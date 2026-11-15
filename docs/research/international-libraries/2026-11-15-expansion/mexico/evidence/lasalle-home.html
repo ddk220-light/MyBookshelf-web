@@ -1,0 +1,943 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <title>Inicio - Micrositios La Salle</title>
+<meta charset="UTF-8" />
+<base href="https://biblioteca.lasalle.mx/" />
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+<link rel="shortcut icon" href="Code/templates/images/global/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="Code/templates/images/global/favicon-16x16.png" type="image/png" sizes="16x16">
+<link rel="shortcut icon" href="Code/templates/images/global/favicon-36x36.png" type="image/png" sizes="36x36">
+<link rel="shortcut icon" href="Code/templates/images/global/favicon-48x48.png" type="image/png" sizes="48x48">
+<link rel="shortcut icon" href="Code/templates/images/global/favicon-96x96.png" type="image/png" sizes="96x96">
+<link rel="shortcut icon" href="Code/templates/images/global/favicon-144x144.png" type="image/png" sizes="144x144">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+<!--<link rel="stylesheet" type="text/css" href="Code/front_end/dist/dev/css/style.css?v=20261113"> -->
+<link rel="stylesheet" type="text/css" href="Code/front_end/dist/dev/css/style2.css?v=20261113">
+
+<!-- Google tag (gtag.js) -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7CGQ7W0466" type="6105512c9b40fd6cd571e992-text/javascript"></script>
+<script type="6105512c9b40fd6cd571e992-text/javascript">
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-7CGQ7W0466');
+</script>
+
+    <style>
+        /* ====== MODX FOOTER FIX ====== */
+        html, body { height: auto !important; min-height: 0 !important; }
+        .page { display: block !important; min-height: 0 !important; height: auto !important; }
+        main[data-fred-dropzone="fredContent"]:empty { display: none !important; }
+
+        /* ====== ESTILOS BUSCADOR ====== */
+        
+        .search-wrapper {
+            margin-top: 15px; padding: 0 20px; width: 100%;
+        }
+        .form-row {
+            display: flex; gap: 10px; justify-content: center; align-items: center; margin-bottom: 15px; width: 100%;
+        }
+
+        /* === INPUTS Y SELECTS === */
+        .modern-input, .modern-select {
+            flex: 1; 
+            height: 38px !important;
+            padding: 0 12px !important;
+            border-radius: 6px !important;
+            border: 1px solid rgba(255, 255, 255, 0.6) !important;
+            background-color: rgba(255, 255, 255, 0.15) !important;
+            color: #ffffff !important;
+            font-size: 14px !important;
+            font-family: inherit;
+            outline: none;
+            backdrop-filter: blur(5px);
+            width: 100%;
+        }
+        
+        .modern-select { cursor: pointer; }
+        .modern-select option { background-color: #001d68 !important; color: white !important; }
+        .modern-input::placeholder { color: #ddd; opacity: 0.8; }
+
+        .modern-input:focus, .modern-select:focus {
+            background-color: rgba(0, 29, 104, 0.8) !important;
+            border-color: #ffffff !important;
+            box-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+
+        /* === BOTONES === */
+        .modern-btn {
+            height: 38px !important; padding: 0 20px !important;
+            background-color: #d21034 !important; color: white !important;
+            border: none !important; border-radius: 6px !important;
+            font-size: 14px !important; font-weight: bold;
+            cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
+            white-space: nowrap; box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        .modern-btn:hover { background-color: #a80c29 !important; transform: translateY(-2px); }
+
+        /* --- RADIO BUTTONS --- */
+        .radio-group {
+            margin-bottom: 20px; text-align: center; display: flex;
+            justify-content: center; gap: 20px; align-items: center;
+        }
+        .radio-clean {
+            -webkit-appearance: radio !important; -moz-appearance: radio !important; appearance: radio !important;
+            width: 18px !important; height: 18px !important; margin: 0 8px 0 0 !important;
+            cursor: pointer; accent-color: #ffffff !important; vertical-align: middle;
+            background: transparent !important; border: none !important; box-shadow: none !important; outline: none !important;
+        }
+        .radio-clean::before, .radio-clean::after {
+            display: none !important; content: none !important; width: 0 !important; height: 0 !important; border: none !important;
+        }
+        .label-clean {
+            color: white; font-size: 16px; cursor: pointer; vertical-align: middle; font-weight: 500;
+        }
+
+        .imgAcceso { width: 18%; display: inline-block; text-align: center; transition: transform 0.3s; }
+        .imgAcceso:hover { transform: translateY(-5px); }
+
+        /* RESPONSIVE */
+        @media screen and (max-width: 768px) {
+            .form-row { flex-direction: column; gap: 10px; }
+            .modern-input, .modern-select, .modern-btn { width: 100% !important; flex: none !important; }
+            .imgAcceso { width: 30%; margin-bottom: 20px; }
+            /* Altura ajustada para móvil también, para que quepa el menú */
+            .hero-container { padding: 60px 15px !important; min-height: 600px !important; }
+        }
+        /* ===== Avisos Home – Carrusel ===== */
+
+            .avisosHome .slideAvisosWrapper {
+              position: relative;
+            }
+            
+            /* Flechas */
+            .avisosHome .slick-prev,
+            .avisosHome .slick-next {
+              position: absolute;
+              top: 50%;
+              transform: translateY(-50%);
+              z-index: 5;
+              background: rgba(0, 29, 104, 0.75);
+              border: none;
+              color: #fff;
+              width: 38px;
+              height: 38px;
+              border-radius: 50%;
+              cursor: pointer;
+              font-size: 22px;
+              line-height: 1;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+            
+            /* Izquierda / derecha */
+            .avisosHome .slick-prev {
+              left: -50px;
+            }
+            
+            .avisosHome .slick-next {
+              right: -50px;
+            }
+    </style>
+</head>
+<body>
+    <div class="searchWrap">
+      <div class="container"><a class="btnSearchClose" id="btnCloseSearch"><span class="icon close"></span></a></div>
+      <div class="searchInner searchInnerUp">
+        <form class="searchForm" action="https://biblioteca.lasalle.mx/globales/resultados-de-busqueda" method="get" autocomplete="off">
+          <fieldset>
+            <label>Encuentra lo que necesitas</label>
+            <div class="searchInput">
+                <input type="hidden" name="asId" value="as0">
+              <input id="searchInput" name="search" type="text" placeholder="Pulsa ENTER para buscar o ESC para salir" value="">
+                  <a class="btnReset" href="#" title="Reset">Reset</a>
+            </div><span class="searchInfo">Pulsa ENTER para buscar o ESC para salir</span>
+          </fieldset>
+        </form>
+      </div>
+      <div class="searchInner searchInnerDown">
+        <div class="searchRelated">
+              <div class="searchSuggestion">
+            <h6>¿Te podemos sugerir?</h6>
+            <p><a href="#">aspirantes, </a> <a href="#">estudiantes, </a> <a href="#">colaboradores, </a> <a href="#">egresados, </a> <a href="#">internatinal_student, </a> <a href="#">faqs</a></p>
+          </div><div class="searchSuggestion">
+            <h6>Nuestra oferta educativa</h6>
+            <p><a href="globales/resultados-de-busqueda.html?search=preparatoria">preparatoria, </a> <a href="#">licenciaturas, </a> <a href="#">especialidades, </a> <a href="#">cursos, </a> <a href="#">diplomado</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="page">
+        <header>
+    <div class="headerTop">
+        <div class="container">
+            <div class="logotipo">
+                <a href="https://biblioteca.lasalle.mx/" title="Inicio">
+                    <img class="lazy"
+                         src="assets/upload/images/general/lasalle-logo.svg"
+                         data-src="assets/upload/images/general/lasalle-logo.svg"
+                         alt="La Salle - Logotipo">
+                </a>
+            </div>
+
+            <div class="toolsHeader">
+                <a style="margin-right:12px; font-size:14px;" href="https://biblioteca.lasalle.mx/bibliotecas/">Bibliotecas</a>
+                <a style="margin-right:12px; font-size:14px;" href="https://biblioteca.lasalle.mx/servicios/">Servicios</a>
+                <a style="margin-right:12px; font-size:14px;" href="https://biblioteca.lasalle.mx/colecciones/">Colecciones</a>
+                <a style="margin-right:12px; font-size:14px;" href="https://biblioteca.lasalle.mx/bibliotecadigital/">Biblioteca Digital</a>
+                <a style="margin-right:12px; font-size:14px;" href="https://biblioteca.lasalle.mx/investigacion/">Investigación</a>
+                <a style="margin-right:12px; font-size:14px;" href="https://biblioteca.lasalle.mx/envivo/">En Vivo</a>
+                <div class="searchButton">
+                    <a id="btnOpenSearch" href="#" title="Buscador" aria-label="Abrir buscador">
+                        <span class="icon seeker"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="headerBottom" style="height: auto;">
+        <div class="container">
+            <div class="logoMicro">
+                <h2>Biblioteca<strong>La Salle</strong></h2>
+            </div>
+            <div class="btnMenu">
+                <a href="#" title="Abrir o cerrar menú" aria-label="Abrir o cerrar menú">Menú móvil</a>
+            </div>
+            <nav class="nav" aria-label="Navegación Biblioteca La Salle">
+                <!-- Opciones secundarias existentes: solo escritorio -->
+                <ul class="navSecundaria">
+                    <li>
+    <a class="openSub" href="#" title="Actividades y programas"></a>
+    <a class="withSub" style="padding: 0;" href="https://biblioteca.lasalle.mx/actividadesyprogramas" title="Actividades y programas">Actividades y programas</a>
+</li><li>
+    <a class="openSub" href="#" title="Mundo Lasallista"></a>
+    <a class="withSub" style="padding: 0;" href="https://biblioteca.lasalle.mx/mundolasallista" title="Mundo Lasallista">Mundo Lasallista</a>
+</li><li>
+    <a class="openSub" href="#" title="Repositorio"></a>
+    <a class="withSub" style="padding: 0;" href="https://biblioteca.lasalle.mx/repositorio" title="Repositorio">Repositorio</a>
+</li><li>
+    <a class="openSub" href="#" title="Nosotros"></a>
+    <a class="withSub" style="padding: 0;" href="https://biblioteca.lasalle.mx/nosotros/" title="Nosotros">Nosotros</a>
+</li>
+                </ul>
+
+                <!-- Seis opciones principales: solo móvil/tableta -->
+                <ul class="navMovilBiblioteca">
+                    <li><a href="https://biblioteca.lasalle.mx/bibliotecas/">Bibliotecas</a></li>
+                    <li><a href="https://biblioteca.lasalle.mx/servicios/">Servicios</a></li>
+                    <li><a href="https://biblioteca.lasalle.mx/colecciones/">Colecciones</a></li>
+                    <li><a href="https://biblioteca.lasalle.mx/bibliotecadigital/">Biblioteca Digital</a></li>
+                    <li><a href="https://biblioteca.lasalle.mx/investigacion/">Investigación</a></li>
+                    <li><a href="https://biblioteca.lasalle.mx/envivo/">En Vivo</a></li>
+                    <li>
+    <a class="openSub" href="#" title="Actividades y programas"></a>
+    <a class="withSub" style="padding: 0;" href="https://biblioteca.lasalle.mx/actividadesyprogramas" title="Actividades y programas">Actividades y programas</a>
+</li><li>
+    <a class="openSub" href="#" title="Mundo Lasallista"></a>
+    <a class="withSub" style="padding: 0;" href="https://biblioteca.lasalle.mx/mundolasallista" title="Mundo Lasallista">Mundo Lasallista</a>
+</li><li>
+    <a class="openSub" href="#" title="Repositorio"></a>
+    <a class="withSub" style="padding: 0;" href="https://biblioteca.lasalle.mx/repositorio" title="Repositorio">Repositorio</a>
+</li><li>
+    <a class="openSub" href="#" title="Nosotros"></a>
+    <a class="withSub" style="padding: 0;" href="https://biblioteca.lasalle.mx/nosotros/" title="Nosotros">Nosotros</a>
+</li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</header>
+
+        
+        <div style="width:100%; max-width:1200px; margin: 0 auto;">
+            
+            <div class="hero-container" style="
+                background-image: linear-gradient(rgba(0, 29, 104, 0.65), rgba(0, 29, 104, 0.65)), url('assets/upload/images/home/240516_VU_ESTUDIANTES-1 2.jpg'); 
+                background-size: cover; 
+                background-position: center center; 
+                padding: 100px 20px; 
+                min-height: 670px; 
+                display: flex; 
+                flex-direction: column; 
+                justify-content: center;
+            ">
+                
+                <h2 style="font-weight: 700; color:#ffffff; font-size: 42px; text-align: center; margin-bottom: 15px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+                    Buscador de recursos
+                </h2>
+                
+                <div class="radio-group">
+                    <div style="display: flex; align-items: center;">
+                        <input type="radio" id="fisico" name="buscador" value="fisico" class="radio-clean" checked>
+                        <label for="fisico" class="label-clean">Acervo físico</label>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <input type="radio" id="digital" name="buscador" value="digital" class="radio-clean">
+                        <label for="digital" class="label-clean">Acervo digital</label>
+                    </div>
+                </div>
+
+                <div class="search-wrapper">
+
+                    <form name="searchform" method="get" action="https://catalogo.biblioteca.lasalle.mx/cgi-bin/koha/opac-search.pl" id="searchform">
+                        <div class="form-row">
+                            <input type="text" id="translControl1" name="q" class="modern-input" placeholder="🔍 Escribe título, autor, tema o ISBN...">
+                        </div>
+                        
+                        <div class="form-row">
+                            <select name="idx" id="masthead_search" class="modern-select">
+                                <option value="">Catálogo completo</option>
+                                <option value="ti">Título</option> 
+                                <option value="au">Autor</option>
+                                <option value="su">Tema</option>
+                                <option value="nb">ISBN</option> 
+                                <option value="se">Series</option>
+                                <option value="callnum">Signatura</option>
+                            </select>
+                            
+                            <select name="limit" id="select_library" class="modern-select">
+                                <option value="">Todas las bibliotecas</option>
+                                <option value="branch:BC">Unidad Condesa</option>
+                                <option value="branch:FMM">Unidad San Fernando</option>
+                                <option value="branch:UST">Unidad Santa Teresa</option>
+                            </select>
+							
+							<input style="display:none;" type="text" name="weight_search" value="1">
+                            
+                            <button type="submit" id="searchsubmit" class="modern-btn" style="min-width: 100px;">Ir</button>
+                        </div>
+                    </form>
+
+                    <form name="direct" method="post" action="https://gestinfo.museknowledge.com/muse/servlet/MusePeer" id="buscadorDigital" style="display:none;" onsubmit="if (!window.__cfRLUnblockHandlers) return false; return ValidarBusquedaDigital()" data-cf-modified-6105512c9b40fd6cd571e992-="">
+                        
+                        <div class="form-row">
+                            <input class="modern-input" type="text" id="queryStatement" name="queryStatement" placeholder="🔍 Buscar en acervo digital (revistas, artículos, tesis)..." autocomplete="off">
+                            
+                            <input class="modern-btn" type="submit" value="Buscar" style="min-width: 120px;">
+                        </div>
+
+                        <input type="hidden" name="action" value="logon">
+                        <input type="hidden" name="userID" value="[REDACTED PUBLIC FORM VALUE]">
+                        <input type="hidden" name="userPwd" value="[REDACTED PUBLIC FORM VALUE]">
+                        <input type="hidden" name="encryption" value="DES">
+                        <input type="hidden" name="templateFile" value="passThrough.html">
+                        <input type="hidden" name="errorTemplate" value="logon/ULSACDMX/error.html">
+                        <input type="hidden" name="reuseSession" value="false">
+                    </form>
+
+                </div>
+            </div>
+            
+            <div style="margin-top: 0px;"> <h3 style="color: #001d68; margin-left: 20px; border-left: 5px solid #d21034; padding-left: 10px;">Accesos directos</h3>
+                <div style="background-color:#f7f9fb; padding: 20px 0;">
+                    <span class="imgAcceso"><a href="https://biblioteca.lasalle.mx/bibliotecas/"><img src="assets/upload/images/home/iconos/reloj.png"><br>Horarios</a></span>
+                    <span class="imgAcceso"><a href="https://catalogo.biblioteca.lasalle.mx/cgi-bin/koha/opac-user.pl"><img src="assets/upload/images/home/iconos/renovación.png"><br>Renovaciones</a></span>
+                    <span class="imgAcceso"><a href="https://biblioteca.lasalle.mx/mundolasallista/#faqs"><img src="assets/upload/images/home/iconos/cabeza.png"><br>FAQs</a></span>
+                    <span class="imgAcceso"><a href="/cdn-cgi/l/email-protection#117378737d787e65747270517d7062707d7d743f7c69"><img src="assets/upload/images/home/iconos/correo.png"><br>Sugerencias</a></span>
+                    <span class="imgAcceso"><a href="https://biblioteca.lasalle.mx/envivo/"><img src="assets/upload/images/home/iconos/video.png"><br>En Vivo</a></span>
+                </div>
+            </div>
+            
+            <main data-fred-dropzone="fredContent">
+                <section class="avisosHome">
+          <div class="container">
+            <h2 class="subtitle">Avisos</h2>
+          </div>
+          <div class="containerCutSliderWrapper">
+            <div class="container">
+              <div class="slideAvisosWrapper">
+  
+  <button class="slick-prev" aria-label="Anterior">‹</button>
+
+  <div class="slideAvisos" data-autoplay="true" data-speed="3000">
+    <div class="slide">
+    <div class="cardAviso">
+        <a href="assets/upload/images/Avisos/Convocatoria Cuento Corto.png" title="Aviso Cuento Corto 2027" target="_self">
+                            <img src="assets/upload/images/Avisos/Carrusel de avisos-3.png" alt="Aviso Cuento Corto 2027" style="width:100%;">
+                       </a>
+    </div>
+</div>
+<div class="slide">
+    <div class="cardAviso">
+        <a href="https://forms.office.com/pages/responsepage.aspx?id=DuJtkHmF60KAt1uonfajFYrQs4hvgPhGtLUtBemJs-RURE03U1ZOSkQwOFVENjc2RldCMTQwNzBERS4u&route=shorturl" title="Aviso Solicitud capacitaciones" target="_self">
+                            <img src="assets/upload/images/Avisos/Avisos_Capacitación.png" alt="Aviso Solicitud capacitaciones" style="width:100%;">
+                       </a>
+    </div>
+</div>
+<div class="slide">
+    <div class="cardAviso">
+        <a href="https://forms.cloud.microsoft/pages/responsepage.aspx?id=DuJtkHmF60KAt1uonfajFdrlen7LUgVDrBi1YtWBBAxUNFlYUjNVTjEwQU8wVVBFOU9ZUzBRSzk0VS4u&origin=QRCode&route=shorturl" title="Aviso Encuesta invierno 2026" target="_self">
+                            <img src="assets/upload/images/general/Encuesta_2026_2-16-BOTÓN-SITIO.png" alt="Aviso Encuesta invierno 2026" style="width:100%;">
+                       </a>
+    </div>
+</div>
+<div class="slide">
+    <div class="cardAviso">
+        <a href="https://forms.office.com/pages/responsepage.aspx?id=DuJtkHmF60KAt1uonfajFYrQs4hvgPhGtLUtBemJs-RUNElINFk5MTRKNTE0RlhITjNaNjBGVFBUMy4u&route=shorturl" title="Aviso Sugerencia de material" target="_self">
+                            <img src="assets/upload/images/Avisos/Avisos_material.png" alt="Aviso Sugerencia de material" style="width:100%;">
+                       </a>
+    </div>
+</div>
+<div class="slide">
+    <div class="cardAviso">
+        <a href="https://lasalle.mx/equidad/" title="Aviso Lasallistas por la Equidad" target="_self">
+                            <img src="assets/upload/images/general/EquidadMicro.jpg" alt="Aviso Lasallistas por la Equidad" style="width:100%;">
+                       </a>
+    </div>
+</div>
+<div class="slide">
+    <div class="cardAviso">
+        <a href="https://lasalle.mx/contigo/#orientadores" title="Aviso acompañamiento emocional" target="_self">
+                            <img src="assets/upload/images/general/BTNmicrositio.jpg" alt="Aviso acompañamiento emocional" style="width:100%;">
+                       </a>
+    </div>
+</div>
+  </div>
+
+  <button class="slick-next" aria-label="Siguiente">›</button>
+
+</div>
+            </div>
+          </div>
+</section><div class="bloque-noticias-simple" style="padding-top: 40px; padding-bottom: 40px; background-color: #ffffff;">
+    <div class="container">
+        
+        <div style="margin-bottom: 30px; text-align: left;">
+            <h2 class="title" style="
+                display: inline-block !important;
+                font-family: Georgia, 'Times New Roman', serif !important;
+                font-style: italic !important;
+                font-weight: 700 !important;
+                font-size: 60px !important;
+                color: #002f5f !important;
+                text-decoration: none !important;
+                margin-top: 0 !important;
+                margin-bottom: 0 !important;
+                line-height: 1.2 !important;
+            ">
+                <a href="noticias/" title="Ir a Noticias" style="color: #002f5f !important; text-decoration: none !important;">
+                    Noticias
+                </a>
+            </h2>
+        </div>
+
+        <div class="listMoreNews" style="display: block; position: relative;">
+            <div class="slide" style="padding-left: 15px;">
+	<div class="cardNews">
+		<div class="img">
+			<a href="https://biblioteca.lasalle.mx/noticias/30-aniversario-rebics" title="30 Aniversario REBICS">
+				<img src="assets/upload/placeholders/La-Salle-Placeholder.jpg" data-lazy="assets/upload/images/general/Sin título - 08 de junio de 2026 a las 09.27.19.png" alt="30 Aniversario REBICS">
+			</a>
+		</div>
+
+		<div class="info">
+			<h3><a href="https://biblioteca.lasalle.mx/noticias/30-aniversario-rebics" title="30 Aniversario REBICS">30 Aniversario REBICS</a></h3>
+			<div class="date">
+				<p>Teresa Rojas</p>
+				<p>30 Abril, 2025</p>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="slide" style="padding-left: 15px;">
+	<div class="cardNews">
+		<div class="img">
+			<a href="https://biblioteca.lasalle.mx/noticias/mensaje-de-bienvenida-a-alumnos-de-posgrado" title="Rincón Violeta">
+				<img src="assets/upload/placeholders/La-Salle-Placeholder.jpg" data-lazy="assets/upload/images/general/RV2.png" alt="Rincón Violeta">
+			</a>
+		</div>
+
+		<div class="info">
+			<h3><a href="https://biblioteca.lasalle.mx/noticias/mensaje-de-bienvenida-a-alumnos-de-posgrado" title="Rincón Violeta">Rincón Violeta</a></h3>
+			<div class="date">
+				<p>Teresa Rojas</p>
+				<p>30 Abril, 2025</p>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="slide" style="padding-left: 15px;">
+	<div class="cardNews">
+		<div class="img">
+			<a href="https://biblioteca.lasalle.mx/noticias/flu-2026" title="Feria del Libro Universitario 2026">
+				<img src="assets/upload/placeholders/La-Salle-Placeholder.jpg" data-lazy="assets/upload/images/general/WhatsApp Image 2026-08-18 at 1.48.30 PM.jpeg" alt="Feria del Libro Universitario 2026">
+			</a>
+		</div>
+
+		<div class="info">
+			<h3><a href="https://biblioteca.lasalle.mx/noticias/flu-2026" title="Feria del Libro Universitario 2026">Feria del Libro Universitario 2026</a></h3>
+			<div class="date">
+				<p>Teresa Rojas</p>
+				<p>17 Septiembre, 2026</p>
+			</div>
+		</div>
+	</div>
+</div>
+        </div>
+        
+    </div>
+</div><style>
+    /* === ESTILOS DEL CARRUSEL Y SIDEBAR === */
+    .home-books-grid {
+        display: grid;
+        grid-template-columns: 5fr 5fr; /* 70% Carrusel - 30% Facebook */
+        gap: 30px;
+        margin: 40px 0;
+        align-items: start;
+    }
+    
+    /* COLUMNA IZQUIERDA */
+    .col-carousel { position: relative; }
+    
+    .books-header {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 10px;
+    }
+    .books-title { 
+        font-family: 'indivisaBold', sans-serif; font-size: 2rem; color: #001d68; margin: 0; 
+    }
+    .btn-ver-todo {
+        background: #001d68; color: #fff; padding: 8px 20px; text-decoration: none;
+        font-size: 0.9rem; border-radius: 4px; transition: background 0.3s;
+    }
+    .btn-ver-todo:hover { background: #d21034; }
+
+    /* CONTENEDOR NEGRO DEL SLIDER */
+    .custom-carousel-container {
+        position: relative; width: 100%; height: 450px;
+        border-radius: 10px; overflow: hidden; background: #000;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    /* DIAPOSITIVAS */
+    .libro-slide {
+        display: none; width: 100%; height: 100%;
+        position: relative; text-align: center;
+        justify-content: center; align-items: center; flex-direction: column;
+        padding: 40px; box-sizing: border-box;
+    }
+    .libro-slide.active { display: flex; }
+
+    .slide-bg {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background-size: cover; background-position: center;
+        filter: blur(8px); opacity: 0.6; z-index: 1;
+    }
+    .slide-overlay {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(45, 20, 95, 0.6); z-index: 2; /* Morado semitransparente */
+    }
+    
+    .slide-content { 
+        position: relative; z-index: 3; color: #fff; max-width: 85%; 
+        text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    }
+    
+    .slide-title { 
+        font-family: 'indivisaBold', sans-serif; font-size: 2.5rem; margin-bottom: 10px; color: #fff; line-height: 1.1;
+    }
+    .slide-meta { 
+        font-size: 0.95rem; background: rgba(0,0,0,0.4); display: inline-block; 
+        padding: 5px 15px; border-radius: 20px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.3);
+    }
+    .slide-desc { 
+        font-size: 1.1rem; line-height: 1.5; margin-bottom: 25px; 
+        font-family: 'indivisaItalicLight', sans-serif; 
+    }
+    
+    .slide-btn {
+        display: inline-block; background: #001d68; color: #fff; padding: 10px 30px;
+        border-radius: 30px; text-decoration: none; font-weight: bold; 
+        border: 1px solid rgba(255,255,255,0.5); box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        transition: transform 0.2s;
+    }
+    .slide-btn:hover { transform: scale(1.05); background: #fff; color: #001d68; }
+
+    /* FLECHAS */
+    .prev, .next {
+        cursor: pointer; position: absolute; top: 50%; width: auto; padding: 16px;
+        margin-top: -22px; color: white; font-weight: bold; font-size: 30px;
+        transition: 0.3s ease; user-select: none; z-index: 10;
+        background-color: rgba(0,0,0,0.3); border-radius: 50%; width: 50px; height: 50px;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .next { right: 10px; }
+    .prev { left: 10px; }
+    .prev:hover, .next:hover { background-color: rgba(255,255,255,0.2); }
+    
+    /* COLUMNA DERECHA (FACEBOOK) */
+    .sidebar-home { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 15px; }
+    .sidebar-header { 
+        display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #eee; 
+        padding-bottom: 10px; margin-bottom: 10px; 
+    }
+
+    @media (max-width: 900px) {
+        .home-books-grid { grid-template-columns: 1fr; }
+        .custom-carousel-container { height: auto; min-height: 500px; }
+        .sidebar-home { display: none; } /* Ocultar FB en móvil si prefieres */
+    }
+</style>
+
+<div class="container">
+    <div class="home-books-grid">
+        
+        <div class="col-carousel">
+            <div class="books-header">
+                <h2 class="books-title">Libros del mes</h2>
+                <a href="libro-del-mes/" class="btn-ver-todo">Ver todo</a>
+            </div>
+
+            <div class="custom-carousel-container" id="libroCarousel_fred_ce776ec_ljz42q7efgi">
+                <div class="libro-slide fade">
+    <div class="slide-bg" style="background-image: url('assets/libros-destacados/Cuatro veranos.jpg');"></div>
+    <div class="slide-overlay"></div>
+    
+    <div class="slide-content">
+        <h2 class="slide-title">Cuatro veranos</h2>
+        
+        <p class="slide-subtitle"></p>
+        
+        <div class="slide-meta">
+            Autor: Benito Taibo &nbsp;|&nbsp; Clasificación: 863.44M Tai-cv 2024
+        </div>
+        
+        <div class="slide-desc">
+            Esta novela de Benito Taibo nos invita a un viaje nostálgico y agridulce a través de la vida de Gael, un joven que, impulsado por una melancólica lista de “cosas por hacer antes de que sea demasiado tarde”, decide regresar a la casa de su infancia en&#8230;
+        </div>
+        
+        <a href="libro-del-mes/cuatro-veranos" class="slide-btn">Leer más</a>
+    </div>
+</div>
+<div class="libro-slide fade">
+    <div class="slide-bg" style="background-image: url('assets/libros-destacados/El jardin de las mariposas.jpg');"></div>
+    <div class="slide-overlay"></div>
+    
+    <div class="slide-content">
+        <h2 class="slide-title">El jardin de las mariposas</h2>
+        
+        <p class="slide-subtitle"></p>
+        
+        <div class="slide-meta">
+            Autor: Dot Hutchison &nbsp;|&nbsp; Clasificación: 813.6 Hut-j
+        </div>
+        
+        <div class="slide-desc">
+            Cerca de una mansión aislada, la policía descubre un macabro jardín, un “invernadero” donde un sádico secuestrador, conocido solo como “El Jardinero”, colecciona jóvenes mujeres a las que tatúa alas de mariposa en la espalda. Cuando el jardín es finalmente&#8230;
+        </div>
+        
+        <a href="libro-del-mes/el-jardin-de-las-mariposas" class="slide-btn">Leer más</a>
+    </div>
+</div>
+<div class="libro-slide fade">
+    <div class="slide-bg" style="background-image: url('assets/libros-destacados/La vida invisible de Addie LaRue.jpg');"></div>
+    <div class="slide-overlay"></div>
+    
+    <div class="slide-content">
+        <h2 class="slide-title">La vida invisible de Addie LaRue</h2>
+        
+        <p class="slide-subtitle"></p>
+        
+        <div class="slide-meta">
+            Autor: V.E. Schwab &nbsp;|&nbsp; Clasificación: 813.6 Schw-v 2021
+        </div>
+        
+        <div class="slide-desc">
+            En la Francia del siglo XVIII, una joven llamada Adeline LaRue, desesperada por escapar de un matrimonio forzado, hace un pacto con la oscuridad. A cambio de la inmortalidad, Addie es condenada a ser olvidada por cada persona que conoce y a no dejar huella&#8230;
+        </div>
+        
+        <a href="libro-del-mes/la-vida-invisible-de-addie-larue" class="slide-btn">Leer más</a>
+    </div>
+</div>
+<div class="libro-slide fade">
+    <div class="slide-bg" style="background-image: url('assets/libros-destacados/1Q84.jpg');"></div>
+    <div class="slide-overlay"></div>
+    
+    <div class="slide-content">
+        <h2 class="slide-title">1Q84 : libros 1 y 2</h2>
+        
+        <p class="slide-subtitle"></p>
+        
+        <div class="slide-meta">
+            Autor: Haruki Murakami &nbsp;|&nbsp; Clasificación: 895.635 Mur-u 2011
+        </div>
+        
+        <div class="slide-desc">
+            “1Q84” nos sumerge en una Tokio de 1984 que, inexplicablemente, se ha desdoblado en una realidad alternativa: 1Q84. La historia se teje a través de las vidas paralelas de dos personajes enigmáticos: Aomame, una joven instructora de fitness y asesina a&#8230;
+        </div>
+        
+        <a href="libro-del-mes/1q84-libros-1-y-2" class="slide-btn">Leer más</a>
+    </div>
+</div>
+<div class="libro-slide fade">
+    <div class="slide-bg" style="background-image: url('assets/libros-destacados/Rojo, blanco y sangre azul.jpg');"></div>
+    <div class="slide-overlay"></div>
+    
+    <div class="slide-content">
+        <h2 class="slide-title">Rojo, blanco y sangre azul</h2>
+        
+        <p class="slide-subtitle"></p>
+        
+        <div class="slide-meta">
+            Autor: Casey Mcquiston &nbsp;|&nbsp; Clasificación: 813.6 Mcq-r 2021
+        </div>
+        
+        <div class="slide-desc">
+            Alex Claremont-Díaz es el “Primer Hijo” de Estados Unidos, carismático y con una imagen pública impecable. Henry es un príncipe británico encantador y muy querido. Aparentemente, lo tienen todo, pero un incidente diplomático altamente publicitado entre&#8230;
+        </div>
+        
+        <a href="libro-del-mes/rojo,-blanco-y-sangre-azul" class="slide-btn">Leer más</a>
+    </div>
+</div>
+<div class="libro-slide fade">
+    <div class="slide-bg" style="background-image: url('assets/libros-destacados/Rayuela.jpg');"></div>
+    <div class="slide-overlay"></div>
+    
+    <div class="slide-content">
+        <h2 class="slide-title">Rayuela</h2>
+        
+        <p class="slide-subtitle"></p>
+        
+        <div class="slide-meta">
+            Autor: Julio Cortazar &nbsp;|&nbsp; Clasificación: 863.44A Cor-rp
+        </div>
+        
+        <div class="slide-desc">
+            “Rayuela” es una novela vanguardista y experimental del escritor argentino Julio Cortázar, publicada en 1963, que desafía las convenciones narrativas tradicionales. El libro se presenta como un “tablero de juego”, ofreciendo al lector dos modos de lectura:&#8230;
+        </div>
+        
+        <a href="libro-del-mes/rayuela" class="slide-btn">Leer más</a>
+    </div>
+</div>
+
+                <a class="prev" onclick="if (!window.__cfRLUnblockHandlers) return false; moveSlide_fred_ce776ec_ljz42q7efgi(-1)" data-cf-modified-6105512c9b40fd6cd571e992-="">❮</a>
+                <a class="next" onclick="if (!window.__cfRLUnblockHandlers) return false; moveSlide_fred_ce776ec_ljz42q7efgi(1)" data-cf-modified-6105512c9b40fd6cd571e992-="">❯</a>
+            </div>
+        </div>
+
+        <div class="col-sidebar">
+            <div class="sidebar-home">
+                <div class="sidebar-header">
+                    <img src="assets/upload/images/home/iconos/libro.png" style="height:25px;" alt="icon">
+                    <strong style="color:#001d68; font-size: 0.9rem;">LaSalleMX / Biblioteca</strong>
+                </div>
+                
+                <div class="fb-page" data-href="https://www.facebook.com/LaSalleMXBiblioteca" data-tabs="timeline" data-width="500" data-height="500" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
+                     <blockquote cite="https://www.facebook.com/LaSalleMXBiblioteca" class="fb-xfbml-parse-ignore">
+                        <a href="https://www.facebook.com/LaSalleMXBiblioteca">Facebook</a>
+                     </blockquote>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="fb-root"></div>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="6105512c9b40fd6cd571e992-text/javascript">
+    // 1. Cargar SDK Facebook si no existe
+    if (!document.getElementById('facebook-jssdk')) {
+        var js, fjs = document.getElementsByTagName('script')[0];
+        js = document.createElement('script'); 
+        js.id = 'facebook-jssdk';
+        js.src = "https://connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v18.0";
+        fjs.parentNode.insertBefore(js, fjs);
+    } else {
+        // Si ya existe (ej. al recargar Fred), repintar
+        if(window.FB) { window.FB.XFBML.parse(); }
+    }
+
+    // 2. Lógica del Slider
+    var slideIndex_fred_ce776ec_ljz42q7efgi = 1;
+    
+    // Iniciar con un pequeño retraso para asegurar carga
+    setTimeout(function() {
+        showSlides_fred_ce776ec_ljz42q7efgi(slideIndex_fred_ce776ec_ljz42q7efgi);
+    }, 500);
+
+    function moveSlide_fred_ce776ec_ljz42q7efgi(n) {
+        showSlides_fred_ce776ec_ljz42q7efgi(slideIndex_fred_ce776ec_ljz42q7efgi += n);
+    }
+
+    function showSlides_fred_ce776ec_ljz42q7efgi(n) {
+        var container = document.getElementById("libroCarousel_fred_ce776ec_ljz42q7efgi");
+        if(!container) return;
+        
+        var slides = container.getElementsByClassName("libro-slide");
+        
+        // Si no hay slides (porque pdoResources no trajo nada), salir
+        if (slides.length === 0) {
+            console.log("No hay libros destacados para mostrar.");
+            return;
+        }
+
+        if (n > slides.length) {slideIndex_fred_ce776ec_ljz42q7efgi = 1}    
+        if (n < 1) {slideIndex_fred_ce776ec_ljz42q7efgi = slides.length}
+        
+        for (var i = 0; i < slides.length; i++) {
+            slides[i].classList.remove("active");
+            slides[i].style.display = "none";  
+        }
+        
+        slides[slideIndex_fred_ce776ec_ljz42q7efgi-1].style.display = "flex";  
+        slides[slideIndex_fred_ce776ec_ljz42q7efgi-1].classList.add("active");
+    }
+</script>
+<section class="calendarioHome" id="calendarSec">
+    <div class="container">
+        <h2 class="subtitle">
+            Calendario
+        </h2>
+
+        <ul class="calendarList">
+            <li>
+                                    <div class="cardCalendar">
+                                      <div class="date">
+                                          <strong>24</strong>
+                                          <small>Noviembre</small>
+                                      </div>
+                                      <div class="info">
+                                        <div class="title">
+                                          <h3><a data="675" href="https://biblioteca.lasalle.mx/calendario/sobreviviendo-a-la-revisión-por-pares" title="Sobreviviendo a la revisión por pares">Sobreviviendo a la revisión por pares</a></h3>
+                                          <a class="btnMoreDetail" href="https://biblioteca.lasalle.mx/calendario/sobreviviendo-a-la-revisión-por-pares"><span class="icon close"></span></a>
+                                        </div>
+                                        <div class="resume">
+                                          <p>14:00-18:00 h</p>
+                                          <p></p>
+                                          <a class="linkArrow" href="https://biblioteca.lasalle.mx/calendario/sobreviviendo-a-la-revisión-por-pares" title="Sobreviviendo a la revisión por pares">
+                                              <span class="icon arrow"></span>
+                                          </a>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </li>
+        </ul>
+
+        <p class="a-center">
+            <a class="btn"
+               href="https://biblioteca.lasalle.mx/calendario/"
+               title="Ir a calendario">
+                Ir a calendario
+            </a>
+        </p>
+    </div>
+</section>
+
+            </main>
+            
+        </div> <footer>
+        <div class="footerTop">
+          <div class="container">
+            <div class="redes">
+              <h6>Síguenos en:</h6>
+              <ul>
+                    <li><a href="https://x.com/LaSalle_MX" title="X"><span class="icon tw"></span></a></li> <li><a href="https://www.youtube.com/@lasallemx" title="Youtube"><span class="icon yt"></span></a></li> <li><a href="https://mx.linkedin.com/school/universidad-la-salle/" title="Linkedin"><span class="icon in"></span></a></li> <li><a href="https://www.instagram.com/biblioteca_lasallemx/" title="Instagram"><span class="icon ig"></span></a></li> <li><a href="https:/facebook.com" title="Facebook"><span class="icon fb"></span></a></li>
+              </ul>
+            </div>
+            <div class="sedes">
+              <!--label class="openMore">Sistema y Red La Salle</label>
+              <ul>
+                  <li><a href="" title="Bajío">Bajío</a></li><li><a href="" title="Ciudad de México">Ciudad de México</a></li><li><a href="" title="Puebla">Puebla</a></li><li><a href="" title="Cancún">Cancún</a></li><li><a href="" title="Chihuahua">Chihuahua</a></li><li><a href="" title="Cuernavaca">Cuernavaca</a></li><li><a href="" title="Laguna">Laguna</a></li><li><a href="" title="Morelia">Morelia</a></li><li><a href="" title="Nezahualcoyotl">Nezahualcoyotl</a></li><li><a href="" title="Noroeste">Noroeste</a></li><li><a href="" title="Oaxaca">Oaxaca</a></li><li><a href="" title="Oaxaca">Oaxaca</a></li><li><a href="" title="Pachuca">Pachuca</a></li><li><a href="" title="Saltillo">Saltillo</a></li><li><a href="" title="Victoria">Victoria</a></li>
+              </ul>-->
+	      <label class="openMore">Sistema y Red La Salle</label>
+                <ul>
+                        <li><a href="http://bajio.delasalle.edu.mx/" title="Bajío">Bajío</a></li>
+                        <li><a href="http://www.lasalle.mx/" title="Ciudad de México">Ciudad de México</a></li>
+                        <li><a href="http://www.ulsapuebla.mx/" title="Puebla">Puebla</a></li>
+                        <li><a href="http://lasallecancun.edu.mx/" title="Cancún">Cancún</a></li>
+                        <li><a href="https://www.ulsachihuahua.edu.mx/" title="Chihuahua">Chihuahua</a></li>
+                        <li><a href="http://www.lasallecuernavaca.edu.mx/wp/" title="Cuernavaca">Cuernavaca</a></li>
+                        <li><a href="http://www.ulsalaguna.edu.mx/" title="Laguna">Laguna</a></li>
+                        <li><a href="http://www.lasallemorelia.edu.mx/" title="Morelia">Morelia</a></li>
+                        <li><a href="http://www.ulsaneza.edu.mx/" title="Nezahualcoyotl">Nezahualcóyotl</a></li>
+                        <li><a href="https://www.lasallenoroeste.edu.mx/" title="Noroeste">Noroeste</a></li>
+                        <li><a href="http://www.ulsaoaxaca.edu.mx/" title="Oaxaca">Oaxaca</a></li>
+                        <li><a href="http://www.ceslas.mx/" title="Monterrey">Monterrey</a></li>
+                        <li><a href="http://www.lasallep.edu.mx/" title="Pachuca">Pachuca</a></li>
+                        <li><a href="https://lasallesaltillo.mx/" title="Saltillo">Saltillo</a></li>
+                        <li><a href="https://www.lasallevictoria.edu.mx/" title="Victoria">Victoria</a></li>
+                </ul>
+            </div>
+          </div>
+        </div>
+        <div class="footerBottom">
+          <div class="container">
+            <div class="logotipos">
+              <ul>
+                <li><a href="http://redlasalle.mx/" title="La Salle Red de Universidades"><img class="lazy" src="Code/front_end/dist/dev/images/global/La-Salle-Red-de-Universidades.png" data-src="Code/front_end/dist/dev/images/global/La-Salle-Red-de-Universidades.png" alt="La Salle Red de Universidades"></a></li>
+                <li><a href="https://www.lasalle.org/" title="La Salle Universities"><img class="lazy" src="Code/front_end/dist/dev/images/global/La-Salle-International-Association.png" data-src="Code/front_end/dist/dev/images/global/La-Salle-International-Association.png" alt="La Salle Universities"></a></li>
+                <li><a href="https://lasalle.mx/comunidadsegura/" title="Universidad Segura"><img class="lazy" src="Code/front_end/dist/dev/images/global/La-Salle-Universidad-Segura.png" data-src="Code/front_end/dist/dev/images/global/La-Salle-Universidad-Segura.png" alt="Universidad Segura"></a></li>
+              </ul>
+            </div>
+            <div class="globalNav">
+              <label class="openMore">Legales</label>
+              <ul>
+                   <li><a href="globales/terminos-y-condiciones.html" title="Terminos y condiciones">Terminos y condiciones</a></li> <li><a href="globales/aviso-de-privacidad.html" title="Aviso de privacidad">Aviso de privacidad</a></li> <li><a href="globales/mapa-de-sitio.html" title="Mapa de sitio">Mapa de sitio</a></li> <li><a href="globales/preguntas-frecuentes.html" title="Preguntas frecuentes">Preguntas frecuentes</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </footer>
+        
+        <div id="js">
+            <script src="Code/front_end/dist/dev/js/main.js" type="6105512c9b40fd6cd571e992-text/javascript"></script>
+        
+            <script type="6105512c9b40fd6cd571e992-text/javascript">
+                /* ===== Toggle buscador físico / digital ===== */
+                var fisico = document.getElementById("fisico");
+                var digital = document.getElementById("digital");
+                var buscadorFisico = document.getElementById("searchform");
+                var buscadorDigital = document.getElementById("buscadorDigital");
+        
+                fisico.onclick = function(){
+                    buscadorFisico.style.display = "block";
+                    buscadorDigital.style.display = "none";
+                }
+                digital.onclick = function(){
+                    buscadorFisico.style.display = "none";
+                    buscadorDigital.style.display = "block";
+                }
+        
+                function ValidarBusquedaDigital(){
+                    return true;
+                }
+        
+                /* ===== Slick: conectar flechas del carrusel Avisos ===== */
+                $(document).ready(function () {
+                    if ($('.slideAvisos').length) {
+                        $('.slideAvisos').slick('slickSetOption', {
+                            arrows: true,
+                            prevArrow: $('.slideAvisosWrapper .slick-prev'),
+                            nextArrow: $('.slideAvisosWrapper .slick-next')
+                        }, true);
+                    }
+                });
+            </script>
+        </div>
+    </div>
+    <script type="6105512c9b40fd6cd571e992-text/javascript">
+(function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="6ozA_UHgMS2ax78OZXJKo";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
+</script>
+<script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="6105512c9b40fd6cd571e992-|49" defer></script></body>
+</html>

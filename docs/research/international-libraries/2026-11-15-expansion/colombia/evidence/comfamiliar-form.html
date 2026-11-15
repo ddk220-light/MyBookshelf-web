@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang='es'>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="">
+			<meta charset="utf-8" />
+			<meta name="author" content="PMB Group" />
+
+			<meta name="keywords" content="OPAC, web, library, opensource, catalog, catalogue, catálogo, biblioteca, bibliothèque, mediateca, librería, médiathèque, pmb, phpmybibli" />
+			<meta name="description" content="Catálogo en línea Centro Cultural Comfamiliar Atlántico." /><meta name='robots' content='all' />
+			<!--IE et son enfer de compatibilit�-->
+			<meta http-equiv='X-UA-Compatible' content='IE=Edge' />
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+	<title>Catálogo en línea Centro Cultural Comfamiliar Atlántico</title>
+	
+	
+<link rel='stylesheet' type='text/css' href='./styles/common/animation_display.css?1615825938' />
+<link rel='stylesheet' type='text/css' href='./styles/common/common.css?1720098068' />
+<link rel='stylesheet' type='text/css' href='./styles/common/contrib.css?1673276618' />
+<link rel='stylesheet' type='text/css' href='./styles/common/dGrowl.css?1657616134' />
+<link rel='stylesheet' type='text/css' href='./styles/common/dsi.css?1699608113' />
+<link rel='stylesheet' type='text/css' href='./styles/common/font-awesome.css?1478593624' />
+<link rel='stylesheet' type='text/css' href='./styles/common/open-sans.css?1479312986' />
+<link rel='stylesheet' type='text/css' href='./styles/common/pagination.css?1532013719' />
+<link rel='stylesheet' type='text/css' href='./styles/common/record_display.css?1540561363' />
+<link rel='stylesheet' type='text/css' href='./styles/common/visionneuse.css?1646663637' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/colonnes.css?1343806866' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/gallerie_photos.css?1297066640' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/genbib.css?1498048756' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/liste_bulletins.css?1297066639' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/print.css?1297066639' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/tags.css?1297066639' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/visionneuse.css?1297066640' /><script type='text/javascript'>var opac_style= 'genbib';</script>
+	<!-- css_authentication -->	<link rel='SHORTCUT ICON' href='./images/site/favicon.ico' />
+	<script type="text/javascript" src="includes/javascript/drag_n_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/handle_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/popup.js"></script>
+	<script type='text/javascript'>
+			// Fonction a utiliser pour l'encodage des URLs en javascript
+			function encode_URL(data){
+				var docCharSet = document.characterSet ? document.characterSet : document.charset;
+				if(docCharSet == "UTF-8"){
+	    			return encodeURIComponent(data);
+	    		}else{
+	    			return escape(data);
+	    		}
+	    	}
+	    </script>
+	<script type='text/javascript'>
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName =
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i);
+				    }
+				 }
+				return items;
+			 }
+		}
+	</script>
+
+		<link rel='stylesheet' type='text/css' href='./includes/javascript/dojo/dijit/themes/tundra/tundra.css' />
+		<script type='text/javascript'>
+			var dojoConfig = {
+				parseOnLoad: true,
+				locale: 'es-es',
+				isDebug: false,
+				usePlainJson: true,
+				packages: [{
+						name: 'pmbBase',
+						location:'../../../..'
+					},{
+						name: 'd3',
+						location:'../../d3'
+					}],
+				deps: ['apps/pmb/MessagesStore', 'dgrowl/dGrowl', 'dojo/ready', 'apps/pmb/ImagesStore'],
+				callback:function(MessagesStore, dGrowl, ready, ImagesStore){
+					window.pmbDojo = {};
+					pmbDojo.messages = new MessagesStore({url:'./ajax.php?module=ajax&categ=messages', directInit:false, lastModified:'1749244574'});
+					pmbDojo.images = new ImagesStore({url:'./ajax.php?module=ajax&categ=images', directInit:false});
+					ready(function(){
+						new dGrowl({'channels':[{'name':'info','pos':2},{'name':'error', 'pos':1}]});
+					});
+
+				},
+			};
+		</script>
+		<script type='text/javascript' src='./includes/javascript/dojo/dojo/dojo.js'></script>
+		<script type='text/javascript'>
+		dojo.addOnLoad(function () {
+			// Ajout du theme Dojo
+			dojo.addClass(dojo.body(),'tundra');
+		})
+		</script>
+		<script type='text/javascript'>
+	var pmb_img_patience = './images/patience.gif';
+</script><script type='text/javascript'>
+			var opac_show_social_network =0;
+		</script>
+	<script type='text/javascript' src='./includes/javascript/http_request.js'></script>
+	
+</head>
+
+<body onload="window.defaultStatus='PMB: Acceso público';"  id="pmbopac">
+		<script type='text/javascript'>
+		function findNoticeElement(id){
+			var ul=null;
+			//cas des notices classiques
+			var domNotice = document.getElementById('el'+id+'Child');
+			//notice_display
+			if(!domNotice) domNotice = document.getElementById('notice');
+			if(domNotice){
+				var uls = domNotice.getElementsByTagName('ul');
+				for (var i=0 ; i<uls.length ; i++){
+					if(uls[i].getAttribute('id') == 'onglets_isbd_public'+id){
+						var ul = uls[i];
+						break;
+					}
+				}
+			} else{
+				var li = document.getElementById('onglet_isbd'+id);
+				if(!li) var li = document.getElementById('onglet_public'+id);
+				if(!li) var li = document.getElementById('onglet_detail'+id);
+				if(li) var ul = li.parentNode;
+			}
+			return ul;
+		}
+		function show_what(quoi, id) {
+			switch(quoi){
+				case 'EXPL_LOC' :
+					document.getElementById('div_expl_loc' + id).style.display = 'block';
+					document.getElementById('div_expl' + id).style.display = 'none';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_inactive';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_active';
+					break;
+				case 'EXPL' :
+					document.getElementById('div_expl_loc' + id).style.display = 'none';
+					document.getElementById('div_expl' + id).style.display = 'block';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_active';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_inactive';
+					break;
+				default :
+					quoi= quoi.toLowerCase();
+					var ul = findNoticeElement(id);
+					if (ul) {
+						var items  = ul.getElementsByTagName('li');
+						for (var i=0 ; i<items.length ; i++){
+							if(items[i].getAttribute('id')){
+								if(items[i].getAttribute('id') == 'onglet_'+quoi+id){
+									items[i].className = 'isbd_public_active';
+									document.getElementById('div_'+quoi+id).style.display = 'block';
+								}else{
+									if(items[i].className != 'onglet_tags' && items[i].className != 'onglet_avis' && items[i].className != 'onglet_sugg' && items[i].className != 'onglet_basket' && items[i].className != 'onglet_liste_lecture'){
+										items[i].className = 'isbd_public_inactive';
+										document.getElementById(items[i].getAttribute('id').replace('onglet','div')).style.display = 'none';
+									}
+								}
+							}
+						}
+					}
+					break;
+			}
+		}
+		</script>
+	<script type='text/javascript' src='./includes/javascript/tablist_ajax.js'></script>
+<script type='text/javascript' src='./includes/javascript/tablist.js'></script>
+<script type='text/javascript' src='./includes/javascript/misc.js'></script>
+	<div id='att' style='z-Index:1000'></div>
+	<div id="container"><div id="main"><div id='main_header'></div><div id="main_hors_footer">
+						
+
+<script type='text/javascript' src='./includes/javascript/auth_popup.js'></script>
+<script type='text/javascript' src='./includes/javascript/pnb.js'></script><div id="intro_message"><div class="p2"></div></div><div id='navigator'>
+<table style='width:100%'><tr><td class='navig_actions_first_screen' ><a href="./index.php?lvl=index" class='navig_etageres'><span>New search</span></a></td>
+<td class='navig_empr_bt_show_compte' ><a href="./empr.php" class='navig_etageres'><span>Su cuenta</span></a></td>
+</tr></table></div><!-- fermeture de #navigator -->
+<div id='resume_panier' class='empty'></div>
+<script type='text/javascript'>
+<!--
+	function test_form(form)
+	{
+
+		return true;
+	}
+-->
+</script><div id='search'><ul class='search_tabs'><li id='current'><a href="./index.php?search_type_asked=simple_search">Búsqueda simple</a></li><li ><a href="./index.php?search_type_asked=extended_search">Búsqueda avanzada</a></li></ul><div id='search_crl'></div><div class='row'>
+		<form name='search_input' action='./index.php?lvl=search_result' method='post' onSubmit="if (search_input.user_query.value.length == 0) { search_input.user_query.value='*'; return true; }">
+			
+			
+			<br />
+			<input type='hidden' name='surligne' value=''/>
+					<input type='text' name='user_query' id='user_query_lib' class='text_query' value="" size='65' />
+<input type='submit' name='ok' value='Buscar' class='boutonrechercher'/>
+<input type='button' value='Ayuda' class='bouton button_search_help' onClick='window.open("./help.php?whatis=simple_search", "search_help", "scrollbars=yes, toolbar=no, dependent=yes, width=400, height=400, resizable=yes"); return false' />
+<div id='simple_search_zone'><div class='row'>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_TITLE' id='look_TITLE' value='1'  /><label for='look_TITLE'> Títulos </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_AUTHOR' id='look_AUTHOR' value='1'  /><label for='look_AUTHOR'> Autores </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_ALL' id='look_ALL' value='1' checked  /><label for='look_ALL'> Todos los campos </label></span></div><div style='clear: both;'><input type='hidden' name='look_FIRSTACCESS' value='1' /></div></div></form>
+		<script type='text/javascript' src='./includes/javascript/ajax.js'></script>
+		<script type='text/javascript'>
+
+                if (document.forms['search_input'] && document.forms['search_input'].elements['user_query']) {
+                    document.forms["search_input"].elements["user_query"].focus();
+					
+                }
+		</script></div></div><div id='infopages'></div><div id="location"><h3><span>¿No se te ocurre nada para buscar? Entre dentro de la biblioteca...</span></h3><div id='location-container'>
+	<script type='text/javascript'>
+		function opac_locations_ui_sort_by(criteria, asc_desc, indice) {
+			var url = './ajax.php?module=empr&lvl=index&action=list&sort_by='+criteria;
+			if(asc_desc == 'desc') {
+				//on repasse en tri croissant
+				url += '&sort_asc_desc=asc';
+			} else if(asc_desc == 'asc') {
+				//on repasse en tri d�croissant
+				url += '&sort_asc_desc=desc';
+			}
+			var req = new http_request();
+			if(document.getElementById('opac_locations_ui_json_filters_'+indice)) {
+				var filters = document.getElementById('opac_locations_ui_json_filters_'+indice).value;
+			} else if(document.getElementById('opac_locations_ui_json_filters')) {
+				var filters = document.getElementById('opac_locations_ui_json_filters').value;
+			} else {
+				var filters = '';
+			}
+			if(document.getElementById('opac_locations_ui_pager_'+indice)) {
+				var pager = document.getElementById('opac_locations_ui_pager_'+indice).value;
+			} else if(document.getElementById('opac_locations_ui_pager')) {
+				var pager = document.getElementById('opac_locations_ui_pager').value;
+			} else {
+				var pager = '';
+			}
+			if(document.getElementById('opac_locations_ui_ancre_'+indice)) {
+				var ancre = document.getElementById('opac_locations_ui_ancre_'+indice).value;
+			} else if(document.getElementById('opac_locations_ui_ancre')) {
+				var ancre = document.getElementById('opac_locations_ui_ancre').value;
+			} else {
+				var ancre = '';
+			}
+            if(document.getElementById('opac_locations_ui_list_'+indice)) {
+				var table = document.getElementById('opac_locations_ui_list_'+indice);
+			} else if(document.getElementById('opac_locations_ui_list_0')) {
+				var table = document.getElementById('opac_locations_ui_list_0');
+			} else {
+				var table = document.getElementById('opac_locations_ui_list');
+			}
+            table.innerHTML = '<tr><td><img src="./images/patience.gif"/></td></tr>';
+			req.request(url,1, 'object_type=opac_locations_ui&filters='+encodeURIComponent(filters)+'&pager='+pager+'&ancre='+ancre, true, function(response) {
+                table.innerHTML = response;
+    			if(document.getElementById('opac_locations_ui_applied_sort_by_0')) {
+    				var options = document.getElementById('opac_locations_ui_applied_sort_by_0').options;
+    				for (var i= 0; i < options.length; i++) {
+    				    if (options[i].value === criteria) {
+    				        options[i].selected= true;
+    				        break;
+    				    }
+    				}
+    				switch(asc_desc) {
+    					case 'asc': //on repasse en tri d�croissant
+    						document.getElementById('opac_locations_ui_applied_sort_asc_0').removeAttribute('checked');
+    						document.getElementById('opac_locations_ui_applied_sort_desc_0').setAttribute('checked', 'checked');
+    						break;
+    					case 'desc': //on repasse en tri croissant
+    					default:
+    						document.getElementById('opac_locations_ui_applied_sort_asc_0').setAttribute('checked', 'checked');
+    						document.getElementById('opac_locations_ui_applied_sort_desc_0').removeAttribute('checked');
+    						break;
+    				}
+    			}
+				if(ancre) {
+					window.location='#'+ancre;
+				}
+				if(typeof initIt !== 'undefined') {
+					initIt();
+				}
+            });
+		}
+	</script>
+<table class='center' style='width:100%'><tr><td class='center'>
+                <a href='./index.php?lvl=section_see&location=13'>
+                    <img src='./images/bibli-small.png' style='border:0px' alt='Centro Cultural Comfamiliar' title='Centro Cultural Comfamiliar'/>
+                </a>
+				<br />
+                <a href='./index.php?lvl=section_see&location=13'><b>Centro Cultural Comfamiliar</b></a></td><td class='center'>
+                <a href='./index.php?lvl=section_see&location=16'>
+                    <img src='./images/bibli-small.png' style='border:0px' alt='Colegio Comfamiliar' title='Colegio Comfamiliar'/>
+                </a>
+				<br />
+                <a href='./index.php?lvl=section_see&location=16'><b>Colegio Comfamiliar</b></a></td><td class='center'>
+                <a href='./index.php?lvl=section_see&location=27'>
+                    <img src='./images/bibli-small.png' style='border:0px' alt='Complejo Social Nu3' title='Complejo Social Nu3'/>
+                </a>
+				<br />
+                <a href='./index.php?lvl=section_see&location=27'><b>Complejo Social Nu3</b></a></td></tr><tr><td class='center'>
+                <a href='./index.php?lvl=section_see&location=26'>
+                    <img src='./images/bibli-small.png' style='border:0px' alt='Ludoteca Usiacur&iacute;' title='Ludoteca Usiacur&iacute;'/>
+                </a>
+				<br />
+                <a href='./index.php?lvl=section_see&location=26'><b>Ludoteca Usiacurí</b></a></td><td class='center'>
+                <a href='./index.php?lvl=section_see&location=14'>
+                    <img src='./images/bibli-small.png' style='border:0px' alt='Malambo' title='Malambo'/>
+                </a>
+				<br />
+                <a href='./index.php?lvl=section_see&location=14'><b>Malambo</b></a></td><td class='center'>
+                <a href='./index.php?lvl=section_see&location=18'>
+                    <img src='./images/bibli-small.png' style='border:0px' alt='Pies Descalzos' title='Pies Descalzos'/>
+                </a>
+				<br />
+                <a href='./index.php?lvl=section_see&location=18'><b>Pies Descalzos</b></a></td></tr><tr><td class='center'>
+                <a href='./index.php?lvl=section_see&location=19'>
+                    <img src='./images/bibli-small.png' style='border:0px' alt='Pozo de la Palabra' title='Pozo de la Palabra'/>
+                </a>
+				<br />
+                <a href='./index.php?lvl=section_see&location=19'><b>Pozo de la Palabra</b></a></td><td class='center'>
+                <a href='./index.php?lvl=section_see&location=20'>
+                    <img src='./images/bibli-small.png' style='border:0px' alt='Tubar&aacute;' title='Tubar&aacute;'/>
+                </a>
+				<br />
+                <a href='./index.php?lvl=section_see&location=20'><b>Tubará</b></a></td><td class='center'>
+                <a href='./index.php?lvl=section_see&location=23'>
+                    <img src='./images/bibli-small.png' style='border:0px' alt='Usiacur&iacute;' title='Usiacur&iacute;'/>
+                </a>
+				<br />
+                <a href='./index.php?lvl=section_see&location=23'><b>Usiacurí</b></a></td></tr></table></div></div>
+	<div id='last_entries'>
+		<h3><span>Últimas adquisiciones</span></h3>
+		<div id='last_entries-container'>Está visualizando los últimos documentos introducidos en el catálogo:<br /><span class="expandAll"><a href='javascript:expandAll_ajax(1);'><img class='img_plusplus' src='./images/expand_all.gif' style='border:0px' id='expandall'></a></span><span class="espaceResultSearch">&nbsp;</span><span class="collapseAll"><a href='javascript:collapseAll()'><img class='img_moinsmoins' src='./images/collapse_all.gif' style='border:0px' id='collapseall'></a></span>
+				<div id="el49292Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el49292Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A49292%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%22c82113db6f8ed85f5e5335f01a1f7a7c%22%2C%22datetime%22%3A1794730298%7D' onClick="expandBase_ajax('el49292', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="https://biblioteca.comfamiliar.com.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_49292"><span class="statutnot4" title="Disponible"></span><span  notice='49292'  class='header_title'>¡QUIERO ADOPTAR UN TIGRE!</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=63139'>WEI- HSUAN WANG</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=%C2%A1QUIERO%20ADOPTAR%20UN%20TIGRE%21&amp;rft.title=%C2%A1QUIERO%20ADOPTAR%20UN%20TIGRE%21&amp;rft.isbn=978-607-16-8651-0&amp;rft.tpages=40%20P%C3%A1ginas&amp;rft.date=2025&amp;rft_id=&amp;rft.series=LOS%20ESPECIALES%20DE%20A%20LA%20ORILLA%20DEL%20VIENTO&amp;rft.pub=FONDO%20DE%20CULTURA%20ECONOMICA&amp;rft.place=MEXICO&amp;rft.edition=1%20EDICI%C3%93N&amp;rft.au=WEI-%20HSUAN%20WANG&amp;rft.au=REBECA%20RUIZ%20CONTRERAS&amp;rft.au=MENG-%20YUN%20CHIANG&amp;rft.aulast=WANG&amp;rft.aufirst=WEI-%20HSUAN'></span></span>
+		    	<br />
+				</div>
+				<div id="el49292Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.comfamiliar.com.co/pmb/opac_css/index.php?lvl=notice_display&id=49292" style="display:none;">Permalink</a>
+			
+		
+				<div id="el49291Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el49291Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A49291%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%224641d9706ef52ed67e7aa03434b69e44%22%2C%22datetime%22%3A1794730298%7D' onClick="expandBase_ajax('el49291', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="https://biblioteca.comfamiliar.com.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_49291"><span class="statutnot4" title="Disponible"></span><span  notice='49291'  class='header_title'>JEPPE EN CAMINO</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=3976'>JUTTA BAUER</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=JEPPE%20EN%20CAMINO&amp;rft.title=JEPPE%20EN%20CAMINO&amp;rft.isbn=978-607-16-8785-2&amp;rft.tpages=40%20P%C3%A1ginas&amp;rft.date=2025&amp;rft_id=&amp;rft.series=LOS%20ESPECIALES%20DE%20A%20LA%20ORILLA%20DEL%20VIENTO&amp;rft.pub=FONDO%20DE%20CULTURA%20ECONOMICA&amp;rft.place=MEXICO&amp;rft.edition=1%20EDICION&amp;rft.au=JUTTA%20BAUER&amp;rft.au=ROCIO%20AGUILAR%20CHAVIRA&amp;rft.aulast=BAUER&amp;rft.aufirst=JUTTA'></span></span>
+		    	<br />
+				</div>
+				<div id="el49291Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.comfamiliar.com.co/pmb/opac_css/index.php?lvl=notice_display&id=49291" style="display:none;">Permalink</a>
+			
+		
+				<div id="el49290Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el49290Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A49290%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%220765e1de026d549d6733cec83ba7443b%22%2C%22datetime%22%3A1794730298%7D' onClick="expandBase_ajax('el49290', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="https://biblioteca.comfamiliar.com.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_49290"><span class="statutnot4" title="Disponible"></span><span  notice='49290'  class='header_title'>GRAN GORILLA</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=56817'>ANTHONY BROWNE</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=GRAN%20GORILLA&amp;rft.title=GRAN%20GORILLA%20%3A%20UN%20LIBRO%20DE%20OPUESTO&amp;rft.isbn=978-607-16-8650-3&amp;rft.tpages=32%20P%C3%A1gina&amp;rft.date=2025&amp;rft_id=&amp;rft.series=LOS%20ESPECIALES%20DE%20A%20LA%20ORILLA%20DEL%20VIENTO&amp;rft.pub=FONDO%20DE%20CULTURA%20ECONOMICA&amp;rft.place=MEXICO&amp;rft.edition=1%20EDICI%C3%93N&amp;rft.au=ANTHONY%20BROWNE&amp;rft.au=ERENDIRA%20GUZMAN%20SALAS&amp;rft.aulast=BROWNE&amp;rft.aufirst=ANTHONY'></span></span>
+		    	<br />
+				</div>
+				<div id="el49290Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.comfamiliar.com.co/pmb/opac_css/index.php?lvl=notice_display&id=49290" style="display:none;">Permalink</a>
+			
+		
+				<div id="el49289Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el49289Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A49289%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%22798a3a3247a8d8a8b5df883dfd9a2afd%22%2C%22datetime%22%3A1794730298%7D' onClick="expandBase_ajax('el49289', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="https://biblioteca.comfamiliar.com.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_49289"><span class="statutnot4" title="Disponible"></span><span  notice='49289'  class='header_title'>OLIVIA Y LAS PRINCESAS</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=54993'>IAN FALCONER</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=OLIVIA%20Y%20LAS%20PRINCESAS&amp;rft.title=OLIVIA%20Y%20LAS%20PRINCESAS&amp;rft.isbn=978-956-289-100-4&amp;rft.tpages=40%20P%C3%A1ginas&amp;rft.date=2012&amp;rft_id=&amp;rft.series=LOS%20ESPECIALES%20DE%20A%20LA%20ORILLA%20DEL%20VIENTO&amp;rft.pub=FONDO%20DE%20CULTURA%20ECONOMICA&amp;rft.place=MEXICO&amp;rft.edition=1%20EDICI%C3%93N&amp;rft.au=IAN%20FALCONER&amp;rft.au=CLARA%20STERN%20RODRIGUEZ&amp;rft.aulast=FALCONER&amp;rft.aufirst=IAN'></span></span>
+		    	<br />
+				</div>
+				<div id="el49289Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.comfamiliar.com.co/pmb/opac_css/index.php?lvl=notice_display&id=49289" style="display:none;">Permalink</a>
+			
+		
+				<div id="el49288Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el49288Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A49288%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%22a4af2d51bd93ddf346266035c3155c66%22%2C%22datetime%22%3A1794730298%7D' onClick="expandBase_ajax('el49288', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="https://biblioteca.comfamiliar.com.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_49288"><span class="statutnot4" title="Disponible"></span><span  notice='49288'  class='header_title'>¿PUEDES VERME?</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=63135'>GÖKCE IRTEN</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=%C2%BFPUEDES%20VERME%3F&amp;rft.title=%C2%BFPUEDES%20VERME%3F&amp;rft.isbn=978-607-16-7496-8&amp;rft.tpages=48%20P%C3%A1ginas&amp;rft.date=2022&amp;rft_id=&amp;rft.pub=FONDO%20DE%20CULTURA%20ECONOMICA&amp;rft.place=MEXICO&amp;rft.edition=1%20EDICI%C3%93N&amp;rft.au=G%C3%96KCE%20IRTEN&amp;rft.au=EDUARDO%20MOCTEZUMA&amp;rft.aulast=IRTEN&amp;rft.aufirst=G%C3%96KCE'></span></span>
+		    	<br />
+				</div>
+				<div id="el49288Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.comfamiliar.com.co/pmb/opac_css/index.php?lvl=notice_display&id=49288" style="display:none;">Permalink</a>
+			
+		
+				<div id="el49287Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el49287Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A49287%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%22b53332c533b2e502af8153066050e112%22%2C%22datetime%22%3A1794730298%7D' onClick="expandBase_ajax('el49287', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="https://biblioteca.comfamiliar.com.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_49287"><span class="statutnot4" title="Disponible"></span><span  notice='49287'  class='header_title'>COCO ¡BRAVO, MOSQUITA!</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=63134'>JEAN-MARC MATHIS</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=COCO%20%C2%A1BRAVO%2C%20MOSQUITA%21&amp;rft.title=COCO%20%C2%A1BRAVO%2C%20MOSQUITA%21&amp;rft.isbn=978-607-16-8933-7&amp;rft.tpages=24%20P%C3%A1ginas&amp;rft.date=2024&amp;rft_id=&amp;rft.pub=FONDO%20DE%20CULTURA%20ECONOMICA&amp;rft.place=MEXICO&amp;rft.edition=1%20EDICI%C3%93N&amp;rft.au=JEAN-MARC%20MATHIS&amp;rft.au=CELINE%20FRAIPONT&amp;rft.aulast=MATHIS&amp;rft.aufirst=JEAN-MARC'></span></span>
+		    	<br />
+				</div>
+				<div id="el49287Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.comfamiliar.com.co/pmb/opac_css/index.php?lvl=notice_display&id=49287" style="display:none;">Permalink</a>
+			
+		
+				<div id="el49286Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el49286Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A49286%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%22574adb1a9c6886135e2dadbfd41ce1f0%22%2C%22datetime%22%3A1794730298%7D' onClick="expandBase_ajax('el49286', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="https://biblioteca.comfamiliar.com.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_49286"><span class="statutnot4" title="Disponible"></span><span  notice='49286'  class='header_title'>COCO Y MOSQUITA</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=63134'>JEAN-MARC MATHIS</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=COCO%20Y%20MOSQUITA&amp;rft.title=COCO%20Y%20MOSQUITA&amp;rft.isbn=978-628-7800-26-7&amp;rft.tpages=24%20P%C3%A1ginas&amp;rft.date=2023&amp;rft_id=&amp;rft.pub=FONDO%20DE%20CULTURA%20ECONOMICA&amp;rft.place=MEXICO&amp;rft.edition=1%20EDICI%C3%93N&amp;rft.au=JEAN-MARC%20MATHIS&amp;rft.au=CELINE%20FRAIPONT&amp;rft.aulast=MATHIS&amp;rft.aufirst=JEAN-MARC'></span></span>
+		    	<br />
+				</div>
+				<div id="el49286Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.comfamiliar.com.co/pmb/opac_css/index.php?lvl=notice_display&id=49286" style="display:none;">Permalink</a>
+			
+		
+				<div id="el49285Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el49285Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A49285%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%223a555487fe5b82383cfa78a9dfb00e73%22%2C%22datetime%22%3A1794730298%7D' onClick="expandBase_ajax('el49285', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="https://biblioteca.comfamiliar.com.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_49285"><span class="statutnot4" title="Disponible"></span><span  notice='49285'  class='header_title'>EL JUEGO DE LOS CONEJOS</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=41152'>SANDRA SIEMENS</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=EL%20JUEGO%20DE%20LOS%20CONEJOS&amp;rft.title=EL%20JUEGO%20DE%20LOS%20CONEJOS&amp;rft.isbn=978-607-16-8765-4&amp;rft.tpages=32%20P%C3%A1ginas&amp;rft.date=2025&amp;rft_id=&amp;rft.series=LOS%20ESPECIALES%20DE%20A%20LA%20ORILLA%20DEL%20VIENTO&amp;rft.pub=FONDO%20DE%20CULTURA%20ECONOMICA&amp;rft.place=MEXICO&amp;rft.edition=1%20EDICI%C3%93N&amp;rft.au=SANDRA%20SIEMENS&amp;rft.au=NATALIA%20COLOMBO&amp;rft.aulast=SIEMENS&amp;rft.aufirst=SANDRA'></span></span>
+		    	<br />
+				</div>
+				<div id="el49285Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.comfamiliar.com.co/pmb/opac_css/index.php?lvl=notice_display&id=49285" style="display:none;">Permalink</a>
+			
+		
+				<div id="el49284Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el49284Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A49284%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%22b4360fd11f5e8e69266a2bc734e84aff%22%2C%22datetime%22%3A1794730298%7D' onClick="expandBase_ajax('el49284', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="https://biblioteca.comfamiliar.com.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_49284"><span class="statutnot4" title="Disponible"></span><span  notice='49284'  class='header_title'>EL LIBRO MENTIROSO</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=63133'>MARIANA ALCANTARA</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=EL%20LIBRO%20MENTIROSO&amp;rft.title=EL%20LIBRO%20MENTIROSO%20%3A%20MAS%20VALE%20UNA%20MENTIRA%20EN%20MANO%2C%20QUE%20CIENTO%20VOLANDO&amp;rft.isbn=978-607-16-8543-8&amp;rft.tpages=14%20P%C3%A1ginas&amp;rft.date=2024&amp;rft_id=&amp;rft.series=LOS%20ESPECIALES%20DE%20A%20LA%20ORILLA%20DEL%20VIENTO&amp;rft.pub=FONDO%20DE%20CULTURA%20ECONOMICA&amp;rft.place=MEXICO&amp;rft.edition=1%20EDICI%C3%93N&amp;rft.au=MARIANA%20ALCANTARA&amp;rft.au=MARIANA%20ALCANTARA&amp;rft.aulast=ALCANTARA&amp;rft.aufirst=MARIANA'></span></span>
+		    	<br />
+				</div>
+				<div id="el49284Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.comfamiliar.com.co/pmb/opac_css/index.php?lvl=notice_display&id=49284" style="display:none;">Permalink</a>
+			
+		
+				<div id="el49283Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el49283Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A49283%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%224258e22185da517c9f25150d335d1a27%22%2C%22datetime%22%3A1794730298%7D' onClick="expandBase_ajax('el49283', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="https://biblioteca.comfamiliar.com.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_49283"><span class="statutnot4" title="Disponible"></span><span  notice='49283'  class='header_title'>EL TERCER AMOR</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=61277'>HIROMI KAWAKAMI</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=EL%20TERCER%20AMOR&amp;rft.title=EL%20TERCER%20AMOR&amp;rft.isbn=978-628-7778-08-5&amp;rft.tpages=310%20P%C3%A1ginas&amp;rft.date=2025&amp;rft_id=&amp;rft.pub=PENGUIN%20RANDON%20HOUSE&amp;rft.place=BOGOTA&amp;rft.edition=1%20EDICI%C3%93N&amp;rft.au=HIROMI%20KAWAKAMI&amp;rft.au=YOKO%20OGIHARA&amp;rft.au=FERNANDO%20CORDOBES&amp;rft.aulast=KAWAKAMI&amp;rft.aufirst=HIROMI'></span></span>
+		    	<br />
+				</div>
+				<div id="el49283Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.comfamiliar.com.co/pmb/opac_css/index.php?lvl=notice_display&id=49283" style="display:none;">Permalink</a>
+			
+		
+				<div id="el49282Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el49282Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A49282%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%2255ecf43a432a5185d02ac8f7a0960036%22%2C%22datetime%22%3A1794730298%7D' onClick="expandBase_ajax('el49282', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="https://biblioteca.comfamiliar.com.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_49282"><span class="statutnot4" title="Disponible"></span><span  notice='49282'  class='header_title'>EL PATITO FEO</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=56420'>HANS CHRISTIAN ANDERSEN</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=EL%20PATITO%20FEO&amp;rft.title=EL%20PATITO%20FEO&amp;rft.isbn=978-607-16-7580-4&amp;rft.tpages=48%20P%C3%A1ginas&amp;rft.date=2022&amp;rft_id=&amp;rft.series=LOS%20ESPECIALES%20DE%20A%20LA%20ORILLA%20DEL%20VIENTO&amp;rft.pub=FONDO%20DE%20CULTURA%20ECONOMICA&amp;rft.place=MEXICO&amp;rft.edition=1%20EDICI%C3%93N&amp;rft.au=HANS%20CHRISTIAN%20ANDERSEN&amp;rft.au=FABIO%20MORABITO&amp;rft.au=VERONICA%20RUFFATO&amp;rft.aulast=ANDERSEN&amp;rft.aufirst=HANS%20CHRISTIAN'></span></span>
+		    	<br />
+				</div>
+				<div id="el49282Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.comfamiliar.com.co/pmb/opac_css/index.php?lvl=notice_display&id=49282" style="display:none;">Permalink</a>
+			
+		
+				<div id="el49281Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el49281Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A49281%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%22504800782f797b1f66991b83c742040d%22%2C%22datetime%22%3A1794730298%7D' onClick="expandBase_ajax('el49281', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="https://biblioteca.comfamiliar.com.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_49281"><span class="statutnot4" title="Disponible"></span><span  notice='49281'  class='header_title'>MEJORES AMIGOS</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=31407'>ROGER OLMOS</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=MEJORES%20AMIGOS&amp;rft.title=MEJORES%20AMIGOS&amp;rft.isbn=978-607-16-8403-5&amp;rft.tpages=56%20P%C3%A1ginas&amp;rft.date=2025&amp;rft_id=&amp;rft.series=LOS%20ESPECIALES%20DE%20A%20LA%20ORILLA%20DEL%20VIENTO&amp;rft.pub=FONDO%20DE%20CULTURA%20ECONOMICA&amp;rft.place=MEXICO&amp;rft.edition=1%20EDICI%C3%93N&amp;rft.au=ROGER%20OLMOS&amp;rft.au=ROGER%20OLMOS&amp;rft.aulast=OLMOS&amp;rft.aufirst=ROGER'></span></span>
+		    	<br />
+				</div>
+				<div id="el49281Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.comfamiliar.com.co/pmb/opac_css/index.php?lvl=notice_display&id=49281" style="display:none;">Permalink</a>
+			
+		
+				<div id="el49280Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el49280Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A49280%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%22b03fd4d0119c1171f09d1ce75e386abb%22%2C%22datetime%22%3A1794730298%7D' onClick="expandBase_ajax('el49280', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="https://biblioteca.comfamiliar.com.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_49280"><span class="statutnot4" title="Disponible"></span><span  notice='49280'  class='header_title'>EMPREZAR DE NUEVO</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=55235'>OLIVER JEFFERS</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=EMPREZAR%20DE%20NUEVO&amp;rft.title=EMPREZAR%20DE%20NUEVO%20%3A%20COMO%20LLEGAMOS%20AQUI%20Y%20AD%C3%93NDE%20PODR%C3%8DAMOS%20IR%20-%20NUESTRA%20HISTORIA%20HUMANA%2C%20HASTA%20AHORA&amp;rft.isbn=978-607-16-8699-2&amp;rft.tpages=120%20P%C3%A1ginas&amp;rft.date=2025&amp;rft_id=&amp;rft.series=LOS%20ESPECIALES%20DE%20A%20LA%20ORILLA%20DEL%20VIENTO&amp;rft.pub=FONDO%20DE%20CULTURA%20ECONOMICA&amp;rft.place=MEXICO&amp;rft.edition=1%20EDICI%C3%93N&amp;rft.au=OLIVER%20JEFFERS&amp;rft.au=DARIO%20ZARATE&amp;rft.aulast=JEFFERS&amp;rft.aufirst=OLIVER'></span></span>
+		    	<br />
+				</div>
+				<div id="el49280Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.comfamiliar.com.co/pmb/opac_css/index.php?lvl=notice_display&id=49280" style="display:none;">Permalink</a>
+			
+		
+				<div id="el49279Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el49279Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A49279%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%22fe7ab42ce549f1a8cae20c9d7b8d3d9f%22%2C%22datetime%22%3A1794730298%7D' onClick="expandBase_ajax('el49279', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="https://biblioteca.comfamiliar.com.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_49279"><span class="statutnot4" title="Disponible"></span><span  notice='49279'  class='header_title'>¡OYE, TÚ!</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=38554'>CLAUDIA RUEDA</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=%C2%A1OYE%2C%20T%C3%9A%21&amp;rft.title=%C2%A1OYE%2C%20T%C3%9A%21&amp;rft.isbn=978-628-7800-33-5&amp;rft.tpages=48%20P%C3%A1ginas&amp;rft.date=2025&amp;rft_id=&amp;rft.series=LOS%20ESPECIALES%20DE%20A%20LA%20ORILLA%20DEL%20VIENTO&amp;rft.pub=FONDO%20DE%20CULTURA%20ECONOMICA&amp;rft.place=MEXICO&amp;rft.edition=1%20EDICI%C3%93N&amp;rft.au=CLAUDIA%20RUEDA&amp;rft.aulast=RUEDA&amp;rft.aufirst=CLAUDIA'></span></span>
+		    	<br />
+				</div>
+				<div id="el49279Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.comfamiliar.com.co/pmb/opac_css/index.php?lvl=notice_display&id=49279" style="display:none;">Permalink</a>
+			
+		
+				<div id="el49278Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el49278Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A49278%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%226b0403136ba77c61b6243905db41defa%22%2C%22datetime%22%3A1794730298%7D' onClick="expandBase_ajax('el49278', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="https://biblioteca.comfamiliar.com.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_49278"><span class="statutnot4" title="Disponible"></span><span  notice='49278'  class='header_title'>ESTAS SON MIS MANOS</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=63129'>LISET LANTIGUA</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=ESTAS%20SON%20MIS%20MANOS&amp;rft.title=ESTAS%20SON%20MIS%20MANOS&amp;rft.isbn=978-9942-8684-4-2&amp;rft.tpages=32%20P%C3%A1ginas&amp;rft.date=2024&amp;rft_id=&amp;rft.series=LOS%20ESPECIALES%20DE%20A%20LA%20ORILLA%20DEL%20VIENTO&amp;rft.pub=FONDO%20DE%20CULTURA%20ECONOMICA&amp;rft.place=MEXICO&amp;rft.edition=1%20EDICI%C3%93N&amp;rft.au=LISET%20LANTIGUA&amp;rft.au=SOZAPATO&amp;rft.aulast=LANTIGUA&amp;rft.aufirst=LISET'></span></span>
+		    	<br />
+				</div>
+				<div id="el49278Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.comfamiliar.com.co/pmb/opac_css/index.php?lvl=notice_display&id=49278" style="display:none;">Permalink</a>
+			
+		
+				<div id="el49277Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el49277Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A49277%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%22a530881023c3d64bd753cb289e82b9a5%22%2C%22datetime%22%3A1794730298%7D' onClick="expandBase_ajax('el49277', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="https://biblioteca.comfamiliar.com.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_49277"><span class="statutnot4" title="Disponible"></span><span  notice='49277'  class='header_title'>GIGANTE</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=63128'>ALEXANDRA CASTELLANOS SOLIS</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=GIGANTE&amp;rft.title=GIGANTE&amp;rft.isbn=978-607-16-7136-3&amp;rft.tpages=48%20P%C3%A1ginas&amp;rft.date=2021&amp;rft_id=&amp;rft.series=LOS%20ESPECIALES%20DE%20A%20LA%20ORILLA%20DEL%20VIENTO&amp;rft.pub=FONDO%20DE%20CULTURA%20ECONOMICA&amp;rft.place=MEXICO&amp;rft.edition=1%20EDICI%C3%93N&amp;rft.au=ALEXANDRA%20CASTELLANOS%20SOLIS&amp;rft.au=ALEXANDRA%20CASTELLANOS%20SOLIS&amp;rft.aulast=CASTELLANOS%20SOLIS&amp;rft.aufirst=ALEXANDRA'></span></span>
+		    	<br />
+				</div>
+				<div id="el49277Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.comfamiliar.com.co/pmb/opac_css/index.php?lvl=notice_display&id=49277" style="display:none;">Permalink</a>
+			
+		
+				<div id="el49276Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el49276Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A49276%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%22e2eb984a7a48e3bdc897f422e79a6894%22%2C%22datetime%22%3A1794730298%7D' onClick="expandBase_ajax('el49276', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="https://biblioteca.comfamiliar.com.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_49276"><span class="statutnot4" title="Disponible"></span><span  notice='49276'  class='header_title'>NUESTRA NIÑA</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=56817'>ANTHONY BROWNE</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=NUESTRA%20NI%C3%91A&amp;rft.title=NUESTRA%20NI%C3%91A&amp;rft.isbn=978-607-16-7010-6&amp;rft.tpages=32%20P%C3%A1ginas&amp;rft.date=2021&amp;rft_id=&amp;rft.series=LOS%20ESPECIALES%20DE%20A%20LA%20ORILLA%20DEL%20VIENTO&amp;rft.pub=FONDO%20DE%20CULTURA%20ECONOMICA&amp;rft.place=MEXICO&amp;rft.edition=1%20EDICI%C3%93N&amp;rft.au=ANTHONY%20BROWNE&amp;rft.au=SUSANA%20FIGUEROA%20LE%C3%93N&amp;rft.aulast=BROWNE&amp;rft.aufirst=ANTHONY'></span></span>
+		    	<br />
+				</div>
+				<div id="el49276Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.comfamiliar.com.co/pmb/opac_css/index.php?lvl=notice_display&id=49276" style="display:none;">Permalink</a>
+			
+		
+				<div id="el49275Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el49275Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A49275%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%2266ffcf44868cd98f6114fb08deebdd07%22%2C%22datetime%22%3A1794730298%7D' onClick="expandBase_ajax('el49275', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="https://biblioteca.comfamiliar.com.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_49275"><span class="statutnot4" title="Disponible"></span><span  notice='49275'  class='header_title'>SECRETO</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=27283'>ANDREA MATURANA</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=SECRETO&amp;rft.title=SECRETO&amp;rft.isbn=978-607-16-5634-6&amp;rft.tpages=52%20P%C3%A1ginas&amp;rft.date=2019&amp;rft_id=&amp;rft.series=LOS%20ESPECIALES%20DE%20A%20LA%20ORILLA%20DEL%20VIENTO&amp;rft.pub=FONDO%20DE%20CULTURA%20ECONOMICA&amp;rft.place=MEXICO&amp;rft.edition=1%20EDICI%C3%93N&amp;rft.au=ANDREA%20MATURANA&amp;rft.au=FRANCISCO%20JAVIER%20OLEA&amp;rft.aulast=MATURANA&amp;rft.aufirst=ANDREA'></span></span>
+		    	<br />
+				</div>
+				<div id="el49275Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.comfamiliar.com.co/pmb/opac_css/index.php?lvl=notice_display&id=49275" style="display:none;">Permalink</a>
+			
+		
+				<div id="el49274Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el49274Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A49274%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%22050b886e243e578336edd3bf3798f483%22%2C%22datetime%22%3A1794730298%7D' onClick="expandBase_ajax('el49274', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="https://biblioteca.comfamiliar.com.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_49274"><span class="statutnot4" title="Disponible"></span><span  notice='49274'  class='header_title'>AQUÍ ESTAMOS</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=55235'>OLIVER JEFFERS</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=AQU%C3%8D%20ESTAMOS&amp;rft.title=AQU%C3%8D%20ESTAMOS%20%3A%20NOTAS%20PARA%20VIVIR%20EN%20EL%20PLANETA%20TIERRA&amp;rft.isbn=978-607-16-5711-4&amp;rft.tpages=48%20P%C3%A1ginas&amp;rft.date=2018&amp;rft_id=&amp;rft.series=LOS%20ESPECIALES%20DE%20A%20LA%20ORILLA%20DEL%20VIENTO&amp;rft.pub=FONDO%20DE%20CULTURA%20ECONOMICA&amp;rft.place=MEXICO&amp;rft.edition=1%20EDICI%C3%93N&amp;rft.au=OLIVER%20JEFFERS&amp;rft.au=SUSANA%20FIGUEROA%20LE%C3%93N&amp;rft.aulast=JEFFERS&amp;rft.aufirst=OLIVER'></span></span>
+		    	<br />
+				</div>
+				<div id="el49274Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.comfamiliar.com.co/pmb/opac_css/index.php?lvl=notice_display&id=49274" style="display:none;">Permalink</a>
+			
+		
+				<div id="el49273Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el49273Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A49273%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.comfamiliar.com.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%22116c279d707c4e2499948ebea6ad473e%22%2C%22datetime%22%3A1794730298%7D' onClick="expandBase_ajax('el49273', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="https://biblioteca.comfamiliar.com.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_49273"><span class="statutnot4" title="Disponible"></span><span  notice='49273'  class='header_title'>LA VIDA SIN SANTI</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=27283'>ANDREA MATURANA</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=LA%20VIDA%20SIN%20SANTI&amp;rft.title=LA%20VIDA%20SIN%20SANTI&amp;rft.isbn=978-607-16-1971-6&amp;rft.tpages=48%20P%C3%A1ginas&amp;rft.date=2014&amp;rft_id=&amp;rft.pub=FONDO%20DE%20CULTURA%20ECONOMICA&amp;rft.place=MEXCIO&amp;rft.edition=1%20EDICI%C3%93N&amp;rft.au=ANDREA%20MATURANA&amp;rft.au=FRANCISCO%20JAVIER%20OLEA&amp;rft.aulast=MATURANA&amp;rft.aufirst=ANDREA'></span></span>
+		    	<br />
+				</div>
+				<div id="el49273Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.comfamiliar.com.co/pmb/opac_css/index.php?lvl=notice_display&id=49273" style="display:none;">Permalink</a>
+			
+					
+		</div>
+	</div>
+		</div><!-- fin DIV main_hors_footer --><div id="footer">
+
+<span id="footer_rss">
+	
+</span>
+<span id="footer_link_sup">
+		<a href='https://biblioteca.comfamiliar.com.co/pmb/' target=_blank>Acceder</a> &nbsp;
+</span>
+
+<span id="footer_link_website">
+	<a class="footer_biblio_name" href="https://www.comfamiliar.com.co/opencms/opencms/comfamiliar/Servicios/CCultural/" title="Centro Cultural Comfamiliar Atlántico">Centro Cultural Comfamiliar Atlántico</a> &nbsp;
+</span>
+
+<span id="footer_link_pmb">
+ &nbsp;
+		<a class="lien_pmb_footer" href="https://www.sigb.net" title="una solución libre para la mediateca" target='_blank'>pmb</a>
+</span>
+
+</div> 
+
+		</div><!-- /div id=main -->
+
+		<div id="intro">
+<div id="intro_bibli">
+			<h3>Centro Cultural Comfamiliar Atlántico</h3>
+			<div class="p1"><img src="./styles/genbib/images/image1.jpg" />
+<img src="./styles/genbib/images/image2.jpg" />
+<img src="./styles/genbib/images/image3.jpg" /></div>
+			<div class="p2"></div>
+			</div>
+		</div><!-- /div id=intro -->
+		<div id="bandeau"><!-- $Id: accessibility.tpl.html,v 1.2.4.1 2023/10/02 14:33:32 jparis Exp $ -->
+
+
+<div id="accessibility">
+    	<input type="hidden" id="opacAccessibility" name="opacAccessibility" value="1"/>
+	<ul class="accessibility_font_size">
+		<li class="accessibility_font_size_small">
+			<a href="javascript:accessibilityFontSize(1);" title="Réduire le texte">A-</a>
+		</li>
+		<li class="accessibility_font_size_normal">
+			<a href="javascript:accessibilityFontSize(0);" title="Réinitialiser le texte">A</a>
+		</li>
+		<li class="accessibility_font_size_big">
+			<a href="javascript:accessibilityFontSize(2);" title="Agrandir le texte">A+</a>
+		</li>
+	</ul>
+</div>
+
+
+<script type="text/javascript" src="./includes/javascript/accessibility.js"></script>
+
+
+<div id="accueil">
+
+<h3><span onclick='document.location="./index.php?"' style='cursor: pointer;'>Inicio</span></h3>
+<p class="centered"><a href='./index.php?'><img src='https://extranet.comfamiliar.com.co/extranet/static/images/logo_comfamiliar.png' alt='Inicio'  style='border:0px' class='center'/></a></p>
+
+					</div><!-- fermeture #accueil -->
+<div id="connexion">
+
+			<h3 class="login_invite">Conectarse</h3><div id='login_form'><form action='' method='post' name='myform' data-csrf='true'><label>acceder a su cuenta de usuario</label><br />
+				<input type='text' name='login' class='login' size='14' placeholder='identificador' ><br />
+                <div class='myform-password-text-visually'>
+                    <input type='password' id='myform-password' name='password' class='password' size='8' placeholder='Mot de passe' value=''/>
+                    <button type='button' class='fa fa-eye' id='myform-password-visually' onclick='toggle_password(this, "myform-password");' title='Afficher ou masquer le mot de passe'></button>
+                </div>
+                <input type='hidden' name='force_login' value='1'/>
+				<input type='submit' name='ok' value='ok' class='bouton'></form><a  class='mdp_forgotten' href='./askmdp.php'>Olvidé mi contraseña</a></div>
+
+			</div><!-- fermeture #connexion -->
+<div id="adresse">
+
+		<h3>Dirección</h3>
+
+		<span>
+			Centro Cultural Comfamiliar Atlántico<br />
+			Carrera 54 No. 59-167<br />
+			 Barranquilla<br />
+			Colombia&nbsp;<br />
+			Teléfono 57+5 3853930<br /><span id='opac_biblio_email'>
+			<a href="mailto:biblioteca@comfamiliar.com.co" title="biblioteca@comfamiliar.com.co">contacto</a></span></span>
+	    </div><!-- fermeture #adresse --></div><div id="bandeau_2"></div></div><!-- /div id=container -->
+		
+		<script type='text/javascript'>init_drag();	//rechercher!!</script>
+		
+			<script type="text/javascript">
+				var tarteaucitron_messages = pmbDojo.messages.getMessages("tarteaucitron");
+				if(tarteaucitron_messages.length) {
+					tarteaucitronCustomText = {};
+					tarteaucitron_messages.forEach(function(message) {
+						if(parseInt(message.code.indexOf(":")) !== -1) {
+							let tarteaucitron_messages_group = message.code.split(":");
+							if(typeof tarteaucitronCustomText[tarteaucitron_messages_group[0]] == "undefined") {
+								tarteaucitronCustomText[tarteaucitron_messages_group[0]] = {};
+							}
+							tarteaucitronCustomText[tarteaucitron_messages_group[0]][tarteaucitron_messages_group[1]] = message.message;
+						} else {
+							tarteaucitronCustomText[message.code] = message.message;
+						}
+					});
+				}
+			</script>
+			<script type="text/javascript" src="./includes/javascript/tarteaucitron/tarteaucitron.js"></script>
+		<script type="text/javascript">
+	        tarteaucitron.init({
+	    	  "privacyUrl": "", /* Privacy policy url */
+	
+	    	  "hashtag": "#PhpMyBibli-COOKIECONSENT", /* Open the panel with this hashtag */
+	    	  "cookieName": "PhpMyBibli-COOKIECONSENT", /* Cookie name */
+	    
+	    	  "orientation": "bottom", /* Banner position (top - bottom - popup) */
+	       
+	          "groupServices": true, /* Group services by category */
+	                           
+	    	  "showAlertSmall": false, /* Show the small banner on bottom right */
+	    	  "cookieslist": false, /* Show the cookie list */
+				                           
+	          "closePopup": false, /* Show a close X on the banner */
+	
+	          "showIcon": false, /* Show cookie icon to manage cookies */
+	          "iconSrc": "./images/cookie.png", /* Optionnal: URL or base64 encoded image */
+	          "iconPosition": "BottomRight", /* BottomRight, BottomLeft, TopRight and TopLeft */
+	
+	    	  "adblocker": false, /* Show a Warning if an adblocker is detected */
+	                           
+	          "DenyAllCta" : true, /* Show the deny all button */
+	          "AcceptAllCta" : true, /* Show the accept all button when highPrivacy on */
+	          "highPrivacy": true, /* HIGHLY RECOMMANDED Disable auto consent */
+	                           
+	    	  "handleBrowserDNTRequest": false, /* If Do Not Track == 1, disallow all */
+	
+	    	  "removeCredit": true, /* Remove credit link */
+	    	  "moreInfoLink": false, /* Show more info link */
+	
+	          "useExternalCss": false, /* If false, the tarteaucitron.css file will be loaded */
+	          "useExternalJs": false, /* If false, the tarteaucitron.js file will be loaded */
+				
+	    	  //"cookieDomain": ".my-multisite-domaine.fr", /* Shared cookie for multisite */
+	                          
+	          "readmoreLink": "", /* Change the default readmore link */
+	
+	          "mandatory": true, /* Show a message about mandatory cookies */
+	        });
+ 
+        </script>
+		 <script type="text/javascript">
+        	(tarteaucitron.job = tarteaucitron.job || []).push("gtag");
+        </script>
+		<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-166760593-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-166760593-1');
+</script>
+		</body>
+		</html>
+		

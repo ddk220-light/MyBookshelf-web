@@ -1,0 +1,1699 @@
+<HTML>
+<HEAD>
+<link rel="stylesheet" type="text/css" href="/scripts/ProStyles.css" />
+<link rel="stylesheet" type="text/css" href="/screens/styles.css" />
+<script type="text/javascript" src="/scripts/elcontent.js">
+</script>
+<script type="text/javascript" src="/scripts/common.js">
+</script>
+<script type="text/javascript" src="/scripts/features.js">
+</script>
+
+<TITLE>KU Library Network</TITLE>
+<!-- พัฒนาเว็บโดย นายอภิยศ เหรียญวิพัฒน์ ออกแบบหน้าเว็บโดย นายสิงห์ทอง ครองพงษ์ (11 เมษายน 2567)-->
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<link href="/screens/mainmenu.css" rel="stylesheet" type="text/css">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+
+<meta charset="utf-8">
+<!--
+  KU Library AI chat widget  (replaces the old chat button, chat box, help popup and chat script)
+ 
+  Needs in <head> of the host page:  <meta name="viewport" content="width=device-width, initial-scale=1">
+  Tailwind is scoped to #kuchat (important selector, preflight off), so it cannot restyle the rest of the OPAC page.
+  Edit the CFG object in the script at the bottom to change endpoints, avatar or feedback form.
+-->
+ 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<!--<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>-->
+<script>
+  tailwind.config = {
+    important: '#kuchat',
+    corePlugins: { preflight: false },
+    theme: {
+      extend: {
+        colors: {
+          kc: {
+            ink: '#10211f',
+            teal: '#006564',
+            deep: '#004a49',
+            mist: '#f3f7f6',
+            line: '#e1e9e7',
+            soft: '#dcefed',
+            mute: '#5d7371'
+          }
+        }
+      }
+    }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+ 
+<style>
+  /* Scoped reset (Tailwind preflight is off so the OPAC page is untouched) */
+  #kuchat { font-family: "IBM Plex Sans Thai", system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; text-align: left; letter-spacing: 0; }
+  #kuchat *, #kuchat *::before, #kuchat *::after { box-sizing: border-box; border: 0 solid #e1e9e7; }
+  #kuchat button, #kuchat input, #kuchat textarea { font: inherit; color: inherit; margin: 0; padding: 0; background: none; border-radius: 0; text-transform: none; letter-spacing: inherit; }
+  #kuchat button { cursor: pointer; -webkit-appearance: none; appearance: none; }
+  #kuchat button:disabled { cursor: default; }
+  #kuchat img, #kuchat svg { display: block; max-width: 100%; }
+  #kuchat [hidden] { display: none !important; }
+ 
+  /* Open / close states */
+  #kc-launcher { transition: opacity .2s ease, transform .2s ease, box-shadow .2s ease; }
+  #kuchat.kc-open #kc-launcher { opacity: 0; transform: scale(.92); pointer-events: none; visibility: hidden; }
+  #kc-panel { opacity: 0; visibility: hidden; transform: translateY(14px) scale(.985); transform-origin: bottom right;
+    transition: opacity .22s ease, transform .22s ease, visibility 0s linear .22s, width .25s ease, height .25s ease; }
+  #kuchat.kc-open #kc-panel { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+  #kuchat.kc-wide #kc-panel { width: min(980px, calc(100vw - 40px)); height: calc(100vh - 40px); }
+  @media (max-width: 639px) { #kuchat.kc-wide #kc-panel { width: auto; height: auto; } }
+ 
+  /* Typing dots */
+  #kuchat .kc-dots { display: inline-flex; gap: 4px; }
+  #kuchat .kc-dots i { width: 6px; height: 6px; border-radius: 9999px; background: #006564; opacity: .25; animation: kc-pulse 1.2s infinite ease-in-out; }
+  #kuchat .kc-dots i:nth-child(2) { animation-delay: .15s; }
+  #kuchat .kc-dots i:nth-child(3) { animation-delay: .3s; }
+  @keyframes kc-pulse { 0%, 80%, 100% { opacity: .25; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-2px); } }
+ 
+  /* Stars */
+  #kuchat .kc-star { color: #9db3b0; }
+  #kuchat .kc-star.kc-on { color: #006564; }
+  #kuchat .kc-star.kc-on svg { fill: currentColor; }
+ 
+  /* Rendered markdown */
+  #kuchat .kc-prose { font-size: 14px; line-height: 1.7; color: #10211f; }
+  #kuchat .kc-prose > :first-child { margin-top: 0; }
+  #kuchat .kc-prose > :last-child { margin-bottom: 0; }
+  #kuchat .kc-prose p { margin: .65em 0; }
+  #kuchat .kc-prose ul, #kuchat .kc-prose ol { margin: .65em 0; padding-left: 1.3em; }
+  #kuchat .kc-prose ul { list-style: disc; }
+  #kuchat .kc-prose ol { list-style: decimal; }
+  #kuchat .kc-prose li { margin: .4em 0; padding-left: .15em; }
+  #kuchat .kc-prose li::marker { color: #5d7371; }
+  #kuchat .kc-prose strong { font-weight: 600; font-size: larger;}
+  #kuchat .kc-prose h1, #kuchat .kc-prose h2, #kuchat .kc-prose h3, #kuchat .kc-prose h4 { font-size: 15px; font-weight: 600; line-height: 1.4; margin: 1.2em 0 .4em; }
+  #kuchat .kc-prose a { color: #006564; font-weight: 500; text-decoration: underline; text-decoration-color: #9cc9c6; text-underline-offset: 3px; }
+  #kuchat .kc-prose a:hover { text-decoration-color: #006564; }
+  #kuchat .kc-prose hr { border: 0; border-top: 1px solid #e1e9e7; margin: 1.3em 0; }
+  #kuchat .kc-prose code { background: #f3f7f6; padding: .1em .35em; border-radius: 6px; font-size: .9em; }
+  #kuchat .kc-prose blockquote { margin: .8em 0; padding-left: 12px; border-left: 2px solid #dcefed; color: #44403C; }
+  #kuchat .kc-prose table { border-collapse: collapse; font-size: 13px; }
+  #kuchat .kc-prose th, #kuchat .kc-prose td { border-bottom: 1px solid #e1e9e7; padding: 6px 10px; text-align: left; vertical-align: top; }
+ 
+  @media (prefers-reduced-motion: reduce) {
+    #kuchat *, #kuchat *::before, #kuchat *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  }
+</style>
+
+<!--  end chat widget -->
+
+
+<style>
+.autocomplete-container {
+    position: relative;
+    width: 50px; /* Adjust the width as needed */
+}
+
+
+#results {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    /*border: 1px solid #ccc;*/
+    border-top: none; /* Remove the top border */
+    max-height: 200px;
+    overflow-y: auto;
+    /*position: absolute;*/
+    width: 100%; /* Match the input width */
+    background-color: white;
+    z-index: 1000; /* Ensure the dropdown is above other elements */
+}
+
+#results li {
+    padding: 6px;
+    cursor: pointer;
+    font-size:14px;
+}
+
+
+#results li:hover {
+    background-color: #f0f0f0;
+}
+
+</style>
+
+
+<style>
+/* The Modal (background) */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.4); 
+    padding-top: 60px;
+}
+
+
+
+/* The Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+</style>
+
+
+
+<style>
+.autocomplete-container {
+    position: relative;
+    width: 50px; /* Adjust the width as needed */
+}
+
+#results {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    /*border: 1px solid #ccc;*/
+    border-top: none; /* Remove the top border */
+    max-height: 200px;
+    overflow-y: auto;
+    /*position: absolute;*/
+    width: 100%; /* Match the input width */
+    background-color: white;
+    z-index: 1000; /* Ensure the dropdown is above other elements */
+}
+
+#results li {
+    padding: 6px;
+    cursor: pointer;
+    font-size:14px;
+}
+
+
+#results li:hover {
+    background-color: #f0f0f0;
+}
+
+</style>
+
+
+<style>
+/* The Modal (background) */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.4); 
+    padding-top: 60px;
+}
+
+/* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto; 
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; 
+}
+
+/* The Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+</style>
+
+
+
+
+<!-- ── AI HYBRID SEARCH STYLES ── -->
+<style>
+#ai-search-btn {
+  position: relative;
+  background: linear-gradient(135deg, #1E8271 0%, #1E8283 50%, #0d6b5e 100%);
+  color: white;
+  border: none;
+  padding: 4px 14px 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: 6px;
+  vertical-align: middle;
+  font-family: inherit;
+  letter-spacing: 0.04em;
+  box-shadow: 0 2px 8px rgba(30,130,113,0.45), 0 0 0 0 rgba(30,130,131,0.4);
+  animation: ai-btn-pulse 2.2s infinite;
+  overflow: hidden;
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+
+/* shimmer sweep */
+#ai-search-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -75%;
+  width: 50%; height: 100%;
+  background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.28) 50%, transparent 100%);
+  animation: ai-btn-shimmer 2.2s infinite;
+  pointer-events: none;
+}
+
+/* pulse ring */
+@keyframes ai-btn-pulse {
+  0%   { box-shadow: 0 2px 8px rgba(30,130,113,0.45), 0 0 0 0 rgba(30,130,131,0.4); }
+  60%  { box-shadow: 0 2px 8px rgba(30,130,113,0.45), 0 0 0 6px rgba(30,130,131,0.0); }
+  100% { box-shadow: 0 2px 8px rgba(30,130,113,0.45), 0 0 0 0 rgba(30,130,131,0.0); }
+}
+
+@keyframes ai-btn-shimmer {
+  0%   { left: -75%; }
+  60%  { left: 125%; }
+  100% { left: 125%; }
+}
+
+#ai-search-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(30,130,113,0.6);
+  animation: none;
+}
+#ai-search-btn:hover::before { animation: none; }
+#ai-search-btn:active { transform: translateY(0px); }
+#ai-search-btn:disabled { opacity: 0.5; cursor: not-allowed; animation: none; }
+
+
+/* -- AI HYBRID SEARCH MODAL -- everything is scoped to #ai-modal-overlay, so nothing here can touch the rest of the OPAC page */
+#ai-modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 9999;
+  align-items: center; justify-content: center; padding: 1rem;
+  background: rgba(28,25,23,.45);
+  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+}
+#ai-modal-overlay.open { display: flex; animation: ai-fade .18s ease both; }
+#ai-modal-overlay.open #ai-modal { animation: ai-pop .22s cubic-bezier(.2,.8,.2,1) both; }
+
+/* Scoped base (Tailwind preflight is not used, and the OPAC stylesheet is unknown territory) */
+#ai-modal-overlay *, #ai-modal-overlay *::before, #ai-modal-overlay *::after { box-sizing: border-box; border: 0 solid #e7e5e4; }
+#ai-modal { font-family: "IBM Plex Sans Thai", Sarabun, system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 14px; line-height: 1.5; color: #1c1917; text-align: left; letter-spacing: 0; -webkit-font-smoothing: antialiased; }
+#ai-modal-overlay h2, #ai-modal-overlay h3, #ai-modal-overlay p, #ai-modal-overlay ul { margin: 0; padding: 0; }
+#ai-modal-overlay h2, #ai-modal-overlay h3 { font-size: inherit; font-weight: inherit; }
+#ai-modal-overlay button { font: inherit; color: inherit; background: none; margin: 0; padding: 0; cursor: pointer; -webkit-appearance: none; appearance: none; }
+#ai-modal-overlay a { color: inherit; text-decoration: none; }
+#ai-modal-overlay input { font: inherit; color: inherit; margin: 0; }
+#ai-modal-overlay svg { display: block; }
+
+/* Show / hide blocks (toggled from JS with the .visible class) */
+#ai-loading, #ai-error, #ai-status, #ai-summary-card { display: none; }
+#ai-loading.visible, #ai-error.visible, #ai-summary-card.visible { display: block; }
+#ai-status.visible { display: flex; }
+
+/* Markdown inside the AI summary */
+#ai-modal-overlay .ai-prose a { color: #006564; font-weight: 500; text-decoration: underline; text-decoration-color: #a8e2dc; text-underline-offset: 3px; font-size: small;}
+#ai-modal-overlay .ai-prose a:hover { text-decoration-color: #006564; }
+#ai-modal-overlay .ai-prose strong { color: #1c1917; font-weight: 600; font-size: medium; }
+#ai-modal-overlay .ai-prose h3 { font-size: .95rem; font-weight: 600; color: #1c1917; margin: .7rem 0 .3rem; }
+#ai-modal-overlay .ai-prose ul { list-style: disc; padding-left: 1.1rem; margin: .25rem 0; }
+#ai-modal-overlay .ai-prose li { margin-bottom: .2rem; font-size: small; }
+#ai-modal-overlay .ai-prose blockquote { margin: .25rem 0 .7rem .1rem; padding-left: .75rem; border-left: 2px solid #a8e2dc; color: #44403C; font-size: 14px; }
+#ai-modal-overlay .ai-prose hr { border-top: 1px solid #e7e5e4; margin: .9rem 0; }
+
+/* Rating stars */
+#ai-modal-overlay .ai-star { color: #d6d3d1; padding: 2px; line-height: 0; border-radius: 9999px; transition: color .1s; }
+#ai-modal-overlay .ai-star svg { fill: none; }
+#ai-modal-overlay .ai-star.on { color: #006564; }
+#ai-modal-overlay .ai-star.on svg { fill: currentColor; }
+#ai-modal-overlay .ai-star:disabled { cursor: default; }
+#ai-modal-overlay .ai-star:focus-visible { outline: 2px solid #1e8271; }
+
+@keyframes ai-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes ai-pop  { from { opacity: 0; transform: translateY(12px) scale(.985); } to { opacity: 1; transform: none; } }
+@keyframes ai-up   { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+#ai-modal-overlay .ai-fade { animation: ai-up .3s ease both; }
+@media (prefers-reduced-motion: reduce) {
+  #ai-modal-overlay, #ai-modal-overlay *:not(.animate-spin) { animation: none !important; transition: none !important; }
+}
+
+  </style>
+<style id="ai-modal-tw">
+/* Tailwind 3.4.17, scoped to #ai-modal-overlay (preflight off) */
+*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }#ai-modal-overlay .visible{visibility:visible}#ai-modal-overlay .mx-auto{margin-left:auto;margin-right:auto}#ai-modal-overlay .-ml-2\.5{margin-left:-.625rem}#ai-modal-overlay .mb-3{margin-bottom:.75rem}#ai-modal-overlay .mb-4{margin-bottom:1rem}#ai-modal-overlay .mb-5{margin-bottom:1.25rem}#ai-modal-overlay .ml-auto{margin-left:auto}#ai-modal-overlay .mt-0\.5{margin-top:.125rem}#ai-modal-overlay .mt-1{margin-top:.25rem}#ai-modal-overlay .mt-2{margin-top:.5rem}#ai-modal-overlay .mt-2\.5{margin-top:.625rem}#ai-modal-overlay .mt-3{margin-top:.75rem}#ai-modal-overlay .mt-4{margin-top:1rem}#ai-modal-overlay .line-clamp-2{overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2}#ai-modal-overlay .block{display:block}#ai-modal-overlay .inline{display:inline}#ai-modal-overlay .flex{display:flex}#ai-modal-overlay .inline-flex{display:inline-flex}#ai-modal-overlay .grid{display:grid}#ai-modal-overlay .hidden{display:none}#ai-modal-overlay .h-0\.5{height:.125rem}#ai-modal-overlay .h-12{height:3rem}#ai-modal-overlay .h-4{height:1rem}#ai-modal-overlay .h-7{height:1.75rem}#ai-modal-overlay .h-8{height:2rem}#ai-modal-overlay .h-\[15px\]{height:15px}#ai-modal-overlay .h-\[17px\]{height:17px}#ai-modal-overlay .max-h-\[88vh\]{max-height:88vh}#ai-modal-overlay .w-12{width:3rem}#ai-modal-overlay .w-14{width:3.5rem}#ai-modal-overlay .w-4{width:1rem}#ai-modal-overlay .w-7{width:1.75rem}#ai-modal-overlay .w-8{width:2rem}#ai-modal-overlay .w-\[15px\]{width:15px}#ai-modal-overlay .w-\[17px\]{width:17px}#ai-modal-overlay .w-full{width:100%}#ai-modal-overlay .min-w-0{min-width:0}#ai-modal-overlay .max-w-3xl{max-width:48rem}#ai-modal-overlay .flex-1{flex:1 1 0%}#ai-modal-overlay .shrink-0{flex-shrink:0}#ai-modal-overlay .basis-full{flex-basis:100%}@keyframes pulse{50%{opacity:.5}}#ai-modal-overlay .animate-pulse{animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}@keyframes spin{to{transform:rotate(1turn)}}#ai-modal-overlay .animate-spin{animation:spin 1s linear infinite}#ai-modal-overlay .flex-col{flex-direction:column}#ai-modal-overlay .flex-wrap{flex-wrap:wrap}#ai-modal-overlay .place-items-center{place-items:center}#ai-modal-overlay .items-start{align-items:flex-start}#ai-modal-overlay .items-end{align-items:flex-end}#ai-modal-overlay .items-center{align-items:center}#ai-modal-overlay .justify-between{justify-content:space-between}#ai-modal-overlay .gap-1{gap:.25rem}#ai-modal-overlay .gap-1\.5{gap:.375rem}#ai-modal-overlay .gap-2{gap:.5rem}#ai-modal-overlay .gap-3{gap:.75rem}#ai-modal-overlay .gap-4{gap:1rem}#ai-modal-overlay .gap-x-0\.5{-moz-column-gap:.125rem;column-gap:.125rem}#ai-modal-overlay .gap-x-3{-moz-column-gap:.75rem;column-gap:.75rem}#ai-modal-overlay .gap-y-1{row-gap:.25rem}#ai-modal-overlay :is(.space-y-1>:not([hidden])~:not([hidden])){--tw-space-y-reverse:0;margin-top:calc(.25rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.25rem*var(--tw-space-y-reverse))}#ai-modal-overlay .overflow-hidden{overflow:hidden}#ai-modal-overlay .overflow-y-auto{overflow-y:auto}#ai-modal-overlay .overscroll-contain{overscroll-behavior:contain}#ai-modal-overlay .truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#ai-modal-overlay .whitespace-nowrap{white-space:nowrap}#ai-modal-overlay .rounded-2xl{border-radius:1rem}#ai-modal-overlay .rounded-full{border-radius:9999px}#ai-modal-overlay .rounded-lg{border-radius:.5rem}#ai-modal-overlay .rounded-md{border-radius:.375rem}#ai-modal-overlay .rounded-xl{border-radius:.75rem}#ai-modal-overlay .border{border-width:1px}#ai-modal-overlay .border-2{border-width:2px}#ai-modal-overlay .border-b{border-bottom-width:1px}#ai-modal-overlay .border-t{border-top-width:1px}#ai-modal-overlay .border-red-200{--tw-border-opacity:1;border-color:rgb(254 202 202/var(--tw-border-opacity,1))}#ai-modal-overlay .border-stone-100{--tw-border-opacity:1;border-color:rgb(245 245 244/var(--tw-border-opacity,1))}#ai-modal-overlay .border-stone-200{--tw-border-opacity:1;border-color:rgb(231 229 228/var(--tw-border-opacity,1))}#ai-modal-overlay .border-t-brand-600{--tw-border-opacity:1;border-top-color:rgb(0 101 100/var(--tw-border-opacity,1))}#ai-modal-overlay .bg-amber-50{--tw-bg-opacity:1;background-color:rgb(255 251 235/var(--tw-bg-opacity,1))}#ai-modal-overlay .bg-brand-600{--tw-bg-opacity:1;background-color:rgb(0 101 100/var(--tw-bg-opacity,1))}#ai-modal-overlay .bg-red-50{--tw-bg-opacity:1;background-color:rgb(254 242 242/var(--tw-bg-opacity,1))}#ai-modal-overlay .bg-stone-100{--tw-bg-opacity:1;background-color:rgb(245 245 244/var(--tw-bg-opacity,1))}#ai-modal-overlay .bg-stone-50{--tw-bg-opacity:1;background-color:rgb(250 250 249/var(--tw-bg-opacity,1))}#ai-modal-overlay .bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}#ai-modal-overlay .bg-gradient-to-r{background-image:linear-gradient(to right,var(--tw-gradient-stops))}#ai-modal-overlay .from-brand-500{--tw-gradient-from:#1e8271 var(--tw-gradient-from-position);--tw-gradient-to:rgba(30,130,113,0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}#ai-modal-overlay .via-brand-200{--tw-gradient-to:rgba(168,226,220,0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),#a8e2dc var(--tw-gradient-via-position),var(--tw-gradient-to)}#ai-modal-overlay .to-transparent{--tw-gradient-to:transparent var(--tw-gradient-to-position)}#ai-modal-overlay .p-4{padding:1rem}#ai-modal-overlay .p-5{padding:1.25rem}#ai-modal-overlay .px-1\.5{padding-left:.375rem;padding-right:.375rem}#ai-modal-overlay .px-2{padding-left:.5rem;padding-right:.5rem}#ai-modal-overlay .px-2\.5{padding-left:.625rem;padding-right:.625rem}#ai-modal-overlay .px-3{padding-left:.75rem;padding-right:.75rem}#ai-modal-overlay .px-4{padding-left:1rem;padding-right:1rem}#ai-modal-overlay .px-5{padding-left:1.25rem;padding-right:1.25rem}#ai-modal-overlay .py-0\.5{padding-top:.125rem;padding-bottom:.125rem}#ai-modal-overlay .py-1{padding-top:.25rem;padding-bottom:.25rem}#ai-modal-overlay .py-10{padding-top:2.5rem;padding-bottom:2.5rem}#ai-modal-overlay .py-12{padding-top:3rem;padding-bottom:3rem}#ai-modal-overlay .py-2{padding-top:.5rem;padding-bottom:.5rem}#ai-modal-overlay .py-3{padding-top:.75rem;padding-bottom:.75rem}#ai-modal-overlay .py-3\.5{padding-top:.875rem;padding-bottom:.875rem}#ai-modal-overlay .py-5{padding-top:1.25rem;padding-bottom:1.25rem}#ai-modal-overlay .pt-1{padding-top:.25rem}#ai-modal-overlay .pt-2{padding-top:.5rem}#ai-modal-overlay .text-center{text-align:center}#ai-modal-overlay .font-mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace}#ai-modal-overlay .text-3xl{font-size:1.875rem;line-height:2.25rem}#ai-modal-overlay .text-\[10px\]{font-size:10px}#ai-modal-overlay .text-\[11px\]{font-size:11px}#ai-modal-overlay .text-\[13\.5px\]{font-size:13.5px}#ai-modal-overlay .text-\[13px\]{font-size:13px}#ai-modal-overlay .text-\[15px\]{font-size:15px}#ai-modal-overlay .text-base{font-size:1rem;line-height:1.5rem}#ai-modal-overlay .text-lg{font-size:1.125rem;line-height:1.75rem}#ai-modal-overlay .text-sm{font-size:.875rem;line-height:1.25rem}#ai-modal-overlay .text-xs{font-size:.75rem;line-height:1rem}#ai-modal-overlay .font-medium{font-weight:500}#ai-modal-overlay .font-semibold{font-weight:600}#ai-modal-overlay .tabular-nums{--tw-numeric-spacing:tabular-nums;font-variant-numeric:var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction)}#ai-modal-overlay .leading-relaxed{line-height:1.625}#ai-modal-overlay .leading-snug{line-height:1.375}#ai-modal-overlay .tracking-wider{letter-spacing:.05em}#ai-modal-overlay .text-amber-700{--tw-text-opacity:1;color:rgb(180 83 9/var(--tw-text-opacity,1))}#ai-modal-overlay .text-brand-600{--tw-text-opacity:1;color:rgb(0 101 100/var(--tw-text-opacity,1))}#ai-modal-overlay .text-red-700{--tw-text-opacity:1;color:rgb(185 28 28/var(--tw-text-opacity,1))}#ai-modal-overlay .text-stone-400{--tw-text-opacity:1;color:rgb(168 162 158/var(--tw-text-opacity,1))}#ai-modal-overlay .text-stone-500{--tw-text-opacity:1;color:rgb(120 113 108/var(--tw-text-opacity,1))}#ai-modal-overlay .text-stone-600{--tw-text-opacity:1;color:rgb(87 83 78/var(--tw-text-opacity,1))}#ai-modal-overlay .text-stone-700{--tw-text-opacity:1;color:rgb(68 64 60/var(--tw-text-opacity,1))}#ai-modal-overlay .text-stone-900{--tw-text-opacity:1;color:rgb(28 25 23/var(--tw-text-opacity,1))}#ai-modal-overlay .text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}#ai-modal-overlay .underline{text-decoration-line:underline}#ai-modal-overlay .decoration-brand-200{text-decoration-color:#a8e2dc}#ai-modal-overlay .underline-offset-\[3px\]{text-underline-offset:3px}#ai-modal-overlay .shadow-\[0_28px_80px_-16px_rgba\(0\2c 0\2c 0\2c \.4\)\]{--tw-shadow:0 28px 80px -16px rgba(0,0,0,.4);--tw-shadow-colored:0 28px 80px -16px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}#ai-modal-overlay .shadow-sm{--tw-shadow:0 1px 2px 0 rgba(0,0,0,.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}#ai-modal-overlay .outline-none{outline:2px solid transparent;outline-offset:2px}#ai-modal-overlay .ring-1{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}#ai-modal-overlay .ring-amber-200{--tw-ring-opacity:1;--tw-ring-color:rgb(253 230 138/var(--tw-ring-opacity,1))}#ai-modal-overlay .ring-black\/5{--tw-ring-color:rgba(0,0,0,.05)}#ai-modal-overlay .ring-stone-200{--tw-ring-opacity:1;--tw-ring-color:rgb(231 229 228/var(--tw-ring-opacity,1))}#ai-modal-overlay .ring-transparent{--tw-ring-color:transparent}#ai-modal-overlay .filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}#ai-modal-overlay .transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}#ai-modal-overlay .transition-all{transition-property:all;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}#ai-modal-overlay .placeholder\:text-stone-400::-moz-placeholder{--tw-text-opacity:1;color:rgb(168 162 158/var(--tw-text-opacity,1))}#ai-modal-overlay .placeholder\:text-stone-400::placeholder{--tw-text-opacity:1;color:rgb(168 162 158/var(--tw-text-opacity,1))}#ai-modal-overlay .hover\:gap-2:hover{gap:.5rem}#ai-modal-overlay .hover\:border-stone-300:hover{--tw-border-opacity:1;border-color:rgb(214 211 209/var(--tw-border-opacity,1))}#ai-modal-overlay .hover\:bg-brand-700:hover{--tw-bg-opacity:1;background-color:rgb(0 79 78/var(--tw-bg-opacity,1))}#ai-modal-overlay .hover\:bg-stone-100:hover{--tw-bg-opacity:1;background-color:rgb(245 245 244/var(--tw-bg-opacity,1))}#ai-modal-overlay .hover\:text-stone-700:hover{--tw-text-opacity:1;color:rgb(68 64 60/var(--tw-text-opacity,1))}#ai-modal-overlay .hover\:text-stone-800:hover{--tw-text-opacity:1;color:rgb(41 37 36/var(--tw-text-opacity,1))}#ai-modal-overlay .hover\:text-stone-900:hover{--tw-text-opacity:1;color:rgb(28 25 23/var(--tw-text-opacity,1))}#ai-modal-overlay .hover\:decoration-brand-600:hover{text-decoration-color:#006564}#ai-modal-overlay .hover\:shadow-md:hover{--tw-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color),0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}#ai-modal-overlay .hover\:shadow-stone-200\/70:hover{--tw-shadow-color:hsla(20,6%,90%,.7);--tw-shadow:var(--tw-shadow-colored)}#ai-modal-overlay .focus\:bg-white:focus{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}#ai-modal-overlay .focus\:ring-brand-600:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(0 101 100/var(--tw-ring-opacity,1))}#ai-modal-overlay .focus-visible\:outline-none:focus-visible{outline:2px solid transparent;outline-offset:2px}#ai-modal-overlay .focus-visible\:ring-2:focus-visible{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}#ai-modal-overlay .focus-visible\:ring-brand-500:focus-visible{--tw-ring-opacity:1;--tw-ring-color:rgb(30 130 113/var(--tw-ring-opacity,1))}#ai-modal-overlay .focus-visible\:ring-brand-600:focus-visible{--tw-ring-opacity:1;--tw-ring-color:rgb(0 101 100/var(--tw-ring-opacity,1))}#ai-modal-overlay .focus-visible\:ring-offset-2:focus-visible{--tw-ring-offset-width:2px}#ai-modal-overlay .disabled\:bg-stone-200:disabled{--tw-bg-opacity:1;background-color:rgb(231 229 228/var(--tw-bg-opacity,1))}#ai-modal-overlay .disabled\:text-stone-400:disabled{--tw-text-opacity:1;color:rgb(168 162 158/var(--tw-text-opacity,1))}
+</style>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+
+</HEAD>
+<BODY BGCOLOR=#e0f2f1 LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0">
+
+
+
+<!-- mobile device detection -->
+<div id="device-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:9999; align-items:center; justify-content:center; padding:1rem;">
+  <div style="background:#fff; border-radius:16px; padding:2rem 1.75rem; max-width:360px; width:100%; text-align:center; font-family:sans-serif; position:relative;">
+    
+    <button onclick="goDesktop()" style="position:absolute; top:12px; right:12px; width:28px; height:28px; border-radius:50%; border:1px solid #ddd; background:#f5f5f5; color:#888; font-size:16px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center;">&times;</button>
+
+    <p style="font-size:18px; font-weight:600; margin:0 0 0.5rem;">Mobile device detected</p>
+    <p style="font-size:14px; color:#666; margin:0 0 1.5rem; line-height:1.6;">
+      The mobile version available.
+    </p>
+    <button onclick="goMobile()" style="width:100%; padding:12px; border-radius:10px; border:1px solid #d0e4ff; background:#eff6ff; color:#1d4ed8; font-size:14px; font-weight:500; cursor:pointer;">
+      Take me to the mobile site
+    </button>
+  </div>
+</div>
+
+<script>
+  const MOBILE_URL = "https://kulc.lib.ku.ac.th/hybrid-search/";
+
+  function isMobileOrTablet() {
+    const ua = navigator.userAgent.toLowerCase();
+    return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua)
+      || (navigator.maxTouchPoints > 1 && /mac/.test(ua));
+  }
+
+  function goMobile() {
+    window.location.href = MOBILE_URL;
+  }
+
+  function goDesktop() {
+    document.getElementById("device-overlay").style.display = "none";
+  }
+
+  // Always show the overlay if they are on a mobile device
+  if (isMobileOrTablet()) {
+    document.getElementById("device-overlay").style.display = "flex";
+  }
+</script>
+<!-- end mobile device detection -->
+
+
+
+
+<BR>
+<TABLE WIDTH=100% height=100% BORDER="0" valign="top" CELLPADDING="0" CELLSPACING="0">
+	<table BGCOLOR=#FFFFFF width="60%" border="0" align="center" cellpadding="0" cellspacing="0">
+		<tr> 
+		  <TD valign="top" align="left"><IMG SRC="/screens/2024-logo-eng.jpg" ALT="" WIDTH=50% HEIGHT="" border="0"></TD>
+		  <TD align="right"><a href="https://intanin.lib.ku.ac.th/*thx"><IMG SRC="/screens/2024-tha.gif" ALT="" WIDTH=50% HEIGHT="" border="0"></align></a></TD>
+          <TD><IMG SRC="/screens/2024-line.gif" WIDTH=50% HEIGHT="" ALT=""></TD>
+          <TD align="left"><IMG SRC="/screens/2024-eng.gif" WIDTH=50% HEIGHT="" ALT=""></align></TD>
+        </tr>
+	</table>	 
+	<table BGCOLOR=#e0f2f1 width="60%" height="" border="0" align="center" cellpadding="0" cellspacing="0">
+		<tr> 
+		  <TD COLSPAN=4 valign="top"><IMG SRC="/screens/2024-searchtopic.gif" ALT="" WIDTH=100% HEIGHT="" border="0">
+ 		  </TD>
+        </tr>
+ 	<tr> 
+		<TD BGCOLOR=5f9ea0 WIDTH=20%><IMG SRC="/screens/2024-searchby-1.gif" ALT="" WIDTH=100% HEIGHT="" border="0"></TD>
+		<TD WIDTH=60% HEIGHT="" align="center" border="0">
+<div class="mainMenuSrchTool">
+<!--
+<form class="unpadded" action="/search" method="post" name="searchtool" id="search">
+-->
+
+
+<form id="smartRedirectSearch" method="POST" action="/search" >
+  <label for="searchtype"></label>
+  <select name="searchtype" id="searchtype">
+    <option value="t">TITLE</option>
+    <option value="a">AUTHOR</option>
+    <option value="d">SUBJECT</option>
+    <option value="X">KEYWORD</option>
+    <option value="e">PUBLISHER</option>
+    <option value="i">ISBN/ISSN</option>
+    <option value="callno">CALL NO</option> <!-- Smart redirect option -->
+  </select>
+  <input maxlength="250" name="searcharg" id="searcharg" size="25" placeholder="Enter search term" required />
+  <span class="nowrap">
+    <input type="image" value="Go" name="Go" src="/screens/2024-searchbutton.gif" WIDTH="20" HEIGHT="20" border="0" align="absmiddle" alt="Search"/>
+    <button type="button" id="ai-search-btn" onclick="aiOpenSearch()">✦ AI Search</button>
+  </span>
+</form>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("smartRedirectSearch").addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const selectedOption = document.getElementById("searchtype").value;
+    const searchArg = document.getElementById("searcharg").value.trim();
+
+    if (!searchArg) {
+      alert("Please enter a search.");
+      return;
+    }
+
+    if (selectedOption !== 'callno') {
+      this.action = '/search';
+      this.method = 'POST';
+
+      const hiddenInput = document.createElement('input');
+      hiddenInput.type = 'hidden';
+      hiddenInput.name = 'searcharg';
+      hiddenInput.value = searchArg;
+      this.appendChild(hiddenInput);
+      this.submit();
+      return;
+    }
+
+    const normalized = searchArg.toUpperCase().replace(/\s+/g, '');
+
+    const nlmPrefixes = [
+      "QS","QT","QU","QV","QW","QY","QZ",
+      "W","WA","WB","WC","WD","WE","WF","WG","WH","WI","WJ","WK","WL",
+      "WM","WN","WO","WP","WQ","WR","WS","WT","WU","WV","WW","WX","WY","WZ"
+    ];
+
+    const localPrefixes = [
+      "ALUMNI", "A-OA", "A-PT", "ARTICLE", "ASEAN", "BD", "BG", "CD", "DN", "DVD", "ECO", "FIC", "FOR", "FS", "GEN",
+      "HEALTH", "HU", "INTRA", "IS", "MP", "MV", "MS", "NO.", "NW", "ODI", "P.", "P-", "PLUG", "RECOFTC", "REFERENCE",
+      "RUR", "SINGLE", "SH", "SL", "SP", "SVFCP", "TC", "THESIS", "V.", "VC", "VRC", "WIRELESS",
+      "กต", "จส", "จุลสาร", "นว", "บัณฑิต", "บทความ", "ปพ", "ปม", "ผลงาน", "มกษ", "มกอชม", "มผช", "มอก", "ยว",
+      "รป", "รส", "รางวัล", "วพ", "หมายเลข", "หูฟัง"
+    ];
+
+    let suffix = 'c'; // Default: LC
+
+    if (nlmPrefixes.some(prefix => normalized.startsWith(prefix))) {
+      suffix = 'v'; // NLM
+    } else if (/^\d{3}(\.\d+)?/.test(searchArg)) {
+      suffix = 'f'; // Dewey
+    } else if (localPrefixes.some(prefix => normalized.startsWith(prefix.replace(/\s+/g, '').toUpperCase()))) {
+      suffix = 'h'; // Local
+    } else if (/^[A-Z]{1,3}\s*\d+/.test(searchArg)) {
+      suffix = 'c'; // LC
+    }
+
+    const encoded = encodeURIComponent(searchArg);
+    window.location.href = `https://intanin.lib.ku.ac.th/search/${suffix}?SEARCH=${encoded}`;
+  });
+});
+</script>
+
+
+</div><!--end tool-->	
+<ul id="results"></ul>	  
+	   </TD>
+	   <TD BGCOLOR=#81cdc6 WIDTH=20%><IMG SRC="/screens/2024-searchby-2.gif" ALT="" WIDTH=100% HEIGHT="" border="0">
+	   </TD>
+ 	   </tr>
+		<tr> 
+		<TD BGCOLOR=#FFFFFF COLSPAN=3 valign="top"><a href="https://intanin.lib.ku.ac.th/search/X"><IMG SRC="/screens/2024-advsearch.gif" ALT="" WIDTH=100% HEIGHT=100 border="0"></a></TD>
+        </tr>
+		<tr>
+		<td BGCOLOR=#FFFFFF COLSPAN=3 align="center"><IMG SRC="/screens/2024-searchbutton-white.gif" WIDTH=20 HEIGHT=20 border="0"><FONT face="MS Sans Serif" color=#ff33cc size=4><A href="https://intanin.lib.ku.ac.th/search/r">Course Reserves by Course Name</A></FONT></align></td>
+        </tr>
+		<tr>
+		<td BGCOLOR=#FFFFFF COLSPAN=3 align="center"><IMG SRC="/screens/2024-searchbutton-white.gif" WIDTH=20 HEIGHT=20 border="0"><FONT face="MS Sans Serif" color=#ff33cc size=4><A href="https://intanin.lib.ku.ac.th/search/p">Course Reserves by Course Instructor</A></FONT></align></td>
+        </tr>
+		<tr>
+		<td BGCOLOR=#FFFFFF COLSPAN=3 align="center"><IMG SRC="/screens/2024-searchbutton-white.gif" WIDTH=20 HEIGHT=20 border="0"><FONT face="MS Sans Serif" color=#ff33cc size=4><A href="https://intanin.lib.ku.ac.th/patroninfo/">View your own Library Record / Self-Renew / Patron Information</A></FONT></align></td>
+        </tr>
+
+		<tr>
+		<td BGCOLOR=#FFFFFF COLSPAN=3 align="center"><IMG SRC="/screens/2024-searchbutton-white.gif" WIDTH=20 HEIGHT=20 border="0"><FONT face="MS Sans Serif" color=#ff33cc size=4><A href="https://www.lib.ku.ac.th/brequest/">Information Resources Suggestion System</A></FONT></align></td>
+        </tr>
+
+	</table>	
+	<table width="60%" border="0" align="center" cellpadding="0" cellspacing="0">
+		<tr> 
+		  <TD align="left"><IMG SRC="/screens/2024-bottom-eng.gif" ALT="" WIDTH="100%" HEIGHT="" border="0"></TD>
+        
+
+</TABLE>
+
+
+<!--   KU Library AI chat widget  (replaces the old chat button, chat box, help popup and chat script)  -->
+<div id="kuchat" class="text-[14px] leading-normal text-kc-ink">
+ 
+  <!-- Launcher -->
+  <button id="kc-launcher" type="button" aria-controls="kc-panel" aria-expanded="false" aria-label="Open the library assistant"
+    class="fixed bottom-5 right-5 z-[999] flex items-center gap-3 rounded-full bg-white py-1.5 pl-5 pr-1.5 text-left shadow-[0_10px_30px_-8px_rgba(16,33,31,0.35),0_1px_3px_rgba(16,33,31,0.12)] ring-1 ring-kc-line hover:shadow-[0_14px_36px_-8px_rgba(16,33,31,0.42),0_1px_3px_rgba(16,33,31,0.14)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kc-teal max-sm:pl-1.5">
+    <span id="kc-teaser" class="flex h-9 w-[180px] items-center text-[14px] font-medium leading-snug text-kc-ink max-sm:hidden" style="transition:opacity .3s ease">Need help finding a book or paper?</span>
+    <span class="relative block h-16 w-16 shrink-0 overflow-hidden rounded-full bg-kc-teal ring-2 ring-kc-teal">
+      <span class="absolute inset-0 grid place-items-center text-white" data-icon="sparkle" data-cls="h-5 w-5"></span>
+      <img class="absolute inset-0 h-full w-full object-cover" alt="" data-avatar>
+    </span>
+  </button>
+ 
+  <!-- Panel -->
+  <section id="kc-panel" role="dialog" aria-label="KU Library AI assistant" inert
+    class="fixed bottom-5 right-5 z-[1000] flex h-[min(680px,calc(100vh_-_40px))] w-[420px] flex-col overflow-hidden rounded-[22px] bg-white text-kc-ink shadow-[0_24px_60px_-12px_rgba(16,33,31,0.28),0_2px_8px_rgba(16,33,31,0.08)] ring-1 ring-kc-line max-sm:inset-0 max-sm:h-auto max-sm:w-auto max-sm:rounded-none">
+ 
+    <header class="flex items-center gap-3 border-b border-kc-line px-4 py-3">
+      <span class="relative block h-9 w-9 shrink-0 overflow-hidden rounded-full bg-kc-teal">
+        <span class="absolute inset-0 grid place-items-center text-white" data-icon="sparkle" data-cls="h-4 w-4"></span>
+        <img class="absolute inset-0 h-full w-full object-cover" alt="" data-avatar>
+      </span>
+      <div class="min-w-0 flex-1">
+        <h2 class="m-0 truncate text-[14px] font-semibold leading-tight">Library Research Assistant</h2>
+        <p class="m-0 mt-0.5 truncate text-[12px] leading-tight text-kc-mute">Kasetsart University Library</p>
+      </div>
+      <button id="kc-help-btn" type="button" aria-label="How it works" class="grid h-8 w-8 place-items-center rounded-full text-kc-mute hover:bg-kc-mist hover:text-kc-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kc-teal" data-icon="help"></button>
+      <button id="kc-expand" type="button" aria-label="Expand" class="grid h-8 w-8 place-items-center rounded-full text-kc-mute hover:bg-kc-mist hover:text-kc-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kc-teal max-sm:hidden" data-icon="expand"></button>
+      <button id="kc-close" type="button" aria-label="Close" class="grid h-8 w-8 place-items-center rounded-full text-kc-mute hover:bg-kc-mist hover:text-kc-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kc-teal" data-icon="close"></button>
+    </header>
+ 
+    <div id="kc-log" role="log" aria-live="polite" class="relative flex-1 overflow-y-auto overscroll-contain px-3 py-2">
+      <div id="kc-empty" class="flex min-h-[50%] flex-col justify-center pb-2">
+        <h3 class="m-0 text-[20px] font-semibold leading-snug tracking-tight">What are you looking for?</h3>
+        <p class="m-0 mt-0 text-[14px] leading-relaxed text-kc-mute">Ask in any language. AI-powered search the KU catalog, theses and research articles from leading publishers worldwide.
+        </p>
+        <p lang="th" class="m-0 mt-0 text-[14px] leading-relaxed text-kc-mute">ค้นหาหนังสือและค้นคว้างานวิจัยจากนิสิต,บุคลากรของมหาวิทยาลัยเกษตรศาสตร์และงานวิจจัยอื่นๆ จากสำนักพิมพ์ชั้นนำทั่วโลก </p>
+        <ul id="kc-suggest" class="m-0 mt-6 list-none border-b border-kc-line p-0"></ul>
+      </div>
+      <div id="kc-thread" class="flex flex-col gap-6"></div>
+    </div>
+ 
+    <form id="kc-form" class="border-t border-kc-line px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+      <div class="flex items-end gap-2 rounded-2xl bg-kc-mist py-2 pl-4 pr-2 ring-1 ring-transparent transition focus-within:bg-white focus-within:ring-kc-teal">
+        <textarea id="kc-input" rows="1" maxlength="1000" aria-label="Your question"
+          class="max-h-32 min-h-[36px] flex-1 resize-none bg-transparent py-[7px] text-[13px] leading-snug outline-none placeholder:text-kc-mute"></textarea>
+        <button id="kc-send" type="submit" aria-label="Send"
+          class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-kc-teal text-white hover:bg-kc-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kc-teal focus-visible:ring-offset-2 disabled:bg-kc-line disabled:text-kc-mute disabled:hover:bg-kc-line"></button>
+      </div>
+      <p class="m-0 mt-2 px-1 text-[11px] leading-snug text-kc-mute">AI can make mistakes. Check important details in the original source.</p>
+    </form>
+ 
+    <!-- How it works -->
+    <div id="kc-help" hidden class="absolute inset-0 z-10 flex flex-col bg-white">
+      <div class="flex items-center justify-between border-b border-kc-line py-3 pl-5 pr-4">
+        <h3 class="m-0 text-[20px] font-semibold">How it works</h3>
+        <button id="kc-help-close" type="button" aria-label="Close help" class="grid h-8 w-8 place-items-center rounded-full text-kc-mute hover:bg-kc-mist hover:text-kc-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kc-teal" data-icon="close"></button>
+      </div>
+      <div class="flex-1 overflow-y-auto px-5 py-5">
+        <ul class="m-0 flex list-none flex-col gap-1 p-0 text-[14px] leading-relaxed">
+          <li><p class="m-0 font-semibold">Ask naturally</p><p class="m-0 text-kc-mute text-[14px]">Type a topic, a method or a title, for example "NaOH used in food processing", "ANOVA method in Financial Analysis", "Social media usage in teenage".</p></li>
+          <li><p class="m-0 font-semibold">Narrow with a keyword</p><p class="m-0 text-kc-mute text-[14px]">Add “book” or “research” (หนังสือ, งานวิจัย) to search only the catalog or only articles and theses.</p></li>
+          <li><p class="m-0 font-semibold">Get the results</p><p class="m-0 text-kc-mute text-[14px]">AI-powered search, summaries, and suggestions from KU Library and research articles by leading publishers.</p></li>
+          <li><p class="m-0 font-semibold">Open the sources</p><p class="m-0 text-kc-mute text-[14px]">Use links to explore the catalog record or the full-text papers and resources.</p></li>
+          <li><p class="m-0 font-semibold">Check what matters</p><p class="m-0 text-kc-mute text-[14px]">AI can rarely make mistakes. Always confirm important details in the original source.</p></li>
+        </ul>
+        <p class="m-0 mt-8 text-[12px] leading-relaxed text-kc-mute">Built with Qdrant and Azure OpenAI, among others. By the Information Technology Division, KU Library.
+          <br><a id="kc-feedback-link" target="_blank" rel="noopener" class="text-[12px] text-kc-teal underline decoration-[#9cc9c6] underline-offset-[3px] hover:decoration-kc-teal">Share detailed feedback</a></p>
+      </div>
+    </div>
+  </section>
+</div>
+ 
+<script>
+(() => {
+  // ---------- Config ----------
+  const CFG = {
+    askUrl: 'https://kulc.lib.ku.ac.th/sierra-ai-chat/ask',
+    rateUrl: 'https://kulc.lib.ku.ac.th/sierra-ai-chat/rate',
+    feedbackUrl: 'https://forms.gle/4DPrXYcW3cMvHD5X9',
+    // PHP endpoint that sends the answer by email (send_email.php). Set this to where you host it.
+    // Its origin list (ALLOWED_ORIGINS in send_email.php) must include the site that shows this chat.
+    emailUrl: 'https://kulc.lib.ku.ac.th/api/sierra/ai_chat/send_email.php',
+    avatarUrl: 'https://kulc.lib.ku.ac.th/sierra-ai-chat/static/chatai_photo.jpg',
+    maxHistory: 6,          // last 6 messages are sent back with each question
+    timeoutMs: 180000,
+    // Preview mode with canned answers when opened as a local file, or with ?kudemo in the URL
+    demo: location.protocol === 'file:' || new URLSearchParams(location.search).has('kudemo')
+  };
+ 
+  const TEASERS = [
+    'Need help finding a book or paper?', 'Ask about any topic or idea', 'Let’s find the best results together',
+    'ค้นหาหนังสือหรืองานวิจัยอยู่หรือไม่?', 'ถามเรื่องที่สนใจได้เลย!', 'มาค้นหาผลลัพธ์ที่ดีที่สุดไปด้วยกัน!'
+  ];
+  const PLACEHOLDERS = [
+    'e.g. popular books for aerospace engineering', 'e.g. research on NaOH used in food processing',
+    'e.g. CH₂O biomass management', 'ตัวอย่าง: หนังสือวิชาการตลาดสำหรับปริญญาโท',
+    'ตัวอย่าง: หนังสือยอดฮิตของหลักสูตรจุลชีววิทยา', 'ตัวอย่าง: งานวิจัยที่ใช้การวิเคราะห์ถดถอยหรือข้อมูลที่มีหลายมิติ'
+  ];
+  const SUGGESTIONS = [
+    { icon: 'book',  text: 'Popular books for aerospace engineering' },
+    { icon: 'paper', text: 'Research on NaOH used in food processing' },
+    { icon: 'book',  text: 'หนังสือยอดฮิตของหลักสูตรจุลชีววิทยา', lang: 'th' },
+    { icon: 'paper', text: 'งานวิจัยที่ใช้การวิเคราะห์ถดถอยหรือข้อมูลที่มีหลายมิติ', lang: 'th' }
+  ];
+ 
+  // ---------- Helpers ----------
+  const ICONS = {
+    send: '<path d="M12 19V5M5 12l7-7 7 7"/>',
+    stop: '<rect x="7" y="7" width="10" height="10" rx="2" fill="currentColor" stroke="none"/>',
+    help: '<circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.8M12 17h.01"/>',
+    expand: '<path d="M15 4h5v5M9 20H4v-5M20 4l-6.5 6.5M4 20l6.5-6.5"/>',
+    collapse: '<path d="M20 9h-5V4M4 15h5v5M15 9l6-6M9 15l-6 6"/>',
+    close: '<path d="M6 6l12 12M18 6L6 18"/>',
+    book: '<path d="M5 4h13a1 1 0 0 1 1 1v14H6.5A1.5 1.5 0 0 1 5 17.5V4z"/><path d="M5 17.5A1.5 1.5 0 0 1 6.5 16H19"/>',
+    paper: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
+    copy: '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/>',
+    check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+    star: '<path d="M12 3.5l2.7 5.6 6.1.8-4.5 4.2 1.1 6-5.4-3-5.4 3 1.1-6L3.2 9.9l6.1-.8L12 3.5z"/>',
+    ext: '<path d="M8 16L16 8M9 8h7v7"/>',
+    sparkle: '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"/>',
+    retry: '<path d="M4 12a8 8 0 0 1 14-5.3L20 9M20 4v5h-5M20 12a8 8 0 0 1-14 5.3L4 15M4 20v-5h5"/>',
+    download: '<path d="M12 4v11M7 11l5 5 5-5M5 20h14"/>',
+    mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>'
+  };
+  const svg = (name, cls = 'h-[18px] w-[18px]') =>
+    `<svg viewBox="0 0 24 24" class="${cls}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]}</svg>`;
+  const h = (tag, cls = '', html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+  const $ = (id) => document.getElementById(id);
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+ 
+  // ---------- Elements ----------
+  const root = $('kuchat'), launcher = $('kc-launcher'), panel = $('kc-panel'), teaser = $('kc-teaser');
+  const log = $('kc-log'), thread = $('kc-thread'), empty = $('kc-empty');
+  const form = $('kc-form'), input = $('kc-input'), sendBtn = $('kc-send');
+  const help = $('kc-help'), expandBtn = $('kc-expand');
+ 
+  root.querySelectorAll('[data-icon]').forEach(el => { el.innerHTML = svg(el.dataset.icon, el.dataset.cls); });
+  root.querySelectorAll('img[data-avatar]').forEach(img => { img.onerror = () => img.remove(); img.src = CFG.avatarUrl; });
+  $('kc-feedback-link').href = CFG.feedbackUrl;
+ 
+  // ---------- State ----------
+  let history = [], busy = false, controller = null, stopped = false, lastQuestion = '';
+ 
+  // ---------- Open / close ----------
+  function openPanel() {
+    panel.inert = false;
+    root.classList.add('kc-open');
+    launcher.setAttribute('aria-expanded', 'true');
+    input.placeholder = PLACEHOLDERS[Math.floor(Math.random() * PLACEHOLDERS.length)];
+    setTimeout(() => input.focus({ preventScroll: true }), 40);
+  }
+  function closePanel() {
+    root.classList.remove('kc-open');
+    panel.inert = true;
+    help.hidden = true;
+    launcher.setAttribute('aria-expanded', 'false');
+    setTimeout(() => launcher.focus({ preventScroll: true }), 40);
+  }
+  launcher.addEventListener('click', openPanel);
+  $('kc-close').addEventListener('click', closePanel);
+  $('kc-help-btn').addEventListener('click', () => { help.hidden = false; $('kc-help-close').focus(); });
+  $('kc-help-close').addEventListener('click', () => { help.hidden = true; input.focus({ preventScroll: true }); });
+  expandBtn.addEventListener('click', () => {
+    const wide = root.classList.toggle('kc-wide');
+    expandBtn.innerHTML = svg(wide ? 'collapse' : 'expand');
+    expandBtn.setAttribute('aria-label', wide ? 'Shrink' : 'Expand');
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape' || !root.classList.contains('kc-open')) return;
+    if (!help.hidden) help.hidden = true; else closePanel();
+  });
+ 
+  // Rotating teaser on the launcher (only while the panel is closed)
+  let ti = 0;
+  setInterval(() => {
+    if (root.classList.contains('kc-open') || document.hidden) return;
+    teaser.style.opacity = 0;
+    setTimeout(() => { ti = (ti + 1) % TEASERS.length; teaser.textContent = TEASERS[ti]; teaser.style.opacity = 1; }, 300);
+  }, 5000);
+ 
+  // ---------- Suggestions ----------
+  SUGGESTIONS.forEach(s => {
+    const li = h('li');
+    const b = h('button', 'flex w-full items-center gap-3 border-t border-kc-line py-3 text-left text-[14px] leading-snug text-kc-ink hover:text-kc-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kc-teal',
+      `<span class="shrink-0 text-kc-mute">${svg(s.icon)}</span><span></span>`);
+    b.type = 'button';
+    const label = b.lastChild; label.textContent = s.text; if (s.lang) label.lang = s.lang;
+    b.addEventListener('click', () => send(s.text));
+    li.append(b); $('kc-suggest').append(li);
+  });
+ 
+  // ---------- Composer ----------
+  function autosize() { input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 128) + 'px'; }
+  function syncSend() {
+    sendBtn.disabled = !busy && !input.value.trim();
+    sendBtn.setAttribute('aria-label', busy ? 'Stop' : 'Send');
+    sendBtn.innerHTML = svg(busy ? 'stop' : 'send');
+  }
+  input.addEventListener('input', () => { autosize(); syncSend(); });
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); if (!busy) send(input.value); }
+  });
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (busy) { stopped = true; controller && controller.abort(); } else send(input.value);
+  });
+  syncSend();
+ 
+  // ---------- Rendering ----------
+  function renderMarkdown(md) {
+    const tpl = document.createElement('template');
+    if (!window.marked || !window.DOMPurify) {            // CDN blocked: show plain text rather than nothing
+      const p = h('p'); p.textContent = md; tpl.content.append(p); return tpl.content;
+    }
+    tpl.innerHTML = DOMPurify.sanitize(marked.parse(md, { gfm: true, breaks: true }));
+    tpl.content.querySelectorAll('a').forEach(a => {
+      const href = a.getAttribute('href') || '';
+      if (!/^https?:\/\//i.test(href)) { a.replaceWith(...a.childNodes); return; }
+      a.target = '_blank'; a.rel = 'noopener noreferrer';
+      const t = a.textContent.trim();
+      if (!t || /^https?:\/\//i.test(t)) a.textContent = 'Link';
+      a.insertAdjacentHTML('beforeend', svg('ext', 'ml-0.5 inline h-3 w-3 align-[-1px]'));
+    });
+    tpl.content.querySelectorAll('table').forEach(t => { const w = h('div', 'my-3 overflow-x-auto'); t.replaceWith(w); w.append(t); });
+    return tpl.content;
+  }
+ 
+  function addUser(text) {
+    const el = h('div', 'max-w-[85%] self-end whitespace-pre-wrap break-words rounded-2xl rounded-br-md bg-kc-teal px-4 py-2.5 text-[14px] leading-relaxed text-white');
+    el.textContent = text; thread.append(el);
+    log.scrollTop = log.scrollHeight;
+  }
+ 
+  // ---------- Export and share ----------
+  const ACTION_CLS = 'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] hover:bg-kc-mist hover:text-kc-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kc-teal';
+  function actionBtn(icon, label) {
+    const b = h('button', ACTION_CLS, `${svg(icon, 'h-[15px] w-[15px]')}<span>${label}</span>`);
+    b.type = 'button'; return b;
+  }
+ 
+  // Markdown -> readable plain text (sent to the email endpoint)
+  function toPlain(md) {
+    return md
+      .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+      .replace(/\[([^\]]*)\]\((https?:[^)\s]+)\)/g, (m, t, u) => (/^(https?:|link$|ลิงก์$)/i.test(t.trim()) || !t.trim()) ? u : `${t} (${u})`)
+      .replace(/\*\*(.*?)\*\*/g, '$1').replace(/__(.*?)__/g, '$1').replace(/`/g, '')
+      .replace(/^#{1,6}\s*/gm, '').replace(/^\s*[-*]\s+/gm, '• ').replace(/^-{3,}\s*$/gm, '')
+      .replace(/\n{3,}/g, '\n\n').trim();
+  }
+ 
+  async function exportPdf(body, question) {
+    const iframe = document.createElement('iframe');
+    iframe.setAttribute('aria-hidden', 'true');
+    iframe.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden';
+    document.body.append(iframe);
+    const win = iframe.contentWindow, doc = win.document;
+    const title = `KU Library answer - ${question.slice(0, 60)}`;
+    doc.open();
+    doc.write(`<!doctype html><html lang="th"><head><meta charset="utf-8"><title></title>
+<link id="f" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
+<style>
+@page { margin: 18mm 16mm; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "IBM Plex Sans Thai", system-ui, sans-serif; color: #10211f; font-size: 11pt; line-height: 1.65; }
+.brand { display: flex; justify-content: space-between; border-bottom: 2px solid #006564; padding-bottom: 8px; font-size: 9.5pt; color: #5d7371; }
+.brand strong { color: #006564; font-weight: 600; }
+h1 { font-size: 15pt; font-weight: 600; line-height: 1.4; margin: 20px 0 14px; }
+.a p, .a ul, .a ol { margin: .6em 0; } .a ul { list-style: disc; padding-left: 1.3em; } .a ol { list-style: decimal; padding-left: 1.3em; }
+.a li { margin: .35em 0; } .a strong { font-weight: 600; }
+.a h1, .a h2, .a h3, .a h4 { font-size: 12pt; font-weight: 600; margin: 1.2em 0 .4em; }
+.a a { color: #006564; text-decoration: underline; } .a a[href]::after { content: " (" attr(href) ")"; font-size: 8.5pt; color: #5d7371; word-break: break-all; }
+.a hr { border: 0; border-top: 1px solid #e1e9e7; margin: 1.2em 0; }
+.a table { border-collapse: collapse; font-size: 9.5pt; width: 100%; } .a th, .a td { border-bottom: 1px solid #e1e9e7; padding: 4px 8px; text-align: left; vertical-align: top; }
+.a code { background: #f3f7f6; padding: 0 .3em; border-radius: 4px; }
+footer { margin-top: 28px; border-top: 1px solid #e1e9e7; padding-top: 8px; font-size: 8.5pt; color: #5d7371; }
+li, tr { break-inside: avoid; }
+</style></head><body></body></html>`);
+    doc.close();
+ 
+    const wrap = (tag, cls, text) => { const e = doc.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+    const brand = wrap('div', 'brand');
+    const b1 = wrap('strong', '', 'Kasetsart University Library, AI assistant');
+    brand.append(b1, wrap('span', '', new Date().toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' })));
+    const answer = wrap('div', 'a');
+    const clone = body.cloneNode(true);
+    clone.querySelectorAll('svg').forEach(n => n.remove());
+    answer.innerHTML = clone.innerHTML;
+    doc.body.append(brand, wrap('h1', '', question), answer,
+      wrap('footer', '', 'Generated by AI from KU Library catalog and research sources. AI can make mistakes. Check important details in the original source.'));
+ 
+    // Wait for the web font so Thai text prints in the right face
+    await new Promise(res => { const l = doc.getElementById('f'); l.onload = res; l.onerror = res; setTimeout(res, 2500); });
+    try { await Promise.race([doc.fonts.ready, new Promise(r => setTimeout(r, 1500))]); } catch (_) {}
+ 
+    const oldTitle = document.title;
+    document.title = title;                       // browsers suggest this as the PDF file name
+    const done = () => { document.title = oldTitle; iframe.remove(); };
+    win.addEventListener('afterprint', done, { once: true });
+    setTimeout(() => { if (iframe.isConnected) done(); }, 120000);
+    win.focus(); win.print();                     // choose "Save as PDF" in the print dialog
+  }
+ 
+  // Inline "send to my email" form shown under an answer
+  function buildMailForm(raw, question) {
+    const f = h('form', 'mt-1 flex flex-wrap items-center gap-2');
+    f.hidden = true; f.noValidate = false;
+    f.innerHTML = `
+      <input type="email" required autocomplete="email" inputmode="email" maxlength="254" placeholder="name@ku.th" aria-label="Email address"
+        class="min-w-0 flex-1 rounded-full bg-kc-mist px-4 py-2 text-[13px] outline-none ring-1 ring-transparent placeholder:text-kc-mute focus:bg-white focus:ring-kc-teal">
+      <button type="submit" class="rounded-full bg-kc-teal px-4 py-2 text-[13px] font-medium text-white hover:bg-kc-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kc-teal focus-visible:ring-offset-2 disabled:bg-kc-line disabled:text-kc-mute">Send</button>
+      <button type="button" data-cancel class="rounded-full px-3 py-2 text-[13px] text-kc-mute hover:bg-kc-mist hover:text-kc-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kc-teal">Cancel</button>
+      <p role="status" data-msg class="m-0 hidden basis-full text-[12px] leading-snug"></p>`;
+    const email = f.querySelector('input'), submit = f.querySelector('[type=submit]'), msg = f.querySelector('[data-msg]');
+    try { email.value = localStorage.getItem('kc-email') || ''; } catch (_) {}
+    const say = (text, ok) => {
+      msg.textContent = text; msg.classList.toggle('hidden', !text);
+      msg.classList.toggle('text-kc-teal', !!ok); msg.classList.toggle('text-red-700', ok === false); msg.classList.toggle('text-kc-mute', ok == null);
+    };
+    f.querySelector('[data-cancel]').addEventListener('click', () => { f.hidden = true; say(''); });
+    f.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const to = email.value.trim();
+      submit.disabled = true; say('Sending…');
+      try {
+        if (CFG.demo) await new Promise(r => setTimeout(r, 900));
+        else {
+          if (!CFG.emailUrl) throw new Error('Email is not set up yet.');
+          const res = await fetch(CFG.emailUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ to, question, text: toPlain(raw) }) });
+          let data = {}; try { data = await res.json(); } catch (_) {}
+          if (!res.ok || !data.ok) throw new Error(data.error || `Could not send the email (${res.status}).`);
+        }
+        try { localStorage.setItem('kc-email', to); } catch (_) {}
+        say(`Sent to ${to}. Check your inbox and spam folder.`, true);
+      } catch (err) {
+        say(err instanceof TypeError ? 'Can’t reach the email service. Try again in a moment.' : err.message, false);
+      } finally { submit.disabled = false; }
+    });
+    return f;
+  }
+ 
+  function addAnswer(raw, question) {
+    const art = h('article');
+    const body = h('div', 'kc-prose break-words'); body.append(renderMarkdown(raw));
+    const bar = h('div', 'mt-3 flex flex-col gap-1.5 text-kc-mute');
+    const tools = h('div', '-ml-2.5 flex flex-wrap items-center gap-x-0.5 gap-y-1');
+    const meta = h('div', 'flex flex-wrap items-center justify-between gap-x-4 gap-y-1');
+ 
+    const copy = actionBtn('copy', 'Copy');
+    const pdf = actionBtn('download', 'Save as PDF');
+    pdf.addEventListener('click', () => exportPdf(body, question));
+    const mail = actionBtn('mail', 'Email');
+    const mailForm = buildMailForm(raw, question);
+    mail.setAttribute('aria-expanded', 'false');
+    mail.addEventListener('click', () => {
+      const open = mailForm.hidden;
+      mailForm.hidden = !open; mail.setAttribute('aria-expanded', String(open));
+      if (open) { mailForm.querySelector('input').focus(); mailForm.scrollIntoView({ block: 'nearest' }); }
+    });
+    copy.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(raw); } catch (_) { return; }
+      copy.innerHTML = `${svg('check', 'h-[15px] w-[15px]')}<span>Copied</span>`;
+      setTimeout(() => { copy.innerHTML = `${svg('copy', 'h-[15px] w-[15px]')}<span>Copy</span>`; }, 1600);
+    });
+ 
+    const rate = h('div', 'flex items-center gap-0.5');
+    const label = h('span', 'mr-1.5 text-[12px]', 'Rate this answer');
+    rate.append(label);
+    let chosen = 0;
+    const stars = [1, 2, 3, 4, 5].map(n => {
+      const b = h('button', 'kc-star grid h-7 w-7 place-items-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kc-teal', svg('star', 'h-[17px] w-[17px]'));
+      b.type = 'button'; b.setAttribute('aria-label', `Rate ${n} out of 5`);
+      b.addEventListener('mouseenter', () => paint(n));
+      b.addEventListener('focus', () => paint(n));
+      b.addEventListener('click', () => {
+        chosen = n; paint(n);
+        stars.forEach(s => { s.disabled = true; });
+        label.textContent = 'Thanks for rating';
+        if (!CFG.demo) fetch(CFG.rateUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ rating: n, query: question, answer: raw }) }).catch(() => {});
+      });
+      return b;
+    });
+    const paint = (n) => stars.forEach((s, i) => s.classList.toggle('kc-on', i < n));
+    rate.addEventListener('mouseleave', () => paint(chosen));
+    stars.forEach(s => rate.append(s));
+ 
+    const fb = h('a', 'text-[12px] font-medium text-kc-teal underline decoration-[#9cc9c6] underline-offset-[3px] hover:decoration-kc-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kc-teal', 'Share detailed feedback');
+    fb.href = CFG.feedbackUrl; fb.target = '_blank'; fb.rel = 'noopener';
+    tools.append(copy, pdf, mail);
+    meta.append(rate, fb);
+    bar.append(tools, meta, mailForm);
+    art.append(body, bar); thread.append(art);
+    // Start reading at the top of the answer, not the bottom
+    log.scrollTo({ top: Math.max(0, art.offsetTop - 12), behavior: reduceMotion ? 'auto' : 'smooth' });
+  }
+ 
+  function addStatus() {
+    const el = h('div', 'flex items-center gap-3 text-[13px] text-kc-mute',
+      '<span class="kc-dots" aria-hidden="true"><i></i><i></i><i></i></span><span data-s>Searching the catalog and research sources…</span>');
+    el.setAttribute('role', 'status'); thread.append(el);
+    log.scrollTop = log.scrollHeight;
+    const t = setTimeout(() => { el.querySelector('[data-s]').textContent = 'Still working. Summaries can take up to a minute.'; }, 9000);
+    el.stop = () => { clearTimeout(t); el.remove(); };
+    return el;
+  }
+ 
+  function addNote(text) {
+    const el = h('p', 'm-0 text-[12px] text-kc-mute'); el.textContent = text; thread.append(el);
+    log.scrollTop = log.scrollHeight;
+  }
+ 
+  function addError(message) {
+    const el = h('div', 'flex flex-col items-start gap-2.5 rounded-2xl bg-red-50 px-4 py-3 text-[13px] leading-relaxed text-red-900');
+    const p = h('p', 'm-0'); p.textContent = message;
+    const retry = h('button', 'inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-[12px] font-medium text-red-900 ring-1 ring-red-200 hover:bg-red-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700',
+      `${svg('retry', 'h-[14px] w-[14px]')}<span>Try again</span>`);
+    retry.type = 'button';
+    retry.addEventListener('click', () => { el.remove(); send(lastQuestion, true); });
+    el.append(p, retry); thread.append(el);
+    log.scrollTop = log.scrollHeight;
+  }
+ 
+  // ---------- Networking ----------
+  const sleep = (ms, sig) => new Promise((res, rej) => {
+    const t = setTimeout(res, ms);
+    sig.addEventListener('abort', () => { clearTimeout(t); rej(new DOMException('Aborted', 'AbortError')); }, { once: true });
+  });
+ 
+  async function ask(question, signal) {
+    if (CFG.demo) {
+      await sleep(1400, signal);
+      return 'Preview mode: this is sample text, not a real answer.\n\nHere is how results will look.\n\n1. **Introduction to Aerospace Engineering** — call number TL545 .A53. [Open record](https://intanin.lib.ku.ac.th/)\n2. **Fundamentals of Flight** — call number TL570 .S54. [Open record](https://intanin.lib.ku.ac.th/)\n\n---\n**More research articles**\n- Example article about your topic ([Link](https://example.org/))';
+    }
+    const res = await fetch(CFG.askUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question, history }), signal });
+    let data = {};
+    try { data = await res.json(); } catch (_) {}
+    if (!res.ok) throw new Error(data.answer || data.error || `The service returned an error (${res.status}).`);
+    return data.answer || '';
+  }
+ 
+  async function send(text, isRetry = false) {
+    text = (text || '').trim();
+    if (!text || busy) return;
+    lastQuestion = text; stopped = false;
+    empty.hidden = true;
+    if (!isRetry) { addUser(text); input.value = ''; autosize(); }
+    busy = true; syncSend();
+    const status = addStatus();
+    controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), CFG.timeoutMs);
+    try {
+      const answer = await ask(text, controller.signal);
+      status.stop();
+      if (!answer.trim()) { addError('No answer came back. Try rephrasing your question.'); return; }
+      history.push({ role: 'user', content: text }, { role: 'assistant', content: answer });
+      history = history.slice(-CFG.maxHistory);
+      addAnswer(answer, text);
+    } catch (err) {
+      status.stop();
+      if (err.name === 'AbortError') { stopped ? addNote('Stopped.') : addError('This is taking too long. Try again, or ask a shorter question.'); }
+      else if (err instanceof TypeError) addError('Can’t reach the library assistant. Check your connection and try again.');
+      else addError(err.message);
+    } finally {
+      clearTimeout(timer); controller = null; busy = false; syncSend();
+      if (root.classList.contains('kc-open')) input.focus({ preventScroll: true });
+    }
+  }
+})();
+</script>
+<!--   END KU Library AI chat widget -->
+
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  document.getElementById("search").addEventListener("submit", function(event) {
+    // Prevent the form from submitting normally
+    event.preventDefault();
+    
+    // Get selected option value
+    const selectedOption = document.getElementById("searchtype").value;
+    
+    // Get search argument value
+    const searchArg = document.getElementById("searcharg").value;
+
+    if (!searchArg.trim()) {
+      alert("Please enter a search.");
+      return;
+    }
+    
+    // Get form data
+    //const formData = new FormData(this);
+    let url;
+    // Set action based on selected option
+    if (selectedOption === 'callno') {
+      // Append search argument to URL
+      //const url = 'https://api.lib.ku.ac.th/kulib/service.php/callno_search/' + encodeURIComponent(searchArg);
+      //const url = '/screens/callno.htm?l';
+      url = '/screens/callno.html?searcharg=' + encodeURIComponent(searchArg);
+      //window.open(url, '_blank');
+      //window.location.href = url;
+      window.location.href = url;
+    } else {
+      this.action = '/search';
+      this.method = 'post';
+      // Append search argument to form data
+      //formData.append('searcharg', searchArg);
+     const searchArgInput = document.createElement('input');
+      searchArgInput.type = 'hidden';
+      searchArgInput.name = 'searcharg';
+      searchArgInput.value = searchArg;
+      // Append the hidden input field to the form
+      this.appendChild(searchArgInput);
+      // Submit the form
+      this.submit();
+    }
+    
+    // Submit the form
+    //this.submit();
+ //window.location.href = url;
+  });
+});
+</script>
+
+<script>
+const searchInput = document.getElementById('searcharg');
+const resultsList = document.getElementById('results');
+
+searchInput.addEventListener('input', function() {
+    const query = this.value;
+
+    if (query.length >= 3) {
+        fetch(`https://kulc.lib.ku.ac.th/api/sierra/auto_suggest/get.php?query=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                displayResults(data);
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    } else {
+        resultsList.innerHTML = '';
+    }
+});
+
+function displayResults(data) {
+    resultsList.innerHTML = '';
+
+    data.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item.result; // Updated to match the correct key
+        li.addEventListener('click', function() {
+            searchInput.value = item.result; // Updated to match the correct key
+            resultsList.innerHTML = ''; // Clear the results list
+        });
+        resultsList.appendChild(li);
+    });
+}
+
+
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  document.getElementById("search").addEventListener("submit", function(event) {
+    // Prevent the form from submitting normally
+    event.preventDefault();
+    
+    // Get selected option value
+    const selectedOption = document.getElementById("searchtype").value;
+    
+    // Get search argument value
+    const searchArg = document.getElementById("searcharg").value;
+
+    if (!searchArg.trim()) {
+      alert("Please enter a search.");
+      return;
+    }
+    
+    // Get form data
+    //const formData = new FormData(this);
+    let url;
+    // Set action based on selected option
+    if (selectedOption === 'callno') {
+      // Append search argument to URL
+      //const url = 'https://api.lib.ku.ac.th/kulib/service.php/callno_search/' + encodeURIComponent(searchArg);
+      //const url = '/screens/callno.htm?l';
+      url = '/screens/callno.html?searcharg=' + encodeURIComponent(searchArg);
+      //window.open(url, '_blank');
+      //window.location.href = url;
+      window.location.href = url;
+    } else {
+      this.action = '/search';
+      this.method = 'post';
+      // Append search argument to form data
+      //formData.append('searcharg', searchArg);
+     const searchArgInput = document.createElement('input');
+      searchArgInput.type = 'hidden';
+      searchArgInput.name = 'searcharg';
+      searchArgInput.value = searchArg;
+      // Append the hidden input field to the form
+      this.appendChild(searchArgInput);
+      // Submit the form
+      this.submit();
+    }
+    
+    // Submit the form
+    //this.submit();
+ //window.location.href = url;
+  });
+});
+</script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var modal = document.getElementById("myModal");
+    var span = document.getElementsByClassName("close")[0];
+    var iframe = document.getElementById("modal-iframe");
+
+    // Function to display the modal
+    function showModal() {
+        iframe.src = "https://kulc.lib.ku.ac.th/api/sierra/recently_added/get.php";
+        modal.style.display = "block";
+    }
+
+    // Function to hide the modal
+    span.onclick = function() {
+        modal.style.display = "none";
+        iframe.src = "";
+    }
+
+    // Hide the modal when clicking outside of it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+            iframe.src = "";
+        }
+    }
+
+    // Randomly show the modal 75% of the time
+    if (Math.random() < 0.50) {
+        showModal();
+    }
+});
+
+</script>
+
+
+<!-- AI HYBRID SEARCH MODAL -->
+<div id="ai-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="ai-modal-title">
+  <div id="ai-modal" class="flex max-h-[88vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl bg-white shadow-[0_28px_80px_-16px_rgba(0,0,0,.4)] ring-1 ring-black/5">
+
+    <header class="flex shrink-0 items-center gap-3 border-b border-stone-200 px-5 py-3.5">
+      <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-brand-600 text-sm text-white">&#x2726;</span>
+      <div class="min-w-0 flex-1">
+        <h2 id="ai-modal-title" class="text-lg font-semibold text-stone-900">AI Hybrid Search</h2>
+        <div id="ai-modal-query-display" class="truncate text-base text-stone-600"></div>
+      </div>
+      <button id="ai-modal-close" type="button" aria-label="Close" onclick="aiCloseModal()" class="grid h-8 w-8 place-items-center rounded-full text-stone-400 transition hover:bg-stone-100 hover:text-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
+        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </header>
+
+    <div id="ai-modal-body" class="flex-1 overflow-y-auto overscroll-contain bg-stone-50 px-5 py-5">
+      <div id="ai-loading" class="py-12 text-center">
+        <div class="mx-auto h-7 w-7 animate-spin rounded-full border-2 border-stone-200 border-t-brand-600"></div>
+        <span id="ai-loading-text" class="mt-3 block text-sm text-stone-500">&#xE01;&#xE33;&#xE25;&#xE31;&#xE07;&#xE04;&#xE49;&#xE19;&#xE2B;&#xE32;...</span>
+      </div>
+      <div id="ai-error" class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"></div>
+      <div id="ai-status" class="mb-4 flex-wrap items-center gap-2 text-xs"></div>
+
+      <section id="ai-summary-card" class="mb-5 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+        <div class="h-0.5 bg-gradient-to-r from-brand-500 via-brand-200 to-transparent"></div>
+        <div class="p-5">
+          <div class="mb-3 flex items-center gap-2 text-base font-semibold text-stone-900">
+            <span class="rounded-md bg-brand-600 px-1.5 py-0.5 text-[10px] tracking-wider text-white">&#x2726; AI</span> AI Librarian Summary
+          </div>
+          <div id="ai-summary-content" class="ai-prose text-[13.5px] leading-relaxed text-stone-700"></div>
+          <div id="ai-actions" style="display:none" class="mt-4 border-t border-stone-100 pt-2"></div>
+          <div id="ai-summary-rating" style="display:none" class="mt-1 flex-wrap items-center gap-x-3 gap-y-1 pt-1 text-xs text-stone-500">
+            <span>Tell us about the answer:</span>
+            <span id="aisr-summary" class="flex items-center"></span>
+            <span id="ai-rating-done" style="display:none" class="text-brand-600">Thank you!</span>
+            <a href="https://forms.gle/4DPrXYcW3cMvHD5X9" target="_blank" rel="noopener" class="ml-auto font-medium text-brand-600 underline decoration-brand-200 underline-offset-[3px] hover:decoration-brand-600">Click here to evaluate the answer.</a>
+          </div>
+        </div>
+      </section>
+      
+      <div id="ai-results" class="flex flex-col gap-3"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  // \u2500\u2500 CONFIG \u2500\u2500
+  const API_URL    = "https://kulc.lib.ku.ac.th/sierra-hybrid-search/v1/search";
+  const API_KEY    = "dev-key-1234";
+  const RATING_API = "https://kulc.lib.ku.ac.th/sierra-hybrid-search/v1/rating";
+
+  const $ = id => document.getElementById(id);
+  const overlay = $("ai-modal-overlay");
+  let activeController = null, currentQuery = "", currentRequestId = null;
+  let lastResults = [], lastSummary = "";
+
+  const esc = s => String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+  // Escapes first, so catalog text or model output can't inject HTML
+  const mdToHtml = md => esc(md)
+    .replace(/^### (.+)/gm, "<h3>$1</h3>")
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+    .replace(/(?<!href=")(https?:\/\/[^\s<"]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>')
+    .replace(/^&gt; (.+)/gm, "<blockquote>$1</blockquote>")
+    .replace(/^---$/gm, "<hr>")
+    .replace(/((?:^[-*] .+\n?)+)/gm, m => "<ul>" + m.replace(/^[-*] (.+)/gm, "<li>$1</li>") + "</ul>")
+    .replace(/\n{2,}/g, "")
+    .replace(/\n/g, "");
+
+  const setLoading = (on, text) => {
+    $("ai-loading").classList.toggle("visible", on);
+    if (text) $("ai-loading-text").textContent = text;
+  };
+
+  // \u2500\u2500 OPEN / CLOSE \u2500\u2500
+  window.aiOpenSearch = function () {
+    const q = $("searcharg")?.value?.trim();
+    if (!q) { $("searcharg")?.focus(); return; }
+    currentQuery = q;
+    overlay.classList.add("open");
+    $("ai-modal-query-display").textContent = "Search: " + q;
+    aiRunSearch(q);
+  };
+
+  window.aiCloseModal = function () {
+    overlay.classList.remove("open");
+    if (activeController) { activeController.abort(); activeController = null; }
+  };
+
+  overlay.addEventListener("click", e => { if (e.target === overlay) window.aiCloseModal(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && overlay.classList.contains("open")) window.aiCloseModal(); });
+
+  // \u2500\u2500 RESET UI \u2500\u2500
+  function aiReset() {
+    setLoading(true, "\u2726 \u0E01\u0E33\u0E25\u0E31\u0E07\u0E04\u0E49\u0E19\u0E2B\u0E32\u0E41\u0E25\u0E30\u0E2A\u0E23\u0E38\u0E1B\u0E1C\u0E25... / Searching & summarizing...");
+    ["ai-error", "ai-status", "ai-summary-card"].forEach(id => $(id).classList.remove("visible"));
+    $("ai-summary-content").innerHTML = "";
+    $("ai-summary-content").dataset.raw = "";
+    $("ai-results").innerHTML = "";
+    $("ai-summary-rating").style.display = "none";
+    $("ai-rating-done").style.display = "none";
+    lastResults = []; lastSummary = "";
+    resetActions();
+    renderStars();
+  }
+
+  function showError(msg) {
+    const el = $("ai-error");
+    el.textContent = "Error: " + msg;
+    el.classList.add("visible");
+  }
+
+  // \u2500\u2500 STREAM SEARCH (meta first, then summary tokens) \u2500\u2500
+  async function aiRunSearch(q) {
+    if (activeController) activeController.abort();
+    const ctrl = activeController = new AbortController();
+    aiReset();
+    currentRequestId = null;
+
+    try {
+      const res = await fetch(API_URL + "/stream", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-API-Key": API_KEY },
+        body: JSON.stringify({ q, summarize: true }),
+        signal: ctrl.signal
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(typeof err.detail === "string" ? err.detail : "HTTP " + res.status);
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      const out = $("ai-summary-content");
+      let buffer = "", summary = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const parts = buffer.split("\n\n");
+        buffer = parts.pop();
+
+        for (const part of parts) {
+          if (!part.startsWith("data: ")) continue;
+          const raw = part.slice(6).trim();
+          if (raw === "[DONE]") {
+            setLoading(false);
+            if (summary) $("ai-summary-rating").style.display = "flex";
+            if (lastResults.length) $("ai-actions").style.display = "block";
+            continue;
+          }
+          let msg; try { msg = JSON.parse(raw); } catch (_) { continue; }
+
+          if (msg.type === "meta") {
+            currentRequestId = msg.request_id || null;
+            lastResults = msg.results || [];
+            setLoading(false);
+            aiRenderStatus(msg);
+            aiRenderCards(msg.results);
+            if (msg.results && msg.results.length) {
+              $("ai-summary-card").classList.add("visible");
+              out.innerHTML = '<span class="animate-pulse text-stone-400">\u2726 AI \u0E01\u0E33\u0E25\u0E31\u0E07\u0E2A\u0E23\u0E38\u0E1B\u0E1C\u0E25... / AI summarizing...</span>';
+            }
+          } else if (msg.type === "token") {
+            summary += msg.text;
+            lastSummary = summary;
+            out.innerHTML = mdToHtml(summary);
+          } else if (msg.type === "error" && !summary) {
+            out.innerHTML = '<span class="text-stone-400">AI summary is unavailable right now.</span>';
+          }
+        }
+      }
+    } catch (e) {
+      if (e.name !== "AbortError") { setLoading(false); showError(e.message); }
+    } finally {
+      // only the newest request may reset the UI (an aborted older one must not)
+      if (activeController === ctrl) { setLoading(false); activeController = null; }
+    }
+  }
+
+  // \u2500\u2500 RENDER STATUS \u2500\u2500
+  function aiRenderStatus(d) {
+    const el = $("ai-status");
+    el.classList.add("visible");
+    el.innerHTML =
+      '<span class="rounded-full bg-white px-2.5 py-0.5 font-medium text-stone-600 ring-1 ring-stone-200">' + esc(d.result_count) + ' results</span>' +
+      //'<span class="rounded-full bg-white px-2.5 py-0.5 text-stone-500 ring-1 ring-stone-200">Search Mode: <strong class="font-medium text-stone-700">' + esc(d.search_mode) + '</strong></span>' +
+      (d.filters_relaxed ? '<span class="rounded-full bg-amber-50 px-2.5 py-0.5 text-amber-700 ring-1 ring-amber-200">Filters relaxed - no exact match</span>' : "");
+  }
+
+  // \u2500\u2500 RENDER CARDS \u2500\u2500
+  function aiRenderCards(results) {
+    const el = $("ai-results");
+    if (!results || !results.length) {
+      el.innerHTML = '<div class="py-10 text-center text-sm text-stone-500"><p class="text-3xl">\uD83D\uDCED</p><p class="mt-2">\u0E44\u0E21\u0E48\u0E1E\u0E1A\u0E1C\u0E25\u0E25\u0E31\u0E1E\u0E18\u0E4C / No results found</p></div>';
+      return;
+    }
+    el.innerHTML = "";
+    results.forEach((r, i) => {
+      const title = (r.title || "").trim();
+      const hue = ((title.charCodeAt(0) || 0) * 47) % 360;
+      const chips = [r.language, r.material_type, r.publish_year].filter(Boolean)
+        .map(c => '<span class="rounded-md bg-stone-100 px-2 py-0.5 text-[11px] font-medium text-stone-600">' + esc(c) + '</span>').join("");
+      const loc = (r.locations || []).slice(0, 2).join(", ");
+      const row = (label, val, mono) => val
+        ? '<div class="flex gap-2"><span class="w-14 shrink-0 text-stone-600">' + label + '</span><span class="min-w-0 ' + (mono ? "font-mono" : "") + '">' + esc(val) + '</span></div>' : "";
+      const link = /^https?:\/\//.test(r.url || "")
+        ? '<a href="' + esc(r.url) + '" target="_blank" rel="noopener" class="inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-sm font-medium text-brand-600 transition-all hover:gap-2">View Record <span aria-hidden="true">\u2192</span></a>' : "";
+
+      const card = document.createElement("article");
+      card.className = "ai-fade flex gap-4 rounded-2xl border border-stone-200 bg-white p-4 transition hover:border-stone-300 hover:shadow-md hover:shadow-stone-200/70";
+      card.style.animationDelay = Math.min(i, 10) * 30 + "ms";
+      card.innerHTML =
+        '<div class="grid h-12 w-12 shrink-0 place-items-center rounded-xl text-lg font-semibold" style="background:hsl(' + hue + ' 45% 93%);color:hsl(' + hue + ' 45% 32%)">' + esc(title[0] ? title[0].toUpperCase() : "?") + '</div>' +
+        '<div class="min-w-0 flex-1">' +
+          '<div class="flex items-start justify-between gap-3">' +
+            '<h3 class="line-clamp-2 text-[15px] font-semibold leading-snug text-stone-900" title="' + esc(title) + '">' + esc(title || "Untitled") + '</h3>' +
+            '<span class="text-xs font-medium tabular-nums text-stone-700">' + String(r.rank).padStart(2, "0") + '</span>' +
+          '</div>' +
+          '<p class="mt-0.5 truncate text-sm text-stone-500">' + esc(r.author || "Unknown author") + '</p>' +
+          (chips ? '<div class="mt-2.5 flex flex-wrap gap-1.5">' + chips + '</div>' : "") +
+          '<div class="mt-3 flex items-end justify-between gap-3">' +
+            '<div class="min-w-0 space-y-1 text-xs text-stone-500">' + row("Call no.", r.call_number, true) + row("Location", loc) + '</div>' +
+            link +
+          '</div>' +
+        '</div>';
+      el.appendChild(card);
+    });
+  }
+
+  // \u2500\u2500 STAR RATING (for the AI summary) \u2500\u2500
+  const STAR = '<svg viewBox="0 0 24 24" class="h-[17px] w-[17px]" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3.5l2.7 5.6 6.1.8-4.5 4.2 1.1 6-5.4-3-5.4 3 1.1-6L3.2 9.9l6.1-.8L12 3.5z"/></svg>';
+  const stars = () => document.querySelectorAll("#aisr-summary .ai-star");
+  const paintStars = n => stars().forEach(s => s.classList.toggle("on", +s.dataset.val <= n));
+
+  function renderStars() {
+    const box = $("aisr-summary");
+    box.innerHTML = "";
+    [1, 2, 3, 4, 5].forEach(n => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "ai-star"; b.dataset.val = n;
+      b.setAttribute("aria-label", "Rate " + n + " out of 5");
+      b.innerHTML = STAR;
+      b.addEventListener("mouseenter", () => paintStars(n));
+      b.addEventListener("focus", () => paintStars(n));
+      b.addEventListener("click", () => rate(n));
+      box.appendChild(b);
+    });
+    box.onmouseleave = () => paintStars(0);
+  }
+
+  async function rate(n) {
+    stars().forEach(s => { s.disabled = true; });
+    $("aisr-summary").onmouseleave = null;
+    paintStars(n);
+    $("ai-rating-done").style.display = "inline";
+    try { localStorage.setItem("ai-rating-summary-" + currentQuery, n); } catch (_) {}
+    try {
+      await fetch(RATING_API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-API-Key": API_KEY },
+        body: JSON.stringify({ query: currentQuery, rating: n, request_id: currentRequestId })
+      });
+    } catch (_) {}
+  }
+
+  // \u2500\u2500 EXPORT / EMAIL (same flow as the AI chat widget: Copy, Save as PDF, Email) \u2500\u2500
+  // ALLOWED_ORIGINS in send_email.php must include the origin that serves this page.
+  const EMAIL_URL  = "https://kulc.lib.ku.ac.th/api/sierra/ai_chat/send_email.php";
+  const EXPORT_MAX = 15;   // results included in the e-mail / copied text (the PDF lists them all)
+  // Preview mode (canned success, nothing is sent) when opened as a local file or with ?kudemo in the URL
+  const DEMO = location.protocol === "file:" || new URLSearchParams(location.search).has("kudemo");
+
+  const ICONS = {
+    copy:     '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/>',
+    check:    '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+    download: '<path d="M12 4v11M7 11l5 5 5-5M5 20h14"/>',
+    mail:     '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>'
+  };
+  const icon = (name, cls) =>
+    '<svg viewBox="0 0 24 24" class="' + cls + '" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONS[name] + '</svg>';
+
+  const ACTION_CLS = "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[13px] text-stone-600 transition hover:bg-stone-100 hover:text-stone-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500";
+  function actionBtn(name, label) {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = ACTION_CLS;
+    b.innerHTML = icon(name, "h-[15px] w-[15px]") + "<span>" + label + "</span>";
+    return b;
+  }
+
+  // Markdown -> readable plain text
+  function toPlain(md) {
+    return md
+      .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+      .replace(/\[([^\]]*)\]\((https?:[^)\s]+)\)/g, (m, t, u) => (/^(https?:|link$|\u0E25\u0E34\u0E07\u0E01\u0E4C$)/i.test(t.trim()) || !t.trim()) ? u : t + " (" + u + ")")
+      .replace(/\*\*(.*?)\*\*/g, "$1").replace(/__(.*?)__/g, "$1").replace(/`/g, "")
+      .replace(/^>\s?/gm, "").replace(/^#{1,6}\s*/gm, "").replace(/^\s*[-*]\s+/gm, "\u2022 ").replace(/^-{3,}\s*$/gm, "")
+      .replace(/\n{3,}/g, "\n\n").trim();
+  }
+
+  // Plain text of what the user sees: AI summary + the catalog results list
+  function exportText() {
+    const parts = [];
+    if (lastSummary) parts.push(toPlain(lastSummary));
+    if (lastResults.length) {
+      const shown = lastResults.slice(0, EXPORT_MAX);
+      const list = shown.map((r, i) => {
+        const meta = [r.author, r.publish_year, r.material_type, r.call_number && "Call no. " + r.call_number, (r.locations || [])[0]]
+          .filter(Boolean).join(" | ");
+        return (i + 1) + ". " + (r.title || "Untitled") + (meta ? "\n   " + meta : "") + (r.url ? "\n   " + r.url : "");
+      }).join("\n");
+      parts.push("Catalog results (" + shown.length + " of " + lastResults.length + "):\n" + list);
+    }
+    return parts.join("\n\n---\n\n");
+  }
+
+  // PDF through the browser's print dialog ("Save as PDF"), in a hidden iframe so the OPAC page is not affected
+  async function exportPdf() {
+    const iframe = document.createElement("iframe");
+    iframe.setAttribute("aria-hidden", "true");
+    iframe.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden";
+    document.body.append(iframe);
+    const win = iframe.contentWindow, doc = win.document;
+    const title = "KU Library AI search - " + currentQuery.slice(0, 60);
+    doc.open();
+    doc.write(`<!doctype html><html lang="th"><head><meta charset="utf-8"><title></title>
+<link id="f" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
+<style>
+@page { margin: 18mm 16mm; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "IBM Plex Sans Thai", system-ui, sans-serif; color: #10211f; font-size: 11pt; line-height: 1.65; }
+.brand { display: flex; justify-content: space-between; border-bottom: 2px solid #006564; padding-bottom: 8px; font-size: 9.5pt; color: #5d7371; }
+.brand strong { color: #006564; font-weight: 600; }
+h1 { font-size: 15pt; font-weight: 600; line-height: 1.4; margin: 20px 0 14px; }
+h2 { font-size: 12pt; font-weight: 600; margin: 22px 0 8px; padding-top: 10px; border-top: 1px solid #e1e9e7; }
+.a p, .a ul, .a ol { margin: .6em 0; } .a ul { list-style: disc; padding-left: 1.3em; }
+.a li { margin: .35em 0; } .a strong { font-weight: 600; }
+.a h3 { font-size: 12pt; font-weight: 600; margin: 1.2em 0 .4em; }
+.a a { color: #006564; text-decoration: underline; } .a a[href]::after { content: " (" attr(href) ")"; font-size: 8.5pt; color: #5d7371; word-break: break-all; }
+.a hr { border: 0; border-top: 1px solid #e1e9e7; margin: 1.2em 0; }
+.a blockquote { margin: .3em 0 .8em 0; padding-left: 10px; border-left: 2px solid #dcefed; color: #5d7371; }
+.res { margin: 0; padding-left: 1.5em; } .res li { margin: 0 0 .8em; }
+.res .t { font-weight: 600; } .res .m { font-size: 9.5pt; color: #5d7371; }
+.res a { font-size: 9pt; color: #006564; word-break: break-all; text-decoration: underline; }
+footer { margin-top: 28px; border-top: 1px solid #e1e9e7; padding-top: 8px; font-size: 8.5pt; color: #5d7371; }
+li, tr { break-inside: avoid; }
+</style></head><body></body></html>`);
+    doc.close();
+
+    const wrap = (tag, cls, text) => { const e = doc.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+    const brand = wrap("div", "brand");
+    brand.append(wrap("strong", "", "Kasetsart University Library, AI Hybrid Search"),
+      wrap("span", "", new Date().toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })));
+    const nodes = [brand, wrap("h1", "", currentQuery)];
+
+    if (lastSummary) {
+      const a = wrap("div", "a");
+      const clone = $("ai-summary-content").cloneNode(true);
+      clone.querySelectorAll("svg").forEach(n => n.remove());
+      a.innerHTML = clone.innerHTML;
+      nodes.push(a);
+    }
+    if (lastResults.length) {
+      nodes.push(wrap("h2", "", "Catalog results (" + lastResults.length + ")"));
+      const ol = wrap("ol", "res");
+      lastResults.forEach(r => {
+        const li = wrap("li", "");
+        li.append(wrap("div", "t", r.title || "Untitled"));
+        const meta = [r.author, r.publish_year, r.language, r.material_type].filter(Boolean).join(" \u00B7 ");
+        if (meta) li.append(wrap("div", "m", meta));
+        const where = [r.call_number && "Call no. " + r.call_number, (r.locations || []).slice(0, 2).join(", ")].filter(Boolean).join(" \u00B7 ");
+        if (where) li.append(wrap("div", "m", where));
+        if (/^https?:\/\//.test(r.url || "")) { const a = wrap("a", "", r.url); a.href = r.url; li.append(a); }
+        ol.append(li);
+      });
+      nodes.push(ol);
+    }
+    nodes.push(wrap("footer", "", "Generated by AI from KU Library catalog and research sources. AI can make mistakes. Check important details in the original source."));
+    doc.body.append(...nodes);
+
+    // Wait for the web font so Thai text prints in the right face
+    await new Promise(res => { const l = doc.getElementById("f"); l.onload = res; l.onerror = res; setTimeout(res, 2500); });
+    try { await Promise.race([doc.fonts.ready, new Promise(r => setTimeout(r, 1500))]); } catch (_) {}
+
+    const oldTitle = document.title;
+    document.title = title;                      // browsers suggest this as the PDF file name
+    const done = () => { document.title = oldTitle; iframe.remove(); };
+    win.addEventListener("afterprint", done, { once: true });
+    setTimeout(() => { if (iframe.isConnected) done(); }, 120000);
+    win.focus(); win.print();                    // choose "Save as PDF" in the print dialog
+  }
+
+  // Inline "send to my email" form
+  let mailForm = null, mailBtn = null;
+  function buildMailForm() {
+    const f = document.createElement("form");
+    f.style.display = "none";
+    f.className = "mt-1 flex-wrap items-center gap-2";
+    f.innerHTML =
+      '<input type="email" required autocomplete="email" inputmode="email" maxlength="254" placeholder="name@ku.th" aria-label="Email address" ' +
+        'class="min-w-0 flex-1 rounded-full bg-stone-100 px-4 py-2 text-[13px] outline-none ring-1 ring-transparent placeholder:text-stone-400 focus:bg-white focus:ring-brand-600">' +
+      '<button type="submit" class="rounded-full bg-brand-600 px-4 py-2 text-[13px] font-medium text-white transition hover:bg-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 disabled:bg-stone-200 disabled:text-stone-400">Send</button>' +
+      '<button type="button" data-cancel class="rounded-full px-3 py-2 text-[13px] text-stone-500 hover:bg-stone-100 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">Cancel</button>' +
+      '<p role="status" data-msg class="hidden basis-full text-xs leading-snug"></p>';
+    const email = f.querySelector("input"), submit = f.querySelector("[type=submit]"), msg = f.querySelector("[data-msg]");
+    try { email.value = localStorage.getItem("kc-email") || ""; } catch (_) {}
+    const say = (text, ok) => {
+      msg.textContent = text; msg.classList.toggle("hidden", !text);
+      msg.classList.toggle("text-brand-600", !!ok); msg.classList.toggle("text-red-700", ok === false); msg.classList.toggle("text-stone-500", ok == null);
+    };
+    f.querySelector("[data-cancel]").addEventListener("click", () => { f.style.display = "none"; mailBtn.setAttribute("aria-expanded", "false"); say(""); });
+    f.addEventListener("submit", async e => {
+      e.preventDefault();
+      const to = email.value.trim();
+      submit.disabled = true; say("Sending\u2026");
+      try {
+        if (DEMO) await new Promise(r => setTimeout(r, 900));
+        else {
+          const res = await fetch(EMAIL_URL, { method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ to, question: currentQuery, text: exportText() }) });
+          let data = {}; try { data = await res.json(); } catch (_) {}
+          if (!res.ok || !data.ok) throw new Error(data.error || "Could not send the email (" + res.status + ").");
+        }
+        try { localStorage.setItem("kc-email", to); } catch (_) {}
+        say("Sent to " + to + ". Check your inbox and spam folder.", true);
+      } catch (err) {
+        say(err instanceof TypeError ? "Can\u2019t reach the email service. Try again in a moment." : err.message, false);
+      } finally { submit.disabled = false; }
+    });
+    f.say = say;
+    return f;
+  }
+
+  function initActions() {
+    const box = $("ai-actions");
+    const tools = document.createElement("div");
+    tools.className = "-ml-2.5 flex flex-wrap items-center gap-x-0.5 gap-y-1";
+
+    const copy = actionBtn("copy", "Copy");
+    copy.addEventListener("click", async () => {
+      try { await navigator.clipboard.writeText(exportText()); } catch (_) { return; }
+      copy.innerHTML = icon("check", "h-[15px] w-[15px]") + "<span>Copied</span>";
+      setTimeout(() => { copy.innerHTML = icon("copy", "h-[15px] w-[15px]") + "<span>Copy</span>"; }, 1600);
+    });
+
+    const pdf = actionBtn("download", "Save as PDF");
+    pdf.addEventListener("click", exportPdf);
+
+    mailBtn = actionBtn("mail", "Email");
+    mailBtn.setAttribute("aria-expanded", "false");
+    mailForm = buildMailForm();
+    mailBtn.addEventListener("click", () => {
+      const open = mailForm.style.display === "none";
+      mailForm.style.display = open ? "flex" : "none";
+      mailBtn.setAttribute("aria-expanded", String(open));
+      if (open) { mailForm.querySelector("input").focus(); mailForm.scrollIntoView({ block: "nearest" }); }
+    });
+
+    tools.append(copy, pdf, mailBtn);
+    box.append(tools, mailForm);
+  }
+
+  function resetActions() {
+    $("ai-actions").style.display = "none";
+    if (mailForm) { mailForm.style.display = "none"; mailForm.say(""); mailBtn.setAttribute("aria-expanded", "false"); }
+  }
+
+  initActions();
+  renderStars();
+})();
+</script>
+<!-- ── END AI HYBRID SEARCH ── -->
+
+
+<span style="font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; visibility: visible; font-size: 85%; text-align: center; display: block; ">WebPAC PRO &copy; Innovative Interfaces, Inc.</span>
+</BODY>
+</HTML>
+<!--this is customized <screens/mainmenu.html>-->

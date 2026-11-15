@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0"/>
+        <title>Acceso a bases de datos</title>
+        <meta name="keywords" content=""/><meta name="description" content=""/><meta property="og:url" content="https://www.juridicas.unam.mx/biblioteca-dr-jorge-carpizo"/><meta property="og:type" content="website"/><meta property="og:title" content="Biblioteca &quot;Dr. Jorge Carpizo&quot;"/><meta property="og:description" content="Biblioteca especializada en disciplinas jurídicas."/><meta property="og:image" content="https://media.juridicas.unam.mx/www/site/compartir_redes/bjc.jpg"/><meta property="twitter:card" content="summary_large_image"/><meta property="twitter:site" content="@IIJUNAM"/><meta property="twitter:title" content="Biblioteca &quot;Dr. Jorge Carpizo&quot;"/><meta property="twitter:description" content="Biblioteca especializada en disciplinas jurídicas."/><meta property="twitter:image:src" content="https://media.juridicas.unam.mx/www/site/compartir_redes/bjc.jpg"/><link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css?1460589287"/><link rel="stylesheet" type="text/css" href="/css/bootstrap-theme.min.css?1460589287"/><link rel="stylesheet" type="text/css" href="/css/style.css?1748467658"/><link rel="stylesheet" type="text/css" href="/css/encabezado_menu_pie.css?1695241223"/><link rel="stylesheet" type="text/css" href="/css/biblioteca.css?1501523028"/><script src="/js/jquery-2.2.2.min.js?1460589287"></script><script src="/js/bootstrap.min.js?1460589287"></script><script src="/js/main.js?1692406178"></script>
+        <link rel="apple-touch-icon" sizes="180x180" href="/img/favicons/apple-touch-icon.png">
+        <link rel="icon" type="image/png" href="/img/favicons/favicon-32x32.png" sizes="32x32">
+        <link rel="icon" type="image/png" href="/img/favicons/favicon-16x16.png" sizes="16x16">
+        <link rel="manifest" href="/img/favicons/manifest.json">
+        <link rel="mask-icon" href="/img/favicons/safari-pinned-tab.svg" color="#2b5797">
+        <link rel="shortcut icon" href="/img/favicons/favicon.ico">
+        <meta name="msapplication-config" content="/img/favicons/browserconfig.xml">
+        <meta name="theme-color" content="#ffffff">
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-VRPY6V1PGX"></script>
+
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-VRPY6V1PGX');
+        </script>
+    </head>
+    <body>
+        <div class="top-unam-home">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-2 col-md-3 col-sm-3 col-xs-7 text-left top-unam-logo">
+                        <a href="https://www.unam.mx" target="_blank"><img src="/img/logo-unam-corto.png?1525881825" alt="Logo UNAM" class="img-unam-header-home"/></a>                        <a href="/" class="liga-iij-header-home"><img src="/img/logo-iij.png?1525881825" alt="Logo IIJ" class="img-iij-header-home"/></a>                    </div><div class="col-lg-10 col-md-9 col-sm-9 col-xs-5 top-menu text-right">
+                        <div class="vcenter">
+                        <a href="/videoteca" class="btn-en-vivo hidden-xs"><span class='en-vivo'></span>EN VIVO</a><a href="https://www.facebook.com/IIJUNAM" class="icono-red hidden-xs" target="_blank"><img src="/img/rs-facebook-bco.png?1692650883" alt="facebook-iij" title="IIJUNAM en Facebook"/></a><a href="https://twitter.com/IIJUNAM" class="icono-red hidden-xs" target="_blank"><img src="/img/rs-x-bco.png?1692650883" alt="twitter-iij" title="IIJUNAM en X"/></a><a href="https://www.youtube.com/IIJUNAM" class="icono-red hidden-xs" target="_blank"><img src="/img/rs-youtube-bco.png?1692650883" alt="youtube-iij" title="IIJUNAM en YouTube"/></a><a href="https://www.instagram.com/iijunam/" class="icono-red hidden-xs" target="_blank"><img src="/img/rs-instagram-bco.png?1692650883" alt="instagram-iij" title="IIJUNAM en Instagram"/></a><a href="https://www.tiktok.com/@iijunam/" class="icono-red hidden-xs" target="_blank"><img src="/img/rs-tiktok-bco.png?1692650883" alt="tiktok-iij" title="IIJUNAM en TikTok"/></a><a href="https://www.threads.net/@iijunam" class="icono-red hidden-xs" target="_blank"><img src="/img/rs-threads-bco.png?1692650883" alt="threads-iij" title="IIJUNAM en Threads"/></a><div class='idiomas hidden-xs'><a href="/es/biblioteca/servicios_accesos_base_datos" class="negrita idioma-esp">ESP</a>&nbsp;|&nbsp;<a href="/en/biblioteca/servicios_accesos_base_datos" class=" idioma-eng">ENG</a></div><a href="/es/pagina/busqueda" class="icono-buscar" target="_blank"><img src="/img/lupa-blanca.png?1597275338" class="lupa" alt="lupa"/></a>                        </div>
+                        <div class="hamburger icono-cabecera vcenter hidden-md hidden-lg">
+                            <div class="_layer -top"></div>
+                            <div class="_layer -mid"></div>
+                            <div class="_layer -bottom"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <nav id="barra-menu-principal" class="navbar navbar-default visible-md visible-lg">
+                <div class="container">
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <div class="collapse navbar-collapse sin-espacio" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Conoce jurídicas <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li class="liga-menu"><a href="https://juridicas.unam.mx/acerca-de/nosotros">Acerca de nosotros</a></li>
+                                    <li class="liga-menu"><a href="https://juridicas.unam.mx/directorio">Directorio</a></li>
+                                    <li class="liga-menu"><a href="https://juridicas.unam.mx/acerca-de/estructura-organica">Estructura orgánica</a></li>
+                                    <li class="liga-menu"><a href="https://juridicas.unam.mx/acerca-de/informes">Planes de desarrollo e informes de gestión</a></li>
+                                    <li class="liga-menu"><a href="https://juridicas.unam.mx/acerca-de/colaboracion-institucional">Colaboración institucional</a></li>
+                                    <li class="liga-menu"><a href="https://juridicas.unam.mx/acerca-de/normativa-interna">Normativa interna</a></li>
+                                    <li class="liga-menu"><a href="https://juridicas.unam.mx/pagina/proteccion-datos-personales">Protección de datos personales</a></li>
+                                    <li class="liga-menu"><a href="https://juridicas.unam.mx/acerca-de/sgc">Catálogo de Servicios Secretaría Administrativa SGC</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Investigación <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li class="liga-menu"><a href="https://juridicas.unam.mx/investigacion
+">Qué investigamos</a></li>
+                                    <li class="liga-menu"><a href="https://juridicas.unam.mx/nuestros-maestros-y-maestras">Nuestros maestros y maestras</a></li>
+                                    <li class="liga-menu"><a href="https://juridicas.unam.mx/lineas-investigacion">Líneas de investigación institucionales</a></li>
+                                    <li class="liga-menu"><a href="https://juridicas.unam.mx/investigacion/becas-posdoctorales">Becas posdoctorales</a></li>
+                                    <li class="liga-menu"><a href="https://enid.juridicas.unam.mx/" target="_blank">Estación Noroeste de Investigación y Docencia</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Bibliotecas <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li class="liga-menu"><a href="https://juridicas.unam.mx/biblioteca-dr-jorge-carpizo">Biblioteca Doctor Jorge Carpizo</a></li>
+                                    <li class="liga-menu"><a href="https://biblio.juridicas.unam.mx/bjv" target="_blank">Biblioteca Jurídica Virtual</a></li>
+                                    <li class="liga-menu"><a href="https://juridicas.unam.mx/legislacion">Constitución mexicana</a></li>
+                                    <li class="liga-menu"><a href="http://ru.juridicas.unam.mx/" target="_blank">Repositorio Universitario</a></li>
+                                    <li class="liga-menu"><a href="https://juridicas.unam.mx/videoteca">Videoteca</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Publicaciones <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li class="liga-menu"><a href="https://juridicas.unam.mx/publicaciones">Novedades</a></li>
+                                    <li class="liga-menu"><a href="https://juridicas.unam.mx/publicaciones/#libreria">Librería</a></li>
+                                    <li class="liga-menu"><a href="https://www.tiendaenlinea.unam.mx/productos?filtred=seller&seller_id=173&seller=Instituto%20de%20Investigaciones%20Jur%C3%ADdicas&pagina=1" target="_blank">Tienda</a></li>
+                                    <li class="liga-menu"><a href="https://revistas.juridicas.unam.mx/" target="_blank">Revistas</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Actividades <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li class="liga-menu"><a href="https://juridicas.unam.mx/actividades-academicas
+">Eventos</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Estudia en jurídicas <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li class="liga-menu"><a href="https://doctorado.juridicas.unam.mx" target="_blank">Doctorado en derecho</a></li>
+                                    <li class="liga-menu"><a href="https://www.juridicas.unam.mx/educacion/diplomados-y-cursos">Diplomados y cursos</a></li>
+                                    <li class="liga-menu"><a href="https://www.juridicas.unam.mx/educacion/programa-de-actualizacion">Programa de actualización</a></li>
+                                    <li class="liga-menu"><a href="https://juridicas.unam.mx/acerca-de/estancias-de-investigacion">Estancias de investigación</a></li>
+                                    <li class="liga-menu"><a href="https://juridicas.unam.mx/acerca-de/programa-de-becas">Becas</a></li>
+                                    <li class="liga-menu"><a href="https://juridicas.unam.mx/acerca-de/practicas-profesionales">Prácticas profesionales</a></li>
+                                    <li class="liga-menu"><a href="https://juridicas.unam.mx/acerca-de/programa-servicio-social
+">Servicio social</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Legislación UNAM <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li class="liga-menu"><a href="http://www.abogadogeneral.unam.mx/legislacion" target="_blank">Abogacía general</a></li>
+                                    <li class="liga-menu"><a href="https://datosabiertos.unam.mx/patrimonio/" target="_blank">Catálogo del patrimonio cultural de la UNAM</a></li>
+                                    <li class="liga-menu"><a href="https://www.defensoria.unam.mx/web/legislacion" target="_blank">Defensoría de los Derechos Universitarios</a></li>
+                                    <li class="liga-menu"><a href="http://www.dgelu.unam.mx/" target="_blank">Dirección General de Estudios de Legislación Universitaria</a></li>
+                                    <li class="liga-menu"><a href="https://consejo.unam.mx/" target="_blank">H. Consejo Universitario</a></li>
+                                    <li class="liga-menu"><a href="https://www.dgae-siae.unam.mx/acerca/normatividad.html" target="_blank">Sistema integral de administración escolar</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div><!-- /.navbar-collapse -->
+                </div><!-- /.container-fluid -->
+            </nav>
+        </div>
+        <div id="menu-principal" class="menu-principal">
+            <div class="container contenedor-menu">
+                <div class="row texto-menu">
+                    <!-- quitar  visible-sm cuando se quite logo 8M -->
+                    <div class="col-lg-4 seccion-menu visible-xs">
+                    <div class='idiomas'><a href="/es/biblioteca/servicios_accesos_base_datos" class="negrita idioma-esp">ESP</a>&nbsp;|&nbsp;<a href="/en/biblioteca/servicios_accesos_base_datos" class=" idioma-eng">ENG</a></div><a href="/videoteca" class="btn-en-vivo"><span class='en-vivo'></span>EN VIVO</a>                            
+                    </div>
+                    <div class="col-lg-4 seccion-menu">
+                        <p class="titulo-menu">Conoce jurídicas</p>
+                        <p class="liga-menu"><a href="https://juridicas.unam.mx/acerca-de/nosotros">Acerca de nosotros</a></p>
+                        <p class="liga-menu"><a href="https://juridicas.unam.mx/directorio">Directorio</a></p>
+                        <p class="liga-menu"><a href="https://juridicas.unam.mx/acerca-de/estructura-organica">Estructura orgánica</a></p>
+                        <p class="liga-menu"><a href="https://juridicas.unam.mx/acerca-de/informes">Planes de desarrollo e informes de gestión</a></p>
+                        <p class="liga-menu"><a href="https://juridicas.unam.mx/acerca-de/colaboracion-institucional">Colaboración institucional</a></p>
+                        <p class="liga-menu"><a href="https://juridicas.unam.mx/acerca-de/normativa-interna">Normativa interna</a></p>
+                        <p class="liga-menu"><a href="https://juridicas.unam.mx/pagina/proteccion-datos-personales">Protección de datos personales</a></p>
+                        <p class="liga-menu"><a href="https://juridicas.unam.mx/acerca-de/sgc">Catálogo de Servicios Secretaría Administrativa SGC</a></p>
+                    </div>
+                    <div class="col-lg-4 seccion-menu">
+                        <p class="titulo-menu">Investigación</p>
+                        <p class="liga-menu"><a href="https://juridicas.unam.mx/investigacion
+">Qué investigamos</a></p>
+                        <p class="liga-menu"><a href="https://juridicas.unam.mx/nuestros-maestros-y-maestras">Nuestros maestros y maestras</a></p>
+                        <p class="liga-menu"><a href="https://juridicas.unam.mx/lineas-investigacion">Líneas de investigación institucionales</a></p>
+                        <p class="liga-menu"><a href="https://juridicas.unam.mx/investigacion/becas-posdoctorales">Becas posdoctorales</a></p>
+                        <p class="liga-menu"><a href="https://enid.juridicas.unam.mx/" target="_blank">Estación Noroeste de Investigación y Docencia</a></p>
+                    </div>
+                    <div class="col-lg-4 seccion-menu">
+                        <p class="titulo-menu">Bibliotecas</p>
+                        <p class="liga-menu"><a href="https://juridicas.unam.mx/biblioteca-dr-jorge-carpizo">Biblioteca Doctor Jorge Carpizo</a></p>
+                        <p class="liga-menu"><a href="https://biblio.juridicas.unam.mx/bjv" target="_blank">Biblioteca Jurídica Virtual</a></p>
+                        <p class="liga-menu"><a href="https://juridicas.unam.mx/legislacion
+">Constitución mexicana</a></p>
+                        <p class="liga-menu"><a href="http://ru.juridicas.unam.mx/" target="_blank">Repositorio Universitario</a></p>
+                        <p class="liga-menu"><a href="https://juridicas.unam.mx/videoteca">Videoteca</a></p>
+                    </div>
+                </div>
+                <div class="row texto-menu">
+                    <div class="col-lg-4 seccion-menu">
+                        <p class="titulo-menu">Publicaciones</p>
+                        <p class="liga-menu"><a href="https://juridicas.unam.mx/publicaciones">Novedades</a></p>
+                        <p class="liga-menu"><a href="https://juridicas.unam.mx/publicaciones">Librería</a></p>
+                        <p class="liga-menu"><a href="https://www.tiendaenlinea.unam.mx/productos?filtred=seller&seller_id=173&seller=Instituto%20de%20Investigaciones%20Jur%C3%ADdicas&pagina=1" target="_blank">Tienda</a></p>
+                        <p class="liga-menu"><a href="https://revistas.juridicas.unam.mx/" target="_blank">Revistas</a></p>
+                    </div>
+                    <div class="col-lg-4 seccion-menu">
+                        <p class="titulo-menu">Actividades</p>
+                        <p class="liga-menu"><a href="https://juridicas.unam.mx/actividades-academicas
+">Eventos</a></p>
+                    </div>
+                    <div class="col-lg-4 seccion-menu">
+                        <p class="titulo-menu">Estudia en jurídicas</p>
+                        <p class="liga-menu"><a href="https://doctorado.juridicas.unam.mx" target="_blank">Doctorado en derecho</a></p>
+                        <p class="liga-menu"><a href="https://www.juridicas.unam.mx/educacion/diplomados-y-cursos">Diplomados y cursos</a></p>
+                        <p class="liga-menu"><a href="https://www.juridicas.unam.mx/educacion/programa-de-actualizacion">Programa de actualización</a></p>
+                        <p class="liga-menu"><a href="https://juridicas.unam.mx/acerca-de/estancias-de-investigacion">Estancias de investigación</a></p>
+                        <p class="liga-menu"><a href="https://juridicas.unam.mx/acerca-de/programa-de-becas">Becas</a></p>
+                        <p class="liga-menu"><a href="https://juridicas.unam.mx/acerca-de/practicas-profesionales">Prácticas profesionales</a></p>
+                        <p class="liga-menu"><a href="https://juridicas.unam.mx/acerca-de/programa-servicio-social
+">Servicio social</a></p>
+                    </div>
+                </div>
+                <div class="row texto-menu">
+                    <div class="col-lg-4 seccion-menu">
+                        <p class="titulo-menu">Legislación UNAM</p>
+                        <p class="liga-menu"><a href="http://www.abogadogeneral.unam.mx/legislacion" target="_blank">Abogacía general</a></p>
+                        <p class="liga-menu"><a href="https://datosabiertos.unam.mx/patrimonio/" target="_blank">Catálogo del patrimonio cultural de la UNAM</a></p>
+                        <p class="liga-menu"><a href="https://www.defensoria.unam.mx/web/legislacion" target="_blank">Defensoría de los Derechos Universitarios</a></p>
+                        <p class="liga-menu"><a href="http://www.dgelu.unam.mx/" target="_blank">Dirección General de Estudios de Legislación Universitaria</a></p>
+                        <p class="liga-menu"><a href="https://consejo.unam.mx/" target="_blank">H. Consejo Universitario</a></p>
+                        <p class="liga-menu"><a href="https://www.dgae-siae.unam.mx/acerca/normatividad.html" target="_blank">Sistema integral de administración escolar</a></p>
+                    </div>
+                    <div class="col-lg-4 seccion-menu hidden-xs"></div>
+                    <div class="col-lg-4 seccion-menu hidden-xs"></div>
+                </div>
+            </div>
+        </div>        
+        <div class="wrapper contenedor-principal">
+                        <link rel="stylesheet" type="text/css" href="/css/styles_biblioteca.css?1780537303"/><div class="container-fluid fondo-seccion">
+    <div class="row  img-principal dos-renglones">
+        <div class="col-lg-12">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-md-7 col-sm-12 col-xs-12">
+                        <h1>Biblioteca<br>"Dr. Jorge Carpizo"</h1>
+                    </div>
+                    <div class="col-lg-4 col-md-5 col-sm-12 col-xs-12 busqueda-tematica buscador">
+                        <form method="get" name="formAleph" id="formaAleph" action="https://biblioteca.juridicas.unam.mx:81/cgi-bin/koha/opac-search.pl?" target="_blank">
+    <div class="input-group"> 
+        <input type="text" placeholder="Busca entre nuestros 350,031 volúmenes" name="q" class="form-control" id="buscador">
+        <div class="input-group-btn">
+            <button class="btn btn-default buscador-radius tamañobotonosindexadmin" id="boton_buscador" type="submit" style="width: 40px; height: 34px;">
+                <span class="glyphicon glyphicon-search"></span>
+            </button>
+        </div>
+    </div>
+    <div id="grupo-radio-catalogos" class="d-flex tipo-busqueda">
+            <input type="radio" class="option-input radio drop-filtros" name="radio-acervo" data-val="81" checked /><p>IIJ</p>
+            <input type="radio" class="option-input radio drop-filtros" name="radio-acervo" data-val="82" /><p>ENID</p>
+            <input type="radio" class="option-input radio drop-filtros" name="radio-acervo" data-val="83" /><p>Histórico</p>
+            <input type="radio" class="option-input radio drop-filtros" name="radio-acervo" data-val="84" /><p>Otros</p>
+    </div>
+    <!--
+    <input name="campo" value="Todos" type="hidden">
+    <input name="adjacent" value="false" type="hidden">
+    -->
+</form>
+
+<script>
+    var url1 = "https://biblioteca.juridicas.unam.mx:";
+    var url2 = "/cgi-bin/koha/opac-search.pl?";
+    $('#buscador').popover({
+        content: 'La búsqueda requiere de mínimo tres caracteres',
+        trigger: 'manual',
+        placement: 'top'
+    });
+    $("#formaAleph").submit(function(e) {
+        if ($('#buscador').val().trim().length < 3) {
+            $('#buscador').popover('show');
+            setTimeout(
+                function() {
+                    $('#buscador').popover('hide');
+                }, 
+                2000);
+            e.preventDefault();
+            $('#buscador').val($('#buscador').val().trim());
+        }
+    });
+    $(".option-input").click(function(){
+        var prt = $(this).attr('data-val');
+        var urlAction = url1 + prt + url2;
+        $("#formaAleph").attr('action', urlAction);
+    });
+</script>                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<nav id="navbarBiblioteca" class="navbar menu-principal-biblioteca">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <link rel="stylesheet" type="text/css" href="/css/styles_biblioteca.css?1780537303"/>
+<script>
+    $(document).ready(function(){        
+        var isMobile = {
+            Android: function() {
+                return navigator.userAgent.match(/Android/i);
+            },
+            BlackBerry: function() {
+                return navigator.userAgent.match(/BlackBerry/i);
+            },
+            iOS: function() {
+                return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+            },
+            Opera: function() {
+                return navigator.userAgent.match(/Opera Mini/i);
+            },
+            Windows: function() {
+                return navigator.userAgent.match(/IEMobile/i);
+            },
+            any: function() {
+                return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
+            }
+        };
+
+        if( isMobile.any() !== true ){
+            /*
+            $('#menu_colecciones').click(
+                function() {
+                    $('#menu_colecciones').addClass('open');
+                }, function() {
+                    $('#menu_colecciones').removeClass('open');
+                }
+            );
+
+            $('#menu_servicios').click(
+                function() {
+                    $('#menu_servicios').addClass('open');
+                }, function() {
+                    $('#menu_servicios').removeClass('open');
+                }
+            );
+            */
+    
+            $(".menu_despegable").click(
+                function(){
+                    $(".opccion_menu_interno").removeClass("active");
+                }, function(){
+                    $(".opccion_menu_interno").addClass("active");
+                }
+            );
+        }
+        
+        $(".menu_accion").click(
+            function(){
+                $(".opccion_menu").removeClass("active");
+            }, function(){
+                $(".opccion_menu").addClass("active");
+            }
+        );
+        
+        
+
+        
+    });
+</script>
+
+<button aria-controls="barraMenuPrincipal" aria-expanded="false" data-target="#barraMenuPrincipal" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
+    <span class="sr-only">Toggle navigation</span>
+    <span class="icon-bar top-bar"></span>
+    <span class="icon-bar middle-bar"></span>
+    <span class="icon-bar bottom-bar"></span>
+</button>
+
+<div class="collapse navbar-collapse fondocolormenubarra" id="barraMenuPrincipal">
+    <!--
+    <ul class="nav navbar-nav pull-md-left ligaMenuPrincipal">
+        <li><a href="/" class="colorDorado negrita">IIJ / INICIO</a></li>
+    </ul>
+    -->
+    <ul class="nav navbar-nav pull-right menu_accion">
+        <li class=" ">
+            <a href="/es/biblioteca/index" class="colortextomenu">INICIO</a>        </li>
+        <!--
+        <li></li>
+        -->
+        <li class=" dropdown" id="menu_busqueda">
+            <a data-toggle="dropdown">BÚSQUEDA <span class="caret"></span></a>
+            <ul class="dropdown-menu menu_despegable">
+                <li class="">
+                    <a href="https://biblioteca.juridicas.unam.mx:5600" class="colortextomenu" target="_blank">Catálogo</a>                </li>
+                <li class="">
+                    <a href="https://www.worldcat.org/" target="_blank">World Cat</a>                </li>
+                <li id="menu_opcion">
+                    <a href="https://biblio.juridicas.unam.mx/bjv" target="_blank">Biblioteca Jurídica Virtual</a>                </li>
+            </ul>
+        </li>
+        <li class=" dropdown" id="menu_colecciones">
+            <a data-toggle="dropdown">COLECCIONES <span class="caret"></span></a>
+            <ul class="dropdown-menu menu_despegable">
+                <li class="">
+                    <a href="/es/biblioteca/colecciones_hemeroteca" class="colortextomenu">Acervo hemerográfico</a>                </li>
+                <li class="">
+                    <a href="/es/biblioteca/colecciones_acervo_tradicional" class="colortextomenu">Acervo tradicional</a>                </li>
+                <li class="">
+                    <a href="/es/biblioteca/colecciones_bibliotecas_personales" class="colortextomenu">Bibliotecas personales</a>                </li>
+                <li class="">
+                    <a href="/es/biblioteca/colecciones_discos_compactos" class="acervo_dicos">Colección de discos compactos</a>                </li>
+                <li class="">
+                    <a href="/es/biblioteca/colecciones_fondo_reservado" class="colortextomenu">Fondo antiguo</a>                </li>
+            </ul>
+        </li>
+        <li class="opccion_menu active dropdown" id="menu_servicios">
+            <a data-toggle="dropdown">SERVICIOS <span class="caret"></span></a>
+            <ul class="dropdown-menu menu_despegable">                
+                <li class="opccion_menu_interno active">
+                    <a href="/es/biblioteca/servicios_accesos_base_datos" class="colortextomenu">Acceso a bases de datos</a>                </li>
+                <li class="">
+                    <a href="/es/biblioteca/servicios_busqueda_especializada" class="colortextomenu">Búsqueda especializada</a>                </li>
+                <li class="">
+                    <a href="/es/biblioteca/servicios_desarrollo_colecciones" class="colortextomenu">Desarrollo de colecciones y sugerencias bibliográficas</a>                </li>
+                <li class="">
+                    <a href="/es/biblioteca/servicios_formacion_usuarios" class="colortextomenu">Formación de usuarios</a>                </li>
+                <li class="">
+                    <a href="/es/biblioteca/servicios_prestamos" class="colortextomenu">Préstamos</a>                </li>
+                <li class="">
+                    <a href="/es/biblioteca/servicios_prestamo_interbibliotecario" class="colortextomenu">Préstamo interbibliotecario</a>                </li>
+                <li class="">
+                    <a href="/es/biblioteca/servicios_reprografia" class="colortextomenu">Fotocopiado</a>                </li>
+                <li class="">
+                    <a href="/es/biblioteca/servicios_solicitud_datos_busqueda_citas" class="colortextomenu">Búsqueda de citas a productos de investigación</a>                </li>
+                <li class="">
+                    <a href="/es/biblioteca/servicios_talleres" class="colortextomenu">Talleres</a>                </li>
+                <li class="">
+                    <a href="/es/biblioteca/servicios_visitas_guiadas" class="colortextomenu">Visitas guiadas</a>                </li>
+            </ul>
+        </li>
+        <li class="">
+            <a href="/es/biblioteca/acerca_de" class="colortextomenu">ACERCA DE</a>        </li>
+            </ul>
+</div><!--/.nav-collapse -->            </div>
+        </div>
+    </div>
+</nav><div class="container">
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 pull-left">
+            <p class="migas">
+                            </p>
+        </div>  
+    </div>
+</div>
+<div class="container textoinfoservicio margen-bottom-lg">
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <h1 class="margen-top posiciontextobannerservicios tamañobase">Acceso a bases de datos</h1>
+        </div>
+    </div>
+    <div class="row margen-bottom">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 margen-top-lg">
+            <div class="textoinfoservicio">
+                <p class="pjustificado">La Universidad Nacional Autónoma de México, a través de la Dirección General de Bibliotecas, ha creado y gestionado el uso de un gran número de bases de datos para ofrecerte un servicio de información integral, donde podrás consultar información de distintas áreas del conocimiento.</p>
+                <p class="pjustificado">Las bases de datos contienen información científica a través de las cuales el usuario puede conocer la producción editorial (libros y artículos) de cualquier área del conocimiento. También existen bases de datos que recogen diversos tipos de documentos (tesis, memorias, capítulos de libros, patentes, etc.) y aquellas que son especializadas en un área específica, como el Derecho.</p>
+                <p class="pjustificado">Ofrecen información novedosa, actualizada y, se caracterizan por servir de apoyo esencial para la investigación y la docencia. Actualmente se cuenta con acceso a más de 170 bases de datos en áreas humanísticas, científicas y técnicas.</p>
+                <br>
+                <br>
+                <h4 class="margen-top-lg subtituloservicios">Catálogos colectivos</h4>
+                <hr class="lineabases">
+                <p class="pjustificado">Un catálogo colectivo es aquel recurso de información que contiene registros bibliográficos y documentos en texto completo de diversas bibliotecas. Es una herramienta imprescindible para localizar obras en distintas ubicaciones a nivel mundial.</p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-4 hidden-xs card">
+            <ul class="listainfo list-group sidebar margen-top" id="catalogo">
+                <li class="list-group-item selectorinfo active" onclick="catalogos('librunam',$(this))">
+                    LIBRUNAM
+                </li>
+                <li class="selectorinfo list-group-item" onclick="catalogos('seriunam',$(this))">
+                    SERIUNAM
+                </li>
+                <li class="selectorinfo list-group-item" onclick="catalogos('tesiunamc',$(this))">
+                    TESIUNAM-Catálogo                </li>
+                <li class="selectorinfo list-group-item" onclick="catalogos('tesiunamb',$(this))">
+                    TESIUNAM-Búsqueda de texto completo                </li>
+                <li class="selectorinfo list-group-item" onclick="catalogos('mapamex',$(this))">
+                    MAPAMEX
+                </li>
+                <li class="selectorinfo list-group-item" onclick="catalogos('fondo',$(this))">
+                    Fondo antiguo                </li>
+                <li class="selectorinfo list-group-item" onclick="catalogos('multimedia',$(this))">
+                    Multimedia UNAM                </li>
+                <li class="selectorinfo list-group-item" onclick="catalogos('autoridades',$(this))">
+                    Autoridades LIBRUNAM                </li>
+            </ul>
+        </div>
+        <div class="hidden-lg hidden-md hidden-sm visible-xs col-xs-12 margen-bottom-lg margen-top">
+            <div class="opcionrevistas">
+                 <select class="form-control" name="revistas" id="revistas"  onchange="catalogos($(this).val(),$(this))">
+                    <option value="librunam">
+                        LIBRUNAM
+                    </option>
+                    <option value="seriunam">
+                        SERIUNAM
+                    </option>
+                    <option value="tesiunamc">
+                        TESIUNAM-Catálogo                    </option>
+                    <option value="tesiunamb">
+                        TESIUNAM-Búsqueda de texto completo                    </option>
+                    <option value="mapamex">
+                        MAPAMEX
+                    </option>
+                    <option value="fondo">
+                        Fondo antiguo                    </option>
+                    <option value="multimedia">
+                        Multimedia UNAM                    </option>
+                    <option value="autoridades">
+                        Autoridades LIBRUNAM                    </option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+            <div class="inforevistas" id="catalogos">
+                <div class="row" id="librunam">
+                    <div class="col-md-9 col-md-offset-1 col-sm-12 col-xs-12">
+                        <h4 class="hinfocuadricula">
+                            <a href="https://www.dgb.unam.mx/index.php/catalogos/librunam" target="_blank">LIBRUNAM</a>                        </h4>
+                        <p class="pjustificado previstas">Referencias bibliográficas de 1’469,294 títulos y 6’590,930 volúmenes, de los cuales alrededor de 400,000 son libros electrónicos, que se encuentran disponibles en el SIBIUNAM.</p>
+                    </div>
+                </div>
+
+                <div class="row" id="seriunam">
+                    <div class="col-md-9 col-md-offset-1 col-sm-12 col-xs-12">
+                        <h4 class="hinfocuadricula">
+                            <a href="https://www.dgb.unam.mx/index.php/catalogos/seriunam" target="_blank">SERIUNAM</a>                        </h4>
+                        <p class="pjustificado previstas">Publicaciones periódicas disponibles en la República Mexicana. Ofrece información de  79,108 títulos y 10’515,367 de fascículos de revistas, tanto del SIBIUNAM como de 236 instituciones de educación superior e investigación de México.</p>
+                    </div>
+                </div>
+
+                <div class="row" id="tesiunamc">
+                    <div class="col-md-9 col-md-offset-1 col-sm-12 col-xs-12">
+                        <h4 class="hinfocuadricula">
+                            <a href="https://www.dgb.unam.mx/index.php/catalogos/tesiunam" target="_blank">TESIUNAM-Catálogo</a>                        </h4>
+                        <p class="pjustificado previstas">Cuenta con 445,198 registros de tesis generadas por egresados de las diferentes carreras de la UNAM y universidades y escuelas incorporadas. Aproximadamente 153,149 títulos son trabajos recepcionales de carácter electrónico en texto completo.</p>
+                    </div>
+                </div>
+                <div class="row" id="tesiunamb">
+                    <div class="col-md-9 col-md-offset-1 col-sm-12 col-xs-12">
+                        <h4 class="hinfocuadricula">
+                            <a href="https://www.dgb.unam.mx/index.php/catalogos/tesiunam" target="_blank">TESIUNAM-Búsqueda de texto completo</a>                        </h4>
+                        <p class="pjustificado previstas">Busca el texto completo de las tesis (45,198 registros) generadas por egresados de las diferentes carreras de la UNAM y universidades y escuelas incorporadas.</p>
+                    </div>
+                </div>
+                <div class="row" id="mapamex">
+                    <div class="col-md-9 col-md-offset-1 col-sm-12 col-xs-12">
+                        <h4 class="hinfocuadricula">
+                            <a href="https://www.dgb.unam.mx/index.php/catalogos/mapamex" target="_blank">MAPAMEX</a>                        </h4>
+                        <p class="pjustificado previstas">Información cartográfica de 15 mapotecas de la UNAM e instituciones externas. Cuenta con 28,390 registros y 96,520 ejemplares de mapas impresos. Incluye 5,967 en formato electrónico con 8,615 imágenes.</p>
+                    </div>
+                </div>
+                <div class="row" id="fondo">
+                    <div class="col-md-9 col-md-offset-1 col-sm-12 col-xs-12">
+                        <h4 class="hinfocuadricula">
+                            <a href="https://www.dgb.unam.mx/index.php/catalogos/fondo-antiguo" target="_blank">Fondo antiguo</a>                        </h4>
+                        <p class="pjustificado previstas">Catálogo de libros antiguos impresos producidos entre los siglos XV y XVIII; contiene alrededor de 2,733 títulos digitales. Once bibliotecas del Sistema tienen fondos antiguos con más de 6,853 títulos.</p>
+                    </div>
+                </div>
+                <div class="row" id="multimedia">
+                    <div class="col-md-9 col-md-offset-1 col-sm-12 col-xs-12">
+                        <h4 class="hinfocuadricula">
+                        <a href="https://www.dgb.unam.mx/index.php/catalogos/multimedia-unam" target="_blank">Multimedia UNAM</a>                        </h4>
+                        <p class="pjustificado previstas">Catálogo de registros bibliográficos que representan 13,513 títulos de materiales multimedia y audiovisuales de SIBIUNAM.</p>
+                    </div>
+                </div>
+                <div class="row" id="autoridades">
+                    <div class="col-md-9 col-md-offset-1 col-sm-12 col-xs-12">
+                        <h4 class="hinfocuadricula">
+                            <a href="https://www.dgb.unam.mx/index.php/catalogos/catalogos-de-autoridades/catalogo-de-autoridades-librunam" target="_blank">Autoridades LIBRUNAM</a>                        </h4>
+                        <p class="pjustificado previstas">Permite localizar información fiable y efectiva de obras a través de temáticas normalizadas. Contienen casi 21,448 temas y 47,935 autores.</p>
+                    </div>
+                </div>
+            </div>                                
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 margen-bottom">
+            <h4 class="margen-top-lg subtituloservicios">Revistas Latinoamericanas</h4>
+            <hr class="lineaservicios">
+            <p class="pjustificado">Reúne la información más importante de citas, índices, referencias bibliográficas, indicadores bibliométricos, artículos en texto completo de revistas académicas y científicas publicadas en América Latina.</p>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-4 hidden-xs card">
+            <ul class="listainfo list-group sidebar margen-top">
+                <li class="list-group-item selectorinfo active" id="CLASE">
+                    CLASE – Ciencias sociales y humanidades                </li>
+                <li class="selectorinfo list-group-item" id="LATINDEX">
+                    LATINDEX – Directorio de revistas académicas                </li>
+                <li class="selectorinfo list-group-item" id="PERIODICA">
+                    PERIÓDICA- Ciencias exactas y naturales                </li>
+                <li class="selectorinfo list-group-item" id="SciELO_Mexico">
+                    SSciELO México – Revistas en texto completo                </li>
+                <li class="selectorinfo list-group-item" id="BIBLAT">
+                    BIBLAT – Indicadores bibliométricos                </li>
+            </ul>
+        </div>
+        <div class="hidden-lg hidden-md hidden-sm visible-xs col-xs-12 margen-bottom-lg margen-top">
+            <div class="opcionrevistas">
+                 <select class="form-control" name="revistas" id="revistas"  onchange="test(this)">
+                    <option value="CLASE">
+                        CLASE – Ciencias sociales y humanidades                    </option>
+                    <option value="LATINDEX">
+                        LATINDEX – Directorio de revistas académicas                    </option>
+                    <option value="PERIODICA">
+                        PERIÓDICA- Ciencias exactas y naturales                    </option>
+                    <option value="SciELO_Mexico">
+                        SciELO México – Revistas en texto completo                    </option>
+                    <option value="BIBLAT">
+                        BIBLAT – Indicadores bibliométricos                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+            <div class="inforevistas">
+                <div class="CLASE">
+                    <h4 class="hinforevistas card-action">
+                    <a href="https://www.dgb.unam.mx/index.php/catalogos/bibliografia-latinoamericana/clase" target="_blank" class="linkhinforevistas">CLASE – Ciencias sociales y humanidades</a>                    </h4>
+                    <br>
+                    <p class="pjustificado previstas">Citas latinoamericanas en ciencias sociales y humanidades. Contiene la información de más de 1,900 revistas, que representan más de 367,100 registros de documentos indizados. Más de 63,000 documentos se encuentran en texto completo.</p>
+                </div>
+                <div class="LATINDEX">
+                    <h4 class="hinforevistas card-action">
+                        <a href="http://www.latindex.org/" target="_blank" class="linkhinforevistas">LATINDEX – Directorio de revistas académicas</a>                    </h4>
+                    <br>
+                    <p class="pjustificado previstas">Índice de revistas latinoamericanas en ciencias. Contiene la información de más de 1,900 revistas, que representan más de 358,200 registros de documentos indizados. Más de 93,000 documentos se encuentran en texto completo.</p>
+                </div>
+                <div class="PERIODICA">
+                    <h4 class="hinforevistas card-action">
+                        <a href="https://www.dgb.unam.mx/index.php/catalogos/bibliografia-latinoamericana/periodica" target="_blank" class="linkhinforevistas">PERIÓDICA- Ciencias exactas y naturales</a>                    </h4>
+                    <br>
+                    <p class="pjustificado previstas">Sistema regional de información en línea para revistas científicas de América Latina, el Caribe, España y Portugal. Proporciona datos normalizados de más de 21,760 revistas académicas de esas regiones, así como de más de 6,900 títulos seleccionados y clasificados de ese tipo de publicaciones, de acuerdo con criterios internacionales de calidad editorial.</p>
+                </div>
+                <div class="SciELO_Mexico">
+                    <h4 class="hinforevistas card-action">
+                        <a href="http://www.scielo.org.mx/scielo.php" target="_blank" class="linkhinforevistas">SciELO México – Revistas en texto completo</a>                    </h4>
+                    <br>
+                    <p class="pjustificado previstas">Hemeroteca virtual conformada por 110 revistas académicas mexicanas, equivalentes a 1,200 fascículos y más de 13,000 artículos disponibles en texto completo. Forma parte de la Red Internacional SciELO, integrada por las colecciones nacionales de 15 países, esta red conjunta más de 425,500 artículos en texto completo publicados en más de 1,000 revistas que forman parte de las colecciones digitales nacionales integrantes.</p>
+                </div>
+                <div class="BIBLAT">
+                    <h4 class="hinforevistas card-action">
+                        <a href="http://biblat.unam.mx/es/" target="_blank" class="linkhinforevistas">BIBLAT – Indicadores bibliométricos</a>                    </h4>
+                    <br>
+                    <p class="pjustificado previstas">Biblat es un portal especializado en revistas científicas y académicas publicadas en América Latina y el Caribe, que ofrece los siguientes servicios:</p>
+                    <ul class="margen-top listainforevistas">
+                        <li>
+                            <p class="pjustificado plistarevistas">Referencias bibliográficas de los artículos y documentos publicados en más de 3,000 títulos indizados en CLASE y PERIÓDICA, mediante opciones de búsqueda básica y avanzada.</p>
+                        </li>
+                        <li>
+                            <p class="pjustificado plistarevistas">Acceso al texto completo de los artículos publicados en revistas de acceso abierto. Biblat ofrece dos tipos de acceso al texto completo: mediante enlaces hipertextuales a los sitios web de las revistas (recursos externos) y a través de la colección del acervo digital de la Hemeroteca Virtual Latinoamericana de la Dirección General de Bibliotecas DGB, Universidad Nacional Autónoma de México UNAM.</p>
+                        </li>
+                        <li>
+                            <p class="pjustificado plistarevistas">Frecuencias e indicadores bibliométricos extraídos de las revistas indizadas en CLASE y PERIÓDICA, en las colecciones SciELO así como de otras fuentes de información.</p>
+                        </li>
+                        <li>
+                            <p class="pjustificado plistarevistas">En Postular una revista se describen los Criterios de selección de revistas para su indización en CLASE y PERIÓDICA, que son la fuente de información principal de biblat@dgb.unam.mx. Los editores de revistas pueden someter a evaluación su revista dirigiéndose a: Biblat.</p>
+                        </li>
+                        <li>
+                            <p class="pjustificado plistarevistas">En Políticas de acceso se clasifican las revistas de acceso abierto de acuerdo con los permisos de acceso, uso y archivado adoptados por éstas.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>                                
+        </div>
+    </div>
+    <h4 class="margen-top-lg subtituloservicios">Bases de datos</h4>
+    <hr class="lineabases">
+    <p class="pjustificado">
+    Las bases de datos son índices en línea que contienen "principalmente" el texto completo de artículos de revistas técnicas y científicas y / o un breve resumen de los mismos. En las bases de datos pueden realizarse búsquedas por autor, título del artículo, revista, palabra clave y tema.<br><br>Se cuenta con acceso a 174 bases de datos en áreas humanísticas, científicas y técnicas. Para acceder a estos recursos de información es necesario hacerlo a través de la Red UNAM o bien solicitando el servicio directamente en el Departamento de Consulta de Biblioteca Central.<br><br>Algunas de las bases de datos a as que se puede acceder son las siguientes: Science Direct; Emerald; Scopus; Gale Cengage Learning; JSTOR; Oxford University Press; ProQuest; Springer; Springer e-Books; VLex; Wiley; Cambridge University Press; Chicago University Press; SciFinder Chemical Abstract Service´s; Society for Industrial and Applied Mathematics; SPIE Digital Library; Thomson Reuters.    </p>
+    <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-4 hidden-xs card">
+            <ul class="listainfo list-group sidebar margen-top">
+                <li class="list-group-item selectorinfo active" id="ECCO">
+                    ECCO
+                </li>
+                <li class="selectorinfo list-group-item" id="ProQuest">
+                    ProQuest
+                </li>
+                <li class="selectorinfo list-group-item" id="Dissertations_theses">
+                    Dissertations & theses
+                </li>
+                <li class="selectorinfo list-group-item" id="Springer">
+                    Springer
+                </li>
+                <li class="selectorinfo list-group-item" id="Emerald">
+                    Emerald
+                </li>
+                <li class="selectorinfo list-group-item" id="Science_direct">
+                    Science direct
+                </li>
+                <li class="selectorinfo list-group-item" id="Scopus">
+                    Scopus
+                </li>
+                <li class="selectorinfo list-group-item" id="Web_of_Science">
+                    Web of Science 
+                </li>
+                <li class="selectorinfo list-group-item" id="Biblio_media">
+                    Biblio media
+                </li>
+            </ul>
+        </div>
+        <div class="hidden-lg hidden-md hidden-sm visible-xs col-xs-12 margen-bottom-lg margen-top">
+            <div class="opcionrevistas">
+                 <select class="form-control" name="revistas" id="revistas"  onchange="bases(this)">
+                    <option value="ECCO">
+                        ECCO
+                    </option>
+                    <option value="ProQuest">
+                        ProQuest
+                    </option>
+                    <option value="Dissertations_theses">
+                        Dissertations & theses
+                    </option>
+                    <option value="Springer">
+                        Springer
+                    </option>
+                    <option value="Emerald">
+                        Emerald
+                    </option>
+                    <option value="Science_direct">
+                        Science direct
+                    </option>
+                    <option value="Scopus">
+                        Scopus
+                    </option>
+                    <option value="Web_of_Science">
+                        Web of Science 
+                    </option>
+                    <option value="Biblio_media">
+                        Biblio media
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+            <div class="">
+                <div class="ECCO">
+                    <h4 class="hinforevistas card-action">
+                        <a href="http://find.galegroup.com/ecco/start.do?prodId=ECCO&amp;userGroupName=unam_ecco" target="_blank" class="linkhinforevistas">ECCO</a>                    </h4>
+                    <br>
+                    <p class="pjustificado previstas">Se trata de la biblioteca microfilmada de libros impresos más grande del mundo. Proporciona acceso en línea a la edición digital más completa del Siglo XVIII, cuyo contenido cubre todas las disciplinas, abarcando la Independencia de los Estados Unidos, la Revolución Francesa y la Revolución industrial, considerados por los estudiosos como los tres acontecimientos más significativos de la historia de mundo en el Siglo XVIII. ECCO ofrece diversos materiales desde libros y directorios a las biblias, partituras, sermones y anuncios. Incluye más de 136,000 títulos y ediciones en lengua inglesa (más de 155,000 volúmenes) publicados entre 1701 y 1800. Este proyecto ofrece la búsqueda en texto completo de más de 26 millones de páginas, proporcionando grandes oportunidades a la investigación al ofrecer una amplia gama de datos. La UNAM ha adquirido dos módulos: 1) ciencias sociales y bellas artes y 2) medicina, ciencia y tecnología.</p>
+                    <div class="col-lg-11 col-md-11 col-sm-11 col-xs-11 pull-right">
+                        <div class="text-center margen-top-lg">
+                        <a href="http://find.galegroup.com/ecco/start.do?prodId=ECCO&amp;userGroupName=unam_ecco" target="_blank" class="linkimagebase"><img src="https://media.juridicas.unam.mx/www/site/BiBlDrJC/imagenes_servicios/Ecco.jpg" class="imagenbases hoverable card" src="servicio_acceso_bases" alt="servicio_acceso_bases"/></a>                        </div>
+                    </div>
+                </div>
+                <div class="ProQuest">
+                    <h4 class="hinforevistas card-action">
+                        <a href="http://search.proquest.com/" target="_blank" class="linkhinforevistas">ProQuest</a>                    </h4>
+                    <br>
+                    <p class="pjustificado previstas">
+                    En cuanto a las bases de datos de ProQuest, desde el año 2000 se han suscrito 23 bases predominando los temas de negocios, comercio, educación, medicina y ciencias sociales. Asimismo, informó que se tiene acceso a más de 700 títulos de libros electrónicos de la plataforma de Safari a través de dos colecciones: Safari Cómputo y Safari Ingeniería.<br><br>Añadió que el sistema también cuenta con un traductor literal en diversos idiomas, aclaró que es un traductor de palabras no de texto. Señaló que además existen índices para buscar artículos, los cuales pueden contener textos y gráficos; también se pueden configurar alertas de las nuevas ediciones; del mismo modo se pueden compartir con otro usuario estrategias de búsqueda y crear enlaces de acuerdo a las diversas disciplinas para tener acceso directo a éstas.                    </p>
+                    <div class="col-lg-11 col-md-11 col-sm-11 col-xs-11 pull-right">
+                        <div class="text-center margen-top-lg">
+                        <a href="http://search.proquest.com/" target="_blank" class="linkimagebase"><img src="https://media.juridicas.unam.mx/www/site/BiBlDrJC/imagenes_servicios/proquest.jpg" class="imagenbases hoverable card" src="servicio_acceso_bases" alt="servicio_acceso_bases"/></a>                        </div>
+                    </div>
+                </div>
+                <div class="Dissertations_theses">
+                    <h4 class="hinforevistas card-action">
+                        <a href="http://search.proquest.com/" target="_blank" class="linkhinforevistas">Dissertations & theses</a>                    </h4>
+                    <br>
+                    <p class="pjustificado previstas">Contiene la colección mundial más completa de tesis y tesinas de diversas disciplinas. Esta base de datos se considera el archivo oficial de disertaciones digitales para la Biblioteca del Congreso y para la investigación de posgrado. Incluye 2,7 millones de citas de disertaciones y tesis de todo el mundo desde 1861 hasta la actualidad, junto con 1,2 millones de disertaciones en texto completo que están disponibles para su descarga en formato PDF. Más de 2,1 millones de títulos disponibles para la compra como copias impresas. Dissertations & theses ofrece texto completo para la mayoría de las disertaciones añadidas desde 1997 y fuerte cobertura retrospectiva en texto completo de las obras antiguas de posgrado. Cada año se agregan más de 70,000 nuevas disertaciones y tesis.</p>
+                    <div class="col-lg-11 col-md-11 col-sm-11 col-xs-11 pull-right">
+                        <div class="text-center margen-top-lg">
+                            <a href="http://search.proquest.com/" target="_blank" class="linkimagebase"><img src="https://media.juridicas.unam.mx/www/site/BiBlDrJC/imagenes_servicios/proquest-2.jpg" class="imagenbases hoverable card" src="servicio_acceso_bases" alt="servicio_acceso_bases"/></a>                        </div>
+                    </div>
+                </div>
+                <div class="Springer">
+                    <h4 class="hinforevistas card-action">
+                        <a href="http://link.springer.com/" target="_blank" class="linkhinforevistas">Springer</a>                    </h4>
+                    <br>
+                    <p class="pjustificado previstas">
+                    SpringerLink es la principal fuente electrónica de información de Springer para investigadores en las áreas de: Ciencias del comportamiento, Ciencias biomédicas y biología, Gerencia y economía, Química y materiales, Informática, Ciencias ambientales, Ingeniería, Humanidades, Ciencias Sociales y Derecho, Matemáticas, Medicina, Física y Astronomía.<br><br>SpringerLink ofrece más de 1200 publicaciones periódicas; más de 2900 títulos de libros en más de 25 series; un archivo digitalizado con más de 2 millones de artículos.                    </p>
+                    <div class="col-lg-11 col-md-11 col-sm-11 col-xs-11 pull-right">
+                        <div class="text-center margen-top-lg">
+                            <a href="http://link.springer.com/" target="_blank" class="linkimagebase"><img src="https://media.juridicas.unam.mx/www/site/BiBlDrJC/imagenes_servicios/springer.jpg" class="imagenbases hoverable card" src="servicio_acceso_bases" alt="servicio_acceso_bases"/></a>                        </div>
+                    </div>
+                </div>
+                <div class="Emerald">
+                    <h4 class="hinforevistas card-action">
+                        <a href="http://www.emeraldinsight.com.pbidi.unam.mx:8080/" target="_blank" class="linkhinforevistas">Emerald</a>                    </h4>
+                    <br>
+                    <p class="pjustificado previstas">Editorial fundada en 1967. Proporciona acceso a más de 208 títulos de revistas en formato electrónico desde 1996 a la fecha. Cubre temas como contabilidad, finanzas, economía, negocios, gestión y estrategia, gestión de la información y del conocimiento, ingeniería, educación, salud, asistencia social entre otros.</p>
+                    <div class="col-lg-11 col-md-11 col-sm-11 col-xs-11 pull-right">
+                        <div class="text-center margen-top-lg">
+                            <a href="http://www.emeraldinsight.com.pbidi.unam.mx:8080/" target="_blank" class="linkimagebase"><img src="https://media.juridicas.unam.mx/www/site/BiBlDrJC/imagenes_servicios/emerald.jpg" class="imagenbases hoverable card" src="servicio_acceso_bases" alt="servicio_acceso_bases"/></a>                        </div>
+                    </div>
+                </div>
+                <div class="Science_direct">
+                    <h4 class="hinforevistas card-action">
+                        <a href="http://www.sciencedirect.com.pbidi.unam.mx:8080/" target="_blank" class="linkhinforevistas">Science direct</a>                    </h4>
+                    <br>
+                    <p class="pjustificado previstas">Science Direct es la plataforma de consulta de una base de datos de revistas y libros editados por Elsevier, considerado el mayor proveedor mundial de información científica, técnica y médica, y publica más de 2,000 revistas, así como libros y bases de datos secundarias. Entre las principales editoriales se encuentran: Academic Press, North Holland o Pergamon, entre otras. La colección contiene más de 9.5 millones de documentos en texto completo, de alta calidad científica en 2,500 revistas y más de 11,000 libros, que abarcan diferentes áreas temáticas, entre las cuales se destacan: medicina, biología, física, matemáticas, ingeniería civil, ingeniería química, ingeniería informática, medio ambiente, ciencia de los materiales, ciencias sociales, sociología, artes y humanidades, economía, agricultura. La base de datos anualmente incluye casi 0.5 millones de nuevos documentos. Comprende millones de artículos en una gran cantidad de archivos de información histórica antes de 1995.</p>
+                    <div class="col-lg-11 col-md-11 col-sm-11 col-xs-11 pull-right">
+                        <div class="text-center margen-top-lg">
+                            <a href="http://www.sciencedirect.com.pbidi.unam.mx:8080/" target="_blank" class="linkimagebase"><img src="https://media.juridicas.unam.mx/www/site/BiBlDrJC/imagenes_servicios/sciencedirect.jpg" class="imagenbases hoverable card" src="servicio_acceso_bases" alt="servicio_acceso_bases"/></a>                        </div>
+                    </div>
+                </div>
+                <div class="Scopus">
+                    <h4 class="hinforevistas card-action">
+                        <a href="http://www-scopus-com.pbidi.unam.mx:8080/" target="_blank" class="linkhinforevistas">Scopus</a>                    </h4>
+                    <br>
+                    <p class="pjustificado previstas">Base de datos especializada en información científica, técnica, ciencias médicas y sociales, incluyendo las artes y las humanidades. Scopus abarca 29 millones de resúmenes de más de 18,500 revistas científicas (incluidas las 1,800 revistas de acceso abierto), 425 publicaciones comerciales, 325 series de libros, 250 actas de congresos, 46 millones de registros. Los datos bibliográficos proporcionan información sobre los puntos clave de la base, tales como: identificador de autor; citation Tracker para un mejor control y seguimiento de citas en tiempo real; alertas, RSS feeds y HTML para mantenerse al día, presenta interoperabilidad con SciVerse ScienceDirect, Reaxis y ProQuest CSA Illumina; y permite exportar los datos obtenidos a través de: RefWorks, EndNote y BibTeX. Scopus es una herramienta que ofrece a los investigadores un recurso rápido, sencillo y completo para apoyar sus necesidades de investigación en cualquier ámbito.</p>
+                    <div class="col-lg-11 col-md-11 col-sm-11 col-xs-11 pull-right">
+                        <div class="text-center margen-top-lg">
+                            <a href="http://www-scopus-com.pbidi.unam.mx:8080/" target="_blank" class="linkimagebase"><img src="https://media.juridicas.unam.mx/www/site/BiBlDrJC/imagenes_servicios/scopus.png" class="imagenbases hoverable card" src="servicio_acceso_bases" alt="servicio_acceso_bases"/></a>                        </div>
+                    </div>
+                </div>
+                <div class="Web_of_Science">
+                    <h4 class="hinforevistas card-action">
+                        <a href="http://biblat.unam.mx/es/" target="_blank" class="linkhinforevistas">Web of Science</a>                    </h4>
+                    <br>
+                    <p class="pjustificado previstas">Es un servicio que facilita el acceso a la literatura de autores y artículos citados de más de 10.000 revistas y más de 120.000 actas de conferencias y congresos, permite a los usuarios buscar información actual y retrospectiva en revistas de mayor prestigio e impacto en el mundo, se puede consultar en línea la literatura citada a partir de 1900 a la fecha, esta base de datos es actualizada semanalmente por Thomson Reuters.</p>
+                    <div class="col-lg-11 col-md-11 col-sm-11 col-xs-11 pull-right">
+                        <div class="text-center margen-top-lg">
+                            <a href="https://www-webofscience-com.pbidi.unam.mx:2443/wos/woscc/basic-search" target="_blank" class="linkimagebase"><img src="https://media.juridicas.unam.mx/www/site/BiBlDrJC/imagenes_servicios/web-of-science.jpg" class="imagenbases hoverable card" src="servicio_acceso_bases" alt="servicio_acceso_bases"/></a>                        </div>
+                    </div>
+                </div>
+                <div class="Biblio_media">
+                    <h4 class="hinforevistas card-action">
+                        <a href="http://biblat.unam.mx/es/" target="_blank" class="linkhinforevistas">Biblio media</a>                    </h4>
+                    <br>
+                    <p class="pjustificado previstas">Ofrece el acceso en línea al acervo actualizado e histórico de más de 1,000 publicaciones nacionales y de Latinoamérica. Incluye más de 1,800,000 documentos y proporciona el texto completo de: libros, tesis, Diario Oficial de la Federación, estadísticas, información legal, noticias, revistas de opinión, revistas científicas y de investigación, colecciones especiales, agencias noticiosas, columnistas, información de gobierno, directorios y guías.</p>
+                    <div class="col-lg-11 col-md-11 col-sm-11 col-xs-11 pull-right">
+                        <div class="text-center margen-top-lg">
+                            <a href="http://www.bibliomedia.com.mx.pbidi.unam.mx:8080/" target="_blank" class="linkimagebase"><img src="https://media.juridicas.unam.mx/www/site/BiBlDrJC/imagenes_servicios/bibliomedia.jpg" class="imagenbases hoverable card" src="servicio_acceso_bases" alt="servicio_acceso_bases"/></a>                        </div>
+                    </div>
+                </div>
+            </div>                                
+        </div>
+    </div>
+    <h4 class="margen-top-lg subtituloservicios margen-bottom-lg">Recursos libres</h4>
+    <hr class="lineaservicios">
+    <div class="row margen-top-lg">
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 text-center margen-top ">
+                    <a href="http://132.248.9.1:8991/F/-/?func=find-b-0&amp;local_base=ACL01" target="_blank"><img src="https://media.juridicas.unam.mx/www/site/BiBlDrJC/imagenes_servicios/congresi.jpg" class="img-recursos" alt="accesos_base_datos" src="accesos_base_datos"/></a>                </div>
+                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                    <h4 class="hinfocuadricula">
+                        <a href="http://132.248.9.1:8991/F/-/?func=find-b-0&amp;local_base=ACL01" target="_blank">Recursos electrónicos de Acceso Abierto</a>                    </h4>
+                    <p class="pjustificado textinfocuadricula">
+                    Diversos acervos electrónicos están consultables en acceso abierto a través del sitio web de la DGB como son: TESIUNAM, MAPAMEX, FONDO ANTIGUO, CLASE, PERIÓDICA y SciELO.<br><br>Este sitio permite realizar búsquedas de libros, revistas, sitios, material de consulta, por proveedores, temas o título.                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 text-center margen-top ">
+                    <a href="http://oa-hermes.unam.mx/oa-hermes.html" target="_blank"><img src="https://media.juridicas.unam.mx/www/site/BiBlDrJC/imagenes_servicios/oa-hermes.jpg" class="img-recursos" alt="accesos_base_datos" src="accesos_base_datos"/></a>                </div>
+                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                    <h4 class="hinfocuadricula">
+                        <a href="http://oa-hermes.unam.mx/oa-hermes.html" target="_blank">Hermes – Open Access</a>                    </h4>
+                    <p class="pjustificado textinfocuadricula">
+                    OA-Hermes es un metabuscador de contenidos electrónicos provenientes de fuentes de información localizadas en Internet, para ponerlas a disposición de la comunidad universitaria. Actualmente se tienen agrupadas alrededor de 60 fuentes de información, de las cuales se puede tener acceso a millones de registros. Esto representa una cantidad significativa de información para ser considerada como un complemento a los acervos de las bibliotecas universitarias.<br><br>OA-Hermes está diseñado de acuerdo a los siguientes propósitos:                    </p>
+                    <ul>
+                        <li>Agrupa múltiples fuentes de información abierta en una sola interfaz, proporcionando un mecanismo de búsqueda flexible y una interfaz de usuario amigable;</li>
+                        <li>Permite la búsqueda de información localizada en Internet Invisible;</li>
+                        <li>Selecciona fuentes de información con calidad suficiente para ser utilizada en el ámbito académico;</li>
+                        <li>Integra semánticamente la información recuperada;</li>
+                        <li>Optimiza recursos al utilizar, en la medida de lo posible, almacenamientos locales de información.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row margen-top-lg margen-bottom-lg">
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 text-center margen-top ">
+                    <a href="http://132.248.9.4:8991/F/-/?func=find-b-0&amp;local_base=CIS01" target="_blank"><img src="https://media.juridicas.unam.mx/www/site/BiBlDrJC/imagenes_servicios/impresos-sueltos.jpg" class="img-recursos" alt="accesos_base_datos" src="accesos_base_datos"/></a>                </div>
+                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                    <h4 class="hinfocuadricula">
+                        <a href="http://132.248.9.4:8991/F/-/?func=find-b-0&amp;local_base=CIS01" target="_blank">Colección de impresos sueltos ‘Tobías Chávez’</a>                    </h4>
+                    <p class="pjustificado textinfocuadricula">Colección de la Biblioteca Central de la UNAM que consta de 522 materiales impresos entre los que se encuentran: actas, acuerdos, folletos, manifiestos, proclamas, testamentos, tratados, además de diversos documentos que conforman esta primera parte de la colección y 23 manuscritos donde se pueden encontrar cartas, comunicados, constancias, pasaportes entre otros más, los cuales se pueden consultar de manera digital.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 text-center margen-top ">
+                    <a href="http://132.248.9.4:8991/F/-/?func=find-b-0&amp;local_base=FOL0" target="_blank"><img src="https://media.juridicas.unam.mx/www/site/BiBlDrJC/imagenes_servicios/folleteria.jpg" class="img-recursos" alt="accesos_base_datos" src="accesos_base_datos"/></a>                </div>
+                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                    <h4 class="hinfocuadricula">
+                        <a href="http://132.248.9.4:8991/F/-/?func=find-b-0&amp;local_base=FOL0" target="_blank">Folletería mexicana Siglo XIX</a>                    </h4>
+                    <p class="pjustificado textinfocuadricula">Catálogo de la Dirección General de Biblioteca de la UNAM que se encuentra compuesta por folletería mexicana de los siglos XIX y XX; dicha colección es de orden político, escolar, religioso, además algunas de las obras se encuentran digitalizadas para sus consulta.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row margen-top-lg margen-bottom-lg">
+        <div class="col-lg-6 col-md-6 col-sm-6">
+            <h4 class="margen-top-lg subtituloservicios">
+                <a href="http://132.248.9.4:8991/F/-/?func=find-b-0&amp;local_base=SERBIDI" target="_blank" class="linkhinforevistas">Revistas electrónicas</a>            </h4>
+            <hr class="lineabases">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 text-center margen-top ">
+                    <a href="http://132.248.9.4:8991/F/-/?func=find-b-0&amp;local_base=SERBIDI" target="_blank"><img src="https://media.juridicas.unam.mx/www/site/BiBlDrJC/imagenes_servicios/revistas-electronicas.jpg" class="img-accesos" alt="accesos_base_datos" src="accesos_base_datos"/></a>                </div>
+                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                    <p class="pjustificado textoinfobases">Revistas científicas y técnicas. Colección de publicaciones periódicas y seriadas suscritas por la UNAM, tanto impresas como electrónicas. Las primeras representan alrededor de 5,000 títulos únicos, mientras que la colección de revistas electrónicas asciende a más de 26,000 títulos. La UNAM a través de su Dirección General de Bibliotecas ha sido promotora del Consorcio Nacional de Recursos de Información Científica y Tecnológica, cuyo objetivo es mantener la continuidad en las colecciones, fortalecer las adquisiciones y suscripciones a publicaciones científicas, racionalizar el uso de recursos económicos y materiales y promover el acceso al texto completo de las revistas de calidad.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6">
+            <h4 class="margen-top-lg subtituloservicios">
+                <a href="https://www.bidi.unam.mx/index.php/sitios-de-interes/recursos-electronicos-en-evaluacion" target="_blank" class="linkhinforevistas">Recursos electrónicos en evaluación</a>            </h4>
+            <hr class="lineabases">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 text-center margen-top ">
+                    <a href="http://dgb.unam.mx/index.php/recursos-electronicos-en-evaluacion" target="_blank"><img src="https://media.juridicas.unam.mx/www/site/BiBlDrJC/imagenes_servicios/imgres.jpg" class="img-accesos" alt="accesos_base_datos" src="accesos_base_datos"/></a>                </div>
+                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                    <p class="pjustificado textoinfobases">
+                    Este sitio ofrece una prueba a diversos recursos electrónicos. Entre las bases de datos a consultar está una de libro electrónico: Gale Virtual Reference Library.<br><br>Libros electrónicos. Esta base de datos se compone de enciclopedias, almanaques y fuentes especializadas de referencia para investigaciones multidisciplinarias.                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+
+        $(".LATINDEX").addClass("hidden");
+        $(".PERIODICA").addClass("hidden");
+        $(".SciELO_Mexico").addClass("hidden");
+        $(".BIBLAT").addClass("hidden");
+
+        $("#CLASE").click( function(){   
+            $("#CLASE").removeClass("active");
+            $("#LATINDEX").removeClass("active");
+            $("#PERIODICA").removeClass("active");
+            $("#SciELO_Mexico").removeClass("active");
+            $("#BIBLAT").removeClass("active");
+            $("#CLASE").addClass("active");
+            $(".CLASE").addClass("hidden");
+            $(".LATINDEX").addClass("hidden");
+            $(".PERIODICA").addClass("hidden");
+            $(".SciELO_Mexico").addClass("hidden");
+            $(".BIBLAT").addClass("hidden");
+            $(".CLASE").removeClass("hidden");
+        });
+        $("#LATINDEX").click( function(){
+            $("#CLASE").removeClass("active");
+            $("#LATINDEX").removeClass("active");
+            $("#PERIODICA").removeClass("active");
+            $("#SciELO_Mexico").removeClass("active");
+            $("#BIBLAT").removeClass("active");
+            $("#LATINDEX").addClass("active");
+            $(".CLASE").addClass("hidden");
+            $(".LATINDEX").addClass("hidden");
+            $(".PERIODICA").addClass("hidden");
+            $(".SciELO_Mexico").addClass("hidden");
+            $(".BIBLAT").addClass("hidden");
+            $(".LATINDEX").removeClass("hidden");
+        });
+        $("#PERIODICA").click( function(){
+            $("#CLASE").removeClass("active");
+            $("#LATINDEX").removeClass("active");
+            $("#PERIODICA").removeClass("active");
+            $("#SciELO_Mexico").removeClass("active");
+            $("#BIBLAT").removeClass("active");
+            $("#PERIODICA").addClass("active");
+            $(".CLASE").addClass("hidden");
+            $(".LATINDEX").addClass("hidden");
+            $(".PERIODICA").addClass("hidden");
+            $(".SciELO_Mexico").addClass("hidden");
+            $(".BIBLAT").addClass("hidden");
+            $(".PERIODICA").removeClass("hidden");
+        });
+        $("#SciELO_Mexico").click( function(){
+            $("#CLASE").removeClass("active");
+            $("#LATINDEX").removeClass("active");
+            $("#PERIODICA").removeClass("active");
+            $("#SciELO_Mexico").removeClass("active");
+            $("#BIBLAT").removeClass("active");
+            $("#SciELO_Mexico").addClass("active");
+            $(".CLASE").addClass("hidden");
+            $(".LATINDEX").addClass("hidden");
+            $(".PERIODICA").addClass("hidden");
+            $(".SciELO_Mexico").addClass("hidden");
+            $(".BIBLAT").addClass("hidden");
+            $(".SciELO_Mexico").removeClass("hidden");
+        });
+        $("#BIBLAT").click( function(){
+            $("#CLASE").removeClass("active");
+            $("#LATINDEX").removeClass("active");
+            $("#PERIODICA").removeClass("active");
+            $("#SciELO_Mexico").removeClass("active");
+            $("#BIBLAT").removeClass("active");
+            $("#BIBLAT").addClass("active");
+            $(".CLASE").addClass("hidden");
+            $(".LATINDEX").addClass("hidden");
+            $(".PERIODICA").addClass("hidden");
+            $(".SciELO_Mexico").addClass("hidden");
+            $(".BIBLAT").addClass("hidden");
+            $(".BIBLAT").removeClass("hidden");
+        });
+    });
+    
+    function test(a) {
+                    var x = (a.value || a.options[a.selectedIndex].value);  //crossbrowser solution =)
+                    if(x === 'CLASE'){
+                        $("#CLASE").removeClass("active");
+                        $("#LATINDEX").removeClass("active");
+                        $("#PERIODICA").removeClass("active");
+                        $("#SciELO_Mexico").removeClass("active");
+                        $("#BIBLAT").removeClass("active");
+                        $("#CLASE").addClass("active");
+                        $(".CLASE").addClass("hidden");
+                        $(".LATINDEX").addClass("hidden");
+                        $(".PERIODICA").addClass("hidden");
+                        $(".SciELO_Mexico").addClass("hidden");
+                        $(".BIBLAT").addClass("hidden");
+                        $(".CLASE").removeClass("hidden");
+                    } else if (x === 'LATINDEX') {
+                        $("#CLASE").removeClass("active");
+                        $("#LATINDEX").removeClass("active");
+                        $("#PERIODICA").removeClass("active");
+                        $("#SciELO_Mexico").removeClass("active");
+                        $("#BIBLAT").removeClass("active");
+                        $("#CLASE").addClass("active");
+                        $(".CLASE").addClass("hidden");
+                        $(".LATINDEX").addClass("hidden");
+                        $(".PERIODICA").addClass("hidden");
+                        $(".SciELO_Mexico").addClass("hidden");
+                        $(".BIBLAT").addClass("hidden");
+                        $(".LATINDEX").removeClass("hidden");
+                    } else if (x === 'PERIODICA') {
+                        $("#CLASE").removeClass("active");
+                        $("#LATINDEX").removeClass("active");
+                        $("#PERIODICA").removeClass("active");
+                        $("#SciELO_Mexico").removeClass("active");
+                        $("#BIBLAT").removeClass("active");
+                        $("#CLASE").addClass("active");
+                        $(".CLASE").addClass("hidden");
+                        $(".LATINDEX").addClass("hidden");
+                        $(".PERIODICA").addClass("hidden");
+                        $(".SciELO_Mexico").addClass("hidden");
+                        $(".BIBLAT").addClass("hidden");
+                        $(".PERIODICA").removeClass("hidden");
+                    } else if (x === 'SciELO_Mexico') {
+                        $("#CLASE").removeClass("active");
+                        $("#LATINDEX").removeClass("active");
+                        $("#PERIODICA").removeClass("active");
+                        $("#SciELO_Mexico").removeClass("active");
+                        $("#BIBLAT").removeClass("active");
+                        $("#CLASE").addClass("active");
+                        $(".CLASE").addClass("hidden");
+                        $(".LATINDEX").addClass("hidden");
+                        $(".PERIODICA").addClass("hidden");
+                        $(".SciELO_Mexico").addClass("hidden");
+                        $(".BIBLAT").addClass("hidden");
+                        $(".SciELO_Mexico").removeClass("hidden");
+                    } else if (x === 'BIBLAT') {
+                        $("#CLASE").removeClass("active");
+                        $("#LATINDEX").removeClass("active");
+                        $("#PERIODICA").removeClass("active");
+                        $("#SciELO_Mexico").removeClass("active");
+                        $("#BIBLAT").removeClass("active");
+                        $("#CLASE").addClass("active");
+                        $(".CLASE").addClass("hidden");
+                        $(".LATINDEX").addClass("hidden");
+                        $(".PERIODICA").addClass("hidden");
+                        $(".SciELO_Mexico").addClass("hidden");
+                        $(".BIBLAT").addClass("hidden");
+                        $(".BIBLAT").removeClass("hidden");
+                    }
+                }
+                
+                
+/*****/                
+$(document).ready(function() {
+
+                $(".ProQuest").addClass("hidden");
+                $(".Dissertations_theses").addClass("hidden");
+                $(".Springer").addClass("hidden");
+                $(".Emerald").addClass("hidden");
+                $(".Science_direct").addClass("hidden");
+                $(".Scopus").addClass("hidden");
+                $(".Web_of_Science").addClass("hidden");
+                $(".Biblio_media").addClass("hidden");
+
+                $("#ECCO").click( function(){   
+                    $("#ECCO").removeClass("active");
+                    $("#ProQuest").removeClass("active");
+                    $("#Dissertations_theses").removeClass("active");
+                    $("#Springer").removeClass("active");
+                    $("#Emerald").removeClass("active");
+                    $("#Science_direct").removeClass("active");
+                    $("#Scopus").removeClass("active");
+                    $("#Web_of_Science").removeClass("active");
+                    $("#Biblio_media").removeClass("active");
+                    $("#ECCO").addClass("active");
+                    $(".ProQuest").addClass("hidden");
+                    $(".Dissertations_theses").addClass("hidden");
+                    $(".Springer").addClass("hidden");
+                    $(".Emerald").addClass("hidden");
+                    $(".Science_direct").addClass("hidden");
+                    $(".Scopus").addClass("hidden");
+                    $(".Web_of_Science").addClass("hidden");
+                    $(".Biblio_media").addClass("hidden");
+                    $(".ECCO").removeClass("hidden");
+                });
+
+                $("#ProQuest").click( function(){   
+                    $("#ECCO").removeClass("active");
+                    $("#ProQuest").removeClass("active");
+                    $("#Dissertations_theses").removeClass("active");
+                    $("#Springer").removeClass("active");
+                    $("#Emerald").removeClass("active");
+                    $("#Science_direct").removeClass("active");
+                    $("#Scopus").removeClass("active");
+                    $("#Web_of_Science").removeClass("active");
+                    $("#Biblio_media").removeClass("active");
+                    $("#ProQuest").addClass("active");
+                    $(".ECCO").addClass("hidden");
+                    $(".Dissertations_theses").addClass("hidden");
+                    $(".Springer").addClass("hidden");
+                    $(".Emerald").addClass("hidden");
+                    $(".Science_direct").addClass("hidden");
+                    $(".Scopus").addClass("hidden");
+                    $(".Web_of_Science").addClass("hidden");
+                    $(".Biblio_media").addClass("hidden");
+                    $(".ProQuest").removeClass("hidden");
+                });
+
+                $("#Dissertations_theses").click( function(){   
+                    $("#ECCO").removeClass("active");
+                    $("#ProQuest").removeClass("active");
+                    $("#Dissertations_theses").removeClass("active");
+                    $("#Springer").removeClass("active");
+                    $("#Emerald").removeClass("active");
+                    $("#Science_direct").removeClass("active");
+                    $("#Scopus").removeClass("active");
+                    $("#Web_of_Science").removeClass("active");
+                    $("#Biblio_media").removeClass("active");
+                    $("#Dissertations_theses").addClass("active");
+                    $(".ECCO").addClass("hidden");
+                    $(".ProQuest").addClass("hidden");
+                    $(".Dissertations_theses").addClass("hidden");
+                    $(".Springer").addClass("hidden");
+                    $(".Emerald").addClass("hidden");
+                    $(".Science_direct").addClass("hidden");
+                    $(".Scopus").addClass("hidden");
+                    $(".Web_of_Science").addClass("hidden");
+                    $(".Biblio_media").addClass("hidden");
+                    $(".Dissertations_theses").removeClass("hidden");
+                });
+
+                $("#Springer").click( function(){   
+                    $("#ECCO").removeClass("active");
+                    $("#ProQuest").removeClass("active");
+                    $("#Dissertations_theses").removeClass("active");
+                    $("#Springer").removeClass("active");
+                    $("#Emerald").removeClass("active");
+                    $("#Science_direct").removeClass("active");
+                    $("#Scopus").removeClass("active");
+                    $("#Web_of_Science").removeClass("active");
+                    $("#Biblio_media").removeClass("active");
+                    $("#Springer").addClass("active");
+                    $(".ECCO").addClass("hidden");
+                    $(".ProQuest").addClass("hidden");
+                    $(".Dissertations_theses").addClass("hidden");
+                    $(".Springer").addClass("hidden");
+                    $(".Emerald").addClass("hidden");
+                    $(".Science_direct").addClass("hidden");
+                    $(".Scopus").addClass("hidden");
+                    $(".Web_of_Science").addClass("hidden");
+                    $(".Biblio_media").addClass("hidden");
+                    $(".Springer").removeClass("hidden");
+                });
+
+                $("#Emerald").click( function(){   
+                    $("#ECCO").removeClass("active");
+                    $("#ProQuest").removeClass("active");
+                    $("#Dissertations_theses").removeClass("active");
+                    $("#Springer").removeClass("active");
+                    $("#Emerald").removeClass("active");
+                    $("#Science_direct").removeClass("active");
+                    $("#Scopus").removeClass("active");
+                    $("#Web_of_Science").removeClass("active");
+                    $("#Biblio_media").removeClass("active");
+                    $("#Emerald").addClass("active");
+                    $(".ECCO").addClass("hidden");
+                    $(".ProQuest").addClass("hidden");
+                    $(".Dissertations_theses").addClass("hidden");
+                    $(".Springer").addClass("hidden");
+                    $(".Emerald").addClass("hidden");
+                    $(".Science_direct").addClass("hidden");
+                    $(".Scopus").addClass("hidden");
+                    $(".Web_of_Science").addClass("hidden");
+                    $(".Biblio_media").addClass("hidden");
+                    $(".Emerald").removeClass("hidden");
+                });
+
+                $("#Science_direct").click( function(){   
+                    $("#ECCO").removeClass("active");
+                    $("#ProQuest").removeClass("active");
+                    $("#Dissertations_theses").removeClass("active");
+                    $("#Springer").removeClass("active");
+                    $("#Emerald").removeClass("active");
+                    $("#Science_direct").removeClass("active");
+                    $("#Scopus").removeClass("active");
+                    $("#Web_of_Science").removeClass("active");
+                    $("#Biblio_media").removeClass("active");
+                    $("#Science_direct").addClass("active");
+                    $(".ECCO").addClass("hidden");
+                    $(".ProQuest").addClass("hidden");
+                    $(".Dissertations_theses").addClass("hidden");
+                    $(".Springer").addClass("hidden");
+                    $(".Emerald").addClass("hidden");
+                    $(".Science_direct").addClass("hidden");
+                    $(".Scopus").addClass("hidden");
+                    $(".Web_of_Science").addClass("hidden");
+                    $(".Biblio_media").addClass("hidden");
+                    $(".Science_direct").removeClass("hidden");
+                });
+
+                $("#Scopus").click( function(){   
+                    $("#ECCO").removeClass("active");
+                    $("#ProQuest").removeClass("active");
+                    $("#Dissertations_theses").removeClass("active");
+                    $("#Springer").removeClass("active");
+                    $("#Emerald").removeClass("active");
+                    $("#Science_direct").removeClass("active");
+                    $("#Scopus").removeClass("active");
+                    $("#Web_of_Science").removeClass("active");
+                    $("#Biblio_media").removeClass("active");
+                    $("#Scopus").addClass("active");
+                    $(".ECCO").addClass("hidden");
+                    $(".ProQuest").addClass("hidden");
+                    $(".Dissertations_theses").addClass("hidden");
+                    $(".Springer").addClass("hidden");
+                    $(".Emerald").addClass("hidden");
+                    $(".Science_direct").addClass("hidden");
+                    $(".Scopus").addClass("hidden");
+                    $(".Web_of_Science").addClass("hidden");
+                    $(".Biblio_media").addClass("hidden");
+                    $(".Scopus").removeClass("hidden");
+                });
+
+                $("#Web_of_Science").click( function(){   
+                    $("#ECCO").removeClass("active");
+                    $("#ProQuest").removeClass("active");
+                    $("#Dissertations_theses").removeClass("active");
+                    $("#Springer").removeClass("active");
+                    $("#Emerald").removeClass("active");
+                    $("#Science_direct").removeClass("active");
+                    $("#Scopus").removeClass("active");
+                    $("#Web_of_Science").removeClass("active");
+                    $("#Biblio_media").removeClass("active");
+                    $("#Web_of_Science").addClass("active");
+                    $(".ECCO").addClass("hidden");
+                    $(".ProQuest").addClass("hidden");
+                    $(".Dissertations_theses").addClass("hidden");
+                    $(".Springer").addClass("hidden");
+                    $(".Emerald").addClass("hidden");
+                    $(".Science_direct").addClass("hidden");
+                    $(".Scopus").addClass("hidden");
+                    $(".Web_of_Science").addClass("hidden");
+                    $(".Biblio_media").addClass("hidden");
+                    $(".Web_of_Science").removeClass("hidden");
+                });
+
+                $("#Biblio_media").click( function(){   
+                    $("#ECCO").removeClass("active");
+                    $("#ProQuest").removeClass("active");
+                    $("#Dissertations_theses").removeClass("active");
+                    $("#Springer").removeClass("active");
+                    $("#Emerald").removeClass("active");
+                    $("#Science_direct").removeClass("active");
+                    $("#Scopus").removeClass("active");
+                    $("#Web_of_Science").removeClass("active");
+                    $("#Biblio_media").removeClass("active");
+                    $("#Biblio_media").addClass("active");
+                    $(".ECCO").addClass("hidden");
+                    $(".ProQuest").addClass("hidden");
+                    $(".Dissertations_theses").addClass("hidden");
+                    $(".Springer").addClass("hidden");
+                    $(".Emerald").addClass("hidden");
+                    $(".Science_direct").addClass("hidden");
+                    $(".Scopus").addClass("hidden");
+                    $(".Web_of_Science").addClass("hidden");
+                    $(".Biblio_media").addClass("hidden");
+                    $(".Biblio_media").removeClass("hidden");
+                });
+            });
+            
+function bases(a) {
+    var x = (a.value || a.options[a.selectedIndex].value);  //crossbrowser solution =)
+    if(x === 'ECCO'){
+        $("#ECCO").removeClass("active");
+        $("#ProQuest").removeClass("active");
+        $("#Dissertations_theses").removeClass("active");
+        $("#Springer").removeClass("active");
+        $("#Emerald").removeClass("active");
+        $("#Science_direct").removeClass("active");
+        $("#Scopus").removeClass("active");
+        $("#Web_of_Science").removeClass("active");
+        $("#Biblio_media").removeClass("active");
+        $("#ECCO").addClass("active");
+        $(".ProQuest").addClass("hidden");
+        $(".Dissertations_theses").addClass("hidden");
+        $(".Springer").addClass("hidden");
+        $(".Emerald").addClass("hidden");
+        $(".Science_direct").addClass("hidden");
+        $(".Scopus").addClass("hidden");
+        $(".Web_of_Science").addClass("hidden");
+        $(".Biblio_media").addClass("hidden");
+        $(".ECCO").removeClass("hidden");
+    } else if (x === 'ProQuest') {
+        $("#ECCO").removeClass("active");
+        $("#ProQuest").removeClass("active");
+        $("#Dissertations_theses").removeClass("active");
+        $("#Springer").removeClass("active");
+        $("#Emerald").removeClass("active");
+        $("#Science_direct").removeClass("active");
+        $("#Scopus").removeClass("active");
+        $("#Web_of_Science").removeClass("active");
+        $("#Biblio_media").removeClass("active");
+        $("#ProQuest").addClass("active");
+        $(".ECCO").addClass("hidden");
+        $(".Dissertations_theses").addClass("hidden");
+        $(".Springer").addClass("hidden");
+        $(".Emerald").addClass("hidden");
+        $(".Science_direct").addClass("hidden");
+        $(".Scopus").addClass("hidden");
+        $(".Web_of_Science").addClass("hidden");
+        $(".Biblio_media").addClass("hidden");
+        $(".ProQuest").removeClass("hidden");
+    } else if (x === 'Dissertations_theses') {
+        $("#ECCO").removeClass("active");
+        $("#ProQuest").removeClass("active");
+        $("#Dissertations_theses").removeClass("active");
+        $("#Springer").removeClass("active");
+        $("#Emerald").removeClass("active");
+        $("#Science_direct").removeClass("active");
+        $("#Scopus").removeClass("active");
+        $("#Web_of_Science").removeClass("active");
+        $("#Biblio_media").removeClass("active");
+        $("#Dissertations_theses").addClass("active");
+        $(".ECCO").addClass("hidden");
+        $(".ProQuest").addClass("hidden");
+        $(".Dissertations_theses").addClass("hidden");
+        $(".Springer").addClass("hidden");
+        $(".Emerald").addClass("hidden");
+        $(".Science_direct").addClass("hidden");
+        $(".Scopus").addClass("hidden");
+        $(".Web_of_Science").addClass("hidden");
+        $(".Biblio_media").addClass("hidden");
+        $(".Dissertations_theses").removeClass("hidden");
+    } else if (x === 'Springer') {
+        $("#ECCO").removeClass("active");
+        $("#ProQuest").removeClass("active");
+        $("#Dissertations_theses").removeClass("active");
+        $("#Springer").removeClass("active");
+        $("#Emerald").removeClass("active");
+        $("#Science_direct").removeClass("active");
+        $("#Scopus").removeClass("active");
+        $("#Web_of_Science").removeClass("active");
+        $("#Biblio_media").removeClass("active");
+        $("#Springer").addClass("active");
+        $(".ECCO").addClass("hidden");
+        $(".ProQuest").addClass("hidden");
+        $(".Dissertations_theses").addClass("hidden");
+        $(".Springer").addClass("hidden");
+        $(".Emerald").addClass("hidden");
+        $(".Science_direct").addClass("hidden");
+        $(".Scopus").addClass("hidden");
+        $(".Web_of_Science").addClass("hidden");
+        $(".Biblio_media").addClass("hidden");
+        $(".Springer").removeClass("hidden");
+    } else if (x === 'Emerald') {
+        $("#ECCO").removeClass("active");
+        $("#ProQuest").removeClass("active");
+        $("#Dissertations_theses").removeClass("active");
+        $("#Springer").removeClass("active");
+        $("#Emerald").removeClass("active");
+        $("#Science_direct").removeClass("active");
+        $("#Scopus").removeClass("active");
+        $("#Web_of_Science").removeClass("active");
+        $("#Biblio_media").removeClass("active");
+        $("#Emerald").addClass("active");
+        $(".ECCO").addClass("hidden");
+        $(".ProQuest").addClass("hidden");
+        $(".Dissertations_theses").addClass("hidden");
+        $(".Springer").addClass("hidden");
+        $(".Emerald").addClass("hidden");
+        $(".Science_direct").addClass("hidden");
+        $(".Scopus").addClass("hidden");
+        $(".Web_of_Science").addClass("hidden");
+        $(".Biblio_media").addClass("hidden");
+        $(".Emerald").removeClass("hidden");
+    }else if (x === 'Science_direct') {
+        $("#ECCO").removeClass("active");
+        $("#ProQuest").removeClass("active");
+        $("#Dissertations_theses").removeClass("active");
+        $("#Springer").removeClass("active");
+        $("#Emerald").removeClass("active");
+        $("#Science_direct").removeClass("active");
+        $("#Scopus").removeClass("active");
+        $("#Web_of_Science").removeClass("active");
+        $("#Biblio_media").removeClass("active");
+        $("#Science_direct").addClass("active");
+        $(".ECCO").addClass("hidden");
+        $(".ProQuest").addClass("hidden");
+        $(".Dissertations_theses").addClass("hidden");
+        $(".Springer").addClass("hidden");
+        $(".Emerald").addClass("hidden");
+        $(".Science_direct").addClass("hidden");
+        $(".Scopus").addClass("hidden");
+        $(".Web_of_Science").addClass("hidden");
+        $(".Biblio_media").addClass("hidden");
+        $(".Science_direct").removeClass("hidden");
+    }else if (x === 'Scopus') {
+        $("#ECCO").removeClass("active");
+        $("#ProQuest").removeClass("active");
+        $("#Dissertations_theses").removeClass("active");
+        $("#Springer").removeClass("active");
+        $("#Emerald").removeClass("active");
+        $("#Science_direct").removeClass("active");
+        $("#Scopus").removeClass("active");
+        $("#Web_of_Science").removeClass("active");
+        $("#Biblio_media").removeClass("active");
+        $("#Scopus").addClass("active");
+        $(".ECCO").addClass("hidden");
+        $(".ProQuest").addClass("hidden");
+        $(".Dissertations_theses").addClass("hidden");
+        $(".Springer").addClass("hidden");
+        $(".Emerald").addClass("hidden");
+        $(".Science_direct").addClass("hidden");
+        $(".Scopus").addClass("hidden");
+        $(".Web_of_Science").addClass("hidden");
+        $(".Biblio_media").addClass("hidden");
+        $(".Scopus").removeClass("hidden");
+    }else if (x === 'Web_of_Science') {
+        $("#ECCO").removeClass("active");
+        $("#ProQuest").removeClass("active");
+        $("#Dissertations_theses").removeClass("active");
+        $("#Springer").removeClass("active");
+        $("#Emerald").removeClass("active");
+        $("#Science_direct").removeClass("active");
+        $("#Scopus").removeClass("active");
+        $("#Web_of_Science").removeClass("active");
+        $("#Biblio_media").removeClass("active");
+        $("#Web_of_Science").addClass("active");
+        $(".ECCO").addClass("hidden");
+        $(".ProQuest").addClass("hidden");
+        $(".Dissertations_theses").addClass("hidden");
+        $(".Springer").addClass("hidden");
+        $(".Emerald").addClass("hidden");
+        $(".Science_direct").addClass("hidden");
+        $(".Scopus").addClass("hidden");
+        $(".Web_of_Science").addClass("hidden");
+        $(".Biblio_media").addClass("hidden");
+        $(".Web_of_Science").removeClass("hidden");
+    }else if (x === 'Biblio_media') {
+        $("#ECCO").removeClass("active");
+        $("#ProQuest").removeClass("active");
+        $("#Dissertations_theses").removeClass("active");
+        $("#Springer").removeClass("active");
+        $("#Emerald").removeClass("active");
+        $("#Science_direct").removeClass("active");
+        $("#Scopus").removeClass("active");
+        $("#Web_of_Science").removeClass("active");
+        $("#Biblio_media").removeClass("active");
+        $("#Biblio_media").addClass("active");
+        $(".ECCO").addClass("hidden");
+        $(".ProQuest").addClass("hidden");
+        $(".Dissertations_theses").addClass("hidden");
+        $(".Springer").addClass("hidden");
+        $(".Emerald").addClass("hidden");
+        $(".Science_direct").addClass("hidden");
+        $(".Scopus").addClass("hidden");
+        $(".Web_of_Science").addClass("hidden");
+        $(".Biblio_media").addClass("hidden");
+        $(".Biblio_media").removeClass("hidden");
+    }
+}
+
+/***************   Catálogos colectivos ***************************************/
+    $(document).ready(function() {            
+        $('#catalogos').children().hide();
+        $('#catalogos').children().first().show();
+    });
+
+    function catalogos(str, e){
+        $('#catalogo').children().removeClass('active');
+        e.addClass('active');
+        $('#catalogos').children().hide();
+        $('#'+str).show();
+    }
+</script>        </div>
+        <footer class="footer">
+            <div class="container margen-top-lg">
+                <div class="row">
+                    <div class="col-sm-6 col-xs-12 col-sm-push-6 seccion-menu texto-menu visible-sm visible-xs">
+                        <div class="redes-menu text-center">
+                        <a href="https://www.facebook.com/IIJUNAM" class="icono-red" target="_blank"><img src="/img/rs-facebook-bco.png?1692650883" alt="facebook-iij" title="IIJUNAM en Facebook"/></a><a href="https://twitter.com/IIJUNAM" class="icono-red" target="_blank"><img src="/img/rs-x-bco.png?1692650883" alt="twitter-iij" title="IIJUNAM en X"/></a><a href="https://www.youtube.com/IIJUNAM" class="icono-red" target="_blank"><img src="/img/rs-youtube-bco.png?1692650883" alt="youtube-iij" title="IIJUNAM en YouTube"/></a><a href="https://www.instagram.com/iijunam/" class="icono-red" target="_blank"><img src="/img/rs-instagram-bco.png?1692650883" alt="instagram-iij" title="IIJUNAM en Instagram"/></a><a href="https://www.tiktok.com/@iijunam/" class="icono-red" target="_blank"><img src="/img/rs-tiktok-bco.png?1692650883" alt="tiktok-iij" title="IIJUNAM en TikTok"/></a><a href="https://www.threads.net/@iijunam" class="icono-red" target="_blank"><img src="/img/rs-threads-bco.png?1692650883" alt="threads-iij" title="IIJUNAM en Threads"/></a>                        </div>
+                    </div>
+                    <div class="col-lg-1 col-lg-pull-0 col-md-2 col-md-pull-0 col-sm-6 col-xs-12 col-sm-pull-6 firma-unam">
+                    <img src="/img/logo-475.png?1770661704" class="logo-475+" title="UNAM, 475+ Universidad de México" alt=""/>                    </div>
+                    <div class="col-sm-12 col-xs-12 hidden-lg hidden-md">
+                        <div class="ligas-footer">
+                            <p class=""><strong>Sitios internos</strong></p>
+                            <p class="">
+                            <a href="http://www2.juridicas.unam.mx/obligaciones-minimas/" target="_blank">Sistema de Productividad Académica</a><a href="/acerca-de/sgc">Catálogo de Servicios Secretaría Administrativa SGC</a>                            </p></br>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-lg-push-7 col-md-4 col-md-push-6 col-sm-12 col-xs-12">
+                        <div class="">
+                            Circuito Maestro Mario de la Cueva s/n<br/>
+                            Ciudad Universitaria, Alc. Coyoacán<br/>
+                            Ciudad de México, C.P. 04510<br/>
+                            Tel. +52(55)5622 7474
+                            <br/><br/>
+                            <a href="https://www.google.com/maps?ll=19.315648,-99.180589&amp;z=17&amp;t=m&amp;hl=es-ES&amp;gl=MX&amp;mapclient=embed&amp;cid=4373376619727935970" target="_blank"><img src="/img/icono-map.png?1469987710" class="icono-map-footer" alt=""/><strong>¿Cómo llegar?</strong></a>                            <br/><br/>
+                            <a href="https://www.juridicas.unam.mx/pagina/suscribirse"><span class="glyphicon glyphicon-envelope icono-sub-footer" aria-hidden="true"></span>Suscripción a actividades académicas</a>                            <br/><br/>
+                            <a href="https://www.juridicas.unam.mx/pagina/aviso-privacidad/" target="_blank"><span class="glyphicon glyphicon-bookmark icono-sub-footer" aria-hidden="true"></span>Aviso de privacidad</a>                            <br/><br/>
+                            <a href="/es/pagina/proteccion_datos_personales"><span class="glyphicon glyphicon-lock icono-sub-footer" aria-hidden="true"></span>Protección de datos personales</a>                            <br/><br/>
+                        </div>
+                        <div class="">
+<!--
+                        <a href="/es/pagina/aviso_legal">Aviso legal</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="/es/pagina/creditos">Créditos</a>-->
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-lg-pull-4 col-lg-offset-1 col-md-6 col-md-pull-4 col-sm-12 col-xs-12">
+                        <div class="ligas-footer visible-lg visible-md">
+                            <p class=""><strong>Sitios internos</strong></p>
+                            <p class="">
+                            <a href="/acerca-de/sgc">Catálogo de Servicios Secretaría Administrativa SGC</a>                            </p></br>
+                        </div>
+                        <p class="small">
+                        Hecho en México, Universidad Nacional Autónoma de México (UNAM), todos los derechos reservados 2026.<br/>Esta página y sus contenidos pueden ser reproducidos con fines no lucrativos, siempre y cuando no se mutile, se cite la fuente completa y su dirección electrónica.<br/>De otra forma, requiere permiso previo por escrito de la institución.                        </p><br/>
+                        <p class="small">
+                        Sitio web administrado por el Instituto de Investigaciones Jurídicas.<br>Cualquier asunto relacionado con este portal favor de dirigirse a: <a href="mailto:padiij@unam.mx">padiij@unam.mx</a>                        </p><br/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-1 col-md-2 hidden-sm hidden-xs">&nbsp;</div>
+                    <div class="col-lg-6 col-lg-offset-1 col-md-6 col-sm-12">
+                        <p class="small">
+                        Última actualización: 15/11/2026                        </p>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                                        </div>
+                </div>
+            </div>
+        </footer>
+        <button class="scrollToTop"  type="button" >
+            <span class="glyphicon glyphicon-menu-up glyphicon-align-left" aria-hidden="true"></span>
+        </button>
+        <script>
+            // Despleigue del menú hamburguesa
+            $(document).ready(function(){
+                $('.hamburger').click(function() {
+                    $('.hamburger').toggleClass('is-active');
+                    if ($('.hamburger').hasClass('is-active')){
+                        $('#menu-principal').fadeIn(200);
+                        $('.top-unam-home').removeClass('opacidad');
+                        $('.contenedor-principal').hide();
+                        $('html, body').scrollTop(0);
+                    }else{
+                        $('#menu-principal').hide();
+                        $('.top-unam-home').addClass('opacidad');
+                        $('.contenedor-principal').show();
+                    }
+                    return false;
+                });
+            });
+        </script>
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-82184401-1', 'auto');
+            ga('send', 'pageview');
+        </script>
+    </body>
+</html>

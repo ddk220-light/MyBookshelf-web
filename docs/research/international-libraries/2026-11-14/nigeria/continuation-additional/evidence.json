@@ -1,0 +1,572 @@
+{
+  "checked_at_utc": "2026-11-15T07:10:57.400544+00:00",
+  "method": "Low-volume unauthenticated read-only ordinary HTTP requests, normal TLS, robots checks; actual book queries required. Named successes are integration candidates, NOT a national top10 size ranking.",
+  "verified_candidates": [
+    {
+      "id": "NG-NISER",
+      "name": "Nigerian Institute of Social and Economic Research Library",
+      "platform": "ERAILS custom Django OPAC",
+      "catalog": "https://publications.niser.gov.ng/library/opac/initial/",
+      "verified": true,
+      "size": {
+        "physical_volumes": null,
+        "national_rank": null,
+        "scope": "Established federal social/economic policy research library; historical18000 bound volumes observed1972 (Library of Congress report1973). Current physical collection total unknown.",
+        "warning": "13K+ ebook/resources homepage counter describes external OER, not local print holdings; record IDs and pagination are not collection counts.",
+        "historical_measurements": [
+          {
+            "value": 18000,
+            "qualifier": "about",
+            "unit": "bound volumes",
+            "observation_date": "January21–29,1972",
+            "publication_year": 1973,
+            "author": "Julian W. Witherell",
+            "publisher": "Library of Congress",
+            "title": "Africana Acquisitions: Report of a Publication Survey Trip to Nigeria, Southern Africa, and Europe,1972",
+            "printed_page": 5,
+            "pdf_page": 10,
+            "source_url": "https://files.eric.ed.gov/fulltext/ED089698.pdf",
+            "local_pdf": "evidence/niser-size-1973-eric.pdf",
+            "local_text": "evidence/niser-size-1973-eric.txt",
+            "basis": "Author personally visited NISER and librarian Adebisi Aladejana showed the collections. Do not infer current size from this54-year-old observation."
+          },
+          {
+            "value": 6000,
+            "unit": "volumes",
+            "publication_date": "1969-01-16",
+            "title": "Federal Republic of Nigeria Official Gazette No.3,Vol.56",
+            "printed_page": 62,
+            "pdf_page": 26,
+            "source_url": "https://archive.gazettes.africa/archive/ng/1969/ng-government-gazette-dated-1969-01-16-no-3.pdf",
+            "local_pdf": "evidence/niser-size-1969-gazette.pdf",
+            "local_text": "evidence/niser-size-1969-gazette.txt",
+            "basis": "University of Ibadan librarian recruitment notice lists NISER library6000 volumes and38 reader seats; distinguish capacities500000volumes of other university buildings."
+          }
+        ],
+        "later_context": {
+          "unit": "journals subscribed to",
+          "value": "over900",
+          "observation_context": "Study data collected May–June2013; UI repository document includes2015 Brazilian Journal of Information Science Vol9No1 publication material. A same-title2014 AJ PSSI article also exists.",
+          "source_url": "https://repository.ui.edu.ng/server/api/core/bitstreams/8d5d322f-05ae-43ec-bff4-324322b5f472/content",
+          "local_pdf": "evidence/niser-size-study2015-ui.pdf",
+          "pdf_page": 12,
+          "interpretation": "Supports established specialist collection; not books, physical volumes, or current journal count."
+        }
+      },
+      "robots": {
+        "label": "niser-robots",
+        "url": "https://publications.niser.gov.ng/robots.txt",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T07:03:41.744953+00:00",
+        "status": 404,
+        "error": "HTTP Error 404: Not Found",
+        "elapsed_seconds": 1.65,
+        "evidence": "evidence/niser-robots.html"
+      },
+      "searches": [
+        {
+          "query": "Nigeria: Crisis and Beyond",
+          "mode": "title",
+          "proof": {
+            "label": "niser-query",
+            "url": "https://publications.niser.gov.ng/library/opac/initial/",
+            "method": "POST",
+            "payload": {
+              "csrfmiddlewaretoken": "G3xrxyA8cv6cIRtX3r9pT2O0cIjdd26HtXn1TsoMZu9RynK3y3eld2IM33FNCBeK",
+              "resource": "Book",
+              "catalog": "Title",
+              "search": "Nigeria: Crisis and Beyond"
+            },
+            "checked_at_utc": "2026-11-15T07:04:45.533281+00:00",
+            "status": 200,
+            "final_url": "https://publications.niser.gov.ng/library/opac/initial/?attr=Title&type=Book&search=Nigeria:%20Crisis%20and%20Beyond",
+            "evidence": "evidence/niser-query.html"
+          },
+          "replay_get": {
+            "label": "niser-get-query",
+            "url": "https://publications.niser.gov.ng/library/opac/initial/?attr=Title&type=Book&search=Nigeria:%20Crisis%20and%20Beyond",
+            "method": "GET",
+            "checked_at_utc": "2026-11-15T07:10:01.387213+00:00",
+            "status": 200,
+            "final_url": "https://publications.niser.gov.ng/library/opac/initial/?attr=Title&type=Book&search=Nigeria:%20Crisis%20and%20Beyond",
+            "content_type": "text/html; charset=utf-8",
+            "elapsed_seconds": 2.0,
+            "evidence": "evidence/niser-get-query.html"
+          },
+          "title": "Nigeria: Crisis and Beyond",
+          "author": "JOHN OYINBO",
+          "record_id": "819",
+          "record_url": "https://publications.niser.gov.ng/opac/819/",
+          "holdings": "NISER LIBRARY selected; Shelf Number13; classification966.9OYI. Detail says Call Numbers: Not Registered. No loan status stated.",
+          "detail_proof": {
+            "label": "niser-detail",
+            "url": "https://publications.niser.gov.ng/opac/819/",
+            "method": "GET",
+            "checked_at_utc": "2026-11-15T07:05:05.306828+00:00",
+            "status": 200,
+            "final_url": "https://publications.niser.gov.ng/opac/819/",
+            "content_type": "text/html; charset=utf-8",
+            "elapsed_seconds": 1.05,
+            "evidence": "evidence/niser-detail.html"
+          }
+        }
+      ],
+      "integration": "Unauthenticated GET replay works; initial search form POST uses anonymous CSRF cookie. Custom parser needed; no patron login used.",
+      "caveats": [
+        "Current physical collection total and largest status unproven; historical18000 bound volumes is a1972 observation, not current inventory.",
+        "Institution main about page returned unrelated casino content; do not rely on that page for authority or scale. OPAC has official niser.gov.ng subdomain and NISER LIBRARY selector."
+      ]
+    },
+    {
+      "id": "NG-EKITI-PUBLIC",
+      "name": "Bishop Gabriel Oloniyo Public Digital Library / Ekiti State Library Board",
+      "platform": "Koha",
+      "catalog": "https://opac.ekitistatelibrary.org/",
+      "verified": true,
+      "size": {
+        "physical_volumes": null,
+        "national_rank": null,
+        "scope": "State-owned public library, inaugurated2024; board manages state services and supports local/school libraries, but this OPAC has only one verified branch.",
+        "official_sources": [
+          "https://www.ekitistate.gov.ng/archives/29079",
+          "https://opac.ekitistatelibrary.org/cgi-bin/koha/opac-page.pl?page_id=6"
+        ],
+        "warning": "Do not treat all Ekiti local/school libraries as already integrated or claim largest status."
+      },
+      "robots": {
+        "label": "ekiti-robots",
+        "url": "https://opac.ekitistatelibrary.org/robots.txt",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T07:01:50.552335+00:00",
+        "status": 404,
+        "error": "HTTP Error 404: Not Found",
+        "elapsed_seconds": 1.29,
+        "evidence": "evidence/ekiti-robots.html"
+      },
+      "searches": [
+        {
+          "query": "English for Business Communication",
+          "mode": "title",
+          "proof": {
+            "label": "ekiti-exact",
+            "url": "https://opac.ekitistatelibrary.org/cgi-bin/koha/opac-search.pl?idx=ti&q=English+for+Business+Communication",
+            "method": "GET",
+            "checked_at_utc": "2026-11-15T07:05:05.305691+00:00",
+            "status": 200,
+            "final_url": "https://opac.ekitistatelibrary.org/cgi-bin/koha/opac-detail.pl?biblionumber=50",
+            "content_type": "text/html; charset=UTF-8",
+            "elapsed_seconds": 1.88,
+            "evidence": "evidence/ekiti-exact.html"
+          },
+          "title": "English for Business Communication (Routledge Applied English Language Introductions).",
+          "author": "Chan, Mable",
+          "year": "2020",
+          "isbn": "1138481688",
+          "record_id": "50",
+          "record_url": "https://opac.ekitistatelibrary.org/cgi-bin/koha/opac-detail.pl?biblionumber=50",
+          "holdings": "Bishop Gabriel Oloniyo Public Digital Library, Ekiti State; General stacks; call number808.066; Available; barcode2026-0050.",
+          "detail_proof": {
+            "label": "ekiti-detail",
+            "url": "https://opac.ekitistatelibrary.org/cgi-bin/koha/opac-detail.pl?biblionumber=50",
+            "method": "GET",
+            "checked_at_utc": "2026-11-15T07:05:05.306336+00:00",
+            "status": 200,
+            "final_url": "https://opac.ekitistatelibrary.org/cgi-bin/koha/opac-detail.pl?biblionumber=50",
+            "content_type": "text/html; charset=UTF-8",
+            "elapsed_seconds": 1.87,
+            "evidence": "evidence/ekiti-detail.html"
+          }
+        }
+      ],
+      "integration": "Koha HTML adapter likely reusable; exact title auto-redirects to detail and exposes a local holding. Query Things fall apart returned zero (not a success); English returned multiple real book records.",
+      "caveats": [
+        "Unknown physical collection total; useful public-access pilot rather than demonstrated national-largest institution."
+      ]
+    },
+    {
+      "id": "NG-MTU",
+      "name": "Mountain Top University Library",
+      "platform": "Lopac (current OPAC footer; older library webpage mentions Koha)",
+      "catalog": "https://opac.mtu.edu.ng/",
+      "verified": true,
+      "size": {
+        "physical_volumes": null,
+        "national_rank": null,
+        "observed_catalog_facet": 11722,
+        "scope": "Main Library facet displays11722 on both one-result title searches; four library options: Main, CBAS, CHMS, Medical.",
+        "warning": "Facet appears global, including unrelated author facets. Treat11722 only as displayed metadata, not audited physical volumes or book count."
+      },
+      "robots": {
+        "label": "mtu-opac-robots",
+        "url": "https://opac.mtu.edu.ng/robots.txt",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T07:08:40.067791+00:00",
+        "status": 200,
+        "final_url": "https://opac.mtu.edu.ng/robots.txt",
+        "content_type": "text/plain",
+        "elapsed_seconds": 2.27,
+        "evidence": "evidence/mtu-opac-robots.html"
+      },
+      "robots_evaluation": {
+        "paths": [
+          "/search?idx=ti&q=Introduction+To+Conflict+Resolution",
+          "/record/9204"
+        ],
+        "allowed": true,
+        "rules": "User-agent:* Allow:/search; Allow:/record/. Disallow sort/branch query traps and patron/auth routes."
+      },
+      "searches": [
+        {
+          "query": "Introduction To Conflict Resolution",
+          "mode": "title",
+          "proof": {
+            "label": "mtu-query",
+            "url": "https://opac.mtu.edu.ng/search?idx=ti&q=Introduction+To+Conflict+Resolution",
+            "method": "GET",
+            "checked_at_utc": "2026-11-15T07:09:23.916212+00:00",
+            "status": 200,
+            "final_url": "https://opac.mtu.edu.ng/search?idx=ti&q=Introduction+To+Conflict+Resolution",
+            "content_type": "text/html; charset=utf-8",
+            "elapsed_seconds": 1.44,
+            "evidence": "evidence/mtu-query.html"
+          },
+          "result_count": 1,
+          "title": "Introduction To Conflict Resolution",
+          "author": "COBB, Sara, FEDERMAN, Sarah And CASTEL, Alison",
+          "year": "2020",
+          "isbn": "9781786608529",
+          "record_id": "9204",
+          "record_url": "https://opac.mtu.edu.ng/record/9204",
+          "holdings": "Main Library; Main Stacks; Books; JZ5538.C63; barcode/accession09907; accession date2026-09-18; Available.",
+          "detail_proof": {
+            "label": "mtu-detail",
+            "url": "https://opac.mtu.edu.ng/record/9204",
+            "method": "GET",
+            "checked_at_utc": "2026-11-15T07:10:01.385378+00:00",
+            "status": 200,
+            "final_url": "https://opac.mtu.edu.ng/record/9204",
+            "content_type": "text/html; charset=utf-8",
+            "elapsed_seconds": 2.32,
+            "evidence": "evidence/mtu-detail.html"
+          }
+        },
+        {
+          "query": "The Culture Of The Second Cold War",
+          "mode": "title",
+          "proof": {
+            "label": "mtu-query2",
+            "url": "https://opac.mtu.edu.ng/search?idx=ti&q=The+Culture+Of+The+Second+Cold+War",
+            "method": "GET",
+            "checked_at_utc": "2026-11-15T07:10:01.386252+00:00",
+            "status": 200,
+            "final_url": "https://opac.mtu.edu.ng/search?idx=ti&q=The+Culture+Of+The+Second+Cold+War",
+            "content_type": "text/html; charset=utf-8",
+            "elapsed_seconds": 1.89,
+            "evidence": "evidence/mtu-query2.html"
+          },
+          "result_count": 1,
+          "title": "The Culture Of The Second Cold War",
+          "author": "SAKWA, Richard",
+          "year": "2025",
+          "holdings": "Search says Copies in collection; call numberJZ5595.S25."
+        }
+      ],
+      "integration": "Custom Lopac HTML parser required. Search /search?idx=ti&q=...; detail /record/{id}. Robots prohibits branch/sort query variants: do not use those facets.",
+      "caveats": [
+        "Current official library homepage under construction and old /library/404. Catalog is institution branded on edu.ng subdomain.",
+        "Not proven national-largest; smaller university candidate with local holding proof."
+      ]
+    }
+  ],
+  "failed_or_unqualified": [
+    {
+      "institution": "Ekiti State University",
+      "reason": "Official homepage points to eksuvirtuallibrary.com; robots and homepage400 Invalid URL. No book query success.",
+      "proof": {
+        "label": "eksu-robots",
+        "url": "https://eksuvirtuallibrary.com/robots.txt",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T07:04:13.974989+00:00",
+        "status": 400,
+        "error": "HTTP Error 400: Bad Request",
+        "elapsed_seconds": 1.99,
+        "evidence": "evidence/eksu-robots.html"
+      }
+    },
+    {
+      "institution": "BOUESTI",
+      "reason": "Robots503; no catalog query attempted.",
+      "proof": {
+        "label": "bouesti-robots",
+        "url": "https://library.bouesti.edu.ng/robots.txt",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T07:01:50.552716+00:00",
+        "status": 503,
+        "error": "HTTP Error 503: Service Unavailable",
+        "elapsed_seconds": 5.82,
+        "evidence": "evidence/bouesti-robots.html"
+      }
+    },
+    {
+      "institution": "Osun State University",
+      "reason": "Official library site and main university /library route proxy403; no catalog verified.",
+      "proof": {
+        "label": "uniosun-home",
+        "url": "https://library.uniosun.edu.ng/index.php/2-uncategorised/48-catalogs-page",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T07:01:50.551791+00:00",
+        "status": null,
+        "error": "<urlopen error Tunnel connection failed: 403 Forbidden>",
+        "elapsed_seconds": 0.46,
+        "evidence": "evidence/uniosun-home.html"
+      }
+    },
+    {
+      "institution": "Delta State University",
+      "reason": "Current host returns only libb; older official page available but no public OPAC identified.",
+      "proof": {
+        "label": "delsu-home",
+        "url": "https://library.delsu.edu.ng/",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T07:03:41.747125+00:00",
+        "status": 200,
+        "final_url": "https://library.delsu.edu.ng/",
+        "content_type": "text/html",
+        "elapsed_seconds": 2.43,
+        "evidence": "evidence/delsu-home.html"
+      }
+    },
+    {
+      "institution": "Nigeria Governors Forum",
+      "reason": "Robots repeatedly timed out, including www; stopped before search.",
+      "proof": {
+        "label": "ngf-robots-retry",
+        "url": "https://ngflibrary.org.ng/robots.txt",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T07:06:16.159516+00:00",
+        "status": null,
+        "error": "The read operation timed out",
+        "elapsed_seconds": 18.26,
+        "evidence": "evidence/ngf-robots-retry.html"
+      }
+    },
+    {
+      "institution": "Benue State University",
+      "reason": "Official library homepage503; no public catalog verified.",
+      "proof": {
+        "label": "bsum-home",
+        "url": "https://library.bsum.edu.ng/",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T07:05:24.176531+00:00",
+        "status": 503,
+        "error": "HTTP Error 503: Service Unavailable",
+        "elapsed_seconds": 1.7,
+        "evidence": "evidence/bsum-home.html"
+      }
+    },
+    {
+      "institution": "IITA",
+      "reason": "Former official Knowledge Center route404; main site timeout. Third-party110000-record claim cannot establish current working catalog.",
+      "proof": {
+        "label": "iita-home",
+        "url": "https://www.iita.org/knowledge/knowledge-center/",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T07:06:16.157588+00:00",
+        "status": 404,
+        "error": "HTTP Error 404: Not Found",
+        "elapsed_seconds": 20.71,
+        "evidence": "evidence/iita-home.html"
+      }
+    },
+    {
+      "institution": "Federal University of Agriculture Zuru",
+      "reason": "Official link to opac.fuaz.edu.ng; robots proxy403. No query attempted.",
+      "proof": {
+        "label": "fuaz-robots",
+        "url": "https://opac.fuaz.edu.ng/robots.txt",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T07:06:16.158462+00:00",
+        "status": null,
+        "error": "<urlopen error Tunnel connection failed: 403 Forbidden>",
+        "elapsed_seconds": 0.46,
+        "evidence": "evidence/fuaz-robots.html"
+      }
+    },
+    {
+      "institution": "Standards Organisation of Nigeria",
+      "reason": "Working specialist standards sales/subscription portal; not verified as local book holdings catalog.",
+      "proof": {
+        "label": "son-home",
+        "url": "https://son.gov.ng/library/?t=offices-opac",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T07:06:16.158967+00:00",
+        "status": 200,
+        "final_url": "https://son.gov.ng/library/?t=offices-opac",
+        "content_type": "text/html; charset=UTF-8",
+        "elapsed_seconds": 5.17,
+        "evidence": "evidence/son-home.html"
+      }
+    },
+    {
+      "institution": "Naijacat Virtual Union Catalogue",
+      "reason": "Homepage marketing millions/60+ conflicts with actual4 libraries/3 entries including demo. No production network count accepted.",
+      "proof": {
+        "label": "naijacat-home",
+        "url": "https://www.naijacat.com.ng/",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T07:05:47.859448+00:00",
+        "status": 200,
+        "final_url": "https://www.naijacat.com.ng/",
+        "content_type": "text/html; charset=utf-8",
+        "elapsed_seconds": 2.62,
+        "evidence": "evidence/naijacat-home.html"
+      }
+    },
+    {
+      "institution": "Lagos Business School",
+      "reason": "Robots404 but exact title query200 Anubis anti-bot page; stopped, no bypass.",
+      "proof": {
+        "label": "lbs-query",
+        "url": "https://lbslibrary.lbs.edu.ng/cgi-bin/koha/opac-search.pl?idx=ti&q=Good+to+great",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T07:07:52.235581+00:00",
+        "status": 200,
+        "final_url": "https://lbslibrary.lbs.edu.ng/cgi-bin/koha/opac-search.pl?idx=ti&q=Good+to+great",
+        "content_type": "text/html; charset=utf-8",
+        "elapsed_seconds": 1.31,
+        "evidence": "evidence/lbs-query.html"
+      }
+    },
+    {
+      "institution": "Landmark University",
+      "reason": "Official homepage503; no current catalog verified.",
+      "proof": {
+        "label": "lmu-home",
+        "url": "https://lmu.edu.ng/",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T07:06:49.975276+00:00",
+        "status": 503,
+        "error": "HTTP Error 503: Service Unavailable",
+        "elapsed_seconds": 1.77,
+        "evidence": "evidence/lmu-home.html"
+      }
+    },
+    {
+      "institution": "African University of Science and Technology",
+      "reason": "Robots503; stopped before query.",
+      "proof": {
+        "label": "aust-robots",
+        "url": "https://opac.aust.edu.ng/robots.txt",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T07:07:08.271507+00:00",
+        "status": 503,
+        "error": "HTTP Error 503: Service Unavailable",
+        "elapsed_seconds": 5.51,
+        "evidence": "evidence/aust-robots.html"
+      }
+    },
+    {
+      "institution": "Rivers State University",
+      "reason": "Official library homepage503; no public catalog verified.",
+      "proof": {
+        "label": "rsu-home",
+        "url": "https://www.rsu.edu.ng/central-library/",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T07:07:08.272281+00:00",
+        "status": 503,
+        "error": "HTTP Error 503: Service Unavailable",
+        "elapsed_seconds": 5.48,
+        "evidence": "evidence/rsu-home.html"
+      }
+    },
+    {
+      "institution": "Sule Lamido University",
+      "reason": "Official resource page links NewGenLib route; robots404; actual /opac/search title query404. Official source warns campus network/VPN may be needed.",
+      "proof": {
+        "label": "slu-opac",
+        "url": "https://sluklibrary.slu.edu.ng/opac/search?q=Things+fall+apart",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T07:08:26.694707+00:00",
+        "status": 404,
+        "error": "HTTP Error 404: Not Found",
+        "elapsed_seconds": 1.58,
+        "evidence": "evidence/slu-opac.html"
+      }
+    },
+    {
+      "institution": "Crawford University",
+      "reason": "Official page mentions remote OPAC, but only e-resources link found; no local book query verified.",
+      "proof": {
+        "label": "crawford-home",
+        "url": "https://crawforduniversity.edu.ng/crawford/about/library.php",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T07:07:08.273389+00:00",
+        "status": 200,
+        "final_url": "https://crawforduniversity.edu.ng/crawford/about/library.php",
+        "content_type": "text/html; charset=UTF-8",
+        "elapsed_seconds": 2.56,
+        "evidence": "evidence/crawford-home.html"
+      }
+    },
+    {
+      "institution": "Nigerian Baptist Theological Seminary",
+      "reason": "Official library page mentions OPAC; Catalogue nav is academic program PDF, not library query; no public OPAC found.",
+      "proof": {
+        "label": "nbts-catalog",
+        "url": "https://nbts.edu.ng/catalogue/",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T07:08:26.695548+00:00",
+        "status": 200,
+        "final_url": "https://nbts.edu.ng/catalogue/",
+        "content_type": "text/html; charset=UTF-8",
+        "elapsed_seconds": 2.05,
+        "evidence": "evidence/nbts-catalog.html"
+      }
+    },
+    {
+      "institution": "Fountain University",
+      "reason": "Robots404, two real title queries Things fall apart/Economics both zero. No success counted. Official scope roughly2000 students+200 staff,140 seats; not national-largest.",
+      "proof": {
+        "label": "fuo-query2",
+        "url": "https://opac.fuo.edu.ng/cgi-bin/koha/opac-search.pl?idx=ti&q=Economics",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T07:09:23.917109+00:00",
+        "status": 200,
+        "final_url": "https://opac.fuo.edu.ng/cgi-bin/koha/opac-search.pl?idx=ti&q=Economics",
+        "content_type": "text/html; charset=UTF-8",
+        "elapsed_seconds": 4.33,
+        "evidence": "evidence/fuo-query2.html"
+      }
+    },
+    {
+      "institution": "Sikiru Adetona College of Education Science and Technology",
+      "reason": "Robots404, two title queries Things fall apart/Education both zero. No success counted.",
+      "proof": {
+        "label": "sacoetec-query2",
+        "url": "https://opac.sacoetec.edu.ng/cgi-bin/koha/opac-search.pl?idx=ti&q=Education",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T07:09:23.917831+00:00",
+        "status": 200,
+        "final_url": "https://opac.sacoetec.edu.ng/cgi-bin/koha/opac-search.pl?idx=ti&q=Education",
+        "content_type": "text/html; charset=UTF-8",
+        "elapsed_seconds": 1.84,
+        "evidence": "evidence/sacoetec-query2.html"
+      }
+    },
+    {
+      "institution": "Federal University of Health Sciences Ila Orangun",
+      "reason": "Robots timeout; no query attempted.",
+      "proof": {
+        "label": "fuhsi-robots",
+        "url": "https://opac.fuhsi.edu.ng/robots.txt",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T07:08:40.069694+00:00",
+        "status": null,
+        "error": "The read operation timed out",
+        "elapsed_seconds": 18.84,
+        "evidence": "evidence/fuhsi-robots.html"
+      }
+    }
+  ],
+  "focused_size_evidence": "size-evidence.json"
+}

@@ -1,0 +1,22 @@
+# https://biblioteca.upeu.edu.pe — OPAC Koha
+# UPeU · DTI-Infra · generado por deploy/40-opac-seo.sh
+#
+# Las paginas de busqueda del OPAC son caras (consulta Zebra + render completo
+# del catalogo). Se cierran a los crawlers; las fichas bibliograficas quedan
+# abiertas para que el catalogo siga siendo indexable.
+
+User-agent: *
+Crawl-delay: 20
+Disallow: /cgi-bin/koha/opac-search.pl
+Disallow: /opac-search.pl
+Disallow: /search
+Disallow: /cgi-bin/koha/opac-export.pl
+Disallow: /cgi-bin/koha/opac-shelves.pl
+Disallow: /cgi-bin/koha/opac-suggestions.pl
+Disallow: /cgi-bin/koha/opac-reserve.pl
+Disallow: /cgi-bin/koha/opac-user.pl
+Disallow: /cgi-bin/koha/opac-ISBDdetail.pl
+Disallow: /cgi-bin/koha/opac-MARCdetail.pl
+Disallow: /cgi-bin/koha/opac-authoritiesdetail.pl
+
+Sitemap: https://biblioteca.upeu.edu.pe/sitemapindex.xml

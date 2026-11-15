@@ -1,0 +1,1038 @@
+﻿var tw = tw || {};
+tw.FACETAS = "facetas";
+tw.FILTRO_BUSCA = "filtroBusca";
+tw.FILTRO_BUSCA_AVANCADA = 'filtroBuscaAvancada';
+tw.NEW_FILTRO_BUSCA_AVANCADA = 'newFiltroBuscaAvancada';
+tw.CODIGO_TIPO_BUSCA = 'codigoTipoBusca';
+tw.COR_MENSAGEM_ERRO = "#A94442";
+tw.COR_MENSAGEM_AVISO = "#27B527";
+tw.ALTURA_MODAL_LOGIN_PADRAO = 270;
+tw.ALTURA_MODAL_LOGIN_INTEGRACAO_UMA = 366;
+tw.ALTURA_MODAL_LOGIN_INTEGRACAO_DUAS = 408;
+tw.ALTURA_MODAL_LOGIN_CADASTRO_EXTERNO = 398;
+tw.ALTURA_LOGIN_CAMPOS_CAPTCHA = 134;
+tw.ALTURA_LOGIN_MENSAGEM_ERRO_SSO = 75;
+tw.ALTERACAO_SENHA_ALTURA = 332;
+tw.RECUPERACAO_SENHA_ALTURA = 329;
+tw.PARAM_CALLBACK_DOACAO = "DOACAO_EXEMPLAR";
+tw.PARAM_CALLBACK_SOLICITAR_EMPRESTIMO = "SOLICITACAO_EMPRESTIMO";
+tw.PARAM_CALLBACK_INCLUIR_PERFIL_INTERESSE = "INCLUIR_PERFIL_INTERESSE";
+
+tw.CORES_GERENCIADOR = {
+	COR_1_1: '#2f6596',
+	COR_10_1: '#c70000',
+	COR_9_1: '#265721',
+	COR_7_1: '#DAA520',
+	COR_8_1: '#D70060',
+	COR_6_1: '#815fb0',
+	COR_5_1: '#D2691E',
+	COR_3_1: '#008CC9',
+	COR_4_1: '#61AE24',
+	COR_2_1: '#01A4A4'
+};
+
+$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+	var requiresCsrf =
+		options.type &&
+		/^(POST|PUT|DELETE|PATCH)$/i.test(options.type);
+
+	if (requiresCsrf) {
+		jqXHR.setRequestHeader("RequestVerificationToken", window.AntiForgeryToken);
+	}
+});
+
+if (!String.prototype.format) {
+	String.prototype.format = function (params) {
+		var args = params;
+		return this.replace(/{(\d+)}/g, function (match, number) {
+			number = parseInt(number, 10);
+			return typeof args[number] !== 'undefined'
+				? args[number]
+				: match
+				;
+		});
+	};
+}
+
+if (!Array.prototype.findIndex) {
+	Array.prototype.findIndex = function (predicate) {
+		if (this === null) {
+			throw new TypeError('Array.prototype.findIndex called on null or undefined');
+		}
+		if (typeof predicate !== 'function') {
+			throw new TypeError('predicate must be a function');
+		}
+		var list = Object(this);
+		var length = list.length >>> 0;
+		var thisArg = arguments[1];
+		var value;
+
+		for (var i = 0; i < length; i++) {
+			value = list[i];
+			if (predicate.call(thisArg, value, i, list)) {
+				return i;
+			}
+		}
+		return -1;
+	};
+}
+
+if (!Array.prototype.indexOf) {
+	Array.prototype.indexOf = function (obj, start) {
+		for (var i = start || 0, j = this.length; i < j; i++) {
+			if (this[i] === obj) { return i; }
+		}
+		return -1;
+	};
+}
+
+if (!Array.prototype.find) {
+	Array.prototype.find = function (predicate) {
+		if (this === null) {
+			throw new TypeError('Array.prototype.find called on null or undefined');
+		}
+		if (typeof predicate !== 'function') {
+			throw new TypeError('predicate must be a function');
+		}
+		var list = Object(this);
+		var length = list.length >>> 0;
+		var thisArg = arguments[1];
+		var value;
+
+		for (var i = 0; i < length; i++) {
+			value = list[i];
+			if (predicate.call(thisArg, value, i, list)) {
+				return value;
+			}
+		}
+		return undefined;
+	};
+}
+
+$(function () {
+	setarCulturaKendo();
+
+	bindScrollToTop();
+
+	inicializarMenuIdiomas();
+});
+
+var listaElementosCarregando = new Array();
+var carregandoInterval;
+var delay = 600;
+
+var bindScrollToTop = function () {
+	$("#scrollToTop").click(function () {
+		$('body,html').animate({ scrollTop: 0 }, 400);
+	});
+	$(window).scroll(function () {
+		if ($(this).scrollTop() > 0) {
+			$("#scrollToTop").fadeIn();
+		} else {
+			$("#scrollToTop").fadeOut();
+		}
+	});
+};
+
+var inicializarMenuIdiomas = function () {
+	$('li.idiomas > .dropdown-menu > a').click(function (e) {
+		var codigoIdioma = $(e.currentTarget).attr('data-idioma');
+		$.ajax({
+			type: 'POST',
+			url: sophiaConfig.serviceBaseUrl + 'AlteraIdioma/Alterar',
+			data: { codigoIdioma: codigoIdioma }
+		}).done(function () {
+			location.reload();
+		});
+		e.preventDefault();
+	});
+};
+
+var mostrarCarregando = function (elementSelector, valorSubtrairWidth, valorSubtrairHeight, divId, appendToSelector) {
+	var criaCarregando = true;
+
+	var id = "";
+	var elementoCarregando = null;
+	if (elementSelector != window) {
+		id = window.location + elementSelector;
+		elementoCarregando = $(elementSelector + ' .loading-mask');
+	} else {
+		id = window.location + "-global";
+		elementoCarregando = $('#carregandoGlobalDiv');
+	}
+
+	if (elementoCarregando.length > 0) {
+		criaCarregando = false;
+		if (typeof listaElementosCarregando[id] !== 'undefined') {
+			listaElementosCarregando[id]++;
+		} else {
+			listaElementosCarregando[id] = 2;
+		}
+	} else {
+		if (typeof listaElementosCarregando[id] !== 'undefined') {
+			delete listaElementosCarregando[id];
+		}
+	}
+
+	if (criaCarregando) {
+		$('<div ' + (divId !== null ? 'id="' + divId + '"' : '') + ' class="loading-mask" >')
+			.append('<div class="loading-image"></div>')
+			.appendTo(appendToSelector !== null ? appendToSelector : elementSelector);
+	}
+};
+
+var mostrarCarregandoGlobal = function () {
+	mostrarCarregando(window, 0, 0, 'carregandoGlobalDiv', 'body');
+	if (!carregandoInterval) {
+		carregandoInterval = setInterval(ocultarCarregandoDuranteGlobal, 100);
+	}
+};
+
+var ocultarCarregandoGlobal = function () {
+	ocultarCarregando('#carregandoGlobalDiv');
+	var carregandoGlobalDiv = $('#carregandoGlobalDiv');
+	if (carregandoGlobalDiv.length === 0) {
+		clearInterval(carregandoInterval);
+		carregandoInterval = null;
+		$('.loading-mask').show();
+	}
+};
+
+var ocultarCarregandoDuranteGlobal = function () {
+	$('.loading-mask').each(function () {
+		var id = $(this).attr('id');
+		if (id !== 'carregandoGlobalDiv') {
+			$(this).hide();
+		}
+	});
+};
+
+var ocultarCarregando = function (elementSelector) {
+	var id = window.location + (elementSelector !== '#carregandoGlobalDiv') ? elementSelector : "-global";
+
+	var removeCarregando = true;
+
+	if (typeof listaElementosCarregando[id] !== 'undefined') {
+		listaElementosCarregando[id]--;
+		if (listaElementosCarregando[id] > 0) {
+			removeCarregando = false;
+		}
+		else {
+			delete listaElementosCarregando[id];
+		}
+	}
+
+	if (!removeCarregando) return;
+
+	if (elementSelector !== '#carregandoGlobalDiv') {
+		$(elementSelector + ' .loading-mask').remove();
+	} else {
+		$(elementSelector).remove();
+	}
+};
+
+String.isNullOrEmpty = function (valor) {
+	return typeof valor === 'undefined' || valor === null || valor === '';
+};
+
+String.isNullOrWhitespace = function (valor) {
+	return String.isNullOrEmpty(valor) || valor.trim() == '';
+};
+
+var GetTermoSemPontoFinal = function (constante, termoPadrao, caixa) {
+	var termo = GetTermo(...arguments);
+	if (!termo || termo.length <= 1)
+		return termo;
+
+	var ultimoCaractere = termo.substr(-1);
+	return ultimoCaractere === '.' ? termo.substr(0, termo.length-1) : termo;
+}
+
+var GetTermo = function (constante, termoPadrao, caixa) {
+	var retorno = constante || termoPadrao;
+
+	if (caixa) {
+		switch (caixa) {
+			case Caixa.Alta:
+				retorno = retorno.toUpperCase();
+				break;
+
+			case Caixa.Baixa:
+				retorno = retorno.toLowerCase();
+				break;
+		}
+	}
+
+	if (arguments.length > 3) {
+		for (var i = 3; i < arguments.length; i++) {
+			retorno = retorno.replace(new RegExp("\\{" + (i - 3) + "\\}", "g"), arguments[i]);
+		}
+	}
+
+	return retorno;
+};
+
+var random = function () {
+	return Math.floor((Math.random() * 10000) + 1);
+};
+
+var gerarGuid = function () {
+	var guid = Date.now
+		? Date.now()
+		: Date().replace(/\D+/g, '');
+
+	return parseInt(guid, 10) + random();
+};
+
+tw.categoriasClick = function (codigo) {
+	var bibliotecas = localStorage.getItem("codigosBibliotecas") ? "&bibliotecas=" + localStorage.getItem("codigosBibliotecas") : "";
+	var guid = $(document).getUrlParam('gui_obterFiltrod') ? "&guid=" + $(document).getUrlParam('guid') : "";
+	location.href = sophiaConfig.serviceBaseUrl + "Busca/Categoria?codigo=" + codigo + bibliotecas + guid;
+};
+
+tw.publicosAlvoClick = function (codigo) {
+	var bibliotecas = localStorage.getItem("codigosBibliotecas") ? "&bibliotecas=" + localStorage.getItem("codigosBibliotecas") : "";
+	var guid = $(document).getUrlParam('guid') ? "&guid=" + $(document).getUrlParam('guid') : "";
+	location.href = sophiaConfig.serviceBaseUrl + "Busca/PublicoAlvo?codigo=" + codigo + bibliotecas + guid;
+};
+
+tw.odsClick = function (codigo) {
+	var bibliotecas = localStorage.getItem("codigosBibliotecas") ? "&bibliotecas=" + localStorage.getItem("codigosBibliotecas") : "";
+	var guid = $(document).getUrlParam('guid') ? "&guid=" + $(document).getUrlParam('guid') : "";
+	location.href = sophiaConfig.serviceBaseUrl + "Busca/ObjetivoDesenvolvimentoSustentavel?codigo=" + codigo + bibliotecas + guid;
+};
+
+tw.comunidadeClick = function (codigoComunidade) {
+	var bibliotecas = localStorage.getItem("codigosbibliotecas") ? "&bibliotecas=" + localStorage.getItem("codigosbibliotecas") : "";
+	var guid = $(document).getUrlParam('guid') ? "&guid=" + $(document).getUrlParam('guid') : "";
+	location.href = sophiaConfig.serviceBaseUrl + "busca/comunidade?codigo=" + codigoComunidade + bibliotecas + guid;
+};
+
+tw.comunidadeColecaoClick = function (codigoColecao) {
+	var bibliotecas = localStorage.getItem("codigosbibliotecas") ? "&bibliotecas=" + localStorage.getItem("codigosbibliotecas") : "";
+	var guid = $(document).getUrlParam('guid') ? "&guid=" + $(document).getUrlParam('guid') : "";
+	location.href = sophiaConfig.serviceBaseUrl + "busca/comunidadecolecao?codigo=" + codigoColecao + bibliotecas + guid;
+};
+
+tw.comunidadeColecaoMaterialClick = function (codigoComunidade, codigoColecao, codigoMaterial) {
+	var bibliotecas = localStorage.getItem("codigosbibliotecas") ? "&bibliotecas=" + localStorage.getItem("codigosbibliotecas") : "";
+	var guid = $(document).getUrlParam('guid') ? "&guid=" + $(document).getUrlParam('guid') : "";
+
+	if (codigoComunidade) {
+		location.href = sophiaConfig.serviceBaseUrl + "busca/comunidadematerial?codigocomunidade=" + codigoComunidade + "&codigomaterial="
+			+ codigoMaterial + bibliotecas + guid;
+	}
+	else if (codigoColecao) {
+		location.href = sophiaConfig.serviceBaseUrl + "busca/comunidadecolecaomaterial?codigocolecao=" + codigoColecao + "&codigomaterial="
+			+ codigoMaterial + bibliotecas + guid;
+	}
+}
+
+tw.atualizarSessionStorageBuscaRapida = (parametros, guid) => {
+	var filtroBusca = _obterSessionStorageBuscaRapida();
+	filtroBusca[guid] = parametros;
+	sessionStorage.setItem(tw.FILTRO_BUSCA, angular.toJson(filtroBusca));
+	sessionStorage.removeItem(tw.FACETAS);
+	sessionStorage.removeItem(tw.FILTRO_BUSCA_AVANCADA);
+};
+
+tw.aplicarTagDeDestaque = (textoOriginal) => {
+	if (!textoOriginal) return textoOriginal;
+
+	return textoOriginal.split('[#d#]').join('<mark>').split('[/#d#]').join('</mark>');
+};
+
+tw.obterSessionStorageBuscaRapidaPorGuid = (guid) => _obterSessionStorageBuscaRapida()[guid];
+
+const _obterSessionStorageBuscaRapida = () => sessionStorage.hasOwnProperty(tw.FILTRO_BUSCA) ? angular.fromJson(sessionStorage.getItem(tw.FILTRO_BUSCA)) : {};
+
+const _autoriaTagSet = [100, 110, 111, 130, 400, 410, 411, 430, 500, 510, 511, 530];
+
+tw.responsabilidadeIntelectualClick = (codigo) => {
+	if (!terminalAtosOficiais)
+		return tw.autoresClick(codigo);
+
+	var guid = gerarGuid();
+	location.href = sophiaConfig.serviceBaseUrl + "Busca/ResponsabilidadeIntelectual?codigo=" + codigo + "&guid=" + guid;
+};
+
+tw.autoridadesClick = (codigo, titulo, tag) => {
+	if (_autoriaTagSet.some((x) => x == tag)) {
+		tw.autoresClick(codigo, titulo);
+	} else {
+		tw.assuntosClick(codigo, titulo);
+	}
+};
+
+tw.autoresClick = (codigo, titulo, guid = gerarGuid()) => {
+	if (!terminalAtosOficiais) {
+		tw.atualizarSessionStorageBuscaRapida({
+			termo: '"' + (titulo ? titulo : $('[data-codigo-autor="' + codigo + '"]:eq(0)').attr('title')).split('[#d#]').join('').split('[/#d#]').join('') + '"',
+			tipoBuscaTerminal: TipoBuscaTerminal.Acervo,
+			opcao: TipoBuscaRapidaAcervo.Autoria
+		}, guid);
+	}
+
+	let bibliotecas = localStorage.getItem("codigosBibliotecas") ? "&bibliotecas=" + localStorage.getItem("codigosBibliotecas") : "";
+	location.href = sophiaConfig.serviceBaseUrl + "Busca/Autor?codigo=" + codigo + bibliotecas + "&guid=" + guid;
+};
+
+tw.assuntosClick = function (codigo, titulo) {
+	var guid = gerarGuid();
+	if (!terminalAtosOficiais) {
+		tw.atualizarSessionStorageBuscaRapida({
+			termo: '"' + (titulo ? titulo : $('[data-codigo-assunto="' + codigo + '"]:eq(0)').attr('title')).split('[#d#]').join('').split('[/#d#]').join('') + '"',
+			tipoBuscaTerminal: TipoBuscaTerminal.Acervo,
+			opcao: TipoBuscaRapidaAcervo.Assunto
+		}, guid);
+	}
+
+	var bibliotecas = localStorage.getItem("codigosBibliotecas") ? "&bibliotecas=" + localStorage.getItem("codigosBibliotecas") : "";
+	location.href = sophiaConfig.serviceBaseUrl + "Busca/Assunto?codigo=" + codigo + bibliotecas + "&guid=" + guid;
+};
+
+tw.seriesClick = function (codigo, titulo) {
+	var guid = gerarGuid();
+	tw.atualizarSessionStorageBuscaRapida({
+		termo: '"' + (titulo ? titulo : $('[data-codigo-serie="' + codigo + '"]:eq(0)').attr('title')).split('[#d#]').join('').split('[/#d#]').join('') + '"',
+		tipoBuscaTerminal: TipoBuscaTerminal.Acervo,
+		opcao: TipoBuscaRapidaAcervo.Colecao
+	}, guid);
+
+	var bibliotecas = localStorage.getItem("codigosBibliotecas") ? "&bibliotecas=" + localStorage.getItem("codigosBibliotecas") : "";
+	location.href = sophiaConfig.serviceBaseUrl + "Busca/Serie?codigo=" + codigo + bibliotecas + "&guid=" + guid;
+};
+
+tw.irParaDetalheComVoltar = function (codigo) {
+	var guid = $(document).getUrlParam('guid') ? "&guid=" + $(document).getUrlParam('guid') : "";
+	location.href = sophiaConfig.serviceBaseUrl + "Acervo/Detalhe/" + codigo + "?a=1" + guid;
+};
+
+tw.esperarPor = (conditionFunction) => {
+	const esperarResolver = resolve => {
+		if (conditionFunction()) resolve();
+		else setTimeout(_ => esperarResolver(resolve), 400);
+	};
+
+	return new Promise(esperarResolver);
+};
+tw.filteringSemDiacritics = function (e) {
+	if (!e.filter) {
+		if (e.sender && e.sender.dataSource)
+			e.sender.dataSource.filter({});
+		e.preventDefault();
+		return;
+	}
+	var value = e.filter.value;
+	if (value)
+		value = removeDiacritics(value).toLowerCase();
+	e.sender.dataSource.filter({
+		filters: [
+			{ field: "Descricao", operator: "contains", value: value },
+			{ field: "DescricaoSemDiacritics", operator: "contains", value: value }
+		],
+		logic: "or"
+	});
+	e.preventDefault();
+};
+
+tw.maxLengthInputNumber = function (maxLength) { return !(event.target.value.length === maxLength && event.keyCode !== 13); };
+
+tw.navegarParaIndicadores = function () {
+	event.preventDefault();
+	let guid = $(document).getUrlParam('guid');
+	location.href = sophiaConfig.serviceBaseUrl + 'Indicador/Index?returnUrl=' + encodeURIComponent(location.href) + (guid ? '&guid=' + guid : '');
+};
+
+// Impede Open Redirect (CWE-601): só aceita path relativo ao próprio site; qualquer outro host/protocolo cai no fallback.
+tw.sanitizarReturnUrl = function (returnUrl, urlPadrao) {
+	var urlFallback = urlPadrao || sophiaConfig.serviceBaseUrl;
+
+	if (String.isNullOrEmpty(returnUrl)) {
+		return urlFallback;
+	}
+
+	try {
+		var urlResolvida = new URL(decodeURIComponent(returnUrl), window.location.origin);
+		return urlResolvida.origin === window.location.origin
+			? urlResolvida.pathname + urlResolvida.search + urlResolvida.hash
+			: urlFallback;
+	} catch (e) {
+		return urlFallback;
+	}
+};
+
+var retornarUrl = function (defaultUrl) {
+	return tw.sanitizarReturnUrl($(document).getUrlParam('returnUrl'), defaultUrl);
+};
+
+var kendoDataSource = function (config) {
+	/// <summary>Cria e retorna um Kendo Datasource</summary>
+	/// <param name="config" type="Object">Parâmetro para configurações:
+	/// <br/>readUrl => Url de listagem.
+	/// <br/>customTransport => Transporte customizado para obtenção dos dados.
+	/// <br/>model => Model do grid.
+	/// <br/>paging => Indica se os dados são paginados.
+	/// <br/>pageSize => Indica o tamanho da página dos dados.
+	/// <br/>sorting => Indica se os dados devem ser ordenados.
+	/// <br/>sort => Indica a ordenação dos dados.
+	/// </param>
+	/// <returns type="KendoDataSource">Kendo DataSource para popular componentes</returns>
+
+	config = validarConfiguracoesDataSource(config);
+
+	var dataSource = criarDataSource(config);
+
+	return dataSource;
+};
+
+var validarConfiguracoesDataSource = function (config) {
+
+	if (!config) {
+		throw "Você deve informar as configurações";
+	}
+
+	if (config.readUrl) {
+		config.transport = {
+			read: {
+				url: config.readUrl
+			}
+		};
+	} else {
+		if (config.customTransport) {
+			config.transport = config.customTransport;
+		} else {
+			throw "Você deve informar a url de listagem ou o custom transport";
+		}
+	}
+
+	if (!config.model) {
+		throw "Você deve informar o objeto model";
+	}
+
+	if (config.paging == undefined) {
+		config.paging = true;
+	}
+
+	if (config.paging && !config.pageSize) {
+		config.pageSize = 10;
+	}
+
+	if (config.sorting == undefined) {
+		config.sorting = false;
+	}
+
+	if (config.sorting && !config.sort) {
+		throw "Você deve informar a ordenação";
+	}
+
+	if (config.schemaData == undefined) {
+		config.schemaData = 'Result.Data';
+	}
+
+	if (config.schemaTotal == undefined) {
+		config.schemaTotal = 'Result.Total';
+	}
+
+	return config;
+};
+
+var criarDataSource = function (config) {
+	var param = {
+		type: 'aspnetmvc-ajax',
+		transport: config.transport,
+		schema: {
+			model: config.model,
+			data: config.schemaData,
+			total: config.schemaTotal
+		},
+		group: config.group,
+		change: config.change,
+		page: config.page || 1,
+		pageSize: config.pageSize,
+		sort: config.sort,
+		serverPaging: config.paging,
+		serverSorting: config.sorting,
+		requestEnd: function (e) {
+			if (sessaoExpirou(e.response)
+				&& decodeURIComponent(window.location.href).indexOf("expirado=true") === -1) {
+				window.location.href = decodeURIComponent(window.location.href) +
+					(decodeURIComponent(window.location.href).indexOf("?") !== -1 ? "&" : "?") + "expirado=true";
+			}
+		}
+	};
+
+	if (config.datasourceFilter) param.filter = config.datasourceFilter;
+
+	return new kendo.data.DataSource(param);
+};
+
+var converterJsonStringToDateTime = function (date) {
+	if (!(date instanceof Date)) {
+		if (date.indexOf('/Date(') === 0)
+			date = new Date(parseInt(date.substr(6)));
+		else
+			date = new Date(date);
+	}
+
+	return date;
+};
+
+var setarCulturaKendo = function () {
+	if (kendo.culture().name != culturaIdioma) {
+		kendo.culture(culturaIdioma);
+	}
+};
+
+var formatarDataHora = function (data) {
+	setarCulturaKendo();
+
+	if (data === null || data === '') {
+		return data;
+	}
+
+	if (typeof data === 'string') {
+		data = converterJsonStringToDateTime(data);
+	}
+
+	if (data instanceof Date) {
+		return kendo.toString(data, 'G');
+	}
+
+	throw new Error('Apenas valores dos tipos String (no formato json) e Date são suportados.');
+};
+
+var formatarHora = function (data, shortTime) {
+	setarCulturaKendo();
+
+	if (data === null || data === '') {
+		return data;
+	}
+
+	if (typeof data === 'string') {
+		data = converterJsonStringToDateTime(data);
+	}
+
+	if (data instanceof Date) {
+		if (shortTime) {
+			if (culturaIdioma === 'en-US') {
+				return kendo.toString(data, 'hh:mm tt');
+			}
+
+			return kendo.toString(data, 'HH:mm');
+		}
+		if (culturaIdioma === 'en-US') {
+			return kendo.toString(data, 'hh:mm:ss tt');
+		}
+
+		return kendo.toString(data, 'HH:mm:ss');
+	}
+
+	throw new Error('Apenas valores dos tipos String (no formato json) e Date são suportados.');
+};
+
+var formatarData = function (data) {
+	setarCulturaKendo();
+
+	if (data === null || data === '') {
+		return data;
+	}
+
+	if (typeof data === 'string') {
+		data = converterJsonStringToDateTime(data);
+	}
+
+	if (data instanceof Date) {
+		return kendo.toString(data, 'd');
+	}
+
+	throw new Error('Apenas valores dos tipos String (no formato json) e Date são suportados.');
+};
+
+var sessaoExpirou = function (data, jqXHR) {
+	if (jqXHR) {
+		var contentType = jqXHR.getResponseHeader('Content-Type');
+
+		return (jqXHR.status === 200 || jqXHR.status === 304) &&
+			contentType.toLowerCase().indexOf('text/html') >= 0 &&
+			data.indexOf('<!DOCTYPE html>') === 0;
+	}
+
+	if (typeof data === 'string') {
+		return data.indexOf('<html') > 0;
+	}
+
+	return false;
+};
+
+var downloadArquivo = function (arquivo, download = false) {
+	if (!sophiaConfig.usuarioAutenticado && !arquivo.Publica) {
+		abrirPopupLogin(false, {
+			funcao: "DOWNLOAD_ARQUIVO",
+			params: { arquivo: arquivo, download: download }
+		});
+	} else {
+		var executarDownload = function (arquivo) {
+			let parametros = `?codigoArquivo=${arquivo.Codigo}&tipoMidia=${arquivo.TipoMidia}`;
+			if (arquivo.TipoVisualizacaoMidia == TipoVisualizacaoMidia.Pdf && (!arquivo.PermiteDownload || !download)) {
+				abrirEmNovaJanelaComAviso(`${sophiaConfig.serviceBaseUrl}VisualizadorPdf${parametros}`);
+			} else if (arquivo.TipoVisualizacaoMidia == TipoVisualizacaoMidia.Html) {
+				abrirEmNovaJanelaComAviso(`${sophiaConfig.serviceBaseUrl}VisualizadorHtml${parametros}`);
+			} else if (arquivo.TipoVisualizacaoMidia == TipoVisualizacaoMidia.Video && (!arquivo.PermiteDownload || !download)) {
+				abrirEmNovaJanelaComAviso(`${sophiaConfig.serviceBaseUrl}VisualizadorVideo${parametros}`);
+			} else {
+				$("#downloadArquivos_iframe")[0].src = `${sophiaConfig.serviceBaseUrl}Busca/Download${parametros}`;
+			}
+		};
+
+		if (!arquivo.Publica) {
+			$.ajax({
+				type: 'POST',
+				url: `${sophiaConfig.serviceBaseUrl}conteudoDigital/temAcesso`,
+				data: { codigoArquivo: arquivo.Codigo, tipoMidia: arquivo.TipoMidia }
+			}).done(function (data) {
+				if (data) {
+					executarDownload(arquivo);
+				} else {
+					exibirPopupMensagemAcessoNegadoConteudoDigital();
+				}
+			});
+		} else {
+			executarDownload(arquivo);
+		}
+	}
+
+	prevenirEvento(event);
+
+	return false;
+};
+
+var exibirPopupMensagemAcessoNegadoConteudoDigital = function() {
+	$('#msg-acesso-negado-conteudo-digital').kendoWindow({
+		width: "350px",
+		height: "182px",
+		title: false,
+		modal: true,
+		resizable: false,
+		closable: true,
+		visible: false,
+		iframe: true
+	}).data("kendoWindow").center().open();
+
+	$('#msg-acesso-negado-conteudo-digital-close').click(function() {
+		$('#msg-acesso-negado-conteudo-digital').data("kendoWindow").close();
+	});
+};
+
+var acessoSite = function (codigo, tipoMidia, tipoSite, codigoRepositorio) {
+	$.ajax({
+		type: 'POST',
+		url: `${sophiaConfig.serviceBaseUrl}Acervo/AcessoSite`,
+		data: { codigoSite: codigo, tipoMidia: tipoMidia, tipoSite: tipoSite, codigoRepositorio: codigoRepositorio }
+	});
+};
+
+var abrirPopupLogin = function (fecharLocal, callbackLogin, loginUrl = "login/loginModal") {
+	if (callbackLogin) {
+		sessionStorage.setItem("callbackLogin", angular.toJson(callbackLogin));
+	}
+
+	$('body').append('<div id="loginWindow"></div>');
+	var loginWindow = $("#loginWindow");
+
+	var alturaLogin = obterAlturaInicialPopupLogin();
+	var fezLogoutManualmente = localStorage.getItem('loginPlataformaExternaDeslogadoManualmente') == 1;
+	if (sophiaConfig.habilitarCaptcha && (!loginAutomaticoPlataformaExterna || fezLogoutManualmente)) {
+		alturaLogin = alturaLogin + tw.ALTURA_LOGIN_CAMPOS_CAPTCHA;
+	}
+	loginWindow.kendoWindow({
+		width: "400px",
+		height: `${alturaLogin}px`,
+		title: false,
+		modal: true,
+		resizable: false,
+		visible: false,
+		content: sophiaConfig.serviceBaseUrl + loginUrl,
+		iframe: true
+	}).data("kendoWindow").center().open();
+
+	loginWindow.attr("fecharLocal", !fecharLocal);
+
+	kendo.ui.progress(loginWindow, true);
+};
+
+var obterAlturaInicialPopupLogin = function () {
+	if (terminalRi && sophiaConfig.permitirUsuariosExternos)
+		return tw.ALTURA_MODAL_LOGIN_INTEGRACAO_UMA;
+
+	if (sophiaConfig.habilitarLoginPlataformaExterna && sophiaConfig.permitirUsuariosExternos)
+		return tw.ALTURA_MODAL_LOGIN_INTEGRACAO_DUAS;
+
+	if (sophiaConfig.habilitarLoginPlataformaExterna || sophiaConfig.permitirUsuariosExternos)
+		return tw.ALTURA_MODAL_LOGIN_INTEGRACAO_UMA;
+
+	return tw.ALTURA_MODAL_LOGIN_PADRAO;
+};
+
+var criarDataSourceAutocomplete = function (opcoes) {
+	var dataTextField = opcoes.dataTextField || 'Descricao';
+
+	if (!opcoes.obterQueryString) {
+		return new kendo.data.DataSource({
+			type: 'aspnetmvc-ajax',
+			serverFiltering: true,
+			serverPaging: true,
+			pageSize: (opcoes.pageSize ? (opcoes.pageSize > 0 ? opcoes.pageSize * -1 : opcoes.pageSize) : -10),
+			sort: opcoes.dataSort || { field: dataTextField, dir: 'asc' },
+			filter: opcoes.datasourceFilter,
+			transport: {
+				read: opcoes.readURL
+			}
+		});
+	} else {
+		opcoes.data = {};
+		opcoes.data[opcoes.chaveQueryString] = function () {
+			return opcoes.obterQueryString();
+		};
+
+		return new kendo.data.DataSource({
+			type: 'aspnetmvc-ajax',
+			serverFiltering: true,
+			serverPaging: true,
+			pageSize: (opcoes.pageSize ? (opcoes.pageSize > 0 ? opcoes.pageSize * -1 : opcoes.pageSize) : -10),
+			sort: opcoes.dataSort || { field: dataTextField, dir: 'asc' },
+			filter: opcoes.datasourceFilter,
+			transport: {
+				read: {
+					url: opcoes.readURL,
+					data: opcoes.data
+				}
+			}
+		});
+	}
+};
+
+var criarCampoData = function (inputID) {
+	$('#' + inputID).keypress(function (evt) { return inputDateFormat(evt, '#' + inputID); });
+};
+
+var inputFormat = function (src, mask) {
+	var i = $(src).val().length;
+	var text = mask.substring(i);
+	if (text.substring(0, 1) !== '#') {
+		$(src).val($(src).val() + text.substring(0, 1));
+	}
+	return true;
+};
+
+var inputDateFormat = function (evt, src) {
+	var charCode = evt.which;
+	if (charCode > 31 && (charCode < 48 || charCode > 57)) return false;
+
+	inputFormat(src, '##/##/####');
+
+	return true;
+};
+
+var getBibliotecasLocalStorage = function () {
+	return multiBiblioteca ? (localStorage.getItem("codigosBibliotecas") || "") : "";
+};
+
+var getLocalizacaoLocalStorage = function () {
+	return terminalRedes ? (localStorage.getItem("codigosLocalizacao") || "") : "";
+};
+
+var exibirMensagemErro = function (titulo, menssagem, funcaoAoFechar = null) {
+	exibirMensagemInformacao(titulo, menssagem, tw.COR_MENSAGEM_ERRO, funcaoAoFechar);
+};
+
+var exibirMensagemSucesso = function (titulo, menssagem, funcaoAoFechar = null) {
+	exibirMensagemInformacao(titulo, menssagem, tw.COR_MENSAGEM_AVISO, funcaoAoFechar);
+};
+
+var fecharMensagemKendoWindow = function (funcaoAoFechar = null) {
+	let mensagemKendoWidget = $('#divMsgKendoWindow').data('kendoWindow');
+	if (mensagemKendoWidget) {
+		mensagemKendoWidget.close();
+		$("#divMsgKendoWindow").remove();
+		if (funcaoAoFechar && typeof (funcaoAoFechar) == 'function') {
+			funcaoAoFechar();
+		}
+	}
+};
+
+var exibirMensagemInformacao = function (titulo, menssagem, cor, funcaoAoFechar = null) {
+	if (!cor)
+		cor = "#000";
+
+	$('<div id="divMsgKendoWindow" class="mainbox">\
+		<div class="panel panel-info">\
+			<div class="panel-heading">\
+				<div class="panel-title">' + titulo + '</div>\
+				<i class="fecharPopupButton mdi mdi-close" onclick="fecharMensagemKendoWindow('+funcaoAoFechar+');"></i>\
+			</div>\
+			<div style="font-weight: bold;color: ' + cor + ';text-align: center;font-size: 1.4em;height: calc(100% - 41px);">\
+				<div class="vertical-center">' + menssagem + '</div>\
+			</div>\
+		</div>\
+	</div>').kendoWindow({
+		width: "400px",
+		height: "284px",
+		title: false,
+		modal: true,
+		resizable: false,
+		visible: false,
+		iframe: true
+	}).data("kendoWindow").center().open();
+};
+
+var removerParametroUrl = function (url, parametro) {
+	var urlparts = url.split('?');
+	if (urlparts.length === 1)
+		return urlparts[0];
+
+	var paramParts = urlparts[1].split('&');
+	for (var i = paramParts.length; i-- > 0;) {
+		if (paramParts[i].lastIndexOf(parametro, 0) !== -1)
+			paramParts.splice(i, 1);
+	}
+
+	if (paramParts.length === 0)
+		return urlparts[0];
+
+	return urlparts[0] + '?' + paramParts.join('&');
+}
+
+Date.prototype.toJSON = function () {
+	var mm = this.getMonth() + 1;
+	var dd = this.getDate();
+	var hh = this.getHours();
+	var mi = this.getMinutes();
+	var sc = this.getSeconds();
+	return this.getFullYear() +
+		'-' +
+		(mm > 9 ? '' : '0') +
+		mm +
+		'-' +
+		(dd > 9 ? '' : '0') +
+		dd +
+		'T' +
+		(hh > 9 ? '' : '0') + hh +
+		':' +
+		(mi > 9 ? '' : '0') + mi +
+		':' +
+		(sc > 9 ? '' : '0') + sc;
+};
+
+Date.prototype.toLocaleTimeString = function () {
+	var hh = this.getHours();
+	var mi = this.getMinutes();
+	var sc = this.getSeconds();
+	return (hh > 9 ? '' : '0') + hh + ':' + (mi > 9 ? '' : '0') + mi + ':' + (sc > 9 ? '' : '0') + sc;
+};
+
+var validarAcessoDetalhe = function () {
+	$.ajax({
+		type: 'POST',
+		url: sophiaConfig.serviceBaseUrl + 'acervo/validaacessodetalhe'
+	});
+}
+
+var autenticarRi = function (urlRi) {
+	mostrarCarregandoGlobal();
+	$.ajax({
+		type: 'POST',
+		url: `${sophiaConfig.serviceBaseUrl}SingleSignOn/ObterDadosParaSsoRi`
+	}).done(function (data) {
+		if (data.Resultado) {
+			$("#formPostLoginRi").attr("action", `${urlRi}SingleSignOn/Autenticar`);
+			$("#formPostLoginRiLogin").val(data.Identificacao);
+			$("#formPostLoginRiData").val(data.Data);
+			$("#formPostLoginRi").submit();
+		} else {
+			window.open(urlRi);
+		}
+	}).always(function () {
+		ocultarCarregandoGlobal();
+	});
+}
+
+var timeoutMsgAvisoAberturaEmNovaJanela;
+
+var abrirEmNovaJanelaComAviso = function (url, idFormulario = null, tempoFecharMensagemSegundos = null) {
+	let urlLinkProsseguir = "";
+	let targetLinkProsseguir = "";
+	let onClickLinkProsseguir = "";
+
+	if (idFormulario && idFormulario.trim() !== "") {
+		urlLinkProsseguir = "javascript: void(0)";
+		onClickLinkProsseguir = `document.getElementById('${idFormulario}').submit(); fecharAvisoAberturaEmNovaJanela(); return true;`;
+
+	} else {
+		urlLinkProsseguir = url;
+		targetLinkProsseguir = 'target="_blank"';
+		onClickLinkProsseguir = "fecharAvisoAberturaEmNovaJanela(); return true;";
+	}
+
+	let htmlMensagem = `
+		<div id="divMsgKendoWindow" class="mainbox">
+			<div class="panel panel-info" style="height: calc(100% - 2px)">
+				<div class="panel-heading">
+					<div class="panel-title">
+						${GetTermo(T4299, 'Aviso')}
+					</div>
+					<i class="fecharPopupButton mdi mdi-close" onclick="fecharAvisoAberturaEmNovaJanela();"></i>
+				</div>
+				<div class="panel-body panel-body-texto-centro">
+					<p>
+						${GetTermo(T10623, 'O conteúdo será aberto em uma nova janela.')}
+					</p>
+					<p style="margin-top: 10px">
+						<a class="btn btn-default" style="margin-right: 20px" role="button" href="${urlLinkProsseguir}" ${targetLinkProsseguir} onclick="${onClickLinkProsseguir}">
+							${GetTermo(T8583, 'Continuar')}
+						</a>
+						<button type="button" class="btn btn-default" onclick="fecharAvisoAberturaEmNovaJanela();">
+							${GetTermo(T5, 'Cancelar')}
+						</button>
+					</p>
+				</div>
+			</div>
+		</div>`;
+
+	$(htmlMensagem).kendoWindow({
+		width: "360px",
+		height: "180px",
+		title: false,
+		modal: true,
+		resizable: false,
+		visible: false,
+		iframe: false
+	}).data("kendoWindow").center().open();
+
+	if (tempoFecharMensagemSegundos && tempoFecharMensagemSegundos > 0) {
+		timeoutMsgAvisoAberturaEmNovaJanela = setTimeout(function () {
+			fecharAvisoAberturaEmNovaJanela();
+		}, tempoFecharMensagemSegundos * 1000);
+	}
+};
+
+var fecharAvisoAberturaEmNovaJanela = function () {
+	if (timeoutMsgAvisoAberturaEmNovaJanela) {
+		clearTimeout(timeoutMsgAvisoAberturaEmNovaJanela);
+	}
+	fecharMensagemKendoWindow();
+};
+
+function prevenirEvento(event) {
+	if (event)
+		event.preventDefault();
+}
+
+function abrirVlibras() {
+	const bloco = document.querySelector('[vw]');
+	const botao = document.querySelector('[vw-access-button]');
+
+	if (!bloco || !botao) return;
+	bloco.style.display = 'block';
+	botao.click();
+}

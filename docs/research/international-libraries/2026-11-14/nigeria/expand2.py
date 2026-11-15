@@ -1,0 +1,7 @@
+from probe import *
+def simple(z):
+ k,u=z;d,b=fetch(u,k+'.html');s=BeautifulSoup(b,'html.parser');d['title']=s.title.get_text(' ',strip=True) if s.title else '';d['links']=[{'title':a.get_text(' ',strip=True),'url':urllib.parse.urljoin(u,a['href'])} for a in s.select('a[href]') if re.search('catalog|opac|library|koha|newgenlib',a.get_text(' ',strip=True)+' '+a['href'],re.I)];d['text']=s.get_text(' ',strip=True)[-20000:];(ROOT/(k+'.json')).write_text(json.dumps(d,indent=2));return {k:v for k,v in d.items() if k not in ['text','links']},d['links'][:20]
+params={'searchText':'Things fall apart','SelectedUnixNames':'','From':'Library','ResultSetOffset':'1','LibraryId':'1','FormName':'Books','ApplyFacet':'false','AuthorSearch':'','SubjectSearch':'','ClassNumberSearch':'','NewSearch':'true','ExactAFId':'','SortField':'','Index':'Title'}
+C=[('benin-specific','https://ir.uniben.edu/newgenlibctxt/Search?'+urllib.parse.urlencode(params)),('portharcourt-opac','http://delopac.uniport.edu.ng/'),('portharcourt-robots','http://delopac.uniport.edu.ng/robots.txt'),('calabar-opac','http://38.17.48.240:8080/newgenlibctxt/'),('calabar-robots','http://38.17.48.240:8080/robots.txt'),('futo-repo','https://repository.futo.edu.ng/'),('minna-home','https://futminna.edu.ng/'),('lasu-elib','https://csc.lasu.edu.ng/lasu_library/')]
+with concurrent.futures.ThreadPoolExecutor(max_workers=6) as ex:
+ for d,l in ex.map(simple,C): print(json.dumps(d),json.dumps(l)[:1600],flush=True)

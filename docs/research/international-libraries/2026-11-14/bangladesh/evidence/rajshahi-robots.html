@@ -1,0 +1,223 @@
+# ==================================================
+# robots.txt for Koha OPAC - RUCL
+# Production Version - September 2026
+# Last Updated: Cleaned and corrected
+# ==================================================
+
+# ==================================================
+# AI / LLM TRAINING BOTS - BLOCKED ENTIRELY
+# These bots respect robots.txt, so this is effective.
+# ==================================================
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: OAI-SearchBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: cohere-ai
+Disallow: /
+
+User-agent: Diffbot
+Disallow: /
+
+User-agent: FacebookBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: ImagesiftBot
+Disallow: /
+
+User-agent: Meta-ExternalAgent
+Disallow: /
+
+User-agent: Omgilibot
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+User-agent: Turnitin
+Disallow: /
+
+User-agent: Lightpanda
+Disallow: /
+
+User-agent: YouBot
+Disallow: /
+
+# ==================================================
+# SEO / MARKETING CRAWLERS - BLOCKED
+# These consume crawl budget without benefit.
+# ==================================================
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: DataForSeoBot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: MauiBot
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
+
+User-agent: SeznamBot
+Disallow: /
+
+User-agent: Sogou
+Disallow: /
+
+User-agent: MegaIndex
+Disallow: /
+
+User-agent: ZoominfoBot
+Disallow: /
+
+User-agent: serpstatbot
+Disallow: /
+
+# ==================================================
+# DEFAULT RULE - ALL OTHER CRAWLERS
+# ==================================================
+User-agent: *
+Crawl-delay: 5
+
+# --- Block error pages ---
+Disallow: /errors/
+Disallow: /cgi-bin/koha/errors/
+
+# --- Block machine-readable / bulk export endpoints ---
+Disallow: /cgi-bin/koha/opac-export.pl
+Disallow: /cgi-bin/koha/opac-ISBDdetail.pl
+Disallow: /cgi-bin/koha/opac-MARCdetail.pl
+Disallow: /cgi-bin/koha/opac-showmarc.pl
+Disallow: /api/
+
+# --- Block user-specific / interactive pages ---
+Disallow: /cgi-bin/koha/opac-search.pl
+Disallow: /cgi-bin/koha/opac-reserve.pl
+Disallow: /cgi-bin/koha/opac-user.pl
+Disallow: /cgi-bin/koha/opac-tags.pl
+Disallow: /cgi-bin/koha/opac-shelves.pl
+Disallow: /cgi-bin/koha/opac-addbybiblionumber.pl
+Disallow: /cgi-bin/koha/opac-authoritiesdetail.pl
+
+# --- Block long query-string variants of detail pages ---
+Disallow: /*?shelfbrowse_itemnumber=
+Disallow: /*?query_desc=
+
+# --- Allow the public-facing catalog ---
+Allow: /cgi-bin/koha/opac-detail.pl
+Allow: /cgi-bin/koha/opac-main.pl
+Allow: /
+
+# ==================================================
+# MAJOR SEARCH ENGINES - ALLOWED WITH DELAY
+# ==================================================
+User-agent: Googlebot
+Crawl-delay: 2
+Disallow: /errors/
+Disallow: /cgi-bin/koha/errors/
+Disallow: /cgi-bin/koha/opac-search.pl
+Disallow: /api/
+
+User-agent: Googlebot-Image
+Crawl-delay: 2
+
+User-agent: bingbot
+Crawl-delay: 2
+Disallow: /errors/
+Disallow: /cgi-bin/koha/errors/
+Disallow: /cgi-bin/koha/opac-search.pl
+Disallow: /api/
+
+User-agent: msnbot
+Crawl-delay: 2
+
+User-agent: Yahoo
+Crawl-delay: 2
+
+User-agent: DuckDuckBot
+Crawl-delay: 2
+
+User-agent: Slurp
+Crawl-delay: 2
+
+User-agent: Yandex
+Crawl-delay: 2
+
+User-agent: Baiduspider
+Crawl-delay: 2
+
+User-agent: Applebot
+Crawl-delay: 2
+
+# ==================================================
+# SOCIAL MEDIA BOTS - ALLOWED WITH DELAY
+# ==================================================
+User-agent: facebookexternalhit
+Crawl-delay: 1
+
+User-agent: twitterbot
+Crawl-delay: 1
+
+User-agent: LinkedInBot
+Crawl-delay: 1
+
+User-agent: Pinterestbot
+Crawl-delay: 1
+
+User-agent: WhatsApp
+Crawl-delay: 1
+
+User-agent: TelegramBot
+Crawl-delay: 1
+
+User-agent: Slackbot
+Crawl-delay: 1
+
+User-agent: Discordbot
+Crawl-delay: 1
+
+# ==================================================
+# SITEMAP (enable if you generate one)
+# ==================================================
+# Sitemap: https://opac.ru.ac.bd/sitemap.xml

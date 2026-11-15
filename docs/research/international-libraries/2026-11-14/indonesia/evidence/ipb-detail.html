@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>    OPAC
+</title>
+    <link rel="icon" href="/assets_user/img/fav-ipb.png" type="image/png" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <!-- all css here -->
+<link rel="stylesheet" href="/assets_user/css/bootstrap.min.css">
+<link rel="stylesheet" href="/assets_user/css/magnific-popup.css">
+<link rel="stylesheet" href="/assets_user/css/animate.css">
+<link rel="stylesheet" href="/assets_user/css/owl.carousel.min.css">
+<link rel="stylesheet" href="/assets_user/css/themify-icons.css">
+<link rel="stylesheet" href="/assets_user/css/pe-icon-7-stroke.css">
+<link rel="stylesheet" href="/assets_user/css/icofont.css">
+<link rel="stylesheet" href="/assets_user/css/meanmenu.min.css">
+<link rel="stylesheet" href="/assets_user/css/jquery-ui.css">
+<link rel="stylesheet" href="/assets_user/css/bundle.css">
+<link rel="stylesheet" href="/assets_user/css/style.css">
+<link rel="stylesheet" href="/assets_user/css/responsive.css">
+<link rel="stylesheet" href="/assets_user/DataTables/datatables.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />    <!-- all top script here -->
+<script src="/assets_user/js/vendor/modernizr-3.11.7.min.js"></script>
+<script src="/assets_user/jquery/jquery.min.js"></script>
+<script src="/assets_user/jquery/jquery.validate.min.js"></script>
+<script src="/assets_user/sweetalert/sweetalert2.all.min.js"></script>
+<script src="/assets_user/jsbarcode/JsBarcode.all.min.js"></script></head>
+<body>
+    <div class="wrapper d-flex flex-column min-vh-100">
+                    <header class="opac-header-wrap">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        .opac-header-wrap {
+            position: relative;
+            font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border-bottom: 1px solid rgba(226, 232, 240, .85);
+            box-shadow: 0 1px 0 rgba(255, 255, 255, .8) inset, 0 8px 32px rgba(15, 23, 42, .04);
+        }
+        .opac-header-wrap::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent 0%, rgba(37, 99, 235, .35) 20%, rgba(59, 130, 246, .5) 50%, rgba(37, 99, 235, .35) 80%, transparent 100%);
+            opacity: .9;
+            pointer-events: none;
+        }
+        .opac-header-inner {
+            position: relative;
+            z-index: 1;
+            padding: 16px 16px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+        .opac-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 0;
+        }
+        .opac-brand-logo {
+            width: 54px;
+            height: 54px;
+            border-radius: 14px;
+            border: 1px solid rgba(191, 219, 254, .9);
+            box-shadow:
+                0 0 0 3px rgba(239, 246, 255, 1),
+                0 12px 28px rgba(37, 99, 235, .18);
+            object-fit: cover;
+            background: #fff;
+        }
+        .opac-brand-title h3 {
+            margin: 0;
+            font-size: 1.35rem;
+            line-height: 1.2;
+            font-weight: 800;
+            letter-spacing: -.02em;
+            color: #0f172a;
+        }
+        .opac-brand-title h4 {
+            margin: 3px 0 0;
+            font-size: .875rem;
+            font-weight: 500;
+            color: #64748b;
+            letter-spacing: .01em;
+        }
+        .opac-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+        .opac-badge {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: #1e40af;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border: 1px solid rgba(147, 197, 253, .85);
+            border-radius: 999px;
+            padding: 6px 12px;
+            box-shadow: 0 1px 2px rgba(30, 64, 175, .06);
+        }
+        .opac-time {
+            font-size: 12px;
+            color: #475569;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+            padding: 6px 12px;
+            border-radius: 10px;
+            background: rgba(248, 250, 252, .9);
+            border: 1px solid #e2e8f0;
+        }
+        @media (max-width: 768px) {
+            .opac-header-inner {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .opac-brand-title h3 {
+                font-size: 1.2rem;
+            }
+            .opac-brand-title h4 {
+                font-size: 13px;
+            }
+            .opac-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+
+    <div class="container opac-header-inner">
+        <div class="opac-brand">
+            <img class="opac-brand-logo" src="/assets_user/img/logo/Logo-IPB.png" alt="Logo IPB">
+            <div class="opac-brand-title">
+                <h3>OPAC</h3>
+                <h4>IPB University E-Library</h4>
+            </div>
+        </div>
+        <div class="opac-right">
+            <span class="opac-badge">Online Catalog</span>
+            <span id="current-time-opac" class="opac-time"></span>
+        </div>
+    </div>
+</header>
+
+<script>
+    function updateTimeOpac() {
+        const now = new Date();
+        const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        const months = [
+            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        ];
+        const day = days[now.getDay()];
+        const date = now.getDate();
+        const month = months[now.getMonth()];
+        const year = now.getFullYear();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        const currentTimeString = `${day}, ${date} ${month} ${year}, ${hours}:${minutes}:${seconds}`;
+        $('#current-time-opac').text(currentTimeString);
+    }
+
+    $(document).ready(function() {
+        setInterval(updateTimeOpac, 1000);
+        updateTimeOpac();
+    });
+</script>
+                <div class="content flex-grow-1">
+                <input type="hidden" id="APP_URLAPP" value="https://readily.ipb.ac.id">
+    <input type="hidden" name="id_buku" id="id_buku" value="52722">
+
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,600;0,8..60,700&display=swap');
+        .opac-detail-page-bg {
+            position: relative;
+            padding: 0 0 32px;
+            background-color: #f1f5f9;
+            background-image:
+                radial-gradient(ellipse 100% 80% at 100% -10%, rgba(59, 130, 246, 0.11) 0%, transparent 52%),
+                radial-gradient(ellipse 70% 50% at 0% 100%, rgba(99, 102, 241, 0.08) 0%, transparent 48%),
+                linear-gradient(180deg, #f8fafc 0%, #f1f5f9 40%, #eef2f7 100%);
+            border: none;
+            overflow: hidden;
+        }
+        .opac-detail-page-bg::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse 120% 60% at 50% -10%, rgba(148, 163, 184, 0.09) 0%, transparent 50%),
+                radial-gradient(ellipse 80% 40% at 100% 80%, rgba(148, 163, 184, 0.06) 0%, transparent 45%);
+        }
+        .opac-detail-page {
+            font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+            color: #0f172a;
+            padding-top: 20px;
+            padding-bottom: 70px;
+            position: relative;
+            z-index: 1;
+        }
+        .opac-detail-breadcrumb {
+            margin-bottom: 14px;
+        }
+        .opac-detail-breadcrumb a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #475569;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, .85);
+            border: 1px solid #e2e8f0;
+            transition: color .15s ease, border-color .15s ease, background .15s ease;
+        }
+        .opac-detail-breadcrumb a:hover {
+            color: #1d4ed8;
+            border-color: #bfdbfe;
+            background: #eff6ff;
+        }
+        .opac-detail-search {
+            position: relative;
+            background:
+                radial-gradient(ellipse 90% 120% at 90% -20%, rgba(147, 197, 253, 0.35) 0%, transparent 55%),
+                linear-gradient(145deg, #1d4ed8 0%, #1e40af 42%, #172554 100%);
+            border-radius: 20px;
+            padding: 14px;
+            margin-bottom: 22px;
+            border: 1px solid rgba(255, 255, 255, .18);
+            box-shadow: 0 20px 48px rgba(30, 58, 138, .28);
+            overflow: hidden;
+        }
+        .opac-detail-search::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background-image: repeating-linear-gradient(
+                180deg,
+                transparent 0,
+                transparent 24px,
+                rgba(255, 255, 255, 0.045) 24px,
+                rgba(255, 255, 255, 0.045) 25px
+            );
+            mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.1) 100%);
+        }
+        .opac-detail-search-inner-wrap {
+            position: relative;
+            z-index: 1;
+        }
+        .opac-detail-search-inner {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #fff;
+            border-radius: 14px;
+            padding: 5px;
+            box-shadow: 0 12px 36px rgba(15, 23, 42, .12);
+        }
+        @media (min-width: 768px) {
+            .opac-detail-search-inner {
+                flex-direction: row;
+                align-items: stretch;
+                gap: 0;
+            }
+            .opac-detail-search-inner .opac-detail-cat {
+                width: 200px;
+                min-width: 180px;
+            }
+            .opac-detail-search-inner .opac-detail-kw {
+                flex: 1;
+                border-left: 1px solid #e2e8f0;
+            }
+            .opac-detail-search-inner .opac-detail-go {
+                padding-left: 4px;
+            }
+        }
+        .opac-detail-search .form-control,
+        .opac-detail-search .form-select {
+            height: 48px;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            box-shadow: none;
+            font-size: 14px;
+        }
+        @media (min-width: 768px) {
+            .opac-detail-search .form-control,
+            .opac-detail-search .form-select {
+                height: 50px;
+            }
+            .opac-detail-search-inner .opac-detail-cat .form-select {
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+            .opac-detail-search-inner .opac-detail-kw .form-control {
+                border-radius: 0;
+            }
+        }
+        .opac-detail-cat {
+            position: relative;
+        }
+        .opac-detail-cat .form-select {
+            appearance: none;
+            -webkit-appearance: none;
+            padding-right: 34px;
+        }
+        .opac-detail-cat::after {
+            content: "";
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 6px solid #64748b;
+            pointer-events: none;
+        }
+        .opac-detail-search .btn {
+            height: 48px;
+            min-width: 112px;
+            border-radius: 10px;
+            font-weight: 700;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid rgba(15, 23, 42, .5);
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, .25);
+            transition: transform .15s ease, box-shadow .15s ease;
+        }
+        @media (min-width: 768px) {
+            .opac-detail-search .btn {
+                height: 50px;
+            }
+        }
+        .opac-detail-search .btn:hover {
+            background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+            transform: translateY(-1px);
+            color: #fff;
+        }
+        .opac-detail-shell {
+            background: linear-gradient(180deg, #ffffff 0%, #fafbfc 100%);
+            border: 1px solid rgba(226, 232, 240, .95);
+            border-radius: 20px;
+            padding: 22px;
+            margin-bottom: 18px;
+            box-shadow: 0 16px 40px rgba(15, 23, 42, .07);
+            position: relative;
+            overflow: hidden;
+        }
+        .opac-detail-shell::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%);
+            border-radius: 20px 0 0 20px;
+        }
+        .opac-detail-eyebrow {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-bottom: 6px;
+        }
+        .opac-detail-cover-frame {
+            position: relative;
+            display: inline-block;
+            border-radius: 14px;
+            overflow: hidden;
+            background: linear-gradient(145deg, #f1f5f9 0%, #e2e8f0 100%);
+            box-shadow:
+                0 2px 0 rgba(255, 255, 255, .6) inset,
+                6px 16px 36px rgba(15, 23, 42, .14);
+            margin: 0 auto;
+        }
+        .opac-detail-cover-frame::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 14px;
+            box-shadow: inset 0 0 0 1px rgba(15, 23, 42, .07);
+            pointer-events: none;
+        }
+        .opac-detail-cover {
+            width: 100%;
+            max-width: 250px;
+            height: 355px;
+            object-fit: cover;
+            border-radius: 14px;
+            border: none;
+            background: #f8fafc;
+            display: block;
+        }
+        .opac-detail-title {
+            font-family: "Source Serif 4", Georgia, serif;
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            line-height: 1.28;
+            letter-spacing: -.02em;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 16px;
+        }
+        .opac-detail-fields {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        .opac-detail-field {
+            display: grid;
+            grid-template-columns: minmax(0, 140px) 1fr;
+            gap: 10px 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
+            align-items: start;
+        }
+        .opac-detail-field:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .opac-detail-field:nth-child(even) {
+            background: linear-gradient(90deg, rgba(248, 250, 252, .6) 0%, transparent 100%);
+            margin: 0 -12px;
+            padding-left: 12px;
+            padding-right: 12px;
+            border-radius: 10px;
+        }
+        .opac-detail-field .label {
+            font-weight: 700;
+            color: #64748b;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            padding-top: 2px;
+        }
+        .opac-detail-field .value {
+            color: #0f172a;
+            font-size: 14px;
+            line-height: 1.58;
+            word-break: break-word;
+        }
+        .opac-detail-tag {
+            display: inline-block;
+            background: #eff6ff;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 999px;
+            padding: 4px 11px;
+            margin: 0 6px 6px 0;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .opac-detail-panel {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 18px;
+            height: 100%;
+            box-shadow: 0 12px 32px rgba(15, 23, 42, .06);
+        }
+        .opac-detail-panel h3 {
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 14px;
+            color: #0f172a;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+        }
+        .opac-detail-panel ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .opac-detail-panel ul li {
+            border-bottom: 1px solid #f1f5f9;
+            padding: 0;
+            font-size: 13px;
+            line-height: 1.45;
+        }
+        .opac-detail-panel ul li:last-child {
+            border-bottom: 0;
+        }
+        .opac-detail-panel ul li a {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 10px 8px;
+            margin: 0 -8px;
+            border-radius: 10px;
+            color: #334155;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background .15s ease, color .15s ease;
+        }
+        .opac-detail-panel ul li a::before {
+            content: "→";
+            flex-shrink: 0;
+            color: #94a3b8;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+        .opac-detail-panel ul li a:hover {
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+        .opac-detail-panel .show-more-link,
+        .opac-detail-panel .show-less-link {
+            font-size: 12px;
+            font-weight: 700;
+            color: #1d4ed8;
+            text-decoration: none;
+        }
+        .opac-detail-panel .show-more-link:hover,
+        .opac-detail-panel .show-less-link:hover {
+            text-decoration: underline;
+        }
+        .opac-detail-tabs {
+            background: #fff;
+            border: 1px solid rgba(226, 232, 240, .95);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 16px 40px rgba(15, 23, 42, .06);
+        }
+        .opac-detail-tabs .description-review-title {
+            margin-bottom: 18px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
+        .opac-detail-tabs .description-review-title a {
+            border: 1px solid #e2e8f0;
+            border-radius: 999px;
+            padding: 10px 18px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #475569;
+            background: #f8fafc;
+            text-decoration: none;
+            transition: all .18s ease;
+        }
+        .opac-detail-tabs .description-review-title a:hover {
+            border-color: #bfdbfe;
+            color: #1d4ed8;
+            background: #fff;
+        }
+        .opac-detail-tabs .description-review-title a.active {
+            background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
+            border-color: #1d4ed8;
+            color: #fff;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, .28);
+        }
+        .opac-detail-tabs .table {
+            margin-bottom: 0;
+        }
+        .opac-detail-tabs .table thead th {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: #64748b;
+            font-weight: 700;
+            border-bottom-width: 1px;
+            background: #f8fafc;
+        }
+        .opac-detail-tabs .table tbody td {
+            font-size: 13px;
+            color: #0f172a;
+            vertical-align: middle;
+        }
+        .opac-detail-tabs .table tbody tr:hover {
+            background: rgba(239, 246, 255, .5);
+        }
+        @media (max-width: 991px) {
+            .opac-detail-title {
+                margin-top: 8px;
+            }
+            .opac-detail-page-bg {
+                padding: 0 0 16px;
+            }
+            .opac-detail-field {
+                grid-template-columns: 1fr;
+                gap: 4px;
+            }
+            .opac-detail-cover {
+                max-width: 212px;
+                height: 306px;
+            }
+        }
+    </style>
+
+    <div class="opac-detail-page-bg">
+    <div class="container opac-detail-page">
+        <nav class="opac-detail-breadcrumb" aria-label="Navigasi">
+            <a href="https://readily.ipb.ac.id/opac"><i class="bi bi-arrow-left" aria-hidden="true"></i> Katalog OPAC</a>
+        </nav>
+
+        <div class="opac-detail-search">
+            <div class="opac-detail-search-inner-wrap">
+                <form>
+                    <div class="opac-detail-search-inner">
+                        <div class="opac-detail-cat">
+                            <select class="form-select" name="category" id="category">
+                                <option value="sembarang">Sembarang</option>
+                                <option value="judul_buku">Judul</option>
+                                <option value="author">Pengarang</option>
+                                <option value="publisher">Penerbit</option>
+                                <option value="subject">Subjek</option>
+                                <option value="callNumber">Nomor Panggil</option>
+                                <option value="ISBN">ISBN</option>
+                                <option value="ISSN">ISSN</option>
+                                <option value="ISMN">ISMN</option>
+                            </select>
+                        </div>
+                        <div class="opac-detail-kw flex-grow-1">
+                            <input class="form-control" placeholder="Cari judul, pengarang, subjek, ISBN, dll..." name="keyword" id="keyword" type="text">
+                        </div>
+                        <div class="opac-detail-go d-grid">
+                            <button type="button" id="btn_search" class="btn">Cari</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-lg-9">
+                <div class="opac-detail-shell">
+                    <div class="row g-4 align-items-start">
+                        <div class="col-md-4 text-center text-md-start">
+                            <div class="opac-detail-cover-frame">
+                                <img
+                                    src="https://readily.ipb.ac.id/assets_user/img/catalogs/nophoto.jpg"
+                                    alt="Kimia dasar"
+                                    class="opac-detail-cover"
+                                    onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://readily.ipb.ac.id/assets/img/catalogs/nophoto.jpg';}else{this.onerror=null;this.src='https://readily.ipb.ac.id/assets_user/img/catalogs/nophoto.jpg';}"
+                                >
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <p class="opac-detail-eyebrow">Detail koleksi</p>
+                            <h1 class="opac-detail-title">Kimia dasar</h1>
+
+                            <div class="opac-detail-fields">
+                                <div class="opac-detail-field">
+                                    <div class="label">Pengarang</div>
+                                    <div class="value">
+                                                                                    -
+                                                                            </div>
+                                </div>
+                                <div class="opac-detail-field">
+                                    <div class="label">Jenis bahan</div>
+                                    <div class="value">Monograf</div>
+                                </div>
+                                <div class="opac-detail-field">
+                                    <div class="label">Edisi</div>
+                                    <div class="value">3rd</div>
+                                </div>
+                                <div class="opac-detail-field">
+                                    <div class="label">Penerbitan</div>
+                                    <div class="value">Jakarta 2003</div>
+                                </div>
+                                <div class="opac-detail-field">
+                                    <div class="label">Deskripsi fisik</div>
+                                    <div class="value">viii, 428 hlm. ; 26 cm.</div>
+                                </div>
+                                <div class="opac-detail-field">
+                                    <div class="label">Bahasa</div>
+                                    <div class="value">Indonesia</div>
+                                </div>
+                                                                <div class="opac-detail-field">
+                                    <div class="label">ISBN / ISSN / ISMN</div>
+                                    <div class="value">-</div>
+                                </div>
+                                <div class="opac-detail-field">
+                                    <div class="label">Subjek</div>
+                                    <div class="value">
+                                                                                                                                    <span class="opac-detail-tag">Chemistry--General chemistry</span>
+                                                                                                                        </div>
+                                </div>
+                                <div class="opac-detail-field">
+                                    <div class="label">Abstrak</div>
+                                    <div class="value">-</div>
+                                </div>
+                                <div class="opac-detail-field">
+                                    <div class="label">Catatan</div>
+                                    <div class="value">-</div>
+                                </div>
+                                <div class="opac-detail-field">
+                                    <div class="label">Akses online</div>
+                                    <div class="value">-</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="opac-detail-tabs">
+                    <div class="product-description-review text-center">
+                        <div class="description-review-title nav" role="tablist">
+                            <a class="active" href="#eksemplar" data-bs-toggle="tab" role="tab" aria-selected="true">
+                                Eksemplar
+                            </a>
+                            <a href="#konten-digital" data-bs-toggle="tab" role="tab" aria-selected="false">
+                                Konten digital
+                            </a>
+                        </div>
+                        <div class="description-review-text tab-content text-start">
+                            <div class="tab-pane active show fade" id="eksemplar" role="tabpanel">
+                                <table id="daftar-eksemplar" class="table" style="width:100%">
+                                    <thead>
+                                    <tr>
+                                        <th>No Barcode</th>
+                                        <th>No. Panggil</th>
+                                        <th>Akses</th>
+                                        <th>Lokasi</th>
+                                        <th>Ketersediaan</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <div class="tab-pane fade" id="konten-digital" role="tabpanel">
+                                <div class="card border-0 shadow-none">
+                                    <div class="card-body px-0 pt-2">
+                                        <div class="table-responsive">
+                                            <table id="daftar-konten-digital" class="table table-striped table-bordered" style="width:100%">
+                                                <thead>
+                                                <tr>
+                                                    <th class="text-center">No</th>
+                                                    <th class="text-center">Nama File</th>
+                                                    <th class="text-center">Nama File Format Flash</th>
+                                                    <th class="text-center">Format File</th>
+                                                    <th class="text-center">Aksi</th>
+                                                </tr>
+                                                </thead>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3">
+                <div class="opac-detail-panel">
+                    <h3>Karya terkait</h3>
+                    <ul class="serupa-list">
+                                                                                    <li class="serupa-item" style="display: block">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=53855">Dasar-dasar ilmu kimia</a>
+                                </li>
+                                                            <li class="serupa-item" style="display: block">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=22016">Dasar-dasar kimia tanah</a>
+                                </li>
+                                                            <li class="serupa-item" style="display: block">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=22016">Dasar-dasar kimia tanah</a>
+                                </li>
+                                                            <li class="serupa-item" style="display: block">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=41750">Kimia organik dasar</a>
+                                </li>
+                                                            <li class="serupa-item" style="display: block">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=51181">Kimia organik dasar</a>
+                                </li>
+                                                            <li class="serupa-item" style="display: none">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=43694">Kimia dasar 3</a>
+                                </li>
+                                                            <li class="serupa-item" style="display: none">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=43695">Kimia dasar 1</a>
+                                </li>
+                                                            <li class="serupa-item" style="display: none">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=43694">Kimia dasar 3</a>
+                                </li>
+                                                            <li class="serupa-item" style="display: none">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=43695">Kimia dasar 1</a>
+                                </li>
+                                                            <li class="serupa-item" style="display: none">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=6546">Ilmu kimia analitik dasar</a>
+                                </li>
+                                                                        </ul>
+                                            <div class="show-more mt-2" style="display: block;">
+                            <a href="javascript:void(0);" class="show-more-link">Lihat selengkapnya</a>
+                        </div>
+                        <div class="show-less mt-2" style="display: none;">
+                            <a href="javascript:void(0);" class="show-less-link">Tampilkan lebih sedikit</a>
+                        </div>
+                                    </div>
+            </div>
+        </div>
+    </div>
+    </div>
+        </div>
+        <footer class="footer-area">
+    <div class="footer-bottom bg-black ptb-20 mt-30">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <div class="copyright">
+                        <p>
+                            Copyright ©
+                            <a href="hastech.company/">IPB University</a> 2025 . All Right Reserved.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>    </div>
+
+    <!-- all js here -->
+<script src="/assets_user/js/vendor/jquery-1.12.4.min.js"></script>
+<script src="/assets_user/js/popper.js"></script>
+<script src="/assets_user/js/bootstrap.min.js"></script>
+<script src="/assets_user/js/jquery.magnific-popup.min.js"></script>
+<script src="/assets_user/js/isotope.pkgd.min.js"></script>
+<script src="/assets_user/js/imagesloaded.pkgd.min.js"></script>
+<script src="/assets_user/js/jquery.counterup.min.js"></script>
+<script src="/assets_user/js/waypoints.min.js"></script>
+<script src="/assets_user/js/ajax-mail.js"></script>
+<script src="/assets_user/js/owl.carousel.min.js"></script>
+<script src="/assets_user/js/plugins.js"></script>
+<script src="/assets_user/js/main.js"></script>
+<script src="/assets_user/jquery/jquery.validate.min.js"></script>
+<script src="/assets_user/DataTables/datatables.min.js"></script>
+<script src="/assets_user/DataTables/datatables.js"></script>
+<script src="/assets_admin/plugins/bootstrap-material-datetimepicker/js/moment.min.js"></script>
+<script src="/assets_user/highcharts/highcharts.js"></script>
+<script src="/assets_user/highcharts/exporting.js"></script>        <script src="/assets_user/javascript/opac/detail_buku.js"></script>
+</body>
+</html>

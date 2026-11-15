@@ -1,0 +1,971 @@
+{
+  "country": "Mexico",
+  "country_code": "MEX",
+  "research_date_utc": "2026-11-15",
+  "status": "complete_with_shortfall",
+  "observed_successes": 7,
+  "selected_count": 3,
+  "reserve_count": 4,
+  "ordinary_reserve_count": 3,
+  "restricted_reserve_count": 1,
+  "eligible_observed_count": 6,
+  "selected_target": 10,
+  "market": {
+    "summary": "Mexico has mature national, state/public, university and specialised library infrastructure, with uneven discovery access and local technical capacity. DGB directory lists 7,476 public libraries (6,462 open, 1,014 closed in the indexed directory snapshot); public-network coordination does not establish one nationwide live holdings service. Large university networks already aggregate millions of physical volumes. INEGI ENDUTIH 2024 reports internet use at 86.9% in urban and 68.5% in rural areas. The opportunity is to bridge fragmented interfaces and unequal access, not to claim that library infrastructure is absent.",
+    "platform_strategy": "Prioritise a carefully scoped Aleph/LIBRUNAM adapter for the largest verified single network, and Koha parser compatibility for Guanajuato and UPAEP; UAAAN is excluded because its wildcard robots policy prohibits the researched routes. Alma/Primo is strategically important, evidenced by UAM, Colmex and BNM migrations, but this study does not clear access to those catalogs. SIABUC and Prometeo V are important domestic automation families; Janium remains in observed institutional routes. ADABI VuFind offers institution-specific heritage discovery, not live full-library circulation. Do not infer national LMS market shares from this selected feasibility sample.",
+    "adoption_evidence": [
+      {
+        "claim": "Official UNAM mobile portal lists Koha 21 and Aleph 500; live LIBRUNAM responses show Aleph u23_2 assets.",
+        "scope": "UNAM, not national market share",
+        "date": "Current page checked 2026-11-15",
+        "source_url": "https://apps.dgb.unam.mx/"
+      },
+      {
+        "claim": "UAM 2025 report records completed institutional Aleph-to-Alma transition.",
+        "scope": "UAM network",
+        "date": "2025 report",
+        "source_url": "https://www.iztapalapa.uam.mx/uami/rectoria/informes/informe_actividades_2025.pdf"
+      },
+      {
+        "claim": "UNAM 2024 IIB report describes Alma-Primo replacing Aleph; BNM migration began at end of 2023.",
+        "scope": "BNM/IIB",
+        "date": "2024",
+        "source_url": "https://www.planeacion.unam.mx/Memoria/2024/PDF/6.3-IIB.pdf"
+      },
+      {
+        "claim": "Colmex acquired Alma in 2016 to replace Aleph; current portal routes to Primo.",
+        "scope": "Colmex",
+        "date": "2016 report plus 2026 live portal",
+        "source_url": "https://www.colmex.mx/archivos/RG9jdW1lbnRvCiAzNQpkb2N1bWVudG8%3D/informe-anual-2016_83.pdf?locale=en"
+      },
+      {
+        "claim": "UJED announced Janium-to-Koha migration begun in 2021, with UNAM training support.",
+        "scope": "UJED network, not a verified catalog search",
+        "date": "2022-02",
+        "source_url": "https://www.ujed.mx/noticias/2022/02/ujed-a-la-vanguardia-con-catalogo-institucional-del-sistema-bibliotecario"
+      },
+      {
+        "claim": "SIABUC producer homepage reports 1,128 institutions with SIABUC9; geography and measurement date unspecified.",
+        "scope": "Supplier deployment counter; NOT a Mexico-only market-share estimate",
+        "date": "Undated live page checked 2026-11-15",
+        "source_url": "https://siabuc.ucol.mx/"
+      },
+      {
+        "claim": "DGB operating guidelines provide a Prometeo V electronic catalog database; DGB still offers Prometeo training in 2026.",
+        "scope": "Public-network automation provision/training; installed count not established",
+        "date": "Current 2026 training plus published guidelines",
+        "source_url": "https://moodle.dgb.cultura.gob.mx/course/info.php?id=1039"
+      },
+      {
+        "claim": "Official Colmich and UAEMex routes expose Janium catalogs; robots could not be resolved for queries.",
+        "scope": "Two institutions, route-level evidence only",
+        "date": "2026-11-15",
+        "source_url": "https://sacademica.uaemex.mx/bachillerato/sistemas-informaticos.html"
+      }
+    ],
+    "network_opportunities": [
+      {
+        "name": "SIBIUNAM / LIBRUNAM",
+        "scope": "One UNAM network; physical-book LIBIMP scope",
+        "source_url": "https://ceib.dgb.unam.mx/index.php/libros",
+        "verification": "Actual title query, stable bibliographic number and per-library copy counts observed.",
+        "integration_implication": "Highest evidenced single connection leverage here; retain per-library policy and identity."
+      },
+      {
+        "name": "Red Nacional de Bibliotecas Públicas / DGB",
+        "scope": "7,476 public library directory entries; not a verified nationwide inventory",
+        "source_url": "https://dgb.cultura.gob.mx/directorio/index.php",
+        "verification": "Official indexed directory; 31 state and 16 alcaldía networks evidenced in DGB training materials.",
+        "integration_implication": "Prometeo/shared catalog policy and state-level connectors warrant separate discovery; cannot count directory entries as searchable holdings."
+      },
+      {
+        "name": "ADABI Catálogo de fondos bibliográficos antiguos",
+        "scope": "Distributed named heritage collections; three explicitly filtered institutions verified",
+        "source_url": "https://adabi.org.mx/fuentes/",
+        "verification": "Actual title queries and records name BNAH, Palafoxiana and Durango. Three reserves only, union not separately counted.",
+        "integration_implication": "New VuFind deployment support with exact Acervo mapping; heritage presence and damage notes only, no inferred availability."
+      },
+      {
+        "name": "SERIUNAM / CONRICYT",
+        "scope": "Journal union and licensed scholarly resources, respectively",
+        "source_url": "https://www.juridicas.unam.mx/es/biblioteca/servicios_accesos_base_datos",
+        "verification": "Official page distinguishes LIBRUNAM books, SERIUNAM periodicals and scientific-resource consortial access.",
+        "integration_implication": "Useful context but neither is evidence of a nationwide physical-book availability connector."
+      }
+    ]
+  },
+  "major_library_priorities": [
+    {
+      "name": "Universidad Nacional Autónoma de México — SIBIUNAM / LIBRUNAM",
+      "size_claim": "139 libraries; 7,685,166 printed volumes and 3,386,177 titles. Undated numeralia checked 2026-11-15, surrounding 2025–2026 statistics.",
+      "source_url": "https://estadistica.unam.mx/index.php/numeralia/",
+      "outcome": "Verified selected, network counted once",
+      "evidence_path": "evidence/unam-size.html"
+    },
+    {
+      "name": "Biblioteca Nacional de México",
+      "size_claim": "1,365,321 volumes, 2022 UNAM statement; Hemeroteca periodical counts explicitly excluded.",
+      "source_url": "https://www.dgcs.unam.mx/boletin/bdboletin/2022_419.html",
+      "outcome": "Policy blocked legacy route; Alma route unresolved",
+      "evidence_path": "evidence/sources/discovery-final-priorities.txt"
+    },
+    {
+      "name": "Universidad de Guadalajara / REBIUdeG",
+      "size_claim": "171 libraries/centres, >1.8m titles and nearly 3m volumes; undated institutional page.",
+      "source_url": "https://dcts.cuaad.udg.mx/acervos/red-de-bibliotecas",
+      "outcome": "Policy blocked Aleph catalog",
+      "evidence_path": "evidence/sources/discovery-size-exact.txt"
+    },
+    {
+      "name": "Biblioteca de México",
+      "size_claim": ">950,000 reading materials, 2017 government article; not books-only.",
+      "source_url": "https://www.gob.mx/cultura/prensa/la-biblioteca-de-mexico-un-oasis-para-la-lectura",
+      "outcome": "Robots unavailable",
+      "evidence_path": "evidence/sources/discovery-final-priorities.txt"
+    },
+    {
+      "name": "Biblioteca Vasconcelos",
+      "size_claim": ">600,000 books and multimedia materials, 2024 government article; mixed units.",
+      "source_url": "https://www.gob.mx/cultura/prensa/la-biblioteca-vasconcelos-abre-al-publico-el-centro-de-documentacion-y-biblioteca-de-la-cndh",
+      "outcome": "Robots access failure",
+      "evidence_path": "evidence/sources/discovery-size-priorities.txt"
+    },
+    {
+      "name": "El Colegio de México / Biblioteca Daniel Cosío Villegas",
+      "size_claim": ">591,510 book/pamphlet titles and approximately 962,819 volumes; undated official page checked 2026-11-15.",
+      "source_url": "https://biblioteca.colmex.mx/index.php/informacion-general/informacion",
+      "outcome": "Primo policy blocked",
+      "evidence_path": "evidence/colmex-size.html"
+    },
+    {
+      "name": "Universidad Autónoma Metropolitana",
+      "size_claim": "Five academic-unit libraries unified by Alma/Primo; institutional network proxy, no comparable size count.",
+      "source_url": "https://cosei.azc.uam.mx/pdf/Proyecto_implementacion_ALMA-Primo.pdf",
+      "outcome": "Public query not verified",
+      "evidence_path": "evidence/sources/discovery-final-priorities.txt"
+    },
+    {
+      "name": "Instituto Mora / Biblioteca Ernesto de la Torre Villar",
+      "size_claim": "192,000 volumes in 69 collections, institutional dossier indexed 2025; not a 2026 count.",
+      "source_url": "https://www.institutomora.edu.mx/Instituto/SiteAssets/sitepages/elmora/Dossier%20Institucional.pdf",
+      "outcome": "Robots HTTP503",
+      "evidence_path": "evidence/sources/discovery-next.txt"
+    },
+    {
+      "name": "Biblioteca Central Estatal de Guanajuato “Wigberto Jiménez Moreno”",
+      "size_claim": "200000 volumes; lower bound; 2021-09-07",
+      "source_url": "https://boletines.guanajuato.gob.mx/2021/09/07/biblioteca-central-estatal-espacio-dinamico-y-vivo/",
+      "outcome": "Verified selected",
+      "evidence_path": "evidence/guanajuato-size.html"
+    },
+    {
+      "name": "Universidad Autónoma Agraria Antonio Narro — Biblioteca Dr. Egidio G. Rebonato",
+      "size_claim": "130502 volumes in central Information and Documentation Centre; 2023 report",
+      "source_url": "https://www.uaaan.edu.mx/wp-content/uploads/2023/11/1er_informe_Alberto_Flores_Olivas_101123_ok_web.pdf",
+      "outcome": "Policy restricted; mistakenly queried response excluded at final audit",
+      "evidence_path": "evidence/sources/discovery-size-priorities.txt"
+    },
+    {
+      "name": "UPAEP — CRAI library network",
+      "size_claim": "163531 physical collection items, including theses and special collections; 2023 institutional report",
+      "source_url": "https://upaep.mx/micrositios/informe2023/InformeDigital2023.pdf",
+      "outcome": "Verified selected",
+      "evidence_path": "evidence/sources/discovery-size-exact.txt"
+    },
+    {
+      "name": "Biblioteca Nacional de Antropología e Historia — Fondo Conventual",
+      "size_claim": "300000 approximately volumes in whole BNAH; not size of tested subset; Undated INAH overview; retrieved indexed 2026-11-15",
+      "source_url": "https://patrimoniomundialmexico.inah.gob.mx/uploads/pdf_publicaciones/2533919739.pdf",
+      "outcome": "Verified heritage reserve; full current catalog not established",
+      "evidence_path": "evidence/sources/discovery-heritage.txt"
+    },
+    {
+      "name": "Biblioteca Palafoxiana",
+      "size_claim": "45000 volumes in historic library; 2025 government article (indexed publication year)",
+      "source_url": "https://puebla.gob.mx/index.php/noticias/item/20352-puebla-en-el-corazon-de-mexico-con-cartelera-de-eventos-de-primer-nivel",
+      "outcome": "Verified heritage reserve; full current catalog not established",
+      "evidence_path": "evidence/sources/discovery-heritage.txt"
+    },
+    {
+      "name": "Biblioteca Pública Central Estatal “Lic. José Ignacio Gallegos Caballero”, Durango",
+      "size_claim": "Official state page calls its old-book collection among the largest in northern Mexico; no comparable numeric size established.",
+      "source_url": "https://bibliotecasiced.durango.gob.mx/actividades.html",
+      "outcome": "Verified heritage reserve; full current catalog not established",
+      "evidence_path": "evidence/sources/discovery-supporting.txt"
+    }
+  ],
+  "libraries": [
+    {
+      "id": "mexico-unam",
+      "name": "Universidad Nacional Autónoma de México — SIBIUNAM / LIBRUNAM",
+      "recommendation": "verified_target",
+      "scope": "One university library network; public LIBRUNAM with LIBIMP physical-book scope; constituent libraries are not separately counted.",
+      "size": {
+        "value": 7685166,
+        "unit": "printed-book volumes across 139 libraries",
+        "date": "Undated current numeralia page checked 2026-11-15; surrounding statistics 2025–2026",
+        "source_url": "https://estadistica.unam.mx/index.php/numeralia/",
+        "evidence_path": "evidence/unam-size.html",
+        "quality": "official",
+        "note": "Also reports 3,386,177 titles. Institutional network total, not deduplicated LIBRUNAM record count; library-specific reporting year not stated."
+      },
+      "platform": {
+        "family": "Aleph",
+        "name": "Aleph",
+        "proof": "Returned /exlibris/aleph/u23_2/ assets and Aleph /F form parameters; official UNAM mobile page identifies Aleph 500 and Koha 21.",
+        "evidence_path": "evidence/unam-search.html"
+      },
+      "query": {
+        "text": "Cien años de soledad",
+        "method": "GET",
+        "url": "https://librunam.dgb.unam.mx:8443/F/4Y4RP7LAG83E5R513DLVTKFKQJBL4J729JEYCVVJ85QU51F9VT-11480?func=find-b&local_base=LIBIMP&request=Cien+a%C3%B1os+de+soledad&find_code=WTT&adjacent=Y",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T07:34:38.457595+00:00",
+        "http_status": 200,
+        "effective_url": "https://librunam.dgb.unam.mx:8443/F/4Y4RP7LAG83E5R513DLVTKFKQJBL4J729JEYCVVJ85QU51F9VT-11480?func=find-b&local_base=LIBIMP&request=Cien+a%C3%B1os+de+soledad&find_code=WTT&adjacent=Y",
+        "result_count": 48,
+        "count_note": "48 results in printed-book scope; first page contains editions and related criticism. Chosen detail is the exact title.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/unam-search.html",
+        "metadata_path": "evidence/unam-search.json"
+      },
+      "books": [
+        {
+          "title": "Cien años de soledad / Gabriel García Márquez ; edición de Jacques Joset",
+          "author": "García Márquez, Gabriel, 1927–2014",
+          "record_id": "002122090",
+          "record_url": "https://librunam.dgb.unam.mx:8443/F/4Y4RP7LAG83E5R513DLVTKFKQJBL4J729JEYCVVJ85QU51F9VT-11541?func=full-set-set&set_number=000638&set_entry=000002&format=999",
+          "isbn": "9788437604947",
+          "holdings": "5 copies at E.N.P. Plantel 9 and 1 at FES Iztacala. Counts/location exposed; copy-level lending status not read. 23a edición, Cátedra, 2017; reprint note 24a, 2018.",
+          "evidence_path": "evidence/unam-detail.html"
+        }
+      ],
+      "robots": {
+        "url": "https://librunam.dgb.unam.mx:8443/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T07:33:35.988861+00:00",
+        "evidence_path": "evidence/unam8443-robots.json",
+        "decision": "no_published_rules",
+        "note": "HTTP404; not an affirmative reuse licence"
+      },
+      "reader_access": "Catalog search is anonymous. Borrowing is governed by each UNAM library and affiliation; licensed ebooks require campus or remote-access entitlement. No visitor-entry or borrowing test.",
+      "integration": {
+        "existing_adapter": "new family",
+        "needs": [
+          "New Aleph session/form adapter; refresh the public basic-search form and use its current GET action. Submit func=find-b, local_base=LIBIMP, request=title, find_code=WTT, adjacent=Y.",
+          "Keep record identity MX001/002122090 and per-library holdings. Anonymous session and set-number links in evidence are transient, not durable permalinks.",
+          "Search table title cells require special parsing; the returned exact-title detail, author, ISBN and holdings confirm this observation."
+        ],
+        "blockers": [
+          "Fresh-session latency and durable public record-link recipe need testing; no endpoint or app integration built."
+        ],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "mexico-guanajuato",
+      "name": "Biblioteca Central Estatal de Guanajuato “Wigberto Jiménez Moreno”",
+      "recommendation": "verified_target",
+      "scope": "One central state public library; only this institution is proved by the returned holdings, not all Guanajuato branches.",
+      "size": {
+        "value": 200000,
+        "unit": "volumes; lower bound",
+        "date": "2021-09-07",
+        "source_url": "https://boletines.guanajuato.gob.mx/2021/09/07/biblioteca-central-estatal-espacio-dinamico-y-vivo/",
+        "evidence_path": "evidence/guanajuato-size.html",
+        "quality": "official",
+        "note": "Official article says more than 200,000 across six rooms, including periodicals/audiovisuals; not books-only and not a 2026 count."
+      },
+      "platform": {
+        "family": "Koha",
+        "name": "Koha",
+        "proof": "meta generator=Koha; opac-search.pl and opac-detail.pl; versioned assets 23.1110000.",
+        "evidence_path": "evidence/guanajuato-search.html"
+      },
+      "query": {
+        "text": "Cien años de soledad",
+        "method": "GET",
+        "url": "https://catalogo.bibliotecasguanajuato.gob.mx/cgi-bin/koha/opac-search.pl?idx=ti&q=Cien+a%C3%B1os+de+soledad&count=5",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T07:33:07.031919+00:00",
+        "http_status": 200,
+        "effective_url": "https://catalogo.bibliotecasguanajuato.gob.mx/cgi-bin/koha/opac-search.pl?idx=ti&q=Cien+a%C3%B1os+de+soledad&count=5",
+        "result_count": 7,
+        "count_note": "7 hits includes separate editions, an anthology and a cassette; selected book is record 81644.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/guanajuato-search.html",
+        "metadata_path": "evidence/guanajuato-search.json"
+      },
+      "books": [
+        {
+          "title": "Cien años de soledad.",
+          "author": "García Márquez, Gabriel, 1927–2014",
+          "record_id": "81644",
+          "record_url": "https://catalogo.bibliotecasguanajuato.gob.mx/cgi-bin/koha/opac-detail.pl?biblionumber=81644",
+          "isbn": "9786070704352",
+          "holdings": "General collection, Co863.4 G217c: one Disponible; second copy Prestado, due 09/12/2026 as displayed. Other returned editions explicitly Material en Reserva (reference), not borrowable.",
+          "evidence_path": "evidence/guanajuato-detail.html"
+        }
+      ],
+      "robots": {
+        "url": "https://catalogo.bibliotecasguanajuato.gob.mx/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T07:32:05.162978+00:00",
+        "evidence_path": "evidence/guanajuato/robots.json",
+        "decision": "no_published_rules",
+        "note": "HTTP 404: no published robots rule; not an affirmative reuse licence."
+      },
+      "reader_access": "Public state library; source describes services to readers and general population. Catalog anonymous; account/login needed for personal borrowing actions, which were not used.",
+      "integration": {
+        "existing_adapter": "candidate reuse",
+        "needs": [
+          "Reuse Koha search/detail parsing after offline fixture checks.",
+          "Keep reference-only Material en Reserva distinct from available-for-loan copies; preserve edition and item identities."
+        ],
+        "blockers": [],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "mexico-uaaan",
+      "name": "Universidad Autónoma Agraria Antonio Narro — Biblioteca Dr. Egidio G. Rebonato",
+      "recommendation": "reserve",
+      "scope": "One central university library in Saltillo; no extrapolation to unverified UAAAN branches.",
+      "size": {
+        "value": 130502,
+        "unit": "volumes in central Information and Documentation Centre",
+        "date": "2023 report",
+        "source_url": "https://www.uaaan.edu.mx/wp-content/uploads/2023/11/1er_informe_Alberto_Flores_Olivas_101123_ok_web.pdf",
+        "evidence_path": "evidence/sources/discovery-size-priorities.txt",
+        "quality": "indexed official",
+        "note": "Official report indexed extract ties 130,502 volumes to CID in Dr. Egidio G. Rebonato. A bounded 2 MB PDF prefix was saved as uaaan-size.html but is truncated and not the evidence for the count."
+      },
+      "platform": {
+        "family": "Koha",
+        "name": "Koha",
+        "proof": "meta generator=Koha; official footer Con tecnología Koha; public search and detail routes.",
+        "evidence_path": "evidence/uaaan-search.html"
+      },
+      "query": {
+        "text": "Principles of genetics",
+        "method": "GET",
+        "url": "https://biblioteca.uaaan.mx/cgi-bin/koha/opac-search.pl?idx=ti&q=Principles+of+genetics&count=5",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T07:34:38.458358+00:00",
+        "http_status": 200,
+        "effective_url": "https://biblioteca.uaaan.mx/cgi-bin/koha/opac-search.pl?idx=ti&q=Principles+of+genetics&count=5",
+        "result_count": 10,
+        "count_note": "10 results; exact title editions plus a related Genetics of Recombination result. Chosen record 16264 is exact title.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/uaaan-search.html",
+        "metadata_path": "evidence/uaaan-search.json"
+      },
+      "books": [
+        {
+          "title": "Principles of genetics.",
+          "author": "Sinnott, Edmund W.; Dunn, L.C.; Dobzhansky, T.H.",
+          "record_id": "16264",
+          "record_url": "https://biblioteca.uaaan.mx/cgi-bin/koha/opac-detail.pl?biblionumber=16264",
+          "isbn": null,
+          "holdings": "One copy, Dr. Egidio G. Rebonato, Colección de Consulta, QH431 .S65 1939, Ej.1; Estado Disponible; note Disponible para prestamo; additional note dISPONIBLE SALA CIMMYT. Publication is McGraw-Hill 1950, edition 4; do not overwrite source call number year.",
+          "evidence_path": "evidence/uaaan-detail.html"
+        }
+      ],
+      "robots": {
+        "url": "https://biblioteca.uaaan.mx/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T07:33:39.410787+00:00",
+        "evidence_path": "evidence/uaaan-robots.json",
+        "decision": "restricted",
+        "note": "Wildcard Disallow:/ applies to research. Initially missed in manual inspection; discovered at final audit. Observed response retained as restricted reserve, never a permission-cleared target."
+      },
+      "reader_access": "Official 2023 source includes external students among readers. Current public regulation restricts external loans to UAAAN students, teachers and workers; anonymous search does not confer borrowing rights (uaaan-access.html).",
+      "integration": {
+        "existing_adapter": "candidate reuse",
+        "needs": [
+          "Koha adapter is a candidate; detail page title/breadcrumb says Sin título while bibliographic body correctly has Principles of genetics. Avoid treating that page-title placeholder as the book title.",
+          "Preserve both Consulta collection and explicit item notes; do not infer unrestricted borrowing from Disponible."
+        ],
+        "blockers": [
+          "Restricted reserve only: wildcard Disallow:/ applies. Initial manual inspection missed the rule before requests were sent; final audit caught it. No further requests or automated integration without resolving permission."
+        ],
+        "live_app_tested": false
+      },
+      "policy_eligible": false
+    },
+    {
+      "id": "mexico-upaep",
+      "name": "UPAEP — CRAI library network",
+      "recommendation": "verified_target",
+      "scope": "One university network covering main university collections, Tehuacán and preparatory campuses; not counted per branch.",
+      "size": {
+        "value": 163531,
+        "unit": "physical collection items, including theses and special collections",
+        "date": "2023 institutional report",
+        "source_url": "https://upaep.mx/micrositios/informe2023/InformeDigital2023.pdf",
+        "evidence_path": "evidence/sources/discovery-size-exact.txt",
+        "quality": "indexed official",
+        "note": "Components: 93,979 central library, 18,560 special collections, 26,782 preparatory libraries, 7,899 Tehuacán, 16,311 theses. Not all distinct books. Current Feb 2026 numeralia is dynamic and did not expose current values."
+      },
+      "platform": {
+        "family": "Koha",
+        "name": "Koha",
+        "proof": "Koha template and /cgi-bin/koha/opac-search.pl; current observed deployment differs from older Aleph/Primo sources.",
+        "evidence_path": "evidence/upaep-search.html"
+      },
+      "query": {
+        "text": "Cien años de soledad",
+        "method": "GET",
+        "url": "https://ils.upaep.mx/cgi-bin/koha/opac-search.pl?idx=ti&q=Cien+a%C3%B1os+de+soledad&count=5",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T07:36:56.619830+00:00",
+        "http_status": 200,
+        "effective_url": "https://ils.upaep.mx/cgi-bin/koha/opac-search.pl?idx=ti&q=Cien+a%C3%B1os+de+soledad&count=5",
+        "result_count": 4,
+        "count_note": "",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/upaep-search.html",
+        "metadata_path": "evidence/upaep-search.json"
+      },
+      "books": [
+        {
+          "title": "Cien años de soledad / Gabriel García Márquez",
+          "author": "García Márquez, Gabriel, 1927–2014",
+          "record_id": "58863",
+          "record_url": "https://ils.upaep.mx/cgi-bin/koha/opac-detail.pl?biblionumber=58863",
+          "isbn": null,
+          "holdings": "Search result: Biblioteca Karol Wojtyla, General, 863.4 G216 2010, 2 items available for loan; first edition, Planeta Mexicana 2010. Search also exposes separate editions at Tehuacán and loaned copies.",
+          "evidence_path": "evidence/upaep-search.html"
+        }
+      ],
+      "robots": {
+        "url": "https://ils.upaep.mx/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T07:36:00.421930+00:00",
+        "evidence_path": "evidence/upaep-robots.json",
+        "decision": "no_published_rules",
+        "note": "HTTP404; not an affirmative reuse licence"
+      },
+      "reader_access": "Anonymous catalog available. Visitor-entry and external borrowing rules not established; account functions were not used.",
+      "integration": {
+        "existing_adapter": "candidate reuse",
+        "needs": [
+          "Koha search parser candidate; map network/library identifiers and preserve separate editions.",
+          "Resolve the broken detail link through an officially supported public route before integration; indexed /bib/ URLs exist but the returned /cgi-bin link was not silently rewritten."
+        ],
+        "blockers": [
+          "Returned detail link for record 58863 gives HTTP410 (evidence/upaep-detail.json). Search success does not imply detail success."
+        ],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "mexico-bnah",
+      "name": "Biblioteca Nacional de Antropología e Historia — Fondo Conventual",
+      "recommendation": "reserve",
+      "scope": "One named institution, limited to its explicitly filtered ADABI heritage-catalog collection; not its full current public catalog.",
+      "size": {
+        "value": 300000,
+        "unit": "approximately volumes in whole BNAH; not size of tested subset",
+        "date": "Undated INAH overview; retrieved indexed 2026-11-15",
+        "source_url": "https://patrimoniomundialmexico.inah.gob.mx/uploads/pdf_publicaciones/2533919739.pdf",
+        "evidence_path": "evidence/sources/discovery-heritage.txt",
+        "quality": "indexed official",
+        "note": "Whole-institution size is a priority proxy; only Fondo Conventual subset verified in ADABI."
+      },
+      "platform": {
+        "family": "VuFind",
+        "name": "VuFind",
+        "proof": "VuFind bootstrap3 templates /vufind/Search/Results and /vufind/Record; ADABI heritage aggregation, not evidence of the custodian library LMS.",
+        "evidence_path": "evidence/bnah-search.html"
+      },
+      "query": {
+        "text": "Don Quijote",
+        "method": "GET",
+        "url": "https://www.adabi.org.mx/vufind/Search/Results?limit=5&lookfor=Don+Quijote&type=AllFields&filter%5B%5D=%7Ebuilding%3A%22Biblioteca+Nacional+de+Antropolog%C3%ADa+e+Historia.+Fondo+Conventual%22",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T07:40:01.458724+00:00",
+        "http_status": 200,
+        "effective_url": "https://www.adabi.org.mx/vufind/Search/Results?limit=5&lookfor=Don+Quijote&type=AllFields&filter%5B%5D=%7Ebuilding%3A%22Biblioteca+Nacional+de+Antropolog%C3%ADa+e+Historia.+Fondo+Conventual%22",
+        "result_count": 4,
+        "count_note": "Institution-specific Acervo filter sent and echoed in returned results; no institution inferred from an unselected facet. Related-title match explicitly retained where applicable.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/bnah-search.html",
+        "metadata_path": "evidence/bnah-search.json"
+      },
+      "books": [
+        {
+          "title": "Vida y hechos del ingenioso caballero Don Quijote de la Mancha",
+          "author": "CERVANTES SAAVEDRA, Miguel de",
+          "record_id": "1038103",
+          "record_url": "https://www.adabi.org.mx/vufind/Record/1038103",
+          "isbn": null,
+          "holdings": "Acervo explicitly Biblioteca Nacional de Antropología e Historia. Fondo Conventual; Madrid 1777, t. III. Note Regular. XXIV,1,22 and ex libris. No live circulation status.",
+          "evidence_path": "evidence/bnah-detail.html"
+        }
+      ],
+      "robots": {
+        "url": "https://www.adabi.org.mx/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T07:37:11.854308+00:00",
+        "evidence_path": "evidence/adabiweb-robots.json",
+        "decision": "allowed_path",
+        "note": "Public research path check; no reuse licence inferred"
+      },
+      "reader_access": "Public bibliographic heritage search. Physical consultation rules and whether damaged items are serviceable were not verified. No borrowing availability inferred.",
+      "integration": {
+        "existing_adapter": "custom",
+        "needs": [
+          "Custom VuFind adapter; existing implementation is deployment-specific and cannot be enabled by hostname only.",
+          "Restrict to Banco de datos/book records and exact Acervo; index also contains project/news records.",
+          "Retain institution-specific catalog provenance, damage notes and unknown circulation state."
+        ],
+        "blockers": [
+          "ADABI is a partial historical corpus, not verified complete current holdings or circulation. Reserve only; not used to fill the selected ten."
+        ],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "mexico-palafoxiana",
+      "name": "Biblioteca Palafoxiana",
+      "recommendation": "reserve",
+      "scope": "One named institution, limited to its explicitly filtered ADABI heritage-catalog collection; not its full current public catalog.",
+      "size": {
+        "value": 45000,
+        "unit": "volumes in historic library",
+        "date": "2025 government article (indexed publication year)",
+        "source_url": "https://puebla.gob.mx/index.php/noticias/item/20352-puebla-en-el-corazon-de-mexico-con-cartelera-de-eventos-de-primer-nivel",
+        "evidence_path": "evidence/sources/discovery-heritage.txt",
+        "quality": "indexed official",
+        "note": "Historic public library/museum, UNESCO Memory of the World collection; ADABI coverage completeness unverified."
+      },
+      "platform": {
+        "family": "VuFind",
+        "name": "VuFind",
+        "proof": "VuFind bootstrap3 templates /vufind/Search/Results and /vufind/Record; ADABI heritage aggregation, not evidence of the custodian library LMS.",
+        "evidence_path": "evidence/palafoxiana-search.html"
+      },
+      "query": {
+        "text": "Don Quijote",
+        "method": "GET",
+        "url": "https://www.adabi.org.mx/vufind/Search/Results?limit=5&lookfor=Don+Quijote&type=AllFields&filter%5B%5D=%7Ebuilding%3A%22Biblioteca+Palafoxiana.+Colecci%C3%B3n+bibliogr%C3%A1fica%22",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T07:40:02.942536+00:00",
+        "http_status": 200,
+        "effective_url": "https://www.adabi.org.mx/vufind/Search/Results?limit=5&lookfor=Don+Quijote&type=AllFields&filter%5B%5D=%7Ebuilding%3A%22Biblioteca+Palafoxiana.+Colecci%C3%B3n+bibliogr%C3%A1fica%22",
+        "result_count": 1,
+        "count_note": "Institution-specific Acervo filter sent and echoed in returned results; no institution inferred from an unselected facet. Related-title match explicitly retained where applicable.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/palafoxiana-search.html",
+        "metadata_path": "evidence/palafoxiana-search.json"
+      },
+      "books": [
+        {
+          "title": "Las donquixotadas mas extrañas = Oder die abenteverlichsten kitterthaten des sinnreichen edlen Don Quijote von la Mancha: zur Untehaltung und Erlenung der spanischen sprache aus dem Don Quijote des Cervantes gezogen und mit einer erflarung de Borter und einer furzgefaßten Spanischen grammatif / von Johann Meinrich Emmert Doctor und Professor",
+          "author": "Johann Meinrich Emmert (statement of responsibility as cataloged)",
+          "record_id": "1054984",
+          "record_url": "https://www.adabi.org.mx/vufind/Record/1054984",
+          "isbn": null,
+          "holdings": "Acervo explicitly Biblioteca Palafoxiana. Colección bibliográfica; Tübingen 1826; location number 32583; damage to binding, fungal damage and bound with 3 works are recorded. No circulation availability.",
+          "evidence_path": "evidence/palafoxiana-detail.html"
+        }
+      ],
+      "robots": {
+        "url": "https://www.adabi.org.mx/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T07:37:11.854308+00:00",
+        "evidence_path": "evidence/adabiweb-robots.json",
+        "decision": "allowed_path",
+        "note": "Public research path check; no reuse licence inferred"
+      },
+      "reader_access": "Public bibliographic heritage search. Physical consultation rules and whether damaged items are serviceable were not verified. No borrowing availability inferred.",
+      "integration": {
+        "existing_adapter": "custom",
+        "needs": [
+          "Custom VuFind adapter; existing implementation is deployment-specific and cannot be enabled by hostname only.",
+          "Restrict to Banco de datos/book records and exact Acervo; index also contains project/news records.",
+          "Retain institution-specific catalog provenance, damage notes and unknown circulation state."
+        ],
+        "blockers": [
+          "ADABI is a partial historical corpus, not verified complete current holdings or circulation. Reserve only; not used to fill the selected ten."
+        ],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "mexico-durango",
+      "name": "Biblioteca Pública Central Estatal “Lic. José Ignacio Gallegos Caballero”, Durango",
+      "recommendation": "reserve",
+      "scope": "One named institution, limited to its explicitly filtered ADABI heritage-catalog collection; not its full current public catalog.",
+      "size": {
+        "value": null,
+        "unit": "state central library and historic collection (institutional proxy)",
+        "date": "Undated official state page checked through index 2026-11-15",
+        "source_url": "https://bibliotecasiced.durango.gob.mx/actividades.html",
+        "evidence_path": "evidence/sources/discovery-supporting.txt",
+        "quality": "institutional proxy",
+        "note": "Official state page calls its old-book collection among the largest in northern Mexico; no comparable numeric size established."
+      },
+      "platform": {
+        "family": "VuFind",
+        "name": "VuFind",
+        "proof": "VuFind bootstrap3 templates /vufind/Search/Results and /vufind/Record; ADABI heritage aggregation, not evidence of the custodian library LMS.",
+        "evidence_path": "evidence/durango-search.html"
+      },
+      "query": {
+        "text": "Don Quijote",
+        "method": "GET",
+        "url": "https://www.adabi.org.mx/vufind/Search/Results?limit=5&lookfor=Don+Quijote&type=AllFields&filter%5B%5D=%7Ebuilding%3A%22Biblioteca+P%C3%BAblica+Central+del+Estado+de+Durango.+Lic.+Jos%C3%A9+Ignacio+Gallegos+Caballero.+Colecci%C3%B3n+General%22",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T07:40:03.581060+00:00",
+        "http_status": 200,
+        "effective_url": "https://www.adabi.org.mx/vufind/Search/Results?limit=5&lookfor=Don+Quijote&type=AllFields&filter%5B%5D=%7Ebuilding%3A%22Biblioteca+P%C3%BAblica+Central+del+Estado+de+Durango.+Lic.+Jos%C3%A9+Ignacio+Gallegos+Caballero.+Colecci%C3%B3n+General%22",
+        "result_count": 1,
+        "count_note": "Institution-specific Acervo filter sent and echoed in returned results; no institution inferred from an unselected facet. Related-title match explicitly retained where applicable.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/durango-search.html",
+        "metadata_path": "evidence/durango-search.json"
+      },
+      "books": [
+        {
+          "title": "El ingenioso hidalgo Don Quijote de la Mancha",
+          "author": "Cervantes Saavedra, Miguel de, 1547–1616",
+          "record_id": "1076832",
+          "record_url": "https://www.adabi.org.mx/vufind/Record/1076832",
+          "isbn": null,
+          "holdings": "Acervo explicitly Durango central public library, Colección General; México 1842, two illustrated volumes; identifiers 7366/7367 in binding notes, including moisture and binding damage. No live circulation status.",
+          "evidence_path": "evidence/durango-detail.html"
+        }
+      ],
+      "robots": {
+        "url": "https://www.adabi.org.mx/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T07:37:11.854308+00:00",
+        "evidence_path": "evidence/adabiweb-robots.json",
+        "decision": "allowed_path",
+        "note": "Public research path check; no reuse licence inferred"
+      },
+      "reader_access": "Public bibliographic heritage search. Physical consultation rules and whether damaged items are serviceable were not verified. No borrowing availability inferred.",
+      "integration": {
+        "existing_adapter": "custom",
+        "needs": [
+          "Custom VuFind adapter; existing implementation is deployment-specific and cannot be enabled by hostname only.",
+          "Restrict to Banco de datos/book records and exact Acervo; index also contains project/news records.",
+          "Retain institution-specific catalog provenance, damage notes and unknown circulation state."
+        ],
+        "blockers": [
+          "ADABI is a partial historical corpus, not verified complete current holdings or circulation. Reserve only; not used to fill the selected ten."
+        ],
+        "live_app_tested": false
+      }
+    }
+  ],
+  "blocked_or_unverified": [
+    {
+      "name": "Biblioteca Nacional de México",
+      "url": "https://catalogo.iib.unam.mx/robots.txt",
+      "reason": "Legacy Nautilo catalog robots disallows /. Current institutional evidence shows Alma/Primo migration; new-catalog route not verified. BNM website robots separately returned 503.",
+      "evidence_path": "evidence/bnm/robots.json"
+    },
+    {
+      "name": "Biblioteca Vasconcelos",
+      "url": "https://www.bibliotecavasconcelos.gob.mx/robots.txt",
+      "reason": "Robots could not be fetched: environment tunnel returned 403; no catalog search attempted.",
+      "evidence_path": "evidence/vasconcelos/robots.json"
+    },
+    {
+      "name": "Biblioteca de México",
+      "url": "https://bibliotecademexico.gob.mx/robots.txt",
+      "reason": "Website robots HTTP503; no automated query attempted.",
+      "evidence_path": "evidence/mexico/robots.json"
+    },
+    {
+      "name": "Universidad de Guadalajara / REBIUdeG",
+      "url": "http://148.202.248.73/robots.txt",
+      "reason": "Official library portal links public IP Aleph catalog; that origin robots disallows /. No query attempted.",
+      "evidence_path": "evidence/udg-robots.json"
+    },
+    {
+      "name": "El Colegio de México / Biblioteca Daniel Cosío Villegas",
+      "url": "https://colmex-primo.hosted.exlibrisgroup.com/robots.txt",
+      "reason": "Official portal points to Primo; Primo robots wildcard disallows /. Googlebot-specific allowances do not apply to this research agent.",
+      "evidence_path": "evidence/colmex-primo-robots.json"
+    },
+    {
+      "name": "Universidad Autónoma de la Ciudad de México",
+      "url": "https://catalogo.uacm.edu.mx/robots.txt",
+      "reason": "Catalog robots HTTP503; stopped.",
+      "evidence_path": "evidence/uacm/robots.json"
+    },
+    {
+      "name": "Instituto Mora",
+      "url": "https://koha.mora.edu.mx/robots.txt",
+      "reason": "Catalog robots HTTP503; stopped.",
+      "evidence_path": "evidence/mora/robots.json"
+    },
+    {
+      "name": "Universidad Pedagógica Nacional / Gregorio Torres Quintero",
+      "url": "https://sibi.upn.mx/robots.txt",
+      "reason": "Catalog robots HTTP503; stopped.",
+      "evidence_path": "evidence/upn-robots.json"
+    },
+    {
+      "name": "Universidad Autónoma de Ciudad Juárez",
+      "url": "https://catalogo.uacj.mx/robots.txt",
+      "reason": "Catalog robots wildcard disallows /; no search.",
+      "evidence_path": "evidence/uacj-robots.json"
+    },
+    {
+      "name": "Universidad Autónoma de San Luis Potosí",
+      "url": "https://www.bibliotecas.uaslp.mx/robots.txt",
+      "reason": "Robots explicitly disallows opac-search.pl; no search.",
+      "evidence_path": "evidence/uaslp-robots.json"
+    },
+    {
+      "name": "Instituto Tecnológico de Sonora",
+      "url": "https://sib.itson.edu.mx/robots.txt",
+      "reason": "Robots wildcard disallows /; no search.",
+      "evidence_path": "evidence/itson-robots.json"
+    },
+    {
+      "name": "Universidad Veracruzana",
+      "url": "https://catbiblio.uv.mx/robots.txt",
+      "reason": "Robots wildcard disallows / except /rebiss/*; catalog search outside allowance. No search.",
+      "evidence_path": "evidence/uv-robots.json"
+    },
+    {
+      "name": "Universidad Michoacana de San Nicolás de Hidalgo",
+      "url": "http://catalogo.koha.umich.mx/robots.txt",
+      "reason": "Published HTTP catalog robots returned HTTP400; policy unresolved; no search.",
+      "evidence_path": "evidence/umich-robots.json"
+    },
+    {
+      "name": "CETYS Universidad",
+      "url": "https://koha.cetys.mx/robots.txt",
+      "reason": "Catalog robots HTTP503; stopped.",
+      "evidence_path": "evidence/cetys-robots.json"
+    },
+    {
+      "name": "Universidad La Salle Ciudad de México",
+      "url": "https://catalogo.biblioteca.lasalle.mx/robots.txt",
+      "reason": "Official portal search points to catalogo.biblioteca.lasalle.mx; robots disallows /cgi-bin/. No search.",
+      "evidence_path": "evidence/lasallecatalog-robots.json"
+    },
+    {
+      "name": "Universidad Autónoma Chapingo",
+      "url": "https://chapingo.koha.es/",
+      "reason": "Robots allows general public paths, but official catalog homepage HTTP403 bot challenge; no bypass or query.",
+      "evidence_path": "evidence/chapingo-home.json"
+    },
+    {
+      "name": "El Colegio de San Luis",
+      "url": "https://opac.colsan.edu.mx/",
+      "reason": "Robots allows general public paths, but catalog homepage HTTP403 bot challenge; stopped.",
+      "evidence_path": "evidence/colsan-home.json"
+    },
+    {
+      "name": "El Colegio de Sonora",
+      "url": "https://jariwa.koha.es/",
+      "reason": "Official library site points to Jariwa Koha. Robots allows general public paths, but catalog homepage HTTP403 bot challenge; stopped.",
+      "evidence_path": "evidence/colson-home.json"
+    },
+    {
+      "name": "El Colegio de la Frontera Sur",
+      "url": "https://biblioteca.ecosur.mx/robots.txt",
+      "reason": "Catalog robots HTTP503; stopped.",
+      "evidence_path": "evidence/ecosur-robots.json"
+    },
+    {
+      "name": "Universidad Autónoma del Estado de México",
+      "url": "https://sistemabibliotecario.uaemex.mx/robots.txt",
+      "reason": "Janium catalog origin robots HTTP503; stopped.",
+      "evidence_path": "evidence/uaemex-robots.json"
+    },
+    {
+      "name": "Instituto Nacional Electoral",
+      "url": "https://biblio.ine.mx/robots.txt",
+      "reason": "Catalog robots HTTP503; stopped.",
+      "evidence_path": "evidence/ine-robots.json"
+    },
+    {
+      "name": "La Salle Bajío",
+      "url": "https://bibliotecakoha.lasallebajio.edu.mx/robots.txt",
+      "reason": "Catalog robots HTTP503; stopped.",
+      "evidence_path": "evidence/lasallebajio-robots.json"
+    },
+    {
+      "name": "CEDAL / Instituto Latinoamericano de la Comunicación Educativa",
+      "url": "https://cedal-koha.ilce.edu.mx/robots.txt",
+      "reason": "Robots request tunnel failed HTTP403; no search.",
+      "evidence_path": "evidence/cedal-robots.json"
+    },
+    {
+      "name": "Biblioteca del Senado",
+      "url": "https://senado-biblioteca.janium.net/robots.txt",
+      "reason": "Janium catalog robots wildcard disallows /; no search.",
+      "evidence_path": "evidence/senado-robots.json"
+    },
+    {
+      "name": "El Colegio de Michoacán / Biblioteca Luis González",
+      "url": "https://anchecata.colmich.edu.mx/robots.txt",
+      "reason": "Janium catalog origin robots HTTP503; stopped.",
+      "evidence_path": "evidence/colmich-robots.json"
+    },
+    {
+      "name": "CIDE",
+      "url": "https://aleph.cide.edu/robots.txt",
+      "reason": "Official library portal points to Aleph; catalog robots HTTP503; stopped.",
+      "evidence_path": "evidence/cide-robots.json"
+    },
+    {
+      "name": "Biblioteca Miguel Lerdo de Tejada / SHCP catalog",
+      "url": "https://bmltp.kohalatino.info/robots.txt",
+      "reason": "Koha candidate robots HTTP503; stopped.",
+      "evidence_path": "evidence/bmltp-robots.json"
+    },
+    {
+      "name": "Universidad Autónoma Metropolitana",
+      "url": "https://www.iztapalapa.uam.mx/uami/rectoria/informes/informe_actividades_2025.pdf",
+      "reason": "Major five-unit network retained as priority. Official 2025 report establishes Aleph-to-Alma transition, but no current public book query was completed in this bounded study.",
+      "evidence_path": "evidence/sources/discovery-platforms.txt"
+    },
+    {
+      "name": "Universidad Autónoma Agraria Antonio Narro — Biblioteca Dr. Egidio G. Rebonato",
+      "url": "https://biblioteca.uaaan.mx/robots.txt",
+      "reason": "Final audit confirmed wildcard Disallow:/ in the robots response fetched before the queries. Initial manual inspection missed that stanza and requests were mistakenly sent. No more requests; excluded from eligible successes and integration targets. Raw evidence retained for a transparent audit.",
+      "evidence_path": "evidence/uaaan-robots.json"
+    }
+  ],
+  "policy_audit": [
+    {
+      "library_id": "mexico-uaaan",
+      "reason": "Wildcard Disallow:/ was missed before querying. Found in final audit; no further requests. Observed response is retained only as restricted reserve and excluded from eligible integration counts.",
+      "evidence_path": "evidence/uaaan-robots.json"
+    }
+  ],
+  "limitations": [
+    "No national largest-ten ranking established; dates, units and scope differ.",
+    "Three selected substantial full-catalog searches, three ordinary institution-specific heritage reserves and one restricted UAAAN reserve; seven selected targets short of ten after policy/technical checks across major and meaningful alternate institutions.",
+    "Single-session public research only; no app adapters, integrations or live-app tests.",
+    "A public catalog hit proves a record, not eligibility to visit/borrow or a reuse licence.",
+    "ADABI records establish only the named historical collection and do not establish current complete holdings, circulation or serviceability of damaged material.",
+    "UPAEP returned detail link HTTP410; availability observed only in search response.",
+    "UNAM session/set-number URLs are transient; fresh form recipe and stable record number retained.",
+    "Size-source snippets explicitly labeled indexed official where not directly retrieved in complete form; UAAAN raw PDF prefix truncated.",
+    "UAAAN was mistakenly queried despite a saved wildcard Disallow:/ rule; final audit retains the response only as a restricted reserve and records the error transparently.",
+    "Robots 503/403/tunnel/400 failures are unresolved access observations, not absence of collections; no challenge bypass or disabled TLS used."
+  ],
+  "sources": [
+    {
+      "url": "https://dgb.cultura.gob.mx/directorio/index.php",
+      "claim": "Public-library network counts and open/closed distinction",
+      "evidence_path": "evidence/sources/discovery-market.txt"
+    },
+    {
+      "url": "https://www.inegi.org.mx/contenidos/programas/endutih/2024/doc/presentacion_endutih2024.pdf",
+      "claim": "Urban/rural internet-use gap; population 6+ scope in ENDUTIH",
+      "evidence_path": "evidence/sources/discovery-market.txt"
+    },
+    {
+      "url": "https://dgb.cultura.gob.mx/Documentos/Normatividad/lineamientos_de_operacionde_bibliotecas.pdf",
+      "claim": "Prometeo V provision in public-library operating guidelines",
+      "evidence_path": "evidence/sources/discovery-prometeo.txt"
+    },
+    {
+      "url": "https://siabuc.ucol.mx/",
+      "claim": "SIABUC producer description and deployment counter",
+      "evidence_path": "evidence/colima-home.html"
+    },
+    {
+      "url": "https://apps.dgb.unam.mx/",
+      "claim": "UNAM platform mix",
+      "evidence_path": "evidence/sources/discovery-supporting.txt"
+    },
+    {
+      "url": "https://www.iztapalapa.uam.mx/uami/rectoria/informes/informe_actividades_2025.pdf",
+      "claim": "UAM Alma transition",
+      "evidence_path": "evidence/sources/discovery-platforms.txt"
+    },
+    {
+      "url": "https://www.planeacion.unam.mx/Memoria/2024/PDF/6.3-IIB.pdf",
+      "claim": "BNM Alma-Primo transition",
+      "evidence_path": "evidence/sources/discovery-platforms.txt"
+    },
+    {
+      "url": "https://adabi.org.mx/fuentes/",
+      "claim": "ADABI heritage corpus purpose",
+      "evidence_path": "evidence/sources/discovery-heritage.txt"
+    },
+    {
+      "url": "https://estadistica.unam.mx/index.php/numeralia/",
+      "claim": "139 libraries; 7,685,166 printed volumes and 3,386,177 titles. Undated numeralia checked 2026-11-15, surrounding 2025–2026 statistics.",
+      "evidence_path": "evidence/unam-size.html"
+    },
+    {
+      "url": "https://www.dgcs.unam.mx/boletin/bdboletin/2022_419.html",
+      "claim": "1,365,321 volumes, 2022 UNAM statement; Hemeroteca periodical counts explicitly excluded.",
+      "evidence_path": "evidence/sources/discovery-final-priorities.txt"
+    },
+    {
+      "url": "https://dcts.cuaad.udg.mx/acervos/red-de-bibliotecas",
+      "claim": "171 libraries/centres, >1.8m titles and nearly 3m volumes; undated institutional page.",
+      "evidence_path": "evidence/sources/discovery-size-exact.txt"
+    },
+    {
+      "url": "https://www.gob.mx/cultura/prensa/la-biblioteca-de-mexico-un-oasis-para-la-lectura",
+      "claim": ">950,000 reading materials, 2017 government article; not books-only.",
+      "evidence_path": "evidence/sources/discovery-final-priorities.txt"
+    },
+    {
+      "url": "https://www.gob.mx/cultura/prensa/la-biblioteca-vasconcelos-abre-al-publico-el-centro-de-documentacion-y-biblioteca-de-la-cndh",
+      "claim": ">600,000 books and multimedia materials, 2024 government article; mixed units.",
+      "evidence_path": "evidence/sources/discovery-size-priorities.txt"
+    },
+    {
+      "url": "https://biblioteca.colmex.mx/index.php/informacion-general/informacion",
+      "claim": ">591,510 book/pamphlet titles and approximately 962,819 volumes; undated official page checked 2026-11-15.",
+      "evidence_path": "evidence/colmex-size.html"
+    },
+    {
+      "url": "https://cosei.azc.uam.mx/pdf/Proyecto_implementacion_ALMA-Primo.pdf",
+      "claim": "Five academic-unit libraries unified by Alma/Primo; institutional network proxy, no comparable size count.",
+      "evidence_path": "evidence/sources/discovery-final-priorities.txt"
+    },
+    {
+      "url": "https://www.institutomora.edu.mx/Instituto/SiteAssets/sitepages/elmora/Dossier%20Institucional.pdf",
+      "claim": "192,000 volumes in 69 collections, institutional dossier indexed 2025; not a 2026 count.",
+      "evidence_path": "evidence/sources/discovery-next.txt"
+    },
+    {
+      "url": "https://boletines.guanajuato.gob.mx/2021/09/07/biblioteca-central-estatal-espacio-dinamico-y-vivo/",
+      "claim": "200000 volumes; lower bound; 2021-09-07",
+      "evidence_path": "evidence/guanajuato-size.html"
+    },
+    {
+      "url": "https://www.uaaan.edu.mx/wp-content/uploads/2023/11/1er_informe_Alberto_Flores_Olivas_101123_ok_web.pdf",
+      "claim": "130502 volumes in central Information and Documentation Centre; 2023 report",
+      "evidence_path": "evidence/sources/discovery-size-priorities.txt"
+    },
+    {
+      "url": "https://upaep.mx/micrositios/informe2023/InformeDigital2023.pdf",
+      "claim": "163531 physical collection items, including theses and special collections; 2023 institutional report",
+      "evidence_path": "evidence/sources/discovery-size-exact.txt"
+    },
+    {
+      "url": "https://patrimoniomundialmexico.inah.gob.mx/uploads/pdf_publicaciones/2533919739.pdf",
+      "claim": "300000 approximately volumes in whole BNAH; not size of tested subset; Undated INAH overview; retrieved indexed 2026-11-15",
+      "evidence_path": "evidence/sources/discovery-heritage.txt"
+    },
+    {
+      "url": "https://puebla.gob.mx/index.php/noticias/item/20352-puebla-en-el-corazon-de-mexico-con-cartelera-de-eventos-de-primer-nivel",
+      "claim": "45000 volumes in historic library; 2025 government article (indexed publication year)",
+      "evidence_path": "evidence/sources/discovery-heritage.txt"
+    },
+    {
+      "url": "https://bibliotecasiced.durango.gob.mx/actividades.html",
+      "claim": "Official state page calls its old-book collection among the largest in northern Mexico; no comparable numeric size established.",
+      "evidence_path": "evidence/sources/discovery-supporting.txt"
+    }
+  ]
+}

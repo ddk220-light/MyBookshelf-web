@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LGE5V5R5B6"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-LGE5V5R5B6');
+    </script>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#2a201a">
+    <meta name="robots" content="noindex">
+    <title>Connexion · Bibliothèque numérique du CNDJ</title>
+    <link rel="icon" href="https://biblio.cndj.ci/img/logo.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://biblio.cndj.ci/vendors/bookland/icons/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="https://biblio.cndj.ci/css/auth-login.css?v=1.2.0">
+    <script type="text/javascript" class="flasher-js" nonce='19695e69f503da3e22a04738f83f4a3d'>
+        (function(window, document) {
+            const merge = (first, second) => {
+                if (Array.isArray(first) && Array.isArray(second)) {
+                    return [...first, ...second.filter(item => !first.includes(item))];
+                }
+
+                if (typeof first === 'object' && typeof second === 'object') {
+                    for (const [key, value] of Object.entries(second)) {
+                        first[key] = key in first ? { ...first[key], ...value } : value;
+                    }
+                    return first;
+                }
+
+                return undefined;
+            };
+
+            const mergeOptions = (...options) => {
+                const result = {};
+
+                options.forEach(option => {
+                    Object.entries(option).forEach(([key, value]) => {
+                        result[key] = key in result ? merge(result[key], value) : value;
+                    });
+                });
+
+                return result;
+            };
+
+            const renderCallback = (options) => {
+                if(!window.flasher) {
+                    throw new Error('Flasher is not loaded');
+                }
+
+                window.flasher.render(options);
+            };
+
+            const render = (options) => {
+                if (options instanceof Event) {
+                    options = options.detail;
+                }
+
+                if (['interactive', 'complete'].includes(document.readyState)) {
+                    renderCallback(options);
+                } else {
+                    document.addEventListener('DOMContentLoaded', () => renderCallback(options));
+                }
+            };
+
+            const addScriptAndRender = (options) => {
+                const mainScript = "\/vendor\/flasher\/flasher.min.js";
+
+                if (window.flasher || !mainScript || document.querySelector('script[src="' + mainScript + '"]')) {
+                    render(options);
+                } else {
+                    const tag = document.createElement('script');
+                    tag.src = mainScript;
+                    tag.type = 'text/javascript';
+                    tag.setAttribute('nonce', "19695e69f503da3e22a04738f83f4a3d");
+                    tag.onload = () => render(options);
+
+                    document.head.appendChild(tag);
+                }
+            };
+
+            const addRenderListener = () => {
+                if (1 === document.querySelectorAll('script.flasher-js').length) {
+                    document.addEventListener('flasher:render', render);
+                    document.addEventListener('turbo:before-cache', () => {
+                        document.querySelectorAll('.fl-wrapper').forEach(el => el.remove());
+                    });
+                }
+
+                    document.addEventListener('livewire:navigating', () => {
+        document.querySelectorAll('.fl-wrapper').forEach(el => el.remove());
+    });
+            };
+
+            const options = [];
+            options.push({"envelopes":[],"scripts":[],"styles":[],"options":[],"context":{"envelopes_only":false,"csp_script_nonce":"19695e69f503da3e22a04738f83f4a3d","csp_style_nonce":"d5552947a20755291ffc5c3da1ed4b7c"}});
+            /** {--FLASHER_REPLACE_ME--} **/
+            addScriptAndRender(mergeOptions(...options));
+            addRenderListener();
+        })(window, document);
+    </script><script type="text/javascript" class="flasher-theme-livewire-js">
+    (function() {
+        window.addEventListener('flasher:theme:click', function(event) {
+            if (typeof Livewire === 'undefined') {
+                return;
+            }
+
+            const { detail } = event;
+            const { envelope } = detail;
+            const context = envelope.context || {};
+
+            if (!context.livewire?.id) {
+                return;
+            }
+
+            const { livewire: { id: componentId } } = context;
+            const component = Livewire.all().find(c => c.id === componentId);
+
+            if (!component) {
+                return;
+            }
+
+            Livewire.dispatchTo(component.name, 'theme:click', { payload: detail });
+
+            // Also dispatch theme-specific event
+            const plugin = envelope.metadata?.plugin || '';
+            let themeName = plugin;
+            if (plugin.startsWith('theme.')) {
+                themeName = plugin.replace('theme.', '');
+            }
+            if (themeName) {
+                Livewire.dispatchTo(component.name, 'theme:' + themeName + ':click', { payload: detail });
+            }
+        }, false);
+    })();
+</script><script type="text/javascript" class="flasher-toastr-livewire-js">
+    (function() {
+        const events = ['flasher:toastr:show', 'flasher:toastr:click', 'flasher:toastr:close', 'flasher:toastr:hidden'];
+
+        events.forEach(function(eventName) {
+            window.addEventListener(eventName, function(event) {
+                if (typeof Livewire === 'undefined') {
+                    return;
+                }
+
+                const { detail } = event;
+                const { envelope } = detail;
+                const context = envelope.context || {};
+
+                if (!context.livewire?.id) {
+                    return;
+                }
+
+                const { livewire: { id: componentId } } = context;
+                const component = Livewire.all().find(c => c.id === componentId);
+
+                if (!component) {
+                    return;
+                }
+
+                const livewireEventName = eventName.replace('flasher:', '').replace(':', ':');
+                Livewire.dispatchTo(component.name, livewireEventName, { payload: detail });
+            }, false);
+        });
+    })();
+</script>
+</head>
+<body class="lg">
+
+<main class="lg__shell">
+
+    
+    <section class="lg__visual" aria-hidden="true">
+        
+        <img class="lg__photo" src="https://biblio.cndj.ci/img/login.jpg" alt=""
+             style="--lg-photo-pos: 72% 40%; --lg-photo-pos-sm: 70% 30%;">
+        <div class="lg__veil"></div>
+
+        <div class="lg__visual-inner">
+            <a href="https://biblio.cndj.ci" class="lg__brand" tabindex="-1">
+                <span class="" style="width: auto; padding: 4px;">
+                    <img src="https://biblio.cndj.ci/img/full-logo-light.png" alt="" style="width: 120px; height: auto">
+                </span>
+
+            </a>
+
+            <div class="lg__pitch">
+                <span class="lg__eyebrow">
+                                            <i class="fa-solid fa-scale-balanced"></i> Bibliothèque numérique
+                                    </span>
+                <h1>
+                                            Le droit ivoirien,<br><em>à portée de main.</em>
+                                    </h1>
+                <p>
+                                            Textes officiels, codes, jurisprudence et doctrine réunis, à jour et consultables partout.
+                                    </p>
+            </div>
+
+            
+            <div class="lg__float lg__float--a"><i class="fa-solid fa-book-open"></i><span><b>Code du travail</b><small>Article mis à jour</small></span></div>
+            <div class="lg__float lg__float--c"><i class="fa-solid fa-magnifying-glass"></i><span><b>Recherche</b><small>« bail commercial »</small></span></div>
+        </div>
+    </section>
+
+    
+    <section class="lg__panel">
+        <div class="lg__card">
+                <a href="https://biblio.cndj.ci" class="lg__back"><i class="fa-solid fa-arrow-left"></i> Retour au site</a>
+
+    <header class="lg__head">
+        <h2>Bienvenue sur votre plateforme d'accès aux ressources juridiques Ivoiriennes</h2>
+        <p>Connectez-vous pour accéder à votre bibliothèque.</p>
+    </header>
+
+    
+            
+    <form method="POST" action="https://biblio.cndj.ci/login" class="lg__form" novalidate id="login-form">
+        <input type="hidden" name="_token" value="[REDACTED_UNUSED_FORM_STATE]" autocomplete="off">
+        <div class="lg__field ">
+            <i class="fa-regular fa-user lg__field-icon" aria-hidden="true"></i>
+            <input id="login" name="login" type="text" value="" placeholder=" "
+                   autocomplete="username" autocapitalize="none" spellcheck="false" required autofocus
+                   >
+            <label for="login">Identifiant ou adresse e-mail</label>
+        </div>
+        
+        <div class="lg__field ">
+            <i class="fa-solid fa-lock lg__field-icon" aria-hidden="true"></i>
+            <input id="password" name="password" type="password" placeholder=" " autocomplete="current-password" required
+                   >
+            <label for="password">Mot de passe</label>
+            <button type="button" class="lg__eye" aria-label="Afficher le mot de passe" aria-pressed="false">
+                <i class="fa-regular fa-eye"></i>
+            </button>
+        </div>
+                <p class="lg__caps" hidden><i class="fa-solid fa-arrow-up"></i> Verrouillage des majuscules activé</p>
+
+        <div class="lg__row">
+            <label class="lg__switch">
+                <input type="checkbox" name="remember" value="1" >
+                <span class="lg__switch-track" aria-hidden="true"><span></span></span>
+                Rester connecté
+            </label>
+            <a href="https://biblio.cndj.ci/password/reset" class="lg__link">Mot de passe oublié ?</a>
+        </div>
+
+        <button type="submit" class="lg__submit">
+            <span class="lg__submit-label">Se connecter</span>
+            <i class="fa-solid fa-arrow-right lg__submit-arrow" aria-hidden="true"></i>
+            <span class="lg__spinner" aria-hidden="true"></span>
+        </button>
+    </form>
+
+    <div class="lg__divider"><span>Pas encore abonné ?</span></div>
+
+    <a href="https://biblio.cndj.ci/pricing" class="lg__secondary">
+        <span class="lg__secondary-icon"><i class="fa-solid fa-crown"></i></span>
+        <span><b>Découvrir nos formules</b><small>Particulier, étudiant, entreprise</small></span>
+        <i class="fa-solid fa-chevron-right"></i>
+    </a>
+
+            <footer class="lg__foot">
+                <span>© 2026 CNDJ</span>
+                <a href="https://biblio.cndj.ci/privacy-policy">Confidentialité</a>
+                <a href="https://biblio.cndj.ci/term-of-use">Conditions</a>
+                <a href="https://biblio.cndj.ci/faq">Aide</a>
+            </footer>
+        </div>
+    </section>
+</main>
+
+<script>
+    // Commun : afficher / masquer un mot de passe, alerte « majuscules », envoi avec indicateur de chargement.
+    (function () {
+        document.querySelectorAll('.lg__eye').forEach((eye) => {
+            const input = eye.closest('.lg__field').querySelector('input');
+            eye.addEventListener('click', () => {
+                const show = input.type === 'password';
+                input.type = show ? 'text' : 'password';
+                eye.setAttribute('aria-pressed', show ? 'true' : 'false');
+                eye.setAttribute('aria-label', show ? 'Masquer le mot de passe' : 'Afficher le mot de passe');
+                eye.querySelector('i').className = show ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye';
+                input.focus();
+            });
+        });
+
+        const caps = document.querySelector('.lg__caps');
+        if (caps) {
+            document.querySelectorAll('input[type=password]').forEach((input) => {
+                const check = (e) => { if (e.getModifierState) caps.hidden = !e.getModifierState('CapsLock'); };
+                input.addEventListener('keydown', check);
+                input.addEventListener('keyup', check);
+                input.addEventListener('blur', () => { caps.hidden = true; });
+            });
+        }
+
+        document.querySelectorAll('form.lg__form').forEach((form) => {
+            const submit = form.querySelector('.lg__submit');
+            form.addEventListener('submit', (e) => {
+                const missing = [...form.querySelectorAll('input[required]')].find((i) => !i.value.trim());
+                if (missing || (form.dataset.check && !window[form.dataset.check]())) {
+                    e.preventDefault();
+                    const field = (missing || form.querySelector('[aria-invalid="true"]') || form.querySelector('input')).closest('.lg__field');
+                    if (field) { field.classList.add('shake'); setTimeout(() => field.classList.remove('shake'), 500); field.querySelector('input').focus(); }
+                    return;
+                }
+                form.classList.add('is-loading');
+                if (submit) submit.disabled = true;
+            });
+            window.addEventListener('pageshow', () => { form.classList.remove('is-loading'); if (submit) submit.disabled = false; });
+        });
+
+        // Champ en erreur : focus dessus.
+        const invalid = document.querySelector('.lg__form [aria-invalid="true"]');
+        if (invalid) invalid.focus();
+    })();
+</script>
+    <script>
+        // Identifiant déjà rempli (retour après erreur) : directement le mot de passe.
+        if (!document.querySelector('.lg__form [aria-invalid="true"]') && document.getElementById('login').value) {
+            document.getElementById('password').focus();
+        }
+    </script>
+</body>
+</html>

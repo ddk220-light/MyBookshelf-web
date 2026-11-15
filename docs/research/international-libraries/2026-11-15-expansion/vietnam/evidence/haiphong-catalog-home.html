@@ -1,0 +1,1015 @@
+
+<!-- <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> -->
+<!DOCTYPE html>
+
+<html lang="vi" class="no-js">
+	<head id="Head1"><meta charset="utf-8" /><title>
+
+</title>
+		<style>
+		#partner .item img {
+					width: 200px;
+					height: 50px;
+				}
+				#slideBanner .owl-pagination{	background-color:#d09f08;}
+				#form-quick button{ line-height:45px; }
+		</style>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" /><meta name="author" />
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/common.js"></script>
+		<script type="text/javascript" >
+		$(document).ready(function() {
+			
+				$('input#txtSearchValueform-quick1').keypress(function(e) {
+				  if (e.which == '13') {
+					 ClientQuickSearch();
+				   }
+				});
+		
+		});
+		
+
+		function ClientQuickSearch() { 
+				sType = 'form-quick';
+				var prefix = 'form-quick';
+			   Fieldsearch = '';
+			   Exactly = '0'; 
+			   unsigned = '0';
+			   Operator = 'and'; 
+			   MaxField = $('#txtMaxSearchField' + prefix).val(); 
+			   SearchFieldText = ''; 
+			   SearchText = ''; 
+			   SiteId = 'opac'; 
+			   CurrentPage = '0';
+			   SearchSessionId = '12345';
+			   sField = '';
+			   keyword = '';
+			   var unsigned = $('#chkunsigned' + prefix).val();
+			   if(typeof unsigned == 'undefined')
+			   {
+				   unsigned = '0';
+			   }
+			   else
+			   {
+				   if(document.getElementById('chkunsigned' + prefix+ IndexField).checked)
+					   unsigned = '1';
+			   }
+			   
+			   for (var IndexField = 1; IndexField <= MaxField; IndexField++) 
+			   { 
+						FieldType = $('#txtTypeField'+ prefix + IndexField).val(); 
+						if(typeof FieldType == 'undefined')
+							continue;
+					   if(FieldType == 'Button')
+						   continue;
+					   
+					   SearchField = document.getElementById('txtSearchField' + prefix+ IndexField).value; 
+					   SearchType = document.getElementById('txtSearchType'+ prefix + IndexField).value; 
+					   
+					   var Exactly = $('#chkExactly' + prefix+ IndexField).val();
+					   Operator = $('#txtOperator' + prefix+ IndexField).val();
+					   if(typeof Exactly == 'undefined')
+					   {
+						   Exactly = '0';
+						   
+					   }
+					   else
+					   {
+						   if(document.getElementById('chkExactly' + prefix+ IndexField).checked)
+							   Exactly = '1';
+					   }
+					   
+					   if (SearchField.indexOf('~') > -1) { 
+						   if (FieldType == 'TextBox' || FieldType == 'textarea' || FieldType == 'DateTime' || FieldType == 'lookup' || FieldType == 'number') { 
+							   ValueFrom = document.getElementById('txtSearchValueFrom'+ prefix + IndexField).value; 
+							   ValueTo = document.getElementById('txtSearchValueTo'+ prefix + IndexField).value; 
+							   if (ValueFrom.length > 0 || ValueTo.length > 0) { 
+								   SearchText = SearchField + '$' + ValueFrom + '~' + ValueTo + '$' + Exactly + '$' + unsigned + '$' + Operator; 
+							   } 
+						   } 
+					   } 
+					   else 
+					   { 
+						   Value = ''; 
+						   if (FieldType == 'CheckBox') { 
+							   Value = document.getElementById('txtSearchValue'+ prefix + IndexField).checked.toString() == 'true' ? '1' : '0'; 
+						   } 
+						   else if(FieldType == 'unsigned') { 
+							   Value = document.getElementById('txtSearchValue'+ prefix + IndexField).checked.toString() == 'true' ? '1' : '0'; 
+						   }
+						   else if(FieldType == 'exactly') {
+							   Value = document.getElementById('txtSearchValue'+ prefix + IndexField).checked.toString() == 'true' ? '1' : '0'; 
+						   }
+						   else if(FieldType == 'fieldsearch') {
+								SearchField = $('#cbSearchValue'+ prefix + IndexField + ' option:selected').val(); 
+								if(SearchField == '')
+									SearchField = 'all';
+							    Value = $('#txtSearchValue'+ prefix + IndexField).val(); 
+								if(Value.length == 0)
+								{	
+									$('#txtSearchValue'+ prefix + IndexField).prev().text('Vui lòng nhập điều kiện cần tìm kiếm'); $('#txtSearchValue'+ prefix + IndexField).focus();	return; 
+								}
+								sField = SearchField;
+								keyword = Value;
+						   }
+						   else if(FieldType == 'listbox') { 
+							   Value = $('#txtSearchValue'+ prefix + IndexField + ' option:selected').val(); 
+						   }
+							else if(FieldType == 'TextBox'){ 
+							   Value = document.getElementById('txtSearchValue'+ prefix + IndexField).value; 
+						   }						   
+						   
+						   else { 
+							   Value = document.getElementById('txtSearchValue'+ prefix + IndexField).value; 
+						   }
+						   
+						   
+						   if (Value.length > 0) { 
+							   SearchText = SearchField + '$' + Value + '$' + Exactly + '$' + unsigned + '$' + Operator; 
+						   }
+					   } 
+					   if (SearchText.length > 0) { 
+						   SearchFieldText = SearchFieldText + SearchText + '|'; 
+					   } 
+					   SearchText = ''; 
+			   }        
+			   ClientReformatKeyword(keyword)
+			   //window.open('wpid-search-stype-'+sType + '-sfield-' + sField + '-keyword-' + keyword + '.html','_self');
+				//window.open('search.aspx?wpid=search&stype='+sType + '&sfield=' + sField + '&keyword=' + keyword,'_self');
+            } 
+			function ClientReformatKeyword(keyword)   
+		   {  
+				var retVal = keyword;
+				$.ajax({ 
+						type: "POST", 
+						url: "FEAjaxProcess.aspx/ServerReformatKeyword", 
+						data: '{ SiteId:"'+SiteId+'", Keyword:"'+keyword+'"}', 
+						contentType: "application/json; charset=utf-8", 
+						dataType: "json", 
+						success: ClientReformatKeywordOnSuccess, 
+						error: function (xhr, ajaxOptions, thrownError) { 
+							AJAX_EXECUTE_ERROR(xhr.status); 
+						  } 
+					}); 
+			}
+			function ClientReformatKeywordOnSuccess(response) { 
+				OAjaxOut = response.d; 
+                if (OAjaxOut.Error) { 
+                     alert(OAjaxOut.ErrorMessage);  
+                } 
+				else 
+				{
+					window.open('wpid-search-stype-'+sType + '-sfield-' + sField + '-keyword-' + OAjaxOut.RetUrl + '.html','_self');
+			    }
+            }
+		function ClientSearchBarClick(sType) { 
+				window.open('wpid-search-stype-'+sType +'.html','_self');
+            } 
+			/*
+			function ClientLogin(SiteId)   
+		   {  
+				//SiteId = 'opac';
+				var username = $('#txtLoginName').val();
+				var password = $('#txtPassword').val();
+				$.ajax({ 
+						type: "POST", 
+						url: "FEAjaxProcess.aspx/ServerUserLoginV2", 
+						data: '{ SiteId:"'+SiteId+'", username:"'+username+'", password:"'+password+'"}', 
+						contentType: "application/json; charset=utf-8", 
+						dataType: "json", 
+						success: ClientLoginOnSuccess, 
+						error: function (xhr, ajaxOptions, thrownError) { 
+							AJAX_EXECUTE_ERROR(xhr.status); 
+						  } 
+					}); 
+			}
+			function ClientLoginOnSuccess(response) { 
+				OAjaxOut = response.d; 
+                if (OAjaxOut.Error) { 
+                     $('#divLoginProcessInfo').html(OAjaxOut.ErrorMessage);  
+                } 
+				else 
+				{
+					$('#ulUserBar').html(OAjaxOut.InnerHTML);  
+					$('#btnCloseModal').trigger('click');
+			    }
+            } 
+			*/
+			//**********************************
+			//xử lý xem dữ liệu bộ sưu tập
+			//**********************************
+			
+			function ClientViewByCollection(SiteId, TypeCode)
+		   {  
+				window.open('wpid-collection-type-' + TypeCode,'_self');
+				/*$.ajax({ 
+						type: "POST", 
+						url: "FEAjaxProcess.aspx/ServerViewByCollection", 
+						data: '{ SiteId:"'+SiteId+'", TypeCode:"'+TypeCode+'"}', 
+						contentType: "application/json; charset=utf-8", 
+						dataType: "json", 
+						success: ClientViewByCollectionOnSuccess, 
+						error: function (xhr, ajaxOptions, thrownError) { 
+							AJAX_EXECUTE_ERROR(xhr.status); 
+						  } 
+					}); 
+					*/
+			}
+			function ClientViewByCollectionOnSuccess(response) { 
+				OAjaxOut = response.d; 
+                if (OAjaxOut.Error) { 
+                     $('#ulUserBar').html('');  
+                } 
+				else 
+				{
+					window.open('wpid-collection','_self');
+			    }
+            }
+			//**********************************
+			//end xử lý xem dữ liệu bộ sưu tập
+			//**********************************
+			function ClientUserLogout(SiteId)   
+		   {  
+				//SiteId = 'opac';
+				username = $('#txtLoginName').val();//'3981137';// 
+				password = $('#txtPassword').val();//'12345678';//
+				$.ajax({ 
+						type: "POST", 
+						url: "FEAjaxProcess.aspx/ServerMemberLogout", 
+						data: '{ }', 
+						contentType: "application/json; charset=utf-8", 
+						dataType: "json", 
+						success: ClientUserLogoutOnSuccess, 
+						error: function (xhr, ajaxOptions, thrownError) { 
+							AJAX_EXECUTE_ERROR(xhr.status); 
+						  } 
+					}); 
+			}
+			function ClientUserLogoutOnSuccess(response) { 
+				OAjaxOut = response.d; 
+                if (OAjaxOut.Error) { 
+                     alert(OAjaxOut.ErrorMessage);  
+                } 
+				else 
+				{
+					window.open('wpid-home.html', '_self');//	$('#ulUserBar').html('');
+			    }
+            }
+		</script>
+    </head>
+
+	<body>
+		<form name="form_default" method="post" action="./default.aspx?wpid=home" id="form_default" enctype="multipart/form-data">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwULLTE2NDExNjM3NjgPZBYCAggPFgIeBFRleHQFv40CPG1ldGEgY2hhcnNldD0idXRmLTgiPg0KPG1ldGEgbmFtZT0idmlld3BvcnQiIGNvbnRlbnQ9IndpZHRoPWRldmljZS13aWR0aCwgaW5pdGlhbC1zY2FsZT0xLjAiPg0KPCEtLTxsaW5rIGhyZWY9J2h0dHBzOi8vZm9udHMuZ29vZ2xlYXBpcy5jb20vY3NzP2ZhbWlseT1PcGVuK1NhbnM6NDAwLDcwMHxBcmltbzo3MDAmc3Vic2V0PXZpZXRuYW1lc2UsbGF0aW4nIHJlbD0nc3R5bGVzaGVldCcgdHlwZT0ndGV4dC9jc3MnPi0tPg0KDQo8IS0tIEJvb3RzdHJhcCBDU1MgLS0+DQo8bGluayBocmVmPSJjc3MvYm9vdHN0cmFwLm1pbi5jc3MiIHJlbD0ic3R5bGVzaGVldCI+DQoNCjwhLS0gZm9udCBhd2Vzb21lIC0tPg0KPGxpbmsgcmVsPSJzdHlsZXNoZWV0IiBocmVmPSJmb250cy9mb250LWF3ZXNvbWUvY3NzL2ZvbnQtYXdlc29tZS5taW4uY3NzIj4NCg0KPCEtLSBPd2wgQ1NTIC0tPg0KPGxpbmsgcmVsPSJzdHlsZXNoZWV0IiBocmVmPSJjc3Mvb3dsLmNhcm91c2VsLmNzcyI+DQo8bGluayByZWw9InN0eWxlc2hlZXQiIGhyZWY9ImNzcy9vd2wudGhlbWUuY3NzIj4NCjxsaW5rIHJlbD0ic3R5bGVzaGVldCIgaHJlZj0iY3NzL293bC50cmFuc2l0aW9ucy5jc3MiPg0KDQo8IS0tIFRoZW1lIENTUyAtLT4NCjxsaW5rIGhyZWY9ImNzcy9zdHlsZS5jc3MiIHJlbD0ic3R5bGVzaGVldCI+DQo8bGluayBocmVmPSJjc3MvcmVzcG9uc2l2ZS5jc3MiIHJlbD0ic3R5bGVzaGVldCI+DQoNCjwhLS0gSFRNTDUgc2hpbSwgZm9yIElFNi04IHN1cHBvcnQgb2YgSFRNTDUgZWxlbWVudHMgLS0+DQo8IS0tW2lmIGx0IElFIDldPg0KPHNjcmlwdCBzcmM9ImpzL2h0bWw1c2hpdi5qcyI+PC9zY3JpcHQ+DQo8IVtlbmRpZl0tLT4NCiANCjwhLS0gRmF2IGljb25zIC0tPg0KPGxpbmsgcmVsPSJzaG9ydGN1dCBpY29uIiBocmVmPSJpbWcvbG9nby5wbmciPg0KPGJvZHk+DQo8IS0tKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqDQpUT1AgWk9ORSANCioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKiotLT4NCjxoZWFkZXI+ICAgIDxkaXYgY2xhc3M9InByZUhlYWRlciI+IA0KICAgIDxkaXYgY2xhc3M9ImNvbnRhaW5lciI+IA0KICAgICAgICA8dWwgY2xhc3M9Imxpc3QtaW5saW5lIG5hdmJhci10ZXh0ICBzb2MtbGlzdCBoaWRkZW4teHMiPiANCiAgICAgICAgPC91bD4gDQogICAgICAgIDx1bCBjbGFzcz0ibGlzdC1pbmxpbmUgbmF2YmFyLXRleHQgbmF2YmFyLXJpZ2h0Ij4gDQogICAgICAgICAgICA8bGkgIGlkPSJhdXNlcmxvZ2luIiAgICAgICAgICAgICAgPiANCiAgICAgICAgICAgICAgICA8YSBocmVmPSIjIiBkYXRhLXRvZ2dsZT0ibW9kYWwiIGRhdGEtdGFyZ2V0PSIjcmVnaXN0ZXJtZW1iZXIiICBvbmNsaWNrPSJqYXZhc2NyaXB0OkNsaWVudERyYXdSZWdpc3Rlck1lbWJlcignb3BhYycpOyIgICA+PGkgY2xhc3M9ImZhIGZhLWVkaXQiPjwvaT4gxJDEg25nIGvDvTwvYT4gDQogICAgICAgICAgICA8L2xpPiANCiAgICAgICAgICAgIDxsaSAgaWQ9InVsVXNlckJhciIgICAgICAgICAgICAgID4gDQogICAgICAgICAgICAgICAgPGEgaHJlZj0iIyIgZGF0YS10b2dnbGU9Im1vZGFsIiBkYXRhLXRhcmdldD0iI2xvZ2luIiAgID48aSBjbGFzcz0iZmEgZmEtdXNlciI+PC9pPiDEkMSDbmcgbmjhuq1wPC9hPiANCiAgICAgICAgICAgIDwvbGk+IA0KICAgICAgICA8L3VsPiANCiAgICA8L2Rpdj4gDQo8L2Rpdj4gDQo8ZGl2IGNsYXNzPSJtb2RhbCBmYWRlIiBpZD0icmVnaXN0ZXJtZW1iZXIiIHRhYmluZGV4PSItMSIgcm9sZT0iZGlhbG9nIiBhcmlhLWxhYmVsbGVkYnk9Im15TW9kYWxMYWJlbCI+PC9kaXY+IA0KPCEtLSBNb2RhbCBsb2dpbiAtLT4gDQo8ZGl2IGNsYXNzPSJtb2RhbCBmYWRlIiBpZD0ibG9naW4iIHRhYmluZGV4PSItMSIgcm9sZT0iZGlhbG9nIiBhcmlhLWxhYmVsbGVkYnk9Im15TW9kYWxMYWJlbCI+IA0KICAgIDxkaXYgY2xhc3M9Im1vZGFsLWRpYWxvZyIgcm9sZT0iZG9jdW1lbnQiPiANCiAgICAgICAgPGRpdiBjbGFzcz0ibW9kYWwtY29udGVudCI+IA0KICAgICAgICAgICAgPGRpdiBjbGFzcz0ibW9kYWwtaGVhZGVyIj4gDQogICAgICAgICAgICAgICAgPGJ1dHRvbiB0eXBlPSJidXR0b24iIGNsYXNzPSJjbG9zZSIgaWQ9ImJ0bkNsb3NlTW9kYWwiICBkYXRhLWRpc21pc3M9Im1vZGFsIiBhcmlhLWxhYmVsPSJDbG9zZSI+PHNwYW4gYXJpYS1oaWRkZW49InRydWUiPiZ0aW1lczs8L3NwYW4+PC9idXR0b24+IA0KICAgICAgICAgICAgICAgIDxoNCBjbGFzcz0ibW9kYWwtdGl0bGUiIGlkPSJteU1vZGFsTGFiZWwiPsSQxINuZyBuaOG6rXA8L2g0PiANCiAgICAgICAgICAgIDwvZGl2PiANCiAgICAgICAgICAgIDxkaXYgY2xhc3M9Im1vZGFsLWJvZHkiPiANCiAgICAgICAgICAgICAgIDxkaXYgY2xhc3M9ImZvcm0tZ3JvdXAiIGlkPSJkaXZMb2dpblByb2Nlc3NJbmZvIj48L2Rpdj4gDQogICAgICAgICAgICAgICAgPGZvcm0+IA0KICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzPSJmb3JtLWdyb3VwIj4gDQogICAgICAgICAgICAgICAgICAgIDwvZGl2PiANCiAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzcz0iZm9ybS1ncm91cCI+IA0KICAgICAgICAgICAgICAgICAgICAgICAgPGxhYmVsIGZvcj0idHh0TG9naW5OYW1lIj5Uw6puIHRydXkgY+G6rXA8L2xhYmVsPiANCiAgICAgICAgICAgICAgICAgICAgICAgIDxpbnB1dCBjbGFzcz0iZm9ybS1jb250cm9sIiBvbmtleWRvd249ImphdmFzY3JpcHQ6aWYgKGV2ZW50LmtleUNvZGUgPT0gMTMpIHtDbGllbnRMb2dpbignb3BhYycpO30iIGlkPSJ0eHRMb2dpbk5hbWUiQVVUT0NPTVBMRVRFPSJvZmYiICBwbGFjZWhvbGRlcj0iTG9naW5OYW1lIiB2YWx1ZT0iIiA+IA0KICAgICAgICAgICAgICAgICAgICA8L2Rpdj4gDQogICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3M9ImZvcm0tZ3JvdXAiPiANCiAgICAgICAgICAgICAgICAgICAgICAgIDxsYWJlbCBmb3I9InR4dFBhc3N3b3JkIj5N4bqtdCBraOG6qXU8L2xhYmVsPiANCiAgICAgICAgICAgICAgICAgICAgICAgIDxpbnB1dCB0eXBlPSJwYXNzd29yZCIgb25rZXlkb3duPSJqYXZhc2NyaXB0OmlmIChldmVudC5rZXlDb2RlID09IDEzKSB7Q2xpZW50TG9naW4oJ29wYWMnKTt9IiBjbGFzcz0iZm9ybS1jb250cm9sIiBBVVRPQ09NUExFVEU9Im9mZiIgaWQ9InR4dFBhc3N3b3JkIiBwbGFjZWhvbGRlcj0iUGFzc3dvcmQiPiANCiAgICAgICAgICAgICAgICAgICAgPC9kaXY+IA0KICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzPSJmb3JtLWdyb3VwIj4gDQogICAgICAgICAgICAgICAgICAgICAgICA8bGFiZWwgZm9yPSJ0eHRQYXNzd29yZCI+TcOjIGLhuqNvIHbhu4c8L2xhYmVsPiANCiAgICAgICAgICAgICAgICAgICAgICAgIDxpbnB1dCB0eXBlPSJ0ZXh0IiBjbGFzcz0iZm9ybS1jb250cm9sIiBpZD0idHh0U2VjQ29kZV9SZWciLz4gDQogICAgICAgICAgICAgICAgICAgICAgICA8aW1nIGlkPSJJbWdDYXB0Y2hhIiBzcmM9Ii9wYWdlcy9vcGFjL1RlbXBEaXIvSW1hZ2VWZXJpZmljYXRpb24vM2I2N2RjOWYtMDdkMS00ZWZhLWE5ZGItYzQwY2M1MzZiNTAwLmpwZyIgYWx0PSIiIC8+IA0KICAgICAgICAgICAgICAgICAgICAgICAgPGltZyB0aXRsZT0ixJDhu5VpIGjDrG5oIiBhbHQ9IsSQ4buVaSBow6xuaCIgb25jbGljaz0iamF2YXNjcmlwdDpDaGFuZ2VJbWdTZWN1cml0eSgnb3BhYycpOyIgc3R5bGU9Im1hcmdpbi10b3A6MTBweDsgY3Vyc29yOnBvaW50ZXIiIHNyYz0iL3BhZ2VzL29wYWMvaW1hZ2VzL3JlZnJlc2gucG5nIiBhbHQ9IiIgLz4gDQogICAgICAgICAgICAgICAgICAgIDwvZGl2PiANCiAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzcz0iY2hlY2tib3giPiANCiAgICAgICAgICAgICAgICAgICAgICAgIDxsYWJlbD4gDQogICAgICAgICAgICAgICAgICAgICAgICA8aW5wdXQgdHlwZT0iY2hlY2tib3giPiBMxrB1IG3huq10IGto4bqpdSANCiAgICAgICAgICAgICAgICAgICAgICAgIDwvbGFiZWw+IA0KICAgICAgICAgICAgICAgICAgICA8L2Rpdj4gDQogICAgICAgICAgICAgICAgPC9mb3JtPiANCiAgICAgICAgICAgIDwvZGl2PiANCiAgICAgICAgICAgIDxkaXYgY2xhc3M9Im1vZGFsLWZvb3RlciI+IA0KICAgICAgICAgICAgICAgIDxidXR0b24gdHlwZT0iYnV0dG9uIiBjbGFzcz0iYnRuIGJ0bi1kZWZhdWx0IiBkYXRhLWRpc21pc3M9Im1vZGFsIj5I4buneTwvYnV0dG9uPiANCiAgICAgICAgICAgICAgICA8YnV0dG9uIHR5cGU9ImJ1dHRvbiIgY2xhc3M9ImJ0biBidG4tcHJpbWFyeSIgb25jbGljaz0iamF2YXNjcmlwdDpDbGllbnRMb2dpbignb3BhYycpOyI+xJDEg25nIG5o4bqtcDwvYnV0dG9uPiANCiAgICAgICAgICAgIDwvZGl2PiANCiAgICAgICAgPC9kaXY+IA0KICAgIDwvZGl2PiANCjwvZGl2PiANCjxpbnB1dCB0eXBlPSJoaWRkZW4iIGlkPSJoZFNpdGVJZCIgdmFsdWU9Im9wYWMiICAgLz4NCjxpbnB1dCB0eXBlPSJoaWRkZW4iIGlkPSJoZEN1cnJlbnRTaXRlSWQiIHZhbHVlPSJvcGFjIiAvPg0KPHNjcmlwdCB0eXBlPSJ0ZXh0L2phdmFzY3JpcHQiPiANCiAgIGZ1bmN0aW9uIENsaWVudERyYXdSZWdpc3Rlck1lbWJlcihTaXRlSWQpIHsgDQogICAgICAgJC5hamF4KHsgDQogICAgICAgICAgIHR5cGU6ICJQT1NUIiwgDQogICAgICAgICAgIHVybDogIkZvcm1Qcm9jZXNzLmFzcHgvU2VydmVyRHJhd1JlZ2lzdGVyTWVtYmVyIiwgDQogICAgICAgICAgIGRhdGE6ICd7IFNpdGVJZDoiJytTaXRlSWQrJyJ9JywgDQogICAgICAgICAgIGNvbnRlbnRUeXBlOiAiYXBwbGljYXRpb24vanNvbjsgY2hhcnNldD11dGYtOCIsIA0KICAgICAgICAgICBkYXRhVHlwZTogImpzb24iLCANCiAgICAgICAgICAgc3VjY2VzczogRHJhd1JlZ2lzdGVyTWVtYmVyT25TdWNjZXNzLCANCiAgICAgICAgICAgZXJyb3I6IGZ1bmN0aW9uICh4aHIsIGFqYXhPcHRpb25zLCB0aHJvd25FcnJvcikgeyANCiAgICAgICAgICAgfSANCiAgICAgICB9KTsNCiAgIH0NCiAgIGZ1bmN0aW9uIERyYXdSZWdpc3Rlck1lbWJlck9uU3VjY2VzcyhyZXNwb25zZSkgeyANCiAgICAgICB2YXIgcmV0VmFsID0gcmVzcG9uc2UuZDsgDQogICAgICAgaWYgKHJldFZhbC5sZW5ndGg9PTApIHsgDQogICAgICAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyZWdpc3Rlcm1lbWJlcicpLmlubmVySFRNTCA9IE9BamF4T3V0LkVycm9yTWVzc2FnZTsgDQogICAgICAgfSANCiAgICAgICBlbHNlIA0KICAgICAgIHsgDQogICAgICAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyZWdpc3Rlcm1lbWJlcicpLmlubmVySFRNTCA9IHJldFZhbDsgDQogICAgICAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyZWdpc3Rlcm1lbWJlcicpLnN0eWxlLmRpc3BsYXkgPSAnYmxvY2snOyANCiAgICAgICAgICAgQ2hhbmdlSW1nU2VjdXJpdHkoJ29wYWMnKTsNCiAgICAgICB9IA0KICAgfQkNCiAgIGZ1bmN0aW9uIENoYW5nZUltZ1NlY3VyaXR5KCkNCiAgIHsNCiAgICAgICB2YXIgaW1hZ2VWZXJpZmljYXRpb24gPSBpTWFuLk9wYWMuRnJvbnRFbmQuaVNlYXJjaFByb2Nlc3MuQ3JlYXRlQ2FwdGNoYSgnb3BhYycpLnZhbHVlOw0KICAgICAgIGlmKGltYWdlVmVyaWZpY2F0aW9uLmxlbmd0aD4wKSANCiAgICAgICB7DQogICAgICAgICAgICQoJyN0eHRTZWNDb2RlJykudmFsKCcnKTsNCiAgICAgICAgICAgJCgnI0ltZ0NhcHRjaGEnKS5hdHRyKCdzcmMnLGltYWdlVmVyaWZpY2F0aW9uKTsNCiAgICAgICB9DQogICB9DQogICBmdW5jdGlvbiBDaGFuZ2VJbWdTZWN1cml0eVJlZygpDQogICB7DQogICAgICAgdmFyIGltYWdlVmVyaWZpY2F0aW9uID0gaU1hbi5PcGFjLkZyb250RW5kLmlTZWFyY2hQcm9jZXNzLkNyZWF0ZUNhcHRjaGEoJ29wYWMnKS52YWx1ZTsNCiAgICAgICBpZihpbWFnZVZlcmlmaWNhdGlvbi5sZW5ndGg+MCkgDQogICAgICAgew0KICAgICAgICAgICAkKCcjdHh0U2VjQ29kZScpLnZhbCgnJyk7DQogICAgICAgICAgICQoJyNJbWdDYXB0Y2hhUmVnJykuYXR0cignc3JjJyxpbWFnZVZlcmlmaWNhdGlvbik7DQogICAgICAgfQ0KICAgfQ0KICAgZnVuY3Rpb24gQ2xpZW50Q2hlY2tMb2dpbk5hbWUoU2l0ZUlkKSANCiAgIHsgDQogICAgICAgdmFyIHR4dExvZ2luTmFtZSA9ICQoJyN0eHRMb2dpbk5hbWVfUmVnJykudmFsKCkudHJpbSgpOw0KICAgICAgIGlmKHR4dExvZ2luTmFtZS5sZW5ndGg9PTApIA0KICAgICAgIHsNCiAgICAgICAgICAgRGlzcGxheU1lc3NhZ2UoJ2RpdlJlZ2lzdGVyUHJvY2Vzc0luZm8nLCdIw6N5IG5o4bqtcCB0w6puIHRydXkgY+G6rXAgdsOgbyEnLDIpOyANCiAgICAgICAgICAgJCgnI3R4dExvZ2luTmFtZScpLmZvY3VzKCk7DQogICAgICAgICAgIHJldHVybjsNCiAgICAgICB9DQogICAgICAgJC5hamF4KHsgDQogICAgICAgICAgIHR5cGU6ICJQT1NUIiwgDQogICAgICAgICAgIHVybDogIkZvcm1Qcm9jZXNzLmFzcHgvU2V2ZXJDaGVja0xvZ2luTmFtZSIsIA0KICAgICAgICAgICBkYXRhOiAneyBTaXRlSWQ6ICInK1NpdGVJZCsnIiwgTG9naW5OYW1lOiAiJyt0eHRMb2dpbk5hbWUrJyIgfScsIA0KICAgICAgICAgICBjb250ZW50VHlwZTogImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9dXRmLTgiLCANCiAgICAgICAgICAgZGF0YVR5cGU6ICJqc29uIiwgDQogICAgICAgICAgIHN1Y2Nlc3M6IENoZWNrTG9naW5OYW1lU3VjY2VzcywgDQogICAgICAgICAgIGVycm9yOiBmdW5jdGlvbiAoeGhyLCBhamF4T3B0aW9ucywgdGhyb3duRXJyb3IpIHsgDQogICAgICAgICAgIH0gDQogICAgICAgfSk7IA0KICAgfQ0KICAgZnVuY3Rpb24gQ2hlY2tMb2dpbk5hbWVTdWNjZXNzKHJlc3BvbnNlKSB7IA0KICAgICAgIE9BamF4T3V0ID0gcmVzcG9uc2UuZDsgDQogICAgICAgaWYgKE9BamF4T3V0LkVycm9yKSAgDQogICAgICAgeyANCiAgICAgICAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdkaXZSZWdpc3RlclByb2Nlc3NJbmZvJykuaW5uZXJIVE1MPU9BamF4T3V0LkVycm9yTWVzc2FnZTsgDQogICAgICAgICAgICQoJyNidG5TYXZlUmVnaXN0ZXInKS5jc3MoJ3Zpc2liaWxpdHknLCAnaGlkZGVuJyk7IA0KICAgICAgICAgICByZXR1cm47IA0KICAgICAgIH0gDQogICAgICAgZWxzZSANCiAgICAgICB7IA0KICAgICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZGl2UmVnaXN0ZXJQcm9jZXNzSW5mbycpLmlubmVySFRNTD1PQWpheE91dC5FcnJvck1lc3NhZ2U7IA0KICAgICAgICAgICAkKCcjYnRuU2F2ZVJlZ2lzdGVyJykuY3NzKCd2aXNpYmlsaXR5JywgJ2luaXRpYWwnKTsgDQogICAgICAgfSANCiAgIH0gDQogICBmdW5jdGlvbiBDbGllbnRSZWdpc3Rlck1lbWJlcihTaXRlSWQpIA0KICAgeyANCiAgICAgICBDbGllbnRDaGVja0xvZ2luTmFtZShTaXRlSWQpOw0KICAgICAgIHZhciB0eHRMb2dpbk5hbWUgPSAkKCcjdHh0TG9naW5OYW1lX1JlZycpLnZhbCgpLnRyaW0oKTsNCiAgICAgICB2YXIgdHh0RnVsbE5hbWUgPSAkKCcjdHh0RnVsbE5hbWVfUmVnJykudmFsKCkudHJpbSgpOw0KICAgICAgIHZhciB0eHRFbWFpbCA9ICQoJyN0eHRFbWFpbF9SZWcnKS52YWwoKS50cmltKCk7DQogICAgICAgdmFyIHR4dFBob25lID0gJCgnI3R4dFBob25lX1JlZycpLnZhbCgpLnRyaW0oKTsNCiAgICAgICB2YXIgdHh0QWRkcmVzcyA9ICQoJyN0eHRBZGRyZXNzX1JlZycpLnZhbCgpLnRyaW0oKTsNCiAgICAgICB2YXIgdHh0UGFzc3dvcmQgPSAkKCcjdHh0UGFzc3dvcmRfUmVnJykudmFsKCkudHJpbSgpOw0KICAgICAgIHZhciB0eHRTZWNDb2RlID0gJCgnI3R4dFNlY0NvZGVfUmVnJykudmFsKCkudHJpbSgpOw0KICAgICAgIGlmKHR4dEVtYWlsLmxlbmd0aD09MCkgDQogICAgICAgew0KICAgICAgICAgICBEaXNwbGF5TWVzc2FnZSgnZGl2UmVnaXN0ZXJQcm9jZXNzSW5mbycsJ0jDo3kgbmjhuq1wIMSR4buLYSBjaOG7iSBlbWFpbCB2w6BvIScsMik7IA0KICAgICAgICAgICAkKCcjdHh0RW1haWwnKS5mb2N1cygpOw0KICAgICAgICAgICByZXR1cm47DQogICAgICAgfQ0KICAgICAgIGlmKCFJc1ZhbGlkRW1haWwodHh0RW1haWwpKSANCiAgICAgICB7DQogICAgICAgICAgIERpc3BsYXlNZXNzYWdlKCdkaXZSZWdpc3RlclByb2Nlc3NJbmZvJywnxJDhu4thIGNo4buJIGVtYWlsIGtow7RuZyBo4bujcCBs4buHLiBIw6N5IG5o4bqtcCBs4bqhaSEnLDIpOyANCiAgICAgICAgICAgJCgnI3R4dEVtYWlsJykuZm9jdXMoKTsNCiAgICAgICAgICAgcmV0dXJuOw0KICAgICAgIH0NCiAgICAgICBpZih0eHRTZWNDb2RlLmxlbmd0aD09MCkgDQogICAgICAgew0KICAgICAgICAgICBEaXNwbGF5TWVzc2FnZSgnZGl2UmVnaXN0ZXJQcm9jZXNzSW5mbycsJ0jDo3kgbmjhuq1wIG3DoyBi4bqjbyB24buHIHbDoG8hJywyKTsgDQogICAgICAgICAgICQoJyN0eHRTZWNDb2RlJykuZm9jdXMoKTsNCiAgICAgICAgICAgcmV0dXJuOw0KICAgICAgIH0NCiAgICAgICBpZih0eHRQYXNzd29yZCE9JCgnI3R4dFJldHlwZVBhc3N3b3JkX1JlZycpLnZhbCgpLnRyaW0oKSkgDQogICAgICAgew0KICAgICAgICAgICBEaXNwbGF5TWVzc2FnZSgnZGl2UmVnaXN0ZXJQcm9jZXNzSW5mbycsJ0fDtSBs4bqhaSBt4bqtdCBraOG6qXUga2jDtG5nIMSRw7puZyEnLDIpOyANCiAgICAgICAgICAgJCgnI3R4dFJldHlwZVBhc3N3b3JkX1JlZycpLmZvY3VzKCk7DQogICAgICAgICAgIHJldHVybjsNCiAgICAgICB9DQogICAgICAgJC5hamF4KHsgDQogICAgICAgICAgIHR5cGU6ICJQT1NUIiwgDQogICAgICAgICAgIHVybDogIkZvcm1Qcm9jZXNzLmFzcHgvQWRkTWVtYmVyIiwgDQogICAgICAgICAgIGRhdGE6ICd7IFNpdGVJZDogIicrU2l0ZUlkKyciLCBMb2dpbk5hbWU6ICInK3R4dExvZ2luTmFtZSsnIiwgRnVsbE5hbWU6ICInK3R4dEZ1bGxOYW1lKyciLCBFbWFpbDogIicrdHh0RW1haWwrJyIsIFBob25lOiAiJyt0eHRQaG9uZSsnIiwgQWRkcmVzczogIicrdHh0QWRkcmVzcysnIiwgUGFzc3dvcmQ6ICInK3R4dFBhc3N3b3JkKyciLCBTZWNDb2RlOiAiJyt0eHRTZWNDb2RlKyciIH0nLCANCiAgICAgICAgICAgY29udGVudFR5cGU6ICJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PXV0Zi04IiwgDQogICAgICAgICAgIGRhdGFUeXBlOiAianNvbiIsIA0KICAgICAgICAgICBzdWNjZXNzOiBBZGRNZW1iZXJTdWNjZXNzLCANCiAgICAgICAgICAgZXJyb3I6IGZ1bmN0aW9uICh4aHIsIGFqYXhPcHRpb25zLCB0aHJvd25FcnJvcikgeyANCiAgICAgICAgICAgfSANCiAgICAgICB9KTsgDQogICB9DQogICBmdW5jdGlvbiBBZGRNZW1iZXJTdWNjZXNzKHJlc3BvbnNlKSB7IA0KICAgICAgIE9BamF4T3V0ID0gcmVzcG9uc2UuZDsgDQogICAgICAgaWYgKE9BamF4T3V0LkVycm9yKSAgDQogICAgICAgeyANCiAgICAgICAgICAgRGlzcGxheU1lc3NhZ2UoJ2RpdlJlZ2lzdGVyUHJvY2Vzc0luZm8nLE9BamF4T3V0LkVycm9yTWVzc2FnZSwzKTsgDQogICAgICAgICAgIHJldHVybjsgDQogICAgICAgfSANCiAgICAgICBlbHNlIA0KICAgICAgIHsgDQogICAgICAgICAgIERpc3BsYXlNZXNzYWdlKCdkaXZSZXN1bHRSZWdpc3RlcicsT0FqYXhPdXQuSW5mb01lc3NhZ2UsNCk7IA0KICAgICAgICAgICAkKCcjZGl2UmVnaXN0ZXJCb2R5JykuY3NzKCd2aXNpYmlsaXR5JywgJ2hpZGRlbicpOyANCiAgICAgICAgICAgJCgnI2RpdlJlZ2lzdGVyRm9vdGVyJykuY3NzKCd2aXNpYmlsaXR5JywgJ2hpZGRlbicpOyANCiAgICAgICB9IA0KICAgfSANCiAgIGZ1bmN0aW9uIElzVmFsaWRFbWFpbChlbWFpbCkgew0KICAgICAgIHZhciByZWdleCA9IG5ldyBSZWdFeHAoL14oW2EtekEtWjAtOV9cLlwtXCtdKStcQCgoW2EtekEtWjAtOVwtXSkrXC4pKyhbYS16QS1aMC05XXsyLDR9KSskLyk7DQogICAgICAgcmV0dXJuIHJlZ2V4LnRlc3QoZW1haWwpOw0KICAgfQ0KICAgZnVuY3Rpb24gRGlzcGxheU1lc3NhZ2UoZGl2SUQsIG1lc3NhZ2UsdHlwZSkgew0KICAgICAgIHZhciBodG1sPScnOw0KICAgICAgIGlmKHR5cGU9PTEpCS8vSW5mb3IgDQogICAgICAgICAgIGh0bWwrPSc8ZGl2IGNsYXNzPSJhbGVydCBhbGVydC1pbmZvIj4nOyANCiAgICAgICBlbHNlIGlmKHR5cGU9PTIpCQ0KICAgICAgICAgICBodG1sKz0nPGRpdiBjbGFzcz0iYWxlcnQgYWxlcnQtd2FybmluZyI+JzsgDQogICAgICAgZWxzZSBpZih0eXBlPT0zKQkNCiAgICAgICAgICAgaHRtbCs9JzxkaXYgY2xhc3M9ImFsZXJ0IGFsZXJ0LWVycm9yIj4nOyANCiAgICAgICBlbHNlIGlmKHR5cGU9PTQpCQ0KICAgICAgICAgICBodG1sKz0nPGRpdiBjbGFzcz0iYWxlcnQgYWxlcnQtc3VjY2VzcyI+JzsgDQogICAgICAgaHRtbCs9bWVzc2FnZSArICc8L2Rpdj4nOyANCiAgICAgICAkKCcjJytkaXZJRCkuaHRtbChodG1sKTsNCiAgIH0NCjwvc2NyaXB0PiANCjxzY3JpcHQ+IA0KICAgICAgICAgICAgZnVuY3Rpb24gQ2xpZW50RHJhd01lbWJlckxvZ2luKCkgeyANCiAgICAgICAgICAgICAgICAkLmFqYXgoeyANCiAgICAgICAgICAgICAgICAgICAgdHlwZTogIlBPU1QiLCANCiAgICAgICAgICAgICAgICAgICAgdXJsOiAiRkVBamF4UHJvY2Vzcy5hc3B4L1NlcnZlckRyYXdNZW1iZXJMb2dpbiIsIA0KICAgICAgICAgICAgICAgICAgICBkYXRhOiAne30nLCANCiAgICAgICAgICAgICAgICAgICAgY29udGVudFR5cGU6ICJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PXV0Zi04IiwgDQogICAgICAgICAgICAgICAgICAgIGRhdGFUeXBlOiAianNvbiIsIA0KICAgICAgICAgICAgICAgICAgICBzdWNjZXNzOiBPblN1Y2Nlc3MsIA0KICAgICAgICAgICAgICAgICAgICBlcnJvcjogZnVuY3Rpb24gKHhociwgYWpheE9wdGlvbnMsIHRocm93bkVycm9yKSB7IA0KICAgICAgICAgICAgICAgICAgICAgICAgQUpBWF9FWEVDVVRFX0VSUk9SKHhoci5zdGF0dXMpOyANCiAgICAgICAgICAgICAgICAgICAgICB9IA0KICAgICAgICAgICAgICAgIH0pOyANCiAgICAgICAgICAgIH0gDQogICAgICAgICAgICBmdW5jdGlvbiBBSkFYX0VYRUNVVEVfRVJST1IoRXJyb3JTdGF0dXMpIHsgDQogICAgICAgICAgICAgICAgICAgICAgICBpZihFcnJvclN0YXR1cyA9PSAnNTAwJykgeyBhbGVydCgnSGnhu4duIGThu4tjaCB24bulIG7DoHkgY2jGsGEgxJHGsOG7o2MgY+G6pXUgaMOsbmgsIHZ1aSBsw7JuZyBxdWF5IGzhuqFpIHNhdScpO30gZWxzZSB7ICAgIGFsZXJ0KCdDw7MgbOG7l2kgdHJvbmcgcXXDoSB0csOsbmggeOG7rSBsw70uIEzhu5dpOiAnK0Vycm9yU3RhdHVzICk7fSANCiAgICAgICAgICAgIH0gDQogICAgICAgICAgICBmdW5jdGlvbiBPblN1Y2Nlc3MocmVzcG9uc2UpIHsgDQogICAgICAgICAgICAgICAgT0FqYXhPdXQgPSByZXNwb25zZS5kOyANCiAgICAgICAgICAgICAgICBpZiAoT0FqYXhPdXQuRXJyb3IpIHsgDQogICAgICAgICAgICAgICAgICAgIGFsZXJ0KE9BamF4T3V0LkluZm9NZXNzYWdlKTsgDQogICAgICAgICAgICAgICAgICAgIHJldHVybjsgDQogICAgICAgICAgICAgICAgfSANCiAgICAgICAgICAgICAgICAkKCcjZGl2TG9naW5Nb2RhbCcpLmh0bWwoT0FqYXhPdXQuSW5uZXJIVE1MKTsgIA0KICAgICAgICAgICAgICAgICAkKCcjZGl2TG9naW5Nb2RhbCcpLm1vZGFsKHtvdmVybGF5Q2xvc2U6dHJ1ZX0pOyANCiAgICAJCSAgICAgcmV0dXJuIGZhbHNlOw0KICAgICAgICAgICAgfSANCiAgICAgICAgICAgZnVuY3Rpb24gQ2xpZW50RW50ZXJMb2dpbihlKXsgaWYgKGUua2V5Q29kZSA9PSAxMykgeyBDbGllbnRNZW1iZXJMb2dpbigpOyB9IH0gDQogICAgICAgICAgIGZ1bmN0aW9uIENsaWVudEVudGVyT3JkZXJMb2dpbihlKXsgaWYgKGUua2V5Q29kZSA9PSAxMykgeyBDbGllbnRPcmRlck1lbWJlckxvZ2luKCk7IH0gfSANCiAgICAgICAgICAgIGZ1bmN0aW9uIENsaWVudE1lbWJlckxvZ2luKCkgeyANCiAgICAgICAgICAgICAgICBjYXJkVmFsID0gJCgnI3R4dFVzZXJOYW1lJykudmFsKCk7IA0KICAgICAgICAgICAgICAgIHZhciBwYXNzd29yZCA9ICQoJyN0eHRQYXNzd29yZCcpLnZhbCgpOyANCiAgICAgICAgICAgICAgICAkLmFqYXgoeyANCiAgICAgICAgICAgICAgICAgICAgdHlwZTogIlBPU1QiLCANCiAgICAgICAgICAgICAgICAgICAgdXJsOiAiaG9tZS5hc3B4L1NlcnZlck1lbWJlckxvZ2luIiwgDQogICAgICAgICAgICAgICAgICAgIGRhdGE6ICd7IGNhcmRfbm86ICInK2NhcmRWYWwrJyIsIHBhc3N3b3JkOiAiJytwYXNzd29yZCsnIiB9JywgDQogICAgICAgICAgICAgICAgICAgIGNvbnRlbnRUeXBlOiAiYXBwbGljYXRpb24vanNvbjsgY2hhcnNldD11dGYtOCIsIA0KICAgICAgICAgICAgICAgICAgICBkYXRhVHlwZTogImpzb24iLCANCiAgICAgICAgICAgICAgICAgICAgc3VjY2VzczogTG9naW5PblN1Y2Nlc3MsIA0KICAgICAgICAgICAgICAgICAgICBlcnJvcjogZnVuY3Rpb24gKHhociwgYWpheE9wdGlvbnMsIHRocm93bkVycm9yKSB7IA0KICAgICAgICAgICAgICAgICAgICAgICAgQUpBWF9FWEVDVVRFX0VSUk9SKHhoci5zdGF0dXMpOyANCiAgICAgICAgICAgICAgICAgICAgICB9IA0KICAgICAgICAgICAgICAgIH0pOyANCiAgICAgICAgICAgIH0gDQogICAgICAgICAgICBmdW5jdGlvbiBMb2dpbk9uU3VjY2VzcyhyZXNwb25zZSkgeyANCiAgICAgICAgICAgICAgICBPQWpheE91dCA9IHJlc3BvbnNlLmQ7IA0KICAgICAgICAgICAgICAgIGlmIChPQWpheE91dC5FcnJvcikgeyANCiAgICAgICAgICAgICAgICAgICAgJCgnI2RpdlByb2Nlc3NJbmZvJykuaHRtbChPQWpheE91dC5FcnJvck1lc3NhZ2UpOyANCiAgICAgICAgICAgICAgICAgICAgcmV0dXJuOyANCiAgICAgICAgICAgICAgICB9IA0KICAgICAgICAgICAgICAgICAgICQoJyNkaXZSZWFkZXJMb2dpbkxhYmVsJykuaHRtbChPQWpheE91dC5Jbm5lckhUTUwpOw0KICAgICAgICAgICAgICAgJCgiLnNpbXBsZW1vZGFsLWNsb3NlIiApLnRyaWdnZXIoImNsaWNrIiApOw0KICAgICAgICAgICAgfSANCiAgICAgICAgICAgIGZ1bmN0aW9uIENsaWVudFVzZXJMb2dpbigpIHsgDQogICAgICAgICAgICAgICAgY2FyZFZhbCA9ICQoJyN0eHRVc2VyTmFtZScpLnZhbCgpOyANCiAgICAgICAgICAgICAgICB2YXIgcGFzc3dvcmQgPSAkKCcjdHh0UGFzc3dvcmQnKS52YWwoKTsgDQogICAgICAgICAgICAgICAgJC5hamF4KHsgDQogICAgICAgICAgICAgICAgICAgIHR5cGU6ICJQT1NUIiwgDQogICAgICAgICAgICAgICAgICAgIHVybDogIkZFQWpheFByb2Nlc3MuYXNweC9TZXJ2ZXJVc2VyTG9naW4iLCANCiAgICAgICAgICAgICAgICAgICAgZGF0YTogJ3sgY2FyZF9ubzogIicrY2FyZFZhbCsnIiwgcGFzc3dvcmQ6ICInK3Bhc3N3b3JkKyciIH0nLCANCiAgICAgICAgICAgICAgICAgICAgY29udGVudFR5cGU6ICJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PXV0Zi04IiwgDQogICAgICAgICAgICAgICAgICAgIGRhdGFUeXBlOiAianNvbiIsIA0KICAgICAgICAgICAgICAgICAgICBzdWNjZXNzOiBVc2VyTG9naW5PblN1Y2Nlc3MsIA0KICAgICAgICAgICAgICAgICAgICBlcnJvcjogZnVuY3Rpb24gKHhociwgYWpheE9wdGlvbnMsIHRocm93bkVycm9yKSB7IA0KICAgICAgICAgICAgICAgICAgICAgICAgQUpBWF9FWEVDVVRFX0VSUk9SKHhoci5zdGF0dXMpOyANCiAgICAgICAgICAgICAgICAgICAgICB9IA0KICAgICAgICAgICAgICAgIH0pOyANCiAgICAgICAgICAgIH0gDQogICAgICAgICAgICBmdW5jdGlvbiBVc2VyTG9naW5PblN1Y2Nlc3MocmVzcG9uc2UpIHsgDQogICAgICAgICAgICAgICAgT0FqYXhPdXQgPSByZXNwb25zZS5kOyANCiAgICAgICAgICAgICAgICBpZiAoT0FqYXhPdXQuRXJyb3IpIHsgDQogICAgICAgICAgICAgICAgICAgICQoJyNkaXZQcm9jZXNzSW5mbycpLmh0bWwoT0FqYXhPdXQuRXJyb3JNZXNzYWdlKTsgDQogICAgICAgICAgICAgICAgICAgIHJldHVybjsgDQogICAgICAgICAgICAgICAgfSANCiAgICAgICAgICAgICAgIGVsc2UgDQogICAgICAgICAgICAgICB7DQogICAgICAgICAgICAgICAgICAgJCgnI2RpdlJlYWRlckxvZ2luTGFiZWwnKS5odG1sKE9BamF4T3V0LklubmVySFRNTCk7DQogICAgICAgICAgICAgICAgICAgJCgiLnNpbXBsZW1vZGFsLWNsb3NlIiApLnRyaWdnZXIoImNsaWNrIiApOw0KICAgICAgICAgICAgICAgfQ0KICAgICAgICAgICAgfSANCiAgICAgICAgICAgIGZ1bmN0aW9uIENsaWVudE9yZGVyTWVtYmVyTG9naW4oVHlwZSwgVmFsdWUpIHsgDQogICAgICAgICAgICAgICAgY2FyZFZhbCA9ICQoJyN0eHRVc2VyTmFtZScpLnZhbCgpOyANCiAgICAgICAgICAgICAgICAkLmFqYXgoeyANCiAgICAgICAgICAgICAgICAgICAgdHlwZTogIlBPU1QiLCANCiAgICAgICAgICAgICAgICAgICAgdXJsOiAiRkVBamF4UHJvY2Vzcy5hc3B4L1NlcnZlck9yZGVyTWVtYmVyTG9naW4iLCANCiAgICAgICAgICAgICAgICAgICAgZGF0YTogJ3sgY2FyZF9ubzogIicrY2FyZFZhbCsnIiwgIHBhc3N3b3JkOiAiIiwgVHlwZTogIicrVHlwZSsnIiwgVmFsdWU6ICInK1ZhbHVlKyciIH0nLCANCiAgICAgICAgICAgICAgICAgICAgY29udGVudFR5cGU6ICJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PXV0Zi04IiwgDQogICAgICAgICAgICAgICAgICAgIGRhdGFUeXBlOiAianNvbiIsIA0KICAgICAgICAgICAgICAgICAgICBzdWNjZXNzOiBPcmRlckxvZ2luT25TdWNjZXNzLCANCiAgICAgICAgICAgICAgICAgICAgZXJyb3I6IGZ1bmN0aW9uICh4aHIsIGFqYXhPcHRpb25zLCB0aHJvd25FcnJvcikgeyANCiAgICAgICAgICAgICAgICAgICAgICAgIEFKQVhfRVhFQ1VURV9FUlJPUih4aHIuc3RhdHVzKTsgDQogICAgICAgICAgICAgICAgICAgICAgfSANCiAgICAgICAgICAgICAgICB9KTsgDQogICAgICAgICAgICB9IA0KICAgICAgICAgICAgZnVuY3Rpb24gT3JkZXJMb2dpbk9uU3VjY2VzcyhyZXNwb25zZSkgeyANCiAgICAgICAgICAgICAgICBPQWpheE91dCA9IHJlc3BvbnNlLmQ7IA0KICAgICAgICAgICAgICAgIGlmIChPQWpheE91dC5FcnJvcikgeyANCiAgICAgICAgICAgICAgICAgICAgJCgnI2RpdlByb2Nlc3NJbmZvJykuaHRtbChPQWpheE91dC5FcnJvck1lc3NhZ2UpOyANCiAgICAgICAgICAgICAgICAgICAgcmV0dXJuOyANCiAgICAgICAgICAgICAgICB9IA0KICAgICAgICAgICAgICAgICQoJyMnK09BamF4T3V0LlJldEV4dHJhUGFyYW0xKS5zaG93KCk7IA0KICAgICAgICAgICAgICAgICQoJyMnK09BamF4T3V0LlJldEV4dHJhUGFyYW0yKS5oaWRlKCk7IA0KICAgICAgICAgICAgICAgICQoJyNkaXZSZWFkZXJMb2dpbkxhYmVsJykuaHRtbChPQWpheE91dC5SZXRFeHRyYVBhcmFtMyk7IA0KICAgICAgICAgICAgICAgJCgnI2NvbnRlbnRtb2R1bGUnKS5odG1sKE9BamF4T3V0LklubmVySFRNTCk7ICANCiAgICAgICAgICAgIH0gDQogICAgICAgICAgICBmdW5jdGlvbiBDbGllbnRNZW1iZXJMb2dvdXQoKSB7IA0KICAgICAgICAgICAgICAgICQuYWpheCh7IA0KICAgICAgICAgICAgICAgICAgICB0eXBlOiAiUE9TVCIsIA0KICAgICAgICAgICAgICAgICAgICB1cmw6ICJob21lLmFzcHgvU2VydmVyTWVtYmVyTG9nb3V0IiwgDQogICAgICAgICAgICAgICAgICAgIGRhdGE6ICd7IH0nLCANCiAgICAgICAgICAgICAgICAgICAgY29udGVudFR5cGU6ICJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PXV0Zi04IiwgDQogICAgICAgICAgICAgICAgICAgIGRhdGFUeXBlOiAianNvbiIsIA0KICAgICAgICAgICAgICAgICAgICBzdWNjZXNzOiBMb2dpbk9uU3VjY2Vzc1NlcnZlck1lbWJlckxvZ291dCwgDQogICAgICAgICAgICAgICAgICAgIGVycm9yOiBmdW5jdGlvbiAoeGhyLCBhamF4T3B0aW9ucywgdGhyb3duRXJyb3IpIHsgDQogICAgICAgICAgICAgICAgICAgICAgICBBSkFYX0VYRUNVVEVfRVJST1IoeGhyLnN0YXR1cyk7IA0KICAgICAgICAgICAgICAgICAgICAgIH0gDQogICAgICAgICAgICAgICAgfSk7IA0KICAgICAgICAgICAgfSANCiAgICAgICAgICAgIGZ1bmN0aW9uIExvZ2luT25TdWNjZXNzU2VydmVyTWVtYmVyTG9nb3V0KHJlc3BvbnNlKSB7IA0KICAgICAgICAgICAgICAgIE9BamF4T3V0ID0gcmVzcG9uc2UuZDsgDQogICAgICAgICAgICAgICAgaWYgKE9BamF4T3V0LkVycm9yKSB7IA0KICAgICAgICAgICAgICAgICAgICBhbGVydChPQWpheE91dC5JbmZvTWVzc2FnZSk7IA0KICAgICAgICAgICAgICAgICAgICByZXR1cm47IA0KICAgICAgICAgICAgICAgIH0gDQogICAgICAgICAgICAgICAgd2luZG93Lm9wZW4oT0FqYXhPdXQuUmV0VXJsLCdfc2VsZicpOw0KICAgICAgICAgICAgfSANCiAgICAgICAgICAgIGZ1bmN0aW9uIENsaWVudFVzZXJCdXR0b25DbGljaygpIHsgDQogICAgICAgICAgICAgICB2YXIgY3VycmVudENsYXNzTmFtZSA9ICQoJyNkaXZVc2VyQnV0dG9uR3JvdXAnKS5hdHRyKCdjbGFzcycpOy8vLnNwbGl0KCcgJykuam9pbignLicpOyANCiAgICAgICAgICAgICAgIGlmKGN1cnJlbnRDbGFzc05hbWUuaW5kZXhPZignb3BlbicpICE9IC0xKSB7ICQoJyNkaXZVc2VyQnV0dG9uR3JvdXAnKS5yZW1vdmVDbGFzcygnYnRuLWdyb3VwIG9wZW4nKS5hZGRDbGFzcygnYnRuLWdyb3VwJyk7ICB9IA0KICAgICAgICAgICAgICAgZWxzZSB7ICQoJyNkaXZVc2VyQnV0dG9uR3JvdXAnKS5yZW1vdmVDbGFzcygnYnRuLWdyb3VwJykuYWRkQ2xhc3MoJ2J0bi1ncm91cCBvcGVuJyk7IH0gIA0KICAgICAgICAgICAgfSANCjwvc2NyaXB0PiANCjxzY3JpcHQgdHlwZT0idGV4dC9qYXZhc2NyaXB0Ij4gDQogICAgIGZ1bmN0aW9uIENsaWVudExvZ2luKFNpdGVJZCkgICANCiAgICAgeyAgICAgDQogICAgICAgICB2YXIgdXNlcm5hbWUgPSAkKCcjdHh0TG9naW5OYW1lJykudmFsKCk7ICAgDQogICAgICAgICB2YXIgcGFzc3dvcmQgPSAkKCcjdHh0UGFzc3dvcmQnKS52YWwoKTsgICANCiAgICAgICAgIHZhciBsb2dpbkNvZGUgPSAkKCcjdHh0U2VjQ29kZV9SZWcnKS52YWwoKTsgICANCiAgICAgICAgIHZhciBPQWpheE91dCA9IGlNYW4uT3BhYy5Gcm9udEVuZC5pU2VhcmNoUHJvY2Vzcy5TZXJ2ZXJVc2VyTG9naW5WMihTaXRlSWQsIHVzZXJuYW1lLCBwYXNzd29yZCwgbG9naW5Db2RlKS52YWx1ZTsNCiAgICAgICAgICAgIGlmIChPQWpheE91dC5FcnJvcikgeyAgICANCiAgICAgICAgICAgICAgICAgJCgnI2RpdkxvZ2luUHJvY2Vzc0luZm8nKS5odG1sKE9BamF4T3V0LkVycm9yTWVzc2FnZSk7ICAgICANCiAgICAgICAgICAgIH0gICAgDQogICAgICAgICAgICBlbHNlICAgIA0KICAgICAgICAgICAgeyAgIA0KICAgICAgICAgICAgICAgICQoJyN1bFVzZXJCYXInKS5odG1sKE9BamF4T3V0LklubmVySFRNTCk7ICAgICANCiAgICAgICAgICAgICAgICAkKCcjYnRuQ2xvc2VNb2RhbCcpLnRyaWdnZXIoJ2NsaWNrJyk7ICAgDQogICAgICAgICAgICAgICBsb2NhdGlvbi5yZWxvYWQoKTsgIA0KICAgICAgICAgICAgfSAgIA0KICAgICB9ICAgDQogICAgZnVuY3Rpb24gQ2xpZW50VXNlckxvZ291dChTaXRlSWQpICAgDQogICAgeyAgDQogICAgICAgIHZhciBPQWpheE91dCA9IGlNYW4uT3BhYy5Gcm9udEVuZC5pU2VhcmNoUHJvY2Vzcy5TZXJ2ZXJNZW1iZXJMb2dvdXQoKS52YWx1ZTsgDQogICAgICAgIGlmIChPQWpheE91dC5FcnJvcikgeyANCiAgICAgICAgICAgICBhbGVydChPQWpheE91dC5FcnJvck1lc3NhZ2UpOyAgDQogICAgICAgIH0gDQogICAgICAgIGVsc2UgDQogICAgICAgIHsNCiAgICAgICAgICAgJChsb2NhdGlvbikuYXR0cignaHJlZicsICcuLi9vcGFjL3dwaWQtc2VhcmNoLXN0eXBlLWZvcm0tcXVpY2suaHRtbCcpOw0KICAgICAgICB9DQogICAgfQ0KCTwvc2NyaXB0Pg0KPCEtLT09PT09PT09PT0gVE9QIEJBTk5FUiA9PT09PT09PT0tLT4gDQo8ZGl2IGNsYXNzPSJ0b3BCYW5uZXIgaGlkZGVuLXhzIj4gDQogICAgPGRpdiBjbGFzcz0iY29udGFpbmVyIj4gDQogICAgICAgIDxkaXYgY2xhc3M9InJvdyI+IA0KICAgICAgICAgICAgPGRpdiBjbGFzcz0iY29sLXNtLTYiPiANCiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzPSJ0b3BCYW5uZXJMZWZ0IGNsZWFyZml4Ij4gDQogICAgICAgICAgICAgICAgICAgIDxhICBjbGFzcz0ibG9nby1oZWFkZXIiID48aW1nIHNyYz0iaW1nL2xvZ28ucG5nIiBhbHQ9IiIgLz48L2E+IA0KICAgICAgICAgICAgICAgICAgICA8aDI+VGjGsCB2aeG7h24ga2hvYSBo4buNYyB04buVbmcgaOG7o3A8L2gyPiANCiAgICAgICAgICAgICAgICAgICAgPGgxPlRow6BuaCBwaOG7kSBI4bqjaSBQaMOybmc8L2gxPiANCiAgICAgICAgICAgICAgICA8L2Rpdj4gDQogICAgICAgICAgICA8L2Rpdj4gDQogICAgICAgICAgICA8ZGl2IGNsYXNzPSJjb2wtc20tOCI+IA0KICAgICAgICAgICAgICAgIDxkaXYgY2xhc3M9InRvcEJhbm5lclJpZ2h0Ij4gDQogICAgICAgICAgICAgICAgPC9kaXY+IA0KICAgICAgICAgICAgPC9kaXY+IA0KICAgICAgICA8L2Rpdj4gDQogICAgPC9kaXY+IA0KPC9kaXY+IA0KPCEtLT09PT09PT09PT0gL1RPUCBCQU5ORVIgPT09PT09PT09LS0+IA0KPCEtLT09PT09PT09PT0gVE9QIE1FTlUgPT09PT09PT09LS0+IA0KPG5hdiBjbGFzcz0ibmF2YmFyIG5hdmJhci1kZWZhdWx0IG5hdmJhci1zdGF0aWMtdG9wIHRvcE1lbnUiIHJvbGU9Im5hdmlnYXRpb24iPiANCiAgICA8ZGl2IGNsYXNzPSJjb250YWluZXIiPiANCiAgICAgICAgPGRpdiBjbGFzcz0ibmF2YmFyLWhlYWRlciI+IA0KICAgICAgICAgICAgPGJ1dHRvbiB0eXBlPSJidXR0b24iIGNsYXNzPSJuYXZiYXItdG9nZ2xlIiBkYXRhLXRvZ2dsZT0iY29sbGFwc2UiIGRhdGEtdGFyZ2V0PSIjZWNvc29mdE5hdiI+ICANCiAgICAgICAgICAgIDxzcGFuIGNsYXNzPSJzci1vbmx5Ij5Ub2dnbGUgbmF2aWdhdGlvbjwvc3Bhbj4gDQogICAgICAgICAgICA8c3BhbiBjbGFzcz0iaWNvbi1iYXIiPjwvc3Bhbj48c3BhbiBjbGFzcz0iaWNvbi1iYXIiPjwvc3Bhbj4gDQogICAgICAgICAgICA8c3BhbiBjbGFzcz0iaWNvbi1iYXIiPjwvc3Bhbj4gDQogICAgICAgICAgICA8L2J1dHRvbj4gIA0KICAgICAgICAgICAgPGEgIGNsYXNzPSJuYXZiYXItYnJhbmQgdmlzaWJsZS14cyIgaHJlZj0iaW5kZXguaHRtbCI+PGltZyBzcmM9ImltZy9sb2dvLnBuZyIgYWx0PSIiIC8+PC9hPiANCiAgICAgICAgPC9kaXY+IA0KICAgICAgICA8ZGl2IGNsYXNzPSJjb2xsYXBzZSBuYXZiYXItY29sbGFwc2UiIGlkPSJlY29zb2Z0TmF2Ij4gDQo8dWwgY2xhc3M9Im5hdiBuYXZiYXItbmF2ICI+IA0KPGxpIGNsYXNzPSJkcm9wZG93biBhY3RpdmUiPjxhIGhyZWY9Ii4uL29wYWMvd3BpZC1ob21lLmh0bWwiID48aSBjbGFzcz0iZmEgZmEtaG9tZSI+PC9pPjwvYT48L2xpPiANCjxsaSBjbGFzcz0iZHJvcGRvd24gIj48YSBocmVmPSIuLi9vcGFjL3dwaWQtc2VhcmNoLXN0eXBlLWZvcm0tcXVpY2suaHRtbCIgPlRyYSBj4bupdSB0w6BpIGxp4buHdTwvYT48L2xpPiANCjxsaSBjbGFzcz0iZHJvcGRvd24gIj48YSBocmVmPSIuLi9vcGFjL3dwaWQtY29sbGVjdGlvbi10eXBlLWljb2xsZWN0aW9uLmh0bWwiID5C4buZIHPGsHUgdOG6rXAgdMOgaSBsaeG7h3UgTWFyYzIxPC9hPjwvbGk+IA0KPGxpIGNsYXNzPSJkcm9wZG93biAiPjxhIGhyZWY9Ii4uL29wYWMvd3BpZC1jb2xsZWN0aW9uLXR5cGUtY29sbGVjdGlvbi5odG1sIiA+QuG7mSBzxrB1IHThuq1wIHPhu5E8L2E+PC9saT4gDQo8bGkgY2xhc3M9ImRyb3Bkb3duICI+PGEgaHJlZj0iLi4vb3BhYy93cGlkLWNvbnRhY3QuaHRtbCIgPkxpw6puIGjhu4c8L2E+PC9saT4gDQo8L3VsPiANCiAgICAgICAgPC9kaXY+IA0KICAgIDwvZGl2PiANCjwvbmF2PiANCjwhLS09PT09PT09PT09IC9UT1AgTUVOVSA9PT09PT09PT0tLT4gDQo8c2NyaXB0IHR5cGU9InRleHQvamF2YXNjcmlwdCI+IA0KICAgICBmdW5jdGlvbiBDbGllbnRMb2dpbihTaXRlSWQpICAgDQogICAgIHsgICAgIA0KICAgICAgICAgdmFyIHVzZXJuYW1lID0gJCgnI3R4dExvZ2luTmFtZScpLnZhbCgpOyAgIA0KICAgICAgICAgdmFyIHBhc3N3b3JkID0gJCgnI3R4dFBhc3N3b3JkJykudmFsKCk7ICAgDQogICAgICAgICB2YXIgbG9naW5Db2RlID0gJCgnI3R4dFNlY0NvZGVfUmVnJykudmFsKCk7ICAgDQogICAgICAgICB2YXIgT0FqYXhPdXQgPSBpTWFuLk9wYWMuRnJvbnRFbmQuaVNlYXJjaFByb2Nlc3MuU2VydmVyVXNlckxvZ2luVjIoU2l0ZUlkLCB1c2VybmFtZSwgcGFzc3dvcmQsIGxvZ2luQ29kZSkudmFsdWU7DQogICAgICAgICAgICBpZiAoT0FqYXhPdXQuRXJyb3IpIHsgICAgDQogICAgICAgICAgICAgICAgICQoJyNkaXZMb2dpblByb2Nlc3NJbmZvJykuaHRtbChPQWpheE91dC5FcnJvck1lc3NhZ2UpOyAgICAgDQogICAgICAgICAgICB9ICAgIA0KICAgICAgICAgICAgZWxzZSAgICANCiAgICAgICAgICAgIHsgICANCiAgICAgICAgICAgICAgICAkKCcjdWxVc2VyQmFyJykuaHRtbChPQWpheE91dC5Jbm5lckhUTUwpOyAgICAgDQogICAgICAgICAgICAgICAgJCgnI2J0bkNsb3NlTW9kYWwnKS50cmlnZ2VyKCdjbGljaycpOyAgIA0KICAgICAgICAgICAgICAgbG9jYXRpb24ucmVsb2FkKCk7ICANCiAgICAgICAgICAgIH0gICANCiAgICAgfSAgIA0KICAgIGZ1bmN0aW9uIENsaWVudFVzZXJMb2dvdXQoU2l0ZUlkKSAgIA0KICAgIHsgIA0KICAgICAgICB2YXIgT0FqYXhPdXQgPSBpTWFuLk9wYWMuRnJvbnRFbmQuaVNlYXJjaFByb2Nlc3MuU2VydmVyTWVtYmVyTG9nb3V0KCkudmFsdWU7IA0KICAgICAgICBpZiAoT0FqYXhPdXQuRXJyb3IpIHsgDQogICAgICAgICAgICAgYWxlcnQoT0FqYXhPdXQuRXJyb3JNZXNzYWdlKTsgIA0KICAgICAgICB9IA0KICAgICAgICBlbHNlIA0KICAgICAgICB7DQogICAgICAgICAgICQobG9jYXRpb24pLmF0dHIoJ2hyZWYnLCAnLi4vb3BhYy93cGlkLXNlYXJjaC1zdHlwZS1mb3JtLXF1aWNrLmh0bWwnKTsNCiAgICAgICAgfQ0KICAgIH0NCgk8L3NjcmlwdD4NCjwvaGVhZGVyPg0KPCEtLSoqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKiANCkhPTUUgUEFHRSBTRUFSQ0ggDQoqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqLS0+IA0KPHNlY3Rpb24gY2xhc3M9ImJhbm5lciI+IA0KICAgIDxkaXYgY2xhc3M9InBhcmFsbGF4LXdpbmRvdyIgZGF0YS1wYXJhbGxheD0ic2Nyb2xsIiBkYXRhLWltYWdlLXNyYz0iaW1nL2JnLTEuanBnIj4gDQogICAgICAgIDxkaXYgY2xhc3M9ImNvbnRhaW5lciI+IA0KICAgICAgICAgICAgPGRpdiBjbGFzcz0iYmFubmVyLWNuIj4gDQogICAgICAgICAgICAgICAgPHVsIGNsYXNzPSJ0YWJzLWNhdCB0ZXh0LWNlbnRlciByb3ciPiANCjxsaSBjbGFzcz0iY2F0ZS1pdGVtIGNvbC14cy0yIGFjdGl2ZSAiPiANCiAgICAgICAgICAgICAgICAgICAgICAgIDxhICBocmVmPSJqYXZhc2NyaXB0OkNsaWVudFNlYXJjaEJhckNsaWNrKCdmb3JtLXF1aWNrJykiIHRpdGxlPSIiPiANCiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8aSBjbGFzcz0iZmEgZmEtcm9ja2V0Ij48L2k+IA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuPlTDjE0gTkhBTkg8L3NwYW4+IA0KICAgICAgICAgICAgICAgICAgICAgICAgPC9hPiANCiAgICAgICAgICAgICAgICAgICAgPC9saT4gDQo8bGkgY2xhc3M9ImNhdGUtaXRlbSBjb2wteHMtMiAiPiANCiAgICAgICAgICAgICAgICAgICAgICAgIDxhICBocmVmPSJqYXZhc2NyaXB0OkNsaWVudFNlYXJjaEJhckNsaWNrKCdmb3JtLWJhc2ljJykiIHRpdGxlPSIiPiANCiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8aSBjbGFzcz0iZmEgZmEtc2VhcmNoIj48L2k+IA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuPkPGoCBC4bqiTjwvc3Bhbj4gDQogICAgICAgICAgICAgICAgICAgICAgICA8L2E+IA0KICAgICAgICAgICAgICAgICAgICA8L2xpPiANCjxsaSBjbGFzcz0iY2F0ZS1pdGVtIGNvbC14cy0yICI+IA0KICAgICAgICAgICAgICAgICAgICAgICAgPGEgIGhyZWY9ImphdmFzY3JpcHQ6Q2xpZW50U2VhcmNoQmFyQ2xpY2soJ2Zvcm0tYWR2YW5jZScpIiB0aXRsZT0iIj4gDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgPGkgY2xhc3M9ImZhIGZhLXNlYXJjaC1wbHVzIj48L2k+IA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxzcGFuPk7Dgk5HIENBTzwvc3Bhbj4gDQogICAgICAgICAgICAgICAgICAgICAgICA8L2E+IA0KICAgICAgICAgICAgICAgICAgICA8L2xpPiANCjxsaSBjbGFzcz0iY2F0ZS1pdGVtIGNvbC14cy0yICI+IA0KICAgICAgICAgICAgICAgICAgICAgICAgPGEgIGhyZWY9ImphdmFzY3JpcHQ6Q2xpZW50U2VhcmNoQmFyQ2xpY2soJ2Zvcm0tbGlua2xpYicpIiB0aXRsZT0iIj4gDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgPGkgY2xhc3M9ImZhIGZhLXNpdGVtYXAiPjwvaT4gDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgPHNwYW4+TEnDik4gVEjGryBWSeG7hk48L3NwYW4+IA0KICAgICAgICAgICAgICAgICAgICAgICAgPC9hPiANCiAgICAgICAgICAgICAgICAgICAgPC9saT4gDQogICAgICAgICAgICAgICAgPC91bD4gDQo8ZGl2IGNsYXNzPSJ0YWItY29udGVudCI+IA0KICAgPGRpdiBjbGFzcz0iZm9ybS1jbiAxIHRhYi1wYW5lIGFjdGl2ZSBpbiIgaWQ9ImZvcm0tcXVpY2siPiANCjxkaXYgY2xhc3M9ImZvcm0tc2VhcmNoIHJvdyI+IA0KPGRpdiBjbGFzcz0iZm9ybS1maWVsZCBmaWVsZC1zZWxlY3QgY29sLXNtLTMiPiANCiAgIDxkaXYgY2xhc3M9InNlbGVjdCI+IA0KPGRpdiBjbGFzcz0ic2VsZWN0Ij4gDQogICA8c3Bhbj5Uw6xtIG5oYW5oPC9zcGFuPiANCiAgICA8c2VsZWN0IGlkPSJjYlNlYXJjaFZhbHVlZm9ybS1xdWljazEiID4gDQogICAgICAgIDxvcHRpb24gdmFsdWU9ImFsbCIgICA+VOG7qyBraMOzYSBi4bqldCBr4buzPC9vcHRpb24+IA0KICAgICAgICA8b3B0aW9uIHZhbHVlPSJ0aXRsZSIgICA+TmhhbiDEkeG7gTwvb3B0aW9uPiANCiAgICAgICAgPG9wdGlvbiB2YWx1ZT0iYXV0aG9yIiAgID5Uw6FjIGdp4bqjPC9vcHRpb24+IA0KICAgICAgICA8b3B0aW9uIHZhbHVlPSJzdWJqZWN0IiAgID5DaOG7pyDEkeG7gTwvb3B0aW9uPiANCiAgICAgICAgPG9wdGlvbiB2YWx1ZT0ia2V5d29yZCIgICA+VOG7qyBraMOzYTwvb3B0aW9uPiANCiAgICAgICAgPG9wdGlvbiB2YWx1ZT0iaXNibiIgICA+U+G7kSBJU0JOPC9vcHRpb24+IA0KICAgICAgICA8b3B0aW9uIHZhbHVlPSJjbGFzcyIgICA+Q2jhu4kgc+G7kSBwaMOibiBsb+G6oWk8L29wdGlvbj4gDQogICAgICAgIDxvcHRpb24gdmFsdWU9InllYXJwdWIiICAgPk7Eg20geHXhuqV0IGLhuqNuPC9vcHRpb24+IA0KICAgIDwvc2VsZWN0PiANCjwvZGl2PiANCgkJPGlucHV0IGlkPSJjYlNlYXJjaEZpZWxkZm9ybS1xdWljazEiIHR5cGU9ImhpZGRlbiIgdmFsdWU9InRpdGxlIj4gDQoJCTxpbnB1dCBpZD0iY2JTZWFyY2hUeXBlZm9ybS1xdWljazEiIHR5cGU9ImhpZGRlbiIgdmFsdWU9IjEiPiANCgkJPGlucHV0IGlkPSJjYlR5cGVGaWVsZGZvcm0tcXVpY2sxIiB0eXBlPSJoaWRkZW4iIHZhbHVlPSJmaWVsZHNlYXJjaCI+IA0KPC9kaXY+IA0KPC9kaXY+IA0KPGRpdiBjbGFzcz0iZm9ybS1maWVsZCBjb2wtc20tNyI+IA0KICAgPGxhYmVsPjxzcGFuPjwvc3Bhbj48L2xhYmVsPiANCiAgIDxpbnB1dCB0eXBlPSJ0ZXh0IiBjbGFzcz0iZmllbGQtaW5wdXQiIGlkPSJ0eHRTZWFyY2hWYWx1ZWZvcm0tcXVpY2sxIj4gDQoJCTxpbnB1dCBpZD0idHh0U2VhcmNoRmllbGRmb3JtLXF1aWNrMSIgdHlwZT0iaGlkZGVuIiB2YWx1ZT0idGl0bGUiPiANCgkJPGlucHV0IGlkPSJ0eHRTZWFyY2hUeXBlZm9ybS1xdWljazEiIHR5cGU9ImhpZGRlbiIgdmFsdWU9IjEiPiANCgkJPGlucHV0IGlkPSJ0eHRUeXBlRmllbGRmb3JtLXF1aWNrMSIgdHlwZT0iaGlkZGVuIiB2YWx1ZT0iZmllbGRzZWFyY2giPiANCgkJPGlucHV0IGlkPSJ0eHRPcGVyYXRvcmZvcm0tcXVpY2sxIiB0eXBlPSJoaWRkZW4iIHZhbHVlPSJhbmQiPiANCjwvZGl2PiANCjxkaXYgY2xhc3M9ImZvcm0tc3VibWl0ICBjb2wtc20tMiI+PGJ1dHRvbiB0eXBlPSJzdWJtaXQiICBvbmNsaWNrPSAiamF2YXNjcmlwdDpDbGllbnRRdWlja1NlYXJjaCgpOyIgY2xhc3M9ImF3ZS1idG4gbWVkaXVtIGF3ZS1zZWFyY2giPjxpIGNsYXNzPSJmYSBmYS1zZWFyY2giPjwvaT4gVMOsbSBraeG6v208L2J1dHRvbj4NCgkJPGlucHV0IGlkPSJ0eHRTZWFyY2hGaWVsZGZvcm0tcXVpY2syIiB0eXBlPSJoaWRkZW4iIHZhbHVlPSJrZXl3b3JkIj4gDQoJCTxpbnB1dCBpZD0idHh0U2VhcmNoVHlwZWZvcm0tcXVpY2syIiB0eXBlPSJoaWRkZW4iIHZhbHVlPSIiPiANCgkJPGlucHV0IGlkPSJ0eHRUeXBlRmllbGRmb3JtLXF1aWNrMiIgdHlwZT0iaGlkZGVuIiB2YWx1ZT0iQnV0dG9uIj4gDQo8L2Rpdj4gPGlucHV0IGlkPSJ0eHRNYXhTZWFyY2hGaWVsZGZvcm0tcXVpY2siIHR5cGU9ImhpZGRlbiIgdmFsdWU9IjIiPiANCjwvZGl2PiANCjwvZGl2PiANCiAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzcz0iZm9ybS1jbiBmb3JtLWZ1bGx0ZXh0IHRhYi1wYW5lIiBpZD0iZm9ybS1mdWxsdGV4dCI+IA0KICAgICAgICAgICAgICAgICAgICA8L2Rpdj4gDQogICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3M9ImZvcm0tY24gZm9ybS16Mzk1MCB0YWItcGFuZSIgaWQ9ImZvcm0tejM5NTAiPiANCiAgICAgICAgICAgICAgICAgICAgPC9kaXY+IA0KICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzPSJmb3JtLWNuIGZvcm0tbGlua2xpYiB0YWItcGFuZSIgaWQ9ImZvcm0tbGlua2xpYiI+IA0KICAgICAgICAgICAgICAgICAgICA8L2Rpdj4gDQogICAgICAgICAgICAgICAgPC9kaXY+IA0KICAgICAgICAgICAgPC9kaXY+IA0KICAgICAgICA8L2Rpdj4gDQogICAgPC9kaXY+IA0KPC9zZWN0aW9uPiANCjwhLS0qKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKiogDQovSE9NRSBQQUdFIFNFQVJDSCAgDQoqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqLS0+IA0KPHNjcmlwdCB0eXBlPSJ0ZXh0L2phdmFzY3JpcHQiID4gDQogICAgJChkb2N1bWVudCkucmVhZHkoZnVuY3Rpb24oKSB7IA0KICAgICAgICAgICAgJCgnaW5wdXQjdHh0U2VhcmNoVmFsdWVmb3JtLXF1aWNrMScpLmtleXByZXNzKGZ1bmN0aW9uKGUpIHsgDQogICAgICAgICAgICAgIGlmIChlLndoaWNoID09ICcxMycpIHsgDQoJICAgICAgICAgICAgIENsaWVudFF1aWNrU2VhcmNoKCk7IA0KICAgICAgICAgICAgICAgfSANCiAgICAgICAgICAgIH0pOyANCiAgICB9KTsgDQogICAgICAgICAgICAgIGZ1bmN0aW9uIENsaWVudFF1aWNrU2VhcmNoKCkgeyAgDQogICAgICAgICAgICAgIHNUeXBlID0gJ2Zvcm0tcXVpY2snOyANCiAgICAgICAgICAgICAgdmFyIHByZWZpeCA9ICdmb3JtLXF1aWNrJzsgDQogICAgICAgICAgICAgIEZpZWxkc2VhcmNoID0gJyc7IA0KICAgICAgICAgICAgICBFeGFjdGx5ID0gJzAnOyAgDQogICAgICAgICAgICAgIHVuc2lnbmVkID0gJzAnOyANCiAgICAgICAgICAgICAgT3BlcmF0b3IgPSAnYW5kJzsgIA0KICAgICAgICAgICAgICBNYXhGaWVsZCA9ICQoJyN0eHRNYXhTZWFyY2hGaWVsZCcgKyBwcmVmaXgpLnZhbCgpOyAgDQogICAgICAgICAgICAgIFNlYXJjaEZpZWxkVGV4dCA9ICcnOyAgDQogICAgICAgICAgICAgIFNlYXJjaFRleHQgPSAnJzsgIA0KICAgICAgICAgICAgICBTaXRlSWQgPSAnb3BhYyc7ICANCiAgICAgICAgICAgICAgQ3VycmVudFBhZ2UgPSAnMCc7IA0KICAgICAgICAgICAgICBTZWFyY2hTZXNzaW9uSWQgPSAnMTIzNDUnOyANCiAgICAgICAgICAgICAgc0ZpZWxkID0gJyc7IA0KICAgICAgICAgICAgICBrZXl3b3JkID0gJyc7IA0KICAgICAgICAgICAgICB2YXIgdW5zaWduZWQgPSAkKCcjY2hrdW5zaWduZWQnICsgcHJlZml4KS52YWwoKTsgDQogICAgICAgICAgICAgIGlmKHR5cGVvZiB1bnNpZ25lZCA9PSAndW5kZWZpbmVkJykgDQogICAgICAgICAgICAgIHsgDQogICAgICAgICAgICAgICAgICB1bnNpZ25lZCA9ICcwJzsgDQogICAgICAgICAgICAgIH0gDQogICAgICAgICAgICAgIGVsc2UgDQogICAgICAgICAgICAgIHsgDQogICAgICAgICAgICAgICAgICBpZihkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnY2hrdW5zaWduZWQnICsgcHJlZml4KyBJbmRleEZpZWxkKS5jaGVja2VkKSANCiAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCA9ICcxJzsgDQogICAgICAgICAgICAgIH0gDQogICAgICAgICAgICAgIGZvciAodmFyIEluZGV4RmllbGQgPSAxOyBJbmRleEZpZWxkIDw9IE1heEZpZWxkOyBJbmRleEZpZWxkKyspICANCiAgICAgICAgICAgICAgeyAgDQogICAgICAgICAgICAgICAgICAgICAgRmllbGRUeXBlID0gJCgnI3R4dFR5cGVGaWVsZCcrIHByZWZpeCArIEluZGV4RmllbGQpLnZhbCgpOyAgDQogICAgICAgICAgICAgICAgICAgICAgaWYodHlwZW9mIEZpZWxkVHlwZSA9PSAndW5kZWZpbmVkJykgDQogICAgICAgICAgICAgICAgICAgICAgICAgIGNvbnRpbnVlOyANCiAgICAgICAgICAgICAgICAgICAgICBpZihGaWVsZFR5cGUgPT0gJ0J1dHRvbicpIA0KICAgICAgICAgICAgICAgICAgICAgICAgICBjb250aW51ZTsgDQogICAgICAgICAgICAgICAgICAgICAgU2VhcmNoRmllbGQgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgndHh0U2VhcmNoRmllbGQnICsgcHJlZml4KyBJbmRleEZpZWxkKS52YWx1ZTsgIA0KICAgICAgICAgICAgICAgICAgICAgIFNlYXJjaFR5cGUgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgndHh0U2VhcmNoVHlwZScrIHByZWZpeCArIEluZGV4RmllbGQpLnZhbHVlOyAgDQogICAgICAgICAgICAgICAgICAgICAgdmFyIEV4YWN0bHkgPSAkKCcjY2hrRXhhY3RseScgKyBwcmVmaXgrIEluZGV4RmllbGQpLnZhbCgpOyANCiAgICAgICAgICAgICAgICAgICAgICBPcGVyYXRvciA9ICQoJyN0eHRPcGVyYXRvcicgKyBwcmVmaXgrIEluZGV4RmllbGQpLnZhbCgpOyANCiAgICAgICAgICAgICAgICAgICAgICBpZih0eXBlb2YgRXhhY3RseSA9PSAndW5kZWZpbmVkJykgDQogICAgICAgICAgICAgICAgICAgICAgeyANCiAgICAgICAgICAgICAgICAgICAgICAgICAgRXhhY3RseSA9ICcwJzsgDQogICAgICAgICAgICAgICAgICAgICAgfSANCiAgICAgICAgICAgICAgICAgICAgICBlbHNlIA0KICAgICAgICAgICAgICAgICAgICAgIHsgDQogICAgICAgICAgICAgICAgICAgICAgICAgIGlmKGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdjaGtFeGFjdGx5JyArIHByZWZpeCsgSW5kZXhGaWVsZCkuY2hlY2tlZCkgDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICBFeGFjdGx5ID0gJzEnOyANCiAgICAgICAgICAgICAgICAgICAgICB9IA0KICAgICAgICAgICAgICAgICAgICAgIGlmIChTZWFyY2hGaWVsZC5pbmRleE9mKCd+JykgPiAtMSkgeyAgDQogICAgICAgICAgICAgICAgICAgICAgICAgIGlmIChGaWVsZFR5cGUgPT0gJ1RleHRCb3gnIHx8IEZpZWxkVHlwZSA9PSAndGV4dGFyZWEnIHx8IEZpZWxkVHlwZSA9PSAnRGF0ZVRpbWUnIHx8IEZpZWxkVHlwZSA9PSAnbG9va3VwJyB8fCBGaWVsZFR5cGUgPT0gJ251bWJlcicpIHsgIA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgVmFsdWVGcm9tID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3R4dFNlYXJjaFZhbHVlRnJvbScrIHByZWZpeCArIEluZGV4RmllbGQpLnZhbHVlOyAgDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICBWYWx1ZVRvID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3R4dFNlYXJjaFZhbHVlVG8nKyBwcmVmaXggKyBJbmRleEZpZWxkKS52YWx1ZTsgIA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaWYgKFZhbHVlRnJvbS5sZW5ndGggPiAwIHx8IFZhbHVlVG8ubGVuZ3RoID4gMCkgeyAgDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgU2VhcmNoVGV4dCA9IFNlYXJjaEZpZWxkICsgJyQnICsgVmFsdWVGcm9tICsgJ34nICsgVmFsdWVUbyArICckJyArIEV4YWN0bHkgKyAnJCcgKyB1bnNpZ25lZCArICckJyArIE9wZXJhdG9yOyAgDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICB9ICANCiAgICAgICAgICAgICAgICAgICAgICAgICAgfSAgDQogICAgICAgICAgICAgICAgICAgICAgfSAgDQogICAgICAgICAgICAgICAgICAgICAgZWxzZSAgDQogICAgICAgICAgICAgICAgICAgICAgeyAgDQogICAgICAgICAgICAgICAgICAgICAgICAgIFZhbHVlID0gJyc7ICANCiAgICAgICAgICAgICAgICAgICAgICAgICAgaWYgKEZpZWxkVHlwZSA9PSAnQ2hlY2tCb3gnKSB7ICANCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFZhbHVlID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3R4dFNlYXJjaFZhbHVlJysgcHJlZml4ICsgSW5kZXhGaWVsZCkuY2hlY2tlZC50b1N0cmluZygpID09ICd0cnVlJyA/ICcxJyA6ICcwJzsgIA0KICAgICAgICAgICAgICAgICAgICAgICAgICB9ICANCiAgICAgICAgICAgICAgICAgICAgICAgICAgZWxzZSBpZihGaWVsZFR5cGUgPT0gJ3Vuc2lnbmVkJykgeyAgDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICBWYWx1ZSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd0eHRTZWFyY2hWYWx1ZScrIHByZWZpeCArIEluZGV4RmllbGQpLmNoZWNrZWQudG9TdHJpbmcoKSA9PSAndHJ1ZScgPyAnMScgOiAnMCc7ICANCiAgICAgICAgICAgICAgICAgICAgICAgICAgfSANCiAgICAgICAgICAgICAgICAgICAgICAgICAgZWxzZSBpZihGaWVsZFR5cGUgPT0gJ2V4YWN0bHknKSB7IA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgVmFsdWUgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgndHh0U2VhcmNoVmFsdWUnKyBwcmVmaXggKyBJbmRleEZpZWxkKS5jaGVja2VkLnRvU3RyaW5nKCkgPT0gJ3RydWUnID8gJzEnIDogJzAnOyAgDQogICAgICAgICAgICAgICAgICAgICAgICAgIH0gDQogICAgICAgICAgICAgICAgICAgICAgICAgIGVsc2UgaWYoRmllbGRUeXBlID09ICdmaWVsZHNlYXJjaCcpIHsgDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICBTZWFyY2hGaWVsZCA9ICQoJyNjYlNlYXJjaFZhbHVlJysgcHJlZml4ICsgSW5kZXhGaWVsZCArICcgb3B0aW9uOnNlbGVjdGVkJykudmFsKCk7ICANCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlmKFNlYXJjaEZpZWxkID09ICcnKSANCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBTZWFyY2hGaWVsZCA9ICdhbGwnOyANCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFZhbHVlID0gJCgnI3R4dFNlYXJjaFZhbHVlJysgcHJlZml4ICsgSW5kZXhGaWVsZCkudmFsKCk7ICANCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlmKFZhbHVlLmxlbmd0aCA9PSAwKSANCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHsJIA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICQoJyN0eHRTZWFyY2hWYWx1ZScrIHByZWZpeCArIEluZGV4RmllbGQpLnByZXYoKS50ZXh0KCdWdWkgbMOybmcgbmjhuq1wIMSRaeG7gXUga2nhu4duIGPhuqduIHTDrG0ga2nhur9tJyk7ICQoJyN0eHRTZWFyY2hWYWx1ZScrIHByZWZpeCArIEluZGV4RmllbGQpLmZvY3VzKCk7CXJldHVybjsgIA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfSANCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNGaWVsZCA9IFNlYXJjaEZpZWxkOyANCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGtleXdvcmQgPSBWYWx1ZTsgDQogICAgICAgICAgICAgICAgICAgICAgICAgIH0gDQogICAgICAgICAgICAgICAgICAgICAgICAgIGVsc2UgaWYoRmllbGRUeXBlID09ICdsaXN0Ym94JykgeyAgDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICBWYWx1ZSA9ICQoJyN0eHRTZWFyY2hWYWx1ZScrIHByZWZpeCArIEluZGV4RmllbGQgKyAnIG9wdGlvbjpzZWxlY3RlZCcpLnZhbCgpOyAgDQogICAgICAgICAgICAgICAgICAgICAgICAgIH0gDQogICAgICAgICAgICAgICAgICAgICAgICAgIGVsc2UgaWYoRmllbGRUeXBlID09ICdUZXh0Qm94Jyl7ICANCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFZhbHVlID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3R4dFNlYXJjaFZhbHVlJysgcHJlZml4ICsgSW5kZXhGaWVsZCkudmFsdWU7ICANCiAgICAgICAgICAgICAgICAgICAgICAgICAgfQkJCQkJCSAgICANCiAgICAgICAgICAgICAgICAgICAgICAgICAgZWxzZSB7ICANCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFZhbHVlID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3R4dFNlYXJjaFZhbHVlJysgcHJlZml4ICsgSW5kZXhGaWVsZCkudmFsdWU7ICANCiAgICAgICAgICAgICAgICAgICAgICAgICAgfSANCiAgICAgICAgICAgICAgICAgICAgICAgICAgaWYgKFZhbHVlLmxlbmd0aCA+IDApIHsgIA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgU2VhcmNoVGV4dCA9IFNlYXJjaEZpZWxkICsgJyQnICsgVmFsdWUgKyAnJCcgKyBFeGFjdGx5ICsgJyQnICsgdW5zaWduZWQgKyAnJCcgKyBPcGVyYXRvcjsgIA0KICAgICAgICAgICAgICAgICAgICAgICAgICB9IA0KICAgICAgICAgICAgICAgICAgICAgIH0gIA0KICAgICAgICAgICAgICAgICAgICAgIGlmIChTZWFyY2hUZXh0Lmxlbmd0aCA+IDApIHsgIA0KICAgICAgICAgICAgICAgICAgICAgICAgICBTZWFyY2hGaWVsZFRleHQgPSBTZWFyY2hGaWVsZFRleHQgKyBTZWFyY2hUZXh0ICsgJ3wnOyAgDQogICAgICAgICAgICAgICAgICAgICAgfSAgDQogICAgICAgICAgICAgICAgICAgICAgU2VhcmNoVGV4dCA9ICcnOyAgDQogICAgICAgICAgICAgIH0gICAgICAgICANCiAgICAgICAgICAgICAgdmFyIE9BamF4T3V0ID0gaU1hbi5PcGFjLkZyb250RW5kLmlTZWFyY2hQcm9jZXNzLlNlcnZlclJlZm9ybWF0S2V5d29yZCgnb3BhYycsIGtleXdvcmQpLnZhbHVlOyAgDQogICAgICAgICAgICAgICBpZiAoT0FqYXhPdXQuRXJyb3IpIHsgIA0KICAgICAgICAgICAgICAgICAgICBhbGVydChPQWpheE91dC5FcnJvck1lc3NhZ2UpOyAgIA0KICAgICAgICAgICAgICAgfSAgDQogICAgICAgICAgICAgICBlbHNlICANCiAgICAgICAgICAgICAgIHsgDQogICAgICAgICAgICAgICAgICAgd2luZG93Lm9wZW4oJ3dwaWQtc2VhcmNoLXN0eXBlLScrc1R5cGUgKyAnLXNmaWVsZC0nICsgc0ZpZWxkICsgJy1rZXl3b3JkLScgKyBPQWpheE91dC5SZXRVcmwgKyAnLmh0bWwnLCdfc2VsZicpOyANCiAgICAgICAgICAgICAgIH0gDQogICAgICAgICAgIH0gDQo8L3NjcmlwdD4gDQo8c2VjdGlvbiBjbGFzcz0icGFydG5lciI+IA0KICAgIDxkaXYgY2xhc3M9ImNvbnRhaW5lciI+IA0KICAgICAgICA8ZGl2IGlkPSJwYXJ0bmVyIiBjbGFzcz0ibWlkZGxlLW93bC1jb250cm9scyBjb3VudHkiPiANCiAgICAgICAgICAgIDxkaXYgY2xhc3M9Iml0ZW0iPiANCiAgICAgICAgICAgICAgICA8YSBocmVmPSJodHRwOi8vd3d3LnRodXZpZW5iaW5oZHVvbmcub3JnLnZuIiB0YXJnZXQ9Il9ibGFuayI+PGltZyBjbGFzcz0iaW1nLXJlc3BvbnNpdmUiIGFsdD0iIiBzcmM9ImltZy9wYXJ0bmVyL3R2YmQucG5nIiAvPjwvYT4gDQogICAgICAgICAgICA8L2Rpdj4gDQogICAgICAgICAgICA8ZGl2IGNsYXNzPSJpdGVtIj4gDQogICAgICAgICAgICAgICAgPGEgaHJlZj0iaHR0cDovL3RodXZpZW5kYW5hbmcudm4iIHRhcmdldD0iX2JsYW5rIj48aW1nIGNsYXNzPSJpbWctcmVzcG9uc2l2ZSIgYWx0PSIiIHNyYz0iaW1nL3BhcnRuZXIvdHZkbi5wbmciIC8+PC9hPiANCiAgICAgICAgICAgIDwvZGl2PiANCiAgICAgICAgICAgIDxkaXYgY2xhc3M9Iml0ZW0iPiANCiAgICAgICAgICAgICAgICA8YSBocmVmPSJodHRwOi8vdGh1dmllbi5odm5oLmVkdS52biIgdGFyZ2V0PSJfYmxhbmsiPjxpbWcgY2xhc3M9ImltZy1yZXNwb25zaXZlIiBhbHQ9IiIgc3JjPSJpbWcvcGFydG5lci9odm5oLnBuZyIgLz48L2E+IA0KICAgICAgICAgICAgPC9kaXY+IA0KICAgICAgICAgICAgPGRpdiBjbGFzcz0iaXRlbSI+IA0KICAgICAgICAgICAgICAgIDxhIGhyZWY9Imh0dHA6Ly90aHV2aWVuLmZ0dS5lZHUudm4vc2l0ZXMvZGVmYXVsdC5hc3B4IiB0YXJnZXQ9Il9ibGFuayI+PGltZyBjbGFzcz0iaW1nLXJlc3BvbnNpdmUiIGFsdD0iIiBzcmM9ImltZy9wYXJ0bmVyL3R2ZGhudC5wbmciIC8+PC9hPiANCiAgICAgICAgICAgIDwvZGl2PiANCiAgICAgICAgICAgIDxkaXYgY2xhc3M9Iml0ZW0iPiANCiAgICAgICAgICAgICAgICA8YSBocmVmPSJodHRwOi8vd3d3LmxpYy52bnUuZWR1LnZuIiB0YXJnZXQ9Il9ibGFuayI+PGltZyBjbGFzcz0iaW1nLXJlc3BvbnNpdmUiIGFsdD0iIiBzcmM9ImltZy9wYXJ0bmVyL3R2ZGhxZ2huLnBuZyIgLz48L2E+IA0KICAgICAgICAgICAgPC9kaXY+IA0KICAgICAgICAgICAgPGRpdiBjbGFzcz0iaXRlbSI+IA0KICAgICAgICAgICAgICAgIDxhIGhyZWY9Imh0dHA6Ly9ubHYuZ292LnZuIiB0YXJnZXQ9Il9ibGFuayI+PGltZyBjbGFzcz0iaW1nLXJlc3BvbnNpdmUiIGFsdD0iIiBzcmM9ImltZy9wYXJ0bmVyL3R2cWcucG5nIiAvPjwvYT4gDQogICAgICAgICAgICA8L2Rpdj4gDQogICAgICAgICAgICA8ZGl2IGNsYXNzPSJpdGVtIj4gDQogICAgICAgICAgICAgICAgPGEgaHJlZj0iaHR0cDovL3d3dy52bnVsaWIuZWR1LnZuIiB0YXJnZXQ9Il9ibGFuayI+PGltZyBjbGFzcz0iaW1nLXJlc3BvbnNpdmUiIGFsdD0iIiBzcmM9ImltZy9wYXJ0bmVyL3R2aGNtLnBuZyIgLz48L2E+IA0KICAgICAgICAgICAgPC9kaXY+IA0KICAgICAgICA8L2Rpdj4gDQogICAgICAgICAgIDxkaXYgY2xhc3M9Im93bC1jb250cm9scyBjbGlja2FibGUiPjxkaXYgY2xhc3M9Im93bC1idXR0b25zIj48ZGl2IGNsYXNzPSJvd2wtcHJldiI+PHNwYW4gY2xhc3M9ImdseXBoaWNvbiBnbHlwaGljb24tY2hldnJvbi1sZWZ0Ij48L3NwYW4+PC9kaXY+PGRpdiBjbGFzcz0ib3dsLW5leHQiPjxzcGFuIGNsYXNzPSJnbHlwaGljb24gZ2x5cGhpY29uLWNoZXZyb24tcmlnaHQiPjwvc3Bhbj48L2Rpdj48L2Rpdj48L2Rpdj4gDQogICAgPC9kaXY+IA0KPC9zZWN0aW9uPiANCg0KPHNlY3Rpb24gY2xhc3M9ImNvcHlyaWdodCI+IA0KICAgIDxkaXYgY2xhc3M9ImNvbnRhaW5lciI+IA0KICAgICAgICA8ZGl2IGNsYXNzPSJyb3cgY2xlYXJmaXgiPiANCjxkaXYgY2xhc3M9ImNvbC1tZC0xMiI+IA0KICAgIDxhIGhyZWY9IiMiIGNsYXNzPSJsb2dvLWhlYWRlciI+PGltZyBhbHQ9IiIgc3JjPSJpbWcvbG9nby5wbmciPjwvYT4gIA0KICAgIDxhZGRyZXNzPjxzdHJvbmc+VEjGryBWSeG7hk4gS0hPQSBI4buMQyBU4buUTkcgSOG7olAgVEjDgE5IIFBI4buQIEjhuqJJIFBIw5JORzwvc3Ryb25nPjxicj4gDQrEkOG7i2EgY2jhu4k6IFPhu5EgMjEzQSBM4bqhY2ggVHJheSAtIE5nw7QgUXV54buBbiAtIEjhuqNpIFBow7JuZzxicj4gDQrEkGnhu4duIHRob+G6oWk6IDAyMjUuNjI2MDkyNyAtIEVtYWlsOiB0aHV2aWVuaGFpcGhvbmdAZ21haWwuY29tPGJyPiANCjwvYWRkcmVzcz4gDQo8L2Rpdj4gDQogICAgICAgICAgICA8ZGl2IGNsYXNzPSJjb2wtbWQtMyI+IA0KICAgICAgICAgICAgPC9kaXY+IA0KICAgICAgICA8L2Rpdj4gDQogICAgPC9kaXY+IA0KPC9zZWN0aW9uPiANCg0KDQo8IS0tIEpxdWVyeSAtLT4NCjxzY3JpcHQgdHlwZT0idGV4dC9qYXZhc2NyaXB0IiBzcmM9ImpzL2pxdWVyeS5taW4uanMiPjwvc2NyaXB0Pg0KDQo8IS0tIEJvb3RzdHJhcCBKUyAtLT4NCjxzY3JpcHQgdHlwZT0idGV4dC9qYXZhc2NyaXB0IiBzcmM9ImpzL2Jvb3RzdHJhcC5taW4uanMiPjwvc2NyaXB0Pg0KDQo8IS0tIE93bCBjYXJvdXNlbCBKUyAtLT4NCjxzY3JpcHQgc3JjPSJqcy9vd2wuY2Fyb3VzZWwubWluLmpzIj48L3NjcmlwdD4NCg0KPCEtLSBIb3ZlciBkcm9wZG93biBKUyAtLT4NCjxzY3JpcHQgc3JjPSJqcy9ib290c3RyYXAtaG92ZXItZHJvcGRvd24ubWluLmpzIj48L3NjcmlwdD4NCg0KPCEtLSBQYXJhbGxheCBKUyAtLT4NCjxzY3JpcHQgc3JjPSJqcy9wYXJhbGxheC5taW4uanMiPjwvc2NyaXB0Pg0KDQo8IS0tIFRoZW1lIEpTIC0tPg0KPHNjcmlwdCB0eXBlPSJ0ZXh0L2phdmFzY3JpcHQiIHNyYz0ianMvc2NyaXB0cy5qcyI+PC9zY3JpcHQ+DQo8c2NyaXB0IHR5cGU9InRleHQvamF2YXNjcmlwdCIgc3JjPSJqcy9tdWRpbS5qcyI+PC9zY3JpcHQ+DQo8L2JvZHk+DQoNCmRkym6ggROTFU8xdBJrOlpGUXpfPa29JrRJKauLB8GO170=" />
+
+
+<script type="text/javascript" src="/ajaxpro/prototype.ashx"></script>
+<script type="text/javascript" src="/ajaxpro/core.ashx"></script>
+<script type="text/javascript" src="/ajaxpro/converter.ashx"></script>
+<script type="text/javascript" src="/ajaxpro/iMan.Opac.FrontEnd.iSearchProcess,iMan.Opac.FrontEnd.ashx"></script>
+
+<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="D17C6C7C" /></form> 
+		   
+        <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700|Arimo:700&subset=vietnamese,latin' rel='stylesheet' type='text/css'>-->
+
+<!-- Bootstrap CSS -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+
+<!-- font awesome -->
+<link rel="stylesheet" href="fonts/font-awesome/css/font-awesome.min.css">
+
+<!-- Owl CSS -->
+<link rel="stylesheet" href="css/owl.carousel.css">
+<link rel="stylesheet" href="css/owl.theme.css">
+<link rel="stylesheet" href="css/owl.transitions.css">
+
+<!-- Theme CSS -->
+<link href="css/style.css" rel="stylesheet">
+<link href="css/responsive.css" rel="stylesheet">
+
+<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+<script src="js/html5shiv.js"></script>
+<![endif]-->
+ 
+<!-- Fav icons -->
+<link rel="shortcut icon" href="img/logo.png">
+<body>
+<!--************************************************************************
+TOP ZONE 
+*************************************************************************-->
+<header>    <div class="preHeader"> 
+    <div class="container"> 
+        <ul class="list-inline navbar-text  soc-list hidden-xs"> 
+        </ul> 
+        <ul class="list-inline navbar-text navbar-right"> 
+            <li  id="auserlogin"              > 
+                <a href="#" data-toggle="modal" data-target="#registermember"  onclick="javascript:ClientDrawRegisterMember('opac');"   ><i class="fa fa-edit"></i> Đăng ký</a> 
+            </li> 
+            <li  id="ulUserBar"              > 
+                <a href="#" data-toggle="modal" data-target="#login"   ><i class="fa fa-user"></i> Đăng nhập</a> 
+            </li> 
+        </ul> 
+    </div> 
+</div> 
+<div class="modal fade" id="registermember" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"></div> 
+<!-- Modal login --> 
+<div class="modal fade" id="login" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"> 
+    <div class="modal-dialog" role="document"> 
+        <div class="modal-content"> 
+            <div class="modal-header"> 
+                <button type="button" class="close" id="btnCloseModal"  data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> 
+                <h4 class="modal-title" id="myModalLabel">Đăng nhập</h4> 
+            </div> 
+            <div class="modal-body"> 
+               <div class="form-group" id="divLoginProcessInfo"></div> 
+                <form> 
+                    <div class="form-group"> 
+                    </div> 
+                    <div class="form-group"> 
+                        <label for="txtLoginName">Tên truy cập</label> 
+                        <input class="form-control" onkeydown="javascript:if (event.keyCode == 13) {ClientLogin('opac');}" id="txtLoginName"AUTOCOMPLETE="off"  placeholder="LoginName" value="" > 
+                    </div> 
+                    <div class="form-group"> 
+                        <label for="txtPassword">Mật khẩu</label> 
+                        <input type="password" onkeydown="javascript:if (event.keyCode == 13) {ClientLogin('opac');}" class="form-control" AUTOCOMPLETE="off" id="txtPassword" placeholder="Password"> 
+                    </div> 
+                    <div class="form-group"> 
+                        <label for="txtPassword">Mã bảo vệ</label> 
+                        <input type="text" class="form-control" id="txtSecCode_Reg"/> 
+                        <img id="ImgCaptcha" src="/pages/opac/TempDir/ImageVerification/3b67dc9f-07d1-4efa-a9db-c40cc536b500.jpg" alt="" /> 
+                        <img title="Đổi hình" alt="Đổi hình" onclick="javascript:ChangeImgSecurity('opac');" style="margin-top:10px; cursor:pointer" src="/pages/opac/images/refresh.png" alt="" /> 
+                    </div> 
+                    <div class="checkbox"> 
+                        <label> 
+                        <input type="checkbox"> Lưu mật khẩu 
+                        </label> 
+                    </div> 
+                </form> 
+            </div> 
+            <div class="modal-footer"> 
+                <button type="button" class="btn btn-default" data-dismiss="modal">Hủy</button> 
+                <button type="button" class="btn btn-primary" onclick="javascript:ClientLogin('opac');">Đăng nhập</button> 
+            </div> 
+        </div> 
+    </div> 
+</div> 
+<input type="hidden" id="hdSiteId" value="opac"   />
+<input type="hidden" id="hdCurrentSiteId" value="opac" />
+<script type="text/javascript"> 
+   function ClientDrawRegisterMember(SiteId) { 
+       $.ajax({ 
+           type: "POST", 
+           url: "FormProcess.aspx/ServerDrawRegisterMember", 
+           data: '{ SiteId:"'+SiteId+'"}', 
+           contentType: "application/json; charset=utf-8", 
+           dataType: "json", 
+           success: DrawRegisterMemberOnSuccess, 
+           error: function (xhr, ajaxOptions, thrownError) { 
+           } 
+       });
+   }
+   function DrawRegisterMemberOnSuccess(response) { 
+       var retVal = response.d; 
+       if (retVal.length==0) { 
+           document.getElementById('registermember').innerHTML = OAjaxOut.ErrorMessage; 
+       } 
+       else 
+       { 
+           document.getElementById('registermember').innerHTML = retVal; 
+           document.getElementById('registermember').style.display = 'block'; 
+           ChangeImgSecurity('opac');
+       } 
+   }	
+   function ChangeImgSecurity()
+   {
+       var imageVerification = iMan.Opac.FrontEnd.iSearchProcess.CreateCaptcha('opac').value;
+       if(imageVerification.length>0) 
+       {
+           $('#txtSecCode').val('');
+           $('#ImgCaptcha').attr('src',imageVerification);
+       }
+   }
+   function ChangeImgSecurityReg()
+   {
+       var imageVerification = iMan.Opac.FrontEnd.iSearchProcess.CreateCaptcha('opac').value;
+       if(imageVerification.length>0) 
+       {
+           $('#txtSecCode').val('');
+           $('#ImgCaptchaReg').attr('src',imageVerification);
+       }
+   }
+   function ClientCheckLoginName(SiteId) 
+   { 
+       var txtLoginName = $('#txtLoginName_Reg').val().trim();
+       if(txtLoginName.length==0) 
+       {
+           DisplayMessage('divRegisterProcessInfo','Hãy nhập tên truy cập vào!',2); 
+           $('#txtLoginName').focus();
+           return;
+       }
+       $.ajax({ 
+           type: "POST", 
+           url: "FormProcess.aspx/SeverCheckLoginName", 
+           data: '{ SiteId: "'+SiteId+'", LoginName: "'+txtLoginName+'" }', 
+           contentType: "application/json; charset=utf-8", 
+           dataType: "json", 
+           success: CheckLoginNameSuccess, 
+           error: function (xhr, ajaxOptions, thrownError) { 
+           } 
+       }); 
+   }
+   function CheckLoginNameSuccess(response) { 
+       OAjaxOut = response.d; 
+       if (OAjaxOut.Error)  
+       { 
+            document.getElementById('divRegisterProcessInfo').innerHTML=OAjaxOut.ErrorMessage; 
+           $('#btnSaveRegister').css('visibility', 'hidden'); 
+           return; 
+       } 
+       else 
+       { 
+           document.getElementById('divRegisterProcessInfo').innerHTML=OAjaxOut.ErrorMessage; 
+           $('#btnSaveRegister').css('visibility', 'initial'); 
+       } 
+   } 
+   function ClientRegisterMember(SiteId) 
+   { 
+       ClientCheckLoginName(SiteId);
+       var txtLoginName = $('#txtLoginName_Reg').val().trim();
+       var txtFullName = $('#txtFullName_Reg').val().trim();
+       var txtEmail = $('#txtEmail_Reg').val().trim();
+       var txtPhone = $('#txtPhone_Reg').val().trim();
+       var txtAddress = $('#txtAddress_Reg').val().trim();
+       var txtPassword = $('#txtPassword_Reg').val().trim();
+       var txtSecCode = $('#txtSecCode_Reg').val().trim();
+       if(txtEmail.length==0) 
+       {
+           DisplayMessage('divRegisterProcessInfo','Hãy nhập địa chỉ email vào!',2); 
+           $('#txtEmail').focus();
+           return;
+       }
+       if(!IsValidEmail(txtEmail)) 
+       {
+           DisplayMessage('divRegisterProcessInfo','Địa chỉ email không hợp lệ. Hãy nhập lại!',2); 
+           $('#txtEmail').focus();
+           return;
+       }
+       if(txtSecCode.length==0) 
+       {
+           DisplayMessage('divRegisterProcessInfo','Hãy nhập mã bảo vệ vào!',2); 
+           $('#txtSecCode').focus();
+           return;
+       }
+       if(txtPassword!=$('#txtRetypePassword_Reg').val().trim()) 
+       {
+           DisplayMessage('divRegisterProcessInfo','Gõ lại mật khẩu không đúng!',2); 
+           $('#txtRetypePassword_Reg').focus();
+           return;
+       }
+       $.ajax({ 
+           type: "POST", 
+           url: "FormProcess.aspx/AddMember", 
+           data: '{ SiteId: "'+SiteId+'", LoginName: "'+txtLoginName+'", FullName: "'+txtFullName+'", Email: "'+txtEmail+'", Phone: "'+txtPhone+'", Address: "'+txtAddress+'", Password: "'+txtPassword+'", SecCode: "'+txtSecCode+'" }', 
+           contentType: "application/json; charset=utf-8", 
+           dataType: "json", 
+           success: AddMemberSuccess, 
+           error: function (xhr, ajaxOptions, thrownError) { 
+           } 
+       }); 
+   }
+   function AddMemberSuccess(response) { 
+       OAjaxOut = response.d; 
+       if (OAjaxOut.Error)  
+       { 
+           DisplayMessage('divRegisterProcessInfo',OAjaxOut.ErrorMessage,3); 
+           return; 
+       } 
+       else 
+       { 
+           DisplayMessage('divResultRegister',OAjaxOut.InfoMessage,4); 
+           $('#divRegisterBody').css('visibility', 'hidden'); 
+           $('#divRegisterFooter').css('visibility', 'hidden'); 
+       } 
+   } 
+   function IsValidEmail(email) {
+       var regex = new RegExp(/^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/);
+       return regex.test(email);
+   }
+   function DisplayMessage(divID, message,type) {
+       var html='';
+       if(type==1)	//Infor 
+           html+='<div class="alert alert-info">'; 
+       else if(type==2)	
+           html+='<div class="alert alert-warning">'; 
+       else if(type==3)	
+           html+='<div class="alert alert-error">'; 
+       else if(type==4)	
+           html+='<div class="alert alert-success">'; 
+       html+=message + '</div>'; 
+       $('#'+divID).html(html);
+   }
+</script> 
+<script> 
+            function ClientDrawMemberLogin() { 
+                $.ajax({ 
+                    type: "POST", 
+                    url: "FEAjaxProcess.aspx/ServerDrawMemberLogin", 
+                    data: '{}', 
+                    contentType: "application/json; charset=utf-8", 
+                    dataType: "json", 
+                    success: OnSuccess, 
+                    error: function (xhr, ajaxOptions, thrownError) { 
+                        AJAX_EXECUTE_ERROR(xhr.status); 
+                      } 
+                }); 
+            } 
+            function AJAX_EXECUTE_ERROR(ErrorStatus) { 
+                        if(ErrorStatus == '500') { alert('Hiện dịch vụ này chưa được cấu hình, vui lòng quay lại sau');} else {    alert('Có lỗi trong quá trình xử lý. Lỗi: '+ErrorStatus );} 
+            } 
+            function OnSuccess(response) { 
+                OAjaxOut = response.d; 
+                if (OAjaxOut.Error) { 
+                    alert(OAjaxOut.InfoMessage); 
+                    return; 
+                } 
+                $('#divLoginModal').html(OAjaxOut.InnerHTML);  
+                 $('#divLoginModal').modal({overlayClose:true}); 
+    		     return false;
+            } 
+           function ClientEnterLogin(e){ if (e.keyCode == 13) { ClientMemberLogin(); } } 
+           function ClientEnterOrderLogin(e){ if (e.keyCode == 13) { ClientOrderMemberLogin(); } } 
+            function ClientMemberLogin() { 
+                cardVal = $('#txtUserName').val(); 
+                var password = $('#txtPassword').val(); 
+                $.ajax({ 
+                    type: "POST", 
+                    url: "home.aspx/ServerMemberLogin", 
+                    data: '{ card_no: "'+cardVal+'", password: "'+password+'" }', 
+                    contentType: "application/json; charset=utf-8", 
+                    dataType: "json", 
+                    success: LoginOnSuccess, 
+                    error: function (xhr, ajaxOptions, thrownError) { 
+                        AJAX_EXECUTE_ERROR(xhr.status); 
+                      } 
+                }); 
+            } 
+            function LoginOnSuccess(response) { 
+                OAjaxOut = response.d; 
+                if (OAjaxOut.Error) { 
+                    $('#divProcessInfo').html(OAjaxOut.ErrorMessage); 
+                    return; 
+                } 
+                   $('#divReaderLoginLabel').html(OAjaxOut.InnerHTML);
+               $(".simplemodal-close" ).trigger("click" );
+            } 
+            function ClientUserLogin() { 
+                cardVal = $('#txtUserName').val(); 
+                var password = $('#txtPassword').val(); 
+                $.ajax({ 
+                    type: "POST", 
+                    url: "FEAjaxProcess.aspx/ServerUserLogin", 
+                    data: '{ card_no: "'+cardVal+'", password: "'+password+'" }', 
+                    contentType: "application/json; charset=utf-8", 
+                    dataType: "json", 
+                    success: UserLoginOnSuccess, 
+                    error: function (xhr, ajaxOptions, thrownError) { 
+                        AJAX_EXECUTE_ERROR(xhr.status); 
+                      } 
+                }); 
+            } 
+            function UserLoginOnSuccess(response) { 
+                OAjaxOut = response.d; 
+                if (OAjaxOut.Error) { 
+                    $('#divProcessInfo').html(OAjaxOut.ErrorMessage); 
+                    return; 
+                } 
+               else 
+               {
+                   $('#divReaderLoginLabel').html(OAjaxOut.InnerHTML);
+                   $(".simplemodal-close" ).trigger("click" );
+               }
+            } 
+            function ClientOrderMemberLogin(Type, Value) { 
+                cardVal = $('#txtUserName').val(); 
+                $.ajax({ 
+                    type: "POST", 
+                    url: "FEAjaxProcess.aspx/ServerOrderMemberLogin", 
+                    data: '{ card_no: "'+cardVal+'",  password: "", Type: "'+Type+'", Value: "'+Value+'" }', 
+                    contentType: "application/json; charset=utf-8", 
+                    dataType: "json", 
+                    success: OrderLoginOnSuccess, 
+                    error: function (xhr, ajaxOptions, thrownError) { 
+                        AJAX_EXECUTE_ERROR(xhr.status); 
+                      } 
+                }); 
+            } 
+            function OrderLoginOnSuccess(response) { 
+                OAjaxOut = response.d; 
+                if (OAjaxOut.Error) { 
+                    $('#divProcessInfo').html(OAjaxOut.ErrorMessage); 
+                    return; 
+                } 
+                $('#'+OAjaxOut.RetExtraParam1).show(); 
+                $('#'+OAjaxOut.RetExtraParam2).hide(); 
+                $('#divReaderLoginLabel').html(OAjaxOut.RetExtraParam3); 
+               $('#contentmodule').html(OAjaxOut.InnerHTML);  
+            } 
+            function ClientMemberLogout() { 
+                $.ajax({ 
+                    type: "POST", 
+                    url: "home.aspx/ServerMemberLogout", 
+                    data: '{ }', 
+                    contentType: "application/json; charset=utf-8", 
+                    dataType: "json", 
+                    success: LoginOnSuccessServerMemberLogout, 
+                    error: function (xhr, ajaxOptions, thrownError) { 
+                        AJAX_EXECUTE_ERROR(xhr.status); 
+                      } 
+                }); 
+            } 
+            function LoginOnSuccessServerMemberLogout(response) { 
+                OAjaxOut = response.d; 
+                if (OAjaxOut.Error) { 
+                    alert(OAjaxOut.InfoMessage); 
+                    return; 
+                } 
+                window.open(OAjaxOut.RetUrl,'_self');
+            } 
+            function ClientUserButtonClick() { 
+               var currentClassName = $('#divUserButtonGroup').attr('class');//.split(' ').join('.'); 
+               if(currentClassName.indexOf('open') != -1) { $('#divUserButtonGroup').removeClass('btn-group open').addClass('btn-group');  } 
+               else { $('#divUserButtonGroup').removeClass('btn-group').addClass('btn-group open'); }  
+            } 
+</script> 
+<script type="text/javascript"> 
+     function ClientLogin(SiteId)   
+     {     
+         var username = $('#txtLoginName').val();   
+         var password = $('#txtPassword').val();   
+         var loginCode = $('#txtSecCode_Reg').val();   
+         var OAjaxOut = iMan.Opac.FrontEnd.iSearchProcess.ServerUserLoginV2(SiteId, username, password, loginCode).value;
+            if (OAjaxOut.Error) {    
+                 $('#divLoginProcessInfo').html(OAjaxOut.ErrorMessage);     
+            }    
+            else    
+            {   
+                $('#ulUserBar').html(OAjaxOut.InnerHTML);     
+                $('#btnCloseModal').trigger('click');   
+               location.reload();  
+            }   
+     }   
+    function ClientUserLogout(SiteId)   
+    {  
+        var OAjaxOut = iMan.Opac.FrontEnd.iSearchProcess.ServerMemberLogout().value; 
+        if (OAjaxOut.Error) { 
+             alert(OAjaxOut.ErrorMessage);  
+        } 
+        else 
+        {
+           $(location).attr('href', '../opac/wpid-search-stype-form-quick.html');
+        }
+    }
+	</script>
+<!--========== TOP BANNER =========--> 
+<div class="topBanner hidden-xs"> 
+    <div class="container"> 
+        <div class="row"> 
+            <div class="col-sm-6"> 
+                <div class="topBannerLeft clearfix"> 
+                    <a  class="logo-header" ><img src="img/logo.png" alt="" /></a> 
+                    <h2>Thư viện khoa học tổng hợp</h2> 
+                    <h1>Thành phố Hải Phòng</h1> 
+                </div> 
+            </div> 
+            <div class="col-sm-8"> 
+                <div class="topBannerRight"> 
+                </div> 
+            </div> 
+        </div> 
+    </div> 
+</div> 
+<!--========== /TOP BANNER =========--> 
+<!--========== TOP MENU =========--> 
+<nav class="navbar navbar-default navbar-static-top topMenu" role="navigation"> 
+    <div class="container"> 
+        <div class="navbar-header"> 
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#ecosoftNav">  
+            <span class="sr-only">Toggle navigation</span> 
+            <span class="icon-bar"></span><span class="icon-bar"></span> 
+            <span class="icon-bar"></span> 
+            </button>  
+            <a  class="navbar-brand visible-xs" href="index.html"><img src="img/logo.png" alt="" /></a> 
+        </div> 
+        <div class="collapse navbar-collapse" id="ecosoftNav"> 
+<ul class="nav navbar-nav "> 
+<li class="dropdown active"><a href="../opac/wpid-home.html" ><i class="fa fa-home"></i></a></li> 
+<li class="dropdown "><a href="../opac/wpid-search-stype-form-quick.html" >Tra cứu tài liệu</a></li> 
+<li class="dropdown "><a href="../opac/wpid-collection-type-icollection.html" >Bộ sưu tập tài liệu Marc21</a></li> 
+<li class="dropdown "><a href="../opac/wpid-collection-type-collection.html" >Bộ sưu tập số</a></li> 
+<li class="dropdown "><a href="../opac/wpid-contact.html" >Liên hệ</a></li> 
+</ul> 
+        </div> 
+    </div> 
+</nav> 
+<!--========== /TOP MENU =========--> 
+<script type="text/javascript"> 
+     function ClientLogin(SiteId)   
+     {     
+         var username = $('#txtLoginName').val();   
+         var password = $('#txtPassword').val();   
+         var loginCode = $('#txtSecCode_Reg').val();   
+         var OAjaxOut = iMan.Opac.FrontEnd.iSearchProcess.ServerUserLoginV2(SiteId, username, password, loginCode).value;
+            if (OAjaxOut.Error) {    
+                 $('#divLoginProcessInfo').html(OAjaxOut.ErrorMessage);     
+            }    
+            else    
+            {   
+                $('#ulUserBar').html(OAjaxOut.InnerHTML);     
+                $('#btnCloseModal').trigger('click');   
+               location.reload();  
+            }   
+     }   
+    function ClientUserLogout(SiteId)   
+    {  
+        var OAjaxOut = iMan.Opac.FrontEnd.iSearchProcess.ServerMemberLogout().value; 
+        if (OAjaxOut.Error) { 
+             alert(OAjaxOut.ErrorMessage);  
+        } 
+        else 
+        {
+           $(location).attr('href', '../opac/wpid-search-stype-form-quick.html');
+        }
+    }
+	</script>
+</header>
+<!--************************************************************************ 
+HOME PAGE SEARCH 
+*************************************************************************--> 
+<section class="banner"> 
+    <div class="parallax-window" data-parallax="scroll" data-image-src="img/bg-1.jpg"> 
+        <div class="container"> 
+            <div class="banner-cn"> 
+                <ul class="tabs-cat text-center row"> 
+<li class="cate-item col-xs-2 active "> 
+                        <a  href="javascript:ClientSearchBarClick('form-quick')" title=""> 
+                            <i class="fa fa-rocket"></i> 
+                            <span>TÌM NHANH</span> 
+                        </a> 
+                    </li> 
+<li class="cate-item col-xs-2 "> 
+                        <a  href="javascript:ClientSearchBarClick('form-basic')" title=""> 
+                            <i class="fa fa-search"></i> 
+                            <span>CƠ BẢN</span> 
+                        </a> 
+                    </li> 
+<li class="cate-item col-xs-2 "> 
+                        <a  href="javascript:ClientSearchBarClick('form-advance')" title=""> 
+                            <i class="fa fa-search-plus"></i> 
+                            <span>NÂNG CAO</span> 
+                        </a> 
+                    </li> 
+<li class="cate-item col-xs-2 "> 
+                        <a  href="javascript:ClientSearchBarClick('form-linklib')" title=""> 
+                            <i class="fa fa-sitemap"></i> 
+                            <span>LIÊN THƯ VIỆN</span> 
+                        </a> 
+                    </li> 
+                </ul> 
+<div class="tab-content"> 
+   <div class="form-cn 1 tab-pane active in" id="form-quick"> 
+<div class="form-search row"> 
+<div class="form-field field-select col-sm-3"> 
+   <div class="select"> 
+<div class="select"> 
+   <span>Tìm nhanh</span> 
+    <select id="cbSearchValueform-quick1" > 
+        <option value="all"   >Từ khóa bất kỳ</option> 
+        <option value="title"   >Nhan đề</option> 
+        <option value="author"   >Tác giả</option> 
+        <option value="subject"   >Chủ đề</option> 
+        <option value="keyword"   >Từ khóa</option> 
+        <option value="isbn"   >Số ISBN</option> 
+        <option value="class"   >Chỉ số phân loại</option> 
+        <option value="yearpub"   >Năm xuất bản</option> 
+    </select> 
+</div> 
+		<input id="cbSearchFieldform-quick1" type="hidden" value="title"> 
+		<input id="cbSearchTypeform-quick1" type="hidden" value="1"> 
+		<input id="cbTypeFieldform-quick1" type="hidden" value="fieldsearch"> 
+</div> 
+</div> 
+<div class="form-field col-sm-7"> 
+   <label><span></span></label> 
+   <input type="text" class="field-input" id="txtSearchValueform-quick1"> 
+		<input id="txtSearchFieldform-quick1" type="hidden" value="title"> 
+		<input id="txtSearchTypeform-quick1" type="hidden" value="1"> 
+		<input id="txtTypeFieldform-quick1" type="hidden" value="fieldsearch"> 
+		<input id="txtOperatorform-quick1" type="hidden" value="and"> 
+</div> 
+<div class="form-submit  col-sm-2"><button type="submit"  onclick= "javascript:ClientQuickSearch();" class="awe-btn medium awe-search"><i class="fa fa-search"></i> Tìm kiếm</button>
+		<input id="txtSearchFieldform-quick2" type="hidden" value="keyword"> 
+		<input id="txtSearchTypeform-quick2" type="hidden" value=""> 
+		<input id="txtTypeFieldform-quick2" type="hidden" value="Button"> 
+</div> <input id="txtMaxSearchFieldform-quick" type="hidden" value="2"> 
+</div> 
+</div> 
+                    <div class="form-cn form-fulltext tab-pane" id="form-fulltext"> 
+                    </div> 
+                    <div class="form-cn form-z3950 tab-pane" id="form-z3950"> 
+                    </div> 
+                    <div class="form-cn form-linklib tab-pane" id="form-linklib"> 
+                    </div> 
+                </div> 
+            </div> 
+        </div> 
+    </div> 
+</section> 
+<!--************************************************************************ 
+/HOME PAGE SEARCH  
+*************************************************************************--> 
+<script type="text/javascript" > 
+    $(document).ready(function() { 
+            $('input#txtSearchValueform-quick1').keypress(function(e) { 
+              if (e.which == '13') { 
+	             ClientQuickSearch(); 
+               } 
+            }); 
+    }); 
+              function ClientQuickSearch() {  
+              sType = 'form-quick'; 
+              var prefix = 'form-quick'; 
+              Fieldsearch = ''; 
+              Exactly = '0';  
+              unsigned = '0'; 
+              Operator = 'and';  
+              MaxField = $('#txtMaxSearchField' + prefix).val();  
+              SearchFieldText = '';  
+              SearchText = '';  
+              SiteId = 'opac';  
+              CurrentPage = '0'; 
+              SearchSessionId = '12345'; 
+              sField = ''; 
+              keyword = ''; 
+              var unsigned = $('#chkunsigned' + prefix).val(); 
+              if(typeof unsigned == 'undefined') 
+              { 
+                  unsigned = '0'; 
+              } 
+              else 
+              { 
+                  if(document.getElementById('chkunsigned' + prefix+ IndexField).checked) 
+                      unsigned = '1'; 
+              } 
+              for (var IndexField = 1; IndexField <= MaxField; IndexField++)  
+              {  
+                      FieldType = $('#txtTypeField'+ prefix + IndexField).val();  
+                      if(typeof FieldType == 'undefined') 
+                          continue; 
+                      if(FieldType == 'Button') 
+                          continue; 
+                      SearchField = document.getElementById('txtSearchField' + prefix+ IndexField).value;  
+                      SearchType = document.getElementById('txtSearchType'+ prefix + IndexField).value;  
+                      var Exactly = $('#chkExactly' + prefix+ IndexField).val(); 
+                      Operator = $('#txtOperator' + prefix+ IndexField).val(); 
+                      if(typeof Exactly == 'undefined') 
+                      { 
+                          Exactly = '0'; 
+                      } 
+                      else 
+                      { 
+                          if(document.getElementById('chkExactly' + prefix+ IndexField).checked) 
+                              Exactly = '1'; 
+                      } 
+                      if (SearchField.indexOf('~') > -1) {  
+                          if (FieldType == 'TextBox' || FieldType == 'textarea' || FieldType == 'DateTime' || FieldType == 'lookup' || FieldType == 'number') {  
+                              ValueFrom = document.getElementById('txtSearchValueFrom'+ prefix + IndexField).value;  
+                              ValueTo = document.getElementById('txtSearchValueTo'+ prefix + IndexField).value;  
+                              if (ValueFrom.length > 0 || ValueTo.length > 0) {  
+                                  SearchText = SearchField + '$' + ValueFrom + '~' + ValueTo + '$' + Exactly + '$' + unsigned + '$' + Operator;  
+                              }  
+                          }  
+                      }  
+                      else  
+                      {  
+                          Value = '';  
+                          if (FieldType == 'CheckBox') {  
+                              Value = document.getElementById('txtSearchValue'+ prefix + IndexField).checked.toString() == 'true' ? '1' : '0';  
+                          }  
+                          else if(FieldType == 'unsigned') {  
+                              Value = document.getElementById('txtSearchValue'+ prefix + IndexField).checked.toString() == 'true' ? '1' : '0';  
+                          } 
+                          else if(FieldType == 'exactly') { 
+                              Value = document.getElementById('txtSearchValue'+ prefix + IndexField).checked.toString() == 'true' ? '1' : '0';  
+                          } 
+                          else if(FieldType == 'fieldsearch') { 
+                              SearchField = $('#cbSearchValue'+ prefix + IndexField + ' option:selected').val();  
+                              if(SearchField == '') 
+                                  SearchField = 'all'; 
+                              Value = $('#txtSearchValue'+ prefix + IndexField).val();  
+                              if(Value.length == 0) 
+                              {	 
+                                  $('#txtSearchValue'+ prefix + IndexField).prev().text('Vui lòng nhập điều kiện cần tìm kiếm'); $('#txtSearchValue'+ prefix + IndexField).focus();	return;  
+                              } 
+                              sField = SearchField; 
+                              keyword = Value; 
+                          } 
+                          else if(FieldType == 'listbox') {  
+                              Value = $('#txtSearchValue'+ prefix + IndexField + ' option:selected').val();  
+                          } 
+                          else if(FieldType == 'TextBox'){  
+                              Value = document.getElementById('txtSearchValue'+ prefix + IndexField).value;  
+                          }						    
+                          else {  
+                              Value = document.getElementById('txtSearchValue'+ prefix + IndexField).value;  
+                          } 
+                          if (Value.length > 0) {  
+                              SearchText = SearchField + '$' + Value + '$' + Exactly + '$' + unsigned + '$' + Operator;  
+                          } 
+                      }  
+                      if (SearchText.length > 0) {  
+                          SearchFieldText = SearchFieldText + SearchText + '|';  
+                      }  
+                      SearchText = '';  
+              }         
+              var OAjaxOut = iMan.Opac.FrontEnd.iSearchProcess.ServerReformatKeyword('opac', keyword).value;  
+               if (OAjaxOut.Error) {  
+                    alert(OAjaxOut.ErrorMessage);   
+               }  
+               else  
+               { 
+                   window.open('wpid-search-stype-'+sType + '-sfield-' + sField + '-keyword-' + OAjaxOut.RetUrl + '.html','_self'); 
+               } 
+           } 
+</script> 
+<section class="partner"> 
+    <div class="container"> 
+        <div id="partner" class="middle-owl-controls county"> 
+            <div class="item"> 
+                <a href="http://www.thuvienbinhduong.org.vn" target="_blank"><img class="img-responsive" alt="" src="img/partner/tvbd.png" /></a> 
+            </div> 
+            <div class="item"> 
+                <a href="http://thuviendanang.vn" target="_blank"><img class="img-responsive" alt="" src="img/partner/tvdn.png" /></a> 
+            </div> 
+            <div class="item"> 
+                <a href="http://thuvien.hvnh.edu.vn" target="_blank"><img class="img-responsive" alt="" src="img/partner/hvnh.png" /></a> 
+            </div> 
+            <div class="item"> 
+                <a href="http://thuvien.ftu.edu.vn/sites/default.aspx" target="_blank"><img class="img-responsive" alt="" src="img/partner/tvdhnt.png" /></a> 
+            </div> 
+            <div class="item"> 
+                <a href="http://www.lic.vnu.edu.vn" target="_blank"><img class="img-responsive" alt="" src="img/partner/tvdhqghn.png" /></a> 
+            </div> 
+            <div class="item"> 
+                <a href="http://nlv.gov.vn" target="_blank"><img class="img-responsive" alt="" src="img/partner/tvqg.png" /></a> 
+            </div> 
+            <div class="item"> 
+                <a href="http://www.vnulib.edu.vn" target="_blank"><img class="img-responsive" alt="" src="img/partner/tvhcm.png" /></a> 
+            </div> 
+        </div> 
+           <div class="owl-controls clickable"><div class="owl-buttons"><div class="owl-prev"><span class="glyphicon glyphicon-chevron-left"></span></div><div class="owl-next"><span class="glyphicon glyphicon-chevron-right"></span></div></div></div> 
+    </div> 
+</section> 
+
+<section class="copyright"> 
+    <div class="container"> 
+        <div class="row clearfix"> 
+<div class="col-md-12"> 
+    <a href="#" class="logo-header"><img alt="" src="img/logo.png"></a>  
+    <address><strong>THƯ VIỆN KHOA HỌC TỔNG HỢP THÀNH PHỐ HẢI PHÒNG</strong><br> 
+Địa chỉ: Số 213A Lạch Tray - Ngô Quyền - Hải Phòng<br> 
+Điện thoại: 0225.6260927 - Email: thuvienhaiphong@gmail.com<br> 
+</address> 
+</div> 
+            <div class="col-md-3"> 
+            </div> 
+        </div> 
+    </div> 
+</section> 
+
+
+<!-- Jquery -->
+<script type="text/javascript" src="js/jquery.min.js"></script>
+
+<!-- Bootstrap JS -->
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+
+<!-- Owl carousel JS -->
+<script src="js/owl.carousel.min.js"></script>
+
+<!-- Hover dropdown JS -->
+<script src="js/bootstrap-hover-dropdown.min.js"></script>
+
+<!-- Parallax JS -->
+<script src="js/parallax.min.js"></script>
+
+<!-- Theme JS -->
+<script type="text/javascript" src="js/scripts.js"></script>
+<script type="text/javascript" src="js/mudim.js"></script>
+</body>
+
+ 
+    </body>
+</html>

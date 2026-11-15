@@ -1,0 +1,361 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" charset='utf-8'>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="author" content="PMB Group" />
+
+	<meta name="keywords" content="ULPGL,Goma,DRC,Universit&eacute;,Biblioth&egrave;que" />
+	<meta name="description" content="Catalogue en ligne ." />
+
+	<meta name="robots" content="all" />
+	<!--IE et son enfer de compatibilit?-->
+	<meta http-equiv='X-UA-Compatible' content='IE=8'/>
+	
+	<title>Catalogue en ligne </title>
+	
+	
+	<link rel='stylesheet' type='text/css' href='./styles/common/common.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/bueil/visionneuse.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/bueil/ext_search.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/bueil/colonnes.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/bueil/tags.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/bueil/bueil.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/bueil/print.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/bueil/liste_bulletins.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/bueil/gallerie_photos.css' />
+	<!-- css_authentication -->	<link rel='SHORTCUT ICON' href='images/site/favicon.ico'>
+	<script type="text/javascript" src="includes/javascript/drag_n_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/handle_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/popup.js"></script>
+	<script type='text/javascript'>
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName = 
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {  
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i); 
+				    }
+				 }
+				return items;
+			 }
+		}
+		// Fonction a utilisier pour l'encodage des URLs en javascript
+		function encode_URL(data){
+			var docCharSet = document.characterSet ? document.characterSet : document.charset;
+			if(docCharSet == "UTF-8"){
+				return encodeURIComponent(data);
+			}else{
+				return escape(data);
+			}
+		}
+	</script>
+<script type='text/javascript'>var opac_show_social_network =0;</script>
+	<script type='text/javascript' src='includes/javascript/simili_search.js'></script>
+	<script type='text/javascript' src='.//visionneuse/javascript/visionneuse.js'></script>
+	<script type='text/javascript' src='./includes/javascript/http_request.js'></script>
+	
+	
+	
+	<!-- Enrichissement de notice en Ajax-->
+	<script type='text/javascript' src='./includes/javascript/enrichment.js'></script>
+</head>
+
+<body onload="window.defaultStatus='PMB : Accès public';"  id="pmbopac">
+	<script type='text/javascript' src='./includes/javascript/tablist_ajax.js'></script>
+<script type='text/javascript' src='./includes/javascript/tablist.js'></script>
+<script type='text/javascript' src='./includes/javascript/http_request.js'></script>
+	<div id='att' style='z-Index:1000'></div>
+	<div id="container"><div id="main"><div id='main_header'><h2>Bienvenu dans le catalogue de la Bibliothèque Universitaire de l'ULPGL Goma</h2></div><div id="main_hors_footer">
+						
+<script type='text/javascript' src='./includes/javascript/auth_popup.js'></script>	
+<div id="intro_message"><div class="p1">
+</div><div class="p2">Université Libre des Pays des Grands Lacs</div></div><div id='navigator'>
+<strong>A partir de cette page vous pouvez :</strong>
+<table width='100%'><tr><td ><a href="./index.php?lvl=index" class='navig_lastnotices'><span>Retourner au premier écran avec les dernières notices...</span></a></td>
+<td ><a href="./empr.php" class='navig_lastnotices'><span>Votre compte</span></a></td>
+</tr></table></div><!-- fermeture de #navigator -->
+<div id='resume_panier' class='empty'></div><script type='text/javascript' src='./includes/javascript/misc.js'></script><script>
+terms=new Array('');
+terms_litteraux=new Array('Principes de marketing','Principes de marketing');
+
+codes=new Array();
+codes['a']='[àáâãäåÀÁÂÃÄÅA]';
+codes['c']='[çÇC]';
+codes['e']='[éèêëÈÉÊËE]';
+codes['i']='[ìíîïIÌÍÎÏ]';
+codes['n']='[ñÑnN]';
+codes['o']='[òóôõöøOÒÓÔÕÖØ]';
+codes['u']='[ùúûüUÙÚÛÜ]';
+
+function remplacer_carac(mot)
+{
+var x;	
+var chaine;
+var reg;				
+chaine=mot;
+reg=new RegExp(codes['a'], 'g');
+chaine=chaine.replace(reg, 'a');
+reg=new RegExp(codes['c'], 'g');
+chaine=chaine.replace(reg, 'c');
+reg=new RegExp(codes['e'], 'g');
+chaine=chaine.replace(reg, 'e');
+reg=new RegExp(codes['i'], 'g');
+chaine=chaine.replace(reg, 'i');
+reg=new RegExp(codes['n'], 'g');
+chaine=chaine.replace(reg, 'n');
+reg=new RegExp(codes['o'], 'g');
+chaine=chaine.replace(reg, 'o');
+reg=new RegExp(codes['u'], 'g');
+chaine=chaine.replace(reg, 'u');
+return(chaine);		
+} 	
+		
+function trouver_mots_f(obj,mot,couleur,litteral,onoff) {
+	var i;
+	var chaine;
+	if (obj.hasChildNodes()) {
+		var childs=new Array();
+		childs=obj.childNodes;
+		
+		if (litteral != 0) {
+			mot=remplacer_carac(reverse_html_entities(mot));
+		}
+		
+		for (i=0; i<childs.length; i++) {
+			
+			if (childs[i].nodeType==3) {
+				if (litteral==0){
+					chaine=childs[i].data.toLowerCase();
+					chaine=remplacer_carac(chaine);
+				} else {
+					chaine=childs[i].data;
+					chaine=remplacer_carac(chaine);
+				}
+				 
+				var reg_mot = new RegExp(mot+' *','gi');	
+				if (chaine.match(reg_mot)) {
+					var elt_found = chaine.match(reg_mot);
+					var chaine_display = childs[i].data;
+					var reg = 0;
+					for(var k=0;k<elt_found.length;k++){
+						reg = chaine.indexOf(elt_found[k],reg); 
+						if (onoff==1) {
+							after_shave=chaine_display.substring(reg+elt_found[k].length);
+							sp=document.createElement('span');
+							if (couleur % 6!=0) {
+								sp.className='text_search'+couleur;
+							} else {
+								sp.className='text_search0';
+							}
+							nmot=document.createTextNode(chaine_display.substring(reg,reg+elt_found[k].length));
+							childs[i].data=chaine_display.substring(0,reg);
+							sp.appendChild(nmot);
+						
+							if (after_shave) {
+								var aftern=document.createTextNode(after_shave);
+							} else var aftern='';
+						
+							if (i<childs.length-1) {
+								obj.insertBefore(sp,childs[i+1]);
+								if (aftern) { obj.insertBefore(aftern,childs[i+2]); }
+							} else {
+								obj.appendChild(sp);
+								if (aftern) obj.appendChild(aftern);
+							}
+							chaine_display ='';
+							i++;
+						} else {
+							obj.replaceChild(childs[i],obj);
+						}
+					}
+				}
+			} else if (childs[i].nodeType==1){
+				trouver_mots_f(childs[i],mot,couleur,litteral,onoff);
+			}
+		}
+	}
+}
+		
+function rechercher(onoff) {
+	obj=document.getElementById('res_first_page');
+	if (!obj) {
+		obj=document.getElementById('resultatrech_liste');
+		if(obj) if (obj.getElementsByTagName('blockquote')[0]) {
+			obj=obj.getElementsByTagName('blockquote')[0];
+		}
+	}
+	if (obj) {
+		if (terms[0]!='')
+		{
+			for (var i=0; i<terms.length; i++) {
+				trouver_mots_f(obj,terms[i],i,0,onoff);			
+			}
+		}
+		if (terms_litteraux[0]!='')
+		{
+			for (var i=0; i<terms_litteraux.length; i++) {
+				trouver_mots_f(obj,terms_litteraux[i],i+terms.length,1,onoff);			
+			}
+		}
+	}
+}
+	
+	
+
+
+</script>
+<script type='text/javascript'>
+<!--
+	function test_form(form)
+	{
+
+		return true;
+	}
+-->
+</script>
+			<div id="search">
+
+			<ul class='search_tabs'>
+				<li id='current'>Recherche simple</li>
+				<li><a href="./index.php?search_type_asked=extended_search">Recherche multi-critères</a></li><li><a href="./index.php?search_type_asked=tags_search">Recherche par tags</a></li>
+			</ul>
+			<div id='search_crl'></div>
+
+			<p class="p1"><span>Vous pouvez lancer une recherche portant sur un ou plusieurs mots (titre, auteur, éditeur, ...).</span></p>
+
+			<div class='row'>
+
+			<form name='search_input' action='./index.php?lvl=search_result' method='post' onSubmit="if (search_input.user_query.value.length == 0) { search_input.user_query.value='*'; return true; }">
+
+				 <select name='typdoc'>  <option  value='' selected>Tout type de document</option>
+  <option  value='a'>texte imprim&eacute;</option>
+  <option  value='e'>document cartographique imprim&eacute;</option>
+  <option  value='g'>document projet&eacute; ou vid&eacute;o</option>
+  <option  value='l'>document &eacute;lectronique</option>
+  <option  value='m'>document multim&eacute;dia</option>
+</select><br />
+
+				<input type='hidden' name='surligne' value='1'/>
+				<input type='text' name='user_query' class='text_query' value="&quot;Principes de marketing&quot;" size='65' />
+		
+				<input type='submit' name='ok' value='Rechercher' class='boutonrechercher'/>
+<input type='button' value='Aide' class='bouton' onClick='window.open("./help.php?whatis=simple_search", "search_help", "scrollbars=yes, toolbar=no, dependent=yes, width=400, height=400, resizable=yes"); return false' />
+		<div id='simple_search_zone'>	
+		<div class='row'></div>
+		<div id='zsimples' class='notice-parent'>
+			<img src='./getgif.php?nomgif=plus' name='imEx' id='zsimplesImg' title='' border='0' onClick="expandBase('zsimples', true); return false;" hspace='3'>
+			<span class='notice-heada'>
+				Rechercher dans...
+			</span>
+		</div>
+		<div id='zsimplesChild' class='notice-child' style='margin-bottom:6px;display:none;width:94%'>
+			<div class='row'>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_TITLE' id='look_TITLE' value='1' checked /><label for='look_TITLE'> Titres </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_AUTHOR' id='look_AUTHOR' value='1'  /><label for='look_AUTHOR'> Auteurs </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_PUBLISHER' id='look_PUBLISHER' value='1'  /><label for='look_PUBLISHER'> Editeurs </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_TITRE_UNIFORME' id='look_TITRE_UNIFORME' value='1' /><label for='look_TITRE_UNIFORME'> Titres uniformes </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_COLLECTION' id='look_COLLECTION' value='1'  /><label for='look_COLLECTION'> Collections </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_CATEGORY' id='look_CATEGORY' value='1'  /><label for='look_CATEGORY'> Catégories </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_INDEXINT' id='look_INDEXINT' value='1'  /><label for='look_INDEXINT'> Indexations décimales </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_KEYWORDS' id='look_KEYWORDS' value='1'  /><label for='look_KEYWORDS'> Tags</label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_ABSTRACT' id='look_ABSTRACT' value='1'  /><label for='look_ABSTRACT'> Résumé et notes </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_ALL' id='look_ALL' value='1'  /><label for='look_ALL'> Tous les champs </label></span></div><div style='clear: both;'><input type='hidden' name='look_FIRSTACCESS' value='1' /></div>
+		</div>
+		</div>
+
+			</form>
+
+			</div>
+
+			<script type='text/javascript' src='./includes/javascript/ajax.js'></script>
+			<script type='text/javascript'>
+
+				document.search_input.user_query.focus();
+
+				
+			</script>
+	
+		</div><div><span><div id="search_result" >
+<h3><span>Résultat de la recherche pour le(s) mot(s) <b>&quot;Principes de marketing&quot;</b></span>&nbsp;&nbsp;&nbsp;<img border='0' align='center' src="./images/text_horizontalrule.png" onMouseOver="this.style.cursor='pointer'"alt='Ne pas surligner les mots recherchés' title='Ne pas surligner les mots recherchés' onClick='document.search_input.surligne.value=0;document.search_input.submit();'/></h3>La recherche n'a renvoyé aucun résultat : &nbsp;&nbsp;&nbsp;<a href=#  onClick="w=window.open('./do_resa.php?lvl=make_sugg&oresa=popup','doresa','scrollbars=yes,width=600,height=600,menubar=0,resizable=yes'); w.focus(); return false;" >Faire une suggestion</a><script>document.getElementById('search_result').style.display='';</script></div></span></div>	
+		</div><!-- fin DIV main_hors_footer --><div id="footer">
+
+<span id="footer_rss">
+	
+</span>
+<span id="footer_link_sup">
+		 &nbsp;
+</span>
+
+<span id="footer_link_website">
+	<a class="footer_biblio_name" href="https://bu-ulpgl.net" title=""></a> &nbsp;
+</span>	
+
+<span id="footer_link_pmb">
+ &nbsp;
+		<a class="lien_pmb_footer" href="http://www.sigb.net" title="...une solution libre pour la médiathèque..." target='_blank'>pmb</a> 	
+</span>		
+		
+</div> 
+
+		</div><!-- /div id=main -->
+
+		<div id="intro">
+<div id="intro_bibli">
+			<h3></h3>
+			<div class="p1"></div>
+			<div class="p2"></div>
+			</div>
+		</div><!-- /div id=intro -->		
+		<div id="bandeau"><div id="accueil">
+
+<h3><span onclick='document.location="./index.php?"' style='cursor: pointer;'>Accueil</span></h3>
+<p class="centered"><a href='./index.php?'><img src='images/site/logou.jpg'  border='0' align='center'/></a></p>
+<div id='lang_select'><h3 ><span>Sélection de la langue</span></h3><span><form method="post" action="index.php" ><select name="lang_sel" onchange="this.form.submit();"><option value='fr_FR' selected>Français </option><option value='en_UK'>English (UK)</option></select></form></span></div>
+
+					</div><!-- fermeture #accueil -->
+<div id="connexion">
+
+			<h3>Se connecter</h3><span id='login_form'><form action='empr.php' method='post' name='myform'>
+				<label>accéder à votre compte de lecteur</label><br />
+				<input type='text' name='login' class='login' size='14' value="identifiant" onFocus="this.value='';"><br />
+				<input type='password' name='password' class='password' size='8' value='' />&nbsp;&nbsp;
+				<input type='submit' name='ok' value='ok' class='bouton'></form><a href=./askmdp.php>Mot de passe oublié ?</a></span>
+
+			</div><!-- fermeture #connexion -->
+<div id="meteo">
+
+		<h3>Météo</h3>
+
+		<p class="centered"><div id="cont_4fa6e3dd37f9370c897a4194ddc8f4df"><span id="h_4fa6e3dd37f9370c897a4194ddc8f4df"><a id="a_4fa6e3dd37f9370c897a4194ddc8f4df" href="http://www.tameteo.com/meteo_Goma-Afrique-Republique+democratique+du+Congo-Goma-FZNA-1-9710.html" target="_blank" style="color:#00ABEB;font-family:Roboto;font-size:14px;">M&eacute;t&eacute;o </a>Goma</span><script type="text/javascript" async src="http://www.tameteo.com/wid_loader/4fa6e3dd37f9370c897a4194ddc8f4df"></script></div></p>
+
+		<small>la météo à GISENYI</small>
+
+		</div><!-- fermeture # meteo -->
+<div id="adresse">
+
+		<h3>Adresse</h3>
+
+		<span>
+			<br />
+			02 Avenue du Lac, Com. de GOMA, Nord-Kivu, R.D.Congo<br />
+			468 GISENYI<br />
+			Rwanda&nbsp;<br />
+			+243997775077<br /><span id='opac_biblio_email'>
+			<a href="mailto:bibliotheque@ulpgl.net" alt="bibliotheque@ulpgl.net">contact</a></span></span>
+	    </div><!-- fermeture #adresse --><div id="post_adress">
+
+		<span><br>
+<b>Statistiques</b><br>
+<iframe src="stat2.php" scrolling="no" marginwidth="0" marginheight="0"
+style="width:100%; height:90px; border:0px solid #ffffff;"> </iframe>
+		</span>	
+	    </div><!-- fermeture #post_adress --></div><div id="bandeau_2"></div></div><!-- /div id=container -->
+		
+		<script type='text/javascript'>init_drag();	rechercher(1);</script> 
+		</body>
+		</html>
+		

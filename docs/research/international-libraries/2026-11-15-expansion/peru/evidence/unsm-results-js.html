@@ -1,0 +1,485 @@
+﻿const index = function () {
+
+    const baseRoute = window.location.pathname;
+    const createForm = $('#suggestion-form');
+    let signedIn = false;
+    let gridMode = false;
+    let currentPage = 1;
+
+    const totalRecords = Number($('#records').val());
+
+    const datatable = {
+        items: {
+            object: null,
+            getOptions: function (id) {
+                return {
+                    ajax: {
+                        url: baseRoute,
+                        data: function (data) {
+                            data.handler = "items";
+                            data.id = id;
+                            data.library = $("#library-filter").val()
+                        }
+                    },
+                    ordering: false,
+                    info: false,
+                    columns: [
+                        {
+                            data: "classification",
+                            title: "Clasificación"
+                        },
+                        {
+                            data: "barcode",
+                            title: "Código de Barras"
+                        },
+                        {
+                            data: "library",
+                            title: "Ubicación"
+                        },
+                        {
+                            data: "location",
+                            title: "Sección"
+                        },
+                        {
+                            data: "type",
+                            title: "Tipo"
+                        },
+                        {
+                            data: null,
+                            title: "Estado",
+                            render: function (data) {
+                                if (signedIn && data.status == 'Disponible') {
+                                    var html = `<button class='btn btn-primary btn-sm btn-reservation' data-id="${data.id}">Reservar</button>`;
+                                    return html;
+                                } else
+                                    return data.status;
+                            }
+                        },
+                    ]
+                }
+            },
+            load: function (id) {
+                var options = this.getOptions(id);
+                var table = $(`#table-record-${id}`).DataTable(options);
+                table.on("click", ".btn-reservation", function () {
+                    var id = $(this).data("id");
+                    form.reservation.create(id, table);
+                })
+            },
+            reload: function (id) {
+                var options = this.getOptions(id);
+                $(`#table-record-${id}`).DataTable(options);
+            }
+        }
+    }
+
+    const events = {
+        onShow: function () {
+            $(".btn-accordion").on('click', function () {
+                const record = $(this).data('id');
+                if ($(this).hasClass('loaded'))
+                    return;
+
+                datatable.items.load(record);
+                $(this).addClass('loaded');
+            });
+        },
+        filter: function () {
+            $('.filter').on('click', function () {
+                const type = $(this).data('filter');
+                const value = $(this).data('val');
+
+                const currentUrl = window.location.href;
+                window.location.href = `${currentUrl}&${type}=${value}`;
+            });
+
+            $('#btn-apply-filters').on('click', function () {
+                // const type = $(this).data('filter');
+                // const value = $(this).data('val');
+                //
+                let currentUrl = new URL(window.location.href);
+
+                $('input:checked').each(function () {
+                    currentUrl.searchParams.append($(this).data('filter'), $(this).val());
+                });
+
+                const minYear = $("#min-year").val();
+                if (minYear != null && minYear !== "")
+                    currentUrl.searchParams.set("minYear", minYear);
+
+                const maxYear = $("#max-year").val();
+                if (maxYear != null && maxYear !== "")
+                    currentUrl.searchParams.set("maxYear", maxYear);
+
+                window.location.href = currentUrl.href;
+            });
+        },
+        removeFilter: function () {
+            $('.filter-badge').on('click', function () {
+                const type = $(this).data('filter');
+                const value = $(this).data('val');
+
+                // if (type.indexOf('search') !== -1) {
+                //     let url = window.location.href;
+                //     url = url.replace(`&${type}.type=${value}`, '').replace(`${type}.type=${value}`, '');
+                //     url = url.replace(`&${type}.text=${value}`, '').replace(`${type}.text=${value}`, '');
+                //    
+                //     let encoded = encodeURI(type);
+                //     url = url.replace(`&${encoded}.type=${value}`, '').replace(`${encoded}.type=${value}`, '');
+                //     url = url.replace(`&${encoded}.text=${value}`, '').replace(`${encoded}.text=${value}`, '');
+                //     window.location.href = url;
+                // } else
+                window.location.href = window.location.href.replace(`&${type}=${value}`, '').replace(`${type}=${value}`, '');
+            });
+        },
+        init: function () {
+            /*this.onShow();*/
+            this.filter();
+            this.removeFilter();
+
+            $('.ShowMore').on('click', function () {
+                $(this).closest('.card').first('.list-group').find('.list-group-item:not(:visible):lt(5)').show();
+            })
+
+            $('.ShowLess').on('click', function () {
+                $(this).closest('.card').first('.list-group').find('.list-group-item').hide();
+                $(this).closest('.card').first('.list-group').find('.list-group-item:lt(5)').show();
+            })
+
+            $("#year-filter").ionRangeSlider({
+                onChange: function (data) {
+                    $("#min-year").val(data.from);
+                    $("#max-year").val(data.to);
+                }
+            });
+
+            $('input[type=radio][name=btnradio]').on('change', function () {
+                if (this.value == 'list') {
+                    gridMode = false;
+                    biblios.load(currentPage);
+                }
+                else if (this.value == 'grid') {
+                    gridMode = true;
+                    biblios.load(currentPage);
+                }
+            });
+        }
+    }
+
+    const form = {
+        create: {
+            object: createForm.validate({
+                submitHandler: function (e) {
+                    createForm.block();
+
+                    $.ajax({
+                        url: $(e).attr("action"),
+                        type: "POST",
+                        data: $(e).serialize()
+                    })
+                        .done(function () {
+                            Swal.fire({
+                                icon: 'success',
+                                text: AkApp.Constants.Message.Success.Create,
+                                confirmButtonText: 'Excelente',
+                                allowOutsideClick: false,
+                                customClass: {
+                                    confirmButton: "btn btn-success",
+                                },
+                            })
+                                .then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location = `/usuario/mis-sugerencias`;
+                                    }
+                                })
+                        })
+                        .fail(function (error) {
+                            Swal.fire({
+                                icon: 'error',
+                                text: error.responseText ?? AkApp.Constants.Message.Error.Task,
+                                customClass: {
+                                    confirmButton: "btn btn-danger",
+                                },
+                            })
+                        })
+                        .always(function () {
+                            createForm.unblock();
+                        });
+                }
+            }),
+            clear: function () {
+                this.object.resetForm();
+                createForm.trigger("reset");
+            }
+        },
+        reservation: {
+            create: function (id, table) {
+                biblios.object.block();
+                $.ajax({
+                    url: `${baseRoute}?handler=createReservation`,
+                    type: "POST",
+                    data: {
+                        itemId: id
+                    }
+                })
+                    .done(function () {
+                        table.ajax.reload(null, false);
+                        Swal.fire({
+                            icon: 'success',
+                            text: "Se ha realizado su reserva. Por favor acérquese a la Biblioteca para realizar su préstamo.",
+                            confirmButtonText: 'Excelente',
+                            customClass: {
+                                confirmButton: "btn btn-success",
+                            },
+                        });
+                    })
+                    .fail(function (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            text: error.responseText ?? AkApp.Constants.Message.Error.Task,
+                            customClass: {
+                                confirmButton: "btn btn-danger",
+                            },
+                        })
+                    })
+                    .always(function () {
+                        biblios.object.unblock();
+                    });
+            }
+        }
+    }
+
+    const biblios = {
+        object: $("#biblio-container"),
+        load: function (page = 1) {
+            this.object.block();
+
+            $("html, body").animate({ scrollTop: 0 });
+
+            $.ajax({
+                url: $(location).attr("href"),
+                type: "GET",
+                data: {
+                    handler: "biblios",
+                    page: page
+                }
+            })
+                .done(function (data) {
+                    var html = "";
+                    if (data.records.length == 0) {
+                        html = `<div class="text-center">No se encontraron registros`
+                        if (data.signed) {
+                            html += ` <br />
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#suggestion-modal">¿Desea registrar una sugerencia?</a>`
+                        }
+                        html += `</div>`;
+                    } else {
+                        var paging = biblios.generatePaging(page, totalRecords);
+
+                        html += paging;
+
+                        if (gridMode) {
+
+                            html += '<div class="row">';
+
+                            $.each(data.records, function (index, element) {
+                                var img = element.bookCover == "" || element.bookCover == null ? "/images/sin-tapa-libro.png" : `/archivos/descargar/${element.bookCover}`;
+
+                                html += `<div class="col-6 col-md-3 col-sm-4 d-flex">
+                            <div class="card book-item mb-3 w-100">
+                            <div class="card-body">
+                                    <div class="mb-1">
+                                        <img class="img-fluid rounded-end w-100" src="${img}" alt="Imagen" style="height: 200px;" />
+                                    </div>
+                                    <a href="/catalogo/detalle/${element.id}" class="card-title text-primary d-block mb-2">
+                                         ${element.title}
+                                    </a>
+                                    <div class="mb-1" style="font-style: italic; font-size: 0.9rem;">
+                                        ${element.authorities ?? ""}
+                                    </div>
+                                    <div style="font-size: 0.9rem;">
+                                        Ejemplares (${element.items})
+                                    </div>     
+                            </div>
+                            </div>
+                        </div>`;
+                            });
+
+                            html += '</div>';
+                        }
+                        else {
+                            $.each(data.records, function (index, element) {
+                                var img = element.bookCover == "" || element.bookCover == null ? "/images/sin-tapa-libro.png" : `/archivos/descargar/${element.bookCover}`;
+                                html += `<div class="card book-item mb-3">
+        <div class="row g-0">
+            <div class="col-md-9">
+                <div class="card-body pb-0">
+                    <a href="/catalogo/detalle/${element.id}" class="card-title text-primary d-block">
+                        ${element.title}
+                    </a>
+                    <div class="row mb-1">
+                        <div class="col-4 fw-bold">Autor(es):</div>
+                        <div class="col-8">${element.authorities ?? ""}</div>
+                    </div>
+                    <div class="row mb-1">
+                        <div class="col-4 fw-bold">Editorial:</div>
+                        <div class="col-8">${element.publisher ?? ""}</div>
+                    </div>
+                    <div class="row mb-1">
+                        <div class="col-4 fw-bold">Año de Publicación:</div>
+                        <div class="col-8">${element.publicationYear}</div>
+                    </div>
+                    <div class="row mb-1">
+                        <div class="col-4 fw-bold">Clasificación:</div>
+                        <div class="col-8">${element.classification ?? ""}</div>
+                    </div>
+                    <div class="row mb-1">
+                        <div class="col-4 fw-bold">Ejemplares:</div>
+                        <div class="col-8">${element.items}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <img class="img-fluid rounded-end w-100 pt-4" src="${img}" alt="Imagen" />
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="accordion" id="accordion-record-${element.id}">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed btn-accordion" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-record-${element.id}" data-id="${element.id}" aria-expanded="false" aria-controls="collapseTwo">
+                            <strong>Detalle del registro</strong>&nbsp;/ Ejemplares disponibles (${element.items})
+                        </button>
+                    </h2>
+                    <div id="collapse-record-${element.id}" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordion-record-${element.id}">
+                        <div class="accordion-body">
+                            <div class="row mb-1">
+                                <div class="col-4 fw-bold">Dimensión:</div>
+                                <div class="col-8">${element.dewey}</div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col-4 fw-bold">ISBN/ISSN/DL:</div>
+                                <div class="col-8">${element.isbn}/${element.issn}/-</div>
+                            </div>
+                            <div class="row mb-1">
+                                <div class="col-4 fw-bold">Nota del Contenido:</div>
+                                <div class="col-8"></div>
+                            </div>
+
+                            <table id="table-record-${element.id}" class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Clasificación</th>
+                                        <th scope="col">Código de Barras</th>
+                                        <th scope="col">Ubicación</th>
+                                        <th scope="col">Sección</th>
+                                        <th scope="col">Tipo</th>
+                                        <th scope="col">Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-group-divider">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>`;
+                            });
+                        }
+                       
+                        html += paging;
+                    }
+
+                    $('#biblio-container').html(html);
+
+                    var instance = new Mark(document.querySelector('#biblio-container'));
+
+                    instance.mark($('#search-filter').val(), {
+                        "accuracy": {
+                            "value": "exactly",
+                            "limiters": [",", ".", ";"]
+                        }
+                    });
+
+                    signedIn = data.signed;
+                    events.onShow();
+                    currentPage = page;
+                })
+                .fail(function (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        text: error.responseText ?? AkApp.Constants.Message.Error.Task,
+                        customClass: {
+                            confirmButton: "btn btn-danger",
+                        },
+                    })
+                })
+                .always(function () {
+                    biblios.object.unblock();
+                });
+        },
+        generatePaging: function (page, total) {
+            var finalPage = Math.ceil(total / 20);
+            if (finalPage <= 1) return '';
+
+            var startIndex = Math.max(1, page - 4);
+            var endIndex = Math.min(finalPage, page + 4);
+            var html = [];
+            html.push('<div class="row"><div class="col"><ul class="pagination justify-content-end">');
+
+            // First and Previous
+            if (page === 1) {
+                html.push('<li class="page-item disabled"><a class="page-link disabled" tabindex="-1"><span>«</span></a></li>');
+                html.push('<li class="page-item disabled"><a class="page-link disabled" tabindex="-1"><span>‹</span></a></li>');
+            } else {
+                html.push(`<li class="page-item"><a class="page-link" onclick="index.loadData(1)" href="javascript:void(0)"><span>«</span></a></li>`);
+                html.push(`<li class="page-item"><a class="page-link" onclick="index.loadData(${page - 1})" href="javascript:void(0)"><span>‹</span></a></li>`);
+            }
+
+            // Page numbers
+            for (var i = startIndex; i <= endIndex; i++) {
+                if (i === page) {
+                    html.push(`<li class="page-item active"><a class="page-link active" tabindex="-1">${i}</a></li>`);
+                } else {
+                    html.push(`<li class="page-item"><a class="page-link" onclick="index.loadData(${i})" href="javascript:void(0)">${i}</a></li>`);
+                }
+            }
+
+            // Next and Last
+            if (page === finalPage) {
+                html.push('<li class="page-item disabled"><a class="page-link disabled" tabindex="-1"><span>›</span></a></li>');
+                html.push('<li class="page-item disabled"><a class="page-link disabled" tabindex="-1"><span>»</span></a></li>');
+            } else {
+                html.push(`<li class="page-item"><a class="page-link" onclick="index.loadData(${page + 1})" href="javascript:void(0)"><span>›</span></a></li>`);
+                html.push(`<li class="page-item"><a class="page-link" onclick="index.loadData(${finalPage})" href="javascript:void(0)"><span>»</span></a></li>`);
+            }
+
+            html.push('</ul></div></div>');
+            return html.join('');
+        }
+    }
+
+    return {
+        init: function () {
+            events.init();
+            biblios.load();
+        },
+        loadData: function (page) {
+            biblios.load(page);
+        }
+    }
+}();
+
+function AddParam(value, type) {
+    let currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.append(type, value);
+    window.location.href = currentUrl.href;
+}
+
+$(() => {
+    index.init();
+});
+

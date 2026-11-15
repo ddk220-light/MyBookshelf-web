@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val))" :class="{ 'dark': darkMode }">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="T4WGXJuzenQBVDE2zbp45K1pjlmnMY7174DiwbqJ">
+    <meta name="token-refresh-url" content="https://library.abrehot.org.et/refresh-token">
+
+    <title>Abrehot Library | Explore Our Collection</title>
+    <meta name="description" content="Abrehot Library - Gateway to knowledge with a vast collection of books, digital resources, and study spaces.">
+    
+    
+    <link rel="icon" href="https://library.abrehot.org.et/favicon.ico" type="image/x-icon">
+    <!-- For Lora -->
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+
+
+    
+    <script @cspNonce>
+        
+        window.appConfig = {
+            csrfToken: 'T4WGXJuzenQBVDE2zbp45K1pjlmnMY7174DiwbqJ',
+            isFrontend: true, 
+            sessionLifetimeMinutes: 15 
+        };
+    </script>
+    
+    
+    <link rel="preload" as="style" href="https://library.abrehot.org.et/build/css/website.css" /><link rel="preload" as="style" href="https://library.abrehot.org.et/build/css/website2.css" /><link rel="preload" as="style" href="https://library.abrehot.org.et/build/css/all.css" /><link rel="modulepreload" as="script" href="https://library.abrehot.org.et/build/js/website2.js" /><link rel="modulepreload" as="script" href="https://library.abrehot.org.et/build/js/vendor.js" /><link rel="modulepreload" as="script" href="https://library.abrehot.org.et/build/js/vendor-jquery.js" /><link rel="modulepreload" as="script" href="https://library.abrehot.org.et/build/js/website-refresh.js" /><link rel="stylesheet" href="https://library.abrehot.org.et/build/css/website.css" data-navigate-track="reload" /><link rel="stylesheet" href="https://library.abrehot.org.et/build/css/website2.css" data-navigate-track="reload" /><link rel="stylesheet" href="https://library.abrehot.org.et/build/css/all.css" data-navigate-track="reload" /><script type="module" src="https://library.abrehot.org.et/build/js/website2.js" data-navigate-track="reload"></script><script type="module" src="https://library.abrehot.org.et/build/js/website-refresh.js" data-navigate-track="reload"></script>    
+    
+    <script >window.Wireui = {cache: {},hook(hook, callback) {window.addEventListener(`wireui:${hook}`, () => callback())},dispatchHook(hook) {window.dispatchEvent(new Event(`wireui:${hook}`))}}</script>
+<script src="https://library.abrehot.org.et/wireui/assets/scripts" defer ></script>
+    
+    
+        
+    
+    <!-- Livewire Styles --><style >[wire\:loading][wire\:loading], [wire\:loading\.delay][wire\:loading\.delay], [wire\:loading\.inline-block][wire\:loading\.inline-block], [wire\:loading\.inline][wire\:loading\.inline], [wire\:loading\.block][wire\:loading\.block], [wire\:loading\.flex][wire\:loading\.flex], [wire\:loading\.table][wire\:loading\.table], [wire\:loading\.grid][wire\:loading\.grid], [wire\:loading\.inline-flex][wire\:loading\.inline-flex] {display: none;}[wire\:loading\.delay\.none][wire\:loading\.delay\.none], [wire\:loading\.delay\.shortest][wire\:loading\.delay\.shortest], [wire\:loading\.delay\.shorter][wire\:loading\.delay\.shorter], [wire\:loading\.delay\.short][wire\:loading\.delay\.short], [wire\:loading\.delay\.default][wire\:loading\.delay\.default], [wire\:loading\.delay\.long][wire\:loading\.delay\.long], [wire\:loading\.delay\.longer][wire\:loading\.delay\.longer], [wire\:loading\.delay\.longest][wire\:loading\.delay\.longest] {display: none;}[wire\:offline][wire\:offline] {display: none;}[wire\:dirty]:not(textarea):not(input):not(select) {display: none;}:root {--livewire-progress-bar-color: #2299dd;}[x-cloak] {display: none !important;}[wire\:cloak] {display: none !important;}dialog#livewire-error::backdrop {background-color: rgba(0, 0, 0, .6);}</style>
+</head>
+<body class="antialiased">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <div class="page-wrapper">
+        <!-- Header -->
+<header x-data="{ scrolled: false, mobileMenuOpen: false }" 
+       @scroll.window="scrolled = window.scrollY > 30" 
+       @keydown.escape.window="mobileMenuOpen = false"
+       :class="{ 'scrolled': scrolled }">
+    <nav class="navbar" aria-label="Primary navigation">
+        <div class="logo-container">
+            <img src="https://library.abrehot.org.et/assets/image/53vxx3kj.png" alt="Library Logo" class="logo animate-float">
+            <span class="logo-text">Abrehot <span class="text-gradient">Library</span></span>
+        </div>
+        <button
+            type="button"
+            class="mobile-menu-btn"
+            id="mobileMenuBtn"
+            @click="mobileMenuOpen = !mobileMenuOpen"
+            :aria-expanded="mobileMenuOpen.toString()"
+            aria-controls="navLinks"
+            aria-label="Toggle navigation menu"
+        >
+            <i class="fas" :class="mobileMenuOpen ? 'fa-times' : 'fa-bars'" aria-hidden="true"></i>
+        </button>
+        <ul class="nav-links" id="navLinks" :class="{ 'active': mobileMenuOpen }">
+            <li style="--item-index: 0"><a href="https://library.abrehot.org.et" class="" @click="mobileMenuOpen = false"><i class="fas fa-home me-2" aria-hidden="true"></i> Home</a></li>
+            <li style="--item-index: 1"><a href="https://library.abrehot.org.et#books" class="active" @click="mobileMenuOpen = false"><i class="fas fa-book me-2" aria-hidden="true"></i> Books</a></li>
+            <li style="--item-index: 2"><a href="https://library.abrehot.org.et#study-rooms" class="" @click="mobileMenuOpen = false"><i class="fas fa-door-open me-2" aria-hidden="true"></i> Study Rooms</a></li>
+            <li style="--item-index: 3"><a href="https://library.abrehot.org.et/events" class="" @click="mobileMenuOpen = false"><i class="fas fa-calendar-alt me-2" aria-hidden="true"></i> Events</a></li>
+            <!-- <li style="--item-index: 4"><a href="https://library.abrehot.org.et/feedback" class="" @click="mobileMenuOpen = false"><i class="fas fa-comment me-2"></i> Feedback</a></li> -->
+            <li style="--item-index: 4"><a href="https://library.abrehot.org.et#contact" class="" @click="mobileMenuOpen = false"><i class="fas fa-envelope me-2" aria-hidden="true"></i> Contact</a></li>
+            <li style="--item-index: 5"><a href="https://library.abrehot.org.et/login" class="login-btn" @click="mobileMenuOpen = false">
+                <i class="fas fa-user-circle me-2" aria-hidden="true"></i> Login
+            </a></li>
+        </ul>
+    </nav>
+</header> 
+        <main id="main-content" class="main-content" tabindex="-1">
+                    
+    <div class="container">
+        <div wire:snapshot="{&quot;data&quot;:{&quot;query&quot;:&quot;Things Fall Apart&quot;,&quot;category&quot;:&quot;&quot;,&quot;activeCategory&quot;:&quot;ALL BOOKS&quot;,&quot;searchQuery&quot;:&quot;Things Fall Apart&quot;,&quot;page&quot;:1,&quot;showBookModal&quot;:false,&quot;selectedBook&quot;:null,&quot;books_available&quot;:0,&quot;parentCat&quot;:null,&quot;paginators&quot;:[{&quot;page&quot;:1},{&quot;s&quot;:&quot;arr&quot;}]},&quot;memo&quot;:{&quot;id&quot;:&quot;2fNfufXPYITsIqratH3D&quot;,&quot;name&quot;:&quot;frontend.explore-collection&quot;,&quot;path&quot;:&quot;explore&quot;,&quot;method&quot;:&quot;GET&quot;,&quot;release&quot;:&quot;a-a-a&quot;,&quot;children&quot;:[],&quot;scripts&quot;:[],&quot;assets&quot;:[],&quot;errors&quot;:[],&quot;locale&quot;:&quot;en&quot;},&quot;checksum&quot;:&quot;04cf960b0effba78f550dbed9f48e33590fb9eabda03ae03aa97a08bda090472&quot;}" wire:effects="{&quot;url&quot;:{&quot;query&quot;:{&quot;as&quot;:&quot;query&quot;,&quot;use&quot;:&quot;push&quot;,&quot;alwaysShow&quot;:false,&quot;except&quot;:&quot;&quot;},&quot;category&quot;:{&quot;as&quot;:&quot;category&quot;,&quot;use&quot;:&quot;push&quot;,&quot;alwaysShow&quot;:false,&quot;except&quot;:&quot;&quot;},&quot;page&quot;:{&quot;as&quot;:&quot;page&quot;,&quot;use&quot;:&quot;push&quot;,&quot;alwaysShow&quot;:false,&quot;except&quot;:1},&quot;paginators.page&quot;:{&quot;as&quot;:&quot;page&quot;,&quot;use&quot;:&quot;push&quot;,&quot;alwaysShow&quot;:false,&quot;except&quot;:null}},&quot;listeners&quot;:[&quot;setCategory&quot;,&quot;search&quot;,&quot;refreshComponent&quot;,&quot;showBookDetails&quot;]}" wire:id="2fNfufXPYITsIqratH3D">
+<div class="books">
+    <div class="books-container">
+            <div class="section-header">
+                <h2>Explore Our <span> Collection </span></h2>
+                <p> Thousands of books at your fingertips</p>
+            </div>
+            <div class="books-search">
+                <label for="explore-search" class="visually-hidden">Search books</label>
+                <input type="text" 
+                       id="explore-search"
+                       wire:model.defer="searchQuery" 
+                       wire:keydown.enter="search"
+                       placeholder="Type here to search by { Title | Author | Publisher | Tag } & Enter"
+                       value="Things Fall Apart">
+                <button class="search-btn" wire:click="search">
+                    Search
+                    <span wire:loading wire:target="search" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                </button>
+            </div>
+            <div class="category-tabs" role="group" aria-label="Book categories">
+                <!-- All Books tab -->
+                <button type="button"
+                        class="category-tab active"
+                        wire:click="setCategory('ALL BOOKS')"
+                        aria-pressed="true">
+                    ALL BOOKS
+                    <span wire:loading wire:target="setCategory('ALL BOOKS')" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                </button>
+                
+                <!-- Dynamic categories from database -->
+                <!--[if BLOCK]><![endif]-->                                        
+                    <button type="button"
+                            class="category-tab "
+                            wire:click="setCategory('1')"
+                            aria-pressed="false">
+                        Elementary and High School text books
+                        <span wire:loading wire:target="setCategory('1')" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    </button>
+                                                        
+                    <button type="button"
+                            class="category-tab "
+                            wire:click="setCategory('3')"
+                            aria-pressed="false">
+                        Computer science
+                        <span wire:loading wire:target="setCategory('3')" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    </button>
+                                                        
+                    <button type="button"
+                            class="category-tab "
+                            wire:click="setCategory('4')"
+                            aria-pressed="false">
+                        Philosophy and Psychology 
+                        <span wire:loading wire:target="setCategory('4')" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    </button>
+                                                        
+                    <button type="button"
+                            class="category-tab "
+                            wire:click="setCategory('5')"
+                            aria-pressed="false">
+                        Religion 
+                        <span wire:loading wire:target="setCategory('5')" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    </button>
+                                                        
+                    <button type="button"
+                            class="category-tab "
+                            wire:click="setCategory('6')"
+                            aria-pressed="false">
+                        Social Sciences
+                        <span wire:loading wire:target="setCategory('6')" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    </button>
+                                                        
+                    <button type="button"
+                            class="category-tab "
+                            wire:click="setCategory('7')"
+                            aria-pressed="false">
+                        Languages
+                        <span wire:loading wire:target="setCategory('7')" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    </button>
+                                                        
+                    <button type="button"
+                            class="category-tab "
+                            wire:click="setCategory('8')"
+                            aria-pressed="false">
+                        Natural Science
+                        <span wire:loading wire:target="setCategory('8')" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    </button>
+                                                        
+                    <button type="button"
+                            class="category-tab "
+                            wire:click="setCategory('9')"
+                            aria-pressed="false">
+                        Literature
+                        <span wire:loading wire:target="setCategory('9')" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    </button>
+                                                        
+                    <button type="button"
+                            class="category-tab "
+                            wire:click="setCategory('10')"
+                            aria-pressed="false">
+                        History and geography
+                        <span wire:loading wire:target="setCategory('10')" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    </button>
+                                                        
+                    <button type="button"
+                            class="category-tab "
+                            wire:click="setCategory('1007')"
+                            aria-pressed="false">
+                        Technology
+                        <span wire:loading wire:target="setCategory('1007')" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    </button>
+                                                        
+                    <button type="button"
+                            class="category-tab "
+                            wire:click="setCategory('1034')"
+                            aria-pressed="false">
+                        Art and Creation
+                        <span wire:loading wire:target="setCategory('1034')" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    </button>
+                                                        
+                    <button type="button"
+                            class="category-tab "
+                            wire:click="setCategory('1043')"
+                            aria-pressed="false">
+                        Ethiopian Collection
+                        <span wire:loading wire:target="setCategory('1043')" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    </button>
+                                                        
+                    <button type="button"
+                            class="category-tab "
+                            wire:click="setCategory('1072')"
+                            aria-pressed="false">
+                        Reference
+                        <span wire:loading wire:target="setCategory('1072')" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    </button>
+                <!--[if ENDBLOCK]><![endif]-->            </div>
+            
+            <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->            
+            <!--[if BLOCK]><![endif]-->            <div class="books-grid">
+                    <!--[if BLOCK]><![endif]-->                                                
+                <div class="book-card">
+                    <div class="book-cover">
+                                <img src="https://library.abrehot.org.et/img/not_found.png" alt="ለየቅል (things Fall Apart)">
+                                <!--[if BLOCK]><![endif]-->                        <span class="book-status">Available</span>
+                                <!--[if ENDBLOCK]><![endif]-->                    </div>
+                    <div class="book-info">
+                                <h3>ለየቅል (things Fall Apart)</h3>
+                                <p class="book-author">ቺንዋ አቸቤ, ሰሎሞን ዳኜ ቸኮል(ተርጓሚ)</p>
+                        <div class="book-meta">
+                                    <span>Shelf No: 7</span>
+                                    <!--[if BLOCK]><![endif]-->                                        <span>2 ኛ እትም</span>
+                                    <!--[if ENDBLOCK]><![endif]-->                                </div>
+                                <button wire:click="showBookDetails(95708)" class="view-details-btn">
+                                    View Details
+                                    <span wire:loading wire:target="showBookDetails(95708)" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                                                                    
+                <div class="book-card">
+                    <div class="book-cover">
+                                <img src="https://library.abrehot.org.et/uploads/1770203684_6NPr83kHyj.jpg" alt="Things Fall Apart">
+                                <!--[if BLOCK]><![endif]-->                        <span class="book-status">Available</span>
+                                <!--[if ENDBLOCK]><![endif]-->                    </div>
+                    <div class="book-info">
+                                <h3>Things Fall Apart</h3>
+                                <p class="book-author">Achebe  Chinua</p>
+                        <div class="book-meta">
+                                    <span>Shelf No: 9</span>
+                                    <!--[if BLOCK]><![endif]-->                                        <span>English</span>
+                                    <!--[if ENDBLOCK]><![endif]-->                                </div>
+                                <button wire:click="showBookDetails(91099)" class="view-details-btn">
+                                    View Details
+                                    <span wire:loading wire:target="showBookDetails(91099)" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                                                                    
+                <div class="book-card">
+                    <div class="book-cover">
+                                <img src="https://library.abrehot.org.et/uploads/dVdZh1Zx9j.jpg" alt="When Things Fall Apart : qualitative studies of poverty in the former Soviet Union ">
+                                <!--[if BLOCK]><![endif]-->                        <span class="book-status">Available</span>
+                                <!--[if ENDBLOCK]><![endif]-->                    </div>
+                    <div class="book-info">
+                                <h3>When Things Fall Apart : quali...</h3>
+                                <p class="book-author">Dudwick, Nora.(ed)...etal</p>
+                        <div class="book-meta">
+                                    <span>Shelf No: 18</span>
+                                    <!--[if BLOCK]><![endif]-->                                                                                <span>Social Sciences</span>
+                                    <!--[if ENDBLOCK]><![endif]-->                                </div>
+                                <button wire:click="showBookDetails(63899)" class="view-details-btn">
+                                    View Details
+                                    <span wire:loading wire:target="showBookDetails(63899)" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                                                                    
+                <div class="book-card">
+                    <div class="book-cover">
+                                <img src="https://library.abrehot.org.et/uploads/xXBYYWmtBu.jpg" alt="Things Fall Apart">
+                                <!--[if BLOCK]><![endif]-->                        <span class="book-status">Available</span>
+                                <!--[if ENDBLOCK]><![endif]-->                    </div>
+                    <div class="book-info">
+                                <h3>Things Fall Apart</h3>
+                                <p class="book-author">Achebe, Chinua</p>
+                        <div class="book-meta">
+                                    <span>Shelf No: 7</span>
+                                    <!--[if BLOCK]><![endif]-->                                                                                <span>Literature</span>
+                                    <!--[if ENDBLOCK]><![endif]-->                                </div>
+                                <button wire:click="showBookDetails(41266)" class="view-details-btn">
+                                    View Details
+                                    <span wire:loading wire:target="showBookDetails(41266)" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                                                                    
+                <div class="book-card">
+                    <div class="book-cover">
+                                <img src="https://library.abrehot.org.et/uploads/1770203684_6NPr83kHyj.jpg" alt="Things Fall Apart">
+                                <!--[if BLOCK]><![endif]-->                        <span class="book-status">Available</span>
+                                <!--[if ENDBLOCK]><![endif]-->                    </div>
+                    <div class="book-info">
+                                <h3>Things Fall Apart</h3>
+                                <p class="book-author">: Achebe, Chinua; Okeke, Uche</p>
+                        <div class="book-meta">
+                                    <span>Shelf No: 7</span>
+                                    <!--[if BLOCK]><![endif]-->                                        <span>English</span>
+                                    <!--[if ENDBLOCK]><![endif]-->                                </div>
+                                <button wire:click="showBookDetails(40949)" class="view-details-btn">
+                                    View Details
+                                    <span wire:loading wire:target="showBookDetails(40949)" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                                                                    
+                <div class="book-card">
+                    <div class="book-cover">
+                                <img src="https://library.abrehot.org.et/uploads/ofeW77Bikw.jpg" alt="Approaches to Teaching Achebe&#039;s Things Fall Apart">
+                                <!--[if BLOCK]><![endif]-->                        <span class="book-status">Available</span>
+                                <!--[if ENDBLOCK]><![endif]-->                    </div>
+                    <div class="book-info">
+                                <h3>Approaches to Teaching Achebe&#039;...</h3>
+                                <p class="book-author">Lindfors, Bernth</p>
+                        <div class="book-meta">
+                                    <span>Shelf No: 7</span>
+                                    <!--[if BLOCK]><![endif]-->                                                                                <span>Literature</span>
+                                    <!--[if ENDBLOCK]><![endif]-->                                </div>
+                                <button wire:click="showBookDetails(34188)" class="view-details-btn">
+                                    View Details
+                                    <span wire:loading wire:target="showBookDetails(34188)" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                                                                    
+                <div class="book-card">
+                    <div class="book-cover">
+                                <img src="https://library.abrehot.org.et/img/not_found.png" alt="Things fall apart">
+                                <!--[if BLOCK]><![endif]-->                        <span class="book-status">Available</span>
+                                <!--[if ENDBLOCK]><![endif]-->                    </div>
+                    <div class="book-info">
+                                <h3>Things fall apart</h3>
+                                <p class="book-author">Achebe, Chinua;</p>
+                        <div class="book-meta">
+                                    <span>Shelf No: 2</span>
+                                    <!--[if BLOCK]><![endif]-->                                                                                <span>Literature</span>
+                                    <!--[if ENDBLOCK]><![endif]-->                                </div>
+                                <button wire:click="showBookDetails(32792)" class="view-details-btn">
+                                    View Details
+                                    <span wire:loading wire:target="showBookDetails(32792)" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                                                                    
+                <div class="book-card">
+                    <div class="book-cover">
+                                <img src="https://library.abrehot.org.et/uploads/yqjjqfsYgd.jpg" alt="Things Fall Apart">
+                                <!--[if BLOCK]><![endif]-->                        <span class="book-status">Available</span>
+                                <!--[if ENDBLOCK]><![endif]-->                    </div>
+                    <div class="book-info">
+                                <h3>Things Fall Apart</h3>
+                                <p class="book-author">Achebe, Chinua</p>
+                        <div class="book-meta">
+                                    <span>Shelf No: 2</span>
+                                    <!--[if BLOCK]><![endif]-->                                                                                <span>Literature</span>
+                                    <!--[if ENDBLOCK]><![endif]-->                                </div>
+                                <button wire:click="showBookDetails(27762)" class="view-details-btn">
+                                    View Details
+                                    <span wire:loading wire:target="showBookDetails(27762)" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                                                                    
+                <div class="book-card">
+                    <div class="book-cover">
+                                <img src="https://library.abrehot.org.et/uploads/FEVKG2IQIn.jpg" alt="Things Fall Apart">
+                                <!--[if BLOCK]><![endif]-->                        <span class="book-status">Available</span>
+                                <!--[if ENDBLOCK]><![endif]-->                    </div>
+                    <div class="book-info">
+                                <h3>Things Fall Apart</h3>
+                                <p class="book-author">Chinua Achebe</p>
+                        <div class="book-meta">
+                                    <span>Shelf No: 3</span>
+                                    <!--[if BLOCK]><![endif]-->                                                                                <span>Literature</span>
+                                    <!--[if ENDBLOCK]><![endif]-->                                </div>
+                                <button wire:click="showBookDetails(15869)" class="view-details-btn">
+                                    View Details
+                                    <span wire:loading wire:target="showBookDetails(15869)" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                                                                    
+                <div class="book-card">
+                    <div class="book-cover">
+                                <img src="https://library.abrehot.org.et/uploads/1772541937_ADtOx5XHbb.jpg" alt="Things fall apart">
+                                <!--[if BLOCK]><![endif]-->                        <span class="book-status">Available</span>
+                                <!--[if ENDBLOCK]><![endif]-->                    </div>
+                    <div class="book-info">
+                                <h3>Things fall apart</h3>
+                                <p class="book-author">Achebe  Chinua; Okeke  Uche</p>
+                        <div class="book-meta">
+                                    <span>Shelf No: 7</span>
+                                    <!--[if BLOCK]><![endif]-->                                                                                <span>Literature</span>
+                                    <!--[if ENDBLOCK]><![endif]-->                                </div>
+                                <button wire:click="showBookDetails(15580)" class="view-details-btn">
+                                    View Details
+                                    <span wire:loading wire:target="showBookDetails(15580)" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                    <!--[if ENDBLOCK]><![endif]-->                </div>
+                
+                <!-- Pagination -->
+                <div class="pagination-container">
+                    <!-- Pagination loading indicator -->
+                    <div wire:loading wire:target="gotoPage, nextPage, previousPage" class="pagination-loading-indicator">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    
+                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--> 
+                </div>
+                
+                <!-- Page refresher for debugging only if needed -->
+                <div wire:key="page-refresher" style="display: none;">
+                    Current Page: 1
+                </div>
+            <!--[if ENDBLOCK]><![endif]-->        </div>
+    </div>
+
+    
+    <!-- Book Details Modal -->
+    <div class="modal fade" id="bookDetailsModal" tabindex="-1" aria-labelledby="bookDetailsModalLabel" aria-hidden="true" wire:ignore.self>
+        <!-- Modal Loading Overlay -->
+        <div wire:loading wire:target="showBookDetails" class="modal-loading-overlay">
+            <div class="spinner-container">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2 text-white">Loading book details...</p>
+            </div>
+        </div>
+        
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->            </div>
+        </div>
+    </div>
+    
+    </div>
+    </div>
+        </main>
+        
+        <!-- Footer -->
+<footer>
+    <div class="footer-container">
+        <div class="footer-about animate-fade-in-up delay-1">
+            <div class="footer-logo">
+                <img src="https://library.abrehot.org.et/assets/image/53vxx3kj.png" alt="Library Logo" class="animate-float">
+                <span class="footer-logo-text">Abrehot</span>
+            </div>
+            <p>Abrehot Library is a beacon of knowledge, dedicated to fostering education, research, and community engagement through access to information and learning resources.</p>
+            <div class="social-links">
+                                    <a href="https://www.facebook.com/abrehotlibrary" class="social-link" aria-label="Facebook" target="_blank">
+                        <i class="fab fa-facebook-f" aria-hidden="true"></i>
+                    </a>
+                                
+                                    <a href="https://twitter.com/Abrehot_library" class="social-link" aria-label="Twitter" target="_blank">
+                        <i class="fab fa-twitter" aria-hidden="true"></i>
+                    </a>
+                                
+                                    <a href="http://insta.com/Abrehot_library" class="social-link" aria-label="Instagram" target="_blank">
+                        <i class="fab fa-instagram" aria-hidden="true"></i>
+                    </a>
+                                
+                                    <a href="http://linkdin.com/Abrehot_library" class="social-link" aria-label="LinkedIn" target="_blank">
+                        <i class="fab fa-linkedin-in" aria-hidden="true"></i>
+                    </a>
+                            </div>
+        </div>
+        <div class="footer-links animate-fade-in-up delay-2">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="https://library.abrehot.org.et"><i class="fas fa-chevron-right" aria-hidden="true"></i> Home</a></li>
+                <li><a href="https://library.abrehot.org.et/explore"><i class="fas fa-chevron-right" aria-hidden="true"></i> Book Catalog</a></li>
+                <li><a href="https://library.abrehot.org.et/rooms"><i class="fas fa-chevron-right" aria-hidden="true"></i> Study Rooms</a></li>
+                <li><a href="https://library.abrehot.org.et/events"><i class="fas fa-chevron-right" aria-hidden="true"></i> Events & Programs</a></li>
+                <li><a href="https://library.abrehot.org.et/login"><i class="fas fa-chevron-right" aria-hidden="true"></i> Membership</a></li>
+                <li><a href="https://library.abrehot.org.et/contact"><i class="fas fa-chevron-right" aria-hidden="true"></i> Contact Us</a></li>
+                <li><a href="https://library.abrehot.org.et/feedback"><i class="fas fa-chevron-right" aria-hidden="true"></i> Give a Feedback</a></li>
+            </ul>
+        </div>
+        <div class="footer-links animate-fade-in-up delay-3">
+            <h3>Resources</h3>
+            <ul>
+                <li><a href="#"><i class="fas fa-chevron-right" aria-hidden="true"></i> Research Databases</a></li>
+                <li><a href="#"><i class="fas fa-chevron-right" aria-hidden="true"></i> E-books</a></li>
+                <li><a href="#"><i class="fas fa-chevron-right" aria-hidden="true"></i> Academic Journals</a></li>
+                <li><a href="#"><i class="fas fa-chevron-right" aria-hidden="true"></i> Children's Section</a></li>
+                <li><a href="#"><i class="fas fa-chevron-right" aria-hidden="true"></i> New Arrivals</a></li>
+                <li><a href="#"><i class="fas fa-chevron-right" aria-hidden="true"></i> Staff Picks</a></li>
+            </ul>
+        </div>
+        <div class="newsletter animate-fade-in-up delay-4">
+            <div wire:snapshot="{&quot;data&quot;:{&quot;email&quot;:&quot;&quot;,&quot;success&quot;:false,&quot;errorMessage&quot;:&quot;&quot;},&quot;memo&quot;:{&quot;id&quot;:&quot;j5yhuyxHED7iNyhLLMir&quot;,&quot;name&quot;:&quot;frontend.newsletter-subscription&quot;,&quot;path&quot;:&quot;explore&quot;,&quot;method&quot;:&quot;GET&quot;,&quot;release&quot;:&quot;a-a-a&quot;,&quot;children&quot;:[],&quot;scripts&quot;:[],&quot;assets&quot;:[],&quot;errors&quot;:[],&quot;locale&quot;:&quot;en&quot;},&quot;checksum&quot;:&quot;d537e9ac96bfbb914f310bc8cc6dd586797e3358f3164200b15dab42adaafcbf&quot;}" wire:effects="[]" wire:id="j5yhuyxHED7iNyhLLMir">
+    <h3>Newsletter</h3>
+    <p>Subscribe to our newsletter to receive updates on new arrivals, events, and special programs.</p>
+    
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->    
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->    
+    <form class="newsletter-form" wire:submit.prevent="subscribe">
+        <div class="newsletter-input-container">
+            <label for="newsletter-email" class="visually-hidden">Email address</label>
+            <input id="newsletter-email" type="email" class="newsletter-input" placeholder="Your email address" wire:model.live="email" autocomplete="email" value="">
+            <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->        </div>
+        <button type="submit" class="newsletter-btn animate-pulse">
+            <span class="visually-hidden">Subscribe</span>
+            <span aria-hidden="true" wire:loading.remove wire:target="subscribe"><i class="fas fa-paper-plane" aria-hidden="true"></i></span>
+            <span aria-hidden="true" wire:loading wire:target="subscribe"><i class="fas fa-spinner fa-spin" aria-hidden="true"></i></span>
+        </button>
+    </form>
+    
+    <style>
+    .newsletter-alert {
+        margin-bottom: 15px;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+    }
+    .newsletter-input-container {
+        position: relative;
+        flex: 1;
+    }
+    .newsletter-error-message {
+        display: block;
+        color: #dc3545;
+        font-size: 0.8rem;
+        margin-top: 5px;
+        position: absolute;
+        bottom: -20px;
+        left: 0;
+    }
+    </style>
+</div>         </div>
+    </div>
+    <div class="copyright">
+        <p>&copy; 2026 Abrehot Library. All Rights Reserved.</p>
+    </div>
+</footer> 
+        <!-- Floating Language Switcher (Google Translate) -->
+        <div class="fixed right-5 bottom-24 z-[1001]" aria-label="Language switcher">
+            <div class="relative">
+                <button
+                    type="button"
+                    id="websiteLangToggle"
+                    translate="no"
+                    class="w-12 h-12 rounded-full border border-gray-200 bg-white text-gray-900 shadow-lg flex items-center justify-center font-semibold hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800"
+                    aria-haspopup="menu"
+                    aria-expanded="false"
+                    aria-controls="websiteLangMenu"
+                    title="Language"
+                >
+                    <span class="notranslate">Ln</span>
+                </button>
+
+                <div
+                    id="websiteLangMenu"
+                    class="hidden absolute bottom-full mb-2 right-0 w-40 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-900"
+                    role="menu"
+                    aria-label="Select language"
+                >
+                    <button type="button" class="w-full px-3 py-2 text-left text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-gray-800" role="menuitem" data-website-lang="en">English</button>
+                    <button type="button" class="w-full px-3 py-2 text-left text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-gray-800" role="menuitem" data-website-lang="am">Amharic</button>
+                    <button type="button" class="w-full px-3 py-2 text-left text-gray-900 hover:bg-gray-50 dark:text-gray-100 dark:hover:bg-gray-800" role="menuitem" data-website-lang="om">Oromifa</button>
+                </div>
+            </div>
+
+            <!-- Google Translate mounts here (kept hidden; we use our own UI) -->
+            <div id="google_translate_element" class="hidden"></div>
+        </div>
+        
+        <!-- Back to Top Button -->
+        <a href="#main-content" class="back-to-top" aria-label="Back to top">
+            <i class="fas fa-arrow-up" aria-hidden="true"></i>
+        </a>
+        
+        <!-- Theme Toggle Button 
+        <button 
+            class="theme-toggle" 
+            @click="darkMode = !darkMode" 
+            aria-label="Toggle dark mode"
+        >
+            <i class="fas" :class="darkMode ? 'fa-sun' : 'fa-moon'"></i>
+        </button> -->
+    </div>
+    
+    <!-- Page-specific scripts -->
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Explore Collection page loaded');
+            
+            // Check if Bootstrap is loaded
+            if (typeof bootstrap === 'undefined' || typeof bootstrap.Modal === 'undefined') {
+                console.warn('Bootstrap not available, loading from CDN for modal functionality');
+                
+                // Load Bootstrap CSS if needed
+                if (!document.querySelector('link[href*="bootstrap"]')) {
+                    const link = document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.href = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css';
+                    document.head.appendChild(link);
+                }
+                
+                // Load Bootstrap JS
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js';
+                script.onload = function() {
+                    console.log('Bootstrap loaded from CDN, initializing modal');
+                    initializeBookDetailsModal();
+                };
+                document.head.appendChild(script);
+            } else {
+                console.log('Bootstrap already loaded, initializing modal');
+                initializeBookDetailsModal();
+            }
+            
+            // Initialize category tabs click events as a fallback
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const categoryName = this.textContent.trim();
+                    // Only apply visual change, Livewire will handle the actual state
+                    document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Check if there's a search query in sessionStorage from the hero search
+            const heroSearchQuery = sessionStorage.getItem('heroSearchQuery');
+            if (heroSearchQuery) {
+                // Clear the sessionStorage item after use
+                sessionStorage.removeItem('heroSearchQuery');
+                
+                // Find the search input in this component
+                const searchInput = document.querySelector('.books-search input[wire\\:model\\.defer="searchQuery"]');
+                if (searchInput) {
+                    // Set the value in the input field
+                    searchInput.value = heroSearchQuery;
+                    
+                    // Get Livewire component instance
+                    if (window.Livewire) {
+                        try {
+                            // Update the Livewire component property directly
+                            const component = window.Livewire.find(
+                                document.querySelector('[wire\\:id]').getAttribute('wire:id')
+                            );
+                            
+                            if (component) {
+                                // Set the search query and trigger search
+                                component.set('searchQuery', heroSearchQuery);
+                                
+                                // Trigger search after a short delay
+                                setTimeout(() => {
+                                    component.call('search');
+                                }, 300);
+                            }
+                        } catch (err) {
+                            console.error('Error triggering Livewire search:', err);
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Initialize Bootstrap modal for book details
+        function initializeBookDetailsModal() {
+            // Modal initialization
+            var bookDetailsModal = document.getElementById('bookDetailsModal');
+            if (bookDetailsModal) {
+                // Create Bootstrap modal instance
+                var bsModal = new bootstrap.Modal(bookDetailsModal);
+                
+                // Make the modal accessible globally (for debugging and direct access)
+                window.bookDetailsModal = bsModal;
+                
+                // Listen for Livewire events to show the modal
+                window.Livewire.on('showModal', () => {
+                    bsModal.show();
+                });
+                
+                // Listen for Livewire events to hide the modal
+                window.Livewire.on('hideModal', () => {
+                    bsModal.hide();
+                });
+                
+                // Ensure modal is properly closed when user clicks close button
+                bookDetailsModal.addEventListener('hidden.bs.modal', function() {
+                    window.Livewire.dispatch('closeBookModal');
+                });
+                
+                // Livewire hooks for handling modal state
+                window.Livewire.hook('message.processed', (message, component) => {
+                    if (component.fingerprint && component.fingerprint.name === 'frontend.explore-collection') {
+                        const showModal = component.data?.showBookModal;
+                        if (showModal) {
+                            bsModal.show();
+                        } else {
+                            bsModal.hide();
+                        }
+                    }
+                });
+            }
+        }
+        
+        // Function to show book preview
+        function showPreview() {
+            // Get selected book data
+            const selectedBook = null;
+            
+            if (!selectedBook) return;
+            
+            // Check if there's a preview URL
+            const previewUrl = selectedBook.preview_url || 
+                (selectedBook.custom_file ? `/uploads/${selectedBook.custom_file}` : null);
+                
+            if (!previewUrl) {
+                Swal.fire({
+                    title: 'Preview Not Available',
+                    text: 'This book does not have a preview available.',
+                    icon: 'info',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+            
+            // Open preview in a new window/tab
+            window.open(previewUrl, '_blank');
+        }
+    </script>
+        
+    <!-- Livewire Scripts -->
+    <script src="/livewire/livewire.min.js?id=40a765a4"   data-csrf="T4WGXJuzenQBVDE2zbp45K1pjlmnMY7174DiwbqJ" data-update-uri="/livewire/update" data-navigate-once="true"></script>
+</body>
+</html>  

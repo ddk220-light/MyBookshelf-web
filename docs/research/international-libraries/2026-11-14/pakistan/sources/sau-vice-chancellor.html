@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <link href="https://i.postimg.cc/VvsYGLNk/Whats-App-Image-2026-06-23-at-11-39-00-AM.jpg" rel="icon">
+    <title>Central Library SAU Tandojam</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { 
+            font-family: 'Poppins', 'Segoe UI', sans-serif; 
+            background: #f8f9fa; 
+            color: #333; 
+            line-height: 1.6; 
+        }
+
+        /* ========== HEADER (SAU GREEN THEME) ========== */
+        .main-header {
+            background: linear-gradient(135deg, #2a7a30 0%, #1d3c1d 100%);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            width: 100%;
+        }
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            gap: 20px;
+        }
+        .header-logo { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            flex-shrink: 0;
+            justify-content: flex-start !important;
+        }
+        
+        /* ========== LOGO - ROUNDED RECTANGLE (ZOOMED & CROPPED) ========== */
+        .logo-container {
+            width: 70px;
+            height: 70px;
+            background: #ffffff;
+            border-radius: 10%;
+            padding: 4px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
+        
+        .logo-container:hover {
+            transform: scale(1.05);
+        }
+        
+        .logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            transform: scale(1.1);
+        }
+
+        .header-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            text-align: left !important;
+        }
+        .header-text h1 { 
+            color: #fff; 
+            font-size: 22px; 
+            font-weight: 700; 
+            letter-spacing: 0.5px; 
+            margin: 0; 
+            white-space: nowrap;
+            text-align: left !important;
+        }
+        .header-text .urdu-text {
+            color: rgba(255,255,255,0.95);
+            font-size: 15px;
+            font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif;
+            direction: rtl;
+            margin: 2px 0;
+            line-height: 1.4;
+            text-align: left !important;
+        }
+        .header-text p { 
+            color: rgba(255,255,255,0.9); 
+            font-size: 13px; 
+            margin: 2px 0 0; 
+            font-weight: 400; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px;
+            text-align: left !important;
+        }
+        .opac-badge {
+            background: #c5a059; 
+            color: #fff; 
+            padding: 3px 12px; 
+            border-radius: 20px;
+            font-size: 10px; 
+            font-weight: 700; 
+            letter-spacing: 1px; 
+            box-shadow: 0 2px 5px rgba(197,160,89,0.4);
+        }
+        .header-nav { 
+            flex: 1; 
+            display: flex; 
+            justify-content: flex-end; 
+            margin-left: 15px; 
+        }
+
+        #cssmenu { background: transparent; width: 100%; }
+        #cssmenu ul { list-style: none; display: flex; flex-wrap: wrap; gap: 5px; }
+        #cssmenu > ul > li { position: relative; }
+        #cssmenu > ul > li > a { 
+            display: block; 
+            padding: 10px 16px; 
+            font-size: 12px; 
+            color: #fff; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            text-decoration: none; 
+            border-radius: 6px; 
+            transition: 0.3s; 
+            letter-spacing: 0.5px;
+        }
+        #cssmenu > ul > li:hover > a, #cssmenu > ul > li.active > a { 
+            background: #4caf50; 
+            transform: translateY(-1px);
+        }
+        #cssmenu > ul > li.has-sub > a::after { 
+            content: ' ▾'; 
+            font-size: 10px; 
+            margin-left: 4px; 
+        }
+        
+        #cssmenu ul ul { 
+            display: none; 
+            position: absolute; 
+            top: 100%; 
+            left: 0; 
+            background: #1d3c1d;
+            border-radius: 8px; 
+            min-width: 220px; 
+            z-index: 9999; 
+            border-top: 3px solid #c5a059;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+            overflow: hidden; 
+            margin-top: 5px;
+        }
+        #cssmenu ul ul li a { 
+            display: block; 
+            padding: 12px 18px; 
+            font-size: 12px; 
+            color: rgba(255,255,255,0.9); 
+            text-decoration: none; 
+            border-bottom: 1px solid rgba(255,255,255,0.05); 
+            transition: 0.2s; 
+        }
+        #cssmenu ul ul li:last-child a { border-bottom: none; }
+        #cssmenu ul ul li:hover > a { 
+            background: #c5a059; 
+            padding-left: 24px; 
+            color: #fff;
+        }
+        
+        .nav-toggle { 
+            display: none; 
+            flex-direction: column; 
+            justify-content: center; 
+            width: 40px; 
+            height: 40px; 
+            cursor: pointer; 
+            gap: 5px; 
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .nav-toggle span { 
+            display: block; 
+            width: 24px; 
+            height: 2px; 
+            background: #fff; 
+            border-radius: 2px; 
+            transition: 0.3s; 
+        }
+        .nav-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .nav-toggle.active span:nth-child(2) { opacity: 0; }
+        .nav-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        /* ========== RESPONSIVE - 800px TOGGLE ========== */
+        @media (max-width: 1024px) {
+            .logo-container { width: 55px; height: 55px; }
+            .header-text h1 { font-size: 18px; }
+            .header-text .urdu-text { font-size: 13px; }
+        }
+
+        @media (max-width: 800px) {
+            .header-container { 
+                flex-wrap: wrap;
+                padding: 8px 50px 8px 15px;
+                min-height: 50px;
+                gap: 10px;
+            }
+            .header-logo {
+                gap: 8px;
+                justify-content: flex-start !important;
+                width: 100%;
+            }
+            .logo-container { 
+                width: 35px; 
+                height: 35px;
+                padding: 2px;
+            }
+            .header-text {
+                gap: 0px;
+                text-align: left !important;
+            }
+            .header-text h1 { 
+                font-size: 14px;
+                white-space: normal;
+                text-align: left !important;
+            }
+            .header-text .urdu-text { 
+                font-size: 10px;
+                text-align: left !important;
+            }
+            .header-text p { 
+                font-size: 8px;
+                text-align: left !important;
+            }
+            .opac-badge {
+                padding: 1px 5px;
+                font-size: 8px;
+            }
+            .nav-toggle { 
+                display: flex;
+                right: 8px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 36px;
+                height: 36px;
+            }
+            .header-nav { 
+                width: 100%; 
+                order: 3; 
+                margin-left: 0; 
+                margin-top: 5px;
+                justify-content: flex-start;
+            }
+            #cssmenu ul { 
+                display: none; 
+                flex-direction: column; 
+                width: 100%; 
+                background: rgba(0,0,0,0.2); 
+                margin-top: 8px; 
+                border-radius: 8px; 
+                padding: 5px; 
+            }
+            #cssmenu ul.mobile-open { display: flex; }
+            #cssmenu > ul > li > a { 
+                padding: 10px 15px;
+                border-radius: 6px;
+                font-size: 13px;
+            }
+            #cssmenu ul ul { 
+                position: static; 
+                width: 100%; 
+                background: rgba(0,0,0,0.15); 
+                border-top: none; 
+                box-shadow: none; 
+                margin-top: 0; 
+                border-radius: 0; 
+            }
+            #cssmenu ul ul li a { padding-left: 35px !important; }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 4px 40px 4px 10px;
+                min-height: 45px;
+                flex-direction: row;
+                align-items: center !important;
+            }
+            .header-logo {
+                gap: 6px;
+                width: auto;
+            }
+            .logo-container {
+                width: 32px;
+                height: 32px;
+            }
+            .header-text h1 {
+                font-size: 13px;
+            }
+            .header-text .urdu-text {
+                font-size: 9px;
+            }
+            .header-text p {
+                font-size: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-container {
+                padding: 3px 38px 3px 8px;
+                min-height: 40px;
+            }
+            .logo-container {
+                width: 30px;
+                height: 30px;
+            }
+            .header-text h1 {
+                font-size: 12px;
+            }
+            .header-text .urdu-text {
+                font-size: 8px;
+            }
+            .header-text p {
+                font-size: 7px;
+            }
+            .opac-badge {
+                padding: 1px 4px;
+                font-size: 7px;
+            }
+            .nav-toggle {
+                width: 32px;
+                height: 32px;
+                right: 6px;
+            }
+        }
+
+        /* ========== MARQUEE ========== */
+        .marquee-container {
+            background: #fff; 
+            border-bottom: 2px solid #2a7a30;
+            padding: 12px 0; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+        .marquee-container marquee { 
+            color: #1d3c1d; 
+            font-size: 15px; 
+            font-weight: 600; 
+        }
+        .marquee-container marquee i { 
+            color: #c5a059; 
+            margin-right: 10px;
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content { max-width: 1400px; margin: 50px auto; padding: 0 20px; }
+
+        /* ========== VICE CHANCELLOR SECTION ========== */
+        .vc-section {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            margin-bottom: 50px;
+            box-shadow: 0 15px 40px -10px rgba(0,0,0,0.08);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+        .vc-text {
+            flex: 1.5;
+            padding: 50px;
+            position: relative;
+        }
+        .vc-text::before {
+            content: '\201C';
+            position: absolute;
+            top: 30px; right: 40px;
+            font-size: 10rem;
+            color: rgba(42,122,48,0.05);
+            font-family: serif;
+            line-height: 1;
+            z-index: 0;
+        }
+        .vc-text h2 {
+            font-size: 2.2rem;
+            color: #1d3c1d;
+            margin-bottom: 25px;
+            border-left: 5px solid #c5a059;
+            padding-left: 20px;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+        .vc-text h2 i { color: #c5a059; margin-right: 12px; }
+        .vc-text p {
+            text-align: justify;
+            line-height: 1.9;
+            color: #555;
+            margin-bottom: 30px;
+            font-size: 0.98rem;
+            position: relative;
+            z-index: 1;
+        }
+        .vc-signature {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 2px solid #e0e6ea;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .vc-signature-icon {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #2a7a30;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        .vc-signature-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: 50%;
+        }
+        .vc-signature-text h4 {
+            color: #c5a059;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+        .vc-signature-text p {
+            color: #1d3c1d;
+            margin: 0;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .vc-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 50px;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            min-width: 300px;
+        }
+        .vc-image-wrapper {
+            position: relative;
+        }
+        .vc-image img {
+            width: 100%;
+            max-width: 350px;
+            height: auto;
+            aspect-ratio: 1 / 1;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 8px solid #fff;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            transition: 0.3s;
+        }
+        .vc-image img:hover {
+            border-color: #c5a059;
+            transform: scale(1.03);
+        }
+        .vc-image-badge {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #c5a059;
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(197,160,89,0.3);
+            white-space: nowrap;
+        }
+
+        /* ========== DIGITAL LIBRARY SECTION ========== */
+        .digital-section {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px -10px rgba(0,0,0,0.08);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: stretch;
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+        .digital-img {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            padding: 50px;
+            min-width: 300px;
+        }
+        .digital-img img {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            aspect-ratio: 900 / 1060;
+            object-fit: cover;
+            border-radius: 20px;
+            border: 6px solid #fff;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            transition: 0.3s;
+        }
+        .digital-img img:hover {
+            border-color: #2a7a30;
+            transform: scale(1.02);
+        }
+        .digital-text {
+            flex: 1.3;
+            padding: 50px;
+            background: #fff;
+            position: relative;
+        }
+        .digital-text h2 {
+            font-size: 2.2rem;
+            color: #1d3c1d;
+            margin-bottom: 25px;
+            border-left: 5px solid #c5a059;
+            padding-left: 20px;
+            font-weight: 700;
+        }
+        .digital-text h2 i { color: #c5a059; margin-right: 12px; }
+        .digital-text p {
+            text-align: justify;
+            line-height: 1.9;
+            color: #555;
+            font-size: 0.98rem;
+        }
+        .digital-text strong {
+            color: #c5a059;
+            font-weight: 700;
+        }
+        .digital-features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .digital-feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 3px solid #2a7a30;
+            transition: 0.3s;
+        }
+        .digital-feature:hover {
+            border-left-color: #c5a059;
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .digital-feature i {
+            font-size: 1.2rem;
+            color: #2a7a30;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .digital-feature:hover i {
+            color: #c5a059;
+        }
+        .digital-feature span {
+            font-size: 0.85rem;
+            color: #555;
+            font-weight: 500;
+        }
+
+        @media (max-width: 900px) {
+            .vc-section, .digital-section { flex-direction: column; }
+            .vc-text, .digital-text { order: 2; padding: 30px; }
+            .vc-image, .digital-img { order: 1; padding: 30px; }
+            .vc-text h2, .digital-text h2 { font-size: 1.6rem; }
+            .vc-image img { max-width: 280px; }
+            .digital-img img { max-width: 320px; }
+            .digital-features { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 600px) {
+            .vc-text, .digital-text { padding: 25px 20px; }
+            .vc-image, .digital-img { padding: 25px 20px; }
+            .vc-image img { max-width: 220px; }
+            .digital-img img { max-width: 260px; }
+            .vc-signature { flex-direction: column; text-align: center; }
+        }
+
+        /* ========== FOOTER ========== */
+        .opac-credits { 
+            background: linear-gradient(135deg, #1d3c1d 0%, #0f280f 100%);
+            color: #ffffff; 
+            margin-top: 60px; 
+            font-size: 14px; 
+            width: 100%; 
+        }
+        .footer-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 40px; 
+            padding: 50px 20px; 
+            max-width: 1400px; 
+            margin: 0 auto; 
+        }
+        .footer-col h4 { 
+            color: #ffffff; 
+            font-size: 16px; 
+            font-weight: 700; 
+            margin-bottom: 20px; 
+            padding-bottom: 10px; 
+            border-bottom: 2px solid #c5a059;
+            display: inline-block; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+        }
+        .footer-col p { 
+            color: rgba(255,255,255,0.8); 
+            line-height: 1.7; 
+            margin-bottom: 15px; 
+            font-size: 13px; 
+        }
+        .footer-contact-item { 
+            display: flex; 
+            align-items: flex-start; 
+            gap: 12px; 
+            margin-bottom: 12px; 
+            font-size: 13px; 
+            color: rgba(255,255,255,0.8); 
+        }
+        .footer-contact-item i { 
+            color: #c5a059; 
+            width: 18px; 
+            margin-top: 3px;
+        }
+        
+        .footer-links { list-style: none; padding: 0; }
+        .footer-links li { margin-bottom: 10px; }
+        .footer-links a { 
+            color: rgba(255,255,255,0.8); 
+            text-decoration: none; 
+            transition: 0.3s; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            font-size: 13px; 
+        }
+        .footer-links a::before { 
+            content: "\f105"; 
+            font-family: "Font Awesome 6 Free"; 
+            font-weight: 900; 
+            color: #c5a059; 
+            font-size: 12px;
+        }
+        .footer-links a:hover { color: #fff; padding-left: 5px; }
+        
+        .footer-gallery { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 10px; 
+        }
+        .footer-gallery-item { 
+            position: relative; 
+            overflow: hidden; 
+            border-radius: 10px; 
+            aspect-ratio: 1/1; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        .footer-gallery-item:nth-child(n+5) { display: none; }
+        .footer-gallery-item:hover { 
+            transform: scale(1.05); 
+            border-color: #c5a059;
+        }
+        .footer-gallery-item img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            transition: 0.4s; 
+        }
+        .footer-gallery-item:hover img { transform: scale(1.1); }
+        .footer-gallery-item::after { 
+            content: "\f002"; 
+            font-family: "Font Awesome 6 Free"; 
+            font-weight: 900; 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%) scale(0); 
+            color: #fff; 
+            font-size: 16px; 
+            background: rgba(197,160,89,0.9);
+            width: 30px; 
+            height: 30px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            transition: 0.3s; 
+        }
+        .footer-gallery-item:hover::after { transform: translate(-50%, -50%) scale(1); }
+        
+        .footer-map iframe { 
+            width: 100%; 
+            height: 180px; 
+            border-radius: 10px; 
+            border: 2px solid rgba(255,255,255,0.1); 
+            filter: grayscale(20%); 
+        }
+        
+        .footer-bottom { 
+            background: #0a1f0a; 
+            padding: 20px; 
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.05); 
+        }
+        .footer-bottom-content { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 15px; 
+        }
+        .social-btn-container { 
+            display: flex; 
+            gap: 12px; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+        }
+        .social-btn { 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            width: 38px; 
+            height: 38px; 
+            border: 1px solid rgba(255,255,255,0.2); 
+            border-radius: 50%; 
+            background: transparent; 
+            color: #fff; 
+            font-size: 14px; 
+            transition: 0.3s; 
+            text-decoration: none; 
+        }
+        .social-btn:hover { 
+            background: #c5a059; 
+            border-color: #c5a059; 
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(197,160,89,0.4); 
+        }
+        .footer-credits, .copyright-text { 
+            font-size: 12px; 
+            color: rgba(255,255,255,0.6); 
+        }
+        .footer-credits span { 
+            color: #c5a059; 
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .footer-grid { grid-template-columns: 1fr; text-align: center; gap: 30px; }
+            .footer-contact-item { justify-content: center; }
+            .footer-links a { justify-content: center; }
+            .footer-col h4 { display: block; text-align: center; width: fit-content; margin: 0 auto 20px; }
+            .footer-gallery { justify-content: center; grid-template-columns: repeat(3, 80px); margin: 0 auto; }
+        }
+
+        /* ========== LIGHTBOX ========== */
+        .lightbox-overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.95); 
+            z-index: 10000; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            visibility: hidden; 
+            opacity: 0; 
+            transition: 0.3s; 
+        }
+        .lightbox-overlay.active { visibility: visible; opacity: 1; }
+        .lightbox-content { position: relative; max-width: 90%; max-height: 90%; }
+        .lightbox-img { 
+            max-width: 90vw; 
+            max-height: 85vh; 
+            object-fit: contain; 
+            border-radius: 8px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+        }
+        .lb-close { 
+            position: absolute; 
+            top: -40px; 
+            right: 0; 
+            font-size: 32px; 
+            color: white; 
+            cursor: pointer; 
+            background: none; 
+            border: none; 
+            transition: 0.2s; 
+        }
+        .lb-close:hover { color: #c5a059; transform: scale(1.1); }
+        .lb-prev, .lb-next { 
+            position: absolute; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            background: rgba(0,0,0,0.5); 
+            color: white; 
+            border: none; 
+            font-size: 24px; 
+            width: 45px; 
+            height: 45px; 
+            cursor: pointer; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            transition: 0.2s; 
+        }
+        .lb-prev { left: -60px; } 
+        .lb-next { right: -60px; }
+        .lb-prev:hover, .lb-next:hover { background: #c5a059; }
+        @media (max-width: 768px) {
+            .lb-prev { left: 10px; } 
+            .lb-next { right: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<div class="main-header">
+    <div class="header-container">
+        <div class="header-logo">
+            <a href="/cgi-bin/koha/opac-main.pl">
+                <div class="logo-container">
+                    <img src="https://i.postimg.cc/VvsYGLNk/Whats-App-Image-2026-06-23-at-11-39-00-AM.jpg" alt="SAU Logo">
+                </div>
+            </a>
+            <div class="header-text">
+                <h1>SINDH AGRICULTURE UNIVERSITY</h1>
+                <span class="urdu-text">سنڌ زرعي يونيورسٽي ٽنڊوڄام</span>
+                <p>Central Library <span class="opac-badge">OPAC</span></p>
+            </div>
+        </div>
+        <div class="nav-toggle" id="navToggle"><span></span><span></span><span></span></div>
+        <div class="header-nav">
+            <div id="cssmenu">
+                <ul id="mainMenu">
+                    <li class="active"><a href="https://opac.sau.edu.pk/cgi-bin/koha/opac-main.pl/">HOME</a></li>
+                    <li><a href="https://opac.sau.edu.pk/lib/vice-chancellor.html">VICE-CHANCELLOR</a></li>
+                    <li><a href="https://opac.sau.edu.pk/lib/library.html">LIBRARY</a></li>
+                    <li><a href="https://opac.sau.edu.pk/lib/ayaz.html">AYAZ-CORNER</a></li>
+                    <li><a href="https://opac.sau.edu.pk/lib/sau-library-staff.html">STAFF</a></li>
+                    <li><a href="https://opac.sau.edu.pk/lib/contactus.html">Contact Us</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== MARQUEE ========== -->
+<div class="marquee-container">
+    <marquee behavior="scroll" direction="left" scrollamount="5">
+        <i class="fas fa-bullhorn"></i> Welcome to Central Library, Sindh Agriculture University, Tando Jam - Your Gateway to Knowledge
+    </marquee>
+</div>
+
+<!-- ========== MAIN CONTENT ========== -->
+<div class="main-content">
+    <!-- Vice Chancellor Section -->
+    <div class="vc-section">
+        <div class="vc-text">
+            <h2 style="font-size: 33px;"><i class="fas fa-user-tie"></i> Message From The Vice Chancellor</h2>
+            <p>It gives me great pleasure to say that the Central Library of Sindh Agriculture University (SAU), Tandojam, stands as the intellectual heart of our university, bridging traditional learning with modern digital resources. Under my guidance, the library has grown into a complete and dynamic resource center, offering a vast collection of printed books alongside access to thousands of international online journals and databases through the HEC Digital Library.</p>
+            <p>I am proud to share that our library provides a comfortable and inspiring study environment with dedicated reading areas and fully automated services, ensuring that both our students and faculty have everything they need to excel academically. It is my firm belief that by empowering our researchers with the right knowledge and tools, we can collectively address the challenges of global food security and drive meaningful rural development.</p>
+            <p>Our rich collection of hundreds of thousands of volumes, including rare textbooks, international journals, and specialized research reports in agronomy, veterinary sciences, agricultural engineering, information technology, and social sciences, reflects our deep commitment to academic excellence and the advancement of agriculture.</p>
+            <div class="vc-signature">
+                <div class="vc-signature-icon">
+                    <img src="img/vice-1.png" alt="Prof. Dr. Altaf Ali Siyal">
+                </div>
+                <div class="vc-signature-text">
+                    <h4>Prof. Dr. Altaf Ali Siyal</h4>
+                    <p>Vice Chancellor, SAU Tandojam</p>
+                </div>
+            </div>
+        </div>
+        <div class="vc-image">
+            <div class="vc-image-wrapper">
+                <img src="img/vice.jpg" alt="Vice Chancellor Prof. Dr. Altaf Ali Siyal">
+                <div class="vc-image-badge">Vice Chancellor</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Digital Library Section -->
+    <div class="digital-section">
+        <div class="digital-img">
+            <img src="img/digital.png" alt="Digital Library">
+        </div>
+        <div class="digital-text">
+            <h2><i class="fas fa-laptop-code"></i> Digital Library</h2>
+            <p>Welcome to the Digital Library of Sindh Agriculture University (SAU), Tandojam. Our digital library is a modern and easy-to-use platform that gives our students, teachers, and researchers quick and simple access to knowledge from around the world.</p>
+            <p style="margin-top: 15px;">We use the <strong>Koha Library Management System</strong>, which helps us manage all library activities smoothly and allows users to search for books and journals easily through our online system called <strong>Web-OPAC</strong>. Through the <strong>HEC National Digital Library</strong>, we provide access to more than <strong>11,000 research journals</strong> and thousands of e-books, all available at the click of a button.</p>
+            <p style="margin-top: 15px;">Our digital library is especially helpful for <strong>Ph.D., M.Phil., and Master's</strong> students who need the latest research and scientific information for their studies. We have made sure that our internet connection is fast and reliable so that no one faces any difficulty while accessing these resources.</p>
+            
+            <div class="digital-features">
+                <div class="digital-feature">
+                    <i class="fas fa-book-open"></i>
+                    <span>11,000+ Research Journals</span>
+                </div>
+                <div class="digital-feature">
+                    <i class="fas fa-database"></i>
+                    <span>HEC Digital Library</span>
+                </div>
+                <div class="digital-feature">
+                    <i class="fas fa-search"></i>
+                    <span>Web-OPAC Search</span>
+                </div>
+                <div class="digital-feature">
+                    <i class="fas fa-wifi"></i>
+                    <span>High-Speed Internet</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== FOOTER ========== -->
+<footer class="opac-credits">
+    <div class="footer-grid">
+        <div class="footer-col">
+            <h4><i class="fas fa-university"></i> About Library</h4>
+            <p>The Central Library of Sindh Agriculture University, Tando Jam, is dedicated to providing comprehensive academic resources, digital databases, and a conducive environment for research and learning.</p>
+            <div class="footer-contact-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Sindh Agriculture University, Tando Jam, Sindh, Pakistan</span>
+            </div>
+            <div class="footer-contact-item">
+                <i class="fas fa-phone-alt"></i>
+                <span>+92 306 3432434</span>
+            </div>
+            <div class="footer-contact-item">
+                <i class="fas fa-envelope"></i>
+                <span>mhabro@sau.edu.pk</span>
+            </div>
+        </div>
+        
+        <div class="footer-col">
+            <h4><i class="fas fa-link"></i> Quick Links</h4>
+            <ul class="footer-links">
+                <li><a href="https://opac.sau.edu.pk/">OPAC Home</a></li>
+                <li><a href="https://sau.edu.pk" target="_blank">University Website</a></li>
+                <li><a href="https://www.digitallibrary.edu.pk/" target="_blank">HEC Digital Library</a></li>
+                <li><a href="https://opac.sau.edu.pk/lib/help-desk.html">Help Desk & Support</a></li>
+                <li><a href="https://opac.sau.edu.pk/lib/library-rules.html">Library Rules & Regulations</a></li>
+                <li><a href="https://opac.sau.edu.pk/lib/arrival.html">New Arrivals</a></li>
+            </ul>
+        </div>
+        
+        <div class="footer-col">
+            <h4><i class="fas fa-images"></i> Library Gallery</h4>
+            <div class="footer-gallery">
+                <div class="footer-gallery-item" data-img="img/foot-1.jpeg"><img src="img/foot-1.jpeg" alt="Gallery 1"></div>
+                <div class="footer-gallery-item" data-img="img/foot-2.jpeg"><img src="img/foot-2.jpeg" alt="Gallery 2"></div>
+                <div class="footer-gallery-item" data-img="img/foot-3.jpeg"><img src="img/foot-3.jpeg" alt="Gallery 3"></div>
+                <div class="footer-gallery-item" data-img="img/foot-4.jpeg"><img src="img/foot-4.jpeg" alt="Gallery 4"></div>
+                <div class="footer-gallery-item" data-img="img/foot-5.jpeg"><img src="img/foot-5.jpeg" alt="Gallery 5"></div>
+                <div class="footer-gallery-item" data-img="img/foot-6.jpeg"><img src="img/foot-6.jpeg" alt="Gallery 6"></div>
+                <div class="footer-gallery-item" data-img="img/foot-7.jpeg"><img src="img/foot-7.jpeg" alt="Gallery 7"></div>
+                <div class="footer-gallery-item" data-img="img/foot-8.jpeg"><img src="img/foot-8.jpeg" alt="Gallery 8"></div>
+                <div class="footer-gallery-item" data-img="img/foot-9.jpeg"><img src="img/foot-9.jpeg" alt="Gallery 9"></div>
+                <div class="footer-gallery-item" data-img="img/foot-10.jpeg"><img src="img/foot-10.jpeg" alt="Gallery 10"></div>
+                <div class="footer-gallery-item" data-img="img/foot-11.jpeg"><img src="img/foot-11.jpeg" alt="Gallery 11"></div>
+                <div class="footer-gallery-item" data-img="img/foot-12.jpeg"><img src="img/foot-12.jpeg" alt="Gallery 12"></div>
+                <div class="footer-gallery-item" data-img="img/foot-13.jpeg"><img src="img/foot-13.jpeg" alt="Gallery 13"></div>
+                <div class="footer-gallery-item" data-img="img/foot-14.jpeg"><img src="img/foot-14.jpeg" alt="Gallery 14"></div>
+                <div class="footer-gallery-item" data-img="img/foot-15.jpeg"><img src="img/foot-15.jpeg" alt="Gallery 15"></div>
+                <div class="footer-gallery-item" data-img="img/foot-16.jpeg"><img src="img/foot-16.jpeg" alt="Gallery 16"></div>
+                <div class="footer-gallery-item" data-img="img/foot-17.jpeg"><img src="img/foot-17.jpeg" alt="Gallery 17"></div>
+                <div class="footer-gallery-item" data-img="img/foot-18.jpeg"><img src="img/foot-18.jpeg" alt="Gallery 18"></div>
+            </div>
+        </div>
+        
+        <div class="footer-col">
+            <h4><i class="fas fa-map-marked-alt"></i> Find Us</h4>
+            <div class="footer-map">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3619.5332681772534!2d68.530648!3d25.424088!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x394c946d5b9e9ed9%3A0xcb2f5f5fd0af3a0a!2sSindh%20Agriculture%20University%20Tandojam!5e0!3m2!1sen!2s!4v1700000000000" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+            <p style="margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <i class="fas fa-clock" style="color: #c5a059;"></i> 
+                Mon-Sat: 8:00 AM - 10:30 PM
+            </p>
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <div class="footer-bottom-content">
+            <div class="social-btn-container">
+                <a href="https://www.facebook.com/SAU.Tandojam.Official" class="social-btn" target="_blank">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://x.com/sau_official" class="social-btn" target="_blank">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="https://www.instagram.com/" class="social-btn" target="_blank">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://www.youtube.com" class="social-btn" target="_blank">
+                    <i class="fab fa-youtube"></i>
+                </a>
+                <a href="https://www.linkedin.com" class="social-btn" target="_blank">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+            </div>
+            <div class="footer-credits">
+                Customized & Maintained by: <span>Munwar Hussain Abro</span> (IT Assistant)
+            </div>
+            <div class="copyright-text">
+                Copyright © 2026 All Rights Reserved | Central Library, Sindh Agriculture University, Tandojam, Pakistan.
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- ========== LIGHTBOX ========== -->
+<div id="lightbox" class="lightbox-overlay">
+    <div class="lightbox-content">
+        <button class="lb-close" id="lbClose">&times;</button>
+        <button class="lb-prev" id="lbPrev"><i class="fas fa-chevron-left"></i></button>
+        <img id="lightboxImg" class="lightbox-img" src="" alt="Preview">
+        <button class="lb-next" id="lbNext"><i class="fas fa-chevron-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // ========== HEADER MENU ==========
+    (function() {
+        const MOBILE_BP = 800; // Changed from 1024 to 800
+        function isMobile() { return window.innerWidth <= MOBILE_BP; }
+        function closeAll() { 
+            document.querySelectorAll('#cssmenu ul ul').forEach(u => u.style.display = 'none'); 
+        }
+        
+        document.querySelectorAll('#cssmenu li.has-sub > a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (isMobile()) return;
+                e.preventDefault(); 
+                e.stopPropagation();
+                const sub = link.parentElement.querySelector(':scope > ul');
+                if (!sub) return;
+                const isOpen = sub.style.display === 'block';
+                link.parentElement.parentElement.querySelectorAll(':scope > li.has-sub > ul').forEach(s => { 
+                    if (s !== sub) s.style.display = 'none'; 
+                });
+                sub.style.display = isOpen ? 'none' : 'block';
+            });
+        });
+        
+        document.addEventListener('click', e => { 
+            if (!isMobile() && !e.target.closest('#cssmenu')) closeAll(); 
+        });
+        
+        const toggle = document.getElementById('navToggle');
+        const menu = document.getElementById('mainMenu');
+        
+        if (toggle && menu) {
+            toggle.addEventListener('click', () => {
+                toggle.classList.toggle('active');
+                menu.classList.toggle('mobile-open');
+            });
+        }
+        
+        if (isMobile()) {
+            document.querySelectorAll('#cssmenu li.has-sub > a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if (!isMobile()) return;
+                    e.preventDefault();
+                    const sub = link.parentElement.querySelector(':scope > ul');
+                    if (sub) sub.style.display = sub.style.display === 'block' ? 'none' : 'block';
+                });
+            });
+        }
+        
+        window.addEventListener('resize', () => {
+            closeAll();
+            if (menu) menu.classList.remove('mobile-open');
+            if (toggle) toggle.classList.remove('active');
+        });
+    })();
+
+    // ========== LIGHTBOX ==========
+    (function() {
+        const galleryItems = document.querySelectorAll('.footer-gallery-item');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightboxImg');
+        const closeBtn = document.getElementById('lbClose');
+        const prevBtn = document.getElementById('lbPrev');
+        const nextBtn = document.getElementById('lbNext');
+        
+        let currentIndex = 0;
+        let imagesArray = [];
+
+        galleryItems.forEach((item, index) => {
+            const imgUrl = item.getAttribute('data-img');
+            if (imgUrl) {
+                imagesArray.push(imgUrl);
+                item.addEventListener('click', () => {
+                    currentIndex = index;
+                    lightboxImg.src = imagesArray[currentIndex];
+                    lightbox.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+            }
+        });
+
+        function closeLightbox() { 
+            lightbox.classList.remove('active'); 
+            document.body.style.overflow = '';
+        }
+        
+        function showNext() {
+            currentIndex = (currentIndex + 1) % imagesArray.length;
+            lightboxImg.src = imagesArray[currentIndex];
+        }
+        
+        function showPrev() {
+            currentIndex = (currentIndex - 1 + imagesArray.length) % imagesArray.length;
+            lightboxImg.src = imagesArray[currentIndex];
+        }
+
+        closeBtn.addEventListener('click', closeLightbox);
+        nextBtn.addEventListener('click', showNext);
+        prevBtn.addEventListener('click', showPrev);
+        lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+        document.addEventListener('keydown', (e) => {
+            if (!lightbox.classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowRight') showNext();
+            if (e.key === 'ArrowLeft') showPrev();
+        });
+    })();
+
+    // ========== URL MASKING ==========
+    (function () {
+        function processLinks() {
+            var links = document.querySelectorAll('a');
+            links.forEach(function (a) {
+                if (a.dataset.masked) return;
+                a.dataset.masked = '1';
+                var originalHref = a.getAttribute('href');
+                if (!originalHref) return;
+                a.dataset.url = originalHref;
+                a.removeAttribute('href');
+                a.style.cursor = 'pointer';
+                a.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    var url = this.dataset.url;
+                    if (!url || url === '#') return;
+                    if (url.startsWith('#')) {
+                        var el = document.querySelector(url);
+                        if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    } else if (this.target === '_blank') {
+                        window.open(url, '_blank', 'noopener,noreferrer');
+                    } else if (url.startsWith('http') && url.indexOf(window.location.hostname) === -1) {
+                        window.open(url, '_blank', 'noopener,noreferrer');
+                    } else if (url.startsWith('mailto:') || url.startsWith('tel:')) {
+                        window.location.href = url;
+                    } else {
+                        window.location.href = url;
+                    }
+                });
+            });
+        }
+        try {
+            Object.defineProperty(window, 'status', {
+                set: function () {},
+                get: function () { return ''; },
+                configurable: true
+            });
+        } catch (e) {}
+        document.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+            return false;
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'F12') { e.preventDefault(); return false; }
+            if (e.ctrlKey && e.shiftKey && 'IJCijc'.indexOf(e.key) !== -1) {
+                e.preventDefault(); return false;
+            }
+            if (e.ctrlKey && (e.key === 'u' || e.key === 'U')) {
+                e.preventDefault(); return false;
+            }
+        });
+        var observer = new MutationObserver(function () {
+            processLinks();
+        });
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function () {
+                processLinks();
+                observer.observe(document.body, { childList: true, subtree: true });
+            });
+        } else {
+            processLinks();
+            observer.observe(document.body, { childList: true, subtree: true });
+        }
+    })();
+</script>
+<script src="/js/url-mask.js"></script>
+
+</body>
+</html>

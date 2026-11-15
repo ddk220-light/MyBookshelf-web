@@ -1,0 +1,523 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" charset='utf-8'>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="author" content="PMB Group" />
+
+	<meta name="keywords" content="ULPGL,Goma,DRC,Universit&eacute;,Biblioth&egrave;que" />
+	<meta name="description" content="Catalogue en ligne ." />
+
+	<meta name="robots" content="all" />
+	<!--IE et son enfer de compatibilit?-->
+	<meta http-equiv='X-UA-Compatible' content='IE=8'/>
+	
+	<title>Catalogue en ligne </title>
+	
+	
+	<link rel='stylesheet' type='text/css' href='./styles/common/common.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/bueil/visionneuse.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/bueil/ext_search.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/bueil/colonnes.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/bueil/tags.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/bueil/bueil.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/bueil/print.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/bueil/liste_bulletins.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/bueil/gallerie_photos.css' />
+	<!-- css_authentication -->	<link rel='SHORTCUT ICON' href='images/site/favicon.ico'>
+	<script type="text/javascript" src="includes/javascript/drag_n_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/handle_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/popup.js"></script>
+	<script type='text/javascript'>
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName = 
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {  
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i); 
+				    }
+				 }
+				return items;
+			 }
+		}
+		// Fonction a utilisier pour l'encodage des URLs en javascript
+		function encode_URL(data){
+			var docCharSet = document.characterSet ? document.characterSet : document.charset;
+			if(docCharSet == "UTF-8"){
+				return encodeURIComponent(data);
+			}else{
+				return escape(data);
+			}
+		}
+	</script>
+<script type='text/javascript'>var opac_show_social_network =0;</script>
+	<script type='text/javascript' src='includes/javascript/simili_search.js'></script>
+	<script type='text/javascript' src='.//visionneuse/javascript/visionneuse.js'></script>
+	<script type='text/javascript' src='./includes/javascript/http_request.js'></script>
+	
+	
+	
+	<!-- Enrichissement de notice en Ajax-->
+	<script type='text/javascript' src='./includes/javascript/enrichment.js'></script>
+</head>
+
+<body onload="window.defaultStatus='PMB : Accès public';"  id="pmbopac">
+	<script type='text/javascript' src='./includes/javascript/tablist_ajax.js'></script>
+<script type='text/javascript' src='./includes/javascript/tablist.js'></script>
+<script type='text/javascript' src='./includes/javascript/http_request.js'></script>
+	<div id='att' style='z-Index:1000'></div>
+	<div id="container"><div id="main"><div id='main_header'><h2>Bienvenu dans le catalogue de la Bibliothèque Universitaire de l'ULPGL Goma</h2></div><div id="main_hors_footer">
+						
+<script type='text/javascript' src='./includes/javascript/auth_popup.js'></script>	
+<div id="intro_message"><div class="p1">
+</div><div class="p2">Université Libre des Pays des Grands Lacs</div></div><div id='navigator' class='empty'></div><div id='resume_panier' class='empty'></div>
+<script type='text/javascript'>
+<!--
+	function test_form(form)
+	{
+
+		return true;
+	}
+-->
+</script>
+			<div id="search">
+
+			<ul class='search_tabs'>
+				<li id='current'>Recherche simple</li>
+				<li><a href="./index.php?search_type_asked=extended_search">Recherche multi-critères</a></li><li><a href="./index.php?search_type_asked=tags_search">Recherche par tags</a></li>
+			</ul>
+			<div id='search_crl'></div>
+
+			<p class="p1"><span>Vous pouvez lancer une recherche portant sur un ou plusieurs mots (titre, auteur, éditeur, ...).</span></p>
+
+			<div class='row'>
+
+			<form name='search_input' action='./index.php?lvl=search_result' method='post' onSubmit="if (search_input.user_query.value.length == 0) { search_input.user_query.value='*'; return true; }">
+
+				 <select name='typdoc'>  <option  value='' selected>Tout type de document</option>
+  <option  value='a'>texte imprim&eacute;</option>
+  <option  value='e'>document cartographique imprim&eacute;</option>
+  <option  value='g'>document projet&eacute; ou vid&eacute;o</option>
+  <option  value='l'>document &eacute;lectronique</option>
+  <option  value='m'>document multim&eacute;dia</option>
+</select><br />
+
+				<input type='hidden' name='surligne' value=''/>
+				<input type='text' name='user_query' class='text_query' value="" size='65' />
+		
+				<input type='submit' name='ok' value='Rechercher' class='boutonrechercher'/>
+<input type='button' value='Aide' class='bouton' onClick='window.open("./help.php?whatis=simple_search", "search_help", "scrollbars=yes, toolbar=no, dependent=yes, width=400, height=400, resizable=yes"); return false' />
+		<div id='simple_search_zone'>	
+		<div class='row'></div>
+		<div id='zsimples' class='notice-parent'>
+			<img src='./getgif.php?nomgif=plus' name='imEx' id='zsimplesImg' title='' border='0' onClick="expandBase('zsimples', true); return false;" hspace='3'>
+			<span class='notice-heada'>
+				Rechercher dans...
+			</span>
+		</div>
+		<div id='zsimplesChild' class='notice-child' style='margin-bottom:6px;display:none;width:94%'>
+			<div class='row'>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_TITLE' id='look_TITLE' value='1' checked /><label for='look_TITLE'> Titres </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_AUTHOR' id='look_AUTHOR' value='1' checked /><label for='look_AUTHOR'> Auteurs </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_PUBLISHER' id='look_PUBLISHER' value='1'  /><label for='look_PUBLISHER'> Editeurs </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_TITRE_UNIFORME' id='look_TITRE_UNIFORME' value='1' /><label for='look_TITRE_UNIFORME'> Titres uniformes </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_COLLECTION' id='look_COLLECTION' value='1'  /><label for='look_COLLECTION'> Collections </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_CATEGORY' id='look_CATEGORY' value='1' checked /><label for='look_CATEGORY'> Catégories </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_INDEXINT' id='look_INDEXINT' value='1'  /><label for='look_INDEXINT'> Indexations décimales </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_KEYWORDS' id='look_KEYWORDS' value='1' checked /><label for='look_KEYWORDS'> Tags</label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_ABSTRACT' id='look_ABSTRACT' value='1'  /><label for='look_ABSTRACT'> Résumé et notes </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_ALL' id='look_ALL' value='1' checked /><label for='look_ALL'> Tous les champs </label></span></div><div style='clear: both;'><input type='hidden' name='look_FIRSTACCESS' value='1' /></div>
+		</div>
+		</div>
+
+			</form>
+
+			</div>
+
+			<script type='text/javascript' src='./includes/javascript/ajax.js'></script>
+			<script type='text/javascript'>
+
+				document.search_input.user_query.focus();
+
+				
+			</script>
+	
+		</div><div id='infopages'><br>
+<h3><span style="cursor:pointer" onclick="document.search_input.user_query.focus(); document.getElementById('t2').style.display='inline'; document.getElementById('r1').style.display='none'; document.getElementById('r2').style.display='none'; document.getElementById('r3').style.display='none';">Navigation Catalogue</span></h3>
+<div id="t2" style="display:inline">
+<p>&nbsp;<br>
+<table>
+<tr>
+<td><img src="./images/folder.gif"> <a href="./index.php?lvl=indexint_see&id=1&main=1">000 Généralités</a></td>
+<td>&nbsp;</td>
+<td><img src="./images/folder.gif"> <a href="./index.php?lvl=indexint_see&id=1940&main=1">500 Sciences naturelles et mathématique</a></td>
+</tr>
+<tr>
+<td><img src="./images/folder.gif"> <a href="./index.php?lvl=indexint_see&id=271&main=1">100 Philosophie, Psychologie et Parapsychologie</a></td>
+<td>&nbsp;</td>
+<td><img src="./images/folder.gif"> <a href="./index.php?lvl=indexint_see&id=2325&main=1">600 Techniques, Sciences appliquées</a></td>
+</tr>
+<tr>
+<td><img src="./images/folder.gif"> <a href="./index.php?lvl=indexint_see&id=584&main=1">200 Christianisme et Religions</a></td>
+<td>&nbsp;</td>
+<td><img src="./images/folder.gif"> <a href="./index.php?lvl=indexint_see&id=3247&main=1">700 Les Arts; arts décoratifs</a></td>
+</tr>
+<tr>
+<td><img src="./images/folder.gif"> <a href="./index.php?lvl=indexint_see&id=841&main=1">300 Sciences sociales</a></td>
+<td>&nbsp;</td>
+<td><img src="./images/folder.gif"> <a href="./index.php?lvl=indexint_see&id=4053&main=1">800 Littérature, belles lettres</a></td>
+</tr>
+<tr>
+<td><img src="./images/folder.gif"> <a href="./index.php?lvl=indexint_see&id=1832&main=1">400 Langage</a></td>
+<td>&nbsp;</td>
+<td><img src="./images/folder.gif"> <a href="./index.php?lvl=indexint_see&id=4249&main=1">900 Géographie, Histoire</a></td>
+</tr>
+</table>
+<p>
+</div></div><div id="location"><h3><span>Vous n'avez pas d'idée pour chercher ? Entrez dans la bibliothèque...</span></h3><div id='location-container'><table align='center' width='100%'><tr><td align='center'>
+				<a href='./index.php?lvl=section_see&location=1'><img src='images/bibli-small.png' border='0' alt='Bibliothèque Universitaire' title='Bibliothèque Universitaire'/></a>
+				<br /><a href='./index.php?lvl=section_see&location=1'><b>Bibliothèque Universitaire</b></a></td><td align='center'>
+				<a href='./index.php?lvl=section_see&location=13'><img src='images/bibli-small.png' border='0' alt='BibMédecine' title='BibMédecine'/></a>
+				<br /><a href='./index.php?lvl=section_see&location=13'><b>BibMédecine</b></a></td><td align='center'>
+				<a href='./index.php?lvl=section_see&location=12'><img src='images/bibli-small.png' border='0' alt='BICAREPD' title='BICAREPD'/></a>
+				<br /><a href='./index.php?lvl=section_see&location=12'><b>BICAREPD</b></a></td><td align='center'>
+				<a href='./index.php?lvl=section_see&location=14'><img src='images/bibli-small.png' border='0' alt='BIFAD' title='BIFAD'/></a>
+				<br /><a href='./index.php?lvl=section_see&location=14'><b>BIFAD</b></a></td></tr><tr><td align='center'>
+				<a href='./index.php?lvl=section_see&location=17'><img src='images/bibli-small.png' border='0' alt='BIFASEG' title='BIFASEG'/></a>
+				<br /><a href='./index.php?lvl=section_see&location=17'><b>BIFASEG</b></a></td><td align='center'>
+				<a href='./index.php?lvl=section_see&location=8'><img src='images/bibli-small.png' border='0' alt='BIFAT' title='BIFAT'/></a>
+				<br /><a href='./index.php?lvl=section_see&location=8'><b>BIFAT</b></a></td><td align='center'>
+				<a href='./index.php?lvl=section_see&location=11'><img src='images/bibli-small.png' border='0' alt='BIFPSE' title='BIFPSE'/></a>
+				<br /><a href='./index.php?lvl=section_see&location=11'><b>BIFPSE</b></a></td><td align='center'>
+				<a href='./index.php?lvl=section_see&location=9'><img src='images/bibli-small.png' border='0' alt='BIFSDC' title='BIFSDC'/></a>
+				<br /><a href='./index.php?lvl=section_see&location=9'><b>BIFSDC</b></a></td></tr><tr><td align='center'>
+				<a href='./index.php?lvl=section_see&location=10'><img src='images/bibli-small.png' border='0' alt='BIFSTA' title='BIFSTA'/></a>
+				<br /><a href='./index.php?lvl=section_see&location=10'><b>BIFSTA</b></a></td><td></td><td></td><td></td></tr></table></div></div>
+	<div id='last_entries'>
+		<h3><span>Dernières acquisitions</span></h3>
+		<div id='last_entries-container'>Voici les derniers ouvrages saisis dans le catalogue :<br /><a href='javascript:expandAll_ajax(1);show_simili_search_all();show_expl_voisin_search_all();'><img class='img_plusplus' src='./images/expand_all.gif' border='0' id='expandall'></a>&nbsp;<a href='javascript:collapseAll()'><img class='img_moinsmoins' src='./images/collapse_all.gif' border='0' id='collapseall'></a>
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=15972;
+				</script>
+			
+				<div id="el15972Parent" class="notice-parent">
+				
+	    		<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el15972Img" title="détail" border="0" onClick="expandBase('el15972', true); show_simili_search('15972'); show_expl_voisin_search('15972'); return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Document: texte imprimé' title='Document: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_15972"><span class="statutnot1" ></span><span  notice='15972'  class='header_title'>Apport des poutres continues dans les structures en BA : Application sur une structure R+2 servant d'habitation</span> / KAHEMBA CYPRIEN Guy<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Apport%20des%20poutres%20continues%20dans%20les%20structures%20en%20BA%20%3A%20Application%20sur%20une%20structure%20R%2B2%20servant%20d%27habitation&amp;rft.title=Apport%20des%20poutres%20continues%20dans%20les%20structures%20en%20BA%20%3A%20Application%20sur%20une%20structure%20R%2B2%20servant%20d%27habitation&amp;rft.date=2025&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D15972&amp;rft.aulast=KAHEMBA%20CYPRIEN%20Guy'></span></span>
+	    		<br />
+				</div>
+				<div id="el15972Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'><table width='100%'><tr><td>
+		<ul id='onglets_isbd_public15972' class='onglets_isbd_public'>
+	  			<li id='onglet_public15972' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '15972'); return false;">Public</a></li>
+				<li id='onglet_isbd15972' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '15972'); return false;">ISBD</a></li>
+				
+		    	
+			</ul>
+			<div class='row'></div>
+			<div id='div_public15972' style='display:block;'><table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Titre :</span></td><td><span class='public_title'>Apport des poutres continues dans les structures en BA : Application sur une structure R+2 servant d'habitation</span></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td><td>texte imprimé</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Auteurs : </span></td><td><a href='./index.php?lvl=author_see&id=14257' >KAHEMBA CYPRIEN Guy</a>, Auteur</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Editeur :</span></td><td><a href='./index.php?lvl=publisher_see&id=1888' >ULPGL-GOMA</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td><td>2025</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Langues :</span></td><td>Français (<i>fre</i>)</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=Poutres%2C+structure+BA' >Poutres, structure BA</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=4638' >PT 48/025 T</a> </td></tr></table>
+</div>
+	  		<div id='div_isbd15972' style='display:none;'>Apport des poutres continues dans les structures en BA : Application sur une structure R+2 servant d'habitation [texte imprimé] / <a href='./index.php?lvl=author_see&id=14257' >KAHEMBA CYPRIEN Guy</a>, Auteur&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=1888' >[S.l.]&nbsp;: ULPGL-GOMA</a>, 2025.<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=Poutres%2C+structure+BA' >Poutres, structure BA</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=4638' >PT 48/025 T</a> </td></tr></table></div></td></tr></table>
+					
+			<div id='expl_voisin_search_15972' class='expl_voisin_search'></div>	
+			<div id='simili_search_15972' class='simili_search'></div></div>
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=15971;
+				</script>
+			
+				<div id="el15971Parent" class="notice-parent">
+				
+	    		<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el15971Img" title="détail" border="0" onClick="expandBase('el15971', true); show_simili_search('15971'); show_expl_voisin_search('15971'); return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Document: texte imprimé' title='Document: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_15971"><span class="statutnot1" ></span><span  notice='15971'  class='header_title'>Contribution à l'étude de la laterité de KARUBA (MASISI) en vue de la production des blocs en terre comprimée</span> / BASHIGE GERMAINE<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Contribution%20%C3%A0%20l%27%C3%A9tude%20de%20la%20laterit%C3%A9%20de%20KARUBA%20%28MASISI%29%20en%20vue%20de%20la%20production%20des%20blocs%20en%20terre%20comprim%C3%A9e&amp;rft.title=Contribution%20%C3%A0%20l%27%C3%A9tude%20de%20la%20laterit%C3%A9%20de%20KARUBA%20%28MASISI%29%20en%20vue%20de%20la%20production%20des%20blocs%20en%20terre%20comprim%C3%A9e&amp;rft.date=2017&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D15971&amp;rft.aulast=BASHIGE%20GERMAINE'></span></span>
+	    		<br />
+				</div>
+				<div id="el15971Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'><table width='100%'><tr><td>
+		<ul id='onglets_isbd_public15971' class='onglets_isbd_public'>
+	  			<li id='onglet_public15971' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '15971'); return false;">Public</a></li>
+				<li id='onglet_isbd15971' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '15971'); return false;">ISBD</a></li>
+				
+		    	
+			</ul>
+			<div class='row'></div>
+			<div id='div_public15971' style='display:block;'><table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Titre :</span></td><td><span class='public_title'>Contribution à l'étude de la laterité de KARUBA (MASISI) en vue de la production des blocs en terre comprimée</span></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td><td>texte imprimé</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Auteurs : </span></td><td><a href='./index.php?lvl=author_see&id=14255' >BASHIGE GERMAINE</a>, Auteur</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Editeur :</span></td><td><a href='./index.php?lvl=publisher_see&id=1888' >ULPGL-GOMA</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td><td>2017</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Langues :</span></td><td>Français (<i>fre</i>)</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=contribution%2C+%C3%A9tude%2C+lat%C3%A9rite' >contribution, étude, latérite</a>&nbsp; <a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=terre%2C+comprim%C3%A9e%2C+blocs' >terre, comprimée, blocs</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=4636' >M02/017 GC</a> </td></tr></table>
+</div>
+	  		<div id='div_isbd15971' style='display:none;'>Contribution à l'étude de la laterité de KARUBA (MASISI) en vue de la production des blocs en terre comprimée [texte imprimé] / <a href='./index.php?lvl=author_see&id=14255' >BASHIGE GERMAINE</a>, Auteur&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=1888' >[S.l.]&nbsp;: ULPGL-GOMA</a>, 2017.<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=contribution%2C+%C3%A9tude%2C+lat%C3%A9rite' >contribution, étude, latérite</a>&nbsp; <a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=terre%2C+comprim%C3%A9e%2C+blocs' >terre, comprimée, blocs</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=4636' >M02/017 GC</a> </td></tr></table></div></td></tr></table>
+					
+			<div id='expl_voisin_search_15971' class='expl_voisin_search'></div>	
+			<div id='simili_search_15971' class='simili_search'></div></div>
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=15970;
+				</script>
+			
+				<div id="el15970Parent" class="notice-parent">
+				
+	    		<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el15970Img" title="détail" border="0" onClick="expandBase('el15970', true); show_simili_search('15970'); show_expl_voisin_search('15970'); return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Document: texte imprimé' title='Document: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_15970"><span class="statutnot1" ></span><span  notice='15970'  class='header_title'>L'effectivité du droit à la Reinsertion sociale des Anciens Detenus au Regard des Articles 48 A 51 de la loi Numéro 23 /028 du juin 2023 Déterminant les principes fondamentaux du Régime pénitentiaire étude de cas de la ville de Goma</span> / NGILIMO BIKAMWA Déborah<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=L%27effectivit%C3%A9%20du%20droit%20%C3%A0%20la%20Reinsertion%20sociale%20des%20Anciens%20Detenus%20au%20Regard%20des%20Articles%2048%20A%2051%20de%20la%20loi%20Num%C3%A9ro%2023%20%2F028%20du%20juin%202023%20D%C3%A9terminant%20les%20principes%20fondamentaux%20du%20R%C3%A9gime%20p%C3%A9nitentiaire%20%C3%A9tude%20de%20cas%20de%20la%20ville%20de%20Goma&amp;rft.title=L%27effectivit%C3%A9%20du%20droit%20%C3%A0%20la%20Reinsertion%20sociale%20des%20Anciens%20Detenus%20au%20Regard%20des%20Articles%2048%20A%2051%20de%20la%20loi%20Num%C3%A9ro%2023%20%2F028%20du%20juin%202023%20D%C3%A9terminant%20les%20principes%20fondamentaux%20du%20R%C3%A9gime%20p%C3%A9nitentiaire%20%C3%A9tude%20de%20cas%20de%20la%20ville%20de%20Goma&amp;rft.date=2025&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D15970&amp;rft.aulast=NGILIMO%20BIKAMWA%20D%C3%A9borah'></span></span>
+	    		<br />
+				</div>
+				<div id="el15970Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'><table width='100%'><tr><td>
+		<ul id='onglets_isbd_public15970' class='onglets_isbd_public'>
+	  			<li id='onglet_public15970' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '15970'); return false;">Public</a></li>
+				<li id='onglet_isbd15970' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '15970'); return false;">ISBD</a></li>
+				
+		    	
+			</ul>
+			<div class='row'></div>
+			<div id='div_public15970' style='display:block;'><table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Titre :</span></td><td><span class='public_title'>L'effectivité du droit à la Reinsertion sociale des Anciens Detenus au Regard des Articles 48 A 51 de la loi Numéro 23 /028 du juin 2023 Déterminant les principes fondamentaux du Régime pénitentiaire étude de cas de la ville de Goma</span></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td><td>texte imprimé</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Auteurs : </span></td><td><a href='./index.php?lvl=author_see&id=14254' >NGILIMO BIKAMWA Déborah</a>, Auteur</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Editeur :</span></td><td><a href='./index.php?lvl=publisher_see&id=1888' >ULPGL-GOMA</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td><td>2025</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Langues :</span></td><td>Français (<i>fre</i>)</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=L%27effectivit%C3%A9%2C+reinsertion%2C+r%C3%A9gime' >L'effectivité, reinsertion, régime</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=4635' >M 31/025 D</a> </td></tr></table>
+</div>
+	  		<div id='div_isbd15970' style='display:none;'>L'effectivité du droit à la Reinsertion sociale des Anciens Detenus au Regard des Articles 48 A 51 de la loi Numéro 23 /028 du juin 2023 Déterminant les principes fondamentaux du Régime pénitentiaire étude de cas de la ville de Goma [texte imprimé] / <a href='./index.php?lvl=author_see&id=14254' >NGILIMO BIKAMWA Déborah</a>, Auteur&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=1888' >[S.l.]&nbsp;: ULPGL-GOMA</a>, 2025.<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=L%27effectivit%C3%A9%2C+reinsertion%2C+r%C3%A9gime' >L'effectivité, reinsertion, régime</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=4635' >M 31/025 D</a> </td></tr></table></div></td></tr></table>
+					
+			<div id='expl_voisin_search_15970' class='expl_voisin_search'></div>	
+			<div id='simili_search_15970' class='simili_search'></div></div>
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=15969;
+				</script>
+			
+				<div id="el15969Parent" class="notice-parent">
+				
+	    		<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el15969Img" title="détail" border="0" onClick="expandBase('el15969', true); show_simili_search('15969'); show_expl_voisin_search('15969'); return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Document: texte imprimé' title='Document: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_15969"><span class="statutnot1" ></span><span  notice='15969'  class='header_title'>Maintient de l'ordre public et Réstruction des droits et libertes fondamentaux en période Exceptionnelle au Nord -Kivu : Une analyse critique de l'article 61 de la constitution de la RDC du 18 Févier</span> / TSIPAMA KAZADI Dan<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Maintient%20de%20l%27ordre%20public%20et%20R%C3%A9struction%20des%20droits%20et%20libertes%20fondamentaux%20en%20p%C3%A9riode%20Exceptionnelle%20au%20Nord%20-Kivu%20%3A%20Une%20analyse%20critique%20de%20l%27article%2061%20de%20la%20constitution%20de%20la%20RDC%20du%2018%20F%C3%A9vier&amp;rft.title=Maintient%20de%20l%27ordre%20public%20et%20R%C3%A9struction%20des%20droits%20et%20libertes%20fondamentaux%20en%20p%C3%A9riode%20Exceptionnelle%20au%20Nord%20-Kivu%20%3A%20Une%20analyse%20critique%20de%20l%27article%2061%20de%20la%20constitution%20de%20la%20RDC%20du%2018%20F%C3%A9vier&amp;rft.date=2025&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D15969&amp;rft.aulast=TSIPAMA%20KAZADI%20Dan'></span></span>
+	    		<br />
+				</div>
+				<div id="el15969Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'><table width='100%'><tr><td>
+		<ul id='onglets_isbd_public15969' class='onglets_isbd_public'>
+	  			<li id='onglet_public15969' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '15969'); return false;">Public</a></li>
+				<li id='onglet_isbd15969' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '15969'); return false;">ISBD</a></li>
+				
+		    	
+			</ul>
+			<div class='row'></div>
+			<div id='div_public15969' style='display:block;'><table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Titre :</span></td><td><span class='public_title'>Maintient de l'ordre public et Réstruction des droits et libertes fondamentaux en période Exceptionnelle au Nord -Kivu : Une analyse critique de l'article 61 de la constitution de la RDC du 18 Févier</span></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td><td>texte imprimé</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Auteurs : </span></td><td><a href='./index.php?lvl=author_see&id=14253' >TSIPAMA KAZADI Dan</a>, Auteur</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Editeur :</span></td><td><a href='./index.php?lvl=publisher_see&id=1888' >ULPGL-GOMA</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td><td>2025</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Langues :</span></td><td>Français (<i>fre</i>)</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=Maintient%2C+Restruction%2C' >Maintient, Restruction,</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=4634' >M 42/025 D</a> </td></tr></table>
+</div>
+	  		<div id='div_isbd15969' style='display:none;'>Maintient de l'ordre public et Réstruction des droits et libertes fondamentaux en période Exceptionnelle au Nord -Kivu : Une analyse critique de l'article 61 de la constitution de la RDC du 18 Févier [texte imprimé] / <a href='./index.php?lvl=author_see&id=14253' >TSIPAMA KAZADI Dan</a>, Auteur&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=1888' >[S.l.]&nbsp;: ULPGL-GOMA</a>, 2025.<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=Maintient%2C+Restruction%2C' >Maintient, Restruction,</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=4634' >M 42/025 D</a> </td></tr></table></div></td></tr></table>
+					
+			<div id='expl_voisin_search_15969' class='expl_voisin_search'></div>	
+			<div id='simili_search_15969' class='simili_search'></div></div>
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=15968;
+				</script>
+			
+				<div id="el15968Parent" class="notice-parent">
+				
+	    		<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el15968Img" title="détail" border="0" onClick="expandBase('el15968', true); show_simili_search('15968'); show_expl_voisin_search('15968'); return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Document: texte imprimé' title='Document: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_15968"><span class="statutnot1" ></span><span  notice='15968'  class='header_title'>De la responsabilité de l'état face a la Torture et traitements inhumains ou dégradants contre les personnes qui font objet d'un mandat d'amener en RDC</span> / MBAMBI KINGANA Christian<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=De%20la%20responsabilit%C3%A9%20de%20l%27%C3%A9tat%20face%20a%20la%20Torture%20et%20traitements%20inhumains%20ou%20d%C3%A9gradants%20contre%20les%20personnes%20qui%20font%20objet%20d%27un%20mandat%20d%27amener%20en%20RDC&amp;rft.title=De%20la%20responsabilit%C3%A9%20de%20l%27%C3%A9tat%20face%20a%20la%20Torture%20et%20traitements%20inhumains%20ou%20d%C3%A9gradants%20contre%20les%20personnes%20qui%20font%20objet%20d%27un%20mandat%20d%27amener%20en%20RDC&amp;rft.date=2025&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D15968&amp;rft.aulast=MBAMBI%20KINGANA%20Christian'></span></span>
+	    		<br />
+				</div>
+				<div id="el15968Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'><table width='100%'><tr><td>
+		<ul id='onglets_isbd_public15968' class='onglets_isbd_public'>
+	  			<li id='onglet_public15968' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '15968'); return false;">Public</a></li>
+				<li id='onglet_isbd15968' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '15968'); return false;">ISBD</a></li>
+				
+		    	
+			</ul>
+			<div class='row'></div>
+			<div id='div_public15968' style='display:block;'><table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Titre :</span></td><td><span class='public_title'>De la responsabilité de l'état face a la Torture et traitements inhumains ou dégradants contre les personnes qui font objet d'un mandat d'amener en RDC</span></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td><td>texte imprimé</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Auteurs : </span></td><td><a href='./index.php?lvl=author_see&id=14252' >MBAMBI KINGANA Christian</a>, Auteur</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Editeur :</span></td><td><a href='./index.php?lvl=publisher_see&id=1888' >ULPGL-GOMA</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td><td>2025</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Langues :</span></td><td>Français (<i>fre</i>)</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=Responsabilit%C3%A9%2C+torture%2C+d%C3%A9gradants%2C+mandat' >Responsabilité, torture, dégradants, mandat</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=4633' >M 26/025 D</a> </td></tr></table>
+</div>
+	  		<div id='div_isbd15968' style='display:none;'>De la responsabilité de l'état face a la Torture et traitements inhumains ou dégradants contre les personnes qui font objet d'un mandat d'amener en RDC [texte imprimé] / <a href='./index.php?lvl=author_see&id=14252' >MBAMBI KINGANA Christian</a>, Auteur&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=1888' >[S.l.]&nbsp;: ULPGL-GOMA</a>, 2025.<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=Responsabilit%C3%A9%2C+torture%2C+d%C3%A9gradants%2C+mandat' >Responsabilité, torture, dégradants, mandat</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=4633' >M 26/025 D</a> </td></tr></table></div></td></tr></table>
+					
+			<div id='expl_voisin_search_15968' class='expl_voisin_search'></div>	
+			<div id='simili_search_15968' class='simili_search'></div></div>
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=15967;
+				</script>
+			
+				<div id="el15967Parent" class="notice-parent">
+				
+	    		<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el15967Img" title="détail" border="0" onClick="expandBase('el15967', true); show_simili_search('15967'); show_expl_voisin_search('15967'); return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Document: texte imprimé' title='Document: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_15967"><span class="statutnot1" ></span><span  notice='15967'  class='header_title'>Problématique de l'effectivité du droit d'accès à la justice en droit positif congolais ; Cas des sourds- muets</span> / MASIKA BAKALANIA Elisabeth<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Probl%C3%A9matique%20de%20l%27effectivit%C3%A9%20du%20droit%20d%27acc%C3%A8s%20%C3%A0%20la%20justice%20en%20droit%20positif%20congolais%20%3B%20Cas%20des%20sourds-%20muets&amp;rft.title=Probl%C3%A9matique%20de%20l%27effectivit%C3%A9%20du%20droit%20d%27acc%C3%A8s%20%C3%A0%20la%20justice%20en%20droit%20positif%20congolais%20%3B%20Cas%20des%20sourds-%20muets&amp;rft.date=2025&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D15967&amp;rft.aulast=MASIKA%20BAKALANIA%20Elisabeth'></span></span>
+	    		<br />
+				</div>
+				<div id="el15967Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'><table width='100%'><tr><td>
+		<ul id='onglets_isbd_public15967' class='onglets_isbd_public'>
+	  			<li id='onglet_public15967' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '15967'); return false;">Public</a></li>
+				<li id='onglet_isbd15967' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '15967'); return false;">ISBD</a></li>
+				
+		    	
+			</ul>
+			<div class='row'></div>
+			<div id='div_public15967' style='display:block;'><table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Titre :</span></td><td><span class='public_title'>Problématique de l'effectivité du droit d'accès à la justice en droit positif congolais ; Cas des sourds- muets</span></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td><td>texte imprimé</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Auteurs : </span></td><td><a href='./index.php?lvl=author_see&id=14251' >MASIKA BAKALANIA Elisabeth</a>, Auteur</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Editeur :</span></td><td><a href='./index.php?lvl=publisher_see&id=1888' >ULPGL-GOMA</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td><td>2025</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Langues :</span></td><td>Français (<i>fre</i>)</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=Probl%C3%A9matique%2C+l%27effectivite%2C+justice' >Problématique, l'effectivite, justice</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=4632' >M 25/025 D</a> </td></tr></table>
+</div>
+	  		<div id='div_isbd15967' style='display:none;'>Problématique de l'effectivité du droit d'accès à la justice en droit positif congolais ; Cas des sourds- muets [texte imprimé] / <a href='./index.php?lvl=author_see&id=14251' >MASIKA BAKALANIA Elisabeth</a>, Auteur&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=1888' >[S.l.]&nbsp;: ULPGL-GOMA</a>, 2025.<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=Probl%C3%A9matique%2C+l%27effectivite%2C+justice' >Problématique, l'effectivite, justice</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=4632' >M 25/025 D</a> </td></tr></table></div></td></tr></table>
+					
+			<div id='expl_voisin_search_15967' class='expl_voisin_search'></div>	
+			<div id='simili_search_15967' class='simili_search'></div></div>
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=15966;
+				</script>
+			
+				<div id="el15966Parent" class="notice-parent">
+				
+	    		<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el15966Img" title="détail" border="0" onClick="expandBase('el15966', true); show_simili_search('15966'); show_expl_voisin_search('15966'); return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Document: texte imprimé' title='Document: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_15966"><span class="statutnot1" ></span><span  notice='15966'  class='header_title'>De la protection des Camps de personnes déplacées en droit international humanitaire : Cas du camp de Mugunga</span> / MISIKI OLWANZO Gaél<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=De%20la%20protection%20des%20Camps%20de%20personnes%20d%C3%A9plac%C3%A9es%20en%20droit%20international%20humanitaire%20%3A%20Cas%20du%20camp%20de%20Mugunga&amp;rft.title=De%20la%20protection%20des%20Camps%20de%20personnes%20d%C3%A9plac%C3%A9es%20en%20droit%20international%20humanitaire%20%3A%20Cas%20du%20camp%20de%20Mugunga&amp;rft.date=2025&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D15966&amp;rft.aulast=MISIKI%20OLWANZO%20Ga%C3%A9l'></span></span>
+	    		<br />
+				</div>
+				<div id="el15966Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'><table width='100%'><tr><td>
+		<ul id='onglets_isbd_public15966' class='onglets_isbd_public'>
+	  			<li id='onglet_public15966' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '15966'); return false;">Public</a></li>
+				<li id='onglet_isbd15966' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '15966'); return false;">ISBD</a></li>
+				
+		    	
+			</ul>
+			<div class='row'></div>
+			<div id='div_public15966' style='display:block;'><table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Titre :</span></td><td><span class='public_title'>De la protection des Camps de personnes déplacées en droit international humanitaire : Cas du camp de Mugunga</span></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td><td>texte imprimé</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Auteurs : </span></td><td><a href='./index.php?lvl=author_see&id=14250' >MISIKI OLWANZO Gaél</a>, Auteur</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Editeur :</span></td><td><a href='./index.php?lvl=publisher_see&id=1888' >ULPGL-GOMA</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td><td>2025</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Langues :</span></td><td>Français (<i>fre</i>)</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=La+protection%2C+camps%2C+deplac%C3%A9es' >La protection, camps, deplacées</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=4631' >M 27/025 D</a> </td></tr></table>
+</div>
+	  		<div id='div_isbd15966' style='display:none;'>De la protection des Camps de personnes déplacées en droit international humanitaire : Cas du camp de Mugunga [texte imprimé] / <a href='./index.php?lvl=author_see&id=14250' >MISIKI OLWANZO Gaél</a>, Auteur&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=1888' >[S.l.]&nbsp;: ULPGL-GOMA</a>, 2025.<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=La+protection%2C+camps%2C+deplac%C3%A9es' >La protection, camps, deplacées</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=4631' >M 27/025 D</a> </td></tr></table></div></td></tr></table>
+					
+			<div id='expl_voisin_search_15966' class='expl_voisin_search'></div>	
+			<div id='simili_search_15966' class='simili_search'></div></div>
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=15965;
+				</script>
+			
+				<div id="el15965Parent" class="notice-parent">
+				
+	    		<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el15965Img" title="détail" border="0" onClick="expandBase('el15965', true); show_simili_search('15965'); show_expl_voisin_search('15965'); return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Document: texte imprimé' title='Document: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_15965"><span class="statutnot1" ></span><span  notice='15965'  class='header_title'>La protection des enfants en situation de Rue contre un logement Abusif : Cas de la ville de Goma</span> / M 30/025 D<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=La%20protection%20des%20enfants%20en%20situation%20de%20Rue%20contre%20un%20logement%20Abusif%20%3A%20Cas%20de%20la%20ville%20de%20Goma&amp;rft.title=La%20protection%20des%20enfants%20en%20situation%20de%20Rue%20contre%20un%20logement%20Abusif%20%3A%20Cas%20de%20la%20ville%20de%20Goma&amp;rft.date=2025&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D15965&amp;rft.aulast=M%2030%2F025%20D'></span></span>
+	    		<br />
+				</div>
+				<div id="el15965Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'><table width='100%'><tr><td>
+		<ul id='onglets_isbd_public15965' class='onglets_isbd_public'>
+	  			<li id='onglet_public15965' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '15965'); return false;">Public</a></li>
+				<li id='onglet_isbd15965' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '15965'); return false;">ISBD</a></li>
+				
+		    	
+			</ul>
+			<div class='row'></div>
+			<div id='div_public15965' style='display:block;'><table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Titre :</span></td><td><span class='public_title'>La protection des enfants en situation de Rue contre un logement Abusif : Cas de la ville de Goma</span></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td><td>texte imprimé</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Auteurs : </span></td><td><a href='./index.php?lvl=author_see&id=14249' >M 30/025 D</a>, Auteur</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Editeur :</span></td><td><a href='./index.php?lvl=publisher_see&id=1888' >ULPGL-GOMA</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td><td>2025</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Langues :</span></td><td>Français (<i>fre</i>)</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=La+protection+%2C+Rue%2C+abusif' >La protection , Rue, abusif</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=4630' >M 30/025 D</a> </td></tr></table>
+</div>
+	  		<div id='div_isbd15965' style='display:none;'>La protection des enfants en situation de Rue contre un logement Abusif : Cas de la ville de Goma [texte imprimé] / <a href='./index.php?lvl=author_see&id=14249' >M 30/025 D</a>, Auteur&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=1888' >[S.l.]&nbsp;: ULPGL-GOMA</a>, 2025.<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=La+protection+%2C+Rue%2C+abusif' >La protection , Rue, abusif</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=4630' >M 30/025 D</a> </td></tr></table></div></td></tr></table>
+					
+			<div id='expl_voisin_search_15965' class='expl_voisin_search'></div>	
+			<div id='simili_search_15965' class='simili_search'></div></div>
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=15964;
+				</script>
+			
+				<div id="el15964Parent" class="notice-parent">
+				
+	    		<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el15964Img" title="détail" border="0" onClick="expandBase('el15964', true); show_simili_search('15964'); show_expl_voisin_search('15964'); return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Document: texte imprimé' title='Document: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_15964"><span class="statutnot1" ></span><span  notice='15964'  class='header_title'>L'harmonisation du regime juridique de protection des refugies au regard des exigences internationales et de la Réalité nationale ; Etude du cas des Refugies en RDC</span> / MUSA MAHESHE Patrice<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=L%27harmonisation%20du%20regime%20juridique%20de%20protection%20des%20refugies%20au%20regard%20des%20exigences%20internationales%20et%20de%20la%20R%C3%A9alit%C3%A9%20nationale%20%3B%20Etude%20du%20cas%20des%20Refugies%20en%20RDC&amp;rft.title=L%27harmonisation%20du%20regime%20juridique%20de%20protection%20des%20refugies%20au%20regard%20des%20exigences%20internationales%20et%20de%20la%20R%C3%A9alit%C3%A9%20nationale%20%3B%20Etude%20du%20cas%20des%20Refugies%20en%20RDC&amp;rft.date=2025&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D15964&amp;rft.aulast=MUSA%20MAHESHE%20Patrice'></span></span>
+	    		<br />
+				</div>
+				<div id="el15964Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'><table width='100%'><tr><td>
+		<ul id='onglets_isbd_public15964' class='onglets_isbd_public'>
+	  			<li id='onglet_public15964' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '15964'); return false;">Public</a></li>
+				<li id='onglet_isbd15964' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '15964'); return false;">ISBD</a></li>
+				
+		    	
+			</ul>
+			<div class='row'></div>
+			<div id='div_public15964' style='display:block;'><table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Titre :</span></td><td><span class='public_title'>L'harmonisation du regime juridique de protection des refugies au regard des exigences internationales et de la Réalité nationale ; Etude du cas des Refugies en RDC</span></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td><td>texte imprimé</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Auteurs : </span></td><td><a href='./index.php?lvl=author_see&id=14248' >MUSA MAHESHE Patrice</a>, Auteur</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Editeur :</span></td><td><a href='./index.php?lvl=publisher_see&id=1888' >ULPGL-GOMA</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td><td>2025</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Langues :</span></td><td>Français (<i>fre</i>)</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=L%27harmonisation%2C+R%C3%A9gime+juridique%2C+Refugi%C3%A9s' >L'harmonisation, Régime juridique, Refugiés</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=4629' >M 28/025 D</a> </td></tr></table>
+</div>
+	  		<div id='div_isbd15964' style='display:none;'>L'harmonisation du regime juridique de protection des refugies au regard des exigences internationales et de la Réalité nationale ; Etude du cas des Refugies en RDC [texte imprimé] / <a href='./index.php?lvl=author_see&id=14248' >MUSA MAHESHE Patrice</a>, Auteur&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=1888' >[S.l.]&nbsp;: ULPGL-GOMA</a>, 2025.<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=L%27harmonisation%2C+R%C3%A9gime+juridique%2C+Refugi%C3%A9s' >L'harmonisation, Régime juridique, Refugiés</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=4629' >M 28/025 D</a> </td></tr></table></div></td></tr></table>
+					
+			<div id='expl_voisin_search_15964' class='expl_voisin_search'></div>	
+			<div id='simili_search_15964' class='simili_search'></div></div>
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=15963;
+				</script>
+			
+				<div id="el15963Parent" class="notice-parent">
+				
+	    		<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el15963Img" title="détail" border="0" onClick="expandBase('el15963', true); show_simili_search('15963'); show_expl_voisin_search('15963'); return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Document: texte imprimé' title='Document: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_15963"><span class="statutnot1" ></span><span  notice='15963'  class='header_title'>Du caractère impératif du jus cogens face à la répression du crime de Génocide</span> / MUHESI MULENGABYUMA Alfred<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Du%20caract%C3%A8re%20imp%C3%A9ratif%20du%20jus%20cogens%20face%20%C3%A0%20la%20r%C3%A9pression%20du%20crime%20de%20G%C3%A9nocide&amp;rft.title=Du%20caract%C3%A8re%20imp%C3%A9ratif%20du%20jus%20cogens%20face%20%C3%A0%20la%20r%C3%A9pression%20du%20crime%20de%20G%C3%A9nocide&amp;rft.date=2025&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D15963&amp;rft.aulast=MUHESI%20MULENGABYUMA%20Alfred'></span></span>
+	    		<br />
+				</div>
+				<div id="el15963Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'><table width='100%'><tr><td>
+		<ul id='onglets_isbd_public15963' class='onglets_isbd_public'>
+	  			<li id='onglet_public15963' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '15963'); return false;">Public</a></li>
+				<li id='onglet_isbd15963' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '15963'); return false;">ISBD</a></li>
+				
+		    	
+			</ul>
+			<div class='row'></div>
+			<div id='div_public15963' style='display:block;'><table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Titre :</span></td><td><span class='public_title'>Du caractère impératif du jus cogens face à la répression du crime de Génocide</span></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td><td>texte imprimé</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Auteurs : </span></td><td><a href='./index.php?lvl=author_see&id=14247' >MUHESI MULENGABYUMA Alfred</a>, Auteur</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Editeur :</span></td><td><a href='./index.php?lvl=publisher_see&id=1888' >ULPGL-GOMA</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td><td>2025</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Langues :</span></td><td>Français (<i>fre</i>)</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=Caract%C3%A9re' >Caractére</a>&nbsp; <a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=jus+cogens%2C+crime%2C+g%C3%A9nocide' >jus cogens, crime, génocide</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=4628' >M 29/025 D</a> </td></tr></table>
+</div>
+	  		<div id='div_isbd15963' style='display:none;'>Du caractère impératif du jus cogens face à la répression du crime de Génocide [texte imprimé] / <a href='./index.php?lvl=author_see&id=14247' >MUHESI MULENGABYUMA Alfred</a>, Auteur&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=1888' >[S.l.]&nbsp;: ULPGL-GOMA</a>, 2025.<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=Caract%C3%A9re' >Caractére</a>&nbsp; <a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=jus+cogens%2C+crime%2C+g%C3%A9nocide' >jus cogens, crime, génocide</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=4628' >M 29/025 D</a> </td></tr></table></div></td></tr></table>
+					
+			<div id='expl_voisin_search_15963' class='expl_voisin_search'></div>	
+			<div id='simili_search_15963' class='simili_search'></div></div>			
+		</div>
+	</div><div id='etageres'><h3><span id='titre_etagere'>Etagères virtuelles</span></h3><div id='etagere-container' class='etagere-container' >
+<div id='etagere_6' class='etagere' ><div id='etagere-titre'><h1><a href="./index.php?lvl=etagere_see&id=6">Livres gestion des entreprises</a></h1></div>
+<div id='etagere-comment'><h2>S&eacute;lection d&#039;ouvrages disponibles au BU</h2></div><div id='etagere-notice-list'></div></div></div><!-- fin id='etagere-container' class='etagere-container' --></div>	
+		</div><!-- fin DIV main_hors_footer --><div id="footer">
+
+<span id="footer_rss">
+	
+</span>
+<span id="footer_link_sup">
+		 &nbsp;
+</span>
+
+<span id="footer_link_website">
+	<a class="footer_biblio_name" href="https://bu-ulpgl.net" title=""></a> &nbsp;
+</span>	
+
+<span id="footer_link_pmb">
+ &nbsp;
+		<a class="lien_pmb_footer" href="http://www.sigb.net" title="...une solution libre pour la médiathèque..." target='_blank'>pmb</a> 	
+</span>		
+		
+</div> 
+
+		</div><!-- /div id=main -->
+
+		<div id="intro">
+<div id="intro_bibli">
+			<h3></h3>
+			<div class="p1"></div>
+			<div class="p2"></div>
+			</div>
+		</div><!-- /div id=intro -->		
+		<div id="bandeau"><div id="accueil">
+
+<h3><span onclick='document.location="./index.php?"' style='cursor: pointer;'>Accueil</span></h3>
+<p class="centered"><a href='./index.php?'><img src='images/site/logou.jpg'  border='0' align='center'/></a></p>
+<div id='lang_select'><h3 ><span>Sélection de la langue</span></h3><span><form method="post" action="index.php" ><select name="lang_sel" onchange="this.form.submit();"><option value='fr_FR' selected>Français </option><option value='en_UK'>English (UK)</option></select></form></span></div>
+
+					</div><!-- fermeture #accueil -->
+<div id="connexion">
+
+			<h3>Se connecter</h3><span id='login_form'><form action='empr.php' method='post' name='myform'>
+				<label>accéder à votre compte de lecteur</label><br />
+				<input type='text' name='login' class='login' size='14' value="identifiant" onFocus="this.value='';"><br />
+				<input type='password' name='password' class='password' size='8' value='' />&nbsp;&nbsp;
+				<input type='submit' name='ok' value='ok' class='bouton'></form><a href=./askmdp.php>Mot de passe oublié ?</a></span>
+
+			</div><!-- fermeture #connexion -->
+<div id="meteo">
+
+		<h3>Météo</h3>
+
+		<p class="centered"><div id="cont_4fa6e3dd37f9370c897a4194ddc8f4df"><span id="h_4fa6e3dd37f9370c897a4194ddc8f4df"><a id="a_4fa6e3dd37f9370c897a4194ddc8f4df" href="http://www.tameteo.com/meteo_Goma-Afrique-Republique+democratique+du+Congo-Goma-FZNA-1-9710.html" target="_blank" style="color:#00ABEB;font-family:Roboto;font-size:14px;">M&eacute;t&eacute;o </a>Goma</span><script type="text/javascript" async src="http://www.tameteo.com/wid_loader/4fa6e3dd37f9370c897a4194ddc8f4df"></script></div></p>
+
+		<small>la météo à GISENYI</small>
+
+		</div><!-- fermeture # meteo -->
+<div id="adresse">
+
+		<h3>Adresse</h3>
+
+		<span>
+			<br />
+			02 Avenue du Lac, Com. de GOMA, Nord-Kivu, R.D.Congo<br />
+			468 GISENYI<br />
+			Rwanda&nbsp;<br />
+			+243997775077<br /><span id='opac_biblio_email'>
+			<a href="mailto:bibliotheque@ulpgl.net" alt="bibliotheque@ulpgl.net">contact</a></span></span>
+	    </div><!-- fermeture #adresse --><div id="post_adress">
+
+		<span><br>
+<b>Statistiques</b><br>
+<iframe src="stat2.php" scrolling="no" marginwidth="0" marginheight="0"
+style="width:100%; height:90px; border:0px solid #ffffff;"> </iframe>
+		</span>	
+	    </div><!-- fermeture #post_adress --></div><div id="bandeau_2"></div></div><!-- /div id=container -->
+		
+		<script type='text/javascript'>init_drag();	//rechercher!!</script> 
+		</body>
+		</html>
+		

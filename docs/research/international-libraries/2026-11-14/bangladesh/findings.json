@@ -1,0 +1,1488 @@
+{
+  "country": "Bangladesh",
+  "research_date": "2026-11-15",
+  "folder_date_note": "Parent batch folder2026-11-14; all recorded live checks took place2026-11-15 UTC.",
+  "verified_target_count": 10,
+  "additional_verified_reserves": 1,
+  "scope_warning": "Ten individually verified substantial academic libraries, not a measured national largest-ten ranking. Larger blocked candidates are retained separately. Live public query/holdings and offline parser replay are not app integration.",
+  "recommended_platform": "Koha",
+  "market_share_caveat": "All11 successful catalog samples use Koha; sample is discovery/feasibility selected, not a national market-share census.",
+  "largest_network_opportunities": [
+    {
+      "name": "DPL / Amar Library",
+      "scope": "71 government public libraries in2026 study; official app says centralizes government libraries",
+      "status": "Potential strongest public-reader partnership; public API and live query not verified",
+      "source": "https://play.google.com/store/apps/details?id=com.misfit.publiclibrary"
+    },
+    {
+      "name": "Independent institutional Koha catalogs",
+      "scope": "10 recommended verified institutions, plus1reserve; some branch/hall/seminar sublibraries",
+      "status": "Best proven technical reuse; onboard each institution separately"
+    },
+    {
+      "name": "BANSDOC National Union Catalog",
+      "scope": "113 participating libraries;5,373journals;9,563holdings displayed",
+      "status": "Journal holdings union, not physical-book federation; no book network unlock claimed",
+      "source": "https://nucb.bansdoc.gov.bd/"
+    }
+  ],
+  "libraries": [
+    {
+      "id": "chittagong",
+      "country": "Bangladesh",
+      "name": "University of Chittagong Central Library",
+      "city": "Chattogram",
+      "type": "Public university",
+      "recommendation": "verified_target",
+      "national_rank": null,
+      "collection": {
+        "count": 350000,
+        "measure": "More than 350,000 book volumes",
+        "source_url": "https://library.cu.ac.bd/library-collections/",
+        "source_year": "undated; accessed 2026-11-15",
+        "evidence": "evidence/chittagong-size-source.html",
+        "quality": "official institutional count"
+      },
+      "official_library_url": "https://library.cu.ac.bd/opac/",
+      "catalog_url": "https://opac.cu.ac.bd",
+      "platform": "Koha",
+      "platform_proof": "Public Koha CGI search and detail HTML with library branding; actual catalog responses saved.",
+      "query_verification": {
+        "method": "GET",
+        "url": "https://opac.cu.ac.bd/cgi-bin/koha/opac-search.pl?q=Pride%20and%20prejudice",
+        "http_status": 200,
+        "effective_url": "https://opac.cu.ac.bd/cgi-bin/koha/opac-search.pl?q=Pride%20and%20prejudice",
+        "checked_at_utc": "2026-11-15T06:11:03.298147+00:00",
+        "elapsed_seconds": 9.75,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/chittagong-search.html",
+        "evidence_metadata": "evidence/chittagong-search.json",
+        "evidence_headers": "evidence/chittagong-search.headers.txt",
+        "error": "",
+        "query": "Pride%20and%20prejudice",
+        "query_text": "Pride and prejudice",
+        "results_count": 20,
+        "returned_books": [
+          {
+            "title": "Pride and prejudice",
+            "authors": "Jane Austen",
+            "record_id": "23458",
+            "record_url": "https://opac.cu.ac.bd/cgi-bin/koha/opac-detail.pl?biblionumber=23458",
+            "holdings_observed": "2 copies available for loan; call 823.7/A9332p."
+          }
+        ]
+      },
+      "detail_verification": {
+        "method": "GET",
+        "url": "https://opac.cu.ac.bd/cgi-bin/koha/opac-detail.pl?biblionumber=23458",
+        "http_status": 200,
+        "effective_url": "https://opac.cu.ac.bd/cgi-bin/koha/opac-detail.pl?biblionumber=23458",
+        "checked_at_utc": "2026-11-15T06:13:41.308781+00:00",
+        "elapsed_seconds": 4.16,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/chittagong-detail.html",
+        "evidence_metadata": "evidence/chittagong-detail.json",
+        "evidence_headers": "evidence/chittagong-detail.headers.txt",
+        "error": ""
+      },
+      "holdings_observed": "2 copies available for loan; call 823.7/A9332p.",
+      "access_limits": "Academic library; public catalog discovery verified. General-public borrowing eligibility not established.",
+      "robots": {
+        "assessment": "404 robots; no applicable disallow found",
+        "request": {
+          "method": "GET",
+          "url": "https://opac.cu.ac.bd/robots.txt",
+          "http_status": 404,
+          "effective_url": "https://opac.cu.ac.bd/robots.txt",
+          "checked_at_utc": "2026-11-15T06:10:19.595458+00:00",
+          "elapsed_seconds": 3.03,
+          "retrieval": "direct curl with TLS verification; no authenticated session",
+          "evidence_html": "evidence/chittagong-robots.html",
+          "evidence_metadata": "evidence/chittagong-robots.json",
+          "evidence_headers": "evidence/chittagong-robots.headers.txt",
+          "error": ""
+        }
+      },
+      "terms": "No integration licence established by these single public searches; copyright/footer is not API permission. Terms and supported reuse require onboarding review.",
+      "adapter_readiness": {
+        "existing_generic_search_parser": "offline replay passes",
+        "richer_title_parser": "offline replay passes",
+        "live_app_tested": false,
+        "activated": false,
+        "evidence": "../adapter-tools/koha-replay-summary.json",
+        "issues": "Institution describes three catalog servers with different refresh schedules; confirm selected server freshness. Placeholder x and missing/invalid ISBN occur."
+      }
+    },
+    {
+      "id": "cuet",
+      "country": "Bangladesh",
+      "name": "Chittagong University of Engineering & Technology Central Library",
+      "city": "Chattogram",
+      "type": "Public engineering university",
+      "recommendation": "verified_target",
+      "national_rank": null,
+      "collection": {
+        "count": 52000,
+        "measure": "More than 52,000 hard-copy books (official indexed source)",
+        "source_url": "https://library.cuet.ac.bd/about/about-library",
+        "source_year": "Undated official page; search-index retrieval 2026-11-15; index reported crawled last month",
+        "evidence": "evidence/continuation/cuet-size-indexed-source.json",
+        "quality": "Official page via search index; direct HTTP 200 rendered the page template without the collection text; titles versus copies unspecified; lower bound"
+      },
+      "official_library_url": "https://library.cuet.ac.bd/",
+      "catalog_url": "http://103.99.128.14",
+      "platform": "Koha",
+      "platform_proof": "Public Koha CGI search and detail HTML with library branding; actual catalog responses saved.",
+      "query_verification": {
+        "method": "GET",
+        "url": "http://103.99.128.14/cgi-bin/koha/opac-search.pl?q=Introduction%20to%20algorithms",
+        "http_status": 200,
+        "effective_url": "http://103.99.128.14/cgi-bin/koha/opac-search.pl?q=Introduction%20to%20algorithms",
+        "checked_at_utc": "2026-11-15T06:12:49.254507+00:00",
+        "elapsed_seconds": 4.12,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/cuet-search.html",
+        "evidence_metadata": "evidence/cuet-search.json",
+        "evidence_headers": "evidence/cuet-search.headers.txt",
+        "error": "",
+        "query": "Introduction%20to%20algorithms",
+        "query_text": "Introduction to algorithms",
+        "results_count": 10,
+        "returned_books": [
+          {
+            "title": "Introduction to algorithms",
+            "authors": "Thomas H. Cormen et al.",
+            "record_id": "206",
+            "record_url": "http://103.99.128.14/cgi-bin/koha/opac-detail.pl?biblionumber=206",
+            "holdings_observed": "2nd ed (2001): 17 loanable, 1 reference-only, 1 checked out; call005.1/COI."
+          }
+        ]
+      },
+      "detail_verification": {
+        "method": "GET",
+        "url": "http://103.99.128.14/cgi-bin/koha/opac-detail.pl?biblionumber=206",
+        "http_status": 200,
+        "effective_url": "http://103.99.128.14/cgi-bin/koha/opac-detail.pl?biblionumber=206",
+        "checked_at_utc": "2026-11-15T06:13:48.657954+00:00",
+        "elapsed_seconds": 3.08,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/cuet-detail.html",
+        "evidence_metadata": "evidence/cuet-detail.json",
+        "evidence_headers": "evidence/cuet-detail.headers.txt",
+        "error": ""
+      },
+      "holdings_observed": "2nd ed (2001): 17 loanable, 1 reference-only, 1 checked out; call005.1/COI.",
+      "access_limits": "Public catalog includes central, hall and seminar libraries; individual branch access/circulation not established.",
+      "robots": {
+        "assessment": "404 robots; no applicable disallow found",
+        "request": {
+          "method": "GET",
+          "url": "http://103.99.128.14/robots.txt",
+          "http_status": 404,
+          "effective_url": "http://103.99.128.14/robots.txt",
+          "checked_at_utc": "2026-11-15T06:12:12.709731+00:00",
+          "elapsed_seconds": 2.25,
+          "retrieval": "direct curl with TLS verification; no authenticated session",
+          "evidence_html": "evidence/cuet-robots.html",
+          "evidence_metadata": "evidence/cuet-robots.json",
+          "evidence_headers": "evidence/cuet-robots.headers.txt",
+          "error": ""
+        }
+      },
+      "terms": "No integration licence established by these single public searches; copyright/footer is not API permission. Terms and supported reuse require onboarding review.",
+      "adapter_readiness": {
+        "existing_generic_search_parser": "offline replay passes",
+        "richer_title_parser": "offline replay fails",
+        "live_app_tested": false,
+        "activated": false,
+        "evidence": "../adapter-tools/koha-replay-summary.json",
+        "issues": "Officially linked HTTP IP; simpler existing parser passes but richer title parser fails."
+      }
+    },
+    {
+      "id": "kuet",
+      "country": "Bangladesh",
+      "name": "Khulna University of Engineering & Technology Central Library",
+      "city": "Khulna",
+      "type": "Public engineering university",
+      "recommendation": "verified_target",
+      "national_rank": null,
+      "collection": {
+        "count": 50000,
+        "measure": "More than 50,000 books; 9,475 e-books reported separately",
+        "source_url": "https://library.kuet.ac.bd/about.php",
+        "source_year": "Undated official page; directly retrieved 2026-11-15",
+        "evidence": "evidence/continuation/kuet-size.html",
+        "quality": "Official institutional book count; titles versus copies unspecified; lower bound, not exact count"
+      },
+      "official_library_url": "https://library.kuet.ac.bd/",
+      "catalog_url": "https://library-backup.kuet.ac.bd",
+      "platform": "Koha",
+      "platform_proof": "Public Koha CGI search and detail HTML with library branding; actual catalog responses saved.",
+      "query_verification": {
+        "method": "GET",
+        "url": "https://library-backup.kuet.ac.bd/cgi-bin/koha/opac-search.pl?q=Introduction%20to%20algorithms",
+        "http_status": 200,
+        "effective_url": "https://library-backup.kuet.ac.bd/cgi-bin/koha/opac-search.pl?q=Introduction%20to%20algorithms",
+        "checked_at_utc": "2026-11-15T06:12:13.108183+00:00",
+        "elapsed_seconds": 9.84,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/kuet-search.html",
+        "evidence_metadata": "evidence/kuet-search.json",
+        "evidence_headers": "evidence/kuet-search.headers.txt",
+        "error": "",
+        "query": "Introduction%20to%20algorithms",
+        "query_text": "Introduction to algorithms",
+        "results_count": 110,
+        "returned_books": [
+          {
+            "title": "Introduction to algorithms",
+            "authors": "Thomas H. Cormen et al.",
+            "record_id": "7590",
+            "record_url": "https://library-backup.kuet.ac.bd/cgi-bin/koha/opac-detail.pl?biblionumber=7590",
+            "holdings_observed": "3rd ed (2009), ISBN9788120340077; 1 available, 4 checked out; call005.1 INT."
+          }
+        ]
+      },
+      "detail_verification": {
+        "method": "GET",
+        "url": "https://library-backup.kuet.ac.bd/cgi-bin/koha/opac-detail.pl?biblionumber=7590",
+        "http_status": 200,
+        "effective_url": "https://library-backup.kuet.ac.bd/cgi-bin/koha/opac-detail.pl?biblionumber=7590",
+        "checked_at_utc": "2026-11-15T06:13:41.697392+00:00",
+        "elapsed_seconds": 2.9,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/kuet-detail.html",
+        "evidence_metadata": "evidence/kuet-detail.json",
+        "evidence_headers": "evidence/kuet-detail.headers.txt",
+        "error": ""
+      },
+      "holdings_observed": "3rd ed (2009), ISBN9788120340077; 1 available, 4 checked out; call005.1 INT.",
+      "access_limits": "Official library describes access for KUET students; public external borrowing not established.",
+      "robots": {
+        "assessment": "404 robots; no applicable disallow found",
+        "request": {
+          "method": "GET",
+          "url": "https://library-backup.kuet.ac.bd/robots.txt",
+          "http_status": 404,
+          "effective_url": "https://library-backup.kuet.ac.bd/robots.txt",
+          "checked_at_utc": "2026-11-15T06:10:55.660573+00:00",
+          "elapsed_seconds": 2.11,
+          "retrieval": "direct curl with TLS verification; no authenticated session",
+          "evidence_html": "evidence/kuet-robots.html",
+          "evidence_metadata": "evidence/kuet-robots.json",
+          "evidence_headers": "evidence/kuet-robots.headers.txt",
+          "error": ""
+        }
+      },
+      "terms": "No integration licence established by these single public searches; copyright/footer is not API permission. Terms and supported reuse require onboarding review.",
+      "adapter_readiness": {
+        "existing_generic_search_parser": "offline replay passes",
+        "richer_title_parser": "offline replay passes",
+        "live_app_tested": false,
+        "activated": false,
+        "evidence": "../adapter-tools/koha-replay-summary.json",
+        "issues": "Reachable hostname is library-backup.kuet.ac.bd; establish canonical/fresh source before onboarding."
+      }
+    },
+    {
+      "id": "khulna",
+      "country": "Bangladesh",
+      "name": "Khulna University Kazi Nazrul Islam Central Library",
+      "city": "Khulna",
+      "type": "Public university",
+      "recommendation": "verified_target",
+      "national_rank": null,
+      "collection": {
+        "count": 42331,
+        "measure": "40,821 text books + 1,510 reference books = 42,331 print books (calculated; excludes e-books/journals)",
+        "source_url": "https://ku.ac.bd/facilities/central-library",
+        "source_year": "undated; accessed 2026-11-15",
+        "evidence": "evidence/khulna-size-source.html",
+        "quality": "official institutional count"
+      },
+      "official_library_url": "https://ku.ac.bd/facilities/central-library",
+      "catalog_url": "https://opac.library.ku.ac.bd",
+      "platform": "Koha",
+      "platform_proof": "Public Koha CGI search and detail HTML with library branding; actual catalog responses saved.",
+      "query_verification": {
+        "method": "GET",
+        "url": "https://opac.library.ku.ac.bd/cgi-bin/koha/opac-search.pl?q=Introduction%20to%20algorithms",
+        "http_status": 200,
+        "effective_url": "https://opac.library.ku.ac.bd/cgi-bin/koha/opac-search.pl?q=Introduction%20to%20algorithms",
+        "checked_at_utc": "2026-11-15T06:12:11.475215+00:00",
+        "elapsed_seconds": 8.2,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/khulna-search.html",
+        "evidence_metadata": "evidence/khulna-search.json",
+        "evidence_headers": "evidence/khulna-search.headers.txt",
+        "error": "",
+        "query": "Introduction%20to%20algorithms",
+        "query_text": "Introduction to algorithms",
+        "results_count": 14,
+        "returned_books": [
+          {
+            "title": "Introduction to algorithms",
+            "authors": "Thomas H. Cormen et al.",
+            "record_id": "18404",
+            "record_url": "https://opac.library.ku.ac.bd/cgi-bin/koha/opac-detail.pl?biblionumber=18404",
+            "holdings_observed": "2 reference-only copies (Not For Loan); call 005.1 COI 2002."
+          }
+        ]
+      },
+      "detail_verification": {
+        "method": "GET",
+        "url": "https://opac.library.ku.ac.bd/cgi-bin/koha/opac-detail.pl?biblionumber=18404",
+        "http_status": 200,
+        "effective_url": "https://opac.library.ku.ac.bd/cgi-bin/koha/opac-detail.pl?biblionumber=18404",
+        "checked_at_utc": "2026-11-15T06:14:03.396685+00:00",
+        "elapsed_seconds": 22.83,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/khulna-detail.html",
+        "evidence_metadata": "evidence/khulna-detail.json",
+        "evidence_headers": "evidence/khulna-detail.headers.txt",
+        "error": ""
+      },
+      "holdings_observed": "2 reference-only copies (Not For Loan); call 005.1 COI 2002.",
+      "access_limits": "Members include university students/staff and specified academic roles; outside persons require special Vice Chancellor permission.",
+      "robots": {
+        "assessment": "404 robots; no applicable disallow found",
+        "request": {
+          "method": "GET",
+          "url": "https://opac.library.ku.ac.bd/robots.txt",
+          "http_status": 404,
+          "effective_url": "https://opac.library.ku.ac.bd/robots.txt",
+          "checked_at_utc": "2026-11-15T06:10:59.884241+00:00",
+          "elapsed_seconds": 6.33,
+          "retrieval": "direct curl with TLS verification; no authenticated session",
+          "evidence_html": "evidence/khulna-robots.html",
+          "evidence_metadata": "evidence/khulna-robots.json",
+          "evidence_headers": "evidence/khulna-robots.headers.txt",
+          "error": ""
+        }
+      },
+      "terms": "No integration licence established by these single public searches; copyright/footer is not API permission. Terms and supported reuse require onboarding review.",
+      "adapter_readiness": {
+        "existing_generic_search_parser": "offline replay passes",
+        "richer_title_parser": "offline replay passes",
+        "live_app_tested": false,
+        "activated": false,
+        "evidence": "../adapter-tools/koha-replay-summary.json",
+        "issues": "Detail response took 22.83 seconds: existing app time budget needs measurement."
+      }
+    },
+    {
+      "id": "ruet",
+      "country": "Bangladesh",
+      "name": "Rajshahi University of Engineering & Technology Central Library",
+      "city": "Rajshahi",
+      "type": "Public engineering university",
+      "recommendation": "verified_target",
+      "national_rank": null,
+      "collection": {
+        "count": 40000,
+        "measure": "Nearly 40,000 books; official 2 August 2025 news",
+        "source_url": "https://www.ruet.ac.bd/public/index.php/news-and-event/ruet-freshers-receive-machine-readable-library-cards",
+        "source_year": "2025-08-02; directly retrieved 2026-11-15",
+        "evidence": "evidence/continuation/ruet-size-news.html",
+        "quality": "Official dated university news; approximate count; titles versus copies unspecified"
+      },
+      "official_library_url": "https://library.ruet.ac.bd/",
+      "catalog_url": "http://centrallibrary.ruet.ac.bd",
+      "platform": "Koha",
+      "platform_proof": "Public Koha CGI search and detail HTML with library branding; actual catalog responses saved.",
+      "query_verification": {
+        "method": "GET",
+        "url": "http://centrallibrary.ruet.ac.bd/cgi-bin/koha/opac-search.pl?q=Introduction%20to%20algorithms",
+        "http_status": 200,
+        "effective_url": "http://centrallibrary.ruet.ac.bd/cgi-bin/koha/opac-search.pl?q=Introduction%20to%20algorithms",
+        "checked_at_utc": "2026-11-15T06:13:40.565374+00:00",
+        "elapsed_seconds": 3.41,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/ruet-search.html",
+        "evidence_metadata": "evidence/ruet-search.json",
+        "evidence_headers": "evidence/ruet-search.headers.txt",
+        "error": "",
+        "query": "Introduction%20to%20algorithms",
+        "query_text": "Introduction to algorithms",
+        "results_count": 3,
+        "returned_books": [
+          {
+            "title": "Introduction to algorithms",
+            "authors": "Thomas H. Cormen et al.",
+            "record_id": "4191",
+            "record_url": "http://centrallibrary.ruet.ac.bd/cgi-bin/koha/opac-detail.pl?biblionumber=4191",
+            "holdings_observed": "3rd ed (2009), ISBN9788120340077; 1 available, 1 reference-only, 1 checked out; call005.1 COR2009."
+          }
+        ]
+      },
+      "detail_verification": {
+        "method": "GET",
+        "url": "http://centrallibrary.ruet.ac.bd/cgi-bin/koha/opac-detail.pl?biblionumber=4191",
+        "http_status": 200,
+        "effective_url": "http://centrallibrary.ruet.ac.bd/cgi-bin/koha/opac-detail.pl?biblionumber=4191",
+        "checked_at_utc": "2026-11-15T06:17:27.862273+00:00",
+        "elapsed_seconds": 4.17,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/ruet-detail.html",
+        "evidence_metadata": "evidence/ruet-detail.json",
+        "evidence_headers": "evidence/ruet-detail.headers.txt",
+        "error": ""
+      },
+      "holdings_observed": "3rd ed (2009), ISBN9788120340077; 1 available, 1 reference-only, 1 checked out; call005.1 COR2009.",
+      "access_limits": "Official membership process is for institutional students/faculty; external public borrowing not established.",
+      "robots": {
+        "assessment": "Catalog HTTP robots404; official main site robots allows all",
+        "request": {
+          "method": "GET",
+          "url": "http://centrallibrary.ruet.ac.bd/robots.txt",
+          "http_status": 404,
+          "effective_url": "http://centrallibrary.ruet.ac.bd/robots.txt",
+          "checked_at_utc": "2026-11-15T06:12:49.419646+00:00",
+          "elapsed_seconds": 3.07,
+          "retrieval": "direct curl with TLS verification; no authenticated session",
+          "evidence_html": "evidence/ruet-opac-robots.html",
+          "evidence_metadata": "evidence/ruet-opac-robots.json",
+          "evidence_headers": "evidence/ruet-opac-robots.headers.txt",
+          "error": ""
+        }
+      },
+      "terms": "No integration licence established by these single public searches; copyright/footer is not API permission. Terms and supported reuse require onboarding review.",
+      "adapter_readiness": {
+        "existing_generic_search_parser": "offline replay passes",
+        "richer_title_parser": "offline replay fails",
+        "live_app_tested": false,
+        "activated": false,
+        "evidence": "../adapter-tools/koha-replay-summary.json",
+        "issues": "Official HTTP origin; simpler existing parser passes but richer title parser fails."
+      }
+    },
+    {
+      "id": "iut",
+      "country": "Bangladesh",
+      "name": "Islamic University of Technology Library",
+      "city": "Gazipur",
+      "type": "OIC university",
+      "recommendation": "verified_target",
+      "national_rank": null,
+      "collection": {
+        "count": 37000,
+        "measure": "Around 37,000 printed copies; 8,145 titles (52,000 is shelf capacity, not holdings)",
+        "source_url": "https://library.iutoic-dhaka.edu/about-library/library-at-a-glance",
+        "source_year": "undated; accessed 2026-11-15",
+        "evidence": "evidence/iut-home.html",
+        "quality": "official institutional count"
+      },
+      "official_library_url": "https://library.iutoic-dhaka.edu/about-library/library-at-a-glance",
+      "catalog_url": "http://103.82.172.142:8081",
+      "platform": "Koha",
+      "platform_proof": "Public Koha CGI search and detail HTML with library branding; actual catalog responses saved.",
+      "query_verification": {
+        "method": "GET",
+        "url": "http://103.82.172.142:8081/cgi-bin/koha/opac-search.pl?q=Introduction%20to%20algorithms",
+        "http_status": 200,
+        "effective_url": "http://103.82.172.142:8081/cgi-bin/koha/opac-search.pl?q=Introduction%20to%20algorithms",
+        "checked_at_utc": "2026-11-15T06:17:29.183862+00:00",
+        "elapsed_seconds": 5.49,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/iut-search.html",
+        "evidence_metadata": "evidence/iut-search.json",
+        "evidence_headers": "evidence/iut-search.headers.txt",
+        "error": "",
+        "query": "Introduction%20to%20algorithms",
+        "query_text": "Introduction to algorithms",
+        "results_count": 12,
+        "returned_books": [
+          {
+            "title": "Introduction to algorithms",
+            "authors": "Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest, Clifford Stein",
+            "record_id": "8114",
+            "record_url": "http://103.82.172.142:8081/cgi-bin/koha/opac-detail.pl?biblionumber=8114",
+            "holdings_observed": "Fourth edition (2022): 7 loanable copies and 3 checked out; call 511.8 COI."
+          }
+        ]
+      },
+      "detail_verification": {
+        "method": "GET",
+        "url": "http://103.82.172.142:8081/cgi-bin/koha/opac-detail.pl?biblionumber=8114",
+        "http_status": 200,
+        "effective_url": "http://103.82.172.142:8081/cgi-bin/koha/opac-detail.pl?biblionumber=8114",
+        "checked_at_utc": "2026-11-15T06:18:47.467162+00:00",
+        "elapsed_seconds": 2.95,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/iut-detail.html",
+        "evidence_metadata": "evidence/iut-detail.json",
+        "evidence_headers": "evidence/iut-detail.headers.txt",
+        "error": ""
+      },
+      "holdings_observed": "Fourth edition (2022): 7 loanable copies and 3 checked out; call 511.8 COI.",
+      "access_limits": "Catalog public; institutional credentials required for account, circulation and linked e-books.",
+      "robots": {
+        "assessment": "404 robots; no applicable disallow found",
+        "request": {
+          "method": "GET",
+          "url": "http://103.82.172.142:8081/robots.txt",
+          "http_status": 404,
+          "effective_url": "http://103.82.172.142:8081/robots.txt",
+          "checked_at_utc": "2026-11-15T06:14:41.791149+00:00",
+          "elapsed_seconds": 2.58,
+          "retrieval": "direct curl with TLS verification; no authenticated session",
+          "evidence_html": "evidence/iut-robots.html",
+          "evidence_metadata": "evidence/iut-robots.json",
+          "evidence_headers": "evidence/iut-robots.headers.txt",
+          "error": ""
+        }
+      },
+      "terms": "No integration licence established by these single public searches; copyright/footer is not API permission. Terms and supported reuse require onboarding review.",
+      "adapter_readiness": {
+        "existing_generic_search_parser": "offline replay passes",
+        "richer_title_parser": "offline replay passes",
+        "live_app_tested": false,
+        "activated": false,
+        "evidence": "../adapter-tools/koha-replay-summary.json",
+        "issues": "Officially linked HTTP IP:8081 origin needs explicit reviewed provider configuration."
+      }
+    },
+    {
+      "id": "jagannath",
+      "country": "Bangladesh",
+      "name": "Jagannath University Central Library",
+      "city": "Dhaka",
+      "type": "Public university",
+      "recommendation": "verified_target",
+      "national_rank": null,
+      "collection": {
+        "count": 31326,
+        "measure": "31,326 central-library books (Prothom Alo, October 2025; secondary source)",
+        "source_url": "https://www.prothomalo.com/amp/story/bangladesh%2F4gkkbhspsm",
+        "source_year": "2025-10-20 Bangladesh local date; retrieved 2026-11-15",
+        "evidence": "evidence/continuation/jagannath-size-secondary.json",
+        "quality": "Secondary dated newspaper report, directly retrieved; official physical-total confirmation not located; titles versus copies unspecified"
+      },
+      "official_library_url": "https://library.jnu.ac.bd/",
+      "catalog_url": "https://opac.jnu.ac.bd",
+      "platform": "Koha",
+      "platform_proof": "Public Koha CGI search and detail HTML with library branding; actual catalog responses saved.",
+      "query_verification": {
+        "method": "GET",
+        "url": "https://opac.jnu.ac.bd/cgi-bin/koha/opac-search.pl?q=Research%20methodology",
+        "http_status": 200,
+        "effective_url": "https://opac.jnu.ac.bd/cgi-bin/koha/opac-search.pl?q=Research%20methodology",
+        "checked_at_utc": "2026-11-15T06:12:54.285896+00:00",
+        "elapsed_seconds": 9.15,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/jagannath-search.html",
+        "evidence_metadata": "evidence/jagannath-search.json",
+        "evidence_headers": "evidence/jagannath-search.headers.txt",
+        "error": "",
+        "query": "Research%20methodology",
+        "query_text": "Research methodology",
+        "results_count": 71,
+        "returned_books": [
+          {
+            "title": "Research methodology: methods and techniques",
+            "authors": "C. R. Kothari and Gaurav Garg",
+            "record_id": "34",
+            "record_url": "https://opac.jnu.ac.bd/cgi-bin/koha/opac-detail.pl?biblionumber=34",
+            "holdings_observed": "3rd ed (2014), ISBN9788122436235; 1 available copy; call001.42 KOR."
+          }
+        ]
+      },
+      "detail_verification": {
+        "method": "GET",
+        "url": "https://opac.jnu.ac.bd/cgi-bin/koha/opac-detail.pl?biblionumber=34",
+        "http_status": 200,
+        "effective_url": "https://opac.jnu.ac.bd/cgi-bin/koha/opac-detail.pl?biblionumber=34",
+        "checked_at_utc": "2026-11-15T06:13:48.311197+00:00",
+        "elapsed_seconds": 7.0,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/jagannath-detail.html",
+        "evidence_metadata": "evidence/jagannath-detail.json",
+        "evidence_headers": "evidence/jagannath-detail.headers.txt",
+        "error": ""
+      },
+      "holdings_observed": "3rd ed (2014), ISBN9788122436235; 1 available copy; call001.42 KOR.",
+      "access_limits": "Public catalog; Central and CSE departmental libraries listed. External borrowing eligibility not established.",
+      "robots": {
+        "assessment": "404 robots; no applicable disallow found",
+        "request": {
+          "method": "GET",
+          "url": "https://opac.jnu.ac.bd/robots.txt",
+          "http_status": 404,
+          "effective_url": "https://opac.jnu.ac.bd/robots.txt",
+          "checked_at_utc": "2026-11-15T06:12:09.921437+00:00",
+          "elapsed_seconds": 6.65,
+          "retrieval": "direct curl with TLS verification; no authenticated session",
+          "evidence_html": "evidence/jagannath-robots.html",
+          "evidence_metadata": "evidence/jagannath-robots.json",
+          "evidence_headers": "evidence/jagannath-robots.headers.txt",
+          "error": ""
+        }
+      },
+      "terms": "No integration licence established by these single public searches; copyright/footer is not API permission. Terms and supported reuse require onboarding review.",
+      "adapter_readiness": {
+        "existing_generic_search_parser": "offline replay passes",
+        "richer_title_parser": "offline replay passes",
+        "live_app_tested": false,
+        "activated": false,
+        "evidence": "../adapter-tools/koha-replay-summary.json",
+        "issues": "Bangladesh JnU; avoid confusion with jagannathuniversity.org in India."
+      }
+    },
+    {
+      "id": "iub",
+      "country": "Bangladesh",
+      "name": "Independent University, Bangladesh Library",
+      "city": "Dhaka",
+      "type": "Private university",
+      "recommendation": "verified_target",
+      "national_rank": null,
+      "collection": {
+        "count": 30000,
+        "measure": "30,000+ printed books",
+        "source_url": "https://library.iub.edu.bd/collection",
+        "source_year": "Undated official page, retrieved via search index2026-11-15; index says crawled last month; direct source503",
+        "evidence": "evidence/iub-size-indexed-source.json",
+        "quality": "Official institution page via search index; live count-page fetch failed"
+      },
+      "official_library_url": "https://library.iub.edu.bd/collection",
+      "catalog_url": "https://opac.iub.edu.bd",
+      "platform": "Koha",
+      "platform_proof": "Public Koha CGI search and detail HTML with library branding; actual catalog responses saved.",
+      "query_verification": {
+        "method": "GET",
+        "url": "https://opac.iub.edu.bd/cgi-bin/koha/opac-search.pl?q=Principles%20of%20marketing",
+        "http_status": 200,
+        "effective_url": "https://opac.iub.edu.bd/cgi-bin/koha/opac-search.pl?q=Principles%20of%20marketing",
+        "checked_at_utc": "2026-11-15T06:10:26.124752+00:00",
+        "elapsed_seconds": 9.56,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/iub-search.html",
+        "evidence_metadata": "evidence/iub-search.json",
+        "evidence_headers": "evidence/iub-search.headers.txt",
+        "error": "",
+        "query": "Principles%20of%20marketing",
+        "query_text": "Principles of marketing",
+        "results_count": 44,
+        "returned_books": [
+          {
+            "title": "Principles of marketing",
+            "authors": "Philip Kotler and Gary Armstrong",
+            "record_id": "717",
+            "record_url": "https://opac.iub.edu.bd/cgi-bin/koha/opac-detail.pl?biblionumber=717",
+            "holdings_observed": "11th ed (2006), ISBN 8120328256; 3 available and 3 damaged copies."
+          }
+        ]
+      },
+      "detail_verification": {
+        "method": "GET",
+        "url": "https://opac.iub.edu.bd/cgi-bin/koha/opac-detail.pl?biblionumber=717",
+        "http_status": 200,
+        "effective_url": "https://opac.iub.edu.bd/cgi-bin/koha/opac-detail.pl?biblionumber=717",
+        "checked_at_utc": "2026-11-15T06:13:43.017086+00:00",
+        "elapsed_seconds": 5.86,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/iub-detail.html",
+        "evidence_metadata": "evidence/iub-detail.json",
+        "evidence_headers": "evidence/iub-detail.headers.txt",
+        "error": ""
+      },
+      "holdings_observed": "11th ed (2006), ISBN 8120328256; 3 available and 3 damaged copies.",
+      "access_limits": "Catalog public; student/faculty circulation eligibility needs explicit display. Subscription e-books are not general-public access.",
+      "robots": {
+        "assessment": "robots Allow / for general user agents; meta-externalagent blocked only",
+        "request": {
+          "method": "GET",
+          "url": "https://opac.iub.edu.bd/robots.txt",
+          "http_status": 200,
+          "effective_url": "https://opac.iub.edu.bd/robots.txt",
+          "checked_at_utc": "2026-11-15T06:09:23.793891+00:00",
+          "elapsed_seconds": 1.64,
+          "retrieval": "direct curl with TLS verification; no authenticated session",
+          "evidence_html": "evidence/iub-robots.html",
+          "evidence_metadata": "evidence/iub-robots.json",
+          "evidence_headers": "evidence/iub-robots.headers.txt",
+          "error": ""
+        }
+      },
+      "terms": "No integration licence established by these single public searches; copyright/footer is not API permission. Terms and supported reuse require onboarding review.",
+      "adapter_readiness": {
+        "existing_generic_search_parser": "offline replay passes",
+        "richer_title_parser": "offline replay passes",
+        "live_app_tested": false,
+        "activated": false,
+        "evidence": "../adapter-tools/koha-replay-summary.json",
+        "issues": "Mixed print/e-book results require material filtering and holdings semantics."
+      }
+    },
+    {
+      "id": "city",
+      "country": "Bangladesh",
+      "name": "City University Library",
+      "city": "Savar, Dhaka",
+      "type": "Private university",
+      "recommendation": "verified_target",
+      "national_rank": null,
+      "collection": {
+        "count": 21000,
+        "measure": "21,000+ printed books",
+        "source_url": "https://library.cityuniversity.ac.bd/",
+        "source_year": "undated; accessed 2026-11-15",
+        "evidence": "evidence/city-home.html",
+        "quality": "official institutional count"
+      },
+      "official_library_url": "https://library.cityuniversity.ac.bd/",
+      "catalog_url": "http://opac.cityuniversity.ac.bd",
+      "platform": "Koha",
+      "platform_proof": "Public Koha CGI search and detail HTML with library branding; actual catalog responses saved.",
+      "query_verification": {
+        "method": "GET",
+        "url": "http://opac.cityuniversity.ac.bd/cgi-bin/koha/opac-search.pl?q=Principles%20of%20marketing",
+        "http_status": 200,
+        "effective_url": "http://opac.cityuniversity.ac.bd/cgi-bin/koha/opac-search.pl?q=Principles%20of%20marketing",
+        "checked_at_utc": "2026-11-15T06:14:41.456380+00:00",
+        "elapsed_seconds": 2.24,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/city-search.html",
+        "evidence_metadata": "evidence/city-search.json",
+        "evidence_headers": "evidence/city-search.headers.txt",
+        "error": "",
+        "query": "Principles%20of%20marketing",
+        "query_text": "Principles of marketing",
+        "results_count": 6,
+        "returned_books": [
+          {
+            "title": "Principles of marketing",
+            "authors": "Philip Kotler et al.",
+            "record_id": "2",
+            "record_url": "http://opac.cityuniversity.ac.bd/cgi-bin/koha/opac-detail.pl?biblionumber=2",
+            "holdings_observed": "10th ed (2003); 3 available at Permanent Campus; call 658.8 KOP 2003."
+          }
+        ]
+      },
+      "detail_verification": {
+        "method": "GET",
+        "url": "http://opac.cityuniversity.ac.bd/cgi-bin/koha/opac-detail.pl?biblionumber=2",
+        "http_status": 200,
+        "effective_url": "http://opac.cityuniversity.ac.bd/cgi-bin/koha/opac-detail.pl?biblionumber=2",
+        "checked_at_utc": "2026-11-15T06:17:25.907009+00:00",
+        "elapsed_seconds": 2.21,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/city-detail.html",
+        "evidence_metadata": "evidence/city-detail.json",
+        "evidence_headers": "evidence/city-detail.headers.txt",
+        "error": ""
+      },
+      "holdings_observed": "10th ed (2003); 3 available at Permanent Campus; call 658.8 KOP 2003.",
+      "access_limits": "Catalog public; borrowing membership not established for general public. Two campus libraries visible.",
+      "robots": {
+        "assessment": "HTTP robots404; HTTPS endpoint unavailable in this environment",
+        "request": {
+          "method": "GET",
+          "url": "http://opac.cityuniversity.ac.bd/robots.txt",
+          "http_status": 404,
+          "effective_url": "http://opac.cityuniversity.ac.bd/robots.txt",
+          "checked_at_utc": "2026-11-15T06:13:38.707703+00:00",
+          "elapsed_seconds": 1.56,
+          "retrieval": "direct curl with TLS verification; no authenticated session",
+          "evidence_html": "evidence/city-http-robots.html",
+          "evidence_metadata": "evidence/city-http-robots.json",
+          "evidence_headers": "evidence/city-http-robots.headers.txt",
+          "error": ""
+        }
+      },
+      "terms": "No integration licence established by these single public searches; copyright/footer is not API permission. Terms and supported reuse require onboarding review.",
+      "adapter_readiness": {
+        "existing_generic_search_parser": "offline replay passes",
+        "richer_title_parser": "offline replay passes",
+        "live_app_tested": false,
+        "activated": false,
+        "evidence": "../adapter-tools/koha-replay-summary.json",
+        "issues": "Officially linked HTTP hostname; HTTPS robots got proxy503. Metadata has typos/duplicate editions."
+      }
+    },
+    {
+      "id": "sylhet",
+      "country": "Bangladesh",
+      "name": "Sylhet Agricultural University Central Library",
+      "city": "Sylhet",
+      "type": "Public university",
+      "recommendation": "verified_target",
+      "national_rank": null,
+      "collection": {
+        "count": 11240,
+        "measure": "11,240 books (journals/theses separately listed)",
+        "source_url": "https://www.sau.ac.bd/aboutus",
+        "source_year": "undated; accessed 2026-11-15",
+        "evidence": "evidence/sylhet-size-source.html",
+        "quality": "official institutional count"
+      },
+      "official_library_url": "https://sau.ac.bd/administration/page/210",
+      "catalog_url": "https://opac.sau.ac.bd",
+      "platform": "Koha",
+      "platform_proof": "Public Koha CGI search and detail HTML with library branding; actual catalog responses saved.",
+      "query_verification": {
+        "method": "GET",
+        "url": "https://opac.sau.ac.bd/cgi-bin/koha/opac-search.pl?q=Plant%20physiology",
+        "http_status": 200,
+        "effective_url": "https://opac.sau.ac.bd/cgi-bin/koha/opac-search.pl?q=Plant%20physiology",
+        "checked_at_utc": "2026-11-15T06:11:02.587677+00:00",
+        "elapsed_seconds": 9.04,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/sylhet-search.html",
+        "evidence_metadata": "evidence/sylhet-search.json",
+        "evidence_headers": "evidence/sylhet-search.headers.txt",
+        "error": "",
+        "query": "Plant%20physiology",
+        "query_text": "Plant physiology",
+        "results_count": 36,
+        "returned_books": [
+          {
+            "title": "Plant physiology and development",
+            "authors": "Lincoln Taiz et al.",
+            "record_id": "4075",
+            "record_url": "https://opac.sau.ac.bd/cgi-bin/koha/opac-detail.pl?biblionumber=4075",
+            "holdings_observed": "6th ed (2015); 1 reference-only copy (Not For Loan); call 571.2 PLA."
+          }
+        ]
+      },
+      "detail_verification": {
+        "method": "GET",
+        "url": "https://opac.sau.ac.bd/cgi-bin/koha/opac-detail.pl?biblionumber=4075",
+        "http_status": 200,
+        "effective_url": "https://opac.sau.ac.bd/cgi-bin/koha/opac-detail.pl?biblionumber=4075",
+        "checked_at_utc": "2026-11-15T06:13:46.958703+00:00",
+        "elapsed_seconds": 5.26,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/sylhet-detail.html",
+        "evidence_metadata": "evidence/sylhet-detail.json",
+        "evidence_headers": "evidence/sylhet-detail.headers.txt",
+        "error": ""
+      },
+      "holdings_observed": "6th ed (2015); 1 reference-only copy (Not For Loan); call 571.2 PLA.",
+      "access_limits": "Borrowing rules apply to registered university members; public search does not establish visitor borrowing.",
+      "robots": {
+        "assessment": "404 robots; no applicable disallow found",
+        "request": {
+          "method": "GET",
+          "url": "https://opac.sau.ac.bd/robots.txt",
+          "http_status": 404,
+          "effective_url": "https://opac.sau.ac.bd/robots.txt",
+          "checked_at_utc": "2026-11-15T06:10:27.318900+00:00",
+          "elapsed_seconds": 5.32,
+          "retrieval": "direct curl with TLS verification; no authenticated session",
+          "evidence_html": "evidence/sylhet-robots.html",
+          "evidence_metadata": "evidence/sylhet-robots.json",
+          "evidence_headers": "evidence/sylhet-robots.headers.txt",
+          "error": ""
+        }
+      },
+      "terms": "No integration licence established by these single public searches; copyright/footer is not API permission. Terms and supported reuse require onboarding review.",
+      "adapter_readiness": {
+        "existing_generic_search_parser": "offline replay passes",
+        "richer_title_parser": "offline replay passes",
+        "live_app_tested": false,
+        "activated": false,
+        "evidence": "../adapter-tools/koha-replay-summary.json",
+        "issues": "Smaller specialist institution, included for verified access rather than national size rank."
+      }
+    },
+    {
+      "id": "adust",
+      "country": "Bangladesh",
+      "name": "Atish Dipankar University of Science & Technology Library",
+      "city": "Dhaka",
+      "type": "Private university",
+      "recommendation": "reserve",
+      "national_rank": null,
+      "collection": {
+        "count": null,
+        "measure": "Reserve technical target; physical collection total not established",
+        "source_url": "https://library.adust.edu.bd/about-library",
+        "source_year": "undated; accessed 2026-11-15",
+        "evidence": "evidence/adust-about-source.html",
+        "quality": "major-institution proxy; not measured rank"
+      },
+      "official_library_url": "https://library.adust.edu.bd/",
+      "catalog_url": "https://opac.adust.edu.bd",
+      "platform": "Koha",
+      "platform_proof": "Public Koha CGI search and detail HTML with library branding; actual catalog responses saved.",
+      "query_verification": {
+        "method": "GET",
+        "url": "https://opac.adust.edu.bd/cgi-bin/koha/opac-search.pl?q=Principles%20of%20marketing",
+        "http_status": 200,
+        "effective_url": "https://opac.adust.edu.bd/cgi-bin/koha/opac-search.pl?q=Principles%20of%20marketing",
+        "checked_at_utc": "2026-11-15T06:12:47.992129+00:00",
+        "elapsed_seconds": 2.85,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/adust-search.html",
+        "evidence_metadata": "evidence/adust-search.json",
+        "evidence_headers": "evidence/adust-search.headers.txt",
+        "error": "",
+        "query": "Principles%20of%20marketing",
+        "query_text": "Principles of marketing",
+        "results_count": 2,
+        "returned_books": [
+          {
+            "title": "Principles of Marketing",
+            "authors": "Philip Kotler and Gary Armstrong",
+            "record_id": "33012",
+            "record_url": "https://opac.adust.edu.bd/cgi-bin/koha/opac-detail.pl?biblionumber=33012",
+            "holdings_observed": "Printed Books record has multiple available copies. The other result34855 is CD/DVD and was excluded."
+          }
+        ]
+      },
+      "detail_verification": {
+        "method": "GET",
+        "url": "https://opac.adust.edu.bd/cgi-bin/koha/opac-detail.pl?biblionumber=33012",
+        "http_status": 200,
+        "effective_url": "https://opac.adust.edu.bd/cgi-bin/koha/opac-detail.pl?biblionumber=33012",
+        "checked_at_utc": "2026-11-15T06:14:42.409310+00:00",
+        "elapsed_seconds": 3.19,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/adust-detail-book.html",
+        "evidence_metadata": "evidence/adust-detail-book.json",
+        "evidence_headers": "evidence/adust-detail-book.headers.txt",
+        "error": ""
+      },
+      "holdings_observed": "Printed Books record has multiple available copies. The other result34855 is CD/DVD and was excluded.",
+      "access_limits": "Institutional university audience; public borrowing not established.",
+      "robots": {
+        "assessment": "robots permits reference/search; GPTBot training disallowed; no applicable ChatGPT-User block",
+        "request": {
+          "method": "GET",
+          "url": "https://opac.adust.edu.bd/robots.txt",
+          "http_status": 200,
+          "effective_url": "https://opac.adust.edu.bd/robots.txt",
+          "checked_at_utc": "2026-11-15T06:12:16.421853+00:00",
+          "elapsed_seconds": 2.47,
+          "retrieval": "direct curl with TLS verification; no authenticated session",
+          "evidence_html": "evidence/adust-robots.html",
+          "evidence_metadata": "evidence/adust-robots.json",
+          "evidence_headers": "evidence/adust-robots.headers.txt",
+          "error": ""
+        }
+      },
+      "terms": "No integration licence established by these single public searches; copyright/footer is not API permission. Terms and supported reuse require onboarding review.",
+      "adapter_readiness": {
+        "existing_generic_search_parser": "offline replay passes",
+        "richer_title_parser": "offline replay passes",
+        "live_app_tested": false,
+        "activated": false,
+        "evidence": "../adapter-tools/koha-replay-summary.json",
+        "issues": "Reserve after ten stronger institutional targets; no reliable size evidence."
+      }
+    }
+  ],
+  "native_script_verification": {
+    "method": "GET",
+    "url": "https://opac.cu.ac.bd/cgi-bin/koha/opac-search.pl?q=%E0%A6%97%E0%A7%80%E0%A6%A4%E0%A6%BE%E0%A6%9E%E0%A7%8D%E0%A6%9C%E0%A6%B2%E0%A6%BF",
+    "http_status": 200,
+    "effective_url": "https://opac.cu.ac.bd/cgi-bin/koha/opac-detail.pl?biblionumber=11391",
+    "checked_at_utc": "2026-11-15T06:18:50.317573+00:00",
+    "elapsed_seconds": 5.8,
+    "retrieval": "direct curl with TLS verification; no authenticated session",
+    "evidence_html": "evidence/chittagong-bengali-search.html",
+    "evidence_metadata": "evidence/chittagong-bengali-search.json",
+    "evidence_headers": "evidence/chittagong-bengali-search.headers.txt",
+    "error": "",
+    "query_text": "গীতাঞ্জলি",
+    "behavior": "Search redirects to single book detail; result-list count absent",
+    "title": "গীতাঞ্জলি",
+    "author": "ঠাকুর, রবীন্দ্রনাথ",
+    "record_id": "11391",
+    "holdings": "2 available book copies; Bengali call numbers and barcodes observed.",
+    "app_native_script_matching_tested": false
+  },
+  "blocked_or_unverified_candidates": [
+    {
+      "name": "University of Dhaka Library",
+      "collection_or_scope": "600,000+ books and periodicals; institutional 2024 statement",
+      "source_url": "https://sustainability.du.ac.bd/sdg_menu_details/43",
+      "verification": "not live-book-query verified",
+      "reason": "Current DULIS and older Koha catalog probes returned Envoy proxy503 connection failure; no live result. Also du-dulis-robots.",
+      "request": {
+        "method": "GET",
+        "url": "https://catalog.library.du.ac.bd/robots.txt",
+        "http_status": 503,
+        "effective_url": "https://catalog.library.du.ac.bd/robots.txt",
+        "checked_at_utc": "2026-11-15T06:09:18.639563+00:00",
+        "elapsed_seconds": 1.8,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/dhaka-robots.html",
+        "evidence_metadata": "evidence/dhaka-robots.json",
+        "evidence_headers": "evidence/dhaka-robots.headers.txt",
+        "error": ""
+      }
+    },
+    {
+      "name": "University of Rajshahi Central Library",
+      "collection_or_scope": "350,000+ books plus 40,000 journal volumes; undated",
+      "source_url": "https://library.ru.ac.bd/about-rucl",
+      "verification": "not live-book-query verified",
+      "reason": "Robots explicitly disallows ChatGPT-User, OAI-SearchBot and GPTBot; no query attempted.",
+      "request": {
+        "method": "GET",
+        "url": "https://opac.ru.ac.bd/robots.txt",
+        "http_status": 200,
+        "effective_url": "https://opac.ru.ac.bd/robots.txt",
+        "checked_at_utc": "2026-11-15T06:09:20.039454+00:00",
+        "elapsed_seconds": 3.2,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/rajshahi-robots.html",
+        "evidence_metadata": "evidence/rajshahi-robots.json",
+        "evidence_headers": "evidence/rajshahi-robots.headers.txt",
+        "error": ""
+      }
+    },
+    {
+      "name": "Bangladesh Agricultural University Library",
+      "collection_or_scope": "184,942 volumes; institutional homepage, undated",
+      "source_url": "https://library.bau.edu.bd/",
+      "verification": "not live-book-query verified",
+      "reason": "Cloudflare522 origin timeout through research environment; not evidence of permanent outage.",
+      "request": {
+        "method": "GET",
+        "url": "https://catalog.bau.edu.bd/robots.txt",
+        "http_status": 522,
+        "effective_url": "https://catalog.bau.edu.bd/robots.txt",
+        "checked_at_utc": "2026-11-15T06:09:36.591616+00:00",
+        "elapsed_seconds": 19.75,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/bau-robots.html",
+        "evidence_metadata": "evidence/bau-robots.json",
+        "evidence_headers": "evidence/bau-robots.headers.txt",
+        "error": ""
+      }
+    },
+    {
+      "name": "BUET Central Library",
+      "collection_or_scope": "Major engineering library; reliable primary collection count not established",
+      "source_url": "https://lib.buet.ac.bd/",
+      "verification": "not live-book-query verified",
+      "reason": "Official HTTP robots disallows search and detail; no query attempted. HTTPS probe gave proxy503.",
+      "request": {
+        "method": "GET",
+        "url": "http://lib.buet.ac.bd/robots.txt",
+        "http_status": 200,
+        "effective_url": "http://lib.buet.ac.bd/robots.txt",
+        "checked_at_utc": "2026-11-15T06:12:52.154008+00:00",
+        "elapsed_seconds": 1.32,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/buet-http-robots.html",
+        "evidence_metadata": "evidence/buet-http-robots.json",
+        "evidence_headers": "evidence/buet-http-robots.headers.txt",
+        "error": ""
+      }
+    },
+    {
+      "name": "Jahangirnagar University Library",
+      "collection_or_scope": "115,000+ printed books; institutional page, undated",
+      "source_url": "https://library.juniv.edu/",
+      "verification": "not live-book-query verified",
+      "reason": "Robots disallows opac-search; alternate official VuFind robot probe proxy503; no query attempted.",
+      "request": {
+        "method": "GET",
+        "url": "https://opac.juniv.edu/robots.txt",
+        "http_status": 200,
+        "effective_url": "https://opac.juniv.edu/robots.txt",
+        "checked_at_utc": "2026-11-15T06:09:21.775355+00:00",
+        "elapsed_seconds": 1.74,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/jahangirnagar-robots.html",
+        "evidence_metadata": "evidence/jahangirnagar-robots.json",
+        "evidence_headers": "evidence/jahangirnagar-robots.headers.txt",
+        "error": ""
+      }
+    },
+    {
+      "name": "Shahjalal University of Science & Technology Library",
+      "collection_or_scope": "75,000+ on library page;90,000+ on university page; undated discrepancy",
+      "source_url": "https://www.sust.edu/others-offices/16",
+      "verification": "not live-book-query verified",
+      "reason": "HTTPS/HTTP redirected robot probes produced Envoy proxy503 connection timeout.",
+      "request": {
+        "method": "GET",
+        "url": "https://opac.library.sust.edu/robots.txt",
+        "http_status": 503,
+        "effective_url": "https://opac.library.sust.edu/robots.txt",
+        "checked_at_utc": "2026-11-15T06:12:15.291011+00:00",
+        "elapsed_seconds": 5.28,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/sust-robots.html",
+        "evidence_metadata": "evidence/sust-robots.json",
+        "evidence_headers": "evidence/sust-robots.headers.txt",
+        "error": ""
+      }
+    },
+    {
+      "name": "BRAC University Ayesha Abed Library",
+      "collection_or_scope": "53,600+ printed books; Spring2026 handout",
+      "source_url": "https://library.bracu.ac.bd/sites/default/files/2026-04/Ayesha_Abed_Library_Handout_Updated_Spring%202026.pdf",
+      "verification": "not live-book-query verified",
+      "reason": "Robots and actual search HTTP468 with empty content; catalog not verified; ordinary web retrieval also failed.",
+      "request": {
+        "method": "GET",
+        "url": "https://library.bracu.ac.bd/cgi-bin/koha/opac-search.pl?q=Pride%20and%20prejudice",
+        "http_status": 468,
+        "effective_url": "https://library.bracu.ac.bd/cgi-bin/koha/opac-search.pl?q=Pride%20and%20prejudice",
+        "checked_at_utc": "2026-11-15T06:12:50.833870+00:00",
+        "elapsed_seconds": 1.41,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/brac-search.html",
+        "evidence_metadata": "evidence/brac-search.json",
+        "evidence_headers": "evidence/brac-search.headers.txt",
+        "error": ""
+      }
+    },
+    {
+      "name": "North South University Library",
+      "collection_or_scope": "51,000+ printed books; official collection page, undated",
+      "source_url": "https://library.northsouth.edu/library-collections/printed-books/",
+      "verification": "not live-book-query verified",
+      "reason": "HTTPS Envoy proxy503; HTTP timed out; ordinary web retrieval also failed.",
+      "request": {
+        "method": "GET",
+        "url": "https://opac.northsouth.edu/robots.txt",
+        "http_status": 503,
+        "effective_url": "https://opac.northsouth.edu/robots.txt",
+        "checked_at_utc": "2026-11-15T06:10:21.846331+00:00",
+        "elapsed_seconds": 5.28,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/nsu-robots.html",
+        "evidence_metadata": "evidence/nsu-robots.json",
+        "evidence_headers": "evidence/nsu-robots.headers.txt",
+        "error": ""
+      }
+    },
+    {
+      "name": "National Library of Bangladesh",
+      "collection_or_scope": "National deposit library; reliable current comparable count not established",
+      "source_url": "https://www.ndl.go.jp/en/cdnlao/meetings/pdf/AR2017_Bangladesh.pdf",
+      "verification": "not live-book-query verified",
+      "reason": "Officially published OPAC IP159.13.20.114 robot request timed out; no result verified.",
+      "request": {
+        "method": "GET",
+        "url": "http://159.13.20.114/robots.txt",
+        "http_status": 0,
+        "effective_url": "http://159.13.20.114/robots.txt",
+        "checked_at_utc": "2026-11-15T06:11:32.764724+00:00",
+        "elapsed_seconds": 25.01,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": null,
+        "evidence_metadata": "evidence/national-robots.json",
+        "evidence_headers": "evidence/national-robots.headers.txt",
+        "error": "curl: (28) Operation timed out after 25002 milliseconds with 0 bytes received\n"
+      }
+    },
+    {
+      "name": "Bangladesh Parliament Library",
+      "collection_or_scope": "National legislative library; scale not verified",
+      "source_url": "https://catalog.parliament.gov.bd/",
+      "verification": "not live-book-query verified",
+      "reason": "Envoy proxy503 connection timeout; no query verified.",
+      "request": {
+        "method": "GET",
+        "url": "https://catalog.parliament.gov.bd/robots.txt",
+        "http_status": 503,
+        "effective_url": "https://catalog.parliament.gov.bd/robots.txt",
+        "checked_at_utc": "2026-11-15T06:09:29.702615+00:00",
+        "elapsed_seconds": 5.91,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/parliament-robots.html",
+        "evidence_metadata": "evidence/parliament-robots.json",
+        "evidence_headers": "evidence/parliament-robots.headers.txt",
+        "error": ""
+      }
+    },
+    {
+      "name": "East West University Library",
+      "collection_or_scope": "Major university proxy; not measured",
+      "source_url": "https://lib.ewubd.edu/faq-page",
+      "verification": "not live-book-query verified",
+      "reason": "Robots disallows search; no query attempted.",
+      "request": {
+        "method": "GET",
+        "url": "https://opac.ewubd.edu/robots.txt",
+        "http_status": 200,
+        "effective_url": "https://opac.ewubd.edu/robots.txt",
+        "checked_at_utc": "2026-11-15T06:10:57.485688+00:00",
+        "elapsed_seconds": 1.74,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/eastwest-robots.html",
+        "evidence_metadata": "evidence/eastwest-robots.json",
+        "evidence_headers": "evidence/eastwest-robots.headers.txt",
+        "error": ""
+      }
+    },
+    {
+      "name": "University of Liberal Arts Bangladesh Library",
+      "collection_or_scope": "University proxy; not measured",
+      "source_url": "https://library.ulab.edu.bd/",
+      "verification": "not live-book-query verified",
+      "reason": "Robots disallows all; no query attempted.",
+      "request": {
+        "method": "GET",
+        "url": "https://opac.ulab.edu.bd/robots.txt",
+        "http_status": 200,
+        "effective_url": "https://opac.ulab.edu.bd/robots.txt",
+        "checked_at_utc": "2026-11-15T06:09:24.306589+00:00",
+        "elapsed_seconds": 1.8,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/ulab-robots.html",
+        "evidence_metadata": "evidence/ulab-robots.json",
+        "evidence_headers": "evidence/ulab-robots.headers.txt",
+        "error": ""
+      }
+    },
+    {
+      "name": "Asiatic Society of Bangladesh Library",
+      "collection_or_scope": "Major specialist collection proxy",
+      "source_url": "https://library.asiaticsociety.org.bd/",
+      "verification": "not live-book-query verified",
+      "reason": "Robots disallows search; no query attempted.",
+      "request": {
+        "method": "GET",
+        "url": "https://library.asiaticsociety.org.bd/robots.txt",
+        "http_status": 200,
+        "effective_url": "https://library.asiaticsociety.org.bd/robots.txt",
+        "checked_at_utc": "2026-11-15T06:11:00.983576+00:00",
+        "elapsed_seconds": 3.5,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/asiatic-robots.html",
+        "evidence_metadata": "evidence/asiatic-robots.json",
+        "evidence_headers": "evidence/asiatic-robots.headers.txt",
+        "error": ""
+      }
+    },
+    {
+      "name": "Gazipur Agricultural University Library",
+      "collection_or_scope": "25,000+ books; official2026 page",
+      "source_url": "https://gau.edu.bd/library/",
+      "verification": "not live-book-query verified",
+      "reason": "Robots disallows search; no query attempted.",
+      "request": {
+        "method": "GET",
+        "url": "https://opac.gau.edu.bd/robots.txt",
+        "http_status": 200,
+        "effective_url": "https://opac.gau.edu.bd/robots.txt",
+        "checked_at_utc": "2026-11-15T06:14:01.495785+00:00",
+        "elapsed_seconds": 2.67,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/gazipur-robots.html",
+        "evidence_metadata": "evidence/gazipur-robots.json",
+        "evidence_headers": "evidence/gazipur-robots.headers.txt",
+        "error": ""
+      }
+    },
+    {
+      "name": "Institute of Chartered Accountants of Bangladesh Library",
+      "collection_or_scope": "Specialist institute, multi-location catalog",
+      "source_url": "https://www.icab.org.bd/",
+      "verification": "not live-book-query verified",
+      "reason": "Robot404 but actual Financial accounting query HTTP403 forbidden; stopped.",
+      "request": {
+        "method": "GET",
+        "url": "https://opac.icab.org.bd/cgi-bin/koha/opac-search.pl?q=Financial%20accounting",
+        "http_status": 403,
+        "effective_url": "https://opac.icab.org.bd/cgi-bin/koha/opac-search.pl?q=Financial%20accounting",
+        "checked_at_utc": "2026-11-15T06:12:10.461484+00:00",
+        "elapsed_seconds": 7.19,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/icab-search.html",
+        "evidence_metadata": "evidence/icab-search.json",
+        "evidence_headers": "evidence/icab-search.headers.txt",
+        "error": ""
+      }
+    },
+    {
+      "name": "University of Barishal Library",
+      "collection_or_scope": "Public university proxy; not measured",
+      "source_url": "https://library.bu.ac.bd/",
+      "verification": "not live-book-query verified",
+      "reason": "Robot request timed out after25s.",
+      "request": {
+        "method": "GET",
+        "url": "https://library.bu.ac.bd/robots.txt",
+        "http_status": 0,
+        "effective_url": "https://library.bu.ac.bd/robots.txt",
+        "checked_at_utc": "2026-11-15T06:11:24.898753+00:00",
+        "elapsed_seconds": 25.01,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": null,
+        "evidence_metadata": "evidence/barishal-robots.json",
+        "evidence_headers": "evidence/barishal-robots.headers.txt",
+        "error": "curl: (28) Operation timed out after 25002 milliseconds with 0 bytes received\n"
+      }
+    },
+    {
+      "name": "Bangladesh University of Professionals Library and Archive",
+      "collection_or_scope": "32,000 books and7,324 journals/magazines; official Aug2026",
+      "source_url": "https://bup.edu.bd/office/office_details/11",
+      "verification": "not live-book-query verified",
+      "reason": "Official management-system instructions require institutional login; no unauthenticated query verified.",
+      "request": {
+        "method": "GET",
+        "url": "https://bup.edu.bd/office/office_details/11",
+        "http_status": 200,
+        "effective_url": "https://bup.edu.bd/office/office_details/11",
+        "checked_at_utc": "2026-11-15T06:11:06.241489+00:00",
+        "elapsed_seconds": 2.93,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/bup-page.html",
+        "evidence_metadata": "evidence/bup-page.json",
+        "evidence_headers": "evidence/bup-page.headers.txt",
+        "error": ""
+      }
+    },
+    {
+      "name": "Sher-e-Bangla Agricultural University Library",
+      "collection_or_scope": "Public university proxy; not measured",
+      "source_url": "https://opac.saulibrary.edu.bd/",
+      "verification": "not live-book-query verified",
+      "reason": "Envoy proxy503 connection timeout.",
+      "request": {
+        "method": "GET",
+        "url": "https://opac.saulibrary.edu.bd/robots.txt",
+        "http_status": 503,
+        "effective_url": "https://opac.saulibrary.edu.bd/robots.txt",
+        "checked_at_utc": "2026-11-15T06:10:28.220588+00:00",
+        "elapsed_seconds": 6.34,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/sherbangla-robots.html",
+        "evidence_metadata": "evidence/sherbangla-robots.json",
+        "evidence_headers": "evidence/sherbangla-robots.headers.txt",
+        "error": ""
+      }
+    },
+    {
+      "name": "Bangladesh Public Administration Training Centre Library",
+      "collection_or_scope": "Official2024–25 report says57,106 online searchable titles across BPATC+RPATC, not physical-volume count",
+      "source_url": "https://objectstorage.ap-dcc-gazipur-1.oraclecloud15.com/n/axvjbnqprylg/b/V2Ministry/o/office-bpatc/2026/0/7193eda5-7802-4143-b2b3-7b6af5ad244a.pdf",
+      "verification": "not live-book-query verified",
+      "reason": "Envoy proxy503 connection timeout; network potential unverified.",
+      "request": {
+        "method": "GET",
+        "url": "https://library.bpatc.org.bd/",
+        "http_status": 503,
+        "effective_url": "https://library.bpatc.org.bd/",
+        "checked_at_utc": "2026-11-15T06:11:07.754534+00:00",
+        "elapsed_seconds": 6.77,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/bpatc-page.html",
+        "evidence_metadata": "evidence/bpatc-page.json",
+        "evidence_headers": "evidence/bpatc-page.headers.txt",
+        "error": ""
+      }
+    },
+    {
+      "name": "BCS Administration Academy Library",
+      "collection_or_scope": "Specialist national institute proxy",
+      "source_url": "https://library.bcsadminacademy.gov.bd/",
+      "verification": "not live-book-query verified",
+      "reason": "Envoy proxy503 connection timeout.",
+      "request": {
+        "method": "GET",
+        "url": "https://library.bcsadminacademy.gov.bd/robots.txt",
+        "http_status": 503,
+        "effective_url": "https://library.bcsadminacademy.gov.bd/robots.txt",
+        "checked_at_utc": "2026-11-15T06:11:10.815244+00:00",
+        "elapsed_seconds": 6.0,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/bcs-robots.html",
+        "evidence_metadata": "evidence/bcs-robots.json",
+        "evidence_headers": "evidence/bcs-robots.headers.txt",
+        "error": ""
+      }
+    },
+    {
+      "name": "Bangladesh University of Business and Technology Library",
+      "collection_or_scope": "University proxy; not measured",
+      "source_url": "https://library.bubt.edu.bd/",
+      "verification": "not live-book-query verified",
+      "reason": "Envoy proxy503 connection termination.",
+      "request": {
+        "method": "GET",
+        "url": "https://library.bubt.edu.bd/robots.txt",
+        "http_status": 503,
+        "effective_url": "https://library.bubt.edu.bd/robots.txt",
+        "checked_at_utc": "2026-11-15T06:12:15.436830+00:00",
+        "elapsed_seconds": 2.31,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/bubt-robots.html",
+        "evidence_metadata": "evidence/bubt-robots.json",
+        "evidence_headers": "evidence/bubt-robots.headers.txt",
+        "error": ""
+      }
+    },
+    {
+      "name": "Daffodil International University Library",
+      "collection_or_scope": "Major private university proxy; not measured",
+      "source_url": "https://library.daffodilvarsity.edu.bd/",
+      "verification": "not live-book-query verified",
+      "reason": "Official OPAC network CONNECT tunnel returned403; no bypass attempted.",
+      "request": {
+        "method": "GET",
+        "url": "https://opac.daffodilvarsity.edu.bd/robots.txt",
+        "http_status": 0,
+        "effective_url": "https://opac.daffodilvarsity.edu.bd/robots.txt",
+        "checked_at_utc": "2026-11-15T06:12:46.349333+00:00",
+        "elapsed_seconds": 0.12,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": null,
+        "evidence_metadata": "evidence/daffodil-robots.json",
+        "evidence_headers": "evidence/daffodil-robots.headers.txt",
+        "error": "curl: (56) CONNECT tunnel failed, response 403\n"
+      }
+    },
+    {
+      "name": "Eastern University Library",
+      "collection_or_scope": "University proxy; not measured",
+      "source_url": "https://opac.easternuni.edu.bd/",
+      "verification": "not live-book-query verified",
+      "reason": "Envoy proxy503 connection termination.",
+      "request": {
+        "method": "GET",
+        "url": "http://opac.easternuni.edu.bd/robots.txt",
+        "http_status": 503,
+        "effective_url": "http://opac.easternuni.edu.bd/robots.txt",
+        "checked_at_utc": "2026-11-15T06:14:05.762518+00:00",
+        "elapsed_seconds": 6.93,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": "evidence/eastern-robots.html",
+        "evidence_metadata": "evidence/eastern-robots.json",
+        "evidence_headers": "evidence/eastern-robots.headers.txt",
+        "error": ""
+      }
+    },
+    {
+      "name": "Department of Public Libraries / Amar Library",
+      "collection_or_scope": "Government network of71 libraries in2026 study; app claims centralized access",
+      "source_url": "https://play.google.com/store/apps/details?id=com.misfit.publiclibrary",
+      "verification": "not live-book-query verified",
+      "reason": "Official app webpage verified; official web home and robots timed out25s. App requires registration. Catalog/query/API not verified.",
+      "request": {
+        "method": "GET",
+        "url": "http://elibrary.dpl.gov.bd/",
+        "http_status": 0,
+        "effective_url": "http://elibrary.dpl.gov.bd/",
+        "checked_at_utc": "2026-11-15T06:19:09.533109+00:00",
+        "elapsed_seconds": 25.02,
+        "retrieval": "direct curl with TLS verification; no authenticated session",
+        "evidence_html": null,
+        "evidence_metadata": "evidence/dpl-home.json",
+        "evidence_headers": "evidence/dpl-home.headers.txt",
+        "error": "curl: (28) Operation timed out after 25002 milliseconds with 0 bytes received\n"
+      }
+    }
+  ],
+  "evidence_method": "Small ordinary public GET requests with curl, default TLS verification, no sign-in, no CAPTCHA/bot bypass. Robots checked before catalog query; blocked paths not queried.404robots treated as no published rule, not reuse permission. Raw headers/body/metadata retained.",
+  "limitations": [
+    "Point-in-time results; one query cannot prove coverage, freshness, uptime or national ranking.",
+    "Many catalog results are mixed media/e-resources; returned book record and item holdings were checked.",
+    "HTTP-only catalogs require explicit origin configuration review; no arbitrary IP access added.",
+    "University borrowing eligibility is restricted; public search is not general-public lending.",
+    "Envoy proxy503/timeouts are environment reachability observations, not asserted national service outages.",
+    "Native-script query tested only at Chittagong; cross-catalog normalization/transliteration and Bengali numeral handling remain untested."
+  ]
+}

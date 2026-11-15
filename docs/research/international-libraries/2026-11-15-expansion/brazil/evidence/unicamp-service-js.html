@@ -1,0 +1,156 @@
+﻿'use strict';
+
+angular.module('terminalApp').factory('buscaRapidaService', ['$http', function ($http) {
+	let self = {};
+
+	const USA_LEGISLACAO = typeof angular.element('#Norma_multiselect')[0] !== 'undefined';
+
+	self.ListarNormaSet = () => {
+		let normaSet = localStorage.getItem('normaSet');
+		if (normaSet) return new Promise(resolve => resolve({ data: angular.fromJson(normaSet) }));
+		return $http({ method: 'POST', url: sophiaConfig.serviceBaseUrl + 'norma/ListarNormaSet' });
+	};
+
+	self.ListarOrgaoOrigemSet = () => {
+		let orgaoSet = localStorage.getItem('orgaoSet');
+		if (orgaoSet) return new Promise(resolve => resolve({ data: angular.fromJson(orgaoSet) }));
+		return $http({ method: 'POST', url: sophiaConfig.serviceBaseUrl + 'orgaoOrigem/ListarOrgaoOrigemSet' });
+	};
+
+	let opcaoAcervoSet = [
+		{ Codigo: TipoBuscaRapidaAcervo.TodosOsCampos, Descricao: GetTermo(T1354, 'Todos os campos') },
+		{ Codigo: TipoBuscaRapidaAcervo.Titulo, Descricao: GetTermo(T177, 'Título') },
+		{ Codigo: TipoBuscaRapidaAcervo.Autoria, Descricao: GetTermo(T5955, 'Autoria') },
+		{ Codigo: TipoBuscaRapidaAcervo.Assunto, Descricao: GetTermo(T72, 'Assunto') },
+		{ Codigo: TipoBuscaRapidaAcervo.Colecao, Descricao: GetTermo(T6897, 'Série') },
+		{ Codigo: TipoBuscaRapidaAcervo.Editora, Descricao: GetTermo(T528, 'Editora') },
+		{ Codigo: TipoBuscaRapidaAcervo.ISBNISSN, Descricao: 'ISBN / ISSN' }
+	];
+
+	if (exibeDescricaoComplementar) {
+		opcaoAcervoSet.push({ Codigo: TipoBuscaRapidaAcervo.DescricaoComplementar, Descricao: GetTermo(T1460, 'Desc. compl.') });
+	}
+
+	if (habilitarIndexacaoArquivo) {
+		opcaoAcervoSet.splice(1, 0, {
+			Codigo: TipoBuscaRapidaAcervo.TodosOsCamposConteudoDigital,
+			Descricao: `+ ${GetTermo(T7517, 'Conteúdo digital')}`
+		});
+	}
+
+	if (habilitarBuscaFonteAnalitica) {
+		opcaoAcervoSet.push(
+			{
+				Codigo: TipoBuscaRapidaAcervo.Fonte,
+				Descricao: GetTermo(T180, 'Fonte')
+			});
+	}
+
+	self.tipoBuscaTerminalSet = [
+		{
+			Codigo: TipoBuscaTerminal.Acervo,
+			Icone: 'mdi-book-open-page-variant',
+			OpcaoSet: opcaoAcervoSet
+		}
+	];
+
+	if (usaBuscaCatalogoAutoridades) {
+		self.tipoBuscaTerminalSet.push({
+			Codigo: TipoBuscaTerminal.Autoridades,
+			Icone: 'mdi-account-search',
+			OpcaoSet: [
+				{ Codigo: '', Descricao: GetTermo(T7454, 'Qualquer') },
+				{ Codigo: MarcAutoridadeTag.Pessoa, Descricao: GetTermo(T732, 'Pessoa') },
+				{ Codigo: MarcAutoridadeTag.Instituicao, Descricao: GetTermo(T62, 'Instituição') },
+				{ Codigo: MarcAutoridadeTag.Evento, Descricao: GetTermo(T63, 'Evento') },
+				{ Codigo: MarcAutoridadeTag.TituloUniforme, Descricao: GetTermo(T70, 'Título uniforme') },
+				{ Codigo: MarcAutoridadeTag.TermoCronologico, Descricao: GetTermo(T71, 'Termo cronológico') },
+				{ Codigo: MarcAutoridadeTag.TermoTopico, Descricao: GetTermo(T742, 'Termo tópico') },
+				{ Codigo: MarcAutoridadeTag.LocalGeografico, Descricao: GetTermo(T1148, 'Local geográfico') },
+				{ Codigo: MarcAutoridadeTag.TermoGeneroForma, Descricao: GetTermo(T3707, 'Termo de gênero e forma') },
+				{ Codigo: MarcAutoridadeTag.SubdivisaoGeral, Descricao: GetTermo(T75, 'Subdivisão geral') },
+				{ Codigo: MarcAutoridadeTag.SubdivisaoGeografica, Descricao: GetTermo(T76, 'Subdivisão geográfica') },
+				{ Codigo: MarcAutoridadeTag.SubdivisaoCronologica, Descricao: GetTermo(T77, 'Subdivisão cronológico') },
+				{ Codigo: MarcAutoridadeTag.SubdivisaoForma, Descricao: GetTermo(T3390, 'Subdivisão de forma') }
+			]
+		});
+	}
+
+	self.temPersonalizacaoHintNumero = () => personalizado && personalizado.busca && personalizado.busca.hintNumero;
+
+	if (USA_LEGISLACAO) {
+		let opcaoLegislacaoSet = [{ Codigo: TipoBuscaLegislacao.TodosOsCampos, Descricao: GetTermo(T1354, 'Todos os campos') }];
+
+		if (habilitarIndexacaoArquivo) {
+			opcaoLegislacaoSet.push({ Codigo: TipoBuscaLegislacao.TodosOsCamposConteudoDigital, Descricao: `+ ${GetTermo(T7517, 'Conteúdo digital')}` });
+		}
+
+		opcaoLegislacaoSet.push({
+			Codigo: TipoBuscaLegislacao.Apelido,
+			Descricao: GetTermo(T5898, 'Apelido')
+		});
+
+		self.tipoBuscaTerminalSet.push({
+			Codigo: TipoBuscaTerminal.Legislacao,
+			Icone: 'mdi-scale-balance',
+			OpcaoSet: opcaoLegislacaoSet
+		});
+	}
+
+	const _obterTraducaoMenuBuscaTerminal = () => {
+		let traducaoMenuBuscaTerminal = localStorage.getItem('traducaoMenuBuscaTerminal');
+		if (traducaoMenuBuscaTerminal) return new Promise(resolve => resolve(angular.fromJson(traducaoMenuBuscaTerminal)));
+		return $http({ method: 'POST', url: sophiaConfig.serviceBaseUrl + 'Busca/ObterTraducaoMenuBuscaTerminal' });
+	};
+
+	const _obterDescricaoMenuBuscaTerminal = () => {
+		return _obterTraducaoMenuBuscaTerminal().then(t => {
+			let traducaoMenuBuscaTerminal = t.data || t;
+			localStorage.setItem('traducaoMenuBuscaTerminal', angular.toJson(traducaoMenuBuscaTerminal), 1440);
+			return traducaoMenuBuscaTerminal;
+		});
+	};
+
+	if (!$("header nav#busca-rapida div.input-group-btn.tipo-busca")[0]) return self;
+
+	_obterDescricaoMenuBuscaTerminal().then(traducaoMenuBuscaTerminal => {
+		let traducaoAcervo = self.tipoBuscaTerminalSet.find(t => t.Codigo === TipoBuscaTerminal.Acervo);
+		let traducaoAutoridades;
+		let traducaoLegislacao;
+		if (usaBuscaCatalogoAutoridades) traducaoAutoridades = self.tipoBuscaTerminalSet.find(t => t.Codigo === TipoBuscaTerminal.Autoridades);
+		if (USA_LEGISLACAO) traducaoLegislacao = self.tipoBuscaTerminalSet.find(t => t.Codigo === TipoBuscaTerminal.Legislacao);
+
+		switch (idiomaAtual) {
+			case 1:
+				traducaoAcervo.Descricao = traducaoMenuBuscaTerminal.Acervo.DescricaoEspanhol || traducaoMenuBuscaTerminal.Acervo.Descricao;
+				if (usaBuscaCatalogoAutoridades) traducaoAutoridades.Descricao = traducaoMenuBuscaTerminal.Autoridades.DescricaoEspanhol
+					|| traducaoMenuBuscaTerminal.Autoridades.Descricao;
+				if (USA_LEGISLACAO) traducaoLegislacao.Descricao = traducaoMenuBuscaTerminal.Legislacao.DescricaoEspanhol
+					|| traducaoMenuBuscaTerminal.Legislacao.Descricao;
+				break;
+			case 2:
+				traducaoAcervo.Descricao = traducaoMenuBuscaTerminal.Acervo.DescricaoIngles || traducaoMenuBuscaTerminal.Acervo.Descricao;
+				if (usaBuscaCatalogoAutoridades) traducaoAutoridades.Descricao = traducaoMenuBuscaTerminal.Autoridades.DescricaoIngles
+					|| traducaoMenuBuscaTerminal.Autoridades.Descricao;
+				if (USA_LEGISLACAO) traducaoLegislacao.Descricao = traducaoMenuBuscaTerminal.Legislacao.DescricaoIngles
+					|| traducaoMenuBuscaTerminal.Legislacao.Descricao;
+				break;
+			case 3:
+				traducaoAcervo.Descricao = traducaoMenuBuscaTerminal.Acervo.DescricaoCatalao || traducaoMenuBuscaTerminal.Acervo.Descricao;
+				if (usaBuscaCatalogoAutoridades) traducaoAutoridades.Descricao = traducaoMenuBuscaTerminal.Autoridades.DescricaoCatalao
+					|| traducaoMenuBuscaTerminal.Autoridades.Descricao;
+				if (USA_LEGISLACAO) traducaoLegislacao.Descricao = traducaoMenuBuscaTerminal.Legislacao.DescricaoCatalao
+					|| traducaoMenuBuscaTerminal.Legislacao.Descricao;
+				break;
+			default:
+				traducaoAcervo.Descricao = traducaoMenuBuscaTerminal.Acervo.DescricaoPortugues || traducaoMenuBuscaTerminal.Acervo.Descricao;
+				if (usaBuscaCatalogoAutoridades) traducaoAutoridades.Descricao = traducaoMenuBuscaTerminal.Autoridades.DescricaoPortugues
+					|| traducaoMenuBuscaTerminal.Autoridades.Descricao;
+				if (USA_LEGISLACAO) traducaoLegislacao.Descricao = traducaoMenuBuscaTerminal.Legislacao.DescricaoPortugues
+					|| traducaoMenuBuscaTerminal.Legislacao.Descricao;
+				break;
+		}
+	});
+
+	return self;
+}]);

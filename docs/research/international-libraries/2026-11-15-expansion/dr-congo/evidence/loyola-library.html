@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<!-- META ============================================= -->
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="keywords" content="" />
+	<meta name="author" content="" />
+	<meta name="robots" content="" />
+	
+	<!-- DESCRIPTION -->
+	<meta name="description" content="Loyola" />
+	
+	<!-- OG -->
+	<meta property="og:title" content="Loyola : University" />
+	<meta property="og:description" content="Loyola : University" />
+	<meta property="og:image" content="/static/favicon-144x144-1.png" />
+	
+	<!-- FAVICONS ICON ============================================= -->
+	<link rel="icon" href="/static/favicon-144x144-1.png" type="image/x-icon" />
+	<link rel="shortcut icon" type="image/x-icon" href="/static/favicon-144x144-1.png" />
+	
+	<!-- PAGE TITLE HERE ============================================= -->
+	<title>Université loyola du Congo : Bibliothèque</title>
+	
+	<!-- MOBILE SPECIFIC ============================================= -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<!--[if lt IE 9]>
+	<script src="/static/assets/js/html5shiv.min.js"></script>
+	<script src="/static/assets/js/respond.min.js"></script>
+	<![endif]-->
+	
+	<!-- All PLUGINS CSS ============================================= -->
+	<link rel="stylesheet" type="text/css" href="/static/assets/css/assets.css">
+	
+	<!-- TYPOGRAPHY ============================================= -->
+	<link rel="stylesheet" type="text/css" href="/static/assets/css/typography.css">
+	
+	<!-- SHORTCODES ============================================= -->
+	<link rel="stylesheet" type="text/css" href="/static/assets/css/shortcodes/shortcodes.css">
+	
+	<!-- STYLESHEETS ============================================= -->
+	<link rel="stylesheet" type="text/css" href="/static/assets/css/style.css">
+	<link class="skin" rel="stylesheet" type="text/css" href="/static/assets/css/color/color-1.css">
+	<link rel="stylesheet" type="text/css" href="/static/assets/css/ulc-overrides.css">
+
+	<!-- POLICES ============================================= -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+	<style>
+		/* === Page Bibliothèque === */
+		:root{
+			--biblio-primary:#720c0c;
+			--biblio-secondary:#930608;
+			--biblio-gold:#D8B043;
+			--biblio-cream:#fbf8f1;
+		}
+
+		.biblio-hero{
+			background-color: var(--biblio-cream);
+			padding: 80px 0 70px;
+			border-bottom: 1px solid rgba(114,12,12,0.08);
+		}
+		.biblio-hero .eyebrow{
+			display:inline-block;
+			font-family:'Inter',sans-serif;
+			font-size:0.78rem;
+			letter-spacing: 3px;
+			text-transform: uppercase;
+			color: var(--biblio-secondary);
+			font-weight:700;
+			margin-bottom: 14px;
+			padding-bottom: 6px;
+			border-bottom: 2px solid var(--biblio-gold);
+		}
+		.biblio-hero h1{
+			font-family:'Playfair Display', serif;
+			font-weight:800;
+			color: var(--biblio-primary);
+			font-size: 2.6rem;
+			line-height:1.2;
+			margin-bottom: 18px;
+		}
+		.biblio-hero p.lead-text{
+			font-family:'Inter',sans-serif;
+			color:#5a4f47;
+			font-size:1.05rem;
+			max-width: 560px;
+			line-height:1.7;
+		}
+		.biblio-hero-figure{
+			position:relative;
+		}
+		.biblio-hero-figure .stack-card{
+			background:#ffffff;
+			border-radius:14px;
+			box-shadow:0 18px 40px rgba(114,12,12,0.12);
+			padding:28px;
+			border-left:5px solid var(--biblio-gold);
+		}
+		.biblio-hero-figure .stack-card .num{
+			font-family:'Playfair Display', serif;
+			font-weight:900;
+			font-size:2.4rem;
+			color: var(--biblio-primary);
+			line-height:1;
+		}
+		.biblio-hero-figure .stack-card .lbl{
+			font-family:'Inter',sans-serif;
+			font-size:0.85rem;
+			color:#8a7e75;
+			text-transform:uppercase;
+			letter-spacing:1px;
+			margin-top:6px;
+		}
+
+		/* Section ressources */
+		.biblio-resources{ padding: 80px 0; background:#ffffff; }
+		.biblio-section-title{
+			font-family:'Playfair Display', serif;
+			font-weight:800;
+			color: var(--biblio-primary);
+			text-transform:uppercase;
+			font-size:2rem;
+			text-align:center;
+			margin-bottom:8px;
+		}
+		.biblio-section-sub{
+			text-align:center;
+			font-family:'Inter',sans-serif;
+			color:#8a7e75;
+			max-width:620px;
+			margin: 0 auto 50px;
+			font-size:0.98rem;
+		}
+		.biblio-divider{
+			width:80px;height:5px;border-radius:5px;
+			background-color: var(--biblio-gold);
+			margin: 14px auto 0;
+		}
+		.resource-card{
+			background:#ffffff;
+			border-radius:12px;
+			padding:35px 28px;
+			height:100%;
+			box-shadow:0 10px 30px rgba(0,0,0,0.06);
+			border-bottom:5px solid var(--biblio-primary);
+			transition: transform .25s ease, box-shadow .25s ease;
+		}
+		.resource-card:hover{
+			transform: translateY(-6px);
+			box-shadow:0 18px 40px rgba(114,12,12,0.14);
+		}
+		.resource-card .icon-wrap{
+			width:62px;height:62px;
+			border-radius:14px;
+			background: var(--biblio-primary);
+			display:flex;align-items:center;justify-content:center;
+			margin-bottom:22px;
+		}
+		.resource-card .icon-wrap i{ color: var(--biblio-gold); font-size:1.6rem; }
+		.resource-card h4{
+			font-family:'Playfair Display', serif;
+			font-weight:700;
+			color:#0e0508;
+			font-size:1.2rem;
+			margin-bottom:12px;
+		}
+		.resource-card p{
+			font-family:'Inter',sans-serif;
+			color:#777;
+			font-size:0.95rem;
+			line-height:1.65;
+			margin-bottom:0;
+		}
+
+		/* Section abonnement */
+		.biblio-subscribe{
+			background: var(--biblio-primary);
+			padding: 90px 0;
+			position:relative;
+			overflow:hidden;
+		}
+		.biblio-subscribe::before{
+			content:"";
+			position:absolute;
+			top:-120px; right:-120px;
+			width:320px;height:320px;
+			border-radius:50%;
+			background: var(--biblio-secondary);
+			opacity:0.35;
+		}
+		.biblio-subscribe::after{
+			content:"";
+			position:absolute;
+			bottom:-100px; left:-100px;
+			width:260px;height:260px;
+			border-radius:50%;
+			border: 2px solid var(--biblio-gold);
+			opacity:0.25;
+		}
+		.biblio-subscribe .content-col{ position:relative; z-index:2; }
+		.biblio-subscribe .eyebrow{
+			font-family:'Inter',sans-serif;
+			font-size:0.78rem;
+			letter-spacing:3px;
+			text-transform:uppercase;
+			color: var(--biblio-gold);
+			font-weight:700;
+			margin-bottom:14px;
+			display:block;
+		}
+		.biblio-subscribe h2{
+			font-family:'Playfair Display', serif;
+			font-weight:800;
+			color:#ffffff;
+			font-size:2.2rem;
+			margin-bottom:18px;
+		}
+		.biblio-subscribe p.lead-text{
+			font-family:'Inter',sans-serif;
+			color: rgba(255,255,255,0.85);
+			font-size:1rem;
+			line-height:1.75;
+			max-width:480px;
+		}
+		.biblio-subscribe .perk-list{
+			list-style:none;
+			padding:0;
+			margin: 28px 0 0;
+			font-family:'Inter',sans-serif;
+		}
+		.biblio-subscribe .perk-list li{
+			color:#ffffff;
+			font-size:0.95rem;
+			margin-bottom:14px;
+			display:flex;
+			align-items:flex-start;
+			gap:12px;
+		}
+		.biblio-subscribe .perk-list li i{
+			color: var(--biblio-gold);
+			margin-top:3px;
+		}
+
+		.subscribe-card{
+			background:#ffffff;
+			border-radius:16px;
+			padding:42px;
+			position:relative;
+			z-index:2;
+			box-shadow:0 25px 60px rgba(0,0,0,0.25);
+		}
+		.subscribe-card h3{
+			font-family:'Playfair Display', serif;
+			font-weight:800;
+			color: var(--biblio-primary);
+			font-size:1.5rem;
+			margin-bottom:6px;
+		}
+		.subscribe-card .sub-text{
+			font-family:'Inter',sans-serif;
+			color:#8a7e75;
+			font-size:0.92rem;
+			margin-bottom:28px;
+		}
+		.biblio-form .form-group{ margin-bottom:18px; }
+		.biblio-form label{
+			font-family:'Inter',sans-serif;
+			font-size:0.85rem;
+			font-weight:600;
+			color:#0e0508;
+			text-transform:uppercase;
+			letter-spacing:0.5px;
+			margin-bottom:6px;
+			display:block;
+		}
+		.biblio-form .form-control,
+		.biblio-form select{
+			font-family:'Inter',sans-serif;
+			border:1px solid #e6ddd2;
+			border-radius:8px;
+			padding:12px 16px;
+			width:100%;
+			font-size:0.95rem;
+			background:#fbf8f1;
+			color:#0e0508;
+			transition: border-color .2s ease, box-shadow .2s ease;
+		}
+		.biblio-form .form-control:focus,
+		.biblio-form select:focus{
+			outline:none;
+			border-color: var(--biblio-primary);
+			box-shadow: 0 0 0 3px rgba(114,12,12,0.12);
+			background:#ffffff;
+		}
+		.biblio-form .btn-subscribe{
+			width:100%;
+			background: var(--biblio-primary);
+			color:#ffffff;
+			border:none;
+			border-radius:8px;
+			padding:15px 20px;
+			font-family:'Inter',sans-serif;
+			font-weight:700;
+			font-size:1rem;
+			letter-spacing:0.5px;
+			text-transform:uppercase;
+			cursor:pointer;
+			transition: background-color .2s ease;
+			margin-top:6px;
+		}
+		.biblio-form .btn-subscribe:hover{
+			background: var(--biblio-secondary);
+		}
+		.biblio-form .form-note{
+			font-family:'Inter',sans-serif;
+			font-size:0.8rem;
+			color:#a89c8f;
+			margin-top:14px;
+			text-align:center;
+		}
+
+		@media (max-width: 991px){
+			.biblio-hero{ padding:60px 0 50px; text-align:center; }
+			.biblio-hero p.lead-text{ margin:0 auto; }
+			.biblio-hero-figure{ margin-top:40px; }
+			.subscribe-card{ margin-top:50px; }
+		}
+
+		/* Section Galerie */
+	.biblio-gallery {
+		background: #ffffff;
+		padding: 0 0 80px 0; /* Pas de padding en haut pour coller à la section précédente */
+	}
+	.gallery-item {
+		border-radius: 12px;
+		overflow: hidden;
+		box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+		position: relative;
+		height: 280px;
+		border-bottom: 4px solid var(--biblio-gold);
+		transition: transform 0.3s ease, box-shadow 0.3s ease;
+	}
+	.gallery-item:hover {
+		transform: translateY(-5px);
+		box-shadow: 0 15px 40px rgba(114,12,12,0.15);
+	}
+	.gallery-item img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 0.5s ease;
+	}
+	.gallery-item:hover img {
+		transform: scale(1.05);
+	}
+	</style>
+	
+</head>
+<body id="bg">
+<div class="page-wraper">
+<div id="loading-icon-bx"></div>
+	<!-- Header Top ==== -->
+	<header class="header rs-nav">
+  <div class="top-bar">
+    <div class="container">
+      <div class="row d-flex justify-content-between">
+        <div class="topbar-left">
+          <ul>
+            <li>
+              <a href="/contact/"
+                ><i class="fa fa-question-circle"></i>Des questions ?</a
+              >
+            </li>
+            <li>
+              <a href="javascript:;"
+                ><i class="fa fa-envelope-o"></i>info@uloyola.cd</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="topbar-right">
+          <ul>
+            <li><a href="/contact/">Contact</a></li>
+            <li hidden>
+              <select class="header-lang-bx">
+                <option data-icon="flag flag-uk">English UK</option>
+                <option data-icon="flag flag-us">English US</option>
+              </select>
+            </li>
+            
+            <li><a href="/user/login/">Se Connecter</a></li>
+            <!-- 
+                        <li><a href="/user/signup/">Register</a></li> -->
+
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sticky-header navbar-expand-lg">
+    <div class="menu-bar clearfix">
+      <div class="container clearfix">
+        <!-- Header Logo ==== -->
+        <div class="menu-logo">
+          <a href="/"
+            ><img
+              src="/static/assets/images/university_mobile_logo_ulc.png"
+              alt=""
+          /></a>
+        </div>
+        <!-- Mobile Nav Button ==== -->
+        <button
+          class="navbar-toggler collapsed menuicon justify-content-end"
+          type="button"
+          data-toggle="collapse"
+          data-target="#menuDropdown"
+          aria-controls="menuDropdown"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <!-- Author Nav ==== -->
+        <div class="secondary-menu">
+          <div class="secondary-inner"></div>
+        </div>
+        <!-- Search Box ==== -->
+        <div class="nav-search-bar">
+          <form action="#">
+            <input
+              name="search"
+              value=""
+              type="text"
+              class="form-control"
+              placeholder="Type to search"
+            />
+            <span><i class="ti-search"></i></span>
+          </form>
+          <span id="search-remove"><i class="ti-close"></i></span>
+        </div>
+        <!-- Navigation Menu ==== -->
+        <div
+          class="menu-links navbar-collapse collapse justify-content-start"
+          id="menuDropdown"
+        >
+          <div class="menu-logo">
+            <img
+              src="/static/assets/images/university_mobile_logo_ulc.png"
+              alt=""
+            />
+          </div>
+          <ul class="nav navbar-nav">
+            <li><a href="/">Accueil</a></li>
+            <li><a href="/admission/">Admission</a></li>
+            <li class="active">
+              <a href="javascript:;"
+                >A propos <i class="fa fa-chevron-down"></i
+              ></a>
+              <ul class="sub-menu">
+                <li><a href="/rectorat/">Rectorat</a></li>
+                <li>
+                  <a href="/academic_secretariat/"
+                    >Secrétariat général Académique</a
+                  >
+                </li>
+                <li>
+                  <a href="/secretariat_administratif/"
+                    >Secrétariat général Administratif</a
+                  >
+                </li>
+                <li>
+                  <a href="/administractif_du_budget/"
+                    >Administration du Budget</a
+                  >  
+                </li>
+              </ul>
+            </li>
+            <li class="active">
+              <a href="javascript:;"
+                >Facultés <i class="fa fa-chevron-down"></i
+              ></a>
+              <ul class="sub-menu">
+                <li>
+                  <a href="/philosophy_faculty/"
+                    >Faculté de Philosophie
+                    </a
+                  >
+                </li>
+                <li>
+                  <a href="/science_and_technology/"
+                    >faculté des sciences et Technologies </a
+                  >
+                </li>
+                <li>
+                  <a href="/agronomiques_and_veterinaires/"
+                    >faculté des sciences Agronomiques et Vétérinaires</a
+                  >
+                </li>
+
+                <li><a href="/social_sciences_and_management/" >Faculté de Sciences Économiques et de Gestion </a></li>
+										<li hidden><a href="#" >Faculté d'Administration des Affaires - Business School </a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="javascript:;"
+                >Etudiants <i class="fa fa-chevron-down"></i
+              ></a>
+              <ul class="sub-menu">
+                <li><a href="/bde/">BDE</a></li>
+                <li><a href="/cultural_activity/">Activité Culturelle</a></li>
+                <li hidden><a href="#">Raison Ardente</a></li>
+                <li><a href="/alumnis/">Alumnis</a></li>
+              </ul>
+            </li>
+            
+            <li><a href="/blog/news_list/">Actualités</a></li>
+            <li class="active">
+                <a href="javascript:;">Services <i class="fa fa-chevron-down"></i></a>
+                <ul class="sub-menu">
+                  <li><a href="/all_courses_list/">Nos Cours </a></li>
+                    <li><a href="/services/logement-etudiant/">Logement Étudiant</a></li>
+                    <li><a href="/services/labo/">LABO</a></li>
+                    <li><a href="/services/service-learning/">Service Learning</a></li>
+                    <li><a href="/services/language-centre/">ULC Language Centre</a></li>
+                </ul>
+            </li>
+            <li><a href="/bibliotheque/">Bibliothèque</a></li>
+            <li><a href="/nos-besoins/">Nos besoins</a></li>
+            <li class="nav-dashboard">
+              <a hidden href="/students_admin/souscription/">S'inscrire </a>
+            </li>
+          </ul>
+          <div class="nav-social-link">
+            <a href="https://www.facebook.com/ULoyolaDuCongo"><i class="fa fa-facebook"></i></a>
+            <a href="https://x.com/loyola_ulc?s=11"><i class="fa fa-twitter"></i></a>
+            <a href="https://www.linkedin.com/in/ulc-universit%C3%A9-loyola-du-congo-498aa2373"><i class="fa fa-linkedin"></i></a>
+          </div>
+        </div>
+        <!-- Navigation Menu END ==== -->
+      </div>
+    </div>
+  </div>
+</header>
+
+    <!-- header END -->
+    <!-- Content -->
+    <div class="page-content bg-white">
+
+		<!-- HERO BIBLIOTHEQUE -->
+		<section class="biblio-hero" style="position: relative; overflow: hidden;">
+    <div style="position: absolute; right: 0; top: 0; width: 45%; height: 100%; opacity: 0.05; background: url('/static/assets/images/gallery/biblio-bg.jpg') center/cover no-repeat; pointer-events: none;"></div>
+
+    <div class="container" style="position: relative; z-index: 2;">
+        <div class="row align-items-center">
+            
+            <div class="col-lg-7 col-md-12">
+                <span class="eyebrow">Bibliothèque universitaire</span>
+                
+                <h1 style="font-size: 2.8rem; line-height: 1.25; margin-bottom: 25px;">
+                    Tout le savoir de l'<span style="color: var(--biblio-secondary);">ULC</span>,<br>à portée de main
+                </h1>
+                
+                <p class="lead-text" style="font-size: 1.1rem; line-height: 1.8; color: #5a4f47; margin-bottom: 0;">
+                    Accédez aux ouvrages, revues académiques et ressources numériques de l'Université Loyola du Congo. 
+                    <span style="display: block; margin-top: 12px; font-weight: 500; color: var(--biblio-primary);">
+                        Abonnez-vous pour suivre les nouveautés, réserver des documents et recevoir les annonces.
+                    </span>
+                </p>
+            </div>
+            
+            <div class="col-lg-5 col-md-12">
+                <div class="biblio-hero-figure">
+                    <div class="row">
+                        <div class="col-6 mb-4">
+                            <div class="stack-card">
+                                <div class="num">4</div>
+                                <div class="lbl">Facultés couvertes</div>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-4">
+                            <div class="stack-card" style="border-left-color: var(--biblio-secondary);">
+                                <div class="num">100%</div>
+                                <div class="lbl">Accès numérique</div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="stack-card" style="border-left-color: var(--biblio-primary); background: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('/static/assets/images/gallery/biblio-1.jpg') center/cover;">
+                                <div class="num">Ouvert</div>
+                                <div class="lbl" style="color: #0e0508; font-weight: 600;">Du lundi au samedi</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+		<!-- RESSOURCES -->
+		<section class="biblio-resources">
+			<div class="container">
+				<h2 class="biblio-section-title">Ce que propose la <span style="color: var(--biblio-secondary);">Bibliothèque</span></h2>
+				<div class="biblio-divider"></div>
+				<p class="biblio-section-sub">
+					Des ressources pensées pour accompagner chaque étudiant et chaque enseignant tout au long de l'année académique.
+				</p>
+
+				<div class="row">
+					<div class="col-lg-4 col-md-6 mb-4">
+						<div class="resource-card">
+							<div class="icon-wrap"><i class="fa fa-book"></i></div>
+							<h4>Fonds documentaire</h4>
+							<p>Ouvrages de référence et manuels couvrant toutes les facultés, disponibles sur place et en consultation.</p>
+						</div>
+					</div>
+					<div class="col-lg-4 col-md-6 mb-4">
+						<div class="resource-card">
+							<div class="icon-wrap"><i class="fa fa-laptop"></i></div>
+							<h4>Bibliothèque numérique</h4>
+							<p>Accès aux revues scientifiques, mémoires et thèses en version électronique depuis le campus ou à distance.</p>
+						</div>
+					</div>
+					<div class="col-lg-4 col-md-6 mb-4">
+						<div class="resource-card">
+							<div class="icon-wrap"><i class="fa fa-bell"></i></div>
+							<h4>Alertes & nouveautés</h4>
+							<p>Les abonnés sont informés en priorité des nouvelles acquisitions et des activités organisées par la bibliothèque.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="biblio-gallery">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-4 col-md-4 col-sm-12 mb-4">
+					<div class="gallery-item">
+						<img src="/static/assets/images/gallery/biblio-2.jpeg" alt="Rayonnages de la bibliothèque ULC">
+					</div>
+				</div>
+				<div class="col-lg-4 col-md-4 col-sm-12 mb-4">
+					<div class="gallery-item" style="border-bottom-color: var(--biblio-primary);">
+						<img src="/static/assets/images/gallery/biblio-4.jpeg" alt="Espace de lecture ULC">
+					</div>
+				</div>
+				<div class="col-lg-4 col-md-4 col-sm-12 mb-4">
+					<div class="gallery-item" style="border-bottom-color: var(--biblio-secondary);">
+						<img src="/static/assets/images/gallery/biblio-3.jpeg" alt="Bibliothèque numérique ULC">
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+		<!-- ABONNEMENT -->
+		<section class="biblio-subscribe">
+			<div class="container">
+				<div class="row align-items-center">
+					<div class="col-lg-6 col-md-12 content-col">
+						<span class="eyebrow">Abonnement étudiant</span>
+						<h2>Abonnez-vous à la Bibliothèque</h2>
+						<p class="lead-text">
+							L'abonnement est gratuit pour tous les étudiants inscrits à l'Université Loyola du Congo.
+							Il vous donne accès aux services suivants :
+						</p>
+						<ul class="perk-list">
+							<li><i class="fa fa-check-circle"></i> Notifications des nouveaux ouvrages par faculté</li>
+							<li><i class="fa fa-check-circle"></i> Accès prioritaire à la bibliothèque numérique</li>
+							<li><i class="fa fa-check-circle"></i> Informations sur les horaires et événements</li>
+						</ul>
+					</div>
+					<div class="col-lg-5 col-md-12 offset-lg-1">
+						<div class="subscribe-card">
+							<h3>Formulaire d'abonnement</h3>
+							<p class="sub-text">Remplissez vos informations pour vous abonner.</p>
+
+							
+							<form class="biblio-form" action="/bibliotheque/" method="post">
+								<input type="hidden" name="csrfmiddlewaretoken" value="Lod7sQmeOUt8YPK9cniuKAem1WP6MRAx9tb90VKTILxheVaOLODUlhIyTFGBKhnI">
+								<div class="form-group">
+									<label for="biblio-name">Nom complet</label>
+									<input type="text" id="biblio-name" name="full_name" class="form-control" placeholder="Votre nom et prénom" required>
+								</div>
+								<div class="form-group">
+									<label for="biblio-email">Adresse e-mail</label>
+									<input type="email" id="biblio-email" name="email" class="form-control" placeholder="exemple@email.com" required>
+								</div>
+								<div class="form-group">
+									<label for="biblio-faculty">Faculté</label>
+								<select id="biblio-faculty" name="faculty" class="form-control">
+									<option value="">Sélectionnez votre faculté</option>
+									
+									<option value="Philosophie">philosophie</option>
+									
+									<option value="Sciences et Technologies">Sciences et Technologies</option>
+									
+									<option value="Agronomiques et Vetérinaires">Agronomiques et Vetérinaires</option>
+									
+									<option value="Sciences Economiques et de Gestion">Sciences Economiques et de Gestion</option>
+									
+								</select>
+								</div>
+								<button type="submit" class="btn-subscribe">S'abonner à la bibliothèque</button>
+								<p class="form-note">Vous recevrez une confirmation par e-mail.</p>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+    </div>
+		
+	
+
+<footer>
+	<div class="footer-top">
+		<div>
+			<div class="row" style="padding: 50px;">
+
+				<!-- Logo + Adresse -->
+				<div class="col-lg-3 col-md-12 col-sm-12">
+					<div style="padding-right: 30px;">
+						<a href="#"><img src="/static/assets/images/university_mobile_logo_ulc.png" alt="logo_ULC"/></a>
+						<br><br>
+						<p class="text-capitalize m-b20">Mission Catholique de Kimwenza</p>
+						<p>C/Mont Ngafula B.P. 3724 Kinshasa-Gombe</p>
+						<a href="tel:+243853323054">+243 853 323 054</a>
+						<br>
+						<a href="tel:+243981205721">+243 981 205 721</a>
+						<br><br>
+					</div>
+				</div>
+
+				<!-- Navigation -->
+				<div class="col-lg-2 col-md-6 col-sm-12">
+					<div class="widget footer_widget">
+						<h5 class="footer-title">NAVIGATION</h5>
+						<ul>
+							<li><a href="/">Accueil</a></li>
+							<li><a href="/blog/news_list/">Actualités</a></li>
+							<li><a href="/bibliotheque/">Bibliothèque</a></li>
+							<li><a href="/contact/">Contact</a></li>
+							<li><a href="/alumnis/">Alumnis</a></li>
+						</ul>
+					</div>
+				</div>
+
+				<!-- Informations -->
+				<div class="col-lg-2 col-md-6 col-sm-12">
+					<div class="widget footer_widget">
+						<h5 class="footer-title">INFORMATIONS</h5>
+						<ul>
+							<li><a href="/students_admin/souscription/">S'inscrire</a></li>
+							<li hidden><a href="#">Conditions</a></li>
+							<li hidden><a href="#">Questions</a></li>
+							<li hidden><a href="#">Calendrier Académique</a></li>
+						</ul>
+					</div>
+				</div>
+
+				<!-- Facultés -->
+				<div class="col-lg-3 col-md-6 col-sm-12">
+					<div class="widget footer_widget">
+						<h5 class="footer-title">FACULTÉS</h5>
+						<ul>
+							<li><a href="/philosophy_faculty/">Faculté de Philosophie</a></li>
+							<li><a href="/science_and_technology/">Sciences et Technologies</a></li>
+							<li><a href="/agronomiques_and_veterinaires/">Sciences Agronomiques et Vétérinaires</a></li>
+							<li><a href="/social_sciences_and_management/">Sciences Économiques et de Gestion</a></li>
+							<li hidden><a href="#">Administration des Affaires – Business School</a></li>
+						</ul>
+					</div>
+				</div>
+
+				<!-- Nos Services -->
+				<div class="col-lg-2 col-md-6 col-sm-12">
+					<div class="widget footer_widget">
+						<h5 class="footer-title">NOS SERVICES</h5>
+						<ul>
+							<li><a href="/services/logement-etudiant/">Logement Étudiant</a></li>
+							<li><a href="/services/labo/">LABO</a></li>
+							<li><a href="/services/service-learning/">Service Learning</a></li>
+							<li><a href="/services/language-centre/">ULC Language Centre</a></li>
+						</ul>
+					</div>
+				</div>
+
+				<!-- Réseaux sociaux -->
+				<div class="col-lg-3 col-md-12 col-sm-12">
+					<h5 class="footer-title">NOS RÉSEAUX</h5>
+					<div class="pt-social-link">
+						<ul class="list-inline m-a0">
+							<li><a href="https://www.facebook.com/ULoyolaDuCongo" target="_blank" class="btn-link"><i class="fa fa-facebook"></i></a></li>
+							<li><a href="https://x.com/Loyola_ULC?t=Gn0q_3hIDWk5OKLAM5CENw&s=08" target="_blank" class="btn-link"><i class="fa fa-twitter"></i></a></li>
+							<li><a href="https://www.linkedin.com/in/ulc-universit%C3%A9-loyola-du-congo-498aa2373" target="_blank" class="btn-link"><i class="fa fa-linkedin"></i></a></li>
+							<li><a href="https://www.instagram.com/uloyoladucongo?utm_source=qr&igsh=cWl0MXl4NG13cXBk" target="_blank" class="btn-link"><i class="fa fa-instagram"></i></a></li>
+							<li><a href="https://www.tiktok.com/@u.loyoladucongo?_t=ZM-8xsjiuaaupi&_r=1" target="_blank" class="btn-link"><i class="bi bi-tiktok"></i></a></li>
+							<li><a href="https://www.youtube.com/channel/UCZxbi1KEt4zdALC-zYAsY5g" target="_blank" class="btn-link"><i class="bi bi-youtube"></i></a></li>
+						</ul>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<div style="background-color: black;" class="pd-20">
+		<div class="container text-center">
+			<p>Copyright © 2023, Université Loyola. Tous droits réservés</p>
+		</div>
+	</div>
+</footer>
+
+<button class="back-to-top fa fa-chevron-up"></button>
+
+<!-- External JavaScripts -->
+<script src="/static/assets/js/jquery.min.js"></script>
+<script src="/static/assets/vendors/bootstrap/js/popper.min.js"></script>
+<script src="/static/assets/vendors/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/assets/vendors/bootstrap-select/bootstrap-select.min.js"></script>
+<script src="/static/assets/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
+<script src="/static/assets/vendors/magnific-popup/magnific-popup.js"></script>
+<script src="/static/assets/vendors/counter/waypoints-min.js"></script>
+<script src="/static/assets/vendors/counter/counterup.min.js"></script>
+<script src="/static/assets/vendors/imagesloaded/imagesloaded.js"></script>
+<script src="/static/assets/vendors/masonry/masonry.js"></script>
+<script src="/static/assets/vendors/masonry/filter.js"></script>
+<script src="/static/assets/vendors/owl-carousel/owl.carousel.js"></script>
+<script src="/static/assets/js/functions.js"></script>
+<script src="/static/assets/js/contact.js"></script>
+<script src='/static/assets/vendors/switcher/switcher.js'></script>
+<script src="/static/django-browser-reload/reload-listener.js" data-worker-script-path="/static/django-browser-reload/reload-worker.js" data-events-path="/__reload__/events/" defer></script></body>
+
+</html>

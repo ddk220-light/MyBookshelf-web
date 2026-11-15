@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+			<meta charset="utf-8">
+			<meta name="author" content="PMB Group">
+					
+			<meta name="keywords" content="OPAC, web, library, opensource, catalog, catalogue, biblioth&egrave;que, m&eacute;diath&egrave;que, pmb, phpmybibli">
+			<meta name="description" content="Online catalogue ."><meta name="robots" content="all">
+			<!--IE et son enfer de compatibilit?-->
+			<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<title>Online catalogue </title>
+	
+	
+<link rel="stylesheet" type="text/css" href="./styles/common/animation_display.css?1615825938">
+<link rel="stylesheet" type="text/css" href="./styles/common/common.css?1671786155">
+<link rel="stylesheet" type="text/css" href="./styles/common/contrib.css?1673276543">
+<link rel="stylesheet" type="text/css" href="./styles/common/dGrowl.css?1657616007">
+<link rel="stylesheet" type="text/css" href="./styles/common/font-awesome.css?1478593624">
+<link rel="stylesheet" type="text/css" href="./styles/common/open-sans.css?1479312986">
+<link rel="stylesheet" type="text/css" href="./styles/common/pagination.css?1532013719">
+<link rel="stylesheet" type="text/css" href="./styles/common/record_display.css?1540561363">
+<link rel="stylesheet" type="text/css" href="./styles/common/visionneuse.css?1646663900">
+<link rel="stylesheet" type="text/css" href="./styles/zen/base.css?1638198054">
+<link rel="stylesheet" type="text/css" href="./styles/zen/fontAcontent.css?1456910813">
+<link rel="stylesheet" type="text/css" href="./styles/zen/zen.css?1551948582">
+<link rel="stylesheet" type="text/css" href="./styles/zen/zen_color_pre_set.css?1526368617">
+<link rel="stylesheet" type="text/css" href="./styles/zen/zonepageo_a.css?1456910813">
+<link rel="stylesheet" type="text/css" href="./styles/zen/zzen_responsive.css?1635417094"><script type="text/javascript">var opac_style= 'zen';</script>
+	<!-- css_authentication -->	<link rel="SHORTCUT ICON" href="./images/site/favicon.ico">
+	<script type="text/javascript" src="includes/javascript/drag_n_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/handle_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/popup.js"></script>
+	<script type="text/javascript">
+			// Fonction a utiliser pour l'encodage des URLs en javascript
+			function encode_URL(data){
+				var docCharSet = document.characterSet ? document.characterSet : document.charset;
+				if(docCharSet == "UTF-8"){
+	    			return encodeURIComponent(data);
+	    		}else{
+	    			return escape(data);
+	    		}
+	    	}
+	    </script>
+	<script type="text/javascript">
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName =
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i);
+				    }
+				 }
+				return items;
+			 }
+		}
+	</script>
+
+		<link rel="stylesheet" type="text/css" href="./includes/javascript/dojo/dijit/themes/tundra/tundra.css">
+		<script type="text/javascript">
+			var dojoConfig = {
+				parseOnLoad: true,
+				locale: 'en-uk',
+				isDebug: false,
+				usePlainJson: true,
+				packages: [{
+						name: 'pmbBase',
+						location:'../../../..'
+					},{
+						name: 'd3',
+						location:'../../d3'
+					}],
+				deps: ['apps/pmb/MessagesStore', 'dgrowl/dGrowl', 'dojo/ready', 'apps/pmb/ImagesStore'],
+				callback:function(MessagesStore, dGrowl, ready, ImagesStore){
+					window.pmbDojo = {};
+					pmbDojo.messages = new MessagesStore({url:'./ajax.php?module=ajax&categ=messages', directInit:false});
+					pmbDojo.images = new ImagesStore({url:'./ajax.php?module=ajax&categ=images', directInit:false});
+					ready(function(){
+						new dGrowl({'channels':[{'name':'info','pos':2},{'name':'error', 'pos':1}]});
+					});
+						
+				},
+			};
+		</script>
+		<script type="text/javascript" src="./includes/javascript/dojo/dojo/dojo.js"></script>
+		<script type="text/javascript">
+		dojo.addOnLoad(function () {
+			// Ajout du theme Dojo
+			dojo.addClass(dojo.body(),'tundra');
+		})
+		</script>
+		<script type="text/javascript">
+	var pmb_img_patience = './images/patience.gif';
+</script><script type="text/javascript">
+			var opac_show_social_network =0;
+		</script>
+	<script type="text/javascript" src="includes/javascript/affiliate_search.js"></script>
+	<script type="text/javascript" src="./visionneuse/javascript/visionneuse.js"></script>
+	<script type="text/javascript" src="./includes/javascript/http_request.js"></script>
+	
+	<!-- Enrichissement de notice en Ajax-->
+	<script src="./includes/javascript/enrichment.js"></script>
+<script>
+				dojo.addOnLoad(function (){
+					//on balance un evenement pour les initialiser les modules si besoin...
+					dojo.publish('init',['cms_dojo_init',{}]);
+				});
+			</script>
+
+		<script type="text/javascript">
+			function cms_module_search_22_change_dest(){
+				var page = 0;
+                var universe = 0;
+                var default_segment = 0;
+                if(document.forms['cms_module_search_22_searchbox'].dest) {
+    				var dests = document.forms['cms_module_search_22_searchbox'].dest;
+    				for(var i = 0; i < dests.length; i++){
+    					if(dests[i].checked){
+    						page = dests[i].value;
+                            universe = dests[i].getAttribute('universe');
+                            default_segment = dests[i].getAttribute('default_segment');
+    						break;
+    					}
+    				}
+                }
+                if(universe > 0){
+                    if(default_segment > 0){
+                        document.forms['cms_module_search_22_searchbox'].action = './index.php?lvl=search_segment&action=segment_results&id='+default_segment;
+                    } else {
+                        document.forms['cms_module_search_22_searchbox'].action = './index.php?lvl=search_universe&id='+universe;   
+                    }  
+                } else if(page>0){
+					document.forms['cms_module_search_22_searchbox'].action = './index.php?lvl=cmspage&pageid='+page;
+				}
+                if (page.toString().indexOf('view_') != -1) {
+					var view_id = page.substr(5);
+				    document.forms['cms_module_search_22_searchbox'].action += '&opac_view='+view_id;
+                }
+			}
+		</script><script type="text/javascript" src="./cms/modules/common/includes/javascript/jquery-2.1.1.min.js"></script><script type="text/javascript" src="./styles/zen/uitkit/js/uikit.min.js"></script><script type="text/javascript" src="./styles/zen/uitkit/js/components/sticky.min.js"></script><script type="text/javascript" src="./styles/zen/uitkit/js/components/grid.min.js"></script><script type="text/javascript" src="./cms/modules/common/includes/javascript/jquery.bxsliderv4.min.js"></script><link rel="stylesheet" href="./styles/zen/uitkit/css/uikit.min.css"><link rel="stylesheet" href="./styles/zen/addcss/home.css"><link rel="stylesheet" href="./styles/zen/uitkit/css/components/sticky.almost-flat.min.css"><link rel="stylesheet" href="./styles/zen/addcss/calendar.css"></head>
+
+<body onload="window.defaultStatus='PMB: Public Access';" id="pmbopac">
+	<script type="text/javascript" src="./includes/javascript/tablist_ajax.js"></script>
+<script type="text/javascript" src="./includes/javascript/tablist.js"></script>
+<script type="text/javascript" src="./includes/javascript/misc.js"></script>
+	<div id="att" style="z-Index:1000"></div>
+	<div id="container"><div id="intro" fixed="yes">
+<div id="intro_bibli" fixed="yes">
+			<h3></h3>
+			<div class="p1"></div>
+			<div class="p2"></div>
+			</div>
+		<div id="cms_module_sectionslist_174" class="cms_module_sectionslist cms_module" style="visibility: visible; position: static; left: 0px; top: 0px; display: block;"><div id="offcanvas" class="uk-offcanvas">
+	<div class="uk-offcanvas-bar">
+			<div class="MenuVertResp">
+			<ul class="NavResponsive">
+			<!-- rubriques niveau 1 -->
+							<li>
+					<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=37" title="Catalogue">Catalogue</a>
+											<ul class="SousNavResponsive">
+				<!-- rubriques niveau 2 -->
+															<li>
+									<a href="./index.php?lvl=index" title="Simple Search">Simple Search</a>
+								</li>
+															<li>
+									<a href="http://nkcs.org.np/afufof/library/opac_css/index.php?lvl=etagere_see&amp;id=6" title="Literature">Literature</a>
+								</li>
+															<li>
+									<a href="./index.php?search_type_asked=perio_a2z" title="Periodicals">Periodicals</a>
+								</li>
+															<li>
+									<a href="http://nkcs.org.np/afufof/library/opac_css/index.php?lvl=etagere_see&amp;id=5" title="Thesis and LEE Reports">Thesis and LEE Reports</a>
+								</li>
+													</ul>
+									</li>
+							<li>
+					<a href="http://nkcs.org.np/afufof/library/opac_css/index.php?lvl=notice_display&amp;id=1090&amp;seule=1" target="_blank" title="Journal of AFU ">Journal of AFU </a>
+									</li>
+							<li>
+					<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=1" title="About the Library">About the Library</a>
+									</li>
+							<li>
+					<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=86" title="Useful Links">Useful Links</a>
+									</li>
+							<li>
+					<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=82" title="About FOF">About FOF</a>
+									</li>
+						</ul>
+		</div>
+		</div>
+</div></div><div id="cms_module_htmlcode_176" class="cms_module_htmlcode cms_module" style="visibility: visible; position: static; left: 0px; top: 0px; display: block;"><div class="TglUser " data-uk-button>
+	<a class="Tgllogin" data-uk-toggle="{target:'#connexion', cls:'heightZero'}">
+		<span class="user"><i class="fa fa-user"></i></span>
+	</a>
+</div></div><div id="cms_module_htmlcode_175" class="cms_module_htmlcode cms_module" style="visibility: visible; position: static; left: 0px; top: 0px;"><div id="btnMenu" class="temp">
+	<div class="tgLbtnMenu">
+		<a class="MenuCanvas uk-button" href="#offcanvas" data-uk-offcanvas><i class="fa fa-bars"></i></a>
+	</div>
+</div></div><div id="cms_module_htmlcode_178" class="cms_module_htmlcode cms_module" style="visibility: visible; position: static; left: 0px; top: 0px;"><div class="TgllSearch" data-uk-button>
+	<a data-uk-toggle="{target:'.searchbox', cls:'heightZero'}">
+		<span class="user"><i class="fa fa-search"></i></span>
+	</a>
+</div></div><div id="cms_module_section_177" class="cms_module_section cms_module" style="visibility: visible; display: block; position: static; left: 0px; top: 0px;"><div class="uk-grid uk-grid-collapse" data-uk-grid-match="{target:'.titrePortail'}" data-uk-grid-margin>
+	<div class="uk-width-1-3">
+        <div id="logo" class="titrePortail">
+            <a href="./index.php" title="AFU Faculty of Forestry"><img src="https://nkcs.org.np/afufof/library/opac_css/cms_vign.php?type=section&amp;id=62&amp;database=afufof&amp;mode=large" alt="AFU Faculty of Forestry"></a>
+        </div>
+    </div>
+	<div class="uk-width-2-3"> 
+        <div id="titrePortail" class="titrePortail">
+            <h1>
+                <span class="mainTitle">AFU Faculty of Forestry</span>
+                <span class="subTitle">Online Library Catalogue</span>
+            </h1>
+        </div>
+     </div>        
+</div></div><div id="cms_module_section_173" class="cms_module_section cms_module" style="visibility: visible; position: static; left: 0px; top: 0px;"><div id="Introbandeau"><img src="https://nkcs.org.np/afufof/library/opac_css/cms_vign.php?type=section&amp;id=79&amp;database=afufof&amp;mode=large" alt="Photo bandeau superieur"></div>
+</div><div id="cms_module_section_125" class="cms_module_section cms_module" style="visibility: visible; display: none; left: auto; top: auto; height: 157px; width: 1024px; margin: 0px; padding: 0px; float: none; position: static;"><div id="logo">
+	<a href="./index.php" title="AFU Faculty of Forestry"><img src="https://nkcs.org.np/afufof/library/opac_css/cms_vign.php?type=section&amp;id=62&amp;database=afufof&amp;mode=large" alt="AFU Faculty of Forestry"></a>
+</div></div><div id="cms_module_metadatas_172" class="cms_module_metadatas cms_module" style="visibility: visible; display: block;"></div><div id="cms_module_section_126" class="cms_module_section cms_module" style="visibility: visible; display: none; left: auto; top: auto; height: 160px; width: 1024px; margin: 0px; padding: 0px; float: none; position: static;"><div id="titrePortail">
+	<h1>
+        <span class="mainTitle">AFU Faculty of Forestry</span>
+        <span class="subTitle">Online Library Catalogue</span>
+	</h1>
+</div></div><div id="cms_module_htmlcode_137" class="cms_module_htmlcode cms_module"><div class="clear"></div></div><div id="cms_module_sectionslist_120" class="cms_module_sectionslist cms_module" style="visibility: visible; display: block;"><div class="uk-flex uk-flex-center uk-hidden-small uk-hidden-medium">
+    <div class="MenuHoriz uk-navbar uk-container">
+        <ul class="Nav uk-navbar-nav">
+        <!-- rubriques niveau 1 -->
+                    <li class="uk-parent" data-uk-dropdown="{pos:'bottom-center',remaintime:'550'}">
+                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=37" title="Catalogue">Catalogue</a>
+                                <div class="uk-dropdown uk-dropdown-navbar">
+                    <ul class="SousNav uk-nav uk-nav-navbar">
+			<!-- rubriques niveau 2 -->
+                                                    <li>
+                                <a href="./index.php?lvl=index">Simple Search</a>
+                            </li>
+                                                    <li>
+                                <a href="http://nkcs.org.np/afufof/library/opac_css/index.php?lvl=etagere_see&amp;id=6">Literature</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?search_type_asked=perio_a2z">Periodicals</a>
+                            </li>
+                                                    <li>
+                                <a href="http://nkcs.org.np/afufof/library/opac_css/index.php?lvl=etagere_see&amp;id=5">Thesis and LEE Reports</a>
+                            </li>
+                                            </ul>
+                </div>      
+                            </li>
+                    <li>
+                <a href="http://nkcs.org.np/afufof/library/opac_css/index.php?lvl=notice_display&amp;id=1090&amp;seule=1" target="_blank" title="Journal of AFU ">Journal of AFU </a>
+                            </li>
+                    <li>
+                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=1" title="About the Library">About the Library</a>
+                            </li>
+                    <li>
+                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=86" title="Useful Links">Useful Links</a>
+                            </li>
+                    <li>
+                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=82" title="About FOF">About FOF</a>
+                            </li>
+                </ul>
+    </div>
+</div>    
+</div></div><div id="main" style="position: static; left: 0px; top: 0px;" fixed="yes"><div id="main_header"></div><div id="main_hors_footer">
+						
+
+<script type="text/javascript" src="./includes/javascript/auth_popup.js"></script>
+<script type="text/javascript" src="./includes/javascript/pnb.js"></script><div id="cms_module_htmlcode_170" class="cms_module_htmlcode cms_module"><div id="boutonRetour">
+<a href="javascript:history.go(-1)" title="Retour">&gt;&gt; Return</a>
+</div>
+<div class="clear"></div> </div><div id="add_div_cms_module_articleslist_21" class="row"></div><div id="navigator" fixed="yes">
+<table style="width:100%"><tr><td class="navig_actions_last_search"><a href="index.php?lvl=search_result&amp;get_query=1" class="actions_last_search"><span>Update search</span></a></td>
+<td class="navig_actions_history"><a href="index.php?lvl=search_history" class="actions_history"><span>Search history</span></a></td>
+<td class="navig_actions_first_screen"><a href="./index.php?lvl=index" class="avec_recherches"><span>Home</span></a></td>
+</tr></table></div><div id="intro_message"><div class="p2"></div></div><!-- fermeture de #navigator -->
+<input type="hidden" id="author_type" name="author_type" value=""><input type="hidden" id="id_thes" name="id_thes" value=""><div id="resultatrech" style="position: static; left: 0px; top: 0px;"><h3>Search results</h3>
+	<div id="search_onglet">
+        <br>
+		<ul id="search_tabs" class="search_tabs">
+			<li id="search_tabs_catalog" class="current"><a href="#" onclick='showSearchTab("catalog",false);return false;'>In the catalog</a></li>
+			<li id="search_tabs_affiliate"><a href="#" onclick='showSearchTab("affiliate",false);return false;'>In the affiliated sources</a></li>
+		</ul>
+	</div><h3 class="searchResult-search">
+				<span class="searchResult-equation">
+					<b>6</b>  title(s) found <b>
+					'The practice of silviculture'</b></span></h3>
+<div id="resultatrech_liste"><span class="expandAll"><a href="javascript:expandAll_ajax(1);"><img class="img_plusplus" src="./images/expand_all.gif" style="border:0px" id="expandall"></a></span><span class="espaceResultSearch">&nbsp;</span><span class="collapseAll"><a href="javascript:collapseAll()"><img class="img_moinsmoins" src="./images/collapse_all.gif" style="border:0px" id="collapseall"></a></span><span class="print_search_result"><span class="printSearchResult">
+<a href="#" onclick="openPopUp('./print.php?lvl=search&amp;current_search=0','print'); w.focus(); return false;" title="Print the current search page...">
+	<img src="./images/print.gif" style="border:0px" class="align_bottom" alt="Print the current search page...">
+</a>
+</span></span><span class="espaceResultSearch">&nbsp;</span><script type="text/javascript" src="./includes/javascript/select.js"></script>
+						<script>
+							var ajax_get_sort=new http_request();
+					
+							function get_sort_content(del_sort, ids) {
+								var url = './ajax.php?module=ajax&categ=sort&sub=get_sort&raz_sort='+(typeof(del_sort) != 'undefined' ? del_sort : '')+'&suppr_ids='+(typeof(ids) != 'undefined' ? ids : '')+'&page_en_cours=lvl%3Dmore_results%26autolevel1%3D1&sort_name=notices';
+								ajax_get_sort.request(url,0,'',1,show_sort_content,0,0);
+							}
+					
+							function show_sort_content(response) {
+								document.getElementById('frame_notice_preview').innerHTML=ajax_get_sort.get_text();
+								var tags = document.getElementById('frame_notice_preview').getElementsByTagName('script');
+					       		for(var i=0;i<tags.length;i++){
+									window.eval(tags[i].text);
+					        	}
+							}
+							function kill_sort_frame() {
+								var sort_view=document.getElementById('frame_notice_preview');
+								if (sort_view)
+									sort_view.parentNode.removeChild(sort_view);
+							}
+						</script>  
+                        <span class="triSelector">
+                            <a onclick="show_layer(); get_sort_content();" title="Sort available" style="cursor : pointer;">
+                                <img src="./images/orderby_az.gif" alt="Sort available" class="align_bottom" hspace="3" style="border:0px" id="sort_icon">
+                            </a>
+                        </span><span class="espaceResultSearch">&nbsp;&nbsp;</span><span class="affiner_recherche"><a href="./index.php?search_type_asked=extended_search&amp;mode_aff=aff_simple_search" title="Refine your search">Refine your search</a></span><span class="espaceResultSearch">&nbsp;&nbsp;</span><span class="short_url"><a target="_blank" href="https://nkcs.org.np/afufof/library/opac_css/s.php?h=dada8b3bbec715a8b909c72a9af72d49" title="Generate the RSS feed of the search">Generate the RSS feed of the search</a></span>
+					<script type="text/javascript">
+						require(['dojo/on', 'dojo/topic', 'apps/pmb/sharelink/SharePopup'], function(on, topic, SharePopup){
+						window.copy_shorturl_to_clipboard = function() {
+								new SharePopup('https://nkcs.org.np/afufof/library/opac_css/s.php?h=7ffb8600b91a8c295be084c529819d84');
+							}					
+						});
+					</script><span class="espaceResultSearch">&nbsp;&nbsp;</span><span class="short_url_permalink"><a href="#" onclick="copy_shorturl_to_clipboard(); return false;" title="Search permalink">Search permalink</a></span><span class="espaceResultSearch">&nbsp;&nbsp;</span><span class="search_bt_external"><a href="./index.php?search_type_asked=external_search&amp;mode_aff=aff_simple_search&amp;external_type=simple" title="Apply to external sources">Apply to external sources</a></span><blockquote>
+			<div id="el81Parent" class="notice-parent">
+			
+			<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el81Img" title="details" alt="details" style="border:0px" onclick="expandBase('el81', true);  return false;" hspace="3"><img src="https://nkcs.org.np/afufof/library/opac_css/images/icon_a_16x16.gif" alt="Monograph: printed text" title="Monograph: printed text">
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_81"><span class="statutnot1"></span><span notice="81" class="header_title">The Practice of Silviculture</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=77">David M. Smith</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=The%20Practice%20of%20Silviculture&amp;rft.title=The%20Practice%20of%20Silviculture&amp;rft.tpages=527p.&amp;rft.date=2014&amp;rft_id=&amp;rft.pub=Wiley&amp;rft.edition=8th&amp;rft.au=David%20M.%20Smith&amp;rft.aulast=Smith&amp;rft.aufirst=David%20M."></span></span>
+	    		<br>
+				</div>
+				<div id="el81Child" class="notice-child" style="margin-bottom:6px;display:none;" token="c0cd9f167ded33530a7450aff6fd3a80" datetime="1794729622"><table style="width:100%"><tr><td>
+		<ul id="onglets_isbd_public81" class="onglets_isbd_public">
+	  			<li id="onglet_public81" class="isbd_public_active"><a href="#" title="Public" onclick="show_what('PUBLIC', '81'); return false;">Public</a></li>
+				<li id="onglet_isbd81" class="isbd_public_inactive"><a href="#" title="ISBD" onclick="show_what('ISBD', '81'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class="row"></div>
+					<div id="div_public81" style="display:block;"><table><tr class="tr_title">
+					<td class="align_right bg-grey"><span class="etiq_champ">Title :</span></td>
+					<td class="public_line_value"><span class="public_title">The Practice of Silviculture</span></td>
+				</tr><tr class="tr_typdoc">
+					<td class="align_right bg-grey"><span class="etiq_champ">Material Type: </span></td>
+					<td class="public_line_value"><span class="public_typdoc">printed text</span></td>
+				</tr><tr class="tr_auteurs">
+					<td class="align_right bg-grey"><span class="etiq_champ">Authors: </span></td>
+					<td class="public_line_value"><span class="public_auteurs"><a href="./index.php?lvl=author_see&amp;id=77">David M. Smith</a>, Author</span></td>
+				</tr><tr class="tr_mention">
+					<td class="align_right bg-grey"><span class="etiq_champ">Edition statement:</span></td>
+					<td class="public_line_value"><span class="public_mention">8th</span></td>
+				</tr><tr class="tr_ed1">
+					<td class="align_right bg-grey"><span class="etiq_champ">Publisher:</span></td>
+					<td class="public_line_value"><span class="public_ed1"><a href="./index.php?lvl=publisher_see&amp;id=15">Wiley</a></span></td>
+				</tr><tr class="tr_year">
+					<td class="align_right bg-grey"><span class="etiq_champ">Publication Date: </span></td>
+					<td class="public_line_value"><span class="public_year">2014</span></td>
+				</tr><tr class="tr_npages">
+					<td class="align_right bg-grey"><span class="etiq_champ">Pagination: </span></td>
+					<td class="public_line_value"><span class="public_npages">527p.</span></td>
+				</tr><tr class="tr_size">
+					<td class="align_right bg-grey"><span class="etiq_champ">Size: </span></td>
+					<td class="public_line_value"><span class="public_size">Book</span></td>
+				</tr><tr class="tr_prix">
+					<td class="align_right bg-grey"><span class="etiq_champ">Price: </span></td>
+					<td class="public_line_value"><span class="public_prix">Rs10560</span></td>
+				</tr><tr class="tr_langues">
+					<td class="align_right bg-grey"><span class="etiq_champ">Languages :</span></td>
+					<td class="public_line_value"><span class="public_langues">English (<i>eng</i>)</span></td>
+				</tr><tr class="tr_categ">
+					<td class="align_right bg-grey"><span class="etiq_champ">Descriptors: </span></td>
+					<td class="public_line_value"><span class="public_categ"><a href="./index.php?lvl=categ_see&amp;id=55">Silviculture</a><br></span></td>
+				</tr><tr class="tr_keywords">
+					<td class="align_right bg-grey"><span class="etiq_champ">Keywords: </span></td>
+					<td class="public_line_value"><span class="public_keywords"><a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Silviculture&amp;tags=ok">Silviculture</a></span></td>
+				</tr><tr class="tr_indexint">
+					<td class="align_right bg-grey"><span class="etiq_champ">Class number: </span></td>
+					<td class="public_line_value"><span class="public_indexint"><a href="./index.php?lvl=indexint_see&amp;id=16">634.95</a> <span></span></span></td>
+				</tr></table>
+</div>
+					<div id="div_isbd81" style="display:none;">The Practice of Silviculture [printed text] / <a href="./index.php?lvl=author_see&amp;id=77">David M. Smith</a>, Author &nbsp;. -&nbsp; 8th&nbsp;.&nbsp;-&nbsp;<a href="./index.php?lvl=publisher_see&amp;id=15">Wiley</a>, 2014&nbsp;.&nbsp;-&nbsp;527p.&nbsp;; Book.<br>Rs10560<br><span class="etiq_champ">Languages</span>&nbsp;: English (<i>eng</i>)<table><tr class="tr_categ">
+					<td class="align_right bg-grey"><span class="etiq_champ">Descriptors: </span></td>
+					<td class="public_line_value"><span class="public_categ"><a href="./index.php?lvl=categ_see&amp;id=55">Silviculture</a><br></span></td>
+				</tr><tr class="tr_keywords">
+					<td class="align_right bg-grey"><span class="etiq_champ">Keywords: </span></td>
+					<td class="public_line_value"><span class="public_keywords"><a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Silviculture&amp;tags=ok">Silviculture</a></span></td>
+				</tr><tr class="tr_indexint">
+					<td class="align_right bg-grey"><span class="etiq_champ">Class number: </span></td>
+					<td class="public_line_value"><span class="public_indexint"><a href="./index.php?lvl=indexint_see&amp;id=16">634.95</a> <span></span></span></td>
+				</tr></table></div></td></tr></table>
+					<h3>Hold</h3><a href="#" onclick="if(confirm('Do you really want to place a hold on this document ?')){w=window.open('./do_resa.php?lvl=resa&amp;id_notice=81&amp;id_bulletin=0&amp;oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Place a hold on this item</a><br>
+<h3><span id="titre_exemplaires" class="titre_exemplaires">Copies (15)</span></h3>
+<table cellpadding="2" class="exemplaires" style="width:100%">
+<tr class="thead"><th class="expl_header_expl_cb">Barcode</th><th class="expl_header_expl_cote">Call number</th><th class="expl_header_tdoc_libelle">Media type</th><th class="expl_header_location_libelle">Location</th><th class="expl_header_section_libelle">Section</th><th class="expl_header_statut">Status</th></tr><tr class="even item_expl expl_available"><td id="expl_1953" class="expl_cb">401</td><td class="expl_cote">634.95 SMI</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1953" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_1392" class="expl_cb">1223</td><td class="expl_cote">634.95 SMI</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1392" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_1393" class="expl_cb">1224</td><td class="expl_cote">634.95 SMI</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1393" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_1394" class="expl_cb">1225</td><td class="expl_cote">634.95 SMI</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1394" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_1395" class="expl_cb">1226</td><td class="expl_cote">634.95 SMI</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1395" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_1396" class="expl_cb">1227</td><td class="expl_cote">634.95 SMI</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1396" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_1397" class="expl_cb">1228</td><td class="expl_cote">634.95 SMI</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1397" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_1398" class="expl_cb">1229</td><td class="expl_cote">634.95 SMI</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1398" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_1399" class="expl_cb">1230</td><td class="expl_cote">634.95 SMI</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1399" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_1400" class="expl_cb">1231</td><td class="expl_cote">634.95 SMI</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1400" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_1401" class="expl_cb">1232</td><td class="expl_cote">634.95 SMI</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1401" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_1950" class="expl_cb">404</td><td class="expl_cote">634.95 SMI</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1950" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_1951" class="expl_cb">402</td><td class="expl_cote">634.95 SMI</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1951" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_1952" class="expl_cb">403</td><td class="expl_cote">634.95 SMI</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1952" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_1954" class="expl_cb">1957</td><td class="expl_cote">634.95 SMI</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1954" class="section_libelle">Referencs</td><td class="expl_situation"><strong>Available</strong> </td></tr>
+</table></div>
+			<div id="el1033Parent" class="notice-parent">
+			
+			<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el1033Img" title="details" alt="details" style="border:0px" onclick="expandBase('el1033', true);  return false;" hspace="3"><img src="https://nkcs.org.np/afufof/library/opac_css/images/icon_a_16x16.gif" alt="Monograph: printed text" title="Monograph: printed text">
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_1033"><span class="statutnot1"></span><span notice="1033" class="header_title">The Practice of Silviculture</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=77">David M. Smith</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=The%20Practice%20of%20Silviculture&amp;rft.title=The%20Practice%20of%20Silviculture&amp;rft.tpages=537p.&amp;rft.date=2014&amp;rft_id=&amp;rft.pub=Wiley&amp;rft.edition=9th&amp;rft.au=David%20M.%20Smith&amp;rft.aulast=Smith&amp;rft.aufirst=David%20M."></span></span>
+	    		<br>
+				</div>
+				<div id="el1033Child" class="notice-child" style="margin-bottom:6px;display:none;" token="5d8861c963ac430bb3d7c739d77217b9" datetime="1794729623"><table style="width:100%"><tr><td>
+		<ul id="onglets_isbd_public1033" class="onglets_isbd_public">
+	  			<li id="onglet_public1033" class="isbd_public_active"><a href="#" title="Public" onclick="show_what('PUBLIC', '1033'); return false;">Public</a></li>
+				<li id="onglet_isbd1033" class="isbd_public_inactive"><a href="#" title="ISBD" onclick="show_what('ISBD', '1033'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class="row"></div>
+					<div id="div_public1033" style="display:block;"><table><tr class="tr_title">
+					<td class="align_right bg-grey"><span class="etiq_champ">Title :</span></td>
+					<td class="public_line_value"><span class="public_title">The Practice of Silviculture</span></td>
+				</tr><tr class="tr_typdoc">
+					<td class="align_right bg-grey"><span class="etiq_champ">Material Type: </span></td>
+					<td class="public_line_value"><span class="public_typdoc">printed text</span></td>
+				</tr><tr class="tr_auteurs">
+					<td class="align_right bg-grey"><span class="etiq_champ">Authors: </span></td>
+					<td class="public_line_value"><span class="public_auteurs"><a href="./index.php?lvl=author_see&amp;id=77">David M. Smith</a>, Author</span></td>
+				</tr><tr class="tr_mention">
+					<td class="align_right bg-grey"><span class="etiq_champ">Edition statement:</span></td>
+					<td class="public_line_value"><span class="public_mention">9th</span></td>
+				</tr><tr class="tr_ed1">
+					<td class="align_right bg-grey"><span class="etiq_champ">Publisher:</span></td>
+					<td class="public_line_value"><span class="public_ed1"><a href="./index.php?lvl=publisher_see&amp;id=15">Wiley</a></span></td>
+				</tr><tr class="tr_year">
+					<td class="align_right bg-grey"><span class="etiq_champ">Publication Date: </span></td>
+					<td class="public_line_value"><span class="public_year">2014</span></td>
+				</tr><tr class="tr_npages">
+					<td class="align_right bg-grey"><span class="etiq_champ">Pagination: </span></td>
+					<td class="public_line_value"><span class="public_npages">537p.</span></td>
+				</tr><tr class="tr_size">
+					<td class="align_right bg-grey"><span class="etiq_champ">Size: </span></td>
+					<td class="public_line_value"><span class="public_size">Book</span></td>
+				</tr><tr class="tr_prix">
+					<td class="align_right bg-grey"><span class="etiq_champ">Price: </span></td>
+					<td class="public_line_value"><span class="public_prix">IC1752</span></td>
+				</tr><tr class="tr_langues">
+					<td class="align_right bg-grey"><span class="etiq_champ">Languages :</span></td>
+					<td class="public_line_value"><span class="public_langues">English (<i>eng</i>)</span></td>
+				</tr><tr class="tr_categ">
+					<td class="align_right bg-grey"><span class="etiq_champ">Descriptors: </span></td>
+					<td class="public_line_value"><span class="public_categ"><a href="./index.php?lvl=categ_see&amp;id=190">forest ecology</a><br><a href="./index.php?lvl=categ_see&amp;id=16">Silviculture</a><br></span></td>
+				</tr><tr class="tr_keywords">
+					<td class="align_right bg-grey"><span class="etiq_champ">Keywords: </span></td>
+					<td class="public_line_value"><span class="public_keywords"><a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Silviculture&amp;tags=ok">Silviculture</a>&nbsp; <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=forest+ecology&amp;tags=ok">forest ecology</a></span></td>
+				</tr><tr class="tr_indexint">
+					<td class="align_right bg-grey"><span class="etiq_champ">Class number: </span></td>
+					<td class="public_line_value"><span class="public_indexint"><a href="./index.php?lvl=indexint_see&amp;id=16">634.95</a> <span></span></span></td>
+				</tr></table>
+</div>
+					<div id="div_isbd1033" style="display:none;">The Practice of Silviculture [printed text] / <a href="./index.php?lvl=author_see&amp;id=77">David M. Smith</a>, Author &nbsp;. -&nbsp; 9th&nbsp;.&nbsp;-&nbsp;<a href="./index.php?lvl=publisher_see&amp;id=15">Wiley</a>, 2014&nbsp;.&nbsp;-&nbsp;537p.&nbsp;; Book.<br>IC1752<br><span class="etiq_champ">Languages</span>&nbsp;: English (<i>eng</i>)<table><tr class="tr_categ">
+					<td class="align_right bg-grey"><span class="etiq_champ">Descriptors: </span></td>
+					<td class="public_line_value"><span class="public_categ"><a href="./index.php?lvl=categ_see&amp;id=190">forest ecology</a><br><a href="./index.php?lvl=categ_see&amp;id=16">Silviculture</a><br></span></td>
+				</tr><tr class="tr_keywords">
+					<td class="align_right bg-grey"><span class="etiq_champ">Keywords: </span></td>
+					<td class="public_line_value"><span class="public_keywords"><a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Silviculture&amp;tags=ok">Silviculture</a>&nbsp; <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=forest+ecology&amp;tags=ok">forest ecology</a></span></td>
+				</tr><tr class="tr_indexint">
+					<td class="align_right bg-grey"><span class="etiq_champ">Class number: </span></td>
+					<td class="public_line_value"><span class="public_indexint"><a href="./index.php?lvl=indexint_see&amp;id=16">634.95</a> <span></span></span></td>
+				</tr></table></div></td></tr></table>
+					<h3>Hold</h3><a href="#" onclick="if(confirm('Do you really want to place a hold on this document ?')){w=window.open('./do_resa.php?lvl=resa&amp;id_notice=1033&amp;id_bulletin=0&amp;oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Place a hold on this item</a><br>
+<h3><span id="titre_exemplaires" class="titre_exemplaires">Copies (6)</span></h3>
+<table cellpadding="2" class="exemplaires" style="width:100%">
+<tr class="thead"><th class="expl_header_expl_cb">Barcode</th><th class="expl_header_expl_cote">Call number</th><th class="expl_header_tdoc_libelle">Media type</th><th class="expl_header_location_libelle">Location</th><th class="expl_header_section_libelle">Section</th><th class="expl_header_statut">Status</th></tr><tr class="even item_expl expl_available"><td id="expl_2911" class="expl_cb">1837</td><td class="expl_cote">634.95 SMI</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_2911" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_out"><td id="expl_2912" class="expl_cb">1838</td><td class="expl_cote">634.95 SMI</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_2912" class="section_libelle">General Books</td><td class="expl_situation"><strong>Due for return by 04/30/2022</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_2913" class="expl_cb">1839</td><td class="expl_cote">634.95 SMI</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_2913" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_2910" class="expl_cb">1836</td><td class="expl_cote">634.95 SMI</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_2910" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_2914" class="expl_cb">1840</td><td class="expl_cote">634.95 SMI</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_2914" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_2915" class="expl_cb">1841</td><td class="expl_cote">634.95 SMI</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_2915" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr>
+</table></div>
+			<div id="el254Parent" class="notice-parent">
+			
+			<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el254Img" title="details" alt="details" style="border:0px" onclick="expandBase('el254', true);  return false;" hspace="3"><img src="https://nkcs.org.np/afufof/library/opac_css/images/icon_a_16x16.gif" alt="Monograph: printed text" title="Monograph: printed text">
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_254"><span class="statutnot1"></span><span notice="254" class="header_title">Principles of and Practice of Silviculture</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=67">L.S. Khanna</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Principles%20of%20and%20Practice%20of%20Silviculture&amp;rft.title=Principles%20of%20and%20Practice%20of%20Silviculture&amp;rft.tpages=473p.&amp;rft.date=2015&amp;rft_id=&amp;rft.pub=Khanna%20Bandhu&amp;rft.au=L.S.%20Khanna&amp;rft.aulast=Khanna&amp;rft.aufirst=L.S."></span></span>
+	    		<br>
+				</div>
+				<div id="el254Child" class="notice-child" style="margin-bottom:6px;display:none;" token="102a603831a61c3d54c57f8d0cdceba7" datetime="1794729623"><table style="width:100%"><tr><td>
+		<ul id="onglets_isbd_public254" class="onglets_isbd_public">
+	  			<li id="onglet_public254" class="isbd_public_active"><a href="#" title="Public" onclick="show_what('PUBLIC', '254'); return false;">Public</a></li>
+				<li id="onglet_isbd254" class="isbd_public_inactive"><a href="#" title="ISBD" onclick="show_what('ISBD', '254'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class="row"></div>
+					<div id="div_public254" style="display:block;"><table><tr class="tr_title">
+					<td class="align_right bg-grey"><span class="etiq_champ">Title :</span></td>
+					<td class="public_line_value"><span class="public_title">Principles of and Practice of Silviculture</span></td>
+				</tr><tr class="tr_typdoc">
+					<td class="align_right bg-grey"><span class="etiq_champ">Material Type: </span></td>
+					<td class="public_line_value"><span class="public_typdoc">printed text</span></td>
+				</tr><tr class="tr_auteurs">
+					<td class="align_right bg-grey"><span class="etiq_champ">Authors: </span></td>
+					<td class="public_line_value"><span class="public_auteurs"><a href="./index.php?lvl=author_see&amp;id=67">L.S. Khanna</a>, Author</span></td>
+				</tr><tr class="tr_ed1">
+					<td class="align_right bg-grey"><span class="etiq_champ">Publisher:</span></td>
+					<td class="public_line_value"><span class="public_ed1"><a href="./index.php?lvl=publisher_see&amp;id=46">Khanna Bandhu</a></span></td>
+				</tr><tr class="tr_year">
+					<td class="align_right bg-grey"><span class="etiq_champ">Publication Date: </span></td>
+					<td class="public_line_value"><span class="public_year">2015</span></td>
+				</tr><tr class="tr_npages">
+					<td class="align_right bg-grey"><span class="etiq_champ">Pagination: </span></td>
+					<td class="public_line_value"><span class="public_npages">473p.</span></td>
+				</tr><tr class="tr_size">
+					<td class="align_right bg-grey"><span class="etiq_champ">Size: </span></td>
+					<td class="public_line_value"><span class="public_size">Book</span></td>
+				</tr><tr class="tr_prix">
+					<td class="align_right bg-grey"><span class="etiq_champ">Price: </span></td>
+					<td class="public_line_value"><span class="public_prix">IC1295</span></td>
+				</tr><tr class="tr_ngen">
+					<td class="align_right bg-grey"><span class="etiq_champ">General note: </span></td>
+					<td class="public_line_value"><span class="public_ngen">8 books are sent to Katari</span></td>
+				</tr><tr class="tr_langues">
+					<td class="align_right bg-grey"><span class="etiq_champ">Languages :</span></td>
+					<td class="public_line_value"><span class="public_langues">English (<i>eng</i>)</span></td>
+				</tr><tr class="tr_categ">
+					<td class="align_right bg-grey"><span class="etiq_champ">Descriptors: </span></td>
+					<td class="public_line_value"><span class="public_categ"><a href="./index.php?lvl=categ_see&amp;id=16">Silviculture</a><br></span></td>
+				</tr><tr class="tr_keywords">
+					<td class="align_right bg-grey"><span class="etiq_champ">Keywords: </span></td>
+					<td class="public_line_value"><span class="public_keywords"><a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Silviculture&amp;tags=ok">Silviculture</a></span></td>
+				</tr><tr class="tr_indexint">
+					<td class="align_right bg-grey"><span class="etiq_champ">Class number: </span></td>
+					<td class="public_line_value"><span class="public_indexint"><a href="./index.php?lvl=indexint_see&amp;id=16">634.95</a> <span></span></span></td>
+				</tr></table>
+</div>
+					<div id="div_isbd254" style="display:none;">Principles of and Practice of Silviculture [printed text] / <a href="./index.php?lvl=author_see&amp;id=67">L.S. Khanna</a>, Author&nbsp;.&nbsp;-&nbsp;<a href="./index.php?lvl=publisher_see&amp;id=46">Khanna Bandhu</a>, 2015&nbsp;.&nbsp;-&nbsp;473p.&nbsp;; Book.<br>IC1295<br>8 books are sent to Katari<br><span class="etiq_champ">Languages</span>&nbsp;: English (<i>eng</i>)<table><tr class="tr_categ">
+					<td class="align_right bg-grey"><span class="etiq_champ">Descriptors: </span></td>
+					<td class="public_line_value"><span class="public_categ"><a href="./index.php?lvl=categ_see&amp;id=16">Silviculture</a><br></span></td>
+				</tr><tr class="tr_keywords">
+					<td class="align_right bg-grey"><span class="etiq_champ">Keywords: </span></td>
+					<td class="public_line_value"><span class="public_keywords"><a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Silviculture&amp;tags=ok">Silviculture</a></span></td>
+				</tr><tr class="tr_indexint">
+					<td class="align_right bg-grey"><span class="etiq_champ">Class number: </span></td>
+					<td class="public_line_value"><span class="public_indexint"><a href="./index.php?lvl=indexint_see&amp;id=16">634.95</a> <span></span></span></td>
+				</tr></table></div></td></tr></table>
+					<h3>Hold</h3><a href="#" onclick="if(confirm('Do you really want to place a hold on this document ?')){w=window.open('./do_resa.php?lvl=resa&amp;id_notice=254&amp;id_bulletin=0&amp;oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Place a hold on this item</a><br>
+<h3><span id="titre_exemplaires" class="titre_exemplaires">Copies (38)</span></h3>
+<table cellpadding="2" class="exemplaires" style="width:100%">
+<tr class="thead"><th class="expl_header_expl_cb">Barcode</th><th class="expl_header_expl_cote">Call number</th><th class="expl_header_tdoc_libelle">Media type</th><th class="expl_header_location_libelle">Location</th><th class="expl_header_section_libelle">Section</th><th class="expl_header_statut">Status</th></tr><tr class="even item_expl expl_out"><td id="expl_652" class="expl_cb">1449</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_652" class="section_libelle">General Books</td><td class="expl_situation"><strong>Due for return by 12/31/2024</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_653" class="expl_cb">1462</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_653" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_654" class="expl_cb">1469</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_654" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_out"><td id="expl_655" class="expl_cb">1470</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_655" class="section_libelle">General Books</td><td class="expl_situation"><strong>Due for return by 06/24/2026</strong> </td></tr><tr class="even item_expl expl_out"><td id="expl_656" class="expl_cb">1461</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_656" class="section_libelle">General Books</td><td class="expl_situation"><strong>Due for return by 06/24/2026</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_657" class="expl_cb">1468</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_657" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_out"><td id="expl_658" class="expl_cb">1456</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_658" class="section_libelle">General Books</td><td class="expl_situation"><strong>Due for return by 06/15/2024</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_659" class="expl_cb">1447</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_659" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_660" class="expl_cb">1452</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_660" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_out"><td id="expl_661" class="expl_cb">1455</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_661" class="section_libelle">General Books</td><td class="expl_situation"><strong>Due for return by 09/01/2026</strong> </td></tr><tr class="even item_expl expl_out"><td id="expl_662" class="expl_cb">1458</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_662" class="section_libelle">General Books</td><td class="expl_situation"><strong>Due for return by 04/13/2026</strong> </td></tr><tr class="odd item_expl expl_out"><td id="expl_5001" class="expl_cb">1451</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_5001" class="section_libelle">General Books</td><td class="expl_situation"><strong>Due for return by 02/28/2025</strong> </td></tr><tr class="even item_expl expl_out"><td id="expl_664" class="expl_cb">1471</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_664" class="section_libelle">General Books</td><td class="expl_situation"><strong>Due for return by 05/28/2025</strong> </td></tr><tr class="odd item_expl expl_out"><td id="expl_665" class="expl_cb">1457</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_665" class="section_libelle">General Books</td><td class="expl_situation"><strong>Due for return by 06/30/2025</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_666" class="expl_cb">1459</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_666" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_out"><td id="expl_667" class="expl_cb">1453</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_667" class="section_libelle">General Books</td><td class="expl_situation"><strong>Due for return by 08/03/2025</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_668" class="expl_cb">1472</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_668" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_669" class="expl_cb">1467</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_669" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_670" class="expl_cb">1444</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_670" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_671" class="expl_cb">6</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_671" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_672" class="expl_cb">2</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_672" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_673" class="expl_cb">5</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_673" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_674" class="expl_cb">3</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_674" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_675" class="expl_cb">4</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_675" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_unavailable"><td id="expl_1988" class="expl_cb">1443</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1988" class="section_libelle">General Books</td><td class="expl_situation"><strong>Not for loan</strong> </td></tr><tr class="odd item_expl expl_out"><td id="expl_1991" class="expl_cb">1463</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1991" class="section_libelle">General Books</td><td class="expl_situation"><strong>Due for return by 06/09/2025</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_1992" class="expl_cb">1464</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1992" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_1993" class="expl_cb">1</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1993" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_1994" class="expl_cb">1445</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1994" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_1995" class="expl_cb">1446</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1995" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_1996" class="expl_cb">1448</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1996" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_1997" class="expl_cb">1450</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1997" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_1998" class="expl_cb">1454</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1998" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_1999" class="expl_cb">1460</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1999" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_2000" class="expl_cb">1465</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_2000" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_out"><td id="expl_2001" class="expl_cb">1466</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_2001" class="section_libelle">General Books</td><td class="expl_situation"><strong>Due for return by 06/27/2025</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_3265" class="expl_cb">00964</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_3265" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_5013" class="expl_cb">411</td><td class="expl_cote">634.95 KHA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_5013" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr>
+</table></div>
+			<div id="el2467Parent" class="notice-parent">
+			
+			<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el2467Img" title="details" alt="details" style="border:0px" onclick="expandBase('el2467', true);  return false;" hspace="3"><img src="https://nkcs.org.np/afufof/library/opac_css/images/icon_a_16x16.gif" alt="Monograph: printed text" title="Monograph: printed text">
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_2467"><span class="statutnot1"></span><span notice="2467" class="header_title">Theory and Practice of Forest Management in Nepal</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=93">Swoyambhu Man Amatya</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Theory%20and%20Practice%20of%20Forest%20Management%20in%20Nepal&amp;rft.title=Theory%20and%20Practice%20of%20Forest%20Management%20in%20Nepal&amp;rft.isbn=978-9937-1-1392-2&amp;rft.tpages=vi%3B155p.&amp;rft.date=2022A.D.&amp;rft_id=&amp;rft.pub=Faculty%20of%20Forestry&amp;rft.au=Swoyambhu%20Man%20Amatya&amp;rft.au=H.B.%20Thapa&amp;rft.au=Balram%20Bhatta&amp;rft.aulast=Amatya&amp;rft.aufirst=Swoyambhu%20Man"></span></span>
+	    		<br>
+				</div>
+				<div id="el2467Child" class="notice-child" style="margin-bottom:6px;display:none;" token="85479f6a33df194cb48cdf4c960d5771" datetime="1794729623"><table style="width:100%"><tr><td style="vertical-align:top">
+		<ul id="onglets_isbd_public2467" class="onglets_isbd_public">
+	  			<li id="onglet_public2467" class="isbd_public_active"><a href="#" title="Public" onclick="show_what('PUBLIC', '2467'); return false;">Public</a></li>
+				<li id="onglet_isbd2467" class="isbd_public_inactive"><a href="#" title="ISBD" onclick="show_what('ISBD', '2467'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class="row"></div>
+					<div id="div_public2467" style="display:block;"><table><tr class="tr_title">
+					<td class="align_right bg-grey"><span class="etiq_champ">Title :</span></td>
+					<td class="public_line_value"><span class="public_title">Theory and Practice of Forest Management in Nepal</span></td>
+				</tr><tr class="tr_typdoc">
+					<td class="align_right bg-grey"><span class="etiq_champ">Material Type: </span></td>
+					<td class="public_line_value"><span class="public_typdoc">printed text</span></td>
+				</tr><tr class="tr_auteurs">
+					<td class="align_right bg-grey"><span class="etiq_champ">Authors: </span></td>
+					<td class="public_line_value"><span class="public_auteurs"><a href="./index.php?lvl=author_see&amp;id=93">Swoyambhu Man Amatya</a>, Author ; <a href="./index.php?lvl=author_see&amp;id=1086">H.B. Thapa</a>, Author ; <a href="./index.php?lvl=author_see&amp;id=797">Balram Bhatta</a>, Author</span></td>
+				</tr><tr class="tr_ed1">
+					<td class="align_right bg-grey"><span class="etiq_champ">Publisher:</span></td>
+					<td class="public_line_value"><span class="public_ed1"><a href="./index.php?lvl=publisher_see&amp;id=547">Faculty of Forestry</a></span></td>
+				</tr><tr class="tr_year">
+					<td class="align_right bg-grey"><span class="etiq_champ">Publication Date: </span></td>
+					<td class="public_line_value"><span class="public_year">2022A.D.</span></td>
+				</tr><tr class="tr_npages">
+					<td class="align_right bg-grey"><span class="etiq_champ">Pagination: </span></td>
+					<td class="public_line_value"><span class="public_npages">vi;155p.</span></td>
+				</tr><tr class="tr_ill">
+					<td class="align_right bg-grey"><span class="etiq_champ">Layout: </span></td>
+					<td class="public_line_value"><span class="public_ill">ill.</span></td>
+				</tr><tr class="tr_size">
+					<td class="align_right bg-grey"><span class="etiq_champ">Size: </span></td>
+					<td class="public_line_value"><span class="public_size">Books</span></td>
+				</tr><tr class="tr_code">
+					<td class="align_right bg-grey"><span class="etiq_champ">ISBN (or other code): </span></td>
+					<td class="public_line_value"><span class="public_code">978-9937-1-1392-2</span></td>
+				</tr><tr class="tr_prix">
+					<td class="align_right bg-grey"><span class="etiq_champ">Price: </span></td>
+					<td class="public_line_value"><span class="public_prix">Rs.600</span></td>
+				</tr><tr class="tr_langues">
+					<td class="align_right bg-grey"><span class="etiq_champ">Languages :</span></td>
+					<td class="public_line_value"><span class="public_langues">English (<i>eng</i>)</span></td>
+				</tr><tr class="tr_keywords">
+					<td class="align_right bg-grey"><span class="etiq_champ">Keywords: </span></td>
+					<td class="public_line_value"><span class="public_keywords"><a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Silviculture+system+and+practices&amp;tags=ok">Silviculture system and practices</a>&nbsp; <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Tree+rotation&amp;tags=ok">Tree rotation</a>&nbsp; <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Yield+Regulation&amp;tags=ok">Yield Regulation</a>&nbsp; <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Tending+operations&amp;tags=ok">Tending operations</a>&nbsp; <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Thinning&amp;tags=ok">Thinning</a>&nbsp; <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Timber+Harvesting&amp;tags=ok">Timber Harvesting</a>&nbsp; <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Forest+Certification&amp;tags=ok">Forest Certification</a>&nbsp; <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Forest+Management+Plan&amp;tags=ok">Forest Management Plan</a></span></td>
+				</tr><tr class="tr_indexint">
+					<td class="align_right bg-grey"><span class="etiq_champ">Class number: </span></td>
+					<td class="public_line_value"><span class="public_indexint"><a href="./index.php?lvl=indexint_see&amp;id=12">634.92</a> <span></span></span></td>
+				</tr></table>
+</div>
+					<div id="div_isbd2467" style="display:none;">Theory and Practice of Forest Management in Nepal [printed text] / <a href="./index.php?lvl=author_see&amp;id=93">Swoyambhu Man Amatya</a>, Author ; <a href="./index.php?lvl=author_see&amp;id=1086">H.B. Thapa</a>, Author ; <a href="./index.php?lvl=author_see&amp;id=797">Balram Bhatta</a>, Author&nbsp;.&nbsp;-&nbsp;<a href="./index.php?lvl=publisher_see&amp;id=547">Faculty of Forestry</a>, 2022A.D.&nbsp;.&nbsp;-&nbsp;vi;155p.&nbsp;: ill.&nbsp;; Books.<br><b>ISBN</b>&nbsp;: 978-9937-1-1392-2&nbsp;: Rs.600<br><span class="etiq_champ">Languages</span>&nbsp;: English (<i>eng</i>)<table><tr class="tr_keywords">
+					<td class="align_right bg-grey"><span class="etiq_champ">Keywords: </span></td>
+					<td class="public_line_value"><span class="public_keywords"><a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Silviculture+system+and+practices&amp;tags=ok">Silviculture system and practices</a>&nbsp; <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Tree+rotation&amp;tags=ok">Tree rotation</a>&nbsp; <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Yield+Regulation&amp;tags=ok">Yield Regulation</a>&nbsp; <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Tending+operations&amp;tags=ok">Tending operations</a>&nbsp; <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Thinning&amp;tags=ok">Thinning</a>&nbsp; <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Timber+Harvesting&amp;tags=ok">Timber Harvesting</a>&nbsp; <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Forest+Certification&amp;tags=ok">Forest Certification</a>&nbsp; <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Forest+Management+Plan&amp;tags=ok">Forest Management Plan</a></span></td>
+				</tr><tr class="tr_indexint">
+					<td class="align_right bg-grey"><span class="etiq_champ">Class number: </span></td>
+					<td class="public_line_value"><span class="public_indexint"><a href="./index.php?lvl=indexint_see&amp;id=12">634.92</a> <span></span></span></td>
+				</tr></table></div></td><td class="align_right" style="vertical-align:top"><img class="vignetteimg align_right" src="https://nkcs.org.np/afufof/library/opac_css/images/vide.png" title="Theory and Practice of Forest Management in Nepal" hspace="4" vspace="2" vigurl="./getimage.php?url_image=http%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9789937113922&amp;entity_id=&amp;vigurl=" alt="thumbnail"></td></tr></table>
+					<h3>Hold</h3><a href="#" onclick="if(confirm('Do you really want to place a hold on this document ?')){w=window.open('./do_resa.php?lvl=resa&amp;id_notice=2467&amp;id_bulletin=0&amp;oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Place a hold on this item</a><br>
+<h3><span id="titre_exemplaires" class="titre_exemplaires">Copies (25)</span></h3>
+<table cellpadding="2" class="exemplaires" style="width:100%">
+<tr class="thead"><th class="expl_header_expl_cb">Barcode</th><th class="expl_header_expl_cote">Call number</th><th class="expl_header_tdoc_libelle">Media type</th><th class="expl_header_location_libelle">Location</th><th class="expl_header_section_libelle">Section</th><th class="expl_header_statut">Status</th></tr><tr class="even item_expl expl_out"><td id="expl_4406" class="expl_cb">2747</td><td class="expl_cote">634.92 AMA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4406" class="section_libelle">General Books</td><td class="expl_situation"><strong>Due for return by 06/15/2024</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_4407" class="expl_cb">2748</td><td class="expl_cote">634.92 AMA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4407" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_out"><td id="expl_4408" class="expl_cb">2749</td><td class="expl_cote">634.92 AMA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4408" class="section_libelle">General Books</td><td class="expl_situation"><strong>Due for return by 10/14/2026</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_4409" class="expl_cb">2750</td><td class="expl_cote">634.92 AMA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4409" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_out"><td id="expl_4410" class="expl_cb">2751</td><td class="expl_cote">634.92 AMA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4410" class="section_libelle">General Books</td><td class="expl_situation"><strong>Due for return by 03/31/2023</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_4411" class="expl_cb">2752</td><td class="expl_cote">634.92 AMA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4411" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_4412" class="expl_cb">2753</td><td class="expl_cote">634.92 AMA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4412" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_4413" class="expl_cb">2754</td><td class="expl_cote">634.92 AMA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4413" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_4414" class="expl_cb">2755</td><td class="expl_cote">634.92 AMA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4414" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_4415" class="expl_cb">2756</td><td class="expl_cote">634.92 AMA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4415" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_4416" class="expl_cb">2757</td><td class="expl_cote">634.92 AMA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4416" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_4417" class="expl_cb">2758</td><td class="expl_cote">634.92 AMA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4417" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_4418" class="expl_cb">2759</td><td class="expl_cote">634.92 AMA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4418" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_4419" class="expl_cb">2760</td><td class="expl_cote">634.92 AMA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4419" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_out"><td id="expl_4420" class="expl_cb">2761</td><td class="expl_cote">634.92 AMA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4420" class="section_libelle">General Books</td><td class="expl_situation"><strong>Due for return by 05/31/2026</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_4421" class="expl_cb">2762</td><td class="expl_cote">634.92 AMA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4421" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_4422" class="expl_cb">2763</td><td class="expl_cote">634.92 AMA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4422" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_out"><td id="expl_4423" class="expl_cb">2764</td><td class="expl_cote">634.92 AMA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4423" class="section_libelle">General Books</td><td class="expl_situation"><strong>Due for return by 05/05/2026</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_4424" class="expl_cb">2765</td><td class="expl_cote">634.92 AMA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4424" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_4425" class="expl_cb">2766</td><td class="expl_cote">634.92 AMA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4425" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_4426" class="expl_cb">2767</td><td class="expl_cote">634.92 AMA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4426" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_4427" class="expl_cb">2768</td><td class="expl_cote">634.92 AMA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4427" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_out"><td id="expl_4428" class="expl_cb">2769</td><td class="expl_cote">634.92 AMA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4428" class="section_libelle">General Books</td><td class="expl_situation"><strong>Due for return by 02/28/2025</strong> </td></tr><tr class="odd item_expl expl_out"><td id="expl_4429" class="expl_cb">2770</td><td class="expl_cote">634.92 AMA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4429" class="section_libelle">General Books</td><td class="expl_situation"><strong>Due for return by 01/17/2024</strong> </td></tr><tr class="even item_expl expl_out"><td id="expl_4430" class="expl_cb">2771</td><td class="expl_cote">634.92 AMA</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4430" class="section_libelle">General Books</td><td class="expl_situation"><strong>Due for return by 04/13/2026</strong> </td></tr>
+</table></div>
+			<div id="el124Parent" class="notice-parent">
+			
+			<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el124Img" title="details" alt="details" style="border:0px" onclick="expandBase('el124', true);  return false;" hspace="3"><img src="https://nkcs.org.np/afufof/library/opac_css/images/icon_a_16x16.gif" alt="Monograph: printed text" title="Monograph: printed text">
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_124"><span class="statutnot1"></span><span notice="124" class="header_title">Theory and Practice of Silvicultural System</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=39">Ram Parkash</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Theory%20and%20Practice%20of%20Silvicultural%20System&amp;rft.title=Theory%20and%20Practice%20of%20Silvicultural%20System&amp;rft.isbn=978-81-7089-339-4&amp;rft.tpages=298p.&amp;rft.date=2015&amp;rft_id=&amp;rft.pub=International%20Book%20Distributors&amp;rft.au=Ram%20Parkash&amp;rft.aulast=Parkash&amp;rft.aufirst=Ram"></span></span>
+	    		<br>
+				</div>
+				<div id="el124Child" class="notice-child" style="margin-bottom:6px;display:none;" token="72531229ef4113c1073e4b7d08e16892" datetime="1794729623"><table style="width:100%"><tr><td style="vertical-align:top">
+		<ul id="onglets_isbd_public124" class="onglets_isbd_public">
+	  			<li id="onglet_public124" class="isbd_public_active"><a href="#" title="Public" onclick="show_what('PUBLIC', '124'); return false;">Public</a></li>
+				<li id="onglet_isbd124" class="isbd_public_inactive"><a href="#" title="ISBD" onclick="show_what('ISBD', '124'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class="row"></div>
+					<div id="div_public124" style="display:block;"><table><tr class="tr_title">
+					<td class="align_right bg-grey"><span class="etiq_champ">Title :</span></td>
+					<td class="public_line_value"><span class="public_title">Theory and Practice of Silvicultural System</span></td>
+				</tr><tr class="tr_typdoc">
+					<td class="align_right bg-grey"><span class="etiq_champ">Material Type: </span></td>
+					<td class="public_line_value"><span class="public_typdoc">printed text</span></td>
+				</tr><tr class="tr_auteurs">
+					<td class="align_right bg-grey"><span class="etiq_champ">Authors: </span></td>
+					<td class="public_line_value"><span class="public_auteurs"><a href="./index.php?lvl=author_see&amp;id=39">Ram Parkash</a>, Author</span></td>
+				</tr><tr class="tr_ed1">
+					<td class="align_right bg-grey"><span class="etiq_champ">Publisher:</span></td>
+					<td class="public_line_value"><span class="public_ed1"><a href="./index.php?lvl=publisher_see&amp;id=26">International Book Distributors</a></span></td>
+				</tr><tr class="tr_year">
+					<td class="align_right bg-grey"><span class="etiq_champ">Publication Date: </span></td>
+					<td class="public_line_value"><span class="public_year">2015</span></td>
+				</tr><tr class="tr_npages">
+					<td class="align_right bg-grey"><span class="etiq_champ">Pagination: </span></td>
+					<td class="public_line_value"><span class="public_npages">298p.</span></td>
+				</tr><tr class="tr_size">
+					<td class="align_right bg-grey"><span class="etiq_champ">Size: </span></td>
+					<td class="public_line_value"><span class="public_size">Book</span></td>
+				</tr><tr class="tr_code">
+					<td class="align_right bg-grey"><span class="etiq_champ">ISBN (or other code): </span></td>
+					<td class="public_line_value"><span class="public_code">978-81-7089-339-4</span></td>
+				</tr><tr class="tr_prix">
+					<td class="align_right bg-grey"><span class="etiq_champ">Price: </span></td>
+					<td class="public_line_value"><span class="public_prix">IC995</span></td>
+				</tr><tr class="tr_langues">
+					<td class="align_right bg-grey"><span class="etiq_champ">Languages :</span></td>
+					<td class="public_line_value"><span class="public_langues">English (<i>eng</i>)</span></td>
+				</tr><tr class="tr_categ">
+					<td class="align_right bg-grey"><span class="etiq_champ">Descriptors: </span></td>
+					<td class="public_line_value"><span class="public_categ"><a href="./index.php?lvl=categ_see&amp;id=83">Silviculture</a><br></span></td>
+				</tr><tr class="tr_keywords">
+					<td class="align_right bg-grey"><span class="etiq_champ">Keywords: </span></td>
+					<td class="public_line_value"><span class="public_keywords"><a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Silviculture&amp;tags=ok">Silviculture</a></span></td>
+				</tr><tr class="tr_indexint">
+					<td class="align_right bg-grey"><span class="etiq_champ">Class number: </span></td>
+					<td class="public_line_value"><span class="public_indexint"><a href="./index.php?lvl=indexint_see&amp;id=16">634.95</a> <span></span></span></td>
+				</tr></table>
+</div>
+					<div id="div_isbd124" style="display:none;">Theory and Practice of Silvicultural System [printed text] / <a href="./index.php?lvl=author_see&amp;id=39">Ram Parkash</a>, Author&nbsp;.&nbsp;-&nbsp;<a href="./index.php?lvl=publisher_see&amp;id=26">International Book Distributors</a>, 2015&nbsp;.&nbsp;-&nbsp;298p.&nbsp;; Book.<br><b>ISBN</b>&nbsp;: 978-81-7089-339-4&nbsp;: IC995<br><span class="etiq_champ">Languages</span>&nbsp;: English (<i>eng</i>)<table><tr class="tr_categ">
+					<td class="align_right bg-grey"><span class="etiq_champ">Descriptors: </span></td>
+					<td class="public_line_value"><span class="public_categ"><a href="./index.php?lvl=categ_see&amp;id=83">Silviculture</a><br></span></td>
+				</tr><tr class="tr_keywords">
+					<td class="align_right bg-grey"><span class="etiq_champ">Keywords: </span></td>
+					<td class="public_line_value"><span class="public_keywords"><a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Silviculture&amp;tags=ok">Silviculture</a></span></td>
+				</tr><tr class="tr_indexint">
+					<td class="align_right bg-grey"><span class="etiq_champ">Class number: </span></td>
+					<td class="public_line_value"><span class="public_indexint"><a href="./index.php?lvl=indexint_see&amp;id=16">634.95</a> <span></span></span></td>
+				</tr></table></div></td><td class="align_right" style="vertical-align:top"><img class="vignetteimg align_right" src="https://nkcs.org.np/afufof/library/opac_css/images/vide.png" title="Theory and Practice of Silvicultural System" hspace="4" vspace="2" vigurl="./getimage.php?url_image=http%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9788170893394&amp;entity_id=&amp;vigurl=" alt="thumbnail"></td></tr></table>
+					<h3>Hold</h3><a href="#" onclick="if(confirm('Do you really want to place a hold on this document ?')){w=window.open('./do_resa.php?lvl=resa&amp;id_notice=124&amp;id_bulletin=0&amp;oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Place a hold on this item</a><br>
+<h3><span id="titre_exemplaires" class="titre_exemplaires">Copies (32)</span></h3>
+<table cellpadding="2" class="exemplaires" style="width:100%">
+<tr class="thead"><th class="expl_header_expl_cb">Barcode</th><th class="expl_header_expl_cote">Call number</th><th class="expl_header_tdoc_libelle">Media type</th><th class="expl_header_location_libelle">Location</th><th class="expl_header_section_libelle">Section</th><th class="expl_header_statut">Status</th></tr><tr class="even item_expl expl_available"><td id="expl_319" class="expl_cb">770</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_319" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_320" class="expl_cb">771</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_320" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_321" class="expl_cb">772</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_321" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_out"><td id="expl_322" class="expl_cb">773</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_322" class="section_libelle">General Books</td><td class="expl_situation"><strong>Due for return by 06/30/2025</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_323" class="expl_cb">774</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_323" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_unavailable"><td id="expl_324" class="expl_cb">775</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_324" class="section_libelle">General Books</td><td class="expl_situation"><strong>Not for loan</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_325" class="expl_cb">776</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_325" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_326" class="expl_cb">777</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_326" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_327" class="expl_cb">778</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_327" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_328" class="expl_cb">779</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_328" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_329" class="expl_cb">780</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_329" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_330" class="expl_cb">781</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_330" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_331" class="expl_cb">782</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_331" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_332" class="expl_cb">783</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_332" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_333" class="expl_cb">784</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_333" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_334" class="expl_cb">785</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_334" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_335" class="expl_cb">786</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_335" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_336" class="expl_cb">787</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_336" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_337" class="expl_cb">788</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_337" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_338" class="expl_cb">789</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_338" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_1969" class="expl_cb">1880</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_1969" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_2204" class="expl_cb">1879</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_2204" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_4009" class="expl_cb">2569</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4009" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_4010" class="expl_cb">2570</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4010" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_4011" class="expl_cb">2576</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4011" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_out"><td id="expl_4012" class="expl_cb">2568</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4012" class="section_libelle">General Books</td><td class="expl_situation"><strong>Due for return by 09/25/2024</strong> </td></tr><tr class="even item_expl expl_out"><td id="expl_4013" class="expl_cb">2577</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4013" class="section_libelle">General Books</td><td class="expl_situation"><strong>Due for return by 05/05/2026</strong> </td></tr><tr class="odd item_expl expl_out"><td id="expl_4014" class="expl_cb">2575</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4014" class="section_libelle">General Books</td><td class="expl_situation"><strong>Due for return by 05/05/2026</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_4015" class="expl_cb">2574</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4015" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_4016" class="expl_cb">2573</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4016" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="even item_expl expl_available"><td id="expl_4017" class="expl_cb">2571</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4017" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr><tr class="odd item_expl expl_available"><td id="expl_4018" class="expl_cb">2572</td><td class="expl_cote">634.95 PAR</td><td class="tdoc_libelle">Books</td><td class="location_libelle">AFUFOF</td><td id="expl_4018" class="section_libelle">General Books</td><td class="expl_situation"><strong>Available</strong> </td></tr>
+</table></div>
+				<div id="el2666Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el2666Img" title="details" alt="details" style="border:0px" param="%7B%22id%22%3A2666%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fnkcs.org.np%5C%2Fafufof%5C%2Flibrary%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fnkcs.org.np%5C%2Fafufof%5C%2Flibrary%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%2249dcd86ecaaf3329ab4eb5c8b4264496%22%2C%22datetime%22%3A1794729623%7D" onclick="expandBase_ajax('el2666', true,this.getAttribute('param'));  return false;" hspace="3"><img src="https://nkcs.org.np/afufof/library/opac_css/images/icon_art_16x16.gif" alt="Article: printed text" title="Article: printed text">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_2666"><span class="statutnot1"></span><span notice="2666" class="header_title">Agroforestry systems: Biodiversity, carbon stocks and contribution to rural livelihood</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=331">Parmod Ghimire</a></span> <span class="header_perio"><i>in Journal of Agriculture and Forestry University, Volume 4 (2020)</i></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rft.genre=article&amp;rft.atitle=Agroforestry%20systems%3A%20Biodiversity%2C%20carbon%20stocks%20and%20contribution%20to%20rural%20livelihood&amp;rft.jtitle=Journal%20of%20Agriculture%20and%20Forestry%20University&amp;rft.issue=Volume%204&amp;rft.date=2020&amp;rft.epage=197-205&amp;rft_id=https%3A%2F%2Fafu.edu.np%2Fsites%2Fdefault%2Ffiles%2FAgroforestry%2520systems%2520Biodiversity%252C%2520carbon%2520stocks%2520and%2520contribution%2520to%2520rural%2520livelihood.pdf&amp;rft.au=Parmod%20Ghimire&amp;rft.au=S.%20Bolakhe&amp;rft.aulast=Ghimire&amp;rft.aufirst=Parmod"></span></span>
+			&nbsp;<span class="notice_link">
+			<a href="https://afu.edu.np/sites/default/files/Agroforestry%20systems%20Biodiversity%2C%20carbon%20stocks%20and%20contribution%20to%20rural%20livelihood.pdf" target="_blank" type="external_url_notice">
+				<img src="https://nkcs.org.np/afufof/library/opac_css/styles/zen/images/globe.gif" style="border:0px" class="align_middle" hspace="3" alt="Open link" title="Open link">
+			</a></span>
+		    	<br>
+				</div>
+				<div id="el2666Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://nkcs.org.np/afufof/library/opac_css/index.php?lvl=notice_display&amp;id=2666" style="display:none;">Permalink</a>
+			
+		</blockquote></div><form name="mc_values" action="./index.php?lvl=more_results" style="display:none" method="post">
+<input type="hidden" name="search[]" value="s_4"><input type="hidden" name="inter_0_s_4" value=""><input type="hidden" name="op_0_s_4" value="EQ"><input type="hidden" name="field_0_s_4[]" value='a:2:{s:17:"serialized_search";s:301:"a:2:{s:6:"SEARCH";a:1:{i:0;s:3:"f_7";}i:0;a:7:{s:6:"SEARCH";s:3:"f_7";s:2:"OP";s:7:"BOOLEAN";s:5:"FIELD";a:1:{i:0;s:28:"The practice of silviculture";}s:6:"FIELD1";s:0:"";s:5:"INTER";s:0:"";s:8:"FIELDVAR";a:2:{s:6:"is_num";a:1:{i:0;s:1:"0";}s:10:"ck_affiche";a:1:{i:0;s:1:"0";}}s:8:"FIELDLIB";a:0:{}}}";s:11:"search_type";s:20:"search_simple_fields";}'><input type="hidden" name="count" value="6"><input type="hidden" name="page" value="1">
+			<input type="hidden" name="nb_per_page_custom" value="10">
+</form><form name="form_values" action="./index.php?lvl=more_results" method="post">
+<input type="hidden" value="" id="filtre_compare_form_values" name="filtre_compare"><input type="hidden" name="user_query" value="The practice of silviculture">
+<input type="hidden" name="mode" value="tous">
+<input type="hidden" name="count" value="6">
+<input type="hidden" name="typdoc" value=""><input type="hidden" name="id_authperso" value="0"><input type="hidden" name="clause" value="">
+<input type="hidden" name="clause_bull" value="">
+<input type="hidden" name="clause_bull_num_notice" value="">
+<input type="hidden" name="join" value="">
+<input type="hidden" name="tri" value="">
+<input type="hidden" name="pert" value="">
+<input type="hidden" name="l_typdoc" value="a">
+
+
+<input type="hidden" name="surligne" value="1">
+<input type="hidden" name="tags" value="">
+<input type="hidden" name="page" value="1">
+				<input type="hidden" name="nb_per_page_custom" value="10">
+<input type="hidden" name="catalog_page" value="1">
+<input type="hidden" name="affiliate_page" value="1">
+<input type="hidden" name="nbexplnum_to_photo" value="">
+</form><br>
+		</div><div id="navbar" style="position: static; left: 0px; top: 0px;"><hr>
+<div style="text-align:center">
+<div class="navbar">
+	
+<script type="text/javascript">
+<!--
+	function test_form(form)
+	{
+
+		if (form.page.value > 1)
+		{
+			alert("Page number too high!");
+			form.page.focus();
+			return false;
+		}
+
+		return true;
+	}
+-->
+</script>
+	<form name="form" action="javascript:document.form_values.page.value=document.form.page.value;%20if(document.form_values.catalog_page)%20document.form_values.catalog_page.value=document.form_values.page.value;%20document.form_values.action%20=%20%22./index.php?lvl=more_results&amp;tab=catalog%22;%20document.form_values.submit()" method="post" onsubmit="return test_form(form)">
+			<img src="./images/first-grey.png" alt="first page">
+				<img src="./images/prev-grey.png" alt="previous page">
+							<strong>1</strong>
+						<img src="./images/next-grey.png" alt="next page">
+				<img src="./images/last-grey.png" alt="last page">
+		(1 - 6 / 6)
+	
+				<span style="float:right;">Per page :
+								<a class="navbar_custom" href="javascript:document.form_values.nb_per_page_custom.value=25;javascript:document.form_values.page.value=1;%20if(document.form_values.catalog_page)document.form_values.catalog_page.value=document.form_values.page.value;%20document.form_values.action%20=%20%22./index.php?lvl=more_results&amp;tab=catalog%22;%20document.form_values.submit()">25</a> 
+											<a class="navbar_custom" href="javascript:document.form_values.nb_per_page_custom.value=50;javascript:document.form_values.page.value=1;%20if(document.form_values.catalog_page)document.form_values.catalog_page.value=document.form_values.page.value;%20document.form_values.action%20=%20%22./index.php?lvl=more_results&amp;tab=catalog%22;%20document.form_values.submit()">50</a> 
+											<a class="navbar_custom" href="javascript:document.form_values.nb_per_page_custom.value=100;javascript:document.form_values.page.value=1;%20if(document.form_values.catalog_page)document.form_values.catalog_page.value=document.form_values.page.value;%20document.form_values.action%20=%20%22./index.php?lvl=more_results&amp;tab=catalog%22;%20document.form_values.submit()">100</a> 
+											<a class="navbar_custom" href="javascript:document.form_values.nb_per_page_custom.value=200;javascript:document.form_values.page.value=1;%20if(document.form_values.catalog_page)document.form_values.catalog_page.value=document.form_values.page.value;%20document.form_values.action%20=%20%22./index.php?lvl=more_results&amp;tab=catalog%22;%20document.form_values.submit()">200</a> 
+							</span>
+		
+		
+		
+		
+		
+		
+		
+			
+			</form>
+</div></div></div><div id="cms_module_articleslist_117" class="cms_module_articleslist cms_module"></div><div id="cms_module_sectionslist_118" class="cms_module_sectionslist cms_module"></div><script type="text/javascript" src="./includes/javascript/misc.js"></script><script type="text/javascript">
+	var terms=new Array('practice','silviculture');
+	var terms_litteraux=new Array('the practice of silviculture');
+	var codes=new Array();
+			
+	function remplacer_carac(mot) {
+		var x;
+		var reg;				
+		var chaine=mot;
+			reg=new RegExp(codes['a'], 'g');
+	chaine=chaine.replace(reg, 'a');
+	reg=new RegExp(codes['A'], 'g');
+	chaine=chaine.replace(reg, 'A');
+	reg=new RegExp(codes['c'], 'g');
+	chaine=chaine.replace(reg, 'c');
+	reg=new RegExp(codes['C'], 'g');
+	chaine=chaine.replace(reg, 'C');
+	reg=new RegExp(codes['e'], 'g');
+	chaine=chaine.replace(reg, 'e');
+	reg=new RegExp(codes['E'], 'g');
+	chaine=chaine.replace(reg, 'E');
+	reg=new RegExp(codes['i'], 'g');
+	chaine=chaine.replace(reg, 'i');
+	reg=new RegExp(codes['I'], 'g');
+	chaine=chaine.replace(reg, 'I');
+	reg=new RegExp(codes['n'], 'g');
+	chaine=chaine.replace(reg, 'n');
+	reg=new RegExp(codes['N'], 'g');
+	chaine=chaine.replace(reg, 'N');
+	reg=new RegExp(codes['o'], 'g');
+	chaine=chaine.replace(reg, 'o');
+	reg=new RegExp(codes['O'], 'g');
+	chaine=chaine.replace(reg, 'O');
+	reg=new RegExp(codes['u'], 'g');
+	chaine=chaine.replace(reg, 'u');
+	reg=new RegExp(codes['U'], 'g');
+	chaine=chaine.replace(reg, 'U');
+		
+		return(chaine);		
+	}
+</script><script type="text/javascript" src="./temp/surligner_codes.js"></script><script type="text/javascript" src="./includes/javascript/surligner.js"></script>
+<!-- fin DIV main_hors_footer --> 
+
+		</div><!-- /div id=main -->
+
+		<!-- /div id=intro -->
+		</div><!-- /div id=container -->
+		
+		<script type="text/javascript">init_drag();	rechercher(1);</script>
+		
+			<script type="text/javascript">
+				var tarteaucitron_messages = pmbDojo.messages.getMessages("tarteaucitron");
+				if(tarteaucitron_messages.length) {
+					tarteaucitronCustomText = {};
+					tarteaucitron_messages.forEach(function(message) {
+						if(parseInt(message.code.indexOf(":")) !== -1) {
+							let tarteaucitron_messages_group = message.code.split(":");
+							if(typeof tarteaucitronCustomText[tarteaucitron_messages_group[0]] == "undefined") {
+								tarteaucitronCustomText[tarteaucitron_messages_group[0]] = {};
+							}
+							tarteaucitronCustomText[tarteaucitron_messages_group[0]][tarteaucitron_messages_group[1]] = message.message; 
+						} else {
+							tarteaucitronCustomText[message.code] = message.message;
+						}
+					});
+				}
+			</script>
+			<script type="text/javascript" src="./includes/javascript/tarteaucitron/tarteaucitron.js"></script>
+		<script type="text/javascript">
+	        tarteaucitron.init({
+	    	  "privacyUrl": "", /* Privacy policy url */
+	
+	    	  "hashtag": "#PhpMyBibli-COOKIECONSENT", /* Open the panel with this hashtag */
+	    	  "cookieName": "PhpMyBibli-COOKIECONSENT", /* Cookie name */
+	    
+	    	  "orientation": "bottom", /* Banner position (top - bottom - popup) */
+	       
+	          "groupServices": true, /* Group services by category */
+	                           
+	    	  "showAlertSmall": false, /* Show the small banner on bottom right */
+	    	  "cookieslist": false, /* Show the cookie list */
+				                           
+	          "closePopup": false, /* Show a close X on the banner */
+	
+	          "showIcon": false, /* Show cookie icon to manage cookies */
+	          "iconSrc": "./images/cookie.png", /* Optionnal: URL or base64 encoded image */
+	          "iconPosition": "BottomRight", /* BottomRight, BottomLeft, TopRight and TopLeft */
+	
+	    	  "adblocker": false, /* Show a Warning if an adblocker is detected */
+	                           
+	          "DenyAllCta" : true, /* Show the deny all button */
+	          "AcceptAllCta" : true, /* Show the accept all button when highPrivacy on */
+	          "highPrivacy": true, /* HIGHLY RECOMMANDED Disable auto consent */
+	                           
+	    	  "handleBrowserDNTRequest": false, /* If Do Not Track == 1, disallow all */
+	
+	    	  "removeCredit": true, /* Remove credit link */
+	    	  "moreInfoLink": false, /* Show more info link */
+	
+	          "useExternalCss": false, /* If false, the tarteaucitron.css file will be loaded */
+	          "useExternalJs": false, /* If false, the tarteaucitron.js file will be loaded */
+				
+	    	  //"cookieDomain": ".my-multisite-domaine.fr", /* Shared cookie for multisite */
+	                          
+	          "readmoreLink": "", /* Change the default readmore link */
+	
+	          "mandatory": true, /* Show a message about mandatory cookies */
+	        });
+ 
+        </script>
+		<div id="bandeau" fixed="yes"><!-- $Id: accessibility.tpl.html,v 1.1.2.1 2022/10/28 13:03:39 qvarin Exp $ -->
+
+
+
+
+
+<script type="text/javascript" src="./includes/javascript/accessibility.js"></script>
+
+
+<div id="cms_module_search_22" class="cms_module_search cms_module" style="position: static; left: 0px; top: 0px;">
+			<form method="post" class="searchbox" action="./index.php?lvl=search_result&amp;search_type_asked=simple_search" name="cms_module_search_22_searchbox" onsubmit="if (cms_module_search_22_searchbox.user_query.value.length == 0) { cms_module_search_22_searchbox.user_query.value='*';}if (typeof cms_module_search_22_change_dest == 'function') { cms_module_search_22_change_dest(); }">
+				
+				<input type="hidden" value="1" name="look_ALL">
+			<h4 class="searchbox_title">We search.. We find.....</h4><span class="research_inputs">
+				<input type="text" name="user_query" value="The practice of silviculture" placeholder="Search.......">
+				<input class="bouton" type="submit" value="Search">
+				<input class="bouton button_search_help" title="Help" type="button" onclick='window.open("./help.php?whatis=simple_search", "search_help", "scrollbars=yes, toolbar=no, dependent=yes, width=400, height=400, resizable=yes"); return false' value="Help"></span><br>
+						<span class="search_radio_button" id="search_radio_button_0"><input type="radio" name="dest" value="0" default_segment="0" universe="" checked>&nbsp;Find in catalogue</span>
+						<span class="search_radio_button" id="search_radio_button_1"><input type="radio" name="dest" value="11" default_segment="0" universe="">&nbsp;Find in site</span>
+				<p class="search_advanced_link"><a href="./index.php?search_type_asked=simple_search" title="Advanced search"> Advanced search</a></p>		
+			</form></div><div id="resume_panier" class="empty" fixed="yes" style="visibility: visible; display: block;"></div><div id="accueil" fixed="yes">
+
+<h3><span onclick='document.location="./index.php?"' style="cursor: pointer;">Home</span></h3>
+<p class="centered"><a href="./index.php?"><img src="images/site/livre.png" alt="Home" style="border:0px" class="center"></a></p>
+
+					</div><!-- fermeture #accueil -->
+<div id="lvl1" fixed="yes" style="position: static; left: 0px; top: 0px;"><script>var tosubmit="surligne=&look_FIRSTACCESS=1&user_query=The%20practice%20of%20silviculture&look_TITLE=1&typdoc=&ok=Search&lvl=more_results&autolevel1=1";
+						var cms_build_activate="0";function updateLevel1(result) {
+							if(result != '') {
+								document.getElementById('lvl1').innerHTML=result;
+							} else {
+								if(!cms_build_activate) {
+									require(['dojo/ready', 'dojo/dom-construct'], function(ready, domConstruct){
+										ready(function(){
+											domConstruct.destroy('lvl1');
+										});
+									});
+								}
+							}
+						}
+						getlevel2=new http_request();
+						getlevel2.request('./ajax.php?module=ajax&categ=level1',true,tosubmit,true,updateLevel1);</script><h3>Search</h3>
+<img src="./images/patience.gif" id="wait_level1"></div><div id="facette" fixed="yes" style="position: static; left: 0px; top: 0px;">
+				
+				
+		<script src="./includes/javascript/select.js" type="text/javascript"></script>
+		<script type="text/javascript"> 		
+			function test(elmt_id){
+				var elmt_list=document.getElementById(elmt_id);
+
+                if(elmt_list.className.includes('facette_expande')){
+                    elmt_list.setAttribute('class', 'facette_collapsed');
+                } else {
+                    elmt_list.setAttribute('class', 'facette_expande');
+                }
+
+				for(i in elmt_list.rows){
+					if(elmt_list.rows[i].firstElementChild && elmt_list.rows[i].firstElementChild.nodeName!='TH'){
+						if(elmt_list.rows[i].style.display == 'none'){
+							elmt_list.rows[i].style.display = 'block';
+                            elmt_list.rows[i].setAttribute('class', 'facette_tr'); 
+						}else{
+							elmt_list.rows[i].style.display = 'none';
+                            elmt_list.rows[i].setAttribute('class', 'facette_tr_hidden uk-hidden'); 
+						}
+					}
+				}
+			}
+			
+			function facette_see_more(id, json_facette_plus) {
+				
+				const usingModal = '0' == 1;
+				var myTable = document.getElementById('facette_list_'+id);
+				
+				if (json_facette_plus == null) {
+
+                    if (usingModal) {
+                        if (typeof openModal == 'function') {
+                            return openModal(id);
+                        } else {
+                            console.error('[facettes_modal] : openModal is not a function !')
+                            return false;
+                        } 
+                    }
+
+					var childs = myTable.childNodes;
+					var nb_childs = childs.length;
+					
+					for(var i = 0; i < nb_childs; i++){
+						if (childs[i].getAttribute('facette_ajax_loaded')!=null) {
+							if (childs[i].getAttribute('style')=='display:block') {
+								childs[i].setAttribute('style','display:none');
+								childs[i].setAttribute('expanded','false');
+							} else {
+								childs[i].setAttribute('style','display:block');
+								childs[i].setAttribute('expanded','true');
+							}
+						}
+					}
+				
+					var see_more_less = document.getElementById('facette_see_more_less_'+id);
+					see_more_less.innerHTML='';
+					var span = document.createElement('span');
+					if (see_more_less.getAttribute('etat')=='plus') {
+						span.className='facette_moins_link';
+						span.innerHTML='[-]';
+						see_more_less.setAttribute('etat','moins');
+					} else {
+						span.className='facette_plus_link';
+						span.innerHTML='[+]';
+						see_more_less.setAttribute('etat','plus');		
+					}
+					see_more_less.appendChild(span);
+					
+				} else {
+					var req = new http_request();
+					var sended_datas = {'json_facette_plus': json_facette_plus };
+					req.request("./ajax.php?module=ajax&categ=facettes&sub=see_more", true, 'sended_datas='+encodeURIComponent(JSON.stringify(sended_datas)), true, function(response) {
+                        if (usingModal) {
+                            if (typeof callback_see_more_modal == 'function') {
+                                callback_see_more_modal(id, myTable, response)
+                            } else {
+                                console.error('[facettes_modal] : callback_see_more_modal is not a function !')
+                            } 
+                        } else {
+                            callback_see_more(id, myTable, response);
+                        }
+                    });
+				}
+			}
+
+            function callback_see_more(id, myTable, data) {
+    			var jsonArray = JSON.parse(data);
+    			//on supprime la ligne '+'
+    			myTable.tBodies[0].removeChild(myTable.rows[myTable.rows.length-1]);
+    			//on ajoute les lignes au tableau
+    			for(var i=0;i<jsonArray.length;i++) {
+    				var tr = document.createElement('tr');
+    				tr.setAttribute('style','display:block');
+    				tr.setAttribute('class', 'facette_tr');
+    				tr.setAttribute('expanded','true');
+    				tr.setAttribute('facette_ajax_loaded','1');
+    	        	var td = tr.appendChild(document.createElement('td'));
+    				td.setAttribute('class','facette_col_coche');
+    	        	td.innerHTML = "<span class='facette_coche'><input type='checkbox' name='check_facette[]' value='" + jsonArray[i]['facette_value'] + "'>";
+    	        	var td2 = tr.appendChild(document.createElement('td'));
+    				td2.setAttribute('class','facette_col_info');
+                    var aonclick = td2.appendChild(document.createElement('a'));
+                    aonclick.setAttribute('style', 'cursor:pointer;');
+                    aonclick.setAttribute('rel', 'nofollow');
+                    aonclick.setAttribute('class', 'facet-link');
+                    if (jsonArray[i]['facette_link']) {
+                        aonclick.setAttribute('onclick', jsonArray[i]['facette_link']);
+                    } else {
+                        //Evt vers SearchSegmentController pour l'initialisation du clic
+                        require(['dojo/topic'], function(topic){
+    						topic.publish('FacettesRoot', 'FacettesRoot', 'initFacetLink', {elem: aonclick}); 
+    					}); 
+                    }
+                    var span_facette_link = aonclick.appendChild(document.createElement('span'));
+                    span_facette_link.setAttribute('class', 'facette_libelle');
+    	        	span_facette_link.innerHTML = jsonArray[i]['facette_libelle'];
+    				aonclick.appendChild(document.createTextNode(' '));
+                    var span_facette_number = aonclick.appendChild(document.createElement('span'));
+                    span_facette_number.setAttribute('class', 'facette_number');
+                    span_facette_number.innerHTML = "[" + jsonArray[i]['facette_number'] + "]";
+    	        	myTable.appendChild(tr);
+    			}
+
+                add_see_less(myTable, id);
+    		}
+            
+            function add_see_less(myTable, id) {
+    			//Ajout du see_less
+    			var tr = document.createElement('tr');
+    			tr.setAttribute('style','display:block');
+    			tr.setAttribute('see_less','1');
+    			tr.setAttribute('class','facette_tr_see_more');
+    				
+    			var td = tr.appendChild(document.createElement('td'));
+    			td.setAttribute('colspan','3');
+    				
+    			var ahref = td.appendChild(document.createElement('a'));
+    			ahref.setAttribute('id','facette_see_more_less_'+id);
+    			ahref.setAttribute('etat','moins');
+    			ahref.setAttribute('onclick','javascript:facette_see_more(' + id + ',null);');
+    			ahref.setAttribute('style','cursor:pointer');
+    			ahref.innerHTML='';
+    				
+    			var span = document.createElement('span');
+    			span.className='facette_moins_link';
+    			span.innerHTML='[-]';
+    			ahref.appendChild(span);
+				
+    			myTable.appendChild(tr);
+            }
+			function valid_facettes_compare(){
+				
+				var form = document.facettes_multi;
+				if(form.elements.length>0){
+					
+					var form_values_compare_input_array=new Array();
+					
+					for(var i=0; i<form.elements.length;i++){
+						
+						if(form.elements[i].name=='check_facette[]' && form.elements[i].checked){
+							//on transforme les case ? coch? en element du tableau des facettes	
+							//on ajoute dans le tableau des facettes
+							var value=form.elements[i].value;
+							var jsonArray=JSON.parse(value);
+							
+							//On ajoute dans le formulaire de postage g?n?ral
+							var form_values_compare_input=document.createElement('input');
+							form_values_compare_input.setAttribute('name','check_facette_compare[]');
+							form_values_compare_input.setAttribute('type','hidden');
+							form_values_compare_input.setAttribute('value',value);
+							form_values_compare_input_array.push(form_values_compare_input);
+						}
+					}
+					
+					var post=false;
+					var form_values=document.form_values;
+					for(var i=0;i<form_values_compare_input_array.length;i++) {
+						form_values.appendChild(form_values_compare_input_array[i]);
+					}
+					
+					for(var i=0; i<form_values.elements.length;i++){
+						if(form_values.elements[i].name=='check_facette_compare[]' && form_values.elements[i].value!=''){
+							if(document.getElementById('filtre_compare_facette')) {
+								document.getElementById('filtre_compare_facette').value='compare';
+							}
+							if(document.getElementById('filtre_compare_form_values')) {
+								document.getElementById('filtre_compare_form_values').value='compare';
+							}
+							form_values.submit();
+							post=true;
+						}
+					}
+					if(post == false){
+						alert('No comparison standard.');
+					}
+				}else{
+					alert('No comparison standard.');
+				}
+			}
+			
+			function valid_compare(){
+				var form_values=document.form_values;
+				var post=false;
+				
+				for(var i=0; i<form_values.elements.length;i++){
+					if(form_values.elements[i].name=='check_facette_compare[]' && form_values.elements[i].value!=''){
+						if(document.getElementById('filtre_compare_facette')) {
+							document.getElementById('filtre_compare_facette').value='compare';
+						}
+						if(document.getElementById('filtre_compare_form_values')) {
+							document.getElementById('filtre_compare_form_values').value='compare';
+						}
+						form_values.submit();
+						post=true;
+					}
+				}
+				if(post == false){
+					alert('No comparison standard.');
+				}
+			}
+			
+			function remove_compare_facette(value){
+				
+				var jsonArray = JSON.parse(value);
+				
+				//on supprime l'?lement du tableau des facettes
+				elem=document.getElementById('compare_facette_'+jsonArray[4]);
+				elem.parentNode.removeChild(elem);
+				
+				//on supprime l'?l?ment du formulaire g?n?ral aussi
+				var form_values=document.form_values;
+				for(var i in form_values.elements){
+					if(form_values.elements[i] && form_values.elements[i].value && form_values.elements[i].name=='check_facette_compare[]'){
+						form_values_json_array=JSON.parse(form_values.elements[i].value);
+						
+						if(form_values_json_array[4]==jsonArray[4]){
+							elem=form_values.elements[i];
+							elem.parentNode.removeChild(elem);
+						}
+					}
+				}
+				var post=true;
+				for(var i in form_values.elements){
+					if(form_values.elements[i] && form_values.elements[i].value && form_values.elements[i].name=='check_facette_compare[]'){
+						valid_facettes_compare();
+						post=false;
+					}
+				}
+
+				if(post){
+					if('facette_search_compare' == 'facettes_external_search_compare') {
+						var input_form_values = document.createElement('input');
+						input_form_values.setAttribute('type', 'hidden');
+						input_form_values.setAttribute('name', 'reinit_compare');
+						input_form_values.setAttribute('value', '1');
+						document.forms['form_values'].appendChild(input_form_values);
+						document.form_values.submit();
+					} else {
+						document.location.href='./index.php?lvl=more_results&get_last_query=1&reinit_compare=1';
+					}
+				}
+			}
+			
+			function group_by(groupBy){
+				
+				var jsonArray=JSON.parse(groupBy);
+			
+				//on vide les elements group_by
+				var group_by_elements=document.getElementsByName('check_facette_groupby[]');
+				
+				var nodes_to_remove;
+				
+				for(var i in group_by_elements){
+					if(group_by_elements[i].nodeName=='INPUT'){
+						if(group_by_elements[i].getAttribute('id')!='facette_groupby_'+jsonArray[3]){
+							
+							if(group_by_elements[i].parentNode.getAttribute('name')!='form_values' && group_by_elements[i].parentNode.getAttribute('name')!='cart_values'){
+								
+								var group_by_elements_img=group_by_elements[i].previousElementSibling.firstChild;
+									
+								group_by_elements_img.setAttribute('src','./images/group_by_grey.png');
+								group_by_elements[i].setAttribute('value','');
+								
+							}else{
+								nodes_to_remove=[i=[group_by_elements[i],group_by_elements[i].parentNode]];
+							}
+						}
+					}
+				}
+				
+				if(nodes_to_remove && nodes_to_remove.length>0){
+					for(var i in nodes_to_remove){
+						nodes_to_remove[i][1].removeChild(nodes_to_remove[i][0]);
+					}
+				}
+				
+				element=document.getElementById('facette_groupby_'+jsonArray[3]);
+				var img=element.previousElementSibling.firstChild;
+				
+				var table_groupby=document.getElementById('facette_groupby');
+				
+				if(element.getAttribute('value')==''){
+					element.setAttribute('value',JSON.stringify(groupBy));
+					
+					//On ajoute dans le formulaire de postage g?n?ral
+					var form_values=document.form_values;
+					var form_values_groupby_input=document.createElement('input');
+					form_values_groupby_input.setAttribute('name','check_facette_groupby[]');
+					form_values_groupby_input.setAttribute('type','hidden');
+					form_values_groupby_input.setAttribute('value',groupBy);
+					form_values.appendChild(form_values_groupby_input);
+					
+					
+				}
+				valid_facettes_compare();
+			}
+		</script>
+		<script type="text/javascript">
+			function valid_facettes_multi(){
+				//on bloque si aucune case coch?e
+				var form = document.facettes_multi;
+				for (i=0, n=form.elements.length; i<n; i++){
+					if ((form.elements[i].checked == true)) {
+						if(document.getElementById('filtre_compare_facette')) {
+							document.getElementById('filtre_compare_facette').value='filter';
+						}
+						if(document.getElementById('filtre_compare_form_values')) {
+							document.getElementById('filtre_compare_form_values').value='filter';
+						}
+						form.submit();
+						return true;
+					}
+				}
+				return false;
+			}
+		</script>
+				<div id="facette_wrapper">
+					<img src="./images/patience.gif">
+					<script type="text/javascript">
+						var req = new http_request();
+						req.request("./ajax.php?module=ajax&categ=facettes&sub=get_data&facet_type=notices",false,null,true,function(data){
+							var response = JSON.parse(data);
+							document.getElementById('facette_wrapper').innerHTML=response.display;
+						    require(['dojo/query', 'dojo/dom-construct'], function(query, domConstruct){
+    						    query('#facette_wrapper script').forEach(function(node) {
+                					domConstruct.create('script', {
+                						innerHTML: node.innerHTML,
+                						type: 'text/javascript'
+                					}, node, 'replace');
+                				});
+						    });
+							if(!response.exists_with_results) {
+								require(['dojo/ready', 'dojo/dom-construct'], function(ready, domConstruct){
+									ready(function(){
+						                if (document.getElementById('segment_searches')) {
+										    domConstruct.destroy('facette_wrapper');
+						                } else {
+						                    domConstruct.destroy('facette');
+						                }
+						    
+									});
+								});
+							}
+							if(response.map_location) {
+								if(document.getElementById('map_location_search')) {
+									document.getElementById('map_location_search').innerHTML=response.map_location;
+									if(typeof(dojo) == 'object'){
+										dojo.require('dojo.parser');
+										dojo.parser.parse(document.getElementById('map_location_search'));
+									}
+								}
+							}
+                            hide_element_by_its_hidden_children('bandeau');
+						}, '', '', true);
+					</script>
+				</div>
+			</div><div id="cms_module_htmlcode_141" class="cms_module_htmlcode cms_module" style="position: static; left: 0px; top: 0px;"><div id="lienHistorique">
+    <a href="./index.php?lvl=search_history" title="Historique des recherches">History...</a>
+</div></div><div id="connexion" fixed="yes">
+
+			<h3 class="login_invite">Login</h3><div id="login_form"><form action="index.php?lvl=more_results&amp;autolevel1=1" method="post" name="myform"><input type="hidden" name="surligne" value=""><input type="hidden" name="look_FIRSTACCESS" value="1"><input type="hidden" name="user_query" value="The practice of silviculture"><input type="hidden" name="look_TITLE" value="1"><input type="hidden" name="typdoc" value=""><input type="hidden" name="ok" value="Search"><label>user name</label><br>
+				<input type="text" name="login" class="login" size="14" placeholder="user name"><br>
+				<input type="password" name="password" class="password" size="8" placeholder="Password" value="">
+                <input type="hidden" name="force_login" value="1">
+				<input type="submit" name="ok" value="ok" class="bouton"></form><a class="mdp_forgotten" href="./askmdp.php">Forgotten password?</a></div>
+
+			</div><!-- fermeture #connexion -->
+
+			<div id="adresse" fixed="yes">
+
+		<h3>Address</h3>
+
+		<span>
+			<br>
+			Agriculture Forestry University Faculty of Forestry<br>
+			72500 Hetauda<br>
+			Nepal&nbsp;<br>
+			057-527354<br><span id="opac_biblio_email">
+			<a href="mailto:forestrylibrary@afu.edu.np" title="forestrylibrary@afu.edu.np">contact</a></span></span>
+	    </div><!-- fermeture #adresse --><div id="cms_module_articleslist_130" class="cms_module_articleslist cms_module" style="visibility: visible; display: block;">    <div class="brevesBandeau">
+	  
+	<!-- titre du cadre -->
+	  
+		<!-- affichage d'un article -->
+	 	      <div class="itemAbrege">
+		    			<a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=19" title="Collection ">
+		    	
+			<!-- titre de l'article -->
+			<h4>Collection </h4>
+			<!-- r&eacute;sum&eacute; -->  
+			<div class="resume"> 
+			    			</div>
+			<!-- lire la suite -->
+						      <p class="lirePlus">View more....</p>
+			 
+			<!-- liens -->
+					    			</a>
+		    	      </div><!-- fin itemAbrege -->
+	 	      <div class="itemAbrege">
+		    			<a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=20" title="Services">
+		    	
+			<!-- titre de l'article -->
+			<h4>Services</h4>
+			<!-- r&eacute;sum&eacute; -->  
+			<div class="resume"> 
+			    			</div>
+			<!-- lire la suite -->
+						      <p class="lirePlus">View more....</p>
+			 
+			<!-- liens -->
+					    			</a>
+		    	      </div><!-- fin itemAbrege -->
+	 	      <div class="itemAbrege">
+		    			<a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=21" title="Contact Us">
+		    	
+			<!-- titre de l'article -->
+			<h4>Contact Us</h4>
+			<!-- r&eacute;sum&eacute; -->  
+			<div class="resume"> 
+			    			</div>
+			<!-- lire la suite -->
+						      <p class="lirePlus">View more....</p>
+			 
+			<!-- liens -->
+					    			</a>
+		    	      </div><!-- fin itemAbrege -->
+	    </div> <!-- fin brevesBandeau -->
+</div></div><div id="bandeau_2" fixed="yes"></div><div id="footer" fixed="yes">
+
+<div id="cms_module_htmlcode_134" class="cms_module_htmlcode cms_module"><div class="Ancre">
+	<a href="#logo" title="Top">&Lambda;</a>
+</div></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><span id="footer_rss" fixed="yes">
+	
+</span>
+<span id="footer_link_sup" fixed="yes">
+		<a href="./index.php?lvl=infopages&amp;pagesid=7">Mentions l&eacute;gales</a> &nbsp;
+</span>
+
+<span id="footer_link_website" fixed="yes">
+	<a class="footer_biblio_name" href="http://nkcs.org.np/afufof/library/opac_css/index.php" title=""></a> &nbsp;
+</span>
+
+<span id="footer_link_pmb" fixed="yes">
+<a href="http://www.google.fr" target="_blank">Faire une recherche avec Google</a> &nbsp;
+		<a class="lien_pmb_footer" href="https://www.sigb.net" title="a free solution for libraries" target="_blank">pmb</a>
+</span>
+
+<div id="accessibility" fixed="yes" style="visibility: visible; display: block;">
+	<ul class="accessibility_font_size">
+		<li class="accessibility_font_size_small">
+			<a href="javascript:accessibilityFontSize(1);" title="Reduce the text">A-</a>
+		</li>
+		<li class="accessibility_font_size_normal">
+			<a href="javascript:accessibilityFontSize(0);" title="Reset the size of the text">A</a>
+		</li>
+		<li class="accessibility_font_size_big">
+			<a href="javascript:accessibilityFontSize(2);" title="Widen the text">A+</a>
+		</li>
+	</ul>
+</div></div></div></body>
+		</html>

@@ -1,0 +1,824 @@
+
+
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: errorpage.tt -->
+
+
+
+
+
+<html lang="en" class="no-js">
+<head>
+
+<title>An error has occurred &rsaquo; DSWD Libraries catalog</title>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha 22.0506000" /> <!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="shortcut icon" href="https://e-library.dswd.gov.ph/images/Dswd_logo_PNG2.png" type="image/x-icon" />
+
+    <link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/lib/jquery/jquery-ui-1.13.1.min_22.0506000.css">
+
+
+    
+        
+    
+
+
+    <link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/css/opac_22.0506000.css">
+
+
+
+
+    <link type="text/css" media="print" rel="stylesheet" href="/opac-tmpl/bootstrap/css/print_22.0506000.css">
+
+
+    <style>#opac-main {background-color: #F7F7F7;}
+
+#opac-main-search {
+           background: #223D8D;
+           border-radius: 7px;
+}
+.btn-primary {
+    background-color: #E43D40;
+    border: 0px solid yellow;
+    color: white;
+}
+
+.main {background-color: #F7F7F7; border: 0px solid lightblue;}
+
+a:link, a:visited {color: darkblue}
+</style>
+
+
+
+    <link rel="search" type="application/opensearchdescription+xml" href="https://e-library.dswd.gov.ph/cgi-bin/koha/opac-search.pl?format=opensearchdescription" title="Search DSWD Libraries">
+    <link rel="unapi-server" type="application/xml" title="unAPI" href="https://e-library.dswd.gov.ph/cgi-bin/koha/unapi" />
+
+
+<script>
+    var Koha = {};
+    function _(s) { return s } // dummy function for gettext
+</script>
+
+<script src="/opac-tmpl/bootstrap/js/Gettext_22.0506000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/i18n_22.0506000.js"></script>
+
+<link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/lib/font-awesome/css/font-awesome.min_22.0506000.css">
+
+
+
+
+
+
+
+
+
+</head>
+<body id="error404" class="error">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<button id="scrolltocontent">Skip to main content</button>
+<div id="wrapper">
+    <div id="header-region" class="noprint">
+        <nav class="navbar navbar-expand">
+            <div id="logo">
+            <a class="navbar-brand" href="/cgi-bin/koha/opac-main.pl">
+                
+                    DSWD Libraries
+                
+            </a>
+            </div>
+            
+                <div id="cartDetails" class="cart-message">Your cart is empty.</div>
+            
+            <ul id="cart-list-nav" class="navbar-nav">
+                
+                    <li class="nav-item js-show">
+                        <a href="#" class="nav-link" title="Collect items you are interested in" id="cartmenulink" role="button">
+                            <i id="carticon" class="fa fa-shopping-cart fa-icon-black" aria-hidden="true"></i> <span class="cartlabel">Cart</span> <span id="basketcount"></span>
+                        </a>
+                    </li>
+                
+                <li class="divider-vertical"></li>
+                
+                    <li class="nav-item dropdown">
+                        <a href="/cgi-bin/koha/opac-shelves.pl" title="Show lists" class="nav-link dropdown-toggle" id="listsmenu" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
+                            ><i class="fa fa-list fa-icon-black" aria-hidden="true"></i> <span class="listslabel">Lists</span>
+                        </a>
+                        <div aria-labelledby="listsmenu" role="menu" class="dropdown-menu">
+                            
+                            
+                            
+                                <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=0" tabindex="-1" role="menuitem"><strong>Your lists</strong></a>
+                                
+                                    <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=add_form" tabindex="-1" role="menuitem">Log in to create your own lists</a>
+                                
+                            
+                        </div> <!-- / .dropdown-menu -->
+                    </li> <!-- / .nav-item.dropdown -->
+                
+            </ul> <!-- / .navbar-nav -->
+
+            
+                
+                <ul id="members" class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        
+                            
+                                
+                                    <a href="/cgi-bin/koha/opac-user.pl" class="nav-link login-link loginModal-trigger"><i class="fa fa-user fa-icon-black fa-fw" aria-hidden="true"></i> <span class="userlabel">Log in to your account</span></a>
+                                
+                            
+                        
+
+                        
+                    </li>
+                    
+                        
+                            <li class="nav-item search_history">
+                                <a class="nav-link login-link" href="/cgi-bin/koha/opac-search-history.pl" title="View your search history">Search history</a>
+                            </li>
+                            <li class="divider-vertical"></li>
+                            <li class="nav-item">
+                                <a class="nav-link logout clearsh" href="/cgi-bin/koha/opac-search-history.pl?action=delete" title="Delete your search history"><i class="fa fa-trash" aria-hidden="true"></i> Clear</a>
+                            </li>
+                        
+                    
+                </ul>
+            
+        </nav> <!-- /navbar -->
+
+        
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col">
+                        
+    
+        <div id="opacheader">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><style>
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.topnav {
+  overflow: hidden;
+  background-color: #223d8d;
+  border-radius: 7px;
+}
+
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+
+}
+
+.elib-responsive {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+margin-top:-10px;
+}
+.spacer{
+padding:5px;
+}
+
+.elib-btn {
+  border: none;
+  outline: none;
+  padding: 10px 16px;
+  background-color: #223d8d;
+  cursor: pointer;
+}
+
+/* Style the active class (and buttons on mouse-over) */
+.active, .elib-btn:hover {
+
+  color: white;
+}
+
+</style>
+<div><img src="https://e-library.dswd.gov.ph/images/KOHA_Banner_v2.png" class="elib-responsive" alt="E-lib Banner" /></div>
+<div class="spacer"></div>
+<div class="topnav">
+<div id="elib-menu"><a href="https://e-library.dswd.gov.ph/" class="elib-btn"><strong>Home</strong></a> <strong><a href="https://e-library.dswd.gov.ph/cgi-bin/koha/opac-library.pl">Directories&nbsp;</a></strong> <a href="https://e-library.dswd.gov.ph/pages.pl?p=about"><strong>About Us</strong></a> <a href="https://e-library.dswd.gov.ph/pages.pl?p=faq"><strong>FAQ</strong></a> <a href="https://e-library.dswd.gov.ph/pages.pl?p=csms"><strong>CSMS</strong></a> <a href="https://e-library.dswd.gov.ph/pages.pl?p=newacq"><strong>New Acquisitions</strong></a><a href="https://docs.google.com/forms/d/e/1FAIpQLSeVOMSnhLtr38qejaLWbvBVvxQJRvFxH92cDOtIXoWBV-EwNQ/viewform" target="_blank" rel="noopener"><strong>Account Registration</strong></a></div>
+</div></div>
+                </div>
+            
+        </div>
+    
+
+                    </div>
+                </div>
+            </div>
+        
+
+    </div> <!-- / header-region -->
+
+    
+        <div class="container-fluid">
+            
+                <div class="row">
+                    <div class="col">
+                            <div id="opac-main-search" class="mastheadsearch">
+                                
+                                    <form name="searchform" method="get" action="/cgi-bin/koha/opac-search.pl" id="searchform">
+                                        <div class="form-row align-items-center">
+                                            <div class="col-sm-auto order-2 order-sm-2">
+                                                <select name="idx" id="masthead_search" class="form-control">
+                                                    
+                                                        <option value="">Library catalog</option>
+                                                    
+                                                    
+                                                        <option value="ti">Title</option>
+                                                    
+                                                    
+                                                        <option value="au">Author</option>
+                                                    
+                                                    
+                                                        <option value="su">Subject</option>
+                                                    
+                                                    
+                                                        <option value="nb">ISBN</option>
+                                                    
+                                                    
+                                                        <option value="ns">ISSN</option>
+                                                    
+                                                    
+                                                        <option value="se">Series</option>
+                                                    
+                                                    
+                                                        
+                                                            <option value="callnum">Call number</option>
+                                                        
+                                                    
+                                                </select>
+                                            </div> <!-- /.col-sm-auto -->
+
+                                            <div class="col order-4 order-sm-3">
+                                                
+                                                    <input type="text" class="transl1 form-control" id="translControl1" name="q" value="" /><span id="translControl"></span>
+                                                
+                                            </div> <!-- /.col -->
+
+                                            
+                                                <div class="col-sm col-md-3 col-lg-2 order-3 order-sm-4">
+                                                    <select name="limit" id="select_library" class="form-control">
+                                                        <option value="">All libraries</option>
+
+                                                        
+
+                                                        
+                                                            
+                                                                <option value="branch:KEC">Central Office Knowledge Exchange Center</option>
+                                                            
+                                                        
+                                                            
+                                                                <option value="branch:FO_IV-A">FO CALABARZON Regional Learning Resource Center</option>
+                                                            
+                                                        
+                                                            
+                                                                <option value="branch:FO_CAR">FO CAR Regional Learning Resource Center</option>
+                                                            
+                                                        
+                                                            
+                                                                <option value="branch:FO_CARAGA">FO CARAGA Regional Learning Resource Center</option>
+                                                            
+                                                        
+                                                            
+                                                                <option value="branch:FO_I">FO I Regional Learning Resource Center</option>
+                                                            
+                                                        
+                                                            
+                                                                <option value="branch:FO_II">FO II Regional Learning Resource Center</option>
+                                                            
+                                                        
+                                                            
+                                                                <option value="branch:FO_III">FO III Regional Learning Resource Center</option>
+                                                            
+                                                        
+                                                            
+                                                                <option value="branch:FO_IX">FO IX Regional Learning Resource Center</option>
+                                                            
+                                                        
+                                                            
+                                                                <option value="branch:FO_IV-B">FO MIMAROPA Regional Learning Resource Center</option>
+                                                            
+                                                        
+                                                            
+                                                                <option value="branch:FO_NCR">FO NCR Regional Learning Resource Center</option>
+                                                            
+                                                        
+                                                            
+                                                                <option value="branch:FO_V">FO V Regional Learning Resource Center</option>
+                                                            
+                                                        
+                                                            
+                                                                <option value="branch:FO_VI">FO VI Regional Learning Resource Center</option>
+                                                            
+                                                        
+                                                            
+                                                                <option value="branch:FO_VII">FO VII Regional Learning Resource Center</option>
+                                                            
+                                                        
+                                                            
+                                                                <option value="branch:FO_VIII">FO VIII Regional Learning Resource Center</option>
+                                                            
+                                                        
+                                                            
+                                                                <option value="branch:FO_X">FO X Regional Learning Resource Center</option>
+                                                            
+                                                        
+                                                            
+                                                                <option value="branch:FO_XI">FO XI Regional Learning Resource Center</option>
+                                                            
+                                                        
+                                                            
+                                                                <option value="branch:FO_XII">FO XII Regional Learning Resource Center</option>
+                                                            
+                                                        
+
+                                                        
+                                                    </select> <!-- /#select_library -->
+                                                </div> <!-- /.col-sm-auto -->
+                                            
+
+                                            <div class="order-5 col-sm-auto">
+                                                <button type="submit" id="searchsubmit" class="btn btn-primary" title="Search" aria-label="Search">
+                                                    <i class="fa fa-search" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
+
+                                        </div> <!-- /.form-row -->
+                                        <input type="hidden" name="weight_search" value="1">
+                                    </form>
+                                
+                            </div><!-- /#opac-main-search -->
+                    </div> <!-- /.col -->
+                </div> <!-- /.row -->
+            
+
+            <div class="row">
+                <ul class="nav" id="moresearches">
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-search.pl">Advanced search</a>
+                    </li>
+                    
+                    
+                    
+                        <li class="nav-item">
+                            <a href="/cgi-bin/koha/opac-authorities-home.pl">Authority search</a>
+                        </li>
+                    
+                    
+                    
+                        <li class="nav-item">
+                            <a href="/cgi-bin/koha/opac-tags.pl">Tag cloud</a>
+                        </li>
+                    
+                    
+                    
+                    
+                    
+                        
+                    
+                    <li class="nav-item">
+                        <a id="library_page" href="/cgi-bin/koha/opac-library.pl">
+                            
+                                <span>Libraries</span>
+                            
+                        </a>
+                    </li>
+                    
+    
+
+                </ul> <!-- /.nav#moresearches -->
+            </div> <!-- /.row -->
+        </div> <!-- /.container-fluid -->
+    
+
+    <!-- Login form hidden by default, used for modal window -->
+    <div id="loginModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modalLoginLabel">Log in to your account</h2>
+                    <button type="button" class="closebtn" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="modalAuth">
+                    <input type="hidden" name="has-search-query" id="has-search-query" value="" />
+                    <div class="modal-body">
+                        
+                        
+                        
+                            <input type="hidden" name="koha_login_context" value="opac" />
+                            <fieldset class="brief">
+                                <div class="local-login">
+                                    <label for="muserid">Login:</label><input type="text" id="muserid" name="userid" autocomplete="off" />
+                                    <label for="mpassword">Password:</label><input type="password" id="mpassword" name="password" autocomplete="off" />
+                                    <fieldset class="action">
+                                        <input type="submit" class="btn btn-primary" value="Log in" />
+                                    </fieldset>
+                                </div>
+                                
+                                
+                                
+                            </fieldset>
+                        
+                    </div>
+                </form> <!-- /#auth -->
+            </div> <!-- /.modal-content -->
+        </div> <!-- /.modal-dialog -->
+    </div>  <!-- /#modalAuth  -->
+
+
+    <div class="main">
+        <nav id="breadcrumbs" aria-label="Breadcrumb" class="breadcrumbs">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/cgi-bin/koha/opac-main.pl">Home</a>
+                </li>
+                <li class="breadcrumb-item active">
+                    <a href="#" aria-current="page">Error 404</a>
+                </li>
+            </ol>
+        </nav> <!-- /#breadcrumbs -->
+
+        <div class="container-fluid">
+            <div class="row">
+                
+                    <div class="col-lg-2">
+                        <div id="navigation">
+                            
+
+
+    
+    
+        <div id="OpacNav">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><style>
+	back	{background-color:white}
+	h4		{color:white;
+    		 background-color: green;
+             padding: 8px;
+    		}
+.pad {
+padding:0px;
+}
+.button {
+  background-color: #223d8d; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+width:100%;
+}
+</style>
+<p class="pad"></p>
+<h3 class="button" style="text-align: center;"><strong>About Us</strong></h3>
+<ul>
+<li style="text-align: left;">Organizational Chart</li>
+</ul>
+<h3 class="button" style="text-align: center;"><strong>Services</strong></h3>
+<ul>
+<li style="text-align: left;">Borrowing &amp; Returning of KEC/RLRC Materials and Collection</li>
+<li style="text-align: left;">KEC/RLRC Conference Room Reservation and Use</li>
+<li style="text-align: left;">Facilitation of Clearance</li>
+</ul>
+<h3 class="button" style="text-align: center;"><strong>KEC Library Hours</strong></h3>
+<div style="text-align: left;">Monday to Friday</div>
+<div style="text-align: left;"><b>8:00AM - 5:00PM</b><br /><br />The KEC adheres to the <b>NO NOON BREAK policy</b> prescribed under Republic Act 9485 or the Anti-Red Tape Act of 2007.<br /><br /></div>
+<h3 class="button"><strong>Contact Us</strong></h3>
+<p style="text-align: left;"><b>DSWD Knowledge Exchange Center </b> <br />4th Floor, Matapat Building<br />DSWD Central Office, <br />Batasan Pambansa Complex, Constitution Hills, Quezon City, Philippines, 1126<br />Telephone: (02) 931-8101 local 10010<br />E-mail: <a href="mailto:kec@dswd.gov.ph">kec@dswd.gov.ph</a><br /><br /><br /><img src="https://e-library.dswd.gov.ph/images/SOCOPAB_logo.png" width="265" height="174" alt="SOCOTECH logo" /></p></div>
+                </div>
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><!-- no_content --></div>
+                </div>
+            
+        </div>
+    
+
+
+
+
+
+
+
+                        </div>
+                    </div>
+                   <div class="col-10 order-first order-md-first order-lg-2">
+                
+                    <div id="errormsg404">
+                        <h1>Sorry, the requested page is not available</h1>
+                        <h2>Error 404</h2>
+                        <p><strong>This message can have the following reason(s):</strong></p>
+                        <ul>
+                            
+
+                            
+
+                            
+
+                            
+
+                            
+                                <li>You made use of an external link to a catalog item that is no longer available.</li>
+                                <li>You followed an outdated link e.g. from a search engine or a bookmark.</li>
+                                <li>You tried to access a page that needs authentication.</li>
+                                <li>An internal link in our catalog home page is broken and the page does not exist.</li>
+                            
+                            
+                        </ul>
+                        <h2>What's next?</h2>
+                        <ul>
+                            
+                            <li>You can use the menu and links at the top of the page</li>
+                            <li>You can search our catalog using the search form at the top of this page.</li>
+                            <li><a href="/cgi-bin/koha/opac-main.pl">Return to the catalog home page.</a></li>
+                        </ul>
+                        <h2>Report issues and broken links</h2>
+                        <ul>
+                            <li>To report this error, please contact the Koha Administrator.
+                                    <a href="mailto:root%40localhost">Send email</a>.</li>
+                        </ul>
+                    </div> <!-- / #errormsg404 -->
+                </div> <!-- / .col-lg10/12 -->
+            </div> <!-- / .row -->
+        </div> <!-- / .container-fluid -->
+    </div> <!-- / .main -->
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col">
+                        
+    
+        <div id="opaccredits">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><!-- standard footer -->
+<div id="gwt-standard-footer"></div>
+<!-- end standard footer --> <!-- standard footer script -->
+<script type="text/javascript">
+(function(d, s, id) {
+  var js, gjs = d.getElementById('gwt-standard-footer');
+
+  js = d.createElement(s); js.id = id;
+  js.src = "//gwhs.i.gov.ph/gwt-footer/footer.js";
+  gjs.parentNode.insertBefore(js, gjs);
+}(document, 'script', 'gwt-footer-jsdk'));
+</script>
+<!-- philippine standard time script-->
+<script type="text/javascript" id="gwt-pst">
+(function(d, eId) {
+	var js, gjs = d.getElementById(eId);
+	js = d.createElement('script'); js.id = 'gwt-pst-jsdk';
+	js.src = "//gwhs.i.gov.ph/pst/gwtpst.js?"+new Date().getTime();
+	gjs.parentNode.insertBefore(js, gjs);
+}(document, 'gwt-pst'));
+
+var gwtpstReady = function(){
+	var firstPst = new gwtpstTime('pst-time');
+}
+</script>
+<!-- end philippine standard time -->
+<script>
+// Get the container element var btnContainer = document.getElementById("elib-menu"); // Get all buttons with class="elib-btn" inside the container var btns = btnContainer.getElementsByClassName("elib-btn"); // Loop through the buttons and add the active class to the current/clicked button for (var i = 0; i &lt; btns.length; i++) { btns[i].addEventListener("click", function() { var current = document.getElementsByClassName("active"); current[0].className = current[0].className.replace(" active", ""); this.className += " active"; }); }
+</script></div>
+                </div>
+            
+        </div>
+    
+
+                    </div>
+                </div>
+            </div>
+        
+
+        
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col">
+                        <div id="report-koha-url">
+                            <div class="row justify-content-between">
+                                
+                                
+                                    <div class="col">
+                                        <div id="koha_url" class="clearfix noprint">
+                                            <p>Powered by
+                                            
+                                                <a class="koha_url" rel="nofollow" href="http://koha-community.org">Koha</a>
+                                            </p>
+                                        </div> <!-- /#koha_url -->
+                                    </div> <!-- /.col -->
+                                
+                            </div> <!-- /.row.justify-content-between -->
+                        </div> <!-- /#report-koha-url -->
+                    </div> <!-- /.col -->
+                </div> <!-- /.row -->
+            </div> <!-- /.container-fluid -->
+        
+    </div> <!-- / #wrapper in masthead.inc -->
+
+    
+        
+    
+
+
+<!-- JavaScript includes -->
+<script src="/opac-tmpl/bootstrap/lib/jquery/jquery-3.6.0.min_22.0506000.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/jquery/jquery-migrate-3.3.2.min_22.0506000.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/jquery/jquery-ui-1.13.1.min_22.0506000.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/bootstrap/js/bootstrap.bundle.min_22.0506000.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/fontfaceobserver.min_22.0506000.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/enquire.min_22.0506000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/global_22.0506000.js"></script>
+
+    <script>
+        var NO_AMAZON_IMAGE = _("No cover image available");
+    </script>
+    <script src="/opac-tmpl/bootstrap/js/amazonimages_22.0506000.js"></script>
+
+
+<script>
+
+    var MSG_CONFIRM_AGAIN = _("Warning: Cannot be undone. Please confirm once again")
+    var MSG_DELETE_SEARCH_HISTORY = _("Are you sure you want to delete your search history?");
+    var MSG_NO_SUGGESTION_SELECTED = _("No suggestion was selected");
+    var MSG_SEARCHING = _("Searching %s...");
+    var MSG_ERROR_SEARCHING_COLLECTION = _("Error searching %s collection");
+    var MSG_NO_RESULTS_FOUND_IN_COLLECTION = _("No results found in the library's %s collection");
+    var MSG_RESULTS_FOUND_IN_COLLECTION = _("Found %s results in the library's %s collection");
+    var MSG_BY = _("by");
+    var MSG_TYPE = _("Type");
+    var MSG_NEXT = _("Next");
+    var MSG_PREVIOUS = _("Previous");
+    var MSG_CHECKOUTS = _("Checkouts");
+    var MSG_NO_CHECKOUTS = _("No checkouts");
+    var MSG_CHECK_OUT = _("Check out");
+    var MSG_CHECK_OUT_CONFIRM = _("Are you sure you want to check out this item?");
+    var MSG_CHECKED_OUT_UNTIL = _("Checked out until %s");
+    var MSG_CHECK_IN = _("Check in");
+    var MSG_CHECK_IN_CONFIRM = _("Are you sure you want to return this item?");
+    var MSG_NO_CHECKOUTS = _("No checkouts");
+    var MSG_DOWNLOAD = _("Download");
+    var MSG_HOLDS = _("Holds");
+    var MSG_NO_HOLDS = _("No holds");
+    var MSG_PLACE_HOLD = _("Place hold");
+    var MSG_CANCEL_HOLD = _("Cancel");
+    var MSG_CANCEL_HOLD_CONFIRM = _("Are you sure you want to cancel this hold?");
+    var MSG_ON_HOLD = _("On hold");
+
+    
+        var MSG_TAGS_DISABLED = _("Sorry, tags are not enabled on this system.");
+        var MSG_TAG_ALL_BAD = _("Error! Your tag was entirely markup code.  It was NOT added.  Please try again with plain text.");
+        var MSG_ILLEGAL_PARAMETER = _("Error! Illegal parameter");
+        var MSG_TAG_SCRUBBED = _("Note: your tag contained markup code that was removed. The tag was added as ");
+        var MSG_ADD_TAG_FAILED = _("Error! Adding tags failed at");
+        var MSG_ADD_TAG_FAILED_NOTE = _("Note: you can only tag an item with a given term once.  Check 'My Tags' to see your current tags.");
+        var MSG_DELETE_TAG_FAILED = _("Error! You cannot delete the tag");
+        var MSG_DELETE_TAG_FAILED_NOTE = _("Note: you can only delete your own tags.")
+        var MSG_LOGIN_REQUIRED = _("You must be logged in to add tags.");
+        var MSG_TAGS_ADDED = _("Tags added: ");
+        var MSG_TAGS_DELETED = _("Tags added: ");
+        var MSG_TAGS_ERRORS = _("Errors: ");
+        var MSG_MULTI_ADD_TAG_FAILED = _("Unable to add one or more tags.");
+        var MSG_NO_TAG_SPECIFIED = _("No tag was specified.");
+    
+    
+    
+
+    
+        $(window).load(function() {
+            verify_images();
+         });
+    
+    $(".print-large").on("click",function(){
+        window.print();
+        return false;
+    });
+    $(".addtoshelf").on("click",function(e){
+        e.preventDefault();
+        Dopop( this.href );
+    });
+    $("body").on("click", ".addtocart", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        addRecord( biblionumber );
+    });
+    $("body").on("click", ".cartRemove", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        delSingleRecord( biblionumber );
+    });
+    $(".clearsh").on("click", function(){
+        return confirmDelete(MSG_DELETE_SEARCH_HISTORY);
+    });
+
+</script>
+
+
+    <script src="/opac-tmpl/bootstrap/js/basket_22.0506000.js"></script>
+
+
+<script src="/opac-tmpl/bootstrap/js/tags_22.0506000.js"></script>
+
+
+
+
+    <script src="/opac-tmpl/bootstrap/js/localcovers_22.0506000.js"></script>
+    <script>
+
+    var NO_LOCAL_JACKET = _("No cover image available");
+
+    </script>
+
+
+
+
+
+
+
+
+<script src="/opac-tmpl/lib/js-cookie/js.cookie-3.0.1.min_22.0506000.js"></script>
+<script>
+$(document).ready(function() {
+    if($('#searchsubmit').length) {
+        $(document).on("click", '#searchsubmit', function(e) {
+            Cookies.remove("form_serialized", { path: '/'});
+            Cookies.remove("form_serialized_limits", { path: '/'});
+            Cookies.remove("search_path_code", { path: '/'});
+        });
+    }
+});
+</script>
+
+
+
+    <script>
+        $("#login").hide();
+
+$("select[name='idx'] option:first").text('Keyword');
+
+$( ".transl1" ).attr( "placeholder", "Search library collection here" );
+    </script>
+
+
+
+</body>
+</html>
+
+

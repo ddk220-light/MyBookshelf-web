@@ -1,0 +1,763 @@
+{
+  "country": "Morocco",
+  "country_code": "MAR",
+  "research_date_utc": "2026-11-15",
+  "status": "complete",
+  "completion_note": "Research completed with explicit verification shortfall; not integration-ready.",
+  "counts": {
+    "observed_successes": 3,
+    "selected": 1,
+    "reserves": 2,
+    "target_selected": 10,
+    "selected_shortfall": 9
+  },
+  "market": {
+    "summary": "Fragmented Arabic/French academic and research sector, ministry/public networks, national deposit library and foundation/cultural-institute libraries. PMB is the strongest observed reusable family; Koha has promising but currently unreachable major endpoints. National/public shared services offer greater strategic reach but no verified multi-library book response in this run.",
+    "platform_strategy": "Pilot site-specific PMB adaptations with CJB/INAU only as reserves; GLB Saïs is a substantial isolated candidate with data-quality and encoding risks. Reassess official IMIST/Ibn Tofail Koha policy/connectivity before adapter reuse. Investigate CBM and Ministry shared service when accessible rather than treating repositories/journal unions as holdings.",
+    "adoption_evidence": [
+      {
+        "claim": "PMB observed live at CJB and INAU; an older PMB interface at FLSH Agadir returns a search summary but follow-through403. Official ENA/INPT pages describe PMB too.",
+        "scope": "Observed and institution-documented deployments only; not a census or national market share",
+        "date": "2026-11-15 observation; institutional pages undated",
+        "source_url": "https://ena.enarabat.ac.ma/cente-de-documentation/",
+        "evidence_path": "evidence/discovery-8.json"
+      },
+      {
+        "claim": "IMIST homepage posts searches to /cgi-bin/koha/opac-search.pl; Ibn Tofail indexed official catalogue uses Koha routes.",
+        "scope": "Two institutional deployment indicators; searches blocked at robots stage",
+        "date": "2026-11-15",
+        "source_url": "https://bibliotheque.imist.ma/",
+        "evidence_path": "evidence/imist-home.html"
+      },
+      {
+        "claim": "BNRM official bibliographic-policy page names Virtua; legacy Chameleon and newer Encore routes exist in cited sources. Current backend not confirmed.",
+        "scope": "BNRM historical official evidence",
+        "date": "Policy posted2013; inspected through indexed source2026-11-15",
+        "source_url": "https://www.bnrm.ma/bnrm/fr/appels-a-candidature/itemlist/category/25-politique-bibliographique.html",
+        "evidence_path": "evidence/discovery-11.json"
+      },
+      {
+        "claim": "Library Technology Guides lists Ministry of Culture shared automation as Symphony (2015), updated2026-11-03. The live root independently identifies Symphony via its title and observed /uhtbin/cgisirsi.exe redirect; public form retrieval timed out.",
+        "scope": "One shared ministry system; no inferred branch count",
+        "date": "record year2015; last updated2026-11-03",
+        "source_url": "https://librarytechnology.org/library/196802",
+        "evidence_path": "evidence/librarytech-ministry.html"
+      },
+      {
+        "claim": "AUI directory record identifies Medad ILS/Portal from2024; previous Sierra2019 and Millennium2004. Current live portal is a JavaScript application.",
+        "scope": "One university; directory plus direct shell",
+        "date": "record updated2026-10-28",
+        "source_url": "https://librarytechnology.org/library/2093/",
+        "evidence_path": "evidence/librarytech-aui.html"
+      },
+      {
+        "claim": "FLSH Saïs uses GLB; Hassan II mosque links III web catalogue with explicit search/record exclusions.",
+        "scope": "Two observed interfaces",
+        "date": "2026-11-15",
+        "source_url": "https://www.fls.usmba.ac.ma/glb/index.php",
+        "evidence_path": "evidence/usmba-catalog-home.html"
+      }
+    ],
+    "network_opportunities": [
+      {
+        "name": "Catalogue des Bibliothèques du Maroc (CBM)",
+        "scope": "Federated national/multi-institution opportunity founded by BNRM and Fondation Abdul-Aziz",
+        "source_url": "https://cbm.bnrm.ma/",
+        "verification": "Indexed official scope; direct robots503. Independent cited MUC root only returned JavaScript shell; no institution-specific holding verified.",
+        "integration_implication": "Highest strategic discovery opportunity if public operation/policy is restored; requires provenance and institution-filtered holdings. Do not count participating libraries as coverage.",
+        "evidence_path": "evidence/discovery-1.json"
+      },
+      {
+        "name": "Ministry of Culture shared public-library service",
+        "scope": "Public-library system, Symphony directory evidence",
+        "source_url": "https://librarytechnology.org/library/196802",
+        "verification": "Directory plus live root title Symphony; robots404; linked public form request timed out before book search.",
+        "integration_implication": "Potential public-library reach through one service; no verified number of live participating libraries.",
+        "evidence_path": "evidence/librarytech-ministry.html"
+      },
+      {
+        "name": "Université Hassan II / Manhal Al-Maarifa catalogue",
+        "scope": "University-wide shared catalogue",
+        "source_url": "https://www.univh2c.ma/fr/page/bibliotheque-universitaire-mohamed-sekkat",
+        "verification": "Official link/prose; catalogue robots503",
+        "integration_implication": "University network as one candidate; no branch multiplication.",
+        "evidence_path": "evidence/uh2c-home.html"
+      },
+      {
+        "name": "Institut français du Maroc",
+        "scope": "12 city media libraries",
+        "source_url": "https://if-maroc.org/mediatheques/",
+        "verification": "Official network description; shared catalogue robots excludes all paths.",
+        "integration_implication": "Strong reader-facing network but policy-blocked automated integration; Culturethèque ebooks are a separate product.",
+        "evidence_path": "evidence/discovery-10.json"
+      },
+      {
+        "name": "IMIST / CNRST",
+        "scope": "Own physical library; national research e-resources, Toubkal theses and PRSM journals are distinct services",
+        "source_url": "https://bibliotheque.imist.ma/",
+        "verification": "Own-library Koha form observed; robots503 on OPAC",
+        "integration_implication": "Koha adapter candidate for own holdings only. Consortium access, repository membership and journal union are not physical-book coverage.",
+        "evidence_path": "evidence/imist-home.html"
+      }
+    ]
+  },
+  "major_library_priorities": [
+    {
+      "name": "Bibliothèque Nationale du Royaume du Maroc (BNRM)",
+      "size_claim": "Reported open-access totals:81,318 grand-public and12,310 researcher monographs as of16June2014; subset, not whole collection or current total. National deposit-library mandate is additional institutional proxy.",
+      "source_url": "https://www.bnrm.ma/bnrm/bibliotheque/nos-collections/monographies/monographies-en-libre-acc%C3%A8s.html",
+      "outcome": "Unverified: main/Encore robots503; legacy OPAC tunnel403.",
+      "evidence_path": "evidence/discovery-10.json"
+    },
+    {
+      "name": "Fondation du Roi Abdul-Aziz Al Saoud, Casablanca",
+      "size_claim": "Specialist Maghreb/Islamic-studies research library and CBM founding partner; institutional/network proxy, current book count not established.",
+      "source_url": "https://bib.cjb.ma/index.php?id_article=79&lvl=cmspage&pageid=4",
+      "outcome": "Unverified: main robots503 timeout; observed OPAC:8086 robots timeout.",
+      "evidence_path": "evidence/discovery-6.json"
+    },
+    {
+      "name": "Université Hassan II / Bibliothèque Universitaire Mohamed Sekkat",
+      "size_claim": "2020–2021 activity report p153:more than80,000 documents accessible through catalogue, mixed formats; not80,000 print books. Current university page describes a common university catalogue.",
+      "source_url": "https://www.univh2c.ma/sites/default/files/2025-03/Rapport_activite_UH2C_2020-2021_VF_23032023-Small_compressed.pdf",
+      "outcome": "Unverified: biblio.univh2c.ma robots503.",
+      "evidence_path": "evidence/discovery-11.json"
+    },
+    {
+      "name": "Al Akhawayn University, Mohammed VI Library",
+      "size_claim": "Spring2023 official faculty handbook:99,500 print copies within336,000+ total volumes; print and ebook totals kept separate.",
+      "source_url": "https://aui.ma/hubfs/PDFs/LC%20Faculty%20Handbook%20Spring%202023.pdf?hsLang=fr",
+      "outcome": "Unverified: current Medad portal returns JavaScript shell; legacy libserv robots503.",
+      "evidence_path": "evidence/discovery-2.json"
+    },
+    {
+      "name": "Médiathèque de la Fondation de la Mosquée Hassan II, Casablanca",
+      "size_claim": "Undated live homepage:122,357 multilingual/multiformat documents,860 seats,12,400m²; not a print-book count.",
+      "source_url": "https://www.mediatheque-fmh2.ma/",
+      "outcome": "Restricted: linked III adult catalogue excludes /search and /record=; no searches made.",
+      "evidence_path": "evidence/hassan-mosque-home.html"
+    },
+    {
+      "name": "Université Ibn Tofail, Bibliothèque universitaire centrale",
+      "size_claim": "Official2023 page says capacity30,000 ouvrages and100 seats; capacity wording is not verified current inventory.",
+      "source_url": "https://www.uit.ac.ma/bibliotheque/",
+      "outcome": "Unverified: Koha catalogue robots503.",
+      "evidence_path": "evidence/discovery-11.json"
+    },
+    {
+      "name": "Bibliothèque IMIST–CNRST, Rabat",
+      "size_claim": "Official current page:4,565.4m² and five thematic library spaces; institutional/space proxy, not book count.",
+      "source_url": "https://bibliotheque.imist.ma/index.php/bibliotheque",
+      "outcome": "Unverified: official linked Koha OPAC robots503; Toubkal/PRSM excluded from physical-book evidence.",
+      "evidence_path": "evidence/imist-size.html"
+    },
+    {
+      "name": "Université Mohammed Premier, Oujda library network",
+      "size_claim": "Official undated page:common OPAC references40,000+ ouvrages,300+ serial titles and eight named constituent institutions; count whole network once.",
+      "source_url": "https://www.ump.ma/fr/formations/bibliotheque-de-luniversite",
+      "outcome": "Unverified: official origin robots tunnel403; no public search response.",
+      "evidence_path": "evidence/discovery-9.json"
+    },
+    {
+      "name": "USMBA, FLSH Saïs – Fès library",
+      "size_claim": "Undated official live homepage:60,000+ ouvrages/monographies;12,500+ theses/mémoires separate.",
+      "source_url": "https://www.fls.usmba.ac.ma/glb/index.php",
+      "outcome": "Verified selected: one French query returns a translated book record; accuracy/reliability caveats remain.",
+      "evidence_path": "evidence/usmba-catalog-home.html"
+    },
+    {
+      "name": "Institut français du Maroc media-library network",
+      "size_claim": "Official undated page:12 city media libraries. Rabat and Fès pages each report30,000+ titles; no extrapolated national total. Culturethèque180,000 digital documents excluded.",
+      "source_url": "https://if-maroc.org/mediatheques/",
+      "outcome": "Restricted: shared catalogue robots Disallow:/. Counted as one network opportunity, not12 successes.",
+      "evidence_path": "evidence/discovery-10.json"
+    }
+  ],
+  "libraries": [
+    {
+      "id": "mar-usmba-flsh-sais",
+      "name": "Bibliothèque de la Faculté des Lettres et des Sciences Humaines Saïs – Fès, Université Sidi Mohamed Ben Abdellah",
+      "recommendation": "verified_target",
+      "scope": "One faculty library; not the entire USMBA network",
+      "size": {
+        "value": 60000,
+        "unit": "ouvrages et monographies (reported lower bound)",
+        "date": "undated; observed 2026-11-15",
+        "source_url": "https://www.fls.usmba.ac.ma/glb/index.php",
+        "evidence_path": "evidence/usmba-catalog-home.html",
+        "quality": "official",
+        "note": "Homepage advertises +60,000 monographs and +12,500 theses/mémoires separately; not independently audited. Some homepage copy counts contradict totals."
+      },
+      "platform": {
+        "family": "GLB (custom)",
+        "name": "GLB (custom)",
+        "proof": "Footer identifies Système Intégré de Gestion de la Bibliothèque Universitaire (GLB); GET /glb/home/book?search=...",
+        "evidence_path": "evidence/usmba-search-fr.html"
+      },
+      "query": {
+        "text": "Le petit prince",
+        "method": "GET",
+        "url": "https://www.fls.usmba.ac.ma/glb/home/book?search=Le+petit+prince",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T08:01:09.097948+00:00",
+        "http_status": 200,
+        "effective_url": "https://www.fls.usmba.ac.ma/glb/home/book?search=Le+petit+prince",
+        "result_count": null,
+        "count_note": "One visible translated-title card on saved first page; two pagination buttons do not establish total result count.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/usmba-search-fr.html",
+        "metadata_path": "evidence/usmba-search-fr.json"
+      },
+      "books": [
+        {
+          "title": "Amnukal Mezzyn = Le petit prince - trad.de Larbi Moumouch",
+          "author": "SAINT-EXUPERY,Antoine",
+          "record_id": "21662",
+          "record_url": null,
+          "isbn": null,
+          "holdings": "Result states disponible; total 1 copie, livres disponibles 1 copie; call number 801.41SAP; ed.IDGL, 2007. No branch or physical shelf exposed. A reservation control carries ID 21662; it was not invoked.",
+          "evidence_path": "evidence/usmba-search-fr.html"
+        }
+      ],
+      "robots": {
+        "url": "https://www.fls.usmba.ac.ma/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T07:59:26.731244+00:00",
+        "evidence_path": "evidence/usmba-robots.json",
+        "decision": "no_published_rules",
+        "note": "HTTP404; not a reuse licence. Initial Arabic query failed at tunnel with 502; separate French query returned HTTP200."
+      },
+      "reader_access": "Public anonymous search succeeded. Homepage addresses students and teachers; visitor entry and borrowing eligibility not verified. Account/reservation actions not used.",
+      "integration": {
+        "existing_adapter": "new family",
+        "needs": [
+          "New GLB parser",
+          "Retain translated edition identity; no French-original ISBN inferred",
+          "Read inline card/modal metadata without invoking reservation",
+          "Validate inconsistent copy-count fields before availability integration"
+        ],
+        "blockers": [
+          "No stable public record URL demonstrated",
+          "Arabic query failed with tunnel502; reliability/native-script support unresolved",
+          "Other homepage records report available copies greater than total copies; displayed availability is not audited circulation"
+        ],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "mar-cjb",
+      "name": "Bibliothèque du Centre Jacques-Berque, Rabat",
+      "recommendation": "reserve",
+      "scope": "One specialist research library",
+      "size": {
+        "value": 12000,
+        "unit": "documents (reported lower bound)",
+        "date": "2023-12-06 page revision",
+        "source_url": "https://www.cjb.ma/presentation-de-la-bibliotheque/",
+        "evidence_path": "evidence/cjb-size.html",
+        "quality": "official",
+        "note": "One-third described as Arabic; retained as specialist reserve rather than substituting for inaccessible national/university collections."
+      },
+      "platform": {
+        "family": "PMB",
+        "name": "PMB",
+        "proof": "PMB footer and /index.php?lvl=more_results / notice_display routes.",
+        "evidence_path": "evidence/cjb-search.html"
+      },
+      "query": {
+        "text": "L'invention du quotidien",
+        "method": "POST",
+        "url": "https://bib.cjb.ma/index.php?lvl=more_results&autolevel1=1",
+        "payload": {
+          "look_TITLE": "1",
+          "look_AUTHOR": "1",
+          "look_INDEXINT": "1",
+          "look_KEYWORDS": "1",
+          "look_ABSTRACT": "1",
+          "look_ALL": "1",
+          "user_query": "L'invention du quotidien",
+          "csrf_token": "<fresh anonymous form token; not persisted>"
+        },
+        "checked_at_utc": "2026-11-15T07:59:09.421016+00:00",
+        "http_status": 200,
+        "effective_url": "https://bib.cjb.ma/index.php?lvl=more_results&autolevel1=1",
+        "result_count": 2,
+        "count_note": "Two numbered-volume records; titles are distinct volume identities.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/cjb-search.html",
+        "metadata_path": "evidence/cjb-search.json"
+      },
+      "books": [
+        {
+          "title": "L'invention du quotidien : 1 - Arts de faire",
+          "author": "Michel de Certeau; Luce Giard (éditeur scientifique)",
+          "record_id": "12203",
+          "record_url": "https://bib.cjb.ma/index.php?lvl=notice_display&id=12203",
+          "isbn": "978-2-07-032576-4",
+          "holdings": "One copy: CJB2001712, 306.4 MIC, Livre, Centre Jacque Berque, Accès public; Consultation sur place; Exclu du prêt. Search label Non prêtable. Gallimard 2020.",
+          "evidence_path": "evidence/cjb-detail.html"
+        },
+        {
+          "title": "L'invention du quotidien : 2 - Habiter, cuisiner",
+          "author": "Michel de Certeau; Luce Giard; Pierre Mayol",
+          "record_id": "12204",
+          "record_url": "https://bib.cjb.ma/index.php?lvl=notice_display&id=12204",
+          "isbn": null,
+          "holdings": "Search label Non prêtable; no detail request for this second volume. Gallimard 2022.",
+          "evidence_path": "evidence/cjb-search.html"
+        }
+      ],
+      "robots": {
+        "url": "https://bib.cjb.ma/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T07:57:52.705031+00:00",
+        "evidence_path": "evidence/cjb-robots.json",
+        "decision": "no_published_rules",
+        "note": "HTTP404 robots; bounded anonymous search and one detail only; no reuse licence inferred."
+      },
+      "reader_access": "Official page: students, teachers and researchers; free registration with valid student card/attestation; no document loan service.",
+      "integration": {
+        "existing_adapter": "candidate PMB family adaptation; current app implementation is deployment-specific",
+        "needs": [
+          "PMB site-specific parser",
+          "Fresh GET homepage with in-memory anonymous cookie jar; read hidden CSRF fields then POST same session",
+          "Preserve Consultation sur place and Exclu du prêt separately from catalog presence"
+        ],
+        "blockers": [],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "mar-inau",
+      "name": "Centre de Documentation, Institut National d’Aménagement et d’Urbanisme, Rabat",
+      "recommendation": "reserve",
+      "scope": "One specialist institute library",
+      "size": {
+        "value": 5400,
+        "unit": "ouvrages (reported lower bound)",
+        "date": "undated; observed 2026-11-15",
+        "source_url": "https://inau.ac.ma/centre-de-documentation-fr/",
+        "evidence_path": "evidence/inau-size.html",
+        "quality": "official",
+        "note": "100 periodical titles and 300+ mémoires are separate; not counted as books."
+      },
+      "platform": {
+        "family": "PMB",
+        "name": "PMB",
+        "proof": "PMB footer and PMB Services heading; standard public more_results and notice_display routes. Institutional page still calls Alexandrie a project; live interface is stronger current evidence.",
+        "evidence_path": "evidence/inau-search.html"
+      },
+      "query": {
+        "text": "The green city",
+        "method": "POST",
+        "url": "https://inau.ac.ma/binau/index.php?lvl=more_results&autolevel1=1",
+        "payload": {
+          "look_ALL": "1",
+          "user_query": "The green city"
+        },
+        "checked_at_utc": "2026-11-15T07:58:33.253201+00:00",
+        "http_status": 200,
+        "effective_url": "https://inau.ac.ma/binau/index.php?lvl=more_results&autolevel1=1",
+        "result_count": 110,
+        "count_note": "All-fields token search returns 110 titles; first returned exact title manually verified, not 110 exact editions.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/inau-search.html",
+        "metadata_path": "evidence/inau-search.json"
+      },
+      "books": [
+        {
+          "title": "The green city",
+          "author": "Roger JOHNSON",
+          "record_id": "2473",
+          "record_url": "https://inau.ac.ma/binau/index.php?lvl=notice_display&id=2473",
+          "isbn": null,
+          "holdings": "One copy barcode5621; call710/JOH; support Biblio; Salle de lecture; Urbanisme; Consultation sur place and Disponible. MacMillan Company1979,163p.",
+          "evidence_path": "evidence/inau-detail.html"
+        }
+      ],
+      "robots": {
+        "url": "https://inau.ac.ma/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T07:57:49.845031+00:00",
+        "evidence_path": "evidence/inau-robots.json",
+        "decision": "allowed_path",
+        "note": "Wildcard Allow:/; no crawl delay published. No reuse licence inferred."
+      },
+      "reader_access": "Official page: on-site consultation free to everyone without registration. Home borrowing restricted to INAU teachers, students and staff; periodicals/reference works excluded. This tested copy remains on-site only.",
+      "integration": {
+        "existing_adapter": "candidate PMB family adaptation; current app implementation is deployment-specific",
+        "needs": [
+          "PMB site-specific parser",
+          "Normalize broad token matching without merging editions",
+          "Preserve room-use restriction alongside Disponible"
+        ],
+        "blockers": [],
+        "live_app_tested": false
+      }
+    }
+  ],
+  "blocked_or_unverified": [
+    {
+      "name": "BNRM main site",
+      "url": "https://www.bnrm.ma/robots.txt",
+      "reason": "RobotsHTTP503; no automated catalogue query cleared.",
+      "evidence_path": "evidence/bnrm-robots.json",
+      "http_status": 503,
+      "checked_at_utc": "2026-11-15T07:56:56.826143+00:00"
+    },
+    {
+      "name": "BNRM Encore catalogue",
+      "url": "https://encore.bnrm.ma/robots.txt",
+      "reason": "RobotsHTTP503.",
+      "evidence_path": "evidence/encore-bnrm-robots.json",
+      "http_status": 503,
+      "checked_at_utc": "2026-11-15T07:57:48.065571+00:00"
+    },
+    {
+      "name": "BNRM legacy Chameleon OPAC",
+      "url": "https://opac.bnrm.ma:8000/robots.txt",
+      "reason": "Robots request tunnel403; no TLS bypass.",
+      "evidence_path": "evidence/bnrm-legacy-robots.json",
+      "http_status": null,
+      "checked_at_utc": "2026-11-15T08:01:41.845089+00:00"
+    },
+    {
+      "name": "Catalogue des Bibliothèques du Maroc portal",
+      "url": "https://cbm.bnrm.ma/robots.txt",
+      "reason": "RobotsHTTP503; membership is not verified holdings.",
+      "evidence_path": "evidence/cbm-robots.json",
+      "http_status": 503,
+      "checked_at_utc": "2026-11-15T07:56:56.826938+00:00"
+    },
+    {
+      "name": "CBM federated MUC interface",
+      "url": "http://muc.deepwebaccess.com/mucsearch-fr/",
+      "reason": "Independent officially cited route: robots404; direct desktop route409 Need active session; normal in-memory root initialization200 JavaScript-required shell. No book response.",
+      "evidence_path": "evidence/muc-session-start.json",
+      "http_status": 200,
+      "checked_at_utc": "2026-11-15T08:02:58.707474+00:00"
+    },
+    {
+      "name": "Fondation Abdul-Aziz site",
+      "url": "https://www.fondation.org.ma/robots.txt",
+      "reason": "RobotsHTTP503 connection timeout.",
+      "evidence_path": "evidence/fondation-robots.json",
+      "http_status": 503,
+      "checked_at_utc": "2026-11-15T07:57:49.412630+00:00"
+    },
+    {
+      "name": "Fondation Abdul-Aziz OPAC",
+      "url": "http://opac.fondation.org.ma:8086/robots.txt",
+      "reason": "Observed port8086 route robots timed out; no query.",
+      "evidence_path": "evidence/fondation-opac-robots.json",
+      "http_status": null,
+      "checked_at_utc": "2026-11-15T07:58:50.921244+00:00"
+    },
+    {
+      "name": "Ibn Tofail Koha",
+      "url": "https://catalogue.uit.ac.ma/robots.txt",
+      "reason": "RobotsHTTP503.",
+      "evidence_path": "evidence/uit-robots.json",
+      "http_status": 503,
+      "checked_at_utc": "2026-11-15T07:56:56.827585+00:00"
+    },
+    {
+      "name": "IMIST Koha OPAC",
+      "url": "https://opac.imist.ma/robots.txt",
+      "reason": "RobotsHTTP503; no search; journal/thesis services do not substitute.",
+      "evidence_path": "evidence/opac-imist-robots.json",
+      "http_status": 503,
+      "checked_at_utc": "2026-11-15T07:57:48.063698+00:00"
+    },
+    {
+      "name": "Hassan II university catalogue",
+      "url": "https://biblio.univh2c.ma/robots.txt",
+      "reason": "RobotsHTTP503.",
+      "evidence_path": "evidence/biblio-uh2c-robots.json",
+      "http_status": 503,
+      "checked_at_utc": "2026-11-15T07:57:48.064575+00:00"
+    },
+    {
+      "name": "Al Akhawayn Medad portal",
+      "url": "https://m6l.aui.ma/",
+      "reason": "Robots allows public paths; anonymousHTTP200 returns empty React shell. Bounded linked JS asset inspected, no book query established.",
+      "evidence_path": "evidence/aui-home.json",
+      "http_status": 200,
+      "checked_at_utc": "2026-11-15T07:57:19.540076+00:00"
+    },
+    {
+      "name": "Al Akhawayn legacy libserv",
+      "url": "http://libserv.aui.ma/robots.txt",
+      "reason": "RobotsHTTP503; superseded-system route not a success.",
+      "evidence_path": "evidence/libserv-aui-robots.json",
+      "http_status": 503,
+      "checked_at_utc": "2026-11-15T08:01:42.955384+00:00"
+    },
+    {
+      "name": "IRCAM catalogue",
+      "url": "https://biblio.ircam.ma/robots.txt",
+      "reason": "RobotsHTTP503.",
+      "evidence_path": "evidence/ircam-robots.json",
+      "http_status": 503,
+      "checked_at_utc": "2026-11-15T07:57:49.493337+00:00"
+    },
+    {
+      "name": "IRCAM independently indexed biblio.ma route",
+      "url": "https://ircam.biblio.ma/robots.txt",
+      "reason": "RobotsHTTP502 Cloudflare origin error; stopped.",
+      "evidence_path": "evidence/ircam-alt-robots.json",
+      "http_status": 502,
+      "checked_at_utc": "2026-11-15T07:59:29.144833+00:00"
+    },
+    {
+      "name": "Institut français shared catalogue",
+      "url": "https://mediatheques.if-maroc.org/robots.txt",
+      "reason": "Wildcard Disallow:/; no catalogue request.",
+      "evidence_path": "evidence/if-maroc-robots.json",
+      "http_status": 200,
+      "checked_at_utc": "2026-11-15T07:57:55.344887+00:00"
+    },
+    {
+      "name": "Hassan II mosque adult III catalogue",
+      "url": "https://mamedh.iii.com/robots.txt",
+      "reason": "Wildcard excludes /search,/record=,/iii and others; no search/detail request.",
+      "evidence_path": "evidence/mamedh-robots.json",
+      "http_status": 200,
+      "checked_at_utc": "2026-11-15T07:58:50.920357+00:00"
+    },
+    {
+      "name": "Cadi Ayyad university portal",
+      "url": "https://biblio-univ.uca.ma/catalogue?phrase=physique&field=1",
+      "reason": "Robots404; submitted observed GET phrase=physique&field=1 returned catalogue frame with zero category counters and no records; not a success or evidence of absence.",
+      "evidence_path": "evidence/uca-search.json",
+      "http_status": 200,
+      "checked_at_utc": "2026-11-15T07:58:33.252258+00:00"
+    },
+    {
+      "name": "Ibn Zohr FLSH Agadir / Mohammed Al-Manouni",
+      "url": "https://sigb.flsh-agadir.ac.ma/index.php?lvl=more_results",
+      "reason": "Robots404. Arabic title query مقدمة ابن خلدون returned382-result intermediate form only; ordinary supplied afficher-form POST returned403. No book record response; stopped.",
+      "evidence_path": "evidence/agadir-results.json",
+      "http_status": 403,
+      "checked_at_utc": "2026-11-15T08:01:09.096482+00:00"
+    },
+    {
+      "name": "USMBA FSJES Fès",
+      "url": "https://elearning.fsjes.usmba.ac.ma/robots.txt",
+      "reason": "Separate faculty PMB origin robots503; not covered by successful FLSH Saïs query.",
+      "evidence_path": "evidence/fsjes-fes-robots.json",
+      "http_status": 503,
+      "checked_at_utc": "2026-11-15T07:57:55.987684+00:00"
+    },
+    {
+      "name": "Université Internationale de Rabat old PMB catalogue",
+      "url": "https://vietud.uir.ac.ma/robots.txt",
+      "reason": "Observed catalogue route robots tunnel403; official site alternative also robots503.",
+      "evidence_path": "evidence/uir-robots.json",
+      "http_status": null,
+      "checked_at_utc": "2026-11-15T07:59:26.731884+00:00"
+    },
+    {
+      "name": "Université Mohammed Premier Oujda",
+      "url": "https://www.ump.ma/robots.txt",
+      "reason": "Official origin robots tunnel403.",
+      "evidence_path": "evidence/ump-robots.json",
+      "http_status": null,
+      "checked_at_utc": "2026-11-15T07:59:26.962165+00:00"
+    },
+    {
+      "name": "ENA Rabat documentation centre",
+      "url": "https://cdena.enarabat.ac.ma/robots.txt",
+      "reason": "Official PMB documentation, but catalogue robots tunnel502.",
+      "evidence_path": "evidence/cdena-robots.json",
+      "http_status": null,
+      "checked_at_utc": "2026-11-15T07:57:51.949210+00:00"
+    },
+    {
+      "name": "INPT documentation centre",
+      "url": "https://portaildoc.inpt.ac.ma/robots.txt",
+      "reason": "Official PMB link; robots tunnel403.",
+      "evidence_path": "evidence/inpt-robots.json",
+      "http_status": null,
+      "checked_at_utc": "2026-11-15T07:57:55.177351+00:00"
+    },
+    {
+      "name": "INSAP library",
+      "url": "https://insap.biblio.ma/robots.txt",
+      "reason": "Indexed PMB source shows62,360 notices; no public catalogue request after robots502.",
+      "evidence_path": "evidence/insap-robots.json",
+      "http_status": 502,
+      "checked_at_utc": "2026-11-15T07:58:52.515741+00:00"
+    },
+    {
+      "name": "Grande médiathèque de Tanger IQRAA",
+      "url": "https://iqraa.biblio.ma/robots.txt",
+      "reason": "Independently indexed catalogue; robots502; scale unquantified.",
+      "evidence_path": "evidence/iqraa-robots.json",
+      "http_status": 502,
+      "checked_at_utc": "2026-11-15T07:59:29.019943+00:00"
+    },
+    {
+      "name": "UM6P Learning Center",
+      "url": "https://learningcenter.um6p.ma/robots.txt",
+      "reason": "HTTP200 robots body is explicit Accès Bloqué/Access Denied security page, not a soft404; stopped.",
+      "evidence_path": "evidence/um6p-robots.json",
+      "http_status": 200,
+      "checked_at_utc": "2026-11-15T08:01:41.843323+00:00"
+    },
+    {
+      "name": "UM6P Africa Business School catalogue",
+      "url": "https://abs.biblio.ma/robots.txt",
+      "reason": "Independently indexed PMB catalogue robots502; stopped.",
+      "evidence_path": "evidence/abs-robots.json",
+      "http_status": 502,
+      "checked_at_utc": "2026-11-15T08:01:41.844261+00:00"
+    },
+    {
+      "name": "UM6SS library",
+      "url": "https://biblio.um6ss.ma/catalogue-en-ligne/",
+      "reason": "Old OPAC page404; current official page200 describes printed books at Casablanca but has no usable public catalogue form/record route; electronic access is authenticated MyAthens.",
+      "evidence_path": "evidence/um6ss-current-page.json",
+      "http_status": 200,
+      "checked_at_utc": "2026-11-15T08:00:25.359685+00:00"
+    },
+    {
+      "name": "Ministry of Culture shared catalogue",
+      "url": "http://opac.minculture.gov.ma/uhtbin/cgisirsi.exe/x/x/0/49/",
+      "reason": "Robots404; rootHTTP200 explicitly titled Symphony and points via meta-refresh to public /uhtbin/cgisirsi.exe/x/x/0/49/. Following that observed form route timed out. No returned books.",
+      "evidence_path": "evidence/ministry-search-form.json",
+      "http_status": null,
+      "checked_at_utc": "2026-11-15T08:09:07.455882+00:00"
+    }
+  ],
+  "limitations": [
+    "No national largest-ten ranking established; dated volumes, titles, capacity, documents and space proxies are not comparable.",
+    "Ten selected substantial successes not reached:1 selected and2 specialist reserves;9 selected shortfall.",
+    "Public searches establish bibliographic presence, not visitor admission, home borrowing eligibility, reuse licence or reliable live circulation.",
+    "No app adapter/live app tests, authentication, holds, outreach, TLS/bot bypass or deployment.",
+    "502/503/tunnel failures are observations from this environment on2026-11-15, not proof that libraries are offline or lack a book.",
+    "USMBA Arabic query failed while French query succeeded; Arabic/French/Amazigh identity and encoding need broader validation.",
+    "USMBA homepage has contradictory copy totals on unrelated cards; selected record happens to show1 total/1 available.",
+    "Most institutional size claims are undated or old; none establishes national rank.",
+    "CJB anonymous CSRF field must be reacquired with a fresh in-memory session; ephemeral token values are redacted in retained evidence.",
+    "Discovery JSON files are search-source evidence only; no search-index title is counted as a catalogue success.",
+    "The AUI linked JavaScript evidence is deliberately truncated at1.5MB; no endpoint availability claim derives from it."
+  ],
+  "sources": [
+    {
+      "url": "https://www.bnrm.ma/bnrm/bibliotheque/nos-collections/monographies/monographies-en-libre-acc%C3%A8s.html",
+      "claim": "Reported open-access totals:81,318 grand-public and12,310 researcher monographs as of16June2014; subset, not whole collection or current total. National deposit-library mandate is additional institutional proxy.",
+      "evidence_path": "evidence/discovery-10.json"
+    },
+    {
+      "url": "https://bib.cjb.ma/index.php?id_article=79&lvl=cmspage&pageid=4",
+      "claim": "Specialist Maghreb/Islamic-studies research library and CBM founding partner; institutional/network proxy, current book count not established.",
+      "evidence_path": "evidence/discovery-6.json"
+    },
+    {
+      "url": "https://www.univh2c.ma/sites/default/files/2025-03/Rapport_activite_UH2C_2020-2021_VF_23032023-Small_compressed.pdf",
+      "claim": "2020–2021 activity report p153:more than80,000 documents accessible through catalogue, mixed formats; not80,000 print books. Current university page describes a common university catalogue.",
+      "evidence_path": "evidence/discovery-11.json"
+    },
+    {
+      "url": "https://aui.ma/hubfs/PDFs/LC%20Faculty%20Handbook%20Spring%202023.pdf?hsLang=fr",
+      "claim": "Spring2023 official faculty handbook:99,500 print copies within336,000+ total volumes; print and ebook totals kept separate.",
+      "evidence_path": "evidence/discovery-2.json"
+    },
+    {
+      "url": "https://www.mediatheque-fmh2.ma/",
+      "claim": "Undated live homepage:122,357 multilingual/multiformat documents,860 seats,12,400m²; not a print-book count.",
+      "evidence_path": "evidence/hassan-mosque-home.html"
+    },
+    {
+      "url": "https://www.uit.ac.ma/bibliotheque/",
+      "claim": "Official2023 page says capacity30,000 ouvrages and100 seats; capacity wording is not verified current inventory.",
+      "evidence_path": "evidence/discovery-11.json"
+    },
+    {
+      "url": "https://bibliotheque.imist.ma/index.php/bibliotheque",
+      "claim": "Official current page:4,565.4m² and five thematic library spaces; institutional/space proxy, not book count.",
+      "evidence_path": "evidence/imist-size.html"
+    },
+    {
+      "url": "https://www.ump.ma/fr/formations/bibliotheque-de-luniversite",
+      "claim": "Official undated page:common OPAC references40,000+ ouvrages,300+ serial titles and eight named constituent institutions; count whole network once.",
+      "evidence_path": "evidence/discovery-9.json"
+    },
+    {
+      "url": "https://www.fls.usmba.ac.ma/glb/index.php",
+      "claim": "Undated official live homepage:60,000+ ouvrages/monographies;12,500+ theses/mémoires separate.",
+      "evidence_path": "evidence/usmba-catalog-home.html"
+    },
+    {
+      "url": "https://if-maroc.org/mediatheques/",
+      "claim": "Official undated page:12 city media libraries. Rabat and Fès pages each report30,000+ titles; no extrapolated national total. Culturethèque180,000 digital documents excluded.",
+      "evidence_path": "evidence/discovery-10.json"
+    },
+    {
+      "url": "https://www.cese.ma/media/2024/08/Rapport-Promouvoir-la-lecture.pdf",
+      "claim": "Public-library structure and2016 counts; scope/date differ from HCP2023 statistics.",
+      "evidence_path": "evidence/discovery-8.json"
+    },
+    {
+      "url": "https://www.hcp.ma/file/244142/",
+      "claim": "HCP social indicators reports272 libraries in2023; do not combine with broader historic counts.",
+      "evidence_path": "evidence/discovery-8.json"
+    },
+    {
+      "url": "https://www.cjb.ma/presentation-de-la-bibliotheque/",
+      "claim": "CJB scope,size and on-site-only access.",
+      "evidence_path": "evidence/cjb-size.html"
+    },
+    {
+      "url": "https://inau.ac.ma/centre-de-documentation-fr/",
+      "claim": "INAU size and public on-site access rules.",
+      "evidence_path": "evidence/inau-size.html"
+    },
+    {
+      "url": "https://ena.enarabat.ac.ma/cente-de-documentation/",
+      "claim": "PMB observed live at CJB and INAU; an older PMB interface at FLSH Agadir returns a search summary but follow-through403. Official ENA/INPT pages describe PMB too.",
+      "evidence_path": "evidence/discovery-8.json"
+    },
+    {
+      "url": "https://bibliotheque.imist.ma/",
+      "claim": "IMIST homepage posts searches to /cgi-bin/koha/opac-search.pl; Ibn Tofail indexed official catalogue uses Koha routes.",
+      "evidence_path": "evidence/imist-home.html"
+    },
+    {
+      "url": "https://www.bnrm.ma/bnrm/fr/appels-a-candidature/itemlist/category/25-politique-bibliographique.html",
+      "claim": "BNRM official bibliographic-policy page names Virtua; legacy Chameleon and newer Encore routes exist in cited sources. Current backend not confirmed.",
+      "evidence_path": "evidence/discovery-11.json"
+    },
+    {
+      "url": "https://librarytechnology.org/library/196802",
+      "claim": "Library Technology Guides lists Ministry of Culture shared automation as Symphony (2015), updated2026-11-03. The live root independently identifies Symphony via its title and observed /uhtbin/cgisirsi.exe redirect; public form retrieval timed out.",
+      "evidence_path": "evidence/librarytech-ministry.html"
+    },
+    {
+      "url": "https://librarytechnology.org/library/2093/",
+      "claim": "AUI directory record identifies Medad ILS/Portal from2024; previous Sierra2019 and Millennium2004. Current live portal is a JavaScript application.",
+      "evidence_path": "evidence/librarytech-aui.html"
+    },
+    {
+      "url": "https://www.fls.usmba.ac.ma/glb/index.php",
+      "claim": "FLSH Saïs uses GLB; Hassan II mosque links III web catalogue with explicit search/record exclusions.",
+      "evidence_path": "evidence/usmba-catalog-home.html"
+    },
+    {
+      "url": "https://uir.ac.ma/upload/media/659ecddc95d83682524537.pdf",
+      "claim": "UIR2023–2024 booklet reports20,000+ ouvrages; priority beyond main ten.",
+      "evidence_path": "evidence/discovery-9.json"
+    },
+    {
+      "url": "https://biblio-univ.uca.ma/catalogue",
+      "claim": "Cadi Ayyad multi-faculty selector; not institution-specific holdings.",
+      "evidence_path": "evidence/uca-home.html"
+    },
+    {
+      "url": "https://isti.um6p.ma/wp-content/uploads/2023/01/1-Brochure-Institutionnelle-FR-UM6P.pdf",
+      "claim": "UM6P2023-hosted brochure reports13,000+ ouvrages; no catalog success.",
+      "evidence_path": "evidence/discovery-7.json"
+    }
+  ]
+}

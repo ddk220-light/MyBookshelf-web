@@ -1,0 +1,24 @@
+{
+  "name": "unsm-search-js",
+  "url": "https://sisbiblioteca.unsm.edu.pe/js/search.js?v=AZaXwCWkG6AfGqcIyiu-nSrZlkeA4sL6PcTy6AThNdw",
+  "method": "GET",
+  "payload": null,
+  "checked_at_utc": "2026-11-15T08:17:26.763153+00:00",
+  "user_agent": "MyBookshelfResearch/1.0 (public library catalog compatibility research)",
+  "status": 200,
+  "effective_url": "https://sisbiblioteca.unsm.edu.pe/js/search.js?v=AZaXwCWkG6AfGqcIyiu-nSrZlkeA4sL6PcTy6AThNdw",
+  "evidence_path": "evidence/unsm-search-js.html",
+  "metadata_path": "evidence/unsm-search-js.json",
+  "response_headers": {
+    "Content-Type": "text/javascript",
+    "Content-Length": "1666"
+  },
+  "truncated": false,
+  "bytes": 1666,
+  "sha256": "019697c025a41ba01f1aa708ca2bbe9d2ad9964780e2c2fa3dc4f2e804e135dc",
+  "title": "",
+  "text": "$(() => {\r\n\r\n    $.ajax({\r\n        url: `/bibliotecas/get`.proto().parseURL()\r\n    })\r\n        .done(function (data) {\r\n            data.items.unshift({ id: '-', text: 'Todas' });\r\n\r\n            const $select = $('#search-bar-library');\r\n            $select.empty();\r\n            for (let i = 0; i < data.items.length; i++) {\r\n                $select.append(` ${data.items[i].text} `);\r\n            }\r\n            $select.change();\r\n\r\n            if (libraryDefault) {\r\n                $select.val(libraryDefault).change();\r\n            }\r\n        });\r\n\r\n    if (typeDefault) {\r\n        $(\"#search-bar-type\").val(typeDefault).trigger(\"change\");\r\n    }\r\n    $(\"#search-bar-input\").val(searchDefault);\r\n\r\n    $(\"#search-bar-btn\").on('click', function () {\r\n        const search = $('#search-bar-input').val();\r\n        const type = $('#search-bar-type').val();\r\n        const library = $('#search-bar-library').val();\r\n\r\n        let url = new URL(`${window.location.origin}/catalogo`);\r\n        if (search != null && search !== \"\")\r\n        {\r\n            url.searchParams.append(\"search[0].filter\", type);\r\n            url.searchParams.append(\"search[0].text\", search);\r\n        }\r\n        if (library !== \"-\")\r\n        {\r\n            url.searchParams.append(\"library\", library);\r\n        }\r\n        window.location.href = url.href;\r\n    });\r\n\r\n    const searchInput = document.getElementById('search-bar-input');\r\n    searchInput.addEventListener('keypress', function (event) {\r\n        if (!isTextKeyWithAccentMark(event)) {\r\n            event.preventDefault(); // Bloquea caracteres no permitidos\r\n        }\r\n    });\r\n});",
+  "links": [],
+  "forms": [],
+  "elapsed_seconds": 2.347
+}

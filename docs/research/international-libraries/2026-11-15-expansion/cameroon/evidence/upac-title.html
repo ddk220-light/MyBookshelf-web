@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="author" content="PMB Group" />
+
+	<meta name="keywords" content="OPAC, web, library, opensource, catalog, catalogue, bibliothèque, médiathèque, pmb, phpmybibli" />
+	<meta name="description" content="Catalogue en ligne Université Protestante d'Afrique Centrale (UPAC)." />
+		<meta name="robots" content="all" />
+	<!--IE et son enfer de compatibilit�-->
+	<meta http-equiv='X-UA-Compatible' content='IE=Edge' />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+			
+	<title>Catalogue en ligne Université Protestante d'Afrique Centrale (UPAC)</title>
+	
+	
+	<link rel='stylesheet' type='text/css' href='./styles/common/common.css?1537222988' />
+	<link rel='stylesheet' type='text/css' href='./styles/common/dGrowl.css?1537222988' />
+	<link rel='stylesheet' type='text/css' href='./styles/common/font-awesome.css?1537222988' />
+	<link rel='stylesheet' type='text/css' href='./styles/common/open-sans.css?1537222988' />
+	<link rel='stylesheet' type='text/css' href='./styles/common/record_display.css?1537222988' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/colonnes.css?1537222989' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/gallerie_photos.css?1537222989' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/genbib.css?1537222989' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/liste_bulletins.css?1537222989' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/print.css?1537222989' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/tags.css?1537222989' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/visionneuse.css?1537222989' /><script type='text/javascript'>var opac_style= 'genbib';</script>
+	<!-- css_authentication -->	<link rel='SHORTCUT ICON' href='images/site/favicon.ico' />
+	<script type="text/javascript" src="includes/javascript/drag_n_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/handle_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/popup.js"></script>
+	<script type='text/javascript'>
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName = 
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {  
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i); 
+				    }
+				 }
+				return items;
+			 }
+		}
+		// Fonction a utilisier pour l'encodage des URLs en javascript
+		function encode_URL(data){
+			var docCharSet = document.characterSet ? document.characterSet : document.charset;
+			if(docCharSet == "UTF-8"){
+				return encodeURIComponent(data);
+			}else{
+				return escape(data);
+			}
+		}
+	</script>
+
+<link rel='stylesheet' type='text/css' href='./includes/javascript/dojo/dijit/themes/tundra/tundra.css' />
+<script type='text/javascript'>
+	var dojoConfig = {
+		parseOnLoad: true,
+		locale: 'fr-fr',
+		isDebug: false,
+		usePlainJson: true,
+		packages: [{
+			name: 'pmbBase',
+			location:'../../../..'
+		},{
+			name: 'd3',
+			location:'../../d3'
+		}],
+		deps: ['apps/pmb/MessagesStore', 'dgrowl/dGrowl', 'dojo/ready'],
+		callback:function(MessagesStore, dGrowl, ready){
+			window.pmbDojo = {};
+			pmbDojo.messages = new MessagesStore({url:'./ajax.php?module=ajax&categ=messages', directInit:false});
+			ready(function(){
+				new dGrowl({'channels':[{'name':'info','pos':2},{'name':'error', 'pos':1}]});
+			});
+		
+		},
+	};
+</script>
+<script type='text/javascript' src='./includes/javascript/dojo/dojo/dojo.js'></script>
+<script type='text/javascript'>var opac_show_social_network =0;</script>
+	<script type='text/javascript' src='./includes/javascript/http_request.js'></script>
+	
+</head>
+
+<body onload="window.defaultStatus='PMB : Accès public';"  id="pmbopac">
+<script type='text/javascript'>
+	function findNoticeElement(id){
+		var ul=null;
+		//cas des notices classiques
+		var domNotice = document.getElementById('el'+id+'Child');
+		//notice_display
+		if(!domNotice) domNotice = document.getElementById('notice');
+		if(domNotice){
+			var uls = domNotice.getElementsByTagName('ul');
+			for (var i=0 ; i<uls.length ; i++){
+				if(uls[i].getAttribute('id') == 'onglets_isbd_public'+id){
+					var ul = uls[i];
+					break;
+				}
+			}
+		} else{
+			var li = document.getElementById('onglet_isbd'+id);
+			if(!li) var li = document.getElementById('onglet_public'+id);
+			if(li) var ul = li.parentNode;
+		}
+		return ul;
+	}
+	function show_what(quoi, id) {
+		switch(quoi){
+			case 'EXPL_LOC' :
+				document.getElementById('div_expl_loc' + id).style.display = 'block';
+				document.getElementById('div_expl' + id).style.display = 'none';		
+				document.getElementById('onglet_expl' + id).className = 'isbd_public_inactive';		
+				document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_active';
+				break;
+			case 'EXPL' :
+				document.getElementById('div_expl_loc' + id).style.display = 'none';
+				document.getElementById('div_expl' + id).style.display = 'block';
+				document.getElementById('onglet_expl' + id).className = 'isbd_public_active';
+				document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_inactive';
+				break;
+			default :
+				quoi= quoi.toLowerCase();
+				var ul = findNoticeElement(id);
+				if (ul) {
+					var items  = ul.getElementsByTagName('li');
+					for (var i=0 ; i<items.length ; i++){
+						if(items[i].getAttribute('id')){
+							if(items[i].getAttribute('id') == 'onglet_'+quoi+id){
+								items[i].className = 'isbd_public_active';
+								document.getElementById('div_'+quoi+id).style.display = 'block';
+							}else{
+								if(items[i].className != 'onglet_tags' && items[i].className != 'onglet_avis' && items[i].className != 'onglet_sugg' && items[i].className != 'onglet_basket' && items[i].className != 'onglet_liste_lecture'){
+									items[i].className = 'isbd_public_inactive';	
+									document.getElementById(items[i].getAttribute('id').replace('onglet','div')).style.display = 'none';
+								}
+							}
+						}
+					}			
+				}
+				break;
+		}
+	}
+</script>
+	<script type='text/javascript' src='./includes/javascript/tablist_ajax.js'></script>
+<script type='text/javascript' src='./includes/javascript/tablist.js'></script>
+<script type='text/javascript' src='./includes/javascript/misc.js'></script>
+	<div id='att' style='z-Index:1000'></div>
+	<div id="container"><div id="main"><div id='main_header'><font color="blue"><strong><center><h3>BIBLIOTHEQUE DE L'UNIVERSITE PROTESTANTE D'AFRIQUE CENTRALE (UPAC)</h3></center></strong></font></div><div id="main_hors_footer">
+						
+<script type='text/javascript' src='./includes/javascript/auth_popup.js'></script>	
+<div id="intro_message"><div class="p1"><MARQUEE><p style="color:red">Le Catalogue de la Bibliothèque de l'UPAC en ligne</p></MARQUEE>
+</div><div class="p2"></div></div><div id='navigator'>
+<table width='100%'><tr><td class='navig_actions_last_search' ><a href="index.php?lvl=search_result&get_query=1" class='actions_last_search'><span>Modifier la recherche</span></a></td>
+<td class='navig_actions_history' ><a href="index.php?lvl=search_history" class='actions_history'><span>Historique</span></a></td>
+<td class='navig_actions_first_screen' ><a href="./index.php?lvl=index" class='navig_etageres'><span>Nouvelle recherche</span></a></td>
+</tr></table></div><!-- fermeture de #navigator -->
+<div id='resume_panier' class='empty'></div><script type='text/javascript' src='./includes/javascript/misc.js'></script><script type='text/javascript' src='./includes/javascript/surligner.js.php'></script>	<div id="resultatrech"><h3 class='searchResult-title'>Résultat de la recherche</h3>
+
+		<div id="resultatrech_container">
+		<div id="resultatrech_see"><h3 class='searchResult-search'><span class='searchResult-equation'><span class='search-found'>3060  titres trouvés pour la recherche 'Introduction au Nouveau Testament'</span></span>&nbsp;&nbsp;&nbsp;<img border='0' align='center' src="./images/text_horizontalrule.png" onMouseOver="this.style.cursor='pointer'" alt='Surligner les mots recherchés' title='Surligner les mots recherchés' onClick='document.form_values.surligne.value=1;document.form_values.submit();'/></h3>
+			</div>
+			<div id="resultatrech_liste"><span class="expandAll"><a href='javascript:expandAll_ajax(1);'><img class='img_plusplus' src='./images/expand_all.gif' border='0' id='expandall'></a></span><span class="espaceResultSearch">&nbsp;</span><span class="collapseAll"><a href='javascript:collapseAll()'><img class='img_moinsmoins' src='./images/collapse_all.gif' border='0' id='collapseall'></a></span><span class='print_search_result'><span class="printSearchResult">
+<a href='#' onClick="openPopUp('./print.php?lvl=search&current_search=0','print',500,600,-2,-2,'scrollbars=yes,menubar=0'); w.focus(); return false;" title="Imprimer la page de recherche courante...">
+	<img src='./images/print.gif' border='0' align='bottom' alt="Imprimer la page de recherche courante..."/>
+</a>
+</span></span><span class="espaceResultSearch">&nbsp;</span><span class="espaceResultSearch">&nbsp;&nbsp;</span><span class="affiner_recherche"><a href='./index.php?search_type_asked=extended_search&mode_aff=aff_simple_search' title='Affiner la recherche'>Affiner la recherche</a></span><span class="espaceResultSearch">&nbsp;&nbsp;</span><span class="short_url"><a target='_blank' href='./s.php?h=cc3d304a434d99891b6b991f56c1e3b4' title='Générer le flux rss de la recherche'>Générer le flux rss de la recherche</a></span>
+					<script type='text/javascript'>
+						require(['dojo/on', 'dojo/topic', 'apps/pmb/sharelink/SharePopup'], function(on, topic, SharePopup){
+						window.copy_shorturl_to_clipboard = function() {
+								new SharePopup('./s.php?h=0c860b3177f4bf036bf73935f59a2f08');
+							}					
+						});
+					</script><span class="espaceResultSearch">&nbsp;&nbsp;</span><span class="short_url_permalink"><a href='#' onclick='copy_shorturl_to_clipboard(); return false;' title='Partager le résultat de cette recherche'>Partager le résultat de cette recherche</a></span><span class="espaceResultSearch">&nbsp;&nbsp;</span><span class="search_bt_external"><a href='./index.php?search_type_asked=external_search&mode_aff=aff_simple_search&external_type=simple' title='Interroger des sources externes'>Interroger des sources externes</a></span><blockquote>
+			<div id="el80784Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el80784Img" title="détail" border="0" onClick="expandBase('el80784', true);  return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_80784"><span class="statutnot1" ></span><span  notice='80784'  class='header_title'>Introduction au Nouveau Testament: son histoire, son &eacute;criture, sa th&eacute;ologie</span><span class='header_authors'> / <a href='index.php?lvl=author_see&id=3015'>MARGUERAT, Daniel</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Introduction%20au%20Nouveau%20Testament%3A%20son%20histoire%2C%20son%20%26eacute%3Bcriture%2C%20sa%20th%26eacute%3Bologie&amp;rft.title=Introduction%20au%20Nouveau%20Testament%3A%20son%20histoire%2C%20son%20%26eacute%3Bcriture%2C%20sa%20th%26eacute%3Bologie&amp;rft.tpages=547%20p&amp;rft.date=2008&rft_id=&amp;rft.series=Le%20Monde%20de%20la%20Bible%20Nl41&amp;rft.pub=LABOR%20ET%20FIDES&rft.edition=4%26egrave%3B%20%26eacute%3Bdition%20revue%20et%20augment%26eacute%3Be&amp;rft.aulast=MARGUERAT%2C%20Daniel'></span></span>
+	    		<br />
+				</div>
+				<div id="el80784Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='a60099948c3a91103a7ec04ef534fcdd' datetime='1794731699'><table width='100%'><tr><td>
+		<ul id='onglets_isbd_public80784' class='onglets_isbd_public'>
+	  			<li id='onglet_public80784' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '80784'); return false;">Public</a></li>
+				<li id='onglet_isbd80784' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '80784'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public80784' style='display:block;'><table><tr class='tr_title'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>Introduction au Nouveau Testament: son histoire, son &eacute;criture, sa th&eacute;ologie</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texte imprimé</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=3015' >MARGUERAT, Daniel</a></span></td>
+				</tr><tr class='tr_mention'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mention d'édition :</span></td>
+					<td class='public_line_value'><span class='public_mention'>4&egrave; &eacute;dition revue et augment&eacute;e</span></td>
+				</tr><tr class='tr_ed1'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=18106' >LABOR ET FIDES</a></span></td>
+				</tr><tr class='tr_year'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_year'>2008</span></td>
+				</tr><tr class='tr_coll'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Collection : </span></td>
+					<td class='public_line_value'><span class='public_coll'><a href='./index.php?lvl=coll_see&id=14090' >Le Monde de la Bible Nl41</a> </span></td>
+				</tr><tr class='tr_npages'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>547 p</span></td>
+				</tr><tr class='tr_size'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Format : </span></td>
+					<td class='public_line_value'><span class='public_size'>22,5cm</span></td>
+				</tr><tr class='tr_langues'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>)</span></td>
+				</tr><tr class='tr_keywords'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=INTRODUCTION+AU+NOUVEAU+TESTAMENT&tags=ok' >INTRODUCTION AU NOUVEAU TESTAMENT</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=TRADITION+DE+JESUS&tags=ok' >TRADITION DE JESUS</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=EVANGILES+SYNOPTIQUES&tags=ok' >EVANGILES SYNOPTIQUES</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=ACTES+DES+APOTRES&tags=ok' >ACTES DES APOTRES</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=LITTERATURE+DE+PAUL&tags=ok' >LITTERATURE DE PAUL</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=EPITRES&tags=ok' >EPITRES</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=TRADITION+JOHANNIQUE&tags=ok' >TRADITION JOHANNIQUE</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=EPITRES+CATHOLIQUES&tags=ok' >EPITRES CATHOLIQUES</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=HISTOIRE+DU+CANON&tags=ok' >HISTOIRE DU CANON</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=CRITIQUE+TEXTUELLE&tags=ok' >CRITIQUE TEXTUELLE</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=THEOLOGIE&tags=ok' >THEOLOGIE</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=HISTOIRE+ET+ECRITURE&tags=ok' >HISTOIRE ET ECRITURE</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Nouveau+Testament+NT&tags=ok' >Nouveau Testament NT</a></span></td>
+				</tr><tr class='tr_contenu'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Note de contenu&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_contenu'>225.01 M337</span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd80784' style='display:none;'>Introduction au Nouveau Testament: son histoire, son &eacute;criture, sa th&eacute;ologie [texte imprimé] / <a href='./index.php?lvl=author_see&id=3015' >MARGUERAT, Daniel</a> &nbsp;. -&nbsp; 4&egrave; &eacute;dition revue et augment&eacute;e&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=18106' >[S.l.] : LABOR ET FIDES</a>, 2008&nbsp;.&nbsp;-&nbsp;547 p&nbsp;; 22,5cm.&nbsp;-&nbsp;(<a href='./index.php?lvl=coll_see&id=14090' >Le Monde de la Bible Nl41</a>) .<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr class='tr_keywords'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=INTRODUCTION+AU+NOUVEAU+TESTAMENT&tags=ok' >INTRODUCTION AU NOUVEAU TESTAMENT</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=TRADITION+DE+JESUS&tags=ok' >TRADITION DE JESUS</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=EVANGILES+SYNOPTIQUES&tags=ok' >EVANGILES SYNOPTIQUES</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=ACTES+DES+APOTRES&tags=ok' >ACTES DES APOTRES</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=LITTERATURE+DE+PAUL&tags=ok' >LITTERATURE DE PAUL</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=EPITRES&tags=ok' >EPITRES</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=TRADITION+JOHANNIQUE&tags=ok' >TRADITION JOHANNIQUE</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=EPITRES+CATHOLIQUES&tags=ok' >EPITRES CATHOLIQUES</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=HISTOIRE+DU+CANON&tags=ok' >HISTOIRE DU CANON</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=CRITIQUE+TEXTUELLE&tags=ok' >CRITIQUE TEXTUELLE</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=THEOLOGIE&tags=ok' >THEOLOGIE</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=HISTOIRE+ET+ECRITURE&tags=ok' >HISTOIRE ET ECRITURE</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Nouveau+Testament+NT&tags=ok' >Nouveau Testament NT</a></span></td>
+				</tr><tr class='tr_contenu'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Note de contenu&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_contenu'>225.01 M337</span></td>
+				</tr></table></div></td></tr></table>
+					
+<h3><span id='titre_exemplaires'>Exemplaires</span></h3>
+<table cellpadding='2' class='exemplaires' width='100%'>
+<tr class='thead'><th class='expl_header_expl_cb'>Code-barres</th><th class='expl_header_expl_cote'>Cote</th><th class='expl_header_tdoc_libelle'>Support</th><th class='expl_header_location_libelle'>Localisation</th><th class='expl_header_section_libelle'>Section</th><th class='expl_header_statut'>Disponibilité</th></tr><tr class=even><td colspan='6'>aucun exemplaire</td></tr>
+</table></div>
+			<div id="el80854Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el80854Img" title="détail" border="0" onClick="expandBase('el80854', true);  return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_80854"><span class="statutnot1" ></span><span  notice='80854'  class='header_title'>Introduction au Nouveau Testament: son histoire, son &eacute;criture, sa th&eacute;ologie</span><span class='header_authors'> / <a href='index.php?lvl=author_see&id=3015'>MARGUERAT, Daniel</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Introduction%20au%20Nouveau%20Testament%3A%20son%20histoire%2C%20son%20%26eacute%3Bcriture%2C%20sa%20th%26eacute%3Bologie&amp;rft.title=Introduction%20au%20Nouveau%20Testament%3A%20son%20histoire%2C%20son%20%26eacute%3Bcriture%2C%20sa%20th%26eacute%3Bologie&amp;rft.tpages=511%20p&amp;rft.date=2001&rft_id=&amp;rft.series=Le%20Monde%20de%20la%20Bible%20Nl41&amp;rft.pub=LABOR%20ET%20FIDES&rft.edition=2%26egrave%3B%20%26eacute%3Bdition%20revue%20et%20augment%26eacute%3Be&amp;rft.aulast=MARGUERAT%2C%20Daniel'></span></span>
+	    		<br />
+				</div>
+				<div id="el80854Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='066e31a2c0b30f81a6d586d080bf0600' datetime='1794731699'><table width='100%'><tr><td>
+		<ul id='onglets_isbd_public80854' class='onglets_isbd_public'>
+	  			<li id='onglet_public80854' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '80854'); return false;">Public</a></li>
+				<li id='onglet_isbd80854' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '80854'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public80854' style='display:block;'><table><tr class='tr_title'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>Introduction au Nouveau Testament: son histoire, son &eacute;criture, sa th&eacute;ologie</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texte imprimé</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=3015' >MARGUERAT, Daniel</a></span></td>
+				</tr><tr class='tr_mention'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mention d'édition :</span></td>
+					<td class='public_line_value'><span class='public_mention'>2&egrave; &eacute;dition revue et augment&eacute;e</span></td>
+				</tr><tr class='tr_ed1'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=18106' >LABOR ET FIDES</a></span></td>
+				</tr><tr class='tr_year'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_year'>2001</span></td>
+				</tr><tr class='tr_coll'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Collection : </span></td>
+					<td class='public_line_value'><span class='public_coll'><a href='./index.php?lvl=coll_see&id=14090' >Le Monde de la Bible Nl41</a> </span></td>
+				</tr><tr class='tr_npages'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>511 p</span></td>
+				</tr><tr class='tr_size'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Format : </span></td>
+					<td class='public_line_value'><span class='public_size'>22,5cm</span></td>
+				</tr><tr class='tr_langues'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>)</span></td>
+				</tr><tr class='tr_keywords'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=INTRODUCTION+AU+NOUVEAU+TESTAMENT&tags=ok' >INTRODUCTION AU NOUVEAU TESTAMENT</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=TRADITION+DE+JESUS&tags=ok' >TRADITION DE JESUS</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=EVANGILES+SYNOPTIQUES&tags=ok' >EVANGILES SYNOPTIQUES</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=ACTES+DES+APOTRES&tags=ok' >ACTES DES APOTRES</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=LITTERATURE+DE+PAUL&tags=ok' >LITTERATURE DE PAUL</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=EPITRES&tags=ok' >EPITRES</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=TRADITION+JOHANNIQUE&tags=ok' >TRADITION JOHANNIQUE</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=EPITRES+CATHOLIQUES&tags=ok' >EPITRES CATHOLIQUES</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=HISTOIRE+DU+CANON&tags=ok' >HISTOIRE DU CANON</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=CRITIQUE+TEXTUELLE&tags=ok' >CRITIQUE TEXTUELLE</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=THEOLOGIE&tags=ok' >THEOLOGIE</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=HISTOIRE+ET+ECRITURE&tags=ok' >HISTOIRE ET ECRITURE</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Nouveau+Testament+NT&tags=ok' >Nouveau Testament NT</a></span></td>
+				</tr><tr class='tr_contenu'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Note de contenu&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_contenu'>225.01 M337</span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd80854' style='display:none;'>Introduction au Nouveau Testament: son histoire, son &eacute;criture, sa th&eacute;ologie [texte imprimé] / <a href='./index.php?lvl=author_see&id=3015' >MARGUERAT, Daniel</a> &nbsp;. -&nbsp; 2&egrave; &eacute;dition revue et augment&eacute;e&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=18106' >[S.l.] : LABOR ET FIDES</a>, 2001&nbsp;.&nbsp;-&nbsp;511 p&nbsp;; 22,5cm.&nbsp;-&nbsp;(<a href='./index.php?lvl=coll_see&id=14090' >Le Monde de la Bible Nl41</a>) .<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr class='tr_keywords'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=INTRODUCTION+AU+NOUVEAU+TESTAMENT&tags=ok' >INTRODUCTION AU NOUVEAU TESTAMENT</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=TRADITION+DE+JESUS&tags=ok' >TRADITION DE JESUS</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=EVANGILES+SYNOPTIQUES&tags=ok' >EVANGILES SYNOPTIQUES</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=ACTES+DES+APOTRES&tags=ok' >ACTES DES APOTRES</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=LITTERATURE+DE+PAUL&tags=ok' >LITTERATURE DE PAUL</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=EPITRES&tags=ok' >EPITRES</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=TRADITION+JOHANNIQUE&tags=ok' >TRADITION JOHANNIQUE</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=EPITRES+CATHOLIQUES&tags=ok' >EPITRES CATHOLIQUES</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=HISTOIRE+DU+CANON&tags=ok' >HISTOIRE DU CANON</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=CRITIQUE+TEXTUELLE&tags=ok' >CRITIQUE TEXTUELLE</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=THEOLOGIE&tags=ok' >THEOLOGIE</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=HISTOIRE+ET+ECRITURE&tags=ok' >HISTOIRE ET ECRITURE</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Nouveau+Testament+NT&tags=ok' >Nouveau Testament NT</a></span></td>
+				</tr><tr class='tr_contenu'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Note de contenu&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_contenu'>225.01 M337</span></td>
+				</tr></table></div></td></tr></table>
+					
+<h3><span id='titre_exemplaires'>Exemplaires</span></h3>
+<table cellpadding='2' class='exemplaires' width='100%'>
+<tr class='thead'><th class='expl_header_expl_cb'>Code-barres</th><th class='expl_header_expl_cote'>Cote</th><th class='expl_header_tdoc_libelle'>Support</th><th class='expl_header_location_libelle'>Localisation</th><th class='expl_header_section_libelle'>Section</th><th class='expl_header_statut'>Disponibilité</th></tr><tr class=even><td colspan='6'>aucun exemplaire</td></tr>
+</table></div>
+			<div id="el70714Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el70714Img" title="détail" border="0" onClick="expandBase('el70714', true);  return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_70714"><span class="statutnot1" ></span><span  notice='70714'  class='header_title'>Introduction au Nouveau Testament</span><span class='header_authors'> / <a href='index.php?lvl=author_see&id=13940'>Jay, Bernard</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Introduction%20au%20Nouveau%20Testament&amp;rft.title=Introduction%20au%20Nouveau%20Testament&amp;rft.tpages=199%20P.&amp;rft.date=1978&rft_id=&amp;rft.series=The%C2%81ologie&amp;rft.pub=CLE&amp;rft.aulast=Jay%2C%20Bernard'></span></span>
+	    		<br />
+				</div>
+				<div id="el70714Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='27637e53025466649996622ac094f2b4' datetime='1794731700'><table width='100%'><tr><td>
+		<ul id='onglets_isbd_public70714' class='onglets_isbd_public'>
+	  			<li id='onglet_public70714' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '70714'); return false;">Public</a></li>
+				<li id='onglet_isbd70714' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '70714'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public70714' style='display:block;'><table><tr class='tr_title'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>Introduction au Nouveau Testament</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texte imprimé</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=13940' >Jay, Bernard</a></span></td>
+				</tr><tr class='tr_ed1'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=17999' >CLE</a></span></td>
+				</tr><tr class='tr_year'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_year'>1978</span></td>
+				</tr><tr class='tr_coll'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Collection : </span></td>
+					<td class='public_line_value'><span class='public_coll'><a href='./index.php?lvl=coll_see&id=11298' >Theologie</a> </span></td>
+				</tr><tr class='tr_npages'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>199 P.</span></td>
+				</tr><tr class='tr_size'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Format : </span></td>
+					<td class='public_line_value'><span class='public_size'>20,5 Cm</span></td>
+				</tr><tr class='tr_ngen'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Note générale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_ngen'>4 exemplaires</span></td>
+				</tr><tr class='tr_langues'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>)</span></td>
+				</tr><tr class='tr_keywords'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=NOUVEAU+TESTAMENT&tags=ok' >NOUVEAU TESTAMENT</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=INTRODUCTION&tags=ok' >INTRODUCTION</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=NOUVEAU+TESTAMENT+%28INTRODUCTION%29&tags=ok' >NOUVEAU TESTAMENT (INTRODUCTION)</a></span></td>
+				</tr><tr class='tr_contenu'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Note de contenu&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_contenu'>225.01 J33</span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd70714' style='display:none;'>Introduction au Nouveau Testament [texte imprimé] / <a href='./index.php?lvl=author_see&id=13940' >Jay, Bernard</a>&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=17999' >[S.l.] : CLE</a>, 1978&nbsp;.&nbsp;-&nbsp;199 P.&nbsp;; 20,5 Cm.&nbsp;-&nbsp;(<a href='./index.php?lvl=coll_see&id=11298' >Theologie</a>) .<br />4 exemplaires<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr class='tr_keywords'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=NOUVEAU+TESTAMENT&tags=ok' >NOUVEAU TESTAMENT</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=INTRODUCTION&tags=ok' >INTRODUCTION</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=NOUVEAU+TESTAMENT+%28INTRODUCTION%29&tags=ok' >NOUVEAU TESTAMENT (INTRODUCTION)</a></span></td>
+				</tr><tr class='tr_contenu'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Note de contenu&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_contenu'>225.01 J33</span></td>
+				</tr></table></div></td></tr></table>
+					
+<h3><span id='titre_exemplaires'>Exemplaires</span></h3>
+<table cellpadding='2' class='exemplaires' width='100%'>
+<tr class='thead'><th class='expl_header_expl_cb'>Code-barres</th><th class='expl_header_expl_cote'>Cote</th><th class='expl_header_tdoc_libelle'>Support</th><th class='expl_header_location_libelle'>Localisation</th><th class='expl_header_section_libelle'>Section</th><th class='expl_header_statut'>Disponibilité</th></tr><tr class=even><td colspan='6'>aucun exemplaire</td></tr>
+</table></div>
+			<div id="el70693Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el70693Img" title="détail" border="0" onClick="expandBase('el70693', true);  return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_70693"><span class="statutnot1" ></span><span  notice='70693'  class='header_title'>Introduction au Nouveau Testament. Histoire litteraire et Theologique</span><span class='header_authors'> / <a href='index.php?lvl=author_see&id=13929'>Shelkle, Ch. H.</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Introduction%20au%20Nouveau%20Testament.%20Histoire%20litte%C2%81raire%20et%20The%C2%81ologique&amp;rft.title=Introduction%20au%20Nouveau%20Testament.%20Histoire%20litte%C2%81raire%20et%20The%C2%81ologique&amp;rft.tpages=334%20P.&amp;rft.date=1965&rft_id=&amp;rft.pub=Salvator&amp;rft.aulast=Shelkle%2C%20Ch.%20H.'></span></span>
+	    		<br />
+				</div>
+				<div id="el70693Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='fd56b724db27fc5c871b6c3e3bf02312' datetime='1794731700'><table width='100%'><tr><td>
+		<ul id='onglets_isbd_public70693' class='onglets_isbd_public'>
+	  			<li id='onglet_public70693' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '70693'); return false;">Public</a></li>
+				<li id='onglet_isbd70693' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '70693'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public70693' style='display:block;'><table><tr class='tr_title'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>Introduction au Nouveau Testament. Histoire litteraire et Theologique</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texte imprimé</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=13929' >Shelkle, Ch. H.</a></span></td>
+				</tr><tr class='tr_ed1'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=19279' >Salvator</a></span></td>
+				</tr><tr class='tr_year'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_year'>1965</span></td>
+				</tr><tr class='tr_npages'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>334 P.</span></td>
+				</tr><tr class='tr_size'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Format : </span></td>
+					<td class='public_line_value'><span class='public_size'>20 Cm</span></td>
+				</tr><tr class='tr_ngen'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Note générale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_ngen'>Traduit par Marccel, Grandclaudon. Bibliographie P.319</span></td>
+				</tr><tr class='tr_langues'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>)</span></td>
+				</tr><tr class='tr_keywords'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=EXEGESE&tags=ok' >EXEGESE</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=NOUVEAU+TESTAMENT&tags=ok' >NOUVEAU TESTAMENT</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=NOUVEAU+TESTAMENT&tags=ok' >NOUVEAU TESTAMENT</a></span></td>
+				</tr><tr class='tr_contenu'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Note de contenu&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_contenu'>225  Sch26</span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd70693' style='display:none;'>Introduction au Nouveau Testament. Histoire litteraire et Theologique [texte imprimé] / <a href='./index.php?lvl=author_see&id=13929' >Shelkle, Ch. H.</a>&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=19279' >[S.l.] : Salvator</a>, 1965&nbsp;.&nbsp;-&nbsp;334 P.&nbsp;; 20 Cm.<br />Traduit par Marccel, Grandclaudon. Bibliographie P.319<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr class='tr_keywords'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=EXEGESE&tags=ok' >EXEGESE</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=NOUVEAU+TESTAMENT&tags=ok' >NOUVEAU TESTAMENT</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=NOUVEAU+TESTAMENT&tags=ok' >NOUVEAU TESTAMENT</a></span></td>
+				</tr><tr class='tr_contenu'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Note de contenu&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_contenu'>225  Sch26</span></td>
+				</tr></table></div></td></tr></table>
+					
+<h3><span id='titre_exemplaires'>Exemplaires</span></h3>
+<table cellpadding='2' class='exemplaires' width='100%'>
+<tr class='thead'><th class='expl_header_expl_cb'>Code-barres</th><th class='expl_header_expl_cote'>Cote</th><th class='expl_header_tdoc_libelle'>Support</th><th class='expl_header_location_libelle'>Localisation</th><th class='expl_header_section_libelle'>Section</th><th class='expl_header_statut'>Disponibilité</th></tr><tr class=even><td colspan='6'>aucun exemplaire</td></tr>
+</table></div>
+			<div id="el68204Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el68204Img" title="détail" border="0" onClick="expandBase('el68204', true);  return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_68204"><span class="statutnot1" ></span><span  notice='68204'  class='header_title'>Introduction au Nouveau Testament : les lettres de Paul</span><span class='header_authors'> / <a href='index.php?lvl=author_see&id=3182'>KUEN, Alfred</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Introduction%20au%20Nouveau%20Testament%20%3A%20les%20lettres%20de%20Paul&amp;rft.title=Introduction%20au%20Nouveau%20Testament%20%3A%20les%20lettres%20de%20Paul&amp;rft.tpages=447%20p.&amp;rft.date=1982&rft_id=&amp;rft.pub=Emma%C2%81s&amp;rft.aulast=KUEN%2C%20Alfred'></span></span>
+	    		<br />
+				</div>
+				<div id="el68204Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='74b7a89713f813dabaacf37903b2f878' datetime='1794731700'><table width='100%'><tr><td>
+		<ul id='onglets_isbd_public68204' class='onglets_isbd_public'>
+	  			<li id='onglet_public68204' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '68204'); return false;">Public</a></li>
+				<li id='onglet_isbd68204' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '68204'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public68204' style='display:block;'><table><tr class='tr_title'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>Introduction au Nouveau Testament : les lettres de Paul</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texte imprimé</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=3182' >KUEN, Alfred</a></span></td>
+				</tr><tr class='tr_ed1'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=18423' >Emmas</a></span></td>
+				</tr><tr class='tr_year'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_year'>1982</span></td>
+				</tr><tr class='tr_npages'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>447 p.</span></td>
+				</tr><tr class='tr_langues'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>)</span></td>
+				</tr><tr class='tr_keywords'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=NOUVEAU+TESTAMENT&tags=ok' >NOUVEAU TESTAMENT</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=NITRODUCTION&tags=ok' >NITRODUCTION</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=PAUL+%28VIE%29&tags=ok' >PAUL (VIE)</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Paul+%28vie+et+%26eacute&tags=ok' >Paul (vie et &eacute</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=p%26icirc&tags=ok' >p&icirc</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=tres%29&tags=ok' >tres)</a></span></td>
+				</tr><tr class='tr_contenu'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Note de contenu&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_contenu'>227.1 K953</span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd68204' style='display:none;'>Introduction au Nouveau Testament : les lettres de Paul [texte imprimé] / <a href='./index.php?lvl=author_see&id=3182' >KUEN, Alfred</a>&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=18423' >[S.l.] : Emmas</a>, 1982&nbsp;.&nbsp;-&nbsp;447 p.<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr class='tr_keywords'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=NOUVEAU+TESTAMENT&tags=ok' >NOUVEAU TESTAMENT</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=NITRODUCTION&tags=ok' >NITRODUCTION</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=PAUL+%28VIE%29&tags=ok' >PAUL (VIE)</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Paul+%28vie+et+%26eacute&tags=ok' >Paul (vie et &eacute</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=p%26icirc&tags=ok' >p&icirc</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=tres%29&tags=ok' >tres)</a></span></td>
+				</tr><tr class='tr_contenu'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Note de contenu&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_contenu'>227.1 K953</span></td>
+				</tr></table></div></td></tr></table>
+					
+<h3><span id='titre_exemplaires'>Exemplaires</span></h3>
+<table cellpadding='2' class='exemplaires' width='100%'>
+<tr class='thead'><th class='expl_header_expl_cb'>Code-barres</th><th class='expl_header_expl_cote'>Cote</th><th class='expl_header_tdoc_libelle'>Support</th><th class='expl_header_location_libelle'>Localisation</th><th class='expl_header_section_libelle'>Section</th><th class='expl_header_statut'>Disponibilité</th></tr><tr class=even><td colspan='6'>aucun exemplaire</td></tr>
+</table></div>
+				<div id="el70798Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el70798Img" title="détail" border="0" param='a%3A11%3A%7Bs%3A2%3A%22id%22%3Bi%3A70798%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A14%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A68%3A%22.%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_concept%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%3Bs%3A19%3A%22lien_rech_authperso%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3Bs%3A5%3A%22token%22%3Bs%3A32%3A%228c61485b06c0ad440e5e2f24d339b695%22%3Bs%3A8%3A%22datetime%22%3Bi%3A1794731700%3B%7D' onClick="expandBase_ajax('el70798', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="./images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_70798"><span class="statutnot1" ></span><span  notice='70798'  class='header_title'>Ethique du Nouveau Testament, introduction aux problemes</span><span class='header_authors'> / <a href='index.php?lvl=author_see&id=13999'>Wendland, H.D.</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Ethique%20du%20Nouveau%20Testament%2C%20introduction%20aux%20proble%C2%80mes&amp;rft.title=Ethique%20du%20Nouveau%20Testament%2C%20introduction%20aux%20proble%C2%80mes&amp;rft.tpages=162%20P.&amp;rft.date=1972&rft_id=&amp;rft.series=Nouvelle%20se%C2%81rie%20the%C2%81ologique%20%2C%2026&amp;rft.pub=LABOR%20ET%20FIDES&amp;rft.aulast=Wendland%2C%20H.D.'></span></span>
+		    	<br />
+				</div>
+				<div id="el70798Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="./index.php?lvl=notice_display&id=70798" style="display:none;">Permalink</a>
+			
+		
+				<div id="el75834Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el75834Img" title="détail" border="0" param='a%3A11%3A%7Bs%3A2%3A%22id%22%3Bi%3A75834%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A14%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A68%3A%22.%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_concept%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%3Bs%3A19%3A%22lien_rech_authperso%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3Bs%3A5%3A%22token%22%3Bs%3A32%3A%228c9eefc913739763b14e72240346b227%22%3Bs%3A8%3A%22datetime%22%3Bi%3A1794731700%3B%7D' onClick="expandBase_ajax('el75834', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="./images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_75834"><span class="statutnot1" ></span><span  notice='75834'  class='header_title'>Guide compact de la foi chr&eacute;tienne : une introduction  la Bible, l'Ancien Testament, J&eacute;sus de Nazareth, le Nouveau Testament, l'histoire de l'Eglise, les principales doctrines chr&eacute;tiennes les autres religions, la pri&egrave;re et l'&eacute;vang&eacute;lisation, un christianisme vivant</span><span class='header_authors'> / <a href='index.php?lvl=author_see&id=3747'>SCHWARZ, John</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Guide%20compact%20de%20la%20foi%20chr%26eacute%3Btienne%20%3A%20une%20introduction%20%C2%85%20la%20Bible%2C%20l%27Ancien%20Testament%2C%20J%26eacute%3Bsus%20de%20Nazareth%2C%20le%20Nouveau%20Testament%2C%20l%27histoire%20de%20l%27Eglise%2C%20les%20principales%20doctrines%20chr%26eacute%3Btiennes%20les%20autres%20religions%2C%20la%20pri%26egrave%3Bre%20et%20l%27%26eacute%3Bvang%26eacute%3Blisation%2C%20un%20christianisme%20vivant&amp;rft.title=Guide%20compact%20de%20la%20foi%20chr%26eacute%3Btienne%20%3A%20une%20introduction%20%C2%85%20la%20Bible%2C%20l%27Ancien%20Testament%2C%20J%26eacute%3Bsus%20de%20Nazareth%2C%20le%20Nouveau%20Testament%2C%20l%27histoire%20de%20l%27Eglise%2C%20les%20principales%20doctrines%20chr%26eacute%3Btiennes%20les%20autres%20religions%2C%20la%20pri%26egrave%3Bre%20et%20l%27%26eacute%3Bvang%26eacute%3Blisation%2C%20un%20christianisme%20vivant&amp;rft.tpages=298%20p.&amp;rft.date=2003&rft_id=&amp;rft.pub=Emma%C2%81s&amp;rft.aulast=SCHWARZ%2C%20John'></span></span>
+		    	<br />
+				</div>
+				<div id="el75834Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="./index.php?lvl=notice_display&id=75834" style="display:none;">Permalink</a>
+			
+		
+				<div id="el80182Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el80182Img" title="détail" border="0" param='a%3A11%3A%7Bs%3A2%3A%22id%22%3Bi%3A80182%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A14%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A68%3A%22.%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_concept%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%3Bs%3A19%3A%22lien_rech_authperso%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3Bs%3A5%3A%22token%22%3Bs%3A32%3A%22d5b9abe0c71b6616d5860fe33f98847c%22%3Bs%3A8%3A%22datetime%22%3Bi%3A1794731700%3B%7D' onClick="expandBase_ajax('el80182', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="./images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_80182"><span class="statutnot1" ></span><span  notice='80182'  class='header_title'>Introduction  la Bible. T.2 : Nouveau Testament</span><span class='header_authors'> / <a href='index.php?lvl=author_see&id=24410'>ROBERT, A.</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Introduction%20%C2%85%20la%20Bible.%20T.2%20%3A%20Nouveau%20Testament&amp;rft.title=Introduction%20%C2%85%20la%20Bible.%20T.2%20%3A%20Nouveau%20Testament&amp;rft.tpages=936%20p.&amp;rft.date=1959&rft_id=&amp;rft.pub=Descl%26eacute%3Be&amp;rft.aulast=ROBERT%2C%20A.'></span></span>
+		    	<br />
+				</div>
+				<div id="el80182Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="./index.php?lvl=notice_display&id=80182" style="display:none;">Permalink</a>
+			
+		
+				<div id="el70701Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el70701Img" title="détail" border="0" param='a%3A11%3A%7Bs%3A2%3A%22id%22%3Bi%3A70701%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A14%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A68%3A%22.%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_concept%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%3Bs%3A19%3A%22lien_rech_authperso%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3Bs%3A5%3A%22token%22%3Bs%3A32%3A%22a7171e66a7816343220df6091db02328%22%3Bs%3A8%3A%22datetime%22%3Bi%3A1794731700%3B%7D' onClick="expandBase_ajax('el70701', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="./images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_70701"><span class="statutnot1" ></span><span  notice='70701'  class='header_title'>Introduction  la Bible. Introduction critique au Nouveau Testament</span><span class='header_authors'> / <a href='index.php?lvl=author_see&id=13934'>Georges, Augustin</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Introduction%20%C2%85%20la%20Bible.%20Introduction%20critique%20au%20Nouveau%20Testament&amp;rft.title=Introduction%20%C2%85%20la%20Bible.%20Introduction%20critique%20au%20Nouveau%20Testament&amp;rft.tpages=268%20P.&amp;rft.date=1976&rft_id=&amp;rft.pub=Descl%26eacute%3Be&amp;rft.aulast=Georges%2C%20Augustin'></span></span>
+		    	<br />
+				</div>
+				<div id="el70701Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="./index.php?lvl=notice_display&id=70701" style="display:none;">Permalink</a>
+			
+		
+				<div id="el70702Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el70702Img" title="détail" border="0" param='a%3A11%3A%7Bs%3A2%3A%22id%22%3Bi%3A70702%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A14%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A68%3A%22.%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_concept%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%3Bs%3A19%3A%22lien_rech_authperso%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3Bs%3A5%3A%22token%22%3Bs%3A32%3A%2266270b56e4e2d93191aebe44c4817540%22%3Bs%3A8%3A%22datetime%22%3Bi%3A1794731700%3B%7D' onClick="expandBase_ajax('el70702', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="./images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_70702"><span class="statutnot1" ></span><span  notice='70702'  class='header_title'>Introduction  la Bible. Introduction critique au Nouveau Testament</span><span class='header_authors'> / <a href='index.php?lvl=author_see&id=13934'>Georges, Augustin</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Introduction%20%C2%85%20la%20Bible.%20Introduction%20critique%20au%20Nouveau%20Testament&amp;rft.title=Introduction%20%C2%85%20la%20Bible.%20Introduction%20critique%20au%20Nouveau%20Testament&amp;rft.tpages=320%20P.&amp;rft.date=1976&rft_id=&amp;rft.pub=Descl%26eacute%3Be&amp;rft.aulast=Georges%2C%20Augustin'></span></span>
+		    	<br />
+				</div>
+				<div id="el70702Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="./index.php?lvl=notice_display&id=70702" style="display:none;">Permalink</a>
+			
+		</blockquote>
+	</div></div></div><form name='mc_values' action='./index.php?lvl=more_results' style='display:none' method='post'>
+<input type='hidden' name='search[]' value='s_4'/><input type='hidden' name='inter_0_s_4' value=''/><input type='hidden' name='op_0_s_4' value='EQ'/><input type='hidden' name='field_0_s_4[]' value='a:2:{s:17:&quot;serialized_search&quot;;s:285:&quot;a:2:{s:6:&quot;SEARCH&quot;;a:1:{i:0;s:3:&quot;f_7&quot;;}i:0;a:6:{s:6:&quot;SEARCH&quot;;s:3:&quot;f_7&quot;;s:2:&quot;OP&quot;;s:7:&quot;BOOLEAN&quot;;s:5:&quot;FIELD&quot;;a:1:{i:0;s:33:&quot;Introduction au Nouveau Testament&quot;;}s:6:&quot;FIELD1&quot;;s:0:&quot;&quot;;s:5:&quot;INTER&quot;;s:0:&quot;&quot;;s:8:&quot;FIELDVAR&quot;;a:2:{s:6:&quot;is_num&quot;;a:1:{i:0;s:1:&quot;0&quot;;}s:10:&quot;ck_affiche&quot;;a:1:{i:0;s:1:&quot;0&quot;;}}}}&quot;;s:11:&quot;search_type&quot;;s:20:&quot;search_simple_fields&quot;;}'/><input type='hidden' name='page' value='1'/>
+			<input type="hidden" name="nb_per_page_custom" value="">
+</form><form name="form_values" action="./index.php?lvl=more_results" method="post">
+<input type='hidden' value='' id='filtre_compare_form_values' name='filtre_compare'><input type="hidden" name="user_query" value="Introduction au Nouveau Testament">
+<input type="hidden" name="mode" value="tous">
+<input type="hidden" name="count" value="3060">
+<input type="hidden" name="typdoc" value=""><input type="hidden" name="clause" value="">
+<input type="hidden" name="clause_bull" value="">
+<input type="hidden" name="clause_bull_num_notice" value="">
+<input type="hidden" name="tri" value="">
+<input type="hidden" name="pert" value="">
+<input type="hidden" name="l_typdoc" value="a">
+<input type="hidden" id=author_type name="author_type" value="">
+<input type="hidden" id="id_thes" name="id_thes" value="">
+<input type="hidden" name="surligne" value="0">
+<input type="hidden" name="tags" value="">
+<input type="hidden" name="page" value="1">
+				<input type="hidden" name="nb_per_page_custom" value="">
+<input type="hidden" name="nbexplnum_to_photo" value="">
+</form><div class='row'>&nbsp;</div><div id='navbar'><hr />
+<center>
+<script type='text/javascript'>
+<!--
+	function test_form(form)
+	{
+
+		if (form.page.value > 306)
+		{
+			alert("Numéro de page trop élevé !");
+			form.page.focus();
+			return false;
+		}
+
+		return true;
+	}
+-->
+</script><div class="navbar">
+<form name='form' action='javascript:document.form_values.page.value=document.form.page.value; document.form_values.submit()' method='post' onsubmit='return test_form(form)'>
+<img src='./images/first-grey.png' alt='first'>
+<img src='./images/prev-grey.png' alt='previous'>
+<strong>1</strong> <a href='javascript:document.form_values.page.value=2; document.form_values.submit()' >2</a> <a href='javascript:document.form_values.page.value=3; document.form_values.submit()' >3</a> <a href='javascript:document.form_values.page.value=4; document.form_values.submit()' >4</a> <a href='javascript:document.form_values.page.value=5; document.form_values.submit()' >5</a> <a href='javascript:document.form_values.page.value=6; document.form_values.submit()' >6</a> <a href='javascript:document.form_values.page.value=2; document.form_values.submit()'><img src='./images/next.png' alt='next' border='0' title='page suivante'></a>
+<a href='javascript:document.form_values.page.value=306; document.form_values.submit()'><img src='./images/last.png' alt='last' border='0' title='dernière page'></a>
+ (1 - 10 / 3060)<span style='float:right;'> Par page :  <a href='javascript:document.form_values.nb_per_page_custom.value=25;javascript:document.form_values.page.value=1; document.form_values.submit()'>25</a>  <a href='javascript:document.form_values.nb_per_page_custom.value=50;javascript:document.form_values.page.value=1; document.form_values.submit()'>50</a>  <a href='javascript:document.form_values.nb_per_page_custom.value=100;javascript:document.form_values.page.value=1; document.form_values.submit()'>100</a>  <a href='javascript:document.form_values.nb_per_page_custom.value=200;javascript:document.form_values.page.value=1; document.form_values.submit()'>200</a> </span></form>
+</div>
+</center></div>	
+		</div><!-- fin DIV main_hors_footer --><div id="footer">
+
+<span id="footer_rss">
+	
+</span>
+<span id="footer_link_sup">
+		<a href="./index.php?lvl=infopages&amp;pagesid=7">Mentions légales</a> &nbsp;
+</span>
+
+<span id="footer_link_website">
+	<a class="footer_biblio_name" href="http://www.sigb.net" title="Université Protestante d'Afrique Centrale (UPAC)">Université Protestante d'Afrique Centrale (UPAC)</a> &nbsp;
+</span>	
+
+<span id="footer_link_pmb">
+<a href=http://www.google.fr target=_blank>Faire une recherche avec Google</a> &nbsp;
+		<a class="lien_pmb_footer" href="http://www.sigb.net" title="...une solution libre pour la médiathèque..." target='_blank'>pmb</a> 	
+</span>		
+		
+</div> 
+
+		</div><!-- /div id=main -->
+
+		<div id="intro">
+<div id="intro_bibli">
+			<h3>Université Protestante d'Afrique Centrale (UPAC)</h3>
+			<div class="p1"><img src="./styles/genbib/images/image11.jpg" />
+<img src="./styles/genbib/images/image22.jpg" />
+<img src="./styles/genbib/images/image33.jpg" /></div>
+			<div class="p2"><ul id="menuDeroulant">
+
+<li><a href="./index.php">Accueil</a></li>
+<li><a href="./index.php?lvl=infopages&amp;pagesid=4">Calendrier</a></li>
+<li><a href="./index.php?lvl=infopages&amp;pagesid=1">Actualités BnF</a>
+<ul class="sousMenu">
+<li><a href="./index.php?lvl=infopages&amp;pagesid=3">Aide en ligne</a></li>
+<li><a href="./index.php?lvl=infopages&amp;pagesid=2">Version 4.0 !</a></li>
+</ul>
+</li>
+
+<li><a href="./index.php?lvl=infopages&amp;pagesid=6">Nous trouver</a></li>
+
+</ul></div>
+			</div>
+		</div><!-- /div id=intro -->		
+		<div id="bandeau"><div id='accessibility'>
+
+		<ul class='accessibility_font_size'>
+			<li class='accessibility_font_size_small'><a href='javascript:set_font_size(-1);' title='Réduire le texte'>A-</a></li>
+			<li class='accessibility_font_size_normal'><a href='javascript:set_font_size(0);' title='Réinitialiser le texte'>A</a></li>
+			<li class='accessibility_font_size_big'><a href='javascript:set_font_size(1);' title='Agrandir le texte'>A+</a></li>
+		</ul>
+		</div>
+<div id="accueil">
+
+<h3><span onclick='document.location="./index.php?"' style='cursor: pointer;'>Accueil</span></h3>
+<p class="centered"><a href='./index.php?'><img src='images/site/livre1.png'  border='0' align='center'/></a></p>
+<div id='lang_select'><h3 ><span>Sélection de la langue</span></h3><span><form method="post" action="index.php" ><select name="lang_sel" onchange="this.form.submit();"><option value='fr_FR' selected>Français </option><option value='it_IT'>Italiano</option><option value='es_ES'>Español</option><option value='ca_ES'>Català</option><option value='en_UK'>English (UK)</option><option value='nl_NL'>Nederlands</option><option value='oc_FR'>Occitan</option></select></form></span></div>
+
+					</div><!-- fermeture #accueil -->
+<div id="connexion">
+
+			<h3 class="login_invite">Se connecter</h3><span id='login_form'><form action='empr.php' method='post' name='myform'>
+				<label>accéder à votre compte de lecteur</label><br />
+				<input type='text' name='login' class='login' size='14' placeholder='identifiant' ><br />
+				<input type='password' name='password' class='password' size='8' placeholder='Mot de passe' value=''/>
+				<input type='submit' name='ok' value='ok' class='bouton'></form><a  class='mdp_forgotten' href='./askmdp.php'>Mot de passe oublié ?</a></span>
+
+			</div><!-- fermeture #connexion -->
+<div id='lvl1'><script>var tosubmit="typdoc=&surligne=&user_query=Introduction%20au%20Nouveau%20Testament&ok=Rechercher&look_TITLE=1&look_FIRSTACCESS=1&lvl=more_results&autolevel1=1";
+						var cms_build_activate="0";function updateLevel1(result) {
+							if(result != '') {
+								document.getElementById('lvl1').innerHTML=result;
+							} else {
+								if(!cms_build_activate) {
+									require(['dojo/ready', 'dojo/dom-construct'], function(ready, domConstruct){
+										ready(function(){
+											domConstruct.destroy('lvl1');
+										});
+									});
+								}
+							}
+						}
+						getlevel2=new http_request();
+						getlevel2.request('./ajax.php?module=ajax&categ=level1',true,tosubmit,true,updateLevel1);</script><h3>Recherche</h3>
+<img src='./images/patience.gif' id='wait_level1'/></div>
+			<div id='facette'>
+				
+		<script src='./includes/javascript/select.js' type='text/javascript'></script>
+		<script type='text/javascript'> 		
+			function test(elmt_id){
+				var elmt_list=document.getElementById(elmt_id);
+				for(i in elmt_list.rows){
+					if(elmt_list.rows[i].firstElementChild && elmt_list.rows[i].firstElementChild.nodeName!='TH'){
+						if(elmt_list.rows[i].style.display == 'none'){
+							elmt_list.rows[i].style.display = 'block';
+						}else{
+							elmt_list.rows[i].style.display = 'none';
+						}
+					}
+				}
+			}
+			
+			function facette_see_more(id,json_facette_plus){
+				
+				var myTable = document.getElementById('facette_list_'+id);
+				
+				if (json_facette_plus == null) {
+					var childs = myTable.childNodes;
+					var nb_childs = childs.length;
+					
+					for(var i = 0; i < nb_childs; i++){
+						if (childs[i].getAttribute('facette_ajax_loaded')!=null) {
+							if (childs[i].getAttribute('style')=='display:block') {
+								childs[i].setAttribute('style','display:none');
+								childs[i].setAttribute('expanded','false');
+							} else {
+								childs[i].setAttribute('style','display:block');
+								childs[i].setAttribute('expanded','true');
+							}
+						}
+					}
+				
+					var see_more_less = document.getElementById('facette_see_more_less_'+id);
+					see_more_less.innerHTML='';
+					var span = document.createElement('span');
+					if (see_more_less.getAttribute('etat')=='plus') {
+						span.className='facette_moins_link';
+						span.innerHTML='[-]';
+						see_more_less.setAttribute('etat','moins');
+					} else {
+						span.className='facette_plus_link';
+						span.innerHTML='[+]';
+						see_more_less.setAttribute('etat','plus');		
+					}
+					see_more_less.appendChild(span);
+					
+				} else {
+					var req = new http_request();
+					var sended_datas={'json_facette_plus':json_facette_plus};
+					req.request("./ajax.php?module=ajax&categ=facettes&sub=see_more",true,'sended_datas='+encodeURIComponent(JSON.stringify(sended_datas)),true,function(data){
+						
+						var jsonArray = JSON.parse(data);
+						//on supprime la ligne '+'
+						myTable.tBodies[0].removeChild(myTable.rows[myTable.rows.length-1]);
+						//on ajoute les lignes au tableau
+						for(var i=0;i<jsonArray.length;i++) {
+							var tr = document.createElement('tr');
+							tr.setAttribute('style','display:block');
+							tr.setAttribute('expanded','true');
+							tr.setAttribute('facette_ajax_loaded','1');
+				        	var td = tr.appendChild(document.createElement('td'));
+				        	td.innerHTML = "<span class='facette_coche'><input type='checkbox' name='check_facette[]' value='" + jsonArray[i]['facette_value'] + "'></span>";
+				        	var td2 = tr.appendChild(document.createElement('td'));
+				        	td2.innerHTML = "<a class='facette_link' onclick='" + jsonArray[i]['facette_link'] + "' style='cursor:pointer;'>"
+												+ "<span class='facette_libelle'>" + jsonArray[i]['facette_libelle'] + "</span> "
+												+ "<span class='facette_number'>[" + jsonArray[i]['facette_number'] + "]</span>"
+												+ "</a>";
+				        	myTable.appendChild(tr);
+	
+						}
+						//Ajout du see_less
+						var tr = document.createElement('tr');
+						tr.setAttribute('style','display:block');
+						tr.setAttribute('see_less','1');
+						tr.setAttribute('class','facette_tr_see_more');
+							
+						var td = tr.appendChild(document.createElement('td'));
+						td.setAttribute('colspan','3');
+							
+						var ahref = td.appendChild(document.createElement('a'));
+						ahref.setAttribute('id','facette_see_more_less_'+id);
+						ahref.setAttribute('etat','moins');
+						ahref.setAttribute('onclick','javascript:facette_see_more(' + id + ',null);');
+						ahref.setAttribute('style','cursor:pointer');
+						ahref.innerHTML='';
+							
+						var span = document.createElement('span');
+						span.className='facette_moins_link';
+						span.innerHTML='[-]';								
+						ahref.appendChild(span);
+								
+						myTable.appendChild(tr);
+					});
+				}
+			}
+			function valid_facettes_compare(){
+				
+				var form = document.facettes_multi;
+				if(form.elements.length>0){
+					
+					var form_values_compare_input_array=new Array();
+					
+					for(var i=0; i<form.elements.length;i++){
+						
+						if(form.elements[i].name=='check_facette[]' && form.elements[i].checked){
+							//on transforme les case � coch� en element du tableau des facettes	
+							//on ajoute dans le tableau des facettes
+							var value=form.elements[i].value;
+							var jsonArray=JSON.parse(value);
+							
+							//On ajoute dans le formulaire de postage g�n�ral
+							var form_values_compare_input=document.createElement('input');
+							form_values_compare_input.setAttribute('name','check_facette_compare[]');
+							form_values_compare_input.setAttribute('type','hidden');
+							form_values_compare_input.setAttribute('value',value);
+							form_values_compare_input_array.push(form_values_compare_input);
+						}
+					}
+					
+					var post=false;
+					var form_values=document.form_values;
+					for(var i=0;i<form_values_compare_input_array.length;i++) {
+						form_values.appendChild(form_values_compare_input_array[i]);
+					}
+					
+					for(var i=0; i<form_values.elements.length;i++){
+						if(form_values.elements[i].name=='check_facette_compare[]' && form_values.elements[i].value!=''){
+							document.getElementById('filtre_compare_facette').value='compare';
+							document.getElementById('filtre_compare_form_values').value='compare';
+							form_values.submit();
+							post=true;
+						}
+					}
+					if(post == false){
+						alert('Pas de critère de comparaison.');
+					}
+				}else{
+					alert('Pas de critère de comparaison.');
+				}
+			}
+			
+			function valid_compare(){
+				var form_values=document.form_values;
+				var post=false;
+				
+				for(var i=0; i<form_values.elements.length;i++){
+					if(form_values.elements[i].name=='check_facette_compare[]' && form_values.elements[i].value!=''){
+						document.getElementById('filtre_compare_facette').value='compare';
+						document.getElementById('filtre_compare_form_values').value='compare';
+						form_values.submit();
+						post=true;
+					}
+				}
+				if(post == false){
+					alert('Pas de critère de comparaison.');
+				}
+			}
+			
+			function remove_compare_facette(value){
+				
+				var jsonArray = JSON.parse(value);
+				
+				//on supprime l'�lement du tableau des facettes
+				elem=document.getElementById('compare_facette_'+jsonArray[4]);
+				elem.parentNode.removeChild(elem);
+				
+				//on supprime l'�l�ment du formulaire g�n�ral aussi
+				var form_values=document.form_values;
+				for(var i in form_values.elements){
+					if(form_values.elements[i] && form_values.elements[i].value && form_values.elements[i].name=='check_facette_compare[]'){
+						form_values_json_array=JSON.parse(form_values.elements[i].value);
+						
+						if(form_values_json_array[4]==jsonArray[4]){
+							elem=form_values.elements[i];
+							elem.parentNode.removeChild(elem);
+						}
+					}
+				}
+				var post=true;
+				for(var i in form_values.elements){
+					if(form_values.elements[i] && form_values.elements[i].value && form_values.elements[i].name=='check_facette_compare[]'){
+						valid_facettes_compare();
+						post=false;
+					}
+				}
+
+				if(post){
+					if('facette_search_compare' == 'facettes_external_search_compare') {
+						var input_form_values = document.createElement('input');
+						input_form_values.setAttribute('type', 'hidden');
+						input_form_values.setAttribute('name', 'reinit_compare');
+						input_form_values.setAttribute('value', '1');
+						document.forms['form_values'].appendChild(input_form_values);
+						document.form_values.submit();
+					} else {
+						document.location.href='./index.php?lvl=more_results&get_last_query=1&reinit_compare=1';
+					}
+				}
+			}
+			
+			function group_by(groupBy){
+				
+				var jsonArray=JSON.parse(groupBy);
+			
+				//on vide les elements group_by
+				var group_by_elements=document.getElementsByName('check_facette_groupby[]');
+				
+				var nodes_to_remove;
+				
+				for(var i in group_by_elements){
+					if(group_by_elements[i].nodeName=='INPUT'){
+						if(group_by_elements[i].getAttribute('id')!='facette_groupby_'+jsonArray[3]){
+							
+							if(group_by_elements[i].parentNode.getAttribute('name')!='form_values' && group_by_elements[i].parentNode.getAttribute('name')!='cart_values'){
+								
+								var group_by_elements_img=group_by_elements[i].previousElementSibling.firstChild;
+									
+								group_by_elements_img.setAttribute('src','./images/group_by_grey.png');
+								group_by_elements[i].setAttribute('value','');
+								
+							}else{
+								nodes_to_remove=[i=[group_by_elements[i],group_by_elements[i].parentNode]];
+							}
+						}
+					}
+				}
+				
+				if(nodes_to_remove && nodes_to_remove.length>0){
+					for(var i in nodes_to_remove){
+						nodes_to_remove[i][1].removeChild(nodes_to_remove[i][0]);
+					}
+				}
+				
+				element=document.getElementById('facette_groupby_'+jsonArray[3]);
+				var img=element.previousElementSibling.firstChild;
+				
+				var table_groupby=document.getElementById('facette_groupby');
+				
+				if(element.getAttribute('value')==''){
+					element.setAttribute('value',JSON.stringify(groupBy));
+					
+					//On ajoute dans le formulaire de postage g�n�ral
+					var form_values=document.form_values;
+					var form_values_groupby_input=document.createElement('input');
+					form_values_groupby_input.setAttribute('name','check_facette_groupby[]');
+					form_values_groupby_input.setAttribute('type','hidden');
+					form_values_groupby_input.setAttribute('value',groupBy);
+					form_values.appendChild(form_values_groupby_input);
+					
+					
+				}
+				valid_facettes_compare();
+			}
+		</script>
+		<script type='text/javascript'>
+			function valid_facettes_multi(){
+				//on bloque si aucune case coch�e
+				var form = document.facettes_multi;
+				for (i=0, n=form.elements.length; i<n; i++){
+					if ((form.elements[i].checked == true)) {
+						document.getElementById('filtre_compare_facette').value='filter';
+						document.getElementById('filtre_compare_form_values').value='filter';
+						form.submit();
+						return true;
+					}
+				}
+				return false;
+			}
+		</script>
+				<div id='facette_wrapper'>
+					<img src='./images/patience.gif'/>
+					<script type='text/javascript'>
+						var req = new http_request();
+						req.request("./ajax.php?module=ajax&categ=facettes&sub=get_data",false,null,true,function(data){
+							var response = JSON.parse(data);
+							document.getElementById('facette_wrapper').innerHTML=response.display;
+							if(!response.exists_with_results) {
+								require(['dojo/ready', 'dojo/dom-construct'], function(ready, domConstruct){
+									ready(function(){
+										domConstruct.destroy('facette');
+									});
+								});
+							}
+							if(response.map_location) {
+								if(document.getElementById('map_location_search')) {
+									document.getElementById('map_location_search').innerHTML=response.map_location;
+									if(typeof(dojo) == 'object'){
+										dojo.require('dojo.parser');
+										dojo.parser.parse(document.getElementById('map_location_search'));
+									}
+								}
+							}
+						});
+					</script>
+				</div>
+			</div><div id="adresse">
+
+		<h3>Adresse</h3>
+
+		<span>
+			Université Protestante d'Afrique Centrale (UPAC)<br />
+			BIBLIOTHEQUE<br />
+			B.P.:4011 YAOUNDE<br />
+			CAMEROUN&nbsp;<br />
+			00(237)699011563 //
+00(237)675224778<br /><span id='opac_biblio_email'>
+			<a href="mailto:pmb@sigb.net" alt="pmb@sigb.net">contact</a></span></span>
+	    </div><!-- fermeture #adresse --><div id="post_adress">
+
+		<span><h3>Horaires d'ouverture :</h3>
+Lundi : 8h - 15h30<br />
+Mardi : 8h - 15h30<br />
+Mercredi : 8h - 15h30<br />
+Jeudi : 8h - 15h30<br />
+Vendredi: 8h - 15h30<br />
+<font color="blue">Permanence jusqu'à 20h chaque jour ouvrable</font><br /><br />
+<h3>Information :</h3>
+<font color="red"><center>La bibliothèque a repris toutes ses activités depuis le 5 janvier 2023</center> </font><br />
+<h3>Bibliothécaire Principal et Webmaster</h3>
+Rév. MOUDIO DALLE Philibert
+		</span>	
+	    </div><!-- fermeture #post_adress --></div><div id="bandeau_2"></div></div><!-- /div id=container -->
+		
+		<script type='text/javascript'>init_drag();	</script> 
+		
+		</body>
+		</html>
+		

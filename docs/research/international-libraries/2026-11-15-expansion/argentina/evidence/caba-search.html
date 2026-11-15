@@ -1,0 +1,1549 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">    
+    <meta name="generator" content="Pérgamo OPAC Web">
+    <title>Búsqueda - Catálogo Bibliográfico - Dirección General de Bibliotecas de la Ciudad de Buenos Aires</title>
+    	<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Dirección General de Bibliotecas de la Ciudad de Buenos Aires",
+    "url": "http://catalogobibliotecas.buenosaires.gob.ar/pergamo/",
+    "alternateName": "OPAC Web",
+    "description": "Catálogo Bibliográfico",
+    "isBasedOn": {
+        "@type": "SoftwareApplication",
+        "name": "Pérgamo OPAC",
+        "applicationCategory": "Library Management System",
+        "creator": {
+            "@type": "Organization",
+            "name": "WalySoft Sistemas",
+            "url": "https://walysoft.com/"
+        }
+    }
+}
+	</script>
+
+
+    <link rel="preload" as="script" href="js/critical-1.1.0.js">
+    <link rel="preload" as="style" href="css/main-1.0.19.css">        
+    <link rel="preload" as="image" href="wsIcons.svg"> <!-- icons preload -->
+    <link rel="icon" type="image/png" href="images/pergamo.png">
+
+
+	<meta name="description" content="Catálogo Bibliográfico - Dirección General de Bibliotecas de la Ciudad de Buenos Aires">
+	<meta name="keywords" content="catálogo, bibliográfico, biblioteca, buscador de libros, OPAC, libros, autores, editoriales, títulos, publicaciones">
+	<meta name="revisit-after" content="5 days">
+	<meta name="distribution" content="Global">
+	<meta name="author" content="OPAC Web">
+	<meta property="og:site_name" content="Dirección General de Bibliotecas de la Ciudad de Buenos Aires" /> 
+	<meta property="og:type" content="website">
+	<meta property="og:title" content="Búsqueda - Catálogo Bibliográfico - Dirección General de Bibliotecas de la Ciudad de Buenos Aires">
+	<meta property="og:description" content="Catálogo Bibliográfico - Dirección General de Bibliotecas de la Ciudad de Buenos Aires">
+	<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Dirección General de Bibliotecas de la Ciudad de Buenos Aires",
+    "url": "http://catalogobibliotecas.buenosaires.gob.ar/pergamo/",
+    "alternateName": "OPAC Web",
+    "description": "Catálogo Bibliográfico",
+    "isBasedOn": {
+        "@type": "SoftwareApplication",
+        "name": "Pérgamo OPAC",
+        "applicationCategory": "Library Management System",
+        "creator": {
+            "@type": "Organization",
+            "name": "WalySoft Sistemas",
+            "url": "https://walysoft.com/"
+        }
+    }
+}
+	</script>
+
+	<script defer src="custom/dglypl/custom-1.0.1.js"></script>
+
+
+<script>
+var aSpcFlds = new Array();
+
+
+function canRange( cField ) {
+  return ( aSpcFlds[cField] !== undefined || cField == 'Edicion_FechaDesde' );
+}
+</script>
+
+
+	<link rel="canonical" href="http://catalogobibliotecas.buenosaires.gob.ar/pergamo/opac.php?a=bsqSi&p=1&o=&trSimple=Rayuela&op=and">
+	<meta name="robots" content="noindex, follow" />
+
+
+	<link rel="dns-prefetch" href="https://www.google-analytics.com"> <!-- Google Analytics -->
+	<link rel="dns-prefetch" href="https://www.googletagmanager.com"> <!-- Google Tag Manager -->
+	<link rel="dns-prefetch" href="https://cdn.jsdelivr.net"> <!-- jsdelivr CDN -->
+	<link rel="stylesheet" href="bootstrap-5.2.0-dist/css/bootstrap.min.css">  <!-- Bootstrap CSS -->
+
+	<!-- vino al usar las notification -->
+	<link rel="stylesheet" media="print" onload="this.media='all'" href="css/animate.min.css" />
+
+	<!-- JQuery -->
+	<script defer src="js/jquery-3.7.1.min.js"></script> 
+	<!-- <script defer src="js/jquery-3.7.1.slim.min.js"></script>  // hago uso de animate y otras funciones que necesitan jquery completo -->
+
+	<script defer src="bootstrap-5.2.0-dist/js/bootstrap.bundle.min.js"></script>
+
+	<link rel="stylesheet" media="all" href="css/main-1.0.19.css" />
+ 
+	<script src="js/critical-1.1.0.js"></script>
+	<script defer src="js/bootstrap-notify-4.js"></script>
+	<script defer src="js/main-1.2.7.js"></script>
+	<script defer src="js/extResources-1.2.0.js"></script>
+	<script defer src="js/ws-autocomplete-1.0.3.js"></script>
+	<script defer src="js/pgImageBox-1.3.0.min.js"></script>
+	<script defer src="js/opac-1.3.9.js"></script>
+
+	<script defer src="custom/dglypl/custom-1.0.1.js"></script>
+
+
+</head>
+<body>
+
+<script>
+  var cOrder = '';
+  var cViewMode = 'ficha';
+  var nPage = '1';
+  var nItems = '25';
+  var cFilters = '';
+  var cURLBase = 'opac.php?a=bsqSi&c=&trSimple=Rayuela&op=and';
+
+  var bIsBsq = true;
+  var bRecursosMediaExternos = true;
+  var cPagePHP = 'opac';
+</script>
+
+<div id="alertBuscando" style="z-index:9000; top:0; left:0; background-color: rgb(0,0,0,0.5)" class="position-fixed h-100 w-100 d-none">
+  <div style="z-index:9100; top:50%; left:50%; transform:translate(-50%,-50%)" class="position-absolute d-flex justify-content-center align-items-center">  
+    <div class="alert alert-info fade show text-center" role="alert"><div class="mb-3"><strong>Cargando...</strong></div>
+      <!-- <div class="m-auto loader"></div> (modelo anterior) -->
+      <div class="spinner-border text-primary" role="status"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+    .wsTopBG {
+        background: rgb(124,198,191); /* #7cc6bf */
+        background: linear-gradient(90deg,rgba(124, 198, 191, 1) 0%, rgba(127, 196, 189, 1) 100%);
+    }
+    .wsBottomBG {
+        background-image: url('./custom/dglypl/footer2026-back.png');
+        background-size: 100% 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+</style>
+<div class="container">
+    <div class="row wsTopBG">  <!-- style="border-bottom: 2px #007bc7 solid"  //-->
+        <div class="p-0 d-block col-12 text-center">
+            <div class="row h-100"><div class="col-12 align-self-center text-center">
+                    <a class="d-block d-lg-none" data-bs-toggle="tooltip" title="Ir al sitio principal" href="https://www.buenosaires.gob.ar/bibliotecas"><img class="img-fluid" src="./custom/dglypl/header2026.png" alt="logo"></a> <!-- style="max-height:6em" //-->
+                    <a class="d-none d-lg-block" data-bs-toggle="tooltip" title="Ir al sitio principal" href="https://www.buenosaires.gob.ar/bibliotecas"><img class="img-fluid" src="./custom/dglypl/header2026.png" alt="logo"></a> <!-- style="max-height:6em" //-->
+			</div></div>
+        </div>
+    </div>
+</div>
+<div class="container pt-1">
+<nav class="mt-2 d-none" id="navBusquedas">
+  <ul class="nav nav-tabs d-print-none" id="navtabBusquedas" role="tablist">
+    <a class="btn btn-light px-1" href="./opac.php" role="button"><svg class="wsTxtIcon" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-backward-fast"></use></svg></a>
+    <li class="nav-item"><a class="nav-link p-2 active" id="tabBsqSimple" data-bs-toggle="tab" href="#lyrBsqSimple" role="tab" aria-controls="tabBsqSimple" aria-selected="true"><svg class="wsTxtIcon me-1" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-simple"></use></svg>Simple</a></li>
+  <li class="nav-item"><a class="nav-link p-2 " id="tabBsqAvanzada" data-bs-toggle="tab" href="#lyrBsqAvanzada" role="tab" aria-controls="tabBsqAvanzada" aria-selected="false"><svg class="wsTxtIcon me-1" viewBox="0 0 512 512"><use xlink:href="wsIcons.svg#icon-avanzado"></use></svg>Avanzada</a></li>
+
+<li class="nav-item"><a class="nav-link p-2 " id="tabBsqNovedades" data-bs-toggle="tab" href="#lyrBsqNovedades" role="tab" aria-controls="tabBsqNovedades" aria-selected="false"><svg class="wsTxtIcon me-1" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-novedades"></use></svg>Novedades</a></li>
+  <button class="btn btn-light ms-auto px-1" id="btnHideSearch" title="Ocultar panel de búsqueda" data-bs-toggle="tooltip"><svg class="wsTxtIcon" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-noSearch"></use></svg></button>
+</ul>
+</nav>
+
+
+<div class="tab-content d-none d-print-none p-2 mb-4 shadow border-top-0 border-rounded" id="tabContentBusquedas">
+
+<!-- BUSQUEDA AVANZADA - - - - - - - - - - - - - - - - - - - - - - - - - - -  //-->
+<div class="tab-pane fade show " id="lyrBsqAvanzada" role="tabpanel" aria-labelledby="tabBsqAvanzada">
+
+<form action="opac.php" id="formBsqAvanzada">
+<div class="form-group">
+<input type="hidden" name="a" value="bsqAv" />
+<input type="hidden" name="p" value="1" />
+<input type="hidden" name="o" value="" />
+
+
+<div id='groupMust'>
+
+<div class="row mb-2">
+	<div class="col-12 col-sm-7 col-lg-4 mb-1">
+		<div class="input-group input-group-sm">
+				<button rel="srchAddCond" id="btnAddCndMust1" class="btn btn-outline-secondary" type="button" title="Agregar otra área de búsqueda" data-bs-toggle="tooltip"><svg class="wsIcon"><use href="wsIcons.svg#icon-plus"></use></svg></button>
+				<label class="input-group-text" for="arMust1">Área</label>
+			<select rel="advCnd" class="form-select" id="arMust1" name="arMust1">
+				<option value ="*">Toda área indizada</option>
+				<option value ="251-Titulos" selected>Títulos</option>
+				<option value ="AUTORES.255-Autor">Autor</option>
+				<option value ="MATERIAS.Materia">Materia</option>
+				<option value ="EDITORIALES.255-Editor">Editorial</option>
+				<option value ="250-Idiomas">Idiomas</option>
+				<option value ="Edicion">Edición</option>
+				<option value ="Edicion_FechaDesde">Año de Publicación</option>
+				<option value ="252-Coleccion">Título de Serie/Colección</option>
+				<option value ="Lugar">Lugar</option>
+				<option value ="244-DescCodPais">País</option>
+				<option value ="Notas">Notas</option>
+				<option value ="Resumen">Resumen</option>
+				<option value ="246-DescTMaterial">Tipo de Material</option>
+				<option value ="245-DescTSoporte">Soporte</option>
+				<option value ="ISBN">ISBN/ISSN</option>
+				<option value ="EJEMPLARES.Inventario">Inventario</option>
+				<option value ="EJEMPLARES.SignaturaTopografica">Signatura Topográfica (Ubicación)</option>
+				<option value ="Serie_AnioReal">REVISTA: Año Real</option>
+				<option value ="Serie_AnioInterno">REVISTA: Año Interno</option>
+				<option value ="Serie_NumDesde">REVISTA: Número</option>
+				<option value ="Serie_Volumen">REVISTA: Volumen</option>
+				<option value ="Serie_Fecha">REVISTA: Fecha</option>
+				<option value ="MULTIMEDIA.Titulo">MULTIMEDIA : Título</option>
+				<option value ="MULTIMEDIA.TipoArchivo">MULTIMEDIA : Tipo</option>
+				<option value ="MULTIMEDIA.Descripcion">MULTIMEDIA : Descripción</option>
+				<option value ="MULTIMEDIA.Alias">MULTIMEDIA : Ubicación</option>
+				<option value ="MULTIMEDIA.Default">MULTIMEDIA : Elemento Principal</option>
+				<option value ="MULTIMEDIA.Nombre">MULTIMEDIA : Nombre de Archivo</option>
+				<option value ="CodTMaterial">Código de Tipo de Material</option>
+				<option value ="CodTSoporte">Código de Soporte</option>
+				<option value ="MULTIMEDIA.CodBiblioteca">MULTIMEDIA : U. Info.</option>
+				<option value ="CodBiblioteca">U. Info. de Documento</option>
+				<option value ="EJEMPLARES.CodBiblioteca">U. Info. de Ejemplar</option>
+				<option value ="AUTORES.FechaNacimiento">Autor, Fecha de Nacimiento</option>
+				<option value ="AUTORES.FechaFallecimiento">Autor, Fecha de Fallecimiento</option>
+				<option value ="AUTORES.Numero">Número Evento</option>
+				<option value ="AUTORES.Anio">Año del Evento</option>
+				<option value ="FechaAlta">Fecha de Ingreso</option>
+				<option value ="NivelBibliografico">Nivel Bibliográfico</option>
+			</select>
+		</div> <!-- input-group //-->
+	</div> <!-- col //-->
+	<div class="col-12 col-sm-5 col-lg-3 mb-1">
+		<div class="input-group input-group-sm">      
+				<label class="input-group-text" for="trMust1"><strong><span class="text-success">Debe</span></strong></label>
+
+			<select class="form-select" id="opMust1" name="opMust1" disabled>    				<option value="" selected>contener</option>				<option value="gt">ser &gt;</option>				<option value="gte">ser &gt;=</option>				<option value="lt">ser &lt;</option>				<option value="lte">ser &lt;=</option>			</select>
+		</div>
+	</div> <!-- col //-->
+	<div class="col-12 col-lg-5 mb-1">
+		<div class="input-group input-group-sm">
+			<input rel="srchInput srchMust" data-n="1" data-select="arMust1" type="text" name="trMust1" id="trMust1" class="form-control" placeholder="Términos clave..." aria-label="areaTerms1">
+				<button rel="srchClear" data-input="trMust1" id="btnClearMust1" class="btn btn-outline-secondary" type="button"><svg class="wsIcon"><use href="wsIcons.svg#icon-x"></use></svg></button>
+		</div>
+	</div> <!-- col -->
+</div> <!-- row //-->
+<div class="row mb-2">
+	<div class="col-12 col-sm-7 col-lg-4 mb-1">
+		<div class="input-group input-group-sm">
+ 				<button rel="srchDelCond" id="btnDelCndMust2" class="btn btn-outline-secondary" type="button"><svg class="wsIcon"><use href="wsIcons.svg#icon-minus"></use></svg></button>
+				<label class="input-group-text" for="arMust2">Área</label>
+			<select rel="advCnd" class="form-select" id="arMust2" name="arMust2">
+				<option value ="*">Toda área indizada</option>
+				<option value ="251-Titulos">Títulos</option>
+				<option value ="AUTORES.255-Autor" selected>Autor</option>
+				<option value ="MATERIAS.Materia">Materia</option>
+				<option value ="EDITORIALES.255-Editor">Editorial</option>
+				<option value ="250-Idiomas">Idiomas</option>
+				<option value ="Edicion">Edición</option>
+				<option value ="Edicion_FechaDesde">Año de Publicación</option>
+				<option value ="252-Coleccion">Título de Serie/Colección</option>
+				<option value ="Lugar">Lugar</option>
+				<option value ="244-DescCodPais">País</option>
+				<option value ="Notas">Notas</option>
+				<option value ="Resumen">Resumen</option>
+				<option value ="246-DescTMaterial">Tipo de Material</option>
+				<option value ="245-DescTSoporte">Soporte</option>
+				<option value ="ISBN">ISBN/ISSN</option>
+				<option value ="EJEMPLARES.Inventario">Inventario</option>
+				<option value ="EJEMPLARES.SignaturaTopografica">Signatura Topográfica (Ubicación)</option>
+				<option value ="Serie_AnioReal">REVISTA: Año Real</option>
+				<option value ="Serie_AnioInterno">REVISTA: Año Interno</option>
+				<option value ="Serie_NumDesde">REVISTA: Número</option>
+				<option value ="Serie_Volumen">REVISTA: Volumen</option>
+				<option value ="Serie_Fecha">REVISTA: Fecha</option>
+				<option value ="MULTIMEDIA.Titulo">MULTIMEDIA : Título</option>
+				<option value ="MULTIMEDIA.TipoArchivo">MULTIMEDIA : Tipo</option>
+				<option value ="MULTIMEDIA.Descripcion">MULTIMEDIA : Descripción</option>
+				<option value ="MULTIMEDIA.Alias">MULTIMEDIA : Ubicación</option>
+				<option value ="MULTIMEDIA.Default">MULTIMEDIA : Elemento Principal</option>
+				<option value ="MULTIMEDIA.Nombre">MULTIMEDIA : Nombre de Archivo</option>
+				<option value ="CodTMaterial">Código de Tipo de Material</option>
+				<option value ="CodTSoporte">Código de Soporte</option>
+				<option value ="MULTIMEDIA.CodBiblioteca">MULTIMEDIA : U. Info.</option>
+				<option value ="CodBiblioteca">U. Info. de Documento</option>
+				<option value ="EJEMPLARES.CodBiblioteca">U. Info. de Ejemplar</option>
+				<option value ="AUTORES.FechaNacimiento">Autor, Fecha de Nacimiento</option>
+				<option value ="AUTORES.FechaFallecimiento">Autor, Fecha de Fallecimiento</option>
+				<option value ="AUTORES.Numero">Número Evento</option>
+				<option value ="AUTORES.Anio">Año del Evento</option>
+				<option value ="FechaAlta">Fecha de Ingreso</option>
+				<option value ="NivelBibliografico">Nivel Bibliográfico</option>
+			</select>
+		</div> <!-- input-group //-->
+	</div> <!-- col //-->
+	<div class="col-12 col-sm-5 col-lg-3 mb-1">
+		<div class="input-group input-group-sm">      
+				<label class="input-group-text" for="trMust2"><strong><span class="text-success">Debe</span></strong></label>
+
+			<select class="form-select" id="opMust2" name="opMust2" disabled>    				<option value="" selected>contener</option>				<option value="gt">ser &gt;</option>				<option value="gte">ser &gt;=</option>				<option value="lt">ser &lt;</option>				<option value="lte">ser &lt;=</option>			</select>
+		</div>
+	</div> <!-- col //-->
+	<div class="col-12 col-lg-5 mb-1">
+		<div class="input-group input-group-sm">
+			<input rel="srchInput srchMust" data-n="2" data-select="arMust2" type="text" name="trMust2" id="trMust2" class="form-control" placeholder="Términos clave..." aria-label="areaTerms2">
+				<button rel="srchClear" data-input="trMust2" id="btnClearMust2" class="btn btn-outline-secondary" type="button"><svg class="wsIcon"><use href="wsIcons.svg#icon-x"></use></svg></button>
+		</div>
+	</div> <!-- col -->
+</div> <!-- row //-->
+<div class="row mb-2">
+	<div class="col-12 col-sm-7 col-lg-4 mb-1">
+		<div class="input-group input-group-sm">
+ 				<button rel="srchDelCond" id="btnDelCndMust3" class="btn btn-outline-secondary" type="button"><svg class="wsIcon"><use href="wsIcons.svg#icon-minus"></use></svg></button>
+				<label class="input-group-text" for="arMust3">Área</label>
+			<select rel="advCnd" class="form-select" id="arMust3" name="arMust3">
+				<option value ="*">Toda área indizada</option>
+				<option value ="251-Titulos">Títulos</option>
+				<option value ="AUTORES.255-Autor">Autor</option>
+				<option value ="MATERIAS.Materia" selected>Materia</option>
+				<option value ="EDITORIALES.255-Editor">Editorial</option>
+				<option value ="250-Idiomas">Idiomas</option>
+				<option value ="Edicion">Edición</option>
+				<option value ="Edicion_FechaDesde">Año de Publicación</option>
+				<option value ="252-Coleccion">Título de Serie/Colección</option>
+				<option value ="Lugar">Lugar</option>
+				<option value ="244-DescCodPais">País</option>
+				<option value ="Notas">Notas</option>
+				<option value ="Resumen">Resumen</option>
+				<option value ="246-DescTMaterial">Tipo de Material</option>
+				<option value ="245-DescTSoporte">Soporte</option>
+				<option value ="ISBN">ISBN/ISSN</option>
+				<option value ="EJEMPLARES.Inventario">Inventario</option>
+				<option value ="EJEMPLARES.SignaturaTopografica">Signatura Topográfica (Ubicación)</option>
+				<option value ="Serie_AnioReal">REVISTA: Año Real</option>
+				<option value ="Serie_AnioInterno">REVISTA: Año Interno</option>
+				<option value ="Serie_NumDesde">REVISTA: Número</option>
+				<option value ="Serie_Volumen">REVISTA: Volumen</option>
+				<option value ="Serie_Fecha">REVISTA: Fecha</option>
+				<option value ="MULTIMEDIA.Titulo">MULTIMEDIA : Título</option>
+				<option value ="MULTIMEDIA.TipoArchivo">MULTIMEDIA : Tipo</option>
+				<option value ="MULTIMEDIA.Descripcion">MULTIMEDIA : Descripción</option>
+				<option value ="MULTIMEDIA.Alias">MULTIMEDIA : Ubicación</option>
+				<option value ="MULTIMEDIA.Default">MULTIMEDIA : Elemento Principal</option>
+				<option value ="MULTIMEDIA.Nombre">MULTIMEDIA : Nombre de Archivo</option>
+				<option value ="CodTMaterial">Código de Tipo de Material</option>
+				<option value ="CodTSoporte">Código de Soporte</option>
+				<option value ="MULTIMEDIA.CodBiblioteca">MULTIMEDIA : U. Info.</option>
+				<option value ="CodBiblioteca">U. Info. de Documento</option>
+				<option value ="EJEMPLARES.CodBiblioteca">U. Info. de Ejemplar</option>
+				<option value ="AUTORES.FechaNacimiento">Autor, Fecha de Nacimiento</option>
+				<option value ="AUTORES.FechaFallecimiento">Autor, Fecha de Fallecimiento</option>
+				<option value ="AUTORES.Numero">Número Evento</option>
+				<option value ="AUTORES.Anio">Año del Evento</option>
+				<option value ="FechaAlta">Fecha de Ingreso</option>
+				<option value ="NivelBibliografico">Nivel Bibliográfico</option>
+			</select>
+		</div> <!-- input-group //-->
+	</div> <!-- col //-->
+	<div class="col-12 col-sm-5 col-lg-3 mb-1">
+		<div class="input-group input-group-sm">      
+				<label class="input-group-text" for="trMust3"><strong><span class="text-success">Debe</span></strong></label>
+
+			<select class="form-select" id="opMust3" name="opMust3" disabled>    				<option value="" selected>contener</option>				<option value="gt">ser &gt;</option>				<option value="gte">ser &gt;=</option>				<option value="lt">ser &lt;</option>				<option value="lte">ser &lt;=</option>			</select>
+		</div>
+	</div> <!-- col //-->
+	<div class="col-12 col-lg-5 mb-1">
+		<div class="input-group input-group-sm">
+			<input rel="srchInput srchMust" data-n="3" data-select="arMust3" type="text" name="trMust3" id="trMust3" class="form-control" placeholder="Términos clave..." aria-label="areaTerms3">
+				<button rel="srchClear" data-input="trMust3" id="btnClearMust3" class="btn btn-outline-secondary" type="button"><svg class="wsIcon"><use href="wsIcons.svg#icon-x"></use></svg></button>
+		</div>
+	</div> <!-- col -->
+</div> <!-- row //-->
+
+</div> <!-- groupMust -->
+
+<div id='groupShld'>
+
+<div class="row mb-2">
+	<div class="col-12 col-sm-7 col-lg-4 mb-1">
+		<div class="input-group input-group-sm">
+				<button rel="srchAddCond" id="btnAddCndShld1" class="btn btn-outline-secondary" type="button" title="Agregar otra área de búsqueda" data-bs-toggle="tooltip"><svg class="wsIcon"><use href="wsIcons.svg#icon-plus"></use></svg></button>
+				<label class="input-group-text" for="arShld1">Área</label>
+			<select rel="advCnd" class="form-select" id="arShld1" name="arShld1">
+				<option value ="*">Toda área indizada</option>
+				<option value ="251-Titulos" selected>Títulos</option>
+				<option value ="AUTORES.255-Autor">Autor</option>
+				<option value ="MATERIAS.Materia">Materia</option>
+				<option value ="EDITORIALES.255-Editor">Editorial</option>
+				<option value ="250-Idiomas">Idiomas</option>
+				<option value ="Edicion">Edición</option>
+				<option value ="Edicion_FechaDesde">Año de Publicación</option>
+				<option value ="252-Coleccion">Título de Serie/Colección</option>
+				<option value ="Lugar">Lugar</option>
+				<option value ="244-DescCodPais">País</option>
+				<option value ="Notas">Notas</option>
+				<option value ="Resumen">Resumen</option>
+				<option value ="246-DescTMaterial">Tipo de Material</option>
+				<option value ="245-DescTSoporte">Soporte</option>
+				<option value ="ISBN">ISBN/ISSN</option>
+				<option value ="EJEMPLARES.Inventario">Inventario</option>
+				<option value ="EJEMPLARES.SignaturaTopografica">Signatura Topográfica (Ubicación)</option>
+				<option value ="Serie_AnioReal">REVISTA: Año Real</option>
+				<option value ="Serie_AnioInterno">REVISTA: Año Interno</option>
+				<option value ="Serie_NumDesde">REVISTA: Número</option>
+				<option value ="Serie_Volumen">REVISTA: Volumen</option>
+				<option value ="Serie_Fecha">REVISTA: Fecha</option>
+				<option value ="MULTIMEDIA.Titulo">MULTIMEDIA : Título</option>
+				<option value ="MULTIMEDIA.TipoArchivo">MULTIMEDIA : Tipo</option>
+				<option value ="MULTIMEDIA.Descripcion">MULTIMEDIA : Descripción</option>
+				<option value ="MULTIMEDIA.Alias">MULTIMEDIA : Ubicación</option>
+				<option value ="MULTIMEDIA.Default">MULTIMEDIA : Elemento Principal</option>
+				<option value ="MULTIMEDIA.Nombre">MULTIMEDIA : Nombre de Archivo</option>
+				<option value ="CodTMaterial">Código de Tipo de Material</option>
+				<option value ="CodTSoporte">Código de Soporte</option>
+				<option value ="MULTIMEDIA.CodBiblioteca">MULTIMEDIA : U. Info.</option>
+				<option value ="CodBiblioteca">U. Info. de Documento</option>
+				<option value ="EJEMPLARES.CodBiblioteca">U. Info. de Ejemplar</option>
+				<option value ="AUTORES.FechaNacimiento">Autor, Fecha de Nacimiento</option>
+				<option value ="AUTORES.FechaFallecimiento">Autor, Fecha de Fallecimiento</option>
+				<option value ="AUTORES.Numero">Número Evento</option>
+				<option value ="AUTORES.Anio">Año del Evento</option>
+				<option value ="FechaAlta">Fecha de Ingreso</option>
+				<option value ="NivelBibliografico">Nivel Bibliográfico</option>
+			</select>
+		</div> <!-- input-group //-->
+	</div> <!-- col //-->
+	<div class="col-12 col-sm-5 col-lg-3 mb-1">
+		<div class="input-group input-group-sm">      
+				<label class="input-group-text" for="trShld1"><strong><span class="text-info">Podría</span></strong></label>
+
+			<select class="form-select" id="opShld1" name="opShld1" disabled>    				<option value="" selected>contener</option>				<option value="gt">ser &gt;</option>				<option value="gte">ser &gt;=</option>				<option value="lt">ser &lt;</option>				<option value="lte">ser &lt;=</option>			</select>
+		</div>
+	</div> <!-- col //-->
+	<div class="col-12 col-lg-5 mb-1">
+		<div class="input-group input-group-sm">
+			<input rel="srchInput srchShld" data-n="1" data-select="arShld1" type="text" name="trShld1" id="trShld1" class="form-control" placeholder="Términos clave..." aria-label="areaTerms1">
+				<button rel="srchClear" data-input="trShld1" id="btnClearShld1" class="btn btn-outline-secondary" type="button"><svg class="wsIcon"><use href="wsIcons.svg#icon-x"></use></svg></button>
+		</div>
+	</div> <!-- col -->
+</div> <!-- row //-->
+<div class="row mb-2">
+	<div class="col-12 col-sm-7 col-lg-4 mb-1">
+		<div class="input-group input-group-sm">
+ 				<button rel="srchDelCond" id="btnDelCndShld2" class="btn btn-outline-secondary" type="button"><svg class="wsIcon"><use href="wsIcons.svg#icon-minus"></use></svg></button>
+				<label class="input-group-text" for="arShld2">Área</label>
+			<select rel="advCnd" class="form-select" id="arShld2" name="arShld2">
+				<option value ="*">Toda área indizada</option>
+				<option value ="251-Titulos">Títulos</option>
+				<option value ="AUTORES.255-Autor" selected>Autor</option>
+				<option value ="MATERIAS.Materia">Materia</option>
+				<option value ="EDITORIALES.255-Editor">Editorial</option>
+				<option value ="250-Idiomas">Idiomas</option>
+				<option value ="Edicion">Edición</option>
+				<option value ="Edicion_FechaDesde">Año de Publicación</option>
+				<option value ="252-Coleccion">Título de Serie/Colección</option>
+				<option value ="Lugar">Lugar</option>
+				<option value ="244-DescCodPais">País</option>
+				<option value ="Notas">Notas</option>
+				<option value ="Resumen">Resumen</option>
+				<option value ="246-DescTMaterial">Tipo de Material</option>
+				<option value ="245-DescTSoporte">Soporte</option>
+				<option value ="ISBN">ISBN/ISSN</option>
+				<option value ="EJEMPLARES.Inventario">Inventario</option>
+				<option value ="EJEMPLARES.SignaturaTopografica">Signatura Topográfica (Ubicación)</option>
+				<option value ="Serie_AnioReal">REVISTA: Año Real</option>
+				<option value ="Serie_AnioInterno">REVISTA: Año Interno</option>
+				<option value ="Serie_NumDesde">REVISTA: Número</option>
+				<option value ="Serie_Volumen">REVISTA: Volumen</option>
+				<option value ="Serie_Fecha">REVISTA: Fecha</option>
+				<option value ="MULTIMEDIA.Titulo">MULTIMEDIA : Título</option>
+				<option value ="MULTIMEDIA.TipoArchivo">MULTIMEDIA : Tipo</option>
+				<option value ="MULTIMEDIA.Descripcion">MULTIMEDIA : Descripción</option>
+				<option value ="MULTIMEDIA.Alias">MULTIMEDIA : Ubicación</option>
+				<option value ="MULTIMEDIA.Default">MULTIMEDIA : Elemento Principal</option>
+				<option value ="MULTIMEDIA.Nombre">MULTIMEDIA : Nombre de Archivo</option>
+				<option value ="CodTMaterial">Código de Tipo de Material</option>
+				<option value ="CodTSoporte">Código de Soporte</option>
+				<option value ="MULTIMEDIA.CodBiblioteca">MULTIMEDIA : U. Info.</option>
+				<option value ="CodBiblioteca">U. Info. de Documento</option>
+				<option value ="EJEMPLARES.CodBiblioteca">U. Info. de Ejemplar</option>
+				<option value ="AUTORES.FechaNacimiento">Autor, Fecha de Nacimiento</option>
+				<option value ="AUTORES.FechaFallecimiento">Autor, Fecha de Fallecimiento</option>
+				<option value ="AUTORES.Numero">Número Evento</option>
+				<option value ="AUTORES.Anio">Año del Evento</option>
+				<option value ="FechaAlta">Fecha de Ingreso</option>
+				<option value ="NivelBibliografico">Nivel Bibliográfico</option>
+			</select>
+		</div> <!-- input-group //-->
+	</div> <!-- col //-->
+	<div class="col-12 col-sm-5 col-lg-3 mb-1">
+		<div class="input-group input-group-sm">      
+				<label class="input-group-text" for="trShld2"><strong><span class="text-info">Podría</span></strong></label>
+
+			<select class="form-select" id="opShld2" name="opShld2" disabled>    				<option value="" selected>contener</option>				<option value="gt">ser &gt;</option>				<option value="gte">ser &gt;=</option>				<option value="lt">ser &lt;</option>				<option value="lte">ser &lt;=</option>			</select>
+		</div>
+	</div> <!-- col //-->
+	<div class="col-12 col-lg-5 mb-1">
+		<div class="input-group input-group-sm">
+			<input rel="srchInput srchShld" data-n="2" data-select="arShld2" type="text" name="trShld2" id="trShld2" class="form-control" placeholder="Términos clave..." aria-label="areaTerms2">
+				<button rel="srchClear" data-input="trShld2" id="btnClearShld2" class="btn btn-outline-secondary" type="button"><svg class="wsIcon"><use href="wsIcons.svg#icon-x"></use></svg></button>
+		</div>
+	</div> <!-- col -->
+</div> <!-- row //-->
+
+</div> <!-- groupShld -->
+
+<div id='groupNot'>
+
+<div class="row mb-2">
+	<div class="col-12 col-sm-7 col-lg-4 mb-1">
+		<div class="input-group input-group-sm">
+				<button rel="srchAddCond" id="btnAddCndNot1" class="btn btn-outline-secondary" type="button" title="Agregar otra área de búsqueda" data-bs-toggle="tooltip"><svg class="wsIcon"><use href="wsIcons.svg#icon-plus"></use></svg></button>
+				<label class="input-group-text" for="arNot1">Área</label>
+			<select rel="advCnd" class="form-select" id="arNot1" name="arNot1">
+				<option value ="*">Toda área indizada</option>
+				<option value ="251-Titulos" selected>Títulos</option>
+				<option value ="AUTORES.255-Autor">Autor</option>
+				<option value ="MATERIAS.Materia">Materia</option>
+				<option value ="EDITORIALES.255-Editor">Editorial</option>
+				<option value ="250-Idiomas">Idiomas</option>
+				<option value ="Edicion">Edición</option>
+				<option value ="Edicion_FechaDesde">Año de Publicación</option>
+				<option value ="252-Coleccion">Título de Serie/Colección</option>
+				<option value ="Lugar">Lugar</option>
+				<option value ="244-DescCodPais">País</option>
+				<option value ="Notas">Notas</option>
+				<option value ="Resumen">Resumen</option>
+				<option value ="246-DescTMaterial">Tipo de Material</option>
+				<option value ="245-DescTSoporte">Soporte</option>
+				<option value ="ISBN">ISBN/ISSN</option>
+				<option value ="EJEMPLARES.Inventario">Inventario</option>
+				<option value ="EJEMPLARES.SignaturaTopografica">Signatura Topográfica (Ubicación)</option>
+				<option value ="Serie_AnioReal">REVISTA: Año Real</option>
+				<option value ="Serie_AnioInterno">REVISTA: Año Interno</option>
+				<option value ="Serie_NumDesde">REVISTA: Número</option>
+				<option value ="Serie_Volumen">REVISTA: Volumen</option>
+				<option value ="Serie_Fecha">REVISTA: Fecha</option>
+				<option value ="MULTIMEDIA.Titulo">MULTIMEDIA : Título</option>
+				<option value ="MULTIMEDIA.TipoArchivo">MULTIMEDIA : Tipo</option>
+				<option value ="MULTIMEDIA.Descripcion">MULTIMEDIA : Descripción</option>
+				<option value ="MULTIMEDIA.Alias">MULTIMEDIA : Ubicación</option>
+				<option value ="MULTIMEDIA.Default">MULTIMEDIA : Elemento Principal</option>
+				<option value ="MULTIMEDIA.Nombre">MULTIMEDIA : Nombre de Archivo</option>
+				<option value ="CodTMaterial">Código de Tipo de Material</option>
+				<option value ="CodTSoporte">Código de Soporte</option>
+				<option value ="MULTIMEDIA.CodBiblioteca">MULTIMEDIA : U. Info.</option>
+				<option value ="CodBiblioteca">U. Info. de Documento</option>
+				<option value ="EJEMPLARES.CodBiblioteca">U. Info. de Ejemplar</option>
+				<option value ="AUTORES.FechaNacimiento">Autor, Fecha de Nacimiento</option>
+				<option value ="AUTORES.FechaFallecimiento">Autor, Fecha de Fallecimiento</option>
+				<option value ="AUTORES.Numero">Número Evento</option>
+				<option value ="AUTORES.Anio">Año del Evento</option>
+				<option value ="FechaAlta">Fecha de Ingreso</option>
+				<option value ="NivelBibliografico">Nivel Bibliográfico</option>
+			</select>
+		</div> <!-- input-group //-->
+	</div> <!-- col //-->
+	<div class="col-12 col-sm-5 col-lg-3 mb-1">
+		<div class="input-group input-group-sm">      
+				<label class="input-group-text" for="trNot1"><strong><span class="text-danger">No debe</span></strong></label>
+
+			<select class="form-select" id="opNot1" name="opNot1" disabled>    				<option value="" selected>contener</option>				<option value="gt">ser &gt;</option>				<option value="gte">ser &gt;=</option>				<option value="lt">ser &lt;</option>				<option value="lte">ser &lt;=</option>			</select>
+		</div>
+	</div> <!-- col //-->
+	<div class="col-12 col-lg-5 mb-1">
+		<div class="input-group input-group-sm">
+			<input rel="srchInput srchNot" data-n="1" data-select="arNot1" type="text" name="trNot1" id="trNot1" class="form-control" placeholder="Términos clave..." aria-label="areaTerms1">
+				<button rel="srchClear" data-input="trNot1" id="btnClearNot1" class="btn btn-outline-secondary" type="button"><svg class="wsIcon"><use href="wsIcons.svg#icon-x"></use></svg></button>
+		</div>
+	</div> <!-- col -->
+</div> <!-- row //-->
+
+</div> <!-- groupNot -->
+
+<div class="row">
+  <div class="col-12">
+      <button type="submit" class="btn btn-primary float-end"><svg class="wsTxtIcon me-1" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-buscar"></use></svg>Buscar</button>
+      <button onclick="wsClearFormsInput('formBsqAvanzada')" type="button" class="btn btn-warning float-end me-4"><svg class="wsTxtIcon me-1" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-x"></use></svg>Limpiar</button>  
+  </div>
+</div>
+</div> <!-- div class="form-group" //-->
+</form>
+
+</div> <!-- bsqAvanzada -->
+
+<!-- BUSQUEDA SIMPLE - - - - - - - - - - - - - - - - - - - - - - - - - - -  //-->
+<div class="tab-pane fade show active" id="lyrBsqSimple" role="tabpanel" aria-labelledby="tabBsqSimple">
+
+<form action="opac.php" id="formBsqSimple">
+<div class="form-group">
+<input type="hidden" name="a" value="bsqSi" />
+<input type="hidden" name="p" value="1" />
+<input type="hidden" name="o" value="" />
+
+<div class="row"><div class="col-12">
+    <div class="input-group">
+      <label class="input-group-text text-info d-none d-md-block" for="trSimple">Buscar</label>
+      <input type="text" rel="srchInput" name="trSimple" id="trSimple" value="Rayuela" class="form-control" placeholder="términos significativos...">
+      <button rel="srchClear" id="clrSimple" data-input="trSimple" type="button" class="btn btn-outline-secondary px-2 px-sm-3"><svg class="wsTxtIcon" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-x"></use></svg></button>
+      <button type="submit" class="btn btn-primary px-2 px-sm-3 px-md-4" title="Buscar" data-bs-toggle="tooltip"><svg class="wsTxtIcon" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-buscar"></use></svg></button>
+    </div>
+</div></div>
+
+<div class="row"><div class="col-12 mt-1">
+  <div class="input-group">
+    <div class="form-check form-switch small">
+    <input class="form-check-input" type="checkbox" id="op" name="op" value="and" checked >
+    <label class="form-check-label" for="op" id="opDesc">Documentos incluyendo TODOS los términos</label>
+    </div>
+  </div>
+</div></div>
+
+<div class="row align-items-end mt-3 small">
+  <div class="col-12 col-md-6">
+        <a href="opac.php?a=bsqRnd&o=ing-d" class="align-bottom">Últimos documentos ingresados</a>
+  </div>
+  <div class="col-12 col-md-6">
+    <div id="viewQR">
+      <p class="m-0 text-end">
+        <a href="qr.php" class="align-bottom"><span class="me-1">Accedé aquí desde tu celular usando QR</span></a>
+        <a href="qr.php"><span class="btn btn-outline-secondary rounded py-1 px-2"><svg class="wsIcon" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-qr"></use></svg></span></a>
+      </p>
+    </div>
+</div></div>
+
+</div> <!-- div class="form-group" //-->
+</form>
+
+</div> <!-- bsqSimple -->
+
+<!-- BUSQUEDA NOVEDADES - - - - - - - - - - - - - - - - - - - - - - - - - - -  //-->
+<div class="tab-pane fade show " id="lyrBsqNovedades" role="tabpanel" aria-labelledby="tabBsqNovedades">
+
+<form action="opac.php" id="formBsqNovedades">
+<div class="form-group">
+<input type="hidden" name="a" value="bsqNov" />
+<input type="hidden" name="p" value="1" />
+<input type="hidden" name="o" value="" />
+
+<div class="row">
+  <div class="col-12">
+    <div class="input-group">
+      <label class="input-group-text text-info d-none d-md-block" for="trNov">Ingresado</label>
+      <select class="form-select" id="trNov" name="trNov">
+	<option value="7d">En la última semana</option>
+	<option value="15d">En la última quincena</option>
+	<option value="1M" selected>En el último mes</option>
+	<option value="3M">En el último trimestre</option>
+	<option value="6M">En el último semestre</option>
+	<option value="1y">Último año</option>
+      </select>
+      <button type="submit" class="btn btn-primary px-2 px-sm-3 px-md-4" title="Buscar" data-bs-toggle="tooltip"><svg class="wsIcon" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-buscar"></use></svg></button>
+    </div>    
+  </div>
+</div>
+
+</div> <!-- div class="form-group" //-->
+</form>
+
+</div> <!-- bsqNovedades -->
+
+<!-- BUSQUEDA REVISTAS - - - - - - - - - - - - - - - - - - - - - - - - - - -  //-->
+<div class="tab-pane fade show " id="lyrBsqRevistas" role="tabpanel" aria-labelledby="tabBsqRevistas">
+
+<form action="opac.php" id="formBsqRevistas">
+<div class="form-group">
+<input type="hidden" name="a" value="bsqRev" />
+<input type="hidden" name="p" value="1" />
+<input type="hidden" name="o" value="" />
+
+<div class="row">
+  <div class="col-12">
+    <div class="input-group">
+      <label class="d-none d-md-block input-group-text" for="trRevTit"><span class="text-info">Título</span></label>
+      <input type="text" rel="srchInput" data-nb="S X" data-field="251-Titulos" name="trRevTit" id="trRevTit" value="" class="form-control" placeholder="términos significativos...">
+      <button rel="srchClear" data-input="trRevTit" type="button" class="btn btn-outline-secondary"><svg class="wsTxtIcon" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-x"></use></svg></button>
+    </div>
+  </div>
+</div>
+<div class="row">
+
+  <div class="cols-12 col-sm-4 col-lg-5 mt-2">
+
+    <div class="input-group">
+      <label class="input-group-text d-none d-md-block" for="trRevAnios"><span class="text-info">Año/s</span></label>
+      <input type="text" name="trRevAnios" id="trRevAnios" value="" class="form-control" placeholder="año1 [año2] [año?]">
+      <button rel="srchClear" data-input="trRevAnios" type="button" class="btn btn-outline-secondary"><svg class="wsTxtIcon" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-x"></use></svg></button>
+    </div>
+
+  </div>
+
+  <div class="cols-12 col-sm-5 mt-2">
+
+    <div class="input-group">
+      <label class="input-group-text d-none d-md-block" for="trRevNros"><span class="text-info">Nro./s:</span></label>
+      <input type="text" name="trRevNros" id="trRevNros" value="" class="form-control" placeholder="nro1 [nro2] [nro?]">
+      <button rel="srchClear" data-input="trRevNros" type="button" class="btn btn-outline-secondary"><svg class="wsTxtIcon" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-x"></use></svg></button>
+    </div>
+
+  </div>
+
+  <div class="cols-12 col-sm-3 col-lg-2 mt-2">
+      <button type="submit" class="btn btn-primary float-end"><svg class="wsTxtIcon me-1" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-buscar"></use></svg>Buscar</button>
+  </div>
+</div>
+
+</div> <!-- div class="form-group" //-->
+</form>
+
+</div> <!-- bsqRev -->
+
+<!-- BUSQUEDA DEBUG - - - - - - - - - - - - - - - - - - - - - - - - - - -  //-->
+<div class="tab-pane fade show " id="lyrBsqDebug" role="tabpanel" aria-labelledby="tabBsqDebug">
+
+<form action="opac.php" id="formBsqDebug">
+<div class="form-group">
+<input type="hidden" name="a" value="bsqDebug" />
+<input type="hidden" name="p" value="1" />
+<input type="hidden" name="o" value="" />
+<input type="hidden" name="dbg" value="1" />
+
+<div class="row"><div class="col-12">
+    <div class="input-group">
+      <div class="form-floating">
+      <textarea class="form-control" placeholder="Ingresar json query aquí..." id="trJsonQuery" name="trJsonQuery" ></textarea>
+      <label for="trJsonQuery">Buscar</label>
+      </div>
+      <button type="submit" class="btn btn-primary px-2 px-sm-3 px-md-4" title="Buscar" data-bs-toggle="tooltip"><svg class="wsTxtIcon" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-buscar"></use></svg></button>
+    </div>
+</div></div>
+
+</div> <!-- div class="form-group" //-->
+</form>
+
+</div> <!-- bsqDebug --></div> <!-- tab-content //-->
+
+<!-- FIN BUSQUEDAS - - - - - - - - - - - - - - - - - - - - - - - - - - -  //-->
+
+	<div id="lyrUI" class="row mb-2 d-none"><div class="col-12">
+		<div class="input-group">
+		<label class="input-group-text" for="trUI"><span class="text-info">Catálogo/Sede</span></label>
+
+		<select class="form-select" name="c" id="trUI">
+  			<option value="0" selected>Todas</option>
+			<option value="10">ASCASUBI, Hilario</option>
+			<option value="27">BANCHS, Enrique (Biblioteca Infantil)</option>
+			<option value="5">CANÉ, Miguel</option>
+			<option value="15">CARRIEGO, Evaristo</option>
+			<option value="16">CENTENERA, Martín del Barco</option>
+			<option value="40">CIRCE (Biblioteca TESORO - Con cita telefónica)</option>
+			<option value="8">Casa de la Lectura y la Escritura</option>
+			<option value="23">DEL CAMPO, Estanislao</option>
+			<option value="21">DEVOTO, Antonio</option>
+			<option value="9">FERNÁNDEZ MORENO, Baldomero</option>
+			<option value="4">GÁLVEZ, Manuel</option>
+			<option value="14">GONZÁLEZ, Joaquín V.</option>
+			<option value="3">GUIDO Y SPANO, Carlos</option>
+			<option value="2">GÜIRALDES, Ricardo</option>
+			<option value="20">HERNANDEZ, José</option>
+			<option value="18">LA PRENSA</option>
+			<option value="6">LUGONES, Leopoldo</option>
+			<option value="7">LYNCH, Benito</option>
+			<option value="45">MAFALDA</option>
+			<option value="22">OBLIGADO, Rafael</option>
+			<option value="46">PARQUE DE LA ESTACIÓN</option>
+			<option value="17">PELLIZA, Mariano</option>
+			<option value="48">PUERTA a PUERTA</option>
+			<option value="34">REINA BATATA</option>
+			<option value="19">SAGUIER, Julio César</option>
+			<option value="25">STORNI, Alfonsina (Biblioteca de la Mujer)</option>
+			<option value="24">VILLAFAÑE, Javier</option>
+			<option value="30">YUNQUE, Alvaro (Biblioteca Infantil)</option>
+			<option value="29">Infantil CANÉ, Miguel</option>
+			<option value="35">Infantil CENTENERA, Martín del Barco</option>
+			<option value="36">Infantil DEVOTO, Antonio</option>
+			<option value="37">Infantil GONZÁLEZ, Joaquín V.</option>
+			<option value="38">Infantil LYNCH, Benito</option>
+			<option value="33">Infantil SAGUIER, Julio César</option>
+			<option value="39">Infantil VILLAFAÑE, Javier</option>
+			<option value="50">MARTÍNEZ, Tomás Eloy</option>
+			<option value="49">Bibliosubte</option>
+		</select>
+		<button id="bInfoSede" class="btn btn-primary d-none" type="button"><svg class="wsIcon" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-circle-info"></use></svg></button>  <!-- info de sede uso basado en userFunc.php //-->
+		</div>
+	</div></div>
+<div id="viewMessages"></div>
+
+<div class="alert alert-info alert-dismissible fade show" role="alert">
+  <svg rel="myFeed" title="Obtener enlace para fuente web (rss)" data-bs-toggle="tooltip" class="wsIcon" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-rss" style="color:#ee802f; cursor:pointer"></use></svg>
+   Se obtuvieron <strong>65</strong> documentos.&nbsp;      
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<!-- CONTROLS - - - - - - - - - - - - - - - - - -   -->
+<div class="row">
+  <div class="col-7 order-2 pb-1     col-md-5 col-lg-7 order-md-1    d-print-none">
+      <div class="me-1 btn-group btn-group-toggle shadow-sm float-start" data-toggle="buttons" aria-label="Modo de visualización de resultados" role="radiogroup">
+        <label for="oFichas" class="btn btn-outline-secondary " title="Visualizar como fichas" data-bs-toggle="tooltip">
+        <input aria-label="Visualizar como fichas" type="radio" class="btn-check" name="vm" id="oFichas" value="fichas"  >
+        <svg class="wsIcon" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-fichas3"></use></svg></label>
+
+        <label for="oFicha" class="btn btn-outline-secondary active" title="Visualizar como ficha encolumnada" data-bs-toggle="tooltip">
+        <input aria-label="Visualizar como ficha encolumnada" type="radio" class="btn-check" name="vm" id="oFicha" value="ficha" checked >
+        <svg class="wsIcon" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-fichas"></use></svg></label>
+
+        <label for="oGrilla" class="btn btn-outline-secondary "  title="Visualizar como grilla" data-bs-toggle="tooltip">
+        <input aria-label="Visualizar como grilla" type="radio" class="btn-check" name="vm" id="oGrilla" value="grilla"  >
+        <svg class="wsIcon" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grilla"></use></svg></label>
+      </div>
+      
+<div class="btn-group shadow-sm ms-1" role="group">
+
+	<button type="button" class="btn btn-outline-secondary dropdown-toggle px-1 px-sm-2" data-bs-toggle="dropdown" id="btnLanguage" aria-label="Español, English, Português?" title="Español, English, Português?" aria-haspopup="true" aria-expanded="false">  
+  <svg class="wsIcon" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-idioma"></use></svg>
+  </button>
+	<ul class="dropdown-menu wsShowOnTop" id="ddLanguage" aria-labelledby="btnLanguage">
+		<li><a class="dropdown-item" id="miLangES" data-lg="ES" href="./opac.php?l=ES">Español</a></li>
+		<li><a class="dropdown-item" id="miLangEN" data-lg="EN" href="./opac.php?l=EN">English</a></li>
+		<li><a class="dropdown-item" id="miLangPT" data-lg="PT" href="./opac.php?l=PT">Português</a></li>
+	</ul>
+</div>
+  </div>
+
+  <div class="col-12 order-1 pb-1    col-md-4 col-lg-3 order-md-2    d-print-none">
+    <div class="float-end float-lg-start">
+      <div class="input-group btn-group-toggle shadow-sm" data-toggle="buttons">
+          <label data-bs-toggle="tooltip" class="input-group-text px-2" for="slOrder">Orden</label>
+          <select class="form-select" id="slOrder" name="o">
+            <option value ="" selected>Relevancia</option>
+            <option value ="tit-a">Título</option>
+            <option value ="aut-a">Autor</option>
+            <option value ="fec-a">Fecha Pub.</option>
+            <option value ="fec-d">Fecha Pub. (desc.)</option>
+            <option value ="ing-d">Último ingresado</option>
+          </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-5 order-3 pb-1     col-md-3 col-lg-2   d-print-none">
+    <div class="float-end">
+        <div class="input-group shadow-sm">
+              <label class="input-group-text px-2" for="slItems">Ítems</label>
+              <select class="form-select" id="slItems" name="i">
+              <option value ="25" selected>25</option>
+              <option value ="50" >50</option>
+              <option value ="100" >100</option>
+              </select>
+        </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="viewItems"></div> 
+<!-- STICKY BAR - - - - - - - - - - - - - - - - - - - - -->
+
+<!-- Sticky Bar : Controles principales -->
+<nav class="navbar sticky-top navbar-expand-lg shadow navbar-light bg-light m-0 py-1 px-0">
+	<div class="d-inline-flex   order-2 col-auto   order-lg-1 ps-2 pe-1">
+		<div class="form-check order-1 ">
+			<input aria-label="Marcar o desmarcar todos los resultados de la página" type="checkbox" class="form-check-input" id="cbTagUntagAll">
+			<label class="form-check-label" for="cbTagUntagAll"></label>
+		</div>
+		<div class="dropdown me-2 order-2">
+			<button type="button" title="Menú para selección de documentos" data-bs-toggle="dropdown" class="btn btn-outline-secondary shadow-sm border dropdown-toggle py-0 px-1" id="btnDropdownMarcas" aria-expanded="false"></button>
+			<div class="dropdown-menu">
+				<a class="dropdown-item" id="miInvertTags"  href="#"><svg class="wsIcon me-1" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-invertCheck"></use></svg>Invertir selección</a>
+				<a class="dropdown-item" id="miTagAll"      href="#"><svg class="wsIcon me-1" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-checkAll"></use></svg>Seleccionar todos</a>
+				<a class="dropdown-item" id="miUntagAll"    href="#"><svg class="wsIcon me-1" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-uncheck"></use></svg>Ninguno seleccionado</a>
+				<div class="dropdown-divider"></div>
+				<a class="dropdown-item" id="miEmptyFavs"   href="#"><svg class="wsIcon me-1" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-trash"></use></svg>Vaciar favoritos</a>
+			</div>
+		</div>
+		<div class="btn-group  order-3" role="group">
+			<button class="btn shadow-sm btn-outline-primary" style="display:none" id="btnAddToCart" title="Guardar en favoritos, permanecerán en memoria mientras dure su sesión" data-bs-toggle="tooltip">
+			<svg class="wsIcon" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-star-fill"></use></svg>
+			</button>
+		</div>
+	</div>
+	<div class="btn-toolbar  order-1 col-12   order-lg-2 col-lg-auto  pe-1 mb-1 my-lg-0" role="toolbar">
+
+		<div class="btn-group shadow-sm ms-1 me-2" role="group">
+
+			<button accesskey="v" onclick="window.history.back()" class="btn btn-primary px-4 px-lg-5" id="btnBack" title="[V] Volver" data-bs-toggle="tooltip"><svg class="wsIcon" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-volver"></use></svg></button>
+			<button accesskey="b" class="btn btn-success px-4 px-lg-5" id="btnNewSearch" title="[B] Nueva búsqueda" data-bs-toggle="tooltip"><svg class="wsIcon" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-buscar"></use></svg></button>
+		</div>
+		<div class="ms-auto">
+			<div class="btn-group shadow-sm" role="group">
+				<button class="btn btn-outline-secondary px-2" id="btnFavs" title="Ver favoritos" data-bs-toggle="tooltip" data-placement="auto">
+				<svg class="wsIcon" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-star"></use></svg>
+					<span id="nTotalFavs" class="badge bg-info ms-1  d-none">0</span>
+				</button>
+			</div>
+			<div class="btn-group shadow-sm ms-1" role="group"> 
+				<a href="opacAyuda.php" role="button" target="" class="btn btn-outline-secondary px-2" id="btnHelp" title="Ayuda para usar el catálogo" data-bs-toggle="tooltip"><svg class="wsIcon" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-ayuda"></use></svg></a>
+				<a title="Ir a nuestro sitio" role="button" class="d-none noInsideFrame btn btn-outline-secondary" data-bs-toggle="tooltip" href="https://www.buenosaires.gob.ar/bibliotecas"><svg class="wsIcon" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-home"></use></svg></a>
+
+				<button class="btn btn-outline-secondary dropdown-toggle px-2" id="btnMoreOptions" aria-label="Más opciones" title="Más opciones" data-bs-toggle="dropdown" aria-expanded="false"><svg class="wsIcon" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-masOp"></use></svg></button>
+				<div class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start">
+					<button class="dropdown-item" rel="myFeed"><svg class="wsIcon me-1" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-feed"></use></svg>Obtener enlace para fuente web (rss)</button>
+					<div class="dropdown-divider"></div>
+					<a href="opac.php?a=bsqRnd" id="miSuggestBooks" class="dropdown-item"><svg class="wsIcon me-1" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-book-half"></use></svg>Sugieranme libros</a>
+					<a href="opac.php?a=bsqRnd&o=ing-d" id="miNews7" class="dropdown-item"><svg class="wsIcon me-1" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-book"></use></svg>Ingresado: <span class="text-lowercase">Último ingresado</span></a>
+					<div class="dropdown-divider"></div>
+					<a href="qr.php" id="miQR" class="dropdown-item"><svg class="wsIcon me-1" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-qr"></use></svg>Accedé aquí desde tu celular usando QR</a>
+					<a href="opac.php" target="_blank" id="miOpenInTab" class="dropdown-item"><svg class="wsIcon me-1" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-out"></use></svg>Abrir el catálogo en nueva pestaña</a>				</div> <!-- dropdown -->
+			</div>
+			
+		</div>
+	</div>
+	<div class="order-3 ms-auto ">
+	<!-- Paginacion -->
+	<ul class="w-auto pagination pagination-sm justify-content-center shadow-sm mx-1 my-0 p-0">
+		<li title="Total de páginas: 3" data-bs-toggle="tooltip" class="page-item active"><a class="page-link" href="#">p.&nbsp;<strong>1</strong><span class="d-none d-sm-inline-block">. <small>Ítems 1-25 de </small>65</span></a></li>
+		<li class="page-item" rel="pgNext" data-bs-toggle="tooltip" title="[S] Siguiente"><a accesskey="s" class="page-link ps-3 pe-1 px-md-3 px-lg-4" href="javascript:gotoPage(2)">
+		<!-- <i class="mx-2 fas fa-chevron-right"></i> -->
+		<svg class="wsIcon"><use href="wsIcons.svg#icon-next"></use></svg>
+		</a></li>
+		<li class="page-item" rel="pgLast" data-bs-toggle="tooltip" title="[U] Última página (3)"><a accesskey="u" class="page-link px-1 px-md-2 px-lg-3" href="javascript:gotoPage(3)">
+		<!-- <i class="fas fa-angle-double-right"></i> -->
+		<svg class="wsIcon"><use href="wsIcons.svg#icon-last"></use></svg>
+		</a></li>
+	</ul>
+	<!-- Fin Paginacion -->
+
+	</div>
+</nav>
+<!-- Fin Sticky -->
+<!-- FIN CONTROLS - - - - - - - - - - - - - - - - - - - -->
+
+<!-- RESULTADOS - - - - - - - - - - - - - - - - - - - - -->
+<main id="lyrResultados" class=" pt-3 pb-2 px-2 h6 font-weight-normal">
+	<article rel="ficha" id="ficha1" class="row px-2 mb-1 overflow-auto">
+		<div class="p-1 wsFicha shadow-sm rounded col-12 h-100" id="documento.php?ui=1&recno=1056&id=PERGAMO.1.1056" itemscope="" itemtype="https://schema.org/Book">
+ 
+
+			<div rel="noImage" data-isbn="9500701987" data-nb="M" class="ms-2 float-end h-100"></div>
+
+			<input type="checkbox" class="form-check-input" data-docid="PERGAMO.1.1056" id="cbTag1"><svg class="wsTxtIcon myGrip" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grip"></use></svg>
+		<!-- begin ficha -->
+		<h4 class="wsKeepFS d-inline"><a href="documento.php?ui=1&recno=1056&id=PERGAMO.1.1056"><span itemprop="name"><mark>Rayuela</mark></span></a></h4><span class="text-nowrap" title="Ubicación/Inventario: <br />821.134.2[82]-31 CORr<br />00869" data-bs-toggle="tooltip" data-bs-html="true"><svg class="ms-1 wsTxtIcon text-secondary"><use xlink:href="wsIcons.svg#icon-location"></use></svg></span>. <h5 itemprop="author" itemscope="" itemtype="https://schema.org/Person" class="wsKeepFS d-inline"><a href="opac.php?a=bsqAutor&n=Cort%C3%A1zar%2C+Julio"><span itemprop="name">Cortázar, Julio</span></a></h5> (1914-1984). 25a.ed. <div class="wsKeepFS d-inline" itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization"><span itemprop="location">Buenos Aires</span> : <h6 class="wsKeepFS d-inline"><a href="opac.php?a=bsqEditor&n=Sudamericana+%2F+Planeta"><span itemprop="name">Sudamericana / Planeta</span></a></h6></div>, <span itemprop="datePublished">1987</span>. <abbr title="Unidad de Información, Sede, Catálogo" data-bs-toggle="tooltip">U.I.</abbr>:&nbsp;DGL. ISBN: 9500701987. (M)&nbsp;LITERATURA
+		<!-- end ficha -->
+
+		</div>
+	</article> <!-- id=ficha -->
+	<article rel="ficha" id="ficha2" class="row px-2 mb-1 overflow-auto">
+		<div class="p-1 wsFicha shadow-sm rounded col-12 h-100" id="documento.php?ui=1&recno=3858&id=PERGAMO.1.3858" itemscope="" itemtype="https://schema.org/CreativeWork">
+ 
+
+			<input type="checkbox" class="form-check-input" data-docid="PERGAMO.1.3858" id="cbTag2"><svg class="wsTxtIcon myGrip" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grip"></use></svg>
+		<!-- begin ficha -->
+		<h4 class="wsKeepFS d-inline"><a href="documento.php?ui=1&recno=3858&id=PERGAMO.1.3858"><span itemprop="name"><mark>Rayuela</mark></span></a></h4><span class="text-nowrap" title="Ubicación/Inventario: <br />val-672<br />16127" data-bs-toggle="tooltip" data-bs-html="true"><svg class="ms-1 wsTxtIcon text-secondary"><use xlink:href="wsIcons.svg#icon-location"></use></svg></span>. <h5 itemprop="author" itemscope="" itemtype="https://schema.org/Person" class="wsKeepFS d-inline"><a href="opac.php?a=bsqAutor&n=Cort%C3%A1zar%2C+Julio"><span itemprop="name">Cortázar, Julio</span></a></h5> (1914-1984). 3a.ed. <div class="wsKeepFS d-inline" itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization"><span itemprop="location">Buenos Aires</span> : <h6 class="wsKeepFS d-inline"><a href="opac.php?a=bsqEditor&n=Sudamericana"><span itemprop="name">Sudamericana</span></a></h6></div>, <span itemprop="datePublished">1966</span>. <abbr title="Unidad de Información, Sede, Catálogo" data-bs-toggle="tooltip">U.I.</abbr>:&nbsp;DGL. (M)&nbsp;LITERATURA
+		<!-- end ficha -->
+
+		</div>
+	</article> <!-- id=ficha -->
+	<article rel="ficha" id="ficha3" class="row px-2 mb-1 overflow-auto">
+		<div class="p-1 wsFicha shadow-sm rounded col-12 h-100" id="documento.php?ui=1&recno=6121&id=PERGAMO.1.6121" itemscope="" itemtype="https://schema.org/Book">
+ 
+
+			<div class="float-end ms-2 bg-light">
+			<img class="border shadow bg-light wsPointer wsThumb" rel="pgResImagen" loading="lazy" onError="imgError(this)" onLoad="imgLoaded(this)" alt="TAPA" title="TAPA" data-bs-toggle="tooltip" data-webpath="/media/Libros/" data-ftitle="TAPA" data-img="950-511-187-8_T.jpg" src="/media/Libros/thmb950-511-187-8_T.jpg"/>
+			</div>
+
+			<input type="checkbox" class="form-check-input" data-docid="PERGAMO.1.6121" id="cbTag3"><svg class="wsTxtIcon myGrip" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grip"></use></svg>
+		<!-- begin ficha -->
+		<h4 class="wsKeepFS d-inline"><a href="documento.php?ui=1&recno=6121&id=PERGAMO.1.6121"><span itemprop="name"><mark>Rayuela</mark></span></a></h4><span class="text-nowrap" title="Ubicación/Inventario: <br />821.134.2[82]-31 CORr<br />35885" data-bs-toggle="tooltip" data-bs-html="true"><svg class="ms-1 wsTxtIcon text-secondary"><use xlink:href="wsIcons.svg#icon-location"></use></svg></span>. <h5 itemprop="author" itemscope="" itemtype="https://schema.org/Person" class="wsKeepFS d-inline"><a href="opac.php?a=bsqAutor&n=Cort%C3%A1zar%2C+Julio"><span itemprop="name">Cortázar, Julio</span></a></h5> (1914-1984). (Biblioteca Cortázar). <div class="wsKeepFS d-inline" itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization"><span itemprop="location">Buenos Aires</span> : <h6 class="wsKeepFS d-inline"><a href="opac.php?a=bsqEditor&n=Alfaguara"><span itemprop="name">Alfaguara</span></a></h6></div>, <span itemprop="datePublished">1995</span>. <abbr title="Unidad de Información, Sede, Catálogo" data-bs-toggle="tooltip">U.I.</abbr>:&nbsp;DGL. ISBN: 9505111878. (M)&nbsp;LITERATURA
+		<!-- end ficha -->
+
+		</div>
+	</article> <!-- id=ficha -->
+	<article rel="ficha" id="ficha4" class="row px-2 mb-1 overflow-auto">
+		<div class="p-1 wsFicha shadow-sm rounded col-12 h-100" id="documento.php?ui=1&recno=8120&id=PERGAMO.1.8120" itemscope="" itemtype="https://schema.org/Book">
+ 
+
+			<div rel="noImage" data-isbn="8489666156" data-nb="M" class="ms-2 float-end h-100"></div>
+
+			<input type="checkbox" class="form-check-input" data-docid="PERGAMO.1.8120" id="cbTag4"><svg class="wsTxtIcon myGrip" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grip"></use></svg>
+		<!-- begin ficha -->
+		<h4 class="wsKeepFS d-inline"><a href="documento.php?ui=1&recno=8120&id=PERGAMO.1.8120"><span itemprop="name"><mark>Rayuela</mark></span></a></h4><span class="text-nowrap" title="Ubicación/Inventario: <br />821.134.2[82]-31.09 CORr<br />32074" data-bs-toggle="tooltip" data-bs-html="true"><svg class="ms-1 wsTxtIcon text-secondary"><use xlink:href="wsIcons.svg#icon-location"></use></svg></span>. <h5 itemprop="author" itemscope="" itemtype="https://schema.org/Person" class="wsKeepFS d-inline"><a href="opac.php?a=bsqAutor&n=Cort%C3%A1zar%2C+Julio"><span itemprop="name">Cortázar, Julio</span></a></h5> (1914-1984). 2a.ed. <div class="wsKeepFS d-inline" itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization"><span itemprop="location">Madrid</span> : <h6 class="wsKeepFS d-inline"><a href="opac.php?a=bsqEditor&n=ALLCA+XX"><span itemprop="name">ALLCA XX</span></a></h6></div>, <span itemprop="datePublished">(19--)</span>. <abbr title="Unidad de Información, Sede, Catálogo" data-bs-toggle="tooltip">U.I.</abbr>:&nbsp;DGL. ISBN: 8489666156. (M)&nbsp;LITERATURA
+		<!-- end ficha -->
+
+		</div>
+	</article> <!-- id=ficha -->
+	<article rel="ficha" id="ficha5" class="row px-2 mb-1 overflow-auto">
+		<div class="p-1 wsFicha shadow-sm rounded col-12 h-100" id="documento.php?ui=1&recno=8993&id=PERGAMO.1.8993" itemscope="" itemtype="https://schema.org/CreativeWork">
+ 
+
+			<input type="checkbox" class="form-check-input" data-docid="PERGAMO.1.8993" id="cbTag5"><svg class="wsTxtIcon myGrip" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grip"></use></svg>
+		<!-- begin ficha -->
+		<h4 class="wsKeepFS d-inline"><a href="documento.php?ui=1&recno=8993&id=PERGAMO.1.8993"><span itemprop="name"><mark>Rayuela</mark></span></a></h4>. <h5 itemprop="author" itemscope="" itemtype="https://schema.org/Person" class="wsKeepFS d-inline"><a href="opac.php?a=bsqAutor&n=Cort%C3%A1zar%2C+Julio"><span itemprop="name">Cortázar, Julio</span></a></h5> (1914-1984). 7a.ed. <div class="wsKeepFS d-inline" itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization"><span itemprop="location">Buenos Aires</span> : <h6 class="wsKeepFS d-inline"><a href="opac.php?a=bsqEditor&n=Sudamericana"><span itemprop="name">Sudamericana</span></a></h6></div>, <span itemprop="datePublished">1968</span>. <abbr title="Unidad de Información, Sede, Catálogo" data-bs-toggle="tooltip">U.I.</abbr>:&nbsp;DGL. (M)&nbsp;LITERATURA
+		<!-- end ficha -->
+
+		</div>
+	</article> <!-- id=ficha -->
+	<article rel="ficha" id="ficha6" class="row px-2 mb-1 overflow-auto">
+		<div class="p-1 wsFicha shadow-sm rounded col-12 h-100" id="documento.php?ui=1&recno=8994&id=PERGAMO.1.8994" itemscope="" itemtype="https://schema.org/CreativeWork">
+ 
+
+			<input type="checkbox" class="form-check-input" data-docid="PERGAMO.1.8994" id="cbTag6"><svg class="wsTxtIcon myGrip" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grip"></use></svg>
+		<!-- begin ficha -->
+		<h4 class="wsKeepFS d-inline"><a href="documento.php?ui=1&recno=8994&id=PERGAMO.1.8994"><span itemprop="name"><mark>Rayuela</mark></span></a></h4>. <h5 itemprop="author" itemscope="" itemtype="https://schema.org/Person" class="wsKeepFS d-inline"><a href="opac.php?a=bsqAutor&n=Cort%C3%A1zar%2C+Julio"><span itemprop="name">Cortázar, Julio</span></a></h5> (1914-1984). 12a.ed. <div class="wsKeepFS d-inline" itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization"><span itemprop="location">Buenos Aires</span> : <h6 class="wsKeepFS d-inline"><a href="opac.php?a=bsqEditor&n=Sudamericana"><span itemprop="name">Sudamericana</span></a></h6></div>, <span itemprop="datePublished">1970</span>. <abbr title="Unidad de Información, Sede, Catálogo" data-bs-toggle="tooltip">U.I.</abbr>:&nbsp;DGL. (M)&nbsp;LITERATURA
+		<!-- end ficha -->
+
+		</div>
+	</article> <!-- id=ficha -->
+	<article rel="ficha" id="ficha7" class="row px-2 mb-1 overflow-auto">
+		<div class="p-1 wsFicha shadow-sm rounded col-12 h-100" id="documento.php?ui=1&recno=15259&id=PERGAMO.1.15259" itemscope="" itemtype="https://schema.org/Book">
+ 
+
+			<div class="float-end ms-2 bg-light">
+			<img class="border shadow bg-light wsPointer wsThumb" rel="pgResImagen" loading="lazy" onError="imgError(this)" onLoad="imgLoaded(this)" alt="TAPA" title="TAPA" data-bs-toggle="tooltip" data-webpath="/media/Libros/" data-ftitle="TAPA" data-img="950-511-187-8_T.jpg" src="/media/Libros/thmb950-511-187-8_T.jpg"/>
+			</div>
+
+			<input type="checkbox" class="form-check-input" data-docid="PERGAMO.1.15259" id="cbTag7"><svg class="wsTxtIcon myGrip" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grip"></use></svg>
+		<!-- begin ficha -->
+		<h4 class="wsKeepFS d-inline"><a href="documento.php?ui=1&recno=15259&id=PERGAMO.1.15259"><span itemprop="name"><mark>Rayuela</mark></span></a></h4><span class="text-nowrap" title="Ubicación/Inventario: <br />821.134.2[82]-31 CORr<br />10271" data-bs-toggle="tooltip" data-bs-html="true"><svg class="ms-1 wsTxtIcon text-secondary"><use xlink:href="wsIcons.svg#icon-location"></use></svg></span>. <h5 itemprop="author" itemscope="" itemtype="https://schema.org/Person" class="wsKeepFS d-inline"><a href="opac.php?a=bsqAutor&n=Cort%C3%A1zar%2C+Julio"><span itemprop="name">Cortázar, Julio</span></a></h5> (1914-1984). <div class="wsKeepFS d-inline" itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization"><span itemprop="location">Buenos Aires</span> : <h6 class="wsKeepFS d-inline"><a href="opac.php?a=bsqEditor&n=Alfaguara"><span itemprop="name">Alfaguara</span></a></h6></div>, <span itemprop="datePublished">1997</span>. <abbr title="Unidad de Información, Sede, Catálogo" data-bs-toggle="tooltip">U.I.</abbr>:&nbsp;DGL. ISBN: 9505111878. (M)&nbsp;LITERATURA
+		<!-- end ficha -->
+
+		</div>
+	</article> <!-- id=ficha -->
+	<article rel="ficha" id="ficha8" class="row px-2 mb-1 overflow-auto">
+		<div class="p-1 wsFicha shadow-sm rounded col-12 h-100" id="documento.php?ui=1&recno=139925&id=PERGAMO.1.139925" itemscope="" itemtype="https://schema.org/CreativeWork">
+ 
+
+			<input type="checkbox" class="form-check-input" data-docid="PERGAMO.1.139925" id="cbTag8"><svg class="wsTxtIcon myGrip" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grip"></use></svg>
+		<!-- begin ficha -->
+		<h4 class="wsKeepFS d-inline"><a href="documento.php?ui=1&recno=139925&id=PERGAMO.1.139925"><span itemprop="name"><mark>Rayuela</mark></span></a></h4><span class="text-nowrap" title="Ubicación/Inventario: <br />821.134.2[82]-31 CORr<br />08920" data-bs-toggle="tooltip" data-bs-html="true"><svg class="ms-1 wsTxtIcon text-secondary"><use xlink:href="wsIcons.svg#icon-location"></use></svg></span>. <h5 itemprop="author" itemscope="" itemtype="https://schema.org/Person" class="wsKeepFS d-inline"><a href="opac.php?a=bsqAutor&n=Cort%C3%A1zar%2C+Julio"><span itemprop="name">Cortázar, Julio</span></a></h5> (1914-1984). <div class="wsKeepFS d-inline" itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization"><span itemprop="location">Buenos Aires</span> : <h6 class="wsKeepFS d-inline"><a href="opac.php?a=bsqEditor&n=Alfaguara"><span itemprop="name">Alfaguara</span></a></h6></div>, <span itemprop="datePublished">1996</span>. <abbr title="Unidad de Información, Sede, Catálogo" data-bs-toggle="tooltip">U.I.</abbr>:&nbsp;DGL. (M)&nbsp;LITERATURA
+		<!-- end ficha -->
+
+		</div>
+	</article> <!-- id=ficha -->
+	<article rel="ficha" id="ficha9" class="row px-2 mb-1 overflow-auto">
+		<div class="p-1 wsFicha shadow-sm rounded col-12 h-100" id="documento.php?ui=1&recno=143973&id=PERGAMO.1.143973" itemscope="" itemtype="https://schema.org/Book">
+ 
+
+			<div rel="noImage" data-isbn="8482804030" data-nb="M" class="ms-2 float-end h-100"></div>
+
+			<input type="checkbox" class="form-check-input" data-docid="PERGAMO.1.143973" id="cbTag9"><svg class="wsTxtIcon myGrip" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grip"></use></svg>
+		<!-- begin ficha -->
+		<h4 class="wsKeepFS d-inline"><a href="documento.php?ui=1&recno=143973&id=PERGAMO.1.143973"><span itemprop="name"><mark>Rayuela</mark></span></a></h4>. <h5 itemprop="author" itemscope="" itemtype="https://schema.org/Person" class="wsKeepFS d-inline"><a href="opac.php?a=bsqAutor&n=Cort%C3%A1zar%2C+Julio"><span itemprop="name">Cortázar, Julio</span></a></h5> (1914-1984). <div class="wsKeepFS d-inline" itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization"><span itemprop="location">Cali</span> : <h6 class="wsKeepFS d-inline"><a href="opac.php?a=bsqEditor&n=Oveja+Negra"><span itemprop="name">Oveja Negra</span></a></h6></div>, <span itemprop="datePublished">2003</span>. <abbr title="Unidad de Información, Sede, Catálogo" data-bs-toggle="tooltip">U.I.</abbr>:&nbsp;DGL. ISBN: 8482804030. (M)&nbsp;LITERATURA
+		<!-- end ficha -->
+
+		</div>
+	</article> <!-- id=ficha -->
+	<article rel="ficha" id="ficha10" class="row px-2 mb-1 overflow-auto">
+		<div class="p-1 wsFicha shadow-sm rounded col-12 h-100" id="documento.php?ui=1&recno=168623&id=PERGAMO.1.168623" itemscope="" itemtype="https://schema.org/Book">
+ 
+
+			<div class="float-end ms-2 bg-light">
+			<img class="border shadow bg-light wsPointer wsThumb" rel="pgResImagen" loading="lazy" onError="imgError(this)" onLoad="imgLoaded(this)" alt="TAPA" title="TAPA" data-bs-toggle="tooltip" data-webpath="/media/Libros/" data-ftitle="TAPA" data-img="950-511-187-8_T.jpg" src="/media/Libros/thmb950-511-187-8_T.jpg"/>
+			</div>
+
+			<input type="checkbox" class="form-check-input" data-docid="PERGAMO.1.168623" id="cbTag10"><svg class="wsTxtIcon myGrip" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grip"></use></svg>
+		<!-- begin ficha -->
+		<h4 class="wsKeepFS d-inline"><a href="documento.php?ui=1&recno=168623&id=PERGAMO.1.168623"><span itemprop="name"><mark>Rayuela</mark></span></a></h4><span class="text-nowrap" title="Ubicación/Inventario: <br />821.134.2(82)-31 CORr<br />20040" data-bs-toggle="tooltip" data-bs-html="true"><svg class="ms-1 wsTxtIcon text-secondary"><use xlink:href="wsIcons.svg#icon-location"></use></svg></span>. <h5 itemprop="author" itemscope="" itemtype="https://schema.org/Person" class="wsKeepFS d-inline"><a href="opac.php?a=bsqAutor&n=Cort%C3%A1zar%2C+Julio"><span itemprop="name">Cortázar, Julio</span></a></h5> (1914-1984). (Biblioteca Cortázar). <div class="wsKeepFS d-inline" itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization"><span itemprop="location">Buenos Aires</span> : <h6 class="wsKeepFS d-inline"><a href="opac.php?a=bsqEditor&n=Alfaguara"><span itemprop="name">Alfaguara</span></a></h6></div>, <span itemprop="datePublished">2006</span>. <abbr title="Unidad de Información, Sede, Catálogo" data-bs-toggle="tooltip">U.I.</abbr>:&nbsp;DGL. ISBN: 9505111878. (M)&nbsp;LITERATURA
+		<!-- end ficha -->
+
+		</div>
+	</article> <!-- id=ficha -->
+	<article rel="ficha" id="ficha11" class="row px-2 mb-1 overflow-auto">
+		<div class="p-1 wsFicha shadow-sm rounded col-12 h-100" id="documento.php?ui=1&recno=169265&id=PERGAMO.1.169265" itemscope="" itemtype="https://schema.org/CreativeWork">
+ 
+
+			<input type="checkbox" class="form-check-input" data-docid="PERGAMO.1.169265" id="cbTag11"><svg class="wsTxtIcon myGrip" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grip"></use></svg>
+		<!-- begin ficha -->
+		<h4 class="wsKeepFS d-inline"><a href="documento.php?ui=1&recno=169265&id=PERGAMO.1.169265"><span itemprop="name"><mark>Rayuela</mark></span></a></h4>. <abbr title="Unidad de Información, Sede, Catálogo" data-bs-toggle="tooltip">U.I.</abbr>:&nbsp;DGL. (C)&nbsp;
+		<!-- end ficha -->
+
+		</div>
+	</article> <!-- id=ficha -->
+	<article rel="ficha" id="ficha12" class="row px-2 mb-1 overflow-auto">
+		<div class="p-1 wsFicha shadow-sm rounded col-12 h-100" id="documento.php?ui=1&recno=177199&id=PERGAMO.1.177199" itemscope="" itemtype="https://schema.org/CreativeWork">
+ 
+
+			<input type="checkbox" class="form-check-input" data-docid="PERGAMO.1.177199" id="cbTag12"><svg class="wsTxtIcon myGrip" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grip"></use></svg>
+		<!-- begin ficha -->
+		<h4 class="wsKeepFS d-inline"><a href="documento.php?ui=1&recno=177199&id=PERGAMO.1.177199"><span itemprop="name"><mark>Rayuela</mark></span></a></h4><span class="text-nowrap" title="Ubicación/Inventario: <br />821.134.2(82)-31 CORr<br />31935" data-bs-toggle="tooltip" data-bs-html="true"><svg class="ms-1 wsTxtIcon text-secondary"><use xlink:href="wsIcons.svg#icon-location"></use></svg></span>. <h5 itemprop="author" itemscope="" itemtype="https://schema.org/Person" class="wsKeepFS d-inline"><a href="opac.php?a=bsqAutor&n=Cort%C3%A1zar%2C+Julio"><span itemprop="name">Cortázar, Julio</span></a></h5> (1914-1984). 10a.ed. <div class="wsKeepFS d-inline" itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization"><span itemprop="location">Buenos Aires</span> : <h6 class="wsKeepFS d-inline"><a href="opac.php?a=bsqEditor&n=Sudamericana"><span itemprop="name">Sudamericana</span></a></h6></div>, <span itemprop="datePublished">1969</span>. <abbr title="Unidad de Información, Sede, Catálogo" data-bs-toggle="tooltip">U.I.</abbr>:&nbsp;DGL. (M)&nbsp;LITERATURA
+		<!-- end ficha -->
+
+		</div>
+	</article> <!-- id=ficha -->
+	<article rel="ficha" id="ficha13" class="row px-2 mb-1 overflow-auto">
+		<div class="p-1 wsFicha shadow-sm rounded col-12 h-100" id="documento.php?ui=1&recno=192819&id=PERGAMO.1.192819" itemscope="" itemtype="https://schema.org/Book">
+ 
+
+			<div rel="noImage" data-isbn="9505111878" data-nb="M" class="ms-2 float-end h-100"></div>
+
+			<input type="checkbox" class="form-check-input" data-docid="PERGAMO.1.192819" id="cbTag13"><svg class="wsTxtIcon myGrip" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grip"></use></svg>
+		<!-- begin ficha -->
+		<h4 class="wsKeepFS d-inline"><a href="documento.php?ui=1&recno=192819&id=PERGAMO.1.192819"><span itemprop="name"><mark>Rayuela</mark></span></a></h4><span class="text-nowrap" title="Ubicación/Inventario: <br />821.134.2(82)-31 CORr<br />S/V00613" data-bs-toggle="tooltip" data-bs-html="true"><svg class="ms-1 wsTxtIcon text-secondary"><use xlink:href="wsIcons.svg#icon-location"></use></svg></span>. <h5 itemprop="author" itemscope="" itemtype="https://schema.org/Person" class="wsKeepFS d-inline"><a href="opac.php?a=bsqAutor&n=Cort%C3%A1zar%2C+Julio"><span itemprop="name">Cortázar, Julio</span></a></h5> (1914-1984). <div class="wsKeepFS d-inline" itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization"><span itemprop="location">Buenos Aires</span> : <h6 class="wsKeepFS d-inline"><a href="opac.php?a=bsqEditor&n=Alfaguara"><span itemprop="name">Alfaguara</span></a></h6></div>, <span itemprop="datePublished">1995</span>. <abbr title="Unidad de Información, Sede, Catálogo" data-bs-toggle="tooltip">U.I.</abbr>:&nbsp;DGL. ISBN: 9505111878. (M)&nbsp;LITERATURA
+		<!-- end ficha -->
+
+		</div>
+	</article> <!-- id=ficha -->
+	<article rel="ficha" id="ficha14" class="row px-2 mb-1 overflow-auto">
+		<div class="p-1 wsFicha shadow-sm rounded col-12 h-100" id="documento.php?ui=1&recno=210766&id=PERGAMO.1.210766" itemscope="" itemtype="https://schema.org/Book">
+ 
+
+			<div rel="noImage" data-isbn="950557133X" data-nb="M" class="ms-2 float-end h-100"></div>
+
+			<input type="checkbox" class="form-check-input" data-docid="PERGAMO.1.210766" id="cbTag14"><svg class="wsTxtIcon myGrip" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grip"></use></svg>
+		<!-- begin ficha -->
+		<h4 class="wsKeepFS d-inline"><a href="documento.php?ui=1&recno=210766&id=PERGAMO.1.210766"><span itemprop="name"><mark>Rayuela</mark></span></a></h4><span class="text-nowrap" title="Ubicación/Inventario: <br />821.134.2(82)-31 CORr<br />S/V02278" data-bs-toggle="tooltip" data-bs-html="true"><svg class="ms-1 wsTxtIcon text-secondary"><use xlink:href="wsIcons.svg#icon-location"></use></svg></span>. <h5 itemprop="author" itemscope="" itemtype="https://schema.org/Person" class="wsKeepFS d-inline"><a href="opac.php?a=bsqAutor&n=Cort%C3%A1zar%2C+Julio"><span itemprop="name">Cortázar, Julio</span></a></h5> (1914-1984). <abbr title="Unidad de Información, Sede, Catálogo" data-bs-toggle="tooltip">U.I.</abbr>:&nbsp;DGL. ISBN: 950557133X. (M)&nbsp;
+		<!-- end ficha -->
+
+		</div>
+	</article> <!-- id=ficha -->
+	<article rel="ficha" id="ficha15" class="row px-2 mb-1 overflow-auto">
+		<div class="p-1 wsFicha shadow-sm rounded col-12 h-100" id="documento.php?ui=1&recno=215994&id=PERGAMO.1.215994" itemscope="" itemtype="https://schema.org/Book">
+ 
+
+			<div rel="noImage" data-isbn="9789875782211" data-nb="M" class="ms-2 float-end h-100"></div>
+
+			<input type="checkbox" class="form-check-input" data-docid="PERGAMO.1.215994" id="cbTag15"><svg class="wsTxtIcon myGrip" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grip"></use></svg>
+		<!-- begin ficha -->
+		<h4 class="wsKeepFS d-inline"><a href="documento.php?ui=1&recno=215994&id=PERGAMO.1.215994"><span itemprop="name"><mark>Rayuela</mark></span></a></h4><span class="text-nowrap" title="Ubicación/Inventario: <br />821.134.2(82)-31 CORr<br />S/V00661" data-bs-toggle="tooltip" data-bs-html="true"><svg class="ms-1 wsTxtIcon text-secondary"><use xlink:href="wsIcons.svg#icon-location"></use></svg></span>. <h5 itemprop="author" itemscope="" itemtype="https://schema.org/Person" class="wsKeepFS d-inline"><a href="opac.php?a=bsqAutor&n=Cort%C3%A1zar%2C+Julio"><span itemprop="name">Cortázar, Julio</span></a></h5> (1914-1984). <div class="wsKeepFS d-inline" itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization"><span itemprop="location">Buenos Aires</span> : <h6 class="wsKeepFS d-inline"><a href="opac.php?a=bsqEditor&n=Punto+de+Lectura"><span itemprop="name">Punto de Lectura</span></a></h6></div>, <span itemprop="datePublished">2017</span>. <abbr title="Unidad de Información, Sede, Catálogo" data-bs-toggle="tooltip">U.I.</abbr>:&nbsp;DGL. ISBN: 9789875782211. (M)&nbsp;LITERATURA
+		<!-- end ficha -->
+
+		</div>
+	</article> <!-- id=ficha -->
+	<article rel="ficha" id="ficha16" class="row px-2 mb-1 overflow-auto">
+		<div class="p-1 wsFicha shadow-sm rounded col-12 h-100" id="documento.php?ui=1&recno=218148&id=PERGAMO.1.218148" itemscope="" itemtype="https://schema.org/Book">
+ 
+
+			<div rel="noImage" data-isbn="9789878266770" data-nb="M" class="ms-2 float-end h-100"></div>
+
+			<input type="checkbox" class="form-check-input" data-docid="PERGAMO.1.218148" id="cbTag16"><svg class="wsTxtIcon myGrip" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grip"></use></svg>
+		<!-- begin ficha -->
+		<h4 class="wsKeepFS d-inline"><a href="documento.php?ui=1&recno=218148&id=PERGAMO.1.218148"><span itemprop="name"><mark>Rayuela</mark></span></a></h4><span class="text-nowrap" title="Ubicación/Inventario: <br />821.134.2(82)-31 CORr<br />12617" data-bs-toggle="tooltip" data-bs-html="true"><svg class="ms-1 wsTxtIcon text-secondary"><use xlink:href="wsIcons.svg#icon-location"></use></svg></span>. <h5 itemprop="author" itemscope="" itemtype="https://schema.org/Person" class="wsKeepFS d-inline"><a href="opac.php?a=bsqAutor&n=Cort%C3%A1zar%2C+Julio"><span itemprop="name">Cortázar, Julio</span></a></h5> (1914-1984). (Biblioteca Cortázar). <div class="wsKeepFS d-inline" itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization"><span itemprop="location">Buenos Aires</span> : <h6 class="wsKeepFS d-inline"><a href="opac.php?a=bsqEditor&n=Alfaguara"><span itemprop="name">Alfaguara</span></a></h6></div>, <span itemprop="datePublished">2023</span>. <abbr title="Unidad de Información, Sede, Catálogo" data-bs-toggle="tooltip">U.I.</abbr>:&nbsp;DGL. ISBN: 9789878266770. (M)&nbsp;LITERATURA
+		<!-- end ficha -->
+
+		</div>
+	</article> <!-- id=ficha -->
+	<article rel="ficha" id="ficha17" class="row px-2 mb-1 overflow-auto">
+		<div class="p-1 wsFicha shadow-sm rounded col-12 h-100" id="documento.php?ui=1&recno=170142&id=PERGAMO.1.170142" itemscope="" itemtype="https://schema.org/CreativeWork">
+ 
+
+			<input type="checkbox" class="form-check-input" data-docid="PERGAMO.1.170142" id="cbTag17"><svg class="wsTxtIcon myGrip" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grip"></use></svg>
+		<!-- begin ficha -->
+		<h4 class="wsKeepFS d-inline"><a href="documento.php?ui=1&recno=170142&id=PERGAMO.1.170142"><span itemprop="name">Memoria de la <mark>Rayuela</mark></span></a></h4><span class="text-nowrap" title="Ubicación/Inventario: <br />821.134.2(82)-1 JELm<br />09690" data-bs-toggle="tooltip" data-bs-html="true"><svg class="ms-1 wsTxtIcon text-secondary"><use xlink:href="wsIcons.svg#icon-location"></use></svg></span>. <h5 itemprop="author" itemscope="" itemtype="https://schema.org/Person" class="wsKeepFS d-inline"><a href="opac.php?a=bsqAutor&n=Jelin%2C+Mois%C3%A9s"><span itemprop="name">Jelin, Moisés</span></a></h5>. <div class="wsKeepFS d-inline" itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization"><span itemprop="location">Buenos Aires</span> : <h6 class="wsKeepFS d-inline"><a href="opac.php?a=bsqEditor&n=Yacar%C3%A9+Parque"><span itemprop="name">Yacaré Parque</span></a></h6></div>, <span itemprop="datePublished">2004</span>. <abbr title="Unidad de Información, Sede, Catálogo" data-bs-toggle="tooltip">U.I.</abbr>:&nbsp;DGL. (M)&nbsp;LITERATURA
+		<!-- end ficha -->
+
+		</div>
+	</article> <!-- id=ficha -->
+	<article rel="ficha" id="ficha18" class="row px-2 mb-1 overflow-auto">
+		<div class="p-1 wsFicha shadow-sm rounded col-12 h-100" id="documento.php?ui=1&recno=169264&id=PERGAMO.1.169264" itemscope="" itemtype="https://schema.org/Book">
+ 
+
+			<div rel="noImage" data-isbn="9872124434" data-nb="M" class="ms-2 float-end h-100"></div>
+
+			<input type="checkbox" class="form-check-input" data-docid="PERGAMO.1.169264" id="cbTag18"><svg class="wsTxtIcon myGrip" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grip"></use></svg>
+		<!-- begin ficha -->
+		<h4 class="wsKeepFS d-inline"><a href="documento.php?ui=1&recno=169264&id=PERGAMO.1.169264"><span itemprop="name">Fronteras : Cuentos</span></a></h4><span class="text-nowrap" title="Ubicación/Inventario: <br />821.134.2(82)-32 MALf<br />44458" data-bs-toggle="tooltip" data-bs-html="true"><svg class="ms-1 wsTxtIcon text-secondary"><use xlink:href="wsIcons.svg#icon-location"></use></svg></span>. <h5 itemprop="author" itemscope="" itemtype="https://schema.org/Person" class="wsKeepFS d-inline"><a href="opac.php?a=bsqAutor&n=Maldonado%2C+Wenceslao+H."><span itemprop="name">Maldonado, Wenceslao H.</span></a></h5>. (Rayuela). <div class="wsKeepFS d-inline" itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization"><span itemprop="location">Buenos Aires</span> : <h6 class="wsKeepFS d-inline"><a href="opac.php?a=bsqEditor&n=Epifan%C3%ADa"><span itemprop="name">Epifanía</span></a></h6></div>, <span itemprop="datePublished">2004</span>. <abbr title="Unidad de Información, Sede, Catálogo" data-bs-toggle="tooltip">U.I.</abbr>:&nbsp;DGL. ISBN: 9872124434. (M)&nbsp;LITERATURA
+		<!-- end ficha -->
+
+		</div>
+	</article> <!-- id=ficha -->
+	<article rel="ficha" id="ficha19" class="row px-2 mb-1 overflow-auto">
+		<div class="p-1 wsFicha shadow-sm rounded col-12 h-100" id="documento.php?ui=1&recno=25421&id=PERGAMO.1.25421" itemscope="" itemtype="https://schema.org/Book">
+ 
+
+			<div rel="noImage" data-isbn="9500701871" data-nb="M" class="ms-2 float-end h-100"></div>
+
+			<input type="checkbox" class="form-check-input" data-docid="PERGAMO.1.25421" id="cbTag19"><svg class="wsTxtIcon myGrip" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grip"></use></svg>
+		<!-- begin ficha -->
+		<h4 class="wsKeepFS d-inline"><a href="documento.php?ui=1&recno=25421&id=PERGAMO.1.25421"><span itemprop="name">Cuaderno de bitácora de <mark>Rayuela</mark></span></a></h4><span class="text-nowrap" title="Ubicación/Inventario: <br />821.134.2(82)-31.09 CORc<br />32124" data-bs-toggle="tooltip" data-bs-html="true"><svg class="ms-1 wsTxtIcon text-secondary"><use xlink:href="wsIcons.svg#icon-location"></use></svg></span>. <h5 itemprop="author" itemscope="" itemtype="https://schema.org/Person" class="wsKeepFS d-inline"><a href="opac.php?a=bsqAutor&n=Cort%C3%A1zar%2C+Julio"><span itemprop="name">Cortázar, Julio</span></a></h5> (1914-1984); <h5 itemprop="author" itemscope="" itemtype="https://schema.org/Person" class="wsKeepFS d-inline"><a href="opac.php?a=bsqAutor&n=Barrenechea%2C+Ana+Mar%C3%ADa"><span itemprop="name">Barrenechea, Ana María</span></a></h5> (1913-2010). <div class="wsKeepFS d-inline" itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization"><span itemprop="location">Buenos Aires</span> : <h6 class="wsKeepFS d-inline"><a href="opac.php?a=bsqEditor&n=Sudamericana"><span itemprop="name">Sudamericana</span></a></h6></div>, <span itemprop="datePublished">1983</span>. <abbr title="Unidad de Información, Sede, Catálogo" data-bs-toggle="tooltip">U.I.</abbr>:&nbsp;DGL. ISBN: 9500701871. (M)&nbsp;LITERATURA
+		<!-- end ficha -->
+
+		</div>
+	</article> <!-- id=ficha -->
+	<article rel="ficha" id="ficha20" class="row px-2 mb-1 overflow-auto">
+		<div class="p-1 wsFicha shadow-sm rounded col-12 h-100" id="documento.php?ui=1&recno=195451&id=PERGAMO.1.195451" itemscope="" itemtype="https://schema.org/Book">
+ 
+
+			<div rel="noImage" data-isbn="9789873805240" data-nb="M" class="ms-2 float-end h-100"></div>
+
+			<input type="checkbox" class="form-check-input" data-docid="PERGAMO.1.195451" id="cbTag20"><svg class="wsTxtIcon myGrip" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grip"></use></svg>
+		<!-- begin ficha -->
+		<h4 class="wsKeepFS d-inline"><a href="documento.php?ui=1&recno=195451&id=PERGAMO.1.195451"><span itemprop="name">Cortázar, 1963 : Acerca de <mark>Rayuela</mark></span></a></h4><span class="text-nowrap" title="Ubicación/Inventario: <br />821.134.2(82)-31.09 ROMc<br />02152" data-bs-toggle="tooltip" data-bs-html="true"><svg class="ms-1 wsTxtIcon text-secondary"><use xlink:href="wsIcons.svg#icon-location"></use></svg></span>. <h5 itemprop="author" itemscope="" itemtype="https://schema.org/Person" class="wsKeepFS d-inline"><a href="opac.php?a=bsqAutor&n=Romano%2C+Eduardo"><span itemprop="name">Romano, Eduardo</span></a></h5> (1938-...). (Autor / Fecha). <div class="wsKeepFS d-inline" itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization"><span itemprop="location">Gonnet (Provincia de Buenos Aires)</span> : <h6 class="wsKeepFS d-inline"><a href="opac.php?a=bsqEditor&n=UNIPE"><span itemprop="name">UNIPE</span></a></h6></div>, <span itemprop="datePublished">2017</span>. <abbr title="Unidad de Información, Sede, Catálogo" data-bs-toggle="tooltip">U.I.</abbr>:&nbsp;DGL. ISBN: 9789873805240. (M)&nbsp;TEXTO NO LITERARIO
+		<!-- end ficha -->
+
+		</div>
+	</article> <!-- id=ficha -->
+	<article rel="ficha" id="ficha21" class="row px-2 mb-1 overflow-auto">
+		<div class="p-1 wsFicha shadow-sm rounded col-12 h-100" id="documento.php?ui=1&recno=123401&id=PERGAMO.1.123401" itemscope="" itemtype="https://schema.org/CreativeWork">
+ 
+
+			<input type="checkbox" class="form-check-input" data-docid="PERGAMO.1.123401" id="cbTag21"><svg class="wsTxtIcon myGrip" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grip"></use></svg>
+		<!-- begin ficha -->
+		<h4 class="wsKeepFS d-inline"><a href="documento.php?ui=1&recno=123401&id=PERGAMO.1.123401"><span itemprop="name">Del truquiflor a la <mark>rayuela</mark> : Panorama de los juegos y entretenimientos argentinos</span></a></h4><span class="text-nowrap" title="Ubicación/Inventario: <br />398 PAEd<br />15035" data-bs-toggle="tooltip" data-bs-html="true"><svg class="ms-1 wsTxtIcon text-secondary"><use xlink:href="wsIcons.svg#icon-location"></use></svg></span>. <h5 itemprop="author" itemscope="" itemtype="https://schema.org/Person" class="wsKeepFS d-inline"><a href="opac.php?a=bsqAutor&n=P%C3%A1ez%2C+Jorge"><span itemprop="name">Páez, Jorge</span></a></h5>. <div class="wsKeepFS d-inline" itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization"><span itemprop="location">Buenos Aires</span> : <h6 class="wsKeepFS d-inline"><a href="opac.php?a=bsqEditor&n=CEAL"><span itemprop="name">CEAL</span></a></h6></div>, <span itemprop="datePublished">1971</span>. <abbr title="Unidad de Información, Sede, Catálogo" data-bs-toggle="tooltip">U.I.</abbr>:&nbsp;DGL. (M)&nbsp;TEXTO NO LITERARIO
+		<!-- end ficha -->
+
+		</div>
+	</article> <!-- id=ficha -->
+	<article rel="ficha" id="ficha22" class="row px-2 mb-1 overflow-auto">
+		<div class="p-1 wsFicha shadow-sm rounded col-12 h-100" id="documento.php?ui=1&recno=2616&id=PERGAMO.1.2616" itemscope="" itemtype="https://schema.org/CreativeWork">
+ 
+
+			<input type="checkbox" class="form-check-input" data-docid="PERGAMO.1.2616" id="cbTag22"><svg class="wsTxtIcon myGrip" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grip"></use></svg>
+		<!-- begin ficha -->
+		<h4 class="wsKeepFS d-inline"><a href="documento.php?ui=1&recno=2616&id=PERGAMO.1.2616"><span itemprop="name">Viaje alrededor de una mesa</span></a></h4><span class="text-nowrap" title="Ubicación/Inventario: <br />82:32 CORv<br />15287" data-bs-toggle="tooltip" data-bs-html="true"><svg class="ms-1 wsTxtIcon text-secondary"><use xlink:href="wsIcons.svg#icon-location"></use></svg></span>. <h5 itemprop="author" itemscope="" itemtype="https://schema.org/Person" class="wsKeepFS d-inline"><a href="opac.php?a=bsqAutor&n=Cort%C3%A1zar%2C+Julio"><span itemprop="name">Cortázar, Julio</span></a></h5> (1914-1984). <div class="wsKeepFS d-inline" itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization"><span itemprop="location">Buenos Aires</span> : <h6 class="wsKeepFS d-inline"><a href="opac.php?a=bsqEditor&n=<mark>Rayuela</mark>"><span itemprop="name"><mark>Rayuela</mark></span></a></h6></div>, <span itemprop="datePublished">c1970</span>. <abbr title="Unidad de Información, Sede, Catálogo" data-bs-toggle="tooltip">U.I.</abbr>:&nbsp;DGL. (M)&nbsp;TEXTO NO LITERARIO
+		<!-- end ficha -->
+
+		</div>
+	</article> <!-- id=ficha -->
+	<article rel="ficha" id="ficha23" class="row px-2 mb-1 overflow-auto">
+		<div class="p-1 wsFicha shadow-sm rounded col-12 h-100" id="documento.php?ui=1&recno=17529&id=PERGAMO.1.17529" itemscope="" itemtype="https://schema.org/CreativeWork">
+ 
+
+			<input type="checkbox" class="form-check-input" data-docid="PERGAMO.1.17529" id="cbTag23"><svg class="wsTxtIcon myGrip" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grip"></use></svg>
+		<!-- begin ficha -->
+		<h4 class="wsKeepFS d-inline"><a href="documento.php?ui=1&recno=17529&id=PERGAMO.1.17529"><span itemprop="name">Las velas</span></a></h4><span class="text-nowrap" title="Ubicación/Inventario: <br />821.134.2[82]-1 CROv<br />13204" data-bs-toggle="tooltip" data-bs-html="true"><svg class="ms-1 wsTxtIcon text-secondary"><use xlink:href="wsIcons.svg#icon-location"></use></svg></span>. <h5 itemprop="author" itemscope="" itemtype="https://schema.org/Person" class="wsKeepFS d-inline"><a href="opac.php?a=bsqAutor&n=Crouzel%2C+Pepita"><span itemprop="name">Crouzel, Pepita</span></a></h5>. <div class="wsKeepFS d-inline" itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization"><span itemprop="location">Tapiales</span> : <h6 class="wsKeepFS d-inline"><a href="opac.php?a=bsqEditor&n=<mark>Rayuela</mark>"><span itemprop="name"><mark>Rayuela</mark></span></a></h6></div>, <span itemprop="datePublished">1980</span>. <abbr title="Unidad de Información, Sede, Catálogo" data-bs-toggle="tooltip">U.I.</abbr>:&nbsp;DGL. (M)&nbsp;LITERATURA
+		<!-- end ficha -->
+
+		</div>
+	</article> <!-- id=ficha -->
+	<article rel="ficha" id="ficha24" class="row px-2 mb-1 overflow-auto">
+		<div class="p-1 wsFicha shadow-sm rounded col-12 h-100" id="documento.php?ui=1&recno=17881&id=PERGAMO.1.17881" itemscope="" itemtype="https://schema.org/CreativeWork">
+ 
+
+			<input type="checkbox" class="form-check-input" data-docid="PERGAMO.1.17881" id="cbTag24"><svg class="wsTxtIcon myGrip" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grip"></use></svg>
+		<!-- begin ficha -->
+		<h4 class="wsKeepFS d-inline"><a href="documento.php?ui=1&recno=17881&id=PERGAMO.1.17881"><span itemprop="name">Oscuridad en fuga</span></a></h4><span class="text-nowrap" title="Ubicación/Inventario: <br />821.134.2[82]-1 ADAo<br />12846" data-bs-toggle="tooltip" data-bs-html="true"><svg class="ms-1 wsTxtIcon text-secondary"><use xlink:href="wsIcons.svg#icon-location"></use></svg></span>. <h5 itemprop="author" itemscope="" itemtype="https://schema.org/Person" class="wsKeepFS d-inline"><a href="opac.php?a=bsqAutor&n=Adamson%2C+Ronnie"><span itemprop="name">Adamson, Ronnie</span></a></h5>. <div class="wsKeepFS d-inline" itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization"><span itemprop="location">Buenos Aires</span> : <h6 class="wsKeepFS d-inline"><a href="opac.php?a=bsqEditor&n=<mark>Rayuela</mark>"><span itemprop="name"><mark>Rayuela</mark></span></a></h6></div>, <span itemprop="datePublished">1981</span>. <abbr title="Unidad de Información, Sede, Catálogo" data-bs-toggle="tooltip">U.I.</abbr>:&nbsp;DGL. (M)&nbsp;LITERATURA
+		<!-- end ficha -->
+
+		</div>
+	</article> <!-- id=ficha -->
+	<article rel="ficha" id="ficha25" class="row px-2 mb-1 overflow-auto">
+		<div class="p-1 wsFicha shadow-sm rounded col-12 h-100" id="documento.php?ui=1&recno=27900&id=PERGAMO.1.27900" itemscope="" itemtype="https://schema.org/CreativeWork">
+ 
+
+			<input type="checkbox" class="form-check-input" data-docid="PERGAMO.1.27900" id="cbTag25"><svg class="wsTxtIcon myGrip" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-grip"></use></svg>
+		<!-- begin ficha -->
+		<h4 class="wsKeepFS d-inline"><a href="documento.php?ui=1&recno=27900&id=PERGAMO.1.27900"><span itemprop="name">Recetas, florecillas y otros contentos</span></a></h4><span class="text-nowrap" title="Ubicación/Inventario: <br />821.134.2[82]-1 DUJr<br />14809" data-bs-toggle="tooltip" data-bs-html="true"><svg class="ms-1 wsTxtIcon text-secondary"><use xlink:href="wsIcons.svg#icon-location"></use></svg></span>. <h5 itemprop="author" itemscope="" itemtype="https://schema.org/Person" class="wsKeepFS d-inline"><a href="opac.php?a=bsqAutor&n=Dujovne+Ortiz%2C+Alicia"><span itemprop="name">Dujovne Ortiz, Alicia</span></a></h5> (1940-...). <div class="wsKeepFS d-inline" itemprop="publisher" itemscope="" itemtype="https://schema.org/Organization"><span itemprop="location">Buenos Aires</span> : <h6 class="wsKeepFS d-inline"><a href="opac.php?a=bsqEditor&n=<mark>Rayuela</mark>"><span itemprop="name"><mark>Rayuela</mark></span></a></h6></div>, <span itemprop="datePublished">1973</span>. <abbr title="Unidad de Información, Sede, Catálogo" data-bs-toggle="tooltip">U.I.</abbr>:&nbsp;DGL. (M)&nbsp;LITERATURA
+		<!-- end ficha -->
+
+		</div>
+	</article> <!-- id=ficha -->
+
+</main> <!-- lyrResultados -->
+
+<div class="row mt-2">
+    <div class="col text-center m-0 p-0 wsBottomBG">
+        <a href="https://www.buenosaires.gob.ar/bibliotecas"><img class="img-fluid" src="./custom/dglypl/footer2026alpha.png" alt="logo"></a>
+    </div>
+</div>
+
+<div class="row mb-2 mt-3">
+    <div class="col-12 col-lg-4 text-center order-2 order-lg-1 fa-lg mt-lg-1 my-2 d-print-none">
+        <div id="opacSocial" class="noInsideFrame d-none">
+        
+
+
+        </div>
+    </div>
+    <div id="opacContacto" class="col-12 col-lg-4 text-center order-1 order-lg-2">
+        <div class="noInsideFrame d-none"> 
+        
+
+
+        </div>
+    </div>
+    <div id="opacPergamo" class="col-12 col-lg-4 text-center text-lg-end order-3">
+        <a href="https://walysoft.com/pergamo" target="_blank" title="Desarrollado con software Pérgamo de WalySoft Sistemas" data-bs-toggle="tooltip">
+            <img class="m-0 p-0" src="images/%5BP%5D.svg" alt="logo Pérgamo" style="height:1.25rem;"> <!-- images/[P].svg -->
+            <small>Pérgamo OPAC Web</small>
+        </a>
+    </div>
+</div>
+<!-- Modal Info Sede --->
+<div class="modal fade" id="mdlInfoSede" tabindex="-1" aria-labelledby="mdlInfoSede" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="titleInfoSede">Nombre de Sede</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="bodyInfoSede">
+        <p>Datos de la sede</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div><script>  
+const acSedes = [];
+const acSedesTitle = [];
+acSedesTitle[10] = 'ASCASUBI, Hilario';
+acSedes[10] = 'Gral. César Díaz 4219<br />4566-5171<br />Lun a Vie 9 a 16hs<br /> biblioteca_ascasubi@buenosaires.gob.ar';
+acSedesTitle[27] = 'BANCHS, Enrique (Biblioteca Infantil)';
+acSedes[27] = 'Parque de los Patricios<br />(Av. Caseros y Urquiza)<br />4943-1078<br />Lun a Vie 10 a 17hs<br /> biblioteca_banchs@buenosaires.gob.ar';
+acSedesTitle[5] = 'CANÉ, Miguel';
+acSedes[5] = 'Espacio "Jorge Luis Borges"<br />Anexo Infantil, Multimedia y Tesoro<br />Carlos Calvo 4319<br />4922-0020<br />Lun a Vie de 10 a 17hs<br /> biblioteca_cane@buenosaires.gob.ar ';
+acSedesTitle[15] = 'CARRIEGO, Evaristo';
+acSedes[15] = 'Espacio Multimedia<br />Honduras 3784<br />4963-2194<br />Lun a Vie 10 a 20hs<br /> biblioteca_carriego@buenosaires.gob.ar ';
+acSedesTitle[16] = 'CENTENERA, Martín del Barco';
+acSedes[16] = 'Anexo Infantil y Multimedia<br />Venezuela 1538<br />4381-1271<br />Lun a Vie 10 a 17hs<br /> biblioteca_centenera@buenosaires.gob.ar';
+acSedesTitle[40] = 'CIRCE (Biblioteca TESORO - Con cita telefónica)';
+acSedes[40] = 'Av. Córdoba 1558<br />4812-4723<br />Lun a Vie 10 a 17hs<br /> biblioteca_circe@buenosaires.gob.a)';
+acSedesTitle[8] = 'Casa de la Lectura y la Escritura';
+acSedes[8] = 'Lavalleja 924<br />5197-5084/5476<br />Lun a Lun de 10 a 20hs<br /> biblioteca_casadelalectura@buenosaires.gob.ar';
+acSedesTitle[23] = 'DEL CAMPO, Estanislao';
+acSedes[23] = 'De las Artes 1210<br />4926-0161<br />Lun a Vie 10 a 17hs<br /> biblioteca_delcampo@buenosaires.gob.ar';
+acSedesTitle[21] = 'DEVOTO, Antonio';
+acSedes[21] = 'Anexo Infantil, Multimedia y de Historieta<br />Bahía Blanca 4025<br />4501-4320<br />Lun a Vie de 10 a 20hs<br /> biblioteca_devoto@buenosaires.gob.ar ';
+acSedesTitle[9] = 'FERNÁNDEZ MORENO, Baldomero';
+acSedes[9] = 'Espacio Multimedia<br />Concepción Arenal 4206<br />4855-7508<br />Lun a Vie 10 a 16hs<br /> biblioteca_fmoreno@buenosaires.gob.ar';
+acSedesTitle[4] = 'GÁLVEZ, Manuel';
+acSedes[4] = 'Av. Córdoba 1558<br />4812-4723<br />Lun a Jue 10 a 20hs<br /> Vie 10 a 17hs<br /> biblioteca_galvez@buenosaires.gob.ar';
+acSedesTitle[14] = 'GONZÁLEZ, Joaquín V.';
+acSedes[14] = 'Anexo Infantil y Multimedia<br />Suárez 408<br />4302-2481<br />Lun a Vier<br /> de 10 a 17hs<br /> biblioteca_gonzalez@buenosaires.gob.ar ';
+acSedesTitle[3] = 'GUIDO Y SPANO, Carlos';
+acSedes[3] = 'Güemes 4601<br />4773-5862<br />Lun a Vie de 10 a 17hs<br /> biblioteca_guidoyspano@buenosaires.gob.ar ';
+acSedesTitle[2] = 'GÜIRALDES, Ricardo';
+acSedes[2] = 'Talcahuano 1261<br />4812-1840 int.110<br />Lun a Lun de 10 a 20hs, Sab, Dom y Feriados 10 a 20hs<br /> biblioteca_guiraldes@buenosaires.gob.ar ';
+acSedesTitle[20] = 'HERNANDEZ, José';
+acSedes[20] = 'Espacio Multimedia<br />Boquerón 6753<br />4641-3673<br />Lun a Vie 10 a 17hs<br /> biblioteca_hernandez@buenosaires.gob.ar ';
+acSedesTitle[18] = 'LA PRENSA';
+acSedes[18] = 'José C. Paz 3100 (Plaza Nicaragua)<br />4912-2701<br />Lun a Vie 10 a 17h';
+acSedesTitle[6] = 'LUGONES, Leopoldo';
+acSedes[6] = 'Anexo Infantil<br />La Pampa 2215<br />4783-1567<br />Lun a Vie de 10 a 17h<br /> biblioteca_lugones_mcgc@buenosaires.gob.ar ';
+acSedesTitle[7] = 'LYNCH, Benito';
+acSedes[7] = 'Espacio Multimedia<br />Pje. Yrupé 6714 (Barrio Los Perales)<br />4687-1977<br />Lun a Vie de 10 a 17hs<br /> biblioteca_lynch@buenosaires.gob.ar ';
+acSedesTitle[45] = 'MAFALDA';
+acSedes[45] = ' Flor de Otoño 676, Barrio Mugica<br />Lun a Vie de 10 a 17hs<br /> biblioteca_mafalda@buenosaires.gob.ar';
+acSedesTitle[22] = 'OBLIGADO, Rafael';
+acSedes[22] = 'Crainqueville 2233<br />4581-8640<br />Lun a Vie 10 a 20hs<br /> biblioteca_obligado@buenosaires.gob.ar';
+acSedesTitle[46] = 'PARQUE DE LA ESTACIÓN';
+acSedes[46] = 'Pres. Tte. Gral. Juan Domingo Perón 3326<br />Lun a Vier de 10 a 17hs<br /> Sab Dom y feriados de 10 a 20hs<br /> biblioteca_parquedelaestacion@buenosaires.gob.ar ';
+acSedesTitle[17] = 'PELLIZA, Mariano';
+acSedes[17] = 'Cranwell 819<br />4631-0961<br />Lun a Vie 10 a 17hs, biblioteca_pelliza@buenosaires.gob.ar';
+acSedesTitle[48] = 'PUERTA a PUERTA';
+acSedes[48] = ' <br /><br />Lun a Vie 11 a 16h, bibliotecapuertaapuerta@buenosaires.gob.ar';
+acSedesTitle[34] = 'REINA BATATA';
+acSedes[34] = 'Bebeteca<br />La Pampa y 11 de Septiembre - Plaza<br />Lun a Vie 10 a 20hs<br />Sab, Dom y Feriados 10 a 18hs<br /> biblioteca_reinabatata@buenosaires.gob.ar ';
+acSedesTitle[19] = 'SAGUIER, Julio César';
+acSedes[19] = 'Torre 14 P.B. Dellepiane Norte<br />(Barrio Cardenal Copello)<br />4635-4009<br />Lun a Vie 10 a 17hs<br />biblioteca_saguier@buenosaires.gob.ar';
+acSedesTitle[25] = 'STORNI, Alfonsina (Biblioteca de la Mujer)';
+acSedes[25] = 'Venezuela 1538, 1º piso<br />4381-9345<br />Lun a Vie 10 a 17hs<br /> biblioteca_storni@buenosaires.gob.ar ';
+acSedesTitle[24] = 'VILLAFAÑE, Javier';
+acSedes[24] = 'Anexo Infantil<br />Ana María Janer, Manzana 5, local 279<br />(Barrio Illia)<br /> alt. Riestra 1800 y A. Vedia 2400<br />4919-0058<br />Lun a Vie 8 a 15hs<br /> biblioteca_villafane@buenosaires.gob.ar ';
+acSedesTitle[30] = 'YUNQUE, Alvaro (Biblioteca Infantil)';
+acSedes[30] = 'Soldado de la Frontera 5210 Block 28<br />4605-0603<br />Lun a Vie 10 a 17hs<br /> biblioteca_yunque@buenosaires.gob.ar';
+acSedesTitle[29] = 'Infantil CANÉ, Miguel';
+acSedes[29] = 'Espacio "Jorge Luis Borges"<br />Anexo Infantil y Multimedia<br />Carlos Calvo 4319<br />4922-0020<br />Lun a Vie de 10 a 17h';
+acSedesTitle[35] = 'Infantil CENTENERA, Martín del Barco';
+acSedes[35] = 'Anexo Infantil y Multimedia<br />Venezuela 1538<br />4381-1271<br />Lun a Vie 10 a 17h ';
+acSedesTitle[36] = 'Infantil DEVOTO, Antonio';
+acSedes[36] = 'Anexo Infantil, Multimedia y de Historieta<br />Bahía Blanca 4025<br />4501-4320<br />Lun a Vie de 10 a 17h ';
+acSedesTitle[37] = 'Infantil GONZÁLEZ, Joaquín V.';
+acSedes[37] = 'Anexo Infantil y Multimedia<br />Suárez 408<br />4302-2481 - Lun a Vier de 10 a 17h ';
+acSedesTitle[38] = 'Infantil LYNCH, Benito';
+acSedes[38] = 'Espacio Multimedia<br />Pje. Yrupé 6714 (Barrio Los Perales)<br />4687-1977<br />Lun a Vie de 10 a 17h ';
+acSedesTitle[33] = 'Infantil SAGUIER, Julio César';
+acSedes[33] = 'Anexo Infantil<br />Torre 14 P.B. Dellepiane Norte<br />(Barrio Cardenal Copello)<br />4635-4009<br />Lun a Vie 10 a 17h<br />';
+acSedesTitle[39] = 'Infantil VILLAFAÑE, Javier';
+acSedes[39] = 'Anexo Infantil<br />Ana María Janer, Manzana 5, local 279<br />(Barrio Illia)<br /> alt. Riestra 1800 y A. Vedia 2400<br />4919-0058<br />Lun a Vie 9 a 17h';
+acSedesTitle[50] = 'MARTÍNEZ, Tomás Eloy';
+acSedes[50] = 'Av. de Mayo 575 (Casa de la Cultura)<br />Lun a Vie de 14 a 20hs<br /> biblioteca_tomaseloymartinez@buenosaires.gob.ar';
+acSedesTitle[49] = 'Bibliosubte';
+acSedes[49] = ' Hipólito Yrigoyen y Defensa (estación Plaza de Mayo Linea A)<br />Lun a Vie de 9 a 20hs<br /> bibliosubte.plazademayo@buenosaires.gob.ar';
+
+
+let nSede = 0;
+let oInfoSede;
+let oBtnInfoSede = document.getElementById( 'bInfoSede' );
+let oSelectUI = document.getElementById( 'trUI' );
+
+function checkInfoSedeButton() {
+	if( oBtnInfoSede ) {
+        if( oSelectUI ) nSede = parseInt(oSelectUI.value);
+		if( nSede !== 0 )
+			oBtnInfoSede.classList.remove( 'd-none' );
+		else
+			oBtnInfoSede.classList.add( 'd-none' );
+	}
+}
+
+function showInfoSede( nSedeAMostrar = 0, cSigla = '' ) {
+    let oBodyInfoSede = document.getElementById( 'bodyInfoSede' );
+    let oTitleInfoSede = document.getElementById( 'titleInfoSede' );
+    oBodyInfoSede.innerHTML = ( nSedeAMostrar !== 0 ? acSedes[nSedeAMostrar] : acSedes[nSede] );
+    if( oSelectUI )
+        oTitleInfoSede.innerText = 'Sede: ' + oSelectUI.options[ oSelectUI.selectedIndex ].text;
+    else
+        oTitleInfoSede.innerText = 'Sede: ' + acSedesTitle[nSedeAMostrar] + ( cSigla !== '' ? ' ('+cSigla+':'+nSedeAMostrar+')' : ' ('+nSedeAMostrar+')'  );
+    oInfoSede.show();
+}
+
+document.addEventListener( "DOMContentLoaded", () => {
+    // espero a que se cargue Bootstrap...
+    checkInfoSedeButton();
+    oInfoSede = new bootstrap.Modal( document.getElementById('mdlInfoSede') );
+    if( oBtnInfoSede ) oBtnInfoSede.addEventListener( "click", () => { showInfoSede(); } );
+    if( oSelectUI ) oSelectUI.addEventListener( "change", () => { checkInfoSedeButton() } );
+
+    // documentos.php <= posicionarse en un inventario
+    const cPath = window.location.pathname;
+    const cFileName = cPath.substring( cPath.lastIndexOf('/') + 1 );
+    if( cFileName == 'documento.php' ) {
+        const urlParams = new URLSearchParams(window.location.search);
+        if ( urlParams.has('selInv') ) {
+            const cValor = urlParams.get('selInv');
+            const acPartes = cValor.split('.');
+            const cMyUI = acPartes[0];
+            const cMyInventario = acPartes[1];
+
+            let bSelected = false;
+            const aoRadios = document.querySelectorAll('#tbEjemplares tbody input[type="radio"]');
+            aoRadios.forEach(( oRadio ) => {
+              const cUI = oRadio.getAttribute('data-ui');
+              const cInventario = oRadio.getAttribute('data-inventario');
+              if( cUI === cMyUI && cInventario === cMyInventario ) {
+                  oRadio.checked = true;
+                  bSelected = true;
+              }
+            });
+            if( bSelected ) {
+                setTimeout(() => {
+                  const oBtn = document.getElementById('btnFormRequest');
+                  oBtn.click();
+                }, 250 ); // un delay para que se termine de asignar el evento onShowModal... que carga datos en el form
+            }
+        }
+    }
+});
+</script><!-- Tomó 222 ms. -->    
+
+    <!-- Visitas: 1433649  Consultas: 1777857 -->
+
+<div class="row">
+	<div class="col-12 m-3"></div> <!-- space -->
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="modalSolicitud"> <!-- modal -->
+<div class="modal-dialog modal-lg modal-dialog-centered" role="document"> <!-- modal-dialog -->
+    <div class="modal-content">
+    <div class="modal-header">
+        <p class="h5 modal-title">Formulario para Solicitud de Material : Documentos seleccionados <strong>favoritos</strong></p>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <div class="row"><div class="col-12">
+            <p class="mb-1" id="infoEjemplarModal" data-ejemplar="Ejemplar"></p>
+        </div></div>
+        <form id="formSolicitud">
+            <input type="hidden" name="iDoc" id="iDoc" value="" >
+            <div class="row my-1">
+                <div class="col-12 col-xl-7 mb-xl-0">
+                    <div class="input-group">
+                        <label class="input-group-text d-none d-md-block mb-1 mb-md-0" for="iLectorApeYNom"><span class="text-info">Apellido y Nombre</span></label>
+                        <input required type="text" name="iLectorApeYNom" id="iLectorApeYNom" value="" class="form-control" placeholder="Ingresá apellido y nombre...">
+                        <button rel="srchClear" data-input="iLectorApeYNom" type="button" class="btn btn-outline-secondary"><svg class="wsIcon" viewBox="0 0 16 16"><use href="wsIcons.svg#icon-x"></use></svg></button>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-5 mt-1 mt-xl-0">
+                    <div class="input-group">
+                        <label class="input-group-text d-none d-md-block" for="iLectorDNI"><span class="text-info">DNI</span></label>
+                        <input type="text" name="iLectorDNI" id="iLectorDNI" value="" class="form-control" placeholder="Ingresá DNI...">
+                        <button rel="srchClear" data-input="iLectorDNI" type="button" class="btn btn-outline-secondary"><svg class="wsIcon" viewBox="0 0 16 16"><use href="wsIcons.svg#icon-x"></use></svg></button>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div class="col-12">
+                    <div class="input-group">
+                        <label class="input-group-text d-none d-md-block" for="iLectorEMail"><span class="text-info">E-Mail</span></label>
+                        <input required type="email" name="iLectorEMail" id="iLectorEMail" value="" class="form-control" placeholder="Ingresá tu E-Mail">
+                        <button rel="srchClear" data-input="iLectorEMail" type="button" class="btn btn-outline-secondary"><svg class="wsIcon" viewBox="0 0 16 16"><use href="wsIcons.svg#icon-x"></use></svg></button>
+                    </div>
+                </div>
+            </div>
+            </form>
+            <div class="alert alert-warning alert-dismissible fade show mt-2">
+                <p class="mb-0" id="modalSolicitudLegend"><strong><svg class="wsIcon" viewBox="0 0 16 16"><use href="wsIcons.svg#icon-warning"></use></svg>&nbsp;Atención NO ES UNA RESERVA!</strong>
+                Es solo a los efectos de disponer de los datos del ejemplar para solicitarlo a biblioteca.<br /><p class="mb-0">Tenga presente también que puede seleccionar favoritos 
+<i class="far fa-star"></i> (los documentos que le interesen) durante su 
+sesión y obtener una lista de ellos.</p></p>                    
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+    </div> <!-- div class="modal-body" -->
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+    </div> <!-- modal-footer -->
+    </div> <!-- modal-content -->
+</div> <!-- modal-dialog -->
+</div> <!-- modal -->
+<div class="modal" tabindex="-1" role="dialog" id="modalFeed">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p class="h5 modal-title">
+        <svg class="wsIcon" viewBox="0 0 16 16"><use xlink:href="wsIcons.svg#icon-rss" style="color:#ee802f"></use></svg>
+         Enlace para fuente web</p>        
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <div class="row"><div class="col-12">
+
+    <div class="alert alert-info">
+        <p class="mb-0">Podrá cargar este enlace de fuente web (<i>'web feed'</i>) en su lector preferido 
+y le mostrará las novedades de los últimos <strong>7</strong> días que cumplan con las condiciones 
+que ha definido para obtener estos resultados.<br />
+Más información sobre este tema 
+<a href="https://es.wikipedia.org/wiki/Fuente_web" target="_blank" 
+title="Más info en Wikipedia" data-toggle="tooltip">aquí <i class="fab fa-wikipedia-w"></i></a></p>
+    </div>
+    <div class="input-group">
+        <div class="input-group-prepend d-none d-md-block">
+            <label class="input-group-text" for="iFeedLink"><span class="text-info">Enlace</span></label>
+          </div>
+          <input type="text" name="iFeedLink" id="iFeedLink" value="http://catalogobibliotecas.buenosaires.gob.ar%2Fpergamo%2Fopac.php%3Fa%3DbsqSi%26p%3D1%26o%3D%26trSimple%3DRayuela%26op%3Dand&fmt=rss" class="form-control" readonly >
+    </div>          </div></div>
+      </div>
+      <div class="modal-footer">
+<button type="button" class="btn btn-primary" id="btnGoFeedLink">Ir al enlace</button>
+<button type="button" class="btn btn-primary me-4" id="btnCopyFeedLink">Copiar</button>        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div> <!-- div class="container" //-->
+
+<!-- PGMedia Modal (DEJAR FUERA DEL .CONTAINER!!) -->
+<div class="modal fade" id="pgMediaModal" tabindex="-1" role="dialog" aria-labelledby="pgMediaModal" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p class="modal-title h5" id="pgMediaModalTitle"></p>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="pgMediaModalBody">
+        ...
+      </div>
+      <div class="modal-footer">        
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script defer src='js/ws-share-1.1.0.js'></script>
+
+
+	</body>
+</html>

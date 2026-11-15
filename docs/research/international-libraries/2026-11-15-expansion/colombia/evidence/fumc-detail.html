@@ -1,0 +1,322 @@
+<!--BEGIN QUALTRICS WEBSITE FEEDBACK SNIPPET-->
+<script type='text/javascript'>
+(function(){var g=function(e,h,f,g){
+this.get=function(a){for(var a=a+"=",c=document.cookie.split(";"),b=0,e=c.length;b<e;b++){for(var d=c[b];" "==d.charAt(0);)d=d.substring(1,d.length);if(0==d.indexOf(a))return d.substring(a.length,d.length)}return null};
+this.set=function(a,c){var b="",b=new Date;b.setTime(b.getTime()+6048E5);b="; expires="+b.toGMTString();document.cookie=a+"="+c+b+"; path=/; "};
+this.check=function(){var a=this.get(f);if(a)a=a.split(":");else if(100!=e)"v"==h&&(e=Math.random()>=e/100?0:100),a=[h,e,0],this.set(f,a.join(":"));else return!0;var c=a[1];if(100==c)return!0;switch(a[0]){case "v":return!1;case "r":return c=a[2]%Math.floor(100/c),a[2]++,this.set(f,a.join(":")),!c}return!0};
+this.go=function(){if(this.check()){var a=document.createElement("script");a.type="text/javascript";a.src=g;document.body&&document.body.appendChild(a)}};
+this.start=function(){var t=this;"complete"!==document.readyState?window.addEventListener?window.addEventListener("load",function(){t.go()},!1):window.attachEvent&&window.attachEvent("onload",function(){t.go()}):t.go()};};
+try{(new g(100,"r","QSI_S_ZN_3rAkACXHgbtUt2m","https://zn3rakacxhgbtut2m-elogimsas.siteintercept.qualtrics.com/SIE/?Q_ZID=ZN_3rAkACXHgbtUt2m")).start()}catch(i){}})();
+</script><div id='ZN_3rAkACXHgbtUt2m'><!--DO NOT REMOVE-CONTENTS PLACED HERE--></div>
+<!--END WEBSITE FEEDBACK SNIPPET-->
+<!DOCTYPE html>
+<html lang='es'>
+<head>
+    
+	<meta charset="utf-8" />
+	<meta name="author" content="PMB Group" />
+
+	<meta name="keywords" content="OPAC, web, library, opensource, catalog, catalogue, catálogo, biblioteca, bibliothèque, mediateca, librería, médiathèque, pmb, phpmybibli" />
+	<meta name="description" content="Catálogo en línea Biblioteca FUMC." /><meta name='robots' content='all' />
+	<!--IE et son enfer de compatibilit?-->
+	<meta http-equiv='X-UA-Compatible' content='IE=Edge' />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+			
+	<title>Catálogo en línea Biblioteca FUMC</title>
+	
+	
+<link rel='stylesheet' type='text/css' href='./styles/common/animation_display.css?1615807938' />
+<link rel='stylesheet' type='text/css' href='./styles/common/common.css?1623389548' />
+<link rel='stylesheet' type='text/css' href='./styles/common/contrib.css?1614764986' />
+<link rel='stylesheet' type='text/css' href='./styles/common/dGrowl.css?1598518188' />
+<link rel='stylesheet' type='text/css' href='./styles/common/font-awesome.css?1478575624' />
+<link rel='stylesheet' type='text/css' href='./styles/common/open-sans.css?1479294986' />
+<link rel='stylesheet' type='text/css' href='./styles/common/pagination.css?1531995718' />
+<link rel='stylesheet' type='text/css' href='./styles/common/record_display.css?1540543362' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/colonnes.css?1343788866' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/gallerie_photos.css?1297048640' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/genbib.css?1627984906' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/liste_bulletins.css?1297048638' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/print.css?1297048638' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/tags.css?1297048638' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/visionneuse.css?1297048640' /><script type='text/javascript'>var opac_style= 'genbib';</script>
+	<!-- css_authentication -->	<link rel='SHORTCUT ICON' href='images/site/favicon.ico' />
+	<script type="text/javascript" src="includes/javascript/drag_n_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/handle_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/popup.js"></script>
+	<script type='text/javascript'>
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName = 
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {  
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i); 
+				    }
+				 }
+				return items;
+			 }
+		}
+		// Fonction a utilisier pour l'encodage des URLs en javascript
+		function encode_URL(data){
+			var docCharSet = document.characterSet ? document.characterSet : document.charset;
+			if(docCharSet == "UTF-8"){
+				return encodeURIComponent(data);
+			}else{
+				return escape(data);
+			}
+		}
+	</script>
+
+<link rel='stylesheet' type='text/css' href='./includes/javascript/dojo/dijit/themes/tundra/tundra.css' />
+<script type='text/javascript'>
+	var dojoConfig = {
+		parseOnLoad: true,
+		locale: 'es-es',
+		isDebug: false,
+		usePlainJson: true,
+		packages: [{
+			name: 'pmbBase',
+			location:'../../../..'
+		},{
+			name: 'd3',
+			location:'../../d3'
+		}],
+		deps: ['apps/pmb/MessagesStore', 'dgrowl/dGrowl', 'dojo/ready', 'apps/pmb/ImagesStore'],
+		callback:function(MessagesStore, dGrowl, ready, ImagesStore){
+			window.pmbDojo = {};
+			pmbDojo.messages = new MessagesStore({url:'./ajax.php?module=ajax&categ=messages', directInit:false});
+			pmbDojo.images = new ImagesStore({url:'./ajax.php?module=ajax&categ=images', directInit:false});
+			ready(function(){
+				new dGrowl({'channels':[{'name':'info','pos':2},{'name':'error', 'pos':1}]});
+			});
+		
+		},
+	};
+</script>
+<script type='text/javascript' src='./includes/javascript/dojo/dojo/dojo.js'></script>
+<script type='text/javascript'>
+	dojo.addOnLoad(function () {
+		// Ajout du theme Dojo
+		dojo.addClass(dojo.body(),'tundra');
+    })
+</script>
+<script type='text/javascript'>
+	var opac_show_social_network =0;
+	var pmb_img_patience = './images/patience.gif';
+</script>
+	<script type='text/javascript' src='./includes/javascript/http_request.js'></script>
+	
+</head>
+
+<body onload="window.defaultStatus='PMB: Acceso público';"  id="pmbopac">
+<script type='text/javascript'>
+	function findNoticeElement(id){
+		var ul=null;
+		//cas des notices classiques
+		var domNotice = document.getElementById('el'+id+'Child');
+		//notice_display
+		if(!domNotice) domNotice = document.getElementById('notice');
+		if(domNotice){
+			var uls = domNotice.getElementsByTagName('ul');
+			for (var i=0 ; i<uls.length ; i++){
+				if(uls[i].getAttribute('id') == 'onglets_isbd_public'+id){
+					var ul = uls[i];
+					break;
+				}
+			}
+		} else{
+			var li = document.getElementById('onglet_isbd'+id);
+			if(!li) var li = document.getElementById('onglet_public'+id);
+			if(!li) var li = document.getElementById('onglet_detail'+id);
+			if(li) var ul = li.parentNode;
+		}
+		return ul;
+	}
+	function show_what(quoi, id) {
+		switch(quoi){
+			case 'EXPL_LOC' :
+				document.getElementById('div_expl_loc' + id).style.display = 'block';
+				document.getElementById('div_expl' + id).style.display = 'none';		
+				document.getElementById('onglet_expl' + id).className = 'isbd_public_inactive';		
+				document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_active';
+				break;
+			case 'EXPL' :
+				document.getElementById('div_expl_loc' + id).style.display = 'none';
+				document.getElementById('div_expl' + id).style.display = 'block';
+				document.getElementById('onglet_expl' + id).className = 'isbd_public_active';
+				document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_inactive';
+				break;
+			default :
+				quoi= quoi.toLowerCase();
+				var ul = findNoticeElement(id);
+				if (ul) {
+					var items  = ul.getElementsByTagName('li');
+					for (var i=0 ; i<items.length ; i++){
+						if(items[i].getAttribute('id')){
+							if(items[i].getAttribute('id') == 'onglet_'+quoi+id){
+								items[i].className = 'isbd_public_active';
+								document.getElementById('div_'+quoi+id).style.display = 'block';
+							}else{
+								if(items[i].className != 'onglet_tags' && items[i].className != 'onglet_avis' && items[i].className != 'onglet_sugg' && items[i].className != 'onglet_basket' && items[i].className != 'onglet_liste_lecture'){
+									items[i].className = 'isbd_public_inactive';	
+									document.getElementById(items[i].getAttribute('id').replace('onglet','div')).style.display = 'none';
+								}
+							}
+						}
+					}			
+				}
+				break;
+		}
+	}
+</script>
+	<script type='text/javascript' src='./includes/javascript/tablist_ajax.js'></script>
+<script type='text/javascript' src='./includes/javascript/tablist.js'></script>
+<script type='text/javascript' src='./includes/javascript/misc.js'></script>
+	<div id='att' style='z-Index:1000'></div>
+	<div id="container"><div id="main"><div id='main_header'><h3>Servicios Bibliotecarios</h3></div><div id="main_hors_footer">
+						
+
+<script type='text/javascript' src='./includes/javascript/auth_popup.js'></script>	
+<script type='text/javascript' src='./includes/javascript/pnb.js'></script><div id="intro_message"><div class="p1"><a href="index.php?lvl=index"><img src="./images/bar_spacer.gif" id="map_lien_retour" alt="" /></a> 
+</div><div class="p2"></div></div><div id='navigator'>
+<table style='width:100%'><tr><td class='navig_actions_first_screen' ><a href="./index.php?lvl=index" class='navig_marguerite'><span>Nueva búsqueda</span></a></td>
+</tr></table></div><!-- fermeture de #navigator -->
+<div id='resume_panier' class='empty'></div>
+<div id='notice'>
+<br />
+			<script type='text/javascript'>
+				if(param_social_network){
+					creeAddthis('el1902');
+				}else{
+					waitingAddthisLoaded('el1902');
+				}
+			</script>
+			<div id='el1902Parent' class='parent'><img src="./images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/><span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_1902"><span class="statutnot1" title="Dep&oacute;sito"></span><span  notice='1902'  class='header_title'>Cien años de soledad</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=13474'>Gabriel García Márquez</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Cien%20a%C3%B1os%20de%20soledad&amp;rft.title=Cien%20a%C3%B1os%20de%20soledad&amp;rft.isbn=978-958-8089-12-6&amp;rft_id=&amp;rft.pub=El%20Tiempo&amp;rft.place=Bogota&amp;rft.au=Gabriel%20Garc%C3%ADa%20M%C3%A1rquez&amp;rft.aulast=Garc%C3%ADa%20M%C3%A1rquez&amp;rft.aufirst=Gabriel'></span></span><table style='width:100%'><tr><td>
+		<ul id='onglets_isbd_public1902' class='onglets_isbd_public'>
+	  			<li id='onglet_public1902' class='isbd_public_active'><a href='#' title="Publico" onclick="show_what('PUBLIC', '1902'); return false;">Público</a></li>
+				<li id='onglet_isbd1902' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '1902'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public1902' style='display:block;'><table><tr class='tr_title'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Título :</span></td>
+					<td class='public_line_value'><span class='public_title'>Cien años de soledad</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Tipo de documento:</span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texto impreso</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Autores:</span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=13474' >Gabriel García Márquez</a></span></td>
+				</tr><tr class='tr_ed1'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Editorial:</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=813' >Bogota : El Tiempo</a></span></td>
+				</tr><tr class='tr_ed2'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Otro editor:</span></td>
+					<td class='public_line_value'><span class='public_ed2'><a href='./index.php?lvl=publisher_see&id=94' >2001</a></span></td>
+				</tr><tr class='tr_size'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Dimensiones:</span></td>
+					<td class='public_line_value'><span class='public_size'>318 p</span></td>
+				</tr><tr class='tr_code'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>ISBN/ISSN/DL:</span></td>
+					<td class='public_line_value'><span class='public_code'>978-958-8089-12-6</span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Palabras clave:</span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=LITERATURA+COLOMBIANA&tags=ok' >LITERATURA COLOMBIANA</a></span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd1902' style='display:none;'>Cien años de soledad [texto impreso] / <a href='./index.php?lvl=author_see&id=13474' >Gabriel García Márquez</a>&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=813' >Bogota : El Tiempo</a>&nbsp;: <a href='./index.php?lvl=publisher_see&id=94' >2001</a>, [s.d.]&nbsp;.&nbsp;-&nbsp;&nbsp;; 318 p.<br /><b>ISBN</b>&nbsp;: 978-958-8089-12-6<table><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Palabras clave:</span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=LITERATURA+COLOMBIANA&tags=ok' >LITERATURA COLOMBIANA</a></span></td>
+				</tr></table></div></td></tr></table>
+					<h3>Reserva</h3><a href='#' onClick="if(confirm('¿Realmente desea reservar este documento?')){w=window.open('./do_resa.php?lvl=resa&id_notice=1902&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Reservar este documento</a><br />
+<h3><span id='titre_exemplaires' class='titre_exemplaires'>Ejemplares (1)</span></h3>
+<table cellpadding='2' class='exemplaires' style='width:100%'>
+<tr class='thead'><th class='expl_header_expl_cb'>C&oacute;digo de barras</th><th class='expl_header_expl_cote'>Signatura</th><th class='expl_header_tdoc_libelle'>Tipo de medio</th><th class='expl_header_location_libelle'>Ubicaci&oacute;n</th><th class='expl_header_section_libelle'>Secci&oacute;n</th><th class='expl_header_statut'>Estado</th></tr><tr class='even item_expl expl_available'><td id='expl_2506' class='expl_cb'>00001163</td><td class='expl_cote'>Co863.6/G216c</td><td class='tdoc_libelle'>Libro</td><td class='location_libelle'>Biblioteca Principal -Medell&iacute;n</td><td class='section_libelle'>Literatura</td><td class='expl_situation'><strong>Disponible</strong> </td></tr>
+</table></div>
+</div>
+	
+		</div><!-- fin DIV main_hors_footer --><div id="footer">
+
+<span id="footer_rss">
+	
+</span>
+<span id="footer_link_sup">
+		<a href="./index.php?lvl=infopages&amp;pagesid=7">Condiciones legales</a> &nbsp;
+</span>
+
+<span id="footer_link_website">
+	<a class="footer_biblio_name" href="http://ciad.fumc.edu.co" title="Biblioteca FUMC">Biblioteca FUMC</a> &nbsp;
+</span>	
+
+<span id="footer_link_pmb">
+<a href=http://www.google.es target=_blank>Buscar en Google</a> &nbsp;
+		<a class="lien_pmb_footer" href="https://www.sigb.net" title="una solución libre para la mediateca" target='_blank'>pmb</a> 	
+</span>		
+		
+</div> 
+
+		</div><!-- /div id=main -->
+
+		<div id="intro">
+<div id="intro_bibli">
+			<h3>Biblioteca FUMC</h3>
+			<div class="p1"><img src="./styles/genbib/images/image1.jpg" />
+<img src="./styles/genbib/images/image2.jpg" />
+<img src="./styles/genbib/images/image3.jpg" /></div>
+			<div class="p2"><ul id="menuDeroulant">
+
+<li><a href="./index.php">Inicio</a></li>
+<li><a href="./index.php?lvl=infopages&amp;pagesid=4">Calendario</a></li>
+<li><a href="./index.php?lvl=infopages&amp;pagesid=3">Ayuda en L&iacute;nea</a>
+</li>
+
+<li><a href="./index.php?lvl=infopages&amp;pagesid=6">Ubicaci&oacute;n</a></li>
+
+</ul></div>
+			</div>
+		</div><!-- /div id=intro -->		
+		<div id="bandeau"><div id='accessibility'>
+
+		<ul class='accessibility_font_size'>
+			<li class='accessibility_font_size_small'><a href='javascript:set_font_size(-1);' title='Réduire le texte'>A-</a></li>
+			<li class='accessibility_font_size_normal'><a href='javascript:set_font_size(0);' title='Réinitialiser le texte'>A</a></li>
+			<li class='accessibility_font_size_big'><a href='javascript:set_font_size(1);' title='Agrandir le texte'>A+</a></li>
+		</ul>
+		</div>
+<div id="accueil">
+
+<h3><span onclick='document.location="./index.php?"' style='cursor: pointer;'>Inicio</span></h3>
+<p class="centered"><a href='./index.php?'><img src='images/site/livre.png' alt='Inicio'  style='border:0px' class='center'/></a></p>
+<div id='lang_select'><h3 ><span>Elige idioma</span></h3><form method="post" action="index.php?lvl=notice_display&id=1902" ><select name="lang_sel" onchange="this.form.submit();"><option value='fr_FR'>Français</option><option value='it_IT'>Italiano</option><option value='es_ES' selected>Español </option><option value='ca_ES'>Català</option><option value='en_UK'>English (UK)</option><option value='nl_NL'>Nederlands</option><option value='oc_FR'>Occitan</option></select></form></div>
+
+					</div><!-- fermeture #accueil -->
+<div id="connexion">
+
+			<h3 class="login_invite">Conectarse</h3><div id='login_form'><form action='index.php?lvl=notice_display&id=1902' method='post' name='myform'><label>acceder a su cuenta de usuario</label><br />
+				<input type='text' name='login' class='login' size='14' placeholder='identificador' ><br />
+				<input type='password' name='password' class='password' size='8' placeholder='Mot de passe' value=''/>
+                <input type='hidden' name='force_login' value='1'/>
+				<input type='submit' name='ok' value='ok' class='bouton'></form><a  class='mdp_forgotten' href='./askmdp.php'>Olvidé mi contraseña</a></div>
+
+			</div><!-- fermeture #connexion -->
+<div id="adresse">
+
+		<h3>Dirección</h3>
+
+		<span>
+			Biblioteca FUMC<br />
+			Calle 56 No.41-90<br />
+			574  Medellín, Antioquia<br />
+			Colombia&nbsp;<br />
+			57 4 4025500 - 108,259<br /><span id='opac_biblio_email'>
+			<a href="mailto:ciad@fumc.edu.co" title="ciad@fumc.edu.co">contacto</a></span></span>
+	    </div><!-- fermeture #adresse --></div><div id="bandeau_2"></div></div><!-- /div id=container -->
+		
+		<script type='text/javascript'>init_drag();	//rechercher!!</script> 
+		
+		</body>
+		</html>
+		

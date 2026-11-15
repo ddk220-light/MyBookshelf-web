@@ -1,0 +1,418 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head><meta charset="utf-8" /><title>
+	Book Detail
+</title><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="description" content="Libmax OPAC provides quick access to books, periodicals, newspapers, theses and more." />
+  <!-- Lightbox assets (unchanged) -->
+  <script src="../lightbox/prototype.js" type="text/javascript"></script>
+  <script src="../lightbox/scriptaculous.js" type="text/javascript"></script>
+  <script src="../lightbox/lightbox.js" type="text/javascript"></script>
+  <link href="../lightbox/lightbox.css" rel="stylesheet" type="text/css" />
+
+  <!-- Page-scoped styles -->
+  <style>
+    /* Top-centered cover */
+    .cover-box{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:12px;
+      box-shadow:var(--shadow);
+      padding:12px;
+      text-align:center;
+      max-width:320px;              /* limit visual width */
+      margin:0 auto var(--cardPad); /* center block + space below */
+    }
+    .cover-box img{
+      width:100%;
+      height:auto;
+      max-width:300px;              /* responsive image cap */
+      border-radius:10px;
+      display:block;
+      margin:0 auto;
+    }
+
+    /* Metadata card below cover */
+    .meta{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:12px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .meta .meta-header{
+      padding:12px 16px;
+      border-bottom:1px solid var(--border);
+      background:linear-gradient(180deg,#fff,var(--muted));
+      font-weight:700;
+      font-size:18px;
+    }
+
+    /* Detail table (keeps your labels/IDs) */
+    .detail-table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+    }
+    .detail-table tr:nth-child(odd){ background:#fafdfa; }
+    .detail-table tr:nth-child(even){ background:#f4f7f4; }
+    .detail-table th,
+    .detail-table td{
+      padding:10px 14px;
+      vertical-align:top;
+      border-bottom:1px solid var(--border);
+    }
+    .detail-table th{
+      width:260px;                  /* a bit wider so long labels fit */
+      text-align:left;
+      color:#234;
+      font-weight:600;
+      background:transparent;
+      border-right:1px solid var(--border);
+    }
+
+    .utility-links{
+      padding:12px 16px;
+      display:flex; flex-wrap:wrap; gap:10px;
+      background:#fff;
+    }
+    .utility-links a{ text-decoration:none; color:var(--brand); font-weight:600; }
+
+    @media (max-width: 780px){
+      .detail-table th{ width:42%; } /* better fit on phones */
+    }
+  </style>
+
+  <!-- Modern theme (kept inline for easy deployment; move to /styles/opac-modern.css if you prefer) -->
+  <style>
+  :root{
+    --brand:#2f7d32; --brand-2:#0b5f2d;
+    --bg:#f6f8f7; --card:#ffffff; --text:#122; --muted:#eef4ef;
+    --border:#d8e3d9; --shadow:0 8px 24px rgba(0,0,0,.08);
+    /* new: responsive gutters & inner padding */
+    --gutter: clamp(12px, 3vw, 36px);
+    --cardPad: clamp(14px, 2.2vw, 28px);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--text);font:14px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+
+  /* Header */
+  .site-header{width:100%;margin:12px 0 8px;padding:0 var(--gutter);position:relative}
+  .site-header .brand{display:block;width:100%;overflow:hidden;border-radius:14px;box-shadow:var(--shadow)}
+  .site-header .brand img{width:100%;height:auto;display:block}
+  .nav-toggle{
+    position:absolute;right:calc(var(--gutter) + 8px);top:18px;z-index:5;
+    background:var(--brand);color:#fff;border:0;border-radius:10px;
+    padding:10px 12px;cursor:pointer;display:none
+  }
+
+  /* Top Nav (full-width with gutters) */
+  nav.main-nav{width:100%;padding:0 var(--gutter);margin:10px 0 0}
+  .nav-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+  .nav-list{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:0;padding:10px}
+  .nav-list li a{
+    display:inline-block;padding:10px 16px;border-radius:10px;color:#102;
+    text-decoration:none;font-weight:600
+  }
+  .nav-list li a:hover{background:rgba(47,125,50,.08)}
+  .nav-list .spacer{flex:0 0 0;border-left:1px solid var(--border);height:28px;margin:6px}
+
+  /* Layout (full-width with gutters) */
+  .container{width:100%;padding:14px var(--gutter)}
+  .grid{
+    display:grid;gap:clamp(12px, 1.6vw, 22px);
+    grid-template-columns: minmax(220px, 22rem) minmax(0,1fr) minmax(220px, 22rem);
+    align-items:start
+  }
+
+  /* Cards */
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    box-shadow:var(--shadow);
+    overflow:visible; /* avoid clipping rounded corners/shadows */
+  }
+  .card-header{
+    padding:calc(var(--cardPad) - 4px) var(--cardPad);
+    border-bottom:1px solid var(--border);
+    background:linear-gradient(180deg,#fff,var(--muted));
+    border-radius:12px 12px 0 0;
+    font-weight:700
+  }
+  .card-body{padding:var(--cardPad)}
+
+  /* Quick Search */
+  .search-text{
+    width:100%;height:38px;border:1px solid var(--border);
+    border-radius:10px;padding:8px 10px
+  }
+  .rb-list{margin-top:8px}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:10px 14px;border-radius:10px;border:1px solid var(--brand);
+    background:var(--brand);color:#fff;cursor:pointer
+  }
+  .btn:hover{background:var(--brand-2);border-color:var(--brand-2)}
+
+  /* Link sections */
+  .section-title{margin:8px 0 6px;font-size:14px;color:#234;font-weight:700}
+  .link-list{list-style:none;margin:0;padding:0}
+  .link-list li{padding:6px 0}
+  .link-list a{text-decoration:none;color:#174a2b}
+  .link-list a:hover{text-decoration:underline}
+
+  /* Counter pill digits */
+  .counter{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:10px}
+  .digit-pill{
+    display:inline-block;padding:8px 10px;border-radius:10px;background:#b09dc4;
+    color:#fff;font-weight:700;min-width:32px;text-align:center
+  }
+
+  /* Middle content placeholder: add inner padding so text/headers don't touch edges */
+  .content-card{min-height:300px;padding:var(--cardPad)}
+  .content-card :is(h1,h2,h3,h4,h5,h6){margin-top:0.2rem}
+  .content-card > :first-child{margin-top:0}
+
+  /* Footer (full-width with gutters) */
+  .footer{width:100%;padding:10px var(--gutter) 24px;text-align:center;color:#344}
+  .footer .card{padding:12px}
+
+  /* Responsive */
+  @media (max-width: 1024px){
+    .grid{grid-template-columns: 1fr}
+    .nav-toggle{display:block}
+    .nav-wrap.collapsed .nav-list{display:none}
+    .nav-wrap.open .nav-list{display:flex}
+  }
+
+  /* (Optional) Dark mode */
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0e0f10;--card:#161819;--text:#e7ece9;--muted:#1b231d;
+      --border:#2a2f2a;--shadow:0 8px 24px rgba(0,0,0,.6)
+    }
+    .link-list a{color:#8bd4a1}
+  }
+</style>
+
+
+  <script type="text/javascript">
+      function toggleNav() {
+          var wrap = document.getElementById('navWrap');
+          if (wrap.classList.contains('open')) { wrap.classList.remove('open'); wrap.classList.add('collapsed'); }
+          else { wrap.classList.add('open'); wrap.classList.remove('collapsed'); }
+      }
+  </script>
+</head>
+<body>
+  <form name="aspnetForm" method="post" action="./BookDetail.aspx?id=82880" id="aspnetForm">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="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" />
+
+
+<script src="/libmax/ScriptResource.axd?d=qpskWSklTNZNNzsx_FecAXoXbYuste8qzQQZ7OfPsthRY-JmXKDJTUC6CY6hWMoKUAvYoDm2zydhRZxS4EKyP1jFqMTGW2tkbFyU3xdN_X--PyGje_PJiVRkcSeDmozE0&amp;t=23c9c237" type="text/javascript"></script>
+<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="859D12BC" />
+<input type="hidden" name="__VIEWSTATEENCRYPTED" id="__VIEWSTATEENCRYPTED" value="" />
+<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="Na4pkvyyNkLt0zzzAbGlwh/F9rBgZsIe1wpwYkP23JF6DFQRyPj0Y7T1Rxsep49338ohMND+wDb2xE0aZYF2EmQO8pUkttIHcS9TZcq209XFNuo4rF6PldIfz/Th9ZMkZ261kHA5XP7fOJOteGEuZip78B1eYee1wLnTvFxVtRdYt0HSQl/20dsBTACgEsQIGQEXt7AjUYTL/k6xi0xS0b9VL01NWd0B4q3cA0/ozdUIthnOUTqzXmq6Ww4hrMOI670EOHxwHSYy9S6oucbwWZUfVptuCdZdRsyAb/JpEsU=" />
+    
+
+    <!-- Header -->
+    <header class="site-header">
+      <a class="brand" href="index.aspx" aria-label="Home">
+        <img src="images/opec.jpg" alt="NDU Library" />
+      </a>
+      <button type="button" class="nav-toggle" onclick="toggleNav()" aria-label="Toggle navigation">☰ Menu</button>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="main-nav">
+      <div id="navWrap" class="nav-wrap collapsed">
+        <ul class="nav-list" role="menubar" aria-label="Primary">
+          <li role="none"><a role="menuitem" href="index.aspx">Home</a></li>
+          <li class="spacer" aria-hidden="true"></li>
+          <li role="none"><a role="menuitem" href="../member/login.aspx">Login</a></li>
+          <li class="spacer" aria-hidden="true"></li>
+          <li role="none"><a role="menuitem" href="aboutlib.aspx">About Library</a></li>
+          <li class="spacer" aria-hidden="true"></li>
+          <li role="none"><a role="menuitem" href="libtiming.aspx">Library Timings</a></li>
+          <li class="spacer" aria-hidden="true"></li>
+          <li role="none"><a role="menuitem" href="Contact.aspx">Contact</a></li>
+          <li class="spacer" aria-hidden="true"></li>
+          <li role="none"><a role="menuitem" href="StaffD.aspx">Staff Directory</a></li>
+          <li class="spacer" aria-hidden="true"></li>
+          <li role="none"><a role="menuitem" href="help.aspx">Help</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Main layout -->
+    <div class="container">
+      <div class="grid">
+        <!-- Left column: Quick Search + Counter -->
+        <aside id="left_div" class="card">
+          <div class="card-header">Quick Search</div>
+          <div class="card-body">
+            <label for="quicksearch" class="section-title" style="display:block">Search Terms</label>
+            <!-- keep IDs so your code-behind works -->
+            <input name="ctl00$quicksearch" type="text" id="ctl00_quicksearch" class="search-text" />
+            <div class="rb-list">
+              <span id="ctl00_RadioButtonList1"><input id="ctl00_RadioButtonList1_0" type="radio" name="ctl00$RadioButtonList1" value="Books" checked="checked" /><label for="ctl00_RadioButtonList1_0">Books</label><br /><input id="ctl00_RadioButtonList1_1" type="radio" name="ctl00$RadioButtonList1" value="Periodicals" /><label for="ctl00_RadioButtonList1_1">Periodicals</label><br /><input id="ctl00_RadioButtonList1_2" type="radio" name="ctl00$RadioButtonList1" value="Periodical Articles" /><label for="ctl00_RadioButtonList1_2">Periodical Articles</label><br /><input id="ctl00_RadioButtonList1_3" type="radio" name="ctl00$RadioButtonList1" value="Newspapers Articles" /><label for="ctl00_RadioButtonList1_3">Newspapers Articles</label></span>
+            </div>
+            <div style="margin-top:10px">
+              <input type="image" name="ctl00$ImageButton1" id="ctl00_ImageButton1" src="images/Search_btn.gif" alt="Search" border="0" />
+            </div>
+          </div>
+
+          <!-- Visitor counter (your code-behind fills this) -->
+          <div class="card-header">Visitors</div>
+          <div id="ctl00_div_counter" class="counter">
+            <!-- your code will inject digits; keeping a style in case -->
+          </div>
+        </aside>
+
+        <!-- Middle content area -->
+        <section class="card content-card">
+          
+  <!-- Top: centered cover (Lightbox-enabled) -->
+  <div class="cover-box">
+    <a id="ctl00_ContentPlaceHolder1_hrefTag" rel="lightbox">
+      <img id="ctl00_ContentPlaceHolder1_Image1" class="book-cover" src="../Images/Library/01book.jpg" alt="Book cover" height="100" width="100" border="0" />
+    </a>
+  </div>
+
+  <!-- Metadata below -->
+  <div class="meta">
+    <div class="meta-header">Book Detail</div>
+
+    <table class="detail-table">
+      <tr>
+        <th scope="row">Title</th>
+        <td><span id="ctl00_ContentPlaceHolder1_lbltitle">Constitutional and Political History of Pakistan</span></td>
+      </tr>
+      <tr>
+        <th scope="row">Sub Title</th>
+        <td><span id="ctl00_ContentPlaceHolder1_lblsubtitle"></span></td>
+      </tr>
+      <tr>
+        <th scope="row">Author(s)</th>
+        <td>
+          <div id="ctl00_ContentPlaceHolder1_authdiv"><a href='SearchBook.aspx?column=Author&criteria=Hamid Khan&pagenumber=1'>Hamid Khan</a></div>
+          
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">Call No</th>
+        <td><span id="ctl00_ContentPlaceHolder1_lblcallno">954.9/342 HAM</span></td>
+      </tr>
+      <tr>
+        <th scope="row">Subject(s)</th>
+        <td>
+          <input name="ctl00$ContentPlaceHolder1$lblsubject1" type="hidden" id="ctl00_ContentPlaceHolder1_lblsubject1" value="Pakistan-History; Mughals-India; Indian Council Act, 1861; Government of India Act, 1919; Khilafat Movement; Provincial Governments; Role of Governors; Jinnah as Governor-GenerL; 1956 Constitution; Fi" />
+          <div id="ctl00_ContentPlaceHolder1_subjectdiv"><a href='SearchBook.aspx?column=Subject&criteria=Pakistan-History&pagenumber=1'>Pakistan-History</a>,&nbsp;<a href='SearchBook.aspx?column=Subject&criteria= Mughals-India&pagenumber=1'> Mughals-India</a>,&nbsp;<a href='SearchBook.aspx?column=Subject&criteria= Indian Council Act, 1861&pagenumber=1'> Indian Council Act, 1861</a>,&nbsp;<a href='SearchBook.aspx?column=Subject&criteria= Government of India Act, 1919&pagenumber=1'> Government of India Act, 1919</a>,&nbsp;<a href='SearchBook.aspx?column=Subject&criteria= Khilafat Movement&pagenumber=1'> Khilafat Movement</a>,&nbsp;<a href='SearchBook.aspx?column=Subject&criteria= Provincial Governments&pagenumber=1'> Provincial Governments</a>,&nbsp;<a href='SearchBook.aspx?column=Subject&criteria= Role of Governors&pagenumber=1'> Role of Governors</a>,&nbsp;<a href='SearchBook.aspx?column=Subject&criteria= Jinnah as Governor-GenerL&pagenumber=1'> Jinnah as Governor-GenerL</a>,&nbsp;<a href='SearchBook.aspx?column=Subject&criteria= 1956 Constitution&pagenumber=1'> 1956 Constitution</a>,&nbsp;<a href='SearchBook.aspx?column=Subject&criteria= Fi&pagenumber=1'> Fi</a></div>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">ISBN</th>
+        <td><span id="ctl00_ContentPlaceHolder1_lblisbn"></span></td>
+      </tr>
+      <tr>
+        <th scope="row">Volume</th>
+        <td><span id="ctl00_ContentPlaceHolder1_lblvolume">, </span></td>
+      </tr>
+      <tr>
+        <th scope="row">Publisher Name</th>
+        <td><span id="ctl00_ContentPlaceHolder1_lblpn">Oxford University Press</span></td>
+      </tr>
+      <tr>
+        <th scope="row">Publishing Year</th>
+        <td><span id="ctl00_ContentPlaceHolder1_lblpy">2023</span></td>
+      </tr>
+      <tr>
+        <th scope="row">Edition</th>
+        <td><span id="ctl00_ContentPlaceHolder1_lbledition">4rd</span></td>
+      </tr>
+      <tr>
+        <th scope="row">Pages</th>
+        <td><span id="ctl00_ContentPlaceHolder1_lblpages">762</span></td>
+      </tr>
+      <tr>
+        <th scope="row">Price</th>
+        <td><span id="ctl00_ContentPlaceHolder1_lblPrice">0.00 PKR</span></td>
+      </tr>
+      <tr>
+        <th scope="row">Text Language</th>
+        <td><span id="ctl00_ContentPlaceHolder1_lbllanguage">English</span></td>
+      </tr>
+      <tr>
+        <th scope="row">Available</th>
+        <td><span id="ctl00_ContentPlaceHolder1_lblavaible">Yes, Accessions:[ 51342, 52875 ]</span></td>
+      </tr>
+      <tr>
+        <th scope="row">Description</th>
+        <td><span id="ctl00_ContentPlaceHolder1_lblnote"></span></td>
+      </tr>
+      <tr>
+        <th scope="row">Keywords</th>
+        <td><span id="ctl00_ContentPlaceHolder1_lblkeywords">Pakistan-History; Mughals-India; Indian Council Act, 1861; Government of India Act, 1919; Khilafat Movement; Provincial Governments; Role of Governors; Jinnah as Governor-GenerL; 1956 Constitution; First Martial Law; Ayub Regime; Constitution of 1962; 1973 Constitution</span></td>
+      </tr>
+    </table>
+
+    <div class="utility-links">
+      <a id="ctl00_ContentPlaceHolder1_lbl_march_view" href="marc_bookdetail.aspx?id=82880">MARC 21 View</a>
+    </div>
+  </div>
+
+        </section>
+
+        <!-- Right column: Catalogue + Publications + Theses -->
+        <aside id="right_div" class="card">
+          <div class="card-header">Catalogue</div>
+          <div class="card-body">
+            <h4 class="section-title">Books</h4>
+            <ul class="link-list">
+              <li><a href="FreshBooks.aspx">Fresh Arrivals</a></li>
+              <li><a href="SearchBook.aspx">Search</a></li>
+            </ul>
+
+            <h4 class="section-title">Periodicals</h4>
+            <ul class="link-list">
+              <li><a href="FreshPeriodicals.aspx">Fresh Arrivals</a></li>
+              <li><a href="PeriodicalList.aspx">Periodicals List</a></li>
+              <li><a href="SearchPeriodical.aspx">Periodical Search</a></li>
+              <li><a href="ArticalSearch.aspx">Periodical Articles</a></li>
+            </ul>
+
+            <h4 class="section-title">Newspapers</h4>
+            <ul class="link-list">
+              <li><a href="NArticleSearch.aspx">Article Search</a></li>
+              <li><a href="TopNArticle.aspx">Latest Articles</a></li>
+            </ul>
+
+            <h4 class="section-title">Publications</h4>
+            <!-- your code-behind writes a table of links here -->
+            <div id="ctl00_coursediv"><table cellpadding='0'><tr><td><a href='SearchPeriodical.aspx?key=E9+Quarterly&type=Title'>E9 Quarterly</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=ISSRA+Papers&type=Title'>ISSRA Papers</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=ISSRA+Working+Paper&type=Title'>ISSRA Working Paper</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=Journal+of+Contemporary+Studies&type=Title'>Journal of Contemporary Studies</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=Journal+of+International+Law&type=Title'>Journal of International Law</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=Margalla+Papers&type=Title'>Margalla Papers</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=Monograph&type=Title'>Monograph</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=NDC+Journal%2fNDU+Journal&type=Title'>NDC Journal/NDU Journal</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=Proceedings&type=Title'>Proceedings</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=Report&type=Title'>Report</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=Strategic+Thought&type=Title'>Strategic Thought</a></td></tr></table></div>
+
+            <h4 class="section-title">Theses / Research Papers</h4>
+            <ul class="link-list">
+              <li><a href="TopRPapers.aspx">Latest Papers</a></li>
+              <li><a href="SearchPapers.aspx">Search</a></li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="card">
+        <div class="Footer_font">© 2010-2026 Powered By
+          <a href="http://www.max-intell.com" rel="noopener">Max Intelligence</a>.
+          All rights reserved.
+        </div>
+      </div>
+    </div>
+
+  </form>
+</body>
+</html>

@@ -1,0 +1,4135 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: opac-main.tt -->
+
+
+
+
+
+
+
+
+
+<html lang="en" class="no-js">
+<head>
+
+<title
+    >OPAC - National Library of Sri Lanka catalog</title
+>
+<link rel="canonical" href="https://libcat.natlib.lk/" />
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha" />
+<!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="csrf-token" content="67ab5179a8d8409e1dd0817e0c2b8e795a9e9759,453ee1e385883bd68bbd29a5ac603fad436c34cb,1794729552" />
+
+    <meta name="description" content="The National Library of Sri Lanka is mainly a research and a reference library and it is the main library and information centre in Sri Lanka. It intends to provide library resources as well as information to all Sri Lankans through the National Library. " />
+
+
+<link rel="shortcut icon" href="/opac-tmpl/bootstrap/images/favicon.ico" type="image/x-icon" />
+<link rel="apple-touch-icon" href="/opac-tmpl/bootstrap/images/favicon.ico" type="image/x-icon" />
+
+    
+        
+    
+
+
+    <link href="/opac-tmpl/bootstrap/css/opac_25.0510000.css" type="text/css" rel="stylesheet">
+
+
+    
+    
+        <link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/css/nlsl.css" />
+    
+
+
+
+    <link href="/opac-tmpl/bootstrap/css/print_25.0510000.css" type="text/css" rel="stylesheet" media="print">
+
+
+    <!-- prettier-ignore-start -->
+    <style>/* ========================================================
+   NLSL Custom OPAC Login Form (OPACUserCSS)
+   Theme: Warm Archival Ivory, Antique Gold & Royal Blue
+   ======================================================== */
+
+/* Ensure Fonts are Available */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap');
+
+/* 1. Main Login Box Container */
+#login {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 20px 0 24px 0 !important;
+    background: linear-gradient(180deg, #fdfbf7 0%, #f7f3e8 100%) !important; /* Subtle Warm Ivory-Champagne Tint */
+    border: 1px solid #e5dec9 !important;
+    border-top: 5px solid #b59a5d !important; /* Antique Gold Top Accent (differentiates from info cards) */
+    border-bottom: 5px solid #1e3a8a !important; /* Royal Blue Bottom Anchor */
+    border-radius: 12px !important;
+    padding: 24px 22px !important;
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    box-shadow: 0 10px 28px rgba(30, 58, 138, 0.08) !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+/* Remove default Koha fieldset borders & spacing */
+#login fieldset.brief,
+#login fieldset.action {
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+}
+
+/* 2. Form Header (Legend Styled as an Executive Banner) */
+#login fieldset.brief legend {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    width: calc(100% + 44px) !important; /* Stretches edge-to-edge across padding */
+    margin: -24px -22px 22px -22px !important;
+    padding: 16px 22px !important;
+    background: linear-gradient(135deg, #0f235c 0%, #1e3a8a 100%) !important; /* Deep Royal Blue */
+    border-bottom: 2px solid #b59a5d !important; /* Gold separator line */
+    color: #ffffff !important;
+    font-family: 'Playfair Display', Georgia, serif !important;
+    font-size: 1.2rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px !important;
+    line-height: 1.3 !important;
+}
+
+/* Add a subtle Gold Lock Icon before the Legend text automatically */
+#login fieldset.brief legend::before {
+    content: "\f023"; /* Font Awesome Lock Icon */
+    font-family: "Font Awesome 6 Free", "FontAwesome" !important;
+    font-weight: 900 !important;
+    font-size: 0.95rem !important;
+    color: #ebd399 !important;
+    background-color: rgba(181, 154, 93, 0.22) !important;
+    border: 1px solid #b59a5d !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 8px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+}
+
+/* 3. Input Labels */
+#login .local-login label,
+#login label[for="userid"],
+#login label[for="password"] {
+    display: block !important;
+    font-weight: 800 !important;
+    color: #1e293b !important;
+    margin-bottom: 6px !important;
+    font-size: 0.88rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+}
+
+/* 4. Input Fields */
+#login .local-login .form-control,
+#login input[type="text"],
+#login input[type="password"] {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    border: 1.5px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    padding: 10px 14px !important;
+    margin-bottom: 16px !important;
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.03) !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+/* Interactive Focus State on Inputs */
+#login .local-login .form-control:focus,
+#login input[type="text"]:focus,
+#login input[type="password"]:focus {
+    border-color: #1e3a8a !important;
+    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.14) !important;
+    outline: none !important;
+}
+
+/* 5. Show Password Toggle Alignment */
+#login .show-password-toggle {
+    display: flex !important;
+    align-items: center !important;
+    margin-top: -6px !important;
+    margin-bottom: 18px !important;
+    padding: 2px 0 !important;
+}
+
+#login .show-password-toggle-checkbox {
+    margin: 0 8px 0 0 !important;
+    width: 16px !important;
+    height: 16px !important;
+    accent-color: #1e3a8a !important;
+    cursor: pointer !important;
+}
+
+#login .show-password-toggle-label {
+    font-weight: 600 !important;
+    margin: 0 !important;
+    font-size: 0.88rem !important;
+    color: #475569 !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    cursor: pointer !important;
+}
+
+/* 6. Log In Button (Full-Width Executive CTA) */
+#login .btn-primary,
+#login input[type="submit"] {
+    width: 100% !important;
+    background: linear-gradient(135deg, #1e3a8a 0%, #0f235c 100%) !important;
+    border: 1px solid #0f235c !important;
+    border-bottom: 3px solid #b59a5d !important; /* Subtle gold underline accent */
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    padding: 11px 20px !important;
+    border-radius: 8px !important;
+    font-size: 0.98rem !important;
+    letter-spacing: 0.4px !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2) !important;
+    transition: all 0.2s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+#login .btn-primary:hover,
+#login input[type="submit"]:hover {
+    background: linear-gradient(135deg, #2547a6 0%, #16307a 100%) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 16px rgba(30, 58, 138, 0.28) !important;
+}
+
+#login .btn-primary:active,
+#login input[type="submit"]:active {
+    transform: translateY(0) !important;
+}
+
+/* 7. Forgot Password & Registration Links */
+#login .forgotpassword,
+#login #nologininstructions,
+#login #patronregistration {
+    margin-top: 14px !important;
+    text-align: center !important;
+}
+
+#login .forgotpassword a,
+#login #patronregistration a {
+    color: #1e3a8a !important;
+    text-decoration: none !important;
+    font-size: 0.9rem !important;
+    font-weight: 700 !important;
+    display: inline-block !important;
+    padding: 4px 10px !important;
+    border-radius: 6px !important;
+    transition: background-color 0.2s ease, color 0.2s ease !important;
+}
+
+#login .forgotpassword a:hover,
+#login #patronregistration a:hover {
+    color: #9a7d3e !important;
+    background-color: rgba(181, 154, 93, 0.12) !important;
+    text-decoration: none !important;
+}
+
+/* ========================================================
+   8. Custom Info Boxes & Headings Inside Login Area
+   ======================================================== */
+.nlsl-login-heading {
+    font-family: 'Playfair Display', Georgia, serif !important;
+    font-size: 1.05rem !important;
+    font-weight: 700 !important;
+    color: #1e3a8a !important;
+    margin-top: 20px !important;
+    margin-bottom: 10px !important;
+    padding-bottom: 6px !important;
+    border-bottom: 1px dashed rgba(181, 154, 93, 0.5) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+.nlsl-login-info-box {
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-left: 4px solid #b59a5d !important; /* Antique Gold left border */
+    border-radius: 8px !important;
+    padding: 13px 15px !important;
+    margin-bottom: 14px !important;
+    font-size: 0.88rem !important;
+    color: #334155 !important;
+    line-height: 1.55 !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02) !important;
+}
+
+.nlsl-login-info-box p {
+    margin: 0 !important;
+}
+
+.nlsl-login-info-box a {
+    color: #1e3a8a !important;
+    font-weight: 700 !important;
+    text-decoration: underline !important;
+}
+
+.nlsl-login-info-box a:hover {
+    color: #9a7d3e !important;
+}
+
+/* Responsive adjustments for smaller mobile screens */
+@media (max-width: 576px) {
+    #login {
+        padding: 20px 16px !important;
+    }
+    #login fieldset.brief legend {
+        width: calc(100% + 32px) !important;
+        margin: -20px -16px 18px -16px !important;
+        padding: 14px 16px !important;
+        font-size: 1.1rem !important;
+    }
+}
+
+
+
+
+
+
+
+
+</style>
+    <!-- prettier-ignore-end -->
+
+
+
+
+    <link rel="search" type="application/opensearchdescription+xml" href="https://libcat.natlib.lk/cgi-bin/koha/opac-search.pl?format=opensearchdescription" title="Search OPAC - National Library of Sri Lanka" />
+    <link rel="unapi-server" type="application/xml" title="unAPI" href="https://libcat.natlib.lk/cgi-bin/koha/unapi" />
+
+
+<script>
+    var Koha = {};
+    function _(s) { return s } // dummy function for gettext
+    const is_logged_in = false
+</script>
+
+<script src="/opac-tmpl/bootstrap/js/Gettext_25.0510000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/i18n_25.0510000.js"></script>
+
+<link href="/opac-tmpl/lib/fontawesome/css/fontawesome.min_25.0510000.css" type="text/css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/opac-tmpl/lib/fontawesome/css/brands.min_25.0510000.css">
+<link type="text/css" rel="stylesheet" href="/opac-tmpl/lib/fontawesome/css/solid.min_25.0510000.css">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+
+
+
+    
+
+
+
+
+
+    
+
+<body ID="opac-main" class="branch-default" >
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<button id="scrolltocontent">Skip to main content</button>
+<!-- prettier-ignore-start -->
+<!-- closed in opac-bottom.inc -->
+<div id="wrapper">
+<!-- prettier-ignore-end -->
+<header id="header-region" class="noprint">
+    <nav class="navbar navbar-expand">
+        <div id="logo">
+            <a class="navbar-brand" href="/cgi-bin/koha/opac-main.pl">
+                
+                    OPAC - National Library of Sri Lanka
+                
+            </a>
+        </div>
+        
+            
+                <div id="cartDetails" class="cart-message">Your cart is empty.</div>
+            
+            <ul id="cart-list-nav" class="navbar-nav">
+                
+                    <li class="nav-item js-show">
+                        <a href="#" class="nav-link" title="Collect items you are interested in" id="cartmenulink" role="button" aria-label="Cart">
+                            <i id="carticon" class="fa fa-shopping-cart fa-fw fa-icon-black" aria-hidden="true"></i> <span class="cartlabel">Cart</span> <span id="basketcount"></span>
+                        </a>
+                    </li>
+                
+                <li role="presentation" class="divider-vertical"></li>
+                
+                    
+                        <li class="nav-item dropdown">
+                            <a
+                                href="/cgi-bin/koha/opac-shelves.pl"
+                                title="Show lists"
+                                class="nav-link dropdown-toggle"
+                                id="listsmenu"
+                                data-bs-toggle="dropdown"
+                                role="button"
+                                aria-label="Show dropdown with detailed list information"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                                ><i class="fa fa-list fa-fw fa-icon-black" aria-hidden="true"></i> <span class="listslabel">Lists</span>
+                            </a>
+                            <div aria-labelledby="listsmenu" role="menu" class="dropdown-menu">
+                                
+                                    <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=1" tabindex="0" role="menuitem"><strong>Public lists</strong></a>
+                                    
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=153&amp;sortfield=title" tabindex="0" role="menuitem"
+                                            >ශ්‍රී ලංකා ජාතික ග්‍රන්ථ නාමාවලිය - 2026 අගෝස්තු</a
+                                        >
+                                        
+                                        
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=148&amp;sortfield=title" tabindex="0" role="menuitem"
+                                            >இலங்கைத் தேசிய நூல் விவரணப் பட்டியல் - ஜீன் வெளியீடு </a
+                                        >
+                                        
+                                        
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=152&amp;sortfield=title" tabindex="0" role="menuitem"
+                                            >Sri Lanka National Bibliography - June Issue</a
+                                        >
+                                        
+                                        
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=151&amp;sortfield=title" tabindex="0" role="menuitem"
+                                            >Sri Lanka National Bibliography - July Issue</a
+                                        >
+                                        
+                                        
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=147&amp;sortfield=title" tabindex="0" role="menuitem"
+                                            > ශ්‍රී ලංකා ජාතික ග්‍රන්ථ නාමාවලිය - 2026 ජුලි</a
+                                        >
+                                        
+                                        
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=144&amp;sortfield=title" tabindex="0" role="menuitem"
+                                            >ශ්‍රී ලංකා ජාතික ග්‍රන්ථ නාමාවලිය - 2026  ජුනි</a
+                                        >
+                                        
+                                        
+                                    
+                                    
+                                
+                                
+                                    <div class="dropdown-divider"></div>
+                                
+                                
+                                    <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=0" tabindex="0" role="menuitem"><strong>Your lists</strong></a>
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=add_form" tabindex="0" role="menuitem">Log in to create your own lists</a>
+                                    
+                                
+                            </div>
+                            <!-- / .dropdown-menu -->
+                        </li>
+                        <!-- / .nav-item.dropdown -->
+                    
+                
+                
+            </ul>
+            <!-- / .navbar-nav -->
+        
+        
+            
+            
+            <ul id="members" class="navbar-nav">
+                <li class="nav-item dropdown dropdown-menu-end">
+                    
+                        
+                            
+                                <a href="/cgi-bin/koha/opac-user.pl" class="nav-link login-link loginModal-trigger" aria-label="Log in to your account"
+                                    ><i class="fa fa-user fa-fw fa-icon-black fa-fw" aria-hidden="true"></i> <span class="userlabel">Log in to your account</span></a
+                                >
+                            
+                        
+                    
+
+                    
+                </li>
+                <!-- Cookie consent button for non logged-in users -->
+                
+                    <li role="presentation" style="display:none" id="cookieConsentDivider" class="divider-vertical" aria-hidden="true"></li>
+                    <li style="display:none" id="cookieConsentLi" class="nav-item" aria-hidden="true">
+                        <a id="cookieConsentButton" href="#" name="Your cookies" class="nav-link" title="View and amend cookies you have consented to" role="button">
+                            <i class="fa fa-cookie-bite fa-fw fa-icon-black" aria-hidden="true"></i>
+                            <span class="cookieconsentlabel">Your cookies</span>
+                        </a>
+                    </li>
+                
+                
+                    
+                        <li role="presentation" class="divider-vertical"></li>
+                        <li class="nav-item search_history">
+                            <a class="nav-link" href="/cgi-bin/koha/opac-search-history.pl" title="View your search history">
+                                <i class="fa fa-calendar-days fa-fw fa-icon-black" aria-hidden="true"></i>
+                                <span class="search_history_label">Search history</span>
+                            </a>
+                        </li>
+                    
+                
+            </ul>
+        
+    </nav>
+    <!-- /navbar -->
+
+    
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col"> 
+    
+        <div id="opacheader">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><style>
+    /* Ensure Professional Fonts are Loaded */
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Nunito:wght@400;600;700;800&display=swap');
+
+    /* ========================================================
+       NLSL - Cinematic Hero Carousel Header (OPACHEADER)
+       ======================================================== */
+    .nlsl-hero-banner,
+    .nlsl-hero-banner * {
+        box-sizing: border-box;
+    }
+
+    .nlsl-hero-banner {
+        position: relative;
+        width: 100%;
+        min-height: 460px;
+        border-radius: 12px;
+        overflow: hidden;
+        margin: 10px 0 18px 0;
+        font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        box-shadow: 0 12px 35px rgba(15, 35, 92, 0.12);
+        border: 1px solid #cbd5e1;
+        border-bottom: 5px solid #b59a5d; /* Antique Gold Bottom Accent */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background-color: #e2e8f0;
+    }
+
+    /* --- 1. Animated Background Slideshow Layer --- */
+    .nlsl-carousel-slides {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+    }
+
+    .nlsl-slide {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center right;
+        background-repeat: no-repeat;
+        opacity: 0;
+        transform: scale(1.08); /* Starts slightly zoomed in */
+        transition: opacity 1.4s ease-in-out, transform 7s ease-out;
+        will-change: opacity, transform;
+    }
+
+    .nlsl-slide.active {
+        opacity: 1;
+        transform: scale(1); /* Smooth cinematic zoom-out while active */
+        z-index: 1;
+    }
+
+    /* --- 2. Atmospheric Gradient Overlay (Matches Reference Image) --- */
+    .nlsl-hero-overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        /* Soft white-blue mist on the left for text legibility, clear on the right to showcase photos */
+        background: linear-gradient(
+            90deg,
+            rgba(244, 247, 252, 0.96) 0%,
+            rgba(244, 247, 252, 0.90) 36%,
+            rgba(244, 247, 252, 0.62) 55%,
+            rgba(244, 247, 252, 0.10) 78%,
+            rgba(244, 247, 252, 0.0) 100%
+        );
+        pointer-events: none;
+    }
+
+    /* --- 3. Foreground Content Container --- */
+    .nlsl-hero-inner {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 48px 45px 24px 45px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    /* Left Text Column */
+    .nlsl-hero-text-box {
+        max-width: 580px;
+        margin-bottom: 35px;
+        animation: nlslFadeUp 0.8s ease-out;
+    }
+
+    @keyframes nlslFadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(12px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .nlsl-hero-kicker {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 28px;
+        font-weight: 500;
+        color: #0f296b;
+        display: block;
+        margin: 0 0 4px 0;
+        line-height: 1.25;
+    }
+
+    .nlsl-hero-main-heading {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 46px;
+        font-weight: 700;
+        color: #0b2259; /* Deep Royal Blue matching image */
+        margin: 0 0 18px 0;
+        line-height: 1.15;
+        letter-spacing: -0.3px;
+    }
+
+    .nlsl-hero-desc {
+        font-size: 17px;
+        line-height: 1.65;
+        color: #1e293b;
+        font-weight: 600;
+        margin: 0 0 28px 0;
+        max-width: 520px;
+    }
+
+    /* --- 4. Action Buttons (Search Collection & Advanced Search) --- */
+    .nlsl-hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .nlsl-btn-primary {
+        background: linear-gradient(135deg, #0b2563 0%, #173885 100%);
+        color: #ffffff !important;
+        text-decoration: none !important;
+        font-size: 15.5px;
+        font-weight: 700;
+        padding: 13px 26px;
+        border-radius: 8px;
+        border: 1.5px solid #0b2563;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 6px 16px rgba(11, 37, 99, 0.22);
+        transition: all 0.25s ease;
+        cursor: pointer;
+    }
+
+    .nlsl-btn-primary:hover {
+        background: linear-gradient(135deg, #153580 0%, #1e459e 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(11, 37, 99, 0.32);
+    }
+
+    .nlsl-btn-secondary {
+        background-color: rgba(255, 255, 255, 0.78);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        color: #0b2563 !important;
+        text-decoration: none !important;
+        font-size: 15.5px;
+        font-weight: 700;
+        padding: 13px 26px;
+        border-radius: 8px;
+        border: 1.5px solid #2b4582;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.25s ease;
+    }
+
+    .nlsl-btn-secondary:hover {
+        background-color: #ffffff;
+        border-color: #0b2563;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(11, 37, 99, 0.12);
+    }
+
+    /* --- 5. Carousel Slide Dots (Right Side) --- */
+    .nlsl-carousel-dots {
+        position: absolute;
+        top: 24px;
+        right: 28px;
+        z-index: 4;
+        display: flex;
+        gap: 8px;
+        background: rgba(15, 23, 42, 0.45);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        padding: 7px 12px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .nlsl-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.5);
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .nlsl-dot.active {
+        width: 26px;
+        border-radius: 10px;
+        background-color: #ebd399; /* Antique Gold highlight */
+    }
+
+    /* --- 6. Bottom Frosted Glass Stats Bar --- */
+    .nlsl-glass-stats-bar {
+        background: rgba(23, 33, 48, 0.86);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 12px;
+        padding: 18px 28px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        align-items: center;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22);
+        width: 100%;
+    }
+
+    .nlsl-glass-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 4px 18px;
+        border-right: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
+    .nlsl-glass-item:first-child {
+        padding-left: 6px;
+    }
+
+    .nlsl-glass-item:last-child {
+        border-right: none;
+        padding-right: 6px;
+    }
+
+    .nlsl-glass-icon {
+        font-size: 30px;
+        color: #f8fafc;
+        opacity: 0.92;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .nlsl-glass-text {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .nlsl-glass-title {
+        font-size: 22px;
+        font-weight: 800;
+        color: #ffffff;
+        line-height: 1.15;
+        letter-spacing: 0.2px;
+    }
+
+    .nlsl-glass-sub {
+        font-size: 13.5px;
+        font-weight: 500;
+        color: #cbd5e1;
+        line-height: 1.3;
+        margin-top: 2px;
+    }
+
+    /* ========================================================
+       7. RESPONSIVE DESIGN (TABLET & MOBILE)
+       ======================================================== */
+    @media (max-width: 992px) {
+        .nlsl-hero-inner {
+            padding: 38px 28px 22px 28px;
+        }
+        .nlsl-hero-kicker {
+            font-size: 24px;
+        }
+        .nlsl-hero-main-heading {
+            font-size: 36px;
+        }
+        .nlsl-hero-overlay {
+            background: linear-gradient(
+                90deg,
+                rgba(244, 247, 252, 0.96) 0%,
+                rgba(244, 247, 252, 0.88) 55%,
+                rgba(244, 247, 252, 0.35) 100%
+            );
+        }
+        .nlsl-glass-stats-bar {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            padding: 18px 20px;
+        }
+        .nlsl-glass-item {
+            border-right: none;
+            padding: 6px 10px;
+        }
+        .nlsl-glass-item:nth-child(odd) {
+            border-right: 1px solid rgba(255, 255, 255, 0.16);
+        }
+    }
+
+    @media (max-width: 640px) {
+        .nlsl-hero-banner {
+            min-height: auto;
+            border-radius: 10px;
+        }
+        .nlsl-hero-overlay {
+            background: linear-gradient(
+                180deg,
+                rgba(244, 247, 252, 0.93) 0%,
+                rgba(244, 247, 252, 0.90) 65%,
+                rgba(244, 247, 252, 0.78) 100%
+            );
+        }
+        .nlsl-hero-inner {
+            padding: 46px 18px 18px 18px;
+        }
+        .nlsl-carousel-dots {
+            top: 14px;
+            right: 16px;
+        }
+        .nlsl-hero-kicker {
+            font-size: 20px;
+        }
+        .nlsl-hero-main-heading {
+            font-size: 30px;
+            margin-bottom: 12px;
+        }
+        .nlsl-hero-desc {
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+        .nlsl-hero-actions {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
+        }
+        .nlsl-btn-primary,
+        .nlsl-btn-secondary {
+            justify-content: center;
+            width: 100%;
+            padding: 12px 18px;
+        }
+        .nlsl-glass-stats-bar {
+            grid-template-columns: 1fr;
+            gap: 12px;
+            padding: 16px;
+        }
+        .nlsl-glass-item,
+        .nlsl-glass-item:nth-child(odd) {
+            border-right: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 0 0 12px 0;
+        }
+        .nlsl-glass-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .nlsl-glass-title {
+            font-size: 19px;
+        }
+    }
+</style>
+<div class="nlsl-hero-banner" id="nlslHeroCarousel"><!-- 1. BACKGROUND CAROUSEL SLIDES (Replace or add your uploaded Koha image URLs here) -->
+<div class="nlsl-carousel-slides"><!-- Slide 1 -->
+<div class="nlsl-slide active" style="background-image: url('https://libcat.natlib.lk/cgi-bin/koha/opac-retrieve-file.pl?id=b84cfca7b27e76f8f3feec032833ab22');"></div>
+<!-- Slide 2 (Replace URL with your 2nd uploaded image) -->
+<div class="nlsl-slide" style="background-image: url('https://libcat.natlib.lk/cgi-bin/koha/opac-retrieve-file.pl?id=e84dfde0a4719c7ef904211848654d43');"></div>
+<!-- Slide 3 (Replace URL with your 3rd uploaded image) -->
+<div class="nlsl-slide" style="background-image: url('https://libcat.natlib.lk/cgi-bin/koha/opac-retrieve-file.pl?id=5258449d9c22f61e29c3ba0755e15090');"></div>
+<!-- Slide 4 (Replace URL with your 4th uploaded image) -->
+<div class="nlsl-slide" style="background-image: url('https://libcat.natlib.lk/cgi-bin/koha/opac-retrieve-file.pl?id=04e25e19c17d0765a2ccdc59b2795af6');"></div>
+<!-- Slide 5 (Replace URL with your 5th uploaded image) -->
+<div class="nlsl-slide" style="background-image: url('https://libcat.natlib.lk/cgi-bin/koha/opac-retrieve-file.pl?id=6cab5bab54e6c6faa1702e9c378b60e0');"></div>
+</div>
+<!-- 2. READABILITY GRADIENT OVERLAY -->
+<div class="nlsl-hero-overlay"></div>
+<!-- 3. SLIDE INDICATOR DOTS (Generated automatically by JS based on number of slides) -->
+<div class="nlsl-carousel-dots" id="nlslCarouselDots" aria-label="Slideshow navigation"></div>
+<!-- 4. FOREGROUND HERO CONTENT -->
+<div class="nlsl-hero-inner">
+<div class="nlsl-hero-text-box"><span class="nlsl-hero-kicker">Discover Sri Lanka&rsquo;s</span>
+<h1 class="nlsl-hero-main-heading">Published Heritage</h1>
+<p class="nlsl-hero-desc">Search books, newspapers, manuscripts, government publications, maps and audiovisual resources preserved by the National Library of Sri Lanka.</p>
+<div class="nlsl-hero-actions"><!-- Scrolls smoothly to Koha's main search input --> <a href="#translControl1" onclick="var s=document.getElementById('translControl1')||document.querySelector('input[name=q]'); if(s){s.focus(); s.scrollIntoView({behavior:'smooth', block:'center'}); return false;}" class="nlsl-btn-primary"> <i class="fa-solid fa-magnifying-glass fa fa-search" aria-hidden="true"></i> Search Collection </a> <!-- Links directly to Koha's Advanced Search page --> <a href="/cgi-bin/koha/opac-search.pl" class="nlsl-btn-secondary"> Advanced Search </a></div>
+</div>
+<!-- 5. BOTTOM FROSTED GLASS STATS BAR -->
+<div class="nlsl-glass-stats-bar"><!-- Item 1 -->
+<div class="nlsl-glass-item">
+<div class="nlsl-glass-icon"><i class="fa-solid fa-book-open fa fa-book" aria-hidden="true"></i></div>
+<div class="nlsl-glass-text"><span class="nlsl-glass-title">500,000+</span> <span class="nlsl-glass-sub">Volumes</span></div>
+</div>
+<!-- Item 2 -->
+<div class="nlsl-glass-item">
+<div class="nlsl-glass-icon"><i class="fa-solid fa-layer-group fa fa-clone" aria-hidden="true"></i></div>
+<div class="nlsl-glass-text"><span class="nlsl-glass-title">27</span> <span class="nlsl-glass-sub">Special Collections</span></div>
+</div>
+<!-- Item 3 -->
+<div class="nlsl-glass-item">
+<div class="nlsl-glass-icon"><i class="fa-solid fa-building-columns fa fa-institution" aria-hidden="true"></i></div>
+<div class="nlsl-glass-text"><span class="nlsl-glass-title">National</span> <span class="nlsl-glass-sub">Legal Deposit Repository</span></div>
+</div>
+<!-- Item 4 -->
+<div class="nlsl-glass-item">
+<div class="nlsl-glass-icon"><i class="fa-solid fa-users-viewfinder fa fa-users" aria-hidden="true"></i></div>
+<div class="nlsl-glass-text"><span class="nlsl-glass-title">Sri Lanka's</span> <span class="nlsl-glass-sub">National Bibliographic Database</span></div>
+</div>
+</div>
+</div>
+</div>
+<script>
+    (function() {
+        var banner = document.getElementById('nlslHeroCarousel');
+        if (!banner) return;
+
+        var slides = banner.querySelectorAll('.nlsl-slide');
+        var dotsContainer = document.getElementById('nlslCarouselDots');
+        var currentIndex = 0;
+        var intervalTime = 6000; /* 6 seconds per slide */
+        var slideTimer;
+
+        if (slides.length <= 1) {
+            if (dotsContainer) dotsContainer.style.display = 'none';
+            return;
+        }
+
+        /* Create navigation dots dynamically based on how many slides you add */
+        slides.forEach(function(_, index) {
+            var dot = document.createElement('button');
+            dot.className = 'nlsl-dot' + (index === 0 ? ' active' : '');
+            dot.setAttribute('aria-label', 'Go to slide ' + (index + 1));
+            dot.addEventListener('click', function() {
+                goToSlide(index);
+                resetTimer();
+            });
+            dotsContainer.appendChild(dot);
+        });
+
+        var dots = dotsContainer.querySelectorAll('.nlsl-dot');
+
+        function goToSlide(index) {
+            slides[currentIndex].classList.remove('active');
+            dots[currentIndex].classList.remove('active');
+            currentIndex = (index + slides.length) % slides.length;
+            slides[currentIndex].classList.add('active');
+            dots[currentIndex].classList.add('active');
+        }
+
+        function nextSlide() {
+            goToSlide(currentIndex + 1);
+        }
+
+        function startTimer() {
+            slideTimer = setInterval(nextSlide, intervalTime);
+        }
+
+        function resetTimer() {
+            clearInterval(slideTimer);
+            startTimer();
+        }
+
+        /* Pause rotation when user hovers over the banner */
+        banner.addEventListener('mouseenter', function() {
+            clearInterval(slideTimer);
+        });
+
+        banner.addEventListener('mouseleave', function() {
+            startTimer();
+        });
+
+        startTimer();
+    })();
+</script></div>
+                </div>
+            
+        </div>
+    
+ </div>
+            </div>
+        </div>
+    
+</header>
+<!-- / header-region -->
+
+
+    <div class="container-fluid">
+        
+            <div class="row">
+                <div class="col">
+                    <div id="opac-main-search" class="mastheadsearch">
+                        
+                            <form name="searchform" method="get" action="/cgi-bin/koha/opac-search.pl" id="searchform">
+                                <div class="row gx-2">
+                                    <div class="col-sm-auto order-2 order-sm-2">
+                                        <label for="masthead_search" class="visually-hidden">Search the catalog by:</label>
+                                        <select name="idx" id="masthead_search" class="form-select">
+                                            
+                                                <option value="" data-placeholder="Search the catalog">Library catalog</option>
+                                            
+                                            
+                                                <option value="ti" data-placeholder="Search the catalog by title">Title</option>
+                                            
+                                            
+                                                <option value="au" data-placeholder="Search the catalog by author">Author</option>
+                                            
+                                            
+                                                <option value="su" data-placeholder="Search the catalog by subject">Subject</option>
+                                            
+                                            
+                                                <option value="nb" data-placeholder="Search the catalog by ISBN">ISBN</option>
+                                            
+                                            
+                                                <option value="ns" data-placeholder="Search the catalog by ISSN">ISSN</option>
+                                            
+                                            
+                                                <option value="se" data-placeholder="Search the catalog by series">Series</option>
+                                            
+                                            
+                                                
+                                                    <option value="callnum" data-placeholder="Search the catalog by call number">Call number</option>
+                                                
+                                            
+                                        </select>
+                                    </div>
+                                    <!-- /.col-sm-auto -->
+
+                                    <div class="col order-4 order-sm-3">
+                                        
+                                            <label for="translControl1" class="visually-hidden">Search the catalog</label>
+                                            <input type="text" class="transl1 form-control" id="translControl1" name="q" value="" placeholder="Search the catalog" /><span id="translControl"></span>
+                                        
+                                    </div>
+                                    <!-- /.col -->
+
+                                    
+                                        
+                                            
+                                        
+                                    
+
+                                    <div class="order-5 col-sm-auto">
+                                        <button type="submit" id="searchsubmit" class="btn btn-primary" title="Search" aria-label="Search">
+                                            <i class="fa fa-search" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- /.form-row -->
+                                <input type="hidden" name="weight_search" value="1" />
+                            </form>
+                         </div
+                    ><!-- /#opac-main-search -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        
+
+        <div class="row">
+            <ul class="nav" id="moresearches">
+                <li class="nav-item">
+                    <a href="/cgi-bin/koha/opac-search.pl">Advanced search</a>
+                </li>
+                
+                
+                
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-authorities-home.pl">Authority search</a>
+                    </li>
+                
+                
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-showreviews.pl">Recent comments</a>
+                    </li>
+                
+                
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-tags.pl">Tag cloud</a>
+                    </li>
+                
+                
+                
+                
+                
+                
+                    <li class="nav-item">
+                        <a id="library_page" href="/cgi-bin/koha/opac-library.pl">
+                            
+                                <span>Contact</span>
+                            
+                        </a>
+                    </li>
+                
+                
+    
+
+            </ul>
+            <!-- /.nav#moresearches -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+
+
+
+    <!-- Login form hidden by default, used for modal window -->
+    <div id="loginModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title" id="modalLoginLabel">Log in to your account</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="modalAuth">
+                    <input type="hidden" name="csrf_token" value="67ab5179a8d8409e1dd0817e0c2b8e795a9e9759,453ee1e385883bd68bbd29a5ac603fad436c34cb,1794729552" />
+
+                    <input type="hidden" name="has-search-query" id="has-search-query" value="" />
+                    <div class="modal-body">
+                        
+                        
+                        
+                            
+                            
+                            <input type="hidden" name="koha_login_context" value="opac" />
+                            <fieldset class="brief">
+                                <div class="local-login">
+                                    
+    <label for="muserid">Card number or username:</label>
+<input type="text" id="muserid" name="login_userid" autocomplete="off" /> <label for="mpassword">Password:</label
+                                    ><input type="password" id="mpassword" name="login_password" autocomplete="off" />
+                                    <fieldset class="action">
+                                        <input type="hidden" name="op" value="cud-login" />
+                                        <input type="submit" class="btn btn-primary" value="Log in" />
+                                    </fieldset>
+                                </div>
+                                
+                                    <div id="nologininstructions-modal" class="nologininstructions"> 
+    
+        <div id="OpacLoginInstructions">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><p style="box-sizing: border-box; margin: 0.5rem 0px; color: #190f10; font-family: NotoSans, sans-serif; font-size: 16px; background-color: #ffffff; padding: 10px;"><strong>Default Username and Password is <span style="color: #bb2025;">OPACUser</span> / <span style="color: #bb2025;">OPACUser</span></strong></p>
+<strong><span style="font-size: 14pt;">Why create an OPAC account?</span></strong>
+<p style="box-sizing: border-box; margin: 0.5rem 0px; color: #190f10; font-family: NotoSans, sans-serif; font-size: 16px; background-color: #ffffff; padding: 10px;">Signing in allows you to <b>save searches, create lists of resources, submit purchase suggestions, and manage your personal preferences within the catalogue.</b></p>
+<strong><span style="font-size: 14pt;">Need account access?</span></strong>
+<p style="box-sizing: border-box; margin: 0.5rem 0px; color: #190f10; font-family: NotoSans, sans-serif; font-size: 16px; background-color: #ffffff; padding: 10px;">Registered National Library members may obtain OPAC login credentials by contacting the <b>Reader Services Division.</b></p></div>
+                </div>
+            
+        </div>
+    
+ </div>
+                                
+                                
+                                    <div id="forgotpassword-modal" class="forgotpassword">
+                                        <p><a href="/cgi-bin/koha/opac-password-recovery.pl">Forgot your password?</a></p>
+                                    </div>
+                                
+                                
+                            </fieldset>
+                        
+                    </div>
+                </form>
+                <!-- /#auth -->
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /#modalAuth  -->
+
+
+
+
+
+<main class="main">
+    
+    <nav id="breadcrumbs" aria-label="Breadcrumb" class="breadcrumbs">
+        <ol class="breadcrumb">
+            
+            
+                
+    
+        <li class="breadcrumb-item active">
+            <a aria-current="page" aria-disabled="true" tabindex="-1"> 
+                    <span>Home</span>
+                 </a>
+        </li>
+    
+
+            
+        </ol>
+    </nav>
+
+
+    
+    
+    <div id="notloggedin" class="container-fluid">
+        <div class="row">
+            
+                <div class="col-12 col-lg-2 order-3 order-lg-1">
+                    <div id="navigation"> 
+
+
+    
+    
+        <div id="OpacNav">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><style>
+    /* ========================================================
+       NLSL Custom "Explore the Catalog" Menu
+       ======================================================== */
+
+    .nlsl-collections-card {
+        background: #ffffff;
+        border: 1px solid #d9dee7;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 6px rgba(0,0,0,.04);
+    }
+
+    .nlsl-card-header {
+        background: #0b2f84;
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 600;
+        padding: 14px 18px;
+        line-height: 1.4;
+    }
+
+    .nlsl-collection-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .nlsl-collection-list li {
+        border-bottom: 1px solid #edf1f6;
+    }
+
+    .nlsl-collection-list li:last-child {
+        border-bottom: none;
+    }
+
+    .nlsl-collection-list a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 13px 18px;
+        text-decoration: none !important;
+        color: #344054;
+        font-size: 15px;
+        transition: all .2s ease;
+    }
+
+    .nlsl-collection-list a:hover {
+        background: #f8faff;
+        color: #0b2f84;
+        padding-left: 22px;
+    }
+
+    .nlsl-icon {
+        width: 22px;
+        height: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        color: #2f4685;
+    }
+
+    /* Adjusted for Font Awesome icons */
+    .nlsl-icon i {
+        font-size: 18px;
+        width: 20px;
+        text-align: center;
+    }
+
+    .nlsl-view-all {
+        border-top: 1px solid #edf1f6;
+    }
+
+    .nlsl-view-all a {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 18px;
+        color: #0b2f84;
+        font-weight: 600;
+        text-decoration: none !important;
+        transition: all .2s ease;
+    }
+
+    .nlsl-view-all a:hover {
+        background: #f8faff;
+    }
+
+    .nlsl-arrow {
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Adjusted for Font Awesome icon */
+    .nlsl-arrow i {
+        font-size: 16px;
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+        .nlsl-card-header {
+            font-size: 16px;
+        }
+
+        .nlsl-collection-list a {
+            font-size: 14px;
+            padding: 12px 15px;
+        }
+    }
+</style>
+<div class="nlsl-collections-card">
+<div class="nlsl-card-header">Explore the Catalog</div>
+<ul class="nlsl-collection-list">
+<li><a href="/cgi-bin/koha/opac-search.pl?advsearch=1&amp;limit=mc-itemtype%2Cphr%3ABOOK&amp;do=Search"> <span class="nlsl-icon"> <i class="fa-solid fa-book" aria-hidden="true"></i> </span> <span>Books</span> </a></li>
+<li><a href="/cgi-bin/koha/opac-search.pl?advsearch=1&amp;limit=mc-ccode%3APERColl&amp;do=Search"> <span class="nlsl-icon"> <i class="fa-solid fa-newspaper" aria-hidden="true"></i> </span> <span>Periodicals</span> </a></li>
+<li><a href="/cgi-bin/koha/opac-search.pl?advsearch=1&amp;limit=mc-ccode%3AGOVPUBColl&amp;do=Search"> <span class="nlsl-icon"> <i class="fa-solid fa-building-columns" aria-hidden="true"></i> </span> <span>Government Publications</span> </a></li>
+<li><a href="/cgi-bin/koha/opac-search.pl?advsearch=1&amp;limit=mc-ccode%3ARAREColl&amp;do=Search"> <span class="nlsl-icon"> <i class="fa-solid fa-scroll" aria-hidden="true"></i> </span> <span>Rare Materials</span> </a></li>
+<li><a href="/cgi-bin/koha/opac-search.pl?advsearch=1&amp;limit=mc-ccode%3AMAPColl&amp;do=Search"> <span class="nlsl-icon"> <i class="fa-solid fa-map" aria-hidden="true"></i> </span> <span>Maps</span> </a></li>
+<li><a href="/cgi-bin/koha/opac-search.pl?advsearch=1&amp;limit=mc-itemtype%2Cphr%3ARREPORT&amp;do=Search"> <span class="nlsl-icon"> <i class="fa-solid fa-file-lines" aria-hidden="true"></i> </span> <span>Research Reports</span> </a></li>
+<li><a href="/cgi-bin/koha/opac-search.pl?advsearch=1&amp;limit=mc-ccode%3ATHSColl&amp;do=Search"> <span class="nlsl-icon"> <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> </span> <span>Theses</span> </a></li>
+<li><a href="/cgi-bin/koha/opac-search.pl?advsearch=1&amp;limit=mc-ccode%3AAVMFCOMColl&amp;do=Search"> <span class="nlsl-icon"> <i class="fa-solid fa-film" aria-hidden="true"></i> </span> <span>Audiovisual Materials</span> </a></li>
+</ul>
+<div class="nlsl-view-all"><a href="/cgi-bin/koha/opac-search.pl"> <span>View all collections &amp; items</span> <span class="nlsl-arrow"> <i class="fa-solid fa-chevron-right" aria-hidden="true"></i> </span> </a></div>
+</div></div>
+                </div>
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><div id="new-arrivals-box">
+<div id="new-arrivals-header">
+<div id="new-arrivals-title">Recently Added Resources</div>
+<div id="update-status">Updating...</div>
+</div>
+<div id="new-arrivals-content">
+<div id="loading-overlay" class="hidden">
+<div class="book-animation">
+<div></div>
+<div></div>
+<div></div>
+</div>
+</div>
+<ul id="new-arrivals-list"></ul>
+</div>
+</div>
+<style>
+    /* Main container */
+    #new-arrivals-box {
+        width: 100%;
+        max-width: 480px;
+        background: #ffffff;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0; /* Light gray border */
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        margin: 25px auto;
+        overflow: hidden;
+        font-family: 'Open Sans', 'Segoe UI', Tahoma, sans-serif;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Header section */
+    #new-arrivals-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        background: #0b2f84;
+        border-bottom: 1px solid #f1f5f9;
+        padding: 16px 20px;
+    }
+
+    /* Title */
+    #new-arrivals-title {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #ffffff;
+        letter-spacing: -0.3px;
+    }
+
+    /* Update status message */
+    #update-status {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #ffffff;
+    }
+
+    /* Content and scroll container */
+    #new-arrivals-content {
+        height: 450px;
+        overflow: hidden;
+        position: relative;
+        padding: 0 20px;
+    }
+
+    /* Loading overlay */
+    #loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+    }
+
+    #loading-overlay.hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+    
+    /* Book animation for loading */
+    .book-animation {
+        display: flex;
+        gap: 6px;
+    }
+    .book-animation div {
+        width: 8px;
+        height: 20px;
+        background: #1e3066;
+        animation: bounce 0.6s infinite alternate;
+        border-radius: 2px;
+    }
+    .book-animation div:nth-child(2) { animation-delay: 0.2s; }
+    .book-animation div:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes bounce {
+        from { transform: scaleY(0.3); }
+        to { transform: scaleY(1); }
+    }
+
+    /* List styling */
+    #new-arrivals-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    /* Individual List Items */
+    #new-arrivals-list li {
+        display: flex;
+        align-items: stretch; /* Allows separator to stretch full height */
+        padding: 18px 0;
+        border-bottom: 1px solid #f1f5f9; /* Subtle horizontal divider */
+    }
+
+    /* Icon Styling (Updated for Font Awesome) */
+    .na-icon {
+        flex-shrink: 0;
+        width: 32px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 2px;
+        color: #475569;
+    }
+    .na-icon i {
+        font-size: 26px; /* Size of Font Awesome icon */
+    }
+
+    /* NEW Vertical Separator */
+    .na-separator {
+        width: 2px;
+        background-color: #e2e8f0;
+        margin: 0 16px;
+        flex-shrink: 0;
+        border-radius: 1px;
+    }
+
+    /* Text Container */
+    .na-details {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    /* Title Link */
+    .na-title {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #1e3066;
+        text-decoration: none;
+        line-height: 1.35;
+        margin-bottom: 6px;
+        transition: color 0.2s;
+    }
+    .na-title:hover {
+        color: #3b82f6; 
+    }
+
+    /* Author & Year */
+    .na-author, .na-year {
+        font-size: 0.85rem;
+        color: #64748b;
+        line-height: 1.4;
+    }
+    .na-year {
+        margin-top: 2px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+        #new-arrivals-box { width: 95%; }
+        #new-arrivals-content { height: 380px; }
+        #new-arrivals-header { padding: 14px 15px; }
+        #new-arrivals-title { font-size: 1.05rem; }
+    }
+</style>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const listElement = document.getElementById("new-arrivals-list");
+        const contentContainer = document.getElementById("new-arrivals-content");
+        const loadingOverlay = document.getElementById("loading-overlay");
+        const statusElement = document.getElementById("update-status");
+
+        const rssUrl = "https://libcat.natlib.lk/cgi-bin/koha/opac-search.pl?limit=mc-itemtype%2Cphr%3AALMA&limit=mc-itemtype%2Cphr%3ABOOK&limit=mc-itemtype%2Cphr%3ATRANSLATIO&limit=mc-itemtype%2Cphr%3ATRANS_NONE&limit=mc-itemtype%2Cphr%3AENCY&limit=mc-itemtype%2Cphr%3ARREPORT&count=50&sort_by=acqdate_dsc&format=rss2";
+        const cacheKey = "newArrivalsCache";
+        const cacheTimeKey = "newArrivalsCacheTime";
+        const CACHE_DURATION_MS = 10 * 60 * 1000; // 10 minutes
+
+        let scrollInterval;
+
+        function showLoading(show) {
+            loadingOverlay.classList.toggle("hidden", !show);
+        }
+
+        // Improved time calculation function
+        function updateStatus(timeString) {
+            if (!timeString) {
+                statusElement.textContent = "Updating...";
+                return;
+            }
+            
+            const pastTime = parseInt(timeString, 10);
+            if (isNaN(pastTime)) return;
+            
+            const minutesAgo = Math.floor((Date.now() - pastTime) / 60000);
+            
+            if (minutesAgo <= 0) {
+                statusElement.textContent = "Updated just now";
+            } else if (minutesAgo === 1) {
+                statusElement.textContent = "Updated 1 minute ago";
+            } else if (minutesAgo < 60) {
+                statusElement.textContent = `Updated ${minutesAgo} minutes ago`;
+            } else {
+                const hours = Math.floor(minutesAgo / 60);
+                statusElement.textContent = `Updated ${hours} hour${hours > 1 ? 's' : ''} ago`;
+            }
+        }
+
+        async function fetchAndDisplayArrivals() {
+            showLoading(true);
+            try {
+                const response = await fetch(rssUrl);
+                if (!response.ok) throw new Error('Network response was not ok.');
+                const text = await response.text();
+
+                const parser = new DOMParser();
+                const xml = parser.parseFromString(text, "text/xml");
+                const items = Array.from(xml.querySelectorAll("item")).slice(0, 15);
+
+                if (items.length === 0) {
+                    listElement.innerHTML = "<li><div class='na-details'><span class='na-author'>No new arrivals found.</span></div></li>";
+                    return;
+                }
+                
+                let html = "";
+                const itemHtml = items.map(item => {
+                    let rawTitle = item.querySelector("title")?.textContent || "Unknown Title";
+                    let title = rawTitle.replace(/\s*\/\s*$/, '').trim();
+                    const link = item.querySelector("link")?.textContent || "#";
+                    
+                    const descNode = item.querySelector("description");
+                    let author = "";
+                    let publication = "";
+
+                    if (descNode) {
+                        let descHtml = descNode.textContent || "";
+                        let lines = descHtml.replace(/<\/?p>/gi, '')
+                                            .split(/<br\s*\/?>/i)
+                                            .map(line => line.trim())
+                                            .filter(line => line.length > 0);
+
+                        if (lines.length > 0) {
+                            author = lines[0].replace(/^By\s+/i, '').replace(/[.,:;/\s]+$/, '').trim();
+                        }
+                        if (lines.length > 1) {
+                            publication = lines[1].replace(/[.,:;/\s]+$/, '').trim();
+                        }
+                    }
+
+                    if (!author) author = "National Library of Sri Lanka";
+
+                    // Font Awesome Document Icon
+                    const iconHtml = `<i class="fa-solid fa-file-lines" aria-hidden="true"></i>`;
+
+                    return `
+                        <li>
+                            <div class="na-icon">${iconHtml}</div>
+                            <div class="na-separator"></div>
+                            <div class="na-details">
+                                <a href="${link}" target="_blank" class="na-title">${title}</a>
+                                <div class="na-author">${author}</div>
+                                ${publication ? `<div class="na-year">${publication}</div>` : ''}
+                            </div>
+                        </li>`;
+                }).join('');
+
+                // Duplicate items for seamless continuous scrolling
+                html = itemHtml + itemHtml;
+                listElement.innerHTML = html;
+
+                // Update cache
+                const currentTime = Date.now().toString();
+                localStorage.setItem(cacheKey, html);
+                localStorage.setItem(cacheTimeKey, currentTime);
+                updateStatus(currentTime);
+                
+                startSmoothScroll();
+
+            } catch (error) {
+                console.error("Failed to load new arrivals:", error);
+                listElement.innerHTML = "<li><div class='na-details'><span class='na-author'>Error loading feed.</span></div></li>";
+                statusElement.textContent = "Update failed";
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function startSmoothScroll() {
+            if (scrollInterval) clearInterval(scrollInterval);
+
+            let scrollPos = 0;
+            let isPaused = false;
+
+            contentContainer.addEventListener("mouseenter", () => isPaused = true);
+            contentContainer.addEventListener("mouseleave", () => isPaused = false);
+
+            const scrollList = () => {
+                if (!isPaused) {
+                    scrollPos += 0.8; 
+                    if (scrollPos >= listElement.scrollHeight / 2) {
+                        scrollPos = 0;
+                    }
+                    contentContainer.scrollTop = scrollPos;
+                }
+            };
+            
+            scrollInterval = setInterval(scrollList, 30);
+        }
+
+        function init() {
+            const cachedHtml = localStorage.getItem(cacheKey);
+            const cachedTime = localStorage.getItem(cacheTimeKey);
+
+            if (cachedHtml && cachedTime && (Date.now() - parseInt(cachedTime, 10) < CACHE_DURATION_MS)) {
+                listElement.innerHTML = cachedHtml;
+                updateStatus(cachedTime);
+                startSmoothScroll();
+                showLoading(false);
+            } else {
+                fetchAndDisplayArrivals();
+            }
+
+            // Keep the "Updated X minutes ago" ticking automatically while user is on the page
+            setInterval(() => {
+                const liveCachedTime = localStorage.getItem(cacheTimeKey);
+                if (liveCachedTime) updateStatus(liveCachedTime);
+            }, 60000); // refresh time every 60 seconds
+        }
+
+        init();
+    });
+</script></div>
+                </div>
+            
+        </div>
+    
+
+
+
+
+
+
+    
+    
+        <div id="OpacNavBottom">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><div class="sc-box">
+<div class="sc-title">Stay Connected</div>
+<!-- Native Koha/Bootstrap Row -->
+<div class="row sc-cards-container"><!-- Facebook Card (50% width) -->
+<div class="col-6 col-xs-6"><a href="https://www.facebook.com/natliblk" target="_blank" rel="noopener noreferrer" class="sc-card"> <!-- Changed div to span so Koha doesn't delete the link --> <span class="sc-card-icon fb-icon"> <svg viewbox="0 0 24 24" fill="currentColor"> <path d="M14 13.5h2.5l1-4H14v-2c0-1.03 0-2 2-2h1.5V2.14c-.326-.043-1.557-.14-2.857-.14C11.928 2 10 3.657 10 6.7v2.8H7v4h3V22h4v-8.5z"></path> </svg> </span> <span class="sc-card-text">Facebook</span> </a></div>
+<!-- YouTube Card (50% width) -->
+<div class="col-6 col-xs-6"><a href="https://www.youtube.com/@NationalLibraryLK" target="_blank" rel="noopener noreferrer" class="sc-card"> <!-- Changed div to span so Koha doesn't delete the link --> <span class="sc-card-icon yt-icon"> <svg viewbox="0 0 24 24" fill="currentColor"> <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"></path> </svg> </span> <span class="sc-card-text">YouTube</span> </a></div>
+</div>
+<p class="sc-text">Stay connected with the National Library of Sri Lanka for updates, events, research resources and insights into our country's literary and documentary heritage.</p>
+</div>
+<style>
+    /* Main Container */
+    .sc-box {
+        width: 100%;
+        max-width: 480px;
+        background: #f8f9fa; 
+        border-radius: 8px;
+        border: 1px solid #e2e8f0; 
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        margin: 25px auto;
+        padding: 24px 20px;
+        font-family: 'Open Sans', 'Segoe UI', Tahoma, sans-serif;
+    }
+
+    /* Section Title */
+    .sc-title {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #1e3066; 
+        letter-spacing: -0.3px;
+        margin-bottom: 20px;
+    }
+
+    /* Spacing for the grid */
+    .sc-cards-container {
+        margin-bottom: 20px;
+    }
+
+    /* The Clickable Card Design */
+    .sc-card {
+        display: block !important;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 16px 10px;
+        text-align: center;
+        text-decoration: none !important;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    .sc-card:hover {
+        border-color: #1a56db;
+        box-shadow: 0 4px 8px rgba(26, 86, 219, 0.1);
+        transform: translateY(-2px);
+    }
+
+    /* Icon within the card */
+    .sc-card-icon {
+        width: 42px;
+        height: 42px;
+        margin: 0 auto 10px auto;
+        border-radius: 10px; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff; 
+    }
+
+    /* Brand Colors */
+    .fb-icon { background: #1877F2; }
+    .yt-icon { background: #FF0000; }
+
+    /* Inner SVG Sizing */
+    .sc-card-icon svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    /* Text inside the card */
+    .sc-card-text {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #1e3066;
+        display: block !important;
+        text-align: center !important;
+        width: 100%;
+    }
+
+    /* Bottom Paragraph */
+    .sc-text {
+        font-size: 0.9rem;
+        color: #475569; 
+        line-height: 1.55;
+        margin: 0;
+        text-align: justify;
+    }
+</style></div>
+                </div>
+            
+        </div>
+    
+
+
+ </div>
+                </div>
+            
+
+            
+            
+                
+                
+            
+            <div class="col-12 col-lg-7 order-md-1 maincontent">
+                <h1 class="sr-only">Koha home</h1>
+
+                
+
+                
+                    
+                
+                
+                    <!-- koha news -->
+                    
+                
+
+                
+                    
+
+                    
+                        
+    
+        <div id="OpacMainUserBlock">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><style>
+    /* Import Professional Fonts: Playfair Display for grand headings, Nunito for clean body text */
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Nunito:wght@400;600;700;800&display=swap');
+
+    /* ========================================================
+       NLSL Unified Main User Block (With Services Carousel)
+       ======================================================== */
+    .nlsl-main-wrapper {
+        background-color: #fcfcfd;
+        border: 1px solid #e2e8f0;
+        border-top: 6px solid #1e3a8a; /* Royal Blue */
+        border-bottom: 6px solid #b59a5d; /* Antique Gold */
+        border-radius: 12px;
+        margin: 20px 0;
+        font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.06);
+        box-sizing: border-box;
+        position: relative;
+        overflow: hidden;
+        color: #334155;
+    }
+
+    .nlsl-main-wrapper * {
+        box-sizing: border-box;
+    }
+
+    /* --- Subtle Background Watermark --- */
+    .nlsl-main-wrapper::before {
+        content: '\f19c'; /* Font Awesome Landmark/Bank Icon */
+        font-family: 'Font Awesome 6 Free', 'FontAwesome';
+        font-weight: 900;
+        position: absolute;
+        top: -30px;
+        right: -40px;
+        font-size: 380px;
+        color: rgba(181, 154, 93, 0.035); /* Extremely subtle gold watermark */
+        z-index: 0;
+        transform: rotate(-12deg);
+        pointer-events: none;
+    }
+
+    /* ========================================================
+       1. HERO & ABOUT SECTION
+       ======================================================== */
+    .nlsl-about-section {
+        padding: 50px 45px 40px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .nlsl-title-container {
+        text-align: center;
+        margin-bottom: 35px;
+    }
+
+    .nlsl-main-title {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 38px;
+        font-weight: 700;
+        color: #1e3a8a; /* Royal Blue */
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        margin: 0 0 12px 0;
+        line-height: 1.25;
+    }
+
+    .nlsl-subtitle {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 21px;
+        font-style: italic;
+        font-weight: 400;
+        color: #9a7d3e; /* Richer Antique Gold for contrast */
+        margin: 0;
+        line-height: 1.4;
+    }
+
+    /* Elegant Golden Divider */
+    .nlsl-divider {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 22px;
+    }
+
+    .nlsl-divider::before,
+    .nlsl-divider::after {
+        content: "";
+        width: 90px;
+        height: 2px;
+        background-color: #b59a5d;
+        opacity: 0.6;
+    }
+
+    .nlsl-divider i {
+        color: #b59a5d;
+        font-size: 18px;
+    }
+
+    /* --- Editorial Text Layout --- */
+    .nlsl-editorial-container {
+        max-width: 1080px;
+        margin: 0 auto;
+    }
+
+    /* Lead Paragraph Highlight */
+    .nlsl-lead-paragraph {
+        font-size: 17.5px;
+        line-height: 1.8;
+        color: #1e293b;
+        background: linear-gradient(to right, rgba(30, 58, 138, 0.04), rgba(181, 154, 93, 0.04));
+        border-left: 4px solid #1e3a8a;
+        padding: 20px 25px;
+        border-radius: 0 8px 8px 0;
+        margin-bottom: 28px;
+        text-align: justify;
+    }
+
+    /* Two-Column Grid for Body Paragraphs on Desktop */
+    .nlsl-body-columns {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 28px;
+        margin-bottom: 28px;
+    }
+
+    .nlsl-body-card {
+        background: #ffffff;
+        border: 1px solid #eef2f6;
+        border-radius: 8px;
+        padding: 22px 25px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    }
+
+    .nlsl-body-card p {
+        font-size: 15.5px;
+        line-height: 1.75;
+        color: #475569;
+        margin: 0 0 16px 0;
+        text-align: justify;
+    }
+
+    .nlsl-body-card p:last-child {
+        margin-bottom: 0;
+    }
+
+    .nlsl-body-card i.nlsl-para-icon {
+        color: #b59a5d;
+        margin-right: 8px;
+        font-size: 16px;
+    }
+
+    /* Welcoming Closing Statement */
+    .nlsl-welcome-closing {
+        text-align: center;
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 18px;
+        font-style: italic;
+        color: #1e3a8a;
+        background-color: #ffffff;
+        border: 1px dashed rgba(181, 154, 93, 0.6);
+        padding: 16px 25px;
+        border-radius: 8px;
+        margin: 0;
+    }
+
+    /* ========================================================
+       2. NATIONAL LIBRARY SERVICES CAROUSEL SECTION
+       ======================================================== */
+    .nlsl-services-section {
+        background-color: #f4f6f9;
+        border-top: 1px solid #e2e8f0;
+        padding: 40px 45px;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Header Row with Title & Quick Arrow Controls */
+    .nlsl-services-top-bar {
+        max-width: 1140px;
+        margin: 0 auto 24px auto;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .nlsl-services-header {
+        text-align: left;
+    }
+
+    .nlsl-services-header h2 {
+        font-family: 'Playfair Display', Georgia, serif;
+        color: #1e3a8a;
+        font-weight: 700;
+        font-size: 30px;
+        margin: 0 0 8px 0;
+    }
+
+    .nlsl-services-header .nlsl-sub-bar {
+        width: 65px;
+        height: 3px;
+        background-color: #b59a5d;
+        border-radius: 2px;
+    }
+
+    /* Prev / Next Navigation Buttons */
+    .nlsl-carousel-nav {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .nlsl-nav-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background-color: #ffffff;
+        border: 1.5px solid #cbd5e1;
+        color: #1e3a8a;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        cursor: pointer;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        transition: all 0.2s ease;
+    }
+
+    .nlsl-nav-btn:hover {
+        background-color: #1e3a8a;
+        border-color: #1e3a8a;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(30, 58, 138, 0.15);
+    }
+
+    .nlsl-nav-btn:active {
+        transform: translateY(0);
+    }
+
+    /* Carousel Viewport & Track */
+    .nlsl-services-viewport {
+        max-width: 1140px;
+        margin: 0 auto;
+        overflow: hidden;
+        padding: 6px 2px 12px 2px; /* Room for card hover shadows */
+    }
+
+    .nlsl-services-track {
+        display: flex;
+        gap: 20px;
+        transition: transform 0.55s cubic-bezier(0.25, 1, 0.5, 1);
+        will-change: transform;
+    }
+
+    /* Individual Service Card (3 visible on Desktop) */
+    .nlsl-service-card {
+        flex: 0 0 calc((100% - 40px) / 3);
+        max-width: calc((100% - 40px) / 3);
+        background-color: #ffffff;
+        border-radius: 10px;
+        padding: 24px 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        border: 1px solid #e2e8f0;
+        border-top: 3px solid #b59a5d;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        user-select: none;
+    }
+
+    .nlsl-service-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 22px rgba(30, 58, 138, 0.09);
+        border-top-color: #1e3a8a;
+    }
+
+    /* Icon Styling */
+    .nlsl-icon-wrapper {
+        width: 48px;
+        height: 48px;
+        background-color: #eff4ff;
+        border: 1px solid rgba(30, 58, 138, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: all 0.25s ease;
+    }
+
+    .nlsl-service-card:hover .nlsl-icon-wrapper {
+        background-color: #1e3a8a;
+    }
+
+    .nlsl-icon-wrapper i {
+        font-size: 19px;
+        color: #1e3a8a;
+        transition: color 0.25s ease;
+    }
+
+    .nlsl-service-card:hover .nlsl-icon-wrapper i {
+        color: #ffffff;
+    }
+
+    /* Card Text Content */
+    .nlsl-card-content h3 {
+        color: #1e3a8a;
+        font-size: 16.5px;
+        font-weight: 700;
+        margin: 0 0 6px 0;
+        line-height: 1.35;
+    }
+
+    .nlsl-card-content p {
+        color: #475569;
+        font-size: 14.5px;
+        line-height: 1.55;
+        margin: 0;
+    }
+
+    /* Carousel Pagination Dots & Status Bar */
+    .nlsl-services-dots-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin: 14px auto 28px auto;
+    }
+
+    .nlsl-srv-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: #cbd5e1;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .nlsl-srv-dot:hover {
+        background-color: #94a3b8;
+    }
+
+    .nlsl-srv-dot.active {
+        width: 28px;
+        border-radius: 8px;
+        background-color: #1e3a8a;
+    }
+
+    /* 10th Service Item: Featured Catalogue Banner */
+    .nlsl-catalogue-cta {
+        max-width: 1140px;
+        margin: 0 auto 30px auto;
+        background: linear-gradient(135deg, #1e3a8a 0%, #0f235c 100%);
+        border-radius: 10px;
+        padding: 24px 30px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 25px;
+        color: #ffffff;
+        box-shadow: 0 8px 20px rgba(30, 58, 138, 0.18);
+        border-left: 6px solid #b59a5d;
+    }
+
+    .nlsl-cta-left {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .nlsl-cta-icon {
+        width: 56px;
+        height: 56px;
+        background-color: rgba(181, 154, 93, 0.2);
+        border: 1px solid #b59a5d;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .nlsl-cta-icon i {
+        font-size: 24px;
+        color: #ebd399;
+    }
+
+    .nlsl-cta-text h3 {
+        color: #ffffff;
+        font-size: 19px;
+        font-weight: 700;
+        margin: 0 0 5px 0;
+    }
+
+    .nlsl-cta-text p {
+        color: #e2e8f0;
+        font-size: 15px;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .nlsl-cta-btn {
+        background-color: #b59a5d;
+        color: #ffffff !important;
+        text-decoration: none !important;
+        font-weight: 700;
+        font-size: 14.5px;
+        padding: 12px 22px;
+        border-radius: 6px;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: background-color 0.2s ease, transform 0.2s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .nlsl-cta-btn:hover {
+        background-color: #9e844a;
+        transform: translateY(-2px);
+    }
+
+    /* ========================================================
+       3. HELPFUL CALLOUT BOX FOR VISITORS & RESEARCHERS
+       ======================================================== */
+    .nlsl-visitor-note {
+        max-width: 1140px;
+        margin: 0 auto 25px auto;
+        background-color: #fffbeb; /* Warm Archival Parchment Tint */
+        border: 1px solid #f59e0b;
+        border-left: 6px solid #b59a5d;
+        border-radius: 8px;
+        padding: 20px 24px;
+        display: flex;
+        align-items: flex-start;
+        gap: 18px;
+        box-shadow: 0 4px 12px rgba(181, 154, 93, 0.08);
+    }
+
+    .nlsl-note-icon {
+        background-color: #fef3c7;
+        color: #9a7d3e;
+        width: 42px;
+        height: 42px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 20px;
+        margin-top: 2px;
+    }
+
+    .nlsl-note-content h4 {
+        color: #1e3a8a;
+        font-size: 16px;
+        font-weight: 800;
+        margin: 0 0 6px 0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .nlsl-note-content p {
+        color: #334155;
+        font-size: 14.5px;
+        line-height: 1.65;
+        margin: 0;
+    }
+
+    .nlsl-note-content a {
+        color: #1e3a8a;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    .nlsl-note-content a:hover {
+        color: #b59a5d;
+    }
+
+    /* Footer / Learn More Link */
+    .nlsl-services-footer {
+        text-align: center;
+        padding-top: 8px;
+    }
+
+    .nlsl-services-footer a {
+        color: #1e3a8a;
+        text-decoration: none;
+        font-size: 15.5px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 18px;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+    }
+
+    .nlsl-services-footer a:hover {
+        background-color: rgba(30, 58, 138, 0.06);
+        color: #0f235c;
+    }
+
+    /* ========================================================
+       4. RESPONSIVE MEDIA QUERIES (TABLET & MOBILE)
+       ======================================================== */
+    /* Tablet View (Below 992px: Show 2 Service Cards at a time) */
+    @media (max-width: 992px) {
+        .nlsl-about-section,
+        .nlsl-services-section {
+            padding: 35px 25px;
+        }
+        .nlsl-main-title {
+            font-size: 30px;
+        }
+        .nlsl-subtitle {
+            font-size: 19px;
+        }
+        .nlsl-body-columns {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        .nlsl-service-card {
+            flex: 0 0 calc((100% - 20px) / 2);
+            max-width: calc((100% - 20px) / 2);
+        }
+        .nlsl-catalogue-cta {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 22px;
+        }
+        .nlsl-cta-btn {
+            align-self: stretch;
+            justify-content: center;
+        }
+    }
+
+    /* Mobile View (Below 640px: Show 1 Service Card at a time) */
+    @media (max-width: 640px) {
+        .nlsl-about-section,
+        .nlsl-services-section {
+            padding: 28px 16px;
+        }
+        .nlsl-main-title {
+            font-size: 24px;
+            letter-spacing: 0.5px;
+        }
+        .nlsl-subtitle {
+            font-size: 16.5px;
+        }
+        .nlsl-lead-paragraph {
+            font-size: 15.5px;
+            padding: 16px;
+            text-align: left;
+        }
+        .nlsl-body-card {
+            padding: 18px;
+        }
+        .nlsl-body-card p {
+            font-size: 15px;
+            text-align: left;
+        }
+        .nlsl-welcome-closing {
+            font-size: 16px;
+            padding: 14px 16px;
+        }
+        .nlsl-services-top-bar {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+        .nlsl-services-header h2 {
+            font-size: 22px;
+        }
+        .nlsl-nav-btn {
+            width: 38px;
+            height: 38px;
+            font-size: 14px;
+        }
+        .nlsl-service-card {
+            flex: 0 0 100%;
+            max-width: 100%;
+            padding: 20px 16px;
+        }
+        .nlsl-cta-left {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .nlsl-visitor-note {
+            flex-direction: column;
+            gap: 12px;
+            padding: 18px;
+        }
+    }
+</style>
+<div class="nlsl-main-wrapper"><!-- ================= 1. HERO & ABOUT SECTION ================= -->
+<div class="nlsl-about-section">
+<div class="nlsl-title-container">
+<h1 class="nlsl-main-title">National Library of Sri Lanka</h1>
+<h3 class="nlsl-subtitle">A National Resource for Research, Reference and Knowledge</h3>
+<div class="nlsl-divider"><i class="fa-solid fa-book-open fa"></i></div>
+</div>
+<div class="nlsl-editorial-container"><!-- Lead Paragraph -->
+<div class="nlsl-lead-paragraph">The <strong>National Library of Sri Lanka</strong> is the country&rsquo;s principal national library and a central institution for the collection, preservation and provision of access to Sri Lanka&rsquo;s documentary and intellectual heritage. Functioning primarily as a research and reference library, it serves scholars, researchers, academics, students, professionals and all others seeking reliable information resources to support inquiry, scholarship and lifelong learning.</div>
+<!-- 2-Column Body Content for Desktop / 1-Column for Mobile -->
+<div class="nlsl-body-columns">
+<div class="nlsl-body-card">
+<p><i class="fa-solid fa-landmark fa nlsl-para-icon"></i> As a <strong>library of last resort</strong>, the National Library has a distinctive role within the nation&rsquo;s information infrastructure: to provide access to resources and information that may not be readily available through other libraries and information services. Its mission extends beyond the provision of resources within its own collections to supporting access to knowledge throughout Sri Lanka through library networks, information centres and resource centres.</p>
+<p><i class="fa-solid fa-layer-group fa nlsl-para-icon"></i> The Library&rsquo;s collections encompass Sri Lankan publications, reference works, periodicals, newspapers, government publications, theses and dissertations, rare and special collections, maps, audiovisual materials and other resources in a range of formats.</p>
+</div>
+<div class="nlsl-body-card">
+<p><i class="fa-solid fa-scroll fa nlsl-para-icon"></i> Through legal deposit, acquisition, exchange, gifts and donations, the Library develops and preserves a documentary record of the country&rsquo;s published output, supporting the study of Sri Lanka&rsquo;s history, society, culture, language and intellectual life.</p>
+<p><i class="fa-solid fa-compass fa nlsl-para-icon"></i> Beyond its collections, the National Library provides reference and information services that assist users in identifying, locating and making effective use of relevant resources. Its services support bibliographic and subject inquiries, research, current awareness, specialised information needs and access to information for readers with visual impairments. Through these activities, the Library contributes to the advancement of scholarship, the dissemination of knowledge and the preservation of the nation&rsquo;s intellectual heritage for present and future generations.</p>
+</div>
+</div>
+<!-- Closing Welcome Banner -->
+<p class="nlsl-welcome-closing">"The National Library of Sri Lanka welcomes all who seek to explore its collections and use its resources for research, reference, education and informed inquiry."</p>
+</div>
+</div>
+<!-- ================= 2. SERVICES CAROUSEL SECTION ================= -->
+<div class="nlsl-services-section" id="nlslServicesCarousel">
+<div class="nlsl-services-top-bar">
+<div class="nlsl-services-header">
+<h2>National Library Services</h2>
+<div class="nlsl-sub-bar"></div>
+</div>
+<!-- Interactive Prev / Next Controls -->
+<div class="nlsl-carousel-nav"><button type="button" class="nlsl-nav-btn" id="nlslSrvPrev" aria-label="Previous services"> <i class="fa-solid fa-chevron-left fa" aria-hidden="true"></i> </button> <button type="button" class="nlsl-nav-btn" id="nlslSrvNext" aria-label="Next services"> <i class="fa-solid fa-chevron-right fa" aria-hidden="true"></i> </button></div>
+</div>
+<!-- Carousel Viewport (3 cards on Desktop, 2 on Tablet, 1 on Mobile) -->
+<div class="nlsl-services-viewport" id="nlslSrvViewport">
+<div class="nlsl-services-track" id="nlslSrvTrack"><!-- Service 1 -->
+<div class="nlsl-service-card">
+<div class="nlsl-icon-wrapper"><i class="fa-solid fa-book-open-reader fa fa-book" aria-hidden="true"></i></div>
+<div class="nlsl-card-content">
+<h3>Reading and Reference Services</h3>
+<p>Access books, journals, newspapers, government publications, reference works and specialised collections for study and research.</p>
+</div>
+</div>
+<!-- Service 2 -->
+<div class="nlsl-service-card">
+<div class="nlsl-icon-wrapper"><i class="fa-solid fa-magnifying-glass fa fa-search" aria-hidden="true"></i></div>
+<div class="nlsl-card-content">
+<h3>Research and Information Inquiries</h3>
+<p>Obtain assistance with bibliographic, factual, subject-based and research-related inquiries.</p>
+</div>
+</div>
+<!-- Service 3 -->
+<div class="nlsl-service-card">
+<div class="nlsl-icon-wrapper"><i class="fa-solid fa-network-wired fa fa-exchange" aria-hidden="true"></i></div>
+<div class="nlsl-card-content">
+<h3>Interlibrary and Networked Resource Access</h3>
+<p>Explore opportunities to identify and access information resources through participating libraries and information networks, subject to applicable arrangements.</p>
+</div>
+</div>
+<!-- Service 4 -->
+<div class="nlsl-service-card">
+<div class="nlsl-icon-wrapper"><i class="fa-solid fa-bell fa fa-crosshairs" aria-hidden="true"></i></div>
+<div class="nlsl-card-content">
+<h3>Current Awareness Services</h3>
+<p>Keep informed of new acquisitions and developments in relevant information resources.</p>
+</div>
+</div>
+<!-- Service 5 -->
+<div class="nlsl-service-card">
+<div class="nlsl-icon-wrapper"><i class="fa-solid fa-user-check fa fa-desktop" aria-hidden="true"></i></div>
+<div class="nlsl-card-content">
+<h3>Selective Dissemination of Information (SDI)</h3>
+<p>Receive information selected according to established research interests and individual information needs.</p>
+</div>
+</div>
+<!-- Service 6 -->
+<div class="nlsl-service-card">
+<div class="nlsl-icon-wrapper"><i class="fa-solid fa-copy fa fa-file-text" aria-hidden="true"></i></div>
+<div class="nlsl-card-content">
+<h3>Reprographic Services</h3>
+<p>Access photocopying, scanning, printing and electronic-copy services, subject to copyright provisions and applicable conditions.</p>
+</div>
+</div>
+<!-- Service 7 -->
+<div class="nlsl-service-card">
+<div class="nlsl-icon-wrapper"><i class="fa-solid fa-graduation-cap fa" aria-hidden="true"></i></div>
+<div class="nlsl-card-content">
+<h3>User Education and Orientation</h3>
+<p>Develop familiarity with the Library&rsquo;s catalogue, collections, facilities and information services through user education programmes and guided visits.</p>
+</div>
+</div>
+<!-- Service 8 -->
+<div class="nlsl-service-card">
+<div class="nlsl-icon-wrapper"><i class="fa-solid fa-universal-access fa" aria-hidden="true"></i></div>
+<div class="nlsl-card-content">
+<h3>Accessible Information Services</h3>
+<p>Access specialised information resources and services intended to support readers with visual impairments.</p>
+</div>
+</div>
+<!-- Service 9 -->
+<div class="nlsl-service-card">
+<div class="nlsl-icon-wrapper"><i class="fa-solid fa-folder-tree fa fa-list-alt" aria-hidden="true"></i></div>
+<div class="nlsl-card-content">
+<h3>Information Repackaging Services</h3>
+<p>Consult curated collections of information resources assembled to support assignments, projects and research on selected subjects.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Dynamic Pagination Dots -->
+<div class="nlsl-services-dots-wrap" id="nlslSrvDots" aria-label="Services slide indicators"></div>
+<!-- Service 10: Featured Full-Width Catalogue Action Bar -->
+<div class="nlsl-catalogue-cta">
+<div class="nlsl-cta-left">
+<div class="nlsl-cta-icon"><i class="fa-solid fa-compass fa fa-search" aria-hidden="true"></i></div>
+<div class="nlsl-cta-text">
+<h3>Explore the Catalogue</h3>
+<p>Search the National Library&rsquo;s holdings to identify books and other catalogued resources relevant to your subject, research question or information need.</p>
+</div>
+</div>
+<a href="#translControl1" onclick="var s=document.getElementById('translControl1')||document.querySelector('input[name=q]'); if(s){s.focus(); s.scrollIntoView({behavior:'smooth', block:'center'}); return false;}" class="nlsl-cta-btn"> <i class="fa-solid fa-magnifying-glass fa fa-search"></i> Search OPAC Now </a></div>
+<!-- ================= 3. HELPFUL VISITOR CALLOUT BOX ================= -->
+<div class="nlsl-visitor-note">
+<div class="nlsl-note-icon"><i class="fa-solid fa-circle-info fa fa-info-circle" aria-hidden="true"></i></div>
+<div class="nlsl-note-content">
+<h4>Note to Researchers &amp; Readers</h4>
+<p>As the nation&rsquo;s archival repository and library of last resort, the National Library of Sri Lanka is a <strong>closed-access reference library</strong>. Materials identified through this OPAC are for <strong>in-library consultation only</strong> and may be requested at the respective Reading Room service desks using the item's <strong>Call Number</strong>. For remote access to digitized heritage materials, please visit the <a href="https://diglib.natlib.lk/" target="_blank" rel="noopener">National Digital Library Repository <i class="fa-solid fa-arrow-up-right-from-square fa fa-external-link" style="font-size: 12px;"></i></a>.</p>
+</div>
+</div>
+<!-- Footer Link -->
+<div class="nlsl-services-footer"><a href="https://www.natlib.lk/NLSL/services/" target="_blank" rel="noopener"> <i class="fa-solid fa-circle-info fa fa-info-circle" aria-hidden="true"></i> Learn more about our services on the official website <i class="fa-solid fa-angle-right fa" aria-hidden="true"></i> </a></div>
+</div>
+</div>
+<script>
+    (function() {
+        var container = document.getElementById('nlslServicesCarousel');
+        var viewport = document.getElementById('nlslSrvViewport');
+        var track = document.getElementById('nlslSrvTrack');
+        var prevBtn = document.getElementById('nlslSrvPrev');
+        var nextBtn = document.getElementById('nlslSrvNext');
+        var dotsWrap = document.getElementById('nlslSrvDots');
+
+        if (!container || !track) return;
+
+        var cards = track.querySelectorAll('.nlsl-service-card');
+        var totalCards = cards.length;
+        var currentPage = 0;
+        var cardsPerView = 3;
+        var totalPages = 3;
+        var autoTimer = null;
+        var intervalMs = 5000; /* Auto-scroll every 5 seconds */
+
+        function getCardsPerView() {
+            var w = window.innerWidth;
+            if (w <= 640) return 1;
+            if (w <= 992) return 2;
+            return 3;
+        }
+
+        function buildDots() {
+            dotsWrap.innerHTML = '';
+            for (var i = 0; i < totalPages; i++) {
+                (function(pageIndex) {
+                    var dot = document.createElement('button');
+                    dot.type = 'button';
+                    dot.className = 'nlsl-srv-dot' + (pageIndex === currentPage ? ' active' : '');
+                    dot.setAttribute('aria-label', 'Go to services group ' + (pageIndex + 1));
+                    dot.addEventListener('click', function() {
+                        goToPage(pageIndex);
+                        restartAutoScroll();
+                    });
+                    dotsWrap.appendChild(dot);
+                })(i);
+            }
+        }
+
+        function updateCarousel() {
+            var newPerView = getCardsPerView();
+            var newTotalPages = Math.ceil(totalCards / newPerView);
+
+            if (newPerView !== cardsPerView || newTotalPages !== totalPages || dotsWrap.children.length === 0) {
+                cardsPerView = newPerView;
+                totalPages = newTotalPages;
+                if (currentPage >= totalPages) {
+                    currentPage = totalPages - 1;
+                }
+                buildDots();
+            }
+
+            /* Calculate exact pixel offset based on card width + 20px gap */
+            var firstCard = cards[0];
+            if (!firstCard) return;
+            var gap = 20;
+            var cardWidth = firstCard.offsetWidth;
+            var startCardIndex = currentPage * cardsPerView;
+
+            /* Prevent overshooting past the last card when totalCards isn't a multiple of cardsPerView */
+            if (startCardIndex + cardsPerView > totalCards) {
+                startCardIndex = Math.max(0, totalCards - cardsPerView);
+            }
+
+            var offsetPx = startCardIndex * (cardWidth + gap);
+            track.style.transform = 'translate3d(-' + offsetPx + 'px, 0, 0)';
+
+            var dots = dotsWrap.querySelectorAll('.nlsl-srv-dot');
+            dots.forEach(function(d, idx) {
+                if (idx === currentPage) {
+                    d.classList.add('active');
+                } else {
+                    d.classList.remove('active');
+                }
+            });
+        }
+
+        function goToPage(pageIndex) {
+            currentPage = (pageIndex + totalPages) % totalPages;
+            updateCarousel();
+        }
+
+        function nextPage() {
+            goToPage(currentPage + 1);
+        }
+
+        function prevPage() {
+            goToPage(currentPage - 1);
+        }
+
+        function startAutoScroll() {
+            stopAutoScroll();
+            autoTimer = setInterval(nextPage, intervalMs);
+        }
+
+        function stopAutoScroll() {
+            if (autoTimer) {
+                clearInterval(autoTimer);
+                autoTimer = null;
+            }
+        }
+
+        function restartAutoScroll() {
+            stopAutoScroll();
+            startAutoScroll();
+        }
+
+        /* Button Click Listeners */
+        if (nextBtn) {
+            nextBtn.addEventListener('click', function() {
+                nextPage();
+                restartAutoScroll();
+            });
+        }
+        if (prevBtn) {
+            prevBtn.addEventListener('click', function() {
+                prevPage();
+                restartAutoScroll();
+            });
+        }
+
+        /* Pause on Hover */
+        viewport.addEventListener('mouseenter', stopAutoScroll);
+        viewport.addEventListener('mouseleave', startAutoScroll);
+
+        /* Touch Swipe Support for Mobile & Tablet */
+        var touchStartX = 0;
+        var touchEndX = 0;
+
+        viewport.addEventListener('touchstart', function(e) {
+            stopAutoScroll();
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        viewport.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            var diff = touchStartX - touchEndX;
+            if (Math.abs(diff) > 40) {
+                if (diff > 0) {
+                    nextPage();
+                } else {
+                    prevPage();
+                }
+            }
+            startAutoScroll();
+        }, { passive: true });
+
+        /* Recalculate smoothly on window resize / device orientation change */
+        var resizeTimeout;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(updateCarousel, 120);
+        });
+
+        /* Initialize */
+        updateCarousel();
+        startAutoScroll();
+    })();
+</script></div>
+                </div>
+            
+        </div>
+    
+
+                    
+                
+            </div>
+            <!-- / .col 6/8 -->
+
+            
+                <div class="col-12 col-lg-3 order-md-2">
+                    
+                        
+                            
+                                <div id="login">
+                                    <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="auth" autocomplete="off">
+                                        <input type="hidden" name="csrf_token" value="67ab5179a8d8409e1dd0817e0c2b8e795a9e9759,453ee1e385883bd68bbd29a5ac603fad436c34cb,1794729552" />
+
+                                        <input type="hidden" name="koha_login_context" value="opac" />
+                                        <h2 class="sr-only">Login form</h2>
+                                        <fieldset class="brief">
+                                            <legend>Log in to your account:</legend>
+                                            
+                                            
+                                            
+                                            <div class="local-login">
+                                                
+    <label for="userid">Card number or username:</label>
+
+                                                <input class="form-control" type="text" id="userid" name="login_userid" autocomplete="off" />
+                                                <label for="password">Password:</label>
+                                                <input class="form-control" type="password" id="password" name="login_password" autocomplete="off" />
+                                                <fieldset class="action">
+                                                    <input type="hidden" name="op" value="cud-login" />
+                                                    <input type="submit" value="Log in" class="btn btn-primary" />
+                                                </fieldset>
+                                            </div>
+                                            
+                                                <div id="nologininstructions-main" class="nologininstructions"> 
+    
+        <div id="OpacLoginInstructions">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><p style="box-sizing: border-box; margin: 0.5rem 0px; color: #190f10; font-family: NotoSans, sans-serif; font-size: 16px; background-color: #ffffff; padding: 10px;"><strong>Default Username and Password is <span style="color: #bb2025;">OPACUser</span> / <span style="color: #bb2025;">OPACUser</span></strong></p>
+<strong><span style="font-size: 14pt;">Why create an OPAC account?</span></strong>
+<p style="box-sizing: border-box; margin: 0.5rem 0px; color: #190f10; font-family: NotoSans, sans-serif; font-size: 16px; background-color: #ffffff; padding: 10px;">Signing in allows you to <b>save searches, create lists of resources, submit purchase suggestions, and manage your personal preferences within the catalogue.</b></p>
+<strong><span style="font-size: 14pt;">Need account access?</span></strong>
+<p style="box-sizing: border-box; margin: 0.5rem 0px; color: #190f10; font-family: NotoSans, sans-serif; font-size: 16px; background-color: #ffffff; padding: 10px;">Registered National Library members may obtain OPAC login credentials by contacting the <b>Reader Services Division.</b></p></div>
+                </div>
+            
+        </div>
+    
+ </div>
+                                            
+                                            
+                                                <div id="forgotpassword-main" class="forgotpassword">
+                                                    <p><a href="/cgi-bin/koha/opac-password-recovery.pl">Forgot your password?</a></p>
+                                                </div>
+                                            
+                                            
+                                        </fieldset>
+                                    </form>
+                                </div>
+                                <!-- /#login -->
+                            
+                        
+                    
+                    
+    
+        <div id="OpacNavRight">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><style>
+    /* Import matching fonts (Safe even if already loaded in MainUserBlock) */
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700&family=Nunito:wght@400;600;700;800&display=swap');
+
+    /* ========================================================
+       NLSL - Executive Sidebar Widget (OPACNAVRIGHT)
+       ======================================================== */
+    .nlsl-glance-card,
+    .nlsl-glance-card * {
+        box-sizing: border-box;
+    }
+
+    .nlsl-glance-card {
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-top: 5px solid #1e3a8a; /* Royal Blue */
+        border-bottom: 5px solid #b59a5d; /* Antique Gold */
+        border-radius: 12px;
+        overflow: hidden;
+        margin: 20px 0;
+        font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        color: #334155;
+    }
+
+    /* --- 1. Header Section --- */
+    .nlsl-glance-header {
+        background: linear-gradient(135deg, #1e3a8a 0%, #0f235c 100%);
+        padding: 18px 22px;
+        border-bottom: 2px solid #b59a5d;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .nlsl-header-icon {
+        width: 36px;
+        height: 36px;
+        background-color: rgba(181, 154, 93, 0.2);
+        border: 1px solid #b59a5d;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ebd399;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+
+    .nlsl-header-title {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 19px;
+        font-weight: 700;
+        color: #ffffff;
+        letter-spacing: 0.5px;
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .nlsl-header-subtitle {
+        font-size: 12px;
+        color: #cbd5e1;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        font-weight: 600;
+        display: block;
+        margin-top: 2px;
+    }
+
+    /* --- 2. Key Statistics (2x2 Grid) --- */
+    .nlsl-stats-section {
+        padding: 20px;
+        background-color: #fcfcfd;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .nlsl-section-label {
+        font-size: 11.5px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #9a7d3e; /* Antique Gold */
+        margin: 0 0 14px 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .nlsl-section-label::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background-color: #e2e8f0;
+    }
+
+    .nlsl-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .nlsl-stat-box {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-left: 3px solid #b59a5d;
+        border-radius: 8px;
+        padding: 14px 12px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.015);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .nlsl-stat-box:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 14px rgba(30, 58, 138, 0.07);
+        border-left-color: #1e3a8a;
+    }
+
+    .nlsl-stat-icon {
+        width: 40px;
+        height: 40px;
+        background-color: #eff4ff;
+        color: #1e3a8a;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+    }
+
+    .nlsl-stat-box:hover .nlsl-stat-icon {
+        background-color: #1e3a8a;
+        color: #ffffff;
+    }
+
+    .nlsl-stat-data {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    .nlsl-stat-number {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 21px;
+        font-weight: 700;
+        color: #1e3a8a;
+        line-height: 1.1;
+        margin-bottom: 3px;
+    }
+
+    .nlsl-stat-label {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: #475569;
+        line-height: 1.25;
+    }
+
+    /* --- 3. Visitor Hours & Schedule Section (Large & Clear) --- */
+    .nlsl-hours-section {
+        padding: 20px;
+        background-color: #ffffff;
+    }
+
+    .nlsl-schedule-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    /* Individual Schedule Card */
+    .nlsl-schedule-card {
+        border-radius: 8px;
+        padding: 16px;
+        border: 1px solid #e2e8f0;
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+    }
+
+    /* Open Hours Styling */
+    .nlsl-schedule-card.is-open {
+        background-color: #f8fafc;
+        border-left: 4px solid #1e3a8a;
+    }
+
+    /* Closed Days Styling */
+    .nlsl-schedule-card.is-closed {
+        background-color: #fffbfa;
+        border-color: #f1e4e4;
+        border-left: 4px solid #991b1b; /* Deep Archival Crimson */
+    }
+
+    .nlsl-schedule-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    .nlsl-schedule-card.is-open .nlsl-schedule-icon {
+        background-color: #e0e7ff;
+        color: #1e3a8a;
+    }
+
+    .nlsl-schedule-card.is-closed .nlsl-schedule-icon {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    .nlsl-schedule-details {
+        flex: 1;
+    }
+
+    .nlsl-schedule-badge {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        margin-bottom: 6px;
+    }
+
+    .nlsl-schedule-card.is-open .nlsl-schedule-badge {
+        background-color: #dcfce7;
+        color: #166534;
+    }
+
+    .nlsl-schedule-card.is-closed .nlsl-schedule-badge {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    .nlsl-schedule-days {
+        font-size: 16px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 3px 0;
+        line-height: 1.3;
+    }
+
+    .nlsl-schedule-time {
+        font-size: 16.5px;
+        font-weight: 700;
+        color: #1e3a8a;
+        margin: 0;
+        line-height: 1.35;
+    }
+
+    .nlsl-schedule-card.is-closed .nlsl-schedule-time {
+        font-size: 15px;
+        font-weight: 600;
+        color: #64748b;
+    }
+
+    /* --- Responsive Adjustments for Tablets & Phones --- */
+    /* When Koha stacks the sidebar into a wide block on tablets (768px - 992px) */
+    @media (min-width: 640px) and (max-width: 991px) {
+        .nlsl-stats-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+        .nlsl-stat-box {
+            flex-direction: column;
+            text-align: center;
+            padding: 14px 10px;
+        }
+        .nlsl-schedule-list {
+            flex-direction: row;
+        }
+        .nlsl-schedule-card {
+            flex: 1;
+        }
+    }
+
+    /* Small Mobile Screens */
+    @media (max-width: 420px) {
+        .nlsl-stats-grid {
+            grid-template-columns: 1fr;
+        }
+        .nlsl-schedule-days,
+        .nlsl-schedule-time {
+            font-size: 15.5px;
+        }
+    }
+</style>
+<div class="nlsl-glance-card"><!-- 1. Executive Header -->
+<div class="nlsl-glance-header">
+<div class="nlsl-header-icon"><i class="fa-solid fa-building-columns fa fa-institution" aria-hidden="true"></i></div>
+<div>
+<h2 class="nlsl-header-title">At a Glance</h2>
+<span class="nlsl-header-subtitle">Key Figures &amp; Service Hours</span></div>
+</div>
+<!-- 2. Key Figures (2x2 Grid) -->
+<div class="nlsl-stats-section">
+<div class="nlsl-section-label"><i class="fa-solid fa-chart-column fa fa-bar-chart" aria-hidden="true"></i> Collection Overview</div>
+<div class="nlsl-stats-grid"><!-- Stat 1: Books -->
+<div class="nlsl-stat-box">
+<div class="nlsl-stat-icon"><i class="fa-solid fa-book fa" aria-hidden="true"></i></div>
+<div class="nlsl-stat-data"><span class="nlsl-stat-number">1M+</span> <span class="nlsl-stat-label">Books &amp; Volumes</span></div>
+</div>
+<!-- Stat 2: Heritage -->
+<div class="nlsl-stat-box">
+<div class="nlsl-stat-icon"><i class="fa-solid fa-clock-rotate-left fa fa-history" aria-hidden="true"></i></div>
+<div class="nlsl-stat-data"><span class="nlsl-stat-number">150+</span> <span class="nlsl-stat-label">Years of Heritage</span></div>
+</div>
+<!-- Stat 3: Collections -->
+<div class="nlsl-stat-box">
+<div class="nlsl-stat-icon"><i class="fa-solid fa-layer-group fa fa-star" aria-hidden="true"></i></div>
+<div class="nlsl-stat-data"><span class="nlsl-stat-number">27</span> <span class="nlsl-stat-label">Special Collections</span></div>
+</div>
+<!-- Stat 4: Gov Publications -->
+<div class="nlsl-stat-box">
+<div class="nlsl-stat-icon"><i class="fa-solid fa-file-shield fa fa-file-text" aria-hidden="true"></i></div>
+<div class="nlsl-stat-data"><span class="nlsl-stat-number">25K+</span> <span class="nlsl-stat-label">Gov. Publications</span></div>
+</div>
+</div>
+</div>
+<!-- 3. Opening Hours & Schedule (Full-Width, Large & Readable) -->
+<div class="nlsl-hours-section">
+<div class="nlsl-section-label"><i class="fa-solid fa-clock fa" aria-hidden="true"></i> Library Hours</div>
+<div class="nlsl-schedule-list"><!-- Open Hours Box -->
+<div class="nlsl-schedule-card is-open">
+<div class="nlsl-schedule-icon"><i class="fa-solid fa-door-open fa fa-clock-o" aria-hidden="true"></i></div>
+<div class="nlsl-schedule-details"><span class="nlsl-schedule-badge">Opening Hours</span>
+<div class="nlsl-schedule-days">Monday &ndash; Friday</div>
+<div class="nlsl-schedule-time">8:30 a.m. &ndash; 4:15 p.m.</div>
+</div>
+</div>
+<!-- Closed Days Box -->
+<div class="nlsl-schedule-card is-closed">
+<div class="nlsl-schedule-icon"><i class="fa-solid fa-calendar-xmark fa fa-calendar-times-o" aria-hidden="true"></i></div>
+<div class="nlsl-schedule-details"><span class="nlsl-schedule-badge">Closed On</span>
+<div class="nlsl-schedule-days">Weekends &amp; Holidays</div>
+<div class="nlsl-schedule-time">Saturdays, Sundays &amp; Public Holidays</div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+                </div>
+            
+        </div>
+    
+
+                </div>
+                <!-- / .col -->
+            
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+</main>
+<!-- /.main -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col"> 
+    
+        <div id="opaccredits">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><style>
+    /* ========================================================
+       NLSL Custom OPAC Footer - Enhanced Typography & Branding
+       ======================================================== */
+    #nlsl-custom-footer {
+        background-color: #08295c; /* Dark Navy Blue */
+        color: #ffffff;
+        border-radius: 6px;
+        /* Rounder, friendlier, bolder font stack */
+        font-family: 'Nunito', 'Varela Round', 'Segoe UI', Tahoma, sans-serif;
+    }
+
+    /* --- Branding & Logo Area --- */
+    .nlsl-logo-svg {
+        width: 95px; /* Larger to show SVG details clearly */
+        height: 95px; 
+        margin-right: 18px;
+        color: #ffffff; /* This turns the SVG white via currentColor */
+    }
+
+    /* Beautifully Differentiated Title */
+    .nlsl-brand-title {
+        font-size: 21px; /* Much larger */
+        font-weight: 900; /* Extra bold */
+        letter-spacing: 0.5px;
+        color: #ffffff;
+        display: block;
+        line-height: 1.1;
+    }
+
+    .nlsl-brand-subtitle {
+        font-size: 13.5px;
+        font-weight: 700;
+        letter-spacing: 1.5px; /* Spaced out for an elegant look */
+        color: #facc15; /* Attractive Gold/Yellow accent color */
+        display: block;
+        margin-top: 4px;
+    }
+
+    .nlsl-desc {
+        font-size: 14px; 
+        font-weight: 600; 
+        color: #e2e8f0; 
+        line-height: 1.6;
+        margin-top: 15px;
+        text-align: justify;
+    }
+
+    /* --- Headings --- */
+    #nlsl-custom-footer .nlsl-heading {
+        color: #ffffff;
+        font-size: 17px; 
+        font-weight: 800; 
+        margin-bottom: 18px;
+        letter-spacing: 0.5px;
+    }
+
+    /* --- Lists & Links --- */
+    #nlsl-custom-footer ul.nlsl-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    #nlsl-custom-footer ul.nlsl-list li {
+        margin-bottom: 10px;
+        font-size: 14px; 
+        font-weight: 600; 
+    }
+    #nlsl-custom-footer ul.nlsl-list li::before {
+        content: '•';
+        margin-right: 8px;
+        color: #ffffff;
+        font-weight: bold;
+    }
+    #nlsl-custom-footer a {
+        color: #ffffff;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+    #nlsl-custom-footer a:hover {
+        color: #92bbf9; /* Light blue hover */
+        text-decoration: underline;
+    }
+
+    /* --- Contact List --- */
+    #nlsl-custom-footer ul.nlsl-contact-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    #nlsl-custom-footer ul.nlsl-contact-list li {
+        display: flex;
+        margin-bottom: 15px;
+        font-size: 14px;
+        font-weight: 600; 
+        line-height: 1.5;
+    }
+    #nlsl-custom-footer ul.nlsl-contact-list i {
+        width: 22px;
+        font-size: 16px;
+        margin-top: 2px;
+    }
+
+    /* --- Bottom Bar Utilities --- */
+    .nlsl-bottom-bar {
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        font-size: 13px;
+        font-weight: 600;
+        margin-top: 10px;
+    }
+    #nlsl-custom-footer .color-light {
+        color: #e2e8f0;
+    }
+
+    /* Add borders between columns on large screens only */
+    @media (min-width: 992px) {
+        .nlsl-border-right {
+            border-right: 1px solid rgba(255, 255, 255, 0.15);
+        }
+    }
+</style>
+<div id="nlsl-custom-footer" class="p-4 mt-4">
+<div class="row"><!-- Column 1: Brand & Logo -->
+<div class="col-12 col-lg-4 mb-4 nlsl-border-right">
+<div class="d-flex align-items-center mb-3"><!-- Custom SVG Logo --> <svg version="1.0" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 600 600" preserveaspectratio="xMidYMid meet" class="nlsl-logo-svg"> <g transform="translate(0,600) scale(0.1,-0.1)" fill="currentColor" stroke="none"> <path d="M1565 4809 c3 -152 0 -165 -34 -135 -16 13 -94 59 -138 80 -13 6 -23 14 -23 19 0 4 -5 7 -10 7 -7 0 -10 -90 -10 -267 l1 -268 -240 -3 -241 -2 0 -942 0 -941 1053 5 c686 4 1060 2 1071 -4 12 -7 21 -7 28 0 6 6 362 8 1044 5 l1034 -6 0 942 0 941 -227 0 -228 0 3 264 3 264 -23 -6 c-13 -3 -36 -13 -53 -22 -16 -10 -50 -29 -75 -43 -25 -14 -45 -31 -45 -39 -1 -17 -14 -38 -25 -38 -5 0 -6 7 -3 17 5 12 3 14 -8 9 -8 -4 -5 1 7 11 19 17 21 31 23 156 2 89 -1 137 -8 137 -6 0 -26 -9 -46 -20 -20 -11 -42 -20 -49 -20 -8 0 -16 -3 -18 -7 -1 -5 -46 -29 -98 -54 -52 -26 -174 -85 -270 -133 -96 -47 -181 -86 -187 -86 -7 0 -13 -4 -13 -10 0 -5 -9 -10 -20 -10 -11 0 -20 -4 -20 -10 0 -5 -9 -10 -20 -10 -11 0 -20 -4 -20 -10 0 -5 -5 -10 -11 -10 -10 0 -161 -72 -465 -221 -77 -38 -145 -69 -152 -69 -7 0 -12 -3 -12 -7 0 -5 -12 -13 -26 -20 -23 -11 -33 -9 -73 12 -25 14 -52 25 -58 25 -7 0 -13 3 -13 8 0 8 -48 32 -66 32 -7 0 -14 4 -16 8 -3 9 -192 102 -207 102 -5 0 -11 3 -13 8 -4 9 -352 182 -367 182 -6 0 -11 3 -11 8 0 4 -21 16 -48 26 -26 11 -49 22 -52 26 -7 9 -276 140 -288 140 -6 0 -12 3 -14 8 -1 4 -53 32 -114 63 l-112 57 3 -149z m2853 69 c1 -32 1 -32 -12 -7 -10 20 -6 36 10 39 1 0 1 -14 2 -32z m-2792 13 c-4 -5 0 -11 6 -14 7 -3 3 -4 -9 -4 -26 1 -32 27 -7 27 8 0 13 -4 10 -9z m2714 -25 c0 -3 -4 -8 -10 -11 -5 -3 -10 -1 -10 4 0 6 5 11 10 11 6 0 10 -2 10 -4z m-2690 -26 c0 -5 9 -10 20 -10 11 0 20 -4 20 -10 0 -5 4 -10 9 -10 14 0 205 -94 209 -102 2 -5 12 -8 23 -8 10 0 19 -4 19 -10 0 -5 4 -10 10 -10 14 0 199 -91 206 -101 3 -5 14 -9 24 -9 10 0 20 -3 22 -8 3 -9 154 -82 169 -82 5 0 9 -4 9 -10 0 -5 9 -10 19 -10 11 0 21 -3 23 -7 4 -10 232 -123 247 -123 6 0 11 -3 11 -8 0 -4 15 -13 33 -21 59 -26 212 -102 219 -109 4 -4 8 -391 10 -860 2 -470 6 -856 10 -859 5 -2 8 -13 8 -23 0 -16 -7 -14 -51 16 -28 19 -57 34 -65 34 -8 0 -14 5 -14 10 0 6 -9 10 -21 10 -11 0 -18 4 -15 8 3 5 -1 9 -8 9 -16 0 -130 55 -134 65 -2 4 -12 8 -22 8 -10 0 -20 3 -22 8 -4 9 -150 82 -165 82 -6 0 -13 3 -15 8 -1 4 -84 48 -183 97 -99 50 -181 93 -183 98 -2 4 -8 7 -13 7 -16 0 -89 35 -89 42 0 5 -6 8 -13 8 -18 0 -67 24 -67 33 0 4 -5 7 -12 7 -11 0 -158 70 -168 80 -3 3 -22 14 -43 25 l-38 20 -2 863 c-2 684 1 862 11 862 6 0 12 -4 12 -10z m2738 -862 l-3 -872 -150 -74 c-414 -203 -513 -251 -542 -264 -18 -7 -33 -16 -33 -20 0 -5 -8 -8 -18 -8 -10 0 -22 -4 -27 -9 -16 -14 -159 -86 -167 -83 -5 1 -8 -2 -8 -8 0 -5 -9 -10 -20 -10 -11 0 -20 -4 -20 -10 0 -5 -9 -10 -20 -10 -11 0 -20 -4 -20 -10 0 -5 -9 -10 -19 -10 -11 0 -21 -3 -23 -7 -4 -11 -75 -43 -93 -43 -8 0 -15 -3 -15 -7 0 -5 -25 -19 -55 -33 -30 -14 -55 -28 -55 -32 0 -5 -9 -8 -20 -8 -11 0 -20 -3 -20 -7 0 -11 -49 -33 -53 -25 -2 4 0 52 3 107 4 55 6 444 6 865 -1 421 0 770 2 777 4 13 200 113 220 113 7 0 12 5 12 10 0 6 9 10 20 10 11 0 20 5 20 10 0 6 9 10 20 10 11 0 20 5 20 10 0 6 4 10 9 10 15 0 246 113 249 122 2 4 10 8 18 8 8 0 22 4 32 9 9 5 53 26 97 47 44 21 92 46 107 56 14 10 33 18 42 18 9 0 16 5 16 10 0 6 7 10 15 10 18 0 89 32 93 43 2 4 12 7 22 7 10 0 20 3 22 8 2 4 50 30 108 57 57 28 127 62 155 77 27 14 56 27 63 27 10 1 12 -176 10 -871z m-2621 846 c-3 -3 -12 -4 -19 -1 -8 3 -5 6 6 6 11 1 17 -2 13 -5z m128 -72 c-3 -3 -11 0 -18 7 -9 10 -8 11 6 5 10 -3 15 -9 12 -12z m-475 -48 c0 -9 -31 -37 -36 -32 -9 9 8 38 22 38 8 0 14 -3 14 -6z m3175 -37 c-14 -21 -15 -118 -13 -921 l3 -897 -40 -10 c-22 -6 -71 -20 -109 -31 -38 -11 -86 -23 -108 -25 -21 -3 -41 -10 -44 -14 -3 -5 -18 -9 -34 -9 -16 0 -32 -4 -35 -10 -3 -5 -19 -10 -35 -10 -16 0 -31 -4 -34 -9 -3 -5 -20 -11 -38 -14 -31 -4 -104 -23 -243 -62 -33 -10 -75 -20 -93 -22 -18 -3 -35 -9 -38 -14 -3 -5 -21 -9 -40 -9 -19 0 -34 -4 -34 -9 0 -5 -15 -11 -32 -14 -47 -7 -172 -42 -251 -71 -78 -28 -123 -24 -61 6 20 10 41 18 46 18 4 0 74 32 155 71 204 97 237 113 243 119 3 3 16 10 30 17 14 6 82 39 151 72 69 34 130 61 135 61 5 0 20 9 34 20 14 11 33 20 43 20 9 0 17 5 17 10 0 6 9 10 20 10 11 0 20 3 20 8 0 4 24 18 53 30 28 13 81 37 117 55 l65 33 3 771 2 771 69 33 c41 20 72 42 76 54 4 12 8 15 11 8 3 -6 -2 -23 -11 -36z m-2540 5 c-3 -3 -11 0 -18 7 -9 10 -8 11 6 5 10 -3 15 -9 12 -12z m-609 -11 c5 -5 32 -21 59 -36 28 -15 51 -29 53 -30 1 -1 2 -340 2 -752 0 -592 2 -753 12 -761 7 -5 56 -31 108 -57 252 -123 434 -218 438 -227 2 -5 12 -8 22 -8 10 0 21 -4 25 -9 3 -5 19 -12 35 -16 17 -4 30 -11 30 -16 0 -5 9 -9 19 -9 11 0 21 -3 23 -8 4 -10 230 -122 246 -122 6 0 12 -4 12 -10 0 -5 9 -10 19 -10 11 0 21 -4 23 -8 5 -12 178 -83 178 -72 0 4 -6 11 -12 13 -10 4 -10 6 0 6 6 1 21 -8 32 -19 11 -11 20 -17 20 -14 0 3 21 -6 48 -19 26 -14 55 -28 65 -31 9 -3 17 -14 17 -25 0 -18 2 -18 29 -5 25 12 32 12 57 -1 25 -13 31 -13 51 0 12 8 29 15 38 15 8 0 15 4 15 8 0 8 76 46 92 47 4 0 13 6 19 13 7 6 18 12 25 12 6 0 17 6 23 14 6 8 22 16 34 19 21 6 21 5 3 -8 -10 -8 -24 -16 -30 -19 -6 -3 -1 -14 14 -26 14 -13 18 -21 10 -19 -17 3 -70 -21 -70 -31 0 -11 106 9 235 45 168 47 277 74 323 82 18 3 35 9 38 14 3 5 18 9 34 9 16 0 31 4 34 9 3 5 20 11 38 14 18 3 60 13 93 22 33 9 77 19 98 22 20 3 40 9 43 14 3 5 18 9 34 9 16 0 32 5 35 10 3 5 19 10 35 10 16 0 32 5 35 10 3 6 19 10 35 10 16 0 31 4 34 9 3 5 20 11 38 14 27 4 164 36 226 53 10 3 12 141 10 694 l-3 690 198 0 197 0 0 -880 0 -880 -874 0 c-649 0 -882 -3 -903 -12 -30 -13 -483 -20 -483 -8 0 4 -6 8 -12 10 -7 2 -424 5 -925 7 l-913 3 0 880 0 880 213 0 212 0 0 -692 0 -691 65 -13 c36 -8 90 -21 120 -30 30 -8 73 -20 95 -26 22 -5 48 -14 57 -19 10 -5 31 -9 47 -9 17 0 33 -4 36 -10 3 -5 19 -10 34 -10 15 0 31 -4 36 -8 6 -5 46 -17 90 -26 44 -10 89 -21 100 -26 21 -9 59 -18 113 -27 17 -3 32 -9 32 -14 0 -5 10 -9 22 -9 12 0 35 -4 52 -10 119 -37 403 -108 471 -117 22 -3 44 -9 50 -14 5 -5 13 -9 19 -9 5 0 -1 9 -14 20 -13 11 -31 20 -41 20 -13 0 -17 6 -14 21 3 15 0 19 -10 16 -7 -3 -37 3 -67 15 -29 11 -89 29 -133 39 -44 11 -88 24 -97 29 -10 6 -29 10 -42 10 -14 0 -28 5 -31 10 -3 6 -22 10 -41 10 -19 0 -34 4 -34 9 0 5 -15 11 -32 14 -18 3 -67 14 -108 25 -182 49 -234 62 -251 62 -11 0 -19 5 -19 10 0 6 -15 10 -33 10 -18 0 -37 4 -42 8 -6 5 -35 14 -65 21 -68 16 -222 57 -272 73 l-38 11 0 909 c0 932 0 933 36 899z m154 -19 c0 -4 -4 -13 -9 -21 -7 -11 -13 -10 -35 4 -14 10 -26 18 -26 19 0 0 16 2 35 3 19 1 35 -1 35 -5z m725 -102 c3 -6 -1 -7 -9 -4 -18 7 -21 14 -7 14 6 0 13 -4 16 -10z m1225 -64 c0 -2 -7 -7 -16 -10 -8 -3 -12 -2 -9 4 6 10 25 14 25 6z m-1035 -34 c-3 -3 -11 0 -18 7 -9 10 -8 11 6 5 10 -3 15 -9 12 -12z m730 -112 c-3 -5 -12 -10 -18 -10 -7 0 -6 4 3 10 19 12 23 12 15 0z m-1870 -117 c-2 -10 -4 -20 -4 -22 -1 -3 -6 0 -12 6 -6 6 -8 16 -5 22 11 17 25 13 21 -6z m1585 8 c0 -5 10 -12 23 -14 21 -4 21 -4 1 -6 -12 0 -27 6 -34 14 -9 10 -9 15 -1 15 6 0 11 -4 11 -9z m1683 3 c8 -8 -3 -34 -14 -34 -5 0 -9 9 -9 20 0 19 11 26 23 14z m-3730 -34 c-3 -11 -7 -20 -9 -20 -2 0 -4 9 -4 20 0 11 4 20 9 20 5 0 7 -9 4 -20z m3497 -1110 c0 -5 -5 -10 -11 -10 -5 0 -7 5 -4 10 3 6 8 10 11 10 2 0 4 -4 4 -10z m-3005 -250 c3 -5 2 -10 -4 -10 -5 0 -13 5 -16 10 -3 6 -2 10 4 10 5 0 13 -4 16 -10z m3210 0 c-3 -5 -14 -10 -23 -10 -15 0 -15 2 -2 10 20 13 33 13 25 0z m-2210 -130 c3 -6 -1 -7 -9 -4 -18 7 -21 14 -7 14 6 0 13 -4 16 -10z m2668 -294 c4 -10 1 -13 -8 -9 -8 3 -12 9 -9 14 7 12 11 11 17 -5z"> </path> <path d="M1865 4670 c3 -5 8 -10 11 -10 2 0 4 5 4 10 0 6 -5 10 -11 10 -5 0 -7 -4 -4 -10z"></path> <path d="M1883 4423 c-7 -2 -13 -9 -13 -14 0 -6 5 -7 10 -4 6 3 10 -3 10 -14 0 -13 11 -24 35 -32 19 -7 35 -17 35 -21 0 -4 6 -8 13 -8 18 0 67 -24 67 -32 0 -5 6 -8 14 -8 14 0 120 -50 484 -226 156 -76 167 -80 191 -65 22 14 -4 48 -57 71 -26 11 -59 26 -74 33 -16 6 -28 15 -28 19 0 5 -6 8 -13 8 -7 0 -37 11 -65 25 -29 14 -58 25 -66 25 -8 0 -16 3 -18 8 -4 10 -87 52 -104 52 -8 0 -14 3 -14 8 0 4 -15 13 -32 21 -18 7 -82 37 -143 66 -60 29 -125 59 -142 66 -18 8 -33 17 -33 21 0 9 -38 9 -57 1z m302 -153 c3 -6 -1 -7 -9 -4 -18 7 -21 14 -7 14 6 0 13 -4 16 -10z"> </path> <path d="M1884 4204 c-23 -10 9 -50 60 -73 28 -13 101 -48 162 -77 61 -30 116 -54 122 -54 7 0 12 -4 12 -10 0 -5 9 -10 20 -10 11 0 20 -4 20 -10 0 -5 5 -10 12 -10 6 0 61 -24 122 -53 61 -30 126 -60 144 -68 17 -8 32 -17 32 -21 0 -5 11 -8 25 -8 14 0 25 -3 25 -8 0 -4 13 -13 30 -20 33 -15 70 -8 70 13 0 24 -28 40 -345 190 -66 32 -161 77 -210 101 -50 24 -96 44 -102 44 -6 0 -13 3 -15 8 -4 10 -75 42 -93 42 -7 0 -15 4 -17 10 -4 11 -58 22 -74 14z m561 -274 c3 -6 -1 -7 -9 -4 -18 7 -21 14 -7 14 6 0 13 -4 16 -10z"> </path> <path d="M1893 3987 c-21 -11 -21 -13 -5 -33 17 -21 217 -124 240 -124 7 0 12 -4 12 -10 0 -5 6 -10 12 -10 13 0 25 -6 248 -114 75 -36 141 -66 148 -66 7 0 12 -4 12 -10 0 -5 6 -10 13 -10 18 0 67 -24 67 -32 0 -5 7 -8 15 -8 8 0 24 -6 35 -12 16 -10 23 -10 35 3 24 23 9 45 -48 72 -136 65 -186 87 -196 87 -6 0 -11 3 -11 8 0 4 -15 13 -32 20 -18 8 -64 29 -102 48 -37 19 -74 34 -82 34 -8 0 -14 5 -14 10 0 6 -5 10 -10 10 -12 0 -102 41 -110 49 -7 8 -44 25 -102 48 -27 10 -48 21 -48 26 0 4 -8 7 -18 7 -10 0 -22 4 -27 9 -6 6 -18 5 -32 -2z"> </path> <path d="M1883 3766 c-17 -20 12 -48 84 -81 97 -46 251 -119 383 -184 69 -33 131 -61 138 -61 7 0 12 -4 12 -10 0 -5 6 -10 13 -10 6 0 52 -20 101 -44 69 -34 94 -42 108 -35 10 5 18 13 18 17 0 16 -32 52 -46 52 -8 0 -35 11 -62 24 -26 14 -62 30 -79 38 -18 7 -33 16 -33 20 0 5 -5 8 -10 8 -6 0 -53 20 -106 45 -52 25 -99 45 -104 45 -6 0 -10 5 -10 10 0 6 -5 10 -12 10 -7 0 -57 22 -113 49 -55 26 -127 61 -160 77 -33 15 -61 32 -63 36 -6 13 -46 8 -59 -6z m652 -316 c3 -6 -1 -7 -9 -4 -18 7 -21 14 -7 14 6 0 13 -4 16 -10z"> </path> <path d="M1886 3552 c-15 -25 11 -50 92 -89 48 -23 148 -71 222 -107 75 -36 141 -66 148 -66 7 0 12 -4 12 -10 0 -5 5 -10 12 -10 7 0 81 -34 165 -75 150 -73 186 -85 198 -65 13 20 -16 47 -87 80 -40 19 -74 38 -76 42 -2 4 -10 8 -17 8 -7 0 -35 11 -62 24 -26 13 -106 52 -178 86 -71 34 -189 91 -261 126 -127 62 -158 73 -168 56z"> </path> <path d="M2635 3480 c3 -5 8 -10 11 -10 2 0 4 5 4 10 0 6 -5 10 -11 10 -5 0 -7 -4 -4 -10z"></path> <path d="M1893 3335 c-24 -10 -31 -25 -13 -25 6 0 10 -6 10 -13 0 -8 18 -20 40 -27 22 -7 40 -17 40 -22 0 -4 4 -8 10 -8 10 0 134 -58 397 -186 83 -41 159 -74 167 -74 9 0 16 -3 16 -7 0 -9 49 -33 67 -33 7 0 13 -3 13 -8 0 -4 13 -13 30 -20 29 -13 70 -9 70 8 0 20 -13 40 -26 40 -8 0 -14 5 -14 10 0 6 -6 10 -13 10 -7 0 -39 13 -72 29 -33 16 -114 55 -180 86 -110 52 -332 159 -465 224 -43 21 -60 24 -77 16z"> </path> <path d="M3924 4366 c-142 -72 -216 -106 -232 -106 -7 0 -12 -3 -12 -8 0 -4 -15 -13 -32 -21 -49 -20 -180 -81 -200 -92 -38 -20 -56 -28 -130 -63 -79 -37 -94 -57 -62 -80 13 -10 34 -3 107 32 110 52 224 107 409 196 76 36 144 66 152 66 8 0 16 3 18 8 2 4 34 23 72 42 77 40 100 65 76 80 -24 16 -39 11 -166 -54z"> </path> <path d="M4025 4195 c-16 -7 -79 -37 -140 -66 -149 -70 -456 -218 -477 -229 -10 -6 -24 -10 -32 -10 -8 0 -16 -4 -18 -8 -4 -9 -93 -52 -109 -52 -18 0 -6 -55 14 -58 20 -4 77 19 77 30 0 5 9 8 20 8 11 0 20 5 20 10 0 6 6 10 13 10 8 0 49 18 93 39 43 21 138 67 209 101 72 34 180 86 241 116 61 30 115 54 120 54 11 0 44 37 44 49 0 8 -24 21 -38 21 -4 0 -20 -7 -37 -15z"> </path> <path d="M3994 3966 c-33 -17 -77 -37 -97 -45 -20 -8 -37 -18 -37 -23 0 -4 -6 -8 -12 -8 -7 0 -49 -18 -93 -39 -255 -126 -458 -221 -470 -221 -8 0 -15 -4 -15 -10 0 -5 -7 -10 -15 -10 -21 0 -19 -46 2 -54 10 -4 53 11 107 38 50 24 159 76 241 116 83 39 172 83 199 96 28 13 55 24 62 24 7 0 14 3 16 8 3 8 141 76 173 86 30 9 49 43 33 59 -20 18 -28 17 -94 -17z"> </path> <path d="M4040 3773 c0 -4 -15 -14 -32 -22 -18 -7 -74 -33 -124 -57 -49 -24 -96 -44 -102 -44 -7 0 -12 -4 -12 -10 0 -5 -6 -10 -13 -10 -7 0 -44 -16 -83 -35 -38 -19 -75 -35 -81 -35 -7 0 -13 -4 -13 -10 0 -5 -5 -10 -10 -10 -15 0 -105 -43 -108 -52 -2 -4 -10 -8 -17 -8 -7 0 -30 -9 -52 -19 -21 -11 -64 -32 -95 -46 -40 -19 -58 -33 -58 -46 0 -49 44 -36 253 71 22 11 45 20 53 20 8 0 14 5 14 10 0 6 4 10 10 10 5 0 52 20 104 45 53 25 100 45 106 45 5 0 10 3 10 8 0 4 15 13 33 21 17 7 46 19 64 27 17 8 36 14 42 14 6 0 11 5 11 10 0 6 9 10 19 10 11 0 21 3 23 8 2 4 29 20 61 37 45 23 57 34 55 50 -2 13 -12 21 -30 23 -16 2 -28 0 -28 -5z m-715 -383 c-3 -5 -12 -10 -18 -10 -7 0 -6 4 3 10 19 12 23 12 15 0z"> </path> <path d="M3970 3519 c-41 -21 -80 -39 -87 -39 -6 0 -13 -3 -15 -7 -4 -11 -115 -63 -133 -63 -8 0 -15 -3 -15 -8 0 -4 -15 -13 -32 -21 -18 -7 -83 -38 -144 -67 -61 -30 -116 -54 -122 -54 -7 0 -12 -4 -12 -10 0 -5 -9 -10 -20 -10 -11 0 -20 -4 -20 -10 0 -5 -6 -10 -13 -10 -7 0 -37 -12 -66 -26 -41 -21 -51 -31 -49 -48 2 -11 11 -22 20 -24 14 -3 219 89 341 153 16 8 35 15 43 15 8 0 14 5 14 10 0 6 6 10 13 10 8 0 83 34 168 76 85 42 173 85 197 97 50 24 66 41 58 62 -9 24 -45 16 -126 -26z"> </path> <path d="M4020 3325 c-47 -27 -175 -85 -187 -85 -7 0 -13 -4 -13 -10 0 -5 -6 -10 -12 -10 -7 0 -62 -25 -123 -55 -60 -30 -115 -55 -122 -55 -7 0 -13 -3 -13 -8 0 -4 -15 -13 -32 -21 -18 -8 -74 -34 -124 -58 -50 -23 -96 -43 -102 -43 -7 0 -12 -4 -12 -10 0 -5 -9 -10 -21 -10 -16 0 -20 -5 -17 -27 2 -17 10 -29 21 -31 20 -4 77 19 77 30 0 5 6 8 14 8 8 0 31 9 53 20 21 10 61 30 88 43 28 13 59 28 70 34 25 15 199 96 243 114 17 8 32 17 32 21 0 5 5 8 12 8 10 0 168 72 217 99 27 14 38 41 21 51 -21 13 -41 12 -70 -5z m-435 -245 c-3 -5 -12 -10 -18 -10 -7 0 -6 4 3 10 19 12 23 12 15 0z"> </path> <path d="M4973 2600 c0 -25 2 -35 4 -22 2 12 2 32 0 45 -2 12 -4 2 -4 -23z"></path> <path d="M3583 2051 c-73 -27 -114 -61 -146 -123 -21 -40 -27 -67 -27 -110 0 -32 5 -58 10 -58 6 0 10 -6 10 -14 0 -46 57 -103 140 -142 19 -8 43 -20 52 -25 10 -5 23 -9 29 -9 20 0 71 -60 65 -77 -3 -8 -6 -19 -6 -24 0 -5 -7 -9 -15 -9 -8 0 -15 -4 -15 -10 0 -13 -84 -13 -108 -1 -9 5 -33 16 -53 25 -20 9 -42 22 -49 31 -22 26 -40 18 -40 -19 0 -19 -4 -38 -10 -41 -5 -3 -10 -19 -10 -36 0 -16 -4 -29 -10 -29 -5 0 -10 -12 -10 -28 0 -22 8 -32 38 -47 20 -11 40 -24 44 -30 11 -15 274 -13 289 3 7 6 19 12 27 12 7 0 20 7 28 15 8 8 21 18 28 22 7 5 25 30 40 56 22 40 26 60 26 126 0 45 -6 89 -13 104 -20 39 -61 87 -74 87 -6 0 -13 4 -15 8 -3 8 -111 63 -131 66 -30 5 -68 40 -65 60 4 27 66 58 90 45 9 -5 28 -9 42 -9 13 0 26 -4 28 -8 5 -12 71 -41 80 -36 4 3 8 13 8 22 0 9 11 47 24 85 l24 67 -27 19 c-33 23 -146 51 -203 51 -24 -1 -66 -9 -95 -19z m237 -40 c38 -16 44 -23 42 -42 -2 -13 -7 -28 -12 -34 -4 -5 -10 -22 -14 -37 -6 -24 -36 -41 -36 -20 0 13 -72 30 -125 29 -43 -2 -57 -7 -74 -27 -11 -14 -20 -36 -21 -48 0 -32 47 -74 107 -97 174 -66 243 -190 178 -321 -43 -86 -113 -124 -232 -125 -68 -1 -112 8 -175 34 -30 13 -37 44 -19 89 5 13 12 31 15 41 5 17 9 16 48 -6 108 -62 235 -37 244 48 6 53 -18 72 -168 139 -148 66 -183 226 -73 332 24 24 59 46 81 52 65 17 183 13 234 -7z"> </path> <path d="M831 1658 l1 -398 105 0 105 0 -4 199 c-2 150 0 197 9 194 6 -3 15 -18 18 -34 4 -16 11 -29 16 -29 5 0 9 -5 9 -10 0 -6 22 -43 49 -83 26 -40 51 -82 55 -94 4 -13 12 -23 17 -23 5 0 9 -7 9 -15 0 -8 5 -15 10 -15 6 0 10 -5 10 -10 0 -6 10 -26 23 -45 l22 -35 92 0 92 0 -2 397 -2 397 -100 0 -100 0 0 -187 c0 -103 -3 -187 -7 -187 -4 0 -17 21 -30 47 -34 70 -42 83 -50 83 -5 0 -8 7 -8 15 0 8 -4 15 -10 15 -5 0 -10 4 -10 10 0 5 -25 48 -55 95 -30 46 -55 89 -55 95 0 5 -6 10 -12 10 -7 0 -55 1 -106 3 l-92 2 1 -397z m197 331 c12 -19 27 -41 32 -49 58 -86 220 -346 220 -352 0 -4 4 -8 8 -8 5 0 9 97 10 216 1 118 4 218 6 222 2 4 19 6 38 5 18 -1 45 -2 61 -2 l27 -1 0 -365 0 -365 -60 0 c-60 0 -60 0 -93 46 -42 59 -76 115 -83 137 -4 9 -10 17 -15 17 -5 0 -9 7 -9 15 0 8 -4 15 -10 15 -5 0 -10 4 -10 10 0 5 -25 48 -55 95 -30 46 -55 89 -55 93 0 5 -9 17 -21 28 -21 19 -21 19 -19 -21 1 -22 2 -129 1 -237 l-1 -198 -65 0 -65 0 0 368 0 368 68 -1 c65 -1 68 -2 90 -36z"> </path> <path d="M2224 2051 c-2 -2 -4 -181 -4 -398 l0 -393 249 0 249 0 -2 78 c-1 42 1 82 6 88 19 26 -20 34 -156 32 l-136 -3 0 300 0 300 -101 0 c-55 0 -103 -2 -105 -4z m173 -328 l1 -298 146 -3 147 -3 -3 -62 -3 -62 -212 -1 -213 -2 0 364 0 364 68 0 69 0 0 -297z"> </path> <path d="M4650 1659 l0 -399 250 0 250 0 0 100 0 99 -136 -5 c-76 -2 -141 -7 -145 -10 -5 -3 -9 1 -9 8 -1 7 -2 146 -3 308 l-2 295 -102 1 -103 1 0 -398z m163 361 c4 0 7 -135 7 -300 l0 -300 148 0 147 0 -2 -62 -1 -63 -194 -3 c-106 -1 -202 0 -213 2 -21 5 -21 4 -15 726 0 4 67 4 123 0z"> </path> <path d="M4988 1333 c6 -2 18 -2 25 0 6 3 1 5 -13 5 -14 0 -19 -2 -12 -5z"></path></g> </svg>
+<div class="nlsl-brand-text"><span class="nlsl-brand-title">NATIONAL LIBRARY</span> <span class="nlsl-brand-subtitle">OF SRI LANKA</span></div>
+</div>
+<p class="nlsl-desc">The National Library of Sri Lanka is the country's foremost research and reference library, dedicated to preserving the nation's documentary heritage and providing access to knowledge resources. Through this catalogue, users can discover books, journals, government publications, rare materials, and other information resources held within the National Library's collections.</p>
+</div>
+<!-- Column 2: Services -->
+<div class="col-12 col-md-4 col-lg-2 mb-4 nlsl-border-right">
+<h5 class="nlsl-heading">Using the Library</h5>
+<ul class="nlsl-list">
+<li><a href="https://www.natlib.lk/NLSL/membership/">Become a Member</a></li>
+<li><a href="https://www.natlib.lk/NLSL/how-to-use/">Rules and Regulations</a></li>
+<li><a href="https://www.natlib.lk/NLSL/services/">Library Services</a></li>
+<li><a href="https://www.natlib.lk/NLSL/discover/">Acquisition Policy</a></li>
+</ul>
+</div>
+<!-- Column 3: About National Library -->
+<div class="col-12 col-md-4 col-lg-2 mb-4 nlsl-border-right">
+<h5 class="nlsl-heading">About the National Library</h5>
+<ul class="nlsl-list">
+<li><a href="https://www.natlib.lk/NLSL/about-us/">About the National Library</a></li>
+<li><a href="https://www.natlib.lk/ICNATLIB2026/">National Library Research Symposium</a></li>
+<li><a href="https://www.natlib.lk/NLSL/contact-us/">Contact Us</a></li>
+</ul>
+</div>
+<!-- Column 4: Quick Links -->
+<div class="col-12 col-md-4 col-lg-2 mb-4 nlsl-border-right">
+<h5 class="nlsl-heading">Quick Links</h5>
+<ul class="nlsl-list">
+<li><a href="https://www.natlib.lk/NLDSB/">National Library &amp; Documentation Services Board Website</a></li>
+<li><a href="https://www.natlib.lk/">National Library Website</a></li>
+<li><a href="https://diglib.natlib.lk">National Digital Library Website</a></li>
+<li><a href="https://unioncatalogue.dlp.gov.lk">National Union Catalogue</a></li>
+</ul>
+</div>
+<!-- Column 5: Contact -->
+<div class="col-12 col-lg-2 mb-4">
+<h5 class="nlsl-heading">Contact Us</h5>
+<ul class="nlsl-contact-list">
+<li><i class="fa-solid fa-location-dot" aria-hidden="true"></i> <span>No 14, Independence Avenue,<br />Colombo 07, Sri Lanka.</span></li>
+<li><i class="fa-solid fa-phone" aria-hidden="true"></i> <span> <a href="tel:+94112698847">+94 11 269 8847</a><br /><a href="tel:+94112685197">+94 11 268 5197</a> </span></li>
+<li><i class="fa-solid fa-envelope" aria-hidden="true"></i> <span><a href="mailto:info@natlib.lk">info@natlib.lk</a></span></li>
+<li><i class="fa-solid fa-globe" aria-hidden="true"></i> <span><a href="https://www.natlib.lk/" target="_blank" rel="noopener">www.natlib.lk</a></span></li>
+</ul>
+</div>
+</div>
+<!-- Bottom Bar -->
+<div class="row pt-3 nlsl-bottom-bar">
+<div class="col-12 col-md-4 text-center text-md-left mb-2 mb-md-0 color-light">&copy; National Library and Documentation Services Board</div>
+<div class="col-12 col-md-4 text-center mb-2 mb-md-0 color-light">All Rights Reserved.</div>
+<div class="col-12 col-md-4 text-center text-md-right color-light">Last Updated: August 21, 2026</div>
+</div>
+</div></div>
+                </div>
+            
+        </div>
+    
+ </div>
+            </div>
+        </div>
+    
+    <!-- prettier-ignore-start -->
+    </div> <!-- / #wrapper in masthead.inc -->
+    <!-- prettier-ignore-end -->
+
+    
+        <footer id="changelanguage" class="navbar navbar-expand navbar-light bg-light noprint">
+            <div class="container-fluid">
+                <div class="collapse navbar-collapse">
+                    
+                    
+
+                    <div class="navbar-nav flex-grow-1">
+                        
+                            <a id="report_a_problem" class="nav-link" href="/cgi-bin/koha/opac-reportproblem.pl">
+                                <i class="fa fa-warning fa-fw fa-icon-footer" aria-hidden="true"></i>
+                                <span class="report_a_problem_text">Report a problem</span>
+                            </a>
+                        
+
+                        
+                    </div>
+                    
+                        <div class="navbar-nav">
+                            <a id="koha_url" class="nav-link koha_url" href="https://koha-community.org">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                                    <path
+                                        fill="currentColor"
+                                        d="M7.394.75c.82-.45 1.75-.72 2.69-.75.5.015.99.1 1.45.27.92.35 1.68 1.05 2.15 1.9.53.865.76 1.875.87 2.875.25 3.315-.98 6.635-3.07 9.18-.825.82-1.835 1.52-3 1.735-.96.135-2-.07-2.775-.675-.48-.365-.67-1-.63-1.575.425.6 1.12 1.015 1.86 1.035.675.03 1.35-.275 1.8-.765.75-.825.835-2.21.12-3.08-.325-.375-.7-.715-1.15-.95-.44-.265-.95-.38-1.46-.45-.93-.06-1.9.11-2.72.57a3.22 3.22 0 0 0-1.565 2.15c-.2.7-.125 1.43-.05 2.14-.31-.81-.43-1.67-.5-2.53v-.64c.12-3.13 1.43-6.2 3.53-8.515.725-.75 1.53-1.43 2.45-1.92Zm0 0"
+                                        style="stroke-width:.500008"
+                                    />
+                                </svg>
+                                <span class="koha_url_text">Powered by Koha</span>
+                            </a>
+                        </div>
+                    
+                </div>
+                <!-- /.collapse.navbar-collapse -->
+            </div>
+            <!-- /.container-fluid -->
+        </footer>
+        <!-- / #changelanguage -->
+    
+
+
+
+
+<!-- CookieConsentedJS code that may run -->
+
+
+<!-- JavaScript includes -->
+<script src="/opac-tmpl/lib/jquery/jquery-3.6.0.min_25.0510000.js"></script>
+<script src="/opac-tmpl/lib/jquery/jquery-migrate-3.3.2.min_25.0510000.js"></script>
+<script src="/opac-tmpl/lib/bootstrap/js/bootstrap.bundle.min_25.0510000.js"></script>
+<script src="/opac-tmpl/lib/fontfaceobserver/fontfaceobserver.min_25.0510000.js"></script>
+<script src="/opac-tmpl/lib/enquire/enquire.min_25.0510000.js"></script>
+<script>
+    let logged_in_user_id = "";
+</script>
+<script src="/opac-tmpl/bootstrap/js/global_25.0510000.js"></script>
+<script type="module" src="/opac-tmpl/bootstrap/js/form-submit_25.0510000.js"></script>
+
+<script>
+    
+
+    
+    $(".print-large").on("click",function(){
+        window.print();
+        return false;
+    });
+    $(".addtoshelf").on("click",function(e){
+        e.preventDefault();
+        Dopop( this.href );
+    });
+    $("body").on("click", ".addtocart", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        addRecord( biblionumber );
+    });
+    $("body").on("click", ".cartRemove", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        delSingleRecord( biblionumber );
+    });
+</script>
+
+    <script src="/opac-tmpl/bootstrap/js/basket_25.0510000.js"></script>
+
+
+<script src="/opac-tmpl/bootstrap/js/tags_25.0510000.js"></script>
+
+    <script src="/opac-tmpl/bootstrap/js/google-jackets_25.0510000.js"></script>
+
+
+
+
+    <script src="/opac-tmpl/bootstrap/js/localcovers_25.0510000.js"></script>
+
+
+
+
+
+
+<script src="/opac-tmpl/lib/js-cookie/js.cookie-3.0.1.min_25.0510000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/show-password-toggle_25.0510000.js"></script>
+<script>
+    $(document).ready(function () {
+        if ($("#searchsubmit").length) {
+            $(document).on("click", "#searchsubmit", function (e) {
+                Cookies.remove("form_serialized", { path: "/" });
+                Cookies.remove("form_serialized_limits", { path: "/" });
+                Cookies.remove("search_path_code", { path: "/" });
+            });
+        }
+    });
+</script>
+
+
+
+
+<script src="/opac-tmpl/lib/dayjs/dayjs.min_25.0510000.js"></script>
+<script src="/opac-tmpl/lib/dayjs/plugin/timezone_25.0510000.js"></script>
+<script src="/opac-tmpl/lib/dayjs/plugin/utc_25.0510000.js"></script>
+<script>
+    dayjs.extend(window.dayjs_plugin_utc);
+    dayjs.extend(window.dayjs_plugin_timezone);
+</script>
+<!-- js-date-format.inc -->
+<script>
+    (function() {
+        var def_date_format = 'iso';
+        var def_time_format = '24hr';
+        var def_tz = 'Asia/Colombo';
+
+        var get_date_pattern = function(format) {
+            var date_pattern = 'YYYY-MM-DD';
+            if(format == 'us') date_pattern = 'MM/DD/YYYY';
+            if(format == 'metric') date_pattern = 'DD/MM/YYYY';
+            if(format == 'dmydot') date_pattern = 'DD.MM.YYYY';
+            return date_pattern;
+        };
+
+        var get_time_pattern = function(format) {
+            var time_pattern = 'HH:mm';
+            if(format == '12hr') time_pattern = 'hh:mm a';
+            return time_pattern;
+        };
+
+        /*
+         * A JS equivalent of the KohaDates TT Plugin. Passed an rfc3339 formatted date string,
+         * or JS Date, the function will return a date string formatted as per the koha instance config.
+         * Optionally accepts a dateformat parameter to allow override of the configured output format
+         * as well as a 'withtime' boolean denoting whether to include time or not in the output string.
+         */
+        window.$date = function(value, options) {
+            if(!value) return '';
+            var tz = (options&&options.tz)||def_tz;
+            var m = dayjs(value);
+            if ( ! value.match(/^\d{4}-\d{2}-\d{2}$/ ) ) {
+                m = m.tz(tz);
+            }
+
+            var dateformat = (options&&options.dateformat)||def_date_format;
+            var withtime = (options&&options.withtime)||false;
+
+            if(dateformat=='rfc3339' && withtime) return m.format();
+
+            var timeformat = (options&&options.timeformat)||def_time_format;
+            var date_pattern = get_date_pattern(dateformat);
+            var time_pattern = !withtime?'':' '+get_time_pattern(timeformat);
+
+            return m.format(date_pattern+time_pattern);
+        }
+
+        window.$datetime = function(value, options) {
+            options = options||{};
+            options.withtime = true;
+            return $date(value, options);
+        };
+
+        window.$time = function(value, options) {
+            if(!value) return '';
+            var tz = (options&&options.tz)||def_tz;
+            var m = dayjs(value);
+            if(tz) m = m.tz(tz);
+
+            var dateformat = (options&&options.dateformat);
+            var timeformat = (dateformat=='rfc3339'&&'24hr')||(options&&options.timeformat)||def_time_format;
+
+            return m.format(get_time_pattern(timeformat)+(dateformat=='rfc3339'?':ss'+(!m.isUTC()?'Z':''):''))+(dateformat=='rfc3339' && m.isUTC()?'Z':'');
+        }
+
+    })();
+</script>
+<!-- / js-date-format.inc -->
+
+
+<script>
+    (function () {
+        /**
+         * Format the biblio response from a Koha RESTful API request.
+         * @param  {Object}  biblio  The biblio json object as returned from the Koha RESTful API
+         * @param  {Object}  config  A configuration object
+         *                           Valid keys are: `link`
+         * @return {string}          The formatted HTML string
+         */
+        window.$biblio_to_html = function (biblio, config) {
+            if (biblio === undefined) {
+                return ""; // empty string for no biblio
+            }
+
+            var title = '<span class="biblio-title">';
+            if (biblio.title != null && biblio.title != "") {
+                title += escape_str(biblio.title);
+            } else {
+                title += _("No title");
+            }
+            title += "</span>";
+
+            // add subtitle
+            if (biblio.subtitle != null && biblio.subtitle != "") {
+                title += ' <span class="biblio-subtitle">' + escape_str(biblio.subtitle) + "</span>";
+            }
+
+            // set title as link
+            if (config && config.link) {
+                if (config.link === "marcdetail") {
+                    title = '<a href="/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                } else if (config.link === "labeled_marc") {
+                    title = '<a href="/cgi-bin/koha/opac-labeledMARCdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                } else if (config.link === "isbd") {
+                    title = '<a href="/cgi-bin/koha/opac-ISBDdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                } else {
+                    title = '<a href="/cgi-bin/koha/opac-detail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                }
+            }
+
+            // add medium
+            if (biblio.medium != null && biblio.medium != "") {
+                title += ' <span class="biblio-medium">' + escape_str(biblio.medium) + "</span>";
+            }
+
+            // add part numbers/names
+            let part_numbers = typeof biblio.part_number === "string" ? biblio.part_number.split("|") : [];
+            let part_names = typeof biblio.part_name === "string" ? biblio.part_name.split("|") : [];
+            let i = 0;
+            while (part_numbers[i] || part_names[i]) {
+                if (part_numbers[i]) {
+                    title += ' <span class="part-number">' + escape_str(part_numbers[i]) + "</span>";
+                }
+                if (part_names[i]) {
+                    title += ' <span class="part-name">' + escape_str(part_names[i]) + "</span>";
+                }
+                i++;
+            }
+
+            return title;
+        };
+    })();
+</script>
+
+
+
+
+    <script>
+        
+
+    </script>
+
+
+
+
+
+
+</body>
+<!-- prettier-ignore-start -->
+</html>
+<!-- prettier-ignore-end -->
+
+

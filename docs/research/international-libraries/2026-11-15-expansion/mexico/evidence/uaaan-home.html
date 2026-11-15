@@ -1,0 +1,1530 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: opac-main.tt -->
+
+
+
+
+
+
+
+
+
+<html lang="es-ES" class="no-js">
+<head>
+
+<title>DR. Egidio G. Rebonato Koha</title>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha 23.0508000" /> <!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/lib/jquery/responsive.dataTables.min_23.0508000.css">
+
+<link rel="shortcut icon" href="https://biblioteca.uaaan.mx/opac-tmpl/bootstrap/images/favicon-16x16.png" type="image/x-icon" />
+<link rel="apple-touch-icon" href="https://biblioteca.uaaan.mx/opac-tmpl/bootstrap/images/favicon-16x16.png" type="image/x-icon" />
+
+ 
+ 
+ 
+
+
+ <link type="text/css" href="/opac-tmpl/bootstrap/css/opac_23.0508000.css" rel="stylesheet">
+
+
+
+
+ <link rel="stylesheet" media="print" href="/opac-tmpl/bootstrap/css/print_23.0508000.css" type="text/css">
+
+
+ <style>button#dropdownMenu1 {
+    padding: 12px 20px;
+    color: #000;
+    text-decoration: none;
+}
+.container-fluid, .main {
+    max-width: 1200px;
+    margin: auto;
+}
+img.menI {
+    margin-right: 5px;
+    margin-bottom: 2px;
+}
+.mastheadsearch.librarypulldown h1 {
+    text-align: center;
+}
+img#banner {
+    border-radius: 0px;
+}
+div#opacheader {
+    margin: 10px 0;
+    box-shadow: 10px 10px 10px #ddd;
+}
+.navbar-inverse .brand, .navbar-inverse .nav>li>a {
+    color: #FFF;
+}
+#members a {
+    color: #FFF;
+}
+#members a:hover, .navbar-inverse .brand:hover, .navbar-inverse .nav>li>a:hover {
+  color: #d4af37;    
+/*  color: #53AB28;  VERDE */
+}
+.dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus, .dropdown-submenu:hover>a, .dropdown-submenu:focus>a {
+    text-decoration: none;
+    color: #ffffff;
+    background-color: #d4af37;  /*background-color: #53AB28;    */
+    background-image: -moz-linear-gradient(top, #d4af37, #d4af37);  
+/* background-image: -moz-linear-gradient(top, #53AB28, #53AB28); */
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#d4af37), to(#d4af37));
+/*  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#53AB28), to(#53AB28));  */
+    background-image: -webkit-linear-gradient(top, #d4af37, #d4af37);
+/*     background-image: -webkit-linear-gradient(top, #53AB28, #53AB28);  */
+    background-image: -o-linear-gradient(top, #d4af37, #d4af37);
+/*      background-image: -o-linear-gradient(top, #53AB28, #53AB28);  */
+    background-image: linear-gradient(to bottom, #d4af37, #d4af37);
+/*      background-image: linear-gradient(to bottom, #d4af37, #d4af37);  */
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#d4af37', endColorstr='#d4af37', GradientType=0);
+
+/* filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#53AB28', endColorstr='#53AB28', GradientType=0);  */
+}
+
+
+div#menuCentral {
+    background-color: #FFF;
+}
+#menuPrincipal ul, #menuRedes ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#menuPrincipal  ul li, #menuRedes ul li {
+    float: left;
+}
+
+#menuPrincipal ul li a, #menuRedes ul li a {
+    display: block;
+    color: #000;
+    text-align: center;
+    padding: 14px 20px;
+    text-decoration: none;
+}
+
+#menuPrincipal ul li a:hover {
+    background-color: #DDD;
+}
+div#menuPrincipal {
+    float: left;
+    width: 80%;
+    display: inline;
+}
+div#menuRedes {
+    text-align: right;
+    display: inline;
+}
+#menuRedes ul li a {
+    padding: 8px 7px;
+}
+.imgopacity:hover{
+  -moz-transform: scale(1.1);
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+}
+
+div#opacheader {
+    background-color: #FFF;
+}
+
+.iframe-16-9 {
+    position: relative;
+    padding-bottom: 20%;
+    padding-top: 35px;
+    height: 0;
+    overflow: hidden;
+    width: 100%;
+    min-height: 200px;
+}
+.iframe-16-9  iframe {
+    position: absolute;
+    top:0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.object-16-9 {
+    position: relative;
+    padding-bottom: 56.25%;
+    padding-top: 35px;
+    height: 0;
+    overflow: hidden;
+}
+
+.object-16-9  object {
+    position: absolute;
+    top:0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+
+ul.breadcrumb {
+    background-color: #101010;
+    border-radius: 1px;
+}
+
+.breadcrumb li a {
+    color: #FFF;
+    text-shadow: 0 0px 0 #ffffff;
+}
+
+.nav-pills>.active>a, .nav-pills>.active>a:hover, .nav-pills>.active>a:focus {
+    background-color: #d4af37; /*  background-color: #53AB28;    */
+    margin-top: 0px;
+    border-radius: 0px;
+}
+
+ul.nav.nav-pills.nav-stacked {
+    border-radius: 5px;
+    border-color: #d4af37;  /*  border-color: #53AB28;  */
+    border-style: solid;
+    border-width: 1px;
+}
+
+a, a:visited {
+    color: #666666;
+}
+ 
+.enlacesExternos a img {
+    margin: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+.enlacesExternos, .divNoticias {
+    padding: 5px;
+}
+
+
+.newsheader {
+    background-color: #FFF;
+    border-bottom: 0px solid #FFF;
+    margin: 0;
+    padding: 5px;
+}
+
+.newscontainer {
+    border: 0px solid #FFF;
+    border-bottom-width: 0;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+}
+.newsbody p {
+    text-align: justify;
+}
+
+div#pie {
+    color: #FFF;
+}
+div#opaccredits {
+    background-color: #222;
+    padding: 10px;
+}
+
+div#opac-main-search div {
+    background-color: #FFF;
+}
+
+.main {
+    border: 1px solid #FFF;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+}
+
+
+.mastheadsearch {
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+    padding: .8em;
+    margin: .5em 0;
+    background: #FFF;
+    background: -moz-linear-gradient(top, #FFF 38%, #FFF 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(38%, #FFF), color-stop(100%, #FFF));
+    background: -webkit-linear-gradient(top, #FFF 38%, #FFF 100%);
+    background: -o-linear-gradient(top, #FFF 38%, #FFF 100%);
+    background: -ms-linear-gradient(top, #FFF 38%, #FFF 100%);
+    background: linear-gradient(to bottom, #FFF 38%, #FFF 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFF', endColorstr='#FFF', GradientType=0);
+}
+
+#opac-main-search select {
+    width: auto;
+    max-width: 13em;
+}
+
+div#moresearches {
+    text-align: center;
+}
+
+.btn-primary, .btn-success {
+    color: #ffffff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    background-color: #006dcc;
+    background-image: -moz-linear-gradient(top, #555555, #666);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#555555), to(#666));
+    background-image: -webkit-linear-gradient(top, #555555, #666);
+    background-image: -o-linear-gradient(top, #555555, #666);
+    background-image: linear-gradient(to bottom, #555555, #666);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#555555', endColorstr='#666', GradientType=0);
+    border-color: #555555 #555555 #666;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+}
+
+
+#search-facets, #menu {
+    border: 1px solid #d4af37;    /*  border: 1px solid #53AB28;    */
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+}
+#search-facets h4 a, #menu h4 a {
+    background-color: #d4af37;   /* background-color: #53AB28;   */
+    border-radius: 0px;
+    border-bottom: 1px solid #FFF;
+    display: block;
+    font-weight: bold;
+    padding: 5px 2px;
+    text-decoration: none;
+    color: #FFF;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+#search-facets ul, #menu ul {
+    padding: 0;
+}
+
+li#availability_facet li {
+    border-top: 1px solid #d4af37;   /* border-top: 1px solid #53AB28; */
+    padding-top: 10px;
+}
+
+h5#facet-authors, #facet-holding-libraries, #facet-itemtypes, #facet-series, #facet-topics {
+    margin-top: 20px;
+    border: 1px solid #d4af37;   /* border: 1px solid #53AB28;  */
+    background-color: #d4af37;   /* background-color: #53AB28;  */
+    color: #FFF;
+    padding: 2px 5px;
+}
+
+#search-facets a, #menu a {
+    text-decoration: none;
+}</style>
+
+
+
+ <link href="http://biblioteca.uaaan.mx/cgi-bin/koha/opac-search.pl?format=opensearchdescription" rel="search" title="Buscar DR. Egidio G. Rebonato" type="application/opensearchdescription+xml">
+ <link rel="unapi-server" type="application/xml" title="unAPI" href="http://biblioteca.uaaan.mx/cgi-bin/koha/unapi" />
+
+
+<script>
+    var Koha = {};
+    function _(s) { return s } // dummy function for gettext
+    const is_logged_in = false
+</script>
+
+ <script src="/opac-tmpl/bootstrap/es-ES/js/locale_data_23.0508000.js"></script>
+
+<script src="/opac-tmpl/bootstrap/js/Gettext_23.0508000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/i18n_23.0508000.js"></script>
+
+<link rel="stylesheet" type="text/css" href="/opac-tmpl/lib/font-awesome/css/font-awesome.min_23.0508000.css">
+
+
+               
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+<body ID="opac-main" class="branch-default" >
+
+
+
+
+
+
+
+
+
+               
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<button id="scrolltocontent">Saltar al contenido principal</button>
+<div id="wrapper">
+ <div id="header-region" class="noprint">
+ <nav class="navbar navbar-expand">
+ <div id="logo">
+ <a class="navbar-brand" href="/cgi-bin/koha/opac-main.pl">
+  DR. Egidio G. Rebonato  </a>
+ </div>
+ 
+ <div id="cartDetails" class="cart-message">Su carrito está vacío.</div>
+ 
+ <ul id="cart-list-nav" class="navbar-nav">
+ 
+ <li class="nav-item js-show">
+ <a class="nav-link" href="#" id="cartmenulink" role="button" title="Reunir ítems en los que esta interesado">
+ <i id="carticon" class="fa fa-shopping-cart fa-icon-black" aria-hidden="true"></i> <span class="cartlabel">Carrito</span> <span id="basketcount"></span>
+ </a>
+ </li>
+ 
+ <li class="divider-vertical"></li>
+ 
+ <li class="nav-item dropdown">
+ <a aria-expanded="false" aria-haspopup="true" aria-label="Mostrar desplegable con información detallada de lista" class="nav-link dropdown-toggle" data-toggle="dropdown" href="/cgi-bin/koha/opac-shelves.pl" id="listsmenu" role="button" title="Mostrar listas"><i class="fa fa-list fa-icon-black" aria-hidden="true"></i> <span class="listslabel">Listas</span>
+ </a>
+ <div aria-labelledby="listsmenu" role="menu" class="dropdown-menu">
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=0" tabindex="-1" role="menuitem"><strong>Sus listas</strong></a>
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=add_form" tabindex="-1" role="menuitem">Ingrese para crear sus propias listas</a>
+ 
+ 
+ </div> <!-- / .dropdown-menu -->
+ </li> <!-- / .nav-item.dropdown -->
+ 
+ </ul> <!-- / .navbar-nav -->
+
+ 
+ 
+ <ul id="members" class="navbar-nav">
+ <li class="nav-item dropdown">
+ 
+ 
+ 
+ <a href="/cgi-bin/koha/opac-user.pl" class="nav-link login-link loginModal-trigger"><i class="fa fa-user fa-icon-black fa-fw" aria-hidden="true"></i> <span class="userlabel">Ingresar a su cuenta</span></a>
+ 
+ 
+ 
+
+ 
+ </li>
+ 
+ 
+ <li class="nav-item search_history">
+ <a class="nav-link login-link" href="/cgi-bin/koha/opac-search-history.pl" title="Ver su historial de búsqueda">Historial de búsqueda</a>
+ </li>
+ <li class="divider-vertical"></li>
+ <li class="nav-item">
+ <a class="nav-link logout clearsh" href="/cgi-bin/koha/opac-search-history.pl?action=delete" title="Eliminar historial de búsqueda"><i class="fa fa-trash" aria-hidden="true"></i> Limpiar</a>
+ </li>
+ 
+ 
+ </ul>
+ 
+ </nav> <!-- /navbar -->
+
+ 
+ <div class="container-fluid">
+ <div class="row">
+ <div class="col">
+ 
+ 
+ <div id="opacheader">
+ 
+ <div class="default_item">
+ 
+ <div class="default_body"><!-- ********BANNER ORIGINAL 02 Feb 2023 Inicio******** --> <!--<center><img id="banner" src="/opac-tmpl/bootstrap/images/banner.png" class="img-rounded"> --> <!--</center> --> <!-- ********BANNER ORIGINAL 02 Feb 2023 Final******** --><center><img id="banner" src="https://tutorias.uaaan.mx/SPA/imagesCID/BannerCID.png" class="img-rounded" /></center><!-- **************************************** -->
+<div id="menuCentral">
+<div id="menuPrincipal">
+<ul style="overflow: inherit;">
+<li><a href="/">Inicio</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=quien">Qui&eacute;nes somos</a></li>
+<li class="dropdown"><button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"> &Aacute;reas <span class="caret"></span> </button>
+<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+<li><a href="/cgi-bin/koha/pages.pl?p=areabiblioteca">&Aacute;REA DE BIBLIOTECA</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=areabanco">&Aacute;REA DE BANCOS DE INFORMACI&Oacute;N</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=areaservicios">&Aacute;REA DE SERVICIOS DE INFORMACI&Oacute;N</a></li>
+<!--<li><a href="#">ARCHIVO HISTÓRICO Y MUSEO</a></li>--></ul>
+</li>
+<li class="dropdown"><button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"> Secciones <span class="caret"></span> </button>
+<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+<li><a href="/cgi-bin/koha/pages.pl?p=procesos">SECCI&Oacute;N DE PROCESOS T&Eacute;CNICOS</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=hemeroteca">SECCI&Oacute;N DE HEMEROTECA</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=seccionoficiales">SECCI&Oacute;N DE INEGI</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=seccionrefe">SECCI&Oacute;N DE REFERENCIA</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=seccionsalas">SECCI&Oacute;N. DE SALAS DE CONSULTA</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=prestamo">SECCI&Oacute;N DE CONTROL DE PRESTAMO</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=seccionbanco">SECCI&Oacute;N BANCO DE TESIS</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=serviciospublico">SECCI&Oacute;N DE SERVICIOS AL P&Uacute;BLICO</a></li>
+</ul>
+</li>
+<li><a href="/cgi-bin/koha/pages.pl?p=directorio">Directorio</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=reglamento">Reglamento</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=contacto">Contacto</a></li>
+</ul>
+</div>
+<div id="menuRedes">
+<ul>
+<li><a href="https://es-es.facebook.com/pages/UNIVERSIDAD-AUTONOMA-AGRARIA-ANTONIO-NARRO/111622832251681"><img alt="Facebook" src="/opac-tmpl/bootstrap/images/facebook.png" class="imgopacity" /></a></li>
+<li><a href="https://twitter.com/uaaanoficial"><img alt="Twitter" src="/opac-tmpl/bootstrap/images/twitter.png" class="imgopacity" /></a></li>
+<li><a href="https://www.youtube.com/user/UAAANOFICIAL"><img alt="Twitter" src="/opac-tmpl/bootstrap/images/youtube.png" class="imgopacity" /></a></li>
+</ul>
+</div>
+</div>
+<!-- ******************Inicio Ebsco
+Implementación caja EBSCO
+Fecha: 26 Agosto 2019
+Inicio--><center><link href="https://code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="https://code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
+<script type="text/javascript" src="https://imageserver.ebscohost.com/branding/tabbedsearch/js/FormProcessing.js"></script>
+<script type="text/javascript" src="https://imageserver.ebscohost.com/branding/tabbedsearch/js/simpletabs_1.3.packed.js"></script>
+<script type="text/javascript" src="https://imageserver.ebscohost.com/branding/tabbedsearch/js/roundies.js"></script>
+<link href="https://imageserver.ebscohost.com/branding/tabbedsearch/css/simpletabs.css" rel="stylesheet" />
+<style>
+/*AUTOCOMPLETE STYLES*/
+#auto-results {
+    border: 1px black solid;
+    font-family: Helvetica,Arial,sans-serif;
+    background-color:white;
+    position:absolute;
+    padding:10px;
+    z-index:1000;
+    width: 350px;
+}
+#auto-results li:hover {
+    background-color: #3875D7;
+    color: white;
+    font-weight:bold;
+    cursor: pointer;
+}
+#auto-results li {
+    border: medium none;
+    list-style: outside none none;
+    padding-left: 5px;
+}
+/*END AUTOCOMPLETE STYLES*/
+</style>
+<style>
+div.simpleTabs {font:11pt Tahoma;border:3px double #EFEFEF;background-color:#FFFFFF}
+ ul.simpleTabsNavigation li a {border:1px solid #d4af37; background:#BCBEC0; color:#000000;}
+ ul.simpleTabsNavigation li a:hover {background-color:#ECB73E;color:#FFFFFF;}
+ ul.simpleTabsNavigation li a.current {background:#d4af37; color:#222222; border-bottom:2px solid #d4af37; }
+ div.simpleTabsContent { border:1px solid #d4af37;background-color:#FFFFFF;border-top: 6px solid #d4af37;}
+</style>
+<style>
+/*     Es el original y se cancela el
+      2 de febrero del 2023
+div.simpleTabs {font:11pt Tahoma;border:3px double #EFEFEF;background-color:#FFFFFF}
+ ul.simpleTabsNavigation li a {border:1px solid #53AB28; background:#BCBEC0; color:#000000;}
+ ul.simpleTabsNavigation li a:hover {background-color:#ECB73E;color:#FFFFFF;}
+ ul.simpleTabsNavigation li a.current {background:#53AB28; color:#222222; border-bottom:2px solid #53AB28; }
+ div.simpleTabsContent { border:1px solid #53AB28;background-color:#FFFFFF;border-top: 6px solid #53AB28;}
+fin del style cancelado */
+</style>
+<div class="simpleTabs">
+<p style="margin: -5px 0 10px; display: none;">EBSCO Discovery Service</p>
+<ul class="simpleTabsNavigation">
+<li><a class="nav " href="#">Recursos electr&oacute;nicos</a></li>
+<li><a class="nav " href="#">Cat&aacute;logo biblioteca</a></li>
+<li><a class="nav " href="#">eBooks</a></li>
+<!--<li ><a class="nav " href="#">Revistas A-Z</a></li>-->
+<li style="visibility: hidden; float: right;"><a class="nav " href="#"></a></li>
+<li style="visibility: hidden; float: right;"><a class="nav " href="#"></a></li>
+<li style="visibility: hidden; float: right;"><a class="nav " href="#"></a></li>
+<li style="visibility: hidden; float: right;"><a class="nav " href="#"></a></li>
+<li style="visibility: hidden; float: right;"><a class="nav " href="#"></a></li>
+</ul>
+<div class="simpleTabsContent"><!-- BEGIN: General Custom Search Box--><form action="https://search.ebscohost.com/login.aspx" method="get" target="_blank" onsubmit="ebscoPreProcess(this)">
+<p></p>
+<!-- Dropdown menu to prepend the selected value below to the user's search term --><select onchange="#" size="1" name="search_prefix" style="width: 120px;">
+<option selected="selected" value="">Palabra Clave</option>
+<option value="TI ">T&iacute;tulo</option>
+<option value="AU ">Autor</option>
+</select><input name="direct" value="true" type="hidden" /><input name="scope" value="site" type="hidden" /><input name="FT" value="y" type="hidden" /> <!-- target an EDS profile --> <input name="site" value="eds-live" type="hidden" /><input name="profile" value="eds" type="hidden" /> <!-- Auth type --> <input name="authtype" value="ip,guest,uid" type="hidden" /><input name="custid" value="s1203672" type="hidden" /><input name="groupid" value="main" type="hidden" /><input value="es" type="hidden" /><input name="cli0" value="FT" type="hidden" /><input name="clv0" value="Y" type="hidden" /> <!-- search box and submit button --> <input name="bquery" id="bquery" value="" type="hidden" /> <input name="uquery" id="uquery" size="65" type="text" placeholder="Buscar..." autocomplete="off" onkeyup="autocomp();" /> <span id="edsSearchWrapper"></span><!-- EDS automplete: Necesario para mostrar las opciones de autocompletado--> <input value="Buscar" type="submit" /><br /><br /><!-- Limiter Check Boxes: To display, adjust the html comment tags at desired 3s --> <!-- Limiter: Full Text --> <!--<input name="cli0" value="FT" type="hidden"><input name="clv0" type="hidden" value='N'><input  type="checkbox" name="fulltext_checkbox" id="fulltext_checkbox_all" onclick="limittoFullText(this.form)" ><label  for="fulltext_checkbox_all">Texto Completo</label>--> <!-- Limiter: Scholarly/Peer-Reviewed --> <!--<input name="cli1" value="RV" type="hidden"><input name="clv1"  type="hidden" value='N'><input  name="scholarly_checkbox" id="scholarly_checkbox_articles" onclick="limittoScholarly(this.form)" type="checkbox"><label  for="scholarly_checkbox_articles"> Publicaciones arbitradas </label>--> <!-- Limiter: Catalog Only --> <!--<input name="cli2" value="FC" type="hidden"><input name="clv2" type="hidden" value='N'><input  name="catalog_only_checkbox" id="catalog_only_checkbox" onclick="limittoCatalog(this.form)" type="checkbox"><label  for="catalog_only_checkbox">Solo en el catálogo </label>--> <!-- Limiter: Institutional Repositories Only --> <!--<input name="cli3" value="FC1" type="hidden"><input name="clv3" type="hidden" value='N'><input  style='display:none' name="IR_only_checkbox" id="IR_only_checkbox" onclick="limittoIR(this.form)" type="checkbox"><label  style='display:none' for="IR_only_checkbox">Institutional Repositories Only</label>--></form><a href="https://search.ebscohost.com/login.aspx?direct=true&amp;site=eds-live&amp;scope=site&amp;type=1&amp;groupid=main&amp;profile=eds&amp;lang=es&amp;authtype=ip,guest,uid&amp;custid=s1203672" target="_blank" rel="noopener">B&uacute;squeda Avanzada</a></div>
+<div class="simpleTabsContent"><form action="https://biblioteca.uaaan.mx/cgi-bin/koha/opac-search.pl?q=" method="get"><select name="idx">
+<option value="" select="selected">Palabra Clave</option>
+<option value="ti">T&iacute;tulo</option>
+<option value="au">Autor</option>
+</select><input name="q" size="65" type="text" /> <input value="Buscar" type="submit" /><br /><br /></form></div>
+<!-- eBooks-->
+<div class="simpleTabsContent"><!-- BEGIN: General Custom Search Box--><form action="https://search.ebscohost.com/login.aspx" method="get" target="_blank" onsubmit="this.uquery.value=this.uquery.value+' AND PT ebook'; ebscoPreProcess(this)">
+<p></p>
+<!-- Dropdown menu to prepend the selected value below to the user's search term --><select onchange="#" size="1" name="search_prefix" style="width: 120px;">
+<option selected="selected" value="">Palabra Clave</option>
+<option value="TI ">T&iacute;tulo</option>
+<option value="AU ">Autor</option>
+</select><input name="direct" value="true" type="hidden" /><input name="scope" value="site" type="hidden" /><input name="FT" value="y" type="hidden" /> <!-- target an EDS profile --> <input name="site" value="eds-live" type="hidden" /><input name="profile" value="eds" type="hidden" /> <!-- Auth type --> <input name="authtype" value="ip,guest,uid" type="hidden" /><input name="custid" value="s1203672" type="hidden" /><input name="groupid" value="main" type="hidden" /><input value="es" type="hidden" /><input name="cli0" value="FT" type="hidden" /><input name="clv0" value="Y" type="hidden" /> <!-- search box and submit button --> <input name="bquery" id="bquery" value="" type="hidden" /> <input name="uquery" id="uquery" size="65" type="text" placeholder="Buscar..." autocomplete="off" onkeyup="autocomp();" /> <span id="edsSearchWrapper"></span><!-- EDS automplete: Necesario para mostrar las opciones de autocompletado--> <input value="Buscar" type="submit" /><br /><br /><!-- Limiter Check Boxes: To display, adjust the html comment tags at desired 3s --> <!-- Limiter: Full Text --> <!--<input name="cli0" value="FT" type="hidden"><input name="clv0" type="hidden" value='N'><input  type="checkbox" name="fulltext_checkbox" id="fulltext_checkbox_all" onclick="limittoFullText(this.form)" ><label  for="fulltext_checkbox_all">Texto Completo</label>--> <!-- Limiter: Scholarly/Peer-Reviewed --> <!--<input name="cli1" value="RV" type="hidden"><input name="clv1"  type="hidden" value='N'><input  name="scholarly_checkbox" id="scholarly_checkbox_articles" onclick="limittoScholarly(this.form)" type="checkbox"><label  for="scholarly_checkbox_articles"> Publicaciones arbitradas </label>--> <!-- Limiter: Catalog Only --> <!--<input name="cli2" value="FC" type="hidden"><input name="clv2" type="hidden" value='N'><input  name="catalog_only_checkbox" id="catalog_only_checkbox" onclick="limittoCatalog(this.form)" type="checkbox"><label  for="catalog_only_checkbox">Solo en el catálogo </label>--> <!-- Limiter: Institutional Repositories Only --> <!--<input name="cli3" value="FC1" type="hidden"><input name="clv3" type="hidden" value='N'><input  style='display:none' name="IR_only_checkbox" id="IR_only_checkbox" onclick="limittoIR(this.form)" type="checkbox"><label  style='display:none' for="IR_only_checkbox">Institutional Repositories Only</label>--></form><a href="https://search.ebscohost.com/login.aspx?direct=true&amp;site=eds-live&amp;scope=site&amp;type=1&amp;groupid=main&amp;profile=eds&amp;lang=es&amp;authtype=ip,guest,uid&amp;custid=s1203672" target="_blank" rel="noopener">B&uacute;squeda Avanzada</a></div>
+<!-- Fin de eBooks -->
+<div class="simpleTabsContent" style="visibility: hidden; float: right;">
+<p></p>
+Enter HTML here</div>
+<div class="simpleTabsContent" style="visibility: hidden; float: right;">
+<p></p>
+Enter HTML here</div>
+<div class="simpleTabsContent" style="visibility: hidden; float: right;">
+<p></p>
+Enter HTML here</div>
+<div class="simpleTabsContent" style="visibility: hidden; float: right;">
+<p></p>
+Enter HTML here</div>
+<div class="simpleTabsContent" style="visibility: hidden; float: right;">
+<p></p>
+Enter HTML here</div>
+</div>
+<script type="text/javascript">
+  /* IE only */
+  curvy_roundies.addRule('.nav', '7px 7px 0px 0px');
+</script>
+<!-- [if IE]>
+<link rel="stylesheet" href="https://imageserver.ebscohost.com/branding/tabbedsearch/css/IEsimpletabs.css" type="text/css" media="screen"/>
+<![endif]--> <!--End of Tabbed Search--> <!--Inicio: EDS Automplete config-->
+<script type="text/javascript">
+  //##### Required Variables #####
+  //ID of form for submission of terms to search
+  var searchformid = 'ebscohostCustomSearchBox';
+  //ID of search box input field
+  var searchboxid = 'uquery';
+  //ID of div or span that the autocomplete results will appear below
+  var appenddiv = 'edsSearchWrapper';
+  //determines if search happens when autocomplete term is clicked
+  var searchOnClick = true;
+  //##### End Variables #####
+</script>
+<script src="https://widgets.ebscohost.com/prod/simplekey/autocomplete/autocomp.js"></script>
+<!--Fin: Autocompete config -->
+<style>
+.mastheadsearch .librarypulldown {
+display:none !important;
+}
+.span12 {display: none !important;}
+</style>
+<!--*******************************************Fin Ebsco
+Implementación caja EBSCO
+Fecha: 26 Agosto 2019
+Fin-->
+<div id="menuSlider">
+<div id="menuSlider1" style="display: inline-block; width: 55%;">
+<div class="iframe-16-9"><!--– <iframe src="/opac-tmpl/slider.html" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"--> --&gt; <iframe src="https://tutorias.uaaan.mx/SPA/sliderCID/slider.html" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe></div>
+</div>
+<div id="menuSlider2" style="display: inline-block; width: 40%;">
+<div class="iframe-16-9"><!-- <iframe src="/opac-tmpl/slider2.html" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>  --> <iframe src="https://tutorias.uaaan.mx/SPA/sliderCID/slider2.htm" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe></div>
+</div>
+</div>
+</center></div>
+ </div>
+ 
+ </div>
+  
+ </div>
+ </div>
+ </div>
+ 
+
+ </div> <!-- / header-region -->
+
+ 
+ <div class="container-fluid">
+ 
+ <div class="row">
+ <div class="col">
+ <div id="opac-main-search" class="mastheadsearch">
+ 
+ 
+ 
+ <div id="OpacCustomSearch">
+ 
+ <div class="es-ES_item">
+ 
+ <div class="es-ES_body">
+
+
+  </div>
+ </div>
+ 
+ <div class="default_item">
+ 
+ <div class="default_body"></div>
+ </div>
+ 
+ <div class="default_item">
+ 
+ <div class="default_body"></div>
+ </div>
+ 
+ </div>
+  
+ 
+ </div><!-- /#opac-main-search -->
+ </div> <!-- /.col -->
+ </div> <!-- /.row -->
+ 
+
+ <div class="row">
+ <ul class="nav" id="moresearches">
+ <li class="nav-item">
+ <a href="/cgi-bin/koha/opac-search.pl">Búsqueda avanzada</a>
+ </li>
+ 
+ 
+ 
+ <li class="nav-item">
+ <a href="/cgi-bin/koha/opac-authorities-home.pl">Búsqueda de autoridad</a>
+ </li>
+ 
+ 
+ 
+ <li class="nav-item">
+ <a href="/cgi-bin/koha/opac-tags.pl">Nube de etiquetas</a>
+ </li>
+ 
+ 
+ 
+ 
+ 
+ <li class="nav-item">
+ <a id="library_page" href="/cgi-bin/koha/opac-library.pl">
+ 
+ <span>Bibliotecas</span>
+ 
+ </a>
+ </li>
+ 
+  
+ </ul> <!-- /.nav#moresearches -->
+ </div> <!-- /.row -->
+ </div> <!-- /.container-fluid -->
+ 
+
+ <!-- Login form hidden by default, used for modal window -->
+ <div id="loginModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+ <div class="modal-dialog">
+ <div class="modal-content">
+ <div class="modal-header">
+ <h2 class="modal-title" id="modalLoginLabel">Ingresar a su cuenta</h2>
+ <button aria-label="Cerrar" class="closebtn" data-dismiss="modal" type="button">
+ <span aria-hidden="true">&times;</span>
+ </button>
+ </div>
+ <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="modalAuth">
+ <input type="hidden" name="has-search-query" id="has-search-query" value="" />
+ <div class="modal-body">
+ 
+ 
+ 
+ 
+ 
+ <input type="hidden" name="koha_login_context" value="opac" />
+ <fieldset class="brief">
+ <div class="local-login">
+ <label for="muserid">Usuario:</label><input type="text" id="muserid" name="userid" autocomplete="off" />
+ <label for="mpassword">Contraseña:</label><input type="password" id="mpassword" name="password" autocomplete="off" />
+ <fieldset class="action">
+ <input class="btn btn-primary" type="submit" value="Ingresar" />
+ </fieldset>
+ </div>
+ 
+ <div id="nologininstructions-modal" class="nologininstructions">
+ 
+ 
+ <div id="OpacLoginInstructions">
+ 
+ <div class="es-ES_item">
+ 
+ <div class="es-ES_body"><p style="text-align: justify;"><span style="font-family: Arial, serif;">Para ingresar a su cuenta en el OPAC proporcione la siguiente información:</span></p>
+<p style="text-align: justify;"><span style="font-family: Arial, serif;"><strong>Alumnos</strong></span></p>
+<p style="text-align: justify;"><span style="font-family: Arial, serif;">Usuario: Matrícula</span></p>
+<p style="text-align: justify;"><span style="font-family: Arial, serif;">Contraseña: Proporcionada en control escolar</span></p>
+<p style="text-align: justify;"><span style="font-family: Arial, serif;"><strong>Maestros y empleados</strong></span></p>
+<p style="text-align: justify;"><span style="font-family: Arial, serif;">Usuario: Expediente</span></p>
+<p style="text-align: justify;"><span style="font-family: Arial, serif;">Contraseña: Proporcionada en control escolar</span></p></div>
+ </div>
+ 
+ <div class="default_item">
+ 
+ <div class="default_body"></div>
+ </div>
+ 
+ <div class="default_item">
+ 
+ <div class="default_body"></div>
+ </div>
+ 
+ </div>
+  
+ </div>
+ 
+ 
+ 
+ </fieldset>
+ 
+ </div>
+ </form> <!-- /#auth -->
+ </div> <!-- /.modal-content -->
+ </div> <!-- /.modal-dialog -->
+ </div> <!-- /#modalAuth -->
+
+
+<div class="main">
+ <nav id="breadcrumbs" aria-label="Breadcrumb" class="breadcrumbs">
+ <ol class="breadcrumb">
+ 
+ <li class="breadcrumb-item active">
+ <a href="#" aria-current="page">Inicio</a>
+ </li>
+ 
+ </ol>
+ </nav> <!-- /#breadcrumbs -->
+
+ 
+ 
+ <div id="notloggedin" class="container-fluid">
+ 
+ 
+
+ <div class="row">
+ 
+ <div class="col-12 col-lg-2 order-3 order-lg-1">
+ <div id="navigation">
+ 
+
+
+ 
+ 
+ <div id="OpacNav">
+ 
+ <div class="default_item">
+ 
+ <div class="default_body"><ul class="nav nav-pills nav-stacked">
+<li class="active"><a href="#">Men&uacute; de Recursos</a></li>
+<li><a href="/"><img class="menI" src="/opac-tmpl/bootstrap/images/menuizq/search.png" />Cat&aacute;logo en l&iacute;nea</a></li>
+<!-- <li><a href="http://repositorio.uaaan.mx:8080/xmlui/"><img class="menI" src="/opac-tmpl/bootstrap/images/menuizq/repo.png" />Repositorio institucional digital</a></li> Se desactiva el acceso con puerto 8080 el día 10 agosto 2026 -->
+<li><a href="http://repositorio.uaaan.mx"><img class="menI" src="/opac-tmpl/bootstrap/images/menuizq/repo.png" />Repositorio institucional digital</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=baccesolibre"><img class="menI" src="/opac-tmpl/bootstrap/images/menuizq/bookshelf.png" />Bibliotecas virtuales de acceso libre</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=bdacad"><img class="menI" src="https://tutorias.uaaan.mx/SPA/imagesCID/bdacad.png" />Bases de datos acad&eacute;micas</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=revistas"><img class="menI" src="/opac-tmpl/bootstrap/images/menuizq/erevistas.png" />Revistas electr&oacute;nicas de acceso gratuito</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=libros"><img class="menI" src="/opac-tmpl/bootstrap/images/menuizq/ebook.png" />Libros electr&oacute;nicos</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=enciclopedias"><img class="menI" src="/opac-tmpl/bootstrap/images/menuizq/books.png" />Enciclopedias</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=interes"><img class="menI" src="/opac-tmpl/bootstrap/images/menuizq/placeholders.png" />Organismos nacionales</a></li>
+<li><a href="https://www.uaaan.mx/agraria/"><img class="menI" src="/opac-tmpl/bootstrap/images/menuizq/revistas.png" />Revista Agraria</a></li>
+</ul></div>
+ </div>
+ 
+ </div>
+  
+
+
+
+
+
+ 
+ 
+ <div id="OpacNavBottom">
+ 
+ <div class="default_item">
+ 
+ <div class="default_body"><?
+include("https://tutorias.uaaan.mx/SPA/CIDcontadorKoha.php"); ?> 
+
+<ul class="nav nav-pills nav-stacked">
+  <li class="active"><a href="#">Contador de Visitas</a></li>
+<br/>
+
+<!--Contador propio del CCA para el CID 19 Sep 2019 
+No funciona
+             <span style="font-size: 32px;"><span style="color: #9f0123;"><span style="font-family: 'lobster', cursive;">Contador:</br></br><?php echo contador(); ?></span></span></span></div>
+</br>   -->
+
+<br/>
+<br/>
+</ul></div>
+ </div>
+ 
+ </div>
+  
+
+
+ </div>
+ </div>
+ 
+
+ 
+ 
+ <div class="col-12 col-lg-7 order-md-1 maincontent">
+ 
+
+ <h1 class="sr-only">Inicio</h1>
+
+ 
+
+ 
+
+ 
+
+ <div id="news" class="newscontainer">
+ 
+ 
+ 
+ <div class="newsitem">
+ <h4 class="newsheader">
+ 
+ <a name="newsitem12" href="/cgi-bin/koha/opac-main.pl?news_id=12">Manual de información</a>
+ 
+ </h4>
+ <div class="newsbody"><p><a title="Manual de Informaci&oacute;n 2019" href="http://tutorias.uaaan.mx/SPA/docsCID/ManualDeInformacion20230831.pdf" target="_blank"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANUAAABzCAYAAAAPBUdwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAABt3SURBVHhe7Z0JdFRFusc/0tn3kJCQRCAEkhhAFgV3j+Ayo+KgooPr8Tkux5Wj7zHOjAsu44Ie93Hk6XMZfe+8M3OGkYHRo87MU1xAHEQUjkCCIQIhkgDZ1+5Op9/3r76VvrnpdJa+6TT4/UJRdevWvX1vVf2rvqq7jfEyJAiCbUQZviAINiGiEgSbEVEJgs2IqATBZkRUgmAzIipBsBkRlSDYzBFxnaqpqYlwmLGxsRQdHa184ceD2+2mrq4u5To7O2ncuHHGmsgk4kXV2tpKlZWVSkz6UOGPGTNGiUu7+Pj4nnBMTIxKJxwZdHd3k9PpVOKBaOAQdrlcSkhRUX6DCmWfkpJCkyZNMmIij4gWFTJ0586dSiQQkRmzwLSvwygkiCsuLk6JTftw1v0I4QMigWAgILMPUC66bKxhK6gXmZmZNH78eCMmsohoUe3YsUO1UoEydiDMItNhOPR4EBlcUlJSj+gE+/B4PNTR0UFtbW09wkHPo9GiCSacgcD+JkyYQGlpaUZM5BCxotq1a5cqHHPXbwdaXNYwhJWQkKCElpiYqHo6YWBgFbS3tysBQUhwKDezcEIRT3+g3PA7hYWFqtwiiYgUVVVVFbW0tJDD4TBiRhadBfDhUFEgZhRWcnKycpFWcKMFegiIqLm5WQkIJp1VQHaKJxi6vEpLS42YyCDiRHXo0CE6ePCgMtNGE11gZgdhpaamqoEyzMYfAxAReiHMwGLSCPmgTfJwCqg/0ACi8S0uLjZiRp+IEhVav3379ilBjXZhWdHZhEJEGMene7L09PSjasYR5QARoUeCqCJJRIGAGYiymDx5shEzukSMqGBGVFRUDHtiItwg27SD0DAmQy8GgR1pEx84foiosbFRCQmYhXQkEEkzghEjqlBm+iIBLS5tjmRkZCgXqQLTQqqrq1NjIxyzFtGRWgboVY855hjVsI0mESEqzPQhQ6yFaT60/graHK/Do10pcNxwMEsw9tICQ6Mx2mB8hHErfORTJDRkupytVdG6DMxxgY4beT5lyhQ1gztajLqoGhoalMmBMQkK2Gx2oPXUh4eWVYeRcdo3O5gAcFqgOtP7C4cDHLPuwTD+ysnJCftMIo6htraW6uvrVdicx+EAv6nLzuzrMI4DlzAwlkaZmx3WwdfpEDbvA/kKdJ3QdQA91mgRURMVdoNxGhwuQOowLkTC172GrlzajRTIZjgUPipQXl6eEtlIgspVU1OjGi5UxpHulXRV0ueqHX5XX2TXd7qgEYWvy+Fo4qgWVTDMItMXLlEJrSIbiUqILIe40DLj5tCxY8caa+wB51VdXa3OS7f2dp+HrjbwdW+BMMwu7bSARiIPI5mwiwo/V+s6SA1dDdTc1UKtnlZqdreosMvrorYurtxeNt/4r9HdhK6EHGMclBSVRNzuUTT/JToSKToqmtKiU9ilUQr8mBRKdbDjcCqHhwMqB0SG6zFaaDheXSntrpzYN8SFVhvmSqjjAOwPYsIs3kiICftHHsGHQ++jr93pXmg4uDxddKCjjuo7W6je2Ux1nc10qIN9Djd1tnF96KJGVxtxP0tOj5uaXL4ZyqSYBEpwxJLH203j4tNVnRmXkEoZcSmUFZ9GY+NTKC9pLOUmjqW0uCS1TTgYEVHVu+upsvN72tuxl/Z27qOqzirax36du4ELOYocXu7y2Y/yosBR8LzMYVX8RhwOCuu9YyAlVHh/y4g/tI1ejvNwCHHIWJ/vpa5uN6XHpFNe/HjKjctRfn58LuUn5FJpchFlxmaofQ0GmI4QGO7wgNiA2Yyyo9LiuNFLwhycOHHisEwiTD7AaSHZdVzaQfxaQLiVC+HBHmdXt4c2HdxJOxr30b7WGqpoPkCVTdW0u6WGDrNTj/XheFH2qAuoCVg26gXA+fBhoLYY6XB8XAsQCeAjiDjUFfiI8BhpWLjEwspLz6dpGRPpuMxJNCd7Kh03toBmjytUu7ALW0V1267bqKJjN+8UvQsPOvkvinsZ/I3hjMP/3ShwnDfyRfu8LSwI5GOPz3G+9d28nrfrdz37fbbvVuLy8IIHf5yxXZAfZzRaRQixOLmQSpKm0LEpRTQtpZhKU6ZyDzjwBAJ6MoxRIDSEtcDsqMjoBSCu/Pz8QZuEmJTZvXu32tYs9uGC6oB9wcE8hYBw0yrENBi21e2mLXW76KtD5fR1XQWLqYzcbH1QVIyyOBxoTKMcbG+gbqBORLFGVAnzbyIPTWXJ+wteR7hu8Mr+1qNi6zB2hnLHeSmBce9HLHbqgnNyt5dJ3133B5qansuJQ8NWUS3ZvoT/Z0F5Hb4T5eP3nzBnAJ8dR/nje61nnwM9fk+64YlKbaXXW9Ihu91eFlt3F5ucHs7XLnJ2uyg7PpOmJ5fQaVnzaF76LJqaXIDEQYHAcL0HIgNmkQ0HFAd6BVTmgoLgv4/ZPJh7gR6NGQpmIcGMg4BwCWAgc+5Aex1tPlxGf/n+E/rqcDltr6tU5w/TPIYbVZ/v4IyH4WYqIw73LZuRF5U/na8umtd7Ww7Tp//2Gp2RN51jQ8NWUf18+89VfxTF5p06gQAnwlEBMtR/cj1+Tzr7RdVne8Pv5tbLzQJz8ZjO2eWbli9NLWahFdG5OWfQKZnH81aBQTbCPMTFVPioXKH0HBAWti8qKuqZUjaDm44h5uHe0oXjhcPvQDzoGSGmYEL6rrmKBfQxbajdRpsOldGhzkaKHxNLsdHsWEDKImFzfTh5P+qiam2gL6//A83NLuLY0LBVVFdtv5LNLK8aM6kTCHAiHBUgQ/0n1+P3pFNFFGQ9+322H56orAWLYnGx0NCTdXBPhqyakz6dzh8/n87JPpVy4gM/1o10mCyAwLSJOByBIc8AhAXxaHB/JMZ45rjBgOOCw35xPLjzALf29CckjIXWHdhCr+96hz6t+ZoOdjRRUnQ8xThiKIYNuDE4p5688+WZXXnfJ515+571/Eu8sr/1QxJVWwNtuPZVOjU39DvebTf/MHYK2lOhUHls4+FT8nJcN3z+w0QE/jzsq/R6e47DSePko5ARfLQQGVJh7IaVyrjg38R6+CNVsPhxl4d7MRZYW1cnTUjMoxPHzqRL88+jeewHAmMeiEtfeNWzcoMF22CcNX36dLXdnj171MXyQL1Xf2ghweEOewipv2tke1oO0P9W/oM+2L+RNh3eyeJxUDwLKc7BImKzvv+8Y5/Dw817TCx0cQLUAeXjvDHZwOWNOqNQk1Xs1KLaoxFmsGOjPqAOKB+O06lxnK6THBNQVNxTbeKeal6k9VSLv12sJigwK+fGsJBNCz1BgGlR+NFRsZThSFezcylRqZTkSGSXRIlRiWqqPNmRzCeLPxwc8kmFVIa1eVpVhrd1t6nZvraudjXt3tTVQk3uZmrgcKOLW3CVoZhlZFOUW1P4ataR7XvOXjU4DjxhElxU/M8fz76Hx2O4DNDh7uTz7KaL886layddQsell3DKvqB3wWMt1nvtBgJFhPSYMMAM32B7KC0k5EFWVpZygX6v2d1G/1m2mlaWvU217fWUGJPAZh33RWzSoeHqc+4c7pt3en1fUSFvPNzruTkB8gx+NyYJlENCdjGxlB6X5psKj0tVfk5ihppsyopP5TwgykxIxZ5VGL+naokSElGnx0UNna3U6GxTU/LwMfVe295I9W11RB3N3CpjfIfGiDdAGI5rA2cuUXszfX3j/9DsrNBnAm0V1Zlfn0nZsTk0Oa6AjombSBMTJlBubK5y2bHjKD4qfM8g1bsa6QfnAdrf4XfVnT6/il1MFAwYzEbhyhfExz7XmOGaIOh5nd1OanW3U2J0Il09YRFdO/liGh/ARETvBXHBREQlH4xpiGKCQ9pg6HR6Cjw7O1v1ToF4s+JdennnavqqvpzSY5NV+URzRfOdM58ZH1PAc1frjXjTegjA3e0mFwSEsWl3FyvKTQlxKVSSPoEmJ+dRYWouu3yakpJLU1LzaGpaPm8ZPnY31dD3zTVU3lhNOxv20bZDe2lbXSU17dtKG+9YSyePP9ZIOXxsFdWRxA+dtVTespvK2iqovHk37WypoH0d1RTDLXQs96aQWgxaam7ZBiMq83oM1dvZPGzhHmBiUj5dW3AJ3VB4Ka9Hit6g54F5CBEM1TQ0o8WkTTzcBhWoR3u/+nN6Zdcaer9qAyXHsHUAIfEYSR+7XzTBRQVrBKJxszncwc7NPQUakxOyimlW5lSak1lEc7LYjS32bXwEgEbBMUCjNRh+tKLqjz1tVfRZ3Sb6smEbbWsqo5rOgxQ3Jk71bLHsojBAR8XqqWB9RWVe7+aKh/EXTKwL8+bTsmN/QSUpfR+mg7AgsKGKSwsJPiYecMOuVUzoPf/ru9X02NY3OV03m3eJfE4xvutDfJyBRGMVFbbr5F7HyeLp4N4I/fy8caV0UvY0WjjhVJo/frZvJ4KIaiAaXc30bfMu+uzwJtpQt5nKmiu5RU6gWEwls8hQkQYzA4UQJjganS1UlDKJflG4mK4pWIQVvcA0+Q8//KCEEkxcKDY4TGLg/kE4pDdT1rSH7vv6JfrowGaK4943iY8bF1x9ovGJpT9RYcHJDYKzy0Wt3CikshDPzT+RLmABnZQ1jc25iUglBEBENUQ6PJ20nsW1ev/f6Yu6b6jdw2OoqAQei8Rwb8bjEa6hgUSltYEwJm1gGsY7YunmqVfQ0qKr+4gHF5VxhzmKxzrmguDQo6FngplnHWetq9lMD219hbbUlfOgP40bAPSuGC/6RRNIVF2ebjbp3HxOThaTk+ZmldLFk86kSyfNV+MgYXCIqEKkjMdjf6n+gD4/vIV2cDjFkchiiesxEwOJSlVsDmACGTcQwzS8lcW1rPQ6SuZxiRl9Tx+AMNAzYcyEG3CtZt6aqnV09+YXqJ5717ToZNNYyTeFHEhUuKzRwSZdC5uIabEpbMbNoSUFZysxCcNDRGUjHWwmvfr9n+mdHz6i71r2UgoLJN4RzzUXPY0vjVlUqOg+0Xm5d+igBmcr91w/p7unXc/mlv+uahQRZgvxQha87th6sfavLKZ/3/w0tbudlBaTzD2XdXLFKio2Rdmsa3Z3qKnznx5zCi2bfhXNzoycNxIdyYioRoi9bdX056r36Q/fr1bXUDCeiY+KY4Fo89AsKi007rlYXJgMWJh/Jq2ce79K0x+vVfyVntnx3+pxiXTuZQJenOWw/i3ceoWesZXd+Xmn0V0zrqQzc+aofQn2IaIKA9sayumNPW/TX/f/nxJWEvdguKbdV1Q+H0WCGUMnj2+uLlhIK2bf6duRwTv7P6HlW1dSTUedur7UIya9H06jRQUDtN3dSQ1sEs5ML6ZfzriGLppwproeJYwMIqow83rlX+jZ8re4oncoEw8THFZRAYRxvQviwsTBk3PuotPHzaFr1t9Lu1urKCMmlc08HrcZaa2iQu+EXqnJ1UZXTv4pPTL7ZspNjOxP0BwtiKhGiQ9rNtJTZW/QtsZdlM4CwZS3Ng2BFggKBxclYbK52CxM5TGTA2Li9X7zzi8qzCxi4gM94i0ll9GyaVdTnGN4T+QKw0NENcpUtOyjh79dSetqN1GSg8ddjnh1Y7BZVH7RGBMOHGcVldvrVo+jF6bk0d3Tr6PLC87F7oVRQEQVIWD89Kuvn6Y1VR+pngX34am78nldMFHhXrvDnU10fEYJPTzrNjo9Z7banzB6iKgiDIyDlm97kf685+/qzo346DjysnqsosIzXnXOJipNK6RnTvgPOjFrhm8HwqgjoopQmlwt9KtvnlM9lxpzce8FUeEaEy7uTkwYT8/M/SWdkS1T4pGGiCrC2dd+gG7c+DBtbSinuCjfM06Pzr6Driq4wEghRBoiqiOEfxzYSJ/UbqbHZi81YoRIRUQlCDYT+hNZgiD0QkQlCDYjohIEmxFRCYLNiKgEwWZEVIJgMyIqQbAZEZUg2IyIShBsRkQlCDYjohIEmxFRCYLNiKgEwWbkLvVRYufOnfTEE0/Qv/71L/Uht2OPPZYWLFhADz74oHqds5W//e1vVFFRQXfccUevl2n+8Y9/VF9WxBPBVrDPRYv6vq9dGGEgKiG8rFixAg2ZciUlJd5Zs2Z5J0yY0BO3bt06I6WfhQsXqnUtLS1GjI9p06b1bBfI5eTkePfu3WukFsKBmH9h5ssvv6R77rmHpk6dqr7uUVZWRt98843qbT7//HOV5uyzz1afIDWDr9XjQwTWjxHEx8erLyzi28L4QiO+ko9t8Yro3//+91RbW0vFxcXkcrmMLYSRRkQVZn77298qn3sjys3NVWHNKaecQm+//bZ6F8XLL79sxA6OuLg4JbDExET1BUV8xOD222+n1atXk9PppKeeespIKYw0Iqow8+mnn6qeA1/tCMS55/re14exlh1ccsklSmTvv/++ESOMNCKqUSAmJsYI9YVNcjr11FPp/PPPN2JCB70WzEwhPIiowoz6KEGQCdfU1FTasGEDXXfddUZM6OD38F0rITyIqH4kBJpyF0YGEZUg2IyIShBsRkQlCDYjohIEmxFRCYLNiKgiDNxNgVuW3G63EWMP2K8QHkRUYQbXjKz375lpbW2lSZMm0V133WXEhA5+L9Cd78LIIKIKM7hH7/Dhw8ZSX3BTLMD9enaAG2xxU+2sWbOMGGGkEVGFmRtvvJFqampozZo1RkxvnnzySeVffvnlyh8MwXq+W265Rfk33HCD8oWRRx5SDDN4LCMvL4+amprogQceoCVLlqjxDorh2WefpbfeeotOP/10+uyzz4wtfCDdqlWrlHmIx0A0c+fOpS1bttDjjz/esx/cPYHbkrCvyspK+tnPfqYechTCBEQlhJeDBw96Z8yY0ethQu3wMKLH4zFS+rnsssvUeutDivPmzeuzD+0SExO9y5cvN1IK4UJ6qlFk69at9O2336reBY/Iz5kzh4qKioy1vWEhqvFRQUFBr/v4Dhw4oB5QNJuA2B/SYMJDCD8iKkGwGZmoEASbEVEJgs2IqATBZkRUgmAzIipBsBkRlSDYjIhKEGxGRCUINiOiEgSbEVEJPwrwGm28VDQciKiEo5r6+nrKzMykW2+9lR566CEjdmQRUQlHNc8995x6VAa3uC5btsyIHVlCuqH2448/pnfffbfnlcLJyckqrO+ahvv1r39N48aNU+uBdZvo6Gi68MILaf78+WoZbN++nd544w165pln1DI+bAauvPJK5QOPx0M333wzvfLKK+RwONTd3n/605/o0UcfNVL4WLFiBdXV1anf03dy4wsY2Ebz4osvUmlpKZ1zzjlGzODAFzo2btyo9o07yF999VVjjR/r+SJvLr74YjrvvPPUcn/gczsoGnwC5/jjj6drrrnGWEPqEzn4oJs+Xjz4iPMMls+BfvfQoUPqoUhzWZSUlNBNN92klgHy+e6771ZhPK+Fu+lPOukkuvTSS1WcxprPeH01Puejt8nIyFDnZAavDMBvYhvtP//888ZaH8jT8vLyXsdorVN4RTY++IDfu+CCC3qd40svvaSeYcPTz/o9HdbyR70BV1xxhfLvv/9+FZ4xY4ZaHioh9VQoNFR8iAkOXwZEHD7ngheXYB0eTTBj3QZhxJnZtm2bemAP7xQHEBicGez/9ddf73lBCh7Ue+yxx1TYzL333qvW4TMzSIuWy/pSFX3cQ0UfF2z1hoYG9XChFfP5DgXk4WuvvaYeLsQj+GYgKv11EIB8CJbP/YFtkAbvr0D+YBvkhRlznkEoqJBvvvmmsdaPNZ8ffvhh5eM83nvvPbXeygsvvKCOAecHH8tWdNlgvzhOHK/1XHGOeEhz8+bNvb4yCfDlSXzxBGI0n4sZiMrcYKMe4VyGDXqq4cIthvqSnwbhBx980FhSPaCXex1jyUegbRBnZtWqVWrb7Oxstbxo0SLlzDidTpUGPuDeTC1bQdzatWuNJd+y3kZTXFzc5xgGA44JDw9qsO/169cbSz6wX3wpcThwz+K97777jCU/J554ovotHnyrZYQD5fNAv4ttsK0GZYe8MKPzWTNz5kzv4sWLjSU/SGPNZ80jjzzSa1mDOP2VR/iB0uB4rHXqq6++Mpb8IB1bDsaSH6QfqPyvuuoqFb906VK1jDDq03AJeUylu2WAMMwMYMeX+/Bg3q5du1RrF6lYz3P//v1GyAdaSHzfFyYFzB28M+KDDz4w1gYH+9b5GQj9/olADOd3g/3WYNBff9R5ov1Q92venuusMoetoO5Zvz6psR5Xf2AYYAdhn6hAYeOD0ChsOIQRZwZ2PLp62Mkwc8z281CBfb9y5Ur6zW9+Q3feeacRO3KYbfWRApVs4cKFKtzfC2TsBoN8mOQY7w5UOYfC8uXL1RgJ/miB/PzJT36iwnhvCMzcUIjI2T+0Rhj4YyIAL5bEYDOSe6tgoAXF930xgYJBOK6XDDRJMRBaVPicKZtiRmxv7P5dfEEfwsKkgHki42gAeYXXFNx2223Epqqa8AilcQy7qMyFDYcw4qxgMMljByUmzNrombuhgm2RWRjwBhoIh4NA5xcqeM0ZBuBogPrDzt9FA4cvQKKn4rGkERs6qMSYgYQ/muBdjGi8NaF8z2tUeipzYQ9U8P/85z+NUGD0bE+wnmwwNjVml4aDdbbJOrMErObtYMG++zsuHmyrr9IvWLDAiAmdgfJg/fr19MUXX6ixml3glWtmPxCDKRvkcX91QMdby8qMrodLly5VfiiEJCqYIebMQFgPKvU1Aatogm2jMVd+fP8WU66NjY1GjA+9f2QCxkvW6xtm9P70NtrX4BgxrYr9YFCP6z7WadtAYLsPP/xQjQ0xJXvCCSf0mpoFSLNjx44hT1Tg+tsnn3yijgvv+zNjzjN8fR4MlM+B0NvgTgOcO37Luh+dV9gfLIcpU6bQtGnTVJyV/vLZWr5m9O9Zf1eDeHPZXH/99X0aLkyBY0Lr6aefpo8++siI9YO6ge21YKzlj0ZXN7y/+93vlB/KuNHBGTrsezfQOuAiJC4GArQEp512GhUWFhK6T1TMiy66qNfLH4Nto4E9O3bsWDrrrLPUMi4O5+Tk0MyZM9UywP5bWlpUWmRyfn6+emnkGWecYaTwgULBZEd2drbaprq6Wh2T2ZxES4ZbWXRGwsdvD3SvGFpQTKKg0uA81q5da6zxg/isrKyeioXjwfnD7A0GegW8rgwOx24+d3Oe4Rhwnebkk0/udbzWfA4E8gAVDBVKHxcuEKNx0FjzDC/1xDU5zMChp9QEy2ccC8Ys1l4VM6X4PdQPpMMtRVbT0lo26KFRzuYxD8xgXCNEWSBPzHmLBhmTXtgex4FxKMaW5vKHWYvXwx133HFqGdvjwu/48ePV8lCRV5QJgs2MyphKEI5mRFSCYDMiKkGwGRGVINiMiEoQbEZEJQg2I6ISBJsRUQmCzYioBMFmRFSCYCtE/w+i5cavS5XfHgAAAABJRU5ErkJggg==" alt="" /></a></p></div>
+ <div class="newsfooter">
+ Publicado en 02/23/2023 
+ 
+ </div>
+ </div>
+ 
+ 
+ 
+ <div class="newsitem">
+ <h4 class="newsheader">
+ 
+ <a name="newsitem9" href="/cgi-bin/koha/opac-main.pl?news_id=9">Díptico del CID</a>
+ 
+ </h4>
+ <div class="newsbody"><p>&nbsp;<a title="D&iacute;ptico del CID" href="http://tutorias.uaaan.mx/SPA/docsCID/BIBLIOTECAD%C3%8DPTICO.pdf"><img src="data:image/png;base64,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" alt="" /></a></p></div>
+ <div class="newsfooter">
+ Publicado en 01/27/2020 
+ 
+ </div>
+ </div>
+ 
+ 
+
+ 
+ <div id="rssnews-container">
+ <!-- Logged in users have a branch code or it could be explicitly set -->
+ <a href="http://biblioteca.uaaan.mx/cgi-bin/koha/opac-news-rss.pl?branchcode=">
+ <i class="fa fa-rss" aria-hidden="true"></i>
+ 
+ 
+ <span>Canal RSS para novedades globales de biblioteca</span>
+ 
+ 
+ </a>
+ </div>
+ 
+ </div>
+
+ 
+
+ 
+
+ 
+ 
+ <div id="daily-quote">
+ <h2>Frase del día</h2>
+ <div>
+ <span id="daily-quote-text">La educación debe ser una experiencia transformadora, y la tecnología debe ser la herramienta que ayuda a hacer realidad esa transformación. ~ </span><span id="daily-quote-sep"> ~ </span><span id="daily-quote-source">Steve Jobs</span>
+ </div>
+ </div>
+ 
+
+ 
+ 
+ 
+ <div id="OpacMainUserBlock">
+ 
+ <div class="default_item">
+ 
+ <div class="default_body"><h3><center>Bienvenidos Biblioteca "Egidio G. Rebonato"</center></h3>
+<br/> 
+Es muy grato poner a su disposición un espacio digital a la vanguardia para la comunidad de la UAAAN con el objetivo de apoyar la actividad docente y de investigación.
+<br/>
+<p>Puedes realizar consultas a través de Internet de libros, revistas, tesis, publicaciones y revisar los préstamos de ejemplares desde tú cuenta de acceso al OPAC (Catálogo de Acceso Público en Línea).</p> 
+
+<!-- Ejemplo 2 -->
+<div align="center"><img src="https://tutorias.uaaan.mx/SPA/VideoCID/MiniVideo.gif" Alt="Servicios" width="50%" height="50%" /> </div>
+<br />
+<div align="center">
+<h4> RECURSOS ELECTRÓNICOS DISPONIBLES</h4>
+<img src="https://tutorias.uaaan.mx/SPA/docsCID/PosterClavesAccesoBiblioteca.jpg" width="85%" height="85%" />
+</div>
+
+<!-- ESTE CÓDIGO que consiste en una tabla se CANCELA el 29 de Sept 2022 para publicar una imagen con la información 
+
+<table style="text-align: left; width: 100%;" border="1" cellpadding="2"
+cellspacing="2">
+<tbody>
+<tr>
+<td style="vertical-align: top;"><img
+style="width: 133px; height: 37px;" alt="EbscoJHost"
+src="https://tutorias.uaaan.mx/SPA/imagesCID/EbscoHostlogo_30.png"><br>
+</td>
+<td style="vertical-align: top;"><b>EBSCOhost</b> plataforma que
+permite el acceso a multitud de bases de datos en distintas áreas
+temáticas.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><img
+style="width: 110px; height: 42px;" alt="EDS"
+src="https://tutorias.uaaan.mx/SPA/imagesCID/EBSCOdiscoveryServiceLogo_30.png"><br>
+</td>
+<td style="vertical-align: top;"><b>EBSCO Discovery Service (EDS)</b>
+es un índice de recursos de información que permite recuperar, a través
+de una plataforma de búsqueda unificada, los contenidos de colecciones
+suscritas por la Biblioteca, así como portales y repositorios gratuitos
+de acceso abierto.
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;">
+<a href="https://www.cabi.org/cabebooks">
+<img 
+style="width: 110px; height: 42px;" alt="CABI"
+src="https://tutorias.uaaan.mx/SPA/imagesCID/logoCABI.png"></a><br>
+</td>
+<td style="vertical-align: top;"><b>CABI</b>
+es una base de datos referencial sobre el ámbito de las ciencias biológicas aplicadas, la agricultura, la silvicultura, la salud y la nutrición, la salud animal y la gestión y conservación de los recursos naturales. 
+</td>
+</tr>
+</tbody>
+</table>
+
+TERMINA la tabla que fue cancelada en comentarios  -->
+<p><br/>
+<!-- EL SIGUIENTE Código para solicitar CLAVE de ACCESO a
+bases de Datos se CANCELA el 29 de Septiembre 2022 
+Estimados usuarios, es posible consultar las bases de datos, revistas y libros electrónicos suscritos por la UAAAN, fuera del campus universitario (acceso remoto) a través de una cuenta de acceso. Como requisito se requiere ser miembro de la comunidad educativa de la institución (docentes, investigadores, empleados administrativos, estudiantes de licenciatura y postgrado). 
+<br/>
+<p>Para solicitar la cuenta de acceso, favor de registarse en el siguiente enlace:</p>  
+TERMINA CÓDIGO a CANCELAR sobre trámite de CLAVE de ACCESO 
+-->
+
+<!-- inicia botón -->
+<!-- SE CANCELA el Botón de Enviar el 29 de Septiembre 2022
+ Da click <center><form action="https://tutorias.uaaan.mx/SPA/CIDAccesoRemotoCabiEbsco.php">
+<input value="Solicitud de acceso a BD electrónicas acceso remoto" type="submit"></form> </center>
+Proporciona usuario y
+contraseña de control escolar. <br>
+ TERMINA CÓDIGO DEL BOTÖN a cancelar -->
+
+
+<table style="text-align: left; width: 100%;" border="0" cellpadding="2"
+cellspacing="2">
+<tbody>
+<tr>
+<td style="vertical-align: top;">
+<!--  ELIMINAMOS ESTE TEXTO 2 de febrero 2022
+
+<b>La UAAAN y el Centro de Información y Documentación "Egidio G. Rebonoato", enviamos nuestra calurosa felicitación al "Centro de Información
+sobre la Educación Superior. Alfonso Rangel Guerra" de la ANUIES al celebrar su 50 aniversario, el 16 de enero del 2022. ¡¡Muchas Felicidades!!</b>
+<br>
+Consulta su catálogo en http://cises.anuies.mx
+ <img
+style="width: 922px; height: 319px;" alt="50Aniversario"
+src="http://tutorias.uaaan.mx/SPA/imagesCID/50AnivAlfonsoR.jpg"><br> -->
+</td>
+</tr>
+</tbody>
+</table>
+<br>
+<p>
+<!--  VIDEO  
+<b>AVISO: Algunas de las consultas a diversas bases de datos, se han
+suspendido por parte del CONRICyT (Consorcio Nacional de Recursos de
+Información Científica y Tecnológica) a partir de Junio del 2019.</b></p>
+<br>
+
+<iframe width="640" height="360" src="https://www.powtoon.com/embed/cGpEshRtA6Z/?rel=0&autoplay=1&showinfo=1&controls=0&modestbranding=1" frameborder="0"></iframe> 
+<h3 style="text-align: center;">Nuevas adquisiciones</h3>
+//VIDEO  -->
+
+<!--  
+<iframe src="/cgi-bin/koha/slides/nuevos_registros.pl" scrolling="no" frameborder="0" width="100%" height="360">Navegador no soportado.</iframe> 
+--></div>
+ </div>
+ 
+ <div class="default_item">
+ 
+ <div class="default_body"></div>
+ </div>
+ 
+ <div class="default_item">
+ 
+ <div class="default_body"></div>
+ </div>
+ 
+ </div>
+  
+ 
+ 
+
+ </div> <!-- / .col 6/8 -->
+
+ 
+ <div class="col-12 col-lg-3 order-md-2">
+ 
+ 
+ 
+ <div id="login">
+ <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="auth" autocomplete="off">
+ <input type="hidden" name="koha_login_context" value="opac" />
+ <fieldset class="brief">
+ <legend>Ingrese a su cuenta:</legend>
+ 
+ 
+ 
+ <div class="local-login">
+ <label for="userid">Usuario:</label>
+ <input class="form-control" type="text" id="userid" name="userid" autocomplete="off" />
+ <label for="password">Contraseña:</label>
+ <input class="form-control" type="password" id="password" name="password" autocomplete="off" />
+ <fieldset class="action">
+ <input class="btn btn-primary" type="submit" value="Ingresar" />
+ </fieldset>
+ </div>
+ 
+ <div id="nologininstructions-main" class="nologininstructions">
+ 
+ 
+ <div id="OpacLoginInstructions">
+ 
+ <div class="es-ES_item">
+ 
+ <div class="es-ES_body"><p style="text-align: justify;"><span style="font-family: Arial, serif;">Para ingresar a su cuenta en el OPAC proporcione la siguiente información:</span></p>
+<p style="text-align: justify;"><span style="font-family: Arial, serif;"><strong>Alumnos</strong></span></p>
+<p style="text-align: justify;"><span style="font-family: Arial, serif;">Usuario: Matrícula</span></p>
+<p style="text-align: justify;"><span style="font-family: Arial, serif;">Contraseña: Proporcionada en control escolar</span></p>
+<p style="text-align: justify;"><span style="font-family: Arial, serif;"><strong>Maestros y empleados</strong></span></p>
+<p style="text-align: justify;"><span style="font-family: Arial, serif;">Usuario: Expediente</span></p>
+<p style="text-align: justify;"><span style="font-family: Arial, serif;">Contraseña: Proporcionada en control escolar</span></p></div>
+ </div>
+ 
+ <div class="default_item">
+ 
+ <div class="default_body"></div>
+ </div>
+ 
+ <div class="default_item">
+ 
+ <div class="default_body"></div>
+ </div>
+ 
+ </div>
+  
+ </div>
+ 
+ 
+ 
+ </fieldset>
+ </form>
+ </div> <!-- /#login -->
+ 
+ 
+ 
+ 
+ 
+ <div id="OpacNavRight">
+ 
+ <div class="es-ES_item">
+ 
+ <div class="es-ES_body"><ul class="nav nav-pills nav-stacked">
+  <li class="active"><a href="#">Noticias</a></li>
+
+  <div class="divNoticias">
+
+  </div>
+
+</ul>
+
+
+
+</div>
+ </div>
+ 
+ </div>
+  
+ </div> <!-- / .col -->
+ 
+
+ </div> <!-- /.container-fluid -->
+ </div> <!-- /.row -->
+</div> <!-- /.main -->
+
+
+
+
+
+
+
+               
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+ <div class="container-fluid">
+ <div class="row">
+ <div class="col">
+ 
+ 
+ <div id="opaccredits">
+ 
+ <div class="default_item">
+ 
+ <div class="default_body">
+<div id="pie" align="center">
+
+Universidad Autónoma Agraria Antonio Narro<br/>
+Dirección: Blvd. Antonio Narro s/n. Buenavista. Saltillo. Coahuila C.P. 25315. México.<br/>
+</div>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-64757528-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-L7B291CXGG"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-L7B291CXGG');
+</script></div>
+ </div>
+ 
+ </div>
+  
+ </div>
+ </div>
+ </div>
+ 
+
+ 
+ <div class="container-fluid">
+ <div class="row">
+ <div class="col">
+ <div id="report-koha-url">
+ <div class="row justify-content-between">
+ 
+ 
+ <div class="col">
+ <div id="koha_url" class="clearfix noprint">
+ <p>Con tecnología  <a class="koha_url" href="http://koha-community.org">Koha</a>
+ </p>
+ </div> <!-- /#koha_url -->
+ </div> <!-- /.col -->
+ 
+ </div> <!-- /.row.justify-content-between -->
+ </div> <!-- /#report-koha-url -->
+ </div> <!-- /.col -->
+ </div> <!-- /.row -->
+ </div> <!-- /.container-fluid -->
+ 
+ </div> <!-- / #wrapper in masthead.inc -->
+
+ 
+ 
+ 
+
+
+<!-- JavaScript includes -->
+<script src="/opac-tmpl/lib/jquery/jquery-3.6.0.min_23.0508000.js"></script>
+<script src="/opac-tmpl/lib/jquery/jquery-migrate-3.3.2.min_23.0508000.js"></script>
+<script src="/opac-tmpl/lib/bootstrap/js/bootstrap.bundle.min_23.0508000.js"></script>
+<script src="/opac-tmpl/lib/fontfaceobserver.min_23.0508000.js"></script>
+<script src="/opac-tmpl/lib/enquire.min_23.0508000.js"></script>
+<script>
+    let logged_in_user_id = "";
+</script>
+<script src="/opac-tmpl/bootstrap/js/global_23.0508000.js"></script>
+
+ <script>
+        var NO_AMAZON_IMAGE = _("No hay imagen de cubierta disponible");
+    </script>
+ <script src="/opac-tmpl/bootstrap/js/amazonimages_23.0508000.js"></script>
+
+
+<script>
+
+    var MSG_CONFIRM_AGAIN = _("Advertencia: No puede deshacerse. Por favor confirmar nuevamente")
+    var MSG_DELETE_SEARCH_HISTORY = _("¿Está seguro que desea eliminar su historial de búsqueda?");
+    var MSG_NO_SUGGESTION_SELECTED = _("No se seleccionó ninguna sugerencia");
+    var MSG_SEARCHING = _("Buscando %s...");
+    var MSG_ERROR_SEARCHING_COLLECTION = _("Error de la búsqueda en la colección %s");
+    var MSG_NO_RESULTS_FOUND_IN_COLLECTION = _("No se han encontrado resultados en la colección de la biblioteca %s");
+    var MSG_RESULTS_FOUND_IN_COLLECTION = _("Se encontraron %s resultados en la colección de la biblioteca %s");
+    var MSG_BY = _("por");
+    var MSG_TYPE = _("Tipo");
+    var MSG_NEXT = _("Siguiente");
+    var MSG_PREVIOUS = _("Previo");
+    var MSG_CHECKOUTS = _("Préstamos");
+    var MSG_NO_CHECKOUTS = _("Sin préstamos");
+    var MSG_CHECK_OUT = _("Préstamo");
+    var MSG_CHECK_OUT_CONFIRM = _("¿Está seguro de querer prestar esta éste ítem?");
+    var MSG_CHECKED_OUT_UNTIL = _("Prestado hasta %s");
+    var MSG_CHECK_IN = _("Devolución");
+    var MSG_CHECK_IN_CONFIRM = _("¿Está seguro de querer devolver éste ítem?");
+    var MSG_NO_CHECKOUTS = _("Sin préstamos");
+    var MSG_DOWNLOAD = _("Descargar");
+    var MSG_HOLDS = _("Reservas");
+    var MSG_NO_HOLDS = _("Sin reservas");
+    var MSG_PLACE_HOLD = _("Hacer reserva");
+    var MSG_CANCEL_HOLD = _("Cancelar");
+    var MSG_CANCEL_HOLD_CONFIRM = _("¿Está seguro que desea cancelar esta reserva?");
+    var MSG_ON_HOLD = _("Con reserva");
+
+    
+        var MSG_TAGS_DISABLED = _("Lo sentimos, las etiquetas no están habilitadas en este sistema.");
+        var MSG_TAG_ALL_BAD = _("Error! Su etiqueta tenía código ilegal. NO ha sido agregada. Intente nuevamente con texto plano.");
+        var MSG_ILLEGAL_PARAMETER = _("¡Error! Parámetro ilegal");
+        var MSG_TAG_SCRUBBED = _("Nota: su etiqueta contenía código que fue removido. La etiqueta fue agregada como ");
+        var MSG_ADD_TAG_FAILED = _("¡Error! La adición de etiquetas falló en");
+        var MSG_ADD_TAG_FAILED_NOTE = _("Nota: solo puede etiquetar un ítem con determinado término una vez. Vea 'Mis Etiquetas' para ver sus etiquetas actuales.");
+        var MSG_DELETE_TAG_FAILED = _("Error! No puede eliminar la etiqueta");
+        var MSG_DELETE_TAG_FAILED_NOTE = _("Nota: sólo puede eliminar sus propias etiquetas.")
+        var MSG_LOGIN_REQUIRED = _("Debe ingresar a su cuenta para agregar etiquetas.");
+        var MSG_TAGS_ADDED = _("Etiquetas agregadas: ");
+        var MSG_TAGS_DELETED = _("Etiquetas agregadas: ");
+        var MSG_TAGS_ERRORS = _("Errores: ");
+        var MSG_MULTI_ADD_TAG_FAILED = _("No se pudo agregar una o más etiquetas.");
+        var MSG_NO_TAG_SPECIFIED = _("No se especificó etiqueta.");
+    
+    
+        var NO_OL_JACKET = _("No hay imagen de cubierta disponible");
+    
+    
+
+    
+        $(window).load(function() {
+            verify_images();
+         });
+    
+    $(".print-large").on("click",function(){
+        window.print();
+        return false;
+    });
+    $(".addtoshelf").on("click",function(e){
+        e.preventDefault();
+        Dopop( this.href );
+    });
+    $("body").on("click", ".addtocart", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        addRecord( biblionumber );
+    });
+    $("body").on("click", ".cartRemove", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        delSingleRecord( biblionumber );
+    });
+    $(".clearsh").on("click", function(){
+        return confirmDelete(MSG_DELETE_SEARCH_HISTORY);
+    });
+
+</script>
+
+
+ <script src="/opac-tmpl/bootstrap/js/basket_23.0508000.js"></script>
+
+
+<script src="/opac-tmpl/bootstrap/js/tags_23.0508000.js"></script>
+
+ <script src="/opac-tmpl/bootstrap/js/google-jackets_23.0508000.js"></script>
+ <script>
+
+        var NO_GOOGLE_JACKET = _("No hay imagen de cubierta disponible");
+
+    </script>
+
+
+
+
+ <script src="/opac-tmpl/bootstrap/js/localcovers_23.0508000.js"></script>
+ <script>
+
+    var NO_LOCAL_JACKET = _("No hay imagen de cubierta disponible");
+
+    </script>
+
+
+
+
+
+
+<script src="/opac-tmpl/lib/js-cookie/js.cookie-3.0.1.min_23.0508000.js"></script>
+<script>
+$(document).ready(function() {
+    if($('#searchsubmit').length) {
+        $(document).on("click", '#searchsubmit', function(e) {
+            Cookies.remove("form_serialized", { path: '/'});
+            Cookies.remove("form_serialized_limits", { path: '/'});
+            Cookies.remove("search_path_code", { path: '/'});
+        });
+    }
+});
+</script>
+
+
+ <script>
+         $( document ).ready(function() { 
+        $("#news").appendTo(".divNoticias");
+        var uri = window.location+"";
+        if( !uri.endsWith( "mx/" ) && !uri.endsWith( "opac-main.pl" ) ){
+           $('#menuSlider').attr('style','display:none;visibility:hidden;');
+        }
+        $(".mastheadsearch.librarypulldown").prepend("<b><p>Localiza tu libro aquí:</p></b>");
+        $(".mastheadsearch.librarypulldown").prepend("<h1>Catálogo en línea</h1>");
+ });
+        $('[name="q"]').attr( "placeholder", "Escribe el título del libro" );
+
+
+
+$( document ).ready(function() {
+$.fn.dataTable.ext.errMode = 'throw';
+  var bibli = $('#biblioId');
+  if( $.trim(bibli.text() )== '02') {
+     $("#banner").attr('src','/opac-tmpl/bootstrap/images/cento2.jpg');
+  }
+
+ if(  $.trim($("h1.title").html())!='')
+{
+      $( "h1.title" ).each(function( index ) {
+          var tituloLista = $( this ).text();
+          $( this ).parent().append( $( "<iframe frameborder='0' height='40' scrolling='no' src='https://repositorio.uaaan.mx:8080/OpenSearch/crearLink.jsp?titulo="+tituloLista+"'></iframe>" ) );
+      });
+
+}
+//Escire
+   if(  $.trim($("a.title").html())!='')
+{
+      $( "a.title" ).each(function( index ) {
+          var tituloLista = $( this ).text();
+if(tituloLista!='')
+{
+          $( this ).parent().append( $( "<iframe frameborder='0' height='40' scrolling='no' src='https://repositorio.uaaan.mx:8080/OpenSearch/crearLink.jsp?titulo="+tituloLista+"'></iframe>" ) );
+
+}
+      });
+
+}
+//Escire  
+var bc = $("#bread_crumb").clone();
+$("#bread_crumb").remove();
+$(".main").prepend(bc);
+
+var breadc =$(".breadcrumb").clone();
+$(".breadcrumb").remove();
+$("#izquierda").append(breadc);
+
+//eScire
+
+var lista = $("ul.nav li:eq(0)").clone();
+$("ul.nav li:eq(0)").remove();
+$("ul.nav").append(lista);
+
+$("#members li #cartmenulink").remove(); 
+
+$(".container-fluid h1#logo").remove();
+
+$("a.loginModal-trigger").html('<i class="icon-user icon-white"></i> Ingrese a su cuenta');
+
+$("input.transl1").attr("placeholder", "Buscar...").val("").focus().blur();
+//Escire
+});
+
+
+
+    </script>
+
+
+
+</body>
+</html>
+
+

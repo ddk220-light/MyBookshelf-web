@@ -1,0 +1,49 @@
+# Original Robots Active File 4 May 2026 by Ata
+# Block aggressive/problematic bots completely
+User-agent: Amazonbot
+Disallow: /
+Crawl-delay: 60
+
+User-agent: meta-externalagent
+Disallow: /
+Crawl-delay: 60
+
+User-agent: Baiduspider
+Disallow: /
+Crawl-delay: 120
+
+User-agent: OpenAI
+Disallow: /
+Crawl-delay: 60
+
+User-agent: Bytespider
+Disallow: /
+Crawl-delay: 60
+
+# Google can index book details but not search
+User-agent: Googlebot
+Allow: /cgi-bin/koha/opac-detail.pl
+Disallow: /cgi-bin/koha/opac-search.pl
+Disallow: /cgi-bin/koha/opac-showmarc.pl
+Disallow: /cgi-bin/koha/opac-detailprint.pl
+Disallow: /cgi-bin/koha/opac-ISBDdetail.pl
+Disallow: /cgi-bin/koha/opac-MARCdetail.pl
+Disallow: /cgi-bin/koha/opac-reserve.pl
+Disallow: /cgi-bin/koha/opac-export.pl
+Disallow: /cgi-bin/koha/opac-authoritiesdetail.pl
+Disallow: /cgi-bin/koha/svc/
+Crawl-delay: 5
+
+# Bing can index book details but not search
+User-agent: Bingbot
+Allow: /cgi-bin/koha/opac-detail.pl
+Disallow: /cgi-bin/koha/opac-search.pl
+Disallow: /cgi-bin/koha/svc/
+Crawl-delay: 5
+
+# All other bots can only access static content
+User-agent: *
+Allow: /
+Disallow: /cgi-bin/koha/opac-search.pl
+Disallow: /cgi-bin/koha/svc/
+Crawl-delay: 10

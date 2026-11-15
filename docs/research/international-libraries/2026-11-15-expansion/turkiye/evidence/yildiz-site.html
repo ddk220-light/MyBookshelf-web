@@ -1,0 +1,3785 @@
+<!DOCTYPE html>
+<html lang="tr" dir="ltr" prefix="og: https://ogp.me/ns#" class="has-modern-header">
+<head>
+  <!-- Meta domain doğrulama -->
+  <meta name="facebook-domain-verification" content="2jabomtpsjm1om60z1nhyrk0w8wbkp" />
+
+  <!-- Meta Pixel Code -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '4098821720360109');
+    fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=4098821720360109&ev=PageView&noscript=1" />
+  </noscript>
+  <!-- End Meta Pixel Code -->
+
+  <!-- Twitter Pixel Code -->
+  <script>
+    !function(e,t,n,s,u,a){
+      e.twq||(s=e.twq=function(){
+        s.exe?s.exe.apply(s,arguments):s.queue.push(arguments);
+      },s.version='1.1',s.queue=[],u=t.createElement(n),
+      u.async=!0,u.src='https://static.ads-twitter.com/uwt.js',
+      a=t.getElementsByTagName(n)[0],a.parentNode.insertBefore(u,a))
+    }(window,document,'script');
+    twq('config','o2xz9');
+  </script>
+  <!-- End Twitter Pixel Code -->
+
+  <meta charset="utf-8" />
+<style>/* @see https://github.com/aFarkas/lazysizes#broken-image-symbol */.js img.lazyload:not([src]) { visibility: hidden; }/* @see https://github.com/aFarkas/lazysizes#automatically-setting-the-sizes-attribute */.js img.lazyloaded[data-sizes=auto] { display: block; width: 100%; }</style>
+<link rel="shortlink" href="http://ktp.yildiz.edu.tr/" />
+<link rel="canonical" href="http://ktp.yildiz.edu.tr/" />
+<meta name="Generator" content="Drupal 10 (https://www.drupal.org)" />
+<meta name="MobileOptimized" content="width" />
+<meta name="HandheldFriendly" content="true" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style data-ytu-critical="modern-header">/**
+ * @file
+ * Modern subsite header CRITICAL CSS.
+ *
+ * This file is read by ytu_preprocess_html() and inlined into <head>
+ * BEFORE any external stylesheet, so its rules apply on the very first
+ * paint and there is no Flash of Unstyled Content.
+ *
+ * Keep it minimal — anything that can wait for the full component CSS
+ * should NOT be here.  Only rules that prevent visible jank/jump on
+ * reload belong below.
+ *
+ * Scoped via the `has-modern-header` class added by ytu_preprocess_html()
+ * to both <html> and <body>.
+ */
+
+/* --------------------------------------------------------------
+   1. Sticky header support.
+   _global/_base.scss puts `overflow-x: hidden` on both <html> and
+   <body>, which silently breaks every `position: sticky` descendant
+   (each becomes its own scroll container instead of the viewport).
+   `overflow-x: clip` prevents horizontal scroll without creating a
+   scroll container, so sticky keeps working.
+   -------------------------------------------------------------- */
+html.has-modern-header,
+body.has-modern-header {
+  overflow-x: clip !important;
+}
+
+/* --------------------------------------------------------------
+   2. Neutralise legacy `html { max-width: 100vw }`.
+   `100vw` includes the scrollbar gutter, so when a vertical
+   scrollbar appears it pushes the html box's right edge under the
+   scrollbar — which would shift every centered max-width container
+   horizontally.
+   -------------------------------------------------------------- */
+html.has-modern-header,
+body.has-modern-header {
+  max-width: none !important;
+}
+
+/* --------------------------------------------------------------
+   3. Always reserve the vertical scrollbar gutter.
+   Modern property + classic fallback + a +1px height hack for the
+   browsers that ignore `overflow-y: scroll` when the page is short.
+   Together these guarantee the viewport width is identical on every
+   page, so the centered header never visibly jitters between
+   long (home) and short (inner) pages.
+   -------------------------------------------------------------- */
+html.has-modern-header {
+  scrollbar-gutter: stable !important;
+  overflow-y: scroll !important;
+}
+
+body.has-modern-header {
+  min-height: calc(100vh + 1px) !important;
+}
+
+/* --------------------------------------------------------------
+   4. Kill the legacy body fade-in animation from _global/_base.scss
+   so the header doesn't flicker on page transitions.
+   -------------------------------------------------------------- */
+body.has-modern-header {
+  animation: none !important;
+  -webkit-animation: none !important;
+  -moz-animation: none !important;
+  -o-animation: none !important;
+}
+
+/* --------------------------------------------------------------
+   5. Pre-paint menu structure to prevent submenu FOUC.
+   Drupal renders the full nested <ul><li>...</li></ul> tree
+   server-side. Without these rules the browser's user-agent styles
+   render every dropdown <ul> inline and bullet-listed for the brief
+   moment before the component CSS is parsed, producing a visible
+   "menu stack" flash on every reload.
+
+   IMPORTANT: only the TOP-LEVEL <ul> gets the margin/padding reset.
+   Dropdown <ul>s (level 2+) are intentionally left alone here so the
+   component CSS's panel padding/margin/border-radius are not in a
+   specificity fight with these rules. The dropdowns are taken out of
+   normal flow and hidden below, which already prevents the bullet
+   stack flash without overriding panel geometry.
+   -------------------------------------------------------------- */
+.has-modern-header .ymh__nav > .block > ul,
+.has-modern-header .ymh__nav > nav > ul,
+.has-modern-header .ymh__nav > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Dropdown <ul>s: take out of normal flow + hide so they don't flash
+   as a bullet stack. We do NOT zero margin/padding/border-radius here
+   on purpose — those are owned by the component CSS panel rules and
+   would otherwise have to win an unnecessary specificity fight. */
+.has-modern-header .ymh__nav li ul {
+  list-style: none;
+  position: absolute;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Prevent default-blue underlined links flashing for one frame. */
+.has-modern-header .ymh__nav a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* --------------------------------------------------------------
+   6. Pre-paint the chevron on items with sub-menus.
+   Without this rule the chevron is unstyled until the full component
+   CSS arrives, so it briefly disappears on every reload and the
+   parent link visibly shifts as the chevron pops back in.
+
+   `:has(> ul)` matches purely from the HTML, with no class or JS
+   dependency, so the chevron is correct from frame 1.
+   -------------------------------------------------------------- */
+.has-modern-header .ymh__nav li:has(> ul) > a::after {
+  content: "";
+  display: inline-block;
+  /* em-based so the chevron scales together with --ymh-link-fs (clamp 13-15px). */
+  width: 0.73em;
+  height: 0.47em;
+  /* Lock to the link's flex centerline & disable shrink so the icon
+     never bobs vertically during fluid resize. */
+  align-self: center;
+  flex-shrink: 0;
+  margin-left: 0.2rem;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1.5L6 6.5L11 1.5' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>") no-repeat center / contain;
+          mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1.5L6 6.5L11 1.5' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>") no-repeat center / contain;
+}
+</style>
+<style data-ytu-inline="modern-header">/**
+ * YTU Modern Subsite Header (ymh)
+ *
+ * Hull-inspired clean header for sub-sites.
+ * All selectors are prefixed with `.ymh` to isolate from the legacy header.
+ *
+ * Activation: $settings['ytu_modern_header'] = TRUE in site's settings.php
+ *
+ * Breakpoints:
+ *   - >= 1024px : full horizontal nav, ALWAYS. No early collapse.
+ *   - <  1024px : hamburger drawer (pure CSS, no JS overflow watcher)
+ *
+ * Fitting strategy in the awkward 1024-1199px band:
+ *   1. Type scale shrinks fluidly (clamp on --ymh-link-fs/--ymh-brand-fs).
+ *   2. Long department names wrap to a 2nd line (slogan -webkit-line-clamp:2).
+ *   3. The brand container is allowed to compress (flex: 0 1 auto + min-width:0).
+ *   4. The 1024-1199 tight band media query trims spacing & control sizes.
+ * Together these keep long Turkish names + 6-7 menu items on one row.
+ */
+
+/* ============================================================
+   Tokens
+   ============================================================ */
+.ymh {
+  --ymh-max-width: 1390px;
+  --ymh-pad-x: 1.5rem;
+  --ymh-height: 84px;
+  --ymh-bg: #ffffff;
+  --ymh-fg: #111827;
+  --ymh-fg-muted: #4b5563;
+  --ymh-border: #e6e6e6;
+  --ymh-accent: #0076ff;
+  /* Logo fill color — bound to the foreground color so the star SVG
+     visually matches the brand text (university name + slogan). Both
+     light and dark mode keep them in sync automatically. */
+  --ymh-logo: var(--ymh-fg);
+  --ymh-hover-bg: #f3f4f6;
+  /* Outer rhythm of the header row.
+     `--ymh-row-gap` controls the brand <-> nav <-> controls spacing
+     and is used as the source-of-truth for the controls divider so
+     the visual gap on BOTH sides of the divider stays equal. The
+     tight band (1024-1199px) overrides --ymh-row-gap, and the divider
+     padding follows automatically — no separate tweak needed. */
+  --ymh-row-gap: 2.5rem;
+  /* Fluid type scale (desktop band, ≥1024px).
+     Both menu links and brand text shrink CONTINUOUSLY as the viewport
+     narrows, instead of stepping down at a single 1199px breakpoint.
+     Goal: long department names ("Gemi İnşaatı ve Gemi Makineleri
+     Mühendisliği" etc.) gracefully fit by the time space is tight, so
+     the brand text never has to fall back to "...".
+
+     Formula: linear interpolation between 1024px and 1400px viewports.
+       --ymh-link-fs : 13px @ 1024vw → 15px @ 1400vw
+       --ymh-brand-fs: 11px @ 1024vw → 13px @ 1400vw
+     The clamp() floors prevent further shrinking on smaller laptops,
+     and the ceilings cap growth on very wide monitors. Below 1024px
+     the mobile media query takes over (hamburger layout). */
+  --ymh-link-fs: clamp(13px, 0.55vw + 7.5px, 15px);
+  /* Brand text size — both rows (university name & department name)
+     read from this token. Slightly reduced on mobile to fit even very
+     narrow viewports without truncation. */
+  --ymh-brand-fs: clamp(11px, 0.55vw + 5.5px, 13px);
+  /* Width bounds for the dropdown panel itself.
+     - min: keeps short menus from looking like a single skinny pill.
+     - max: caps an editor-entered long item ("Kütüphane ve Dokümantasyon
+       Daire Başkanlığı" etc.) from stretching the panel without bound.
+       400px (~28ch) is generous enough that most realistic department
+       names fit on a single row, while still preventing extreme outliers
+       from blowing the panel out to half the screen. */
+  --ymh-dropdown-min-width: 240px;
+  --ymh-dropdown-max-width: 400px;
+  --ymh-transition: 180ms ease;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+}
+
+/* ============================================================
+   Drupal admin toolbar coexistence
+
+   Drupal's admin toolbar tray (the second-row panel that opens when
+   you click "Manage" → its sub-menus) lives at z-index ~502. Our
+   sticky header is z-index 1000 and its dropdown panels are 1001 —
+   without intervention they'd render OVER the toolbar's tray menus
+   and the editor couldn't reach them.
+
+   Drop the header (and therefore its dropdowns) below the toolbar's
+   stacking layer whenever any toolbar body class is present. End
+   users never carry these classes, so nothing changes for them.
+
+   The vertical-offset rules further down (top: 39px / 79px) handle
+   the vertical stacking; this rule handles the z-axis stacking.
+   ============================================================ */
+body.toolbar-fixed .ymh,
+body.toolbar-tray-open .ymh,
+body.toolbar-horizontal .ymh,
+body.toolbar-vertical .ymh {
+  z-index: 100;
+}
+
+/* ============================================================
+   Header shell
+   ============================================================ */
+.ymh {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  width: 100%;
+  /* Forced so legacy header background rules cannot leak through and
+     create a visible tone difference between header and dropdown panel. */
+  background-color: var(--ymh-bg) !important;
+  /* Single 1px separator. We deliberately do NOT add a box-shadow here:
+     border + shadow stacked would render a ~2px darker strip at the
+     header bottom (≈ #f0f0f0) and read as a subtle gradient between
+     the header and the dropdown panel. */
+  border-bottom: 1px solid var(--ymh-border);
+}
+
+.ymh__inner {
+  display: flex;
+  /* Stretch so the nav <li>'s reach the bottom of the header — this is what
+     anchors the dropdown panels flush to the header bottom. Brand & controls
+     re-center themselves vertically inside their own flex containers below. */
+  align-items: stretch;
+  /* Token-driven so the controls divider can mirror it exactly. */
+  gap: var(--ymh-row-gap);
+  max-width: var(--ymh-max-width);
+  min-height: var(--ymh-height);
+  margin: 0 auto;
+  padding: 0 var(--ymh-pad-x);
+}
+
+/* ============================================================
+   Brand (logo + site name + site slogan)
+   The system_branding_block renders a wrapper <div> with three direct
+   <a> children (no classes):
+     a:nth-child(1) -> logo (with <img>)
+     a:nth-child(2) -> site_name  ("YILDIZ TEKNİK ÜNİVERSİTESİ")
+     a:nth-child(3) -> site_slogan ("Fen Bilimleri Enstitüsü" etc.)
+   We use CSS Grid to stack the two text rows next to the logo.
+   ============================================================ */
+.ymh__brand {
+  position: relative;
+  /* Brand can SHRINK (flex-shrink: 1) but never grow.
+     This lets long department names wrap to a second line (Layer 1)
+     instead of pushing into the menu — because the nav alongside is
+     pinned with flex-shrink: 0. min-width: 0 is required so the grid
+     child inside is allowed to compress at all (default min-content). */
+  flex: 0 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* Inline SVG monogram painted on top of the (now visually empty) logo
+   anchor. Color follows --ymh-logo via currentColor — no filter, no mask,
+   no JS. Theme switch is instant because it's just CSS color cascade.
+   The container is exactly 58px wide with overflow:hidden — the SVG keeps
+   its full original viewBox (152x58.5) at its native height, so the star
+   renders at the same crisp size as the legacy <img> (no scale-down,
+   no thicker-looking strokes). The horizontal overflow hides the "YTÜ"
+   wordmark on the right side of the source SVG. */
+.ymh__brand-logo {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 58px;
+  height: 58px;
+  overflow: hidden;
+  pointer-events: none;
+  color: var(--ymh-logo);
+  z-index: 1;
+}
+.ymh__brand-logo svg {
+  display: block;
+  height: 58px;
+  /* Let the SVG keep its intrinsic 152x58.5 aspect ratio (≈150px wide
+     when height is 58px). The container clips it to the leftmost 58px. */
+  width: auto;
+  max-width: none;
+}
+
+/* Brand container — fixed height locked to the logo so the two text rows
+   can never grow taller than the SVG. Two grid rows stack the
+   site_name and site_slogan with a tiny gap between them.
+
+   IMPORTANT: `min-width: 0` + `minmax(0, 1fr)` on the text column is the
+   bridge that lets the brand actually shrink. Without these, the grid's
+   text column locks to the natural width of the (nowrap) university name
+   on row 1 — so the brand refuses to compress and bumps into the nav
+   somewhere around 1150px viewport (the exact symptom that broke before).
+   Together with `.ymh__brand { flex: 0 1 auto; min-width: 0 }` above,
+   this is what allows Layer 1 (slogan wrapping to 2 lines) to actually
+   trigger. */
+.ymh__brand > div {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-content: center;
+  height: 58px;
+  column-gap: 0.5rem;
+  row-gap: 2px;
+  min-width: 0;
+}
+
+/* Logo anchor — kept as the click target for "go to home" but visually
+   empty: the inline SVG (.ymh__brand-logo) is painted on top of it.
+   The native <img> is hidden because it cannot follow the dark/light
+   theme on its own. */
+.ymh__brand > div > a:nth-child(1) {
+  grid-row: 1 / span 2;
+  grid-column: 1;
+  position: relative;
+  display: block;
+  width: 58px;
+  height: 58px;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.ymh__brand img {
+  display: none !important;
+}
+
+/* Top row: site_name — uppercase Inter Regular at the fluid --ymh-brand-fs,
+   anchored to the bottom of row 1 so it sits flush against the slogan.
+
+   `min-width: 0` releases the grid item's default min-content lock so the
+   parent grid's text column can actually shrink. `text-overflow: ellipsis`
+   is a far-edge safety valve: the full "YILDIZ TEKNİK ÜNİVERSİTESİ" fits
+   at normal widths; only extremely narrow shells truncate it gracefully. */
+.ymh__brand > div > a:nth-child(2) {
+  grid-row: 1;
+  grid-column: 2;
+  align-self: end;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: var(--ymh-brand-fs);
+  font-weight: 400;
+  /* PIXEL line-height (not em) keeps the row height identical across the
+     fluid 11–13px font range, so neither the brand text nor the chevrons
+     in the menu next to it shift vertically during a window resize.
+     16px is generous enough that Turkish diacritics (İ, Ü, Ö dots that sit
+     above the ascender) render fully without clipping, while still fitting
+     comfortably under the 58px logo grid cell. */
+  line-height: 16px;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--ymh-fg);
+  text-decoration: none;
+  white-space: nowrap;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+  padding: 0;
+}
+
+/* Bottom row: site_slogan (department / unit name).
+   Long Turkish unit names like "Gemi İnşaatı ve Gemi Makineleri Mühendisliği"
+   or "Kütüphane ve Dokümantasyon Daire Başkanlığı" are common, so the text
+   may wrap onto a SECOND line. With the pixel line-height (16px) and the
+   max-height cap (32px) below, the slogan box is at most:
+     16px (row 1)  +  2px (row gap)  +  32px (slogan, 2 lines)  =  50px
+   which sits comfortably inside the 58px brand height — so header
+   geometry stays rock-solid whether the name is 1 line or 2. */
+.ymh__brand > div > a:nth-child(3) {
+  grid-row: 2;
+  grid-column: 2;
+  align-self: start;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: var(--ymh-brand-fs);
+  font-weight: 600;
+  /* PIXEL line-height (not em) — same reason as the university name above:
+     keeps the slogan rows the exact same height regardless of where the
+     fluid font-size lands, eliminating vertical jitter. */
+  line-height: 16px;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--ymh-fg);
+  text-decoration: none;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  /* Hard physical cap = exactly 2 line-boxes tall on a real pixel boundary.
+     `-webkit-line-clamp` alone counts lines but can leak the top few
+     pixels of a 3rd line when totals are fractional. With pixel
+     line-height + max-height locked to a clean 32px, the clip always
+     lands on the integer boundary — no phantom sliver below the ellipsis. */
+  max-height: 32px;
+  margin: 0;
+  padding: 0;
+}
+
+/* Brand text & logo are clickable (all three anchors point to home) but
+   they should NOT change color on hover — only act as a navigation target.
+   We use !important to defeat legacy global a:hover rules from subsite.css
+   that have higher inherited specificity in the cascade. */
+.ymh .ymh__brand > div > a,
+.ymh .ymh__brand > div > a:link,
+.ymh .ymh__brand > div > a:visited,
+.ymh .ymh__brand > div > a:hover,
+.ymh .ymh__brand > div > a:focus,
+.ymh .ymh__brand > div > a:focus-visible,
+.ymh .ymh__brand > div > a:active {
+  color: var(--ymh-fg) !important;
+  text-decoration: none !important;
+  background-color: transparent !important;
+  outline: none !important;
+  border: none !important;
+}
+
+/* ============================================================
+   Primary nav (right-aligned)
+   ============================================================ */
+.ymh__nav {
+  /* Grows to fill remaining space (so it stays right-aligned), but
+     NEVER shrinks below its content width. This is the second half of
+     the brand/nav handshake: brand is allowed to compress, nav is not.
+     The result: long brand text wraps onto a 2nd line cleanly instead
+     of overlapping the menu items. */
+  flex: 1 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  align-items: stretch;
+}
+
+.ymh__nav .block,
+.ymh__nav nav.navbar {
+  display: contents;
+}
+
+.ymh__nav ul,
+.ymh__nav ul.menu,
+.ymh__nav ul.navbar-nav {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: stretch;
+  /* Inter-item spacing — tight band overrides this to 0 for a denser row. */
+  gap: 1.25rem;
+}
+
+/* Top-level items */
+.ymh__nav > .block > ul > li,
+.ymh__nav > nav > ul > li,
+.ymh__nav > ul > li {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+
+.ymh__nav > .block > ul > li > a,
+.ymh__nav > .block > ul > li > span,
+.ymh__nav > nav > ul > li > a,
+.ymh__nav > nav > ul > li > span,
+.ymh__nav > ul > li > a,
+.ymh__nav > ul > li > span {
+  position: relative;
+  /* Sit at the natural text height, vertically centered inside the
+     stretched <li>. The <li> still spans the full header height (so
+     dropdowns can anchor flush to the header bottom), but the link itself
+     keeps its compact size — and the underline indicator lands right under
+     the text instead of at the header's bottom edge. */
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.25rem;
+  font-size: var(--ymh-link-fs);
+  font-weight: 500;
+  /* PIXEL-fixed line-height (not em/unitless) is critical: while --ymh-link-fs
+     is being fluidly interpolated by clamp(), an em-based line-height would
+     also change continuously and shift every link's vertical center by
+     fractions of a pixel — making chevrons & brand text "bob" during resize.
+     A flat 20px line-box comfortably fits the 13–15px fluid range without
+     clipping descenders, and stays identical across every nav item. */
+  line-height: 20px;
+  color: var(--ymh-fg);
+  text-decoration: none;
+  white-space: nowrap;
+  background-color: transparent;
+  transition: color var(--ymh-transition);
+  cursor: pointer;
+}
+
+/* Underline indicator (border-bottom effect) */
+.ymh__nav > .block > ul > li > a::before,
+.ymh__nav > nav > ul > li > a::before,
+.ymh__nav > ul > li > a::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background-color: var(--ymh-accent);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform var(--ymh-transition);
+  pointer-events: none;
+}
+
+.ymh__nav > .block > ul > li > a:hover::before,
+.ymh__nav > .block > ul > li > a:focus-visible::before,
+.ymh__nav > .block > ul > li.is-open > a::before,
+.ymh__nav > .block > ul > li > a.is-active::before,
+.ymh__nav > .block > ul > li > a.is-active-trail::before,
+.ymh__nav > nav > ul > li > a:hover::before,
+.ymh__nav > nav > ul > li > a:focus-visible::before,
+.ymh__nav > nav > ul > li.is-open > a::before,
+.ymh__nav > nav > ul > li > a.is-active::before,
+.ymh__nav > nav > ul > li > a.is-active-trail::before,
+.ymh__nav > ul > li > a:hover::before,
+.ymh__nav > ul > li > a:focus-visible::before,
+.ymh__nav > ul > li.is-open > a::before,
+.ymh__nav > ul > li > a.is-active::before,
+.ymh__nav > ul > li > a.is-active-trail::before {
+  transform: scaleX(1);
+}
+
+/* Top-level nav links keep their default text color in every state.
+   The ONLY visual feedback for hover / focus / open / active-trail is
+   the underline indicator (::before). No blue color shift.
+   `!important` is required here because Bootstrap's reboot.scss sets a
+   global `a:hover { color: $link-hover-color }` (blue) at the same
+   specificity, which would otherwise win on hover. */
+.ymh .ymh__nav > .block > ul > li > a,
+.ymh .ymh__nav > .block > ul > li > a:link,
+.ymh .ymh__nav > .block > ul > li > a:visited,
+.ymh .ymh__nav > .block > ul > li > a:hover,
+.ymh .ymh__nav > .block > ul > li > a:focus,
+.ymh .ymh__nav > .block > ul > li > a:focus-visible,
+.ymh .ymh__nav > .block > ul > li > a:active,
+.ymh .ymh__nav > .block > ul > li.is-open > a,
+.ymh .ymh__nav > .block > ul > li > a.is-active,
+.ymh .ymh__nav > .block > ul > li > a.is-active-trail,
+.ymh .ymh__nav > nav > ul > li > a,
+.ymh .ymh__nav > nav > ul > li > a:link,
+.ymh .ymh__nav > nav > ul > li > a:visited,
+.ymh .ymh__nav > nav > ul > li > a:hover,
+.ymh .ymh__nav > nav > ul > li > a:focus,
+.ymh .ymh__nav > nav > ul > li > a:focus-visible,
+.ymh .ymh__nav > nav > ul > li > a:active,
+.ymh .ymh__nav > nav > ul > li.is-open > a,
+.ymh .ymh__nav > nav > ul > li > a.is-active,
+.ymh .ymh__nav > nav > ul > li > a.is-active-trail,
+.ymh .ymh__nav > ul > li > a,
+.ymh .ymh__nav > ul > li > a:link,
+.ymh .ymh__nav > ul > li > a:visited,
+.ymh .ymh__nav > ul > li > a:hover,
+.ymh .ymh__nav > ul > li > a:focus,
+.ymh .ymh__nav > ul > li > a:focus-visible,
+.ymh .ymh__nav > ul > li > a:active,
+.ymh .ymh__nav > ul > li.is-open > a,
+.ymh .ymh__nav > ul > li > a.is-active,
+.ymh .ymh__nav > ul > li > a.is-active-trail {
+  color: var(--ymh-fg) !important;
+  text-decoration: none !important;
+}
+
+/* Chevron for items with a submenu.
+   `:has(> ul)` is a pure-CSS detector of a nested <ul>, so the chevron
+   renders on first paint without depending on Drupal class flags
+   (`.menu-item--expanded` is only added when "Show as expanded" is
+   ticked in the menu admin) or JavaScript class injection.
+
+   Note: the chevron does NOT rotate on hover/open. The dropdown
+   appearance itself is a sufficient affordance, and the rotation was
+   considered visually noisy. */
+.ymh__nav li:has(> ul) > a::after {
+  content: "";
+  display: inline-block;
+  /* Sized in `em` so the chevron scales together with --ymh-link-fs.
+     At 15px link size: 11x7px (the original ratio); at 13px: ~9.5x6px. */
+  width: 0.73em;
+  height: 0.47em;
+  /* Lock vertical position to the link's flex centerline and prevent the
+     icon from being shrunk by flex-children rules elsewhere — together
+     these stop the 1px chevron jitter during fluid resize. */
+  align-self: center;
+  flex-shrink: 0;
+  margin-left: 0.2rem;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1.5L6 6.5L11 1.5' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>") no-repeat center / contain;
+          mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1.5L6 6.5L11 1.5' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>") no-repeat center / contain;
+}
+
+/* ============================================================
+   Dropdown panels (level 2)
+   All structural rules use `:has(> ul)` so they apply to every <li>
+   that contains a nested <ul>, regardless of Drupal/JS class flags.
+   ============================================================ */
+.ymh__nav li:has(> ul) > ul {
+  position: absolute;
+  top: 100%;
+  /* Anchored to the parent <li>'s LEFT edge and pulled out by 1rem so
+     that (panel padding 0.5rem + item padding-left 0.75rem) - 1rem == 0.25rem,
+     which is exactly the parent menu link's own padding-left.  Result: the
+     dropdown row text is left-aligned with the parent menu item text. */
+  left: -1rem;
+  transform: translateY(-6px);
+  min-width: var(--ymh-dropdown-min-width);
+  max-width: var(--ymh-dropdown-max-width);
+  margin: 0;
+  padding: 0.5rem;
+  /* `!important` is here to defeat any legacy `ul { background: ... }`
+     reset that might shade the dropdown a different tone than the header. */
+  background-color: var(--ymh-bg) !important;
+  /* No borders: side borders against the header's bottom border read as a
+     visible gray seam.  We rely on the box-shadow alone for the panel
+     boundary, which keeps the header↔dropdown joint perfectly seamless. */
+  border: 0;
+  border-radius: 0 0 8px 8px;
+  /* Single downward shadow so the panel looks lit from above and shares no
+     visible tone difference with the header at the seam. */
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.10);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--ymh-transition), transform var(--ymh-transition), visibility 0s linear var(--ymh-transition);
+  z-index: 1001;
+}
+
+.ymh__nav > .block > ul > li:hover > ul,
+.ymh__nav > .block > ul > li.is-open > ul,
+.ymh__nav > .block > ul > li:focus-within > ul,
+.ymh__nav > nav > ul > li:hover > ul,
+.ymh__nav > nav > ul > li.is-open > ul,
+.ymh__nav > nav > ul > li:focus-within > ul,
+.ymh__nav > ul > li:hover > ul,
+.ymh__nav > ul > li.is-open > ul,
+.ymh__nav > ul > li:focus-within > ul {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  /* Flush against the header bottom (no gap). Only Y changes; X stays
+     anchored so left-alignment is preserved both at rest and on open. */
+  transform: translateY(0);
+  transition: opacity var(--ymh-transition), transform var(--ymh-transition), visibility 0s;
+}
+
+/* Dropdown item rows.
+   We zero margin/padding/list-style explicitly here (rather than rely on
+   the critical CSS) so the row geometry is owned by ONE place — this
+   component file — and cannot regress if the critical CSS ever changes. */
+.ymh__nav li:has(> ul) > ul li {
+  position: relative;
+  display: block;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ymh__nav li:has(> ul) > ul li > a,
+.ymh__nav li:has(> ul) > ul li > span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  /* Same token as the top-level nav so they shrink together in the
+     1024-1199 tight band. Without this the dropdown items would stay
+     at 15px while the parent menu went to 13px — visually disjointed. */
+  font-size: var(--ymh-link-fs);
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--ymh-fg);
+  text-decoration: none;
+  border-radius: 6px;
+  /* Wrap onto multiple lines when the editor enters a very long
+     submenu name. Combined with the panel's max-width above, this
+     keeps the dropdown a sensible size instead of growing horizontally
+     forever. `overflow-wrap: anywhere` is a safety valve for single
+     long words/URLs without spaces. */
+  white-space: normal;
+  overflow-wrap: anywhere;
+  transition: background-color var(--ymh-transition), color var(--ymh-transition);
+}
+
+/* When the row text wraps to multiple lines, keep the chevron pinned
+   to the right and vertically centered against the wrapped text — never
+   let it shrink or jump to a new line. */
+.ymh__nav li:has(> ul) > ul li > a::after,
+.ymh__nav li:has(> ul) > ul li > span::after {
+  flex-shrink: 0;
+}
+
+.ymh__nav li:has(> ul) > ul li > a:hover,
+.ymh__nav li:has(> ul) > ul li > a:focus-visible {
+  color: var(--ymh-accent);
+  background-color: var(--ymh-hover-bg);
+}
+
+/* Active submenu item — when the user is currently ON one of the dropdown
+   pages, mark that link with the accent color so it visually matches the
+   parent's underline indicator in the top bar. We cover all the class
+   names Drupal's menu system may emit: `.is-active` / `.is-active-trail`
+   on the <a>, and `.menu-item--active(-trail)` on the wrapping <li>.
+   No background tint here (background is reserved for hover) — keeps the
+   "where am I" cue subtle and consistent with the top-level treatment. */
+.ymh .ymh__nav li:has(> ul) > ul li > a.is-active,
+.ymh .ymh__nav li:has(> ul) > ul li > a.is-active-trail,
+.ymh .ymh__nav li:has(> ul) > ul li.menu-item--active > a,
+.ymh .ymh__nav li:has(> ul) > ul li.menu-item--active-trail > a {
+  color: var(--ymh-accent) !important;
+}
+
+/* Last-item radius harmony.
+   The panel itself has border-radius 0 0 8px 8px with an inner padding
+   of 0.5rem (8px). The visible inner radius is therefore ~0 (8 - 8),
+   so the LAST item's hover background sits flush against a straight
+   inner corner — its bottom corners must also be square or the row
+   radius would visibly "step" out of the panel's straight inner edge. */
+.ymh__nav li:has(> ul) > ul > li:last-child > a,
+.ymh__nav li:has(> ul) > ul > li:last-child > span {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* Inner submenu chevron points right */
+.ymh__nav li:has(> ul) > ul li:has(> ul) > a::after {
+  transform: rotate(-90deg);
+}
+
+/* ============================================================
+   Dropdown panels (level 3+) - flyout right
+   ============================================================ */
+.ymh__nav li:has(> ul) > ul li:has(> ul) > ul {
+  position: absolute;
+  top: -0.5rem;
+  left: 100%;
+  transform: translate(6px, 0);
+  border-radius: 8px;
+}
+
+.ymh__nav li:has(> ul) > ul li:has(> ul):hover > ul,
+.ymh__nav li:has(> ul) > ul li:has(> ul).is-open > ul,
+.ymh__nav li:has(> ul) > ul li:has(> ul):focus-within > ul {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate(0, 0);
+  transition: opacity var(--ymh-transition), transform var(--ymh-transition), visibility 0s;
+}
+
+/* ============================================================
+   Edge clamp – align dropdowns to viewport when near right edge.
+   For the last two top-level items we anchor by `right` instead of
+   `left` so the panel doesn't overflow the viewport. The -1rem mirror
+   keeps the right-side text alignment with the parent's right edge.
+   ============================================================ */
+.ymh__nav > .block > ul > li:nth-last-child(-n+2) > ul,
+.ymh__nav > nav > ul > li:nth-last-child(-n+2) > ul,
+.ymh__nav > ul > li:nth-last-child(-n+2) > ul {
+  left: auto;
+  right: -1rem;
+}
+
+.ymh__nav > .block > ul > li:nth-last-child(-n+2):hover > ul,
+.ymh__nav > .block > ul > li:nth-last-child(-n+2).is-open > ul,
+.ymh__nav > nav > ul > li:nth-last-child(-n+2):hover > ul,
+.ymh__nav > nav > ul > li:nth-last-child(-n+2).is-open > ul,
+.ymh__nav > ul > li:nth-last-child(-n+2):hover > ul,
+.ymh__nav > ul > li:nth-last-child(-n+2).is-open > ul {
+  transform: translate(0, 0);
+}
+
+/* ============================================================
+   Right-side controls
+   ============================================================ */
+.ymh__controls {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  /* Center the vertical divider EXACTLY in the middle of the
+     brand/nav/controls row gap. The trick:
+       - margin-left pulls the controls box back by half the row gap,
+         so the divider (pinned to its left edge) lands at the visual
+         midpoint between the nav and the controls.
+       - padding-left of the SAME magnitude restores symmetric breathing
+         room on the controls side.
+     Net effect: nav last item -> divider distance ===
+                 divider -> EN distance, regardless of viewport. */
+  margin-left: calc(var(--ymh-row-gap) / -2);
+  padding-left: calc(var(--ymh-row-gap) / 2);
+}
+
+/* Short, centered vertical divider between the nav and the controls.
+   Sits inside the controls (left edge), independent of header height. */
+.ymh__controls::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 1px;
+  height: 24px;
+  transform: translateY(-50%);
+  background-color: var(--ymh-border);
+  pointer-events: none;
+}
+
+/* On narrow screens (when nav is hidden), the divider would look orphaned. */
+@media (max-width: 1023.98px) {
+  .ymh__controls {
+    padding-left: 0;
+    margin-left: auto;
+  }
+  .ymh__controls::before {
+    display: none;
+  }
+}
+
+.ymh__icon-btn {
+  --size: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size);
+  height: var(--size);
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  color: var(--ymh-fg);
+  cursor: pointer;
+  transition: background-color var(--ymh-transition), color var(--ymh-transition);
+}
+
+.ymh__icon-btn:hover,
+.ymh__icon-btn:focus-visible {
+  background-color: var(--ymh-hover-bg);
+  color: var(--ymh-accent);
+  outline: none;
+}
+
+.ymh__icon-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Hamburger bars */
+.ymh__bars {
+  position: relative;
+  display: inline-block;
+  width: 22px;
+  height: 16px;
+}
+.ymh__bars span {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: currentColor;
+  border-radius: 2px;
+  transition: transform var(--ymh-transition), opacity var(--ymh-transition), top var(--ymh-transition);
+}
+.ymh__bars span:nth-child(1) { top: 0; }
+.ymh__bars span:nth-child(2) { top: 7px; }
+.ymh__bars span:nth-child(3) { top: 14px; }
+
+[data-ymh-toggle="drawer"][aria-expanded="true"] .ymh__bars span:nth-child(1) { top: 7px; transform: rotate(45deg); }
+[data-ymh-toggle="drawer"][aria-expanded="true"] .ymh__bars span:nth-child(2) { opacity: 0; }
+[data-ymh-toggle="drawer"][aria-expanded="true"] .ymh__bars span:nth-child(3) { top: 7px; transform: rotate(-45deg); }
+
+/* ============================================================
+   Language switcher (compact)
+   ============================================================ */
+.ymh__lang {
+  display: flex;
+  align-items: center;
+}
+.ymh__lang .block {
+  margin: 0;
+  padding: 0;
+}
+.ymh__lang ul,
+.ymh__lang .links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 4px;
+}
+.ymh__lang li {
+  display: inline-flex;
+}
+/* Language link sized to match the icon buttons (40x40 circle) so the EN /
+   moon / search trio share the exact same hover hit-area shape. */
+.ymh__lang a,
+.ymh__lang .lang-switcher a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ymh-fg);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  border-radius: 50%;
+  transition: background-color var(--ymh-transition), color var(--ymh-transition);
+  /* Reset the legacy globe icon */
+  background-image: none !important;
+  filter: none !important;
+  position: static !important;
+  margin: 0 !important;
+  line-height: 1 !important;
+}
+.ymh__lang a::before,
+.ymh__lang .lang-switcher a::before {
+  display: none !important;
+}
+/* Hide the legacy globe SVG that lang-switcher prepends to the link;
+   we only want to show the language code (EN/TR). */
+.ymh__lang .lang-icon,
+.ymh__lang svg.lang-icon {
+  display: none !important;
+}
+.ymh__lang a:hover,
+.ymh__lang a:focus-visible {
+  color: var(--ymh-accent);
+  background-color: var(--ymh-hover-bg);
+  outline: none;
+}
+.ymh__lang a.is-active {
+  display: none !important;
+}
+
+/* ============================================================
+   Dark mode single-button toggle.
+   Shows the sun icon while light mode is active (click -> switch to dark).
+   Shows the moon icon while dark mode is active.
+   ============================================================ */
+.ymh__mode-btn {
+  position: relative;
+}
+.ymh__mode-icon {
+  position: absolute;
+  inset: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity var(--ymh-transition), transform var(--ymh-transition);
+}
+.ymh__mode-icon svg {
+  width: 18px;
+  height: 18px;
+}
+.ymh__mode-icon--moon {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.6);
+}
+body.dark-mode .ymh__mode-icon--sun {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.6);
+}
+body.dark-mode .ymh__mode-icon--moon {
+  opacity: 1;
+  transform: rotate(0) scale(1);
+}
+
+/* ============================================================
+   Search overlay
+   ============================================================ */
+.ymh__search-overlay {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--ymh-bg);
+  border-bottom: 1px solid var(--ymh-border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  padding: 1rem var(--ymh-pad-x);
+  z-index: 1000;
+  animation: ymh-fade-down 200ms ease both;
+}
+.ymh__search-overlay[hidden] { display: none; }
+
+.ymh__search-inner {
+  max-width: var(--ymh-max-width);
+  margin: 0 auto;
+}
+
+.ymh__search-inner form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--ymh-border);
+  border-radius: 32px;
+  padding: 0.25rem 0.25rem 0.25rem 1.25rem;
+  background: var(--ymh-bg);
+}
+
+.ymh__search-inner input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1rem;
+  color: var(--ymh-fg);
+  padding: 0.5rem 0;
+  font-family: inherit;
+}
+
+.ymh__search-inner input::placeholder {
+  color: var(--ymh-fg-muted);
+}
+
+@keyframes ymh-fade-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   Mobile drawer
+
+   Full-width panel anchored BELOW the sticky header (`top: var(--ymh-height)`)
+   so the logo + brand stay visible while the drawer is open. The hamburger
+   button morphs into an X to act as the only close affordance, which is
+   why there's no separate close button inside the drawer.
+
+   `[hidden]` keeps the drawer fully removed when closed, so screen
+   readers and tabbing skip it. The `is-closing` class drives the
+   reverse fade animation; matching JS waits for it to finish before
+   applying `[hidden]`.
+   ============================================================ */
+.ymh__drawer {
+  position: fixed;
+  top: var(--ymh-height);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--ymh-bg);
+  z-index: 1100;
+  animation: ymh-slide-in-left 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.ymh__drawer[hidden] { display: none; }
+.ymh__drawer.is-closing {
+  animation: ymh-slide-out-left 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.ymh__drawer-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  /* Prevent scroll chaining: when the drawer content hits its own
+     top/bottom boundary, do NOT let the scroll propagate to the
+     background page. Pairs with the position:fixed body lock in JS. */
+  overscroll-behavior: contain;
+}
+
+.ymh__drawer-nav {
+  padding: 0.75rem 0.75rem 1rem;
+  flex: 1;
+}
+
+.ymh__drawer-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* All drawer links: comfortable touch target (44px+ tall once padding
+   and line-height are added), large readable type. The flex layout lets
+   the chevron sit on the right side of the row. */
+.ymh__drawer-nav > .block > ul > li > a,
+.ymh__drawer-nav > nav > ul > li > a,
+.ymh__drawer-nav ul li a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.875rem 0.875rem;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--ymh-fg);
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background-color var(--ymh-transition), color var(--ymh-transition);
+}
+
+.ymh__drawer-nav ul li a:hover,
+.ymh__drawer-nav ul li a:focus-visible {
+  background: var(--ymh-hover-bg);
+  color: var(--ymh-accent);
+  outline: none;
+}
+
+/* Top-level rows visually separated by a subtle divider — gives the
+   long list a clearer rhythm without needing to add bordered cards. */
+.ymh__drawer-nav > .block > ul > li + li,
+.ymh__drawer-nav > nav > ul > li + li,
+.ymh__drawer-nav > ul > li + li {
+  border-top: 1px solid var(--ymh-border);
+}
+
+/* Active page (and its ancestors) — same accent color as the desktop
+   nav's active-trail underline, keeping the visual language consistent. */
+.ymh .ymh__drawer-nav a.is-active,
+.ymh .ymh__drawer-nav a.is-active-trail,
+.ymh .ymh__drawer-nav li.menu-item--active > a,
+.ymh .ymh__drawer-nav li.menu-item--active-trail > a {
+  color: var(--ymh-accent) !important;
+}
+
+/* Submenu container — collapsed by default. The matching JS toggles
+   `is-open` on the parent <li> when the user taps it (initMobileSubmenuClicks). */
+.ymh__drawer-nav ul ul {
+  display: none;
+  padding-left: 1rem;
+  margin: 0.25rem 0 0.5rem;
+  border-left: 1px solid var(--ymh-border);
+}
+.ymh__drawer-nav li.is-open > ul {
+  display: block;
+}
+
+/* Chevron next to any drawer link that has a submenu. Detected with pure
+   CSS via `:has(> ul)`, so no extra Drupal class is required. The chevron
+   rotates when the submenu is open, providing a clear open/closed cue
+   that the desktop dropdowns intentionally don't (taps need affordance,
+   hovers don't). */
+.ymh__drawer-nav li:has(> ul) > a::after {
+  content: "";
+  display: inline-block;
+  width: 12px;
+  height: 8px;
+  margin-left: 0.5rem;
+  flex-shrink: 0;
+  background-color: currentColor;
+  transition: transform var(--ymh-transition);
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1.5L6 6.5L11 1.5' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>") no-repeat center / contain;
+          mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1.5L6 6.5L11 1.5' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>") no-repeat center / contain;
+}
+.ymh__drawer-nav li.is-open > a::after {
+  transform: rotate(180deg);
+}
+
+.ymh__drawer-foot {
+  padding: 1rem;
+  border-top: 1px solid var(--ymh-border);
+  /* Lay out the language switcher and the dark mode toggle in a single
+     row, evenly spaced. The mode button anchors to the right; the
+     language list to the left. */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+/* Drawer-scoped lang/mode controls.  These are normally hidden by the
+   `.ymh__controls .ymh__lang` rule above only when they live in the
+   header's controls bar; inside the drawer footer they should ALWAYS
+   render as their normal selves regardless of viewport. */
+.ymh__drawer-foot .ymh__lang {
+  display: flex;
+  align-items: center;
+}
+.ymh__drawer-foot .ymh__mode-btn {
+  display: inline-flex;
+}
+
+@keyframes ymh-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes ymh-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+@keyframes ymh-slide-in-left {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+@keyframes ymh-slide-out-left {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-100%); }
+}
+
+/* ============================================================
+   Responsive collapse — single, predictable Hull-style breakpoint.
+
+   At 1024px (Bootstrap lg) the desktop nav folds into the hamburger
+   drawer. Above 1024px the nav is ALWAYS visible — no content-aware
+   early collapse, no surprises. To keep things comfortable in the
+   awkward 1024-1199px band, see the "tight band" rules further down
+   that shrink the brand-to-nav gap and item-to-item gap.
+   ============================================================ */
+.ymh__menu-btn { display: none; }
+
+@media (max-width: 1023.98px) {
+  /* Hide the desktop nav, and move the language switcher + dark mode
+     toggle out of the top header into the drawer footer. This frees up
+     the entire right side for just [search][hamburger] — a slim 80px
+     trio — so the brand text on the left can claim the rest of the
+     row without ever needing to truncate on common phone widths.
+
+     Selectors are scoped to `.ymh__controls` so the same .ymh__lang /
+     .ymh__mode-btn rendered INSIDE the drawer footer stays visible. */
+  .ymh__nav,
+  .ymh__controls .ymh__lang,
+  .ymh__controls .ymh__mode-btn {
+    display: none;
+  }
+  .ymh__menu-btn { display: inline-flex; }
+
+  /* Tighten the outer rhythm and side padding so the brand gets all the
+     extra room on phones. The divider auto-mirrors via --ymh-row-gap.
+     `--ymh-brand-fs` is pinned to a fixed 13px (overriding the desktop
+     clamp() floor of 11px) so even very narrow viewports — iPhone SE
+     at 375px — keep the full "YILDIZ TEKNİK ÜNİVERSİTESİ" readable. */
+  .ymh {
+    --ymh-row-gap: 0.75rem;
+    --ymh-pad-x: 1rem;
+    --ymh-brand-fs: 13px;
+  }
+}
+
+/* ============================================================
+   Tight band — 1024 to 1199px (laptops / small desktops).
+
+   The nav is fully visible here, so we tighten SPACING across the
+   board (gap, padding, control sizes) so the whole row compresses
+   uniformly. The fluid type scale (clamp on --ymh-link-fs and
+   --ymh-brand-fs) handles font sizing on its own across the entire
+   1024-1400px range — no font overrides in this band.
+   ============================================================ */
+@media (min-width: 1024px) and (max-width: 1199.98px) {
+  /* Outer rhythm: tighter brand <-> nav <-> controls gap; the divider
+     geometry auto-mirrors via the --ymh-row-gap token. */
+  .ymh {
+    --ymh-row-gap: 1rem;
+  }
+
+  /* — Menu items: tighten gap and link padding — */
+  .ymh__nav ul,
+  .ymh__nav ul.menu,
+  .ymh__nav ul.navbar-nav {
+    /* 0.25rem -> 0 : items already have horizontal padding, so dropping
+       the inter-item gap reads as natural tightening rather than crowding. */
+    gap: 0;
+  }
+  .ymh__nav > .block > ul > li > a,
+  .ymh__nav > .block > ul > li > span,
+  .ymh__nav > nav > ul > li > a,
+  .ymh__nav > nav > ul > li > span,
+  .ymh__nav > ul > li > a,
+  .ymh__nav > ul > li > span {
+    /* Trim horizontal padding a hair so the underline indicators stay
+       tight under the link text without shrinking the click target. */
+    padding-left: 0.625rem;
+    padding-right: 0.625rem;
+  }
+
+  /* — Right-side controls: gap between EN / dark / search, and the
+     micro-gap inside the language pill list. The divider geometry is
+     handled automatically by the token override above. — */
+  .ymh__controls {
+    /* 0.125rem -> 0 : icon-button trio sits flush together. */
+    gap: 0;
+  }
+  .ymh__lang ul,
+  .ymh__lang .links {
+    /* 4px -> 0 between language pills. */
+    gap: 0;
+  }
+  /* Smaller circular hit-areas — same icon size inside (20px), only
+     the surrounding hover circle shrinks. Visually subtle, gives back
+     ~4px per control (~16px total). */
+  .ymh__icon-btn {
+    --size: 36px;
+  }
+  .ymh__lang a,
+  .ymh__lang .lang-switcher a {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* ============================================================
+   Dark mode body class compatibility
+   ============================================================ */
+body.dark-mode .ymh {
+  --ymh-bg: #0f172a;
+  --ymh-fg: #e5e7eb;
+  --ymh-fg-muted: #9ca3af;
+  --ymh-border: rgba(255, 255, 255, 0.08);
+  --ymh-hover-bg: rgba(255, 255, 255, 0.06);
+  --ymh-accent: #4f9cff;
+  /* --ymh-logo follows --ymh-fg automatically — no override needed. */
+}
+
+/* ============================================================
+   Admin toolbar offset
+
+   Drupal's core admin toolbar (and Gin) is `position: fixed; top: 0`
+   on the viewport. Our header is `position: sticky; top: 0` — without
+   an offset, the two would overlap visually whenever an editor with
+   toolbar access loads a subsite page.
+
+   We push the sticky header down by the toolbar's height so they stack
+   cleanly. End users (no toolbar classes on body) are unaffected.
+
+   Heights:
+     - core toolbar bar:        39px
+     - core toolbar + open tray: 79px (extra ~40px tray)
+     - vertical toolbar tray:   leaves bar at 39px (tray docks left)
+     - Gin: uses its own --gin-toolbar-y-offset variable.
+   ============================================================ */
+body.toolbar-fixed .ymh {
+  top: 39px;
+}
+body.toolbar-fixed.toolbar-horizontal.toolbar-tray-open .ymh {
+  top: 79px;
+}
+body.gin--horizontal-toolbar .ymh,
+body.gin--classic-toolbar .ymh {
+  top: var(--gin-toolbar-y-offset, 39px);
+}
+
+/* The mobile drawer is anchored to the SAME logical "below header" point.
+   When an admin toolbar is present, push the drawer's top so it still
+   starts right under the header (not under the toolbar). */
+body.toolbar-fixed .ymh__drawer {
+  top: calc(var(--ymh-height) + 39px);
+}
+body.toolbar-fixed.toolbar-horizontal.toolbar-tray-open .ymh__drawer {
+  top: calc(var(--ymh-height) + 79px);
+}
+
+/* ============================================================
+   Reset legacy body padding — subsite.css reserves 102px for the
+   old fixed header; our sticky header sits in normal flow and
+   does not need that offset.
+   ============================================================ */
+html body.has-modern-header {
+  padding-top: 0 !important;
+}
+.layout-container.layout-container--modern-header {
+  margin-top: 0;
+}
+
+/* ============================================================
+   Make sticky work on subsites that use the modern header.
+   _global/_base.scss sets `overflow-x: hidden` on both <html> and <body>,
+   which silently breaks every `position: sticky` descendant (because each
+   becomes its own scroll container instead of the viewport).
+   We swap that to `overflow-x: clip`, which prevents horizontal scroll
+   without creating a scroll container — so sticky keeps working.
+
+   We use the body class (added by ytu_preprocess_html) instead of the
+   `:has(.layout-container--modern-header)` selector so the rule matches
+   on the very first paint and avoids a brief sticky/animation FOUC during
+   reloads.
+   ============================================================ */
+html:has(body.has-modern-header),
+body.has-modern-header {
+  overflow-x: clip !important;
+}
+
+/* ============================================================
+   Page-load fade — keep the content fade-in effect from
+   _global/_base.scss but exclude the header so it stays rock-solid
+   between page navigations (no flicker / no opacity dip).
+   We disable the body-level animation only on subsites that opted
+   into the modern header, then re-apply it to every direct child of
+   .layout-container--modern-header EXCEPT the header itself.
+   ============================================================ */
+body.has-modern-header {
+  animation: none !important;
+  -webkit-animation: none !important;
+  -moz-animation: none !important;
+  -o-animation: none !important;
+}
+body.has-modern-header .layout-container--modern-header > *:not(.ymh):not(header) {
+  animation: fadein 1s ease both;
+}
+</style>
+<link rel="icon" href="/themes/custom/ytu/favicon.ico" type="image/vnd.microsoft.icon" />
+<link rel="alternate" hreflang="tr" href="http://ktp.yildiz.edu.tr/" />
+<link rel="alternate" hreflang="en" href="http://ktp.yildiz.edu.tr/en" />
+
+  <title>Anasayfa | Kütüphane ve Dokümantasyon Daire Başkanlığı</title>
+  <link rel="stylesheet" media="all" href="/core/themes/stable9/css/core/components/progress.module.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/core/components/ajax-progress.module.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/system/components/align.module.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/system/components/fieldgroup.module.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/system/components/container-inline.module.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/system/components/clearfix.module.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/system/components/details.module.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/system/components/hidden.module.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/system/components/item-list.module.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/system/components/js.module.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/system/components/nowrap.module.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/system/components/position-container.module.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/system/components/reset-appearance.module.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/system/components/resize.module.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/system/components/system-status-counter.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/system/components/system-status-report-counters.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/system/components/system-status-report-general-info.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/system/components/tablesort.module.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/views/views.module.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/modules/contrib/better_exposed_filters/css/better_exposed_filters.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/modules/contrib/extlink/css/extlink.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/modules/contrib/paragraphs/css/paragraphs.unpublished.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/core/assets/vendor/normalize-css/normalize.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/themes/custom/ytu/css/_global/bs/bootstrap-grid.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/themes/custom/ytu/css/_global/style.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/themes/custom/ytu/css/_global/dark-mode.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/themes/custom/ytu/css/_global/icons.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/themes/custom/ytu/css/_global/print.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/themes/custom/ytu/css/header-centered.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/themes/custom/ytu/css/header-modern-controls.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/themes/custom/ytu/css/inline-content-images.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/themes/custom/ytu/components/_global/select2/select2.min.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/themes/custom/ytu/css/_global/select2/select2-custom.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/themes/custom/ytu/css/announcement/announcement.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/themes/custom/ytu/components/_global/aos/aos.min.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/themes/custom/ytu/css/_global/bs/buttons.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/themes/custom/ytu/css/_global/form-select.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/themes/custom/ytu/css/_global/utilities.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/themes/custom/ytu/css/color-link-box/color-link-box.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/themes/custom/ytu/css/flex-box/flex-box.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/themes/custom/ytu/css/static-search/static-search.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/themes/custom/ytu/css/subsite/css/subsite-footer.css?toi8r4" />
+<link rel="stylesheet" media="all" href="/themes/custom/ytu/css/subsite/css/subsite.css?toi8r4" />
+<link rel="stylesheet" media="all" href="//cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<link rel="stylesheet" media="all" href="/themes/custom/ytu/components/modern_slider/modern_slider.css?toi8r4" />
+
+  
+
+  <!-- Google Analytics -->
+  <script async src="//www.google-analytics.com/analytics.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DWKC67PSKG"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-DWKC67PSKG');
+  </script>
+</head>
+
+  <body class="has-modern-header path-frontpage">
+        <a href="#main-content" class="visually-hidden focusable">
+      Ana içeriğe atla
+    </a>
+    
+      <div class="dialog-off-canvas-main-canvas" data-off-canvas-main-canvas>
+    
+<div class="layout-container layout-container--modern-header">
+
+  
+
+<header class="ymh" data-ymh-root>
+  <div class="ymh__inner">
+        <div class="ymh__brand">
+      <div>
+  
+    
+        <a href="/" rel="home">
+      <img src="/themes/custom/ytu/logo-subsite.svg" alt="Anasayfa" fetchpriority="high" />
+    </a>
+        <a href="/" rel="home">YILDIZ TEKNİK ÜNİVERSİTESİ</a>
+    <a href="/" rel="home">Kütüphane ve Dokümantasyon Daire Başkanlığı</a>
+</div>
+
+      <span class="ymh__brand-logo" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 152.034 58.521" preserveAspectRatio="xMinYMid meet">
+          <path d="M49.093,35.268l13.083-8.574L46.5,26.849l4.924-14.841L38.74,21.321,34.189,6.355,29.655,21.42l-12.689-9.4,5.011,14.894-15.651-.2L19.064,35.63,6.42,44.719l15.714-.258L17.079,59.306l12.709-9.652,4.393,15.222L38.9,49.723l12.461,9.671L46.02,44.386l16.015.4Zm7.107-6.7-8.6,5.6-2.831-2.081L45.889,28.7ZM48.212,16.454,44.725,26.866l-4.285.042L39.3,23.154Zm-14.04-3.826,3,9.847-3.06,2.246-2.925-2.167ZM20.564,16.966,29.1,23.26l-1.122,3.727-4.135-.052Zm-8.006,11.74H22.581l1.191,3.538-3.049,2.192Zm-.5,14.159L20.591,36.7l3.38,2.366-1.2,3.538Zm8.66,11.4,3.468-9.837,4.075-.067.987,3.422Zm13.555,4.221-2.9-10.034,2.979-2.262,2.878,2.235ZM37.793,46.5l-3.416-2.615-3.547,2.7-1.2-4.145-4.785.117,1.475-4.184L22.243,35.5l3.572-2.581-1.387-4.216h4.906l1.3-4.319L34.177,27l3.556-2.673,1.36,4.463,5.01-.066L42.737,32.8l3.251,2.414L41.93,37.857l1.426,4.3-4.22-.234Zm9.383,7.184L39.5,47.807l1.108-3.556,3.472.087ZM45.265,42.266l-1.3-3.64,3.512-2.3,8.824,6.554Z" transform="translate(-6.326 -6.355)" fill="currentColor"/>
+        </svg>
+      </span>
+    </div>
+
+        <nav class="ymh__nav" aria-label="Ana menü" data-ymh-nav>
+      
+              <ul>
+              <li>
+        <a href="/hakkinda" data-drupal-link-system-path="node/15210">Hakkında</a>
+                                <ul>
+              <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/hakkinda/tarihce/tarihce" data-drupal-link-system-path="node/13119">Tarihçe</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/hakkinda/tarihce/misyon-ve-vizyon" data-drupal-link-system-path="node/13242">Misyon ve Vizyon</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/hakkinda/tarihce/kutuphane-kullanim-kurallari-ile-kural-ihlali-durumunda" data-drupal-link-system-path="node/13263">Kütüphane Kullanım Kuralları İle Kural İhlali Durumunda Uygulanacak Yaptırımlar</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/hakkinda/tarihce/kat-planlari-kullanim-alanlari-ve-kapasiteler" data-drupal-link-system-path="node/13125">Kat Planları, Kullanım Alanları ve Kapasiteler</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/hakkinda/tarihce/organizasyon-semasi" data-drupal-link-system-path="node/13203">Organizasyon Şeması</a>
+              </li>
+          <li>
+        <a href="/hakkinda/personel" data-drupal-link-system-path="node/13128">Personel</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/hakkinda/tarihce/akis-surecleri" data-drupal-link-system-path="node/15309">İş Akış Süreçleri</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/hakkinda/tarihce/formlar" data-drupal-link-system-path="node/15315">Formlar</a>
+              </li>
+          <li>
+        <a href="https://kalite.yildiz.edu.tr/sayfa/Kalite-Dok%C3%BCmanlar%C4%B1/Di%C4%9Fer-Dok%C3%BCmanlar/343">Hizmet Envanteri (DD-121)</a>
+              </li>
+          <li>
+        <a href="https://kalite.yildiz.edu.tr/sayfa/Kalite-Dok%C3%BCmanlar%C4%B1/Di%C4%9Fer-Dok%C3%BCmanlar/343">Hizmet Standartları (DD-122)</a>
+              </li>
+          <li>
+        <a href="/hakkinda/acil-durum-eylem-plani" data-drupal-link-system-path="node/13251">Acil Durum Eylem Planı</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/hakkinda/tarihce/hassas-gorev-tespit-formu" data-drupal-link-system-path="node/15402">Hassas Görev Tespit Formu</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/hakkinda/tarihce/hassas-gorev-envanteri-formu" data-drupal-link-system-path="node/15399">Hassas Görev Envanteri Formu</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/hakkinda/tarihce/hassas-gorev-listesi-formu" data-drupal-link-system-path="node/15405">Hassas Görev Listesi Formu</a>
+              </li>
+          <li>
+        <a href="/hakkinda/iletisim" data-drupal-link-system-path="node/13131">İletişim</a>
+              </li>
+        </ul>
+  
+              </li>
+          <li>
+        <a href="/mevzuat" data-drupal-link-system-path="node/15372">Mevzuat</a>
+                                <ul>
+              <li>
+        <a href="/mevzuat/kutuphane-yonergesi" data-drupal-link-system-path="node/15375">Kütüphane Yönergesi</a>
+              </li>
+          <li>
+        <a href="/mevzuat/acik-erisim-yonergesi-yo-023" data-drupal-link-system-path="node/15390">Açık Erişim Yönergesi</a>
+              </li>
+          <li>
+        <a href="/mevzuat/kamu-ihale-kanunu-ds-007" data-drupal-link-system-path="node/15393">Kamu İhale Kanunu</a>
+              </li>
+        </ul>
+  
+              </li>
+          <li>
+        <a href="/e-kaynaklar" data-drupal-link-system-path="node/15213">E-Kaynaklar</a>
+                                <ul>
+              <li>
+        <a href="/e-kaynaklar/e-dergi-veritabanlari" data-drupal-link-system-path="node/15237">E-Dergi Veritabanları</a>
+              </li>
+          <li>
+        <a href="/e-kaynaklar/e-kitaplar" data-drupal-link-system-path="node/13143">E-Kitaplar</a>
+              </li>
+          <li>
+        <a href="/e-kaynaklar/e-referans-kaynaklari" data-drupal-link-system-path="node/13146">E-Referans Kaynakları</a>
+              </li>
+          <li>
+        <a href="/e-kaynaklar/deneme-veri-tabanlari" data-drupal-link-system-path="node/13149">Deneme Veri Tabanları</a>
+              </li>
+          <li>
+        <a href="/e-kaynaklar/2025-yili-uye-veri-tabanlari" data-drupal-link-system-path="node/13260">2025 Yılı Üye Veri Tabanları</a>
+              </li>
+          <li>
+        <a href="/e-kaynaklar/intihal-programlari-turnitinithenticate" data-drupal-link-system-path="node/13248">İntihal Programları (Turnitin&amp;Ithenticate)</a>
+              </li>
+          <li>
+        <a href="/e-kaynaklar/elektronik-yayinlarin-kullanim-kurallari-ve-telif-hakki" data-drupal-link-system-path="node/13239">Elektronik Yayınların Kullanım Kuralları ve Telif Hakkı</a>
+              </li>
+          <li>
+        <a href="/e-kaynaklar/isbn-ve-issn-islemleri" data-drupal-link-system-path="node/15414">ISBN ve ISSN İşlemleri</a>
+              </li>
+        </ul>
+  
+              </li>
+          <li>
+        <a href="/sureli-yayin" data-drupal-link-system-path="node/15216">Süreli Yayın</a>
+                                <ul>
+              <li>
+        <a href="/sureli-yayin/guncel-yabanci-sureli-yayinlar" data-drupal-link-system-path="node/13152">Güncel Yabancı Süreli Yayınlar</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/sureli-yayin/guncel-turkce-sureli-yayinlar/guncel-turkce-sureli-yayinlar" data-drupal-link-system-path="node/13155">Güncel Türkçe Süreli Yayınlar</a>
+              </li>
+        </ul>
+  
+              </li>
+          <li>
+        <a href="/odunc-iade-islemleri" data-drupal-link-system-path="node/15219">Üyelik/Ödünç-İade/Dış Kullanıcı</a>
+                                <ul>
+              <li>
+        <a href="/odunc-iade-islemleri/uyelik-islemleri" data-drupal-link-system-path="node/13197">Üyelik İşlemleri</a>
+              </li>
+          <li>
+        <a href="/odunc-iade-islemleri/dis-kullanici-yararlanma-kosullaridilekce" data-drupal-link-system-path="node/15255">Dış Kullanıcı Yararlanma Koşulları/Başvuru</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/odunc-iade/uyelik-islemleri/kutuphanelerarasi-odunc-verme-hizmeti-ill" data-drupal-link-system-path="node/13161">Kütüphanelerarası Ödünç Verme Hizmeti (ILL)</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/odunc-iade/uyelik-islemleri/gecikme-cezasi" data-drupal-link-system-path="node/15246">Gecikme Cezası</a>
+              </li>
+          <li>
+        <a href="/odunc-iade-islemleri/odunc-iade-politikasi" data-drupal-link-system-path="node/15378">Ödünç-İade Politikası</a>
+              </li>
+        </ul>
+  
+              </li>
+          <li>
+        <a href="/yayin-saglama" data-drupal-link-system-path="node/15222">Yayın Sağlama</a>
+                                <ul>
+              <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/yayin-saglama/bagis-politikasi/bagis-politikasi" data-drupal-link-system-path="node/15381">Bağış Politikası</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/yayin-saglama/bagis-politikasi/yeni-gelen-yayinlar" data-drupal-link-system-path="node/13173">Yeni Gelen Yayınlar</a>
+              </li>
+        </ul>
+  
+              </li>
+          <li>
+        <a href="/belge-saglama" data-drupal-link-system-path="node/15225">Belge Sağlama</a>
+                                <ul>
+              <li>
+        <a href="http://belgesaglama.ktp.yildiz.edu.tr/yurticitezistek">Yurt İçi Tez İstek</a>
+              </li>
+          <li>
+        <a href="http://belgesaglama.ktp.yildiz.edu.tr/yurticimakaleistek">Yurt İçi Makale İstek</a>
+              </li>
+        </ul>
+  
+              </li>
+          <li>
+        <a href="/bize-danisin" data-drupal-link-system-path="node/15228">Bize Danışın</a>
+                                <ul>
+              <li>
+        <a href="/bize-danisin/kutuphane-egitimi-kilavuzu" data-drupal-link-system-path="node/13257">Kütüphane Eğitimi Kılavuzu</a>
+              </li>
+          <li>
+        <a href="/bize-danisin/kutuphane-egitimi-kilavuzu/sss" data-drupal-link-system-path="node/13254">SSS</a>
+              </li>
+          <li>
+        <a href="/bize-danisin/staj-basvurusu" data-drupal-link-system-path="node/13218">Staj Başvurusu</a>
+              </li>
+          <li>
+        <a href="/bize-danisin/oryantasyon-kullanici-egitimleri" data-drupal-link-system-path="node/13245">Oryantasyon &amp; Kullanıcı Eğitimleri</a>
+              </li>
+        </ul>
+  
+              </li>
+        </ul>
+  
+
+
+    </nav>
+
+        <div class="ymh__controls">
+            <div class="ymh__lang">
+        <div class="language-switcher-language-url" role="navigation">
+  
+    
+        <div class="lang-switcher">
+                                                                    <a href="/en" class="lang-btn" hreflang="en">
+            <svg class="lang-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M2 12h20"/>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+            <span class="lang-code">EN</span>
+          </a>
+                    </div>
+
+  </div>
+
+      </div>
+
+            <button type="button" class="ymh__icon-btn ymh__mode-btn" data-ymh-toggle="darkmode" aria-label="Karanlık / aydınlık mod" aria-pressed="false">
+        <span class="ymh__mode-icon ymh__mode-icon--sun" aria-hidden="true">  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.75"/>
+    <path d="M12 2V4M12 20V22M4.93 4.93L6.34 6.34M17.66 17.66L19.07 19.07M2 12H4M20 12H22M4.93 19.07L6.34 17.66M17.66 6.34L19.07 4.93" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
+  </svg>
+</span>
+        <span class="ymh__mode-icon ymh__mode-icon--moon" aria-hidden="true">  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</span>
+      </button>
+
+            <button type="button" class="ymh__icon-btn ymh__search-btn" data-ymh-toggle="search" aria-label="Ara" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.75"/>
+    <path d="M20 20L16.5 16.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
+  </svg>
+
+      </button>
+
+            <button type="button" class="ymh__icon-btn ymh__menu-btn" data-ymh-toggle="drawer" aria-label="Menü" aria-expanded="false">
+        <span class="ymh__bars" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+      </button>
+    </div>
+  </div>
+
+    <div class="ymh__search-overlay" data-ymh-panel="search" hidden>
+    <div class="ymh__search-inner">
+      <form action="/search/content" role="search">
+        <label class="visually-hidden" for="ymh-search-input">Arama</label>
+        <input id="ymh-search-input" type="text" name="keys" autocomplete="off" placeholder="YTÜ'de ara...">
+        <button type="submit" class="ymh__icon-btn" aria-label="Ara">  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.75"/>
+    <path d="M20 20L16.5 16.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
+  </svg>
+</button>
+        <button type="button" class="ymh__icon-btn" data-ymh-toggle="search" aria-label="Kapat">  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M5 5L19 19M19 5L5 19" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
+  </svg>
+</button>
+      </form>
+    </div>
+  </div>
+
+    <div class="ymh__drawer" data-ymh-panel="drawer" hidden>
+    <div class="ymh__drawer-inner">
+      <div class="ymh__drawer-nav">
+        
+              <ul>
+              <li>
+        <a href="/hakkinda" data-drupal-link-system-path="node/15210">Hakkında</a>
+                                <ul>
+              <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/hakkinda/tarihce/tarihce" data-drupal-link-system-path="node/13119">Tarihçe</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/hakkinda/tarihce/misyon-ve-vizyon" data-drupal-link-system-path="node/13242">Misyon ve Vizyon</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/hakkinda/tarihce/kutuphane-kullanim-kurallari-ile-kural-ihlali-durumunda" data-drupal-link-system-path="node/13263">Kütüphane Kullanım Kuralları İle Kural İhlali Durumunda Uygulanacak Yaptırımlar</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/hakkinda/tarihce/kat-planlari-kullanim-alanlari-ve-kapasiteler" data-drupal-link-system-path="node/13125">Kat Planları, Kullanım Alanları ve Kapasiteler</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/hakkinda/tarihce/organizasyon-semasi" data-drupal-link-system-path="node/13203">Organizasyon Şeması</a>
+              </li>
+          <li>
+        <a href="/hakkinda/personel" data-drupal-link-system-path="node/13128">Personel</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/hakkinda/tarihce/akis-surecleri" data-drupal-link-system-path="node/15309">İş Akış Süreçleri</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/hakkinda/tarihce/formlar" data-drupal-link-system-path="node/15315">Formlar</a>
+              </li>
+          <li>
+        <a href="https://kalite.yildiz.edu.tr/sayfa/Kalite-Dok%C3%BCmanlar%C4%B1/Di%C4%9Fer-Dok%C3%BCmanlar/343">Hizmet Envanteri (DD-121)</a>
+              </li>
+          <li>
+        <a href="https://kalite.yildiz.edu.tr/sayfa/Kalite-Dok%C3%BCmanlar%C4%B1/Di%C4%9Fer-Dok%C3%BCmanlar/343">Hizmet Standartları (DD-122)</a>
+              </li>
+          <li>
+        <a href="/hakkinda/acil-durum-eylem-plani" data-drupal-link-system-path="node/13251">Acil Durum Eylem Planı</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/hakkinda/tarihce/hassas-gorev-tespit-formu" data-drupal-link-system-path="node/15402">Hassas Görev Tespit Formu</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/hakkinda/tarihce/hassas-gorev-envanteri-formu" data-drupal-link-system-path="node/15399">Hassas Görev Envanteri Formu</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/hakkinda/tarihce/hassas-gorev-listesi-formu" data-drupal-link-system-path="node/15405">Hassas Görev Listesi Formu</a>
+              </li>
+          <li>
+        <a href="/hakkinda/iletisim" data-drupal-link-system-path="node/13131">İletişim</a>
+              </li>
+        </ul>
+  
+              </li>
+          <li>
+        <a href="/mevzuat" data-drupal-link-system-path="node/15372">Mevzuat</a>
+                                <ul>
+              <li>
+        <a href="/mevzuat/kutuphane-yonergesi" data-drupal-link-system-path="node/15375">Kütüphane Yönergesi</a>
+              </li>
+          <li>
+        <a href="/mevzuat/acik-erisim-yonergesi-yo-023" data-drupal-link-system-path="node/15390">Açık Erişim Yönergesi</a>
+              </li>
+          <li>
+        <a href="/mevzuat/kamu-ihale-kanunu-ds-007" data-drupal-link-system-path="node/15393">Kamu İhale Kanunu</a>
+              </li>
+        </ul>
+  
+              </li>
+          <li>
+        <a href="/e-kaynaklar" data-drupal-link-system-path="node/15213">E-Kaynaklar</a>
+                                <ul>
+              <li>
+        <a href="/e-kaynaklar/e-dergi-veritabanlari" data-drupal-link-system-path="node/15237">E-Dergi Veritabanları</a>
+              </li>
+          <li>
+        <a href="/e-kaynaklar/e-kitaplar" data-drupal-link-system-path="node/13143">E-Kitaplar</a>
+              </li>
+          <li>
+        <a href="/e-kaynaklar/e-referans-kaynaklari" data-drupal-link-system-path="node/13146">E-Referans Kaynakları</a>
+              </li>
+          <li>
+        <a href="/e-kaynaklar/deneme-veri-tabanlari" data-drupal-link-system-path="node/13149">Deneme Veri Tabanları</a>
+              </li>
+          <li>
+        <a href="/e-kaynaklar/2025-yili-uye-veri-tabanlari" data-drupal-link-system-path="node/13260">2025 Yılı Üye Veri Tabanları</a>
+              </li>
+          <li>
+        <a href="/e-kaynaklar/intihal-programlari-turnitinithenticate" data-drupal-link-system-path="node/13248">İntihal Programları (Turnitin&amp;Ithenticate)</a>
+              </li>
+          <li>
+        <a href="/e-kaynaklar/elektronik-yayinlarin-kullanim-kurallari-ve-telif-hakki" data-drupal-link-system-path="node/13239">Elektronik Yayınların Kullanım Kuralları ve Telif Hakkı</a>
+              </li>
+          <li>
+        <a href="/e-kaynaklar/isbn-ve-issn-islemleri" data-drupal-link-system-path="node/15414">ISBN ve ISSN İşlemleri</a>
+              </li>
+        </ul>
+  
+              </li>
+          <li>
+        <a href="/sureli-yayin" data-drupal-link-system-path="node/15216">Süreli Yayın</a>
+                                <ul>
+              <li>
+        <a href="/sureli-yayin/guncel-yabanci-sureli-yayinlar" data-drupal-link-system-path="node/13152">Güncel Yabancı Süreli Yayınlar</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/sureli-yayin/guncel-turkce-sureli-yayinlar/guncel-turkce-sureli-yayinlar" data-drupal-link-system-path="node/13155">Güncel Türkçe Süreli Yayınlar</a>
+              </li>
+        </ul>
+  
+              </li>
+          <li>
+        <a href="/odunc-iade-islemleri" data-drupal-link-system-path="node/15219">Üyelik/Ödünç-İade/Dış Kullanıcı</a>
+                                <ul>
+              <li>
+        <a href="/odunc-iade-islemleri/uyelik-islemleri" data-drupal-link-system-path="node/13197">Üyelik İşlemleri</a>
+              </li>
+          <li>
+        <a href="/odunc-iade-islemleri/dis-kullanici-yararlanma-kosullaridilekce" data-drupal-link-system-path="node/15255">Dış Kullanıcı Yararlanma Koşulları/Başvuru</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/odunc-iade/uyelik-islemleri/kutuphanelerarasi-odunc-verme-hizmeti-ill" data-drupal-link-system-path="node/13161">Kütüphanelerarası Ödünç Verme Hizmeti (ILL)</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/odunc-iade/uyelik-islemleri/gecikme-cezasi" data-drupal-link-system-path="node/15246">Gecikme Cezası</a>
+              </li>
+          <li>
+        <a href="/odunc-iade-islemleri/odunc-iade-politikasi" data-drupal-link-system-path="node/15378">Ödünç-İade Politikası</a>
+              </li>
+        </ul>
+  
+              </li>
+          <li>
+        <a href="/yayin-saglama" data-drupal-link-system-path="node/15222">Yayın Sağlama</a>
+                                <ul>
+              <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/yayin-saglama/bagis-politikasi/bagis-politikasi" data-drupal-link-system-path="node/15381">Bağış Politikası</a>
+              </li>
+          <li>
+        <a href="/https%3A/ktp.yildiz.edu.tr/yayin-saglama/bagis-politikasi/yeni-gelen-yayinlar" data-drupal-link-system-path="node/13173">Yeni Gelen Yayınlar</a>
+              </li>
+        </ul>
+  
+              </li>
+          <li>
+        <a href="/belge-saglama" data-drupal-link-system-path="node/15225">Belge Sağlama</a>
+                                <ul>
+              <li>
+        <a href="http://belgesaglama.ktp.yildiz.edu.tr/yurticitezistek">Yurt İçi Tez İstek</a>
+              </li>
+          <li>
+        <a href="http://belgesaglama.ktp.yildiz.edu.tr/yurticimakaleistek">Yurt İçi Makale İstek</a>
+              </li>
+        </ul>
+  
+              </li>
+          <li>
+        <a href="/bize-danisin" data-drupal-link-system-path="node/15228">Bize Danışın</a>
+                                <ul>
+              <li>
+        <a href="/bize-danisin/kutuphane-egitimi-kilavuzu" data-drupal-link-system-path="node/13257">Kütüphane Eğitimi Kılavuzu</a>
+              </li>
+          <li>
+        <a href="/bize-danisin/kutuphane-egitimi-kilavuzu/sss" data-drupal-link-system-path="node/13254">SSS</a>
+              </li>
+          <li>
+        <a href="/bize-danisin/staj-basvurusu" data-drupal-link-system-path="node/13218">Staj Başvurusu</a>
+              </li>
+          <li>
+        <a href="/bize-danisin/oryantasyon-kullanici-egitimleri" data-drupal-link-system-path="node/13245">Oryantasyon &amp; Kullanıcı Eğitimleri</a>
+              </li>
+        </ul>
+  
+              </li>
+        </ul>
+  
+
+
+      </div>
+            <div class="ymh__drawer-foot">
+        <div class="ymh__lang">
+          <div class="language-switcher-language-url" role="navigation">
+  
+    
+        <div class="lang-switcher">
+                                                                    <a href="/en" class="lang-btn" hreflang="en">
+            <svg class="lang-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M2 12h20"/>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+            <span class="lang-code">EN</span>
+          </a>
+                    </div>
+
+  </div>
+
+        </div>
+        <button type="button" class="ymh__icon-btn ymh__mode-btn" data-ymh-toggle="darkmode" aria-label="Karanlık / aydınlık mod" aria-pressed="false">
+          <span class="ymh__mode-icon ymh__mode-icon--sun" aria-hidden="true">  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.75"/>
+    <path d="M12 2V4M12 20V22M4.93 4.93L6.34 6.34M17.66 17.66L19.07 19.07M2 12H4M20 12H22M4.93 19.07L6.34 17.66M17.66 6.34L19.07 4.93" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
+  </svg>
+</span>
+          <span class="ymh__mode-icon ymh__mode-icon--moon" aria-hidden="true">  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+  
+  
+  
+
+  <main>
+    <a id="main-content" tabindex="-1"></a>
+    <div class="layout-content">
+        <div id="block-ytu-ktp-site-tweaks">
+  
+    
+      
+            <div><style id="ktp-site-tweaks">
+/* KTP slider — title large; description smaller (FED pattern) */
+.modern-swiper .slide-title p.slide-desc {
+  font-size: 1.52rem;
+  font-weight: 400;
+  margin-top: 10px;
+  width: 140%;
+  max-width: none;
+  line-height: 1.35;
+  letter-spacing: 0;
+}
+.modern-swiper .slide-title > p:not(.slide-desc) {
+  font-size: inherit;
+  font-weight: 600;
+}
+@media (max-width: 992px) {
+  .modern-swiper .slide-title p.slide-desc {
+    font-size: clamp(0.85rem, 2.8vw, 1.05rem) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-top: 8px;
+    line-height: 1.4;
+  }
+}
+/* KTP modern header — denser top-level menu gap */
+.ymh {
+  --ymh-row-gap: 1.25rem;
+}
+.ymh__nav ul,
+.ymh__nav ul.menu,
+.ymh__nav ul.navbar-nav {
+  gap: 1rem;
+}
+.ymh__nav > .block > ul > li > a,
+.ymh__nav > .block > ul > li > span,
+.ymh__nav > nav > ul > li > a,
+.ymh__nav > nav > ul > li > span,
+.ymh__nav > ul > li > a,
+.ymh__nav > ul > li > span {
+  padding-left: 0.2rem;
+  padding-right: 0.2rem;
+}
+
+/* ============================================================
+   KTP desktop: 2-row header (YBD A deseni)
+   Üst: logo+yazı | EN / dark / search
+   Alt: menü tam genişlik + space-between
+   ============================================================ */
+@media (min-width: 1024px) {
+  .ymh__inner {
+    display: grid !important;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "brand controls"
+      "nav nav";
+    align-items: center;
+    column-gap: 1.25rem;
+    row-gap: 0.55rem;
+    min-height: 0;
+    padding-top: 0.65rem;
+    padding-bottom: 0.45rem;
+  }
+
+  .ymh__brand {
+    grid-area: brand;
+    flex: 0 0 auto !important;
+    min-width: 0;
+    align-self: center;
+  }
+
+  .ymh__brand > div {
+    min-width: max-content;
+  }
+  .ymh__brand > div > a:nth-child(2) {
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  .ymh__controls {
+    grid-area: controls;
+    justify-self: end;
+    align-self: center;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+  }
+  .ymh__controls::before {
+    display: none !important;
+  }
+
+  .ymh__nav {
+    grid-area: nav;
+    flex: none !important;
+    width: 100%;
+    min-width: 0;
+    justify-content: flex-start;
+    align-self: stretch;
+    border-top: 1px solid var(--ymh-border, #e6e6e6);
+    margin-top: 0.1rem;
+    padding-top: 0.45rem;
+  }
+
+  .ymh__nav ul,
+  .ymh__nav ul.menu,
+  .ymh__nav ul.navbar-nav {
+    width: 100%;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .ymh__nav > .block > ul > li > a,
+  .ymh__nav > .block > ul > li > span,
+  .ymh__nav > nav > ul > li > a,
+  .ymh__nav > nav > ul > li > span,
+  .ymh__nav > ul > li > a,
+  .ymh__nav > ul > li > span {
+    padding-top: 0.45rem;
+    padding-bottom: 0.45rem;
+  }
+}
+
+/* KTP search/quick — header + .subsite-container (1390) ile hiza */
+.ktp-search-wrapper,
+.ktp-quick-access-buttons {
+  max-width: 1390px !important;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+.ktp-search-section {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+.ktp-quick-access-section {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+</style>
+</div>
+      
+  </div>
+<div data-drupal-messages-fallback class="hidden"></div>
+<div id="block-ytu-content">
+  
+    
+      
+
+<div>
+    
+        
+
+    
+    <div class="content-area">
+        <div class="content-top-area">
+            
+      <div>
+              <div>  <div class="paragraph paragraph--type--prg-views-reference prg_id--5241 paragraph--view-mode--default">
+          
+            <div><div class="views-element-container">
+
+<div class="js-view-dom-id-9c07445721f81fc3e017203b2e03c051cc1f12ef92968bf2524bef1980fe9ece modern-slider-container" style="width: 100%; max-width: 100%; margin: 0; padding: 0; position: relative; overflow: hidden;">
+  
+  
+  
+
+  <div class="swiper modern-swiper" style="width: 100%; height: 500px; position: relative; overflow: hidden;">
+    <div class="swiper-wrapper" style="height: 100%;">
+        <div class="swiper-slide" style="width: 100%; height: 500px; min-height: 500px; position: relative; overflow: hidden;">
+    
+
+
+<div class="slide-inner">
+
+            <div class="slide-image-wrapper">
+      <div>
+  
+  
+  <div>
+    <div class="visually-hidden">Image</div>
+              <div>  <img loading="lazy" src="/sites/ktp.yildiz.edu.tr/files/2025-07/kutuphane2.jpg" width="2392" height="1110" alt="YTÜ Kütüphane" />
+
+</div>
+          </div>
+
+</div>
+
+    </div>
+  
+    <div class="slide-overlay"></div>
+
+    <div class="slide-content">
+    <div class="slide-content-inner">
+      
+                    <div class="slide-title">
+          <p>Ulusal Çaptaki Araştırmaların Bilgi Kaynağını Oluşturmaktayız</p>
+<p class="slide-desc">Ulusal ve uluslararası akademik kaynaklarla araştırmalarınızı destekliyor, bilimsel keşiflerinizi güçlendiriyoruz.</p>
+        </div>
+            
+                  
+    </div>
+  </div>
+
+</div>
+
+  </div>
+
+    </div>
+    
+    <!-- Pagination -->
+    <div class="swiper-pagination"></div>
+    
+    <!-- Navigation -->
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
+  </div>
+</div>
+</div>
+</div>
+      
+      </div>
+</div>
+              <div>  <div class="paragraph paragraph--type--prg-grid prg_id--2889 paragraph--view-mode--default" id="section2889">
+          
+
+
+
+
+
+			
+      <div class="row">
+              
+        	      		      			      	      	
+      		      		      			      	      	
+        	      		      			      	      	
+        
+        <div>
+          
+
+
+
+        <div class="paragraph paragraph--type--prg-text paragraph--view-mode--default">
+                                              <style>
+    /* KTP Slider Widget İçin Minimal Reset */
+    .ktp-slider-widget-container * {
+        box-sizing: border-box;
+    }
+    .ktp-slider-widget-container {
+        width: 100%;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
+        background: transparent;
+        margin: 0;
+        position: relative;
+    }
+    /* Slider/Banner Bölümü */
+    
+    
+    
+    
+    /* Arama Bölümü - Tab Panel */
+    .ktp-search-section {
+        background: transparent;
+        padding: 30px 20px;
+        position: relative;
+    }
+    .ktp-search-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    /* Modern Tab Navigation */
+    .ktp-tab-container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+    }
+    .ktp-tab-navigation {
+        display: flex;
+        background: #f8fafc;
+        border-bottom: 1px solid #e2e8f0;
+        overflow-x: auto;
+    }
+    .ktp-tab-button {
+        flex: 1;
+        padding: 20px 24px;
+        background: transparent;
+        border: none;
+        font-size: 16px;
+        font-weight: 600;
+        color: #64748b;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+        position: relative;
+        min-width: 180px;
+        border-bottom: 3px solid transparent;
+    }
+    .ktp-tab-button:hover:not(.active) {
+        background: rgba(0, 118, 255, 0.05);
+        color: #0076ff;
+    }
+    .ktp-tab-button.active {
+        background: white;
+        color: #0076ff;
+        border-bottom-color: #0076ff;
+        font-weight: 700;
+    }
+    .ktp-tab-content {
+        background: white;
+        padding: 30px;
+        min-height: 120px;
+    }
+    .ktp-tab-panel {
+        display: none;
+    }
+    .ktp-tab-panel.active {
+        display: block;
+    }
+    /* Tek Satır Arama Formu */
+    .ktp-search-form {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+    .ktp-input-group {
+        position: relative;
+        flex: 1;
+    }
+    .ktp-search-input {
+        width: 100%;
+        padding: 12px 45px 12px 16px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 14px;
+        background: #ffffff;
+        color: #1e293b;
+        transition: all 0.3s ease;
+        font-family: inherit;
+    }
+    .ktp-search-input:focus {
+        outline: none;
+        border-color: #0076ff;
+        box-shadow: 0 0 0 3px rgba(0, 118, 255, 0.1);
+    }
+    .ktp-search-input::placeholder {
+        color: #9ca3af;
+        font-weight: 400;
+    }
+    .ktp-search-icon {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 18px;
+        height: 18px;
+        pointer-events: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .ktp-search-icon svg {
+        width: 100%;
+        height: 100%;
+        fill: #9ca3af;
+        transition: fill 0.3s ease;
+    }
+    .ktp-search-input:focus + .ktp-search-icon svg {
+        fill: #0076ff;
+    }
+    .ktp-search-btn {
+        padding: 12px 24px;
+        background: linear-gradient(135deg, #0076ff, #66aaff);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+    .ktp-search-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 118, 255, 0.3);
+    }
+    .ktp-advanced-link {
+        margin-top: 8px;
+    }
+    .ktp-advanced-link a {
+        color: #0076ff;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 12px;
+        transition: all 0.3s ease;
+        padding: 4px 8px;
+        border-radius: 6px;
+        display: inline-block;
+    }
+    .ktp-advanced-link a:hover {
+        background: rgba(0, 118, 255, 0.1);
+        color: #0066e6;
+    }
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        
+        
+        
+        .ktp-search-section {
+            padding: 20px 15px;
+        }
+        .ktp-tab-button {
+            padding: 14px 12px;
+            font-size: 13px;
+            min-width: 120px;
+        }
+        .ktp-tab-content {
+            padding: 18px;
+        }
+        .ktp-search-form {
+            flex-direction: column;
+            gap: 12px;
+        }
+        .ktp-input-group {
+            width: 100%;
+            min-width: auto;
+            max-width: none;
+        }
+        .ktp-search-btn {
+            width: 100%;
+            padding: 12px 20px;
+        }
+        .ktp-quick-access-section {
+            margin-top: 20px;
+            padding: 0 10px;
+        }
+        /* Mobile single column layout */
+        .ktp-quick-access-buttons {
+            flex-direction: column;
+            gap: 10px;
+        }
+        .ktp-quick-btn {
+            padding: 14px 16px;
+            font-size: 13px;
+            min-height: 56px;
+            flex: 1 1 100%;
+            min-width: auto;
+            justify-content: flex-start;
+            gap: 12px;
+        }
+        .ktp-quick-btn-icon {
+            font-size: 16px !important;
+            min-width: 20px !important;
+        }
+        .ktp-quick-btn-text {
+            font-size: 13px !important;
+            text-align: left !important;
+        }
+    }
+    @media (max-width: 640px) and (min-width: 481px) {
+        .ktp-quick-access-section {
+            padding: 0 8px;
+        }
+        .ktp-quick-access-buttons {
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .ktp-quick-btn {
+            font-size: 12px;
+            padding: 13px 16px;
+            min-height: 54px;
+            flex: 1 1 calc(50% - 6px);
+            min-width: 200px;
+            justify-content: flex-start;
+            gap: 10px;
+        }
+        .ktp-quick-btn-icon {
+            font-size: 15px;
+            min-width: 18px;
+        }
+        .ktp-quick-btn-text {
+            font-size: 12px;
+            text-align: left;
+        }
+    }
+    @media (max-width: 480px) {
+        
+        
+        
+        .ktp-search-section {
+            padding: 15px 8px;
+        }
+        .ktp-tab-navigation {
+            flex-direction: column;
+        }
+        .ktp-tab-button {
+            padding: 12px 14px;
+            font-size: 12px;
+            min-width: auto;
+            border-bottom: none;
+            border-right: 3px solid transparent;
+        }
+        .ktp-tab-button.active {
+            border-bottom: none;
+            border-right-color: #0076ff;
+        }
+        .ktp-tab-content {
+            padding: 12px;
+        }
+        .ktp-input-group {
+            width: 100%;
+            min-width: auto;
+            max-width: none;
+        }
+        .ktp-search-input {
+            padding: 10px 35px 10px 12px;
+            font-size: 12px;
+            width: 100%;
+        }
+        .ktp-search-btn {
+            padding: 10px 16px;
+            font-size: 12px;
+            width: 100%;
+        }
+        .ktp-search-icon {
+            right: 8px;
+            width: 16px;
+            height: 16px;
+        }
+        .ktp-advanced-link a {
+            font-size: 10px;
+        }
+        .ktp-quick-access-section {
+            margin-top: 15px;
+            padding: 0 5px;
+        }
+        .ktp-quick-access-buttons {
+            flex-direction: column;
+            gap: 8px;
+        }
+        .ktp-quick-btn {
+            padding: 12px 14px;
+            font-size: 12px;
+            min-height: 50px;
+            gap: 10px;
+            flex: 1 1 100%;
+            min-width: auto;
+            justify-content: flex-start;
+            border-radius: 10px;
+        }
+        .ktp-quick-btn-icon {
+            font-size: 14px;
+            min-width: 18px;
+        }
+        .ktp-quick-btn-text {
+            font-size: 12px;
+            line-height: 1.2;
+            text-align: left;
+            flex: 1;
+        }
+    }
+    @media (max-width: 360px) {
+        
+        
+        
+        .ktp-search-section {
+            padding: 10px 5px;
+        }
+        .ktp-tab-content {
+            padding: 10px;
+        }
+        .ktp-quick-access-section {
+            margin-top: 12px;
+            padding: 0 2px;
+        }
+        .ktp-quick-access-buttons {
+            flex-direction: column;
+            gap: 6px;
+        }
+        .ktp-quick-btn {
+            padding: 10px 12px;
+            font-size: 11px;
+            min-height: 46px;
+            gap: 8px;
+            flex: 1 1 100%;
+            min-width: auto;
+            justify-content: flex-start;
+            border-radius: 8px;
+        }
+        .ktp-quick-btn-icon {
+            font-size: 12px;
+            min-width: 16px;
+        }
+        .ktp-quick-btn-text {
+            font-size: 11px;
+            line-height: 1.1;
+            text-align: left;
+            flex: 1;
+        }
+    }
+    /* Animation Effects */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .ktp-search-form-section.entering {
+        animation: fadeInUp 0.4s ease-out forwards;
+    }
+    /* Loading State */
+    .ktp-search-btn.loading {
+        background: #94a3b8;
+        cursor: not-allowed;
+    }
+    .ktp-search-btn.loading::before {
+        opacity: 0;
+    }
+    /* Error State */
+    .ktp-search-input.error {
+        border-color: #ef4444;
+        box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+    }
+    /* Quick Access Buttons */
+    .ktp-quick-access-section {
+        margin-top: 30px;
+    }
+    .ktp-quick-access-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .ktp-quick-btn {
+           display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #334155;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    min-height: 64px;
+    flex: 1 1 calc(20% - 13px);
+    min-width: 220px;
+    box-sizing: border-box;
+    }
+    .ktp-quick-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0, 118, 255, 0.15);
+        border-color: #0076ff;
+        background: #fafbff;
+        color: #0076ff;
+    }
+    .ktp-quick-btn-icon {
+        display: inline-block;
+        font-size: 18px;
+        line-height: 1;
+        flex-shrink: 0;
+        min-width: 18px;
+        text-align: center;
+    }
+    .ktp-quick-btn-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex: 1;
+    }
+</style><div class="ktp-slider-widget-container"><!-- Arama Bölümü --><div class="ktp-search-section"><div class="ktp-search-wrapper"><!-- Modern Tab Container --><div class="ktp-tab-container"><!-- Tab Navigation --><div class="ktp-tab-navigation"><button class="ktp-tab-button active" data-tab="all-resources">
+                                                                                                                                                                                        Tüm Kaynaklar
+                                                                                                                                                                                    </button> <button class="ktp-tab-button" data-tab="publications">
+                                                                                                                                                                                        Yayın Arama
+                                                                                                                                                                                    </button> <button class="ktp-tab-button" data-tab="catalog">
+                                                                                                                                                                                        Katalog Arama
+                                                                                                                                                                                    </button></div><!-- Tab Content --><div class="ktp-tab-content"><!-- Tüm Kaynaklar Panel --><div class="ktp-tab-panel active" id="all-resources"><form class="ktp-search-form" action="https://discovery.ebsco.com/c/d7qe3y/results" method="get" target="_blank"><div class="ktp-input-group"><p><input class="ktp-search-input" name="q" type="text" placeholder="Anahtar kelime, yazar, başlık..." required></p><div class="ktp-search-icon"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" /></svg></div></div><p><input name="acr_values" value="ip+guest" type="hidden"> <button class="ktp-search-btn" type="submit">Ara</button></p></form><div class="ktp-advanced-link"><a href="https://discovery.ebsco.com/c/d7qe3y/modal/advanced-search/?acr_values=ip+guest" target="_blank">Gelişmiş Arama Seçenekleri</a></div></div><!-- Yayın Arama Panel --><div class="ktp-tab-panel" id="publications"><form class="ktp-search-form" action="https://publications.ebsco.com/" method="get" target="_blank"><div class="ktp-input-group"><p><input class="ktp-search-input" name="search" type="text" placeholder="Yayın adı girin..." required></p><div class="ktp-search-icon"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" /></svg></div></div><p><input name="custId" value="s9291447" type="hidden"> <input name="groupId" value="main" type="hidden"> <input name="profileId" value="pfui" type="hidden"> <button class="ktp-search-btn" type="submit">Ara</button></p></form></div><!-- Katalog Arama Panel --><div class="ktp-tab-panel" id="catalog"><form class="ktp-search-form" action="https://yordam.yildiz.edu.tr/yordam/" method="get" target="_blank"><div class="ktp-input-group"><p><input class="ktp-search-input" name="q" type="text" placeholder="Kitap, yazar, konu..." required></p><div class="ktp-search-icon"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" /></svg></div></div><p><input name="p" value="1" type="hidden"> <input name="alan" value="tum_txt" type="hidden"> <button class="ktp-search-btn" type="submit">Ara</button></p></form><div class="ktp-advanced-link"><a href="https://yordam.ktp.yildiz.edu.tr/yordambt/yordam.php" target="_blank">Ayrıntılı Katalog Arama</a></div></div></div></div><!-- Quick Access Buttons --><div class="ktp-quick-access-section"><div class="ktp-quick-access-buttons"><a class="ktp-quick-btn" href="https://publications.ebsco.com/?custId=s9291447&amp;groupId=main&amp;profileId=pfui" target="_blank"><span class="ktp-quick-btn-icon">📚</span> <span class="ktp-quick-btn-text">Elektronik Kaynaklar</span> </a><a class="ktp-quick-btn" href="https://yordam.yildiz.edu.tr/yordam/?p=2&amp;dil=0&amp;devam=2f796f7264616d2f#girisFormKapsayan" target="_blank"><span class="ktp-quick-btn-icon">👤</span> <span class="ktp-quick-btn-text">Kütüphane Hesabım</span> </a><a class="ktp-quick-btn" href="https://ktp.yildiz.edu.tr/kampus-disi-erisim" target="_blank"><span class="ktp-quick-btn-icon">🌍</span> <span class="ktp-quick-btn-text">Kampüs Dışı Erişim</span>&nbsp;</a> <a class="ktp-quick-btn" href="https://dspace.yildiz.edu.tr/home" target="_blank"><span class="ktp-quick-btn-icon">📖</span> <span class="ktp-quick-btn-text">Açık Arşiv</span>&nbsp;</a> <a class="ktp-quick-btn" href="https://ktp.yildiz.edu.tr/e-kaynaklar/isbn-ve-issn-islemleri" target="_blank"><span class="ktp-quick-btn-icon"><img alt="ISBN ve ISSN İşlemleri" width="32" height="32" loading="lazy" class="lazyload" data-src="https://ktp.yildiz.edu.tr/sites/ktp.yildiz.edu.tr/files/2026-06/isbn_issn_0.jpg" src="/themes/custom/ytu/images/lazy-load.png"></span> <span class="ktp-quick-btn-text">ISBN ve ISSN İşlemleri</span>&nbsp;</a></div></div></div></div></div><script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Modern Tab Panel functionality
+    const tabButtons = document.querySelectorAll('.ktp-tab-button');
+    const tabPanels = document.querySelectorAll('.ktp-tab-panel');
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const targetTab = this.getAttribute('data-tab');
+            const targetPanel = document.getElementById(targetTab);
+            
+            // Remove active class from all buttons and panels
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabPanels.forEach(panel => panel.classList.remove('active'));
+            
+            // Add active class to clicked button and target panel
+            this.classList.add('active');
+            targetPanel.classList.add('active');
+        });
+    });
+    // Form validation and loading states
+    const forms = document.querySelectorAll('.ktp-search-form');
+    
+    forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const input = this.querySelector('.ktp-search-input');
+            const button = this.querySelector('.ktp-search-btn');
+            
+            if (input.value.trim() === '') {
+                e.preventDefault();
+                input.classList.add('error');
+                input.focus();
+                
+                setTimeout(() => {
+                    input.classList.remove('error');
+                }, 2000);
+                return;
+            }
+            
+            // Show loading state
+            button.classList.add('loading');
+            const originalText = button.innerHTML;
+            button.innerHTML = 'Aranıyor...';
+            button.disabled = true;
+            
+            // Reset button after a short delay
+            setTimeout(() => {
+                button.classList.remove('loading');
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }, 2000);
+        });
+    });
+    // Enhanced focus animations
+    const inputs = document.querySelectorAll('.ktp-search-input');
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            this.classList.remove('error');
+        });
+    });
+    // Keyboard navigation for tabs
+    document.addEventListener('keydown', function(e) {
+        const activeButton = document.querySelector('.ktp-tab-button.active');
+        const allButtons = Array.from(tabButtons);
+        const currentIndex = allButtons.indexOf(activeButton);
+        if (e.key === 'ArrowLeft' && currentIndex > 0) {
+            e.preventDefault();
+            allButtons[currentIndex - 1].click();
+            allButtons[currentIndex - 1].focus();
+        } else if (e.key === 'ArrowRight' && currentIndex < allButtons.length - 1) {
+            e.preventDefault();
+            allButtons[currentIndex + 1].click();
+            allButtons[currentIndex + 1].focus();
+        }
+    });
+});
+</script>
+                    
+
+            </div>
+    
+
+        </div>
+          </div>
+  
+      </div>
+</div>
+          </div>
+  
+        </div>
+        <div class="subsite-container">
+            <div class="row">
+                                <div class="left-area col-sm-12 col-md-8">
+                                    
+      <div>
+              <div>  <div class="paragraph paragraph--type--prg-views-reference prg_id--2892 paragraph--view-mode--default">
+          
+            <div><div class="views-element-container">
+
+<div class="announcement-block-wrapper js-view-dom-id-ca7e0efa6d4fe3a9c033af198da5ed918f6b468b3fd8b5463a377bd9a490d973">
+  
+  
+  
+      <div class="view-header">
+      <div class="title">
+  <h3 class="mb-2">Duyurular</h3>
+</div>
+    </div>
+  
+  <form class="views-exposed-form bef-exposed-form" data-bef-auto-submit="" data-bef-auto-submit-delay="500" data-bef-auto-submit-minimum-length="3" data-bef-auto-submit-full-form="" data-drupal-selector="views-exposed-form-announcement-block-1" action="/node/28" method="get" id="views-exposed-form-announcement-block-1" accept-charset="UTF-8">
+  <div class="js-form-item form-item form-type-select js-form-type-select form-item-announcement-date js-form-item-announcement-date form-no-label">
+        
+<select class="js-select2 form-select" data-drupal-selector="edit-announcement-date" id="edit-announcement-date" name="announcement_date"><option value="" selected="selected">YIL</option><option value="2026">2026</option><option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021">2021</option><option value="2020">2020</option><option value="2019">2019</option><option value="2018">2018</option><option value="2017">2017</option><option value="2016">2016</option><option value="2015">2015</option><option value="2014">2014</option><option value="2013">2013</option><option value="2012">2012</option><option value="2011">2011</option><option value="2010">2010</option><option value="2009">2009</option><option value="2008">2008</option><option value="2007">2007</option><option value="2006">2006</option></select>
+        </div>
+<div class="js-form-item form-item form-type-select js-form-type-select form-item-announcement-month js-form-item-announcement-month form-no-label">
+        
+<select class="js-select2 form-select" data-drupal-selector="edit-announcement-month" id="edit-announcement-month" name="announcement_month"><option value="" selected="selected">AY</option><option value="01">Ocak</option><option value="02">Şubat</option><option value="03">Mart</option><option value="04">Nisan</option><option value="05">Mayıs</option><option value="06">Haziran</option><option value="07">Temmuz</option><option value="08">Ağustos</option><option value="09">Eylül</option><option value="10">Ekim</option><option value="11">Kasım</option><option value="12">Aralık</option></select>
+        </div>
+<div class="js-form-item form-item form-type-select js-form-type-select form-item-announcement-category js-form-item-announcement-category">
+      
+        
+<select class="js-select2 form-select" data-drupal-selector="edit-announcement-category" id="edit-announcement-category" name="announcement_category"><option value="All" selected="selected">Tümü</option></select>
+        </div>
+<div class="js-hide form-actions js-form-wrapper form-wrapper" data-drupal-selector="edit-actions" id="edit-actions">
+<input data-bef-auto-submit-click="" data-drupal-selector="edit-submit-announcement" type="submit" id="edit-submit-announcement" value="Uygula" class="button js-form-submit form-submit btn btn-primary" />
+</div>
+
+
+</form>
+
+  
+
+      <div class="mb-4 d-flex announcement">    <div class="date">
+        <a href="/node/15434" class="bg-pink w-100 d-inline-block">
+          <div class="date text-center text-white px-3 pt-3 pb-2 fs-11"><span class="d-block fs-12">02</span>Kas
+          </div>
+        </a>
+      </div>
+ 
+    <div class="date-link ps-4">
+      <a href="/node/15434">
+        <div class="all fs-7">
+         iTStemAI  Platformu Deneme Erişimi Hk. 
+          <small>
+         <i class="ytu-icon arrow-right d-block"></i>
+        </small>
+        </div>
+      </a>
+    </div>
+ 
+</div>
+    <div class="mb-4 d-flex announcement">    <div class="date">
+        <a href="/node/15433" class="bg-pink w-100 d-inline-block">
+          <div class="date text-center text-white px-3 pt-3 pb-2 fs-11"><span class="d-block fs-12">27</span>Eki
+          </div>
+        </a>
+      </div>
+ 
+    <div class="date-link ps-4">
+      <a href="/node/15433">
+        <div class="all fs-7">
+         İdeal Online Veri Tabanı Deneme Erişimi  
+          <small>
+         <i class="ytu-icon arrow-right d-block"></i>
+        </small>
+        </div>
+      </a>
+    </div>
+ 
+</div>
+    <div class="mb-4 d-flex announcement">    <div class="date">
+        <a href="/node/15432" class="bg-pink w-100 d-inline-block">
+          <div class="date text-center text-white px-3 pt-3 pb-2 fs-11"><span class="d-block fs-12">27</span>Eki
+          </div>
+        </a>
+      </div>
+ 
+    <div class="date-link ps-4">
+      <a href="/node/15432">
+        <div class="all fs-7">
+         Citext  (Kaynakça ve Atıf Yönetimi Platformu) Deneme Erişimi 
+          <small>
+         <i class="ytu-icon arrow-right d-block"></i>
+        </small>
+        </div>
+      </a>
+    </div>
+ 
+</div>
+    <div class="mb-4 d-flex announcement">    <div class="date">
+        <a href="/node/15431" class="bg-pink w-100 d-inline-block">
+          <div class="date text-center text-white px-3 pt-3 pb-2 fs-11"><span class="d-block fs-12">27</span>Eki
+          </div>
+        </a>
+      </div>
+ 
+    <div class="date-link ps-4">
+      <a href="/node/15431">
+        <div class="all fs-7">
+         EBSCO Veri Tabanları  Deneme Erişimleri 
+          <small>
+         <i class="ytu-icon arrow-right d-block"></i>
+        </small>
+        </div>
+      </a>
+    </div>
+ 
+</div>
+    <div class="mb-4 d-flex announcement">    <div class="date">
+        <a href="/node/15430" class="bg-pink w-100 d-inline-block">
+          <div class="date text-center text-white px-3 pt-3 pb-2 fs-11"><span class="d-block fs-12">27</span>Eki
+          </div>
+        </a>
+      </div>
+ 
+    <div class="date-link ps-4">
+      <a href="/node/15430">
+        <div class="all fs-7">
+         Assistin.ai Akademik Yapay Zeka Platformu Deneme Erişimi 
+          <small>
+         <i class="ytu-icon arrow-right d-block"></i>
+        </small>
+        </div>
+      </a>
+    </div>
+ 
+</div>
+
+    
+
+  
+  
+
+      <div class="view-footer">
+      <div class="more mt-4 text-left">
+  <a href="/duyurular" class="btn-primary-animated" data-title="TÜMÜ">TÜMÜ</a>
+</div><br>
+    </div>
+  
+  
+</div>
+</div>
+</div>
+      
+      </div>
+</div>
+              <div>  <div class="paragraph paragraph--type--prg-grid prg_id--2904 paragraph--view-mode--default" id="section2904">
+          
+
+
+
+
+
+							
+      <div class="row pt-60 pb-60">
+              
+        	      		      			      	      	
+      		      		      			      	      	
+        	      		      			      	      	
+        
+        <div class="col-sm-12 col-md-4 col-lg-4">
+          
+
+
+
+
+
+<div class="d-lg-flex">
+       
+         <div class="card-button position-relative bg-blue">
+      <a class="stretched-link" href="https://docs.google.com/forms/d/e/1FAIpQLSdlRppWywJ1GCmgeWDYKGArfQRbOJlmdpDgLrGEYzsWsTidBg/viewform"> 
+         <div class="person-text text-left position-relative">
+            <div class="fs-9 title">
+            <div>Kütüphane Memnuniyet Anketi</div>
+      </div>
+         </div>
+          <span class="fs-11 devam">Devamı</span>
+      </a>
+      </div>
+    </div>
+
+        </div>
+              
+        	      	                                        	
+      		      		      			      	      	
+        	      		      			      	      	
+        
+        <div class="col-sm-12 col-md-4 col-lg-4">
+          
+
+
+
+
+
+<div class="d-lg-flex">
+       
+         <div class="card-button position-relative bg-purple">
+      <a class="stretched-link" href="http://isiknowledge.com/"> 
+         <div class="person-text text-left position-relative">
+            <div class="fs-9 title">
+            <div>Web of Science</div>
+      </div>
+         </div>
+          <span class="fs-11 devam">Devamı</span>
+      </a>
+      </div>
+    </div>
+
+        </div>
+              
+        	      	                                        	
+      		      		      			      	      	
+        	      		      			      	      	
+        
+        <div class="col-sm-12 col-md-4 col-lg-4">
+          
+
+
+
+
+
+<div class="d-lg-flex">
+       
+         <div class="card-button position-relative bg-pink">
+      <a class="stretched-link" href="https://ktprezervasyon.yildiz.edu.tr"> 
+         <div class="person-text text-left position-relative">
+            <div class="fs-9 title">
+            <div>Davutpaşa Rezervasyon</div>
+      </div>
+         </div>
+          <span class="fs-11 devam">Devamı</span>
+      </a>
+      </div>
+    </div>
+
+        </div>
+          </div>
+  
+      </div>
+</div>
+          </div>
+  
+                </div>
+
+                                <div class="right-area col-sm-12 col-md-4">
+                    
+      <div>
+              <div>
+
+
+
+        <div class="paragraph paragraph--type--prg-text paragraph--view-mode--default mb-4">
+                                              <style>
+    /* KTP Compact Library Hours Widget */
+    .ktp-compact-hours-container {
+        width: 100%;
+        max-width: 370px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+    }
+
+    /* Header */
+    .ktp-compact-header {
+        background: linear-gradient(135deg, #0076ff, #66aaff);
+        color: white;
+        padding: 16px 20px;
+        text-align: center;
+        position: relative;
+    }
+
+    .ktp-compact-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .ktp-current-time-display {
+        font-size: 20px;
+        font-weight: 700;
+        font-family: 'Courier New', monospace;
+        margin-bottom: 4px;
+    }
+
+    .ktp-current-date-display {
+        font-size: 12px;
+        opacity: 0.9;
+    }
+
+    /* Tab Navigation - Unique selectors to avoid conflicts */
+    .ktp-compact-library-tabs {
+        display: flex;
+        background: #f8fafc;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .ktp-compact-tab-btn {
+        flex: 1;
+        padding: 14px 8px;
+        background: none;
+        border: none;
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748b;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        border-bottom: 3px solid transparent;
+        line-height: 1.2;
+    }
+
+    .ktp-compact-tab-btn.ktp-compact-active {
+        background: white;
+        color: #0076ff;
+        border-bottom-color: #0076ff;
+    }
+
+    .ktp-compact-tab-btn:hover:not(.ktp-compact-active) {
+        background: rgba(0, 118, 255, 0.05);
+        color: #0076ff;
+    }
+
+    /* Tab Content - Unique selectors */
+    .ktp-compact-tab-content {
+        padding: 16px;
+        min-height: 300px;
+        overflow: visible;
+    }
+
+    .ktp-compact-tab-panel {
+        display: none;
+    }
+
+    .ktp-compact-tab-panel.ktp-compact-active {
+        display: block;
+    }
+
+    /* Status Badge */
+    .ktp-status-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #10b981;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 16px;
+    }
+
+    .ktp-status-indicator.limited {
+        background: #f59e0b;
+    }
+
+    .ktp-status-indicator.closed {
+        background: #ef4444;
+    }
+
+    .ktp-status-dot {
+        width: 8px;
+        height: 8px;
+        background: white;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+
+    /* Compact Info Sections */
+    .ktp-compact-info {
+        margin-bottom: 20px;
+    }
+
+    .ktp-info-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #0076ff;
+        margin-bottom: 10px;
+    }
+
+    .ktp-info-icon {
+        font-size: 16px;
+    }
+
+    .ktp-info-text {
+        font-size: 13px;
+        color: #4b5563;
+        line-height: 1.4;
+    }
+
+    .ktp-time-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-top: 8px;
+    }
+
+    .ktp-time-chip {
+        background: rgba(0, 118, 255, 0.1);
+        color: #0076ff;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    /* Accordion Style for Details */
+    .ktp-accordion-item {
+        border-bottom: 1px solid #e2e8f0;
+        margin-bottom: 20px;
+    }
+
+    .ktp-accordion-header {
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        padding: 16px 0;
+        cursor: pointer;
+        font-size: 18px;
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .ktp-accordion-header:hover {
+        color: #0076ff;
+    }
+
+    .ktp-accordion-content {
+        padding-bottom: 16px;
+        display: none;
+    }
+
+    .ktp-accordion-content.active {
+        display: block;
+    }
+
+    .ktp-expand-icon {
+        transition: transform 0.3s ease;
+        font-size: 16px;
+    }
+
+    .ktp-expand-icon.expanded {
+        transform: rotate(180deg);
+    }
+
+    /* Footer Note */
+    .ktp-compact-footer {
+        background: #f8fafc;
+        padding: 12px;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .ktp-footer-note {
+        font-size: 11px;
+        color: #6b7280;
+        text-align: center;
+        line-height: 1.3;
+    }
+
+
+
+    /* Mobile Optimizations */
+    @media (max-width: 400px) {
+        .ktp-compact-hours-container {
+            max-width: 100%;
+        }
+        
+        .ktp-tab-btn {
+            font-size: 10px;
+            padding: 10px 6px;
+        }
+        
+        .ktp-compact-header {
+            padding: 16px;
+        }
+        
+        .ktp-compact-title {
+            font-size: 16px;
+        }
+        
+        .ktp-current-time-display {
+            font-size: 20px;
+        }
+    }
+</style><div class="ktp-compact-hours-container"><!-- Header with Clock --><div class="ktp-compact-header"><div class="ktp-compact-title">&nbsp;</div><div class="ktp-current-time-display" id="compact-time">--:--</div><div class="ktp-current-date-display" id="compact-date">-- --, ----</div></div><!-- Library Tabs --><div class="ktp-compact-library-tabs"><button class="ktp-compact-tab-btn ktp-compact-active" data-target="merkez">
+            Davutpaşa Merkez Kütüphanesi
+        </button> <button class="ktp-compact-tab-btn" data-target="varank">
+            Davutpaşa Şehit Prof. Dr. İlhan Varank Kütüphanesi
+        </button> <button class="ktp-compact-tab-btn" data-target="sabanci">
+            Yıldız Şevket Sabancı Şube Kütüphanesi
+        </button> &nbsp;&nbsp;</div><!-- Tab Content --><div class="ktp-compact-tab-content"><!-- Merkez Kütüphanesi --><div class="ktp-compact-tab-panel ktp-compact-active" id="merkez"><div class="ktp-status-indicator">7/24 AÇIK</div><div class="ktp-compact-info"><div class="ktp-info-header"><span class="ktp-info-icon">🕒</span> <span>Çalışma Saatleri</span></div><div class="ktp-info-text"><strong>7/24 Açık (Rezervasyon Zorunluluğu bulunmaktadır)</strong><br>&nbsp;</div></div><div class="ktp-compact-info"><div class="ktp-info-header"><span class="ktp-info-icon">📅</span> <span>Masa Rezervasyon Saatleri</span></div><div class="ktp-time-grid"><div class="ktp-time-chip">08:00-12:00</div><div class="ktp-time-chip">12:00-16:00</div><div class="ktp-time-chip">16:00-20:00</div><div class="ktp-time-chip">20:00-24:00</div><div class="ktp-time-chip">24:00-04:00</div><div class="ktp-time-chip">04:00-08:00</div></div></div><div class="ktp-compact-info"><div class="ktp-info-header"><span class="ktp-info-icon">🏠</span> <span>Bireysel/Grup Oda Rezervasyon Saatleri</span></div><div class="ktp-time-grid"><div class="ktp-time-chip">08:00-14:00</div><div class="ktp-time-chip">14:00-20:00</div><div class="ktp-time-chip">20:00-02:00</div><div class="ktp-time-chip">02:00-08:00</div></div></div></div><!-- Varank Kütüphanesi --><div class="ktp-compact-tab-panel" id="varank"><div class="ktp-status-indicator">7/24 AÇIK</div><div class="ktp-compact-info"><div class="ktp-info-header"><span class="ktp-info-icon">🕒</span> <span>Çalışma Saatleri</span></div><div class="ktp-info-text"><span class="ktp-info-icon">📚</span> <span>Akademik Dönem</span></div><div class="ktp-info-text"><strong>7/24 Açık</strong><br>&nbsp;</div><div class="ktp-info-text">&nbsp;<span class="ktp-info-icon">🏖️</span> <span>Tatil Dönemi</span></div><div class="ktp-info-text"><strong>Hafta İçi:</strong> Pzt.-Cuma 08:30-16:30<br><strong>Hafta Sonu:</strong> Kapalı</div></div><div class="ktp-compact-info"><div class="ktp-info-header">&nbsp;</div><div class="ktp-info-header"><span class="ktp-info-icon">📋</span> <span>Rezervasyon Bilgileri</span></div><div class="ktp-info-text"><strong>Rezervasyonsuz</strong> (YTÜ Mensupları ve <a href="https://ktp.yildiz.edu.tr/https%3A/ktp.yildiz.edu.tr/odunc-iade/uyelik-islemleri/dis-kullanici-yararlanma-kosullaridilekce"><span style="color:#0070C0;"><strong>Yararlanma Koşullarında</strong></span></a> tanımlanan tüm kullanıcılara açıktır)<br><small>&nbsp;</small></div></div></div><!-- Şevket Sabancı Kütüphanesi --><div class="ktp-compact-tab-panel" id="sabanci"><div class="ktp-status-indicator limited" id="sabanci-status">SINIRLI SAATLERİYLE</div><div class="ktp-compact-info"><div class="ktp-info-header"><span class="ktp-info-icon">📚</span> <span>Akademik Dönem</span></div><div class="ktp-info-text"><strong>Hafta İçi:</strong> Pzt.-Cuma 08:30-23:00<br><strong>Hafta Sonu:</strong> Cumt.-Pazar 10:00-23:00</div><div class="ktp-info-text"><strong>Sınav Dönemi (1 Hafta öncesi dahil):</strong> 7/24 Açık</div></div><div class="ktp-compact-info"><div class="ktp-info-header"><span class="ktp-info-icon">🏖️</span> <span>Tatil Dönemi</span></div><div class="ktp-info-text"><strong>Hafta İçi:</strong> Pzt.-Cuma 08:30-16:30<br><strong>Hafta Sonu:</strong> Kapalı</div></div><div class="ktp-compact-info"><div class="ktp-info-header"><span class="ktp-info-icon">📋</span> <span>Rezervasyon Bilgileri</span></div><div class="ktp-info-text"><strong>Rezervasyonsuz</strong> (YTÜ Mensupları ve <a href="https://ktp.yildiz.edu.tr/https%3A/ktp.yildiz.edu.tr/odunc-iade/uyelik-islemleri/dis-kullanici-yararlanma-kosullaridilekce"><span style="color:#0070C0;"><strong>Yararlanma Koşullarında</strong></span></a> tanımlanan tüm kullanıcılara açıktır)<br>&nbsp;</div></div></div></div><!-- Footer --><div class="ktp-compact-footer"><p class="text-align-justify"><span style="font-family:&quot;Segoe UI Emoji&quot;,sans-serif;font-size:8.5pt;line-height:115%;">⚠️</span><span style="background-color:white;color:#4B5563;font-family:&quot;Segoe UI&quot;,sans-serif;font-size:8.5pt;line-height:115%;"> (Kullanıcılara duyurulmak suretiyle, Resmi tatillerde ve Daire Başkanlığının uygun göreceği zorunlu hallerde çalışma saatlerinde değişiklik yapılabilir)</span></p></div></div><script>
+// Tab functionality with unique selectors
+document.querySelectorAll('.ktp-compact-tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const target = this.getAttribute('data-target');
+        
+        // Remove active classes
+        document.querySelectorAll('.ktp-compact-tab-btn').forEach(b => b.classList.remove('ktp-compact-active'));
+        document.querySelectorAll('.ktp-compact-tab-panel').forEach(p => p.classList.remove('ktp-compact-active'));
+        
+        // Add active classes
+        this.classList.add('ktp-compact-active');
+        document.getElementById(target).classList.add('ktp-compact-active');
+    });
+});
+
+
+
+// Clock functionality
+function updateCompactClock() {
+    const now = new Date();
+    const options = {
+        timeZone: 'Europe/Istanbul',
+        hour12: false
+    };
+    
+    const timeString = now.toLocaleTimeString('tr-TR', options).slice(0, 5); // HH:MM format
+    const dateOptions = {
+        timeZone: 'Europe/Istanbul',
+        weekday: 'short',
+        month: 'short', 
+        day: 'numeric'
+    };
+    const dateString = now.toLocaleDateString('tr-TR', dateOptions);
+    
+    document.getElementById('compact-time').textContent = timeString;
+    document.getElementById('compact-date').textContent = dateString;
+}
+
+// Update Şevket Sabancı status
+function updateSabanciStatus() {
+    const now = new Date();
+    const turkeyTime = new Date(now.toLocaleString("en-US", {timeZone: "Europe/Istanbul"}));
+    const currentHour = turkeyTime.getHours();
+    const currentDay = turkeyTime.getDay();
+    
+    const statusBadge = document.getElementById('sabanci-status');
+    let isOpen = false;
+    
+    if (currentDay >= 1 && currentDay <= 5) { // Pazartesi-Cuma
+        if (currentHour >= 8 && currentHour < 23) {
+            isOpen = true;
+        }
+    } else if (currentDay === 6 || currentDay === 0) { // Cumartesi-Pazar
+        if (currentHour >= 10 && currentHour < 18) {
+            isOpen = true;
+        }
+    }
+    
+    if (isOpen) {
+        statusBadge.className = 'ktp-status-indicator';
+        statusBadge.innerHTML = '<span class="ktp-status-dot"></span>AÇIK';
+    } else {
+        statusBadge.className = 'ktp-status-indicator closed';
+        statusBadge.innerHTML = '<span class="ktp-status-dot"></span>KAPALI';
+    }
+}
+
+// Initialize
+updateCompactClock();
+updateSabanciStatus();
+setInterval(updateCompactClock, 60000);
+setInterval(updateSabanciStatus, 60000);
+
+
+</script>
+                    
+
+            </div>
+    
+</div>
+          </div>
+  
+                </div>
+                            </div>
+        </div>
+        <div class="content-bottom-area">
+            
+        </div>
+    </div>
+    
+</div>
+
+  </div>
+
+
+    </div>
+  </main>
+
+        <footer class="main-footer text-white bg-dark-blue d-block mt-0">
+        <div class="container">
+              <div id="block-footeraddresstr">
+  
+    
+      
+            <div><style>
+
+.ktp-footer-wrapper {
+    margin-bottom: 20px!important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+
+}
+
+.ktp-footer-content {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 40px !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+}
+
+.ktp-footer-info {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    box-sizing: border-box !important;
+}
+
+.ktp-footer-location {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    color: white !important;
+    font-weight: 500 !important;
+    line-height: 1.4 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    text-decoration: none !important;
+    box-sizing: border-box !important;
+}
+
+.ktp-footer-location svg {
+    flex-shrink: 0 !important;
+    width: 20px !important;
+    height: 20px !important;
+    fill: none !important;
+    stroke: white !important;
+    stroke-width: 2 !important;
+}
+
+.ktp-footer-location span {
+    color: white !important;
+    font-weight: 500 !important;
+    line-height: 1.4 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.ktp-footer-contacts {
+    display: flex !important;
+    align-items: center !important;
+    gap: 24px !important;
+    flex-wrap: wrap !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+    box-sizing: border-box !important;
+}
+
+.ktp-footer-contact {
+    display: flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-sizing: border-box !important;
+}
+
+.ktp-footer-contact svg {
+    flex-shrink: 0 !important;
+    width: 18px !important;
+    height: 18px !important;
+    fill: none !important;
+    stroke: white !important;
+    stroke-width: 2 !important;
+}
+
+.ktp-footer-contact a {
+    color: white !important;
+    text-decoration: none !important;
+    font-weight: 500 !important;
+    transition: opacity 0.3s ease !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: none !important;
+    box-sizing: border-box !important;
+}
+
+.ktp-footer-contact a:hover {
+    opacity: 0.8 !important;
+    color: white !important;
+    text-decoration: none !important;
+}
+
+.ktp-footer-contact a:visited {
+    color: white !important;
+    text-decoration: none !important;
+}
+
+.ktp-footer-contact a:focus {
+    color: white !important;
+    text-decoration: none !important;
+    outline: 1px solid rgba(255, 255, 255, 0.5) !important;
+}
+
+.ktp-footer-social {
+    display: flex !important;
+    gap: 12px !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+    box-sizing: border-box !important;
+}
+
+.ktp-footer-social a {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 40px !important;
+    height: 40px !important;
+    background: none !important;
+    border: none !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.ktp-footer-social a:hover {
+    opacity: 0.7 !important;
+    transform: translateY(-2px) !important;
+    text-decoration: none !important;
+}
+
+.ktp-footer-social a:visited {
+    text-decoration: none !important;
+}
+
+.ktp-footer-social a:focus {
+    text-decoration: none !important;
+    outline: 1px solid rgba(255, 255, 255, 0.5) !important;
+}
+
+.ktp-footer-social svg {
+    width: 18px !important;
+    height: 18px !important;
+    fill: white !important;
+    stroke: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: none !important;
+    box-sizing: border-box !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .ktp-footer-wrapper {
+        padding: 0 20px !important;
+    }
+    
+    .ktp-footer-content {
+        flex-direction: column !important;
+        gap: 24px !important;
+        text-align: center !important;
+    }
+    
+    .ktp-footer-info {
+        align-items: center !important;
+    }
+    
+    .ktp-footer-location {
+        justify-content: center !important;
+        text-align: center !important;
+        max-width: 300px !important;
+    }
+    
+    .ktp-footer-contacts {
+        justify-content: center !important;
+        gap: 20px !important;
+    }
+    
+    .ktp-footer-social {
+        justify-content: center !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .ktp-footer-wrapper {
+        padding: 0 16px !important;
+    }
+    
+    .ktp-footer-content {
+        gap: 20px !important;
+    }
+    
+    .ktp-footer-contacts {
+        flex-direction: column !important;
+        gap: 16px !important;
+    }
+    
+    .ktp-footer-location {
+        max-width: 280px !important;
+    }
+    
+    .ktp-footer-social {
+        gap: 10px !important;
+    }
+    
+    .ktp-footer-social a {
+        width: 36px !important;
+        height: 36px !important;
+    }
+    
+    .ktp-footer-social svg {
+        width: 16px !important;
+        height: 16px !important;
+    }
+}
+
+/* İlave güvenlik stilleri */
+.ktp-footer-container * {
+    box-sizing: border-box !important;
+}
+
+.ktp-footer-container a,
+.ktp-footer-container a:hover,
+.ktp-footer-container a:visited,
+.ktp-footer-container a:focus,
+.ktp-footer-container a:active {
+    color: white !important;
+    text-decoration: none !important;
+}
+</style><div class="ktp-footer-wrapper"><div class="ktp-footer-content"><div class="ktp-footer-info"><div class="ktp-footer-location"><svg fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>&nbsp;<span>Yıldız Teknik Üniversitesi Kütüphane ve Dokümantasyon Daire Başkanlığı</span></div><div class="ktp-footer-contacts"><div class="ktp-footer-contact"><svg fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>&nbsp;<a href="tel:0212 383 54 54">0212 383 54 57</a></div><div class="ktp-footer-contact"><svg fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>&nbsp;<a href="mailto:ktddb@yildiz.edu.tr">ktddb@yildiz.edu.tr</a></div></div></div><div class="ktp-footer-social"><!-- Facebook --><a href="https://www.facebook.com/YildizEdu" target="_blank" title="Facebook"><svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>&nbsp;</a><!-- Instagram --><a href="https://www.instagram.com/yildizedu" target="_blank" title="Instagram"><svg viewBox="0 0 24 24"> <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" /></svg>&nbsp;</a><!-- X (Twitter) --><a href="https://twitter.com/YildizEdu" target="_blank" title="X (Twitter)"><svg viewBox="0 0 24 24"> <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>&nbsp;</a><!-- LinkedIn --><a href="https://tr.linkedin.com/school/y%C4%B1ld%C4%B1z-teknik-%C3%BCniversitesi" target="_blank" title="LinkedIn"><svg viewBox="0 0 24 24"> <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>&nbsp;</a><!-- YouTube --><a href="https://www.youtube.com/user/ytuwebtv" target="_blank" title="YouTube"><svg viewBox="0 0 24 24"> <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" /></svg>&nbsp;</a></div></div></div></div>
+      
+  </div>
+<div id="block-footercoprighttr">
+  
+    
+      
+            <div><div class="d-lg-flex justify-content-center footer-copyright text-center"><div class="ps-lg-4 pe-lg-4 text-lg-center border-end">© 2024 Yıldız Teknik Üniversitesi</div><div class="ps-lg-4 pe-lg-4 text-lg-center"><a class="text-white" href="https://yildiz.edu.tr/gizlilik">Gizlilik</a></div><div class="ps-lg-4 pe-lg-4 text-lg-center"><a class="text-white" href="https://yildiz.edu.tr/cerezler">Çerezler</a></div><div class="ps-lg-4 pe-lg-4 text-lg-center"><a class="text-white" href="https://yildiz.edu.tr/universite/hukuksal-metinler/kvkk-aydinlatma-metni">KVKK Aydınlatma Metni</a></div></div></div>
+      
+  </div>
+
+
+        </div>
+    </footer>
+
+  </div>
+  </div>
+
+    
+    <script type="application/json" data-drupal-selector="drupal-settings-json">{"path":{"baseUrl":"\/","pathPrefix":"","currentPath":"node\/28","currentPathIsAdmin":false,"isFront":true,"currentLanguage":"tr"},"pluralDelimiter":"\u0003","suppressDeprecationErrors":true,"ajaxPageState":{"libraries":"eJxtj1FuxDAIRC_kxEeKsEMStsREBm-TPX29dtOqUn-AeRoxENAM84TnIYrztBBXqR6KyaQl7GQu_G9ZMWEGdlEy-iR5B6YXOjyNKX34OZcDePyWjuF1-XdxB2RYMxyb3p5fMpZ0lMCkG85OLzXcfQBF9yT8VN_qCA84_4Bd5sLoLiseUpKSIu6YrAPR1tuWNugYipkkveVSbx8UGaPdqBgxGWH3RGHJw_uNIcjZ0MJ4_oiajzkNylR7I2pgFOtSyHHrpAQlw6l7O3quA6VHjZX8BfTlmM4","theme":"ytu","theme_token":null},"ajaxTrustedUrl":{"\/node\/28":true},"lazy":{"lazysizes":{"lazyClass":"lazyload","loadedClass":"lazyloaded","loadingClass":"lazyloading","preloadClass":"lazypreload","errorClass":"lazyerror","autosizesClass":"lazyautosizes","srcAttr":"data-src","srcsetAttr":"data-srcset","sizesAttr":"data-sizes","minSize":40,"customMedia":[],"init":true,"expFactor":1.5,"hFac":0.8,"loadMode":2,"loadHidden":true,"ricTimeout":0,"throttleDelay":125,"plugins":[]},"placeholderSrc":"\/themes\/custom\/ytu\/images\/lazy-load.png","preferNative":false,"minified":true,"libraryPath":"\/libraries\/lazysizes"},"data":{"extlink":{"extTarget":true,"extTargetAppendNewWindowDisplay":true,"extTargetAppendNewWindowLabel":"(opens in a new window)","extTargetNoOverride":false,"extNofollow":false,"extTitleNoOverride":false,"extNoreferrer":true,"extFollowNoOverride":false,"extClass":"0","extLabel":"(link is external)","extImgClass":false,"extSubdomains":false,"extExclude":"","extInclude":"","extCssExclude":"","extCssInclude":"","extCssExplicit":"","extAlert":false,"extAlertText":"This link will take you to an external web site. We are not responsible for their content.","extHideIcons":false,"mailtoClass":"0","telClass":"","mailtoLabel":"(link sends email)","telLabel":"(link is a phone number)","extUseFontAwesome":false,"extIconPlacement":"append","extPreventOrphan":false,"extFaLinkClasses":"fa fa-external-link","extFaMailtoClasses":"fa fa-envelope-o","extAdditionalLinkClasses":"","extAdditionalMailtoClasses":"","extAdditionalTelClasses":"","extFaTelClasses":"fa fa-phone","allowedDomains":[],"extExcludeNoreferrer":""}},"views":{"ajax_path":"\/views\/ajax","ajaxViews":{"views_dom_id:ca7e0efa6d4fe3a9c033af198da5ed918f6b468b3fd8b5463a377bd9a490d973":{"view_name":"announcement","view_display_id":"block_1","view_args":"","view_path":"\/node\/28","view_base_path":null,"view_dom_id":"ca7e0efa6d4fe3a9c033af198da5ed918f6b468b3fd8b5463a377bd9a490d973","pager_element":0,"viewsreference":{"compressed":"eJxdkNEOgyAMRf-lzz4sLpubP0O6UbAJIAF0McZ_H0yn2R4InJ7eNmEGiQmhnQGDHiy5BK0bjKnAo6bwhY5QHpQ4GYL2VIFhy3uiVyrSRksF5PBhSIpcS-x0_F1yPPd5272U3SEbkQ-nSaTJF5uLqAP6Dv4bWGZd3-71YRSTkcKhLckVfNBiZHpFEUhR7nrSh49QoJEj924b2FybyznbNc6JrJBkym-dljdIq25L"}}}},"better_exposed_filters":{"autosubmit_exclude_textfield":false},"user":{"uid":0,"permissionsHash":"e30587a76fd1d97b06aa0b1d2b8f384f8e64604276b1177602344848ede38f24"}}</script>
+<script src="/core/assets/vendor/jquery/jquery.min.js?v=3.7.1"></script>
+<script src="/core/assets/vendor/once/once.min.js?v=1.0.1"></script>
+<script src="/sites/ktp.yildiz.edu.tr/files/languages/tr_KbsXKuS0fGKqCayPFpU_Qq-BBYJVIOjwyJe5sMm0c1I.js?toi8r4"></script>
+<script src="/core/misc/drupalSettingsLoader.js?v=10.6.21"></script>
+<script src="/core/misc/drupal.js?v=10.6.21"></script>
+<script src="/core/misc/drupal.init.js?v=10.6.21"></script>
+<script src="/core/assets/vendor/tabbable/index.umd.min.js?v=6.3.0"></script>
+<script src="/core/misc/debounce.js?v=10.6.21"></script>
+<script src="/modules/contrib/better_exposed_filters/js/auto_submit.js?toi8r4"></script>
+<script src="/modules/contrib/better_exposed_filters/js/better_exposed_filters.js?toi8r4"></script>
+<script src="/modules/contrib/extlink/js/extlink.js?toi8r4"></script>
+<script src="/modules/contrib/lazy/js/lazy.js?v=10.6.21"></script>
+<script src="/core/misc/jquery.form.js?v=4.3.0"></script>
+<script src="/core/misc/progress.js?v=10.6.21"></script>
+<script src="/core/assets/vendor/loadjs/loadjs.min.js?v=4.3.0"></script>
+<script src="/core/misc/announce.js?v=10.6.21"></script>
+<script src="/core/misc/message.js?v=10.6.21"></script>
+<script src="/core/misc/ajax.js?v=10.6.21"></script>
+<script src="/core/modules/views/js/base.js?v=10.6.21"></script>
+<script src="/core/modules/views/js/ajax_view.js?v=10.6.21"></script>
+<script src="/themes/custom/ytu/components/_global/aos/aos.min.js?v=0.1"></script>
+<script src="/themes/custom/ytu/components/_global/script.js?v=7.5.6"></script>
+<script src="/themes/custom/ytu/components/_global/inline-content-images.js?v=7.5.6"></script>
+<script src="//cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="/themes/custom/ytu/components/modern_slider/modern_slider.js?v=3.0.2"></script>
+<script src="/themes/custom/ytu/components/_global/select2/select2.min.js?v=0.1"></script>
+<script src="/themes/custom/ytu/components/_global/select2/select2-tr.min.js?v=0.1"></script>
+<script src="/themes/custom/ytu/components/_global/mark/jquery.mark.min.js?v=0.1"></script>
+<script src="/themes/custom/ytu/components/static-search/static-search.js?v=0.1"></script>
+<script src="/themes/custom/ytu/components/subsite_modern_header/js/subsite-modern-header.js?v=3.0.1"></script>
+<script src="/themes/custom/ytu/components/subsite/js/subsite.js?v=1.0.1"></script>
+<script src="/themes/custom/ytu/components/_global/svg-injector/svg-injector.min.js?v=0.1"></script>
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+  <script>
+      WebFont.load({
+        custom: {
+          families: ['Fakt Pro', 'Fakt Pro Med', 'Felix Titling'],
+          urls: ['/themes/custom/ytu/css/_global/fonts.css'],
+        }
+      });
+  </script>
+  <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-32348550-1', 'auto');
+      ga('send', 'pageview', {
+        'dimension1':  '193.35.200.234'
+      }); 
+  </script>
+        
+        <!-- LinkedIn Insight Tag -->
+  <script type="text/javascript">
+    _linkedin_partner_id = "7537754";
+    window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+    window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+  </script>
+
+  <script type="text/javascript">
+    (function(l) {
+      if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
+      window.lintrk.q=[]}
+      var s = document.getElementsByTagName("script")[0];
+      var b = document.createElement("script");
+      b.type = "text/javascript";b.async = true;
+      b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+      s.parentNode.insertBefore(b, s);
+    })(window.lintrk);
+  </script>
+
+  <noscript>
+    <img height="1" width="1" style="display:none;" alt=""
+    src="https://px.ads.linkedin.com/collect/?pid=7537754&fmt=gif" />
+  </noscript>
+  <!-- End LinkedIn Insight Tag -->
+
+  </body>
+</html>

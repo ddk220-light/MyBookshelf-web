@@ -1,0 +1,106 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ <!-- TODO 2022-12-19 JRA remove -->
+
+
+
+
+
+
+
+<HTML lang="en">
+<HEAD>
+<link REL="shortcut icon" HREF="/images/destiny.ico" TYPE="image/x-icon">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+</HEAD>
+<BODY>
+
+    
+    
+<script type="text/javascript" src="/common/consoleLogger.js"></script>
+<script type="text/javascript">
+    ConsoleLogger.setDebugEnabled(false);
+</script>
+
+    <script>
+
+        
+
+            let maxAttempts = 3;
+            let promise = new Promise((resolve) => {
+                let attempt = 0;
+                let timer;
+                let timeout = 5000;
+
+                function listener(event) {
+                    clearTimeout(timer);
+                    window.removeEventListener('message', listener);
+                    resolve(event.data);
+                }
+
+                function tryLoad() {
+                    attempt++;
+                    ConsoleLogger.info('check_iframe attempt ' + attempt + ' of ' + maxAttempts);
+
+                    let existing = document.getElementById('_cookieCheckFrame');
+                    if (existing) { existing.parentNode.removeChild(existing); }
+
+                    let frame = document.createElement('iframe');
+                    frame.id = '_cookieCheckFrame';
+                    frame.src = 'https://portal.follettdestiny.com/portal/check_iframe.html';
+                    frame.style.display = 'none';
+                    document.body.appendChild(frame);
+
+                    timer = setTimeout(() => {
+                        if (attempt < maxAttempts) {
+                            ConsoleLogger.info('check_iframe timed out (attempt ' + attempt + '), retrying...');
+                            tryLoad();
+                        } else {
+                            window.removeEventListener('message', listener);
+                            resolve('timeout');
+                        }
+                    }, timeout);
+                }
+
+                window.addEventListener('message', listener);
+                tryLoad();
+            });
+
+            promise.then((result) => {
+                let destinyBypassURL = '/district/servlet/presentlistsitesform.do?districtMode=true&searchTerm=null&portalMode=false&showMessage=';
+
+                if (result === "false") {
+                    
+                    	ConsoleLogger.info('Browser is blocking third party cookies.  Forwarding to central access portal via reverse proxy');
+                        window.location.href = 'https://bsu-opac.follettdestiny.com:443/portal?appId=destiny-T489-ZB3F'
+                    
+                } else if (result === "timeout") {
+                    ConsoleLogger.info("Failed to detect if browser is blocking cookies (timeout after " + maxAttempts + " attempts).  Remaining in Destiny backoffice");
+                    let message = 'Bypassing unified navigation. (TIMEOUT)';
+                    window.location.href = destinyBypassURL + encodeURIComponent(message);
+                } else {
+                    ConsoleLogger.info("Browser is allowing third party cookies.  Forwarding to central access portal");
+                    window.location.href = "https://portal.follettdestiny.com/portal?appId=destiny-T489-ZB3F";
+                }
+            });
+        
+    </script>
+</BODY>
+</HTML>

@@ -1,0 +1,289 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head><meta charset="utf-8" /><title>
+	LibMax · OPAC — Online Public Access Catalogue
+</title><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="description" content="Libmax OPAC provides quick access to books, periodicals, newspapers, theses and more." />
+
+  <!-- Modern theme (kept inline for easy deployment; move to /styles/opac-modern.css if you prefer) -->
+  <style>
+  :root{
+    --brand:#2f7d32; --brand-2:#0b5f2d;
+    --bg:#f6f8f7; --card:#ffffff; --text:#122; --muted:#eef4ef;
+    --border:#d8e3d9; --shadow:0 8px 24px rgba(0,0,0,.08);
+    /* new: responsive gutters & inner padding */
+    --gutter: clamp(12px, 3vw, 36px);
+    --cardPad: clamp(14px, 2.2vw, 28px);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--text);font:14px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+
+  /* Header */
+  .site-header{width:100%;margin:12px 0 8px;padding:0 var(--gutter);position:relative}
+  .site-header .brand{display:block;width:100%;overflow:hidden;border-radius:14px;box-shadow:var(--shadow)}
+  .site-header .brand img{width:100%;height:auto;display:block}
+  .nav-toggle{
+    position:absolute;right:calc(var(--gutter) + 8px);top:18px;z-index:5;
+    background:var(--brand);color:#fff;border:0;border-radius:10px;
+    padding:10px 12px;cursor:pointer;display:none
+  }
+
+  /* Top Nav (full-width with gutters) */
+  nav.main-nav{width:100%;padding:0 var(--gutter);margin:10px 0 0}
+  .nav-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+  .nav-list{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:0;padding:10px}
+  .nav-list li a{
+    display:inline-block;padding:10px 16px;border-radius:10px;color:#102;
+    text-decoration:none;font-weight:600
+  }
+  .nav-list li a:hover{background:rgba(47,125,50,.08)}
+  .nav-list .spacer{flex:0 0 0;border-left:1px solid var(--border);height:28px;margin:6px}
+
+  /* Layout (full-width with gutters) */
+  .container{width:100%;padding:14px var(--gutter)}
+  .grid{
+    display:grid;gap:clamp(12px, 1.6vw, 22px);
+    grid-template-columns: minmax(220px, 22rem) minmax(0,1fr) minmax(220px, 22rem);
+    align-items:start
+  }
+
+  /* Cards */
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    box-shadow:var(--shadow);
+    overflow:visible; /* avoid clipping rounded corners/shadows */
+  }
+  .card-header{
+    padding:calc(var(--cardPad) - 4px) var(--cardPad);
+    border-bottom:1px solid var(--border);
+    background:linear-gradient(180deg,#fff,var(--muted));
+    border-radius:12px 12px 0 0;
+    font-weight:700
+  }
+  .card-body{padding:var(--cardPad)}
+
+  /* Quick Search */
+  .search-text{
+    width:100%;height:38px;border:1px solid var(--border);
+    border-radius:10px;padding:8px 10px
+  }
+  .rb-list{margin-top:8px}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:10px 14px;border-radius:10px;border:1px solid var(--brand);
+    background:var(--brand);color:#fff;cursor:pointer
+  }
+  .btn:hover{background:var(--brand-2);border-color:var(--brand-2)}
+
+  /* Link sections */
+  .section-title{margin:8px 0 6px;font-size:14px;color:#234;font-weight:700}
+  .link-list{list-style:none;margin:0;padding:0}
+  .link-list li{padding:6px 0}
+  .link-list a{text-decoration:none;color:#174a2b}
+  .link-list a:hover{text-decoration:underline}
+
+  /* Counter pill digits */
+  .counter{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:10px}
+  .digit-pill{
+    display:inline-block;padding:8px 10px;border-radius:10px;background:#b09dc4;
+    color:#fff;font-weight:700;min-width:32px;text-align:center
+  }
+
+  /* Middle content placeholder: add inner padding so text/headers don't touch edges */
+  .content-card{min-height:300px;padding:var(--cardPad)}
+  .content-card :is(h1,h2,h3,h4,h5,h6){margin-top:0.2rem}
+  .content-card > :first-child{margin-top:0}
+
+  /* Footer (full-width with gutters) */
+  .footer{width:100%;padding:10px var(--gutter) 24px;text-align:center;color:#344}
+  .footer .card{padding:12px}
+
+  /* Responsive */
+  @media (max-width: 1024px){
+    .grid{grid-template-columns: 1fr}
+    .nav-toggle{display:block}
+    .nav-wrap.collapsed .nav-list{display:none}
+    .nav-wrap.open .nav-list{display:flex}
+  }
+
+  /* (Optional) Dark mode */
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0e0f10;--card:#161819;--text:#e7ece9;--muted:#1b231d;
+      --border:#2a2f2a;--shadow:0 8px 24px rgba(0,0,0,.6)
+    }
+    .link-list a{color:#8bd4a1}
+  }
+</style>
+
+
+  <script type="text/javascript">
+      function toggleNav() {
+          var wrap = document.getElementById('navWrap');
+          if (wrap.classList.contains('open')) { wrap.classList.remove('open'); wrap.classList.add('collapsed'); }
+          else { wrap.classList.add('open'); wrap.classList.remove('collapsed'); }
+      }
+  </script>
+</head>
+<body>
+  <form name="aspnetForm" method="post" action="./index.aspx" id="aspnetForm">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="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" />
+
+
+<script src="/libmax/ScriptResource.axd?d=qpskWSklTNZNNzsx_FecAXoXbYuste8qzQQZ7OfPsthRY-JmXKDJTUC6CY6hWMoKUAvYoDm2zydhRZxS4EKyP1jFqMTGW2tkbFyU3xdN_X--PyGje_PJiVRkcSeDmozE0&amp;t=23c9c237" type="text/javascript"></script>
+<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="4D6D0D64" />
+<input type="hidden" name="__VIEWSTATEENCRYPTED" id="__VIEWSTATEENCRYPTED" value="" />
+<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="RJz96fZB2NNSJeKMZefpa9Wk2itHqYvYhx+wWpzvvhgTSkzwxTWRDkUFwdQO1PX8Qvry1v8FRLxXbRds1JfcQhalHbAEihg5MP0fx2ASnBGn04m+Iglr4aANgkzVXnD4Jj3qt9BH3qLUHKzFxqCkYC+7KA2JMwgoy1RwV2Le/i70VihxfYAw+nL+DQ8k9Yzq1DEfAVYZQX0uDJx+/c6PMSfxCwH5UvyX/7KAfqPo1Dy1xz+Fmtww4FQZNqNzj90pSf4O704n4jtsZjX7z7VbJQ==" />
+    
+
+    <!-- Header -->
+    <header class="site-header">
+      <a class="brand" href="index.aspx" aria-label="Home">
+        <img src="images/opec.jpg" alt="NDU Library" />
+      </a>
+      <button type="button" class="nav-toggle" onclick="toggleNav()" aria-label="Toggle navigation">☰ Menu</button>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="main-nav">
+      <div id="navWrap" class="nav-wrap collapsed">
+        <ul class="nav-list" role="menubar" aria-label="Primary">
+          <li role="none"><a role="menuitem" href="index.aspx">Home</a></li>
+          <li class="spacer" aria-hidden="true"></li>
+          <li role="none"><a role="menuitem" href="../member/login.aspx">Login</a></li>
+          <li class="spacer" aria-hidden="true"></li>
+          <li role="none"><a role="menuitem" href="aboutlib.aspx">About Library</a></li>
+          <li class="spacer" aria-hidden="true"></li>
+          <li role="none"><a role="menuitem" href="libtiming.aspx">Library Timings</a></li>
+          <li class="spacer" aria-hidden="true"></li>
+          <li role="none"><a role="menuitem" href="Contact.aspx">Contact</a></li>
+          <li class="spacer" aria-hidden="true"></li>
+          <li role="none"><a role="menuitem" href="StaffD.aspx">Staff Directory</a></li>
+          <li class="spacer" aria-hidden="true"></li>
+          <li role="none"><a role="menuitem" href="help.aspx">Help</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Main layout -->
+    <div class="container">
+      <div class="grid">
+        <!-- Left column: Quick Search + Counter -->
+        <aside id="left_div" class="card">
+          <div class="card-header">Quick Search</div>
+          <div class="card-body">
+            <label for="quicksearch" class="section-title" style="display:block">Search Terms</label>
+            <!-- keep IDs so your code-behind works -->
+            <input name="ctl00$quicksearch" type="text" id="ctl00_quicksearch" class="search-text" />
+            <div class="rb-list">
+              <span id="ctl00_RadioButtonList1"><input id="ctl00_RadioButtonList1_0" type="radio" name="ctl00$RadioButtonList1" value="Books" checked="checked" /><label for="ctl00_RadioButtonList1_0">Books</label><br /><input id="ctl00_RadioButtonList1_1" type="radio" name="ctl00$RadioButtonList1" value="Periodicals" /><label for="ctl00_RadioButtonList1_1">Periodicals</label><br /><input id="ctl00_RadioButtonList1_2" type="radio" name="ctl00$RadioButtonList1" value="Periodical Articles" /><label for="ctl00_RadioButtonList1_2">Periodical Articles</label><br /><input id="ctl00_RadioButtonList1_3" type="radio" name="ctl00$RadioButtonList1" value="Newspapers Articles" /><label for="ctl00_RadioButtonList1_3">Newspapers Articles</label></span>
+            </div>
+            <div style="margin-top:10px">
+              <input type="image" name="ctl00$ImageButton1" id="ctl00_ImageButton1" src="images/Search_btn.gif" alt="Search" border="0" />
+            </div>
+          </div>
+
+          <!-- Visitor counter (your code-behind fills this) -->
+          <div class="card-header">Visitors</div>
+          <div id="ctl00_div_counter" class="counter">
+            <!-- your code will inject digits; keeping a style in case -->
+          </div>
+        </aside>
+
+        <!-- Middle content area -->
+        <section class="card content-card">
+          
+    <div id="mid_div">
+                                    
+                                    <div id="top_div">
+                                        <table cellpadding="0" cellspacing="0" border="0" width="100%" style="text-align: left;">
+                                            <tr>
+                                                <td class="left_bar">
+                                                </td>
+                                                <td class="mid_bar" align="left">
+                                                    <div class="Menu_font">Library</div>
+                                                </td>
+                                                <td class="right_bar">
+                                                </td> 
+                                            </tr>
+                                            
+                                        
+                                            
+                                          
+                                            
+                                            <tr>
+                                                <td colspan="3">
+                                                <center>
+                                                <br />
+                                                <img id="ctl00_ContentPlaceHolder1_Image1" src="images/lib1.jpg" height="210" width="361" border="0" />
+                                                    </center>
+                                                    <br />
+                                                    <br />
+                                                    <div id="ctl00_ContentPlaceHolder1_divhome" class="text_font"><p style="LINE-HEIGHT: 20px; TEXT-ALIGN: justify">Founded in 1970, the National Defence University Library Islamabad, over the years progressed and expanded significantly. It is now one of the well organized academic cum research libraries of the defence institutions and the capital as well. Its collection is a blend of books, research papers, professional journals, newspaper clippings and digital databases. The library is stocked with 96,000 books, professional journals and other materials on subjects of interest including military history, defence and security studies, nuclear studies, international relations, peace and conflict studies, governance and public policy, economics, politics, international relations, Pakistan affairs, Islam, etc. The books have been classified using Dewey Decimal Classification Scheme (DDC).</p>
+<p style="LINE-HEIGHT: 20px; TEXT-ALIGN: justify">&nbsp;By virtue of its dynamic and user friendly services, the library is playing vital role in research support activities. The effective practices of acquisition, organization and dissemination of information have been highly valuable in extension of services to the researchers. </p></div>
+                                                </td>
+                                            </tr>
+                                            
+                                        </table>
+                                    </div>
+                                    
+                                  
+                                    
+                                </div>
+
+        </section>
+
+        <!-- Right column: Catalogue + Publications + Theses -->
+        <aside id="right_div" class="card">
+          <div class="card-header">Catalogue</div>
+          <div class="card-body">
+            <h4 class="section-title">Books</h4>
+            <ul class="link-list">
+              <li><a href="FreshBooks.aspx">Fresh Arrivals</a></li>
+              <li><a href="SearchBook.aspx">Search</a></li>
+            </ul>
+
+            <h4 class="section-title">Periodicals</h4>
+            <ul class="link-list">
+              <li><a href="FreshPeriodicals.aspx">Fresh Arrivals</a></li>
+              <li><a href="PeriodicalList.aspx">Periodicals List</a></li>
+              <li><a href="SearchPeriodical.aspx">Periodical Search</a></li>
+              <li><a href="ArticalSearch.aspx">Periodical Articles</a></li>
+            </ul>
+
+            <h4 class="section-title">Newspapers</h4>
+            <ul class="link-list">
+              <li><a href="NArticleSearch.aspx">Article Search</a></li>
+              <li><a href="TopNArticle.aspx">Latest Articles</a></li>
+            </ul>
+
+            <h4 class="section-title">Publications</h4>
+            <!-- your code-behind writes a table of links here -->
+            <div id="ctl00_coursediv"><table cellpadding='0'><tr><td><a href='SearchPeriodical.aspx?key=E9+Quarterly&type=Title'>E9 Quarterly</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=ISSRA+Papers&type=Title'>ISSRA Papers</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=ISSRA+Working+Paper&type=Title'>ISSRA Working Paper</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=Journal+of+Contemporary+Studies&type=Title'>Journal of Contemporary Studies</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=Journal+of+International+Law&type=Title'>Journal of International Law</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=Margalla+Papers&type=Title'>Margalla Papers</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=Monograph&type=Title'>Monograph</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=NDC+Journal%2fNDU+Journal&type=Title'>NDC Journal/NDU Journal</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=Proceedings&type=Title'>Proceedings</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=Report&type=Title'>Report</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=Strategic+Thought&type=Title'>Strategic Thought</a></td></tr></table></div>
+
+            <h4 class="section-title">Theses / Research Papers</h4>
+            <ul class="link-list">
+              <li><a href="TopRPapers.aspx">Latest Papers</a></li>
+              <li><a href="SearchPapers.aspx">Search</a></li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="card">
+        <div class="Footer_font">© 2010-2026 Powered By
+          <a href="http://www.max-intell.com" rel="noopener">Max Intelligence</a>.
+          All rights reserved.
+        </div>
+      </div>
+    </div>
+
+  </form>
+</body>
+</html>

@@ -1,0 +1,4102 @@
+
+
+
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: opac-results.tt -->
+
+
+
+
+<html lang="vi-VN" class="no-js">
+<head>
+
+<title>Trung tâm Thông tin - Thư viện catalog &rsaquo;
+
+ Results of search for 'ti,wrdl: toán cao cấp'
+</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha 17.1100000" /> <!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="shortcut icon" href="/opac-tmpl/bootstrap/images/favicon.ico" type="image/x-icon" />
+
+ <link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/lib/bootstrap/css/bootstrap.min.css" />
+
+
+
+ <link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/lib/jquery/jquery-ui.css" />
+
+
+
+
+ <link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/css/opac.css" />
+
+
+
+<link rel="stylesheet" type="text/css" media="print" href="/opac-tmpl/bootstrap/css/print.css" />
+
+<style type="text/css">/* Thiết lập Tên tài liệu chính viết hoa, màu xanh lá HUAF */
+.opac-detail h1.title, .opac-detail .title {
+    font-size: 26px !important;
+    font-weight: 800 !important;
+    color: #1e5c33 !important; /* Xanh lá HUAF */
+    line-height: 1.4;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: block;
+}
+
+/* Lớp CSS tự động sinh ra cho phần tác giả dính kèm tiêu đề */
+.dynamic-author-sub {
+    display: block !important;          /* Ép buộc xuống hàng riêng */
+    font-size: 15px !important;         /* Cỡ chữ nhỏ hơn tên sách */
+    font-weight: normal !important;     /* Không in đậm */
+    text-transform: none !important;    /* Giữ nguyên chữ hoa chữ thường của tên tác giả */
+    color: #555555 !important;          /* Màu xám thanh lịch */
+    margin-top: 6px;
+    font-style: italic;                 /* In nghiêng theo chuẩn hiển thị tài liệu khoa học */
+}
+
+/* Định dạng dấu phẩy phân cách đồng tác giả gọn gàng */
+.xslt-comma-separator {
+    color: #666;
+    font-weight: bold;
+    margin-right: 5px;
+}</style>
+
+<link rel="unapi-server" type="application/xml" title="unAPI" href="/cgi-bin/koha/unapi" />
+
+ <link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/css/jquery.rating.css" />
+ 
+<!-- Respond.js brings responsive layout behavior to IE < v.9 -->
+<!--[if lt IE 9]>
+ <script src="/opac-tmpl/bootstrap/lib/respond.min.js"></script>
+<![endif]-->
+<script type="text/javascript">
+    function _(s) { return s } // dummy function for gettext
+</script>
+<script type="text/javascript" src="/opac-tmpl/bootstrap/lib/modernizr.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/lib/font-awesome/css/font-awesome.min.css" />
+
+
+
+
+ 
+
+
+<link type="application/rss+xml" rel="alternate" title="Tìm kiếm RSS Feed Trung tâm Thông tin - Thư viện " href="/cgi-bin/koha/opac-search.pl?idx=ti&q=to%25C3%25A1n%2520cao%2520c%25E1%25BA%25A5p&count=50&sort_by=acqdate_dsc&format=rss2" />
+</head>
+
+
+
+ 
+
+
+ 
+
+
+
+
+ 
+
+<body ID="results" class="branch-default scrollto" >
+
+
+
+
+<div id="wrap">
+ <div id="header-region" class="noprint">
+ <div class="navbar navbar-inverse navbar-static-top">
+ <div class="navbar-inner">
+ <div class="container-fluid">
+ <h1 id="logo">
+ <a class="brand" href="/cgi-bin/koha/opac-main.pl">
+  Trung tâm Thông tin - Thư viện  </a>
+ </h1>
+ 
+ <div id="cartDetails" class="cart-message">Giỏ tài liệu trống</div>
+ 
+ <ul class="nav">
+ 
+ <li class="dropdown">
+ <a href="#" title="Collect items you are interested in" class="dropdown-toggle" id="cartmenulink" data-toggle="dropdown" role="button">
+ <i id="carticon" class="icon-shopping-cart icon-white"></i> <span class="cartlabel">Giỏ tài liệu</span> <span id="basketcount"></span> <b class="caret"></b>
+ </a>
+ <ul aria-labelledby="cartmenulink" role="menu" class="dropdown-menu">
+ <li role="presentation">
+ <a href="#" id="cartmenuitem" class="cart-message" tabindex="-1" role="menuitem">Giỏ tài liệu trống</a>
+ </li>
+ </ul>
+ </li>
+ 
+ 
+ <li class="divider-vertical"></li>
+ 
+ 
+ <li class="dropdown">
+ <a href="#" title="Show lists" class="dropdown-toggle" id="listsmenu" data-toggle="dropdown" role="button"><i class="icon-list icon-white"></i> <span class="listslabel">Giá sách ảo</span> <b class="caret"></b></a>
+ <ul aria-labelledby="listsmenu" role="menu" class="dropdown-menu">
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;category=2" tabindex="-1" role="menuitem"><strong>Giá sách ảo cộng đồng</strong></a></li>
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=28&amp;sortfield=title" tabindex="-1" role="menuitem">Trí tuệ nhân tạo</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=22&amp;sortfield=title" tabindex="-1" role="menuitem">Bảo vệ thực vật</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=17&amp;sortfield=title" tabindex="-1" role="menuitem">Quản lý đất đai</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=14&amp;sortfield=title" tabindex="-1" role="menuitem">Nuôi trồng thủy sản</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=2&amp;sortfield=title" tabindex="-1" role="menuitem">Khoa học cây trồng</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=26&amp;sortfield=title" tabindex="-1" role="menuitem">Kinh doanh và khởi nghiệp nông thôn</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=25&amp;sortfield=title" tabindex="-1" role="menuitem">Sinh học ứng dụng</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=24&amp;sortfield=title" tabindex="-1" role="menuitem">Nông nghiệp công nghệ cao</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=23&amp;sortfield=title" tabindex="-1" role="menuitem">Nông học</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=21&amp;sortfield=title" tabindex="-1" role="menuitem">Phát triển nông thôn</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;category=2" tabindex="-1" role="menuitem" class="listmenulink">Xem tất cả</a></li>
+ 
+ 
+ <li class="divider" role="presentation"></li>
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;category=1" tabindex="-1" role="menuitem"><strong>Giá sách ảo của bạn</strong></a></li>
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-user.pl" tabindex="-1" class="menu-inactive loginModal-trigger" role="menuitem">Đăng nhập để tạo giá sách của bạn</a></li>
+ 
+ 
+ 
+ </ul> <!-- / .dropdown-menu -->
+ </li> <!-- / .dropdown -->
+ 
+ </ul> <!-- / .nav -->
+ <div id="listsDetails"></div>
+ 
+ <a id="user-menu-trigger" class="pull-right" href="#"><i class="icon-user"></i> <span class="caret"></span></a>
+ <div id="members">
+ <ul class="nav pull-right">
+
+ 
+
+<li class="dropdown">
+ <a href="#" title="Switch languages" class="dropdown-toggle" id="langmenu" data-toggle="dropdown" role="button"><i class="icon-flag icon-white"></i> <span class="langlabel">Languages</span> <b class="caret"></b></a>
+ <ul aria-labelledby="langmenu" role="menu" class="dropdown-menu">
+ 
+ 
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-changelanguage.pl?language=en"  tabindex="-1" role="menuitem" class="listmenulink">English</a></li>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <li role="presentation"><a href="#" tabindex="-1" class="menu-inactive" role="menuitem">Tiếng Việt&nbsp;<i class="icon-ok"></i></a></li>
+ 
+ 
+ 
+ 
+ 
+ </ul> <!-- /# .dropdown-menu -->
+</li> <!-- / .dropdown -->
+
+
+
+ 
+ 
+ 
+ <li><a href="/cgi-bin/koha/opac-user.pl" class="loginModal-trigger" role="button" data-toggle="modal">Đăng nhập</a></li>
+ 
+ 
+ 
+ 
+ 
+ <li><p class="navbar-text"><a title="Xem lịch sử tìm kiếm của bạn" href="/cgi-bin/koha/opac-search-history.pl">Lịch sử tìm kiếm</a> [<a title="Xóa lịch sử tìm kiếm" href="/cgi-bin/koha/opac-search-history.pl?action=delete" class="logout clearsh">x</a>]</p></li>
+ <li class="divider-vertical"></li>
+ 
+ 
+ 
+ 
+ </ul>
+ </div> <!-- /members -->
+ 
+ </div> <!-- /container-fluid -->
+ </div> <!-- /navbar-inner -->
+ </div> <!-- /navbar -->
+
+ 
+ <div class="container-fluid">
+ <div class="row-fluid">
+ <div id="opacheader">
+ Thư viện trường Đại học Nông Lâm Huế
+
+ </div>
+ </div>
+ </div>
+ 
+ </div> <!-- / header-region -->
+
+ <div class="container-fluid">
+ <div class="row-fluid">
+ <div id="opac-main-search">
+ <!-- <div class="span2">
+ 
+ <h1 id="libraryname">
+ 
+ <a href="/cgi-bin/koha/opac-main.pl">Trung tâm Thông tin - Thư viện</a></h1>
+ </div> /.span2 -->
+ <div class="span12">
+ 
+ 
+ 
+ <div class="mastheadsearch">
+ 
+ 
+ <form name="searchform" method="get" action="/cgi-bin/koha/opac-search.pl" id="searchform" class="form-inline">
+ <label for="masthead_search"> Tìm kiếm
+ 
+ 
+ 
+ </label>
+
+ <select name="idx" id="masthead_search">
+ 
+ <option value="">Từ khóa</option>
+ 
+ 
+ <option selected="selected" value="ti">Nhan đề</option>
+ 
+ 
+ <option value="au">Tác giả</option>
+ 
+ 
+ <option value="su">Chủ đề</option>
+ 
+ 
+ <option value="nb">Số ISBN</option>
+ 
+ 
+ <option value="se">Tùng thư</option>
+ 
+ 
+ 
+ <option value="callnum">Ký hiệu phân loại</option>
+ 
+ 
+ </select>
+
+ 
+ <div class="input-append nolibrarypulldown">
+ 
+ 
+ <input type="text" title="Type search term" class="transl1" id = "translControl1" name="q" value="toán cao cấp" /><span id="translControl"></span>
+ 
+
+ 
+ <button type="submit" id="searchsubmit" class="btn btn-primary">Tìm kiếm</button>
+ </div>
+ 
+
+ 
+ 
+ 
+ 
+ 
+
+ </form>
+ 
+ </div> <!-- / .mastheadsearch -->
+ 
+
+ <div class="row-fluid">
+ <div id="moresearches">
+ <ul>
+ <li><a href="/cgi-bin/koha/opac-search.pl">Tìm kiếm nâng cao</a></li>
+ <li><a href="/cgi-bin/koha/opac-course-reserves.pl">CSDL khóa học</a></li>
+ 
+ <li><a href="/cgi-bin/koha/opac-authorities-home.pl">Tìm kiếm dữ liệu kiểm soát</a></li>
+ 
+ <li><a href="/cgi-bin/koha/opac-tags.pl">Mây Tag</a></li>
+ 
+ 
+ 
+ 
+ <li><a href="/cgi-bin/koha/opac-suggestions.pl">Đề xuất mua tài liệu</a></li>
+ 
+ 
+ </ul>
+ </div> <!-- /#moresearches -->
+ </div> <!-- /.row-fluid -->
+
+ 
+ </div> <!-- /.span10 -->
+ </div> <!-- /.opac-main-search -->
+ </div> <!-- / .row-fluid -->
+ </div> <!-- /.container-fluid -->
+
+ <!-- Login form hidden by default, used for modal window -->
+ <div id="loginModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+ <div class="modal-header">
+ <button type="button" class="closebtn" data-dismiss="modal" aria-hidden="true">×</button>
+ <h3 id="modalLoginLabel">Đăng nhập</h3>
+ </div>
+ <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="modalAuth">
+ <div class="modal-body">
+ 
+ <input type="hidden" name="koha_login_context" value="opac" />
+ <fieldset class="brief">
+ <label for="muserid">Tên đăng nhập:</label><input type="text" id="muserid" name="userid" />
+ <label for="mpassword">Mật khẩu:</label><input type="password" id="mpassword" name="password" />
+ 
+ 
+ 
+ </fieldset>
+ </div>
+ <div class="modal-footer">
+ <input type="submit" value="Đăng nhập" class="btn btn-primary" />
+ <a href="#" data-dismiss="modal" aria-hidden="true" class="cancel">Hủy bỏ</a>
+ </div>
+ </form> <!-- /#auth -->
+ </div> <!-- /#modalAuth -->
+
+
+ <div class="main">
+ <ul class="breadcrumb">
+ <li><a href="/cgi-bin/koha/opac-main.pl">Trang chủ</a> <span class="divider">&rsaquo;</span></li>
+ <li>
+ 
+ <a href="#">Results of search for 'ti,wrdl: toán cao cấp'</a>
+ 
+ </li>
+ </ul>
+
+ 
+
+ <div id="maincontent" class="container-fluid">
+ <div class="row-fluid">
+ 
+ <div class="span2">
+ <div id="facetcontainer">
+ <!-- FACETS START -->
+ 
+
+ <div id="search-facets">
+ <h4><a href="#" class="menu-collapse-toggle">Giới hạn kết quả tìm kiếm</a></h4>
+ <ul class="menu-collapse">
+ <li id="availability_facet">Availability
+ <ul>
+ <li>
+ 
+ <a href="/cgi-bin/koha/opac-search.pl?idx=ti&q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;sort_by=relevance_dsc&amp;limit=available">Limit to currently available items.</a>
+ 
+ </li>
+ </ul>
+ 
+ </li>
+
+ 
+ 
+ <li id="au_id">
+ <h5 id="facet-authors">Tác giả</h5>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <ul>
+ 
+ 
+ 
+ 
+ 
+ 
+ <li>
+ 
+ 
+ <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=ti&q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;sort_by=relevance_dsc&amp;limit=au:Nguyễn, Hồ Quỳnh" title="Nguyễn, Hồ Quỳnh">Nguyễn, Hồ Quỳnh</a></span>
+ 
+ 
+ </li>
+ 
+ 
+ <li>
+ 
+ 
+ <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=ti&q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;sort_by=relevance_dsc&amp;limit=au:Nguyễn, Đình Trí" title="Nguyễn, Đình Trí">Nguyễn, Đình Trí</a></span>
+ 
+ 
+ </li>
+ 
+ 
+ <li>
+ 
+ 
+ <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=ti&q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;sort_by=relevance_dsc&amp;limit=au:Ngô, Đình Hiền" title="Ngô, Đình Hiền">Ngô, Đình Hiền</a></span>
+ 
+ 
+ </li>
+ 
+ 
+ <li>
+ 
+ 
+ <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=ti&q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;sort_by=relevance_dsc&amp;limit=au:Phan, Tăng Đa" title="Phan, Tăng Đa">Phan, Tăng Đa</a></span>
+ 
+ 
+ </li>
+ 
+ 
+ <li>
+ 
+ 
+ <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=ti&q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;sort_by=relevance_dsc&amp;limit=au:Tạ, Văn Đĩnh" title="Tạ, Văn Đĩnh">Tạ, Văn Đĩnh</a></span>
+ 
+ 
+ </li>
+ 
+ 
+ <li class="showmore">
+ <a href="/cgi-bin/koha/opac-search.pl?idx=ti&q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;sort_by=relevance_dsc&amp;expand=au#au_id">Hiển thị thêm</a>
+ </li>
+ 
+ </ul>
+ </li>
+ 
+ 
+ 
+ <li id="holdingbranch_id">
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <span id="facet-holding-libraries">Thư viện sở hữu</span>
+ 
+ 
+ <ul>
+ 
+ 
+ 
+ 
+ 
+ 
+ <li>
+ 
+ 
+ <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=ti&q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;sort_by=relevance_dsc&amp;limit=holdingbranch:109.1" title="109.1">Kho Mở T1</a></span>
+ 
+ 
+ </li>
+ 
+ 
+ <li>
+ 
+ 
+ <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=ti&q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;sort_by=relevance_dsc&amp;limit=holdingbranch:109.2" title="109.2">Kho Mở T2</a></span>
+ 
+ 
+ </li>
+ 
+ 
+ <li>
+ 
+ 
+ <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=ti&q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;sort_by=relevance_dsc&amp;limit=holdingbranch:109" title="109">Trung tâm Thông tin - Thư viện</a></span>
+ 
+ 
+ </li>
+ 
+ 
+ </ul>
+ </li>
+ 
+ 
+ 
+ <li id="itype_id">
+ 
+ 
+ 
+ 
+ 
+ <h5 id="facet-itemtypes">Kiểu tài liệu</h5>
+ 
+ 
+ 
+ 
+ 
+ 
+ <ul>
+ 
+ 
+ 
+ 
+ 
+ 
+ <li>
+ 
+ 
+ <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=ti&q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;sort_by=relevance_dsc&amp;limit=itype:APĐK" title="APĐK">Báo - Tạp chí in</a></span>
+ 
+ 
+ </li>
+ 
+ 
+ <li>
+ 
+ 
+ <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=ti&q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;sort_by=relevance_dsc&amp;limit=itype:Giáo trình" title="Giáo trình">Giáo trình</a></span>
+ 
+ 
+ </li>
+ 
+ 
+ <li>
+ 
+ 
+ <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=ti&q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;sort_by=relevance_dsc&amp;limit=itype:SACH" title="SACH">Sách in</a></span>
+ 
+ 
+ </li>
+ 
+ 
+ <li>
+ 
+ 
+ <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=ti&q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;sort_by=relevance_dsc&amp;limit=itype:Sách in" title="Sách in">Sách in</a></span>
+ 
+ 
+ </li>
+ 
+ 
+ <li>
+ 
+ 
+ <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=ti&q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;sort_by=relevance_dsc&amp;limit=itype:KHAC" title="KHAC">Tài liệu</a></span>
+ 
+ 
+ </li>
+ 
+ 
+ <li class="showmore">
+ <a href="/cgi-bin/koha/opac-search.pl?idx=ti&q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;sort_by=relevance_dsc&amp;expand=itype#itype_id">Hiển thị thêm</a>
+ </li>
+ 
+ </ul>
+ </li>
+ 
+ 
+ 
+ 
+ 
+ <li id="su-to_id">
+ 
+ 
+ <h5 id="facet-topics">Chủ đề</h5>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <ul>
+ 
+ 
+ 
+ 
+ 
+ 
+ <li>
+ 
+ 
+ <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=ti&q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;sort_by=relevance_dsc&amp;limit=su-to:Giải tích" title="Giải tích">Giải tích</a></span>
+ 
+ 
+ </li>
+ 
+ 
+ <li>
+ 
+ 
+ <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=ti&q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;sort_by=relevance_dsc&amp;limit=su-to:Giải tích nhiều biến số" title="Giải tích nhiều biến số">Giải tích nhiều biến...</a></span>
+ 
+ 
+ </li>
+ 
+ 
+ <li>
+ 
+ 
+ <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=ti&q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;sort_by=relevance_dsc&amp;limit=su-to:Toán cao cấp" title="Toán cao cấp">Toán cao cấp</a></span>
+ 
+ 
+ </li>
+ 
+ 
+ <li>
+ 
+ 
+ <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=ti&q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;sort_by=relevance_dsc&amp;limit=su-to:Toán học" title="Toán học">Toán học</a></span>
+ 
+ 
+ </li>
+ 
+ 
+ <li>
+ 
+ 
+ <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=ti&q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;sort_by=relevance_dsc&amp;limit=su-to:Toán học cao cấp" title="Toán học cao cấp">Toán học cao cấp</a></span>
+ 
+ 
+ </li>
+ 
+ 
+ <li class="showmore">
+ <a href="/cgi-bin/koha/opac-search.pl?idx=ti&q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;sort_by=relevance_dsc&amp;expand=su-to#su-to_id">Hiển thị thêm</a>
+ </li>
+ 
+ </ul>
+ </li>
+ 
+ 
+ </ul>
+ </div> <!-- / #search-facets -->
+
+ 
+
+
+ <!-- FACETS END -->
+ </div>
+ </div>
+ 
+
+ <div class="span10 maincontent">
+
+ 
+ <p id="numresults">
+ <strong>Tìm thấy 25 kết quả phù hợp với yêu cầu của bạn.</strong>
+ 
+ <a href="/cgi-bin/koha/opac-search.pl?idx=ti&q=to%25C3%25A1n%2520cao%2520c%25E1%25BA%25A5p&amp;count=50&amp;sort_by=acqdate_dsc&amp;format=rss2" class="rsssearchlink noprint"><img alt="Theo dõi kết quả tìm kiếm này" class="rsssearchicon" src="/opac-tmpl/bootstrap/images/feed-icon-16x16.png" title="Theo dõi kết quả tìm kiếm này" /></a>
+ 
+ </p>
+ 
+
+ <div id="userresults">
+ 
+
+ <div id="top-pages">
+ <div class="pagination pagination-small noprint">
+ <ul>
+ 
+ 
+ 
+ <li class="active"><a href="#">1</a></li>
+ 
+ 
+ 
+ <li><a href="/cgi-bin/koha/opac-search.pl?idx=ti&amp;q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;offset=20&amp;sort_by=relevance_dsc">2</a></li>
+ 
+ 
+ 
+ <li><a href="/cgi-bin/koha/opac-search.pl?idx=ti&amp;q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;offset=20&amp;sort_by=relevance_dsc">Trang sau &raquo;</a></li>
+ <li><a href="/cgi-bin/koha/opac-search.pl?idx=ti&amp;q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;offset=20&amp;sort_by=relevance_dsc">Trước</a></li>
+ 
+ </ul>
+ </div>
+
+</div>
+
+ 
+ 
+ 
+ 
+ 
+
+ <!-- Search Results Table -->
+ 
+
+ <div class="searchresults">
+ <form action="/cgi-bin/koha/opac-search.pl" method="get" name="bookbag_form" id="bookbag_form" class="checkboxed">
+ 
+ 
+ <input type="hidden" name="idx" value="ti"/>
+ 
+ <input type="hidden" name="q" value="toán cao cấp"/>
+ 
+ 
+ 
+
+ <div id="toolbar" class="toolbar clearfix">
+ 
+ <div class="highlight_controls noprint">
+ <a href="#" class="highlight_toggle" id="highlight_toggle_off">Bỏ đánh dấu</a>
+ <a href="#" class="highlight_toggle" id="highlight_toggle_on">Đánh dấu</a>
+ </div>
+ 
+ 
+ <div class="sort_by pull-right">
+ <select id="sort_by" class="resort" name="sort_by"> <option value="relevance">Sắp xếp kết quả tìm theo</option>
+<optgroup label="Tần suất sử dụng">
+ 
+ <option value="popularity_dsc">Tần suất sử dụng (Nhiều - Ít)</option>
+ 
+ 
+ <option value="popularity_asc">Tần suất sử dụng (Ít - Nhiều )</option>
+ 
+</optgroup>
+<optgroup label="Tác giả">
+ 
+ <option value="author_az">Tác giả (A-Z)</option>
+ 
+ 
+ <option value="author_za">Tác giả (Z-A)</option>
+ 
+</optgroup>
+<optgroup label="Ký hiệu phân loại">
+ 
+ <option value="call_number_asc">Ký hiệu phân loại (0-9 tới A-Z)</option>
+ 
+ 
+ <option value="call_number_dsc">Ký hiệu phân loại (Z-A tới 9-0)</option>
+ 
+</optgroup>
+<optgroup label="Ngày liên quan">
+ 
+ <option value="pubdate_dsc">Năm xuất bản/Phát hành: Mới nhất - Cũ nhất</option>
+ 
+ 
+ <option value="pubdate_asc">Năm xuất bản/Phát hành: Cũ nhất - Mới nhất</option>
+ 
+ 
+ <option value="acqdate_dsc">Ngày bổ sung: Mới nhất - Cũ nhất</option>
+ 
+ 
+ <option value="acqdate_asc">Ngày bổ sung: Cũ nhất - Mới nhất</option>
+ 
+</optgroup>
+<optgroup label="Nhan đề">
+ 
+ <option value="title_az">Nhan đề (A-Z)</option>
+ 
+ 
+ <option value="title_za">Nhan đề (Z-A)</option>
+ 
+</optgroup>
+ </select>
+ <input type="submit" value="Tìm kiếm" class="btn btn-small clearfix" id="sortsubmit" />
+ </div>
+ 
+ </div> <!-- / #toolbar -->
+
+ <div id="selections-toolbar" class="toolbar noprint">
+ <!-- checkall, clearall are now needed for placehold -->
+ <span class="checkall"></span>
+ <span class="clearall"></span> <span class="sep">|</span>
+
+ <span class="links">
+ 
+ <span class="addto"></span>
+ 
+ <span id="placehold"><!-- input class="submit" type="submit" value="Place Hold"/ --></span>
+
+ 
+ </span> <!-- / .links -->
+ </div> <!-- / #selections-toolbar -->
+
+ <!-- TABLE RESULTS START -->
+ <table class="table table-striped">
+
+ <!-- Actual Search Results -->
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ <input type="checkbox" class="cb" id="bib709" name="biblionumber" value="709" /> <label for="bib709"></label>
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 1.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_APĐK">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=709">
+ 
+ <span title="709" class="709" id="local-thumbnail1"></span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Toán+học+cao+cấp.&amp;rft.isbn=&amp;rft.issn=&amp;rft.aulast=&amp;rft.aufirst=&amp;rft.au=Nguyễn,+Đình+Trí&amp;rft.au=Nguyễn,+Hồ+Quỳnh&amp;rft.pub=Giáo+dục&amp;rft.date=2002&amp;rft.pages="></span>
+ 
+
+ 
+ 
+
+<a xmlns:str="http://exslt.org/strings" href="/cgi-bin/koha/opac-detail.pl?biblionumber=709" class="title">Toán học cao cấp. <span class="title_resp_stmt">Nguyễn Đình Trí, Tạ Văn Đĩnh, Nguyễn Hồ Quỳnh </span>Tập 2 Phép tính giải tích một biến số </a><p xmlns:str="http://exslt.org/strings">
+
+ Tác giả <span class="author">Nguyễn, Đình Trí<span class="separator"> | </span>Nguyễn, Hồ Quỳnh<span class="separator"> | </span>Tạ, Văn Đỉnh.</span></p><span class="results_summary edition"><span class="label">Ấn bản: </span>Tái bản lần thứ năm có chỉnh lý</span><span class="results_summary source"><span class="label">Nguồn: </span>Toán học cao cấp</span><span class="results_summary type"><span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/silk/book.png" title="Sách" class="materialtype" alt="Sách"> Sách</span><span class="results_format"><span class="label">; Định dạng: </span>
+ Bản in </span><span class="results_contents_literary"></span> </span><span class="results_summary publisher"><span class="label">Nhà xuất bản: </span>Hà Nội Giáo dục 2002</span><span class="results_summary online_resources"><span class="label">Online access: </span><a target="_blank" href="http://dlib.huaf.edu.vn/handle/1/1089">Truy cập trực tuyến</a> </span><span xmlns:str="http://exslt.org/strings" class="results_summary availability"><span class="label">Sẵn sàng: </span><span class="available"><b>Items available for loan: </b><span class="ItemSummary">Trung tâm Thông tin - Thư viện (30). </span></span></span>
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <div class="results_summary ratings">
+ 
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-709" value="1" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-709" value="2" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-709" value="3" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-709" value="4" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-709" value="5" disabled="disabled"   />
+ 
+ 
+
+ 
+ <br />
+ 
+ </div> <!-- / .results_summary -->
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=709">Đặt mượn</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ <span class="actions"><a class="addtocart cart709" href="#" onclick="addRecord('709'); return false;">Thêm vào giỏ tài liệu</a> <a style="display:none;" class="cartRemove cartR709" href="#" onclick="delSingleRecord('709'); return false;">(remove)</a></span>
+ 
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ <input type="checkbox" class="cb" id="bib708" name="biblionumber" value="708" /> <label for="bib708"></label>
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 2.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_Sách in">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=708">
+ 
+ <span title="708" class="708" id="local-thumbnail2"></span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Toán+học+cao+cấp.&amp;rft.isbn=&amp;rft.issn=&amp;rft.aulast=&amp;rft.aufirst=&amp;rft.au=Nguyễn,+Đình+Trí&amp;rft.au=Nguyễn,+Hồ+Quỳnh&amp;rft.pub=Giáo+dục&amp;rft.date=2002&amp;rft.pages="></span>
+ 
+
+ 
+ 
+
+<a xmlns:str="http://exslt.org/strings" href="/cgi-bin/koha/opac-detail.pl?biblionumber=708" class="title">Toán học cao cấp. <span class="title_resp_stmt">Nguyễn Đình Trí, Tạ Văn Đĩnh, Nguyễn Hồ Quỳnh </span>Tập 3 Phép tính giải tích nhiều biến số </a><p xmlns:str="http://exslt.org/strings">
+
+ Tác giả <span class="author">Nguyễn, Đình Trí<span class="separator"> | </span>Nguyễn, Hồ Quỳnh<span class="separator"> | </span>Tạ, Văn Đỉnh.</span></p><span class="results_summary edition"><span class="label">Ấn bản: </span>Tái bản lần thứ 5</span><span class="results_summary source"><span class="label">Nguồn: </span>Toán học cao cấp</span><span class="results_summary type"><span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/silk/book.png" title="Sách" class="materialtype" alt="Sách"> Sách</span><span class="results_format"><span class="label">; Định dạng: </span>
+ Bản in </span><span class="results_contents_literary"></span> </span><span class="results_summary publisher"><span class="label">Nhà xuất bản: </span>Hà Nội Giáo dục 2002</span><span xmlns:str="http://exslt.org/strings" class="results_summary availability"><span class="label">Sẵn sàng: </span><span class="available"><b>Items available for loan: </b><span class="ItemSummary">Trung tâm Thông tin - Thư viện (30). </span></span></span>
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <div class="results_summary ratings">
+ 
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-708" value="1" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-708" value="2" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-708" value="3" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-708" value="4" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-708" value="5" disabled="disabled"   />
+ 
+ 
+
+ 
+ <br />
+ 
+ </div> <!-- / .results_summary -->
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=708">Đặt mượn</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ <span class="actions"><a class="addtocart cart708" href="#" onclick="addRecord('708'); return false;">Thêm vào giỏ tài liệu</a> <a style="display:none;" class="cartRemove cartR708" href="#" onclick="delSingleRecord('708'); return false;">(remove)</a></span>
+ 
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ <input type="checkbox" class="cb" id="bib710" name="biblionumber" value="710" /> <label for="bib710"></label>
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 3.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_Sách in">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=710">
+ 
+ <span title="710" class="710" id="local-thumbnail3"></span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Toán+học+cao+cấp&amp;rft.isbn=&amp;rft.issn=&amp;rft.aulast=&amp;rft.aufirst=&amp;rft.au=Nguyễn,+Đình+Trí&amp;rft.au=Nguyễn,+Hồ+Quỳnh&amp;rft.pub=Giáo+dục&amp;rft.date=2002&amp;rft.pages="></span>
+ 
+
+ 
+ 
+
+<a xmlns:str="http://exslt.org/strings" href="/cgi-bin/koha/opac-detail.pl?biblionumber=710" class="title">Toán học cao cấp <span class="title_resp_stmt">Nguyễn Đình Trí, Tạ Văn Đĩnh, Nguyễn Hồ Quỳnh </span>Tập 1 Đại số và hình học giải tích </a><p xmlns:str="http://exslt.org/strings">
+
+ Tác giả <span class="author">Nguyễn, Đình Trí<span class="separator"> | </span>Nguyễn, Hồ Quỳnh<span class="separator"> | </span>Tạ, Văn Đỉnh.</span></p><span class="results_summary edition"><span class="label">Ấn bản: </span>Tái bản lần thứ 6, có chỉnh lý</span><span class="results_summary source"><span class="label">Nguồn: </span>Toán học cao cấp</span><span class="results_summary type"><span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/silk/book.png" title="Sách" class="materialtype" alt="Sách"> Sách</span><span class="results_format"><span class="label">; Định dạng: </span>
+ Bản in </span><span class="results_contents_literary"></span> </span><span class="results_summary publisher"><span class="label">Nhà xuất bản: </span>Hà Nội Giáo dục 2002</span><span xmlns:str="http://exslt.org/strings" class="results_summary availability"><span class="label">Sẵn sàng: </span><span class="available"><b>Items available for loan: </b><span class="ItemSummary">Trung tâm Thông tin - Thư viện (29). </span></span></span>
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <div class="results_summary shelves">
+ <span class="label">Lists:</span>
+ <ul>
+ 
+ <li><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=17">Quản lý đất đai</a></li>.
+ </ul>
+ </span>
+ </div>
+ 
+
+ 
+
+ 
+ <div class="results_summary ratings">
+ 
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-710" value="1" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-710" value="2" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-710" value="3" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-710" value="4" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-710" value="5" disabled="disabled"   />
+ 
+ 
+
+ 
+ <br />
+ 
+ </div> <!-- / .results_summary -->
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=710">Đặt mượn</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ <span class="actions"><a class="addtocart cart710" href="#" onclick="addRecord('710'); return false;">Thêm vào giỏ tài liệu</a> <a style="display:none;" class="cartRemove cartR710" href="#" onclick="delSingleRecord('710'); return false;">(remove)</a></span>
+ 
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ <input type="checkbox" class="cb" id="bib844" name="biblionumber" value="844" /> <label for="bib844"></label>
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 4.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_Sách in">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=844">
+ 
+ <span title="844" class="844" id="local-thumbnail4"></span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Bài+tập+toán+cao+cấp.&amp;rft.isbn=&amp;rft.issn=&amp;rft.aulast=&amp;rft.aufirst=&amp;rft.au=Nguyễn,+Đình+Trí&amp;rft.au=Tạ,+Văn+Đĩnh&amp;rft.pub=Giáo+dục+Việt+Nam&amp;rft.date=2009&amp;rft.pages="></span>
+ 
+
+ 
+ 
+
+<a xmlns:str="http://exslt.org/strings" href="/cgi-bin/koha/opac-detail.pl?biblionumber=844" class="title">Bài tập toán cao cấp. <span class="title_resp_stmt">Nguyễn Đình Trí (chủ biên), Tạ Văn Đĩnh, Nguyễn Hồ Quỳnh </span>Tập 3 Phép giải tích nhiều biến số </a><p xmlns:str="http://exslt.org/strings">
+
+ Tác giả <span class="author">Nguyễn, Đình Trí<span class="separator"> | </span>Tạ, Văn Đĩnh<span class="separator"> | </span>Nguyễn, Hồ Quỳnh.</span></p><span class="results_summary edition"><span class="label">Ấn bản: </span>Tái bản lần thứ mười một</span><span class="results_summary type"><span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/silk/book.png" title="Sách" class="materialtype" alt="Sách"> Sách</span><span class="results_format"><span class="label">; Định dạng: </span>
+ Bản in </span><span class="results_contents_literary"></span> </span><span class="results_summary publisher"><span class="label">Nhà xuất bản: </span>Hà Nội Giáo dục Việt Nam 2009</span><span xmlns:str="http://exslt.org/strings" class="results_summary availability"><span class="label">Sẵn sàng: </span><span class="available"><b>Items available for loan: </b><span class="ItemSummary">Trung tâm Thông tin - Thư viện (10). </span></span></span>
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <div class="results_summary ratings">
+ 
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-844" value="1" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-844" value="2" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-844" value="3" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-844" value="4" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-844" value="5" disabled="disabled"   />
+ 
+ 
+
+ 
+ <br />
+ 
+ </div> <!-- / .results_summary -->
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=844">Đặt mượn</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ <span class="actions"><a class="addtocart cart844" href="#" onclick="addRecord('844'); return false;">Thêm vào giỏ tài liệu</a> <a style="display:none;" class="cartRemove cartR844" href="#" onclick="delSingleRecord('844'); return false;">(remove)</a></span>
+ 
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ <input type="checkbox" class="cb" id="bib843" name="biblionumber" value="843" /> <label for="bib843"></label>
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 5.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_Sách in">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=843">
+ 
+ <span title="843" class="843" id="local-thumbnail5"></span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Bài+tập+toán+cao+cấp.&amp;rft.isbn=&amp;rft.issn=&amp;rft.aulast=&amp;rft.aufirst=&amp;rft.au=Nguyễn,+Đình+Trí&amp;rft.au=Tạ,+Văn+Đĩnh&amp;rft.pub=Giáo+dục+Việt+Nam&amp;rft.date=2009&amp;rft.pages="></span>
+ 
+
+ 
+ 
+
+<a xmlns:str="http://exslt.org/strings" href="/cgi-bin/koha/opac-detail.pl?biblionumber=843" class="title">Bài tập toán cao cấp. <span class="title_resp_stmt">Nguyễn Đình Trí (chủ biên), Tạ Văn Đĩnh, Nguyễn Hồ Quỳnh </span>Tập1 Đại số và hình học giải tích </a><p xmlns:str="http://exslt.org/strings">
+
+ Tác giả <span class="author">Nguyễn, Đình Trí<span class="separator"> | </span>Tạ, Văn Đĩnh<span class="separator"> | </span>Nguyễn, Hồ Quỳnh.</span></p><span class="results_summary edition"><span class="label">Ấn bản: </span>Tái bản lần13</span><span class="results_summary type"><span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/silk/book.png" title="Sách" class="materialtype" alt="Sách"> Sách</span><span class="results_format"><span class="label">; Định dạng: </span>
+ Bản in </span><span class="results_contents_literary"></span> </span><span class="results_summary publisher"><span class="label">Nhà xuất bản: </span>Hà Nội Giáo dục Việt Nam 2009</span><span xmlns:str="http://exslt.org/strings" class="results_summary availability"><span class="label">Sẵn sàng: </span><span class="available"><b>Items available for loan: </b><span class="ItemSummary">Trung tâm Thông tin - Thư viện (10). </span></span></span>
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <div class="results_summary ratings">
+ 
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-843" value="1" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-843" value="2" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-843" value="3" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-843" value="4" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-843" value="5" disabled="disabled"   />
+ 
+ 
+
+ 
+ <br />
+ 
+ </div> <!-- / .results_summary -->
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=843">Đặt mượn</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ <span class="actions"><a class="addtocart cart843" href="#" onclick="addRecord('843'); return false;">Thêm vào giỏ tài liệu</a> <a style="display:none;" class="cartRemove cartR843" href="#" onclick="delSingleRecord('843'); return false;">(remove)</a></span>
+ 
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ <input type="checkbox" class="cb" id="bib866" name="biblionumber" value="866" /> <label for="bib866"></label>
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 6.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_Giáo trình">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=866">
+ 
+ <span title="866" class="866" id="local-thumbnail6"></span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Giáo+trình+toán+học+cao+cấp.&amp;rft.isbn=&amp;rft.issn=&amp;rft.aulast=&amp;rft.aufirst=&amp;rft.au=Nguyễn,+Đình+Trí&amp;rft.au=Lê,+Trọng+Vinh&amp;rft.pub=Giáo+dục&amp;rft.date=2009&amp;rft.pages="></span>
+ 
+
+ 
+ 
+
+<a xmlns:str="http://exslt.org/strings" href="/cgi-bin/koha/opac-detail.pl?biblionumber=866" class="title">Giáo trình toán học cao cấp. <span class="title_resp_stmt">Nguyễn Đình Trí (chủ biên), Lê Trọng Vinh, Dương Thủy Vỹ </span>Tập 2 </a><p xmlns:str="http://exslt.org/strings">
+
+ Tác giả <span class="author">Nguyễn, Đình Trí<span class="separator"> | </span>Lê, Trọng Vinh<span class="separator"> | </span>Dương, Thủy Vỹ.</span></p><span class="results_summary edition"><span class="label">Ấn bản: </span>Tái bản lần 3</span><span class="results_summary type"><span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/silk/book.png" title="Sách" class="materialtype" alt="Sách"> Sách</span><span class="results_format"><span class="label">; Định dạng: </span>
+ Bản in </span><span class="results_contents_literary"></span> </span><span class="results_summary publisher"><span class="label">Nhà xuất bản: </span>[kđ] Giáo dục 2009</span><span xmlns:str="http://exslt.org/strings" class="results_summary availability"><span class="label">Sẵn sàng: </span><span class="available"><b>Items available for loan: </b><span class="ItemSummary">Trung tâm Thông tin - Thư viện (10). </span></span></span>
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <div class="results_summary shelves">
+ <span class="label">Lists:</span>
+ <ul>
+ 
+ <li><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=2">Khoa học cây trồng</a></li>, 
+ <li><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=14">Nuôi trồng thủy sản</a></li>.
+ </ul>
+ </span>
+ </div>
+ 
+
+ 
+
+ 
+ <div class="results_summary ratings">
+ 
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-866" value="1" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-866" value="2" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-866" value="3" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-866" value="4" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-866" value="5" disabled="disabled"   />
+ 
+ 
+
+ 
+ <br />
+ 
+ </div> <!-- / .results_summary -->
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=866">Đặt mượn</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ <span class="actions"><a class="addtocart cart866" href="#" onclick="addRecord('866'); return false;">Thêm vào giỏ tài liệu</a> <a style="display:none;" class="cartRemove cartR866" href="#" onclick="delSingleRecord('866'); return false;">(remove)</a></span>
+ 
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ <input type="checkbox" class="cb" id="bib867" name="biblionumber" value="867" /> <label for="bib867"></label>
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 7.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_Giáo trình">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=867">
+ 
+ <span title="867" class="867" id="local-thumbnail7"></span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Giáo+trình+toán+học+cao+cấp.&amp;rft.isbn=&amp;rft.issn=&amp;rft.aulast=&amp;rft.aufirst=&amp;rft.au=Nguyễn,+Đình+Trí&amp;rft.au=Lê,+Trọng+Vinh&amp;rft.pub=Giáo+dục&amp;rft.date=2009&amp;rft.pages="></span>
+ 
+
+ 
+ 
+
+<a xmlns:str="http://exslt.org/strings" href="/cgi-bin/koha/opac-detail.pl?biblionumber=867" class="title">Giáo trình toán học cao cấp. <span class="title_resp_stmt">Nguyễn Đình Trí (chủ biên), Lê Trọng Vinh, Dương Thủy Vỹ </span>Tập 1 </a><p xmlns:str="http://exslt.org/strings">
+
+ Tác giả <span class="author">Nguyễn, Đình Trí<span class="separator"> | </span>Lê, Trọng Vinh<span class="separator"> | </span>Dương, Thủy Vỹ.</span></p><span class="results_summary edition"><span class="label">Ấn bản: </span>Tái bản lần 3</span><span class="results_summary type"><span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/silk/book.png" title="Sách" class="materialtype" alt="Sách"> Sách</span><span class="results_format"><span class="label">; Định dạng: </span>
+ Bản in </span><span class="results_contents_literary"></span> </span><span class="results_summary publisher"><span class="label">Nhà xuất bản: </span>Hà Nội Giáo dục 2009</span><span xmlns:str="http://exslt.org/strings" class="results_summary availability"><span class="label">Sẵn sàng: </span><span class="available"><b>Items available for loan: </b><span class="ItemSummary">Trung tâm Thông tin - Thư viện (10). </span></span></span>
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <div class="results_summary shelves">
+ <span class="label">Lists:</span>
+ <ul>
+ 
+ <li><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=2">Khoa học cây trồng</a></li>, 
+ <li><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=14">Nuôi trồng thủy sản</a></li>, 
+ <li><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=17">Quản lý đất đai</a></li>.
+ </ul>
+ </span>
+ </div>
+ 
+
+ 
+
+ 
+ <div class="results_summary ratings">
+ 
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-867" value="1" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-867" value="2" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-867" value="3" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-867" value="4" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-867" value="5" disabled="disabled"   />
+ 
+ 
+
+ 
+ <br />
+ 
+ </div> <!-- / .results_summary -->
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=867">Đặt mượn</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ <span class="actions"><a class="addtocart cart867" href="#" onclick="addRecord('867'); return false;">Thêm vào giỏ tài liệu</a> <a style="display:none;" class="cartRemove cartR867" href="#" onclick="delSingleRecord('867'); return false;">(remove)</a></span>
+ 
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ <input type="checkbox" class="cb" id="bib1120" name="biblionumber" value="1120" /> <label for="bib1120"></label>
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 8.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_Giáo trình">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=1120">
+ 
+ <span title="1120" class="1120" id="local-thumbnail8"></span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Giáo+trình+toán+học+cao+cấpDùng+cho+các+ngành+lâm+nghiệp+thuộc+đại+học+nông+nghiệp&amp;rft.isbn=&amp;rft.issn=&amp;rft.aulast=&amp;rft.aufirst=&amp;rft.au=Lê,+Văn+Tiến&amp;rft.pub=Nông+Nghiệp&amp;rft.date=1998&amp;rft.pages="></span>
+ 
+
+ 
+ 
+
+<a xmlns:str="http://exslt.org/strings" href="/cgi-bin/koha/opac-detail.pl?biblionumber=1120" class="title">Giáo trình toán học cao cấp Dùng cho các ngành lâm nghiệp thuộc đại học nông nghiệp <span class="title_resp_stmt">Lê Văn Tiến </span></a><p xmlns:str="http://exslt.org/strings">
+
+ Tác giả <span class="author">Lê, Văn Tiến<span class="separator"> | </span>Trường Đại học Nông nghiệp I Hà Nội.</span></p><span class="results_summary type"><span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/silk/book.png" title="Sách" class="materialtype" alt="Sách"> Sách</span><span class="results_format"><span class="label">; Định dạng: </span>
+ Bản in </span><span class="results_contents_literary"></span> </span><span class="results_summary publisher"><span class="label">Nhà xuất bản: </span>Hà Nội Nông Nghiệp 1998</span><span class="results_summary other_title"><span class="label">Nhan đề khác: </span>Toán học cao cấp.</span><span xmlns:str="http://exslt.org/strings" class="results_summary availability"><span class="label">Sẵn sàng: </span><span class="available"><b>Items available for loan: </b><span class="ItemSummary">Trung tâm Thông tin - Thư viện (30). </span></span></span>
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <div class="results_summary ratings">
+ 
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1120" value="1" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1120" value="2" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1120" value="3" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1120" value="4" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1120" value="5" disabled="disabled"   />
+ 
+ 
+
+ 
+ <br />
+ 
+ </div> <!-- / .results_summary -->
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=1120">Đặt mượn</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ <span class="actions"><a class="addtocart cart1120" href="#" onclick="addRecord('1120'); return false;">Thêm vào giỏ tài liệu</a> <a style="display:none;" class="cartRemove cartR1120" href="#" onclick="delSingleRecord('1120'); return false;">(remove)</a></span>
+ 
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ <input type="checkbox" class="cb" id="bib1593" name="biblionumber" value="1593" /> <label for="bib1593"></label>
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 9.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_Sách in">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=1593">
+ 
+ <span title="1593" class="1593" id="local-thumbnail9"></span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Toán+học+cao+cấp.&amp;rft.isbn=&amp;rft.issn=&amp;rft.aulast=&amp;rft.aufirst=&amp;rft.au=Nguyễn,+Đình+Trí&amp;rft.au=Tạ,+Văn+Đĩnh&amp;rft.pub=Giáo+dục&amp;rft.date=2008&amp;rft.pages="></span>
+ 
+
+ 
+ 
+
+<a xmlns:str="http://exslt.org/strings" href="/cgi-bin/koha/opac-detail.pl?biblionumber=1593" class="title">Toán học cao cấp. <span class="title_resp_stmt">Nguyễn Đình Trí (chủ biên), Tạ Văn Đĩnh, Nguyễn Hồ Quỳnh </span>Tập 3 Phép tính giải tích nhiều biến số </a><p xmlns:str="http://exslt.org/strings">
+
+ Tác giả <span class="author">Nguyễn, Đình Trí<span class="separator"> | </span>Tạ, Văn Đĩnh<span class="separator"> | </span>Nguyễn, Hồ Quỳnh.</span></p><span class="results_summary edition"><span class="label">Ấn bản: </span>Tái bản lần thứ 11</span><span class="results_summary type"><span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/silk/book.png" title="Sách" class="materialtype" alt="Sách"> Sách</span><span class="results_format"><span class="label">; Định dạng: </span>
+ Bản in </span><span class="results_contents_literary"></span> </span><span class="results_summary publisher"><span class="label">Nhà xuất bản: </span>Hà Nội Giáo dục 2008</span><span xmlns:str="http://exslt.org/strings" class="results_summary availability"><span class="label">Sẵn sàng: </span><span class="available"><b>Items available for loan: </b><span class="ItemSummary">Trung tâm Thông tin - Thư viện (1). </span></span></span>
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <div class="results_summary shelves">
+ <span class="label">Lists:</span>
+ <ul>
+ 
+ <li><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=2">Khoa học cây trồng</a></li>, 
+ <li><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=14">Nuôi trồng thủy sản</a></li>, 
+ <li><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=17">Quản lý đất đai</a></li>.
+ </ul>
+ </span>
+ </div>
+ 
+
+ 
+
+ 
+ <div class="results_summary ratings">
+ 
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1593" value="1" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1593" value="2" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1593" value="3" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1593" value="4" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1593" value="5" disabled="disabled"   />
+ 
+ 
+
+ 
+ <br />
+ 
+ </div> <!-- / .results_summary -->
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=1593">Đặt mượn</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ <span class="actions"><a class="addtocart cart1593" href="#" onclick="addRecord('1593'); return false;">Thêm vào giỏ tài liệu</a> <a style="display:none;" class="cartRemove cartR1593" href="#" onclick="delSingleRecord('1593'); return false;">(remove)</a></span>
+ 
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ <input type="checkbox" class="cb" id="bib1592" name="biblionumber" value="1592" /> <label for="bib1592"></label>
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 10.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_APĐK">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=1592">
+ 
+ <span title="1592" class="1592" id="local-thumbnail10"></span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Bài+tập+toán+cao+cấp.&amp;rft.isbn=&amp;rft.issn=&amp;rft.aulast=&amp;rft.aufirst=&amp;rft.au=Nguyễn,+Đình+Trí&amp;rft.au=Tạ,+Văn+Đĩnh&amp;rft.pub=Giáo+dục&amp;rft.date=2006&amp;rft.pages="></span>
+ 
+
+ 
+ 
+
+<a xmlns:str="http://exslt.org/strings" href="/cgi-bin/koha/opac-detail.pl?biblionumber=1592" class="title">Bài tập toán cao cấp. <span class="title_resp_stmt">Nguyễn Đình Trí (chủ biên), Tạ Văn Đĩnh, Nguyễn Hồ Quỳnh </span>Tập 3 Phép giải tích nhiều biến số </a><p xmlns:str="http://exslt.org/strings">
+
+ Tác giả <span class="author">Nguyễn, Đình Trí<span class="separator"> | </span>Tạ, Văn Đĩnh<span class="separator"> | </span>Nguyễn, Hồ Quỳnh.</span></p><span class="results_summary edition"><span class="label">Ấn bản: </span>Tái bản lần thứ 8</span><span class="results_summary type"><span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/silk/book.png" title="Sách" class="materialtype" alt="Sách"> Sách</span><span class="results_format"><span class="label">; Định dạng: </span>
+ Bản in </span><span class="results_contents_literary"></span> </span><span class="results_summary publisher"><span class="label">Nhà xuất bản: </span>Hà Nội Giáo dục 2006</span><span class="results_summary online_resources"><span class="label">Online access: </span><a target="_blank" href="http://dlib.huaf.edu.vn/handle/1/1087">Truy cập trực tuyến</a> </span><span xmlns:str="http://exslt.org/strings" class="results_summary availability"><span class="label">Sẵn sàng: </span><span class="available"><b>Items available for loan: </b><span class="ItemSummary">Trung tâm Thông tin - Thư viện (1). </span></span></span>
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <div class="results_summary ratings">
+ 
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1592" value="1" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1592" value="2" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1592" value="3" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1592" value="4" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1592" value="5" disabled="disabled"   />
+ 
+ 
+
+ 
+ <br />
+ 
+ </div> <!-- / .results_summary -->
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=1592">Đặt mượn</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ <span class="actions"><a class="addtocart cart1592" href="#" onclick="addRecord('1592'); return false;">Thêm vào giỏ tài liệu</a> <a style="display:none;" class="cartRemove cartR1592" href="#" onclick="delSingleRecord('1592'); return false;">(remove)</a></span>
+ 
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ <input type="checkbox" class="cb" id="bib1590" name="biblionumber" value="1590" /> <label for="bib1590"></label>
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 11.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_Sách in">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=1590">
+ 
+ <span title="1590" class="1590" id="local-thumbnail11"></span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Bài+tập+toán+cao+cấp.&amp;rft.isbn=&amp;rft.issn=&amp;rft.aulast=&amp;rft.aufirst=&amp;rft.au=Nguyễn,+Đình+Trí&amp;rft.au=Tạ,+Văn+Đĩnh&amp;rft.pub=Giáo+dục&amp;rft.date=2007&amp;rft.pages="></span>
+ 
+
+ 
+ 
+
+<a xmlns:str="http://exslt.org/strings" href="/cgi-bin/koha/opac-detail.pl?biblionumber=1590" class="title">Bài tập toán cao cấp. <span class="title_resp_stmt">Nguyễn Đình Trí (chủ biên), Tạ Văn Đĩnh, Nguyễn Hồ Quỳnh </span>Tập1 Đại số và hình học giải tích </a><p xmlns:str="http://exslt.org/strings">
+
+ Tác giả <span class="author">Nguyễn, Đình Trí<span class="separator"> | </span>Tạ, Văn Đĩnh<span class="separator"> | </span>Nguyễn, Hồ Quỳnh.</span></p><span class="results_summary edition"><span class="label">Ấn bản: </span>Tái bản lần thứ 10</span><span class="results_summary type"><span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/silk/book.png" title="Sách" class="materialtype" alt="Sách"> Sách</span><span class="results_format"><span class="label">; Định dạng: </span>
+ Bản in </span><span class="results_contents_literary"></span> </span><span class="results_summary publisher"><span class="label">Nhà xuất bản: </span>Hà Nội Giáo dục 2007</span><span xmlns:str="http://exslt.org/strings" class="results_summary availability"><span class="label">Sẵn sàng: </span><span class="available"><b>Items available for loan: </b><span class="ItemSummary">Trung tâm Thông tin - Thư viện (1). </span></span></span>
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <div class="results_summary ratings">
+ 
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1590" value="1" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1590" value="2" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1590" value="3" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1590" value="4" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1590" value="5" disabled="disabled"   />
+ 
+ 
+
+ 
+ <br />
+ 
+ </div> <!-- / .results_summary -->
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=1590">Đặt mượn</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ <span class="actions"><a class="addtocart cart1590" href="#" onclick="addRecord('1590'); return false;">Thêm vào giỏ tài liệu</a> <a style="display:none;" class="cartRemove cartR1590" href="#" onclick="delSingleRecord('1590'); return false;">(remove)</a></span>
+ 
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ <input type="checkbox" class="cb" id="bib1600" name="biblionumber" value="1600" /> <label for="bib1600"></label>
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 12.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_Sách in">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=1600">
+ 
+ <span title="1600" class="1600" id="local-thumbnail12"></span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Bài+tập+toán+cao+cấp.&amp;rft.isbn=&amp;rft.issn=&amp;rft.aulast=&amp;rft.aufirst=&amp;rft.au=Nguyễn,+Đình+Trí&amp;rft.au=Tạ,+Văn+Đĩnh&amp;rft.pub=Giáo+dục&amp;rft.date=2008&amp;rft.pages="></span>
+ 
+
+ 
+ 
+
+<a xmlns:str="http://exslt.org/strings" href="/cgi-bin/koha/opac-detail.pl?biblionumber=1600" class="title">Bài tập toán cao cấp. <span class="title_resp_stmt">Nguyễn Đình Trí (chủ biên), Tạ Văn Đĩnh, Nguyễn Hồ Quỳnh </span>Tập 2 Phép giải tích một biến số </a><p xmlns:str="http://exslt.org/strings">
+
+ Tác giả <span class="author">Nguyễn, Đình Trí<span class="separator"> | </span>Tạ, Văn Đĩnh<span class="separator"> | </span>Nguyễn, Hồ Quỳnh.</span></p><span class="results_summary edition"><span class="label">Ấn bản: </span>Tái bản lần thứ 8</span><span class="results_summary type"><span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/silk/book.png" title="Sách" class="materialtype" alt="Sách"> Sách</span><span class="results_format"><span class="label">; Định dạng: </span>
+ Bản in </span><span class="results_contents_literary"></span> </span><span class="results_summary publisher"><span class="label">Nhà xuất bản: </span>Hà Nội Giáo dục 2008</span><span xmlns:str="http://exslt.org/strings" class="results_summary availability"><span class="label">Sẵn sàng: </span><span class="available"><b>Items available for loan: </b><span class="ItemSummary">Trung tâm Thông tin - Thư viện (4). </span></span></span>
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <div class="results_summary ratings">
+ 
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1600" value="1" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1600" value="2" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1600" value="3" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1600" value="4" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1600" value="5" disabled="disabled"   />
+ 
+ 
+
+ 
+ <br />
+ 
+ </div> <!-- / .results_summary -->
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=1600">Đặt mượn</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ <span class="actions"><a class="addtocart cart1600" href="#" onclick="addRecord('1600'); return false;">Thêm vào giỏ tài liệu</a> <a style="display:none;" class="cartRemove cartR1600" href="#" onclick="delSingleRecord('1600'); return false;">(remove)</a></span>
+ 
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ <input type="checkbox" class="cb" id="bib1599" name="biblionumber" value="1599" /> <label for="bib1599"></label>
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 13.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_Sách in">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=1599">
+ 
+ <span title="1599" class="1599" id="local-thumbnail13"></span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Toán+học+cao+cấp.&amp;rft.isbn=&amp;rft.issn=&amp;rft.aulast=&amp;rft.aufirst=&amp;rft.au=Nguyễn,+Đình+Trí&amp;rft.au=Tạ,+Văn+Đĩnh&amp;rft.pub=Giáo+dục&amp;rft.date=2008&amp;rft.pages="></span>
+ 
+
+ 
+ 
+
+<a xmlns:str="http://exslt.org/strings" href="/cgi-bin/koha/opac-detail.pl?biblionumber=1599" class="title">Toán học cao cấp. <span class="title_resp_stmt">Nguyễn Đình Trí (Chủ biên), Tạ Văn Đĩnh, Nguyễn Hồ Quỳnh </span>Tập 2 Phép tính giải tích một biến số </a><p xmlns:str="http://exslt.org/strings">
+
+ Tác giả <span class="author">Nguyễn, Đình Trí<span class="separator"> | </span>Tạ, Văn Đĩnh<span class="separator"> | </span>Nguyễn, Hồ Quỳnh.</span></p><span class="results_summary edition"><span class="label">Ấn bản: </span>Tái bản lần thứ 12</span><span class="results_summary type"><span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/silk/book.png" title="Sách" class="materialtype" alt="Sách"> Sách</span><span class="results_format"><span class="label">; Định dạng: </span>
+ Bản in </span><span class="results_contents_literary"></span> </span><span class="results_summary publisher"><span class="label">Nhà xuất bản: </span>Hà Nội Giáo dục 2008</span><span xmlns:str="http://exslt.org/strings" class="results_summary availability"><span class="label">Sẵn sàng: </span><span class="available"><b>Items available for loan: </b><span class="ItemSummary">Trung tâm Thông tin - Thư viện (1). </span></span></span>
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <div class="results_summary shelves">
+ <span class="label">Lists:</span>
+ <ul>
+ 
+ <li><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=17">Quản lý đất đai</a></li>.
+ </ul>
+ </span>
+ </div>
+ 
+
+ 
+
+ 
+ <div class="results_summary ratings">
+ 
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1599" value="1" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1599" value="2" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1599" value="3" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1599" value="4" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-1599" value="5" disabled="disabled"   />
+ 
+ 
+
+ 
+ <br />
+ 
+ </div> <!-- / .results_summary -->
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=1599">Đặt mượn</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ <span class="actions"><a class="addtocart cart1599" href="#" onclick="addRecord('1599'); return false;">Thêm vào giỏ tài liệu</a> <a style="display:none;" class="cartRemove cartR1599" href="#" onclick="delSingleRecord('1599'); return false;">(remove)</a></span>
+ 
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ <input type="checkbox" class="cb" id="bib3108" name="biblionumber" value="3108" /> <label for="bib3108"></label>
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 14.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_Sách in">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=3108">
+ 
+ <span title="3108" class="3108" id="local-thumbnail14"></span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Toán+học+cao+cấpBài+giảng+biên+soạn+theo+chương+trình+đã+được+Bộ+Giáo+dục+và+Đào+tạo+duyệt+và+ban+hành+theo+quyết+định+số+778/QĐ-ĐH+ngày+19/5/1990&amp;rft.isbn=&amp;rft.issn=&amp;rft.aulast=&amp;rft.aufirst=&amp;rft.au=Lê,+Văn+Tiến&amp;rft.pub=[Knxb]&amp;rft.date=1990&amp;rft.pages="></span>
+ 
+
+ 
+ 
+
+<a xmlns:str="http://exslt.org/strings" href="/cgi-bin/koha/opac-detail.pl?biblionumber=3108" class="title">Toán học cao cấp Bài giảng biên soạn theo chương trình đã được Bộ Giáo dục và Đào tạo duyệt và ban hành theo quyết định số 778/QĐ-ĐH ngày 19/5/1990 <span class="title_resp_stmt">Lê Văn Tiến </span></a><p xmlns:str="http://exslt.org/strings">
+
+ Tác giả <span class="author">Lê, Văn Tiến<span class="separator"> | </span>Trường Đại học Nông nghiệp I Hà Nội.</span></p><span class="results_summary type"><span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/silk/book.png" title="Sách" class="materialtype" alt="Sách"> Sách</span><span class="results_format"><span class="label">; Định dạng: </span>
+ Bản in </span><span class="results_contents_literary"></span> </span><span class="results_summary publisher"><span class="label">Nhà xuất bản: </span>[Kđ] [Knxb] 1990</span><span xmlns:str="http://exslt.org/strings" class="results_summary availability"><span class="label">Sẵn sàng: </span><span class="available"><b>Items available for loan: </b><span class="ItemSummary">Trung tâm Thông tin - Thư viện (2). </span></span></span>
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <div class="results_summary ratings">
+ 
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-3108" value="1" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-3108" value="2" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-3108" value="3" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-3108" value="4" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-3108" value="5" disabled="disabled"   />
+ 
+ 
+
+ 
+ <br />
+ 
+ </div> <!-- / .results_summary -->
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=3108">Đặt mượn</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ <span class="actions"><a class="addtocart cart3108" href="#" onclick="addRecord('3108'); return false;">Thêm vào giỏ tài liệu</a> <a style="display:none;" class="cartRemove cartR3108" href="#" onclick="delSingleRecord('3108'); return false;">(remove)</a></span>
+ 
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ <input type="checkbox" class="cb" id="bib3333" name="biblionumber" value="3333" /> <label for="bib3333"></label>
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 15.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_Sách in">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=3333">
+ 
+ <span title="3333" class="3333" id="local-thumbnail15"></span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Bài+tập+toán+cao+cấp.&amp;rft.isbn=&amp;rft.issn=&amp;rft.aulast=&amp;rft.aufirst=&amp;rft.au=Nguyễn,+Đình+Trí&amp;rft.au=Tạ,+Văn+Đĩnh&amp;rft.pub=Giáo+dục&amp;rft.date=2009&amp;rft.pages="></span>
+ 
+
+ 
+ 
+
+<a xmlns:str="http://exslt.org/strings" href="/cgi-bin/koha/opac-detail.pl?biblionumber=3333" class="title">Bài tập toán cao cấp. <span class="title_resp_stmt">Nguyễn Đình Trí (chủ biên), Tạ Văn Đĩnh, Nguyễn Hồ Quỳnh </span>Tập 2 Phép giải tích một biến số </a><p xmlns:str="http://exslt.org/strings">
+
+ Tác giả <span class="author">Nguyễn, Đình Trí<span class="separator"> | </span>Tạ, Văn Đĩnh<span class="separator"> | </span>Nguyễn, Hồ Quỳnh.</span></p><span class="results_summary edition"><span class="label">Ấn bản: </span>Tái bản lần thứ 9</span><span class="results_summary type"><span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/silk/book.png" title="Sách" class="materialtype" alt="Sách"> Sách</span><span class="results_format"><span class="label">; Định dạng: </span>
+ Bản in </span><span class="results_contents_literary"></span> </span><span class="results_summary publisher"><span class="label">Nhà xuất bản: </span>Hà Nội Giáo dục 2009</span><span xmlns:str="http://exslt.org/strings" class="results_summary availability"><span class="label">Sẵn sàng: </span><span class="available"><b>Items available for loan: </b><span class="ItemSummary">Trung tâm Thông tin - Thư viện (6). </span></span></span>
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <div class="results_summary ratings">
+ 
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-3333" value="1" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-3333" value="2" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-3333" value="3" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-3333" value="4" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-3333" value="5" disabled="disabled"   />
+ 
+ 
+
+ 
+ <br />
+ 
+ </div> <!-- / .results_summary -->
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=3333">Đặt mượn</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ <span class="actions"><a class="addtocart cart3333" href="#" onclick="addRecord('3333'); return false;">Thêm vào giỏ tài liệu</a> <a style="display:none;" class="cartRemove cartR3333" href="#" onclick="delSingleRecord('3333'); return false;">(remove)</a></span>
+ 
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ <input type="checkbox" class="cb" id="bib3332" name="biblionumber" value="3332" /> <label for="bib3332"></label>
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 16.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_Sách in">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=3332">
+ 
+ <span title="3332" class="3332" id="local-thumbnail16"></span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Bài+tập+toán+cao+cấp&amp;rft.isbn=&amp;rft.issn=&amp;rft.aulast=&amp;rft.aufirst=&amp;rft.au=Nguyễn,+Đình+Trí&amp;rft.au=Tạ,+Văn+Đĩnh&amp;rft.pub=Giáo+dục&amp;rft.date=2006&amp;rft.pages="></span>
+ 
+
+ 
+ 
+
+<a xmlns:str="http://exslt.org/strings" href="/cgi-bin/koha/opac-detail.pl?biblionumber=3332" class="title">Bài tập toán cao cấp <span class="title_resp_stmt">Nguyễn Đình Trí (chủ biên), Tạ Văn Đĩnh, Nguyễn Hồ Quỳnh </span>Tập 2 Phép giải tích một biến số </a><p xmlns:str="http://exslt.org/strings">
+
+ Tác giả <span class="author">Nguyễn, Đình Trí<span class="separator"> | </span>Tạ, Văn Đĩnh<span class="separator"> | </span>Nguyễn, Hồ Quỳnh.</span></p><span class="results_summary edition"><span class="label">Ấn bản: </span>Tái bản lần thứ 7</span><span class="results_summary type"><span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/silk/book.png" title="Sách" class="materialtype" alt="Sách"> Sách</span><span class="results_format"><span class="label">; Định dạng: </span>
+ Bản in </span><span class="results_contents_literary"></span> </span><span class="results_summary publisher"><span class="label">Nhà xuất bản: </span>Hà Nội Giáo dục 2006</span><span xmlns:str="http://exslt.org/strings" class="results_summary availability"><span class="label">Sẵn sàng: </span><span class="available"><b>Items available for loan: </b><span class="ItemSummary">Trung tâm Thông tin - Thư viện (1). </span></span></span>
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <div class="results_summary ratings">
+ 
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-3332" value="1" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-3332" value="2" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-3332" value="3" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-3332" value="4" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-3332" value="5" disabled="disabled"   />
+ 
+ 
+
+ 
+ <br />
+ 
+ </div> <!-- / .results_summary -->
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=3332">Đặt mượn</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ <span class="actions"><a class="addtocart cart3332" href="#" onclick="addRecord('3332'); return false;">Thêm vào giỏ tài liệu</a> <a style="display:none;" class="cartRemove cartR3332" href="#" onclick="delSingleRecord('3332'); return false;">(remove)</a></span>
+ 
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ <input type="checkbox" class="cb" id="bib6144" name="biblionumber" value="6144" /> <label for="bib6144"></label>
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 17.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_Sách in">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=6144">
+ 
+ <span title="6144" class="6144" id="local-thumbnail17"></span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Toán+học+cao+cấpDùng+cho+sinh+viên+các+trường+đại+học+kĩ+thuật&amp;rft.isbn=&amp;rft.issn=&amp;rft.aulast=&amp;rft.aufirst=&amp;rft.au=Nguyễn,+Đình+Trí&amp;rft.au=Phan,+Tăng+Đa&amp;rft.pub=Giáo+dục&amp;rft.date=1995&amp;rft.pages="></span>
+ 
+
+ 
+ 
+
+<a xmlns:str="http://exslt.org/strings" href="/cgi-bin/koha/opac-detail.pl?biblionumber=6144" class="title">Toán học cao cấp Dùng cho sinh viên các trường đại học kĩ thuật <span class="title_resp_stmt">Nguyễn Đình Trí,...[và những người khác] </span>Tập III Giải tích </a><p xmlns:str="http://exslt.org/strings">
+
+ Tác giả <span class="author">Nguyễn, Đình Trí<span class="separator"> | </span>Phan, Tăng Đa<span class="separator"> | </span>Tạ, Ngọc Đạt<span class="separator"> | </span>Tạ, Văn Đĩnh<span class="separator"> | </span>Ngô, Đình Hiền<span class="separator"> | </span>Thái, Thanh Sơn<span class="separator"> | </span>Nguyễn, Đình Hiền.</span></p><span class="results_summary type"><span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/silk/book.png" title="Sách" class="materialtype" alt="Sách"> Sách</span><span class="results_format"><span class="label">; Định dạng: </span>
+ Bản in </span><span class="results_contents_literary"></span> </span><span class="results_summary publisher"><span class="label">Nhà xuất bản: </span> Giáo dục 1995</span><span xmlns:str="http://exslt.org/strings" class="results_summary availability"><span class="label">Sẵn sàng: </span><span class="available"><b>Items available for loan: </b><span class="ItemSummary">Trung tâm Thông tin - Thư viện (6). </span></span></span>
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <div class="results_summary ratings">
+ 
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-6144" value="1" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-6144" value="2" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-6144" value="3" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-6144" value="4" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-6144" value="5" disabled="disabled"   />
+ 
+ 
+
+ 
+ <br />
+ 
+ </div> <!-- / .results_summary -->
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=6144">Đặt mượn</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ <span class="actions"><a class="addtocart cart6144" href="#" onclick="addRecord('6144'); return false;">Thêm vào giỏ tài liệu</a> <a style="display:none;" class="cartRemove cartR6144" href="#" onclick="delSingleRecord('6144'); return false;">(remove)</a></span>
+ 
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ <input type="checkbox" class="cb" id="bib6153" name="biblionumber" value="6153" /> <label for="bib6153"></label>
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 18.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_Sách in">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=6153">
+ 
+ <span title="6153" class="6153" id="local-thumbnail18"></span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Bài+tập+toán+học+cao+cấpDùng+cho+sinh+viên+các+trường+đại+học+kĩ+thuật+công+nghiệp&amp;rft.isbn=&amp;rft.issn=&amp;rft.aulast=&amp;rft.aufirst=&amp;rft.au=Nguyễn,+Phú+Trường&amp;rft.au=Đinh,+Bạc+Thẩm&amp;rft.pub=Giáo+dục&amp;rft.date=1995&amp;rft.pages="></span>
+ 
+
+ 
+ 
+
+<a xmlns:str="http://exslt.org/strings" href="/cgi-bin/koha/opac-detail.pl?biblionumber=6153" class="title">Bài tập toán học cao cấp Dùng cho sinh viên các trường đại học kĩ thuật công nghiệp <span class="title_resp_stmt">Nguyễn Phú Trường, Đinh Bạc Thẩm </span>Tập II </a><p xmlns:str="http://exslt.org/strings">
+
+ Tác giả <span class="author">Nguyễn, Phú Trường<span class="separator"> | </span>Đinh, Bạc Thẩm.</span></p><span class="results_summary type"><span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/silk/book.png" title="Sách" class="materialtype" alt="Sách"> Sách</span><span class="results_format"><span class="label">; Định dạng: </span>
+ Bản in </span><span class="results_contents_literary"></span> </span><span class="results_summary publisher"><span class="label">Nhà xuất bản: </span> Giáo dục 1995</span><span xmlns:str="http://exslt.org/strings" class="results_summary availability"><span class="label">Sẵn sàng: </span><span class="available"><b>Items available for loan: </b><span class="ItemSummary">Trung tâm Thông tin - Thư viện (7). </span></span></span>
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <div class="results_summary ratings">
+ 
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-6153" value="1" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-6153" value="2" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-6153" value="3" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-6153" value="4" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-6153" value="5" disabled="disabled"   />
+ 
+ 
+
+ 
+ <br />
+ 
+ </div> <!-- / .results_summary -->
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=6153">Đặt mượn</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ <span class="actions"><a class="addtocart cart6153" href="#" onclick="addRecord('6153'); return false;">Thêm vào giỏ tài liệu</a> <a style="display:none;" class="cartRemove cartR6153" href="#" onclick="delSingleRecord('6153'); return false;">(remove)</a></span>
+ 
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ <input type="checkbox" class="cb" id="bib6152" name="biblionumber" value="6152" /> <label for="bib6152"></label>
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 19.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_Sách in">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=6152">
+ 
+ <span title="6152" class="6152" id="local-thumbnail19"></span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Bài+tập+toán+học+cao+cấpDùng+cho+sinh+viên+các+trường+đại+học+kĩ+thuật+công+nghiệp&amp;rft.isbn=&amp;rft.issn=&amp;rft.aulast=&amp;rft.aufirst=&amp;rft.au=Nguyễn,+Phú+Trường&amp;rft.au=Đinh,+Bạc+Thẩm&amp;rft.pub=Giáo+dục&amp;rft.date=1995&amp;rft.pages="></span>
+ 
+
+ 
+ 
+
+<a xmlns:str="http://exslt.org/strings" href="/cgi-bin/koha/opac-detail.pl?biblionumber=6152" class="title">Bài tập toán học cao cấp Dùng cho sinh viên các trường đại học kĩ thuật công nghiệp <span class="title_resp_stmt">Nguyễn Phú Trường, Đinh Bạc Thẩm </span>Tập I </a><p xmlns:str="http://exslt.org/strings">
+
+ Tác giả <span class="author">Nguyễn, Phú Trường<span class="separator"> | </span>Đinh, Bạc Thẩm.</span></p><span class="results_summary type"><span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/silk/book.png" title="Sách" class="materialtype" alt="Sách"> Sách</span><span class="results_format"><span class="label">; Định dạng: </span>
+ Bản in </span><span class="results_contents_literary"></span> </span><span class="results_summary publisher"><span class="label">Nhà xuất bản: </span> Giáo dục 1995</span><span xmlns:str="http://exslt.org/strings" class="results_summary availability"><span class="label">Sẵn sàng: </span><span class="available"><b>Items available for loan: </b><span class="ItemSummary">Trung tâm Thông tin - Thư viện (8). </span></span></span>
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <div class="results_summary ratings">
+ 
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-6152" value="1" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-6152" value="2" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-6152" value="3" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-6152" value="4" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-6152" value="5" disabled="disabled"   />
+ 
+ 
+
+ 
+ <br />
+ 
+ </div> <!-- / .results_summary -->
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=6152">Đặt mượn</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ <span class="actions"><a class="addtocart cart6152" href="#" onclick="addRecord('6152'); return false;">Thêm vào giỏ tài liệu</a> <a style="display:none;" class="cartRemove cartR6152" href="#" onclick="delSingleRecord('6152'); return false;">(remove)</a></span>
+ 
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ <input type="checkbox" class="cb" id="bib6151" name="biblionumber" value="6151" /> <label for="bib6151"></label>
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 20.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_Sách in">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=6151">
+ 
+ <span title="6151" class="6151" id="local-thumbnail20"></span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Toán+học+cao+cấpDùng+cho+sinh+viên+các+trường+đại+học+kĩ+thuật&amp;rft.isbn=&amp;rft.issn=&amp;rft.aulast=&amp;rft.aufirst=&amp;rft.au=Nguyễn,+Đình+Trí&amp;rft.au=Phan,+Tăng+Đa&amp;rft.pub=Giáo+dục&amp;rft.date=1995&amp;rft.pages="></span>
+ 
+
+ 
+ 
+
+<a xmlns:str="http://exslt.org/strings" href="/cgi-bin/koha/opac-detail.pl?biblionumber=6151" class="title">Toán học cao cấp Dùng cho sinh viên các trường đại học kĩ thuật <span class="title_resp_stmt">Nguyễn Đình Trí,...[và những người khác] </span>Tập II Giải tích </a><p xmlns:str="http://exslt.org/strings">
+
+ Tác giả <span class="author">Nguyễn, Đình Trí<span class="separator"> | </span>Phan, Tăng Đa<span class="separator"> | </span>Tạ, Ngọc Đạt<span class="separator"> | </span>Tạ, Văn Đĩnh<span class="separator"> | </span>Ngô, Đình Hiền<span class="separator"> | </span>Thái, Thanh Sơn<span class="separator"> | </span>Nguyễn, Đình Hiền.</span></p><span class="results_summary type"><span class="results_material_type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/silk/book.png" title="Sách" class="materialtype" alt="Sách"> Sách</span><span class="results_format"><span class="label">; Định dạng: </span>
+ Bản in </span><span class="results_contents_literary"></span> </span><span class="results_summary publisher"><span class="label">Nhà xuất bản: </span> Giáo dục 1995</span><span xmlns:str="http://exslt.org/strings" class="results_summary availability"><span class="label">Sẵn sàng: </span><span class="available"><b>Items available for loan: </b><span class="ItemSummary">Trung tâm Thông tin - Thư viện (6). </span></span></span>
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <div class="results_summary ratings">
+ 
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-6151" value="1" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-6151" value="2" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-6151" value="3" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-6151" value="4" disabled="disabled"   />
+ 
+ 
+ 
+ <input class="star" type="radio"  name="rating-6151" value="5" disabled="disabled"   />
+ 
+ 
+
+ 
+ <br />
+ 
+ </div> <!-- / .results_summary -->
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=6151">Đặt mượn</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ <span class="actions"><a class="addtocart cart6151" href="#" onclick="addRecord('6151'); return false;">Thêm vào giỏ tài liệu</a> <a style="display:none;" class="cartRemove cartR6151" href="#" onclick="delSingleRecord('6151'); return false;">(remove)</a></span>
+ 
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ </table>
+ </form> <!-- / #bookbag_form -->
+
+ <form id="hold_form" name="hold_form" method="get" action="/cgi-bin/koha/opac-reserve.pl">
+ <!-- The value will be set by holdBiblioNums() in basket.js -->
+ <input id="hold_form_biblios" type="hidden" name="biblionumbers" value=""/>
+ </form>
+ </div> <!-- / .searchresults -->
+
+ <div id="bottom-pages">
+ <div class="pagination pagination-small noprint">
+ <ul>
+ 
+ 
+ 
+ <li class="active"><a href="#">1</a></li>
+ 
+ 
+ 
+ <li><a href="/cgi-bin/koha/opac-search.pl?idx=ti&amp;q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;offset=20&amp;sort_by=relevance_dsc">2</a></li>
+ 
+ 
+ 
+ <li><a href="/cgi-bin/koha/opac-search.pl?idx=ti&amp;q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;offset=20&amp;sort_by=relevance_dsc">Trang sau &raquo;</a></li>
+ <li><a href="/cgi-bin/koha/opac-search.pl?idx=ti&amp;q=to%C3%A1n%20cao%20c%E1%BA%A5p&amp;offset=20&amp;sort_by=relevance_dsc">Trước</a></li>
+ 
+ </ul>
+ </div>
+
+</div>
+
+ 
+
+ 
+ <div class="suggestion">
+ Not finding what you're looking for?
+ <ul>
+ 
+ <li>Tạo <a href="/cgi-bin/koha/opac-suggestions.pl?op=add">đề xuất mua</a></li>
+ 
+ 
+ </ul>
+ </div>
+ 
+ </div> <!-- / #userresults -->
+ </div> <!-- /.span10/12 -->
+ </div> <!-- / .row-fluid -->
+ </div> <!-- / .container-fluid -->
+ </div><!-- / .main -->
+
+
+ 
+ 
+
+ 
+ <div class="container-fluid">
+ <div class="row-fluid">
+ <div class="span12">
+ <div id="koha_url" class="clearfix noprint">
+ <p>Powered by
+ 
+ <a class="koha_url" rel="nofollow" href="http://koha-community.org">Koha</a>
+ </p>
+ </div>
+ </div> <!-- /.span12 -->
+ </div> <!-- /.row-fluid -->
+ </div> <!-- /.container-fluid -->
+ 
+
+</div> <!-- / #wrap in masthead.inc -->
+
+ 
+ 
+ 
+ <div id="changelanguage" class="navbar navbar-fixed-bottom navbar-static-bottom noprint">
+ <div class="navbar-inner">
+ <ul id="i18nMenu" class="nav">
+ <li><p class="lang navbar-text"><strong>Ngôn ngữ:&nbsp;</strong></p></li>
+ 
+ 
+ 
+ 
+ 
+ <li><a href="/cgi-bin/koha/opac-changelanguage.pl?language=en">English</a></li>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <li class="active"><p class="navbar-text">Tiếng Việt</p></li>
+ 
+ 
+ 
+ 
+ 
+ </ul> <!-- / #i18menu -->
+ </div> <!-- / .navbar-inner -->
+ </div> <!-- / #changelanguage -->
+ 
+ 
+ 
+
+
+
+
+<!-- JavaScript includes -->
+<script type="text/javascript" src="/opac-tmpl/bootstrap/lib/jquery/jquery.js"></script>
+<script type="text/javascript" src="/opac-tmpl/bootstrap/lib/jquery/jquery-ui.js"></script>
+<script type="text/javascript">
+// Resolve name collision between jQuery UI and Twitter Bootstrap
+$.widget.bridge('uitooltip', $.ui.tooltip);
+</script>
+<script type="text/javascript" src="/opac-tmpl/bootstrap/lib/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/opac-tmpl/bootstrap/js/global.js"></script>
+<script type="text/javascript">
+    Modernizr.load([
+        // Test need for polyfill
+        {
+            test: window.matchMedia,
+            nope: "/opac-tmpl/bootstrap/lib/media.match.min.js"
+        },
+        // and then load enquire
+        "/opac-tmpl/bootstrap/lib/enquire.min.js",
+        "/opac-tmpl/bootstrap/js/script.js"
+    ]);
+
+    // Fix for datepicker in a modal
+    $.fn.modal.Constructor.prototype.enforceFocus = function () {};
+</script>
+
+
+<script type="text/javascript">
+    //<![CDATA[
+    var MSG_CONFIRM_AGAIN = _("Cảnh báo: Hành động này không thể được khôi phục lại. Xin xác nhận lại một lần nữa")
+    var MSG_DELETE_SEARCH_HISTORY = _("Bạn chắc chắn muốn xóa lịch sử tìm kiếm của mình?");
+    var MSG_NO_SUGGESTION_SELECTED = _("Không có đề xuất nào được chọn");
+    
+        var MSG_BASKET_EMPTY = _("Giỏ tài liệu trống");
+        var MSG_RECORD_IN_BASKET = _("Tài liệu này đã có trong giỏ của bạn");
+        var MSG_RECORD_ADDED = _("Tài liệu đã được thêm vào giỏ của bạn");
+        var MSG_RECORD_REMOVED = _("Tài liệu đã bị xóa khỏi giỏ của bạn");
+        var MSG_NRECORDS_ADDED = _(" tài liệu đã được thêm vào giỏ tài liệu của bạn");
+        var MSG_NRECORDS_IN_BASKET = _("đã có trong giỏ tài liệu của bạn");
+        var MSG_NO_RECORD_SELECTED = _("Không có tài liệu nào được chọn");
+        var MSG_NO_RECORD_ADDED = _("Không có tài liệu được thêm vào giỏ tài liệu của bạn");
+        var MSG_CONFIRM_DEL_BASKET = _("Bạn chắc chắn muốn xóa giỏ tài liệu của bạn?");
+        var MSG_CONFIRM_DEL_RECORDS = _("Bạn chắc chắn muốn loại bỏ các tài liệu đã chọn?");
+        var MSG_ITEM_IN_CART = _("Trong giỏ tài liệu");
+        var MSG_IN_YOUR_CART = _("Tài liệu trong giỏ tài liệu của bạn: ");
+        var MSG_ITEM_NOT_IN_CART = _("Thêm vào giỏ tài liệu");
+    
+    
+        var MSG_TAGS_DISABLED = _("Xin lỗi, các từ khóa không được kích hoạt trong hệ thống của bạn.");
+        var MSG_TAG_ALL_BAD = _("Lỗi! Từ khóa của bạn chứa ký tự không phù hợp. Bạn không thể tạo từ khóa  này. Bạn vui lòng thử lại với từ khóa khác.");
+        var MSG_ILLEGAL_PARAMETER = _("Lỗi! Thông số không phù hợp");
+        var MSG_TAG_SCRUBBED = _("Ghi chú: Từ khóa của bạn có chứa ký tự không phù hợp nên đã bị loại bỏ. Từ khóa đã được thêm như là ");
+        var MSG_ADD_TAG_FAILED = _("Lỗi! Không thể thêm thẻ vào");
+        var MSG_ADD_TAG_FAILED_NOTE = _("Lưu ý: Bạn chỉ có thể thêm một từ khóa cho một tài liệu. Bạn vui lòng kiểm tra 'Từ khóa' để xem các từ khóa hiện tại của bạn.");
+        var MSG_DELETE_TAG_FAILED = _("Lỗi! Bạn không thể xóa từ khóa");
+        var MSG_DELETE_TAG_FAILED_NOTE = _("Lưu ý: Bạn chỉ được phép xóa các từ khóa bạn tạo ra.")
+        var MSG_LOGIN_REQUIRED = _("Bạn phải đăng nhập để thêm từ khóa.");
+        var MSG_TAGS_ADDED = _("Từ khóa đã nhập: ");
+        var MSG_TAGS_DELETED = _("Từ khóa đã nhập: ");
+        var MSG_TAGS_ERRORS = _("Lỗi: ");
+        var MSG_MULTI_ADD_TAG_FAILED = _("Không thể thêm từ khóa nữa.");
+        var MSG_NO_TAG_SPECIFIED = _("Không có từ khóa nào được khai báo.");
+    
+    
+    $(".print-large").on("click",function(){
+        window.print();
+        return false;
+    });
+    $("#ulactioncontainer > ul > li > a.addtoshelf").on("click",function(){
+        Dopop('opac-addbybiblionumber.pl?biblionumber=');
+        return false;
+    });
+    $(".addrecord").on("click",function(){
+        addRecord('');
+        return false;
+    });
+    $(".cartRemove").on("click",function(){
+        delSingleRecord('');
+        return false;
+    });
+    $(".clearsh").on("click", function(){
+        return confirmDelete(MSG_DELETE_SEARCH_HISTORY);
+    });
+    //]]>
+</script>
+
+
+ <script type="text/javascript" src="/opac-tmpl/bootstrap/js/basket.js"></script>
+
+
+<script type="text/javascript" src="/opac-tmpl/bootstrap/js/tags.js"></script>
+
+
+
+
+
+
+ <script type="text/javascript" src="/opac-tmpl/bootstrap/js/localcovers.js"></script>
+ <script type="text/javascript">
+    //<![CDATA[
+    var NO_LOCAL_JACKET = _("Không có ảnh bìa");
+    //]]>
+    </script>
+
+
+
+
+ <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+ <script type="text/javascript" src="/opac-tmpl/bootstrap/js/googleindictransliteration.js"></script>
+
+
+
+
+<script type="text/javascript" src="/opac-tmpl/bootstrap/lib/jquery/plugins/jquery.cookie.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    if($('#searchsubmit').length) {
+        $(document).on("click", '#searchsubmit', function(e) {
+            jQuery.removeCookie("form_serialized", { path: '/'});
+            jQuery.removeCookie("form_serialized_itype", { path: '/'});
+            jQuery.removeCookie("form_serialized_limits", { path: '/'});
+            jQuery.removeCookie("num_paragraph", { path: '/'});
+            jQuery.removeCookie("search_path_code", { path: '/'});
+        });
+    }
+});
+</script>
+
+
+<script type="text/javascript" src="/opac-tmpl/bootstrap/lib/jquery/plugins/jquery.rating.js"></script>
+
+<script type="text/javascript" src="/opac-tmpl/bootstrap/lib/jquery/plugins/jquery.checkboxes.min.js"></script>
+<script type="text/javascript" src="/opac-tmpl/bootstrap/lib/jquery/plugins/jquery.highlight-3.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+
+function holdMultiple() {
+    var checkedBiblioNums = ""; // Separated by "/"
+    var checkedCount = 0;
+    if(document.bookbag_form.biblionumber.length > 0) {
+        for (var i=0; i < document.bookbag_form.biblionumber.length; i++) {
+            if (document.bookbag_form.biblionumber[i].checked) {
+                checkedBiblioNums += (document.bookbag_form.biblionumber[i].value + "/");
+                checkedCount++;
+            }
+        }
+    }
+
+    if (checkedCount > 0) {
+        holdBiblioNums(checkedBiblioNums);
+    } else {
+        alert(MSG_NO_RECORD_SELECTED);
+    }
+}
+
+function holdBiblioNums(numList) {
+    // numList: biblio numbers separated by "/"
+    $("#hold_form_biblios").attr("value", numList);
+    $("#hold_form").submit();
+}
+
+
+
+
+function enableCheckboxActions(){
+    // Enable/disable controls if checkboxes are checked
+    var checkedBoxes = $(".checkboxed input:checkbox:checked");
+    var controls = $("#selections-toolbar .links a, #selections-toolbar .links input, #selections-toolbar .links select, , #selections-toolbar .links label")
+    if ($(checkedBoxes).size()) {
+      $("#selections").html(_("Với nhan đề được chọn: "));
+      $(controls).removeClass("disabled");
+    } else {
+      $("#selections").html(_("Chọn nhan đề để: "));
+      $(controls).addClass("disabled");
+    }
+}
+
+
+var q_array = new Array();  // holds search terms if available
+
+function highlightOff() {
+    $("td").removeHighlight();
+    $(".highlight_toggle").toggle();
+}
+function highlightOn() {
+    var x;
+    for (x in q_array) {
+        q_array[x] = q_array[x].replace(/\w*:([\w])/, "$1");
+        q_array[x] = q_array[x].toLowerCase();
+        var myStopwords = "and|or|not".toLowerCase().split('|');
+        if ( (q_array[x].length > 0) && ($.inArray(q_array[x], myStopwords) == -1) ) {
+            $(".title").highlight(q_array[x]);
+            $(".author").highlight(q_array[x]);
+            $(".results_summary").highlight(q_array[x]);
+        }
+    }
+    $(".highlight_toggle").toggle();
+}
+
+$(document).ready(function(){
+    
+        $('a.title').each(function() {
+            $(this).attr("href", $(this).attr("href") + "&query_desc=ti%2Cwrdl%3A%20to%C3%A1n%20cao%20c%E1%BA%A5p");
+        });
+    
+
+    $(".cb").click(function(){
+      enableCheckboxActions();
+    });
+    enableCheckboxActions();
+
+    
+
+    var param1 = "";
+    
+    param1 += "<span id=\"selections\">"+_("Chọn nhan đề để: ")+"</span>";
+    
+
+
+    param1 += "<select class=\"disabled\" name=\"addto\" id=\"addto\"><option>"+_("Add to...")+"</option>";
+
+    
+        param1 += "<option value=\"addtocart\">"+_("Giỏ tài liệu")+"<\/option>";
+    
+    
+        
+        
+            param1 += "<optgroup label=\""+_("Giá sách ảo cộng đồng:")+"\">";
+            
+            
+                
+                    param1 += "<option id=\"s28\" value=\"addtolist\">Trí tuệ nhân tạo<\/option>";
+                    
+                    
+                
+            
+                
+                    param1 += "<option id=\"s22\" value=\"addtolist\">Bảo vệ thực vật<\/option>";
+                    
+                    
+                
+            
+                
+                    param1 += "<option id=\"s17\" value=\"addtolist\">Quản lý đất đai<\/option>";
+                    
+                    
+                
+            
+                
+                    param1 += "<option id=\"s14\" value=\"addtolist\">Nuôi trồng thủy sản<\/option>";
+                    
+                    
+                
+            
+                
+                    param1 += "<option id=\"s2\" value=\"addtolist\">Khoa học cây trồng<\/option>";
+                    
+                    
+                
+            
+                
+                    param1 += "<option id=\"s26\" value=\"addtolist\">Kinh doanh và khởi nghiệp nông thôn<\/option>";
+                    
+                    
+                
+            
+                
+                    param1 += "<option id=\"s25\" value=\"addtolist\">Sinh học ứng dụng<\/option>";
+                    
+                    
+                
+            
+                
+                    param1 += "<option id=\"s24\" value=\"addtolist\">Nông nghiệp công nghệ cao<\/option>";
+                    
+                    
+                
+            
+                
+                    param1 += "<option id=\"s23\" value=\"addtolist\">Nông học<\/option>";
+                    
+                    
+                
+            
+                
+                    param1 += "<option id=\"s21\" value=\"addtolist\">Phát triển nông thôn<\/option>";
+                    
+                    
+            param1 += "<\/optgroup>";
+        
+        
+            param1 += "<option value=\"morelists\">[ "+_("Thêm giá sách ảo")+" ]<\/option>";
+        
+        param1 +="<option value=\"newlist\">"+_("[ New list ]")+"<\/option>"
+    
+    param1 += "<\/select> <input type=\"submit\" class=\"btn btn-small\" value=\""+_("Lưu")+"\" />";
+
+
+    $('#sortsubmit').hide();
+    $('.resort').change(function() {
+        $('#bookbag_form').submit();
+    });
+    $("span.clearall").html("<a id=\"CheckNone\" href=\"#\">"+_("Bỏ tất cả")+"<\/a>");
+    $("span.checkall").html("<a id=\"CheckAll\" href=\"#\">"+_("Chọn tất cả")+"<\/a>");
+
+
+    $("span.addto").html(param1);
+
+
+
+    
+        $("#addto").on("change",function(){
+            cartList();
+        });
+        $(".addto").find("input:submit").click(function(){
+            cartList();
+            return false;
+        });
+    
+
+
+    function cartList(){
+        addtoOption = $("#addto").find("option:selected");
+        addtoval = addtoOption.val();
+        if(addtoval == "addtolist"){
+            var shelfnumber = addtoOption.attr("id").replace("s","");
+            if (vShelfAdd()) {
+                Dopop('/cgi-bin/koha/opac-addbybiblionumber.pl?selectedshelf='+shelfnumber+'&' + vShelfAdd());
+            }
+            return false;
+        } else if(addtoval == "newlist"){
+            
+                alert(_("Bạn phải đăng nhập để tạo và thêm tài liệu vào giá sách ảo"));
+            
+            return false;
+        } else if(addtoval == "morelists"){
+            
+                alert(_("Bạn phải đăng nhập để tạo và thêm tài liệu vào giá sách ảo"));
+            
+            return false;
+        }
+        if(addtoval == "addtocart" || $("#addto").attr("class") == "addtocart"){
+            addMultiple();
+            return false;
+         }
+    }
+    $("#CheckAll").click(function(){
+        $("#bookbag_form").checkCheckboxes();
+        enableCheckboxActions();
+        return false;
+    });
+    $("#CheckNone").click(function(){
+        $("#bookbag_form").unCheckCheckboxes();
+        enableCheckboxActions();
+        return false;
+    });
+
+
+    $("#placehold").html("<input class=\"hold disabled\" type=\"submit\" value=\""+_("Đặt mượn")+"\"/>");
+    $("#placehold").find("input:submit").click(function(){
+        holdMultiple();
+        return false;
+    });
+
+
+
+    var query_desc = "ti,wrdl: toán cao cấp";
+    var querystring = "toán cao cấp";
+    
+        q_array = query_desc.split(" ");
+        // ensure that we don't have "" at the end of the array, which can
+        // break the highlighter
+        while (q_array.length > 0 && q_array[q_array.length-1] == "") {
+            q_array = q_array.splice(0,-1);
+        }
+        highlightOn();
+        $("#highlight_toggle_on" ).hide().click(function() {highlightOn() ;});
+        $("#highlight_toggle_off").show().click(function() {highlightOff();});
+    
+    
+    
+
+
+
+
+
+KOHA.LocalCover.GetCoverFromBibnumber(false);
+
+
+
+
+
+$("input.newtag").on('keydown', function(e){
+    if (e.keyCode == 13) { e.preventDefault(); }
+});
+
+});
+//]]>
+</script>
+
+
+ <script type="text/javascript">
+        //<![CDATA[
+        (function (KohajQuery) {
+    KohajQuery(document).ready(function () {
+        
+        // =================================================================
+        // 1. TỰ ĐỘNG BÓC TÁCH TIÊU ĐỀ & TÁC GIẢ CHO TOÀN BỘ TÀI LIỆU (Trường 245)
+        // =================================================================
+        var titleEl = KohajQuery('.opac-detail h1.title, .opac-detail .title');
+        if (titleEl.length > 0) {
+            var rawTitle = titleEl.html().trim(); // Lấy mã HTML bao gồm cả các thẻ bôi đậm <span class="term"> nếu có
+            var textTitle = titleEl.text().trim();
+            
+            // Hướng xử lý Tự động hóa: Tìm vị trí ngắt dòng dựa trên quy luật cấu trúc dữ liệu thô của Koha HUAF
+            var splitIndex = -1;
+            var splitTerm = "";
+
+            // Trường hợp A: Có cụm từ nghiệp vụ "chủ biên" dính trong tên sách
+            if (textTitle.indexOf('chủ biên') !== -1) {
+                splitTerm = 'chủ biên';
+            } 
+            // Trường hợp B: Tác giả xuất hiện ngay sau cụm từ tên sách (Nhận diện qua từ viết hoa đầu tiên sau chuỗi tên sách thông thường)
+            else {
+                // Thuật toán quét tìm vị trí tên tác giả (Ví dụ: "Nguyễn...", "Phùng...") xuất hiện sau phần tên sách
+                // Dựa trên dữ liệu thực tế: Koha thường render Tên tác giả giữ nguyên chữ hoa chữ thường kế tiếp tên sách
+                var match = textTitle.match(/(Nguyễn|Lê|Trần|Phạm|Phùng|Hoàng|Vũ|Đặng|Bùi|Đỗ|Hồ|Ngô|Chủ biên)/);
+                if (match && match.index > 10) { // Điểm ngắt phải nằm sau độ dài tên sách tối thiểu
+                    splitIndex = match.index;
+                    splitTerm = match[0];
+                }
+            }
+
+            // Thực hiện bóc tách và bọc thẻ CSS tự động cho toàn bộ hệ thống
+            if (splitTerm === 'chủ biên') {
+                var parts = rawTitle.split('chủ biên');
+                var mainTitle = parts[0].trim();
+                var authorPart = 'chủ biên' + parts.slice(1).join('chủ biên');
+                titleEl.html(mainTitle + '<span class="dynamic-author-sub">/ ' + authorPart + '</span>');
+            } else if (splitIndex !== -1) {
+                // Tách động theo vị trí ký tự tìm thấy thương hiệu họ người Việt
+                var mainTitleDynamic = textTitle.substring(0, splitIndex).trim();
+                var authorPartDynamic = textTitle.substring(splitIndex).trim();
+                
+                // Giữ lại định dạng highlight tìm kiếm nếu có
+                titleEl.html(mainTitleDynamic + '<span class="dynamic-author-sub">/ ' + authorPartDynamic + '</span>');
+            }
+        }
+
+        // =================================================================
+        // 2. CHUẨN HÓA TÊN TÁC GIẢ TIẾNG VIỆT TOÀN HỆ THỐNG (Trường 100/700)
+        // =================================================================
+        KohajQuery('.opac-detail .results_summary a[href*="au="], .opac-detail .author a').each(function () {
+            var authorText = KohajQuery(this).text();
+            // Nếu phát hiện cấu trúc đảo họ tên kiểu Tây có dấu phẩy "Họ, Tên"
+            if (authorText.indexOf(',') !== -1) {
+                var nameParts = authorText.split(',');
+                if (nameParts.length === 2) {
+                    // Trả lại tên tiếng Việt xuôi dòng tự nhiên
+                    var correctName = nameParts[0].trim() + " " + nameParts[1].replace('.', '').trim();
+                    KohajQuery(this).text(correctName);
+                }
+            }
+        });
+
+        // =================================================================
+        // 3. XỬ LÝ DẤU PHÂN CÁCH ĐỒNG TÁC GIẢ TOÀN HỆ THỐNG (Contributor)
+        // =================================================================
+        KohajQuery('.opac-detail .results_summary').each(function () {
+            var currentBlock = KohajQuery(this);
+            // Kiểm tra các trường liên quan đến người đóng góp/đồng tác giả
+            if (currentBlock.text().indexOf('Contributor(s)') !== -1 || currentBlock.text().indexOf('Người đóng góp') !== -1) {
+                var blockHtml = currentBlock.html();
+                if (blockHtml.indexOf('|') !== -1) {
+                    // Thay thế toàn bộ dấu gạch đứng thô kệch thành dấu phẩy chuẩn ISBD
+                    blockHtml = blockHtml.replace(/\|/g, '<span class="xslt-comma-separator">, </span>');
+                    currentBlock.html(blockHtml);
+                }
+            }
+        });
+
+    });
+})(jQuery);
+        //]]>
+    </script>
+
+
+</body>
+</html>
+
+

@@ -1,0 +1,1202 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <head>
+
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.2.4/dist/css/uikit.min.css" />
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" media="screen"  href="/css/bootstrap.css" />
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.2.4/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.2.4/dist/js/uikit-icons.min.js"></script>
+
+
+
+    <!-- JQuery -->
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<!--    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>-->
+
+    <!-- Datatables CSS -->
+    <link rel="stylesheet" media="screen"  href="/css/datatables.bundle.css" />
+    <script type="text/javascript" charset="utf8" src="/js/datatables.bundle.js"></script>
+    <link rel="stylesheet" media="screen"  href="https://cdn.datatables.net/buttons/1.6.4/css/buttons.dataTables.min.css"/>
+
+    <link rel="stylesheet" media="screen"  href="https://cdn.datatables.net/fixedheader/3.1.6/css/fixedHeader.dataTables.min.css" />
+
+
+
+    <script src="https://cdn.datatables.net/fixedheader/3.1.6/js/dataTables.fixedHeader.min.js"></script>
+
+
+
+    <style>
+
+        @media (max-width: 1024px){
+            .body_push_dowm {
+                margin-top:2.5rem;
+            }
+        }
+
+
+        @media (min-width: 1024px){
+            .title{
+                display: block;
+                font-size: 1.6rem;
+                font-weight: 500;
+                padding:1.5rem;
+                color: #dc5638; }
+            }
+        @media (max-width: 1024px){
+            .title{
+                display: none }
+         }
+
+
+
+        .btn {
+            -webkit-transition: all .2s linear;
+            transition: all .2s linear;
+            border: none;
+            border-radius: 3px;
+            padding: 15px 30px;
+            font-size: 13px;
+            line-height: 1em;
+            font-weight: 700;
+            letter-spacing: .1em;
+            color: #fff;
+            -webkit-box-shadow: none!important;
+            box-shadow: none!important;
+        }
+        .btn-primary {
+            color: #fff;
+            background-color: #dc5638;
+            border-color: #dc5638;
+            margin: 3px;}
+        .btn-primary:hover {
+            color: #fff;
+            background-color: #f46946;
+            border-color: #f46946; }
+        .btn-primary:focus, .btn-primary.focus {
+            box-shadow: 0 0 0 0.2rem rgba(154, 65, 42, 0.5); }
+
+
+        .btn-outline-primary {
+            color: #dc5638;
+            border-color: #dc5638;
+        }
+
+        .btn-outline-primary:hover {
+            color: #fff;
+            background-color: #dc5638;
+            border-color: #dc5638;
+        }
+
+        .btn-outline-primary:focus, .btn-outline-primary.focus {
+            box-shadow: 0 0 0 0.2rem rgba(233, 104, 71, 0.5);
+        }
+        .btn.btn-pill {
+            border-radius: 2rem;
+        }
+
+
+        tr td:not(:first-child){
+             text-align: center;
+         }
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background: #992e36;
+            cursor: pointer;
+        }
+
+
+        .alert-info {
+            color: #0c1d33;
+            background-color: rgba(238, 86, 56, 0.25);
+            border: unset;
+        }
+
+        .alert-note {
+            color: #0c1d33;
+            background-color: rgba(129, 128, 112, 0.12);
+            border: unset;
+        }
+
+        .alert-info hr {
+            border-top-color: rgba(238, 86, 56, 0.61);;
+        }
+
+        .alert-info .alert-link {
+            color: #0c1d33;
+        }
+
+
+    </style>
+
+</head>
+    <title>TO-KAT</title>
+
+
+    <link rel="stylesheet" media="screen"  href="/css/university.styles.css" />
+    <link rel="stylesheet" media="screen"  href="/css/item.css" />
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-10CCRXHZ6V"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-10CCRXHZ6V');
+    </script>
+
+
+    <script src="/js/item_datatables.js"></script>
+
+    <script src= "https://cdn.datatables.net/buttons/1.6.4/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.flash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src=" https://cdn.datatables.net/buttons/1.6.4/js/buttons.html5.min.js"></script>
+    <script src=" https://cdn.datatables.net/buttons/1.6.4/js/buttons.print.min.js"></script>
+
+
+
+</head>
+
+<body>
+
+    <div class="uk-navbar-container tm-navbar-container uk-active">
+    <div class="uk-container uk-container-expand">
+        <nav class="uk-navbar">
+            <div class="uk-navbar-left">
+                <a href="/index" class="uk-navbar-item uk-logo links">
+                    <img style="height: 40px" src="/images/ulakbim-yatay.png" class="uk-margin-small-right">
+                    ULAKBİM Veri Portalı
+                </a>
+            </div>
+            <div class="uk-navbar-right">
+                <ul class="uk-navbar-nav uk-visible@m">
+                    <li class="uk-active links">
+                        <a href="/hizmetler">HİZMETLER</a>
+                    </li>
+                    <li class="uk-active links">
+                        <a href="/universiteler">ÜNİVERSİTELER</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+</div>
+
+    <div class="modern-item-container">
+        <!-- Hero Section -->
+        <div class="item-hero">
+            <div class="item-hero-content">
+                <div class="item-hero-main">
+                    <div class="item-icon-wrapper">
+                        <div class="item-icon-bg"></div>
+                        <div class="item-icon">
+                            <img src="data:image/png;base64,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" alt="Service icon">
+                        </div>
+                    </div>
+                    <div class="item-hero-text">
+                        <span class="item-short-title">TO-KAT</span>
+                        <h1 class="item-title">Ulusal Toplu Katalog</h1>
+                        <div class="item-description">Farklı kataloglara ve otomasyon sistemlerine sahip kütüphanelerin ve kütüphane kaynaklarının tek bir arayüzden taranabildiği, kayıt paylaşımının da yapılabildiği ulusal toplu katalogdur. TO-KAT'ta üniversitelerle birlikte 200'den fazla kütüphane koleksiyonu ve 14 milyondan fazla kayıt yer almaktadır. </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alert Notes Section -->
+        <div class="item-alerts-section">
+            
+
+            
+        </div>
+
+        <!-- Main Content Section -->
+        <div class="item-content-section">
+            <div class="item-content-wrapper">
+                <!-- Conditions Card -->
+                <div class="modern-card conditions-card">
+                    <div class="modern-card-header">
+                        <div class="card-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 11.24V7.5a2.5 2.5 0 0 1 5 0v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6c0-.83-.67-1.5-1.5-1.5S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.91-1.38z" fill="currentColor"/>
+                            </svg>
+                        </div>
+                        <h3 class="card-title">Hizmetten Faydalanma Koşulları</h3>
+                    </div>
+                    <div class="modern-card-body">
+                        <div class="card-content"><p><a href="https://www.toplukatalog.gov.tr/" target="_blank">TO-KAT'a</a> katılım için gerekli teknik altyapıya sahip olmak yeterlidir. <a href="http://www.toplukatalog.gov.tr/index.php?cwid=20" target="_blank">Başvurular</a> web sayfası üzerinden yapılmalıdır.</p><p><strong>Not:</strong>&nbsp;TO-KAT'ta yer alan <a href="https://www.toplukatalog.gov.tr/?cwid=13" target="_blank">yıllara bağlı üniversite sayıları</a> aşağıda yer almaktadır.</p><p>2025:179</p><p>2024:180</p><p>2023:179</p><p>2022: 181</p><p>2021: 175</p><p>2020: 169</p><p>2019: 165</p><p>Portal verileri TO-KAT'ta kayıtlı verileri gösterdiğinden kütüphanelerin kendi kayıtları ile farklılıklar olabilir.</p></div>
+                    </div>
+                </div>
+
+                <!-- Year Selector Card -->
+                <div class="modern-card year-selector-card">
+                    <div class="modern-card-header">
+                        <div class="card-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7v-5z" fill="currentColor"/>
+                            </svg>
+                        </div>
+                        <h3 class="card-title">Veri Yılı Seçimi</h3>
+                    </div>
+                    <div class="modern-card-body">
+                        <div>
+
+    <div class="form-row">
+        <div class="form-group col-md-12">
+
+            <label style="font-weight: 600; color: #1a1a2e; margin-bottom: 0.75rem; display: block;">Yıl seçiniz:</label>
+            <select class="custom-select" id="dataYear" style="border: 2px solid #e9ecef; border-radius: 12px; padding: 0.75rem 1rem; font-size: 1rem; transition: all 0.3s ease; background-color: #ffffff; width: 100%; max-width: 300px;min-height: 50px;">
+                <option value="2025"
+                        selected="selected">2025</option>
+                <option value="2024">2024</option>
+                <option value="2023">2023</option>
+                <option value="2022">2022</option>
+                <option value="2021">2021</option>
+                <option value="2020">2020</option>
+                <option value="2019">2019</option>
+            </select>
+            <div style="display: none; position: fixed;z-index: 1031;top: 50%;right: 50%; width:10rem; height: 10rem;" class="grow" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div id="yearLoading" class="spinner-grow" style="width: 10rem; height: 10rem; display: block;position: fixed;z-index: 1031;top: 50%;right: 50%;color: #dc5638;display: none;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div id="dataYearWarning" class="alert alert-warning" style="margin-top:10px;" role="alert">
+                <div class="alert-text">
+                    <span>2026 yılı verileri yıl sonundan sonra eklenecektir</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        $(function(){
+            $("#dataYear").change(function() {
+                $("#yearLoading").show();
+                window.location.href = window.location.origin + window.location.pathname + '?year=' + this.value;
+            });
+        });
+    </script>
+</div>
+                    </div>
+                </div>
+
+                <!-- Data Table Card -->
+                <div class="modern-card data-table-card">
+                    <div class="modern-card-header">
+                        <div class="card-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" fill="currentColor"/>
+                            </svg>
+                        </div>
+                        <h3 class="card-title">Üniversite Verileri</h3>
+                    </div>
+                    <div class="modern-card-body">
+                
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+
+                    
+                    
+                    <div>
+                        <table class="table display table-striped- table-bordered table-hover responsive no-wrap" width="100%" id="table_tokat">
+                            <thead>
+                            <tr>
+                                <th>Üniversite</th>
+                                <!--                            <th th:if="${universityList.size() > 0}" th:each="field: ${universityList.get(0).getUniversityDataWithYear()}" th:text="${field.unitField.name}"></th>-->
+                                <th>TO-KAT&#39;ta yer alan Kayıt Sayısı</th>
+                                <th>Kayıt Sayısına Göre Üniversite Sıralaması</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td><a href="/universite/225">Abdullah Gül Üniversitesi</a></td>
+                                <td>39.205</td>
+                                <td>166</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/226">Acıbadem Mehmet Ali Aydınlar Üniversitesi</a></td>
+                                <td>38.281</td>
+                                <td>168</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/228">Adana Alparslan Türkeş Bilim ve Teknoloji Üniversitesi</a></td>
+                                <td>290.693</td>
+                                <td>29</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/229">Adıyaman Üniversitesi</a></td>
+                                <td>77.321</td>
+                                <td>112</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/230">Afyon Kocatepe Üniversitesi</a></td>
+                                <td>353.742</td>
+                                <td>21</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/232">Ağrı İbrahim Çeçen Üniversitesi</a></td>
+                                <td>184.173</td>
+                                <td>45</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/234">Akdeniz Üniversitesi</a></td>
+                                <td>113.122</td>
+                                <td>83</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/235">Aksaray Üniversitesi</a></td>
+                                <td>130.223</td>
+                                <td>74</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/236">Alanya Alaaddin Keykubat Üniversitesi</a></td>
+                                <td>65.675</td>
+                                <td>130</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/238">Altınbaş Üniversitesi</a></td>
+                                <td>99.888</td>
+                                <td>91</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/239">Amasya Üniversitesi</a></td>
+                                <td>77.989</td>
+                                <td>111</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/240">Anadolu Üniversitesi</a></td>
+                                <td>402.756</td>
+                                <td>17</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/246">Ankara Üniversitesi</a></td>
+                                <td>731.459</td>
+                                <td>4</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/247">Ankara Yıldırım Beyazıt Üniversitesi</a></td>
+                                <td>94.133</td>
+                                <td>96</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/249">Antalya Bilim Üniversitesi</a></td>
+                                <td>54.16</td>
+                                <td>144</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/250">Ardahan Üniversitesi</a></td>
+                                <td>89.242</td>
+                                <td>102</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/251">Artvin Çoruh Üniversitesi</a></td>
+                                <td>125.647</td>
+                                <td>77</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/252">Atatürk Üniversitesi</a></td>
+                                <td>246.592</td>
+                                <td>34</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/253">Atılım Üniversitesi</a></td>
+                                <td>372.6</td>
+                                <td>20</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/255">Aydın Adnan Menderes Üniversitesi</a></td>
+                                <td>410.087</td>
+                                <td>16</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/256">Bahçeşehir Üniversitesi</a></td>
+                                <td>373.303</td>
+                                <td>19</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/257">Balıkesir Üniversitesi</a></td>
+                                <td>71.418</td>
+                                <td>123</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/258">Bandırma Onyedi Eylül Üniversitesi</a></td>
+                                <td>62.015</td>
+                                <td>136</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/259">Bartın Üniversitesi</a></td>
+                                <td>162.211</td>
+                                <td>50</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/260">Başkent Üniversitesi</a></td>
+                                <td>509.042</td>
+                                <td>10</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/261">Batman Üniversitesi</a></td>
+                                <td>64.749</td>
+                                <td>131</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/262">Bayburt Üniversitesi</a></td>
+                                <td>93.958</td>
+                                <td>97</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/263">İstanbul Beykent Üniversitesi</a></td>
+                                <td>115.391</td>
+                                <td>81</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/264">Beykoz Üniversitesi</a></td>
+                                <td>15.421</td>
+                                <td>203</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/265">Bezm-i Alem Vakıf Üniversitesi</a></td>
+                                <td>331.052</td>
+                                <td>23</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/266">Bilecik Şeyh Edebali Üniversitesi</a></td>
+                                <td>75.571</td>
+                                <td>115</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/267">Bingöl Üniversitesi</a></td>
+                                <td>83.958</td>
+                                <td>106</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/268">Biruni Üniversitesi</a></td>
+                                <td>49.929</td>
+                                <td>149</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/269">Bitlis Eren Üniversitesi</a></td>
+                                <td>63.019</td>
+                                <td>132</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/270">Boğaziçi Üniversitesi</a></td>
+                                <td>303.683</td>
+                                <td>25</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/271">Bolu Abant İzzet Baysal Üniversitesi</a></td>
+                                <td>115.238</td>
+                                <td>82</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/272">Burdur Mehmet Akif Ersoy Üniversitesi</a></td>
+                                <td>99.703</td>
+                                <td>93</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/274">Bursa Uludağ Üniversitesi</a></td>
+                                <td>21.96</td>
+                                <td>194</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/275">Çağ Üniversitesi</a></td>
+                                <td>76.744</td>
+                                <td>114</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/276">Çanakkale Onsekiz Mart Üniversitesi</a></td>
+                                <td>490.196</td>
+                                <td>12</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/277">Çankaya Üniversitesi</a></td>
+                                <td>62.441</td>
+                                <td>135</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/279">Çukurova Üniversitesi</a></td>
+                                <td>99.867</td>
+                                <td>92</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/280">Dicle Üniversitesi</a></td>
+                                <td>179.754</td>
+                                <td>46</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/281">Doğu Akdeniz Üniversitesi</a></td>
+                                <td>152.71</td>
+                                <td>56</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/282">Doğuş Üniversitesi</a></td>
+                                <td>48.949</td>
+                                <td>152</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/283">Dokuz Eylül Üniversitesi</a></td>
+                                <td>276.832</td>
+                                <td>31</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/284">Düzce Üniversitesi</a></td>
+                                <td>92.534</td>
+                                <td>99</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/285">Ege Üniversitesi</a></td>
+                                <td>302.174</td>
+                                <td>26</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/286">Erciyes Üniversitesi</a></td>
+                                <td>208.195</td>
+                                <td>40</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/287">Erzincan Binali Yıldırım Üniversitesi</a></td>
+                                <td>149.73</td>
+                                <td>57</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/288">Erzurum Teknik Üniversitesi</a></td>
+                                <td>38.284</td>
+                                <td>167</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/290">Eskişehir Teknik Üniversitesi</a></td>
+                                <td>24.994</td>
+                                <td>191</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/291">Fatih Sultan Mehmet Vakıf Üniversitesi</a></td>
+                                <td>105.569</td>
+                                <td>87</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/292">Fenerbahçe Üniversitesi</a></td>
+                                <td>48.941</td>
+                                <td>153</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/293">Fırat Üniversitesi</a></td>
+                                <td>186.345</td>
+                                <td>43</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/294">Galatasaray Üniversitesi</a></td>
+                                <td>138.347</td>
+                                <td>62</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/295">Gazi Üniversitesi</a></td>
+                                <td>153.094</td>
+                                <td>55</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/296">Gaziantep İslam Bilim Ve Teknoloji Üniversitesi</a></td>
+                                <td>47.733</td>
+                                <td>157</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/297">Gaziantep Üniversitesi</a></td>
+                                <td>134.549</td>
+                                <td>67</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/298">Gebze Teknik Üniversitesi</a></td>
+                                <td>32.512</td>
+                                <td>177</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/299">Giresun Üniversitesi</a></td>
+                                <td>69.888</td>
+                                <td>127</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/302">Gümüşhane Üniversitesi</a></td>
+                                <td>104.712</td>
+                                <td>89</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/303">Hacettepe Üniversitesi</a></td>
+                                <td>334.91</td>
+                                <td>22</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/304">Hakkari Üniversitesi</a></td>
+                                <td>15.23</td>
+                                <td>204</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/305">Haliç Üniversitesi</a></td>
+                                <td>70.776</td>
+                                <td>124</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/306">Harran Üniversitesi</a></td>
+                                <td>58.778</td>
+                                <td>140</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/307">Hasan Kalyoncu Üniversitesi</a></td>
+                                <td>50.729</td>
+                                <td>148</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/308">Hatay Mustafa Kemal Üniversitesi</a></td>
+                                <td>82.325</td>
+                                <td>108</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/309">Hitit Üniversitesi</a></td>
+                                <td>66.435</td>
+                                <td>129</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/310">Iğdır Üniversitesi</a></td>
+                                <td>36.18</td>
+                                <td>171</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/312">Işık Üniversitesi</a></td>
+                                <td>240.545</td>
+                                <td>35</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/313">İbn Haldun Üniversitesi</a></td>
+                                <td>62.549</td>
+                                <td>134</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/314">İhsan Doğramacı Bilkent Üniversitesi</a></td>
+                                <td>662.04</td>
+                                <td>6</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/315">İnönü Üniversitesi</a></td>
+                                <td>157.547</td>
+                                <td>53</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/316">İskenderun Teknik Üniversitesi</a></td>
+                                <td>137.025</td>
+                                <td>65</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/317">İstanbul 29 Mayıs Üniversitesi</a></td>
+                                <td>130.257</td>
+                                <td>73</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/318">İstanbul Arel Üniversitesi</a></td>
+                                <td>49.332</td>
+                                <td>150</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/319">İstanbul Atlas Üniversitesi</a></td>
+                                <td>37.064</td>
+                                <td>169</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/320">İstanbul Aydın Üniversitesi</a></td>
+                                <td>254.088</td>
+                                <td>33</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/323">Demiroğlu Bilim Üniversitesi</a></td>
+                                <td>12.319</td>
+                                <td>209</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/324">İstanbul Esenyurt Üniversitesi</a></td>
+                                <td>29.567</td>
+                                <td>184</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/326">İstanbul Gelişim Üniversitesi</a></td>
+                                <td>75.368</td>
+                                <td>116</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/328">İstanbul Kültür Üniversitesi</a></td>
+                                <td>70.43</td>
+                                <td>125</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/329">İstanbul Medeniyet Üniversitesi</a></td>
+                                <td>127.792</td>
+                                <td>76</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/330">İstanbul Medipol Üniversitesi</a></td>
+                                <td>36.715</td>
+                                <td>170</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/332">İstanbul Rumeli Üniversitesi</a></td>
+                                <td>36.113</td>
+                                <td>172</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/333">İstanbul Sabahattin Zaim Üniversitesi</a></td>
+                                <td>116.459</td>
+                                <td>80</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/335">İstanbul Teknik Üniversitesi</a></td>
+                                <td>443.974</td>
+                                <td>14</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/336">İstanbul Ticaret Üniversitesi</a></td>
+                                <td>185.933</td>
+                                <td>44</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/337">İstanbul Üniversitesi</a></td>
+                                <td>1.628.309</td>
+                                <td>2</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/338">İstanbul Üniversitesi-Cerrahpaşa</a></td>
+                                <td>143.828</td>
+                                <td>59</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/339">İstanbul Yeni Yüzyıl Üniversitesi</a></td>
+                                <td>16.636</td>
+                                <td>201</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/340">İstinye Üniversitesi</a></td>
+                                <td>40.808</td>
+                                <td>164</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/341">İzmir Bakırçay Üniversitesi</a></td>
+                                <td>70.325</td>
+                                <td>126</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/343">İzmir Ekonomi Üniversitesi</a></td>
+                                <td>62.966</td>
+                                <td>133</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/344">İzmir Katip Çelebi Üniversitesi</a></td>
+                                <td>61.685</td>
+                                <td>137</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/346">İzmir Yüksek Teknoloji Enstitüsü</a></td>
+                                <td>485.145</td>
+                                <td>13</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/348">Kadir Has Üniversitesi</a></td>
+                                <td>74.25</td>
+                                <td>119</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/349">Kafkas Üniversitesi</a></td>
+                                <td>48.17</td>
+                                <td>155</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/351">Kahramanmaraş Sütçü İmam Üniversitesi</a></td>
+                                <td>230.999</td>
+                                <td>36</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/352">Kapadokya Üniversitesi</a></td>
+                                <td>49.036</td>
+                                <td>151</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/353">Karabük Üniversitesi</a></td>
+                                <td>98.12</td>
+                                <td>95</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/354">Karadeniz Teknik Üniversitesi</a></td>
+                                <td>121.603</td>
+                                <td>79</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/355">Karamanoğlu Mehmetbey Üniversitesi</a></td>
+                                <td>104.978</td>
+                                <td>88</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/356">Kastamonu Üniversitesi</a></td>
+                                <td>429.478</td>
+                                <td>15</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/357">Kayseri Üniversitesi</a></td>
+                                <td>46.555</td>
+                                <td>158</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/363">Kırklareli Üniversitesi</a></td>
+                                <td>290.018</td>
+                                <td>30</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/364">Kırşehir Ahi Evran Üniversitesi</a></td>
+                                <td>103.23</td>
+                                <td>90</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/365">Kilis 7 Aralık Üniversitesi</a></td>
+                                <td>47.801</td>
+                                <td>156</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/366">Kocaeli Üniversitesi</a></td>
+                                <td>169.146</td>
+                                <td>48</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/367">Koç Üniversitesi</a></td>
+                                <td>1</td>
+                                <td>228</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/369">Konya Teknik Üniversitesi</a></td>
+                                <td>84.089</td>
+                                <td>105</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/370">KTO Karatay Üniversitesi</a></td>
+                                <td>59.896</td>
+                                <td>138</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/371">Kütahya Dumlupınar Üniversitesi</a></td>
+                                <td>138.469</td>
+                                <td>61</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/372">Kütahya Sağlık Bilimleri Üniversitesi</a></td>
+                                <td>17.643</td>
+                                <td>199</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/373">Lefke Avrupa Üniversitesi</a></td>
+                                <td>2.871</td>
+                                <td>223</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/374">Lokman Hekim Üniversitesi</a></td>
+                                <td>16.241</td>
+                                <td>202</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/375">Malatya Turgut Özal Üniversitesi</a></td>
+                                <td>39.628</td>
+                                <td>165</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/376">Maltepe Üniversitesi</a></td>
+                                <td>159.285</td>
+                                <td>51</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/377">Manisa Celal Bayar Üniversitesi</a></td>
+                                <td>110.877</td>
+                                <td>84</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/378">Mardin Artuklu Üniversitesi</a></td>
+                                <td>109.059</td>
+                                <td>85</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/379">Marmara Üniversitesi</a></td>
+                                <td>718.372</td>
+                                <td>5</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/380">MEF Üniversitesi</a></td>
+                                <td>10.274</td>
+                                <td>213</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/381">Mersin Üniversitesi</a></td>
+                                <td>132.12</td>
+                                <td>71</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/383">Mimar Sinan Güzel Sanatlar Üniversitesi</a></td>
+                                <td>136.132</td>
+                                <td>66</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/385">Munzur Üniversitesi</a></td>
+                                <td>19.129</td>
+                                <td>198</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/386">Muş Alparslan Üniversitesi</a></td>
+                                <td>45.652</td>
+                                <td>160</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/387">Necmettin Erbakan Üniversitesi</a></td>
+                                <td>93.699</td>
+                                <td>98</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/388">Nevşehir Hacı Bektaş Veli Üniversitesi</a></td>
+                                <td>52.649</td>
+                                <td>146</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/392">Ondokuz Mayıs Üniversitesi</a></td>
+                                <td>140.062</td>
+                                <td>60</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/393">Ordu Üniversitesi</a></td>
+                                <td>81.22</td>
+                                <td>109</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/394">Orta Doğu Teknik Üniversitesi</a></td>
+                                <td>658.372</td>
+                                <td>7</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/395">Osmaniye Korkut Ata Üniversitesi</a></td>
+                                <td>74.68</td>
+                                <td>118</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/397">Özyeğin Üniversitesi</a></td>
+                                <td>31.541</td>
+                                <td>180</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/398">Pamukkale Üniversitesi</a></td>
+                                <td>55.369</td>
+                                <td>141</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/401">Recep Tayyip Erdoğan Üniversitesi</a></td>
+                                <td>155.93</td>
+                                <td>54</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/402">Sabancı Üniversitesi</a></td>
+                                <td>2.460.261</td>
+                                <td>1</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/403">Sağlık Bilimleri Üniversitesi</a></td>
+                                <td>55.36</td>
+                                <td>142</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/405">Sakarya Üniversitesi</a></td>
+                                <td>492.47</td>
+                                <td>11</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/406">Samsun Üniversitesi</a></td>
+                                <td>24.444</td>
+                                <td>192</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/407">SANKO Üniversitesi</a></td>
+                                <td>9.095</td>
+                                <td>216</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/408">Selçuk Üniversitesi</a></td>
+                                <td>213.054</td>
+                                <td>39</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/410">Siirt Üniversitesi</a></td>
+                                <td>68.029</td>
+                                <td>128</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/411">Sinop Üniversitesi</a></td>
+                                <td>59.786</td>
+                                <td>139</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/412">Sivas Bilim Ve Teknoloji Üniversitesi</a></td>
+                                <td>6.463</td>
+                                <td>218</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/413">Sivas Cumhuriyet Üniversitesi</a></td>
+                                <td>295.192</td>
+                                <td>28</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/414">Süleyman Demirel Üniversitesi</a></td>
+                                <td>137.425</td>
+                                <td>64</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/415">Şırnak Üniversitesi</a></td>
+                                <td>88.399</td>
+                                <td>103</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/416">Tarsus Üniversitesi</a></td>
+                                <td>33.807</td>
+                                <td>174</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/417">TED Üniversitesi</a></td>
+                                <td>43.415</td>
+                                <td>161</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/418">Tekirdağ Namık Kemal Üniversitesi</a></td>
+                                <td>391.799</td>
+                                <td>18</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/419">TOBB Ekonomi ve Teknoloji Üniversitesi</a></td>
+                                <td>53.078</td>
+                                <td>145</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/420">Tokat Gaziosmanpaşa Üniversitesi</a></td>
+                                <td>129.418</td>
+                                <td>75</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/421">Toros Üniversitesi</a></td>
+                                <td>19.881</td>
+                                <td>197</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/422">Trabzon Üniversitesi</a></td>
+                                <td>91.276</td>
+                                <td>101</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/423">Trakya Üniversitesi</a></td>
+                                <td>158.264</td>
+                                <td>52</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/424">Türk Alman Üniversitesi</a></td>
+                                <td>55.284</td>
+                                <td>143</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/428">Ufuk Üniversitesi</a></td>
+                                <td>11.84</td>
+                                <td>211</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/430">Uluslararası Kıbrıs Üniversitesi</a></td>
+                                <td>1.397</td>
+                                <td>227</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/431">Uşak Üniversitesi</a></td>
+                                <td>133.547</td>
+                                <td>68</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/432">Üsküdar Üniversitesi</a></td>
+                                <td>72.679</td>
+                                <td>120</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/433">Van Yüzüncü Yıl Üniversitesi</a></td>
+                                <td>30.984</td>
+                                <td>182</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/434">Yakın Doğu Üniversitesi</a></td>
+                                <td>85.322</td>
+                                <td>104</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/435">Yalova Üniversitesi</a></td>
+                                <td>131.361</td>
+                                <td>72</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/436">Yaşar Üniversitesi</a></td>
+                                <td>50.812</td>
+                                <td>147</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/437">Yeditepe Üniversitesi</a></td>
+                                <td>172.665</td>
+                                <td>47</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/438">Yıldız Teknik Üniversitesi</a></td>
+                                <td>222.294</td>
+                                <td>38</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/439">Yozgat Bozok Üniversitesi</a></td>
+                                <td>83.661</td>
+                                <td>107</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/441">Zonguldak Bülent Ecevit Üniversitesi</a></td>
+                                <td>145.435</td>
+                                <td>58</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/445">İstanbul Galata Üniversitesi</a></td>
+                                <td>10.189</td>
+                                <td>215</td>
+                            </tr>
+                            <tr>
+                                <td><a href="/universite/449">Kocaeli Sağlık ve Teknoloji Üniversitesi</a></td>
+                                <td>8.577</td>
+                                <td>217</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+
+                
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

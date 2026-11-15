@@ -1,0 +1,2093 @@
+<!DOCTYPE html>
+<html lang='fr'>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="">
+			<meta charset="utf-8" />
+			<meta name="author" content="PMB Group" />
+
+			<meta name="keywords" content="OPAC, web, library, opensource, catalog, catalogue, bibliothèque, médiathèque, pmb, phpmybibli" />
+			<meta name="description" content="Catalogue en ligne Bibliothèque de l'IIA." /><meta name='robots' content='all' />
+			<!--IE et son enfer de compatibilit�-->
+			<meta http-equiv='X-UA-Compatible' content='IE=Edge' />
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+	<title>Catalogue en ligne Bibliothèque de l'IIA</title>
+	
+	
+<link rel='stylesheet' type='text/css' href='./styles/common/animation_display.css?1712012223' />
+<link rel='stylesheet' type='text/css' href='./styles/common/common.css?1712012223' />
+<link rel='stylesheet' type='text/css' href='./styles/common/contrib.css?1712012223' />
+<link rel='stylesheet' type='text/css' href='./styles/common/dGrowl.css?1712012223' />
+<link rel='stylesheet' type='text/css' href='./styles/common/dsi.css?1712012223' />
+<link rel='stylesheet' type='text/css' href='./styles/common/font-awesome.css?1712012223' />
+<link rel='stylesheet' type='text/css' href='./styles/common/open-sans.css?1712012223' />
+<link rel='stylesheet' type='text/css' href='./styles/common/pagination.css?1712012223' />
+<link rel='stylesheet' type='text/css' href='./styles/common/record_display.css?1712012223' />
+<link rel='stylesheet' type='text/css' href='./styles/common/visionneuse.css?1712012223' />
+<link rel='stylesheet' type='text/css' href='./styles/iia/colonnes.css?1789662451' />
+<link rel='stylesheet' type='text/css' href='./styles/iia/gallerie_photos.css?1789662451' />
+<link rel='stylesheet' type='text/css' href='./styles/iia/iia.css?1789991435' />
+<link rel='stylesheet' type='text/css' href='./styles/iia/liste_bulletins.css?1789662451' />
+<link rel='stylesheet' type='text/css' href='./styles/iia/print.css?1789662451' />
+<link rel='stylesheet' type='text/css' href='./styles/iia/tags.css?1789662451' />
+<link rel='stylesheet' type='text/css' href='./styles/iia/visionneuse.css?1789662451' />
+<script src='./styles/iia/javascript/iia_home.js?1789990523' ></script>
+<script src='./styles/iia/javascript/resa_inline.js?1789740315' ></script><script type='text/javascript'>var opac_style= 'iia';</script>
+	<!-- css_authentication -->	<link rel='SHORTCUT ICON' href='./images/site/favicon.ico' />
+	<script type="text/javascript" src="includes/javascript/drag_n_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/handle_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/popup.js"></script>
+	<script type='text/javascript'>
+			// Fonction a utiliser pour l'encodage des URLs en javascript
+			function encode_URL(data){
+				var docCharSet = document.characterSet ? document.characterSet : document.charset;
+				if(docCharSet == "UTF-8"){
+	    			return encodeURIComponent(data);
+	    		}else{
+	    			return escape(data);
+	    		}
+	    	}
+	    </script>
+	<script type='text/javascript'>
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName =
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i);
+				    }
+				 }
+				return items;
+			 }
+		}
+	</script>
+
+		<link rel='stylesheet' type='text/css' href='./includes/javascript/dojo/dijit/themes/tundra/tundra.css' />
+		<script type='text/javascript'>
+			var dojoConfig = {
+				parseOnLoad: true,
+				locale: 'fr-fr',
+				isDebug: false,
+				usePlainJson: true,
+				packages: [{
+						name: 'pmbBase',
+						location:'../../../..'
+					},{
+						name: 'd3',
+						location:'../../d3'
+					}],
+				deps: ['apps/pmb/MessagesStore', 'dgrowl/dGrowl', 'dojo/ready', 'apps/pmb/ImagesStore'],
+				callback:function(MessagesStore, dGrowl, ready, ImagesStore){
+					window.pmbDojo = {};
+					pmbDojo.messages = new MessagesStore({url:'./ajax.php?module=ajax&categ=messages', directInit:false});
+					pmbDojo.images = new ImagesStore({url:'./ajax.php?module=ajax&categ=images', directInit:false});
+					ready(function(){
+						new dGrowl({'channels':[{'name':'info','pos':2},{'name':'error', 'pos':1}]});
+					});
+
+				},
+			};
+		</script>
+		<script type='text/javascript' src='./includes/javascript/dojo/dojo/dojo.js'></script>
+		<script type='text/javascript'>
+		dojo.addOnLoad(function () {
+			// Ajout du theme Dojo
+			dojo.addClass(dojo.body(),'tundra');
+		})
+		</script>
+		<script type='text/javascript'>
+	var pmb_img_patience = './images/patience.gif';
+</script><script type='text/javascript'>
+			var opac_show_social_network =0;
+		</script>
+	<script type='text/javascript' src='./includes/javascript/http_request.js'></script>
+	<script type='text/javascript' src='./includes/javascript/track_clicks.js'></script>
+	
+</head>
+
+<body onload="window.defaultStatus='PMB : Accès public';"  id="pmbopac">
+		<script type='text/javascript'>
+		function findNoticeElement(id){
+			var ul=null;
+			//cas des notices classiques
+			var domNotice = document.getElementById('el'+id+'Child');
+			//notice_display
+			if(!domNotice) domNotice = document.getElementById('notice');
+			if(domNotice){
+				var uls = domNotice.getElementsByTagName('ul');
+				for (var i=0 ; i<uls.length ; i++){
+					if(uls[i].getAttribute('id') == 'onglets_isbd_public'+id){
+						var ul = uls[i];
+						break;
+					}
+				}
+			} else{
+				var li = document.getElementById('onglet_isbd'+id);
+				if(!li) var li = document.getElementById('onglet_public'+id);
+				if(!li) var li = document.getElementById('onglet_detail'+id);
+				if(li) var ul = li.parentNode;
+			}
+			return ul;
+		}
+		function show_what(quoi, id) {
+			switch(quoi){
+				case 'EXPL_LOC' :
+					document.getElementById('div_expl_loc' + id).style.display = 'block';
+					document.getElementById('div_expl' + id).style.display = 'none';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_inactive';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_active';
+					break;
+				case 'EXPL' :
+					document.getElementById('div_expl_loc' + id).style.display = 'none';
+					document.getElementById('div_expl' + id).style.display = 'block';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_active';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_inactive';
+					break;
+				default :
+					quoi= quoi.toLowerCase();
+					var ul = findNoticeElement(id);
+					if (ul) {
+						var items  = ul.getElementsByTagName('li');
+						for (var i=0 ; i<items.length ; i++){
+							if(items[i].getAttribute('id')){
+								if(items[i].getAttribute('id') == 'onglet_'+quoi+id){
+									items[i].className = 'isbd_public_active';
+									document.getElementById('div_'+quoi+id).style.display = 'block';
+								}else{
+									if(items[i].className != 'onglet_tags' && items[i].className != 'onglet_avis' && items[i].className != 'onglet_sugg' && items[i].className != 'onglet_basket' && items[i].className != 'onglet_liste_lecture'){
+										items[i].className = 'isbd_public_inactive';
+										document.getElementById(items[i].getAttribute('id').replace('onglet','div')).style.display = 'none';
+									}
+								}
+							}
+						}
+					}
+					break;
+			}
+		}
+		</script>
+	<script type='text/javascript' src='./includes/javascript/tablist_ajax.js'></script>
+<script type='text/javascript' src='./includes/javascript/tablist.js'></script>
+<script type='text/javascript' src='./includes/javascript/misc.js'></script>
+	<div id='att' style='z-Index:1000'></div>
+	<div id="container"><div id="main"><div id='main_header'><h3>Bibliothèque de l'IIA en ligne</h3></div><div id="main_hors_footer">
+						
+
+<script type='text/javascript' src='./includes/javascript/auth_popup.js'></script>
+<script type='text/javascript' src='./includes/javascript/pnb.js'></script><div id="intro_message"><div class="p1"><!--<a href="index.php?lvl=index"><img src="./images/bar_spacer.gif" id="map_lien_retour" alt="" /></a>---> 
+<!---<a href="http://www.sigb.net" id="puce">Sigb.Net</a>--->
+<!---<a href="http://www.sigb.net/wiki/" id="puce">WiKi PMB</a>--->
+<!---<a href="http://fr.wikipedia.org" id="puce">WiKipedia</a>--->
+</div><div class="p2"></div></div><div id='navigator'>
+<table style='width:100%'><tr><td class='navig_actions_first_screen' ><a href="./index.php?lvl=index" class='navig_etageres'><span>Nouvelle recherche</span></a></td>
+</tr></table></div><!-- fermeture de #navigator -->
+<div id='resume_panier' class='empty'></div>
+<script type='text/javascript'>
+<!--
+	function test_form(form)
+	{
+
+		return true;
+	}
+-->
+</script><div id='search'><ul class='search_tabs'><li id='current'><a href="./index.php?search_type_asked=simple_search">Recherche simple</a></li><li ><a href="./index.php?search_type_asked=extended_search">Recherche multi-critères</a></li><li ><a href="./index.php?search_type_asked=term_search">Recherche par termes</a></li><li ><a href="./index.php?search_type_asked=external_search&external_type=simple">Interrogation externe</a></li></ul><div id='search_crl'></div><div class='row'>
+		<form name='search_input' action='./index.php?lvl=more_results&autolevel1=1' method='post' onSubmit="if (search_input.user_query.value.length == 0) { search_input.user_query.value='*'; return true; }">
+			 <select name='typdoc'>  <option  value='' selected>Tout type de document</option>
+  <option  value='a'>texte imprim&eacute;</option>
+  <option  value='l'>document &eacute;lectronique</option>
+</select>
+			
+			<br />
+			<input type='hidden' name='surligne' value=''/>
+					<input type='text' name='user_query' id='user_query_lib' class='text_query' value="" size='65' />
+<input type='submit' name='ok' value='Rechercher' class='boutonrechercher'/>
+<input type='button' value='Aide' class='bouton button_search_help' onClick='window.open("./help.php?whatis=simple_search", "search_help", "scrollbars=yes, toolbar=no, dependent=yes, width=400, height=400, resizable=yes"); return false' />
+<div id='simple_search_zone'>
+		<div class='row'></div>
+		<div id='zsimples' class='notice-parent'>
+			<img src='./getgif.php?nomgif=plus' name='imEx' id='zsimplesImg' title='détail' style='border:0px' onClick="expandBase('zsimples', true); return false;" hspace='3'>
+			<span class='notice-heada'>
+				Rechercher dans...
+			</span>
+		</div>
+		<div id='zsimplesChild' class='notice-child' style='margin-bottom:6px;display:none;width:94%'>
+			<div class='row'>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_TITLE' id='look_TITLE' value='1'  /><label for='look_TITLE'> Titres </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_AUTHOR' id='look_AUTHOR' value='1'  /><label for='look_AUTHOR'> Auteurs </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_PUBLISHER' id='look_PUBLISHER' value='1'  /><label for='look_PUBLISHER'> Editeurs </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_TITRE_UNIFORME' id='look_TITRE_UNIFORME' value='1' /><label for='look_TITRE_UNIFORME'> Oeuvres / Expressions </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_CATEGORY' id='look_CATEGORY' value='1'  /><label for='look_CATEGORY'> Catégories </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_INDEXINT' id='look_INDEXINT' value='1'  /><label for='look_INDEXINT'> Indexations décimales </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_KEYWORDS' id='look_KEYWORDS' value='1'  /><label for='look_KEYWORDS'> Mots-clés</label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_ABSTRACT' id='look_ABSTRACT' value='1'  /><label for='look_ABSTRACT'> Résumé et notes </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_ALL' id='look_ALL' value='1' checked onclick='return false;' title='La recherche Tous les champs ne peut être décochée.' /><label for='look_ALL'> Tous les champs </label></span></div><div style='clear: both;'><input type='hidden' name='look_FIRSTACCESS' value='1' /></div>
+		</div>
+		</div></form>
+		<script type='text/javascript' src='./includes/javascript/ajax.js'></script>
+		<script type='text/javascript'>
+
+                if (document.forms['search_input'] && document.forms['search_input'].elements['user_query']) {
+                    document.forms["search_input"].elements["user_query"].focus();
+					
+                }
+		</script></div></div><div id='infopages'><p><b>Astuce</b> utilisez des guillemets pour chercher une suite de caract&egrave;res : &quot;r&eacute;volution fran&ccedil;aise&quot;</p></div>
+<div id='categories'>
+<h3><span id='titre_categories'>Catégories</span></h3>
+
+<div id='categories-container'>
+<div class='row_categ'><div class='category' >
+<h2><img src='./images/folder.gif' alt='folder'><a href='./index.php?&lvl=categ_see&id=7&main=1&id_thes=1'>Enseignements</a></h2>
+<ul>
+<li><a href='./index.php?lvl=categ_see&id=14&main=1&id_thes=1'>Enseignements de l'ENASS</a></li>
+<li><a href='./index.php?lvl=categ_see&id=13&main=1&id_thes=1'>Enseignements de l'IIA</a></li>
+
+</ul>
+<div class='clear'></div>
+</div>
+<div class='category' >
+<h2><img src='./images/folder.gif' alt='folder'><a href='./index.php?&lvl=categ_see&id=15&main=1&id_thes=1'>Livres</a></h2>
+<ul>
+<li><a href='./index.php?lvl=categ_see&id=5&main=1&id_thes=1'>Autres livres</a></li>
+<li><a href='./index.php?lvl=categ_see&id=4&main=1&id_thes=1'>Livres traitant des assurances </a></li>
+
+</ul>
+<div class='clear'></div>
+</div>
+<div class='category' >
+<h2><img src='./images/folder.gif' alt='folder'><a href='./index.php?&lvl=categ_see&id=6&main=1&id_thes=1'>Mémoires et rapports de stage soutenus à l'IIA</a></h2>
+<ul>
+<li><a href='./index.php?lvl=categ_see&id=8&main=1&id_thes=1'>Mémoires </a></li>
+<li><a href='./index.php?lvl=categ_see&id=9&main=1&id_thes=1'>Rapports de stage </a></li>
+
+</ul>
+<div class='clear'></div>
+</div>
+</div><div class='row_categ'><div class='category' >
+<h2><img src='./images/folder.gif' alt='folder'><a href='./index.php?&lvl=categ_see&id=17&main=1&id_thes=1'>Rapports d'études</a></h2>
+<ul>
+
+</ul>
+<div class='clear'></div>
+</div>
+<div class='category' >
+<h2><img src='./images/folder.gif' alt='folder'><a href='./index.php?&lvl=categ_see&id=18&main=1&id_thes=1'>Thèses</a></h2>
+<ul>
+
+</ul>
+<div class='clear'></div>
+</div>
+<div class='category'>&nbsp;</div></div><div class='div_clr'></div>
+</div>
+<div style='clear: both; visibility: hidden; display: none;' id='category_bloc_sep'>&nbsp;</div>
+</div>
+<div id='etageres'><h3><span id='titre_etagere'>Etagères virtuelles</span></h3><div id='etagere-container' class='etagere-container' >
+<div id='etagere_5' class='etagere' ><div id='etagere-titre'><h1><a href="./index.php?lvl=etagere_see&id=5">Livres traitant des assurances</a></h1></div>
+<div id='etagere-comment'><h2></h2></div><div id='etagere-notice-list'>
+			<div id="el44Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el44Img" title="détail" alt="détail" style='border:0px' onClick="expandBase('el44', true);  return false;" hspace="3" /><img src="https://books.iiayaounde.com/opac_css/images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_44"><span class="statutnot1" ></span><span  notice='44'  class='header_title'>100 Fiches Pour Comprendre la Mondialisation</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=68'>Serge d' Agostino</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=100%20Fiches%20Pour%20Comprendre%20la%20Mondialisation&amp;rft.title=100%20Fiches%20Pour%20Comprendre%20la%20Mondialisation&amp;rft.isbn=978-2-7495-0626-5&amp;rft.tpages=1%20vol.%20%28237%20p.%29&amp;rft.date=impr.%202006&amp;rft_id=&amp;rft.pub=Br%C3%A9al%20%C3%A9d.&amp;rft.place=Paris&amp;rft.au=Serge%20d%27%20Agostino&amp;rft.au=Alain%20Chaffel&amp;rft.au=Jean-Marc%20Huart&amp;rft.au=Marc%20Montouss%C3%A9&amp;rft.aulast=Agostino&amp;rft.aufirst=Serge%20d%27'></span></span>
+	    		<br />
+				</div>
+				<div id="el44Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='4540f3647fba1ec80707c1addacd8804' datetime='1794731670'><table style='width:100%'><tr><td style='vertical-align:top'>
+		<ul id='onglets_isbd_public44' class='onglets_isbd_public'>
+	  			<li id='onglet_public44' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '44'); return false;">Public</a></li>
+				<li id='onglet_isbd44' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '44'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public44' style='display:block;'><table><tr class='tr_title'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>100 Fiches Pour Comprendre la Mondialisation</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texte imprimé</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=68' >Serge d' Agostino</a>, Auteur ; <a href='./index.php?lvl=author_see&id=69' >Alain Chaffel</a>, Auteur ; <a href='./index.php?lvl=author_see&id=70' >Jean-Marc Huart</a>, Auteur ; <a href='./index.php?lvl=author_see&id=71' >Marc Montoussé</a>, Directeur de publication</span></td>
+				</tr><tr class='tr_ed1'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=88' >Paris : Bréal éd.</a></span></td>
+				</tr><tr class='tr_year'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_year'>impr. 2006</span></td>
+				</tr><tr class='tr_npages'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>1 vol. (237 p.)</span></td>
+				</tr><tr class='tr_ill'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Présentation : </span></td>
+					<td class='public_line_value'><span class='public_ill'>couv. ill. en coul.</span></td>
+				</tr><tr class='tr_size'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Format : </span></td>
+					<td class='public_line_value'><span class='public_size'>16 x 1.3 x 24 cm</span></td>
+				</tr><tr class='tr_code'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>ISBN/ISSN/EAN&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_code'>978-2-7495-0626-5</span></td>
+				</tr><tr class='tr_prix'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Prix : </span></td>
+					<td class='public_line_value'><span class='public_prix'>23 EUR</span></td>
+				</tr><tr class='tr_ngen'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Note générale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_ngen'>Index</span></td>
+				</tr><tr class='tr_langues'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>)</span></td>
+				</tr><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=4' >Livres:Livres traitant des assurances </a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Mondialisation&tags=ok' >Mondialisation</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Economie+International&tags=ok' >Economie International</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4853' >337 A</a> <span></span></span></td>
+				</tr><tr class='tr_nresume'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Résumé : </span></td>
+					<td class='public_line_value'><span class='public_nresume'>Cet ouvrage présente 100 thèmes essentiels pour comprendre le processus de la mondialisation sous forme de fiches synthétiques de deux pages chacune. Les fiches ont pour objectifs : d'offrir une synthèse complète et accessible ; de préparer efficacement les étudiants aux examens et aux concours ; de faciliter une consultation rapide grâce notamment à des index détaillés. Cet ouvrage est destiné aux étudiants en classes préparatoires économiques et commerciales, en premier cycle universitaire ainsi qu'aux personnes préparant les concours de la fonction publique et à tous ceux qui peuvent être intéressés par ce thème aussi fondamental qu'actuel.</span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd44' style='display:none;'>100 Fiches Pour Comprendre la Mondialisation [texte imprimé] / <a href='./index.php?lvl=author_see&id=68' >Serge d' Agostino</a>, Auteur ; <a href='./index.php?lvl=author_see&id=69' >Alain Chaffel</a>, Auteur ; <a href='./index.php?lvl=author_see&id=70' >Jean-Marc Huart</a>, Auteur ; <a href='./index.php?lvl=author_see&id=71' >Marc Montoussé</a>, Directeur de publication&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=88' >Paris : Bréal éd.</a>, impr. 2006&nbsp;.&nbsp;-&nbsp;1 vol. (237 p.)&nbsp;: couv. ill. en coul.&nbsp;; 16 x 1.3 x 24 cm.<br /><b>ISBN</b>&nbsp;: 978-2-7495-0626-5&nbsp;: 23 EUR<br />Index<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=4' >Livres:Livres traitant des assurances </a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Mondialisation&tags=ok' >Mondialisation</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Economie+International&tags=ok' >Economie International</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4853' >337 A</a> <span></span></span></td>
+				</tr><tr class='tr_nresume'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Résumé : </span></td>
+					<td class='public_line_value'><span class='public_nresume'>Cet ouvrage présente 100 thèmes essentiels pour comprendre le processus de la mondialisation sous forme de fiches synthétiques de deux pages chacune. Les fiches ont pour objectifs : d'offrir une synthèse complète et accessible ; de préparer efficacement les étudiants aux examens et aux concours ; de faciliter une consultation rapide grâce notamment à des index détaillés. Cet ouvrage est destiné aux étudiants en classes préparatoires économiques et commerciales, en premier cycle universitaire ainsi qu'aux personnes préparant les concours de la fonction publique et à tous ceux qui peuvent être intéressés par ce thème aussi fondamental qu'actuel.</span></td>
+				</tr></table></div></td><td class='align_right' style='vertical-align:top'><img class='vignetteimg align_right' src='https://books.iiayaounde.com/opac_css/images/vide.png' title="100 Fiches Pour Comprendre la Mondialisation" hspace='4' vspace='2' vigurl="https://books.iiayaounde.com/opac_css/thumbnail.php?type=1&id=44" alt='vignette' /></td></tr></table>
+					<h3>Réservation</h3><a href='#' onClick="if(confirm('Voulez-vous vraiment réserver ce document ?')){w=window.open('./do_resa.php?lvl=resa&id_notice=44&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Réserver ce document</a> (Actuellement <b>1</b> réservation(s) en cours sur cet ouvrage)<br /><!-- $Id: expl_list.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<h3>
+	<span id='titre_exemplaires' class='titre_exemplaires'>
+		Exemplaires(1)
+	</span>
+</h3>
+	<!-- $Id: expl_table.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<table cellpadding='2' class='exemplaires' style='width:100%'>
+		<tr class='thead'>
+									<th class='expl_header_expl_cb'>Code-barres</th>
+						
+																																																																	<th class='expl_header_expl_cote'>Cote</th>
+						
+																																																																	<th class='expl_header_tdoc_libelle'>Support</th>
+						
+																																																																	<th class='expl_header_location_libelle'>Localisation</th>
+						
+																																																																	<th class='expl_header_section_libelle'>Section</th>
+						
+																																																												<th class='expl_header_statut'>Disponibilité</th>
+	</tr>
+						<tr class='odd item_expl expl_available'>
+																																			<td id='expl_80' class='expl_cb'>
+							2286
+						</td>
+																																																																		<td class='expl_cote'>337 AGO</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliothèque principale</td>
+																																													<td id='expl_80' class='section_libelle'>
+															Documentaires
+													</td>
+																								<td class='expl_situation'><strong>Disponible</strong></td>
+
+																																																	</tr>
+			</table></div>
+			<div id="el121Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el121Img" title="détail" alt="détail" style='border:0px' onClick="expandBase('el121', true);  return false;" hspace="3" /><img src="https://books.iiayaounde.com/opac_css/images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_121"><span class="statutnot1" ></span><span  notice='121'  class='header_title'>Les 201 Mots Clés de L'assurance</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=177'>Jean-Pierre Lambert</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Les%20201%20Mots%20Cl%C3%A9s%20de%20L%27assurance&amp;rft.title=Les%20201%20Mots%20Cl%C3%A9s%20de%20L%27assurance&amp;rft.isbn=978-2-902189-03-8&amp;rft.tpages=114%20p.&amp;rft.date=1985&amp;rft_id=&amp;rft.pub=%C3%A9d.%20l%27Assurance%20fran%C3%A7aise&amp;rft.place=Paris&amp;rft.au=Jean-Pierre%20Lambert&amp;rft.aulast=Lambert&amp;rft.aufirst=Jean-Pierre'></span></span>
+	    		<br />
+				</div>
+				<div id="el121Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='0ae92a88b601f278fa191002796cfb5c' datetime='1794731670'><table style='width:100%'><tr><td style='vertical-align:top'>
+		<ul id='onglets_isbd_public121' class='onglets_isbd_public'>
+	  			<li id='onglet_public121' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '121'); return false;">Public</a></li>
+				<li id='onglet_isbd121' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '121'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public121' style='display:block;'><table><tr class='tr_title'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>Les 201 Mots Clés de L'assurance</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texte imprimé</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=177' >Jean-Pierre Lambert</a>, Auteur</span></td>
+				</tr><tr class='tr_ed1'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=184' >Paris : éd. l'Assurance française</a></span></td>
+				</tr><tr class='tr_year'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_year'>1985</span></td>
+				</tr><tr class='tr_npages'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>114 p.</span></td>
+				</tr><tr class='tr_ill'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Présentation : </span></td>
+					<td class='public_line_value'><span class='public_ill'>couv. ill. en coul.</span></td>
+				</tr><tr class='tr_size'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Format : </span></td>
+					<td class='public_line_value'><span class='public_size'>17 cm</span></td>
+				</tr><tr class='tr_code'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>ISBN/ISSN/EAN&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_code'>978-2-902189-03-8</span></td>
+				</tr><tr class='tr_prix'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Prix : </span></td>
+					<td class='public_line_value'><span class='public_prix'>28 F</span></td>
+				</tr><tr class='tr_langues'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>)</span></td>
+				</tr><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=4' >Livres:Livres traitant des assurances </a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Assurance&tags=ok' >Assurance</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Dictionnaires&tags=ok' >Dictionnaires</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4863' >413 L</a> <span></span></span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd121' style='display:none;'>Les 201 Mots Clés de L'assurance [texte imprimé] / <a href='./index.php?lvl=author_see&id=177' >Jean-Pierre Lambert</a>, Auteur&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=184' >Paris : éd. l'Assurance française</a>, 1985&nbsp;.&nbsp;-&nbsp;114 p.&nbsp;: couv. ill. en coul.&nbsp;; 17 cm.<br /><b>ISBN</b>&nbsp;: 978-2-902189-03-8&nbsp;: 28 F<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=4' >Livres:Livres traitant des assurances </a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Assurance&tags=ok' >Assurance</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Dictionnaires&tags=ok' >Dictionnaires</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4863' >413 L</a> <span></span></span></td>
+				</tr></table></div></td><td class='align_right' style='vertical-align:top'><img class='vignetteimg align_right' src='https://books.iiayaounde.com/opac_css/images/vide.png' title="Les 201 Mots Cl&eacute;s de L&#039;assurance" hspace='4' vspace='2' vigurl="https://books.iiayaounde.com/opac_css/thumbnail.php?type=1&id=121" alt='vignette' /></td></tr></table>
+					<h3>Réservation</h3><a href='#' onClick="if(confirm('Voulez-vous vraiment réserver ce document ?')){w=window.open('./do_resa.php?lvl=resa&id_notice=121&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Réserver ce document</a><br /><!-- $Id: expl_list.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<h3>
+	<span id='titre_exemplaires' class='titre_exemplaires'>
+		Exemplaires(4)
+	</span>
+</h3>
+	<!-- $Id: expl_table.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<table cellpadding='2' class='exemplaires' style='width:100%'>
+		<tr class='thead'>
+									<th class='expl_header_expl_cb'>Code-barres</th>
+						
+																																																																																																																																																																																																																																<th class='expl_header_expl_cote'>Cote</th>
+						
+																																																																																																																																																																																																																																<th class='expl_header_tdoc_libelle'>Support</th>
+						
+																																																																																																																																																																																																																																<th class='expl_header_location_libelle'>Localisation</th>
+						
+																																																																																																																																																																																																																																<th class='expl_header_section_libelle'>Section</th>
+						
+																																																																																																																																																																																																																											<th class='expl_header_statut'>Disponibilité</th>
+	</tr>
+						<tr class='odd item_expl expl_available'>
+																																			<td id='expl_202' class='expl_cb'>
+							82
+						</td>
+																																																																		<td class='expl_cote'>413 LAM</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliothèque principale</td>
+																																													<td id='expl_202' class='section_libelle'>
+															Documentaires
+													</td>
+																								<td class='expl_situation'><strong>Disponible</strong></td>
+
+																																																	</tr>
+					<tr class='even item_expl expl_available'>
+																																			<td id='expl_203' class='expl_cb'>
+							3160
+						</td>
+																																																																		<td class='expl_cote'>413 LAM</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliothèque principale</td>
+																																													<td id='expl_203' class='section_libelle'>
+															Documentaires
+													</td>
+																								<td class='expl_situation'><strong>Disponible</strong></td>
+
+																																																	</tr>
+					<tr class='odd item_expl expl_available'>
+																																			<td id='expl_204' class='expl_cb'>
+							3161
+						</td>
+																																																																		<td class='expl_cote'>413 LAM</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliothèque principale</td>
+																																													<td id='expl_204' class='section_libelle'>
+															Documentaires
+													</td>
+																								<td class='expl_situation'><strong>Disponible</strong></td>
+
+																																																	</tr>
+					<tr class='even item_expl expl_available'>
+																																			<td id='expl_205' class='expl_cb'>
+							3904
+						</td>
+																																																																		<td class='expl_cote'>413 LAM</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliothèque principale</td>
+																																													<td id='expl_205' class='section_libelle'>
+															Documentaires
+													</td>
+																								<td class='expl_situation'><strong>Disponible</strong></td>
+
+																																																	</tr>
+			</table></div>
+			<div id="el293Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el293Img" title="détail" alt="détail" style='border:0px' onClick="expandBase('el293', true);  return false;" hspace="3" /><img src="https://books.iiayaounde.com/opac_css/images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_293"><span class="statutnot1" ></span><span  notice='293'  class='header_title'>L'Accident nous attend au coin de la rue</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=443'>François Ewald</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=L%27Accident%20nous%20attend%20au%20coin%20de%20la%20rue&amp;rft.title=L%27Accident%20nous%20attend%20au%20coin%20de%20la%20rue%20%3A%20les%20accidents%20de%20la%20circulation%20l%27histoire%20d%27un%20probl%C3%A8me&amp;rft.isbn=978-2-11-000929-6&amp;rft.tpages=162%20p&amp;rft.date=1982&amp;rft_id=&amp;rft.series=Collection%20Minist%C3%A8re%20de%20la%20justice&amp;rft.pub=la%20Documentation%20fran%C3%A7aise&amp;rft.place=Paris&amp;rft.au=Fran%C3%A7ois%20Ewald&amp;rft.aulast=Ewald&amp;rft.aufirst=Fran%C3%A7ois'></span></span>
+	    		<br />
+				</div>
+				<div id="el293Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='ecd21c548e862e238f05b190d7227a47' datetime='1794731670'><table style='width:100%'><tr><td style='vertical-align:top'>
+		<ul id='onglets_isbd_public293' class='onglets_isbd_public'>
+	  			<li id='onglet_public293' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '293'); return false;">Public</a></li>
+				<li id='onglet_isbd293' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '293'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public293' style='display:block;'><table><tr class='tr_title'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>L'Accident nous attend au coin de la rue&nbsp;: les accidents de la circulation l'histoire d'un problème</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texte imprimé</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=443' >François Ewald (1946-....)</a>, Auteur</span></td>
+				</tr><tr class='tr_ed1'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=223' >Paris : la Documentation française</a></span></td>
+				</tr><tr class='tr_year'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_year'>1982</span></td>
+				</tr><tr class='tr_ed2'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Autre Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed2'><a href='./index.php?lvl=publisher_see&id=224' >05-Gap : Impr. Louis-Jean</a></span></td>
+				</tr><tr class='tr_coll'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Collection : </span></td>
+					<td class='public_line_value'><span class='public_coll'><a href='./index.php?lvl=coll_see&id=129' >Collection Ministère de la justice, ISSN 0338-6368</a> num. 13 </span></td>
+				</tr><tr class='tr_npages'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>162 p</span></td>
+				</tr><tr class='tr_size'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Format : </span></td>
+					<td class='public_line_value'><span class='public_size'>24 cm</span></td>
+				</tr><tr class='tr_code'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>ISBN/ISSN/EAN&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_code'>978-2-11-000929-6</span></td>
+				</tr><tr class='tr_prix'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Prix : </span></td>
+					<td class='public_line_value'><span class='public_prix'>60 F</span></td>
+				</tr><tr class='tr_ngen'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Note générale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_ngen'>La couv. porte en plus : &quot;&eacute;tude de sociologie juridique&quot;</span></td>
+				</tr><tr class='tr_langues'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>)</span></td>
+				</tr><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=4' >Livres:Livres traitant des assurances </a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Responsabilit%C3%A9+pour+accidents+de+la+route&tags=ok' >Responsabilité pour accidents de la route</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=France&tags=ok' >France</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4877' >368 E</a> <span></span></span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd293' style='display:none;'>L'Accident nous attend au coin de la rue&nbsp;: les accidents de la circulation l'histoire d'un problème [texte imprimé] / <a href='./index.php?lvl=author_see&id=443' >François Ewald (1946-....)</a>, Auteur&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=223' >Paris : la Documentation française</a>&nbsp;: <a href='./index.php?lvl=publisher_see&id=224' >05-Gap : Impr. Louis-Jean</a>, 1982&nbsp;.&nbsp;-&nbsp;162 p&nbsp;; 24 cm.&nbsp;-&nbsp;(<a href='./index.php?lvl=coll_see&id=129' >Collection Ministère de la justice, ISSN 0338-6368</a>; 13) .<br /><b>ISBN</b>&nbsp;: 978-2-11-000929-6&nbsp;: 60 F<br />La couv. porte en plus : &quot;&eacute;tude de sociologie juridique&quot;<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=4' >Livres:Livres traitant des assurances </a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Responsabilit%C3%A9+pour+accidents+de+la+route&tags=ok' >Responsabilité pour accidents de la route</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=France&tags=ok' >France</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4877' >368 E</a> <span></span></span></td>
+				</tr></table></div></td><td class='align_right' style='vertical-align:top'><img class='vignetteimg align_right' src='https://books.iiayaounde.com/opac_css/images/vide.png' title="L&#039;Accident nous attend au coin de la rue" hspace='4' vspace='2' vigurl="https://books.iiayaounde.com/opac_css/thumbnail.php?type=1&id=293" alt='vignette' /></td></tr></table>
+					<h3>Réservation</h3><a href='#' onClick="if(confirm('Voulez-vous vraiment réserver ce document ?')){w=window.open('./do_resa.php?lvl=resa&id_notice=293&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Réserver ce document</a><br /><!-- $Id: expl_list.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<h3>
+	<span id='titre_exemplaires' class='titre_exemplaires'>
+		Exemplaires(1)
+	</span>
+</h3>
+	<!-- $Id: expl_table.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<table cellpadding='2' class='exemplaires' style='width:100%'>
+		<tr class='thead'>
+									<th class='expl_header_expl_cb'>Code-barres</th>
+						
+																																																																	<th class='expl_header_expl_cote'>Cote</th>
+						
+																																																																	<th class='expl_header_tdoc_libelle'>Support</th>
+						
+																																																																	<th class='expl_header_location_libelle'>Localisation</th>
+						
+																																																																	<th class='expl_header_section_libelle'>Section</th>
+						
+																																																												<th class='expl_header_statut'>Disponibilité</th>
+	</tr>
+						<tr class='odd item_expl expl_available'>
+																																			<td id='expl_459' class='expl_cb'>
+							305
+						</td>
+																																																																		<td class='expl_cote'>368 EWA</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliothèque principale</td>
+																																													<td id='expl_459' class='section_libelle'>
+															Documentaires
+													</td>
+																								<td class='expl_situation'><strong>Disponible</strong></td>
+
+																																																	</tr>
+			</table></div>
+			<div id="el63Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el63Img" title="détail" alt="détail" style='border:0px' onClick="expandBase('el63', true);  return false;" hspace="3" /><img src="https://books.iiayaounde.com/opac_css/images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_63"><span class="statutnot1" ></span><span  notice='63'  class='header_title'>L'Accident du Travail et le Management de la Prévention</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=19'>Jacques Charbonnier</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=L%27Accident%20du%20Travail%20et%20le%20Management%20de%20la%20Pr%C3%A9vention&amp;rft.title=L%27Accident%20du%20Travail%20et%20le%20Management%20de%20la%20Pr%C3%A9vention&amp;rft.isbn=978-2-7057-0314-1&amp;rft.tpages=179%20p.&amp;rft.date=1980&amp;rft_id=&amp;rft.pub=Editions%20Hommes%20et%20Techniques&amp;rft.au=Jacques%20Charbonnier&amp;rft.aulast=Charbonnier&amp;rft.aufirst=Jacques'></span></span>
+	    		<br />
+				</div>
+				<div id="el63Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='d3c283f47e9be169f7a643cf21d86397' datetime='1794731670'><table style='width:100%'><tr><td style='vertical-align:top'>
+		<ul id='onglets_isbd_public63' class='onglets_isbd_public'>
+	  			<li id='onglet_public63' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '63'); return false;">Public</a></li>
+				<li id='onglet_isbd63' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '63'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public63' style='display:block;'><table><tr class='tr_title'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>L'Accident du Travail et le Management de la Prévention</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texte imprimé</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=19' >Jacques Charbonnier (1930-2018)</a>, Auteur</span></td>
+				</tr><tr class='tr_ed1'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=551' >Editions Hommes et Techniques</a></span></td>
+				</tr><tr class='tr_year'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_year'>1980</span></td>
+				</tr><tr class='tr_ed2'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Autre Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed2'><a href='./index.php?lvl=publisher_see&id=66' >42-Saint-étienne : Impr. Edit'offset</a></span></td>
+				</tr><tr class='tr_npages'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>179 p.</span></td>
+				</tr><tr class='tr_ill'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Présentation : </span></td>
+					<td class='public_line_value'><span class='public_ill'>ill., couv. ill. en coul. Graphiques</span></td>
+				</tr><tr class='tr_size'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Format : </span></td>
+					<td class='public_line_value'><span class='public_size'>24 cm</span></td>
+				</tr><tr class='tr_code'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>ISBN/ISSN/EAN&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_code'>978-2-7057-0314-1</span></td>
+				</tr><tr class='tr_prix'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Prix : </span></td>
+					<td class='public_line_value'><span class='public_prix'>59,58 F</span></td>
+				</tr><tr class='tr_ngen'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Note générale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_ngen'>Bibliogr., 8 p.</span></td>
+				</tr><tr class='tr_langues'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>)</span></td>
+				</tr><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=4' >Livres:Livres traitant des assurances </a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=S%C3%A9curit%C3%A9+du+travail&tags=ok' >Sécurité du travail</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=France&tags=ok' >France</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Travail&tags=ok' >Travail</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Accidents&tags=ok' >Accidents</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4833' >344.0</a> <span></span></span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd63' style='display:none;'>L'Accident du Travail et le Management de la Prévention [texte imprimé] / <a href='./index.php?lvl=author_see&id=19' >Jacques Charbonnier (1930-2018)</a>, Auteur&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=551' >Editions Hommes et Techniques</a>&nbsp;: <a href='./index.php?lvl=publisher_see&id=66' >42-Saint-étienne : Impr. Edit'offset</a>, 1980&nbsp;.&nbsp;-&nbsp;179 p.&nbsp;: ill., couv. ill. en coul. Graphiques&nbsp;; 24 cm.<br /><b>ISBN</b>&nbsp;: 978-2-7057-0314-1&nbsp;: 59,58 F<br />Bibliogr., 8 p.<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=4' >Livres:Livres traitant des assurances </a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=S%C3%A9curit%C3%A9+du+travail&tags=ok' >Sécurité du travail</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=France&tags=ok' >France</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Travail&tags=ok' >Travail</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Accidents&tags=ok' >Accidents</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4833' >344.0</a> <span></span></span></td>
+				</tr></table></div></td><td class='align_right' style='vertical-align:top'><img class='vignetteimg align_right' src='https://books.iiayaounde.com/opac_css/images/vide.png' title="L&#039;Accident du Travail et le Management de la Pr&eacute;vention" hspace='4' vspace='2' vigurl="https://books.iiayaounde.com/opac_css/thumbnail.php?type=1&id=63" alt='vignette' /></td></tr></table>
+					<h3>Réservation</h3><a href='#' onClick="if(confirm('Voulez-vous vraiment réserver ce document ?')){w=window.open('./do_resa.php?lvl=resa&id_notice=63&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Réserver ce document</a><br /><!-- $Id: expl_list.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<h3>
+	<span id='titre_exemplaires' class='titre_exemplaires'>
+		Exemplaires(1)
+	</span>
+</h3>
+	<!-- $Id: expl_table.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<table cellpadding='2' class='exemplaires' style='width:100%'>
+		<tr class='thead'>
+									<th class='expl_header_expl_cb'>Code-barres</th>
+						
+																																																																	<th class='expl_header_expl_cote'>Cote</th>
+						
+																																																																	<th class='expl_header_tdoc_libelle'>Support</th>
+						
+																																																																	<th class='expl_header_location_libelle'>Localisation</th>
+						
+																																																																	<th class='expl_header_section_libelle'>Section</th>
+						
+																																																												<th class='expl_header_statut'>Disponibilité</th>
+	</tr>
+						<tr class='odd item_expl expl_available'>
+																																			<td id='expl_111' class='expl_cb'>
+							1
+						</td>
+																																																																		<td class='expl_cote'>344.02 CHA</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliothèque principale</td>
+																																													<td id='expl_111' class='section_libelle'>
+															Documentaires
+													</td>
+																								<td class='expl_situation'><strong>Disponible</strong></td>
+
+																																																	</tr>
+			</table></div>
+			<div id="el1978Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el1978Img" title="détail" alt="détail" style='border:0px' onClick="expandBase('el1978', true);  return false;" hspace="3" /><img src="https://books.iiayaounde.com/opac_css/images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_1978"><span class="statutnot1" ></span><span  notice='1978'  class='header_title'>Les accidents du travail et les maladies professionnelles en Europe</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=2862'>SCOR TECH</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Les%20accidents%20du%20travail%20et%20les%20maladies%20professionnelles%20en%20Europe&amp;rft.title=Les%20accidents%20du%20travail%20et%20les%20maladies%20professionnelles%20en%20Europe&amp;rft.tpages=255%20P.&amp;rft.date=1999&amp;rft_id=&amp;rft.au=SCOR%20TECH&amp;rft.aulast=SCOR%20TECH&amp;rft.aufirst='></span></span>
+	    		<br />
+				</div>
+				<div id="el1978Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='6a499107ed5ac3871e856fc9d48756fc' datetime='1794731670'><table style='width:100%'><tr><td style='vertical-align:top'>
+		<ul id='onglets_isbd_public1978' class='onglets_isbd_public'>
+	  			<li id='onglet_public1978' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '1978'); return false;">Public</a></li>
+				<li id='onglet_isbd1978' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '1978'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public1978' style='display:block;'><table><tr class='tr_title'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>Les accidents du travail et les maladies professionnelles en Europe</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texte imprimé</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=2862' >SCOR TECH</a>, Auteur</span></td>
+				</tr><tr class='tr_year'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_year'>1999</span></td>
+				</tr><tr class='tr_npages'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>255 P.</span></td>
+				</tr><tr class='tr_ill'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Présentation : </span></td>
+					<td class='public_line_value'><span class='public_ill'>couv. ill. en coul.</span></td>
+				</tr><tr class='tr_size'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Format : </span></td>
+					<td class='public_line_value'><span class='public_size'>30 cm</span></td>
+				</tr><tr class='tr_langues'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>)</span></td>
+				</tr><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=4' >Livres:Livres traitant des assurances </a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Accidents+du+travail&tags=ok' >Accidents du travail</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Maladies+professionnelles&tags=ok' >Maladies professionnelles</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Europe&tags=ok' >Europe</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4906' >368.3</a> <span></span></span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd1978' style='display:none;'>Les accidents du travail et les maladies professionnelles en Europe [texte imprimé] / <a href='./index.php?lvl=author_see&id=2862' >SCOR TECH</a>, Auteur&nbsp;.&nbsp;-&nbsp;1999&nbsp;.&nbsp;-&nbsp;255 P.&nbsp;: couv. ill. en coul.&nbsp;; 30 cm.<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=4' >Livres:Livres traitant des assurances </a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Accidents+du+travail&tags=ok' >Accidents du travail</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Maladies+professionnelles&tags=ok' >Maladies professionnelles</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Europe&tags=ok' >Europe</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4906' >368.3</a> <span></span></span></td>
+				</tr></table></div></td><td class='align_right' style='vertical-align:top'><img class='vignetteimg align_right' src='https://books.iiayaounde.com/opac_css/images/vide.png' title="Les accidents du travail et les maladies professionnelles en Europe" hspace='4' vspace='2' vigurl="https://books.iiayaounde.com/opac_css/thumbnail.php?type=1&id=1978" alt='vignette' /></td></tr></table>
+					<h3>Réservation</h3><a href='#' onClick="if(confirm('Voulez-vous vraiment réserver ce document ?')){w=window.open('./do_resa.php?lvl=resa&id_notice=1978&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Réserver ce document</a><br /><!-- $Id: expl_list.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<h3>
+	<span id='titre_exemplaires' class='titre_exemplaires'>
+		Exemplaires(1)
+	</span>
+</h3>
+	<!-- $Id: expl_table.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<table cellpadding='2' class='exemplaires' style='width:100%'>
+		<tr class='thead'>
+									<th class='expl_header_expl_cb'>Code-barres</th>
+						
+																																																																	<th class='expl_header_expl_cote'>Cote</th>
+						
+																																																																	<th class='expl_header_tdoc_libelle'>Support</th>
+						
+																																																																	<th class='expl_header_location_libelle'>Localisation</th>
+						
+																																																																	<th class='expl_header_section_libelle'>Section</th>
+						
+																																																												<th class='expl_header_statut'>Disponibilité</th>
+	</tr>
+						<tr class='odd item_expl expl_available'>
+																																			<td id='expl_2552' class='expl_cb'>
+							1941
+						</td>
+																																																																		<td class='expl_cote'>368.3 SCO</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliothèque principale</td>
+																																													<td id='expl_2552' class='section_libelle'>
+															Documentaires
+													</td>
+																								<td class='expl_situation'><strong>Disponible</strong></td>
+
+																																																	</tr>
+			</table></div><a href="./index.php?lvl=etagere_see&id=5"><span class='etagere-suite'>Voir la suite...</span></a></div></div>
+<div id='etagere_4' class='etagere' ><div id='etagere-titre'><h1><a href="./index.php?lvl=etagere_see&id=4">Livres traitant des sujets autres que les assurances</a></h1></div>
+<div id='etagere-comment'><h2></h2></div><div id='etagere-notice-list'>
+			<div id="el198Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el198Img" title="détail" alt="détail" style='border:0px' onClick="expandBase('el198', true);  return false;" hspace="3" /><img src="https://books.iiayaounde.com/opac_css/images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_198"><span class="statutnot1" ></span><span  notice='198'  class='header_title'>Les 9 points clés de la conduite d'un projet informatique</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=299'>Christian Bénard</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Les%209%20points%20cl%C3%A9s%20de%20la%20conduite%20d%27un%20projet%20informatique&amp;rft.title=Les%209%20points%20cl%C3%A9s%20de%20la%20conduite%20d%27un%20projet%20informatique&amp;rft.isbn=978-2-7081-1413-5&amp;rft.tpages=301%20p.&amp;rft.date=1992&amp;rft_id=&amp;rft.series=Collection%20Hommes%20et%20techniques&amp;rft.pub=les%20%C3%A9d.%20d%27Organisation&amp;rft.place=Paris&amp;rft.au=Christian%20B%C3%A9nard&amp;rft.aulast=B%C3%A9nard&amp;rft.aufirst=Christian'></span></span>
+	    		<br />
+				</div>
+				<div id="el198Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='bda25056e2a581de2f09c4bbab98f6de' datetime='1794731670'><table style='width:100%'><tr><td style='vertical-align:top'>
+		<ul id='onglets_isbd_public198' class='onglets_isbd_public'>
+	  			<li id='onglet_public198' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '198'); return false;">Public</a></li>
+				<li id='onglet_isbd198' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '198'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public198' style='display:block;'><table><tr class='tr_title'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>Les 9 points clés de la conduite d'un projet informatique</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texte imprimé</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=299' >Christian Bénard (1949-....)</a>, Auteur</span></td>
+				</tr><tr class='tr_ed1'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=25' >Paris : les éd. d'Organisation</a></span></td>
+				</tr><tr class='tr_year'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_year'>1992</span></td>
+				</tr><tr class='tr_ed2'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Autre Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed2'><a href='./index.php?lvl=publisher_see&id=159' >[Paris] : J. Delmas et Cie</a></span></td>
+				</tr><tr class='tr_coll'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Collection : </span></td>
+					<td class='public_line_value'><span class='public_coll'><a href='./index.php?lvl=coll_see&id=91' >Collection Hommes et techniques</a> </span></td>
+				</tr><tr class='tr_npages'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>301 p.</span></td>
+				</tr><tr class='tr_ill'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Présentation : </span></td>
+					<td class='public_line_value'><span class='public_ill'>Couv. ill. en coul., Graphique</span></td>
+				</tr><tr class='tr_size'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Format : </span></td>
+					<td class='public_line_value'><span class='public_size'>24 cm</span></td>
+				</tr><tr class='tr_code'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>ISBN/ISSN/EAN&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_code'>978-2-7081-1413-5</span></td>
+				</tr><tr class='tr_ngen'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Note générale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_ngen'>Bibliogr., 1 p.</span></td>
+				</tr><tr class='tr_langues'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>)</span></td>
+				</tr><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=5' >Livres:Autres livres</a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Projets+informatiques&tags=ok' >Projets informatiques</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4923' >004.0</a> <span></span></span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd198' style='display:none;'>Les 9 points clés de la conduite d'un projet informatique [texte imprimé] / <a href='./index.php?lvl=author_see&id=299' >Christian Bénard (1949-....)</a>, Auteur&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=25' >Paris : les éd. d'Organisation</a>&nbsp;: <a href='./index.php?lvl=publisher_see&id=159' >[Paris] : J. Delmas et Cie</a>, 1992&nbsp;.&nbsp;-&nbsp;301 p.&nbsp;: Couv. ill. en coul., Graphique&nbsp;; 24 cm.&nbsp;-&nbsp;(<a href='./index.php?lvl=coll_see&id=91' >Collection Hommes et techniques</a>) .<br /><b>ISBN</b>&nbsp;: 978-2-7081-1413-5<br />Bibliogr., 1 p.<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=5' >Livres:Autres livres</a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Projets+informatiques&tags=ok' >Projets informatiques</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4923' >004.0</a> <span></span></span></td>
+				</tr></table></div></td><td class='align_right' style='vertical-align:top'><img class='vignetteimg align_right' src='https://books.iiayaounde.com/opac_css/images/vide.png' title="Les 9 points cl&eacute;s de la conduite d&#039;un projet informatique" hspace='4' vspace='2' vigurl="https://books.iiayaounde.com/opac_css/thumbnail.php?type=1&id=198" alt='vignette' /></td></tr></table>
+					<h3>Réservation</h3><a href='#' onClick="if(confirm('Voulez-vous vraiment réserver ce document ?')){w=window.open('./do_resa.php?lvl=resa&id_notice=198&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Réserver ce document</a> (Actuellement <b>1</b> réservation(s) en cours sur cet ouvrage)<br /><!-- $Id: expl_list.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<h3>
+	<span id='titre_exemplaires' class='titre_exemplaires'>
+		Exemplaires(1)
+	</span>
+</h3>
+	<!-- $Id: expl_table.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<table cellpadding='2' class='exemplaires' style='width:100%'>
+		<tr class='thead'>
+									<th class='expl_header_expl_cb'>Code-barres</th>
+						
+																																																																	<th class='expl_header_expl_cote'>Cote</th>
+						
+																																																																	<th class='expl_header_tdoc_libelle'>Support</th>
+						
+																																																																	<th class='expl_header_location_libelle'>Localisation</th>
+						
+																																																																	<th class='expl_header_section_libelle'>Section</th>
+						
+																																																												<th class='expl_header_statut'>Disponibilité</th>
+	</tr>
+						<tr class='odd item_expl expl_available'>
+																																			<td id='expl_314' class='expl_cb'>
+							186
+						</td>
+																																																																		<td class='expl_cote'>004.02 BEN</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliothèque principale</td>
+																																													<td id='expl_314' class='section_libelle'>
+															Documentaires
+													</td>
+																								<td class='expl_situation'><strong>Disponible</strong></td>
+
+																																																	</tr>
+			</table></div>
+			<div id="el1845Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el1845Img" title="détail" alt="détail" style='border:0px' onClick="expandBase('el1845', true);  return false;" hspace="3" /><img src="https://books.iiayaounde.com/opac_css/images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_1845"><span class="statutnot1" ></span><span  notice='1845'  class='header_title'>L'abordage en droit maritime et en droit fluvial</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=2718'>Le Clere, Julien</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=L%27abordage%20en%20droit%20maritime%20et%20en%20droit%20fluvial&amp;rft.title=L%27abordage%20en%20droit%20maritime%20et%20en%20droit%20fluvial&amp;rft.tpages=304%20p.&amp;rft.date=1955&amp;rft_id=&amp;rft.pub=Librairie%20g%C3%A9n%C3%A9rale%20de%20droit%20et%20de%20jurisprudence&amp;rft.place=Paris&amp;rft.au=Le%20Clere%2C%20Julien&amp;rft.aulast=Le%20Clere%2C%20Julien&amp;rft.aufirst='></span></span>
+	    		<br />
+				</div>
+				<div id="el1845Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='567c6e7534e643ad4d75244c2b24d5d4' datetime='1794731670'><table style='width:100%'><tr><td style='vertical-align:top'>
+		<ul id='onglets_isbd_public1845' class='onglets_isbd_public'>
+	  			<li id='onglet_public1845' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '1845'); return false;">Public</a></li>
+				<li id='onglet_isbd1845' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '1845'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public1845' style='display:block;'><table><tr class='tr_title'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>L'abordage en droit maritime et en droit fluvial</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texte imprimé</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=2718' >Le Clere, Julien</a>, Auteur</span></td>
+				</tr><tr class='tr_ed1'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=53' >Paris : Librairie générale de droit et de jurisprudence</a></span></td>
+				</tr><tr class='tr_year'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_year'>1955</span></td>
+				</tr><tr class='tr_npages'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>304 p.</span></td>
+				</tr><tr class='tr_ill'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Présentation : </span></td>
+					<td class='public_line_value'><span class='public_ill'>couv. ill. en coul.</span></td>
+				</tr><tr class='tr_size'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Format : </span></td>
+					<td class='public_line_value'><span class='public_size'>24 cm</span></td>
+				</tr><tr class='tr_langues'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>)</span></td>
+				</tr><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=5' >Livres:Autres livres</a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Droit+maritime&tags=ok' >Droit maritime</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=droit+fluvial&tags=ok' >droit fluvial</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=abordage&tags=ok' >abordage</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=dommage&tags=ok' >dommage</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=r%C3%A8glementation&tags=ok' >règlementation</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4837' >343.0</a> <span></span></span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd1845' style='display:none;'>L'abordage en droit maritime et en droit fluvial [texte imprimé] / <a href='./index.php?lvl=author_see&id=2718' >Le Clere, Julien</a>, Auteur&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=53' >Paris : Librairie générale de droit et de jurisprudence</a>, 1955&nbsp;.&nbsp;-&nbsp;304 p.&nbsp;: couv. ill. en coul.&nbsp;; 24 cm.<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=5' >Livres:Autres livres</a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Droit+maritime&tags=ok' >Droit maritime</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=droit+fluvial&tags=ok' >droit fluvial</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=abordage&tags=ok' >abordage</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=dommage&tags=ok' >dommage</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=r%C3%A8glementation&tags=ok' >règlementation</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4837' >343.0</a> <span></span></span></td>
+				</tr></table></div></td><td class='align_right' style='vertical-align:top'><img class='vignetteimg align_right' src='https://books.iiayaounde.com/opac_css/images/vide.png' title="L&#039;abordage en droit maritime et en droit fluvial" hspace='4' vspace='2' vigurl="https://books.iiayaounde.com/opac_css/thumbnail.php?type=1&id=1845" alt='vignette' /></td></tr></table>
+					<h3>Réservation</h3><a href='#' onClick="if(confirm('Voulez-vous vraiment réserver ce document ?')){w=window.open('./do_resa.php?lvl=resa&id_notice=1845&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Réserver ce document</a><br /><!-- $Id: expl_list.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<h3>
+	<span id='titre_exemplaires' class='titre_exemplaires'>
+		Exemplaires(1)
+	</span>
+</h3>
+	<!-- $Id: expl_table.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<table cellpadding='2' class='exemplaires' style='width:100%'>
+		<tr class='thead'>
+									<th class='expl_header_expl_cb'>Code-barres</th>
+						
+																																																																	<th class='expl_header_expl_cote'>Cote</th>
+						
+																																																																	<th class='expl_header_tdoc_libelle'>Support</th>
+						
+																																																																	<th class='expl_header_location_libelle'>Localisation</th>
+						
+																																																																	<th class='expl_header_section_libelle'>Section</th>
+						
+																																																												<th class='expl_header_statut'>Disponibilité</th>
+	</tr>
+						<tr class='odd item_expl expl_available'>
+																																			<td id='expl_2399' class='expl_cb'>
+							1894
+						</td>
+																																																																		<td class='expl_cote'>343.09 LEC</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliothèque principale</td>
+																																													<td id='expl_2399' class='section_libelle'>
+															Documentaires
+													</td>
+																								<td class='expl_situation'><strong>Disponible</strong></td>
+
+																																																	</tr>
+			</table></div>
+			<div id="el1696Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el1696Img" title="détail" alt="détail" style='border:0px' onClick="expandBase('el1696', true);  return false;" hspace="3" /><img src="https://books.iiayaounde.com/opac_css/images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_1696"><span class="statutnot1" ></span><span  notice='1696'  class='header_title'>L'affrètement par charte-partie</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=2503'>Du Pontavice, Emmanuel</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=L%27affr%C3%A8tement%20par%20charte-partie&amp;rft.title=L%27affr%C3%A8tement%20par%20charte-partie&amp;rft.tpages=249%20p.&amp;rft.date=1964&amp;rft_id=&amp;rft.series=Biblioth%C3%A8que%20de%20droit%20maritime%2C%20fluvial%2C%20a%C3%A9rien%20et%20spatial&amp;rft.pub=Librairie%20g%C3%A9n%C3%A9rale%20de%20droit%20et%20de%20jurisprudence&amp;rft.place=Paris&amp;rft.au=Du%20Pontavice%2C%20Emmanuel&amp;rft.au=Sortais%2C%20Jean-Paul&amp;rft.au=Pi%C3%A9deli%C3%A8vre%2C%20A&amp;rft.au=De%20Lestang%2C%20Gaston&amp;rft.au=De%20Juglart%2C%20Michel&amp;rft.aulast=Du%20Pontavice%2C%20Emmanuel&amp;rft.aufirst='></span></span>
+	    		<br />
+				</div>
+				<div id="el1696Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='28051600dee1ea98b626a52f5c435712' datetime='1794731670'><table style='width:100%'><tr><td style='vertical-align:top'>
+		<ul id='onglets_isbd_public1696' class='onglets_isbd_public'>
+	  			<li id='onglet_public1696' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '1696'); return false;">Public</a></li>
+				<li id='onglet_isbd1696' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '1696'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public1696' style='display:block;'><table><tr class='tr_title'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>L'affrètement par charte-partie</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texte imprimé</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=2503' >Du Pontavice, Emmanuel</a>, Auteur ; <a href='./index.php?lvl=author_see&id=2562' >Sortais, Jean-Paul</a>, Auteur ; <a href='./index.php?lvl=author_see&id=2563' >Piédelièvre, A</a>, Auteur ; <a href='./index.php?lvl=author_see&id=2564' >De Lestang, Gaston</a>, Auteur ; <a href='./index.php?lvl=author_see&id=2350' >De Juglart, Michel</a>, Préfacier, etc.</span></td>
+				</tr><tr class='tr_ed1'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=53' >Paris : Librairie générale de droit et de jurisprudence</a></span></td>
+				</tr><tr class='tr_year'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_year'>1964</span></td>
+				</tr><tr class='tr_coll'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Collection : </span></td>
+					<td class='public_line_value'><span class='public_coll'><a href='./index.php?lvl=coll_see&id=324' >Bibliothèque de droit maritime, fluvial, aérien et spatial</a> </span></td>
+				</tr><tr class='tr_npages'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>249 p.</span></td>
+				</tr><tr class='tr_ill'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Présentation : </span></td>
+					<td class='public_line_value'><span class='public_ill'>couv. ill. en coul.</span></td>
+				</tr><tr class='tr_size'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Format : </span></td>
+					<td class='public_line_value'><span class='public_size'>24 cm</span></td>
+				</tr><tr class='tr_langues'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>)</span></td>
+				</tr><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=5' >Livres:Autres livres</a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Droit+transport&tags=ok' >Droit transport</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=affr%C3%A8tement+maritime&tags=ok' >affrètement maritime</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=contrat+transport&tags=ok' >contrat transport</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4837' >343.0</a> <span></span></span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd1696' style='display:none;'>L'affrètement par charte-partie [texte imprimé] / <a href='./index.php?lvl=author_see&id=2503' >Du Pontavice, Emmanuel</a>, Auteur ; <a href='./index.php?lvl=author_see&id=2562' >Sortais, Jean-Paul</a>, Auteur ; <a href='./index.php?lvl=author_see&id=2563' >Piédelièvre, A</a>, Auteur ; <a href='./index.php?lvl=author_see&id=2564' >De Lestang, Gaston</a>, Auteur ; <a href='./index.php?lvl=author_see&id=2350' >De Juglart, Michel</a>, Préfacier, etc.&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=53' >Paris : Librairie générale de droit et de jurisprudence</a>, 1964&nbsp;.&nbsp;-&nbsp;249 p.&nbsp;: couv. ill. en coul.&nbsp;; 24 cm.&nbsp;-&nbsp;(<a href='./index.php?lvl=coll_see&id=324' >Bibliothèque de droit maritime, fluvial, aérien et spatial</a>) .<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=5' >Livres:Autres livres</a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Droit+transport&tags=ok' >Droit transport</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=affr%C3%A8tement+maritime&tags=ok' >affrètement maritime</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=contrat+transport&tags=ok' >contrat transport</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4837' >343.0</a> <span></span></span></td>
+				</tr></table></div></td><td class='align_right' style='vertical-align:top'><img class='vignetteimg align_right' src='https://books.iiayaounde.com/opac_css/images/vide.png' title="L&#039;affr&egrave;tement par charte-partie" hspace='4' vspace='2' vigurl="https://books.iiayaounde.com/opac_css/thumbnail.php?type=1&id=1696" alt='vignette' /></td></tr></table>
+					<h3>Réservation</h3><a href='#' onClick="if(confirm('Voulez-vous vraiment réserver ce document ?')){w=window.open('./do_resa.php?lvl=resa&id_notice=1696&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Réserver ce document</a><br /><!-- $Id: expl_list.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<h3>
+	<span id='titre_exemplaires' class='titre_exemplaires'>
+		Exemplaires(1)
+	</span>
+</h3>
+	<!-- $Id: expl_table.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<table cellpadding='2' class='exemplaires' style='width:100%'>
+		<tr class='thead'>
+									<th class='expl_header_expl_cb'>Code-barres</th>
+						
+																																																																	<th class='expl_header_expl_cote'>Cote</th>
+						
+																																																																	<th class='expl_header_tdoc_libelle'>Support</th>
+						
+																																																																	<th class='expl_header_location_libelle'>Localisation</th>
+						
+																																																																	<th class='expl_header_section_libelle'>Section</th>
+						
+																																																												<th class='expl_header_statut'>Disponibilité</th>
+	</tr>
+						<tr class='odd item_expl expl_available'>
+																																			<td id='expl_2244' class='expl_cb'>
+							1845
+						</td>
+																																																																		<td class='expl_cote'>343.09 DUP</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliothèque principale</td>
+																																													<td id='expl_2244' class='section_libelle'>
+															Documentaires
+													</td>
+																								<td class='expl_situation'><strong>Disponible</strong></td>
+
+																																																	</tr>
+			</table></div>
+			<div id="el856Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el856Img" title="détail" alt="détail" style='border:0px' onClick="expandBase('el856', true);  return false;" hspace="3" /><img src="https://books.iiayaounde.com/opac_css/images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_856"><span class="statutnot1" ></span><span  notice='856'  class='header_title'>L'Afrique noire précoloniale</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=1377'>Cheikh Anta Diop</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=L%27Afrique%20noire%20pr%C3%A9coloniale&amp;rft.title=L%27Afrique%20noire%20pr%C3%A9coloniale%20%3A%20%C3%A9tude%20compar%C3%A9e%20des%20syst%C3%A8mes%20politiques%20et%20sociaux%20de%20l%27Europe%20et%20de%20l%27Afrique%20noire%2C%20de%20l%27Antiquit%C3%A9%20%C3%A0%20la%20formation%20des%20%C3%A9tats%20modernes&amp;rft.isbn=978-2-7087-0479-4&amp;rft.tpages=278%20p.&amp;rft.date=1987&amp;rft_id=&amp;rft.pub=Pr%C3%A9sence%20africaine&amp;rft.place=Paris&amp;rft.edition=2e%20%C3%A9d.&amp;rft.au=Cheikh%20Anta%20Diop&amp;rft.aulast=Diop&amp;rft.aufirst=Cheikh%20Anta'></span></span>
+	    		<br />
+				</div>
+				<div id="el856Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='587b1dee80237c763196eb7f605b27a5' datetime='1794731670'><table style='width:100%'><tr><td style='vertical-align:top'>
+		<ul id='onglets_isbd_public856' class='onglets_isbd_public'>
+	  			<li id='onglet_public856' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '856'); return false;">Public</a></li>
+				<li id='onglet_isbd856' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '856'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public856' style='display:block;'><table><tr class='tr_title'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>L'Afrique noire précoloniale&nbsp;: étude comparée des systèmes politiques et sociaux de l'Europe et de l'Afrique noire, de l'Antiquité à la formation des états modernes</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texte imprimé</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=1377' >Cheikh Anta Diop (1923-1986)</a>, Auteur</span></td>
+				</tr><tr class='tr_mention'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Mention d'édition :</span></td>
+					<td class='public_line_value'><span class='public_mention'>2e éd.</span></td>
+				</tr><tr class='tr_ed1'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=330' >Paris : Présence africaine</a></span></td>
+				</tr><tr class='tr_year'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_year'>1987</span></td>
+				</tr><tr class='tr_npages'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>278 p.</span></td>
+				</tr><tr class='tr_ill'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Présentation : </span></td>
+					<td class='public_line_value'><span class='public_ill'>couv. ill. en coul.</span></td>
+				</tr><tr class='tr_size'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Format : </span></td>
+					<td class='public_line_value'><span class='public_size'>17 cm</span></td>
+				</tr><tr class='tr_code'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>ISBN/ISSN/EAN&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_code'>978-2-7087-0479-4</span></td>
+				</tr><tr class='tr_prix'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Prix : </span></td>
+					<td class='public_line_value'><span class='public_prix'>55 F</span></td>
+				</tr><tr class='tr_langues'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>)</span></td>
+				</tr><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=5' >Livres:Autres livres</a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Syst%C3%A8mes+sociaux&tags=ok' >Systèmes sociaux</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Institutions+politiques+compar%C3%A9es&tags=ok' >Institutions politiques comparées</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Europe&tags=ok' >Europe</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Conditions+sociales&tags=ok' >Conditions sociales</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Histoire&tags=ok' >Histoire</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Institutions+politiques&tags=ok' >Institutions politiques</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Afrique+noire&tags=ok' >Afrique noire</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=5024' >320 D</a> <span></span></span></td>
+				</tr><tr class='tr_nresume'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Résumé : </span></td>
+					<td class='public_line_value'><span class='public_nresume'>Six ans après la parution de Nations Nègres et Culture, le professeur Cheikh Anta Diop publie, coup sur coup, en 1960, trois livres essentiels qui portent sur l'Unité culturelle de l'Afrique Noire, l'Afrique Noire pré-coloniale et les Fondements politiques, économiques, culturels, industriels, technologiques et scientifiques d'un futur État fédéral d'Afrique Noire. L'histoire africaine était née, au terme d'une recherche scientifique harassante mais riche en perspectives humaines, conduite avec désintéressement, dans la solitude, pendant dix ans, au milieu d'épreuves de toutes sortes, recherche qui fut couronnée par un doctorat d'Etat ès lettres en Sorbonne. Son originalité fut rapidement reconnue. Depuis ce fracassant instant de rupture épistémologique d'avec les cartons ethnographiques et les �illères de l'histoire africaniste, superficielle et anecdotique, le cadre général d'idées et de connaissances défini et dressé par le professeur Cheikh Anta Diop devenait bientôt, pour les jeunes chercheurs africains, une assurance et une incitation au travail. Toute comptabilité bien faite, Cheikh Anta Diop apparaît, dès le départ, comme le véritable inventeur, de nos jours, de l'histoire africaine. L'Afrique Noire pré-coloniale se veut un livre de "sociologie historique africaine", et le prouve; les problèmes majeurs développés dans cet ouvrage (analyse de la notion de caste, économies, États, idéologies, techniques et sciences de l'Afrique ancienne, etc.) ont connu, grâce au travail récent de jeunes universitaires africains, des prolongements heureux. Cependant, il reste, pour sûr, des "territoires" non encore explorés mais qu'il faudra étudier, ardemment, à la suite du maître. La comparaison de l'évolution socio-politique de l'Europe et de l'Afrique, de l'Antiquité aux Temps Modernes, et, surtout, aussi, le problème, épineux, complexe, d'un haut intérêt scientifique et humain, des migrations primaires et de l'ethnogenèse des peuples actuels de l'Afrique devront faire l'objet d'études plus approfondies. Tout cela qui requiert une interdisciplinarité vivante par l'emploi croisé de l'archéologie, la linguistique diachronique, la tradition orale, l'anthropologie culturelle, sans négliger l'apport des sciences naturelles et physicochimiques. Et, toujours, selon la rigueur exemplaire du professeur Cheikh Anta Diop dont l'influence intellectuelle sur les études africaines sérieuses par les Africains reste indestructible. Le dialogue culturel, scientifique, entre les Africains et les Autres, au niveau international, est à ce prix.<br />
+En lire moins</span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd856' style='display:none;'>L'Afrique noire précoloniale&nbsp;: étude comparée des systèmes politiques et sociaux de l'Europe et de l'Afrique noire, de l'Antiquité à la formation des états modernes [texte imprimé] / <a href='./index.php?lvl=author_see&id=1377' >Cheikh Anta Diop (1923-1986)</a>, Auteur &nbsp;. -&nbsp; 2e éd.&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=330' >Paris : Présence africaine</a>, 1987&nbsp;.&nbsp;-&nbsp;278 p.&nbsp;: couv. ill. en coul.&nbsp;; 17 cm.<br /><b>ISBN</b>&nbsp;: 978-2-7087-0479-4&nbsp;: 55 F<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=5' >Livres:Autres livres</a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Syst%C3%A8mes+sociaux&tags=ok' >Systèmes sociaux</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Institutions+politiques+compar%C3%A9es&tags=ok' >Institutions politiques comparées</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Europe&tags=ok' >Europe</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Conditions+sociales&tags=ok' >Conditions sociales</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Histoire&tags=ok' >Histoire</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Institutions+politiques&tags=ok' >Institutions politiques</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Afrique+noire&tags=ok' >Afrique noire</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=5024' >320 D</a> <span></span></span></td>
+				</tr><tr class='tr_nresume'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Résumé : </span></td>
+					<td class='public_line_value'><span class='public_nresume'>Six ans après la parution de Nations Nègres et Culture, le professeur Cheikh Anta Diop publie, coup sur coup, en 1960, trois livres essentiels qui portent sur l'Unité culturelle de l'Afrique Noire, l'Afrique Noire pré-coloniale et les Fondements politiques, économiques, culturels, industriels, technologiques et scientifiques d'un futur État fédéral d'Afrique Noire. L'histoire africaine était née, au terme d'une recherche scientifique harassante mais riche en perspectives humaines, conduite avec désintéressement, dans la solitude, pendant dix ans, au milieu d'épreuves de toutes sortes, recherche qui fut couronnée par un doctorat d'Etat ès lettres en Sorbonne. Son originalité fut rapidement reconnue. Depuis ce fracassant instant de rupture épistémologique d'avec les cartons ethnographiques et les �illères de l'histoire africaniste, superficielle et anecdotique, le cadre général d'idées et de connaissances défini et dressé par le professeur Cheikh Anta Diop devenait bientôt, pour les jeunes chercheurs africains, une assurance et une incitation au travail. Toute comptabilité bien faite, Cheikh Anta Diop apparaît, dès le départ, comme le véritable inventeur, de nos jours, de l'histoire africaine. L'Afrique Noire pré-coloniale se veut un livre de "sociologie historique africaine", et le prouve; les problèmes majeurs développés dans cet ouvrage (analyse de la notion de caste, économies, États, idéologies, techniques et sciences de l'Afrique ancienne, etc.) ont connu, grâce au travail récent de jeunes universitaires africains, des prolongements heureux. Cependant, il reste, pour sûr, des "territoires" non encore explorés mais qu'il faudra étudier, ardemment, à la suite du maître. La comparaison de l'évolution socio-politique de l'Europe et de l'Afrique, de l'Antiquité aux Temps Modernes, et, surtout, aussi, le problème, épineux, complexe, d'un haut intérêt scientifique et humain, des migrations primaires et de l'ethnogenèse des peuples actuels de l'Afrique devront faire l'objet d'études plus approfondies. Tout cela qui requiert une interdisciplinarité vivante par l'emploi croisé de l'archéologie, la linguistique diachronique, la tradition orale, l'anthropologie culturelle, sans négliger l'apport des sciences naturelles et physicochimiques. Et, toujours, selon la rigueur exemplaire du professeur Cheikh Anta Diop dont l'influence intellectuelle sur les études africaines sérieuses par les Africains reste indestructible. Le dialogue culturel, scientifique, entre les Africains et les Autres, au niveau international, est à ce prix.<br />
+En lire moins</span></td>
+				</tr></table></div></td><td class='align_right' style='vertical-align:top'><img class='vignetteimg align_right' src='https://books.iiayaounde.com/opac_css/images/vide.png' title="L&#039;Afrique noire pr&eacute;coloniale" hspace='4' vspace='2' vigurl="https://books.iiayaounde.com/opac_css/thumbnail.php?type=1&id=856" alt='vignette' /></td></tr></table>
+					<h3>Réservation</h3><a href='#' onClick="if(confirm('Voulez-vous vraiment réserver ce document ?')){w=window.open('./do_resa.php?lvl=resa&id_notice=856&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Réserver ce document</a><br /><!-- $Id: expl_list.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<h3>
+	<span id='titre_exemplaires' class='titre_exemplaires'>
+		Exemplaires(1)
+	</span>
+</h3>
+	<!-- $Id: expl_table.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<table cellpadding='2' class='exemplaires' style='width:100%'>
+		<tr class='thead'>
+									<th class='expl_header_expl_cb'>Code-barres</th>
+						
+																																																																	<th class='expl_header_expl_cote'>Cote</th>
+						
+																																																																	<th class='expl_header_tdoc_libelle'>Support</th>
+						
+																																																																	<th class='expl_header_location_libelle'>Localisation</th>
+						
+																																																																	<th class='expl_header_section_libelle'>Section</th>
+						
+																																																												<th class='expl_header_statut'>Disponibilité</th>
+	</tr>
+						<tr class='odd item_expl expl_available'>
+																																			<td id='expl_1175' class='expl_cb'>
+							882
+						</td>
+																																																																		<td class='expl_cote'>320 DIO</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliothèque principale</td>
+																																													<td id='expl_1175' class='section_libelle'>
+															Documentaires
+													</td>
+																								<td class='expl_situation'><strong>Disponible</strong></td>
+
+																																																	</tr>
+			</table></div>
+			<div id="el847Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el847Img" title="détail" alt="détail" style='border:0px' onClick="expandBase('el847', true);  return false;" hspace="3" /><img src="https://books.iiayaounde.com/opac_css/images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_847"><span class="statutnot1" ></span><span  notice='847'  class='header_title'>L'Afrique de l'Ouest bloquée</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=1371'>Samir Amin</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=L%27Afrique%20de%20l%27Ouest%20bloqu%C3%A9e&amp;rft.title=L%27Afrique%20de%20l%27Ouest%20bloqu%C3%A9e%20%3A%20l%27%C3%A9conomie%20politique%20de%20la%20colonisation%201880-1970&amp;rft.isbn=978-2-7073-0049-2&amp;rft.tpages=322%20p.&amp;rft.date=1978&amp;rft_id=&amp;rft.series=Grands%20documents&amp;rft.pub=Les%20Ed.%20de%20Minuit&amp;rft.place=Paris&amp;rft.au=Samir%20Amin&amp;rft.aulast=Amin&amp;rft.aufirst=Samir'></span></span>
+	    		<br />
+				</div>
+				<div id="el847Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='d7768fe306372f02f5e603b8d208dcc4' datetime='1794731670'><table style='width:100%'><tr><td style='vertical-align:top'>
+		<ul id='onglets_isbd_public847' class='onglets_isbd_public'>
+	  			<li id='onglet_public847' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '847'); return false;">Public</a></li>
+				<li id='onglet_isbd847' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '847'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public847' style='display:block;'><table><tr class='tr_title'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>L'Afrique de l'Ouest bloquée&nbsp;: l'économie politique de la colonisation 1880-1970</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texte imprimé</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=1371' >Samir Amin (1931-2018)</a>, Auteur</span></td>
+				</tr><tr class='tr_ed1'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=325' >Paris : Les Ed. de Minuit</a></span></td>
+				</tr><tr class='tr_year'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_year'>1978</span></td>
+				</tr><tr class='tr_coll'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Collection : </span></td>
+					<td class='public_line_value'><span class='public_coll'><a href='./index.php?lvl=coll_see&id=203' >Grands documents</a> </span></td>
+				</tr><tr class='tr_npages'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>322 p.</span></td>
+				</tr><tr class='tr_ill'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Présentation : </span></td>
+					<td class='public_line_value'><span class='public_ill'>couv. ill. en coul. graphique</span></td>
+				</tr><tr class='tr_size'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Format : </span></td>
+					<td class='public_line_value'><span class='public_size'>22 cm</span></td>
+				</tr><tr class='tr_code'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>ISBN/ISSN/EAN&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_code'>978-2-7073-0049-2</span></td>
+				</tr><tr class='tr_langues'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>)</span></td>
+				</tr><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=5' >Livres:Autres livres</a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Science+politique&tags=ok' >Science politique</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Colonisation&tags=ok' >Colonisation</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Afrique+occidentale&tags=ok' >Afrique occidentale</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=19e+si%C3%A8cle&tags=ok' >19e siècle</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=20e+si%C3%A8cle&tags=ok' >20e siècle</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=5019' >320.1</a> <span>L&#039;Etat</span></span></td>
+				</tr><tr class='tr_nresume'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Résumé : </span></td>
+					<td class='public_line_value'><span class='public_nresume'>Ecrire l'économie politique de l'Ouest, qui a accédé à l'indépendance en 1960, c'est faire l'histoire d'une croissance extravertie, c'est-à-dire impulsée par la demande extérieure et financée par le capital étranger. L'expérience historique montre que cette croissance extravertie est croissance sans développement, synonyme de sous-développement. Car la ponction exercée sur le surplus par les centres développés du système mondial ruine toute possibilité d'une modernisation agricole radicale et d'une industrialisation profonde.</span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd847' style='display:none;'>L'Afrique de l'Ouest bloquée&nbsp;: l'économie politique de la colonisation 1880-1970 [texte imprimé] / <a href='./index.php?lvl=author_see&id=1371' >Samir Amin (1931-2018)</a>, Auteur&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=325' >Paris : Les Ed. de Minuit</a>, 1978&nbsp;.&nbsp;-&nbsp;322 p.&nbsp;: couv. ill. en coul. graphique&nbsp;; 22 cm.&nbsp;-&nbsp;(<a href='./index.php?lvl=coll_see&id=203' >Grands documents</a>) .<br /><b>ISBN</b>&nbsp;: 978-2-7073-0049-2<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=5' >Livres:Autres livres</a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Science+politique&tags=ok' >Science politique</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Colonisation&tags=ok' >Colonisation</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Afrique+occidentale&tags=ok' >Afrique occidentale</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=19e+si%C3%A8cle&tags=ok' >19e siècle</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=20e+si%C3%A8cle&tags=ok' >20e siècle</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=5019' >320.1</a> <span>L&#039;Etat</span></span></td>
+				</tr><tr class='tr_nresume'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Résumé : </span></td>
+					<td class='public_line_value'><span class='public_nresume'>Ecrire l'économie politique de l'Ouest, qui a accédé à l'indépendance en 1960, c'est faire l'histoire d'une croissance extravertie, c'est-à-dire impulsée par la demande extérieure et financée par le capital étranger. L'expérience historique montre que cette croissance extravertie est croissance sans développement, synonyme de sous-développement. Car la ponction exercée sur le surplus par les centres développés du système mondial ruine toute possibilité d'une modernisation agricole radicale et d'une industrialisation profonde.</span></td>
+				</tr></table></div></td><td class='align_right' style='vertical-align:top'><img class='vignetteimg align_right' src='https://books.iiayaounde.com/opac_css/images/vide.png' title="L&#039;Afrique de l&#039;Ouest bloqu&eacute;e" hspace='4' vspace='2' vigurl="https://books.iiayaounde.com/opac_css/thumbnail.php?type=1&id=847" alt='vignette' /></td></tr></table>
+					<h3>Réservation</h3><a href='#' onClick="if(confirm('Voulez-vous vraiment réserver ce document ?')){w=window.open('./do_resa.php?lvl=resa&id_notice=847&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Réserver ce document</a><br /><!-- $Id: expl_list.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<h3>
+	<span id='titre_exemplaires' class='titre_exemplaires'>
+		Exemplaires(5)
+	</span>
+</h3>
+	<!-- $Id: expl_table.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<table cellpadding='2' class='exemplaires' style='width:100%'>
+		<tr class='thead'>
+									<th class='expl_header_expl_cb'>Code-barres</th>
+						
+																																																																																																																																																																																																																																																																																					<th class='expl_header_expl_cote'>Cote</th>
+						
+																																																																																																																																																																																																																																																																																					<th class='expl_header_tdoc_libelle'>Support</th>
+						
+																																																																																																																																																																																																																																																																																					<th class='expl_header_location_libelle'>Localisation</th>
+						
+																																																																																																																																																																																																																																																																																					<th class='expl_header_section_libelle'>Section</th>
+						
+																																																																																																																																																																																																																																																																																<th class='expl_header_statut'>Disponibilité</th>
+	</tr>
+						<tr class='odd item_expl expl_unavailable'>
+																																			<td id='expl_1155' class='expl_cb'>
+							3678
+						</td>
+																																																																		<td class='expl_cote'>320.1 AMI</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliobus</td>
+																																													<td id='expl_1155' class='section_libelle'>
+															Albums Enfants
+													</td>
+																								<td class='expl_situation'><strong>Exclu du prêt</strong></td>
+
+																																																	</tr>
+					<tr class='even item_expl expl_unavailable'>
+																																			<td id='expl_1156' class='expl_cb'>
+							3679
+						</td>
+																																																																		<td class='expl_cote'>320.1 AMI</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliobus</td>
+																																													<td id='expl_1156' class='section_libelle'>
+															Albums Enfants
+													</td>
+																								<td class='expl_situation'><strong>Exclu du prêt</strong></td>
+
+																																																	</tr>
+					<tr class='odd item_expl expl_unavailable'>
+																																			<td id='expl_1157' class='expl_cb'>
+							3680
+						</td>
+																																																																		<td class='expl_cote'>320.1 AMI</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliobus</td>
+																																													<td id='expl_1157' class='section_libelle'>
+															Albums Enfants
+													</td>
+																								<td class='expl_situation'><strong>Exclu du prêt</strong></td>
+
+																																																	</tr>
+					<tr class='even item_expl expl_unavailable'>
+																																			<td id='expl_1158' class='expl_cb'>
+							3681
+						</td>
+																																																																		<td class='expl_cote'>320.1 AMI</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliobus</td>
+																																													<td id='expl_1158' class='section_libelle'>
+															Albums Enfants
+													</td>
+																								<td class='expl_situation'><strong>Exclu du prêt</strong></td>
+
+																																																	</tr>
+					<tr class='odd item_expl expl_available'>
+																																			<td id='expl_1159' class='expl_cb'>
+							876
+						</td>
+																																																																		<td class='expl_cote'>320.1 AMI</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliothèque principale</td>
+																																													<td id='expl_1159' class='section_libelle'>
+															Documentaires
+													</td>
+																								<td class='expl_situation'><strong>Disponible</strong></td>
+
+																																																	</tr>
+			</table></div><a href="./index.php?lvl=etagere_see&id=4"><span class='etagere-suite'>Voir la suite...</span></a></div></div>
+<div id='etagere_9' class='etagere' ><div id='etagere-titre'><h1><a href="./index.php?lvl=etagere_see&id=9">M&eacute;moires r&eacute;cents</a></h1></div>
+<div id='etagere-comment'><h2></h2></div><div id='etagere-notice-list'>
+			<div id="el1025Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el1025Img" title="détail" alt="détail" style='border:0px' onClick="expandBase('el1025', true);  return false;" hspace="3" /><img src="https://books.iiayaounde.com/opac_css/images/icon_l_16x16.gif" alt='Document: document &eacute;lectronique' title='Document: document &eacute;lectronique'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_1025"><span class="statutnot1" ></span><span  notice='1025'  class='header_title'>Amélioration de la politique de souscription des affaires facultatives dans la branche maritime et transports d'une société de réassurance</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=1649'>Valéry Florent Kotia</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Am%C3%A9lioration%20de%20la%20politique%20de%20souscription%20des%20affaires%20facultatives%20dans%20la%20branche%20maritime%20et%20transports%20d%27une%20soci%C3%A9t%C3%A9%20de%20r%C3%A9assurance&amp;rft.title=Am%C3%A9lioration%20de%20la%20politique%20de%20souscription%20des%20affaires%20facultatives%20dans%20la%20branche%20maritime%20et%20transports%20d%27une%20soci%C3%A9t%C3%A9%20de%20r%C3%A9assurance%20%3A%20Cas%20de%20continental%20Re-Bureau%20d%27Abidjan%20%28C%C3%B4te%20d%27Ivoire%29&amp;rft.tpages=78%20p.&amp;rft.date=2020&amp;rft_id=https%3A%2F%2Fbooks.iiayaounde.com%2Fscan_iia%2Fscan_lyd%2FAmelioration_Politique_KOTIA_VALERY_DESSA_0001.pdf&amp;rft.pub=Institut%20International%20des%20Assurances%20%28IIA%29&amp;rft.place=Yaound%C3%A9&amp;rft.au=Val%C3%A9ry%20Florent%20Kotia&amp;rft.au=koffi%20B%C3%A9ranger%20Kouadio&amp;rft.aulast=Kotia&amp;rft.aufirst=Val%C3%A9ry%20Florent'></span></span>
+			&nbsp;<span class='notice_link'>
+			<a href="https://books.iiayaounde.com/scan_iia/scan_lyd/Amelioration_Politique_KOTIA_VALERY_DESSA_0001.pdf" target="_blank" type='external_url_notice'>
+				<img src="https://books.iiayaounde.com/opac_css/images/globe.gif" style='border:0px' class='align_middle' hspace="3" alt="Ouvrir le lien " title="Ouvrir le lien " />
+			</a></span>
+	    		<br />
+				</div>
+				<div id="el1025Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='6bdadc468668af5334f1f35531b94aa1' datetime='1794731670'><table style='width:100%'><tr><td style='vertical-align:top'>
+		<ul id='onglets_isbd_public1025' class='onglets_isbd_public'>
+	  			<li id='onglet_public1025' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '1025'); return false;">Public</a></li>
+				<li id='onglet_isbd1025' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '1025'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public1025' style='display:block;'><table><tr class='tr_title'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>Amélioration de la politique de souscription des affaires facultatives dans la branche maritime et transports d'une société de réassurance&nbsp;: Cas de continental Re-Bureau d'Abidjan (Côte d'Ivoire)</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>document électronique</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=1649' >Valéry Florent Kotia</a>, Auteur ; <a href='./index.php?lvl=author_see&id=1650' >koffi Béranger Kouadio</a>, Directeur de la recherche</span></td>
+				</tr><tr class='tr_ed1'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=254' >Yaoundé [Cameroun] : Institut International des Assurances (IIA)</a></span></td>
+				</tr><tr class='tr_year'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_year'>2020</span></td>
+				</tr><tr class='tr_npages'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>78 p.</span></td>
+				</tr><tr class='tr_langues'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>)</span></td>
+				</tr><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=12' >Mémoires et rapports de stage soutenus à l'IIA:Mémoires :2016-2025</a><br /></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=5161' >368.06</a> <span></span></span></td>
+				</tr><tr class='tr_lien'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>En ligne : </span></td>
+					<td class='public_line_value'><span class='public_lien'><a href="https://books.iiayaounde.com/scan_iia/scan_lyd/Amelioration_Politique_KOTIA_VALERY_DESSA_0001.pdf" target="top" class='lien856' type="external_url_notice">https://books.iiayaounde.com/scan_iia/scan_lyd/Amelioration_Politique_KOTIA_VALE</a>&nbsp;[...]</span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd1025' style='display:none;'>Amélioration de la politique de souscription des affaires facultatives dans la branche maritime et transports d'une société de réassurance&nbsp;: Cas de continental Re-Bureau d'Abidjan (Côte d'Ivoire) [document électronique] / <a href='./index.php?lvl=author_see&id=1649' >Valéry Florent Kotia</a>, Auteur ; <a href='./index.php?lvl=author_see&id=1650' >koffi Béranger Kouadio</a>, Directeur de la recherche&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=254' >Yaoundé [Cameroun] : Institut International des Assurances (IIA)</a>, 2020&nbsp;.&nbsp;-&nbsp;78 p.<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=12' >Mémoires et rapports de stage soutenus à l'IIA:Mémoires :2016-2025</a><br /></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=5161' >368.06</a> <span></span></span></td>
+				</tr><tr class='tr_lien'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>En ligne : </span></td>
+					<td class='public_line_value'><span class='public_lien'><a href="https://books.iiayaounde.com/scan_iia/scan_lyd/Amelioration_Politique_KOTIA_VALERY_DESSA_0001.pdf" target="top" class='lien856' type="external_url_notice">https://books.iiayaounde.com/scan_iia/scan_lyd/Amelioration_Politique_KOTIA_VALE</a>&nbsp;[...]</span></td>
+				</tr></table></div></td><td class='align_right' style='vertical-align:top'><img class='vignetteimg align_right' src='https://books.iiayaounde.com/opac_css/images/vide.png' title="Am&eacute;lioration de la politique de souscription des affaires facultatives dans la branche maritime et transports d&#039;une soci&eacute;t&eacute; de r&eacute;assurance" hspace='4' vspace='2' vigurl="https://books.iiayaounde.com/opac_css/thumbnail.php?type=1&id=1025" alt='vignette' /></td></tr></table>
+					<h3>Réservation</h3><a href='#' onClick="if(confirm('Voulez-vous vraiment réserver ce document ?')){w=window.open('./do_resa.php?lvl=resa&id_notice=1025&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Réserver ce document</a> (Actuellement <b>1</b> réservation(s) en cours sur cet ouvrage)<br /><!-- $Id: expl_list.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<h3>
+	<span id='titre_exemplaires' class='titre_exemplaires'>
+		Exemplaires(1)
+	</span>
+</h3>
+	<!-- $Id: expl_table.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<table cellpadding='2' class='exemplaires' style='width:100%'>
+		<tr class='thead'>
+									<th class='expl_header_expl_cb'>Code-barres</th>
+						
+																																																																	<th class='expl_header_expl_cote'>Cote</th>
+						
+																																																																	<th class='expl_header_tdoc_libelle'>Support</th>
+						
+																																																																	<th class='expl_header_location_libelle'>Localisation</th>
+						
+																																																																	<th class='expl_header_section_libelle'>Section</th>
+						
+																																																												<th class='expl_header_statut'>Disponibilité</th>
+	</tr>
+						<tr class='odd item_expl expl_available'>
+																																			<td id='expl_1377' class='expl_cb'>
+							1077
+						</td>
+																																																																		<td class='expl_cote'>368.06 KOT</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliothèque principale</td>
+																																													<td id='expl_1377' class='section_libelle'>
+															Documentaires
+													</td>
+																								<td class='expl_situation'><strong>Disponible</strong></td>
+
+																																																	</tr>
+			</table></div>
+			<div id="el910Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el910Img" title="détail" alt="détail" style='border:0px' onClick="expandBase('el910', true);  return false;" hspace="3" /><img src="https://books.iiayaounde.com/opac_css/images/icon_l_16x16.gif" alt='Document: document &eacute;lectronique' title='Document: document &eacute;lectronique'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_910"><span class="statutnot1" ></span><span  notice='910'  class='header_title'>Analyse de l'activité et de la solvabilité d'une compagnie d'assurance non-vie</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=1462'>Hamet Sylla</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Analyse%20de%20l%27activit%C3%A9%20et%20de%20la%20solvabilit%C3%A9%20d%27une%20compagnie%20d%27assurance%20non-vie&amp;rft.title=Analyse%20de%20l%27activit%C3%A9%20et%20de%20la%20solvabilit%C3%A9%20d%27une%20compagnie%20d%27assurance%20non-vie%20%3A%20cas%20de%20les%20assurances%20Bleues-CNAR&amp;rft.tpages=67%20p.&amp;rft.date=2020&amp;rft_id=https%3A%2F%2Fbooks.iiayaounde.com%2Fscan_iia%2Fscan_lyd%2FAnalyse_Activite_Solvabilite_SYLLA_HAMET_MSTA_0001.pdf&amp;rft.pub=Institut%20International%20des%20Assurances%20%28IIA%29&amp;rft.place=Yaound%C3%A9&amp;rft.au=Hamet%20Sylla&amp;rft.au=Daouda%20Dioh&amp;rft.aulast=Sylla&amp;rft.aufirst=Hamet'></span></span>
+			&nbsp;<span class='notice_link'>
+			<a href="https://books.iiayaounde.com/scan_iia/scan_lyd/Analyse_Activite_Solvabilite_SYLLA_HAMET_MSTA_0001.pdf" target="_blank" type='external_url_notice'>
+				<img src="https://books.iiayaounde.com/opac_css/images/globe.gif" style='border:0px' class='align_middle' hspace="3" alt="Ouvrir le lien " title="Ouvrir le lien " />
+			</a></span>
+	    		<br />
+				</div>
+				<div id="el910Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='be3777f9252ef9bde17e01b6bc65d8fc' datetime='1794731670'><table style='width:100%'><tr><td style='vertical-align:top'>
+		<ul id='onglets_isbd_public910' class='onglets_isbd_public'>
+	  			<li id='onglet_public910' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '910'); return false;">Public</a></li>
+				<li id='onglet_isbd910' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '910'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public910' style='display:block;'><table><tr class='tr_title'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>Analyse de l'activité et de la solvabilité d'une compagnie d'assurance non-vie&nbsp;: cas de les assurances Bleues-CNAR</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>document électronique</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=1462' >Hamet Sylla</a>, Auteur ; <a href='./index.php?lvl=author_see&id=1463' >Daouda Dioh</a>, Directeur de la recherche</span></td>
+				</tr><tr class='tr_ed1'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=254' >Yaoundé [Cameroun] : Institut International des Assurances (IIA)</a></span></td>
+				</tr><tr class='tr_year'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_year'>2020</span></td>
+				</tr><tr class='tr_npages'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>67 p.</span></td>
+				</tr><tr class='tr_langues'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>)</span></td>
+				</tr><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=12' >Mémoires et rapports de stage soutenus à l'IIA:Mémoires :2016-2025</a><br /></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=5161' >368.06</a> <span></span></span></td>
+				</tr><tr class='tr_lien'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>En ligne : </span></td>
+					<td class='public_line_value'><span class='public_lien'><a href="https://books.iiayaounde.com/scan_iia/scan_lyd/Analyse_Activite_Solvabilite_SYLLA_HAMET_MSTA_0001.pdf" target="top" class='lien856' type="external_url_notice">https://books.iiayaounde.com/scan_iia/scan_lyd/Analyse_Activite_Solvabilite_SYLL</a>&nbsp;[...]</span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd910' style='display:none;'>Analyse de l'activité et de la solvabilité d'une compagnie d'assurance non-vie&nbsp;: cas de les assurances Bleues-CNAR [document électronique] / <a href='./index.php?lvl=author_see&id=1462' >Hamet Sylla</a>, Auteur ; <a href='./index.php?lvl=author_see&id=1463' >Daouda Dioh</a>, Directeur de la recherche&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=254' >Yaoundé [Cameroun] : Institut International des Assurances (IIA)</a>, 2020&nbsp;.&nbsp;-&nbsp;67 p.<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=12' >Mémoires et rapports de stage soutenus à l'IIA:Mémoires :2016-2025</a><br /></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=5161' >368.06</a> <span></span></span></td>
+				</tr><tr class='tr_lien'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>En ligne : </span></td>
+					<td class='public_line_value'><span class='public_lien'><a href="https://books.iiayaounde.com/scan_iia/scan_lyd/Analyse_Activite_Solvabilite_SYLLA_HAMET_MSTA_0001.pdf" target="top" class='lien856' type="external_url_notice">https://books.iiayaounde.com/scan_iia/scan_lyd/Analyse_Activite_Solvabilite_SYLL</a>&nbsp;[...]</span></td>
+				</tr></table></div></td><td class='align_right' style='vertical-align:top'><img class='vignetteimg align_right' src='https://books.iiayaounde.com/opac_css/images/vide.png' title="Analyse de l&#039;activit&eacute; et de la solvabilit&eacute; d&#039;une compagnie d&#039;assurance non-vie" hspace='4' vspace='2' vigurl="https://books.iiayaounde.com/opac_css/thumbnail.php?type=1&id=910" alt='vignette' /></td></tr></table>
+					<h3>Réservation</h3><a href='#' onClick="if(confirm('Voulez-vous vraiment réserver ce document ?')){w=window.open('./do_resa.php?lvl=resa&id_notice=910&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Réserver ce document</a><br /><!-- $Id: expl_list.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<h3>
+	<span id='titre_exemplaires' class='titre_exemplaires'>
+		Exemplaires(1)
+	</span>
+</h3>
+	<!-- $Id: expl_table.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<table cellpadding='2' class='exemplaires' style='width:100%'>
+		<tr class='thead'>
+									<th class='expl_header_expl_cb'>Code-barres</th>
+						
+																																																																	<th class='expl_header_expl_cote'>Cote</th>
+						
+																																																																	<th class='expl_header_tdoc_libelle'>Support</th>
+						
+																																																																	<th class='expl_header_location_libelle'>Localisation</th>
+						
+																																																																	<th class='expl_header_section_libelle'>Section</th>
+						
+																																																												<th class='expl_header_statut'>Disponibilité</th>
+	</tr>
+						<tr class='odd item_expl expl_available'>
+																																			<td id='expl_1244' class='expl_cb'>
+							949
+						</td>
+																																																																		<td class='expl_cote'>368.06 SYL</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliothèque principale</td>
+																																													<td id='expl_1244' class='section_libelle'>
+															Documentaires
+													</td>
+																								<td class='expl_situation'><strong>Disponible</strong></td>
+
+																																																	</tr>
+			</table></div>
+			<div id="el1139Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el1139Img" title="détail" alt="détail" style='border:0px' onClick="expandBase('el1139', true);  return false;" hspace="3" /><img src="https://books.iiayaounde.com/opac_css/images/icon_l_16x16.gif" alt='Document: document &eacute;lectronique' title='Document: document &eacute;lectronique'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_1139"><span class="statutnot1" ></span><span  notice='1139'  class='header_title'>Analyse et gestion des risques menaçant la solidité financière et compromettant la rentabilité d'une société vie</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=1816'>Simon Boton Yétondé</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Analyse%20et%20gestion%20des%20risques%20mena%C3%A7ant%20la%20solidit%C3%A9%20financi%C3%A8re%20et%20compromettant%20la%20rentabilit%C3%A9%20d%27une%20soci%C3%A9t%C3%A9%20vie&amp;rft.title=Analyse%20et%20gestion%20des%20risques%20mena%C3%A7ant%20la%20solidit%C3%A9%20financi%C3%A8re%20et%20compromettant%20la%20rentabilit%C3%A9%20d%27une%20soci%C3%A9t%C3%A9%20vie&amp;rft.tpages=85%20p.&amp;rft_id=https%3A%2F%2Fbooks.iiayaounde.com%2Fscan_iia%2Fscan_lyd%2FAnalyse_Gestion_SIMON_YETONDE_BOTON_Master_Actuariat_0001.pdf&amp;rft.pub=Institut%20International%20des%20Assurances%20%28IIA%29&amp;rft.place=Yaound%C3%A9&amp;rft.au=Simon%20Boton%20Y%C3%A9tond%C3%A9&amp;rft.au=Aymric%20Kamega&amp;rft.aulast=Boton%20Y%C3%A9tond%C3%A9&amp;rft.aufirst=Simon'></span></span>
+			&nbsp;<span class='notice_link'>
+			<a href="https://books.iiayaounde.com/scan_iia/scan_lyd/Analyse_Gestion_SIMON_YETONDE_BOTON_Master_Actuariat_0001.pdf" target="_blank" type='external_url_notice'>
+				<img src="https://books.iiayaounde.com/opac_css/images/globe.gif" style='border:0px' class='align_middle' hspace="3" alt="Ouvrir le lien " title="Ouvrir le lien " />
+			</a></span>
+	    		<br />
+				</div>
+				<div id="el1139Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='29dd14f236deef510b5142f8372228a7' datetime='1794731670'><table style='width:100%'><tr><td style='vertical-align:top'>
+		<ul id='onglets_isbd_public1139' class='onglets_isbd_public'>
+	  			<li id='onglet_public1139' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '1139'); return false;">Public</a></li>
+				<li id='onglet_isbd1139' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '1139'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public1139' style='display:block;'><table><tr class='tr_title'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>Analyse et gestion des risques menaçant la solidité financière et compromettant la rentabilité d'une société vie</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>document électronique</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=1816' >Simon Boton Yétondé</a>, Auteur ; <a href='./index.php?lvl=author_see&id=1787' >Aymric Kamega</a>, Directeur de la recherche</span></td>
+				</tr><tr class='tr_ed1'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=254' >Yaoundé [Cameroun] : Institut International des Assurances (IIA)</a></span></td>
+				</tr><tr class='tr_npages'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>85 p.</span></td>
+				</tr><tr class='tr_langues'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>)</span></td>
+				</tr><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=12' >Mémoires et rapports de stage soutenus à l'IIA:Mémoires :2016-2025</a><br /></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=5161' >368.06</a> <span></span></span></td>
+				</tr><tr class='tr_lien'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>En ligne : </span></td>
+					<td class='public_line_value'><span class='public_lien'><a href="https://books.iiayaounde.com/scan_iia/scan_lyd/Analyse_Gestion_SIMON_YETONDE_BOTON_Master_Actuariat_0001.pdf" target="top" class='lien856' type="external_url_notice">https://books.iiayaounde.com/scan_iia/scan_lyd/Analyse_Gestion_SIMON_YETONDE_BOT</a>&nbsp;[...]</span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd1139' style='display:none;'>Analyse et gestion des risques menaçant la solidité financière et compromettant la rentabilité d'une société vie [document électronique] / <a href='./index.php?lvl=author_see&id=1816' >Simon Boton Yétondé</a>, Auteur ; <a href='./index.php?lvl=author_see&id=1787' >Aymric Kamega</a>, Directeur de la recherche&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=254' >Yaoundé [Cameroun] : Institut International des Assurances (IIA)</a>, [s.d.]&nbsp;.&nbsp;-&nbsp;85 p.<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=12' >Mémoires et rapports de stage soutenus à l'IIA:Mémoires :2016-2025</a><br /></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=5161' >368.06</a> <span></span></span></td>
+				</tr><tr class='tr_lien'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>En ligne : </span></td>
+					<td class='public_line_value'><span class='public_lien'><a href="https://books.iiayaounde.com/scan_iia/scan_lyd/Analyse_Gestion_SIMON_YETONDE_BOTON_Master_Actuariat_0001.pdf" target="top" class='lien856' type="external_url_notice">https://books.iiayaounde.com/scan_iia/scan_lyd/Analyse_Gestion_SIMON_YETONDE_BOT</a>&nbsp;[...]</span></td>
+				</tr></table></div></td><td class='align_right' style='vertical-align:top'><img class='vignetteimg align_right' src='https://books.iiayaounde.com/opac_css/images/vide.png' title="Analyse et gestion des risques mena&ccedil;ant la solidit&eacute; financi&egrave;re et compromettant la rentabilit&eacute; d&#039;une soci&eacute;t&eacute; vie" hspace='4' vspace='2' vigurl="https://books.iiayaounde.com/opac_css/thumbnail.php?type=1&id=1139" alt='vignette' /></td></tr></table>
+					<h3>Réservation</h3><a href='#' onClick="if(confirm('Voulez-vous vraiment réserver ce document ?')){w=window.open('./do_resa.php?lvl=resa&id_notice=1139&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Réserver ce document</a><br /><!-- $Id: expl_list.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<h3>
+	<span id='titre_exemplaires' class='titre_exemplaires'>
+		Exemplaires(1)
+	</span>
+</h3>
+	<!-- $Id: expl_table.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<table cellpadding='2' class='exemplaires' style='width:100%'>
+		<tr class='thead'>
+									<th class='expl_header_expl_cb'>Code-barres</th>
+						
+																																																																	<th class='expl_header_expl_cote'>Cote</th>
+						
+																																																																	<th class='expl_header_tdoc_libelle'>Support</th>
+						
+																																																																	<th class='expl_header_location_libelle'>Localisation</th>
+						
+																																																																	<th class='expl_header_section_libelle'>Section</th>
+						
+																																																												<th class='expl_header_statut'>Disponibilité</th>
+	</tr>
+						<tr class='odd item_expl expl_available'>
+																																			<td id='expl_1532' class='expl_cb'>
+							1236
+						</td>
+																																																																		<td class='expl_cote'>368.06 BOT</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliothèque principale</td>
+																																													<td id='expl_1532' class='section_libelle'>
+															Documentaires
+													</td>
+																								<td class='expl_situation'><strong>Disponible</strong></td>
+
+																																																	</tr>
+			</table></div>
+			<div id="el911Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el911Img" title="détail" alt="détail" style='border:0px' onClick="expandBase('el911', true);  return false;" hspace="3" /><img src="https://books.iiayaounde.com/opac_css/images/icon_l_16x16.gif" alt='Document: document &eacute;lectronique' title='Document: document &eacute;lectronique'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_911"><span class="statutnot1" ></span><span  notice='911'  class='header_title'>Analyse et optimisation du portefeuille risque divers</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=1464'>Lou Liaman Myriam Raissa Dobo</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Analyse%20et%20optimisation%20du%20portefeuille%20risque%20divers&amp;rft.title=Analyse%20et%20optimisation%20du%20portefeuille%20risque%20divers%20%3A%20cas%20de%20assurances%20COMAR%20C%C3%B4te%20d%27Ivoire&amp;rft.tpages=46%20p.&amp;rft.date=2020&amp;rft_id=https%3A%2F%2Fbooks.iiayaounde.com%2Fscan_iia%2Fscan_lyd%2FAnalyse_Optimisation_Portefeuille_DOBO_LOU_MSTA_0001.pdf&amp;rft.pub=Institut%20International%20des%20Assurances%20%28IIA%29&amp;rft.place=Yaound%C3%A9&amp;rft.au=Lou%20Liaman%20Myriam%20Raissa%20Dobo&amp;rft.au=Angoua%20Amoikon&amp;rft.aulast=Dobo&amp;rft.aufirst=Lou%20Liaman%20Myriam%20Raissa'></span></span>
+			&nbsp;<span class='notice_link'>
+			<a href="https://books.iiayaounde.com/scan_iia/scan_lyd/Analyse_Optimisation_Portefeuille_DOBO_LOU_MSTA_0001.pdf" target="_blank" type='external_url_notice'>
+				<img src="https://books.iiayaounde.com/opac_css/images/globe.gif" style='border:0px' class='align_middle' hspace="3" alt="Ouvrir le lien " title="Ouvrir le lien " />
+			</a></span>
+	    		<br />
+				</div>
+				<div id="el911Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='b3119b23c63141a30c8c144ee2238059' datetime='1794731670'><table style='width:100%'><tr><td style='vertical-align:top'>
+		<ul id='onglets_isbd_public911' class='onglets_isbd_public'>
+	  			<li id='onglet_public911' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '911'); return false;">Public</a></li>
+				<li id='onglet_isbd911' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '911'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public911' style='display:block;'><table><tr class='tr_title'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>Analyse et optimisation du portefeuille risque divers&nbsp;: cas de assurances COMAR Côte d'Ivoire</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>document électronique</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=1464' >Lou Liaman Myriam Raissa Dobo</a>, Auteur ; <a href='./index.php?lvl=author_see&id=1465' >Angoua Amoikon</a>, Directeur de la recherche</span></td>
+				</tr><tr class='tr_ed1'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=254' >Yaoundé [Cameroun] : Institut International des Assurances (IIA)</a></span></td>
+				</tr><tr class='tr_year'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_year'>2020</span></td>
+				</tr><tr class='tr_npages'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>46 p.</span></td>
+				</tr><tr class='tr_langues'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>)</span></td>
+				</tr><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=12' >Mémoires et rapports de stage soutenus à l'IIA:Mémoires :2016-2025</a><br /></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=5161' >368.06</a> <span></span></span></td>
+				</tr><tr class='tr_lien'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>En ligne : </span></td>
+					<td class='public_line_value'><span class='public_lien'><a href="https://books.iiayaounde.com/scan_iia/scan_lyd/Analyse_Optimisation_Portefeuille_DOBO_LOU_MSTA_0001.pdf" target="top" class='lien856' type="external_url_notice">https://books.iiayaounde.com/scan_iia/scan_lyd/Analyse_Optimisation_Portefeuille</a>&nbsp;[...]</span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd911' style='display:none;'>Analyse et optimisation du portefeuille risque divers&nbsp;: cas de assurances COMAR Côte d'Ivoire [document électronique] / <a href='./index.php?lvl=author_see&id=1464' >Lou Liaman Myriam Raissa Dobo</a>, Auteur ; <a href='./index.php?lvl=author_see&id=1465' >Angoua Amoikon</a>, Directeur de la recherche&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=254' >Yaoundé [Cameroun] : Institut International des Assurances (IIA)</a>, 2020&nbsp;.&nbsp;-&nbsp;46 p.<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=12' >Mémoires et rapports de stage soutenus à l'IIA:Mémoires :2016-2025</a><br /></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=5161' >368.06</a> <span></span></span></td>
+				</tr><tr class='tr_lien'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>En ligne : </span></td>
+					<td class='public_line_value'><span class='public_lien'><a href="https://books.iiayaounde.com/scan_iia/scan_lyd/Analyse_Optimisation_Portefeuille_DOBO_LOU_MSTA_0001.pdf" target="top" class='lien856' type="external_url_notice">https://books.iiayaounde.com/scan_iia/scan_lyd/Analyse_Optimisation_Portefeuille</a>&nbsp;[...]</span></td>
+				</tr></table></div></td><td class='align_right' style='vertical-align:top'><img class='vignetteimg align_right' src='https://books.iiayaounde.com/opac_css/images/vide.png' title="Analyse et optimisation du portefeuille risque divers" hspace='4' vspace='2' vigurl="https://books.iiayaounde.com/opac_css/thumbnail.php?type=1&id=911" alt='vignette' /></td></tr></table>
+					<h3>Réservation</h3><a href='#' onClick="if(confirm('Voulez-vous vraiment réserver ce document ?')){w=window.open('./do_resa.php?lvl=resa&id_notice=911&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Réserver ce document</a><br /><!-- $Id: expl_list.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<h3>
+	<span id='titre_exemplaires' class='titre_exemplaires'>
+		Exemplaires(1)
+	</span>
+</h3>
+	<!-- $Id: expl_table.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<table cellpadding='2' class='exemplaires' style='width:100%'>
+		<tr class='thead'>
+									<th class='expl_header_expl_cb'>Code-barres</th>
+						
+																																																																	<th class='expl_header_expl_cote'>Cote</th>
+						
+																																																																	<th class='expl_header_tdoc_libelle'>Support</th>
+						
+																																																																	<th class='expl_header_location_libelle'>Localisation</th>
+						
+																																																																	<th class='expl_header_section_libelle'>Section</th>
+						
+																																																												<th class='expl_header_statut'>Disponibilité</th>
+	</tr>
+						<tr class='odd item_expl expl_available'>
+																																			<td id='expl_1245' class='expl_cb'>
+							1000
+						</td>
+																																																																		<td class='expl_cote'>368.06 DOB</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliothèque principale</td>
+																																													<td id='expl_1245' class='section_libelle'>
+															Documentaires
+													</td>
+																								<td class='expl_situation'><strong>Disponible</strong></td>
+
+																																																	</tr>
+			</table></div>
+			<div id="el1138Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el1138Img" title="détail" alt="détail" style='border:0px' onClick="expandBase('el1138', true);  return false;" hspace="3" /><img src="https://books.iiayaounde.com/opac_css/images/icon_l_16x16.gif" alt='Document: document &eacute;lectronique' title='Document: document &eacute;lectronique'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_1138"><span class="statutnot1" ></span><span  notice='1138'  class='header_title'>Analyse et optimisation de la rentabilité de la branche responsabilité civile générale</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=1814'>Salomon Dibi N'guessan</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Analyse%20et%20optimisation%20de%20la%20rentabilit%C3%A9%20de%20la%20branche%20responsabilit%C3%A9%20civile%20g%C3%A9n%C3%A9rale&amp;rft.title=Analyse%20et%20optimisation%20de%20la%20rentabilit%C3%A9%20de%20la%20branche%20responsabilit%C3%A9%20civile%20g%C3%A9n%C3%A9rale&amp;rft.tpages=99%20p.&amp;rft.date=2021&amp;rft_id=https%3A%2F%2Fbooks.iiayaounde.com%2Fscan_iia%2Fscan_lyd%2FAnalyse_Optimisation_DIBI_NGUESSAN_Master_Actuariat_0001.pdf&amp;rft.pub=Institut%20International%20des%20Assurances%20%28IIA%29&amp;rft.place=Yaound%C3%A9&amp;rft.au=Salomon%20Dibi%20N%27guessan&amp;rft.au=Eric%20Maniable&amp;rft.aulast=Dibi%20N%27guessan&amp;rft.aufirst=Salomon'></span></span>
+			&nbsp;<span class='notice_link'>
+			<a href="https://books.iiayaounde.com/scan_iia/scan_lyd/Analyse_Optimisation_DIBI_NGUESSAN_Master_Actuariat_0001.pdf" target="_blank" type='external_url_notice'>
+				<img src="https://books.iiayaounde.com/opac_css/images/globe.gif" style='border:0px' class='align_middle' hspace="3" alt="Ouvrir le lien " title="Ouvrir le lien " />
+			</a></span>
+	    		<br />
+				</div>
+				<div id="el1138Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='2929003d99b0482e890954fe7a81d455' datetime='1794731670'><table style='width:100%'><tr><td style='vertical-align:top'>
+		<ul id='onglets_isbd_public1138' class='onglets_isbd_public'>
+	  			<li id='onglet_public1138' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '1138'); return false;">Public</a></li>
+				<li id='onglet_isbd1138' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '1138'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public1138' style='display:block;'><table><tr class='tr_title'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>Analyse et optimisation de la rentabilité de la branche responsabilité civile générale</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>document électronique</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=1814' >Salomon Dibi N'guessan</a>, Auteur ; <a href='./index.php?lvl=author_see&id=1776' >Eric Maniable</a>, Directeur de la recherche</span></td>
+				</tr><tr class='tr_ed1'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=254' >Yaoundé [Cameroun] : Institut International des Assurances (IIA)</a></span></td>
+				</tr><tr class='tr_year'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_year'>2021</span></td>
+				</tr><tr class='tr_npages'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>99 p.</span></td>
+				</tr><tr class='tr_langues'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>)</span></td>
+				</tr><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=12' >Mémoires et rapports de stage soutenus à l'IIA:Mémoires :2016-2025</a><br /></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=5161' >368.06</a> <span></span></span></td>
+				</tr><tr class='tr_lien'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>En ligne : </span></td>
+					<td class='public_line_value'><span class='public_lien'><a href="https://books.iiayaounde.com/scan_iia/scan_lyd/Analyse_Optimisation_DIBI_NGUESSAN_Master_Actuariat_0001.pdf" target="top" class='lien856' type="external_url_notice">https://books.iiayaounde.com/scan_iia/scan_lyd/Analyse_Optimisation_DIBI_NGUESSA</a>&nbsp;[...]</span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd1138' style='display:none;'>Analyse et optimisation de la rentabilité de la branche responsabilité civile générale [document électronique] / <a href='./index.php?lvl=author_see&id=1814' >Salomon Dibi N'guessan</a>, Auteur ; <a href='./index.php?lvl=author_see&id=1776' >Eric Maniable</a>, Directeur de la recherche&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=254' >Yaoundé [Cameroun] : Institut International des Assurances (IIA)</a>, 2021&nbsp;.&nbsp;-&nbsp;99 p.<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=12' >Mémoires et rapports de stage soutenus à l'IIA:Mémoires :2016-2025</a><br /></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=5161' >368.06</a> <span></span></span></td>
+				</tr><tr class='tr_lien'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>En ligne : </span></td>
+					<td class='public_line_value'><span class='public_lien'><a href="https://books.iiayaounde.com/scan_iia/scan_lyd/Analyse_Optimisation_DIBI_NGUESSAN_Master_Actuariat_0001.pdf" target="top" class='lien856' type="external_url_notice">https://books.iiayaounde.com/scan_iia/scan_lyd/Analyse_Optimisation_DIBI_NGUESSA</a>&nbsp;[...]</span></td>
+				</tr></table></div></td><td class='align_right' style='vertical-align:top'><img class='vignetteimg align_right' src='https://books.iiayaounde.com/opac_css/images/vide.png' title="Analyse et optimisation de la rentabilit&eacute; de la branche responsabilit&eacute; civile g&eacute;n&eacute;rale" hspace='4' vspace='2' vigurl="https://books.iiayaounde.com/opac_css/thumbnail.php?type=1&id=1138" alt='vignette' /></td></tr></table>
+					<h3>Réservation</h3><a href='#' onClick="if(confirm('Voulez-vous vraiment réserver ce document ?')){w=window.open('./do_resa.php?lvl=resa&id_notice=1138&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Réserver ce document</a><br /><!-- $Id: expl_list.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<h3>
+	<span id='titre_exemplaires' class='titre_exemplaires'>
+		Exemplaires(1)
+	</span>
+</h3>
+	<!-- $Id: expl_table.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<table cellpadding='2' class='exemplaires' style='width:100%'>
+		<tr class='thead'>
+									<th class='expl_header_expl_cb'>Code-barres</th>
+						
+																																																																	<th class='expl_header_expl_cote'>Cote</th>
+						
+																																																																	<th class='expl_header_tdoc_libelle'>Support</th>
+						
+																																																																	<th class='expl_header_location_libelle'>Localisation</th>
+						
+																																																																	<th class='expl_header_section_libelle'>Section</th>
+						
+																																																												<th class='expl_header_statut'>Disponibilité</th>
+	</tr>
+						<tr class='odd item_expl expl_available'>
+																																			<td id='expl_1531' class='expl_cb'>
+							1235
+						</td>
+																																																																		<td class='expl_cote'>368.06 DIB</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliothèque principale</td>
+																																													<td id='expl_1531' class='section_libelle'>
+															Documentaires
+													</td>
+																								<td class='expl_situation'><strong>Disponible</strong></td>
+
+																																																	</tr>
+			</table></div><a href="./index.php?lvl=etagere_see&id=9"><span class='etagere-suite'>Voir la suite...</span></a></div></div></div><!-- fin id='etagere-container' class='etagere-container' --></div>
+		</div><!-- fin DIV main_hors_footer --><div id="footer">
+
+<span id="footer_rss">
+	
+</span>
+<span id="footer_link_sup">
+		<a href="./index.php?lvl=infopages&amp;pagesid=7">Mentions légales</a> &nbsp;
+</span>
+
+<span id="footer_link_website">
+	<a class="footer_biblio_name" href="http://www.books.iiayaounde.com" title="Bibliothèque de l'IIA">Bibliothèque de l'IIA</a> &nbsp;
+</span>
+
+<span id="footer_link_pmb">
+<!--<a href=http://www.google.fr target=_blank>Faire une recherche avec Google</a>--> &nbsp;
+		<a class="lien_pmb_footer" href="https://www.sigb.net" title="...une solution libre pour la médiathèque..." target='_blank'>pmb</a>
+</span>
+
+</div> 
+
+		</div><!-- /div id=main -->
+
+		<div id="intro">
+<div id="intro_bibli">
+			<h3>Bibliothèque de l'IIA</h3>
+			<div class="p1"><img src="./styles/iia/images/image1.jpg" />
+<img src="./styles/iia/images/image2.jpg" />
+</div>
+			<div class="p2"><ul id="menuDeroulant">
+
+<li><a href="./index.php">Accueil</a></li>
+<!--<li><a href="./index.php?lvl=infopages&amp;pagesid=4"></a></li>-->
+<li><a href="./index.php?lvl=infopages&amp;pagesid=1">Actualités de la bibliothèque de l'IIA</a>
+<li><a href="./index.php?lvl=infopages&amp;pagesid=6">Nous trouver</a></li>
+<ul class="sousMenu">
+<!---<li><a href="./index.php?lvl=infopages&amp;pagesid=3">Aide en ligne</a></li>--->
+<!---<li><a href="./index.php?lvl=infopages&amp;pagesid=2">Version 7.3 !</a></li>
+</ul>--->
+</li>
+</ul></div>
+			</div>
+		</div><!-- /div id=intro -->
+		<div id="bandeau"><!-- $Id: accessibility.tpl.html,v 1.2.4.1 2023/10/02 14:33:32 jparis Exp $ -->
+
+
+<div id="accessibility">
+    	<input type="hidden" id="opacAccessibility" name="opacAccessibility" value="1"/>
+	<ul class="accessibility_font_size">
+		<li class="accessibility_font_size_small">
+			<a href="javascript:accessibilityFontSize(1);" title="Réduire le texte">A-</a>
+		</li>
+		<li class="accessibility_font_size_normal">
+			<a href="javascript:accessibilityFontSize(0);" title="Réinitialiser le texte">A</a>
+		</li>
+		<li class="accessibility_font_size_big">
+			<a href="javascript:accessibilityFontSize(2);" title="Agrandir le texte">A+</a>
+		</li>
+	</ul>
+</div>
+
+
+<script type="text/javascript" src="./includes/javascript/accessibility.js"></script>
+
+
+<div id="accueil">
+
+<h3><span onclick='document.location="./index.php?"' style='cursor: pointer;'>Accueil</span></h3>
+<p class="centered"><a href='./index.php?'><img src='images/site/livre.png' alt='Accueil'  style='border:0px' class='center'/></a></p>
+<div id='lang_select'><h3 ><span>Sélection de la langue</span></h3><form method="post" action="" ><select name="lang_sel" onchange="this.form.submit();"><option value='fr_FR' selected>Français </option><option value='it_IT'>Italiano</option><option value='es_ES'>Español</option><option value='ca_ES'>Català</option><option value='en_UK'>English (UK)</option><option value='nl_NL'>Nederlands</option><option value='oc_FR'>Occitan</option></select></form></div>
+
+					</div><!-- fermeture #accueil -->
+<div id="connexion">
+
+			<h3 class="login_invite">Se connecter</h3><div id='login_form'><form action='' method='post' name='myform' data-csrf='true'><label>accéder à votre compte de lecteur</label><br />
+				<input type='text' name='login' class='login' size='14' placeholder='identifiant' ><br />
+                <div class='myform-password-text-visually'>
+                    <input type='password' id='myform-password' name='password' class='password' size='8' placeholder='Mot de passe' value=''/>
+                    <button type='button' class='fa fa-eye' id='myform-password-visually' onclick='toggle_password(this, "myform-password");' title='Afficher ou masquer le mot de passe'></button>
+                </div>
+                <input type='hidden' name='force_login' value='1'/>
+				<input type='submit' name='ok' value='ok' class='bouton'></form><a  class='mdp_forgotten' href='./askmdp.php'>Mot de passe oublié ?</a><br /><a class='subs_not_yet_subscriber' href='./subscribe.php'>Pas encore inscrit ?</a></div>
+
+			</div><!-- fermeture #connexion -->
+<div id="adresse">
+
+		<h3>Adresse</h3>
+
+		<span>
+			Bibliothèque de l'IIA<br />
+			Yaoundé, Titi garage-Cameroun
+BP 1575<br />
+			 Yaoundé<br />
+			Cameroun&nbsp;<br />
+			+237 222 207 152<br /><span id='opac_biblio_email'>
+			<a href="mailto:books@iiayaounde.com" title="books@iiayaounde.com">contact</a></span></span>
+	    </div><!-- fermeture #adresse --></div><div id="bandeau_2"></div></div><!-- /div id=container -->
+		
+		<script type='text/javascript'>init_drag();	//rechercher!!</script>
+		
+			<script type="text/javascript">
+				var tarteaucitron_messages = pmbDojo.messages.getMessages("tarteaucitron");
+				if(tarteaucitron_messages.length) {
+					tarteaucitronCustomText = {};
+					tarteaucitron_messages.forEach(function(message) {
+						if(parseInt(message.code.indexOf(":")) !== -1) {
+							let tarteaucitron_messages_group = message.code.split(":");
+							if(typeof tarteaucitronCustomText[tarteaucitron_messages_group[0]] == "undefined") {
+								tarteaucitronCustomText[tarteaucitron_messages_group[0]] = {};
+							}
+							tarteaucitronCustomText[tarteaucitron_messages_group[0]][tarteaucitron_messages_group[1]] = message.message;
+						} else {
+							tarteaucitronCustomText[message.code] = message.message;
+						}
+					});
+				}
+			</script>
+			<script type="text/javascript" src="./includes/javascript/tarteaucitron/tarteaucitron.js"></script>
+		<script type="text/javascript">
+	        tarteaucitron.init({
+	    	  "privacyUrl": "", /* Privacy policy url */
+	
+	    	  "hashtag": "#PhpMyBibli-COOKIECONSENT", /* Open the panel with this hashtag */
+	    	  "cookieName": "PhpMyBibli-COOKIECONSENT", /* Cookie name */
+	    
+	    	  "orientation": "bottom", /* Banner position (top - bottom - popup) */
+	       
+	          "groupServices": true, /* Group services by category */
+	                           
+	    	  "showAlertSmall": false, /* Show the small banner on bottom right */
+	    	  "cookieslist": false, /* Show the cookie list */
+				                           
+	          "closePopup": false, /* Show a close X on the banner */
+	
+	          "showIcon": false, /* Show cookie icon to manage cookies */
+	          "iconSrc": "./images/cookie.png", /* Optionnal: URL or base64 encoded image */
+	          "iconPosition": "BottomRight", /* BottomRight, BottomLeft, TopRight and TopLeft */
+	
+	    	  "adblocker": false, /* Show a Warning if an adblocker is detected */
+	                           
+	          "DenyAllCta" : true, /* Show the deny all button */
+	          "AcceptAllCta" : true, /* Show the accept all button when highPrivacy on */
+	          "highPrivacy": true, /* HIGHLY RECOMMANDED Disable auto consent */
+	                           
+	    	  "handleBrowserDNTRequest": false, /* If Do Not Track == 1, disallow all */
+	
+	    	  "removeCredit": true, /* Remove credit link */
+	    	  "moreInfoLink": false, /* Show more info link */
+	
+	          "useExternalCss": false, /* If false, the tarteaucitron.css file will be loaded */
+	          "useExternalJs": false, /* If false, the tarteaucitron.js file will be loaded */
+				
+	    	  //"cookieDomain": ".my-multisite-domaine.fr", /* Shared cookie for multisite */
+	                          
+	          "readmoreLink": "", /* Change the default readmore link */
+	
+	          "mandatory": true, /* Show a message about mandatory cookies */
+	        });
+ 
+        </script>
+		<script type="text/javascript">
+		tarteaucitron.services.pmbstatopac = {
+		  	"key": "pmbstatopac",
+			"type": "analytic",
+			"name": "PMB (Statistiques)",
+			"needConsent": true,
+			"cookies": [],
+			"uri": "https://books.iiayaounde.com/opac_css/",
+			"readmoreLink": "", // If you want to change readmore link
+			"js": function () {
+			    "use strict";
+			    // When user allow cookie
+		  	},
+		  	"fallback": function () {
+		    	"use strict";
+		    	// when use deny cookie
+		  	}
+		};
+		</script>
+		<script type="text/javascript">
+        	(tarteaucitron.job = tarteaucitron.job || []).push("pmbstatopac");
+        </script>
+		</body>
+		</html>
+		

@@ -1,0 +1,3933 @@
+/* 
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+var suggestion = "";
+var suggestion1 = "";
+
+$(function() {
+    $('.error').hide();
+    $("#SearchFormTabs").tabs();
+    $("#HoldingsOtherDetails").tabs();
+    $("#SocialNetworking").accordion({
+        collapsible: true,
+        active: false,
+        autoHeight: true
+    });
+    $("#dialog").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 500,
+        autoOpen: false,
+        closeOnEscape: false,
+        open: function(event, ui) {
+            $(".ui-dialog-titlebar-close").hide();
+        },
+        buttons: {
+            'Close': function() {
+                $(this).dialog('close');
+                location.reload();
+            }
+        }
+    }
+    );
+    $(document).ready(function() {
+        $('.bxslider').bxSlider({
+            slideWidth: 500,
+            minSlides: 5,
+            maxSlides: 3,
+            slideMargin: 10,
+            adaptiveHeight:true,
+            slideMargin:10
+        });
+    });
+    $("#HoldingsSummaryDialog").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 'auto',
+        autoOpen: false
+    }
+    );
+    $("#ResourceDialog").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 'auto',
+        autoOpen: false
+    }
+    );
+
+    $("#RecordDialog").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 'auto',
+        autoOpen: false
+    }
+    );
+    $("#LoginDialog").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 'auto',
+        autoOpen: false
+    });
+    $('input.wow').rating({
+        cancel: true
+    });
+    $("#ReviewsDialog").dialog({
+        autoResize: true,
+        width: 'auto',
+        height: 400,
+        autoOpen: false
+    });
+    $("#TagsDialog").dialog({
+        autoResize: true,
+        width: 'auto',
+        height: 'auto',
+        autoOpen: false
+    });
+    $("#FavouriteDialog").dialog({
+        autoResize: true,
+        width: 'auto',
+        height: 'auto',
+        autoOpen: false,
+        modal: true
+    });
+    $("#DELETEMEMMSGDIALOG").dialog({
+        autoResize: true,
+        width: 'auto',
+        height: 'auto',
+        autoOpen: false,
+        modal: true
+    });
+    $("#OtherDetails").dialog({
+        autoResize: true,
+        width: 'auto',
+        height: 'auto',
+        autoOpen: false,
+        buttons: {
+            'Save': function() {
+                $(this).dialog('close');
+                otherdetails(true);
+
+            },
+            'Cancel': function() {
+                $(this).dialog('close');
+                otherdetails(false);
+            }
+        }
+    });
+    // Rajesh 
+    $("#ApproveRequestDialog").dialog({
+        autoResize: true,
+        width: 'auto',
+        height: 'auto',
+        autoOpen: false,
+        buttons: {
+            'Proceed with Approve': function() {
+                $(this).dialog('close');
+                approveRequest(true, false);
+
+            },
+            'Cancel': function() {
+                $(this).dialog('close');
+                approveRequest(false, false);
+            }
+        }
+    });
+    $("#ApproveStatusDialog").dialog({
+        autoResize: true,
+        width: 'auto',
+        height: 'auto',
+        autoOpen: false,
+        buttons: {
+            'Ok': function() {
+                $(this).dialog('close');
+            },
+            'Cancel': function() {
+                $(this).dialog('close');
+            }
+        }
+    });
+    $("#PatronApproveRequestDialog").dialog({
+        autoResize: true,
+        width: 'auto',
+        height: 'auto',
+        autoOpen: false,
+        buttons: {
+            'Ok': function() {
+                $(this).dialog('close');
+                $("#BudgetApprovingAuthorityID").val("");
+                var approverId = $('input:radio[name=GROUP]:checked').val();
+                $("#BudgetApprovingAuthorityID").val(approverId);
+                approveRequest(true, true);
+            },
+            'Cancel': function() {
+                $("#BudgetApprovingAuthorityID").val("");
+                $(this).dialog('close');
+            }
+        }
+    });
+    $("#RejectRequestDialog").dialog({
+        autoResize: true,
+        width: 'auto',
+        height: 'auto',
+        autoOpen: false,
+        buttons: {
+            'Proceed with Reject': function() {
+                $(this).dialog('close');
+                rejectRequest(true);
+
+            },
+            'Cancel': function() {
+                $(this).dialog('close');
+                rejectRequest(false);
+            }
+        }
+    });
+    $("#SendBackForCommentsRequestDialog").dialog({
+        autoResize: true,
+        width: 'auto',
+        height: 'auto',
+        autoOpen: false,
+        buttons: {
+            'Proceed to send back with comments': function() {
+                $(this).dialog('close');
+                sendBackWithComments(true, false);
+
+            },
+            'Cancel': function() {
+                $(this).dialog('close');
+                sendBackWithComments(false, false);
+            }
+        }
+    });
+    $("#SendBackStatusDialog").dialog({
+        autoResize: true,
+        width: 'auto',
+        height: 'auto',
+        autoOpen: false,
+        buttons: {
+            'Ok': function() {
+                $(this).dialog('close');
+            },
+            'Cancel': function() {
+                $(this).dialog('close');
+            }
+        }
+    });
+    $("#PatronSendBackRequestDialog").dialog({
+        autoResize: true,
+        width: 'auto',
+        height: 'auto',
+        autoOpen: false,
+        buttons: {
+            'Ok': function() {
+                $(this).dialog('close');
+                $("#BudgetApprovingAuthorityID").val("");
+                var approverId = $('input:radio[name=GROUP]:checked').val();
+                $("#BudgetApprovingAuthorityID").val(approverId);
+                sendBackWithComments(true, true);
+            },
+            'Cancel': function() {
+                $("#BudgetApprovingAuthorityID").val("");
+                $(this).dialog('close');
+            }
+        }
+    });
+    $("#Mydialog").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 500,
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            'Yes': function() {
+                $(this).dialog('close');
+                callback(true);
+            },
+            'No': function() {
+                $(this).dialog('close');
+                callback(false);
+            }
+        }
+
+    }
+    );
+    $("#SuggestionsNewRequest").dialog({
+        autoResize: true,
+        height: 600,
+        width: 800,
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            'Save': function() {
+                //                $(this).dialog('close');
+                if (suggestion == "NewSuggestion") {
+                    suggestionsNewRequest(true);
+                } else {
+                    suggestionsEditRequest(true);
+                }
+            },
+            'Cancel': function() {
+                $(this).dialog('close');
+                suggestionsNewRequest(false);
+            }
+        }
+
+    }
+    );
+    $("#Acquistion1SuggestionsNewRequest").dialog({
+        autoResize: true,
+        height: 600,
+        width: 800,
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            'Save': function() {
+                //                $(this).dialog('close');
+                if (suggestion1 == "NewSuggestion") {
+                    Acquistion1suggestionsNewRequest(true);
+                } else {
+                    Acquistion1suggestionsEditRequest(true);
+                }
+            },
+            'Cancel': function() {
+                $(this).dialog('close');
+                Acquistion1suggestionsNewRequest(false);
+                Acquistion1suggestionsEditRequest(false);
+            }
+        }
+
+    }
+    );
+    $("#Password").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 300,
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            'Save': function() {
+                $(this).dialog('close');
+                changepassword(true);
+            },
+            'Cancel': function() {
+                $(this).dialog('close');
+                changepassword(false);
+            }
+        }
+
+    }
+    );
+    $("#MsgDialogue").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 750,
+        autoOpen: false
+    }
+    );
+    $("#DeleteSuggestion").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 500,
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            'Yes': function() {
+                $(this).dialog('close');
+                deleteSuggestion(true);
+            },
+            'No': function() {
+                $(this).dialog('close');
+                deleteSuggestion(false);
+            }
+        }
+
+    }
+    );
+
+    $("#Acquistion1DeleteSuggestion").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 500,
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            'Yes': function() {
+                $(this).dialog('close');
+                Acquistion1deleteSuggestion(true);
+            },
+            'No': function() {
+                $(this).dialog('close');
+                Acquistion1deleteSuggestion(false);
+            }
+        }
+
+    }
+    );
+    $("#Email").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 300,
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            'Save': function() {
+                $(this).dialog('close');
+                changeMail(true);
+            },
+            'Cancel': function() {
+                $(this).dialog('close');
+                changeMail(false);
+            }
+        }
+
+    }
+    );
+    $("#CheckOutDialog").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 500,
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            'Yes': function() {
+                $(this).dialog('close');
+                checkOut(true);
+            },
+            'No': function() {
+                $(this).dialog('close');
+                checkOut(false);
+            }
+        }
+
+    }
+    );
+    $("#EditDiscussionDialog").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 500,
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            'Save': function() {
+                $(this).dialog('close');
+                editDiscussion(true);
+            },
+            'Cancel': function() {
+                $(this).dialog('close');
+                editDiscussion(false);
+            }
+        }
+
+    }
+    );
+    $("#EditDiscussionTitleDialog").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 500,
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            'Save': function() {
+                $(this).dialog('close');
+                editDiscussionTitle(true);
+            },
+            'Cancel': function() {
+                $(this).dialog('close');
+                editDiscussionTitle(false);
+            }
+        }
+
+    }
+    );
+    $("#DeleteDiscussionDialog").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 500,
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            'Yes': function() {
+                $(this).dialog('close');
+                deleteDiscussion(true);
+            },
+            'No': function() {
+                $(this).dialog('close');
+                deleteDiscussion(false);
+            }
+        }
+
+    }
+    );
+    $("#ReservationSuccessfulDialog").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 'auto',
+        autoOpen: false
+    }
+    );
+    $("#ReservationMaterialTypeDialog").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 'auto',
+        autoOpen: false
+    }
+    );
+    $("#ReservationMTVolumeDialog").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 'auto',
+        autoOpen: false
+    }
+    );
+    $("#RequestForCheckOutDialog").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 'auto',
+        autoOpen: false
+    }
+    );
+    $("#LoanReqTitleDialoge").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 'auto',
+        autoOpen: false
+    }
+    );
+    //    $( "#SuggestionsTitleDialoge" ).dialog({
+    //        autoResize: true,
+    //        height: 'auto',
+    //        width: 'auto',
+    //        autoOpen: false
+    //    }
+    //    );
+    $("#Acquistion1PendingTitleDialoge").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 'auto',
+        autoOpen: false
+    }
+    );
+    $("#SaveQueryDialog").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 'auto',
+        autoOpen: false,
+        buttons: {
+            'Save': function() {
+                var url = $("#SAVEQUERY").attr("href");
+                var queryName = $("#QueryName").val();
+                $.post("OPAC2Utility?OPID=19", {
+                    QUERY: url,
+                    QUERYNAME: queryName
+                }, function(data) {
+                    var jssonobj = jQuery.parseJSON(data);
+                    var savestatus = jssonobj.Status;
+                    if (savestatus == "L") {
+                        var value = $("#MESSAGE_SQ_L").text();
+                        $("#SavedQueryMessage").text(value);
+                    } else if (savestatus == "M1") {
+                        var value = $("#MESSAGE_SQ_M1").text();
+                        $("#SavedQueryMessage").text(value);
+                        $("#SaveQueryDialog").dialog('close');
+                    } else if (savestatus == "M2") {
+                        var value = $("#MESSAGE_SQ_M2").text();
+                        $("#SavedQueryMessage").text(value);
+                    } else if (savestatus == "M3") {
+                        var value = $("#MESSAGE_SQ_M3").text();
+                        $("#SavedQueryMessage").text(value);
+                    } else if (savestatus == "M4") {
+                        var value = $("#MESSAGE_SQ_M4").text();
+                        $("#SavedQueryMessage").text(value);
+                    }
+                });
+            },
+            'Cancel': function() {
+                $(this).dialog('close');
+
+            }
+        }
+    }
+    );
+    $(function() {
+        $("#AndroidEmailDiv").dialog({
+            autoOpen: false
+        });
+    });
+    function checkOut(value) {
+        if (value == true) {
+            var id = $("#CheckOutId").val();
+
+            $.post("MyLibrary?OPId=10", {
+                CheckOutId: id
+
+            }, function(data) {
+                var jssonobj = jQuery.parseJSON(data);
+                var renewstatus = jssonobj.Status;
+
+                if (renewstatus == 'N') {
+
+                } else if (renewstatus == 'Y') {
+
+                    location.reload();
+                }
+
+            });
+
+        }
+    }
+    function editDiscussion(value) {
+        if (value == true) {
+            var discription = $("#EDITDESCRIPTION").val();
+            var id = $("#EditDiscussionId").val();
+            $.post("OPAC2Utility?OPID=39", {
+                DiscussionId: id,
+                Description: discription
+            }, function(data) {
+                var jssonobj = jQuery.parseJSON(data);
+                if (jssonobj.Status == 'Y') {
+                    $("#EditDiscussionDialog").dialog("close");
+                    location.reload();
+                }
+            })
+        }
+    }
+    function editDiscussionTitle(value) {
+        if (value == true) {
+            var title = $("#EDITDESCRIPTIONTITLE").val();
+            var id = $("#DisId").val();
+            $.post("OPAC2Utility?OPID=44", {
+                DiscussionId: id,
+                Title: title
+            }, function(data) {
+                var jssonobj = jQuery.parseJSON(data);
+                if (jssonobj.Status == 'Y') {
+                    $("#EditDiscussionTitleDialog").dialog("close");
+                    location.reload();
+                }
+            })
+        }
+    }
+    function deleteDiscussion(value) {
+        if (value == true) {
+            var id = $("#DeleteDiscussionId").val();
+            $.post("OPAC2Utility?OPID=40", {
+                DiscussionId: id
+            }, function(data) {
+                var jssonobj = jQuery.parseJSON(data);
+                if (jssonobj.Status == 'Y') {
+                    $("#DeleteDiscussionDialog").dialog("close");
+                    location.reload();
+                }
+            })
+        }
+    }
+    $("#MEMBERSHIPEDITDIALOG").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 1000,
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            'Save': function() {
+
+                $(this).dialog('close');
+                EditMemShip(true);
+            },
+            'Cancel': function() {
+
+                $(this).dialog('close');
+                EditMemShip(false);
+            }
+        }
+
+    }
+    );
+    $("#KBUserProfileDialog").dialog({
+        autoResize: true,
+        height: 650,
+        width: 1000,
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            'Close': function() {
+
+                $(this).dialog('close');
+
+            }
+        }
+
+    }
+    );
+    $("#MEMBERSHIPDELETEDIALOG").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 500,
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            'Yes': function() {
+                $(this).dialog('close');
+                DeleteMem(true);
+            },
+            'No': function() {
+                $(this).dialog('close');
+                DeleteMem(false);
+            }
+        }
+
+    }
+    );
+
+    function EditMemShip(value) {
+        if (value == true) {
+            $('#EditMemberShipForm').submit();
+        }
+    }
+    function DeleteMem(value) {
+        if (value == true) {
+            var Userid = $('#OLDPATID').val();
+            var libid = $('#OLDLIBID').val();
+            $.post("OPAC2Utility?OPID=35", {
+                UserId: Userid,
+                LibraryId: libid
+
+            }, function(data) {
+                var jssonobj = jQuery.parseJSON(data);
+                var renewstatus = jssonobj.Status;
+                if (renewstatus == "N") {
+
+                } else if (renewstatus == "Y") {
+
+                    $("#DELETEMEMMSGDIALOG").dialog("open");
+                    $('#MemberShipForm').each(function() {
+                        this.reset();
+                        //                        location.reload();
+                    });
+                    $('#MSG').ready(function() {
+                        $("#success").hide();
+                        $("#fail").hide();
+                    });
+                    $("#MEMBERSHIPEdit").hide();
+                    $("#MEMBERSHIPDelete").hide();
+
+                }
+            })
+        }
+    }
+
+    function callback(value) {
+        if (value == true) {
+            var id = $("#CurrentReservationId").val();
+            $.post("MyLibrary?OPId=9", {
+                ReservationId: id
+            }, function(data) {
+                var jssonobj = jQuery.parseJSON(data);
+                var renewstatus = jssonobj.Status;
+                if (renewstatus == 'N') {
+
+                } else if (renewstatus == 'Y') {
+                    //                    location.reload();
+                    var message2 = "Your reservation has been cancelled:";
+                    $("#dialog").text(message2);
+                    $("#dialog").dialog("open");
+                    this.preventDefault();
+                }
+            });
+        }
+    }
+    function changepassword(value) {
+        if (value == true) {
+            var oldpwd = $("#old").val();
+            var newpwd = $("#new").val();
+            var renewpwd = $("#renew").val();
+            if (newpwd == renewpwd) {
+                $.post("MyLibrary?OPId=13", {
+                    OldPassword: oldpwd,
+                    NewPassword: newpwd
+                }, function(data) {
+                    var jssonobj = jQuery.parseJSON(data);
+                    var renewstatus = jssonobj.Status;
+                    if (renewstatus == "Fail") {
+                    } else if (renewstatus == "Success") {
+                        location.reload();
+                    }
+                });
+            }
+        }
+    }
+    function changeMail(value) {
+        if (value == true) {
+            var mobile = $("#mobile").val();
+            var email = $("#email").val();
+            var twitter = $("#twitter").val();
+            var faceBook = $("#FaceBook").val();
+            $.post("MyLibrary?OPId=14", {
+                Mobile: mobile,
+                Email: email,
+                Twitter: twitter,
+                Facebook: faceBook
+            }, function(data) {
+                var jssonobj = jQuery.parseJSON(data);
+                var renewstatus = jssonobj.Status;
+                if (renewstatus == "Fail") {
+                } else if (renewstatus == "Success") {
+                    location.reload();
+                }
+            });
+        }
+    }
+    $("#LiveRequests").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 500,
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            'Yes': function() {
+                $(this).dialog('close');
+                liveRequest(true);
+            },
+            'No': function() {
+                $(this).dialog('close');
+                liveRequest(false);
+            }
+        }
+
+    }
+    );
+    function deleteSuggestion(value) {
+        if (value == true)
+        {
+            var reqId = $("#DeleteRequestId").val();
+            $.post("MyLibrary?OPId=30", {
+                ReqId: reqId
+            }, function(data) {
+                var jssonobj = jQuery.parseJSON(data);
+                if (jssonobj.Status == 'Y') {
+                    location.reload();
+                }
+            })
+        }
+    }
+    function liveRequest(value) {
+        if (value == true)
+        {
+            var reqId = $("#RequestId").val();
+            var libId = $("#LibraryId").val();
+            var patId = $("#PatronId").val();
+            $.post("MyLibrary?OPId=21", {
+                ReqId: reqId,
+                LibId: libId,
+                PatId: patId
+            }, function(data) {
+                var jssonobj = jQuery.parseJSON(data);
+                var renewstatus = jssonobj.Status;
+                if (renewstatus == "N") {
+
+                } else if (renewstatus == "Y") {
+
+                    location.reload();
+                }
+            });
+        }
+    }
+
+    $("#LoneNewRequest").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 500,
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            'Ok': function() {
+                //                $(this).dialog('close');
+                newRequest(true);
+            },
+            'Cancel': function() {
+                $(this).dialog('close');
+                newRequest(false);
+            }
+        }
+
+    }
+    );
+
+    $("#BufferedEmailDialog").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 300,
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            'Email': function() {
+                $(this).dialog('close');
+
+                mailBuffer(true);
+            },
+            'Cancel': function() {
+                $(this).dialog('close');
+                mailBuffer(false);
+            }
+        }
+
+    }
+    );
+
+
+
+    function mailBuffer(value) {
+        if (value == true)
+        {
+            var mailid1 = $("#EMAILUSER").val();
+            if (mailid1 != null) {
+                var mailid = mailid1;
+                $("#OPID").val("23");
+                $("#EMAILID").val(mailid);
+                $("#BufferForm").submit();
+                $(window).bind('unload', function() {
+                });
+            } else {
+
+            }
+
+        }
+    }
+
+    $("#BufferedEmailHyperDialog").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 300,
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            'Email': function() {
+                $(this).dialog('close');
+
+                mailHyperBuffer(true);
+            },
+            'Cancel': function() {
+                $(this).dialog('close');
+                mailHyperBuffer(false);
+            }
+        }
+
+    }
+    );
+    $("#DIVAPPROVINGAUTHORITIES").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 'auto',
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            'Submit': function() {
+                $(this).dialog('close');
+                AprovingAuthorityDialog(true);
+            },
+            'Cancel': function() {
+                $(this).dialog('close');
+                AprovingAuthorityDialog(false);
+            }
+        }
+
+    }
+    );
+    function AprovingAuthorityDialog(value) {
+        if (value == true)
+        {
+            var selectid = $('input[name=Id]:checked').val()
+            $("#SelectedManagerId").val(selectid)
+            $("#FormNewRequest").submit();
+        }
+    }
+    $("#workflowButtonDialoge").dialog({
+        autoResize: false,
+        height: 300,
+        width: 800,
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            'Ok': function() {
+                $(this).dialog('close');
+                workflowButtonDialoge(true);
+            },
+            'Cancel': function() {
+                $(this).dialog('close');
+                workflowButtonDialoge(false);
+            }
+        }
+
+    }
+    );
+    function workflowButtonDialoge(value) {
+        if (value == true)
+        {
+            var selectid = $('input[name=Id]:checked').val()
+            var no = $("#WorkFlowIdNo").val();
+            no++;
+            $("#StepManager_" + no).val(selectid)
+
+        }
+    }
+    function mailHyperBuffer(value) {
+        if (value == true)
+        {
+
+            var mailid1 = $("#EMAILUSER").val();
+            var id = $("#SelectedIdForEmail").val();
+            if (mailid != '') {
+                var mailid = mailid1;
+                $.post("OPAC2Utility?OPID=23", {
+                    ID: id,
+                    EMAILID: mailid
+                }, function(data) {
+
+                });
+            } else {
+
+            }
+
+        }
+    }
+
+    function newRequest(value) {
+        if (value == true)
+        {
+            var title1 = $("#Title1").val();
+            if (title1 != '') {
+                var title = title1;
+                var author = $("#Author1").val();
+                var isbn = $("#ISBN1").val();
+                var publisher = $("#Publisher1").val();
+                var edition = $("#Edition1").val();
+                var volume = $("#Volume1").val();
+                var lendingLib = $("#LendingLibrary1").find('option:selected').text();
+                var notes = $("#Notes1").val();
+                var reqretu = "";
+                if ($("#ReqReturn1").is(':checked')) {
+                    reqretu = 'Y';
+                } else {
+                    reqretu = 'L';
+                }
+                $.post("MyLibrary?OPId=25", {
+                    Title: title,
+                    Author: author,
+                    ISBN: isbn,
+                    Publisher: publisher,
+                    Edition: edition,
+                    Volume: volume,
+                    LendingLibrary: lendingLib,
+                    Notes: notes,
+                    ReqReturn: reqretu
+                }, function(data) {
+                    var jssonobj = jQuery.parseJSON(data);
+                    var renewstatus = jssonobj.Status;
+                    if (renewstatus == "N") {
+
+                    } else if (renewstatus == "Y") {
+                        $("#LoneNewRequest").dialog('close');
+                        location.reload();
+                    }
+                });
+            } else {
+                //                alert("Please enter Title");
+                var value = $("#MESSAGE_L").text();
+                $("#SetLoanReqTitleDialoge").html("<p>" + value + "</p>");
+                $("#LoanReqTitleDialoge").dialog("open");
+
+            }
+
+        }
+    }
+    $("#EditRequest").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 500,
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            'Ok': function() {
+                //                $(this).dialog('close');
+                editRequest(true);
+            },
+            'Cancel': function() {
+                $(this).dialog('close');
+                editRequest(false);
+            }
+        }
+
+    }
+    );
+    function editRequest(value) {
+        if (value == true)
+        {
+            var reqId = $("#RequestId1").val();
+            var title1 = $("#Title").val();
+            if (title1 != '') {
+                var title = title1;
+                var author = $("#Author").val();
+                var isbn = $("#ISBN").val();
+                var publisher = $("#Publisher").val();
+                var edition = $("#Edition").val();
+                var volume = $("#Volume").val();
+                var lendingLib = $("#LendingLibrary").find('option:selected').text();
+                var notes = $("#Note").val();
+                var reqretu = "";
+                if ($("#ReqRetur").is(':checked')) {
+                    reqretu = 'Y';
+                } else {
+                    reqretu = 'L';
+                }
+                $.post("MyLibrary?OPId=28", {
+                    ReqId: reqId,
+                    Title: title,
+                    Author: author,
+                    ISBN: isbn,
+                    Publisher: publisher,
+                    Edition: edition,
+                    Volume: volume,
+                    LendingLibrary: lendingLib,
+                    Notes: notes,
+                    ReqReturn: reqretu
+                }, function(data) {
+                    var jssonobj = jQuery.parseJSON(data);
+                    var renewstatus = jssonobj.Status;
+                    if (renewstatus == "N") {
+
+                    } else if (renewstatus == "Y") {
+                        $("#EditRequest").dialog('close');
+                        location.reload();
+                    }
+                });
+            } else {
+                //                alert("Please enter Title");
+                var value = $("#MESSAGE_L").text();
+                $("#SetLoanReqTitleDialoge").html("<p>" + value + "</p>");
+                $("#LoanReqTitleDialoge").dialog("open");
+
+            }
+
+        }
+    }
+    function otherdetails(value) {
+        if (value == true) {
+            $("#OtherDetailsForm").submit();
+        }
+    }
+    function approveRequest(value, value1) {
+        if (value == true) {
+            var reqId = $("#ApproveRequestID").val();
+            var libId = $("#ApproveRequestLibraryID").val();
+            var notes = $("#ApproveRequestNotesText").val();
+            var approverId = "";
+            if (value1) {
+                approverId = $("#BudgetApprovingAuthorityID").val();
+            }
+            $.post("MyLibrary?OPId=53", {
+                RequestId: reqId,
+                LibraryId: libId,
+                Notes: notes,
+                ApproverId: approverId
+            }, function(data) {
+                var jssonobj = jQuery.parseJSON(data);
+                var renewstatus = jssonobj.Status;
+                if (renewstatus == 'FAIL') {
+                    $("#ApproveRequestDialog").dialog('close');
+                    $("#ApproveStatusDialog").html("");
+                    $("#ApproveStatusDialog").html("<p>Error occured</p>");
+                    $("#ApproveStatusDialog").dialog('open');
+                } else if (renewstatus == 'SUCCESS') {
+                    $("#ApproveRequestDialog").dialog('close');
+                    location.reload();
+                } else if (renewstatus == 'ERROR') {
+                    var errorCode = jssonobj.ERROR_CODE;
+                    $("#ApproveRequestDialog").dialog('close');
+                    $("#ApproveStatusDialog").html("");
+                    $("#ApproveStatusDialog").html("<p>" + errorCode + "</p>");
+                    $("#ApproveStatusDialog").dialog('open');
+                } else if (renewstatus == 'REQUEST_ACTION') {
+                    var patron = jssonobj.Patrons;
+                    var html = "<table><tr><th></th><th>Patron Id</th><th>Patron Name</th><th>Department</th><th>Category</th><th>Course</th></tr>";
+                    for (i = 0; i < patron.length; ++i) {
+                        var patHm = patron[i];
+                        html += "<tr><td><input type='radio' name='GROUP' value=" + patHm.PatronId + "/></td><td>" + patHm.PatronId + "</td><td>" + patHm.PatronName + "</td><td>" + patHm.Department + "</td><td>" + patHm.PatronCategory + "</td><td>" + patHm.Course + "</td></tr>";
+                    }
+                    html += "</table>";
+                    $("#ApproveRequestDialog").dialog('close');
+                    $("#PatronApproveRequestDialog").html("");
+                    $("#PatronApproveRequestDialog").html(html);
+                    $("#PatronApproveRequestDialog").dialog('open');
+                }
+            });
+        }
+    }
+    function rejectRequest(value) {
+        if (value == true) {
+            var reqId = $("#RejectRequestID").val();
+            var libId = $("#RejectRequestLibraryID").val();
+            var notes = $("#RejectRequestReasonText").val();
+            $.post("MyLibrary?OPId=54", {
+                RequestId: reqId,
+                LibraryId: libId,
+                Notes: notes
+            }, function(data) {
+                var jssonobj = jQuery.parseJSON(data);
+                var renewstatus = jssonobj.Status;
+                if (renewstatus == 'Fail') {
+                    $("#ApproveStatusDialog").html("");
+                    $("#ApproveStatusDialog").html("<p>Error occured</p>");
+                    $("#ApproveStatusDialog").dialog('open');
+                } else {
+                    $("#RejectRequestDialog").dialog('close');
+                    location.reload();
+                }
+            });
+        }
+    }
+    function sendBackWithComments(value, value1) {
+        if (value == true) {
+            var reqId = $("#SendBackForCommntsRequestID").val();
+            var libId = $("#SendBackForCommntsRequestLibraryID").val();
+            var notes = $("#SendBackForCommentsText").val();
+            var approverId = "";
+            if (value1) {
+                approverId = $("#BudgetApprovingAuthorityID").val();
+            }
+            $.post("MyLibrary?OPId=55", {
+                RequestId: reqId,
+                LibraryId: libId,
+                Notes: notes,
+                ApproverId: approverId
+            }, function(data) {
+                var jssonobj = jQuery.parseJSON(data);
+                var renewstatus = jssonobj.Status;
+                if (renewstatus == 'FAIL') {
+                    $("#SendBackForCommentsRequestDialog").dialog('close');
+                    $("#SendBackStatusDialog").html("");
+                    $("#SendBackStatusDialog").html("<p>Error occured</p>");
+                    $("#SendBackStatusDialog").dialog('open');
+                } else if (renewstatus == 'SUCCESS') {
+                    $("#SendBackForCommentsRequestDialog").dialog('close');
+                    location.reload();
+                } else if (renewstatus == 'ERROR') {
+                    var errorCode = jssonobj.ERROR_CODE;
+                    $("#SendBackForCommentsRequestDialog").dialog('close');
+                    $("#SendBackStatusDialog").html("");
+                    $("#SendBackStatusDialog").html("<p>" + errorCode + "</p>");
+                    $("#SendBackStatusDialog").dialog('open');
+                } else if (renewstatus == 'REQUEST_ACTION') {
+                    var patron = jssonobj.Patrons;
+                    var html = "<table><tr><th></th><th>Patron Id</th><th>Patron Name</th><th>Department</th><th>Category</th><th>Course</th></tr>";
+                    for (i = 0; i < patron.length; ++i) {
+                        var patHm = patron[i];
+                        html += "<tr><td><input type='radio' name='GROUP'/></td><td>" + patHm.PatronId + "</td><td>" + patHm.PatronName + "</td><td>" + patHm.Department + "</td><td>" + patHm.PatronCategory + "</td><td>" + patHm.Course + "</td></tr>";
+                    }
+                    html += "</table>";
+                    $("#SendBackForCommentsRequestDialog").dialog('close');
+                    $("#PatronSendBackRequestDialog").html("");
+                    $("#PatronSendBackRequestDialog").html(html);
+                    $("#PatronSendBackRequestDialog").dialog('open');
+                }
+            });
+        }
+    }
+    function suggestionsNewRequest(value) {
+        if (value == true) {
+            var title = $("#NewTitle").val();
+            var author = $("#NewAuthor").val();
+            var isbn = $("#NewISBN").val();
+            var publisher = $("#NewPublisher").val();
+            var edition = $("#NewEdition").val();
+            var price = $("#NewPrice").val();
+            var copies = $("#NewCopies").val();
+            var notes = $("#NewNotes").val();
+            var mediumType = "";
+            if ($("#NewElectronic").is(':checked')) {
+                mediumType = 'A';
+            } else {
+                mediumType = 'B';
+            }
+            var BibLevel = "";
+            if ($("#NewSerial").is(':checked')) {
+                BibLevel = '4';
+            } else {
+                BibLevel = '3';
+            }
+            var currency = $("#NewCurrency").find('option:selected').text();
+            var location1 = $("#NewLibraryName").find('option:selected').val();
+            var bindType = $("#NewBindType").find('option:selected').val();
+            var materialType = $("#NewMaterialType").find('option:selected').val();
+            var arr44 = new Array();
+            $("input[name=selector]:checked").each(function() {
+                arr44.push(this.value);
+            });
+            var courseId = $('input:radio[name=group]:checked').val();
+            var budgets = arr44.toString();
+            if (title != '') {
+                $.post("MyLibrary?OPId=29", {
+                    Title: title,
+                    Author: author,
+                    ISBN: isbn,
+                    Publisher: publisher,
+                    Edition: edition,
+                    Price: price,
+                    Copies: copies,
+                    Notes: notes,
+                    MediumType: mediumType,
+                    BibLevel: BibLevel,
+                    Currency: currency,
+                    Location: location1,
+                    BindType: bindType,
+                    MaterialType: materialType,
+                    Budgets: budgets,
+                    CourseId: courseId
+                }, function(data) {
+                    var jssonobj = jQuery.parseJSON(data);
+                    var renewstatus = jssonobj.Status;
+                    if (renewstatus == 'N') {
+
+                    } else if (renewstatus == 'Y') {
+                        $("#SuggestionsNewRequest").dialog('close');
+                        location.reload();
+                    }
+                });
+            } else {
+                alert("Please enter title");
+                //                var value = $("#MESSAGE_L").text();
+                //                $("#SetSuggestionsTitleDialoge").html("<p>"+value+"</p>");
+                //                $("#SuggestionsTitleDialoge").dialog("open");
+            }
+        }
+    }
+    function suggestionsEditRequest(value) {
+        if (value == true) {
+            var title = $("#NewTitle").val();
+            var author = $("#NewAuthor").val();
+            var isbn = $("#NewISBN").val();
+            var publisher = $("#NewPublisher").val();
+            var edition = $("#NewEdition").val();
+            var price = $("#NewPrice").val();
+            var copies = $("#NewCopies").val();
+            var notes = $("#NewNotes").val();
+            var mediumType = "";
+            if ($("#NewElectronic").is(':checked')) {
+                mediumType = 'A';
+            }
+            else {
+                mediumType = 'B';
+            }
+            var BibLevel = "";
+            if ($("#NewSerial").is(':checked')) {
+                BibLevel = '4';
+            } else {
+                BibLevel = '3';
+            }
+            var currency = $("#NewCurrency").find('option:selected').text();
+            var location1 = $("#NewLibraryName").find('option:selected').val();
+            var bindType = $("#NewBindType").find('option:selected').val();
+            var materialType = $("#NewMaterialType").find('option:selected').val();
+            var arr44 = new Array();
+            $("input[name=selector]:checked").each(function() {
+                arr44.push(this.value);
+            });
+            var courseId = $('input:radio[name=group]:checked').val();
+            var budgets = arr44.toString();
+            var reqId = $("#RequestId").val();
+            if (title != '') {
+                $.post("MyLibrary?OPId=32", {
+                    ReqId: reqId,
+                    Title: title,
+                    Author: author,
+                    ISBN: isbn,
+                    Publisher: publisher,
+                    Edition: edition,
+                    Price: price,
+                    Copies: copies,
+                    Notes: notes,
+                    MediumType: mediumType,
+                    BibLevel: BibLevel,
+                    Currency: currency,
+                    Location: location1,
+                    BindType: bindType,
+                    MaterialType: materialType,
+                    Budgets: budgets,
+                    CourseId: courseId
+                }, function(data) {
+                    var jssonobj = jQuery.parseJSON(data);
+                    var renewstatus = jssonobj.Status;
+                    if (renewstatus == 'N') {
+
+                    } else if (renewstatus == 'Y') {
+                        $("#SuggestionsNewRequest").dialog('close');
+                        location.reload();
+                    }
+                });
+            } else {
+                alert("Please enter title");
+                //                var value = $("#MESSAGE_L").text();
+                //                $("#SetSuggestionsTitleDialoge").html("<p>"+value+"</p>");
+                //                $("#SuggestionsTitleDialoge").dialog("open");
+            }
+        }
+    }
+    function Acquistion1suggestionsNewRequest(value) {
+        if (value == true) {
+            //$("#OPId").val("58");
+            //OPId="58";
+            $("#OPId").val("59");
+            $("#DIVAPPROVINGAUTHORITIES").hide();
+            $("#AppAuTable").html("");
+            $('.error').hide();
+            var title = $("input#NewTitle").val();
+            if (title == "") {
+                $("label#Title_error").show();
+                $("input#NewTitle").focus();
+                return false;
+            }
+            var arr44 = new Array();
+            $("input:checkbox:checked").each(function() {
+                arr44.push(this.value);
+            });
+            var arr45 = new Array();
+
+            var name;
+            var val;
+            $("input").map(function() {
+                name = $(this).attr('name');
+                val = $(this).val();
+                arr45.push(name + "-" + val);
+            });
+
+            var budgets = arr44.toString();
+            var workfl = arr45.toString();
+            var libid = $("#LibId").val();
+            $.post("MyLibrary?OPId=58", {
+                LibId: libid,
+                WorkFlow: workfl,
+                Budgets: budgets
+
+            }, function(data) {
+                var jssonobj = jQuery.parseJSON(data);
+                var renewstatus = jssonobj.Status;
+                if (renewstatus == '0') {
+                    var value = $("#MESSAGE_L").text();
+                    $("#SetAcquistion1PendingTitleDialoge").html("<p>" + value + "</p>");
+                    $("#Acquistion1PendingTitleDialoge").dialog("open");
+                    $("#Acquistion1SuggestionsNewRequest").dialog('close');
+                    //                    location.reload();
+                } else if (renewstatus == '1') {
+                    $("#FormNewRequest").submit();
+                } else if (renewstatus == 'More') {
+                    var arr = jssonobj.AprovingAu;
+                    $("#AppAuTable").append('<tr><th>#</th><th>PatronId</th><th>Patron Name</th><th>Department</th><th>Patron Category</th><th>Course</th></tr>');
+                    $.each(arr, function(key, value) {
+                        var ht = value
+                        var patid;
+                        var patname;
+                        var dept;
+                        var patcat;
+                        var course;
+                        $.each(ht, function(key, value) {
+                            if (key == 'PatronID') {
+                                patid = value;
+                            }
+                            if (key == 'PatronName') {
+                                patname = value;
+                            }
+                            if (key == 'Department') {
+                                dept = value;
+                            }
+                            if (key == 'PatronCategory') {
+                                patcat = value;
+                            }
+                            if (key == 'Course') {
+                                course = value;
+                            }
+                        });
+                        $("#AppAuTable").append('<tr><td><input type="radio" name="Id" id="Id" value="' + patid + '"></td><td>' + patid + '</td><td>' + patname + '</td><td>' + dept + '</td><td>' + patcat + '</td><td>' + course + '</td></tr>');
+                    });
+                    $("#DIVAPPROVINGAUTHORITIES").dialog("open");
+                }
+            });
+
+        }
+    }
+    function Acquistion1suggestionsEditRequest(value) {
+        if (value == true) {
+            var reqId = $("#Acq1RequestId").val();
+            $("#OPId").val("61");
+            $("#ReqId").val(reqId);
+            $("#DIVAPPROVINGAUTHORITIES").hide();
+            $("#AppAuTable").html("");
+            $('.error').hide();
+            var title = $("input#NewTitle").val();
+            if (title == "") {
+                $("label#Title_error").show();
+                $("input#NewTitle").focus();
+                return false;
+            }
+            var arr44 = new Array();
+            $("input:checkbox:checked").each(function() {
+                arr44.push(this.value);
+            });
+            var arr45 = new Array();
+
+            var name;
+            var val;
+            $("input").map(function() {
+                name = $(this).attr('name');
+                val = $(this).val();
+                arr45.push(name + "-" + val);
+            });
+
+            var budgets = arr44.toString();
+            var workfl = arr45.toString();
+            var libid = $("#LibId").val();
+            $.post("MyLibrary?OPId=58", {
+                LibId: libid,
+                WorkFlow: workfl,
+                Budgets: budgets
+
+            }, function(data) {
+                var jssonobj = jQuery.parseJSON(data);
+                var renewstatus = jssonobj.Status;
+                if (renewstatus == '0') {
+                    var value = $("#MESSAGE_L").text();
+                    $("#SetAcquistion1PendingTitleDialoge").html("<p>" + value + "</p>");
+                    $("#Acquistion1PendingTitleDialoge").dialog("open");
+                    $("#Acquistion1SuggestionsNewRequest").dialog('close');
+                    //                    location.reload();
+                } else if (renewstatus == '1') {
+                    $("#FormNewRequest").submit();
+                } else if (renewstatus == 'More') {
+                    var arr = jssonobj.AprovingAu;
+                    $("#AppAuTable").append('<tr><th>#</th><th>PatronId</th><th>Patron Name</th><th>Department</th><th>Patron Category</th><th>Course</th></tr>');
+                    $.each(arr, function(key, value) {
+                        var ht = value
+                        var patid;
+                        var patname;
+                        var dept;
+                        var patcat;
+                        var course;
+                        $.each(ht, function(key, value) {
+                            if (key == 'PatronID') {
+                                patid = value;
+                            }
+                            if (key == 'PatronName') {
+                                patname = value;
+                            }
+                            if (key == 'Department') {
+                                dept = value;
+                            }
+                            if (key == 'PatronCategory') {
+                                patcat = value;
+                            }
+                            if (key == 'Course') {
+                                course = value;
+                            }
+                        });
+                        $("#AppAuTable").append('<tr><td><input type="radio" name="Id" id="Id" value="' + patid + '"></td><td>' + patid + '</td><td>' + patname + '</td><td>' + dept + '</td><td>' + patcat + '</td><td>' + course + '</td></tr>');
+                    });
+                    $("#DIVAPPROVINGAUTHORITIES").dialog("open");
+                }
+            });
+            
+        }
+    }
+
+    function Acquistion1deleteSuggestion(value) {
+        if (value == true)
+        {
+            var reqId = $("#Acquistion1DeleteRequestId").val();
+            var libid = $("#LibId").val();
+            $.post("MyLibrary?OPId=39", {
+                LibId: libid,
+                ReqId: reqId
+            }, function(data) {
+                var jssonobj = jQuery.parseJSON(data);
+                if (jssonobj.Status == 'Y') {
+                    window.location.href = "/newgenlibctxt/MyLibrary?LibId=1&OPId=34";
+                }
+            })
+        }
+    }
+    $("#EmailNewArrivalDialog").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 300,
+        modal: true,
+        autoOpen: false,
+        buttons: {
+            'Email': function() {
+                $(this).dialog('close');
+
+                mailNewArrival(true);
+            },
+            'Cancel': function() {
+                $(this).dialog('close');
+                mailNewArrival(false);
+            }
+        }
+
+    }
+    );
+    function mailNewArrival(value) {
+        if (value == true)
+        {
+            var emailId = $("#NEWARRIEMAILUSER").val();
+            $("#NewArrivalForm").append('<input id="From" type="hidden" name="EMAILID" value="' + emailId + '"/>');
+            $("#NewArrivalForm").submit();
+        }
+    }
+    $("#newUserCatalogerecordId").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 750,
+        autoOpen: false
+    }
+    );
+    $("#editUserCatalogerecordId").dialog({
+        autoResize: true,
+        height: 'auto',
+        width: 750,
+        autoOpen: false
+    }
+    );
+});
+
+//Rajesh
+
+$(document).ready(function() {
+    $("a.addQuery").live('click', function(event) {
+        var split = event.target.id.split('_');
+        var req = "OPID=1&Form=" + split[1] + "&Id=" + split[2] + "&From=" + split[3];
+        var idToFit = "SpaceForAddingOtherSearchBoxes_" + split[1];
+        $.post('OPAC2Utility', req, function(data) {
+            $("#" + idToFit).append(data);
+            $("#ADDQUERY_" + split[1] + "_" + split[2]).hide();
+            $("#REMOVEQUERY_" + split[1] + "_" + split[2]).hide();
+        });
+        event.preventDefault();
+    });
+    $("a.removeQuery").live('click', function(event) {
+        var split = event.target.id.split('_');
+        $("#DIVQUERY_" + split[1] + "_" + split[2]).remove();
+        $("#ADDQUERY_" + split[1] + "_" + (split[2] - 1)).show();
+        $("#REMOVEQUERY_" + split[1] + "_" + (split[2] - 1)).show();
+        event.preventDefault();
+    });
+    $("a.addVolume").live('click', function(event) {
+        var split = event.target.id.split('_');
+        var no = split[1];
+        var req = "MyLibrary?OPId=56&No=" + split[1] + "&LibId=" + split[2];
+        $.post(req, function(data) {
+            $("#AddingVolumes").append(data);
+            $("#ADDVOLUME_" + split[1]).hide();
+            $("#REMOVEVOLUME_" + split[1]).hide();
+            $("#DefaultVolumes").hide();
+        });
+        if (split[1] == no) {
+            $("#ADDVOLUME_" + split[1] + "_" + split[2]).hide();
+        }
+        event.preventDefault();
+    });
+    $("a.removeVolume").live('click', function(event) {
+        var split = event.target.id.split('_');
+        $("#DIVVOLUME_" + split[1]).remove();
+        $("#ADDVOLUME_" + (split[1] - 1) + "_" + split[2]).show();
+        $("#REMOVEVOLUME_" + (split[1] - 1) + "_" + split[2]).show();
+        if (split[1] == '1') {
+            $("#DefaultVolumes").show();
+        }
+        event.preventDefault();
+    });
+    $("a.addWorkflow").live('click', function(event) {
+        var split = event.target.id.split('_');
+        var no = split[1];
+        var req = "MyLibrary?OPId=57&No=" + split[1] + "&LibId=" + split[2];
+        $.post(req, function(data) {
+            $("#WorkFlowIdNo").val(split[1]);
+            $("#AddingWorkflow").append(data);
+            $("#ADDWORKFLOW_" + split[1] + "_" + split[2]).hide();
+            $("#REMOVEWORKFLOW_" + split[1] + "_" + split[2]).hide();
+
+        });
+        if (split[1] == no) {
+            $("#ADDWORKFLOW_" + split[1] + "_" + split[2]).hide();
+        }
+        event.preventDefault();
+    });
+    $("a.removeWorkflow").live('click', function(event) {
+        var split = event.target.id.split('_');
+        if (split[1] == '1') {
+            $("#MaimWorkFlowAdd").show();
+        }
+        $("#DIVWORKFLOW_" + split[1]).remove();
+        $("#ADDWORKFLOW_" + (split[1] - 1) + "_" + split[2]).show();
+
+        $("#REMOVEWORKFLOW_" + (split[1] - 1) + "_" + split[2]).show();
+        event.preventDefault();
+    });
+    $("#GoImageNetworkLibraryList").click(function(event) {
+        var val = $("#NetworkLibraryList option:selected").val();
+        if (val != 'X') {
+            window.location = "/newgenlibctxt/Home?Id=" + val;
+        }
+    });
+    $("#workflowButton").live('click', function(event) {
+        $("#workflowButtonDialoge").dialog("open");
+    });
+    $("input.RepositoryNameCB").click(function(event) {
+        var id = event.target.id;
+        if (id == 'REPCB_ALL') {
+            if ($('#REPCB_ALL').is(':checked')) {
+                $('input.RepositoryNameCB').each(function(index) {
+                    var currentId = $(this).attr('id');
+                    if (currentId != 'REPCB_ALL') {
+                        $("#" + currentId).prop("checked", false);
+                    }
+                });
+            } else {
+
+            }
+        } else {
+            var currentId = $(this).attr('id');
+            if ($("#" + currentId).is(':checked')) {
+                $("#REPCB_ALL").prop("checked", false);
+            }
+        }
+    });
+    $("input.BTNSEARCH").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var formName = split[1];
+        var unixNames = "";
+        $("input[id^=REPCB]").each(function() {
+            var idToUse = this.id;
+            if ($('#' + idToUse).attr('checked')) {
+                var unixName = $('#' + idToUse).attr('name');
+                unixNames += unixName + ",";
+            }
+
+        });
+        $("#" + formName + "_SelectedUnixNames").val(unixNames);
+        $("#" + formName + "_AuthorSearch").val("");
+        $("#ExactAFId").val("");
+        $("#" + formName + "_SubjectSearch").val("");
+        $("#" + formName + "_ClassNumberSearch").val("");
+        $("#" + formName + "_SortField").val("");
+        $("#" + formName + "_ApplyFacet").val("false");
+        $("#" + formName + "_NewSearch").val("true");
+        $("#SEARCHFRMID_" + formName).submit();
+        event.preventDefault();
+    });
+    $("input.EXPERTSSEARCH").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var formName = split[1];
+        $("#" + formName + "CurrentPage").val("1");
+        $('input:hidden[name^="SUBLOCATIONFACET"]').each(function() {
+            $(this).remove();
+        });
+        $('input:hidden[name^="DEPARTMENTFACET"]').each(function() {
+            $(this).remove();
+        });
+        $('input:hidden[name^="ZIPCODEFACET"]').each(function() {
+            $(this).remove();
+        });
+        $('input:hidden[name^="CITYFACET"]').each(function() {
+            $(this).remove();
+        });
+        $('input:hidden[name^="STATEFACET"]').each(function() {
+            $(this).remove();
+        });
+        $('input:hidden[name^="COUNTRYFACET"]').each(function() {
+            $(this).remove();
+        });
+        $("#" + formName + "_ApplyFacet").val("false");
+        $("#" + formName + "_NewSearch").val("true");
+
+        $("#KBEXPERTSID_Experts").submit();
+        event.preventDefault();
+    });
+    $("input.DISCUSSIONSSEARCH").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var formName = split[1];
+        $("#" + formName + "CurrentPage").val("1");
+        $("#" + formName + "_ApplyFacet").val("false");
+        $("#" + formName + "_NewSearch").val("true");
+        $("#KBDISCUSSIONSID_Discussions").submit();
+        event.preventDefault();
+    });
+
+    $("#NetworkLibraryList").change(function() {
+        var val = $("#NetworkLibraryList option:selected").val();
+        if (val != 'X') {
+            window.location = "/newgenlibctxt/Home?Id=" + val;
+        }
+    });
+    $("a.Renew").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var taid = split[1];
+        $.post("MyLibrary?OPId=2", {
+            TaId: taid
+        }, function(data) {
+            var jssonobj = jQuery.parseJSON(data);
+            var renewstatus = jssonobj.Renew;
+            if (renewstatus == 'N') {
+                var message1 = jssonobj.Message1;
+                $("#dialog").text(message1);
+                $("#dialog").dialog("open");
+
+            } else if (renewstatus == 'Y') {
+                var message2 = jssonobj.Message2;
+                $("#dialog").text(message2);
+                $("#dialog").dialog("open");
+                //                location.reload();
+            }
+        })
+        event.preventDefault();
+    });
+    $("a.PAGINATIONLINK").click(function(event) {
+        var id = event.target.id;
+        var unixNames = "";
+        var split = id.split('_');
+        var formName = split[1];
+        var pageNumber = split[2];
+        $("#" + formName + "_ResultSetOffset").val(pageNumber);
+        $("#" + formName + "_ApplyFacet").val("true");
+        $("input[id^=REPCB]").each(function() {
+            var idToUse = this.id;
+            if ($('#' + idToUse).attr('checked')) {
+                var unixName = $('#' + idToUse).attr('name');
+                unixNames += unixName + ",";
+            }
+        });
+        $("#" + formName + "_SelectedUnixNames").val(unixNames);
+        $("#" + formName + "_NewSearch").val("false");
+        $("#SEARCHFRMID_" + formName).submit();
+        event.preventDefault();
+    });
+    $("a.KBPAGELINK").click(function(event) {
+        var id = event.target.id;
+        var unixNames = "";
+        var split = id.split('_');
+        var formName = split[1];
+        var pageNumber = split[2];
+        $("#CurrentPage").val(pageNumber);
+        $("#" + formName + "_ResultSetOffset").val(pageNumber);
+        $("#" + formName + "_ApplyFacet").val("true");
+        $("#" + formName + "_SelectedUnixNames").val(unixNames);
+        $("#" + formName + "_NewSearch").val("false");
+        $("#KBEXPERTSID_Experts").submit();
+        event.preventDefault();
+    });
+    $("a.DISCUSSIONPAGELINK").click(function(event) {
+        var id = event.target.id;
+        var unixNames = "";
+        var split = id.split('_');
+        var formName = split[1];
+        var pageNumber = split[2];
+        $("#CurrentPage").val(pageNumber);
+        $("#" + formName + "_ResultSetOffset").val(pageNumber);
+        $("#" + formName + "_ApplyFacet").val("true");
+        $("#" + formName + "_SelectedUnixNames").val(unixNames);
+        $("#" + formName + "_NewSearch").val("false");
+        $("#KBDISCUSSIONSID_Discussions").submit();
+        event.preventDefault();
+    });
+    $("a.BROWSEPAGINATIONLINK").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var pageNumber = split[1];
+        $("#BROWSE_ResultSetOffset").val(pageNumber);
+        $("#FORM_BROWSE").submit();
+        event.preventDefault();
+    });
+    $("a.anchorclickClass").click(function(event) {
+        var req = "id=" + event.target.id;
+        $.post('/newgenlibctxt/jsp/carbon/aportal/cataloguing/ViewHoldingsSummary.jsp', req, function(data) {
+            $("#SetAnaliseData").replaceWith(data);
+        });
+        setTimeout(function() {
+            $("#HoldingsSummaryDialog").dialog("open");
+        }, 0)
+        event.preventDefault();
+    });
+    $("a.clickClass").click(function(event) {
+        var req = "id=" + event.target.id;
+        $.post('/newgenlibctxt/jsp/carbon/aportal/cataloguing/PopupContents.jsp', req, function(data) {
+            $("#SetRecordData").replaceWith(data);
+            handleAHREFEvent();
+        });
+        setTimeout(function() {
+            $("#RecordDialog").dialog("open");
+        }, 0)
+        event.preventDefault();
+    });
+    $("a.FacetClass").click(function(event) {
+        var id = event.target.id;
+        var unixNames = "";
+        var split = id.split('_');
+        var formName = split[1];
+        var type = split[2];
+        var afid = split[3];
+        var aflibid = "";
+        if (split.length > 4)
+            aflibid = split[4];
+        if (type == "PN") {
+            $('#SEARCHFRMID_' + formName).append('<input type="hidden" name="PNFACET" value="' + afid + "_" + aflibid + '" />');
+        } else if (type == "CN") {
+            $('#SEARCHFRMID_' + formName).append('<input type="hidden" name="CNFACET" value="' + afid + "_" + aflibid + '" />');
+        } else if (type == "MN") {
+            $('#SEARCHFRMID_' + formName).append('<input type="hidden" name="MNFACET" value="' + afid + "_" + aflibid + '" />');
+        } else if (type == "TTSH") {
+            $('#SEARCHFRMID_' + formName).append('<input type="hidden" name="TTSHFACET" value="' + afid + "_" + aflibid + '" />');
+        } else if (type == "GNSH") {
+            $('#SEARCHFRMID_' + formName).append('<input type="hidden" name="GNSHFACET" value="' + afid + "_" + aflibid + '" />');
+        } else if (type == "NOC") {
+            $('#SEARCHFRMID_' + formName).append('<input type="hidden" name="NOCFACET" value="' + afid + '" />');
+        } else if (type == "BIB") {
+            $('#SEARCHFRMID_' + formName).append('<input type="hidden" name="BIBFACET" value="' + afid + '" />');
+        } else if (type == "MATTYPE") {
+            $('#SEARCHFRMID_' + formName).append('<input type="hidden" name="MTFACET" value="' + afid + '" />');
+        } else if (type == "LIB") {
+            $('#SEARCHFRMID_' + formName).append('<input type="hidden" name="LIBFACET" value="' + afid + '" />');
+        } else if (type == "SL") {
+            $('#SEARCHFRMID_' + formName).append('<input type="hidden" name="SLFACET" value="' + afid + "_" + aflibid + '" />');
+        } else if (type == "LOC") {
+            $('#SEARCHFRMID_' + formName).append('<input type="hidden" name="LOCFACET" value="' + afid + "_" + aflibid + '" />');
+        }
+        $("#" + formName + "_ResultSetOffset").val(1);
+        $("#" + formName + "_ApplyFacet").val("true");
+        $("input[id^=REPCB]").each(function() {
+            var idToUse = this.id;
+            if ($('#' + idToUse).attr('checked')) {
+                var unixName = $('#' + idToUse).attr('name');
+                unixNames += unixName + ",";
+            }
+        });
+        $("#" + formName + "_SelectedUnixNames").val(unixNames);
+        $("#" + formName + "_NewSearch").val("false");
+        $("#SEARCHFRMID_" + formName).submit();
+        event.preventDefault();
+    });
+    $("a.KBFacetClass").click(function(event) {
+        var id = event.target.id;
+        var unixNames = "";
+        var split = id.split('_');
+        var type = split[0];
+        var id = split[1];
+        if (split.length > 2)
+            var libraryId = split[2];
+        if (type == "KBFacetLOC") {
+            $("#KBEXPERTSID_Experts").append('<input type="hidden" name="SUBLOCATIONFACET" value="' + id + "_" + libraryId + '" />');
+        } else if (type == "KBFacetDEPT") {
+            $("#KBEXPERTSID_Experts").append('<input type="hidden" name="DEPARTMENTFACET" value="' + id + "_" + libraryId + '" />');
+        } else if (type == "KBFacetZipCode") {
+            $("#KBEXPERTSID_Experts").append('<input type="hidden" name="ZIPCODEFACET" value="' + id + '" />');
+        } else if (type == "KBFacetCity") {
+            $("#KBEXPERTSID_Experts").append('<input type="hidden" name="CITYFACET" value="' + id + '" />');
+        } else if (type == "KBFacetState") {
+            $("#KBEXPERTSID_Experts").append('<input type="hidden" name="STATEFACET" value="' + id + '" />');
+        } else if (type == "KBFacetCountry") {
+            $("#KBEXPERTSID_Experts").append('<input type="hidden" name="COUNTRYFACET" value="' + id + '" />');
+        }
+        //$("#"+formName+"_ResultSetOffset").val(1);        
+        //$("#"+formName+"_ApplyFacet").val("true");        
+        //        $("input[id^=REPCB]").each(function() {
+        //            var idToUse=this.id;
+        //            if($('#'+idToUse).attr('checked')){        
+        //                var unixName=$('#'+idToUse).attr('name');        
+        //                unixNames+=unixName+",";
+        //            }		
+        //        });	        
+        //        $("#"+formName+"_SelectedUnixNames").val(unixNames);        
+        //        $("#"+formName+"_NewSearch").val("false");
+        $("#KBEXPERTSID_Experts").submit();
+        event.preventDefault();
+    });
+    $("a.RemoveFacet").click(function(event) {
+        var id = event.target.id;
+        var unixNames = "";
+        var split = id.split('_');
+        var formName = split[1];
+        var type = split[2];
+        var afid = split[3];
+        var aflibid = "";
+        if (split.length > 4)
+            aflibid = split[4];
+        var idToComp = afid + "_" + aflibid;
+        $('input:hidden[name^="PNFACET"]').each(function() {
+            var valHid = $(this).val();
+            if (valHid == idToComp) {
+                $(this).remove();
+            }
+        });
+        $('input:hidden[name^="CNFACET"]').each(function() {
+            var valHid = $(this).val();
+            if (valHid == idToComp) {
+                $(this).remove();
+            }
+        });
+        $('input:hidden[name^="MNFACET"]').each(function() {
+            var valHid = $(this).val();
+            if (valHid == idToComp) {
+                $(this).remove();
+            }
+        });
+        $('input:hidden[name^="TTSHFACET"]').each(function() {
+            var valHid = $(this).val();
+            if (valHid == idToComp) {
+                $(this).remove();
+            }
+        });
+        $('input:hidden[name^="GNSHFACET"]').each(function() {
+            var valHid = $(this).val();
+            if (valHid == idToComp) {
+                $(this).remove();
+            }
+        });
+        $('input:hidden[name^="NOCFACET"]').each(function() {
+            var valHid = $(this).val();
+            if (valHid == afid) {
+                $(this).remove();
+            }
+        });
+        $('input:hidden[name^="BIBFACET"]').each(function() {
+            var valHid = $(this).val();
+            if (valHid == afid) {
+                $(this).remove();
+            }
+        });
+        $('input:hidden[name^="MTFACET"]').each(function() {
+            var valHid = $(this).val();
+            if (valHid == afid) {
+                $(this).remove();
+            }
+        });
+        $('input:hidden[name^="LIBFACET"]').each(function() {
+            var valHid = $(this).val();
+            if (valHid == afid) {
+                $(this).remove();
+            }
+        });
+        $('input:hidden[name^="SLFACET"]').each(function() {
+            var valHid = $(this).val();
+            if (valHid == idToComp) {
+                $(this).remove();
+            }
+        });
+        $('input:hidden[name^="LOCFACET"]').each(function() {
+            var valHid = $(this).val();
+            if (valHid == idToComp) {
+                $(this).remove();
+            }
+        });
+        $("input[id^=REPCB]").each(function() {
+            var idToUse = this.id;
+            if ($('#' + idToUse).attr('checked')) {
+                var unixName = $('#' + idToUse).attr('name');
+                unixNames += unixName + ",";
+            }
+
+        });
+        $("#" + formName + "_SelectedUnixNames").val(unixNames);
+        $("#" + formName + "_ApplyFacet").val("true");
+        $("#" + formName + "_NewSearch").val("false");
+        $("#SEARCHFRMID_" + formName).submit();
+        event.preventDefault();
+    });
+    $("a.KBRemoveFacet").click(function(event) {
+        var id = event.target.id;
+        var unixNames = "";
+        var idToComp = "";
+        var split = id.split('_');
+        var type = split[0];
+        var id = split[1];
+        idToComp = id;
+        if (split.length > 2) {
+            var libraryId = split[2];
+            idToComp = id + "_" + libraryId;
+        }
+        $('input:hidden[name^="SUBLOCATIONFACET"]').each(function() {
+            var valHid = $(this).val();
+            if (valHid == idToComp) {
+                $(this).remove();
+            }
+        });
+        $('input:hidden[name^="DEPARTMENTFACET"]').each(function() {
+            var valHid = $(this).val();
+            if (valHid == idToComp) {
+                $(this).remove();
+            }
+        });
+        $('input:hidden[name^="ZIPCODEFACET"]').each(function() {
+            var valHid = $(this).val();
+            if (valHid == idToComp) {
+                $(this).remove();
+            }
+        });
+        $('input:hidden[name^="CITYFACET"]').each(function() {
+            var valHid = $(this).val();
+            if (valHid == idToComp) {
+                $(this).remove();
+            }
+        });
+        $('input:hidden[name^="STATEFACET"]').each(function() {
+            var valHid = $(this).val();
+            if (valHid == idToComp) {
+                $(this).remove();
+            }
+        });
+        $('input:hidden[name^="COUNTRYFACET"]').each(function() {
+            var valHid = $(this).val();
+            if (valHid == idToComp) {
+                $(this).remove();
+            }
+        });
+        //        $("#Experts_SelectedUnixNames").val(unixNames);
+        //        $("#Experts_ApplyFacet").val("true"); 
+        //        $("#Experts_NewSearch").val("false");
+        $("#KBEXPERTSID_Experts").submit();
+        event.preventDefault();
+    });
+    $("#Login").click(function(event) {
+        $("#UserId").val("");
+        $("#LoginPassword").val("");
+        $("#LoginFailed").empty();
+        $("#LoginDialog").dialog("open");
+        event.preventDefault();
+    });
+    $("#KBUserSubmit").click(function(event) {
+        $("#KBUserDetailsForm").submit();
+        event.preventDefault();
+    });
+    $("a.KBUserWorkAddQuery").live('click', function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var Id = split[1];
+        $.post("MyLibrary?OPId=52", {
+            Type: "Work",
+            ID: Id
+        }, function(data) {
+            var jssonobj = jQuery.parseJSON(data);
+            var htmContent = jssonobj.HtmlContent;
+            $("#KBUserWorkAddQuery_" + Id).hide();
+            $("#SpaceForAddingOtherKBUserWork").append(htmContent);
+        })
+        event.preventDefault();
+    });
+    $("a.KBUserWorkRemoveQuery").live('click', function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var Id = split[1];
+        $("#KBUserWork_" + Id).remove();
+        $("#KBUserWorkAddQuery_" + (split[1] - 1)).show();
+        event.preventDefault();
+    });
+    $("a.KBUserSubjectAddQuery").live('click', function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var Id = split[1];
+        $.post("MyLibrary?OPId=52", {
+            Type: "Subject",
+            ID: Id
+        }, function(data) {
+            var jssonobj = jQuery.parseJSON(data);
+            var htmContent = jssonobj.HtmlContent;
+            $("#KBUserSubjectAddQuery_" + Id).hide();
+            $("#SpaceForAddingOtherKBUserSubject").append(htmContent);
+        })
+        event.preventDefault();
+    });
+    $("a.KBUserSubjectRemoveQuery").live('click', function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var Id = split[1];
+        $("#KBUserSubject_" + Id).remove();
+        $("#KBUserSubjectAddQuery_" + (split[1] - 1)).show();
+        event.preventDefault();
+    });
+    $("a.KBUserOtherFieldsAddQuery").live('click', function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var Id = split[1];
+        $.post("MyLibrary?OPId=52", {
+            Type: "OtherFields",
+            ID: Id
+        }, function(data) {
+            var jssonobj = jQuery.parseJSON(data);
+            var htmContent = jssonobj.HtmlContent;
+            $("#KBUserOtherFieldsAddQuery_" + Id).hide();
+            $("#SpaceForAddingOtherKBUserFields").append(htmContent);
+        })
+        event.preventDefault();
+    });
+    $("a.KBUserOtherFieldsRemoveQuery").live('click', function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var Id = split[1];
+        $("#KBUserOtherFields_" + Id).remove();
+        $("#KBUserOtherFieldsAddQuery_" + (split[1] - 1)).show();
+        event.preventDefault();
+    });
+    $("#LoginPassword").keypress(function(event) {
+        if (event.which == 13) {
+            var libId = $("#LoginLibrarySelection").val();
+            var loginId = encodeURIComponent($("#UserId").val());
+            var loginPass = encodeURIComponent($("#LoginPassword").val());
+            $("#LoginFailed").empty();
+            $.getJSON('OPAC2Utility?OPID=2&LibraryId=' + libId + '&LoginId=' + loginId + '&Password=' + loginPass, function(data) {
+                if (data.Status == 'Success') {
+                    $("#LoginDialog").dialog("close");
+                    location.reload();
+                } else {
+                    $("#LoginFailed").append("Login failed: ").append("LDAP Status: " + data.LDAPStatus).append(" Local Status: " + data.LocalStatus);
+                }
+            });
+            event.preventDefault();
+        }
+
+    });
+    $("#LoginButton").click(function(event) {
+        var libId = $("#LoginLibrarySelection").val();
+        var loginId = encodeURIComponent($("#UserId").val());
+        var loginPass = encodeURIComponent($("#LoginPassword").val());
+        $("#LoginFailed").empty();
+        $.getJSON('OPAC2Utility?OPID=2&LibraryId=' + libId + '&LoginId=' + loginId + '&Password=' + loginPass, function(data) {
+            if (data.Status == 'Success') {
+                $("#LoginDialog").dialog("close");
+                location.reload();
+            } else {
+                $("#LoginFailed").append("Login failed: ").append("LDAP Status: " + data.LDAPStatus).append(" Local Status: " + data.LocalStatus);
+            }
+        });
+        event.preventDefault();
+    });
+    $("#LoginCancelButton").click(function(event) {
+        $("#LoginDialog").dialog("close");
+        event.preventDefault();
+    });
+    $("#Logout").click(function(event) {
+        $.getJSON('OPAC2Utility?OPID=3', function(data) {
+            if (data.Status == 'Success') {
+//                location.reload();
+                window.location.assign("/newgenlibctxt/Home")
+            }
+        });
+        event.preventDefault();
+    });
+    $("a.reviewClickClass").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var catId = split[1];
+        var ownlibid = split[2];
+        $('#RateMe option[value="5"]').attr("selected", "selected");
+        $("#ReviewText").val("");
+        var req = "OPID=5&CatId=" + catId + "&OwnLibId=" + ownlibid;
+        $.post('OPAC2Utility', req, function(data) {
+            $('#myContainer').append('<div class="rateit"> </div>');
+            $("#SetReviewData").html(data);
+            $("#ReviewsDialog").dialog("open");
+        });
+        event.preventDefault();
+    });
+    $("input.SaveReviewButton").live('click', function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var catId = split[1];
+        var ownlibid = split[2];
+        var rating = $("#RateMe").find('option:selected').val();
+        var reviewText = $("#ReviewText").val();
+        var req = "OPID=6&CatId=" + catId + "&OwnLibId=" + ownlibid + "&Review=" + reviewText + "&Rating=" + rating;
+        $.post('OPAC2Utility', req, function(data) {
+            var convT = String(data);
+            if (data.charAt(0) == "Y") {
+                var req1 = "OPID=5&CatId=" + catId + "&OwnLibId=" + ownlibid;
+                $.post('OPAC2Utility', req1, function(data1) {
+                    //                    $("#ReviewsDialog").html(data1);  
+                    $('#myContainer').append('<div class="rateit"> </div>');
+                    $("#SetReviewData").html(data1);
+                    $("#ReviewsDialog").dialog("open");
+
+                });
+            }
+            else {
+                $("#REVIEWERRORMESSAGE").text("Error occurred. Please try again.");
+            }
+        });
+        event.preventDefault();
+    });
+    $("a.DeleteReview").live('click', function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var IdToDel = split[1];
+        var catId = split[2];
+        var ownlibid = split[3];
+        var req = "OPID=7&Id=" + IdToDel;
+        $.post('OPAC2Utility', req, function(data) {
+            var convT = String(data);
+            if (data.charAt(0) == "Y") {
+                var req1 = "OPID=5&CatId=" + catId + "&OwnLibId=" + ownlibid;
+                $.post('OPAC2Utility', req1, function(data1) {
+                    $("#ReviewsDialog").html(data1);
+                });
+            }
+            else {
+                $("#REVIEWERRORMESSAGE").text("Error occurred. Please try again.");
+            }
+        });
+        event.preventDefault();
+    });
+    $("a.tagsClickClass").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var catId = split[1];
+        var ownlibid = split[2];
+        var req = "OPID=8&CatId=" + catId + "&OwnLibId=" + ownlibid;
+        $.post('OPAC2Utility', req, function(data) {
+            $("#TagsDialog").html(data);
+            $("#TagsDialog").dialog("open");
+        });
+        event.preventDefault();
+    });
+    $("input.SaveTags").live('click', function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var catId = split[1];
+        var ownlibid = split[2];
+        var tagsToSave = $("#TagsToSave").val();
+        var req = "OPID=9&CatId=" + catId + "&OwnLibId=" + ownlibid + "&Tags=" + tagsToSave;
+        $.post('OPAC2Utility', req, function(data) {
+            var convT = String(data);
+            if (data.charAt(0) == "Y") {
+                var req1 = "OPID=8&CatId=" + catId + "&OwnLibId=" + ownlibid;
+                $.post('OPAC2Utility', req1, function(data1) {
+                    $("#TagsDialog").html(data1);
+                });
+            }
+            else {
+                $("#TAGERRORMESSAGE").text("Error occurred. Please try again.");
+            }
+        });
+        event.preventDefault();
+    });
+    $("a.DeleteTag").live('click', function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var IdToDel = split[1];
+        var catId = split[2];
+        var ownlibid = split[3];
+        var req = "OPID=10&Id=" + IdToDel;
+        $.post('OPAC2Utility', req, function(data) {
+            var convT = String(data);
+            if (data.charAt(0) == "Y") {
+                var req1 = "OPID=8&CatId=" + catId + "&OwnLibId=" + ownlibid;
+                $.post('OPAC2Utility', req1, function(data1) {
+                    $("#TagsDialog").html(data1);
+                });
+            } else {
+                $("#TAGERRORMESSAGE").text("Error occurred. Please try again.");
+            }
+        });
+        event.preventDefault();
+    });
+    $("a.favouriteClickClass").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var catId = split[1];
+        var ownlibid = split[2];
+        var req = "OPID=11&CatId=" + catId + "&OwnLibId=" + ownlibid;
+        var reloadData = "N";
+        $.post('OPAC2Utility', req, function(data) {
+            var data1 = "";
+            if (data.charAt(0) == "Y") {
+                data1 = "Record added to your favourites";
+                reloadData = "Y";
+                $("#FavouriteDialog").html(data1);
+                $("#FavouriteDialog").dialog("open");
+            }
+            if (data.charAt(0) == "N") {
+                data1 = "Error occurred. Please try again.";
+                reloadData = "N";
+                $("#FavouriteDialog").html(data1);
+                $("#FavouriteDialog").dialog("open");
+                event.preventDefault();
+            }
+            if (data.charAt(0) == "A") {
+                data1 = "Record is already added to your favourties";
+                reloadData = "N";
+                $("#FavouriteDialog").html(data1);
+                $("#FavouriteDialog").dialog("open");
+                event.preventDefault();
+            }
+            if (data.charAt(0) == "N") {
+                data1 = "Error occurred. Please try again.";
+                reloadData = "N";
+                $("#FavouriteDialog").html(data1);
+                $("#FavouriteDialog").dialog("open");
+                event.preventDefault();
+            }
+            if (data.charAt(0) == "L") {
+                data1 = "You must login to add records to your favourites";
+                reloadData = "N";
+                $("#FavouriteDialog").html(data1);
+                $("#FavouriteDialog").dialog("open");
+                this.event.preventDefault();
+            }
+
+        });
+        event.preventDefault();
+    });
+    $("a.RemoveFavouriteClickClass").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var catId = split[1];
+        var ownlibid = split[2];
+        var req = "OPID=12&CatId=" + catId + "&OwnLibId=" + ownlibid;
+        $.post('OPAC2Utility', req, function(data) {
+            if (data.charAt(0) == "Y") {
+            } else {
+                event.preventDefault();
+            }
+        });
+
+    });
+    $("a.AUTHORSEARCH").click(function(event) {
+        var id = event.target.id;
+        var splitVal = id.split('_');
+        var formName = splitVal[1];
+        var name = splitVal[2];
+        $("#" + formName + "_AuthorSearch").val(name);
+        var unixNames = "";
+        $("#" + formName + "_ApplyFacet").val("false");
+        $("input[id^=REPCB]").each(function() {
+            var idToUse = this.id;
+            if ($('#' + idToUse).attr('checked')) {
+                var unixName = $('#' + idToUse).attr('name');
+                unixNames += unixName + ",";
+            }
+        });
+        $("#" + formName + "_SelectedUnixNames").val(unixNames);
+        $("#" + formName + "_SubjectSearch").val("");
+        $("#" + formName + "_ClassNumberSearch").val("");
+        $("#ExactAFId").val("id");
+        $("#" + formName + "_NewSearch").val("false");
+        $("#SEARCHFRMID_" + formName).submit();
+        event.preventDefault();
+    });
+    $("a.AFLINK").click(function(event) {
+        var id = event.target.id;
+        $("#ExactAFId").val(id);
+        var unixNames = "";
+        $("#All_ApplyFacet").val("false");
+        $("input[id^=REPCB]").each(function() {
+            var idToUse = this.id;
+            if ($('#' + idToUse).attr('checked')) {
+                var unixName = $('#' + idToUse).attr('name');
+                unixNames += unixName + ",";
+            }
+        });
+        $("#All_SelectedUnixNames").val(unixNames);
+        $("#All_SubjectSearch").val("");
+        $("#All_AuthorSearch").val("");
+        $("#All_ClassNumberSearch").val("");
+        $("#All_NewSearch").val("false");
+        $("#SEARCHFRMID_All").submit();
+        event.preventDefault();
+    });
+    $("a.SUBJECTSEARCH").click(function(event) {
+        var id = event.target.id;
+        var splitVal = id.split('_');
+        var formName = splitVal[1];
+        var name = splitVal[2];
+        $("#" + formName + "_SubjectSearch").val(name);
+        $("#" + formName + "_AuthorSearch").val("");
+        $("#ExactAFId").val("");
+        $("#" + formName + "_ClassNumberSearch").val("");
+        var unixNames = "";
+        $("#" + formName + "_ApplyFacet").val("false");
+        $("input[id^=REPCB]").each(function() {
+            var idToUse = this.id;
+            if ($('#' + idToUse).attr('checked')) {
+                var unixName = $('#' + idToUse).attr('name');
+                unixNames += unixName + ",";
+            }
+        });
+        $("#" + formName + "_SelectedUnixNames").val(unixNames);
+        $("#" + formName + "_NewSearch").val("false");
+        $("#SEARCHFRMID_" + formName).submit();
+        event.preventDefault();
+    });
+    $("a.CALLNUMBERSEARCH").click(function(event) {
+        var id = event.target.id;
+        var splitVal = id.split('_');
+        var formName = splitVal[1];
+        var name = splitVal[2];
+        $("#" + formName + "_ClassNumberSearch").val(name);
+        var unixNames = "";
+        $("#" + formName + "_ApplyFacet").val("false");
+        $("#" + formName + "_SubjectSearch").val("");
+        $("#" + formName + "_AuthorSearch").val("");
+        $("#ExactAFId").val("");
+        $("input[id^=REPCB]").each(function() {
+            var idToUse = this.id;
+            if ($('#' + idToUse).attr('checked')) {
+                var unixName = $('#' + idToUse).attr('name');
+                unixNames += unixName + ",";
+            }
+        });
+        $("#" + formName + "_SelectedUnixNames").val(unixNames);
+        $("#" + formName + "_NewSearch").val("false");
+        $("#SEARCHFRMID_" + formName).submit();
+        event.preventDefault();
+    });
+    $("a.DownloadMARCRecord").click(function(event) {
+        var id = event.target.id;
+        var splitVal = id.split('_');
+        var catId = splitVal[1];
+        var ownLibId = splitVal[2];
+        window.open("OPAC2Utility?OPID=13&CATID=" + catId + "&OWNLIBID=" + ownLibId);
+        event.preventDefault();
+    });
+    $("a.Delete").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var reqId = split[1];
+        var libId = split[2];
+        var patId = split[3];
+        $("#RequestId").val(reqId);
+        $("#LibraryId").val(libId);
+        $("#PatronId").val(patId);
+        $("#LiveRequests").dialog("open");
+        event.preventDefault();
+    });
+    $("input.BTNBROWSE").click(function(event) {
+        $("#FORM_BROWSE").submit();
+        event.preventDefault();
+    });
+    $("a.LoneNew").click(function(event) {
+        $("#Title1").val("");
+        $("#Author1").val("");
+        $("#ISBN1").val("");
+        $("#Publisher1").val("");
+        $("#Edition1").val("");
+        $("#Volume1").val("");
+        $("#LendingLibrary1").val("");
+        $("#Notes1").val("");
+        $("#ReqReturn1").attr('checked', false);
+        $("#LoneNewRequest").dialog("open");
+        event.preventDefault();
+    });
+    $("a.Edit").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var reqId = split[1];
+        var libId = split[2];
+        $("#RequestId1").val(reqId);
+        $.post("MyLibrary?OPId=27", {
+            ReqId: reqId
+        }, function(data) {
+            var jssonobj = jQuery.parseJSON(data);
+            var title = jssonobj.Title;
+            var author = jssonobj.Author;
+            var isbn = jssonobj.ISBN;
+            var publisher = jssonobj.Publisher;
+            var volumeno = jssonobj.VolumeNo;
+            var edition = jssonobj.Edition;
+            var libname = jssonobj.LoaningLibrary;
+            var note = jssonobj.Note;
+            var reqretu = jssonobj.ReqRetur;
+            var othtab = jssonobj.OtherTab;
+            var renewstatus = jssonobj.Status;
+            if (renewstatus == 'N') {
+
+
+            } else if (renewstatus == 'Y') {
+                $("#Title").val(title);
+                $("#Author").val(author);
+                $("#ISBN").val(isbn);
+                $("#Publisher").val(publisher);
+                $("#Volume").val(volumeno);
+                $("#Edition").val(edition);
+                //                 $("#LendingLibrary").val(libname);
+                $("#LendingLibrary option:contains(" + libname + ")").attr('selected', 'selected');
+                $("#Note").val(note);
+                if (reqretu == "Y") {
+                    $("#ReqRetur").attr('checked', true);
+                } else {
+                    $("#ReqRetur").attr('checked', false);
+
+                }
+                $("#EditRequest").dialog("open");
+            }
+        })
+        event.preventDefault();
+    });
+    //    Rajesh
+    $("a.RequestsForCheckOut").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var reservationId = split[1];
+        $("#CheckOutId").val(reservationId);
+        $("#CheckOutDialog").dialog("open");
+        event.preventDefault();
+    });
+    $("input.MEMBERSHIPEdit").click(function(event) {
+        $("#MEMBERSHIPEDITDIALOG").dialog("open");
+    });
+    $("input.MEMBERSHIPDelete").click(function(event) {
+        $("#MEMBERSHIPDELETEDIALOG").dialog("open");
+    });
+    $("a.CancelReservation").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var reservationId = split[1];
+        $("#CurrentReservationId").val(reservationId);
+        $("#Mydialog").dialog("open");
+        event.preventDefault();
+    });
+    $("a.NewSuggestion").click(function(event) {
+        suggestion = "NewSuggestion";
+        $("#NewTitle").val("")
+        $("#NewAuthor").val("")
+        $("#NewISBN").val("")
+        $("#NewPublisher").val("")
+        $("#NewEdition").val("")
+        $("#NewPrice").val("")
+        $("#NewCopies").val("")
+        $("#NewNotes").val("")
+        $("#NewElectronic").attr('checked', false);
+        $("#NewSerial").attr('checked', false);
+        $("input[name=selector]:checked").each(function() {
+            $(this).prop('checked', false);
+        });
+        $('#NewBindType option[value="A"]').attr("selected", "selected");
+        $('input:radio[name=group]:checked').attr("checked", false);
+        $("#SuggestionsNewRequest").dialog({
+            title: "New Request"
+        });
+        $("#SuggestionsNewRequest").dialog("open");
+        event.preventDefault();
+    });
+    $("a.KBUserProfile").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var patId = split[0];
+        var libId = split[1];
+        $.post("OPAC2Utility?OPID=36", {
+            PatronId: patId,
+            LibraryId: libId
+        }, function(data) {
+            var jssonobj = jQuery.parseJSON(data);
+            var htmContent = jssonobj.HtmlContent;
+            $("#KBUserProfileDialog").html(htmContent);
+        })
+        $("#KBUserProfileDialog").dialog("open");
+        event.preventDefault();
+    });
+
+    $("#DISRESET").live('click', function(event) {
+        $("#DISDESCRIPTION").val("");
+        $("#DISTITLE").val("");
+        event.preventDefault();
+    });
+    $("a.EditDiscussion").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var id = split[1];
+        var discription = split[2];
+        $("#EditDiscussionId").val(id);
+        $("#EDITDESCRIPTION").val(discription);
+        $("#EditDiscussionDialog").dialog("open");
+        event.preventDefault();
+    });
+    $("a.EditDiscussionTitle").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var id = split[1];
+        var title = split[2];
+        $("#EDITDESCRIPTIONTITLE").val(title);
+        $("#EditDiscussionTitleDialog").dialog("open");
+        event.preventDefault();
+    });
+    $("a.DeleteDiscussion").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var id = split[1];
+        $("#DeleteDiscussionId").val(id);
+        $("#DeleteDiscussionDialog").dialog("open");
+        event.preventDefault();
+    });
+    $("input.ADDPOST").click(function(event) {
+        var description = $("#DISDESCRIPTION").val();
+        var disId = $("#DisId").val();
+        $.post("OPAC2Utility?OPID=41", {
+            DisThreadId: disId,
+            Description: description
+        }, function(data) {
+            var jssonobj = jQuery.parseJSON(data);
+            if (jssonobj.Status == 'Y') {
+                location.reload();
+            }
+        });
+        event.preventDefault();
+    });
+    $("a.EditRequest").click(function(event) {
+        suggestion = "EditSuggestion";
+        $("#NewTitle").val("")
+        $("#NewAuthor").val("")
+        $("#NewISBN").val("")
+        $("#NewPublisher").val("")
+        $("#NewEdition").val("")
+        $("#NewPrice").val("")
+        $("#NewCopies").val("")
+        $("#NewNotes").val("")
+        $("#NewElectronic").attr('checked', false);
+        $("#NewSerial").attr('checked', false);
+        $("input[name=selector]:checked").each(function() {
+            $(this).prop('checked', false);
+        });
+        $('#NewBindType option[value="A"]').attr("selected", "selected");
+        $('input:radio[name=group]:checked').attr("checked", false);
+        var id = event.target.id;
+        var split = id.split('_');
+        var reqId = split[1];
+        $("#RequestId").val(reqId);
+        $.post("MyLibrary?OPId=31", {
+            ReqId: reqId
+        }, function(data) {
+            var jssonobj = jQuery.parseJSON(data);
+            var renewstatus = jssonobj.Status;
+            if (renewstatus == 'N') {
+
+            } else if (renewstatus == 'Y') {
+                var title = jssonobj.Title;
+                var author = jssonobj.Author;
+                var publisher = jssonobj.Publisher;
+                var edition = jssonobj.Edition;
+                var isbn = jssonobj.ISBN;
+                var currencyCode = jssonobj.CurrencyCode;
+                var copies = jssonobj.Copies;
+                var notes = "";
+                var notes1 = jssonobj.Notes;
+                var notesjo = jQuery.parseJSON(notes1);
+                $.each(notesjo, function(k, v) {
+                    var field = v.Field;
+                    var value = v.Value;
+                    if (field == "Notes") {
+                        notes = value;
+                    }
+                });
+                var price = jssonobj.Price;
+                var courseId = jssonobj.CourseId;
+                var mediumType = jssonobj.MediumType;
+                var bindType = jssonobj.BindType;
+                var bibLevel = jssonobj.BibLevel;
+                var materialType = jssonobj.MaterialType;
+                var budgets = jssonobj.Budgets;
+                var location = jssonobj.Location;
+                $("#NewTitle").val(title)
+                $("#NewAuthor").val(author)
+                $("#NewISBN").val(isbn)
+                $("#NewPublisher").val(publisher)
+                $("#NewEdition").val(edition)
+                $("#NewPrice").val(price)
+                $("#NewCopies").val(copies)
+                $("#NewNotes").val(notes)
+                if (mediumType == 'A') {
+                    $("#NewElectronic").attr('checked', true);
+                }
+                if (bibLevel == '4') {
+                    $("#NewSerial").attr('checked', true);
+                }
+                $("#NewCurrency option:contains(" + currencyCode + ")").attr('selected', 'selected');
+                $('#NewBindType option').each(function() {
+                    $("#NewBindType option[value=" + bindType + "]").attr("selected", "selected");
+                });
+                $('#NewLibraryName option').each(function() {
+                    $("#NewLibraryName option[value=" + location + "]").attr("selected", "selected");
+                });
+                $('#NewMaterialType option').each(function() {
+                    $("#NewMaterialType option[value=" + materialType + "]").attr("selected", "selected");
+                });
+                var budgetsSplit = budgets.split(',');
+                for (i = 0; i < budgetsSplit.length; ++i) {
+                    var budgetsId = budgetsSplit[i];
+                    $("input[name=selector]").each(function() {
+                        if (this.value == $.trim(budgetsId)) {
+                            $(this).attr('checked', true);
+                        }
+                    });
+                }
+                $("input:radio[name=group]").each(function() {
+                    if (this.value == courseId) {
+                        $(this).attr('checked', true);
+                    }
+                });
+                $("#SuggestionsNewRequest").dialog({
+                    title: "Edit Request"
+                });
+                $("#SuggestionsNewRequest").dialog("open");
+            }
+        })
+        event.preventDefault();
+    });
+    $("a.Acquistion1NewSuggestion").click(function(event) {
+        suggestion1 = "NewSuggestion";
+        $("#AddingWorkflow").html("");
+        $("#MaimWorkFlowAdd").show();
+        $("#NewTitle").val("")
+        $("#NewAuthor").val("")
+        $("#NewSeries").val("")
+        $("#NewISBN").val("")
+        $("#NewYearOfPublication").val("")
+        $("#NewPlaceOfPublication").val("")
+        $("#NewPublisher").val("")
+        $("#NewEdition").val("")
+        $("#NewVolumes").val("")
+        $("#Notes").val("")
+        $("#name").val("")
+        $("#NewPartSubDivision").val("")
+        $("#NewPrice").val("0")
+        $("#NewCopies").val("1")
+        $("#EditVolumes").show();
+        $("#ExtraVolumes").hide();
+        $("#NewVolume").val("")
+        $("#NewPart").val("")
+
+        $("input:checkbox:checked").each(function() {
+            $(this).prop('checked', false);
+        });
+        $('#NewBindType option[value="A"]').attr("selected", "selected");
+        $('#NewMaterialType option[value="8"]').attr("selected", "selected");
+        //        $("#AddingWorkflow").append();
+        //         $("#AddingVolumes").append();
+        $("#Acquistion1SuggestionsNewRequest").dialog({
+            title: "New Request"
+        });
+        $("#Acquistion1SuggestionsNewRequest").dialog("open");
+        event.preventDefault();
+    });
+    $("a.UnreadMessages").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var formId = split[1];
+        var libraryId = split[2];
+        $.post("MyLibrary?OPId=16", {
+            FormId: formId,
+            LibraryId: libraryId
+        }, function(data) {
+            var jssonobj = jQuery.parseJSON(data);
+            var htmContent = jssonobj.HtmlContent;
+            if (htmContent != "") {
+
+                $("#MsgDialogue").html(htmContent);
+                $("#MsgDialogue").dialog("open");
+
+            } else {
+
+                var formContent = jssonobj.FormLetterContent;
+                $("#MsgDialogue").html(formContent);
+                $("#MsgDialogue").dialog("open");
+                //                location.reload();
+            }
+        })
+        event.preventDefault();
+    });
+    $("a.Acquistion1EditRequest").click(function(event) {
+        suggestion1 = "EditSuggestion";
+        $("#AddingWorkflow").html("");
+        $("#MaimWorkFlowAdd").show();
+        $("#EditVolumes").hide();
+        $("#ExtraVolumes").show();
+        $("#NewTitle").val("")
+        $("#NewAuthor").val("")
+        $("#NewSeries").val("")
+        $("#NewISBN").val("")
+        $("#NewYearOfPublication").val("")
+        $("#NewPlaceOfPublication").val("")
+        $("#NewPublisher").val("")
+        $("#NewEdition").val("")
+        $("#NewVolume").val("")
+        $("#NewPart").val("")
+        $("#NewPartSubDivision").val("")
+        $("#NewPrice").val("0")
+        $("#NewCopies").val("1")
+        //        $("input[name=selector]:checked").each(function(){
+        //            $(this).prop('checked', false);
+        //        });
+        $("input:checkbox:checked").each(function() {
+            $(this).prop('checked', false);
+        });
+        $('#NewBindType option[value="A"]').attr("selected", "selected");
+        var id = event.target.id;
+        var split = id.split('_');
+        var reqId = split[1];
+        var libid = $("#LIBID").val();
+        $("#Acq1RequestId").val(reqId);
+        $.post("MyLibrary?OPId=37", {
+            LibId: libid,
+            ReqId: reqId
+        }, function(data) {
+            var jssonobj = jQuery.parseJSON(data);
+            var renewstatus = jssonobj.Status;
+            if (renewstatus == 'N') {
+
+            } else if (renewstatus == 'Y') {
+
+                var title = jssonobj.Title;
+                var author = jssonobj.Author;
+                var publisher = jssonobj.Publisher;
+                var edition = jssonobj.Edition;
+                var isbn = jssonobj.ISBN;
+                var volume = jssonobj.Volume;
+                var part = jssonobj.Part;
+                var subDiv = jssonobj.PartsSubDivison;
+                var series = jssonobj.Series;
+                var publishPlace = jssonobj.PublishPlace;
+                var publishYear = jssonobj.PublishYear;
+                var currencyCode = jssonobj.CurrencyCode;
+                var copies = jssonobj.Copies;
+                var price = jssonobj.Price;
+                var bindType = jssonobj.BindType;
+                var materialType = jssonobj.MaterialType;
+                var budgets = jssonobj.Budgets;
+                var notes = jssonobj.Notes;
+                var customworkflowarrHtml = jssonobj.CustomWorkflow;
+                if (customworkflowarrHtml == '') {
+                    $("#MaimWorkFlowAdd").show();
+                } else {
+                    $("#MaimWorkFlowAdd").hide();
+                    $("#AddingWorkflow").html(customworkflowarrHtml);
+                }
+                //                alert(customworkflowarr);
+                //                $.each( customworkflowarr, function( key, value ) {
+                //                    
+                //                    var libid=$("#LIBID").val();
+                //                    $.each( value, function( key1, value1 ) {
+                //                        if(key1 == 'SequenceNumber'){
+                //                        var req = "MyLibrary?OPId=57&No="+value1+"&LibId="+libid;        
+                //                        $.post(req,function(data){  
+                //                            $("#WorkFlowIdNo").val(value1);
+                //                            $("#AddingWorkflow").append(data);
+                //                            $("#ADDWORKFLOW_"+value1).hide();
+                //                            $("#REMOVEWORKFLOW_"+value1).hide();
+                //            
+                //                        });        
+                //                        if(split[1]==no ){
+                //                            $("#ADDWORKFLOW_"+value1+"_"+libid).hide(); 
+                //                        }  
+                //                     }
+                ////                        alert( key1 + ": " + value1 );
+                //                    });
+                //                });
+                var bindType1;
+                if (bindType == 'A') {
+                    bindType1 = 'Paperback';
+                } else if (bindType == 'B') {
+                    bindType1 = 'Hardback';
+                }
+                $("#NewTitle").val(title)
+                $("#NewAuthor").val(author)
+                $("#NewSeries").val(series)
+                $("#NewISBN").val(isbn)
+                $("#NewYearOfPublication").val(publishYear)
+                $("#NewPlaceOfPublication").val(publishPlace)
+                $("#NewPublisher").val(publisher)
+                $("#NewEdition").val(edition)
+                $("#NewVolume").val(volume)
+                $("#NewPart").val(part)
+                $("#NewPartSubDivision").val(subDiv)
+                $("#Notes").text(notes)
+                if (price != "") {
+                    $("#NewPrice").val(price)
+                }
+                if (copies != "") {
+                    $("#NewCopies").val(copies)
+                }
+                if (currencyCode != "") {
+                    $("#NewCurrency option:contains(" + currencyCode + ")").attr('selected', 'selected');
+                }
+                $('#NewBindType option').each(function() {
+                    $("#NewBindType option[value=" + bindType1 + "]").attr("selected", "selected");
+                });
+                $('#NewMaterialType option').each(function() {
+                    $("#NewMaterialType option[value=" + materialType + "]").attr("selected", "selected");
+                });
+                var budgetsSplit = budgets.split(',');
+                for (i = 0; i < budgetsSplit.length; ++i) {
+                    var budgetsId = budgetsSplit[i];
+                    $("input:checkbox").each(function() {
+                        if (this.value == $.trim(budgetsId)) {
+                            $(this).attr('checked', true);
+                        }
+                    });
+                }
+                //                for (i = 0; i < customworkflowarr.size(); i++) {
+                //                    var job=customworkflowarr.get(i);
+                //                    alert(job.SequenceNumber+".."+job.Definition+".."+job.StepManagerType+".."+job.StepManagerId+".."+job.Time);
+                //                }
+                $("#Acquistion1SuggestionsNewRequest").dialog({
+                    title: "Edit Request"
+                });
+                $("#Acquistion1SuggestionsNewRequest").dialog("open");
+            }
+        })
+        event.preventDefault();
+    });
+    $("a.Acquistion1DeleteRequest").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var reqId = split[1];
+        $("#Acquistion1DeleteRequestId").val(reqId);
+        $("#Acquistion1DeleteSuggestion").dialog("open");
+        event.preventDefault();
+    });
+    $("a.DeleteRequest").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var reqId = split[1];
+        $("#DeleteRequestId").val(reqId);
+        $("#DeleteSuggestion").dialog("open");
+        event.preventDefault();
+    });
+    $('#button').click('input', function() {
+        $("#managerTable").html("");
+        var name = $('#name').val();
+        if (name.length >= 1) {
+            $.ajax({
+                type: 'POST',
+                url: "MyLibrary?OPId=60",
+                data: {
+                    Name: name
+                },
+                success: function(data) {
+                    var jssonobj = jQuery.parseJSON(data);
+                    var renewstatus = jssonobj.Status;
+                    if (renewstatus == '1') {
+                        var arr = jssonobj.Names;
+                        $("#managerTable").append('<tr><th>#</th><th>PatronId</th><th>Patron Name</th><th>Department</th><th>Patron Category</th><th>Course</th></tr>');
+                        $.each(arr, function(key, value) {
+                            var ht = value
+                            var patid;
+                            var patname;
+                            var dept;
+                            var patcat;
+                            var course;
+                            $.each(ht, function(key, value) {
+                                if (key == 'PatronID') {
+                                    patid = value;
+                                }
+                                if (key == 'PatronName') {
+                                    patname = value;
+                                }
+                                if (key == 'Department') {
+                                    dept = value;
+                                }
+                                if (key == 'PatronCategory') {
+                                    patcat = value;
+                                }
+                                if (key == 'Course') {
+                                    course = value;
+                                }
+                            });
+                            $("#managerTable").append('<tr><td><input type="radio" name="Id" id="Id" value="' + patid + '"></td><td>' + patid + '</td><td>' + patname + '</td><td>' + dept + '</td><td>' + patcat + '</td><td>' + course + '</td></tr>');
+                        });
+                        //$( "#DIVAPPROVINGAUTHORITIES" ).dialog("open");
+                    } else if (renewstatus == '0') {
+                        alert("No records found");
+                    }
+                },
+                async: false
+            });
+            
+        }
+    });
+    $("input.PersonalDetailsChangePassword").click(function(event) {
+        $("#old").val("")
+        $("#new").val("")
+        $("#renew").val("")
+        $("#Password").dialog("open");
+        event.preventDefault();
+    });
+    $("input.PersonalDetailsEdit").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var libId = split[1];
+        var patId = split[2];
+        var req = "OPId=43&LibraryId=" + libId + "&PatronId=" + patId;
+        $.post('MyLibrary', req, function(data) {
+            var jssonobj = jQuery.parseJSON(data);
+            var email = jssonobj.Email;
+            var mobile = jssonobj.Mobile;
+            var facebookId = jssonobj.FaceBook;
+            var twitterid = jssonobj.Twitter;
+            var renewstatus = jssonobj.Status;
+
+            if (renewstatus == 'N') {
+
+            } else if (renewstatus == 'Y') {
+                $("#mobile").val(mobile);
+                $("#email").val(email);
+                $("#twitter").val(twitterid);
+                $("#FaceBook").val(facebookId);
+                $("#Email").dialog("open");
+            }
+        });
+
+        event.preventDefault();
+    });
+    $("input.Arrivals").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var libId = split[1];
+        var days = $("#days").val();
+        window.location = "MyLibrary?OPId=22&Days=" + days + "&LibId=" + libId;
+    });
+    //    Rajesh
+    $("a.ReserveItem").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var catId = split[1];
+        var ownLibId = split[2];
+        var url = "OPAC2Utility?OPID=14&CATID=" + catId + "&OWNLIBID=" + ownLibId;
+        $.post(url, function(data) {
+
+            var obj = $.parseJSON(data);
+            if (obj.Message == null) {
+                if (obj.Volumes != null) {
+                    $("#ReservationVolumeId").attr('style', 'display: visible');
+                    var optionVal = "<option value='X'>Select a volume</option>";
+                    $("#ReservationSelect").append(optionVal);
+                    $.each(obj.Volumes, function(k, v) {
+                        var volId = v.VolumeId;
+                        var volName = v.VolumeName;
+                        var strToSet = volId + "_" + catId + "_" + ownLibId;
+                        var optionVal = "<option value=" + strToSet + ">" + volName + "</option>";
+                        $("#ReservationSelect").append(optionVal);
+                    });
+                    $("#ReservationMaterialTypeDialog").dialog("open");
+                } else if (obj.MaterialType != null) {
+                    $("#ReservationVolumeId").attr('style', 'display: none');
+                    $("#ReservationMaterialType").attr('style', 'display: visible');
+                    var optionVal = "<option value='X'>Select a material type</option>";
+                    var volid = obj.DefaultVolumeId;
+                    $("#ReservationSelectMT").append(optionVal);
+                    $.each(obj.MaterialType, function(k, v) {
+                        var matName = v.MaterialType;
+                        var matId = v.MaterialTypeId;
+                        var strToSet = volid + "_" + catId + "_" + ownLibId + "_" + matId;
+                        var optionVal = "<option value=" + strToSet + ">" + matName + "</option>";
+                        $("#ReservationSelectMT").append(optionVal);
+                    });
+                    $("#ReservationMaterialTypeDialog").dialog("open");
+                }
+            } else if (obj.Message == "L") {
+                var value = $("#MESSAGE_L").text();
+                $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                $("#ReservationSuccessfulDialog").dialog("open");
+            } else if (obj.Message.charAt(0) == "M") {
+                if (obj.Message == "M1") {
+                    var value = $("#MESSAGE_M1").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                } else if (obj.Message == "M2") {
+                    var value = $("#MESSAGE_M2").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                } else if (obj.Message == "M3") {
+                    var value = $("#MESSAGE_M3").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                } else if (obj.Message == "M4") {
+                    var value = $("#MESSAGE_M4").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                } else if (obj.Message == "M5") {
+                    var value = $("#MESSAGE_M5").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                } else if (obj.Message == "M6") {
+                    var value = $("#MESSAGE_M6").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                } else if (obj.Message == "M7") {
+                    var value = $("#MESSAGE_M7").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                } else if (obj.Message == "M8") {
+                    var value = $("#MESSAGE_M8").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                } else if (obj.Message == "M9") {
+                    var value = $("#MESSAGE_M9").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                }
+            } else {
+                var value = $("#MESSAGE_SUCCESS").text();
+                $("#SetReservationSuccessful").html("<p>" + value + " " + obj.Message + "</p>");
+                $("#ReservationSuccessfulDialog").dialog("open");
+            }
+        });
+        event.preventDefault();
+    });
+    $("#Locales").change(function() {
+        var value = $("#Locales option:selected").val();
+        if (value != "X") {
+            var url = "OPAC2Utility?OPID=15&Locale=" + value;
+            $.post(url, function(data) {
+            });
+            location.reload();
+        }
+    });
+    $("#ReservationSelect").live("change", function() {
+        var volumeId = $(this).val();
+        var splitVals = volumeId.split('_');
+        var volid = splitVals[0];
+        var catid = splitVals[1];
+        var ownlibid = splitVals[2];
+        var url = "OPAC2Utility?OPID=16&CATID=" + catid + "&OWNLIBID=" + ownlibid + "&VOLID=" + volid;
+        $.post(url, function(data) {
+            var obj = $.parseJSON(data);
+            if (obj.Message == null) {
+                if (obj.MaterialType != null) {
+                    $("#ReservationMaterialType").attr('style', 'display: visible');
+                    var optionVal = "<option value='X'>Select a material type</option>";
+                    $("#ReservationSelectMT").append(optionVal);
+                    $.each(obj.MaterialType, function(k, v) {
+                        var matName = v.MaterialType;
+                        var matId = v.MaterialTypeId;
+                        var strToSet = volid + "_" + catid + "_" + ownlibid + "_" + matId;
+                        var optionVal = "<option value=" + strToSet + ">" + matName + "</option>";
+                        $("#ReservationSelectMT").append(optionVal);
+                    });
+                    $("#ReservationMaterialTypeDialog").dialog("open");
+                }
+            } else if (obj.Message == "L") {
+                $("#ReservationMaterialType").attr('style', 'display: none');
+                var value = $("#MESSAGE_L").text();
+                $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                $("#ReservationSuccessfulDialog").dialog("open");
+            } else if (obj.Message.charAt(0) == "M") {
+                $("#ReservationMaterialType").attr('style', 'display: none');
+                if (obj.Message == "M1") {
+                    var value = $("#MESSAGE_M1").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                } else if (obj.Message == "M2") {
+                    var value = $("#MESSAGE_M2").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                } else if (obj.Message == "M3") {
+                    var value = $("#MESSAGE_M3").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                } else if (obj.Message == "M4") {
+                    var value = $("#MESSAGE_M4").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                } else if (obj.Message == "M5") {
+                    var value = $("#MESSAGE_M5").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                } else if (obj.Message == "M6") {
+                    var value = $("#MESSAGE_M6").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                } else if (obj.Message == "M7") {
+                    var value = $("#MESSAGE_M7").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                } else if (obj.Message == "M8") {
+                    var value = $("#MESSAGE_M8").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                } else if (obj.Message == "M9") {
+                    var value = $("#MESSAGE_M9").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                }
+            } else {
+                $("#ReservationMaterialType").attr('style', 'display: none');
+                var value = $("#MESSAGE_SUCCESS").text();
+                $("#SetReservationSuccessful").html("<p>" + value + " " + obj.Message + "</p>");
+                $("#ReservationSuccessfulDialog").dialog("open");
+            }
+        });
+    });
+    $("#ReservationSelectMT").live("change", function() {
+        var matName = $(this).val();
+        var splitVals = matName.split('_');
+        var volid = splitVals[0];
+        var catid = splitVals[1];
+        var ownlibid = splitVals[2];
+        var mattypename = splitVals[3];
+        var url = "OPAC2Utility?OPID=17&CATID=" + catid + "&OWNLIBID=" + ownlibid + "&VOLID=" + volid + "&MATNAME=" + mattypename;
+        $.post(url, function(data) {
+            var obj = $.parseJSON(data);
+            if (obj.Message == "L") {
+                var value = $("#MESSAGE_L").text();
+                $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                $("#ReservationSuccessfulDialog").dialog("open");
+            } else if (obj.Message.charAt(0) == "M") {
+                if (obj.Message == "M1") {
+                    var value = $("#MESSAGE_M1").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                } else if (obj.Message == "M2") {
+                    var value = $("#MESSAGE_M2").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                } else if (obj.Message == "M3") {
+                    var value = $("#MESSAGE_M3").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                } else if (obj.Message == "M4") {
+                    var value = $("#MESSAGE_M4").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                } else if (obj.Message == "M5") {
+                    var value = $("#MESSAGE_M5").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                } else if (obj.Message == "M6") {
+                    var value = $("#MESSAGE_M6").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                } else if (obj.Message == "M7") {
+                    var value = $("#MESSAGE_M7").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                } else if (obj.Message == "M8") {
+                    var value = $("#MESSAGE_M8").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                } else if (obj.Message == "M9") {
+                    var value = $("#MESSAGE_M9").text();
+                    $("#SetReservationSuccessful").html("<p>" + value + "</p>");
+                    $("#ReservationSuccessfulDialog").dialog("open");
+                }
+            } else {
+                var value = $("#MESSAGE_SUCCESS").text();
+                $("#SetReservationSuccessful").html("<p>" + value + " " + obj.Message + "</p>");
+                $("#ReservationSuccessfulDialog").dialog("open");
+            }
+        });
+    });
+    $("a.REQUESTFORCHECKOUT").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var accno = split[1];
+        var libId = split[2];
+        var req = "OPID=18&ACCNO=" + accno + "&LIBID=" + libId;
+        $.post('OPAC2Utility', req, function(data) {
+            var obj = $.parseJSON(data);
+            if (obj.Message == "L1") {
+                var value = $("#MESSAGE_RC_L1").text();
+                $("#SetRequestForCheckOut").html("<p>" + value + "</p>");
+                $("#RequestForCheckOutDialog").dialog("open");
+            } else if (obj.Message == "L2") {
+                var value = $("#MESSAGE_RC_L2").text();
+                $("#SetRequestForCheckOut").html("<p>" + value + "</p>");
+                $("#RequestForCheckOutDialog").dialog("open");
+            } else if (obj.Message == "M1") {
+                var value = $("#MESSAGE_RC_M1").text();
+                $("#SetRequestForCheckOut").html("<p>" + value + "</p>");
+                $("#RequestForCheckOutDialog").dialog("open");
+            } else if (obj.Message == "M2") {
+                var value = $("#MESSAGE_RC_M2").text();
+                $("#SetRequestForCheckOut").html("<p>" + value + "</p>");
+                $("#RequestForCheckOutDialog").dialog("open");
+            } else if (obj.Message == "M3") {
+                var value = $("#MESSAGE_RC_M3").text();
+                $("#SetRequestForCheckOut").html("<p>" + value + "</p>");
+                $("#RequestForCheckOutDialog").dialog("open");
+            } else if (obj.Message == "M4") {
+                var value = $("#MESSAGE_RC_M4").text();
+                $("#SetRequestForCheckOut").html("<p>" + value + "</p>");
+                $("#RequestForCheckOutDialog").dialog("open");
+            } else if (obj.Message == "M5") {
+                var value = $("#MESSAGE_RC_M5").text();
+                $("#SetRequestForCheckOut").html("<p>" + value + "</p>");
+                $("#RequestForCheckOutDialog").dialog("open");
+            } else if (obj.Message == "M6") {
+                var value = $("#MESSAGE_RC_M6").text();
+                $("#SetRequestForCheckOut").html("<p>" + value + "</p>");
+                $("#RequestForCheckOutDialog").dialog("open");
+            } else if (obj.Message == "M7") {
+                var value = $("#MESSAGE_RC_M7").text();
+                $("#SetRequestForCheckOut").html("<p>" + value + "</p>");
+                $("#RequestForCheckOutDialog").dialog("open");
+            }
+            else {
+                var value = $("#MESSAGE_RC_SUCCESS").text() + obj.Message;
+                $("#SetRequestForCheckOut").html("<p>" + value + "</p>");
+                $("#RequestForCheckOutDialog").dialog("open");
+            }
+        });
+        event.preventDefault();
+    });
+    $("a.BackToSearchResults").click(function(event) {
+        var id = event.target.id;
+        var unixNames = "";
+        var split = id.split('_');
+        var formName = split[1];
+        var pageNumber = split[2];
+        $("#" + formName + "_ResultSetOffset").val(pageNumber);
+        $("#" + formName + "_ApplyFacet").val("true");
+        $("input[id^=REPCB]").each(function() {
+            var idToUse = this.id;
+            if ($('#' + idToUse).attr('checked')) {
+                var unixName = $('#' + idToUse).attr('name');
+                unixNames += unixName + ",";
+            }
+        });
+        $("#" + formName + "_SelectedUnixNames").val(unixNames);
+        $("#" + formName + "_NewSearch").val("false");
+        $("#SEARCHFRMID_" + formName).submit();
+        event.preventDefault();
+    });
+    $("a.SAVEQUERY").click(function(event) {
+        var id = event.target.id;
+        $("#SaveQueryDialog").dialog("open");
+        $("#QueryName").val("");
+        var value = $("#MESSAGE_SQ_RESET").text();
+        $("#SavedQueryMessage").text(value);
+        event.preventDefault();
+    });
+    $("a.RemoveQuery").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var qryId = split[1];
+        var req = "OPId=41&QueryId=" + qryId;
+        $.post('MyLibrary', req, function(data) {
+            if (data.charAt(0) == "Y") {
+            } else {
+                event.preventDefault();
+            }
+        });
+
+    });
+    $("a.ADDBUFFER").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var catId = split[1];
+        var ownlibId = split[2];
+        var idToUse = catId + "_" + ownlibId;
+        var req = "OPAC2Utility?OPID=20&ID=" + idToUse;
+        $.post(req, function(data) {
+            var obj = $.parseJSON(data);
+            if (obj.Status == "AVAILABLE") {
+                $("#BUFFMESS_" + idToUse).text("Available in the buffer");
+            } else if (obj.Status == "ADDED") {
+                $("#BUFFMESS_" + idToUse).text("Item added to buffer");
+            }
+            if (obj.Count == "0") {
+                $("#DisplayBufferCount").attr('style', 'display: none');
+            } else {
+                $("#DisplayBufferCount").attr('style', 'display: visible');
+                $("#DisplayBufferCountNumber").text(obj.Count);
+            }
+        });
+        event.preventDefault();
+    });
+
+    $("#selectall").click(function() {
+        $('.case').attr('checked', this.checked);
+    });
+
+
+    $("#BufferPrint").click(function(event) {
+        $("#OPID").val("22");
+        $("#BufferForm").submit();
+        event.preventDefault();
+    });
+    $("a.BufferEmailHyper").click(function(event) {
+        $("#EMAILUSER").val("");
+        var id = event.target.id;
+        var split = id.split("_");
+        var catid = split[1];
+        var ownlibid = split[2];
+        var idtoset = catid + "_" + ownlibid;
+        $("#SelectedIdForEmail").val(idtoset);
+        $.post("OPAC2Utility?OPID=25", {
+        }, function(data) {
+            var jssonobj = jQuery.parseJSON(data);
+            var email = jssonobj.Email;
+            var renewstatus = jssonobj.Status;
+
+            if (renewstatus == 'N') {
+
+            } else if (renewstatus == 'Y') {
+                $("#EMAILUSER").val(email);
+
+            }
+
+            $("#BufferedEmailHyperDialog").dialog("open");
+        })
+
+        event.preventDefault();
+    });
+
+    $("#BufferEmail").click(function(event) {
+        $("#EMAILUSER").val("");
+        $.post("OPAC2Utility?OPID=25", {
+        }, function(data) {
+            var jssonobj = jQuery.parseJSON(data);
+            var email = jssonobj.Email;
+            var renewstatus = jssonobj.Status;
+
+            if (renewstatus == 'N') {
+
+            } else if (renewstatus == 'Y') {
+                $("#EMAILUSER").val(email);
+            }
+
+            $("#BufferedEmailDialog").dialog("open");
+        })
+
+        event.preventDefault();
+    });
+    $("#BufferClearlist").click(function(event) {
+        $("#OPID").val("24");
+        $("#BufferForm").submit();
+        event.preventDefault();
+    });
+    $("#SendAndroidLinkEmail").click(function(event) {
+        $("#AndroidEmailDiv").dialog('open');
+        $('#AndroidEmailButtonSubmit').attr("disabled", false);
+        $("#AndroidEmailMessage").text("");
+        $("#AndroidEmailTextField").val("");
+        event.preventDefault();
+    });
+    $("#AndroidEmailButtonSubmit").click(function(event) {
+        $('#AndroidEmailButtonSubmit').attr("disabled", true);
+
+        var email = encodeURIComponent($("#AndroidEmailTextField").val());
+        var url = "OPAC2Utility?OPID=26&Email=" + email;
+        $("#AndroidEmailMessage").text("Please wait, System is sending an Email to the entered Email Id. This window will automatically close after sending the Email.");
+        $.get(url, function(data) {
+            if (data == 0) {
+                $("#AndroidEmailDiv").dialog('close');
+            } else {
+                $("#AndroidEmailMessage").text("Could not send Email. Please check your Email Id and try again");
+                $('#AndroidEmailButtonSubmit').attr("disabled", false);
+            }
+        });
+        event.preventDefault();
+    });
+    $("a.Resources").click(function(event) {
+        var id = event.target.id;
+        var split = id.split("|");
+        var resourseType = split[1];
+        var recordCatId = split[2];
+        var recordOwnLibId = split[3];
+        var resourceFileName = split[4];
+        var recordOpenArchive = split[5];
+
+        $.post("OPAC2Utility?OPID=27&", {
+            Type: resourseType,
+            Id: recordCatId,
+            OwnLibId: recordOwnLibId,
+            FileName: resourceFileName,
+            OpenArchive: recordOpenArchive
+        }, function(data) {
+            var jssonobj = jQuery.parseJSON(data);
+            var renewstatus = jssonobj.Status;
+            var type = jssonobj.Type;
+            var id = jssonobj.Id;
+            var libId = jssonobj.OwnLibId;
+            var name = encodeURIComponent(jssonobj.FileName);
+            window.location = "AttachmentDownloadServlet?Type=" + type + "&Id=" + id + "&LibId=" + libId + "&FileName=" + name;
+//            if (renewstatus == "NeedToLogin") {
+//                $("#ResourceDialog").dialog("open");
+//            } else if (renewstatus == "Login") {
+//                
+//
+//            }
+
+        })
+
+        event.preventDefault();
+    });
+    $("select.Resort").change(function(event) {
+        var id = event.target.id;
+        var unixNames = "";
+        var split = id.split("_");
+        var formName = split[1];
+        var value = $("#Resort_" + formName + " option:selected").val();
+        if (value == "A")
+            $("#" + formName + "_SortField").val("Title");
+        if (value == "B")
+            $("#" + formName + "_SortField").val("Author");
+        if (value == "C")
+            $("#" + formName + "_SortField").val("DateAsc");
+        if (value == "D")
+            $("#" + formName + "_SortField").val("DateDsc");
+        $("#" + formName + "_ApplyFacet").val("true");
+        $("input[id^=REPCB]").each(function() {
+            var idToUse = this.id;
+            if ($('#' + idToUse).attr('checked')) {
+                var unixName = $('#' + idToUse).attr('name');
+                unixNames += unixName + ",";
+            }
+        });
+        $("#" + formName + "_SelectedUnixNames").val(unixNames);
+        $("#" + formName + "_NewSearch").val("false");
+        $("#SEARCHFRMID_" + formName).submit();
+        event.preventDefault();
+    });
+
+
+    $("input.SRUServer").change(function() {
+        var arr50 = "";
+        var libraryId = $("#FederatedLibraryId").val();
+        $("input[name^=SRUselector]:checked").each(function() {
+            var id = $(this).attr("id");
+            var split = id.split("_");
+            var serverid = split[1];
+            var libid = split[2];
+            if ($("#SRU_" + serverid + "_" + libid).is(':checked')) {
+                var star = "";
+                star = serverid + "_" + libid;
+                arr50 += "|" + star;
+            }
+        });
+
+        $.post("FederatedSearch?LibId=" + libraryId + "&OPID=1", {
+            ServerIds: arr50
+        }, function(data) {
+            var jssonobj = jQuery.getJSON(data);
+
+
+
+        })
+        event.preventDefault();
+    });
+    $("#EmailNewArrival").click(function(event) {
+        $("#NEWARRIEMAILUSER").val("");
+        $("#EmailNewArrivalDialog").dialog("open");
+        event.preventDefault();
+    });
+
+    $(function() {
+        $("#StartDate").datepicker();
+    });
+    $(function() {
+        $("#LastDate").datepicker();
+    });
+    $(function() {
+        $("#EditStartDate").datepicker();
+    });
+    $(function() {
+        $("#EditLastDate").datepicker();
+    });
+    $("#LibraryId").change(function() {
+        $('#UserType').text('<option value="' + +'">' + +'</option>');
+        $('#Department').text('<option value="' + +'">' + +'</option>');
+        $('#Course').text('<option value="' + +'">' + +'</option>');
+        $('#CustomFields').html("");
+        $('#EditCustomFields').html("");
+        $("#UserId").val("");
+        $("#Password1").val("");
+        $("#RetypePassword").val("");
+        $("#FirstName").val("");
+        $("#MiddleName").val("");
+        $("#LastName").val("");
+        $("#Address1").val("");
+        $("#Address2").val("");
+        $("#City").val("");
+        $("#State").val("");
+        $("#Country").val("");
+        $("#ZipCode").val("");
+        $("#Email1").val("");
+        $("#AlternateEmail").val("");
+        $("#Phone").val("");
+        $("#Mobile").val("");
+        $("#StartDate").val("");
+        $("#LastDate").val("");
+        var value = $("#LibraryId option:selected").val();
+        //            var url = "OPAC2Utility?OPID=30&LibId="+value;
+        $.post("OPAC2Utility?OPID=30&LibId=" + value, function(data) {
+            var jssonobj = jQuery.parseJSON(data);
+            var patr = jssonobj.PatrenValues;
+            $("#MEMBERSHIPEdit").hide();
+            $("#MEMBERSHIPDelete").hide();
+            for (i = 0; i < patr.length; ++i) {
+                var pat1 = patr[i];
+                $('#UserType').append('<option value="' + pat1.PatrenId + '">' + pat1.PatrenName + '</option>');
+            }
+            for (j = 0; j < patr.length; ++j) {
+                var pat1 = patr[j];
+                $('#EditUserType').append('<option value="' + pat1.PatrenId + '">' + pat1.PatrenName + '</option>');
+            }
+            var dept = jssonobj.DeptValues;
+            for (k = 0; k < dept.length; k++) {
+                var dep1 = dept[k];
+                $('#Department').append('<option value="' + dep1.DeptId + '">' + dep1.DeptName + '</option>');
+            }
+            for (l = 0; l < dept.length; l++) {
+                var dep1 = dept[l];
+                $('#EditDepartment').append('<option value="' + dep1.DeptId + '">' + dep1.DeptName + '</option>');
+            }
+            var course = jssonobj.CourseValues;
+            for (m = 0; m < course.length; m++) {
+                var cour = course[m];
+                $('#Course').append('<option value="' + cour.CourseId + '">' + cour.CourseName + '</option>');
+            }
+            for (n = 0; n < course.length; n++) {
+                var cour = course[n];
+                $('#EditCourse').append('<option value="' + cour.CourseId + '">' + cour.CourseName + '</option>');
+            }
+            var custom = jssonobj.CustomFields;
+            //var str='<table style="width:1000px;"><tbody>';
+            var str = '';
+            var str1 = '';
+            for (o = 0; o < custom.length; o++) {
+                var cus = custom[o];
+                str += '<tr><td style="text-align:left">' + cus.DisplayName + '</td><td style="text-align:left"><input type="text" id="CUST_' + cus.Name + '" name="CUST_' + cus.Name + '"></td><td></td><td></td></tr>';
+            }
+            //str+='</tbody></table>';
+            for (p = 0; p < custom.length; p++) {
+                var cus = custom[p];
+                str1 += '<tr><td style="text-align:left">' + cus.DisplayName + '</td><td style="text-align:left"><input type="text" id="EditCUST_' + cus.Name + '" name="EditCUST_' + cus.Name + '"></td><td></td><td></td></tr>';
+            }
+            $('#CustomFields').append(str);
+            $('#EditCustomFields').append(str1);
+        });
+        //        location.reload();
+
+    });
+    $("input.otherDetailsEdit").click(function(event) {
+        $("#OtherDetails").dialog("open");
+    });
+    $("#UserId").focusin(function() {
+        $("#IDSTATUS").html("");
+        $("#IDIMAGE").html("");
+        $("#EDITBUTTON").html("");
+        $("#DELETEBUTTON").html("");
+        $("input[type=submit]").removeAttr("disabled");
+    });
+
+    $("#UserId").focusout(function() {
+        $("#Password1").val("");
+        $("#RetypePassword").val("");
+        $("#FirstName").val("");
+        $("#MiddleName").val("");
+        $("#LastName").val("");
+        $("#Address1").val("");
+        $("#Address2").val("");
+        $("#City").val("");
+        $("#State").val("");
+        $("#Country").val("");
+        $("#ZipCode").val("");
+        $("#Email1").val("");
+        $("#AlternateEmail").val("");
+        $("#Phone").val("");
+        $("#Mobile").val("");
+        $("#StartDate").val("");
+        $("#LastDate").val("");
+        var logid = $("#UserId").val();
+        if (logid == '') {
+
+        } else {
+            var libid = $("#LibraryId option:selected").val();
+            $.post("OPAC2Utility?OPID=32", {
+                UserId: logid,
+                LibraryId: libid
+            }, function(data) {
+                var jssonobj = jQuery.parseJSON(data);
+                var status = jssonobj.Status;
+                var patid = encodeURIComponent(jssonobj.PatID);
+                var libid = jssonobj.LibID;
+                $("#MEMBERSHIPEdit").hide();
+                $("#MEMBERSHIPDelete").hide();
+                $("#success").hide();
+                $("#fail").hide();
+                if (status == '0') {
+                    $("#NEWMEM").val("");
+                    $("#IDIMAGE").append('<img src="/resources/images/red.jpeg" />');
+                    $("#IDSTATUS").html('<p>This Login Id is already taken.</p>');
+                    $("input[type=submit]").attr("disabled", "disabled");
+                }
+            })
+        }
+    });
+
+    $("a.SubmitRecord").click(function(event) {
+        $('#newUserCatalogerecordFormId').each(function() {
+            $(".MultiFile-list").empty();
+            this.reset();
+        });
+        $("#newUserCatalogerecordId").dialog("open");
+        event.preventDefault();
+    });
+    $("#SubmitRecordResetButton").click(function(event) {
+        $('#newUserCatalogerecordFormId').each(function() {
+            $(".MultiFile-list").empty();
+            this.reset();
+        });
+        event.preventDefault();
+    });
+    $("#SubmitRecordTitle").focusout(function() {
+        var title = $("#SubmitRecordTitle").val();
+        if (title == "") {
+            $("#EmptyCheck").html('<p>Please enter title.</p>');
+            $("#SubmitRecordSubmitId").attr("disabled", "disabled");
+        } else {
+            $("#EmptyCheck").remove();
+            $("#SubmitRecordSubmitId").removeAttr("disabled");
+        }
+    });
+    $("a.SubmitRecordDelete").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var recordId = split[1];
+        $.post("MyLibrary?OPId=45", {
+            Id: recordId
+        }, function(data) {
+            var jssonobj = jQuery.parseJSON(data);
+            var renewstatus = jssonobj.Status;
+            if (renewstatus == 'N') {
+            } else if (renewstatus == 'Y') {
+                location.reload();
+            }
+        });
+    });
+    $("a.REQUESTAPPROVE").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var reqId = split[1];
+        var libId = split[2];
+        $("#ApproveRequestNotesText").val("");
+        $("#ApproveRequestID").val(reqId);
+        $("#ApproveRequestLibraryID").val(libId);
+        $("#ApproveRequestDialog").dialog("open");
+        event.preventDefault();
+    });
+    $("a.REQUESTREJECT").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var reqId = split[1];
+        var libId = split[2];
+        $("#RejectRequestReasonText").val("");
+        $("#RejectRequestID").val(reqId);
+        $("#RejectRequestLibraryID").val(libId);
+        $("#RejectRequestDialog").dialog("open");
+        event.preventDefault();
+    });
+    $("a.REQUESTSENDBACK").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var reqId = split[1];
+        var libId = split[2];
+        $("#SendBackForCommentsText").val("");
+        $("#SendBackForCommntsRequestID").val(reqId);
+        $("#SendBackForCommntsRequestLibraryID").val(libId);
+        $("#SendBackForCommentsRequestDialog").dialog("open");
+        event.preventDefault();
+    });
+    $("a.SubmitRecordEdit").click(function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var recordId = split[1];
+        $("#EditSubmitRecordId").val(recordId);
+        $('#editUserCatalogerecordFormId').each(function() {
+            this.reset();
+        });
+        $(".MultiFile-list").empty();
+        $.post("MyLibrary?OPId=46", {
+            Id: recordId
+        }, function(data) {
+            var jssonobj = jQuery.parseJSON(data);
+            var renewstatus = jssonobj.Status;
+            var title = jssonobj.Title;
+            var main = jssonobj.MainAuthor;
+            var other = jssonobj.OtherAuthor;
+            var keyWords = jssonobj.Keywords;
+            var pubName = jssonobj.PublisherName;
+            var pubPlace = jssonobj.PlaceOfPublication;
+            var year = jssonobj.Year;
+            var edition = jssonobj.Edition;
+            var isbn = jssonobj.ISBN;
+            var materialType = jssonobj.MaterialType;
+            var files = jssonobj.UpdatedFiles;
+            var id = jssonobj.Id;
+            if (renewstatus == 'N') {
+            } else if (renewstatus == 'Y') {
+                $("#EditSubmitRecordTitle").val(title);
+                $("#EditSubmitRecordAuthor").val(main);
+                $("#EditSubmitRecordOtherAuthor").val(other);
+                $("#EditSubmitRecordKeywords").val(keyWords);
+                $("#EditSubmitRecordPublicationsName").val(pubName);
+                $("#EditSubmitRecordPublicationsPlace").val(pubPlace);
+                $("#EditSubmitRecordPublicationsYear").val(year);
+                $("#EditSubmitRecordEdition").val(edition);
+                $("#EditSubmitRecordISBN").val(isbn);
+                $('#EditSubmitRecordMaterialType option[value=' + materialType + ']').attr("selected", "selected");
+                var html = "";
+                $.each(files, function(i, l) {
+                    var fileIdName = l.replace(/\./g, 'X');
+                    html += "<div id='Remove_" + id + "_" + fileIdName + "'><a href='' class='AlreadyUploaded' id='Upload_" + id + "_" + l + "'>X</a>" + l + "</div>";
+                });
+                $("#EditSubmitRecordUpdatedFiles").html(html);
+                $("#editUserCatalogerecordId").dialog("open");
+            }
+        });
+        event.preventDefault();
+    });
+    $("#SubmitRecordSubmitId").click(function(event) {
+        $("#newUserCatalogerecordFormId").submit();
+        event.preventDefault();
+    });
+    $("#EditSubmitRecordSubmitId").click(function(event) {
+        $("#editUserCatalogerecordFormId").submit();
+        event.preventDefault();
+    });
+    $("a.AlreadyUploaded").live('click', function(event) {
+        var id = event.target.id;
+        var split = id.split('_');
+        var id = split[1];
+        var filename = split[2];
+        $.post("MyLibrary?OPId=48", {
+            FileName: filename,
+            Id: id
+        }, function(data) {
+            var jssonobj = jQuery.parseJSON(data);
+            var renewstatus = jssonobj.Status;
+            if ($.trim(renewstatus) == 'N') {
+            } else if ($.trim(renewstatus) == 'Y') {
+                var filenameforid = filename.replace(/\./g, 'X');
+                $("#Remove_" + id + "_" + filenameforid).remove();
+            }
+        });
+        event.preventDefault();
+    });
+    $("#EditSubmitRecordCancelId").click(function(event) {
+        $('#editUserCatalogerecordFormId').each(function() {
+            this.reset();
+        });
+        $("#editUserCatalogerecordId").dialog('close');
+        event.preventDefault();
+    });
+    $("#PostComment").click(function(event) {
+        var comment = $("#Comment").val();
+        var catid = $("#CatId").val();
+        var ownlibid = $("#OwnLibId").val();
+        $.post("View?CatId=" + catid + "&OwnLibId=" + ownlibid, {
+            Comment: comment
+        }, function(data) {
+            location.reload();
+        })
+    });
+    $("input[type=submit]").click(function(event) {
+        $("#MemberShipForm").submit();
+    });
+
+});

@@ -1,0 +1,1595 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: errorpage.tt -->
+
+
+
+
+
+
+
+
+
+<html lang="en" class="no-js">
+<head>
+
+<title
+    >An error has occurred &rsaquo; TOM MBOYA UNIVERSITY LIBRARY catalog</title
+>
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha" />
+<!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="csrf-token" content="aaacf87bb96d0d18218a9163d4f4dde701167bdd,c1cdcc3ab8247a711f1eb9d610a0460ba50931e7,1794727956" />
+
+
+<link rel="shortcut icon" href="/opac-tmpl/bootstrap/images/favicon.ico" type="image/x-icon" />
+<link rel="apple-touch-icon" href="/opac-tmpl/bootstrap/images/favicon.ico" type="image/x-icon" />
+
+    
+        
+    
+
+
+    <link type="text/css" href="/opac-tmpl/bootstrap/css/opac_25.1109000.css" rel="stylesheet">
+
+
+
+
+    <link type="text/css" href="/opac-tmpl/bootstrap/css/print_25.1109000.css" media="print" rel="stylesheet">
+
+
+    <!-- prettier-ignore-start -->
+    <style>/* ==========================================================================
+   TMU Library — Koha 25.11 OPAC stylesheet
+   Brand colour: #003D7C
+   Structure: base → layout → header → navbar → search → facets → homepage
+              → records → lists → misc
+   ========================================================================== */
+
+@import url(https://fonts.googleapis.com/css?family=Questrial);
+
+/* --------------------------------------------------------------------------
+   1. Base typography & page
+   -------------------------------------------------------------------------- */
+
+body, h1, h2, h3, h4 {
+  font-family: 'Questrial', sans-serif;
+}
+
+body {
+  background-color: #FFF;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  color: #003D7C;
+}
+
+#wrap {
+  margin-top: 0;
+  border: none;
+  background-color: #FFF;
+}
+
+.breadcrumb {
+  background-color: #FFF;
+}
+
+.page-header {
+  background: none repeat scroll 0 0 rgba(255, 255, 255, 0.7);
+  margin: 0;
+  border: none;
+}
+
+/* --------------------------------------------------------------------------
+   2. Top navbar / masthead — solid brand blue, white text everywhere
+   -------------------------------------------------------------------------- */
+
+.navbar,
+.navbar-inverse,
+.navbar-fixed-top {
+  background-color: #003D7C !important;
+  border-color: #003D7C !important;
+}
+
+.navbar-inner,
+.navbar .container,
+.navbar .container-fluid {
+  background-color: transparent !important;
+  background-image: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.navbar a,
+.navbar .nav > li > a,
+.navbar .navbar-text,
+.navbar .navbar-brand,
+.navbar .dropdown-toggle,
+.navbar #members a,
+.navbar #cartmenulink,
+.navbar #listsmenu,
+.navbar #changelanguage,
+.navbar #changelanguage a {
+  color: #ffffff !important;
+  text-shadow: none !important;
+}
+
+.navbar .nav > li > a:hover,
+.navbar .nav > li > a:focus,
+.navbar a:hover {
+  background-color: #0052A3 !important;
+  color: #ffffff !important;
+}
+
+.navbar .fa,
+.navbar .fas,
+.navbar .far,
+.navbar .glyphicon {
+  color: #ffffff !important;
+}
+
+/* ---- Navbar dropdowns (Lists, Cart, My Account) — white bg, brand-blue text ---- */
+
+.navbar .dropdown-menu,
+.navbar-fixed-top .dropdown-menu,
+.navbar-inverse .dropdown-menu {
+  background-color: #ffffff !important;
+  border: 1px solid #003D7C !important;
+}
+
+.navbar .dropdown-menu > li > a,
+.navbar-fixed-top .dropdown-menu > li > a,
+.navbar-inverse .dropdown-menu > li > a,
+.navbar .dropdown-menu li a,
+.navbar .dropdown-menu a.dropdown-item {
+  color: #003D7C !important;
+  background-color: #ffffff !important;
+  text-shadow: none !important;
+}
+
+.navbar .dropdown-menu > li > a:hover,
+.navbar-fixed-top .dropdown-menu > li > a:hover,
+.navbar-inverse .dropdown-menu > li > a:hover,
+.navbar .dropdown-menu li a:hover,
+.navbar .dropdown-menu a.dropdown-item:hover,
+.navbar .dropdown-menu > li > a:focus {
+  background-color: #e9ecef !important;
+  color: #003D7C !important;
+}
+
+.navbar .dropdown-menu .dropdown-divider {
+  border-top-color: #dee2e6 !important;
+}
+
+.navbar .dropdown-menu .dropdown-header {
+  color: #003D7C !important;
+  font-weight: bold;
+}
+
+/* Legacy selectors kept for safety on older sub-templates */
+.navbar-inverse .navbar-inner {
+  background: #003D7C;
+}
+
+#members a,
+.cartlabel,
+.listslabel {
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  text-shadow: none;
+  text-decoration: none;
+}
+
+#members a:hover,
+.cartlabel:hover,
+.listslabel:hover {
+  background-color: #0052A3;
+  padding: 10px;
+  color: white;
+  text-shadow: none;
+}
+
+/* --------------------------------------------------------------------------
+   3. OPAC header (logo + wordmark) — injected via opacheader customization
+   -------------------------------------------------------------------------- */
+
+#opacheader {
+  border-top: none;
+  height: auto;
+}
+
+.header_ups {
+  padding: 10px 0;
+  background: #FFF;
+  height: auto;
+}
+
+.header_ups h1 {
+  color: #003D7C;
+  font-size: 40px;
+  text-shadow: 0 1px 0 #FFFFFF;
+  margin-left: 20px;
+}
+
+#new_header {
+  background: #003D7C;
+  height: 100px;
+  padding: 10px;
+}
+
+/* --------------------------------------------------------------------------
+   4. Main search bar
+   -------------------------------------------------------------------------- */
+
+#opac-main-search {
+  background: #003D7C none !important;
+}
+
+#opac-main-search .form-control,
+#opac-main-search input {
+  color: #000 !important;
+  background-color: #fff !important;
+}
+
+/* --------------------------------------------------------------------------
+   5. Search results / facets
+   -------------------------------------------------------------------------- */
+
+#results_summary a:link,
+#results_summary a:visited {
+  color: #003D7C;
+  text-decoration: none;
+}
+
+#search-facets {
+  margin-top: 10px;
+}
+
+#search-facets h5 {
+  background: #003D7C;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+#search-facets h4 a {
+  background: #0052A3;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.nouveautes {
+  background: #003D7C;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.title_xslt {
+  font-weight: bold;
+  padding: 5px;
+  background-color: #003D7C;
+  color: white;
+  font-size: 16px;
+  border-radius: 10px;
+}
+
+/* --------------------------------------------------------------------------
+   6. Homepage sidebar blocks (OpacNav / OpacNavRight legacy styling)
+   -------------------------------------------------------------------------- */
+
+#ruedesfacs h1 {
+  padding: 5px;
+  background-color: #003D7C;
+  color: #FFF;
+  font-size: 16px;
+  text-shadow: 0 1px 0 #919191;
+}
+
+#ruedesfacs,
+#atoz {
+  border: 1px solid #003D7C;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+#atoz h3 {
+  padding: 5px;
+  background-color: #003D7C;
+  color: white;
+  text-shadow: 0 2px 3px #555;
+  font-size: 16px;
+  border-radius: 10px;
+}
+
+/* --------------------------------------------------------------------------
+   7. Record detail pages
+   -------------------------------------------------------------------------- */
+
+#catalogue_detail_biblio .span4 {
+  font-weight: bold;
+}
+
+#biblio_plus {
+  color: black;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+#biblio_plus_2 {
+  color: black;
+  background-color: white;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.img-thumbnail {
+  margin-left: 20px;
+}
+
+/* --------------------------------------------------------------------------
+   8. RSS / feeds
+   -------------------------------------------------------------------------- */
+
+#rssfeed h1 {
+  padding: 5px;
+  background-color: #003D7C;
+  color: white;
+}
+
+#rssfeed,
+#rss-styled {
+  border: 1px solid #003D7C;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+/* --------------------------------------------------------------------------
+   9. Footer / language bar
+   -------------------------------------------------------------------------- */
+
+#changelanguage {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: white;
+}
+
+/* --------------------------------------------------------------------------
+   10. Lists & miscellaneous
+   -------------------------------------------------------------------------- */
+
+/* Dropdowns OUTSIDE the navbar keep a white background with brand-blue text.
+   Navbar dropdowns are handled in Section 2 and must NOT be overridden here. */
+#wrap .dropdown-menu li a,
+#opac-main .dropdown-menu li a,
+#opac-main-search ~ .dropdown-menu li a {
+  background-color: #FFF;
+  color: #003D7C;
+}
+
+#wrap .dropdown-menu li a:hover,
+#opac-main .dropdown-menu li a:hover {
+  background-color: #e9ecef;
+  color: #003D7C;
+}
+
+ul.botlinks {
+  margin-left: 0;
+}
+ul.botlinks li {
+  background: none;
+  display: inline;
+  border-left: 1px solid #888;
+  padding: 0 8px;
+}
+ul.botlinks li.first {
+  padding-left: 0;
+  border: none;
+}
+
+/* Hide the default login form in the right sidebar if a custom one is used.
+   Remove this line if you prefer Koha's built-in login box. */
+#login { display: none; }</style>
+    <!-- prettier-ignore-end -->
+
+
+
+
+
+<script>
+    var Koha = {};
+    function _(s) { return s } // dummy function for gettext
+    const is_logged_in = false
+</script>
+
+<script src="/opac-tmpl/bootstrap/js/Gettext_25.1109000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/i18n_25.1109000.js"></script>
+
+<link rel="stylesheet" type="text/css" href="/opac-tmpl/lib/fontawesome/css/fontawesome.min_25.1109000.css">
+<link type="text/css" href="/opac-tmpl/lib/fontawesome/css/brands.min_25.1109000.css" rel="stylesheet">
+<link type="text/css" href="/opac-tmpl/lib/fontawesome/css/solid.min_25.1109000.css" rel="stylesheet">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body id="error404" class="error">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<button id="scrolltocontent">Skip to main content</button>
+<!-- prettier-ignore-start -->
+<!-- closed in opac-bottom.inc -->
+<div id="wrapper">
+<!-- prettier-ignore-end -->
+<header id="header-region" class="noprint">
+    <nav class="navbar navbar-expand">
+        <div id="logo">
+            <a class="navbar-brand" href="/cgi-bin/koha/opac-main.pl">
+                
+                    TOM MBOYA UNIVERSITY LIBRARY
+                
+            </a>
+        </div>
+        
+            
+                <div id="cartDetails" class="cart-message">Your cart is empty.</div>
+            
+            <ul id="cart-list-nav" class="navbar-nav">
+                
+                    <li class="nav-item js-show">
+                        <a href="#" class="nav-link" title="Collect items you are interested in" id="cartmenulink" role="button" aria-label="Cart">
+                            <i id="carticon" class="fa fa-shopping-cart fa-fw fa-icon-black" aria-hidden="true"></i> <span class="cartlabel">Cart</span> <span id="basketcount"></span>
+                        </a>
+                    </li>
+                
+                <li role="presentation" class="divider-vertical"></li>
+                
+                    
+                        <li class="nav-item dropdown">
+                            <a
+                                href="/cgi-bin/koha/opac-shelves.pl"
+                                title="Show lists"
+                                class="nav-link dropdown-toggle"
+                                id="listsmenu"
+                                data-bs-toggle="dropdown"
+                                role="button"
+                                aria-label="Show dropdown with detailed list information"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                                ><i class="fa fa-list fa-fw fa-icon-black" aria-hidden="true"></i> <span class="listslabel">Lists</span>
+                            </a>
+                            <div aria-labelledby="listsmenu" role="menu" class="dropdown-menu">
+                                
+                                    <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=1" tabindex="0" role="menuitem"><strong>Public lists</strong></a>
+                                    
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=2&amp;sortfield=title" tabindex="0" role="menuitem"
+                                            >Education phsycology</a
+                                        >
+                                        
+                                        
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=1&amp;sortfield=title" tabindex="0" role="menuitem"
+                                            >Physical education</a
+                                        >
+                                        
+                                        
+                                    
+                                    
+                                
+                                
+                                    <div class="dropdown-divider"></div>
+                                
+                                
+                                    <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=0" tabindex="0" role="menuitem"><strong>Your lists</strong></a>
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=add_form" tabindex="0" role="menuitem">Log in to create your own lists</a>
+                                    
+                                
+                            </div>
+                            <!-- / .dropdown-menu -->
+                        </li>
+                        <!-- / .nav-item.dropdown -->
+                    
+                
+                
+            </ul>
+            <!-- / .navbar-nav -->
+        
+        
+            
+            
+            <ul id="members" class="navbar-nav">
+                <li class="nav-item dropdown dropdown-menu-end">
+                    
+                        
+                            
+                                <a href="/cgi-bin/koha/opac-user.pl" class="nav-link login-link loginModal-trigger" aria-label="Log in to your account"
+                                    ><i class="fa fa-user fa-fw fa-icon-black fa-fw" aria-hidden="true"></i> <span class="userlabel">Log in to your account</span></a
+                                >
+                            
+                        
+                    
+
+                    
+                </li>
+                <!-- Cookie consent button for non logged-in users -->
+                
+                    <li role="presentation" style="display:none" id="cookieConsentDivider" class="divider-vertical" aria-hidden="true"></li>
+                    <li style="display:none" id="cookieConsentLi" class="nav-item" aria-hidden="true">
+                        <a id="cookieConsentButton" href="#" name="Your cookies" class="nav-link" title="View and amend cookies you have consented to" role="button">
+                            <i class="fa fa-cookie-bite fa-fw fa-icon-black" aria-hidden="true"></i>
+                            <span class="cookieconsentlabel">Your cookies</span>
+                        </a>
+                    </li>
+                
+                
+                    
+                        <li role="presentation" class="divider-vertical"></li>
+                        <li class="nav-item search_history">
+                            <a class="nav-link" href="/cgi-bin/koha/opac-search-history.pl" title="View your search history">
+                                <i class="fa fa-calendar-days fa-fw fa-icon-black" aria-hidden="true"></i>
+                                <span class="search_history_label">Search history</span>
+                            </a>
+                        </li>
+                    
+                
+            </ul>
+        
+    </nav>
+    <!-- /navbar -->
+
+    
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col"> 
+    
+        <div id="opacheader">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><div class="header_ups" style="display: flex; align-items: center; justify-content: center; gap: 25px; padding: 15px 20px; flex-wrap: wrap;"><a href="/cgi-bin/koha/opac-main.pl" style="flex-shrink: 0;"> <img src="https://opac.tmu.ac.ke/cgi-bin/koha/opac-retrieve-file.pl?id=888318ad359c5efaca10f72413d23c49" alt="TMU Library Logo" style="height: 85px; width: auto; display: block;" /> </a>
+<div style="display: flex; flex-direction: column; line-height: 1.1; border-left: 3px solid #003D7C; padding-left: 20px; text-transform: uppercase;"><span style="font-family: 'Times New Roman', Times, serif; font-size: 22pt; font-weight: bold; color: #d60015; letter-spacing: 0.55em; text-align: justify; text-align-last: justify;"> Library </span> <span style="font-family: 'Times New Roman', Times, serif; font-size: 22pt; font-weight: bold; color: #003d7c; letter-spacing: 0.15em; text-align: justify; text-align-last: justify;"> Catalogue </span></div>
+</div></div>
+                </div>
+            
+        </div>
+    
+ </div>
+            </div>
+        </div>
+    
+</header>
+<!-- / header-region -->
+
+
+    <div class="container-fluid">
+        
+            <div class="row">
+                <div class="col">
+                    <div id="opac-main-search" class="mastheadsearch">
+                        
+                            <form name="searchform" method="get" action="/cgi-bin/koha/opac-search.pl" id="searchform" role="search">
+                                <div class="row gx-2">
+                                    <div class="col-sm-auto order-2 order-sm-2">
+                                        <label for="masthead_search" class="visually-hidden">Search the catalog by:</label>
+                                        <select name="idx" id="masthead_search" class="form-select">
+                                            
+                                                <option value="" data-placeholder="Search the catalog">Library catalog</option>
+                                            
+                                            
+                                                <option value="ti" data-placeholder="Search the catalog by title">Title</option>
+                                            
+                                            
+                                                <option value="au" data-placeholder="Search the catalog by author">Author</option>
+                                            
+                                            
+                                                <option value="su" data-placeholder="Search the catalog by subject">Subject</option>
+                                            
+                                            
+                                                <option value="nb" data-placeholder="Search the catalog by ISBN">ISBN</option>
+                                            
+                                            
+                                                <option value="ns" data-placeholder="Search the catalog by ISSN">ISSN</option>
+                                            
+                                            
+                                                <option value="se" data-placeholder="Search the catalog by series">Series</option>
+                                            
+                                            
+                                                
+                                                    <option value="callnum" data-placeholder="Search the catalog by call number">Call number</option>
+                                                
+                                            
+                                        </select>
+                                    </div>
+                                    <!-- /.col-sm-auto -->
+
+                                    <div class="col order-4 order-sm-3">
+                                        
+                                            <label for="translControl1" class="visually-hidden">Search the catalog</label>
+                                            <input type="text" class="transl1 form-control" id="translControl1" name="q" value="" placeholder="Search the catalog" /><span id="translControl"></span>
+                                        
+                                    </div>
+                                    <!-- /.col -->
+
+                                    
+                                        
+                                            
+                                        
+                                    
+
+                                    <div class="order-5 col-sm-auto">
+                                        <button type="submit" id="searchsubmit" class="btn btn-primary" title="Search" aria-label="Search">
+                                            <i class="fa fa-search" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- /.form-row -->
+                                <input type="hidden" name="weight_search" value="1" />
+                            </form>
+                         </div
+                    ><!-- /#opac-main-search -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        
+
+        <div class="row">
+            <ul class="nav" id="moresearches">
+                <li class="nav-item">
+                    <a href="/cgi-bin/koha/opac-search.pl">Advanced search</a>
+                </li>
+                
+                
+                
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-authorities-home.pl">Authority search</a>
+                    </li>
+                
+                
+                
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-tags.pl">Tag cloud</a>
+                    </li>
+                
+                
+                
+                
+                
+                
+                    <li class="nav-item">
+                        <a id="library_page" href="/cgi-bin/koha/opac-library.pl">
+                            
+                                <span>Contact</span>
+                            
+                        </a>
+                    </li>
+                
+                
+    
+
+            </ul>
+            <!-- /.nav#moresearches -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+
+
+
+    <!-- Login form hidden by default, used for modal window -->
+    <div id="loginModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title" id="modalLoginLabel">Log in to your account</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="modalAuth">
+                    <input type="hidden" name="csrf_token" value="aaacf87bb96d0d18218a9163d4f4dde701167bdd,c1cdcc3ab8247a711f1eb9d610a0460ba50931e7,1794727956" />
+
+                    <input type="hidden" name="has-search-query" id="has-search-query" value="" />
+                    <div class="modal-body">
+                        
+                        
+                        
+                            
+                            
+                            <input type="hidden" name="koha_login_context" value="opac" />
+                            <fieldset class="brief">
+                                <div class="local-login">
+                                    
+    <label for="muserid">Card number or username:</label>
+<input type="text" id="muserid" name="login_userid" autocomplete="off" /> <label for="mpassword">Password:</label
+                                    ><input type="password" id="mpassword" name="login_password" autocomplete="off" />
+                                    <fieldset class="action">
+                                        <input type="hidden" name="login_op" value="cud-login" />
+                                        <input type="submit" class="btn btn-primary" value="Log in" />
+                                    </fieldset>
+                                </div>
+                                
+                                
+                                
+                            </fieldset>
+                        
+                    </div>
+                </form>
+                <!-- /#auth -->
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /#modalAuth  -->
+
+
+
+
+
+<main class="main">
+    
+    <nav id="breadcrumbs" aria-label="Breadcrumb" class="breadcrumbs">
+        <ol class="breadcrumb">
+            
+            
+                
+    
+        <li class="breadcrumb-item"> 
+                    <a href="/cgi-bin/koha/opac-main.pl" title="Home">Home</a>
+                 </li>
+    
+
+                <li class="breadcrumb-item active">
+            <a aria-current="page" aria-disabled="true" tabindex="-1"> 
+            <span>An error has occurred</span>
+         </a>
+        </li>
+            
+        </ol>
+    </nav>
+
+
+    <div class="container-fluid">
+        <div class="row">
+            
+            
+                
+                <div class="col-lg-2">
+                    <div id="navigation"> 
+
+
+    
+    
+        <div id="OpacNav">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><h3 style="color: #003d7c; font-family: 'Times New Roman', Times, serif; font-size: 14pt; border-bottom: 2px solid #003D7C; padding-bottom: 6px; margin-top: 0;">Operating Hours</h3>
+<ul style="list-style: none; padding: 0; margin: 0; font-size: 10pt; line-height: 1.7;">
+<li><strong>Mon &ndash; Fri:</strong> 8:00 AM &ndash; 8:00 PM</li>
+<li><strong>Saturday:</strong> 9:00 AM &ndash; 4:00 PM</li>
+<li><strong>Sun / Holidays:</strong> <span style="color: #b02a37;">Closed</span></li>
+</ul></div>
+                </div>
+            
+        </div>
+    
+
+
+
+
+
+
+ </div>
+                </div>
+            
+
+            <div class="col-10 order-first order-md-first order-lg-2">
+                <div id="errormsg404">
+                    <h1>Sorry, the requested page is not available</h1>
+                    <h2>Error 404</h2>
+                    <p><strong>This message can have the following reason(s):</strong></p>
+                    <ul>
+                        
+
+                        
+
+                        
+
+                        
+
+                        
+                            <li>You made use of an external link to a catalog item that is no longer available.</li>
+                            <li>You followed an outdated link e.g. from a search engine or a bookmark.</li>
+                            <li>You tried to access a page that needs authentication.</li>
+                            <li>An internal link in our catalog home page is broken and the page does not exist.</li>
+                        
+                        
+                    </ul>
+                    <h2>What's next?</h2>
+                    <ul>
+                        
+                        <li>You can use the menu and links at the top of the page</li>
+                        <li>You can search our catalog using the search form at the top of this page.</li>
+                        <li><a href="/cgi-bin/koha/opac-main.pl">Return to the catalog home page.</a></li>
+                    </ul>
+                    <h2>Report issues and broken links</h2>
+                    <ul>
+                        <li>To report this error, please contact the Koha Administrator. <a href="mailto:koha%40tmu.ac.ke">Send email</a>.</li>
+                    </ul>
+                </div>
+                <!-- / #errormsg404 -->
+            </div>
+            <!-- / .col-lg10/12 -->
+        </div>
+        <!-- / .row -->
+    </div>
+    <!-- / .container-fluid -->
+</main>
+<!-- / .main -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col"> 
+    
+        <div id="opaccredits">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><div style="text-align: center; padding: 10px 0; font-size: 10.5pt; color: #555;">Developed by <a href="http://www.appkings.co.ke" target="_blank" rel="noopener" style="color: #003d7c; font-weight: bold;">AppKings Solutions Limited</a></div></div>
+                </div>
+            
+        </div>
+    
+ </div>
+            </div>
+        </div>
+    
+    <!-- prettier-ignore-start -->
+    </div> <!-- / #wrapper in masthead.inc -->
+    <!-- prettier-ignore-end -->
+
+    
+        <footer id="changelanguage" class="navbar navbar-expand navbar-light bg-light noprint">
+            <div class="container-fluid">
+                <div class="collapse navbar-collapse">
+                    
+                    
+
+                    <div class="navbar-nav flex-grow-1">
+                        
+
+                        
+                    </div>
+                    
+                        <div class="navbar-nav">
+                            <a id="koha_url" class="nav-link koha_url" href="https://koha-community.org">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                                    <path
+                                        fill="currentColor"
+                                        d="M7.394.75c.82-.45 1.75-.72 2.69-.75.5.015.99.1 1.45.27.92.35 1.68 1.05 2.15 1.9.53.865.76 1.875.87 2.875.25 3.315-.98 6.635-3.07 9.18-.825.82-1.835 1.52-3 1.735-.96.135-2-.07-2.775-.675-.48-.365-.67-1-.63-1.575.425.6 1.12 1.015 1.86 1.035.675.03 1.35-.275 1.8-.765.75-.825.835-2.21.12-3.08-.325-.375-.7-.715-1.15-.95-.44-.265-.95-.38-1.46-.45-.93-.06-1.9.11-2.72.57a3.22 3.22 0 0 0-1.565 2.15c-.2.7-.125 1.43-.05 2.14-.31-.81-.43-1.67-.5-2.53v-.64c.12-3.13 1.43-6.2 3.53-8.515.725-.75 1.53-1.43 2.45-1.92Zm0 0"
+                                        style="stroke-width:.500008"
+                                    />
+                                </svg>
+                                <span class="koha_url_text">Powered by Koha</span>
+                            </a>
+                        </div>
+                    
+                </div>
+                <!-- /.collapse.navbar-collapse -->
+            </div>
+            <!-- /.container-fluid -->
+        </footer>
+        <!-- / #changelanguage -->
+    
+
+
+
+
+<!-- CookieConsentedJS code that may run -->
+
+
+<!-- JavaScript includes -->
+<script src="/opac-tmpl/lib/jquery/jquery-3.6.0.min_25.1109000.js"></script>
+<script src="/opac-tmpl/lib/jquery/jquery-migrate-3.3.2.min_25.1109000.js"></script>
+<script src="/opac-tmpl/lib/bootstrap/js/bootstrap.bundle.min_25.1109000.js"></script>
+<script src="/opac-tmpl/lib/fontfaceobserver/fontfaceobserver.min_25.1109000.js"></script>
+<script src="/opac-tmpl/lib/enquire/enquire.min_25.1109000.js"></script>
+<script>
+    let logged_in_user_id = "";
+</script>
+<script src="/opac-tmpl/bootstrap/js/global_25.1109000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/form-submit_25.1109000.js" type="module"></script>
+
+<script>
+    
+
+    
+    $(".print-large").on("click",function(){
+        window.print();
+        return false;
+    });
+    $(".addtoshelf").on("click",function(e){
+        e.preventDefault();
+        Dopop( this.href );
+    });
+    $("body").on("click", ".addtocart", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        addRecord( biblionumber );
+    });
+    $("body").on("click", ".cartRemove", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        delSingleRecord( biblionumber );
+    });
+</script>
+
+    <script src="/opac-tmpl/bootstrap/js/basket_25.1109000.js"></script>
+
+
+<script src="/opac-tmpl/bootstrap/js/tags_25.1109000.js"></script>
+
+
+
+
+
+
+
+
+
+<script src="/opac-tmpl/lib/js-cookie/js.cookie-3.0.1.min_25.1109000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/show-password-toggle_25.1109000.js"></script>
+<script>
+    $(document).ready(function () {
+        if ($("#searchsubmit").length) {
+            $(document).on("click", "#searchsubmit", function (e) {
+                Cookies.remove("form_serialized", { path: "/" });
+                Cookies.remove("form_serialized_limits", { path: "/" });
+                Cookies.remove("search_path_code", { path: "/" });
+            });
+        }
+    });
+</script>
+
+
+
+
+<script src="/opac-tmpl/lib/dayjs/dayjs.min_25.1109000.js"></script>
+<script src="/opac-tmpl/lib/dayjs/plugin/timezone_25.1109000.js"></script>
+<script src="/opac-tmpl/lib/dayjs/plugin/utc_25.1109000.js"></script>
+<script>
+    dayjs.extend(window.dayjs_plugin_utc);
+    dayjs.extend(window.dayjs_plugin_timezone);
+</script>
+<!-- js-date-format.inc -->
+<script>
+    (function() {
+        var def_date_format = 'us';
+        var def_time_format = '24hr';
+        var def_tz = 'Africa/Nairobi';
+
+        var get_date_pattern = function(format) {
+            var date_pattern = 'YYYY-MM-DD';
+            if(format == 'us') date_pattern = 'MM/DD/YYYY';
+            if(format == 'metric') date_pattern = 'DD/MM/YYYY';
+            if(format == 'dmydot') date_pattern = 'DD.MM.YYYY';
+            return date_pattern;
+        };
+
+        var get_time_pattern = function(format) {
+            var time_pattern = 'HH:mm';
+            if(format == '12hr') time_pattern = 'hh:mm a';
+            return time_pattern;
+        };
+
+        /*
+         * A JS equivalent of the KohaDates TT Plugin. Passed an rfc3339 formatted date string,
+         * or JS Date, the function will return a date string formatted as per the koha instance config.
+         * Optionally accepts a dateformat parameter to allow override of the configured output format
+         * as well as a 'withtime' boolean denoting whether to include time or not in the output string.
+         */
+        window.$date = function(value, options) {
+            if(!value) return '';
+            var tz = (options&&options.tz)||def_tz;
+            var m = dayjs(value);
+            if ( ! value.match(/^\d{4}-\d{2}-\d{2}$/ ) ) {
+                m = m.tz(tz);
+            }
+
+            var dateformat = (options&&options.dateformat)||def_date_format;
+            var withtime = (options&&options.withtime)||false;
+
+            if(dateformat=='rfc3339' && withtime) return m.format();
+
+            var timeformat = (options&&options.timeformat)||def_time_format;
+            var date_pattern = get_date_pattern(dateformat);
+            var time_pattern = !withtime?'':' '+get_time_pattern(timeformat);
+
+            return m.format(date_pattern+time_pattern);
+        }
+
+        window.$datetime = function(value, options) {
+            options = options||{};
+            options.withtime = true;
+            return $date(value, options);
+        };
+
+        window.$time = function(value, options) {
+            if(!value) return '';
+            var tz = (options&&options.tz)||def_tz;
+            var m = dayjs(value);
+            if(tz) m = m.tz(tz);
+
+            var dateformat = (options&&options.dateformat);
+            var timeformat = (dateformat=='rfc3339'&&'24hr')||(options&&options.timeformat)||def_time_format;
+
+            return m.format(get_time_pattern(timeformat)+(dateformat=='rfc3339'?':ss'+(!m.isUTC()?'Z':''):''))+(dateformat=='rfc3339' && m.isUTC()?'Z':'');
+        }
+
+    })();
+</script>
+<!-- / js-date-format.inc -->
+
+
+<script>
+    (function () {
+        /**
+         * Format the biblio response from a Koha RESTful API request.
+         * @param  {Object}  biblio  The biblio json object as returned from the Koha RESTful API
+         * @param  {Object}  config  A configuration object
+         *                           Valid keys are: `link`
+         * @return {string}          The formatted HTML string
+         */
+        window.$biblio_to_html = function (biblio, config) {
+            if (biblio === undefined) {
+                return ""; // empty string for no biblio
+            }
+
+            var title = '<span class="biblio-title">';
+            if (biblio.title != null && biblio.title != "") {
+                title += escape_str(biblio.title);
+            } else {
+                title += _("No title");
+            }
+            title += "</span>";
+
+            // add subtitle
+            if (biblio.subtitle != null && biblio.subtitle != "") {
+                title += ' <span class="biblio-subtitle">' + escape_str(biblio.subtitle) + "</span>";
+            }
+
+            // set title as link
+            if (config && config.link) {
+                if (config.link === "marcdetail") {
+                    title = '<a href="/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                } else if (config.link === "labeled_marc") {
+                    title = '<a href="/cgi-bin/koha/opac-labeledMARCdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                } else if (config.link === "isbd") {
+                    title = '<a href="/cgi-bin/koha/opac-ISBDdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                } else {
+                    title = '<a href="/cgi-bin/koha/opac-detail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                }
+            }
+
+            // add medium
+            if (biblio.medium != null && biblio.medium != "") {
+                title += ' <span class="biblio-medium">' + escape_str(biblio.medium) + "</span>";
+            }
+
+            // add part numbers/names
+            let part_numbers = typeof biblio.part_number === "string" ? biblio.part_number.split("|") : [];
+            let part_names = typeof biblio.part_name === "string" ? biblio.part_name.split("|") : [];
+            let i = 0;
+            while (part_numbers[i] || part_names[i]) {
+                if (part_numbers[i]) {
+                    title += ' <span class="part-number">' + escape_str(part_numbers[i]) + "</span>";
+                }
+                if (part_names[i]) {
+                    title += ' <span class="part-name">' + escape_str(part_names[i]) + "</span>";
+                }
+                i++;
+            }
+
+            return title;
+        };
+    })();
+</script>
+
+
+
+
+    <script>
+        $(document).ready(function(){   
+
+$("#opacheader").insertBefore("#header-region");
+
+//Add placeholder to search box: "Search the catalog"
+$( ".transl1" ).attr( "placeholder", "Search for items in the library" );
+
+//Change "Library Catalog" to "Keyword" in search dropdown menu
+$("#masthead_search option:first").text("Keyword");
+
+ 
+//Add links to top-bar
+$(".navbar-inner ul.nav:nth-child(1)").prepend("<li class='extLink'><a href='https://library.tmuc.ac.ke/Home/KLISC_E_Resources' target='_blank'>Articles & Databases</a></li> <li class='extLink'><a href='https://library.tmuc.ac.ke/Home/KLISC_E_Resources' target='_blank'>Repository</a></li>");
+
+//Change "Browse shelf" to "See Similar items"
+$("a:contains('Browse shelf')").text("See Similar Items");
+
+$('#myCarousel').carousel();
+
+//Speed ​​of the carousel to the home page
+$('.carousel').carousel({  
+  interval: 7000 // in milliseconds  
+})  
+
+$('#bookcover').insertBefore( $( "#bibliodescriptions" ) );
+$("#bookcover").animate({top:"500px",right:"400px",speed:"slow"});
+ 
+});
+
+
+
+    </script>
+
+
+
+
+
+
+</body>
+<!-- prettier-ignore-start -->
+</html>
+<!-- prettier-ignore-end -->
+
+

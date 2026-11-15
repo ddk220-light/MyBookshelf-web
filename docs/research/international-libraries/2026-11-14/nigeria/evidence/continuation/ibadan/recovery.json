@@ -1,0 +1,183 @@
+{
+  "institution": "University of Ibadan \u2014 Kenneth Dike Library / university library system",
+  "city": "Ibadan",
+  "country": "Nigeria",
+  "status": "blocked_unverified",
+  "verified_book_search": false,
+  "new_verified_count": 0,
+  "researched_at_utc": "2026-11-15T07:05:42Z",
+  "platform": {
+    "name": "University of Ibadan Integrated Library System (UIILS)",
+    "proof": "https://library.ui.edu.ng/library-guide",
+    "evidence": "current-guide.html",
+    "confidence": "Official current guide explicitly names deployed software. Historical Virtua co-use is not proof of current publicly reachable Virtua endpoint."
+  },
+  "collection_size": {
+    "amount": "well over 2 million",
+    "unit": "aggregate physical volumes, mixed material types",
+    "scope": "University library system including main Kenneth Dike, Latunde Odeku Medical and 26 faculty/department/institute libraries",
+    "materials": [
+      "books",
+      "journals",
+      "dissertations",
+      "technical reports",
+      "monographs"
+    ],
+    "source_url": "https://library.ui.edu.ng/library-guide",
+    "source_year": "undated current page",
+    "observed_at_utc": "2026-11-15T07:02:13.387901+00:00",
+    "caveat": "Not a dated count of books; not the single main building or individually verified catalog deployments."
+  },
+  "official_routes": [
+    {
+      "url": "http://41.184.122.87:8080/record/opac",
+      "published_by": "https://library.ui.edu.ng/",
+      "status": "Previously timed out; preserved prior evidence and not blindly repeated",
+      "prior_evidence": "../../../ibadan-custom.json"
+    },
+    {
+      "url": "http://ils.library.ui.edu.ng/",
+      "published_by": "https://ui.edu.ng/sites/default/files/2023-09/EDITED%20Library%20Guide%202023%201.pdf",
+      "status": "HTTP403 environment/proxy response: No approved upstream IPv4 address",
+      "evidence": "ils-home.html",
+      "cause_confidence": "Environment routing diagnostic is explicit; origin health/access cannot be concluded."
+    },
+    {
+      "url": "https://library.ui.edu.ng/library-guide",
+      "status": "HTTP200, but apparent OPAC input is presentational and does not submit searches",
+      "evidence": [
+        "current-guide.html",
+        "guide-script.html",
+        "guide-search-widget-excerpt.txt"
+      ]
+    }
+  ],
+  "policy": {
+    "research_user_agent": "MyBookshelf/1.0 (public catalog compatibility research)",
+    "application_parser_reviewed": "server/services/providers/robots.js (merges wildcard groups, most-specific rule wins)",
+    "website_robots": "Prior evidence records404 for https://library.ui.edu.ng/robots.txt. Current app treats this as no robots rules. Not legal permission for integration.",
+    "new_ils_robots": "HTTP403 environment routing diagnostic, no origin robots directives obtained. Network route not usable; no bypass attempted.",
+    "restrictions_respected": [
+      "No private10.x request",
+      "No proxy/DNS/TLS bypass",
+      "No authenticated access",
+      "No general chatbot queries",
+      "No machine endpoint guessed from staff-only LCSH service",
+      "No indexed snippet counted as live catalog verification"
+    ],
+    "public_membership": "Official guide requires university registration/card; regular non-university use requires special librarian permission granted exceptionally for scholarship/research. This is use/borrowing eligibility, separate from catalog access."
+  },
+  "book_queries": [],
+  "returned_books": [],
+  "holdings_verified": false,
+  "adapter_status": "No app adapter tested; a reachable UIILS endpoint would need distinct protocol/parser investigation, not assumed Koha reuse.",
+  "probes": [
+    {
+      "url": "https://library.ui.edu.ng/library-guide",
+      "checked_at_utc": "2026-11-15T07:02:13.387901+00:00",
+      "method": "GET",
+      "status": 200,
+      "final_url": "https://library.ui.edu.ng/library-guide",
+      "headers": {
+        "Content-Type": "text/html; charset=utf-8",
+        "Server": "envoy"
+      },
+      "elapsed_seconds": 1.27,
+      "response_bytes": 59768,
+      "evidence": "current-guide.html"
+    },
+    {
+      "url": "https://library.ui.edu.ng/e-resources",
+      "checked_at_utc": "2026-11-15T07:02:13.390369+00:00",
+      "method": "GET",
+      "status": 200,
+      "final_url": "https://library.ui.edu.ng/e-resources",
+      "headers": {
+        "Content-Type": "text/html; charset=utf-8",
+        "Server": "envoy"
+      },
+      "elapsed_seconds": 1.12,
+      "response_bytes": 31560,
+      "evidence": "eresources.html"
+    },
+    {
+      "url": "http://ils.library.ui.edu.ng/robots.txt",
+      "checked_at_utc": "2026-11-15T07:02:13.388801+00:00",
+      "method": "GET",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden",
+      "headers": {
+        "Content-Type": "text/plain",
+        "Server": "envoy"
+      },
+      "elapsed_seconds": 0.24,
+      "response_bytes": 33,
+      "evidence": "ils-robots.html"
+    },
+    {
+      "url": "http://ils.library.ui.edu.ng/",
+      "checked_at_utc": "2026-11-15T07:02:38.233818+00:00",
+      "method": "GET",
+      "status": 403,
+      "error": "HTTP Error 403: Forbidden",
+      "headers": {
+        "Content-Type": "text/plain",
+        "Server": "envoy"
+      },
+      "elapsed_seconds": 0.24,
+      "response_bytes": 33,
+      "evidence": "ils-home.html"
+    },
+    {
+      "url": "https://ils.library.ui.edu.ng/robots.txt",
+      "checked_at_utc": "2026-11-15T07:02:38.475873+00:00",
+      "method": "GET",
+      "error": "<urlopen error Tunnel connection failed: 403 Forbidden>",
+      "elapsed_seconds": 0.01,
+      "response_bytes": 0
+    },
+    {
+      "url": "https://library.ui.edu.ng/_next/static/chunks/9d445a4aadcc880a.js",
+      "checked_at_utc": "2026-11-15T07:02:55.126008+00:00",
+      "method": "GET",
+      "status": 200,
+      "final_url": "https://library.ui.edu.ng/_next/static/chunks/9d445a4aadcc880a.js",
+      "headers": {
+        "Content-Type": "application/javascript; charset=utf-8",
+        "Server": "envoy"
+      },
+      "elapsed_seconds": 0.52,
+      "response_bytes": 59860,
+      "evidence": "guide-script.html"
+    },
+    {
+      "url": "https://library.ui.edu.ng/_next/static/chunks/6be2e8237dc08ae6.js",
+      "checked_at_utc": "2026-11-15T07:02:55.126669+00:00",
+      "method": "GET",
+      "status": 200,
+      "final_url": "https://library.ui.edu.ng/_next/static/chunks/6be2e8237dc08ae6.js",
+      "headers": {
+        "Content-Type": "application/javascript; charset=utf-8",
+        "Server": "envoy"
+      },
+      "elapsed_seconds": 0.42,
+      "response_bytes": 110812,
+      "evidence": "navigation-script.html"
+    },
+    {
+      "url": "https://library.ui.edu.ng/_next/static/chunks/423998df57ad2ac2.js",
+      "checked_at_utc": "2026-11-15T07:02:55.127059+00:00",
+      "method": "GET",
+      "status": 200,
+      "final_url": "https://library.ui.edu.ng/_next/static/chunks/423998df57ad2ac2.js",
+      "headers": {
+        "Content-Type": "application/javascript; charset=utf-8",
+        "Server": "envoy"
+      },
+      "elapsed_seconds": 0.53,
+      "response_bytes": 24438,
+      "evidence": "home-script.html"
+    }
+  ],
+  "next_step": "Seek a currently reachable university-published public UIILS endpoint or operator-authorized metadata feed. Do not infer missing books or nationwide outage from these access failures."
+}

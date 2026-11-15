@@ -1,0 +1,145 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" charset='utf-8'>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="author" content="PMB Group" />
+
+	<meta name="keywords" content="OPAC, web, library, opensource, catalog, catalogue, biblioth�que, m�diath�que, pmb, phpmybibli" />
+	<meta name="description" content="Catalogue en ligne مرحبا بكم على الموقع الإلكتروني -الفهرس الإلكتروني- لخزانة محمد المنوني بكلية الآداب و العلوم الإنسانية بأكادير.
+
+La Bibliothèque Mohammed Al-Manouni de la Faculté des Lettres et des Sciences Humaine d'Agadir.
+Bienvenue
+
+
+
+
+." />
+
+	<meta name="robots" content="all" />
+
+	<title>Catalogue en ligne مرحبا بكم على الموقع الإلكتروني -الفهرس الإلكتروني- لخزانة محمد المنوني بكلية الآداب و العلوم الإنسانية بأكادير.
+
+La Bibliothèque Mohammed Al-Manouni de la Faculté des Lettres et des Sciences Humaine d'Agadir.
+Bienvenue
+
+
+
+
+.</title>
+	
+	
+	<link rel='stylesheet' type='text/css' href='./styles/pmb/pmb.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/pmb/print.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/pmb/liste_bulletins.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/pmb/tags.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/pmb/colonnes.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/pmb/ext_search.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/pmb/gallerie_photos.css' />
+	<link rel="SHORTCUT ICON" href="images/site/favicon.ico">
+	<script type="text/javascript" src="includes/javascript/drag_n_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/handle_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/popup.js"></script>
+	
+</head>
+
+<body onload="window.defaultStatus='PMB : Accès public';" id="pmbopac">
+<script type='text/javascript'>
+function show_what(quoi, id) {
+	var whichISBD = document.getElementById('div_isbd' + id);
+	var whichPUBLIC = document.getElementById('div_public' + id);
+	var whichongletISBD = document.getElementById('onglet_isbd' + id);
+	var whichongletPUBLIC = document.getElementById('onglet_public' + id);
+	if (quoi == 'ISBD') {
+		whichISBD.style.display  = 'block';
+		whichPUBLIC.style.display = 'none';
+		whichongletPUBLIC.className = 'isbd_public_inactive';
+		whichongletISBD.className = 'isbd_public_active';
+		} else {
+			whichISBD.style.display = 'none';
+			whichPUBLIC.style.display = 'block';
+  			whichongletPUBLIC.className = 'isbd_public_active';
+			whichongletISBD.className = 'isbd_public_inactive';
+			}
+  	}
+</script>
+
+<script type='text/javascript' src='./includes/javascript/tablist.js'></script>
+	<div id='att' style='z-Index:1000'></div>
+	<div id="container"><div id="main"><div id='main_header'></div><div id="main_hors_footer">
+						
+
+<script type='text/javascript'>
+<!--
+	function test_form(form)
+	{
+
+		return true;
+	}
+-->
+</script>
+			<div id="search">
+
+			<ul class='search_tabs'><li id='current'>Recherche simple</li><li><a href="./index.php?search_type_asked=extended_search">Recherche multi-critères</a></li></ul><div id='search_crl'></div>
+
+			<p class="p1"><span>Vous pouvez lancer une recherche portant sur un ou plusieurs mots (titre, auteur, éditeur, ...).</span></p>
+
+			<div class='row'>
+
+			<form name='search_input' action='./index.php?lvl=search_result' method='post' onSubmit="if (search_input.user_query.value.length == 0) { search_input.user_query.value='*'; return true; }">
+
+				 <select name='typdoc'>  <option  value='' selected>tout type de document</option>
+  <option  value='a'>texte imprim&eacute;</option>
+</select><br/>
+
+				<input type='hidden' name='surligne' value=''/>
+				<input type='text' name='user_query' class='text_query' value="" size='65' />
+
+				<input type='submit' name='ok' value='Rechercher' class='boutonrechercher'/>
+<input type='button' value='Aide' class='bouton' onClick='window.open("./help.php?whatis=simple_search", "search_help", "scrollbars=yes, toolbar=no, dependent=yes, width=400, height=400, resizable=yes"); return false' />
+		<div id='simple_search_zone'><div class='row'>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_TITLE' id='look_TITLE' value='1' checked /><label for='look_TITLE'> Titres </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_AUTHOR' id='look_AUTHOR' value='1' checked /><label for='look_AUTHOR'> Auteurs </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_PUBLISHER' id='look_PUBLISHER' value='1'  /><label for='look_PUBLISHER'> Editeurs </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_COLLECTION' id='look_COLLECTION' value='1'  /><label for='look_COLLECTION'> Collections </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_CATEGORY' id='look_CATEGORY' value='1'  /><label for='look_CATEGORY'> Catégories </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_KEYWORDS' id='look_KEYWORDS' value='1'  /><label for='look_KEYWORDS'> Mots-clés</label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_ALL' id='look_ALL' value='1' checked /><label for='look_ALL'> Tous les champs </label></span></div><div style='clear: both;'><input type='hidden' name='look_FIRSTACCESS' value='1' /></div></div>
+
+			</form>
+
+			</div>
+
+			<script type='text/javascript'>
+
+				document.search_input.user_query.focus();
+
+				</script>
+	
+		</div>	
+		 
+
+		</div><!-- /div id=main -->
+
+		<div id="intro">
+<div id="intro_bibli">
+			<h3>مرحبا بكم على الموقع الإلكتروني -الفهرس الإلكتروني- لخزانة محمد المنوني بكلية الآداب و العلوم الإنسانية بأكادير.
+
+La Bibliothèque Mohammed Al-Manouni de la Faculté des Lettres et des Sciences Humaine d'Agadir.
+Bienvenue
+
+
+
+
+</h3>
+			<div class="p1">Université Ibn Zohr
+Agadir.</div>
+			<div class="p2"></div>
+			</div>
+		</div><!-- /div id=intro -->		
+		</div><!-- /div id=container -->
+		<script type='text/javascript'>init_drag();	//rechercher!!</script> 
+		</body>
+		</html>
+		

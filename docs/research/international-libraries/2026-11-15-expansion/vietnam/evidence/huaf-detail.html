@@ -1,0 +1,3983 @@
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+
+
+ 
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: opac-detail.tt -->
+
+
+
+
+<html lang="vi-VN" class="no-js">
+<head>
+
+<title>Trung tâm Thông tin - Thư viện catalog &rsaquo; Details for: Toán học cao cấp.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha 17.1100000" /> <!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="shortcut icon" href="/opac-tmpl/bootstrap/images/favicon.ico" type="image/x-icon" />
+
+ <link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/lib/bootstrap/css/bootstrap.min.css" />
+
+
+
+ <link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/lib/jquery/jquery-ui.css" />
+
+
+
+
+ <link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/css/opac.css" />
+
+
+
+<link rel="stylesheet" type="text/css" media="print" href="/opac-tmpl/bootstrap/css/print.css" />
+
+<style type="text/css">/* Thiết lập Tên tài liệu chính viết hoa, màu xanh lá HUAF */
+.opac-detail h1.title, .opac-detail .title {
+    font-size: 26px !important;
+    font-weight: 800 !important;
+    color: #1e5c33 !important; /* Xanh lá HUAF */
+    line-height: 1.4;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: block;
+}
+
+/* Lớp CSS tự động sinh ra cho phần tác giả dính kèm tiêu đề */
+.dynamic-author-sub {
+    display: block !important;          /* Ép buộc xuống hàng riêng */
+    font-size: 15px !important;         /* Cỡ chữ nhỏ hơn tên sách */
+    font-weight: normal !important;     /* Không in đậm */
+    text-transform: none !important;    /* Giữ nguyên chữ hoa chữ thường của tên tác giả */
+    color: #555555 !important;          /* Màu xám thanh lịch */
+    margin-top: 6px;
+    font-style: italic;                 /* In nghiêng theo chuẩn hiển thị tài liệu khoa học */
+}
+
+/* Định dạng dấu phẩy phân cách đồng tác giả gọn gàng */
+.xslt-comma-separator {
+    color: #666;
+    font-weight: bold;
+    margin-right: 5px;
+}</style>
+
+<link rel="unapi-server" type="application/xml" title="unAPI" href="/cgi-bin/koha/unapi" />
+<link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/css/jquery.rating.css" />
+<!-- Respond.js brings responsive layout behavior to IE < v.9 -->
+<!--[if lt IE 9]>
+ <script src="/opac-tmpl/bootstrap/lib/respond.min.js"></script>
+<![endif]-->
+<script type="text/javascript">
+    function _(s) { return s } // dummy function for gettext
+</script>
+<script type="text/javascript" src="/opac-tmpl/bootstrap/lib/modernizr.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/lib/font-awesome/css/font-awesome.min.css" />
+
+
+
+
+
+ 
+
+<script type="text/javascript">
+    var GB_ROOT_DIR = "/opac-tmpl/bootstrap/lib/greybox/";
+</script>
+<script type="text/javascript" src="/opac-tmpl/bootstrap/lib/greybox/AJS.js"></script>
+<script type="text/javascript" src="/opac-tmpl/bootstrap/lib/greybox/AJS_fx.js"></script>
+<script type="text/javascript" src="/opac-tmpl/bootstrap/lib/greybox/gb_scripts.js"></script>
+<link href="/opac-tmpl/bootstrap/lib/greybox/gb_styles.css" rel="stylesheet" type="text/css" />
+
+</head>
+
+
+ 
+
+
+ 
+
+
+
+
+ 
+
+<body ID="opac-detail" class="branch-default scrollto" >
+
+
+
+
+<div id="wrap">
+ <div id="header-region" class="noprint">
+ <div class="navbar navbar-inverse navbar-static-top">
+ <div class="navbar-inner">
+ <div class="container-fluid">
+ <h1 id="logo">
+ <a class="brand" href="/cgi-bin/koha/opac-main.pl">
+  Trung tâm Thông tin - Thư viện  </a>
+ </h1>
+ 
+ <div id="cartDetails" class="cart-message">Giỏ tài liệu trống</div>
+ 
+ <ul class="nav">
+ 
+ <li class="dropdown">
+ <a href="#" title="Collect items you are interested in" class="dropdown-toggle" id="cartmenulink" data-toggle="dropdown" role="button">
+ <i id="carticon" class="icon-shopping-cart icon-white"></i> <span class="cartlabel">Giỏ tài liệu</span> <span id="basketcount"></span> <b class="caret"></b>
+ </a>
+ <ul aria-labelledby="cartmenulink" role="menu" class="dropdown-menu">
+ <li role="presentation">
+ <a href="#" id="cartmenuitem" class="cart-message" tabindex="-1" role="menuitem">Giỏ tài liệu trống</a>
+ </li>
+ </ul>
+ </li>
+ 
+ 
+ <li class="divider-vertical"></li>
+ 
+ 
+ <li class="dropdown">
+ <a href="#" title="Show lists" class="dropdown-toggle" id="listsmenu" data-toggle="dropdown" role="button"><i class="icon-list icon-white"></i> <span class="listslabel">Giá sách ảo</span> <b class="caret"></b></a>
+ <ul aria-labelledby="listsmenu" role="menu" class="dropdown-menu">
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;category=2" tabindex="-1" role="menuitem"><strong>Giá sách ảo cộng đồng</strong></a></li>
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=28&amp;sortfield=title" tabindex="-1" role="menuitem">Trí tuệ nhân tạo</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=22&amp;sortfield=title" tabindex="-1" role="menuitem">Bảo vệ thực vật</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=17&amp;sortfield=title" tabindex="-1" role="menuitem">Quản lý đất đai</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=14&amp;sortfield=title" tabindex="-1" role="menuitem">Nuôi trồng thủy sản</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=2&amp;sortfield=title" tabindex="-1" role="menuitem">Khoa học cây trồng</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=26&amp;sortfield=title" tabindex="-1" role="menuitem">Kinh doanh và khởi nghiệp nông thôn</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=25&amp;sortfield=title" tabindex="-1" role="menuitem">Sinh học ứng dụng</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=24&amp;sortfield=title" tabindex="-1" role="menuitem">Nông nghiệp công nghệ cao</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=23&amp;sortfield=title" tabindex="-1" role="menuitem">Nông học</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=21&amp;sortfield=title" tabindex="-1" role="menuitem">Phát triển nông thôn</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;category=2" tabindex="-1" role="menuitem" class="listmenulink">Xem tất cả</a></li>
+ 
+ 
+ <li class="divider" role="presentation"></li>
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;category=1" tabindex="-1" role="menuitem"><strong>Giá sách ảo của bạn</strong></a></li>
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-user.pl" tabindex="-1" class="menu-inactive loginModal-trigger" role="menuitem">Đăng nhập để tạo giá sách của bạn</a></li>
+ 
+ 
+ 
+ </ul> <!-- / .dropdown-menu -->
+ </li> <!-- / .dropdown -->
+ 
+ </ul> <!-- / .nav -->
+ <div id="listsDetails"></div>
+ 
+ <a id="user-menu-trigger" class="pull-right" href="#"><i class="icon-user"></i> <span class="caret"></span></a>
+ <div id="members">
+ <ul class="nav pull-right">
+
+ 
+
+<li class="dropdown">
+ <a href="#" title="Switch languages" class="dropdown-toggle" id="langmenu" data-toggle="dropdown" role="button"><i class="icon-flag icon-white"></i> <span class="langlabel">Languages</span> <b class="caret"></b></a>
+ <ul aria-labelledby="langmenu" role="menu" class="dropdown-menu">
+ 
+ 
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-changelanguage.pl?language=en"  tabindex="-1" role="menuitem" class="listmenulink">English</a></li>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <li role="presentation"><a href="#" tabindex="-1" class="menu-inactive" role="menuitem">Tiếng Việt&nbsp;<i class="icon-ok"></i></a></li>
+ 
+ 
+ 
+ 
+ 
+ </ul> <!-- /# .dropdown-menu -->
+</li> <!-- / .dropdown -->
+
+
+
+ 
+ 
+ 
+ <li><a href="/cgi-bin/koha/opac-user.pl" class="loginModal-trigger" role="button" data-toggle="modal">Đăng nhập</a></li>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ </ul>
+ </div> <!-- /members -->
+ 
+ </div> <!-- /container-fluid -->
+ </div> <!-- /navbar-inner -->
+ </div> <!-- /navbar -->
+
+ 
+ <div class="container-fluid">
+ <div class="row-fluid">
+ <div id="opacheader">
+ Thư viện trường Đại học Nông Lâm Huế
+
+ </div>
+ </div>
+ </div>
+ 
+ </div> <!-- / header-region -->
+
+ <div class="container-fluid">
+ <div class="row-fluid">
+ <div id="opac-main-search">
+ <!-- <div class="span2">
+ 
+ <h1 id="libraryname">
+ 
+ <a href="/cgi-bin/koha/opac-main.pl">Trung tâm Thông tin - Thư viện</a></h1>
+ </div> /.span2 -->
+ <div class="span12">
+ 
+ 
+ 
+ <div class="mastheadsearch">
+ 
+ 
+ <form name="searchform" method="get" action="/cgi-bin/koha/opac-search.pl" id="searchform" class="form-inline">
+ <label for="masthead_search"> Tìm kiếm
+ 
+ 
+ 
+ </label>
+
+ <select name="idx" id="masthead_search">
+ 
+ <option value="">Từ khóa</option>
+ 
+ 
+ <option value="ti">Nhan đề</option>
+ 
+ 
+ <option value="au">Tác giả</option>
+ 
+ 
+ <option value="su">Chủ đề</option>
+ 
+ 
+ <option value="nb">Số ISBN</option>
+ 
+ 
+ <option value="se">Tùng thư</option>
+ 
+ 
+ 
+ <option value="callnum">Ký hiệu phân loại</option>
+ 
+ 
+ </select>
+
+ 
+ <div class="input-append nolibrarypulldown">
+ 
+ 
+ <input type="text" title="Type search term" class="transl1" id = "translControl1" name="q" /><span id="translControl"></span>
+ 
+
+ 
+ <button type="submit" id="searchsubmit" class="btn btn-primary">Tìm kiếm</button>
+ </div>
+ 
+
+ 
+ 
+ 
+ 
+ 
+
+ </form>
+ 
+ </div> <!-- / .mastheadsearch -->
+ 
+
+ <div class="row-fluid">
+ <div id="moresearches">
+ <ul>
+ <li><a href="/cgi-bin/koha/opac-search.pl">Tìm kiếm nâng cao</a></li>
+ <li><a href="/cgi-bin/koha/opac-course-reserves.pl">CSDL khóa học</a></li>
+ 
+ <li><a href="/cgi-bin/koha/opac-authorities-home.pl">Tìm kiếm dữ liệu kiểm soát</a></li>
+ 
+ <li><a href="/cgi-bin/koha/opac-tags.pl">Mây Tag</a></li>
+ 
+ 
+ 
+ 
+ <li><a href="/cgi-bin/koha/opac-suggestions.pl">Đề xuất mua tài liệu</a></li>
+ 
+ 
+ </ul>
+ </div> <!-- /#moresearches -->
+ </div> <!-- /.row-fluid -->
+
+ 
+ </div> <!-- /.span10 -->
+ </div> <!-- /.opac-main-search -->
+ </div> <!-- / .row-fluid -->
+ </div> <!-- /.container-fluid -->
+
+ <!-- Login form hidden by default, used for modal window -->
+ <div id="loginModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+ <div class="modal-header">
+ <button type="button" class="closebtn" data-dismiss="modal" aria-hidden="true">×</button>
+ <h3 id="modalLoginLabel">Đăng nhập</h3>
+ </div>
+ <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="modalAuth">
+ <div class="modal-body">
+ 
+ <input type="hidden" name="koha_login_context" value="opac" />
+ <fieldset class="brief">
+ <label for="muserid">Tên đăng nhập:</label><input type="text" id="muserid" name="userid" />
+ <label for="mpassword">Mật khẩu:</label><input type="password" id="mpassword" name="password" />
+ 
+ 
+ 
+ </fieldset>
+ </div>
+ <div class="modal-footer">
+ <input type="submit" value="Đăng nhập" class="btn btn-primary" />
+ <a href="#" data-dismiss="modal" aria-hidden="true" class="cancel">Hủy bỏ</a>
+ </div>
+ </form> <!-- /#auth -->
+ </div> <!-- /#modalAuth -->
+
+
+<div class="main">
+ <ul class="breadcrumb">
+ <li><a href="/cgi-bin/koha/opac-main.pl">Trang chủ</a> <span class="divider">&rsaquo;</span></li>
+ <li><a href="#"><span>Details for: </span>Toán học cao cấp.</a></li>
+ </ul>
+
+ <div class="container-fluid">
+ <div class="row-fluid">
+ <div class="span9">
+ <div id="catalogue_detail_biblio" class="maincontent">
+
+ <div id="bookcover">
+ 
+ <div title="709" class="709" id="local-thumbnail-preview"></div>
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ </div><!-- / #bookcover -->
+
+ <abbr class="unapi-id" title="koha:biblionumber:709"><!-- unAPI --></abbr>
+ 
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Toán+học+cao+cấp.&amp;rft.isbn=&amp;rft.issn=&amp;rft.aulast=&amp;rft.aufirst=&amp;rft.au=Nguyễn,+Đình+Trí&amp;rft.au=Nguyễn,+Hồ+Quỳnh&amp;rft.pub=Giáo+dục&amp;rft.date=2002&amp;rft.pages="></span>
+ 
+
+ <div id="views">
+ <span class="view current-view"><span id="Normalview">Hiển thị đơn giản</span></span>
+ <span class="view"><a id="MARCview" href="/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=709">Hiển thị MARC</a></span>
+ <span class="view"><a id="ISBDview" href="/cgi-bin/koha/opac-ISBDdetail.pl?biblionumber=709">Hiển thị ISBD</a></span>
+ </div>
+ 
+ 
+
+<div class="record" vocab="http://schema.org/" typeof="CreativeWork Sản phẩm" resource="#record">
+<h1 class="title" property="name">Toán học cao cấp. <span class="title_resp_stmt">Nguyễn Đình Trí, Tạ Văn Đĩnh, Nguyễn Hồ Quỳnh </span>Tập 2 Phép tính giải tích một biến số </h1>
+<h5 class="author">By: <a href="/cgi-bin/koha/opac-search.pl?q=au:%22Nguy%E1%BB%85n,%20%C4%90%C3%ACnh%20Tr%C3%AD%22"><span resource="#record"><span property="author" typeof="Cá nhân"><span property="name">Nguyễn, Đình Trí</span></span></span></a>.</h5>
+<h5 class="author">Contributor(s): <a href="/cgi-bin/koha/opac-search.pl?q=au:%22Nguy%E1%BB%85n,%20H%E1%BB%93%20Qu%E1%BB%B3nh%22"><span resource="#record"><span property="Người đóng góp" typeof="Cá nhân"><span property="name">Nguyễn, Hồ Quỳnh</span></span></span></a><span class="separator"> | </span><a href="/cgi-bin/koha/opac-search.pl?q=an:%22180%22"><span resource="#record"><span property="Người đóng góp" typeof="Cá nhân"><span property="name">Tạ, Văn Đỉnh</span></span></span></a><a class="authlink" href="/cgi-bin/koha/opac-authoritiesdetail.pl?authid=180"><img src="/opac-tmpl/bootstrap/images/filefind.png" style="vertical-align:middle" height="15" width="15"></a>.</h5>
+<span class="results_summary type"><span class="label">Material type: </span><img src="/opac-tmpl/lib/famfamfam/BK.png" alt="materialTypeLabel" class="materialtype">Sách</span><span class="results_summary publisher"><span class="label">Nhà xuất bản: </span><span property="publisher" typeof="Organization"><span property="location">Hà Nội</span> <span property="name"><a href="/cgi-bin/koha/opac-search.pl?q=Provider:Gi%C3%A1o%20d%E1%BB%A5c">Giáo dục</a></span></span> <span property="datePublished">2002</span></span><span class="results_summary edition"><span class="label">Ấn bản: </span><span property="bookEdition">Tái bản lần thứ năm có chỉnh lý</span>.</span><span class="results_summary description"><span class="label">Thông tin mô tả: </span><span property="description">404tr. 21cm</span>.</span><span class="results_summary subjects"><span class="label">Chủ đề: </span><span property="keywords"><a href="/cgi-bin/koha/opac-search.pl?q=su:%22To%C3%A1n%20h%E1%BB%8Dc%20cao%20c%E1%BA%A5p%22">Toán học cao cấp</a></span> | <span property="keywords"><a href="/cgi-bin/koha/opac-search.pl?q=su:%22To%C3%A1n%20h%E1%BB%8Dc%20cao%20c%E1%BA%A5p%22">Toán học cao cấp</a></span></span><span class="results_summary ddc"><span class="label">DDC classification: </span>515 </span><span class="results_summary online_resources"><span class="label">Nguồn trực tuyến: </span><a property="url" href="http://dlib.huaf.edu.vn/handle/1/1089" target="_blank">Truy cập trực tuyến</a> </span><span class="results_summary in"><span class="label">
+ Trong: </span><a href="/cgi-bin/koha/opac-search.pl?q=ti,phr:To%C3%A1n%20h%E1%BB%8Dc%20cao%20c%E1%BA%A5p">Toán học cao cấp</a></span><span class="results_summary summary"><span class="label">Tóm tắt: </span>Nội dung tài liệu giới thiệu những phần chính sau: Số thực. Hàm số một biến số thực. Giới hạn và sự liên tục của hàm số một biến số. Đạo hàm và vi phân của hàm số một biến số. Các định lý về giá trị trung bình. Nguyên hàm và tích phân bất định. Tích phân xác định.</span>
+</div>
+
+
+
+ 
+
+ <!-- This puts the LTFL reviews in, and if TabbedView is not set, puts the remaining content above the Tabs instead of in them -->
+ 
+
+ <!--This grabs all of the lists a bib record appears in -->
+ 
+
+ 
+ <div class="results_summary tags">
+ 
+ <span class="label">Từ khóa:</span> <span class="notags">Chưa có bạn đọc nào thêm từ khóa mới cho nhan để trên.</span>
+ 
+ 
+ 
+ <span id="login4tags">
+ 
+ <a class="loginModal-trigger" data-toggle="modal" role="button" href="/cgi-bin/koha/opac-user.pl">Đăng nhập để thêm từ khóa.</a>
+ 
+ </span>
+ 
+ 
+ </div>
+ 
+
+ 
+
+ 
+ <form method="post" action="/cgi-bin/koha/opac-ratings.pl">
+ <div class="results_summary ratings">
+
+ 
+ 
+ 
+ 
+ <input class="auto-submit-star" type="radio" name="rating" value="1" disabled="disabled" />
+ 
+ 
+ 
+ <input class="auto-submit-star" type="radio" name="rating" value="2" disabled="disabled" />
+ 
+ 
+ 
+ <input class="auto-submit-star" type="radio" name="rating" value="3" disabled="disabled" />
+ 
+ 
+ 
+ <input class="auto-submit-star" type="radio" name="rating" value="4" disabled="disabled" />
+ 
+ 
+ 
+ <input class="auto-submit-star" type="radio" name="rating" value="5" disabled="disabled" />
+ 
+ 
+
+ <!-- define some hidden vars for ratings -->
+
+ <input  type="hidden" name='biblionumber'  value="709" />
+ <input  type="hidden" name='rating_value' id='rating_value' value="" />
+
+ &nbsp; <input type="submit" value="Đánh giá của bạn:" name="rate_button" />&nbsp;
+
+ 
+ <span id="rating_value_text"></span>
+ 
+
+ <span id="rating_text">Đánh giá trung bình: 0.0 (0 phiếu)</span>
+ </div>
+ </form>
+ 
+
+ 
+
+ 
+
+ 
+
+ </div> <!-- / #catalogue_detail_biblio -->
+
+ <div id="bibliodescriptions" class="toptabs">
+ <ul>
+ 
+ <li id="tab_holdings">
+ 
+ 
+ <a href="#holdings"><span>Bản tài liệu</span>  ( 30 )</a>
+ </li>
+ 
+ 
+ <li id="tab_descriptions"> <a href="#descriptions">Ghi chú nhan đề</a></li>
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ <li id="tab_comments"><a href="#comments">Comments ( 0 )</a></li>
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ </ul>
+
+ 
+
+
+ <div id="holdings">
+ 
+ 
+ <table class="table table-bordered table-striped" id="holdingst">
+ <thead>
+ <tr>
+ 
+ <th id="item_itemtype" data-colname="item_itemtype" class="itype">Kiểu tài liệu</th>
+ 
+ 
+ <th id="item_home_location" data-colname="item_home_location" class="item_location">Thư viện chính</th>
+ 
+ 
+ <th id="item_callnumber" data-colname="item_callnumber" class="call_no">Ký hiệu phân loại</th>
+ 
+ 
+ 
+ <th id="item_status" data-colname="item_status" class="status">Trạng thái</th>
+ 
+ <th id="item_datedue" data-colname="item_datedue" class="date_due">Ngày hết hạn</th>
+ <th id="item_barcode" data-colname="item_barcode" class="barcode">Đăng ký cá biệt</th>
+ 
+ 
+ </tr>
+ </thead>
+ <tbody>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.012002</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.012003</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.012004</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.012005</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.012006</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.012007</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.012008</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.012009</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.012010</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.014786</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.014787</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.014788</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.014789</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.014790</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.014791</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.014792</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.014793</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.014794</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.014795</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.014796</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.014797</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.014798</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.014799</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.014800</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.014801</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.014802</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.014803</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.014804</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.014805</td>
+ 
+ 
+ </tr>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/bridge/book.gif" title="Sách in" alt="Sách in" />
+ 
+ 
+ Sách in
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="branch-info-tooltip-trigger" title="">
+ 
+ 
+ 
+ <a href="http://lic.huaf.edu.vn">Trung tâm Thông tin - Thư viện</a>
+ 
+ 
+ </span>
+ <div class="branch-info-tooltip"><p>OPAC thử nghiệm</p></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Available </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">NL.028594</td>
+ 
+ 
+ </tr>
+ 
+ </tbody>
+ </table>
+
+ 
+ 
+ 
+ 
+
+ 
+ 
+
+ <br style="clear:both;" />
+ </div> <!-- / #holdings -->
+
+ 
+
+ 
+ <div id="descriptions">
+ <div class="content_set">
+
+ 
+
+ 
+ <div id="marcnotes">
+ 
+ <p>
+ 
+ Nội dung tài liệu giới thiệu những phần chính sau: Số thực. Hàm số một biến số thực. Giới hạn và sự liên tục của hàm số một biến số. Đạo hàm và vi phân của hàm số một biến số. Các định lý về giá trị trung bình. Nguyên hàm và tích phân bất định. Tích phân xác định.
+ 
+ </p>
+ 
+ </div>
+ 
+
+ </div>
+ </div> <!-- / #descriptions -->
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <div id="comments">
+ <div id="newcomment"></div>
+ 
+ <p>Hiện tại chưa có bình luận nào về tài liệu này.</p>
+ 
+
+ 
+ <div id="addcomment"><a href="/cgi-bin/koha/opac-user.pl">Đăng nhập</a> để gửi bình luận.</div>
+ 
+ </div> <!-- / #comments -->
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ </div> <!-- / #bibliodescriptions -->
+
+ 
+
+ 
+
+ 
+ 
+
+
+
+ </div> <!-- /.span9 -->
+
+ <div class="span3">
+ <div id="ulactioncontainer">
+
+ 
+
+ 
+<ul id="action">
+ 
+ 
+ 
+ 
+ <li><a class="reserve" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=709">Đặt mượn</a></li>
+ 
+ 
+ 
+ 
+
+ <li><a class="print-large" href="#">Bản in</a></li>
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ <li><a class="addtocart cart709 addrecord" href="#">Thêm vào giỏ tài liệu</a> <a style="display:none;" class="cartRemove cartR709" href="#">(remove)</a></li>
+ 
+ 
+
+ 
+
+ 
+ 
+ <li>
+ <div id="export">
+ <div class="dropdown">
+ <a id="format" class="dropdown-toggle" data-toggle="dropdown" href="#">Save record <b class="caret"></b></a>
+ <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="format">
+ 
+ 
+ <li>
+ <a role="menuitem" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=709&amp;format=bibtex">
+ BIBTEX
+ 
+ </a>
+ </li>
+ 
+ 
+ 
+ <li><a role="menuitem" href="#" data-toggle="modal" data-target="#exportModal_">Dublin Core</a></li>
+ 
+ 
+ 
+ <li>
+ <a role="menuitem" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=709&amp;format=isbd">
+ ISBD
+ 
+ </a>
+ </li>
+ 
+ 
+ 
+ <li>
+ <a role="menuitem" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=709&amp;format=marc8">
+ MARC (non-Unicode/MARC-8)
+ 
+ </a>
+ </li>
+ 
+ 
+ 
+ <li>
+ <a role="menuitem" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=709&amp;format=marcxml">
+ MARCXML
+ 
+ </a>
+ </li>
+ 
+ 
+ 
+ <li>
+ <a role="menuitem" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=709&amp;format=mods">
+ MODS (XML)
+ 
+ </a>
+ </li>
+ 
+ 
+ 
+ <li>
+ <a role="menuitem" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=709&amp;format=ris">
+ RIS
+ 
+ </a>
+ </li>
+ 
+ 
+ 
+ <li>
+ <a role="menuitem" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=709&amp;format=utf8">
+ MARC (Unicode/UTF-8)
+ 
+ </a>
+ </li>
+ 
+ 
+ 
+ <li>
+ <a role="menuitem" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=709&amp;format=marcstd">
+ MARC (Unicode/UTF-8, Standard)
+ 
+ </a>
+ </li>
+ 
+ 
+ </ul>
+ </div>
+ </div>
+ </li>
+ 
+
+ 
+ <li>
+ <div id="moresearches_menu">
+ <div class="dropdown">
+ <a id="furthersearches" class="dropdown-toggle" data-toggle="dropdown" href="#">More searches <b class="caret"></b></a>
+ <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="furthersearches">
+ <li><a href="#" class="menu-inactive">Tìm kiếm nhan đề trong:</a></li>
+ <li><a  href="http://worldcat.org/search?q=To%C3%A1n%20h%E1%BB%8Dc%20cao%20c%E1%BA%A5p." target="_blank">Other Libraries (WorldCat)</a></li>
+<li><a href="http://www.scholar.google.com/scholar?q=To%C3%A1n%20h%E1%BB%8Dc%20cao%20c%E1%BA%A5p." target="_blank">Other Databases (Google Scholar)</a></li>
+<li><a href="http://www.bookfinder.com/search/?author=Nguy%E1%BB%85n%2C%20%C4%90%C3%ACnh%20Tr%C3%AD&amp;title=To%C3%A1n%20h%E1%BB%8Dc%20cao%20c%E1%BA%A5p.&amp;st=xl&amp;ac=qr" target="_blank">Online Stores (Bookfinder.com)</a></li>
+<li><a href="https://openlibrary.org/search/?author=(Nguy%E1%BB%85n%2C%20%C4%90%C3%ACnh%20Tr%C3%AD)&title=(To%C3%A1n%20h%E1%BB%8Dc%20cao%20c%E1%BA%A5p.)" target="_blank">Open Library (openlibrary.org)</a></li>
+ </ul>
+ </div>
+ </div>
+ </li>
+ 
+</ul>
+
+<!-- Dublin Core Modal Form -->
+<div class="modal hide" id="exportModal_" tabindex="-1" role="dialog" aria-labelledby="exportLabelexportModal_" aria-hidden="true">
+ <div class="modal-header">
+ <button type="button" class="closebtn" data-dismiss="modal" aria-hidden="true">&times;</button>
+ <h3 class="modal-title" id="exportModalLabel">Exporting to Dublin Core...</h3>
+ </div>
+ <form method="get" action="/cgi-bin/koha/opac-export.pl">
+ <div class="modal-body">
+ <fieldset id="dc_fieldset">
+ <input id="input-simple" type="radio" name="format" value="rdfdc">
+ <label class="label_dc" for="input-simple">Simple DC-RDF</label>
+ <br>
+ <input id="input-oai" type="radio" name="format" value="oaidc" checked>
+ <label class="label_dc" for="input-oai">OAI-DC</label>
+ <br>
+ <input id="input-srw" type="radio" name="format" value="srwdc">
+ <label class="label_dc" for="input-srw">SRW-DC</label>
+ <br>
+ <input type="hidden" name="op" value="export">
+ <input type="hidden" name="bib" value="709">
+ </fieldset>
+ </div>
+ <div class="modal-footer">
+ <button type="submit" class="btn">Export</button>
+ <button class="btn btn-link" data-dismiss="modal" aria-hidden="true">Hủy bỏ</button>
+ </div>
+ </form>
+</div>
+
+
+ 
+
+ 
+
+ 
+ </div> <!-- / .ulactioncontainer -->
+ </div> <!-- / .span4 -->
+ </div> <!-- / .row-fluid -->
+ <div class="row-fluid">
+ 
+
+ 
+
+ 
+ </div> <!-- / .row-fluid -->
+</div> <!-- / .container-fluid -->
+</div> <!-- / .main -->
+
+
+ 
+ 
+
+ 
+ <div class="container-fluid">
+ <div class="row-fluid">
+ <div class="span12">
+ <div id="koha_url" class="clearfix noprint">
+ <p>Powered by
+ 
+ <a class="koha_url" rel="nofollow" href="http://koha-community.org">Koha</a>
+ </p>
+ </div>
+ </div> <!-- /.span12 -->
+ </div> <!-- /.row-fluid -->
+ </div> <!-- /.container-fluid -->
+ 
+
+</div> <!-- / #wrap in masthead.inc -->
+
+ 
+ 
+ 
+ <div id="changelanguage" class="navbar navbar-fixed-bottom navbar-static-bottom noprint">
+ <div class="navbar-inner">
+ <ul id="i18nMenu" class="nav">
+ <li><p class="lang navbar-text"><strong>Ngôn ngữ:&nbsp;</strong></p></li>
+ 
+ 
+ 
+ 
+ 
+ <li><a href="/cgi-bin/koha/opac-changelanguage.pl?language=en">English</a></li>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <li class="active"><p class="navbar-text">Tiếng Việt</p></li>
+ 
+ 
+ 
+ 
+ 
+ </ul> <!-- / #i18menu -->
+ </div> <!-- / .navbar-inner -->
+ </div> <!-- / #changelanguage -->
+ 
+ 
+ 
+
+
+
+
+<!-- JavaScript includes -->
+<script type="text/javascript" src="/opac-tmpl/bootstrap/lib/jquery/jquery.js"></script>
+<script type="text/javascript" src="/opac-tmpl/bootstrap/lib/jquery/jquery-ui.js"></script>
+<script type="text/javascript">
+// Resolve name collision between jQuery UI and Twitter Bootstrap
+$.widget.bridge('uitooltip', $.ui.tooltip);
+</script>
+<script type="text/javascript" src="/opac-tmpl/bootstrap/lib/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/opac-tmpl/bootstrap/js/global.js"></script>
+<script type="text/javascript">
+    Modernizr.load([
+        // Test need for polyfill
+        {
+            test: window.matchMedia,
+            nope: "/opac-tmpl/bootstrap/lib/media.match.min.js"
+        },
+        // and then load enquire
+        "/opac-tmpl/bootstrap/lib/enquire.min.js",
+        "/opac-tmpl/bootstrap/js/script.js"
+    ]);
+
+    // Fix for datepicker in a modal
+    $.fn.modal.Constructor.prototype.enforceFocus = function () {};
+</script>
+
+
+<script type="text/javascript">
+    //<![CDATA[
+    var MSG_CONFIRM_AGAIN = _("Cảnh báo: Hành động này không thể được khôi phục lại. Xin xác nhận lại một lần nữa")
+    var MSG_DELETE_SEARCH_HISTORY = _("Bạn chắc chắn muốn xóa lịch sử tìm kiếm của mình?");
+    var MSG_NO_SUGGESTION_SELECTED = _("Không có đề xuất nào được chọn");
+    
+        var MSG_BASKET_EMPTY = _("Giỏ tài liệu trống");
+        var MSG_RECORD_IN_BASKET = _("Tài liệu này đã có trong giỏ của bạn");
+        var MSG_RECORD_ADDED = _("Tài liệu đã được thêm vào giỏ của bạn");
+        var MSG_RECORD_REMOVED = _("Tài liệu đã bị xóa khỏi giỏ của bạn");
+        var MSG_NRECORDS_ADDED = _(" tài liệu đã được thêm vào giỏ tài liệu của bạn");
+        var MSG_NRECORDS_IN_BASKET = _("đã có trong giỏ tài liệu của bạn");
+        var MSG_NO_RECORD_SELECTED = _("Không có tài liệu nào được chọn");
+        var MSG_NO_RECORD_ADDED = _("Không có tài liệu được thêm vào giỏ tài liệu của bạn");
+        var MSG_CONFIRM_DEL_BASKET = _("Bạn chắc chắn muốn xóa giỏ tài liệu của bạn?");
+        var MSG_CONFIRM_DEL_RECORDS = _("Bạn chắc chắn muốn loại bỏ các tài liệu đã chọn?");
+        var MSG_ITEM_IN_CART = _("Trong giỏ tài liệu");
+        var MSG_IN_YOUR_CART = _("Tài liệu trong giỏ tài liệu của bạn: ");
+        var MSG_ITEM_NOT_IN_CART = _("Thêm vào giỏ tài liệu");
+    
+    
+        var MSG_TAGS_DISABLED = _("Xin lỗi, các từ khóa không được kích hoạt trong hệ thống của bạn.");
+        var MSG_TAG_ALL_BAD = _("Lỗi! Từ khóa của bạn chứa ký tự không phù hợp. Bạn không thể tạo từ khóa  này. Bạn vui lòng thử lại với từ khóa khác.");
+        var MSG_ILLEGAL_PARAMETER = _("Lỗi! Thông số không phù hợp");
+        var MSG_TAG_SCRUBBED = _("Ghi chú: Từ khóa của bạn có chứa ký tự không phù hợp nên đã bị loại bỏ. Từ khóa đã được thêm như là ");
+        var MSG_ADD_TAG_FAILED = _("Lỗi! Không thể thêm thẻ vào");
+        var MSG_ADD_TAG_FAILED_NOTE = _("Lưu ý: Bạn chỉ có thể thêm một từ khóa cho một tài liệu. Bạn vui lòng kiểm tra 'Từ khóa' để xem các từ khóa hiện tại của bạn.");
+        var MSG_DELETE_TAG_FAILED = _("Lỗi! Bạn không thể xóa từ khóa");
+        var MSG_DELETE_TAG_FAILED_NOTE = _("Lưu ý: Bạn chỉ được phép xóa các từ khóa bạn tạo ra.")
+        var MSG_LOGIN_REQUIRED = _("Bạn phải đăng nhập để thêm từ khóa.");
+        var MSG_TAGS_ADDED = _("Từ khóa đã nhập: ");
+        var MSG_TAGS_DELETED = _("Từ khóa đã nhập: ");
+        var MSG_TAGS_ERRORS = _("Lỗi: ");
+        var MSG_MULTI_ADD_TAG_FAILED = _("Không thể thêm từ khóa nữa.");
+        var MSG_NO_TAG_SPECIFIED = _("Không có từ khóa nào được khai báo.");
+    
+    
+    $(".print-large").on("click",function(){
+        window.print();
+        return false;
+    });
+    $("#ulactioncontainer > ul > li > a.addtoshelf").on("click",function(){
+        Dopop('opac-addbybiblionumber.pl?biblionumber=709');
+        return false;
+    });
+    $(".addrecord").on("click",function(){
+        addRecord('709');
+        return false;
+    });
+    $(".cartRemove").on("click",function(){
+        delSingleRecord('709');
+        return false;
+    });
+    $(".clearsh").on("click", function(){
+        return confirmDelete(MSG_DELETE_SEARCH_HISTORY);
+    });
+    //]]>
+</script>
+
+
+ <script type="text/javascript" src="/opac-tmpl/bootstrap/js/basket.js"></script>
+
+
+<script type="text/javascript" src="/opac-tmpl/bootstrap/js/tags.js"></script>
+
+
+
+
+
+
+ <script type="text/javascript" src="/opac-tmpl/bootstrap/js/localcovers.js"></script>
+ <script type="text/javascript">
+    //<![CDATA[
+    var NO_LOCAL_JACKET = _("Không có ảnh bìa");
+    //]]>
+    </script>
+
+
+
+
+
+
+
+<script type="text/javascript" src="/opac-tmpl/bootstrap/lib/jquery/plugins/jquery.cookie.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    if($('#searchsubmit').length) {
+        $(document).on("click", '#searchsubmit', function(e) {
+            jQuery.removeCookie("form_serialized", { path: '/'});
+            jQuery.removeCookie("form_serialized_itype", { path: '/'});
+            jQuery.removeCookie("form_serialized_limits", { path: '/'});
+            jQuery.removeCookie("num_paragraph", { path: '/'});
+            jQuery.removeCookie("search_path_code", { path: '/'});
+        });
+    }
+});
+</script>
+
+<script type="text/javascript" src="/opac-tmpl/lib/jquery/plugins/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+    var MSG_DT_FIRST = _("Lần 1");
+    var MSG_DT_LAST = _("Trước");
+    var MSG_DT_NEXT = _("Tiếp tục");
+    var MSG_DT_PREVIOUS = _("Sau");
+    var MSG_DT_EMPTY_TABLE = _("Không có dữ liệu hiển thị trong bảng");
+    var MSG_DT_INFO = _("Hiển thị từ _START_ tới _END_ trong _TOTAL_");
+    var MSG_DT_INFO_EMPTY = _("Không có dữ liệu hiển thị");
+    var MSG_DT_INFO_FILTERED = _("(Lọc từ _MAX_)");
+    var MSG_DT_LENGTH_MENU = _("Hiển thị trang _MENU_");
+    var MSG_DT_LOADING_RECORDS = _("Đang tải...");
+    var MSG_DT_PROCESSING = _("Đang xử lý...");
+    var MSG_DT_SEARCH = _("Tìm kiếm:");
+    var MSG_DT_ZERO_RECORDS = _("Không tìm thấy biểu ghi phù hợp");
+    var CONFIG_EXCLUDE_ARTICLES_FROM_SORT = _("a an the");
+//]]>
+</script>
+<script type="text/javascript" src="/opac-tmpl/bootstrap/js/datatables.js"></script>
+
+
+<script type="text/javascript">
+function KohaTable(selector, dt_parameters, columns_settings) {
+    var id = 0;
+    var hidden_ids = [];
+    var included_ids = [];
+    $(columns_settings).each( function() {
+        var named_id = $( 'thead th[data-colname="' + this.columnname + '"]', selector ).index( selector+' th' );
+
+        var used_id = dt_parameters.bKohaColumnsUseNames ? named_id : id;
+        if ( used_id == -1 ) return;
+
+        if ( this['is_hidden'] == "1" ) {
+            hidden_ids.push( used_id );
+        }
+        if ( this['cannot_be_toggled'] == "0" ) {
+            included_ids.push( used_id );
+        }
+        id++;
+    });
+    dt_parameters[ "buttons" ] = [
+        {
+            extend: 'colvis',
+            columns: included_ids,
+            text: _("Column visibility"),
+        }
+    ];
+    var table = $(selector).dataTable($.extend(true, {}, dataTablesDefaults, dt_parameters));
+
+    $(hidden_ids).each(function(index, value) {
+        table.fnSetColumnVis( value, false );
+    });
+
+    return table;
+}
+
+</script>
+
+
+<script type="text/javascript" src="/opac-tmpl/bootstrap/lib/jquery/plugins/jquery.rating.js"></script>
+
+<script type="text/javascript" src="/opac-tmpl/bootstrap/lib/jquery/plugins/jquery.highlight-3.js"></script>
+
+<script type="text/javascript">
+//<![CDATA[
+
+    
+
+    
+        var q_array = new Array();  // holds search terms if available
+
+        function highlightOff() {
+            $("#catalogue_detail_biblio").removeHighlight();
+            $(".highlight_toggle").toggle();
+        }
+        function highlightOn() {
+            var x;
+            for (x in q_array) {
+                if ( q_array[x].length > 0 ) {
+                    q_array[x] = q_array[x].replace(/\w*:([\w])/, "$1");
+                    q_array[x] = q_array[x].toLowerCase();
+                    var myStopwords = "and|or|not".toLowerCase().split('|');
+                    if( $.inArray(q_array[x], myStopwords) == -1 ) {
+                        $(".title").highlight(q_array[x]);
+                        $(".author").highlight(q_array[x]);
+                        $(".results_summary").highlight(q_array[x]);
+                    }
+                }
+            }
+            $(".highlight_toggle").toggle();
+        }
+    
+
+     $(document).ready(function() {
+        $('#bibliodescriptions').tabs();
+        $(".branch-info-tooltip-trigger").uitooltip({
+            position: { my: "left+15 center", at: "right center" },
+            show: 50,
+            hide: 50,
+            content: function(){
+                var element = $(this).next("div");
+                return element.html();
+            }
+        });
+
+        var columns_settings = [{"columnname":"item_itemtype","cannot_be_modified":0,"is_hidden":0,"cannot_be_toggled":0},{"cannot_be_modified":0,"cannot_be_toggled":0,"is_hidden":0,"columnname":"item_current_location"},{"columnname":"item_home_location","cannot_be_modified":0,"cannot_be_toggled":0,"is_hidden":0},{"cannot_be_toggled":0,"is_hidden":"1","cannot_be_modified":0,"columnname":"item_shelving_location"},{"cannot_be_toggled":0,"is_hidden":0,"cannot_be_modified":0,"columnname":"item_ccode"},{"cannot_be_modified":0,"cannot_be_toggled":0,"is_hidden":0,"columnname":"item_callnumber"},{"columnname":"item_enumchron","cannot_be_toggled":0,"is_hidden":0,"cannot_be_modified":0},{"columnname":"item_url","cannot_be_modified":0,"is_hidden":0,"cannot_be_toggled":0},{"is_hidden":0,"cannot_be_toggled":0,"cannot_be_modified":0,"columnname":"item_copy"},{"columnname":"item_status","cannot_be_toggled":0,"is_hidden":0,"cannot_be_modified":0},{"is_hidden":0,"cannot_be_toggled":0,"cannot_be_modified":0,"columnname":"item_notes"},{"columnname":"item_datedue","cannot_be_modified":0,"cannot_be_toggled":0,"is_hidden":0},{"columnname":"item_barcode","cannot_be_modified":0,"cannot_be_toggled":"0","is_hidden":"0"},{"columnname":"item_holds","cannot_be_toggled":0,"is_hidden":0,"cannot_be_modified":0},{"cannot_be_toggled":0,"is_hidden":0,"cannot_be_modified":0,"columnname":"item_priority"},{"is_hidden":0,"cannot_be_toggled":0,"cannot_be_modified":0,"columnname":"item_coursereserves"}];
+
+        KohaTable("#holdingst", {
+            dom: 'B<"clearfix">t',
+            "columnDefs": [
+                { "aTargets": [ -1 ], "bSortable": false, "bSearchable": false },
+                { "sType": "title-string", "aTargets" : [ "title-string" ] }
+                ],
+            "bKohaColumnsUseNames": true
+        }, columns_settings);
+
+        KohaTable("#otherholdingst", {
+            dom: 'B<"clearfix">t',
+            "columnDefs": [
+                { "aTargets": [ -1 ], "bSortable": false, "bSearchable": false },
+                { "sType": "title-string", "aTargets" : [ "title-string" ] }
+                ],
+            "bKohaColumnsUseNames": true
+        }, columns_settings);
+
+
+
+        
+        
+            var default_order_index = 0;
+        
+
+        
+    
+    
+
+    
+    
+        KOHA.LocalCover.GetCoverFromBibnumber(true);
+    
+    
+
+    
+
+
+    (function prepareShelfBrowser(){
+
+        $(".main").on("click",".close_shelf",function(e){
+            e.preventDefault();
+            $("#shelfbrowser").toggle();
+        });
+        $(".main").on("click", "#browser_previous a", function(e){
+            e.preventDefault();
+            $.ajax({
+                url: "/cgi-bin/koha/svc/shelfbrowser.pl",
+                type: "POST",
+                data: {
+                    "shelfbrowse_itemnumber": $("#browser_previous a").data( "prev-itemnumber" )
+                },
+                success: function(data){
+                    $("#shelfbrowser").replaceWith(data);
+                    
+                    
+                    
+                    
+                      KOHA.LocalCover.GetCoverFromBibnumber(true);
+                    
+                }
+            });
+        });
+
+        $(".main").on("click", "#browser_next a", function(e){
+            e.preventDefault();
+            $.ajax({
+                  url: "/cgi-bin/koha/svc/shelfbrowser.pl",
+                  type: "POST",
+                  data: {
+                    "shelfbrowse_itemnumber": $("#browser_next a").data( "next-itemnumber" )
+                },
+                success: function(data){
+                    $("#shelfbrowser").replaceWith(data);
+                    
+                    
+                    
+                    
+                      KOHA.LocalCover.GetCoverFromBibnumber(true);
+                    
+                }
+            });
+        });
+    }());
+
+
+    // -----------------------------------------------------
+    // star-ratings code
+    // -----------------------------------------------------
+    // hide 'rate' button if javascript enabled
+
+    $('input[name="rate_button"]').remove();
+
+    $(function () {
+      $(".auto-submit-star").rating({
+        callback: function (value, link) {
+
+          // if the new value equals the old value, dont execute callback...
+          // just do nothing!
+          if ($("#rating_value").attr("value") != value) {
+
+            $(function () {
+
+              $.post("/cgi-bin/koha/opac-ratings-ajax.pl", {
+                rating_old_value: $("#rating_value").attr("value"),
+                borrowernumber: "",
+                biblionumber: "709",
+                rating_value: value,
+                auth_error: value
+              }, function (data) {
+
+                if (data.auth_status != 'ok') {
+                  window.alert(_("Phiên bản CGI Cookie của bạn không hoạt động. Vui lòng tải lại trang này và thực hiện lại."));
+                } else {
+                  $("#rating_value").val(data.rating_value);
+
+                  if (data.rating_value) {
+                    $("#rating_value_text").text(_("your rating: ") + data.rating_value + ", ");
+                  } else {
+                    $("#rating_value_text").text('');
+                  }
+
+                  $("#rating_text").text(_("average rating: ") + data.rating_avg + " (" + data.rating_total + ' ' + _("votes") + ")");
+
+                }
+              }, "json");
+            });
+          };
+        }
+      });
+    });
+    // -----------------------------------------------------
+
+
+
+
+});
+    
+
+    
+//]]>
+</script>
+
+
+
+
+ <script type="text/javascript">
+        //<![CDATA[
+        (function (KohajQuery) {
+    KohajQuery(document).ready(function () {
+        
+        // =================================================================
+        // 1. TỰ ĐỘNG BÓC TÁCH TIÊU ĐỀ & TÁC GIẢ CHO TOÀN BỘ TÀI LIỆU (Trường 245)
+        // =================================================================
+        var titleEl = KohajQuery('.opac-detail h1.title, .opac-detail .title');
+        if (titleEl.length > 0) {
+            var rawTitle = titleEl.html().trim(); // Lấy mã HTML bao gồm cả các thẻ bôi đậm <span class="term"> nếu có
+            var textTitle = titleEl.text().trim();
+            
+            // Hướng xử lý Tự động hóa: Tìm vị trí ngắt dòng dựa trên quy luật cấu trúc dữ liệu thô của Koha HUAF
+            var splitIndex = -1;
+            var splitTerm = "";
+
+            // Trường hợp A: Có cụm từ nghiệp vụ "chủ biên" dính trong tên sách
+            if (textTitle.indexOf('chủ biên') !== -1) {
+                splitTerm = 'chủ biên';
+            } 
+            // Trường hợp B: Tác giả xuất hiện ngay sau cụm từ tên sách (Nhận diện qua từ viết hoa đầu tiên sau chuỗi tên sách thông thường)
+            else {
+                // Thuật toán quét tìm vị trí tên tác giả (Ví dụ: "Nguyễn...", "Phùng...") xuất hiện sau phần tên sách
+                // Dựa trên dữ liệu thực tế: Koha thường render Tên tác giả giữ nguyên chữ hoa chữ thường kế tiếp tên sách
+                var match = textTitle.match(/(Nguyễn|Lê|Trần|Phạm|Phùng|Hoàng|Vũ|Đặng|Bùi|Đỗ|Hồ|Ngô|Chủ biên)/);
+                if (match && match.index > 10) { // Điểm ngắt phải nằm sau độ dài tên sách tối thiểu
+                    splitIndex = match.index;
+                    splitTerm = match[0];
+                }
+            }
+
+            // Thực hiện bóc tách và bọc thẻ CSS tự động cho toàn bộ hệ thống
+            if (splitTerm === 'chủ biên') {
+                var parts = rawTitle.split('chủ biên');
+                var mainTitle = parts[0].trim();
+                var authorPart = 'chủ biên' + parts.slice(1).join('chủ biên');
+                titleEl.html(mainTitle + '<span class="dynamic-author-sub">/ ' + authorPart + '</span>');
+            } else if (splitIndex !== -1) {
+                // Tách động theo vị trí ký tự tìm thấy thương hiệu họ người Việt
+                var mainTitleDynamic = textTitle.substring(0, splitIndex).trim();
+                var authorPartDynamic = textTitle.substring(splitIndex).trim();
+                
+                // Giữ lại định dạng highlight tìm kiếm nếu có
+                titleEl.html(mainTitleDynamic + '<span class="dynamic-author-sub">/ ' + authorPartDynamic + '</span>');
+            }
+        }
+
+        // =================================================================
+        // 2. CHUẨN HÓA TÊN TÁC GIẢ TIẾNG VIỆT TOÀN HỆ THỐNG (Trường 100/700)
+        // =================================================================
+        KohajQuery('.opac-detail .results_summary a[href*="au="], .opac-detail .author a').each(function () {
+            var authorText = KohajQuery(this).text();
+            // Nếu phát hiện cấu trúc đảo họ tên kiểu Tây có dấu phẩy "Họ, Tên"
+            if (authorText.indexOf(',') !== -1) {
+                var nameParts = authorText.split(',');
+                if (nameParts.length === 2) {
+                    // Trả lại tên tiếng Việt xuôi dòng tự nhiên
+                    var correctName = nameParts[0].trim() + " " + nameParts[1].replace('.', '').trim();
+                    KohajQuery(this).text(correctName);
+                }
+            }
+        });
+
+        // =================================================================
+        // 3. XỬ LÝ DẤU PHÂN CÁCH ĐỒNG TÁC GIẢ TOÀN HỆ THỐNG (Contributor)
+        // =================================================================
+        KohajQuery('.opac-detail .results_summary').each(function () {
+            var currentBlock = KohajQuery(this);
+            // Kiểm tra các trường liên quan đến người đóng góp/đồng tác giả
+            if (currentBlock.text().indexOf('Contributor(s)') !== -1 || currentBlock.text().indexOf('Người đóng góp') !== -1) {
+                var blockHtml = currentBlock.html();
+                if (blockHtml.indexOf('|') !== -1) {
+                    // Thay thế toàn bộ dấu gạch đứng thô kệch thành dấu phẩy chuẩn ISBD
+                    blockHtml = blockHtml.replace(/\|/g, '<span class="xslt-comma-separator">, </span>');
+                    currentBlock.html(blockHtml);
+                }
+            }
+        });
+
+    });
+})(jQuery);
+        //]]>
+    </script>
+
+
+</body>
+</html>
+
+
+
+
+
+
+

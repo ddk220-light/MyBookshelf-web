@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:fb="http://ogp.me/ns/fb#">
+
+	<head>
+		<meta http-equiv="content-type" content="text/html;charset=iso-8859-1" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<link rel="shortcut icon" href="favicon.ico?v=2023" type="image/x-icon" />
+        <script type="text/javascript" src="scripts/jquery/jquery-3.6.4.min.js"></script>
+		<title></title>
+        <script>
+			$(document).ready(function () {
+				var url = "spacer.php";
+				var codigo_sophia = window.sessionStorage.getItem('codigo_sophia');
+				if (codigo_sophia) {
+					url = url + "?codigo_sophia=" + codigo_sophia;
+
+					var twri = window.sessionStorage.getItem('twri');
+					var usuario = window.sessionStorage.getItem('usuario');
+					if (twri) {
+						url = url + "&twri=" + twri + "&usuario=" + usuario;
+						window.sessionStorage.removeItem("twri");
+						window.sessionStorage.removeItem("usuario");
+					}
+                }
+
+                var codigo_levantamento = window.sessionStorage.getItem('codigo_levantamento');
+                if (codigo_levantamento) {
+                    url = url + "?codigo_levantamento=" + codigo_levantamento;
+                    window.sessionStorage.removeItem("codigo_levantamento");
+                }
+
+				$("#mainFrame").attr("src", url);
+			});
+        </script>
+	</head>
+
+
+	<frameset rows="100%,*">
+
+		<frame id="mainFrame" name="mainFrame" src="about:blank" noresize="noresize">
+
+		<frame name="hiddenFrame" src="sessiondata.php">
+
+		<noframes>
+			
+			<body>
+
+				<span class="centro">
+			
+					Este site precisa de um browser com suporte � frames!
+					<br> 
+					Por favor atualize seu browser!
+			
+				</span>
+			
+			</body>
+		
+		</noframes>
+
+	</frameset>
+		
+</html>

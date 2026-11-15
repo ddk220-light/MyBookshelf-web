@@ -1,0 +1,3468 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: errorpage.tt -->
+
+
+
+
+
+
+
+
+
+<html lang="en" class="no-js">
+<head>
+
+<title
+    >An error has occurred &rsaquo; Central Library, SAU Tandojam catalog</title
+>
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha" />
+<!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="csrf-token" content="578d17cde0fe1a3dae23cf4f5e8f0b6bf9ca91a3,fc8aaebedfaf764a2ef164b951cfd319cf8d5d01,1794726384" />
+
+
+    <meta name="robots" content="noindex,nofollow" />
+
+<link rel="shortcut icon" href="https://i.postimg.cc/VvsYGLNk/Whats-App-Image-2026-06-23-at-11-39-00-AM.jpg" type="image/x-icon" />
+<link rel="apple-touch-icon" href="https://i.postimg.cc/VvsYGLNk/Whats-App-Image-2026-06-23-at-11-39-00-AM.jpg" type="image/x-icon" />
+
+    
+        
+    
+
+
+    <link rel="stylesheet" href="/opac-tmpl/bootstrap/css/opac_26.0501000.css" type="text/css">
+
+
+
+
+    <link rel="stylesheet" href="/opac-tmpl/bootstrap/css/print_26.0501000.css" media="print" type="text/css">
+
+
+    <!-- prettier-ignore-start -->
+    <style nonce="">/* ═══════════════════════════════════════════════════════════════════════════════
+START: RESET AND BASE STYLES (LIGHT GREEN BACKGROUND)
+═══════════════════════════════════════════════════════════════════════════════ */
+* { margin: 0; padding: 0; text-decoration: none; box-sizing: border-box; }
+html, body { overflow-x: hidden !important; overflow-y: auto; max-width: 100%; width: 100%; height: auto; }
+body { 
+    font-family: 'Open Sans', Arial, sans-serif; 
+    background: linear-gradient(135deg, #f4fbf7 0%, #e8f5e9 100%) !important; /* Halka Green Theme */
+    color: #333; 
+    line-height: 1.6; 
+}
+/* Koha ke default wrappers ko bhi green karne ke liye */
+#wrapper, #page-wrapper, .container-fluid, #main, .main, #content, main, #page {
+    background: transparent !important;
+}
+/* =========================================================
+   FULL WIDTH FIX - left/right space khatam
+   ========================================================= */
+.container, .container-fluid, #wrapper, .wrapper,
+#page-wrapper, #main, .main, #content, .content,
+main, #page, .page, #main-container {
+    width:100% !important;
+    max-width:100% !important;
+    margin:0 !important;
+    padding:0 20px !important;
+    box-sizing:border-box;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   START: LOGIN MODAL & HEADER REGION FIXES
+   Commit: Fix login modal z-index and header region visibility
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Login modal ko header se UPAR rakho */
+.modal {
+    z-index: 99999 !important;
+}
+
+.modal-backdrop {
+    z-index: 99998 !important;
+}
+
+.modal.show {
+    z-index: 99999 !important;
+}
+
+#loginModal {
+    z-index: 99999 !important;
+}
+
+#loginModal .modal-dialog {
+    z-index: 100000 !important;
+    position: relative;
+}
+
+/* Koha default header-region ko hamesha sabse upar rakho */
+#header-region {
+    display: block !important;
+    visibility: visible !important;
+}
+
+#header-region > nav.navbar {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    background: #ffffff;
+    padding: 8px 20px;
+    align-items: center;
+    justify-content: flex-end;
+    position: relative;
+    z-index: 2000 !important;
+    flex-wrap: wrap;
+}
+
+#header-region #members,
+#header-region #cart-list-nav {
+    display: flex !important;
+    visibility: visible !important;
+    list-style: none;
+    align-items: center;
+    gap: 4px;
+}
+
+#header-region #members li,
+#header-region #cart-list-nav li {
+    display: inline-flex !important;
+    visibility: visible !important;
+}
+
+#header-region #members a,
+#header-region #cart-list-nav a {
+    display: inline-flex !important;
+    visibility: visible !important;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    color: #1d3c1d !important;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+#header-region #members a:hover {
+    color: #2a7a30 !important;
+}
+
+#header-region .divider-vertical {
+    display: inline-block !important;
+    width: 1px;
+    height: 20px;
+    background: #ddd;
+    margin: 0 4px;
+}
+
+#opacheader {
+    display: block;
+    width: 100%;
+}
+
+/* #usermenu ko FORCE VISIBLE rakho */
+#opac-main #usermenu,
+#header-region #usermenu,
+#usermenu {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+#opac-main #usermenu li,
+#header-region #usermenu li,
+#usermenu li {
+    display: inline-flex !important;
+    visibility: visible !important;
+}
+
+#opac-main #usermenu a,
+#header-region #usermenu a,
+#usermenu a {
+    display: inline-flex !important;
+    visibility: visible !important;
+    color: #1d3c1d;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   END: LOGIN MODAL & HEADER REGION FIXES
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   START: RESET AND BASE STYLES
+   Commit: Global reset and base typography
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+* {
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+html, body {
+    overflow-x: hidden !important;
+    overflow-y: auto;
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+}
+
+body {
+    font-family: 'Open Sans', Arial, sans-serif;
+    background: #f9f9f9;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   END: RESET AND BASE STYLES
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   START: TOP BAR
+   Commit: Top navigation bar with social links
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.top-bar {
+    background: #1d3c1d;
+    color: #c8e6c9;
+    font-size: 12.5px;
+    padding: 0 20px;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.top-bar-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 4px;
+    min-height: 36px;
+}
+
+.top-social {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.top-social a {
+    color: #c8e6c9;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 36px;
+    font-size: 13px;
+    text-decoration: none;
+    transition: color .2s, background .2s;
+}
+
+.top-social a:hover {
+    color: #fff;
+    background: rgba(255,255,255,.12);
+}
+
+.top-links {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+}
+
+.top-links a {
+    color: #c8e6c9;
+    text-decoration: none;
+    font-size: 12px;
+    padding: 0 10px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    border-left: 1px solid rgba(255,255,255,.15);
+    transition: color .2s, background .2s;
+    white-space: nowrap;
+}
+
+.top-links a:first-child {
+    border-left: none;
+}
+
+.top-links a:hover {
+    color: #fff;
+    background: rgba(255,255,255,.12);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   END: TOP BAR
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   START: MAIN HEADER - LOGO ALWAYS LEFT
+   Commit: Main header container with gradient background
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.main-header {
+    background: linear-gradient(135deg, #2a7a30 0%, #1d3c1d 100%);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    width: 100%;
+}
+
+.header-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    gap: 15px;
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   END: MAIN HEADER - LOGO ALWAYS LEFT
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   START: LOGO SECTION - ALWAYS LEFT ALIGNED
+   Commit: Logo and header text styling
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+    text-decoration: none;
+    justify-content: flex-start !important;
+}
+
+.header-logo img {
+    height: 70px;
+    width: 70px;
+    border-radius: 10%;
+    background: #fff;
+    padding: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    object-fit: contain;
+    border: 2px solid rgba(255,255,255,0.3);
+    transition: transform 0.3s ease;
+}
+
+.header-logo img:hover {
+    transform: scale(1.05);
+}
+
+.header-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-align: left !important;
+}
+
+.header-text h1 {
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin: 0;
+    line-height: 1.2;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+    text-align: left !important;
+}
+
+.header-text .urdu-text {
+    color: rgba(255,255,255,0.95);
+    font-size: 15px;
+    font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif;
+    direction: rtl;
+    margin: 0;
+    line-height: 1.4;
+    text-align: left !important;
+}
+
+.header-text p {
+    color: rgba(255,255,255,0.95);
+    font-size: 13px;
+    margin: 0;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-align: left !important;
+}
+
+.opac-badge {
+    background: #c5a059;
+    color: #fff;
+    padding: 3px 12px;
+    border-radius: 15px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    display: inline-block;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   END: LOGO SECTION - ALWAYS LEFT ALIGNED
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   START: NAVIGATION MENU
+   Commit: Main navigation menu with dropdown support
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.header-nav {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+#cssmenu {
+    background: transparent;
+}
+
+#cssmenu, #cssmenu ul, #cssmenu ul li, #cssmenu ul li a, #cssmenu #head-mobile {
+    border: 0;
+    list-style: none;
+    line-height: 1;
+    display: block;
+    position: relative;
+    box-sizing: border-box;
+}
+
+#cssmenu:after, #cssmenu > ul:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+
+#cssmenu #head-mobile {
+    display: none;
+}
+
+#cssmenu > ul > li {
+    float: left;
+    margin-left: 5px;
+}
+
+#cssmenu > ul > li > a {
+    padding: 10px 16px;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    color: #fff;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    white-space: nowrap;
+}
+
+#cssmenu > ul > li:hover > a, #cssmenu ul li.active a {
+    color: #fff;
+    background: #4caf50;
+}
+
+#cssmenu > ul > li.has-sub > a {
+    padding-right: 28px;
+}
+
+#cssmenu > ul > li.has-sub > a:after {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 6px;
+    height: 2px;
+    display: block;
+    background: #fff;
+    content: '';
+}
+
+#cssmenu > ul > li.has-sub > a:before {
+    position: absolute;
+    top: 11px;
+    right: 16px;
+    display: block;
+    width: 2px;
+    height: 6px;
+    background: #fff;
+    content: '';
+    transition: all .25s ease;
+}
+
+#cssmenu > ul > li.has-sub:hover > a:before {
+    top: 15px;
+    height: 0;
+}
+
+#cssmenu ul ul {
+    position: absolute;
+    left: -9999px;
+    background: #1d3c1d;
+    border-radius: 5px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    min-width: 200px;
+    z-index: 1001;
+}
+
+#cssmenu ul ul li {
+    height: 0;
+    transition: all .25s ease;
+}
+
+#cssmenu li:hover > ul {
+    left: auto;
+}
+
+#cssmenu li:hover > ul > li {
+    height: 40px;
+}
+
+#cssmenu ul ul ul {
+    margin-left: 100%;
+    top: 0;
+}
+
+#cssmenu ul ul li a {
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 12px 15px;
+    width: 200px;
+    font-size: 12px;
+    text-decoration: none;
+    color: #fff;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+#cssmenu ul ul li:last-child > a {
+    border-bottom: 0;
+}
+
+#cssmenu ul ul li:hover > a, #cssmenu ul ul li a:hover {
+    color: #fff;
+    background: #c5a059;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   END: NAVIGATION MENU
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   START: MOBILE MENU BUTTON
+   Commit: Hamburger menu button for mobile devices
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.button {
+    display: none;
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    right: 20px;
+    top: 12px;
+    cursor: pointer;
+    z-index: 800;
+}
+
+.button:after {
+    position: absolute;
+    top: 18px;
+    right: 10px;
+    display: block;
+    height: 3px;
+    width: 20px;
+    border-top: 2px solid #ffffff;
+    border-bottom: 2px solid #ffffff;
+    content: '';
+}
+
+.button:before {
+    transition: all .3s ease;
+    position: absolute;
+    top: 12px;
+    right: 10px;
+    display: block;
+    height: 2px;
+    width: 20px;
+    background: #fff;
+    content: '';
+}
+
+.button.menu-opened:after {
+    top: 19px;
+    border: 0;
+    height: 2px;
+    width: 19px;
+    background: #fff;
+    transform: rotate(45deg);
+}
+
+.button.menu-opened:before {
+    top: 19px;
+    background: #fff;
+    width: 19px;
+    transform: rotate(-45deg);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   END: MOBILE MENU BUTTON
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   START: RESPONSIVE BREAKPOINTS - LOGO ALWAYS LEFT
+   Commit: Responsive design for all screen sizes
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Tablet & Desktop (1366px) */
+@media screen and (max-width: 1366px) {
+    .header-container {
+        flex-wrap: wrap;
+    }
+    .header-nav {
+        width: 100%;
+        justify-content: flex-start;
+        margin-top: 10px;
+    }
+    #cssmenu {
+        width: 100%;
+    }
+    #cssmenu > ul > li {
+        float: none;
+        display: inline-block;
+    }
+    #cssmenu > ul > li > a {
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+}
+
+/* Tablet (1024px) */
+@media screen and (max-width: 1024px) {
+    .header-logo img { height: 55px; width: 55px; }
+    .header-text h1 { font-size: 18px; }
+    .header-text .urdu-text { font-size: 13px; }
+}
+
+/* Mobile Toggle at 800px - COMPACT HEADER */
+@media screen and (max-width: 800px) {
+    .header-container {
+        padding: 5px 45px 5px 12px;
+        min-height: 50px;
+        gap: 8px;
+        justify-content: flex-start !important;
+    }
+    .header-logo {
+        gap: 6px;
+        justify-content: flex-start !important;
+        width: 100%;
+    }
+    .header-logo img { 
+        height: 35px; 
+        width: 35px; 
+        padding: 2px;
+    }
+    .header-text {
+        gap: 0px;
+        text-align: left !important;
+    }
+    .header-text h1 { 
+        font-size: 14px; 
+        line-height: 1.1;
+        text-align: left !important;
+    }
+    .header-text .urdu-text { 
+        font-size: 10px; 
+        line-height: 1.2;
+        text-align: left !important;
+    }
+    .header-text p { 
+        font-size: 8px; 
+        gap: 5px;
+        text-align: left !important;
+    }
+    .opac-badge {
+        padding: 1px 5px;
+        font-size: 8px;
+    }
+    
+    .header-nav { 
+        width: 100%; 
+        justify-content: flex-start; 
+        margin-top: 5px;
+    }
+    
+    .button {
+        right: 8px;
+        top: 6px;
+        width: 36px;
+        height: 36px;
+    }
+    
+    #cssmenu { 
+        width: 100%; 
+    }
+    #cssmenu ul { 
+        width: 100%; 
+        display: none; 
+    }
+    #cssmenu ul li { 
+        width: 100%; 
+        border-top: 1px solid rgba(255,255,255,0.1); 
+    }
+    #cssmenu ul li:hover { 
+        background: rgba(255,255,255,0.1); 
+    }
+    #cssmenu ul ul li, #cssmenu li:hover > ul > li { 
+        height: auto; 
+    }
+    #cssmenu ul li a, #cssmenu ul ul li a { 
+        width: 100%; 
+        border-bottom: 0; 
+        padding: 10px 15px;
+        font-size: 13px;
+    }
+    #cssmenu > ul > li { 
+        float: none; 
+        display: block;
+    }
+    #cssmenu ul ul li a { 
+        padding-left: 30px; 
+    }
+    #cssmenu ul ul li { 
+        background: #1d3c1d !important; 
+    }
+    #cssmenu ul ul li:hover { 
+        background: #c5a059 !important; 
+    }
+    #cssmenu ul ul ul li a { 
+        padding-left: 45px; 
+    }
+    #cssmenu ul ul, #cssmenu ul ul ul { 
+        position: relative; 
+        left: 0; 
+        width: 100%; 
+        margin: 0; 
+        box-shadow: none; 
+    }
+    #cssmenu > ul > li.has-sub > a:after, 
+    #cssmenu > ul > li.has-sub > a:before, 
+    #cssmenu ul ul > li.has-sub > a:after, 
+    #cssmenu ul ul > li.has-sub > a:before { 
+        display: none; 
+    }
+    #cssmenu #head-mobile { 
+        display: block; 
+        padding: 10px 15px; 
+        color: #fff; 
+        font-size: 13px; 
+        font-weight: 700; 
+    }
+    
+    .button { 
+        display: block !important; 
+    }
+    
+    .submenu-button { 
+        position: absolute; 
+        z-index: 99; 
+        right: 0; 
+        top: 0; 
+        bottom: 0; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        border-left: 1px solid rgba(255,255,255,0.2); 
+        width: 40px; 
+        cursor: pointer; 
+    }
+    .submenu-button.submenu-opened { 
+        background: rgba(255,255,255,0.1); 
+    }
+    .submenu-button:after { 
+        position: absolute; 
+        top: 50%; 
+        right: 14px; 
+        transform: translateY(-50%); 
+        width: 6px; 
+        height: 2px; 
+        display: block; 
+        background: #fff; 
+        content: ''; 
+    }
+    .submenu-button:before { 
+        position: absolute; 
+        top: 50%; 
+        right: 17px; 
+        transform: translateY(-50%); 
+        display: block; 
+        width: 2px; 
+        height: 8px; 
+        background: #fff; 
+        content: ''; 
+    }
+    .submenu-button.submenu-opened:after { 
+        background: #fff; 
+    }
+    .submenu-button.submenu-opened:before { 
+        display: none; 
+    }
+}
+
+/* Small Mobile (768px) - COMPACT HEADER */
+@media screen and (max-width: 768px) {
+    .header-container { 
+        flex-direction: row;
+        align-items: center !important;
+        padding: 4px 40px 4px 10px; 
+        min-height: 45px;
+    }
+    .header-logo { 
+        justify-content: flex-start !important;
+        gap: 6px;
+        width: auto;
+    }
+    .header-logo img {
+        height: 32px;
+        width: 32px;
+    }
+    .header-text {
+        text-align: left !important;
+    }
+    .header-text h1 { 
+        font-size: 13px; 
+        text-align: left !important;
+    }
+    .header-text .urdu-text {
+        font-size: 9px;
+        text-align: left !important;
+    }
+    .header-text p { 
+        font-size: 8px; 
+        text-align: left !important;
+    }
+    .header-nav { 
+        margin-top: 5px; 
+        width: 100%;
+    }
+    .top-bar-inner { 
+        flex-direction: column; 
+        gap: 6px; 
+        padding: 6px 0; 
+    }
+    .top-links { 
+        justify-content: center; 
+    }
+}
+
+/* Very Small Mobile (480px) - ULTRA COMPACT */
+@media screen and (max-width: 480px) {
+    .header-container {
+        padding: 3px 38px 3px 8px;
+        min-height: 40px;
+        align-items: center !important;
+    }
+    .header-logo {
+        justify-content: flex-start !important;
+        gap: 5px;
+    }
+    .header-logo img {
+        height: 30px;
+        width: 30px;
+    }
+    .header-text {
+        text-align: left !important;
+    }
+    .header-text h1 {
+        font-size: 12px;
+        text-align: left !important;
+    }
+    .header-text .urdu-text {
+        font-size: 8px;
+        text-align: left !important;
+    }
+    .header-text p {
+        font-size: 7px;
+        text-align: left !important;
+    }
+    .opac-badge {
+        padding: 1px 4px;
+        font-size: 7px;
+    }
+    .button {
+        width: 32px;
+        height: 32px;
+        right: 6px;
+        top: 5px;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   END: RESPONSIVE BREAKPOINTS - LOGO ALWAYS LEFT
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   START: MARQUEE - SIMPLE CSS SOLUTION
+   Commit: Animated marquee banner without HTML changes
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.marquee-container {
+    background: #ffffff;
+    border-bottom: 3px solid #2a7a30;
+    padding: 10px 0;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.marquee-container marquee {
+    display: none !important;
+}
+
+.marquee-container::before {
+    content: "📢 Welcome to Central Library, Sindh Agriculture University, Tando Jam - Your Gateway to Knowledge";
+    display: block;
+    white-space: nowrap;
+    color: #1d3c1d;
+    font-size: 16px;
+    font-weight: 600;
+    animation: scroll-text 35s linear infinite;
+    width: 100%;
+}
+
+@keyframes scroll-text {
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.marquee-container:hover::before {
+    animation-play-state: running !important;
+}
+
+@media screen and (max-width: 768px) {
+    .marquee-container::before {
+        font-size: 14px;
+        animation-duration: 12s;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   END: MARQUEE - SIMPLE CSS SOLUTION
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   START: SAU DIGITAL RESOURCES PANEL
+   Commit: Digital resources sidebar panel with clickable links
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.sau-digital-resources-panel {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin-bottom: 20px;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 100% !important;
+    box-sizing: border-box !important;
+    flex: 1 1 100% !important;
+    position: relative;
+    z-index: 1;
+}
+
+.sau-digital-resources-panel * {
+    box-sizing: border-box;
+}
+
+.sau-digital-resources-panel .panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f3f4f6;
+    width: 100%;
+}
+
+.sau-digital-resources-panel .ph-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    color: #111827;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.sau-digital-resources-panel .ph-left .pi {
+    font-size: 16px;
+}
+
+.sau-digital-resources-panel .res-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px;
+    margin-bottom: 8px;
+    background: #f9fafb;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    cursor: pointer;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    pointer-events: auto !important;
+    position: relative;
+    z-index: 2;
+}
+
+.sau-digital-resources-panel .res-row:hover {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+    transform: translateX(4px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.sau-digital-resources-panel .res-badge {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 12px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    pointer-events: auto !important;
+}
+
+.sau-digital-resources-panel .res-badge.hec {
+    background: #1d4ed8;
+}
+
+.sau-digital-resources-panel .res-badge.jstor {
+    background: #b91c1c;
+}
+
+.sau-digital-resources-panel .res-badge.sd {
+    background: #0f9488;
+}
+
+.sau-digital-resources-panel .res-badge.sl {
+    background: #7c3aed;
+}
+
+.sau-digital-resources-panel .ri {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+    min-width: 0;
+    pointer-events: auto !important;
+}
+
+.sau-digital-resources-panel .ri strong {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+    line-height: 1.2;
+    display: block;
+    pointer-events: auto !important;
+}
+
+.sau-digital-resources-panel .ri span {
+    font-size: 12px;
+    color: #6b7280;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    pointer-events: auto !important;
+}
+
+.sau-digital-resources-panel .viewall-link {
+    display: block;
+    text-align: right;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #f3f4f6;
+    font-size: 13px;
+    color: #15803d;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    width: 100% !important;
+    pointer-events: auto !important;
+}
+
+.sau-digital-resources-panel .viewall-link:hover {
+    color: #166534;
+    text-decoration: underline;
+    padding-right: 5px;
+}
+
+@media (max-width: 768px) {
+    .sau-digital-resources-panel {
+        padding: 16px;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    .sau-digital-resources-panel .res-row {
+        padding: 10px;
+        gap: 12px;
+    }
+    
+    .sau-digital-resources-panel .res-badge {
+        width: 38px;
+        height: 38px;
+        font-size: 11px;
+    }
+    
+    .sau-digital-resources-panel .ri strong {
+        font-size: 13px;
+    }
+    
+    .sau-digital-resources-panel .ri span {
+        font-size: 11px;
+    }
+    
+    .sau-digital-resources-panel .ph-left {
+        font-size: 13px;
+    }
+    
+    .sau-digital-resources-panel .ph-left .pi {
+        font-size: 14px;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   END: SAU DIGITAL RESOURCES PANEL
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   START: SIDEBAR NAVIGATION BOXES - PROPERLY ALIGNED
+   Commit: Clean layout with proper alignment - no negative margins
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* Left Sidebar - Properly Aligned Left */
+#opacnav { 
+    background: #ffffff; 
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+    padding: 20px; 
+    margin-bottom: 20px; 
+    margin-left: -40px;
+    margin-right: 15px;
+    width: 240px;
+    min-width: 240px;
+    max-width: 250px;
+    flex: 0 0 240px;
+    box-sizing: border-box;
+    float: left;
+}
+
+/* Right Sidebar - Properly Aligned Right */
+#opacnavright { 
+    background: #ffffff; 
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+    padding: 20px; 
+    margin-bottom: 20px; 
+    margin-left: 15px;
+    margin-right: -40px;
+    width: 260px;
+    min-width: 260px;
+    max-width: 280px;
+    flex: 0 0 260px;
+    box-sizing: border-box;
+    float: right;
+}
+
+/* Clearfix for parent container */
+.main-content::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Box Styling - Both Sidebars */
+#opacnav .box, #opacnavright .box { 
+    background: linear-gradient(135deg, #2a7a30 0%, #1d3c1d 100%);
+    border: none; 
+    border-radius: 8px; 
+    margin-bottom: 15px; 
+    overflow: hidden; 
+    box-shadow: 0 2px 4px rgba(29, 60, 29, 0.3);
+}
+
+#opacnav .box h3, #opacnavright .box h3 { 
+    background: none; 
+    color: #ffffff; 
+    margin: 0; 
+    padding: 12px 15px; 
+    text-align: center; 
+    font-size: 14px; 
+    font-weight: 700; 
+    letter-spacing: 1px; 
+    text-transform: uppercase; 
+}
+
+/* Section Headings */
+#opacnav h3:not(.box h3), #opacnavright h1 { 
+    color: #1d3c1d;
+    font-weight: 700; 
+    font-size: 16px; 
+    margin: 20px 0 12px 0; 
+    padding-bottom: 8px; 
+    border-bottom: 3px solid #4caf50;
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+}
+
+#opacnav h3:not(.box h3)::before, #opacnavright h1::before { 
+    font-family: 'Font Awesome 6 Free'; 
+    font-weight: 900; 
+    color: #c5a059;
+    font-size: 16px; 
+    width: 20px; 
+    text-align: center; 
+}
+
+/* Lists */
+#opacnav ul, #opacnavright ul { 
+    list-style: none; 
+    margin: 0; 
+    padding: 0; 
+}
+
+#opacnav li, #opacnavright li { 
+    margin: 0; 
+    padding: 0; 
+    line-height: 1.6; 
+}
+
+/* Links */
+#opacnav a, #opacnavright a { 
+    display: block; 
+    padding: 8px 12px; 
+    color: #333; 
+    text-decoration: none; 
+    border-radius: 6px; 
+    transition: all 0.3s ease; 
+    font-size: 14px; 
+    border-left: 3px solid transparent; 
+}
+
+#opacnav a:hover, #opacnavright a:hover { 
+    background: #e8f5e9;
+    color: #2a7a30; 
+    border-left-color: #c5a059;
+    padding-left: 16px; 
+}
+
+/* Horizontal Rules */
+#opacnav hr, #opacnavright hr { 
+    border: none; 
+    height: 1px; 
+    background: linear-gradient(to right, transparent, #e0e0e0, transparent); 
+    margin: 15px 0; 
+}
+
+/* Right Sidebar Content - Better Readability */
+#opacnavright p, #opacnavright div {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+#opacnavright .box {
+    margin-bottom: 20px;
+}
+
+/* Icons for Left Sidebar */
+#opacnav h3:nth-of-type(2)::before { content: "\f02d"; }
+#opacnav h3:nth-of-type(3)::before { content: "\f1ea"; }
+#opacnav h3:nth-of-type(4)::before { content: "\f19d"; }
+#opacnav h3:nth-of-type(5)::before { content: "\f0b1"; }
+#opacnav h3:nth-of-type(6)::before { content: "\f0ad"; }
+#opacnav h3:nth-of-type(7)::before { content: "\f1ea"; }
+
+/* Icons for Right Sidebar */
+#opacnavright h1:nth-of-type(1)::before { content: "\f0e4"; }
+#opacnavright h1:nth-of-type(2)::before { content: "\f0c1"; }
+#opacnavright h1:nth-of-type(3)::before { content: "\f059"; }
+#opacnavright h1:nth-of-type(4)::before { content: "\f0c0"; }
+#opacnavright h1:nth-of-type(5)::before { content: "\f017"; }
+#opacnavright h1:nth-of-type(6)::before { content: "\f017"; }
+#opacnavright h1:nth-of-type(7)::before { content: "\f02d"; }
+
+/* Responsive Adjustments */
+@media (max-width: 1400px) {
+    #opacnav {
+        width: 220px;
+        min-width: 220px;
+        max-width: 230px;
+        flex: 0 0 220px;
+    }
+    #opacnavright {
+        width: 240px;
+        min-width: 240px;
+        max-width: 250px;
+        flex: 0 0 240px;
+    }
+}
+
+@media (max-width: 1200px) {
+    #opacnav {
+        width: 200px;
+        min-width: 200px;
+        flex: 0 0 200px;
+    }
+    #opacnavright {
+        width: 220px;
+        min-width: 220px;
+        flex: 0 0 220px;
+    }
+}
+
+@media (max-width: 992px) {
+    #opacnav, #opacnavright {
+        width: 100%;
+        max-width: 100%;
+        flex: 0 0 100%;
+        float: none;
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   END: SIDEBAR NAVIGATION BOXES
+   ═══════════════════════════════════════════════════════════════════════════════ */
+/*═══════════════════════════════════════════════
+  Research Support Services - Premium Design
+═══════════════════════════════════════════════*/
+
+#opacnav h3:nth-of-type(8)::before{
+    content:"\f19d";
+}
+
+#opacnav li a{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    transition:all .35s ease;
+}
+
+#opacnav li a i{
+    width:28px;
+    height:28px;
+    line-height:28px;
+    text-align:center;
+    border-radius:50%;
+    background:#eef8ef;
+    color:#2a7a30;
+    font-size:14px;
+    transition:all .35s ease;
+    flex-shrink:0;
+}
+
+#opacnav li a:hover{
+    background:#edf8ed;
+    color:#1d3c1d;
+    padding-left:18px;
+    border-left:3px solid #c5a059;
+}
+
+#opacnav li a:hover i{
+    background:#2a7a30;
+    color:#fff;
+    transform:rotate(8deg) scale(1.1);
+}
+
+#opacnav li{
+    margin:4px 0;
+}
+
+#opacnav li a::after{
+    content:"\f054";
+    font-family:"Font Awesome 6 Free";
+    font-weight:900;
+    margin-left:auto;
+    color:#c5a059;
+    opacity:0;
+    transition:.3s;
+    font-size:11px;
+}
+
+#opacnav li a:hover::after{
+    opacity:1;
+    transform:translateX(3px);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   START: 3D SLIDESHOW / CAROUSEL (DESKTOP)
+   Commit: 3D rotating carousel for desktop view
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.sbb-slider{
+    width:100%;
+    height:360px;
+    position:relative;
+    perspective:1650px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:visible !important;   /* OPAC ke hidden overflow ko bypass */
+    margin-bottom:5px;
+}
+
+.sbb-books{
+    width:90px;
+    height:130px;
+    position:relative;
+    left:37px;                      /* Right side shift */
+    transform-style:preserve-3d;
+    animation:sbbRotate 32s linear infinite;
+}
+
+.sbb-books:hover{
+    animation-play-state:paused;
+}
+
+.sbb-books a{
+    position:absolute;
+    width:90px;
+    height:130px;
+    left:0;
+    top:0;
+}
+
+.sbb-books img{
+    width:90px;
+    height:130px;
+    object-fit:cover;
+    border-radius:6px;
+    border:2px solid #fff;
+    box-shadow:0 6px 15px rgba(0,0,0,.40);
+    background:#fff;
+}
+
+.sbb-books a:nth-child(1){ transform:rotateY(0deg) translateZ(390px); }
+.sbb-books a:nth-child(2){ transform:rotateY(18deg) translateZ(390px); }
+.sbb-books a:nth-child(3){ transform:rotateY(36deg) translateZ(390px); }
+.sbb-books a:nth-child(4){ transform:rotateY(54deg) translateZ(390px); }
+.sbb-books a:nth-child(5){ transform:rotateY(72deg) translateZ(390px); }
+.sbb-books a:nth-child(6){ transform:rotateY(90deg) translateZ(390px); }
+.sbb-books a:nth-child(7){ transform:rotateY(108deg) translateZ(390px); }
+.sbb-books a:nth-child(8){ transform:rotateY(126deg) translateZ(390px); }
+.sbb-books a:nth-child(9){ transform:rotateY(144deg) translateZ(390px); }
+.sbb-books a:nth-child(10){ transform:rotateY(162deg) translateZ(390px); }
+.sbb-books a:nth-child(11){ transform:rotateY(180deg) translateZ(390px); }
+.sbb-books a:nth-child(12){ transform:rotateY(198deg) translateZ(390px); }
+.sbb-books a:nth-child(13){ transform:rotateY(216deg) translateZ(390px); }
+.sbb-books a:nth-child(14){ transform:rotateY(234deg) translateZ(390px); }
+.sbb-books a:nth-child(15){ transform:rotateY(252deg) translateZ(390px); }
+.sbb-books a:nth-child(16){ transform:rotateY(270deg) translateZ(390px); }
+.sbb-books a:nth-child(17){ transform:rotateY(288deg) translateZ(390px); }
+.sbb-books a:nth-child(18){ transform:rotateY(306deg) translateZ(390px); }
+.sbb-books a:nth-child(19){ transform:rotateY(324deg) translateZ(390px); }
+.sbb-books a:nth-child(20){ transform:rotateY(342deg) translateZ(390px); }
+
+@keyframes sbbRotate{
+    from{ transform:rotateX(-5deg) rotateY(0deg); }
+    to{   transform:rotateX(-5deg) rotateY(360deg); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   END: 3D SLIDESHOW / CAROUSEL (DESKTOP)
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   START: LIBRARY IMAGES
+   Commit: Library image display below slider
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.libraryimage img {
+    border-radius: 16px;
+    margin-top: 20px;
+    max-width: 100%;
+    height: 330px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   END: LIBRARY IMAGES
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   START: MOBILE 3D SLIDER
+   Commit: Responsive 3D slider for mobile devices
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+@media screen and (max-width: 800px) {
+    #slideshow {
+        height: 400px;
+        margin-left: 0 !important;
+        margin-right: 0;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+    .entire-content {
+        width: 100%;
+        height: 100%;
+        margin: 0 auto;
+        position: relative;
+        perspective: 1000px;
+    }
+    .content-carrousel {
+        width: 0;
+        height: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: 0;
+        animation: rotar-mobile-800 15s infinite linear;
+        transform-style: preserve-3d;
+    }
+    .content-carrousel figure {
+        width: 100px;
+        height: 130px;
+        position: absolute;
+        top: -65px;
+        left: -50px;
+        border: 2px solid #337F92;
+        overflow: hidden;
+    }
+    .content-carrousel figure:nth-child(1) { transform: rotateY(0deg) translateZ(220px); }
+    .content-carrousel figure:nth-child(2) { transform: rotateY(40deg) translateZ(220px); }
+    .content-carrousel figure:nth-child(3) { transform: rotateY(80deg) translateZ(220px); }
+    .content-carrousel figure:nth-child(4) { transform: rotateY(120deg) translateZ(220px); }
+    .content-carrousel figure:nth-child(5) { transform: rotateY(160deg) translateZ(220px); }
+    .content-carrousel figure:nth-child(6) { transform: rotateY(200deg) translateZ(220px); }
+    .content-carrousel figure:nth-child(7) { transform: rotateY(240deg) translateZ(220px); }
+    .content-carrousel figure:nth-child(8) { transform: rotateY(280deg) translateZ(220px); }
+    .content-carrousel figure:nth-child(9) { transform: rotateY(320deg) translateZ(220px); }
+    
+    .libraryimage img {
+        height: 250px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    #slideshow {
+        height: 380px;
+        margin-left: 0 !important;
+    }
+    .content-carrousel {
+        animation: rotar-mobile-600 15s infinite linear;
+    }
+    .content-carrousel figure {
+        width: 90px;
+        height: 120px;
+        top: -60px;
+        left: -45px;
+    }
+    .content-carrousel figure:nth-child(1) { transform: rotateY(0deg) translateZ(200px); }
+    .content-carrousel figure:nth-child(2) { transform: rotateY(40deg) translateZ(200px); }
+    .content-carrousel figure:nth-child(3) { transform: rotateY(80deg) translateZ(200px); }
+    .content-carrousel figure:nth-child(4) { transform: rotateY(120deg) translateZ(200px); }
+    .content-carrousel figure:nth-child(5) { transform: rotateY(160deg) translateZ(200px); }
+    .content-carrousel figure:nth-child(6) { transform: rotateY(200deg) translateZ(200px); }
+    .content-carrousel figure:nth-child(7) { transform: rotateY(240deg) translateZ(200px); }
+    .content-carrousel figure:nth-child(8) { transform: rotateY(280deg) translateZ(200px); }
+    .content-carrousel figure:nth-child(9) { transform: rotateY(320deg) translateZ(200px); }
+    
+    .libraryimage img {
+        height: 220px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    #slideshow {
+        height: 350px;
+        margin-left: 0 !important;
+    }
+    .content-carrousel {
+        animation: rotar-mobile-480 15s infinite linear;
+    }
+    .content-carrousel figure {
+        width: 80px;
+        height: 110px;
+        top: -55px;
+        left: -40px;
+    }
+    .content-carrousel figure:nth-child(1) { transform: rotateY(0deg) translateZ(180px); }
+    .content-carrousel figure:nth-child(2) { transform: rotateY(40deg) translateZ(180px); }
+    .content-carrousel figure:nth-child(3) { transform: rotateY(80deg) translateZ(180px); }
+    .content-carrousel figure:nth-child(4) { transform: rotateY(120deg) translateZ(180px); }
+    .content-carrousel figure:nth-child(5) { transform: rotateY(160deg) translateZ(180px); }
+    .content-carrousel figure:nth-child(6) { transform: rotateY(200deg) translateZ(180px); }
+    .content-carrousel figure:nth-child(7) { transform: rotateY(240deg) translateZ(180px); }
+    .content-carrousel figure:nth-child(8) { transform: rotateY(280deg) translateZ(180px); }
+    .content-carrousel figure:nth-child(9) { transform: rotateY(320deg) translateZ(180px); }
+    
+    .libraryimage img {
+        height: 200px;
+    }
+}
+
+@media screen and (max-width: 360px) {
+    #slideshow {
+        height: 320px;
+        margin-left: 0 !important;
+    }
+    .content-carrousel {
+        animation: rotar-mobile-360 15s infinite linear;
+    }
+    .content-carrousel figure {
+        width: 70px;
+        height: 95px;
+        top: -47px;
+        left: -35px;
+    }
+    .content-carrousel figure:nth-child(1) { transform: rotateY(0deg) translateZ(160px); }
+    .content-carrousel figure:nth-child(2) { transform: rotateY(40deg) translateZ(160px); }
+    .content-carrousel figure:nth-child(3) { transform: rotateY(80deg) translateZ(160px); }
+    .content-carrousel figure:nth-child(4) { transform: rotateY(120deg) translateZ(160px); }
+    .content-carrousel figure:nth-child(5) { transform: rotateY(160deg) translateZ(160px); }
+    .content-carrousel figure:nth-child(6) { transform: rotateY(200deg) translateZ(160px); }
+    .content-carrousel figure:nth-child(7) { transform: rotateY(240deg) translateZ(160px); }
+    .content-carrousel figure:nth-child(8) { transform: rotateY(280deg) translateZ(160px); }
+    .content-carrousel figure:nth-child(9) { transform: rotateY(320deg) translateZ(160px); }
+    
+    .libraryimage img {
+        height: 180px;
+    }
+}
+
+@keyframes rotar-mobile-800 {
+    from { transform: translate(-50%, -50%) rotateY(0deg); }
+    to { transform: translate(-50%, -50%) rotateY(360deg); }
+}
+
+@keyframes rotar-mobile-600 {
+    from { transform: translate(-50%, -50%) rotateY(0deg); }
+    to { transform: translate(-50%, -50%) rotateY(360deg); }
+}
+
+@keyframes rotar-mobile-480 {
+    from { transform: translate(-50%, -50%) rotateY(0deg); }
+    to { transform: translate(-50%, -50%) rotateY(360deg); }
+}
+
+@keyframes rotar-mobile-360 {
+    from { transform: translate(-50%, -50%) rotateY(0deg); }
+    to { transform: translate(-50%, -50%) rotateY(360deg); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   END: MOBILE 3D SLIDER
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   START: PROFESSIONAL FOOTER
+   Commit: Multi-column footer with contact, links, gallery, and map
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.opac-credits { 
+    background: #1d3c1d;
+    color: #ffffff; 
+    margin-top: 50px; 
+    font-size: 14px; 
+    width: 100%; 
+}
+
+.footer-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+    gap: 30px; 
+    padding: 40px 20px; 
+    max-width: 1200px;
+    margin: 0 auto; 
+    width: 100%; 
+    box-sizing: border-box; 
+}
+
+.footer-col h4 { 
+    color: #ffffff; 
+    font-size: 18px; 
+    font-weight: 700; 
+    margin-bottom: 20px; 
+    padding-bottom: 10px; 
+    border-bottom: 2px solid #c5a059;
+    display: inline-block; 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+}
+
+.footer-col p { 
+    color: rgba(255, 255, 255, 0.85); 
+    line-height: 1.8; 
+    margin-bottom: 15px; 
+}
+
+.footer-contact-item { 
+    display: flex; 
+    align-items: flex-start; 
+    gap: 12px; 
+    margin-bottom: 15px; 
+    color: rgba(255, 255, 255, 0.9); 
+}
+
+.footer-contact-item i { 
+    color: #c5a059;
+    margin-top: 4px; 
+    font-size: 16px; 
+}
+
+.footer-links { 
+    list-style: none; 
+    padding: 0; 
+}
+
+.footer-links li { 
+    margin-bottom: 10px; 
+}
+
+.footer-links a { 
+    color: rgba(255, 255, 255, 0.85); 
+    text-decoration: none; 
+    transition: all 0.3s ease; 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+    cursor: pointer; 
+}
+
+.footer-links a::before { 
+    content: "\f105"; 
+    font-family: "Font Awesome 6 Free"; 
+    font-weight: 900; 
+    color: #c5a059;
+}
+
+.footer-links a:hover { 
+    color: #ffffff; 
+    padding-left: 5px; 
+}
+
+.footer-gallery { 
+    display: grid; 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 10px; 
+    max-width: 100%; 
+}
+
+.footer-gallery-item { 
+    position: relative; 
+    overflow: hidden; 
+    border-radius: 8px;
+    border: 2px solid rgba(255,255,255,0.2); 
+    aspect-ratio: 16/10; 
+    cursor: pointer; 
+}
+
+.footer-gallery-item:nth-child(n+5) { 
+    display: none; 
+}
+
+.footer-gallery-item img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    transition: transform 0.4s ease; 
+}
+
+.footer-gallery-item:hover img { 
+    transform: scale(1.1); 
+}
+
+.footer-gallery-item::after { 
+    content: "\f002"; 
+    font-family: "Font Awesome 6 Free"; 
+    font-weight: 900; 
+    position: absolute; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%) scale(0); 
+    color: #fff; 
+    font-size: 20px; 
+    background: rgba(197, 160, 89, 0.9);
+    width: 35px; 
+    height: 35px; 
+    border-radius: 50%; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    transition: transform 0.3s ease; 
+}
+
+.footer-gallery-item:hover::after { 
+    transform: translate(-50%, -50%) scale(1); 
+}
+
+.footer-map iframe { 
+    width: 100%; 
+    height: 180px; 
+    border-radius: 8px;
+    border: 2px solid rgba(255,255,255,0.2); 
+    filter: grayscale(20%) contrast(1.1); 
+    transition: filter 0.3s ease; 
+}
+
+.footer-map iframe:hover { 
+    filter: grayscale(0%) contrast(1); 
+}
+
+.footer-bottom { 
+    background: #0f280f;
+    padding: 20px; 
+    text-align: center; 
+    border-top: 1px solid rgba(255,255,255,0.1); 
+    width: 100%; 
+}
+
+.footer-bottom-content { 
+    max-width: 1200px; 
+    margin: 0 auto; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 15px; 
+    width: 100%; 
+}
+
+.footer-credits { 
+    color: rgba(255, 255, 255, 0.8); 
+    font-size: 13px; 
+}
+
+.footer-credits span { 
+    color: #c5a059;
+    font-weight: 600; 
+}
+
+.social-btn-container { 
+    display: flex; 
+    gap: 12px; 
+}
+
+.social-btn { 
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center; 
+    width: 40px; 
+    height: 40px; 
+    border: 2px solid rgba(255,255,255,0.3); 
+    border-radius: 50%; 
+    background: transparent; 
+    color: #ffffff !important; 
+    font-size: 16px; 
+    text-decoration: none; 
+    transition: all 0.3s ease; 
+    cursor: pointer; 
+}
+
+.social-btn:hover { 
+    background-color: #c5a059;
+    border-color: #c5a059; 
+    transform: translateY(-3px); 
+}
+
+.copyright-text { 
+    color: rgba(255, 255, 255, 0.7); 
+    font-size: 13px; 
+    margin-top: 10px; 
+}
+
+@media screen and (max-width: 768px) {
+    .footer-grid { 
+        grid-template-columns: 1fr; 
+        text-align: center; 
+    }
+    .footer-contact-item { 
+        justify-content: center; 
+    }
+    .footer-links a { 
+        justify-content: center; 
+    }
+    .footer-bottom-content { 
+        text-align: center; 
+    }
+    .footer-gallery { 
+        justify-content: center; 
+        max-width: 280px; 
+        margin: 0 auto; 
+        gap: 8px; 
+    }
+    .footer-col { 
+        width: 100%; 
+        overflow-x: hidden; 
+    }
+}
+
+#opac-main #top-bar, #opac-main #header, #opac-main #usermenu, #opac-main .navbar { 
+    display: none !important; 
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   END: PROFESSIONAL FOOTER
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   START: LIGHTBOX GALLERY
+   Commit: Full-screen image lightbox with navigation
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.lightbox-overlay { 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    background: rgba(0, 0, 0, 0.95); 
+    z-index: 100000; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    visibility: hidden; 
+    opacity: 0; 
+    transition: visibility 0.2s, opacity 0.2s; 
+}
+
+.lightbox-overlay.active { 
+    visibility: visible; 
+    opacity: 1; 
+    overflow: hidden; 
+    touch-action: pan-y pinch-zoom; 
+}
+
+.lightbox-content { 
+    position: relative; 
+    width: 100%; 
+    height: 100%; 
+}
+
+.lightbox-img { 
+    position: absolute; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    max-width: 90vw; 
+    max-height: 85vh; 
+    width: auto; 
+    height: auto; 
+    object-fit: contain; 
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); 
+}
+
+.lb-close { 
+    position: absolute; 
+    top: 20px; 
+    right: 20px; 
+    font-size: 36px; 
+    color: white; 
+    cursor: pointer; 
+    background: none; 
+    border: none; 
+    z-index: 100001; 
+    transition: transform 0.2s; 
+}
+
+.lb-close:hover { 
+    color: #c5a059;
+    transform: scale(1.1); 
+}
+
+.lb-prev, .lb-next { 
+    all: unset; 
+    position: absolute; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    color: white; 
+    font-size: 2rem; 
+    font-weight: bold; 
+    cursor: pointer; 
+    padding: 10px 20px; 
+    background: rgba(0, 0, 0, 0.5); 
+    border-radius: 40px; 
+    z-index: 100001; 
+    transition: all 0.2s; 
+}
+
+.lb-prev { 
+    left: 20px; 
+}
+
+.lb-next { 
+    right: 20px; 
+}
+
+.lb-prev:hover, .lb-next:hover { 
+    background: #c5a059;
+    color: white; 
+}
+
+@media (max-width: 768px) {
+    .lb-prev, .lb-next { 
+        font-size: 1.2rem; 
+        padding: 6px 12px; 
+        background: rgba(0, 0, 0, 0.6); 
+    }
+    .lb-prev { 
+        left: 10px; 
+    }
+    .lb-next { 
+        right: 10px; 
+    }
+    .lightbox-img { 
+        max-width: 95vw; 
+        max-height: 80vh; 
+    }
+}
+
+#backToTop { 
+    display: none !important; 
+    visibility: hidden !important; 
+    opacity: 0 !important; 
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   END: LIGHTBOX GALLERY
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   START: SECTION TITLES
+   Commit: Reusable section title component
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.section-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #1d3c1d;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: #4caf50;
+    border-radius: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   END: SECTION TITLES
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   START: CARDS & BOXES
+   Commit: Reusable card and info box components
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.card, .info-box {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+    padding: 20px;
+    transition: all 0.3s ease;
+    border: 1px solid #e8e8e8;
+}
+
+.card:hover, .info-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(29, 60, 29, 0.18);
+    border-color: #2a7a30;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   END: CARDS & BOXES
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   START: BUTTONS
+   Commit: Reusable button components
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.btn-sau {
+    background: #2a7a30;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.btn-sau:hover {
+    background: #4caf50;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(42, 122, 48, 0.3);
+    color: #fff;
+}
+
+.btn-sau-gold {
+    background: #c5a059;
+    color: #fff;
+}
+
+.btn-sau-gold:hover {
+    background: #b08d4a;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   END: BUTTONS
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   START: COOKIE CONSENT FIX
+   Commit: Hide cookie consent elements
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+#cookieConsentDivider,
+#cookieConsentLi,
+#cookieConsentButton,
+li#cookieConsentLi,
+a#cookieConsentButton,
+a[name="Your cookies"],
+.cookieconsentlabel,
+li:has(.cookieconsentlabel) {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   END: COOKIE CONSENT FIX
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   START: SEARCH SUGGESTIONS FIX
+   Commit: Hide "Not what you expected?" suggestions
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+#didyoumean,
+#didyoumean.dym-loaded {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   END: SEARCH SUGGESTIONS FIX
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   START: SAU QUICK NAVIGATION (COMPACT PRO EDITION)
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+#moresearches {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+    margin: 15px auto;
+    padding: 0 10px;
+    width: 100%;
+    max-width: 1200px;
+    list-style: none;
+    box-sizing: border-box;
+}
+
+#moresearches li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+#moresearches li::before,
+#moresearches li::after,
+#moresearches li + li::before {
+    content: none !important;
+    display: none !important;
+}
+
+#moresearches li a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 90%; /* Width Reduced */
+    max-width: 90%;
+    box-sizing: border-box;
+    min-height: 34px; /* Height Reduced */
+    padding: 6px 12px; /* Padding Reduced */
+    background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%) !important;
+    color: #ffffff !important;
+    text-decoration: none;
+    font-family: 'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+    font-size: 12px; /* Font slightly reduced for compact look */
+    font-weight: 500;
+    border-radius: 6px !important; /* Slightly smaller radius for smaller buttons */
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 3px 8px rgba(27, 94, 32, 0.15) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 0.3px;
+    position: relative;
+    text-align: center;
+    line-height: 1.3;
+}
+
+/* Subtle Shine Effect */
+#moresearches li a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.6s ease;
+}
+
+#moresearches li a:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15), 0 6px 12px rgba(27, 94, 32, 0.25) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+#moresearches li a:hover::before {
+    left: 100%;
+}
+
+#moresearches li a:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+#moresearches li a::after {
+    display: none !important;
+}
+
+/* Override JS injected styles */
+#moresearches .sau-quick-link .nav-link,
+#moresearches li a.nav-link,
+#moresearches li:nth-child(n) a {
+    background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 3px 8px rgba(27, 94, 32, 0.15) !important;
+    width: 90% !important;
+    max-width: 90% !important;
+    box-sizing: border-box !important;
+}
+
+#moresearches .sau-quick-link .nav-link:hover,
+#moresearches li:nth-child(n) a:hover {
+    background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15), 0 6px 12px rgba(27, 94, 32, 0.25) !important;
+}
+
+@media(max-width: 992px) {
+    #moresearches {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media(max-width: 768px) {
+    #moresearches {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    
+    #moresearches li a {
+        min-height: 32px;
+        font-size: 11px;
+        padding: 5px 10px;
+        width: 95%;
+        max-width: 95%;
+    }
+}
+
+@media(max-width: 480px) {
+    #moresearches {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    #moresearches li a {
+        min-height: 34px;
+        font-size: 12px;
+        padding: 6px 12px;
+        width: 95%;
+        max-width: 95%;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   END: SAU QUICK NAVIGATION
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   START: MODERN SEARCH BOX
+   Commit: Modern Google-style search box design with dropdown arrow
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+#opac-main-search {
+    max-width: 1000px;
+    margin: 12px auto 17px;
+    position: relative;
+    z-index: 10;
+    background: transparent !important;
+}
+
+#searchform {
+    background: transparent !important;
+}
+
+#searchform > .row {
+    background: #fff;
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 0 !important;
+    border: 5px solid #dadce0;
+  	border-color:#dadce0;
+    border-radius: 60px;
+    overflow: hidden;
+    box-shadow: none !important;
+    transition: border-color .30s ease;
+}
+
+#searchform > .row:hover {
+    border-color: #4285F4;
+    box-shadow: none !important;
+}
+
+#searchform .col-sm-auto:first-child {
+    width: 220px;
+    max-width: 220px;
+    flex: none;
+    position: relative;
+}
+
+/* Divider Line - Bold aur Thick kar diya */
+#searchform .col-sm-auto:first-child::after {
+    content: "" !important;
+    position: absolute !important;
+    right: 0 !important;
+    top: 8px !important;
+    width: 3px !important; /* Pehle 1px tha, ab 2px kar diya taake thick ho jaye */
+    height: 50px !important;
+    background: #008080 !important; /* Pehle light gray tha, ab dark gray kar diya taake bold dikhe */
+}
+
+/* Dropdown arrow */
+#searchform .col-sm-auto:first-child::before {
+    content: "▼" !important;
+    position: absolute !important;
+    right: 40px !important; 
+    bottom: 11px !important; 
+    font-size: 23px !important; 
+    color: #28a745 !important; 
+    pointer-events: none !important;
+    display: block !important;
+    z-index: 100 !important;
+}
+
+#masthead_search {
+    height: 64px !important;
+    border: none !important;
+    background: #fff !important;
+    box-shadow: none !important;
+    font-size: 15px;
+    padding-left: 18px;
+    padding-right: 35px;
+    cursor: pointer;
+}
+
+#searchform .col.order-4 {
+    flex: 1;
+}
+
+#translControl1 {
+    height: 64px !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    font-size: 20px;
+    padding-left: 24px;
+    padding-right: 24px;
+    text-align: left !important;
+    width: 100% !important;
+}
+
+#translControl1::placeholder {
+    color: #5f6368 !important;
+    font-size: 18px !important;
+    text-align: left !important;
+    opacity: 1 !important;
+    font-weight: 400 !important;
+}
+
+#translControl1:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+#searchform .order-5 {
+    width: 72px;
+    max-width: 72px;
+    flex: none;
+}
+
+#searchsubmit {
+    width: 72px;
+    height: 64px;
+    border: none !important;
+    border-radius: 0 !important;
+    background: #1565C0 !important;
+    transition: .30s;
+}
+
+#searchsubmit:hover {
+    background: #0D47A1 !important;
+}
+
+#searchsubmit i {
+    font-size: 22px;
+}
+
+@media(max-width: 768px) {
+    #opac-main-search {
+        margin-top: 15px;
+    }
+    
+    #searchform > .row {
+        flex-wrap: wrap;
+        border-radius: 20px;
+    }
+    
+    #searchform .col-sm-auto:first-child {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    #searchform .col-sm-auto:first-child::after,
+    #searchform .col-sm-auto:first-child::before {
+        display: none !important;
+    }
+    
+    #masthead_search {
+        border-bottom: 1px solid #eee !important;
+    }
+    
+    #searchform .order-5 {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    #searchsubmit {
+        width: 100%;
+        border-radius: 0 0 20px 20px !important;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   END: MODERN SEARCH BOX
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   START: HIDE AUTHORITY SEARCH BUTTON
+   Commit: Remove Authority search button from quick navigation
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Method 1: href attribute se target karein (Koha OPAC) */
+#moresearches li a[href*="authorit"],
+#moresearches li a[href*="authorities"],
+#moresearches li a[href*="authority"] {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    overflow: hidden !important;
+}
+
+/* Method 2: :has() pseudo-class se text content match karein */
+#moresearches li:has(a[href*="authorit"]) {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    overflow: hidden !important;
+}
+
+/* Method 3: Agar upar wale kaam na karein, to 2nd button hide karein */
+/* (Image mein Authority search 2nd position pe hai) */
+#moresearches li:nth-child(2) {
+    display: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   END: HIDE AUTHORITY SEARCH BUTTON
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   DISCOVER LIBRARY SECTION - SAU LIBRARY THEME
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.discover-library-wrapper {
+    width: 100%;
+    clear: both;
+}
+
+.discover-library-section {
+    margin: 40px 0;
+    padding: 0 15px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.discover-title {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    color: #1d3c1d;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    padding-bottom: 12px;
+}
+
+.discover-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: #2a7a30;
+    border-radius: 2px;
+}
+
+.discover-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.discover-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 25px 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    border: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.discover-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(42, 122, 48, 0.15);
+    border-color: #e8f5e9;
+}
+
+.discover-icon {
+    width: 55px;
+    height: 55px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    font-size: 26px;
+    color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+.discover-card:hover .discover-icon {
+    transform: scale(1.1);
+}
+
+.discover-card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1d3c1d;
+    margin: 10px 0;
+    line-height: 1.3;
+}
+
+.discover-card-desc {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.6;
+    margin: 10px 0 20px 0;
+    flex-grow: 1;
+}
+
+.discover-btn {
+    background: #ffffff;
+    color: #2a7a30;
+    border: 2px solid #2a7a30;
+    padding: 8px 24px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    width: 100%;
+}
+
+.discover-btn:hover {
+    background: #2a7a30;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(42, 122, 48, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .discover-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .discover-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .discover-title {
+        font-size: 18px;
+    }
+    
+    .discover-card {
+        padding: 20px 15px;
+    }
+    
+    .discover-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+    }
+    
+    .discover-card-title {
+        font-size: 14px;
+    }
+    
+    .discover-card-desc {
+        font-size: 11px;
+    }
+    
+    .discover-btn {
+        padding: 7px 20px;
+        font-size: 11px;
+    }
+}
+
+
+
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   SIDEBAR VISIBILITY CONTROL - SAU LIBRARY
+   Full-width layout when sidebar is hidden (suggestions page)
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* When sidebar is hidden on suggestions page */
+body.sidebar-hidden #opacnav,
+body.sidebar-hidden .sau-left-sidebar {
+    display: none !important;
+}
+
+body.sidebar-hidden .sau-main-content,
+body.sidebar-hidden .center-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    float: none !important;
+}
+
+body.sidebar-hidden .main-content {
+    overflow: hidden;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    #opacnav,
+    .sau-left-sidebar {
+        display: none;
+    }
+    
+    .sau-main-content,
+    .center-content {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+}
+
+
+
+
+
+/*=======================================================
+ Start:	Sirf opac-topissues.pl page par sidebar hide karein 
+  ====================================================*/
+/* opac-topissues.pl page par sidebar ko completely hide karein */
+body:has(a[href*="opac-topissues.pl"]) .sidebar,
+body:has(a[href*="opac-topissues.pl"]) #sidebar,
+body:has(a[href*="opac-topissues.pl"]) .col-md-3,
+body:has(a[href*="opac-topissues.pl"]) aside,
+body:has(a[href*="opac-topissues.pl"]) .opac-sidebar,
+body:has(a[href*="opac-topissues.pl"]) .refine-your-search,
+body:has(a[href*="opac-topissues.pl"]) #refine,
+body:has(a[href*="opac-topissues.pl"]) .nav-sidebar {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Main content ko full width karein */
+body:has(a[href*="opac-topissues.pl"]) #maincontent,
+body:has(a[href*="opac-topissues.pl"]) .col-md-9,
+body:has(a[href*="opac-topissues.pl"]) .main-content,
+body:has(a[href*="opac-topissues.pl"]) .container-fluid {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+}
+/*=======================================================
+ End:	Sirf opac-topissues.pl page par sidebar hide karein 
+  ====================================================*/
+</style>
+    <!-- prettier-ignore-end -->
+
+
+
+
+
+<script nonce="">
+    var Koha = {};
+    function _(s) { return s } // dummy function for gettext
+    const is_logged_in = false
+</script>
+
+<script src="/opac-tmpl/bootstrap/js/Gettext_26.0501000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/i18n_26.0501000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/stores_26.0501000.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body id="error404" class="error">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<button id="scrolltocontent">Skip to main content</button>
+<!-- prettier-ignore-start -->
+<!-- closed in opac-bottom.inc -->
+<div id="wrapper">
+<!-- prettier-ignore-end -->
+<header id="header-region" class="noprint">
+    <nav class="navbar navbar-expand">
+        <div id="logo">
+            <a class="navbar-brand" href="/cgi-bin/koha/opac-main.pl">
+                
+                    Central Library, SAU Tandojam
+                
+            </a>
+        </div>
+        
+            
+            <ul id="cart-list-nav" class="navbar-nav">
+                
+                <li role="presentation" class="divider-vertical"></li>
+                
+                
+            </ul>
+            <!-- / .navbar-nav -->
+        
+        
+            
+            
+            <ul id="members" class="navbar-nav">
+                <li class="nav-item dropdown dropdown-menu-end">
+                    
+                        
+                            
+                                <a href="/cgi-bin/koha/opac-user.pl" class="nav-link login-link loginModal-trigger" aria-label="Log in to your account"
+                                    ><i class="fa fa-user fa-fw fa-icon-black fa-fw" aria-hidden="true"></i> <span class="userlabel">Log in to your account</span></a
+                                >
+                            
+                        
+                    
+
+                    
+                </li>
+                <!-- Cookie consent button for non logged-in users -->
+                
+                    <li role="presentation" style="display:none" id="cookieConsentDivider" class="divider-vertical" aria-hidden="true"></li>
+                    <li style="display:none" id="cookieConsentLi" class="nav-item" aria-hidden="true">
+                        <a id="cookieConsentButton" href="#" name="Your cookies" class="nav-link" title="View and amend cookies you have consented to" role="button">
+                            <i class="fa fa-cookie-bite fa-fw fa-icon-black" aria-hidden="true"></i>
+                            <span class="cookieconsentlabel">Your cookies</span>
+                        </a>
+                    </li>
+                
+                
+                    
+                        <li role="presentation" class="divider-vertical"></li>
+                        <li class="nav-item search_history">
+                            <a class="nav-link" href="/cgi-bin/koha/opac-search-history.pl" title="View your search history">
+                                <i class="fa fa-calendar-days fa-fw fa-icon-black" aria-hidden="true"></i>
+                                <span class="search_history_label">Search history</span>
+                            </a>
+                        </li>
+                    
+                
+            </ul>
+        
+    </nav>
+    <!-- /navbar -->
+
+    
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col"> 
+    
+        <div id="opacheader">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><!-- ========== HEADER SECTION ========== --> <!-- opacheader --><header class="main-header">
+<div class="header-container"><!-- Logo Section --> <a href="https://www.sau.edu.pk" class="header-logo"> <img src="https://i.postimg.cc/VvsYGLNk/Whats-App-Image-2026-06-23-at-11-39-00-AM.jpg" alt="SAU Logo" class="brand-emblem" /></a>
+<div class="header-text">
+<h1>Sindh Agriculture University</h1>
+<span class="urdu-text">سنڌ زرعي يونيورسٽي ٽنڊوڄام </span>
+<p>Central Library <span class="opac-badge">OPAC</span></p>
+</div>
+<!-- Navigation Menu --><nav class="header-nav">
+<div id="cssmenu">
+<div id="head-mobile"></div>
+<div class="button"></div>
+<ul>
+<li class="active"><a href="https://opac.sau.edu.pk/cgi-bin/koha/opac-main.pl">HOME</a></li>
+<li><a href="https://opac.sau.edu.pk/lib/vice-chancellor.html" rel="noopener">VICE-CHANCELLOR</a></li>
+<li><a href="https://opac.sau.edu.pk/lib/library.html" rel="noopener">LIBRARY</a></li>
+<li><a href="https://opac.sau.edu.pk/lib/ayaz.html" rel="noopener">AYAZ-CORNER</a></li>
+<li><a href="https://opac.sau.edu.pk/lib/sau-library-staff.html" rel="noopener">STAFF</a></li>
+<li><a href="https://opac.sau.edu.pk/lib/contactus.html" rel="noopener">CONTACT US</a></li>
+<!-- ✅ E-RESOURCES - Now with <a> tag for consistent styling --> <!--
+<li class="has-sub"><a href="#">E-RESOURCES</a>
+<ul>
+<!-- Dropdown list modified -- >
+<li class="has-sub"><a href="#">ONLINE RESOURCES</a>
+<ul>
+<li><a href="https://link.springer.com/search/page/3?facet-content-type=%22Book%22&amp;package=openaccess" target="_blank" rel="noopener">Springer E-Books</a></li>
+<li><a href="https://magazinelib.com/?uid=117522004192189783614" target="_blank" rel="noopener">E Magzines</a></li>
+<li><a href="https://books.google.com/books?uid=117522004192189783614" target="_blank" rel="noopener">Google Books</a></li>
+<li><a href="https://www.loc.gov/collections/world-digital-library/about-this-collection/#18413" target="_blank" rel="noopener">World Digital Library</a></li>
+<li><a href="https://archive.org/?uid=117522004192189783614" target="_blank" rel="noopener">Internet Archive</a></li>
+<li><a href="https://www.elibrary.imf.org/?redirect=true" target="_blank" rel="noopener">IMF E-Library</a></li>
+</ul>
+</li>
+<li class="has-sub"><a href="#">NEWS</a>
+<ul>
+<li><a href="https://www.dawn.com/" target="_blank" rel="noopener">Dawn</a></li>
+<li><a href="https://tribune.com.pk/" target="_blank" rel="noopener">Tribune</a></li>
+<li><a href="https://epaper.pknewspapers.com/the-kawish.html" target="_blank" rel="noopener">Kawish</a></li>
+<li><a href="https://epaper.pahenjiakhbar.com/" target="_blank" rel="noopener">Pahenji Akhbar</a></li>
+<li><a href="https://jang.com.pk/" target="_blank" rel="noopener">Jang</a></li>
+<li><a href="https://www.express.com.pk/" target="_blank" rel="noopener">Express</a></li>
+</ul>
+</li>
+</ul>
+</li>
+--></ul>
+</div>
+</nav></div>
+</header><!-- NAYA CODE -->
+<div class="marquee-container">
+<div class="marquee-wrapper">
+<div class="marquee-content"></div>
+</div>
+</div></div>
+                </div>
+            
+        </div>
+    
+ </div>
+            </div>
+        </div>
+    
+</header>
+<!-- / header-region -->
+
+
+    <div class="container-fluid">
+        
+            <div class="row">
+                <div class="col">
+                    <div id="opac-main-search" class="mastheadsearch">
+                        
+                            <form name="searchform" method="get" action="/cgi-bin/koha/opac-search.pl" id="searchform" role="search">
+                                <div class="row gx-2">
+                                    <div class="col-sm-auto order-2 order-sm-2">
+                                        <label for="masthead_search" class="visually-hidden">Search the catalog by:</label>
+                                        <select name="idx" id="masthead_search" class="form-select">
+                                            
+                                                <option value="" data-placeholder="Search the catalog">Library catalog</option>
+                                            
+                                            
+                                                <option value="ti" data-placeholder="Search the catalog by title">Title</option>
+                                            
+                                            
+                                                <option value="au" data-placeholder="Search the catalog by author">Author</option>
+                                            
+                                            
+                                                <option value="su" data-placeholder="Search the catalog by subject">Subject</option>
+                                            
+                                            
+                                                <option value="nb" data-placeholder="Search the catalog by ISBN">ISBN</option>
+                                            
+                                            
+                                                <option value="ns" data-placeholder="Search the catalog by ISSN">ISSN</option>
+                                            
+                                            
+                                                <option value="se" data-placeholder="Search the catalog by series">Series</option>
+                                            
+                                            
+                                                
+                                                    <option value="callnum" data-placeholder="Search the catalog by call number">Call number</option>
+                                                
+                                            
+                                        </select>
+                                    </div>
+                                    <!-- /.col-sm-auto -->
+
+                                    <div class="col order-4 order-sm-3">
+                                        
+                                            <label for="translControl1" class="visually-hidden">Search the catalog</label>
+                                            <input type="text" class="transl1 form-control" id="translControl1" name="q" value="" placeholder="Search the catalog" /><span id="translControl"></span>
+                                        
+                                    </div>
+                                    <!-- /.col -->
+
+                                    
+                                        
+                                            
+                                        
+                                    
+
+                                    <div class="order-5 col-sm-auto">
+                                        <button type="submit" id="searchsubmit" class="btn btn-primary" title="Search" aria-label="Search">
+                                            <i class="fa fa-search" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- /.form-row -->
+                                <input type="hidden" name="weight_search" value="1" />
+                            </form>
+                         </div
+                    ><!-- /#opac-main-search -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        
+
+        <div class="row">
+            <ul class="nav" id="moresearches">
+                <li class="nav-item">
+                    <a href="/cgi-bin/koha/opac-search.pl">Advanced search</a>
+                </li>
+                
+                
+                
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-authorities-home.pl">Authority search</a>
+                    </li>
+                
+                
+                
+                
+                
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-topissues.pl">Most popular</a>
+                    </li>
+                
+                
+                
+                    
+                        <li class="nav-item">
+                            <a href="/cgi-bin/koha/opac-suggestions.pl?suggested_by_anyone=1">Purchase suggestions</a>
+                        </li>
+                    
+                
+                
+                    <li class="nav-item">
+                        <a id="library_page" href="/cgi-bin/koha/opac-library.pl">
+                            
+                                <span>Contact</span>
+                            
+                        </a>
+                    </li>
+                
+                
+    
+
+            </ul>
+            <!-- /.nav#moresearches -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+
+
+
+    <!-- Login form hidden by default, used for modal window -->
+    <div id="loginModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div

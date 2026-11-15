@@ -1,0 +1,947 @@
+<title>Things fall apart</title>
+<input type="hidden" id="SelectedIdForEmail"/>
+<link rel="unapi-server" type="application/xml" title="unAPI" href="/newgenlibctxt/unapi" />
+<div id="RequestForCheckOutDialog" Title="Request for check out Message"><div id="SetRequestForCheckOut"></div></div>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<link rel="shortcut icon" href="/resources/portal/web_pages/LIB_1/favicon.ico" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" /> 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="robots" content="index, follow" />
+<meta name="keywords" content="" />
+<meta name="title" content="" />
+<meta name="description" content="" />
+<title>Welcome to UNILAG Online Public Access Catalog</title>
+<link rel="shortcut icon" href="/resources/portal/web_pages/LIB_1/favicon.ico" />
+<!-- ////////////////////////////////// -->
+<!-- //      Start Stylesheets       // -->
+<!-- ////////////////////////////////// -->
+<link href="/resources/css/style.css" rel="stylesheet" type="text/css" />
+<!-- ////////////////////////////////// -->
+<!-- //      Javascript Files        // -->
+<!-- ////////////////////////////////// -->
+<script type="text/javascript" src="http://books.google.com/books/previewlib.js"></script>
+<script type="text/javascript" src="/resources/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="/resources/rateit/src/jquery.rateit.js"></script>
+<link href="/resources/rateit/src/rateit.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="/resources/rateit/src/jquery.rating.pack.js"></script>
+<script type="text/javascript" src="/resources/documentation/jquery.MetaData.js"></script>
+<script type="text/javascript" src="/resources/documentation/jquery.MultiFile.js"></script>
+<script type="text/javascript" src="/resources/documentation/jquery.MultiFile.pack.js"></script>
+<script type="text/javascript" src="/resources/js/xml2json.js"></script>
+<script type="text/javascript" src="/resources/js/jquery.xdomainajax.js"></script>
+<script src="/resources/bxSlider/jquery.bxslider.min.js"></script>
+<link href="/resources/bxSlider/jquery.bxslider.css" rel="stylesheet" />
+
+<link rel="stylesheet" type="text/css" href="/resources/css/inner.css" />
+<link rel="stylesheet" type="text/css" href="/resources/css/style.css" />
+
+
+<!-- Start WOWSlider.com HEAD section -->
+<link rel="stylesheet" type="text/css" href="/myImages/engine1/style.css" />
+<!-- End WOWSlider.com HEAD section -->
+
+<script type="text/javascript" src="/resources/js/Vegur_400.font.js"></script>
+<script type="text/javascript" src="/newgenlibctxt/javascript/opac2.js"></script>
+<script src="/resources/js/jquery-ui-1.8.18.custom.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/resources/css/redmond/jquery-ui-1.8.21.custom.css" />
+<script type="text/javascript">
+	 Cufon.replace('h1') ('h1 a') ('h2') ('h3') ('h4') ('h5') ('h6') ('blockquote') ('.styled') ('.txtbold');
+</script>
+<script type="text/javascript" src="/resources/js/dropdown.js"></script>
+<script type="text/javascript" src="/resources/js/jquery.cycle.all.min.js"></script>
+<script type="text/javascript">
+   $(function(){     
+         $('#slideshow').cycle({
+            timeout: 5000,  // milliseconds between slide transitions (0 to disable auto advance)
+            fx:      'fade', // choose your transition type, ex: fade, scrollUp, shuffle, etc...            
+            pager:   '#pager',  // selector for element to use as pager container
+            pause:   0,	  // true to enable "pause on hover"
+            pauseOnPagerHover: 0 // true to pause when hovering over pager link
+        });
+     });
+</script>
+
+<style>
+
+.custom-input {
+    width: 100%;
+    max-width: 500px;
+
+    outline: none;
+    border: 1px solid #8b241d;
+
+    padding: 8px 10px;        /* â†“ reduces height */
+    line-height: 1.2;        /* keeps text centered */
+    font-size: 14px;         /* slightly smaller text */
+
+    border-radius: 4px;
+    transition: border-color 0.25s ease;
+}
+
+.custom-input:focus {
+    border: 2px solid;     /* black border */
+    border-color: #8b241d;         /* focus color */
+    box-shadow: 0 0 0 2px rgba(139, 36, 29, 0.25); /* soft focus glow */
+}
+
+
+/* Centering wrapper */
+.btn-center {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+/* Modern search button */
+.BTNSEARCH_CUSTOM {
+    background: #8b241d;
+    color: #ffffff;
+
+    border: none;
+    border-radius: 6px;
+
+    padding: 10px 26px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+
+    cursor: pointer;
+
+    transition: 
+        background-color 0.3s ease,
+        box-shadow 0.3s ease,
+        transform 0.15s ease;
+}
+
+/* Hover glow effect */
+.BTNSEARCH_CUSTOM:hover {
+    background: #a02b23;
+    box-shadow: 0 0 12px rgba(139, 36, 29, 0.6);
+}
+
+/* Click (active) effect */
+.BTNSEARCH_CUSTOM:active {
+    transform: scale(0.97);
+    box-shadow: 0 0 6px rgba(139, 36, 29, 0.4);
+}
+
+/* Keyboard accessibility */
+.BTNSEARCH_CUSTOM:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(139, 36, 29, 0.35);
+}
+
+
+/* Shared input style */
+.selectbox-input {
+
+    width: 100%;
+    max-width: 250px;
+
+    outline: none;
+    border: 1px solid #8b241d;
+
+    padding: 8px 10px;        /* â†“ reduces height */
+    line-height: 1.2;        /* keeps text centered */
+    font-size: 14px;         /* slightly smaller text */
+
+    border-radius: 4px;
+    background-color: #fff;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    /*transition: border-color 0.25s ease; */
+}
+
+/* Focus state */
+.selectbox-input:focus {
+    border-color: #8b241d;
+    box-shadow: 0 0 0 2px rgba(139, 36, 29, 0.25);
+}
+
+/* Select-specific tweaks */
+.select-input {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    background-image:
+        linear-gradient(45deg, transparent 50%, #000 50%),
+        linear-gradient(135deg, #000 50%, transparent 50%);
+    background-position:
+        calc(100% - 16px) 50%,
+        calc(100% - 11px) 50%;
+    background-size: 5px 5px;
+    background-repeat: no-repeat;
+
+    padding-right: 30px; /* space for arrow */
+}
+
+/* Plus button styling */
+.addQuery {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-left: 8px;
+    width: 33px;
+    height: 33px;
+
+    font-size: 20px;
+    font-weight: bold;
+    color: #8b241d;
+
+    border: 2px solid #8b241d;
+    border-radius: 50%;
+    cursor: pointer;
+
+    transition: background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.addQuery:hover {
+    background-color: #8b241d;
+    color: #fff;
+    box-shadow: 0 0 8px rgba(139, 36, 29, 0.5);
+}
+
+
+
+
+/* Shared input style */
+.selectlang-input {
+
+    width: 100%;
+    max-width: 150px;
+
+    outline: none;
+    border: 1px solid #8b241d;
+
+    padding: 4px 8px;        /* â†“ reduces height */
+    line-height: 1.2;        /* keeps text centered */
+    font-size: 12px;         /* slightly smaller text */
+
+    border-radius: 4px;
+    background-color: #fff;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    /*transition: border-color 0.25s ease; */
+}
+
+/* Focus state */
+.selectlang-input:focus {
+    border-color: #8b241d;
+    box-shadow: 0 0 0 2px rgba(139, 36, 29, 0.25);
+}
+
+/* Select-specific tweaks */
+.select-input {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    background-image:
+        linear-gradient(45deg, transparent 50%, #000 50%),
+        linear-gradient(135deg, #000 50%, transparent 50%);
+    background-position:
+        calc(100% - 16px) 50%,
+        calc(100% - 11px) 50%;
+    background-size: 5px 5px;
+    background-repeat: no-repeat;
+
+    padding-right: 30px; /* space for arrow */
+}
+
+
+
+/****** Discovery menu ********/
+
+/* FORCE default link color */
+.widget_menu_custom a,
+.widget_menu_custom a:link {
+color: #FF0000 !important;
+font-size: 13px !important;
+text-decoration: none !important;
+}
+
+/* FORCE visited link color */
+.widget_menu_custom a:visited {
+color: #E7CE9A !important;
+font-size: 13px !important;
+}
+
+/* FORCE hover color */
+.widget_menu_custom a:hover {
+color: #A06656 !important;
+font-size: 13px !important;
+text-decoration: underline !important;
+}
+
+/* FORCE active (on click) */
+.widget_menu_custom a:active {
+color: #A06656 !important;
+font-size: 13px !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+
+</head>
+<body>
+<div id="wrapper">
+	<div id="container">
+		<div id="top">
+			<div id="logo">
+				<img src="/resources/portal/web_pages/LIB_1/opaclogo.gif"  height="100" width="270" style="float:left"/><h2 style="vertical-align: middle; position: relative; padding-top: 30px; padding-left: 100px;" >
+				<span style="font-weight: 400">
+				<marquee style="font-family: Monotype Corsiva; font-size: 14pt" scrolldelay="150">
+					A domain of knowledge and excellence, producing global leaders.
+				</marquee></span></h2><h3 style="vertical-align: middle; position: relative; padding-left: 100px;" ></h3>
+			</div><!-- end #logo -->
+		</div><!-- end #top -->
+		<div  align="right">
+			<div align="right"  style="display:inline-block">
+			<a id="Login" href=""><img style="vertical-align: middle; padding-bottom: 5px;" src="/resources/images/login.png" width="20"/> Login</a>   
+</div>
+<div id="LoginDialog" title="Login"  style="display:inline-block">
+	
+		Library<br/>
+			<select id="LoginLibrarySelection">
+				<option value="1">UNILAG Online Public Access Catalog</option>
+			</select>
+		<br/>
+		Login Id<br>
+		<input type="text" id="UserId"/><br/>
+		Password<br/>
+		<input type="password" id="LoginPassword"/><br/>
+		<div id="LoginFailed"></div><br/>
+		<input type="button" value="Login" id="LoginButton"/><input type="button" value="Cancel" id="LoginCancelButton"/>
+</div>
+|
+<div style="display:inline-block">
+	<select id="Locales" class="selectlang-input select-inputttt">		
+		<option value="X">Select language</option>
+			<option value="ar_SA" >Arabic (Saudi Arabia)</option>
+			<option value="bg_BG" >Bulgarian (Bulgaria)</option>
+			<option value="el_GR" >Greek (Greece)</option>
+			<option value="en_PH" >English (Philippines)</option>
+			<option value="en_UK" >English (UK)</option>
+			<option value="es_ES" >Spanish (Spain)</option>
+			<option value="fil_PH" >Filipino (Philippines)</option>
+			<option value="fr_FR" >French (France)</option>
+			<option value="hi_IN" >Hindi (India)</option>
+			<option value="ms_MY" >Malay (Malaysia)</option>
+			<option value="nl_NL" >Dutch (Netherlands)</option>
+			<option value="pt_BR" >Portuguese (Brazil)</option>
+			<option value="ta_IN" >Tamil (India)</option>
+			<option value="th_TH" >Thai (Thailand)</option>
+			<option value="ur_PK" >Urdu (Pakistan)</option>
+	</select>
+</div>
+<a href="OPAC2Utility?From=Library&LibraryId=1&OPID=29">|<font color="#559642">Sign up</font></a>
+		</div>
+		<div id="topnavigation">
+
+			<ul id="topnav">
+				<li><a class="current" href="/newgenlibctxt/Home?Id=1">Home</a></li>
+				<li><a href="About?LibId=1&Type=0">About</a>
+					<ul>
+						<li><a href="About?LibId=1&Type=1">Organization</a></li>
+						<li class="lastnav"><a href="About?LibId=1&Type=2">Library</a></li>
+					</ul>
+				</li>
+				<li><a href="">My Library</a>
+                                    <ul>
+
+                                        
+
+                                        <li><a href="MyLibrary?LibId=1&OPId=1"> My Check-outs </a>
+					<ul><li><a href="MyLibrary?LibId=1&OPId=1">Items held currently(Also renew items)</a></li>
+					<li><a href="MyLibrary?LibId=1&OPId=3">Lost items</a></li>
+					<li><a href="MyLibrary?LibId=1&OPId=5">My overdue payments</a></li>
+					<li><a href="MyLibrary?LibId=1&OPId=4">History</a></li></ul></li>
+										  <li><a href="MyLibrary?LibId=1&OPId=6">My Reservations </a>
+					<ul><li><a href="MyLibrary?LibId=1&OPId=6">Current Reservations (Also Cancel current Reservations)</a></li>
+					<li><a href="MyLibrary?LibId=1&OPId=7">History</a></li></ul></li>
+									      <li><a href="MyLibrary?LibId=1&OPId=8">My requests for check out </a>
+					<ul><li><a href="MyLibrary?LibId=1&OPId=8">Current Requests (Also Cancel Current Requests)</a></li>
+					<li><a href="MyLibrary?LibId=1&OPId=12">History</a></li></ul></li>
+									      <li><a href="MyLibrary?LibId=1&OPId=34">My suggestions for new items </a>
+					<!--<ul><li><a href="MyLibrary?LibId=1&OPId=26">Suggestions in process (Also edit, delete current suggestions)</a></li>
+					<li><a href="MyLibrary?LibId=1&OPId=33">History</a></li></ul>--></li>
+		                           <li><a href="MyLibrary?LibId=1&OPId=11">My Personal Details</a></li>
+		                           <li><a href="MyLibrary?LibId=1&OPId=18">My Privileges</a></li>
+		                           <li><a href="#">My requests for Inter Library Loan</a><ul><li><a href="MyLibrary?LibId=1&OPId=19">Loans under process</a></li><li><a href="MyLibrary?LibId=1&OPId=20">History</a></li></ul></li>
+		                           <li><a href="MyLibrary?LibId=1&OPId=23">My vouchers</a></li>
+                                           <li><a href="MyLibrary?LibId=1&OPId=35">My Favourites</a></li>
+  					   <li><a href="MyLibrary?LibId=1&OPId=42">Statistics</a></li>	
+                                           <li><a href="MyLibrary?LibId=1&OPId=49">Download My Circulation history</a></li>
+                                           <li><a href="MyLibrary?LibId=1&OPId=44">Submit Record</a></li>
+                                           <li><a href="ProcessRequestWF?LibraryId=
+1">Suggestions to Approve</a></li>
+                                    </ul>                
+                                </li>	
+
+
+				<li><a href="">Message</a>
+<ul><li><a href="MyLibrary?LibId=1&OPId=15">Unread Messages</li></a><li><a href="MyLibrary?LibId=1&OPId=17">All Messages</a></li></ul></li>
+				
+
+				<li><a href="MyLibrary?LibId=1&OPId=22">New arrivals</a></li>
+				
+                <li><a href="#">UNILAG eResources</a>
+					<ul>
+                        <li> <a href="https://ir.unilag.edu.ng/home" target="_BLANK">UNILAG Repository</a></li>
+                        <li> <a href="https://portal.igpublish.com/iglibrary/" target="_BLANK">iG Publishing eBook Platform</a></li>
+                        <li> <a href="https://heinonline.org/HOL/Welcome" target="_BLANK">HeinOnline</a></li>
+                        <li> <a href="https://www.proquest.com/?accountid=173489" target="_BLANK">ProQuest</a></li>
+                        <li> <a href="https://brill.com/" target="_BLANK">Brill</a></li>
+                        <li> <a href="https://ebookcentral.proquest.com/lib/unilag/home.action" target="_BLANK">ProQuest Ebook Central</a></li>
+                        <li> <a href="https://www.emerald.com/" target="_BLANK">Emerald</a></li>
+                        <li> <a href="https://www.sciencedirect.com/" target="_BLANK">ScienceDirect Journals & eBooks</a></li>
+					</ul>
+				</li>
+
+				<li><a href="#">Nigerian Newspapers</a>
+					<ul>
+						<li><a href="https://businessday.ng/" target="_BLANK">Business Day</a></li>
+						<li><a href="https://www.dailyindependent.com/" target="_BLANK">Daily Independent</a></li>
+						<li><a href="https://www.dailytrust.com.ng/" target="_BLANK">Daily Trust</a></li>
+						<li><a href="https://www.guardian.ng/" target="_BLANK">Guardian</a></li>
+						<li><a href="https://www.latestnigeriannews.com/" target="_BLANK">Latest Nigerian News</a></li>
+						<li><a href="https://leadership.ng/" target="_BLANK">Leadership</a></li>
+						<li><a href="https://thenationonlineng.net/" target="_BLANK">The Nation</a></li>
+						<li><a href="https://punchng.com/" target="_BLANK">The Punch</a></li>
+						<li><a href="https://www.sunnewsonline.com/" target="_BLANK">The Sun</a></li>
+						<li><a href="http://www.thisdaylive.com/" target="_BLANK">This Day</a></li>
+						<li><a href="https://tribuneonlineng.com/" target="_BLANK">Tribune</a></li>
+						<li><a href="https://www.vanguardngr.com/" target="_BLANK">Vanguard</a></li>
+						<li><a href="https://www.premiumtimesng.com/" target="_BLANK">Premiumtimes</a></li>
+						<li><a href="https://www.blueprint.ng/" target="_BLANK">Blueprint</a></li>
+					</ul>
+				</li>
+				<li><a href="ContactUs?LibId=1">Contact us</a></li>
+
+			</ul><!-- end #topnav -->
+
+
+
+		</div><!-- end #topnavigation -->		
+		
+		
+		
+		
+		
+
+
+<div id="HoldingsSummaryDialog" Title="Copies summary"><div id="SetAnaliseData"></div></div>
+<div id="RecordDialog" Title="Record details"><div id="SetRecordData"></div></div>
+<div id="ReviewsDialog" Title="Reviews"><div id="SetReviewData"></div></div>
+<div id="TagsDialog" Title="Tags"><div id="SetTagsData"></div></div>
+<div id="FavouriteDialog" Title="Message"><div id="SetFavourite"></div></div>
+<div id="ReservationSuccessfulDialog" Title="Reservation Message"><div id="SetReservationSuccessful"></div></div>
+<div id="BufferedEmailHyperDialog" title="Sent Email">
+Email id: <br />
+<input type="text" id="EMAILUSER" value=""><br/>
+</div>
+<div id="ReservationMaterialTypeDialog" Title="Select Material Type">
+    <div id="SetReservationMaterialType">
+        <div id="ReservationVolumeId" style="display: none;">
+            There Are Multiple Volumes For This Title Please Select A Volume<br/>
+            <select id="ReservationSelect"></select>
+        </div>
+        <div id="ReservationMaterialType" style="display: none;">
+            There Are Multiple Material Types For This Title Please Select A Material Type<br/>
+            <select id="ReservationSelectMT"></select>
+        </div>
+    </div>
+</div>
+<div id="ReservationMTVolumeDialog" Title="Select Material Type/Volume"><div id="SetReservationMTVolume"></div></div>
+
+
+
+
+
+<div id="SearchFormTabs">
+	<ul>
+					<li><a href="#SINGLETAB_All">All material types<TNF></a></li>
+			<li><a href="#SINGLETAB_Books">Books</a></li>
+			<li><a href="#SINGLETAB_Serials">Journals and Serials<TNF></a></li>
+			<li><a href="#SINGLETAB_Articles">Articles and Book chapters<TNF></a></li>
+		<li><a href="#BROWSE">Browse A-Z</a></li>
+
+		<li><a href="#KBEXPERTSTAB">Experts</a></li>
+                <li><a href="#KBDISCUSSIONSTAB">Discussions</a></li>
+	</ul>
+		<div id="SINGLETAB_All">
+			<form id="SEARCHFRMID_All" name="All" method="GET" action="Search">
+					Search <input type="text" class="custom-input" name="searchText"/>
+					
+
+
+<select name="Index" class="selectbox-input select-input">
+        <option value="Title">Title</option>
+        <option value="Author">Author</option>
+        <option value="Subject">Subject</option>
+        <option value="Keywords">Keywords</option>
+        <option value="Classification number">Classification number<TNF></option>
+        <option value="Accession number">Accession number<TNF></option>
+        <option value="Anywhere">Anywhere<TNF></option>
+</select>
+
+<a class="addQuery"
+   id="ADDQUERY_All_0_1">
+   +
+</a>
+
+
+
+					<br>					
+				<div id="SpaceForAddingOtherSearchBoxes_All">					
+				</div>
+
+
+				<div class="btn-center">
+					<input type="button"
+						value="Search"
+						class="BTNSEARCH BTNSEARCH_CUSTOM"
+						id="BTNSEARCH_All" />
+				</div>
+
+
+
+				<input type="hidden" id="All_SelectedUnixNames" name="SelectedUnixNames"/>
+				<input type="hidden" id="From" name="From" value="Library"/>
+				<input type="hidden" id="All_ResultSetOffset" class="ResultSetOffset" name="ResultSetOffset" value="1"/>
+					<input type="hidden" id="LibraryId" name="LibraryId" value="1"/>
+				<input type="hidden" name="FormName" value="All"/>
+				<input type="hidden" name="ApplyFacet" id="All_ApplyFacet" value="false"/>
+				<input type="hidden" id="All_AuthorSearch" name="AuthorSearch" value=""/>
+				<input type="hidden" id="All_SubjectSearch" name="SubjectSearch" value=""/>
+				<input type="hidden" id="All_ClassNumberSearch" name="ClassNumberSearch" value=""/>
+				<input type="hidden" name="NewSearch" id="All_NewSearch" value="false"/>
+				<input type="hidden" name="ExactAFId" id="ExactAFId" value=""/>
+				<input type="hidden" name="SortField" id="All_SortField" value=""/>
+			</form>
+		</div>
+		<div id="SINGLETAB_Books">
+			<form id="SEARCHFRMID_Books" name="Books" method="GET" action="Search">
+					Search <input type="text" class="custom-input" name="searchText"/>
+					
+
+
+<select name="Index" class="selectbox-input select-input">
+        <option value="Title">Title</option>
+        <option value="Author">Author</option>
+        <option value="Subject">Subject</option>
+        <option value="Keywords">Keywords</option>
+        <option value="Classification number">Classification number<TNF></option>
+        <option value="Accession number">Accession number<TNF></option>
+        <option value="Anywhere">Anywhere<TNF></option>
+</select>
+
+<a class="addQuery"
+   id="ADDQUERY_Books_0_1">
+   +
+</a>
+
+
+
+					<br>					
+				<div id="SpaceForAddingOtherSearchBoxes_Books">					
+				</div>
+
+
+				<div class="btn-center">
+					<input type="button"
+						value="Search"
+						class="BTNSEARCH BTNSEARCH_CUSTOM"
+						id="BTNSEARCH_Books" />
+				</div>
+
+
+
+				<input type="hidden" id="Books_SelectedUnixNames" name="SelectedUnixNames"/>
+				<input type="hidden" id="From" name="From" value="Library"/>
+				<input type="hidden" id="Books_ResultSetOffset" class="ResultSetOffset" name="ResultSetOffset" value="1"/>
+					<input type="hidden" id="LibraryId" name="LibraryId" value="1"/>
+				<input type="hidden" name="FormName" value="Books"/>
+				<input type="hidden" name="ApplyFacet" id="Books_ApplyFacet" value="false"/>
+				<input type="hidden" id="Books_AuthorSearch" name="AuthorSearch" value=""/>
+				<input type="hidden" id="Books_SubjectSearch" name="SubjectSearch" value=""/>
+				<input type="hidden" id="Books_ClassNumberSearch" name="ClassNumberSearch" value=""/>
+				<input type="hidden" name="NewSearch" id="Books_NewSearch" value="false"/>
+				<input type="hidden" name="ExactAFId" id="ExactAFId" value=""/>
+				<input type="hidden" name="SortField" id="Books_SortField" value=""/>
+			</form>
+		</div>
+		<div id="SINGLETAB_Serials">
+			<form id="SEARCHFRMID_Serials" name="Serials" method="GET" action="Search">
+					Search <input type="text" class="custom-input" name="searchText"/>
+					
+
+
+<select name="Index" class="selectbox-input select-input">
+        <option value="Title">Title</option>
+        <option value="Subject">Subject</option>
+        <option value="Keywords">Keywords</option>
+        <option value="Classification number">Classification number<TNF></option>
+        <option value="Anywhere">Anywhere<TNF></option>
+</select>
+
+<a class="addQuery"
+   id="ADDQUERY_Serials_0_1">
+   +
+</a>
+
+
+
+					<br>					
+				<div id="SpaceForAddingOtherSearchBoxes_Serials">					
+				</div>
+
+
+				<div class="btn-center">
+					<input type="button"
+						value="Search"
+						class="BTNSEARCH BTNSEARCH_CUSTOM"
+						id="BTNSEARCH_Serials" />
+				</div>
+
+
+
+				<input type="hidden" id="Serials_SelectedUnixNames" name="SelectedUnixNames"/>
+				<input type="hidden" id="From" name="From" value="Library"/>
+				<input type="hidden" id="Serials_ResultSetOffset" class="ResultSetOffset" name="ResultSetOffset" value="1"/>
+					<input type="hidden" id="LibraryId" name="LibraryId" value="1"/>
+				<input type="hidden" name="FormName" value="Serials"/>
+				<input type="hidden" name="ApplyFacet" id="Serials_ApplyFacet" value="false"/>
+				<input type="hidden" id="Serials_AuthorSearch" name="AuthorSearch" value=""/>
+				<input type="hidden" id="Serials_SubjectSearch" name="SubjectSearch" value=""/>
+				<input type="hidden" id="Serials_ClassNumberSearch" name="ClassNumberSearch" value=""/>
+				<input type="hidden" name="NewSearch" id="Serials_NewSearch" value="false"/>
+				<input type="hidden" name="ExactAFId" id="ExactAFId" value=""/>
+				<input type="hidden" name="SortField" id="Serials_SortField" value=""/>
+			</form>
+		</div>
+		<div id="SINGLETAB_Articles">
+			<form id="SEARCHFRMID_Articles" name="Articles" method="GET" action="Search">
+					Search <input type="text" class="custom-input" name="searchText"/>
+					
+
+
+<select name="Index" class="selectbox-input select-input">
+        <option value="Title">Title</option>
+        <option value="Subject">Subject</option>
+        <option value="Keywords">Keywords</option>
+        <option value="Classification number">Classification number<TNF></option>
+        <option value="Anywhere">Anywhere<TNF></option>
+</select>
+
+<a class="addQuery"
+   id="ADDQUERY_Articles_0_1">
+   +
+</a>
+
+
+
+					<br>					
+				<div id="SpaceForAddingOtherSearchBoxes_Articles">					
+				</div>
+
+
+				<div class="btn-center">
+					<input type="button"
+						value="Search"
+						class="BTNSEARCH BTNSEARCH_CUSTOM"
+						id="BTNSEARCH_Articles" />
+				</div>
+
+
+
+				<input type="hidden" id="Articles_SelectedUnixNames" name="SelectedUnixNames"/>
+				<input type="hidden" id="From" name="From" value="Library"/>
+				<input type="hidden" id="Articles_ResultSetOffset" class="ResultSetOffset" name="ResultSetOffset" value="1"/>
+					<input type="hidden" id="LibraryId" name="LibraryId" value="1"/>
+				<input type="hidden" name="FormName" value="Articles"/>
+				<input type="hidden" name="ApplyFacet" id="Articles_ApplyFacet" value="false"/>
+				<input type="hidden" id="Articles_AuthorSearch" name="AuthorSearch" value=""/>
+				<input type="hidden" id="Articles_SubjectSearch" name="SubjectSearch" value=""/>
+				<input type="hidden" id="Articles_ClassNumberSearch" name="ClassNumberSearch" value=""/>
+				<input type="hidden" name="NewSearch" id="Articles_NewSearch" value="false"/>
+				<input type="hidden" name="ExactAFId" id="ExactAFId" value=""/>
+				<input type="hidden" name="SortField" id="Articles_SortField" value=""/>
+			</form>
+		</div>
+
+<div id="KBEXPERTSTAB">
+		<form id="KBEXPERTSID_Experts" name="Experts" method="GET" action="SearchUser">
+					Search <input type="text" class="custom-input" name="searchText"/>
+					<select name="Index" class="selectbox-input select-input">
+						
+						
+							
+					</select> <font size='+2'><a class="addQuery" id="ADDQUERY_Experts_0_1">+</a></font>
+					<br>					
+                              <div id="SpaceForAddingOtherSearchBoxes_Experts">
+			</div>	
+
+                    <input type="button" value="Search" class="EXPERTSSEARCH" id="EXPERTSSEARCH_Experts"/>
+					<input type="hidden" id="LibraryId" name="LibraryId" value="1"/>
+				<input type="hidden" name="FormName" value="Experts"/>
+                                <input type="hidden" id="From" name="From" value="Library"/>
+                                <input type="hidden" id="KBPreviousValues" name="KBPreviousValues" value=""/>
+                                <input type="hidden" id="CurrentPage" name="CurrentPage" value=""/>
+		</form>
+	</div>	
+	<div id="BROWSE" name="BROWSE" method="GET" action="Browse">
+		<form id="FORM_BROWSE" name="BROWSE" method="GET" action="Browse">
+			Search <input type="text" class="custom-input" name="searchText" value=""/>
+			<select name="TYPE">
+				<option value="AUTHOR" >Author</option>
+				<option value="SUBJECT" >Subject</option>
+				<option value="UNIFORMTITLE" >Uniform titles/Series</option>
+			</select>
+			<input type="button" value="Browse" class="BTNBROWSE" id="BTNBROWSE"/>
+			<input type="hidden" id="From" name="From" value="Library"/>
+				<input type="hidden" id="LibraryId" name="LibraryId" value="1"/>
+			<input type="hidden" id="BROWSE_ResultSetOffset" class="ResultSetOffset" name="ResultSetOffset" value="1"/>
+		</form>
+	</div>
+<div id="KBDISCUSSIONSTAB">
+		<form id="KBDISCUSSIONSID_Discussions" name="Discussions" method="GET" action="SearchDiscussion">
+					Search <input type="text" class="custom-input" name="searchText"/>
+					<select name="Index" class="selectbox-input select-input">
+						
+							
+					</select> 
+					
+					<a class="addQuery"
+						id="ADDQUERY_Discussions_0_1">
+						+
+					</a>
+					
+					<br>					
+                              <div id="SpaceForAddingOtherSearchBoxes_Discussions">
+			</div>	
+					<div class="btn-center">
+						<input type="button"
+							value="Search"
+							class="DISCUSSIONSSEARCH BTNSEARCH_CUSTOM"
+							id="DISCUSSIONSSEARCH_Discussions" />
+					</div>
+
+
+					<input type="hidden" id="LibraryId" name="LibraryId" value="1"/>
+				<input type="hidden" name="FormName" value="Discussions"/>
+                                <input type="hidden" id="From" name="From" value="Library"/>
+                                <input type="hidden" id="KBDiscussionPreviousValues" name="KBDiscussionPreviousValues" value=""/>
+                                <input type="hidden" id="CurrentPage" name="CurrentPage" value=""/>
+		</form>
+	</div>	
+</div>
+<a href="MyLibrary?From=Library&LibraryId=1&OPId=40"><img src="/resources/images/open.png" style="vertical-align:middle;" height="20"/> <font color="#559642">Saved queries and queries in this session</font></a>
+<script>
+$(document).ready(function(){	
+});
+</script>
+<br/>
+
+
+
+
+	<div style="float:left">
+		<img width="100" src="BookCoverServlet?Id=24417&LibId=1" alt="" /><br/>
+<img width="40" src="GetCustomImage?Type=Book" style="padding-left: 0px; padding-top: 20px; margin-left: 0px;" alt="" title="Book"/>
+	</div>
+	<div style="margin-left: 120px;">
+		<p class="product-title" style="line-height: 25px;color:#5C9CCC">Things fall apart
+
+</p>
+
+
+                <strong>Physical description<TNF>:</strong> 
+                
+            187p  19cm;
+                 </br>
+
+
+
+
+
+                <strong>Series:</strong> 
+                
+            African writer series, no 1;
+                 </br>
+
+
+
+
+                <strong>Author(s):</strong> 
+                
+                     <a class="AUTHORSEARCH" id="AUTHOR_All_Achebe, Chinua" href="Achebe, Chinua"> Achebe, Chinua</a>;
+                 </br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <strong>Publisher:</strong> 
+                
+           : Heinemann  London , 1958;
+                 </br>
+
+                <strong>Call number<TNF>:</strong> 
+                
+                    <a class="CALLNUMBERSEARCH" id="CALLNUMBER_All_PR 9899 .A2 .T5" href="PR 9899 .A2 .T5">  PR 9899 .A2 .T5</a>;
+                 </br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+		
+		
+		
+		
+		
+		
+									
+		
+			<strong>Type: </strong>Book<br/>
+			<strong>Available At: </strong><br/>
+		
+			<strong>Availability: </strong><img align="center" src="/resources/carbon/images/redDot.gif" style="vertical-align:middle;"/><a class="anchorclickClass" href="" id="AVAILSUM_24417_1">View details</a><br/>
+                 <b>Reviews: </b> <div class="rateit" data-rateit-value="0" data-rateit-ispreset="true" data-rateit-readonly="true">
+            </div> (0 reviews) <img style="vertical-align:middle;" src="/resources/images/review.png" height="15"/> <a style="color:#f07746" href="" class="reviewClickClass" id="REVIEW_24417_1">View/Add reviews</a>
+								</br>
+		<a href="" class="clickClass" id="24417_1">Quick view &darr;</a> |   
+		
+		<a style="color:green" href="" class="tagsClickClass" id="TAGS_24417_1">Tag This Record</a><img style="vertical-align:middle;"  src="/resources/images/tag.png" height="15"/>
+			| <a style="color:red" href="" class="favouriteClickClass" id="FAVOURITE_24417_1">Add To Favourites</a><img style="vertical-align:middle;"  src="/resources/images/favourite.png" height="15"/>
+		 | <a style="color:indigo" href="" class="ReserveItem" id="ReserveItem_24417_1">ReservethisItem<TNF></a>
+		<br/>
+<a href="OPAC2Utility?OPID=22&From=Library&LibraryId=1&ID=24417_1" class="" id="" style="color:black">Print Record</a><img style="vertical-align:middle;" src="/resources/images/print.png" height="15"/> | 
+								<a href="OPAC2Utility?OPID=25&From=Library&LibraryId=1" class="BufferEmailHyper" id="BufferEmailHyper_24417_1" style="color:#686712">Email Record</a><img style="vertical-align:middle;" src="/resources/images/email.gif" height="15"/> |
+								<a href="" class="ADDBUFFER" id="ADDBUFFER_24417_1" style="color:#0b850b">Add Record To Buffer(You can print all records in buffer) (You can print all records in buffer)</a><img style="vertical-align:middle;" src="/resources/images/add.png" height="15"/>
+<br/>
+								<font color="#ffff00" ><p style="BACKGROUND-COLOR: #880000" id="BUFFMESS_24417_1"></p></font>
+	</div>
+<div id="ResourceDialog">
+<p>You Need to Login, to view the Full View</p>
+</div>
+
+<br/>
+<div id="HoldingsOtherDetails">
+    <ul>
+        <li><a href="#tabs-1">Holdings</a></li>
+        <li><a href="#tabs-2">For Librarians (MARC Record View and Download)</a></li>
+    </ul>
+    <div id="tabs-1">
+                <h3></h3>
+    </div>
+    <div id="tabs-2">
+        <strong><a href="" class="DownloadMARCRecord" id="DownloadMARCRecord_24417_1">Download MARC Record</a></strong>
+        <table>
+            <tr><td><strong>Leader</strong></td><td></td></tr>
+                <tr><td><strong>008</strong></td><td style="text-align:left;">200921 1958                             </td></tr>
+                <tr><td><strong>082</strong></td><td style="text-align:left;">0 <strong>$a</strong>PR 9899 .A2 .T5</td></tr>
+                <tr><td><strong>100</strong></td><td style="text-align:left;">  <strong>$a</strong>Achebe, Chinua<strong>$e</strong>Author</td></tr>
+                <tr><td><strong>245</strong></td><td style="text-align:left;">  <strong>$a</strong>Things fall apart</td></tr>
+                <tr><td><strong>260</strong></td><td style="text-align:left;">  <strong>$b</strong>Heinemann<strong>$a</strong>London<strong>$c</strong>1958</td></tr>
+                <tr><td><strong>300</strong></td><td style="text-align:left;">  <strong>$a</strong>187p<strong>$c</strong>19cm</td></tr>
+                <tr><td><strong>440</strong></td><td style="text-align:left;">  <strong>$a</strong>African writer series, no 1</td></tr>
+        </table>
+    </div>   
+</div>
+<abbr class="unapi-id" title='ngl:24417:1'></abbr>
+<br/>
+    <h2 class="pagetitle">Other books in the rack</h2>
+    <div align="center">
+    </div>
+<h2 class="pagetitle">Share your views - post your comment below</h2>
+
+<h4 class="pagetitle">Please login to post comment</h4>
+
+		<div id="footer">
+			<div id="footer-text" align="center">
+			  University of Lagos Library copyright  
+			  <span id="currentYear"></span>
+			</div> <!-- end #footer-text -->
+		</div> <!-- end #footer -->
+		
+		<script>
+		document.getElementById("currentYear").textContent = new Date().getFullYear();
+		</script>
+		  
+	</div><!-- end #container -->	
+</div>
+
+
+</body>
+</html>
+<input type="hidden" id="CURRENTPAGE" value=""/>
+<p id="MESSAGE_RC_L1" style="display: none;">Please login to request check out of this item</p>
+<p id="MESSAGE_RC_L2" style="display: none;">This item does not belong to your library</p>
+<p id="MESSAGE_RC_M1" style="display: none;">You already placed a request for a similar item</p>
+<p id="MESSAGE_RC_M2" style="display: none;">You have reached the maximum limit of number of requests for check out</p>
+<p id="MESSAGE_RC_M3" style="display: none;">You already placed a request for this item</p>
+<p id="MESSAGE_RC_M4" style="display: none;">This item is already requested for check out by someone else</p>
+<p id="MESSAGE_RC_M5" style="display: none;">Unknown error occurred. Please try again</p>
+<p id="MESSAGE_RC_M6" style="display: none;">NOTALLOWEDTOREQUESTFORCHECKOUTFROMTHISSUBLOCATION<TNF></p>
+<p id="MESSAGE_RC_M7" style="display: none;">You are not privileged to check-out this item</p>
+<p id="MESSAGE_RC_SUCCESS" style="display: none;">Your request for check-out is accepted. Your request is valid till </p>
+
+<p id="MESSAGE_L" style="display: none;">please login to reserve this item</p>
+<p id="MESSAGE_M1" style="display: none;">INVALIDPATRONID<TNF></p>
+<p id="MESSAGE_M2" style="display: none;">PATRONMEMBERSHIPEXPIRED<TNF></p>
+<p id="MESSAGE_M3" style="display: none;">PATRONMEMBERSHIPONHOLD<TNF></p>
+<p id="MESSAGE_M4" style="display: none;">MAXRESERVATIONCOUNTREACHEDBYPATRON<TNF></p>
+<p id="MESSAGE_M5" style="display: none;">RESERVATIONALREADYPRESENTFORTHISPATRON<TNF></p>
+<p id="MESSAGE_M6" style="display: none;">SIMILARITEMHELDBYPATRON<TNF></p>
+<p id="MESSAGE_M7" style="display: none;">PATRONFROMTHISSUBLOCATIONNOTELIGIBLE<TNF></p>
+<p id="MESSAGE_M8" style="display: none;">DOCUMENTAVAILABLE<TNF></p>
+<p id="MESSAGE_M9" style="display: none;">RESERVATIONQUEUEFACTORNOTDEFINED<TNF></p>
+<p id="MESSAGE_M10" style="display: none;">DATABASEERROR<TNF></p>
+<p id="MESSAGE_M11" style="display: none;">UNKNOWN<TNF></p>
+<p id="MESSAGE_SUCCESS" style="display: none;">Your reservation is successfully place. Your queue number is </p>
+<p id="MESSAGE_SQ_L" style="display: none;">Please Login To Save The Query</p>
+<p id="MESSAGE_SQ_M1" style="display: none;">Query saved. You can close the dialog</p>
+<p id="MESSAGE_SQ_M2" style="display: none;">Please Use A Different Query Name This Name Is Already Used</p>
+<p id="MESSAGE_SQ_M3" style="display: none;">Unknown error. Please try again</p>
+<p id="MESSAGE_SQ_M4" style="display: none;">Please Enter A Query Name</p>
+<p id="MESSAGE_SQ_RESET" style="display: none;">On saving the query, this dialog will close automatically</p>

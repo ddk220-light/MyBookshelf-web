@@ -1,0 +1,1682 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: opac-results.tt -->
+
+
+
+
+
+
+
+
+
+<html lang="en" class="no-js">
+<head>
+
+<title
+    >Results of search for &#39;education&#39; &rsaquo; Koha online catalog</title
+>
+<meta name="robots" content="noindex" />
+<link rel="stylesheet" href="/opac-tmpl/lib/Chocolat/css/chocolat_26.0503000.css" type="text/css">
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha" />
+<!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="csrf-token" content="16b28a39eb534a1d28f0f06611e56647191c2338,1e8fbc2791a63f5352efd2a479dc42a05fcf6e2c,1794723056" />
+
+
+<link rel="shortcut icon" href="/opac-tmpl/bootstrap/images/favicon.ico" type="image/x-icon" />
+<link rel="apple-touch-icon" href="/opac-tmpl/bootstrap/images/favicon.ico" type="image/x-icon" />
+
+    
+        
+    
+
+
+    <link type="text/css" href="/opac-tmpl/bootstrap/css/opac_26.0503000.css" rel="stylesheet">
+
+
+
+
+    <link media="print" type="text/css" href="/opac-tmpl/bootstrap/css/print_26.0503000.css" rel="stylesheet">
+
+
+    <!-- prettier-ignore-start -->
+    <style nonce="">/* Vertical Menu Styles */
+.vertical-menu {
+  width: 100%;
+  background-color: #31a31f;
+}
+
+.vertical-menu ul {
+  padding: 0;
+}
+
+.vertical-menu ul li {
+  border-bottom: 1px solid #ccc;
+}
+
+.vertical-menu ul li a {
+  display: flex;
+  align-items: center;
+  padding: 7px;
+  text-decoration: none;
+  color: white;
+  font-size: 14px; /* Font size set to 11px */
+  font-weight: bold; /* You can adjust the font weight as needed */
+  letter-spacing: 1px; /* Adding spacing between characters */
+}
+
+.vertical-menu ul li a i {
+  padding-right: 10px;
+}
+
+.vertical-menu ul li a:hover {
+  background-color: #31a31f;
+}
+
+
+
+
+
+/* Replace logos */
+ 
+#logo {
+  background: rgba(0, 0, 0, 0) url("#") no-repeat scroll 0 center;
+}
+ 
+@media only screen and (max-width: 700px) {
+  #logo{
+    background: transparent url("#");
+  }
+}
+
+/*Search Buttons*/
+#koha_url {
+display: none;
+}
+
+/*Buttons*/
+.btn-success {
+background: #003300;
+}
+
+
+a, a:visited {
+color:#faa954; /* this can be any colour*/
+}
+/*change link hover property*/
+a:hover {
+color:#002966;
+}
+
+/*Primary Buttons*/
+.btn-primary {
+background: #003300;
+}
+
+
+
+
+
+#navcontainer ul
+{
+padding-left: 0;
+margin-left: 0;
+background-color: #000000;
+color: White;
+float: left;
+width: 100%;
+font-family: arial, helvetica, sans-serif;
+}
+
+#navcontainer ul li { display: inline; }
+
+#navcontainer ul li a
+{
+padding: 0.2em 1em;
+background-color: #000000;;
+color: White;
+text-decoration: none;
+float: left;
+border-right: 1px solid #fff;
+}
+
+#navcontainer ul li a:hover
+{
+background-color: #31a31f;
+color: #fff;
+}
+
+
+
+
+</style>
+    <!-- prettier-ignore-end -->
+
+
+
+
+
+<script nonce="">
+    var Koha = {};
+    function _(s) { return s } // dummy function for gettext
+    const is_logged_in = false
+</script>
+
+<script src="/opac-tmpl/bootstrap/js/Gettext_26.0503000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/i18n_26.0503000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/stores_26.0503000.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link id='flipster-css' href='/api/v1/contrib/coverflow/static/jquery-flipster/jquery.flipster.min.css' type='text/css' rel='stylesheet' />
+<style>
+    /* CSS for Koha CoverFlow Plugin 
+       This CSS was added automatically by installing the CoverFlow plugin
+       Please do not modify */
+    .coverflow {
+        height:160px;
+        margin-left:25px;
+        width:850px;
+    }
+
+    .coverflow img,.coverflow .item {
+        -moz-border-radius:10px;
+        -moz-box-shadow:0 5px 5px #777;
+        -o-border-radius:10px;
+        -webkit-border-radius:10px;
+        -webkit-box-shadow:0 5px 5px #777;
+        border-radius:10px;
+        box-shadow:0 5px 5px #777;
+        height:100%;
+        width:100%;
+    }
+
+    .itemTitle {
+        padding-top:30px;
+    }
+
+    .coverflow .selectedItem {
+        -moz-box-shadow:0 4px 10px #0071BC;
+        -webkit-box-shadow:0 4px 10px #0071BC;
+        border:1px solid #0071BC;
+        box-shadow:0 4px 10px #0071BC;
+    }
+    /* End of CSS for Koha CoverFlow Plugin */
+</style>
+    
+<style>#header-region,body{background-color:#ffffff;border-color:#ffffff;}
+#opacheader{background-color:#ffffff;margin-top:5px;}
+#logo{background:transparent url(/opac-tmpl/bootstrap/images/koha-logo-navbar.png)no-repeat scroll 0;}
+.navbar .nav>li>a{text-shadow:none;}
+#carticon,#listsmenu .fa,#user-menu .fa-user,#langmenu .fa-flag,#members .fa-user{color:#31a31f;}
+.listslabel,.cartlabel,.userlabel,.nav-link[href="/cgi-bin/koha/opac-search-history.pl"],.langlabel{color:#31a31f;}
+.listslabel:hover,.cartlabel:hover,.userlabel:hover,.nav#search_history:hover,.nav>.search_history>a[title="View your search history"]:hover,.listslabel:active,.cartlabel:active,.userlabel:active,.nav#search_history:active{color:#efffec;}
+.navbar-inverse .navbar-inner li.dropdown>a:hover .caret{border-top-color:#efffec!important;border-bottom-color:#efffec!important;}
+.dropdown-menu>.dropdown-item:hover{background:#31a31f!important;}
+.mastheadsearch{background:linear-gradient(to bottom,#31a31f 38%,#31a31f 100%)repeat scroll 0%0%transparent!important;}
+#searchsubmit{color:#000;background:#ffffff!important;}
+#searchform label{color:#31a31f!important;}
+#moresearches{width:100%;}
+#moresearches a,#moresearches a:link{color:#31a31f;}
+#moresearches{background:}
+.breadcrumb a{color:#31a31f;text-shadow:none;}
+.breadcrumb{background:#efffec}
+#login label[for="userid"],#login label[for="password"]{color:#31a31f;}
+#login a{color:#31a31f;}
+#login legend{color:#31a31f;}
+#login .btn{color:#000;text-shadow:0px-1px 0px rgba(0,0,0,0.25);background-color:#31a31f;background-image:linear-gradient(to bottom,#31a31f,#31a31f);}
+#login .btn:hover{background-color:#efffec;background-image:-moz-linear-gradient(top,#efffec,#efffec);background-image:-webkit-gradient(linear,0 0,0 100%,from(#efffec),to(#efffec));background-image:-webkit-linear-gradient(top,#efffec,#efffec);background-image:-o-linear-gradient(top,#efffec,#efffec);background-image:linear-gradient(to bottom,#efffec,#efffec);}
+#login .btn:hover{color:#ffffff;}
+@media screen and
+(max-width:608px){
+</style>
+
+
+
+<link
+    rel="alternate"
+    type="application/rss+xml"
+    title=" Search RSS feed"
+    href="/cgi-bin/koha/opac-search.pl?idx=kw&q=%22education%22&amp;count=&amp;sort_by=acqdate_dsc&amp;format=rss"
+/>
+</head>
+
+
+
+
+    
+
+
+    
+
+
+
+
+    
+
+<body ID="results" class="branch-default scrollto" >
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<button id="scrolltocontent">Skip to main content</button>
+<!-- prettier-ignore-start -->
+<!-- closed in opac-bottom.inc -->
+<div id="wrapper">
+<!-- prettier-ignore-end -->
+<header id="header-region" class="noprint">
+    <nav class="navbar navbar-expand">
+        <div id="logo">
+            <a class="navbar-brand" href="/cgi-bin/koha/opac-main.pl">
+                
+                    Koha online
+                
+            </a>
+        </div>
+        
+            
+                <div id="cartDetails" class="cart-message">Your cart is empty.</div>
+            
+            <ul id="cart-list-nav" class="navbar-nav">
+                
+                    <li class="nav-item js-show">
+                        <a href="#" class="nav-link" title="Collect items you are interested in" id="cartmenulink" role="button" aria-label="Cart">
+                            <i id="carticon" class="fa fa-shopping-cart fa-fw fa-icon-black" aria-hidden="true"></i> <span class="cartlabel">Cart</span> <span id="basketcount"></span>
+                        </a>
+                    </li>
+                
+                <li role="presentation" class="divider-vertical"></li>
+                
+                    
+                        <li class="nav-item dropdown">
+                            <a
+                                href="/cgi-bin/koha/opac-shelves.pl"
+                                title="Show lists"
+                                class="nav-link dropdown-toggle"
+                                id="listsmenu"
+                                data-bs-toggle="dropdown"
+                                role="button"
+                                aria-label="Show dropdown with detailed list information"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                                ><i class="fa fa-list fa-fw fa-icon-black" aria-hidden="true"></i> <span class="listslabel">Lists</span>
+                            </a>
+                            <div aria-labelledby="listsmenu" role="menu" class="dropdown-menu">
+                                
+                                
+                                
+                                    <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=0" tabindex="0" role="menuitem"><strong>Your lists</strong></a>
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=add_form" tabindex="0" role="menuitem">Log in to create your own lists</a>
+                                    
+                                
+                            </div>
+                            <!-- / .dropdown-menu -->
+                        </li>
+                        <!-- / .nav-item.dropdown -->
+                    
+                
+                
+            </ul>
+            <!-- / .navbar-nav -->
+        
+        
+            
+            
+            <ul id="members" class="navbar-nav">
+                <li class="nav-item dropdown dropdown-menu-end">
+                    
+                        
+                            
+                                <a href="/cgi-bin/koha/opac-user.pl" class="nav-link login-link loginModal-trigger" aria-label="Log in to your account"
+                                    ><i class="fa fa-user fa-fw fa-icon-black fa-fw" aria-hidden="true"></i> <span class="userlabel">Log in to your account</span></a
+                                >
+                            
+                        
+                    
+
+                    
+                </li>
+                <!-- Cookie consent button for non logged-in users -->
+                
+                    <li role="presentation" style="display:none" id="cookieConsentDivider" class="divider-vertical" aria-hidden="true"></li>
+                    <li style="display:none" id="cookieConsentLi" class="nav-item" aria-hidden="true">
+                        <a id="cookieConsentButton" href="#" name="Your cookies" class="nav-link" title="View and amend cookies you have consented to" role="button">
+                            <i class="fa fa-cookie-bite fa-fw fa-icon-black" aria-hidden="true"></i>
+                            <span class="cookieconsentlabel">Your cookies</span>
+                        </a>
+                    </li>
+                
+                
+                    
+                        <li role="presentation" class="divider-vertical"></li>
+                        <li class="nav-item search_history">
+                            <a class="nav-link" href="/cgi-bin/koha/opac-search-history.pl" title="View your search history">
+                                <i class="fa fa-calendar-days fa-fw fa-icon-black" aria-hidden="true"></i>
+                                <span class="search_history_label">Search history</span>
+                            </a>
+                        </li>
+                    
+                
+            </ul>
+        
+    </nav>
+    <!-- /navbar -->
+
+    
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col"> 
+    
+        <div id="opacheader">
+            
+                <div class="en_item">
+                    
+                    <div class="en_body"><style>
+        .responsive-img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+<img src="https://opac.uniabuja.edu.ng/opac-tmpl/bootstrap/images/opac6.png" alt="Responsive Image" class="responsive-img" />
+<div id="navcontainer">
+<ul id="navlist">
+<li id="active"><a href="https://portal.igpublish.com/iglibrary/" id="current" target="_blank" rel="noopener">IG Publishing library</a></li>
+<li><a href="https://jgateplus.com/" target="_blank" rel="noopener">Jgate Journals</a></li>
+<li><a href="http://ardi2.wipo.int/content/en/journals.php" target="_blank" rel="noopener">ARDI</a></li>
+<li><a href="http://aginternetwork.org" target="_blank" rel="noopener">AGORA</a></li>
+<li><a href="http://extranet.who.int/hinari/en/journals.php" target="_blank" rel="noopener">HINARI</a></li>
+<li><a href="http://oare.oaresciences.org/content/en/journal" target="_blank" rel="noopener">OARE</a></li>
+<li><a href="http://doaj.org" target="_blank" rel="noopener">DOAJ</a></li>
+<li><a href="/cgi-bin/koha/tools/www.jstor.org" target="_blank" rel="noopener">JSTOR</a></li>
+<li><a href="http://eric.ed.gov/" target="_blank" rel="noopener">ERIC</a></li>
+<li><a href="/cgi-bin/koha/tools/www.sciencedirect.com" target="_blank" rel="noopener">Science Direct</a></li>
+<li><a href="/cgi-bin/koha/tools/search.ebscohost.com" target="_blank" rel="noopener">Ebscohost</a></li>
+<li><a href="/cgi-bin/koha/tools/www.lawpavilionplus.com" target="_blank" rel="noopener">Lawpavilion</a></li>
+</ul>
+</div></div>
+                </div>
+            
+        </div>
+    
+ </div>
+            </div>
+        </div>
+    
+</header>
+<!-- / header-region -->
+
+
+    <div class="container-fluid">
+        
+            <div class="row">
+                <div class="col">
+                    <div id="opac-main-search" class="mastheadsearch">
+                        
+                            <form name="searchform" method="get" action="/cgi-bin/koha/opac-search.pl" id="searchform" role="search">
+                                <div class="row gx-2">
+                                    <div class="col-sm-auto order-2 order-sm-2">
+                                        <label for="masthead_search" class="visually-hidden">Search the catalog by:</label>
+                                        <select name="idx" id="masthead_search" class="form-select">
+                                            
+                                                <option value="" data-placeholder="Search the catalog">Library catalog</option>
+                                            
+                                            
+                                                <option value="ti" data-placeholder="Search the catalog by title">Title</option>
+                                            
+                                            
+                                                <option value="au" data-placeholder="Search the catalog by author">Author</option>
+                                            
+                                            
+                                                <option value="su" data-placeholder="Search the catalog by subject">Subject</option>
+                                            
+                                            
+                                                <option value="nb" data-placeholder="Search the catalog by ISBN">ISBN</option>
+                                            
+                                            
+                                                <option value="ns" data-placeholder="Search the catalog by ISSN">ISSN</option>
+                                            
+                                            
+                                                <option value="se" data-placeholder="Search the catalog by series">Series</option>
+                                            
+                                            
+                                                
+                                                    <option value="callnum" data-placeholder="Search the catalog by call number">Call number</option>
+                                                
+                                            
+                                        </select>
+                                    </div>
+                                    <!-- /.col-sm-auto -->
+
+                                    <div class="col order-4 order-sm-3">
+                                        
+                                            <label for="translControl1" class="visually-hidden">Search the catalog</label>
+                                            <input type="text" class="transl1 form-control" id="translControl1" name="q" value="education" placeholder="Search the catalog" /><span id="translControl"></span>
+                                        
+                                    </div>
+                                    <!-- /.col -->
+
+                                    
+                                        <div class="col-sm col-md-3 col-lg-2 order-3 order-sm-4">
+                                            <label for="select_library" class="visually-hidden">Search the catalog in:</label>
+                                            <select name="limit" id="select_library" class="form-select">
+                                                <option value="">All libraries</option>
+
+                                                
+                                                    
+                                                        
+                                                            <option value="branch:AgricLib">Agriculture Library</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:EnginLib">Engineering Library</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:EnvironLib">Environmental Sciences Library</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:InstLib">Institute of Education Library</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:LawLib">Law Library</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:ML">Medical Library</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:CPL">Pharmacy Library</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:UNIABUJA">Samuel Ogbemudia Main Library, University of Abuja</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:VetLib">Veterinary Medicine Library </option>
+                                                        
+                                                    
+                                                
+                                            </select>
+                                            <!-- /#select_library -->
+                                        </div>
+                                        <!-- /.col-sm-auto -->
+                                    
+
+                                    <div class="order-5 col-sm-auto">
+                                        <button type="submit" id="searchsubmit" class="btn btn-primary" title="Search" aria-label="Search">
+                                            <i class="fa fa-search" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- /.form-row -->
+                                <input type="hidden" name="weight_search" value="1" />
+                            </form>
+                         </div
+                    ><!-- /#opac-main-search -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        
+
+        <div class="row">
+            <ul class="nav" id="moresearches">
+                <li class="nav-item">
+                    <a href="/cgi-bin/koha/opac-search.pl">Advanced search</a>
+                </li>
+                
+                
+                
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-authorities-home.pl">Authority search</a>
+                    </li>
+                
+                
+                
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-tags.pl">Tag cloud</a>
+                    </li>
+                
+                
+                
+                
+                
+                
+                    <li class="nav-item">
+                        <a id="library_page" href="/cgi-bin/koha/opac-library.pl">
+                            
+                                <span>Libraries</span>
+                            
+                        </a>
+                    </li>
+                
+                
+    
+
+            </ul>
+            <!-- /.nav#moresearches -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+
+
+
+    <!-- Login form hidden by default, used for modal window -->
+    <div id="loginModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title" id="modalLoginLabel">Log in to your account</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="modalAuth">
+                    <input type="hidden" name="csrf_token" value="16b28a39eb534a1d28f0f06611e56647191c2338,1e8fbc2791a63f5352efd2a479dc42a05fcf6e2c,1794723056" />
+
+                    <input type="hidden" name="has-search-query" id="has-search-query" value="" />
+                    <div class="modal-body">
+                        
+                        
+                        
+                            
+                            
+                            <input type="hidden" name="koha_login_context" value="opac" />
+                            <fieldset class="brief">
+                                <div class="local-login">
+                                    
+    <label for="muserid">Card number or username:</label>
+<input type="text" id="muserid" name="login_userid" autocomplete="off" /> <label for="mpassword">Password:</label
+                                    ><input type="password" id="mpassword" name="login_password" autocomplete="off" />
+                                    <fieldset class="action">
+                                        <input type="hidden" name="login_op" value="cud-login" />
+                                        <input type="submit" class="btn btn-primary" value="Log in" />
+                                    </fieldset>
+                                </div>
+                                
+                                
+                                
+                            </fieldset>
+                        
+                    </div>
+                </form>
+                <!-- /#auth -->
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /#modalAuth  -->
+
+
+
+
+
+<main class="main">
+    
+    <nav id="breadcrumbs" aria-label="Breadcrumb" class="breadcrumbs">
+        <ol class="breadcrumb">
+            
+            
+                
+    
+        <li class="breadcrumb-item"> 
+                    <a href="/cgi-bin/koha/opac-main.pl" title="Home">Home</a>
+                 </li>
+    
+
+                <li class="breadcrumb-item"> 
+                    <a href="/cgi-bin/koha/opac-search.pl">Advanced search</a>
+                 </li>
+    
+
+            
+            
+    
+        <li class="breadcrumb-item active">
+            <a aria-current="page" aria-disabled="true" tabindex="-1"> 
+                
+                    <span title="You searched for 'kw,wrdl: &quot;education&quot;'"
+                        >Results of search for 'education'</span
+                    >
+                
+             </a>
+        </li>
+            
+        </ol>
+    </nav>
+
+
+    
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col">
+                    <h1 id="numresults">No results found!</h1>
+                    <p>
+                        
+                            No results found for that in  catalog.
+                            <a
+                                href="/cgi-bin/koha/opac-search.pl?idx=kw&q=%22education%22&amp;count=&amp;sort_by=acqdate_dsc&amp;format=rss"
+                                aria-label="Subscribe to this search"
+                                class="btn btn-link rsssearchlink noprint"
+                            >
+                                <i class="fa fa-rss rsssearchicon" aria-hidden="true" title="Subscribe to this search"></i>
+                            </a>
+                        
+                    </p>
+                    
+                    
+                </div>
+                <!-- / .col -->
+            </div>
+            <!-- / .row -->
+        </div>
+        <!-- / .container-fluid -->
+    
+
+    <div class="container-fluid">
+        <div class="row">
+            
+
+            
+            
+                
+            
+            <div class="col-lg-10 maincontent">
+                
+                    
+                
+
+                <div id="userresults">
+                    
+
+                    
+                    
+
+                    <!-- Search Results Table -->
+                    
+
+                    
+                    
+                        <div class="suggestion">
+                            Not finding what you're looking for?
+                            <ul>
+                                
+                                    <li>Make a <a href="/cgi-bin/koha/opac-suggestions.pl?op=add_form">purchase suggestion</a></li>
+                                
+                                
+                            </ul>
+                        </div>
+                    
+                </div>
+                <!-- / #userresults -->
+            </div>
+            <!-- /.span10/12 -->
+        </div>
+        <!-- / .row -->
+    </div>
+    <!-- / .container-fluid --> </main
+><!-- / .main -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col"> 
+    
+        <div id="opaccredits">
+            
+                <div class="en_item">
+                    
+                    <div class="en_body"><style>
+        /* Resetting default margins and paddings */
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Styles for the footer */
+        .footer {
+            background-color: black;
+            color: white;
+            padding: 20px;
+        }
+        
+        .footer-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        
+        .footer-column {
+            flex: 1;
+            text-align: left;
+        }
+        
+        .footer-column h3 {
+            color: #31a31f;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+            padding: 0;
+            line-height: 1.8;
+        }
+        
+        .footer-column ul li a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        .footer-column.address {
+            text-align: right;
+        }
+        
+        /* Styles for the second row */
+        .footer-second-row {
+            background-color: #31a31f;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
+    </style>
+<footer class="footer">
+<div class="footer-row">
+<div class="footer-column">
+<h3>QUICK LINKS</h3>
+<ul>
+<li><a href="#">UNIABUJA Website</a></li>
+<li><a href="#">Library Website</a></li>
+<li><a href="#">OPAC</a></li>
+</ul>
+</div>
+<div class="footer-column">
+<h3>ARCHIVES</h3>
+<ul>
+<li><a href="#">Databases</a></li>
+<li><a href="#">Newspaper</a></li>
+</ul>
+</div>
+<div class="footer-column address">
+<h3>ADDRESS</h3>
+<p>Samuel Ogbemudia Library<br />University of Abuja,<br />PMB 117, Giri, Airport Road,<br />Federal Capital Territory, Abuja, Nigeria.</p>
+</div>
+</div>
+<div class="footer-second-row">
+<p>Samuel Ogbemudia Library &copy; 2023, All Right Reserved</p>
+</div>
+</footer></div>
+                </div>
+            
+        </div>
+    
+ </div>
+            </div>
+        </div>
+    
+    <!-- prettier-ignore-start -->
+    </div> <!-- / #wrapper in masthead.inc -->
+    <!-- prettier-ignore-end -->
+
+    
+        <footer id="changelanguage" class="navbar navbar-expand navbar-light bg-light noprint">
+            <div class="container-fluid">
+                <div class="collapse navbar-collapse">
+                    
+                    
+
+                    <div class="navbar-nav flex-grow-1">
+                        
+
+                        
+                    </div>
+                    
+                        <div class="navbar-nav">
+                            <a id="koha_url" class="nav-link koha_url" href="https://koha-community.org">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                                    <path
+                                        fill="currentColor"
+                                        d="M7.394.75c.82-.45 1.75-.72 2.69-.75.5.015.99.1 1.45.27.92.35 1.68 1.05 2.15 1.9.53.865.76 1.875.87 2.875.25 3.315-.98 6.635-3.07 9.18-.825.82-1.835 1.52-3 1.735-.96.135-2-.07-2.775-.675-.48-.365-.67-1-.63-1.575.425.6 1.12 1.015 1.86 1.035.675.03 1.35-.275 1.8-.765.75-.825.835-2.21.12-3.08-.325-.375-.7-.715-1.15-.95-.44-.265-.95-.38-1.46-.45-.93-.06-1.9.11-2.72.57a3.22 3.22 0 0 0-1.565 2.15c-.2.7-.125 1.43-.05 2.14-.31-.81-.43-1.67-.5-2.53v-.64c.12-3.13 1.43-6.2 3.53-8.515.725-.75 1.53-1.43 2.45-1.92Zm0 0"
+                                        style="stroke-width:.500008"
+                                    />
+                                </svg>
+                                <span class="koha_url_text">Powered by Koha</span>
+                            </a>
+                        </div>
+                    
+                </div>
+                <!-- /.collapse.navbar-collapse -->
+            </div>
+            <!-- /.container-fluid -->
+        </footer>
+        <!-- / #changelanguage -->
+    
+
+
+
+
+<!-- CookieConsentedJS code that may run -->
+
+
+<!-- JavaScript includes -->
+<script src="/opac-tmpl/lib/jquery/jquery-3.6.0.min_26.0503000.js"></script>
+<script src="/opac-tmpl/lib/jquery/jquery-migrate-3.3.2.min_26.0503000.js"></script>
+<script src="/opac-tmpl/lib/bootstrap/js/bootstrap.bundle.min_26.0503000.js"></script>
+<script src="/opac-tmpl/lib/fontfaceobserver/fontfaceobserver.min_26.0503000.js"></script>
+<script src="/opac-tmpl/lib/enquire/enquire.min_26.0503000.js"></script>
+<script nonce="">
+    let logged_in_user_id = "";
+</script>
+<script src="/opac-tmpl/bootstrap/js/global_26.0503000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/form-submit_26.0503000.js" type="module"></script>
+
+<script nonce="">
+    var query_desc = "kw,wrdl: &quot;education&quot;";
+    var querystring = "education";
+    var query_cgi = "idx=kw&amp;q=%22education%22";
+
+    
+    $(".print-large").on("click",function(){
+        window.print();
+        return false;
+    });
+    $(".addtoshelf").on("click",function(e){
+        e.preventDefault();
+        Dopop( this.href );
+    });
+    $("body").on("click", ".addtocart", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        addRecord( biblionumber );
+    });
+    $("body").on("click", ".cartRemove", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        delSingleRecord( biblionumber );
+    });
+</script>
+
+    <script src="/opac-tmpl/bootstrap/js/basket_26.0503000.js"></script>
+
+
+<script src="/opac-tmpl/bootstrap/js/tags_26.0503000.js"></script>
+
+
+
+
+
+
+
+<script src="/opac-tmpl/lib/js-cookie/js.cookie-3.0.1.min_26.0503000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/show-password-toggle_26.0503000.js"></script>
+<script nonce="">
+    $(document).ready(function () {
+        if ($("#searchsubmit").length) {
+            $(document).on("click", "#searchsubmit", function (e) {
+                Cookies.remove("form_serialized", { path: "/" });
+                Cookies.remove("form_serialized_limits", { path: "/" });
+                Cookies.remove("search_path_code", { path: "/" });
+            });
+        }
+    });
+</script>
+
+
+
+
+<script src="/opac-tmpl/lib/dayjs/dayjs.min_26.0503000.js"></script>
+<script src="/opac-tmpl/lib/dayjs/plugin/timezone_26.0503000.js"></script>
+<script src="/opac-tmpl/lib/dayjs/plugin/utc_26.0503000.js"></script>
+<script nonce="">
+    dayjs.extend(window.dayjs_plugin_utc);
+    dayjs.extend(window.dayjs_plugin_timezone);
+</script>
+<!-- js-date-format.inc -->
+<script nonce="">
+    (function() {
+        var def_date_format = 'us';
+        var def_time_format = '24hr';
+        var def_tz = 'UTC';
+
+        var get_date_pattern = function(format) {
+            var date_pattern = 'YYYY-MM-DD';
+            if(format == 'us') date_pattern = 'MM/DD/YYYY';
+            if(format == 'metric') date_pattern = 'DD/MM/YYYY';
+            if(format == 'dmydot') date_pattern = 'DD.MM.YYYY';
+            return date_pattern;
+        };
+
+        var get_time_pattern = function(format) {
+            var time_pattern = 'HH:mm';
+            if(format == '12hr') time_pattern = 'hh:mm a';
+            return time_pattern;
+        };
+
+        /*
+         * A JS equivalent of the KohaDates TT Plugin. Passed an rfc3339 formatted date string,
+         * or JS Date, the function will return a date string formatted as per the koha instance config.
+         * Optionally accepts a dateformat parameter to allow override of the configured output format
+         * as well as a 'withtime' boolean denoting whether to include time or not in the output string.
+         */
+        window.$date = function(value, options) {
+            if(!value) return '';
+            var tz = (options&&options.tz)||def_tz;
+            var m = dayjs(value);
+            if ( ! value.match(/^\d{4}-\d{2}-\d{2}$/ ) ) {
+                m = m.tz(tz);
+            }
+
+            var dateformat = (options&&options.dateformat)||def_date_format;
+            var withtime = (options&&options.withtime)||false;
+
+            if(dateformat=='rfc3339' && withtime) return m.format();
+
+            var timeformat = (options&&options.timeformat)||def_time_format;
+            var date_pattern = get_date_pattern(dateformat);
+            var time_pattern = !withtime?'':' '+get_time_pattern(timeformat);
+
+            return m.format(date_pattern+time_pattern);
+        }
+
+        window.$datetime = function(value, options) {
+            options = options||{};
+            options.withtime = true;
+            return $date(value, options);
+        };
+
+        window.$time = function(value, options) {
+            if(!value) return '';
+            var tz = (options&&options.tz)||def_tz;
+            var m = dayjs(value);
+            if(tz) m = m.tz(tz);
+
+            var dateformat = (options&&options.dateformat);
+            var timeformat = (dateformat=='rfc3339'&&'24hr')||(options&&options.timeformat)||def_time_format;
+
+            return m.format(get_time_pattern(timeformat)+(dateformat=='rfc3339'?':ss'+(!m.isUTC()?'Z':''):''))+(dateformat=='rfc3339' && m.isUTC()?'Z':'');
+        }
+
+    })();
+</script>
+<!-- / js-date-format.inc -->
+
+
+
+<script nonce="">
+    (function () {
+        /**
+         * Format the biblio response from a Koha RESTful API request.
+         * @param  {Object}  biblio  The biblio json object as returned from the Koha RESTful API
+         * @param  {Object}  config  A configuration object
+         *                           Valid keys are: `link`
+         * @return {string}          The formatted HTML string
+         */
+        window.$biblio_to_html = function (biblio, config) {
+            if (biblio === undefined) {
+                return ""; // empty string for no biblio
+            }
+
+            var title = '<span class="biblio-title">';
+            if (biblio.title != null && biblio.title != "") {
+                title += escape_str(biblio.title);
+            } else {
+                title += _("No title");
+            }
+            title += "</span>";
+
+            // add subtitle
+            if (biblio.subtitle != null && biblio.subtitle != "") {
+                title += ' <span class="biblio-subtitle">' + escape_str(biblio.subtitle) + "</span>";
+            }
+
+            // set title as link
+            if (config && config.link) {
+                if (config.link === "marcdetail") {
+                    title = '<a href="/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                } else if (config.link === "labeled_marc") {
+                    title = '<a href="/cgi-bin/koha/opac-labeledMARCdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                } else if (config.link === "isbd") {
+                    title = '<a href="/cgi-bin/koha/opac-ISBDdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                } else {
+                    title = '<a href="/cgi-bin/koha/opac-detail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                }
+            }
+
+            // add medium
+            if (biblio.medium != null && biblio.medium != "") {
+                title += ' <span class="biblio-medium">' + escape_str(biblio.medium) + "</span>";
+            }
+
+            // add part numbers/names
+            let part_numbers = typeof biblio.part_number === "string" ? biblio.part_number.split("|") : [];
+            let part_names = typeof biblio.part_name === "string" ? biblio.part_name.split("|") : [];
+            let i = 0;
+            while (part_numbers[i] || part_names[i]) {
+                if (part_numbers[i]) {
+                    title += ' <span class="part-number">' + escape_str(part_numbers[i]) + "</span>";
+                }
+                if (part_names[i]) {
+                    title += ' <span class="part-name">' + escape_str(part_names[i]) + "</span>";
+                }
+                i++;
+            }
+
+            return title;
+        };
+    })();
+</script>
+
+
+    
+    
+    <script src="/opac-tmpl/bootstrap/js/authtoresults_26.0503000.js"></script>
+    
+        <script src="/opac-tmpl/lib/jquery/plugins/jquery.highlight-5_26.0503000.js"></script>
+    
+    
+    <script src="/opac-tmpl/lib/Chocolat/js/chocolat_26.0503000.js"></script>
+    
+    <script nonce="">
+        const loggedinusername = 0;
+        const opacbookbag = 1;
+        const virtualshelves = 1;
+    </script>
+    <script src="/opac-tmpl/bootstrap/js/results-list_26.0503000.js"></script>
+    <script src="/opac-tmpl/bootstrap/js/cover_images_26.0503000.js"></script>
+    <script nonce="">
+        
+            var q_array = new Array();  // holds search terms if available
+
+            function highlightOff() {
+                $("td").removeHighlight();
+                $(".highlight_toggle").toggle();
+            }
+            function highlightOn() {
+                var x;
+                for (x in q_array) {
+                    q_array[x] = q_array[x].replace(/\w*:([\w])/, "$1");
+                    q_array[x] = q_array[x].toLowerCase();
+                    var myStopwords = "and|or|not".toLowerCase().split('|');
+                    if ( (q_array[x].length > 0) && ($.inArray(q_array[x], myStopwords) == -1) ) {
+                        $(".title").highlight(q_array[x]);
+                        $(".author").highlight(q_array[x]);
+                        $(".results_summary").highlight(q_array[x]);
+                    }
+                }
+                $(".highlight_toggle").toggle();
+            }
+        
+
+
+
+        let counter_wait = 0;
+        function wait_for_images(cb){
+
+            var loaded = 1;
+            counter_wait++;
+
+            
+
+            
+
+            
+
+            if (!loaded && counter_wait < 50) {// Do not wait more than 5 seconds
+                window.setTimeout(function(){wait_for_images(cb);}, 100);
+            } else {
+                if (counter_wait >= 50 ) {
+                }
+                cb();
+            }
+        }
+
+        $(window).load(function() {
+            wait_for_images(verify_cover_images);
+        });
+
+        $(document).ready(function(){
+
+            $(".moretoggle").click(function(e){
+                e.preventDefault();
+                $(this).siblings(".collapsible-facet").toggle();
+                $(this).siblings(".moretoggle").toggle();
+                $(this).toggle();
+            });
+
+            
+                $('a.title').each(function() {
+                    $(this).attr("href", $(this).attr("href") + "&query_desc=kw%2Cwrdl%3A%20%22education%22");
+                });
+            
+
+            $(".br-readonly a").on("click", function(e){
+                e.preventDefault();
+            });
+
+            $('.resort').change(function() {
+                $('#bookbag_form').submit();
+            });
+
+            $('#results_per_page').change(function() {
+                $('#bookbag_form').submit();
+            });
+
+            
+                
+                    q_array = query_desc.split(" ");
+                    // ensure that we don't have "" at the end of the array, which can
+                    // break the highlighter
+                    while (q_array.length > 0 && q_array[q_array.length-1] == "") {
+                        q_array = q_array.splice(0,-1);
+                    }
+                    highlightOn();
+                    $("#highlight_toggle_on" ).hide().click(function(e) {
+                        e.preventDefault();
+                        highlightOn();
+                    });
+                    $("#highlight_toggle_off").show().click(function(e) {
+                        e.preventDefault();
+                        highlightOff();
+                    });
+                
+                
+                
+            
+
+            
+            
+            
+            
+
+            
+
+            $("input.newtag").on('keydown', function(e){
+                if (e.keyCode == 13) { e.preventDefault(); }
+            });
+        });
+    </script>
+
+
+
+
+
+
+
+        <script src="/api/v1/contrib/coverflow/static/jquery-flipster/jquery.flipster.min.js"></script>
+        <script>$(document).ready(function(){$('#coverflow').load("/api/v1/contrib/coverflow/reports/1",function(){$('.koha-coverflow img').on("load",function(){if(this.naturalHeight==1){$(this).attr("src","https://opac.uniabuja.edu.ng/opac-tmpl/bootstrap/images/cover.jpg");}});var opt={'items':'.item','minfactor':15,'distribution':1.5,'scalethreshold':0,'staticbelowthreshold':false,'titleclass':'itemTitle','selectedclass':'selectedItem','scrollactive':true,'step':{'limit':4,'width':10,'scale':true}};$('#coverflow').flipster({});});$('.random').load("/api/v1/contrib/coverflow/reports/8",function(){$('.koha-coverflow img').on("load",function(){if(this.naturalHeight==1){$(this).attr("src","https://opac.uniabuja.edu.ng/opac-tmpl/bootstrap/images/cover.jpg");}});var opt={'items':'.item','minfactor':15,'distribution':1.5,'scalethreshold':0,'staticbelowthreshold':false,'titleclass':'itemTitle','selectedclass':'selectedItem','scrollactive':true,'step':{'limit':4,'width':10,'scale':true}};$('.random').flipster({autoplay:'4000',buttons:'1',loop:'1',});});});
+</script>
+    
+<script>if($('#search-facets').length){}
+if($('#advsearch').length){}
+
+</script>
+</body>
+<!-- prettier-ignore-start -->
+</html>
+<!-- prettier-ignore-end -->
+
+

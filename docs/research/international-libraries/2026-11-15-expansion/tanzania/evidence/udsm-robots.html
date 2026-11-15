@@ -1,0 +1,42 @@
+# robots.txt for lib.udsm.ac.tz (OPAC)
+#
+# Deployed to /opt/udsm-koha/static/robots.txt and served by the host Apache
+# ahead of the reverse proxy, so it costs no Koha worker to serve.
+#
+# Why this exists: crawlers were issuing 3-7 requests/second against
+# opac-search.pl with generated CCL queries, plus opac-export.pl and
+# opac-showmarc.pl on every record. Each of those is a Zebra search or a MARC
+# render, and on a 4-core box that saturated all CPU and pushed page times from
+# 0.2s to 20s. Koha's own README.robots warns about precisely this.
+#
+# Record pages stay crawlable — that is how patrons find the catalogue from
+# Google. What is blocked is the machine-generated query space, which is
+# effectively infinite and has no search-result value.
+
+User-agent: *
+Crawl-delay: 20
+
+# Infinite/expensive query space — never useful to index
+Disallow: /cgi-bin/koha/opac-search.pl
+Disallow: /cgi-bin/koha/opac-export.pl
+Disallow: /cgi-bin/koha/opac-showmarc.pl
+Disallow: /cgi-bin/koha/opac-ISBDdetail.pl
+Disallow: /cgi-bin/koha/opac-MARCdetail.pl
+Disallow: /cgi-bin/koha/opac-downloadcart.pl
+Disallow: /cgi-bin/koha/opac-downloadshelf.pl
+Disallow: /cgi-bin/koha/opac-sendbasket.pl
+Disallow: /cgi-bin/koha/opac-sendshelf.pl
+Disallow: /cgi-bin/koha/opac-tags.pl
+Disallow: /cgi-bin/koha/opac-shelves.pl
+
+# Patron-facing / authenticated areas
+Disallow: /cgi-bin/koha/opac-user.pl
+Disallow: /cgi-bin/koha/opac-reserve.pl
+Disallow: /cgi-bin/koha/opac-messaging.pl
+Disallow: /cgi-bin/koha/opac-passwd.pl
+Disallow: /cgi-bin/koha/opac-memberentry.pl
+
+# Record detail pages remain allowed on purpose.
+Allow: /cgi-bin/koha/opac-detail.pl
+
+Sitemap: https://lib.udsm.ac.tz/sitemapindex.xml

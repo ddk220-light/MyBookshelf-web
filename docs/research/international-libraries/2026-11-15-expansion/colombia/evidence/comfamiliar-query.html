@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang='es'>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="">
+			<meta charset="utf-8" />
+			<meta name="author" content="PMB Group" />
+
+			<meta name="keywords" content="OPAC, web, library, opensource, catalog, catalogue, catálogo, biblioteca, bibliothèque, mediateca, librería, médiathèque, pmb, phpmybibli" />
+			<meta name="description" content="Catálogo en línea Centro Cultural Comfamiliar Atlántico." /><meta name='robots' content='all' />
+			<!--IE et son enfer de compatibilit�-->
+			<meta http-equiv='X-UA-Compatible' content='IE=Edge' />
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+	<title>Catálogo en línea Centro Cultural Comfamiliar Atlántico</title>
+	
+	
+<link rel='stylesheet' type='text/css' href='./styles/common/animation_display.css?1615825938' />
+<link rel='stylesheet' type='text/css' href='./styles/common/common.css?1720098068' />
+<link rel='stylesheet' type='text/css' href='./styles/common/contrib.css?1673276618' />
+<link rel='stylesheet' type='text/css' href='./styles/common/dGrowl.css?1657616134' />
+<link rel='stylesheet' type='text/css' href='./styles/common/dsi.css?1699608113' />
+<link rel='stylesheet' type='text/css' href='./styles/common/font-awesome.css?1478593624' />
+<link rel='stylesheet' type='text/css' href='./styles/common/open-sans.css?1479312986' />
+<link rel='stylesheet' type='text/css' href='./styles/common/pagination.css?1532013719' />
+<link rel='stylesheet' type='text/css' href='./styles/common/record_display.css?1540561363' />
+<link rel='stylesheet' type='text/css' href='./styles/common/visionneuse.css?1646663637' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/colonnes.css?1343806866' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/gallerie_photos.css?1297066640' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/genbib.css?1498048756' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/liste_bulletins.css?1297066639' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/print.css?1297066639' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/tags.css?1297066639' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/visionneuse.css?1297066640' /><script type='text/javascript'>var opac_style= 'genbib';</script>
+	<!-- css_authentication -->	<link rel='SHORTCUT ICON' href='./images/site/favicon.ico' />
+	<script type="text/javascript" src="includes/javascript/drag_n_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/handle_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/popup.js"></script>
+	<script type='text/javascript'>
+			// Fonction a utiliser pour l'encodage des URLs en javascript
+			function encode_URL(data){
+				var docCharSet = document.characterSet ? document.characterSet : document.charset;
+				if(docCharSet == "UTF-8"){
+	    			return encodeURIComponent(data);
+	    		}else{
+	    			return escape(data);
+	    		}
+	    	}
+	    </script>
+	<script type='text/javascript'>
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName =
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i);
+				    }
+				 }
+				return items;
+			 }
+		}
+	</script>
+
+		<link rel='stylesheet' type='text/css' href='./includes/javascript/dojo/dijit/themes/tundra/tundra.css' />
+		<script type='text/javascript'>
+			var dojoConfig = {
+				parseOnLoad: true,
+				locale: 'es-es',
+				isDebug: false,
+				usePlainJson: true,
+				packages: [{
+						name: 'pmbBase',
+						location:'../../../..'
+					},{
+						name: 'd3',
+						location:'../../d3'
+					}],
+				deps: ['apps/pmb/MessagesStore', 'dgrowl/dGrowl', 'dojo/ready', 'apps/pmb/ImagesStore'],
+				callback:function(MessagesStore, dGrowl, ready, ImagesStore){
+					window.pmbDojo = {};
+					pmbDojo.messages = new MessagesStore({url:'./ajax.php?module=ajax&categ=messages', directInit:false, lastModified:'1749244574'});
+					pmbDojo.images = new ImagesStore({url:'./ajax.php?module=ajax&categ=images', directInit:false});
+					ready(function(){
+						new dGrowl({'channels':[{'name':'info','pos':2},{'name':'error', 'pos':1}]});
+					});
+
+				},
+			};
+		</script>
+		<script type='text/javascript' src='./includes/javascript/dojo/dojo/dojo.js'></script>
+		<script type='text/javascript'>
+		dojo.addOnLoad(function () {
+			// Ajout du theme Dojo
+			dojo.addClass(dojo.body(),'tundra');
+		})
+		</script>
+		<script type='text/javascript'>
+	var pmb_img_patience = './images/patience.gif';
+</script><script type='text/javascript'>
+			var opac_show_social_network =0;
+		</script>
+	<script type='text/javascript' src='./includes/javascript/http_request.js'></script>
+	
+</head>
+
+<body onload="window.defaultStatus='PMB: Acceso público';"  id="pmbopac">
+		<script type='text/javascript'>
+		function findNoticeElement(id){
+			var ul=null;
+			//cas des notices classiques
+			var domNotice = document.getElementById('el'+id+'Child');
+			//notice_display
+			if(!domNotice) domNotice = document.getElementById('notice');
+			if(domNotice){
+				var uls = domNotice.getElementsByTagName('ul');
+				for (var i=0 ; i<uls.length ; i++){
+					if(uls[i].getAttribute('id') == 'onglets_isbd_public'+id){
+						var ul = uls[i];
+						break;
+					}
+				}
+			} else{
+				var li = document.getElementById('onglet_isbd'+id);
+				if(!li) var li = document.getElementById('onglet_public'+id);
+				if(!li) var li = document.getElementById('onglet_detail'+id);
+				if(li) var ul = li.parentNode;
+			}
+			return ul;
+		}
+		function show_what(quoi, id) {
+			switch(quoi){
+				case 'EXPL_LOC' :
+					document.getElementById('div_expl_loc' + id).style.display = 'block';
+					document.getElementById('div_expl' + id).style.display = 'none';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_inactive';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_active';
+					break;
+				case 'EXPL' :
+					document.getElementById('div_expl_loc' + id).style.display = 'none';
+					document.getElementById('div_expl' + id).style.display = 'block';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_active';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_inactive';
+					break;
+				default :
+					quoi= quoi.toLowerCase();
+					var ul = findNoticeElement(id);
+					if (ul) {
+						var items  = ul.getElementsByTagName('li');
+						for (var i=0 ; i<items.length ; i++){
+							if(items[i].getAttribute('id')){
+								if(items[i].getAttribute('id') == 'onglet_'+quoi+id){
+									items[i].className = 'isbd_public_active';
+									document.getElementById('div_'+quoi+id).style.display = 'block';
+								}else{
+									if(items[i].className != 'onglet_tags' && items[i].className != 'onglet_avis' && items[i].className != 'onglet_sugg' && items[i].className != 'onglet_basket' && items[i].className != 'onglet_liste_lecture'){
+										items[i].className = 'isbd_public_inactive';
+										document.getElementById(items[i].getAttribute('id').replace('onglet','div')).style.display = 'none';
+									}
+								}
+							}
+						}
+					}
+					break;
+			}
+		}
+		</script>
+	<script type='text/javascript' src='./includes/javascript/tablist_ajax.js'></script>
+<script type='text/javascript' src='./includes/javascript/tablist.js'></script>
+<script type='text/javascript' src='./includes/javascript/misc.js'></script>
+	<div id='att' style='z-Index:1000'></div>
+	<div id="container"><div id="main"><div id='main_header'></div><div id="main_hors_footer">
+						
+
+<script type='text/javascript' src='./includes/javascript/auth_popup.js'></script>
+<script type='text/javascript' src='./includes/javascript/pnb.js'></script><div id="intro_message"><div class="p2"></div></div><div id='navigator'>
+<table style='width:100%'><tr><td class='navig_actions_first_screen' ><a href="./index.php?lvl=index" class='navig_etageres'><span>New search</span></a></td>
+<td class='navig_empr_bt_show_compte' ><a href="./empr.php" class='navig_etageres'><span>Su cuenta</span></a></td>
+</tr></table></div><!-- fermeture de #navigator -->
+<div id='resume_panier' class='empty'></div><script type='text/javascript' src='./includes/javascript/misc.js'></script><script type='text/javascript'>
+	var terms=new Array('cien','anos','soledad');
+	var terms_litteraux=new Array('cien anos de soledad');
+	if (!codes) {
+		var codes = {};
+	}
+
+	function remplacer_carac(mot) {
+		var x;
+		var reg;				
+		var chaine=mot;
+			reg=new RegExp(codes['a'], 'g');
+	chaine=chaine.replace(reg, 'a');
+	reg=new RegExp(codes['A'], 'g');
+	chaine=chaine.replace(reg, 'A');
+	reg=new RegExp(codes['c'], 'g');
+	chaine=chaine.replace(reg, 'c');
+	reg=new RegExp(codes['C'], 'g');
+	chaine=chaine.replace(reg, 'C');
+	reg=new RegExp(codes['e'], 'g');
+	chaine=chaine.replace(reg, 'e');
+	reg=new RegExp(codes['E'], 'g');
+	chaine=chaine.replace(reg, 'E');
+	reg=new RegExp(codes['i'], 'g');
+	chaine=chaine.replace(reg, 'i');
+	reg=new RegExp(codes['I'], 'g');
+	chaine=chaine.replace(reg, 'I');
+	reg=new RegExp(codes['n'], 'g');
+	chaine=chaine.replace(reg, 'n');
+	reg=new RegExp(codes['N'], 'g');
+	chaine=chaine.replace(reg, 'N');
+	reg=new RegExp(codes['o'], 'g');
+	chaine=chaine.replace(reg, 'o');
+	reg=new RegExp(codes['O'], 'g');
+	chaine=chaine.replace(reg, 'O');
+	reg=new RegExp(codes['u'], 'g');
+	chaine=chaine.replace(reg, 'u');
+	reg=new RegExp(codes['U'], 'g');
+	chaine=chaine.replace(reg, 'U');
+		
+		return(chaine);		
+	}
+</script><script type='text/javascript' src='./temp/surligner_codes.js'></script><script type='text/javascript' src='./includes/javascript/surligner.js'></script>
+<script type='text/javascript'>
+<!--
+	function test_form(form)
+	{
+
+		return true;
+	}
+-->
+</script><div id='search'><ul class='search_tabs'><li id='current'><a href="./index.php?search_type_asked=simple_search">Búsqueda simple</a></li><li ><a href="./index.php?search_type_asked=extended_search">Búsqueda avanzada</a></li></ul><div id='search_crl'></div><div class='row'>
+		<form name='search_input' action='./index.php?lvl=search_result' method='post' onSubmit="if (search_input.user_query.value.length == 0) { search_input.user_query.value='*'; return true; }">
+			
+			
+			<br />
+			<input type='hidden' name='surligne' value=''/>
+					<input type='text' name='user_query' id='user_query_lib' class='text_query' value="Cien a&ntilde;os de soledad" size='65' />
+<input type='submit' name='ok' value='Buscar' class='boutonrechercher'/>
+<input type='button' value='Ayuda' class='bouton button_search_help' onClick='window.open("./help.php?whatis=simple_search", "search_help", "scrollbars=yes, toolbar=no, dependent=yes, width=400, height=400, resizable=yes"); return false' />
+<div id='simple_search_zone'><div class='row'>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_TITLE' id='look_TITLE' value='1' checked /><label for='look_TITLE'> Títulos </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_AUTHOR' id='look_AUTHOR' value='1'  /><label for='look_AUTHOR'> Autores </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_ALL' id='look_ALL' value='1'   /><label for='look_ALL'> Todos los campos </label></span></div><div style='clear: both;'><input type='hidden' name='look_FIRSTACCESS' value='1' /></div></div></form>
+		<script type='text/javascript' src='./includes/javascript/ajax.js'></script>
+		<script type='text/javascript'>
+
+                if (document.forms['search_input'] && document.forms['search_input'].elements['user_query']) {
+                    document.forms["search_input"].elements["user_query"].focus();
+					
+                }
+		</script></div></div><div id="search_result" >
+<h3><span>resultado de la búsqueda por palabra clave<b>Cien años de soledad</b></span></h3><div class='search_result' id="title" name="title"><strong>Título</strong> 29 resultado(s) <a href="#" onclick="document.forms['search_objects'].submit(); return false;">mostrar&nbsp;<img src='./images/search.gif' style='border:0px' align='absmiddle'/></a><br /><form name="search_objects" action="./index.php?lvl=more_results" method="post">
+<input type="hidden" name="user_query" value="Cien a&ntilde;os de soledad"><input type="hidden" name="mode" value="title"><input type="hidden" name="search_type_asked" value="simple_search"><input type="hidden" name="count" value="29"><input type="hidden" name="typdoc" value="">
+<input type="hidden" name="l_typdoc" value="a,m"></form></div><script>document.getElementById('search_result').style.display='';</script></div>
+		</div><!-- fin DIV main_hors_footer --><div id="footer">
+
+<span id="footer_rss">
+	
+</span>
+<span id="footer_link_sup">
+		<a href='https://biblioteca.comfamiliar.com.co/pmb/' target=_blank>Acceder</a> &nbsp;
+</span>
+
+<span id="footer_link_website">
+	<a class="footer_biblio_name" href="https://www.comfamiliar.com.co/opencms/opencms/comfamiliar/Servicios/CCultural/" title="Centro Cultural Comfamiliar Atlántico">Centro Cultural Comfamiliar Atlántico</a> &nbsp;
+</span>
+
+<span id="footer_link_pmb">
+ &nbsp;
+		<a class="lien_pmb_footer" href="https://www.sigb.net" title="una solución libre para la mediateca" target='_blank'>pmb</a>
+</span>
+
+</div> 
+
+		</div><!-- /div id=main -->
+
+		<div id="intro">
+<div id="intro_bibli">
+			<h3>Centro Cultural Comfamiliar Atlántico</h3>
+			<div class="p1"><img src="./styles/genbib/images/image1.jpg" />
+<img src="./styles/genbib/images/image2.jpg" />
+<img src="./styles/genbib/images/image3.jpg" /></div>
+			<div class="p2"></div>
+			</div>
+		</div><!-- /div id=intro -->
+		<div id="bandeau"><!-- $Id: accessibility.tpl.html,v 1.2.4.1 2023/10/02 14:33:32 jparis Exp $ -->
+
+
+<div id="accessibility">
+    	<input type="hidden" id="opacAccessibility" name="opacAccessibility" value="1"/>
+	<ul class="accessibility_font_size">
+		<li class="accessibility_font_size_small">
+			<a href="javascript:accessibilityFontSize(1);" title="Réduire le texte">A-</a>
+		</li>
+		<li class="accessibility_font_size_normal">
+			<a href="javascript:accessibilityFontSize(0);" title="Réinitialiser le texte">A</a>
+		</li>
+		<li class="accessibility_font_size_big">
+			<a href="javascript:accessibilityFontSize(2);" title="Agrandir le texte">A+</a>
+		</li>
+	</ul>
+</div>
+
+
+<script type="text/javascript" src="./includes/javascript/accessibility.js"></script>
+
+
+<div id="accueil">
+
+<h3><span onclick='document.location="./index.php?"' style='cursor: pointer;'>Inicio</span></h3>
+<p class="centered"><a href='./index.php?'><img src='https://extranet.comfamiliar.com.co/extranet/static/images/logo_comfamiliar.png' alt='Inicio'  style='border:0px' class='center'/></a></p>
+
+					</div><!-- fermeture #accueil -->
+<div id="connexion">
+
+			<h3 class="login_invite">Conectarse</h3><div id='login_form'><form action='index.php?lvl=search_result' method='post' name='myform' data-csrf='true'><input type='hidden' name='user_query' value='Cien a&ntilde;os de soledad' /><input type='hidden' name='look_TITLE' value='1' /><input type='hidden' name='look_FIRSTACCESS' value='1' /><input type='hidden' name='surligne' value='' /><input type='hidden' name='ok' value='Buscar' /><label>acceder a su cuenta de usuario</label><br />
+				<input type='text' name='login' class='login' size='14' placeholder='identificador' ><br />
+                <div class='myform-password-text-visually'>
+                    <input type='password' id='myform-password' name='password' class='password' size='8' placeholder='Mot de passe' value=''/>
+                    <button type='button' class='fa fa-eye' id='myform-password-visually' onclick='toggle_password(this, "myform-password");' title='Afficher ou masquer le mot de passe'></button>
+                </div>
+                <input type='hidden' name='force_login' value='1'/>
+				<input type='submit' name='ok' value='ok' class='bouton'></form><a  class='mdp_forgotten' href='./askmdp.php'>Olvidé mi contraseña</a></div>
+
+			</div><!-- fermeture #connexion -->
+<div id="adresse">
+
+		<h3>Dirección</h3>
+
+		<span>
+			Centro Cultural Comfamiliar Atlántico<br />
+			Carrera 54 No. 59-167<br />
+			 Barranquilla<br />
+			Colombia&nbsp;<br />
+			Teléfono 57+5 3853930<br /><span id='opac_biblio_email'>
+			<a href="mailto:biblioteca@comfamiliar.com.co" title="biblioteca@comfamiliar.com.co">contacto</a></span></span>
+	    </div><!-- fermeture #adresse --></div><div id="bandeau_2"></div></div><!-- /div id=container -->
+		
+		<script type='text/javascript'>init_drag();	addLoadEvent(function() {rechercher(1);});</script>
+		
+			<script type="text/javascript">
+				var tarteaucitron_messages = pmbDojo.messages.getMessages("tarteaucitron");
+				if(tarteaucitron_messages.length) {
+					tarteaucitronCustomText = {};
+					tarteaucitron_messages.forEach(function(message) {
+						if(parseInt(message.code.indexOf(":")) !== -1) {
+							let tarteaucitron_messages_group = message.code.split(":");
+							if(typeof tarteaucitronCustomText[tarteaucitron_messages_group[0]] == "undefined") {
+								tarteaucitronCustomText[tarteaucitron_messages_group[0]] = {};
+							}
+							tarteaucitronCustomText[tarteaucitron_messages_group[0]][tarteaucitron_messages_group[1]] = message.message;
+						} else {
+							tarteaucitronCustomText[message.code] = message.message;
+						}
+					});
+				}
+			</script>
+			<script type="text/javascript" src="./includes/javascript/tarteaucitron/tarteaucitron.js"></script>
+		<script type="text/javascript">
+	        tarteaucitron.init({
+	    	  "privacyUrl": "", /* Privacy policy url */
+	
+	    	  "hashtag": "#PhpMyBibli-COOKIECONSENT", /* Open the panel with this hashtag */
+	    	  "cookieName": "PhpMyBibli-COOKIECONSENT", /* Cookie name */
+	    
+	    	  "orientation": "bottom", /* Banner position (top - bottom - popup) */
+	       
+	          "groupServices": true, /* Group services by category */
+	                           
+	    	  "showAlertSmall": false, /* Show the small banner on bottom right */
+	    	  "cookieslist": false, /* Show the cookie list */
+				                           
+	          "closePopup": false, /* Show a close X on the banner */
+	
+	          "showIcon": false, /* Show cookie icon to manage cookies */
+	          "iconSrc": "./images/cookie.png", /* Optionnal: URL or base64 encoded image */
+	          "iconPosition": "BottomRight", /* BottomRight, BottomLeft, TopRight and TopLeft */
+	
+	    	  "adblocker": false, /* Show a Warning if an adblocker is detected */
+	                           
+	          "DenyAllCta" : true, /* Show the deny all button */
+	          "AcceptAllCta" : true, /* Show the accept all button when highPrivacy on */
+	          "highPrivacy": true, /* HIGHLY RECOMMANDED Disable auto consent */
+	                           
+	    	  "handleBrowserDNTRequest": false, /* If Do Not Track == 1, disallow all */
+	
+	    	  "removeCredit": true, /* Remove credit link */
+	    	  "moreInfoLink": false, /* Show more info link */
+	
+	          "useExternalCss": false, /* If false, the tarteaucitron.css file will be loaded */
+	          "useExternalJs": false, /* If false, the tarteaucitron.js file will be loaded */
+				
+	    	  //"cookieDomain": ".my-multisite-domaine.fr", /* Shared cookie for multisite */
+	                          
+	          "readmoreLink": "", /* Change the default readmore link */
+	
+	          "mandatory": true, /* Show a message about mandatory cookies */
+	        });
+ 
+        </script>
+		 <script type="text/javascript">
+        	(tarteaucitron.job = tarteaucitron.job || []).push("gtag");
+        </script>
+		<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-166760593-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-166760593-1');
+</script>
+		</body>
+		</html>
+		

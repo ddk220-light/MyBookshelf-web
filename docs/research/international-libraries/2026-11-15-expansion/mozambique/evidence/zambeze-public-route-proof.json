@@ -1,0 +1,32 @@
+{
+  "source_url": "https://biblioteca.unizambeze.ac.mz/main.d0245fa6a8418d1c.js",
+  "source_metadata": "evidence/zambeze-public-js.json",
+  "note": "Public frontend source identifies unauthenticated public catalog endpoint and parameters. No private/authenticated route requested.",
+  "excerpts": [
+    {
+      "term": "class CatalogoPublicoComponent",
+      "offset": 119858,
+      "excerpt": " return [12, 24, 48];\n};\nconst _c2 = function () {\n  return {\n    width: \"min(960px, 94vw)\"\n  };\n};\nclass CatalogoPublicoComponent {\n  constructor(brandingService, portalService, messageService) {\n    this.brandingService = brandingService;\n    this.portalService = portalService;\n    this.messageService = messageService;\n    this.termo = '';\n    this.livros = [];\n    this.total = 0;\n    this.rows = 12;\n    this.page = 0;\n    this.loading = false;\n    this.detalheVisible = false;\n    this.livroSelecionado = null;\n    this.showAdvancedFilters = true;\n    this.viewMode = 'grid';\n    this.disponibilidade = 'todos';\n    this.ordenacao = 'titulo';\n    this.quickTerms = [{\n      label: 'Novidades',\n      value: ''\n    }, {\n      label: 'Livros disponíveis',\n      value: 'disponivel'\n    }, {\n      label: 'Teses e monografias',\n      value: 'trabalho de fim de curso'\n    }, {\n      label: 'Periódicos',\n      value: 'periodico'\n    }, {\n      label: 'Autores',\n      value: 'autor'\n    }];\n    this.disponibilidadeOptions = [{\n      label: 'Todos os estados',\n      value: 'todos'\n    }, {\n     "
+    },
+    {
+      "term": "pesquisarCatalogo(termo",
+      "offset": 1988552,
+      "excerpt": "CK_IMPORTED_MODULE_0__.environment.baseURL;\n    this.storageKey = 'biblioteca_portal_leitor';\n  }\n  pesquisarCatalogo(termo = '', page = 0, size = 12) {\n    const params = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__.HttpParams().set('termo', termo).set('page', page).set('size', size);\n    return this.http.get(`${this.apiUrl}/public/catalogo`, {\n      params\n    });\n  }\n  detalheLivro(stamp) {\n    return this.http.get(`${this.apiUrl}/public/catalogo/${encodeURIComponent(stamp)}`);\n  }\n  login(codigoLeitor, password) {\n    return this.http.post(`${this.apiUrl}/portal/login`, {\n      codigoLeitor,\n      password\n    });\n  }\n  loginSso(token) {\n    return this.http.post(`${this.apiUrl}/portal/sso`, {\n      token\n    });\n  }\n  leitorAutenticado() {\n    return this.http.get(`${this.apiUrl}/leitor/portal-atual`);\n  }\n  emprestimos(leitorId) {\n    return this.http.get(`${this.apiUrl}/portal/leitores/${leitorId}/emprestimos`);\n  }\n  emprestimosPaginado(leitorId, page = 0, size = 5) {\n    const params = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__.HttpParams().set('page', pa"
+    },
+    {
+      "term": "detalheLivro(stamp)",
+      "offset": 1151961,
+      "excerpt": "get('stamp');\n    if (!stamp) {\n      return;\n    }\n    this.loading = true;\n    this.portalService.detalheLivro(stamp).subscribe({\n      next: livro => {\n        this.livro = livro;\n        this.loading = false;\n        const url = `${window.location.origin}/catalogo/livro/${livro.stamp}`;\n        this.qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(url)}`;\n      },\n      error: () => {\n        this.loading = false;\n        this.livro = null;\n      }\n    });\n  }\n  static #_ = this.ɵfac = function ObraPublicaComponent_Factory(t) {\n    return new (t || ObraPublicaComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_2__[\"ɵɵdirectiveInject\"](src_app_services_branding_service__WEBPACK_IMPORTED_MODULE_0__.BrandingService), _angular_core__WEBPACK_IMPORTED_MODULE_2__[\"ɵɵdirectiveInject\"](_angular_router__WEBPACK_IMPORTED_MODULE_3__.ActivatedRoute), _angular_core__WEBPACK_IMPORTED_MODULE_2__[\"ɵɵdirectiveInject\"](src_app_services_portal_biblioteca_service__WEBPACK_IMPORTED_MODULE_1__.PortalBibliotecaService));\n  };\n  static #_2 = this.ɵcmp = /*@__PURE_"
+    },
+    {
+      "term": "baseURL:",
+      "offset": 2026098,
+      "excerpt": "=> (/* binding */ environment)\n/* harmony export */ });\nconst environment = {\n  production: true,\n  baseURL: 'https://biblioteca.unizambeze.ac.mz/api/v1',\n  enableConsoleLogs: false\n};\n\n/***/ }),\n\n/***/ 4429:\n/*!*********************!*\\\n  !*** ./src/main.ts ***!\n  \\*********************/\n/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {\n\n__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/platform-browser */ 345);\n/* harmony import */ var _app_app_module__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./app/app.module */ 635);\n\n\n_angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__.platformBrowser().bootstrapModule(_app_app_module__WEBPACK_IMPORTED_MODULE_0__.AppModule).catch(err => console.error(err));\n\n/***/ }),\n\n/***/ 1874:\n/*!*************************************************!*\\\n  !*** ./node_modules/jsbarcode/bin/JsBarcode.js ***!\n  \\*************************************************/\n/***/ ((module, __unused_webpack_exports, __webpack_re"
+    },
+    {
+      "term": "const isPublicRequest",
+      "offset": 1912623,
+      "excerpt": "talLoginRequest = request.url.includes('/portal/login') || request.url.includes('/portal/sso');\n    const isPublicRequest = request.url.includes('/public/') || isLoginRequest || isPortalLoginRequest || request.url.includes('/sistema/seguranca/publico') || request.url.includes('/sistema/personalizacao');\n    if (token && !isPublicRequest) {\n      request = request.clone({\n        setHeaders: {\n          Authorization: `Bearer ${token}`\n        }\n      });\n    }\n    return next.handle(request).pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_1__.catchError)(error => {\n      if (error.status === 401 && !isAuthRequest && !isPublicRequest) {\n        window.dispatchEvent(new Event('siga-session-expired'));\n      }\n      return (0,rxjs__WEBPACK_IMPORTED_MODULE_2__.throwError)(() => error);\n    }));\n  }\n  static #_ = this.ɵfac = function TokenInterceptor_Factory(t) {\n    return new (t || TokenInterceptor)(_angular_core__WEBPACK_IMPORTED_MODULE_3__[\"ɵɵinject\"](_services_auth_service__WEBPACK_IMPORTED_MODULE_0__.AuthService), _angular_core__WEBPACK_IMPORTED_MODULE_3__[\"ɵɵinject\"](_angular_router__WEBPACK"
+    }
+  ]
+}

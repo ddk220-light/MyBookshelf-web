@@ -1,0 +1,2258 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: opac-library.tt -->
+
+
+
+
+
+
+
+
+
+<html lang="en" class="no-js">
+<head>
+
+<title
+    >Libraries &rsaquo; National Open University Library catalog</title
+>
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha" />
+<!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="csrf-token" content="03cef09e4736a1f2f047c64fce7fb36f77b9378f,20ebd7022abc5aac4e8e0b82d57895488c7eab4e,1794723151" />
+
+
+<link rel="shortcut icon" href="/opac-tmpl/bootstrap/images/favicon.ico" type="image/x-icon" />
+<link rel="apple-touch-icon" href="/opac-tmpl/bootstrap/images/favicon.ico" type="image/x-icon" />
+
+    
+        
+    
+
+
+    <link href="/opac-tmpl/bootstrap/css/opac_25.0506000.css" rel="stylesheet" type="text/css">
+
+
+
+
+    <link rel="stylesheet" media="print" href="/opac-tmpl/bootstrap/css/print_25.0506000.css" type="text/css">
+
+
+
+
+
+    <link rel="search" type="application/opensearchdescription+xml" href="http://88.99.165.190:80/cgi-bin/koha/opac-search.pl?format=opensearchdescription" title="Search National Open University Library" />
+    <link rel="unapi-server" type="application/xml" title="unAPI" href="http://88.99.165.190:80/cgi-bin/koha/unapi" />
+
+<style> .section_library { margin-top: 1rem; margin-bottom: 1rem; border: 0; border-bottom: 1px solid rgba(0, 0, 0, 0.1); } </style>
+<script>
+    var Koha = {};
+    function _(s) { return s } // dummy function for gettext
+    const is_logged_in = false
+</script>
+
+<script src="/opac-tmpl/bootstrap/js/Gettext_25.0506000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/i18n_25.0506000.js"></script>
+
+<link rel="stylesheet" href="/opac-tmpl/lib/fontawesome/css/fontawesome.min_25.0506000.css" type="text/css">
+<link type="text/css" rel="stylesheet" href="/opac-tmpl/lib/fontawesome/css/brands.min_25.0506000.css">
+<link href="/opac-tmpl/lib/fontawesome/css/solid.min_25.0506000.css" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link id='flipster-css' href='/api/v1/contrib/coverflow/static/jquery-flipster/jquery.flipster.min.css' type='text/css' rel='stylesheet' />
+<style>
+    /* CSS for Koha CoverFlow Plugin 
+       This CSS was added automatically by installing the CoverFlow plugin
+       Please do not modify */
+    .coverflow {
+        height:160px;
+        margin-left:25px;
+        width:850px;
+    }
+
+    .coverflow img,.coverflow .item {
+        -moz-border-radius:10px;
+        -moz-box-shadow:0 5px 5px #777;
+        -o-border-radius:10px;
+        -webkit-border-radius:10px;
+        -webkit-box-shadow:0 5px 5px #777;
+        border-radius:10px;
+        box-shadow:0 5px 5px #777;
+        height:100%;
+        width:100%;
+    }
+
+    .itemTitle {
+        padding-top:30px;
+    }
+
+    .coverflow .selectedItem {
+        -moz-box-shadow:0 4px 10px #0071BC;
+        -webkit-box-shadow:0 4px 10px #0071BC;
+        border:1px solid #0071BC;
+        box-shadow:0 4px 10px #0071BC;
+    }
+    /* End of CSS for Koha CoverFlow Plugin */
+</style>
+    
+
+
+</head>
+
+
+
+
+
+    
+
+
+    
+
+
+
+
+    
+
+<body ID="opac-library" class="branch-default scrollto" >
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<button id="scrolltocontent">Skip to main content</button>
+<!-- prettier-ignore-start -->
+<!-- closed in opac-bottom.inc -->
+<div id="wrapper">
+<!-- prettier-ignore-end -->
+<header id="header-region" class="noprint">
+    <nav class="navbar navbar-expand">
+        <!--div id="logo">
+            <a class="navbar-brand" href="/cgi-bin/koha/opac-main.pl">
+                
+                    National Open University Library
+                
+            </a>
+        </div-->
+        
+            
+                <div id="cartDetails" class="cart-message">Your cart is empty.</div>
+            
+            <ul id="cart-list-nav" class="navbar-nav">
+            <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-main.pl" class="nav-link" title="OPAC Home Page" role="button" aria-label="Home">
+                            <i class="fa fa-home fa-fw fa-icon-noun" aria-hidden="true"></i> <span class="cartlabel">Home</span>
+                        </a>
+                    </li>
+                
+                    <li class="nav-item js-show">
+                        <a href="#" class="nav-link" title="Collect items you are interested in" id="cartmenulink" role="button" aria-label="Cart">
+                            <i id="carticon" class="fa fa-shopping-cart fa-fw fa-icon-noun" aria-hidden="true"></i> <span class="cartlabel">Cart</span> <span id="basketcount"></span>
+                        </a>
+                    </li>
+                
+                <li role="presentation" class="divider-vertical"></li>
+                
+                    
+                        <li class="nav-item dropdown">
+                            <a
+                                href="/cgi-bin/koha/opac-shelves.pl"
+                                title="Show lists"
+                                class="nav-link dropdown-toggle"
+                                id="listsmenu"
+                                data-bs-toggle="dropdown"
+                                role="button"
+                                aria-label="Show dropdown with detailed list information"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                                ><i class="fa fa-list fa-fw fa-icon-noun" aria-hidden="true"></i> <span class="listslabel">Lists</span>
+                            </a>
+                            <div aria-labelledby="listsmenu" role="menu" class="dropdown-menu">
+                                
+                                    <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=1" tabindex="0" role="menuitem"><strong>Public lists</strong></a>
+                                    
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=11&amp;sortfield=title" tabindex="0" role="menuitem"
+                                            >Electronic analog measurements and transducers, Module 4, text with lab summaries /</a
+                                        >
+                                        
+                                        
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=9&amp;sortfield=title" tabindex="0" role="menuitem"
+                                            >LIST OF FRENCH BOOKS</a
+                                        >
+                                        
+                                        
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=4&amp;sortfield=title" tabindex="0" role="menuitem"
+                                            >physics</a
+                                        >
+                                        
+                                        
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=2&amp;sortfield=title" tabindex="0" role="menuitem"
+                                            >General New Arrival</a
+                                        >
+                                        
+                                        
+                                    
+                                    
+                                
+                                
+                                    <div class="dropdown-divider"></div>
+                                
+                                
+                                    <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=0" tabindex="0" role="menuitem"><strong>Your lists</strong></a>
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=add_form" tabindex="0" role="menuitem">Log in to create your own lists</a>
+                                    
+                                
+                            </div>
+                            <!-- / .dropdown-menu -->
+                        </li>
+                        <!-- / .nav-item.dropdown -->
+                    
+                
+                
+            </ul>
+            <!-- / .navbar-nav -->
+        
+        
+            
+            
+            <ul id="members" class="navbar-nav">
+                <li class="nav-item dropdown dropdown-menu-end">
+                    
+                        
+                            
+                                <a href="/cgi-bin/koha/opac-user.pl" class="nav-link login-link loginModal-trigger" aria-label="Log in to your account"
+                                    ><i class="fa fa-sign-in fa-icon-noun fa-fw" aria-hidden="true"></i> <span class="userlabel">Login</span></a
+                                >
+                            
+                        
+                    
+
+                    
+                </li>
+                <!-- Cookie consent button for non logged-in users -->
+                
+                    <li role="presentation" style="display:none" id="cookieConsentDivider" class="divider-vertical" aria-hidden="true"></li>
+                    <li style="display:none" id="cookieConsentLi" class="nav-item" aria-hidden="true">
+                        <a id="cookieConsentButton" href="#" name="Your cookies" class="nav-link" title="View and amend cookies you have consented to" role="button">
+                            <i class="fa fa-cookie-bite fa-fw fa-icon-noun" aria-hidden="true"></i>
+                            <span class="cookieconsentlabel">Your cookies</span>
+                        </a>
+                    </li>
+                
+                
+                    
+                
+            </ul>
+        
+    </nav>
+    <!-- /navbar -->
+
+    
+</header>
+<!-- / header-region -->
+<div class="gradient">
+<h1 id="logo"><a href="/cgi-bin/koha/opac-main.pl">
+                
+                    National Open University Library
+                
+</a></h1>
+</div>
+
+    <div class="container-fluid">
+        
+            <div class="row">
+                <div class="col">
+                    <div id="opac-main-search" class="mastheadsearch">
+                        
+                            <form name="searchform" method="get" action="/cgi-bin/koha/opac-search.pl" id="searchform">
+                                <div class="row gx-2">
+                                    <div class="col-sm-auto order-2 order-sm-2">
+                                        <label for="masthead_search" class="visually-hidden">Search the catalog by:</label>
+                                        <select name="idx" id="masthead_search" class="form-select">
+                                            
+                                                <option value="" data-placeholder="Search the catalog">Library catalog</option>
+                                            
+                                            
+                                                <option value="ti" data-placeholder="Search the catalog by title">Title</option>
+                                            
+                                            
+                                                <option value="au" data-placeholder="Search the catalog by author">Author</option>
+                                            
+                                            
+                                                <option value="su" data-placeholder="Search the catalog by subject">Subject</option>
+                                            
+                                            
+                                                <option value="nb" data-placeholder="Search the catalog by ISBN">ISBN</option>
+                                            
+                                            
+                                                <option value="ns" data-placeholder="Search the catalog by ISSN">ISSN</option>
+                                            
+                                            
+                                                <option value="se" data-placeholder="Search the catalog by series">Series</option>
+                                            
+                                            
+                                                
+                                                    <option value="callnum" data-placeholder="Search the catalog by call number">Call number</option>
+                                                
+                                            
+                                        </select>
+                                    </div>
+                                    <!-- /.col-sm-auto -->
+
+                                    <div class="col order-4 order-sm-3">
+                                        
+                                            <label for="translControl1" class="visually-hidden">Search the catalog</label>
+                                            <input type="text" class="transl1 form-control" id="translControl1" name="q" value="" placeholder="Search the catalog" /><span id="translControl"></span>
+                                        
+                                    </div>
+                                    <!-- /.col -->
+
+                                    
+                                        <div class="col-sm col-md-3 col-lg-2 order-3 order-sm-4">
+                                            <label for="select_library" class="visually-hidden">Search the catalog in:</label>
+                                            <select name="limit" id="select_library" class="form-select">
+                                                <option value="">All libraries</option>
+
+                                                
+                                                    
+                                                        
+                                                            <option value="branch:CR01">  Calabar Study Centre</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:YB01">  Damaturu Study Centre </option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:GM01">  Gombe Study Centre </option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:PL01">  Jos Study Centre </option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:KD01">  Kaduna Study Centre </option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:KT02">  Katsina Study Centre</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:LA01">  Lagos Study Centre </option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:KD03">  NOUN Special Study Centre</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:AB01">  Umudike Study Centre </option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:AK01">  Uyo Study Centre</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:IM01"> Owerri Study Centre </option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:OG01">Abeokuta Study Centre </option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:FC01">Abuja Model Study Centre </option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:ON01">Akure Study Centre </option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:DE01">Asaba Study Centre </option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:AWKA">Awka Study Centre</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:BA02">Bauchi Study Centre</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:ED01">Benin Study Centre </option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:FC05">Dei-De Study Centre</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:EN02">Enugu Study Centre</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:FOA">Faculty of  Arts</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:FOSS">Faculty of  Social Sciences</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:FOE">Faculty of Education</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:FOHS">Faculty of Health Sciences</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:FOL">FACULTY OF LAW LIBRARY</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:MGT">Faculty of Management Science Library</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:FSL">Faculty of Science Library</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:MHQ">Gabriel Afolabi Ojo Central Library (Headquarters).</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:OY01">Ibadan Study Centre</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:IKD01">Ikorodu Study Centre</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:KW01">Ilorin Study Centre </option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:KN01">Kano Study Centre</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:NS01">Lafia Study Centre</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:B001">Maiduguri Study Centre</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:BN01">Makurdi Study Centre</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:LA02">McCarthy Study Centre </option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:NG01">Minna Study Centre</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:NIS01">NOUN Special Study Centre For Immigration Service</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:FC09">NOUN Wuse II Study Centre, Abuja </option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:RV01">Port Harcourt Study Centre Obiri-Ikwere </option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:KN02">Shanono Community Study Centre</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:NS03">Spec. Study Centre Immigration, Gwagwalada, Abuja</option>
+                                                        
+                                                    
+                                                
+                                            </select>
+                                            <!-- /#select_library -->
+                                        </div>
+                                        <!-- /.col-sm-auto -->
+                                    
+
+                                    <div class="order-5 col-sm-auto">
+                                        <button type="submit" id="searchsubmit" class="btn btn-primary" title="Search" aria-label="Search">
+                                            <i class="fa fa-search" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- /.form-row -->
+                                <input type="hidden" name="weight_search" value="1" />
+                            </form>
+                         </div
+                    ><!-- /#opac-main-search -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        
+
+        <div class="row">
+            <ul class="nav" id="moresearches">
+                <li class="nav-item">
+                    <a href="/cgi-bin/koha/opac-search.pl">Advanced search</a>
+                </li>
+                
+                
+                
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-authorities-home.pl">Authority search</a>
+                    </li>
+                
+                
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-showreviews.pl">Recent comments</a>
+                    </li>
+                
+                
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-tags.pl">Tag cloud</a>
+                    </li>
+                
+                
+                
+                
+                
+                
+                    <li class="nav-item">
+                        <a id="library_page" href="/cgi-bin/koha/opac-library.pl">
+                            
+                                <span>Libraries</span>
+                            
+                        </a>
+                    </li>
+                
+                
+    
+
+            </ul>
+            <!-- /.nav#moresearches -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+
+
+
+    <!-- Login form hidden by default, used for modal window -->
+    <div id="loginModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title" id="modalLoginLabel">Log in to your account</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="modalAuth">
+                    <input type="hidden" name="csrf_token" value="03cef09e4736a1f2f047c64fce7fb36f77b9378f,20ebd7022abc5aac4e8e0b82d57895488c7eab4e,1794723151" />
+
+                    <input type="hidden" name="has-search-query" id="has-search-query" value="" />
+                    <div class="modal-body">
+                        
+                        
+                        
+                            
+                            
+                            <input type="hidden" name="koha_login_context" value="opac" />
+                            <fieldset class="brief">
+                                <div class="local-login">
+                                    
+    <label for="muserid">Card number or username:</label>
+<input type="text" id="muserid" name="login_userid" autocomplete="off" /> <label for="mpassword">Password:</label
+                                    ><input type="password" id="mpassword" name="login_password" autocomplete="off" />
+                                    <fieldset class="action">
+                                        <input type="hidden" name="op" value="cud-login" />
+                                        <input type="submit" class="btn btn-primary" value="Log in" />
+                                    </fieldset>
+                                </div>
+                                
+                                
+                                    <div id="forgotpassword-modal" class="forgotpassword">
+                                        <p><a href="/cgi-bin/koha/opac-password-recovery.pl">Forgot your password?</a></p>
+                                    </div>
+                                
+                                
+                            </fieldset>
+                        
+                    </div>
+                </form>
+                <!-- /#auth -->
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /#modalAuth  -->
+
+
+
+
+
+
+
+
+
+
+<main class="main">
+    
+    <nav id="breadcrumbs" aria-label="Breadcrumb" class="breadcrumbs">
+        <ol class="breadcrumb">
+            
+            
+                
+    
+        <li class="breadcrumb-item"> 
+                    <a href="/cgi-bin/koha/opac-main.pl" title="Home">Home</a>
+                 </li>
+    
+
+                <li class="breadcrumb-item active">
+            <a aria-current="page" aria-disabled="true" tabindex="-1"> 
+                <span>Libraries</span>
+             </a>
+        </li>
+            
+        </ol>
+    </nav>
+
+
+    <div class="container-fluid">
+        <div class="row">
+            
+            
+                
+                <div class="col-lg-2">
+                    <div id="navigation"> 
+
+
+    
+    
+        <div id="OpacNav">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><style>
+        #navmenu {
+            background: #f0f3f3;
+            padding: 5px 2px;
+            max-width: 380px; /* Optional constraint to keep it clean in preview */
+        }
+        #navmenulist h4 {
+            background: #00622c; /* Reverted to the original green background */
+            padding: 3px;
+            margin: 0px;
+            text-align: center; /* Center aligns the alert header text */
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #ff1a1a; /* Default to bold red */
+            animation: alertTextBlink 1.2s infinite; /* Blinking animation applied only to text */
+        }
+        
+        /* CSS Keyframes to blink the text color between bright red and white for contrast */
+        @keyframes alertTextBlink {
+            0%, 100% {
+                color: #ff1a1a; /* Bright Bold Red */
+            }
+            50% {
+                color: #ffffff; /* Blinks to white for high readability against the green background */
+            }
+        }
+
+        #navmenulist ul {
+            padding-left: 10px;
+            list-style: none;
+            margin: 0px;
+        }
+        #navmenulist ul li {
+            border-bottom: 2px solid #548300;
+            color: #548300;
+        }
+        #navmenulist ul li a:hover {
+            background-color: #548300;
+            color: #FFF;
+        }
+        #navmenulist ul {
+            padding: 0px 1px;
+        }
+        #navmenulist ul li a {
+            display: block;
+            height: 100%;
+            width: 100%;
+            color: #2d8bbb;
+            text-decoration: none;
+            cursor: pointer;
+            border-bottom: 0px solid #548300;
+            padding: 4px 0px; /* Added small vertical padding for touch/click targets */
+            transition: 0.3s ease all;
+        }
+    </style>
+<div id="navmenu">
+<div id="navmenulist">
+<h4 id="koha-alert-header">Library Resources</h4>
+<ul><!-- Original Resources -->
+<li><a href="https://search.ebscohost.com/" target="_blank" title="Get high-quality articles licensed from reputable publishers recognized by library professionals, chosen to meet the specific needs of researchers." rel="noopener">EBSCOHOST</a></li>
+<li><a href="https://jstor.org" target="_blank" title="Explore the world&rsquo;s knowledge, cultures, and ideas." rel="noopener">JSTOR</a></li>
+<li><a href="https://login.research4life.org/tacsgr1portal_research4life_org/content/agora" target="_blank" title="Explore the world&rsquo;s knowledge, cultures, and ideas." rel="noopener">AGORA</a></li>
+<li><a href="https://login.research4life.org/tacsgr1portal_research4life_org/content/oare in.cshtml" target="_blank" title="Explore the world&rsquo;s knowledge, cultures, and ideas." rel="noopener">OARE</a></li>
+<li><a href="https://login.research4life.org/tacsgr1ardi_research4life_org/" target="_blank" title="Explore the world&rsquo;s knowledge, cultures, and ideas." rel="noopener">ARDI</a></li>
+<li><a href="https://login.research4life.org/tacsgr1portal_research4life_org/content/hinari" target="_blank" title="Explore the world&rsquo;s knowledge, cultures, and ideas." rel="noopener">Hinari</a></li>
+<li><a href="https://www.sciencedirect.com/" target="_blank" title="Explore the world&rsquo;s knowledge, cultures, and ideas." rel="noopener">ScienceDirect</a></li>
+<li><a href="https://www.elibrary.imf.org" target="_blank" title="Explore the world&rsquo;s knowledge, cultures, and ideas." rel="noopener">IMF E-Library (OERDB)</a></li>
+<li><a href="https://oa.mg/" target="_blank" title="Explore the world&rsquo;s knowledge, cultures, and ideas." rel="noopener">OA.MG (OERDB)</a></li>
+<li><a href="https://www.proquest.com/?accountid=194157" target="_blank" title="Explore the world&rsquo;s knowledge, cultures, and ideas." rel="noopener">ProQuest</a></li>
+<li><a href="https://www.scopus.com/" target="_blank" title="Explore the world&rsquo;s knowledge, cultures, and ideas." rel="noopener">SCOPUS</a></li>
+<!-- State/E-Library Resources -->
+<li><a href="https://elibraryusa.state.gov/index.html" target="_blank" title="Access via eLibraryUSA" rel="noopener">Libby, by OverDrive</a></li>
+<li><a href="https://elibraryusa.state.gov/index.html" target="_blank" title="Access via eLibraryUSA" rel="noopener">PressReader</a></li>
+<li><a href="https://elibraryusa.state.gov/index.html" target="_blank" title="Access via eLibraryUSA" rel="noopener">BookFlix</a></li>
+<li><a href="https://elibraryusa.state.gov/index.html" target="_blank" title="Access via eLibraryUSA" rel="noopener">Academic Search Premier</a></li>
+<!-- Law & Speciality Resources -->
+<li><a href="https://plus.lexis.com/" target="_blank" title="Access via Noun Library" rel="noopener">Lexis (Noun Library)</a></li>
+<li><a href="https://primsol.lawpavilion.com/" target="_blank" title="Use account: boluwaseun@noun.edu.ng" rel="noopener">Law Pavilion</a></li>
+</ul>
+</div>
+</div>
+<!-- Fail-safe script to ensure blinking works inside Koha systems -->
+<script type="text/javascript">
+        (function() {
+            var header = document.getElementById('koha-alert-header');
+            if (header) {
+                var isRed = true;
+                setInterval(function() {
+                    if (isRed) {
+                        header.style.setProperty('color', '#ffffff', 'important');
+                    } else {
+                        header.style.setProperty('color', '#ff1a1a', 'important');
+                    }
+                    isRed = !isRed;
+                }, 600); // Toggles color every 600ms to match the CSS speed
+            }
+        })();
+    </script></div>
+                </div>
+            
+        </div>
+    
+
+
+
+
+
+
+ </div>
+                </div>
+            
+
+            <div class="col-10 order-first order-md-first order-lg-2">
+                
+                    <div id="library_info" class="maincontent">
+                        <h1>Libraries</h1>
+                        
+                        
+                            
+                            <div class="section_library" id="section_CR01">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=CR01">   Calabar Study Centre </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Opposite Zone 6 Police Hqtrs (Former Teachers Training College) </div></span><div class="branchcity">
+            <span property="addressLocality">Calabar</span><span property="addressRegion">, Cross River State.</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:07032760885" property="telephone">07032760885</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_YB01">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=YB01">   Damaturu Study Centre  </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1">   Former Amusement Park, Maiduguri Road </div></span><div class="branchcity">
+            <span property="addressLocality">Damaturu</span><span property="addressRegion">, Yobe State.</span>
+                <span property="postalCode">234</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:08037919205" property="telephone">08037919205</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_GM01">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=GM01">   Gombe Study Centre  </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1">  All Saints College, Gombe Federal Low Cost </div><div class="branchaddress2">P.M.B 0163</div></span><div class="branchcity">
+            <span property="addressLocality">Gombe</span><span property="addressRegion">, Gombe  State</span>
+                <span property="postalCode">234</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:07030936665" property="telephone">07030936665</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_PL01">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=PL01">   Jos Study Centre  </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Lomay International Hotel Road, P.M.B.0983, Bukuru Sabon Barki </div></span><div class="branchcity">
+            <span property="addressLocality">Jos</span><span property="addressRegion">, Plateau State</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:09022200559,%2008065650774" property="telephone">09022200559, 08065650774</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_KD01">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=KD01">   Kaduna Study Centre  </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Kaduna Campus (Old NETC) by Trade Fair Complex, KM 4  </div></span><div class="branchcity">
+            <span property="addressLocality">Zaria </span><span property="addressRegion">, Kaduna</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_KT02">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=KT02">   Katsina Study Centre </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> After Katsina State House of Assembly </div></span><div class="branchcity">
+            <span property="addressLocality">Kaita Road</span><span property="addressRegion">, Katsina State</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:08033540469" property="telephone">08033540469</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_LA01">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=LA01">   Lagos Study Centre  </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <div class="branchcity">
+            <span property="addressLocality">Victoria Island</span><span property="addressRegion">,  Lagos State</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:08037779342" property="telephone">08037779342</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_KD03">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=KD03">   NOUN Special Study Centre </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Nigerian Air Force  </div><div class="branchaddress2">Plot 1236, Sapele Street</div></span><div class="branchcity">
+            <span property="addressLocality">Garki II</span><span property="addressRegion">, Abuja, FCT.</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:08023124361" property="telephone">08023124361</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_AB01">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=AB01">   Umudike Study Centre  </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> National Root Crop Institute, P.M.B 7296  </div></span><div class="branchcity">
+            <span property="addressLocality">Umuahia</span><span property="addressRegion">,  Abia State.</span>
+                <span property="postalCode">234</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:07032805515" property="telephone">07032805515</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_AK01">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=AK01">   Uyo Study Centre </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Udo-Udoma Avenue, Opposite 100 Unit Housing Estate, Beside Headquarters 2 Brigade, Nigerian Army </div></span><div class="branchcity">
+            <span property="addressLocality">Uyo</span><span property="addressRegion">, Akwa Ibom State</span></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:08036668264" property="telephone">08036668264</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_IM01">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=IM01">  Owerri Study Centre  </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> No. 63 Okigwe Road </div></span><div class="branchcity">
+            <span property="addressLocality">Owerri</span><span property="addressRegion">, Imo State.</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:08063812465%20" property="telephone">08063812465 </a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_OG01">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=OG01"> Abeokuta Study Centre  </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Opposite NNPC Mega Station </div></span><div class="branchcity">
+            <span property="addressLocality">Abeokuta</span><span property="addressRegion">, Ogun State.</span>
+                <span property="postalCode">234</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:08035921524" property="telephone">08035921524</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_FC01">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=FC01"> Abuja Model Study Centre  </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Dutse-Alhaji, Kubwa Express Way </div></span><div class="branchcity">
+            <span property="addressLocality">Abuja</span><span property="addressRegion">, FCT</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:08036761286,%2008052000000" property="telephone">08036761286, 08052000000</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_ON01">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=ON01"> Akure Study Centre  </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Old NRC Building </div></span><div class="branchcity">
+            <span property="addressLocality"> Idanre </span><span property="addressRegion">, Ondo State</span>
+                <span property="postalCode">234</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:08063105001" property="telephone">08063105001</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_DE01">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=DE01"> Asaba Study Centre  </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Federal College of Education (Technical) </div></span><div class="branchcity">
+            <span property="addressLocality">Asaba</span><span property="addressRegion">,  Delta State</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:08037056993" property="telephone">08037056993</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_AWKA">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=AWKA"> Awka Study Centre </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Akwa </div></span><div class="branchcity">
+            <span property="addressLocality">Akwa</span><span property="addressRegion">, Anambra State</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:08033613301" property="telephone">08033613301</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_BA02">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=BA02"> Bauchi Study Centre </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1">   Former NRC Building, Federal Low Cost Housing Estate </div></span><div class="branchcity">
+            <span property="addressLocality">Bauchi</span><span property="addressRegion">, Bauchi State</span>
+                <span property="postalCode">234</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:08036188434" property="telephone">08036188434</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_ED01">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=ED01"> Benin Study Centre  </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Ekenwa Road, Old SDP Secretariat </div></span><div class="branchcity">
+            <span property="addressLocality">Benin City</span><span property="addressRegion">, Edo State</span>
+                <span property="postalCode">234</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:08035665669" property="telephone">08035665669</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_FC05">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=FC05"> Dei-De Study Centre </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Directorate of Police Education Complex (Beside Mopol Barracks)  </div><div class="branchaddress2">Suleja Express Way, Dei-Dei, Abuja.</div></span><div class="branchcity">
+            <span property="addressLocality">FCT</span><span property="addressRegion">, Abuja</span>
+                <span property="postalCode">90001</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_EN02">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=EN02"> Enugu Study Centre </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> 87/89 Nike-Lake Road </div></span><div class="branchcity">
+            <span property="addressLocality">Enugu</span><span property="addressRegion">, Enugu State.</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:07030729120" property="telephone">07030729120</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_FOA">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=FOA"> Faculty of  Arts </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Abuja </div></span><div class="branchcity">
+            <span property="addressLocality">FCT</span><span property="addressRegion">, Abuja</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_FOSS">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=FOSS"> Faculty of  Social Sciences </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Abuja </div></span><div class="branchcity">
+            <span property="addressLocality">FCT</span><span property="addressRegion">, Abuja</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_FOE">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=FOE"> Faculty of Education </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Abuja </div></span><div class="branchcity">
+            <span property="addressLocality">FCT</span><span property="addressRegion">, Abuja</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_FOHS">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=FOHS"> Faculty of Health Sciences </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Abuja </div></span><div class="branchcity">
+            <span property="addressLocality">FCT</span><span property="addressRegion">, Abuja</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_FOL">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=FOL"> FACULTY OF LAW LIBRARY </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Gaberial Afolabi ojo  Centre Library </div></span><div class="branchcity">
+            <span property="addressLocality">FCT</span><span property="addressRegion">, ABUJA</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:08033557006" property="telephone">08033557006</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_MGT">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=MGT"> Faculty of Management Science Library </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> NOUN </div></span><div class="branchcity">
+            <span property="addressLocality">Abuja, </span><span property="addressRegion">, Federal Capital Territory</span>
+                <span property="postalCode">900211</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:+2349168809957" property="telephone">+2349168809957</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_FSL">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=FSL"> Faculty of Science Library </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> National Open University of Nigeria </div><div class="branchaddress2">University Village Plot 91, Cadastral Zone Nnamdi Azikiwe Ex</div></span><div class="branchcity">
+            <span property="addressLocality">abuja</span><span property="addressRegion">, Nigeria</span>
+                <span property="postalCode">234</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:07063616443" property="telephone">07063616443</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_MHQ">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=MHQ"> Gabriel Afolabi Ojo Central Library (Headquarters). </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> National Open University of Nigeria University Village Plot 91, Cadastral Zone Nnamdi Azikiwe Expressway Jabi. </div></span><div class="branchcity">
+            <span property="addressLocality">Abuja</span><span property="addressRegion">, FCT</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_OY01">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=OY01"> Ibadan Study Centre </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Former Party Secretariat, Faith Clinic Road, Ijokodo Junction, Sango-Eleyele, P.M.B 5061 </div></span><div class="branchcity">
+            <span property="addressLocality">Ibadan</span><span property="addressRegion">, Oyo State</span></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:08037707047" property="telephone">08037707047</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_IKD01">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=IKD01"> Ikorodu Study Centre </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Ikorodu Study Centre Ikorodu Lagos, Lagos Nigeria </div></span> </div>
+    <!-- /div property=address -->
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_KW01">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=KW01"> Ilorin Study Centre  </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Old Party Building, Kulende Housing Estate </div></span><div class="branchcity">
+            <span property="addressLocality"> Ilorin</span><span property="addressRegion">,  Kwara State.</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_KN01">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=KN01"> Kano Study Centre </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress">  </div>
+    <!-- /div property=address -->
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_NS01">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=NS01"> Lafia Study Centre </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Bukan-Sidi, Jos Road </div></span><div class="branchcity">
+            <span property="addressLocality">Lafia</span><span property="addressRegion">, Nasarawa </span>
+                <div property="addressCountry"> Nigeria </div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:08035936950" property="telephone">08035936950</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_B001">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=B001"> Maiduguri Study Centre </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Baga Road, P.O. Box 548, Maiduguri- Mubi Express Way, Borno State </div></span> </div>
+    <!-- /div property=address -->
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_BN01">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=BN01"> Makurdi Study Centre </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Former NDE Office, Opp. Mechanic Village, Kanshio, Markurdi, Benue State </div></span><div class="branchcity">
+            <span property="addressLocality">Makurdi</span><span property="addressRegion">, Benue</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:08036125998" property="telephone">08036125998</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_LA02">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=LA02"> McCarthy Study Centre  </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1">   No. 38/40 McCarthy, Off Obalende Road, Opp. Ghana High Commission </div></span><div class="branchcity">
+            <span property="addressLocality">Victoria Island</span><span property="addressRegion">, Lagos State.</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:08024957468" property="telephone">08024957468</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_NG01">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=NG01"> Minna Study Centre </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> NRC Secretariat, Opp. Mariam Babangida Girls Science College, Bosso, Minna, Niger State </div></span><div class="branchcity">
+            <span property="addressLocality">Minna</span><span property="addressRegion">, Niger</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:08033808321" property="telephone">08033808321</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_NIS01">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=NIS01"> NOUN Special Study Centre For Immigration Service </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Gwagwalada </div></span><div class="branchcity">
+            <span property="addressLocality">FCT</span><span property="addressRegion">, Abuja</span>
+                <span property="postalCode">234</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:08069775991" property="telephone">08069775991</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_FC09">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=FC09"> NOUN Wuse II Study Centre, Abuja  </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> 5 Dares Salaam Off Aminu Kanu Crescent </div></span><div class="branchcity">
+            <span property="addressLocality">Wuse II</span><span property="addressRegion">, Abuja, FCT.</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:07036640610" property="telephone">07036640610</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_RV01">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=RV01"> Port Harcourt Study Centre Obiri-Ikwere  </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Port Harcourt Study Centre Obiri-Ikwere Junction </div><div class="branchaddress2"> NTA/Choba Road, </div></span><div class="branchcity">
+            <span property="addressLocality">Ozuoba</span><span property="addressRegion">, Rivers State</span>
+                <span property="postalCode">234</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:+2349032689336" property="telephone">+2349032689336</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_KN02">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=KN02"> Shanono Community Study Centre </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <div class="branchcity">
+            <span property="addressLocality">kano</span><span property="addressRegion">, Kano State</span>
+                <span property="postalCode">234</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:08036029140" property="telephone">08036029140</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                            
+                            <div class="section_library" id="section_NS03">
+                                <h2 property="name">
+                                    <a href="/cgi-bin/koha/opac-library.pl?branchcode=NS03"> Spec. Study Centre Immigration, Gwagwalada, Abuja </a>
+                                </h2>
+                                
+    <div class="branchaddress" property="address" typeof="PostalAddress"> <span property="streetAddress"><div class="branchaddress1"> Pension Board Office, (Immediately after Atlas Hotel) Secretariat Road, Gwagwalada </div></span><div class="branchcity">
+            <span property="addressLocality">Abuja</span><span property="addressRegion">, FCT</span>
+                <div property="addressCountry"> Nigeria</div></div> </div>
+    <!-- /div property=address -->
+    
+        <p class="branchphone">Phone: <a href="tel:08037790099" property="telephone">08037790099</a></p>
+    
+    
+    
+
+                            </div>
+                        
+                    </div>
+                    <!-- /#library_info -->
+                
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+</main>
+<!-- / .main -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <!-- prettier-ignore-start -->
+    </div> <!-- / #wrapper in masthead.inc -->
+    <!-- prettier-ignore-end -->
+
+    
+        <footer id="changelanguage" class="navbar navbar-expand navbar-light bg-light noprint">
+            <div class="container-fluid">
+                <div class="collapse navbar-collapse">
+                    
+                    
+
+                    <div class="navbar-nav flex-grow-1">
+                        
+
+                        
+                    </div>
+                    
+                        <div class="navbar-nav">
+                            <a id="koha_url" class="nav-link koha_url" href="https://koha-community.org">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                                    <path
+                                        fill="currentColor"
+                                        d="M7.394.75c.82-.45 1.75-.72 2.69-.75.5.015.99.1 1.45.27.92.35 1.68 1.05 2.15 1.9.53.865.76 1.875.87 2.875.25 3.315-.98 6.635-3.07 9.18-.825.82-1.835 1.52-3 1.735-.96.135-2-.07-2.775-.675-.48-.365-.67-1-.63-1.575.425.6 1.12 1.015 1.86 1.035.675.03 1.35-.275 1.8-.765.75-.825.835-2.21.12-3.08-.325-.375-.7-.715-1.15-.95-.44-.265-.95-.38-1.46-.45-.93-.06-1.9.11-2.72.57a3.22 3.22 0 0 0-1.565 2.15c-.2.7-.125 1.43-.05 2.14-.31-.81-.43-1.67-.5-2.53v-.64c.12-3.13 1.43-6.2 3.53-8.515.725-.75 1.53-1.43 2.45-1.92Zm0 0"
+                                        style="stroke-width:.500008"
+                                    />
+                                </svg>
+                                <span class="koha_url_text">Powered by Koha</span>
+                            </a>
+                        </div>
+                    
+                </div>
+                <!-- /.collapse.navbar-collapse -->
+            </div>
+            <!-- /.container-fluid -->
+        </footer>
+        <!-- / #changelanguage -->
+    
+
+
+
+
+<!-- CookieConsentedJS code that may run -->
+
+
+<!-- JavaScript includes -->
+<script src="/opac-tmpl/lib/jquery/jquery-3.6.0.min_25.0506000.js"></script>
+<script src="/opac-tmpl/lib/jquery/jquery-migrate-3.3.2.min_25.0506000.js"></script>
+<script src="/opac-tmpl/lib/bootstrap/js/bootstrap.bundle.min_25.0506000.js"></script>
+<script src="/opac-tmpl/lib/fontfaceobserver/fontfaceobserver.min_25.0506000.js"></script>
+<script src="/opac-tmpl/lib/enquire/enquire.min_25.0506000.js"></script>
+<script>
+    let logged_in_user_id = "";
+</script>
+<script src="/opac-tmpl/bootstrap/js/global_25.0506000.js"></script>
+<script type="module" src="/opac-tmpl/bootstrap/js/form-submit_25.0506000.js"></script>
+
+<script>
+    
+
+    
+    $(".print-large").on("click",function(){
+        window.print();
+        return false;
+    });
+    $(".addtoshelf").on("click",function(e){
+        e.preventDefault();
+        Dopop( this.href );
+    });
+    $("body").on("click", ".addtocart", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        addRecord( biblionumber );
+    });
+    $("body").on("click", ".cartRemove", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        delSingleRecord( biblionumber );
+    });
+</script>
+
+    <script src="/opac-tmpl/bootstrap/js/basket_25.0506000.js"></script>
+
+
+<script src="/opac-tmpl/bootstrap/js/tags_25.0506000.js"></script>
+
+    <script src="/opac-tmpl/bootstrap/js/google-jackets_25.0506000.js"></script>
+
+
+
+
+
+
+
+
+
+<script src="/opac-tmpl/lib/js-cookie/js.cookie-3.0.1.min_25.0506000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/show-password-toggle_25.0506000.js"></script>
+<script>
+    $(document).ready(function () {
+        if ($("#searchsubmit").length) {
+            $(document).on("click", "#searchsubmit", function (e) {
+                Cookies.remove("form_serialized", { path: "/" });
+                Cookies.remove("form_serialized_limits", { path: "/" });
+                Cookies.remove("search_path_code", { path: "/" });
+            });
+        }
+    });
+</script>
+
+
+
+
+<script src="/opac-tmpl/lib/dayjs/dayjs.min_25.0506000.js"></script>
+<script src="/opac-tmpl/lib/dayjs/plugin/timezone_25.0506000.js"></script>
+<script src="/opac-tmpl/lib/dayjs/plugin/utc_25.0506000.js"></script>
+<script>
+    dayjs.extend(window.dayjs_plugin_utc);
+    dayjs.extend(window.dayjs_plugin_timezone);
+</script>
+<!-- js-date-format.inc -->
+<script>
+    (function() {
+        var def_date_format = 'us';
+        var def_time_format = '12hr';
+        var def_tz = 'UTC';
+
+        var get_date_pattern = function(format) {
+            var date_pattern = 'YYYY-MM-DD';
+            if(format == 'us') date_pattern = 'MM/DD/YYYY';
+            if(format == 'metric') date_pattern = 'DD/MM/YYYY';
+            if(format == 'dmydot') date_pattern = 'DD.MM.YYYY';
+            return date_pattern;
+        };
+
+        var get_time_pattern = function(format) {
+            var time_pattern = 'HH:mm';
+            if(format == '12hr') time_pattern = 'hh:mm a';
+            return time_pattern;
+        };
+
+        /*
+         * A JS equivalent of the KohaDates TT Plugin. Passed an rfc3339 formatted date string,
+         * or JS Date, the function will return a date string formatted as per the koha instance config.
+         * Optionally accepts a dateformat parameter to allow override of the configured output format
+         * as well as a 'withtime' boolean denoting whether to include time or not in the output string.
+         */
+        window.$date = function(value, options) {
+            if(!value) return '';
+            var tz = (options&&options.tz)||def_tz;
+            var m = dayjs(value);
+            if ( ! value.match(/^\d{4}-\d{2}-\d{2}$/ ) ) {
+                m = m.tz(tz);
+            }
+
+            var dateformat = (options&&options.dateformat)||def_date_format;
+            var withtime = (options&&options.withtime)||false;
+
+            if(dateformat=='rfc3339' && withtime) return m.format();
+
+            var timeformat = (options&&options.timeformat)||def_time_format;
+            var date_pattern = get_date_pattern(dateformat);
+            var time_pattern = !withtime?'':' '+get_time_pattern(timeformat);
+
+            return m.format(date_pattern+time_pattern);
+        }
+
+        window.$datetime = function(value, options) {
+            options = options||{};
+            options.withtime = true;
+            return $date(value, options);
+        };
+
+        window.$time = function(value, options) {
+            if(!value) return '';
+            var tz = (options&&options.tz)||def_tz;
+            var m = dayjs(value);
+            if(tz) m = m.tz(tz);
+
+            var dateformat = (options&&options.dateformat);
+            var timeformat = (dateformat=='rfc3339'&&'24hr')||(options&&options.timeformat)||def_time_format;
+
+            return m.format(get_time_pattern(timeformat)+(dateformat=='rfc3339'?':ss'+(!m.isUTC()?'Z':''):''))+(dateformat=='rfc3339' && m.isUTC()?'Z':'');
+        }
+
+    })();
+</script>
+<!-- / js-date-format.inc -->
+
+
+<script>
+    (function () {
+        /**
+         * Format the biblio response from a Koha RESTful API request.
+         * @param  {Object}  biblio  The biblio json object as returned from the Koha RESTful API
+         * @param  {Object}  config  A configuration object
+         *                           Valid keys are: `link`
+         * @return {string}          The formatted HTML string
+         */
+        window.$biblio_to_html = function (biblio, config) {
+            if (biblio === undefined) {
+                return ""; // empty string for no biblio
+            }
+
+            var title = '<span class="biblio-title">';
+            if (biblio.title != null && biblio.title != "") {
+                title += escape_str(biblio.title);
+            } else {
+                title += _("No title");
+            }
+            title += "</span>";
+
+            // add subtitle
+            if (biblio.subtitle != null && biblio.subtitle != "") {
+                title += ' <span class="biblio-subtitle">' + escape_str(biblio.subtitle) + "</span>";
+            }
+
+            // set title as link
+            if (config && config.link) {
+                if (config.link === "marcdetail") {
+                    title = '<a href="/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                } else if (config.link === "labeled_marc") {
+                    title = '<a href="/cgi-bin/koha/opac-labeledMARCdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                } else if (config.link === "isbd") {
+                    title = '<a href="/cgi-bin/koha/opac-ISBDdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                } else {
+                    title = '<a href="/cgi-bin/koha/opac-detail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                }
+            }
+
+            // add medium
+            if (biblio.medium != null && biblio.medium != "") {
+                title += ' <span class="biblio-medium">' + escape_str(biblio.medium) + "</span>";
+            }
+
+            // add part numbers/names
+            let part_numbers = typeof biblio.part_number === "string" ? biblio.part_number.split("|") : [];
+            let part_names = typeof biblio.part_name === "string" ? biblio.part_name.split("|") : [];
+            let i = 0;
+            while (part_numbers[i] || part_names[i]) {
+                if (part_numbers[i]) {
+                    title += ' <span class="part-number">' + escape_str(part_numbers[i]) + "</span>";
+                }
+                if (part_names[i]) {
+                    title += ' <span class="part-name">' + escape_str(part_names[i]) + "</span>";
+                }
+                i++;
+            }
+
+            return title;
+        };
+    })();
+</script>
+
+
+
+
+    <script>
+          var _paq = window._paq = window._paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//koha.nou.edu.ng:8282/";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '2']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+    </script>
+
+
+
+
+
+
+        <script src="/api/v1/contrib/coverflow/static/jquery-flipster/jquery.flipster.min.js"></script>
+        <script>$(document).ready(function(){$('#coverflow').load("/api/v1/contrib/coverflow/reports/7",function(){$('.koha-coverflow img').on("load",function(){if(this.naturalHeight==1){$(this).attr("src","https://raw.githubusercontent.com/bywatersolutions/web-assets/master/NoImage.png");}});var opt={'items':'.item','minfactor':15,'distribution':1.5,'scalethreshold':0,'staticbelowthreshold':false,'titleclass':'itemTitle','selectedclass':'selectedItem','scrollactive':true,'step':{'limit':4,'width':10,'scale':true}};$('#coverflow').flipster({});});});
+</script>
+    
+
+    <script>
+    var defaultSearch="koha";
+    </script>
+    <script src="/plugin/Koha/Plugin/EDS/js/EDSScript.js">
+    </script>
+    
+</body>
+<!-- prettier-ignore-start -->
+</html>
+<!-- prettier-ignore-end -->
+
+

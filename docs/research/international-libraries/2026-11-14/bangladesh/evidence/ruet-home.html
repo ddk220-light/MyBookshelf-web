@@ -1,0 +1,503 @@
+<!-- Jquery -->
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+
+
+    <!-- Custom-Stylesheets for the Page-->
+    <link rel="stylesheet" type="text/css" href="https://library.ruet.ac.bd/css/app.css">
+
+    <link rel="stylesheet" type="text/css" href="https://library.ruet.ac.bd/css/home.css">
+
+    <title>Central Library-RUET</title>
+</head>
+
+<body>
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous">
+    </script>
+
+    <!-- JQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/8d2ff8b906.js" crossorigin="anonymous"></script>
+
+    <!-- Nav Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white p-2 mb-2"> <!-- shadow p-4 mb-4 bg-white rounded | shadow p-2 bg-white rounded -->
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="https://library.ruet.ac.bd/imgs/ruet-hd.png" width="50" height="50" alt="RUET">
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <!-- me-auto : ms-auto | style="margin-left: auto" -->
+                    <li class="nav-item">
+                        <a class="nav-link active" id="jq-nav-home" aria-current="page" href="/"><i class="bi bi-house-door"></i> Home</a>
+                    </li>
+
+                    <!-- About Lib -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-info-circle"></i> About Library
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="https://library.ruet.ac.bd/lib/info/mission"><i class="fa-solid fa-bars-staggered"></i> Mission</a></li>
+                            
+                            <li><a class="dropdown-item" href="https://library.ruet.ac.bd/lib/info/vision"><i class="fa-solid fa-bars-staggered"></i> Vision</a></li>
+
+                            <li><a class="dropdown-item" href="https://library.ruet.ac.bd/lib/info/library-committee"> <i class="fa-solid fa-bars-staggered"></i> Library Committe</a></li>
+
+                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#"><i class="fa-solid fa-bars-staggered"></i> Purchase Committe</a></li>
+
+                            <li><a class="dropdown-item" href="https://library.ruet.ac.bd/lib/info/library-staff"><i class="fa-solid fa-bars-staggered"></i> Staff Directory</a></li>
+
+                            <li><a class="dropdown-item" href="https://library.ruet.ac.bd/lib/info/photo-gallery"><i class="fa-solid fa-bars-staggered"></i> Image Gallery</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Lib Rules-->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-scale-balanced"></i> Library Rules
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#"><i class="fa-solid fa-bars-staggered"></i> Access Rules</a></li>
+                            
+                            <li><a class="dropdown-item" href="https://library.ruet.ac.bd/lib/info/membership-process"><i class="fa-solid fa-bars-staggered"></i> Membership Rules</a></li>
+
+                            <li><a class="dropdown-item" href="https://library.ruet.ac.bd/lib/info/borrowing-facilitities"> <i class="fa-solid fa-bars-staggered"></i> Borrowing Rules</a></li>
+
+                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#"><i class="fa-solid fa-bars-staggered"></i> Fine Policy</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Services-->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-brands fa-servicestack"></i> Services
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#"><i class="fa-solid fa-bars-staggered"></i> Membership</a></li>
+                            
+                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#"><i class="fa-solid fa-bars-staggered"></i> Circulation Services</a></li>
+
+                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#"> <i class="fa-solid fa-bars-staggered"></i> Referrence Services</a></li>
+
+                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#"><i class="fa-solid fa-bars-staggered"></i> Repographic Services</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- E-Resources-->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-brands fa-osi"></i> E-Resources
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="https://www.ruet.ac.bd/public/storage/files/library-bas-licob-database_1615271943.pdf"><i class="fa-solid fa-bars-staggered"></i> Li-COB Journals</a></li>
+                            
+                            <li><a class="dropdown-item" href="http://www.udl-ugc.gov.bd/"><i class="fa-solid fa-bars-staggered"></i> UDL Journals</a></li>
+
+                            <li><a class="dropdown-item" href="https://library.ruet.ac.bd/#e-journals"> <i class="fa-solid fa-bars-staggered"></i> Free Journals & Maganzines</a></li>
+
+                            <li><a class="dropdown-item" href="https://library.ruet.ac.bd/#e-books"><i class="fa-solid fa-bars-staggered"></i> Free E-Books</a></li>
+                        </ul>
+                    </li>
+
+                     <!-- Research Support-->
+                     <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-brands fa-searchengin"></i> Research Support
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#"><i class="fa-solid fa-bars-staggered"></i> Mendeley Research Tool</a></li>
+                            
+                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#"><i class="fa-solid fa-bars-staggered"></i> Zotero Research Tool</a></li>
+
+                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#"> <i class="fa-solid fa-bars-staggered"></i> ORCID ID</a></li>
+
+                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#"><i class="fa-solid fa-bars-staggered"></i> Shodhganga ETD</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Important Link-->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-link-45deg"></i> Important Link
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="http://lib.buet.ac.bd/home/"><i class="fa-solid fa-bars-staggered"></i> BUET Library</a></li>
+                            
+                            <li><a class="dropdown-item" href="https://library.kuet.ac.bd/"><i class="fa-solid fa-bars-staggered"></i> KUET Library</a></li>
+
+                            <li><a class="dropdown-item" href="https://libraries.mit.edu/"> <i class="fa-solid fa-bars-staggered"></i> MIT Library</a></li>
+
+                            <li><a class="dropdown-item" href="https://library.harvard.edu/"><i class="fa-solid fa-bars-staggered"></i> Harvard Library</a></li>
+
+                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#"><i class="fa-solid fa-bars-staggered"></i> Library of Congress</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Contact/About Us -->
+                    <li class="nav-item">
+                        <!-- <a class="nav-link" id="jq-nav-home" aria-current="page" href="/ict-cell"><i class="bi bi-headset"></i> Contact Us</a> -->
+                        <a class="nav-link" id="" aria-current="page" href="/lib/info/about-us"><i class="fa-regular fa-hand-spock"></i> About Us</a>
+                    </li>
+
+                </ul>
+                
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <div class="container text-center">
+        <p class="h1 font-monospace">Central Library</p>
+        <p class="fst-italic fw-bold" style="margin-top: -10px;">Rajshahi University of Engineering & Technology (RUET)</p>
+    </div>
+
+    <!-- Search Bar -->
+<div class="container mt-5 mb-4">
+    <form class="d-flex justify-content-center">
+        <!-- Library Catalog -->
+        <select class="form-select bg-light mx-2" style="width: 15%;" id="lib_catalog" name="lib_catalog">
+            <!-- form-control -->
+            <option value="lb" selected>Library Catalog</option>
+            <option value="ti">Title</option>
+            <option value="au">Author</option>
+            <option value="su">Subject</option>
+            <option value="nb">ISBN</option>
+            <option value="ns">ISSN</option>
+            <option value="se">Series</option>
+            <option value="callnum">Call number</option>
+        </select>
+
+        <input class="form-control me-2 w-50" type="search" id="search_bar" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success" type="button" onclick="searchCatalog()"><i class="bi bi-hand-index-thumb"></i> Go</button>
+    </form>
+</div>
+
+<!-- Working Hour -->
+<div class="container mb-3" style="font-size: 12px;">
+    <div class="row">
+        <div class="col-0 col-md-4 d-none d-md-block"></div>
+        <div class="col-12 col-md-4">
+            <table class="table table-sm caption-top border border-dark border-2">
+                <caption><strong><i class="bi bi-smartwatch"></i> Library Hour</strong></caption>
+                <!-- <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Time</th>
+                    </tr>
+                </thead> -->
+                <tbody>
+                    <tr>
+                        <th scope="row">Saturday – Wednesday</th>
+                        <td>09:00 AM - 05:00 PM</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Launch and Prayer Break</th>
+                        <td>01:30 PM - 03:00 PM</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Reference cum Reading Section</th>
+                        <td>08:00 AM - 09:00PM</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Weekly holiday</th>
+                        <td>Thursday & Friday</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Govt. holidays</th>
+                        <td>Closed</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-0 col-md-4 d-none d-md-block"></div>
+    </div>
+</div>
+<!-- SLIDER -->
+<div class="container">
+    <h1 class="display-6 text-center mb-2"><i class="fa-solid fa-book-open-reader"></i> Library Corner</h1>
+
+    <div class="row mt-3">
+        <div class="col-1"></div>
+        <div class="col-10 shadow p-2 mb-2 rounded">
+            <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                </div>
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="https://library.ruet.ac.bd/imgs/bg/sliders/reference-room.jpg" class="d-block w-100" height="400" width="800" alt="ICT-Cell-Concept">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5 class="text-dark">Reference Room</h5>
+                            <!-- <p class="text-white">Libray Message ellaboration</p> -->
+                        </div>
+                    </div>
+
+                    <div class="carousel-item">
+                        <img src="https://library.ruet.ac.bd/imgs/bg/sliders/lib-day-2026.jpg" class="d-block w-100" height="400" width="800" alt="...">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5 class="text-white">Library Day-2026</h5>
+                            <!-- <p class="text-dark">Libray Message ellaboration</p> -->
+                        </div>
+                    </div>
+
+                    <div class="carousel-item">
+                        <img src="https://library.ruet.ac.bd/imgs/bg/sliders/journal-section.jpg" class="d-block w-100" height="400" width="800" alt="...">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5 class="text-white">Journal Section</h5>
+                            <!-- <p class="text-white">The accessibility and availablity is assured.</p> -->
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+        <div class="col-1"></div>
+    </div>
+</div>
+
+<!-- E-Journals -->
+<div class="container bg-light pb-3" id="e-journals" style="margin-top: 30px">
+    <h1 class="display-6 text-center mb-2"><i class="fa-solid fa-book-journal-whills"></i> Subscribed E-Journals</h1>
+
+    <hr />
+    
+    <!-- Journal list -->
+    <div class="d-flex flex-wrap flex-column flex-md-row justify-content-center justify-content-md-start align-items-center align-items-md-stretch gap-2 mt-5">
+        <div class="card" style="width: 17rem;">
+            <img src="https://library.ruet.ac.bd/imgs/lib/logo/e-journals/ieee.png" class="card-img-top" alt="ieee-logo" height="100">
+            <div class="card-body" style="margin-top: -20px;">
+                <hr />
+                <h5 class="card-title text-center fst-italic">IEEE</h5>
+                <a href="http://ieeexplore.ieee.org/" class="btn btn-outline-success w-100">Visit <i class="bi bi-arrow-right-square"></i></a>
+            </div>
+        </div>
+        
+        <div class="card" style="width: 17rem;">
+            <img src="https://library.ruet.ac.bd/imgs/lib/logo/e-journals/emerald.png" class="card-img-top" alt="ieee-logo" height="100">
+            <div class="card-body" style="margin-top: -20px;">
+                <hr />
+                <h5 class="card-title text-center fst-italic">Emerald</h5>
+                <a href="https://www.emerald.com/" class="btn btn-outline-success w-100">Visit <i class="bi bi-arrow-right-square"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- E-Books -->
+<div class="container" id="e-books" style="margin-top: 40px">
+    <h1 class="display-6 text-center mb-2"><i class="fa-solid fa-book-open"></i> Subscribed E-Books</h1>
+    <hr />
+    <!-- Book list -->
+    <div class="d-flex flex-wrap flex-column flex-md-row justify-content-center justify-content-md-between align-items-center align-items-md-stretch gap-2 mt-5">
+
+        <div class="card" style="width: 12rem;">
+            <img src="https://library.ruet.ac.bd/imgs/lib/logo/e-books/sci-direct.png" class="card-img-top" alt="mc-graw-hill-logo" height="100">
+            <div class="card-body" style="margin-top: -20px;">
+                <hr />
+                <h5 class="card-title text-center fst-italic">Elsevie</h5>
+                <a href="https://www.sciencedirect.com/" class="btn btn-outline-success w-100">Visit <i class="bi bi-arrow-right-square"></i></a>
+            </div>
+        </div>
+
+        <div class="card" style="width: 12rem;">
+            <img src="https://library.ruet.ac.bd/imgs/lib/logo/e-books/wiley.png" class="card-img-top" alt="mc-graw-hill-logo" height="100">
+            <div class="card-body" style="margin-top: -20px;">
+                <hr />
+                <h5 class="card-title text-center fst-italic">WILEY</h5>
+                <a href="https://wiley.mindtickle.com/room/5d427031-3018-4732-9282-b43154a0f529" class="btn btn-outline-success w-100">Visit <i class="bi bi-arrow-right-square"></i></a>
+            </div>
+        </div>
+
+        <div class="card" style="width: 12rem;">
+            <img src="https://library.ruet.ac.bd/imgs/lib/logo/e-books/sage.jpg" class="card-img-top" alt="mc-graw-hill-logo" height="100">
+            <div class="card-body" style="margin-top: -20px;">
+                <hr />
+                <h5 class="card-title text-center fst-italic">Sage</h5>
+                <a href="https://search.sagepub.com/" class="btn btn-outline-success w-100">Visit <i class="bi bi-arrow-right-square"></i></a>
+            </div>
+        </div>
+
+        <div class="card" style="width: 12rem;">
+            <img src="https://library.ruet.ac.bd/imgs/lib/logo/e-books/springer.png" class="card-img-top" alt="mc-graw-hill-logo" height="100">
+            <div class="card-body" style="margin-top: -20px;">
+                <hr />
+                <h5 class="card-title text-center fst-italic">Springer Nature</h5>
+                <a href="https://link.springer.com" class="btn btn-outline-success w-100">Visit <i class="bi bi-arrow-right-square"></i></a>
+            </div>
+        </div>
+
+        <div class="card" style="width: 12rem;">
+            <img src="https://library.ruet.ac.bd/imgs/lib/logo/e-books/taylor.jpg" class="card-img-top" alt="taylor-logo" height="100">
+            <div class="card-body" style="margin-top: -20px;">
+                <hr />
+                <h5 class="card-title text-center fst-italic">Taylor & Francis</h5>
+                <a href="https://www.taylorfrancis.com/search?isLicensed=true&key=" class="btn btn-outline-success w-100">Visit <i class="bi bi-arrow-right-square"></i></a>
+            </div>
+        </div>
+
+        <div class="card" style="width: 12rem;">
+            <img src="https://library.ruet.ac.bd/imgs/lib/logo/e-books/mc-graw-hill.png" class="card-img-top" alt="mc-graw-hill-logo" height="100">
+            <div class="card-body" style="margin-top: -20px;">
+                <hr />
+                <h5 class="card-title text-center fst-italic">McGraw Hill</h5>
+                <a href="https://resolver.vitalsource.com/?brand=mcgrawhillindia.vitalsource.com" class="btn btn-outline-success w-100">Visit <i class="bi bi-arrow-right-square"></i></a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+    <!-- Modal for POPup -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"><i class="bi bi-bell-fill"></i> Message from Server</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    The required feature/link is not addded till now in the system.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footers -->
+    <div class="container" style="margin-top: 40px;">
+        <div class="d-flex flex-column flex-md-row justify-content-between">
+            <div>
+                <!-- <p class="h3 text-decoration-underline">Library Contacts</p> -->
+                <p class="h3">Library Contacts</p>
+                <hr/>
+                <p class="h5 fw-bold fst-italic" style="margin-top: 10px;">Md. Mahbubul Alam</p>
+                <p class="h6 fw-bold fst-italic" style="margin-top: -10px;">Librarian(In–Charge)</p>
+                <p style="margin-top: 15px; font-size: 13px;"><i class="bi bi-pin-map-fill"></i> Central Libray (GF), RUET, Rajshahi-6204</p>
+                <p class="contact_items_info"><i class="fa-solid fa-envelope-circle-check"></i> mahbubul@ruet.ac.bd</p>
+                <p class="contact_items_info"><i class="bi bi-telephone-inbound-fill"></i> 750742-3 (Ex-671)</p>
+                <p class="contact_items_info"><i class="bi bi-phone"></i> 01713-228512 | 01765491152</p>
+                <p class="contact_items_info"><i class="bi bi-clock-history"></i> 09:00 AM - 05:00 PM</p>
+            </div>
+
+            <!-- Developer Info -->
+            <div>
+                <p class="h3">IT Support</p>
+                <hr/>
+                <p class="h5 fw-bold fst-italic" style="margin-top: 10px;">Engr. Md. Julfikar Islam</p>
+                <p class="h6 fw-bold fst-italic" style="margin-top: -10px;">Assistant Computer Programmer, ICT Cell</p>
+                <p style="margin-top: 15px; font-size: 13px;"><i class="bi bi-pin-map-fill"></i> Central Computer Center (L-3), RUET, Rajshahi-6204</p>
+                <p class="contact_items_info"><i class="fa-solid fa-envelope-circle-check"></i> julfikar.islam@ictcell.ruet.ac.bd</p>
+                <p class="contact_items_info"><i class="bi bi-telephone-inbound-fill"></i> 2312803</p>
+                <p class="contact_items_info"><i class="bi bi-phone"></i> +8802588867522</p>
+                <p class="contact_items_info"><i class="bi bi-clock-history"></i> 09:00 AM - 05:00 PM</p>
+            </div>
+
+            <!-- Social Media -->
+            <div>
+                <p class="h3">Social Links</p>
+                <hr/>
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <a href="#" class="" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="bi bi-facebook"></i></a>
+                    </div>
+
+                    <div>
+                        <a href="#" class="" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="bi bi-youtube"></i></a>
+                    </div>
+
+                    <div>
+                        <a href="#" class="" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="bi bi-linkedin"></i></a>
+                    </div>
+
+                    <div>
+                        <a href="https://www.ruet.ac.bd/" class=""><i class="bi bi-house-fill"></i></a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Copyright -->
+    <footer class="mt-3">
+        <div class="container text-center">
+            <!-- <hr class="my-4" style="{ border: 5px solid black};"> -->
+            <div class="fw-light fst-italic mb-3">
+                <p class="fw-bold">
+                    ©2026 Copyright: Developed & maintained by ICT Cell, RUET.
+                </p>
+            </div>
+       </div>
+    </footer>
+
+    
+<script type="text/javascript">
+    /*
+    $(document).ready(function () {
+    });
+    */
+
+    // Button event handler
+    function searchCatalog() {
+        var query_param = "";
+        // Opac Search URl
+        var url = "http://centrallibrary.ruet.ac.bd/cgi-bin/koha/opac-search.pl?";
+        var lib_catalog = document.getElementById("lib_catalog").value;
+        var search_item = document.getElementById("search_bar").value;
+
+        search_item = search_item.replaceAll(" ", "+"); //replacing all spaces with + sign
+
+        if (lib_catalog === "lb") {
+            query_param = "q=" + search_item;
+        } else {
+            query_param = "idx=" + lib_catalog + "&q=" + search_item;
+        }
+
+        window.location.href = url + query_param;
+        // alert(url + query_param);
+    }
+</script>
+
+
+</body>
+
+</html>

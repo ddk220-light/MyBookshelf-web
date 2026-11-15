@@ -1,0 +1,3805 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: opac-main.tt -->
+
+
+
+
+
+
+
+
+
+<html lang="en" class="no-js">
+<head>
+
+<title>Chughtai Public Library  catalog</title>
+<link rel="canonical" href="/" />
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha" />
+<!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="csrf-token" content="4e0649f10330d97f41f4257020192b720a464f3e,b95d0195db74de73870a4917b2eb1186f4aeb84d,1794723809" />
+
+
+    <meta name="robots" content="nofollow,noindex" />
+
+<link rel="shortcut icon" href="/opac-tmpl/bootstrap/images/favicon.ico" type="image/x-icon" />
+<link rel="apple-touch-icon" href="/opac-tmpl/bootstrap/images/favicon.ico" type="image/x-icon" />
+
+    
+        
+    
+
+
+    <link type="text/css" href="/opac-tmpl/bootstrap/css/opac_25.0502000.css" rel="stylesheet">
+
+
+    
+    
+        <link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/css/colors.css" />
+    
+
+
+
+    <link href="/opac-tmpl/bootstrap/css/print_25.0502000.css" media="print" type="text/css" rel="stylesheet">
+
+
+    <!-- prettier-ignore-start -->
+    <style>
+
+
+
+#DisplayUrduKeyboard {
+color: black;
+cursor: pointer;
+}
+
+#UrduKeyboard {
+background-color: #E1F5A9;
+height: 130px;
+width: 430px;
+border: 1px solid black;
+border-bottom-left-radius: 20px;
+border-bottom-right-radius: 20px;
+}
+
+#FirstLine, #SecondLine, #ThirdLine, #FourthLine {
+text-align: center;
+height: 30px;
+}
+
+.UrduKey {
+font-size: 16px;
+font-weight: bold;
+color: #ffffff;
+background: #3498db;
+background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
+background-image: -moz-linear-gradient(top, #3498db, #2980b9);
+background-image: -ms-linear-gradient(top, #3498db, #2980b9);
+background-image: -o-linear-gradient(top, #3498db, #2980b9);
+background-image: linear-gradient(to bottom, #3498db, #2980b9);
+-webkit-border-radius: 7;
+-moz-border-radius: 7;
+border-radius: 7px;
+width: 18px;
+height: 20px;
+cursor:pointer;
+display: inline-block;
+text-align: center;
+margin-top: 10px;
+padding: 2px;
+}
+
+.UrduKey:hover {
+background: white;
+color: black;
+width: 22px;
+height: 24px;
+font-size: 18px;
+}
+
+
+.UrduKey:active {
+background: red;
+color: yellow;
+position:relative;
+top:2px;
+}
+
+.UrduKeySpace {
+font-size: 20px;
+color: white;
+background: #3498db;
+background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
+background-image: -moz-linear-gradient(top, #3498db, #2980b9);
+background-image: -ms-linear-gradient(top, #3498db, #2980b9);
+background-image: -o-linear-gradient(top, #3498db, #2980b9);
+background-image: linear-gradient(to bottom, #3498db, #2980b9);
+border:0px solid #4a3a00;
+text-shadow: 0px -1px 1px #222222;
+box-shadow: 0px 4px 0px #2e2300;
+-moz-box-shadow: 0px 4px 0px #2e2300;
+-webkit-box-shadow: 0px 4px 0px #2e2300;
+border-radius: 5px;
+-moz-border-radius: 5px;
+-webkit-border-radius: 5px;
+width: 300px;
+height: 20px;
+cursor:pointer;
+display: inline-block;
+text-align: center;
+margin-top: 10px;
+}
+
+.UrduKeySpace:hover {
+background: white;
+color: black;
+}
+
+
+.UrduKeySpace:active {
+background: red;
+color: yellow;
+position:relative;
+top:2px;
+}
+
+
+#translControl1 {
+
+}
+
+
+
+
+
+@media only screen and (min-width: 1200px) {
+#wrap {width:1180px; margin:0 auto;}
+#header-region {margin:0 20px}
+/*login input full*/
+fieldset input { width:200px;}
+
+/*Căn lề right, left navigation*/
+.row-fluid .span3 {width: 19.5%;}
+.row-fluid .span2 {width: 18%; }
+.row-fluid .span9 {width: 77%; }
+.row-fluid .span10 {width: 79.42%; }
+ 
+/*footer*/
+#drl_footer  {
+padding-top:100px;
+}
+
+.drl_wrap {
+width: 1180px;
+margin: 0 auto;
+text-align: left;
+}
+
+#company-promos {
+margin-bottom: 20px;
+}
+
+#company-promos li {
+background: url(/opac-tmpl/bootstrap/images/company-promos/company_promo_bg_zps43cdcd5c.png) no-repeat 0 0;
+width: 200px;
+padding: 0 10px;
+margin-left: 51px;
+}
+#company-promos li:last-child { margin-right:55px;}
+
+#company-promos li a {
+padding-top: 84px;
+height: 96px;
+}
+#company-promos li a img {
+margin-top: -184px;
+margin-bottom: 10px;
+}
+#company-promos li a strong {
+width: 200px;
+}
+
+}
+ 
+/* ---------------------------------------------------------------------------- */
+@media only screen and (min-width: 768px) and (max-width: 1199px) {
+/*Căn lề right, left navigation*/
+.row-fluid .span3 {overflow: hidden; padding:1px;}
+.row-fluid .span2 {overflow: hidden; padding:1px;}
+/*Căn lề right, left navigation*/
+.row-fluid .span3 {width: 19%;}
+.row-fluid .span2 {width: 18%; }
+.row-fluid .span9 {width: 78%; }
+.row-fluid .span10 {width: 78.42%; }
+
+#drl_trangchu #slider1_container {display:none;}
+
+/*footer */
+#drl_footer  {
+padding-top:100px;
+}
+.drl_wrap {
+width: 100%;
+margin: 0 auto;
+text-align: left;
+}
+
+#company-promos {
+margin-bottom:20px;
+}
+
+#company-promos li {
+background-color:#343436;
+width: 20%;
+margin-left: 4%;
+}
+#company-promos li:last-child {
+margin-right:4%;
+}
+
+#company-promos li a {
+padding:84px 10px 0px 10px;
+height: 96px;
+}
+#company-promos li a img {
+margin-top: -184px;
+margin-bottom: 10px;
+width:100%;
+}
+#company-promos li a strong {
+width: 100%;
+}
+
+
+}
+
+/* ---------------------------------------------------------------------------- */
+@media only screen and (max-width: 767px) {
+#drl_trangchu {display:none;}
+/*footer */
+#drl_footer  {
+padding-top:20px;
+}
+
+#company-promos li {
+background-color:#343436;
+width: 40%;
+margin-left:7%;
+margin-bottom:20px;
+}
+
+#company-promos li a {
+padding: 10px;
+}
+
+#company-promos li a img {
+margin: 10px;
+width:100%;
+}
+#company-promos li a strong {
+width: 100%;
+}
+
+}
+
+/*User for all screen*/
+#drl_footer  {
+float: left;
+width: 100%;
+clear: both;
+display: inline;
+color: #565656;
+background-color:#19191A;
+border-radius:7px;
+}
+
+#company-promos {
+margin: 0 auto;
+float: left;
+display: block;
+}
+
+#company-promos li {
+float: left;
+display: inline;
+text-align: center;
+}
+
+#company-promos li a {
+font-size: 11px;
+color: #BBB;
+display: block;
+}
+#company-promos li a img {
+display: block;
+}
+#company-promos li a strong {
+color: #fff;
+display: block;
+opacity: .9;
+font-size:16px;
+}
+
+#drl_copyright {color: #fff; margin-top:20px;}
+
+/*Màu sắc các header tab trên OPAC*/
+.frontTitle {
+background: #A7C34F;
+width: 100%;
+color: #fff;
+border: solid 10px #A7C34F;box-sizing: border-box;
+font-size: 14px;
+margin-top: 10px;
+border-top-right-radius: 4px; border-top-left-radius: 4px;
+}
+/*Nội dung mấy menu left nav bottom*/
+.drl_nav_content {font-size: 12px; padding:5px 10px;}
+
+/*Trang tin tức mới nhất*/
+/*Daily quote*/
+#daily-quote{ margin-top:10px;}
+#daily-quote h3 {border-top-right-radius: 4px; border-top-left-radius: 4px; padding:9px ; font-size: 14px;background-color: #A7C34F;font-weight:bold; color: #fff; margin-top:0px;}
+#daily-quote div {border: 1px solid #E2E2E2; padding:10px;margin-top:-10px;text-align:justify; }
+/*Tin tức*/
+#news p {text-align:justify !important; font-size: 14px !important;}
+#news img {width:75% ; display: block; margin:10px auto;}
+#news th {background-color: #A7C34F;font-weight:bold; color: #fff;}
+
+/*Trang tin lẻ*/
+#trangtin_title  {align= left; padding:10px; font-size: 14px;color: #000;background-color: #E2E2E2;font-weight:bold; margin-top:10px; border-top-right-radius: 4px; border-top-left-radius: 4px;}
+#trangtin_content {text-align:justify; border: 1px solid #E2E2E2;padding:10px;margin-top:-10px;}
+.trangtin_img { width:75%; display: block; margin:10px auto;}
+
+
+/*Css dành cho slider_OpacmainuserBlock*/
+/* jssor slider thumbnail navigator skin 04 css */                  
+.jssort04 .w, .jssort04 .pav:hover .w {position: absolute; width: 60px;
+height: 40px; border: #0099FF 1px solid;}
+* html .jssort04 .w { width:  62px; height:  42px;}
+.jssort04 .pdn .w, .jssort04 .pav .w {border-style: solid;}
+.jssort04 .c {width: 62px; height: 42px; filter: alpha(opacity=45); opacity: .45;
+transition: opacity .6s;
+-moz-transition: opacity .6s;
+-webkit-transition: opacity .6s;
+-o-transition: opacity .6s;}
+.jssort04 .p:hover .c, .jssort04 .pav .c {
+filter: alpha(opacity=0);opacity: 0;}
+.jssort04 .p:hover .c {
+transition: none;
+-moz-transition: none;
+-webkit-transition: none;
+-o-transition: none;}
+
+#slider1_container .jssort04 {position: absolute; width: 380px; height: 60px; right: 0px; bottom: 0px;}
+#slider1_container #slider1_moving  {cursor: move; position: absolute; left: 0px; top: 0px; width: 629px; height: 300px; overflow: hidden;}
+#slider1_container .slider1_details {position: absolute; width: 250px; height: 210px; top: 20px; left: 10px; text-align: left; line-height: 1.8em; font-size: 12px ;overflow: hidden; color: #FFFFFF;}
+#slider1_container .slider1_details .title{display: block; line-height: 1.2em; text-transform: uppercase; font-size: 2.1em;margin-bottom:10px;}
+#slider1_container .slider1_details .author {display: block; line-height: 1.2em; font-size: 1.8em; margin-bottom:10px; }
+#slider1_container .slider1_details .content {display: block; line-height: 1.2em; font-size: 1.3em; }
+#slider1_container .more_details {position: absolute; bottom: 20px; left:20px;}
+
+#slider1_container .more_details a:hover {text-decoration:underline;}
+#slider1_container .big_images{position: absolute; top: 10px; left: 1px; width: 660px; height: 220px;}
+
+
+/*Menu left navigation */
+.drl_nav_lef_type2 {
+    color: rgb(67, 67, 62);
+    width: 197px;
+    border: solid 1px #E2E2E2;
+    margin: 0px auto;
+}
+.drl_nav_lef_type2_header, .drl_nav_lef_type2_content{
+    color: rgb(67, 67, 62);
+    height: 45px;
+    width: 197px;
+    border-bottom: solid 1px #E2E2E2;
+    list-style: none outside none;
+}
+.drl_nav_lef_type2_header span{
+    color: rgb(255, 255, 255);
+    display: block;
+    height: 17px;
+    left: -10px;
+    position: relative;
+    text-align: left;
+    width: 192px;
+    background: rgba(0, 0, 0, 0) url(/opac-tmpl/bootstrap/images/navheader/1.png) no-repeat scroll 0% 0% / auto padding-box border-box;
+    margin: -7px 0px 0px;
+    outline: rgb(255, 255, 255) none 0px;
+    padding: 13px 10px 20px 20px;
+}
+.drl_nav_lef_type2_content a{
+    color: rgb(67, 67, 62);
+    display: block;
+    height: 17px;
+    left: -10px;
+    position: relative;
+    text-align: left;
+    width: 192px;
+    margin: -6px 0px 0px;
+    outline: rgb(255, 255, 255) none 0px;
+    padding: 15px 10px 20px 20px;
+}
+.drl_nav_lef_type2_content a:hover {
+    color: rgb(255, 255, 255);
+    background: rgba(0, 0, 0, 0) url(/opac-tmpl/bootstrap/images/navheader/1.png) no-repeat scroll -223px 0px / auto padding-box border-box;
+    padding: 13px 10px 20px 20px;
+}
+
+/*Căn chính giữa cho các tab sách sidebar*/
+#drl_opacnavbottom iframe {border:0px; overflow:hidden;margin:0 auto; display:block; width:198px; }
+#drl_opacnavright iframe {border:0px; overflow:hidden;margin:0 auto; display:block; width:213px;}
+/*CSS cho iframe trên opacmainuserblock*/
+#drl_trangchu iframe {border:0px; overflow:hidden;display:block; width:100%;}
+
+/*Màu sắc cho khung SEARCH */
+.mastheadsearch {
+background: #7c9927;
+background: -moz-linear-gradient(top,#7c9927 38%,#698417 100%);
+background: -webkit-gradient(linear,left top,left bottom,color-stop(38%,#7c9927),color-stop(100%,#698417));
+background: -webkit-linear-gradient(top,#7c9927 38%,#698417 100%);
+background: -o-linear-gradient(top,#7c9927 38%,#698417 100%);
+background: -ms-linear-gradient(top,#7c9927 38%,#698417 100%);
+background: linear-gradient(to bottom,#7c9927 38%,#698417 100%);
+}
+
+/*Video css responsive*/
+.responsiveVideoContainer
+{
+    position: relative;
+    padding-bottom: 56.25%;
+    padding-top: 30px; height: 0; overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.responsiveVideoContainer iframe
+{
+    margin-bottom: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+
+
+
+
+opacuserjs
+/*Add dropdown mennu  menu top
+
+$('.container-fluid > .nav').append(' <li class="divider-vertical"></li>');
+$('.container-fluid > .nav').append(' <li class="dropdown" id="drl_dropdown_menu"></li>');
+$('#drl_dropdown_menu').append('<a href="#" class="dropdown-toggle" id="listsmenu" data-toggle="dropdown" role="button"><i class="icon-list icon-white"></i><span class="listslabel">News from Library</span><b class="caret"></b> </a>');
+$('#drl_dropdown_menu').append('<ul aria-labelledby="listsmenu" role="menu" class="dropdown-menu" id="drl_dropdown_menu_ul"> </ul> ');
+$('#drl_dropdown_menu_ul').append(' <li role="presentation"><a href="/tintucmoi.pl?p=library" tabindex="-1" role="menuitem"><strong>News from Tools>News </strong></a></li>');
+$('#drl_dropdown_menu_ul').append(' <li role="presentation"><a href="/trangtin.pl?p=gioithieu" tabindex="-1" role="menuitem"><strong>Giới thiệu về thư viện </strong></a></li>');
+$('#drl_dropdown_menu_ul').append(' <li role="presentation"><a href="/trangtin.pl?p=cauhoihaygap" tabindex="-1" role="menuitem"><strong>Những câu hỏi hay gặp </strong></a></li>');
+
+*/
+/*page background and font*/
+body {
+    background-color: #fff;
+    font-family: sans-serif;
+    font-size: 14px;
+}
+
+/*header background*/
+#opacheader {
+    background-color: #fff;
+    margin-top: 5px;
+}
+
+/*padding around header image*/
+#opacheader img {
+    padding-top:0px;
+    padding-bottom:0px;
+    padding-left:0px;
+}
+
+/*link color*/
+a, a:hover, a:focus {
+    color: #1962A8 !important;
+}
+
+/* center more searches bar */
+#moresearches {
+    text-align: center;
+
+}
+
+/*Change navbar color*/
+.navbar-inverse .navbar-inner {
+    background-image: linear-gradient(to bottom, #1962A8, #1962A8);
+    border-color: #1962A8;
+    background-color: #1962A8;
+}
+
+/*change navbar font to white*/
+.navbar-inverse .brand, .navbar-inverse .nav > li > a, #members a {
+    color: #fff !important;
+}
+
+/*remove black bars from nav bar*/
+.navbar-inverse .divider-vertical {
+    border-left-color: #1962A8;
+    border-right-color: #1962A8;
+}
+
+
+/*searchbox background*/
+.mastheadsearch {
+    background: linear-gradient(to bottom, #1962A8 38%, #1962A8 100%) repeat scroll 0% 0% transparent;
+}
+
+/*search label made white*/
+.mastheadsearch label {
+    color: white;
+}
+
+
+/*Search button color*/
+.btn-primary {
+    color: #000;
+    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.25);
+    background-color: #F2F2EF !important;
+    background-image: linear-gradient(to bottom, #F2F2EF, #F2F2EF) !important;
+}
+
+.no-image { display: none !important; }
+
+a.ebook {
+background: url("http://media.bywatersolutions.com/Model/opac-results-download-ebook.png") no-repeat scroll 5px 5px transparent;
+border: 1px solid #8BC45C;
+border-radius: 5px 5px 5px 5px;
+font-size: 135%;
+font-weight: bold;
+line-height: 175%;
+padding: 4px 4px 4px 25px;
+text-decoration: none;
+}
+
+#daily-quote {
+    border: 1px solid #000000;
+    border-radius: 15px 15px 15px 15px;
+    margin:auto;
+    text-align: center; 
+}
+
+#bib_holds {
+    border: 2px solid #153450;
+    border-radius: 15px 15px 15px 15px;
+    font-weight: bold;
+    padding-left: 10px;
+}
+/* CSS for Koha CoverFlow Plugin 
+   This CSS was added automatically by installing the CoverFlow plugin
+   Please do not modify */
+.coverflow {
+    height:160px;
+    margin-left:25px;
+    width:850px;
+}
+
+.coverflow img,.coverflow .item {
+    -moz-border-radius:10px;
+    -moz-box-shadow:0 5px 5px #777;
+    -o-border-radius:10px;
+    -webkit-border-radius:10px;
+    -webkit-box-shadow:0 5px 5px #777;
+    border-radius:10px;
+    box-shadow:0 5px 5px #777;
+    height:100%;
+    width:100%;
+}
+
+.itemTitle {
+    padding-top:30px;
+}
+
+.coverflow .selectedItem {
+    -moz-box-shadow:0 4px 10px #0071BC;
+    -webkit-box-shadow:0 4px 10px #0071BC;
+    border:1px solid #0071BC;
+    box-shadow:0 4px 10px #0071BC;
+}
+/* End of CSS for Koha CoverFlow Plugin */
+    
+
+/* Hide login box on homepage and center message */
+#login {
+    display: none;
+}
+ 
+div#notloggedin div.first {
+    width: 100%;
+    margin: auto;
+}
+/* --------------------------------------------- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*change navbar color*/
+.navbar-inverse .navbar-inner {
+   background-image: linear-gradient(to bottom,
+#0d8205, #0d8205);
+    border-color: #0d8207;
+    background-color: #0d8207;
+}
+/*Removes Logo */
+#logo {
+display:none;
+}
+/*change navbar font to white*/
+.navbar-inverse .brand, .navbar-inverse .nav > li > a, #members a {
+    color: #ffg !important;
+}
+-primary, .btn, .ebook, .results_summary.online_resources a, .btn-small, #placehold {
+    background-color: #153981 !important;
+    background-image: linear-gradient(to bottom, #22b24c, #22b24c) !important;
+    background-repeat: repeat-x;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25) !important;
+    color: #ffffff !important;
+}
+#opacheader {
+    background-color: white;
+    margin-bottom: 4px;
+    margin-top: 11px;
+}
+.btn-main{
+    margin: 1px;
+    width: 23.8%;
+    padding: 7px 2px;
+    border: none !important;
+    font-size: 11px;
+    font-weight: normal;
+	}
+/*remove black bars from nav bar*/ 
+
+
+    
+
+    
+/* ------- 
+Yellow     f2ab1b
+Blue       1c479a
+Dark Blue  1f3265
+ ------- */
+
+/* ------- header ------- */
+#wrap {
+max-width:1400px;
+margin:0 auto
+}
+
+/* Hide Home button */
+
+.breadcrumb {
+  //display:none;
+}
+
+
+}
+
+
+/* ----------Cart and Lists Color Change---------------- */
+bootstrap.min.css
+.navbar-inverse .brand, .navbar-inverse .nav > li > a {
+  color:#f2ab1b;
+  font-weight:bold;
+}
+
+/* OPAC Log-in Name Color Change
+--------------------------------------------------------*/
+#members a {
+  color:#f2ab1b;
+  font-weight:bold;
+}
+
+/* OPAC Log-in / Log-out Color Change
+--------------------------------------------------------*/
+
+#members a.logout {
+  color:white;
+  padding:0 0.3em;
+}
+
+
+
+/* OPAC Search Icon Color Change
+--------------------------------------------------------*/
+.mastheadsearch label {
+  color:#f2ab1b;
+  font-size:115%;
+  font-weight:bold;
+}
+
+/* hr color change
+--------------------------------------------------------*/
+
+hr {
+height: 1px;
+background-color: #1c479a;
+border: none;
+}
+
+/*--------------Header Link Style---------------------*/
+#contentlist ul {
+margin-bottom : 0;
+}
+#contentlist li {
+display: inline;
+}
+#contentlist li a {
+font-size: 100%;
+color: #ffffff;
+display: inline-block;
+border : 1px solid #1c479a;
+border-bottom-width: 0;
+padding : 5px 15px 5px 15px;
+background-color: #1c479a;
+border-radius : 5px 5px 0 0;
+}
+#contentlist{
+
+}
+
+
+/* OPAC Search Bar Color
+--------------------------------------------------------*/
+
+.mastheadsearch {
+  background:linear-gradient(#1c479a 38%, #1c479a 100%);
+  border-radius:7px;
+  margin:0.5em 0;
+  padding:0.8em;
+}
+
+
+/* Go Button --------------------------------------------- */
+
+.btn-primary {
+  background-color:#1c479a;
+  background-image:linear-gradient(#1c479a, #0e2658);
+  background-repeat:repeat-x;
+  border-color:rgba(0, 0, 0, 0.0980392) rgba(0, 0, 0, 0.0980392) rgba(0, 0, 0, 
+
+0.247059);
+  color:#FFFFFF;
+  text-shadow: 0px 0px 0px #5B84DC;
+}
+
+.btn-primary:hover {
+  background: #4360A1;
+ }
+
+.btn {
+padding:5px 12px;
+font-size:16px;
+margin-top: -1px;
+ }
+
+/*------------OPAC Top------------------------------*/
+.navbar-inverse .navbar-inner {
+  background-color:#1B1B1B;
+  background-image:linear-gradient(#1c479a, #1c479a);
+  background-repeat:repeat-x;
+  border-color:#1c479a;
+}
+
+
+.navbar-inverse .divider-vertical {
+  border-left-color:#1c479a;
+  border-right-color:#1c479a;
+}
+
+/*------------Koha logo colored------------------------------*/
+#logo{
+background:url(/kohaimages/UERM/koha-logo.png)no-repeat scroll center top
+}
+
+/* ------- header ------- */
+#wrap {
+max-width:1400px;
+margin:0 auto
+}
+
+
+/* Scroll Main -----------------------------------------*/
+div.scrollmain {
+max-width:970px;
+    height: 500px;
+    overflow: scroll;
+overflow-y: scroll;
+overflow-x: hidden;
+}
+
+
+/* Scroll Right-----------------------------------------*/
+div.scrollright {
+    max-width: 500px;
+    height: 525px;
+    overflow: scroll;
+overflow-y: scroll;
+overflow-x: hidden;
+}
+
+
+/* Scroll Left -----------------------------------------*/
+div.scrollleft {
+    max-width: 500px;
+    height: 428px;
+    overflow: scroll;
+overflow-y: scroll;
+overflow-x: hidden;
+}
+
+
+/* Scroll Article-----------------------------------------*/
+div.scrollarticle {
+    max-width: 750px;
+    height: 550px;
+    overflow: scroll;
+overflow-y: scroll;
+overflow-x: hidden;
+}
+
+/* --------- Left sidebar nav ------------*/
+.box {
+	border: 1px solid #00226C;
+	margin: 0px;
+	overflow:hidden;
+}
+
+.rounded {
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+}
+
+.box h3 {
+	background: -webkit-linear-gradient(#1c479a,#1c479a); /* For Safari 5.1 to 6.0 
+
+*/
+    background: -o-linear-gradient(#1c479a,#1c479a); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient(#1c479a,#1c479a); /* For Firefox 3.6 to 15 */
+	background: linear-gradient(#1c479a,#1c479a);
+	color:#f2ab1b;
+	margin:0;
+	padding:10px;
+        text-align: center;
+}
+
+.box ul {
+	margin-right:5px;
+	margin-top:10px;
+}
+
+.box ul li:hover {
+        font-weight:bold;
+}
+
+/* Link -------------------------------------- */
+a, a:visited {
+  color:#1c479a;
+}
+
+
+a, a:visited {
+  color:#1c479a;
+}
+
+
+a:hover {
+  font-weight:bold;
+  color:#1c479a;
+}
+
+a.link {
+  color:#1c479a;
+}
+
+.available {
+ color:#1c479a;
+}
+
+
+
+.highlight-front a{ 
+    color: #f2ab1b; 
+ }
+
+/*--------------Header Link Style---------------------*/
+nav ul#head-nav {
+  background:#1c479a;
+  float:right;
+  margin-bottom:1px;
+  min-height:15px;
+  padding:0;
+  width:100%;
+  border-radius:7px;
+}
+nav ul#head-nav ul {
+  background:none;
+  bottom:0;
+  height:0;
+  left:0;
+  padding-top:0;
+  position:absolute;
+  visibility:hidden;
+}
+nav ul#head-nav li {
+  float:left;
+  height:25px;
+  list-style:none;
+  margin:0;
+  padding:9px 15px 0;
+  position:relative;
+  vertical-align:middle;
+  z-index:11;
+}
+nav ul#head-nav li a {
+  color:#FFFFFF !important;
+  font-family:FreeSans, FreeSans, Arial, Helvetica, sans-serif;
+  font-size:11px;
+  letter-spacing:0.5px;
+  padding:5px 0;
+  text-transform:uppercase;
+}
+nav ul#head-nav li a:hover, ul#head-nav a:visited:hover {
+  color:#0e2658;
+  position:relative;
+  text-decoration:none;
+  z-index:11;
+}
+ul#head-nav li a:visited {
+  color:#0e2658;
+}
+nav ul#head-nav li a:active, ul#head-nav li a:visited:active {
+  background:#1c479a;
+  color:#0e2658;
+}
+nav ul#head-nav li.has_current > a {
+}
+nav ul#head-nav li:hover {
+  background:#d2e5ec;
+}
+nav ul#head-nav li:hover ul {
+  color:#0D112E;
+  margin-left:0px;
+  margin-top:10px;
+  visibility:visible;
+  z-index:10;
+}
+nav ul#head-nav ul li {
+  background:#d2e5ec;
+  color:#0e2658;
+  height:auto;
+  margin-bottom:8px;
+  margin-top:-8px;
+  min-width:175px;
+  padding:9px 9px 9px 10px;
+  width:auto;
+  z-index:10;
+}
+nav ul#head-nav ul li:hover {
+  background:#0e2658;
+  visibility:visible;
+}
+nav ul#head-nav ul li a:hover {
+  color:#FFFFFF;
+  visibility:visible;
+}
+nav ul#head-nav ul li:first-child {
+  margin-top:0 !important;
+}
+nav ul#head-nav ul ul li {
+  left:33px;
+  top:-3px;
+  visibility:hidden;
+}
+nav ul#head-nav ul li:hover ul li {
+  visibility:visible;
+}
+nav ul#head-nav ul ul {
+  left:156px;
+  padding-top:0;
+  top:-1px;
+  width:149px;
+}
+nav ul#head-nav ul li:hover ul ul li {
+  visibility:hidden;
+}
+nav ul#head-nav ul ul li:hover ul li {
+  visibility:visible;
+}
+nav ul#head-nav ul ul {
+  left:156px;
+  padding-top:0;
+  top:-1px;
+  width:149px;
+}
+nav ul#head-nav ul ul li:hover ul ul li {
+  visibility:hidden;
+}
+nav ul#head-nav ul ul ul li:hover ul li {
+  visibility:visible;
+}
+nav ul#head-nav ul ul {
+  left:156px;
+  padding-top:0;
+  top:-1px;
+  width:149px;
+}
+nav ul#head-nav ul ul ul li:hover ul ul li {
+  visibility:hidden;
+}
+nav ul#head-nav ul ul ul ul li:hover ul li {
+  visibility:visible;
+}
+nav ul#head-nav ul ul {
+  left:161px;
+  padding-top:0;
+  top:-1px;
+  width:149px;
+}
+
+/*Additonal for header-nav------------------*/
+nav ul#head-nav ul li a {
+  color:#0e2658;
+}
+nav ul#head-nav ul li:hover a {
+  color:#0e2658;
+}
+
+nav ul#head-nav li:hover {
+  color:#0e2658 !important;
+}
+nav ul#head-nav li:hover > a {
+  color:#FFFFFF;
+}
+nav ul#head-nav li:hover ul li > a {
+  color:#0e2658 !important;
+}
+nav ul#head-nav li:hover ul li:hover > a {
+  color:#FFFFFF !important;
+}
+nav ul#head-nav li:hover > a {
+  color:#0e2658 !important;
+}
+
+#contentContainer {
+  width:100%;
+}
+
+/* toggle-button -------------------
+
+.toggle-button {
+  background:transparent;
+  border:1px solid #FFFFFF;
+  border-radius:4px;
+  display:none;
+  margin:9px;
+  padding:8px;
+  position:absolute;
+  right:0;
+
+}
+.toggle-button:focus {
+  outline:0;
+}
+
+.toggle-button {
+  display:block;
+}
+
+.icon {
+  margin:5px auto;
+  width:130px;
+}
+
+.icon-bar {
+  background:#FFFFFF;
+  display:block;
+  height:2px;
+  margin-bottom:3px;
+  width:20px;
+}
+
+
+/*Footer Size --------------------------------------------------*/
+
+.pull-left {
+  font-size:11px;
+}
+
+.pull-right {
+  font-size:11px;
+}
+
+
+/*Left Image Text ---------------*/
+
+.classleft {
+   padding:5px;
+    border: 1px solid #1c479a;
+    background-color: #FFFFFF;
+
+
+   display: block;
+   margin: -15px 0;
+}
+
+ 
+/*Carousel ---------------*/
+.carrouselFrame {
+    background: #0033cc38;
+    border-radius: 8px;
+    margin: 1em 0;
+    overflow: hidden;
+    padding: 1em 0;
+    position: relative;
+}
+
+.carrousel
+{
+    height : 300px;
+}
+
+.loadingDiv
+{
+    background : white;
+    position : absolute;
+    height : 100%;
+    width : 100%;
+    z-index : 2000;
+    top : 0;
+}
+#title-text{
+    color : #f2ab1b;
+}
+.carousel-control,
+.carousel-caption
+{
+    background-color : #1c479a;
+    z-index:1000;
+}
+
+
+
+usel-control,
+.carousel-caption
+{
+    background-color : #1c479a;
+    z-index:1000;
+}
+
+.carousel-caption
+{
+    font-weight : bold;
+    background: #003aa9b5;
+}
+
+a.locked
+{
+    width:100px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#divUrduKeyboardcontainer {
+
+}
+
+#DisplayUrduKeyboard {
+color: black;
+cursor: pointer;
+}
+
+#UrduKeyboard {
+background-color: #E1F5A9;
+height: 130px;
+width: 430px;
+border: 1px solid black;
+border-bottom-left-radius: 20px;
+border-bottom-right-radius: 20px;
+}
+
+#FirstLine, #SecondLine, #ThirdLine, #FourthLine {
+text-align: center;
+height: 30px;
+}
+
+.UrduKey {
+font-size: 16px;
+font-weight: bold;
+color: #ffffff;
+background: #3498db;
+background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
+background-image: -moz-linear-gradient(top, #3498db, #2980b9);
+background-image: -ms-linear-gradient(top, #3498db, #2980b9);
+background-image: -o-linear-gradient(top, #3498db, #2980b9);
+background-image: linear-gradient(to bottom, #3498db, #2980b9);
+-webkit-border-radius: 7;
+-moz-border-radius: 7;
+border-radius: 7px;
+width: 18px;
+height: 20px;
+cursor:pointer;
+display: inline-block;
+text-align: center;
+margin-top: 10px;
+padding: 2px;
+}
+
+.UrduKey:hover {
+background: white;
+color: black;
+width: 22px;
+height: 24px;
+font-size: 18px;
+}
+
+
+.UrduKey:active {
+background: red;
+color: yellow;
+position:relative;
+top:2px;
+}
+
+.UrduKeySpace {
+font-size: 20px;
+color: white;
+background: #3498db;
+background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
+background-image: -moz-linear-gradient(top, #3498db, #2980b9);
+background-image: -ms-linear-gradient(top, #3498db, #2980b9);
+background-image: -o-linear-gradient(top, #3498db, #2980b9);
+background-image: linear-gradient(to bottom, #3498db, #2980b9);
+border:0px solid #4a3a00;
+text-shadow: 0px -1px 1px #222222;
+box-shadow: 0px 4px 0px #2e2300;
+-moz-box-shadow: 0px 4px 0px #2e2300;
+-webkit-box-shadow: 0px 4px 0px #2e2300;
+border-radius: 5px;
+-moz-border-radius: 5px;
+-webkit-border-radius: 5px;
+width: 300px;
+height: 20px;
+cursor:pointer;
+display: inline-block;
+text-align: center;
+margin-top: 10px;
+}
+
+.UrduKeySpace:hover {
+background: white;
+color: black;
+}
+
+
+.UrduKeySpace:active {
+background: red;
+color: yellow;
+position:relative;
+top:2px;
+}
+
+
+#translControl1 {
+
+}
+
+
+
+
+
+@media only screen and (min-width: 1200px) {
+#wrap {width:1180px; margin:0 auto;}
+#header-region {margin:0 20px}
+/*login input full*/
+fieldset input { width:200px;}
+
+/*Căn lề right, left navigation*/
+.row-fluid .span3 {width: 19.5%;}
+.row-fluid .span2 {width: 18%; }
+.row-fluid .span9 {width: 77%; }
+.row-fluid .span10 {width: 79.42%; }
+ 
+/*footer*/
+#drl_footer  {
+padding-top:100px;
+}
+
+.drl_wrap {
+width: 1180px;
+margin: 0 auto;
+text-align: left;
+}
+
+#company-promos {
+margin-bottom: 20px;
+}
+
+#company-promos li {
+background: url(/opac-tmpl/bootstrap/images/company-
+
+promos/company_promo_bg_zps43cdcd5c.png) no-repeat 0 0;
+width: 200px;
+padding: 0 10px;
+margin-left: 51px;
+}
+#company-promos li:last-child { margin-right:55px;}
+
+#company-promos li a {
+padding-top: 84px;
+height: 96px;
+}
+#company-promos li a img {
+margin-top: -184px;
+margin-bottom: 10px;
+}
+#company-promos li a strong {
+width: 200px;
+}
+
+}
+ 
+/* ---------------------------------------------------------------------------- */
+@media only screen and (min-width: 768px) and (max-width: 1199px) {
+/*Căn lề right, left navigation*/
+.row-fluid .span3 {overflow: hidden; padding:1px;}
+.row-fluid .span2 {overflow: hidden; padding:1px;}
+/*Căn lề right, left navigation*/
+.row-fluid .span3 {width: 19%;}
+.row-fluid .span2 {width: 18%; }
+.row-fluid .span9 {width: 78%; }
+.row-fluid .span10 {width: 78.42%; }
+
+#drl_trangchu #slider1_container {display:none;}
+
+/*footer */
+#drl_footer  {
+padding-top:100px;
+}
+.drl_wrap {
+width: 100%;
+margin: 0 auto;
+text-align: left;
+}
+
+#company-promos {
+margin-bottom:20px;
+}
+
+#company-promos li {
+background-color:#343436;
+width: 20%;
+margin-left: 4%;
+}
+#company-promos li:last-child {
+margin-right:4%;
+}
+
+#company-promos li a {
+padding:84px 10px 0px 10px;
+height: 96px;
+}
+#company-promos li a img {
+margin-top: -184px;
+margin-bottom: 10px;
+width:100%;
+}
+#company-promos li a strong {
+width: 100%;
+}
+
+
+}
+
+/* ---------------------------------------------------------------------------- */
+@media only screen and (max-width: 767px) {
+#drl_trangchu {display:none;}
+/*footer */
+#drl_footer  {
+padding-top:20px;
+}
+
+#company-promos li {
+background-color:#343436;
+width: 40%;
+margin-left:7%;
+margin-bottom:20px;
+}
+
+#company-promos li a {
+padding: 10px;
+}
+
+#company-promos li a img {
+margin: 10px;
+width:100%;
+}
+#company-promos li a strong {
+width: 100%;
+}
+
+}
+
+/*User for all screen*/
+#drl_footer  {
+float: left;
+width: 100%;
+clear: both;
+display: inline;
+color: #565656;
+background-color:#19191A;
+border-radius:7px;
+}
+
+#company-promos {
+margin: 0 auto;
+float: left;
+display: block;
+}
+
+#company-promos li {
+float: left;
+display: inline;
+text-align: center;
+}
+
+#company-promos li a {
+font-size: 11px;
+color: #BBB;
+display: block;
+}
+#company-promos li a img {
+display: block;
+}
+#company-promos li a strong {
+color: #fff;
+display: block;
+opacity: .9;
+font-size:16px;
+}
+
+#drl_copyright {color: #fff; margin-top:20px;}
+
+/*Màu sắc các header tab trên OPAC*/
+.frontTitle {
+background: #A7C34F;
+width: 100%;
+color: #fff;
+border: solid 10px #A7C34F;box-sizing: border-box;
+font-size: 14px;
+margin-top: 10px;
+border-top-right-radius: 4px; border-top-left-radius: 4px;
+}
+/*Nội dung mấy menu left nav bottom*/
+.drl_nav_content {font-size: 12px; padding:5px 10px;}
+
+/*Trang tin tức mới nhất*/
+/*Daily quote*/
+#daily-quote{ margin-top:10px;}
+#daily-quote h3 {border-top-right-radius: 4px; border-top-left-radius: 4px; padding:9px 
+
+; font-size: 14px;background-color: #A7C34F;font-weight:bold; color: #fff; margin-
+
+top:0px;}
+#daily-quote div {border: 1px solid #E2E2E2; padding:10px;margin-top:-10px;text-
+
+align:justify; }
+/*Tin tức*/
+#news p {text-align:justify !important; font-size: 14px !important;}
+#news img {width:75% ; display: block; margin:10px auto;}
+#news th {background-color: #A7C34F;font-weight:bold; color: #fff;}
+
+/*Trang tin lẻ*/
+#trangtin_title  {align= left; padding:10px; font-size: 14px;color: #000;background-
+
+color: #E2E2E2;font-weight:bold; margin-top:10px; border-top-right-radius: 4px; 
+
+border-top-left-radius: 4px;}
+#trangtin_content {text-align:justify; border: 1px solid #E2E2E2;padding:10px;margin-
+
+top:-10px;}
+.trangtin_img { width:75%; display: block; margin:10px auto;}
+
+
+/*Css dành cho slider_OpacmainuserBlock*/
+/* jssor slider thumbnail navigator skin 04 css */                  
+.jssort04 .w, .jssort04 .pav:hover .w {position: absolute; width: 60px;
+height: 40px; border: #0099FF 1px solid;}
+* html .jssort04 .w { width:  62px; height:  42px;}
+.jssort04 .pdn .w, .jssort04 .pav .w {border-style: solid;}
+.jssort04 .c {width: 62px; height: 42px; filter: alpha(opacity=45); opacity: .45;
+transition: opacity .6s;
+-moz-transition: opacity .6s;
+-webkit-transition: opacity .6s;
+-o-transition: opacity .6s;}
+.jssort04 .p:hover .c, .jssort04 .pav .c {
+filter: alpha(opacity=0);opacity: 0;}
+.jssort04 .p:hover .c {
+transition: none;
+-moz-transition: none;
+-webkit-transition: none;
+-o-transition: none;}
+
+#slider1_container .jssort04 {position: absolute; width: 380px; height: 60px; right: 
+
+0px; bottom: 0px;}
+#slider1_container #slider1_moving  {cursor: move; position: absolute; left: 0px; top: 
+
+0px; width: 629px; height: 300px; overflow: hidden;}
+#slider1_container .slider1_details {position: absolute; width: 250px; height: 210px; 
+
+top: 20px; left: 10px; text-align: left; line-height: 1.8em; font-size: 12px ;overflow: 
+
+hidden; color: #FFFFFF;}
+#slider1_container .slider1_details .title{display: block; line-height: 1.2em; text-
+
+transform: uppercase; font-size: 2.1em;margin-bottom:10px;}
+#slider1_container .slider1_details .author {display: block; line-height: 1.2em; font-
+
+size: 1.8em; margin-bottom:10px; }
+#slider1_container .slider1_details .content {display: block; line-height: 1.2em; 
+
+font-size: 1.3em; }
+#slider1_container .more_details {position: absolute; bottom: 20px; left:20px;}
+
+#slider1_container .more_details a:hover {text-decoration:underline;}
+#slider1_container .big_images{position: absolute; top: 10px; left: 1px; width: 660px; 
+
+height: 220px;}
+
+
+/*Menu left navigation */
+.drl_nav_lef_type2 {
+    color: rgb(67, 67, 62);
+    width: 197px;
+    border: solid 1px #E2E2E2;
+    margin: 0px auto;
+}
+.drl_nav_lef_type2_header, .drl_nav_lef_type2_content{
+    color: rgb(67, 67, 62);
+    height: 45px;
+    width: 197px;
+    border-bottom: solid 1px #E2E2E2;
+    list-style: none outside none;
+}
+.drl_nav_lef_type2_header span{
+    color: rgb(255, 255, 255);
+    display: block;
+    height: 17px;
+    left: -10px;
+    position: relative;
+    text-align: left;
+    width: 192px;
+    background: rgba(0, 0, 0, 0) url(/opac-tmpl/bootstrap/images/navheader/1.png) no-
+
+repeat scroll 0% 0% / auto padding-box border-box;
+    margin: -7px 0px 0px;
+    outline: rgb(255, 255, 255) none 0px;
+    padding: 13px 10px 20px 20px;
+}
+.drl_nav_lef_type2_content a{
+    color: rgb(67, 67, 62);
+    display: block;
+    height: 17px;
+    left: -10px;
+    position: relative;
+    text-align: left;
+    width: 192px;
+    margin: -6px 0px 0px;
+    outline: rgb(255, 255, 255) none 0px;
+    padding: 15px 10px 20px 20px;
+}
+.drl_nav_lef_type2_content a:hover {
+    color: rgb(255, 255, 255);
+    background: rgba(0, 0, 0, 0) url(/opac-tmpl/bootstrap/images/navheader/1.png) no-
+
+repeat scroll -223px 0px / auto padding-box border-box;
+    padding: 13px 10px 20px 20px;
+}
+
+/*Căn chính giữa cho các tab sách sidebar*/
+#drl_opacnavbottom iframe {border:0px; overflow:hidden;margin:0 auto; display:block; 
+
+width:198px; }
+#drl_opacnavright iframe {border:0px; overflow:hidden;margin:0 auto; display:block; 
+
+width:213px;}
+/*CSS cho iframe trên opacmainuserblock*/
+#drl_trangchu iframe {border:0px; overflow:hidden;display:block; width:100%;}
+
+/*Màu sắc cho khung SEARCH */
+.mastheadsearch {
+background: #7c9927;
+background: -moz-linear-gradient(top,#7c9927 38%,#698417 100%);
+background: -webkit-gradient(linear,left top,left bottom,color-stop
+
+(38%,#7c9927),color-stop(100%,#698417));
+background: -webkit-linear-gradient(top,#7c9927 38%,#698417 100%);
+background: -o-linear-gradient(top,#7c9927 38%,#698417 100%);
+background: -ms-linear-gradient(top,#7c9927 38%,#698417 100%);
+background: linear-gradient(to bottom,#7c9927 38%,#698417 100%);
+}
+
+/*Video css responsive*/
+.responsiveVideoContainer
+{
+    position: relative;
+    padding-bottom: 56.25%;
+    padding-top: 30px; height: 0; overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.responsiveVideoContainer iframe
+{
+    margin-bottom: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+
+
+
+
+opacuserjs
+/*Add dropdown mennu  menu top
+
+$('.container-fluid > .nav').append(' <li class="divider-vertical"></li>');
+$('.container-fluid > .nav').append(' <li class="dropdown" 
+
+id="drl_dropdown_menu"></li>');
+$('#drl_dropdown_menu').append('<a href="#" class="dropdown-toggle" id="listsmenu" 
+
+data-toggle="dropdown" role="button"><i class="icon-list icon-white"></i><span 
+
+class="listslabel">News from Library</span><b class="caret"></b> </a>');
+$('#drl_dropdown_menu').append('<ul aria-labelledby="listsmenu" role="menu" 
+
+class="dropdown-menu" id="drl_dropdown_menu_ul"> </ul> ');
+$('#drl_dropdown_menu_ul').append(' <li role="presentation"><a href="/tintucmoi.pl?
+
+p=library" tabindex="-1" role="menuitem"><strong>News from Tools>News 
+
+</strong></a></li>');
+$('#drl_dropdown_menu_ul').append(' <li role="presentation"><a href="/trangtin.pl?
+
+p=gioithieu" tabindex="-1" role="menuitem"><strong>Giới thiệu về thư viện 
+
+</strong></a></li>');
+$('#drl_dropdown_menu_ul').append(' <li role="presentation"><a href="/trangtin.pl?
+
+p=cauhoihaygap" tabindex="-1" role="menuitem"><strong>Những câu hỏi hay gặp 
+
+</strong></a></li>');
+
+*/
+/*page background and font*/
+body {
+    background-color: #fff;
+    font-family: sans-serif;
+    font-size: 14px;
+}
+
+/*header background*/
+#opacheader {
+    background-color: #fff;
+    margin-top: 5px;
+}
+
+/*padding around header image*/
+#opacheader img {
+    padding-top:0px;
+    padding-bottom:0px;
+    padding-left:0px;
+}
+
+/*link color*/
+a, a:hover, a:focus {
+    color: #1962A8 !important;
+}
+
+
+/* center more searches bar */
+#moresearches {
+    text-align: center;
+}
+
+/*Change navbar color*/
+.navbar-inverse .navbar-inner {
+    background-image: linear-gradient(to bottom, #1962A8, #1962A8);
+    border-color: #1962A8;
+    background-color: #1962A8;
+}
+
+/*change navbar font to white*/
+.navbar-inverse .brand, .navbar-inverse .nav > li > a, #members a {
+    color: #fff !important;
+}
+
+/*remove black bars from nav bar*/
+.navbar-inverse .divider-vertical {
+    border-left-color: #1962A8;
+    border-right-color: #1962A8;
+}
+
+
+/*searchbox background*/
+.mastheadsearch {
+    background: linear-gradient(to bottom, #1962A8 38%, #1962A8 100%) repeat scroll 0% 
+
+0% transparent;
+}
+
+/*search label made white*/
+.mastheadsearch label {
+    color: white;
+}
+
+
+/*Search button color*/
+.btn-primary {
+    color: #000;
+    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.25);
+    background-color: #F2F2EF !important;
+    background-image: linear-gradient(to bottom, #F2F2EF, #F2F2EF) !important;
+}
+
+.no-image { display: none !important; }
+
+a.ebook {
+background: url("http://media.bywatersolutions.com/Model/opac-results-download-
+
+ebook.png") no-repeat scroll 5px 5px transparent;
+border: 1px solid #8BC45C;
+border-radius: 5px 5px 5px 5px;
+font-size: 135%;
+font-weight: bold;
+line-height: 175%;
+padding: 4px 4px 4px 25px;
+text-decoration: none;
+}
+
+#daily-quote {
+    border: 1px solid #000000;
+    border-radius: 15px 15px 15px 15px;
+    margin:auto;
+    text-align: center; 
+}
+
+#bib_holds {
+    border: 2px solid #153450;
+    border-radius: 15px 15px 15px 15px;
+    font-weight: bold;
+    padding-left: 10px;
+}
+/* CSS for Koha CoverFlow Plugin 
+   This CSS was added automatically by installing the CoverFlow plugin
+   Please do not modify */
+.coverflow {
+    height:160px;
+    margin-left:25px;
+    width:850px;
+}
+
+.coverflow img,.coverflow .item {
+    -moz-border-radius:10px;
+    -moz-box-shadow:0 5px 5px #777;
+    -o-border-radius:10px;
+    -webkit-border-radius:10px;
+    -webkit-box-shadow:0 5px 5px #777;
+    border-radius:10px;
+    box-shadow:0 5px 5px #777;
+    height:100%;
+    width:100%;
+}
+
+.itemTitle {
+    padding-top:30px;
+}
+
+.coverflow .selectedItem {
+    -moz-box-shadow:0 4px 10px #0071BC;
+    -webkit-box-shadow:0 4px 10px #0071BC;
+    border:1px solid #0071BC;
+    box-shadow:0 4px 10px #0071BC;
+}
+/* End of CSS for Koha CoverFlow Plugin */
+    
+
+/* Hide login box on homepage and center message */
+#login {
+    display: none;
+}
+ 
+div#notloggedin div.first {
+    width: 100%;
+    margin: auto;
+}
+/* --------------------------------------------- */
+
+
+</style>
+    <!-- prettier-ignore-end -->
+
+
+
+
+
+<script>
+    var Koha = {};
+    function _(s) { return s } // dummy function for gettext
+    const is_logged_in = false
+</script>
+
+<script src="/opac-tmpl/bootstrap/js/Gettext_25.0502000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/i18n_25.0502000.js"></script>
+
+<link rel="stylesheet" type="text/css" href="/opac-tmpl/lib/fontawesome/css/fontawesome.min_25.0502000.css">
+<link type="text/css" href="/opac-tmpl/lib/fontawesome/css/brands.min_25.0502000.css" rel="stylesheet">
+<link rel="stylesheet" href="/opac-tmpl/lib/fontawesome/css/solid.min_25.0502000.css" type="text/css">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+
+
+
+    
+
+
+
+
+
+    
+
+<body ID="opac-main" class="branch-default" >
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<button id="scrolltocontent">Skip to main content</button>
+<!-- prettier-ignore-start -->
+<!-- closed in opac-bottom.inc -->
+<div id="wrapper">
+<!-- prettier-ignore-end -->
+<header id="header-region" class="noprint">
+    <nav class="navbar navbar-expand">
+        <div id="logo">
+            <a class="navbar-brand" href="/cgi-bin/koha/opac-main.pl">
+                
+                    Chughtai Public Library 
+                
+            </a>
+        </div>
+        
+            
+                <div id="cartDetails" class="cart-message">Your cart is empty.</div>
+            
+            <ul id="cart-list-nav" class="navbar-nav">
+                
+                    <li class="nav-item js-show">
+                        <a href="#" class="nav-link" title="Collect items you are interested in" id="cartmenulink" role="button" aria-label="Cart">
+                            <i id="carticon" class="fa fa-shopping-cart fa-fw fa-icon-black" aria-hidden="true"></i> <span class="cartlabel">Cart</span> <span id="basketcount"></span>
+                        </a>
+                    </li>
+                
+                <li class="divider-vertical"></li>
+                
+                    
+                        <li class="nav-item dropdown">
+                            <a
+                                href="/cgi-bin/koha/opac-shelves.pl"
+                                title="Show lists"
+                                class="nav-link dropdown-toggle"
+                                id="listsmenu"
+                                data-bs-toggle="dropdown"
+                                role="button"
+                                aria-label="Show dropdown with detailed list information"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                                ><i class="fa fa-list fa-fw fa-icon-black" aria-hidden="true"></i> <span class="listslabel">Lists</span>
+                            </a>
+                            <div aria-labelledby="listsmenu" role="menu" class="dropdown-menu">
+                                
+                                    <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=1" tabindex="0" role="menuitem"><strong>Public lists</strong></a>
+                                    
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=4&amp;sortfield=title" tabindex="0" role="menuitem"
+                                            >Contents of New Arrivals</a
+                                        >
+                                        
+                                        
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=5&amp;sortfield=title" tabindex="0" role="menuitem"
+                                            >Novels</a
+                                        >
+                                        
+                                        
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=6&amp;sortfield=author" tabindex="0" role="menuitem"
+                                            >Literature</a
+                                        >
+                                        
+                                        
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=7&amp;sortfield=title" tabindex="0" role="menuitem"
+                                            >Islamic</a
+                                        >
+                                        
+                                        
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=8&amp;sortfield=title" tabindex="0" role="menuitem"
+                                            >English</a
+                                        >
+                                        
+                                        
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=9&amp;sortfield=title" tabindex="0" role="menuitem"
+                                            >ETC</a
+                                        >
+                                        
+                                        
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=10&amp;sortfield=title" tabindex="0" role="menuitem"
+                                            >Suggested</a
+                                        >
+                                        
+                                        
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=11&amp;sortfield=title" tabindex="0" role="menuitem"
+                                            >Eng ETC</a
+                                        >
+                                        
+                                        
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=12&amp;sortfield=title" tabindex="0" role="menuitem"
+                                            >Iqbal</a
+                                        >
+                                        
+                                        
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=13&amp;sortfield=title" tabindex="0" role="menuitem"
+                                            >Suggest Read</a
+                                        >
+                                        
+                                        
+                                    
+                                        <a class="dropdown-item listmenulink" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=1" tabindex="0" role="menuitem">View all</a>
+                                    
+                                
+                                
+                                
+                            </div>
+                            <!-- / .dropdown-menu -->
+                        </li>
+                        <!-- / .nav-item.dropdown -->
+                    
+                
+                
+            </ul>
+            <!-- / .navbar-nav -->
+        
+        
+            
+            
+            <ul id="members" class="navbar-nav">
+                <li class="nav-item dropdown dropdown-menu-end">
+                    
+
+                    
+                </li>
+                <!-- Cookie consent button for non logged-in users -->
+                
+                    <li style="display:none" id="cookieConsentDivider" class="divider-vertical" aria-hidden="true"></li>
+                    <li style="display:none" id="cookieConsentLi" class="nav-item" aria-hidden="true">
+                        <a id="cookieConsentButton" href="#" name="Your cookies" class="nav-link" title="View and amend cookies you have consented to" role="button">
+                            <i class="fa fa-cookie-bite fa-fw fa-icon-black" aria-hidden="true"></i>
+                            <span class="cookieconsentlabel">Your cookies</span>
+                        </a>
+                    </li>
+                
+                
+                    
+                        <li class="divider-vertical"></li>
+                        <li class="nav-item search_history">
+                            <a class="nav-link" href="/cgi-bin/koha/opac-search-history.pl" title="View your search history">
+                                <i class="fa fa-calendar-days fa-fw fa-icon-black" aria-hidden="true"></i>
+                                <span class="search_history_label">Search history</span>
+                            </a>
+                        </li>
+                    
+                
+            </ul>
+        
+    </nav>
+    <!-- /navbar -->
+
+    
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col"> 
+    
+        <div id="opacheader">
+            
+                <div class="en_item">
+                    
+                    <div class="en_body"><img src="http://122.129.84.203/web.jpg" width="100%" height="100%" alt="header" /> <!-- Một số file cần thiết cho SLIDER đầu tiên giao diện OPAC -->
+<script type="text/javascript" src="/opac-tmpl/bootstrap/js/newjavafile/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/opac-tmpl/bootstrap/js/newjavafile/drl_jssor.js"></script>
+<script type="text/javascript" src="/opac-tmpl/bootstrap/js/newjavafile/drl_jssor.slider.js"></script>
+<script type="text/javascript" src="/opac-tmpl/bootstrap/js/newjavafile/drl_added.js"></script>
+<script type="text/javascript">
+
+function WriteLetter(Letter) {
+textfield = document.getElementById("translControl1");
+textfield.value = textfield.value + Letter;
+}
+
+
+function DisplayUrduKeyboardFunction () {
+x = document.getElementById("UrduKeyboard");
+if (x.style.display == "none") {
+x.style.display = "block";
+}
+else if (x.style.display == "block") {
+x.style.display = "none";
+}
+}
+
+</script>
+<div id="divUrduKeyboardcontainer"><center><span id="DisplayUrduKeyboard" onclick="DisplayUrduKeyboardFunction();"> اردو کى بورڈ</span>
+<div id="UrduKeyboard" style="display: none;">
+<div id="FirstLine">
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ذ</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ڈ</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">د</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">خ</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ح</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">چ</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ج</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ث</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ٹ</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ت</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">پ</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ب</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">آ</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">أ</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ا</div>
+<div class="UrduKey" onclick="WriteLetter2(this.innerHTML);">ّ</div>
+</div>
+<div id="SecondLine">
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ق</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ف</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">غ</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ع</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ظ</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ط</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ض</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ص</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ش</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">س</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ژ</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ز</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ڑ</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ر</div>
+</div>
+<div id="ThirdLine">
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ے</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ي</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ى</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ء</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ھ</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ه</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ؤ</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">و</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ن</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">م</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ل</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">گ</div>
+<div class="UrduKey" onclick="WriteLetter(this.innerHTML);">ک</div>
+</div>
+<div id="FourthLine"><!-- SPACE -->
+<div class="UrduKeySpace" onclick="WriteLetter(' ');">Space</div>
+<!-- BACKSPACE -->
+<div class="UrduKey" onclick="var t=document.getElementById('translControl1'); if(t){t.value=t.value.substring(0,t.value.length-1); t.focus();}">⌫</div>
+</div>
+</div>
+</center></div>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-127590702-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-127590702-1');
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-81673579-3', 'auto');
+  ga('send', 'pageview');
+
+</script></div>
+                </div>
+            
+        </div>
+    
+ </div>
+            </div>
+        </div>
+    
+</header>
+<!-- / header-region -->
+
+
+    <div class="container-fluid">
+        
+            <div class="row">
+                <div class="col">
+                    <div id="opac-main-search" class="mastheadsearch">
+                        
+                            <form name="searchform" method="get" action="/cgi-bin/koha/opac-search.pl" id="searchform">
+                                <div class="row gx-2">
+                                    <div class="col-sm-auto order-2 order-sm-2">
+                                        <label for="masthead_search" class="visually-hidden">Search the catalog by:</label>
+                                        <select name="idx" id="masthead_search" class="form-select">
+                                            
+                                                <option value="" data-placeholder="Search the catalog by keyword">Library catalog</option>
+                                            
+                                            
+                                                <option value="ti" data-placeholder="Search the catalog by title">Title</option>
+                                            
+                                            
+                                                <option value="au" data-placeholder="Search the catalog by author">Author</option>
+                                            
+                                            
+                                                <option value="su" data-placeholder="Search the catalog by subject">Subject</option>
+                                            
+                                            
+                                                <option value="nb" data-placeholder="Search the catalog by ISBN">ISBN</option>
+                                            
+                                            
+                                                <option value="ns" data-placeholder="Search the catalog by ISSN">ISSN</option>
+                                            
+                                            
+                                                <option value="se" data-placeholder="Search the catalog by series">Series</option>
+                                            
+                                            
+                                                
+                                                    <option value="callnum" data-placeholder="Search the catalog by call number">Call number</option>
+                                                
+                                            
+                                        </select>
+                                    </div>
+                                    <!-- /.col-sm-auto -->
+
+                                    <div class="col order-4 order-sm-3">
+                                        
+                                            <label for="translControl1" class="visually-hidden">Search the catalog by keyword</label>
+                                            <input type="text" class="transl1 form-control" id="translControl1" name="q" value="" placeholder="Search the catalog by keyword" /><span id="translControl"></span>
+                                        
+                                    </div>
+                                    <!-- /.col -->
+
+                                    
+                                        <div class="col-sm col-md-3 col-lg-2 order-3 order-sm-4">
+                                            <label for="select_library" class="visually-hidden">Search the catalog in:</label>
+                                            <select name="limit" id="select_library" class="form-select">
+                                                <option value="">All libraries</option>
+
+                                                
+                                                    
+                                                        
+                                                            <option value="branch:Alkitab">Al-Kitab Library</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:17">Alipur Library</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:AT">Attock Library</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:CPL">Central Park Library</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:002">Chughtai Institute of Pathology </option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:001">Chughtai Public Library</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:DL">Depalpur Library</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:LW">Library on Wheels</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:MC">Mariam Chughtai Library </option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:FMJL">Masood Faisal Jhandir Library</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:MBL">Medical Branch Library</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:NSL">Nankana Sahib Library</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:QL">Quetta Library</option>
+                                                        
+                                                    
+                                                        
+                                                            <option value="branch:GLM">Zulfiqar Shah Gardezi Library Multan</option>
+                                                        
+                                                    
+                                                
+                                            </select>
+                                            <!-- /#select_library -->
+                                        </div>
+                                        <!-- /.col-sm-auto -->
+                                    
+
+                                    <div class="order-5 col-sm-auto">
+                                        <button type="submit" id="searchsubmit" class="btn btn-primary" title="Search" aria-label="Search">
+                                            <i class="fa fa-search" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- /.form-row -->
+                                <input type="hidden" name="weight_search" value="1" />
+                            </form>
+                         </div
+                    ><!-- /#opac-main-search -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        
+
+        <div class="row">
+            <ul class="nav" id="moresearches">
+                <li class="nav-item">
+                    <a href="/cgi-bin/koha/opac-search.pl">Advanced search</a>
+                </li>
+                
+                
+                
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-authorities-home.pl">Authority search</a>
+                    </li>
+                
+                
+                
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-tags.pl">Tag cloud</a>
+                    </li>
+                
+                
+                
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-topissues.pl">Most popular</a>
+                    </li>
+                
+                
+                
+                
+                    <li class="nav-item">
+                        <a id="library_page" href="/cgi-bin/koha/opac-library.pl">
+                            
+                                <span>Libraries</span>
+                            
+                        </a>
+                    </li>
+                
+                
+    
+
+            </ul>
+            <!-- /.nav#moresearches -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+
+
+
+
+
+
+
+<main class="main">
+    
+    <nav id="breadcrumbs" aria-label="Breadcrumb" class="breadcrumbs">
+        <ol class="breadcrumb">
+            
+            
+                
+    
+        <li class="breadcrumb-item active">
+            <a href="#" aria-current="page"> 
+                    <span>Home</span>
+                 </a>
+        </li>
+    
+
+            
+        </ol>
+    </nav>
+
+
+    
+    
+    <div id="notloggedin" class="container-fluid">
+        <div class="row">
+            
+                <div class="col-12 col-lg-2 order-3 order-lg-1">
+                    <div id="navigation"> 
+
+
+    
+    
+        <div id="OpacNav">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><div id="FindOut">
+<h2>Find out what's new</h2>
+<p><strong>New Items</strong></p>
+<form method="get" action="/cgi-bin/koha/opac-search.pl"><input name="idx" value="kw" type="hidden" /> <input name="sort_by" value="acqdate_dsc" type="hidden" /> <input name="do" value="OK" type="hidden" /><select name="limit" onchange="this.form.submit()">
+<option>-- Please choose --</option>
+<option value="mc-itype:BK">All Books List</option>
+<option value="mc-itype:BK">Fresh Arrivals</option>
+<option value="mc-itype:DVD">DVD</option>
+<option value="mc-itype:LP">AUP Publications</option>
+<option value="mc-itype:PER">Books with DVD</option>
+</select></form><hr /></div>
+<!--
+<div style="margin-top:10px">
+	<ul class="drl_nav_lef_type2">
+		<li class="drl_nav_lef_type2_header" style='background-color:#1962a8'>
+			<span>Quick Links</span>
+		</li>
+
+		<li class="drl_nav_lef_type2_content">
+			 <a href="/cgi-bin/koha/pages.pl?p=6" >Message of Founder</a>
+		</li>
+
+		<li class="drl_nav_lef_type2_content">
+			 <a href="/cgi-bin/koha/pages.pl?p=2" >Library Rules</a>
+</li>
+
+		<li class="drl_nav_lef_type2_content">
+			 <a href="/cgi-bin/koha/pages.pl?p=3" >Services</a>
+</li>
+<li class="drl_nav_lef_type2_content">
+			 <a href="/cgi-bin/koha/pages.pl?p=1" >Donations</a>
+</li>
+		<li class="drl_nav_lef_type2_content">
+			 <a href="/cgi-bin/koha/pages.pl?p=4" >Timings</a>
+</li>
+      <li class="drl_nav_lef_type2_content">
+			 <a href="/cgi-bin/koha/pages.pl?p=10" >Library Locations</a>
+</li>
+
+		<li class="drl_nav_lef_type2_content">
+			 <a href="/cgi-bin/koha/pages.pl?p=7" >Membership Form</a>
+</li>
+
+<li class="drl_nav_lef_type2_content">
+			 <a href="/cgi-bin/koha/pages.pl?p=12" >Request a Book</a>
+</li>
+
+
+		<li class="drl_nav_lef_type2_content">
+			 <a href="/cgi-bin/koha/pages.pl?p=8" >Newsletter</a> 
+</li>
+<li class="drl_nav_lef_type2_content">
+			 <a href="/cgi-bin/koha/opac-search.pl?idx=kw&sort_by=acqdate_dsc&do=OK&limit=mc-itype%3ABK" >New Arrivals</a>
+			 </li>
+			 
+
+		<li class="drl_nav_lef_type2_content">
+			 <a href="/cgi-bin/koha/pages.pl?p=11" >Staff Directory</a>
+			 </li>
+			 <li class="drl_nav_lef_type2_content">
+			 <a href="https://dashboard.tawk.to/login"target="new" >Staff Chat Login</a>
+			 </li>
+
+
+	</ul>
+</div>
+--> <!--Ðây là toàn b? Menu phía bên trái, hi?n th? nh?ng giá sách trong thu vi?n -->
+<div style="margin-top: 10px;">
+<ul class="drl_nav_lef_type2">
+<li class="drl_nav_lef_type2_header" style="background-color: #1962a8;"><span>Online Newspapers</span></li>
+<li class="drl_nav_lef_type2_content"><a href="http://e.jang.com.pk/" target="new">Jang</a></li>
+<li class="drl_nav_lef_type2_content"><a href="http://www.express.com.pk/" target="new">Express</a></li>
+<li class="drl_nav_lef_type2_content"><a href="http://www.nawaiwaqt.com.pk/" target="new">Nawaiwaqt</a></li>
+<li class="drl_nav_lef_type2_content"><a href="http://epaper.dawn.com/" target="new">Dawn</a></li>
+<li class="drl_nav_lef_type2_content"><a href="http://nation.com.pk/E-Paper" target="new">The Nation</a></li>
+</ul>
+</div></div>
+                </div>
+            
+        </div>
+    
+
+
+
+
+
+
+    
+    
+        <div id="OpacNavBottom">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><div id="drl_opacnavbottom">
+<!--Newest books from collection SHTN auto display Left navigation EFFECT 3-->
+
+
+</div> <!-- Finish div drl_opacnavbottom-->
+</div>
+                </div>
+            
+        </div>
+    
+
+
+ </div>
+                </div>
+            
+
+            
+            
+                
+            
+            <div class="col-12 col-lg-10 order-md-1 maincontent">
+                <h1 class="sr-only">Koha home</h1>
+
+                
+
+                
+                    
+                
+                
+                    <!-- koha news -->
+                    
+                
+
+                
+                    
+
+                    
+                        
+    
+        <div id="OpacMainUserBlock">
+            
+                <div class="en_item">
+                    
+                    <div class="en_body"><!--  <b><h2><center><u><font color="blue">New Arrivals </font></h2></b></u>
+<span id="coverflow"></span></centre>
+
+<be>
+
+
+<!-- 
+<br>
+<h2 style="color:#1c479a">
+FEATURED COLLECTIONS</h2>
+--> <!-- Debut du carrousel 
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<div class='carrouselFrame'>
+    <div class="loadingDiv"></div>
+    <div id="June2017" class='carrousel'>
+        <a id="left-but" class='left carousel-control'>‹</a>
+        <a id="right-but" class='right carousel-control'>›</a>
+
+
+
+<a target="_blank" href="/cgi-bin/koha/opac-detail.pl?biblionumber=25878">
+
+<img class="cloudcarousel" src="https://books.google.com/books/content?id=tacOAAAAQAAJ&printsec=frontcover&img=1&zoom=5" 
+
+title="Explaining American Politics"/></a>
+
+
+<a target="_blank" href="/cgi-bin/koha/opac-detail.pl?biblionumber=25882">
+
+<img class="cloudcarousel" src="https://books.google.com/books/content?id=aMOXgtjz-I4C&printsec=frontcover&img=1&zoom=5" 
+
+title="Governd by Opinion"/></a>
+
+
+<a target="_blank" href="/cgi-bin/koha/opac-detail.pl?biblionumber=27098">
+
+<img class="cloudcarousel" src="https://books.google.com/books/content?id=2FDlderh-KcC&printsec=frontcover&img=1&zoom=5" 
+
+title="Manhunt  "/></a>
+
+
+
+<a target="_blank" href="/cgi-bin/koha/opac-detail.pl?biblionumber=26898">
+
+<img class="cloudcarousel" src="https://books.google.com/books/content?id=2iKL7zr3kl0C&printsec=frontcover&img=1&zoom=5" 
+
+title="War and change in world politics "/></a>
+
+
+
+<a target="_blank" href="/cgi-bin/koha/opac-detail.pl?biblionumber=26898">
+
+<img class="cloudcarousel" src="https://books.google.com/books/content?id=aOaGn5KKuA0C&printsec=frontcover&img=1&zoom=5" 
+
+title="The Crisis of London "/></a>
+
+
+
+
+
+<a target="_blank" href="/cgi-bin/koha/opac-detail.pl?biblionumber=26966">
+
+<img class="cloudcarousel" src="https://books.google.com/books/content?id=nUMhPwAACAAJ&printsec=frontcover&img=1&zoom=5" 
+
+title="The modern world since 1870"/></a>
+
+
+
+<a target="_blank" href="/cgi-bin/koha/opac-detail.pl?biblionumber=26985">
+
+<img class="cloudcarousel" src="https://books.google.com/books/content?id=OHLD1z1ivTwC&printsec=frontcover&img=1&zoom=5" 
+
+title="International relations"/></a>
+
+
+
+<a target="_blank" href="/cgi-bin/koha/opac-detail.pl?biblionumber=26996">
+
+<img class="cloudcarousel" src="https://books.google.com/books/content?id=FKa4QgAACAAJ&printsec=frontcover&img=1&zoom=5" 
+
+title="The panorama of the Renaissance "/></a>
+
+
+
+<a target="_blank" href="/cgi-bin/koha/opac-detail.pl?biblionumber=26998">
+
+<img class="cloudcarousel" src="https://books.google.com/books/content?id=sfSbQgAACAAJ&printsec=frontcover&img=1&zoom=5" 
+
+title="Open world  "/></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ <div class="carousel-caption">
+            <p id="title-text"></p>
+        </div>
+    </div>
+</div>
+
+
+<!-- This is the cloud carousel javascript(cloud-carousel.1.0.0.js) -->
+<script>
+//////////////////////////////////////////////////////////////////////////////////
+// CloudCarousel V1.0.5
+// (c) 2011 by R Cecco. <https://www.professorcloud.com>
+// MIT License
+//
+// Reflection code based on plugin by Christophe Beyls <https://www.digitalia.be>
+//
+// Please retain this copyright header in all versions of the software
+//////////////////////////////////////////////////////////////////////////////////
+(function($){function Reflection(img,reflHeight,opacity){var reflection,cntx,imageWidth=img.width,imageHeight=img.width,gradient,parent;parent=$(img.parentNode);this.element=reflection=parent.append("<canvas class='reflection' style='position:absolute'/>").find(':last')[0];if(!reflection.getContext&&$.browser.msie){this.element=reflection=parent.append("<img class='reflection' style='position:absolute'/>").find(':last')[0];reflection.src=img.src;reflection.style.filter="flipv progid:DXImageTransform.Microsoft.Alpha(opacity="+(opacity*100)+", style=1, finishOpacity=0, startx=0, starty=0, finishx=0, finishy="+(reflHeight/imageHeight*100)+")"}else{cntx=reflection.getContext("2d");try{$(reflection).attr({width:imageWidth,height:reflHeight});cntx.save();cntx.translate(0,imageHeight-1);cntx.scale(1,-1);cntx.drawImage(img,0,0,imageWidth,imageHeight);cntx.restore();cntx.globalCompositeOperation="destination-out";gradient=cntx.createLinearGradient(0,0,0,reflHeight);gradient.addColorStop(0,"rgba(255, 255, 255, "+(1-opacity)+")");gradient.addColorStop(1,"rgba(255, 255, 255, 1.0)");cntx.fillStyle=gradient;cntx.fillRect(0,0,imageWidth,reflHeight)}catch(e){return}}$(reflection).attr({'alt':$(img).attr('alt'),title:$(img).attr('title')})}var Item=function(imgIn,options){this.orgWidth=imgIn.width;this.orgHeight=imgIn.height;this.image=imgIn;this.reflection=null;this.alt=imgIn.alt;this.title=imgIn.title;this.imageOK=false;this.options=options;this.imageOK=true;if(this.options.reflHeight>0){this.reflection=new Reflection(this.image,this.options.reflHeight,this.options.reflOpacity)}$(this.image).css('position','absolute')};var Controller=function(container,images,options){var items=[],funcSin=Math.sin,funcCos=Math.cos,ctx=this;this.controlTimer=0;this.stopped=false;this.container=container;this.xRadius=options.xRadius;this.yRadius=options.yRadius;this.showFrontTextTimer=0;this.autoRotateTimer=0;if(options.xRadius===0){this.xRadius=($(container).width()/2.3)}if(options.yRadius===0){this.yRadius=($(container).height()/6)}this.xCentre=options.xPos;this.yCentre=options.yPos;this.frontIndex=0;this.rotation=this.destRotation=Math.PI/2;this.timeDelay=1000/options.FPS;if(options.altBox!==null){$(options.altBox).css('display','block');$(options.titleBox).css('display','block')}$(container).css({position:'relative',overflow:'hidden'});$(options.buttonLeft).css('display','inline');$(options.buttonRight).css('display','inline');$(options.buttonLeft).bind('mouseup',this,function(event){event.data.rotate(-1);return false});$(options.buttonRight).bind('mouseup',this,function(event){event.data.rotate(1);return false});if(options.mouseWheel){$(container).bind('mousewheel',this,function(event,delta){event.data.rotate(delta);return false})}$(container).bind('mouseover click',this,function(event){clearInterval(event.data.autoRotateTimer);var text=$(event.target).attr('alt');if(text!==undefined&&text!==null){clearTimeout(event.data.showFrontTextTimer);$(options.altBox).html(($(event.target).attr('alt')));$(options.titleBox).html(($(event.target).attr('title')));if(options.bringToFront&&event.type=='click'){var idx=$(event.target).data('itemIndex');var frontIndex=event.data.frontIndex;var diff=(idx-frontIndex)%images.length;if(Math.abs(diff)>images.length/2){diff+=(diff>0?-images.length:images.length)}event.data.rotate(-diff)}}});$(container).bind('mouseout',this,function(event){var context=event.data;clearTimeout(context.showFrontTextTimer);context.showFrontTextTimer=setTimeout(function(){context.showFrontText()},1000);context.autoRotate()});$(container).bind('mousedown',this,function(event){event.data.container.focus();return false});container.onselectstart=function(){return false};this.innerWrapper=$(container).wrapInner('<div style="position:absolute;width:100%;height:100%;"/>').children()[0];this.showFrontText=function(){if(items[this.frontIndex]===undefined){return}$(options.titleBox).html($(items[this.frontIndex].image).attr('title'));$(options.altBox).html($(items[this.frontIndex].image).attr('alt'))};this.go=function(){if(this.controlTimer!==0){return}var context=this;this.controlTimer=setTimeout(function(){context.updateAll()},this.timeDelay)};this.stop=function(){clearTimeout(this.controlTimer);this.controlTimer=0};
+
+this.rotate=function(direction){
+    this.frontIndex-=direction;
+    while (this.frontIndex<0) { this.frontIndex += items.length; }
+    this.frontIndex%=items.length;
+    this.destRotation+=(Math.PI/items.length)*(2*direction);
+    this.showFrontText();
+    this.go()
+};
+
+this.autoRotate=function(){if(options.autoRotate!=='no'){var dir=(options.autoRotate==='right')?1:-1;this.autoRotateTimer=setInterval(function(){ctx.rotate(dir)},options.autoRotateDelay)}};this.updateAll=function(){var minScale=options.minScale;var smallRange=(1-minScale)*0.5;var w,h,x,y,scale,item,sinVal;var change=(this.destRotation-this.rotation);var absChange=Math.abs(change);this.rotation+=change*options.speed;if(absChange<0.001){this.rotation=this.destRotation}var itemsLen=items.length;var spacing=(Math.PI/itemsLen)*2;var radians=this.rotation;var isMSIE=$.browser.msie;this.innerWrapper.style.display='none';var style;var px='px',reflHeight;var context=this;for(var i=0;i<itemsLen;i++){item=items[i];sinVal=funcSin(radians);scale=((sinVal+1)*smallRange)+minScale;x=this.xCentre+(((funcCos(radians)*this.xRadius)-(item.orgWidth*0.5))*scale);y=this.yCentre+(((sinVal*this.yRadius))*scale);if(item.imageOK){var img=item.image;w=img.width=item.orgWidth*scale;h=img.height=item.orgHeight*scale;img.style.left=x+px;img.style.top=y+px;img.style.zIndex=""+(scale*100)>>0;if(item.reflection!==null){reflHeight=options.reflHeight*scale;style=item.reflection.element.style;style.left=x+px;style.top=y+h+options.reflGap*scale+px;style.width=w+px;if(isMSIE){style.filter.finishy=(reflHeight/h*100)}else{style.height=reflHeight+px}}}radians+=spacing}this.innerWrapper.style.display='block';if(absChange>=0.001){this.controlTimer=setTimeout(function(){context.updateAll()},this.timeDelay)}else{this.stop()}};this.checkImagesLoaded=function(){var i;for(i=0;i<images.length;i++){if((images[i].width===undefined)||((images[i].complete!==undefined)&&(!images[i].complete))){return}}for(i=0;i<images.length;i++){items.push(new Item(images[i],options));$(images[i]).data('itemIndex',i)}clearInterval(this.tt);this.showFrontText();this.autoRotate();this.updateAll()};this.tt=setInterval(function(){ctx.checkImagesLoaded()},50)};$.fn.CloudCarousel=function(options){this.each(function(){options=$.extend({},{reflHeight:0,reflOpacity:0.5,reflGap:0,minScale:0.5,xPos:0,yPos:0,xRadius:0,yRadius:0,altBox:null,titleBox:null,FPS:30,autoRotate:'no',autoRotateDelay:1500,speed:0.2,mouseWheel:false,bringToFront:false},options);$(this).data('cloudcarousel',new Controller(this,$('.cloudcarousel',$(this)),options))});return this}})(jQuery);
+</script>
+<!---This initialises carousels on the container elements specified. -->
+<script type="text/javascript">
+var formCarousel=$("#June2017").parent();
+$("#June2017").CloudCarousel(
+    {
+        xPos : formCarousel.width() * 0.5,
+        yPos : 10,
+        xRadius : formCarousel.width() / 2,
+        yRadius : formCarousel.height() / 7,
+        buttonLeft: $("#left-but"),
+        buttonRight: $("#right-but"),
+        altBox: $("#alt-text"),
+        titleBox: $("#title-text"),
+        minScale: 0.25,
+        reflHeight : 40,
+        reflGap : 4,
+        reflOpacity : 0.75
+    });
+    $(".loadingDiv").delay(1000);
+    $(".loadingDiv").fadeOut(1000);
+</script>
+<h1 style="text-align: center;">FIND US HERE</h1>
+<div class="map-responsive"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3400.6546885626585!2d74.33836541472529!3d31.533642781365238!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x391905a63d356a07%3A0xc99708bc47d0b20a!2sChughtai+Public+Library!5e0!3m2!1sen!2s!4v1530776627882" width="600" height="450" frameborder="0" style="border: 0;" allowfullscreen=""></iframe></div>
+<style>
+  .gdpk{color:white !important;}.gdpka{color:white !important;}.gdpka:visited{color:white !important;}
+</style>
+<div class="gdpk">Visit <a href="https://graduate.pk/top-universities/pakistan" class="gdpka">Top Universities</a> of Pakistan</div></div>
+                </div>
+            
+        </div>
+    
+
+                    
+                
+            </div>
+            <!-- / .col 6/8 -->
+
+            
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+</main>
+<!-- /.main -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col"> 
+    
+        <div id="opaccredits">
+            
+                <div class="en_item">
+                    
+                    <div class="en_body"><!-- Start of SimpleHitCounter Code -->
+<div align="center"><a href="#"><img src="http://simplehitcounter.com/hit.php?uid=2208078&amp;f=16777215&amp;b=0" border="0" height="18" width="83" /> <!-- End of SimpleHitCounter Code --> <img src="/opac-tmpl/bootstrap/images/facebook.png" alt="" width="74" height="72" align="left" /><strong style="font-weight: 400;">&copy; All right reserved <span style="color: #1962a8;">Chughtai Public Library</span> </strong> <br /><strong>CPL IT DEPARTMENT</strong></a></div></div>
+                </div>
+            
+        </div>
+    
+ </div>
+            </div>
+        </div>
+    
+    <!-- prettier-ignore-start -->
+    </div> <!-- / #wrapper in masthead.inc -->
+    <!-- prettier-ignore-end -->
+
+    
+
+
+
+
+<!-- CookieConsentedJS code that may run -->
+
+
+<!-- JavaScript includes -->
+<script src="/opac-tmpl/lib/jquery/jquery-3.6.0.min_25.0502000.js"></script>
+<script src="/opac-tmpl/lib/jquery/jquery-migrate-3.3.2.min_25.0502000.js"></script>
+<script src="/opac-tmpl/lib/bootstrap/js/bootstrap.bundle.min_25.0502000.js"></script>
+<script src="/opac-tmpl/lib/fontfaceobserver/fontfaceobserver.min_25.0502000.js"></script>
+<script src="/opac-tmpl/lib/enquire/enquire.min_25.0502000.js"></script>
+<script>
+    let logged_in_user_id = "";
+</script>
+<script src="/opac-tmpl/bootstrap/js/global_25.0502000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/form-submit_25.0502000.js" type="module"></script>
+
+<script>
+    
+
+    
+    $(".print-large").on("click",function(){
+        window.print();
+        return false;
+    });
+    $(".addtoshelf").on("click",function(e){
+        e.preventDefault();
+        Dopop( this.href );
+    });
+    $("body").on("click", ".addtocart", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        addRecord( biblionumber );
+    });
+    $("body").on("click", ".cartRemove", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        delSingleRecord( biblionumber );
+    });
+</script>
+
+    <script src="/opac-tmpl/bootstrap/js/basket_25.0502000.js"></script>
+
+
+
+
+    <script src="/opac-tmpl/bootstrap/js/google-jackets_25.0502000.js"></script>
+
+
+
+
+
+
+
+
+
+<script src="/opac-tmpl/lib/js-cookie/js.cookie-3.0.1.min_25.0502000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/show-password-toggle_25.0502000.js"></script>
+<script>
+    $(document).ready(function () {
+        if ($("#searchsubmit").length) {
+            $(document).on("click", "#searchsubmit", function (e) {
+                Cookies.remove("form_serialized", { path: "/" });
+                Cookies.remove("form_serialized_limits", { path: "/" });
+                Cookies.remove("search_path_code", { path: "/" });
+            });
+        }
+    });
+</script>
+
+
+
+
+<script src="/opac-tmpl/lib/dayjs/dayjs.min_25.0502000.js"></script>
+<script src="/opac-tmpl/lib/dayjs/plugin/timezone_25.0502000.js"></script>
+<script src="/opac-tmpl/lib/dayjs/plugin/utc_25.0502000.js"></script>
+<script>
+    dayjs.extend(window.dayjs_plugin_utc);
+    dayjs.extend(window.dayjs_plugin_timezone);
+</script>
+<!-- js-date-format.inc -->
+<script>
+    (function() {
+        var def_date_format = 'metric';
+        var def_time_format = '24hr';
+        var def_tz = 'UTC';
+
+        var get_date_pattern = function(format) {
+            var date_pattern = 'YYYY-MM-DD';
+            if(format == 'us') date_pattern = 'MM/DD/YYYY';
+            if(format == 'metric') date_pattern = 'DD/MM/YYYY';
+            if(format == 'dmydot') date_pattern = 'DD.MM.YYYY';
+            return date_pattern;
+        };
+
+        var get_time_pattern = function(format) {
+            var time_pattern = 'HH:mm';
+            if(format == '12hr') time_pattern = 'hh:mm a';
+            return time_pattern;
+        };
+
+        /*
+         * A JS equivalent of the KohaDates TT Plugin. Passed an rfc3339 formatted date string,
+         * or JS Date, the function will return a date string formatted as per the koha instance config.
+         * Optionally accepts a dateformat parameter to allow override of the configured output format
+         * as well as a 'withtime' boolean denoting whether to include time or not in the output string.
+         */
+        window.$date = function(value, options) {
+            if(!value) return '';
+            var tz = (options&&options.tz)||def_tz;
+            var m = dayjs(value);
+            if ( ! value.match(/^\d{4}-\d{2}-\d{2}$/ ) ) {
+                m = m.tz(tz);
+            }
+
+            var dateformat = (options&&options.dateformat)||def_date_format;
+            var withtime = (options&&options.withtime)||false;
+
+            if(dateformat=='rfc3339' && withtime) return m.format();
+
+            var timeformat = (options&&options.timeformat)||def_time_format;
+            var date_pattern = get_date_pattern(dateformat);
+            var time_pattern = !withtime?'':' '+get_time_pattern(timeformat);
+
+            return m.format(date_pattern+time_pattern);
+        }
+
+        window.$datetime = function(value, options) {
+            options = options||{};
+            options.withtime = true;
+            return $date(value, options);
+        };
+
+        window.$time = function(value, options) {
+            if(!value) return '';
+            var tz = (options&&options.tz)||def_tz;
+            var m = dayjs(value);
+            if(tz) m = m.tz(tz);
+
+            var dateformat = (options&&options.dateformat);
+            var timeformat = (dateformat=='rfc3339'&&'24hr')||(options&&options.timeformat)||def_time_format;
+
+            return m.format(get_time_pattern(timeformat)+(dateformat=='rfc3339'?':ss'+(!m.isUTC()?'Z':''):''))+(dateformat=='rfc3339' && m.isUTC()?'Z':'');
+        }
+
+    })();
+</script>
+<!-- / js-date-format.inc -->
+
+
+<script>
+    (function () {
+        /**
+         * Format the biblio response from a Koha RESTful API request.
+         * @param  {Object}  biblio  The biblio json object as returned from the Koha RESTful API
+         * @param  {Object}  config  A configuration object
+         *                           Valid keys are: `link`
+         * @return {string}          The formatted HTML string
+         */
+        window.$biblio_to_html = function (biblio, config) {
+            if (biblio === undefined) {
+                return ""; // empty string for no biblio
+            }
+
+            var title = '<span class="biblio-title">';
+            if (biblio.title != null && biblio.title != "") {
+                title += escape_str(biblio.title);
+            } else {
+                title += _("No title");
+            }
+            title += "</span>";
+
+            // add subtitle
+            if (biblio.subtitle != null && biblio.subtitle != "") {
+                title += ' <span class="biblio-subtitle">' + escape_str(biblio.subtitle) + "</span>";
+            }
+
+            // set title as link
+            if (config && config.link) {
+                if (config.link === "marcdetail") {
+                    title = '<a href="/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                } else if (config.link === "labeled_marc") {
+                    title = '<a href="/cgi-bin/koha/opac-labeledMARCdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                } else if (config.link === "isbd") {
+                    title = '<a href="/cgi-bin/koha/opac-ISBDdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                } else {
+                    title = '<a href="/cgi-bin/koha/opac-detail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                }
+            }
+
+            // add medium
+            if (biblio.medium != null && biblio.medium != "") {
+                title += ' <span class="biblio-medium">' + escape_str(biblio.medium) + "</span>";
+            }
+
+            // add part numbers/names
+            let part_numbers = typeof biblio.part_number === "string" ? biblio.part_number.split("|") : [];
+            let part_names = typeof biblio.part_name === "string" ? biblio.part_name.split("|") : [];
+            let i = 0;
+            while (part_numbers[i] || part_names[i]) {
+                if (part_numbers[i]) {
+                    title += ' <span class="part-number">' + escape_str(part_numbers[i]) + "</span>";
+                }
+                if (part_names[i]) {
+                    title += ' <span class="part-name">' + escape_str(part_names[i]) + "</span>";
+                }
+                i++;
+            }
+
+            return title;
+        };
+    })();
+</script>
+
+
+
+
+    <script>
+        // Load keyboard library
+$.getScript("https://cdnjs.cloudflare.com/ajax/libs/jquery.keyboard/1.30.1/js/jquery.keyboard.min.js");
+
+$(document).ready(function(){
+
+  function attachKeyboard() {
+    $('input[type="text"], textarea').each(function(){
+
+      if (!$(this).data('keyboard')) {
+
+        $(this).keyboard({
+          layout: 'custom',
+          usePreview: false,
+          autoAccept: true,
+          openOn: null, // disable default open
+
+          customLayout: {
+
+            // English
+            'default': [
+              'q w e r t y u i o p',
+              'a s d f g h j k l',
+              '{shift} z x c v b n m {bksp}',
+              '{space}'
+            ],
+
+            // Urdu phonetic (easy typing)
+            'urdu': [
+              'q و e ر t ت y ی u ع i ا o و p پ',
+              'a ا s س d د f ف g گ h ہ j ج k ک l ل',
+              'z ز x ش c چ v و b ب n ن m م {bksp}',
+              '{space}'
+            ]
+          }
+
+        })
+
+        // AUTO OPEN on touch / focus
+        .on('focus click touchstart', function(){
+          if ($(this).getkeyboard()) {
+            $(this).getkeyboard().reveal();
+          }
+        });
+
+      }
+
+    });
+  }
+
+  attachKeyboard();
+
+  // Fix for Advanced Search (dynamic content)
+  $(document).ajaxComplete(function(){
+    attachKeyboard();
+  });
+
+  // LANGUAGE TOGGLE BUTTON
+  if ($('#langToggle').length === 0) {
+    $('body').append('<button id="langToggle">اردو</button>');
+  }
+
+  $('#langToggle').css({
+    position: 'fixed',
+    bottom: '15px',
+    right: '15px',
+    padding: '12px 18px',
+    fontSize: '18px',
+    zIndex: 9999,
+    background: '#007bff',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '8px'
+  });
+
+  let currentLang = 'default';
+
+  $('#langToggle').click(function(){
+
+    currentLang = (currentLang === 'default') ? 'urdu' : 'default';
+
+    $(this).text(currentLang === 'urdu' ? 'EN' : 'اردو');
+
+    $('input:focus, textarea:focus').each(function(){
+      let kb = $(this).getkeyboard();
+      if (kb) {
+        kb.options.layout = currentLang;
+        kb.redraw();
+      }
+    });
+
+  });
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// For EDS plugin
+$.getScript("/plugin/Koha/Plugin/EDS/js/EDSScript.js");
+
+$(document).ready(function(){ 
+$(".results_summary.ddc").hide();
+ });
+//Project gutenberg results
+$("#userresults").ready(function(){
+$("#userresults table td").each(function(i){
+td = $(this);
+var pgbks_link = td.find("a[href^='http://www.gutenberg.org/etext']");
+var linkc = pgbks_link.parent();
+var pgbks_link = pgbks_link.attr("href");
+if(pgbks_link){
+$("td:eq("+i+") span.availability,td:eq("+i+") span.actions").hide();
+linkc.html('<a class="ebook" href="'+pgbks_link+'">Available from Project Gutenberg</a>');
+}
+});
+});
+
+//Fashion results
+$("#userresults").ready(function(){
+$("#userresults table td").each(function(i){
+td = $(this);
+var pgbks_link = td.find("a[href^='http://www.bergfashionlibrary.com']");
+var linkc = pgbks_link.parent();
+var pgbks_link = pgbks_link.attr("href");
+if(pgbks_link){
+$("td:eq("+i+") span.availability,td:eq("+i+") span.actions").hide();
+linkc.html('<a class="ebook" href="'+pgbks_link+'">Available from Berg Fashion Library</a>');
+}
+});
+});
+
+
+//Project gutenberg detail
+$("span.online_resources").ready(function(){
+var pgbks_link = $("span.online_resources a[href^='http://www.bergfashionlibrary.com']").attr("href");
+if(pgbks_link){
+$("#holdings").html('<a href="'+pgbks_link+'"><img src="http://media.bywatersolutions.com/Model/opac-generic.jpg" alt="Available from Berg Fashion Library" /></a>');
+}
+});
+
+//open library results
+$("#userresults").ready(function(){
+$("#userresults table td").each(function(i){
+td = $(this);
+var olbks_link = td.find("a[href^='http://www.openlibrary.org/books']");
+var linkc = olbks_link.parent();
+var olbks_link = olbks_link.attr("href");
+if(olbks_link){
+$("td:eq("+i+") span.availability,td:eq("+i+") span.actions").hide();
+linkc.html('<a class="ebook" href="'+olbks_link+'">Available from the Open Library project</a>');
+}
+});
+});
+
+//Project gutenberg detail
+$("span.online_resources").ready(function(){
+var pgbks_link = $("span.online_resources a[href^='http://www.gutenberg.org/etext']").attr("href");
+if(pgbks_link){
+$("#holdings").html('<a href="'+pgbks_link+'"><img src="http://media.bywatersolutions.com/Model/opac-guten.png" alt="Available from Project Gutenberg" /></a>');
+}
+});
+
+//open library detail
+$("span.online_resources").ready(function(){
+var olbks_link = $("span.online_resources a[href^='http://www.openlibrary.org/books']").attr("href");
+if(olbks_link){
+$("#holdings").html('<a href="'+olbks_link+'"><img src="http://media.bywatersolutions.com/Model/opac-ol.png" alt="Available from the Open Library" /></a>');
+}
+});
+
+
+//Internet Archive results
+$("#userresults").ready(function(){
+$("#userresults table td").each(function(i){
+td = $(this);
+var iabks_link = td.find("a[href^='http://www.archive.org/details']");
+var linkc = iabks_link.parent();
+var iabks_link = iabks_link.attr("href");
+if(iabks_link){
+$("td:eq("+i+") span.availability,td:eq("+i+") span.actions").hide();
+linkc.html('<a class="ebook" href="'+iabks_link+'">Available from the Internet Archive</a>');
+}
+});
+});
+
+//Internet Archive detail
+$("span.online_resources").ready(function(){
+var iabks_link = $("span.online_resources a[href^='http://www.archive.org/details']").attr("href");
+if(iabks_link){
+$("#holdings").html('<a href="'+iabks_link+'"><img src="http://media.bywatersolutions.com/Model/opac-ia.png" alt="Available from the Internet Archive" /></a>');
+}
+}); 
+
+/* JS for Koha CoverFlow Plugin 
+   This JS was added automatically by installing the CoverFlow plugin
+   Please do not modify $(document).ready(function(){$.getScript("/plugin/Koha/Plugin/Com/ByWaterSolutions/CoverFlow/jquery-flipster/src/js/jquery.flipster.min.js",function(data,textStatus,jqxhr){$("head").append("<link id='flipster-css' href='/plugin/Koha/Plugin/Com/ByWaterSolutions/CoverFlow/jquery-flipster/src/css/jquery.flipster.min.css' type='text/css' rel='stylesheet' />");$('#coverflow').load("/coverflow.pl?id=165",function(){$('.coverTest img').on("load",function(){if(this.naturalHeight==1){$(this).attr("src","http://media.bywatersolutions.com/Model/NoImage.png");}});var opt={'items':'.item','minfactor':15,'distribution':1.5,'scalethreshold':0,'staticbelowthreshold':false,'titleclass':'itemTitle','selectedclass':'selectedItem','scrollactive':true,'step':{'limit':4,'width':10,'scale':true}};$('#coverflow').flipster({});});});});
+/* End of JS for Koha CoverFlow Plugin */
+
+$(document).ready(function(){
+$(".mastheadsearch").append($("#divUrduKeyboardcontainer"));
+})
+$("#translControl1").val("");
+
+//Add links to top-bar
+$(document).ready(function(){
+$("#cartDetails + .nav").append("<li><a href='http://www.chughtailibrary.com/digital_library' target='_blank'>Digital library</a></li><li class='divider-vertical'></li>");
+});
+
+
+
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/5baca2f6b156da713cb3db2e/default';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+
+$("select[name='idx']").append("<option value='bc'>Accession No.</option>");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Log-in Note */
+ 
+$('#login').hide();
+$(document).ready(function(){
+
+
+
+});
+/* Remove No Book Cover Image ----------------------------------------------------------------------*/
+$(window).load(function(){
+    $(".no-image").remove();
+});
+
+/* Disable editing Firstname and Surname 
+--------------------------------------------------------*/
+$(document).ready(function(){
+$("#borrower_surname").prop('disabled', true);
+$("#borrower_firstname").prop('disabled', true);
+});
+
+/* Change Place on hold button
+ --------------------------------------*/
+  $(document).ready(function(){
+  var holdlinks = $("a:contains('Place Hold'),a:contains('Place hold')");
+  $(holdlinks).text("Reserve Item");
+  });
+  $(window).load(function(){
+  $("input[value='Place Hold']").attr("value","Reserve Item");
+  });
+
+/* Change Search - Library Catalog 
+-----------------------------------------------------*/
+$("select[name='idx'] option:first").text('Keyword');
+
+
+/*Place holder in search engine  ---------------------*/
+
+$( ".transl1" ).attr( "placeholder", "Search library collection here" );
+
+/*Place holder in Username/Password  ---------------------*/
+
+$( '#muserid' ).attr( "placeholder", "? ID Number" );
+$( '#mpassword' ).attr( "placeholder", "? ID Number" );
+
+
+/*Place holder in Log-in ---------------------*/
+
+$( '#userid' ).attr( "placeholder", "? Enter ID Number" );
+$( '#password' ).attr( "placeholder", "? Enter ID Number" );
+
+
+
+
+$(document).ready(function(){
+$("form#searchform.form-inline").after('<span class="highlight-front"><a href="/cgi-bin/koha/opac-search.pl">Advanced search</a></div');
+});
+
+
+
+$(document).ready(function(){
+   $("label[for='collectiontitle']").html("Subject Code");
+ });
+
+
+
+/*Masthead to Item Types ---------------------------------------------*/
+$("#select_library option[value='branch:UERM']").hide();
+
+$("#select_library option[value='branch:UERM']").after("<option value=\'mc-itype,phr:ARC\'>Archives</option>");
+
+$("#select_library option[value='mc-itype,phr:ARC']").after("<option value=\'mc-itype,phr:AV\'>Audiovisual Materials</option>");
+$("#select_library option[value='mc-itype,phr:AV']");
+
+$("#select_library option[value='mc-itype,phr:AV']").after("<option value=\'mc-itype,phr:CIRC\'>Circulation Books</option>");
+$("#select_library option[value='mc-itype,phr:CIRC']");
+
+$("#select_library option[value='mc-itype,phr:CIRC']").after("<option value=\'mc-itype,phr:PER\'>Periodicals</option>");
+$("#select_library option[value='mc-itype,phr:PER']");
+
+$("#select_library option[value='mc-itype,phr:PER']").after("<option value=\'mc-itype,phr:REF\'>Reference</option>");
+$("#select_library option[value='mc-itype,phr:REF']");
+
+$("#select_library option[value='mc-itype,phr:REF']").after("<option value=\'mc-itype,phr:RES\'>Reserved Books</option>");
+$("#select_library option[value='mc-itype,phr:RES']");
+
+$("#select_library option[value='mc-itype,phr:RES']").after("<option value=\'mc-itype,phr:TH\'>Theses</option>");
+$("#select_library option[value='mc-itype,phr:TH']");
+
+/*Change All libraries to Item Types in select option-----*/
+$('select option:contains("All libraries")').text('All libraries');
+
+
+
+
+/* INKOLT_NAVOPT - JS to activate AskALibrarian plugin */
+/* TOUCH ONLY IF YOU KNOW WHAT YOU ARE DOING */$(document).ready(function() {
+    var modalInsert = '<li class="dropdown">';
+    modalInsert += '<a href="#" role="button" data-toggle="modal" data-target="#feedbackModal">';
+    modalInsert += '<i class="fa fa-envelope-o" aria-hidden="true"></i> Ask A Librarian</a>';
+    modalInsert += '</li>';
+    $( '#header-region > div.navbar.navbar-inverse.navbar-static-top > div > div > ul' ).append( modalInsert ); 
+});
+/* INKOLT_NAVOPT */
+/* INKOLT_MODALJS - JS handler for modal submit */
+/* TOUCH ONLY IF YOU KNOW WHAT YOU ARE DOING */
+$(document).ready(function() {
+$( '#feedbackModalSubmit' ).on('click', function(e) {
+    var dataString = '';
+    if ( jQuery.type($('#name').val()) != "undefined" ) {
+        dataString += 'name=' + $('#name').val();
+        if ( $('#name').val() == '' ) {
+            alert('Please enter your name');
+            $('#name').focus();
+            return false;
+        }
+    }
+    else {
+        dataString += 'name=';
+    }
+    if ( jQuery.type($('#userdesignation').val()) != "undefined" ) {
+        dataString += '&usertype=' + $('#userdesignation').val();
+    }    
+    else {
+        dataString += '&usertype=';
+    }
+    if ( jQuery.type($('#phone').val()) != "undefined" ) {
+        dataString += '&phone=' + $('#phone').val();
+    }     
+    else {
+        dataString += '&phone=';
+    }
+    if ( jQuery.type($('#email').val()) != "undefined" ) {
+        dataString += '&email=' + $('#email').val();
+        var mailregex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (!mailregex.test( $('#email').val() )) {
+            alert('Please enter a valid email address');
+            $('#email').focus();
+            return false;
+        }
+    }     
+    else {
+        dataString += '&email=';
+    }
+    if ( jQuery.type($('#comment').val()) != "undefined" ) {
+        dataString += '&comment=' + $('#comment').val();
+        if ( $('#comment').val() == '' ) {
+            alert('Please enter your question / comment');
+            $('#comment').focus();
+            return false;
+        }
+    }     
+    else {
+        dataString += '&comment=';
+    }
+    $('#feedbackModal').modal('hide');
+    e.preventDefault();
+    $.ajax({
+        type:   "POST",
+        url:    "/askalibrarian.pl",
+        data:   dataString,
+        cache:  false,
+        success: function(data) {
+            if ( data.status == 'success' ) { 
+                alert('Your message was recorded successfully.');
+            } else {
+                alert('Error recording your feedback. Please try again later.');
+            } 
+        },
+    });
+    return false;
+});
+});
+
+$(document).ready(function() {
+  $(".modal").on("hidden.bs.modal", function() {
+    $('#name').val('');
+    $('#userdesignation').val('');
+    $('#phone').val('');
+    $('#email').val('');
+    $('#comment').val('');
+  });
+});
+/* INKOLT_MODALJS */
+
+$(document).ready(function(){
+
+  // your old JS code...
+
+  // --- ADD NEW CODE BELOW ---
+  $(".masthead").prepend($(".header-banner"));
+
+});
+
+
+
+
+
+    </script>
+
+
+
+
+
+
+</body>
+<!-- prettier-ignore-start -->
+</html>
+<!-- prettier-ignore-end -->
+
+

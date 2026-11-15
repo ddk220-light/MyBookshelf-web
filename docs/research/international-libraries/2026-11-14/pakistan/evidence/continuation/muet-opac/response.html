@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Library Catalogue | MUET Library</title>
+
+<style>
+:root{
+    --primary:#2f5f8f;
+    --dark:#1f4e7a;
+    --light:#f4f8fc;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:"Segoe UI", Arial, sans-serif;
+    background:#eef3f8;
+    color:#1f2a35;
+}
+
+/* ================= HEADER ================= */
+
+        header {
+            background: #4f7da6;
+            color: white;
+            padding: 8px 0px 2px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-left img {
+            height: 65px;
+            background: white;
+            padding: 4px;
+            border-radius: 6px;
+        }
+
+        .header-text h1 {
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .header-text p {
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .search-box {
+            display: flex;
+        }
+
+        .search-box input {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 4px 0 0 4px;
+            outline: none;
+        }
+
+        .search-box button {
+            padding: 6px 12px;
+            border: none;
+            background: #174a87;
+            color: white;
+            cursor: pointer;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .search-box button:hover {
+            background: #0f3a6b;
+        }
+
+
+/* Search Box */
+
+.search-box{
+    display:flex;
+}
+
+.search-box input{
+    padding:6px 10px;
+    border:none;
+    border-radius:4px 0 0 4px;
+    outline:none;
+}
+
+.search-box button{
+    padding:6px 12px;
+    border:none;
+    background:#174a87;
+    color:white;
+    cursor:pointer;
+    border-radius:0 4px 4px 0;
+}
+
+.search-box button:hover{
+    background:#0f3a6b;
+}
+
+/* ================= PAGE TITLE ================= */
+
+.page-title{
+    max-width:1200px;
+    margin:40px auto 20px auto;
+    padding:0 15px;
+}
+
+.page-title h2{
+    font-size:2rem;
+    color:var(--dark);
+    border-bottom:3px solid var(--primary);
+    padding-bottom:6px;
+    display:inline-block;
+}
+
+.page-title p{
+    margin-top:10px;
+    color:#555;
+}
+
+/* ================= EVENTS GRID ================= */
+
+.events-container{
+    max-width:1200px;
+    margin:20px auto 50px auto;
+    padding:0 15px;
+}
+
+.events-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:25px;
+}
+
+.event-card{
+    background:white;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    transition:0.3s ease;
+}
+
+.event-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 10px 20px rgba(0,0,0,0.12);
+}
+
+.event-card img{
+    width:100%;
+    height:220px;
+    object-fit:cover;
+}
+
+.event-content{
+    padding:20px;
+}
+
+.event-content h3{
+    color:var(--dark);
+    margin-bottom:8px;
+}
+
+.event-date{
+    font-size:13px;
+    font-weight:600;
+    color:var(--primary);
+    margin-bottom:10px;
+}
+
+.event-content p{
+    font-size:14px;
+    line-height:1.6;
+    color:#444;
+}
+
+/* ================= FOOTER ================= */
+
+footer{
+    background:var(--primary);
+    color:white;
+    margin-top:40px;
+}
+
+.footer-container{
+    max-width:1200px;
+    margin:auto;
+    padding:20px;
+    text-align:center;
+}
+
+.footer-links{
+    margin-bottom:10px;
+}
+
+.footer-links a{
+    color:white;
+    text-decoration:none;
+    margin:0 10px;
+}
+
+.footer-links a:hover{
+    text-decoration:underline;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:900px){
+    header{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:15px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+    <header>
+        <div class="header-left">
+            <img src="logo.png" alt="MUET Logo">
+            <div class="header-text">
+                <h1 style="font-size: 30px; font-weight:bold;">MUET Central Library and Online Information Center, <br>Jamshoro</h1>
+                
+            </div>
+        </div>
+
+        <nav style="margin-left: 680px; display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+                <a href="home.html">Home</a>
+                <a href="ebooks.html">Electronic Resources</a>
+                <a href="Services.html">Services</a>
+                <a href="Facalities.html">Facilities</a>
+				<a href="opac.html">Library Catalog</a>
+                <a href="contact.html">Contact Us</a>
+                <a href="admin.html">Admin</a>
+            
+            <form class="search-box" onsubmit="library_search(this.query.value); return false;">
+                <input type="text" name="query" placeholder="Search library...">
+                <button type="submit">Book Search</button>
+            </form>
+        </nav>
+    </header>
+
+
+<!-- PAGE TITLE -->
+<div class="page-title">
+    <h2>Library Catalogues </h2>
+    <p>library Servers Access</p>
+</div>
+
+<!-- EVENTS SECTION -->
+<section class="events-container">
+
+    <div class="events-grid">
+
+        <div class="event-card">
+                <div class="event-content">
+                <h3><a href="http://opac.muet.edu.pk/">MUET Server</a></h3>
+                 <p>
+                    You can search here availble collection of Central Library as well department library.
+                </p>
+            </div>
+        </div>
+    
+        <div class="event-card">
+                <div class="event-content">
+            <h3><a href="http://pakcat.pastic.gov.pk/">PakCat Union Catalogue</a></h3>
+                 <p>
+                    PakCat serves as a national union catalogue for Pakistani libraries, with MUET being an active member of the network.
+            <h3><a href="http://142.54.178.188:5107/">PASTIC Server</a></h3>
+             <p>
+                    The PASTIC Consortium Server hosts the available collections of the MUET Central Library and its departmental libraries.
+                </p>
+            </div>
+        </div>
+
+        <div class="event-card">
+                <div class="event-content">
+                <h3><a href="http://172.16.21.210:8080/jspui/">MUET Repository</a></h3>
+                 <p>
+				 <h3> It is Access Only within the Campus</h3>
+                    University Own Publications by personels Like wise, Research Articles, Book Chapter, Book, Conference Papers, University magzines, prospectus are availble collection of Central Library as well department libraery.
+                </p>
+            </div>
+        </div>
+		<div class="event-card">
+                <div class="event-content">
+                <h3><a href="http://172.16.21.41/">Lending Collection</a></h3>
+                 <p>
+				 <h3> Check in Checkout Status (One Month Issue) </h3>
+                    It is Access Only within the Campus. You can view your histroy of issue and return books from day 1 to present.
+                </p>
+            </div>
+        </div>
+
+
+        <div class="event-card">
+                <div class="event-content">
+                <div class="event-content">
+                <h3><a href="http://172.16.21.11/">Book Bank</a></h3>
+                 <p>
+				  <h3> Check in Checkout Status (Semester Issue)</h3>
+                    It is Access Only within the Campus. You can view your histroy of issue and return books from day 1 to present.
+                </p>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<footer>
+   <div class="footer-links">
+                <a href="home.html">Home</a>
+                <a href="Edu-resources.html">Educational Resources</a>
+                <a href="about.html">About Us</a>
+                <a href="events.html">Events</a>
+                <a href="Facalities.html">Facilities</a>
+                <a href="contact.html">Contact Us</a>
+                <a href="admin.html">Admin</a>
+            </div>
+        <center>@2026 MUET Library and Online Information Center, Jamshoro </center>
+    </div>
+</footer>
+
+<script>
+function library_search(query){
+    const baseUrl="http://121.52.154.142/cgi-bin/koha/opac-search.pl";
+    const url=`${baseUrl}?idx=&q=${encodeURIComponent(query)}&weight_search=1`;
+    window.location.href=url;
+}
+</script>
+
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"42fd1fb6e73f40648c9445084bf33a00","spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>

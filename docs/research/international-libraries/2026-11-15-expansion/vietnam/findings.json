@@ -1,0 +1,1441 @@
+{
+  "country": "Vietnam",
+  "country_code": "VNM",
+  "research_date_utc": "2026-11-15",
+  "status": "complete",
+  "observed_success_count": 11,
+  "selected_count": 10,
+  "reserve_count": 1,
+  "market": {
+    "summary": "Vietnam has substantial national, provincial/city public and university collections, with local commercial platforms alongside Koha and international systems. The observed catalog sample is heterogeneous and is not a market-share estimate. National/provincial administrative mergers require present institution identity to be separated from legacy catalog scope.",
+    "platform_strategy": "Start a bounded UCVN national-library integration and reusable KIPOS and Vebrary adapter work, each latter family supported by two distinct successful deployments. Retain Koha reuse as a conditional reserve until HUAF test-labelled holdings are resolved. Public-network HCMC and Sierra/VNUHCM offer broad leverage but current access checks block automation. PSC zLIS offers an observed anonymous JSON search; SLIB and custom portals need separate adapters.",
+    "adoption_evidence": [
+      {
+        "claim": "Vendor describes Libol and lists major public/university customers. Undated/historical client list is adoption evidence, not current deployments or national share.",
+        "scope": "Vendor/customer description, not national share",
+        "date": "undated; inspected 2026-11-15",
+        "source_url": "https://tinhvan.vn/en/products/software-packages/libol/"
+      },
+      {
+        "claim": "CMC describes iLib8 for public, university and specialist libraries, with Vietnamese processing. Product presence, not a market-share census.",
+        "scope": "Vendor/customer description, not national share",
+        "date": "undated; inspected 2026-11-15",
+        "source_url": "https://cmcts.com.vn/en/solutions/giai-phap-thu-vien-dien-tu-thu-vien-so.html"
+      },
+      {
+        "claim": "D&L claims more than 30 Koha clients across Vietnam AND Southeast Asia; this does not establish 30 Vietnam installations.",
+        "scope": "Vendor/customer description, not national share",
+        "date": "2020-12-10 / 2021-05-06 page dates",
+        "source_url": "https://dlcorp.com.vn/phan-mem-quan-ly-tai-nguyen-truyen-thong-ma-nguon-mo-koha/"
+      },
+      {
+        "claim": "Two independently verified KIPOS public searches:DHHP andNTU; two Vebrary searches:LRC andHUSC.",
+        "scope": "This feasibility-selected sample only",
+        "date": "2026-11-15",
+        "source_url": "https://lib.dhhp.edu.vn/"
+      }
+    ],
+    "network_opportunities": [
+      {
+        "name": "HCMC public-library shared catalog",
+        "scope": "Official public-system guide describes central library +21 district libraries +Thu Duc, but later retains older 24-district text. Shared search supports institution/location/status filtering. Network size is dated/inconsistent and not a 2026 census.",
+        "source_url": "https://thuvientphcm.gov.vn/gioi-thieu/huong-dan-su-dung/huong_dan",
+        "verification": "Official guide; automated search not performed due robots restriction.",
+        "integration_implication": "Potential broad location-aware public discovery via one system; cannot treat central and branches as separate wins."
+      },
+      {
+        "name": "VNUHCM Sierra/shared discovery",
+        "scope": "HCMUS 2024 student handbook describes Sierra and EDS shared discovery across nine VNUHCM libraries.",
+        "source_url": "https://hcmus.edu.vn/wp-content/uploads/2024/09/STSV-2024-ONLINE.pdf",
+        "verification": "Official handbook evidence; endpoint robots503.",
+        "integration_implication": "Institution-filtered holdings needed; ebooks/EDS records do not alone prove local printed stock."
+      },
+      {
+        "name": "Shared digital university library",
+        "scope": "DHHP official2024account:94member institutions;nearly3,000DHHP digital contributions.",
+        "source_url": "https://lib.dhhp.edu.vn/contentbrowser.aspx?catid=3100&contentid=4448",
+        "verification": "Digital network membership only.",
+        "integration_implication": "Useful digital discovery, not94physical-book integrations."
+      },
+      {
+        "name": "Hue University federation",
+        "scope": "Selected centralLRC and HUSC are distinct collections with separate source names,MARC040,addresses and endpoints;HUAF reserve.",
+        "source_url": "https://lib.husc.edu.vn/Page/gioi-thieu-thu-vien-",
+        "verification": "Actual institution-owned book responses; no whole-federation union counted.",
+        "integration_implication": "One Vebrary family can serve two configurations; do not aggregate holdings or duplicate institution counts."
+      }
+    ]
+  },
+  "major_library_priorities": [
+    {
+      "name": "Thư viện Quốc gia Việt Nam / National Library of Vietnam",
+      "size_claim": "Over 2.5 million monograph items. Undated inventory statement, not a verified 2026 total. Digitized pages are a separate measure. ",
+      "source_url": "https://nlv.gov.vn/ef/information-resources.html",
+      "outcome": "verified_target"
+    },
+    {
+      "name": "Trung tâm Văn hóa và Thư viện Hà Nội / Hanoi Cultural and Library Center",
+      "size_claim": "600,272 printed book copies as of June 2026. Foreign-language and local-history holdings are subsets. ",
+      "source_url": "https://ttvanhoavathuvien.hanoi.gov.vn/gioi-thieu-chi-tiet/nguon-luc-thong-tin-2.html",
+      "outcome": "verified_target"
+    },
+    {
+      "name": "Thư viện thành phố Hải Phòng / Haiphong City Library",
+      "size_claim": "Over 600,000 book copies across two facilities after the July 2025 merger of Haiphong and Hai Duong libraries. Queried catalog identifies only 213A Lach Tray; coverage of Hai Duong is unproven. Catalog scope is narrower than this institution-wide size.",
+      "source_url": "https://baohaiphong.vn/thu-vien-thanh-pho-hai-phong-70-nam-gin-giu-va-lan-toa-tri-thuc-551584.html",
+      "outcome": "verified_target"
+    },
+    {
+      "name": "Thư viện tỉnh Khánh Hòa — cơ sở2 Phan Rang",
+      "size_claim": "Current site2 counters show 90,934 monograph records and 177,244 shelving entries. Footer identifies Khanh Hoa Provincial Library site2, Phan Rang; record holdings retain TvNinhThuan. 177,244 shelving entries reported separately.",
+      "source_url": "https://pr.thuvienkhanhhoa.gov.vn/TraCuuTaiLieuTruyenThong2Xem.aspx?intItemID=3022",
+      "outcome": "verified_target"
+    },
+    {
+      "name": "Viện Chuyển đổi số và Học liệu, Đại học Huế / Hue University central learning-resource collection",
+      "size_claim": "Over 25,000 printed titles spanning books, newspapers and journals, not a pure book-volume total. Only the central collection at 20 Le Loi is selected. ",
+      "source_url": "https://lrc.hueuni.edu.vn/",
+      "outcome": "verified_target"
+    },
+    {
+      "name": "Trung tâm Thông tin & Thư viện, Trường Đại học Khoa học, Đại học Huế / HUSC",
+      "size_claim": "Distinct university library at 77 Nguyen Hue; four-storey building and 12 staff. Official institutional proxy; no current aggregate book stock claimed. ",
+      "source_url": "https://lib.husc.edu.vn/Page/gioi-thieu-thu-vien-",
+      "outcome": "verified_target"
+    },
+    {
+      "name": "Trung tâm Thông tin - Thư viện, Trường Đại học Hải Phòng / Haiphong University",
+      "size_claim": "Full university information-library center at building C4; joined the 94-member shared DIGITAL library in September 2024, contributing nearly 3,000 digital resources. This supports institutional importance but is NOT its print inventory. ",
+      "source_url": "https://lib.dhhp.edu.vn/contentbrowser.aspx?catid=3100&contentid=4448",
+      "outcome": "verified_target"
+    },
+    {
+      "name": "Trung tâm Lưu trữ và Thư viện, Trường Đại học Bình Dương / Binh Duong University",
+      "size_claim": "2017 self-assessment, printed p125/PDF p132: main campus 10,372 textbook/reference titles, 26,760 copies. Ca Mau separately had 1,404 titles/4,886 copies; not added to the tested main catalog scope. Historical, not current stock. 10,372 titles; age of figure explicit.",
+      "source_url": "https://bdu.edu.vn/uploads/news/2019_12/Bao-cao-TDG.pdf",
+      "outcome": "verified_target"
+    },
+    {
+      "name": "Thư viện HUFLIT / Ho Chi Minh City University of Foreign Languages–Information Technology",
+      "size_claim": "61,595 catalog documents across three campuses; mixed formats, not 61,595 physical copies. ",
+      "source_url": "https://lib.huflit.edu.vn/",
+      "outcome": "verified_target"
+    },
+    {
+      "name": "Trung tâm Thông tin và Tư liệu, Trường Đại học Nha Trang / Nha Trang University",
+      "size_claim": "Public counters: 24,270 print records, including 13,333 Vietnamese-book records, 1,222 foreign-book records and 179 NTU books/lectures. Theses and periodicals are also in the print total. ",
+      "source_url": "https://thuvien.ntu.edu.vn/",
+      "outcome": "verified_target"
+    },
+    {
+      "name": "Trung tâm Thông tin - Thư viện, Trường Đại học Nông Lâm, Đại học Huế / HUAF",
+      "size_claim": "University agriculture/forestry library with discipline-specific shelves. No reliable current stock established; detail holdings labelled OPAC thử nghiệm. ",
+      "source_url": "https://opac.huaf.edu.vn/",
+      "outcome": "reserve"
+    },
+    {
+      "name": "Ho Chi Minh City public-library system",
+      "size_claim": "Official public-system guide describes central library +21 district libraries +Thu Duc, but later retains older 24-district text. Shared search supports institution/location/status filtering. Network size is dated/inconsistent and not a 2026 census.",
+      "source_url": "https://thuvientphcm.gov.vn/gioi-thieu/huong-dan-su-dung/huong_dan",
+      "outcome": "blocked_or_unverified"
+    },
+    {
+      "name": "VNUHCM union libraries",
+      "size_claim": "HCMUS 2024 student handbook describes Sierra and EDS shared discovery across nine VNUHCM libraries.",
+      "source_url": "https://hcmus.edu.vn/wp-content/uploads/2024/09/STSV-2024-ONLINE.pdf",
+      "outcome": "blocked_or_unverified"
+    },
+    {
+      "name": "Can Tho University",
+      "size_claim": "Print stock 144,831 titles /314,473 copies at31 December2021; ebooks/databases separately counted.",
+      "source_url": "https://m.ctu.edu.vn/images/upload/TT36/2022/Bieu_19_DHCT_Cong_khai_CSVC.pdf",
+      "outcome": "blocked_or_unverified"
+    },
+    {
+      "name": "HUST Ta Quang Buu Library",
+      "size_claim": "2022-23 disclosure: textbooks236,247 copies, Vietnamese references31,326 copies, foreign books127,576 copies, separately from theses and digital subscriptions.",
+      "source_url": "https://www.hust.edu.vn/uploads/sys/ba-cong-khai/bm19_thong-tin-csvc-nam-hoc-2022-2023.pdf",
+      "outcome": "blocked_or_unverified"
+    },
+    {
+      "name": "Hong Duc University",
+      "size_claim": "2024 accreditation report cites22,487 titles/156,447 copies; digital shared resources separate.",
+      "source_url": "https://media.hdu.edu.vn/Media/1_hdu_home/FolderFunc/202404/Documents/2-daihochongduc-bctdg-kythuatdien-20240404071819-e.pdf",
+      "outcome": "blocked_or_unverified"
+    }
+  ],
+  "libraries": [
+    {
+      "id": "vnm-nlv",
+      "name": "Thư viện Quốc gia Việt Nam / National Library of Vietnam",
+      "recommendation": "verified_target",
+      "scope": "One national library collection, not a Vietnamese union catalog.",
+      "size": {
+        "value": 2500000,
+        "unit": "monograph items (over; undated)",
+        "date": "undated; inspected 2026-11-15",
+        "source_url": "https://nlv.gov.vn/ef/information-resources.html",
+        "evidence_path": null,
+        "quality": "official",
+        "note": "Over 2.5 million monograph items. Undated inventory statement, not a verified 2026 total. Digitized pages are a separate measure. "
+      },
+      "platform": {
+        "family": "UCVN public catalog",
+        "name": "UCVN public catalog",
+        "proof": "Footer explicitly says Phát triển bởi UCVN; current public Search JSON-to-HTML endpoint.",
+        "evidence_path": "evidence/nlv-session-query.html"
+      },
+      "query": {
+        "text": "Dế mèn phiêu lưu ký",
+        "method": "POST",
+        "url": "https://opac.nlv.gov.vn/Search",
+        "payload": {
+          "type": "quick",
+          "page": 1,
+          "pageSize": 5,
+          "hasFacetFilter": true,
+          "request": {
+            "searchBy": [
+              [
+                "option",
+                "ti"
+              ],
+              [
+                "keyword",
+                "Dế mèn phiêu lưu ký"
+              ]
+            ],
+            "sortBy": [
+              [
+                "year_pub",
+                "desc"
+              ]
+            ],
+            "filterBy": []
+          }
+        },
+        "checked_at_utc": "2026-11-15T07:38:43.099008+00:00",
+        "http_status": 200,
+        "effective_url": "https://opac.nlv.gov.vn/Search",
+        "result_count": 143,
+        "count_note": "143 mixed records; facet reports141 Sách đơn,1 article,1 Sách tập.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/nlv-session-query.html",
+        "metadata_path": "evidence/nlv-session-query.json",
+        "transient_payload_fields": [],
+        "payload_note": "Exact semantic payload retained.",
+        "request_chain": [
+          {
+            "method": "GET",
+            "url": "https://opac.nlv.gov.vn/tim-kiem",
+            "purpose": "fresh anonymous cookie jar and anti-forgery token"
+          },
+          {
+            "method": "POST",
+            "url": "https://opac.nlv.gov.vn/Search",
+            "payload": {
+              "type": "quick",
+              "page": 1,
+              "pageSize": 5,
+              "hasFacetFilter": true,
+              "request": {
+                "searchBy": [
+                  [
+                    "option",
+                    "ti"
+                  ],
+                  [
+                    "keyword",
+                    "Dế mèn phiêu lưu ký"
+                  ]
+                ],
+                "sortBy": [
+                  [
+                    "year_pub",
+                    "desc"
+                  ]
+                ],
+                "filterBy": []
+              }
+            },
+            "headers_recipe": "RequestVerificationToken from fresh form; Content-Type:application/json"
+          }
+        ]
+      },
+      "books": [
+        {
+          "title": "Dế mèn phiêu lưu ký",
+          "author": "Tô Hoài; Thành Chương (illustrator)",
+          "record_id": "202611190700813201100",
+          "record_url": "https://opac.nlv.gov.vn/chi-tiet-tai-lieu/de-men-phieu-luu-ky-202611190700813201100",
+          "isbn": "9786042311458",
+          "holdings": "Two copies VN26.01078, VN26.01079; Phòng đọc yêu cầu và đọc báo, tạp chí, Tầng3 - NhàD (Tổng kho); both Sẵn sàng. Do not infer home lending from Mượn action.",
+          "evidence_path": "evidence/nlv-detail.html",
+          "edition_format": "4th reprint, Kim Đồng2026,170p; printed monograph"
+        }
+      ],
+      "robots": {
+        "url": "https://opac.nlv.gov.vn/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T07:31:53.330202+00:00",
+        "evidence_path": "evidence/nlv-robots.json",
+        "decision": "unresolved",
+        "note": "HTTP200 robots redirects to /khong-tim-thay-tai-nguyen-yeu-cau ordinary explicit not-found HTML. No interpretable policy; one bounded public title-query flow allowed by protocol, not policy clearance."
+      },
+      "reader_access": "Anonymous catalog search succeeded. Entry, borrowing eligibility, reservations and licensed digital access were not tested and are not inferred.",
+      "integration": {
+        "existing_adapter": "new family / custom",
+        "needs": [
+          "Fresh GET /tim-kiem; retain anonymous cookies in memory; read requestVerificationToken and send RequestVerificationToken header with POST /Search. Do not store cookie jar.",
+          "Preserve 2026 publication variants, accession IDs, MARC ISBN and physical extent.",
+          "Policy remains unknown: robots200 is explicit ordinary HTML not-found fallback, manually assessed under protocol; not clearance."
+        ],
+        "blockers": [],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "vnm-hanoi",
+      "name": "Trung tâm Văn hóa và Thư viện Hà Nội / Hanoi Cultural and Library Center",
+      "recommendation": "verified_target",
+      "scope": "One public institution with Ba Trieu and Ha Dong facilities; facilities not counted separately.",
+      "size": {
+        "value": 600272,
+        "unit": "printed book copies",
+        "date": "2026-06",
+        "source_url": "https://ttvanhoavathuvien.hanoi.gov.vn/gioi-thieu-chi-tiet/nguon-luc-thong-tin-2.html",
+        "evidence_path": null,
+        "quality": "official",
+        "note": "600,272 printed book copies as of June 2026. Foreign-language and local-history holdings are subsets. "
+      },
+      "platform": {
+        "family": "SLIB",
+        "name": "SLIB",
+        "proof": "Current official institutional introduction names SLIB; ASP.NET title-search form observed.",
+        "evidence_path": "evidence/hanoi-query.html"
+      },
+      "query": {
+        "text": "Dế mèn phiêu lưu ký",
+        "method": "POST",
+        "url": "https://tracuu.ttvanhoavathuvien.hanoi.gov.vn/tim-kiem-don-gian.html",
+        "payload": {
+          "ctl00$Menu$txtDieuKien": "",
+          "ctl00$MenuMobile$txtSoThe": "",
+          "ctl00$MenuMobile$txtMatKhau": "",
+          "ctl00$phContent$radLoai": "-1",
+          "ctl00$phContent$txtNhanDe": "Dế mèn phiêu lưu ký",
+          "ctl00$phContent$txtTacGia": "",
+          "ctl00$phContent$txtNhaXuatXuat": "",
+          "ctl00$phContent$txtNgonNgu": "",
+          "ctl00$phContent$txtTuKhoa": "",
+          "ctl00$phContent$txtNamXuatBan": "",
+          "ctl00$phContent$txtDkcb": "",
+          "ctl00$phContent$txtHienThi": "",
+          "ctl00$phContent$ctl04$txtSoThe": "",
+          "ctl00$phContent$ctl04$txtMatKhau": "",
+          "ctl00$phContent$hidOpacXemSlBanIn": "1",
+          "ctl00$phContent$hidOpacXemSlBanSo": "1",
+          "ctl00$phContent$hidOpacXemDkcb": "1",
+          "ctl00$phContent$hidOpacXemChiSoPhanLoai": "0",
+          "ctl00$phContent$hidTimKiem": "",
+          "ctl00$phContent$ddlLaSachNoi": "-1",
+          "ctl00$phContent$ddlDkcb": "=",
+          "ctl00$phContent$lstBmDmDangTaiLieu": "1",
+          "ctl00$phContent$lstBsThuVien": "7",
+          "ctl00$phContent$ddlSapXep": "TIEU_DE",
+          "ctl00$phContent$ddlSapXepTheo": "ASC",
+          "ctl00$phContent$ddlGioiHan": "500"
+        },
+        "checked_at_utc": "2026-11-15T07:34:28.430181+00:00",
+        "http_status": 200,
+        "effective_url": "https://tracuu.ttvanhoavathuvien.hanoi.gov.vn/tim-kiem-don-gian.html",
+        "result_count": 96,
+        "count_note": "Returned record count; not copies.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/hanoi-query.html",
+        "metadata_path": "evidence/hanoi-query.json",
+        "transient_payload_fields": [
+          "__VIEWSTATE",
+          "__VIEWSTATEGENERATOR",
+          "__VIEWSTATEENCRYPTED",
+          "ctl00$Menu$hidPhienLamViec",
+          "ctl00$phContent$hidPhienLamViec",
+          "__EVENTTARGET",
+          "__EVENTARGUMENT"
+        ],
+        "payload_note": "Exact submitted payload is in metadata_path. ASP.NET transient hidden fields require a fresh public form; excluded here for readability."
+      },
+      "books": [
+        {
+          "title": "Dế Mèn phiêu lưu ký",
+          "author": "Tô Hoài",
+          "record_id": "0bc03b115ba44a90bce4ea54fe0e8c50",
+          "record_url": "https://tracuu.ttvanhoavathuvien.hanoi.gov.vn/tai-lieu-chi-tiet/de-men-phieu-luu-ky-0bc03b115ba44a90bce4ea54fe0e8c50.html",
+          "isbn": null,
+          "holdings": "Four shelving records: Ha Dong KTB018695; Ba Trieu LCV40960,LCV40961,TB015461. Cho phép/Không cho phép are reservation permissions, not available/unavailable circulation states; status cells blank.",
+          "evidence_path": "evidence/hanoi-detail.html",
+          "edition_format": "Kim Đồng2024,190p; printed book"
+        }
+      ],
+      "robots": {
+        "url": "https://tracuu.ttvanhoavathuvien.hanoi.gov.vn/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T07:32:10.222275+00:00",
+        "evidence_path": "evidence/hanoi-robots.json",
+        "decision": "no_published_rules",
+        "note": "404 means no published robots rules, not reuse permission."
+      },
+      "reader_access": "Anonymous catalog search succeeded. Entry, borrowing eligibility, reservations and licensed digital access were not tested and are not inferred.",
+      "integration": {
+        "existing_adapter": "new family / custom",
+        "needs": [
+          "Fresh ASP.NET form state; title field ctl00$phContent$txtNhanDe and __EVENTTARGET=ctl00$phContent$lnkTimKiem.",
+          "Map location, request permission and actual circulation status separately."
+        ],
+        "blockers": [],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "vnm-haiphong",
+      "name": "Thư viện thành phố Hải Phòng / Haiphong City Library",
+      "recommendation": "verified_target",
+      "scope": "One merged public institution; successful legacy catalog explicitly identifies213A LachTray. HaiDuong site coverage unproven; not separately counted.",
+      "size": {
+        "value": 600000,
+        "unit": "book copies (over; entire merged institution)",
+        "date": "2026-08-26",
+        "source_url": "https://baohaiphong.vn/thu-vien-thanh-pho-hai-phong-70-nam-gin-giu-va-lan-toa-tri-thuc-551584.html",
+        "evidence_path": null,
+        "quality": "local public newspaper",
+        "note": "Over 600,000 book copies across two facilities after the July 2025 merger of Haiphong and Hai Duong libraries. Queried catalog identifies only 213A Lach Tray; coverage of Hai Duong is unproven. Catalog scope is narrower than this institution-wide size."
+      },
+      "platform": {
+        "family": "iMan.Opac custom ASP.NET",
+        "name": "iMan.Opac custom ASP.NET",
+        "proof": "Observed iMan.Opac.FrontEnd.iSearchProcess AJAX and wpid detail/search routes; iLib vendor attribution not proven.",
+        "evidence_path": "evidence/haiphong-query.html"
+      },
+      "query": {
+        "text": "Dế mèn phiêu lưu ký",
+        "method": "GET",
+        "url": "http://118.70.179.60:8888/pages/opac/wpid-search-stype-form-quick-sfield-title-keyword-D%E1%BA%BF%20m%C3%A8n%20phi%C3%AAu%20l%C6%B0u%20k%C3%BD.html",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T07:43:38.805473+00:00",
+        "http_status": 200,
+        "effective_url": "http://118.70.179.60:8888/pages/opac/wpid-search-stype-form-quick-sfield-title-keyword-D%E1%BA%BF%20m%C3%A8n%20phi%C3%AAu%20l%C6%B0u%20k%C3%BD.html",
+        "result_count": 25,
+        "count_note": "Returned record count; not copies.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/haiphong-query.html",
+        "metadata_path": "evidence/haiphong-query.json",
+        "transient_payload_fields": [],
+        "payload_note": "Exact semantic payload retained.",
+        "request_chain": [
+          {
+            "method": "POST",
+            "url": "http://118.70.179.60:8888/ajaxpro/iMan.Opac.FrontEnd.iSearchProcess,iMan.Opac.FrontEnd.ashx",
+            "payload": {
+              "SiteId": "opac",
+              "Keyword": "Dế mèn phiêu lưu ký"
+            },
+            "headers": {
+              "X-AjaxPro-Method": "ServerReformatKeyword",
+              "Content-Type": "application/json; charset=utf-8"
+            },
+            "metadata_path": "evidence/haiphong-keyword.json"
+          },
+          {
+            "method": "GET",
+            "url": "http://118.70.179.60:8888/pages/opac/wpid-search-stype-form-quick-sfield-title-keyword-D%E1%BA%BF%20m%C3%A8n%20phi%C3%AAu%20l%C6%B0u%20k%C3%BD.html"
+          }
+        ]
+      },
+      "books": [
+        {
+          "title": "Dế Mèn phiêu lưu ký",
+          "author": "Tô Hoài",
+          "record_id": "153181",
+          "record_url": "http://118.70.179.60:8888/pages/opac/wpid-detailbib-id-153181.html",
+          "isbn": null,
+          "holdings": "Bibliographic book record; no reliably interpretable copy/location/status table in bounded detail HTML.",
+          "evidence_path": "evidence/haiphong-detail.html",
+          "edition_format": "Kim Đồng2023,128p,15cm; Sách lẻ"
+        }
+      ],
+      "robots": {
+        "url": "http://118.70.179.60:8888/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T07:38:19.053438+00:00",
+        "evidence_path": "evidence/haiphong-catalog-robots.json",
+        "decision": "no_published_rules",
+        "note": "404 means no published robots rules, not reuse permission."
+      },
+      "reader_access": "Anonymous catalog search succeeded. Entry, borrowing eligibility, reservations and licensed digital access were not tested and are not inferred.",
+      "integration": {
+        "existing_adapter": "new family / custom",
+        "needs": [
+          "Official www.thuvienhaiphong.org.vn homepage directly links this public IPv4:8888 catalog; no private-network probe.",
+          "Public HTTP-only route; deployment needs secure proxy/link policy review.",
+          "Frontend keyword normalization AjaxPro POST uses X-AjaxPro-Method:ServerReformatKeyword, SiteId:opac, Keyword:exact title, then GET generated route.",
+          "Query broad matching returns related works as well as exact title; do not merge them."
+        ],
+        "blockers": [],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "vnm-khanhhoa",
+      "name": "Thư viện tỉnh Khánh Hòa — cơ sở2 Phan Rang",
+      "recommendation": "verified_target",
+      "scope": "One provincial institution, verified only PhanRang site2/formerNinhThuan collection. NhaTrang public-library site not counted; NTU is a separate university.",
+      "size": {
+        "value": 90934,
+        "unit": "monograph catalog records",
+        "date": "2026-11-15",
+        "source_url": "https://pr.thuvienkhanhhoa.gov.vn/TraCuuTaiLieuTruyenThong2Xem.aspx?intItemID=3022",
+        "evidence_path": "evidence/khanhhoa-detail.html",
+        "quality": "official",
+        "note": "Current site2 counters show 90,934 monograph records and 177,244 shelving entries. Footer identifies Khanh Hoa Provincial Library site2, Phan Rang; record holdings retain TvNinhThuan. 177,244 shelving entries reported separately."
+      },
+      "platform": {
+        "family": "Custom ASP.NET traditional catalog",
+        "name": "Custom ASP.NET traditional catalog",
+        "proof": "TraCuuTaiLieuTruyenThong2 family; iLib-like route is insufficient vendor proof.",
+        "evidence_path": "evidence/khanhhoa-session-query.html"
+      },
+      "query": {
+        "text": "Dế mèn phiêu lưu ký",
+        "method": "POST",
+        "url": "https://pr.thuvienkhanhhoa.gov.vn/tracuutailieutruyenthong2dongian",
+        "payload": {
+          "ctl00$phContent$txtTitle": "Dế mèn phiêu lưu ký",
+          "ctl00$phContent$txtAuthor": "",
+          "ctl00$phContent$txtIndexDDC": "",
+          "ctl00$phContent$txtIndexBBK": "",
+          "ctl00$phContent$txtIndexUDC": "",
+          "ctl00$phContent$txtKeyword": "",
+          "ctl00$phContent$Check": "optISBD",
+          "ctl00$phContent$ValDocType": "0",
+          "ctl00$phContent$txtMsg": "Chưa có điều kiện tìm kiếm!",
+          "ctl00$phContent$ddlFormat": "----- Tất cả -----",
+          "ctl00$phContent$ddlLibrary": "0",
+          "ctl00$phContent$ddlLocation": "0",
+          "ctl00$phContent$ddlSort": "0",
+          "ctl00$phContent$ddlLimit": "50",
+          "ctl00$ucMenuRight$ucPortalLeftStatistic$ddlMonth": "11",
+          "ctl00$ucMenuRight$ucPortalLeftStatistic$ddlYear": "2026",
+          "ctl00$phContent$btnSearch": "Tìm kiếm"
+        },
+        "checked_at_utc": "2026-11-15T07:38:46.937469+00:00",
+        "http_status": 200,
+        "effective_url": "https://pr.thuvienkhanhhoa.gov.vn/tracuutailieutruyenthong2ketquatimkiem",
+        "result_count": 19,
+        "count_note": "19 mixed records including printed editions and an audio result; book3022 is explicitly printed.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/khanhhoa-session-query.html",
+        "metadata_path": "evidence/khanhhoa-session-query.json",
+        "transient_payload_fields": [
+          "__VIEWSTATE",
+          "__VIEWSTATEGENERATOR",
+          "__EVENTVALIDATION"
+        ],
+        "payload_note": "Exact submitted payload is in metadata_path. ASP.NET transient hidden fields require a fresh public form; excluded here for readability."
+      },
+      "books": [
+        {
+          "title": "Dế mèn phiêu lưu ký",
+          "author": "Tô Hoài",
+          "record_id": "3022",
+          "record_url": "https://pr.thuvienkhanhhoa.gov.vn/TraCuuTaiLieuTruyenThong2Xem.aspx?intItemID=3022",
+          "isbn": null,
+          "holdings": "TvNinhThuan: Thiếu Nhi(TN),TNM.019372; total1,free1 (including reserved copies),reserved0. Retain that definition of free.",
+          "evidence_path": "evidence/khanhhoa-detail.html",
+          "edition_format": "Văn học2008,190p,14cm; printed book"
+        }
+      ],
+      "robots": {
+        "url": "https://pr.thuvienkhanhhoa.gov.vn/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T07:33:58.486531+00:00",
+        "evidence_path": "evidence/khanhhoa-robots.json",
+        "decision": "allowed_path",
+        "note": "Public query path allowed by applicable wildcard rules; no reuse licence established."
+      },
+      "reader_access": "Anonymous catalog search succeeded. Entry, borrowing eligibility, reservations and licensed digital access were not tested and are not inferred.",
+      "integration": {
+        "existing_adapter": "new family / custom",
+        "needs": [
+          "Fresh anonymous cookie jar plus ASP.NET form state required; POST redirects to result page.",
+          "Resolve legacy location name TvNinhThuan to present site2 without assuming combined province-wide coverage.",
+          "Robots has search=yes,ai-train=no,use=reference and wildcardAllow:/; training crawler blocks are not treated as public-search rules. Reuse terms still require assessment."
+        ],
+        "blockers": [],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "vnm-hue",
+      "name": "Viện Chuyển đổi số và Học liệu, Đại học Huế / Hue University central learning-resource collection",
+      "recommendation": "verified_target",
+      "scope": "Only central LRC collection at20LeLoi, not the whole HueUniversity federation. Search-count source names this institute; book MARC040=LRC-HUE.",
+      "size": {
+        "value": 25000,
+        "unit": "printed titles (over; books + periodicals)",
+        "date": "undated current page",
+        "source_url": "https://lrc.hueuni.edu.vn/",
+        "evidence_path": "evidence/hue-home.html",
+        "quality": "official",
+        "note": "Over 25,000 printed titles spanning books, newspapers and journals, not a pure book-volume total. Only the central collection at 20 Le Loi is selected. "
+      },
+      "platform": {
+        "family": "Lạc Việt Vebrary5",
+        "name": "Lạc Việt Vebrary5",
+        "proof": "Observed Vebrary5/LacViet namespaces and public Search_Count/SearchPaging endpoints.",
+        "evidence_path": "evidence/hue-session-query.html"
+      },
+      "query": {
+        "text": "GMAT",
+        "method": "POST",
+        "url": "https://lrc.hueuni.edu.vn/SearchOpac/SearchPaging",
+        "payload": {
+          "dbResourceID": -1,
+          "pageIndex": 1,
+          "pageSize": 5,
+          "orderBy": "BIBID/DESC"
+        },
+        "checked_at_utc": "2026-11-15T07:37:15.016956+00:00",
+        "http_status": 200,
+        "effective_url": "https://lrc.hueuni.edu.vn/SearchOpac/SearchPaging",
+        "result_count": 5,
+        "count_note": "Returned record count; not copies.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/hue-session-query.html",
+        "metadata_path": "evidence/hue-session-query.json",
+        "transient_payload_fields": [],
+        "payload_note": "Exact semantic payload retained.",
+        "request_chain": [
+          {
+            "method": "GET",
+            "url": "https://lrc.hueuni.edu.vn/SearchOpac/Index?query=GMAT&category=4",
+            "purpose": "create fresh anonymous session and load public form"
+          },
+          {
+            "method": "POST",
+            "url": "https://lrc.hueuni.edu.vn/SearchOpac/Search_Count",
+            "payload": {
+              "lstOrAndNot": ",AND,AND,AND,AND",
+              "lstColunm": "4,4,4,4,4",
+              "lstValue": "GMAT''''",
+              "heldmediumtype": "",
+              "materialtype": "b",
+              "location": "",
+              "locationTemp": "",
+              "language": "",
+              "lstZdbname": []
+            },
+            "metadata_path": "evidence/hue-session-count.json",
+            "evidence_path": "evidence/hue-session-count.html"
+          },
+          {
+            "method": "POST",
+            "url": "https://lrc.hueuni.edu.vn/SearchOpac/SearchPaging",
+            "payload": {
+              "dbResourceID": -1,
+              "pageIndex": 1,
+              "pageSize": 5,
+              "orderBy": "BIBID/DESC"
+            }
+          }
+        ]
+      },
+      "books": [
+        {
+          "title": "Gmat : graduate management admission test",
+          "author": "Eugene D. Jaffe; Stephen Hilbert",
+          "record_id": "31988",
+          "record_url": "https://lrc.hueuni.edu.vn/Portal/BookDetail?BIBID=31988",
+          "isbn": null,
+          "holdings": "Search JSON COUNTHOLDING=1,COUNTHOLDINGAVAILABLE=1; item location not expanded. Detail HTML contains unloaded zero placeholders, not true zero holdings.",
+          "evidence_path": "evidence/hue-session-query.html",
+          "edition_format": "14th ed.; Trẻ/FirstNews2009;509p+CD-ROM; Books-Sách"
+        }
+      ],
+      "robots": {
+        "url": "https://lrc.hueuni.edu.vn/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T07:31:53.331420+00:00",
+        "evidence_path": "evidence/hue-robots.json",
+        "decision": "no_published_rules",
+        "note": "404 means no published robots rules, not reuse permission."
+      },
+      "reader_access": "Anonymous catalog search succeeded. Entry, borrowing eligibility, reservations and licensed digital access were not tested and are not inferred.",
+      "integration": {
+        "existing_adapter": "new family / custom",
+        "needs": [
+          "Use fresh anonymous session; GET form, POST Search_Count, then POST SearchPaging with returned sourceID=-1.",
+          "Do not read initial detail-page zeros as holdings; dynamic component not loaded.",
+          "MARC string contains Vietnamese mojibake while top-level fields are readable. Preserve original payload and normalize display cautiously.",
+          "GMAT substring search also returns a title containing pragmatic; label broad related-title results rather than five exact matches."
+        ],
+        "blockers": [],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "vnm-husc",
+      "name": "Trung tâm Thông tin & Thư viện, Trường Đại học Khoa học, Đại học Huế / HUSC",
+      "recommendation": "verified_target",
+      "scope": "Distinct Hue federation member-university library at77NguyenHue. Search-count source names HUSC; MARC040=LIB.HUSC,CUSTOMERID=DHHUE. Not a branch of the selected central LRC catalog.",
+      "size": {
+        "value": null,
+        "unit": "institutional proxy: four-storey university library,12 staff",
+        "date": "undated current page",
+        "source_url": "https://lib.husc.edu.vn/Page/gioi-thieu-thu-vien-",
+        "evidence_path": "evidence/husc-size.html",
+        "quality": "official institutional proxy",
+        "note": "Distinct university library at 77 Nguyen Hue; four-storey building and 12 staff. Official institutional proxy; no current aggregate book stock claimed. "
+      },
+      "platform": {
+        "family": "Lạc Việt Vebrary5",
+        "name": "Lạc Việt Vebrary5",
+        "proof": "Vebrary public form and same Search_Count/SearchPaging schema as LRC, with distinct institution source.",
+        "evidence_path": "evidence/husc-query.html"
+      },
+      "query": {
+        "text": "Tham vấn tâm lý cá nhân",
+        "method": "POST",
+        "url": "https://lib.husc.edu.vn/SearchOpac/SearchPaging",
+        "payload": {
+          "dbResourceID": -1,
+          "pageIndex": 1,
+          "pageSize": 5,
+          "orderBy": "BIBID/DESC"
+        },
+        "checked_at_utc": "2026-11-15T07:39:49.041619+00:00",
+        "http_status": 200,
+        "effective_url": "https://lib.husc.edu.vn/SearchOpac/SearchPaging",
+        "result_count": 2,
+        "count_note": "Returned record count; not copies.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/husc-query.html",
+        "metadata_path": "evidence/husc-query.json",
+        "transient_payload_fields": [],
+        "payload_note": "Exact semantic payload retained.",
+        "request_chain": [
+          {
+            "method": "GET",
+            "url": "https://lib.husc.edu.vn/SearchOpac/Index?query=Tham+v%E1%BA%A5n+t%C3%A2m+l%C3%BD+c%C3%A1+nh%C3%A2n&category=4",
+            "purpose": "create fresh anonymous session and load public form"
+          },
+          {
+            "method": "POST",
+            "url": "https://lib.husc.edu.vn/SearchOpac/Search_Count",
+            "payload": {
+              "lstOrAndNot": ",AND,AND,AND,AND",
+              "lstColunm": "4,4,4,4,4",
+              "lstValue": "Tham vấn tâm lý cá nhân''''",
+              "heldmediumtype": "",
+              "materialtype": "b",
+              "location": "",
+              "locationTemp": "",
+              "language": "",
+              "lstZdbname": [
+                "-1"
+              ]
+            },
+            "metadata_path": "evidence/husc-count.json",
+            "evidence_path": "evidence/husc-count.html"
+          },
+          {
+            "method": "POST",
+            "url": "https://lib.husc.edu.vn/SearchOpac/SearchPaging",
+            "payload": {
+              "dbResourceID": -1,
+              "pageIndex": 1,
+              "pageSize": 5,
+              "orderBy": "BIBID/DESC"
+            }
+          }
+        ]
+      },
+      "books": [
+        {
+          "title": "Tham vấn tâm lý cá nhân và gia đình",
+          "author": "Trần Đình Tuấn",
+          "record_id": "34655",
+          "record_url": "https://lib.husc.edu.vn/Portal/BookDetail?No=1&bibid=34655&dbID=-1",
+          "isbn": "9786049346866",
+          "holdings": "Search JSON5 holdings,4 available; MARC852 Vv24919–Vv24923. Dynamic detail HTML zero defaults not actual counts.",
+          "evidence_path": "evidence/husc-query.html",
+          "edition_format": "Đại học Quốc gia Hà Nội2015,381p,24cm; Books-Sách"
+        }
+      ],
+      "robots": {
+        "url": "https://lib.husc.edu.vn/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T07:38:19.054442+00:00",
+        "evidence_path": "evidence/husc-robots.json",
+        "decision": "no_published_rules",
+        "note": "404 means no published robots rules, not reuse permission."
+      },
+      "reader_access": "Anonymous catalog search succeeded. Entry, borrowing eligibility, reservations and licensed digital access were not tested and are not inferred.",
+      "integration": {
+        "existing_adapter": "new family / custom",
+        "needs": [
+          "Fresh anonymous session with institution sourceID=-1; separate deployment baseURL from central LRC.",
+          "Record33649 is a separate returned record for same2015title; do not deduplicate solely on title.",
+          "Use loaded search aggregate counts; do not infer individual-copy availability."
+        ],
+        "blockers": [],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "vnm-dhhp",
+      "name": "Trung tâm Thông tin - Thư viện, Trường Đại học Hải Phòng / Haiphong University",
+      "recommendation": "verified_target",
+      "scope": "One university library; distinct from Haiphong city public library and from private Haiphong Management and Technology University (HPU).",
+      "size": {
+        "value": null,
+        "unit": "institutional proxy: full university information-library center",
+        "date": "2024-10-15",
+        "source_url": "https://lib.dhhp.edu.vn/contentbrowser.aspx?catid=3100&contentid=4448",
+        "evidence_path": "evidence/dhhp-context.html",
+        "quality": "official institutional proxy",
+        "note": "Full university information-library center at building C4; joined the 94-member shared DIGITAL library in September 2024, contributing nearly 3,000 digital resources. This supports institutional importance but is NOT its print inventory. "
+      },
+      "platform": {
+        "family": "KIPOS",
+        "name": "KIPOS",
+        "proof": "Official current notices name KIPOS; observed ASP.NET keywordsearch and DmdInfo,kiposdata assets.",
+        "evidence_path": "evidence/dhhp-query.html"
+      },
+      "query": {
+        "text": "Giáo trình kinh tế chính trị",
+        "method": "POST",
+        "url": "https://lib.dhhp.edu.vn/opac/keywordsearch.aspx?mnuid=142",
+        "payload": {
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchBox1$KeywordSearchBox1$txtsearchValue1": "Giáo trình kinh tế chính trị",
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchBox1$KeywordSearchBox1$txtsearchValue2": "",
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchBox1$KeywordSearchBox1$txtsearchValue3": "",
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchBox1$KeywordSearchBox1$ddlDmdCollection": "",
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchBox1$KeywordSearchBox1$ddlMaterialType": "0",
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchBox1$KeywordSearchBox1$cmbsearchField1": "t",
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchBox1$KeywordSearchBox1$cmbsearchOperator1": " & ",
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchBox1$KeywordSearchBox1$cmbsearchField2": "t",
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchBox1$KeywordSearchBox1$cmbsearchOperator2": " & ",
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchBox1$KeywordSearchBox1$cmbsearchField3": "t",
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchResult1$KeywordSearchResult1$ddlSortKey": "TITLE",
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchResult1$KeywordSearchResult1$ddlSortDirection": "ASC",
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchBox1$KeywordSearchBox1$btnSearch": "Tìm kiếm"
+        },
+        "checked_at_utc": "2026-11-15T07:36:06.010731+00:00",
+        "http_status": 200,
+        "effective_url": "https://lib.dhhp.edu.vn/opac/keywordsearch.aspx?mnuid=142&s_searchvalue1=Gi%C3%A1o%20tr%C3%ACnh%20kinh%20t%E1%BA%BF%20ch%C3%ADnh%20tr%E1%BB%8B&search_field1=t&search_field2=t&search_field3=t&s_searchoperator1=%20%26%20&s_searchoperator2=%20%26%20&user_query=t%3AGi%C3%A1o%20tr%C3%ACnh%20kinh%20t%E1%BA%BF%20ch%C3%ADnh%20tr%E1%BB%8B",
+        "result_count": 23,
+        "count_note": "Returned record count; not copies.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/dhhp-query.html",
+        "metadata_path": "evidence/dhhp-query.json",
+        "transient_payload_fields": [
+          "__WPPS",
+          "__VIEWSTATE",
+          "__VIEWSTATEGENERATOR",
+          "__EVENTVALIDATION"
+        ],
+        "payload_note": "Exact submitted payload is in metadata_path. ASP.NET transient hidden fields require a fresh public form; excluded here for readability."
+      },
+      "books": [
+        {
+          "title": "Giáo trình Kinh tế chính trị Mác - Lênin : Dành cho bậc đại học hệ chuyên lý luận chính trị",
+          "author": "Ngô Tuấn Nghĩa; Phạm Văn Dũng; Đoàn Xuân Thuỷ et al.",
+          "record_id": "41665",
+          "record_url": "https://lib.dhhp.edu.vn/opac/DmdInfo.aspx?dmd_id=41665",
+          "isbn": null,
+          "holdings": "20 print copies:15Giáo trình,2Khođọc,2Khomượn,1TiếngViệt; barcodes in detail. One row has due-date03-12-2024; blank cells and historical circulation23 do not prove20available now.",
+          "evidence_path": "evidence/dhhp-detail.html",
+          "edition_format": "Chính trị Quốc gia2021,439p,21cm; print"
+        }
+      ],
+      "robots": {
+        "url": "https://lib.dhhp.edu.vn/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T07:33:58.484964+00:00",
+        "evidence_path": "evidence/dhhp-robots.json",
+        "decision": "no_published_rules",
+        "note": "404 means no published robots rules, not reuse permission."
+      },
+      "reader_access": "Anonymous catalog search succeeded. Entry, borrowing eligibility, reservations and licensed digital access were not tested and are not inferred.",
+      "integration": {
+        "existing_adapter": "new family / custom",
+        "needs": [
+          "Fresh ASP.NET state; generated control names identical to NTU but per-deployment selectors still validate.",
+          "Do not confuse DHHP with HPU: secondary70,000stock claims cite HPU domains and are rejected.",
+          "Three thousand digital contributions/94-network count are not print-book totals."
+        ],
+        "blockers": [],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "vnm-bdu",
+      "name": "Trung tâm Lưu trữ và Thư viện, Trường Đại học Bình Dương / Binh Duong University",
+      "recommendation": "verified_target",
+      "scope": "Main university catalog; CaMau branch holdings not separately verified or added.",
+      "size": {
+        "value": 26760,
+        "unit": "textbook/reference copies (2017 main campus)",
+        "date": "2017; file uploaded 2019",
+        "source_url": "https://bdu.edu.vn/uploads/news/2019_12/Bao-cao-TDG.pdf",
+        "evidence_path": null,
+        "quality": "official",
+        "note": "2017 self-assessment, printed p125/PDF p132: main campus 10,372 textbook/reference titles, 26,760 copies. Ca Mau separately had 1,404 titles/4,886 copies; not added to the tested main catalog scope. Historical, not current stock. 10,372 titles; age of figure explicit."
+      },
+      "platform": {
+        "family": "PSC zLIS7",
+        "name": "PSC zLIS7",
+        "proof": "Official help names PSCzLIS7; observed zlisscript.js and same-origin /api/Book/SearchOpac public route.",
+        "evidence_path": "evidence/bdu-query2.html"
+      },
+      "query": {
+        "text": "Giáo trình kinh tế chính trị",
+        "method": "POST",
+        "url": "https://lib.bdu.edu.vn/api/Book/SearchOpac?recordGroupId=0&inventoryId=0&ebookSearch=false&startIndex=0&count=5",
+        "payload": [
+          {
+            "Field": "title",
+            "Structure": "phrase",
+            "Value": "Giáo trình kinh tế chính trị",
+            "Relation": "",
+            "Position": "",
+            "Truncate": "right_truncation",
+            "Completeness": "",
+            "SortType": "",
+            "Operator": ""
+          },
+          {
+            "Field": "date",
+            "SortType": "dsc",
+            "Operator": "or",
+            "Value": "0",
+            "Structure": "",
+            "Relation": "",
+            "Position": "",
+            "Truncate": "",
+            "Completeness": ""
+          }
+        ],
+        "checked_at_utc": "2026-11-15T07:37:51.842240+00:00",
+        "http_status": 200,
+        "effective_url": "https://lib.bdu.edu.vn/api/Book/SearchOpac?recordGroupId=0&inventoryId=0&ebookSearch=false&startIndex=0&count=5",
+        "result_count": 2,
+        "count_note": "Returned record count; not copies.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/bdu-query2.html",
+        "metadata_path": "evidence/bdu-query2.json",
+        "transient_payload_fields": [],
+        "payload_note": "Exact semantic payload retained."
+      },
+      "books": [
+        {
+          "title": "Giáo trình kinh tế chính trị Mác - Lênin : dùng cho khối ngành Kinh tế - Quản trị kinh doanh trong các trường đại học, cao đẳng",
+          "author": "Chu Văn Cấp; Trần Bình Trọng",
+          "record_id": "40290",
+          "record_url": "https://lib.bdu.edu.vn/module/chi-tiet-sach?RecordID=40290",
+          "isbn": null,
+          "holdings": "NumberOfCopies=1,NumberOfFiles=0; location and circulation status absent. A second2021record48006 has10copies and1file; not combined.",
+          "evidence_path": "evidence/bdu-query2.html",
+          "edition_format": "1st reprint,Chính trị Quốc gia2005,511p; print"
+        }
+      ],
+      "robots": {
+        "url": "https://lib.bdu.edu.vn/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T07:33:58.485720+00:00",
+        "evidence_path": "evidence/bdu-robots.json",
+        "decision": "allowed_path",
+        "note": "Public query path allowed by applicable wildcard rules; no reuse licence established."
+      },
+      "reader_access": "Anonymous catalog search succeeded. Entry, borrowing eligibility, reservations and licensed digital access were not tested and are not inferred.",
+      "integration": {
+        "existing_adapter": "new family / custom",
+        "needs": [
+          "Use observed public JSON API without credentials; title phrase search,right_truncation; sort date=dsc (not descending).",
+          "Copies are stock counts, not available counts; detail HTML is a JavaScript shell.",
+          "Current zLIS and historical2017Libol6 demonstrate migration; avoid vendor-list inference."
+        ],
+        "blockers": [],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "vnm-huflit",
+      "name": "Thư viện HUFLIT / Ho Chi Minh City University of Foreign Languages–Information Technology",
+      "recommendation": "verified_target",
+      "scope": "One university network across SuVanHanh,HocMon,BaGia; three locations counted once.",
+      "size": {
+        "value": 61595,
+        "unit": "catalog documents across3campuses; mixed formats",
+        "date": "2026-11-15",
+        "source_url": "https://lib.huflit.edu.vn/",
+        "evidence_path": "evidence/huflit-home.html",
+        "quality": "official",
+        "note": "61,595 catalog documents across three campuses; mixed formats, not 61,595 physical copies. "
+      },
+      "platform": {
+        "family": "Custom Next.js portal",
+        "name": "Custom Next.js portal",
+        "proof": "Streamed Next.js result HTML; present underlying ILS not established.",
+        "evidence_path": "evidence/huflit-query.html"
+      },
+      "query": {
+        "text": "Cambridge Global English",
+        "method": "GET",
+        "url": "https://lib.huflit.edu.vn/vi/tim-kiem?q=Cambridge+Global+English&field=title",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T07:38:04.073023+00:00",
+        "http_status": 200,
+        "effective_url": "https://lib.huflit.edu.vn/vi/tim-kiem?q=Cambridge+Global+English&field=title",
+        "result_count": 1,
+        "count_note": "Returned record count; not copies.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/huflit-query.html",
+        "metadata_path": "evidence/huflit-query.json",
+        "transient_payload_fields": [],
+        "payload_note": "Exact semantic payload retained."
+      },
+      "books": [
+        {
+          "title": "Cambridge Global English : For Cambridge Secondary 1 English as a Second Language, Coursebook. 9",
+          "author": "Chris Barker; Libby Mitchell",
+          "record_id": "92856",
+          "record_url": "https://lib.huflit.edu.vn/vi/tai-lieu/92856",
+          "isbn": "9781107689732",
+          "holdings": "SuVanHanh1/1copy,barcode100052547. Query explicitly labels holdings snapshot23:00 on14Nov2026; intraday lending/returns not reflected.",
+          "evidence_path": "evidence/huflit-detail.html",
+          "edition_format": "CambridgeUP2016;152p+1CD; print"
+        }
+      ],
+      "robots": {
+        "url": "https://lib.huflit.edu.vn/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T07:32:50.511036+00:00",
+        "evidence_path": "evidence/huflit-robots.json",
+        "decision": "no_published_rules",
+        "note": "404 means no published robots rules, not reuse permission."
+      },
+      "reader_access": "Anonymous catalog search succeeded. Entry, borrowing eligibility, reservations and licensed digital access were not tested and are not inferred.",
+      "integration": {
+        "existing_adapter": "new family / custom",
+        "needs": [
+          "Parse completed streamed response after initial loading shell.",
+          "Expose nightly snapshot timestamp; never label live.",
+          "Reservations require school login; public discovery does not confer eligibility."
+        ],
+        "blockers": [],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "vnm-ntu",
+      "name": "Trung tâm Thông tin và Tư liệu, Trường Đại học Nha Trang / Nha Trang University",
+      "recommendation": "verified_target",
+      "scope": "One university collection; not KhanhHoa provincial public library.",
+      "size": {
+        "value": 24270,
+        "unit": "print catalog records, including theses/periodicals",
+        "date": "2026-11-15",
+        "source_url": "https://thuvien.ntu.edu.vn/",
+        "evidence_path": "evidence/ntu-home.html",
+        "quality": "official",
+        "note": "Public counters: 24,270 print records, including 13,333 Vietnamese-book records, 1,222 foreign-book records and 179 NTU books/lectures. Theses and periodicals are also in the print total. "
+      },
+      "platform": {
+        "family": "KIPOS",
+        "name": "KIPOS",
+        "proof": "Observed same keywordsearch/DmdInfo control family; ntukiposdata assets in MARC856.",
+        "evidence_path": "evidence/ntu-query.html"
+      },
+      "query": {
+        "text": "Nguyên lý marketing",
+        "method": "POST",
+        "url": "https://thuvien.ntu.edu.vn/opac/keywordsearch.aspx?mnuid=142",
+        "payload": {
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchBox1$KeywordSearchBox1$txtsearchValue1": "Nguyên lý marketing",
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchBox1$KeywordSearchBox1$txtsearchValue2": "",
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchBox1$KeywordSearchBox1$txtsearchValue3": "",
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchBox1$KeywordSearchBox1$ddlDmdCollection": "",
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchBox1$KeywordSearchBox1$ddlMaterialType": "1",
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchBox1$KeywordSearchBox1$cmbsearchField1": "t",
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchBox1$KeywordSearchBox1$cmbsearchOperator1": " & ",
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchBox1$KeywordSearchBox1$cmbsearchField2": "t",
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchBox1$KeywordSearchBox1$cmbsearchOperator2": " & ",
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchBox1$KeywordSearchBox1$cmbsearchField3": "t",
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchResult1$KeywordSearchResult1$ddlSortKey": "TITLE",
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchResult1$KeywordSearchResult1$ddlSortDirection": "ASC",
+          "ctl00$WebPartManagerPanel1$WebPartManagerMain$gwpKeywordSearchBox1$KeywordSearchBox1$btnSearch": "Tìm kiếm"
+        },
+        "checked_at_utc": "2026-11-15T07:45:57.562170+00:00",
+        "http_status": 200,
+        "effective_url": "https://thuvien.ntu.edu.vn/opac/keywordsearch.aspx?mnuid=142&s_searchvalue1=Nguy%C3%AAn%20l%C3%BD%20marketing&search_field1=t&search_field2=t&search_field3=t&s_searchoperator1=%20%26%20&s_searchoperator2=%20%26%20&user_query=t%3ANguy%C3%AAn%20l%C3%BD%20marketing",
+        "result_count": 1,
+        "count_note": "Returned record count; not copies.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/ntu-query.html",
+        "metadata_path": "evidence/ntu-query.json",
+        "transient_payload_fields": [
+          "__WPPS",
+          "__VIEWSTATE",
+          "__VIEWSTATEGENERATOR",
+          "__EVENTVALIDATION"
+        ],
+        "payload_note": "Exact submitted payload is in metadata_path. ASP.NET transient hidden fields require a fresh public form; excluded here for readability."
+      },
+      "books": [
+        {
+          "title": "Nguyên lý marketing",
+          "author": "Philip Kotler; Gary Armstrong; Khoa Marketing Trường Đại học Kinh tế Quốc dân (translator)",
+          "record_id": "215619",
+          "record_url": "https://thuvien.ntu.edu.vn/opac/DmdInfo.aspx?dmd_id=215619",
+          "isbn": "9786043304961",
+          "holdings": "4print copies:3KhođọcSinhviên(1000030701,1000030702,1000031170),1Khomượn(3000041250);1digital object. Individual status cells blank; counts do not imply available.",
+          "evidence_path": "evidence/ntu-detail.html",
+          "edition_format": "17th edition;Đại học Kinh tế quốc dân2022,2024;1080p; print+digital"
+        }
+      ],
+      "robots": {
+        "url": "https://thuvien.ntu.edu.vn/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T07:44:45.530507+00:00",
+        "evidence_path": "evidence/ntu-robots.json",
+        "decision": "no_published_rules",
+        "note": "404 means no published robots rules, not reuse permission."
+      },
+      "reader_access": "Anonymous catalog search succeeded. Entry, borrowing eligibility, reservations and licensed digital access were not tested and are not inferred.",
+      "integration": {
+        "existing_adapter": "new family / custom",
+        "needs": [
+          "Title query explicitly filtered ddlMaterialType=1 (Có bản cứng).",
+          "Fresh ASP.NET state required; preserve Vietnamese text and record215619.",
+          "Mixed year field2022,2024 retained, not normalized to one invented edition date."
+        ],
+        "blockers": [],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "vnm-huaf",
+      "name": "Trung tâm Thông tin - Thư viện, Trường Đại học Nông Lâm, Đại học Huế / HUAF",
+      "recommendation": "reserve",
+      "scope": "Distinct member university within Hue federation; only its own Koha holdings, not federation aggregate.",
+      "size": {
+        "value": null,
+        "unit": "university institutional proxy; stock unquantified",
+        "date": "2026-11-15",
+        "source_url": "https://opac.huaf.edu.vn/",
+        "evidence_path": "evidence/huaf-detail.html",
+        "quality": "official",
+        "note": "University agriculture/forestry library with discipline-specific shelves. No reliable current stock established; detail holdings labelled OPAC thử nghiệm. "
+      },
+      "platform": {
+        "family": "Koha",
+        "name": "Koha",
+        "proof": "Powered by Koha footer,standard /cgi-bin/koha/ routes, actual biblionumber709.",
+        "evidence_path": "evidence/huaf-query.html"
+      },
+      "query": {
+        "text": "toán cao cấp",
+        "method": "GET",
+        "url": "https://opac.huaf.edu.vn/cgi-bin/koha/opac-search.pl?idx=ti&q=to%C3%A1n+cao+c%E1%BA%A5p",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T07:33:45.603118+00:00",
+        "http_status": 200,
+        "effective_url": "https://opac.huaf.edu.vn/cgi-bin/koha/opac-search.pl?idx=ti&q=to%C3%A1n+cao+c%E1%BA%A5p",
+        "result_count": 25,
+        "count_note": "Returned record count; not copies.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/huaf-query.html",
+        "metadata_path": "evidence/huaf-query.json",
+        "transient_payload_fields": [],
+        "payload_note": "Exact semantic payload retained."
+      },
+      "books": [
+        {
+          "title": "Toán học cao cấp. Tập2, Phép tính giải tích một biến số",
+          "author": "Nguyễn Đình Trí; Tạ Văn Đĩnh; Nguyễn Hồ Quỳnh",
+          "record_id": "709",
+          "record_url": "https://opac.huaf.edu.vn/cgi-bin/koha/opac-detail.pl?biblionumber=709",
+          "isbn": null,
+          "holdings": "30printed copies marked Available atTrungtâmThôngtin-Thưviện, but every row carries OPAC thử nghiệm. Production circulation validity unproven.",
+          "evidence_path": "evidence/huaf-detail.html",
+          "edition_format": "5th revised reprint;Giáo dục2002;404p;print"
+        }
+      ],
+      "robots": {
+        "url": "https://opac.huaf.edu.vn/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T07:32:22.155603+00:00",
+        "evidence_path": "evidence/huaf-robots.json",
+        "decision": "no_published_rules",
+        "note": "404 means no published robots rules, not reuse permission."
+      },
+      "reader_access": "Anonymous catalog search succeeded. Entry, borrowing eligibility, reservations and licensed digital access were not tested and are not inferred.",
+      "integration": {
+        "existing_adapter": "candidate reuse",
+        "needs": [
+          "Existing Koha adapter is a reuse candidate, not tested in live MyBookshelf.",
+          "Test-labelled holdings require production endpoint and status validation before promotion.",
+          "Official lib.huaf.edu.vn homepage has unrelated spam; do not use it for inventory facts."
+        ],
+        "blockers": [],
+        "live_app_tested": false
+      }
+    }
+  ],
+  "blocked_or_unverified": [
+    {
+      "name": "Ho Chi Minh City General Sciences Library/public system",
+      "url": "https://phucvu.thuvientphcm.gov.vn/robots.txt",
+      "reason": "robots explicitly disallows /Item/SearchAdvanced and /Dictionary/dictionary. No search submitted; do not bypass via alternate search endpoint.",
+      "evidence_path": "evidence/hcmc-robots.json"
+    },
+    {
+      "name": "Vietnam National University Ho Chi Minh City union",
+      "url": "https://opac.vnulib.edu.vn/robots.txt",
+      "reason": "robots503; no search clearance; Sierra network priority retained.",
+      "evidence_path": "evidence/vnuhcm-robots.json"
+    },
+    {
+      "name": "Can Tho University Learning Resource Center",
+      "url": "https://lrcopac.ctu.edu.vn/robots.txt",
+      "reason": "robots503/timeout; large print stock retained as blocked priority.",
+      "evidence_path": "evidence/ctu-robots.json"
+    },
+    {
+      "name": "Hanoi University of Science and Technology,TaQuangBuu Library",
+      "url": "https://libopac.hust.edu.vn/robots.txt",
+      "reason": "robots503; no search performed.",
+      "evidence_path": "evidence/hust-robots.json"
+    },
+    {
+      "name": "Hong Duc University",
+      "url": "http://thuvien.hdu.edu.vn/robots.txt",
+      "reason": "robots timed out; no catalog search performed.",
+      "evidence_path": "evidence/hdu-robots.json"
+    },
+    {
+      "name": "University of Economics–Technology for Industries",
+      "url": "https://opac.uneti.edu.vn/robots.txt",
+      "reason": "robots403 challenge; stopped.",
+      "evidence_path": "evidence/uneti-robots.json"
+    },
+    {
+      "name": "Dong Nai Provincial Library",
+      "url": "https://thuvien.dongnai.gov.vn/robots.txt",
+      "reason": "robots401; stopped.",
+      "evidence_path": "evidence/dongnai-robots.json"
+    },
+    {
+      "name": "Da Nang public library",
+      "url": "https://opac.thuvien.danang.gov.vn/robots.txt",
+      "reason": "robots503; stopped.",
+      "evidence_path": "evidence/danang-robots.json"
+    },
+    {
+      "name": "Phenikaa University",
+      "url": "https://opac.phenikaa-uni.edu.vn/robots.txt",
+      "reason": "robots503; stopped.",
+      "evidence_path": "evidence/phenikaa-robots.json"
+    },
+    {
+      "name": "Vietnam Academy of Science and Technology",
+      "url": "https://opac.vast.vn/robots.txt",
+      "reason": "robots connection tunnel403; stopped.",
+      "evidence_path": "evidence/vast-robots.json"
+    },
+    {
+      "name": "Thang Long University",
+      "url": "https://thuvien.thanglong.edu.vn/robots.txt",
+      "reason": "robots503; stopped.",
+      "evidence_path": "evidence/thanglong-robots.json"
+    },
+    {
+      "name": "Vietnam National University of Agriculture",
+      "url": "https://opac.vnua.edu.vn/robots.txt",
+      "reason": "robots tunnel403; stopped.",
+      "evidence_path": "evidence/vnua-robots.json"
+    },
+    {
+      "name": "VNUHCM University of Social Sciences and Humanities",
+      "url": "https://thuvien.hcmussh.edu.vn/robots.txt",
+      "reason": "Koha homepage/detail is indexed but two bounded public title requests returned You did not specify any search criteria; not a successful search. Not added to selected set.",
+      "evidence_path": "evidence/ussh-query2.json"
+    },
+    {
+      "name": "Ho Chi Minh City University of Industry and Trade",
+      "url": "https://thuvien.huit.edu.vn/robots.txt",
+      "reason": "Public OPAC link resolves to Vebrary login. Bounded title flow returned login HTML, not books; stopped, no login attempt.",
+      "evidence_path": "evidence/huit-count.json"
+    }
+  ],
+  "limitations": [
+    "No national largest-ten ranking established; selection is feasibility-based with explicit size dates/units and institutional proxies.",
+    "No live MyBookshelf adapter tests, product changes, outreach, authentication, reservations or borrowing actions.",
+    "Public catalog visibility does not establish entry/borrowing eligibility or a reuse licence.",
+    "Size statements mix historical inventory and current catalog counters; no total across institutions is calculated.",
+    "Hanoi,Haiphong andKhanhHoa current names may differ from legacy location identifiers; no network+branch double counting.",
+    "Vebrary detail HTML zero counters are unloaded placeholders; Koha HUAF holdings explicitly test-labelled; HUFLIT availability explicitly nightly snapshot.",
+    "One mistaken lic.hueuni.edu.vn detail hostname returned connection error before correction to observed lrc.hueuni.edu.vn; not used as evidence or success.",
+    "Bounded raw captures are research evidence, not a collection harvest."
+  ],
+  "sources": [
+    {
+      "url": "https://nlv.gov.vn/ef/information-resources.html",
+      "claim": "Over 2.5 million monograph items. Undated inventory statement, not a verified 2026 total. Digitized pages are a separate measure.",
+      "date": "undated; inspected 2026-11-15",
+      "evidence_path": null,
+      "quality": "official"
+    },
+    {
+      "url": "https://ttvanhoavathuvien.hanoi.gov.vn/gioi-thieu-chi-tiet/nguon-luc-thong-tin-2.html",
+      "claim": "600,272 printed book copies as of June 2026. Foreign-language and local-history holdings are subsets.",
+      "date": "2026-06",
+      "evidence_path": null,
+      "quality": "official"
+    },
+    {
+      "url": "https://ttvanhoavathuvien.hanoi.gov.vn/gioi-thieu-chi-tiet/gioi-thieu-ve-trung-tam-van-hoa-va-thu-vien-ha-noi-1.html",
+      "claim": "Current introduction explicitly names web-based SLIB; historical Libol customer lists must not override current institutional evidence.",
+      "date": "undated; inspected 2026-11-15",
+      "evidence_path": null,
+      "quality": "official"
+    },
+    {
+      "url": "https://baohaiphong.vn/thu-vien-thanh-pho-hai-phong-70-nam-gin-giu-va-lan-toa-tri-thuc-551584.html",
+      "claim": "Over 600,000 book copies across two facilities after the July 2025 merger of Haiphong and Hai Duong libraries. Queried catalog identifies only 213A Lach Tray; coverage of Hai Duong is unproven.",
+      "date": "2026-08-26",
+      "evidence_path": null,
+      "quality": "local public newspaper"
+    },
+    {
+      "url": "https://pr.thuvienkhanhhoa.gov.vn/TraCuuTaiLieuTruyenThong2Xem.aspx?intItemID=3022",
+      "claim": "Current site2 counters show 90,934 monograph records and 177,244 shelving entries. Footer identifies Khanh Hoa Provincial Library site2, Phan Rang; record holdings retain TvNinhThuan.",
+      "date": "2026-11-15",
+      "evidence_path": "evidence/khanhhoa-detail.html",
+      "quality": "official"
+    },
+    {
+      "url": "https://lrc.hueuni.edu.vn/",
+      "claim": "Over 25,000 printed titles spanning books, newspapers and journals, not a pure book-volume total. Only the central collection at 20 Le Loi is selected.",
+      "date": "undated current page",
+      "evidence_path": "evidence/hue-home.html",
+      "quality": "official"
+    },
+    {
+      "url": "https://lib.husc.edu.vn/Page/gioi-thieu-thu-vien-",
+      "claim": "Distinct university library at 77 Nguyen Hue; four-storey building and 12 staff. Official institutional proxy; no current aggregate book stock claimed.",
+      "date": "undated current page",
+      "evidence_path": "evidence/husc-size.html",
+      "quality": "official"
+    },
+    {
+      "url": "https://lib.dhhp.edu.vn/contentbrowser.aspx?catid=3100&contentid=4448",
+      "claim": "Full university information-library center at building C4; joined the 94-member shared DIGITAL library in September 2024, contributing nearly 3,000 digital resources. This supports institutional importance but is NOT its print inventory.",
+      "date": "2024-10-15",
+      "evidence_path": "evidence/dhhp-context.html",
+      "quality": "official"
+    },
+    {
+      "url": "https://bdu.edu.vn/uploads/news/2019_12/Bao-cao-TDG.pdf",
+      "claim": "2017 self-assessment, printed p125/PDF p132: main campus 10,372 textbook/reference titles, 26,760 copies. Ca Mau separately had 1,404 titles/4,886 copies; not added to the tested main catalog scope. Historical, not current stock.",
+      "date": "2017; file uploaded 2019",
+      "evidence_path": null,
+      "quality": "official"
+    },
+    {
+      "url": "https://lib.bdu.edu.vn/vi/tro-giup/huong-dan-tra-cuu-tai-lieu-so-doc-toan-van-tren-nen-tang-phan-mem-quan-ly-thu-vien-psc-zlis7-0",
+      "claim": "Current institutional help explicitly names PSC zLIS7.0; 2017 Libol6 statement is historical.",
+      "date": "undated; inspected 2026-11-15",
+      "evidence_path": null,
+      "quality": "official"
+    },
+    {
+      "url": "https://lib.huflit.edu.vn/",
+      "claim": "61,595 catalog documents across three campuses; mixed formats, not 61,595 physical copies.",
+      "date": "2026-11-15",
+      "evidence_path": "evidence/huflit-home.html",
+      "quality": "official"
+    },
+    {
+      "url": "https://thuvien.ntu.edu.vn/",
+      "claim": "Public counters: 24,270 print records, including 13,333 Vietnamese-book records, 1,222 foreign-book records and 179 NTU books/lectures. Theses and periodicals are also in the print total.",
+      "date": "2026-11-15",
+      "evidence_path": "evidence/ntu-home.html",
+      "quality": "official"
+    },
+    {
+      "url": "https://opac.huaf.edu.vn/",
+      "claim": "University agriculture/forestry library with discipline-specific shelves. No reliable current stock established; detail holdings labelled OPAC thử nghiệm.",
+      "date": "2026-11-15",
+      "evidence_path": "evidence/huaf-detail.html",
+      "quality": "official"
+    },
+    {
+      "url": "https://tinhvan.vn/en/products/software-packages/libol/",
+      "claim": "Vendor describes Libol and lists major public/university customers. Undated/historical client list is adoption evidence, not current deployments or national share.",
+      "date": "undated; inspected 2026-11-15",
+      "evidence_path": null,
+      "quality": "indexed vendor primary"
+    },
+    {
+      "url": "https://cmcts.com.vn/en/solutions/giai-phap-thu-vien-dien-tu-thu-vien-so.html",
+      "claim": "CMC describes iLib8 for public, university and specialist libraries, with Vietnamese processing. Product presence, not a market-share census.",
+      "date": "undated; inspected 2026-11-15",
+      "evidence_path": null,
+      "quality": "indexed vendor primary"
+    },
+    {
+      "url": "https://dlcorp.com.vn/phan-mem-quan-ly-tai-nguyen-truyen-thong-ma-nguon-mo-koha/",
+      "claim": "D&L claims more than 30 Koha clients across Vietnam AND Southeast Asia; this does not establish 30 Vietnam installations.",
+      "date": "2020-12-10 / 2021-05-06 page dates",
+      "evidence_path": null,
+      "quality": "vendor primary"
+    },
+    {
+      "url": "https://thuvientphcm.gov.vn/gioi-thieu/huong-dan-su-dung/huong_dan",
+      "claim": "Official public-system guide describes central library +21 district libraries +Thu Duc, but later retains older 24-district text. Shared search supports institution/location/status filtering. Network size is dated/inconsistent and not a 2026 census.",
+      "date": "page dated 2020-08-17; text subsequently updated",
+      "evidence_path": null,
+      "quality": "official"
+    },
+    {
+      "url": "https://hcmus.edu.vn/wp-content/uploads/2024/09/STSV-2024-ONLINE.pdf",
+      "claim": "HCMUS 2024 student handbook describes Sierra and EDS shared discovery across nine VNUHCM libraries.",
+      "date": "2024",
+      "evidence_path": null,
+      "quality": "indexed official"
+    },
+    {
+      "url": "https://m.ctu.edu.vn/images/upload/TT36/2022/Bieu_19_DHCT_Cong_khai_CSVC.pdf",
+      "claim": "Print stock 144,831 titles /314,473 copies at31 December2021; ebooks/databases separately counted.",
+      "date": "stock 2021-12-31; report2022",
+      "evidence_path": null,
+      "quality": "indexed official"
+    },
+    {
+      "url": "https://www.hust.edu.vn/uploads/sys/ba-cong-khai/bm19_thong-tin-csvc-nam-hoc-2022-2023.pdf",
+      "claim": "2022-23 disclosure: textbooks236,247 copies, Vietnamese references31,326 copies, foreign books127,576 copies, separately from theses and digital subscriptions.",
+      "date": "2022-2023",
+      "evidence_path": null,
+      "quality": "indexed official"
+    },
+    {
+      "url": "https://media.hdu.edu.vn/Media/1_hdu_home/FolderFunc/202404/Documents/2-daihochongduc-bctdg-kythuatdien-20240404071819-e.pdf",
+      "claim": "2024 accreditation report cites22,487 titles/156,447 copies; digital shared resources separate.",
+      "date": "2024",
+      "evidence_path": null,
+      "quality": "indexed official"
+    }
+  ]
+}

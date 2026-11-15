@@ -1,0 +1,674 @@
+{
+  "country": "Argentina",
+  "country_code": "ARG",
+  "research_date_utc": "2026-11-15",
+  "status": "complete",
+  "counts": {
+    "observed_successes": 4,
+    "selected": 4,
+    "reserves": 0,
+    "target": 10,
+    "shortfall": 6
+  },
+  "market": {
+    "summary": "Argentina has distinct national heritage and congressional institutions, municipal public networks, independent bibliotecas populares supported by CONABIP, and large university networks. Public discovery does not imply public borrowing. Koha has strong primary adoption evidence, Pérgamo serves major public/university deployments, and VuFind provides discovery over mixed systems. No national LMS market-share estimate is established.",
+    "platform_strategy": "First scope a new Argentine Pérgamo adapter against the two verified substantial networks, then a deployment-specific UNS VuFind adapter with unknown-availability handling. Existing Koha code is a strategic reuse candidate but this sample produced no permitted, successful Koha book query. SIU BDU has the greatest cross-institution discovery potential; direct external search was rate-limited, so it is a research/partnership lead, not a ready connector. PMB BFA is a separately verified science-library option. Preserve edition and institution IDs.",
+    "adoption_evidence": [
+      {
+        "claim": "DigiBepé is a CONABIP adaptation of Koha for popular libraries.",
+        "scope": "Named national support program; not all popular-library membership and not proof of an open OPAC.",
+        "date": "undated, observed 2026-11-15",
+        "source_url": "https://conabip.gob.ar/digibepe",
+        "evidence_path": "evidence/conabip-digibepe.html"
+      },
+      {
+        "claim": "UBA central-library modernization specifies Koha and MARC21 for 18 central libraries.",
+        "scope": "Institutional program, not verified completion in all 18.",
+        "date": "institutional code, accessed 2026-11-15",
+        "source_url": "https://codigo.rec.uba.ar/codigo_uba/libro-i-normas-generales-de-la-universidad-de-buenos-aires-1/titulo-26-bibliotecas-y-publicaciones/capitulo-l-sistema-informatico-de-gestion-en-red-de-las-bibliotecas-centrales-de-la-universidad-de-buenos-aires/",
+        "evidence_path": "evidence/indexed-market-sources.json"
+      },
+      {
+        "claim": "UNLP coordinates Koha migration and a VuFind collective catalog from previously heterogeneous systems.",
+        "scope": "One university network; historical Pérgamo/Meran installations should not be assumed current.",
+        "date": "project pages and 2024 launch; observed 2026-11-15",
+        "source_url": "https://bibliotecas.unlp.edu.ar/proyectos/",
+        "evidence_path": "evidence/indexed-market-sources.json"
+      },
+      {
+        "claim": "Pérgamo vendor lists municipal, university, professional, school and other deployments; CABA and UNNE also directly verified.",
+        "scope": "Vendor customer roster, not national share.",
+        "date": "undated, observed 2026-11-15",
+        "source_url": "https://www.walysoft.com.ar/pergamo/clientes.php",
+        "evidence_path": "evidence/walysoft-clients.html"
+      },
+      {
+        "claim": "BNMM institutional cataloging documentation identifies Aleph 500; live catalog not verified.",
+        "scope": "One national institution.",
+        "date": "institutional documentation indexed 2026-11-15",
+        "source_url": "https://escritoriopt.bn.gov.ar/mcat/mcat-intro.html"
+      },
+      {
+        "claim": "UNS describes development/support of CaMPI; its current discovery interface is VuFind.",
+        "scope": "UNS and supported deployments; no count established.",
+        "date": "observed 2026-11-15",
+        "source_url": "https://bc.uns.edu.ar/",
+        "evidence_path": "evidence/uns-about.html"
+      }
+    ],
+    "network_opportunities": [
+      {
+        "name": "SIU BDU",
+        "scope": "Homepage reports 3,530,385 documents and 79 institutions; library registry 56 library contributors. Includes repositories/journals as well as books.",
+        "source_url": "https://bdu.siu.edu.ar/",
+        "verification": "Homepage and two registry pages fetched; one filtered UNLP Rayuela search returned 429.",
+        "integration_implication": "One allowed service could expose many distinct institutional holdings; never treat all 79 institutions or repository entries as verified physical-book providers."
+      },
+      {
+        "name": "CONABIP DigiBepé and collective catalog",
+        "scope": "Popular-library automation program and union-discovery opportunity.",
+        "source_url": "https://conabip.gob.ar/digibepe",
+        "verification": "Official Koha adaptation description fetched; no member book queries performed.",
+        "integration_implication": "Potential Koha-family reach requires exact member catalog, permitted query, scale and access validation."
+      },
+      {
+        "name": "BNMM Sistema Nacional de Bibliotecas Públicas",
+        "scope": "National coordination of public libraries dependent on local governments.",
+        "source_url": "https://www.bn.gov.ar/bibliotecaspublicas",
+        "verification": "Institutional program discovered; not a proven live shared holdings endpoint.",
+        "integration_implication": "Directory/coordination opportunity only; no blanket automation or borrowing claim."
+      },
+      {
+        "name": "Municipal and university networks",
+        "scope": "CABA, UNNE, UNS verified as one network each; UNLP BFA is one separate faculty/museum library.",
+        "source_url": "https://buenosaires.gob.ar/cultura/prestamo-de-libros",
+        "verification": "Actual record/holding evidence retained for four institutions.",
+        "integration_implication": "Count networks once. Branch selectors are location facets, not extra verified institutions."
+      }
+    ]
+  },
+  "major_library_priorities": [
+    {
+      "name": "Biblioteca Nacional Mariano Moreno",
+      "size_claim": "National legal-deposit/heritage-library institutional proxy; current total not established",
+      "source_url": "https://www.bn.gov.ar/biblioteca",
+      "outcome": "Unverified: both institutional and catalog robots returned 503; Aleph documented by institutional cataloging sources."
+    },
+    {
+      "name": "Biblioteca del Congreso de la Nación",
+      "size_claim": "More than 3.5 million bibliographic pieces, undated institutional archive description; mixed units",
+      "source_url": "https://archivos.bcn.gob.ar/index.php/q7mf-mr32-rzgd",
+      "outcome": "Blocked: official catalog redirects to consulta.bcn.gob.ar; wildcard robots Disallow: /."
+    },
+    {
+      "name": "Red de Bibliotecas de la Ciudad de Buenos Aires",
+      "size_claim": "More than 320,000 copies; official undated service page observed 2026-11-15",
+      "source_url": "https://buenosaires.gob.ar/cultura/prestamo-de-libros",
+      "outcome": "Verified selected Pérgamo target."
+    },
+    {
+      "name": "Biblioteca Pública de la UNLP",
+      "size_claim": "194,693 BDU bibliographic-source records observed 2026-11-15; independent official site describes around 600,000 mixed physical volumes",
+      "source_url": "https://bdu.siu.edu.ar/bibliotecas?page=2",
+      "outcome": "Unverified: direct Koha robots 503; BDU title query 429. Do not substitute BFA for this library."
+    },
+    {
+      "name": "Universidad Nacional de Córdoba library network",
+      "size_claim": "Major university-wide collective catalog; institutional network proxy",
+      "source_url": "https://catalogo.biblio.unc.edu.ar/",
+      "outcome": "Blocked: homepage Anubis challenge; no bypass."
+    },
+    {
+      "name": "Universidad de Buenos Aires SISBI / central libraries",
+      "size_claim": "Institutional plan covers 18 central libraries, Koha standardization; FAUBA BDU contribution 87,627 records observed",
+      "source_url": "https://codigo.rec.uba.ar/codigo_uba/libro-i-normas-generales-de-la-universidad-de-buenos-aires-1/titulo-26-bibliotecas-y-publicaciones/capitulo-l-sistema-informatico-de-gestion-en-red-de-las-bibliotecas-centrales-de-la-universidad-de-buenos-aires/",
+      "outcome": "FAUBA route blocked by wildcard robots; full SISBI network not queried or represented as verified."
+    },
+    {
+      "name": "Universidad Nacional de Cuyo library network",
+      "size_claim": "300,410 BDU source records observed 2026-11-15; not physical-copy count",
+      "source_url": "https://bdu.siu.edu.ar/bibliotecas?page=2",
+      "outcome": "Blocked: direct discovery homepage Anubis challenge; BDU search stopped after 429."
+    },
+    {
+      "name": "Biblioteca Nacional de Maestros",
+      "size_claim": "101,866 BDU source records observed 2026-11-15; institutional national education collection",
+      "source_url": "https://bdu.siu.edu.ar/bibliotecas?page=2",
+      "outcome": "Blocked: current official Koha catalog robots Disallow: /."
+    },
+    {
+      "name": "Universidad Nacional del Nordeste library network",
+      "size_claim": "Central + faculty and institute network, explicit institutional proxy",
+      "source_url": "https://bib.unne.edu.ar/",
+      "outcome": "Verified selected Pérgamo target, CENTRAL copy."
+    },
+    {
+      "name": "Universidad Nacional del Sur library network",
+      "size_claim": "149,068 general-collection records within 290,315 mixed discovery records, observed 2026-11-15",
+      "source_url": "https://catalogo.uns.edu.ar/vufind/",
+      "outcome": "Verified selected VuFind target; copy backend unavailable."
+    }
+  ],
+  "libraries": [
+    {
+      "id": "arg-caba-public-network",
+      "name": "Red de Bibliotecas de la Ciudad de Buenos Aires",
+      "recommendation": "verified_target",
+      "scope": "One municipal public-library network. Branch selectors and individual branches are not counted separately.",
+      "size": {
+        "value": 320000,
+        "unit": "copies (lower bound: more than 320,000)",
+        "date": "undated page, observed 2026-11-15",
+        "source_url": "https://buenosaires.gob.ar/cultura/prestamo-de-libros",
+        "evidence_path": "evidence/caba-access.html",
+        "quality": "official",
+        "note": "Official current page says more than 320,000 copies. Vendor separately says 26 interconnected libraries, >315,000 copies and 100,000 titles; dates and units differ."
+      },
+      "platform": {
+        "family": "Pérgamo",
+        "name": "Pérgamo",
+        "proof": "Footer links Pérgamo OPAC Web to WalySoft; observed /pergamo/opac.php and documento.php. Argentine Pérgamo is distinct from Brazilian Pergamum.",
+        "evidence_path": "evidence/caba-search.html"
+      },
+      "query": {
+        "text": "Rayuela",
+        "method": "GET",
+        "url": "https://catalogobibliotecas.buenosaires.gob.ar/pergamo/opac.php?a=bsqSi&p=1&o=&trSimple=Rayuela&op=and",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T08:13:07.050201+00:00",
+        "http_status": 200,
+        "effective_url": "https://catalogobibliotecas.buenosaires.gob.ar/pergamo/opac.php?a=bsqSi&p=1&o=&trSimple=Rayuela&op=and",
+        "result_count": 65,
+        "count_note": "Returned query results, including related titles and other formats; not a holdings count.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/caba-search.html",
+        "metadata_path": "evidence/caba-search.json"
+      },
+      "books": [
+        {
+          "title": "Rayuela",
+          "author": "Cortázar, Julio (1914–1984)",
+          "record_id": "PERGAMO.1.1056",
+          "record_url": "https://catalogobibliotecas.buenosaires.gob.ar/pergamo/documento.php?ui=1&recno=1056&id=PERGAMO.1.1056",
+          "isbn": "9500701987",
+          "holdings": "1987, 25a.ed., Sudamericana / Planeta. One copy: unit 8, inventory 00869, shelfmark 821.134.2[82]-31 CORr. Detail explicitly says No Disponible; other columns include No / ?. Do not map to available.",
+          "evidence_path": "evidence/caba-detail.html"
+        }
+      ],
+      "robots": {
+        "url": "https://catalogobibliotecas.buenosaires.gob.ar/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T08:12:15.459123+00:00",
+        "evidence_path": "evidence/caba-robots.json",
+        "decision": "allowed_path",
+        "note": "Public research path check; no reuse licence inferred; crawl-delay 5.0 seconds"
+      },
+      "reader_access": "Public city network. Official service page: DNI on first visit; up to 3 books for 30 days. The catalog material-request form explicitly says it is not a reservation. Source: https://buenosaires.gob.ar/cultura/prestamo-de-libros (evidence/caba-access.html).",
+      "integration": {
+        "existing_adapter": "new family",
+        "needs": [
+          "New Pérgamo search/detail parser",
+          "Preserve edition IDs, institution/unit identifiers and availability columns",
+          "Honor 5-second crawl delay"
+        ],
+        "blockers": [],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "arg-unne-network",
+      "name": "Red de Bibliotecas de la Universidad Nacional del Nordeste",
+      "recommendation": "verified_target",
+      "scope": "One UNNE university network, covering central library and faculty/institute libraries; the returned CENTRAL copy is direct institutional evidence.",
+      "size": {
+        "value": null,
+        "unit": "institutional network proxy",
+        "date": "observed 2026-11-15",
+        "source_url": "https://bib.unne.edu.ar/",
+        "evidence_path": "evidence/unne-about.html",
+        "quality": "institutional proxy",
+        "note": "Official DGB page identifies a central library plus all faculty and institute libraries. This substantial public-university network is selected without claiming a measured collection total."
+      },
+      "platform": {
+        "family": "Pérgamo",
+        "name": "Pérgamo",
+        "proof": "Observed Pérgamo OPAC Web footer, /pergamo/opac.php search and /pergamo/documento.php records.",
+        "evidence_path": "evidence/unne-search.html"
+      },
+      "query": {
+        "text": "Rayuela",
+        "method": "GET",
+        "url": "https://redbiblio.unne.edu.ar/pergamo/opac.php?a=bsqSi&p=1&o=&trSimple=Rayuela&op=and",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T08:13:07.049496+00:00",
+        "http_status": 200,
+        "effective_url": "https://redbiblio.unne.edu.ar/pergamo/opac.php?a=bsqSi&p=1&o=&trSimple=Rayuela&op=and",
+        "result_count": 24,
+        "count_note": "Returned query results, including related titles and other formats; not a holdings count.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/unne-search.html",
+        "metadata_path": "evidence/unne-search.json"
+      },
+      "books": [
+        {
+          "title": "Rayuela",
+          "author": "Cortázar, Julio (1914–1984)",
+          "record_id": "RESISTENCIA.1.3045",
+          "record_url": "https://redbiblio.unne.edu.ar/pergamo/documento.php?ui=1&recno=3045&id=RESISTENCIA.1.3045",
+          "isbn": "9789875780620",
+          "holdings": "2013, 2a ed., 12a reim., Punto de Lectura. One CENTRAL copy: inventory 01-028237, shelfmark 86(82)-31 C827 r 2 ej.1. No circulation availability displayed in retained detail.",
+          "evidence_path": "evidence/unne-detail.html"
+        }
+      ],
+      "robots": {
+        "url": "https://redbiblio.unne.edu.ar/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T08:12:14.708116+00:00",
+        "evidence_path": "evidence/unne-robots.json",
+        "decision": "no_published_rules",
+        "note": "HTTP404; not an affirmative reuse licence"
+      },
+      "reader_access": "Anonymous catalog open. DGB site invites membership for free services but linked /usuarios/ returned 404, so external-reader eligibility and borrowing rules remain unverified. DGB site lists onsite hours; catalog carries an undated virtual-only notice, so do not infer current closure. Source: evidence/unne-about.html and evidence/unne-access.html.",
+      "integration": {
+        "existing_adapter": "new family",
+        "needs": [
+          "Reuse new Pérgamo family with deployment-specific templates",
+          "Resolve unit identifiers and distinguish holdings from circulation availability"
+        ],
+        "blockers": [
+          "External-reader borrowing eligibility unresolved"
+        ],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "arg-uns-network",
+      "name": "Sistema de Bibliotecas de la Universidad Nacional del Sur",
+      "recommendation": "verified_target",
+      "scope": "One university catalog network; includes central and departmental/school libraries. Sample record explicitly locates BIB. CENTRAL - Sector A.",
+      "size": {
+        "value": 149068,
+        "unit": "records in Colección general facet",
+        "date": "2026-11-15",
+        "source_url": "https://catalogo.uns.edu.ar/vufind/",
+        "evidence_path": "evidence/uns-home.html",
+        "quality": "official",
+        "note": "Search homepage shows 290,315 total mixed records, including 149,068 Colección general, 133,948 eLibro Cátedra, 5,349 institutional repository and 1,950 journal-portal records. General facet is a scale proxy, not number of physical books or current loans."
+      },
+      "platform": {
+        "family": "VuFind",
+        "name": "VuFind",
+        "proof": "VuFind branding and /vufind/Search/Results, /vufind/Record/ routes. UNS Central separately describes CaMPI development/support; no claim every constituent uses the same ILS.",
+        "evidence_path": "evidence/uns-home.html"
+      },
+      "query": {
+        "text": "Rayuela",
+        "method": "GET",
+        "url": "https://catalogo.uns.edu.ar/vufind/Search/Results?lookfor=Rayuela&type=Title",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T08:16:04.313572+00:00",
+        "http_status": 200,
+        "effective_url": "https://catalogo.uns.edu.ar/vufind/Search/Results?lookfor=Rayuela&type=Title",
+        "result_count": 13,
+        "count_note": "Returned query results, including related titles and other formats; not a holdings count.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/uns-search.html",
+        "metadata_path": "evidence/uns-search.json"
+      },
+      "books": [
+        {
+          "title": "Rayuela",
+          "author": "Cortázar, Julio, 1914–1984",
+          "record_id": "EUN.eunm001183",
+          "record_url": "https://catalogo.uns.edu.ar/vufind/Record/EUN.eunm001183",
+          "isbn": null,
+          "holdings": "Buenos Aires: Suma de Letras Argentina, 2004, 1a. ed., Punto de lectura 79/6. Holdings section identifies BIB. CENTRAL - Sector A, but copy area says Library System Unavailable. This is an unavailable backend, not an unavailable item.",
+          "evidence_path": "evidence/uns-detail.html"
+        }
+      ],
+      "robots": {
+        "url": "https://catalogo.uns.edu.ar/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T08:14:55.211148+00:00",
+        "evidence_path": "evidence/uns-robots.json",
+        "decision": "no_published_rules",
+        "note": "HTTP404; not an affirmative reuse licence"
+      },
+      "reader_access": "Public discovery. Central-library loans require active reader account and identification. Official table includes UNS members, students from other institutions, professionals and transeúntes, with different limits. Request confirmation is required before pickup. No login or loan tested. Source: https://bc.uns.edu.ar/prestamos/ (evidence/uns-access.html).",
+      "integration": {
+        "existing_adapter": "candidate family reuse; deployment work required",
+        "needs": [
+          "Deployment-specific VuFind mapping; existing adapter is not generic",
+          "Separate e-books/repository results from physical holdings",
+          "Keep backend errors as unknown availability"
+        ],
+        "blockers": [
+          "Copy-level backend returned Library System Unavailable"
+        ],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "arg-unlp-bfa",
+      "name": "Biblioteca Florentino Ameghino, Facultad de Ciencias Naturales y Museo, UNLP",
+      "recommendation": "verified_target",
+      "scope": "One central faculty/museum library with Museo and Facultad sites. Not the UNLP Public Library or whole UNLP network; no double-counting.",
+      "size": {
+        "value": 33660,
+        "unit": "volumes, lower bound; books, congress proceedings, monographs and reference works",
+        "date": "2019-04-01 page update",
+        "source_url": "https://www.bfa.fcnym.unlp.edu.ar/sobre-la-biblioteca/colecciones",
+        "evidence_path": "evidence/bfa-collections.html",
+        "quality": "official",
+        "note": "Page says more than 33,660 volumes, plus separately 5,305 pamphlets/offprints, 4,650 serial titles, 1,436 doctoral theses and 15,666 faculty research works. Older size, not a current ranking. Historic central science faculty/museum collection across two sites supports substantial selection."
+      },
+      "platform": {
+        "family": "PMB",
+        "name": "PMB",
+        "proof": "Catalog footer links pmb; PMB /catalogo/index.php?lvl=more_results POST form and public /id/ record links observed.",
+        "evidence_path": "evidence/bfa-search-exact.html"
+      },
+      "query": {
+        "text": "\"El origen de las especies\"",
+        "method": "POST",
+        "url": "https://www.bfa.fcnym.unlp.edu.ar/catalogo/index.php?lvl=more_results&autolevel1=1",
+        "payload": {
+          "typdoc": "",
+          "surligne": "",
+          "user_query": "\"El origen de las especies\"",
+          "ok": "Buscar",
+          "look_TITLE": "1",
+          "look_FIRSTACCESS": "1"
+        },
+        "checked_at_utc": "2026-11-15T08:18:54.624151+00:00",
+        "http_status": 200,
+        "effective_url": "https://www.bfa.fcnym.unlp.edu.ar/catalogo/index.php?lvl=more_results&autolevel1=1",
+        "result_count": 22,
+        "count_note": "Returned query results, including related titles and other formats; not a holdings count.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/bfa-search-exact.html",
+        "metadata_path": "evidence/bfa-search-exact.json"
+      },
+      "books": [
+        {
+          "title": "Jornadas darwinianas 2009: A 200 años del nacimiento de Darwin y 150 años de la publicación del Origen de las Especies",
+          "author": "Riccardi, Alberto Carlos; Núñez, Josué Antonio; Quesada Allué, Luis A.",
+          "record_id": "25966",
+          "record_url": "https://www.bfa.fcnym.unlp.edu.ar/id/25966",
+          "isbn": "978-987-537-111-8",
+          "holdings": "2011, 1a.ed., Academia Nacional de Ciencias de Buenos Aires, Instituto de Investigación y Desarrollo. One Museo copy, barcode 66, shelfmark 92 D1 R4, Fondo general, Disponible. It is a related-title result, not Darwin’s book.",
+          "evidence_path": "evidence/bfa-search-exact.html"
+        },
+        {
+          "title": "Desarrollo histórico de las ideas y teorías evolucionistas",
+          "author": "Makinistian, Alberto A.",
+          "record_id": "20482",
+          "record_url": "https://www.bfa.fcnym.unlp.edu.ar/id/20482",
+          "isbn": "978-84-92774-07-4",
+          "holdings": "2009, 2a.ed., Prensas Universitarias de Zaragoza. Facultad copy barcode 23741, shelfmark 576.12 M14-E2, Disponible. Related result.",
+          "evidence_path": "evidence/bfa-search-exact.html"
+        }
+      ],
+      "robots": {
+        "url": "https://www.bfa.fcnym.unlp.edu.ar/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T08:17:26.872334+00:00",
+        "evidence_path": "evidence/bfa-robots.json",
+        "decision": "allowed_path",
+        "note": "Public research path check; no reuse licence inferred"
+      },
+      "reader_access": "Any person, affiliated or not, may consult in the reading room with DNI/equivalent/passport and consultation form. Home loans limited to eligible faculty students/staff/researchers and listed related UNLP students with reader card; visiting researchers/professionals only onsite. Source: evidence/bfa-access.html.",
+      "integration": {
+        "existing_adapter": "candidate family reuse; deployment work required",
+        "needs": [
+          "PMB POST form adapter; do not turn POST into a GET record link",
+          "Preserve Museo/Facultad locations and Consulta en Sala statuses",
+          "Search scope unexpectedly includes contents/keywords despite title checkbox"
+        ],
+        "blockers": [],
+        "live_app_tested": false
+      }
+    }
+  ],
+  "blocked_or_unverified": [
+    {
+      "name": "Biblioteca Nacional Mariano Moreno",
+      "url": "https://catalogo.bn.gov.ar/robots.txt",
+      "reason": "Robots HTTP503; stopped, no policy clearance.",
+      "evidence_path": "evidence/bn-catalog-robots.json"
+    },
+    {
+      "name": "Biblioteca del Congreso de la Nación",
+      "url": "https://consulta.bcn.gob.ar/robots.txt",
+      "reason": "Wildcard Disallow: / prohibits official catalog. No search sent.",
+      "evidence_path": "evidence/bcn-consulta-robots.json"
+    },
+    {
+      "name": "Biblioteca Pública UNLP",
+      "url": "https://catalogo.biblio.unlp.edu.ar/robots.txt",
+      "reason": "Robots HTTP503; stopped.",
+      "evidence_path": "evidence/unlp-public-robots.json"
+    },
+    {
+      "name": "SIU BDU shared discovery",
+      "url": "https://bdu.siu.edu.ar/bdu/Search/Results?lookfor=Rayuela&type=AllFields&limit=20&filter%5B%5D=library_str%3AB-53",
+      "reason": "HTTP429 explicitly rate-limits external direct search routes; stopped all BDU search, did not count indexed records as successes.",
+      "evidence_path": "evidence/bdu-unlp-search.json"
+    },
+    {
+      "name": "Universidad Nacional de Córdoba collective catalog",
+      "url": "https://catalogo.biblio.unc.edu.ar/",
+      "reason": "HTTP200 Anubis proof-of-work challenge; no bypass or further search.",
+      "evidence_path": "evidence/unc-home.json"
+    },
+    {
+      "name": "Universidad Nacional de Cuyo",
+      "url": "https://bibliotecas.uncuyo.edu.ar/",
+      "reason": "HTTP200 Anubis challenge; no bypass or further search.",
+      "evidence_path": "evidence/uncuyo-home.json"
+    },
+    {
+      "name": "UNMdP Biblioteca Central",
+      "url": "https://biblio12.mdp.edu.ar/robots.txt",
+      "reason": "Wildcard Disallow: / and specific search/detail exclusions. BDU registry lists 128,932 source records.",
+      "evidence_path": "evidence/unmdp-robots.json"
+    },
+    {
+      "name": "UBA Facultad de Agronomía central library",
+      "url": "https://ceiba.agro.uba.ar/robots.txt",
+      "reason": "Wildcard Disallow: /; no search. BDU registry lists 87,627 source records.",
+      "evidence_path": "evidence/uba-agro-robots.json"
+    },
+    {
+      "name": "UNGS Biblioteca Horacio González",
+      "url": "https://biblioteca.ungs.edu.ar/robots.txt",
+      "reason": "Robots excludes Koha search/detail; no search. BDU registry lists 66,545 source records.",
+      "evidence_path": "evidence/ungs-robots.json"
+    },
+    {
+      "name": "UNSAM cooperative Koha",
+      "url": "https://koha.unsam.edu.ar/cgi-bin/koha/opac-search.pl?q=Rayuela",
+      "reason": "Search HTTP403 Cloudflare challenge; no bypass. BDU registry lists 70,240 source records.",
+      "evidence_path": "evidence/unsam-search.json"
+    },
+    {
+      "name": "UNICEN library system",
+      "url": "https://opac.biblio.unicen.edu.ar/robots.txt",
+      "reason": "Robots HTTP403; unresolved, no search. BDU registry lists 70,500 source records.",
+      "evidence_path": "evidence/unicen-robots.json"
+    },
+    {
+      "name": "UNLaM Biblioteca Leopoldo Marechal",
+      "url": "https://pergamo.unlam.edu.ar/robots.txt",
+      "reason": "Robots connection failed: tunnel403. BDU registry lists 36,639 source records; institution confirms Pérgamo.",
+      "evidence_path": "evidence/unlam-robots.json"
+    },
+    {
+      "name": "Biblioteca Nacional de Maestros current Koha",
+      "url": "https://bnm-catalogo.educacion.gob.ar/robots.txt",
+      "reason": "Wildcard Disallow: /; official website linked current catalog.",
+      "evidence_path": "evidence/bnm-cat-robots.json"
+    },
+    {
+      "name": "Universidad Nacional de Quilmes",
+      "url": "https://koha.unq.edu.ar/robots.txt",
+      "reason": "Robots HTTP503 connection timeout. BDU registry lists 40,276 source records.",
+      "evidence_path": "evidence/unq-robots.json"
+    },
+    {
+      "name": "Universidad Nacional de La Pampa",
+      "url": "https://koha.unlpam.edu.ar/robots.txt",
+      "reason": "Robots HTTP403. BDU registry lists 51,537 source records.",
+      "evidence_path": "evidence/unlpam-robots.json"
+    },
+    {
+      "name": "Universidad Nacional de Río Negro",
+      "url": "https://koha.unrn.edu.ar/cgi-bin/koha/opac-search.pl?q=Rayuela",
+      "reason": "HTTP200 empty JS page invoking koha_fast_challenge; no returned book. No challenge bypass.",
+      "evidence_path": "evidence/unrn-search.json"
+    },
+    {
+      "name": "Universidad Católica de Santa Fe",
+      "url": "https://servicios.ucsf.edu.ar/wxis/catalogo.htm",
+      "reason": "Official published WXIS route HTTP401 unauthorized; no authentication. BDU registry lists 103,333 source records.",
+      "evidence_path": "evidence/ucsfs-home.json"
+    },
+    {
+      "name": "UNR Facultad de Ciencia Política y RRII",
+      "url": "https://koha-fcpolit.unr.edu.ar/robots.txt",
+      "reason": "Robots HTTP503 connection timeout; no search; not a claim about other UNR libraries.",
+      "evidence_path": "evidence/unr-fcpolit-robots.json"
+    },
+    {
+      "name": "Rosario municipal library network",
+      "url": "https://biblio1.rosario.gob.ar/robots.txt",
+      "reason": "Robots HTTP503 timeout; no search. Major city network remains priority alternative.",
+      "evidence_path": "evidence/rosario-robots.json"
+    },
+    {
+      "name": "Universidad Nacional del Chaco Austral",
+      "url": "https://uncaus.opac.com.ar/robots.txt",
+      "reason": "Pérgamo robots excludes simple/advanced/random/recent search query routes; no search.",
+      "evidence_path": "evidence/uncaus-robots.json"
+    },
+    {
+      "name": "Biblioteca Popular Bernardino Rivadavia, Bahía Blanca",
+      "url": "http://abr.uns.edu.ar/cgi-bin/opacmarc/wxis?IsisScript=opac/xis/opac.xis&db=abr",
+      "reason": "Institutional page linked OPACMARC/WXIS catalog; home HTTP403 despite interpretable robots. No search. Not the UNS university network, even though hosted on uns.edu.ar.",
+      "evidence_path": "evidence/rivadavia-home.json"
+    },
+    {
+      "name": "Universidad de San Andrés Biblioteca Max von Buch",
+      "url": "https://udesa.primo.exlibrisgroup.com/robots.txt",
+      "reason": "Official site publishes Primo discovery route; robots excludes /discovery/search and /primaws. No query. BDU registry lists 68,869 source records.",
+      "evidence_path": "evidence/udesa-primo-robots.json"
+    }
+  ],
+  "limitations": [
+    "No national largest-ten ranking established; dates and units are not comparable.",
+    "Four substantial institutions verified, six short of the target. Twenty-two blocked/unverified catalog cases retained.",
+    "No successful Koha book query in this sample; named migrations and DigiBepé adoption do not imply usable automation.",
+    "BDU source-record totals are harvested bibliographic counts, not holdings/copy totals or live circulation.",
+    "BFA title-query response includes related works; no claim to have retrieved Darwin’s requested title.",
+    "UNS backend failure is not an item availability state; UNNE copy status absent; CABA selected edition explicitly unavailable.",
+    "No authentication, holds, outreach, TLS bypass, bot-challenge bypass or app integration performed.",
+    "Transient anonymous form tokens and reflected network addresses redacted from retained raw response files; metadata marks any redaction."
+  ],
+  "sources": [
+    {
+      "url": "https://buenosaires.gob.ar/cultura/prestamo-de-libros",
+      "claim": "Size, borrowing and identification",
+      "evidence_path": "evidence/caba-access.html"
+    },
+    {
+      "url": "https://bib.unne.edu.ar/",
+      "claim": "UNNE network scope and service notice",
+      "evidence_path": "evidence/unne-about.html"
+    },
+    {
+      "url": "https://catalogo.uns.edu.ar/vufind/",
+      "claim": "Mixed discovery counts and platform",
+      "evidence_path": "evidence/uns-home.html"
+    },
+    {
+      "url": "https://bc.uns.edu.ar/prestamos/",
+      "claim": "Borrower categories and process",
+      "evidence_path": "evidence/uns-access.html"
+    },
+    {
+      "url": "https://bc.uns.edu.ar/",
+      "claim": "CaMPI support and central-library services",
+      "evidence_path": "evidence/uns-about.html"
+    },
+    {
+      "url": "https://www.bfa.fcnym.unlp.edu.ar/sobre-la-biblioteca/colecciones",
+      "claim": "Dated collection volumes and scope",
+      "evidence_path": "evidence/bfa-collections.html"
+    },
+    {
+      "url": "https://www.bfa.fcnym.unlp.edu.ar/servicios/reglamento-de-consultas-y-prestamos",
+      "claim": "External reading-room and member lending eligibility",
+      "evidence_path": "evidence/bfa-access.html"
+    },
+    {
+      "url": "https://bdu.siu.edu.ar/",
+      "claim": "BDU network scale and mixed material explanation",
+      "evidence_path": "evidence/bdu-home.html"
+    },
+    {
+      "url": "https://bdu.siu.edu.ar/bibliotecas",
+      "claim": "Contributor-level source counts",
+      "evidence_path": "evidence/bdu-libraries.html"
+    },
+    {
+      "url": "https://bdu.siu.edu.ar/bibliotecas?page=2",
+      "claim": "Contributor-level source counts",
+      "evidence_path": "evidence/bdu-libraries2.html"
+    },
+    {
+      "url": "https://conabip.gob.ar/digibepe",
+      "claim": "Koha adaptation",
+      "evidence_path": "evidence/conabip-digibepe.html"
+    },
+    {
+      "url": "https://www.walysoft.com.ar/pergamo/clientes.php",
+      "claim": "Pérgamo adoption examples",
+      "evidence_path": "evidence/walysoft-clients.html"
+    },
+    {
+      "url": "https://www.abrbp.org.ar/catalogos/",
+      "claim": "Official link to independent popular-library catalog",
+      "evidence_path": "evidence/rivadavia-catalogs.html"
+    },
+    {
+      "url": "https://udesa.edu.ar/biblioteca",
+      "claim": "Official Primo link and special-collection access",
+      "evidence_path": "evidence/udesa-library.html"
+    },
+    {
+      "url": "https://www.siu.edu.ar/siu-bibliotecas",
+      "claim": "SIU module and cooperative BDU",
+      "evidence_path": "evidence/indexed-market-sources.json"
+    },
+    {
+      "url": "https://bibliotecas.unlp.edu.ar/proyectos/",
+      "claim": "UNLP platform strategy",
+      "evidence_path": "evidence/indexed-market-sources.json"
+    },
+    {
+      "url": "https://codigo.rec.uba.ar/codigo_uba/libro-i-normas-generales-de-la-universidad-de-buenos-aires-1/titulo-26-bibliotecas-y-publicaciones/capitulo-l-sistema-informatico-de-gestion-en-red-de-las-bibliotecas-centrales-de-la-universidad-de-buenos-aires/",
+      "claim": "UBA Koha program",
+      "evidence_path": "evidence/indexed-market-sources.json"
+    },
+    {
+      "url": "https://archivos.bcn.gob.ar/index.php/q7mf-mr32-rzgd",
+      "claim": "Congress library more than 3.5 million mixed bibliographic pieces",
+      "evidence_path": "evidence/indexed-primary-sources.json"
+    },
+    {
+      "url": "https://escritoriopt.bn.gov.ar/mcat/mcat-intro.html",
+      "claim": "Institutional cataloging manual names Aleph 500; indexed discovery only",
+      "evidence_path": null
+    }
+  ]
+}

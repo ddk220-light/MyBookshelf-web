@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Central Library Portal | QUEST, Nawabshah</title>
+  <meta name="description" content="QUEST Central Library - Integrated Koha OPAC & Research Gateway" />
+
+  <!-- Fonts & Tailwind CSS CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: #0b1610;
+      color: #f1f5f9;
+      margin: 0;
+      padding: 0;
+    }
+    @keyframes marquee {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-100%, 0); }
+    }
+    .animate-marquee-scroll {
+      display: inline-block;
+      white-space: nowrap;
+      animation: marquee 35s linear infinite;
+      padding-left: 100%;
+    }
+    .animate-marquee-scroll:hover {
+      animation-play-state: paused;
+    }
+/* Intense Neon Light Shed Breathing Keyframes */
+@keyframes neonBreathe {
+  0%, 100% { transform: scale(0.98); opacity: 0.4; blur: 15px; filter: drop-shadow(0 0 10px rgba(255,204,0,0.3)); }
+  50% { transform: scale(1.02); opacity: 0.95; blur: 25px; filter: drop-shadow(0 0 35px rgba(255,204,0,0.8)); }
+}
+.animate-neon-breathe {
+  animation: neonBreathe 2s ease-in-out infinite;
+}
+
+/* Button Warning Pulse Keyframes */
+@keyframes buttonPulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(255, 204, 0, 0.6); }
+  50% { box-shadow: 0 0 25px rgba(255, 251, 0, 1); transform: scale(1.02); }
+}
+.animate-button-pulse {
+  animation: buttonPulse 1.5s infinite alternate;
+}
+
+  </style>
+</head>
+<body class="selection:bg-[#ffcc00] selection:text-[#0f2416] p-2 sm:p-4 md:p-5 flex flex-col items-center">
+
+  <!-- MAIN WRAPPER CONTAINER -->
+  <main class="w-full max-w-[1240px] flex flex-col gap-3.5 sm:gap-4 box-border">
+
+    <!-- 1. STICKY TOP NAVIGATION BAR -->
+    <header class="sticky top-2 z-50 w-full">
+      <div class="w-full bg-[#0f2416] border-[1.5px] border-[#FFCC00] rounded-xl shadow-xl px-3 sm:px-4 py-2 flex flex-col gap-1.5 backdrop-blur-md">
+        <div class="w-full flex flex-wrap items-center justify-between gap-2.5">
+          
+          <!-- Logo & Portal Title -->
+          <div class="flex items-center gap-2.5 text-white flex-shrink-0">
+            <div class="w-10 h-10 rounded-lg bg-[#17351f] border border-[#ffcc00]/50 flex items-center justify-center p-1 overflow-hidden shadow-inner">
+              <img 
+                src="QUESTlogo.png" 
+                alt="QUEST Logo" 
+                class="w-full h-full object-contain" 
+              />
+            </div>
+            <div class="flex flex-col justify-center leading-tight">
+              <span class="text-[13px] md:text-[14.5px] font-extrabold text-[#FFCC00] uppercase tracking-wider">Central Library Portal</span>
+              <span class="text-[10px] md:text-[11px] font-bold text-slate-200 tracking-wide opacity-95">QUEST, Nawabshah</span>
+            </div>
+          </div>
+
+          <!-- Navigation Links & Action Buttons -->
+          <nav class="flex flex-wrap items-center gap-1.5 md:gap-2 ml-auto">
+            <a href="/" class="px-2.5 py-1 bg-[#1e3f20] hover:bg-[#2d6a4f] text-white hover:text-[#FFCC00] border border-[#FFCC00]/80 rounded text-[11px] font-bold inline-flex items-center gap-1 transition-all">Home</a>
+            <a id="nav-koha-adv-search" href="/cgi-bin/koha/opac-search.pl" target="_self" class="inline-flex px-2.5 py-1 bg-[#1e3f20] hover:bg-[#2d6a4f] text-white hover:text-[#FFCC00] border border-[#FFCC00]/80 rounded text-[11px] font-bold items-center gap-1 transition-all">Adv. Search</a>
+            <button type="button" onclick="openAppointmentModal()" class="px-2.5 py-1 bg-gradient-to-r from-[#17351f] to-[#204e2b] hover:from-[#1e4629] text-[#ffcc00] border border-[#FFCC00] rounded text-[11px] font-extrabold inline-flex items-center gap-1 transition-all">Research Assist</button>
+            <a href="https://quest.edu.pk/services/central-library/" target="_blank" class="hidden sm:inline-flex px-2.5 py-1 bg-[#1e3f20] hover:bg-[#2d6a4f] text-white hover:text-[#FFCC00] border border-[#FFCC00]/80 rounded text-[11px] font-bold items-center gap-1 transition-all">About</a>
+            <a id="nav-koha-cart" href="/cgi-bin/koha/opac-basket.pl" target="_self" class="inline-flex px-2.5 py-1 bg-[#1e3f20] hover:bg-[#2d6a4f] text-white hover:text-[#FFCC00] border border-[#FFCC00]/80 rounded text-[11px] font-bold items-center gap-1 transition-all">Cart</a>
+            <a href="https://quest.edu.pk/admin-department/34/" target="_blank" class="hidden lg:inline-flex px-2.5 py-1 bg-[#1e3f20] hover:bg-[#2d6a4f] text-white hover:text-[#FFCC00] border border-[#FFCC00]/80 rounded text-[11px] font-bold items-center gap-1 transition-all">Staff</a>
+            
+            <!-- Dynamic Auth Button -->
+            <button type="button" id="quest-dynamic-auth-btn" onclick="handleAuthClick()" class="px-3 py-1 bg-gradient-to-r from-[#1e3f20] to-[#2d6a4f] text-[#FFCC00] border border-[#FFCC00] rounded text-[11px] font-extrabold inline-flex items-center gap-1 transition-all shadow-md">
+              Login
+            </button>
+          </nav>
+        </div>
+
+        <!-- Dynamic User Status Strip -->
+        <div class="w-full border-t border-[#FFCC00]/25 pt-1 flex flex-wrap items-center justify-between text-[11.5px]">
+          <div class="flex items-center gap-2 text-slate-300">
+            <span class="inline-flex items-center gap-1 text-[10.5px] text-[#a7f3d0] font-medium bg-[#17351f] px-2 py-0.5 rounded-full border border-emerald-500/30">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+              Koha OPAC Engine Active
+            </span>
+          </div>
+
+          <!-- Live Dynamic Welcome Status -->
+          <div class="relative flex items-center gap-2">
+            <div id="quest-live-status-pill" class="inline-flex items-center gap-1.5 font-semibold text-slate-200 py-0.5 px-2.5 rounded bg-[#17351f] border border-[#FFCC00]/40">
+              <svg class="w-3.5 h-3.5 text-[#00bcff]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+              <span class="text-[#00bcff]">Welcome,</span>
+              <span id="quest-live-name" class="text-[#FFCC00] font-bold">Guest</span>
+              <span id="quest-live-card" class="text-emerald-300 font-medium"></span>
+            </div>
+            
+<a id="quest-patron-acc-link" href="/cgi-bin/koha/opac-user.pl" target="_self" ...>My Account / Loans &rarr;</a>
+           </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- 2. NEWS TICKER STRIP -->
+    <div class="w-full bg-[#0f2416] h-9 rounded-xl border-[1.5px] border-[#FFCC00] shadow-md flex items-center overflow-hidden font-sans relative">
+      <div class="bg-[#FFCC00] text-[#0f2416] font-extrabold text-[10.5px] h-full px-3 flex items-center gap-1 uppercase tracking-wider whitespace-nowrap z-10 border-r-2 border-[#0f2416]">
+        UPDATES:
+      </div>
+      <div class="flex-1 overflow-hidden flex items-center relative h-full px-2">
+        <div class="animate-marquee-scroll text-[12px] font-semibold text-slate-100">
+          Welcome to the next-generation QUEST Central Library Portal. The unified Koha OPAC catalog platform, HEC Digital Library (23,000+ Journals), Turnitin Plagiarism Support, and E-Book Repositories are fully synchronized for students and faculty.
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. OFFICIAL ORIGINAL CLEAN BANNER -->
+    <div class="w-full rounded-xl border-[1.5px] border-[#FFCC00] shadow-xl overflow-hidden bg-[#0f2416]">
+      <img 
+        src="OpacHomeBanner1.png" 
+        alt="QUEST Central Library Banner" 
+        class="w-full h-auto block" 
+      />
+    </div>
+
+    <!-- 4. KOHA OPAC SEARCH MATRIX (21+ Seminar Libraries) -->
+    <div class="w-full bg-[#0f2416] border-[1.5px] border-[#FFCC00] rounded-xl p-3.5 sm:p-4 shadow-xl">
+      <div class="flex items-center justify-between mb-2.5 border-b border-[#FFCC00]/20 pb-1.5">
+        <span class="text-[12.5px] font-extrabold text-[#FFCC00] uppercase tracking-wide">
+          Koha OPAC Unified Search Engine
+        </span>
+        <span class="text-[10.5px] text-slate-300 font-medium">21+ Seminar Libraries Active</span>
+      </div>
+
+      <form id="kohaSearchForm" onsubmit="executeKohaSearch(event)" class="flex flex-col gap-2.5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <select id="kohaLimitSelect" class="w-full h-9 bg-[#17351f] text-[#FFCC00] border border-[#FFCC00] rounded-lg px-3 text-[12px] font-bold outline-none">
+            <option value="">Select Library (All Collections)</option>
+            <option value="multibranchlimit:QUESTCL">Central Library, QUEST, Nawabshah</option>
+            <option value="multibranchlimit:BB">Book Bank Section</option>
+            <option value="multibranchlimit:CIR">Circulation Section</option>
+            <option value="multibranchlimit:CNS">Computerization & Networking Section</option>
+            <option value="multibranchlimit:EBR">Ebook Repository</option>
+            <option value="multibranchlimit:HECDL">HEC Digital Library</option>
+            <option value="multibranchlimit:LFG">Library for Girls</option>
+            <option value="multibranchlimit:MMS">Multimedia Section</option>
+            <option value="multibranchlimit:REF">Reference Section</option>
+            <option value="multibranchlimit:RESEARCH">Research Section</option>
+            <option value="multibranchlimit:SLCH">Seminar Library, Chemical Engg.</option>
+            <option value="multibranchlimit:SLCE">Seminar Library, Civil Engg.</option>
+            <option value="multibranchlimit:SLELC">Seminar Library, Department of English</option>
+            <option value="multibranchlimit:SLEL">Seminar Library, Electrical Engg.</option>
+            <option value="multibranchlimit:SLES">Seminar Library, Electronic Engg.</option>
+            <option value="multibranchlimit:SLEE">Seminar Library, Energy & Environ. Engg.</option>
+            <option value="multibranchlimit:SLIT">Seminar Library, Information Technology</option>
+            <option value="multibranchlimit:SLMS">Seminar Library, Mathematics & Statis.</option>
+            <option value="multibranchlimit:SLME">Seminar Library, Mechanical Engg.</option>
+            <option value="multibranchlimit:SLTE">Seminar Library, Telecom. Engg.</option>
+            <option value="multibranchlimit:ST">Stacks Area</option>
+          </select>
+
+          <select id="kohaIdxSelect" class="w-full h-9 bg-[#17351f] text-[#FFCC00] border border-[#FFCC00] rounded-lg px-3 text-[12px] font-bold outline-none">
+            <option value="">Select Keyword (All Fields)</option>
+            <option value="ti">Title</option>
+            <option value="au">Author</option>
+            <option value="su">Subject</option>
+            <option value="nb">ISBN</option>
+            <option value="se">Series</option>
+            <option value="callnum">Call Number</option>
+            <option value="barcode">Accession No. (Barcode)</option>
+          </select>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-2.5">
+          <input 
+            type="text" 
+            id="kohaSearchInput"
+            placeholder="Search book titles, authors, subjects, ISBN, barcode..." 
+            class="flex-1 h-9 bg-slate-100 text-[#0f2416] font-semibold text-[12.5px] px-3.5 rounded-lg border border-[#FFCC00] outline-none"
+            required
+          />
+          <button 
+            type="submit" 
+            class="w-full sm:w-32 h-9 bg-[#FFCC00] hover:bg-yellow-400 text-[#0f2416] font-extrabold text-[12px] uppercase rounded-lg cursor-pointer transition-all shadow-md flex items-center justify-center gap-1.5"
+          >
+            Search
+          </button>
+        </div>
+      </form>
+    </div>
+
+<!-- 5. FEATURE: BOOK APPOINTMENT FOR RESEARCH ASSISTANCE (COMPACT TRANSPARENT ENGINE PART 1) -->
+<link rel="preload" as="image" href="Book Appointment Image.jpeg">
+
+<div id="researchAppointmentBox" class="w-full my-6 rounded-xl border-[1.5px] border-[#FFCC00] shadow-[0_10px_30px_rgba(0,0,0,0.6)] overflow-hidden relative" style="background-image: linear-gradient(to right, rgba(15, 36, 22, 0.65), rgba(15, 36, 22, 0.30), rgba(15, 36, 22, 0.65)), url('Book Appointment Image.jpeg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+  
+  <div class="w-full p-4 sm:p-5 relative z-10 backdrop-blur-[0.5px]">
+    <div class="flex flex-col gap-4">
+      
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <span class="text-[14px] sm:text-[15.5px] font-black text-[#00bcff] uppercase tracking-wider flex items-center gap-2 drop-shadow-[0_2px_5px_rgba(0,0,0,1)]">
+            <span class="flex h-2.5 w-2.5 relative">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#FFCC00] shadow-[0_0_8px_#FFCC00]"></span>
+            </span>
+            BOOK APPOINTMENT FOR RESEARCH ASSISTANCE
+          </span>
+          <p class="text-[11.5px] sm:text-[12.5px] font-medium mt-1.5 leading-relaxed drop-shadow-[0_1px_4px_rgba(0,0,0,1)]">
+            <span class="text-[#FFCC00]">Schedule a personal research guidance session with the Librarian for:</span>
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onclick="triggerChipAppointment('General Research Consultation Suite')"
+          class="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-[#00bcff] to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-black text-[12.5px] uppercase tracking-widest rounded-lg shadow-[0_4px_15px_rgba(0,188,255,0.5)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 flex-shrink-0 cursor-pointer"
+        >
+          Book Now &rarr;
+        </button>
+      </div>
+      <!-- ??? COMPACT 3-COLUMN TRANSPARENT GRID MATRIX (PART 2) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 mt-1">
+        
+        <button type="button" onclick="triggerChipAppointment('Thesis Writing')" class="flex items-center gap-2.5 bg-transparent border border-[#FFCC00]/50 hover:border-[#00bcff] p-2 px-3 rounded-lg text-[11px] font-extrabold text-[#FFCC00] hover:text-[#00bcff] transition-all duration-200 text-left shadow-sm group cursor-pointer hover:-translate-y-0.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 flex-shrink-0 shadow-[0_0_6px_#22d3ee]"></span>
+          <span class="truncate tracking-wide drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">Thesis Writing</span>
+        </button>
+
+        <button type="button" onclick="triggerChipAppointment('Plagiarism Checking')" class="flex items-center gap-2.5 bg-transparent border border-[#FFCC00]/50 hover:border-[#00bcff] p-2 px-3 rounded-lg text-[11px] font-extrabold text-[#FFCC00] hover:text-[#00bcff] transition-all duration-200 text-left shadow-sm group cursor-pointer hover:-translate-y-0.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-rose-400 flex-shrink-0 shadow-[0_0_6px_#f43f5e]"></span>
+          <span class="truncate tracking-wide drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">Plagiarism Checking</span>
+        </button>
+
+        <button type="button" onclick="triggerChipAppointment('AI Checking')" class="flex items-center gap-2.5 bg-transparent border border-[#FFCC00]/50 hover:border-[#00bcff] p-2 px-3 rounded-lg text-[11px] font-extrabold text-[#FFCC00] hover:text-[#00bcff] transition-all duration-200 text-left shadow-sm group cursor-pointer hover:-translate-y-0.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-purple-400 flex-shrink-0 shadow-[0_0_6px_#a855f7]"></span>
+          <span class="truncate tracking-wide drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">AI Checking</span>
+        </button>
+
+        <button type="button" onclick="triggerChipAppointment('Citation Management Tools')" class="flex items-center gap-2.5 bg-transparent border border-[#FFCC00]/50 hover:border-[#00bcff] p-2 px-3 rounded-lg text-[11px] font-extrabold text-[#FFCC00] hover:text-[#00bcff] transition-all duration-200 text-left shadow-sm group cursor-pointer hover:-translate-y-0.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-orange-400 flex-shrink-0 shadow-[0_0_6px_#f97316]"></span>
+          <span class="truncate tracking-wide drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">Citation Tools</span>
+        </button>
+
+        <button type="button" onclick="triggerChipAppointment('Research Articles')" class="flex items-center gap-2.5 bg-transparent border border-[#FFCC00]/50 hover:border-[#00bcff] p-2 px-3 rounded-lg text-[11px] font-extrabold text-[#FFCC00] hover:text-[#00bcff] transition-all duration-200 text-left shadow-sm group cursor-pointer hover:-translate-y-0.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 flex-shrink-0 shadow-[0_0_6px_#22d3ee]"></span>
+          <span class="truncate tracking-wide drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">Research Articles</span>
+        </button>
+
+        <button type="button" onclick="triggerChipAppointment('HEC Digital Library')" class="flex items-center gap-2.5 bg-transparent border border-[#FFCC00]/50 hover:border-[#00bcff] p-2 px-3 rounded-lg text-[11px] font-extrabold text-[#FFCC00] hover:text-[#00bcff] transition-all duration-200 text-left shadow-sm group cursor-pointer hover:-translate-y-0.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0 shadow-[0_0_6px_#10b981]"></span>
+          <span class="truncate tracking-wide drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">HEC Digital Library</span>
+        </button>
+
+        <button type="button" onclick="triggerChipAppointment('eBook Repositories')" class="flex items-center gap-2.5 bg-transparent border border-[#FFCC00]/50 hover:border-[#00bcff] p-2 px-3 rounded-lg text-[11px] font-extrabold text-[#FFCC00] hover:text-[#00bcff] transition-all duration-200 text-left shadow-sm group cursor-pointer hover:-translate-y-0.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-yellow-400 flex-shrink-0 shadow-[0_0_6px_#eab308]"></span>
+          <span class="truncate tracking-wide drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">eBook Repositories</span>
+        </button>
+
+        <button type="button" onclick="triggerChipAppointment('Research Repositories of QUEST & Data Analysis')" class="flex items-center gap-2.5 bg-transparent border border-[#FFCC00]/50 hover:border-[#00bcff] p-2 px-3 rounded-lg text-[11px] font-extrabold text-[#FFCC00] hover:text-[#00bcff] transition-all duration-200 text-left shadow-sm group cursor-pointer hover:-translate-y-0.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 flex-shrink-0 shadow-[0_0_6px_#6366f1]"></span>
+          <span class="truncate tracking-wide drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">QUEST Repos &amp; Stats</span>
+        </button>
+
+        <button type="button" onclick="triggerChipAppointment('Custom Research Inquiry / Other Service')" class="flex items-center gap-2.5 bg-transparent border border-[#FFCC00]/50 hover:border-[#00bcff] p-2 px-3 rounded-lg text-[11px] font-extrabold text-[#FFCC00] hover:text-[#00bcff] transition-all duration-200 text-left shadow-sm group cursor-pointer hover:-translate-y-0.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-pink-400 flex-shrink-0 shadow-[0_0_6px_#f43f5e]"></span>
+          <span class="truncate tracking-wide drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] font-black">Custom Request</span>
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+    <!-- 6. RESOURCE LINKS & ACADEMIC DATABASES -->
+    <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-3.5">
+      <!-- Institutional Repositories & Quick Links -->
+      <div class="bg-[#0f2416] border-[1.5px] border-[#FFCC00] rounded-xl p-3.5 shadow-lg flex flex-col justify-between">
+        <div>
+          <h3 class="text-xs font-bold text-[#FFCC00] uppercase tracking-wider mb-2.5 border-b border-[#FFCC00]/20 pb-1.5 flex items-center gap-1.5">
+            Quick Links &amp; Institutional Repositories
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+            <a href="http://10.10.170.122:8080/" target="_blank" class="p-2 rounded bg-[#1b4332] hover:bg-[#255740] border border-[#FFCC00] text-white hover:text-[#FFCC00] font-bold block truncate transition-all">QUEST eBook Repository</a>
+            <a href="https://quest.edu.pk" target="_blank" class="p-2 rounded bg-[#17351f] hover:bg-[#20492c] border border-[#FFCC00]/40 text-white hover:text-[#FFCC00] font-semibold block truncate transition-all">QUEST Official Website</a>
+            <a href="http://www.digitallibrary.edu.pk/quaideawam.html" target="_blank" class="p-2 rounded bg-[#17351f] hover:bg-[#20492c] border border-[#FFCC00]/40 text-white hover:text-[#FFCC00] font-semibold block truncate transition-all">HEC Digital Library</a>
+            <a href="https://www.igi-global.com/affiliate/roheen-qamar/466745" target="_blank" class="p-2 rounded bg-[#17351f] hover:bg-[#20492c] border border-[#FFCC00]/40 text-white hover:text-[#FFCC00] font-semibold block truncate transition-all">IGI Global (Roheen)</a>
+            <a href="https://www.igi-global.com/search/?p=&ctid=1" target="_blank" class="p-2 rounded bg-[#17351f] hover:bg-[#20492c] border border-[#FFCC00]/40 text-white hover:text-[#FFCC00] font-semibold block truncate transition-all">IGI Global (Open Access)</a>
+            <a href="https://hec.gov.pk/" target="_blank" class="p-2 rounded bg-[#17351f] hover:bg-[#20492c] border border-[#FFCC00]/40 text-white hover:text-[#FFCC00] font-semibold block truncate transition-all">HEC Official website</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Free Online Academic Databases -->
+      <div class="bg-[#0f2416] border-[1.5px] border-[#FFCC00] rounded-xl p-3.5 shadow-lg flex flex-col justify-between">
+        <div>
+          <h3 class="text-xs font-bold text-[#FFCC00] uppercase tracking-wider mb-2.5 border-b border-[#FFCC00]/20 pb-1.5 flex items-center gap-1.5">
+            Free Online Academic Databases
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+            <a href="https://annas-archive.gl/" target="_blank" class="p-2 rounded bg-[#17351f] hover:bg-[#20492c] border border-[#FFCC00]/40 text-white hover:text-[#FFCC00] font-semibold block truncate transition-all">Anna's Archive (E-Books)</a>
+            <a href="https://welib.st/" target="_blank" class="p-2 rounded bg-[#17351f] hover:bg-[#20492c] border border-[#FFCC00]/40 text-white hover:text-[#FFCC00] font-semibold block truncate transition-all">WeLib Free eBooks</a>
+            <a href="https://doaj.org/" target="_blank" class="p-2 rounded bg-[#17351f] hover:bg-[#20492c] border border-[#FFCC00]/40 text-white hover:text-[#FFCC00] font-semibold block truncate transition-all">DOAJ Research Journals</a>
+            <a href="https://www.google.com/webhp?hl=en" target="_blank" class="p-2 rounded bg-[#17351f] hover:bg-[#20492c] border border-[#FFCC00]/40 text-white hover:text-[#FFCC00] font-semibold block truncate transition-all">AI Gemini Research Tool</a>
+            <a href="https://scholar.google.com" target="_blank" class="p-2 rounded bg-[#17351f] hover:bg-[#20492c] border border-[#FFCC00]/40 text-white hover:text-[#FFCC00] font-semibold block truncate transition-all">Google Scholar Citations</a>
+            <a href="https://arxiv.org/" target="_blank" class="p-2 rounded bg-[#17351f] hover:bg-[#20492c] border border-[#FFCC00]/40 text-white hover:text-[#FFCC00] font-semibold block truncate transition-all">arXiv Scientific Open Access</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<!-- 7. PHOTO ALBUMS & INFRASTRUCTURE GALLERY (CLEAN HOVER-REVEAL FACEBOOK ENGINE) -->
+    <div class="w-full bg-[#0f2416] border-[1.5px] border-[#FFCC00] rounded-xl p-3.5 sm:p-4 shadow-xl">
+      <div class="flex items-center justify-between mb-3 border-b border-[#FFCC00]/20 pb-2">
+        <div>
+          <span class="text-[12.5px] sm:text-[13.5px] font-extrabold text-[#FFCC00] uppercase tracking-wide flex items-center gap-1.5">
+            QUEST Central Library Photo Albums &amp; Infrastructure
+          </span>
+          <p class="text-[10.5px] text-slate-300 mt-0.5">Explore our campus infrastructure, reading halls, VIP delegations, and academic events on Facebook.</p>
+        </div>
+        <!-- Single Official Facebook Header Button -->
+        <a href="https://www.facebook.com/centrallibquest/photos" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 bg-[#1877F2]/20 hover:bg-[#1877F2] text-blue-300 hover:text-white border border-[#1877F2]/60 rounded-lg text-[11px] font-bold transition-all shadow-sm">
+          <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          Official Facebook Page
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+        
+        <!-- 1. Library Exterior Card -->
+        <a href="https://www.facebook.com/centrallibquest/photos" target="_blank" class="group relative rounded-xl overflow-hidden border border-[#FFCC00]/50 bg-[#0d2214] aspect-[4/3] flex flex-col justify-end p-3 shadow-md hover:border-[#FFCC00] hover:shadow-[0_0_20px_rgba(255,204,0,0.35)] transition-all duration-300">
+          <div class="absolute inset-0 bg-cover bg-center transition-all duration-700 transform group-hover:scale-110" style="background-image: url('library_exterior.jpg');"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent group-hover:via-black/60 transition-all"></div>
+          
+          <!-- Subtle Center Facebook Hover Signal -->
+          <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 pointer-events-none">
+            <div class="w-10 h-10 rounded-full bg-[#1877F2]/90 border border-white/40 flex items-center justify-center text-white shadow-xl transform scale-75 group-hover:scale-100 transition-all">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </div>
+          </div>
+
+          <div class="relative z-20">
+            <span class="font-black text-[#FFCC00] text-[13px] block drop-shadow-md">Library Exterior</span>
+            <span class="text-[10px] text-slate-200 block">Building &amp; Campus Surroundings</span>
+            <span class="text-[10px] text-emerald-300 font-bold mt-1.5 flex items-center gap-1 opacity-90 group-hover:opacity-100 group-hover:translate-x-1 transition-all">
+              View album on Facebook &rarr;
+            </span>
+          </div>
+        </a>
+
+        <!-- 2. Reading Halls Card -->
+        <a href="https://www.facebook.com/centrallibquest/photos" target="_blank" class="group relative rounded-xl overflow-hidden border border-[#FFCC00]/50 bg-[#0d2214] aspect-[4/3] flex flex-col justify-end p-3 shadow-md hover:border-[#FFCC00] hover:shadow-[0_0_20px_rgba(255,204,0,0.35)] transition-all duration-300">
+          <div class="absolute inset-0 bg-cover bg-center transition-all duration-700 transform group-hover:scale-110" style="background-image: url('reading_halls.jpg');"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent group-hover:via-black/60 transition-all"></div>
+          
+          <!-- Subtle Center Facebook Hover Signal -->
+          <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 pointer-events-none">
+            <div class="w-10 h-10 rounded-full bg-[#1877F2]/90 border border-white/40 flex items-center justify-center text-white shadow-xl transform scale-75 group-hover:scale-100 transition-all">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </div>
+          </div>
+
+          <div class="relative z-20">
+            <span class="font-black text-[#FFCC00] text-[13px] block drop-shadow-md">Reading Halls</span>
+            <span class="text-[10px] text-slate-200 block">Quiet Study Areas &amp; Stacks</span>
+            <span class="text-[10px] text-emerald-300 font-bold mt-1.5 flex items-center gap-1 opacity-90 group-hover:opacity-100 group-hover:translate-x-1 transition-all">
+              View album on Facebook &rarr;
+            </span>
+          </div>
+        </a>
+
+        <!-- 3. VIP Visitors Card (Gold Highlighted) -->
+        <a href="https://www.facebook.com/centrallibquest/photos" target="_blank" class="group relative rounded-xl overflow-hidden border-2 border-[#FFCC00] bg-[#0d2214] aspect-[4/3] flex flex-col justify-end p-3 shadow-[0_0_15px_rgba(255,204,0,0.3)] hover:shadow-[0_0_25px_rgba(255,204,0,0.6)] transition-all duration-300">
+          <div class="absolute inset-0 bg-cover bg-center transition-all duration-700 transform group-hover:scale-110" style="background-image: url('vip_visitors.jpg');"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/20 group-hover:via-black/70 transition-all"></div>
+          
+          <!-- Distinguished Badge on top right -->
+          <div class="absolute top-2.5 right-2.5 z-20 px-2 py-0.5 bg-[#FFCC00] text-[#0f2416] rounded text-[9px] font-black uppercase tracking-wider shadow">
+            VIP Gallery
+          </div>
+
+          <!-- Subtle Center Facebook Hover Signal -->
+          <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 pointer-events-none">
+            <div class="w-10 h-10 rounded-full bg-[#1877F2]/90 border border-white/40 flex items-center justify-center text-white shadow-xl transform scale-75 group-hover:scale-100 transition-all">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </div>
+          </div>
+
+          <div class="relative z-20">
+            <span class="font-black text-[#FFCC00] text-[13px] block drop-shadow-md">VIP Visitors &amp; Guests</span>
+            <span class="text-[10px] text-emerald-300 block font-medium">Distinguished Delegations &amp; VC Tours</span>
+            <span class="text-[10px] text-yellow-300 font-extrabold mt-1.5 flex items-center gap-1 opacity-95 group-hover:opacity-100 group-hover:translate-x-1 transition-all">
+              View album on Facebook &rarr;
+            </span>
+          </div>
+        </a>
+
+        <!-- 4. Library Events Card -->
+        <a href="https://www.facebook.com/centrallibquest/photos" target="_blank" class="group relative rounded-xl overflow-hidden border border-[#FFCC00]/50 bg-[#0d2214] aspect-[4/3] flex flex-col justify-end p-3 shadow-md hover:border-[#FFCC00] hover:shadow-[0_0_20px_rgba(255,204,0,0.35)] transition-all duration-300">
+          <div class="absolute inset-0 bg-cover bg-center transition-all duration-700 transform group-hover:scale-110" style="background-image: url('library_events.jpg');"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/20 group-hover:via-black/70 transition-all"></div>
+          
+          <!-- Subtle Center Facebook Hover Signal -->
+          <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 pointer-events-none">
+            <div class="w-10 h-10 rounded-full bg-[#1877F2]/90 border border-white/40 flex items-center justify-center text-white shadow-xl transform scale-75 group-hover:scale-100 transition-all">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </div>
+          </div>
+
+          <div class="relative z-20">
+            <span class="font-black text-[#FFCC00] text-[13px] block drop-shadow-md">Library Events</span>
+            <span class="text-[10px] text-slate-200 block">Book Fairs, Workshops &amp; Seminars</span>
+            <span class="text-[10px] text-emerald-300 font-bold mt-1.5 flex items-center gap-1 opacity-90 group-hover:opacity-100 group-hover:translate-x-1 transition-all">
+              View album on Facebook &rarr;
+            </span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+    <!-- 8. MAIN DASHBOARD GRID -->
+    <div id="hero-login-row" class="w-full flex flex-col lg:flex-row gap-4 items-stretch">
+      
+      <!-- Left Dashboard: Library Stats & Timings -->
+      <div class="flex-1 lg:flex-[2] bg-gradient-to-br from-[#0f2416] to-[#1e3f20] p-4 sm:p-5 rounded-xl border-[1.5px] border-[#FFCC00] shadow-xl flex flex-col justify-between">
+        <div class="flex flex-col md:flex-row gap-4 items-start">
+          <div class="flex-1">
+            <h2 class="text-lg sm:text-xl font-extrabold text-[#FFCC00] uppercase font-display mb-1">
+              QUEST University Libraries
+              <span class="block text-sm font-normal text-white normal-case mt-0.5">Union Catalogue & Research Hub</span>
+            </h2>
+            <p class="text-[12px] text-slate-200 text-justify mt-2 opacity-90 leading-relaxed">
+              The Central Library houses over <strong class="text-[#FFCC00]">16,800 book titles</strong> and <strong class="text-[#FFCC00]">68,000 total books</strong> specializing in Engineering, Science, and Technology, located near B Sector. We provide current subscriptions to top international journals (USA &amp; UK), a dedicated Book-Bank with 9,500+ text-books, a vibrant Newspapers &amp; Periodicals section (1st Floor), and an HEC-powered Digital Library granting campus-wide access to 23,000+ research journals.
+            </p>
+          </div>
+
+          <!-- Timings Box -->
+          <div class="w-full md:w-64 bg-[#17351f] border-[1.5px] border-[#FFCC00] rounded-xl p-3 shadow-md flex-shrink-0">
+            <div class="flex items-center justify-between border-b border-[#FFCC00]/30 pb-1 mb-2">
+              <span class="text-[11.5px] font-extrabold text-[#FFCC00] uppercase"> Library Timings</span>
+              <span class="px-2 py-0.5 rounded bg-emerald-950 border border-emerald-400 text-emerald-300 text-[9.5px] font-bold">Open</span>
+            </div>
+            <div class="space-y-1.5 text-xs">
+              <div class="flex justify-between bg-black/20 p-1.5 rounded border border-white/5">
+                <span class="text-[#FFCC00] font-semibold">Mon - Fri:</span>
+                <span class="text-white">08:30 AM - 10:00 PM</span>
+              </div>
+              <div class="flex justify-between bg-black/20 p-1.5 rounded border border-white/5">
+                <span class="text-slate-300 font-semibold">Sat - Sun:</span>
+                <span class="text-white">08:30 AM - 03:00 PM</span>
+              </div>
+            </div>
+            <p class="text-[10px] text-slate-300 italic text-center mt-1.5">*Regular operational hours are active.</p>
+          </div>
+        </div>
+
+        <!-- 4 Metrics Row -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4 pt-3 border-t border-[#FFCC00]/20">
+          <div class="bg-[#17351f] border border-[#FFCC00] rounded-lg p-2 text-center">
+            <div class="text-base sm:text-lg font-extrabold text-[#FFCC00]">16,800+</div>
+            <div class="text-[9.5px] font-semibold text-white uppercase mt-0.5">Book Titles</div>
+          </div>
+          <div class="bg-[#17351f] border border-[#FFCC00] rounded-lg p-2 text-center">
+            <div class="text-base sm:text-lg font-extrabold text-[#FFCC00]">68,000+</div>
+            <div class="text-[9.5px] font-semibold text-white uppercase mt-0.5">Total Books</div>
+          </div>
+          <div class="bg-[#17351f] border border-[#FFCC00] rounded-lg p-2 text-center flex flex-col justify-center items-center">
+            <span class="text-[8.5px] bg-white text-[#0f2416] px-1 py-0.5 rounded font-extrabold uppercase mb-0.5">Active Portal</span>
+            <div class="text-[9.5px] font-semibold text-white">Students & Researchers</div>
+          </div>
+          <div class="bg-[#17351f] border border-[#FFCC00] rounded-lg p-2 text-center flex flex-col justify-center items-center">
+            <span class="text-[8.5px] bg-white text-[#2d6a4f] px-1 py-0.5 rounded font-extrabold uppercase mb-0.5">Full Access</span>
+            <div class="text-[9.5px] font-semibold text-white">Digital Resources</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Card: Instant In-Page Patron Authentication Card -->
+      <div id="login-slot-canvas-blueprint" class="w-full lg:w-72 lg:min-w-[280px] flex items-stretch flex-shrink-0">
+        <div class="w-full bg-gradient-to-br from-[#0f2416] to-[#1e3f20] border-[1.5px] border-[#FFCC00] rounded-xl p-4 shadow-xl flex flex-col justify-between">
+          
+          <form 
+            id="kohaInPageLoginForm"
+            onsubmit="handleKohaLoginForm(event)" 
+            class="w-full flex flex-col justify-between h-full space-y-2.5"
+          >
+            <div>
+              <h5 class="text-[12.5px] font-bold text-[#FFCC00] uppercase text-center border-b-2 border-white/10 pb-1.5 mb-3 tracking-wide flex items-center justify-center gap-1.5">
+                <svg class="w-4 h-4 text-[#FFCC00]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                Koha Patron Login
+              </h5>
+              
+              <div class="mb-2.5">
+                <label for="koha_user_input" class="block text-[11px] font-bold text-[#FFCC00] uppercase tracking-wider mb-1">Card Number / Username</label>
+                <input 
+                  type="text" 
+                  id="koha_user_input" 
+                  name="userid" 
+                  placeholder="e.g. 21AI110 or iashah" 
+                  class="w-full h-9 bg-[#17351f] text-[#FFCC00] placeholder:text-slate-500 border border-[#FFCC00] rounded-lg px-2.5 text-xs font-semibold outline-none focus:ring-1 focus:ring-[#FFCC00]"
+                  required
+                />
+              </div>
+
+              <div class="mb-2.5">
+                <label for="koha_pass_input" class="block text-[11px] font-bold text-[#FFCC00] uppercase tracking-wider mb-1">Password</label>
+                <input 
+                  type="password" 
+                  id="koha_pass_input" 
+                  name="password" 
+                  placeholder="Enter your password" 
+                  class="w-full h-9 bg-[#17351f] text-[#FFCC00] placeholder:text-slate-500 border border-[#FFCC00] rounded-lg px-2.5 text-xs font-semibold outline-none focus:ring-1 focus:ring-[#FFCC00]"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <button 
+                type="submit" 
+                id="koha_login_btn"
+                class="w-full h-9 bg-[#FFCC00] hover:bg-yellow-400 text-[#0f2416] font-extrabold text-xs uppercase tracking-wider rounded-lg flex items-center justify-center cursor-pointer transition-all shadow-md"
+              >
+                Log In to OPAC
+              </button>
+              <p id="koha_login_status_msg" class="text-[9.5px] text-center text-slate-300 mt-1.5">Official Koha Library Card Credentials</p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. COMPACT EXECUTIVE FOOTER -->
+    <footer class="w-full bg-gradient-to-r from-[#0f2416] via-[#051405] to-[#0f2416] text-white border-[1.5px] border-[#FFCC00] rounded-xl px-4 py-2.5 shadow-xl text-center font-sans mt-1">
+      <div class="max-w-4xl mx-auto space-y-1">
+        <p class="text-[11.5px] sm:text-xs font-semibold text-slate-100">
+          Copyright &copy; 2026, <span class="text-[#FFCC00] font-bold">QUEST, Nawabshah, Shaheed Benazirabad</span>. All rights reserved.
+        </p>
+        <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] text-slate-200">
+          <span>Librarian: <strong class="text-[#a7f3d0]">Mr. G. Farooq Channar</strong></span>
+          <span>&bull;</span>
+          <span><strong class="text-[#FFCC00]">Ph#:</strong> 0244-9370381-4 Ext. 2308</span>
+          <span>&bull;</span>
+          <span><strong class="text-[#FFCC00]">Email:</strong> <a href="mailto:lib@quest.edu.pk" class="text-slate-200 hover:text-[#FFCC00] underline">lib@quest.edu.pk</a></span>
+          <span>&bull;</span>
+          <span><strong class="text-[#FFCC00]">Web:</strong> <a href="https://quest.edu.pk" target="_blank" class="text-[#a7f3d0] underline">quest.edu.pk</a></span>
+        </div>
+        <div class="pt-0.5 text-[10.5px] text-slate-400">
+          OPAC Enhancer &amp; Technical Architecture: 
+          <button type="button" onclick="openDeveloperModal()" class="font-bold text-[#FFCC00] hover:underline uppercase ml-1">
+            Sayyed Imam Ali Shah
+          </button>
+        </div>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- MODALS -->
+  <div id="appointmentModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-3 bg-black/80 backdrop-blur-sm overflow-y-auto">
+    <div class="w-full max-w-lg bg-[#0f2416] border-2 border-[#FFCC00] rounded-2xl shadow-2xl overflow-hidden p-4 sm:p-5 text-white my-auto">
+      <div class="flex items-center justify-between border-b border-[#FFCC00]/30 pb-2 mb-3">
+        <div>
+          <h3 class="text-base font-black text-[#FFCC00] uppercase">Book Appointment for Research Assistance</h3>
+          <p class="text-[11px] text-emerald-200">Consultation with Chief Librarian (Mr. G. Farooq Channar)</p>
+        </div>
+        <button type="button" onclick="closeAppointmentModal()" class="text-slate-400 hover:text-white text-xl font-bold p-1">&times;</button>
+      </div>
+
+      <form id="appointmentForm" onsubmit="submitAppointmentForm(event)" class="space-y-2.5 text-xs">
+        <div>
+          <label class="block font-bold text-[#FFCC00] uppercase mb-0.5 text-[11px]">1. Full Name *</label>
+          <input type="text" id="app_name" placeholder="e.g. Student Name" required class="w-full h-9 bg-[#17351f] text-white px-3 rounded-lg border border-[#FFCC00] outline-none text-xs" />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold text-[#FFCC00] uppercase mb-0.5 text-[11px]">2. Roll / ID / Dept *</label>
+            <input type="text" id="app_roll" placeholder="e.g. 21AI110 / AI Dept" required class="w-full h-9 bg-[#17351f] text-white px-3 rounded-lg border border-[#FFCC00] outline-none text-xs" />
+          </div>
+          <div>
+            <label class="block font-bold text-[#FFCC00] uppercase mb-0.5 text-[11px]">3. WhatsApp Number *</label>
+            <input type="tel" id="app_whatsapp" placeholder="e.g. 0303-3000933" required class="w-full h-9 bg-[#17351f] text-white px-3 rounded-lg border border-[#FFCC00] outline-none text-xs" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-[#FFCC00] uppercase mb-0.5 text-[11px]">4. Email Address *</label>
+          <input type="email" id="app_email" placeholder="e.g. student@quest.edu.pk" required class="w-full h-9 bg-[#17351f] text-white px-3 rounded-lg border border-[#FFCC00] outline-none text-xs" />
+        </div>
+<!-- OTP Verification Box --> <div class="bg-[#17351f]/90 p-2.5 rounded-lg border border-[#FFCC00]/60 space-y-2"> <div class="flex gap-2"> <button type="button" id="app_send_otp_btn" onclick="sendAppointmentOtp()" class="px-3 py-1.5 bg-[#00bcff] hover:bg-cyan-400 text-[#0f2416] font-extrabold rounded text-[11px] uppercase whitespace-nowrap cursor-pointer"> Send OTP to Email </button> <input type="text" id="app_otp_code" maxlength="6" placeholder="Enter 6-Digit OTP *" required class="w-full h-8 bg-[#0f2416] text-[#FFCC00] font-bold px-2.5 rounded border border-[#FFCC00] outline-none text-xs tracking-widest" /> </div> <p id="app_otp_status" class="text-[10px] text-emerald-300">Click "Send OTP to Email" and enter the code received in your inbox.</p> </div>
+        <div>
+          <label class="block font-bold text-[#FFCC00] uppercase mb-0.5 text-[11px]">5. Research Topic / Guidance Required *</label>
+          <textarea id="app_topic" rows="2" placeholder="e.g. Thesis Topic, EndNote Citations, Turnitin Plagiarism..." required class="w-full bg-[#17351f] text-white p-2.5 rounded-lg border border-[#FFCC00] outline-none resize-none text-xs"></textarea>
+        </div>
+
+        <div>
+          <label class="block font-bold text-[#FFCC00] uppercase mb-0.5 text-[11px]">6. Preferred Time Slot *</label>
+          <select id="app_time" class="w-full h-9 bg-[#17351f] text-[#FFCC00] px-3 rounded-lg border border-[#FFCC00] outline-none font-bold text-xs">
+            <option>09:00 AM - 10:00 AM (Morning Session)</option>
+            <option>10:30 AM - 11:30 AM (Morning Session)</option>
+            <option>11:30 AM - 12:30 PM (Mid-day Session)</option>
+            <option>02:00 PM - 03:00 PM (Afternoon Session)</option>
+            <option>03:30 PM - 04:30 PM (Afternoon Session)</option>
+            <option>05:00 PM - 06:00 PM (Evening Research Slot)</option>
+          </select>
+        </div>
+        <button type="submit" id="app_submit_btn" class="w-full h-10 bg-[#FFCC00] hover:bg-yellow-400 text-[#0f2416] font-black uppercase tracking-wider rounded-lg shadow-lg cursor-pointer transition-all">
+          SUBMIT APPOINTMENT REQUEST
+        </button>
+      </form>
+
+      <div id="appointmentSuccessView" class="hidden text-center py-5 space-y-2.5">
+        <div class="w-14 h-14 rounded-full bg-emerald-950 border-2 border-emerald-400 flex items-center justify-center text-emerald-400 text-2xl mx-auto font-bold">&check;</div>
+        <h4 class="text-base font-extrabold text-[#FFCC00]">Appointment Request Successfully Processed!</h4>
+        <p class="text-xs text-slate-200">Details have been dispatched to Chief Librarian &amp; routed to <strong class="text-[#FFCC00]">lib@quest.edu.pk</strong>.</p>
+        <div class="pt-2 flex justify-center gap-2">
+          <button type="button" id="direct_wa_btn" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs uppercase flex items-center gap-1">
+            Open WhatsApp Copy
+          </button>
+          <button type="button" onclick="closeAppointmentModal()" class="px-4 py-1.5 bg-[#FFCC00] text-[#0f2416] font-bold rounded-lg text-xs uppercase">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="photoModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-3 bg-black/80 backdrop-blur-sm" onclick="closePhotoPreview()">
+    <div class="max-w-md w-full bg-[#0f2416] border-2 border-[#FFCC00] rounded-xl p-4 text-center text-white" onclick="event.stopPropagation()">
+      <h3 id="photoModalTitle" class="text-base font-bold text-[#FFCC00] mb-1"></h3>
+      <p id="photoModalDesc" class="text-xs text-slate-200 mb-3"></p>
+      <button type="button" onclick="closePhotoPreview()" class="px-4 py-1 bg-[#FFCC00] text-[#0f2416] font-bold rounded text-xs uppercase">Close Preview</button>
+    </div>
+  </div>
+
+  <div id="developerModal" class="fixed inset-0 z-[999999] hidden items-center justify-center p-3 bg-black/80 backdrop-blur-sm">
+    <div class="w-full max-w-md bg-[#ffffff] text-[#333333] rounded-2xl shadow-2xl p-5 relative border-2 border-[#0f2416]">
+      <button type="button" onclick="closeDeveloperModal()" class="absolute right-4 top-3 text-slate-400 hover:text-red-600 text-2xl font-bold">&times;</button>
+      <div class="border-b-2 border-[#FFCC00] pb-2 mb-3">
+        <h3 class="text-base font-extrabold text-[#0f2416] uppercase">Developer Profile</h3>
+        <p class="text-xs text-slate-500 font-medium">Central Library IT Enhancement &amp; Architecture</p>
+      </div>
+      <div class="space-y-2 text-xs text-slate-800">
+        <div><strong>Name:</strong> Sayyed Imam Ali Shah</div>
+        <div><strong>Contribution:</strong> OPAC Technical Enhancement Contributor</div>
+        <div><strong>Role:</strong> Library Staff / Technical IT Specialist</div>
+        <div><strong>Institution:</strong> Central Library QUEST, Nawabshah</div>
+        <hr class="my-1.5 border-slate-200" />
+        <div><strong>Gmail:</strong> <a href="mailto:awtsias@gmail.com" class="text-[#0f2416] font-bold underline">awtsias@gmail.com</a></div>
+        <div><strong>WhatsApp:</strong> <a href="https://wa.me/923033000933" target="_blank" class="text-emerald-700 font-bold underline">0303-3000933</a></div>
+      </div>
+    </div>
+  </div>
+<!-- QUEST Chat Verification Modal (Guest Users Only) -->
+<div id="chatVerificationModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-3 bg-black/80 backdrop-blur-sm">
+    <div class="w-full max-w-md bg-[#0f2416] border-2 border-[#FFCC00] rounded-2xl shadow-2xl p-5 text-white relative">
+        <!-- Close Button -->
+        <button type="button" id="closeChatModalBtn" class="absolute right-4 top-3 text-slate-400 hover:text-white text-xl font-bold p-1">&times;</button>
+        
+        <!-- Header -->
+        <div class="border-b border-[#FFCC00]/30 pb-2 mb-4">
+            <h3 class="text-base font-black text-[#FFCC00] uppercase tracking-wide">Guest Chat Verification</h3>
+            <p class="text-[11px] text-emerald-200">Please verify your identity to initiate secure live support.</p>
+        </div>
+        
+        <!-- DYNAMIC BODY CONTAINER (Is ke andar content khud badlega) -->
+        <div id="chatModalDynamicBody">
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-bold text-[#FFCC00] uppercase mb-1 text-[11px]">Full Name *</label>
+                    <input type="text" id="chatGuestName" placeholder="e.g. Ali Khan" class="w-full h-9 bg-[#17351f] text-white px-3 rounded-lg border border-[#FFCC00] outline-none text-xs" />
+                </div>
+                <div>
+                    <label class="block font-bold text-[#FFCC00] uppercase mb-1 text-[11px]">Email Address *</label>
+                    <input type="email" id="chatGuestEmail" placeholder="e.g. ali@gmail.com" class="w-full h-9 bg-[#17351f] text-white px-3 rounded-lg border border-[#FFCC00] outline-none text-xs" />
+                </div>
+                <button type="button" id="chatSendOtpBtn" class="w-full h-9 bg-[#FFCC00] hover:bg-yellow-400 text-[#0f2416] font-black uppercase tracking-wider rounded-lg shadow-lg cursor-pointer transition-all">
+                    Send OTP Verification Code
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+    
+  <script>
+    const KOHA_HOST = "http://121.52.154.125:8000";
+    
+    // Centralized Background Python Mail Engine Endpoint Configuration
+    const MAIL_API_HOST = "https://library.quest.edu.pk/mailengine";
+
+    // 1. Page Load Setup
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedCard = localStorage.getItem('quest_koha_card');
+      const savedName = localStorage.getItem('quest_koha_name');
+
+      if (savedCard && savedCard.trim() !== '') {
+        setPatronLoggedInState(savedName || savedCard, savedCard);
+      } else {
+        setPatronLoggedOutState();
+      }
+    });
+
+    // 2. Auth State Handlers
+    function setPatronLoggedInState(fullName, cardNumber) {
+      document.getElementById('quest-live-name').innerText = fullName;
+      document.getElementById('quest-live-card').innerText = `(${cardNumber})`;
+      
+      const accLink = document.getElementById('quest-patron-acc-link');
+      if (accLink) accLink.classList.remove('hidden');
+
+      const authBtn = document.getElementById('quest-dynamic-auth-btn');
+      authBtn.innerText = "Logout";
+      authBtn.className = "px-3 py-1 bg-gradient-to-r from-red-600 to-rose-700 text-white border border-red-400 rounded text-[11px] font-extrabold inline-flex items-center gap-1 transition-all shadow-md";
+    }
+
+    function setPatronLoggedOutState() {
+      document.getElementById('quest-live-name').innerText = "Guest";
+      document.getElementById('quest-live-card').innerText = "";
+      
+      const accLink = document.getElementById('quest-patron-acc-link');
+      if (accLink) accLink.classList.add('hidden');
+
+      const authBtn = document.getElementById('quest-dynamic-auth-btn');
+      authBtn.innerText = "Login";
+      authBtn.className = "px-3 py-1 bg-gradient-to-r from-[#1e3f20] to-[#2d6a4f] text-[#FFCC00] border border-[#FFCC00] rounded text-[11px] font-extrabold inline-flex items-center gap-1 transition-all shadow-md";
+    }
+
+    function handleAuthClick() {
+      const authBtn = document.getElementById('quest-dynamic-auth-btn');
+      if (authBtn.innerText.trim() === "Logout") {
+        localStorage.removeItem('quest_koha_card');
+        localStorage.removeItem('quest_koha_name');
+        setPatronLoggedOutState();
+      } else {
+        const loginSlot = document.getElementById('login-slot-canvas-blueprint');
+        if (loginSlot) {
+          loginSlot.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setTimeout(() => {
+            document.getElementById('koha_user_input').focus();
+          }, 400);
+        }
+      }
+    }
+
+    // 3. Koha In-Page Patrons Authenticator
+    async function handleKohaLoginForm(e) {
+      e.preventDefault();
+      const userField = document.getElementById('koha_user_input');
+      const passField = document.getElementById('koha_pass_input');
+      const btn = document.getElementById('koha_login_btn');
+      const msg = document.getElementById('koha_login_status_msg');
+
+      const enteredUser = userField.value.trim();
+      const enteredPass = passField.value.trim();
+
+      if (!enteredUser) return;
+
+      btn.innerText = "Authenticating...";
+      btn.disabled = true;
+
+      try {
+        const response = await fetch('patron.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userid: enteredUser, password: enteredPass })
+        });
+        const result = await response.json();
+
+        if (result && result.status === 'success') {
+          const realName = result.fullname;
+          const realCard = result.cardnumber;
+
+          localStorage.setItem('quest_koha_card', realCard);
+          localStorage.setItem('quest_koha_name', realName);
+          setPatronLoggedInState(realName, realCard);
+
+          btn.innerText = "Logged In ??";
+          msg.innerText = `Welcome, ${realName}!`;
+          msg.className = "text-[9.5px] text-center text-emerald-300 font-bold mt-1.5";
+
+          userField.value = "";
+          passField.value = "";
+        } else {
+          btn.innerText = "Log In to OPAC";
+          btn.disabled = false;
+          msg.innerText = "Patron not found. Check credentials.";
+          msg.className = "text-[9.5px] text-center text-rose-400 font-bold mt-1.5";
+        }
+      } catch(err) {
+        console.warn("Patron DB fetch notice:", err);
+        btn.innerText = "Log In to OPAC";
+        btn.disabled = false;
+      }
+    }
+
+    // 4. Unified OPAC Catalogue Search Matrix (Koha Zebra & CCL Compliant)
+    function executeKohaSearch(e) {
+      e.preventDefault();
+      const rawQuery = document.getElementById('kohaSearchInput').value.trim();
+      const branchVal = document.getElementById('kohaLimitSelect').value;
+      const idxVal = document.getElementById('kohaIdxSelect').value;
+
+      if (!rawQuery) return;
+
+      // 1. Index prefix set karein (ti:, au:, su:, etc.)
+      let finalQuery = rawQuery;
+      if (idxVal && idxVal.trim() !== "") {
+        if (idxVal === "barcode") {
+          finalQuery = `bc:${rawQuery}`;
+        } else {
+          finalQuery = `${idxVal}:${rawQuery}`;
+        }
+      }
+
+      const params = new URLSearchParams();
+      params.set('q', finalQuery);
+
+      // 2. Branch limit format set karein
+      if (branchVal && branchVal.trim() !== "") {
+        const cleanBranch = branchVal.replace('multibranchlimit:', '');
+        params.set('limit', `branch:${cleanBranch}`);
+      }
+
+      // 3. Perfect Koha search execution
+      window.open('/cgi-bin/koha/opac-search.pl?' + params.toString(), '_self');
+    }
+       // 5. Modals Controls & Structural Toggles
+    function openAppointmentModal() {
+      document.getElementById('appointmentModal').classList.remove('hidden');
+      document.getElementById('appointmentModal').classList.add('flex');
+    }
+
+    // ? DYNAMIC ROUTING: Automatically tracks chip button text selection and forces focus onto target form textareas nodes
+    function triggerChipAppointment(serviceTopicText) {
+        const appTopicField = document.getElementById('app_topic');
+        if (appTopicField) {
+            appTopicField.value = "Guidance Required For: " + serviceTopicText;
+        }
+        if (typeof openAppointmentModal === 'function') {
+            openAppointmentModal();
+        }
+    }
+
+    function closeAppointmentModal() {
+      document.getElementById('appointmentModal').classList.add('hidden');
+      document.getElementById('appointmentModal').classList.remove('flex');
+      document.getElementById('appointmentForm').classList.remove('hidden');
+      document.getElementById('appointmentSuccessView').classList.add('hidden');
+    }
+
+    function openDeveloperModal() {
+      document.getElementById('developerModal').classList.remove('hidden');
+      document.getElementById('developerModal').classList.add('flex');
+    }
+
+    function closeDeveloperModal() {
+      document.getElementById('developerModal').classList.add('hidden');
+      document.getElementById('developerModal').classList.remove('flex');
+    }
+
+    function openPhotoPreview(title, desc) {
+      document.getElementById('photoModalTitle').innerText = title;
+      document.getElementById('photoModalDesc').innerText = desc;
+      document.getElementById('photoModal').classList.remove('hidden');
+      document.getElementById('photoModal').classList.add('flex');
+    }
+
+    function closePhotoPreview() {
+      document.getElementById('photoModal').classList.add('hidden');
+      document.getElementById('photoModal').classList.remove('flex');
+    }
+
+    // 6. RESEARCH ASSISTANCE APPOINTMENT FORM DISPATCHER (WITH OTP & ANTI-BOT)
+ async function sendAppointmentOtp() {
+   const email = document.getElementById('app_email').value.trim();
+   const name = document.getElementById('app_name').value.trim() || 'Student';
+   const btn = document.getElementById('app_send_otp_btn');
+   const status = document.getElementById('app_otp_status');
+
+   if (!email) {
+     alert("Please enter your Email Address first.");
+     return;
+   }
+
+   btn.disabled = true;
+   btn.innerText = "Sending...";
+   try {
+     const res = await fetch(`${MAIL_API_HOST}/api/send-otp`, {
+       method: 'POST',
+       headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify({ email: email, name: name, type: 'Appointment' })
+     });
+     const data = await res.json();
+     if (data.status === 'success') {
+       status.innerText = "OTP sent! Check your email inbox (and Spam folder).";
+       status.className = "text-[10px] text-emerald-300 font-bold";
+       btn.innerText = "Resend OTP";
+     } else {
+       status.innerText = data.message || "Invalid email address.";
+       status.className = "text-[10px] text-rose-400 font-bold";
+       btn.innerText = "Send OTP to Email";
+     }
+   } catch (err) {
+     status.innerText = "Server error while sending OTP.";
+     btn.innerText = "Send OTP to Email";
+   }
+   btn.disabled = false;
+ }
+
+async function submitAppointmentForm(e) {
+  e.preventDefault();
+
+  const name = document.getElementById('app_name').value.trim();
+  const roll = document.getElementById('app_roll').value.trim();
+  const studentEmail = document.getElementById('app_email').value.trim();
+  const whatsapp = document.getElementById('app_whatsapp').value.trim();
+  const topic = document.getElementById('app_topic').value.trim();
+  const time = document.getElementById('app_time').value;
+  const otpCode = document.getElementById('app_otp_code').value.trim();
+
+  // Block Hacker Code & Links
+  const badPattern = /(\{\{|\}\}|<\?php|<script|http:\/\/|https:\/\/|oast\.site)/i;
+  if (badPattern.test(name) || badPattern.test(topic)) {
+    alert("Invalid characters or links are not allowed.");
+    return;
+  }
+
+  // Check 6-Digit OTP
+  if (!otpCode || otpCode.length !== 6) {
+    alert("Please click 'Send OTP to Email' and enter the 6-digit code first.");
+    return;
+  }
+
+  const submitBtn = document.getElementById('app_submit_btn');
+  submitBtn.innerText = "Verifying & Sending...";
+  submitBtn.disabled = true;
+
+  const waText = encodeURIComponent(
+    `*QUEST Library Research Appointment Request*\n` +
+    `*Name:* ${name}\n` +
+    `*Roll/Dept:* ${roll}\n` +
+    `*Email:* ${studentEmail}\n` +
+    `*WhatsApp:* ${whatsapp}\n` +
+    `*Topic:* ${topic}\n` +
+    `*Time Slot:* ${time}`
+  );
+
+  document.getElementById('direct_wa_btn').onclick = function() {
+    window.open(`https://wa.me{waText}`, '_blank');
+  };
+
+  try {
+    const response = await fetch(`${MAIL_API_HOST}/api/appointment`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: name,
+        email: studentEmail,
+        datetime: time,
+        purpose: `Roll/Dept: ${roll} | WhatsApp: ${whatsapp} | Topic: ${topic}`,
+        otp: otpCode
+      })
+    });
+    const result = await response.json();
+    if (result.status === 'success') {
+      if (window.confetti) {
+        confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 }, colors: ['#FFCC00', '#2d6a4f', '#ffffff'] });
+      }
+      document.getElementById('appointmentForm').classList.add('hidden');
+      document.getElementById('appointmentSuccessView').classList.remove('hidden');
+    } else {
+      alert(result.message || "Invalid or expired OTP code.");
+    }
+  } catch (err) {
+    alert("Connection error with mail server.");
+  }
+  submitBtn.innerText = "SUBMIT APPOINTMENT REQUEST";
+  submitBtn.disabled = false;
+}
+// =========================================================================
+// 7. SECURE LIVE TAWK.TO CHAT CONTROLLER MATRIX (INSTANT VISITOR SYNC ENGINE)
+// =========================================================================
+let chatGeneratedOtp = null;
+let guestVerifiedPassed = false; 
+let verifiedGuestData = { name: '', email: '' }; 
+
+function isPatronChatVerified() {
+    const savedCard = localStorage.getItem('quest_koha_card');
+    return (savedCard && savedCard.trim() !== '');
+}
+
+var Tawk_API = Tawk_API || {};
+var Tawk_LoadStart = new Date();
+
+if (isPatronChatVerified()) {
+    const savedCard = localStorage.getItem('quest_koha_card');
+    const savedName = localStorage.getItem('quest_koha_name') || savedCard;
+    Tawk_API.visitor = {
+        name  : savedName,
+        email : savedCard + '@quest.edu.pk'
+    };
+}
+
+Tawk_API.onLoad = function(){
+    if (isPatronChatVerified()) {
+        const savedCard = localStorage.getItem('quest_koha_card');
+        const savedName = localStorage.getItem('quest_koha_name') || savedCard;
+        Tawk_API.setAttributes({
+            'name'  : savedName,
+            'email' : savedCard + '@quest.edu.pk',
+            'hash'  : savedCard
+        }, function(error){});
+    }
+};
+
+Tawk_API.onChatMaximized = function(){
+    if (isPatronChatVerified()) {
+        const savedCard = localStorage.getItem('quest_koha_card');
+        const savedName = localStorage.getItem('quest_koha_name') || savedCard;
+        Tawk_API.setAttributes({
+            'name'  : savedName,
+            'email' : savedCard + '@quest.edu.pk'
+        }, function(error){});
+        return; 
+    }
+    
+    if (guestVerifiedPassed) {
+        Tawk_API.setAttributes({
+            'name'  : verifiedGuestData.name,
+            'email' : verifiedGuestData.email
+        }, function(error){});
+        return;
+    }
+    
+    if(Tawk_API.minimize) { Tawk_API.minimize(); }
+    
+    const chatVerificationModal = document.getElementById("chatVerificationModal");
+    if (chatVerificationModal) {
+        chatVerificationModal.classList.remove("hidden");
+        chatVerificationModal.classList.add("flex");
+        setupChatFormListeners(); 
+    }
+};
+
+// Fixed Tawk.to Embedded Core Script Module Injection Tracker
+(function(){
+    var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0]; 
+    s1.async = true;
+    s1.src = 'https://embed.tawk.to/6a93eae5c3c46c3445875f0c/1k18sr4o7'; 
+    s1.charset = 'UTF-8';
+    s1.setAttribute('crossorigin', '*');
+    s0.parentNode.insertBefore(s1, s0);
+})();
+
+window.addEventListener('DOMContentLoaded', () => {
+    const closeChatModalBtn = document.getElementById("closeChatModalBtn");
+    const chatVerificationModal = document.getElementById("chatVerificationModal");
+    if (closeChatModalBtn) {
+        closeChatModalBtn.addEventListener("click", function() {
+            chatVerificationModal.classList.add("hidden");
+            chatVerificationModal.classList.remove("flex");
+        });
+    }
+});
+
+function setupChatFormListeners() {
+    const chatSendOtpBtn = document.getElementById("chatSendOtpBtn");
+    if (chatSendOtpBtn) {
+        chatSendOtpBtn.onclick = async function() {
+            const name = document.getElementById("chatGuestName").value.trim();
+            const email = document.getElementById("chatGuestEmail").value.trim();
+
+            if (!name || !email) {
+                alert("Please provide both your Full Name and Email Address.");
+                return;
+            }
+
+            verifiedGuestData.name = name;
+            verifiedGuestData.email = email;
+            chatSendOtpBtn.innerText = "Sending Verification OTP...";
+            chatSendOtpBtn.disabled = true;
+
+            try {
+                const response = await fetch(`${MAIL_API_HOST}/api/send-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, name: name })
+                });
+                const mailResult = await response.json();
+                
+                if (mailResult.status === "success") {
+                    chatGeneratedOtp = mailResult.otp;
+                    alert("A secure authentication OTP token has been dispatched to your inbox.");
+                    
+                    document.getElementById("chatModalDynamicBody").innerHTML = `
+                        <div class="space-y-4 text-xs">
+                            <div class="text-center bg-black/20 p-3 rounded-xl border border-white/5">
+                                <label class="block font-bold text-[#FFCC00] uppercase mb-2 text-[11px]">Enter 6-Digit OTP *</label>
+                                <input type="text" id="chatInputOtp" maxlength="6" placeholder="X X X X X X" style="letter-spacing: 0.3rem; text-align: center;" class="w-44 h-10 bg-[#17351f] text-white text-center font-black text-lg rounded-lg border-2 border-[#FFCC00] outline-none mx-auto block uppercase" />
+                            </div>
+                            <button type="button" id="chatVerifyOtpBtn" class="w-full h-9 bg-emerald-600 hover:bg-emerald-500 text-white font-black uppercase tracking-wider rounded-lg shadow-lg cursor-pointer transition-all">
+                                Verify OTP & Start Chat
+                            </button>
+                        </div>
+                    `;
+                    setupChatVerificationTrigger();
+                } else {
+                    throw new Error("Production mail API connection refused.");
+                }
+            } catch (err) {
+                alert("System encountered a transmission fault. Please retry.");
+                chatSendOtpBtn.innerText = "Send OTP Verification Code";
+                chatSendOtpBtn.disabled = false;
+                console.error("Secure Chat Engine Backend Fault:", err);
+            }
+        };
+    }
+}
+
+function setupChatVerificationTrigger() {
+    const chatVerifyOtpBtn = document.getElementById("chatVerifyOtpBtn");
+    const chatVerificationModal = document.getElementById("chatVerificationModal");
+    if (chatVerifyOtpBtn) {
+        chatVerifyOtpBtn.onclick = function() {
+            const userEnteredOtp = document.getElementById("chatInputOtp").value.trim();
+            if (userEnteredOtp === chatGeneratedOtp) {
+                alert("Verification Complete! Connecting you to live support desk.");
+                guestVerifiedPassed = true;
+                chatVerificationModal.classList.add("hidden");
+                chatVerificationModal.classList.remove("flex");
+                if (typeof Tawk_API !== 'undefined' && Tawk_API.maximize) {
+                    Tawk_API.setAttributes({ 'name': verifiedGuestData.name, 'email': verifiedGuestData.email }, function(error){});
+                    Tawk_API.maximize(); 
+                }
+            } else {
+                alert("Invalid security token. Please cross-verify the 6-digit code sent to your email.");
+            }
+        };
+    }
+}
+</script>
+</body>
+</html>
+
+
+
+

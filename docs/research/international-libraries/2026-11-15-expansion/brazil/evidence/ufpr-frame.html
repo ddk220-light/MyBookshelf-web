@@ -1,0 +1,174 @@
+<script type='text/javascript'>
+	// Controla o popup para abrir um popup de dentro do popup
+	var popup_html = "";
+	var popup_w = 0;
+	var popup_h = 0;
+	var popup_html2 = "";
+	var popup_w2 = 0;
+	var popup_h2 = 0;
+	var popup_refresh = false;
+
+	var content = "";
+	var modo_busca = "rapida";
+	var modo_busca_bak = "rapida";
+	var refinar = 0;
+
+	
+		var rapida_filtro = "palavra_chave";
+	
+		var rapida_campo = "";
+	
+
+	var rapida_busca_musica = 0;
+	var rapida_busca_bib = 0;
+	var rapida_busca_midia = 0;
+	var geral_bib = 0;
+	var geral_subloc = "";
+	var aut_campo = "";
+	var aut_filtro = "qualquer";
+	var aut_campo_dsi = "";
+	var aut_iniciado_com = 0;
+	var aut_filtro_dsi = "qualquer";
+	var comb_filtro1 = "palavra_chave";
+	var comb_filtro2 = "titulo";
+	var comb_filtro3 = "autor";
+	var comb_filtro4 = "assunto";
+	var comb_campo1 = "";
+	var comb_campo2 = "";
+	var comb_campo3 = "";
+	var comb_campo4 = "";
+	var comb_logica1 = "E";
+	var comb_logica2 = "E";
+	var comb_logica3 = "E";
+	var comb_ano1 = "";
+	var comb_ano2 = "";
+	var comb_material = "";
+    var comb_colecao = "";
+	var comb_nivel = "";
+	var comb_meiofisico = "";
+	var comb_formaregistro = "";
+    var comb_idioma = 0;
+    var comb_reposdigital = "";
+	var comb_ordenacao = "";
+	var comb_logica_outros = "E";
+	var comb_outros = "nenhum";
+	var comb_conteudo_outros = "";
+	var comb_logica_datas = "E";
+	var comb_tabopc = 0;
+	var comb_busca_musica = 0;
+	var comb_busca_bib = 0;
+	var comb_busca_midia = 0;
+    var Data_Inicio = "";
+	var Data_Fim = "";
+	var leg_campo1 = "";
+	var leg_campo2 = "";
+	var leg_campo4 = "";
+	var leg_campo5 = "";
+	var leg_campo6 = "";
+	var leg_normas = -1;
+	var leg_orgao_origem = -1;
+	var leg_normas_desc = "";
+	var leg_numero = "";
+	var leg_sel_data_ass = 0;
+	var leg_data_ass_inicio = "";
+	var leg_data_ass_fim = "";
+	var leg_sel_data_pub = 0;
+	var leg_data_pub_inicio = "";
+	var leg_data_pub_fim = "";
+	var leg_autoria = "";
+	var leg_numero_projeto = "";
+	var leg_ano_ass = "";
+	var leg_processo = "";
+	var leg_ordenacao = "";
+	var leg_filtro = "";
+	var leg_busca_midia = 0;
+	var bloqueia_renovar = 0;
+	var layerX = 'div4';
+	var layerY = 'div4';
+	var global_aba1 = '#E6E6E6';
+	var global_aba2 = '#E6E6E6';
+	var vetor_codigos = new Array;
+	var vetor_auts = new Array;
+	var vetor_auts_dsi = new Array;
+	var vetor_bib_curso = new Array;
+	var vetor_pag = new Array;
+	var vetor_pag_auts = new Array;
+	var vetor_pag_auts_dsi = new Array;
+	var vetor_pag_bib_curso = new Array;
+	var limite_vetor_pag = 0;
+	var limite_vetor_pag_auts = 0;
+	var limite_vetor_pag_auts_dsi = 0;
+	var limite_vetor_pag_bib_curso = 0;
+	var limite_vetores = 1001;
+	var vetor_bibs = new Array(9);
+	// Marcam o índice do servidor de aplicação da obra corrente
+	var iSrvCorrente = 1;
+	var iSrvCorrente_Aut = 1;
+	var iSrvCorrente_MySel = 1;
+	// Armazena as páginas correntes de cada servidor
+	var arPagCorrente = new Array;
+	var arPagCorrenteAut = new Array;
+	var arPagCorrenteAutDSI = new Array;
+	var arPagCorrenteBibCurso = new Array;
+	var pagCorrenteEds = "";
+	// Armazena os índices correntes de cada servidor
+	var arIndCorrente = new Array;
+	var arIndCorrenteAut = new Array;
+	var arIndCorrenteAutDSI = new Array;
+	var arIndCorrenteBibCurso = new Array;
+	var indCorrenteEds = "";
+	// Número de abas criadas
+	var iNumAbas = 1;
+	// Projeto (Utilizado na busca)
+	var iBusca_Projeto = 0;
+	// Utiliza configuração com mais de um servbib
+	var iMultiServbib = 0;
+	// Controle do combo de novas aquisições
+	var AQ_CURSO = -1;
+	var AQ_SERIE = -1;
+	// Armazena a seleção atual (Antes de ser enviado para Minha Seleção)
+	var arSelecao = new Array;
+	var arSelecaoDSI = new Array;
+	// Travar o combo de biblioteca - não deixar alterar
+	var iFixarBibUsu = 0;
+	var iFixarBib = 0;
+    // Idioma atual (0 = Portugues, 1 = Espanhol, 2 = Ingles, 3 = Catalão, 4 = Alemão, 5 = Galego, 6 = Euskera)
+	var iIdioma = 0;
+	// Valores dos dados acadêmicos escolhidos pelo usuário na tela de bibliografia do curso.
+	var iBibliografiaCurso = 0;
+	var iBibliografiaSerie = 0;
+	var iBibliografiaDisciplina = 0;
+	// Busca somente registro com mídias
+	var iBuscaMidia = 0;
+	var buscaAvancadaLegislacao = undefined;
+	var iSomenteLegislacao = 0;
+	var iEscondeMenu = 0;
+	var iBanner = 0;
+
+	var ckNorma_codigos = "";
+	var ckOrgaoOrigem_codigos = "";
+
+	var img_vetor_ano = new Array;
+	var idx_vetor_ano = 0;
+	var img_pagina_atual = 0;
+	var img_paginas = 0;
+	var img_total_registros_ano = 0;
+	var img_total_imagens = 0;
+    
+	var other_thesauro = new Array;
+	var other_thesauro_atual = -1;
+	var main_thesauro = 0;
+	var tipo_autoridade = 0;
+	var levantamento = 0;
+	var leg_orgao_origem_desc = "";
+	var codigoCurso = 0;
+	var codigoPrograma = 0;
+	var codigoArea = 0;
+	var codigoMaterial = 0;
+	var anoInicial = 0;
+	var anoFinal = 0;
+	var tipoFiltro = 0;
+	var tipoBuscaRegistro = 0;
+    var alturaJanelaLogin = 320;
+    var tipoAcelerador = "";
+</script>

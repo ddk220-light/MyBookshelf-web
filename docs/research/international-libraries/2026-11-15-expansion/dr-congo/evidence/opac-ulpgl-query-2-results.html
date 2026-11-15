@@ -1,0 +1,770 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" charset='utf-8'>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="author" content="PMB Group" />
+
+	<meta name="keywords" content="ULPGL,Goma,DRC,Universit&eacute;,Biblioth&egrave;que" />
+	<meta name="description" content="Catalogue en ligne ." />
+
+	<meta name="robots" content="all" />
+	<!--IE et son enfer de compatibilit?-->
+	<meta http-equiv='X-UA-Compatible' content='IE=8'/>
+	
+	<title>Catalogue en ligne </title>
+	
+	
+	<link rel='stylesheet' type='text/css' href='./styles/common/common.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/bueil/visionneuse.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/bueil/ext_search.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/bueil/colonnes.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/bueil/tags.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/bueil/bueil.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/bueil/print.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/bueil/liste_bulletins.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/bueil/gallerie_photos.css' />
+	<!-- css_authentication -->	<link rel='SHORTCUT ICON' href='images/site/favicon.ico'>
+	<script type="text/javascript" src="includes/javascript/drag_n_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/handle_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/popup.js"></script>
+	<script type='text/javascript'>
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName = 
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {  
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i); 
+				    }
+				 }
+				return items;
+			 }
+		}
+		// Fonction a utilisier pour l'encodage des URLs en javascript
+		function encode_URL(data){
+			var docCharSet = document.characterSet ? document.characterSet : document.charset;
+			if(docCharSet == "UTF-8"){
+				return encodeURIComponent(data);
+			}else{
+				return escape(data);
+			}
+		}
+	</script>
+<script type='text/javascript'>var opac_show_social_network =0;</script>
+	<script type='text/javascript' src='includes/javascript/simili_search.js'></script>
+	<script type='text/javascript' src='.//visionneuse/javascript/visionneuse.js'></script>
+	<script type='text/javascript' src='./includes/javascript/http_request.js'></script>
+	
+	
+	
+	<!-- Enrichissement de notice en Ajax-->
+	<script type='text/javascript' src='./includes/javascript/enrichment.js'></script>
+</head>
+
+<body onload="window.defaultStatus='PMB : Accès public';"  id="pmbopac">
+	<script type='text/javascript' src='./includes/javascript/tablist_ajax.js'></script>
+<script type='text/javascript' src='./includes/javascript/tablist.js'></script>
+<script type='text/javascript' src='./includes/javascript/http_request.js'></script>
+	<div id='att' style='z-Index:1000'></div>
+	<div id="container"><div id="main"><div id='main_header'><h2>Bienvenu dans le catalogue de la Bibliothèque Universitaire de l'ULPGL Goma</h2></div><div id="main_hors_footer">
+						
+<script type='text/javascript' src='./includes/javascript/auth_popup.js'></script>	
+<div id="intro_message"><div class="p1">
+</div><div class="p2">Université Libre des Pays des Grands Lacs</div></div><div id='navigator'>
+<strong>A partir de cette page vous pouvez :</strong>
+<table width='100%'><tr><td ><a href="index.php?lvl=search_result&get_query=1" class='actions_last_search'><span>Retourner à l'écran de résultat de la dernière recherche</span></a></td>
+<td ><a href="index.php?lvl=search_history" class='actions_history'><span>Consulter l'historique des recherches</span></a></td>
+<td ><a href="./index.php?lvl=index" class='navig_lastnotices'><span>Retourner au premier écran avec les dernières notices...</span></a></td>
+<td ><a href="./empr.php" class='navig_lastnotices'><span>Votre compte</span></a></td>
+</tr></table></div><!-- fermeture de #navigator -->
+<div id='resume_panier' class='empty'></div><script type='text/javascript' src='./includes/javascript/misc.js'></script><script>
+terms=new Array('sociologie','sociologiques','sociologies','sociologique','medias','media');
+terms_litteraux=new Array('Sociologie des m&eacute;dias');
+
+codes=new Array();
+codes['a']='[àáâãäåÀÁÂÃÄÅA]';
+codes['c']='[çÇC]';
+codes['e']='[éèêëÈÉÊËE]';
+codes['i']='[ìíîïIÌÍÎÏ]';
+codes['n']='[ñÑnN]';
+codes['o']='[òóôõöøOÒÓÔÕÖØ]';
+codes['u']='[ùúûüUÙÚÛÜ]';
+
+function remplacer_carac(mot)
+{
+var x;	
+var chaine;
+var reg;				
+chaine=mot;
+reg=new RegExp(codes['a'], 'g');
+chaine=chaine.replace(reg, 'a');
+reg=new RegExp(codes['c'], 'g');
+chaine=chaine.replace(reg, 'c');
+reg=new RegExp(codes['e'], 'g');
+chaine=chaine.replace(reg, 'e');
+reg=new RegExp(codes['i'], 'g');
+chaine=chaine.replace(reg, 'i');
+reg=new RegExp(codes['n'], 'g');
+chaine=chaine.replace(reg, 'n');
+reg=new RegExp(codes['o'], 'g');
+chaine=chaine.replace(reg, 'o');
+reg=new RegExp(codes['u'], 'g');
+chaine=chaine.replace(reg, 'u');
+return(chaine);		
+} 	
+		
+function trouver_mots_f(obj,mot,couleur,litteral,onoff) {
+	var i;
+	var chaine;
+	if (obj.hasChildNodes()) {
+		var childs=new Array();
+		childs=obj.childNodes;
+		
+		if (litteral != 0) {
+			mot=remplacer_carac(reverse_html_entities(mot));
+		}
+		
+		for (i=0; i<childs.length; i++) {
+			
+			if (childs[i].nodeType==3) {
+				if (litteral==0){
+					chaine=childs[i].data.toLowerCase();
+					chaine=remplacer_carac(chaine);
+				} else {
+					chaine=childs[i].data;
+					chaine=remplacer_carac(chaine);
+				}
+				 
+				var reg_mot = new RegExp(mot+' *','gi');	
+				if (chaine.match(reg_mot)) {
+					var elt_found = chaine.match(reg_mot);
+					var chaine_display = childs[i].data;
+					var reg = 0;
+					for(var k=0;k<elt_found.length;k++){
+						reg = chaine.indexOf(elt_found[k],reg); 
+						if (onoff==1) {
+							after_shave=chaine_display.substring(reg+elt_found[k].length);
+							sp=document.createElement('span');
+							if (couleur % 6!=0) {
+								sp.className='text_search'+couleur;
+							} else {
+								sp.className='text_search0';
+							}
+							nmot=document.createTextNode(chaine_display.substring(reg,reg+elt_found[k].length));
+							childs[i].data=chaine_display.substring(0,reg);
+							sp.appendChild(nmot);
+						
+							if (after_shave) {
+								var aftern=document.createTextNode(after_shave);
+							} else var aftern='';
+						
+							if (i<childs.length-1) {
+								obj.insertBefore(sp,childs[i+1]);
+								if (aftern) { obj.insertBefore(aftern,childs[i+2]); }
+							} else {
+								obj.appendChild(sp);
+								if (aftern) obj.appendChild(aftern);
+							}
+							chaine_display ='';
+							i++;
+						} else {
+							obj.replaceChild(childs[i],obj);
+						}
+					}
+				}
+			} else if (childs[i].nodeType==1){
+				trouver_mots_f(childs[i],mot,couleur,litteral,onoff);
+			}
+		}
+	}
+}
+		
+function rechercher(onoff) {
+	obj=document.getElementById('res_first_page');
+	if (!obj) {
+		obj=document.getElementById('resultatrech_liste');
+		if(obj) if (obj.getElementsByTagName('blockquote')[0]) {
+			obj=obj.getElementsByTagName('blockquote')[0];
+		}
+	}
+	if (obj) {
+		if (terms[0]!='')
+		{
+			for (var i=0; i<terms.length; i++) {
+				trouver_mots_f(obj,terms[i],i,0,onoff);			
+			}
+		}
+		if (terms_litteraux[0]!='')
+		{
+			for (var i=0; i<terms_litteraux.length; i++) {
+				trouver_mots_f(obj,terms_litteraux[i],i+terms.length,1,onoff);			
+			}
+		}
+	}
+}
+	
+	
+
+
+</script>	<div id="resultatrech"><h3>Résultat de la recherche</h3>
+
+		<div id="resultatrech_container">
+		<div id="resultatrech_see"><h3><span>82 titres trouvés pour la recherche 'Sociologie des m&eacute;dias'</span>&nbsp;&nbsp;&nbsp;<img border='0' align='center' src="./images/text_horizontalrule.png" onMouseOver="this.style.cursor='pointer'"alt='Ne pas surligner les mots recherchés' title='Ne pas surligner les mots recherchés' onClick='document.form_values.surligne.value=0;document.form_values.submit();'/></h3>
+			</div>
+			<div id="resultatrech_liste"><a href='javascript:expandAll_ajax(1);show_simili_search_all();show_expl_voisin_search_all();'><img class='img_plusplus' src='./images/expand_all.gif' border='0' id='expandall'></a>&nbsp;<a href='javascript:collapseAll()'><img class='img_moinsmoins' src='./images/collapse_all.gif' border='0' id='collapseall'></a>&nbsp;&nbsp;&nbsp;<a href='./index.php?search_type_asked=extended_search&mode_aff=aff_simple_search'>Affiner la recherche</a>&nbsp;&nbsp;&nbsp;<a href=#  onClick="w=window.open('./do_resa.php?lvl=make_sugg&oresa=popup','doresa','scrollbars=yes,width=600,height=600,menubar=0,resizable=yes'); w.focus(); return false;" >Faire une suggestion</a><blockquote>
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=7182;
+				</script>
+			
+				<div id="el7182Parent" class="notice-parent">
+				
+	    		<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el7182Img" title="détail" border="0" onClick="expandBase('el7182', true); show_simili_search('7182'); show_expl_voisin_search('7182'); return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Document: texte imprimé' title='Document: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_7182"><span class="statutnot1" ></span><span  notice='7182'  class='header_title'>Sociologie des médias</span> / Rémy Rieffel<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Sociologie%20des%20m%C3%A9dias&amp;rft.title=Sociologie%20des%20m%C3%A9dias&amp;rft.isbn=978-2-7298-0596-8&amp;rft.tpages=1%20vol.%20%28176%20p.%29&amp;rft.date=2001&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D7182&amp;rft.aulast=Rieffel&amp;rft.aufirst=R%C3%A9my'></span></span>
+	    		<br />
+				</div>
+				<div id="el7182Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'><table width='100%'><tr><td valign='top'>
+		<ul id='onglets_isbd_public7182' class='onglets_isbd_public'>
+	  			<li id='onglet_public7182' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '7182'); return false;">Public</a></li>
+				<li id='onglet_isbd7182' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '7182'); return false;">ISBD</a></li>
+				
+		    	
+			</ul>
+			<div class='row'></div>
+			<div id='div_public7182' style='display:block;'><table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Titre :</span></td><td><span class='public_title'>Sociologie des médias</span></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td><td>texte imprimé</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Auteurs : </span></td><td><a href='./index.php?lvl=author_see&id=5943' >Rémy Rieffel</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Editeur :</span></td><td><a href='./index.php?lvl=publisher_see&id=2308' >Paris : Ellipses édition marketing</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td><td>2001</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Collection : </span></td><td><a href='./index.php?lvl=coll_see&id=1431' >Infocom</a> </td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Importance : </span></td><td>1 vol. (176 p.)</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Présentation : </span></td><td>couv. en couleur</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Format : </span></td><td>24 cm</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>ISBN/ISSN/EAN&nbsp;: </span></td><td>978-2-7298-0596-8</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Note générale&nbsp;: </span></td><td>Bibliographie p.169-173</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Langues :</span></td><td>Français (<i>fre</i>)</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td><td><a href='./index.php?lvl=categ_see&id=1382' >Sciences humaines</a><br /></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=M%C3%A9dias' >Médias</a>&nbsp; <a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=vie+politique' >vie politique</a>&nbsp; <a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=propagande' >propagande</a>&nbsp; <a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=publicit%C3%A9' >publicité</a>&nbsp; <a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=culture' >culture</a>&nbsp; <a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=TIC' >TIC</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=1398' >302.23</a> M&eacute;dias (moyens de communication)</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Résumé : </span></td><td class='td_resume'>Bibliogr. p. 169-173</td></tr></table>
+</div>
+	  		<div id='div_isbd7182' style='display:none;'>Sociologie des médias [texte imprimé] / <a href='./index.php?lvl=author_see&id=5943' >Rémy Rieffel</a>&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=2308' >Paris : Ellipses édition marketing</a>, 2001&nbsp;.&nbsp;-&nbsp;1 vol. (176 p.)&nbsp;: couv. en couleur&nbsp;; 24 cm.&nbsp;-&nbsp;(<a href='./index.php?lvl=coll_see&id=1431' >Infocom</a>) .<br /><b>ISBN</b>&nbsp;: 978-2-7298-0596-8<br />Bibliographie p.169-173<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td><td><a href='./index.php?lvl=categ_see&id=1382' >Sciences humaines</a><br /></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=M%C3%A9dias' >Médias</a>&nbsp; <a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=vie+politique' >vie politique</a>&nbsp; <a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=propagande' >propagande</a>&nbsp; <a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=publicit%C3%A9' >publicité</a>&nbsp; <a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=culture' >culture</a>&nbsp; <a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=TIC' >TIC</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=1398' >302.23</a> M&eacute;dias (moyens de communication)</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Résumé : </span></td><td class='td_resume'>Bibliogr. p. 169-173</td></tr></table></div></td><td valign='top' align='right'><img class='vignetteimg' src='./images/vide.png' title="" align='right' hspace='4' vspace='2' isbn='9782729805968' url_image='./getimage.php?url_image=http%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&noticecode=!!noticecode!!&vigurl=' vigurl="" /></td></tr></table>
+					<h3>Réservation</h3><a href='#' onClick="if(confirm('Voulez-vous vraiment réserver ce document ?')){w=window.open('./do_resa.php?lvl=resa&id_notice=7182&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Réserver ce document</a><br />
+<h3><span id='titre_exemplaires'>Exemplaires</span></h3>
+<table cellpadding='2' class='exemplaires' width='100%'>
+<tr><th class='expl_header_expl_cb'>Code-barres</th><th class='expl_header_expl_cote'>Cote</th><th class='expl_header_tdoc_libelle'>Support</th><th class='expl_header_location_libelle'>Localisation</th><th class='expl_header_section_libelle'>Section</th><th>Disponibilité</th><tr><td class='expl_cb'>BU0005955</td><td class='expl_cote'>302.23 RIE</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>BIFAD</td><td class='section_libelle'>G&eacute;n&eacute;ralit&eacute;s</td><td class='expl_situation'><strong>Disponible</strong> </td></tr>
+</table>
+			<div id='expl_voisin_search_7182' class='expl_voisin_search'></div>	
+			<div id='simili_search_7182' class='simili_search'></div></div>
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=1826;
+				</script>
+			
+				<div id="el1826Parent" class="notice-parent">
+				
+	    		<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el1826Img" title="détail" border="0" onClick="expandBase('el1826', true); show_simili_search('1826'); show_expl_voisin_search('1826'); return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Document: texte imprimé' title='Document: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_1826"><span class="statutnot1" ></span><span  notice='1826'  class='header_title'>Sociologies Religieuses</span> / Desroche Henri<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Sociologies%20Religieuses&amp;rft.title=Sociologies%20Religieuses&amp;rft.tpages=Texte%20imprim%C3%A9%20%3A%20Henri%20Desroche%2C%20220%20p.%3B%20couv.%20ill.%20en%20coul.%2C%2018%20cm.&amp;rft.date=1968&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D1826&amp;rft.aulast=Desroche%20Henri'></span></span>
+	    		<br />
+				</div>
+				<div id="el1826Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'><table width='100%'><tr><td>
+		<ul id='onglets_isbd_public1826' class='onglets_isbd_public'>
+	  			<li id='onglet_public1826' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '1826'); return false;">Public</a></li>
+				<li id='onglet_isbd1826' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '1826'); return false;">ISBD</a></li>
+				
+		    	
+			</ul>
+			<div class='row'></div>
+			<div id='div_public1826' style='display:block;'><table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Titre :</span></td><td><span class='public_title'>Sociologies Religieuses</span></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td><td>texte imprimé</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Auteurs : </span></td><td><a href='./index.php?lvl=author_see&id=1208' >Desroche Henri</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Autre Editeur :</span></td><td><a href='./index.php?lvl=publisher_see&id=16' >Paris : Presses Universitaires de France</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td><td>1968</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Importance : </span></td><td>Texte imprimé : Henri Desroche, 220 p.; couv. ill. en coul., 18 cm.</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Prix : </span></td><td>0,00</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Note générale&nbsp;: </span></td><td>Paris</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Langues :</span></td><td>Français (<i>fre</i>)</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td><td><a href='./index.php?lvl=categ_see&id=1656' >Sciences humaines:Sociologie</a><br /></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=Sociologie+religieuse' >Sociologie religieuse</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=149' >306.6</a> </td></tr></table>
+</div>
+	  		<div id='div_isbd1826' style='display:none;'>Sociologies Religieuses [texte imprimé] / <a href='./index.php?lvl=author_see&id=1208' >Desroche Henri</a>&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=16' >[S.l.]&nbsp;: Paris : Presses Universitaires de France</a>, 1968&nbsp;.&nbsp;-&nbsp;Texte imprimé : Henri Desroche, 220 p.; couv. ill. en coul., 18 cm.<br />0,00<br />Paris<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td><td><a href='./index.php?lvl=categ_see&id=1656' >Sciences humaines:Sociologie</a><br /></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=Sociologie+religieuse' >Sociologie religieuse</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=149' >306.6</a> </td></tr></table></div></td></tr></table>
+					<h3>Réservation</h3><a href='#' onClick="if(confirm('Voulez-vous vraiment réserver ce document ?')){w=window.open('./do_resa.php?lvl=resa&id_notice=1826&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Réserver ce document</a><br />
+<h3><span id='titre_exemplaires'>Exemplaires</span></h3>
+<table cellpadding='2' class='exemplaires' width='100%'>
+<tr><th class='expl_header_expl_cb'>Code-barres</th><th class='expl_header_expl_cote'>Cote</th><th class='expl_header_tdoc_libelle'>Support</th><th class='expl_header_location_libelle'>Localisation</th><th class='expl_header_section_libelle'>Section</th><th>Disponibilité</th><tr><td class='expl_cb'>BU0003945</td><td class='expl_cote'>306.6 DES</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>BIFAT</td><td class='section_libelle'>Sociologie</td><td class='expl_situation'><strong>Disponible</strong> </td></tr><tr><td class='expl_cb'>BU0003950</td><td class='expl_cote'>306.6 DES</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>BIFAT</td><td class='section_libelle'>Sociologie</td><td class='expl_situation'><strong>Disponible</strong> </td></tr>
+</table>
+			<div id='expl_voisin_search_1826' class='expl_voisin_search'></div>	
+			<div id='simili_search_1826' class='simili_search'></div></div>
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=5634;
+				</script>
+			
+				<div id="el5634Parent" class="notice-parent">
+				
+	    		<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el5634Img" title="détail" border="0" onClick="expandBase('el5634', true); show_simili_search('5634'); show_expl_voisin_search('5634'); return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Document: texte imprimé' title='Document: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_5634"><span class="statutnot1" ></span><span  notice='5634'  class='header_title'>La dimension humaine dans les projets de développement</span> / Cernea Michael M.<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=La%20dimension%20humaine%20dans%20les%20projets%20de%20d%C3%A9veloppement&amp;rft.title=La%20dimension%20humaine%20dans%20les%20projets%20de%20d%C3%A9veloppement&amp;rft.isbn=978-2-86537-923-1&amp;rft.tpages=1%20vol.%20%28586%20p.%29&amp;rft.date=1998&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D5634&amp;rft.aulast=Cernea%20Michael%20M.&amp;rft.aulast=Bagadion&amp;rft.aufirst=Benjamin%20U&amp;rft.aulast=Cook&amp;rft.aufirst=Cynthia%20C.'></span></span>
+	    		<br />
+				</div>
+				<div id="el5634Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'><table width='100%'><tr><td valign='top'>
+		<ul id='onglets_isbd_public5634' class='onglets_isbd_public'>
+	  			<li id='onglet_public5634' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '5634'); return false;">Public</a></li>
+				<li id='onglet_isbd5634' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '5634'); return false;">ISBD</a></li>
+				
+		    	
+			</ul>
+			<div class='row'></div>
+			<div id='div_public5634' style='display:block;'><table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Titre :</span></td><td><span class='public_title'>La dimension humaine dans les projets de développement&nbsp;: Les variables sociologiques et culturelles</span></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td><td>texte imprimé</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Auteurs : </span></td><td><a href='./index.php?lvl=author_see&id=4785' >Cernea Michael M.</a>, Editeur scientifique ; <a href='./index.php?lvl=author_see&id=6325' >Benjamin U Bagadion</a>, Auteur ; <a href='./index.php?lvl=author_see&id=6326' >Cynthia C. Cook</a>, Auteur</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Editeur :</span></td><td><a href='./index.php?lvl=publisher_see&id=2341' >Paris : Karthala</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td><td>1998</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Collection : </span></td><td><a href='./index.php?lvl=coll_see&id=1535' >Économie et développement</a> </td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Importance : </span></td><td>1 vol. (586 p.)</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Présentation : </span></td><td>couv. ill. en coul., graph.</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Format : </span></td><td>24 cm</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>ISBN/ISSN/EAN&nbsp;: </span></td><td>978-2-86537-923-1</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Note générale&nbsp;: </span></td><td>Paris</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Langues :</span></td><td>Français (<i>fre</i>)</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=projets+de+d%C3%A9veloppement' >projets de développement</a>&nbsp; <a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=variables+sociologiques' >variables sociologiques</a>&nbsp; <a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=variables+culturelles' >variables culturelles</a>&nbsp; <a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=participation' >participation</a>&nbsp; <a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=organisation+sociale' >organisation sociale</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=1468' >303.44</a> Processus sociaux : croissance et d&eacute;veloppement</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Résumé : </span></td><td class='td_resume'>Bibliogr. p. 575-580</td></tr></table>
+</div>
+	  		<div id='div_isbd5634' style='display:none;'>La dimension humaine dans les projets de développement&nbsp;: Les variables sociologiques et culturelles [texte imprimé] / <a href='./index.php?lvl=author_see&id=4785' >Cernea Michael M.</a>, Editeur scientifique ; <a href='./index.php?lvl=author_see&id=6325' >Benjamin U Bagadion</a>, Auteur ; <a href='./index.php?lvl=author_see&id=6326' >Cynthia C. Cook</a>, Auteur&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=2341' >Paris : Karthala</a>, 1998&nbsp;.&nbsp;-&nbsp;1 vol. (586 p.)&nbsp;: couv. ill. en coul., graph.&nbsp;; 24 cm.&nbsp;-&nbsp;(<a href='./index.php?lvl=coll_see&id=1535' >Économie et développement</a>) .<br /><b>ISBN</b>&nbsp;: 978-2-86537-923-1<br />Paris<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=projets+de+d%C3%A9veloppement' >projets de développement</a>&nbsp; <a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=variables+sociologiques' >variables sociologiques</a>&nbsp; <a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=variables+culturelles' >variables culturelles</a>&nbsp; <a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=participation' >participation</a>&nbsp; <a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=organisation+sociale' >organisation sociale</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=1468' >303.44</a> Processus sociaux : croissance et d&eacute;veloppement</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Résumé : </span></td><td class='td_resume'>Bibliogr. p. 575-580</td></tr></table></div></td><td valign='top' align='right'><img class='vignetteimg' src='./images/vide.png' title="" align='right' hspace='4' vspace='2' isbn='9782865379231' url_image='./getimage.php?url_image=http%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&noticecode=!!noticecode!!&vigurl=' vigurl="" /></td></tr></table>
+					<h3>Réservation</h3><a href='#' onClick="if(confirm('Voulez-vous vraiment réserver ce document ?')){w=window.open('./do_resa.php?lvl=resa&id_notice=5634&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Réserver ce document</a><br />
+<h3><span id='titre_exemplaires'>Exemplaires</span></h3>
+<table cellpadding='2' class='exemplaires' width='100%'>
+<tr><th class='expl_header_expl_cb'>Code-barres</th><th class='expl_header_expl_cote'>Cote</th><th class='expl_header_tdoc_libelle'>Support</th><th class='expl_header_location_libelle'>Localisation</th><th class='expl_header_section_libelle'>Section</th><th>Disponibilité</th><tr><td class='expl_cb'>BU0006663</td><td class='expl_cote'>303.44 CER</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>BIFASEG</td><td class='section_libelle'>Sociologie</td><td class='expl_situation'><strong>Disponible</strong> </td></tr>
+</table>
+			<div id='expl_voisin_search_5634' class='expl_voisin_search'></div>	
+			<div id='simili_search_5634' class='simili_search'></div></div>
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=4926;
+				</script>
+			
+				<div id="el4926Parent" class="notice-parent">
+				
+	    		<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el4926Img" title="détail" border="0" onClick="expandBase('el4926', true); show_simili_search('4926'); show_expl_voisin_search('4926'); return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Document: texte imprimé' title='Document: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_4926"><span class="statutnot1" ></span><span  notice='4926'  class='header_title'>Introduction à la sociologie</span> / Michel De Coster<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Introduction%20%C3%A0%20la%20sociologie&amp;rft.title=Introduction%20%C3%A0%20la%20sociologie&amp;rft.isbn=978-2-8041-3801-1&amp;rft.tpages=312%20p.&amp;rft.date=2001&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D4926&amp;rft.aulast=De%20Coster&amp;rft.aufirst=Michel&amp;rft.aulast=Poncelet&amp;rft.aufirst=Marc&amp;rft.aulast=Legros-Bawin&amp;rft.aufirst=Bernadette'></span></span>
+	    		<br />
+				</div>
+				<div id="el4926Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'><table width='100%'><tr><td valign='top'>
+		<ul id='onglets_isbd_public4926' class='onglets_isbd_public'>
+	  			<li id='onglet_public4926' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '4926'); return false;">Public</a></li>
+				<li id='onglet_isbd4926' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '4926'); return false;">ISBD</a></li>
+				
+		    	
+			</ul>
+			<div class='row'></div>
+			<div id='div_public4926' style='display:block;'><table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Titre :</span></td><td><span class='public_title'>Introduction à la sociologie</span></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td><td>texte imprimé</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Auteurs : </span></td><td><a href='./index.php?lvl=author_see&id=4246' >Michel De Coster</a>, Auteur ; <a href='./index.php?lvl=author_see&id=4247' >Marc Poncelet</a>, Auteur ; <a href='./index.php?lvl=author_see&id=4248' >Bernadette Legros-Bawin</a>, Auteur</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Mention d'édition :</span></td><td>5e éd.</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Editeur :</span></td><td><a href='./index.php?lvl=publisher_see&id=1655' >Bruxelles : De Boeck université</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td><td>2001</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Collection : </span></td><td><a href='./index.php?lvl=coll_see&id=623' >Ouvertures sociologiques, ISSN 0777-5253</a> </td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Importance : </span></td><td>312 p.</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Format : </span></td><td>24 cm</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>ISBN/ISSN/EAN&nbsp;: </span></td><td>978-2-8041-3801-1</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Prix : </span></td><td>178 F</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Note générale&nbsp;: </span></td><td>Bibliogr. p. 273-299. Notes bibliogr. Index</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Langues :</span></td><td>Français (<i>fre</i>)</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td><td><a href='./index.php?lvl=categ_see&id=2529' >Sciences humaines:Sciences sociales</a><br /></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=Sociologie' >Sociologie</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=515' >301</a> </td></tr></table>
+</div>
+	  		<div id='div_isbd4926' style='display:none;'>Introduction à la sociologie [texte imprimé] / <a href='./index.php?lvl=author_see&id=4246' >Michel De Coster</a>, Auteur ; <a href='./index.php?lvl=author_see&id=4247' >Marc Poncelet</a>, Auteur ; <a href='./index.php?lvl=author_see&id=4248' >Bernadette Legros-Bawin</a>, Auteur &nbsp;. -&nbsp; 5e éd.&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=1655' >De Boeck université</a>, 2001&nbsp;.&nbsp;-&nbsp;312 p.&nbsp;; 24 cm.&nbsp;-&nbsp;(<a href='./index.php?lvl=coll_see&id=623' >Ouvertures sociologiques, ISSN 0777-5253</a>) .<br /><b>ISBN</b>&nbsp;: 978-2-8041-3801-1&nbsp;: 178 F<br />Bibliogr. p. 273-299. Notes bibliogr. Index<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td><td><a href='./index.php?lvl=categ_see&id=2529' >Sciences humaines:Sciences sociales</a><br /></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=Sociologie' >Sociologie</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=515' >301</a> </td></tr></table></div></td><td valign='top' align='right'><img class='vignetteimg' src='./images/vide.png' title="" align='right' hspace='4' vspace='2' isbn='9782804138011' url_image='./getimage.php?url_image=http%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&noticecode=!!noticecode!!&vigurl=' vigurl="" /></td></tr></table>
+					<h3>Réservation</h3><a href='#' onClick="if(confirm('Voulez-vous vraiment réserver ce document ?')){w=window.open('./do_resa.php?lvl=resa&id_notice=4926&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Réserver ce document</a><br />
+<h3><span id='titre_exemplaires'>Exemplaires</span></h3>
+<table cellpadding='2' class='exemplaires' width='100%'>
+<tr><th class='expl_header_expl_cb'>Code-barres</th><th class='expl_header_expl_cote'>Cote</th><th class='expl_header_tdoc_libelle'>Support</th><th class='expl_header_location_libelle'>Localisation</th><th class='expl_header_section_libelle'>Section</th><th>Disponibilité</th><tr><td class='expl_cb'>BU0005605</td><td class='expl_cote'>301 DEC</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>BIFPSE</td><td class='section_libelle'>Sociologie</td><td class='expl_situation'><strong>Disponible</strong> </td></tr>
+</table>
+			<div id='expl_voisin_search_4926' class='expl_voisin_search'></div>	
+			<div id='simili_search_4926' class='simili_search'></div></div>
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=15248;
+				</script>
+			
+				<div id="el15248Parent" class="notice-parent">
+				
+	    		<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el15248Img" title="détail" border="0" onClick="expandBase('el15248', true); show_simili_search('15248'); show_expl_voisin_search('15248'); return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Document: texte imprimé' title='Document: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_15248"><span class="statutnot1" ></span><span  notice='15248'  class='header_title'>Introduction à la Sociologie</span> / Michel De Coster<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Introduction%20%C3%A0%20la%20Sociologie&amp;rft.title=Introduction%20%C3%A0%20la%20Sociologie&amp;rft.isbn=978-2-8041-1009-3&amp;rft.tpages=1%20vol.%28389%20p.%29&amp;rft.date=1994&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D15248&amp;rft.aulast=De%20Coster&amp;rft.aufirst=Michel'></span></span>
+	    		<br />
+				</div>
+				<div id="el15248Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'><table width='100%'><tr><td valign='top'>
+		<ul id='onglets_isbd_public15248' class='onglets_isbd_public'>
+	  			<li id='onglet_public15248' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '15248'); return false;">Public</a></li>
+				<li id='onglet_isbd15248' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '15248'); return false;">ISBD</a></li>
+				
+		    	
+			</ul>
+			<div class='row'></div>
+			<div id='div_public15248' style='display:block;'><table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Titre :</span></td><td><span class='public_title'>Introduction à la Sociologie</span></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td><td>texte imprimé</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Auteurs : </span></td><td><a href='./index.php?lvl=author_see&id=4246' >Michel De Coster</a>, Auteur</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Mention d'édition :</span></td><td>3e</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Editeur :</span></td><td><a href='./index.php?lvl=publisher_see&id=1655' >Bruxelles : De Boeck université</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td><td>1994</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Collection : </span></td><td><a href='./index.php?lvl=coll_see&id=623' >Ouvertures sociologiques, ISSN 0777-5253</a> </td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Importance : </span></td><td>1 vol.(389 p.)</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Format : </span></td><td>24 Cm</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>ISBN/ISSN/EAN&nbsp;: </span></td><td>978-2-8041-1009-3</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Note générale&nbsp;: </span></td><td>Bibliogr. p.339-364, Index.</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Langues :</span></td><td>Français (<i>fre</i>)</td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td><td><a href='./index.php?lvl=categ_see&id=1656' >Sciences humaines:Sociologie</a><br /></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=Sociologie' >Sociologie</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=515' >301</a> </td></tr></table>
+</div>
+	  		<div id='div_isbd15248' style='display:none;'>Introduction à la Sociologie [texte imprimé] / <a href='./index.php?lvl=author_see&id=4246' >Michel De Coster</a>, Auteur &nbsp;. -&nbsp; 3e&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=1655' >De Boeck université</a>, 1994&nbsp;.&nbsp;-&nbsp;1 vol.(389 p.)&nbsp;; 24 Cm.&nbsp;-&nbsp;(<a href='./index.php?lvl=coll_see&id=623' >Ouvertures sociologiques, ISSN 0777-5253</a>) .<br /><b>ISBN</b>&nbsp;: 978-2-8041-1009-3<br />Bibliogr. p.339-364, Index.<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td><td><a href='./index.php?lvl=categ_see&id=1656' >Sciences humaines:Sociologie</a><br /></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Tags :</span></td><td><a href='./index.php?lvl=search_result&mode=keyword&auto_submit=1&user_query=Sociologie' >Sociologie</a></td></tr><tr><td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td><td><a href='./index.php?lvl=indexint_see&id=515' >301</a> </td></tr></table></div></td><td valign='top' align='right'><img class='vignetteimg' src='./images/vide.png' title="" align='right' hspace='4' vspace='2' isbn='9782804110093' url_image='./getimage.php?url_image=http%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&noticecode=!!noticecode!!&vigurl=' vigurl="" /></td></tr></table>
+					<h3>Réservation</h3><a href='#' onClick="if(confirm('Voulez-vous vraiment réserver ce document ?')){w=window.open('./do_resa.php?lvl=resa&id_notice=15248&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Réserver ce document</a><br />
+<h3><span id='titre_exemplaires'>Exemplaires</span></h3>
+<table cellpadding='2' class='exemplaires' width='100%'>
+<tr><th class='expl_header_expl_cb'>Code-barres</th><th class='expl_header_expl_cote'>Cote</th><th class='expl_header_tdoc_libelle'>Support</th><th class='expl_header_location_libelle'>Localisation</th><th class='expl_header_section_libelle'>Section</th><th>Disponibilité</th><tr><td class='expl_cb'>BU0014019</td><td class='expl_cote'>301 DEC</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>BIFAT</td><td class='section_libelle'>Sociologie</td><td class='expl_situation'><strong>Disponible</strong> </td></tr>
+</table>
+			<div id='expl_voisin_search_15248' class='expl_voisin_search'></div>	
+			<div id='simili_search_15248' class='simili_search'></div></div>
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=2035;
+				</script>
+			
+				<div id="el2035Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el2035Img" title="détail" border="0" param='a%3A9%3A%7Bs%3A2%3A%22id%22%3Bi%3A2035%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A12%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A75%3A%22.%2Findex.php%3Flvl%3Dsearch_result%26mode%3Dkeyword%26auto_submit%3D1%26user_query%3D%21%21mot%21%21%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3B%7D' onClick="expandBase_ajax('el2035', true,this.getAttribute('param')); show_simili_search('2035'); show_expl_voisin_search('2035'); return false;" hspace="3"/><img src="./images/icon_a_16x16.gif" alt='Document: texte imprimé' title='Document: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_2035"><span class="statutnot1" ></span><span  notice='2035'  class='header_title'>Les Organisations : problèmes psycho-sociologiques</span> / March J.G. et Simon H.A.<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Les%20Organisations%20%3A%20probl%C3%A8mes%20psycho-sociologiques&amp;rft.title=Les%20Organisations%20%3A%20probl%C3%A8mes%20psycho-sociologiques&amp;rft.isbn=978-2-04-010728-4&amp;rft.tpages=Texte%20imprim%C3%A9%20%3A%20J.G.%20March%20et%20H.A.%20Simon%20XVII-253%20p.%2024%20cm&amp;rft.date=1979&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D2035&amp;rft.aulast=March%20J.G.%20et%20Simon%20H.A.&amp;rft.aulast=Rouchy%20J.-C.%20et%20Prunier%20G.'></span></span>
+		    	<br />
+				</div>
+				<div id="el2035Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'>
+		    	</div><a href="./index.php?lvl=notice_display&id=2035" style="display:none;">Permalink</a>
+			
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=2035;
+				</script>
+			
+		
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=4824;
+				</script>
+			
+				<div id="el4824Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el4824Img" title="détail" border="0" param='a%3A9%3A%7Bs%3A2%3A%22id%22%3Bi%3A4824%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A12%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A75%3A%22.%2Findex.php%3Flvl%3Dsearch_result%26mode%3Dkeyword%26auto_submit%3D1%26user_query%3D%21%21mot%21%21%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3B%7D' onClick="expandBase_ajax('el4824', true,this.getAttribute('param')); show_simili_search('4824'); show_expl_voisin_search('4824'); return false;" hspace="3"/><img src="./images/icon_a_16x16.gif" alt='Document: texte imprimé' title='Document: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_4824"><span class="statutnot1" ></span><span  notice='4824'  class='header_title'>Les règles de la méthode sociologique</span> / Émile Durkheim<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Les%20r%C3%A8gles%20de%20la%20m%C3%A9thode%20sociologique&amp;rft.title=Les%20r%C3%A8gles%20de%20la%20m%C3%A9thode%20sociologique&amp;rft.isbn=978-2-13-056331-0&amp;rft.tpages=1%20vol.%20%2820-XXII-149%20p.%29&amp;rft.date=impr.%202007&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D4824&amp;rft.aulast=Durkheim&amp;rft.aufirst=%C3%89mile&amp;rft.aulast=Dubet&amp;rft.aufirst=Fran%C3%A7ois'></span></span>
+		    	<br />
+				</div>
+				<div id="el4824Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'>
+		    	</div><a href="./index.php?lvl=notice_display&id=4824" style="display:none;">Permalink</a>
+			
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=4824;
+				</script>
+			
+		
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=6257;
+				</script>
+			
+				<div id="el6257Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el6257Img" title="détail" border="0" param='a%3A9%3A%7Bs%3A2%3A%22id%22%3Bi%3A6257%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A12%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A75%3A%22.%2Findex.php%3Flvl%3Dsearch_result%26mode%3Dkeyword%26auto_submit%3D1%26user_query%3D%21%21mot%21%21%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3B%7D' onClick="expandBase_ajax('el6257', true,this.getAttribute('param')); show_simili_search('6257'); show_expl_voisin_search('6257'); return false;" hspace="3"/><img src="./images/icon_a_16x16.gif" alt='Document: texte imprimé' title='Document: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_6257"><span class="statutnot1" ></span><span  notice='6257'  class='header_title'>Histoire des idées sociologiques</span> / Lallement Michel<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Histoire%20des%20id%C3%A9es%20sociologiques&amp;rft.title=Histoire%20des%20id%C3%A9es%20sociologiques&amp;rft.isbn=978-2-09-190120-6&amp;rft.tpages=1%20vol.%20%28255%20p.%29&amp;rft.date=1993&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D6257&amp;rft.aulast=Lallement%20Michel'></span></span>
+		    	<br />
+				</div>
+				<div id="el6257Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'>
+		    	</div><a href="./index.php?lvl=notice_display&id=6257" style="display:none;">Permalink</a>
+			
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=6257;
+				</script>
+			
+		
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=6258;
+				</script>
+			
+				<div id="el6258Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el6258Img" title="détail" border="0" param='a%3A9%3A%7Bs%3A2%3A%22id%22%3Bi%3A6258%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A12%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A75%3A%22.%2Findex.php%3Flvl%3Dsearch_result%26mode%3Dkeyword%26auto_submit%3D1%26user_query%3D%21%21mot%21%21%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3B%7D' onClick="expandBase_ajax('el6258', true,this.getAttribute('param')); show_simili_search('6258'); show_expl_voisin_search('6258'); return false;" hspace="3"/><img src="./images/icon_a_16x16.gif" alt='Document: texte imprimé' title='Document: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_6258"><span class="statutnot1" ></span><span  notice='6258'  class='header_title'>Histoire des idées sociologiques.</span> / Lallement Michel<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Histoire%20des%20id%C3%A9es%20sociologiques.&amp;rft.title=Histoire%20des%20id%C3%A9es%20sociologiques.&amp;rft.isbn=978-2-09-190096-4&amp;rft.tpages=1%20vol.%20%28255%20p.%29&amp;rft.date=1993&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D6258&amp;rft.aulast=Lallement%20Michel'></span></span>
+		    	<br />
+				</div>
+				<div id="el6258Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'>
+		    	</div><a href="./index.php?lvl=notice_display&id=6258" style="display:none;">Permalink</a>
+			
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=6258;
+				</script>
+			
+		
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=7100;
+				</script>
+			
+				<div id="el7100Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el7100Img" title="détail" border="0" param='a%3A9%3A%7Bs%3A2%3A%22id%22%3Bi%3A7100%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A12%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A75%3A%22.%2Findex.php%3Flvl%3Dsearch_result%26mode%3Dkeyword%26auto_submit%3D1%26user_query%3D%21%21mot%21%21%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3B%7D' onClick="expandBase_ajax('el7100', true,this.getAttribute('param')); show_simili_search('7100'); show_expl_voisin_search('7100'); return false;" hspace="3"/><img src="./images/icon_a_16x16.gif" alt='Document: texte imprimé' title='Document: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_7100"><span class="statutnot1" ></span><span  notice='7100'  class='header_title'>Les rLgles de la mØthode sociologique</span> / Durkheim Emile<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Les%20rLgles%20de%20la%20m%C3%98thode%20sociologique&amp;rft.title=Les%20rLgles%20de%20la%20m%C3%98thode%20sociologique&amp;rft.isbn=978-2-13-044794-8&amp;rft.date=1937&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D7100&amp;rft.aulast=Durkheim%20Emile'></span></span>
+		    	<br />
+				</div>
+				<div id="el7100Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'>
+		    	</div><a href="./index.php?lvl=notice_display&id=7100" style="display:none;">Permalink</a>
+			
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=7100;
+				</script>
+			
+		
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=7494;
+				</script>
+			
+				<div id="el7494Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el7494Img" title="détail" border="0" param='a%3A9%3A%7Bs%3A2%3A%22id%22%3Bi%3A7494%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A12%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A75%3A%22.%2Findex.php%3Flvl%3Dsearch_result%26mode%3Dkeyword%26auto_submit%3D1%26user_query%3D%21%21mot%21%21%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3B%7D' onClick="expandBase_ajax('el7494', true,this.getAttribute('param')); show_simili_search('7494'); show_expl_voisin_search('7494'); return false;" hspace="3"/><img src="./images/icon_a_16x16.gif" alt='Document: texte imprimé' title='Document: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_7494"><span class="statutnot1" ></span><span  notice='7494'  class='header_title'>100 fiches de lecture</span> / Montoussé Marc<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=100%20fiches%20de%20lecture&amp;rft.title=100%20fiches%20de%20lecture&amp;rft.isbn=9872842911362&amp;rft.tpages=1%20vol.%20%28448%20p.%29&amp;rft.date=1998&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D7494&amp;rft.aulast=Montouss%C3%A9%20Marc'></span></span>
+		    	<br />
+				</div>
+				<div id="el7494Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'>
+		    	</div><a href="./index.php?lvl=notice_display&id=7494" style="display:none;">Permalink</a>
+			
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=7494;
+				</script>
+			
+		
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=10191;
+				</script>
+			
+				<div id="el10191Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el10191Img" title="détail" border="0" param='a%3A9%3A%7Bs%3A2%3A%22id%22%3Bi%3A10191%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A12%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A75%3A%22.%2Findex.php%3Flvl%3Dsearch_result%26mode%3Dkeyword%26auto_submit%3D1%26user_query%3D%21%21mot%21%21%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3B%7D' onClick="expandBase_ajax('el10191', true,this.getAttribute('param')); show_simili_search('10191'); show_expl_voisin_search('10191'); return false;" hspace="3"/><img src="./images/icon_art_16x16.gif" alt='Article: texte imprimé' title='Article: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_10191"><span class="statutnot1" ></span><span  notice='10191'  class='header_title'>18 femmes des médias formées aux NTIC reçoivent leurs certificats de participation</span> / Lady Kamanga <i>in Plume et liberté. Magazine d'information du Journaliste En Danger (JED)., N°001 (Mars 2004)</i><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rft.genre=article&amp;rft.atitle=18%20femmes%20des%20m%C3%A9dias%20form%C3%A9es%20aux%20NTIC%20re%C3%A7oivent%20leurs%20certificats%20de%20participation&amp;rft.jtitle=Plume%20et%20libert%C3%A9.%20Magazine%20d%27information%20du%20Journaliste%20En%20Danger%20%28JED%29.&amp;rft.epage=p.15&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D10191&amp;rft.aulast=Kamanga&amp;rft.aufirst=Lady'></span></span>
+		    	<br />
+				</div>
+				<div id="el10191Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'>
+		    	</div><a href="./index.php?lvl=notice_display&id=10191" style="display:none;">Permalink</a>
+			
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=10191;
+				</script>
+			
+		
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=5086;
+				</script>
+			
+				<div id="el5086Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el5086Img" title="détail" border="0" param='a%3A9%3A%7Bs%3A2%3A%22id%22%3Bi%3A5086%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A12%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A75%3A%22.%2Findex.php%3Flvl%3Dsearch_result%26mode%3Dkeyword%26auto_submit%3D1%26user_query%3D%21%21mot%21%21%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3B%7D' onClick="expandBase_ajax('el5086', true,this.getAttribute('param')); show_simili_search('5086'); show_expl_voisin_search('5086'); return false;" hspace="3"/><img src="./images/icon_a_16x16.gif" alt='Document: texte imprimé' title='Document: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_5086"><span class="statutnot1" ></span><span  notice='5086'  class='header_title'>Aides publiques aux médias d'Afrique centrale : pourquoi, comment?</span> / DUPLAT Domitille<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Aides%20publiques%20aux%20m%C3%A9dias%20d%27Afrique%20centrale%20%3A%20pourquoi%2C%20comment%3F&amp;rft.title=Aides%20publiques%20aux%20m%C3%A9dias%20d%27Afrique%20centrale%20%3A%20pourquoi%2C%20comment%3F&amp;rft.tpages=158%20p.&amp;rft.date=2004&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D5086&amp;rft.aulast=DUPLAT%20Domitille'></span></span>
+		    	<br />
+				</div>
+				<div id="el5086Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'>
+		    	</div><a href="./index.php?lvl=notice_display&id=5086" style="display:none;">Permalink</a>
+			
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=5086;
+				</script>
+			
+		
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=11278;
+				</script>
+			
+				<div id="el11278Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el11278Img" title="détail" border="0" param='a%3A9%3A%7Bs%3A2%3A%22id%22%3Bi%3A11278%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A12%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A75%3A%22.%2Findex.php%3Flvl%3Dsearch_result%26mode%3Dkeyword%26auto_submit%3D1%26user_query%3D%21%21mot%21%21%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3B%7D' onClick="expandBase_ajax('el11278', true,this.getAttribute('param')); show_simili_search('11278'); show_expl_voisin_search('11278'); return false;" hspace="3"/><img src="./images/icon_art_16x16.gif" alt='Article: texte imprimé' title='Article: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_11278"><span class="statutnot1" ></span><span  notice='11278'  class='header_title'>Arrêté interministériel n°002/CAB/MCM/2017 et n°CAB/MIN/FINANCES/2017/030 du 01 juillet 2017 portant fixation des taux des droits, taxes et redevances à percevoir à l'initiative du Ministère de la Communication et Medias</span> <i>in Journal Officiel de la République Démocratique du Congo, 15 (01 août 2017)</i><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rft.genre=article&amp;rft.atitle=Arr%C3%AAt%C3%A9%20interminist%C3%A9riel%20n%C2%B0002%2FCAB%2FMCM%2F2017%20et%20n%C2%B0CAB%2FMIN%2FFINANCES%2F2017%2F030%20du%2001%20juillet%202017%20portant%20fixation%20des%20taux%20des%20droits%2C%20taxes%20et%20redevances%20%C3%A0%20percevoir%20%C3%A0%20l%27initiative%20du%20Minist%C3%A8re%20de%20la%20Communication%20et%20Medias&amp;rft.jtitle=Journal%20Officiel%20de%20la%20R%C3%A9publique%20D%C3%A9mocratique%20du%20Congo&amp;rft.epage=col.28-30&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D11278'></span></span>
+		    	<br />
+				</div>
+				<div id="el11278Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'>
+		    	</div><a href="./index.php?lvl=notice_display&id=11278" style="display:none;">Permalink</a>
+			
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=11278;
+				</script>
+			
+		
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=12332;
+				</script>
+			
+				<div id="el12332Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el12332Img" title="détail" border="0" param='a%3A9%3A%7Bs%3A2%3A%22id%22%3Bi%3A12332%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A12%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A75%3A%22.%2Findex.php%3Flvl%3Dsearch_result%26mode%3Dkeyword%26auto_submit%3D1%26user_query%3D%21%21mot%21%21%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3B%7D' onClick="expandBase_ajax('el12332', true,this.getAttribute('param')); show_simili_search('12332'); show_expl_voisin_search('12332'); return false;" hspace="3"/><img src="./images/icon_art_16x16.gif" alt='Article: texte imprimé' title='Article: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_12332"><span class="statutnot1" ></span><span  notice='12332'  class='header_title'>Arrêté ministériel n°005/CAB.MIN.M-CM/15 du 22 janvier 2015 portant désignation des membres de la Commission chargée de l'actualisation de la cartographie des medias</span> <i>in Journal Officiel de la République Démocratique du Congo, 22 (15 novembre 2015)</i><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rft.genre=article&amp;rft.atitle=Arr%C3%AAt%C3%A9%20minist%C3%A9riel%20n%C2%B0005%2FCAB.MIN.M-CM%2F15%20du%2022%20janvier%202015%20portant%20d%C3%A9signation%20des%20membres%20de%20la%20Commission%20charg%C3%A9e%20de%20l%27actualisation%20de%20la%20cartographie%20des%20medias&amp;rft.jtitle=Journal%20Officiel%20de%20la%20R%C3%A9publique%20D%C3%A9mocratique%20du%20Congo&amp;rft.epage=col.28-30&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D12332'></span></span>
+		    	<br />
+				</div>
+				<div id="el12332Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'>
+		    	</div><a href="./index.php?lvl=notice_display&id=12332" style="display:none;">Permalink</a>
+			
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=12332;
+				</script>
+			
+		
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=13061;
+				</script>
+			
+				<div id="el13061Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el13061Img" title="détail" border="0" param='a%3A9%3A%7Bs%3A2%3A%22id%22%3Bi%3A13061%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A12%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A75%3A%22.%2Findex.php%3Flvl%3Dsearch_result%26mode%3Dkeyword%26auto_submit%3D1%26user_query%3D%21%21mot%21%21%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3B%7D' onClick="expandBase_ajax('el13061', true,this.getAttribute('param')); show_simili_search('13061'); show_expl_voisin_search('13061'); return false;" hspace="3"/><img src="./images/icon_a_16x16.gif" alt='Document: texte imprimé' title='Document: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_13061"><span class="statutnot1" ></span><span  notice='13061'  class='header_title'>L'audiovisuel public en RD Congo</span> / Pungi Ana-U'Mberha Lino Joseph<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=L%27audiovisuel%20public%20en%20RD%20Congo&amp;rft.title=L%27audiovisuel%20public%20en%20RD%20Congo&amp;rft.tpages=1%20vol.%20%28118%20p.%29&amp;rft.date=2015&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D13061&amp;rft.aulast=Pungi%20Ana-U%27Mberha%20Lino%20Joseph&amp;rft.aulast=Nkundiye%20Angalikiyana%20Stanis'></span></span>
+		    	<br />
+				</div>
+				<div id="el13061Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'>
+		    	</div><a href="./index.php?lvl=notice_display&id=13061" style="display:none;">Permalink</a>
+			
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=13061;
+				</script>
+			
+		
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=8699;
+				</script>
+			
+				<div id="el8699Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el8699Img" title="détail" border="0" param='a%3A9%3A%7Bs%3A2%3A%22id%22%3Bi%3A8699%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A12%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A75%3A%22.%2Findex.php%3Flvl%3Dsearch_result%26mode%3Dkeyword%26auto_submit%3D1%26user_query%3D%21%21mot%21%21%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3B%7D' onClick="expandBase_ajax('el8699', true,this.getAttribute('param')); show_simili_search('8699'); show_expl_voisin_search('8699'); return false;" hspace="3"/><img src="./images/icon_per_16x16.gif" alt='Périodique: texte imprimé' title='Périodique: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_8699"><span class="statutnot1" ></span><span  class='header_title'>Bulletin des recherches théologiques et sociologiques</span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3A&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D8699&amp;rft.aulast=BISHIKWABO%20BAGUMA&amp;rft.aulast=Facult%C3%A9%20de%20Th%C3%A9ologie%20ULPGL-GOMA'></span></span>
+		    	<br />
+				</div>
+				<div id="el8699Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'>
+		    	</div><a href="./index.php?lvl=notice_display&id=8699" style="display:none;">Permalink</a>
+			
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=8699;
+				</script>
+			
+		
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=10778;
+				</script>
+			
+				<div id="el10778Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el10778Img" title="détail" border="0" param='a%3A9%3A%7Bs%3A2%3A%22id%22%3Bi%3A10778%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A12%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A75%3A%22.%2Findex.php%3Flvl%3Dsearch_result%26mode%3Dkeyword%26auto_submit%3D1%26user_query%3D%21%21mot%21%21%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3B%7D' onClick="expandBase_ajax('el10778', true,this.getAttribute('param')); show_simili_search('10778'); show_expl_voisin_search('10778'); return false;" hspace="3"/><img src="./images/icon_per_16x16.gif" alt='Périodique: texte imprimé' title='Périodique: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_10778"><span class="statutnot1" ></span><span  class='header_title'>Cahiers des médias pour la paix</span> / Institut Panos Paris (Paris)<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3A&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D10778&amp;rft.aulast=Institut%20Panos%20Paris'></span></span>
+		    	<br />
+				</div>
+				<div id="el10778Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'>
+		    	</div><a href="./index.php?lvl=notice_display&id=10778" style="display:none;">Permalink</a>
+			
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=10778;
+				</script>
+			
+		
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=1679;
+				</script>
+			
+				<div id="el1679Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el1679Img" title="détail" border="0" param='a%3A9%3A%7Bs%3A2%3A%22id%22%3Bi%3A1679%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A12%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A75%3A%22.%2Findex.php%3Flvl%3Dsearch_result%26mode%3Dkeyword%26auto_submit%3D1%26user_query%3D%21%21mot%21%21%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3B%7D' onClick="expandBase_ajax('el1679', true,this.getAttribute('param')); show_simili_search('1679'); show_expl_voisin_search('1679'); return false;" hspace="3"/><img src="./images/icon_a_16x16.gif" alt='Document: texte imprimé' title='Document: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_1679"><span class="statutnot1" ></span><span  notice='1679'  class='header_title'>Christianisme et société : introduction à la sociologie de Ernst Troeltsch</span> / Séguy Jean<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Christianisme%20et%20soci%C3%A9t%C3%A9%20%3A%20introduction%20%C3%A0%20la%20sociologie%20de%20Ernst%20Troeltsch&amp;rft.title=Christianisme%20et%20soci%C3%A9t%C3%A9%20%3A%20introduction%20%C3%A0%20la%20sociologie%20de%20Ernst%20Troeltsch&amp;rft.isbn=978-2-204-01487-8&amp;rft.tpages=Texte%20imprim%C3%A9%20%3A%20Jean%20S%C3%A9guy%20%2C%20334%20p.%2C%2022%20cm&amp;rft.date=1980&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D1679&amp;rft.aulast=S%C3%A9guy%20Jean'></span></span>
+		    	<br />
+				</div>
+				<div id="el1679Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'>
+		    	</div><a href="./index.php?lvl=notice_display&id=1679" style="display:none;">Permalink</a>
+			
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=1679;
+				</script>
+			
+		
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=4803;
+				</script>
+			
+				<div id="el4803Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el4803Img" title="détail" border="0" param='a%3A9%3A%7Bs%3A2%3A%22id%22%3Bi%3A4803%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A12%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A75%3A%22.%2Findex.php%3Flvl%3Dsearch_result%26mode%3Dkeyword%26auto_submit%3D1%26user_query%3D%21%21mot%21%21%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3B%7D' onClick="expandBase_ajax('el4803', true,this.getAttribute('param')); show_simili_search('4803'); show_expl_voisin_search('4803'); return false;" hspace="3"/><img src="./images/icon_per_16x16.gif" alt='Périodique: texte imprimé' title='Périodique: texte imprimé'/>		
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_4803"><span class="statutnot1" ></span><span  class='header_title'>Communautés et sociétés : Annales de sociologie et d'anthropologie</span> / Collectif<span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3A&rft_id=.%2Findex.php%3Flvl%3Dnotice_display%26id%3D4803&amp;rft.aulast=Collectif'></span></span>
+		    	<br />
+				</div>
+				<div id="el4803Child" class="notice-child" style="margin-bottom:6px;display:none;"  simili_search='1'>
+		    	</div><a href="./index.php?lvl=notice_display&id=4803" style="display:none;">Permalink</a>
+			
+				<script type='text/javascript'>
+					tab_notices_simili_search_all[tab_notices_simili_search_all.length]=4803;
+				</script>
+			
+		</blockquote>
+	</div></div></div><form name="form_values" action="./index.php?lvl=more_results" method="post">
+<input type="hidden" name="user_query" value="Sociologie des m&eacute;dias">
+<input type="hidden" name="mode" value="title">
+<input type="hidden" name="count" value="82">
+<input type="hidden" name="typdoc" value=""><input type="hidden" name="clause" value="">
+<input type="hidden" name="clause_bull" value="">
+<input type="hidden" name="clause_bull_num_notice" value="">
+<input type="hidden" name="join" value="">
+<input type="hidden" name="tri" value="">
+<input type="hidden" name="pert" value="">
+<input type="hidden" name="l_typdoc" value="a">
+<input type="hidden" id=author_type name="author_type" value="">
+<input type="hidden" id="id_thes" name="id_thes" value="">
+<input type="hidden" name="surligne" value="1">
+<input type="hidden" name="tags" value="">
+<input type="hidden" name="page" value="1">
+<input type="hidden" name="nbexplnum_to_photo" value="0">
+</form><div class='row'>&nbsp;</div><div id='navbar'><hr />
+<center>
+<script type='text/javascript'>
+<!--
+	function test_form(form)
+	{
+
+		if (form.page.value > 5)
+		{
+			alert("Numéro de page trop élevé !");
+			form.page.focus();
+			return false;
+		}
+
+		if (form.page.value < 1)
+		{
+			alert("Numéro de page trop bas !");
+			form.page.focus();
+			return false;
+		}
+		return true;
+	}
+-->
+</script><div class="navbar">
+<form name='form' action='javascript:document.form_values.page.value=document.form.page.value; document.form_values.submit()' method='post' onsubmit='return test_form(form)'>
+<img src='./images/first-grey.gif' alt='first'>
+<img src='./images/prev-grey.gif' alt='previous'>
+page <input type='text' class='numero_page' name='page' value='1' size='1'>/5
+<a href='javascript:document.form_values.page.value=2; document.form_values.submit()'><img src='./images/next.gif' alt='next' border='0' title='page suivante'></a>
+<a href='javascript:document.form_values.page.value=5; document.form_values.submit()'><img src='./images/last.gif' alt='last' border='0' title='dernière page'></a>
+</form>
+</div>
+</center></div>	
+		</div><!-- fin DIV main_hors_footer --><div id="footer">
+
+<span id="footer_rss">
+	
+</span>
+<span id="footer_link_sup">
+		 &nbsp;
+</span>
+
+<span id="footer_link_website">
+	<a class="footer_biblio_name" href="https://bu-ulpgl.net" title=""></a> &nbsp;
+</span>	
+
+<span id="footer_link_pmb">
+ &nbsp;
+		<a class="lien_pmb_footer" href="http://www.sigb.net" title="...une solution libre pour la médiathèque..." target='_blank'>pmb</a> 	
+</span>		
+		
+</div> 
+
+		</div><!-- /div id=main -->
+
+		<div id="intro">
+<div id="intro_bibli">
+			<h3></h3>
+			<div class="p1"></div>
+			<div class="p2"></div>
+			</div>
+		</div><!-- /div id=intro -->		
+		<div id="bandeau"><div id="accueil">
+
+<h3><span onclick='document.location="./index.php?"' style='cursor: pointer;'>Accueil</span></h3>
+<p class="centered"><a href='./index.php?'><img src='images/site/logou.jpg'  border='0' align='center'/></a></p>
+<div id='lang_select'><h3 ><span>Sélection de la langue</span></h3><span><form method="post" action="index.php" ><select name="lang_sel" onchange="this.form.submit();"><option value='fr_FR' selected>Français </option><option value='en_UK'>English (UK)</option></select></form></span></div>
+
+					</div><!-- fermeture #accueil -->
+<div id="connexion">
+
+			<h3>Se connecter</h3><span id='login_form'><form action='empr.php' method='post' name='myform'>
+				<label>accéder à votre compte de lecteur</label><br />
+				<input type='text' name='login' class='login' size='14' value="identifiant" onFocus="this.value='';"><br />
+				<input type='password' name='password' class='password' size='8' value='' />&nbsp;&nbsp;
+				<input type='submit' name='ok' value='ok' class='bouton'></form><a href=./askmdp.php>Mot de passe oublié ?</a></span>
+
+			</div><!-- fermeture #connexion -->
+<div id="meteo">
+
+		<h3>Météo</h3>
+
+		<p class="centered"><div id="cont_4fa6e3dd37f9370c897a4194ddc8f4df"><span id="h_4fa6e3dd37f9370c897a4194ddc8f4df"><a id="a_4fa6e3dd37f9370c897a4194ddc8f4df" href="http://www.tameteo.com/meteo_Goma-Afrique-Republique+democratique+du+Congo-Goma-FZNA-1-9710.html" target="_blank" style="color:#00ABEB;font-family:Roboto;font-size:14px;">M&eacute;t&eacute;o </a>Goma</span><script type="text/javascript" async src="http://www.tameteo.com/wid_loader/4fa6e3dd37f9370c897a4194ddc8f4df"></script></div></p>
+
+		<small>la météo à GISENYI</small>
+
+		</div><!-- fermeture # meteo -->
+
+			<div id='lvl1'>
+				<h3>Recherche</h3>
+<table id='lvl1_list'><tr class='even' onmouseover="this.className='surbrillance'" onmouseout="this.className='even'" >
+							<td><form name="search_objects" action="./index.php?lvl=more_results" method="post">
+  	<input type="hidden" name="mode" value="title">
+  	<input type="hidden" name="typdoc" value="">
+  	<input type="hidden" name="count" value="82">
+  	<input type="hidden" name="user_query" value="Sociologie des m&eacute;dias">
+  	<input type="hidden" name="l_typdoc" value="a">
+  	</form><span class='current'>Titres (82)</span></td>
+						</tr></table>
+			</div>
+			<div id='facette'>
+				
+			</div><div id="adresse">
+
+		<h3>Adresse</h3>
+
+		<span>
+			<br />
+			02 Avenue du Lac, Com. de GOMA, Nord-Kivu, R.D.Congo<br />
+			468 GISENYI<br />
+			Rwanda&nbsp;<br />
+			+243997775077<br /><span id='opac_biblio_email'>
+			<a href="mailto:bibliotheque@ulpgl.net" alt="bibliotheque@ulpgl.net">contact</a></span></span>
+	    </div><!-- fermeture #adresse --><div id="post_adress">
+
+		<span><br>
+<b>Statistiques</b><br>
+<iframe src="stat2.php" scrolling="no" marginwidth="0" marginheight="0"
+style="width:100%; height:90px; border:0px solid #ffffff;"> </iframe>
+		</span>	
+	    </div><!-- fermeture #post_adress --></div><div id="bandeau_2"></div></div><!-- /div id=container -->
+		
+		<script type='text/javascript'>init_drag();	rechercher(1);</script> 
+		</body>
+		</html>
+		

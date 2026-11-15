@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    
+			<meta charset="utf-8">
+			<meta name="author" content="Portail documentaire de l'universit&eacute; Mohamed Khider Biskra, biblioth&egrave;que centrale, biblioth&egrave;que universitaire, universit&eacute; de Biskra">
+					
+			<meta name="keywords" content="Portail documentaire de l'universit&eacute; Mohamed Khider Biskra, biblioth&egrave;que centrale, biblioth&egrave;que universitaire, universit&eacute; de Biskra">
+			<meta name="description" content="Portail documentaire de l'universit&eacute; Mohamed Khider Biskra, biblioth&egrave;que centrale, biblioth&egrave;que universitaire, universit&eacute; de Biskra"><meta name="robots" content="all">
+			<!--IE et son enfer de compatibilit?-->
+			<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<title>Catalogue en ligne 
+
+
+</title>
+	
+	
+<link rel="stylesheet" type="text/css" href="./styles/common/common.css?1671279992">
+<link rel="stylesheet" type="text/css" href="./styles/common/contrib.css?1531394600">
+<link rel="stylesheet" type="text/css" href="./styles/common/dGrowl.css?1458291776">
+<link rel="stylesheet" type="text/css" href="./styles/common/font-awesome.css?1478593624">
+<link rel="stylesheet" type="text/css" href="./styles/common/open-sans.css?1479312986">
+<link rel="stylesheet" type="text/css" href="./styles/common/pagination.css?1532017320">
+<link rel="stylesheet" type="text/css" href="./styles/common/record_display.css?1673565286">
+<link rel="stylesheet" type="text/css" href="./styles/zen/base.css?1679100194">
+<link rel="stylesheet" type="text/css" href="./styles/zen/fontAcontent.css?1599688760">
+<link rel="stylesheet" type="text/css" href="./styles/zen/zen.css?1673567990">
+<link rel="stylesheet" type="text/css" href="./styles/zen/zen_color_pre_set.css?1670117048">
+<link rel="stylesheet" type="text/css" href="./styles/zen/zonepageo_a.css?1673754598">
+<link rel="stylesheet" type="text/css" href="./styles/zen/zzen_responsive.css?1674273206"><script type="text/javascript">var opac_style= 'zen';</script>
+	<style type="text/css">
+	#container {
+    margin: 0 auto;
+    max-width: 1240px;
+    width: 100%;
+    position: relative;
+    box-sizing: border-box;
+}
+
+#main {
+    max-width: 1035px;
+    width: 76.5%;
+    box-sizing: border-box;
+    overflow: hidden;
+    padding: 2px 1px 0 0;
+    float: left;
+}
+
+#bandeau {
+    padding: 20px 0 0 0;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+    width: 22%;
+    margin-left: 1%;
+    max-width: 308px;
+    float: left;
+}
+
+#footer {
+    clear: both;
+    width: 100% !important;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    box-sizing: border-box;
+    border: 0;
+    vertical-align: middle;
+}
+
+
+/* ===== Affichage t&eacute;l&eacute;phone / tablette ===== */
+
+@media screen and (max-width: 768px) {
+
+    #container {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0 8px;
+        box-sizing: border-box;
+    }
+
+    #main {
+        width: 100%;
+        max-width: 100%;
+        float: none;
+        padding: 0;
+        overflow: visible;
+    }
+
+    #bandeau {
+        width: 100%;
+        max-width: 100%;
+        float: none;
+        margin: 0;
+        padding: 10px 0;
+    }
+
+    #footer {
+        width: 100% !important;
+        clear: both;
+    }
+}
+		</style>
+	<!-- css_authentication -->	<link rel="SHORTCUT ICON" href="styles/zen/images/favico.ico">
+	<script type="text/javascript" src="includes/javascript/drag_n_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/handle_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/popup.js"></script>
+	<script type="text/javascript">
+			// Fonction a utiliser pour l'encodage des URLs en javascript
+			function encode_URL(data){
+				var docCharSet = document.characterSet ? document.characterSet : document.charset;
+				if(docCharSet == "UTF-8"){
+	    			return encodeURIComponent(data);
+	    		}else{
+	    			return escape(data);
+	    		}
+	    	}
+	    </script>
+	<script type="text/javascript">
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName = 
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {  
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i); 
+				    }
+				 }
+				return items;
+			 }
+		}
+	</script>
+
+		<link rel="stylesheet" type="text/css" href="./includes/javascript/dojo/dijit/themes/tundra/tundra.css">
+		<script type="text/javascript">
+			var dojoConfig = {
+				parseOnLoad: true,
+				locale: 'fr-fr',
+				isDebug: false,
+				usePlainJson: true,
+				packages: [{
+						name: 'pmbBase',
+						location:'../../../..'
+					},{
+						name: 'd3',
+						location:'../../d3'
+					}],
+				deps: ['apps/pmb/MessagesStore', 'dgrowl/dGrowl', 'dojo/ready', 'apps/pmb/ImagesStore'],
+				callback:function(MessagesStore, dGrowl, ready, ImagesStore){
+					window.pmbDojo = {};
+					pmbDojo.messages = new MessagesStore({url:'./ajax.php?module=ajax&categ=messages', directInit:false});
+					pmbDojo.images = new ImagesStore({url:'./ajax.php?module=ajax&categ=images', directInit:false});
+					ready(function(){
+						new dGrowl({'channels':[{'name':'info','pos':2},{'name':'error', 'pos':1}]});
+					});
+						
+				},
+			};
+		</script>
+		<script type="text/javascript" src="./includes/javascript/dojo/dojo/dojo.js"></script>
+		<script type="text/javascript">
+		dojo.addOnLoad(function () {
+			// Ajout du theme Dojo
+			dojo.addClass(dojo.body(),'tundra');
+		})
+		</script>
+		<script type="text/javascript">
+	var pmb_img_patience = './images/patience.gif';
+</script><script type="text/javascript">
+			var opac_show_social_network =0;
+		</script>
+	<script type="text/javascript" src="includes/javascript/simili_search.js"></script>
+	<script type="text/javascript" src="./includes/javascript/http_request.js"></script>
+	<script type="text/javascript" src="./includes/javascript/track_clicks.js"></script>
+	
+<script>
+				dojo.addOnLoad(function (){
+					//on balance un evenement pour les initialiser les modules si besoin...
+					dojo.publish('init',['cms_dojo_init',{}]);
+				});
+			</script>
+
+		<script type="text/javascript">
+			function cms_module_search_22_change_dest(){
+				var page = 0;
+                var universe = 0;
+                var default_segment = 0;
+                if(document.forms['cms_module_search_22_searchbox'].dest) {
+    				var dests = document.forms['cms_module_search_22_searchbox'].dest;
+    				for(var i = 0; i < dests.length; i++){
+    					if(dests[i].checked){
+    						page = dests[i].value;
+                            universe = dests[i].getAttribute('universe');
+                            default_segment = dests[i].getAttribute('default_segment');
+    						break;
+    					}
+    				}
+                }
+                if(universe > 0){
+                    if(default_segment > 0){
+                        document.forms['cms_module_search_22_searchbox'].action = './index.php?lvl=search_segment&action=segment_results&id='+default_segment;
+                    } else {
+                        document.forms['cms_module_search_22_searchbox'].action = './index.php?lvl=search_universe&id='+universe;   
+                    }  
+                } else if(page>0){
+					document.forms['cms_module_search_22_searchbox'].action = './index.php?lvl=cmspage&pageid='+page;
+				}
+                if (page.toString().indexOf('view_') != -1) {
+					var view_id = page.substr(5);
+				    document.forms['cms_module_search_22_searchbox'].action += '&opac_view='+view_id;
+                }
+			}
+		</script>
+<!-- Inclusion JQuery pour le portail-->
+<!--[if (!IE)|(gt IE 8)]><!-->
+  <script src="./cms/modules/common/includes/javascript/jquery-2.1.1.min.js"></script>
+<!--<![endif]-->
+
+<!--[if lte IE 8]>
+  <script src='./cms/modules/common/includes/javascript/jquery-1.9.1.min.js'></script>
+<![endif]-->
+<script src="./cms/modules/common/includes/javascript/jquery.bxsliderv4.min.js"></script>
+<script>
+		document.addEventListener('DOMContentLoaded', function(){
+		if (navigator.userAgent.search("Firefox") >= 0) {
+		    var ff_version = navigator.userAgent.match(/Firefox\/([\d]+\.[\d])+/);
+		    ff_version = parseFloat(ff_version[1]);
+		    if(ff_version == 0 || ff_version >= 59) {
+		        $('body').on('mousedown', '.bx-viewport a', function() {
+		            var ff_link = $(this);
+		            var ff_href = ff_link.attr('href');
+		            if(ff_href) {
+		                location.href = ff_href;
+		                return false;
+		            }
+		        });
+		    }
+		}})</script>
+<link rel="stylesheet" type="text/css" href="./cms/modules/common/includes/css/jquery.bxslider.css"><script type="text/javascript" src="./cms/modules/common/includes/javascript/jquery-2.1.1.min.js"></script><script type="text/javascript" src="./styles/zen/uitkit/js/uikit.min.js"></script><script type="text/javascript" src="./styles/zen/uitkit/js/components/sticky.min.js"></script><script type="text/javascript" src="./styles/zen/uitkit/js/components/grid.min.js"></script><script type="text/javascript" src="./cms/modules/common/includes/javascript/jquery.bxsliderv4.min.js"></script><link rel="stylesheet" href="./styles/zen/uitkit/css/uikit.min.css"><link rel="stylesheet" href="./styles/zen/addcss/home.css"><link rel="stylesheet" href="./styles/zen/uitkit/css/components/sticky.almost-flat.min.css"><link rel="stylesheet" href="./styles/zen/addcss/calendar.css"></head>
+
+<body onload="window.defaultStatus='PMB : Acc&egrave;s public';" onresize="history.go(0);" id="pmbopac">
+		<script type="text/javascript">
+		function findNoticeElement(id){
+			var ul=null;
+			//cas des notices classiques
+			var domNotice = document.getElementById('el'+id+'Child');
+			//notice_display
+			if(!domNotice) domNotice = document.getElementById('notice');
+			if(domNotice){
+				var uls = domNotice.getElementsByTagName('ul');
+				for (var i=0 ; i<uls.length ; i++){
+					if(uls[i].getAttribute('id') == 'onglets_isbd_public'+id){
+						var ul = uls[i];
+						break;
+					}
+				}
+			} else{
+				var li = document.getElementById('onglet_isbd'+id);
+				if(!li) var li = document.getElementById('onglet_public'+id);
+				if(!li) var li = document.getElementById('onglet_detail'+id);
+				if(li) var ul = li.parentNode;
+			}
+			return ul;
+		}
+		function show_what(quoi, id) {
+			switch(quoi){
+				case 'EXPL_LOC' :
+					document.getElementById('div_expl_loc' + id).style.display = 'block';
+					document.getElementById('div_expl' + id).style.display = 'none';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_inactive';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_active';
+					break;
+				case 'EXPL' :
+					document.getElementById('div_expl_loc' + id).style.display = 'none';
+					document.getElementById('div_expl' + id).style.display = 'block';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_active';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_inactive';
+					break;
+				default :
+					quoi= quoi.toLowerCase();
+					var ul = findNoticeElement(id);
+					if (ul) {
+						var items  = ul.getElementsByTagName('li');
+						for (var i=0 ; i<items.length ; i++){
+							if(items[i].getAttribute('id')){
+								if(items[i].getAttribute('id') == 'onglet_'+quoi+id){
+									items[i].className = 'isbd_public_active';
+									document.getElementById('div_'+quoi+id).style.display = 'block';
+								}else{
+									if(items[i].className != 'onglet_tags' && items[i].className != 'onglet_avis' && items[i].className != 'onglet_sugg' && items[i].className != 'onglet_basket' && items[i].className != 'onglet_liste_lecture'){
+										items[i].className = 'isbd_public_inactive';
+										document.getElementById(items[i].getAttribute('id').replace('onglet','div')).style.display = 'none';
+									}
+								}
+							}
+						}
+					}
+					break;
+			}
+		}
+		</script>
+	<script type="text/javascript" src="./includes/javascript/tablist_ajax.js"></script>
+<script type="text/javascript" src="./includes/javascript/tablist.js"></script>
+<script type="text/javascript" src="./includes/javascript/misc.js"></script>
+	<div id="att" style="z-Index:1000"></div>
+	<div id="container"><div id="intro" fixed="yes">
+<div id="intro_bibli" fixed="yes">
+			<h3>
+
+
+</h3>
+			<div class="p1"></div>
+			<div class="p2"></div>
+			</div>
+		<div id="cms_module_sectionslist_174" class="cms_module_sectionslist cms_module" style="visibility: visible; position: static; left: 0px; top: 0px; display: block;"><div id="offcanvas" class="uk-offcanvas">
+	<div class="uk-offcanvas-bar">
+			<div class="MenuVertResp">
+			<ul class="NavResponsive">
+			<!-- rubriques niveau 1 -->
+							<li>
+					<a href="./index.php" title="Accueil">Accueil</a>
+									</li>
+							<li>
+					<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=37" title="infos pratiques">infos pratiques</a>
+											<ul class="SousNavResponsive">
+				<!-- rubriques niveau 2 -->
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=122" title="Inscriptions et quitus">Inscriptions et quitus</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=index" title="Recherche simple">Recherche simple</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=49" title="Inscription sndl">Inscription sndl</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=153" title="Inscription biblioth&egrave;que iqraa">Inscription biblioth&egrave;que iqraa</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=101" title="Coordonn&eacute;es contact">Coordonn&eacute;es contact</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=102" title="Modalit&eacute;s d'acc&eacute;s et pr&eacute;t">Modalit&eacute;s d'acc&eacute;s et pr&eacute;t</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=103" title="R&eacute;glemnt interieur">R&eacute;glemnt interieur</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=104" title="Statistiques">Statistiques</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=141" title="Horraire et modalit&eacute;s d'acc&eacute;s">Horraire et modalit&eacute;s d'acc&eacute;s</a>
+								</li>
+													</ul>
+									</li>
+							<li>
+					<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=22" title="Services aux adh&egrave;rants">Services aux adh&egrave;rants</a>
+											<ul class="SousNavResponsive">
+				<!-- rubriques niveau 2 -->
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=88" title="Pr&eacute;t de documents">Pr&eacute;t de documents</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=90" title="Acc&eacute;s a internet">Acc&eacute;s a internet</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=91" title="Services distants">Services distants</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=150" title="R&eacute;servation de salles">R&eacute;servation de salles</a>
+								</li>
+													</ul>
+									</li>
+							<li>
+					<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=71" title="Acc&egrave;s aux ressources ">Acc&egrave;s aux ressources </a>
+											<ul class="SousNavResponsive">
+				<!-- rubriques niveau 2 -->
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=96" title="Revues de l'universit&eacute;">Revues de l'universit&eacute;</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=92" title="Monographies imprim&eacute;s">Monographies imprim&eacute;s</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=93" title="M&eacute;moires de magist&eacute;re">M&eacute;moires de magist&eacute;re</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=94" title="Th&eacute;ses  de doctorat">Th&eacute;ses  de doctorat</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=95" title="Polycopies de l'universit&eacute;">Polycopies de l'universit&eacute;</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=97" title="Articles scientifiques ">Articles scientifiques </a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=98" title="Actes de seminaires">Actes de seminaires</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=99" title="Cours en ligne">Cours en ligne</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=100" title="Bases de donn&eacute;es">Bases de donn&eacute;es</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=105" title="Archives ouverts">Archives ouverts</a>
+								</li>
+													</ul>
+									</li>
+							<li>
+					<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=1" title="Acc&egrave;s aux biblioth&egrave;ques ">Acc&egrave;s aux biblioth&egrave;ques </a>
+											<ul class="SousNavResponsive">
+				<!-- rubriques niveau 2 -->
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=4" title="Agenda">Agenda</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=80" title="Biblioth&eacute;que centrale Chetma">Biblioth&eacute;que centrale Chetma</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=83" title="Facult&eacute; lettres et langues">Facult&eacute; lettres et langues</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=84" title="Facult&eacute; sciences &eacute;conomiques">Facult&eacute; sciences &eacute;conomiques</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=85" title="D&eacute;partement sciences de la vie">D&eacute;partement sciences de la vie</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=87" title="Facult&eacute; droit et science politique">Facult&eacute; droit et science politique</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=136" title="Institut education physique">Institut education physique</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=138" title="D&eacute;partement d'agronomie">D&eacute;partement d'agronomie</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=157" title="Sc.Humaines et Sociales">Sc.Humaines et Sociales</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=139" title="D&eacute;partement d'architecture">D&eacute;partement d'architecture</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=152" target="_blank" title="Facult&eacute; sciences et technologie">Facult&eacute; sciences et technologie</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=159" title="Facult&eacute; de M&eacute;decine">Facult&eacute; de M&eacute;decine</a>
+								</li>
+													</ul>
+									</li>
+							<li>
+					<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=162" title="Abonnements scientifiques">Abonnements scientifiques</a>
+									</li>
+						</ul>
+		</div>
+		</div>
+</div></div><div id="cms_module_htmlcode_176" class="cms_module_htmlcode cms_module" style="visibility: visible; position: static; left: 0px; top: 0px; display: block;"><div class="TglUser " data-uk-button>
+	<a class="Tgllogin" data-uk-toggle="{target:'#connexion', cls:'heightZero'}">
+		<span class="user"><i class="fa fa-user"></i></span>
+	</a>
+</div></div><div id="cms_module_htmlcode_175" class="cms_module_htmlcode cms_module" style="visibility: visible; position: static; left: 0px; top: 0px;"><div id="btnMenu" class="temp">
+	<div class="tgLbtnMenu">
+		<a class="MenuCanvas uk-button" href="#offcanvas" data-uk-offcanvas><i class="fa fa-bars"></i></a>
+	</div>
+</div></div><div id="cms_module_htmlcode_178" class="cms_module_htmlcode cms_module" style="visibility: visible; position: static; left: 0px; top: 0px;"><div class="TgllSearch" data-uk-button>
+	<a data-uk-toggle="{target:'.searchbox', cls:'heightZero'}">
+		<span class="user"><i class="fa fa-search"></i></span>
+	</a>
+</div></div><div id="cms_module_section_177" class="cms_module_section cms_module" style="visibility: visible; display: block; position: static; left: 0px; top: 0px;"><div class="uk-grid uk-grid-collapse" data-uk-grid-match="{target:'.titrePortail'}" data-uk-grid-margin>
+	<div class="uk-width-1-3">
+        <div id="logo" class="titrePortail">
+            <a href="./index.php" title="Portail documentaire"><img src="https://documentation.univ-biskra.dz/opac_css/temp/cms_vign/bucentralelalia/large/section62.gif" alt="Portail documentaire"></a>
+        </div>
+    </div>
+	<div class="uk-width-2-3"> 
+        <div id="titrePortail" class="titrePortail">
+            <h1>
+                <span class="mainTitle">Portail documentaire</span>
+                <span class="subTitle"><font size="3"><font color="#ff0000" style="">U</font>niversit&eacute; <font color="#ff0000" style="">M</font>ohamed <font color="#ff0000" style="">K</font>hider <font color="#ff0000" style="">B</font>iskra</font></span>
+            </h1>
+        </div>
+     </div>        
+</div></div><div id="cms_module_section_173" class="cms_module_section cms_module" style="visibility: visible; position: static; left: 0px; top: 0px; display: block;"><div id="Introbandeau"><img src="https://documentation.univ-biskra.dz/opac_css/cms_vign.php?type=section&amp;id=79&amp;database=bucentralelalia&amp;mode=large" alt="Photo bandeau superieur"></div>
+</div><div id="cms_module_section_125" class="cms_module_section cms_module" style="visibility: visible; display: none; left: auto; top: auto; height: 157px; width: 1024px; margin: 0px; padding: 0px; float: none; position: static;"><div id="logo">
+	<a href="./index.php" title="Portail documentaire"><img src="https://documentation.univ-biskra.dz/opac_css/temp/cms_vign/bucentralelalia/large/section62.gif" alt="Portail documentaire"></a>
+</div></div><div id="cms_module_metadatas_172" class="cms_module_metadatas cms_module" style="visibility: visible; display: block;"></div><div id="cms_module_section_126" class="cms_module_section cms_module" style="visibility: visible; display: none; left: auto; top: auto; height: 160px; width: 1024px; margin: 0px; padding: 0px; float: none; position: static;"><div id="titrePortail">
+	<h1>
+        <span class="mainTitle">Portail documentaire</span>
+        <span class="subTitle"><font size="3"><font color="#ff0000" style="">U</font>niversit&eacute; <font color="#ff0000" style="">M</font>ohamed <font color="#ff0000" style="">K</font>hider <font color="#ff0000" style="">B</font>iskra</font></span>
+	</h1>
+</div></div><div id="cms_module_htmlcode_137" class="cms_module_htmlcode cms_module" style="visibility: visible; display: block;"><div class="clear"></div></div><div id="cms_module_sectionslist_120" class="cms_module_sectionslist cms_module" style="visibility: visible; display: block; position: relative; left: -1px; top: 57px;"><div class="uk-flex uk-flex-center uk-hidden-small uk-hidden-medium">
+    <div class="MenuHoriz uk-navbar uk-container">
+        <ul class="Nav uk-navbar-nav">
+        <!-- rubriques niveau 1 -->
+                    <li>
+                <a href="./index.php" title="Accueil">Accueil</a>
+                            </li>
+                    <li class="uk-parent" data-uk-dropdown="{pos:'bottom-center',remaintime:'550'}">
+                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=37" title="infos pratiques">infos pratiques</a>
+                                <div class="uk-dropdown uk-dropdown-navbar">
+                    <ul class="SousNav uk-nav uk-nav-navbar">
+			<!-- rubriques niveau 2 -->
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=122">Inscriptions et quitus</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=index">Recherche simple</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=49">Inscription sndl</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=153">Inscription biblioth&egrave;que iqraa</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=101">Coordonn&eacute;es contact</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=102">Modalit&eacute;s d'acc&eacute;s et pr&eacute;t</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=103">R&eacute;glemnt interieur</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=104">Statistiques</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=141">Horraire et modalit&eacute;s d'acc&eacute;s</a>
+                            </li>
+                                            </ul>
+                </div>      
+                            </li>
+                    <li class="uk-parent" data-uk-dropdown="{pos:'bottom-center',remaintime:'550'}">
+                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=22" title="Services aux adh&egrave;rants">Services aux adh&egrave;rants</a>
+                                <div class="uk-dropdown uk-dropdown-navbar">
+                    <ul class="SousNav uk-nav uk-nav-navbar">
+			<!-- rubriques niveau 2 -->
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=88">Pr&eacute;t de documents</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=90">Acc&eacute;s a internet</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=91">Services distants</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=150">R&eacute;servation de salles</a>
+                            </li>
+                                            </ul>
+                </div>      
+                            </li>
+                    <li class="uk-parent" data-uk-dropdown="{pos:'bottom-center',remaintime:'550'}">
+                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=71" title="Acc&egrave;s aux ressources ">Acc&egrave;s aux ressources </a>
+                                <div class="uk-dropdown uk-dropdown-navbar">
+                    <ul class="SousNav uk-nav uk-nav-navbar">
+			<!-- rubriques niveau 2 -->
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=96">Revues de l'universit&eacute;</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=92">Monographies imprim&eacute;s</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=93">M&eacute;moires de magist&eacute;re</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=94">Th&eacute;ses  de doctorat</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=95">Polycopies de l'universit&eacute;</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=97">Articles scientifiques </a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=98">Actes de seminaires</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=99">Cours en ligne</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=100">Bases de donn&eacute;es</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=105">Archives ouverts</a>
+                            </li>
+                                            </ul>
+                </div>      
+                            </li>
+                    <li class="uk-parent" data-uk-dropdown="{pos:'bottom-center',remaintime:'550'}">
+                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=1" title="Acc&egrave;s aux biblioth&egrave;ques ">Acc&egrave;s aux biblioth&egrave;ques </a>
+                                <div class="uk-dropdown uk-dropdown-navbar">
+                    <ul class="SousNav uk-nav uk-nav-navbar">
+			<!-- rubriques niveau 2 -->
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=4">Agenda</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=80">Biblioth&eacute;que centrale Chetma</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=83">Facult&eacute; lettres et langues</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=84">Facult&eacute; sciences &eacute;conomiques</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=85">D&eacute;partement sciences de la vie</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=87">Facult&eacute; droit et science politique</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=136">Institut education physique</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=138">D&eacute;partement d'agronomie</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=157">Sc.Humaines et Sociales</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=139">D&eacute;partement d'architecture</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=152" target="_blank">Facult&eacute; sciences et technologie</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=159">Facult&eacute; de M&eacute;decine</a>
+                            </li>
+                                            </ul>
+                </div>      
+                            </li>
+                    <li>
+                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=162" title="Abonnements scientifiques">Abonnements scientifiques</a>
+                            </li>
+                </ul>
+    </div>
+</div>    
+</div><div id="cms_module_search_22" class="cms_module_search cms_module" style="position: relative; left: 0px; top: -32px; visibility: visible; display: block;">
+			<form method="post" class="searchbox" action="./index.php?lvl=more_results&amp;autolevel1=1" name="cms_module_search_22_searchbox" onsubmit="if (cms_module_search_22_searchbox.user_query.value.length == 0) { cms_module_search_22_searchbox.user_query.value='*';}cms_module_search_22_change_dest();">
+				
+				<input type="hidden" value="1" name="look_TITLE">
+				<input type="hidden" value="1" name="look_AUTHOR">
+				<input type="hidden" value="1" name="look_KEYWORDS">
+				<input type="hidden" value="1" name="look_ABSTRACT">
+				<input type="hidden" value="1" name="look_CONCEPT">
+				<input type="hidden" value="1" name="look_ALL">
+			<h4 class="searchbox_title">Barre de recherche</h4><span class="research_inputs">
+				<input type="text" name="user_query" value="" placeholder="Rechercher un livre,une th&egrave;se ou un autre document...">
+				<input class="bouton" type="submit" value="Rechercher"></span>
+				<p class="search_advanced_link"><a href="./index.php?search_type_asked=simple_search" title="Recherche avanc&eacute;e"> Recherche avanc&eacute;e</a></p>		
+			</form></div></div><div id="main" style="position: static; left: 0px; top: 0px;" fixed="yes"><div id="main_header"></div><div id="main_hors_footer">
+						
+
+<script type="text/javascript" src="./includes/javascript/auth_popup.js"></script>	
+<script type="text/javascript" src="./includes/javascript/pnb.js"></script><div id="add_div_cms_module_articleslist_21" class="row"></div><div id="cms_module_articleslist_21" class="cms_module_articleslist cms_module" style="position: relative; left: -2px; top: 0px; visibility: visible; display: block;">    <div class="Slider">
+        <div class="SliderArt">
+             
+            <!-- titre du cadre -->
+                            <h3 class="titleInside">Flash infos</h3>
+                          <ul id="carousel_cms_module_articleslist_21">
+                 <!-- affichage d'un article -->
+                                                               <li class="cms_module_articleslist_21_item">
+                              <!-- contenu de l'article -->
+			      <div class="itemContent">
+				 <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=192" title="&#1573;&#1591;&#1604;&#1575;&#1602; &#1578;&#1591;&#1576;&#1610;&#1602; &#1575;&#1604;&#1605;&#1603;&#1578;&#1576;&#1577; &#1575;&#1604;&#1585;&#1602;&#1605;&#1610;&#1577; &#1604;&#1580;&#1575;&#1605;&#1593;&#1577; &#1605;&#1581;&#1605;&#1583; &#1582;&#1610;&#1590;&#1585; &#1576;&#1587;&#1603;&#1585;&#1577; &ndash; UMKB Digital Library">
+				    <!-- logo -->
+				    					<div class="imgL">	
+						<img src="https://documentation.univ-biskra.dz/opac_css/cms_vign.php?type=article&amp;id=192&amp;database=bucentralelalia&amp;mode=small" alt="&#1573;&#1591;&#1604;&#1575;&#1602; &#1578;&#1591;&#1576;&#1610;&#1602; &#1575;&#1604;&#1605;&#1603;&#1578;&#1576;&#1577; &#1575;&#1604;&#1585;&#1602;&#1605;&#1610;&#1577; &#1604;&#1580;&#1575;&#1605;&#1593;&#1577; &#1605;&#1581;&#1605;&#1583; &#1582;&#1610;&#1590;&#1585; &#1576;&#1587;&#1603;&#1585;&#1577; &ndash; UMKB Digital Library">
+					</div>
+				     
+				    <div class="ItemResume">
+					<!-- titre de l'article -->
+					<h4>&#1573;&#1591;&#1604;&#1575;&#1602; &#1578;&#1591;&#1576;&#1610;&#1602; &#1575;&#1604;&#1605;&#1603;&#1578;&#1576;&#1577; &#1575;&#1604;&#1585;&#1602;&#1605;&#1610;&#1577; &#1604;&#1580;&#1575;&#1605;&#1593;&#1577; &#1605;&#1581;&#1605;&#1583; &#1582;&#1610;&#1590;&#1585; &#1576;&#1587;&#1603;&#1585;&#1577; &ndash; UMKB Digital Library</h4>
+					<!-- dates -->
+					 
+					<!-- r&eacute;sum&eacute; -->
+					<div class="resume">
+					    						    &nbsp;   &#1578;&#1591;&#1576;&#1610;&#1602; &#1575;&#1604;&#1605;&#1603;&#1578;&#1576;&#1577; &#1575;&#1604;&#1585;&#1602;&#1605;&#1610;&#1577; &#1604;&#1580;&#1575;&#1605;&#1593;&#1577; &#1605;&#1581;&#1605;&#1583; &#1582;&#1610;&#1590;&#1585; &#1576;&#1587;&#1603;&#1585;&#1577;
+    
+    
+	  UMKB Digital Library &ndash; Version 1.0.0 (2026)  
+    
+    
+	&#1605;&#1603;&#1578;&#1576;&#1578;&#1603; &#1575;&#1604;&#1580;&#1575;&#1605;&#1593;&#1610;&#1577; &#1576;&#1610;&#1606; &#1610;&#1583;&#1610;&#1603;&#1548; &#1571;&#1610;&#1606;&#1605;&#1575; &#1603;&#1606;&#1578;.
+    
+    
+	  Your University Library, Anywhere.  
+    
+    ...
+					    					    <p class="lirePlus">Lire la suite</p>
+					  </div><!-- resume  -->
+				    </div> <!-- fin itemResume -->
+				</a>      
+			    </div><!--fin itemContent-->
+                            <div class="clear"></div>
+                          </li>
+                                                                                    <li class="cms_module_articleslist_21_item">
+                              <!-- contenu de l'article -->
+			      <div class="itemContent">
+				 <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=191" title="&#1575;&#1588;&#1578;&#1585;&#1575;&#1603;&#1575;&#1578; &#1593;&#1604;&#1605;&#1610;&#1577; &#1608;&#1585;&#1602;&#1605;&#1610;&#1577; &#1580;&#1583;&#1610;&#1583;&#1577;">
+				    <!-- logo -->
+				    					<div class="imgL">	
+						<img src="https://documentation.univ-biskra.dz/opac_css/cms_vign.php?type=article&amp;id=191&amp;database=bucentralelalia&amp;mode=small" alt="&#1575;&#1588;&#1578;&#1585;&#1575;&#1603;&#1575;&#1578; &#1593;&#1604;&#1605;&#1610;&#1577; &#1608;&#1585;&#1602;&#1605;&#1610;&#1577; &#1580;&#1583;&#1610;&#1583;&#1577;">
+					</div>
+				     
+				    <div class="ItemResume">
+					<!-- titre de l'article -->
+					<h4>&#1575;&#1588;&#1578;&#1585;&#1575;&#1603;&#1575;&#1578; &#1593;&#1604;&#1605;&#1610;&#1577; &#1608;&#1585;&#1602;&#1605;&#1610;&#1577; &#1580;&#1583;&#1610;&#1583;&#1577;</h4>
+					<!-- dates -->
+					 
+					<!-- r&eacute;sum&eacute; -->
+					<div class="resume">
+					    						    
+	    &#1578;&#1593;&#1604;&#1606; &#1575;&#1604;&#1605;&#1603;&#1578;&#1576;&#1577; &#1575;&#1604;&#1605;&#1585;&#1603;&#1586;&#1610;&#1577; &#1604;&#1580;&#1575;&#1605;&#1593;&#1577; &#1605;&#1581;&#1605;&#1583; &#1582;&#1610;&#1590;&#1585; &#1576;&#1587;&#1603;&#1585;&#1577; &#1593;&#1606; &#1573;&#1578;&#1575;&#1581;&#1577; &#1605;&#1580;&#1605;&#1608;&#1593;&#1577; &#1580;&#1583;&#1610;&#1583;&#1577; &#1605;&#1606; &#1575;&#1604;&#1575;&#1588;&#1578;&#1585;&#1575;&#1603;&#1575;&#1578; &#1575;&#1604;&#1593;&#1604;&#1605;&#1610;&#1577; &#1608;&#1575;&#1604;&#1605;&#1608;&#1575;&#1585;&#1583; &#1575;&#1604;&#1585;&#1602;&#1605;&#1610;&#1577; &#1604;&#1601;&#1575;&#1574;&#1583;&#1577; &#1575;&#1604;&#1591;&#1604;&#1576;&#1577; &#1608;&#1575;&#1604;&#1571;&#1587;&#1575;&#1578;&#1584;&#1577; &#1608;&#1575;&#1604;&#1576;&#1575;&#1581;&#1579;&#1610;&#1606;&#1548; &#1583;&#1593;&#1605;&#1611;&#1575; &#1604;&#1604;&#1578;&#1593;&#1604;&#1610;&#1605; &#1608;&#1575;&#1604;&#1576;&#1581;&#1579; &#1575;&#1604;&#1593;&#1604;&#1605;&#1610; &#1608;&#1578;&#1610;&#1587;&#1610;&#1585;&#1611;&#1575; &#1604;&#1604;&#1608;&#1589;&#1608;&#1604; &#1573;&#1604;&#1609; &#1575;&#1604;&#1605;&#1589;&#1575;&#1583;&#1585; &#1575;&#1604;&#1571;&#1603;&#1575;&#1583;&#1610;&#1605;&#1610;&#1577; &#1575;...
+					    					    <p class="lirePlus">Lire la suite</p>
+					  </div><!-- resume  -->
+				    </div> <!-- fin itemResume -->
+				</a>      
+			    </div><!--fin itemContent-->
+                            <div class="clear"></div>
+                          </li>
+                                                                                                                                                                                                                                                                                                                                                                                                    <li class="cms_module_articleslist_21_item">
+                              <!-- contenu de l'article -->
+			      <div class="itemContent">
+				 <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=183" title="D&eacute;p&ocirc;t de th&egrave;ses">
+				    <!-- logo -->
+				    					<div class="imgL">	
+						<img src="https://documentation.univ-biskra.dz/opac_css/temp/cms_vign/bucentralelalia/small/article183.jpeg" alt="D&eacute;p&ocirc;t de th&egrave;ses">
+					</div>
+				     
+				    <div class="ItemResume">
+					<!-- titre de l'article -->
+					<h4>D&eacute;p&ocirc;t de th&egrave;ses</h4>
+					<!-- dates -->
+					 
+					<!-- r&eacute;sum&eacute; -->
+					<div class="resume">
+					    						  Le   P  ortail   N  ational de   S  ignalement des   T  h&egrave;ses est un dispositif visant la prise en charge de la production scientifique nationale en mati&egrave;re de th&egrave;ses, en l'application de l'arr&ecirc;t&eacute; n&deg;153 du 14 Mai 2012...
+					    					    <p class="lirePlus">Lire la suite</p>
+					  </div><!-- resume  -->
+				    </div> <!-- fin itemResume -->
+				</a>      
+			    </div><!--fin itemContent-->
+                            <div class="clear"></div>
+                          </li>
+                                                                                                                                                                                                      <li class="cms_module_articleslist_21_item">
+                              <!-- contenu de l'article -->
+			      <div class="itemContent">
+				 <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=168" title="A propos du portail ">
+				    <!-- logo -->
+				     
+				    <div class="ItemResume">
+					<!-- titre de l'article -->
+					<h4>A propos du portail </h4>
+					<!-- dates -->
+					 
+					<!-- r&eacute;sum&eacute; -->
+					<div class="resume">
+					    						      Ch&egrave;res lectrices  et ch&egrave;rs lecteurs:bienvenus(es) sur ce&nbsp; portail&nbsp; documentaire           Le portail vous permet des services et des produits      
+					    					    <p class="lirePlus">Lire la suite</p>
+					  </div><!-- resume  -->
+				    </div> <!-- fin itemResume -->
+				</a>      
+			    </div><!--fin itemContent-->
+                            <div class="clear"></div>
+                          </li>
+                                                                                    <li class="cms_module_articleslist_21_item">
+                              <!-- contenu de l'article -->
+			      <div class="itemContent">
+				 <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=167" title="Biblioth&egrave;que IQRAA">
+				    <!-- logo -->
+				    					<div class="imgL">	
+						<img src="https://documentation.univ-biskra.dz/opac_css/temp/cms_vign/bucentralelalia/small/article167.png" alt="Biblioth&egrave;que IQRAA">
+					</div>
+				     
+				    <div class="ItemResume">
+					<!-- titre de l'article -->
+					<h4>Biblioth&egrave;que IQRAA</h4>
+					<!-- dates -->
+					 
+					<!-- r&eacute;sum&eacute; -->
+					<div class="resume">
+					    						  Cette offre documentaire est une premi&eacute;re initiative de numerisation du patrimoine scientifique national &eacute;dit&eacute; chez l'    O    ffice       des   P    ublication  s   U    niversitaire  s  .      
+					    					    <p class="lirePlus">Lire la suite</p>
+					  </div><!-- resume  -->
+				    </div> <!-- fin itemResume -->
+				</a>      
+			    </div><!--fin itemContent-->
+                            <div class="clear"></div>
+                          </li>
+                                                                                                                                                                                                                                                                                  <li class="cms_module_articleslist_21_item">
+                              <!-- contenu de l'article -->
+			      <div class="itemContent">
+				 <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=70" title="Inscription en S.N.D.L.">
+				    <!-- logo -->
+				    					<div class="imgL">	
+						<img src="https://documentation.univ-biskra.dz/opac_css/temp/cms_vign/bucentralelalia/small/article70.png" alt="Inscription en S.N.D.L.">
+					</div>
+				     
+				    <div class="ItemResume">
+					<!-- titre de l'article -->
+					<h4>Inscription en S.N.D.L.</h4>
+					<!-- dates -->
+					 
+					<!-- r&eacute;sum&eacute; -->
+					<div class="resume">
+					    						              Nous Nous invitons les &eacute;tudiants inscrits en master 2,en magister, en doctorat et les  enseignants non affili&eacute;s aux laboratoires de recherche pour&nbsp; s'inscrire au Syst&egrave;me National de de Documentation en Lig...
+					    					    <p class="lirePlus">Lire la suite</p>
+					  </div><!-- resume  -->
+				    </div> <!-- fin itemResume -->
+				</a>      
+			    </div><!--fin itemContent-->
+                            <div class="clear"></div>
+                          </li>
+                                                                                                                                                                                                                                                                                                                                                                                                                                          <li class="cms_module_articleslist_21_item">
+                              <!-- contenu de l'article -->
+			      <div class="itemContent">
+				 <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=1" title="Exposition">
+				    <!-- logo -->
+				    					<div class="imgL">	
+						<img src="https://documentation.univ-biskra.dz/opac_css/temp/cms_vign/bucentralelalia/small/article1.jpeg" alt="Exposition">
+					</div>
+				     
+				    <div class="ItemResume">
+					<!-- titre de l'article -->
+					<h4>Exposition</h4>
+					<!-- dates -->
+										    						  <h5 class="datesEven">Du 27/11/2024 au 30/11/2024</h5>
+					    					 
+					<!-- r&eacute;sum&eacute; -->
+					<div class="resume">
+					    						    
+  
+	  
+		  
+		 
+					    					    <p class="lirePlus">Lire la suite</p>
+					  </div><!-- resume  -->
+				    </div> <!-- fin itemResume -->
+				</a>      
+			    </div><!--fin itemContent-->
+                            <div class="clear"></div>
+                          </li>
+                                                                                        </ul>
+        </div><!-- fin SliderArt -->
+    </div><!-- fin Slider -->
+
+		<script type="text/javascript">
+			jQuery(document).ready(function() {
+				jQuery('#carousel_cms_module_articleslist_21').bxSlider({
+					//parametres generaux
+					mode: 					'fade',
+					speed: 					'500',
+					pause: 					'4000',	
+					autoStart: 				true,
+					autoHover: 				true,	
+					pager: 					true,	
+					moveSlides : 			'1',	
+					minSlides: 				'1',	
+					maxSlides: 				'1',
+					slideWidth: 			'600',
+					//parametres avances
+					slideMargin: 			'0',
+					randomStart: 			false,
+					easing: 				'linear',
+					captions: 				false,
+					adaptiveHeight:			false,
+					adaptiveHeightSpeed:	'500',
+					pagerType:				'full',
+					pagerShortSeparator:	'/',
+					controls:				true,
+					nextText:				'Suivant',
+					prevText:				'Pr&eacute;c&eacute;dent',
+					autoControls: 			false,
+					startText: 				'Jouer',
+					stopText: 				'Stop',
+					autoControlsCombine: 	false,
+					autoDirection: 			'next',
+					autoDelay: 				'0',
+					auto: 					true
+				});
+			});
+		</script></div><div id="cms_module_recordslist_23" class="cms_module_recordslist cms_module" style="visibility: visible; display: block;">    <div class="SliderHoriz">
+        <div class="SliderNot">
+                          <!-- titre du cadre --> 
+                              <h3>Acquisitions (titres en commande)</h3> 
+                          <ul id="carousel_cms_module_recordslist_23" class="" data-uk-grid-match> 
+                                  <!-- affichage d'une notice via template de notices -->
+                    <li class="cms_module_recordslist_23_item itemVign itemVignHoz itemSlider "> 
+                        <div class="listNotHz">
+                            <!-- vignette + lien -->
+                            <div class="imgL">
+                            <a href="./index.php?lvl=notice_display&amp;id=117575">
+                            <img src="./getimage.php?url_image=https%3A%2F%2Fdocumentation.univ-biskra.dz%2Fopac_css%2Fphotos%2Fcouvertures%2F%21%21isbn%21%21.jpg%3Bhttp%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9781984695239&amp;entity_id=&amp;vigurl=https%3A%2F%2Fwww.3ge-learning.com%2Fimage%2F9781984695239.jpg" title="Advanced Data Analytics and Visualization">
+                            </a>
+                            </div>
+                            <!-- titre tronqu&eacute; + lien -->
+<a href="https://documentation.univ-biskra.dz/opac_css/index.php?lvl=notice_display&amp;id=117575"><h3>Advanced Data Analytics and Visualization</h3>
+</a>
+                        </div>
+		    </li> 
+                                  <!-- affichage d'une notice via template de notices -->
+                    <li class="cms_module_recordslist_23_item itemVign itemVignHoz itemSlider "> 
+                        <div class="listNotHz">
+                            <!-- vignette + lien -->
+                            <div class="imgL">
+                            <a href="./index.php?lvl=notice_display&amp;id=117576">
+                            <img src="./getimage.php?url_image=https%3A%2F%2Fdocumentation.univ-biskra.dz%2Fopac_css%2Fphotos%2Fcouvertures%2F%21%21isbn%21%21.jpg%3Bhttp%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9781984694591&amp;entity_id=&amp;vigurl=https%3A%2F%2Fwww.3ge-learning.com%2Fimage%2F9781984694591.jpg" title="Applications of Artificial Intelligence in Operational Excellence">
+                            </a>
+                            </div>
+                            <!-- titre tronqu&eacute; + lien -->
+<a href="https://documentation.univ-biskra.dz/opac_css/index.php?lvl=notice_display&amp;id=117576"><h3>Applications of Artificial Intelligence in Operati...</h3>
+</a>
+                        </div>
+		    </li> 
+                                  <!-- affichage d'une notice via template de notices -->
+                    <li class="cms_module_recordslist_23_item itemVign itemVignHoz itemSlider "> 
+                        <div class="listNotHz">
+                            <!-- vignette + lien -->
+                            <div class="imgL">
+                            <a href="./index.php?lvl=notice_display&amp;id=117778">
+                            <img src="./getimage.php?url_image=https%3A%2F%2Fdocumentation.univ-biskra.dz%2Fopac_css%2Fphotos%2Fcouvertures%2F%21%21isbn%21%21.jpg%3Bhttp%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9781984697332&amp;entity_id=&amp;vigurl=https%3A%2F%2Fd1qo7emxwx6va0.cloudfront.net%2Fphoenixdata%2F59%2Fe4ce3c76feef999b051b52aad10ced7c%2Fpreview.jpg%3Fd%3D400x600" title="Artificial Intelligence and Deep Learning">
+                            </a>
+                            </div>
+                            <!-- titre tronqu&eacute; + lien -->
+<a href="https://documentation.univ-biskra.dz/opac_css/index.php?lvl=notice_display&amp;id=117778"><h3>Artificial Intelligence and Deep Learning</h3>
+</a>
+                        </div>
+		    </li> 
+                                  <!-- affichage d'une notice via template de notices -->
+                    <li class="cms_module_recordslist_23_item itemVign itemVignHoz itemSlider "> 
+                        <div class="listNotHz">
+                            <!-- vignette + lien -->
+                            <div class="imgL">
+                            <a href="./index.php?lvl=notice_display&amp;id=117586">
+                            <img src="./getimage.php?url_image=https%3A%2F%2Fdocumentation.univ-biskra.dz%2Fopac_css%2Fphotos%2Fcouvertures%2F%21%21isbn%21%21.jpg%3Bhttp%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9781779564856&amp;entity_id=&amp;vigurl=https%3A%2F%2Fd1qo7emxwx6va0.cloudfront.net%2Fphoenixdata%2F59%2F430eb0203eeb115ca6136c19f197267a%2Fpreview.jpg%3Fd%3D400x600" title="Clinical Microbiology">
+                            </a>
+                            </div>
+                            <!-- titre tronqu&eacute; + lien -->
+<a href="https://documentation.univ-biskra.dz/opac_css/index.php?lvl=notice_display&amp;id=117586"><h3>Clinical Microbiology</h3>
+</a>
+                        </div>
+		    </li> 
+                                  <!-- affichage d'une notice via template de notices -->
+                    <li class="cms_module_recordslist_23_item itemVign itemVignHoz itemSlider "> 
+                        <div class="listNotHz">
+                            <!-- vignette + lien -->
+                            <div class="imgL">
+                            <a href="./index.php?lvl=notice_display&amp;id=117588">
+                            <img src="./getimage.php?url_image=https%3A%2F%2Fdocumentation.univ-biskra.dz%2Fopac_css%2Fphotos%2Fcouvertures%2F%21%21isbn%21%21.jpg%3Bhttp%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9781779564962&amp;entity_id=&amp;vigurl=https%3A%2F%2Fd1qo7emxwx6va0.cloudfront.net%2Fphoenixdata%2F59%2F77a886ca0fcc276f84e68fb57f90e333%2Fpreview.jpg%3Fd%3D400x600" title="Clinical Neurology">
+                            </a>
+                            </div>
+                            <!-- titre tronqu&eacute; + lien -->
+<a href="https://documentation.univ-biskra.dz/opac_css/index.php?lvl=notice_display&amp;id=117588"><h3>Clinical Neurology</h3>
+</a>
+                        </div>
+		    </li> 
+                                  <!-- affichage d'une notice via template de notices -->
+                    <li class="cms_module_recordslist_23_item itemVign itemVignHoz itemSlider "> 
+                        <div class="listNotHz">
+                            <!-- vignette + lien -->
+                            <div class="imgL">
+                            <a href="./index.php?lvl=notice_display&amp;id=117592">
+                            <img src="./getimage.php?url_image=https%3A%2F%2Fdocumentation.univ-biskra.dz%2Fopac_css%2Fphotos%2Fcouvertures%2F%21%21isbn%21%21.jpg%3Bhttp%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9781779565235&amp;entity_id=&amp;vigurl=https%3A%2F%2Fd1qo7emxwx6va0.cloudfront.net%2Fphoenixdata%2F59%2F2884f411b0b2fe2b4266800d678704dd%2Fpreview.jpg%3Fd%3D400x600" title="Clinical toxicology">
+                            </a>
+                            </div>
+                            <!-- titre tronqu&eacute; + lien -->
+<a href="https://documentation.univ-biskra.dz/opac_css/index.php?lvl=notice_display&amp;id=117592"><h3>Clinical toxicology</h3>
+</a>
+                        </div>
+		    </li> 
+                                  <!-- affichage d'une notice via template de notices -->
+                    <li class="cms_module_recordslist_23_item itemVign itemVignHoz itemSlider "> 
+                        <div class="listNotHz">
+                            <!-- vignette + lien -->
+                            <div class="imgL">
+                            <a href="./index.php?lvl=notice_display&amp;id=117536">
+                            <img src="./getimage.php?url_image=https%3A%2F%2Fdocumentation.univ-biskra.dz%2Fopac_css%2Fphotos%2Fcouvertures%2F%21%21isbn%21%21.jpg%3Bhttp%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9781682511329&amp;entity_id=&amp;vigurl=http%3A%2F%2Fwww.unifacmanu.com.tw%2FbookImg%2F9781682511329.jpg" title="Electronics Technology Basics">
+                            </a>
+                            </div>
+                            <!-- titre tronqu&eacute; + lien -->
+<a href="https://documentation.univ-biskra.dz/opac_css/index.php?lvl=notice_display&amp;id=117536"><h3>Electronics Technology Basics</h3>
+</a>
+                        </div>
+		    </li> 
+                                  <!-- affichage d'une notice via template de notices -->
+                    <li class="cms_module_recordslist_23_item itemVign itemVignHoz itemSlider "> 
+                        <div class="listNotHz">
+                            <!-- vignette + lien -->
+                            <div class="imgL">
+                            <a href="./index.php?lvl=notice_display&amp;id=117572">
+                            <img src="./getimage.php?url_image=https%3A%2F%2Fdocumentation.univ-biskra.dz%2Fopac_css%2Fphotos%2Fcouvertures%2F%21%21isbn%21%21.jpg%3Bhttp%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9781984695741&amp;entity_id=&amp;vigurl=https%3A%2F%2Fwww.3ge-learning.com%2Fimage%2F9781984695741.jpg" title="Environmental Toxicology">
+                            </a>
+                            </div>
+                            <!-- titre tronqu&eacute; + lien -->
+<a href="https://documentation.univ-biskra.dz/opac_css/index.php?lvl=notice_display&amp;id=117572"><h3>Environmental Toxicology</h3>
+</a>
+                        </div>
+		    </li> 
+                                  <!-- affichage d'une notice via template de notices -->
+                    <li class="cms_module_recordslist_23_item itemVign itemVignHoz itemSlider "> 
+                        <div class="listNotHz">
+                            <!-- vignette + lien -->
+                            <div class="imgL">
+                            <a href="./index.php?lvl=notice_display&amp;id=117525">
+                            <img src="./getimage.php?url_image=https%3A%2F%2Fdocumentation.univ-biskra.dz%2Fopac_css%2Fphotos%2Fcouvertures%2F%21%21isbn%21%21.jpg%3Bhttp%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9781682511343&amp;entity_id=&amp;vigurl=https%3A%2F%2Fencrypted-tbn0.gstatic.com%2Fimages%3Fq%3Dtbn%3AANd9GcTdEuFElS9WFjwe5Fc2bYE9tEbaRK3JVyCGUA%26s" title="Fundamentals of Fluid Mechanics">
+                            </a>
+                            </div>
+                            <!-- titre tronqu&eacute; + lien -->
+<a href="https://documentation.univ-biskra.dz/opac_css/index.php?lvl=notice_display&amp;id=117525"><h3>Fundamentals of Fluid Mechanics</h3>
+</a>
+                        </div>
+		    </li> 
+                                  <!-- affichage d'une notice via template de notices -->
+                    <li class="cms_module_recordslist_23_item itemVign itemVignHoz itemSlider "> 
+                        <div class="listNotHz">
+                            <!-- vignette + lien -->
+                            <div class="imgL">
+                            <a href="./index.php?lvl=notice_display&amp;id=117589">
+                            <img src="./getimage.php?url_image=https%3A%2F%2Fdocumentation.univ-biskra.dz%2Fopac_css%2Fphotos%2Fcouvertures%2F%21%21isbn%21%21.jpg%3Bhttp%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9781779565082&amp;entity_id=&amp;vigurl=https%3A%2F%2Fd1qo7emxwx6va0.cloudfront.net%2Fphoenixdata%2F59%2Fdf9dea5861808df22f134ddf25b78980%2Fpreview.jpg%3Fd%3D400x600" title="General Pharmacology PRODUCT OVERVIEW">
+                            </a>
+                            </div>
+                            <!-- titre tronqu&eacute; + lien -->
+<a href="https://documentation.univ-biskra.dz/opac_css/index.php?lvl=notice_display&amp;id=117589"><h3>General Pharmacology PRODUCT OVERVIEW</h3>
+</a>
+                        </div>
+		    </li> 
+                                  <!-- affichage d'une notice via template de notices -->
+                    <li class="cms_module_recordslist_23_item itemVign itemVignHoz itemSlider "> 
+                        <div class="listNotHz">
+                            <!-- vignette + lien -->
+                            <div class="imgL">
+                            <a href="./index.php?lvl=notice_display&amp;id=117553">
+                            <img src="./getimage.php?url_image=https%3A%2F%2Fdocumentation.univ-biskra.dz%2Fopac_css%2Fphotos%2Fcouvertures%2F%21%21isbn%21%21.jpg%3Bhttp%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9781984695406&amp;entity_id=&amp;vigurl=https%3A%2F%2Fwww.3ge-learning.com%2Fimage%2F9781984695406.jpg" title="Geoenvironmental engineering and management">
+                            </a>
+                            </div>
+                            <!-- titre tronqu&eacute; + lien -->
+<a href="https://documentation.univ-biskra.dz/opac_css/index.php?lvl=notice_display&amp;id=117553"><h3>Geoenvironmental engineering and management</h3>
+</a>
+                        </div>
+		    </li> 
+                                  <!-- affichage d'une notice via template de notices -->
+                    <li class="cms_module_recordslist_23_item itemVign itemVignHoz itemSlider "> 
+                        <div class="listNotHz">
+                            <!-- vignette + lien -->
+                            <div class="imgL">
+                            <a href="./index.php?lvl=notice_display&amp;id=117593">
+                            <img src="./getimage.php?url_image=https%3A%2F%2Fdocumentation.univ-biskra.dz%2Fopac_css%2Fphotos%2Fcouvertures%2F%21%21isbn%21%21.jpg%3Bhttp%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9781779565464&amp;entity_id=&amp;vigurl=https%3A%2F%2Fd1qo7emxwx6va0.cloudfront.net%2Fphoenixdata%2F59%2F4dbd0834bcf87f87e78f978a230a6f3e%2Fpreview.jpg%3Fd%3D400x600" title="Imaging in medical sciences">
+                            </a>
+                            </div>
+                            <!-- titre tronqu&eacute; + lien -->
+<a href="https://documentation.univ-biskra.dz/opac_css/index.php?lvl=notice_display&amp;id=117593"><h3>Imaging in medical sciences</h3>
+</a>
+                        </div>
+		    </li> 
+                                  <!-- affichage d'une notice via template de notices -->
+                    <li class="cms_module_recordslist_23_item itemVign itemVignHoz itemSlider "> 
+                        <div class="listNotHz">
+                            <!-- vignette + lien -->
+                            <div class="imgL">
+                            <a href="./index.php?lvl=notice_display&amp;id=117590">
+                            <img src="./getimage.php?url_image=https%3A%2F%2Fdocumentation.univ-biskra.dz%2Fopac_css%2Fphotos%2Fcouvertures%2F%21%21isbn%21%21.jpg%3Bhttp%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9781779565297&amp;entity_id=&amp;vigurl=https%3A%2F%2Fd1qo7emxwx6va0.cloudfront.net%2Fphoenixdata%2F59%2F685e430f2d0ad0e97e61501137e35b25%2Fpreview.jpg%3Fd%3D400x600" title="Introduction to Maternal and Child Health">
+                            </a>
+                            </div>
+                            <!-- titre tronqu&eacute; + lien -->
+<a href="https://documentation.univ-biskra.dz/opac_css/index.php?lvl=notice_display&amp;id=117590"><h3>Introduction to Maternal and Child Health</h3>
+</a>
+                        </div>
+		    </li> 
+                                  <!-- affichage d'une notice via template de notices -->
+                    <li class="cms_module_recordslist_23_item itemVign itemVignHoz itemSlider "> 
+                        <div class="listNotHz">
+                            <!-- vignette + lien -->
+                            <div class="imgL">
+                            <a href="./index.php?lvl=notice_display&amp;id=117591">
+                            <img src="./getimage.php?url_image=https%3A%2F%2Fdocumentation.univ-biskra.dz%2Fopac_css%2Fphotos%2Fcouvertures%2F%21%21isbn%21%21.jpg%3Bhttp%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9781984698193&amp;entity_id=&amp;vigurl=https%3A%2F%2Fd1qo7emxwx6va0.cloudfront.net%2Fphoenixdata%2F59%2Fbbbd602228c61c84340336226df139d8%2Fpreview.jpg%3Fd%3D400x600" title="Urbanization and Society">
+                            </a>
+                            </div>
+                            <!-- titre tronqu&eacute; + lien -->
+<a href="https://documentation.univ-biskra.dz/opac_css/index.php?lvl=notice_display&amp;id=117591"><h3>Urbanization and Society</h3>
+</a>
+                        </div>
+		    </li> 
+                                  <!-- affichage d'une notice via template de notices -->
+                    <li class="cms_module_recordslist_23_item itemVign itemVignHoz itemSlider "> 
+                        <div class="listNotHz">
+                            <!-- vignette + lien -->
+                            <div class="imgL">
+                            <a href="./index.php?lvl=notice_display&amp;id=117745">
+                            <img src="./getimage.php?url_image=https%3A%2F%2Fdocumentation.univ-biskra.dz%2Fopac_css%2Fphotos%2Fcouvertures%2F%21%21isbn%21%21.jpg%3Bhttp%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9781984697462&amp;entity_id=&amp;vigurl=https%3A%2F%2Fd1qo7emxwx6va0.cloudfront.net%2Fphoenixdata%2F59%2F0491bb345096e663e5d11250a4fbe704%2Fpreview.jpg%3Fd%3D400x600" title="Water Quality and Pollution Control">
+                            </a>
+                            </div>
+                            <!-- titre tronqu&eacute; + lien -->
+<a href="https://documentation.univ-biskra.dz/opac_css/index.php?lvl=notice_display&amp;id=117745"><h3>Water Quality and Pollution Control</h3>
+</a>
+                        </div>
+		    </li> 
+                              </ul>
+        </div>
+       <!-- SliderNot END -->
+    </div> 
+
+		<script type="text/javascript">
+			jQuery(document).ready(function() {
+				jQuery('#carousel_cms_module_recordslist_23').bxSlider({
+					//parametres generaux
+					mode: 					'horizontal',
+					speed: 					'500',
+					pause: 					'4000',	
+					autoStart: 				true,
+					autoHover: 				true,	
+					pager: 					true,	
+					moveSlides : 			'1',	
+					minSlides: 				'2',	
+					maxSlides: 				'4',
+					slideWidth: 			'200',
+					//parametres avances
+					slideMargin: 			'20',
+					randomStart: 			false,
+					easing: 				'ease-in-out',
+					captions: 				false,
+					adaptiveHeight:			false,
+					adaptiveHeightSpeed:	'500',
+					pagerType:				'short',
+					pagerShortSeparator:	'/',
+					controls:				true,
+					nextText:				'Suivant',
+					prevText:				'Pr&eacute;c&eacute;dent',
+					autoControls: 			true,
+					startText: 				'Jouer',
+					stopText: 				'Stop',
+					autoControlsCombine: 	true,
+					autoDirection: 			'next',
+					autoDelay: 				'0',
+					auto: 					true
+				});
+			});
+		</script></div><div id="cms_module_articleslist_38" class="cms_module_articleslist cms_module" style="position: static; left: 0px; top: 0px;">     <div class="listselect">
+	  
+	<!-- titre du cadre -->
+	 	     <h3>Production scientifique</h3>
+	          <div class="uk-grid uk-grid-collapse uk-grid-match" data-uk-grid-match="{target:'.imgL'}" data-uk-grid-margin>
+                                                                                   <div class="itemVign uk-width-1-1 uk-width-small-1-2 uk-width-medium-1-4">
+                 <!-- logo + lien -->
+                 <div class="imgL uk-vertical-align uk-panel uk-panel-box">
+                     <div class="uk-vertical-align-middle">
+                      <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=3" title="Actes de seminaires">
+                          <img src="https://documentation.univ-biskra.dz/opac_css/temp/cms_vign/bucentralelalia/vign/article3.png" alt="Actes de seminaires">
+                      </a>
+                     </div>
+                 </div>
+                 <!-- titre + lien -->
+                 <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=3" title="Actes de seminaires">
+                    <h4>Actes de seminaires</h4>
+                 </a>
+                 </div><!-- fin itemVign -->
+                                                     <div class="itemVign uk-width-1-1 uk-width-small-1-2 uk-width-medium-1-4">
+                 <!-- logo + lien -->
+                 <div class="imgL uk-vertical-align uk-panel uk-panel-box">
+                     <div class="uk-vertical-align-middle">
+                      <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=16" title="Articles publi&eacute;s">
+                          <img src="https://documentation.univ-biskra.dz/opac_css/temp/cms_vign/bucentralelalia/vign/article16.png" alt="Articles publi&eacute;s">
+                      </a>
+                     </div>
+                 </div>
+                 <!-- titre + lien -->
+                 <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=16" title="Articles publi&eacute;s">
+                    <h4>Articles publi&eacute;s</h4>
+                 </a>
+                 </div><!-- fin itemVign -->
+                                                                                                                                                                                         <div class="itemVign uk-width-1-1 uk-width-small-1-2 uk-width-medium-1-4">
+                 <!-- logo + lien -->
+                 <div class="imgL uk-vertical-align uk-panel uk-panel-box">
+                     <div class="uk-vertical-align-middle">
+                      <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=13" title="Cours en ligne">
+                          <img src="https://documentation.univ-biskra.dz/opac_css/temp/cms_vign/bucentralelalia/vign/article13.jpeg" alt="Cours en ligne">
+                      </a>
+                     </div>
+                 </div>
+                 <!-- titre + lien -->
+                 <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=13" title="Cours en ligne">
+                    <h4>Cours en ligne</h4>
+                 </a>
+                 </div><!-- fin itemVign -->
+                                                                                                                                                                   <div class="itemVign uk-width-1-1 uk-width-small-1-2 uk-width-medium-1-4">
+                 <!-- logo + lien -->
+                 <div class="imgL uk-vertical-align uk-panel uk-panel-box">
+                     <div class="uk-vertical-align-middle">
+                      <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=84" title="Inscriptions et quitus">
+                          <img src="https://documentation.univ-biskra.dz/opac_css/temp/cms_vign/bucentralelalia/vign/article84.jpeg" alt="Inscriptions et quitus">
+                      </a>
+                     </div>
+                 </div>
+                 <!-- titre + lien -->
+                 <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=84" title="Inscriptions et quitus">
+                    <h4>Inscriptions et quitus</h4>
+                 </a>
+                 </div><!-- fin itemVign -->
+                                                     <div class="itemVign uk-width-1-1 uk-width-small-1-2 uk-width-medium-1-4">
+                 <!-- logo + lien -->
+                 <div class="imgL uk-vertical-align uk-panel uk-panel-box">
+                     <div class="uk-vertical-align-middle">
+                      <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=76" title="M&eacute;moires magist&eacute;re">
+                          <img src="https://documentation.univ-biskra.dz/opac_css/temp/cms_vign/bucentralelalia/vign/article76.png" alt="M&eacute;moires magist&eacute;re">
+                      </a>
+                     </div>
+                 </div>
+                 <!-- titre + lien -->
+                 <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=76" title="M&eacute;moires magist&eacute;re">
+                    <h4>M&eacute;moires magist&eacute;re</h4>
+                 </a>
+                 </div><!-- fin itemVign -->
+                                                     <div class="itemVign uk-width-1-1 uk-width-small-1-2 uk-width-medium-1-4">
+                 <!-- logo + lien -->
+                 <div class="imgL uk-vertical-align uk-panel uk-panel-box">
+                     <div class="uk-vertical-align-middle">
+                      <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=82" title="Monographies">
+                          <img src="https://documentation.univ-biskra.dz/opac_css/temp/cms_vign/bucentralelalia/vign/article82.png" alt="Monographies">
+                      </a>
+                     </div>
+                 </div>
+                 <!-- titre + lien -->
+                 <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=82" title="Monographies">
+                    <h4>Monographies</h4>
+                 </a>
+                 </div><!-- fin itemVign -->
+                                                                                                 <div class="itemVign uk-width-1-1 uk-width-small-1-2 uk-width-medium-1-4">
+                 <!-- logo + lien -->
+                 <div class="imgL uk-vertical-align uk-panel uk-panel-box">
+                     <div class="uk-vertical-align-middle">
+                      <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=24" title="P&eacute;riodiques">
+                          <img src="https://documentation.univ-biskra.dz/opac_css/temp/cms_vign/bucentralelalia/vign/article24.png" alt="P&eacute;riodiques">
+                      </a>
+                     </div>
+                 </div>
+                 <!-- titre + lien -->
+                 <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=24" title="P&eacute;riodiques">
+                    <h4>P&eacute;riodiques</h4>
+                 </a>
+                 </div><!-- fin itemVign -->
+                                                                           <div class="itemVign uk-width-1-1 uk-width-small-1-2 uk-width-medium-1-4">
+                 <!-- logo + lien -->
+                 <div class="imgL uk-vertical-align uk-panel uk-panel-box">
+                     <div class="uk-vertical-align-middle">
+                      <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=81" title="Polycopies">
+                          <img src="https://documentation.univ-biskra.dz/opac_css/temp/cms_vign/bucentralelalia/vign/article81.png" alt="Polycopies">
+                      </a>
+                     </div>
+                 </div>
+                 <!-- titre + lien -->
+                 <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=81" title="Polycopies">
+                    <h4>Polycopies</h4>
+                 </a>
+                 </div><!-- fin itemVign -->
+                                                                                                 <div class="itemVign uk-width-1-1 uk-width-small-1-2 uk-width-medium-1-4">
+                 <!-- logo + lien -->
+                 <div class="imgL uk-vertical-align uk-panel uk-panel-box">
+                     <div class="uk-vertical-align-middle">
+                      <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=163" title="Revue de l'universit&eacute;">
+                          <img src="https://documentation.univ-biskra.dz/opac_css/temp/cms_vign/bucentralelalia/vign/article163.png" alt="Revue de l'universit&eacute;">
+                      </a>
+                     </div>
+                 </div>
+                 <!-- titre + lien -->
+                 <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=163" title="Revue de l'universit&eacute;">
+                    <h4>Revue de l'universit&eacute;</h4>
+                 </a>
+                 </div><!-- fin itemVign -->
+                                                                           <div class="itemVign uk-width-1-1 uk-width-small-1-2 uk-width-medium-1-4">
+                 <!-- logo + lien -->
+                 <div class="imgL uk-vertical-align uk-panel uk-panel-box">
+                     <div class="uk-vertical-align-middle">
+                      <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=164" title="Th&egrave;se de doctorat">
+                          <img src="https://documentation.univ-biskra.dz/opac_css/temp/cms_vign/bucentralelalia/vign/article164.png" alt="Th&egrave;se de doctorat">
+                      </a>
+                     </div>
+                 </div>
+                 <!-- titre + lien -->
+                 <a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=164" title="Th&egrave;se de doctorat">
+                    <h4>Th&egrave;se de doctorat</h4>
+                 </a>
+                 </div><!-- fin itemVign -->
+                                                                                                                        </div>
+     </div>
+</div><div id="navigator" fixed="yes" style="position: relative; left: -4px; top: 23px;">
+<table style="width:100%"><tr><td class="navig_actions_first_screen"><a href="./index.php?lvl=index" class="navig_etageres"><span>Nouvelle recherche</span></a></td>
+</tr></table></div><div id="intro_message"><div class="p2"></div></div><!-- fermeture de #navigator -->
+	
+		</div><!-- fin DIV main_hors_footer --></div><!-- /div id=main -->
+
+		<!-- /div id=intro -->		
+		<div id="bandeau" fixed="yes"><div id="resume_panier" class="empty" fixed="yes" style="visibility: visible; display: block;"></div><div id="accueil" fixed="yes">
+
+<h3><span onclick='document.location="./index.php?"' style="cursor: pointer;">Accueil</span></h3>
+<p class="centered"><a href="./index.php?"><img src="images/site/livre.png" alt="Accueil" style="border:0px" class="center"></a></p>
+
+					</div><div id="connexion" fixed="yes">
+
+			<h3 class="login_invite">COMPTE LECTEUR</h3><div id="login_form"><form action="" method="post" name="myform"><label>acc&eacute;der &agrave; votre compte de lecteur</label><br>
+				<input type="text" name="login" class="login" size="14" placeholder="Exemple:202035031220"><br>
+				<input type="password" name="password" class="password" size="8" placeholder="Mot de passe" value="">
+                <input type="hidden" name="force_login" value="1">
+				<input type="submit" name="ok" value="Connection au compte" class="bouton"></form><a class="mdp_forgotten" href="./askmdp.php">Demande de mot de passe</a><br><a class="subs_not_yet_subscriber" href="./subscribe.php">Demande de preinscription</a></div>
+
+			</div><div id="adresse" fixed="yes">
+
+		<h3>Adresse</h3>
+
+		<span>
+			
+
+
+<br>
+			<br>
+			07000 Biskra<br>
+			Alg&eacute;rie&nbsp;<br>
+			
+
+033 54 32 99<br><span id="opac_biblio_email">
+			<a href="mailto:library@univ-biskra.dz" title="library@univ-biskra.dz">contact</a></span></span>
+	    </div><div id="cms_module_articleslist_130" class="cms_module_articleslist cms_module" style="visibility: visible; display: block;">    <div class="brevesBandeau">
+	  
+	<!-- titre du cadre -->
+	 	    <h3>Recherche documentaire</h3>
+	  
+		<!-- affichage d'un article -->
+	 	      <div class="itemAbrege">
+		    			<a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=170" title="Catalogues des biblioth&eacute;ques">
+		    	
+			<!-- titre de l'article -->
+			<h4>Catalogues des biblioth&eacute;ques</h4>
+			<!-- r&eacute;sum&eacute; -->  
+			<div class="resume"> 
+			    				Ce portail vous permet l'identification des ressources disponibles dans les diff&eacute;rentes biblioth&egrave;ques de l'universit&eacute; .
+			    			</div>
+			<!-- lire la suite -->
+						      <p class="lirePlus">Lire la suite</p>
+			 
+			<!-- liens -->
+					    			</a>
+		    	      </div><!-- fin itemAbrege -->
+	 	      <div class="itemAbrege">
+		    	
+			<!-- titre de l'article -->
+			<h4>Br&egrave;ve 1</h4>
+			<!-- r&eacute;sum&eacute; -->  
+			<div class="resume"> 
+			    				Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+ tempor incididunt ut labore et dolore magna aliqua.
+			    			</div>
+			<!-- lire la suite -->
+			 
+			<!-- liens -->
+						    <ul class="liensExtrn">
+								    <li><a href="http://sigb.net" target="_blank">Exemple de lien</a></li>
+							    </ul>
+					    	      </div><!-- fin itemAbrege -->
+	 	      <div class="itemAbrege">
+		    			<a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=21" title="Syst&egrave;me National Documentation">
+		    	
+			<!-- titre de l'article -->
+			<h4>Syst&egrave;me National Documentation</h4>
+			<!-- r&eacute;sum&eacute; -->  
+			<div class="resume"> 
+			    				Le Syst&egrave;me National de Documentation en Ligne est un portail documentaire permettant l&rsquo;acc&egrave;s a la documentation &eacute;lectronique nationale et internationale.
+			    			</div>
+			<!-- lire la suite -->
+						      <p class="lirePlus">Lire la suite</p>
+			 
+			<!-- liens -->
+					    			</a>
+		    	      </div><!-- fin itemAbrege -->
+	 	      <div class="itemAbrege">
+		    	
+			<!-- titre de l'article -->
+			<h4>Th&egrave;ses en ligne sur e-print</h4>
+			<!-- r&eacute;sum&eacute; -->  
+			<div class="resume"> 
+			    				Afin de permettre une visibilit&eacute; et accessibilit&eacute; du patrimoine scientifique de l'universit&eacute; ,le portail offre la possibilit&eacute; d'acc&egrave;s direct aux m&ecirc;mes ressources d&eacute;pos&eacute;s sur le portail national des t 
+			    			</div>
+			<!-- lire la suite -->
+			 
+			<!-- liens -->
+					    	      </div><!-- fin itemAbrege -->
+	 	      <div class="itemAbrege">
+		    			<a href="./index.php?lvl=cmspage&amp;pageid=4&amp;id_article=171" title="Catalogue Collectif d'Algerie">
+		    	
+			<!-- titre de l'article -->
+			<h4>Catalogue Collectif d'Algerie</h4>
+			<!-- r&eacute;sum&eacute; -->  
+			<div class="resume"> 
+			    				CCdz(Catalogue Collectif d'Alg&eacute;rie) est un catalogue national qui regroupe l&rsquo;ensemble des fonds documentaires des biblioth&egrave;ques alg&eacute;riennes.&nbsp;
+			    			</div>
+			<!-- lire la suite -->
+						      <p class="lirePlus">Lire la suite</p>
+			 
+			<!-- liens -->
+					    			</a>
+		    	      </div><!-- fin itemAbrege -->
+	    </div> <!-- fin brevesBandeau -->
+</div>
+<!-- fermeture #accueil -->
+<!-- fermeture #connexion -->
+<!-- fermeture #adresse --></div><div id="bandeau_2" fixed="yes"></div><div id="footer" style="visibility: visible; display: block;" fixed="yes">
+
+<div id="cms_module_htmlcode_134" class="cms_module_htmlcode cms_module" style="visibility: visible; display: block;"><div class="Ancre">
+	<a href="#pmbopac" title="Top" data-uk-smooth-scroll>Haut de page</a>
+</div></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module uk-width-1-1 bottom-nav uk-grid-margin" style="visibility: visible; display: block;"><div class="liensFooter">
+<nav class="uk-navbar"><ul class="uk-navbar-nav"><li id="containAccessibiliy">
+</li><li>
+<a href="https://documentation.univ-biskra.dz/opac_css/index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=143" class="fa fa-copyright" style="font-size:20px;color:white">
+Charte Portail 
+</a>
+</li>
+<li>
+<a href="https://documentation.univ-biskra.dz/opac_css/index.php?lvl=contact_form" class="fa fa-envelope" style="font-size:20px;color:white">
+Contact B.U.
+</a>
+</li>
+<li>
+
+
+</li>
+<li>
+
+
+</li>
+<li>
+<a href="https://business.facebook.com/latest/inbox/messenger?asset_id=100730678514593&amp;nav_ref=bm_home_redirect&amp;mailbox_id=&amp;selected_item_id=100033915726630s=" fa fa-facebook-square style="font-size:20px;color:white">
+
+</a></li>
+<li>
+
+</li>
+<li>
+<a href="https://univ-biskra.dz/index.php/ar/45-news/anonces/2192-%D8%A5%D8%B9%D9%84%D8%A7%D9%86%D8%A7%D8%AA-%D8%AE%D8%A7%D8%B5%D8%A9-%D8%A8%D8%A7%D9%84%D9%85%D9%83%D8%AA%D8%A8%D8%A9-%D8%A7%D9%84%D9%85%D8%B1%D9%83%D8%B2%D9%8A%D8%A9" class="fa fa-google-plus-circle" style="font-size:20px;color:white">B.U.sur l'UMK
+</a>
+</li>
+ &nbsp;
+
+
+	
+
+		
+		
+</ul></nav></div> 
+
+		</div><span id="footer_rss" fixed="yes">
+	
+</span>
+<span id="footer_link_sup" fixed="yes">
+		</span><span id="footer_link_website" fixed="yes">
+	<a class="footer_biblio_name" href="https://documentation.univ-biskra.dz/opac_css/" title="
+
+
+">
+
+
+</a> &nbsp;
+</span><span id="footer_link_pmb" fixed="yes">
+https://scholar.google.com/ &nbsp;
+		<a class="lien_pmb_footer" href="https://www.sigb.net" title="...une solution libre pour la m&eacute;diath&egrave;que..." target="_blank">pmb</a> 	
+</span><div id="accessibility" fixed="yes" style="visibility: visible; display: block;">
+
+		<ul class="accessibility_font_size">
+			<li class="accessibility_font_size_small"><a href="javascript:set_font_size(-1);" title="R&eacute;duire le texte">A-</a></li>
+			<li class="accessibility_font_size_normal"><a href="javascript:set_font_size(0);" title="R&eacute;initialiser le texte">A</a></li>
+			<li class="accessibility_font_size_big"><a href="javascript:set_font_size(1);" title="Agrandir le texte">A+</a></li>
+		</ul>
+		</div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div></div></div><!-- /div id=container -->
+		
+		<script type="text/javascript">init_drag();	//rechercher!!</script> 
+		
+			<script type="text/javascript">
+				var tarteaucitron_messages = pmbDojo.messages.getMessages("tarteaucitron");
+				if(tarteaucitron_messages.length) {
+					tarteaucitronCustomText = {};
+					tarteaucitron_messages.forEach(function(message) {
+						if(parseInt(message.code.indexOf(":")) !== -1) {
+							let tarteaucitron_messages_group = message.code.split(":");
+							if(typeof tarteaucitronCustomText[tarteaucitron_messages_group[0]] == "undefined") {
+								tarteaucitronCustomText[tarteaucitron_messages_group[0]] = {};
+							}
+							tarteaucitronCustomText[tarteaucitron_messages_group[0]][tarteaucitron_messages_group[1]] = message.message; 
+						} else {
+							tarteaucitronCustomText[message.code] = message.message;
+						}
+					});
+				}
+			</script>
+			<script type="text/javascript" src="./includes/javascript/tarteaucitron/tarteaucitron.js"></script>
+		<script type="text/javascript">
+	        tarteaucitron.init({
+	    	  "privacyUrl": "", /* Privacy policy url */
+	
+	    	  "hashtag": "#PhpMyBibli-COOKIECONSENT", /* Open the panel with this hashtag */
+	    	  "cookieName": "PhpMyBibli-COOKIECONSENT", /* Cookie name */
+	    
+	    	  "orientation": "bottom", /* Banner position (top - bottom - popup) */
+	       
+	          "groupServices": true, /* Group services by category */
+	                           
+	    	  "showAlertSmall": false, /* Show the small banner on bottom right */
+	    	  "cookieslist": false, /* Show the cookie list */
+				                           
+	          "closePopup": false, /* Show a close X on the banner */
+	
+	          "showIcon": false, /* Show cookie icon to manage cookies */
+	          "iconSrc": "./images/cookie.png", /* Optionnal: URL or base64 encoded image */
+	          "iconPosition": "BottomRight", /* BottomRight, BottomLeft, TopRight and TopLeft */
+	
+	    	  "adblocker": false, /* Show a Warning if an adblocker is detected */
+	                           
+	          "DenyAllCta" : true, /* Show the deny all button */
+	          "AcceptAllCta" : true, /* Show the accept all button when highPrivacy on */
+	          "highPrivacy": true, /* HIGHLY RECOMMANDED Disable auto consent */
+	                           
+	    	  "handleBrowserDNTRequest": false, /* If Do Not Track == 1, disallow all */
+	
+	    	  "removeCredit": true, /* Remove credit link */
+	    	  "moreInfoLink": false, /* Show more info link */
+	
+	          "useExternalCss": false, /* If false, the tarteaucitron.css file will be loaded */
+	          "useExternalJs": false, /* If false, the tarteaucitron.js file will be loaded */
+				
+	    	  //"cookieDomain": ".my-multisite-domaine.fr", /* Shared cookie for multisite */
+	                          
+	          "readmoreLink": "", /* Change the default readmore link */
+	
+	          "mandatory": true, /* Show a message about mandatory cookies */
+	        });
+ 
+        </script>
+		<script type="text/javascript">
+		tarteaucitron.services.pmbstatopac = {
+		  	"key": "pmbstatopac",
+			"type": "analytic",
+			"name": "PMB (Statistiques)",
+			"needConsent": true,
+			"cookies": [],
+			"uri": "https://documentation.univ-biskra.dz/opac_css/",
+			"readmoreLink": "", // If you want to change readmore link
+			"js": function () {
+			    "use strict";
+			    // When user allow cookie
+		  	},
+		  	"fallback": function () {
+		    	"use strict";
+		    	// when use deny cookie
+		  	}
+		};
+		</script>
+		<script type="text/javascript">
+        	(tarteaucitron.job = tarteaucitron.job || []).push("pmbstatopac");
+        </script>
+		</body>
+		</html>

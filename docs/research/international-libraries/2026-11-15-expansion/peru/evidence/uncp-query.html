@@ -1,0 +1,2390 @@
+
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: opac-results.tt -->
+
+
+
+
+<html lang="es-ES" class="no-js">
+<head>
+
+<title>Catálogo en línea Koha &rsaquo;   Resultados de la búsqueda para 'Cien anos de soledad'  </title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha 19.0501000" /> <!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="shortcut icon" href="/opac-tmpl/bootstrap/images/favicon.ico" type="image/x-icon" />
+
+ <link href="/opac-tmpl/bootstrap/lib/bootstrap/css/bootstrap.min_19.0501000.css" type="text/css" rel="stylesheet">
+
+
+
+ <link href="/opac-tmpl/bootstrap/lib/jquery/jquery-ui_19.0501000.css" rel="stylesheet" type="text/css">
+
+
+
+
+ <link href="/opac-tmpl/bootstrap/css/opac_19.0501000.css" type="text/css" rel="stylesheet">
+
+
+ 
+ <link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/css/colors.css" />
+ 
+
+
+<link href="/opac-tmpl/bootstrap/css/print_19.0501000.css" media="print" rel="stylesheet" type="text/css">
+
+<style>/* Cambiar el color de la barra de navegación azul*/
+.navbar-inverse .navbar-inner {
+    background-image: linear-gradient(to bottom, #3168D5, #3168D5);
+    border-color: #3168D5;
+    background-color: #3168D5;
+}
+ 
+/* Cambia la fuente de la barra de navegación a blanco */
+.navbar-inverse .brand, .navbar-inverse .nav > li > a, #members a {
+    color: #fff !important;
+}
+ 
+/* Elimina las barras negras de la barra de navegación*/
+.navbar-inverse .divider-vertical {
+    border-left: none;
+    border-right: none;
+}</style>
+
+<link rel="unapi-server" type="application/xml" title="unAPI" href="/cgi-bin/koha/unapi" />
+
+<!-- Respond.js brings responsive layout behavior to IE < v.9 -->
+<!--[if lt IE 9]>
+ <script src="/opac-tmpl/bootstrap/lib/respond.min.js"></script>
+<![endif]-->
+<script>
+    function _(s) { return s } // dummy function for gettext
+</script>
+<script src="/opac-tmpl/bootstrap/lib/modernizr.min_19.0501000.js"></script>
+<link href="/opac-tmpl/bootstrap/lib/font-awesome/css/font-awesome.min_19.0501000.css" type="text/css" rel="stylesheet">
+
+
+
+
+
+
+
+<link href="/cgi-bin/koha/opac-search.pl?idx=kw&q=Cien%20anos%20de%20soledad&count=50&sort_by=acqdate_dsc&format=rss2" rel="alternate" title="  Buscar contenido RSS" type="application/rss+xml" />
+</head>
+
+
+
+
+ 
+
+
+ 
+
+
+
+
+ 
+
+<body ID="results" class="branch-default scrollto" >
+
+
+
+
+
+
+<div id="wrap">
+ <div id="header-region" class="noprint">
+ <div class="navbar navbar-inverse navbar-static-top">
+ <div class="navbar-inner">
+ <div class="container-fluid">
+ <h1 id="logo">
+ <a class="brand" href="/cgi-bin/koha/opac-main.pl">
+  Catálogo en línea  </a>
+ </h1>
+ 
+ <ul class="nav">
+ 
+ 
+ 
+ <li class="dropdown">
+ <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="listsmenu" role="button" title="Mostrar listas"><i class="fa fa-list fa-icon-white"></i> <span class="listslabel">Listas</span> <b class="caret"></b></a>
+ <ul aria-labelledby="listsmenu" role="menu" class="dropdown-menu">
+ 
+ <li role="presentation"><a href="#" tabindex="-1" class="menu-inactive" role="menuitem">No hay listas públicas</a></li>
+ 
+ <li class="divider" role="presentation"></li>
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;category=1" tabindex="-1" role="menuitem"><strong>Sus listas</strong></a></li>
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-user.pl" tabindex="-1" class="menu-inactive loginModal-trigger" role="menuitem">Ingrese para crear sus propias listas</a></li>
+ 
+ 
+ 
+ </ul> <!-- / .dropdown-menu -->
+ </li> <!-- / .dropdown -->
+ 
+ </ul> <!-- / .nav -->
+ <div id="listsDetails"></div>
+ 
+ <a id="user-menu-trigger" class="pull-right" href="#"><i class="fa fa-user fa-icon-white"></i> <span class="caret"></span></a>
+ <div id="members">
+ <ul class="nav pull-right">
+
+ 
+
+
+
+ 
+ 
+ 
+ <li><a href="/cgi-bin/koha/opac-user.pl" class="login-link loginModal-trigger" role="button" data-toggle="modal">Ingresar a su cuenta</a></li>
+ 
+ 
+ 
+ 
+ 
+ <li><p class="navbar-text"><a class="login-link" href="/cgi-bin/koha/opac-search-history.pl" title="Ver su historial de búsqueda">Historial de búsqueda</a> [<a class="logout clearsh" href="/cgi-bin/koha/opac-search-history.pl?action=delete" title="Eliminar historial de búsqueda">x</a>]</p></li>
+ <li class="divider-vertical"></li>
+ 
+ 
+ 
+ 
+ </ul>
+ </div> <!-- /members -->
+ 
+ </div> <!-- /container-fluid -->
+ </div> <!-- /navbar-inner -->
+ </div> <!-- /navbar -->
+
+ 
+ </div> <!-- / header-region -->
+
+ <div class="container-fluid">
+ <div class="row-fluid">
+ <div id="opac-main-search">
+ <div class="span12">
+ 
+ 
+ 
+ <div class="mastheadsearch librarypulldown">
+ 
+ 
+ <form name="searchform" method="get" action="/cgi-bin/koha/opac-search.pl" id="searchform" class="form-inline">
+ <label for="masthead_search"> Buscar  </label>
+
+ <select name="idx" id="masthead_search">
+ 
+ <option value="">Catálogo de biblioteca</option>
+ 
+ 
+ <option value="ti">Título</option>
+ 
+ 
+ <option value="au">Autor</option>
+ 
+ 
+ <option value="su">Tema</option>
+ 
+ 
+ <option value="nb">ISBN</option>
+ 
+ 
+ <option value="ns">ISSN</option>
+ 
+ 
+ <option value="se">Series</option>
+ 
+ 
+ 
+ <option value="callnum">Signatura</option>
+ 
+ 
+ </select>
+
+ 
+ 
+ <input class="transl1" id="translControl1" name="q" title="Escriba el término de búsqueda" type="text" value="Cien anos de soledad" /><span id="translControl"></span>
+ 
+
+ 
+
+ 
+ <div class="input-append">
+ <select name="branch_group_limit" id="select_library">
+ <option value="">Todas las bibliotecas</option>
+
+ 
+
+ 
+ 
+ <option value="branch:BC">Biblioteca Central</option>
+ 
+ 
+ 
+ <option value="branch:CCAA">Ciencias Agrarias</option>
+ 
+ 
+ 
+ <option value="branch:FE">Facultad de Educación</option>
+ 
+ 
+ 
+ <option value="branch:MAIN">Main Library</option>
+ 
+ 
+
+ 
+ </select>
+ <button type="submit" id="searchsubmit" class="btn btn-primary">Ir</button>
+ </div>
+ 
+
+ </form>
+ 
+ </div> <!-- / .mastheadsearch -->
+ 
+
+ <div class="row-fluid">
+ <div id="moresearches">
+ <ul>
+ <li><a href="/cgi-bin/koha/opac-search.pl">Búsqueda avanzada</a></li>
+ 
+ 
+ <li><a href="/cgi-bin/koha/opac-authorities-home.pl">Búsqueda de autoridad</a></li>
+ 
+ <li><a href="/cgi-bin/koha/opac-tags.pl">Nube de etiquetas</a></li>
+ 
+ 
+ 
+ 
+ 
+ 
+ </ul>
+ </div> <!-- /#moresearches -->
+ </div> <!-- /.row-fluid -->
+
+ 
+ </div> <!-- /.span10 -->
+ </div> <!-- /.opac-main-search -->
+ </div> <!-- / .row-fluid -->
+ </div> <!-- /.container-fluid -->
+
+ <!-- Login form hidden by default, used for modal window -->
+ <div id="loginModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+ <div class="modal-header">
+ <button type="button" class="closebtn" data-dismiss="modal" aria-hidden="true">×</button>
+ <h3 id="modalLoginLabel">Ingresar a su cuenta</h3>
+ </div>
+ <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="modalAuth">
+ <input type="hidden" name="has-search-query" id="has-search-query" value="" />
+ <div class="modal-body">
+ 
+ <input type="hidden" name="koha_login_context" value="opac" />
+ <fieldset class="brief">
+ <label for="muserid">Usuario:</label><input type="text" id="muserid" name="userid" />
+ <label for="mpassword">Contraseña:</label><input type="password" id="mpassword" name="password" />
+ 
+ 
+ 
+ </fieldset>
+ </div>
+ <div class="modal-footer">
+ <input class="btn btn-primary" type="submit" value="Ingresar" />
+ </div>
+ </form> <!-- /#auth -->
+ </div> <!-- /#modalAuth -->
+
+
+ <div class="main">
+ <ul class="breadcrumb">
+ <li><a href="/cgi-bin/koha/opac-main.pl">Inicio</a> <span class="divider">&rsaquo;</span></li>
+ 
+ 
+ <li>
+ 
+ <a href="#" title="Has buscado  para 'kw,wrdl: Cien anos de soledad'">Resultados de la búsqueda para 'Cien anos de soledad'</a>
+ 
+ </li>
+ 
+ </ul>
+
+ 
+
+ <div id="maincontent" class="container-fluid">
+ <div class="row-fluid">
+ 
+ <div class="span2">
+ <div id="facetcontainer">
+ <!-- FACETS START -->
+ 
+
+
+
+ <div id="search-facets">
+ <h4><a href="#" class="menu-collapse-toggle">Refinar su búsqueda</a></h4>
+ <ul class="menu-collapse">
+ <li id="availability_facet"><h5 id="facet-availability">Disponibilidad</h5>
+ <ul>
+ <li>
+ 
+ <a href="/cgi-bin/koha/opac-search.pl?idx=kw&q=Cien%20anos%20de%20soledad&amp;sort_by=relevance_dsc&amp;limit=available">Limitar a ítems actualmente disponibles.</a>
+ 
+ </li>
+ </ul>
+ 
+ </li>
+
+ 
+ 
+ <li id="au_id">
+ <h5 id="facet-authors">Autores</h5>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <ul>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <li>
+ 
+ 
+ <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=kw&q=Cien%20anos%20de%20soledad&amp;sort_by=relevance_dsc&limit=au:ESPINOZA%20ZAGASTIZ%C3%81BAL,%20JUANA%20MAR%C3%8DA" title="ESPINOZA ZAGASTIZÁBAL, JUANA MARÍA">ESPINOZA ZAGASTIZÁBA...</a></span>
+ 
+ 
+ </li>
+ 
+ 
+ 
+ <li>
+ 
+ 
+ <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=kw&q=Cien%20anos%20de%20soledad&amp;sort_by=relevance_dsc&limit=au:GARCIA%20MARQUEZ,%20GABRIEL" title="GARCIA MARQUEZ, GABRIEL">GARCIA MARQUEZ, GABR...</a></span>
+ 
+ 
+ </li>
+ 
+ 
+ 
+ <li>
+ 
+ 
+ <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=kw&q=Cien%20anos%20de%20soledad&amp;sort_by=relevance_dsc&limit=au:GARC%C3%8DA%20M%C3%81RQUEZ,%20GABRIEL" title="GARCÍA MÁRQUEZ, GABRIEL">GARCÍA MÁRQUEZ, GABR...</a></span>
+ 
+ 
+ </li>
+ 
+ 
+ </ul>
+ </li>
+ 
+ 
+ 
+ <li id="holdingbranch_id">
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <h5 id="facet-holding-libraries">Bibliotecas depositarias</h5>
+ 
+ 
+ <ul>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <li>
+ 
+ 
+ <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=kw&q=Cien%20anos%20de%20soledad&amp;sort_by=relevance_dsc&limit=holdingbranch:BC" title="BC">Biblioteca Central</a></span>
+ 
+ 
+ </li>
+ 
+ 
+ 
+ <li>
+ 
+ 
+ <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=kw&q=Cien%20anos%20de%20soledad&amp;sort_by=relevance_dsc&limit=holdingbranch:FE" title="FE">Facultad de Educación</a></span>
+ 
+ 
+ </li>
+ 
+ 
+ </ul>
+ </li>
+ 
+ 
+ 
+ <li id="itype_id">
+ 
+ 
+ 
+ 
+ 
+ <h5 id="facet-itemtypes">Tipos de ítem</h5>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <ul>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <li>
+ 
+ 
+ <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=kw&q=Cien%20anos%20de%20soledad&amp;sort_by=relevance_dsc&limit=itype:LB" title="LB">Libros</a></span>
+ 
+ 
+ </li>
+ 
+ 
+ 
+ <li>
+ 
+ 
+ <span class="facet-label"><a href="/cgi-bin/koha/opac-search.pl?idx=kw&q=Cien%20anos%20de%20soledad&amp;sort_by=relevance_dsc&limit=itype:TESIS" title="TESIS">Tesis</a></span>
+ 
+ 
+ </li>
+ 
+ 
+ </ul>
+ </li>
+ 
+ 
+ 
+ 
+ </ul>
+ </div> <!-- / #search-facets -->
+
+ 
+
+
+ <!-- FACETS END -->
+ </div>
+ </div>
+ 
+
+ <div class="span10 maincontent">
+
+ 
+ <p id="numresults">
+ <strong>Su búsqueda retornó 9 resultados.</strong>
+  <a href="/cgi-bin/koha/opac-search.pl?idx=kw&q=Cien%20anos%20de%20soledad&amp;format=rss2" class="rsssearchlink noprint">
+ <i class="fa fa-rss rsssearchicon" title="Suscribirse a esta búsqueda"></i>
+ </a>
+ 
+ </p>
+ 
+
+ <div id="userresults">
+ 
+
+ <div id="top-pages">
+</div>
+
+ 
+ 
+ 
+ 
+ 
+
+ <!-- Search Results Table -->
+ 
+
+ <div class="searchresults">
+ <form action="/cgi-bin/koha/opac-search.pl" method="get" name="bookbag_form" id="bookbag_form" class="checkboxed">
+ 
+ 
+ <input type="hidden" name="idx" value="kw"/>
+ 
+ <input type="hidden" name="q" value="Cien anos de soledad"/>
+ 
+ 
+ 
+
+ <div id="toolbar" class="toolbar clearfix">
+ 
+ <div class="highlight_controls noprint">
+ <a href="#" class="highlight_toggle" id="highlight_toggle_off">Quitar resaltado</a>
+ <a href="#" class="highlight_toggle" id="highlight_toggle_on">Resaltar</a>
+ </div>
+ 
+ 
+ <div class="sort_by pull-right">
+ <select id="sort_by" class="resort" name="sort_by"> <option value="relevance">Relevancia</option>
+<optgroup label="Popularidad">
+ 
+ <option value="popularity_dsc">Popularidad (mayor a menor)</option>
+ 
+ 
+ <option value="popularity_asc">Popularidad (menor a mayor)</option>
+ 
+</optgroup>
+<optgroup label="Autor">
+ 
+ <option value="author_az">Autor (A-Z)</option>
+ 
+ 
+ <option value="author_za">Autor (Z-A)</option>
+ 
+</optgroup>
+<optgroup label="Signatura">
+ 
+ <option value="call_number_asc">Signatura topográfica (0-9 a A-Z)</option>
+ 
+ 
+ <option value="call_number_dsc">Signatura topográfica (Z-A a 9-0)</option>
+ 
+</optgroup>
+<optgroup label="Fechas">
+ 
+ <option value="pubdate_dsc">Publicación/Fecha de Copyright: Nuevos a viejos</option>
+ 
+ 
+ <option value="pubdate_asc">Publicación/Fecha de Copyright: Viejos a nuevos</option>
+ 
+ 
+ <option value="acqdate_dsc">Fecha de adquisición: Nuevos a viejos</option>
+ 
+ 
+ <option value="acqdate_asc">Fecha de adquisición: Viejos a nuevos</option>
+ 
+</optgroup>
+<optgroup label="Título">
+ 
+ <option value="title_az">Título (A-Z)</option>
+ 
+ 
+ <option value="title_za">Título (Z-A)</option>
+ 
+</optgroup>
+ </select>
+ <input class="btn btn-small clearfix" id="sortsubmit" type="submit" value="Ir" />
+ </div>
+ 
+ </div> <!-- / #toolbar -->
+
+ <div id="selections-toolbar" class="toolbar noprint">
+ <!-- checkall, clearall are now needed for placehold -->
+ <span class="checkall"></span>
+ <span class="clearall"></span> <span class="sep">|</span>
+
+ <span class="links">
+ 
+ <span class="addto"></span>
+ 
+ <span id="placehold"><!-- input class="submit" type="submit" value="Place Hold"/ --></span>
+
+ 
+ </span> <!-- / .links -->
+ </div> <!-- / #selections-toolbar -->
+
+ <!-- TABLE RESULTS START -->
+ <table class="table table-striped">
+
+ <!-- Actual Search Results -->
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ 
+ <input type="checkbox" class="cb" id="bib54734" name="biblionumber" value="54734" /> <label for="bib54734"></label>
+ 
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 1.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_LB">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=54734">
+ 
+ <span title="54734" class="54734" id="local-thumbnail1"></span>
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ <span class="no-image">No hay imagen de cubierta disponible</span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;amp;rft.genre=book&amp;amp;rft.btitle=CIEN%20A%C3%91OS%20DE%20SOLEDAD&amp;amp;rft.au=GARC%C3%8DA%20M%C3%81RQUEZ%2C%20GABRIEL"></span>
+ 
+
+ 
+ 
+ 
+ <a class="title" href="/cgi-bin/koha/opac-detail.pl?biblionumber=54734" title="Ver detalles para este título">
+    CIEN AÑOS DE SOLEDAD  </a>
+
+  por <a class="author" href="/cgi-bin/koha/opac-search.pl?q=au:GARC%C3%8DA%20M%C3%81RQUEZ,%20GABRIEL" title="Buscar trabajos de este autor">GARCÍA MÁRQUEZ, GABRIEL</a>
+ 
+
+ <span class="results_summary publisher">
+ <span class="label">Publicación:</span>
+ 57a ed. Buenos Aires, Sudamericana, 1982 
+ 
+ 
+ 
+ 
+ . 359 páginas.
+ 
+  Ubicación: Tercer piso - Referencias. Código: 869.634/C49/1982
+ 
+ </span>
+
+ 
+
+ 
+
+ <span class="results_summary">
+ <span class="label">Disponibilidad:</span>
+ 
+ <span class="available"><strong>Ítems disponibles:</strong>
+ 
+ 
+ <span>
+ 
+
+ 
+ Biblioteca Central
+ 
+
+ 
+ <span class="shelvingloc"></span>
+ [<a href="/cgi-bin/koha/opac-search.pl?q=callnum:%22869.634/C49/1982%22">869.634/C49/1982</a>]
+ 
+ (1),
+ </span>
+ 
+ </span>
+ 
+
+ <span class="unavailable">
+        </span>
+ </span> <!-- / .results_summary -->
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=54734">Hacer reserva</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ 
+ <input type="checkbox" class="cb" id="bib54735" name="biblionumber" value="54735" /> <label for="bib54735"></label>
+ 
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 2.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_LB">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=54735">
+ 
+ <span title="54735" class="54735" id="local-thumbnail2"></span>
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ <span class="no-image">No hay imagen de cubierta disponible</span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;amp;rft.genre=book&amp;amp;rft.btitle=CIEN%20A%C3%91OS%20DE%20SOLEDAD&amp;amp;rft.au=GARC%C3%8DA%20M%C3%81RQUEZ%2C%20GABRIEL"></span>
+ 
+
+ 
+ 
+ 
+ <a class="title" href="/cgi-bin/koha/opac-detail.pl?biblionumber=54735" title="Ver detalles para este título">
+    CIEN AÑOS DE SOLEDAD  </a>
+
+  por <a class="author" href="/cgi-bin/koha/opac-search.pl?q=au:GARC%C3%8DA%20M%C3%81RQUEZ,%20GABRIEL" title="Buscar trabajos de este autor">GARCÍA MÁRQUEZ, GABRIEL</a>
+ 
+
+ <span class="results_summary publisher">
+ <span class="label">Publicación:</span>
+ Bogotá, Oveja Negra, 1984 
+ 
+ 
+ 
+ 
+ . 325 páginas.
+ 
+  Ubicación: Tercer piso - Referencias. Código: 869.634/C49/1984
+ 
+ </span>
+
+ 
+
+ 
+
+ <span class="results_summary">
+ <span class="label">Disponibilidad:</span>
+ 
+ <span class="available"><strong>Ítems disponibles:</strong>
+ 
+ 
+ <span>
+ 
+
+ 
+ Biblioteca Central
+ 
+
+ 
+ <span class="shelvingloc"></span>
+ [<a href="/cgi-bin/koha/opac-search.pl?q=callnum:%22869.634/C49/1984%22">869.634/C49/1984</a>]
+ 
+ (1),
+ </span>
+ 
+ </span>
+ 
+
+ <span class="unavailable">
+        </span>
+ </span> <!-- / .results_summary -->
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=54735">Hacer reserva</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ 
+ <input type="checkbox" class="cb" id="bib54736" name="biblionumber" value="54736" /> <label for="bib54736"></label>
+ 
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 3.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_LB">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=54736">
+ 
+ <span title="54736" class="54736" id="local-thumbnail3"></span>
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ <span class="no-image">No hay imagen de cubierta disponible</span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;amp;rft.genre=book&amp;amp;rft.btitle=CIEN%20A%C3%91OS%20DE%20SOLEDAD&amp;amp;rft.au=GARC%C3%8DA%20M%C3%81RQUEZ%2C%20GABRIEL"></span>
+ 
+
+ 
+ 
+ 
+ <a class="title" href="/cgi-bin/koha/opac-detail.pl?biblionumber=54736" title="Ver detalles para este título">
+    CIEN AÑOS DE SOLEDAD  </a>
+
+  por <a class="author" href="/cgi-bin/koha/opac-search.pl?q=au:GARC%C3%8DA%20M%C3%81RQUEZ,%20GABRIEL" title="Buscar trabajos de este autor">GARCÍA MÁRQUEZ, GABRIEL</a>
+ 
+
+ <span class="results_summary publisher">
+ <span class="label">Publicación:</span>
+ 12a ed. Bogotá, Oveja Negra, 1985 
+ 
+ 
+ 
+ 
+ . 325 páginas.
+ 
+  Ubicación: Tercer piso - Referencias. Código: 869.634/C49/1985
+ 
+ </span>
+
+ 
+
+ 
+
+ <span class="results_summary">
+ <span class="label">Disponibilidad:</span>
+ 
+ <span class="available"><strong>Ítems disponibles:</strong>
+ 
+ 
+ <span>
+ 
+
+ 
+ Biblioteca Central
+ 
+
+ 
+ <span class="shelvingloc"></span>
+ [<a href="/cgi-bin/koha/opac-search.pl?q=callnum:%22869.634/C49/1985%22">869.634/C49/1985</a>]
+ 
+ (1),
+ </span>
+ 
+ </span>
+ 
+
+ <span class="unavailable">
+        </span>
+ </span> <!-- / .results_summary -->
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=54736">Hacer reserva</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ 
+ <input type="checkbox" class="cb" id="bib54737" name="biblionumber" value="54737" /> <label for="bib54737"></label>
+ 
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 4.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_LB">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=54737">
+ 
+ <span title="54737" class="54737" id="local-thumbnail4"></span>
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ <span class="no-image">No hay imagen de cubierta disponible</span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;amp;rft.genre=book&amp;amp;rft.btitle=CIEN%20A%C3%91OS%20DE%20SOLEDAD&amp;amp;rft.au=GARC%C3%8DA%20M%C3%81RQUEZ%2C%20GABRIEL"></span>
+ 
+
+ 
+ 
+ 
+ <a class="title" href="/cgi-bin/koha/opac-detail.pl?biblionumber=54737" title="Ver detalles para este título">
+    CIEN AÑOS DE SOLEDAD  </a>
+
+  por <a class="author" href="/cgi-bin/koha/opac-search.pl?q=au:GARC%C3%8DA%20M%C3%81RQUEZ,%20GABRIEL" title="Buscar trabajos de este autor">GARCÍA MÁRQUEZ, GABRIEL</a>
+ 
+
+ <span class="results_summary publisher">
+ <span class="label">Publicación:</span>
+ 16a ed. Bogotá, Oveja Negra, 1986 
+ 
+ 
+ 
+ 
+ . 325 páginas.
+ 
+  Ubicación: Tercer piso - Referencias. Código: 869.634/C49/1986
+ 
+ </span>
+
+ 
+
+ 
+
+ <span class="results_summary">
+ <span class="label">Disponibilidad:</span>
+ 
+ <span class="available"><strong>Ítems disponibles:</strong>
+ 
+ 
+ <span>
+ 
+
+ 
+ Biblioteca Central
+ 
+
+ 
+ <span class="shelvingloc"></span>
+ [<a href="/cgi-bin/koha/opac-search.pl?q=callnum:%22869.634/C49/1986%22">869.634/C49/1986</a>]
+ 
+ (1),
+ </span>
+ 
+ </span>
+ 
+
+ <span class="unavailable">
+        </span>
+ </span> <!-- / .results_summary -->
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=54737">Hacer reserva</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ 
+ <input type="checkbox" class="cb" id="bib54738" name="biblionumber" value="54738" /> <label for="bib54738"></label>
+ 
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 5.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_LB">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=54738">
+ 
+ <span title="54738" class="54738" id="local-thumbnail5"></span>
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ <span class="no-image">No hay imagen de cubierta disponible</span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;amp;rft.genre=book&amp;amp;rft.btitle=CIEN%20A%C3%91OS%20DE%20SOLEDAD&amp;amp;rft.au=GARC%C3%8DA%20M%C3%81RQUEZ%2C%20GABRIEL"></span>
+ 
+
+ 
+ 
+ 
+ <a class="title" href="/cgi-bin/koha/opac-detail.pl?biblionumber=54738" title="Ver detalles para este título">
+    CIEN AÑOS DE SOLEDAD  </a>
+
+  por <a class="author" href="/cgi-bin/koha/opac-search.pl?q=au:GARC%C3%8DA%20M%C3%81RQUEZ,%20GABRIEL" title="Buscar trabajos de este autor">GARCÍA MÁRQUEZ, GABRIEL</a>
+ 
+
+ <span class="results_summary publisher">
+ <span class="label">Publicación:</span>
+ Bogotá, Norma, 1997 
+ 
+ 
+ 
+ 
+ . 404 páginas.
+ 
+  Ubicación: Tercer piso - Referencias. Código: 869.634/C49/1997
+ 
+ </span>
+
+ 
+
+ 
+
+ <span class="results_summary">
+ <span class="label">Disponibilidad:</span>
+ 
+ <span class="available"><strong>Ítems disponibles:</strong>
+ 
+ 
+ <span>
+ 
+
+ 
+ Biblioteca Central
+ 
+
+ 
+ <span class="shelvingloc"></span>
+ [<a href="/cgi-bin/koha/opac-search.pl?q=callnum:%22869.634/C49/1997%22">869.634/C49/1997</a>]
+ 
+ (1),
+ </span>
+ 
+ </span>
+ 
+
+ <span class="unavailable">
+        </span>
+ </span> <!-- / .results_summary -->
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=54738">Hacer reserva</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ 
+ <input type="checkbox" class="cb" id="bib54742" name="biblionumber" value="54742" /> <label for="bib54742"></label>
+ 
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 6.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_LB">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=54742">
+ 
+ <span title="54742" class="54742" id="local-thumbnail6"></span>
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ <span class="no-image">No hay imagen de cubierta disponible</span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;amp;rft.genre=book&amp;amp;rft.btitle=CIEN%20A%C3%91OS%20DE%20SOLEDAD&amp;amp;rft.au=GARC%C3%8DA%20M%C3%81RQUEZ%2C%20GABRIEL"></span>
+ 
+
+ 
+ 
+ 
+ <a class="title" href="/cgi-bin/koha/opac-detail.pl?biblionumber=54742" title="Ver detalles para este título">
+    CIEN AÑOS DE SOLEDAD  </a>
+
+  por <a class="author" href="/cgi-bin/koha/opac-search.pl?q=au:GARC%C3%8DA%20M%C3%81RQUEZ,%20GABRIEL" title="Buscar trabajos de este autor">GARCÍA MÁRQUEZ, GABRIEL</a>
+ 
+
+ <span class="results_summary publisher">
+ <span class="label">Publicación:</span>
+ 15a ed. Buenos Aires, s/e, 1969 
+ 
+ 
+ 
+ 
+ . 351 páginas.
+ 
+  Ubicación: Tercer piso - Referencias. Código: 869.634/G25/1969
+ 
+ </span>
+
+ 
+
+ 
+
+ <span class="results_summary">
+ <span class="label">Disponibilidad:</span>
+ 
+ <span class="available"><strong>Ítems disponibles:</strong>
+ 
+ 
+ <span>
+ 
+
+ 
+ Biblioteca Central
+ 
+
+ 
+ <span class="shelvingloc"></span>
+ [<a href="/cgi-bin/koha/opac-search.pl?q=callnum:%22869.634/G25/1969%22">869.634/G25/1969</a>]
+ 
+ (1),
+ </span>
+ 
+ </span>
+ 
+
+ <span class="unavailable">
+        </span>
+ </span> <!-- / .results_summary -->
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=54742">Hacer reserva</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ 
+ <input type="checkbox" class="cb" id="bib54743" name="biblionumber" value="54743" /> <label for="bib54743"></label>
+ 
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 7.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_LB">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=54743">
+ 
+ <span title="54743" class="54743" id="local-thumbnail7"></span>
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ <span class="no-image">No hay imagen de cubierta disponible</span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;amp;rft.genre=book&amp;amp;rft.btitle=CIEN%20A%C3%91OS%20DE%20SOLEDAD&amp;amp;rft.au=GARC%C3%8DA%20M%C3%81RQUEZ%2C%20GABRIEL"></span>
+ 
+
+ 
+ 
+ 
+ <a class="title" href="/cgi-bin/koha/opac-detail.pl?biblionumber=54743" title="Ver detalles para este título">
+    CIEN AÑOS DE SOLEDAD  </a>
+
+  por <a class="author" href="/cgi-bin/koha/opac-search.pl?q=au:GARC%C3%8DA%20M%C3%81RQUEZ,%20GABRIEL" title="Buscar trabajos de este autor">GARCÍA MÁRQUEZ, GABRIEL</a>
+ 
+
+ <span class="results_summary publisher">
+ <span class="label">Publicación:</span>
+ 2a ed. Bogotá, La Oveja Negra, 1987 
+ 
+ 
+ 
+ 
+ . 325 páginas.
+ 
+  Ubicación: Tercer piso - Referencias. Código: 869.634/G25/1987
+ 
+ </span>
+
+ 
+
+ 
+
+ <span class="results_summary">
+ <span class="label">Disponibilidad:</span>
+ 
+ <span class="available"><strong>Ítems disponibles:</strong>
+ 
+ 
+ <span>
+ 
+
+ 
+ Biblioteca Central
+ 
+
+ 
+ <span class="shelvingloc"></span>
+ [<a href="/cgi-bin/koha/opac-search.pl?q=callnum:%22869.634/G25/1987%22">869.634/G25/1987</a>]
+ 
+ (1),
+ </span>
+ 
+ </span>
+ 
+
+ <span class="unavailable">
+        </span>
+ </span> <!-- / .results_summary -->
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=54743">Hacer reserva</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ 
+ <input type="checkbox" class="cb" id="bib88184" name="biblionumber" value="88184" /> <label for="bib88184"></label>
+ 
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 8.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_TESIS">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=88184">
+ 
+ <span title="88184" class="88184" id="local-thumbnail8"></span>
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ <span class="no-image">No hay imagen de cubierta disponible</span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;amp;rft.genre=book&amp;amp;rft.btitle=TESIS%3A%20OBSERVACIONES%20Y%20CONTRADICCIONES%20TEM%C3%81TICAS%20EN%20LA%20NOVELA%20CIEN%20A%C3%91OS%20DE%20SOLEDAD.&amp;amp;rft.au=ESPINOZA%20ZAGASTIZ%C3%81BAL%2C%20JUANA%20MAR%C3%8DA"></span>
+ 
+
+ 
+ 
+ 
+ <a class="title" href="/cgi-bin/koha/opac-detail.pl?biblionumber=88184" title="Ver detalles para este título">
+    TESIS: OBSERVACIONES Y CONTRADICCIONES TEMÁTICAS EN LA NOVELA CIEN AÑOS DE SOLEDAD.  </a>
+
+  por <a class="author" href="/cgi-bin/koha/opac-search.pl?q=au:ESPINOZA%20ZAGASTIZ%C3%81BAL,%20JUANA%20MAR%C3%8DA" title="Buscar trabajos de este autor">ESPINOZA ZAGASTIZÁBAL, JUANA MARÍA</a>
+ 
+
+ <span class="results_summary publisher">
+ <span class="label">Publicación:</span>
+ Huancayo, 1972. 
+ 
+ 
+ 
+ 
+ . 61 páginas.
+ 
+  Ubicación: Quinto Piso. Código: PEL/44/1972
+ 
+ </span>
+
+ 
+
+ 
+
+ <span class="results_summary">
+ <span class="label">Disponibilidad:</span>
+ 
+ <span class="available"><strong>Ítems disponibles:</strong>
+ 
+ 
+ <span>
+ 
+
+ 
+ Biblioteca Central
+ 
+
+ 
+ <span class="shelvingloc"></span>
+ [<a href="/cgi-bin/koha/opac-search.pl?q=callnum:%22PEL/44/1972%22">PEL/44/1972</a>]
+ 
+ (1),
+ </span>
+ 
+ </span>
+ 
+
+ <span class="unavailable">
+        </span>
+ </span> <!-- / .results_summary -->
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=88184">Hacer reserva</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ <tr>
+ 
+ <td class="select selectcol">
+ 
+ 
+ <input type="checkbox" class="cb" id="bib107884" name="biblionumber" value="107884" /> <label for="bib107884"></label>
+ 
+ 
+ </td>
+ 
+ <td class="select selectcol">
+ 
+ 9.
+ 
+ </td>
+
+ 
+
+ 
+ <td class="bibliocol">
+ <div class="coverimages itemtype_LB">
+ <a class="p1" href="/cgi-bin/koha/opac-detail.pl?biblionumber=107884">
+ 
+ <span title="107884" class="107884" id="local-thumbnail9"></span>
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ <span title="107884" class="9972402207" id="gbs-thumbnail9"></span>
+ 
+ 
+
+ 
+
+ 
+
+ 
+ </a>
+
+ 
+
+ 
+ </div>
+ 
+ <!-- COinS / Openurl -->
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;amp;rft.genre=book&amp;amp;rft.btitle=CIEN%20A%C3%91OS%20DE%20SOLEDAD&amp;amp;rft.isbn=9972402207&amp;amp;rft.au=GARCIA%20MARQUEZ%2C%20GABRIEL"></span>
+ 
+
+ 
+ 
+ 
+ <a class="title" href="/cgi-bin/koha/opac-detail.pl?biblionumber=107884" title="Ver detalles para este título">
+    CIEN AÑOS DE SOLEDAD  </a>
+
+  por <a class="author" href="/cgi-bin/koha/opac-search.pl?q=au:GARCIA%20MARQUEZ,%20GABRIEL" title="Buscar trabajos de este autor">GARCIA MARQUEZ, GABRIEL</a>
+ 
+
+ <span class="results_summary publisher">
+ <span class="label">Publicación:</span>
+ El comercio ediciones, Madrid, España, 2002 
+ 
+ 
+ 
+ 
+ . 380 p.
+ 
+  Ubicación: primer piso FE. Código: 868.993/G26/2002
+ 
+ </span>
+
+ 
+
+ 
+
+ <span class="results_summary">
+ <span class="label">Disponibilidad:</span>
+ 
+ <span class="available"><strong>Ítems disponibles:</strong>
+ 
+ 
+ <span>
+ 
+
+ 
+ Facultad de Educación
+ 
+
+ 
+ <span class="shelvingloc"></span>
+ [<a href="/cgi-bin/koha/opac-search.pl?q=callnum:%22868.993/G26/2002%22">868.993/G26/2002</a>]
+ 
+ (1),
+ </span>
+ 
+ </span>
+ 
+
+ <span class="unavailable">
+        </span>
+ </span> <!-- / .results_summary -->
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ <div class="actions-menu noprint">
+ 
+ 
+ 
+ <span class="actions"><a class="hold" href="/cgi-bin/koha/opac-reserve.pl?biblionumber=107884">Hacer reserva</a></span><!-- add back when available 0 holds in queue-->
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ </div>
+
+ 
+
+
+
+ </td>
+ </tr>
+ 
+ </table>
+ </form> <!-- / #bookbag_form -->
+
+ <form id="hold_form" name="hold_form" method="get" action="/cgi-bin/koha/opac-reserve.pl">
+ <!-- The value will be set by holdBiblioNums() in basket.js -->
+ <input id="hold_form_biblios" type="hidden" name="biblionumbers" value=""/>
+ </form>
+ </div> <!-- / .searchresults -->
+
+ <div id="bottom-pages">
+</div>
+
+ 
+
+ 
+ </div> <!-- / #userresults -->
+ </div> <!-- /.span10/12 -->
+ </div> <!-- / .row-fluid -->
+ </div> <!-- / .container-fluid -->
+ </div><!-- / .main -->
+
+
+
+
+ 
+ 
+ <div class="container-fluid">
+ <div class="row-fluid">
+ <div class="span12">
+ <div id="opaccredits" class="noprint">
+ <p style="text-align: center;"><span style="font-size: 12px;"><span style="color: #008080;"><img style="float: left;" src="data:image/png;base64,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" alt="" width="100" height="94" /></span></span></p>
+<p style="text-align: left;"><span style="font-size: 12px;"><span style="color: #008080;"><span style="color: #ffffff;">--</span>Copyright &copy; 2018, Universidad Nacional del Centro del Per&uacute;.</span><br /><span style="color: #008080;"><span style="color: #ffffff;">--</span>Centro de Recursos para el Aprendizaje y la Investigaci&oacute;n</span><br /><span style="color: #008080;"><span style="color: #ffffff;">--</span>Av. Mariscal Castilla N&deg; 3909 - El Tambo - Huancayo</span><br /><span style="color: #008080;"><span style="color: #ffffff;">--</span>Central Telef&oacute;nica: (064) 48 10 60 - Fax: (064) 24 85 95</span></span></p>
+<p style="text-align: center;"><span style="font-size: 12px;"><span style="color: #008080;"><br /></span></span></p>
+ </div>
+ </div>
+ </div>
+ </div>
+ 
+
+ 
+
+</div> <!-- / #wrap in masthead.inc -->
+
+ 
+
+
+
+
+<!-- JavaScript includes -->
+<script src="/opac-tmpl/bootstrap/lib/jquery/jquery_19.0501000.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/jquery/jquery-ui_19.0501000.js"></script>
+<script>
+// Resolve name collision between jQuery UI and Twitter Bootstrap
+$.widget.bridge('uitooltip', $.ui.tooltip);
+</script>
+<script src="/opac-tmpl/bootstrap/lib/bootstrap/js/bootstrap.min_19.0501000.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/fontfaceobserver.min_19.0501000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/global_19.0501000.js"></script>
+<script>
+    Modernizr.load([
+        // Test need for polyfill
+        {
+            test: window.matchMedia,
+            nope: "/opac-tmpl/bootstrap/lib/media.match.min_19.0501000.js"
+        },
+        // and then load enquire
+        "/opac-tmpl/bootstrap/lib/enquire.min_19.0501000.js",
+        "/opac-tmpl/bootstrap/js/script_19.0501000.js",
+    ]);
+
+    // Fix for datepicker in a modal
+    $.fn.modal.Constructor.prototype.enforceFocus = function () {};
+</script>
+
+
+<script src="/opac-tmpl/lib/emoji-picker/js/config_19.0501000.js"></script>
+<script src="/opac-tmpl/lib/emoji-picker/js/util_19.0501000.js"></script>
+<script src="/opac-tmpl/lib/emoji-picker/js/jquery.emojiarea_19.0501000.js"></script>
+<script src="/opac-tmpl/lib/emoji-picker/js/emoji-picker_19.0501000.js"></script>
+
+<script>
+    //<![CDATA[
+    var MSG_CONFIRM_AGAIN = _("Advertencia: No puede deshacerse. Por favor confirmar nuevamente")
+    var MSG_DELETE_SEARCH_HISTORY = _("¿Está seguro que desea eliminar su historial de búsqueda?");
+    var MSG_NO_SUGGESTION_SELECTED = _("No se seleccionó ninguna sugerencia");
+    var MSG_SEARCHING = _("Buscando %s...");
+    var MSG_ERROR_SEARCHING_COLLECTION = _("Error de la búsqueda en la colección %s");
+    var MSG_NO_RESULTS_FOUND_IN_COLLECTION = _("No se han encontrado resultados en la colección de la biblioteca %s");
+    var MSG_RESULTS_FOUND_IN_COLLECTION = _("Se encontraron %s resultados en la colección de la biblioteca %s");
+    var MSG_BY = _("por");
+    var MSG_TYPE = _("Tipo");
+    var MSG_NEXT = _("Siguiente");
+    var MSG_PREVIOUS = _("Previo");
+    var MSG_CHECKOUTS = _("Préstamos");
+    var MSG_NO_CHECKOUTS = _("Sin préstamos");
+    var MSG_CHECK_OUT = _("Préstamo");
+    var MSG_CHECK_OUT_CONFIRM = _("¿Está seguro de querer prestar esta éste ítem?");
+    var MSG_CHECKED_OUT_UNTIL = _("Prestado hasta %s");
+    var MSG_CHECK_IN = _("Devolución");
+    var MSG_CHECK_IN_CONFIRM = _("¿Está seguro de querer devolver éste ítem?");
+    var MSG_NO_CHECKOUTS = _("Sin préstamos");
+    var MSG_DOWNLOAD = _("Bajar");
+    var MSG_HOLDS = _("Reservas");
+    var MSG_NO_HOLDS = _("Sin reservas");
+    var MSG_PLACE_HOLD = _("Hacer reserva");
+    var MSG_CANCEL_HOLD = _("Cancelar");
+    var MSG_CANCEL_HOLD_CONFIRM = _("¿Está seguro que desea cancelar esta reserva?");
+    var MSG_ON_HOLD = _("Reservado");
+    
+        var MSG_BASKET_EMPTY = _("Su carrito está vacío");
+        var MSG_RECORD_IN_BASKET = _("Este ejemplar ya se encuentra en su carrito");
+        var MSG_RECORD_ADDED = _("Este ejemplar ha sido agregado a su carrito");
+        var MSG_RECORD_REMOVED = _("Este ejemplar ha sido eliminado de su carrito");
+        var MSG_NRECORDS_ADDED = _(" ejemplar(es) agregado(s) a su carrito");
+        var MSG_NRECORDS_IN_BASKET = _("ya está en su carrito");
+        var MSG_NO_RECORD_SELECTED = _("Ningún ítem fue seleccionado");
+        var MSG_NO_RECORD_ADDED = _("No se agregaron ítems a su carrito");
+        var MSG_CONFIRM_DEL_BASKET = _("¿Está seguro de querer vaciar su carrito?");
+        var MSG_CONFIRM_DEL_RECORDS = _("¿Está seguro de querer eliminar los ítems seleccionados?");
+        var MSG_ITEM_IN_CART = _("En su carrito");
+        var MSG_ITEM_NOT_IN_CART = _("Agregar a su carrito");
+    
+    
+        var MSG_TAGS_DISABLED = _("Lo sentimos, las etiquetas no están habilitadas en este sistema.");
+        var MSG_TAG_ALL_BAD = _("Error! Su etiqueta tenía código ilegal. NO ha sido agregada. Intente nuevamente con texto plano.");
+        var MSG_ILLEGAL_PARAMETER = _("¡Error! Parámetro ilegal");
+        var MSG_TAG_SCRUBBED = _("Nota: su etiqueta contenía código que fue removido. La etiqueta fue agregada como ");
+        var MSG_ADD_TAG_FAILED = _("¡Error! La adición de etiquetas falló en");
+        var MSG_ADD_TAG_FAILED_NOTE = _("Nota: solo puede etiquetar un ítem con determinado término una vez. Vea 'Mis Etiquetas' para ver sus etiquetas actuales.");
+        var MSG_DELETE_TAG_FAILED = _("Error! No puede eliminar la etiqueta");
+        var MSG_DELETE_TAG_FAILED_NOTE = _("Nota: sólo puede eliminar sus propias etiquetas.")
+        var MSG_LOGIN_REQUIRED = _("Debe ingresar a su cuenta para agregar etiquetas.");
+        var MSG_TAGS_ADDED = _("Etiquetas agregadas: ");
+        var MSG_TAGS_DELETED = _("Etiquetas agregadas: ");
+        var MSG_TAGS_ERRORS = _("Errores: ");
+        var MSG_MULTI_ADD_TAG_FAILED = _("No se pudo agregar una o más etiquetas.");
+        var MSG_NO_TAG_SPECIFIED = _("No se especificó etiqueta.");
+    
+    
+    $(".print-large").on("click",function(){
+        window.print();
+        return false;
+    });
+    $("#ulactioncontainer > ul > li > a.addtoshelf").on("click",function(){
+        Dopop('opac-addbybiblionumber.pl?biblionumber=');
+        return false;
+    });
+    $("body").on("click", ".addtocart", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        addRecord( biblionumber );
+    });
+    $("body").on("click", ".cartRemove", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        delSingleRecord( biblionumber );
+    });
+    $(".clearsh").on("click", function(){
+        return confirmDelete(MSG_DELETE_SEARCH_HISTORY);
+    });
+    //]]>
+</script>
+
+
+ <script src="/opac-tmpl/bootstrap/js/basket_19.0501000.js"></script>
+
+
+<script src="/opac-tmpl/bootstrap/js/tags_19.0501000.js"></script>
+
+ <script src="/opac-tmpl/bootstrap/js/google-jackets_19.0501000.js"></script>
+ <script>
+        //<![CDATA[
+        var NO_GOOGLE_JACKET = _("No hay imagen de cubierta disponible");
+        //]]>
+    </script>
+
+
+
+
+
+
+ <script src="/opac-tmpl/bootstrap/js/localcovers_19.0501000.js"></script>
+ <script>
+    //<![CDATA[
+    var NO_LOCAL_JACKET = _("No hay imagen de cubierta disponible");
+    //]]>
+    </script>
+
+
+
+
+
+
+
+
+
+<script src="/opac-tmpl/bootstrap/lib/jquery/plugins/jquery.cookie.min_19.0501000.js"></script>
+<script>
+$(document).ready(function() {
+    if($('#searchsubmit').length) {
+        $(document).on("click", '#searchsubmit', function(e) {
+            jQuery.removeCookie("form_serialized", { path: '/'});
+            jQuery.removeCookie("form_serialized_limits", { path: '/'});
+            jQuery.removeCookie("num_paragraph", { path: '/'});
+            jQuery.removeCookie("search_path_code", { path: '/'});
+        });
+    }
+
+    window.emojiPicker = new EmojiPicker({
+      emojiable_selector: '[data-emojiable=true]',
+      assetsPath: '/opac-tmpl/lib/emoji-picker/img/',
+      popupButtonClasses: 'fa fa-smile-o'
+    });
+    window.emojiPicker.discover();
+});
+</script>
+
+
+
+
+<script src="/opac-tmpl/bootstrap/lib/jquery/plugins/jquery.checkboxes.min_19.0501000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/authtoresults_19.0501000.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/jquery/plugins/jquery.highlight-3_19.0501000.js"></script>
+<script>
+//<![CDATA[
+
+function holdMultiple() {
+    var checkedBiblioNums = ""; // Separated by "/"
+    var checkedCount = 0;
+    if(document.bookbag_form.biblionumber.length > 0) {
+        for (var i=0; i < document.bookbag_form.biblionumber.length; i++) {
+            if (document.bookbag_form.biblionumber[i].checked) {
+                checkedBiblioNums += (document.bookbag_form.biblionumber[i].value + "/");
+                checkedCount++;
+            }
+        }
+    }
+
+    if (checkedCount > 0) {
+        holdBiblioNums(checkedBiblioNums);
+    } else {
+        alert(MSG_NO_RECORD_SELECTED);
+    }
+}
+
+function holdBiblioNums(numList) {
+    // numList: biblio numbers separated by "/"
+    $("#hold_form_biblios").attr("value", numList);
+    $("#hold_form").submit();
+}
+
+
+
+
+function enableCheckboxActions(){
+    // Enable/disable controls if checkboxes are checked
+    var checkedBoxes = $(".checkboxed input:checkbox:checked");
+    var controls = $("#selections-toolbar .links a, #selections-toolbar .links input, #selections-toolbar .links select, , #selections-toolbar .links label")
+    if ($(checkedBoxes).size()) {
+      $("#selections").html(_("Con los títulos seleccionados: "));
+      $(controls).removeClass("disabled");
+    } else {
+      $("#selections").html(_("Seleccionar títulos para: "));
+      $(controls).addClass("disabled");
+    }
+}
+
+
+var q_array = new Array();  // holds search terms if available
+
+function highlightOff() {
+    $("td").removeHighlight();
+    $(".highlight_toggle").toggle();
+}
+function highlightOn() {
+    var x;
+    for (x in q_array) {
+        q_array[x] = q_array[x].replace(/\w*:([\w])/, "$1");
+        q_array[x] = q_array[x].toLowerCase();
+        var myStopwords = "and|or|not".toLowerCase().split('|');
+        if ( (q_array[x].length > 0) && ($.inArray(q_array[x], myStopwords) == -1) ) {
+            $(".title").highlight(q_array[x]);
+            $(".author").highlight(q_array[x]);
+            $(".results_summary").highlight(q_array[x]);
+        }
+    }
+    $(".highlight_toggle").toggle();
+}
+
+$(document).ready(function(){
+    
+        $('a.title').each(function() {
+            $(this).attr("href", $(this).attr("href") + "&query_desc=kw%2Cwrdl%3A%20Cien%20anos%20de%20soledad");
+        });
+    
+
+    $(".cb").click(function(){
+      enableCheckboxActions();
+    });
+    enableCheckboxActions();
+
+    $(".br-readonly a").on("click", function(e){
+        e.preventDefault();
+    });
+
+    
+
+    var param1 = "";
+    
+    param1 += "<span id=\"selections\">"+_("Seleccionar títulos para: ")+"</span>";
+    
+
+
+    param1 += "<select class=\"disabled\" name=\"addto\" id=\"addto\"><option>"+_("Agregar a...")+"</option>";
+
+    
+    
+        
+        
+        
+        param1 +="<option value=\"newlist\">"+_("[ Nueva lista ]")+"<\/option>"
+    
+    param1 += "<\/select> <input type=\"submit\" class=\"btn btn-small\" value=\""+_("Guardar")+"\" />";
+
+
+    $('#sortsubmit').hide();
+    $('.resort').change(function() {
+        $('#bookbag_form').submit();
+    });
+    $("span.clearall").html("<a id=\"CheckNone\" href=\"#\">"+_("Limpiar todo")+"<\/a>");
+    $("span.checkall").html("<a id=\"CheckAll\" href=\"#\">"+_("Seleccionar todo")+"<\/a>");
+
+
+    
+
+
+
+    
+        $("#addto").on("change",function(){
+            cartList();
+        });
+        $(".addto").find("input:submit").click(function(){
+            cartList();
+            return false;
+        });
+    
+
+
+    function cartList(){
+        addtoOption = $("#addto").find("option:selected");
+        addtoval = addtoOption.val();
+        if(addtoval == "addtolist"){
+            var shelfnumber = addtoOption.attr("id").replace("s","");
+            if (vShelfAdd()) {
+                Dopop('/cgi-bin/koha/opac-addbybiblionumber.pl?selectedshelf='+shelfnumber+'&' + vShelfAdd());
+            }
+            return false;
+        } else if(addtoval == "newlist"){
+            
+                alert(_("Debe ingresar a su cuenta para crear o agregar a listas"));
+            
+            return false;
+        } else if(addtoval == "morelists"){
+            
+                alert(_("Debe ingresar a su cuenta para crear o agregar a listas"));
+            
+            return false;
+        }
+        if(addtoval == "addtocart" || $("#addto").attr("class") == "addtocart"){
+            addMultiple();
+            return false;
+         }
+    }
+    $("#CheckAll").click(function(){
+        $("#bookbag_form").checkCheckboxes();
+        enableCheckboxActions();
+        return false;
+    });
+    $("#CheckNone").click(function(){
+        $("#bookbag_form").unCheckCheckboxes();
+        enableCheckboxActions();
+        return false;
+    });
+
+
+    $("#placehold").html("<input class=\"hold disabled\" type=\"submit\" value=\""+_("Hacer reserva")+"\"/>");
+    $("#placehold").find("input:submit").click(function(){
+        holdMultiple();
+        return false;
+    });
+
+
+
+    var query_desc = "kw,wrdl: Cien anos de soledad";
+    var querystring = "Cien anos de soledad";
+    
+        q_array = query_desc.split(" ");
+        // ensure that we don't have "" at the end of the array, which can
+        // break the highlighter
+        while (q_array.length > 0 && q_array[q_array.length-1] == "") {
+            q_array = q_array.splice(0,-1);
+        }
+        highlightOn();
+        $("#highlight_toggle_on" ).hide().click(function() {highlightOn() ;});
+        $("#highlight_toggle_off").show().click(function() {highlightOff();});
+    
+    
+    
+    
+
+
+
+
+
+KOHA.LocalCover.GetCoverFromBibnumber(false);
+KOHA.Google.GetCoverFromIsbn();
+
+
+
+
+$("input.newtag").on('keydown', function(e){
+    if (e.keyCode == 13) { e.preventDefault(); }
+});
+
+});
+//]]>
+</script>
+
+
+ <script>
+        //Place cursor in search box
+$('#searchform .transl1').focus();
+//Add placeholder to search box: "Search the catalog"
+$( ".transl1" ).attr( "placeholder", "Escriba aquí término(s) de búsqueda" );
+//Change "Library Catalog" to "Keyword" in search dropdown menu
+$("#masthead_search option:first").text("Todos los campos");
+    </script>
+
+
+
+</body>
+</html>
+
+

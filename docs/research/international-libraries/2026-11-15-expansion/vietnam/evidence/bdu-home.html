@@ -1,0 +1,3031 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="app">
+<head id="Head1"><meta charset="utf-8" /><title>
+	Thư viện trường Đại Học Bình Dương
+</title><meta name="description" content="blank page" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta http-equiv="X-UA-Compatible" content="IE=edge" /><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><link rel="shortcut icon" type="image/png" href="/Resources/assets/index/imgs/favicon.ico" />
+    <!--Basic Styles-->
+    <link href="/App/Admin/assets/css/bootstrap.min.css" rel="stylesheet" /><link href="/App/Admin/assets/css/font-awesome.min.css" rel="stylesheet" /><link href="/App/Admin/assets/css/weather-icons.min.css" rel="stylesheet" />
+    <!--Fonts-->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300" rel="stylesheet" type="text/css" /><link href="/App/Admin/assets/css/demo.min.css" rel="stylesheet" /><link href="/App/Admin/assets/css/typicons.min.css" rel="stylesheet" /><link href="/App/Admin/assets/css/animate.min.css" rel="stylesheet" /><link href="/App/Admin/assets/css/skins/gray.css" rel="stylesheet" type="text/css" /><link href="/CSS/SearchThumb.css" rel="stylesheet" /><link href="/CSS/zebra_dialog.css" rel="stylesheet" /><link href="/App/Admin/lib/modules/angularjs-toaster/toaster.css" rel="stylesheet" /><link href="/App/Admin/lib/WebImageMaker/jquery.fileupload.css" rel="stylesheet" />
+
+    
+	<script type="application/javascript" src="/Scripts/zliscontrols.js"></script>	
+	<script type="application/javascript" src="/Scripts/zlisscript.js"></script>
+    <link href="Resources/assets/index/resourcesTV/css/style.css" rel="stylesheet" /><link rel="stylesheet" href="/CSS/balloon.min.css" /><link href="/Lightbox2/css/lightbox.min.css" rel="stylesheet" />
+	<script src="/Lightbox2/js/lightbox-plus-jquery.min.js"></script>
+	
+	
+	
+	    
+	<!--script type="application/javascript">
+    	    $(document).ready(function () {
+    	        ReaderVerify();
+    	        let readerCookie = $.cookie('ReaderCookie');
+    	        if (readerCookie != null && readerCookie != "") {
+    	            let readerData = JSON.parse($.cookie('ReaderCookie'));
+    	            if (readerData.Token != "") {
+    	                ReaderVerify();
+    	            }
+    	        }
+
+    	        function setCookie(cname, cvalue, exdays) {
+    	            var d = new Date();
+    	            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    	            var expires = "expires=" + d.toUTCString();
+    	            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    	        }
+                
+    	        function ReaderVerify() {
+    	            let readerData = JSON.parse($.cookie('ReaderCookie'));
+    	            $.ajax({
+    	                headers: {
+    	                    'Token': readerData.Token,
+    	                    'Content-Type': 'application/json'
+    	                },
+    	                type: "GET",
+    	                url: `${getZlisApi()}api/Reader/Verify`,
+    	                contentType: "application/json"
+    	            })
+                    .done(responseData => {
+                        
+                        
+                        if(responseData.Token === null)
+                        {
+                            alert(responseData.Message);
+                            setCookie('ReaderCookie', JSON.stringify(responseData), -1);
+                        }
+                        else {
+                            setCookie('ReaderCookie', JSON.stringify(responseData), 30);
+                            //alert(responseData.UnreadMessages);
+                            //if (!readerData){  }
+                        }
+                    });
+    	        }
+
+    	    });
+	</script-->
+    
+
+   <!-- Scripts -->
+    <script src="/App/Admin/lib/angular/angular-datetimepicker/moment.js"></script>
+    <script src="/App/Admin/lib/jquery/jquery.min.js"></script>    
+    <script src="/App/Admin/lib/angular/angular-datetimepicker/bootstrap-datetimepicker.js"></script>
+    <script src="/App/Admin/lib/angular/angular.js"></script>
+    <script src="/App/Admin/lib/utilities.js"></script>
+    <script src="/App/Admin/lib/angular/angular-animate/angular-animate.js"></script>
+    <script src="/App/Admin/lib/angular/angular-cookies/angular-cookies.js"></script>
+    <script src="/App/Admin/lib/angular/angular-resource/angular-resource.js"></script>
+    <script src="/App/Admin/lib/angular/angular-sanitize/angular-sanitize.js"></script>
+    <script src="/App/Admin/lib/angular/angular-touch/angular-touch.js"></script>
+    <script src="/App/Admin/lib/angular/angular-ui-router/angular-ui-router.js"></script>
+    <script src="/App/Admin/lib/angular/angular-ocLazyLoad/ocLazyLoad.js"></script>
+    <script src="/App/Admin/lib/angular/angular-ngStorage/ngStorage.js"></script>
+    <script src="/App/Admin/lib/angular/angular-ui-utils/angular-ui-utils.js"></script>
+    <script src="/App/Admin/lib/angular/angular-breadcrumb/angular-breadcrumb.js"></script>
+    <script src="/App/Admin/lib/angular/angular-ui-bootstrap/ui-bootstrap.js"></script>
+    <script src="/App/Admin/lib/jquery/slimscroll/jquery.slimscroll.js"></script>
+    <script src="/App/Admin/lib/modules/ui-select-master/dist/select.js"></script>
+    <script src="/App/Admin/lib/modules/angularjs-toaster/toaster.js"></script>
+    <script src="/App/Admin/lib/angular/angular-file-upload/angular-file-upload.min.js"></script>
+     <script src="/App/Admin/lib/angular/angular-datetimepicker/angular-eonasdan-datetimepicker.js"></script>
+    <!-- App Con/fig and Routing Scripts -->
+    <script src="/App/Admin/app/app.js"></script>
+    <script src="/App/Admin/app/config.js"></script>
+    <script src="/App/Admin/app/beyond.js"></script>
+    <!-- Layout R/elated Directives -->
+    <script src="/App/Admin/app/directives/loading.js"></script>
+    <script src="/App/Admin/app/directives/skin.js"></script>
+    <script src="/App/Admin/app/directives/sidebar.js"></script>
+    <script src="/App/Admin/app/directives/header.js"></script>
+    <script src="/App/Admin/app/directives/navbar.js"></script>
+    <script src="/App/Admin/app/directives/chatbar.js"></script>
+    <script src="/App/Admin/app/directives/widget.js"></script>
+    <script src="/App/Admin/app/controllers/ModuleController.js"></script>
+    <script src="/App/Admin/app/services/ModuleService.js"></script>
+    <script src="/App/Admin/app/services/UploadImgService.js" type="text/javascript"></script>
+    <script src="/App/Admin/app/directives/UploadImgDirective.js" type="text/javascript"></script>
+<link href="/WebResource.axd?d=Hr4Q5BbhACEcHNwMiwUxYq3WQgxqhDWlE1sTEhADDQ5I3pgLbU89EoKcYiSfpkWezM9ysecbV5yvQxPO33MYk8UYPaP04hdqEh7RMQL-fvLUE_HhqKBFnSRda8wdFwgW9kvH7Q2&amp;t=636457680680000000" type="text/css" rel="stylesheet" class="Telerik_stylesheet" /><link href="/WebResource.axd?d=5SKMTUiFyCIs89TaZc1eW4nL1b_Cq0ZKkSMHFLpPy7wbrgWABb5XkbxyVGVhqAgRF0txWlzroh1I-hx1VtffQFM0gqM87NgSsNpT0BlxmyHzsuHD_fYAip2bD9AUDqckftdDmCaZJd9Uldyqf1VLpJdioFE1&amp;t=636457680680000000" type="text/css" rel="stylesheet" class="Telerik_stylesheet" /></head>
+
+
+
+<body >
+    
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = 'https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v3.0&appId=195786024374615&autoLogAppEvents=1';
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+    
+
+    <form name="form1" method="post" action="./" id="form1">
+<input type="hidden" name="RadScriptManager1_TSM" id="RadScriptManager1_TSM" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPaA8FDzhkZjQzMjU5YTMzMGU2NxgBBR5fX0NvbnRyb2xzUmVxdWlyZVBvc3RCYWNrS2V5X18WAQURUmFkV2luZG93TWFuYWdlcjHIMBmbbUKdK83nWioLvRIIl3Lw5A==" />
+
+
+<script src="/Telerik.Web.UI.WebResource.axd?_TSM_HiddenField_=RadScriptManager1_TSM&amp;compress=1&amp;_TSM_CombinedScripts_=%3b%3bSystem.Web.Extensions%2c+Version%3d4.0.0.0%2c+Culture%3dneutral%2c+PublicKeyToken%3d31bf3856ad364e35%3avi-VN%3add3ac3d5-1e29-4112-8fed-529caffa8f24%3aea597d4b%3bTelerik.Web.UI%2c+Version%3d2014.2.618.40%2c+Culture%3dneutral%2c+PublicKeyToken%3d121fae78165ba3d4%3avi-VN%3a15590aec-52e9-4282-8ed4-e91eae292c7b%3a16e4e7cd%3af7645509%3a24ee1bba%3a92fe8ea0%3af46195d3%3afa31b949%3a874f8ea2%3ac128760b%3a19620875%3a490a9d4e%3abd8f85e4" type="text/javascript"></script>
+<script src="Services/PortletProxy.asmx/js" type="text/javascript"></script>
+<script src="Services/ModuleProxy.asmx/js" type="text/javascript"></script>
+<script src="Services/CMS.asmx/js" type="text/javascript"></script>
+<script src="Services/WeatherService.asmx/js" type="text/javascript"></script>
+<script src="Services/DMSSearch.asmx/js" type="text/javascript"></script>
+<script src="Services/AuthorCMS.asmx/js" type="text/javascript"></script>
+<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="CA0B0334" />
+        <div id="mainwrap">
+				
+        <div id="RadWindowManager1" style="display:none;">
+	<!-- 2014.2.618.40 --><div id="RadWindowManager1_alerttemplate" style="display:none;">
+		<div class="rwDialogPopup radalert">			
+			<div class="rwDialogText">
+			{1}				
+			</div>
+			
+			<div>
+				<a  onclick="$find('{0}').close(true);"
+				class="rwPopupButton" href="javascript:void(0);">
+					<span class="rwOuterSpan">
+						<span class="rwInnerSpan">##LOC[OK]##</span>
+					</span>
+				</a>				
+			</div>
+		</div>
+		</div><div id="RadWindowManager1_prompttemplate" style="display:none;">
+		 <div class="rwDialogPopup radprompt">			
+			    <div class="rwDialogText">
+			    {1}				
+			    </div>		
+			    <div>
+				    <script type="text/javascript">
+				    function RadWindowprompt_detectenter(id, ev, input)
+				    {							
+					    if (!ev) ev = window.event;                
+					    if (ev.keyCode == 13)
+					    {															        
+					        var but = input.parentNode.parentNode.getElementsByTagName("A")[0];					        
+					        if (but)
+						    {							
+							    if (but.click) but.click();
+							    else if (but.onclick)
+							    {
+							        but.focus(); var click = but.onclick; but.onclick = null; if (click) click.call(but);							 
+							    }
+						    }
+					       return false;
+					    } 
+					    else return true;
+				    }	 
+				    </script>
+				    <input title="Enter Value" onkeydown="return RadWindowprompt_detectenter('{0}', event, this);" type="text"  class="rwDialogInput" value="{2}" />
+			    </div>
+			    <div>
+				    <a onclick="$find('{0}').close(this.parentNode.parentNode.getElementsByTagName('input')[0].value);"				
+					    class="rwPopupButton" href="javascript:void(0);" ><span class="rwOuterSpan"><span class="rwInnerSpan">##LOC[OK]##</span></span></a>
+				    <a onclick="$find('{0}').close(null);" class="rwPopupButton"  href="javascript:void(0);"><span class="rwOuterSpan"><span class="rwInnerSpan">##LOC[Cancel]##</span></span></a>
+			    </div>
+		    </div>				       
+		</div><div id="RadWindowManager1_confirmtemplate" style="display:none;">
+		<div class="rwDialogPopup radconfirm">			
+			<div class="rwDialogText">
+			{1}				
+			</div>						
+			<div>
+				<a onclick="$find('{0}').close(true);"  class="rwPopupButton" href="javascript:void(0);" ><span class="rwOuterSpan"><span class="rwInnerSpan">##LOC[OK]##</span></span></a>
+				<a onclick="$find('{0}').close(false);" class="rwPopupButton"  href="javascript:void(0);"><span class="rwOuterSpan"><span class="rwInnerSpan">##LOC[Cancel]##</span></span></a>
+			</div>
+		</div>		
+		</div><input id="RadWindowManager1_ClientState" name="RadWindowManager1_ClientState" type="hidden" />
+</div>
+        
+        
+
+<!--font-awesome-->
+<link href="/Resources/lib/hover-min.css" rel="stylesheet" />
+<link href="/Resources/lib/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+<!-- smart menu -->
+<link href="/Resources/lib/smartmenus-1.0.1/addons/bootstrap/jquery.smartmenus.bootstrap.css" rel="stylesheet" />
+<link href="/Resources/assets/index/templates/css/template-default.css" rel="stylesheet" />
+
+<script src="/Resources/assets/index/resourcesTV/js/jquery.cookie.js"></script>
+
+
+<!-- media -->
+<link href="/Resources/assets/index/media/mod_languages/css/template.css" rel="stylesheet" />
+<link href="/Resources/assets/index/templates/css/responsive.css" rel="stylesheet" />
+<link href="/Resources/assets/index/modules/mod_sj_k2_mega_news/assets/css/styles-responsive.css" rel="stylesheet" type="text/css"/>
+<!-- slider -->
+<link href="/Resources/assets/index/modules/mod_sj_k2_slickslider/assets/css/sj-slickslider.css" rel="stylesheet" type="text/css"/>
+<!-- tin mới nhất -->
+<link href="/Resources/assets/index/modules/mod_sj_k2_slider/assets/css/slider.css" rel="stylesheet" type="text/css"/>
+<!-- sự kiện nổi bật -->
+<link href="/Resources/assets/index/modules/mod_sj_k2_extraslider/assets/css/style.css" rel="stylesheet" type="text/css"/>
+<link href="/Resources/assets/index/modules/mod_sj_k2_extraslider/assets/css/css3.css" rel="stylesheet" type="text/css"/>
+<!-- owl.carousel -->
+<link href="/Resources/lib/OwlCarousel2-2.2.1/dist/assets/owl.carousel.min.css" rel="stylesheet" />
+<link href="/Resources/lib/OwlCarousel2-2.2.1/dist/assets/owl.theme.default.min.css" rel="stylesheet" />
+<!-- hỏi đáp nhanh -->
+<link href="/Resources/assets/index/templates/html/mod_sj_content_accordion/css/sj-accordion.css" rel="stylesheet" type="text/css"/>
+<!-- sinh viên tiêu biểu -->
+<link href="/Resources/assets/index/plugins/system/ytshortcodes/assets/css/shortcodes.css" rel="stylesheet" type="text/css"/>
+<!-- khám phá hbu -->
+<link href="/Resources/assets/index/modules/mod_sj_k2_scattered_gallery/assets/css/style.css" rel="stylesheet" type="text/css"/>
+<link href="/Resources/lib/MaterialDesign-Webfont/css/materialdesignicons.min.css" rel="stylesheet">
+<!-- QNU -->
+<link href="/Resources/assets/index/css/QNU.css" rel="stylesheet" />
+<link href="/Resources/assets/index/css/release.css" rel="stylesheet" />
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>	
+<script src="/Resources/lib/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<!-- defind msie -->    
+<script src="/Resources/assets/index/media/jui/js/jquery-migrate.min.js" type="text/javascript"></script>
+<!-- slider-->
+<script src="/Resources/assets/index/modules/mod_sj_k2_extraslider/assets/js/jcarousel.js" type="text/javascript"></script>
+<script src="/Resources/assets/index/modules/mod_sj_k2_slickslider/assets/js/jquery.cj-swipe.js" type="text/javascript"></script>
+<!-- tin mới nhất -->
+<script src="/Resources/assets/index/modules/mod_sj_k2_slider/assets/js/slider.js" type="text/javascript"></script>
+<script src="/Resources/assets/index/modules/mod_sj_k2_slider/assets/js/jquery.cj-swipe.js" type="text/javascript"></script>
+<!-- sự kiện nổi bật -->	
+<script src="/Resources/assets/index/modules/mod_sj_k2_extraslider/assets/js/jquery.mousewheel.js" type="text/javascript"></script>
+<script src="/Resources/assets/index/modules/mod_sj_k2_extraslider/assets/js/jquery.touchwipe.1.1.1.js" type="text/javascript"></script>
+	<!-- hỏi đáp nhanh -->
+<script src="/Resources/assets/index/modules/mod_sj_content_accordion/assets/js/jquery.sj_accordion.js" type="text/javascript"></script>
+<!-- sinh viên tiêu biểu -->
+<script src="/Resources/assets/index/plugins/system/ytshortcodes/assets/js/shortcodes.js" type="text/javascript"></script>
+ <script src="/Resources/assets/index/js/slider.js"></script>
+
+
+        
+
+<div id="bd" class="homepage home-layout1 res">
+    <div id="yt_wrapper">
+	
+<div id="psc-divPanelWrapper">
+	<div id="psc-divPanelTop" style="width:100%;float:left">
+		<div id="psc-divPanelTop-Content" style="min-height: 30px;">
+			<div id="psc-divPortlet-f628b9fe-0548-47a5-be04-1aad71dd10ee" class="psc-divPortlet-Wrapper" style="">
+				<div class="psc-divPortlet-Content">
+					
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hover.css/2.3.1/css/hover.css"/>
+
+<style>
+	#userlog2{
+		position: relative;
+		float: left;
+		top: 30px;
+		left: -25px;
+		color: aliceblue;
+		border-radius: 5px;
+		background-color: #a1a1a1;
+		border: 2px;
+		padding: 8px;
+	}
+    .navbar-nav .dropdown-menu > li > a:hover {
+        color:white;
+    }
+    #imgUser{
+        margin-top: -15px;
+    }
+    ul li a.loginul { color: #000; }
+    .caret { color: #fff; }
+    .dropdown-toggle
+    {
+        cursor: pointer !important;
+        width: 35px;
+        margin-top: 20px;
+    }
+    .dropdown-toggle:hover { -webkit-filter: brightness(150%);  }
+    .OpenObject{ position: relative;top: 20px; }
+    #mesagenumber a {
+        width: 26px;
+        background-color: red;
+        color: #fff;    
+        height: 8px;
+        padding: 10px;
+        position: fixed;
+        top: 28px;
+        right: 10px;
+        border-radius: 5px;
+    }
+    @media screen and (max-width: 978px) {
+        .dropdown-toggle{
+			cursor: pointer !important;
+			width: 35px;
+			margin-top: -12px;
+            float:right;
+		}
+        #userlog2{
+			left: -60px;
+		}
+    }
+     .loginWin{
+        font-weight: bold;
+        border: 1px;
+        width: 450px;
+        height: 80px;
+        display: block;
+        margin-left: -35px;
+        margin-right: auto;
+        color: #263d84;
+        padding-top: 8px;
+        background: #e4e7ec;
+        font-size: 11pt;
+    }
+     
+     .loginWin i{
+         color: #263d84;
+     }
+
+    @media screen and (max-width: 550px) {
+         .loginWin{
+            font-weight: bold;
+            border: 1px;
+            width: 450px;
+            height: 80px;
+            display: block;
+            margin-left: -35px;
+            margin-right: auto;
+            color: #263d84;
+            padding-top: 8px;
+            background: #e4e7ec;
+            font-size: 11pt;
+        }
+    }
+    @media screen and (max-width: 280px) {
+         .loginWin{
+            font-weight: bold;
+            border: 1px;
+            width: 270px;
+            height: 80px;
+            display: block;
+            margin-left: -35px;
+            margin-right: auto;
+            color: #263d84;
+            padding-top: 8px;
+            background: #e4e7ec;
+            font-size: 6.5pt;
+        }
+    }
+    @media screen and (max-width: 500px){
+		#userlog2{
+			position: relative;
+			float: left;
+			top: 25px;
+			color: aliceblue;
+			border-radius: 5px;
+			background-color: #a1a1a1;
+			border: 2px;
+			padding: 8px;
+            width:max-content;
+            font-size:9pt;
+		}
+		.dropdown-toggle {  float: right; }
+		
+		.OpenObject { position: relative;top: 20px; }
+		#listmenupanel li a:hover { color: #fff !important; }
+		.dropdown-menu {
+			border-radius: 5px !important;
+			color: #000 !important;
+			position: absolute;
+			top: 100%;
+			left: 0;
+			z-index: 1000;
+			display: none;
+			float: left;
+			min-width: 160px;
+			padding: 5px 0;
+			margin: 2px 0 0;
+			margin-top: 2px;
+			margin-right: 0px;
+			margin-left: 0px;
+			font-size: 14px;
+			text-align: left;
+			list-style: none;
+			background-color: #fff !important;
+			-webkit-background-clip: padding-box;
+			background-clip: padding-box;
+			border: 1px solid rgba(0,0,0,.15);
+			border: 1px solid rgba(0,0,0,.15);
+			border-radius: 4px;
+			-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+			box-shadow: 0 6px 12px rgba(0,0,0,.175);
+		}
+
+		.dropdown-toggle{
+			cursor: pointer !important;
+			width: 35px;
+		}
+		#mesagenumber a {
+			width: 27px;
+			background-color: red;
+			color: #fff;
+			height: 8px;
+			padding: 10px;
+			position: relative !important;
+			top: 10px !important;
+			left: -0px !important;
+			border-radius: 5px;
+			z-index: 989898989898; 
+			margin: 5px;
+			float: right;
+		}
+        #message{
+            top: -5.5rem;
+            right:-3rem;
+        }
+        .login .left-item a {
+            margin-right: 10px;
+        }
+         #imgUser{
+            margin-top: 0px;
+        }
+        
+     
+     .loginWin i{
+         color: #263d84;
+     }
+	}
+    
+     @media screen and (max-width: 415px) {
+         .loginWin{
+            font-weight: bold;
+            border: 1px;
+            width: 391px;
+            height: 80px;
+            display: block;
+            margin-left: -35px;
+            margin-right: auto;
+            color: #263d84;
+            padding-top: 8px;
+            background: #e4e7ec;
+            font-size: 9pt;
+        }
+    }
+      @media screen and (max-width: 400px) {
+         .loginWin{
+            font-weight: bold;
+            border: 1px;
+            width: 380px;
+            height: 80px;
+            display: block;
+            margin-left: -35px;
+            margin-right: auto;
+            color: #263d84;
+            padding-top: 8px;
+            background: #e4e7ec;
+            font-size: 9pt;
+        }
+    }
+    
+    @media screen and (max-width: 375px) {
+         .loginWin{
+            font-weight: bold;
+            border: 1px;
+            width: 355px;
+            height: 80px;
+            display: block;
+            margin-left: -35px;
+            margin-right: auto;
+            color: #263d84;
+            padding-top: 8px;
+            background: #e4e7ec;
+            font-size: 8.6pt;
+        }
+    }
+    
+      @media screen and (max-width: 360px) {
+         .loginWin{
+            font-weight: bold;
+            border: 1px;
+            width: 340px;
+            height: 80px;
+            display: block;
+            margin-left: -35px;
+            margin-right: auto;
+            color: #263d84;
+            padding-top: 8px;
+            background: #e4e7ec;
+            font-size: 8.3pt;
+        }
+    }
+       @media screen and (max-width: 320px) {
+         .loginWin{
+            font-weight: bold;
+            border: 1px;
+            width: 310px;
+            height: 80px;
+            display: block;
+            margin-left: -35px;
+            margin-right: auto;
+            color: #263d84;
+            padding-top: 8px;
+            background: #e4e7ec;
+            font-size: 7.5pt;
+        }
+         .dropdown-toggle{
+			cursor: pointer !important;
+			width: 35px;
+			margin-right: 0;
+		}
+    }
+    @media screen and (min-width: 500px) {
+        .loginWin{
+        font-weight: bold;
+        border: 1px;
+        width: 380px;
+        height: 80px;
+        display: block;
+        margin-left: -35px;
+        margin-right: auto;
+        color: #263d84;
+        padding-top: 8px;
+        background: #e4e7ec;
+        font-size: 9pt;
+    }
+    }
+    @media screen and (min-width: 768px) {
+         .loginWin{
+            font-weight: bold;
+            border: 1px;
+            width: 450px;
+            height: 80px;
+            display: block;
+            margin-left: -35px;
+            margin-right: auto;
+            color: #263d84;
+            padding-top: 8px;
+            background: #e4e7ec;
+            font-size: 11pt;
+        }
+    }
+    @media screen and (max-width: 768px) {
+          #imgUser {
+            margin-top: 0;
+        }
+    }
+    @media screen and (min-width: 1024px) {
+         .loginWin{
+            font-weight: bold;
+            border: 1px;
+            width: 450px;
+            height: 80px;
+            display: block;
+            margin-left: -35px;
+            margin-right: auto;
+            color: #263d84;
+            padding-top: 8px;
+            background: #e4e7ec;
+            font-size: 11pt;
+        }
+    }
+    @media screen and (max-width: 320px) /*iphone5se*/
+	{
+		.OpenObject { position: relative;}
+		.right-item { width: auto; }
+	}
+    #message{
+        position: relative;
+        border-radius: 2.75rem;
+        min-width: .6875rem;
+        line-height: 1.2em;
+        /*padding: 0 .3125rem;*/
+        text-align: center;
+        /*height: 1.5rem;*/
+        border: .125rem solid #ff0000;
+        color: #ff0000;
+        background-color: #fff;
+        top: -4.5rem;
+        right:-3rem;
+        font-size:8pt;
+        width:2.1rem;
+    }
+    
+    #loginModal{
+        margin: 0px auto;
+        left: 0px;
+        right: 0px;
+        display: none;
+        position: absolute;
+        z-index: 99999;
+    }
+    .login-box .close1{
+        width: 26px;
+        height: 26px;
+        color: #fff;
+        float: right;
+        font-size: 21px;
+        font-weight: 300;
+        line-height: 1;
+        opacity: 1;
+        text-shadow: none;
+        background: #005fab;
+    }
+    .icon1 {
+        color: #f3e89e;
+        background: #263d84;
+        font-size: 60px;
+        font-weight: bold;
+        line-height: 90px;
+        height: 90px;
+        width: 90px;
+        margin: 0 auto 5px;
+        border-radius: 50%;
+        text-align: center;
+        margin-top: -50px;
+    }
+    .hvr-icon-forward {
+     display: inline-block; 
+     vertical-align: middle; 
+     -webkit-transform: perspective(1px) translateZ(0); 
+     transform: perspective(1px) translateZ(0); 
+     box-shadow: 0 0 1px rgba(0, 0, 0, 0); 
+     -webkit-transition-duration: 0.1s; 
+     transition-duration: 0.1s; 
+}
+    .hvr-icon-forward .hvr-icon {
+     -webkit-transform: translateZ(0); 
+     transform: translateZ(0); 
+     -webkit-transition-duration: 0.1s; 
+     transition-duration: 0.1s; 
+     -webkit-transition-property: transform; 
+     transition-property: transform; 
+     -webkit-transition-timing-function: ease-out; 
+     transition-timing-function: ease-out; 
+}
+</style>
+
+<script>
+    
+    $(document).ready(function () {
+
+        $('#LoadingPanelImgLogin').hide();
+        $('#btnLogin').click(function () { ReaderLogin(); });
+        $('#clickkk').click(function () {
+            ReaderLogout();
+        });
+        UpdateReaderStatus();
+        $("a.OpenObject").click(function () { $("#loginwindow").show(); });
+        $("button.close").click(function () { $("#loginwindow").hide(); });
+        getlink();
+        $("button.close1").click(function(){
+        $("#loginwindow").hide();
+    })
+    });
+   
+	function getlink() {
+	    homehref.innerHTML = `
+			<a title='Home' href='${getLinkHomepage()}'><i class='fa fa-home' aria-hidden='true' style='font-size: 20pt;color: white;'></i></a>
+			<a class="facebook" target="_blank" href="http://www.facebook.com/sharer.php?u=${getLinkHomepage()}">
+			  <span class="fa fa-facebook"></span>
+			</a>
+			
+			<a class ="twitter" target="_blank" href="https://twitter.com/intent/tweet?source=sharethiscom&text=Thư viện&url=${getLinkHomepage()}">
+			  <span class="fa fa-twitter"></span>
+			</a>
+	    `;
+    }
+
+    function UpdateReaderStatus() {
+		let readerCookie = $.cookie('ReaderCookie');
+		if (readerCookie != null && readerCookie != "") {
+			$("#loginpanel").hide();
+			$("#logoutpanel").show();
+            if ($.cookie('ReaderCookie') != null) {
+				$("#mesagenumber").show();
+                
+                let readerData = JSON.parse($.cookie('ReaderCookie'));
+				$("#userlog").append(readerData.ReaderName);
+                $("#userlog2").append(`<p style="min-height:0; margin: 3px 0px 3px">${readerData.ReaderName}</p>`);
+                $.ajax({
+                headers: { 'Token': GetReaderData().Token },
+                type: "GET",
+                data: JSON.stringify(),
+                url: `${getZlisApi()}api/ReaderMessages/Get?status=unread&index=0&count=20`,
+                contentType: "application/json"
+                }).done(responseData => {
+					dropdownToggle.innerHTML = `<img src='${readerData.PhotoUrl}' class="dropdown-image" />`;
+                    $("#mesagepanel").append(`Tin nhắn (${responseData.length})`);
+                    if (responseData.length == 0) {
+					$("#mesagenumber").hide();
+				    }
+                    else {
+                        dropdownToggle.innerHTML = `<div id="imgUser"><img src='${readerData.PhotoUrl}' class="dropdown-image" />
+                                                </div><div id="message">${responseData.length}</div>`;
+                       
+				    };
+                });
+				
+			}
+		    else $("#mesagenumber").hide();
+		} else {
+			$("#loginpanel").show();
+			$("#logoutpanel").hide();
+			$("#userlog2").hide();
+		}
+	}
+
+	function ReaderLogout() {
+	    setCookie('ReaderCookie', "", -1);
+	    location.reload();
+	    UpdateReaderStatus();
+	}
+
+	function setCookie(cname, cvalue, exdays) {
+		var d = new Date();
+		d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+		var expires = "expires=" + d.toUTCString();
+		document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+	}
+	
+	function KeyDownLogin(event) {
+		if (event.keyCode == 13) {
+			ReaderLogin();
+			return false;
+		} else return true;
+	}
+	
+    function ReaderLogin() {
+	    $('#LoadingPanelImgLogin').show();
+	    let username = document.getElementById('txtUserName').value;
+	    let password = document.getElementById('txtPassword').value;
+
+	    let loginmodel = {
+	        "authenticationtype": "password",
+	        "device": "online",
+	        "username": username,
+	        "password": password
+	    };
+
+	    $.ajax({
+	        type: "POST",
+	        data: JSON.stringify(loginmodel),
+	        url: `${getZlisApi()}api/Reader/Login`,
+	        contentType: "application/json"
+	    })
+		.done(responseData => {
+			console.log(responseData.Success);
+			$('#LoadingPanelImgLogin').hide();
+			if (!responseData || !responseData.Success)
+				msgpanel.innerHTML = `<div class="alert alert-warning"><strong> ${responseData.Message} </strong></div>`;
+			else {
+				$("#loginwindow").hide();
+				setCookie('ReaderCookie', JSON.stringify(responseData), 30);
+				UpdateReaderStatus();
+				msgpanel.innerHTML = "";
+				location.reload();
+		    }
+		});
+	}
+</script>
+
+<div id="LoadingPanelImgLogin" style="position: fixed; margin: 0px auto; left: 40%; top: 40%; z-index: 92939949; display: none;">
+	
+    <i class="fa fa-spinner fa-3x fa-spin"></i>
+</div>
+<section class="login mt-20">
+	<div class="container">
+		<div class="left-item">
+			<div id="homehref" style="margin-top:10px"></div>
+		</div><!-- ./left-item -->
+		<div class="right-item" style="z-index: 99999; line-height: 0px;">
+			<div id="userlog2"></div>
+			<div id="mesagenumber"></div>
+			<ul class="nav navbar-nav navbar-right" id="logoutpanel" style="line-height: 0px;">
+				<li class="dropdown" style="line-height: 0px;">
+					<div id="dropdownToggle" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						
+					</div>
+					<ul id="listmenupanel" class="dropdown-menu dropdown-menu-right" role="menu" style="line-height: 0px;line-height: 0px;position: absolute;left: -140px;z-index: 999999999;">
+						<li role="presentation"><a id="userlog" class="loginul"></a></li>
+						<li role="presentation"><a href="/module/chi-tiet-doc-gia" class="loginul">Xem thông tin </a></li>
+						<li role="presentation"><a href="/module/lich-su-muon-tra" class="loginul" target="_blank">Lịch sử mượn trả </a></li>
+						<li role="presentation"><a href="/module/danh-sach-yeu-cau-dat-truoc-tai-lieu" target="_blank" class="loginul">Danh sách tài liệu đặt trước</a></li>
+						
+						
+						<li role="presentation"><a id="mesagepanel" class="loginul" href="/module/thong-bao"></a></li>
+						<li role="presentation"><a href="/module/doi-mat-khau" class="loginul">Đổi mật mã</a></li>
+						<li role="presentation">
+							<a href="javascript:void(0)" class="loginul" id="clickkk">Đăng xuất</a>                  
+						</li>
+					</ul>
+				</li>
+			</ul>
+			<div id="loginpanel">                  
+				<a href="javascript:void(0)" class="OpenObject" title="Đăng nhập">
+					<i class="fa fa-user" aria-hidden="true" style='color: white;'></i>
+					<span>Đăng nhập</span>
+				</a>
+			</div>
+		</div><!-- .right-item -->
+	</div><!-- ./container -->
+</section>
+
+<!--log in box-->
+<div id="loginwindow" >
+	<div class="login-box">
+		<div role="dialog" tabindex="-1" style="display: block;" aria-hidden="false">
+			<div role="document" class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header"> 
+						<button aria-label="Close" data-dismiss="modal" class="close1" type="button"><span aria-hidden="true" onclick="close()">×</span></button>
+						<h3>Đăng nhập</h3>
+						<div class="login-socail">
+							<div id="panel111" style="display: none;">
+								<a class="facebook" href="#"><em aria-hidden="true" class="fa fa-facebook"></em><p class="socialp">Đăng nhập bằng facebook</p></a>
+								<a class="twitter" href="#"><em aria-hidden="true" class="fa fa-twitter"></em><p class="socialp">Đăng nhập bằng Office 365</p></a>
+								<a class="gplus" href="#"><em aria-hidden="true" class="fa fa-google-plus"></em><p class="socialp">Đăng nhập bằng gmail+</p></a>
+							</div>
+							<div id="panel222" style="display: none;"> 
+								<a class="facebook" href="#"><em aria-hidden="true" class="fa fa-facebook"></em>Đăng nhập bằng facebook</a>
+								<a class="twitter" href="#"><em aria-hidden="true" class="fa fa-twitter"></em>Đăng nhập bằng Office 365</a> 
+								<a class="gplus" href="#"><em aria-hidden="true" class="fa fa-google-plus"></em>Đăng nhập bằng gmail+</a>
+							</div>
+						</div>
+					</div>
+					<div class="modal-body">
+						<form id="form01" action="#">
+							<div class="outer-input"> 
+								<label><i aria-hidden="true" class="fa fa-user"></i>Tên người dùng</label>   
+								<input id="txtUserName" type="text" onkeydown='return KeyDownLogin(event);'/>                    
+							</div>
+							<div class="outer-input"> 
+								<label><i aria-hidden="true" class="fa fa-lock"></i>Mật khẩu</label> 
+								<input id="txtPassword" type="password" onkeydown='return KeyDownLogin(event);'/>
+							</div> 
+							<div class="LoginButton" style="width: 25%;position: relative;top: 10px;float: right;">
+								<a href="javascript:void(0)" id="btnLogin" class="btn btn-success logintext" onkeydown='return KeyDownLogin(event);'>Đăng nhập</a>
+							</div>
+							<div style="width: 35%;position: relative;top: 10px;float: left;">
+								<a href="/module/quen-mat-ma">Quên mật mã !</a>
+							</div>
+							<br />
+							<div id="msgpanel" class="col-md-12" style="float: left; margin-top: 15px;"></div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+				</div>
+			</div><div id="psc-divPortlet-d6ec3c76-737e-4486-88bd-1cd448b3f0ff" class="psc-divPortlet-Wrapper" style="">
+				<div class="psc-divPortlet-Content">
+					<style>
+    .OpenTime{
+    width: 303px; position: relative; float: right;
+    }
+    @media screen and (max-width: 500px)
+    {
+    abc div
+    {
+    /*width: 100% !important;
+    margin: 5px;
+    float: left;*/
+    }
+    }
+    @media screen and (max-width: 768px)
+    {
+    }
+    .abc div
+    {
+    /*width: 100% !important;
+    margin: 5px;
+    float: left;*/
+    }
+</style>
+<script>
+function ReturnHomePage()
+{
+	var linkk = getLinkHomepage();
+	$('#ReturnHomePage').append(`
+	
+		<a href='https://www.bdu.edu.vn/' target="_blank"><img alt="logo" src="/Temp/SiteImage/Banner.png" class="img-responsive" style="width:  70%; float: left;" /></a>
+	
+	`);
+}
+
+$(function (){
+	ReturnHomePage();
+})
+</script>
+<div id="ReturnHomePage">&nbsp;</div>
+<div>
+<div class="OpenTime"><!-- style="border: 1px solid #01863e;" -->
+<span style="color: #ff0000;">
+<!-- style="text-align: center; vertical-align: top; font-family: verdana, arial, helvetica, sans-serif; font-size: 11px; font-weight: bold;" -->
+</span>
+<table>
+    <tbody>
+        <tr>
+            <td style="text-align: left; width: 235px; height: 1px;"><img alt="" src="/Temp/Image/OpenTime.png" style="width: 120px; padding-left: 54px;" />&nbsp;</td>
+        </tr>
+        <tr>
+            <td>
+            <p><strong><span style="font-family: Arial; color: #ff0000;">Thời gian phục vụ từ thứ 2 - thứ 7</span></strong></p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<span style="color: #ff0000;">
+<!-- style="text-align: center; vertical-align: top; font-family: verdana, arial, helvetica, sans-serif; font-size: 12px; width: 250px;" -->
+</span><span style="color: #ff0000;">
+<!-- text-align: center; vertical-align: top; font-family: verdana, arial, helvetica, sans-serif; font-size: 12px; width: 232px; font-weight: bold; -->
+</span>
+<table style="width: 269px; height: 99px; left: 380px;">
+    <tbody>
+        <tr>
+            <td style="text-align: left; font-family: verdana, arial, helvetica, sans-serif; font-size: 12px;"><span style="color: #ff0000;"><img alt="" src="/Temp/Image/Clock.png" style="width: 15px; height: 15px;" />&nbsp;<strong><span style="font-size: 12px; font-family: Arial;">B&igrave;nh Dương&nbsp;</span></strong><span style="text-align: center; vertical-align: top; font-weight: bold; font-family: Arial;">:&nbsp; 07h00 - 20h00&nbsp;</span></span></td>
+        </tr>
+        <tr>
+        </tr>
+        <tr>
+            <td style="text-align: left; font-family: verdana, arial, helvetica, sans-serif; font-size: 12px;">
+            <p><span style="font-family: Arial; color: #ff0000;"><img alt="" src="/Temp/Image/Clock.png" style="width: 15px; height: 15px;" />&nbsp;</span><span style="text-align: left; vertical-align: top; width: 232px; font-weight: bold; font-size: 12px; font-family: Arial; color: #ff0000;">PH C&agrave; Mau:&nbsp; &nbsp; &nbsp;07h00 - 11h00&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<span style="font-size: 12px; font-weight: 700; font-family: Arial; color: #ff0000;">13h00 - 17h00</span><br />
+            </span></p>
+            <p><span style="text-align: left; vertical-align: top; width: 232px; font-weight: bold; font-size: 12px; font-family: Arial; color: #ff0000;"></span><span style="font-weight: 700; font-family: Arial; color: #ff0000;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+            <p><span style="text-align: left; vertical-align: top; width: 232px; font-weight: bold; font-size: 12px; font-family: Arial;"><br />
+            </span></p>
+            </td>
+            <!-- style="text-align: center; vertical-align: top; width: 232px;" -->
+        </tr>
+        <tr>
+            <!-- style="text-align: center; vertical-align: top; font-family: verdana, arial, helvetica, sans-serif; font-size: 12px; width: 232px; font-weight: bold;" -->
+        </tr>
+    </tbody>
+</table>
+</div>
+</div>
+
+				</div>
+			</div><div id="psc-divPortlet-6bb38f2d-fbfd-4d65-9fcb-70ab599b056e" class="psc-divPortlet-Wrapper" style="">
+				<div class="psc-divPortlet-Content">
+					
+
+<style>
+    .navbar-nav li{
+        
+    }
+</style>
+
+<!-- Display -->
+<div class="main-menu width-common">
+		<div class="bg-header" >
+			<div class="header-top" id="print-header">
+				<div class="container ">
+					<div class="logo">
+						
+					</div>
+				</div>
+			</div>
+			<div class="top-menu width-common">
+				<!-- Navbar static top -->
+				<div class="navbar navbar-default navbar-static-top" role="navigation">
+					<div class="container ">
+						<div class="navbar-header">								
+							<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+								<span class="sr-only">Toggle navigation</span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+							</button>
+						</div>
+						<div class="navbar-collapse collapse">
+							<!-- Right nav -->
+							<ul class="nav navbar-nav">	
+                                        						
+								<li ><a  href='/trang-chu'>Trang chủ</a></li><li><a  >Giới thiệu<span class='caret'></span></a><ul class='dropdown-menu'><li  class=''><a V     class='wobble-horizontal' title='VỊ TRÍ - CHỨC NĂNG - NHIỆM VỤ' href='/vi/gioi-thieu/vi-tri-chuc-nang-nhiem-vu-3803'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>VỊ TRÍ - CHỨC NĂNG - NHIỆM VỤ</a></li><li><a class='wobble-horizontal' title='QUY TRÌNH THƯ VIỆN'><span class='fa fa-angle-double-right' aria-hidden='true'></span>QUY TRÌNH THƯ VIỆN<span class='caret'></span></a><ul class='dropdown-menu'><li   class=''><a target='_blank' class='wobble-horizontal' title='QUY TRÌNH BỔ SUNG TÀI LIỆU ' href='/vi/gioi-thieu/quy-trinh-bo-sung-tai-lieu'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>QUY TRÌNH BỔ SUNG TÀI LIỆU </a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='QUY TRÌNH TIẾP NHẬN TÀI LIỆU NỘP LƯU CHIỂU' href='/vi/gioi-thieu/quy-trinh-tiep-nhan-tai-lieu-nop-luu-chieu'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>QUY TRÌNH TIẾP NHẬN TÀI LIỆU NỘP LƯU CHIỂU</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='QUY TRÌNH XỬ LÝ KỸ THUẬT TÀI LIỆU GIẤY' href='/vi/gioi-thieu/quy-trinh-xu-ly-ky-thuat-tai-lieu-giay'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>QUY TRÌNH XỬ LÝ KỸ THUẬT TÀI LIỆU GIẤY</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='QUY TRÌNH XỬ LÝ KỸ THUẬT BÁO - TẠP CHÍ' href='/vi/gioi-thieu/quy-trinh-xu-ly-ky-thuat-bao-tap-chi'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>QUY TRÌNH XỬ LÝ KỸ THUẬT BÁO - TẠP CHÍ</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='QUY TRÌNH SỐ HÓA TÀI LIỆU' href='/vi/gioi-thieu/quy-trinh-so-hoa-tai-lieu'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>QUY TRÌNH SỐ HÓA TÀI LIỆU</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='QUY TRÌNH XỬ LÝ KỸ THUẬT TÀI LIỆU ĐIỆN TỬ' href='/vi/gioi-thieu/quy-trinh-xu-ly-ky-thuat-tai-lieu-dien-tu'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>QUY TRÌNH XỬ LÝ KỸ THUẬT TÀI LIỆU ĐIỆN TỬ</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='QUY TRÌNH TỔ CHỨC QUẢN LÝ KHO TÀI LIỆU' href='/vi/gioi-thieu/quy-trinh-to-chuc-quan-ly-kho-tai-lieu'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>QUY TRÌNH TỔ CHỨC QUẢN LÝ KHO TÀI LIỆU</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='QUY TRÌNH TỔ CHỨC LỚP HƯỚNG DẪN SỬ DỤNG THƯ VIỆN' href='/vi/gioi-thieu/quy-trinh-to-chuc-lop-huong-dan-su-dung-thu-vien'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>QUY TRÌNH TỔ CHỨC LỚP HƯỚNG DẪN SỬ DỤNG THƯ VIỆN</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='QUY TRÌNH PHỤC VỤ PHÒNG ĐỌC' href='/vi/gioi-thieu/quy-trinh-phuc-vu-phong-doc-3840'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>QUY TRÌNH PHỤC VỤ PHÒNG ĐỌC</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='QUY TRÌNH MƯỢN TÀI LIỆU VỀ NHÀ' href='/vi/gioi-thieu/quy-trinh-muon-tai-lieu-ve-nha'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>QUY TRÌNH MƯỢN TÀI LIỆU VỀ NHÀ</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='QUY TRÌNH SỬ DỤNG PHÒNG MÁY ' href='/vi/gioi-thieu/quy-trinh-phuc-vu-phong-may-1356'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>QUY TRÌNH SỬ DỤNG PHÒNG MÁY </a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='QUY TRÌNH QUẢN LÝ GIỜ TỰ HỌC TẠI THƯ VIỆN ' href='/vi/gioi-thieu/quy-trinh-quan-ly-gio-tu'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>QUY TRÌNH QUẢN LÝ GIỜ TỰ HỌC TẠI THƯ VIỆN </a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='QUY TRÌNH TỔ CHỨC SỰ KIỆN' href='/vi/gioi-thieu/quy-trinh-to-chuc-su-kien'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>QUY TRÌNH TỔ CHỨC SỰ KIỆN</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='QUY TRÌNH KIỂM KÊ TÀI LIỆU' href='/vi/gioi-thieu/quy-trinh-kiem-ke-tai-lieu'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>QUY TRÌNH KIỂM KÊ TÀI LIỆU</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='QUY TRÌNH BAO QUẢN TÀI LIỆU' href='/vi/gioi-thieu/quy-trinh-bao-quan-tai-lieu'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>QUY TRÌNH BAO QUẢN TÀI LIỆU</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='QUY TRÌNH KHẢO SÁT Ý KIẾN NGƯỜI SỬ DỤNG THƯ VIỆN' href='/vi/gioi-thieu/quy-trinh-khao-sat-y-kien-nguoi-su-dung-thu-vien'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>QUY TRÌNH KHẢO SÁT Ý KIẾN NGƯỜI SỬ DỤNG THƯ VIỆN</a></li></ul></li><li  class=''><a V     class='wobble-horizontal' title='NỘI QUY THƯ VIỆN' href='/vi/gioi-thieu/noi-quy-thu-vien'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>NỘI QUY THƯ VIỆN</a></li><li  class=''><a V     class='wobble-horizontal' title='CƠ CẤU NHÂN SỰ' href='/vi/gioi-thieu/abc-0112'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>CƠ CẤU NHÂN SỰ</a></li></ul></li><li ><a  href='/module/tim-sach'>Tra cứu</a></li><li><a  >Cơ sở dữ liệu<span class='caret'></span></a><ul class='dropdown-menu'><li><a class='wobble-horizontal' title='CSDL mua quyền truy cập'><span class='fa fa-angle-double-right' aria-hidden='true'></span>CSDL mua quyền truy cập<span class='caret'></span></a><ul class='dropdown-menu'><li   class=''><a target='_blank' class='wobble-horizontal' title='Proquest Central' href='http://lhtv.vista.vn/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Proquest Central</a></li></ul></li><li><a class='wobble-horizontal' title='Cơ sở dữ liệu mở'><span class='fa fa-angle-double-right' aria-hidden='true'></span>Cơ sở dữ liệu mở<span class='caret'></span></a><ul class='dropdown-menu'><li   class=''><a target='_blank' class='wobble-horizontal' title='Website học tiếng Anh miễn phí ' href='https://www.duolingo.com'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Website học tiếng Anh miễn phí </a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Thư viện học liệu mở Việt Nam' href='http://voer.edu.vn'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Thư viện học liệu mở Việt Nam</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Cơ sở dữ liệu quốc gia về văn bản Luật' href='http://vbpl.vn/pages/portal.aspx'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Cơ sở dữ liệu quốc gia về văn bản Luật</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Tạp chí Khoa học Việt Nam trực tuyến – VJOL' href='https://vjol.info.vn/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Tạp chí Khoa học Việt Nam trực tuyến – VJOL</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='CSDL Luận án Tiến sĩ Việt Nam' href='http://luanan.nlv.gov.vn'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>CSDL Luận án Tiến sĩ Việt Nam</a></li></ul></li></ul></li><li ><a  href='/module/tai-lieu-so'>Tài liệu số</a></li><li><a  >Thư viện liên kết<span class='caret'></span></a><ul class='dropdown-menu'><li><a class='wobble-horizontal' title='Tra cứu liên thư viện'><span class='fa fa-angle-double-right' aria-hidden='true'></span>Tra cứu liên thư viện<span class='caret'></span></a><ul class='dropdown-menu'><li   class=''><a target='_blank' class='wobble-horizontal' title='Liên hiệp Thư viện  Đại học Khu vực phía Nam' href='http://vilasal.org.vn'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Liên hiệp Thư viện  Đại học Khu vực phía Nam</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Thư viện tỉnh Bình Dương' href='http://www.thuvienbinhduong.org.vn/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Thư viện tỉnh Bình Dương</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Thư viện tỉnh Cà Mau' href='http://thuvien.camau.gov.vn/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Thư viện tỉnh Cà Mau</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Thư viện Trường Đại học Ngân hàng Tp. Hồ Chí Minh' href='https://library.hub.edu.vn/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Thư viện Trường Đại học Ngân hàng Tp. Hồ Chí Minh</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Trung tâm Thông tin - Thư viện Đại học Công nghệ Đồng Nai' href='https://lib.dntu.edu.vn/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Trung tâm Thông tin - Thư viện Đại học Công nghệ Đồng Nai</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Trung tâm Thông tin - Thư viện Đại học Luật Thành phố Hồ Chí Minh' href='http://library.hcmulaw.edu.vn/index.php/vi/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Trung tâm Thông tin - Thư viện Đại học Luật Thành phố Hồ Chí Minh</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Trung tâm Thông tin - Thư viện Đại học Nguyễn Tất Thành ' href='http://elib.ntt.edu.vn/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Trung tâm Thông tin - Thư viện Đại học Nguyễn Tất Thành </a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Thư viện trường Đại Học Văn Hiến' href='https://tv.vhu.edu.vn/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Thư viện trường Đại Học Văn Hiến</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Thư viện Trường Đại học Y Dược Buôn Ma Thuột' href='http://thuvien.bmu.edu.vn/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Thư viện Trường Đại học Y Dược Buôn Ma Thuột</a></li></ul></li><li  class=''><a V     class='wobble-horizontal' title='Nội dung mở liên thư viện' href='/module/z3950-oca'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Nội dung mở liên thư viện</a></li></ul></li><li><a  >Trợ giúp<span class='caret'></span></a><ul class='dropdown-menu'><li  class=''><a V     class='wobble-horizontal' title='KHẢO SÁT LỚP HDSDTV_2026' href='/vi/tro-giup/khao-sat-lop-huong-dan-su-dung-thu-vien-2026'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>KHẢO SÁT LỚP HDSDTV_2026</a></li><li  class=''><a V     class='wobble-horizontal' title='Yêu cầu đặt mua tài liệu' href='/module/yeu-cau-dat-mua-tai-lieu'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Yêu cầu đặt mua tài liệu</a></li><li  class=''><a V     class='wobble-horizontal' title='Thủ tục mượn tài liệu' href='/vi/tro-giup/thu-tuc-muon-tai-lieu'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Thủ tục mượn tài liệu</a></li><li  class=''><a V     class='wobble-horizontal' title='Thủ tục đăng ký thẻ thư viện' href='/vi/tro-giup/thu-tuc-dang-ky-lam-the-thu-vien'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Thủ tục đăng ký thẻ thư viện</a></li><li  class=''><a V     class='wobble-horizontal' title='Hướng dẫn sử dụng phòng Đọc' href='/vi/tro-giup/huong-dan-su-dung-phong-doc'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Hướng dẫn sử dụng phòng Đọc</a></li><li  class=''><a V     class='wobble-horizontal' title='Hướng dẫn sử dụng Phòng máy' href='/vi/tro-giup/huong-dan-su-dung-phong-may-2849'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Hướng dẫn sử dụng Phòng máy</a></li><li  class=''><a V     class='wobble-horizontal' title='Hướng dẫn thực hiện giờ tự học' href='/vi/tro-giup/huong-dan-thuc-hien-gio-tu-hoc-2609'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Hướng dẫn thực hiện giờ tự học</a></li><li  class=''><a V     class='wobble-horizontal' title='Hướng dẫn tra cứu trên OPAC' href='/vi/tro-giup/huong-dan-tra-cuu-tren-opac'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Hướng dẫn tra cứu trên OPAC</a></li><li  class=''><a V     class='wobble-horizontal' title='Hướng dẫn tra cứu CSDL Proquets Central' href='/vi/tro-giup/huong-dan-tra-cuu-csdl-proquets-central'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Hướng dẫn tra cứu CSDL Proquets Central</a></li><li  class=''><a V     class='wobble-horizontal' title='Hướng dẫn tra cứu tài liệu số và đọc toàn văn ' href='/vi/tro-giup/huong-dan-tra-cuu-tai-lieu-so-doc-toan-van-tren-nen-tang-phan-mem-quan-ly-thu-vien-psc-zlis7-0'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Hướng dẫn tra cứu tài liệu số và đọc toàn văn </a></li><li  class=''><a V     class='wobble-horizontal' title='Khảo sát SD Thư viện' href='/vi/tro-giup/phieu-khao-sat-y-kien-nguoi-su-dung-thu-vien-nam-2025'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Khảo sát SD Thư viện</a></li><li  class=''><a V     class='wobble-horizontal' title='ĐK LỚP HDSD THƯ VIỆN' href='/vi/tro-giup/phieu-khao-sat-y-kien-nguoi-su-dung-thu-vien-nam-2024'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>ĐK LỚP HDSD THƯ VIỆN</a></li><li><a class='wobble-horizontal' title='DANH MỤC SÁCH MỚI'><span class='fa fa-angle-double-right' aria-hidden='true'></span>DANH MỤC SÁCH MỚI<span class='caret'></span></a><ul class='dropdown-menu'><li   class=''><a  class='wobble-horizontal' title='NĂM HỌC 2017-2018' href='/vi/nam-hoc-2017-2018/danh-muc-sach-moi-nam-2017-2018'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>NĂM HỌC 2017-2018</a></li><li   class=''><a  class='wobble-horizontal' title='NĂM HỌC 2018-2019' href='/vi/nam-hoc-2017-2018/danh-muc-sach-moi-nam-2018-2019'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>NĂM HỌC 2018-2019</a></li><li   class=''><a  class='wobble-horizontal' title='NĂM HỌC 2019-2020' href='/vi/nam-hoc-2017-2018/danh-muc-sach-moi-nam-2019-2020'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>NĂM HỌC 2019-2020</a></li><li   class=''><a  class='wobble-horizontal' title='NĂM HỌC 2020-2021' href='/vi/nam-hoc-2017-2018/danh-muc-sach-moi-nam-2020-2021'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>NĂM HỌC 2020-2021</a></li><li   class=''><a  class='wobble-horizontal' title='NĂM HỌC 2021-2022' href='/vi/danh-muc-bo-sung-sach-moi/danh-muc-sach-moi-nam-2021-2022'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>NĂM HỌC 2021-2022</a></li><li   class=''><a  class='wobble-horizontal' title='NĂM HỌC 2022-2023' href='/vi/danh-muc-bo-sung-sach-moi/danh-muc-sach-moi-nam-2022-2023'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>NĂM HỌC 2022-2023</a></li></ul></li></ul></li><li ><a  href='/vi/thong-bao'>Thông báo</a></li><li ><a  href='/vi/video/gioi-thieu-sach-1358'>VIDEO</a></li><li ><a  href='/module/lien-he'>Liên hệ</a></li>
+																		
+							</ul>
+						</div>
+						<!--/.nav-collapse -->
+					</div>			
+				</div>
+				<!-- /.navbar -->
+			</div>
+			<!-- ./top-menu -->	
+		</div>
+							
+	</div>	
+	<!-- / MENU -->
+<script src="/Resources/assets/index/js/script.js"></script>
+
+
+
+
+
+
+                                       
+
+
+				</div>
+			</div><div id="psc-divPortlet-5e00de96-1a4b-4d76-8985-a5db40880fa9" class="psc-divPortlet-Wrapper" style="">
+				<div class="psc-divPortlet-Content">
+					
+
+<!-- Display_HomePage -->
+
+	<style>
+		.block-intro{
+			width:100%;
+			float:left;
+		}
+		.block-intro .box-wrapper{
+			padding:15px ;
+			/*overflow:hidden;*/
+			height:218px;
+		}
+		.block-intro h2 a{
+            color: #ffffff !important;
+            font-size: 25px;
+            font-weight: 400;
+			/*color: #fdfab1;			
+			font-size: 28px;
+            font-weight: 400;*/
+		}
+		.div-content{
+			color: #fff;
+			font-size: 16px;		
+			font-weight: 300;
+			line-height: 24px;
+            overflow: auto;
+		}
+		.see-more{
+			cursor:pointer;		
+			display: block;
+			padding:0px;
+			color: #fdfab1;
+			font-size: 12px;
+			font-weight: 300;
+			line-height: 16px;
+			text-transform: uppercase;
+            float: left;
+		}
+		.bg-green{			
+			background-color: #005fab;
+		}
+		/* hide title*/
+		.item-content-inner{
+			display:none!important;
+		}
+		@media(max-width:767px){
+			.block-intro .box-wrapper{
+				height:auto;
+				padding-bottom:0;
+			}
+		}
+        .DescriptionContent span{
+            color: aliceblue !important;
+        }
+	</style>
+
+<script>
+    $(document).ready(function () {
+        GetNews();
+    });
+
+    function GetNews() {
+        let TopicCatalog = "thong-bao";
+        let Count = 1;
+        let Index = 0;
+
+        $.ajax({
+            url: `${getZlisApi()}api/Portal/ArticleBelongTopic?topic=${TopicCatalog}&index=${Index}&count=${Count}`,
+            dataType: 'JSON',
+            type: "GET",
+            success: function (arrCatalogs) {
+
+                if (arrCatalogs[0] == null) {
+                    articlecontentpanel.innerHTML = `<div class='alert alert-warning'>Không tìm thấy tài liệu nào...</div>`;
+                }
+
+                arrCatalogs.forEach(items => {
+                    $('#ArticleContentPanel').append(`
+
+                    <div class ="box-wrapper" >
+					    <h2><a target='_blank' href='${getZlisApi()}vi/${TopicCatalog}/${items.Url}'>${items.Name}</a></h2>
+					    <div class ="div-content DescriptionContent">
+						    ${items.Description}
+				        <a class ="see-more" target='_blank' id='articletitle${items.Id}' href='${getZlisApi()}vi/${TopicCatalog}/${items.Url}'>Đọc tiếp <span class ="fa fa-angle-double-right"></span></a>
+					    </div>
+
+				    </div>
+
+
+                        `);
+
+                });
+
+
+            },
+        });
+}
+</script>
+
+<section class="block-intro">
+	<div class="container ">
+		<div class="bg-green">
+		<div class="row">
+			<div class="col-sm-4" id="ArticleContentPanel">
+                
+			</div>
+			<!-- /.col-sm-4 -->
+			<div class="col-sm-8" style=" float: left; ">
+				<div id="slideshow">
+					<div id="sj_k2slickslider346" class="sj-k2slickslider  slide slickslider-right" data-interval="5000" data-pause="hover">
+						<div class="slickslider-items bg-style1">
+							                 
+									<div class="slickslider-item item clearfix active-1 ">
+										<div class="images-slideshow">
+											<img  alt="" src="/Temp/ArticleImage/01407b81-e43f-4bf3-9c72-a6c6da04b484-hinh nen2-44.jpg" />
+										</div>
+										<div class="item-content">
+											<div class="item-content-inner"><h3 class="item-title"></h3></div>
+										</div>
+									</div>
+								                 
+									<div class="slickslider-item item clearfix active-2 ">
+										<div class="images-slideshow">
+											<img  alt="" src="/Temp/ArticleImage/dabad8c7-d699-4e4f-bd7a-fc492ff40312-hinh nen1-27.jpg" />
+										</div>
+										<div class="item-content">
+											<div class="item-content-inner"><h3 class="item-title"></h3></div>
+										</div>
+									</div>
+								                 
+									<div class="slickslider-item item clearfix active-3 ">
+										<div class="images-slideshow">
+											<img  alt="" src="/Temp/ArticleImage/45638848-59e7-45e4-9258-cb95e2d9ea3a-TB THU VIEN 2026-23.jpg" />
+										</div>
+										<div class="item-content">
+											<div class="item-content-inner"><h3 class="item-title"></h3></div>
+										</div>
+									</div>
+								                 
+									<div class="slickslider-item item clearfix active-4 ">
+										<div class="images-slideshow">
+											<img  alt="" src="/Temp/ArticleImage/62b09771-0d6c-4f8f-8ab1-37c62d1f2cc0-2 thang 9-54.jpg" />
+										</div>
+										<div class="item-content">
+											<div class="item-content-inner"><h3 class="item-title"></h3></div>
+										</div>
+									</div>
+								                 
+									<div class="slickslider-item item clearfix active-5 ">
+										<div class="images-slideshow">
+											<img  alt="" src="/Temp/ArticleImage/df140da6-f2e9-4426-98d4-a18a5514e281-penci_1 (1)-35.jpg" />
+										</div>
+										<div class="item-content">
+											<div class="item-content-inner"><h3 class="item-title"></h3></div>
+										</div>
+									</div>
+								                 
+									<div class="slickslider-item item clearfix active-6 ">
+										<div class="images-slideshow">
+											<img  alt="" src="/Temp/ArticleImage/20173357-bc86-41df-b55c-d129ebc2e25f-sach 17-7.jpg" />
+										</div>
+										<div class="item-content">
+											<div class="item-content-inner"><h3 class="item-title"></h3></div>
+										</div>
+									</div>
+								                 
+									<div class="slickslider-item item clearfix active-7 ">
+										<div class="images-slideshow">
+											<img  alt="" src="/Temp/ArticleImage/61ffac26-f99f-45c4-8a29-bde2f4eeb967-sach 16-50.jpg" />
+										</div>
+										<div class="item-content">
+											<div class="item-content-inner"><h3 class="item-title"></h3></div>
+										</div>
+									</div>
+								                 
+									<div class="slickslider-item item clearfix active-8 ">
+										<div class="images-slideshow">
+											<img  alt="" src="/Temp/ArticleImage/5634109f-f250-4dbb-8fdf-1feed659650f-sach 15-20.jpg" />
+										</div>
+										<div class="item-content">
+											<div class="item-content-inner"><h3 class="item-title"></h3></div>
+										</div>
+									</div>
+								                 
+									<div class="slickslider-item item clearfix active-9 ">
+										<div class="images-slideshow">
+											<img  alt="" src="/Temp/ArticleImage/7581a19d-4878-4d02-9a81-88c24f926110-sach 14-1.jpg" />
+										</div>
+										<div class="item-content">
+											<div class="item-content-inner"><h3 class="item-title"></h3></div>
+										</div>
+									</div>
+								                 
+									<div class="slickslider-item item clearfix active-10 ">
+										<div class="images-slideshow">
+											<img  alt="" src="/Temp/ArticleImage/89c8a394-b221-421f-b4d6-699aec56c606-sach 13-35.jpg" />
+										</div>
+										<div class="item-content">
+											<div class="item-content-inner"><h3 class="item-title"></h3></div>
+										</div>
+									</div>
+								                 
+									<div class="slickslider-item item clearfix active-11 ">
+										<div class="images-slideshow">
+											<img  alt="" src="/Temp/ArticleImage/d2b35271-8c62-4e39-81cb-72bf3372435c-25-36.jpg" />
+										</div>
+										<div class="item-content">
+											<div class="item-content-inner"><h3 class="item-title"></h3></div>
+										</div>
+									</div>
+								                 
+									<div class="slickslider-item item clearfix active-12 ">
+										<div class="images-slideshow">
+											<img  alt="" src="/Temp/ArticleImage/1344a402-5ba1-4452-ab5e-c0f54d39c9eb-28-48.jpg" />
+										</div>
+										<div class="item-content">
+											<div class="item-content-inner"><h3 class="item-title"></h3></div>
+										</div>
+									</div>
+								                 
+									<div class="slickslider-item item clearfix active-13 ">
+										<div class="images-slideshow">
+											<img  alt="" src="/Temp/ArticleImage/e8404b4d-cd00-47a4-9298-c0e031abef92-Panner TV-50.jpg" />
+										</div>
+										<div class="item-content">
+											<div class="item-content-inner"><h3 class="item-title"></h3></div>
+										</div>
+									</div>
+								                 
+									<div class="slickslider-item item clearfix active-14 ">
+										<div class="images-slideshow">
+											<img  alt="" src="/Temp/ArticleImage/bb0a2fe1-7df9-4e70-8cf3-4196de7eb937-Panner TV5-57.jpg" />
+										</div>
+										<div class="item-content">
+											<div class="item-content-inner"><h3 class="item-title"></h3></div>
+										</div>
+									</div>
+								                 
+									<div class="slickslider-item item clearfix active-15 ">
+										<div class="images-slideshow">
+											<img  alt="" src="/Temp/ArticleImage/2eda977f-9056-4180-be95-d1e146e8d4c3-Panner TV4-46.jpg" />
+										</div>
+										<div class="item-content">
+											<div class="item-content-inner"><h3 class="item-title"></h3></div>
+										</div>
+									</div>
+								                 
+									<div class="slickslider-item item clearfix active-16 ">
+										<div class="images-slideshow">
+											<img  alt="" src="/Temp/ArticleImage/be213282-e905-4feb-b7d1-20ee8410694a-Panner TV3-33.jpg" />
+										</div>
+										<div class="item-content">
+											<div class="item-content-inner"><h3 class="item-title"></h3></div>
+										</div>
+									</div>
+								                 
+									<div class="slickslider-item item clearfix active-17 ">
+										<div class="images-slideshow">
+											<img  alt="" src="/Temp/ArticleImage/36571bd4-a737-4bf4-a246-23ae1e0ea663-Panner TV2-20.jpg" />
+										</div>
+										<div class="item-content">
+											<div class="item-content-inner"><h3 class="item-title"></h3></div>
+										</div>
+									</div>
+								                 
+									<div class="slickslider-item item clearfix active-18 ">
+										<div class="images-slideshow">
+											<img  alt="" src="/Temp/ArticleImage/d108d040-34d1-4701-a9b7-a5a9730df262-Panner TV1-6.jpg" />
+										</div>
+										<div class="item-content">
+											<div class="item-content-inner"><h3 class="item-title"></h3></div>
+										</div>
+									</div>
+								                 
+									<div class="slickslider-item item clearfix active-19 ">
+										<div class="images-slideshow">
+											<img  alt="" src="/Temp/ArticleImage/32cd4bb0-9cd6-4431-a470-c3bb81108a9e-THONG BAO GIO TU HOC HKIII 20242025-33.jpg" />
+										</div>
+										<div class="item-content">
+											<div class="item-content-inner"><h3 class="item-title"></h3></div>
+										</div>
+									</div>
+								                 
+									<div class="slickslider-item item clearfix active-20 ">
+										<div class="images-slideshow">
+											<img  alt="" src="/Temp/ArticleImage/fb4f8f65-b055-4cb5-b553-85b5a7e665e6-SACH-21.jpg" />
+										</div>
+										<div class="item-content">
+											<div class="item-content-inner"><h3 class="item-title"></h3></div>
+										</div>
+									</div>
+								
+						</div>
+						<!-- Carousel nav -->
+						<div class="nav-pagination conner-tl bg-style1">
+							<a class="left" href="#sj_k2slickslider346" data-jslide="prev">Prev<span class="over-row"></span></a>
+							<a class="right" href="#sj_k2slickslider346" data-jslide="next">Next<span class="over-row"></span></a>
+						</div>
+						<div class="pag-item">
+							<a class=" sel" href="#sj_k2slickslider346" data-jslide="0">1</a>
+								
+										<a class=" " href="#sj_k2slickslider346" data-jslide="1">1</a>
+									
+										<a class=" " href="#sj_k2slickslider346" data-jslide="2">2</a>
+									
+										<a class=" " href="#sj_k2slickslider346" data-jslide="3">3</a>
+									
+										<a class=" " href="#sj_k2slickslider346" data-jslide="4">4</a>
+									
+										<a class=" " href="#sj_k2slickslider346" data-jslide="5">5</a>
+									
+										<a class=" " href="#sj_k2slickslider346" data-jslide="6">6</a>
+									
+										<a class=" " href="#sj_k2slickslider346" data-jslide="7">7</a>
+									
+										<a class=" " href="#sj_k2slickslider346" data-jslide="8">8</a>
+									
+										<a class=" " href="#sj_k2slickslider346" data-jslide="9">9</a>
+									
+										<a class=" " href="#sj_k2slickslider346" data-jslide="10">10</a>
+									
+										<a class=" " href="#sj_k2slickslider346" data-jslide="11">11</a>
+									
+										<a class=" " href="#sj_k2slickslider346" data-jslide="12">12</a>
+									
+										<a class=" " href="#sj_k2slickslider346" data-jslide="13">13</a>
+									
+										<a class=" " href="#sj_k2slickslider346" data-jslide="14">14</a>
+									
+										<a class=" " href="#sj_k2slickslider346" data-jslide="15">15</a>
+									
+										<a class=" " href="#sj_k2slickslider346" data-jslide="16">16</a>
+									
+										<a class=" " href="#sj_k2slickslider346" data-jslide="17">17</a>
+									
+										<a class=" " href="#sj_k2slickslider346" data-jslide="18">18</a>
+									
+										<a class=" " href="#sj_k2slickslider346" data-jslide="19">19</a>
+									
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /.col-sm-8 -->
+		</div>
+		<!-- /.row -->
+		</div>
+		<!-- /.bg-green -->
+    </div>
+</section>
+				</div>
+			</div><div id="psc-divPortlet-80f1f4c1-a885-4d4a-87f7-4fda371482cf" class="psc-divPortlet-Wrapper" style="">
+				<div class="psc-divPortlet-Content">
+					
+
+<!-- Book_QuickSearch JS -->
+<style>
+
+
+    .ebooktypepanel li{
+        width: 100%;
+    }
+	
+	.opac_next{
+		float: left;
+		top: 30px;
+		position: relative;
+		width: 100%;
+	}
+	.opac_next a{
+		color: #000;
+		padding: 10px;
+	}
+
+    @media screen and (max-width: 1280px) {
+
+    .opac_next {
+    /*margin-left: 40%;*/
+    /* float: left; */
+    /* top: 30px; */
+    /* position: relative; */
+    /* width: 100%; */
+}
+
+}
+
+        @media screen and (max-width: 500px) {
+
+
+    .opac_next {
+    margin-left: 25%;
+    /* float: left; */
+    /* top: 30px; */
+    /* position: relative; */
+    /* width: 100%; */
+}
+
+}
+
+
+</style>
+
+
+
+
+<!--section class="banner-contact width-100f">
+              <h1 style="color: white; opacity:0.8; font-size: 36px; text-transform: uppercase;">Tìm kiếm</h1>
+</!--section--><!-- ./banner--page-title -->
+
+
+
+<aside class="danhsach-theloai">
+            <div class="container"> 
+                
+         <section class="search width-100f">
+          
+              <div class="form">
+                    <div class="SearchLeft">
+                        <input type="text" onkeydown='return ZLISKeyDownSearch(event);' id="txtSearch" placeholder="Nhập từ khóa tìm kiếm ..." class="col-md-offset-1 col-md-8 col-sm-offset-1 col-sm-8 col-xs-9"/>
+                        <a href="javascript:void(0);" class="text-search col-md-2 col-sm-2 col-xs-3" onclick="SearchTransferContent()">Tìm kiếm</a>
+
+                        <div id="pnSearchResult"  style="position: absolute;left: 40%;top: 22%;color: #fff"></div>
+                    </div>
+                    <div class="SearchRight hvr-wobble-vertical" style="float: left; padding: 5px; margin-top: 5px;"><p><a style="color:aliceblue;" href="module/tim-sach">Tìm nâng cao</a></p></div>
+
+              </div><!-- ./form -->
+            
+          </section><!-- ./search -->
+
+            <!--span id="list-style-buttons" class="list-style-buttons" style="display: block;">
+				<a href="javascript:void(0);" id="gridview" class="switcher"><img src="../../../Resources/assets/index/resourcesTV/imgs/grid-view.png" alt="Grid"></a>
+				<a href="javascript:void(0);" id="listview" class="switcher"><img src="../../../Resources/assets/index/resourcesTV/imgs/list-view.png" alt="List"></a>
+			</span-->
+                    <div id="tab1111" class="tab-pane active">
+                      <div class="row">
+                        <ul class="width-100f list-inline" id="main-panel">  
+                            
+                          
+                        </ul>
+                      </div><!-- ./row -->
+                    </div>
+
+
+                    <div id="LoadingPanelImg" style="position:fixed; margin: 0px auto; left: 40%;top: 40%; z-index: 92939949;">
+                            
+                        <i class="fa fa-spinner fa-3x fa-spin"></i>
+                    </div>
+
+                </div><!-- ./tab-book5 -->
+
+          </aside>
+
+
+<script>
+
+    function SearchTransferContent()
+    {
+        let searchText = document.getElementById("txtSearch").value;
+        let escape11 = escape(searchText);
+
+        let SearchArrayValue = [];
+        SearchArrayValue.push(searchText);
+        window.location.href = getZlisApi() + `module/tim-sach?Searchkey=` + `${escape11}`;
+    }
+
+    $('#gridview').click(function () {
+        changeView(1);
+    });
+
+    $('#listview').click(function () {
+        changeView(2);
+    });
+
+    function changeView(type) {
+        if (type === 1)
+        { // gridview
+            $('.li-list').css({ 'width': '230px' });
+            $('.thumb').css({ 'min-height': '380px', 'overflow': 'hidden' });
+            $('.text-thumb').css({ 'height': '80px' });
+            $('.iconfile').css({ 'position': 'relative', 'margin': '0px auto', 'text-align': 'left' });
+        }
+        else if (type === 2)
+        { // listview
+            $('.li-list').css({ 'width': '100%', 'min-height': '0px' });
+            $('.img-thumb').css({ 'float': 'left', 'height': 'auto', 'margin-left': '10px' });
+            $('.text-thumb').css({ 'float': 'left', 'padding-left': '10px' });
+            $('.thumb').css({ 'min-height': '240px', 'overflow': 'hidden' });
+            $('.name-publishyear').css({ 'display': 'block' });
+            $('.name-subject').css({ 'display': 'block' });
+            $('.name-abtract').css({ 'display': 'block', 'word-wrap': 'break-word' });
+            $('.name-numberofpage').css({ 'display': 'block' });
+            $('.name-description').css({ 'display': 'block' });
+        }
+    }
+
+
+
+
+    $(document).ready(function () {
+        changeView(1);
+        $('#LoadingPanelImg').hide();
+        $('#list-style-buttons').hide();
+
+        FillParameters();
+
+    });
+
+
+    var quichSearchIndex = 0, quickSearchTotal = 0, quickSearchCount = 20;
+    
+    function ZLISKeyDownSearch(event) {
+        if (event.keyCode == 13) {
+            quichSearchIndex = 0;
+            quickSearchTotal = 0;
+            SearchTransferContent();
+            //ZlisSearch(false);
+            return false;
+        }
+        else return true;
+    }
+
+    function searchOnPage(newIndex) {
+        quichSearchIndex = newIndex;
+        ZlisSearch(false);
+    }
+    
+    const syntaxQueues = [];
+ 
+    var state = {
+        field1: $('#txtSearch').val()
+    };
+
+    function ZlisSearch(IsPostBack) {
+
+        console.log(syntaxQueues.length);
+
+        let searchText = document.getElementById("txtSearch").value;
+        $('#pnSearchResult').empty();
+        $('#Paging2').empty();
+        $('#main-panel').empty();
+        if (!searchText) {
+            pnSearchResult.innerHTML = `<div class="alert alert-info fade in">
+                                        <a href="#" class ="close" data-dismiss="alert" aria-label="close"> &times; </a>
+                                        <strong>Chưa nhập từ khóa!</strong></div>`;
+            return;
+        }
+
+        let urlpath = "?Searchkey=" + searchText;
+
+        let listSyntax = [];
+
+        listSyntax.push(
+            {
+            "Field": "any",
+            "Structure": "word_list",
+            "Value": searchText,
+            "Relation": "",
+            "Position": "",
+            "Truncate": "",
+            "Completeness": "",
+            "SortType": "",
+            "Operator": ""
+            }
+        );
+
+        syntaxQueues.push(listSyntax);
+
+        $('#LoadingPanelImg').show();
+
+        $.ajax({
+            type: "POST",
+            data: JSON.stringify(listSyntax),
+            url: getZlisApi() + `api/Book/SearchOpac?recordGroupId=0&inventoryId=0&ebookSearch=false&startIndex=${quichSearchIndex}&count=${quickSearchCount}`,
+            contentType: "application/json"
+        })
+        .done(function (res) {
+            //
+            window.history.pushState(state, searchText, urlpath);
+            //
+            for (var i = 0; i < res.length; i++) {
+                let obj = res[i];
+                if (quickSearchTotal === 0) {
+                    quickSearchTotal = obj.TotalRecords;
+                }
+                if (i === 0) {
+                    $('#main-panel').append(`
+                        <div class='col-md-12' style='text-align: center; '>Tìm được <b> ${quickSearchTotal} </b>tài liệu</div>
+                        <div class ='col-md-12' id='Paging2' style='text-align: center; margin-bottom: 35px;'></div>
+                        `);
+                }
+                $('#psc-divPanelCenter').empty();
+                $('#main-panel').append(CreateBookItemHtml2(obj));
+                if (obj.Abstract) {
+                    obj.Abstract.forEach(abs => $(`#description${i}`).append(`<p>${abs}</p>`));
+                }
+                $(`#description${i}`).append(`<a>${obj.Title}</a>`);
+                $(`#description${i}`).append(`<a>${obj.Author}</a>`);
+                $('#LoadingPanelImg').hide();
+            }
+
+            if (res.length == 0) {
+                $("#main-panel").append(`
+                    <div class ="container" >
+                    <div class ="form">
+                    <div class ="alert alert-danger col-md-8"><strong>Không tìm thấy kết quả.</strong></div>
+                    </div></div>
+                    `);
+                $('#LoadingPanelImg').hide();
+            }
+            else {
+                $('#Paging2').append(ZlisSearchPaging(quichSearchIndex, quickSearchCount, quickSearchTotal, 'searchOnPage'));
+                $('#main-panel').append(ZlisSearchPaging(quichSearchIndex, quickSearchCount, quickSearchTotal, 'searchOnPage'));
+                $('#list-style-buttons').show();
+            }
+        });
+    }
+
+
+    window.addEventListener('popstate', e => {  // Hàm bắt sự kiện Tới Lui trình duyệt
+        postBackSearch();
+        FillParameters();
+
+    });
+
+    function postBackSearch() {
+        //console.log(listSyntax);
+        if (syntaxQueues && syntaxQueues.length > 0) {
+
+            var listSyntax1 = syntaxQueues[syntaxQueues.length - 1];
+
+            listSyntax1.forEach((syntax, index) => {
+                if (index < syntax.length - 1) {
+                    document.getElementById(`txtSearch${index}`).value = syntax['Value'];
+                }
+
+            });
+
+            syntaxQueues.splice(syntaxQueues.length - 1, 1);
+
+            setTimeout(function () {
+                ZlisSearch(true);
+            }, 100);
+
+        }
+    }
+
+    function FillParameters() {
+
+        hu = window.location.search.substring(1);
+
+        if (hu != "") {
+            par = unescape(hu);
+            gy = par.split("&");
+            for (i = 0; i < gy.length; i++) {
+                ft = gy[i].split("=");
+                switch (ft[0]) {
+                    case "Searchkey": Searchkey = ft[1]; break;
+
+                }
+            }
+            if (Searchkey) {
+                document.getElementById("txtSearch").value = Searchkey;
+
+            }
+
+        }
+
+    }
+
+
+</script>
+
+
+
+
+				</div>
+			</div>
+		</div>
+	</div><div id="psc-divPanelMid">
+		<div id="psc-divPanelCenter" style="width:100%;float:left">
+			<div id="psc-divPanelCenter-Content" style="min-height: 30px;">
+				<div id="psc-divPortlet-31015bee-64e2-4ae1-b82c-d415ec03a94c" class="psc-divPortlet-Wrapper" style="">
+					<div class="psc-divPortlet-Content">
+						<ul class="hanging">
+    <li>
+    <a href="#">
+    <img alt="" src="/Resources/assets/index/imgs/icon-hanging/icon_dangky_small.png" />
+    <span>Khảo s&aacute;t</span>
+    </a>
+    </li>
+    <li>
+    <a href="/module/tim-nang-cao">
+    <img alt="" src="/Resources/assets/index/imgs/icon-hanging/icon_tracuu_small.png" />
+    <span>Tra cứu t&agrave;i liệu</span>
+    </a>
+    </li>
+    <li>
+    <a href="/module/album">
+    <img alt="" src="/Resources/assets/index/imgs/icon-hanging/icon_album-hinhanh_small.png" />
+    <span>Album h&igrave;nh ảnh</span>
+    </a>
+    </li>
+    <li>
+    <a href="/module/video">
+    <img alt="" src="/Resources/assets/index/imgs/icon-hanging/icon_video_small.png" />
+    <span>Video</span>
+    </a>
+    </li>
+</ul>
+
+					</div>
+				</div><div id="psc-divPortlet-c6ad3746-db81-404e-ad7d-9341c2b37d9b" class="psc-divPortlet-Wrapper" style="">
+					<div class="psc-divPortlet-Content">
+						
+
+<!-- News_Slider_JS -->
+<style>
+    .itemtitle{
+        display: none;
+    }
+
+    @media screen and (max-width: 500px)
+    {
+		.itemtitle{
+			display: block;
+		}
+    }
+</style>
+
+ <script>
+        $(function () {
+            CaroselTest();
+            $('#owl-demo-kesach').html('');
+            $("#owl-demo-kesach").owlCarousel({
+                loop: true,
+                dots: false,
+                nav: false,
+                navText: ["<i class='fas fa-angle-double-left'></i>", "<i class='fas fa-angle-double-right'></i>"],
+                pagination: true,
+                slideSpeed: 1000,
+                //autoplayTimeout: 1000,
+                stopOnHover: true,
+                autoplay: true,
+                items: 5,
+                margin: 10,
+                responsiveClass: true,
+                responsive: {
+                    0: {
+                        items: 1,
+                        dots: true,
+                        nav: false,
+                        navText: [".owl-prev", ".owl-next"],
+                        loop: true
+                    },
+                    600: {
+                        items: 3,
+                        nav: false,
+                        loop: true
+                    },
+                    1280: {
+                        items: 5,
+                        nav: true,//navigation
+                        navText: ["<i class='fas fa-angle-double-left'></i>", "<i class='fas fa-angle-double-right'></i>"],
+                        loop: true
+                    }
+                }
+            });
+        })
+
+function CaroselTest() {
+    let TopicCatalog = "sach-hay-moi-tuan";
+    let Count = 10;
+    let Index = 0;
+    let Topicitems111 = "";
+
+    $.ajax({
+        type: "GET",
+        cache: true,
+        url: `${getZlisApi()}api/Portal/ArticleBelongTopic?topic=${TopicCatalog}&index=${Index}&count=${Count}`,
+        contentType: "application/json"
+    })
+    .done(responseData => {
+
+        responseData.forEach((item,zIndex) => {
+            if(item.lenght > 0) item.splice(0, 1);
+            let html = "";
+            html += `
+                    <div class ="item" id='item${zIndex}'>
+                        <a target='_blank' href='${getZlisApi()}vi/${TopicCatalog}/${item.Url}' title='${item.Name}'>
+                        <img src='${item.ImageUrl}' alt='${item.Name}'></a>
+                    </div>
+                    <div class ="itemtitle">${item.Name}</div>
+                `;
+            $('#owl-demo-kesach').owlCarousel('add', html).owlCarousel('refresh');
+            $('.owl-next').click(function () {
+                $('#owl-demo-kesach').trigger('next.owl.carousel');
+            })
+            $('.owl-prev').click(function () {
+                $('#owl-demo-kesach').trigger('prev.owl.carousel', [300]);
+            })
+        });
+        $('#item0').hide();
+    })
+}
+
+</script>
+
+
+
+<div class="owl-demo owl-theme"></div>
+<aside class="kesach" style="float: left;margin-top:  30px;">
+    <div class="container">
+        <div class="heading1">
+            <span id="FavouriteShelfTitle">Sách hay mỗi tuần</span>
+        </div>
+        <div class="box-owl-kesach">
+            <div id="owl-demo-kesach" class="owl-carousel owl-theme">
+
+            </div>
+        </div>
+    </div>
+</aside>
+
+
+					</div>
+				</div><div id="psc-divPortlet-60852dca-7ca5-4d73-a1f6-ce69e88fff73" class="psc-divPortlet-Wrapper" style="">
+					<div class="psc-divPortlet-Content">
+						
+	
+<!-- Topic_HomePage_HotNew_PNT_TTMN -->
+
+<script type="text/javascript">
+    let linkkk = 'Bản tin thư viện';
+    //console.log(linkkk);
+
+    var arrra = [];
+    //console.log(arrra);
+
+    $(function () {
+
+       arrra.forEach(listt => {
+
+        $('#ArticleList').append(`
+            <div class="item" style="word-wrap: break-word;">
+                <div class="item-wrap">
+
+                    <div class="item-img item-height">
+                        <div class="item-img-info">
+                            <a href='${listt.Link}'>
+                                <img alt="" src='${listt.ImageUrl}' />
+                            </a>
+                            <div class="over-image"></div>
+                        </div>
+                    </div>
+                    <div class="item-info  ">
+                        <div class="item-inner">
+                            <div class="item-title">
+                                <a href='${listt.Link}' title="" target="_blank">${listt.Name}</a>
+                            </div>
+                            <!--div class="item-content">
+                                <div class="item-des" style="float: left;width: 70%;">
+                                    ${listt.Title}
+                                </div>
+                            </div-->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+            `);
+
+       });
+
+    });
+
+
+</script>
+<style>
+    .page-button{
+	    position:  relative;
+        top: 25px;
+	    right:  20px;
+    }
+        @media screen and (max-width: 500px)
+    {
+            .page-button{
+	        position:  relative;
+            top: 12px;
+	        right:  20px;
+        }
+    }
+</style>
+
+<div style="margin-top: 0px;float: left;width:  100%;">
+    <hr />
+<div class="heading1">
+    <a href="/vi/ban-tin-thu-vien"><span class="hvr-wobble-horizontal">Bản tin thư viện</span></a>
+</div>
+<section id="yt_spotlight3" class="block">
+    <div class="container">
+        <div class="row">
+            <div id="top4" class="col-lg-9 col-sm-8 ">
+                <div class="module  k2-slider-style-one ">                    
+                    <div class="modcontent clearfix">
+                        <div id="sj_k2_slider_250891460429162" class="sj-k2-container-slider" style="">
+                            <div class="page-button top style">
+                                <ul class="control-button preload">
+                                    <li class="preview"><i class="fa fa-chevron-left"></i></li>
+                                    <li class="next"><i class="fa fa-chevron-right"></i></li>
+                                </ul>
+                            </div>
+                            <div class="slider not-js cols-6 preset01-3 preset02-3 preset03-1 preset04-1 preset05-1" style="padding-bottom: 10px;">
+                                <div class="vpo-wrap" style="height: 215px !important; padding-bottom: 5px;">
+                                    <div class="vp">
+                                        <div class="vpi-wrap" id="ArticleList"></div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <script type="text/javascript">
+                            //<![CDATA[
+                            jQuery(document).ready(function ($) {;
+                                (function (element) {
+                                    var $element = $(element);
+                                    var $slider = $('.slider', $element)
+                                    $('.slider', $element).responsiver({
+                                        interval: 0,
+                                        speed: 1000,
+                                        start: 0,
+                                        step: 1,
+                                        circular: true,
+                                        preload: true,
+                                        fx: 'slide',
+                                        pause: 'hover',
+                                        control: {
+                                            prev: '#sj_k2_slider_250891460429162 .control-button li[class="preview"]',
+                                            next: '#sj_k2_slider_250891460429162 .control-button li[class="next"]'
+                                        },
+                                        getColumns: function (element) {
+                                            var match = $(element).attr('class').match(/cols-(\d+)/);
+                                            if (match[1]) {
+                                                var column = parseInt(match[1]);
+                                            } else {
+                                                var column = 1;
+                                            }
+                                            if (!column) column = 1;
+                                            return column;
+                                        }
+                                    });
+                                    $slider.touchSwipeLeft(function () {
+                                        $slider.responsiver('next');
+                                    });
+                                    $slider.touchSwipeRight(function () {
+                                        $slider.responsiver('prev');
+                                    });
+
+                                    $('.control-button', $element).removeClass('preload');
+                                })('#sj_k2_slider_250891460429162');
+                            });
+                            //]]>
+                        </script>
+                    </div>
+                </div>
+            </div>
+            <!-- /#top4 -->
+            <div id="top5" class="col-lg-3 col-sm-4 " style="display: none;">
+							<div class="module  cus-admissions ">
+								 
+							</div><!-- /.admissions -->
+						</div><!-- /#top5 -->
+					</div>
+
+        </div>
+
+</section>
+</div>
+
+<div class="vpi-wrap2" style="display: none;">
+
+
+
+<div class="item" style="word-wrap: break-word;">
+<div class="item-wrap">
+
+<div class="item-img item-height"><!-- Hình mô tả -->
+<div class="item-img-info">
+<a href="/vi/ban-tin-thu-vien/tang-cuong-ho-tro-tan-sinh-vien-k29-khai-thac-su-dung-nguon-tai-nguyen-tai-thu-vien-truong-dai-hoc-binh-duong" >
+<img alt="" src="/Temp/ArticleImage/cae31a5b-5036-471f-986a-63126c3e8466-background-48.jpg" />
+</a>
+<div class="over-image"></div>
+</div>
+</div>
+
+<div class="item-info  ">
+<div class="item-inner">
+<div class="item-title">
+<a href="/vi/ban-tin-thu-vien/tang-cuong-ho-tro-tan-sinh-vien-k29-khai-thac-su-dung-nguon-tai-nguyen-tai-thu-vien-truong-dai-hoc-binh-duong" title="" target="_blank">Tăng cường hỗ trợ tân sinh viên K29 khai thác, sử dụng nguồn tài nguyên tại Thư viện Trường Đại học Bình Dương</a>
+</div>
+<div class="item-content">
+<div class="item-des" style="float: left;width: 70%;">
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script type="text/javascript">
+arrra.push({
+'ImageUrl': '/Temp/ArticleImage/cae31a5b-5036-471f-986a-63126c3e8466-background-48.jpg',
+'Link': '/vi/ban-tin-thu-vien/tang-cuong-ho-tro-tan-sinh-vien-k29-khai-thac-su-dung-nguon-tai-nguyen-tai-thu-vien-truong-dai-hoc-binh-duong',
+'Name': 'Tăng cường hỗ trợ tân sinh viên K29 khai thác, sử dụng nguồn tài nguyên tại Thư viện Trường Đại học Bình Dương',
+'Title': ''
+});
+</script>
+
+<!-- /.item -->
+
+
+<div class="item" style="word-wrap: break-word;">
+<div class="item-wrap">
+
+<div class="item-img item-height"><!-- Hình mô tả -->
+<div class="item-img-info">
+<a href="/vi/ban-tin-thu-vien/loi-tri-an-tu-thu-vien-truong-dai-hoc-binh-duong" >
+<img alt="" src="/Temp/ArticleImage/7cc82f71-65d0-47ec-b528-e55f407be7f7-744870787_122118154334884188_6782124559196987135_n-16.jpg" />
+</a>
+<div class="over-image"></div>
+</div>
+</div>
+
+<div class="item-info  ">
+<div class="item-inner">
+<div class="item-title">
+<a href="/vi/ban-tin-thu-vien/loi-tri-an-tu-thu-vien-truong-dai-hoc-binh-duong" title="" target="_blank">LỜI TRI ÂN TỪ THƯ VIỆN TRƯỜNG ĐẠI HỌC BÌNH DƯƠNG</a>
+</div>
+<div class="item-content">
+<div class="item-des" style="float: left;width: 70%;">
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script type="text/javascript">
+arrra.push({
+'ImageUrl': '/Temp/ArticleImage/7cc82f71-65d0-47ec-b528-e55f407be7f7-744870787_122118154334884188_6782124559196987135_n-16.jpg',
+'Link': '/vi/ban-tin-thu-vien/loi-tri-an-tu-thu-vien-truong-dai-hoc-binh-duong',
+'Name': 'LỜI TRI ÂN TỪ THƯ VIỆN TRƯỜNG ĐẠI HỌC BÌNH DƯƠNG',
+'Title': ''
+});
+</script>
+
+<!-- /.item -->
+
+
+<div class="item" style="word-wrap: break-word;">
+<div class="item-wrap">
+
+<div class="item-img item-height"><!-- Hình mô tả -->
+<div class="item-img-info">
+<a href="/vi/ban-tin-thu-vien/doi-doi-ghi-nho-cong-on-cac-anh-hung-liet-si" >
+<img alt="" src="/Temp/ArticleImage/93f28309-b96a-4af5-9f64-3dd3786f0ee8-27-7-5.jpg" />
+</a>
+<div class="over-image"></div>
+</div>
+</div>
+
+<div class="item-info  ">
+<div class="item-inner">
+<div class="item-title">
+<a href="/vi/ban-tin-thu-vien/doi-doi-ghi-nho-cong-on-cac-anh-hung-liet-si" title="" target="_blank">Đời đời ghi nhớ công ơn các Anh hùng liệt sĩ!</a>
+</div>
+<div class="item-content">
+<div class="item-des" style="float: left;width: 70%;">
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script type="text/javascript">
+arrra.push({
+'ImageUrl': '/Temp/ArticleImage/93f28309-b96a-4af5-9f64-3dd3786f0ee8-27-7-5.jpg',
+'Link': '/vi/ban-tin-thu-vien/doi-doi-ghi-nho-cong-on-cac-anh-hung-liet-si',
+'Name': 'Đời đời ghi nhớ công ơn các Anh hùng liệt sĩ!',
+'Title': ''
+});
+</script>
+
+<!-- /.item -->
+
+
+<div class="item" style="word-wrap: break-word;">
+<div class="item-wrap">
+
+<div class="item-img item-height"><!-- Hình mô tả -->
+<div class="item-img-info">
+<a href="/vi/ban-tin-thu-vien/ky-niem-136-nam-ngay-sinh-chu-tich-ho-chi-minh-19-5-1890-19-5-2026-thang-5-nho-bac-kinh-yeu" >
+<img alt="" src="/Temp/ArticleImage/aff40a03-697e-48af-bbab-c42e551f7d51-sinh nhat Bac-7.jpg" />
+</a>
+<div class="over-image"></div>
+</div>
+</div>
+
+<div class="item-info  ">
+<div class="item-inner">
+<div class="item-title">
+<a href="/vi/ban-tin-thu-vien/ky-niem-136-nam-ngay-sinh-chu-tich-ho-chi-minh-19-5-1890-19-5-2026-thang-5-nho-bac-kinh-yeu" title="" target="_blank">KỶ NIỆM 136 NĂM NGÀY SINH CHỦ TỊCH HỒ CHÍ MINH (19-5-1890 - 19-5-2026)- THÁNG 5 NHỚ BÁC KÍNH YÊU</a>
+</div>
+<div class="item-content">
+<div class="item-des" style="float: left;width: 70%;">
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script type="text/javascript">
+arrra.push({
+'ImageUrl': '/Temp/ArticleImage/aff40a03-697e-48af-bbab-c42e551f7d51-sinh nhat Bac-7.jpg',
+'Link': '/vi/ban-tin-thu-vien/ky-niem-136-nam-ngay-sinh-chu-tich-ho-chi-minh-19-5-1890-19-5-2026-thang-5-nho-bac-kinh-yeu',
+'Name': 'KỶ NIỆM 136 NĂM NGÀY SINH CHỦ TỊCH HỒ CHÍ MINH (19-5-1890 - 19-5-2026)- THÁNG 5 NHỚ BÁC KÍNH YÊU',
+'Title': ''
+});
+</script>
+
+<!-- /.item -->
+
+
+<div class="item" style="word-wrap: break-word;">
+<div class="item-wrap">
+
+<div class="item-img item-height"><!-- Hình mô tả -->
+<div class="item-img-info">
+<a href="/vi/ban-tin-thu-vien/chuoi-su-kien-huong-ung-ngay-sach-va-van-hoa-doc-viet-nam-nam-2026" >
+<img alt="" src="/Temp/ArticleImage/71e1af23-5e7f-42ed-a74c-7ba03229a6c0-penci_file_1_20260403_044342-54.jpg" />
+</a>
+<div class="over-image"></div>
+</div>
+</div>
+
+<div class="item-info  ">
+<div class="item-inner">
+<div class="item-title">
+<a href="/vi/ban-tin-thu-vien/chuoi-su-kien-huong-ung-ngay-sach-va-van-hoa-doc-viet-nam-nam-2026" title="" target="_blank">CHUỖI SỰ KIỆN HƯỞNG ỨNG NGÀY SÁCH VÀ VĂN HÓA ĐỌC VIỆT NAM NĂM 2026</a>
+</div>
+<div class="item-content">
+<div class="item-des" style="float: left;width: 70%;">
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script type="text/javascript">
+arrra.push({
+'ImageUrl': '/Temp/ArticleImage/71e1af23-5e7f-42ed-a74c-7ba03229a6c0-penci_file_1_20260403_044342-54.jpg',
+'Link': '/vi/ban-tin-thu-vien/chuoi-su-kien-huong-ung-ngay-sach-va-van-hoa-doc-viet-nam-nam-2026',
+'Name': 'CHUỖI SỰ KIỆN HƯỞNG ỨNG NGÀY SÁCH VÀ VĂN HÓA ĐỌC VIỆT NAM NĂM 2026',
+'Title': ''
+});
+</script>
+
+<!-- /.item -->
+
+
+<div class="item" style="word-wrap: break-word;">
+<div class="item-wrap">
+
+<div class="item-img item-height"><!-- Hình mô tả -->
+<div class="item-img-info">
+<a href="/vi/ban-tin-thu-vien/thu-vien-truong-dai-hoc-binh-duong-tham-du-dai-hoi-lien-chi-hoi-thu-vien-dh-phia-nam-nhiem-ky-2025-2028" >
+<img alt="" src="/Temp/ArticleImage/2b6e6cb9-4da3-4019-b50c-371120b0b6e7-266431-73a09772 (1)-51.jpg" />
+</a>
+<div class="over-image"></div>
+</div>
+</div>
+
+<div class="item-info  ">
+<div class="item-inner">
+<div class="item-title">
+<a href="/vi/ban-tin-thu-vien/thu-vien-truong-dai-hoc-binh-duong-tham-du-dai-hoi-lien-chi-hoi-thu-vien-dh-phia-nam-nhiem-ky-2025-2028" title="" target="_blank">THƯ VIỆN TRƯỜNG ĐẠI HỌC BÌNH DƯƠNG THAM DỰ ĐẠI HỘI LIÊN CHI HỘI THƯ VIỆN ĐH PHÍA NAM NHIỆM KỲ 2025-2028.</a>
+</div>
+<div class="item-content">
+<div class="item-des" style="float: left;width: 70%;">
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script type="text/javascript">
+arrra.push({
+'ImageUrl': '/Temp/ArticleImage/2b6e6cb9-4da3-4019-b50c-371120b0b6e7-266431-73a09772 (1)-51.jpg',
+'Link': '/vi/ban-tin-thu-vien/thu-vien-truong-dai-hoc-binh-duong-tham-du-dai-hoi-lien-chi-hoi-thu-vien-dh-phia-nam-nhiem-ky-2025-2028',
+'Name': 'THƯ VIỆN TRƯỜNG ĐẠI HỌC BÌNH DƯƠNG THAM DỰ ĐẠI HỘI LIÊN CHI HỘI THƯ VIỆN ĐH PHÍA NAM NHIỆM KỲ 2025-2028.',
+'Title': ''
+});
+</script>
+
+<!-- /.item -->
+
+
+<div class="item" style="word-wrap: break-word;">
+<div class="item-wrap">
+
+<div class="item-img item-height"><!-- Hình mô tả -->
+<div class="item-img-info">
+<a href="/vi/ban-tin-thu-vien/nhung-moc-son-cua-bao-chi-cach-mang-viet-nam" >
+<img alt="" src="/Temp/ArticleImage/ffd38ad4-004a-44b2-bcad-0b4272661301-tobaodautin-1750462819729927376665-57.jpg" />
+</a>
+<div class="over-image"></div>
+</div>
+</div>
+
+<div class="item-info  ">
+<div class="item-inner">
+<div class="item-title">
+<a href="/vi/ban-tin-thu-vien/nhung-moc-son-cua-bao-chi-cach-mang-viet-nam" title="" target="_blank">Những mốc son của báo chí cách mạng Việt Nam</a>
+</div>
+<div class="item-content">
+<div class="item-des" style="float: left;width: 70%;">
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script type="text/javascript">
+arrra.push({
+'ImageUrl': '/Temp/ArticleImage/ffd38ad4-004a-44b2-bcad-0b4272661301-tobaodautin-1750462819729927376665-57.jpg',
+'Link': '/vi/ban-tin-thu-vien/nhung-moc-son-cua-bao-chi-cach-mang-viet-nam',
+'Name': 'Những mốc son của báo chí cách mạng Việt Nam',
+'Title': ''
+});
+</script>
+
+<!-- /.item -->
+
+
+<div class="item" style="word-wrap: break-word;">
+<div class="item-wrap">
+
+<div class="item-img item-height"><!-- Hình mô tả -->
+<div class="item-img-info">
+<a href="/vi/ban-tin-thu-vien/chu-tich-ho-chi-minh-voi-doc-sach-va-tu-hoc" >
+<img alt="" src="/Temp/ArticleImage/27f1ff49-c2e2-48a7-a079-91096322a84a-A0D49913-85B5-4C43-9-13.jpeg" />
+</a>
+<div class="over-image"></div>
+</div>
+</div>
+
+<div class="item-info  ">
+<div class="item-inner">
+<div class="item-title">
+<a href="/vi/ban-tin-thu-vien/chu-tich-ho-chi-minh-voi-doc-sach-va-tu-hoc" title="" target="_blank">Chủ tịch Hồ Chí Minh với đọc sách và tự học</a>
+</div>
+<div class="item-content">
+<div class="item-des" style="float: left;width: 70%;">
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script type="text/javascript">
+arrra.push({
+'ImageUrl': '/Temp/ArticleImage/27f1ff49-c2e2-48a7-a079-91096322a84a-A0D49913-85B5-4C43-9-13.jpeg',
+'Link': '/vi/ban-tin-thu-vien/chu-tich-ho-chi-minh-voi-doc-sach-va-tu-hoc',
+'Name': 'Chủ tịch Hồ Chí Minh với đọc sách và tự học',
+'Title': ''
+});
+</script>
+
+<!-- /.item -->
+
+
+<div class="item" style="word-wrap: break-word;">
+<div class="item-wrap">
+
+<div class="item-img item-height"><!-- Hình mô tả -->
+<div class="item-img-info">
+<a href="/vi/ban-tin-thu-vien/buoi-noi-chuyen-chuyen-de-sach-va-van-hoa-doc-trong-thoi-dai-4-0-lan-toa-tinh-than-doc-sach-trong-ky-nguyen-so" >
+<img alt="" src="/Temp/ArticleImage/83458342-b91d-48c0-80e4-a7a41fb80af9-491339532_1262768262517330_1649373914345801995_n-39.jpg" />
+</a>
+<div class="over-image"></div>
+</div>
+</div>
+
+<div class="item-info  ">
+<div class="item-inner">
+<div class="item-title">
+<a href="/vi/ban-tin-thu-vien/buoi-noi-chuyen-chuyen-de-sach-va-van-hoa-doc-trong-thoi-dai-4-0-lan-toa-tinh-than-doc-sach-trong-ky-nguyen-so" title="" target="_blank">BUỔI NÓI CHUYỆN CHUYÊN ĐỀ: “SÁCH VÀ VĂN HÓA ĐỌC TRONG THỜI ĐẠI 4.0” – LAN TỎA TINH THẦN ĐỌC SÁCH TRONG KỶ NGUYÊN SỐ</a>
+</div>
+<div class="item-content">
+<div class="item-des" style="float: left;width: 70%;">
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script type="text/javascript">
+arrra.push({
+'ImageUrl': '/Temp/ArticleImage/83458342-b91d-48c0-80e4-a7a41fb80af9-491339532_1262768262517330_1649373914345801995_n-39.jpg',
+'Link': '/vi/ban-tin-thu-vien/buoi-noi-chuyen-chuyen-de-sach-va-van-hoa-doc-trong-thoi-dai-4-0-lan-toa-tinh-than-doc-sach-trong-ky-nguyen-so',
+'Name': 'BUỔI NÓI CHUYỆN CHUYÊN ĐỀ: “SÁCH VÀ VĂN HÓA ĐỌC TRONG THỜI ĐẠI 4.0” – LAN TỎA TINH THẦN ĐỌC SÁCH TRONG KỶ NGUYÊN SỐ',
+'Title': ''
+});
+</script>
+
+<!-- /.item -->
+
+
+<div class="item" style="word-wrap: break-word;">
+<div class="item-wrap">
+
+<div class="item-img item-height"><!-- Hình mô tả -->
+<div class="item-img-info">
+<a href="/vi/ban-tin-thu-vien/thong-bao-cuoc-thi-dai-su-van-hoa-doc-nam-2025" >
+<img alt="" src="/Temp/ArticleImage/189293cc-702a-4528-92b8-c43d37b8b574-486937543_1243146704479486_8231509579974229873_n-10.jpg" />
+</a>
+<div class="over-image"></div>
+</div>
+</div>
+
+<div class="item-info  ">
+<div class="item-inner">
+<div class="item-title">
+<a href="/vi/ban-tin-thu-vien/thong-bao-cuoc-thi-dai-su-van-hoa-doc-nam-2025" title="" target="_blank">THÔNG BÁO CUỘC THI “ĐẠI SỨ VĂN HÓA ĐỌC NĂM 2025”</a>
+</div>
+<div class="item-content">
+<div class="item-des" style="float: left;width: 70%;">
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script type="text/javascript">
+arrra.push({
+'ImageUrl': '/Temp/ArticleImage/189293cc-702a-4528-92b8-c43d37b8b574-486937543_1243146704479486_8231509579974229873_n-10.jpg',
+'Link': '/vi/ban-tin-thu-vien/thong-bao-cuoc-thi-dai-su-van-hoa-doc-nam-2025',
+'Name': 'THÔNG BÁO CUỘC THI “ĐẠI SỨ VĂN HÓA ĐỌC NĂM 2025”',
+'Title': ''
+});
+</script>
+
+<!-- /.item -->
+
+
+
+
+</div>
+					</div>
+				</div><div id="psc-divPortlet-f745c9bd-dbbb-41ba-9351-12965e6c1874" class="psc-divPortlet-Wrapper" style="">
+					<div class="psc-divPortlet-Content">
+						<style>
+    @media screen and (max-width: 767px) {...}
+    marquee a img{
+    width:unset !important;
+    }
+</style>
+<div class="container-fluid">
+<div class="row">
+<div class="col-md-12">
+<marquee onmouseover="this.stop()" onmouseout="this.start()" scrollamount="7">
+<a href="http://www.thuvienbinhduong.org.vn/" target="_blank"><img alt="" src="/Resources/Images/icon%20TV/BD.png" width="140px" height="120px" /></a>
+<a href="http://thuvien.camau.gov.vn/" target="_blank"><img alt="" src="/Resources/Images/icon%20TV/CaMau.png" width="140px" height="120px" /></a>
+<a href="https://lib.dntu.edu.vn/" target="_blank"><img alt="" src="/Resources/Images/icon%20TV/DHCongNgheDN.png" width="140px" height="120px" /></a>
+<a href="https://elib.ntt.edu.vn/" target="_blank"><img alt="" src="/Resources/Images/icon%20TV/NTT.png" width="140px" height="120px" /></a>
+<a href="https://tv.vhu.edu.vn/" target="_blank"><img alt="" src="/Resources/Images/icon%20TV/VanHien.png" width="140px" height="120px" /></a>
+<a href="https://library.hub.edu.vn/" target="_blank"><img alt="" src="/Resources/Images/icon%20TV/Bank.png" width="140px" height="120px" /></a>
+<a href="https://vilasal.org.vn/" target="_blank"><img alt="" src="/Resources/Images/icon%20TV/ChiHoiPhiaNam.png" width="140px" height="120px" /></a>
+<a href="https://http://thuvien.bmu.edu.vn/" target="_blank"><img alt="" src="/Resources/Images/icon%20TV/bmu.png" width="140px" height="120px" /></a>
+<a href="https://library.hcmulaw.edu.vn/" target="_blank"><img alt="" src="/Resources/Images/icon%20TV/Law.png" width="140px" height="120px" /></a>
+<a href="https://nlv.gov.vn/" target="_blank"><img alt="" src="/Resources/Images/icon%20TV/TVQGVN.png" width="140px" height="120px" /></a>
+</marquee></div>
+</div>
+</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div><div id="psc-divPanelBottom" style="width:100%;float:left">
+		<div id="psc-divPanelBottom-Content" style="min-height: 30px;">
+			<div id="psc-divPortlet-2bf53576-05b0-4783-aec9-21f58e96c2eb" class="psc-divPortlet-Wrapper" style="">
+				<div class="psc-divPortlet-Content">
+					
+
+<!-- Display_All -->
+
+<style>
+	
+	footer{
+	margin-top: 40px !important;
+	}
+    
+	#fbpanel{
+        float: left; width: 300px;
+    }
+
+    @media screen and (max-width: 500px) /*mobile*/
+    {
+            #fbpanel{
+            float: left; width: 100%;
+            padding: 3px;
+        }
+
+            .copyright{
+                width: 100% !important;
+            }
+    }
+
+    @media screen and (max-width: 768px) /*ipad*/
+    {
+        .HomePage-coutting .pull-right {
+            width: 98% !important;
+        }
+    }
+
+    @media screen and (max-width: 1024px) /*ipad*/
+    {
+        .HomePage-coutting .pull-right {
+            width: 98% !important;
+        }
+    }
+
+</style>
+
+<style>
+	/*.HomePage-coutting{
+		background-color: #a31a16;
+	}*/
+    .section-coutting{
+    float: left;
+    background: #fff;
+    }
+    .coutting-row article{
+        padding: 3px 0px;
+    }
+    @media (min-width: 1200px) {
+        .HomePage-coutting .pull-right{
+            margin-right:30px;
+        }
+    }
+    @media (max-width: 1199px) {
+       .HomePage-coutting .pull-right{
+            float:left!important;
+        }
+    }
+</style>
+
+
+<!--   FOOTER  -->
+
+<footer id="yt_footer" class="block">
+
+<!-- Contact -->
+<div id="yt_copyright" class="col-sm-12" style="float: left;">
+<div class="container">
+<div class="row">
+
+<div class="footerpanel">
+<div class="HomePage HomePage-coutting">
+
+
+<div class="ContentEditable">
+
+    
+        <style>
+    .block div{
+    padding-bottom: 5px;
+    }
+    .td_uid_53_5b694e6cf2c4b .tdm-social-text {
+    display: none;
+    }
+    .td_uid_53_5b694e6cf2c4b .tdm-social-item {
+    margin: 5px 10px 5px 0;
+    }
+    .td_uid_53_5b694e6cf2c4b .tdm-social-item {
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    }
+    .tdm-social-item-wrap {
+    display: inline-block;
+    }
+    .td_uid_21_5b694e6cbcd8c_rand .td_block_wrap {
+    text-align: left;
+    }
+</style>
+<div class="block col-md-8">
+<div class="bl1dc1" style="margin-bottom: 5px; text-align: left; font-size: 13px; line-height: 24px;"><strong><span style="font-family: 'Times New Roman'; font-size: 18px; color: #ffffff;">Trụ sở ch&iacute;nh</span></strong><span style="font-family: 'Times New Roman'; font-size: 18px; color: #ffffff;">: Số 504 Đại lộ B&igrave;nh Dương, P. Ph&uacute; Lợi, TP. Hồ Ch&iacute; Minh</span></div>
+<div class="bl1dc1" style="margin-bottom: 5px; text-align: left; font-size: 13px; line-height: 24px;"><span style="font-family: 'Times New Roman'; font-size: 18px; color: #ffffff;">
+<em class="fa fa-phone" aria-hidden="true"></em>(0274) 3 837 208<br />
+<em class="fa fa-internet-explorer" aria-hidden="true"></em><a href="http://lib.bdu.edu.vn" target="_blank">http://lib.bdu.edu.vn</a><br />
+<em class="fa fa-envelope-o" aria-hidden="true"></em><a href="mailto:thuvien@bdu.edu.vn">thuvien@bdu.edu.vn</a></span></div>
+<p class="bl1dc1" style="margin-bottom: 5px; text-align: left; font-size: 13px; line-height: 24px;"><span style="font-family: 'Times New Roman'; font-size: 18px; color: #ffffff;"><a href="https://www.facebook.com/thuvien.bdu.edu.vn/">https://www.facebook.com/thuvien.bdu.edu.vn/</a><br />
+</span></p>
+<div class="bl1dc1" style="margin-bottom: 5px; text-align: left; font-size: 13px; line-height: 24px;"><span style="font-family: 'Times New Roman'; font-size: 18px; color: #ffffff;"><strong>P</strong><strong>H C&agrave; Mau:</strong>&nbsp;Số 3, Đường L&ecirc; Thị Ri&ecirc;ng, P.T&acirc;n Th&agrave;nh, C&agrave; Mau.</span></div>
+</div>
+<div class="block col-md-8">
+<div class="block col-md-2"><span style="font-size: 18px; color: #ffffff;">&nbsp;</span></div>
+</div>
+<!-- Zalo SDK -->
+<script src="https://sp.zalo.me/plugins/sdk.js"></script>
+<!-- Zalo Chat Widget -->
+<div class="zalo-chat-widget" data-oaid="2128217749550650935" data-welcome-message="Rất vui khi được hỗ trợ bạn!" data-autopopup="0" data-width="350" data-height="420" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
+</div>
+
+        
+</div>
+
+<section class="section-coutting pull-right col-md-3 col-sm-12 col-xs-12">
+    <div class="box ">
+    <div class="countingpn">
+				<div class="coutting-right">
+					<div class="coutting-wrapper">						
+						<div class="box-header"><a href="#" title="">Truy cập</a></div>
+						<div class="coutting-body">
+							<div class="coutting-row">
+                                <article>							
+									<span class="out-line truy-cap"><img src="/Resources/ImagePhoto/icon-hn.png" />Đang online:</span>
+									<a class="title" href="#" title="Truy cập hôm nay"><span id="ctl22_psc-portlet-2bf53576-05b0-4783-aec9-21f58e96c2eb_LblOnline">1367</span></a>
+								</article>                                 
+								<article>							
+									<span class="out-line truy-cap"><img src="/Resources/ImagePhoto/icon-hn.png" />Truy cập hôm nay:</span>
+									<a class="title" href="#" title="Truy cập hôm nay"><span id="ctl22_psc-portlet-2bf53576-05b0-4783-aec9-21f58e96c2eb_lblhomnay">1596</span></a>
+								</article>
+                                <article>							
+									<span class="out-line truy-cap"><img src="/Resources/ImagePhoto/icon-hq.png" />Truy cập hôm qua:</span>
+									<a class="title" href="#" title="Truy cập hôm qua"><span id="ctl22_psc-portlet-2bf53576-05b0-4783-aec9-21f58e96c2eb_lblhomqua">1848</span></a>
+								</article>
+                                <article>							
+									<span class="out-line truy-cap"><img src="/Resources/ImagePhoto/icon-tn.png" />Truy cập tuần này:</span>
+									<a class="title" href="#" title="Truy cập tuần này"><span id="ctl22_psc-portlet-2bf53576-05b0-4783-aec9-21f58e96c2eb_lbltuannay">1596</span></a>
+								</article>
+                                <article>							
+									<span class="out-line truy-cap"><img src="/Resources/ImagePhoto/icon-tq.png" />Truy cập tuần trước:</span>
+									<a class="title" href="#" title="Truy cập tuần trước"><span id="ctl22_psc-portlet-2bf53576-05b0-4783-aec9-21f58e96c2eb_lbltuanqua">11638</span></a>
+								</article>
+                                <article>							
+									<span class="out-line truy-cap"><img src="/Resources/ImagePhoto/icon-thangn.png" />Truy cập tháng này:</span>
+									<a class="title" href="#" title="Truy cập tháng này"><span id="ctl22_psc-portlet-2bf53576-05b0-4783-aec9-21f58e96c2eb_lblthangnay">28844</span></a>
+								</article>
+                                 <article>							
+									<span class="out-line truy-cap"><img src="/Resources/ImagePhoto/icon-thangtr.png" />Truy cập tháng trước:</span>
+									<a class="title" href="#" title="Truy cập tháng trước"><span id="ctl22_psc-portlet-2bf53576-05b0-4783-aec9-21f58e96c2eb_lblthangtruoc">71929</span></a>
+								</article>
+                                 <article>							
+									<span class="out-line truy-cap"><img src="/Resources/ImagePhoto/icon-all.png" />Tổng truy cập:</span>
+									<a class="title" href="#" title="Tổng truy cập"><span id="ctl22_psc-portlet-2bf53576-05b0-4783-aec9-21f58e96c2eb_lblAll">11351909</span></a>
+								</article>
+							</div>
+						</div>
+					</div>
+				</div>
+    </div>
+                
+    </div>
+</section>
+ </div>
+ </div>
+
+</div>
+</div>
+</div>
+<!-- Contact -->
+
+    <!-- FB -->
+    <div class="FBsocial" style="float: right; display: none;">
+        <div class="container">
+            <div class="row">
+                <div id="bottom4" class="col-md-4 col-sm-6">
+                    <div class="module  clients-say " style="float: left; width: 300px;">
+                        <!--h3 class="modtitle">Mạng x&atilde; hội</h3-->
+                        <div class="modcontent clearfix">
+                            <iframe src="//www.facebook.com/plugins/likebox.php?href=https://www.facebook.com/facebook?fref=ts
+                            ref=stream;width=300&amp;height=590&amp;colorscheme=light&amp;show_faces=true&amp;header=false&amp;stream=false&amp;show_border=true" scrolling="no" style="border: medium none; overflow: hidden; width: 300px; height: 210px;" allowtransparency="f" frameborder="0"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- FB -->
+
+</footer>
+<!-- / FOOTER -->
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+        </div>
+</div>
+
+
+<!--smartmenus-->
+<script src="/Resources/lib/smartmenus-1.0.1/jquery.smartmenus.min.js"></script>
+<script src="/Resources/lib/smartmenus-1.0.1/addons/bootstrap/jquery.smartmenus.bootstrap.min.js"></script>
+<script src="/Resources/lib/OwlCarousel2-2.2.1/dist/owl.carousel.min.js"></script>
+
+<script type="text/javascript">										
+										$(document).ready(function($) {
+								
+											var ua = navigator.userAgent,
+												_device = (ua.match(/iPad/i) || ua.match(/iPhone/i) || ua.match(/iPod/i)) ? "smartphone" : "desktop";
+
+											if (_device == "desktop") {
+												$(".mod-languages").hover(function() {
+								
+													$(this).children(".dropdown-toggle").addClass(function() {
+														if ($(this).hasClass("open")) {
+															$(this).removeClass("open");
+															return "";
+														}
+														return "open";
+													});
+													$(this).children(".dropdown-menu").slideToggle();
+												});
+											} else {
+												$('.mod-languages .dropdown-toggle').bind('touchstart', function() {
+													$('.mod-languages .dropdown-menu').toggle();
+												});
+											}
+										});
+</script>
+
+<script type="text/javascript">
+			    $(window).scroll(function () {
+			        if ($(this).scrollTop() > 50) {
+			            $('.backtotop').fadeIn();
+					} else {
+			            $('.backtotop').fadeOut();
+					}
+				});
+
+			    $('.backtotop').click(function () {
+			        $('body,html').animate({
+						scrollTop: 0
+					}, 1200);
+					return false;
+				});
+</script>
+        <a id="yt-totop" class="backtotop" href="#"><i class="fa fa-angle-up"></i>Top </a>
+        
+
+		
+		
+        <div id="articleModal" class="modal fade" role="form">
+            <div class="modal-dialog modal-lg vertical-align-center-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Some text in the modal.</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+</div> 
+        
+    
+
+<script type="text/javascript">
+//<![CDATA[
+Sys.Application.add_init(function() {
+    $create(Telerik.Web.UI.RadWindowManager, {"clientStateFieldID":"RadWindowManager1_ClientState","formID":"form1","iconUrl":"","minimizeIconUrl":"","name":"RadWindowManager1","skin":"Default","windowControls":"[]"}, null, null, $get("RadWindowManager1"));
+});
+//]]>
+</script>
+</form>
+
+    
+
+
+
+     <script type="text/javascript">
+
+         (function () {
+             var elms = document.getElementsByTagName("*"), i, len, ids = {}, id;
+             for (i = 0, len = elms.length; i < len; i += 1) {
+                 id = elms[i].id || null;
+                 if (id) {
+                     ids[id] = ids.hasOwnProperty(id) ? ids[id] += 1 : 0;
+                 }
+             }
+             for (id in ids) {
+                 if (ids.hasOwnProperty(id)) {
+                     if (ids[id]) {
+                         console.warn("Multiple IDs #" + id);
+                     }
+                 }
+             }
+         }());
+
+         //  var $ = jQuery.noConflict();
+
+         function SearchProcess(event, query) {
+             if (event.keyCode == 13) {
+                 OnSearch(query);
+                 return false;
+             }
+             return true;
+         }
+         function OnSearch(query) {
+             PSCPortal.Services.CMS.SearchAndPaging(query, currentPage, OnSearchSuccess, OnSearchFailed);
+         }
+
+         function OnSearchSuccess(results, context, methodName) {
+
+             LoadContentAndPaging(results);
+         }
+         function OnSearchFailed(results, context, methodName) {
+         }
+
+         function retitleUrl(str) {
+             str = str.replace(/^\s+|\s+$/g, ''); // trim
+             str = str.toLowerCase();
+             // remove accents, swap ñ for n, etc
+             var from = "àáảãạăằắẳẵặâầấẩẫậđèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵ·/_,:;";
+             var to = "aaaaaaaaaaaaaaaaadeeeeeeeeeeeiiiiiooooooooooooooooouuuuuuuuuuuyyyyy------";
+             for (var i = 0, l = from.length ; i < l ; i++) {
+                 str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+             }
+             str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+                 .replace(/\s+/g, '-') // collapse whitespace and replace by -
+                 .replace(/-+/g, '-'); // collapse dashes
+             return str;
+         };
+
+         function popunder() {
+             $('a').not('[href^="http"],[href^="https"],[href^="mailto:"],[href^="#"]').each(function () {
+                 $(this).attr('href', function (index, value) {
+                     if (value != undefined) {
+                         var index = value.indexOf("Default.aspx");
+                         if (index >= 0)
+                             return value = "/" + value.substring(index, value.length);
+
+                     }
+                 });
+             });
+         }
+         //popup dialog
+         function showDialogInfomation(dialogId) {
+             PSCPortal.Services.CMS.GetArticleContent(dialogId, GetArticleContentCallback);
+         }
+         function GetArticleContentCallback(result) {
+
+             $('#articleModal').find('.modal-body').html(result);
+             $('#articleModal').modal();
+
+             $('#articleModal').find('.modal-body').html(result);
+             $('#articleModal').modal();
+
+         }
+
+
+         //smooth scroll to top
+         //pscjqback_to_top.on('click', function (event) {
+         //    event.preventDefault();
+         //    $('body,html').animate({
+         //        scrollTop: 0,
+         //    }, scroll_top_duration);
+         //});
+
+
+         $(window).scroll(function () {
+             if ($(this).scrollTop() > 50) {
+                 $('.backtotop').fadeIn();
+                 $('.backtotop').css("display", "block");
+             } else {
+                 $('.backtotop').fadeOut();
+             }
+         });
+         //$.scrollSpeed(100, 800);
+
+        </script>
+
+    	<!--  GO TO TOP -->	
+			<script type="text/javascript">
+			    $(window).scroll(function () {
+			        if ($(this).scrollTop() > 50) {
+			            $('.backtotop').fadeIn();
+			        } else {
+			            $('.backtotop').fadeOut();
+			        }
+			    });
+
+			    $('.backtotop').click(function () {
+			        $('body,html').animate({
+			            scrollTop: 0
+			        }, 1200);
+			        return false;
+			    });
+
+
+
+			</script>
+			<!-- /GO TO TOP -->
+<script type="text/html" id="search-binding-template">
+        <div class="s-tintuc">
+            <div class='result_lucene'>
+                <a style="color:#337ab7;" data-bind="html: 'Kết quả tìm thấy: ' + Count" href='#'></a>
+            </div>
+            
+
+<section class="topic-content">
+    <div class="container">
+        <div class="row mt-40">
+            <div class="col-sm-8">
+
+                     <div class="article">
+                        <div class="article-thumb-search">
+                            <a class="hvr-grow"  data-bind="attr: {href:Link}" %>
+                                                    <img data-bind="attr: {src: ImageUrl}" />
+                                </a>
+                        </div> 
+                         <div class="article-content">					  
+                    <h4><a style="font-weight:700;color: #337ab7;"  class="title_topicdisplay" data-bind="attr: { href: Link }, html: Highligth"></a></h4>
+                    <h5 class="h3_content" data-bind="html: Title + '...'"></h5>
+                            <p class="txt-date fa fa-clock-o"  aria-hidden="true" data-bind="date:  CreatedDate"></p>
+                </div>
+                         </div>
+                <!-- /ko -->
+                <div align='center' id='pagingContentHolder' class='ct_topic_r1'></div>
+            </div>
+            <div id="top5" class="col-lg-4 col-sm-4 ">
+							<div class="module  cus-admissions ">
+								 <div class="modcontent clearfix">
+<ul>
+    <li>
+    <div class="icon"> <img src="/Resources/assets/index/imgs/icon-tinmoi/icon_dang_ky.png" alt="khảo sát"/></div>
+    <div class="content">
+    <h3 class="title"><a href="#">Đăng ký học phần</a></h3>
+    </div>
+    </li>
+    <li>
+    <div class="icon"> <img src="/Resources/assets/index/imgs/icon-tinmoi/icon_tra_cuu.png" alt="Tra cứu điểm"/></div>
+    <div class="content">
+    <h3 class="title"><a href="#">tra cứu điểm 2017</a></h3>
+    </div>
+    </li>
+    <li>
+    <div class="icon"> <img src="/Resources/assets/index/imgs/icon-tinmoi/icon_vb_tai_lieu.png" alt="Văn bản tài liệu"/></div>
+    <div class="content">
+    <h3 class="title"><a href="#">Văn bản tài liệu</a></h3>
+    </div>
+    </li>
+    <li>
+    <div class="icon"> <img src="/Resources/assets/index/imgs/icon-tinmoi/icon_thoi_khoa_bieu.png" alt="Giáo trình học liệu"/></div>
+    <div class="content">
+    <h3 class="title"><a href="#">Giáo trình học liệu</a></h3>
+    </div>
+    </li>
+    <li>
+    <div class="icon"> <img src="/Resources/assets/index/imgs/icon-tinmoi/icon_album.png" alt="Album hình ảnh"/></div>
+    <div class="content">
+    <h3 class="title"><a href="#">Album hình ảnh</a></h3>
+    </div>
+    </li>
+        <li>
+    <div class="icon"> <img src="/Resources/assets/index/imgs/icon-tinmoi/icon-video.png" alt="Video Clip" /></div>
+    <div class="content">
+    <h3 class="title"><a href="#">Video Clip</a></h3>
+    </div>
+    </li>
+
+</ul>
+</div>
+							</div><!-- /.admissions -->
+						</div>
+
+
+        </div>
+
+
+
+
+    </div>
+    </section>
+
+
+        </div>
+    </script>
+
+    <script type="text/javascript" src="/Scripts/knockout-2.3.0.js"></script>
+    <script src="/Scripts/Common.js" type="text/javascript"></script>
+    <script src="/Scripts/PagingContent.js" type="text/javascript"></script>
+    <script src="/Scripts/zebra_dialog.js" type="text/javascript"></script>
+   
+    
+     
+    <script type="text/javascript">
+        $(function () {
+            /* slider have img kesach*/
+            $('#owl-demo-kesach').owlCarousel({
+                loop: true,
+                responsiveClass: true,
+                nav: true,
+                autoplay: true,
+                margin: 10,
+                dots: false,
+                responsive: {
+                    300: {
+                        items: 1,
+                    },
+                    700: {
+                        items: 2,
+                    },
+                    // 750:{
+                    //     items:3,
+                    // },
+                    850: {
+                        items: 3,
+                    },
+                    992: {
+                        items: 5,
+                    }
+                }
+            })
+            /* slider last*/
+
+            /* Book slider 2 effect config */
+            $('#owl-slider-book-horizontal2').owlCarousel({
+                loop: true,
+                responsiveClass: true,
+                nav: true,
+                autoplay: true,
+                margin: 10,
+                dots: false,
+                responsive: {
+                    300: {
+                        items: 1,
+                    },
+                    700: {
+                        items: 2,
+                    },
+                    750: {
+                        items: 3,
+                    },
+                    850: {
+                        items: 4,
+                    },
+                    992: {
+                        items: 5,
+                    }
+                }
+            })
+
+
+        });
+    </script>
+	
+	<!-- Trang thu vien -->
+	<script src="/Resources/assets/index/resourcesTV/js/jquery.cookie.js"></script>   
+	
+	<div id="bookDetailModal" class="modal fade" role="dialog" style="z-index: 96969696;" onclick=" $('.nextArraypanel').hide();">
+		<div class="modal-dialog modal-lg" style="width:95%;height:90%;">
+			<div class="modal-content" style="height:100%">
+				<div class="modal-header">
+					<i class ="close fa fa-window-close" aria-hidden="true" style="color: #ff0b00;font-size: 30pt;position: relative;left: 10px;top: -5px;" data-dismiss="modal" onclick=" $('.nextArraypanel').hide();"></i>
+					<!--button type="button" class="close" ></button-->
+					<h4 class="modal-title">Thông tin tài liệu</h4>
+				</div>
+				<div class="modal-body" style="width:100%;height:90%"></div>
+			</div>
+		</div>
+	</div>
+	
+</body>
+</html>

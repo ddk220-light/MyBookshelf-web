@@ -1,0 +1,566 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head><meta charset="utf-8" /><title>
+	LibMax · OPAC — Online Public Access Catalogue
+</title><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="description" content="Libmax OPAC provides quick access to books, periodicals, newspapers, theses and more." />
+
+
+  <!-- Modern theme (kept inline for easy deployment; move to /styles/opac-modern.css if you prefer) -->
+  <style>
+  :root{
+    --brand:#2f7d32; --brand-2:#0b5f2d;
+    --bg:#f6f8f7; --card:#ffffff; --text:#122; --muted:#eef4ef;
+    --border:#d8e3d9; --shadow:0 8px 24px rgba(0,0,0,.08);
+    /* new: responsive gutters & inner padding */
+    --gutter: clamp(12px, 3vw, 36px);
+    --cardPad: clamp(14px, 2.2vw, 28px);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--text);font:14px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+
+  /* Header */
+  .site-header{width:100%;margin:12px 0 8px;padding:0 var(--gutter);position:relative}
+  .site-header .brand{display:block;width:100%;overflow:hidden;border-radius:14px;box-shadow:var(--shadow)}
+  .site-header .brand img{width:100%;height:auto;display:block}
+  .nav-toggle{
+    position:absolute;right:calc(var(--gutter) + 8px);top:18px;z-index:5;
+    background:var(--brand);color:#fff;border:0;border-radius:10px;
+    padding:10px 12px;cursor:pointer;display:none
+  }
+
+  /* Top Nav (full-width with gutters) */
+  nav.main-nav{width:100%;padding:0 var(--gutter);margin:10px 0 0}
+  .nav-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+  .nav-list{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:0;padding:10px}
+  .nav-list li a{
+    display:inline-block;padding:10px 16px;border-radius:10px;color:#102;
+    text-decoration:none;font-weight:600
+  }
+  .nav-list li a:hover{background:rgba(47,125,50,.08)}
+  .nav-list .spacer{flex:0 0 0;border-left:1px solid var(--border);height:28px;margin:6px}
+
+  /* Layout (full-width with gutters) */
+  .container{width:100%;padding:14px var(--gutter)}
+  .grid{
+    display:grid;gap:clamp(12px, 1.6vw, 22px);
+    grid-template-columns: minmax(220px, 22rem) minmax(0,1fr) minmax(220px, 22rem);
+    align-items:start
+  }
+
+  /* Cards */
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    box-shadow:var(--shadow);
+    overflow:visible; /* avoid clipping rounded corners/shadows */
+  }
+  .card-header{
+    padding:calc(var(--cardPad) - 4px) var(--cardPad);
+    border-bottom:1px solid var(--border);
+    background:linear-gradient(180deg,#fff,var(--muted));
+    border-radius:12px 12px 0 0;
+    font-weight:700
+  }
+  .card-body{padding:var(--cardPad)}
+
+  /* Quick Search */
+  .search-text{
+    width:100%;height:38px;border:1px solid var(--border);
+    border-radius:10px;padding:8px 10px
+  }
+  .rb-list{margin-top:8px}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:10px 14px;border-radius:10px;border:1px solid var(--brand);
+    background:var(--brand);color:#fff;cursor:pointer
+  }
+  .btn:hover{background:var(--brand-2);border-color:var(--brand-2)}
+
+  /* Link sections */
+  .section-title{margin:8px 0 6px;font-size:14px;color:#234;font-weight:700}
+  .link-list{list-style:none;margin:0;padding:0}
+  .link-list li{padding:6px 0}
+  .link-list a{text-decoration:none;color:#174a2b}
+  .link-list a:hover{text-decoration:underline}
+
+  /* Counter pill digits */
+  .counter{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:10px}
+  .digit-pill{
+    display:inline-block;padding:8px 10px;border-radius:10px;background:#b09dc4;
+    color:#fff;font-weight:700;min-width:32px;text-align:center
+  }
+
+  /* Middle content placeholder: add inner padding so text/headers don't touch edges */
+  .content-card{min-height:300px;padding:var(--cardPad)}
+  .content-card :is(h1,h2,h3,h4,h5,h6){margin-top:0.2rem}
+  .content-card > :first-child{margin-top:0}
+
+  /* Footer (full-width with gutters) */
+  .footer{width:100%;padding:10px var(--gutter) 24px;text-align:center;color:#344}
+  .footer .card{padding:12px}
+
+  /* Responsive */
+  @media (max-width: 1024px){
+    .grid{grid-template-columns: 1fr}
+    .nav-toggle{display:block}
+    .nav-wrap.collapsed .nav-list{display:none}
+    .nav-wrap.open .nav-list{display:flex}
+  }
+
+  /* (Optional) Dark mode */
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0e0f10;--card:#161819;--text:#e7ece9;--muted:#1b231d;
+      --border:#2a2f2a;--shadow:0 8px 24px rgba(0,0,0,.6)
+    }
+    .link-list a{color:#8bd4a1}
+  }
+</style>
+
+
+  <script type="text/javascript">
+      function toggleNav() {
+          var wrap = document.getElementById('navWrap');
+          if (wrap.classList.contains('open')) { wrap.classList.remove('open'); wrap.classList.add('collapsed'); }
+          else { wrap.classList.add('open'); wrap.classList.remove('collapsed'); }
+      }
+  </script>
+</head>
+<body>
+  <form name="aspnetForm" method="post" action="./SearchBook.aspx?column=Title&amp;criteria=Constitutional+and+political+history+of+Pakistan&amp;pagenumber=1" id="aspnetForm">
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="btnsearch" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="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" />
+
+
+<script src="/libmax/ScriptResource.axd?d=qpskWSklTNZNNzsx_FecAXoXbYuste8qzQQZ7OfPsthRY-JmXKDJTUC6CY6hWMoKUAvYoDm2zydhRZxS4EKyP1jFqMTGW2tkbFyU3xdN_X--PyGje_PJiVRkcSeDmozE0&amp;t=23c9c237" type="text/javascript"></script>
+<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="6494A390" />
+<input type="hidden" name="__VIEWSTATEENCRYPTED" id="__VIEWSTATEENCRYPTED" value="" />
+<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="9MIRFDSvXBcU4+o8gRJlU1XlQ5bSfD5SswkWVjO5ndkvh+4hlElMGlDGEgbzDp0JCj2lpZeUrebYq0dt/6QG/7n0aujMg5+GtbeRPFyqnUZelZ5khMvoZxlhnYQsjRmP3UDzEaGv7+tvnkXQsgg/gemFmAjBLVFim5dkcX4gGnjVlx1aESszRVuEoNVMxIZLcY5dGrKexO0NbaVHMew8oHnVJJivIYrD2fz/K69Ueh0em2sT9jzuu8gtMobrNO4escVgCv6nxsNO0GEEZnmbTn2RitQzN35NTF0/8S3YE022HSPlhsGfov5p28MInJaADkD2raUGq0F16EOpAF070QAOacv8mfjcEMG6l3zP1SQ3taCrBLiWVAgPxFmgdu8UPbn5rKamdAjrB1LZ0ziQKavnVuxavJWuLerSCeQ1kMmbfHXZzeebmDh2EiFC8pug/mgjsxjmhy4FOrSNH7WYow==" />
+    
+
+    <!-- Header -->
+    <header class="site-header">
+      <a class="brand" href="index.aspx" aria-label="Home">
+        <img src="images/opec.jpg" alt="NDU Library" />
+      </a>
+      <button type="button" class="nav-toggle" onclick="toggleNav()" aria-label="Toggle navigation">☰ Menu</button>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="main-nav">
+      <div id="navWrap" class="nav-wrap collapsed">
+        <ul class="nav-list" role="menubar" aria-label="Primary">
+          <li role="none"><a role="menuitem" href="index.aspx">Home</a></li>
+          <li class="spacer" aria-hidden="true"></li>
+          <li role="none"><a role="menuitem" href="../member/login.aspx">Login</a></li>
+          <li class="spacer" aria-hidden="true"></li>
+          <li role="none"><a role="menuitem" href="aboutlib.aspx">About Library</a></li>
+          <li class="spacer" aria-hidden="true"></li>
+          <li role="none"><a role="menuitem" href="libtiming.aspx">Library Timings</a></li>
+          <li class="spacer" aria-hidden="true"></li>
+          <li role="none"><a role="menuitem" href="Contact.aspx">Contact</a></li>
+          <li class="spacer" aria-hidden="true"></li>
+          <li role="none"><a role="menuitem" href="StaffD.aspx">Staff Directory</a></li>
+          <li class="spacer" aria-hidden="true"></li>
+          <li role="none"><a role="menuitem" href="help.aspx">Help</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Main layout -->
+    <div class="container">
+      <div class="grid">
+        <!-- Left column: Quick Search + Counter -->
+        <aside id="left_div" class="card">
+          <div class="card-header">Quick Search</div>
+          <div class="card-body">
+            <label for="quicksearch" class="section-title" style="display:block">Search Terms</label>
+            <!-- keep IDs so your code-behind works -->
+            <input name="ctl00$quicksearch" type="text" id="ctl00_quicksearch" class="search-text" />
+            <div class="rb-list">
+              <span id="ctl00_RadioButtonList1"><input id="ctl00_RadioButtonList1_0" type="radio" name="ctl00$RadioButtonList1" value="Books" checked="checked" /><label for="ctl00_RadioButtonList1_0">Books</label><br /><input id="ctl00_RadioButtonList1_1" type="radio" name="ctl00$RadioButtonList1" value="Periodicals" /><label for="ctl00_RadioButtonList1_1">Periodicals</label><br /><input id="ctl00_RadioButtonList1_2" type="radio" name="ctl00$RadioButtonList1" value="Periodical Articles" /><label for="ctl00_RadioButtonList1_2">Periodical Articles</label><br /><input id="ctl00_RadioButtonList1_3" type="radio" name="ctl00$RadioButtonList1" value="Newspapers Articles" /><label for="ctl00_RadioButtonList1_3">Newspapers Articles</label></span>
+            </div>
+            <div style="margin-top:10px">
+              <input type="image" name="ctl00$ImageButton1" id="ctl00_ImageButton1" src="images/Search_btn.gif" alt="Search" border="0" />
+            </div>
+          </div>
+
+          <!-- Visitor counter (your code-behind fills this) -->
+          <div class="card-header">Visitors</div>
+          <div id="ctl00_div_counter" class="counter">
+            <!-- your code will inject digits; keeping a style in case -->
+          </div>
+        </aside>
+
+        <!-- Middle content area -->
+        <section class="card content-card">
+          
+    &nbsp;<script language="javascript" type="text/javascript">
+function getdetail(btn)
+{
+window.location="BookDetail.aspx?id="+btn.id;
+return false;
+}
+
+//ctl00_ContentPlaceHolder1_txtCriteria
+function gotonext()
+{
+    if (document.getElementById('ctl00_ContentPlaceHolder1_txtCriteria').value.length < 1)
+return;
+var criteria = document.getElementById('ctl00_ContentPlaceHolder1_txtCriteria').value;
+var column = document.getElementById('ctl00_ContentPlaceHolder1_txtColumnName').value;
+if (document.getElementById('ctl00_ContentPlaceHolder1_fldPageNumber').value.length > 0)
+{
+    var page = document.getElementById('ctl00_ContentPlaceHolder1_fldPageNumber').value;
+page++;
+window.location="SearchBook.aspx?pagenumber="+page+"&criteria="+criteria+"&column="+column;
+}
+else
+window.location="SearchBook.aspx?pagenumber="+"1"+"&criteria="+criteria+"&column="+column;
+}
+function gotoprev()
+{
+        if(document.getElementById('ctl00_ContentPlaceHolder1_txtCriteria').value.length<1)
+        return;
+        var criteria=document.getElementById('ctl00_ContentPlaceHolder1_txtCriteria').value;
+        var column=document.getElementById('ctl00_ContentPlaceHolder1_txtColumnName').value;
+        if(document.getElementById('ctl00_ContentPlaceHolder1_fldPageNumber').value.length>0)
+        {
+        var page=document.getElementById('ctl00_ContentPlaceHolder1_fldPageNumber').value;
+        page--;
+        window.location="SearchBook.aspx?pagenumber="+page+"&criteria="+criteria+"&column="+column;
+        }
+        else
+        window.location="SearchBook.aspx?pagenumber="+"1"+"&criteria="+criteria+"&column="+column;
+}
+function gotospecific()
+{
+if(document.getElementById('ctl00_ContentPlaceHolder1_txtCriteria').value.length<1)
+        return;
+        var criteria=document.getElementById('ctl00_ContentPlaceHolder1_txtCriteria').value;
+        var column=document.getElementById('ctl00_ContentPlaceHolder1_txtColumnName').value;
+        var page=document.getElementById('ctl00_ContentPlaceHolder1_GoToSpecificPage').value;
+ window.location="SearchBook.aspx?pagenumber="+page+"&criteria="+criteria+"&column="+column;
+}
+function gotofirst()
+{
+var criteria=document.getElementById('ctl00_ContentPlaceHolder1_txtCriteria').value;
+        var column=document.getElementById('ctl00_ContentPlaceHolder1_txtColumnName').value;
+ window.location="SearchBook.aspx?pagenumber="+"1"+"&criteria="+criteria+"&column="+column;
+}
+ function searchbook()
+    {
+
+    var ctrl=document.getElementById('ctl00_ContentPlaceHolder1_ddsearch');
+    
+    var criteria=document.getElementById('ctl00_ContentPlaceHolder1_txtsearch').value;
+   
+   var column=ctrl.options[ctrl.selectedIndex].value;
+   var pagenum=1;
+  
+   window.location="SearchBook.aspx?pagenumber="+pagenum+"&column="+column+"&criteria="+criteria;
+  return false;
+    }
+    </script><div id="mid_div">
+        <div id="top_div">
+            <div id="ctl00_ContentPlaceHolder1_panSearch">
+	
+                <table cellpadding="0" cellspacing="0" border="0" width="100%" style="text-align: left;
+                    color: #0000FF;">
+                    <tr>
+                        <td class="left_bar">
+                        </td>
+                        <td class="mid_bar" align="left">
+                            <div class="Menu_font">
+                                Book Search <b>
+                                    (Records Found: 4)</b></div>
+                        </td>
+                        <td class="right_bar">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            
+                            <table>
+                                <tr>
+                                    <td>
+                                        <span class="text_font">Search:</span>
+                                    </td>
+                                    <td>
+                                        <input name="ctl00$ContentPlaceHolder1$txtsearch" type="text" id="ctl00_ContentPlaceHolder1_txtsearch" class="search_text" value="Constitutional and political history of Pakistan" />
+                                    </td>
+                                    <td>
+                                        <select name="ctl00$ContentPlaceHolder1$ddsearch" id="ctl00_ContentPlaceHolder1_ddsearch" class="lblNormal">
+		<option value="Author">Author</option>
+		<option selected="selected" value="Title">Title</option>
+		<option value="Subject">Subject</option>
+		<option value="CallNo">CallNo</option>
+		<option value="Keyword">Keyword</option>
+		<option value="All">All</option>
+
+	</select>
+                                    </td>
+                                    <td align="left">
+                                        <input type="submit" name="ctl00$ContentPlaceHolder1$btnsearch" value="Search" onclick=" return searchbook();" id="ctl00_ContentPlaceHolder1_btnsearch" class="button" />
+                                    </td>
+                                    <td>
+                                        <a id="ctl00_ContentPlaceHolder1_HyperLink1" href="SearchBookAdvance.aspx" style="font-weight: 700">Advance Search</a> || 
+                                        <a id="ctl00_ContentPlaceHolder1_HyperLink2" href="SearchUrduBooks.aspx" style="font-weight: 600">Urdu Search</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            
+</div>
+            
+                    <table width="100%" border="0" cellspacing="0" class="lbleNormal" cellpadding="0"
+                        style="margin-left: 5px;">
+                
+                    <tr align="left" style="width: 100%">
+                        <td>
+                            <br />
+                            <b>Title:
+                                <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl01_img11" />
+                                Constitutional and Political History of Pakistan
+                            </b>
+                        </td>
+                    </tr>
+                    <tr style="width: 100%">
+                        <td align="left">
+                            Author:
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl01_img10" />
+                            Hamid Khan
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left">
+                            Call No:
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl01_img9" />
+                            954.9/342 HAM
+                        </td>
+                    </tr>
+                    <tr style="width: 100%">
+                        <td align="left">
+                            Publisher:
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl01_img2" />
+                            A and C Black
+                            ,<img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl01_img1" />
+                            38 Soho Square,London,United Kingdom
+                            ,<img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl01_img4" />
+                            2009
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl01_img5" />
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl01_img6" />
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl01_img7" />
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl01_img8" />
+                            <a href="BookDetail.aspx?id=61244" style="color: Blue;"><b>Detail</b></a>
+                        </td>
+                    </tr>
+                    <tr style="width: 100%">
+                        <td align="left">
+                            <img src="../Images/Backgrounds/a-bg.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl01_img3" />
+                        </td>
+                    </tr>
+                
+                    <tr align="left" style="width: 100%">
+                        <td>
+                            <br />
+                            <b>Title:
+                                <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl02_img11" />
+                                Constitutional and Political History of Pakistan
+                            </b>
+                        </td>
+                    </tr>
+                    <tr style="width: 100%">
+                        <td align="left">
+                            Author:
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl02_img10" />
+                            Hamid Khan
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left">
+                            Call No:
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl02_img9" />
+                            954.9/342 HAM
+                        </td>
+                    </tr>
+                    <tr style="width: 100%">
+                        <td align="left">
+                            Publisher:
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl02_img2" />
+                            Islamabad, Pakistan
+                            ,<img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl02_img1" />
+                            
+                            ,<img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl02_img4" />
+                            0
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl02_img5" />
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl02_img6" />
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl02_img7" />
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl02_img8" />
+                            <a href="BookDetail.aspx?id=47457" style="color: Blue;"><b>Detail</b></a>
+                        </td>
+                    </tr>
+                    <tr style="width: 100%">
+                        <td align="left">
+                            <img src="../Images/Backgrounds/a-bg.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl02_img3" />
+                        </td>
+                    </tr>
+                
+                    <tr align="left" style="width: 100%">
+                        <td>
+                            <br />
+                            <b>Title:
+                                <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl03_img11" />
+                                Constitutional and Political History of Pakistan
+                            </b>
+                        </td>
+                    </tr>
+                    <tr style="width: 100%">
+                        <td align="left">
+                            Author:
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl03_img10" />
+                            Hamid Khan
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left">
+                            Call No:
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl03_img9" />
+                            954.9/342 HAM
+                        </td>
+                    </tr>
+                    <tr style="width: 100%">
+                        <td align="left">
+                            Publisher:
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl03_img2" />
+                            Oxford University Press
+                            ,<img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl03_img1" />
+                            5- Banglore Town, sharae Faisal, Karachi, Pakistan
+                            ,<img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl03_img4" />
+                            2023
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl03_img5" />
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl03_img6" />
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl03_img7" />
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl03_img8" />
+                            <a href="BookDetail.aspx?id=82880" style="color: Blue;"><b>Detail</b></a>
+                        </td>
+                    </tr>
+                    <tr style="width: 100%">
+                        <td align="left">
+                            <img src="../Images/Backgrounds/a-bg.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl03_img3" />
+                        </td>
+                    </tr>
+                
+                    <tr align="left" style="width: 100%">
+                        <td>
+                            <br />
+                            <b>Title:
+                                <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl04_img11" />
+                                Constitutional and Political History of Pakistan
+                            </b>
+                        </td>
+                    </tr>
+                    <tr style="width: 100%">
+                        <td align="left">
+                            Author:
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl04_img10" />
+                            Hamid, Khan
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left">
+                            Call No:
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl04_img9" />
+                            954.9/342 HAM
+                        </td>
+                    </tr>
+                    <tr style="width: 100%">
+                        <td align="left">
+                            Publisher:
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl04_img2" />
+                            Islamabad, Pakistan
+                            ,<img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl04_img1" />
+                            
+                            ,<img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl04_img4" />
+                            0
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl04_img5" />
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl04_img6" />
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl04_img7" />
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl04_img8" />
+                            <a href="BookDetail.aspx?id=48184" style="color: Blue;"><b>Detail</b></a>
+                        </td>
+                    </tr>
+                    <tr style="width: 100%">
+                        <td align="left">
+                            <img src="../Images/Backgrounds/a-bg.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl04_img3" />
+                        </td>
+                    </tr>
+                
+                    </table>
+                
+            
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <input name="ctl00$ContentPlaceHolder1$txtHidden" type="hidden" id="ctl00_ContentPlaceHolder1_txtHidden" style="width: 28px" value="1" />
+            
+        </div>
+    </div>
+
+        </section>
+
+        <!-- Right column: Catalogue + Publications + Theses -->
+        <aside id="right_div" class="card">
+          <div class="card-header">Catalogue</div>
+          <div class="card-body">
+            <h4 class="section-title">Books</h4>
+            <ul class="link-list">
+              <li><a href="FreshBooks.aspx">Fresh Arrivals</a></li>
+              <li><a href="SearchBook.aspx">Search</a></li>
+            </ul>
+
+            <h4 class="section-title">Periodicals</h4>
+            <ul class="link-list">
+              <li><a href="FreshPeriodicals.aspx">Fresh Arrivals</a></li>
+              <li><a href="PeriodicalList.aspx">Periodicals List</a></li>
+              <li><a href="SearchPeriodical.aspx">Periodical Search</a></li>
+              <li><a href="ArticalSearch.aspx">Periodical Articles</a></li>
+            </ul>
+
+            <h4 class="section-title">Newspapers</h4>
+            <ul class="link-list">
+              <li><a href="NArticleSearch.aspx">Article Search</a></li>
+              <li><a href="TopNArticle.aspx">Latest Articles</a></li>
+            </ul>
+
+            <h4 class="section-title">Publications</h4>
+            <!-- your code-behind writes a table of links here -->
+            <div id="ctl00_coursediv"><table cellpadding='0'><tr><td><a href='SearchPeriodical.aspx?key=E9+Quarterly&type=Title'>E9 Quarterly</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=ISSRA+Papers&type=Title'>ISSRA Papers</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=ISSRA+Working+Paper&type=Title'>ISSRA Working Paper</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=Journal+of+Contemporary+Studies&type=Title'>Journal of Contemporary Studies</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=Journal+of+International+Law&type=Title'>Journal of International Law</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=Margalla+Papers&type=Title'>Margalla Papers</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=Monograph&type=Title'>Monograph</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=NDC+Journal%2fNDU+Journal&type=Title'>NDC Journal/NDU Journal</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=Proceedings&type=Title'>Proceedings</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=Report&type=Title'>Report</a></td></tr><tr><td><a href='SearchPeriodical.aspx?key=Strategic+Thought&type=Title'>Strategic Thought</a></td></tr></table></div>
+
+            <h4 class="section-title">Theses / Research Papers</h4>
+            <ul class="link-list">
+              <li><a href="TopRPapers.aspx">Latest Papers</a></li>
+              <li><a href="SearchPapers.aspx">Search</a></li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="card">
+        <div class="Footer_font">© 2010-2026 Powered By
+          <a href="http://www.max-intell.com" rel="noopener">Max Intelligence</a>.
+          All rights reserved.
+        </div>
+      </div>
+    </div>
+
+  </form>
+</body>
+</html>

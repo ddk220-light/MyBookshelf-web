@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">	
+<meta charset="utf-8">
+<title>Library OPAC</title>
+
+<link rel='stylesheet' href='library/bootstrap.min.css'>
+  <script src='library/jquery.min.js'></script>  
+  <script src='library/bootstrap.min.js'></script>
+  <script src='library/yauk.min.js'></script>
+  
+<link rel='stylesheet' href='library/bootstrap-icons.css'>
+  <link rel='stylesheet' href='library/font-awesome.min.css'>
+												  <!-- Include Bootstrap, jQuery etc. -->
+<style>
+    /* ===== GLOBAL STYLES ===== */
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: #f5f5f5;
+    }
+    
+    /* Layout containers */
+    .wrap { 
+        display: flex; 
+        justify-content: center; 
+        width: 100%; 
+    }
+    
+    .header, .footer { 
+        width: 1200px; 
+        max-width: 100%; 
+    }
+    
+    .header img, .footer img { 
+        width: 100%; 
+        display: block; 
+    }
+    
+    /* Main content container */
+    .container {
+        width: 1200px;
+        max-width: 100%;
+        margin: 25px auto;
+        padding: 25px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+    
+    /* Search form styling */
+    .search-card {
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+        background: #fff;
+    }
+    
+    .search-card h3 {
+        margin: 0 0 15px;
+        color: #0b3c5d;
+        font-weight: 600;
+    }
+    
+    /* Grid layout for search form - 4 columns on desktop (including search button) */
+    .search-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr 1.5fr 0.8fr;
+        gap: 15px;
+        align-items: end;
+    }
+    
+    /* For mobile - stack vertically */
+    @media (max-width: 768px) {
+        .search-grid {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+    }
+    
+    .search-field-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .search-field-group label {
+        font-weight: 600;
+        color: #0b3c5d;
+        font-size: 14px;
+    }
+    
+    /* Search type select styling */
+    .search-type-select {
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        background: white;
+        cursor: pointer;
+    }
+    
+    /* Input field styling */
+    .search-input {
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .search-input:focus, .search-type-select:focus, .dept-select:focus {
+        outline: none;
+        border-color: #ff6600;
+        box-shadow: 0 0 0 2px rgba(255,102,0,0.1);
+    }
+    
+    /* Department select styling */
+    .dept-select {
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        background: white;
+        cursor: pointer;
+        width: 100%;
+    }
+    
+    /* Search button styling */
+    .search-btn {
+        padding: 10px 20px;
+        background: #0b3c5d;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s;
+        font-size: 16px;
+        height: 48px;
+        width: 100%;
+    }
+    
+    .search-btn:hover { 
+        background: #092f49; 
+    }
+    
+    /* Active search info display */
+    .active-search-info {
+        background: #e8f0fe;
+        padding: 12px 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 14px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .search-badge {
+        background: #0b3c5d;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+    }
+    
+    /* Filter buttons (PDF/All) */
+    .filter-buttons {
+        text-align: center;
+        margin-bottom: 15px;
+    }
+    
+    .filter-buttons button {
+        margin: 5px;
+        padding: 8px 14px;
+        background: #0b3c5d;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+    
+    .filter-buttons button.active { 
+        background: #ff6600;
+    }
+    
+    /* View toggle (Card/List) */
+    .view-toggle {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 20px;
+        gap: 10px;
+    }
+    
+    .view-btn {
+        padding: 8px 16px;
+        border: 1px solid #0b3c5d;
+        background: white;
+        color: #0b3c5d;
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+    
+    .view-btn:hover {
+        background: #0b3c5d;
+        color: white;
+    }
+    
+    .view-btn.active {
+        background: #0b3c5d;
+        color: white;
+    }
+    
+    /* ===== CARD VIEW (Grid Layout) ===== */
+    .cards-view {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 15px;
+    }
+    
+    /* Individual card */
+    .card {
+        background: #fff;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        border-left: 3px solid #ff6600;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .card:hover {
+        box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+        transform: translateY(-2px);
+    }
+    
+    .card h4 {
+        margin: 0 0 8px;
+        font-size: 16px;
+        color: #0b3c5d;
+        border-bottom: 1px solid #f0f0f0;
+        padding-bottom: 6px;
+        line-height: 1.3;
+        font-weight: 600;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-height: 42px;
+    }
+    
+    .card p {
+        margin: 4px 0;
+        font-size: 13px;
+        color: #555;
+        line-height: 1.4;
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+    }
+    
+    .card .label {
+        font-weight: 600;
+        color: #0b3c5d;
+        min-width: 65px;
+        display: inline-block;
+        font-size: 12px;
+    }
+    
+    .card .value {
+        color: #333;
+        word-break: break-word;
+    }
+    
+    .call-number {
+        font-family: 'Courier New', monospace;
+        background: #f0f4f9;
+        padding: 3px 6px;
+        border-radius: 4px;
+        color: #0b3c5d;
+        font-weight: 600;
+        font-size: 12px;
+        display: inline-block;
+    }
+    
+    .dept-badge {
+        background: #e8f0fe;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        color: #0b3c5d;
+        display: inline-block;
+        margin-top: 5px;
+    }
+    
+    /* ===== LIST VIEW ===== */
+    .list-view {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .list-item {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        transition: all 0.3s ease;
+        border: 1px solid #e5e7eb;
+    }
+    
+    .list-item:hover {
+        box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+        transform: translateX(3px);
+        border-left: 3px solid #ff6600;
+    }
+    
+    .list-content {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+    
+    .list-title {
+        flex: 2;
+        min-width: 220px;
+    }
+    
+    .list-title h4 {
+        margin: 0 0 3px;
+        color: #0b3c5d;
+        font-size: 15px;
+        font-weight: 600;
+    }
+    
+    .list-title .author {
+        color: #666;
+        font-size: 13px;
+    }
+    
+    .list-details {
+        flex: 3;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    
+    .list-detail-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 13px;
+    }
+    
+    .list-detail-item .label {
+        font-weight: 600;
+        color: #0b3c5d;
+        font-size: 12px;
+    }
+    
+    .pdf-badge {
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        display: inline-block;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        line-height: 1.2;
+    }
+    
+    .pdf-badge-primary {
+        background: #0b3c5d;
+        color: white;
+    }
+    
+    .pdf-badge-primary:hover {
+        background: #092f49;
+        transform: translateY(-1px);
+        box-shadow: 0 3px 6px rgba(11,60,93,0.2);
+    }
+    
+    .pdf-badge-secondary {
+        background: #6c757d;
+        color: white;
+    }
+    
+    .pager {
+        margin-top: 25px;
+        text-align: center;
+    }
+    
+    .pager a {
+        display: inline-block;
+        padding: 6px 12px;
+        margin: 2px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        text-decoration: none;
+        color: #555;
+        transition: all 0.3s;
+        font-size: 13px;
+    }
+    
+    .pager a:hover {
+        background: #0b3c5d;
+        color: #fff;
+        border-color: #0b3c5d;
+    }
+    
+    .pager .on {
+        background: #ff6600;
+        color: #fff;
+        border-color: #ff6600;
+        font-weight: 600;
+    }
+    
+    .count {
+        text-align: center;
+        font-weight: 500;
+        margin: 10px 0;
+        color: #0b3c5d;
+        font-size: 14px;
+    }
+    
+    /* ===== RESPONSIVE STYLES ===== */
+    @media (max-width: 640px) {
+        .container {
+            padding: 15px;
+            margin: 10px auto;
+        }
+        
+        .search-card {
+            padding: 15px;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .view-toggle {
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .cards-view {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        
+        .card {
+            padding: 12px;
+        }
+        
+        .list-content {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        
+        .list-title {
+            width: 100%;
+            min-width: auto;
+        }
+        
+        .list-details {
+            width: 100%;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .list-actions {
+            width: 100%;
+            text-align: left;
+        }
+        
+        .active-search-info {
+            flex-direction: column;
+            gap: 8px;
+            text-align: center;
+        }
+    }
+    
+    @media (min-width: 641px) and (max-width: 768px) {
+        .cards-view {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+</head>
+<body>
+
+<!-- University Header Image -->
+<div class="wrap"><div class="header"><img src="header.jpg" alt="University Header"></div></div>
+
+<div class="container">
+    <!-- Language Selection Buttons -->
+    <div class="d-flex justify-content-center gap-3 mb-4">
+        <a href="index.php" class="btn btn-primary btn-lg">
+            English Search
+        </a>
+        <a href="index1.php" class="btn btn-outline-primary btn-lg">
+            Urdu Search
+        </a>
+    </div>
+    
+    <!-- Search Form Card -->
+    <div class="search-card">
+        <form method="get">
+            <div class="search-grid">
+                <!-- First: Search Type Selection -->
+                <div class="search-field-group">
+                    <h4>Search By:</h4>
+                    <select name="search_type" class="search-type-select">
+                        <option value="title" selected>Title</option>
+                        <option value="author" >Author</option>
+                        <option value="class" >Classification</option>
+                    </select>
+                </div>
+                
+                <!-- Second: Input field for search term -->
+                <div class="search-field-group">
+                    <h4>Search Keyword:</h4>
+                    <input type="text" name="search_term" class="search-input" 
+                           placeholder="Enter search term..." 
+                           value="Pakistan the formative phase">
+                </div>
+                
+                <!-- Third: Department Dropdown -->
+                <div class="search-field-group">
+                    <h4>Department:</h4>
+                    <select name="department" class="dept-select">
+                        <option value="">-- All Departments --</option>
+                                                    <option value="Centre for High Energy Physics" >
+                                Centre for High Energy Physics                            </option>
+                                                    <option value="Centre of Excellence in Solid State Physics" >
+                                Centre of Excellence in Solid State Physics                            </option>
+                                                    <option value="Clinical Psychology" >
+                                Clinical Psychology                            </option>
+                                                    <option value="College of Earth and  Environmental Science" >
+                                College of Earth and  Environmental Science                            </option>
+                                                    <option value="College of Engineering and Emerging Technologies" >
+                                College of Engineering and Emerging Technologies                            </option>
+                                                    <option value="Department of Archaeology" >
+                                Department of Archaeology                            </option>
+                                                    <option value="Department of Botany" >
+                                Department of Botany                            </option>
+                                                    <option value="Department of English Language &amp; Literature" >
+                                Department of English Language &amp; Literature                            </option>
+                                                    <option value="Department of Gender Studies" >
+                                Department of Gender Studies                            </option>
+                                                    <option value="Department of Geography" >
+                                Department of Geography                            </option>
+                                                    <option value="Department of History" >
+                                Department of History                            </option>
+                                                    <option value="Department of Islamic Studies" >
+                                Department of Islamic Studies                            </option>
+                                                    <option value="Department of Kashmiryat" >
+                                Department of Kashmiryat                            </option>
+                                                    <option value="Department of Mathematics" >
+                                Department of Mathematics                            </option>
+                                                    <option value="Department of Mosques" >
+                                Department of Mosques                            </option>
+                                                    <option value="Department of Philosophy" >
+                                Department of Philosophy                            </option>
+                                                    <option value="Department of Physics" >
+                                Department of Physics                            </option>
+                                                    <option value="Department of Political Science " >
+                                Department of Political Science                             </option>
+                                                    <option value="Department of Punjabi" >
+                                Department of Punjabi                            </option>
+                                                    <option value="Department of Social Work" >
+                                Department of Social Work                            </option>
+                                                    <option value="Department of Special Education" >
+                                Department of Special Education                            </option>
+                                                    <option value="Department of Zoology" >
+                                Department of Zoology                            </option>
+                                                    <option value="Gujranwala Campus" >
+                                Gujranwala Campus                            </option>
+                                                    <option value="Hailey College of Banking &amp; Finance" >
+                                Hailey College of Banking &amp; Finance                            </option>
+                                                    <option value="Hailey College of Commerce" >
+                                Hailey College of Commerce                            </option>
+                                                    <option value="Institute of Administrative Science" >
+                                Institute of Administrative Science                            </option>
+                                                    <option value="Institute of Agricultural sciences" >
+                                Institute of Agricultural sciences                            </option>
+                                                    <option value="Institute of Biochemistry &amp; Biotechnology" >
+                                Institute of Biochemistry &amp; Biotechnology                            </option>
+                                                    <option value="Institute of Business Administration" >
+                                Institute of Business Administration                            </option>
+                                                    <option value="Institute of Chemical Engineering &amp; Technology" >
+                                Institute of Chemical Engineering &amp; Technology                            </option>
+                                                    <option value="Institute of Chemistry" >
+                                Institute of Chemistry                            </option>
+                                                    <option value="Institute of Education &amp; Research" >
+                                Institute of Education &amp; Research                            </option>
+                                                    <option value="Institute of Energy &amp; Environmental Engineering" >
+                                Institute of Energy &amp; Environmental Engineering                            </option>
+                                                    <option value="Institute of Geology" >
+                                Institute of Geology                            </option>
+                                                    <option value="Institute of Quality &amp; Technology Management" >
+                                Institute of Quality &amp; Technology Management                            </option>
+                                                    <option value="Institute of Statistics" >
+                                Institute of Statistics                            </option>
+                                                    <option value="Library &amp; Information Science" >
+                                Library &amp; Information Science                            </option>
+                                                    <option value="Pakistan Studies Centre" >
+                                Pakistan Studies Centre                            </option>
+                                                    <option value="Punjab University Library" >
+                                Punjab University Library                            </option>
+                                                    <option value="School of Biological Sciences" >
+                                School of Biological Sciences                            </option>
+                                                    <option value="School of Economics" >
+                                School of Economics                            </option>
+                                                    <option value="School of Physical Sciences" >
+                                School of Physical Sciences                            </option>
+                                                    <option value="Sheikh Zayed Islamic Centre" >
+                                Sheikh Zayed Islamic Centre                            </option>
+                                                    <option value="South Asian Study Centre" >
+                                South Asian Study Centre                            </option>
+                                                    <option value="University College of Pharmacy" >
+                                University College of Pharmacy                            </option>
+                                                    <option value="University Law College" >
+                                University Law College                            </option>
+                                                    <option value="University of the Punjab  Jhelum Campus" >
+                                University of the Punjab  Jhelum Campus                            </option>
+                                                    <option value="University Oriental College" >
+                                University Oriental College                            </option>
+                                                    <option value="Urdu Encyclopaedia of Islam" >
+                                Urdu Encyclopaedia of Islam                            </option>
+                                            </select>
+                </div>
+                
+                <!-- Search button only (no reset button) -->
+                <div class="search-field-group">
+                    <h4>&nbsp;</h4> <!-- Empty label for alignment -->
+                    <button type="submit" class="search-btn">Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+            <!-- Active Search Info Display -->
+     
+        <!-- Filter Buttons (PDF/All) -->
+        <div class="filter-buttons"> 
+            <form method="get" style="display:inline;"> 
+                <input type="hidden" name="search_type" value="title"> 
+                <input type="hidden" name="search_term" value="Pakistan the formative phase"> 
+                <input type="hidden" name="department" value="">
+                <button type="submit" name="filter" value="all" class="active"> Show All</button> 
+                <button type="submit" name="filter" value="dl" > Only PDF</button> 
+            </form> 
+        </div>
+
+        <!-- Results Count Display -->
+                <div class="count">
+             Total 12 Record(s) Found. Showing 1-12        </div>
+        
+        <!-- View Toggle (Card/List) -->
+        <div class="view-toggle">
+            <a href="?search_type=title&search_term=Pakistan+the+formative+phase&department=&view=card" 
+               class="view-btn active">
+                 Card View
+            </a>
+            <a href="?search_type=title&search_term=Pakistan+the+formative+phase&department=&view=list" 
+               class="view-btn ">
+                 List View
+            </a>
+        </div>
+        
+        <!-- CARD VIEW DISPLAY -->
+                <div class="cards-view">
+                        <div class="card">
+                <h4 title=" Pakistan the formative phase.">
+                     Pakistan the formative phase.                                    </h4>
+                
+                <p>
+                    <span class="label">Author:</span> 
+                    <span class="value">
+                        Khalid Bin Sayeed                                            </span>
+                </p>
+                
+                <p>
+                    <span class="label">Call No:</span> 
+                    <span class="call-number">
+                        954.7 KHA                    </span>
+                </p>
+                
+                <p>
+                    <span class="label">Publisher:</span> 
+                    <span class="value">
+                        Oxford university pr                        ...                    </span>
+                </p>
+                
+                <p>
+                    <span class="label">Year:</span> 
+                    <span class="value">1968</span>
+                </p>
+
+                                <div class="dept-badge">
+                   <u>Dept:</u>  Department of Philosophy                </div>
+                
+                            </div>
+                        <div class="card">
+                <h4 title="Pakistan the Formative Phase">
+                    Pakistan the Formative Phase                                    </h4>
+                
+                <p>
+                    <span class="label">Author:</span> 
+                    <span class="value">
+                        Sayeed, Khalid Bin                                            </span>
+                </p>
+                
+                <p>
+                    <span class="label">Call No:</span> 
+                    <span class="call-number">
+                        954.91 S16P                    </span>
+                </p>
+                
+                <p>
+                    <span class="label">Publisher:</span> 
+                    <span class="value">
+                        Pakistan publishing                         ...                    </span>
+                </p>
+                
+                <p>
+                    <span class="label">Year:</span> 
+                    <span class="value">1960</span>
+                </p>
+
+                                <div class="dept-badge">
+                   <u>Dept:</u>  University Law College                </div>
+                
+                            </div>
+                        <div class="card">
+                <h4 title="Pakistan The Formative Phase">
+                    Pakistan The Formative Phase                                    </h4>
+                
+                <p>
+                    <span class="label">Author:</span> 
+                    <span class="value">
+                        Khalid Bin Sayeed                                            </span>
+                </p>
+                
+                <p>
+                    <span class="label">Call No:</span> 
+                    <span class="call-number">
+                        954.035 SAY                    </span>
+                </p>
+                
+                <p>
+                    <span class="label">Publisher:</span> 
+                    <span class="value">
+                        Pakistan Publication                        ...                    </span>
+                </p>
+                
+                <p>
+                    <span class="label">Year:</span> 
+                    <span class="value"></span>
+                </p>
+
+                                <div class="dept-badge">
+                   <u>Dept:</u>  Department of History                </div>
+                
+                            </div>
+                        <div class="card">
+                <h4 title="Pakistan the Formative Phase">
+                    Pakistan the Formative Phase                                    </h4>
+                
+                <p>
+                    <span class="label">Author:</span> 
+                    <span class="value">
+                        Khalid Bin Sayeed,Dr.                                            </span>
+                </p>
+                
+                <p>
+                    <span class="label">Call No:</span> 
+                    <span class="call-number">
+                        954.9 K 26 P                    </span>
+                </p>
+                
+                <p>
+                    <span class="label">Publisher:</span> 
+                    <span class="value">
+                        Pakistan Publishing                         ...                    </span>
+                </p>
+                
+                <p>
+                    <span class="label">Year:</span> 
+                    <span class="value">1960</span>
+                </p>
+
+                                <div class="dept-badge">
+                   <u>Dept:</u>  Department of Islamic Studies                </div>
+                
+                            </div>
+                        <div class="card">
+                <h4 title="Pakistan the Formative Phase">
+                    Pakistan the Formative Phase                                    </h4>
+                
+                <p>
+                    <span class="label">Author:</span> 
+                    <span class="value">
+                        Khalid, Bin Sayeed                                            </span>
+                </p>
+                
+                <p>
+                    <span class="label">Call No:</span> 
+                    <span class="call-number">
+                        954.7 KHA                    </span>
+                </p>
+                
+                <p>
+                    <span class="label">Publisher:</span> 
+                    <span class="value">
+                        Pakistan Publishing                         ...                    </span>
+                </p>
+                
+                <p>
+                    <span class="label">Year:</span> 
+                    <span class="value">1960</span>
+                </p>
+
+                                <div class="dept-badge">
+                   <u>Dept:</u>  Institute of Chemical Engineering &amp; Tech                </div>
+                
+                            </div>
+                        <div class="card">
+                <h4 title="PAKISTAN THE FORMATIVE PHASE 1857-1948">
+                    PAKISTAN THE FORMATIVE PHASE 1857-1948                                    </h4>
+                
+                <p>
+                    <span class="label">Author:</span> 
+                    <span class="value">
+                        KHALID BIN SAYEED                                            </span>
+                </p>
+                
+                <p>
+                    <span class="label">Call No:</span> 
+                    <span class="call-number">
+                        320.9549 K55P                    </span>
+                </p>
+                
+                <p>
+                    <span class="label">Publisher:</span> 
+                    <span class="value">
+                        Ameena saiyid                                            </span>
+                </p>
+                
+                <p>
+                    <span class="label">Year:</span> 
+                    <span class="value">1969</span>
+                </p>
+
+                                <div class="dept-badge">
+                   <u>Dept:</u>  Department of Political Science                 </div>
+                
+                            </div>
+                        <div class="card">
+                <h4 title="Pakistan The Formative Phase 1857-1948">
+                    Pakistan The Formative Phase 1857-1948                                    </h4>
+                
+                <p>
+                    <span class="label">Author:</span> 
+                    <span class="value">
+                        Khalid Bin Sayeed                                             </span>
+                </p>
+                
+                <p>
+                    <span class="label">Call No:</span> 
+                    <span class="call-number">
+                        954.91 K55P                    </span>
+                </p>
+                
+                <p>
+                    <span class="label">Publisher:</span> 
+                    <span class="value">
+                        Oxford University Pr                        ...                    </span>
+                </p>
+                
+                <p>
+                    <span class="label">Year:</span> 
+                    <span class="value">2012</span>
+                </p>
+
+                                <div class="dept-badge">
+                   <u>Dept:</u>  University Law College                </div>
+                
+                            </div>
+                        <div class="card">
+                <h4 title="Pakistan the formative phase 1857-1948">
+                    Pakistan the formative phase 1857-1948                                    </h4>
+                
+                <p>
+                    <span class="label">Author:</span> 
+                    <span class="value">
+                        Khalid B. Sayeed                                            </span>
+                </p>
+                
+                <p>
+                    <span class="label">Call No:</span> 
+                    <span class="call-number">
+                        954.9 K 55 P                    </span>
+                </p>
+                
+                <p>
+                    <span class="label">Publisher:</span> 
+                    <span class="value">
+                        Oxford University Pe                        ...                    </span>
+                </p>
+                
+                <p>
+                    <span class="label">Year:</span> 
+                    <span class="value">1968</span>
+                </p>
+
+                                <div class="dept-badge">
+                   <u>Dept:</u>  Punjab University Library                </div>
+                
+                            </div>
+                        <div class="card">
+                <h4 title="Pakistan the Formative Phase 1857-1948">
+                    Pakistan the Formative Phase 1857-1948                                    </h4>
+                
+                <p>
+                    <span class="label">Author:</span> 
+                    <span class="value">
+                        Khalid B. Sayeed                                            </span>
+                </p>
+                
+                <p>
+                    <span class="label">Call No:</span> 
+                    <span class="call-number">
+                        954.91 S16P                    </span>
+                </p>
+                
+                <p>
+                    <span class="label">Publisher:</span> 
+                    <span class="value">
+                        Oxford University Pr                        ...                    </span>
+                </p>
+                
+                <p>
+                    <span class="label">Year:</span> 
+                    <span class="value">1968</span>
+                </p>
+
+                                <div class="dept-badge">
+                   <u>Dept:</u>  University Law College                </div>
+                
+                            </div>
+                        <div class="card">
+                <h4 title="PAKISTAN THE FORMATIVE PHASE 1857-1948">
+                    PAKISTAN THE FORMATIVE PHASE 1857-1948                                    </h4>
+                
+                <p>
+                    <span class="label">Author:</span> 
+                    <span class="value">
+                        KHALID B, SAYEED                                            </span>
+                </p>
+                
+                <p>
+                    <span class="label">Call No:</span> 
+                    <span class="call-number">
+                        320.9549 K55P                    </span>
+                </p>
+                
+                <p>
+                    <span class="label">Publisher:</span> 
+                    <span class="value">
+                        Ameena saiyid                                            </span>
+                </p>
+                
+                <p>
+                    <span class="label">Year:</span> 
+                    <span class="value">1992</span>
+                </p>
+
+                                <div class="dept-badge">
+                   <u>Dept:</u>  Department of Political Science                 </div>
+                
+                            </div>
+                        <div class="card">
+                <h4 title="PAKISTAN THE FORMATIVE PHASE 1857-1948">
+                    PAKISTAN THE FORMATIVE PHASE 1857-1948                                    </h4>
+                
+                <p>
+                    <span class="label">Author:</span> 
+                    <span class="value">
+                        KHALID B, SAYEED                                            </span>
+                </p>
+                
+                <p>
+                    <span class="label">Call No:</span> 
+                    <span class="call-number">
+                        320.9549 K55P                    </span>
+                </p>
+                
+                <p>
+                    <span class="label">Publisher:</span> 
+                    <span class="value">
+                        Ameena saiyid                                            </span>
+                </p>
+                
+                <p>
+                    <span class="label">Year:</span> 
+                    <span class="value">1968</span>
+                </p>
+
+                                <div class="dept-badge">
+                   <u>Dept:</u>  Department of Political Science                 </div>
+                
+                            </div>
+                        <div class="card">
+                <h4 title="Pakistan The Formative Phase 1857-1948">
+                    Pakistan The Formative Phase 1857-1948                                    </h4>
+                
+                <p>
+                    <span class="label">Author:</span> 
+                    <span class="value">
+                        Sayeed, Khalid Bin                                            </span>
+                </p>
+                
+                <p>
+                    <span class="label">Call No:</span> 
+                    <span class="call-number">
+                        954.9 SAY                    </span>
+                </p>
+                
+                <p>
+                    <span class="label">Publisher:</span> 
+                    <span class="value">
+                        Oxford University Pr                        ...                    </span>
+                </p>
+                
+                <p>
+                    <span class="label">Year:</span> 
+                    <span class="value">1998</span>
+                </p>
+
+                                <div class="dept-badge">
+                   <u>Dept:</u>  South Asian Study Centre                </div>
+                
+                            </div>
+                    </div>
+        
+        <!-- LIST VIEW DISPLAY -->
+        
+        <!-- Pagination Links -->
+        
+    </div>
+
+<!-- University Footer Image -->
+<div class="wrap"><div class="footer"><img src="footer.jpg" alt="University Footer"></div></div>
+
+<!-- Bootstrap JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

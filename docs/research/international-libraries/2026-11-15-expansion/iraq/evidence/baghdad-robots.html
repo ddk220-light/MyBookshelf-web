@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: errorpage.tt -->
+
+
+
+
+<html lang="ar-Arab" dir="rtl" class="no-js">
+<head>
+
+<title>Central library | المكتبة المركزية الفهرس &rsaquo; لقد حدث خطأ</title>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha 19.0504000" /> <!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="shortcut icon" href="/opac-tmpl/bootstrap/images/favicon.ico" type="image/x-icon" />
+
+ <link href="/opac-tmpl/bootstrap/lib/bootstrap/css/bootstrap-rtl.min_19.0504000.css" rel="stylesheet" type="text/css">
+ <link href="/opac-tmpl/bootstrap/lib/jquery/jquery-ui-rtl_19.0504000.css" rel="stylesheet" type="text/css">
+ <link href="/opac-tmpl/bootstrap/css/right-to-left_19.0504000.css" rel="stylesheet" type="text/css">
+
+
+ 
+
+
+ <link href="/opac-tmpl/bootstrap/css/opac_19.0504000.css" rel="stylesheet" type="text/css">
+
+
+
+<link type="text/css" rel="stylesheet" href="/opac-tmpl/bootstrap/css/print_19.0504000.css" media="print">
+
+ <style>#opaccredits {
+background: linear-gradient(180deg, #44B400  30%, #E4FF8E  50%, #44B400  70%, #44B400  100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#44B400 ', endColorstr='#44B400 ', GradientType=1 );
+padding: 5px;
+color:#fff;
+}
+
+
+#daily-quote {
+background-color:#FFFFFF;
+border:2px solid #000000;
+border-radius:15px 15px 15px 15px;
+margin:0 0px 0px;
+text-align:center;
+width:auto;
+}
+
+#daily-quote-text{
+color: Green;
+font-weight: bold;
+}
+
+#daily-quote-source {
+color: Black;
+font-weight: bold;
+}</style>
+
+
+
+
+<!-- Respond.js brings responsive layout behavior to IE < v.9 -->
+<!--[if lt IE 9]>
+ <script src="/opac-tmpl/bootstrap/lib/respond.min.js"></script>
+<![endif]-->
+<script>
+    function _(s) { return s } // dummy function for gettext
+</script>
+<script src="/opac-tmpl/bootstrap/lib/modernizr.min_19.0504000.js"></script>
+<link href="/opac-tmpl/bootstrap/lib/font-awesome/css/font-awesome.min_19.0504000.css" type="text/css" rel="stylesheet">
+
+
+
+
+
+
+
+</head>
+<body id="error404" class="error">
+
+
+
+
+
+<div id="wrap">
+ <div id="header-region" class="noprint">
+ <div class="navbar navbar-inverse navbar-static-top">
+ <div class="navbar-inner">
+ <div class="container-fluid">
+ <h1 id="logo">
+ <a class="brand" href="/cgi-bin/koha/opac-main.pl">
+  Central library | المكتبة المركزية  </a>
+ </h1>
+ 
+ <div id="cartDetails" class="cart-message">سلتك فارغة.</div>
+ 
+ <ul class="nav">
+ 
+ <li>
+ <a href="#" id="cartmenulink" role="button" title="تجميع المواد التي تهمك">
+ <i id="carticon" class="fa fa-shopping-cart fa-icon-white"></i> <span class="cartlabel">سلة</span> <span id="basketcount"></span>
+ </a>
+ </li>
+ 
+ 
+ <li class="divider-vertical"></li>
+ 
+ 
+ <li class="dropdown">
+ <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="listsmenu" role="button" title="عرض القوائم"><i class="fa fa-list fa-icon-white"></i> <span class="listslabel">قوائم</span> <b class="caret"></b></a>
+ <ul aria-labelledby="listsmenu" role="menu" class="dropdown-menu">
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;category=2" tabindex="-1" role="menuitem"><strong>قوائم عامة</strong></a></li>
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=9&amp;sortfield=title" tabindex="-1" role="menuitem">كتاب الادب العربي</a></li>
+ 
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;category=2" tabindex="-1" role="menuitem" class="listmenulink">عرض الكل</a></li>
+ 
+ 
+ <li class="divider" role="presentation"></li>
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;category=1" tabindex="-1" role="menuitem"><strong>قوائمك</strong></a></li>
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-user.pl" tabindex="-1" class="menu-inactive loginModal-trigger" role="menuitem">سجل دخولك لكي تنشئ قوائمك الخاصة بك</a></li>
+ 
+ 
+ 
+ </ul> <!-- / .dropdown-menu -->
+ </li> <!-- / .dropdown -->
+ 
+ </ul> <!-- / .nav -->
+ <div id="listsDetails"></div>
+ 
+ <a id="user-menu-trigger" class="pull-right" href="#"><i class="fa fa-user fa-icon-white"></i> <span class="caret"></span></a>
+ <div id="members">
+ <ul class="nav pull-right">
+
+ 
+
+<li class="dropdown">
+ <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="langmenu" role="button" title="تغيير اللغة"><i class="fa fa-flag fa-icon-white"></i> <span class="langlabel">اللغات</span> <b class="caret"></b></a>
+ <ul aria-labelledby="langmenu" role="menu" class="dropdown-menu">
+ 
+ 
+ 
+ 
+ 
+ <li role="presentation"><a href="#" tabindex="-1" class="menu-inactive" role="menuitem">لعربية&nbsp;<i class="fa fa-check"></i></a></li>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-changelanguage.pl?language=en"  tabindex="-1" role="menuitem">English</a></li>
+ 
+ 
+ 
+ 
+ 
+ </ul> <!-- /# .dropdown-menu -->
+</li> <!-- / .dropdown -->
+
+
+
+ 
+ 
+ 
+ <li><a href="/cgi-bin/koha/opac-user.pl" class="login-link loginModal-trigger" role="button" data-toggle="modal">تسجيل الدخول إلى حسابك</a></li>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ </ul>
+ </div> <!-- /members -->
+ 
+ </div> <!-- /container-fluid -->
+ </div> <!-- /navbar-inner -->
+ </div> <!-- /navbar -->
+
+ 
+ <div class="container-fluid">
+ <div class="row-fluid">
+ <div id="opacheader">
+ <center>
+<img src="/opac-tmpl/bootstrap/images/kohalogo.png" style="width:auto;height:auto;">
+</center>
+
+ </div>
+ </div>
+ </div>
+ 
+ </div> <!-- / header-region -->
+
+ <div class="container-fluid">
+ <div class="row-fluid">
+ <div id="opac-main-search">
+ <div class="span12">
+ 
+ 
+ 
+ <div class="mastheadsearch">
+ 
+ 
+ <form name="searchform" method="get" action="/cgi-bin/koha/opac-search.pl" id="searchform" class="form-inline">
+ <label for="masthead_search"> البحث    </label>
+
+ <select name="idx" id="masthead_search">
+ 
+ <option value="">فهرس المكتبة</option>
+ 
+ 
+ <option value="ti">عنوان</option>
+ 
+ 
+ <option value="au">مؤلف</option>
+ 
+ 
+ <option value="su">موضوع</option>
+ 
+ 
+ <option value="nb">تدمك</option>
+ 
+ 
+ <option value="ns">تدمد</option>
+ 
+ 
+ <option value="se">السلاسل</option>
+ 
+ 
+ 
+ <option value="callnum">رقم الطلب</option>
+ 
+ 
+ </select>
+
+ 
+ <div class="input-append nolibrarypulldown">
+ 
+ 
+ <input class="transl1" id="translControl1" name="q" title="ادخل مصطلح البحث" type="text" /><span id="translControl"></span>
+ 
+
+ 
+ <button type="submit" id="searchsubmit" class="btn btn-primary">اذهب</button>
+ </div>
+ 
+
+ 
+ 
+ 
+ 
+ 
+
+ </form>
+ 
+ </div> <!-- / .mastheadsearch -->
+ 
+
+ <div class="row-fluid">
+ <div id="moresearches">
+ <ul>
+ <li><a href="/cgi-bin/koha/opac-search.pl">بحث متقدم</a></li>
+ 
+ 
+ <li><a href="/cgi-bin/koha/opac-authorities-home.pl">بحث الاستناد</a></li>
+ 
+ <li><a href="/cgi-bin/koha/opac-tags.pl">سحابة الوسوم</a></li>
+ 
+ 
+ 
+ 
+ 
+ 
+ </ul>
+ </div> <!-- /#moresearches -->
+ </div> <!-- /.row-fluid -->
+
+ 
+ </div> <!-- /.span10 -->
+ </div> <!-- /.opac-main-search -->
+ </div> <!-- / .row-fluid -->
+ </div> <!-- /.container-fluid -->
+
+ <!-- Login form hidden by default, used for modal window -->
+ <div id="loginModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+ <div class="modal-header">
+ <button type="button" class="closebtn" data-dismiss="modal" aria-hidden="true">×</button>
+ <h3 id="modalLoginLabel">تسجيل الدخول إلى حسابك</h3>
+ </div>
+ <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="modalAuth">
+ <input type="hidden" name="has-search-query" id="has-search-query" value="" />
+ <div class="modal-body">
+ 
+ <input type="hidden" name="koha_login_context" value="opac" />
+ <fieldset class="brief">
+ <label for="muserid">تسجيل الدخول:</label><input type="text" id="muserid" name="userid" />
+ <label for="mpassword">كلمة المرور:</label><input type="password" id="mpassword" name="password" />
+ 
+ 
+ 
+ </fieldset>
+ </div>
+ <div class="modal-footer">
+ <input class="btn btn-primary" type="submit" value="تسجيل الدخول" />
+ </div>
+ </form> <!-- /#auth -->
+ </div> <!-- /#modalAuth -->
+
+
+ <div class="main">
+ <ul class="breadcrumb">
+ <li><a href="/cgi-bin/koha/opac-main.pl">الصفحة الرئيسية</a> <span class="divider">&rsaquo;</span></li>
+ <li><a href="#">خطأ 404</a></li>
+ </ul>
+
+ <div class="container-fluid">
+ <div class="row-fluid">
+ 
+ <div class="span2">
+ <div id="navigation">
+ 
+<div id="opacnav">  <ul class="nav flex-column bg-white mb-0">
+    <li class="nav-item">
+      
+      <a  href="http://uobaghdad.edu.iq" class="nav-link text-dark font-italic bg-light">
+                <i class="fa fa-th-large mr-3 text-primary fa-fw"></i>
+        
+                <b id="p1">Baghdad Uni.</b>
+            </a>
+    </li>
+<br>
+    <li class="nav-item">
+      
+      <a  href="http://clib.uobaghdad.edu.iq" class="nav-link text-dark font-italic bg-light">
+                <i class="fa fa-th-large mr-3 text-primary fa-fw"></i>
+                <b id="p2">Central library</b>
+            </a>
+    </li>
+    <br>
+    <li class="nav-item">
+      
+      <a  href="http://clib.uobaghdad.edu.iq/?page_id=15084" class="nav-link text-dark font-italic bg-light"><i class="fa fa-th-large mr-3 text-primary fa-fw"></i>
+                
+                <b id="p3">About</b>
+            </a>
+    </li>
+  </ul>
+</div>
+
+<div id="opacnavbottom"></div>
+
+ </div>
+ </div>
+ <div class="span10">
+ 
+ <div id="errormsg404">
+ <h3>عذرا،الصفحة المطلوبة غير متاحة</h3>
+ <h4>خطأ 404</h4>
+ <h3>يمكن أن يكون لهذه الرسالة الأسباب التالية:</h3>
+ <ul>
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <li>لقد استخدمت رابطاً خارجياً لمادة في الفهرس لم تعد متاحة</li>
+ <li>لقد قمت بتتبع رابط مهمل مثال: من محرك بحث أو إشارة مرجعية</li>
+ <li>لقد حاولت الوصول إلى صفحة تحتاج التحقق.</li>
+ <li>يوجد رابط داخلي مكسور في صفحة فهرسنا الرئيسية والصفحة غير موجودة.</li>
+ 
+ 
+ </ul>
+ <h3>ما التالي؟</h3>
+ <ul>
+ 
+ <li>يمكنك استخدام القائمة والروابط في أعلى هذه الصفحة</li>
+ <li>يمكنك بحث فهرسنا باستخدام نموذج البحث أعلى هذه الصفحة.</li>
+ <li><a href="/cgi-bin/koha/opac-main.pl">العودة الى صفحة الفهرس الرئيسية</a></li>
+ </ul>
+ <h3>التبليغ عن الروابط المكسورة والمشاكل</h3>
+ <ul>
+ <li>للتبليغ عن هذا الخطأ، يرجى الاتصال بمدير كوها<a href="/cdn-cgi/l/email-protection#355854464150471b5451585c5b100105405a5754525d5154511b5051401b5c44">أرسل بريد الكتروني</a>.</li>
+ </ul>
+ </div> <!-- / #errormsg404 -->
+ </div> <!-- / .span10/12 -->
+ </div> <!-- / .row-fluid -->
+ </div> <!-- / .container-fluid -->
+ </div> <!-- / .main -->
+
+
+
+
+ 
+ 
+ <div class="container-fluid">
+ <div class="row-fluid">
+ <div class="span12">
+ <div id="opaccredits" class="noprint">
+ <body>
+<footer>
+<div class="container">
+<strong> <center> 
+<a href="http://www.clib.uobaghdad.edu.iq" target="_blank"><font color="#fff" id="f1">Central library</font></a></center></strong>
+<br>
+<strong> <center> <font color="#fff" id="f2">COPYRIGHT © 2019 BAGHDAD UNIVERSITY / GENERAL SECRETARIAT OF THE CENTRAL LIBRARY ALL RIGHTS RESERVED</font></center></strong>
+</footer>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+ </div>
+ </div>
+ </div>
+ </div>
+ 
+
+ 
+
+</div> <!-- / #wrap in masthead.inc -->
+
+ 
+ 
+ 
+ <div id="changelanguage" class="navbar navbar-fixed-bottom navbar-static-bottom noprint">
+ <div class="navbar-inner">
+ <ul id="i18nMenu" class="nav">
+ <li><p class="lang navbar-text"><strong>اللغات:&nbsp;</strong></p></li>
+ 
+ 
+ 
+ 
+ 
+ <li class="active"><p class="navbar-text">لعربية</p></li>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <li><a href="/cgi-bin/koha/opac-changelanguage.pl?language=en">English</a></li>
+ 
+ 
+ 
+ 
+ 
+ </ul> <!-- / #i18menu -->
+ </div> <!-- / .navbar-inner -->
+ </div> <!-- / #changelanguage -->
+ 
+ 
+ 
+
+
+
+
+<!-- JavaScript includes -->
+<script src="/opac-tmpl/bootstrap/lib/jquery/jquery_19.0504000.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/jquery/jquery-ui_19.0504000.js"></script>
+<script>
+// Resolve name collision between jQuery UI and Twitter Bootstrap
+$.widget.bridge('uitooltip', $.ui.tooltip);
+</script>
+<script src="/opac-tmpl/bootstrap/lib/bootstrap/js/bootstrap.min_19.0504000.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/fontfaceobserver.min_19.0504000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/global_19.0504000.js"></script>
+<script>
+    Modernizr.load([
+        // Test need for polyfill
+        {
+            test: window.matchMedia,
+            nope: "/opac-tmpl/bootstrap/lib/media.match.min_19.0504000.js"
+        },
+        // and then load enquire
+        "/opac-tmpl/bootstrap/lib/enquire.min_19.0504000.js",
+        "/opac-tmpl/bootstrap/js/script_19.0504000.js",
+    ]);
+
+    // Fix for datepicker in a modal
+    $.fn.modal.Constructor.prototype.enforceFocus = function () {};
+</script>
+
+
+<script src="/opac-tmpl/lib/emoji-picker/js/config_19.0504000.js"></script>
+<script src="/opac-tmpl/lib/emoji-picker/js/util_19.0504000.js"></script>
+<script src="/opac-tmpl/lib/emoji-picker/js/jquery.emojiarea_19.0504000.js"></script>
+<script src="/opac-tmpl/lib/emoji-picker/js/emoji-picker_19.0504000.js"></script>
+
+<script>
+    //<![CDATA[
+    var MSG_CONFIRM_AGAIN = _("تحذير: لا يمكنك التراجع. من فضلك أكد رغبتك بذلك مرةً أخرى")
+    var MSG_DELETE_SEARCH_HISTORY = _("هل أنت متأكد من أنك تريد حذف سِجل بحثك؟");
+    var MSG_NO_SUGGESTION_SELECTED = _("لم يتم تحديد أي مقترح");
+    var MSG_SEARCHING = _("جاري البحث %s...");
+    var MSG_ERROR_SEARCHING_COLLECTION = _("خطأ أثناء بحث مجموعة %s ");
+    var MSG_NO_RESULTS_FOUND_IN_COLLECTION = _("لم يتم العثور على نتائج في مجموعة %s بالمكتبة");
+    var MSG_RESULTS_FOUND_IN_COLLECTION = _("تم العثور على %s نتيجة في مجموعة %s بالمكتبة");
+    var MSG_BY = _("بواسطة");
+    var MSG_TYPE = _("نوع");
+    var MSG_NEXT = _("التالى");
+    var MSG_PREVIOUS = _("السابق");
+    var MSG_CHECKOUTS = _("الإعارات");
+    var MSG_NO_CHECKOUTS = _("لا توجد إعارات");
+    var MSG_CHECK_OUT = _("إعارة");
+    var MSG_CHECK_OUT_CONFIRM = _("هل أنت متأكد من أنك تريد إعارة هذه المادة؟");
+    var MSG_CHECKED_OUT_UNTIL = _("معار حتى %s");
+    var MSG_CHECK_IN = _("الإعادة (الرد)");
+    var MSG_CHECK_IN_CONFIRM = _("هل أنت متأكد من أنك تريد إعادة هذه المادة؟");
+    var MSG_NO_CHECKOUTS = _("لا توجد إعارات");
+    var MSG_DOWNLOAD = _("تنزيل");
+    var MSG_HOLDS = _("الحجوزات ");
+    var MSG_NO_HOLDS = _("لا توجد حجوزات");
+    var MSG_PLACE_HOLD = _("إحجز");
+    var MSG_CANCEL_HOLD = _("إلغاء");
+    var MSG_CANCEL_HOLD_CONFIRM = _("هل أنت متأكد من أنك تريد إلغاء هذا الحجز؟");
+    var MSG_ON_HOLD = _("محجوز");
+    
+        var MSG_BASKET_EMPTY = _("سلتك فارغة حالياً");
+        var MSG_RECORD_IN_BASKET = _("المادة موجودة بالفعل في سلتك");
+        var MSG_RECORD_ADDED = _("تمت إضافة المادة إلى سلتك");
+        var MSG_RECORD_REMOVED = _("تمت إزالة المادة من سلتك");
+        var MSG_NRECORDS_ADDED = _(" المواد إضيفت إلى سلتك");
+        var MSG_NRECORDS_IN_BASKET = _("فعلاً موجودة في سلتك");
+        var MSG_NO_RECORD_SELECTED = _("لا مواد محددة");
+        var MSG_NO_RECORD_ADDED = _("لم يتم إضافة أي مادة إلى سلتك");
+        var MSG_CONFIRM_DEL_BASKET = _("هل انت متأكد انك تريد تفريغ عربة التسوق خاصتك؟");
+        var MSG_CONFIRM_DEL_RECORDS = _("هل أنت متأكد أنك تريد إزالة المواد المحددة؟");
+        var MSG_ITEM_IN_CART = _("في سلتك");
+        var MSG_ITEM_NOT_IN_CART = _("أضف إلى سلتك");
+    
+    
+        var MSG_TAGS_DISABLED = _("عذرا ، الوسوم غير مفعلة في هذا النظام.");
+        var MSG_TAG_ALL_BAD = _("خطأ! الوسم المدخل هو رمز محظور. لم يتم إضافته . يرجى المحاولة مرة أخرى مع نص عادي.");
+        var MSG_ILLEGAL_PARAMETER = _("خطأ :معامل غير مشروع");
+        var MSG_TAG_SCRUBBED = _("ملاحظة: تحتوي وسيمتك على رمز تم حذفه. تمت إضافة الوسيمة كـ");
+        var MSG_ADD_TAG_FAILED = _("خطأ! فشلت إضافة الوسوم في");
+        var MSG_ADD_TAG_FAILED_NOTE = _("ملاحظة: يمكنك وضع  فقط وسيمة المادة مع مصطلح يطلق مرة واحدة. تحقق من 'وسومي' لرؤية وسومك الحالية .");
+        var MSG_DELETE_TAG_FAILED = _("خطأ : لا يمكنك حذف الوسم");
+        var MSG_DELETE_TAG_FAILED_NOTE = _("ملاحظة: يمكنك حذف فقط الأوسمة الخاصة بك.")
+        var MSG_LOGIN_REQUIRED = _("يجب تسجيل دخولك لكي تضيف وسوم.");
+        var MSG_TAGS_ADDED = _("الوسوم المضافة:");
+        var MSG_TAGS_DELETED = _("الوسوم المضافة:");
+        var MSG_TAGS_ERRORS = _("أخطاء: ");
+        var MSG_MULTI_ADD_TAG_FAILED = _("غير قادر على إضافة واحد أو أكثر من العلامات.");
+        var MSG_NO_TAG_SPECIFIED = _("لا يوجد وسم محدد.");
+    
+    
+    $(".print-large").on("click",function(){
+        window.print();
+        return false;
+    });
+    $("#ulactioncontainer > ul > li > a.addtoshelf").on("click",function(){
+        Dopop('opac-addbybiblionumber.pl?biblionumber=');
+        return false;
+    });
+    $("body").on("click", ".addtocart", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        addRecord( biblionumber );
+    });
+    $("body").on("click", ".cartRemove", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        delSingleRecord( biblionumber );
+    });
+    $(".clearsh").on("click", function(){
+        return confirmDelete(MSG_DELETE_SEARCH_HISTORY);
+    });
+    //]]>
+</script>
+
+
+ <script src="/opac-tmpl/bootstrap/js/basket_19.0504000.js"></script>
+
+
+<script src="/opac-tmpl/bootstrap/js/tags_19.0504000.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/opac-tmpl/bootstrap/lib/jquery/plugins/jquery.cookie.min_19.0504000.js"></script>
+<script>
+$(document).ready(function() {
+    if($('#searchsubmit').length) {
+        $(document).on("click", '#searchsubmit', function(e) {
+            jQuery.removeCookie("form_serialized", { path: '/'});
+            jQuery.removeCookie("form_serialized_limits", { path: '/'});
+            jQuery.removeCookie("num_paragraph", { path: '/'});
+            jQuery.removeCookie("search_path_code", { path: '/'});
+        });
+    }
+
+    window.emojiPicker = new EmojiPicker({
+      emojiable_selector: '[data-emojiable=true]',
+      assetsPath: '/opac-tmpl/lib/emoji-picker/img/',
+      popupButtonClasses: 'fa fa-smile-o'
+    });
+    window.emojiPicker.discover();
+});
+</script>
+
+
+
+ <script>
+        var userLang = document.documentElement.lang;
+
+var greeting;
+  if (userLang == "en") {
+    greeting = "Baghdad Uni.";
+  } else {
+    greeting = "جامعة بغداد";
+  }
+document.getElementById("p1").innerHTML = greeting;
+
+var greeting1;
+  if (userLang == "en") {
+    greeting1 = "Central library";
+  } else {
+    greeting1 = "المكتبة المركزية";
+  }
+document.getElementById("p2").innerHTML = greeting1;
+
+var greeting3;
+  if (userLang == "en") {
+    greeting3 = "About";
+  } else {
+    greeting3 = "عن المكتبة";
+  }
+document.getElementById("p3").innerHTML = greeting3;
+var fo1;
+  if (userLang == "en") {
+    fo1 = "Central library";
+  } else {
+    fo1 = "المكتبة المركزية";
+  }
+document.getElementById("f1").innerHTML = fo1;
+
+var fo2;
+  if (userLang == "en") {
+    fo2 = "COPYRIGHT © 2019 BAGHDAD UNIVERSITY / GENERAL SECRETARIAT OF THE CENTRAL LIBRARY ALL RIGHTS RESERVED";
+  } else {
+    fo2 = "© جميع حقوق النشر محفوظة لجامعة بغداد / الامانة العامة للمكتبة المركزية 2019";
+  }
+document.getElementById("f2").innerHTML = fo2;
+
+    </script>
+
+
+
+</body>
+</html>
+
+

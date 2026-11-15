@@ -1,0 +1,11 @@
+import sys,json
+from pathlib import Path
+sys.path.insert(0,str(Path(__file__).parent.parent))
+from probe import fetch,robots_decision
+D=Path(__file__).parent
+url=json.loads((D/'evidence/ccdz-advanced.json').read_text())['forms'][0]['action']
+assert robots_decision(D/'evidence/ccdz-robots.json',url)['allowed']
+for n,loc,q in [('alger1-second',60,'Introduction à la sociologie'),('constantine1-second',124,'Algèbre linéaire'),('oran1-second',119,'Algèbre linéaire'),('annaba',142,'Algèbre linéaire')]:
+ payload={'Type_not':'a','not_loc':str(loc),'op_log_titre':' AND ','titres':q,'Auteurs':'','sujets':'','editeur':'','resumer':'','diplome':'','spec':'','issn':'','col':'','date_not':'','langue':'','Rechercher':'Rechercher'}
+ d=fetch('ccdz-'+n+'-query',url,D,method='POST',payload=payload,timeout=35)
+ print(n,d.get('status'),d.get('error'),d.get('text','')[-5000:],flush=True)

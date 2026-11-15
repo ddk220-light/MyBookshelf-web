@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="author" content="PMB Group" />
+
+	<meta name="keywords" content="OPAC, web, library, opensource, catalog, catalogue, bibliothèque, médiathèque, pmb, phpmybibli" />
+	<meta name="description" content="Catalogue en ligne Université Protestante d'Afrique Centrale (UPAC)." />
+		<meta name="robots" content="all" />
+	<!--IE et son enfer de compatibilit�-->
+	<meta http-equiv='X-UA-Compatible' content='IE=Edge' />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+			
+	<title>Catalogue en ligne Université Protestante d'Afrique Centrale (UPAC)</title>
+	
+	
+	<link rel='stylesheet' type='text/css' href='./styles/common/common.css?1537222988' />
+	<link rel='stylesheet' type='text/css' href='./styles/common/dGrowl.css?1537222988' />
+	<link rel='stylesheet' type='text/css' href='./styles/common/font-awesome.css?1537222988' />
+	<link rel='stylesheet' type='text/css' href='./styles/common/open-sans.css?1537222988' />
+	<link rel='stylesheet' type='text/css' href='./styles/common/record_display.css?1537222988' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/colonnes.css?1537222989' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/gallerie_photos.css?1537222989' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/genbib.css?1537222989' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/liste_bulletins.css?1537222989' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/print.css?1537222989' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/tags.css?1537222989' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/visionneuse.css?1537222989' /><script type='text/javascript'>var opac_style= 'genbib';</script>
+	<!-- css_authentication -->	<link rel='SHORTCUT ICON' href='images/site/favicon.ico' />
+	<script type="text/javascript" src="includes/javascript/drag_n_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/handle_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/popup.js"></script>
+	<script type='text/javascript'>
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName = 
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {  
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i); 
+				    }
+				 }
+				return items;
+			 }
+		}
+		// Fonction a utilisier pour l'encodage des URLs en javascript
+		function encode_URL(data){
+			var docCharSet = document.characterSet ? document.characterSet : document.charset;
+			if(docCharSet == "UTF-8"){
+				return encodeURIComponent(data);
+			}else{
+				return escape(data);
+			}
+		}
+	</script>
+
+<link rel='stylesheet' type='text/css' href='./includes/javascript/dojo/dijit/themes/tundra/tundra.css' />
+<script type='text/javascript'>
+	var dojoConfig = {
+		parseOnLoad: true,
+		locale: 'fr-fr',
+		isDebug: false,
+		usePlainJson: true,
+		packages: [{
+			name: 'pmbBase',
+			location:'../../../..'
+		},{
+			name: 'd3',
+			location:'../../d3'
+		}],
+		deps: ['apps/pmb/MessagesStore', 'dgrowl/dGrowl', 'dojo/ready'],
+		callback:function(MessagesStore, dGrowl, ready){
+			window.pmbDojo = {};
+			pmbDojo.messages = new MessagesStore({url:'./ajax.php?module=ajax&categ=messages', directInit:false});
+			ready(function(){
+				new dGrowl({'channels':[{'name':'info','pos':2},{'name':'error', 'pos':1}]});
+			});
+		
+		},
+	};
+</script>
+<script type='text/javascript' src='./includes/javascript/dojo/dojo/dojo.js'></script>
+<script type='text/javascript'>var opac_show_social_network =0;</script>
+	<script type='text/javascript' src='./includes/javascript/http_request.js'></script>
+	
+</head>
+
+<body onload="window.defaultStatus='PMB : Accès public';"  id="pmbopac">
+<script type='text/javascript'>
+	function findNoticeElement(id){
+		var ul=null;
+		//cas des notices classiques
+		var domNotice = document.getElementById('el'+id+'Child');
+		//notice_display
+		if(!domNotice) domNotice = document.getElementById('notice');
+		if(domNotice){
+			var uls = domNotice.getElementsByTagName('ul');
+			for (var i=0 ; i<uls.length ; i++){
+				if(uls[i].getAttribute('id') == 'onglets_isbd_public'+id){
+					var ul = uls[i];
+					break;
+				}
+			}
+		} else{
+			var li = document.getElementById('onglet_isbd'+id);
+			if(!li) var li = document.getElementById('onglet_public'+id);
+			if(li) var ul = li.parentNode;
+		}
+		return ul;
+	}
+	function show_what(quoi, id) {
+		switch(quoi){
+			case 'EXPL_LOC' :
+				document.getElementById('div_expl_loc' + id).style.display = 'block';
+				document.getElementById('div_expl' + id).style.display = 'none';		
+				document.getElementById('onglet_expl' + id).className = 'isbd_public_inactive';		
+				document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_active';
+				break;
+			case 'EXPL' :
+				document.getElementById('div_expl_loc' + id).style.display = 'none';
+				document.getElementById('div_expl' + id).style.display = 'block';
+				document.getElementById('onglet_expl' + id).className = 'isbd_public_active';
+				document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_inactive';
+				break;
+			default :
+				quoi= quoi.toLowerCase();
+				var ul = findNoticeElement(id);
+				if (ul) {
+					var items  = ul.getElementsByTagName('li');
+					for (var i=0 ; i<items.length ; i++){
+						if(items[i].getAttribute('id')){
+							if(items[i].getAttribute('id') == 'onglet_'+quoi+id){
+								items[i].className = 'isbd_public_active';
+								document.getElementById('div_'+quoi+id).style.display = 'block';
+							}else{
+								if(items[i].className != 'onglet_tags' && items[i].className != 'onglet_avis' && items[i].className != 'onglet_sugg' && items[i].className != 'onglet_basket' && items[i].className != 'onglet_liste_lecture'){
+									items[i].className = 'isbd_public_inactive';	
+									document.getElementById(items[i].getAttribute('id').replace('onglet','div')).style.display = 'none';
+								}
+							}
+						}
+					}			
+				}
+				break;
+		}
+	}
+</script>
+	<script type='text/javascript' src='./includes/javascript/tablist_ajax.js'></script>
+<script type='text/javascript' src='./includes/javascript/tablist.js'></script>
+<script type='text/javascript' src='./includes/javascript/misc.js'></script>
+	<div id='att' style='z-Index:1000'></div>
+	<div id="container"><div id="main"><div id='main_header'><font color="blue"><strong><center><h3>BIBLIOTHEQUE DE L'UNIVERSITE PROTESTANTE D'AFRIQUE CENTRALE (UPAC)</h3></center></strong></font></div><div id="main_hors_footer">
+						
+<script type='text/javascript' src='./includes/javascript/auth_popup.js'></script>	
+<div id="intro_message"><div class="p1"><MARQUEE><p style="color:red">Le Catalogue de la Bibliothèque de l'UPAC en ligne</p></MARQUEE>
+</div><div class="p2"></div></div><div id='navigator' class='empty'></div><div id='resume_panier' class='empty'></div>
+<script type='text/javascript'>
+<!--
+	function test_form(form)
+	{
+
+		return true;
+	}
+-->
+</script>
+			<div id="search">
+
+			<ul class='search_tabs'>
+				<li id='current'><a href="./index.php?search_type_asked=simple_search">Recherche simple</a></li>
+				<li><a href="./index.php?search_type_asked=extended_search">Recherche multi-critères</a></li><li><a href="./index.php?search_type_asked=term_search">Recherche par termes</a></li><li><a href="./index.php?search_type_asked=external_search&external_type=simple">Interrogation externe</a></li>
+			</ul>
+			<div id='search_crl'></div>
+
+			<p class="p1"><span>Vous pouvez lancer une recherche portant sur un ou plusieurs mots (titre, auteur, éditeur, ...).</span></p>
+
+			<div class='row'>
+
+			<form name='search_input' action='./index.php?lvl=more_results&autolevel1=1' method='post' onSubmit="if (search_input.user_query.value.length == 0) { search_input.user_query.value='*'; return true; }">
+
+				 <select name='typdoc'>  <option  value='' selected>Tout type de document</option>
+  <option  value='a'>texte imprim&eacute;</option>
+</select><br />
+
+				<input type='hidden' name='surligne' value=''/>
+				<input type='text' name='user_query' class='text_query' value="" size='65' />
+		
+				<input type='submit' name='ok' value='Rechercher' class='boutonrechercher'/>
+<input type='button' value='Aide' class='bouton' onClick='window.open("./help.php?whatis=simple_search", "search_help", "scrollbars=yes, toolbar=no, dependent=yes, width=400, height=400, resizable=yes"); return false' />
+		<div id='simple_search_zone'>	
+		<div class='row'></div>
+		<div id='zsimples' class='notice-parent'>
+			<img src='./getgif.php?nomgif=plus' name='imEx' id='zsimplesImg' title='détail' border='0' onClick="expandBase('zsimples', true); return false;" hspace='3'>
+			<span class='notice-heada'>
+				Rechercher dans...
+			</span>
+		</div>
+		<div id='zsimplesChild' class='notice-child' style='margin-bottom:6px;display:none;width:94%'>
+			<div class='row'>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_TITLE' id='look_TITLE' value='1'  /><label for='look_TITLE'> Titres </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_AUTHOR' id='look_AUTHOR' value='1'  /><label for='look_AUTHOR'> Auteurs </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_PUBLISHER' id='look_PUBLISHER' value='1'  /><label for='look_PUBLISHER'> Editeurs </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_TITRE_UNIFORME' id='look_TITRE_UNIFORME' value='1' /><label for='look_TITRE_UNIFORME'> Titres uniformes </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_CATEGORY' id='look_CATEGORY' value='1'  /><label for='look_CATEGORY'> Catégories </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_INDEXINT' id='look_INDEXINT' value='1'  /><label for='look_INDEXINT'> Indexations décimales </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_KEYWORDS' id='look_KEYWORDS' value='1'  /><label for='look_KEYWORDS'> Mots-clés</label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_ABSTRACT' id='look_ABSTRACT' value='1'  /><label for='look_ABSTRACT'> Résumé et notes </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_ALL' id='look_ALL' value='1' checked onclick='return false;' title='La recherche Tous les champs ne peut être décochée.' title='toto' /><label for='look_ALL'> Tous les champs </label></span></div><div style='clear: both;'><input type='hidden' name='look_FIRSTACCESS' value='1' /></div>
+		</div>
+		</div>
+		</form>
+
+			</div>
+
+			<script type='text/javascript' src='./includes/javascript/ajax.js'></script>
+			<script type='text/javascript'>
+
+				document.forms["search_input"].elements["user_query"].focus();
+				
+			</script>
+	
+		</div><div id='infopages'><p><b>Astuce</b> utilisez des guillemets pour chercher une suite de caract&egrave;res : &quot;r&eacute;volution fran&ccedil;aise&quot;</p></div>
+<div id='categories'>
+<h3><span id='titre_categories'>Catégories</span></h3>
+
+<div id='categories-container'>
+<div class='div_clr'></div>
+</div>
+<div style='clear: both; visibility: hidden; display: none;' id='category_bloc_sep'>&nbsp;</div>
+</div>
+<div id="location"><h3><span>Vous n'avez pas d'idée pour chercher ? Entrez dans la bibliothèque...</span></h3><div id='location-container'><table align='center' width='100%'><tr><td align='center'>
+					<a href='./index.php?lvl=section_see&location=8'><img src='images/site/campus.jpg' border='0' alt='Campus UPAC' title='Campus UPAC'/></a>
+					<br /><a href='./index.php?lvl=section_see&location=8'><b>Campus UPAC</b></a></td><td align='center'>
+					<a href='./index.php?lvl=section_see&location=1'><img src='images/site/bib_princ1.jpg' border='0' alt='Entrée Bibliothèque UPAC' title='Entrée Bibliothèque UPAC'/></a>
+					<br /><a href='./index.php?lvl=section_see&location=1'><b>Entrée Bibliothèque UPAC</b></a></td><td align='center'>
+					<a href='./index.php?lvl=section_see&location=7'><img src='images/site/bibliobus1.jpg' border='0' alt='Magasin Bibliothèque' title='Magasin Bibliothèque'/></a>
+					<br /><a href='./index.php?lvl=section_see&location=7'><b>Magasin Bibliothèque</b></a></td><td></td><td></td><td></td></tr></table></div></div><div id='etageres'><h3><span id='titre_etagere'>Etagères virtuelles</span></h3><div id='etagere-container' class='etagere-container' >
+<div id='etagere_3' class='etagere' ><div id='etagere-titre'><h1><a href="./index.php?lvl=etagere_see&id=3">Loire</a></h1></div>
+<div id='etagere-comment'><h2>Exposition virtuelle sur la Loire</h2></div></div></div><!-- fin id='etagere-container' class='etagere-container' --></div>	
+		</div><!-- fin DIV main_hors_footer --><div id="footer">
+
+<span id="footer_rss">
+	
+</span>
+<span id="footer_link_sup">
+		<a href="./index.php?lvl=infopages&amp;pagesid=7">Mentions légales</a> &nbsp;
+</span>
+
+<span id="footer_link_website">
+	<a class="footer_biblio_name" href="http://www.sigb.net" title="Université Protestante d'Afrique Centrale (UPAC)">Université Protestante d'Afrique Centrale (UPAC)</a> &nbsp;
+</span>	
+
+<span id="footer_link_pmb">
+<a href=http://www.google.fr target=_blank>Faire une recherche avec Google</a> &nbsp;
+		<a class="lien_pmb_footer" href="http://www.sigb.net" title="...une solution libre pour la médiathèque..." target='_blank'>pmb</a> 	
+</span>		
+		
+</div> 
+
+		</div><!-- /div id=main -->
+
+		<div id="intro">
+<div id="intro_bibli">
+			<h3>Université Protestante d'Afrique Centrale (UPAC)</h3>
+			<div class="p1"><img src="./styles/genbib/images/image11.jpg" />
+<img src="./styles/genbib/images/image22.jpg" />
+<img src="./styles/genbib/images/image33.jpg" /></div>
+			<div class="p2"><ul id="menuDeroulant">
+
+<li><a href="./index.php">Accueil</a></li>
+<li><a href="./index.php?lvl=infopages&amp;pagesid=4">Calendrier</a></li>
+<li><a href="./index.php?lvl=infopages&amp;pagesid=1">Actualités BnF</a>
+<ul class="sousMenu">
+<li><a href="./index.php?lvl=infopages&amp;pagesid=3">Aide en ligne</a></li>
+<li><a href="./index.php?lvl=infopages&amp;pagesid=2">Version 4.0 !</a></li>
+</ul>
+</li>
+
+<li><a href="./index.php?lvl=infopages&amp;pagesid=6">Nous trouver</a></li>
+
+</ul></div>
+			</div>
+		</div><!-- /div id=intro -->		
+		<div id="bandeau"><div id='accessibility'>
+
+		<ul class='accessibility_font_size'>
+			<li class='accessibility_font_size_small'><a href='javascript:set_font_size(-1);' title='Réduire le texte'>A-</a></li>
+			<li class='accessibility_font_size_normal'><a href='javascript:set_font_size(0);' title='Réinitialiser le texte'>A</a></li>
+			<li class='accessibility_font_size_big'><a href='javascript:set_font_size(1);' title='Agrandir le texte'>A+</a></li>
+		</ul>
+		</div>
+<div id="accueil">
+
+<h3><span onclick='document.location="./index.php?"' style='cursor: pointer;'>Accueil</span></h3>
+<p class="centered"><a href='./index.php?'><img src='images/site/livre1.png'  border='0' align='center'/></a></p>
+<div id='lang_select'><h3 ><span>Sélection de la langue</span></h3><span><form method="post" action="index.php" ><select name="lang_sel" onchange="this.form.submit();"><option value='fr_FR' selected>Français </option><option value='it_IT'>Italiano</option><option value='es_ES'>Español</option><option value='ca_ES'>Català</option><option value='en_UK'>English (UK)</option><option value='nl_NL'>Nederlands</option><option value='oc_FR'>Occitan</option></select></form></span></div>
+
+					</div><!-- fermeture #accueil -->
+<div id="connexion">
+
+			<h3 class="login_invite">Se connecter</h3><span id='login_form'><form action='empr.php' method='post' name='myform'>
+				<label>accéder à votre compte de lecteur</label><br />
+				<input type='text' name='login' class='login' size='14' placeholder='identifiant' ><br />
+				<input type='password' name='password' class='password' size='8' placeholder='Mot de passe' value=''/>
+				<input type='submit' name='ok' value='ok' class='bouton'></form><a  class='mdp_forgotten' href='./askmdp.php'>Mot de passe oublié ?</a></span>
+
+			</div><!-- fermeture #connexion -->
+<div id="adresse">
+
+		<h3>Adresse</h3>
+
+		<span>
+			Université Protestante d'Afrique Centrale (UPAC)<br />
+			BIBLIOTHEQUE<br />
+			B.P.:4011 YAOUNDE<br />
+			CAMEROUN&nbsp;<br />
+			00(237)699011563 //
+00(237)675224778<br /><span id='opac_biblio_email'>
+			<a href="mailto:pmb@sigb.net" alt="pmb@sigb.net">contact</a></span></span>
+	    </div><!-- fermeture #adresse --><div id="post_adress">
+
+		<span><h3>Horaires d'ouverture :</h3>
+Lundi : 8h - 15h30<br />
+Mardi : 8h - 15h30<br />
+Mercredi : 8h - 15h30<br />
+Jeudi : 8h - 15h30<br />
+Vendredi: 8h - 15h30<br />
+<font color="blue">Permanence jusqu'à 20h chaque jour ouvrable</font><br /><br />
+<h3>Information :</h3>
+<font color="red"><center>La bibliothèque a repris toutes ses activités depuis le 5 janvier 2023</center> </font><br />
+<h3>Bibliothécaire Principal et Webmaster</h3>
+Rév. MOUDIO DALLE Philibert
+		</span>	
+	    </div><!-- fermeture #post_adress --></div><div id="bandeau_2"></div></div><!-- /div id=container -->
+		
+		<script type='text/javascript'>init_drag();	//rechercher!!</script> 
+		
+		</body>
+		</html>
+		

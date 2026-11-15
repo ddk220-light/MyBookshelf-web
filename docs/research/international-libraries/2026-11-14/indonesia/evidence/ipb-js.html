@@ -1,0 +1,630 @@
+$(document).ready(function () {
+    const APP_URLAPP = window.location.origin;
+    const rootContainer = document.querySelector('.opac-v2-root');
+    const urlParams = new URLSearchParams(window.location.search);
+    const state = {
+        q: (urlParams.get('q') || '').trim(),
+        category: (urlParams.get('category') || 'sembarang').trim(),
+        page: 1,
+        perPage: 10,
+        authors: [],
+        publishers: [],
+        publishLocations: [],
+        worksheetIds: [],
+        libraryLocations: [],
+        worksheetLabelMap: {}
+    };
+    let hasTriggeredSearch = false;
+    let currentDisplayMode = null;
+    let displayTransitionToken = 0;
+
+    $('#keyword').val(state.q);
+    $('#category').val(state.category);
+
+    const escapeHtml = (text) => $('<div>').text(text || '').html();
+
+    function normalizeCoverFileName(coverUrl) {
+        let cover = (coverUrl || '').toString().trim();
+        if (!cover) return 'nophoto.jpg';
+
+        // If the source stores plain numeric IDs, default to jpg.
+        if (/^\d+$/.test(cover)) {
+            cover += '.jpg';
+        }
+
+        // Remove accidental leading slash and spaces.
+        cover = cover.replace(/^\/+/, '');
+        return cover || 'nophoto.jpg';
+    }
+
+    function getCoverUrl(coverUrl) {
+        const cover = normalizeCoverFileName(coverUrl);
+        // Sumber utama: public/assets_user/img/catalogs (sama dengan admin upload & legacy)
+        return APP_URLAPP + '/assets_user/img/catalogs/' + encodeURIComponent(cover);
+    }
+
+    function renderFacet(containerId, inputName, buckets, selectedValues) {
+        const el = $(containerId);
+        if (!buckets || buckets.length === 0) {
+            el.html('<div class="text-muted small">Tidak ada data.</div>');
+            return;
+        }
+
+        const visibleLimit = 8;
+        let html = '';
+        buckets.forEach((item, index) => {
+            if (!item.key) return;
+            const label = item.label || item.key;
+            const key = String(item.key);
+            const activeClass = selectedValues.map(String).includes(key) ? 'active' : '';
+            const hiddenClass = index >= visibleLimit ? 'facet-hidden' : '';
+            html += `
+                <button type="button" class="facet-item-btn ${activeClass} ${hiddenClass}" data-facet-name="${inputName}" data-facet-value="${escapeHtml(key)}">
+                    <span>${escapeHtml(label)}</span>
+                    <span class="facet-item-count">${item.doc_count}</span>
+                </button>
+            `;
+        });
+
+        if (buckets.length > visibleLimit) {
+            html += `<button type="button" class="facet-more-btn" data-target="${containerId.replace('#', '')}" data-expanded="0">Lihat lebih banyak</button>`;
+        }
+
+        el.html(html);
+
+        if (inputName === 'facet_worksheets') {
+            const map = {};
+            buckets.forEach((item) => {
+                map[String(item.key)] = item.label || item.key;
+            });
+            state.worksheetLabelMap = map;
+        }
+    }
+
+    function filterChipHtml(cssMod, typeKey, value, labelHtml) {
+        const enc = encodeURIComponent(String(value));
+        return (
+            `<span class="opac-v2-filter-chip opac-v2-filter-chip--${cssMod}">` +
+            `<span class="opac-v2-filter-chip-text">${labelHtml}</span>` +
+            `<button type="button" class="opac-v2-filter-chip-remove" aria-label="Hapus filter" ` +
+            `data-opac-remove-type="${typeKey}" data-opac-remove-value="${enc}">` +
+            `<i class="bi bi-x-lg" aria-hidden="true"></i>` +
+            `</button></span>`
+        );
+    }
+
+    function renderActiveFilterBadges() {
+        const badges = [];
+        state.authors.forEach((v) =>
+            badges.push(filterChipHtml('author', 'authors', v, `Pengarang: ${escapeHtml(v)}`))
+        );
+        state.publishers.forEach((v) =>
+            badges.push(filterChipHtml('publisher', 'publishers', v, `Penerbit: ${escapeHtml(v)}`))
+        );
+        state.publishLocations.forEach((v) =>
+            badges.push(filterChipHtml('place', 'publish_locations', v, `Lokasi terbit: ${escapeHtml(v)}`))
+        );
+        state.worksheetIds.forEach((v) => {
+            const label = state.worksheetLabelMap[String(v)] || v;
+            badges.push(filterChipHtml('type', 'worksheet_ids', v, `Jenis: ${escapeHtml(label)}`));
+        });
+        state.libraryLocations.forEach((v) =>
+            badges.push(filterChipHtml('lib', 'library_locations', v, `Perpustakaan: ${escapeHtml(v)}`))
+        );
+        $('#active-filter-badges').html(badges.join(''));
+    }
+
+    function removeActiveFacet(type, encodedValue) {
+        let raw;
+        try {
+            raw = decodeURIComponent(encodedValue);
+        } catch (e) {
+            return;
+        }
+        const val = String(raw);
+
+        if (type === 'authors') {
+            state.authors = state.authors.filter((x) => String(x) !== val);
+        } else if (type === 'publishers') {
+            state.publishers = state.publishers.filter((x) => String(x) !== val);
+        } else if (type === 'publish_locations') {
+            state.publishLocations = state.publishLocations.filter((x) => String(x) !== val);
+        } else if (type === 'worksheet_ids') {
+            state.worksheetIds = state.worksheetIds.filter((x) => String(x) !== val);
+        } else if (type === 'library_locations') {
+            state.libraryLocations = state.libraryLocations.filter((x) => String(x) !== val);
+        } else {
+            return;
+        }
+
+        state.q = ($('#keyword').val() || '').trim();
+        state.category = $('#category').val() || 'sembarang';
+        state.page = 1;
+
+        if (state.q === '' && !hasAnyFilterSelected()) {
+            resetToHomeDefault();
+            return;
+        }
+        fetchSearch();
+    }
+
+    function renderResults(data) {
+        const list = $('#opac-result-list');
+        if (!data || data.length === 0) {
+            list.html('<div class="opac-v2-empty">Data tidak ditemukan. Coba kata kunci atau filter lain.</div>');
+            list.removeClass('is-loading');
+            return;
+        }
+
+        let html = '';
+        data.forEach((book) => {
+            const catalogId = book.CatalogId || '';
+            const title = book.judul_buku || '-';
+            const author = book.author || '-';
+            const publisher = [book.publisher, book.PublishLocation, book.PublishYear].filter(Boolean).join(' ');
+            const worksheet = book.worksheet || '-';
+            const callNumber = book.callNumber || '-';
+            const digital = book.KONTEN_DIGITAL || 'Tidak ada data';
+            const available = Number(book.JML_BUKU || 0);
+            const total = Number(book.ALL_BUKU || 0);
+
+            html += `
+                <div class="opac-v2-result-card opac-result-animate">
+                    <div class="opac-v2-result-card-inner">
+                        <a href="${APP_URLAPP}/opac/detail-buku?id=${encodeURIComponent(String(catalogId))}" class="opac-v2-result-cover-wrap">
+                            <img
+                                class="opac-v2-result-cover"
+                                src="${getCoverUrl(book.CoverURL)}"
+                                alt="${escapeHtml(title)}"
+                                onerror="this.onerror=null;this.src='${APP_URLAPP}/assets_user/img/catalogs/nophoto.jpg';"
+                            >
+                        </a>
+                        <div class="opac-v2-result-body">
+                            <h5 class="opac-v2-title">
+                                <a href="${APP_URLAPP}/opac/detail-buku?id=${encodeURIComponent(String(catalogId))}">${escapeHtml(title)}</a>
+                            </h5>
+                            <div class="opac-v2-meta-grid">
+                                <div class="opac-v2-meta-row"><i class="bi bi-book" aria-hidden="true"></i><span><strong>Jenis</strong> ${escapeHtml(worksheet)}</span></div>
+                                <div class="opac-v2-meta-row"><i class="bi bi-person" aria-hidden="true"></i><span><strong>Pengarang</strong> ${escapeHtml(author)}</span></div>
+                                <div class="opac-v2-meta-row"><i class="bi bi-building" aria-hidden="true"></i><span><strong>Penerbit</strong> ${escapeHtml(publisher || '-')}</span></div>
+                                <div class="opac-v2-meta-row"><i class="bi bi-hash" aria-hidden="true"></i><span><strong>Nomor panggil</strong> ${escapeHtml(callNumber)}</span></div>
+                                <div class="opac-v2-meta-row"><i class="bi bi-file-earmark-text" aria-hidden="true"></i><span><strong>Konten digital</strong> ${escapeHtml(digital)}</span></div>
+                            </div>
+                            <div class="opac-v2-result-foot">
+                                <span class="opac-v2-availability"><i class="bi bi-layers" aria-hidden="true"></i> Ketersediaan: ${available} dari ${total} eksemplar</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        list.html(html);
+        list.find('.opac-result-animate').each(function (index) {
+            const el = this;
+            setTimeout(function () {
+                el.classList.add('is-visible');
+            }, index * 35);
+        });
+        list.removeClass('is-loading');
+    }
+
+    function renderPagination(meta) {
+        const container = $('#opac-pagination');
+        const totalPages = Number(meta.total_pages || 0);
+        const currentPage = Number(meta.page || 1);
+
+        if (totalPages <= 1) {
+            container.html('');
+            return;
+        }
+
+        const startPage = Math.max(1, currentPage - 2);
+        const endPage = Math.min(totalPages, startPage + 4);
+        let html = '<ul class="pagination justify-content-center">';
+
+        const prevDisabled = currentPage <= 1 ? 'disabled' : '';
+        html += `<li class="page-item ${prevDisabled}"><a class="page-link opac-page-link" data-page="${currentPage - 1}" href="#">Prev</a></li>`;
+
+        for (let i = startPage; i <= endPage; i++) {
+            const active = i === currentPage ? 'active' : '';
+            html += `<li class="page-item ${active}"><a class="page-link opac-page-link" data-page="${i}" href="#">${i}</a></li>`;
+        }
+
+        const nextDisabled = currentPage >= totalPages ? 'disabled' : '';
+        html += `<li class="page-item ${nextDisabled}"><a class="page-link opac-page-link" data-page="${currentPage + 1}" href="#">Next</a></li>`;
+        html += '</ul>';
+        container.html(html);
+    }
+
+    function updateSummary(meta) {
+        const total = Number(meta.total || 0);
+        const page = Number(meta.page || 1);
+        const perPage = Number(meta.per_page || 10);
+        const firstItem = total === 0 ? 0 : ((page - 1) * perPage) + 1;
+        const lastItem = Math.min(page * perPage, total);
+        $('#search-summary').text(`Menampilkan ${firstItem} - ${lastItem} dari ${total} hasil`);
+    }
+
+    function hasAnyFilterSelected() {
+        return (
+            state.authors.length > 0 ||
+            state.publishers.length > 0 ||
+            state.publishLocations.length > 0 ||
+            state.worksheetIds.length > 0 ||
+            state.libraryLocations.length > 0
+        );
+    }
+
+    function smoothShow($el, duration) {
+        return new Promise(function (resolve) {
+            if (!$el || $el.length === 0) {
+                resolve();
+                return;
+            }
+
+            $el.stop(true, true);
+            $el.removeClass('d-none');
+            $el.css({ opacity: 0, transform: 'translateY(10px)' });
+            $el.show();
+            $el.animate({ opacity: 1 }, {
+                duration: duration || 300,
+                queue: false,
+                complete: function () {
+                    $el.css({ opacity: '', transform: '' });
+                    resolve();
+                }
+            });
+            requestAnimationFrame(function () {
+                $el.css('transform', 'translateY(0)');
+            });
+        });
+    }
+
+    function smoothHide($el, duration) {
+        return new Promise(function (resolve) {
+            if (!$el || $el.length === 0) {
+                resolve();
+                return;
+            }
+
+            if ($el.hasClass('d-none') || !$el.is(':visible')) {
+                $el.addClass('d-none');
+                resolve();
+                return;
+            }
+
+            $el.stop(true, true);
+            $el.css({ opacity: 1, transform: 'translateY(0)' });
+            $el.animate({ opacity: 0 }, {
+                duration: duration || 220,
+                queue: false,
+                complete: function () {
+                    $el.addClass('d-none').css({ display: '', opacity: '', transform: '' });
+                    resolve();
+                }
+            });
+            requestAnimationFrame(function () {
+                $el.css('transform', 'translateY(10px)');
+            });
+        });
+    }
+
+    function setDisplayMode(isSearchMode, useAnimation) {
+        const searchPanel = $('#opac-search-panel');
+        const popularSection = $('#opac-popular-section');
+        const latestSection = $('#opac-latest-section');
+        const homeDefaultButton = $('#btn-home-default');
+        const animate = useAnimation !== false;
+        const nextMode = isSearchMode ? 'search' : 'home';
+        const token = ++displayTransitionToken;
+
+        if (currentDisplayMode === nextMode) {
+            if (isSearchMode) {
+                homeDefaultButton.removeClass('d-none');
+            } else {
+                homeDefaultButton.addClass('d-none');
+            }
+            return;
+        }
+
+        if (isSearchMode) {
+            if (!animate) {
+                searchPanel.removeClass('d-none');
+                popularSection.addClass('d-none');
+                latestSection.addClass('d-none');
+                homeDefaultButton.removeClass('d-none');
+                currentDisplayMode = nextMode;
+                return;
+            }
+            Promise.all([
+                smoothHide(popularSection, 220),
+                smoothHide(latestSection, 220)
+            ]).then(function () {
+                if (token !== displayTransitionToken) return;
+                smoothShow(searchPanel, 320).then(function () {
+                    if (token !== displayTransitionToken) return;
+                    homeDefaultButton.removeClass('d-none');
+                    currentDisplayMode = nextMode;
+                });
+            });
+            return;
+        }
+
+        if (!animate) {
+            searchPanel.addClass('d-none');
+            popularSection.removeClass('d-none');
+            latestSection.removeClass('d-none');
+            homeDefaultButton.addClass('d-none');
+            currentDisplayMode = nextMode;
+            return;
+        }
+
+        homeDefaultButton.addClass('d-none');
+        smoothHide(searchPanel, 220).then(function () {
+            if (token !== displayTransitionToken) return;
+            Promise.all([
+                smoothShow(popularSection, 320),
+                smoothShow(latestSection, 320)
+            ]).then(function () {
+                if (token !== displayTransitionToken) return;
+                currentDisplayMode = nextMode;
+            });
+        });
+    }
+
+    function resetToHomeDefault() {
+        state.q = '';
+        state.category = 'sembarang';
+        state.page = 1;
+        state.authors = [];
+        state.publishers = [];
+        state.publishLocations = [];
+        state.worksheetIds = [];
+        state.libraryLocations = [];
+        state.worksheetLabelMap = {};
+        hasTriggeredSearch = false;
+
+        $('#keyword').val('');
+        $('#category').val('sembarang');
+        $('#facet-authors').html('');
+        $('#facet-publishers').html('');
+        $('#facet-publish-locations').html('');
+        $('#facet-worksheets').html('');
+        $('#facet-library-locations').html('');
+
+        setDisplayMode(false);
+        renderInitialHomeState();
+
+        if (window.history && typeof window.history.replaceState === 'function') {
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    }
+
+    function renderInitialHomeState() {
+        const latestCount = Number($('#home_latest_count').val() || 0);
+        const popularCount = Number($('#home_popular_count').val() || 0);
+        $('#search-summary').text('Belum ada pencarian');
+        $('#active-filter-badges').html('');
+        $('#opac-pagination').html('');
+        $('#opac-result-list').html(
+            `
+            <div class="opac-v2-home">
+                <div class="opac-v2-home-top">
+                    <div class="opac-v2-home-title">Mulai Menelusur Koleksi</div>
+                </div>
+                <div class="opac-v2-home-desc">Gunakan kata kunci atau pilih contoh cepat di bawah ini.</div>
+
+                <div class="opac-v2-home-metrics">
+                    <div class="opac-v2-home-metric">
+                        <div class="opac-v2-home-metric-label">Kategori Pencarian</div>
+                        <div class="opac-v2-home-metric-value">9</div>
+                        <div class="opac-v2-home-metric-note">Judul, pengarang, ISBN, dll.</div>
+                    </div>
+                    <div class="opac-v2-home-metric">
+                        <div class="opac-v2-home-metric-label">Buku Terbaru</div>
+                        <div class="opac-v2-home-metric-value">${latestCount}</div>
+                        <div class="opac-v2-home-metric-note">Ditampilkan di section bawah</div>
+                    </div>
+                    <div class="opac-v2-home-metric">
+                        <div class="opac-v2-home-metric-label">Buku Populer</div>
+                        <div class="opac-v2-home-metric-value">${popularCount}</div>
+                        <div class="opac-v2-home-metric-note">Berdasarkan frekuensi pinjam</div>
+                    </div>
+                </div>
+
+                <div class="opac-v2-home-grid">
+                    <div class="opac-v2-home-card">
+                        <h6>Contoh Pencarian</h6>
+                        <button type="button" class="opac-v2-home-btn" data-home-query="kimia dasar" data-home-category="judul_buku">Kimia Dasar</button>
+                        <button type="button" class="opac-v2-home-btn" data-home-query="raymond chang" data-home-category="author">Raymond Chang</button>
+                        <button type="button" class="opac-v2-home-btn" data-home-query="9789792933999" data-home-category="ISBN">ISBN</button>
+                    </div>
+                    <div class="opac-v2-home-card">
+                        <h6>Kategori Populer</h6>
+                        <button type="button" class="opac-v2-home-btn" data-home-query="" data-home-category="subject">Subjek</button>
+                        <button type="button" class="opac-v2-home-btn" data-home-query="" data-home-category="publisher">Penerbit</button>
+                        <button type="button" class="opac-v2-home-btn" data-home-query="" data-home-category="callNumber">Nomor Panggil</button>
+                    </div>
+                    <div class="opac-v2-home-card">
+                        <h6>Panduan Cepat</h6>
+                        <ul class="opac-v2-home-list">
+                            <li>Pilih kategori dulu agar hasil lebih presisi.</li>
+                            <li>Pakai filter kanan untuk mempersempit hasil.</li>
+                            <li>Klik judul buku untuk detail, eksemplar, dan konten digital.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="opac-v2-empty">Ketik kata kunci lalu klik Cari untuk mulai menelusur katalog.</div>
+            </div>
+            `
+        );
+    }
+
+    function fetchSearch() {
+        hasTriggeredSearch = true;
+        setDisplayMode(true);
+        $('#search-summary').text('Memuat data...');
+        $('#opac-result-list').addClass('is-loading');
+        $('#opac-result-list').scrollTop(0);
+        $('#opac-result-list').html('<div class="opac-v2-empty">Memproses pencarian...</div>');
+
+        $.ajax({
+            url: APP_URLAPP + '/opac/search',
+            type: 'GET',
+            dataType: 'json',
+            traditional: true,
+            data: {
+                q: state.q,
+                category: state.category,
+                page: state.page,
+                per_page: state.perPage,
+                authors: state.authors,
+                publishers: state.publishers,
+                publish_locations: state.publishLocations,
+                worksheet_ids: state.worksheetIds,
+                library_locations: state.libraryLocations
+            },
+            success: function (res) {
+                if (!res.success) {
+                    $('#opac-result-list').html('<div class="opac-v2-empty">Gagal mengambil data pencarian.</div>');
+                    $('#search-summary').text('Terjadi kesalahan');
+                    $('#opac-result-list').removeClass('is-loading');
+                    return;
+                }
+
+                renderResults(res.data || []);
+                renderFacet('#facet-authors', 'facet_authors', (res.facets || {}).authors || [], state.authors);
+                renderFacet('#facet-publishers', 'facet_publishers', (res.facets || {}).publishers || [], state.publishers);
+                renderFacet('#facet-publish-locations', 'facet_publish_locations', (res.facets || {}).publish_locations || [], state.publishLocations);
+                renderFacet('#facet-worksheets', 'facet_worksheets', (res.facets || {}).worksheets || [], state.worksheetIds);
+                renderFacet('#facet-library-locations', 'facet_library_locations', (res.facets || {}).library_locations || [], state.libraryLocations);
+                renderActiveFilterBadges();
+                renderPagination(res.meta || {});
+                updateSummary(res.meta || {});
+                $('#opac-result-list').scrollTop(0);
+            },
+            error: function () {
+                $('#opac-result-list').html('<div class="opac-v2-empty">Tidak dapat terhubung ke layanan pencarian.</div>');
+                $('#search-summary').text('Terjadi kesalahan');
+                $('#opac-result-list').removeClass('is-loading');
+                $('#opac-result-list').scrollTop(0);
+            }
+        });
+    }
+
+    $('#opac-search-form').on('submit', function (e) {
+        e.preventDefault();
+        state.q = ($('#keyword').val() || '').trim();
+        state.category = $('#category').val() || 'sembarang';
+        state.page = 1;
+        if (state.q === '' && !hasAnyFilterSelected()) {
+            hasTriggeredSearch = false;
+            setDisplayMode(false);
+            renderInitialHomeState();
+            return;
+        }
+        fetchSearch();
+    });
+
+    $(document).on('click', '.opac-v2-filter-chip-remove', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const type = $(this).data('opac-remove-type');
+        const enc = $(this).attr('data-opac-remove-value');
+        if (!type || enc === undefined) return;
+        removeActiveFacet(String(type), enc);
+    });
+
+    $(document).on('click', '.facet-item-btn', function () {
+        const facetName = $(this).data('facet-name');
+        const facetValue = String($(this).data('facet-value'));
+        let target = [];
+
+        if (facetName === 'facet_authors') target = state.authors;
+        if (facetName === 'facet_publishers') target = state.publishers;
+        if (facetName === 'facet_publish_locations') target = state.publishLocations;
+        if (facetName === 'facet_worksheets') target = state.worksheetIds;
+        if (facetName === 'facet_library_locations') target = state.libraryLocations;
+
+        const currentIndex = target.indexOf(facetValue);
+        if (currentIndex >= 0) {
+            target.splice(currentIndex, 1);
+        } else {
+            target.push(facetValue);
+        }
+
+        state.page = 1;
+        fetchSearch();
+    });
+
+    $(document).on('click', '.facet-more-btn', function () {
+        const btn = $(this);
+        const targetId = btn.data('target');
+        const container = $('#' + targetId);
+        const isExpanded = String(btn.attr('data-expanded')) === '1';
+        const hiddenItems = container.find('.facet-item-btn.facet-hidden');
+
+        if (isExpanded) {
+            hiddenItems.hide();
+            btn.attr('data-expanded', '0').text('Lihat lebih banyak');
+        } else {
+            hiddenItems.show();
+            btn.attr('data-expanded', '1').text('Lihat lebih sedikit');
+        }
+    });
+
+    $(document).on('click', '.opac-page-link', function (e) {
+        e.preventDefault();
+        const page = Number($(this).data('page') || 1);
+        if (page < 1) return;
+        state.page = page;
+        fetchSearch();
+    });
+
+    $(document).on('click', '.opac-v2-home-btn', function () {
+        const q = String($(this).data('home-query') || '');
+        const cat = String($(this).data('home-category') || 'sembarang');
+        state.q = q;
+        state.category = cat;
+        state.page = 1;
+        $('#keyword').val(q);
+        $('#category').val(cat);
+        fetchSearch();
+    });
+
+    $('#btn-home-default').on('click', function () {
+        resetToHomeDefault();
+    });
+
+    const revealEls = document.querySelectorAll('.opac-reveal');
+    if (revealEls.length > 0 && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('show');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+        revealEls.forEach((el) => observer.observe(el));
+    } else {
+        revealEls.forEach((el) => el.classList.add('show'));
+    }
+
+    // Subtle staged entrance on first paint.
+    if (rootContainer) {
+        requestAnimationFrame(() => {
+            rootContainer.classList.add('opac-ready');
+            rootContainer.classList.remove('opac-preload');
+        });
+    }
+
+    if (state.q !== '' || hasAnyFilterSelected() || urlParams.has('page')) {
+        setDisplayMode(true, false);
+        fetchSearch();
+    } else {
+        setDisplayMode(false, false);
+        renderInitialHomeState();
+    }
+});

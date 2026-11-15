@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>OPAC
+</title>
+    <link rel="icon" href="/assets_user/img/fav-ipb.png" type="image/png" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <!-- all css here -->
+<link rel="stylesheet" href="/assets_user/css/bootstrap.min.css">
+<link rel="stylesheet" href="/assets_user/css/magnific-popup.css">
+<link rel="stylesheet" href="/assets_user/css/animate.css">
+<link rel="stylesheet" href="/assets_user/css/owl.carousel.min.css">
+<link rel="stylesheet" href="/assets_user/css/themify-icons.css">
+<link rel="stylesheet" href="/assets_user/css/pe-icon-7-stroke.css">
+<link rel="stylesheet" href="/assets_user/css/icofont.css">
+<link rel="stylesheet" href="/assets_user/css/meanmenu.min.css">
+<link rel="stylesheet" href="/assets_user/css/jquery-ui.css">
+<link rel="stylesheet" href="/assets_user/css/bundle.css">
+<link rel="stylesheet" href="/assets_user/css/style.css">
+<link rel="stylesheet" href="/assets_user/css/responsive.css">
+<link rel="stylesheet" href="/assets_user/DataTables/datatables.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />    <!-- all top script here -->
+<script src="/assets_user/js/vendor/modernizr-3.11.7.min.js"></script>
+<script src="/assets_user/jquery/jquery.min.js"></script>
+<script src="/assets_user/jquery/jquery.validate.min.js"></script>
+<script src="/assets_user/sweetalert/sweetalert2.all.min.js"></script>
+<script src="/assets_user/jsbarcode/JsBarcode.all.min.js"></script></head>
+<body>
+    <div class="wrapper d-flex flex-column min-vh-100">
+                    <header class="opac-header-wrap">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        .opac-header-wrap {
+            position: relative;
+            font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border-bottom: 1px solid rgba(226, 232, 240, .85);
+            box-shadow: 0 1px 0 rgba(255, 255, 255, .8) inset, 0 8px 32px rgba(15, 23, 42, .04);
+        }
+        .opac-header-wrap::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent 0%, rgba(37, 99, 235, .35) 20%, rgba(59, 130, 246, .5) 50%, rgba(37, 99, 235, .35) 80%, transparent 100%);
+            opacity: .9;
+            pointer-events: none;
+        }
+        .opac-header-inner {
+            position: relative;
+            z-index: 1;
+            padding: 16px 16px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+        .opac-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 0;
+        }
+        .opac-brand-logo {
+            width: 54px;
+            height: 54px;
+            border-radius: 14px;
+            border: 1px solid rgba(191, 219, 254, .9);
+            box-shadow:
+                0 0 0 3px rgba(239, 246, 255, 1),
+                0 12px 28px rgba(37, 99, 235, .18);
+            object-fit: cover;
+            background: #fff;
+        }
+        .opac-brand-title h3 {
+            margin: 0;
+            font-size: 1.35rem;
+            line-height: 1.2;
+            font-weight: 800;
+            letter-spacing: -.02em;
+            color: #0f172a;
+        }
+        .opac-brand-title h4 {
+            margin: 3px 0 0;
+            font-size: .875rem;
+            font-weight: 500;
+            color: #64748b;
+            letter-spacing: .01em;
+        }
+        .opac-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+        .opac-badge {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: #1e40af;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border: 1px solid rgba(147, 197, 253, .85);
+            border-radius: 999px;
+            padding: 6px 12px;
+            box-shadow: 0 1px 2px rgba(30, 64, 175, .06);
+        }
+        .opac-time {
+            font-size: 12px;
+            color: #475569;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+            padding: 6px 12px;
+            border-radius: 10px;
+            background: rgba(248, 250, 252, .9);
+            border: 1px solid #e2e8f0;
+        }
+        @media (max-width: 768px) {
+            .opac-header-inner {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .opac-brand-title h3 {
+                font-size: 1.2rem;
+            }
+            .opac-brand-title h4 {
+                font-size: 13px;
+            }
+            .opac-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+
+    <div class="container opac-header-inner">
+        <div class="opac-brand">
+            <img class="opac-brand-logo" src="/assets_user/img/logo/Logo-IPB.png" alt="Logo IPB">
+            <div class="opac-brand-title">
+                <h3>OPAC</h3>
+                <h4>IPB University E-Library</h4>
+            </div>
+        </div>
+        <div class="opac-right">
+            <span class="opac-badge">Online Catalog</span>
+            <span id="current-time-opac" class="opac-time"></span>
+        </div>
+    </div>
+</header>
+
+<script>
+    function updateTimeOpac() {
+        const now = new Date();
+        const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        const months = [
+            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        ];
+        const day = days[now.getDay()];
+        const date = now.getDate();
+        const month = months[now.getMonth()];
+        const year = now.getFullYear();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        const currentTimeString = `${day}, ${date} ${month} ${year}, ${hours}:${minutes}:${seconds}`;
+        $('#current-time-opac').text(currentTimeString);
+    }
+
+    $(document).ready(function() {
+        setInterval(updateTimeOpac, 1000);
+        updateTimeOpac();
+    });
+</script>
+                <div class="content flex-grow-1">
+                <input type="hidden" id="APP_URLAPP" value="https://readily.ipb.ac.id">
+    <input type="hidden" id="home_latest_count" value="8">
+    <input type="hidden" id="home_popular_count" value="8">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,600;0,8..60,700;1,8..60,600&display=swap');
+        .opac-v2-page-bg {
+            position: relative;
+            padding: 0 0 36px;
+            background-color: #f1f5f9;
+            background-image:
+                radial-gradient(ellipse 100% 80% at 100% -10%, rgba(59, 130, 246, 0.11) 0%, transparent 52%),
+                radial-gradient(ellipse 70% 50% at 0% 100%, rgba(99, 102, 241, 0.08) 0%, transparent 48%),
+                linear-gradient(180deg, #f8fafc 0%, #f1f5f9 40%, #eef2f7 100%);
+            border: none;
+            border-radius: 0;
+            overflow: hidden;
+        }
+        .opac-v2-page-bg::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse 120% 60% at 50% -10%, rgba(148, 163, 184, 0.09) 0%, transparent 50%),
+                radial-gradient(ellipse 80% 40% at 100% 80%, rgba(148, 163, 184, 0.06) 0%, transparent 45%);
+            opacity: 1;
+        }
+        .opac-v2-root {
+            font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+            color: #0f172a;
+            position: relative;
+            z-index: 1;
+        }
+        .opac-v2-root.opac-preload .opac-entry {
+            opacity: 0;
+            transform: translateY(12px);
+        }
+        .opac-v2-root.opac-ready .opac-entry {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity .45s ease, transform .45s ease;
+        }
+        .opac-v2-root.opac-ready .opac-delay-1 { transition-delay: .06s; }
+        .opac-v2-root.opac-ready .opac-delay-2 { transition-delay: .12s; }
+        .opac-v2-root.opac-ready .opac-delay-3 { transition-delay: .18s; }
+        .opac-v2-hero {
+            position: relative;
+            background:
+                radial-gradient(ellipse 90% 120% at 90% -20%, rgba(147, 197, 253, 0.35) 0%, transparent 55%),
+                radial-gradient(ellipse 60% 80% at 10% 110%, rgba(30, 64, 175, 0.45) 0%, transparent 50%),
+                linear-gradient(145deg, #1d4ed8 0%, #1e40af 38%, #172554 100%);
+            border-radius: 24px;
+            color: #fff;
+            padding: 32px 28px 28px;
+            margin: 12px 0 26px;
+            border: 1px solid rgba(255, 255, 255, .18);
+            box-shadow:
+                0 4px 6px rgba(15, 23, 42, .08),
+                0 28px 56px rgba(30, 58, 138, 0.35);
+            overflow: hidden;
+        }
+        /* Nuansa bacaan: garis horizontal halus (baris teks), tanpa pola kotak atau silang */
+        .opac-v2-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: 1;
+            background-image: repeating-linear-gradient(
+                180deg,
+                transparent 0,
+                transparent 24px,
+                rgba(255, 255, 255, 0.05) 24px,
+                rgba(255, 255, 255, 0.05) 25px
+            );
+            mask-image: linear-gradient(
+                180deg,
+                rgba(0, 0, 0, 0.5) 0%,
+                rgba(0, 0, 0, 0.28) 50%,
+                rgba(0, 0, 0, 0.08) 100%
+            );
+        }
+        .opac-v2-hero::after {
+            content: "";
+            position: absolute;
+            right: -15%;
+            top: -50%;
+            width: min(55vw, 420px);
+            height: min(55vw, 420px);
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, .14) 0%, transparent 62%);
+            pointer-events: none;
+        }
+        .opac-v2-hero-inner {
+            position: relative;
+            z-index: 1;
+        }
+        .opac-v2-title-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 8px;
+        }
+        .opac-v2-title-line {
+            width: 36px;
+            height: 2px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .75), transparent);
+            opacity: .9;
+        }
+        .opac-v2-hero-eyebrow {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, .72);
+            margin-bottom: 10px;
+        }
+        .opac-v2-hero h2 {
+            font-family: "Source Serif 4", Georgia, serif;
+            color: #fff;
+            margin-bottom: 0;
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.05;
+        }
+        .opac-v2-hero p {
+            color: rgba(255, 255, 255, .88);
+            margin: 14px auto 0;
+            max-width: 36rem;
+            font-size: 15px;
+            text-align: center;
+            font-weight: 500;
+            line-height: 1.55;
+        }
+        .opac-v2-search-box {
+            background: rgba(255, 255, 255, .1);
+            border: 1px solid rgba(255, 255, 255, .22);
+            border-radius: 18px;
+            padding: 12px;
+            margin-top: 22px;
+            backdrop-filter: blur(10px);
+        }
+        .opac-v2-search-inner {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #fff;
+            border-radius: 14px;
+            padding: 5px;
+            box-shadow: 0 12px 40px rgba(15, 23, 42, .12);
+        }
+        @media (min-width: 768px) {
+            .opac-v2-search-inner {
+                flex-direction: row;
+                align-items: stretch;
+                gap: 0;
+            }
+        }
+        .opac-v2-search-inner .opac-v2-category-wrap {
+            flex: 0 0 auto;
+        }
+        @media (min-width: 768px) {
+            .opac-v2-search-inner .opac-v2-category-wrap {
+                width: 200px;
+                min-width: 180px;
+            }
+        }
+        .opac-v2-search-inner .opac-v2-kw-wrap {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+        @media (min-width: 768px) {
+            .opac-v2-search-inner .opac-v2-kw-wrap {
+                border-left: 1px solid #e2e8f0;
+            }
+        }
+        .opac-v2-search-inner .opac-v2-submit-wrap {
+            flex: 0 0 auto;
+        }
+        @media (min-width: 768px) {
+            .opac-v2-search-inner .opac-v2-submit-wrap {
+                padding-left: 4px;
+            }
+        }
+        .opac-v2-search-box .form-control,
+        .opac-v2-search-box .form-select {
+            height: 48px;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            background: #fff;
+            font-size: 14px;
+            box-shadow: none;
+        }
+        @media (min-width: 768px) {
+            .opac-v2-search-box .form-control,
+            .opac-v2-search-box .form-select {
+                border-radius: 10px;
+                height: 50px;
+            }
+            .opac-v2-search-inner .opac-v2-category-wrap .form-select {
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+            .opac-v2-search-inner .opac-v2-kw-wrap .form-control {
+                border-radius: 0;
+            }
+        }
+        .opac-v2-category-wrap {
+            position: relative;
+            height: 100%;
+        }
+        .opac-v2-category-wrap .form-select {
+            appearance: none;
+            -webkit-appearance: none;
+            padding-right: 34px;
+            height: 100%;
+        }
+        .opac-v2-category-wrap::after {
+            content: "";
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 6px solid #64748b;
+            pointer-events: none;
+        }
+        .opac-v2-search-box .btn {
+            height: 48px;
+            min-width: 112px;
+            border-radius: 10px;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid rgba(15, 23, 42, .5);
+            font-weight: 700;
+            letter-spacing: .02em;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, .25);
+            transition: transform .15s ease, box-shadow .15s ease;
+        }
+        @media (min-width: 768px) {
+            .opac-v2-search-box .btn {
+                height: 50px;
+                border-radius: 10px;
+            }
+        }
+        .opac-v2-search-box .btn:hover {
+            background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+            border-color: #334155;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(15, 23, 42, .3);
+        }
+        .opac-v2-home-reset {
+            border: 1px solid #cbd5e1;
+            background: #fff;
+            color: #334155;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .15px;
+            padding: 6px 10px;
+            line-height: 1.2;
+            transition: all .18s ease;
+        }
+        .opac-v2-home-reset:hover {
+            border-color: #93c5fd;
+            color: #1d4ed8;
+            background: #eff6ff;
+            transform: translateY(-1px);
+        }
+        .opac-v2-result-tools {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .opac-v2-sidebar,
+        .opac-v2-results {
+            background: linear-gradient(180deg, #ffffff 0%, #fafbfc 100%);
+            border: 1px solid rgba(226, 232, 240, .9);
+            border-radius: 18px;
+            padding: 20px;
+            box-shadow: 0 12px 32px rgba(15, 23, 42, .06);
+        }
+        .opac-v2-sidebar {
+            position: sticky;
+            top: 16px;
+            max-height: calc(100vh - 24px);
+            overflow: auto;
+        }
+        .opac-v2-sidebar h5 {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #475569;
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: .9px;
+        }
+        .facet-section {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 12px;
+            background: #fcfdff;
+        }
+        .facet-section:last-child {
+            margin-bottom: 0;
+        }
+        .facet-section h5 {
+            margin-bottom: 8px;
+        }
+        .facet-list {
+            max-height: 220px;
+            overflow: auto;
+            margin-bottom: 0;
+            padding-right: 4px;
+        }
+        .facet-item-btn.facet-hidden {
+            display: none;
+        }
+        .facet-more-btn {
+            margin-top: 8px;
+            width: 100%;
+            border: 1px dashed #cbd5e1;
+            background: #fff;
+            color: #475569;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 6px 10px;
+        }
+        .facet-more-btn:hover {
+            border-color: #93c5fd;
+            color: #1d4ed8;
+        }
+        .facet-item-btn {
+            width: 100%;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            color: #334155;
+            border-radius: 11px;
+            padding: 8px 10px;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            transition: all .16s ease;
+            cursor: pointer;
+        }
+        .facet-item-btn:hover {
+            border-color: #93c5fd;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(59, 130, 246, .10);
+        }
+        .facet-item-btn.active {
+            border-color: #2563eb;
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+        .facet-item-count {
+            background: #f1f5f9;
+            color: #334155;
+            border-radius: 999px;
+            font-size: 11px;
+            min-width: 32px;
+            text-align: center;
+            padding: 3px 8px;
+            font-weight: 700;
+        }
+        .opac-v2-results-heading {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .opac-v2-results-eyebrow {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: #64748b;
+            margin: 0;
+        }
+        .opac-v2-result-headline {
+            font-family: "Source Serif 4", Georgia, serif;
+            font-size: clamp(1.35rem, 2.5vw, 1.65rem);
+            font-weight: 700;
+            color: #0f172a;
+            letter-spacing: -.02em;
+            margin-bottom: 0;
+        }
+        #search-summary {
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+        }
+        #opac-result-list {
+            transition: opacity .22s ease;
+        }
+        #opac-result-list.is-loading {
+            opacity: .6;
+        }
+        .opac-v2-result-card {
+            position: relative;
+            border: 1px solid rgba(226, 232, 240, .95);
+            border-radius: 16px;
+            padding: 0;
+            margin-bottom: 14px;
+            transition: box-shadow .22s ease, border-color .22s ease, transform .22s ease;
+            background: #fff;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(15, 23, 42, .04);
+        }
+        .opac-v2-result-card::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%);
+            opacity: .85;
+            border-radius: 16px 0 0 16px;
+        }
+        .opac-v2-result-card:hover {
+            box-shadow: 0 16px 36px rgba(15, 23, 42, .1);
+            border-color: #bfdbfe;
+            transform: translateY(-3px);
+        }
+        .opac-v2-result-card-inner {
+            display: flex;
+            gap: 16px;
+            padding: 16px 16px 16px 20px;
+            align-items: flex-start;
+        }
+        a.opac-v2-result-cover-wrap {
+            flex-shrink: 0;
+            text-decoration: none;
+            border-radius: 12px;
+            overflow: hidden;
+            background: linear-gradient(145deg, #f1f5f9 0%, #e2e8f0 100%);
+            box-shadow:
+                0 2px 0 rgba(255, 255, 255, .5) inset,
+                4px 10px 22px rgba(15, 23, 42, .12);
+            transition: transform .25s ease, box-shadow .25s ease;
+        }
+        a.opac-v2-result-cover-wrap:hover {
+            transform: scale(1.02);
+            box-shadow: 4px 14px 28px rgba(15, 23, 42, .16);
+        }
+        a.opac-v2-result-cover-wrap:focus-visible {
+            outline: 2px solid rgba(37, 99, 235, .5);
+            outline-offset: 3px;
+        }
+        .opac-result-animate {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity .3s ease, transform .3s ease;
+        }
+        .opac-result-animate.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .opac-v2-result-cover {
+            width: 112px;
+            min-width: 112px;
+            height: 154px;
+            border-radius: 0;
+            object-fit: cover;
+            border: none;
+            background: #f8fafc;
+            display: block;
+        }
+        .opac-v2-result-body {
+            flex: 1;
+            min-width: 0;
+        }
+        .opac-v2-meta-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 4px;
+        }
+        .opac-v2-meta-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 13px;
+            color: #475569;
+            line-height: 1.45;
+        }
+        .opac-v2-meta-row > i {
+            flex-shrink: 0;
+            margin-top: 3px;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+        .opac-v2-meta-row strong {
+            color: #334155;
+            font-weight: 600;
+            margin-right: 6px;
+        }
+        .opac-v2-result-foot {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #f1f5f9;
+        }
+        .opac-v2-title {
+            margin-bottom: 6px;
+            font-size: 18px;
+            line-height: 1.35;
+            font-weight: 800;
+            letter-spacing: -.2px;
+        }
+        .opac-v2-title a {
+            color: #0f172a;
+        }
+        .opac-v2-title a:hover {
+            color: #1d4ed8;
+        }
+        .opac-v2-meta {
+            margin-bottom: 4px;
+            font-size: 13px;
+            color: #334155;
+            line-height: 1.55;
+        }
+        .opac-v2-meta strong {
+            color: #0f172a;
+            font-weight: 700;
+        }
+        .opac-v2-availability {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            color: #1e3a8a;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 8px 12px;
+            border: 1px solid rgba(191, 219, 254, .95);
+        }
+        .opac-v2-availability i {
+            font-size: 15px;
+            opacity: .9;
+        }
+        .opac-v2-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .opac-v2-filter-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            max-width: 100%;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 5px 5px 11px;
+            border-radius: 999px;
+            border: 1px solid transparent;
+        }
+        .opac-v2-filter-chip-text {
+            flex: 1;
+            min-width: 0;
+            line-height: 1.35;
+        }
+        .opac-v2-filter-chip-remove {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            width: 22px;
+            height: 22px;
+            margin: 0;
+            padding: 0;
+            border: none;
+            border-radius: 999px;
+            background: transparent;
+            color: inherit;
+            opacity: 0.55;
+            cursor: pointer;
+            line-height: 1;
+            transition: opacity .15s ease, background .15s ease;
+        }
+        .opac-v2-filter-chip-remove:hover {
+            opacity: 1;
+            background: rgba(15, 23, 42, 0.08);
+        }
+        .opac-v2-filter-chip-remove:focus-visible {
+            outline: 2px solid currentColor;
+            outline-offset: 1px;
+        }
+        .opac-v2-filter-chip-remove .bi {
+            font-size: 12px;
+            pointer-events: none;
+        }
+        .opac-v2-filter-chip--author {
+            background: #eff6ff;
+            color: #1e40af;
+            border-color: #bfdbfe;
+        }
+        .opac-v2-filter-chip--publisher {
+            background: #ecfdf5;
+            color: #065f46;
+            border-color: #a7f3d0;
+        }
+        .opac-v2-filter-chip--place {
+            background: #ecfeff;
+            color: #0e7490;
+            border-color: #a5f3fc;
+        }
+        .opac-v2-filter-chip--type {
+            background: #f5f3ff;
+            color: #5b21b6;
+            border-color: #ddd6fe;
+        }
+        .opac-v2-filter-chip--lib {
+            background: #f8fafc;
+            color: #475569;
+            border-color: #e2e8f0;
+        }
+        .opac-v2-empty {
+            border: 1px dashed #cbd5e1;
+            border-radius: 16px;
+            padding: 32px 22px;
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+            background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+        .opac-v2-home {
+            border: 1px solid #dbeafe;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+            border-radius: 14px;
+            padding: 16px;
+        }
+        .opac-v2-home-top {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 0;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .opac-v2-home-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 0;
+            letter-spacing: -.2px;
+        }
+        .opac-v2-home-desc {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+        .opac-v2-home-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .opac-v2-home-metric {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #fff;
+            padding: 10px;
+        }
+        .opac-v2-home-metric-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            color: #64748b;
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+        .opac-v2-home-metric-value {
+            font-size: 18px;
+            color: #0f172a;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+        .opac-v2-home-metric-note {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+        .opac-v2-home-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .opac-v2-home-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: #fff;
+            padding: 10px;
+        }
+        .opac-v2-home-card h6 {
+            margin-bottom: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #475569;
+            letter-spacing: .4px;
+        }
+        .opac-v2-home-list {
+            margin: 0;
+            padding-left: 16px;
+            color: #475569;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+        .opac-v2-home-list li {
+            margin-bottom: 2px;
+        }
+        .opac-v2-home-btn {
+            border: 1px solid #cbd5e1;
+            border-radius: 999px;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #fff;
+            color: #334155;
+            margin: 0 6px 6px 0;
+            cursor: pointer;
+        }
+        .opac-v2-home-btn:hover {
+            border-color: #93c5fd;
+            color: #1d4ed8;
+            background: #eff6ff;
+        }
+        @media (max-width: 767px) {
+            .opac-v2-home-metrics {
+                grid-template-columns: 1fr;
+            }
+            .opac-v2-home-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        #opac-pagination .pagination {
+            margin-bottom: 0;
+        }
+        #opac-pagination .page-link {
+            border-radius: 10px;
+            margin: 0 3px;
+            border: 1px solid #dbe4ff;
+            color: #1d4ed8;
+            font-size: 12px;
+            font-weight: 700;
+            min-width: 34px;
+            text-align: center;
+        }
+        #opac-pagination .page-item.active .page-link {
+            background: #1d4ed8;
+            border-color: #1d4ed8;
+            color: #fff;
+            box-shadow: 0 8px 18px rgba(37, 99, 235, .25);
+        }
+        @media (min-width: 992px) {
+            .opac-v2-results {
+                position: sticky;
+                top: 16px;
+                max-height: calc(100vh - 24px);
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+            }
+            #opac-result-list {
+                flex: 1 1 auto;
+                min-height: 260px;
+                overflow-y: auto;
+                padding-right: 4px;
+                scroll-behavior: smooth;
+            }
+            #opac-pagination {
+                flex-shrink: 0;
+                margin-top: 8px !important;
+                padding-top: 10px;
+                border-top: 1px solid #e2e8f0;
+                background: #fff;
+            }
+        }
+        .opac-v2-section-head.section-title-3 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .opac-v2-section-head {
+            margin-bottom: 18px !important;
+        }
+        .opac-v2-section-eyebrow {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+        .opac-v2-popular .section-title-3 {
+            margin-bottom: 14px !important;
+        }
+        .opac-v2-popular .section-title-3 h2 {
+            font-family: "Source Serif 4", Georgia, serif;
+            font-weight: 700;
+            letter-spacing: -.02em;
+            font-size: clamp(1.65rem, 3.5vw, 2.1rem);
+            color: #0f172a;
+            margin-bottom: 2px;
+        }
+        .opac-v2-popular .section-title-3 h2::before,
+        .opac-v2-popular .section-title-3 h2::after {
+            opacity: .25;
+            background: linear-gradient(90deg, transparent, #94a3b8, transparent);
+        }
+        .opac-v2-popular-wrap {
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, .92) 0%, rgba(248, 250, 252, .95) 100%);
+            border: 1px solid rgba(226, 232, 240, .95);
+            border-radius: 20px;
+            box-shadow:
+                0 1px 0 rgba(255, 255, 255, .9) inset,
+                0 20px 48px rgba(15, 23, 42, .07);
+            padding: 22px;
+        }
+        .opac-v2-latest-wrap {
+            background: linear-gradient(165deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            box-shadow: 0 16px 40px rgba(15, 23, 42, .06);
+            padding: 22px;
+        }
+        .opac-v2-popular-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+        }
+        .opac-v2-popular-card {
+            border: 1px solid rgba(226, 232, 240, .95);
+            border-radius: 18px;
+            background: #fff;
+            padding: 14px;
+            transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            border-top-width: 3px;
+            border-top-color: #60a5fa;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, .04);
+        }
+        .opac-v2-popular-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(191, 219, 254, .95);
+            box-shadow: 0 20px 40px rgba(15, 23, 42, .1);
+        }
+        .opac-v2-popular-rank {
+            display: inline-flex;
+            align-items: center;
+            align-self: flex-start;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .04em;
+            color: #fff;
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+            border-radius: 6px;
+            padding: 5px 10px;
+            margin-bottom: 10px;
+        }
+        a.opac-v2-popular-cover-wrap {
+            text-decoration: none;
+            color: inherit;
+        }
+        a.opac-v2-popular-cover-wrap:focus-visible {
+            outline: 2px solid rgba(37, 99, 235, .45);
+            outline-offset: 3px;
+        }
+        .opac-v2-popular-cover-wrap {
+            position: relative;
+            margin-bottom: 14px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: linear-gradient(145deg, #f1f5f9 0%, #e2e8f0 100%);
+            box-shadow:
+                0 2px 0 rgba(255, 255, 255, .6) inset,
+                4px 12px 28px rgba(15, 23, 42, .12);
+        }
+        .opac-v2-popular-cover-wrap::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 12px;
+            box-shadow: inset 0 0 0 1px rgba(15, 23, 42, .06);
+            pointer-events: none;
+        }
+        .opac-v2-popular-cover {
+            width: 100%;
+            height: 230px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: none;
+            background: transparent;
+            margin-bottom: 0;
+            display: block;
+            transition: transform .35s ease;
+        }
+        .opac-v2-popular-card:hover .opac-v2-popular-cover {
+            transform: scale(1.03);
+        }
+        .opac-v2-popular-title {
+            font-size: 15px;
+            line-height: 1.45;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #0f172a;
+            min-height: 64px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .opac-v2-popular-title a {
+            color: #0f172a;
+        }
+        .opac-v2-popular-title a:hover {
+            color: #1d4ed8;
+        }
+        .opac-v2-popular-author {
+            font-size: 12px;
+            color: #475569;
+            margin-bottom: 10px;
+            min-height: 36px;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .opac-v2-popular-date {
+            font-size: 11px;
+            color: #6b7280;
+            margin-top: -4px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .opac-v2-popular-badge {
+            display: inline-block;
+            background: #eff6ff;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 5px 10px;
+            margin-top: auto;
+        }
+        .opac-v2-popular-card:nth-child(4n+1) {
+            border-top-color: #60a5fa;
+        }
+        .opac-v2-popular-card:nth-child(4n+1) .opac-v2-popular-rank {
+            background: linear-gradient(90deg, #2563eb 0%, #3b82f6 100%);
+        }
+        .opac-v2-popular-card:nth-child(4n+1) .opac-v2-popular-badge {
+            background: #eff6ff;
+            color: #1e40af;
+            border-color: #bfdbfe;
+        }
+        .opac-v2-popular-card:nth-child(4n+2) {
+            border-top-color: #34d399;
+        }
+        .opac-v2-popular-card:nth-child(4n+2) .opac-v2-popular-rank {
+            background: linear-gradient(90deg, #059669 0%, #10b981 100%);
+        }
+        .opac-v2-popular-card:nth-child(4n+2) .opac-v2-popular-badge {
+            background: #ecfdf5;
+            color: #065f46;
+            border-color: #a7f3d0;
+        }
+        .opac-v2-popular-card:nth-child(4n+3) {
+            border-top-color: #a78bfa;
+        }
+        .opac-v2-popular-card:nth-child(4n+3) .opac-v2-popular-rank {
+            background: linear-gradient(90deg, #7c3aed 0%, #8b5cf6 100%);
+        }
+        .opac-v2-popular-card:nth-child(4n+3) .opac-v2-popular-badge {
+            background: #f5f3ff;
+            color: #5b21b6;
+            border-color: #ddd6fe;
+        }
+        .opac-v2-popular-card:nth-child(4n) {
+            border-top-color: #f59e0b;
+        }
+        .opac-v2-popular-card:nth-child(4n) .opac-v2-popular-rank {
+            background: linear-gradient(90deg, #d97706 0%, #f59e0b 100%);
+        }
+        .opac-v2-popular-card:nth-child(4n) .opac-v2-popular-badge {
+            background: #fffbeb;
+            color: #92400e;
+            border-color: #fde68a;
+        }
+        .opac-reveal {
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity .55s ease, transform .55s ease;
+        }
+        .opac-reveal.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        @media (max-width: 767px) {
+            .opac-v2-search-inner .opac-v2-kw-wrap {
+                border-left: none !important;
+            }
+        }
+        @media (max-width: 991px) {
+            .opac-v2-page-bg {
+                border-radius: 0;
+                padding: 0 0 18px;
+            }
+            .opac-v2-hero {
+                border-radius: 18px;
+                padding: 22px 18px 20px;
+            }
+            .opac-v2-sidebar {
+                position: static;
+            }
+            .opac-v2-result-cover {
+                width: 90px;
+                min-width: 90px;
+                height: 126px;
+            }
+            .opac-v2-result-card-inner {
+                gap: 12px;
+            }
+            .opac-v2-title {
+                font-size: 17px;
+            }
+            .opac-v2-popular-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            .opac-v2-popular .section-title-3 h2 {
+                font-size: 30px;
+            }
+        }
+        @media (max-width: 575px) {
+            .opac-v2-popular-grid {
+                grid-template-columns: 1fr;
+            }
+            .opac-v2-popular .section-title-3 h2 {
+                font-size: 26px;
+            }
+        }
+    </style>
+
+    <div class="opac-v2-page-bg">
+    <div class="container pb-80 opac-v2-root opac-preload">
+        <div class="opac-v2-hero opac-entry opac-delay-1">
+            <div class="opac-v2-hero-inner">
+                <p class="opac-v2-hero-eyebrow">Katalog terbuka</p>
+                <div class="opac-v2-title-wrap">
+                    <span class="opac-v2-title-line"></span>
+                    <h2>OPAC</h2>
+                    <span class="opac-v2-title-line"></span>
+                </div>
+                <p>Online Public Access Catalog — temukan koleksi lebih cepat dengan pencarian dan filter yang presisi.</p>
+
+                <div class="opac-v2-search-box">
+                    <form id="opac-search-form">
+                        <div class="opac-v2-search-inner">
+                            <div class="opac-v2-category-wrap">
+                                <select class="form-select" name="category" id="category">
+                                    <option value="sembarang" selected>Sembarang</option>
+                                    <option value="judul_buku">Judul</option>
+                                    <option value="author">Pengarang</option>
+                                    <option value="publisher">Penerbit</option>
+                                    <option value="subject">Subjek</option>
+                                    <option value="callNumber">Nomor Panggil</option>
+                                    <option value="ISBN">ISBN</option>
+                                    <option value="ISSN">ISSN</option>
+                                    <option value="ISMN">ISMN</option>
+                                </select>
+                            </div>
+                            <div class="opac-v2-kw-wrap">
+                                <input class="form-control" placeholder="Cari judul, pengarang, subjek, ISBN, dll..." name="keyword" id="keyword" type="text">
+                            </div>
+                            <div class="opac-v2-submit-wrap d-grid">
+                                <button type="submit" id="btn_search" class="btn btn-primary">Cari</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3 opac-entry opac-delay-2" id="opac-search-panel">
+            <div class="col-lg-3">
+                <div class="opac-v2-sidebar">
+                    <div class="facet-section">
+                        <h5>Filter Pengarang</h5>
+                        <div class="facet-list" id="facet-authors"></div>
+                    </div>
+
+                    <div class="facet-section">
+                        <h5>Filter Penerbit</h5>
+                        <div class="facet-list" id="facet-publishers"></div>
+                    </div>
+
+                    <div class="facet-section">
+                        <h5>Filter Lokasi Terbit</h5>
+                        <div class="facet-list" id="facet-publish-locations"></div>
+                    </div>
+
+                    <div class="facet-section">
+                        <h5>Filter Jenis Bahan</h5>
+                        <div class="facet-list" id="facet-worksheets"></div>
+                    </div>
+
+                    <div class="facet-section">
+                        <h5>Filter Lokasi Perpustakaan</h5>
+                        <div class="facet-list" id="facet-library-locations"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-9">
+                <div class="opac-v2-results">
+                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+                        <div class="opac-v2-results-heading">
+                            <p class="opac-v2-results-eyebrow">Daftar koleksi</p>
+                            <h4 class="opac-v2-result-headline">Hasil pencarian</h4>
+                        </div>
+                        <div class="opac-v2-result-tools">
+                            <small id="search-summary">Memuat data...</small>
+                            <button type="button" id="btn-home-default" class="opac-v2-home-reset d-none">Kembali ke Beranda</button>
+                        </div>
+                    </div>
+
+                    <div class="opac-v2-badges" id="active-filter-badges"></div>
+                    <div id="opac-result-list"></div>
+                    <nav class="mt-3" id="opac-pagination"></nav>
+                </div>
+            </div>
+        </div>
+
+        <div class="best-product-area pt-70 opac-v2-popular opac-reveal opac-entry opac-delay-2" id="opac-popular-section">
+            <div class="section-title-3 text-center mb-25 opac-v2-section-head">
+                <p class="opac-v2-section-eyebrow">Berdasarkan peminjaman</p>
+                <h2>Paling Sering Dipinjam</h2>
+            </div>
+            <div class="opac-v2-popular-wrap">
+                <div class="opac-v2-popular-grid">
+                                                                                                    <div class="opac-v2-popular-card opac-reveal">
+                                <span class="opac-v2-popular-rank">#1 Terpopuler</span>
+                                <a href="https://readily.ipb.ac.id/opac/detail-buku?id=55391" class="opac-v2-popular-cover-wrap d-block">
+                                    <img
+                                        src="https://readily.ipb.ac.id/assets_user/img/catalogs/55391.jpg"
+                                        class="opac-v2-popular-cover"
+                                        alt="Biologi Jilid 1 / Campbell, Neil A"
+                                        onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://readily.ipb.ac.id/assets/img/catalogs/55391.jpg';}else{this.onerror=null;this.src='https://readily.ipb.ac.id/assets_user/img/catalogs/nophoto.jpg';}"
+                                    >
+                                </a>
+                                <div class="opac-v2-popular-title">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=55391">Biologi Jilid 1 / Campbell, Neil A</a>
+                                </div>
+                                <div class="opac-v2-popular-author">Reece, Jane B ; Reece, Jane B</div>
+                                <span class="opac-v2-popular-badge">Dipinjam 521 kali</span>
+                            </div>
+                                                                                <div class="opac-v2-popular-card opac-reveal">
+                                <span class="opac-v2-popular-rank">#2 Terpopuler</span>
+                                <a href="https://readily.ipb.ac.id/opac/detail-buku?id=55452" class="opac-v2-popular-cover-wrap d-block">
+                                    <img
+                                        src="https://readily.ipb.ac.id/assets_user/img/catalogs/55452.jpg"
+                                        class="opac-v2-popular-cover"
+                                        alt="Kimia dasar Jilid 1 :  Konsep-konsep inti / Raymond Chang"
+                                        onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://readily.ipb.ac.id/assets/img/catalogs/55452.jpg';}else{this.onerror=null;this.src='https://readily.ipb.ac.id/assets_user/img/catalogs/nophoto.jpg';}"
+                                    >
+                                </a>
+                                <div class="opac-v2-popular-title">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=55452">Kimia dasar Jilid 1 :  Konsep-konsep inti / Raymond Chang</a>
+                                </div>
+                                <div class="opac-v2-popular-author">Chang, Raymond</div>
+                                <span class="opac-v2-popular-badge">Dipinjam 340 kali</span>
+                            </div>
+                                                                                <div class="opac-v2-popular-card opac-reveal">
+                                <span class="opac-v2-popular-rank">#3 Terpopuler</span>
+                                <a href="https://readily.ipb.ac.id/opac/detail-buku?id=41648" class="opac-v2-popular-cover-wrap d-block">
+                                    <img
+                                        src="https://readily.ipb.ac.id/assets_user/img/catalogs/41648.jpg"
+                                        class="opac-v2-popular-cover"
+                                        alt="Makroekonomi / N. Gregory Mankiw"
+                                        onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://readily.ipb.ac.id/assets/img/catalogs/41648.jpg';}else{this.onerror=null;this.src='https://readily.ipb.ac.id/assets_user/img/catalogs/nophoto.jpg';}"
+                                    >
+                                </a>
+                                <div class="opac-v2-popular-title">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=41648">Makroekonomi / N. Gregory Mankiw</a>
+                                </div>
+                                <div class="opac-v2-popular-author">Mankiw, N. Gregory</div>
+                                <span class="opac-v2-popular-badge">Dipinjam 306 kali</span>
+                            </div>
+                                                                                <div class="opac-v2-popular-card opac-reveal">
+                                <span class="opac-v2-popular-rank">#4 Terpopuler</span>
+                                <a href="https://readily.ipb.ac.id/opac/detail-buku?id=55447" class="opac-v2-popular-cover-wrap d-block">
+                                    <img
+                                        src="https://readily.ipb.ac.id/assets_user/img/catalogs/1778469790-Kalkulus_1.png"
+                                        class="opac-v2-popular-cover"
+                                        alt="Kalkulus Jilid 1 / Dale Varberg, Edwin J. Purcell, Steven E. Rigdon"
+                                        onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://readily.ipb.ac.id/assets/img/catalogs/1778469790-Kalkulus_1.png';}else{this.onerror=null;this.src='https://readily.ipb.ac.id/assets_user/img/catalogs/nophoto.jpg';}"
+                                    >
+                                </a>
+                                <div class="opac-v2-popular-title">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=55447">Kalkulus Jilid 1 / Dale Varberg, Edwin J. Purcell, Steven E. Rigdon</a>
+                                </div>
+                                <div class="opac-v2-popular-author">Varberg, Dale ; Rigdon, Steven E.</div>
+                                <span class="opac-v2-popular-badge">Dipinjam 287 kali</span>
+                            </div>
+                                                                                <div class="opac-v2-popular-card opac-reveal">
+                                <span class="opac-v2-popular-rank">#5 Terpopuler</span>
+                                <a href="https://readily.ipb.ac.id/opac/detail-buku?id=55448" class="opac-v2-popular-cover-wrap d-block">
+                                    <img
+                                        src="https://readily.ipb.ac.id/assets_user/img/catalogs/1779176695-Kalkulus_Jilid_2_Dale_Varberg.jpg"
+                                        class="opac-v2-popular-cover"
+                                        alt="Kalkulus Jilid 2 / Dale Varberg, Edwin J. Purcell, Steven E. Rigdon"
+                                        onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://readily.ipb.ac.id/assets/img/catalogs/1779176695-Kalkulus_Jilid_2_Dale_Varberg.jpg';}else{this.onerror=null;this.src='https://readily.ipb.ac.id/assets_user/img/catalogs/nophoto.jpg';}"
+                                    >
+                                </a>
+                                <div class="opac-v2-popular-title">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=55448">Kalkulus Jilid 2 / Dale Varberg, Edwin J. Purcell, Steven E. Rigdon</a>
+                                </div>
+                                <div class="opac-v2-popular-author">Varberg, Dale ; Rigdon, Steven E.</div>
+                                <span class="opac-v2-popular-badge">Dipinjam 252 kali</span>
+                            </div>
+                                                                                <div class="opac-v2-popular-card opac-reveal">
+                                <span class="opac-v2-popular-rank">#6 Terpopuler</span>
+                                <a href="https://readily.ipb.ac.id/opac/detail-buku?id=55451" class="opac-v2-popular-cover-wrap d-block">
+                                    <img
+                                        src="https://readily.ipb.ac.id/assets_user/img/catalogs/55451.jpg"
+                                        class="opac-v2-popular-cover"
+                                        alt="Kimia dasar Jilid 2 :  Konsep-konsep inti / Raymond Chang"
+                                        onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://readily.ipb.ac.id/assets/img/catalogs/55451.jpg';}else{this.onerror=null;this.src='https://readily.ipb.ac.id/assets_user/img/catalogs/nophoto.jpg';}"
+                                    >
+                                </a>
+                                <div class="opac-v2-popular-title">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=55451">Kimia dasar Jilid 2 :  Konsep-konsep inti / Raymond Chang</a>
+                                </div>
+                                <div class="opac-v2-popular-author">Chang, Raymond</div>
+                                <span class="opac-v2-popular-badge">Dipinjam 236 kali</span>
+                            </div>
+                                                                                <div class="opac-v2-popular-card opac-reveal">
+                                <span class="opac-v2-popular-rank">#7 Terpopuler</span>
+                                <a href="https://readily.ipb.ac.id/opac/detail-buku?id=55450" class="opac-v2-popular-cover-wrap d-block">
+                                    <img
+                                        src="https://readily.ipb.ac.id/assets_user/img/catalogs/1779176021-fisika_1.jpg"
+                                        class="opac-v2-popular-cover"
+                                        alt="Fisika Jilid 1 :  Prinsip dan aplikasi / Douglas C. Giancoli"
+                                        onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://readily.ipb.ac.id/assets/img/catalogs/1779176021-fisika_1.jpg';}else{this.onerror=null;this.src='https://readily.ipb.ac.id/assets_user/img/catalogs/nophoto.jpg';}"
+                                    >
+                                </a>
+                                <div class="opac-v2-popular-title">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=55450">Fisika Jilid 1 :  Prinsip dan aplikasi / Douglas C. Giancoli</a>
+                                </div>
+                                <div class="opac-v2-popular-author">Giancoli, Douglas C.</div>
+                                <span class="opac-v2-popular-badge">Dipinjam 164 kali</span>
+                            </div>
+                                                                                <div class="opac-v2-popular-card opac-reveal">
+                                <span class="opac-v2-popular-rank">#8 Terpopuler</span>
+                                <a href="https://readily.ipb.ac.id/opac/detail-buku?id=40732" class="opac-v2-popular-cover-wrap d-block">
+                                    <img
+                                        src="https://readily.ipb.ac.id/assets_user/img/catalogs/1779175732-40732.png"
+                                        class="opac-v2-popular-cover"
+                                        alt="Dasar-dasar matematika ekonomi Jilid. 1 / Alpha C. Chiang dan Kevin Wainwright"
+                                        onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://readily.ipb.ac.id/assets/img/catalogs/1779175732-40732.png';}else{this.onerror=null;this.src='https://readily.ipb.ac.id/assets_user/img/catalogs/nophoto.jpg';}"
+                                    >
+                                </a>
+                                <div class="opac-v2-popular-title">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=40732">Dasar-dasar matematika ekonomi Jilid. 1 / Alpha C. Chiang dan Kevin Wainwright</a>
+                                </div>
+                                <div class="opac-v2-popular-author">Chiang, Alpha C ; Kevin Wainwriht (Penulis ke 2)</div>
+                                <span class="opac-v2-popular-badge">Dipinjam 157 kali</span>
+                            </div>
+                                                            </div>
+            </div>
+        </div>
+
+        <div class="best-product-area pt-70 opac-v2-popular opac-reveal opac-entry opac-delay-3" id="opac-latest-section">
+            <div class="section-title-3 text-center mb-25 opac-v2-section-head">
+                <p class="opac-v2-section-eyebrow">Koleksi baru</p>
+                <h2>Buku Terbaru</h2>
+            </div>
+            <div class="opac-v2-latest-wrap">
+                <div class="opac-v2-popular-grid">
+                                                                                                    <div class="opac-v2-popular-card opac-reveal">
+                                <span class="opac-v2-popular-rank">#1 Terbaru</span>
+                                <a href="https://readily.ipb.ac.id/opac/detail-buku?id=142605" class="opac-v2-popular-cover-wrap d-block">
+                                    <img
+                                        src="https://readily.ipb.ac.id/assets_user/img/catalogs/1794368819-images.jpg"
+                                        class="opac-v2-popular-cover"
+                                        alt="Behind the Orange Label :  Riks, Benefits, and the Regulatory Politics of Paraquat Herbicide / Midzon Johannis"
+                                        onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://readily.ipb.ac.id/assets/img/catalogs/1794368819-images.jpg';}else{this.onerror=null;this.src='https://readily.ipb.ac.id/assets_user/img/catalogs/nophoto.jpg';}"
+                                    >
+                                </a>
+                                <div class="opac-v2-popular-title">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=142605">Behind the Orange Label :  Riks, Benefits, and the Regulatory Politics of Paraquat Herbicide / Midzon Johannis</a>
+                                </div>
+                                <div class="opac-v2-popular-author">Johannis, Midzon (Pengarang)</div>
+                                                                <div class="opac-v2-popular-date">Ditambahkan: 11 November 2026</div>
+                                <span class="opac-v2-popular-badge">Monograf • 2026</span>
+                            </div>
+                                                                                <div class="opac-v2-popular-card opac-reveal">
+                                <span class="opac-v2-popular-rank">#2 Terbaru</span>
+                                <a href="https://readily.ipb.ac.id/opac/detail-buku?id=142590" class="opac-v2-popular-cover-wrap d-block">
+                                    <img
+                                        src="https://readily.ipb.ac.id/assets_user/img/catalogs/1794191982-Hunter_with_scalpel.jpg"
+                                        class="opac-v2-popular-cover"
+                                        alt="Hunter With A Scalpel / Choi Yi-Do"
+                                        onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://readily.ipb.ac.id/assets/img/catalogs/1794191982-Hunter_with_scalpel.jpg';}else{this.onerror=null;this.src='https://readily.ipb.ac.id/assets_user/img/catalogs/nophoto.jpg';}"
+                                    >
+                                </a>
+                                <div class="opac-v2-popular-title">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=142590">Hunter With A Scalpel / Choi Yi-Do</a>
+                                </div>
+                                <div class="opac-v2-popular-author">Choi Yi-Do ; Intan Ekapratiwi (Editor)</div>
+                                                                <div class="opac-v2-popular-date">Ditambahkan: 03 November 2026</div>
+                                <span class="opac-v2-popular-badge">Monograf • 2026</span>
+                            </div>
+                                                                                <div class="opac-v2-popular-card opac-reveal">
+                                <span class="opac-v2-popular-rank">#3 Terbaru</span>
+                                <a href="https://readily.ipb.ac.id/opac/detail-buku?id=142589" class="opac-v2-popular-cover-wrap d-block">
+                                    <img
+                                        src="https://readily.ipb.ac.id/assets_user/img/catalogs/1794191239-Salvation.jpeg"
+                                        class="opac-v2-popular-cover"
+                                        alt="Salvation of A Saint / Higashino Keigo"
+                                        onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://readily.ipb.ac.id/assets/img/catalogs/1794191239-Salvation.jpeg';}else{this.onerror=null;this.src='https://readily.ipb.ac.id/assets_user/img/catalogs/nophoto.jpg';}"
+                                    >
+                                </a>
+                                <div class="opac-v2-popular-title">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=142589">Salvation of A Saint / Higashino Keigo</a>
+                                </div>
+                                <div class="opac-v2-popular-author">Higashino Keigo ; Faira Ammadea (penterjemah)</div>
+                                                                <div class="opac-v2-popular-date">Ditambahkan: 03 November 2026</div>
+                                <span class="opac-v2-popular-badge">Monograf • 2021</span>
+                            </div>
+                                                                                <div class="opac-v2-popular-card opac-reveal">
+                                <span class="opac-v2-popular-rank">#4 Terbaru</span>
+                                <a href="https://readily.ipb.ac.id/opac/detail-buku?id=142588" class="opac-v2-popular-cover-wrap d-block">
+                                    <img
+                                        src="https://readily.ipb.ac.id/assets_user/img/catalogs/1794185528-Project_Hail_Mary_Andy_Weir.jpg"
+                                        class="opac-v2-popular-cover"
+                                        alt="Project Hail Mary / Andy Weir"
+                                        onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://readily.ipb.ac.id/assets/img/catalogs/1794185528-Project_Hail_Mary_Andy_Weir.jpg';}else{this.onerror=null;this.src='https://readily.ipb.ac.id/assets_user/img/catalogs/nophoto.jpg';}"
+                                    >
+                                </a>
+                                <div class="opac-v2-popular-title">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=142588">Project Hail Mary / Andy Weir</a>
+                                </div>
+                                <div class="opac-v2-popular-author">Weir, Andy ; Iingliana (Penerjemah)</div>
+                                                                <div class="opac-v2-popular-date">Ditambahkan: 03 November 2026</div>
+                                <span class="opac-v2-popular-badge">Monograf • 2026</span>
+                            </div>
+                                                                                <div class="opac-v2-popular-card opac-reveal">
+                                <span class="opac-v2-popular-rank">#5 Terbaru</span>
+                                <a href="https://readily.ipb.ac.id/opac/detail-buku?id=142587" class="opac-v2-popular-cover-wrap d-block">
+                                    <img
+                                        src="https://readily.ipb.ac.id/assets_user/img/catalogs/1794186172-The_Lost_Library.jpg"
+                                        class="opac-v2-popular-cover"
+                                        alt="The Lost Library :  Misteri Perpustakaan Yang Hilang / Rebecca Stead; Wendy Mass"
+                                        onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://readily.ipb.ac.id/assets/img/catalogs/1794186172-The_Lost_Library.jpg';}else{this.onerror=null;this.src='https://readily.ipb.ac.id/assets_user/img/catalogs/nophoto.jpg';}"
+                                    >
+                                </a>
+                                <div class="opac-v2-popular-title">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=142587">The Lost Library :  Misteri Perpustakaan Yang Hilang / Rebecca Stead; Wendy Mass</a>
+                                </div>
+                                <div class="opac-v2-popular-author">Stead, Rebecca ; Mass,Wendy</div>
+                                                                <div class="opac-v2-popular-date">Ditambahkan: 03 November 2026</div>
+                                <span class="opac-v2-popular-badge">Monograf • 2026</span>
+                            </div>
+                                                                                <div class="opac-v2-popular-card opac-reveal">
+                                <span class="opac-v2-popular-rank">#6 Terbaru</span>
+                                <a href="https://readily.ipb.ac.id/opac/detail-buku?id=142586" class="opac-v2-popular-cover-wrap d-block">
+                                    <img
+                                        src="https://readily.ipb.ac.id/assets_user/img/catalogs/1794190837-Animal_Farm_cov.jpg"
+                                        class="opac-v2-popular-cover"
+                                        alt="Animal Farm :  Republik Hewan / George Orwell"
+                                        onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://readily.ipb.ac.id/assets/img/catalogs/1794190837-Animal_Farm_cov.jpg';}else{this.onerror=null;this.src='https://readily.ipb.ac.id/assets_user/img/catalogs/nophoto.jpg';}"
+                                    >
+                                </a>
+                                <div class="opac-v2-popular-title">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=142586">Animal Farm :  Republik Hewan / George Orwell</a>
+                                </div>
+                                <div class="opac-v2-popular-author">Orwell, George ; Djokolelono (Alih bahasa)</div>
+                                                                <div class="opac-v2-popular-date">Ditambahkan: 03 November 2026</div>
+                                <span class="opac-v2-popular-badge">Monograf • 2021</span>
+                            </div>
+                                                                                <div class="opac-v2-popular-card opac-reveal">
+                                <span class="opac-v2-popular-rank">#7 Terbaru</span>
+                                <a href="https://readily.ipb.ac.id/opac/detail-buku?id=142585" class="opac-v2-popular-cover-wrap d-block">
+                                    <img
+                                        src="https://readily.ipb.ac.id/assets_user/img/catalogs/1794185122-Midsummer_s_Equation.jpg"
+                                        class="opac-v2-popular-cover"
+                                        alt="A Midsummer&#039;s Equation :  Rumus Kebenaran Musin Panas / Keigo Higashino"
+                                        onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://readily.ipb.ac.id/assets/img/catalogs/1794185122-Midsummer_s_Equation.jpg';}else{this.onerror=null;this.src='https://readily.ipb.ac.id/assets_user/img/catalogs/nophoto.jpg';}"
+                                    >
+                                </a>
+                                <div class="opac-v2-popular-title">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=142585">A Midsummer&#039;s Equation :  Rumus Kebenaran Musin Panas / Keigo Higashino</a>
+                                </div>
+                                <div class="opac-v2-popular-author">Keigo Higashino ; Faira Ammaneda</div>
+                                                                <div class="opac-v2-popular-date">Ditambahkan: 03 November 2026</div>
+                                <span class="opac-v2-popular-badge">Monograf • 2026</span>
+                            </div>
+                                                                                <div class="opac-v2-popular-card opac-reveal">
+                                <span class="opac-v2-popular-rank">#8 Terbaru</span>
+                                <a href="https://readily.ipb.ac.id/opac/detail-buku?id=142584" class="opac-v2-popular-cover-wrap d-block">
+                                    <img
+                                        src="https://readily.ipb.ac.id/assets_user/img/catalogs/1794186601-Keajaiban_Toko_Kelontong_Namiya.jpg"
+                                        class="opac-v2-popular-cover"
+                                        alt="Keajaiban Toko Kelontong Namiya / Keigo Higashino"
+                                        onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://readily.ipb.ac.id/assets/img/catalogs/1794186601-Keajaiban_Toko_Kelontong_Namiya.jpg';}else{this.onerror=null;this.src='https://readily.ipb.ac.id/assets_user/img/catalogs/nophoto.jpg';}"
+                                    >
+                                </a>
+                                <div class="opac-v2-popular-title">
+                                    <a href="https://readily.ipb.ac.id/opac/detail-buku?id=142584">Keajaiban Toko Kelontong Namiya / Keigo Higashino</a>
+                                </div>
+                                <div class="opac-v2-popular-author">Keigo Higashino ; Faira Ammadea (Penerjemah)</div>
+                                                                <div class="opac-v2-popular-date">Ditambahkan: 03 November 2026</div>
+                                <span class="opac-v2-popular-badge">Monograf • 2020</span>
+                            </div>
+                                                            </div>
+            </div>
+        </div>
+    </div>
+    </div>
+        </div>
+        <footer class="footer-area">
+    <div class="footer-bottom bg-black ptb-20 mt-30">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <div class="copyright">
+                        <p>
+                            Copyright ©
+                            <a href="hastech.company/">IPB University</a> 2025 . All Right Reserved.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>    </div>
+
+    <!-- all js here -->
+<script src="/assets_user/js/vendor/jquery-1.12.4.min.js"></script>
+<script src="/assets_user/js/popper.js"></script>
+<script src="/assets_user/js/bootstrap.min.js"></script>
+<script src="/assets_user/js/jquery.magnific-popup.min.js"></script>
+<script src="/assets_user/js/isotope.pkgd.min.js"></script>
+<script src="/assets_user/js/imagesloaded.pkgd.min.js"></script>
+<script src="/assets_user/js/jquery.counterup.min.js"></script>
+<script src="/assets_user/js/waypoints.min.js"></script>
+<script src="/assets_user/js/ajax-mail.js"></script>
+<script src="/assets_user/js/owl.carousel.min.js"></script>
+<script src="/assets_user/js/plugins.js"></script>
+<script src="/assets_user/js/main.js"></script>
+<script src="/assets_user/jquery/jquery.validate.min.js"></script>
+<script src="/assets_user/DataTables/datatables.min.js"></script>
+<script src="/assets_user/DataTables/datatables.js"></script>
+<script src="/assets_admin/plugins/bootstrap-material-datetimepicker/js/moment.min.js"></script>
+<script src="/assets_user/highcharts/highcharts.js"></script>
+<script src="/assets_user/highcharts/exporting.js"></script>      <script src="/assets_user/javascript/opac/opac.js"></script>
+</body>
+</html>

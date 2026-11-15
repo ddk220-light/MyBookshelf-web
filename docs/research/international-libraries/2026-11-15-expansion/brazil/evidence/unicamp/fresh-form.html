@@ -1,0 +1,656 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR" class="">
+<head>
+	<meta charset="utf-8">
+	<meta name="google" content="notranslate">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Content-Language" content="pt-BR" />
+		<link rel="manifest" href="/ManifestoPwa" />
+	<link rel="apple-touch-icon" sizes="72x72" href="/content/images/icones-pwa/biblioteca/logo_72x72px.png" />
+	<link rel="apple-touch-icon" sizes="96x96" href="/content/images/icones-pwa/biblioteca/logo_96x96px.png" />
+	<link rel="apple-touch-icon" sizes="128x128" href="/content/images/icones-pwa/biblioteca/logo_128x128px.png" />
+	<link rel="apple-touch-icon" sizes="144x144" href="/content/images/icones-pwa/biblioteca/logo_144x144px.png" />
+	<link rel="apple-touch-icon" sizes="152x152" href="/content/images/icones-pwa/biblioteca/logo_152x152px.png" />
+	<link rel="apple-touch-icon" sizes="192x192" href="/content/images/icones-pwa/biblioteca/logo_192x192px.png" />
+	<link rel="apple-touch-icon" sizes="384x384" href="/content/images/icones-pwa/biblioteca/logo_384x384px.png" />
+	<link rel="apple-touch-icon" sizes="512x512" href="/content/images/icones-pwa/biblioteca/logo_512x512px.png" />
+	
+	
+	
+
+
+	
+	<script type="text/javascript">Caixa = { Normal: 0, Alta: 1, Baixa: 2, Capitalizada: 3, PrimeiraPalavraCapitalizada: 4  };</script>
+
+
+
+	<title>Terminal - Sophia Biblioteca Web</title>
+	
+	<link href="/bundles/css?v=9r1hxkBhVzrjLYp2iV35Vqj9Q9_YFdHkNn5rJSuM5Dk1" rel="stylesheet"/>
+
+	<link href='/Content/css/theme.less?build=1.223.0.0' rel='stylesheet' type='text/css' />
+	
+	<link href='/Content/css/toastr/angular-toastr.min.css?build=1.223.0.0' rel='stylesheet' type='text/css' />
+	<link href='/Content/css/toastr/toastr.custom.less?build=1.223.0.0' rel='stylesheet' type='text/css' />
+
+	
+	<link href='/Content/css/slick/slick.css?build=1.223.0.0' rel='stylesheet' type='text/css' />
+	<link href='/Content/css/slick/slick-theme.css?build=1.223.0.0' rel='stylesheet' type='text/css' />
+	<link href='/Content/css/slick/slick.custom.less?build=1.223.0.0' rel='stylesheet' type='text/css' />
+	<link href='/Content/css/home/index.less?build=1.223.0.0' rel='stylesheet' type='text/css' />
+<link href='/Content/css/home/carrosselRegistrosGrande.less?build=1.223.0.0' rel='stylesheet' type='text/css' /><link href='/Content/css/home/carrosselCategoriaLegislacaoGrande.less?build=1.223.0.0' rel='stylesheet' type='text/css' />	
+
+	<style>
+		@media (min-width: 1200px) {
+			header > nav.navbar > div.container.imagemCabecalho {
+				background-image: url('/Home/ObterCabecalho');
+			}
+		}
+	</style>
+
+
+	<link rel="shortcut icon" href="/content/images/favicon.ico?v=2023" type="image/x-icon" />
+</head>
+
+
+
+
+
+
+<body role="document" ng-app="terminalApp" ng-cloak>
+	
+
+
+
+
+		<script>
+			document.addEventListener("DOMContentLoaded", () => {
+				validarAcessoDetalhe();
+			});
+		</script>
+
+
+<h1 class="visivel-apenas-para-leitor-de-acessibilidade">Terminal de consulta web</h1>
+<ul id="accessibility" class="visivel-apenas-para-leitor-de-acessibilidade">
+	<li>
+		<a accesskey="1" href="#acessibilidade-e-auto-contraste" id="link-acessibilidade-e-auto-contraste">
+			Versão de alto contraste e opções de acessibilidade<span>1</span>
+		</a>
+	</li>
+	<li>
+		<a accesskey="2" href="#menu-principal" id="link-menu-principal">
+			Filtro por bibliotecas e menu de ações do usuário<span>2</span>
+		</a>
+	</li>
+	<li>
+		<a accesskey="3" href="#busca-rapida" id="link-busca-rapida">
+			Busca rápida por palavra chave<span>3</span>
+		</a>
+	</li>
+	<li>
+		<a accesskey="4" href="#carrosseis" id="link-carrosseis">
+			Últimos títulos adquiridos e mais emprestados<span>4</span>
+		</a>
+	</li>
+	<li>
+		<a accesskey="5" href="#rodape" id="link-rodape">
+			Rodapé<span>5</span>
+		</a>
+	</li>
+</ul>
+<header>
+	<nav class="navbar navbar-fixed-top">
+		<div id="acessibilidade-e-auto-contraste" class="container">
+			<span class="container-ssogovbr" ng-controller="SolicitacaoImagensModalController as solicImgModalCtrl" ng-cloak>
+			</span>
+			<button onclick="tw.acessibilidade.abrir()">
+				<i class="mdi mdi-human"></i>Acessibilidade
+			</button>
+			<button onclick="tw.contraste.toggle()">
+				<i class="mdi mdi-circle-slice-4"></i>Alto contraste
+			</button>
+		</div>
+	</nav>
+	<nav id="menu-principal" class="navbar navbar-fixed-top">
+		<div class="container ">
+			<a id="logotipoTerminal" href="/" target="_self" title="Logotipo da instituição">
+				<img src="/Home/ObterLogotipo" alt="Logotipo da instituição" />
+			</a>
+			<ul class="nav navbar-nav navbar-right" ng-cloak>
+				
+				<li class="dropdown filtro-biblioteca" ng-controller="FiltroBibliotecasCtrl as filtroBibCtrl">
+	<button id="bibliotecasSelecionadasA" class="dropdown-toggle a-caret" data-toggle="dropdown" role="button"
+			aria-haspopup="true" aria-expanded="false">
+		<span class="mdi mdi-map-marker" aria-hidden="true" data-total-bibliotecas="{{filtroBibCtrl.totalBibliotecas()}}"></span>
+		<span id="bibliotecasSelecionadasTitulo"></span>
+		<span class="caret"></span>
+	</button>
+	<ul class="dropdown-menu animated bounceInDown">
+		<li class="li-multiselect" ng-if="filtroBibCtrl.model.EstadoSet.length > 0">
+			<label>Estado</label>
+			<div class="multiselecao">
+				<select kendo-multi-select id="estado_multiselect" k-options="filtroBibCtrl.options.estado"
+						data-no-data-template="false" k-ng-model="filtroBibCtrl.filtro.estadoSet" data-value-primitive="false"
+						ng-cloak></select>
+			</div>
+		</li>
+		<li class="li-multiselect" ng-if="filtroBibCtrl.model.CidadeSet.length > 0">
+			<label>Cidade</label>
+			<div class="multiselecao">
+				<select kendo-multi-select id="cidade_multiselect" k-options="filtroBibCtrl.options.cidade"
+						data-no-data-template="false" k-ng-model="filtroBibCtrl.filtro.cidadeSet" data-value-primitive="false"
+						ng-cloak></select>
+			</div>
+		</li>
+		<li class="divider" ng-if="filtroBibCtrl.model.EstadoSet.length > 0 && filtroBibCtrl.model.CidadeSet.length > 0"></li>
+		<li class="li-multiselect">
+			<label>Biblioteca</label>
+			<div class="multiselecao">
+				<select kendo-multi-select id="biblioteca_multiselect" k-options="filtroBibCtrl.options.biblioteca"
+						data-no-data-template="false" k-ng-model="filtroBibCtrl.filtro.bibliotecaSet" data-value-primitive="false"
+						ng-cloak></select>
+			</div>
+		</li>
+		<li class="divider"></li>
+		<li>
+			<button class="btn" ng-click="filtroBibCtrl.filtrar();">
+				<span class="mdi mdi-filter-outline" aria-hidden="true"></span>
+				Aplicar filtro
+			</button>
+		</li>
+	</ul>
+</li>
+
+				<li class="minha-selecao" ng-controller="ServicosController as servicosCtrl">
+	<a href="/MinhaSelecao" title="Minha seleção" ng-click="servicosCtrl.navegarParaMinhaSelecao()">
+		<span class="visivel-apenas-para-leitor-de-acessibilidade">Minha seleção</span>
+		<span class="mdi mdi-basket" data-total-selecao="{{servicosCtrl.obterTotalMinhaSelecao()}}">
+			<span class="texto-vlibras">Minha seleção</span>
+		</span>
+	</a>
+</li>
+<li class="dropdown favorito-menu" ng-controller="menuFavoritoController as menuFavoritoCtrl">
+	<button class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
+			title="Meus favoritos" ng-click="menuFavoritoCtrl.openMenu()">
+		<span class="mdi mdi-heart" aria-hidden="true">
+			<span class="texto-vlibras">Meus favoritos</span>
+		</span>
+	</button>
+	<div class="dropdown-menu dropdown-menu-right animated bounceInDown">
+		<ul>
+			<li>
+				<div class="titulo-menu">
+					Meus favoritos
+					<span ng-show="menuFavoritoCtrl.favoritoMenu.tituloRegistro">(</span>
+					<span ng-bind="menuFavoritoCtrl.favoritoMenu.tituloRegistro" class="titulo-registro-fav"></span>
+					<span ng-show="menuFavoritoCtrl.favoritoMenu.tituloRegistro">)</span>
+				</div>
+			</li>
+			<li>
+				<div class="corpo-menu">
+					<div ng-repeat="favorito in menuFavoritoCtrl.favoritoMenu.FavoritoListaSet" class="exibeBorda">
+						<div class="btn" ng-class="menuFavoritoCtrl.obterClasseBtn(favorito.Codigo)" ng-click="menuFavoritoCtrl.favoritar(favorito.Codigo)">
+							<i class="mdi" ng-class="menuFavoritoCtrl.obterClasseIcone(favorito.Codigo)"></i>
+						</div>
+						<div class="conteudo-menu">
+							<button ng-bind="favorito.Nome" href="javascript:void(0);" ng-click="menuFavoritoCtrl.ir(favorito.Codigo)" class="favorito-teste"></button>
+							<span ng-bind="menuFavoritoCtrl.obterTermoQuantidade(favorito.QuantidadeRegistros)" class="sub-titulo"></span>
+							<span ng-show="menuFavoritoCtrl.recemAdicionado(favorito.Codigo)" class="info-change adicionado">Adicionado!</span>
+							<span ng-show="menuFavoritoCtrl.recemRemovido(favorito.Codigo)" class="info-change removido">Removido!</span>
+						</div>
+					</div>
+				</div>
+				<div class="corpo-menu">
+					<div>
+						<div class="btn adicionar-favorito" ng-click="menuFavoritoCtrl.adicionar()"><i class="mdi mdi-plus"></i></div>
+						<div class="conteudo-menu">
+							<a href="javascript:void(0);" ng-click="menuFavoritoCtrl.adicionar()" ng-show="!menuFavoritoCtrl.adicionando">
+								Nova lista
+							</a>
+							<form>
+								<fieldset ng-show="menuFavoritoCtrl.adicionando" class="adicionando">
+									<legend class="visivel-apenas-para-leitor-de-acessibilidade">Nova lista de favoritos</legend>
+									<label class="visivel-apenas-para-leitor-de-acessibilidade" for="NomeLista">Nova lista de favoritos</label>
+									<input type="text" id="NomeLista" required maxlength="50"
+										   placeholder="Nome da lista" ng-model="menuFavoritoCtrl.nomeNovaLista" />
+									<a href="javascript:void(0);" ng-click="menuFavoritoCtrl.salvarLista()">
+										<i class="mdi mdi-check"></i>
+										<span>Salvar</span>
+									</a>
+									<input type="submit" id="submitFake" alt="Salvar nova lista de favoritos" />
+								</fieldset>
+							</form>
+						</div>
+					</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+</li>				<li class="dropdown avisos" ng-controller="AvisoController as avisoCtrl" ng-show="avisoCtrl.exibeMenuAviso()">
+	<button class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
+	   title="Avisos">
+		<span class="mdi mdi-bell" aria-hidden="true" data-total-avisos="{{avisoCtrl.viewModel.TotalAvisos}}"></span>
+	</button>
+	<div class="dropdown-menu dropdown-menu-right animated bounceInDown">
+		<ul>
+            <li>
+                <a class="titulo-aviso" href="/aviso/avisosPublicos"> Avisos</a>
+            </li>
+			<li>
+				<div class="corpo-aviso">
+					<a ng-repeat="aviso in avisoCtrl.viewModel.AvisoSet" ng-class="avisoCtrl.exibeUltimaBarra($index)"
+					   href="/aviso/avisosPublicos?codigoAviso={{aviso.Codigo}}">
+						<span class="visivel-apenas-para-leitor-de-acessibilidade">Aviso aos usuáriosLink do aviso</span>
+						<div class="btn"><i class="mdi mdi-message"></i></div>
+						<div class="conteudo-aviso">
+							<h2 ng-bind="aviso.Titulo">Avisos - Título</h2>
+							<span ng-bind="aviso.Subtitulo">Avisos - Subtítulo</span>
+						</div>
+					</a>
+				</div>
+			</li>
+			<li ng-show="avisoCtrl.exibeVerTodos()">
+				<a class="ver-todos-avisos" href="/aviso/avisosPublicos">
+					<span>Ver todos (<span ng-bind="avisoCtrl.viewModel.TotalAvisos"></span> avisos)</span>
+				</a>
+			</li>
+		</ul>
+	</div>
+</li>								<li class="links-uteis" ng-controller="ServicosController as servicosCtrl">
+	<a href="/LinksUteis"
+	   title="Links" ng-click="servicosCtrl.navegarParaLinksUteis()">
+		<span class="mdi mdi-link-variant">
+			<span class="texto-vlibras">Links</span>
+		</span>
+	</a>
+</li>				
+
+<li>
+		<a href="https://repositorio.unicamp.br/" target="_blank" title="Reposit&#243;rio Institucional">
+			<span class="icon-repositorio-institucional">
+				<span class="texto-vlibras">"Reposit&#243;rio Institucional"</span>
+			</span>
+		</a>
+</li>
+					<li class="dropdown idiomas">
+		<button class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
+		   title="Idioma">
+			<span class="mdi mdi-earth">
+				<span class="texto-vlibras">Idioma</span>
+			</span>
+		</button>
+		<div class="dropdown-menu dropdown-menu-right animated bounceInDown">
+				<a href="javascript:void(0);" data-idioma="0">Português</a>
+										<a href="javascript:void(0);" data-idioma="2">English</a>
+							<a href="javascript:void(0);" data-idioma="1">Español</a>
+							<a href="javascript:void(0);" data-idioma="3">Català</a>
+		</div>
+	</li>
+
+
+
+
+
+
+<li class="dropdown usuarios" ng-controller="OpenLoginController as openLoginCtrl">
+		<button href="javascript:void(0);" ng-click="openLoginCtrl.abrirPopupLogin()" title="Entrar">
+			<div>
+				<span class="mdi mdi-account">
+					<span class="texto-vlibras">Entrar</span>
+				</span>
+			</div>
+		</button>
+</li>			</ul>
+		</div>
+	</nav>
+	<nav id="busca-rapida" class="navbar navbar-fixed-top">
+	<div class="container" ng-controller="BuscaRapidaController as buscaRapidaCtrl">
+		<form name="formCampoBusca" class="form-inline" ng-class="buscaRapidaCtrl.ObterClasseFormulario()" method="post" id="formCampoBusca" action="#">
+			<input name="__RequestVerificationToken" type="hidden" value="[REDACTED_ANONYMOUS_STATE_OR_UNUSED_PUBLIC_CONFIG]" />
+			<div class="campoBuscaRapida">
+				<input type="hidden" name="Guid" id="Guid" value="{{buscaRapidaCtrl.guid}}" />
+				<input type="hidden" id="TipoBuscaRapida" name="TipoBuscaRapida" ng-value="buscaRapidaCtrl.opcaoSelecionada.Codigo" />
+				<input type="hidden" id="IniciadoCom" name="IniciadoCom" ng-value="buscaRapidaCtrl.iniciadoCom" />
+				<ul class="nav navbar-nav" id="divBuscaRapida" ng-cloak>
+					<li>
+						<div class="input-group">
+								<div class="input-group-btn tipo-busca">
+									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+											aria-expanded="false">
+										<i class="mdi" ng-class="buscaRapidaCtrl.tipoBuscaTerminalSelecionada.Icone"
+										   title="{{buscaRapidaCtrl.tipoBuscaTerminalSelecionada.Descricao}}"></i>
+										<span ng-bind="buscaRapidaCtrl.tipoBuscaTerminalSelecionada.Descricao"></span>
+										<span class="caret"></span>
+									</button>
+									<ul class="dropdown-menu">
+										<li ng-repeat="tipoBuscaTerminal in buscaRapidaCtrl.tipoBuscaTerminalSet"
+											ng-class="buscaRapidaCtrl.classLiTipoBuscaTerminal(tipoBuscaTerminal.Codigo)"
+											ng-click="buscaRapidaCtrl.trocarTipoBuscaTerminal(tipoBuscaTerminal.Codigo)">
+											<i class="mdi" ng-class="tipoBuscaTerminal.Icone"></i>
+											<span ng-bind="tipoBuscaTerminal.Descricao"></span>
+										</li>
+									</ul>
+								</div>
+							<div class="input-group-btn opcao-busca">
+								<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+										aria-expanded="false" tabindex="{{buscaRapidaCtrl.tabIndexBtnOpcao()}}">
+									<span ng-bind="buscaRapidaCtrl.opcaoSelecionada.Descricao"></span>
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu">
+									<li ng-repeat="opcao in buscaRapidaCtrl.tipoBuscaTerminalSelecionada.OpcaoSet"
+										ng-class="buscaRapidaCtrl.classLiOpcao(opcao.Codigo)"
+										ng-click="buscaRapidaCtrl.trocarOpcao(opcao.Codigo)" ng-bind="opcao.Descricao"></li>
+								</ul>
+							</div>
+								<div class="iniciado-com" ng-show="buscaRapidaCtrl.buscaAutoridadesSelecionada()" ng-click="buscaRapidaCtrl.clickIniciadoCom()">
+									<i class="mdi" ng-class="buscaRapidaCtrl.classIniciadoCom()"></i>
+									<span>Iniciado com</span>
+								</div>
+							<label class="visivel-apenas-para-leitor-de-acessibilidade" for="PalavraChave">Busca rápida</label>
+							<input class="form-control" name="PalavraChave" id="PalavraChave" placeholder="Pesquisar"
+								   type="text" maxlength="500" ng-model="palavraChave" validation-error="buscaRapidaCtrl.validacaoPalavraChave()" />
+							<span class="input-group-btn" id="btnEnviarBuscaRapida" title="Pesquisar">
+								<button class="caixa-busca-button btn btn-default" title="Pesquisar" type="submit" ng-disabled="buscaRapidaCtrl.btnDisabled">
+									<span class="mdi mdi-magnify">
+										<span class="texto-vlibras">Pesquisar</span>
+									</span>
+								</button>
+							</span>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div class="buscaRapidaAcoes">
+				<div class="acao-botoes">
+					<button type="submit" class="btn btn-default" ng-disabled="buscaRapidaCtrl.btnDisabled" id="btnBuscaRapidaBuscar">
+						<span class="mdi mdi-magnify" aria-hidden="true"></span>
+						<span>Buscar</span>
+					</button>
+					<button type="button" class="btn btn-default" ng-click="buscaRapidaCtrl.limparBusca()" id="btnBuscaRapidaLimpar">
+						<span class="mdi mdi-eraser" aria-hidden="true"></span>
+						<span>Limpar</span>
+					</button>
+				</div>
+				<div class="acao-avancada">
+					<a href="/Busca/Avancada{{buscaRapidaCtrl.guidBuscaAvancada}}">
+						<i class="mdi" ng-class="buscaRapidaCtrl.classIconeBuscaAvancada()" title="Busca avançada"></i>
+						<span>Busca avançada</span>
+					</a>
+				</div>
+			</div>
+		</form>
+	</div>
+</nav>
+</header>
+<div id="aviso-instalar-pwa" class="hidden">
+	<div id="aviso-instalar-pwa-pergunta">
+		Deseja instalar o aplicativo?<br />
+		<a href="javascript:void(0)" onclick="tw.instalacaoPwa.instalar()">Sim</a>
+		<a href="javascript:void(0)" onclick="tw.instalacaoPwa.naoInstalar()">Não, obrigado</a>
+	</div>
+	<div id="aviso-instalar-pwa-negado" class="hidden">
+		Você ainda poderá instalar clicando no link no rodapé.<br />
+		<a href="javascript:void(0)" onclick="tw.instalacaoPwa.okMensagemNaoInstalar()">Ok</a>
+	</div>
+</div>
+
+<main>
+	
+
+
+
+
+
+	<img id="img-banner" src="/Home/ObterBanner" alt="Banner da instituição" />
+
+<div ng-controller="HomeController as homeCtrl" ng-cloak>
+
+	<div id="carrosseis">
+		<div>
+			<div ng-repeat="carrossel in homeCtrl.viewModel.CarrosselViewModelSet">
+				<div ng-if="carrossel.TipoCarrossel != 3 && carrossel.TipoCarrossel != 7 && carrossel.TipoCarrossel != 10" pr-carrossel-registros model='homeCtrl.viewModel.CarrosselViewModelSet[$index]'></div>
+				<div ng-if="carrossel.TipoCarrossel == 3" pr-carrossel-categorias model='homeCtrl.viewModel.CarrosselViewModelSet[$index]'></div>
+				<div ng-if="carrossel.TipoCarrossel == 7" pr-carrossel-categorias-legislacao model='homeCtrl.viewModel.CarrosselViewModelSet[$index]'></div>
+				<div ng-if="carrossel.TipoCarrossel == 10" pr-carrossel-ods model='homeCtrl.viewModel.CarrosselViewModelSet[$index]'></div>
+			</div>
+		</div>
+
+		<div class="row ver-mais-carrosseis" ng-show="homeCtrl.viewModel.CarrosseisRestantes > 0">
+			<button type="button" class="btn btn-lg ver-mais" id="btn-mostrar-mais-resultados" ng-click="homeCtrl.verMais()">
+				Ver mais <span class="mdi mdi-chevron-double-down"></span>
+			</button>
+		</div>
+	</div>
+</div>
+</main>
+<div id="painel-suspenso-lateral">
+	<div class="acao" onclick="abrirVlibras();">
+		<a href="javascript:void(0);">
+			<i class="icon-vlibras" aria-hidden="true"></i>
+			<span class="info-acao">VLibras</span>
+		</a>
+	</div>
+	<div class="acao" onclick="tw.contraste.toggle()">
+		<a href="javascript:void(0);">
+			<i class="mdi mdi-circle-slice-4" title="Alto contraste"></i>
+			<span class="info-acao">Alto contraste</span>
+		</a>
+	</div>
+	</div>
+
+<div vw class="enabled">
+	<div vw-access-button class="active" style="display: none;"></div>
+	<div vw-plugin-wrapper>
+		<div class="vw-plugin-top-wrapper"></div>
+	</div>
+</div>
+
+<script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+
+<script>
+	new window.VLibras.Widget('https://vlibras.gov.br/app');
+</script>
+
+<script>
+	// No mobile (sem hover), o painel abre/fecha por toque.
+	// 1º toque: abre (os .acao ficam pointer-events:none no CSS enquanto fechado, então
+	// a ação não dispara). Aberto: tocar numa opção executa a ação e fecha; tocar fora fecha.
+	document.addEventListener('DOMContentLoaded', function () {
+		if (!window.matchMedia('(hover: none)').matches)
+			return;
+
+		var $ = window.jQuery;
+		var $painel = $('#painel-suspenso-lateral');
+
+		$painel.on('click', function () {
+			if (!$painel.hasClass('painel-aberto'))
+				$painel.addClass('painel-aberto');
+		});
+
+		$painel.on('click', '.acao', function () {
+			$painel.removeClass('painel-aberto');
+		});
+
+		$(document).on('click', function (evento) {
+			if (!$(evento.target).closest('#painel-suspenso-lateral').length)
+				$painel.removeClass('painel-aberto');
+		});
+	});
+</script>
+<footer id="footer-principal">
+	<div class="container">
+		<div class="row" id="rodape-extra-mobile">
+			<div class="col-xs-12 produto">
+				<a href="http://www.sophia.com.br" target="_blank" alt="Este terminal foi criado por Soluções Sophia">
+					<img src="/Content/images/sophia_rodape.png" alt="Este terminal foi criado por Soluções Sophia" />
+				</a>
+			</div>
+		</div>
+		<div class="row" id="rodape-padrao">
+			<div class="col-xs-4 sophia">
+				<span>Desenvolvido por</span>
+				<a href="http://www.sophia.com.br" target="_blank" alt="Este terminal foi criado por Soluções Sophia">
+					<img src="/Content/images/prima.png" alt="Este terminal foi criado por Soluções Sophia" />
+				</a>
+			</div>
+			<div class="col-xs-4 produto">
+				<a href="http://www.sophia.com.br" target="_blank" alt="Este terminal foi criado por Soluções Sophia">
+					<img src="/Content/images/sophia_rodape.png" alt="Este terminal foi criado por Soluções Sophia" />
+				</a>
+			</div>
+			<div class="col-xs-4 instalacao-pwa">
+				<a class="instalar-app" href="javascript:void(0)" onclick="tw.instalacaoPwa.instalar()">
+					<span><i class="icon-monitor-cellphone"></i>Instalar o app</span>
+				</a>
+				<span class="app-instalado"><i class="icon-monitor-cellphone"></i>App instalado</span>
+			</div>
+		</div>
+	</div>
+</footer>
+
+
+	<div id="scrollToTop">
+		<span class="mdi mdi-chevron-up" aria-hidden="true" title="Rolar para o topo"></span>
+	</div>
+
+	<script>
+		const sophiaConfig = Object.freeze({
+			serviceBaseUrl: '/',
+			habilitarLoginPlataformaExterna: false,
+			exigirLoginTerminalWeb: false,
+			habilitarCaptcha: false,
+			permitirUsuariosExternos: false,
+			usuarioAutenticado: 'False' == 'True'
+		});
+		var personalizado = {};
+		var namespaceStorage = 'sb.tw.';
+		var idiomaAtual = 0;
+		var culturaIdioma = 'pt-BR';
+		var moedaConfigurada = 'R$   ';
+		var formatoMoedaConfigurada = '$ n';
+		var multiTenant = false;
+		var multiBiblioteca = true;
+		var terminalRedes = false;
+		var habilitarIndexacaoArquivo = true;
+		var loginAutomaticoPlataformaExterna = false;
+		var terminalRi = false;
+		var terminalAtosOficiais = false;
+		var exibirServicos = true;
+		var usaBuscaCatalogoAutoridades = true;
+		var usaBuscaLegislacao = false;
+		var habilitarBuscaFonteAnalitica = true;
+		var exibeDescricaoComplementar = false;
+		var codigoAnalytics = '';
+		const COR_BASE = '#517f89';
+		window.AntiForgeryToken = 'CeGJVPRqCNHc19Ld0SbZaBSbzVYmHq0CVo_F-brdgVIxXCpgfARc25R8CrAOmfCqeZRap8t50oGsFDZSClmAxZHBNHeqZuTWtiGEo1dQj5A1:HMMKQXo1-8uh2g2JOhy6dwmcGWRTAP8FipwQ0wLvdd4TPnbW0X68F9fMUe1C1yUdR6RxjcOJUH8Sc3GTp_q4b82PPU4POGO1d5SvJn_CLZg1';
+		TipoBuscaTerminal = { Acervo: 1, Autoridades: 2, Legislacao: 3  };
+		TipoBuscaRapidaAcervo = { TodosOsCampos: 0, Titulo: 1, Autoria: 2, Assunto: 3, Colecao: 4, Editora: 5, ISBNISSN: 6, TodosOsCamposConteudoDigital: 7, Fonte: 8, DescricaoComplementar: 9  };
+		TipoBuscaLegislacao = { TodosOsCampos: 0, TodosOsCamposConteudoDigital: 1, Apelido: 2  };
+		MarcAutoridadeTag = { Lider: 0, NumeroControle: 1, UltimaAtualizacao: 5, Pessoa: 100, Instituicao: 110, Evento: 111, TituloUniforme: 130, TermoCronologico: 148, TermoTopico: 150, LocalGeografico: 151, TermoGeneroForma: 155, SubdivisaoGeral: 180, SubdivisaoGeografica: 181, SubdivisaoCronologica: 182, SubdivisaoForma: 185, RemissivaComplexaVer: 260, RemisivaComplexaVerTambem: 360, PessoaRemissivaVer: 400, InstituicaoRemissivaVer: 410, EventoRemissivaVer: 411, TituloUniformeRemissivaVer: 430, TermoCronologicoRemissivaVer: 448, TermoTopicoRemissivaVer: 450, LocalGeograficoRemissivaVer: 451, TermoGeneroFormaRemissivaVer: 455, SubdivisaoGeralRemissivaVer: 480, SubdivisaoGeograficaRemissivaVer: 481, SubdivisaoCronologicaRemissivaVer: 482, SubdivisaoFormaRemissivaVer: 485, PessoaRemissivaVerTambem: 500, InstituicaoRemissivaVerTambem: 510, EventoRemissivaVerTambem: 511, TituloUniformeRemissivaVerTambem: 530, TermoCronologicoRemissivaVerTambem: 548, TermoTopicoRemissivaVerTambem: 550, LocalGeograficoRemissivaVerTambem: 551, TermoGeneroFormaRemissivaVerTambem: 555, SubdivisaoGeralRemissivaVerTambem: 580, SubdivisaoGeograficaRemissivaVerTambem: 581, SubdivisaoCronologicaRemissivaVerTambem: 582, SubdivisaoFormaRemissivaVerTambem: 585, NotaGeralPrivadaSigilosa: 667, FontePositivaDeDados: 670, TituloRelacionadoAutoridade: 672, TituloNaoRelacionadoAutoridade: 673, FonteNegativaDosDados: 675, DadosHistoricosOuBibliograficos: 678, NotaGeralPublica: 680, NotaDePontoDeAcessoDoAssunto: 681, InformacaoDeCabecalhoApagada: 682, AplicacaoDeNotaHistorica: 688, PessoaOutrosVocabularios: 700, InstituicaoOutrosVocabularios: 710, EventoOutrosVocabularios: 711, TituloUniformeOutrosVocabularios: 730, TermoCronologicoOutrosVocabularios: 748, TermoTopicoOutrosVocabularios: 750, LocalGeograficoOutrosVocabularios: 751, TermoGeneroFormaOutrosVocabularios: 755, SubdivisaoGeralOutrosVocabularios: 780, SubdivisaoGeograficaOutrosVocabularios: 781, SubdivisaoCronologicaOutrosVocabularios: 782, SubdivisaoFormaOutrosVocabularios: 785, LocalEletronicoAcesso: 856  };
+		TipoRepositorioDigital = { Sophia: 0, DSpace: 1, SophiaWeb: 2  };
+		OrigemBusca = { TerminalUnificadaRapida: 1, TerminalUnificadaAvancada: 2, TerminalCarrosselUltimasAquisicoes: 3, TerminalCarrosselCategoria: 4, TerminalCarrosselMaisEmprestados: 5, TerminalCarrosselPublicoAlvo: 6, TerminalLegislacaoRapida: 7, TerminalLegislacaoAvancada: 8, TerminalRiAceleradores: 9, TerminalCarrosselImagensMaisSolicitadas: 10, TerminalCarrosselLevantamentoBibliografico: 11, TerminalBibliografiaCurso: 12, TerminalCarrosselCategoriaLegislacao: 13, TerminalObjetivoDesenvolvimentoSustentavel: 14, TerminalRiCarrosselMaisAcessados: 15, TerminalRiCarrosselUltimasInclusoes: 16, TerminalRedesCarrosselMaisAcessados: 17  };
+		TipoOrdenacaoLegislacao = { DataPublicacaoDecrescente: 1, DataPublicacaoCrescente: 2, Norma: 3  };
+		TipoRetornoGovbr = { LoginNaoEfetuado: 0, Sucesso: 1, PermissaoNegada: 2, RetornoDoSsoSemDados: 3  };
+		MetodoRequisicao = { Get: 0, Post: 1  };
+		TipoMidia = { MidiaTitulo: 0, MidiaExemplar: 1  };
+		TipoVisualizacaoMidia = { Avulso: 0, Pdf: 1, Html: 2, Video: 3  };
+		TipoLoginExterno = { AzureAd: 0, Google: 1, Wso2: 2  };
+	</script>
+
+	<script src="/bundles/scripts?v=WqUVclc6QzUhrtD0MMcO9MGkjR93L_if4FRZkFr1-tk1"></script>
+
+
+	<script src='/Scripts/terminalWeb-termos.js?s=pt-BR&build=1.223.0.0'></script>
+	<script src='/Scripts/terminalWeb.js?build=1.223.0.0'></script>
+	<script src='/Scripts/Pwa/install.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Utils/angular-ui.min.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/app.js?build=1.223.0.0'></script>
+
+	<script src="/bundles/kendoui?v=pfb_jq41uqf4Poprmvsg6aen49_kbsrw0a3g35DQCwc1"></script>
+
+
+	
+
+	<script src='/Scripts/kendo/2018.3.1017/cultures/kendo.culture.pt-BR.min.js?build=1.223.0.0'></script>
+
+	<script>
+		kendo.cultures[culturaIdioma].numberFormat.currency.symbol = moedaConfigurada;
+		kendo.cultures[culturaIdioma].numberFormat.currency.pattern = ["-" + formatoMoedaConfigurada, formatoMoedaConfigurada];
+	</script>
+		
+			<!-- Google tag (gtag.js) -->
+			<script async src="https://www.googletagmanager.com/gtag/js?id=UA-177080613-1"></script>
+			<script>
+				window.dataLayer = window.dataLayer || [];
+				function gtag() { dataLayer.push(arguments); }
+				gtag('js', new Date());
+				gtag('config', 'UA-177080613-1');
+				if (codigoAnalytics != "")
+				{
+					gtag('config', codigoAnalytics);
+				}
+			</script>
+		
+	
+
+<script src='/Scripts/AngularJS/FiltroBibliotecas/filtroBibliotecasService.js?build=1.223.0.0'></script><script src='/Scripts/AngularJS/FiltroBibliotecas/filtroBibliotecasController-termos.js?s=pt-BR&build=1.223.0.0'></script><script src='/Scripts/AngularJS/FiltroBibliotecas/filtroBibliotecasController.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/SolicitacaoImagens/solicitacaoImagensModalController.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/SolicitacaoImagens/solicitacaoImagensService.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Reserva/reservaService.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/IntegracaoDigital/integracaoDigitalService.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Servicos/servicosController-termos.js?s=pt-BR&build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/LinksUteis/linksUteisService.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Servicos/servicosController.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Aviso/avisoService.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Aviso/avisoController.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Login/loginService.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Login/requisitoSenhaService.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Login/openLoginController.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Usuario/usuarioService.js?build=1.223.0.0'></script>
+	<script src='/Scripts/messageBox-termos.js?s=pt-BR&build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Busca/buscaRapidaService-termos.js?s=pt-BR&build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Busca/buscaRapidaService.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Busca/buscaRapidaController-termos.js?s=pt-BR&build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Busca/buscaRapidaController.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Utils/validationErrorDirective.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Favorito/favoritoService.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Favorito/menuFavoritoController-termos.js?s=pt-BR&build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Favorito/menuFavoritoController.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/MinhaSelecao/minhaSelecaoService.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/WhatsApp/whatsAppService.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/WhatsApp/whatsAppController-termos.js?s=pt-BR&build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/WhatsApp/whatsAppController.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/ChatBot/chatBotService.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/ChatBot/chatBotController-termos.js?s=pt-BR&build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/ChatBot/chatBotController.js?build=1.223.0.0'></script>
+
+	
+	<script src='/Scripts/slick/slick.min.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Home/carrosselCategoriasDirective.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Home/carrosselCategoriasLegislacaoDirective.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Home/carrosselRegistrosDirective.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Home/carrosselOdsDirective.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Utils/gridService.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Home/homeService.js?build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Home/homeController-termos.js?s=pt-BR&build=1.223.0.0'></script>
+	<script src='/Scripts/AngularJS/Home/homeController.js?build=1.223.0.0'></script>
+	<script>
+		TipoRegistro = { Periodico: 0, Obra: 1, Legislacao: 2, Analitica: 3, PeriodicoAvulso: 20, ObraAvulsa: 21  };
+		TipoCarrossel = { UltimasAquisicoes: 1, MaisEmprestados: 2, CategoriaPorCor: 3, ImagensMaisSolicitadas: 4, LevantamentoBibliografico: 5, MaisAcessados: 6, CategoriaLegislacao: 7, MaisAcessadosRi: 8, UltimasInclusoes: 9, Ods: 10  };
+		var habilitarBuscaMaterialRi = false;
+		var habilitarBuscaTeseDissertacaoRi = false;
+		var habilitarAceleradorLocalizacaoRi = false;
+		var habilitarAceleradorComunidadeColecaoRi = false;
+		var usaComunidadeAcelerador = false;
+		var rotuloComunidade = "";
+		var rotuloColecao = "";
+	</script>
+	<noscript>Este navegador pode não ser compatível com o sistema.</noscript>
+
+
+</body>
+</html>
+

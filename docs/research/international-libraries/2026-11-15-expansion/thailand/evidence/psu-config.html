@@ -1,0 +1,106 @@
+﻿// ============================================================
+// 🔧 CONFIGURATION FILE FOR PSU LIBRARY OPAC
+// ============================================================
+// 📍 Location: public/config.js
+// ⚠️  This file can be edited AFTER build without rebuilding!
+// ============================================================
+
+window.APP_CONFIG = {
+
+    // ==================== 🌐 API SETTINGS ====================
+
+    /**
+     * Backend API Base URL
+     * 🔧 Change this based on environment:
+     * 
+     * Development:
+     *   'http://localhost:5256'
+     * 
+     * Production:
+     *   'https://emeeting-dev.psu.ac.th:4433'
+     */
+    //BASE_URL: 'http://localhost:5256',
+    BASE_URL: 'https://opac.psu.ac.th/api',
+
+    // ==================== 📡 API ENDPOINTS ====================
+
+    /**
+     * API Endpoints (relative paths from BASE_URL)
+     */
+    ENDPOINTS: {
+        BIB_LIMIT: '/api/BibLimit',              // Basic Search
+        BIB_LIMIT_TOTAL: '/api/BibLimit/total',  // Total Count for Basic Search
+        BIB_MARC: '/api/BibMarc',                // Book MARC Details
+        BIB_ITEM: '/api/BibItem',                // Book Items/Copies
+        ADVANCED_SEARCH: '/api/advanced-search', // Advanced Search
+        ADVANCED_SEARCH_COUNT: '/api/advanced-search/count', // 📊 Advanced Search Count
+        READ_IMAGE: '/ReadImage.aspx',           // Read Image Endpoint
+        BOOKS_BY_AUTHOR: '/api/books/by-author',
+        TITLE_SUGGESTIONS: '/api/BibLimit',
+        COUNT_TYPE: '/api/BibLimit/CountType',   // 📊 Type Counts
+        BRANCH: '/api/Branch/branches',          // 🏢 Branch/Location
+        SEARCH_BY_TYPE: '/api/BibLimit/SearchByType', // 🔍 New Endpoint
+        SEARCH_LOG: '/api/search-log',           // 📝 POST: บันทึก Search Log (base URL)
+        SEARCH_LOG_POPULAR: '/api/search-log/popular', // 📊 GET: ดึงคำค้นหายอดนิยม
+        SEARCH_LOG_VIEW_BIB: '/api/search-log/view-bib', // 📖 POST: บันทึก View Bib Log
+        VIEW_LOG: '/api/search-log/views',       // 📋 GET: ดึง View Bib Logs สำหรับ Admin
+    },
+
+
+    // ==================== ⏱️ TIMEOUT SETTINGS ====================
+
+    /**
+     * API Timeout (milliseconds)
+     */
+    TIMEOUT: 30000, // 30 seconds
+
+
+    // ==================== 🌐 EXTERNAL URLs ====================
+
+    /**
+     * External Services URLs
+     */
+    EXTERNAL: {
+        // PSU OPAC URLs
+        OPAC_BASE: 'https://opac.psu.ac.th',
+        OPAC_IMAGE: 'https://opac.psu.ac.th/opac2/ReadImage.aspx',
+        OPAC_SEARCH: 'https://opac.psu.ac.th/opac2/Search_Basic.aspx',
+        OPAC_REGISTER: 'https://opac.psu.ac.th/opac2/Main_Register.aspx',
+        OPAC_HELP: 'https://opac.psu.ac.th/opac2/Help.aspx',
+
+        // OpenLibrary Cover API
+        OPENLIBRARY_COVER: 'https://covers.openlibrary.org/b/isbn',
+    },
+
+
+    // ==================== 🎨 APP SETTINGS ====================
+
+    APP_NAME: 'PSU Library OPAC',
+    VERSION: '1.0.0',
+
+
+    /**
+     * Enable Debug Logging
+     * 🔧 Set to true for development, false for production
+     */
+    DEBUG: false,
+
+    /**
+     * Show Book Cover Source Selector ตรงนี้น่ะครับพี่ไก่ ต้องการดีบัคหน้าปกหนังสือ
+     * 🔧 Set to true for development (to debug/test image sources)
+     *    Set to false for production (clean UI, only shows cover)
+     * 
+     * When true: Shows chip with source name + button to change source
+     * When false: Only shows book cover image
+     */
+    SHOW_COVER_SOURCE_SELECTOR: false,  // Dev: true, Prod: false
+};
+
+// ============================================================
+// 📝 AUTO-LOGGING (for debugging)
+// ============================================================
+if (window.APP_CONFIG.DEBUG) {
+    console.log('✅ APP_CONFIG loaded successfully');
+    console.log('📍 BASE_URL:', window.APP_CONFIG.BASE_URL);
+    console.log('📡 ENDPOINTS:', window.APP_CONFIG.ENDPOINTS);
+}

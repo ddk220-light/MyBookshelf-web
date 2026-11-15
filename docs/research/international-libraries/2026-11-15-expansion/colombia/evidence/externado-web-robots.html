@@ -1,0 +1,292 @@
+# ============================================
+# Universidad Externado de Colombia
+# beta.uexternado.edu.co
+# Optimizado para rastreo de bots de IA
+# Actualizado: 2026-09-18
+# ============================================
+
+# ============================================
+# REGLA GENERAL
+# ============================================
+
+User-agent: *
+Content-Signal: search=yes, ai-input=yes, ai-train=no
+Disallow: /wp-admin/
+Allow: /wp-admin/admin-ajax.php
+Disallow: /biblioteca/recursos-digitales/
+Disallow: /prueba-recursos-digitales/
+Disallow: /search/*
+Disallow: /trackback/
+Disallow: /wp-includes/
+Disallow: /wp-json/
+Disallow: /*?s=
+Disallow: /*.php$
+Disallow: */trackback/
+Disallow: /*?paged=
+Disallow: /*?submenu=
+
+# No rastrear copias de seguridad
+
+Disallow: /*.git$
+Disallow: /*.sql$
+Disallow: /*.tgz$
+Disallow: /*.gz$
+Disallow: /*.tar$
+Disallow: /*.svn$
+Disallow: /*.bz2$
+Disallow: /*.log$
+
+# ============================================
+# BOTS IA — BÚSQUEDA Y AGENTES DE USUARIO
+# Permitir: son los que citan en respuestas
+# de IA en tiempo real (ChatGPT, Claude, 
+# Perplexity, Google AI Overviews, Apple 
+# Intelligence). Sin estos, el contenido
+# del Externado no aparece en chats de IA.
+# ============================================
+
+# — OpenAI (ChatGPT Search + agentes) —
+
+User-agent: OAI-SearchBot
+Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+User-agent: ChatGPT-User
+Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+User-agent: GPTBot
+Allow: /
+Crawl-delay: 10
+Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+# — Anthropic (Claude Search + agentes) —
+
+User-agent: Claude-SearchBot
+Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+User-agent: Claude-User
+Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+User-agent: Claude-Web
+Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+User-agent: ClaudeBot
+Allow: /
+Crawl-delay: 10
+Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+User-agent: anthropic-ai
+Allow: /
+Crawl-delay: 10
+Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+# — Perplexity —
+
+User-agent: PerplexityBot
+Allow: /
+Crawl-delay: 5
+Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+User-agent: Perplexity-User
+Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+# — Google (AI Overviews + AI Mode) —
+
+User-agent: Google-Extended
+Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+# — Apple (Apple Intelligence) —
+
+User-agent: Applebot-Extended
+Allow: /
+Crawl-delay: 10
+Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+# — Amazon (Alexa + búsqueda) —
+
+User-agent: Amazonbot
+Allow: /
+Crawl-delay: 2
+
+# ============================================
+# BOTS IA — BLOQUEAR (entrenamiento masivo
+# sin citación, alto consumo de ancho de banda)
+# ============================================
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: meta-externalagent
+Disallow: /
+
+User-agent: FacebookBot
+Disallow: /
+
+User-agent: cohere-ai
+Disallow: /
+
+User-agent: Diffbot
+Disallow: /
+
+# ============================================
+# SEO CRAWLERS — BLOQUEAR
+# ============================================
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: AhrefsSiteAudit
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: SemrushBot-BA
+Disallow: /
+
+User-agent: SemrushBot-FT
+Disallow: /
+
+User-agent: SemrushBot-OCOB
+Disallow: /
+
+User-agent: SemrushBot-SI
+Disallow: /
+
+User-agent: SemrushBot-SWA
+Disallow: /
+
+User-agent: SiteAuditBot
+Disallow: /
+
+User-agent: SplitSignalBot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: dotbot/1.0
+Disallow: /
+
+# ============================================
+# SCRAPERS Y BOTS MALICIOSOS — BLOQUEAR
+# ============================================
+
+User-agent: Barkrowler
+Disallow: /
+
+User-agent: CazoodleBot
+Disallow: /
+
+User-agent: duggmirror
+Disallow: /
+
+User-agent: Gigabot
+Disallow: /
+
+User-agent: Go-http-client
+Disallow: /
+
+User-agent: HTTrack
+Disallow: /
+
+User-agent: ia_archiver
+Disallow: /
+
+User-agent: libwww
+Disallow: /
+
+User-agent: magpie-crawler
+Disallow: /
+
+User-agent: Microsoft.URL.Control
+Disallow: /
+
+User-agent: MSIECrawler
+Disallow: /
+
+User-agent: msnbot
+Disallow: /
+
+User-agent: Node/simplecrawler
+Disallow: /
+
+User-agent: noxtrumbot
+Disallow: /
+
+User-agent: Nuclei
+Disallow: /
+
+User-agent: omgili
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
+
+User-agent: Riddler
+Disallow: /
+
+User-agent: SentiBot
+Disallow: /
+
+User-agent: Slurp
+Disallow: /
+
+User-agent: WebCopier
+Disallow: /
+
+User-agent: WikiDo
+Disallow: /
+
+User-agent: Zoominfobot
+Disallow: /
+
+# ============================================
+# SEARCH ENGINES TRADICIONALES
+# ============================================
+
+# Un bot solo obedece el grupo más específico que lo nombra e ignora
+# "User-agent: *", así que los Disallow generales se repiten aquí.
+# Mantener sincronizado con la REGLA GENERAL.
+User-agent: Bingbot
+User-agent: bingbot
+Crawl-delay: 2
+Disallow: /wp-admin/
+Allow: /wp-admin/admin-ajax.php
+Disallow: /biblioteca/recursos-digitales/
+Disallow: /prueba-recursos-digitales/
+Disallow: /search/*
+Disallow: /trackback/
+Disallow: /wp-includes/
+Disallow: /wp-json/
+Disallow: /*?s=
+Disallow: /*.php$
+Disallow: */trackback/
+Disallow: /*?paged=
+Disallow: /*?submenu=
+Disallow: /*.git$
+Disallow: /*.sql$
+Disallow: /*.tgz$
+Disallow: /*.gz$
+Disallow: /*.tar$
+Disallow: /*.svn$
+Disallow: /*.bz2$
+Disallow: /*.log$
+
+User-agent: YandexBot
+Crawl-delay: 2
+
+# ============================================
+# SITEMAPS
+# ============================================
+
+Sitemap: https://www.uexternado.edu.co/sitemap_index.xml

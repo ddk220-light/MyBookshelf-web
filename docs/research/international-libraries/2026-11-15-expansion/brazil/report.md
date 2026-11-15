@@ -1,0 +1,65 @@
+# Brazil — library expansion feasibility, 15 November 2026
+
+**10 selected institutional targets; 10 successful book searches; 0 additional verified reserves; 14 blocked or unverified alternatives retained.** Nine targets are university/federal-institute networks counted once each. The tenth is Biblioteca Pública do Paraná (BPP), whose own holdings were proved inside a wider shared catalog. These are substantial, feasible candidates, not a national largest-ten ranking.
+
+Build Pergamum and SophiA support first. Three selected targets expose Pergamum public search JSON; six expose SophiA, split evenly between modern TerminalWeb forms and older ASP/PHP AJAX interfaces. IFPE supplies a practical Koha reuse candidate. This is an access-selected sample and cannot establish national market share. No application integration was implemented or tested.
+
+## Marketplace and reader access
+
+Brazil already has mature national, public, university and technical-education library infrastructure. The integration problem is the diversity of deployments, policy restrictions, temporary state, mixed physical/digital discovery and uneven reader eligibility. The [SNBP works with 27 state/district systems](https://www.gov.br/turismo/pt-br/secretaria-especial-da-cultura/assuntos/sistema-nacional-de-bibliotecas-publicas-snbp/sistemas-estaduais-1), but that coordination network and its directory do not constitute a national live book-holdings endpoint. The [2026 PNLL policy](https://www.gov.br/cultura/pt-br/acesso-a-informacao/legislacao-e-normativas/portaria-interministerial-minc-mec-no-12-de-23-de-abril-de-2026) still sets goals for reopening libraries, municipal coverage and accessible collections. Goals must not be reported as completed coverage or used to infer that all libraries lack technology.
+
+[Pergamum's vendor page](https://www.pergamum.pucpr.br/produtos/pergamum) reports more than 10,000 information units. That is a vendor footprint with an unspecified geographical denominator, not a measured Brazilian LMS market share. Its [cooperative catalog](https://www.pergamum.pucpr.br/rede/consulta/geral) is a plausible metadata-discovery service; local holdings and current circulation still need institution-specific checks. BPP demonstrates the distinction: the union query returned 280 records, while a returned record's detailed holdings explicitly identify BPP in Curitiba. No municipal participants are separately counted.
+
+SophiA is independently named in the [UFG institutional plan](https://files.cercomp.ufg.br/weby/up/1/o/PDI_2023-2027_final.pdf) and [IFSC's September 2025 course document](https://www.ifsc.edu.br/documents/d/campus-palhoca-bilingue/resolucao_11-2025_assinado-anexo-pdf), and directly observed in six successful catalogs. The [IFB 2024 procurement](https://ifb.edu.br/attachments/article/39100/Edital%20PE%20SRP%2090056.2024%20e%20Anexos.pdf) describes limitations in its former Siabi implementation; the current observed catalog is SophiA. This is concrete evidence of migration and implementation diversity at IFB, not evidence that Brazilian library infrastructure is generally immature. [IFPE's official SIBI page](https://portal.ifpe.edu.br/o-ifpe/biblioteca/o-sibi/) links Koha.
+
+Other network opportunities include the [Senate-coordinated RVBI](https://www12.senado.leg.br/institucional/biblioteca/contato/perguntas-frequentes-2) and [CRUESP-related integrated university discovery](https://www.abcd.usp.br/bibliotecas/digitais-sistemicas/portal-busca-integrada/). Neither was counted as an additional verified title-search target in this pass. Journal unions, thesis repositories and licensed ebook services should not be substituted for physical-book holdings. A university discovery portal may contain all of these together.
+
+Reader access differs from catalog access. [UFC's official overview](https://www.ufc.br/pt/sistema-de-bibliotecas) restricts borrowing to its internal community and distinguishes circulating from consultation-only material. IFPE explicitly permits outside researchers and students to consult its collection onsite. IFSC's cited course document restricts FIC students to borrowing at their enrolled campus. Anonymous search and an available copy therefore need separate eligibility information in MyBookshelf.
+
+## Ten selected targets and actual returned books
+
+All searches below returned HTTP 200 book records on 2026-11-15 UTC. Exact timestamps, URLs, methods, POST payloads, platform evidence, policy checks and source dates are in [findings.json](findings.json). “Results” means reported catalog matches, not copies, and may include other formats. Each network counts once.
+
+| Target / platform | Published scale and date | Submitted title; reported results | Actual returned book / ID / observed holdings |
+|---|---|---|---|
+| UNICAMP / modern SophiA | [1,367,813 mixed items, 2018](https://www2.unicamp.br/unicamp/ju/noticias/2018/08/10/unicamp-recebe-biblioteca-de-antonio-candido/); includes ebooks and electronic resources | Dom Casmurro; 112 | *Dom Casmurro*, Machado de Assis, c2006; **382639**; CTC (2). [Response](evidence/unicamp/search.html) |
+| UFMG / Pergamum | [More than 1 million items; 26 libraries](https://www.bu.ufmg.br/bu_atual/o-sistema-de-bibliotecas/apresentacao/), undated | Dom Casmurro; 96 | **Related title:** *Amor de Capitu*, Fernando Sabino, 4th ed., 2000; **412646**; 5 copies, LETRAS. [Response](evidence/ufmg-query.html) |
+| UFC / Pergamum | [More than 20 library units](https://www.ufc.br/pt/sistema-de-bibliotecas), undated institutional scale proxy | Vidas secas; 18 | **Related title:** *Graciliano Ramos poeta: poemas desentranhados das Vidas Secas*, Ana Ivo, 1996; **144784**; 1 copy. [Response](evidence/ufc-query.html) |
+| Biblioteca Pública do Paraná / Pergamum | [About 1 million physical items](https://www.bpp.pr.gov.br/Pagina/Historia), page's 2026 anniversary context; mixed formats | Dom Casmurro; 280 union-wide | **Related title:** *Amor de Capitu*, Fernando Sabino; **743634**; detail identifies BPP, 2 available copies. Search says 3; retained discrepancy. [Search](evidence/bpp-query.html), [BPP detail](evidence/bpp-detail.html) |
+| UFPR / legacy SophiA ASP | [Ciências Humanas component alone about 216,000 items, 2020](https://bibliotecas.ufpr.br/sobre/bibliotecas/ch/); not a system total | Dom Casmurro; 44 | *Dom Casmurro*, Machado de Assis, c1987; **120163**; EP–Educação Profissional e Tecnológica (1). [Response](evidence/ufpr-results.html) |
+| UFG / legacy SophiA PHP | [306,004 copies, 2022](https://files.cercomp.ufg.br/weby/up/1/o/PDI_2023-2027_final.pdf), Figure 6 p.103; books/periodicals collection context | Dom Casmurro; 59 | *Dom Casmurro*, Machado de Assis, 2020; **344080**; printed book, call number 821.134.3(81)-31 ASS /dom; copy status unknown. [Response](evidence/ufg-results-lower.html) |
+| UNIRIO / modern SophiA | [Central + BIJU + seven sectoral libraries](https://www.unirio.br/perguntas-frequentes), undated institutional proxy; official indexed excerpt | Dom Casmurro; 16 | *Dom Casmurro*, Machado de Assis, 2009; **75002**; B869.3 A848d. Detail later returned request validation; holdings unknown. [Response](evidence/unirio/search.html) |
+| IFB / modern SophiA | [108,977 physical copies / 48,206 physical titles](https://ifb.edu.br/attachments/article/39100/Edital%20PE%20SRP%2090056.2024%20e%20Anexos.pdf), 2024 tender's historical ETP table p.83 | Dom Casmurro; 38 | *Dom Casmurro*, Machado de Assis, c2004; **19169**; Taguatinga (1). [Response](evidence/ifb/search.html) |
+| IFPE / Koha | [17 libraries, official page updated 2023-08-10](https://portal.ifpe.edu.br/o-ifpe/biblioteca/o-sibi/); institutional proxy | Dom Casmurro; 23 | *Dom Casmurro*, Machado de Assis, 9th ed., 2005; **1362**; 1 explicitly available for loan at Clarice Lispector, Campus Paulista. [Response](evidence/ifpe-query.html) |
+| IFSC / legacy SophiA ASP | [22 libraries, 2025-09-01](https://www.ifsc.edu.br/documents/d/campus-palhoca-bilingue/resolucao_11-2025_assinado-anexo-pdf), p.16; institutional proxy | Dom Casmurro; 49 | *Dom Casmurro*, Machado de Assis, 2023; **81131**; Tubarão (2). [Response](evidence/ifsc-query.html) |
+
+The UFMG, UFC and BPP examples are real returned books with related titles, not claims that the searched novel's exact edition was verified. Reported holdings counts for the other targets do not establish current loan availability unless the response explicitly says so. BPP's display year is 2002 while its formatted reference says 2001; the edition discrepancy remains unresolved.
+
+## Large priorities and alternatives that remain blocked
+
+These remain important expansion priorities. A failed request or policy restriction never means a library lacks the book.
+
+| Priority / scale evidence | Observed outcome |
+|---|---|
+| [Biblioteca Nacional: about 10 million items, MinC 2026 article](https://www.gov.br/cultura/pt-br/assuntos/noticias-defeso-eleitoral/fundacao-biblioteca-nacional-reune-mais-de-dois-seculos-de-historia-e-preserva-a-memoria-bibliografica-do-pais) | Catalog robots403 Cloudflare; stopped before search. |
+| [USP: 60 physical libraries](https://www5.usp.br/pesquisa/bibliotecas/), undated network proxy | Dedalus robots disallows all paths. |
+| [UFRJ: 45-library network](https://www.cartadeservicos.ufrj.br/servico/128), institutional proxy | Minerva robots disallows all paths. |
+| [Mário de Andrade: 3.3 million items, 2013](https://prefeitura.sp.gov.br/web/cultura/w/bma/acervos/8479) | São Paulo shared catalog robots503. Municipal catalog is broader than this one collection. |
+| UFSC, major federal university network | Catalog robots explicitly excludes OAI-SearchBot; no query. |
+| UFRGS/SABI, major university network | Conservatively restricted robots group; homepage also said license limit exceeded. No book query. |
+| [UERJ Sirius: 460,000 physical works](https://www.uerj.br/rede-sirius-rede-de-bibliotecas-uerj/), undated | Catalog robots503. |
+| [UFU: 355,000 items in 2015, including 306,000 books](https://comunica.ufu.br/noticias/2016/02/bibliotecas-disponibilizam-amplo-acervo-para-usuarios) | Public form reachable after robots404; submitted query503. |
+| [UTFPR: 15 libraries, 2025](https://www.utfpr.edu.br/bibliotecas/acervo-fisico), institutional proxy | Catalog robots503 despite official documentation of public searching. |
+| UnB, UFPE, UFSCar, IFPB and IFG institutional networks | Robots502,503,403,403 and503 respectively; no book-query success claimed. |
+
+## Integration and evidence limits
+
+Pergamum's observed public v2 endpoint can return bounded search JSON without authentication; a separate holdings endpoint distinguishes copy status and institution. Its generated short search-session ID is request state, not an institution code. Avoid dependence on captured sessions or assuming every deployment exposes the same version. BPP's search-versus-detail count difference makes detailed holdings preferable for availability.
+
+Modern SophiA needs a fresh anonymous form and anti-forgery token in an in-memory cookie session. [sophia_query.py](sophia_query.py) records that recipe; captured anonymous token values are redacted. Legacy SophiA submits the public form to a results-frame endpoint observed in its own JavaScript. ASP uses `resultadoFrame.asp`; UFG's PHP uses lowercase `resultadoframe.php`. Its result links are JavaScript navigation actions. Record IDs/actions are retained, and no invented permanent detail links are supplied. UNIRIO's successful search remains valid evidence, but the later detail validation page blocked further holdings verification.
+
+IFPE is a candidate for the existing Koha adapter, subject to title parsing, physical-holding and eligibility checks in the app. No successful HTTP response here certifies existing-adapter compatibility. No credentials, account actions, holds, outreach or production changes were used.
+
+All ten successful targets have an audited longest-match robots decision. HTTP404 means no published rule was found, not permission to reuse data. Error responses and blocked majors remain in evidence. During UFMG public endpoint discovery, incorrect parameters produced400/409/500 responses before a corrected public request returned records; those attempts are retained. At UFRGS a homepage was fetched before the consecutive wildcard/Baiduspider grouping was resolved conservatively as restrictive; it returned an overload notice and no books. No prohibited search followed.
+
+The evidence snapshots are bounded, with sanitization labelled and saved-byte hashes recalculated where modified. The selected catalogs returned at most one result page each; three modern SophiA workflows acquired fresh form state first. Size evidence varies between direct institutional pages, dated official documents and labelled indexed official excerpts. Dates, units and component scope prevent summing the ten or ranking them nationally. Historical catalog coverage, mixed digital results and temporary access failures also prevent treating unsuccessful searches as absence.

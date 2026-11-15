@@ -1,0 +1,40 @@
+var option=0;
+function ajouter_panier()
+{
+alert('ajouter au panier');
+
+var fso=new ActiveXObject("Scripting.FileSystemObject"); //Système de fichier.
+fso.CreateTextFile("fichier1.txt",true); //Création du fichier "fichier1.txt" avec ecrasement.
+var otf=fso.OpenTextFile("fichier1.txt", 8 ,true); //Ouverture du fichier "fichier1.txt" en mode écriture a la suite.
+otf.WriteLine("Bonjour."); //Ecriture de la ligne "Bonjour.".
+otf.Write("Coucou"); //Ecriture de "Coucou".
+otf.Close(); //Fermeture du fichier "fichier1.txt".
+otf=fso.OpenTextFile("fichier1.txt", 1 ,false); //Ouverture du fichier "fichier1.txt" en mode lecture.
+alert(otf.Read(7)); //Lecture des 7 premiers caractères ("Bonjour.").
+alert(otf.ReadAll()); //Lecture de tout le fichier ("Bonjour.\nCoucou").
+otf.Close(); //Fermeture du fichier "fichier1.txt".
+
+alert('ajouter au panier');
+
+
+}
+function imprimer()
+{
+alert('imprimer');
+}
+function selectionner_tout()
+{
+
+if(option==0)
+    {
+for (i = 0; i < document.getElementsByName('list').length; i++)
+	document.getElementsByName('list')[i].checked = true ;
+option=1;
+	}	
+else
+   {
+for (i = 0; i < document.getElementsByName('list').length; i++)
+	document.getElementsByName('list')[i].checked = false ;
+	option=0;
+   }	
+}

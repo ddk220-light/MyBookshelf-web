@@ -1,0 +1,52 @@
+# ==========================================================
+# ROBOTS.TXT - KOHA IEP (2026)
+# ==========================================================
+
+# --- BLOQUE 1: BLOQUEO TOTAL DE IA Y SCRAPERS ---
+# Evitamos que usen el catálogo para entrenar modelos sin permiso
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: CCBot
+User-agent: Google-Extended
+User-agent: anthropic-ai
+User-agent: Omgilibot
+User-agent: Omgili
+User-agent: FacebookBot
+User-agent: Bytespider
+User-agent: Diffbot
+User-agent: ImagesiftBot 
+User-agent: YouBot
+User-agent: PerplexityBot
+User-agent: Amazonbot
+User-agent: Applebot
+User-agent: XBot
+User-agent: TwitterBot
+User-agent: ClaudeBot
+Disallow: /
+
+# --- BLOQUE 2: BUSCADORES GENERALES (GOOGLE, BING, ETC) ---
+User-agent: *
+# Forzamos a los buscadores a ir despacio para no saturar Perl/Plack
+Crawl-delay: 20
+
+# Bloqueo de rutas críticas de Koha que consumen mucha CPU/RAM
+Disallow: /cgi-bin/koha/opac-search.pl
+Disallow: /cgi-bin/koha/opac-retrieval.pl
+Disallow: /cgi-bin/koha/opac-showmarc.pl
+Disallow: /cgi-bin/koha/opac-detailprint.pl
+Disallow: /cgi-bin/koha/opac-export.pl
+Disallow: /cgi-bin/koha/opac-report.pl
+Disallow: /cgi-bin/koha/opac-account.pl
+Disallow: /cgi-bin/koha/opac-user.pl
+Disallow: /cgi-bin/koha/opac-basket.pl
+Disallow: /cgi-bin/koha/opac-shelves.pl
+Disallow: /cgi-bin/koha/opac-tags.pl
+
+# Si usas URLs amigables (RewriteRules), añade estas:
+Disallow: /opac-search.pl
+Disallow: /opac-detail.pl?*
+Disallow: /search?*
+
+# --- BLOQUE 3: PERMITIR CONTENIDO ESTÁTICO ---
+Allow: /opac-tmpl/
+Allow: /api/v1/

@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: errorpage.tt -->
+
+
+
+
+<html lang="vi-VN" class="no-js">
+<head>
+
+<title>Trung tâm Thông tin - Thư viện catalog &rsaquo; An error has occurred</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha 17.1100000" /> <!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="shortcut icon" href="/opac-tmpl/bootstrap/images/favicon.ico" type="image/x-icon" />
+
+ <link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/lib/bootstrap/css/bootstrap.min.css" />
+
+
+
+ <link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/lib/jquery/jquery-ui.css" />
+
+
+
+
+ <link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/css/opac.css" />
+
+
+
+<link rel="stylesheet" type="text/css" media="print" href="/opac-tmpl/bootstrap/css/print.css" />
+
+<style type="text/css">/* Thiết lập Tên tài liệu chính viết hoa, màu xanh lá HUAF */
+.opac-detail h1.title, .opac-detail .title {
+    font-size: 26px !important;
+    font-weight: 800 !important;
+    color: #1e5c33 !important; /* Xanh lá HUAF */
+    line-height: 1.4;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: block;
+}
+
+/* Lớp CSS tự động sinh ra cho phần tác giả dính kèm tiêu đề */
+.dynamic-author-sub {
+    display: block !important;          /* Ép buộc xuống hàng riêng */
+    font-size: 15px !important;         /* Cỡ chữ nhỏ hơn tên sách */
+    font-weight: normal !important;     /* Không in đậm */
+    text-transform: none !important;    /* Giữ nguyên chữ hoa chữ thường của tên tác giả */
+    color: #555555 !important;          /* Màu xám thanh lịch */
+    margin-top: 6px;
+    font-style: italic;                 /* In nghiêng theo chuẩn hiển thị tài liệu khoa học */
+}
+
+/* Định dạng dấu phẩy phân cách đồng tác giả gọn gàng */
+.xslt-comma-separator {
+    color: #666;
+    font-weight: bold;
+    margin-right: 5px;
+}</style>
+
+<link rel="unapi-server" type="application/xml" title="unAPI" href="/cgi-bin/koha/unapi" />
+
+<!-- Respond.js brings responsive layout behavior to IE < v.9 -->
+<!--[if lt IE 9]>
+ <script src="/opac-tmpl/bootstrap/lib/respond.min.js"></script>
+<![endif]-->
+<script type="text/javascript">
+    function _(s) { return s } // dummy function for gettext
+</script>
+<script type="text/javascript" src="/opac-tmpl/bootstrap/lib/modernizr.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/lib/font-awesome/css/font-awesome.min.css" />
+
+
+
+
+</head>
+<body id="error404" class="error">
+
+
+
+<div id="wrap">
+ <div id="header-region" class="noprint">
+ <div class="navbar navbar-inverse navbar-static-top">
+ <div class="navbar-inner">
+ <div class="container-fluid">
+ <h1 id="logo">
+ <a class="brand" href="/cgi-bin/koha/opac-main.pl">
+  Trung tâm Thông tin - Thư viện  </a>
+ </h1>
+ 
+ <div id="cartDetails" class="cart-message">Giỏ tài liệu trống</div>
+ 
+ <ul class="nav">
+ 
+ <li class="dropdown">
+ <a href="#" title="Collect items you are interested in" class="dropdown-toggle" id="cartmenulink" data-toggle="dropdown" role="button">
+ <i id="carticon" class="icon-shopping-cart icon-white"></i> <span class="cartlabel">Giỏ tài liệu</span> <span id="basketcount"></span> <b class="caret"></b>
+ </a>
+ <ul aria-labelledby="cartmenulink" role="menu" class="dropdown-menu">
+ <li role="presentation">
+ <a href="#" id="cartmenuitem" class="cart-message" tabindex="-1" role="menuitem">Giỏ tài liệu trống</a>
+ </li>
+ </ul>
+ </li>
+ 
+ 
+ <li class="divider-vertical"></li>
+ 
+ 
+ <li class="dropdown">
+ <a href="#" title="Show lists" class="dropdown-toggle" id="listsmenu" data-toggle="dropdown" role="button"><i class="icon-list icon-white"></i> <span class="listslabel">Giá sách ảo</span> <b class="caret"></b></a>
+ <ul aria-labelledby="listsmenu" role="menu" class="dropdown-menu">
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;category=2" tabindex="-1" role="menuitem"><strong>Giá sách ảo cộng đồng</strong></a></li>
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=28&amp;sortfield=title" tabindex="-1" role="menuitem">Trí tuệ nhân tạo</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=22&amp;sortfield=title" tabindex="-1" role="menuitem">Bảo vệ thực vật</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=17&amp;sortfield=title" tabindex="-1" role="menuitem">Quản lý đất đai</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=14&amp;sortfield=title" tabindex="-1" role="menuitem">Nuôi trồng thủy sản</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=2&amp;sortfield=title" tabindex="-1" role="menuitem">Khoa học cây trồng</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=26&amp;sortfield=title" tabindex="-1" role="menuitem">Kinh doanh và khởi nghiệp nông thôn</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=25&amp;sortfield=title" tabindex="-1" role="menuitem">Sinh học ứng dụng</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=24&amp;sortfield=title" tabindex="-1" role="menuitem">Nông nghiệp công nghệ cao</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=23&amp;sortfield=title" tabindex="-1" role="menuitem">Nông học</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=21&amp;sortfield=title" tabindex="-1" role="menuitem">Phát triển nông thôn</a></li>
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;category=2" tabindex="-1" role="menuitem" class="listmenulink">Xem tất cả</a></li>
+ 
+ 
+ <li class="divider" role="presentation"></li>
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;category=1" tabindex="-1" role="menuitem"><strong>Giá sách ảo của bạn</strong></a></li>
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-user.pl" tabindex="-1" class="menu-inactive loginModal-trigger" role="menuitem">Đăng nhập để tạo giá sách của bạn</a></li>
+ 
+ 
+ 
+ </ul> <!-- / .dropdown-menu -->
+ </li> <!-- / .dropdown -->
+ 
+ </ul> <!-- / .nav -->
+ <div id="listsDetails"></div>
+ 
+ <a id="user-menu-trigger" class="pull-right" href="#"><i class="icon-user"></i> <span class="caret"></span></a>
+ <div id="members">
+ <ul class="nav pull-right">
+
+ 
+
+<li class="dropdown">
+ <a href="#" title="Switch languages" class="dropdown-toggle" id="langmenu" data-toggle="dropdown" role="button"><i class="icon-flag icon-white"></i> <span class="langlabel">Languages</span> <b class="caret"></b></a>
+ <ul aria-labelledby="langmenu" role="menu" class="dropdown-menu">
+ 
+ 
+ 
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-changelanguage.pl?language=en"  tabindex="-1" role="menuitem" class="listmenulink">English</a></li>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <li role="presentation"><a href="#" tabindex="-1" class="menu-inactive" role="menuitem">Tiếng Việt&nbsp;<i class="icon-ok"></i></a></li>
+ 
+ 
+ 
+ 
+ 
+ </ul> <!-- /# .dropdown-menu -->
+</li> <!-- / .dropdown -->
+
+
+
+ 
+ 
+ 
+ <li><a href="/cgi-bin/koha/opac-user.pl" class="loginModal-trigger" role="button" data-toggle="modal">Đăng nhập</a></li>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ </ul>
+ </div> <!-- /members -->
+ 
+ </div> <!-- /container-fluid -->
+ </div> <!-- /navbar-inner -->
+ </div> <!-- /navbar -->
+
+ 
+ <div class="container-fluid">
+ <div class="row-fluid">
+ <div id="opacheader">
+ Thư viện trường Đại học Nông Lâm Huế
+
+ </div>
+ </div>
+ </div>
+ 
+ </div> <!-- / header-region -->
+
+ <div class="container-fluid">
+ <div class="row-fluid">
+ <div id="opac-main-search">
+ <!-- <div class="span2">
+ 
+ <h1 id="libraryname">
+ 
+ <a href="/cgi-bin/koha/opac-main.pl">Trung tâm Thông tin - Thư viện</a></h1>
+ </div> /.span2 -->
+ <div class="span12">
+ 
+ 
+ 
+ <div class="mastheadsearch">
+ 
+ 
+ <form name="searchform" method="get" action="/cgi-bin/koha/opac-search.pl" id="searchform" class="form-inline">
+ <label for="masthead_search"> Tìm kiếm
+ 
+ 
+ 
+ </label>
+
+ <select name="idx" id="masthead_search">
+ 
+ <option value="">Từ khóa</option>
+ 
+ 
+ <option value="ti">Nhan đề</option>
+ 
+ 
+ <option value="au">Tác giả</option>
+ 
+ 
+ <option value="su">Chủ đề</option>
+ 
+ 
+ <option value="nb">Số ISBN</option>
+ 
+ 
+ <option value="se">Tùng thư</option>
+ 
+ 
+ 
+ <option value="callnum">Ký hiệu phân loại</option>
+ 
+ 
+ </select>
+
+ 
+ <div class="input-append nolibrarypulldown">
+ 
+ 
+ <input type="text" title="Type search term" class="transl1" id = "translControl1" name="q" /><span id="translControl"></span>
+ 
+
+ 
+ <button type="submit" id="searchsubmit" class="btn btn-primary">Tìm kiếm</button>
+ </div>
+ 
+
+ 
+ 
+ 
+ 
+ 
+
+ </form>
+ 
+ </div> <!-- / .mastheadsearch -->
+ 
+
+ <div class="row-fluid">
+ <div id="moresearches">
+ <ul>
+ <li><a href="/cgi-bin/koha/opac-search.pl">Tìm kiếm nâng cao</a></li>
+ <li><a href="/cgi-bin/koha/opac-course-reserves.pl">CSDL khóa học</a></li>
+ 
+ <li><a href="/cgi-bin/koha/opac-authorities-home.pl">Tìm kiếm dữ liệu kiểm soát</a></li>
+ 
+ <li><a href="/cgi-bin/koha/opac-tags.pl">Mây Tag</a></li>
+ 
+ 
+ 
+ 
+ <li><a href="/cgi-bin/koha/opac-suggestions.pl">Đề xuất mua tài liệu</a></li>
+ 
+ 
+ </ul>
+ </div> <!-- /#moresearches -->
+ </div> <!-- /.row-fluid -->
+
+ 
+ </div> <!-- /.span10 -->
+ </div> <!-- /.opac-main-search -->
+ </div> <!-- / .row-fluid -->
+ </div> <!-- /.container-fluid -->
+
+ <!-- Login form hidden by default, used for modal window -->
+ <div id="loginModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+ <div class="modal-header">
+ <button type="button" class="closebtn" data-dismiss="modal" aria-hidden="true">×</button>
+ <h3 id="modalLoginLabel">Đăng nhập</h3>
+ </div>
+ <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="modalAuth">
+ <div class="modal-body">
+ 
+ <input type="hidden" name="koha_login_context" value="opac" />
+ <fieldset class="brief">
+ <label for="muserid">Tên đăng nhập:</label><input type="text" id="muserid" name="userid" />
+ <label for="mpassword">Mật khẩu:</label><input type="password" id="mpassword" name="password" />
+ 
+ 
+ 
+ </fieldset>
+ </div>
+ <div class="modal-footer">
+ <input type="submit" value="Đăng nhập" class="btn btn-primary" />
+ <a href="#" data-dismiss="modal" aria-hidden="true" class="cancel">Hủy bỏ</a>
+ </div>
+ </form> <!-- /#auth -->
+ </div> <!-- /#modalAuth -->
+
+
+ <div class="main">
+ <ul class="breadcrumb">
+ <li><a href="/cgi-bin/koha/opac-main.pl">Trang chủ</a> <span class="divider">&rsaquo;</span></li>
+ <li><a href="#">Error 404</a></li>
+ </ul>
+
+ <div class="container-fluid">
+ <div class="row-fluid">
+ 
+ <div class="span2">
+ <div id="navigation">
+ <div id="opacnav">Cổng thông tin điện tử</div>
+
+<div id="opacnavbottom">Trang Thông tin thư viện điện tử</div>
+
+ </div>
+ </div>
+ <div class="span10">
+ 
+ <div id="errormsg404">
+ <h3>Sorry, the requested page is not available</h3>
+ <h4>Error 404</h4>
+ <h3>This message can have the following reason(s):</h3>
+ <ul>
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <li>You made use of an external link to a catalog item that is no longer available.</li>
+ <li>You followed an outdated link e.g. from a search engine or a bookmark.</li>
+ <li>You tried to access a page that needs authentication.</li>
+ <li>An internal link in our catalog home page is broken and the page does not exist.</li>
+ 
+ 
+ </ul>
+ <h3>What's next?</h3>
+ <ul>
+ 
+ <li>You can use the menu and links at the top of the page</li>
+ <li>You can search our catalog using the search form at the top of this page.</li>
+ <li><a href="/cgi-bin/koha/opac-main.pl">Return to the catalog home page.</a></li>
+ </ul>
+ <h3>Report issues and broken links</h3>
+ <ul>
+ <li>To report this error, please contact the Koha Administrator.
+ <a href="mailto:root@localhost">Send email</a>.</li>
+ </ul>
+ </div> <!-- / #errormsg404 -->
+ </div> <!-- / .span10/12 -->
+ </div> <!-- / .row-fluid -->
+ </div> <!-- / .container-fluid -->
+ </div> <!-- / .main -->
+
+
+ 
+ 
+
+ 
+ <div class="container-fluid">
+ <div class="row-fluid">
+ <div class="span12">
+ <div id="koha_url" class="clearfix noprint">
+ <p>Powered by
+ 
+ <a class="koha_url" rel="nofollow" href="http://koha-community.org">Koha</a>
+ </p>
+ </div>
+ </div> <!-- /.span12 -->
+ </div> <!-- /.row-fluid -->
+ </div> <!-- /.container-fluid -->
+ 
+
+</div> <!-- / #wrap in masthead.inc -->
+
+
+
+
+<!-- JavaScript includes -->
+<script type="text/javascript" src="/opac-tmpl/bootstrap/lib/jquery/jquery.js"></script>
+<script type="text/javascript" src="/opac-tmpl/bootstrap/lib/jquery/jquery-ui.js"></script>
+<script type="text/javascript">
+// Resolve name collision between jQuery UI and Twitter Bootstrap
+$.widget.bridge('uitooltip', $.ui.tooltip);
+</script>
+<script type="text/javascript" src="/opac-tmpl/bootstrap/lib/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/opac-tmpl/bootstrap/js/global.js"></script>
+<script type="text/javascript">
+    Modernizr.load([
+        // Test need for polyfill
+        {
+            test: window.matchMedia,
+            nope: "/opac-tmpl/bootstrap/lib/media.match.min.js"
+        },
+        // and then load enquire
+        "/opac-tmpl/bootstrap/lib/enquire.min.js",
+        "/opac-tmpl/bootstrap/js/script.js"
+    ]);
+
+    // Fix for datepicker in a modal
+    $.fn.modal.Constructor.prototype.enforceFocus = function () {};
+</script>
+
+
+<script type="text/javascript">
+    //<![CDATA[
+    var MSG_CONFIRM_AGAIN = _("Cảnh báo: Hành động này không thể được khôi phục lại. Xin xác nhận lại một lần nữa")
+    var MSG_DELETE_SEARCH_HISTORY = _("Bạn chắc chắn muốn xóa lịch sử tìm kiếm của mình?");
+    var MSG_NO_SUGGESTION_SELECTED = _("Không có đề xuất nào được chọn");
+    
+    
+    
+    $(".print-large").on("click",function(){
+        window.print();
+        return false;
+    });
+    $("#ulactioncontainer > ul > li > a.addtoshelf").on("click",function(){
+        Dopop('opac-addbybiblionumber.pl?biblionumber=');
+        return false;
+    });
+    $(".addrecord").on("click",function(){
+        addRecord('');
+        return false;
+    });
+    $(".cartRemove").on("click",function(){
+        delSingleRecord('');
+        return false;
+    });
+    $(".clearsh").on("click", function(){
+        return confirmDelete(MSG_DELETE_SEARCH_HISTORY);
+    });
+    //]]>
+</script>
+
+
+ <script type="text/javascript">var readCookie;</script>
+
+
+
+
+
+
+
+
+
+ <script type="text/javascript" src="/opac-tmpl/bootstrap/js/localcovers.js"></script>
+ <script type="text/javascript">
+    //<![CDATA[
+    var NO_LOCAL_JACKET = _("Không có ảnh bìa");
+    //]]>
+    </script>
+
+
+
+
+
+
+
+<script type="text/javascript" src="/opac-tmpl/bootstrap/lib/jquery/plugins/jquery.cookie.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    if($('#searchsubmit').length) {
+        $(document).on("click", '#searchsubmit', function(e) {
+            jQuery.removeCookie("form_serialized", { path: '/'});
+            jQuery.removeCookie("form_serialized_itype", { path: '/'});
+            jQuery.removeCookie("form_serialized_limits", { path: '/'});
+            jQuery.removeCookie("num_paragraph", { path: '/'});
+            jQuery.removeCookie("search_path_code", { path: '/'});
+        });
+    }
+});
+</script>
+
+
+
+ <script type="text/javascript">
+        //<![CDATA[
+        (function (KohajQuery) {
+    KohajQuery(document).ready(function () {
+        
+        // =================================================================
+        // 1. TỰ ĐỘNG BÓC TÁCH TIÊU ĐỀ & TÁC GIẢ CHO TOÀN BỘ TÀI LIỆU (Trường 245)
+        // =================================================================
+        var titleEl = KohajQuery('.opac-detail h1.title, .opac-detail .title');
+        if (titleEl.length > 0) {
+            var rawTitle = titleEl.html().trim(); // Lấy mã HTML bao gồm cả các thẻ bôi đậm <span class="term"> nếu có
+            var textTitle = titleEl.text().trim();
+            
+            // Hướng xử lý Tự động hóa: Tìm vị trí ngắt dòng dựa trên quy luật cấu trúc dữ liệu thô của Koha HUAF
+            var splitIndex = -1;
+            var splitTerm = "";
+
+            // Trường hợp A: Có cụm từ nghiệp vụ "chủ biên" dính trong tên sách
+            if (textTitle.indexOf('chủ biên') !== -1) {
+                splitTerm = 'chủ biên';
+            } 
+            // Trường hợp B: Tác giả xuất hiện ngay sau cụm từ tên sách (Nhận diện qua từ viết hoa đầu tiên sau chuỗi tên sách thông thường)
+            else {
+                // Thuật toán quét tìm vị trí tên tác giả (Ví dụ: "Nguyễn...", "Phùng...") xuất hiện sau phần tên sách
+                // Dựa trên dữ liệu thực tế: Koha thường render Tên tác giả giữ nguyên chữ hoa chữ thường kế tiếp tên sách
+                var match = textTitle.match(/(Nguyễn|Lê|Trần|Phạm|Phùng|Hoàng|Vũ|Đặng|Bùi|Đỗ|Hồ|Ngô|Chủ biên)/);
+                if (match && match.index > 10) { // Điểm ngắt phải nằm sau độ dài tên sách tối thiểu
+                    splitIndex = match.index;
+                    splitTerm = match[0];
+                }
+            }
+
+            // Thực hiện bóc tách và bọc thẻ CSS tự động cho toàn bộ hệ thống
+            if (splitTerm === 'chủ biên') {
+                var parts = rawTitle.split('chủ biên');
+                var mainTitle = parts[0].trim();
+                var authorPart = 'chủ biên' + parts.slice(1).join('chủ biên');
+                titleEl.html(mainTitle + '<span class="dynamic-author-sub">/ ' + authorPart + '</span>');
+            } else if (splitIndex !== -1) {
+                // Tách động theo vị trí ký tự tìm thấy thương hiệu họ người Việt
+                var mainTitleDynamic = textTitle.substring(0, splitIndex).trim();
+                var authorPartDynamic = textTitle.substring(splitIndex).trim();
+                
+                // Giữ lại định dạng highlight tìm kiếm nếu có
+                titleEl.html(mainTitleDynamic + '<span class="dynamic-author-sub">/ ' + authorPartDynamic + '</span>');
+            }
+        }
+
+        // =================================================================
+        // 2. CHUẨN HÓA TÊN TÁC GIẢ TIẾNG VIỆT TOÀN HỆ THỐNG (Trường 100/700)
+        // =================================================================
+        KohajQuery('.opac-detail .results_summary a[href*="au="], .opac-detail .author a').each(function () {
+            var authorText = KohajQuery(this).text();
+            // Nếu phát hiện cấu trúc đảo họ tên kiểu Tây có dấu phẩy "Họ, Tên"
+            if (authorText.indexOf(',') !== -1) {
+                var nameParts = authorText.split(',');
+                if (nameParts.length === 2) {
+                    // Trả lại tên tiếng Việt xuôi dòng tự nhiên
+                    var correctName = nameParts[0].trim() + " " + nameParts[1].replace('.', '').trim();
+                    KohajQuery(this).text(correctName);
+                }
+            }
+        });
+
+        // =================================================================
+        // 3. XỬ LÝ DẤU PHÂN CÁCH ĐỒNG TÁC GIẢ TOÀN HỆ THỐNG (Contributor)
+        // =================================================================
+        KohajQuery('.opac-detail .results_summary').each(function () {
+            var currentBlock = KohajQuery(this);
+            // Kiểm tra các trường liên quan đến người đóng góp/đồng tác giả
+            if (currentBlock.text().indexOf('Contributor(s)') !== -1 || currentBlock.text().indexOf('Người đóng góp') !== -1) {
+                var blockHtml = currentBlock.html();
+                if (blockHtml.indexOf('|') !== -1) {
+                    // Thay thế toàn bộ dấu gạch đứng thô kệch thành dấu phẩy chuẩn ISBD
+                    blockHtml = blockHtml.replace(/\|/g, '<span class="xslt-comma-separator">, </span>');
+                    currentBlock.html(blockHtml);
+                }
+            }
+        });
+
+    });
+})(jQuery);
+        //]]>
+    </script>
+
+
+</body>
+</html>
+
+

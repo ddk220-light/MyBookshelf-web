@@ -1,0 +1,24 @@
+{
+  "name": "udsm-robots",
+  "url": "https://lib.udsm.ac.tz/robots.txt",
+  "method": "GET",
+  "payload": null,
+  "checked_at_utc": "2026-11-15T07:43:09.551821+00:00",
+  "user_agent": "MyBookshelfResearch/1.0 (public library catalog compatibility research)",
+  "status": 200,
+  "effective_url": "https://lib.udsm.ac.tz/robots.txt",
+  "evidence_path": "evidence/udsm-robots.html",
+  "metadata_path": "evidence/udsm-robots.json",
+  "response_headers": {
+    "Content-Type": "text/plain",
+    "Content-Length": "1685"
+  },
+  "truncated": false,
+  "bytes": 1685,
+  "sha256": "6d2496419077b44bb48b4799a2733ee5ae141477773535bf4b3516a23fc7545a",
+  "title": "",
+  "text": "# robots.txt for lib.udsm.ac.tz (OPAC)\n#\n# Deployed to /opt/udsm-koha/static/robots.txt and served by the host Apache\n# ahead of the reverse proxy, so it costs no Koha worker to serve.\n#\n# Why this exists: crawlers were issuing 3-7 requests/second against\n# opac-search.pl with generated CCL queries, plus opac-export.pl and\n# opac-showmarc.pl on every record. Each of those is a Zebra search or a MARC\n# render, and on a 4-core box that saturated all CPU and pushed page times from\n# 0.2s to 20s. Koha's own README.robots warns about precisely this.\n#\n# Record pages stay crawlable — that is how patrons find the catalogue from\n# Google. What is blocked is the machine-generated query space, which is\n# effectively infinite and has no search-result value.\n\nUser-agent: *\nCrawl-delay: 20\n\n# Infinite/expensive query space — never useful to index\nDisallow: /cgi-bin/koha/opac-search.pl\nDisallow: /cgi-bin/koha/opac-export.pl\nDisallow: /cgi-bin/koha/opac-showmarc.pl\nDisallow: /cgi-bin/koha/opac-ISBDdetail.pl\nDisallow: /cgi-bin/koha/opac-MARCdetail.pl\nDisallow: /cgi-bin/koha/opac-downloadcart.pl\nDisallow: /cgi-bin/koha/opac-downloadshelf.pl\nDisallow: /cgi-bin/koha/opac-sendbasket.pl\nDisallow: /cgi-bin/koha/opac-sendshelf.pl\nDisallow: /cgi-bin/koha/opac-tags.pl\nDisallow: /cgi-bin/koha/opac-shelves.pl\n\n# Patron-facing / authenticated areas\nDisallow: /cgi-bin/koha/opac-user.pl\nDisallow: /cgi-bin/koha/opac-reserve.pl\nDisallow: /cgi-bin/koha/opac-messaging.pl\nDisallow: /cgi-bin/koha/opac-passwd.pl\nDisallow: /cgi-bin/koha/opac-memberentry.pl\n\n# Record detail pages remain allowed on purpose.\nAllow: /cgi-bin/koha/opac-detail.pl\n\nSitemap: https://lib.udsm.ac.tz/sitemapindex.xml",
+  "links": [],
+  "forms": [],
+  "elapsed_seconds": 4.701
+}

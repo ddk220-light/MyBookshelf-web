@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="author" content="PMB Group" />
+
+	<meta name="keywords" content="OPAC, web, library, opensource, catalog, catalogue, bibliothèque, médiathèque, pmb, phpmybibli" />
+	<meta name="description" content="Catalogue en ligne Bibliothèque Centrale." />
+		<meta name="robots" content="all" />
+	<!--IE et son enfer de compatibilit�-->
+	<meta http-equiv='X-UA-Compatible' content='IE=Edge' />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+			
+	<title>Catalogue en ligne Bibliothèque Centrale</title>
+	
+	
+	<link rel='stylesheet' type='text/css' href='./styles/common/common.css?1534412382' />
+	<link rel='stylesheet' type='text/css' href='./styles/common/contrib.css?1531398200' />
+	<link rel='stylesheet' type='text/css' href='./styles/common/dGrowl.css?1458295376' />
+	<link rel='stylesheet' type='text/css' href='./styles/common/font-awesome.css?1478597224' />
+	<link rel='stylesheet' type='text/css' href='./styles/common/open-sans.css?1479316586' />
+	<link rel='stylesheet' type='text/css' href='./styles/common/pagination.css?1532020920' />
+	<link rel='stylesheet' type='text/css' href='./styles/common/record_display.css?1540568230' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/colonnes.css?1343814066' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/gallerie_photos.css?1297070240' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/genbib.css?1498055956' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/liste_bulletins.css?1297070240' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/print.css?1297070240' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/tags.css?1297070240' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/visionneuse.css?1297070240' /><script type='text/javascript'>var opac_style= 'genbib';</script>
+	<!-- css_authentication -->	<link rel='SHORTCUT ICON' href='images/site/favicon.ico' />
+	<script type="text/javascript" src="includes/javascript/drag_n_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/handle_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/popup.js"></script>
+	<script type='text/javascript'>
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName = 
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {  
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i); 
+				    }
+				 }
+				return items;
+			 }
+		}
+		// Fonction a utilisier pour l'encodage des URLs en javascript
+		function encode_URL(data){
+			var docCharSet = document.characterSet ? document.characterSet : document.charset;
+			if(docCharSet == "UTF-8"){
+				return encodeURIComponent(data);
+			}else{
+				return escape(data);
+			}
+		}
+	</script>
+
+<link rel='stylesheet' type='text/css' href='./includes/javascript/dojo/dijit/themes/tundra/tundra.css' />
+<script type='text/javascript'>
+	var dojoConfig = {
+		parseOnLoad: true,
+		locale: 'fr-fr',
+		isDebug: false,
+		usePlainJson: true,
+		packages: [{
+			name: 'pmbBase',
+			location:'../../../..'
+		},{
+			name: 'd3',
+			location:'../../d3'
+		}],
+		deps: ['apps/pmb/MessagesStore', 'dgrowl/dGrowl', 'dojo/ready'],
+		callback:function(MessagesStore, dGrowl, ready){
+			window.pmbDojo = {};
+			pmbDojo.messages = new MessagesStore({url:'./ajax.php?module=ajax&categ=messages', directInit:false});
+			ready(function(){
+				new dGrowl({'channels':[{'name':'info','pos':2},{'name':'error', 'pos':1}]});
+			});
+		
+		},
+	};
+</script>
+<script type='text/javascript' src='./includes/javascript/dojo/dojo/dojo.js'></script>
+<script type='text/javascript'>var opac_show_social_network =0;</script>
+	<script type='text/javascript' src='./includes/javascript/http_request.js'></script>
+	
+</head>
+
+<body onload="window.defaultStatus='PMB : Accès public';"  id="pmbopac">
+<script type='text/javascript'>
+	function findNoticeElement(id){
+		var ul=null;
+		//cas des notices classiques
+		var domNotice = document.getElementById('el'+id+'Child');
+		//notice_display
+		if(!domNotice) domNotice = document.getElementById('notice');
+		if(domNotice){
+			var uls = domNotice.getElementsByTagName('ul');
+			for (var i=0 ; i<uls.length ; i++){
+				if(uls[i].getAttribute('id') == 'onglets_isbd_public'+id){
+					var ul = uls[i];
+					break;
+				}
+			}
+		} else{
+			var li = document.getElementById('onglet_isbd'+id);
+			if(!li) var li = document.getElementById('onglet_public'+id);
+			if(li) var ul = li.parentNode;
+		}
+		return ul;
+	}
+	function show_what(quoi, id) {
+		switch(quoi){
+			case 'EXPL_LOC' :
+				document.getElementById('div_expl_loc' + id).style.display = 'block';
+				document.getElementById('div_expl' + id).style.display = 'none';		
+				document.getElementById('onglet_expl' + id).className = 'isbd_public_inactive';		
+				document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_active';
+				break;
+			case 'EXPL' :
+				document.getElementById('div_expl_loc' + id).style.display = 'none';
+				document.getElementById('div_expl' + id).style.display = 'block';
+				document.getElementById('onglet_expl' + id).className = 'isbd_public_active';
+				document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_inactive';
+				break;
+			default :
+				quoi= quoi.toLowerCase();
+				var ul = findNoticeElement(id);
+				if (ul) {
+					var items  = ul.getElementsByTagName('li');
+					for (var i=0 ; i<items.length ; i++){
+						if(items[i].getAttribute('id')){
+							if(items[i].getAttribute('id') == 'onglet_'+quoi+id){
+								items[i].className = 'isbd_public_active';
+								document.getElementById('div_'+quoi+id).style.display = 'block';
+							}else{
+								if(items[i].className != 'onglet_tags' && items[i].className != 'onglet_avis' && items[i].className != 'onglet_sugg' && items[i].className != 'onglet_basket' && items[i].className != 'onglet_liste_lecture'){
+									items[i].className = 'isbd_public_inactive';	
+									document.getElementById(items[i].getAttribute('id').replace('onglet','div')).style.display = 'none';
+								}
+							}
+						}
+					}			
+				}
+				break;
+		}
+	}
+</script>
+	<script type='text/javascript' src='./includes/javascript/tablist_ajax.js'></script>
+<script type='text/javascript' src='./includes/javascript/tablist.js'></script>
+<script type='text/javascript' src='./includes/javascript/misc.js'></script>
+	<div id='att' style='z-Index:1000'></div>
+	<div id="container"><div id="main"><div id='main_header'></div><div id="main_hors_footer">
+						
+<script type='text/javascript' src='./includes/javascript/auth_popup.js'></script>	
+<div id="intro_message"><div class="p2"></div></div><div id='navigator'>
+<table width='100%'><tr><td class='navig_actions_first_screen' ><a href="./index.php?lvl=index" class='navig_categ'><span>Nouvelle recherche</span></a></td>
+</tr></table></div><!-- fermeture de #navigator -->
+<div id='resume_panier' class='empty'></div>
+<script type='text/javascript'>
+<!--
+	function test_form(form)
+	{
+
+		return true;
+	}
+-->
+</script>
+			<div id="search">
+
+			<ul class='search_tabs'>
+				<li id='current'><a href="./index.php?search_type_asked=simple_search">Recherche simple</a></li>
+				<li><a href="./index.php?search_type_asked=extended_search">Recherche multi-critères</a></li><li><a href="./index.php?search_type_asked=term_search">Recherche par termes</a></li><li><a href="./index.php?search_type_asked=external_search&external_type=simple">Interrogation externe</a></li>
+			</ul>
+			<div id='search_crl'></div>
+
+			<p class="p1"><span>Vous pouvez lancer une recherche portant sur un ou plusieurs mots (titre, auteur, éditeur, ...).</span></p>
+
+			<div class='row'>
+
+			<form name='search_input' action='./index.php?lvl=more_results&autolevel1=1' method='post' onSubmit="if (search_input.user_query.value.length == 0) { search_input.user_query.value='*'; return true; }">
+
+				 <select name='typdoc'>  <option  value='' selected>Tout type de document</option>
+  <option  value='a'>texte imprim&eacute;</option>
+  <option  value='e'>document cartographique imprim&eacute;</option>
+  <option  value='l'>document &eacute;lectronique</option>
+  <option  value='m'>document multim&eacute;dia</option>
+</select><br />
+
+				<input type='hidden' name='surligne' value=''/>
+				<input type='text' name='user_query' class='text_query' value="" size='65' />
+		
+				<input type='submit' name='ok' value='Rechercher' class='boutonrechercher'/>
+		<div id='simple_search_zone'>	
+		<div class='row'></div>
+		<div id='zsimples' class='notice-parent'>
+			<img src='./getgif.php?nomgif=plus' name='imEx' id='zsimplesImg' title='détail' border='0' onClick="expandBase('zsimples', true); return false;" hspace='3'>
+			<span class='notice-heada'>
+				Rechercher dans...
+			</span>
+		</div>
+		<div id='zsimplesChild' class='notice-child' style='margin-bottom:6px;display:none;width:94%'>
+			<div class='row'>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_TITLE' id='look_TITLE' value='1'  /><label for='look_TITLE'> Titres </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_AUTHOR' id='look_AUTHOR' value='1'  /><label for='look_AUTHOR'> Auteurs </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_PUBLISHER' id='look_PUBLISHER' value='1'  /><label for='look_PUBLISHER'> Editeurs </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_TITRE_UNIFORME' id='look_TITRE_UNIFORME' value='1' /><label for='look_TITRE_UNIFORME'> Titres uniformes </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_CATEGORY' id='look_CATEGORY' value='1'  /><label for='look_CATEGORY'> Catégories </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_INDEXINT' id='look_INDEXINT' value='1'  /><label for='look_INDEXINT'> Indexations décimales </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_KEYWORDS' id='look_KEYWORDS' value='1'  /><label for='look_KEYWORDS'> Mots-clés</label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_ABSTRACT' id='look_ABSTRACT' value='1'  /><label for='look_ABSTRACT'> Résumé et notes </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_ALL' id='look_ALL' value='1' checked onclick='return false;' title='La recherche Tous les champs ne peut être décochée.' title='toto' /><label for='look_ALL'> Tous les champs </label></span></div><div style='clear: both;'><input type='hidden' name='look_FIRSTACCESS' value='1' /></div>
+		</div>
+		</div>
+		</form>
+
+			</div>
+
+			<script type='text/javascript' src='./includes/javascript/ajax.js'></script>
+			<script type='text/javascript'>
+
+				document.forms["search_input"].elements["user_query"].focus();
+				
+			</script>
+	
+		</div><div id='infopages'><p><b>Astuce</b> utilisez des guillemets pour chercher une suite de caract&egrave;res : &quot;r&eacute;volution fran&ccedil;aise&quot;</p></div>
+<div id='categories'>
+<h3><span id='titre_categories'>Catégories</span></h3>
+
+<div id='categories-container'>
+<div class='row_categ'><div class='category' >
+<h2><img src='./images/folder.gif'><a href='./index.php?&lvl=categ_see&id=7103&main=1&id_thes=1'>1- Sciences Exactes et Informatique</a></h2>
+<ul>
+<li><a href='./index.php?lvl=categ_see&id=7122&main=1&id_thes=1'>Chimie</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7111&main=1&id_thes=1'>Informatique</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7107&main=1&id_thes=1'>Mathématiques</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7121&main=1&id_thes=1'>Physique</a></li>
+
+<div class='clear'></div>
+</ul>
+</div>
+<div class='category' >
+<h2><img src='./images/folder.gif'><a href='./index.php?&lvl=categ_see&id=7186&main=1&id_thes=1'>2- Sciences de la Terre et Agriculture</a></h2>
+<ul>
+<li><a href='./index.php?lvl=categ_see&id=7348&main=1&id_thes=1'>Agriculture</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7583&main=1&id_thes=1'>Astronomie</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7347&main=1&id_thes=1'>Géologie</a></li>
+
+<div class='clear'></div>
+</ul>
+</div>
+<div class='category' >
+<h2><img src='./images/folder.gif'><a href='./index.php?&lvl=categ_see&id=7200&main=1&id_thes=1'>3- Sciences de l'ingénieur</a></h2>
+<ul>
+<li><a href='./index.php?lvl=categ_see&id=7201&main=1&id_thes=1'>620 Ingénierie et activités connexes</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7206&main=1&id_thes=1'>621 Physique appliquée</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7225&main=1&id_thes=1'>624 Génie civil</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7229&main=1&id_thes=1'>627 Technique hydraulique</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7230&main=1&id_thes=1'>628 Techniques d'Hygiène du Milieu et Sanitaire Publique</a></li>
+...
+<div class='clear'></div>
+</ul>
+</div>
+</div><div class='row_categ'><div class='category' >
+<h2><img src='./images/folder.gif'><a href='./index.php?&lvl=categ_see&id=7252&main=1&id_thes=1'>4- Sciences Biologiques et Médicales</a></h2>
+<ul>
+<li><a href='./index.php?lvl=categ_see&id=7253&main=1&id_thes=1'>Biologie</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7254&main=1&id_thes=1'>Médecine</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7255&main=1&id_thes=1'>Pharmacie</a></li>
+
+<div class='clear'></div>
+</ul>
+</div>
+<div class='category' >
+<h2><img src='./images/folder.gif'><a href='./index.php?&lvl=categ_see&id=7248&main=1&id_thes=1'>5- Sciences Economique et Gestion des entreprises</a></h2>
+<ul>
+<li><a href='./index.php?lvl=categ_see&id=7249&main=1&id_thes=1'>Economie</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7250&main=1&id_thes=1'>Gestion des entreprises</a></li>
+
+<div class='clear'></div>
+</ul>
+</div>
+<div class='category' >
+<h2><img src='./images/folder.gif'><a href='./index.php?&lvl=categ_see&id=7354&main=1&id_thes=1'>6- Langues et Littératures</a></h2>
+<ul>
+<li><a href='./index.php?lvl=categ_see&id=7355&main=1&id_thes=1'>Langues</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7356&main=1&id_thes=1'>Littératures</a></li>
+
+<div class='clear'></div>
+</ul>
+</div>
+</div><div class='row_categ'><div class='category' >
+<h2><img src='./images/folder.gif'><a href='./index.php?&lvl=categ_see&id=7462&main=1&id_thes=1'>7- Sport</a></h2>
+<ul>
+<li><a href='./index.php?lvl=categ_see&id=7463&main=1&id_thes=1'>796 Jeux athlétiques, sports de plein air </a></li>
+<li><a href='./index.php?lvl=categ_see&id=7464&main=1&id_thes=1'>796.019 Psychologie du sport</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7465&main=1&id_thes=1'>796.069 7 Nutrition et santé dans le sport</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7466&main=1&id_thes=1'>796.3 Jeux de balle, ballon et boule</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7467&main=1&id_thes=1'>796.4 Athlétisme et gymnastique</a></li>
+...
+<div class='clear'></div>
+</ul>
+</div>
+<div class='category' >
+<h2><img src='./images/folder.gif'><a href='./index.php?&lvl=categ_see&id=7479&main=1&id_thes=1'>8- Sciences Humaines et Sécurité publique</a></h2>
+<ul>
+<li><a href='./index.php?lvl=categ_see&id=7483&main=1&id_thes=1'>Droit</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7486&main=1&id_thes=1'>Education</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7590&main=1&id_thes=1'>Généralités</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7482&main=1&id_thes=1'>Politique</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7480&main=1&id_thes=1'>Psychologie</a></li>
+...
+<div class='clear'></div>
+</ul>
+</div>
+<div class='category' >
+<h2><img src='./images/folder.gif'><a href='./index.php?&lvl=categ_see&id=7497&main=1&id_thes=1'>9- Histoire et Géographie</a></h2>
+<ul>
+<li><a href='./index.php?lvl=categ_see&id=7498&main=1&id_thes=1'>900 Histoire et géographie</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7500&main=1&id_thes=1'>Géographie</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7499&main=1&id_thes=1'>Histoire</a></li>
+
+<div class='clear'></div>
+</ul>
+</div>
+</div><div class='row_categ'><div class='category' >
+<h2><img src='./images/folder.gif'><a href='./index.php?&lvl=categ_see&id=7400&main=1&id_thes=1'>Articles Techniques de l'ingénieur</a></h2>
+<ul>
+<li><a href='./index.php?lvl=categ_see&id=7404&main=1&id_thes=1'>Automatique (Robotique)</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7405&main=1&id_thes=1'>Biomédical & Pharma</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7406&main=1&id_thes=1'>Construction et Travaux Publics</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7407&main=1&id_thes=1'>Electronique - Photonique</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7408&main=1&id_thes=1'>Energies</a></li>
+...
+<div class='clear'></div>
+</ul>
+</div>
+<div class='category' >
+<h2><img src='./images/folder.gif'><a href='./index.php?&lvl=categ_see&id=7575&main=1&id_thes=1'>Dictionnaires et Encyclopédies </a></h2>
+<ul>
+
+<div class='clear'></div>
+</ul>
+</div>
+<div class='category' >
+<h2><img src='./images/folder.gif'><a href='./index.php?&lvl=categ_see&id=7393&main=1&id_thes=1'>Livres Electronique(EBooks)</a></h2>
+<ul>
+<li><a href='./index.php?lvl=categ_see&id=7399&main=1&id_thes=1'>Apprentissage des Langues</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7401&main=1&id_thes=1'>Informatique</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7394&main=1&id_thes=1'>Ingénierie et Technologie</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7396&main=1&id_thes=1'>Littérature et Critique</a></li>
+<li><a href='./index.php?lvl=categ_see&id=7397&main=1&id_thes=1'>Mathématiques</a></li>
+...
+<div class='clear'></div>
+</ul>
+</div>
+</div><div class='row_categ'><div class='category' >
+<h2><img src='./images/folder.gif'><a href='./index.php?&lvl=categ_see&id=7571&main=1&id_thes=1'>Périodiques</a></h2>
+<ul>
+
+<div class='clear'></div>
+</ul>
+</div>
+<div class='category'>&nbsp;</div><div class='category'>&nbsp;</div></div><div class='div_clr'></div>
+</div>
+<div style='clear: both; visibility: hidden; display: none;' id='category_bloc_sep'>&nbsp;</div>
+</div>
+<div id="location"><h3><span>Vous n'avez pas d'idée pour chercher ? Entrez dans la bibliothèque...</span></h3><div id='location-container'><table align='center' width='100%'><tr><td align='center'>
+					<a href='./index.php?lvl=section_see&location=7&id=26'><img src='https://pmb.univ-batna2.dz/opac_css/images/Etagere 1.png' border='0' alt='1-Sciences Exactes et informatique ' title='1-Sciences Exactes et informatique '/></a>
+					<br /><a href='./index.php?lvl=section_see&location=7&id=26'><b>1-Sciences Exactes et informatique </b></a></td><td align='center'>
+					<a href='./index.php?lvl=section_see&location=7&id=29'><img src='https://pmb.univ-batna2.dz/opac_css/images/Etagere 1.png' border='0' alt='2-Sciences Agricoles et Sciences de la Terre' title='2-Sciences Agricoles et Sciences de la Terre'/></a>
+					<br /><a href='./index.php?lvl=section_see&location=7&id=29'><b>2-Sciences Agricoles et Sciences de la Terre</b></a></td><td align='center'>
+					<a href='./index.php?lvl=section_see&location=7&id=28'><img src='https://pmb.univ-batna2.dz/opac_css/images/Etagere 1.png' border='0' alt='3-Sciences de l'Ingénieur' title='3-Sciences de l'Ingénieur'/></a>
+					<br /><a href='./index.php?lvl=section_see&location=7&id=28'><b>3-Sciences de l'Ingénieur</b></a></td><td align='center'>
+					<a href='./index.php?lvl=section_see&location=7&id=24'><img src='https://pmb.univ-batna2.dz/opac_css/images/Etagere 1.png' border='0' alt='4-Sciences Biologiques et Médicales' title='4-Sciences Biologiques et Médicales'/></a>
+					<br /><a href='./index.php?lvl=section_see&location=7&id=24'><b>4-Sciences Biologiques et Médicales</b></a></td><td align='center'>
+					<a href='./index.php?lvl=section_see&location=7&id=31'><img src='https://pmb.univ-batna2.dz/opac_css/images/Etagere 1.png' border='0' alt='5-Sciences Economique et Gestion' title='5-Sciences Economique et Gestion'/></a>
+					<br /><a href='./index.php?lvl=section_see&location=7&id=31'><b>5-Sciences Economique et Gestion</b></a></td></tr><tr><td align='center'>
+					<a href='./index.php?lvl=section_see&location=7&id=27'><img src='https://pmb.univ-batna2.dz/opac_css/images/Etagere 1.png' border='0' alt='6-Langues et littératures' title='6-Langues et littératures'/></a>
+					<br /><a href='./index.php?lvl=section_see&location=7&id=27'><b>6-Langues et littératures</b></a></td><td align='center'>
+					<a href='./index.php?lvl=section_see&location=7&id=30'><img src='https://pmb.univ-batna2.dz/opac_css/images/Etagere 1.png' border='0' alt='7-Education Physique et Sportive' title='7-Education Physique et Sportive'/></a>
+					<br /><a href='./index.php?lvl=section_see&location=7&id=30'><b>7-Education Physique et Sportive</b></a></td><td align='center'>
+					<a href='./index.php?lvl=section_see&location=7&id=36'><img src='https://pmb.univ-batna2.dz/opac_css/images/Etagere 1.png' border='0' alt='8- Fonds Sciences Humaines et Sécurité publique' title='8- Fonds Sciences Humaines et Sécurité publique'/></a>
+					<br /><a href='./index.php?lvl=section_see&location=7&id=36'><b>8- Fonds Sciences Humaines et Sécurité publique</b></a></td><td align='center'>
+					<a href='./index.php?lvl=section_see&location=7&id=37'><img src='https://pmb.univ-batna2.dz/opac_css/images/Etagere 1.png' border='0' alt='9- Histoire et Géographie' title='9- Histoire et Géographie'/></a>
+					<br /><a href='./index.php?lvl=section_see&location=7&id=37'><b>9- Histoire et Géographie</b></a></td><td align='center'>
+					<a href='./index.php?lvl=section_see&location=7&id=38'><img src='https://pmb.univ-batna2.dz/opac_css/images/Etagere 1.png' border='0' alt='Dictionnaires et Encyclopédies' title='Dictionnaires et Encyclopédies'/></a>
+					<br /><a href='./index.php?lvl=section_see&location=7&id=38'><b>Dictionnaires et Encyclopédies</b></a></td></tr><tr><td align='center'>
+					<a href='./index.php?lvl=section_see&location=7&id=32'><img src='https://pmb.univ-batna2.dz/opac_css/images/EBook.png' border='0' alt='Livres Electronique' title='Livres Electronique'/></a>
+					<br /><a href='./index.php?lvl=section_see&location=7&id=32'><b>Livres Electronique</b></a></td><td align='center'>
+					<a href='./index.php?lvl=section_see&location=7&id=39'><img src='https://pmb.univ-batna2.dz/opac_css/images/Etagere 2.png' border='0' alt='Périodiques' title='Périodiques'/></a>
+					<br /><a href='./index.php?lvl=section_see&location=7&id=39'><b>Périodiques</b></a></td><td align='center'>
+					<a href='./index.php?lvl=section_see&location=7&id=33'><img src='https://pmb.univ-batna2.dz/opac_css/images/Tech_Ing.png' border='0' alt='Technique de l'ingénieur' title='Technique de l'ingénieur'/></a>
+					<br /><a href='./index.php?lvl=section_see&location=7&id=33'><b>Technique de l'ingénieur</b></a></td><td></td><td></td></tr></table></div></div>	
+		</div><!-- fin DIV main_hors_footer --><div id="footer">
+
+<span id="footer_rss">
+	
+</span>
+<span id="footer_link_sup">
+		 &nbsp;
+</span>
+
+<span id="footer_link_pmb">
+ &nbsp;
+		<a class="lien_pmb_footer" href="http://www.sigb.net" title="...une solution libre pour la médiathèque..." target='_blank'>pmb</a> 	
+</span>		
+		
+</div> 
+
+		</div><!-- /div id=main -->
+
+		<div id="intro">
+<div id="intro_bibli">
+			<h3>Bibliothèque Centrale</h3>
+			<div class="p1"><img src="https://pmb.univ-batna2.dz/opac_css/styles/genbib/images/BC1.jpg" />
+<img src="https://pmb.univ-batna2.dz/opac_css/styles/genbib/images/BC2.jpg" />
+<img src="https://pmb.univ-batna2.dz/opac_css/styles/genbib/images/BC3.jpg" /></div>
+			<div class="p2"></div>
+			</div>
+		</div><!-- /div id=intro -->		
+		<div id="bandeau"><div id='accessibility'>
+
+		<ul class='accessibility_font_size'>
+			<li class='accessibility_font_size_small'><a href='javascript:set_font_size(-1);' title='Réduire le texte'>A-</a></li>
+			<li class='accessibility_font_size_normal'><a href='javascript:set_font_size(0);' title='Réinitialiser le texte'>A</a></li>
+			<li class='accessibility_font_size_big'><a href='javascript:set_font_size(1);' title='Agrandir le texte'>A+</a></li>
+		</ul>
+		</div>
+<div id="accueil">
+
+<h3><span onclick='document.location="./index.php?"' style='cursor: pointer;'>Accueil</span></h3>
+<p class="centered"><a href='./index.php?'><img src='https://pmb.univ-batna2.dz/opac_css/images/site/logo_univ_batna2.png
+
+'  border='0' align='center'/></a></p>
+<div id='lang_select'><h3 ><span>Sélection de la langue</span></h3><span><form method="post" action="index.php" ><select name="lang_sel" onchange="this.form.submit();"><option value='fr_FR' selected>Français </option><option value='en_UK'>English (UK)</option></select></form></span></div>
+
+					</div><!-- fermeture #accueil -->
+<div id="connexion">
+
+			<h3 class="login_invite">Se connecter</h3><span id='login_form'><form action='empr.php' method='post' name='myform'>
+				<label>accéder à votre compte de lecteur</label><br />
+				<input type='text' name='login' class='login' size='14' placeholder='identifiant' ><br />
+				<input type='password' name='password' class='password' size='8' placeholder='Mot de passe' value=''/>
+				<input type='submit' name='ok' value='ok' class='bouton'></form><a  class='mdp_forgotten' href='./askmdp.php'>Mot de passe oublié ?</a></span>
+
+			</div><!-- fermeture #connexion -->
+<div id="adresse">
+
+		<h3>Adresse</h3>
+
+		<span>
+			Bibliothèque Centrale<br />
+			Université Batna 2<br />
+			05078 Route de Constantine N°53 Fesdis Batna <br />
+			Algérie &nbsp;<br />
+			02 43 440 660<br /></span>
+	    </div><!-- fermeture #adresse --></div><div id="bandeau_2"></div></div><!-- /div id=container -->
+		
+		<script type='text/javascript'>init_drag();	//rechercher!!</script> 
+		
+		</body>
+		</html>
+		

@@ -1,0 +1,3109 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: opac-auth.tt -->
+
+
+
+
+
+
+
+
+
+<html lang="en" class="no-js">
+<head>
+
+<title
+    >Log in to your account &rsaquo; Adamson University Library catalog</title
+>
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha" />
+<!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="csrf-token" content="c8c6113d0aeafd621841a7dbdf1aac35c3fe2f01,e296f6c5c230f087383ace3cb2d66c53cf3213b3,1794726185" />
+
+
+<link rel="shortcut icon" href="/cgi-bin/koha/opac-retrieve-file.pl?id=a3e358ee7bda08d94c71f52055e85e4b" type="image/x-icon" />
+<link rel="apple-touch-icon" href="/cgi-bin/koha/opac-retrieve-file.pl?id=a3e358ee7bda08d94c71f52055e85e4b" type="image/x-icon" />
+
+    
+        
+    
+
+
+    <link type="text/css" rel="stylesheet" href="/opac-tmpl/bootstrap/css/opac_25.1108000.css">
+
+
+
+
+    <link href="/opac-tmpl/bootstrap/css/print_25.1108000.css" media="print" rel="stylesheet" type="text/css">
+
+
+    <!-- prettier-ignore-start -->
+    <style>#wrapper {
+    overflow: hidden;
+    width: 100%;
+    margin: auto;
+    padding: 0;
+}
+
+.btn-primary {
+    background-color: #003169;
+    color: #fff;
+}
+
+.main {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.container-fluid{
+	padding-left: 0px;
+    padding-right: 0px;
+}
+
+@media only screen and (max-width: 767px){
+#wrapper {
+    padding: 0;
+ }
+  
+ 
+#searchform {
+    max-width: inherit;
+    width: 90%;
+    margin: 0 auto;
+    padding: 10px;
+}
+}
+
+@media only screen and (max-width: 992px){
+#searchform {
+    max-width: inherit;
+    width: 90%;
+    margin: 0 auto;
+    padding: 10px;
+}
+}
+
+
+
+@media only screen and (min-width: 608px) and (max-width: 767px){
+#wrapper {
+    padding: 0;
+}
+}
+
+
+#opac-main-search {
+    margin: 0;
+    padding: 0px;
+    height: 50px;
+        background-color: #024691;
+    background-size: cover;
+    background-position: bottom;
+}
+
+@media (min-width: 992px){
+#searchform {
+    padding: 0.5rem 2.5rem;
+    width: 85vw;
+    margin: 0 auto;
+}
+}
+
+
+#moresearches {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    width: 100%;
+    margin: 0;
+    padding: 1rem;
+    font-family: 'Noto Sans',sans-serif;
+    font-weight: inherit;
+    height: 50px;
+    background-color: #024691;
+    background-size: cover;
+    background-position: bottom;
+    border-bottom: #003169 thin;
+}
+
+
+#header-region nav.navbar.navbar-expand .fa.fa-icon-black, .fa.fa-icon-white {
+    color: #ffc107;
+}
+
+
+#header-region .navbar-nav>li>a {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.fa-trash:before {
+    content: "\f1f8";
+    color: red;
+}
+
+#moresearches a {
+    color: #fff;
+}
+
+#header-region .container-fluid {
+    padding-right: 0px;
+    padding-left: 0px;
+}
+
+
+/* NAVBAR */
+
+
+
+
+.section-project {
+  position: relative;
+}
+
+.section__title, .section__subtitle {
+  text-align: center;
+  color: white;
+  display: block;
+}
+
+.section__title {
+  font-size: 3em;
+  line-height: 1;
+  margin: 0 0 20px;
+}
+
+.section__subtitle {
+  font-size: 1.2em;
+  line-height: 1.5;
+  opacity: 0.5;
+}
+.section__subtitle a {
+  color: inherit;
+}
+
+.project-carousel {
+  position: relative;
+}
+
+.project-strip {
+    margin: 20px 0 20px;
+    filter: blur(10px);
+}
+.project-strip .project {
+  cursor: pointer;
+}
+.project-strip img {
+  max-width: 100%;
+  width: 100%;
+  height: auto;
+}
+
+.slick-slide img {
+    height: 55vh;
+    display: block;
+}
+
+.project-screen {
+	width: 36vw;
+    height: 55vh;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+
+.project-screen .project-detail {
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 90%;
+  margin: 0px auto 0;
+  z-index: 1;
+  background-color: #333;
+}
+
+
+.project-screen .project-detail .slick-slide img {
+    width: 36vw;
+}
+
+.project-screen .screen-frame {
+  content: " ";
+  width: 768px;
+  height: 451px;
+  position: absolute;
+  background-image: url("https://dl.dropboxusercontent.com/u/26808427/cdn/experiments/training/macbook-frame.png");
+  background-repeat: no-repeat;
+}
+.project-screen .project {
+  margin-right: -100%;
+  float: left;
+  cursor: move;
+}
+
+section#Second {
+    border: 4px solid black;
+    border-radius: 26px;
+    padding: 20px;
+    margin: 13px;
+}
+
+section#Second {
+        box-shadow: 2px 2px 5px #222 inset, 2px 2px 5px #222;
+}
+
+.Hline {
+    text-align: center;
+    background: linear-gradient(to right, #024691, #155398);
+    padding: 6px;
+    width: 46%;
+    margin: 0 auto;
+    z-index: 9;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    margin-bottom: 30px;
+    margin-top: -48px;
+}
+
+.Hline h1 {
+  font-weight: 800;
+  font-family: Arial;
+  font-size: 32px;
+}
+
+.Hline2 {
+    text-align: center;
+    background: linear-gradient(to right, #0080c9, #3c9dd5);
+    padding: 6px;
+    /* width: 25%; */
+    margin: 0 auto;
+    z-index: 9;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 1.2);
+    margin-top: 20px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.Hline2 h1 {
+  font-weight: 800;
+  font-family: Arial;
+  font-size: 32px;
+  white-space: nowrap;
+  animation: marquee 12s linear infinite;
+}
+
+.Hline2 h2 {
+  color: #000000;
+  font-family: Arial;
+  font-weight: 200;
+}
+
+@media only screen and (max-width: 1550px){
+ .Hline h1 {
+   font-size: 32px;
+  }
+ .Hline2 h1 {
+   font-size: 32px;
+  }
+ .Hline {
+   width: 40%;
+  }
+}
+
+@media only screen and (max-width: 1000px){
+ .Hline h1 {
+   font-size: 29px;
+  }
+  .Hline2 h1 {
+   font-size: 29px;
+  }
+ .Hline {
+    width: 50%;
+    padding: 1px;
+    margin-top: -40px;
+  }
+}
+
+@media only screen and (max-width: 750px){
+ .Hline h1 {
+   font-size: 22px;
+  }
+  .Hline2 h1 {
+   font-size: 22px;
+  }
+ .Hline {
+    width: 50%;
+    padding: 1px;
+    margin-top: -40px;
+  }
+   .Hline2 {
+    padding: 1px;
+  }
+}
+
+@media only screen and (max-width: 600px){
+   .Hline h1 {
+   font-size: 14px;
+   margin-top: 5px;
+}
+   .Hline2 h1 {
+   font-size: 14px;
+   margin-top: 5px;
+  }
+  section#Second {
+    border: 1px solid black;
+    border-radius: 26px;
+    padding: 20px;
+    margin: 13px;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-top: 3vh;
+}
+  .slideshow-container {
+    margin-top: -20px;
+}
+}
+
+        @keyframes marquee {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+
+nav.navbar.navbar-expand {
+    background: #003169;
+    border-bottom: #cdcecf solid thin;
+}
+
+#header-region nav.navbar.navbar-expand .fa.fa-icon-black, .fa.fa-icon-white {
+    color: #fff;
+}
+
+
+#header-region .container-fluid {
+    padding-right: 0px;
+    padding-left: 0px;
+}
+
+
+/* NAVBAR */
+/*--------------NEW NAVBAR --------------*/ 
+:root {
+  box-sizing: border-box;
+  primary: #245eaf;
+  hover-color: #7bc0da;
+  dark: #245eaff3;
+  light: #ffcc18;
+  header-bg: var(--primary);
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+.dropdown-menu.show {
+    z-index: 99999;
+}
+
+.navbar1 {
+    display: flex;
+    justify-content: center;
+    align-items: inherit;
+    height: 50px;
+    background-color: #024691;
+    background-size: cover;
+    background-position: bottom;
+}
+
+.menu {
+  display: flex;
+  flex-direction: row;
+  z-index: 100;
+}
+
+.menu li {
+  list-style: none;
+}
+
+.menu li a {
+    display: block;
+    text-decoration: none;
+    color: #ffffff;
+    padding: 1em 1.3em;
+    font-size: 97%;
+    text-align: left;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 2.2);
+}
+
+/* Styling submenu */
+.has-dropdown {
+  position: relative;
+}
+
+.submenu {
+    position: absolute;
+    left: 0;
+    background-color: #003169;
+    white-space: nowrap;
+    padding: 0.1em 0;
+    min-width: 10em;
+    opacity: 0;
+    transform: scaleY(0);
+  	z-index: 99999;
+}
+
+.submenu > li > a {
+  padding: 0.5em 1.5em;
+  z-index: 99999;
+}
+
+.submenu .submenu {
+  left: 100%;
+  top: -65%;
+}
+
+.submenu .submenu .submenu {
+  left: 100%;
+  top: 0;
+}
+
+.menu > li:hover > a,
+.submenu > li:hover > a {
+  background-color: hsla(0, 0%, 100%, 0.05);
+  color: #fff;
+}
+
+.menu > li:hover > a {
+  background-color: #10366b;
+}
+
+/* Arrows */
+.menu .arrow {
+  width: 0.5em;
+  height: 0.5em;
+  display: inline-block;
+  vertical-align: middle;
+  border-left: 0.15em solid currentColor;
+  border-bottom: 0.15em solid currentColor;
+  transform: rotate(-45deg);
+  margin-top: -0.25em;
+  transition: transform 100ms ease-in-out;
+  margin-left: 7px;
+}
+
+/* Reveal */
+.menu > li:hover > a + .submenu,
+.submenu > li:hover > a + .submenu {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+/* ANIMATE ARROWS */
+.menu > li:hover > a > .arrow,
+.submenu > li:hover > a > .arrow {
+  transform: rotate(225deg);
+}
+
+@media only screen and (max-width: 78.75em) {
+  .submenu .submenu .submenu {
+    left: 100%;
+    top: 0.5em;
+  }
+  .submenu {
+    min-width: 16em;
+  }
+}
+
+@media only screen and (max-width: 58.75em) {
+  .menu li a {
+    font-size: 1rem;
+  }
+}
+
+@media only screen and (max-width: 50em) {
+  .navbar1 {
+    padding: 1em 1.5em;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  .menu {
+    flex-flow: column;
+    position: absolute;
+    background: var(--light);
+    top: 4.55em;
+    left: 0;
+    right: 0;
+    height: 100vh;
+    opacity: 0;
+    transform: scaleY(0);
+    transform-origin: top center;
+    transition: 200ms transform cubic-bezier(0.36, 0.4, 0.42, 1.48) 100ms, 100ms opacity ease-in-out;
+    overflow-y: scroll;
+  }
+  .menu > li > a {
+    font-size: 1rem;
+    color: var(--dark);
+    text-shadow: 0 0 black;
+  }
+  .submenu > li > a {
+    font-size: 1rem;
+  }
+  .submenu {
+    top: 0;
+    padding-left: 0.5em;
+    border-left: 0.12em dotted hsla(0, 0%, 100%, 0.95);
+  }
+  .submenu .submenu {
+    left: 0;
+    top: -100%;
+  }
+  .submenu .submenu .submenu {
+    left: 100%;
+    top: 0;
+  }
+  .menu > li:hover > a + .submenu,
+  .submenu > li:hover > a + .submenu { position: relative; } .hamburger { width: 2em; height: 0.25em; display: block; background: var(--light); position: relative; cursor: pointer; transition: 0.2s transform ease-in-out; } .hamburger::after, .hamburger::before { content: ""; position: absolute; left: 0; background: inherit; width: inherit; height: inherit; transition: 0.2s transform ease-in-out; } .hamburger::after { top: 0.65em; } .hamburger::before { bottom: 0.65em; } .close::after, .close::before { top: 0; transition: 0.2s transform ease-in-out; } .close::before { display: none; } .close { transform: rotate(45deg); transition: 0.2s transform ease-in-out; } .close::after { transform: rotate(-90deg); } 
+  
+  /* reveal menu */ 
+  input[type="checkbox"]:checked + .menu { position: absolute; opacity: 1; transform: scaleY(1); } } 
+
+
+/*--------------------END OF NAVBAR ----------------*/ 
+
+/*START FOOTER STYLES*/
+	#ADUfooter-wrapper {
+		background-color: #0080c9;
+		width: 100%;
+		position: static;
+		bottom: 0px;
+		
+		margin:auto;
+		margin-top: 30px;
+		
+		
+	}
+#ADUfooter-links {
+    background-color: #0080c9;
+    margin: auto;
+    font-size: 14px;
+    color: #FFF;
+    min-height: 130px;
+}
+			
+			
+		#copyright {
+			height: 50px;
+			background-color: #014590;
+			color:#FFF;
+			font-size: 12px;
+		}
+			#copyright a {
+				color:#FFF;
+				font-size: 12px;
+			}
+	
+#copyright #copyright-span {
+    margin: 10px;
+    padding-top: 15px;
+    display: flex;
+    justify-content: center;
+}
+			#copyright #copyright-span li {
+				display:inline-block;
+				
+			}
+
+/*END FOOTER STYLES*/
+
+body { font-family: sans-serif; }
+
+#carousel_imgsize img{
+  width: 100px;
+  height: 150px;
+ border:2px solid #fff;
+  box-shadow: 5px 5px 1px #87CEEB;
+}
+.scene {
+
+  margin:80px;
+  position: relative;
+  width: 210px;
+  height: 140px;
+  margin: 50px;
+  perspective: 900px;
+}
+
+.carousel {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  transform: translateZ(-288px);
+  transform-style: preserve-3d;
+  transition: transform 1s;
+ 
+}
+
+.carousel figure {
+  transform-origin: 50% 50%;
+}
+
+.carousel__cell {
+  position: absolute;
+  width: 180px;
+  height: 100px;
+  left: 10px;
+  top: 10px;
+ 
+  line-height: 116px;
+  font-size: 80px;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+}
+
+
+
+
+
+.carousel__cell:nth-child(9n+1) { background: hsla(  0);}
+.carousel__cell:nth-child(9n+2) { background: hsla(  40,0,0,1); }
+.carousel__cell:nth-child(9n+3) { background: hsla(  80); } 
+.carousel__cell:nth-child(9n+4) { background: hsla(  120); }  
+.carousel__cell:nth-child(9n+5) { background: hsla(  160); }
+.carousel__cell:nth-child(9n+6) { background: hsla(  200); }
+.carousel__cell:nth-child(9n+7) { background: hsla(  240); }
+.carousel__cell:nth-child(9n+8) { background: hsla(  280); }
+.carousel__cell:nth-child(9n+0) { background: hsla(  320); }
+
+.carousel__cell:nth-child(1) { transform: rotateY(  0deg) translateZ(288px); }
+.carousel__cell:nth-child(2) { transform: rotateY( 40deg) translateZ(288px); }
+.carousel__cell:nth-child(3) { transform: rotateY( 80deg) translateZ(288px); }
+.carousel__cell:nth-child(4) { transform: rotateY(120deg) translateZ(288px); }
+.carousel__cell:nth-child(5) { transform: rotateY(160deg) translateZ(288px); }
+.carousel__cell:nth-child(6) { transform: rotateY(200deg) translateZ(288px); }
+.carousel__cell:nth-child(7) { transform: rotateY(240deg) translateZ(288px); }
+.carousel__cell:nth-child(8) { transform: rotateY(280deg) translateZ(288px); }
+.carousel__cell:nth-child(9) { transform: rotateY(320deg) translateZ(288px); }
+
+/* LEFT NAVIGATION */
+
+h1#eResourcesFont {
+    font-family: NotoSans;
+    font-size: 1.2em;
+    text-align: center;
+    color: #edf0ed;
+    margin-bottom: 0;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.eResources {
+    background-color: #024691;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/*Left Image Text ---------------*/
+
+.classleft {
+    border: 1px solid #1c479a;
+    background-color: #FFFFFF;
+    transition: 0.5s;
+    display: block;
+    margin: -1px 0;
+    border-radius: 5px;
+    margin-top: 5px;
+    padding: 2px;
+}
+
+.classleft:hover {
+  z-index: 1;
+  transform: scale(.85);
+  box-shadow: 0 25px 40px rgba(0, 0, 0, .5);
+}
+
+div#navcontainer ul {
+    margin-top: 5px;
+}
+
+#quickLinks{
+   list-style: none;
+}
+#quickLinks li{
+   padding: 5px;
+}
+
+
+
+/* Footer */
+
+.ADUFooter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.FooterLogo img {
+    width: 6vw;
+    margin-bottom: 1vh;
+}
+
+.FooterName h1 {
+    color: white;
+}
+
+h2.fSub {
+    color: white;
+    font-size: 1em;
+}
+
+.FotterSub a {
+    color: white;
+    font-style: italic;
+}
+
+/* Footer */
+
+@media only screen and (max-width: 1850px){
+.project-screen .project-detail .slick-slide img {
+    width: 36vw;
+}
+.project-screen {
+    height: 50vh;
+}
+  
+.slick-slide img {
+    height: 50vh;
+}
+}
+
+@media only screen and (max-width: 1700px){
+.project-screen .project-detail .slick-slide img {
+    width: 36vw;
+}
+.project-screen {
+    height: 40vh;
+}
+.slick-slide img {
+    height: 40vh;
+  }
+}
+
+@media only screen and (max-width: 1550px){
+.project-screen .project-detail .slick-slide img {
+    width: 36vw;
+}
+.project-screen {
+    height: 36vh;
+}
+.slick-slide img {
+    height: 36vh;
+  }
+.Hline h1 {
+    font-size: 29px;
+}
+.Hline {
+    width: 60%;
+  }
+}
+
+@media only screen and (max-width: 1300px){
+.project-screen {
+    height: 30vh;
+}
+.slick-slide img {
+    height: 30vh;
+  }
+.Hline h1 {
+    font-size: 29px;
+}
+.Hline {
+    width: 60%;
+  }
+    .menu li a {
+    padding: 0.9em 1em;
+}
+}
+
+@media only screen and (max-width: 900px){
+.project-screen .project-detail .slick-slide img {
+    width: 46vw;
+}
+.project-screen {
+    height: 27vh;
+    width: 46vw;
+}
+.slick-slide img {
+    height: 27vh;
+  }
+.Hline h1 {
+    font-size: 24px;
+}
+.Hline {
+    width: 60%;
+  }
+}
+
+@media only screen and (max-width: 650px){
+.project-screen .project-detail .slick-slide img {
+    width: 46vw;
+}
+.project-screen {
+    height: 21vh;
+    width: 46vw;
+}
+.slick-slide img {
+    height: 21vh;
+  }
+.Hline h1 {
+    font-size: 20px;
+}
+.Hline {
+    width: 60%;
+  }
+  #moresearches {
+  height: 27vh
+  }
+}
+
+
+.ADUlogo{
+ text-align: center;
+}
+
+.ADUlogo img{
+ width: 10vw;
+}
+
+/*GALLERY*/
+.containerG {
+  position: relative;
+  padding: 10px 0;
+  margin: 0 auto;
+  width: 100%;
+  max-height: 70vh;
+  overflow: hidden;
+   transition: opacity 2s ease;
+}
+
+.gallery-wrap {
+  display: none;
+  flex-direction: row;
+  width: 100%;
+  height: 46vh;
+   transition: opacity 2s ease;
+}
+
+.gallery-wrap .item {
+  flex: 1;
+  height: 100%;
+  background-position: center;
+  background-size: cover;
+  background-repeat: none;
+  transition: flex 0.8s ease;
+
+  &:hover {
+    flex: 7;
+  }
+}
+
+.gallery-wrap .item-1 {
+  background-image: url('https://images.unsplash.com/photo-1499198116522-4a6235013d63?auto=format&fit=crop&w=1233&q=80');
+}
+
+.gallery-wrap .item-2 {
+  background-image: url('https://images.unsplash.com/photo-1492760864391-753aaae87234?auto=format&fit=crop&w=1336&q=80');
+}
+
+.gallery-wrap .item-3 {
+  background-image: url('https://images.unsplash.com/photo-1503631285924-e1544dce8b28?auto=format&fit=crop&w=1234&q=80');
+}
+
+.gallery-wrap .item-4 {
+  background-image: url('https://images.unsplash.com/photo-1510425463958-dcced28da480?auto=format&fit=crop&w=1352&q=80');
+}
+
+.gallery-wrap .item-5 {
+  background-image: url('https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=1234&q=80');
+}
+
+.default-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+   transition: opacity 2s ease;
+      border-radius: 10px;
+}
+
+.containerG:hover .default-image {
+  opacity: 0;
+}
+
+.containerG:hover .gallery-wrap {
+  display: flex;
+}
+
+img.gallery {
+    width: 100%;
+}
+
+.no-image {
+    display: none;
+}
+
+a#library_page {
+    display: none;
+}
+
+#moresearches li:after {
+    content: " ";
+}
+
+@media only screen and (max-width: 600px){
+   .Hline h1 {
+   font-size: 14px;
+   margin-top: 5px;
+}
+   .Hline2 h1 {
+   font-size: 14px;
+   margin-top: 5px;
+  }
+  section#Second {
+    border: 1px solid black;
+    border-radius: 26px;
+    padding: 20px;
+    margin: 13px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+  .slideshow-container {
+    margin-top: -20px;
+}
+}
+
+        @keyframes marquee {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+/* New CAROUSEL */ 
+.mySlides { display: none } img { vertical-align: middle; } .slideshow-container { max-width: 100%; position: relative; margin: auto; } 
+
+/* Next & previous buttons */ .prev, .next { cursor: pointer; position: absolute; top: 50%; width: auto; padding: 16px; margin-top: -22px; color: #242c6a; font-weight: bold; font-size: 18px; transition: 0.6s ease; border-radius: 0 3px 3px 0; user-select: none; } 
+
+/* Position the "next button" to the right */ 
+
+.next { right: 0; border-radius: 3px 0 0 3px; } 
+
+/* On hover, add a black background color with a little bit see-through */ 
+.prev:hover, .next:hover { background-color: rgba(0, 0, 0, 0.8); } 
+
+/* Caption text */ 
+.text { color: #ffffff; font-size: 15px; padding: 8px 12px; position: absolute; bottom: 8px; width: 100%; text-align: center; } 
+
+/* Number text (1/3 etc) */ 
+.numbertext { color: #ffffff; font-size: 12px; padding: 8px 12px; position: absolute; top: 0; } 
+
+/* The dots/bullets/indicators */ 
+.dot { 
+  cursor: pointer; 
+  height: 15px; 
+  width: 15px; 
+  margin: 0 2px; 
+  background-color: #242c6a; 
+  border-radius: 50%; 
+  display: inline-block; 
+  transition: background-color 1s ease; 
+} 
+/* ------------- tinatamaan ung ibang css
+
+The dots/bullets/indicators
+.active, .dot:hover { 
+  background-color: #242c6a; 
+} 
+
+ -----------------------------*/ 
+
+/* Fading animation */ 
+.fade { -webkit-animation-name: fade; -webkit-animation-duration: 5s; animation-name: fade; animation-duration: 5s; } @-webkit-keyframes fade { from { opacity: .4 } to { opacity: 1 } } @keyframes fade { from { opacity: 1 } to { opacity: 1 } } 
+
+/* On smaller screens, decrease text size */
+@media only screen and (max-width: 300px) { .prev, .next, .text { font-size: 11px } } 
+
+/* END OF CAROUSEL */
+
+.default-image img {
+	width: 100%;
+  height: 46vh;
+}
+
+.ContainerSwap {
+	height: 46vh;
+}
+
+/* Fading animation */ 
+.fade { -webkit-animation-name: fade; -webkit-animation-duration: 5s; animation-name: fade; animation-duration: 5s; } @-webkit-keyframes fade { from { opacity: .4 } to { opacity: 1 } } @keyframes fade { from { opacity: 1 } to { opacity: 1 } } 
+
+/* On smaller screens, decrease text size */
+@media only screen and (max-width: 300px) { .prev, .next, .text { font-size: 11px } } 
+
+/* END OF CAROUSEL */
+
+.default-image img {
+	width: 100%;
+  height: 46vh;
+}
+
+.ContainerSwap {
+	height: 46vh;
+}
+
+.AnimationBG {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+}
+
+.AnimationBG {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fcf9fc;
+}
+
+.AnimationBG p {
+    position: relative;
+    font-family: "Dancing Script", cursive;
+    font-optical-sizing: auto;
+    font-weight: bolder;
+    font-style: normal;
+    font-size: 3.8em;
+    letter-spacing: 4px;
+    overflow: hidden;
+    background: linear-gradient(90deg, #fff, #014590, #fff);
+    background-repeat: no-repeat;
+    background-size: 80%;
+    animation: animate 5s linear infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: rgba(255, 255, 255, 0);
+    margin-bottom: 0;
+}
+
+@keyframes animate {
+  0% {
+    background-position: -500%;
+  }
+  100% {
+    background-position: 500%;
+  }
+}
+
+footer.ADUFooterM {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Footerleft {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    text-align: right;
+    width: 25%;
+}
+
+.Footerright {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    text-align: left;
+    width: 25%;
+}
+
+.Footerright a{
+	color: white;
+}
+
+.Footerright a:hover{
+	text-decoration: none;
+    font-weight: bold;
+}
+
+p.copyright-text {
+    color: white;
+    margin: 0;
+    font-size: .8em;
+    text-align: center;
+    font-weight: 100;
+    letter-spacing: 1px;
+}
+
+.socialmediaLinks .fab {
+    padding: 7px;
+    font-size: 1.5em;
+    text-align: center;
+    text-decoration: none;
+    margin: 4px 2px;
+}
+
+.socialmediaLinks .fab:hover{
+	transform: scale(1.1);
+}
+
+    .fa-facebook {
+      background: #3B5998;
+      color: white;
+      border-radius: 5px;
+      transition: transform 0.3s ease;
+    }
+      
+     .fa-instagram {
+      background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
+      color: white;
+      border-radius: 5px;
+      transition: transform 0.3s ease;
+    }
+
+@media only screen and (max-width: 970px) {
+  footer.ADUFooterM {
+    flex-direction: column;
+}
+  .Footerleft {
+    text-align: center;
+    width: 100%;
+}
+  .ADUFooter {
+    align-items: center;
+    width: 100%;
+}
+  .Footerright {
+    text-align: center;
+    width: 100%;
+}
+}
+  
+  /* Footer */
+
+.ADUFooter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 40%;
+}
+
+.FooterLogo img {
+    width: 6vw;
+    margin-bottom: 1vh;
+}
+
+.FooterName h1, .Footerright h1, .Footerleft h1 {
+    color: white;
+}
+
+
+h2.fSub {
+    color: white;
+    font-size: .9em;
+    font-weight: 100;
+}
+
+
+.FotterSub a {
+    color: white;
+    font-style: italic;
+}
+
+/* Footer */
+
+/* OpacLoginInstruction */
+
+.opac-login-instructions h2{
+  color: #014590;
+}</style>
+    <!-- prettier-ignore-end -->
+
+
+
+
+    <link rel="search" type="application/opensearchdescription+xml" href="https://libwebopac.adamson.edu.ph/cgi-bin/koha/opac-search.pl?format=opensearchdescription" title="Search Adamson University Library" />
+    <link rel="unapi-server" type="application/xml" title="unAPI" href="https://libwebopac.adamson.edu.ph/cgi-bin/koha/unapi" />
+
+
+<script>
+    var Koha = {};
+    function _(s) { return s } // dummy function for gettext
+    const is_logged_in = false
+</script>
+
+<script src="/opac-tmpl/bootstrap/js/Gettext_25.1108000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/i18n_25.1108000.js"></script>
+
+<link type="text/css" rel="stylesheet" href="/opac-tmpl/lib/fontawesome/css/fontawesome.min_25.1108000.css">
+<link href="/opac-tmpl/lib/fontawesome/css/brands.min_25.1108000.css" type="text/css" rel="stylesheet">
+<link href="/opac-tmpl/lib/fontawesome/css/solid.min_25.1108000.css" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link id='flipster-css' href='/api/v1/contrib/coverflow/static/jquery-flipster/jquery.flipster.min.css' type='text/css' rel='stylesheet' />
+<style>
+    /* CSS for Koha CoverFlow Plugin 
+       This CSS was added automatically by installing the CoverFlow plugin
+       Please do not modify */
+    .coverflow {
+        height:160px;
+        margin-left:25px;
+        width:850px;
+    }
+
+    .coverflow img,.coverflow .item {
+        -moz-border-radius:10px;
+        -moz-box-shadow:0 5px 5px #777;
+        -o-border-radius:10px;
+        -webkit-border-radius:10px;
+        -webkit-box-shadow:0 5px 5px #777;
+        border-radius:10px;
+        box-shadow:0 5px 5px #777;
+        height:100%;
+        width:100%;
+    }
+
+    .itemTitle {
+        padding-top:30px;
+    }
+
+    .coverflow .selectedItem {
+        -moz-box-shadow:0 4px 10px #0071BC;
+        -webkit-box-shadow:0 4px 10px #0071BC;
+        border:1px solid #0071BC;
+        box-shadow:0 4px 10px #0071BC;
+    }
+    /* End of CSS for Koha CoverFlow Plugin */
+</style>
+    
+
+
+</head>
+
+
+
+
+    
+
+
+    
+
+
+
+
+    
+
+<body ID="opac-login-page" class="branch-default scrollto" >
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<button id="scrolltocontent">Skip to main content</button>
+<!-- prettier-ignore-start -->
+<!-- closed in opac-bottom.inc -->
+<div id="wrapper">
+<!-- prettier-ignore-end -->
+<header id="header-region" class="noprint">
+    <nav class="navbar navbar-expand">
+        <div id="logo">
+            <a class="navbar-brand" href="/cgi-bin/koha/opac-main.pl">
+                
+                    Adamson University Library
+                
+            </a>
+        </div>
+        
+        
+            
+            
+            <ul id="members" class="navbar-nav">
+                <li class="nav-item dropdown dropdown-menu-end">
+                    
+                        
+                            
+                                <a href="/cgi-bin/koha/opac-user.pl" class="nav-link login-link loginModal-trigger" aria-label="Log in to your account"
+                                    ><i class="fa fa-user fa-fw fa-icon-black fa-fw" aria-hidden="true"></i> <span class="userlabel">Log in to your account</span></a
+                                >
+                            
+                        
+                    
+
+                    
+                </li>
+                <!-- Cookie consent button for non logged-in users -->
+                
+                    <li role="presentation" style="display:none" id="cookieConsentDivider" class="divider-vertical" aria-hidden="true"></li>
+                    <li style="display:none" id="cookieConsentLi" class="nav-item" aria-hidden="true">
+                        <a id="cookieConsentButton" href="#" name="Your cookies" class="nav-link" title="View and amend cookies you have consented to" role="button">
+                            <i class="fa fa-cookie-bite fa-fw fa-icon-black" aria-hidden="true"></i>
+                            <span class="cookieconsentlabel">Your cookies</span>
+                        </a>
+                    </li>
+                
+                
+            </ul>
+        
+    </nav>
+    <!-- /navbar -->
+
+    
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col"> 
+    
+        <div id="opacheader">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><div class="banner"><a href="/cgi-bin/koha/opac-main.pl"> <img src="/cgi-bin/koha/opac-retrieve-file.pl?id=2a6639f5b82a62c574e7e3c42d950867" width="100%" alt="banner" /></a></div>
+<nav class="navbar1"><label for="input-hamburger" class="hamburger "></label> <input type="checkbox" id="input-hamburger" hidden="" />
+<ul class="menu">
+<li><a href="/cgi-bin/koha/opac-main.pl" class="menu-link">Home</a></li>
+<li><a href="https://www.adamson.edu.ph/" class="menu-link">AdU Website</a></li>
+<li class="has-dropdown"><a class="menu-link">About us<span class="arrow"></span></a>
+<ul class="submenu">
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=12" class="menu-link">Vision, Mission &amp; Objectives</a></li>
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=13" class="menu-link">Brief History</a></li>
+<li><a href="#" class="menu-link">Archives &amp; Museum</a></li>
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=14" class="menu-link">Organizational Chart</a></li>
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=35" class="menu-link">Facilities &amp; Sections</a></li>
+<li class="has-dropdown"><a class="menu-link">LRC Guides<span class="arrow"></span></a>
+<ul class="submenu">
+<li><a href="/cgi-bin/koha/opac-retrieve-file.pl?id=ab192ec592d3590e7e9a29b632130d67" class="menu-link">E-Resources How - To's</a></li>
+<li><a href="#" class="menu-link">Citation Management</a></li>
+<li><a href="#" class="menu-link">Reference Management Tools</a></li>
+</ul>
+</li>
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=11" class="menu-link">LRC Hours</a></li>
+<li class="has-dropdown"><a class="menu-link">LRC Programs<span class="arrow"></span></a>
+<ul class="submenu">
+<li><a href="#" class="menu-link">Community Outreach</a></li>
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=52" class="menu-link">Public Programs</a></li>
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=53" class="menu-link">Information Literacy/LRC Instructions</a></li>
+</ul>
+</li>
+<li class="has-dropdown"><a class="menu-link">Networking &amp; Linkages<span class="arrow"></span></a>
+<ul class="submenu">
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=54" class="menu-link">SMEC</a></li>
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=55" class="menu-link">CELPH</a></li>
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=56" class="menu-link">OTHERS</a></li>
+</ul>
+</li>
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=32" class="menu-link">FAQs</a></li>
+</ul>
+</li>
+<li class="has-dropdown"><a class="menu-link">LRC Policies<span class="arrow"></span></a>
+<ul class="submenu">
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=18" class="menu-link">General Guidelines</a></li>
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=58" class="menu-link">General Guidelines on Thesis/Dissertation/Research Submission</a></li>
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=19" class="menu-link">Archives &amp; Museum</a></li>
+</ul>
+</li>
+<li class="has-dropdown"><a class="menu-link">LRC Services<span class="arrow"></span></a>
+<ul class="submenu">
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=20" class="menu-link">Bibliographic Services</a></li>
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=21" class="menu-link">Circulation Service</a></li>
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=22" class="menu-link">Current Awareness Service</a></li>
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=23" class="menu-link">E-Resources Assistance</a></li>
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=24" class="menu-link">Instructional Media Services</a></li>
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=25" class="menu-link">Internet</a></li>
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=26" class="menu-link">LRC Instruction Program (User Education)</a></li>
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=27" class="menu-link">Reference Service (Information Service)</a></li>
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=28" class="menu-link">Refferal and Interlibrary Loan</a></li>
+<li><a href="#" class="menu-link">Technical Services</a></li>
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=29" class="menu-link">Turnitin Assistance</a></li>
+</ul>
+</li>
+<li class="has-dropdown"><a class="menu-link">LRC Resources<span class="arrow"></span></a>
+<ul class="submenu">
+<li class="has-dropdown"><a class="menu-link">Databases<span class="arrow"></span></a>
+<ul class="submenu">
+<li><a href="https://go.openathens.net/redirector/adamson.edu.ph?url=https%3A%2F%2Fwww.bloomsburyvisualarts.com%2Fbloomsbury-architecture-library" class="menu-link">Bloomsbury Architecture Library</a></li>
+<li><a href="https://go.openathens.net/redirector/adamson.edu.ph?url=https%3A%2F%2Fovidsp.ovid.com%2F" class="menu-link">Ovid Nursing Edge</a></li>
+<li><a href="https://go.openathens.net/redirector/adamson.edu.ph?url=https%3A%2F%2Fstatista.com" class="menu-link">STATISTA</a></li>
+</ul>
+</li>
+<li class="has-dropdown"><a class="menu-link">E-Journals<span class="arrow"></span></a>
+<ul class="submenu">
+<li><a href="https://go.openathens.net/redirector/adamson.edu.ph?url=https%3A%2F%2Faccesspharmacy.mhmedical.com%2F" class="menu-link">Access Pharmacy</a></li>
+<li><a href="https://go.openathens.net/redirector/adamson.edu.ph?url=https%3A%2F%2Fsearch.ebscohost.com%2Fwebauth%2FCommunity.aspx%3Fcode%3DSTvwOo3Lb97u%26ref%3Dhttps%253a%252f%252flibwebopac.adamson.edu.ph%252f%26ugt%3D723731763C2635773726351632953E9220E363D36313639365E327E334133603%26authtype%3Dshibboleth%26stsug%3DAggXGgXEkDXzdcpNwsb5CWfjqRn2J_GQac-24Fuwr7i2otoDr7oY79ih5cCXMcLr0YlbQcM3XofdNtpKKquipS6uH_Hc9kQGst9U9kZP4yhuniRfb5rIpZ4143GQyAekjFyTl0KTRj3TYQ62OQ1RSGmJpYcI7MM6hQEABbHNmMiYRBg%26IsAdminMobile%3DN%26encid%3D320771C67CC675C777C675C672C57CC730133303336333433573%26selectServicesToken%3DAwgXKeAx-TTd5Sb8SLLhNBFQSSL69oZUAAamCYetdf16d4HkMI5xd7olF_4uwah75vrrGAvuwL8AfWXMYJ6R0KO4etiPYiByyr9GRcqGiaqXw-0HCL1TcIwDjtTkyAkDrnKh8il8-Kh5K-GCRmPoxGpDkie6m_A90bgitxRKlgq5t3V6aZuQvq8npj6kqGhH14rtu2b3Zfkp4J61nAf0-AacVlsoHUV5ts5UW0PrjxyIlcyok2JzICSMF8C--a0jCWzRC6GA-UVc81HmzCukZ2B5nRuIruUA8zeIVwsiBOg" class="menu-link">EBSCOhost</a></li>
+<li><a href="https://go.openathens.net/redirector/adamson.edu.ph?url=https%3A%2F%2Fieeexplore.ieee.org%2FXplore%2Fhome.jsp" class="menu-link">IEEE Xplore Digital Library</a></li>
+<li><a href="https://go.openathens.net/redirector/adamson.edu.ph?url=https%3A%2F%2Fpubs.nctm.org%2Fview%2Fjournals%2Fjrme%2Fjrme-overview.xml%3Ftab_body%3DAbout" class="menu-link">National Council of Teachers of Mathematics (1)</a></li>
+<li><a href="https://go.openathens.net/redirector/adamson.edu.ph?url=https%3A%2F%2Facademic.oup.com%2Fccc%2Fissue%3Flogin%3Dtrue" class="menu-link">Oxford University Press Academic Resources (1)</a></li>
+<li><a href="https://go.openathens.net/redirector/adamson.edu.ph?url=https%3A%2F%2Fjournals.sagepub.com%2Floi%2Fjmc" class="menu-link">SAGE Journals (1)</a></li>
+<li><a href="https://go.openathens.net/redirector/adamson.edu.ph?url=https%3A%2F%2Fwww.sciencedirect.com%2F" class="menu-link">Science Direct</a></li>
+<li><a href="https://go.openathens.net/redirector/adamson.edu.ph?url=https%3A%2F%2Fwww.proquest.com%2F%3Faccountid%3D133797" class="menu-link">ProQuest Central Premium</a></li>
+</ul>
+</li>
+<li class="has-dropdown"><a class="menu-link">E-Books<span class="arrow"></span></a>
+<ul class="submenu">
+<li><a href="https://www.adamson.edu.ph/v1/?page=library-ebsco-gobi" class="menu-link">Ebsco-Gobi Ebooks</a></li>
+<li><a href="https://go.openathens.net/redirector/adamson.edu.ph?url=https%3A%2F%2Fwww.icevirtuallibrary.com%2F" class="menu-link">Ice Virtual Library</a></li>
+<li><a href="https://go.openathens.net/redirector/adamson.edu.ph?url=https%3A%2F%2Fportal.igpublish.com%2Figlibrary%2F" class="menu-link">iG Library</a></li>
+<li><a href="https://ebookcentral.proquest.com/lib/adamson/detail.action?docID=6170189" class="menu-link">Proquest Ebook Central</a></li>
+<li><a href="https://link.gale.com/apps/menu?userGroupName=adamson&amp;prodId=MENU" class="menu-link">Gale Virtual Reference Library</a></li>
+<li><a href="https://go.openathens.net/redirector/adamson.edu.ph?url=https%3A%2F%2Fwww.sciencedirect.com%2F" class="menu-link">Science Direct</a></li>
+<li><a href="https://go.openathens.net/redirector/adamson.edu.ph?url=https%3A%2F%2Fwww.taylorfrancis.com%2F" class="menu-link">Taylor Francis</a></li>
+<li><a href="https://www.megatextsphils.store/landingpages/smec/" class="menu-link">Wiley Online -SMEC</a></li>
+<li><a href="https://www.megatextsphils.store/landingpages/celph/" class="menu-link">Wiley Online -CELPH</a></li>
+<li><a href="https://www.partridgepublishing.com/en-sg/redeem" class="menu-link">Partridge Publishing</a></li>
+<li><a href="https://www.adamson.edu.ph/v1/images/library/esource/2021BookTamingTheBigGreenElephant.pdf" class="menu-link">Taming the Big Green Elephant</a></li>
+<li><a href="https://encleare.com/" class="menu-link">Encleare</a></li>
+<li><a href="https://www.accessengineeringlibrary.com/?implicit-login=true" class="menu-link">Access Engineering Library</a></li>
+<li><a href="https://paarl.odilo.us/" class="menu-link">ODILO</a></li>
+<li><a href="https://proxy.openathens.net/login?qurl=https%3A%2F%2Ftdmebooks.com" class="menu-link">Tritech Digital Media</a></li>
+</ul>
+</li>
+<li class="has-dropdown"><a class="menu-link">Open Educational Resources (OER)<span class="arrow"></span></a>
+<ul class="submenu">
+<li><a href="http://abc-chemistry.org/" class="menu-link">ABC Chemistry</a></li>
+<li><a href="https://www.biomedcentral.com/" class="menu-link">BioMED Central</a></li>
+<li><a href="https://chanrobles.com/" class="menu-link">Chan Robles Virtual Law Library</a></li>
+<li><a href="https://www.concreteconstruction.net/" class="menu-link">Concrete Construction</a></li>
+<li><a href="https://www.herdin.ph/" class="menu-link">HERDIN NeON</a></li>
+<li><a href="https://www.hindawi.com/" class="menu-link">Hindawi</a></li>
+<li><a href="https://lawphil.net/" class="menu-link">The LAWPhil Project</a></li>
+<li><a href="https://www.mdpi.com/" class="menu-link">MPDI Open Access</a></li>
+<li><a href="https://direct.mit.edu/action/showPublications" class="menu-link">The MIT Press Journals</a></li>
+<li><a href="https://www.nist.gov/srd" class="menu-link">NIST Data Gateway</a></li>
+<li><a href="https://www.elib.gov.ph/" class="menu-link">Philippine E-lib</a></li>
+<li><a href="http://www.philjol.info/philjol/index.php" class="menu-link">Philippine Journals Online</a></li>
+<li><a href="https://www.starbooks.ph/" class="menu-link">Starbooks</a></li>
+</ul>
+</li>
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=31" class="menu-link">Webliographies</a></li>
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=64" class="menu-link">Journal Finders</a></li>
+</ul>
+</li>
+<li><a href="https://www.facebook.com/leandromontanana.library" class="menu-link">Like us on Facebook</a></li>
+<li><a href="/cgi-bin/koha/opac-page.pl?page_id=30" class="menu-link">Contact Us</a></li>
+<li><a href="https://forms.office.com/Pages/ResponsePage.aspx?id=Bhtzb50I80a3prEasvR-TK8UNYrrHoFDhTiY1ZRID4RUMUpLQTNXSlFDMjNRSk9MWEJLQUVOSjdOSS4u" class="menu-link">Rate Us</a></li>
+</ul>
+</nav></div>
+                </div>
+            
+        </div>
+    
+ </div>
+            </div>
+        </div>
+    
+</header>
+<!-- / header-region -->
+
+
+
+
+    <!-- Login form hidden by default, used for modal window -->
+    <div id="loginModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title" id="modalLoginLabel">Log in to your account</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="modalAuth">
+                    <input type="hidden" name="csrf_token" value="c8c6113d0aeafd621841a7dbdf1aac35c3fe2f01,e296f6c5c230f087383ace3cb2d66c53cf3213b3,1794726185" />
+
+                    <input type="hidden" name="has-search-query" id="has-search-query" value="" />
+                    <div class="modal-body">
+                        
+                        
+                        
+                            
+                            
+                            <input type="hidden" name="koha_login_context" value="opac" />
+                            <fieldset class="brief">
+                                <div class="local-login">
+                                    
+    <label for="muserid">Card number or username:</label>
+<input type="text" id="muserid" name="login_userid" autocomplete="off" /> <label for="mpassword">Password:</label
+                                    ><input type="password" id="mpassword" name="login_password" autocomplete="off" />
+                                    <fieldset class="action">
+                                        <input type="hidden" name="login_op" value="cud-login" />
+                                        <input type="submit" class="btn btn-primary" value="Log in" />
+                                    </fieldset>
+                                </div>
+                                
+                                    <div id="nologininstructions-modal" class="nologininstructions"> 
+    
+        <div id="OpacLoginInstructions">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><div class="opac-login-instructions">
+<h2>Welcome to the AdU Learning Resource Commons Online Public Access Catalog (OPAC)</h2>
+<p>Please use the default credentials below to log in as a guest:</p>
+<div class="guest-credentials">
+<p><strong>Username:</strong> AdULibguest</p>
+<p><strong>Password:</strong> Libguest2026</p>
+</div>
+<p>Students, administrators, faculty, and employees are kindly advised to use the login details sent to their official AdU email accounts.</p>
+</div></div>
+                </div>
+            
+        </div>
+    
+ </div>
+                                
+                                
+                                    <div id="forgotpassword-modal" class="forgotpassword">
+                                        <p><a href="/cgi-bin/koha/opac-password-recovery.pl">Forgot your password?</a></p>
+                                    </div>
+                                
+                                
+                            </fieldset>
+                        
+                    </div>
+                </form>
+                <!-- /#auth -->
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /#modalAuth  -->
+
+
+
+
+
+<main class="main">
+    
+    <nav id="breadcrumbs" aria-label="Breadcrumb" class="breadcrumbs">
+        <ol class="breadcrumb">
+            
+            
+                
+    
+        <li class="breadcrumb-item"> 
+                    <a href="/cgi-bin/koha/opac-main.pl" title="Home">Home</a>
+                 </li>
+    
+
+                <li class="breadcrumb-item active">
+            <a aria-current="page" aria-disabled="true" tabindex="-1"> 
+            
+                <span>Log in to your account</span>
+            
+         </a>
+        </li>
+            
+        </ol>
+    </nav>
+
+
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-6">
+                <div id="opac-auth" class="maincontent">
+                    <!--CONTENT-->
+                    
+                        
+
+                        
+                            <!-- login prompt time-->
+                            <h1>Log in to your account</h1>
+
+                            
+
+                            
+
+                            
+
+                            
+
+                            
+
+                            
+                                
+
+                                
+                                
+
+                                
+                            
+
+                            
+
+                            
+                                
+                                
+                                <form action="/cgi-bin/koha/errors/404.pl" name="auth" id="auth" method="post" autocomplete="off">
+                                    <input type="hidden" name="csrf_token" value="c8c6113d0aeafd621841a7dbdf1aac35c3fe2f01,e296f6c5c230f087383ace3cb2d66c53cf3213b3,1794726185" />
+
+                                    <input type="hidden" name="login_op" value="cud-login" />
+                                    <input type="hidden" name="koha_login_context" value="opac" />
+
+                                    <div class="local-login">
+                                        <fieldset class="brief">
+                                            
+                                            <div class="form-group">
+                                                
+    <label for="userid">Card number or username:</label>
+
+                                                <input class="form-control" type="text" size="25" id="userid" name="login_userid" autocomplete="off" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="password">Password:</label>
+                                                <input class="form-control" type="password" size="25" id="password" name="login_password" autocomplete="off" />
+                                            </div>
+                                            <fieldset class="action">
+                                                <input type="submit" value="Log in" class="btn btn-primary" />
+                                            </fieldset>
+                                        </fieldset>
+                                    </div>
+
+                                    <div id="nologininstructions">
+                                        
+                                            
+    
+        <div id="OpacLoginInstructions">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><div class="opac-login-instructions">
+<h2>Welcome to the AdU Learning Resource Commons Online Public Access Catalog (OPAC)</h2>
+<p>Please use the default credentials below to log in as a guest:</p>
+<div class="guest-credentials">
+<p><strong>Username:</strong> AdULibguest</p>
+<p><strong>Password:</strong> Libguest2026</p>
+</div>
+<p>Students, administrators, faculty, and employees are kindly advised to use the login details sent to their official AdU email accounts.</p>
+</div></div>
+                </div>
+            
+        </div>
+    
+
+                                        
+                                    </div>
+                                    
+                                        <div id="forgotpassword">
+                                            <p><a href="/cgi-bin/koha/opac-password-recovery.pl">Forgot your password?</a></p>
+                                        </div>
+                                    
+                                    
+                                </form>
+                            
+                        
+                    
+                </div>
+                <!-- /.opac-auth -->
+            </div>
+            <!-- /.col-md-10 col-lg-6 -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+</main>
+<!-- / .main -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col"> 
+    
+        <div id="opaccredits">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/67a2c562825083258e101f28/1ij9t626d';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script--></div>
+                </div>
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><!-- Matomo -->
+<script>
+  var _paq = window._paq = window._paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//piwik.onstrike.com.ph/";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '48']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<!-- End Matomo Code --></div>
+                </div>
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" /><link href="https://fonts.googleapis.com" rel="preconnect" /><link href="https://fonts.gstatic.com" rel="preconnect" /><link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&amp;family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&amp;display=swap" rel="stylesheet" />
+<div class="AnimationBG">
+<p>Exploring Knowledge Beyond Boundaries</p>
+</div>
+<div id="ADUfooter-wrapper"><footer class="ADUFooterM">
+<div class="Footerleft">
+<h1>LEARNING RESOURCE COMMONS</h1>
+<h2 class="fSub">tel: +63-2-8524-2011 loc. 131, 242</h2>
+<h2 class="fSub">tel: +63-2-8524-8038</h2>
+<h2 class="fSub"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="48292c3d24212a3a293a3108292c29253b2726662d2c3d663820">[email&#160;protected]</a></h2>
+<div class="socialmediaLinks"><a href="#"><i class="fab fa-instagram"></i></a><a href="https://www.facebook.com/adamsonlrc"><i class="fab fa-facebook"></i></a></div>
+</div>
+<footer class="ADUFooter">
+<div class="FooterName">
+<div class="ADUlogo"><img src="/cgi-bin/koha/opac-retrieve-file.pl?id=dcf668a3532a365ac0cb0c537b586bc0" /></div>
+<h1>ADAMSON UNIVERSITY</h1>
+</div>
+<footer class="ADUFooter">
+<div class="FotterSub">
+<h2 class="fSub">900 San Marcelino St. Ermita, Manila 1000</h2>
+</div>
+</footer><footer class="ADUFooter">
+<div class="FotterSub">
+<h2 class="fSub"><a href="https://onstrike.com.ph/" target="_blank" rel="noopener">Onstrike Library Solutions</a> | Powered by <a href="http://koha-community.org/">Koha</a></h2>
+<p class="copyright-text">Copyright &copy; 2024</p>
+</div>
+</footer></footer>
+<div class="Footerright"><a href="/cgi-bin/koha/opac-main.pl">Home</a> <a href="/cgi-bin/koha/opac-main.pl">About Us</a> <a href="/cgi-bin/koha/opac-main.pl">News</a> <a href="/cgi-bin/koha/opac-retrieve-file.pl?id=6afbef9bfe9e83332a76c58fafb328d5">Privacy Notice</a> <a href="https://forms.office.com/Pages/ResponsePage.aspx?id=Bhtzb50I80a3prEasvR-TK8UNYrrHoFDhTiY1ZRID4RUMUpLQTNXSlFDMjNRSk9MWEJLQUVOSjdOSS4u">Feedback</a></div>
+</footer>
+<div id="copyright">
+<ul id="copyright-span">
+<li></li>
+<li style="margin-left: 32%;"></li>
+</ul>
+</div>
+</div></div>
+                </div>
+            
+        </div>
+    
+ </div>
+            </div>
+        </div>
+    
+    <!-- prettier-ignore-start -->
+    </div> <!-- / #wrapper in masthead.inc -->
+    <!-- prettier-ignore-end -->
+
+    
+
+
+
+
+<!-- CookieConsentedJS code that may run -->
+
+
+<!-- JavaScript includes -->
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="/opac-tmpl/lib/jquery/jquery-3.6.0.min_25.1108000.js"></script>
+<script src="/opac-tmpl/lib/jquery/jquery-migrate-3.3.2.min_25.1108000.js"></script>
+<script src="/opac-tmpl/lib/bootstrap/js/bootstrap.bundle.min_25.1108000.js"></script>
+<script src="/opac-tmpl/lib/fontfaceobserver/fontfaceobserver.min_25.1108000.js"></script>
+<script src="/opac-tmpl/lib/enquire/enquire.min_25.1108000.js"></script>
+<script>
+    let logged_in_user_id = "";
+</script>
+<script src="/opac-tmpl/bootstrap/js/global_25.1108000.js"></script>
+<script type="module" src="/opac-tmpl/bootstrap/js/form-submit_25.1108000.js"></script>
+
+<script>
+    
+
+    
+    $(".print-large").on("click",function(){
+        window.print();
+        return false;
+    });
+    $(".addtoshelf").on("click",function(e){
+        e.preventDefault();
+        Dopop( this.href );
+    });
+    $("body").on("click", ".addtocart", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        addRecord( biblionumber );
+    });
+    $("body").on("click", ".cartRemove", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        delSingleRecord( biblionumber );
+    });
+</script>
+
+    <script src="/opac-tmpl/bootstrap/js/basket_25.1108000.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/opac-tmpl/lib/js-cookie/js.cookie-3.0.1.min_25.1108000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/show-password-toggle_25.1108000.js"></script>
+<script>
+    $(document).ready(function () {
+        if ($("#searchsubmit").length) {
+            $(document).on("click", "#searchsubmit", function (e) {
+                Cookies.remove("form_serialized", { path: "/" });
+                Cookies.remove("form_serialized_limits", { path: "/" });
+                Cookies.remove("search_path_code", { path: "/" });
+            });
+        }
+    });
+</script>
+
+
+
+
+<script src="/opac-tmpl/lib/dayjs/dayjs.min_25.1108000.js"></script>
+<script src="/opac-tmpl/lib/dayjs/plugin/timezone_25.1108000.js"></script>
+<script src="/opac-tmpl/lib/dayjs/plugin/utc_25.1108000.js"></script>
+<script>
+    dayjs.extend(window.dayjs_plugin_utc);
+    dayjs.extend(window.dayjs_plugin_timezone);
+</script>
+<!-- js-date-format.inc -->
+<script>
+    (function() {
+        var def_date_format = 'us';
+        var def_time_format = '24hr';
+        var def_tz = 'Asia/Manila';
+
+        var get_date_pattern = function(format) {
+            var date_pattern = 'YYYY-MM-DD';
+            if(format == 'us') date_pattern = 'MM/DD/YYYY';
+            if(format == 'metric') date_pattern = 'DD/MM/YYYY';
+            if(format == 'dmydot') date_pattern = 'DD.MM.YYYY';
+            return date_pattern;
+        };
+
+        var get_time_pattern = function(format) {
+            var time_pattern = 'HH:mm';
+            if(format == '12hr') time_pattern = 'hh:mm a';
+            return time_pattern;
+        };
+
+        /*
+         * A JS equivalent of the KohaDates TT Plugin. Passed an rfc3339 formatted date string,
+         * or JS Date, the function will return a date string formatted as per the koha instance config.
+         * Optionally accepts a dateformat parameter to allow override of the configured output format
+         * as well as a 'withtime' boolean denoting whether to include time or not in the output string.
+         */
+        window.$date = function(value, options) {
+            if(!value) return '';
+            var tz = (options&&options.tz)||def_tz;
+            var m = dayjs(value);
+            if ( ! value.match(/^\d{4}-\d{2}-\d{2}$/ ) ) {
+                m = m.tz(tz);
+            }
+
+            var dateformat = (options&&options.dateformat)||def_date_format;
+            var withtime = (options&&options.withtime)||false;
+
+            if(dateformat=='rfc3339' && withtime) return m.format();
+
+            var timeformat = (options&&options.timeformat)||def_time_format;
+            var date_pattern = get_date_pattern(dateformat);
+            var time_pattern = !withtime?'':' '+get_time_pattern(timeformat);
+
+            return m.format(date_pattern+time_pattern);
+        }
+
+        window.$datetime = function(value, options) {
+            options = options||{};
+            options.withtime = true;
+            return $date(value, options);
+        };
+
+        window.$time = function(value, options) {
+            if(!value) return '';
+            var tz = (options&&options.tz)||def_tz;
+            var m = dayjs(value);
+            if(tz) m = m.tz(tz);
+
+            var dateformat = (options&&options.dateformat);
+            var timeformat = (dateformat=='rfc3339'&&'24hr')||(options&&options.timeformat)||def_time_format;
+
+            return m.format(get_time_pattern(timeformat)+(dateformat=='rfc3339'?':ss'+(!m.isUTC()?'Z':''):''))+(dateformat=='rfc3339' && m.isUTC()?'Z':'');
+        }
+
+    })();
+</script>
+<!-- / js-date-format.inc -->
+
+
+<script>
+    (function () {
+        /**
+         * Format the biblio response from a Koha RESTful API request.
+         * @param  {Object}  biblio  The biblio json object as returned from the Koha RESTful API
+         * @param  {Object}  config  A configuration object
+         *                           Valid keys are: `link`
+         * @return {string}          The formatted HTML string
+         */
+        window.$biblio_to_html = function (biblio, config) {
+            if (biblio === undefined) {
+                return ""; // empty string for no biblio
+            }
+
+            var title = '<span class="biblio-title">';
+            if (biblio.title != null && biblio.title != "") {
+                title += escape_str(biblio.title);
+            } else {
+                title += _("No title");
+            }
+            title += "</span>";
+
+            // add subtitle
+            if (biblio.subtitle != null && biblio.subtitle != "") {
+                title += ' <span class="biblio-subtitle">' + escape_str(biblio.subtitle) + "</span>";
+            }
+
+            // set title as link
+            if (config && config.link) {
+                if (config.link === "marcdetail") {
+                    title = '<a href="/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                } else if (config.link === "labeled_marc") {
+                    title = '<a href="/cgi-bin/koha/opac-labeledMARCdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                } else if (config.link === "isbd") {
+                    title = '<a href="/cgi-bin/koha/opac-ISBDdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                } else {
+                    title = '<a href="/cgi-bin/koha/opac-detail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                }
+            }
+
+            // add medium
+            if (biblio.medium != null && biblio.medium != "") {
+                title += ' <span class="biblio-medium">' + escape_str(biblio.medium) + "</span>";
+            }
+
+            // add part numbers/names
+            let part_numbers = typeof biblio.part_number === "string" ? biblio.part_number.split("|") : [];
+            let part_names = typeof biblio.part_name === "string" ? biblio.part_name.split("|") : [];
+            let i = 0;
+            while (part_numbers[i] || part_names[i]) {
+                if (part_numbers[i]) {
+                    title += ' <span class="part-number">' + escape_str(part_numbers[i]) + "</span>";
+                }
+                if (part_names[i]) {
+                    title += ' <span class="part-name">' + escape_str(part_names[i]) + "</span>";
+                }
+                i++;
+            }
+
+            return title;
+        };
+    })();
+</script>
+
+
+    <script>
+        // Hide circular 'Log in to Your Account' link in opac-auth.pl
+        $(document).ready(function () {
+            if ($("#auth")) {
+                $("#members ul li a").hide();
+            }
+        });
+    </script>
+
+
+    <script>
+        ////////  Ebook reader //////////
+
+$(document).ready(function () {
+
+    /** Set "Online resources: Loading..." so that when page loads, 
+     *  this text is what user will see in 856$u or Online resources **/
+    //IF SINGLE EBOOK USE THIS
+    let onlineResources = $(".online_resources");
+
+    console.info(onlineResources.length);
+
+    var settings = {
+        "url": "/cgi-bin/koha/logged-in-user.pl",
+        "method": "GET",
+        "timeout": 0
+    };
+
+    $.ajax(settings).done(function (response) {
+        var mygroup = 'PUB';
+        //var myResponse  = JSON.parse(response);
+        console.log('Settings Response');
+        var myResponse = JSON.parse(response);
+
+        if (myResponse.status) {
+            mygroup = myResponse.category_code;
+        }
+
+        var hasWelcome = $('.userlabel').html();
+        console.log("hasWelcome is: " + hasWelcome.indexOf('Welcome'));
+
+        showLogin = function () {
+            /** set class userlabel innerHTML to variable hasWelcome **/
+            var hasWelcome = $('.userlabel').html();
+
+            /** Since, we've set hasWelcome to innerHTML of .userlabel, that certainly has a value "Welcome, 
+             *  First Name Last Name. With indexOf, we are looking for the value "Welcome" in variable hasWelcome. **/
+            if (hasWelcome.indexOf('Welcome') >= 0) {
+                alert('You dont have access to this type of material, please email adulibrary@adamson.edu.ph to request access');
+            } else {
+                $('.userlabel').click();
+            }
+        };
+
+        if (onlineResources.length <= 1) {
+            console.log('Single Book');
+            $(".online_resources").html('Online Resources : Loading....');
+
+            /** Attribute data-biblionumber. Get the value of an attribute for the first element in the set 
+             *  of matched elements or set one or more attributes for every matched element (In this case 
+             *  "data-biblionumber"). And then this is set to variable biblioNum **/
+            var biblioNum = $("[data-biblionumber]").attr('data-biblionumber');
+
+            /** Get all following siblings of class "loggedinusername" but is set to index 1 (second element) **/
+            var loglibnode = $(".loggedinusername").nextAll().eq(1);
+            //alert (loglibnode);
+
+            /** Remove the white spaces at the start and at the end of the string of value loglibnode **/
+            var loglibtext = $.trim(loglibnode.text());
+            // console.log (loglibtext); Sa log sa taas, ito lumalabas:
+            // opac-detail.pl?biblionumber=biblionumber
+
+            /** Set settings values as key value array **/
+//            setTimeout(addRedirectURI, 2000);
+  //          function addRedirectURI() {
+  //              $("#modalAuth").prepend(`<input type="hidden" name="redirect_uri" id="redirect_uri" value="${window.location.href}">`);
+//            }
+
+            var form = new FormData();
+            form.append("group", btoa(mygroup));
+            form.append("biblioNum", btoa(biblioNum));
+            form.append("biblioNumMany", biblioNum);
+
+            var settings = {
+                "url": "/kohaimages/ADU/ebookreader/listebook.php",
+                "method": "POST",
+                "timeout": 0,
+                "processData": false,
+                "mimeType": "multipart/form-data",
+                "contentType": false,
+                "data": form
+            };
+
+            $.ajax(settings).done(function (bookResponse) {
+                console.info(response);
+                var myBooks = JSON.parse(bookResponse);
+
+                setTimeout(myFunction, 2000);
+                function myFunction() {
+                    if (parseInt(biblioNum) > 0) {
+                        $("#modalAuth").prepend('<input type="hidden" name="biblionumber" id="biblionumber" value="' + biblioNum + '">');
+                    }
+                }
+
+                $(".online_resources").html('Online Resources : <br /> <ul>');
+                myBooks.forEach(function (item, index) {
+                    if (item.login == 'true') {
+                        $(".online_resources").append(`<li><a onclick="showLogin()" > ${item.subfield[4] !== undefined ? item.subfield[4] : item.subfield[0]}</a><br /></li>`);
+                    } else {
+                        console.log('Start of Subfield');
+                        if (item.subfield[0] == '0') {
+                            $(".online_resources").append(`<li><a data="111111AAAA" href='${item.subfield[3]}' target='_blank'> ${item.subfield[4]}</a><br /></li>`);
+                        } else {
+                            $(".online_resources").append(`<li><a data="22222" href='${item.link}&ref=${window.location.href}&biblionumber=${biblioNum}&speech=${item.subfield[1]}'> ${item.subfield[4]}</a> <br /></li>`);
+                        }
+                        console.log(item.subfield[0]);
+                        console.log(item.subfield[1]);
+                        console.log(item.subfield[2]);
+                        console.log(item.subfield[3]);
+                    }
+                });
+                $(".online_resources").append('</ul>');
+            });
+
+        } else {
+            console.log('Multiple Book - opac-search.pl handling');
+
+            $(".results_summary.online_resources").each(function () {
+                const $container = $(this);
+                const $record = $container.closest(".title_summary");
+                const recordId = $record.attr("id"); // e.g., "title_summary_29564"
+
+                if (!recordId || !recordId.startsWith("title_summary_")) {
+                    console.warn("Could not find valid biblionumber from title_summary ID.");
+                    return;
+                }
+
+                const biblioNum = recordId.replace("title_summary_", "");
+                console.log('biblioNum (from search result):', biblioNum);
+
+                var form = new FormData();
+                form.append("group", btoa(mygroup));
+                form.append("biblioNumReal", biblioNum);
+                form.append("biblioNum", btoa(biblioNum));
+
+                var settings = {
+                    "url": "/kohaimages/ADU/ebookreader/listebook.php",
+                    "method": "POST",
+                    "timeout": 0,
+                    "processData": false,
+                    "mimeType": "multipart/form-data",
+                    "contentType": false,
+                    "data": form
+                };
+
+                $.ajax(settings).done(function (bookResponse) {
+                    let myBooks = [];
+
+                    try {
+                        myBooks = JSON.parse(bookResponse);
+                    } catch (e) {
+                        console.error('Error parsing bookResponse for biblioNum ' + biblioNum, bookResponse);
+                        return;
+                    }
+
+                    const $ul = $container.find("ul");
+                    $ul.empty();
+
+                    if (myBooks.length === 0) {
+                        $ul.append('<li><em>No online resources available.</em></li>');
+                        return;
+                    }
+
+                    myBooks.forEach(function (item) {
+                        if (item.login === 'true') {
+                            $ul.append(`<li><a onclick="showLogin()">${item.subfield[4] || item.subfield[0]}</a></li>`);
+                        } else {
+                            if (item.subfield[0] === '0') {
+                                $ul.append(`<li><a target="_blank" href="${item.subfield[3]}">${item.subfield[4]}</a></li>`);
+                            } else {
+                                $ul.append(`<li><a href="${item.link}&ref=${window.location.href}&biblionumber=${biblioNum}&speech=${item.subfield[1]}">${item.subfield[4]}</a></li>`);
+                            }
+                        }
+                    });
+                });
+            });
+        }
+
+    });
+
+    function fetchBook(biblioNum, myThis, form, myResponse, holder) {
+        var settings = {
+            "url": "/kohaimages/ADU/ebookreader/listebook.php",
+            "method": "POST",
+            "timeout": 0,
+            "processData": false,
+            "mimeType": "multipart/form-data",
+            "contentType": false,
+            "data": form
+        };
+
+        $.ajax(settings).done(function (bookResponse) {
+            var myBooks = JSON.parse(bookResponse);
+
+            let owner = $(myThis).parent().parent();
+            $(owner).html('');
+
+            myBooks.forEach(function (item, index) {
+                if (item.login == 'true') {
+                    $(owner).append(`<li style="display: contents;"><a onclick="showLogin()" > ${item.subfield[4] !== undefined ? item.subfield[4] : item.subfield[0]}</a></li>`);
+                } else {
+                    console.log('item length');
+                    console.info(item.subfield.length);
+
+                    if (item.subfield[0] == '0') {
+                        $(owner).append(`<li style='' data-test="1111111"><a target='_blank' href='${item.subfield[3]}&ref=${window.location.href}&biblionumber=${biblioNum}&speech=${item.subfield[1]}'> ${item.subfield[4]}</a></li>`);
+                    } else {
+                        $(owner).append(`<li data-test="222222"><a href='${item.link}&ref=${window.location.href}&biblionumber=${biblioNum}&speech=${item.subfield[1]}'> ${item.subfield[4]}</a></li>`);
+                    }
+                }
+            });
+        });
+    }
+
+});
+downloadMe = function (url, biblioNum, userId) {
+    $.post("/kohaimages/ADU/ebookreader/logDownload.php", {
+        biblioNum: btoa(biblioNum),
+        userId: btoa(userId),
+        url: url
+    }).done(function (data) {
+        console.log('Recorded');
+    });
+};
+
+/* setTimeout(redirectUser, 1000);
+
+function redirectUser() {
+    console.log("Redirect AAAAAA");
+
+    // Function to get the value of a specific query parameter
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        console.info(urlParams);
+        return urlParams.get(param);
+    }
+
+    // Check if the URL contains 'redirect_uri'
+    const redirectUri = getQueryParam('redirect_uri');
+
+    if (redirectUri) {
+        // Decode the URI and redirect the browser
+        console.log('Redirect User--------');
+        window.location.href = decodeURIComponent(redirectUri);
+    } else {
+        function getRedirectUri() {
+            // Get the current URL
+            const currentUrl = window.location.href;
+            console.log("currentUrl");
+            console.info(currentUrl);
+
+            // Find the position of 'redirect_uri=' in the URL
+            console.info(currentUrl.indexOf('redirect_uri='));
+            const redirectUriStart = currentUrl.indexOf('redirect_uri=');
+            console.log("redirectUriStart");
+            console.info(redirectUriStart);
+
+            // If 'redirect_uri=' is not found, return null
+            if (redirectUriStart === -1) {
+                return "nothing";
+            } else {
+                // Find the position of the next parameter or the end of the URL
+                const redirectUriEnd = currentUrl.indexOf(';', redirectUriStart);
+                const endPosition = redirectUriEnd === -1 ? currentUrl.length : redirectUriEnd;
+
+                // Extract the 'redirect_uri' value
+                const redirectUri = currentUrl.substring(redirectUriStart + 'redirect_uri='.length, endPosition);
+
+                // Decode the URI component
+                const decodedRedirectUri = decodeURIComponent(redirectUri);
+                console.log('may nakita');
+                return decodedRedirectUri;
+            }
+        }
+
+        // Usage
+        const redirectUriValue = getRedirectUri();
+        if (redirectUriValue != "nothing") {
+            console.log('Im here======');
+            console.info(decodeURIComponent(redirectUriValue));
+
+            setTimeout(gotoLink, 1000);
+            function gotoLink() {
+                // window.location.replace(decodeURIComponent(redirectUriValue));
+            }
+
+            window.location.href = decodeURIComponent(redirectUriValue);
+        }
+    }
+} **/
+
+// redirect fixes //
+
+/* ---------- Global error logging ---------- */
+window.addEventListener('error', function (e) {
+  console.error('Uncaught JS error:', e.message, 'at', e.filename + ':' + e.lineno, e);
+});
+window.addEventListener('unhandledrejection', function (e) {
+  console.error('Unhandled promise rejection:', e.reason);
+});
+
+/* ---------- Helper: determine unsafe redirect candidates ---------- */
+function isUnsafeRedirectCandidate(rawCandidate) {
+  if (!rawCandidate) return true; // treat empty as unsafe
+
+  // try to decode but be defensive
+  let decoded;
+  try { decoded = decodeURIComponent(rawCandidate); }
+  catch (e) { decoded = rawCandidate; }
+
+  const lc = decoded.toLowerCase();
+
+  // 1) Block any URL containing a logout token
+  // Matches: logout, logout.x, logout.x=1, opac-main.pl?logout.x=1 etc.
+  if (/\blogout(?:\.x)?\b/.test(lc)) {
+    // specifically block logout.x=1 or any 'logout' token
+    return true;
+  }
+
+  // 2) Block if has-search-query exists with an EMPTY value
+  // handle separators ? & ; or end-of-string
+  // Patterns to block: '?has-search-query=', '&has-search-query=', ';has-search-query='
+  // Also block if value is only whitespace
+  const hsqRegex = /(?:[?&;])has-search-query=([^&;]*)/i;
+  const hsqMatch = decoded.match(hsqRegex);
+  if (hsqMatch) {
+    const value = hsqMatch[1] === undefined ? '' : hsqMatch[1].trim();
+    if (value === '') {
+      return true; // empty -> unsafe
+    }
+    // if value not empty, still allow (you can tighten later)
+  }
+
+  // No unsafe patterns found -> safe
+  return false;
+}
+
+/* ---------- Sanitized addRedirectURI (store safe value only) ---------- */
+function addRedirectURI() {
+  try {
+    var $modal = $("#modalAuth");
+    if (!$modal.length) return;
+
+    var href = window.location.href;
+    if (!href) return;
+
+    // Avoid storing logout or empty has-search-query
+    if (isUnsafeRedirectCandidate(href)) {
+      console.warn('addRedirectURI: skipping unsafe redirect_uri:', href);
+      return;
+    }
+
+    // Build sanitized URL: remove known bad params if present, keep others
+    // Use URL if available (fallback to basic strip)
+    var cleanHref = href;
+    try {
+      var u = new URL(href);
+      // remove any 'redirect_uri' param just in case
+      if (u.searchParams.has('redirect_uri')) u.searchParams.delete('redirect_uri');
+      // remove has-search-query if it's empty (safety)
+      if (u.searchParams.has('has-search-query') && (u.searchParams.get('has-search-query') || '').trim() === '') {
+        u.searchParams.delete('has-search-query');
+      }
+      // remove logout param variants if present
+      if (u.searchParams.has('logout.x')) u.searchParams.delete('logout.x');
+      if (u.searchParams.has('logout')) u.searchParams.delete('logout');
+      cleanHref = u.origin + u.pathname + (u.search ? '?' + u.searchParams.toString() : '') + (u.hash ? u.hash : '');
+    } catch (e) {
+      // if URL parsing fails, fallback to the raw href but we already tested isUnsafeRedirectCandidate
+      cleanHref = href.split(';has-search-query=')[0]; // remove trailing semicolon segment containing has-search-query
+    }
+
+    // Ensure same-origin before injecting
+    try {
+      var check = new URL(cleanHref, window.location.href);
+      if (check.origin !== window.location.origin) {
+        console.warn('addRedirectURI: skipping cross-origin redirect_uri:', check.href);
+        return;
+      }
+      // add sanitized input
+      $modal.find("#redirect_uri").remove();
+      $modal.prepend('<input type="hidden" name="redirect_uri" id="redirect_uri" value="' + check.href + '">');
+      console.info('addRedirectURI: inserted sanitized redirect_uri:', check.href);
+    } catch (e) {
+      console.warn('addRedirectURI: invalid URL after sanitization, skipping', cleanHref);
+    }
+  } catch (e) {
+    console.error('addRedirectURI error', e);
+  }
+}
+
+/* schedule sanitized addRedirectURI as before */
+setTimeout(addRedirectURI, 2000);
+
+/* ---------- Safe redirect: use redirect_uri only when safe; otherwise go home ---------- */
+setTimeout(function () {
+  try {
+    // extract redirect_uri from query or semicolon-style param if present
+    function extractRawRedirectParam(name) {
+      const usp = new URLSearchParams(window.location.search);
+      if (usp.has(name)) return usp.get(name);
+      // fallback: raw text search for ;name= or name= in href
+      const href = window.location.href;
+      const idx = href.indexOf(name + '=');
+      if (idx === -1) return null;
+      const start = idx + name.length + 1;
+      const nextAmp = href.indexOf('&', start);
+      const nextSemi = href.indexOf(';', start);
+      let end = href.length;
+      if (nextAmp !== -1 && nextAmp < end) end = nextAmp;
+      if (nextSemi !== -1 && nextSemi < end) end = nextSemi;
+      return href.substring(start, end);
+    }
+
+    const raw = extractRawRedirectParam('redirect_uri');
+    // fallback homepage
+    const homepage = window.location.origin + '/'; // change path if you prefer OPAC home
+
+    if (!raw) {
+      return; // no redirect requested, do nothing
+    }
+
+    // if raw is unsafe, do not follow it
+    if (isUnsafeRedirectCandidate(raw)) {
+      console.warn('redirect blocked: redirect_uri is unsafe or contains logout/empty has-search-query.');
+      return;
+    }
+
+    // decode and build destination URL
+    let candidate = null;
+    try { candidate = decodeURIComponent(raw); } catch (e) { candidate = raw; }
+
+    try {
+      const dest = new URL(candidate, window.location.href);
+      // ensure same-origin
+      if (dest.origin !== window.location.origin) {
+        console.warn('Blocked cross-origin redirect:', dest.href);
+        return;
+      }
+      // final safety re-check: block if logout or empty has-search-query still present
+      if (isUnsafeRedirectCandidate(dest.href)) {
+        console.warn('Blocked redirect after parsing (unsafe):', dest.href);
+        return;
+      }
+      // safe: navigate using replace (no back entry)
+      window.location.replace(dest.href);
+    } catch (e) {
+      console.warn('Invalid redirect_uri candidate, aborting redirect:', candidate, e);
+    }
+  } catch (e) {
+    console.error('redirectUser error:', e);
+  }
+}, 1000);
+
+
+///Ebookreader END/////
+
+
+
+
+
+$("#login").hide();
+$("#breadcrumbs").hide();
+$("#koha_url").hide();
+
+
+
+
+
+ 
+
+$(document).ready(function() {
+    setTimeout(function() {
+        $('[id^=gbs-thumbnail] img').each(function() {
+            var correspondingAmazonId = $(this).closest('.coverimages').find('[id^=amazon-thumbnail]').attr('id');
+            $('#' + correspondingAmazonId).hide();
+        });
+    }, 1000);
+});
+
+
+
+function fadeIn(element) {
+    element.style.transition = 'opacity 1s cubic-bezier(0.47, 0, 0.745, 0.715)';
+    element.style.opacity = 1;
+}
+
+function fadeOut(element) {
+    element.style.transition = 'opacity 1s cubic-bezier(0.47, 0, 0.745, 0.715)';
+    element.style.opacity = 0;
+
+    // Ensure the display property is set to 'none' after the transition
+    element.addEventListener('transitionend', function onTransitionEnd() {
+        element.style.display = 'none';
+        element.style.transition = 'none'; // Reset transition properties
+        element.removeEventListener('transitionend', onTransitionEnd);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const defaultImage = document.querySelector('.default-image');
+    const gallery = document.querySelector('.gallery-wrap');
+
+    // Add mouseenter event listener to the default image
+    defaultImage.addEventListener('mouseenter', function () {
+        fadeOut(defaultImage);
+
+        // Use setTimeout to delay the display of the gallery
+        setTimeout(function () {
+            gallery.style.display = 'flex';
+            fadeIn(gallery);
+        }, 1000); // 1000 milliseconds delay, matching the fadeOut duration
+    });
+
+    // Add mouseleave event listener to the gallery
+    gallery.addEventListener('mouseleave', function () {
+        fadeOut(gallery);
+
+        // Use setTimeout to delay the display and fadeIn of the default image
+        setTimeout(function () {
+            defaultImage.style.display = 'block'; // Assuming the default display property is 'block'
+            fadeIn(defaultImage);
+        }, 1000); // 1000 milliseconds delay, matching the fadeOut duration
+    });
+});
+
+
+/*Main Full Screen*/  
+$(document).ready(function() {
+  var wrapper = document.getElementById('wrapper');
+
+  wrapper.style.paddingLeft = '0px';
+  wrapper.style.paddingRight = '0px';
+});
+
+$(document).ready(function() {
+  $("#notloggedin > div > div.col-12.col-lg-9.order-md-1.maincontent").attr('class', 'col-12 col-lg-18 order-md-1 maincontent');
+  
+  if (location.pathname.indexOf('koha/pages.pl') > -1) {
+    $("#notloggedin > div > div.col-12.col-lg-9.order-md-1.maincontent").attr('class', 'col-12 col-lg-18 order-md-1 maincontent');
+  }
+});
+
+
+
+//carousel
+//note, returned this, got this from DAP
+var slideIndex = 0;
+showSlides();
+function showSlides() {
+  var i;
+  var slides = document.getElementsByClassName("mySlides");
+  for(i = 0; i < slides.length; i++) {
+    slides[i].style.display = "none";
+  }
+  slideIndex++;
+  if(slideIndex > slides.length) {
+    slideIndex = 1;
+  }
+  slides[slideIndex - 1].style.display = "block";
+  var auto = setTimeout(showSlides, 5000); // Change image every 2 seconds
+}
+
+var slideIndex1 = 1;
+showSlides1(slideIndex1);
+function plusSlides(n) {
+  showSlides1(slideIndex1 += n);
+}
+function currentSlide(n) {
+  showSlides1(slideIndex1 = n);
+}
+function showSlides1(n) {
+  var i;
+  var slides1 = document.getElementsByClassName("mySlides");
+  var dots = document.getElementsByClassName("dot");
+  if(n > slides1.length) {
+    slideIndex1 = 1;
+  }
+  if(n < 1) {
+    slideIndex1 = slides1.length;
+  }
+  for(i = 0; i < slides1.length; i++) {
+    slides1[i].style.display = "none";
+  }
+  for(i = 0; i < dots.length; i++) {
+    dots[i].className = dots[i].className.replace(" active", "");
+  }
+  slides1[slideIndex1 - 1].style.display = "block";
+  dots[slideIndex1 - 1].className += " active";
+}
+
+$(document).ready(function() {
+    if ($('.google-books-image').length > 0) {
+        $('.amazon-image').hide();
+    }
+});
+
+
+
+    </script>
+
+
+
+
+
+
+        <script src="/api/v1/contrib/coverflow/static/jquery-flipster/jquery.flipster.min.js"></script>
+        <script>$(document).ready(function(){$('#coverflow').load("/api/v1/contrib/coverflow/reports/1",function(){$('.koha-coverflow img').on("load",function(){if(this.naturalHeight==1){$(this).attr("src","https://raw.githubusercontent.com/bywatersolutions/web-assets/master/NoImage.png");}});var opt={'items':'.item','minfactor':15,'distribution':1.5,'scalethreshold':0,'staticbelowthreshold':false,'titleclass':'itemTitle','selectedclass':'selectedItem','scrollactive':true,'step':{'limit':4,'width':10,'scale':true}};$('#coverflow').flipster({autoplay:'4000',buttons:'1',loop:'1',});});});
+</script>
+    
+</body>
+<!-- prettier-ignore-start -->
+</html>
+<!-- prettier-ignore-end -->
+
+

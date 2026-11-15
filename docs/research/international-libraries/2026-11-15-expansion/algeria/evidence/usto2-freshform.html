@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta http-equiv="Content-Security-Policy" content="">
+			<meta charset="utf-8">
+			<meta name="author" content="PMB Group">
+
+			<meta name="keywords" content="OPAC, web, library, opensource, catalog, catalogue, bibliothèque, médiathèque, pmb, phpmybibli">
+			<meta name="description" content="Catalogue en ligne BUC USTOMB'Doc."><meta name="robots" content="all">
+			
+			<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3">
+	<title>Catalogue en ligne BUC USTOMB'Doc</title>
+	
+	
+<link rel="stylesheet" type="text/css" href="./styles/common/ai_search.css?1738679468">
+<link rel="stylesheet" type="text/css" href="./styles/common/animation_display.css?1738679462">
+<link rel="stylesheet" type="text/css" href="./styles/common/common.css?1738679464">
+<link rel="stylesheet" type="text/css" href="./styles/common/contrib.css?1738679462">
+<link rel="stylesheet" type="text/css" href="./styles/common/dGrowl.css?1738679464">
+<link rel="stylesheet" type="text/css" href="./styles/common/dsi.css?1738679468">
+<link rel="stylesheet" type="text/css" href="./styles/common/font-awesome.css?1738679462">
+<link rel="stylesheet" type="text/css" href="./styles/common/open-sans.css?1738679464">
+<link rel="stylesheet" type="text/css" href="./styles/common/pagination.css?1738679462">
+<link rel="stylesheet" type="text/css" href="./styles/common/record_display.css?1738679462">
+<link rel="stylesheet" type="text/css" href="./styles/common/visionneuse.css?1738679462">
+<link rel="stylesheet" type="text/css" href="./styles/chateau/chateau.css?1773917907">
+<link rel="stylesheet" type="text/css" href="./styles/chateau/colonnes.css?1738679461">
+<link rel="stylesheet" type="text/css" href="./styles/chateau/ext_search.css?1738679461">
+<link rel="stylesheet" type="text/css" href="./styles/chateau/gallerie_photos.css?1738679461">
+<link rel="stylesheet" type="text/css" href="./styles/chateau/liste_bulletins.css?1738679461">
+<link rel="stylesheet" type="text/css" href="./styles/chateau/print.css?1738679461">
+<link rel="stylesheet" type="text/css" href="./styles/chateau/tags.css?1738679461">
+<link rel="stylesheet" type="text/css" href="./styles/chateau/visionneuse.css?1738679461"><script>var opac_style= 'chateau';</script>
+		<link rel="SHORTCUT ICON" href="https://maktabati.univ-usto.dz/images/USTOLOGO.png">
+	<script src="includes/javascript/drag_n_drop.js"></script>
+	<script src="includes/javascript/handle_drop.js"></script>
+	<script src="includes/javascript/popup.js"></script>
+	<script>
+			// Fonction a utiliser pour l'encodage des URLs en javascript
+			function encode_URL(data){
+				var docCharSet = document.characterSet ? document.characterSet : document.charset;
+				if(docCharSet == "UTF-8"){
+	    			return encodeURIComponent(data);
+	    		}else{
+	    			return escape(data);
+	    		}
+	    	}
+	    </script>
+	<script>
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName =
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i);
+				    }
+				 }
+				return items;
+			 }
+		}
+	</script>
+
+		<link rel="stylesheet" type="text/css" href="./includes/javascript/dojo/dijit/themes/tundra/tundra.css">
+		<script>
+			var dojoConfig = {
+				parseOnLoad: true,
+				locale: 'fr-fr',
+				isDebug: false,
+				usePlainJson: true,
+				packages: [{
+						name: 'pmbBase',
+						location:'../../../..'
+					},{
+						name: 'd3',
+						location:'../../d3'
+					}],
+				deps: ['apps/pmb/MessagesStore', 'dgrowl/dGrowl', 'dojo/ready', 'apps/pmb/ImagesStore'],
+				callback:function(MessagesStore, dGrowl, ready, ImagesStore){
+					window.pmbDojo = {};
+					pmbDojo.messages = new MessagesStore({url:'./ajax.php?module=ajax&categ=messages', directInit:false, lastModified:'1773920188'});
+					pmbDojo.images = new ImagesStore({url:'./ajax.php?module=ajax&categ=images', directInit:false});
+					ready(function(){
+						new dGrowl({'channels':[{'name':'info','pos':2},{'name':'error', 'pos':1}]});
+					});
+
+				},
+			};
+		</script>
+		<script src="./includes/javascript/dojo/dojo/dojo.js"></script>
+		<script>
+		dojo.addOnLoad(function () {
+			// Ajout du theme Dojo
+			dojo.addClass(dojo.body(),'tundra');
+		})
+		</script>
+		<script>
+	var pmb_img_patience = './images/patience.gif';
+</script><script>
+			var opac_show_social_network =0;
+		</script>
+	<script src="./includes/javascript/http_request.js"></script>
+	
+<meta http-equiv="Content-Type" content="charset=utf-8"></head>
+
+<body onload="window.defaultStatus='PMB : Accès public';" id="pmbopac">
+		<script>
+		function findNoticeElement(id){
+			var ul=null;
+			//cas des notices classiques
+			var domNotice = document.getElementById('el'+id+'Child');
+			//notice_display
+			if(!domNotice) domNotice = document.getElementById('notice');
+			if(domNotice){
+				var uls = domNotice.getElementsByTagName('ul');
+				for (var i=0 ; i<uls.length ; i++){
+					if(uls[i].getAttribute('id') == 'onglets_isbd_public'+id){
+						var ul = uls[i];
+						break;
+					}
+				}
+			} else{
+				var li = document.getElementById('onglet_isbd'+id);
+				if(!li) var li = document.getElementById('onglet_public'+id);
+				if(!li) var li = document.getElementById('onglet_detail'+id);
+				if(li) var ul = li.parentNode;
+			}
+			return ul;
+		}
+		function show_what(quoi, id) {
+			switch(quoi){
+				case 'EXPL_LOC' :
+					document.getElementById('div_expl_loc' + id).style.display = 'block';
+					document.getElementById('div_expl' + id).style.display = 'none';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_inactive';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_active';
+					break;
+				case 'EXPL' :
+					document.getElementById('div_expl_loc' + id).style.display = 'none';
+					document.getElementById('div_expl' + id).style.display = 'block';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_active';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_inactive';
+					break;
+				default :
+					quoi= quoi.toLowerCase();
+					var ul = findNoticeElement(id);
+					if (ul) {
+						var items  = ul.getElementsByTagName('li');
+						for (var i=0 ; i<items.length ; i++){
+							if(items[i].getAttribute('id')){
+								if(items[i].getAttribute('id') == 'onglet_'+quoi+id){
+									items[i].className = 'isbd_public_active';
+									document.getElementById('div_'+quoi+id).style.display = 'block';
+								}else{
+									if(items[i].className != 'onglet_tags' && items[i].className != 'onglet_avis' && items[i].className != 'onglet_sugg' && items[i].className != 'onglet_basket' && items[i].className != 'onglet_liste_lecture'){
+										items[i].className = 'isbd_public_inactive';
+										document.getElementById(items[i].getAttribute('id').replace('onglet','div')).style.display = 'none';
+									}
+								}
+							}
+						}
+					}
+					break;
+			}
+		}
+		</script>
+	<script src="./includes/javascript/tablist_ajax.js"></script>
+<script src="./includes/javascript/tablist.js"></script>
+<script src="./includes/javascript/misc.js"></script>
+	<div id="att" style="z-Index:1000"></div>
+	<div id="container"><div id="main"><div id="main_header"></div><div id="main_hors_footer"><div id="home_on_top">
+    	<span onclick='document.location="./index.php?"' style="cursor: pointer;"><img src="./images/home.jpg" loading="lazy"> Accueil</span>
+	</div>
+						
+
+<script src="./includes/javascript/auth_popup.js"></script>
+<script src="./includes/javascript/pnb.js"></script><div id="intro_message"><div class="p1"> 
+<br>
+
+<map name="map_lien_retour" id="map_lien_retour">
+<area shape="rect" coords="0,0,300,100" href="index.php?lvl=index" alt="Retour Ã  l'accueil">
+</map>
+<img src="./images/bar_spacer.gif" usemap="#map_lien_retour" alt="" loading="lazy"> 
+
+<b>Vous pouvez faire des propositions d'achat de livres, en utilisant
+<a href="http://www.univ-usto.dz/catalog_en_ligne/do_resa.php?lvl=make_sugg"><font color="#ff0000"> le formulaire en ligne</font></a><br>Vous pouvez vérifier au préalable si le document n'est pas disponible dans notre catalogue.</b> 
+</div><div class="p2"><b>vous cherchez un livre à la bibliothèque centrale?</b></div></div><div id="navigator">
+<table role="presentation" style="width:100%"><tr><td class="navig_actions_first_screen"><a href="./index.php?lvl=index" class="navig_lastnotices"><span>Nouvelle recherche</span></a></td>
+<td class="navig_empr_bt_show_compte"><a href="./empr.php" class="navig_lastnotices"><span>Votre compte</span></a></td>
+</tr></table></div>
+<div id="resume_panier" class="empty"></div>
+<script>
+<!--
+	function test_form(form)
+	{
+
+		return true;
+	}
+-->
+</script><div id="search" role="search"><ul class="search_tabs"><li id="current" aria-current="page"><a href="./index.php?search_type_asked=simple_search">Recherche simple</a></li><li><a href="./index.php?search_type_asked=search_perso">Prédéfinie</a></li><li><a href="./index.php?search_type_asked=extended_search">Recherche multi-critères</a></li><li><a href="./index.php?search_type_asked=term_search">Recherche par termes</a></li><li><a href="./index.php?search_type_asked=connect_empr">Se connecter</a></li></ul><div id="search_crl"></div><div class="row">
+		<form name="search_input" action="./index.php?lvl=search_result" method="post" onsubmit="if (search_input.user_query.value.length == 0) { search_input.user_query.value='*'; return true; }">
+			<label for="typdoc_select" class="visually-hidden">Sélectionner un type de document</label><select name="typdoc" id="typdoc_select" title="Sélectionner un type de document">  <option value="" selected>Tout type de document</option>
+  <option value="a">texte imprimé</option>
+  <option value="e">document cartographique imprimé</option>
+  <option value="g">document projeté ou vidéo</option>
+  <option value="l">document électronique</option>
+  <option value="m">document multimédia</option>
+  <option value="r">objet à 3 dimensions, artefacts, ...</option>
+</select>
+			
+			<br>
+			<input type="hidden" name="surligne" value="">
+				<label for="user_query_lib" class="visually-hidden">Recherche</label>
+				<input type="text" name="user_query" title="Rechercher un document" id="user_query_lib" class="text_query" value="" size="65" expand_mode="2" completion="suggestions" word_only="no">
+<input type="submit" name="ok" value="Rechercher" class="boutonrechercher">
+<input type="button" value="Aide" class="bouton button_search_help" onclick='window.open("./help.php?whatis=simple_search", "search_help", "scrollbars=yes, toolbar=no, dependent=yes, width=400, height=400, resizable=yes"); return false'>
+<div id="simple_search_zone"><div class="row">
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_TITLE" id="look_TITLE" value="1"><label for="look_TITLE"> Titres </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_AUTHOR" id="look_AUTHOR" value="1"><label for="look_AUTHOR"> Auteurs </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_PUBLISHER" id="look_PUBLISHER" value="1"><label for="look_PUBLISHER"> Editeurs </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_TITRE_UNIFORME" id="look_TITRE_UNIFORME" value="1"><label for="look_TITRE_UNIFORME"> Oeuvres / Expressions </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_CATEGORY" id="look_CATEGORY" value="1"><label for="look_CATEGORY"> Catégories </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_INDEXINT" id="look_INDEXINT" value="1"><label for="look_INDEXINT"> Indexations décimales </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_KEYWORDS" id="look_KEYWORDS" value="1"><label for="look_KEYWORDS"> Mots-clés</label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_ALL" id="look_ALL" value="1" checked><label for="look_ALL"> Tous les champs </label></span></div><div style="clear: both;"><input type="hidden" name="look_FIRSTACCESS" value="1"></div></div><input type="hidden" name="csrf_token" value="5321dad9c8ad30ef272d90df9ac32b160d3f2d10"></form>
+		<script src="./includes/javascript/ajax.js"></script>
+		<script>
+
+                if (document.forms['search_input'] && document.forms['search_input'].elements['user_query']) {
+                    document.forms["search_input"].elements["user_query"].focus();
+					ajax_pack_element(document.forms["search_input"].elements["user_query"]);
+                }
+		</script></div></div><div id="last_entries"><h3><span>Dernières acquisitions</span></h3><div id="last_entries-container">Voici les derniers ouvrages saisis dans le catalogue :<br>
+            <span class="expandAll">
+                <a href="javascript:expandAll_ajax(1);">
+                    <img class="img_plusplus" src="./images/expand_all.gif" style="border:0px" id="expandall" loading="lazy">
+                </a>
+            </span><span class="espaceResultSearch"> </span>
+            <span class="collapseAll">
+                <a href="javascript:collapseAll()">
+                    <img class="img_moinsmoins" src="./images/collapse_all.gif" style="border:0px" id="collapseall" loading="lazy">
+                </a>
+            </span>
+				<div id="el24032Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24032Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24032%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22293bd69e9d329196219e5f62b412675a%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24032', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24032"><span class="statutnot1"></span><span notice="24032" class="header_title">Analyse des structures et milieux continus. volume5</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=26418">François FREY</a></span> / Presses polytechniques et universitaires romandes (2003)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Analyse%20des%20structures%20et%20milieux%20continus.%20volume5&amp;rft.title=Analyse%20des%20structures%20et%20milieux%20continus.%20volume5%20%3A%20Coques.&amp;rft.isbn=978-2-88074-516-5&amp;rft.tpages=259%20p.&amp;rft.date=2003&amp;rft_id=https%3A%2F%2Fwww.google.dz%2Fbooks%2Fedition%2FAnalyse_des_structures_et_milieux_contin%2FyFfea6WX1IYC%3Fhl%3Dfr%26gbpv%3D0&amp;rft.pub=Presses%20polytechniques%20et%20universitaires%20romandes&amp;rft.au=Fran%C3%A7ois%20FREY&amp;rft.au=Marc-Andr%C3%A9%20STUDER&amp;rft.au=Maurice%20FIAUX&amp;rft.aulast=FREY&amp;rft.aufirst=Fran%C3%A7ois"></span></span>
+			 <span class="notice_link">
+			<a href="https://www.google.dz/books/edition/Analyse_des_structures_et_milieux_contin/yFfea6WX1IYC?hl=fr&amp;gbpv=0" target="_blank" type="external_url_notice">
+				<img src="https://maktabati.univ-usto.dz/pmb_centrale/images/globe.gif" style="border:0px" class="align_middle" alt="Ouvrir le lien " title="Ouvrir le lien " loading="lazy">
+			</a></span>
+		    	<br>
+				</div>
+				<div id="el24032Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24032" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24031Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24031Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24031%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%222291a01dfc12cb8acec41cab0ab32702%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24031', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24031"><span class="statutnot1"></span><span notice="24031" class="header_title">Mécanique des structures. Tome 6</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=4653">Serge LAROZE</a></span> / cépadués (2005)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=M%C3%A9canique%20des%20structures.%20Tome%206&amp;rft.title=M%C3%A9canique%20des%20structures.%20Tome%206%20%3A%20Thermique%20des%20structures%2C%20dynamique%20des%20structures.%20exercices&amp;rft.isbn=978-2-85428-715-8&amp;rft.tpages=328%20p.&amp;rft.date=2005&amp;rft_id=&amp;rft.pub=c%C3%A9padu%C3%A9s&amp;rft.au=Serge%20LAROZE&amp;rft.aulast=LAROZE&amp;rft.aufirst=Serge"></span></span>
+		    	<br>
+				</div>
+				<div id="el24031Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24031" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24030Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24030Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24030%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22d820c812815f2d0b6f75b1f036cf0dcb%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24030', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24030"><span class="statutnot1"></span><span notice="24030" class="header_title">Resistance des materiaux et typologie des structures.</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=21637">Eldar RAMAZANOV</a></span> / Centre de publication universitaire (2008)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Resistance%20des%20materiaux%20et%20typologie%20des%20structures.&amp;rft.title=Resistance%20des%20materiaux%20et%20typologie%20des%20structures.&amp;rft.isbn=978-9973-37-425-7&amp;rft.tpages=308%20p.&amp;rft.date=2008&amp;rft_id=&amp;rft.pub=Centre%20de%20publication%20universitaire&amp;rft.au=Eldar%20RAMAZANOV&amp;rft.au=Wassef%20OUNAIES&amp;rft.aulast=RAMAZANOV&amp;rft.aufirst=Eldar"></span></span>
+		    	<br>
+				</div>
+				<div id="el24030Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24030" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24029Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24029Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24029%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22f89ebf7c6af72a1c25b8e371498f8598%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24029', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24029"><span class="statutnot1"></span><span notice="24029" class="header_title">Optimisation des structures et d'éléments mécaniques.</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=26416">Jean-Luc MARCELIN</a></span> / cépadués (2006)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Optimisation%20des%20structures%20et%20d%27%C3%A9l%C3%A9ments%20m%C3%A9caniques.&amp;rft.title=Optimisation%20des%20structures%20et%20d%27%C3%A9l%C3%A9ments%20m%C3%A9caniques.&amp;rft.isbn=978-2-85428-717-2&amp;rft.tpages=204%20p.&amp;rft.date=2006&amp;rft_id=https%3A%2F%2Fwww.eyrolles.com%2FSciences%2FLivre%2Foptimisation-des-structures-et-d-elements-mecaniques-9782854287172%2F&amp;rft.pub=c%C3%A9padu%C3%A9s&amp;rft.au=Jean-Luc%20MARCELIN&amp;rft.aulast=MARCELIN&amp;rft.aufirst=Jean-Luc"></span></span>
+			 <span class="notice_link">
+			<a href="https://www.eyrolles.com/Sciences/Livre/optimisation-des-structures-et-d-elements-mecaniques-9782854287172/" target="_blank" type="external_url_notice">
+				<img src="https://maktabati.univ-usto.dz/pmb_centrale/images/globe.gif" style="border:0px" class="align_middle" alt="Ouvrir le lien " title="Ouvrir le lien " loading="lazy">
+			</a></span>
+		    	<br>
+				</div>
+				<div id="el24029Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24029" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24028Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24028Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24028%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22a3f36291057d65984783440a44763cb5%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24028', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24028"><span class="statutnot1"></span><span notice="24028" class="header_title">Mécanique des structures. tome 4</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=4653">Serge LAROZE</a></span> / cépadués (2005)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=M%C3%A9canique%20des%20structures.%20tome%204&amp;rft.title=M%C3%A9canique%20des%20structures.%20tome%204%20%3A%20Solides%20%C3%A9lastiques%20-%20Plastiques%20et%20Coques.%20Exercices&amp;rft.isbn=978-2-85428-711-0&amp;rft.tpages=210%20p.&amp;rft.date=2005&amp;rft_id=&amp;rft.pub=c%C3%A9padu%C3%A9s&amp;rft.au=Serge%20LAROZE&amp;rft.aulast=LAROZE&amp;rft.aufirst=Serge"></span></span>
+		    	<br>
+				</div>
+				<div id="el24028Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24028" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24027Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24027Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24027%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%225922a52219b278ec8a3b94071d3deeb1%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24027', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24027"><span class="statutnot1"></span><span notice="24027" class="header_title">Mécanique des structures. Tome 1</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=4653">Serge LAROZE</a></span> / cépadués (2005)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=M%C3%A9canique%20des%20structures.%20Tome%201&amp;rft.title=M%C3%A9canique%20des%20structures.%20Tome%201%20%3A%20Solides%20%C3%A9lastiques%20-%20Plastiques%20et%20Coques.&amp;rft.isbn=978-2-85428-710-3&amp;rft.tpages=225%20p.&amp;rft.date=2005&amp;rft_id=https%3A%2F%2Fwww.cepadues.com%2Flivres%2Fsciences%2Fmecanique-physique%2F187-solides-elastiques-plaques-et-coques-9782854287103.html%3Fsrsltid%3DAYCX9vIsBbzVNg4lFVweDhEyjg5YC3JAJWD1JJq1Isc32swxp_HNKmBB&amp;rft.pub=c%C3%A9padu%C3%A9s&amp;rft.au=Serge%20LAROZE&amp;rft.aulast=LAROZE&amp;rft.aufirst=Serge"></span></span>
+			 <span class="notice_link">
+			<a href="https://www.cepadues.com/livres/sciences/mecanique-physique/187-solides-elastiques-plaques-et-coques-9782854287103.html?srsltid=AYCX9vIsBbzVNg4lFVweDhEyjg5YC3JAJWD1JJq1Isc32swxp_HNKmBB" target="_blank" type="external_url_notice">
+				<img src="https://maktabati.univ-usto.dz/pmb_centrale/images/globe.gif" style="border:0px" class="align_middle" alt="Ouvrir le lien " title="Ouvrir le lien " loading="lazy">
+			</a></span>
+		    	<br>
+				</div>
+				<div id="el24027Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24027" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24026Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24026Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24026%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%2265b39b69520910ce055503ac8664e841%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24026', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24026"><span class="statutnot1"></span><span notice="24026" class="header_title">Calcul des structures.</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=26414">Kaouther BEN KADDOUR MACHTA</a></span> / Centre de publication universitaire (2007)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Calcul%20des%20structures.&amp;rft.title=Calcul%20des%20structures.%20%3A%20Cours%20avec%20problemes%20resolus.&amp;rft.isbn=978-9973-37-398-4&amp;rft.tpages=192%20p.&amp;rft.date=2007&amp;rft_id=&amp;rft.pub=Centre%20de%20publication%20universitaire&amp;rft.au=Kaouther%20BEN%20KADDOUR%20MACHTA&amp;rft.au=Samir%20ELLOUZE&amp;rft.aulast=BEN%20KADDOUR%20MACHTA&amp;rft.aufirst=Kaouther"></span></span>
+		    	<br>
+				</div>
+				<div id="el24026Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24026" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24025Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24025Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24025%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%2280df7e0b70dbcb9d61928c8b4cc672d4%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24025', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24025"><span class="statutnot1"></span><span notice="24025" class="header_title">Macroeconomie.</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=26413">Najat ZATLA</a></span> / Dar Elqods EL ARABI (2017)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Macroeconomie.&amp;rft.title=Macroeconomie.%20%3A%20Cours%20et%20exercices&amp;rft.isbn=978-9947-927-64-9&amp;rft.tpages=300%20p.&amp;rft.date=2017&amp;rft_id=&amp;rft.pub=Dar%20Elqods%20EL%20ARABI&amp;rft.au=Najat%20ZATLA&amp;rft.aulast=ZATLA&amp;rft.aufirst=Najat"></span></span>
+		    	<br>
+				</div>
+				<div id="el24025Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24025" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24023Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24023Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24023%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22b316b39bb48634a510bcc446a2404949%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24023', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24023"><span class="statutnot1"></span><span notice="24023" class="header_title">Mécanique des structures.</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=4653">Serge LAROZE</a></span> / Toulouse : Cépaduès éd. (2005)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=M%C3%A9canique%20des%20structures.&amp;rft.title=M%C3%A9canique%20des%20structures.%20%3A%20Tome%205%3A%20Poutres%20-%20Exercices&amp;rft.isbn=978-2-85428-713-4&amp;rft.tpages=230%20P.&amp;rft.date=2005&amp;rft_id=https%3A%2F%2Fwww.eyrolles.com%2FBTP%2FLivre%2Fmecanique-des-structures-tome-5-9782854287134%2F&amp;rft.pub=C%C3%A9padu%C3%A8s%20%C3%A9d.&amp;rft.place=Toulouse&amp;rft.au=Serge%20LAROZE&amp;rft.au=M.%20LORRAIN&amp;rft.aulast=LAROZE&amp;rft.aufirst=Serge"></span></span>
+			 <span class="notice_link">
+			<a href="https://www.eyrolles.com/BTP/Livre/mecanique-des-structures-tome-5-9782854287134/" target="_blank" type="external_url_notice">
+				<img src="https://maktabati.univ-usto.dz/pmb_centrale/images/globe.gif" style="border:0px" class="align_middle" alt="Ouvrir le lien " title="Ouvrir le lien " loading="lazy">
+			</a></span>
+		    	<br>
+				</div>
+				<div id="el24023Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24023" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24022Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24022Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24022%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%221124b8be5c45ee69841d5c3a1d67d563%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24022', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24022"><span class="statutnot1"></span><span notice="24022" class="header_title">Traité de mécanique des structures.</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=26411">Mohamed KHAOUA</a></span> / Office des publications universitaires (2009)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Trait%C3%A9%20de%20m%C3%A9canique%20des%20structures.&amp;rft.title=Trait%C3%A9%20de%20m%C3%A9canique%20des%20structures.&amp;rft.isbn=978-9961-0-0628-3&amp;rft.tpages=321%20p.&amp;rft.date=2009&amp;rft_id=https%3A%2F%2Fopu.dz%2Fen%2Flivre%2Fg%25C3%25A9nie-civil%2Ftrait%25C3%25A9-de-m%25C3%25A9canique-des-structures&amp;rft.pub=Office%20des%20publications%20universitaires&amp;rft.au=Mohamed%20KHAOUA&amp;rft.aulast=KHAOUA&amp;rft.aufirst=Mohamed"></span></span>
+			 <span class="notice_link">
+			<a href="https://opu.dz/en/livre/g%C3%A9nie-civil/trait%C3%A9-de-m%C3%A9canique-des-structures" target="_blank" type="external_url_notice">
+				<img src="https://maktabati.univ-usto.dz/pmb_centrale/images/globe.gif" style="border:0px" class="align_middle" alt="Ouvrir le lien " title="Ouvrir le lien " loading="lazy">
+			</a></span>
+		    	<br>
+				</div>
+				<div id="el24022Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24022" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24021Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24021Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24021%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%2266fd2e6719b5c1a7dcec824857ef31ff%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24021', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24021"><span class="statutnot1"></span><span notice="24021" class="header_title">Structural analysis.</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=26408">R. VAIDYANATHAN</a></span> / Laxmi publications(p) LTD (2004)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Structural%20analysis.&amp;rft.title=Structural%20analysis.&amp;rft.isbn=81-7008-564-5&amp;rft.tpages=330%20p.%20vol.%202&amp;rft.date=2004&amp;rft_id=https%3A%2F%2Fbooks.google.dz%2Fbooks%2Fabout%2FStructural_Analysis_Vol_II.html%3Fid%3DqZPAfoVDtEMC%26redir_esc%3Dy&amp;rft.pub=Laxmi%20publications%28p%29%20LTD&amp;rft.au=R.%20VAIDYANATHAN&amp;rft.au=P.%20PERUMAL&amp;rft.aulast=VAIDYANATHAN&amp;rft.aufirst=R."></span></span>
+			 <span class="notice_link">
+			<a href="https://books.google.dz/books/about/Structural_Analysis_Vol_II.html?id=qZPAfoVDtEMC&amp;redir_esc=y" target="_blank" type="external_url_notice">
+				<img src="https://maktabati.univ-usto.dz/pmb_centrale/images/globe.gif" style="border:0px" class="align_middle" alt="Ouvrir le lien " title="Ouvrir le lien " loading="lazy">
+			</a></span>
+		    	<br>
+				</div>
+				<div id="el24021Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24021" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24020Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24020Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24020%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%220c2c34883ae3baaaac6136e58f6332a8%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24020', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24020"><span class="statutnot1"></span><span notice="24020" class="header_title">Introduction à l'analyse des structures.</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=26406">Marc-André STUDER</a></span> / Lausanne : Presses polytechniques et universitaires romandes (1997)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Introduction%20%C3%A0%20l%27analyse%20des%20structures.&amp;rft.title=Introduction%20%C3%A0%20l%27analyse%20des%20structures.&amp;rft.isbn=978-2-88074-328-4&amp;rft.tpages=368%20p.&amp;rft.date=1997&amp;rft_id=https%3A%2F%2Fwww.epflpress.org%2Fproduit%2F71%2F9782880743284%2Fintroduction-a-l-analyse-des-structures&amp;rft.pub=Presses%20polytechniques%20et%20universitaires%20romandes&amp;rft.place=Lausanne&amp;rft.au=Marc-Andr%C3%A9%20STUDER&amp;rft.au=Fran%C3%A7ois%20FREY&amp;rft.aulast=STUDER&amp;rft.aufirst=Marc-Andr%C3%A9"></span></span>
+			 <span class="notice_link">
+			<a href="https://www.epflpress.org/produit/71/9782880743284/introduction-a-l-analyse-des-structures" target="_blank" type="external_url_notice">
+				<img src="https://maktabati.univ-usto.dz/pmb_centrale/images/globe.gif" style="border:0px" class="align_middle" alt="Ouvrir le lien " title="Ouvrir le lien " loading="lazy">
+			</a></span>
+		    	<br>
+				</div>
+				<div id="el24020Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24020" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24019Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24019Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24019%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%226927d833f8d562116939504b517c18a8%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24019', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24019"><span class="statutnot1"></span><span notice="24019" class="header_title">اساسيات الهندسة الكهربية</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=20577">جيمي ج. كاثى</a></span> / الدار الدولية للنشر و التوزيع (2000)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=%D8%A7%D8%B3%D8%A7%D8%B3%D9%8A%D8%A7%D8%AA%20%D8%A7%D9%84%D9%87%D9%86%D8%AF%D8%B3%D8%A9%20%D8%A7%D9%84%D9%83%D9%87%D8%B1%D8%A8%D9%8A%D8%A9&amp;rft.title=%D8%A7%D8%B3%D8%A7%D8%B3%D9%8A%D8%A7%D8%AA%20%D8%A7%D9%84%D9%87%D9%86%D8%AF%D8%B3%D8%A9%20%D8%A7%D9%84%D9%83%D9%87%D8%B1%D8%A8%D9%8A%D8%A9%20%3A%20%D8%A7%D9%84%D8%B7%D8%A8%D8%B9%D8%A9%202%20%D8%A7%D8%B3%D8%A7%D8%B3%D9%8A%D8%A7%D8%AA%20%D8%A7%D9%84%D9%85%D9%88%D8%AC%D9%88%D8%AF%D8%A9%20%D9%81%D9%8A%20%D8%A7%D9%84%D9%85%D9%86%D8%A7%D9%87%D8%AC%20%D9%88%20%D8%A7%D9%84%D9%85%D8%B1%D8%A7%D8%AC%D8%B9&amp;rft.isbn=978-977-282-094-8&amp;rft.date=2000&amp;rft_id=&amp;rft.series=%D8%B3%D9%84%D8%B3%D9%84%D8%A9%20%D9%85%D9%84%D8%AE%D8%B5%D8%A7%D8%AA%20%D8%B4%D9%88%D9%85&amp;rft.pub=%D8%A7%D9%84%D8%AF%D8%A7%D8%B1%20%D8%A7%D9%84%D8%AF%D9%88%D9%84%D9%8A%D8%A9%20%D9%84%D9%84%D9%86%D8%B4%D8%B1%20%D9%88%20%D8%A7%D9%84%D8%AA%D9%88%D8%B2%D9%8A%D8%B9&amp;rft.edition=2%20%D8%B7.&amp;rft.au=%D8%AC%D9%8A%D9%85%D9%8A%20%D8%AC.%20%D9%83%D8%A7%D8%AB%D9%89&amp;rft.au=%D8%B3%D9%8A%D8%AF%20%D8%A7%20%D9%86%D8%B5%D8%A7%D8%B1&amp;rft.aulast=%D8%AC.%20%D9%83%D8%A7%D8%AB%D9%89&amp;rft.aufirst=%D8%AC%D9%8A%D9%85%D9%8A"></span></span>
+		    	<br>
+				</div>
+				<div id="el24019Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24019" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24018Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24018Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24018%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22528ea07f46afccef50adb2586b2947c0%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24018', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24018"><span class="statutnot1"></span><span notice="24018" class="header_title">Théorie des vibrations.</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=26403">Michel; Géradin</a></span> / Paris : Masson (1996)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Th%C3%A9orie%20des%20vibrations.&amp;rft.title=Th%C3%A9orie%20des%20vibrations.%20%3A%20Application%20%C3%A0%20la%20dynamique%20des%20structures.&amp;rft.isbn=978-2-225-85173-5&amp;rft.tpages=421%20p.%202%C3%A9me%20%C3%A9d.&amp;rft.date=1996&amp;rft_id=&amp;rft.pub=Masson&amp;rft.place=Paris&amp;rft.au=Michel%3B%20G%C3%A9radin&amp;rft.au=Daniel%20Jean%20Rixen&amp;rft.aulast=Michel%3B%20G%C3%A9radin&amp;rft.aufirst="></span></span>
+		    	<br>
+				</div>
+				<div id="el24018Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24018" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24017Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24017Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24017%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%2284dea506b87939a9ed12cdedf4e4fbcc%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24017', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24017"><span class="statutnot1"></span><span notice="24017" class="header_title">Analyse des structures par éléments finis.</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=26400">Jean-François Imbert</a></span> / Toulouse : Cépaduès éd. (1991)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Analyse%20des%20structures%20par%20%C3%A9l%C3%A9ments%20finis.&amp;rft.title=Analyse%20des%20structures%20par%20%C3%A9l%C3%A9ments%20finis.&amp;rft.isbn=978-2-85428-273-3&amp;rft.tpages=506%20p.%203%C3%A9me%20%C3%A9d.&amp;rft.date=1991&amp;rft_id=https%3A%2F%2Fwww.eyrolles.com%2FBTP%2FLivre%2Fanalyse-des-structures-par-elements-finis-9782854282733%2F&amp;rft.series=Sup%27a%C3%A9ro&amp;rft.pub=C%C3%A9padu%C3%A8s%20%C3%A9d.&amp;rft.place=Toulouse&amp;rft.edition=3e%20%C3%A9d.&amp;rft.au=Jean-Fran%C3%A7ois%20Imbert&amp;rft.aulast=Imbert&amp;rft.aufirst=Jean-Fran%C3%A7ois"></span></span>
+			 <span class="notice_link">
+			<a href="https://www.eyrolles.com/BTP/Livre/analyse-des-structures-par-elements-finis-9782854282733/" target="_blank" type="external_url_notice">
+				<img src="https://maktabati.univ-usto.dz/pmb_centrale/images/globe.gif" style="border:0px" class="align_middle" alt="Ouvrir le lien " title="Ouvrir le lien " loading="lazy">
+			</a></span>
+		    	<br>
+				</div>
+				<div id="el24017Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24017" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24016Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24016Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24016%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22ccf35c249bca7e0a6cbdf66640168750%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24016', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24016"><span class="statutnot1"></span><span notice="24016" class="header_title">De la mécanique vibratoire classique à la méthode des éléments finis. Volume 2</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=3276">Bernard DROUIN</a></span> / Paris-La Défense : AFNOR (1993)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=De%20la%20m%C3%A9canique%20vibratoire%20classique%20%C3%A0%20la%20m%C3%A9thode%20des%20%C3%A9l%C3%A9ments%20finis.%20Volume%202&amp;rft.title=De%20la%20m%C3%A9canique%20vibratoire%20classique%20%C3%A0%20la%20m%C3%A9thode%20des%20%C3%A9l%C3%A9ments%20finis.%20Volume%202%20%3A%20%C3%89tude%20de%20cas%20et%20solutions%20comment%C3%A9es.&amp;rft.isbn=978-2-12-309112-7&amp;rft.tpages=405%20p.&amp;rft.date=1993&amp;rft_id=https%3A%2F%2Fbookswap.fr%2Fbook%2F223b9430-dec3-4eb3-8ac0-7a6902ed2878&amp;rft.pub=AFNOR&amp;rft.place=Paris-La%20D%C3%A9fense&amp;rft.au=Bernard%20DROUIN&amp;rft.au=J.%20M.%20Senicourt&amp;rft.aulast=DROUIN&amp;rft.aufirst=Bernard"></span></span>
+			 <span class="notice_link">
+			<a href="https://bookswap.fr/book/223b9430-dec3-4eb3-8ac0-7a6902ed2878" target="_blank" type="external_url_notice">
+				<img src="https://maktabati.univ-usto.dz/pmb_centrale/images/globe.gif" style="border:0px" class="align_middle" alt="Ouvrir le lien " title="Ouvrir le lien " loading="lazy">
+			</a></span>
+		    	<br>
+				</div>
+				<div id="el24016Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24016" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24015Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24015Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24015%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%2296c557749c1ca53929532bdbbb7a11a8%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24015', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24015"><span class="statutnot1"></span><span notice="24015" class="header_title">introduction à la mécanique des solides et des structures</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=3492">Michel DEL PEDRO</a></span> / Lausanne : Presses polytechniques et universitaires romandes (c 2004)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=introduction%20%C3%A0%20la%20m%C3%A9canique%20des%20solides%20et%20des%20structures&amp;rft.title=introduction%20%C3%A0%20la%20m%C3%A9canique%20des%20solides%20et%20des%20structures&amp;rft.isbn=978-2-88074-617-9&amp;rft.tpages=313%20p.&amp;rft.date=c%202004&amp;rft_id=https%3A%2F%2Fbooks.google.dz%2Fbooks%3Fid%3DWkB4vl9zExUC%26printsec%3Dfrontcover%26hl%3Dfr%23v%3Donepage%26q%26f%3Dfalse&amp;rft.pub=Presses%20polytechniques%20et%20universitaires%20romandes&amp;rft.place=Lausanne&amp;rft.au=Michel%20DEL%20PEDRO&amp;rft.aulast=DEL%20PEDRO&amp;rft.aufirst=Michel"></span></span>
+			 <span class="notice_link">
+			<a href="https://books.google.dz/books?id=WkB4vl9zExUC&amp;printsec=frontcover&amp;hl=fr#v=onepage&amp;q&amp;f=false" target="_blank" type="external_url_notice">
+				<img src="https://maktabati.univ-usto.dz/pmb_centrale/images/globe.gif" style="border:0px" class="align_middle" alt="Ouvrir le lien " title="Ouvrir le lien " loading="lazy">
+			</a></span>
+		    	<br>
+				</div>
+				<div id="el24015Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24015" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24014Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24014Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24014%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22d53d2621b9523829f48ee4270621adc5%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24014', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24014"><span class="statutnot3" title="commandé"></span><span notice="24014" class="header_title">Physique et structures fractales</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=26396">J.F GOUYET</a></span> / Paris : Masson (DL 1992)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Physique%20et%20structures%20fractales&amp;rft.title=Physique%20et%20structures%20fractales&amp;rft.isbn=978-2-225-82777-8&amp;rft.tpages=234P.&amp;rft.date=DL%201992&amp;rft_id=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F51wOyUVxybL.jpg&amp;rft.pub=Masson&amp;rft.place=Paris&amp;rft.au=J.F%20GOUYET&amp;rft.au=Mandelbrot&amp;rft.aulast=GOUYET&amp;rft.aufirst=J.F"></span></span>
+			 <span class="notice_link">
+			<a href="https://m.media-amazon.com/images/I/51wOyUVxybL.jpg" target="_blank" type="external_url_notice">
+				<img src="https://maktabati.univ-usto.dz/pmb_centrale/images/globe.gif" style="border:0px" class="align_middle" alt="Ouvrir le lien " title="Ouvrir le lien " loading="lazy">
+			</a></span>
+		    	<br>
+				</div>
+				<div id="el24014Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24014" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24013Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24013Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24013%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%2272339680299bdeee6624772b625abbdc%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24013', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24013"><span class="statutnot1"></span><span notice="24013" class="header_title">Dynamique des structures analyse modale imérique</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=26393">Thomas GMUR</a></span> / Presses polytechniques et universitaires romandes (2017)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Dynamique%20des%20structures%20analyse%20modale%20im%C3%A9rique&amp;rft.title=Dynamique%20des%20structures%20analyse%20modale%20im%C3%A9rique&amp;rft.tpages=570p.&amp;rft.date=2017&amp;rft_id=https%3A%2F%2Fimgv2-2-f.scribdassets.com%2Fimg%2Fdocument%2F130678465%2Foriginal%2Fa92df99e3b%2F1%3Fv%3D1&amp;rft.pub=Presses%20polytechniques%20et%20universitaires%20romandes&amp;rft.au=Thomas%20GMUR&amp;rft.aulast=GMUR&amp;rft.aufirst=Thomas"></span></span>
+			 <span class="notice_link">
+			<a href="https://imgv2-2-f.scribdassets.com/img/document/130678465/original/a92df99e3b/1?v=1" target="_blank" type="external_url_notice">
+				<img src="https://maktabati.univ-usto.dz/pmb_centrale/images/globe.gif" style="border:0px" class="align_middle" alt="Ouvrir le lien " title="Ouvrir le lien " loading="lazy">
+			</a></span>
+		    	<br>
+				</div>
+				<div id="el24013Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24013" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24012Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24012Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24012%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%2215f0616f99e543820c07e04ae9b5eb84%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24012', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24012"><span class="statutnot1"></span><span notice="24012" class="header_title">Méthode des éléments finis en mécanique des structures</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=26392">Thomas GMUR</a></span> / Presses polytechniques et universitaires romandes (2000)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=M%C3%A9thode%20des%20%C3%A9l%C3%A9ments%20finis%20en%20m%C3%A9canique%20des%20structures&amp;rft.title=M%C3%A9thode%20des%20%C3%A9l%C3%A9ments%20finis%20en%20m%C3%A9canique%20des%20structures&amp;rft.tpages=252%20p.&amp;rft.date=2000&amp;rft_id=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.nbRr1mqRVVVv9zUJUWxDrwAAAA%3Fr%3D0%26rs%3D1%26pid%3DImgDetMain%26o%3D7%26rm%3D3&amp;rft.pub=Presses%20polytechniques%20et%20universitaires%20romandes&amp;rft.au=Thomas%20GMUR&amp;rft.aulast=GMUR&amp;rft.aufirst=Thomas"></span></span>
+			 <span class="notice_link">
+			<a href="https://tse3.mm.bing.net/th/id/OIP.nbRr1mqRVVVv9zUJUWxDrwAAAA?r=0&amp;rs=1&amp;pid=ImgDetMain&amp;o=7&amp;rm=3" target="_blank" type="external_url_notice">
+				<img src="https://maktabati.univ-usto.dz/pmb_centrale/images/globe.gif" style="border:0px" class="align_middle" alt="Ouvrir le lien " title="Ouvrir le lien " loading="lazy">
+			</a></span>
+		    	<br>
+				</div>
+				<div id="el24012Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24012" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24011Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24011Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24011%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22d4caab55d4e0310b74d3d9b8b222ac7f%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24011', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24011"><span class="statutnot1"></span><span notice="24011" class="header_title">400 manipulations commentées de chimie des solutions V2</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=26388">Jean-Pierre BAYLE</a></span> / Ellipses (2014)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=400%20manipulations%20comment%C3%A9es%20de%20chimie%20des%20solutions%20V2&amp;rft.title=400%20manipulations%20comment%C3%A9es%20de%20chimie%20des%20solutions%20V2%20%3A%20de%20l%27exp%C3%A9rience%20au%20concept&amp;rft.isbn=978-2-340-00208-1&amp;rft.tpages=693%20p.&amp;rft.date=2014&amp;rft_id=&amp;rft.pub=Ellipses&amp;rft.au=Jean-Pierre%20BAYLE&amp;rft.aulast=Jean-Pierre%20BAYLE&amp;rft.aufirst="></span></span>
+		    	<br>
+				</div>
+				<div id="el24011Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24011" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24010Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24010Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24010%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%2260bbe6e6d9e15d797eb68038d5d9aa88%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24010', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24010"><span class="statutnot1"></span><span notice="24010" class="header_title">De l'Elasto-plasticité au Calcul à la rupture.</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=11148">J. SALENCON</a></span> / Palaiseau : Ecole polytechnique (DL 2002)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=De%20l%27Elasto-plasticit%C3%A9%20au%20Calcul%20%C3%A0%20la%20rupture.&amp;rft.title=De%20l%27Elasto-plasticit%C3%A9%20au%20Calcul%20%C3%A0%20la%20rupture.&amp;rft.isbn=978-2-7302-0915-1&amp;rft.tpages=1%20vol.%20%28262%20p.%29&amp;rft.date=DL%202002&amp;rft_id=https%3A%2F%2Fhal.science%2Fhal-00112707&amp;rft.pub=Ecole%20polytechnique&amp;rft.place=Palaiseau&amp;rft.au=J.%20SALENCON&amp;rft.aulast=SALENCON&amp;rft.aufirst=J."></span></span>
+			 <span class="notice_link">
+			<a href="https://hal.science/hal-00112707" target="_blank" type="external_url_notice">
+				<img src="https://maktabati.univ-usto.dz/pmb_centrale/images/globe.gif" style="border:0px" class="align_middle" alt="Ouvrir le lien " title="Ouvrir le lien " loading="lazy">
+			</a></span>
+		    	<br>
+				</div>
+				<div id="el24010Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24010" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24009Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24009Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24009%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22f9431028bb8c877722f2f9857f84d293%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24009', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24009"><span class="statutnot1"></span><span notice="24009" class="header_title">De la mécanique vibratoire classique à la méthode des éléments finis.</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=3276">Bernard DROUIN</a></span> / AFNOR (C 1993)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=De%20la%20m%C3%A9canique%20vibratoire%20classique%20%C3%A0%20la%20m%C3%A9thode%20des%20%C3%A9l%C3%A9ments%20finis.&amp;rft.title=De%20la%20m%C3%A9canique%20vibratoire%20classique%20%C3%A0%20la%20m%C3%A9thode%20des%20%C3%A9l%C3%A9ments%20finis.&amp;rft.isbn=978-2-12-309111-0&amp;rft.tpages=1%20vol.%20%28XIX-370%20p.%29&amp;rft.date=C%201993&amp;rft_id=https%3A%2F%2Fwww.bruit.fr%2Fdocumentation%2Fmediatheque%2Fen-pret-au-cidb%2Fde-la-mecanique-vibratoire-classique-a-la-methode-des-elements-finis-volume-1&amp;rft.pub=AFNOR&amp;rft.au=Bernard%20DROUIN&amp;rft.au=Jacques-Marie%20Senicourt&amp;rft.au=Lavaste&amp;rft.au=Fezans&amp;rft.aulast=DROUIN&amp;rft.aufirst=Bernard"></span></span>
+			 <span class="notice_link">
+			<a href="https://www.bruit.fr/documentation/mediatheque/en-pret-au-cidb/de-la-mecanique-vibratoire-classique-a-la-methode-des-elements-finis-volume-1" target="_blank" type="external_url_notice">
+				<img src="https://maktabati.univ-usto.dz/pmb_centrale/images/globe.gif" style="border:0px" class="align_middle" alt="Ouvrir le lien " title="Ouvrir le lien " loading="lazy">
+			</a></span>
+		    	<br>
+				</div>
+				<div id="el24009Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24009" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24008Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24008Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24008%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%220ed66ab5fbd491cb9fb3bd92284019e9%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24008', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24008"><span class="statutnot1"></span><span notice="24008" class="header_title">Traité de construction parasismique</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=23483">MILAN Zacek</a></span> / Marseille : Éd. Parenthèses (2023)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Trait%C3%A9%20de%20construction%20parasismique&amp;rft.title=Trait%C3%A9%20de%20construction%20parasismique%20%3A%20risque%20sismique%2C%20r%C3%A9glementation%2C%20conception%20des%20b%C3%A2timents%2C%20m%C3%A9thodes%20de%20calcul&amp;rft.isbn=978-2-86364-370-9&amp;rft.date=2023&amp;rft_id=&amp;rft.pub=%C3%89d.%20Parenth%C3%A8ses&amp;rft.place=Marseille&amp;rft.au=MILAN%20Zacek&amp;rft.aulast=MILAN%20Zacek&amp;rft.aufirst="></span></span>
+		    	<br>
+				</div>
+				<div id="el24008Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24008" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24006Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24006Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24006%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%221e8b55edad62f279d04943eed6596004%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24006', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24006"><span class="statutnot3" title="commandé"></span><span notice="24006" class="header_title">Formulaire du dessinateur et du technicien</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=26353">Georges Chevasson</a></span> / Paris [France] : Desforges (1977)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Formulaire%20du%20dessinateur%20et%20du%20technicien&amp;rft.title=Formulaire%20du%20dessinateur%20et%20du%20technicien&amp;rft.tpages=Pagination%20multiple&amp;rft.date=1977&amp;rft_id=&amp;rft.pub=Desforges&amp;rft.place=Paris&amp;rft.au=Georges%20Chevasson&amp;rft.au=A.%20Pezet&amp;rft.aulast=Chevasson&amp;rft.aufirst=Georges"></span></span>
+		    	<br>
+				</div>
+				<div id="el24006Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24006" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24003Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24003Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24003%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22ff63278886bdd955d72ec21df6b054cc%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24003', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24003"><span class="statutnot3" title="commandé"></span><span notice="24003" class="header_title">Cas pratiques de conduite de projets</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=26346">Thu Quang Pham</a></span> / Paris : Eyrolles (DL 1993)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Cas%20pratiques%20de%20conduite%20de%20projets&amp;rft.title=Cas%20pratiques%20de%20conduite%20de%20projets&amp;rft.isbn=00001001057007&amp;rft.tpages=1%20vol.%20%28XIV-202%20p.%29&amp;rft.date=DL%201993&amp;rft_id=&amp;rft.series=Informatique%20pratique%20dans%20les%20entreprises&amp;rft.pub=Eyrolles&amp;rft.place=Paris&amp;rft.au=Thu%20Quang%20Pham&amp;rft.au=Jean%20JOSKOWICZ&amp;rft.aulast=Pham&amp;rft.aufirst=Thu%20Quang"></span></span>
+		    	<br>
+				</div>
+				<div id="el24003Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24003" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24001Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24001Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24001%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22252a7ccdc49ca0d29ee5dd55fc1ef2cb%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24001', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24001"><span class="statutnot1"></span><span notice="24001" class="header_title">Sécurité et conditions de travail</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=26341">Jackie BOISSELIER</a></span> / Les Editions d'Organisation ((1984))<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=S%C3%A9curit%C3%A9%20et%20conditions%20de%20travail&amp;rft.title=S%C3%A9curit%C3%A9%20et%20conditions%20de%20travail&amp;rft.isbn=978-2-7081-0589-8&amp;rft.tpages=%28170%20p.%29&amp;rft.date=%281984%29&amp;rft_id=&amp;rft.pub=Les%20Editions%20d%27Organisation&amp;rft.au=Jackie%20BOISSELIER&amp;rft.au=Marie-France%20DERRIEN&amp;rft.au=Pierre%20BOIS&amp;rft.aulast=BOISSELIER&amp;rft.aufirst=Jackie"></span></span>
+		    	<br>
+				</div>
+				<div id="el24001Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24001" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24000Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el24000Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A24000%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22159d675eb27849b100c2c8c4c9a2d368%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el24000', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24000"><span class="statutnot1"></span><span notice="24000" class="header_title">Vers la professionnalisation des étudiants en architecture d'interieur</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=26339">Hend DAHMAN</a></span> / L'Harmattan<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Vers%20la%20professionnalisation%20des%20%C3%A9tudiants%20en%20architecture%20d%27interieur&amp;rft.title=Vers%20la%20professionnalisation%20des%20%C3%A9tudiants%20en%20architecture%20d%27interieur%20%3A%20p%C3%A9dagogie%20par%20projet%20et%20intelligence%20collective.&amp;rft.isbn=978-14-029013-8&amp;rft.tpages=%28186%20p.%29&amp;rft_id=&amp;rft.pub=L%27Harmattan&amp;rft.au=Hend%20DAHMAN&amp;rft.au=Salma%20CHAABOUNI&amp;rft.aulast=DAHMAN&amp;rft.aufirst=Hend"></span></span>
+		    	<br>
+				</div>
+				<div id="el24000Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=24000" style="display:none;">Permalink</a>
+			
+		
+				<div id="el23995Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el23995Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A23995%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22c1830fa12ddac867dcedd676c01ea480%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el23995', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_23995"><span class="statutnot1"></span><span notice="23995" class="header_title">النظم الرقمية</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=774">فاروق سيد حسين</a></span> / بيروت [لبنان] : دار الراتب الجامعية (1990)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=%D8%A7%D9%84%D9%86%D8%B8%D9%85%20%D8%A7%D9%84%D8%B1%D9%82%D9%85%D9%8A%D8%A9&amp;rft.title=%D8%A7%D9%84%D9%86%D8%B8%D9%85%20%D8%A7%D9%84%D8%B1%D9%82%D9%85%D9%8A%D8%A9%20%3A%20%D8%A8%D9%86%D8%A7%D8%A1%20%D8%AF%D9%88%D8%A7%D8%A6%D8%B1%20%D8%B9%D9%84%D9%85%D9%8A%D8%A9%20%D8%A9%20%D9%86%D8%B8%D8%B1%D9%8A%D8%A7%D8%AA%20%D8%A7%D9%84%D8%AA%D8%B4%D8%BA%D9%8A%D9%84%20%D8%A7%D9%84%D8%B5%D9%8A%D8%A7%D9%86%D8%A9%20%D8%A7%D9%84%D8%A7%D8%B5%D9%84%D8%A7%D8%AD%20%D8%A7%D9%84%D8%A7%D8%B9%D8%B7%D8%A7%D9%84&amp;rft.tpages=200%D8%B5.&amp;rft.date=1990&amp;rft_id=&amp;rft.series=%D8%B3%D9%84%D8%B3%D9%84%D8%A9%20%D8%A5%D9%84%D9%83%D8%AA%D8%B1%D9%88%D9%86%D9%8A%D8%A7%D8%AA%20%D8%A7%D9%84%D9%85%D8%B3%D8%AA%D9%82%D8%A8%D9%84&amp;rft.pub=%D8%AF%D8%A7%D8%B1%20%D8%A7%D9%84%D8%B1%D8%A7%D8%AA%D8%A8%20%D8%A7%D9%84%D8%AC%D8%A7%D9%85%D8%B9%D9%8A%D8%A9&amp;rft.place=%D8%A8%D9%8A%D8%B1%D9%88%D8%AA&amp;rft.au=%D9%81%D8%A7%D8%B1%D9%88%D9%82%20%D8%B3%D9%8A%D8%AF%20%D8%AD%D8%B3%D9%8A%D9%86&amp;rft.aulast=%D8%B3%D9%8A%D8%AF%20%D8%AD%D8%B3%D9%8A%D9%86&amp;rft.aufirst=%D9%81%D8%A7%D8%B1%D9%88%D9%82"></span></span>
+		    	<br>
+				</div>
+				<div id="el23995Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=23995" style="display:none;">Permalink</a>
+			
+		
+				<div id="el23994Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el23994Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A23994%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%2299339dc0dae4c265b6e7929b5938b6b7%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el23994', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_23994"><span class="statutnot1"></span><span notice="23994" class="header_title">سلسلة الدوائر</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=774">فاروق سيد حسين</a></span> / دار الراتب الجامعية<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=%D8%B3%D9%84%D8%B3%D9%84%D8%A9%20%D8%A7%D9%84%D8%AF%D9%88%D8%A7%D8%A6%D8%B1&amp;rft.title=%D8%B3%D9%84%D8%B3%D9%84%D8%A9%20%D8%A7%D9%84%D8%AF%D9%88%D8%A7%D8%A6%D8%B1%20%3A%20%D8%A7%D9%84%D8%B9%D9%85%D9%84%D9%8A%D8%A9%20%D9%88%20%D8%A7%D9%84%D8%A7%D9%84%D9%83%D8%AA%D8%B1%D9%88%D9%86%D9%8A%D8%A9&amp;rft.tpages=94%20%D8%B5.&amp;rft_id=&amp;rft.pub=%D8%AF%D8%A7%D8%B1%20%D8%A7%D9%84%D8%B1%D8%A7%D8%AA%D8%A8%20%D8%A7%D9%84%D8%AC%D8%A7%D9%85%D8%B9%D9%8A%D8%A9&amp;rft.au=%D9%81%D8%A7%D8%B1%D9%88%D9%82%20%D8%B3%D9%8A%D8%AF%20%D8%AD%D8%B3%D9%8A%D9%86&amp;rft.aulast=%D8%B3%D9%8A%D8%AF%20%D8%AD%D8%B3%D9%8A%D9%86&amp;rft.aufirst=%D9%81%D8%A7%D8%B1%D9%88%D9%82"></span></span>
+		    	<br>
+				</div>
+				<div id="el23994Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=23994" style="display:none;">Permalink</a>
+			
+		
+				<div id="el23992Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el23992Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A23992%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22051085280db8419b12ea0e252cf68f9d%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el23992', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_23992"><span class="statutnot1"></span><span notice="23992" class="header_title">عجائب الدوائر الالكترونية</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=26334">فاروق سيد حسين</a></span> / بيروت [لبنان] : دار الراتب الجامعية (1993)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=%D8%B9%D8%AC%D8%A7%D8%A6%D8%A8%20%D8%A7%D9%84%D8%AF%D9%88%D8%A7%D8%A6%D8%B1%20%D8%A7%D9%84%D8%A7%D9%84%D9%83%D8%AA%D8%B1%D9%88%D9%86%D9%8A%D8%A9&amp;rft.title=%D8%B9%D8%AC%D8%A7%D8%A6%D8%A8%20%D8%A7%D9%84%D8%AF%D9%88%D8%A7%D8%A6%D8%B1%20%D8%A7%D9%84%D8%A7%D9%84%D9%83%D8%AA%D8%B1%D9%88%D9%86%D9%8A%D8%A9&amp;rft.tpages=64%20%D8%B5.&amp;rft.date=1993&amp;rft_id=&amp;rft.series=%D8%B3%D9%84%D8%B3%D9%84%D8%A9%20%D8%A5%D9%84%D9%83%D8%AA%D8%B1%D9%88%D9%86%D9%8A%D8%A7%D8%AA%20%D8%A7%D9%84%D9%85%D8%B3%D8%AA%D9%82%D8%A8%D9%84&amp;rft.pub=%D8%AF%D8%A7%D8%B1%20%D8%A7%D9%84%D8%B1%D8%A7%D8%AA%D8%A8%20%D8%A7%D9%84%D8%AC%D8%A7%D9%85%D8%B9%D9%8A%D8%A9&amp;rft.place=%D8%A8%D9%8A%D8%B1%D9%88%D8%AA&amp;rft.au=%D9%81%D8%A7%D8%B1%D9%88%D9%82%20%D8%B3%D9%8A%D8%AF%20%D8%AD%D8%B3%D9%8A%D9%86&amp;rft.aulast=%D8%AD%D8%B3%D9%8A%D9%86&amp;rft.aufirst=%D9%81%D8%A7%D8%B1%D9%88%D9%82%20%D8%B3%D9%8A%D8%AF"></span></span>
+		    	<br>
+				</div>
+				<div id="el23992Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=23992" style="display:none;">Permalink</a>
+			
+		
+				<div id="el23991Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el23991Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A23991%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%227aa7f8d141e575dc59495c28d4be7bca%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el23991', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_23991"><span class="statutnot1"></span><span notice="23991" class="header_title">automotive mechanics</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=24203">William H CROUSE</a></span> / McGraw-Hill (1995)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=automotive%20mechanics&amp;rft.title=automotive%20mechanics&amp;rft.isbn=978-0-02-800943-8&amp;rft.tpages=820%20P.&amp;rft.date=1995&amp;rft_id=&amp;rft.pub=McGraw-Hill&amp;rft.edition=10%20ed.&amp;rft.au=William%20H%20CROUSE&amp;rft.aulast=CROUSE&amp;rft.aufirst=William%20H"></span></span>
+		    	<br>
+				</div>
+				<div id="el23991Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=23991" style="display:none;">Permalink</a>
+			
+		
+				<div id="el23989Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el23989Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A23989%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%225caa5c74ca345e30bf4ba29ac90709c4%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el23989', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_23989"><span class="statutnot1"></span><span notice="23989" class="header_title">المشروعات العملية للمبتدئين في الترانزستور</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=760">فاروق محمد العامري</a></span> / الدار المصرية اللبنانية (1988)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=%D8%A7%D9%84%D9%85%D8%B4%D8%B1%D9%88%D8%B9%D8%A7%D8%AA%20%D8%A7%D9%84%D8%B9%D9%85%D9%84%D9%8A%D8%A9%20%D9%84%D9%84%D9%85%D8%A8%D8%AA%D8%AF%D8%A6%D9%8A%D9%86%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%AA%D8%B1%D8%A7%D9%86%D8%B2%D8%B3%D8%AA%D9%88%D8%B1&amp;rft.title=%D8%A7%D9%84%D9%85%D8%B4%D8%B1%D9%88%D8%B9%D8%A7%D8%AA%20%D8%A7%D9%84%D8%B9%D9%85%D9%84%D9%8A%D8%A9%20%D9%84%D9%84%D9%85%D8%A8%D8%AA%D8%AF%D8%A6%D9%8A%D9%86%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%AA%D8%B1%D8%A7%D9%86%D8%B2%D8%B3%D8%AA%D9%88%D8%B1%20%3A%20%D8%A7%D9%84%D9%83%D8%AA%D8%A7%D8%A8%20%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%8A&amp;rft.isbn=978-977-15-2517-2&amp;rft.date=1988&amp;rft_id=&amp;rft.pub=%D8%A7%D9%84%D8%AF%D8%A7%D8%B1%20%D8%A7%D9%84%D9%85%D8%B5%D8%B1%D9%8A%D8%A9%20%D8%A7%D9%84%D9%84%D8%A8%D9%86%D8%A7%D9%86%D9%8A%D8%A9&amp;rft.au=%D9%81%D8%A7%D8%B1%D9%88%D9%82%20%D9%85%D8%AD%D9%85%D8%AF%20%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%B1%D9%8A&amp;rft.au=%D8%A3%D9%85%D9%8A%D9%86%20%D9%81%D9%87%D9%85%D9%8A&amp;rft.aulast=%D9%85%D8%AD%D9%85%D8%AF%20%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%B1%D9%8A&amp;rft.aufirst=%D9%81%D8%A7%D8%B1%D9%88%D9%82"></span></span>
+		    	<br>
+				</div>
+				<div id="el23989Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=23989" style="display:none;">Permalink</a>
+			
+		
+				<div id="el23988Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el23988Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A23988%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fmaktabati.univ-usto.dz%5C%2Fpmb_centrale%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22e89b154b5494ce22c15c3a6c75277b2b%22%2C%22datetime%22%3A1794730550%7D" onclick="expandBase_ajax('el23988', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://maktabati.univ-usto.dz/pmb_centrale/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_23988"><span class="statutnot3" title="commandé"></span><span notice="23988" class="header_title">300 tests d'anglais</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=25761">Anthony Bulger</a></span> / ASSIMIL (DL 2019)<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=300%20tests%20d%27anglais&amp;rft.title=300%20tests%20d%27anglais%20%3A%20QCM%20D%27ANGLAIS%20NIVEAU%20A2&amp;rft.isbn=978-2-7005-0832-1&amp;rft.tpages=1%20vol.%20%28299%20p.%29&amp;rft.date=DL%202019&amp;rft_id=370373&amp;rft.series=QCM%20Assimil&amp;rft.pub=ASSIMIL&amp;rft.au=Anthony%20Bulger&amp;rft.aulast=Bulger&amp;rft.aufirst=Anthony"></span></span>
+			 <span class="notice_link">
+			<a href="370373" target="_blank" type="external_url_notice">
+				<img src="https://maktabati.univ-usto.dz/pmb_centrale/images/globe.gif" style="border:0px" class="align_middle" alt="Ouvrir le lien " title="Ouvrir le lien " loading="lazy">
+			</a></span>
+		    	<br>
+				</div>
+				<div id="el23988Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://maktabati.univ-usto.dz/pmb_centrale/index.php?lvl=notice_display&amp;id=23988" style="display:none;">Permalink</a>
+			
+		</div>
+	</div>
+		</div>
+<div id="footer">
+    <span id="footer_rss"></span>
+    <span id="footer_link_sup"><img id="logo_sndl" src="images/logo_sndl.jpg" alt="" loading="lazy">
+<a href="http://www.sndl.cerist.dz/" target="_blank">SNDL Systeme National de Documentation en Ligne</a> </span>
+    <span id="footer_link_pmb"><a href="/" target="_blank"></a> 
+        <a class="lien_pmb_footer" href="https://www.sigb.net" title="pmb ...une solution libre pour la médiathèque..." target="_blank">pmb</a>
+    </span>
+</div> 
+
+		</div>
+
+		<div id="intro">
+<div id="intro_bibli">
+			<h3>BUC USTOMB'Doc</h3>
+			<div class="p1">La Bibliothèque Centrale de l'USTOMB (BUC)met à votre disposition une multitude ouvrages multidisciplinaires.
+Pour découvrir le contenu de notre catalogue Commencez donc par la recherche ...<br>
+Cet écran vous présente de nombreuses possibilités de recherche et de navigation, celles-ci sont grandement paramétrables.<br><br>
+</div>
+			<div class="p2">
+</div>
+			</div>
+		</div>
+		<div id="bandeau">
+
+
+<div id="accessibility">
+    	<input type="hidden" id="opacAccessibility" name="opacAccessibility" value="1">
+	<ul class="accessibility_font_size">
+		<li class="accessibility_font_size_small">
+			<a href="javascript:accessibilityFontSize(1);" title="Réduire le texte">A-</a>
+		</li>
+		<li class="accessibility_font_size_normal">
+			<a href="javascript:accessibilityFontSize(0);" title="Réinitialiser le texte">A</a>
+		</li>
+		<li class="accessibility_font_size_big">
+			<a href="javascript:accessibilityFontSize(2);" title="Agrandir le texte">A+</a>
+		</li>
+	</ul>
+</div>
+
+
+<script src="./includes/javascript/accessibility.js"></script>
+
+
+<div id="accueil">
+
+<h3><span onclick='document.location="./index.php?"' style="cursor: pointer;">Accueil</span></h3>
+<p class="centered"><a href="./index.php?"><img src="https://maktabati.univ-usto.dz/images/USTOLOGO.png" alt="Accueil" style="border:0px" class="center" loading="lazy"></a></p>
+<div id="lang_select"><h3><span>Sélection de la langue</span></h3><form method="post" action=""><select id="lang_sel_selector" name="lang_sel" onchange="this.form.submit();" title="Sélection de la langue"><option value="fr_FR" selected>Français</option><option value="en_UK">English (UK)</option><option value="ar">Arabe</option></select><input type="hidden" name="csrf_token" value="cdb693027dc60143b5d91e1b45d114614717a773"></form></div>
+
+					</div>
+<div id="connexion">
+		<h3 class="login_invite">Se connecter</h3>
+        <div id="login_form"><form action="" method="post" name="myform"><label>accéder à votre compte de lecteur</label><br>
+        <input type="text" name="login" class="login" size="14" placeholder="identifiant"><br>
+        <div class="myform-password-text-visually">
+            <input type="password" id="myform-password" name="password" class="password" size="8" placeholder="Mot de passe" value="">
+            <button type="button" class="fa fa-eye" id="myform-password-visually" onclick='toggle_password(this, "myform-password");' title="Afficher ou masquer le mot de passe"></button>
+        </div>
+        <input type="hidden" name="force_login" value="1">
+        <input type="submit" name="ok" value="ok" class="bouton">
+    <input type="hidden" name="csrf_token" value="f9425849b3d4c00d05802ea5987b9a1c29521f96"></form><a class="mdp_forgotten" href="./askmdp.php">Mot de passe oublié ?</a><br><a class="subs_not_yet_subscriber" href="./subscribe.php">Pas encore inscrit ?</a></div>
+	</div>
+    
+    <div id="meteo">
+
+		<h3>Météo</h3>
+
+		<p class="centered"><img src="https://www.dzmeteo.com/meteo-oran.dz" alt="" border="0" hspace="0" loading="lazy"></p>
+
+		<small>la météo à </small>
+
+		</div>
+<div id="adresse">
+
+		<h3>Adresse</h3>
+
+		<span>
+			BUC USTOMB'Doc<br>
+			Bibliothèque centrale
+USTOMB<br>
+			BP 1505 EL M'Naouer ORAN <br>
+			Algérie <br>
+			(213)041627180<br><span id="opac_biblio_email">
+			<a href="mailto:buc_usto@yahoo.fr" title="contact">contact</a></span></span>
+	    </div><div id="post_adress">
+
+		<span>Nous informons les utilisateurs de la Bibliothèque Universitaire Centrale qu’une exposition spéciale est faite au sein de la BUC au niveau de 2 éme étage, cette dernière est consacrée aux ouvrages de différentes spécialités dont les titres sont pour nos utilisateurs méconnues. 
+		</span>
+	    </div></div><div id="bandeau_2"></div></div>
+		
+		<script>init_drag();	//rechercher!!</script>
+		
+			<script>
+				var tarteaucitron_messages = pmbDojo.messages.getMessages("tarteaucitron");
+				if(tarteaucitron_messages.length) {
+					tarteaucitronCustomText = {};
+					tarteaucitron_messages.forEach(function(message) {
+						if(parseInt(message.code.indexOf(":")) !== -1) {
+							let tarteaucitron_messages_group = message.code.split(":");
+							if(typeof tarteaucitronCustomText[tarteaucitron_messages_group[0]] == "undefined") {
+								tarteaucitronCustomText[tarteaucitron_messages_group[0]] = {};
+							}
+							tarteaucitronCustomText[tarteaucitron_messages_group[0]][tarteaucitron_messages_group[1]] = message.message;
+						} else {
+							tarteaucitronCustomText[message.code] = message.message;
+						}
+					});
+				}
+			</script>
+			<script src="./includes/javascript/tarteaucitron/tarteaucitron.js"></script>
+		<script>
+	        tarteaucitron.init({
+	    	  "privacyUrl": "", /* Privacy policy url */
+	
+	    	  "hashtag": "#PhpMyBibli-COOKIECONSENT", /* Open the panel with this hashtag */
+	    	  "cookieName": "PhpMyBibli-COOKIECONSENT", /* Cookie name */
+	    
+	    	  "orientation": "bottom", /* Banner position (top - bottom - popup) */
+	       
+	          "groupServices": true, /* Group services by category */
+	                           
+	    	  "showAlertSmall": false, /* Show the small banner on bottom right */
+	    	  "cookieslist": false, /* Show the cookie list */
+				                           
+	          "closePopup": false, /* Show a close X on the banner */
+	
+	          "showIcon": false, /* Show cookie icon to manage cookies */
+	          "iconSrc": "./images/cookie.png", /* Optionnal: URL or base64 encoded image */
+	          "iconPosition": "BottomRight", /* BottomRight, BottomLeft, TopRight and TopLeft */
+	
+	    	  "adblocker": false, /* Show a Warning if an adblocker is detected */
+	                           
+	          "DenyAllCta" : true, /* Show the deny all button */
+	          "AcceptAllCta" : true, /* Show the accept all button when highPrivacy on */
+	          "highPrivacy": true, /* HIGHLY RECOMMANDED Disable auto consent */
+	                           
+	    	  "handleBrowserDNTRequest": false, /* If Do Not Track == 1, disallow all */
+	
+	    	  "removeCredit": true, /* Remove credit link */
+	    	  "moreInfoLink": false, /* Show more info link */
+	
+	          "useExternalCss": false, /* If false, the tarteaucitron.css file will be loaded */
+	          "useExternalJs": false, /* If false, the tarteaucitron.js file will be loaded */
+				
+	    	  //"cookieDomain": ".my-multisite-domaine.fr", /* Shared cookie for multisite */
+	                          
+	          "readmoreLink": "", /* Change the default readmore link */
+	
+	          "mandatory": true, /* Show a message about mandatory cookies */
+	        });
+ 
+        </script>
+		 <script>
+        	(tarteaucitron.job = tarteaucitron.job || []).push("addthis");
+        </script>
+		<script src="./styles/maktabati_dark/maktabati_banner.js"></script>
+		</body>
+		</html>

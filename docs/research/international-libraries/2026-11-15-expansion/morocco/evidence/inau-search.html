@@ -1,0 +1,2547 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    
+			<meta charset="utf-8">
+			<meta name="author" content="PMB Group">
+					
+			<meta name="keywords" content="OPAC, web, library, opensource, catalog, catalogue, biblioth&egrave;que, m&eacute;diath&egrave;que, pmb, phpmybibli">
+			<meta name="description" content="Catalogue en ligne ."><meta name="robots" content="all">
+			<!--IE et son enfer de compatibilit?-->
+			<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<title>Catalogue en ligne </title>
+	
+	
+<link rel="stylesheet" type="text/css" href="./styles/common/HRM_common.css?1669590040">
+<link rel="stylesheet" type="text/css" href="./styles/common/animation_display.css?1615829538">
+<link rel="stylesheet" type="text/css" href="./styles/common/common.css?1641316188">
+<link rel="stylesheet" type="text/css" href="./styles/common/contrib.css?1629374426">
+<link rel="stylesheet" type="text/css" href="./styles/common/dGrowl.css?1598536188">
+<link rel="stylesheet" type="text/css" href="./styles/common/font-awesome.css?1478593624">
+<link rel="stylesheet" type="text/css" href="./styles/common/open-sans.css?1479312986">
+<link rel="stylesheet" type="text/css" href="./styles/common/pagination.css?1532013718">
+<link rel="stylesheet" type="text/css" href="./styles/common/record_display.css?1540561362">
+<link rel="stylesheet" type="text/css" href="./styles/inau_yandev_theme/base.css?1670463328">
+<link rel="stylesheet" type="text/css" href="./styles/inau_yandev_theme/fontAcontent.css?1456928812">
+<link rel="stylesheet" type="text/css" href="./styles/inau_yandev_theme/grayscale_css.css?1670390036">
+<link rel="stylesheet" type="text/css" href="./styles/inau_yandev_theme/style_footer.css?1681958179">
+<link rel="stylesheet" type="text/css" href="./styles/inau_yandev_theme/zen.css?1670457134">
+<link rel="stylesheet" type="text/css" href="./styles/inau_yandev_theme/zen_color_pre_set.css?1670469501">
+<link rel="stylesheet" type="text/css" href="./styles/inau_yandev_theme/zonepageo_a.css?1670445670">
+<link rel="stylesheet" type="text/css" href="./styles/inau_yandev_theme/zzen_responsive.css?1665979722"><script type="text/javascript">var opac_style= 'inau_yandev_theme';</script>
+	<!-- css_authentication -->	<link rel="SHORTCUT ICON" href="styles/inau_yandev_theme/images/favicon.ico">
+	<script type="text/javascript" src="includes/javascript/drag_n_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/handle_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/popup.js"></script>
+	<script type="text/javascript">
+			// Fonction a utiliser pour l'encodage des URLs en javascript
+			function encode_URL(data){
+				var docCharSet = document.characterSet ? document.characterSet : document.charset;
+				if(docCharSet == "UTF-8"){
+	    			return encodeURIComponent(data);
+	    		}else{
+	    			return escape(data);
+	    		}
+	    	}
+	    </script>
+	<script type="text/javascript">
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName = 
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {  
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i); 
+				    }
+				 }
+				return items;
+			 }
+		}
+	</script>
+
+		<link rel="stylesheet" type="text/css" href="./includes/javascript/dojo/dijit/themes/tundra/tundra.css">
+		<script type="text/javascript">
+			var dojoConfig = {
+				parseOnLoad: true,
+				locale: 'fr-fr',
+				isDebug: false,
+				usePlainJson: true,
+				packages: [{
+						name: 'pmbBase',
+						location:'../../../..'
+					},{
+						name: 'd3',
+						location:'../../d3'
+					}],
+				deps: ['apps/pmb/MessagesStore', 'dgrowl/dGrowl', 'dojo/ready', 'apps/pmb/ImagesStore'],
+				callback:function(MessagesStore, dGrowl, ready, ImagesStore){
+					window.pmbDojo = {};
+					pmbDojo.messages = new MessagesStore({url:'./ajax.php?module=ajax&categ=messages', directInit:false});
+					pmbDojo.images = new ImagesStore({url:'./ajax.php?module=ajax&categ=images', directInit:false});
+					ready(function(){
+						new dGrowl({'channels':[{'name':'info','pos':2},{'name':'error', 'pos':1}]});
+					});
+						
+				},
+			};
+		</script>
+		<script type="text/javascript" src="./includes/javascript/dojo/dojo/dojo.js"></script>
+		<script type="text/javascript">
+		dojo.addOnLoad(function () {
+			// Ajout du theme Dojo
+			dojo.addClass(dojo.body(),'tundra');
+		})
+		</script>
+		<script type="text/javascript">
+	var pmb_img_patience = './images/patience.gif';
+</script><script type="text/javascript">
+			var opac_show_social_network =0;
+		</script>
+	<script type="text/javascript" src="includes/javascript/simili_search.js"></script>
+	<script type="text/javascript" src="./visionneuse/javascript/visionneuse.js"></script>
+	<script type="text/javascript" src="./includes/javascript/http_request.js"></script>
+	<!-- Script d'enrichissement pour wikipedia-->
+<script type="text/javascript">
+			function load_wiki(notice_id,type,label){
+				var	wiki= new http_request();
+				var content = document.getElementById('div_'+type+notice_id);
+				content.innerHTML = '';
+				var patience= document.createElement('img');
+				patience.setAttribute('src','./images/patience.gif');
+				patience.setAttribute('align','middle');
+				patience.setAttribute('id','patience'+notice_id);
+				content.appendChild(patience);
+				wiki.request('./ajax.php?module=ajax&categ=enrichment&action=enrichment&type='+type+'&id='+notice_id,true,'&enrich_params[label]='+label,true,gotEnrichment);
+			}
+		</script>
+<!-- Script d'enrichissement pour Youtube-->
+
+	<!-- Enrichissement de notice en Ajax-->
+	<script type="text/javascript" src="./includes/javascript/enrichment.js"></script>
+<script>
+				dojo.addOnLoad(function (){
+					//on balance un evenement pour les initialiser les modules si besoin...
+					dojo.publish('init',['cms_dojo_init',{}]);
+				});
+			</script>
+
+		<script type="text/javascript">
+			function cms_module_search_22_change_dest(){
+				var page = 0;
+                var universe = 0;
+                var default_segment = 0;
+                if(document.forms['cms_module_search_22_searchbox'].dest) {
+    				var dests = document.forms['cms_module_search_22_searchbox'].dest;
+    				for(var i = 0; i < dests.length; i++){
+    					if(dests[i].checked){
+    						page = dests[i].value;
+                            universe = dests[i].getAttribute('universe');
+                            default_segment = dests[i].getAttribute('default_segment');
+    						break;
+    					}
+    				}
+                }
+                if(universe > 0){
+                    if(default_segment > 0){
+                        document.forms['cms_module_search_22_searchbox'].action = './index.php?lvl=search_segment&action=segment_results&id='+default_segment;
+                    } else {
+                        document.forms['cms_module_search_22_searchbox'].action = './index.php?lvl=search_universe&id='+universe;   
+                    }  
+                } else if(page>0){
+					document.forms['cms_module_search_22_searchbox'].action = './index.php?lvl=cmspage&pageid='+page;
+				}
+                if (page.toString().indexOf('view_') != -1) {
+					var view_id = page.substr(5);
+				    document.forms['cms_module_search_22_searchbox'].action += '&opac_view='+view_id;
+                }
+			}
+		</script><script type="text/javascript" src="./cms/modules/common/includes/javascript/jquery-2.1.1.min.js"></script><script type="text/javascript" src="./styles/zen/uitkit/js/uikit.min.js"></script><script type="text/javascript" src="./styles/zen/uitkit/js/components/sticky.min.js"></script><script type="text/javascript" src="./styles/zen/uitkit/js/components/grid.min.js"></script><script type="text/javascript" src="./cms/modules/common/includes/javascript/jquery.bxsliderv4.min.js"></script><link rel="stylesheet" href="./styles/zen/uitkit/css/uikit.min.css"><link rel="stylesheet" href="./styles/zen/addcss/home.css"><link rel="stylesheet" href="./styles/zen/uitkit/css/components/sticky.almost-flat.min.css"><link rel="stylesheet" href="./styles/zen/addcss/calendar.css"></head>
+
+<body onload="window.defaultStatus='PMB : Acc&egrave;s public';" id="pmbopac">
+	<script type="text/javascript" src="./includes/javascript/tablist_ajax.js"></script>
+<script type="text/javascript" src="./includes/javascript/tablist.js"></script>
+<script type="text/javascript" src="./includes/javascript/misc.js"></script>
+	<div id="att" style="z-Index:1000"></div>
+	<div id="container"><div id="intro" fixed="yes">
+<div id="intro_bibli" fixed="yes">
+			<h3></h3>
+			<div class="p1"></div>
+			<div class="p2"><br><br><br><br><br><br><br><br><br><br><br>
+<br>
+
+<li><p align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="./index.php?lvl=show_cart">
+<!--img src="./images/basket_small_20x20.png"--><img src="" width="65" height="20"></a></p></li>
+</div>
+			</div>
+		<div id="cms_module_sectionslist_174" class="cms_module_sectionslist cms_module" style="visibility: visible; position: static; left: 0px; top: 0px; display: block;"><div id="offcanvas" class="uk-offcanvas">
+	<div class="uk-offcanvas-bar">
+			<div class="MenuVertResp">
+			<ul class="NavResponsive">
+			<!-- rubriques niveau 1 -->
+							<li>
+					<a href="./index.php" title="Accueil">Accueil</a>
+									</li>
+							<li>
+					<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=37" title="Catalogue">Catalogue</a>
+											<ul class="SousNavResponsive">
+				<!-- rubriques niveau 2 -->
+															<li>
+									<a href="./index.php?lvl=index" title="Recherche simple">Recherche simple</a>
+								</li>
+															<li>
+									<a href="./index.php?search_type_asked=perio_a2z" title="P&eacute;riodiques">P&eacute;riodiques</a>
+								</li>
+													</ul>
+									</li>
+							<li>
+					<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=1" title="Actualit&eacute;s">Actualit&eacute;s</a>
+											<ul class="SousNavResponsive">
+				<!-- rubriques niveau 2 -->
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=4" title="Agenda">Agenda</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=7" title="Nouveaut&eacute;s">Nouveaut&eacute;s</a>
+								</li>
+													</ul>
+									</li>
+							<li>
+					<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=71" title="Ressources num&eacute;riques">Ressources num&eacute;riques</a>
+									</li>
+						</ul>
+		</div>
+		</div>
+</div></div><div id="cms_module_htmlcode_176" class="cms_module_htmlcode cms_module" style="visibility: visible; position: static; left: 0px; top: 0px; display: block;"><div class="TglUser " data-uk-button>
+	<a class="Tgllogin" data-uk-toggle="{target:'#connexion', cls:'heightZero'}">
+		<span class="user"><i class="fa fa-user"></i></span>
+	</a>
+</div></div><div id="cms_module_htmlcode_175" class="cms_module_htmlcode cms_module" style="visibility: visible; position: static; left: 0px; top: 0px; display: block;"><div id="btnMenu" class="temp">
+	<div class="tgLbtnMenu">
+		<a class="MenuCanvas uk-button" href="#offcanvas" data-uk-offcanvas><i class="fa fa-bars"></i></a>
+	</div>
+</div></div><div id="cms_module_htmlcode_178" class="cms_module_htmlcode cms_module" style="visibility: visible; position: static; left: 0px; top: 0px; display: block;"><div class="TgllSearch" data-uk-button>
+	<a data-uk-toggle="{target:'.searchbox', cls:'heightZero'}">
+		<span class="user"><i class="fa fa-search"></i></span>
+	</a>
+</div></div><div id="cms_module_section_177" class="cms_module_section cms_module" style="visibility: visible; display: block; position: static; left: 0px; top: 0px;"><div class="uk-grid uk-grid-collapse" data-uk-grid-match="{target:'.titrePortail'}" data-uk-grid-margin>
+	<div class="uk-width-1-3">
+        <div id="logo" class="titrePortail">
+            <a href="./index.php" title="PMB Services"><img src="https://inau.ac.ma/binau/cms_vign.php?type=section&amp;id=62&amp;mode=large" alt="PMB Services"></a>
+        </div>
+    </div>
+	<div class="uk-width-2-3"> 
+        <div id="titrePortail" class="titrePortail">
+            <h1>
+                <span class="mainTitle">PMB Services</span>
+                <span class="subTitle">r&eacute;seau mediath&egrave;ques</span>
+            </h1>
+        </div>
+     </div>        
+</div></div><div id="cms_module_section_173" class="cms_module_section cms_module" style="visibility: visible; position: static; left: 0px; top: 0px; display: block;"><div id="Introbandeau"><img src="https://inau.ac.ma/binau/cms_vign.php?type=section&amp;id=79&amp;mode=large%20alt=" photo bandeau superieur></div>
+</div><div id="cms_module_section_125" class="cms_module_section cms_module" style="visibility: visible; display: none; left: auto; top: auto; height: 156px; width: 1023px; margin: 0px; padding: 0px; float: none; position: static;"><div id="logo">
+	<a href="./index.php" title="PMB Services"><img src="https://inau.ac.ma/binau/cms_vign.php?type=section&amp;id=62&amp;mode=large" alt="PMB Services"></a>
+</div></div><div id="cms_module_metadatas_172" class="cms_module_metadatas cms_module" style="visibility: visible; display: block;"></div><div id="cms_module_section_126" class="cms_module_section cms_module" style="visibility: visible; display: none; left: auto; top: auto; height: 159px; width: 1023px; margin: 0px; padding: 0px; float: none; position: static;"><div id="titrePortail">
+	<h1>
+        <span class="mainTitle">PMB Services</span>
+        <span class="subTitle">r&eacute;seau mediath&egrave;ques</span>
+	</h1>
+</div></div><div id="cms_module_htmlcode_137" class="cms_module_htmlcode cms_module" style="visibility: visible; display: block;"><div class="clear"></div></div><div id="cms_module_sectionslist_120" class="cms_module_sectionslist cms_module" style="visibility: visible; display: block;"><div class="uk-flex uk-flex-center uk-hidden-small uk-hidden-medium">
+    <div class="MenuHoriz uk-navbar uk-container">
+        <ul class="Nav uk-navbar-nav">
+        <!-- rubriques niveau 1 -->
+                    <li>
+                <a href="./index.php" title="Accueil">Accueil</a>
+                            </li>
+                    <li class="uk-parent" data-uk-dropdown="{pos:'bottom-center',remaintime:'550'}">
+                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=37" title="Catalogue">Catalogue</a>
+                                <div class="uk-dropdown uk-dropdown-navbar">
+                    <ul class="SousNav uk-nav uk-nav-navbar">
+			<!-- rubriques niveau 2 -->
+                                                    <li>
+                                <a href="./index.php?lvl=index">Recherche simple</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?search_type_asked=perio_a2z">P&eacute;riodiques</a>
+                            </li>
+                                            </ul>
+                </div>      
+                            </li>
+                    <li class="uk-parent" data-uk-dropdown="{pos:'bottom-center',remaintime:'550'}">
+                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=1" title="Actualit&eacute;s">Actualit&eacute;s</a>
+                                <div class="uk-dropdown uk-dropdown-navbar">
+                    <ul class="SousNav uk-nav uk-nav-navbar">
+			<!-- rubriques niveau 2 -->
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=4">Agenda</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=7">Nouveaut&eacute;s</a>
+                            </li>
+                                            </ul>
+                </div>      
+                            </li>
+                    <li>
+                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=71" title="Ressources num&eacute;riques">Ressources num&eacute;riques</a>
+                            </li>
+                </ul>
+    </div>
+</div>    
+</div></div><div id="main" style="position: static; left: 0px; top: 0px;" fixed="yes"><div id="main_header"><link href="https://fonts.googleapis.com/css?family=Dosis:400,500" rel="stylesheet" type="text/css"></div><div id="main_hors_footer" style="position: relative; left: 0px; top: 0px;">
+						
+
+<script type="text/javascript" src="./includes/javascript/auth_popup.js"></script>	
+<script type="text/javascript" src="./includes/javascript/pnb.js"></script><div id="add_div_cms_module_articleslist_21" class="row"></div><div id="cms_module_htmlcode_170" class="cms_module_htmlcode cms_module"><div id="boutonRetour">
+<a href="javascript:history.go(-1)" title="Retour">&gt;&gt; Retour</a>
+</div>
+<div class="clear"></div> </div><div id="navigator" fixed="yes">
+<table style="width:100%"><tr><td class="navig_actions_last_search"><a href="index.php?lvl=search_result&amp;get_query=1" class="actions_last_search"><span>Modifier la recherche</span></a></td>
+<td class="navig_actions_history"><a href="index.php?lvl=search_history" class="actions_history"><span>Historique</span></a></td>
+<td class="navig_actions_first_screen"><a href="./index.php?lvl=index" class="navig_etageres"><span>Nouvelle recherche</span></a></td>
+</tr></table></div><div id="intro_message"><div class="p2"></div></div><!-- fermeture de #navigator -->
+<script type="text/javascript" src="./includes/javascript/misc.js"></script><script type="text/javascript">
+	var terms=new Array('the','green','city');
+	var terms_litteraux=new Array('the green city');
+	var codes=new Array();
+			
+	function remplacer_carac(mot) {
+		var x;
+		var reg;				
+		var chaine=mot;
+			reg=new RegExp(codes['a'], 'g');
+	chaine=chaine.replace(reg, 'a');
+	reg=new RegExp(codes['A'], 'g');
+	chaine=chaine.replace(reg, 'A');
+	reg=new RegExp(codes['c'], 'g');
+	chaine=chaine.replace(reg, 'c');
+	reg=new RegExp(codes['C'], 'g');
+	chaine=chaine.replace(reg, 'C');
+	reg=new RegExp(codes['e'], 'g');
+	chaine=chaine.replace(reg, 'e');
+	reg=new RegExp(codes['E'], 'g');
+	chaine=chaine.replace(reg, 'E');
+	reg=new RegExp(codes['i'], 'g');
+	chaine=chaine.replace(reg, 'i');
+	reg=new RegExp(codes['I'], 'g');
+	chaine=chaine.replace(reg, 'I');
+	reg=new RegExp(codes['n'], 'g');
+	chaine=chaine.replace(reg, 'n');
+	reg=new RegExp(codes['N'], 'g');
+	chaine=chaine.replace(reg, 'N');
+	reg=new RegExp(codes['o'], 'g');
+	chaine=chaine.replace(reg, 'o');
+	reg=new RegExp(codes['O'], 'g');
+	chaine=chaine.replace(reg, 'O');
+	reg=new RegExp(codes['u'], 'g');
+	chaine=chaine.replace(reg, 'u');
+	reg=new RegExp(codes['U'], 'g');
+	chaine=chaine.replace(reg, 'U');
+		
+		return(chaine);		
+	}
+</script><script type="text/javascript" src="./temp/surligner_codes.js"></script><script type="text/javascript" src="./includes/javascript/surligner.js"></script>	
+            <input type="hidden" id="author_type" name="author_type" value=""><input type="hidden" id="id_thes" name="id_thes" value=""><div id="resultatrech" style="position: static; left: 0px; top: 0px;"><h3 class="searchResult-title">R&eacute;sultat de la recherche</h3>
+				<div id="resultatrech_container">
+				    <div id="resultatrech_see"><h3 class="searchResult-search">
+				<span class="searchResult-equation">
+					<b>110</b>  titres trouv&eacute;s pour la recherche <b>
+					'The green city'</b></span>&nbsp;&nbsp;&nbsp;<img style="border:0px" class="center" src="./images/text_horizontalrule.png" onmouseover="this.style.cursor='pointer'" alt="Ne pas surligner les mots recherch&eacute;s" title="Ne pas surligner les mots recherch&eacute;s" onclick="document.form_values.surligne.value=0;document.form_values.submit();"></h3>
+
+					</div><div id="resultatrech_liste"><span class="expandAll"><a href="javascript:expandAll_ajax(1);show_simili_search_all();show_expl_voisin_search_all();"><img class="img_plusplus" src="./images/expand_all.gif" style="border:0px" id="expandall"></a></span><span class="espaceResultSearch">&nbsp;</span><span class="collapseAll"><a href="javascript:collapseAll()"><img class="img_moinsmoins" src="./images/collapse_all.gif" style="border:0px" id="collapseall"></a></span><span class="print_search_result"><span class="printSearchResult">
+<a href="#" onclick="openPopUp('./print.php?lvl=search&amp;current_search=0','print'); w.focus(); return false;" title="Imprimer la page de recherche courante...">
+	<img src="./images/print.gif" style="border:0px" class="align_bottom" alt="Imprimer la page de recherche courante...">
+</a>
+</span></span><span class="espaceResultSearch">&nbsp;</span><script type="text/javascript" src="./includes/javascript/select.js"></script>
+						<script>
+							var ajax_get_sort=new http_request();
+					
+							function get_sort_content(del_sort, ids) {
+								var url = './ajax.php?module=ajax&categ=sort&sub=get_sort&raz_sort='+(typeof(del_sort) != 'undefined' ? del_sort : '')+'&suppr_ids='+(typeof(ids) != 'undefined' ? ids : '')+'&page_en_cours=lvl%3Dmore_results%26autolevel1%3D1&sort_name=notices';
+								ajax_get_sort.request(url,0,'',1,show_sort_content,0,0);
+							}
+					
+							function show_sort_content(response) {
+								document.getElementById('frame_notice_preview').innerHTML=ajax_get_sort.get_text();
+								var tags = document.getElementById('frame_notice_preview').getElementsByTagName('script');
+					       		for(var i=0;i<tags.length;i++){
+									window.eval(tags[i].text);
+					        	}
+							}
+							function kill_sort_frame() {
+								var sort_view=document.getElementById('frame_notice_preview');
+								if (sort_view)
+									sort_view.parentNode.removeChild(sort_view);
+							}
+						</script>  
+                        <span class="triSelector">
+                            <a onclick="show_layer(); get_sort_content();" title="Tris disponibles" style="cursor : pointer;">
+                                <img src="./images/orderby_az.gif" alt="Tris disponibles" class="align_bottom" hspace="3" style="border:0px" id="sort_icon">
+                            </a>
+                        </span><span class="addCart"><a href="javascript:document.cart_values.submit()" title="Ajouter le r&eacute;sultat dans votre panier">Ajouter le r&eacute;sultat dans votre panier</a></span><span class="espaceResultSearch">&nbsp;&nbsp;</span><span class="affiner_recherche"><a href="./index.php?search_type_asked=extended_search&amp;mode_aff=aff_simple_search" title="Affiner la recherche">Affiner la recherche</a></span><span class="espaceResultSearch">&nbsp;&nbsp;</span><span class="short_url"><a target="_blank" href="https://inau.ac.ma/binau/s.php?h=cf5d2b75a670100c103ae08c335a1177" title="G&eacute;n&eacute;rer le flux rss de la recherche">G&eacute;n&eacute;rer le flux rss de la recherche</a></span>
+					<script type="text/javascript">
+						require(['dojo/on', 'dojo/topic', 'apps/pmb/sharelink/SharePopup'], function(on, topic, SharePopup){
+						window.copy_shorturl_to_clipboard = function() {
+								new SharePopup('https://inau.ac.ma/binau/s.php?h=fb55aec56cc24a15c26ee86e327769c7');
+							}					
+						});
+					</script><span class="espaceResultSearch">&nbsp;&nbsp;</span><span class="short_url_permalink"><a href="#" onclick="copy_shorturl_to_clipboard(); return false;" title="Partager le r&eacute;sultat de cette recherche">Partager le r&eacute;sultat de cette recherche</a></span><span class="espaceResultSearch">&nbsp;&nbsp;&nbsp;</span><span class="search_bt_sugg"><a href="#" onclick="w=window.open('./do_resa.php?lvl=make_sugg&amp;oresa=popup','doresa','scrollbars=yes,width=600,height=600,menubar=0,resizable=yes'); w.focus(); return false;" title="Faire une suggestion">Faire une suggestion</a></span><blockquote><!-- $Id: record_in_result_display.tpl.html,v 1.62 2019/11/07 14:41:14 ngantier Exp $ -->
+
+<div id="record_container_2473" class="parentNotCourte uk-clearfix">
+				
+ 			<div class="vignetteimgNot">
+														<!-- Vignette de la notice -->
+						<div class="vignetteDocNot">
+							<img class="vignetteNot" src="./styles/inau_yandev_theme/images/no_image.jpg" alt="The green city">
+						</div>						
+						
+						
+							<p class="typeDoc_notCourte">
+											texte imprim&eacute;
+									</p>
+			 
+		</div>
+		
+				<!-- Contenu de la notice -->
+			<div class="notice_corps">
+				<div class="descr_notice_corps">
+											<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=The%20green%20city&amp;rft.title=The%20green%20city&amp;rft.date=1979&amp;rft_id=&amp;rft.pub=The%20MacMillan%20Company&amp;rft.au=Roger%20JOHNSON&amp;rft.aulast=JOHNSON&amp;rft.aufirst=Roger"></span>
+										
+											<div class="title_notCourte">
+							<h3><a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=2473">
+																																																				
+																	<span class="tit1_notCourte">The green city</span>
+															</a></h3>
+						</div>
+										
+											<div class="infoCompl_notCourte">
+																																		<span class="auteur_notCourte">
+																			<a href="./index.php?lvl=author_see&amp;id=1934">Roger JOHNSON</a>																			</span>
+																															
+																								 									 	 | 									 									 <span class="editeur_notCourte"><a href="./index.php?lvl=publisher_see&amp;id=481">The MacMillan Company</a></span>
+																						
+																													
+														
+																																		 | 																		 <span class="annee_notCourte">1979</span>
+																					</div>
+										
+																				</div>
+									<!-- Plus d'informations -->
+					<div class="plusN">
+						<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=2473">Plus d'information...</a>
+					</div>
+							</div>
+		
+			<div class="panier_avis_notCourte">
+													
+																		<!-- Ajouter au panier -->
+						<div class="onglet_basketNoticeCourte ui-panel-basket-item">
+							<div id="record_container_2473_cart" class="ui-flex ui-flex-middle">
+																	<a href="cart_info.php?id=2473&amp;header=The+green+city" target="cart_info" class="img_basketNotCourte" title="Ajouter au panier">
+										<span class="icon_basketNot"><img src="./styles/common/images/white_basket.png" style="border:0px" alt="Ajouter au panier"></span>
+									</a>
+									<a href="cart_info.php?id=2473&amp;header=The+green+city" target="cart_info" class="label_basketNotCourte" title="Ajouter au panier">
+										<span class="label_basketNot">Ajouter au panier</span>
+									</a>
+															</div>
+						</div>
+											
+				
+
+													
+											
+													
+				
+										
+															
+							<!-- Documents numeriques -->
+									</div>
+		<div class="clear"></div>
+	
+			<div class="footer_notice">
+																									<!-- Bouton de pnb -->
+													
+																																											<!-- Bouton de reservation -->
+																																		<div id="resa_notice-2473" class="resa_notice">
+											<h3>
+												<a href="#" onclick="if(confirm('Voulez-vous vraiment r&eacute;server ce document ?')){w=window.open('./do_resa.php?lvl=resa&amp;id_notice=2473&amp;id_bulletin=0&amp;oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa_NotCourte-2473" class="bt_resa_NotCourte">R&eacute;server</a>
+											</h3>
+										</div>
+																																			
+													<!-- Voir les disponibilites -->
+							<div class="dispoLien_notice">
+								<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=2473#zone_exemplaires">
+																			<span class="notice_dispo">Disponible</span>
+																	</a>
+							</div>
+																				</div>
+		
+				<!-- Exemplaire -->
+		<div id="zone_exemplaires">
+			
+<h3><span id="titre_exemplaires" class="titre_exemplaires">Exemplaires (1)</span></h3>
+<table cellpadding="2" class="exemplaires" style="width:100%">
+<tr class="thead"><th class="expl_header_expl_cb">Code-barres</th><th class="expl_header_expl_cote">Cote</th><th class="expl_header_tdoc_libelle">Support</th><th class="expl_header_location_libelle">Localisation</th><th class="expl_header_section_libelle">Section</th><th class="expl_header_statut">Disponibilit&eacute;</th></tr><tr class="item_expl expl_available"><td id="expl_5814" class="Code-barres">5621</td><td class="Cote">710/JOH</td><td class="Support">Biblio</td><td class="Localisation">Salle de lecture</td><td class="Section">Urbanisme</td><td class="Disponibilit&eacute;">Consultation sur place<br><strong>Disponible</strong> </td></tr>
+</table>
+		</div>
+		
+	<div class="clear"></div>
+</div><!-- $Id: record_in_result_display.tpl.html,v 1.62 2019/11/07 14:41:14 ngantier Exp $ -->
+
+<div id="record_container_4292" class="parentNotCourte uk-clearfix">
+				
+ 			<div class="vignetteimgNot">
+														<!-- Vignette de la notice -->
+						<div class="vignetteDocNot">
+							<img class="vignetteNot" src="https://inau.ac.ma/binau/getimage.php?url_image=http%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9780822347682&amp;entity_id=4292&amp;vigurl=" alt="City of extremes . The spatial politics of johannesburg">
+						</div>						
+						
+						
+							<p class="typeDoc_notCourte">
+											texte imprim&eacute;
+									</p>
+			 
+		</div>
+		
+				<!-- Contenu de la notice -->
+			<div class="notice_corps">
+				<div class="descr_notice_corps">
+											<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=City%20of%20extremes%20.%20The%20spatial%20politics%20of%20johannesburg&amp;rft.title=City%20of%20extremes%20.%20The%20spatial%20politics%20of%20johannesburg&amp;rft.isbn=978-0-8223-4768-2&amp;rft.date=2011&amp;rft_id=&amp;rft.pub=Duke%20university%20press&amp;rft.au=Martin%20J%20MURRAY&amp;rft.aulast=MURRAY&amp;rft.aufirst=Martin%20J"></span>
+										
+											<div class="title_notCourte">
+							<h3><a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=4292">
+																																																				
+																	<span class="tit1_notCourte">City of extremes . The spatial politics of johannesburg</span>
+															</a></h3>
+						</div>
+										
+											<div class="infoCompl_notCourte">
+																																		<span class="auteur_notCourte">
+																			<a href="./index.php?lvl=author_see&amp;id=2979">Martin J MURRAY</a>																			</span>
+																															
+																								 									 	 | 									 									 <span class="editeur_notCourte"><a href="./index.php?lvl=publisher_see&amp;id=1096">Duke university press</a></span>
+																						
+																													
+														
+																																		 | 																		 <span class="annee_notCourte">2011</span>
+																					</div>
+										
+																				</div>
+									<!-- Plus d'informations -->
+					<div class="plusN">
+						<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=4292">Plus d'information...</a>
+					</div>
+							</div>
+		
+			<div class="panier_avis_notCourte">
+													
+																		<!-- Ajouter au panier -->
+						<div class="onglet_basketNoticeCourte ui-panel-basket-item">
+							<div id="record_container_4292_cart" class="ui-flex ui-flex-middle">
+																	<a href="cart_info.php?id=4292&amp;header=City+of+extremes+.+The+spatial+politics+of+johannesburg" target="cart_info" class="img_basketNotCourte" title="Ajouter au panier">
+										<span class="icon_basketNot"><img src="./styles/common/images/white_basket.png" style="border:0px" alt="Ajouter au panier"></span>
+									</a>
+									<a href="cart_info.php?id=4292&amp;header=City+of+extremes+.+The+spatial+politics+of+johannesburg" target="cart_info" class="label_basketNotCourte" title="Ajouter au panier">
+										<span class="label_basketNot">Ajouter au panier</span>
+									</a>
+															</div>
+						</div>
+											
+				
+
+													
+											
+													
+				
+										
+															
+							<!-- Documents numeriques -->
+									</div>
+		<div class="clear"></div>
+	
+			<div class="footer_notice">
+																									<!-- Bouton de pnb -->
+													
+																																											<!-- Bouton de reservation -->
+																																		<div id="resa_notice-4292" class="resa_notice">
+											<h3>
+												<a href="#" onclick="if(confirm('Voulez-vous vraiment r&eacute;server ce document ?')){w=window.open('./do_resa.php?lvl=resa&amp;id_notice=4292&amp;id_bulletin=0&amp;oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa_NotCourte-4292" class="bt_resa_NotCourte">R&eacute;server</a>
+											</h3>
+										</div>
+																																			
+													<!-- Voir les disponibilites -->
+							<div class="dispoLien_notice">
+								<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=4292#zone_exemplaires">
+																			<span class="notice_dispo">Disponible</span>
+																	</a>
+							</div>
+																				</div>
+		
+				<!-- Exemplaire -->
+		<div id="zone_exemplaires">
+			
+<h3><span id="titre_exemplaires" class="titre_exemplaires">Exemplaires (1)</span></h3>
+<table cellpadding="2" class="exemplaires" style="width:100%">
+<tr class="thead"><th class="expl_header_expl_cb">Code-barres</th><th class="expl_header_expl_cote">Cote</th><th class="expl_header_tdoc_libelle">Support</th><th class="expl_header_location_libelle">Localisation</th><th class="expl_header_section_libelle">Section</th><th class="expl_header_statut">Disponibilit&eacute;</th></tr><tr class="item_expl expl_available"><td id="expl_9143" class="Code-barres">8900</td><td class="Cote">711-68/MUR</td><td class="Support">Biblio</td><td class="Localisation">Salle de lecture</td><td class="Section">Urbanisme</td><td class="Disponibilit&eacute;">Consultation sur place<br><strong>Disponible</strong> </td></tr>
+</table>
+		</div>
+		
+	<div class="clear"></div>
+</div><!-- $Id: record_in_result_display.tpl.html,v 1.62 2019/11/07 14:41:14 ngantier Exp $ -->
+
+<div id="record_container_3251" class="parentNotCourte uk-clearfix">
+				
+ 			<div class="vignetteimgNot">
+														<!-- Vignette de la notice -->
+						<div class="vignetteDocNot">
+							<img class="vignetteNot" src="./styles/inau_yandev_theme/images/no_image.jpg" alt="City promises.Mainstreaning gender in development in the Arab states.">
+						</div>						
+						
+						
+							<p class="typeDoc_notCourte">
+											texte imprim&eacute;
+									</p>
+			 
+		</div>
+		
+				<!-- Contenu de la notice -->
+			<div class="notice_corps">
+				<div class="descr_notice_corps">
+											<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=City%20promises.Mainstreaning%20gender%20in%20development%20in%20the%20Arab%20states.&amp;rft.title=City%20promises.Mainstreaning%20gender%20in%20development%20in%20the%20Arab%20states.&amp;rft.date=2001&amp;rft_id=&amp;rft.pub=THE%20FORD%20FONDATION&amp;rft.au=THEFORD%20FONDATIO&amp;rft.aulast=THEFORD%20FONDATIO&amp;rft.aufirst="></span>
+										
+											<div class="title_notCourte">
+							<h3><a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=3251">
+																																																				
+																	<span class="tit1_notCourte">City promises.Mainstreaning gender in development in the Arab states.</span>
+															</a></h3>
+						</div>
+										
+											<div class="infoCompl_notCourte">
+																																		<span class="auteur_notCourte">
+																			<a href="./index.php?lvl=author_see&amp;id=2311">THEFORD FONDATIO</a>																			</span>
+																															
+																								 									 	 | 									 									 <span class="editeur_notCourte"><a href="./index.php?lvl=publisher_see&amp;id=914">THE FORD FONDATION</a></span>
+																						
+																													
+														
+																																		 | 																		 <span class="annee_notCourte">2001</span>
+																					</div>
+										
+																				</div>
+									<!-- Plus d'informations -->
+					<div class="plusN">
+						<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=3251">Plus d'information...</a>
+					</div>
+							</div>
+		
+			<div class="panier_avis_notCourte">
+													
+																		<!-- Ajouter au panier -->
+						<div class="onglet_basketNoticeCourte ui-panel-basket-item">
+							<div id="record_container_3251_cart" class="ui-flex ui-flex-middle">
+																	<a href="cart_info.php?id=3251&amp;header=City+promises.Mainstreaning+gender+in+development+in+the+Arab+states." target="cart_info" class="img_basketNotCourte" title="Ajouter au panier">
+										<span class="icon_basketNot"><img src="./styles/common/images/white_basket.png" style="border:0px" alt="Ajouter au panier"></span>
+									</a>
+									<a href="cart_info.php?id=3251&amp;header=City+promises.Mainstreaning+gender+in+development+in+the+Arab+states." target="cart_info" class="label_basketNotCourte" title="Ajouter au panier">
+										<span class="label_basketNot">Ajouter au panier</span>
+									</a>
+															</div>
+						</div>
+											
+				
+
+													
+											
+													
+				
+										
+															
+							<!-- Documents numeriques -->
+									</div>
+		<div class="clear"></div>
+	
+			<div class="footer_notice">
+																									<!-- Bouton de pnb -->
+													
+																																											<!-- Bouton de reservation -->
+																																		<div id="resa_notice-3251" class="resa_notice">
+											<h3>
+												<a href="#" onclick="if(confirm('Voulez-vous vraiment r&eacute;server ce document ?')){w=window.open('./do_resa.php?lvl=resa&amp;id_notice=3251&amp;id_bulletin=0&amp;oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa_NotCourte-3251" class="bt_resa_NotCourte">R&eacute;server</a>
+											</h3>
+										</div>
+																																			
+													<!-- Voir les disponibilites -->
+							<div class="dispoLien_notice">
+								<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=3251#zone_exemplaires">
+																			<span class="notice_dispo">Disponible</span>
+																	</a>
+							</div>
+																				</div>
+		
+				<!-- Exemplaire -->
+		<div id="zone_exemplaires">
+			
+<h3><span id="titre_exemplaires" class="titre_exemplaires">Exemplaires (1)</span></h3>
+<table cellpadding="2" class="exemplaires" style="width:100%">
+<tr class="thead"><th class="expl_header_expl_cb">Code-barres</th><th class="expl_header_expl_cote">Cote</th><th class="expl_header_tdoc_libelle">Support</th><th class="expl_header_location_libelle">Localisation</th><th class="expl_header_section_libelle">Section</th><th class="expl_header_statut">Disponibilit&eacute;</th></tr><tr class="item_expl expl_available"><td id="expl_7157" class="Code-barres">6951</td><td class="Cote">FordFondation.1</td><td class="Support">Biblio</td><td class="Localisation">Salle de lecture</td><td class="Section">Urbanisme</td><td class="Disponibilit&eacute;">Consultation sur place<br><strong>Disponible</strong> </td></tr>
+</table>
+		</div>
+		
+	<div class="clear"></div>
+</div><!-- $Id: record_in_result_display.tpl.html,v 1.62 2019/11/07 14:41:14 ngantier Exp $ -->
+
+<div id="record_container_1314" class="parentNotCourte uk-clearfix">
+				
+ 			<div class="vignetteimgNot">
+														<!-- Vignette de la notice -->
+						<div class="vignetteDocNot">
+							<img class="vignetteNot" src="./styles/inau_yandev_theme/images/no_image.jpg" alt="L'eau et la ville = Water and the city.">
+						</div>						
+						
+						
+							<p class="typeDoc_notCourte">
+											texte imprim&eacute;
+									</p>
+			 
+		</div>
+		
+				<!-- Contenu de la notice -->
+			<div class="notice_corps">
+				<div class="descr_notice_corps">
+											<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=L%27eau%20et%20la%20ville%20%3D%20Water%20and%20the%20city.&amp;rft.title=L%27eau%20et%20la%20ville%20%3D%20Water%20and%20the%20city.&amp;rft.date=1990&amp;rft_id=&amp;rft.pub=Coop%C3%A9ration%20et%20am%C3%A9nagement&amp;rft.au=Thierry%20CHAMBOLLE&amp;rft.aulast=CHAMBOLLE&amp;rft.aufirst=Thierry"></span>
+										
+											<div class="title_notCourte">
+							<h3><a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=1314">
+																																																				
+																	<span class="tit1_notCourte">L'eau et la ville = Water and the city.</span>
+															</a></h3>
+						</div>
+										
+											<div class="infoCompl_notCourte">
+																																		<span class="auteur_notCourte">
+																			<a href="./index.php?lvl=author_see&amp;id=1102">Thierry CHAMBOLLE</a>																			</span>
+																															
+																								 									 	 | 									 									 <span class="editeur_notCourte"><a href="./index.php?lvl=publisher_see&amp;id=408">Coop&eacute;ration et am&eacute;nagement</a></span>
+																						
+																													
+														
+																																		 | 																		 <span class="annee_notCourte">1990</span>
+																					</div>
+										
+																				</div>
+									<!-- Plus d'informations -->
+					<div class="plusN">
+						<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=1314">Plus d'information...</a>
+					</div>
+							</div>
+		
+			<div class="panier_avis_notCourte">
+													
+																		<!-- Ajouter au panier -->
+						<div class="onglet_basketNoticeCourte ui-panel-basket-item">
+							<div id="record_container_1314_cart" class="ui-flex ui-flex-middle">
+																	<a href="cart_info.php?id=1314&amp;header=L%27eau+et+la+ville+%3D+Water+and+the+city." target="cart_info" class="img_basketNotCourte" title="Ajouter au panier">
+										<span class="icon_basketNot"><img src="./styles/common/images/white_basket.png" style="border:0px" alt="Ajouter au panier"></span>
+									</a>
+									<a href="cart_info.php?id=1314&amp;header=L%27eau+et+la+ville+%3D+Water+and+the+city." target="cart_info" class="label_basketNotCourte" title="Ajouter au panier">
+										<span class="label_basketNot">Ajouter au panier</span>
+									</a>
+															</div>
+						</div>
+											
+				
+
+													
+											
+													
+				
+										
+															
+							<!-- Documents numeriques -->
+									</div>
+		<div class="clear"></div>
+	
+			<div class="footer_notice">
+																									<!-- Bouton de pnb -->
+													
+																																											<!-- Bouton de reservation -->
+																																		<div id="resa_notice-1314" class="resa_notice">
+											<h3>
+												<a href="#" onclick="if(confirm('Voulez-vous vraiment r&eacute;server ce document ?')){w=window.open('./do_resa.php?lvl=resa&amp;id_notice=1314&amp;id_bulletin=0&amp;oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa_NotCourte-1314" class="bt_resa_NotCourte">R&eacute;server</a>
+											</h3>
+										</div>
+																																			
+													<!-- Voir les disponibilites -->
+							<div class="dispoLien_notice">
+								<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=1314#zone_exemplaires">
+																			<span class="notice_dispo">Disponible</span>
+																	</a>
+							</div>
+																				</div>
+		
+				<!-- Exemplaire -->
+		<div id="zone_exemplaires">
+			
+<h3><span id="titre_exemplaires" class="titre_exemplaires">Exemplaires (1)</span></h3>
+<table cellpadding="2" class="exemplaires" style="width:100%">
+<tr class="thead"><th class="expl_header_expl_cb">Code-barres</th><th class="expl_header_expl_cote">Cote</th><th class="expl_header_tdoc_libelle">Support</th><th class="expl_header_location_libelle">Localisation</th><th class="expl_header_section_libelle">Section</th><th class="expl_header_statut">Disponibilit&eacute;</th></tr><tr class="item_expl expl_available"><td id="expl_3813" class="Code-barres">3668</td><td class="Cote">628.1/EAU</td><td class="Support">Biblio</td><td class="Localisation">Salle de lecture</td><td class="Section">Urbanisme</td><td class="Disponibilit&eacute;">Consultation sur place<br><strong>Disponible</strong> </td></tr>
+</table>
+		</div>
+		
+	<div class="clear"></div>
+</div><!-- $Id: record_in_result_display.tpl.html,v 1.62 2019/11/07 14:41:14 ngantier Exp $ -->
+
+<div id="record_container_1098" class="parentNotCourte uk-clearfix">
+				
+ 			<div class="vignetteimgNot">
+														<!-- Vignette de la notice -->
+						<div class="vignetteDocNot">
+							<img class="vignetteNot" src="https://inau.ac.ma/binau/getimage.php?url_image=http%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9782869060210&amp;entity_id=1098&amp;vigurl=" alt="El&eacute;ments sur les centres-villes dans le Monde Arabe = material on city centers in the arab World">
+						</div>						
+						
+						
+							<p class="typeDoc_notCourte">
+											texte imprim&eacute;
+									</p>
+			 
+		</div>
+		
+				<!-- Contenu de la notice -->
+			<div class="notice_corps">
+				<div class="descr_notice_corps">
+											<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=El%C3%A9ments%20sur%20les%20centres-villes%20dans%20le%20Monde%20Arabe%20%3D%20material%20on%20city%20centers%20in%20the%20arab%20World&amp;rft.title=El%C3%A9ments%20sur%20les%20centres-villes%20dans%20le%20Monde%20Arabe%20%3D%20material%20on%20city%20centers%20in%20the%20arab%20World&amp;rft.isbn=978-2-86906-021-0&amp;rft.date=1988&amp;rft_id=&amp;rft.pub=Urbama"></span>
+										
+											<div class="title_notCourte">
+							<h3><a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=1098">
+																																																				
+																	<span class="tit1_notCourte">El&eacute;ments sur les centres-villes dans le Monde Arabe = material on city centers in the arab World</span>
+															</a></h3>
+						</div>
+										
+											<div class="infoCompl_notCourte">
+																													
+																								 									 <span class="editeur_notCourte"><a href="./index.php?lvl=publisher_see&amp;id=136">Urbama</a></span>
+																						
+																													
+														
+																																	 <span class="annee_notCourte">1988</span>
+																					</div>
+										
+																				</div>
+									<!-- Plus d'informations -->
+					<div class="plusN">
+						<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=1098">Plus d'information...</a>
+					</div>
+							</div>
+		
+			<div class="panier_avis_notCourte">
+													
+																		<!-- Ajouter au panier -->
+						<div class="onglet_basketNoticeCourte ui-panel-basket-item">
+							<div id="record_container_1098_cart" class="ui-flex ui-flex-middle">
+																	<a href="cart_info.php?id=1098&amp;header=El%C3%A9ments+sur+les+centres-villes+dans+le+Monde+Arabe+%3D+material+on+city+centers+in+the+arab+World" target="cart_info" class="img_basketNotCourte" title="Ajouter au panier">
+										<span class="icon_basketNot"><img src="./styles/common/images/white_basket.png" style="border:0px" alt="Ajouter au panier"></span>
+									</a>
+									<a href="cart_info.php?id=1098&amp;header=El%C3%A9ments+sur+les+centres-villes+dans+le+Monde+Arabe+%3D+material+on+city+centers+in+the+arab+World" target="cart_info" class="label_basketNotCourte" title="Ajouter au panier">
+										<span class="label_basketNot">Ajouter au panier</span>
+									</a>
+															</div>
+						</div>
+											
+				
+
+													
+											
+													
+				
+										
+															
+							<!-- Documents numeriques -->
+									</div>
+		<div class="clear"></div>
+	
+			<div class="footer_notice">
+																									<!-- Bouton de pnb -->
+													
+																																											<!-- Bouton de reservation -->
+																																		<div id="resa_notice-1098" class="resa_notice">
+											<h3>
+												<a href="#" onclick="if(confirm('Voulez-vous vraiment r&eacute;server ce document ?')){w=window.open('./do_resa.php?lvl=resa&amp;id_notice=1098&amp;id_bulletin=0&amp;oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa_NotCourte-1098" class="bt_resa_NotCourte">R&eacute;server</a>
+											</h3>
+										</div>
+																																			
+													<!-- Voir les disponibilites -->
+							<div class="dispoLien_notice">
+								<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=1098#zone_exemplaires">
+																			<span class="notice_dispo">Disponible</span>
+																	</a>
+							</div>
+																				</div>
+		
+				<!-- Exemplaire -->
+		<div id="zone_exemplaires">
+			
+<h3><span id="titre_exemplaires" class="titre_exemplaires">Exemplaires (2)</span></h3>
+<table cellpadding="2" class="exemplaires" style="width:100%">
+<tr class="thead"><th class="expl_header_expl_cb">Code-barres</th><th class="expl_header_expl_cote">Cote</th><th class="expl_header_tdoc_libelle">Support</th><th class="expl_header_location_libelle">Localisation</th><th class="expl_header_section_libelle">Section</th><th class="expl_header_statut">Disponibilit&eacute;</th></tr><tr class="item_expl expl_available"><td id="expl_3417" class="Code-barres">3290</td><td class="Cote">711.5/ELE</td><td class="Support">Biblio</td><td class="Localisation">Salle de lecture</td><td class="Section">Urbanisme</td><td class="Disponibilit&eacute;">Consultation sur place<br><strong>Disponible</strong> </td></tr><tr class="item_expl expl_available"><td id="expl_3418" class="Code-barres">3291</td><td class="Cote">711.5/ELE</td><td class="Support">Biblio</td><td class="Localisation">Salle de lecture</td><td class="Section">Urbanisme</td><td class="Disponibilit&eacute;">Consultation sur place<br><strong>Disponible</strong> </td></tr>
+</table>
+		</div>
+		
+	<div class="clear"></div>
+</div><!-- $Id: record_in_result_display.tpl.html,v 1.62 2019/11/07 14:41:14 ngantier Exp $ -->
+
+<div id="record_container_1593" class="parentNotCourte uk-clearfix">
+				
+ 			<div class="vignetteimgNot">
+														<!-- Vignette de la notice -->
+						<div class="vignetteDocNot">
+							<img class="vignetteNot" src="https://inau.ac.ma/binau/getimage.php?url_image=http%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9780249441482&amp;entity_id=1593&amp;vigurl=" alt="Growth and change in the future city region">
+						</div>						
+						
+						
+							<p class="typeDoc_notCourte">
+											texte imprim&eacute;
+									</p>
+			 
+		</div>
+		
+				<!-- Contenu de la notice -->
+			<div class="notice_corps">
+				<div class="descr_notice_corps">
+											<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Growth%20and%20change%20in%20the%20future%20city%20region&amp;rft.title=Growth%20and%20change%20in%20the%20future%20city%20region&amp;rft.isbn=978-0-249-44148-2&amp;rft.date=1976&amp;rft_id=&amp;rft.pub=Leonard%20Hill&amp;rft.au=Tom%20HANCOCK&amp;rft.aulast=HANCOCK&amp;rft.aufirst=Tom"></span>
+										
+											<div class="title_notCourte">
+							<h3><a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=1593">
+																																																				
+																	<span class="tit1_notCourte">Growth and change in the future city region</span>
+															</a></h3>
+						</div>
+										
+											<div class="infoCompl_notCourte">
+																																		<span class="auteur_notCourte">
+																			<a href="./index.php?lvl=author_see&amp;id=1313">Tom HANCOCK</a>																			</span>
+																															
+																								 									 	 | 									 									 <span class="editeur_notCourte"><a href="./index.php?lvl=publisher_see&amp;id=511">Leonard Hill</a></span>
+																						
+																													
+														
+																																		 | 																		 <span class="annee_notCourte">1976</span>
+																					</div>
+										
+																				</div>
+									<!-- Plus d'informations -->
+					<div class="plusN">
+						<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=1593">Plus d'information...</a>
+					</div>
+							</div>
+		
+			<div class="panier_avis_notCourte">
+													
+																		<!-- Ajouter au panier -->
+						<div class="onglet_basketNoticeCourte ui-panel-basket-item">
+							<div id="record_container_1593_cart" class="ui-flex ui-flex-middle">
+																	<a href="cart_info.php?id=1593&amp;header=Growth+and+change+in+the+future+city+region" target="cart_info" class="img_basketNotCourte" title="Ajouter au panier">
+										<span class="icon_basketNot"><img src="./styles/common/images/white_basket.png" style="border:0px" alt="Ajouter au panier"></span>
+									</a>
+									<a href="cart_info.php?id=1593&amp;header=Growth+and+change+in+the+future+city+region" target="cart_info" class="label_basketNotCourte" title="Ajouter au panier">
+										<span class="label_basketNot">Ajouter au panier</span>
+									</a>
+															</div>
+						</div>
+											
+				
+
+													
+											
+													
+				
+										
+															
+							<!-- Documents numeriques -->
+									</div>
+		<div class="clear"></div>
+	
+			<div class="footer_notice">
+																									<!-- Bouton de pnb -->
+													
+																																											<!-- Bouton de reservation -->
+																																		<div id="resa_notice-1593" class="resa_notice">
+											<h3>
+												<a href="#" onclick="if(confirm('Voulez-vous vraiment r&eacute;server ce document ?')){w=window.open('./do_resa.php?lvl=resa&amp;id_notice=1593&amp;id_bulletin=0&amp;oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa_NotCourte-1593" class="bt_resa_NotCourte">R&eacute;server</a>
+											</h3>
+										</div>
+																																			
+													<!-- Voir les disponibilites -->
+							<div class="dispoLien_notice">
+								<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=1593#zone_exemplaires">
+																			<span class="notice_dispo">Disponible</span>
+																	</a>
+							</div>
+																				</div>
+		
+				<!-- Exemplaire -->
+		<div id="zone_exemplaires">
+			
+<h3><span id="titre_exemplaires" class="titre_exemplaires">Exemplaires (2)</span></h3>
+<table cellpadding="2" class="exemplaires" style="width:100%">
+<tr class="thead"><th class="expl_header_expl_cb">Code-barres</th><th class="expl_header_expl_cote">Cote</th><th class="expl_header_tdoc_libelle">Support</th><th class="expl_header_location_libelle">Localisation</th><th class="expl_header_section_libelle">Section</th><th class="expl_header_statut">Disponibilit&eacute;</th></tr><tr class="item_expl expl_available"><td id="expl_4308" class="Code-barres">4160</td><td class="Cote">711.3/HAN</td><td class="Support">Biblio</td><td class="Localisation">Salle de lecture</td><td class="Section">Urbanisme</td><td class="Disponibilit&eacute;">Consultation sur place<br><strong>Disponible</strong> </td></tr><tr class="item_expl expl_available"><td id="expl_4309" class="Code-barres">4161</td><td class="Cote">711.3/HAN</td><td class="Support">Biblio</td><td class="Localisation">Salle de lecture</td><td class="Section">Urbanisme</td><td class="Disponibilit&eacute;">Consultation sur place<br><strong>Disponible</strong> </td></tr>
+</table>
+		</div>
+		
+	<div class="clear"></div>
+</div><!-- $Id: record_in_result_display.tpl.html,v 1.62 2019/11/07 14:41:14 ngantier Exp $ -->
+
+<div id="record_container_965" class="parentNotCourte uk-clearfix">
+				
+ 			<div class="vignetteimgNot">
+														<!-- Vignette de la notice -->
+						<div class="vignetteDocNot">
+							<img class="vignetteNot" src="https://inau.ac.ma/binau/getimage.php?url_image=http%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9780704907546&amp;entity_id=965&amp;vigurl=" alt="international transfer and the inner city">
+						</div>						
+						
+						
+							<p class="typeDoc_notCourte">
+											texte imprim&eacute;
+									</p>
+			 
+		</div>
+		
+				<!-- Contenu de la notice -->
+			<div class="notice_corps">
+				<div class="descr_notice_corps">
+											<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=international%20transfer%20and%20the%20inner%20city&amp;rft.title=international%20transfer%20and%20the%20inner%20city&amp;rft.isbn=978-0-7049-0754-6&amp;rft.date=1980&amp;rft_id=&amp;rft.pub=School%20of%20planning%20studies&amp;rft.au=DAVIESH.W.&amp;rft.aulast=DAVIESH.W.&amp;rft.aufirst="></span>
+										
+											<div class="title_notCourte">
+							<h3><a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=965">
+																																																				
+																	<span class="tit1_notCourte">international transfer and the inner city</span>
+															</a></h3>
+						</div>
+										
+											<div class="infoCompl_notCourte">
+																																		<span class="auteur_notCourte">
+																			<a href="./index.php?lvl=author_see&amp;id=832">DAVIESH.W.</a>																			</span>
+																															
+																								 									 	 | 									 									 <span class="editeur_notCourte"><a href="./index.php?lvl=publisher_see&amp;id=282">School of planning studies</a></span>
+																						
+																													
+														
+																																		 | 																		 <span class="annee_notCourte">1980</span>
+																					</div>
+										
+																				</div>
+									<!-- Plus d'informations -->
+					<div class="plusN">
+						<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=965">Plus d'information...</a>
+					</div>
+							</div>
+		
+			<div class="panier_avis_notCourte">
+													
+																		<!-- Ajouter au panier -->
+						<div class="onglet_basketNoticeCourte ui-panel-basket-item">
+							<div id="record_container_965_cart" class="ui-flex ui-flex-middle">
+																	<a href="cart_info.php?id=965&amp;header=international+transfer+and+the+inner+city" target="cart_info" class="img_basketNotCourte" title="Ajouter au panier">
+										<span class="icon_basketNot"><img src="./styles/common/images/white_basket.png" style="border:0px" alt="Ajouter au panier"></span>
+									</a>
+									<a href="cart_info.php?id=965&amp;header=international+transfer+and+the+inner+city" target="cart_info" class="label_basketNotCourte" title="Ajouter au panier">
+										<span class="label_basketNot">Ajouter au panier</span>
+									</a>
+															</div>
+						</div>
+											
+				
+
+													
+											
+													
+				
+										
+															
+							<!-- Documents numeriques -->
+									</div>
+		<div class="clear"></div>
+	
+			<div class="footer_notice">
+																									<!-- Bouton de pnb -->
+													
+																																											<!-- Bouton de reservation -->
+																																		<div id="resa_notice-965" class="resa_notice">
+											<h3>
+												<a href="#" onclick="if(confirm('Voulez-vous vraiment r&eacute;server ce document ?')){w=window.open('./do_resa.php?lvl=resa&amp;id_notice=965&amp;id_bulletin=0&amp;oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa_NotCourte-965" class="bt_resa_NotCourte">R&eacute;server</a>
+											</h3>
+										</div>
+																																			
+													<!-- Voir les disponibilites -->
+							<div class="dispoLien_notice">
+								<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=965#zone_exemplaires">
+																			<span class="notice_dispo">Disponible</span>
+																	</a>
+							</div>
+																				</div>
+		
+				<!-- Exemplaire -->
+		<div id="zone_exemplaires">
+			
+<h3><span id="titre_exemplaires" class="titre_exemplaires">Exemplaires (2)</span></h3>
+<table cellpadding="2" class="exemplaires" style="width:100%">
+<tr class="thead"><th class="expl_header_expl_cb">Code-barres</th><th class="expl_header_expl_cote">Cote</th><th class="expl_header_tdoc_libelle">Support</th><th class="expl_header_location_libelle">Localisation</th><th class="expl_header_section_libelle">Section</th><th class="expl_header_statut">Disponibilit&eacute;</th></tr><tr class="item_expl expl_available"><td id="expl_3134" class="Code-barres">3011</td><td class="Cote">711.4/DAV</td><td class="Support">Biblio</td><td class="Localisation">Salle de lecture</td><td class="Section">Urbanisme</td><td class="Disponibilit&eacute;">Consultation sur place<br><strong>Disponible</strong> </td></tr><tr class="item_expl expl_available"><td id="expl_3135" class="Code-barres">3012</td><td class="Cote">711.4/DAV</td><td class="Support">Biblio</td><td class="Localisation">Salle de lecture</td><td class="Section">Urbanisme</td><td class="Disponibilit&eacute;">Consultation sur place<br><strong>Disponible</strong> </td></tr>
+</table>
+		</div>
+		
+	<div class="clear"></div>
+</div><!-- $Id: record_in_result_display.tpl.html,v 1.62 2019/11/07 14:41:14 ngantier Exp $ -->
+
+<div id="record_container_4299" class="parentNotCourte uk-clearfix">
+				
+ 			<div class="vignetteimgNot">
+														<!-- Vignette de la notice -->
+						<div class="vignetteDocNot">
+							<img class="vignetteNot" src="https://inau.ac.ma/binau/getimage.php?url_image=http%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9780691143118&amp;entity_id=4299&amp;vigurl=" alt="Keys to the city : How economics,institutions,social interactions and politics shape development">
+						</div>						
+						
+						
+							<p class="typeDoc_notCourte">
+											texte imprim&eacute;
+									</p>
+			 
+		</div>
+		
+				<!-- Contenu de la notice -->
+			<div class="notice_corps">
+				<div class="descr_notice_corps">
+											<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Keys%20to%20the%20city%20%3A%20How%20economics%2Cinstitutions%2Csocial%20interactions%20and%20politics%20shape%20development&amp;rft.title=Keys%20to%20the%20city%20%3A%20How%20economics%2Cinstitutions%2Csocial%20interactions%20and%20politics%20shape%20development&amp;rft.isbn=978-0-691-14311-8&amp;rft.date=2013&amp;rft_id=&amp;rft.pub=princeton%20university%20press&amp;rft.au=Michael%20STORPER&amp;rft.aulast=STORPER&amp;rft.aufirst=Michael"></span>
+										
+											<div class="title_notCourte">
+							<h3><a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=4299">
+																																																				
+																	<span class="tit1_notCourte">Keys to the city : How economics,institutions,social interactions and politics shape development</span>
+															</a></h3>
+						</div>
+										
+											<div class="infoCompl_notCourte">
+																																		<span class="auteur_notCourte">
+																			<a href="./index.php?lvl=author_see&amp;id=2984">Michael STORPER</a>																			</span>
+																															
+																								 									 	 | 									 									 <span class="editeur_notCourte"><a href="./index.php?lvl=publisher_see&amp;id=1097">princeton university press</a></span>
+																						
+																													
+														
+																																		 | 																		 <span class="annee_notCourte">2013</span>
+																					</div>
+										
+																				</div>
+									<!-- Plus d'informations -->
+					<div class="plusN">
+						<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=4299">Plus d'information...</a>
+					</div>
+							</div>
+		
+			<div class="panier_avis_notCourte">
+													
+																		<!-- Ajouter au panier -->
+						<div class="onglet_basketNoticeCourte ui-panel-basket-item">
+							<div id="record_container_4299_cart" class="ui-flex ui-flex-middle">
+																	<a href="cart_info.php?id=4299&amp;header=Keys+to+the+city+%3A+How+economics%2Cinstitutions%2Csocial+interactions+and+politics+shape+development" target="cart_info" class="img_basketNotCourte" title="Ajouter au panier">
+										<span class="icon_basketNot"><img src="./styles/common/images/white_basket.png" style="border:0px" alt="Ajouter au panier"></span>
+									</a>
+									<a href="cart_info.php?id=4299&amp;header=Keys+to+the+city+%3A+How+economics%2Cinstitutions%2Csocial+interactions+and+politics+shape+development" target="cart_info" class="label_basketNotCourte" title="Ajouter au panier">
+										<span class="label_basketNot">Ajouter au panier</span>
+									</a>
+															</div>
+						</div>
+											
+				
+
+													
+											
+													
+				
+										
+															
+							<!-- Documents numeriques -->
+									</div>
+		<div class="clear"></div>
+	
+			<div class="footer_notice">
+																									<!-- Bouton de pnb -->
+													
+																																											<!-- Bouton de reservation -->
+																																		<div id="resa_notice-4299" class="resa_notice">
+											<h3>
+												<a href="#" onclick="if(confirm('Voulez-vous vraiment r&eacute;server ce document ?')){w=window.open('./do_resa.php?lvl=resa&amp;id_notice=4299&amp;id_bulletin=0&amp;oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa_NotCourte-4299" class="bt_resa_NotCourte">R&eacute;server</a>
+											</h3>
+										</div>
+																																			
+													<!-- Voir les disponibilites -->
+							<div class="dispoLien_notice">
+								<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=4299#zone_exemplaires">
+																			<span class="notice_dispo">Disponible</span>
+																	</a>
+							</div>
+																				</div>
+		
+				<!-- Exemplaire -->
+		<div id="zone_exemplaires">
+			
+<h3><span id="titre_exemplaires" class="titre_exemplaires">Exemplaires (1)</span></h3>
+<table cellpadding="2" class="exemplaires" style="width:100%">
+<tr class="thead"><th class="expl_header_expl_cb">Code-barres</th><th class="expl_header_expl_cote">Cote</th><th class="expl_header_tdoc_libelle">Support</th><th class="expl_header_location_libelle">Localisation</th><th class="expl_header_section_libelle">Section</th><th class="expl_header_statut">Disponibilit&eacute;</th></tr><tr class="item_expl expl_available"><td id="expl_9150" class="Code-barres">8907</td><td class="Cote">307.76/STO</td><td class="Support">Biblio</td><td class="Localisation">Salle de lecture</td><td class="Section">Urbanisme</td><td class="Disponibilit&eacute;">Consultation sur place<br><strong>Disponible</strong> </td></tr>
+</table>
+		</div>
+		
+	<div class="clear"></div>
+</div><!-- $Id: record_in_result_display.tpl.html,v 1.62 2019/11/07 14:41:14 ngantier Exp $ -->
+
+<div id="record_container_2309" class="parentNotCourte uk-clearfix">
+				
+ 			<div class="vignetteimgNot">
+														<!-- Vignette de la notice -->
+						<div class="vignetteDocNot">
+							<img class="vignetteNot" src="https://inau.ac.ma/binau/getimage.php?url_image=http%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=047199605&amp;entity_id=2309&amp;vigurl=" alt="Nature in cities : the natural environnement in the design ahd developement of urban green space">
+						</div>						
+						
+						
+							<p class="typeDoc_notCourte">
+											texte imprim&eacute;
+									</p>
+			 
+		</div>
+		
+				<!-- Contenu de la notice -->
+			<div class="notice_corps">
+				<div class="descr_notice_corps">
+											<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Nature%20in%20cities%20%3A%20the%20natural%20environnement%20in%20the%20design%20ahd%20developement%20of%20urban%20green%20space&amp;rft.title=Nature%20in%20cities%20%3A%20the%20natural%20environnement%20in%20the%20design%20ahd%20developement%20of%20urban%20green%20space&amp;rft.isbn=0-471-99605&amp;rft.date=1979&amp;rft_id=&amp;rft.pub=john%20wiley%20and%20sons&amp;rft.au=Lan%20.C%20LAURIE&amp;rft.aulast=LAURIE&amp;rft.aufirst=Lan%20.C"></span>
+										
+											<div class="title_notCourte">
+							<h3><a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=2309">
+																																																				
+																	<span class="tit1_notCourte">Nature in cities : the natural environnement in the design ahd developement of urban green space</span>
+															</a></h3>
+						</div>
+										
+											<div class="infoCompl_notCourte">
+																																		<span class="auteur_notCourte">
+																			<a href="./index.php?lvl=author_see&amp;id=1809">Lan .C LAURIE</a>																			</span>
+																															
+																								 									 	 | 									 									 <span class="editeur_notCourte"><a href="./index.php?lvl=publisher_see&amp;id=702">john wiley and sons</a></span>
+																						
+																													
+														
+																																		 | 																		 <span class="annee_notCourte">1979</span>
+																					</div>
+										
+																				</div>
+									<!-- Plus d'informations -->
+					<div class="plusN">
+						<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=2309">Plus d'information...</a>
+					</div>
+							</div>
+		
+			<div class="panier_avis_notCourte">
+													
+																		<!-- Ajouter au panier -->
+						<div class="onglet_basketNoticeCourte ui-panel-basket-item">
+							<div id="record_container_2309_cart" class="ui-flex ui-flex-middle">
+																	<a href="cart_info.php?id=2309&amp;header=Nature+in+cities+%3A+the+natural+environnement+in+the+design+ahd+developement+of+urban+green+space" target="cart_info" class="img_basketNotCourte" title="Ajouter au panier">
+										<span class="icon_basketNot"><img src="./styles/common/images/white_basket.png" style="border:0px" alt="Ajouter au panier"></span>
+									</a>
+									<a href="cart_info.php?id=2309&amp;header=Nature+in+cities+%3A+the+natural+environnement+in+the+design+ahd+developement+of+urban+green+space" target="cart_info" class="label_basketNotCourte" title="Ajouter au panier">
+										<span class="label_basketNot">Ajouter au panier</span>
+									</a>
+															</div>
+						</div>
+											
+				
+
+													
+											
+													
+				
+										
+															
+							<!-- Documents numeriques -->
+									</div>
+		<div class="clear"></div>
+	
+			<div class="footer_notice">
+																									<!-- Bouton de pnb -->
+													
+																																											<!-- Bouton de reservation -->
+																																		<div id="resa_notice-2309" class="resa_notice">
+											<h3>
+												<a href="#" onclick="if(confirm('Voulez-vous vraiment r&eacute;server ce document ?')){w=window.open('./do_resa.php?lvl=resa&amp;id_notice=2309&amp;id_bulletin=0&amp;oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa_NotCourte-2309" class="bt_resa_NotCourte">R&eacute;server</a>
+											</h3>
+										</div>
+																																			
+													<!-- Voir les disponibilites -->
+							<div class="dispoLien_notice">
+								<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=2309#zone_exemplaires">
+																			<span class="notice_dispo">Disponible</span>
+																	</a>
+							</div>
+																				</div>
+		
+				<!-- Exemplaire -->
+		<div id="zone_exemplaires">
+			
+<h3><span id="titre_exemplaires" class="titre_exemplaires">Exemplaires (1)</span></h3>
+<table cellpadding="2" class="exemplaires" style="width:100%">
+<tr class="thead"><th class="expl_header_expl_cb">Code-barres</th><th class="expl_header_expl_cote">Cote</th><th class="expl_header_tdoc_libelle">Support</th><th class="expl_header_location_libelle">Localisation</th><th class="expl_header_section_libelle">Section</th><th class="expl_header_statut">Disponibilit&eacute;</th></tr><tr class="item_expl expl_available"><td id="expl_5556" class="Code-barres">5384</td><td class="Cote">719/LAU</td><td class="Support">Biblio</td><td class="Localisation">Salle de lecture</td><td class="Section">Urbanisme</td><td class="Disponibilit&eacute;">Consultation sur place<br><strong>Disponible</strong> </td></tr>
+</table>
+		</div>
+		
+	<div class="clear"></div>
+</div><!-- $Id: record_in_result_display.tpl.html,v 1.62 2019/11/07 14:41:14 ngantier Exp $ -->
+
+<div id="record_container_4263" class="parentNotCourte uk-clearfix">
+				
+ 			<div class="vignetteimgNot">
+														<!-- Vignette de la notice -->
+						<div class="vignetteDocNot">
+							<img class="vignetteNot" src="https://inau.ac.ma/binau/getimage.php?url_image=http%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9781781680742&amp;entity_id=4263&amp;vigurl=" alt="Rebel cities . From the right to city to the urban revolution">
+						</div>						
+						
+						
+							<p class="typeDoc_notCourte">
+											texte imprim&eacute;
+									</p>
+			 
+		</div>
+		
+				<!-- Contenu de la notice -->
+			<div class="notice_corps">
+				<div class="descr_notice_corps">
+											<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Rebel%20cities%20.%20From%20the%20right%20to%20city%20to%20the%20urban%20revolution&amp;rft.title=Rebel%20cities%20.%20From%20the%20right%20to%20city%20to%20the%20urban%20revolution&amp;rft.isbn=978-1-78168-074-2&amp;rft.date=2013&amp;rft_id=&amp;rft.pub=VERSO&amp;rft.au=David%20HARVEY&amp;rft.aulast=HARVEY&amp;rft.aufirst=David"></span>
+										
+											<div class="title_notCourte">
+							<h3><a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=4263">
+																																																				
+																	<span class="tit1_notCourte">Rebel cities . From the right to city to the urban revolution</span>
+															</a></h3>
+						</div>
+										
+											<div class="infoCompl_notCourte">
+																																		<span class="auteur_notCourte">
+																			<a href="./index.php?lvl=author_see&amp;id=1189">David HARVEY</a>																			</span>
+																															
+																								 									 	 | 									 									 <span class="editeur_notCourte"><a href="./index.php?lvl=publisher_see&amp;id=1083">VERSO</a></span>
+																						
+																													
+														
+																																		 | 																		 <span class="annee_notCourte">2013</span>
+																					</div>
+										
+																				</div>
+									<!-- Plus d'informations -->
+					<div class="plusN">
+						<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=4263">Plus d'information...</a>
+					</div>
+							</div>
+		
+			<div class="panier_avis_notCourte">
+													
+																		<!-- Ajouter au panier -->
+						<div class="onglet_basketNoticeCourte ui-panel-basket-item">
+							<div id="record_container_4263_cart" class="ui-flex ui-flex-middle">
+																	<a href="cart_info.php?id=4263&amp;header=Rebel+cities+.+From+the+right+to+city+to+the+urban+revolution" target="cart_info" class="img_basketNotCourte" title="Ajouter au panier">
+										<span class="icon_basketNot"><img src="./styles/common/images/white_basket.png" style="border:0px" alt="Ajouter au panier"></span>
+									</a>
+									<a href="cart_info.php?id=4263&amp;header=Rebel+cities+.+From+the+right+to+city+to+the+urban+revolution" target="cart_info" class="label_basketNotCourte" title="Ajouter au panier">
+										<span class="label_basketNot">Ajouter au panier</span>
+									</a>
+															</div>
+						</div>
+											
+				
+
+													
+											
+													
+				
+										
+															
+							<!-- Documents numeriques -->
+									</div>
+		<div class="clear"></div>
+	
+			<div class="footer_notice">
+																									<!-- Bouton de pnb -->
+													
+																																											<!-- Bouton de reservation -->
+																																		<div id="resa_notice-4263" class="resa_notice">
+											<h3>
+												<a href="#" onclick="if(confirm('Voulez-vous vraiment r&eacute;server ce document ?')){w=window.open('./do_resa.php?lvl=resa&amp;id_notice=4263&amp;id_bulletin=0&amp;oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa_NotCourte-4263" class="bt_resa_NotCourte">R&eacute;server</a>
+											</h3>
+										</div>
+																																			
+													<!-- Voir les disponibilites -->
+							<div class="dispoLien_notice">
+								<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=4263#zone_exemplaires">
+																			<span class="notice_dispo">Disponible</span>
+																	</a>
+							</div>
+																				</div>
+		
+				<!-- Exemplaire -->
+		<div id="zone_exemplaires">
+			
+<h3><span id="titre_exemplaires" class="titre_exemplaires">Exemplaires (1)</span></h3>
+<table cellpadding="2" class="exemplaires" style="width:100%">
+<tr class="thead"><th class="expl_header_expl_cb">Code-barres</th><th class="expl_header_expl_cote">Cote</th><th class="expl_header_tdoc_libelle">Support</th><th class="expl_header_location_libelle">Localisation</th><th class="expl_header_section_libelle">Section</th><th class="expl_header_statut">Disponibilit&eacute;</th></tr><tr class="item_expl expl_available"><td id="expl_9111" class="Code-barres">8868</td><td class="Cote">307.76/HAR</td><td class="Support">Biblio</td><td class="Localisation">Salle de lecture</td><td class="Section">Urbanisme</td><td class="Disponibilit&eacute;">Consultation sur place<br><strong>Disponible</strong> </td></tr>
+</table>
+		</div>
+		
+	<div class="clear"></div>
+</div><!-- $Id: record_in_result_display.tpl.html,v 1.62 2019/11/07 14:41:14 ngantier Exp $ -->
+
+<div id="record_container_4578" class="parentNotCourte uk-clearfix">
+				
+ 			<div class="vignetteimgNot">
+														<!-- Vignette de la notice -->
+						<div class="vignetteDocNot">
+							<img class="vignetteNot" src="https://inau.ac.ma/binau/getimage.php?url_image=http%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9782940222476&amp;entity_id=4578&amp;vigurl=" alt="Rethinking the city urban dynamics and motility">
+						</div>						
+						
+						
+							<p class="typeDoc_notCourte">
+											texte imprim&eacute;
+									</p>
+			 
+		</div>
+		
+				<!-- Contenu de la notice -->
+			<div class="notice_corps">
+				<div class="descr_notice_corps">
+											<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Rethinking%20the%20city%20urban%20dynamics%20and%20motility&amp;rft.title=Rethinking%20the%20city%20urban%20dynamics%20and%20motility&amp;rft.isbn=978-2-940222-47-6&amp;rft.date=2011&amp;rft_id=&amp;rft.pub=EPFL%20PRESS&amp;rft.au=Vincent%20KAUFMANN&amp;rft.aulast=KAUFMANN&amp;rft.aufirst=Vincent"></span>
+										
+											<div class="title_notCourte">
+							<h3><a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=4578">
+																																																				
+																	<span class="tit1_notCourte">Rethinking the city urban dynamics and motility</span>
+															</a></h3>
+						</div>
+										
+											<div class="infoCompl_notCourte">
+																																		<span class="auteur_notCourte">
+																			<a href="./index.php?lvl=author_see&amp;id=479">Vincent KAUFMANN</a>																			</span>
+																															
+																								 									 	 | 									 									 <span class="editeur_notCourte"><a href="./index.php?lvl=publisher_see&amp;id=1131">EPFL PRESS</a></span>
+																						
+																													
+														
+																																		 | 																		 <span class="annee_notCourte">2011</span>
+																					</div>
+										
+																				</div>
+									<!-- Plus d'informations -->
+					<div class="plusN">
+						<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=4578">Plus d'information...</a>
+					</div>
+							</div>
+		
+			<div class="panier_avis_notCourte">
+													
+																		<!-- Ajouter au panier -->
+						<div class="onglet_basketNoticeCourte ui-panel-basket-item">
+							<div id="record_container_4578_cart" class="ui-flex ui-flex-middle">
+																	<a href="cart_info.php?id=4578&amp;header=Rethinking+the+city+urban+dynamics+and+motility" target="cart_info" class="img_basketNotCourte" title="Ajouter au panier">
+										<span class="icon_basketNot"><img src="./styles/common/images/white_basket.png" style="border:0px" alt="Ajouter au panier"></span>
+									</a>
+									<a href="cart_info.php?id=4578&amp;header=Rethinking+the+city+urban+dynamics+and+motility" target="cart_info" class="label_basketNotCourte" title="Ajouter au panier">
+										<span class="label_basketNot">Ajouter au panier</span>
+									</a>
+															</div>
+						</div>
+											
+				
+
+													
+											
+													
+				
+										
+															
+							<!-- Documents numeriques -->
+									</div>
+		<div class="clear"></div>
+	
+			<div class="footer_notice">
+																									<!-- Bouton de pnb -->
+													
+																																											<!-- Bouton de reservation -->
+																																		<div id="resa_notice-4578" class="resa_notice">
+											<h3>
+												<a href="#" onclick="if(confirm('Voulez-vous vraiment r&eacute;server ce document ?')){w=window.open('./do_resa.php?lvl=resa&amp;id_notice=4578&amp;id_bulletin=0&amp;oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa_NotCourte-4578" class="bt_resa_NotCourte">R&eacute;server</a>
+											</h3>
+										</div>
+																																			
+													<!-- Voir les disponibilites -->
+							<div class="dispoLien_notice">
+								<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=4578#zone_exemplaires">
+																			<span class="notice_dispo">Disponible</span>
+																	</a>
+							</div>
+																				</div>
+		
+				<!-- Exemplaire -->
+		<div id="zone_exemplaires">
+			
+<h3><span id="titre_exemplaires" class="titre_exemplaires">Exemplaires (1)</span></h3>
+<table cellpadding="2" class="exemplaires" style="width:100%">
+<tr class="thead"><th class="expl_header_expl_cb">Code-barres</th><th class="expl_header_expl_cote">Cote</th><th class="expl_header_tdoc_libelle">Support</th><th class="expl_header_location_libelle">Localisation</th><th class="expl_header_section_libelle">Section</th><th class="expl_header_statut">Disponibilit&eacute;</th></tr><tr class="item_expl expl_available"><td id="expl_9725" class="Code-barres">9450</td><td class="Cote">338.4/KAU</td><td class="Support">Biblio</td><td class="Localisation">Salle de lecture</td><td class="Section">Urbanisme</td><td class="Disponibilit&eacute;">Consultation sur place<br><strong>Disponible</strong> </td></tr>
+</table>
+		</div>
+		
+	<div class="clear"></div>
+</div><!-- $Id: record_in_result_display.tpl.html,v 1.62 2019/11/07 14:41:14 ngantier Exp $ -->
+
+<div id="record_container_2403" class="parentNotCourte uk-clearfix">
+				
+ 			<div class="vignetteimgNot">
+														<!-- Vignette de la notice -->
+						<div class="vignetteDocNot">
+							<img class="vignetteNot" src="https://inau.ac.ma/binau/getimage.php?url_image=http%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9780198740803&amp;entity_id=2403&amp;vigurl=" alt="Social problems and the city : Geographical perspectives">
+						</div>						
+						
+						
+							<p class="typeDoc_notCourte">
+											texte imprim&eacute;
+									</p>
+			 
+		</div>
+		
+				<!-- Contenu de la notice -->
+			<div class="notice_corps">
+				<div class="descr_notice_corps">
+											<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Social%20problems%20and%20the%20city%20%3A%20Geographical%20perspectives&amp;rft.title=Social%20problems%20and%20the%20city%20%3A%20Geographical%20perspectives&amp;rft.isbn=978-0-19-874080-3&amp;rft.date=1979&amp;rft_id=&amp;rft.pub=Oxford%20university%20Press&amp;rft.au=David%20HERBERT&amp;rft.aulast=HERBERT&amp;rft.aufirst=David"></span>
+										
+											<div class="title_notCourte">
+							<h3><a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=2403">
+																																																				
+																	<span class="tit1_notCourte">Social problems and the city : Geographical perspectives</span>
+															</a></h3>
+						</div>
+										
+											<div class="infoCompl_notCourte">
+																																		<span class="auteur_notCourte">
+																			<a href="./index.php?lvl=author_see&amp;id=877">David HERBERT</a>																			</span>
+																															
+																								 									 	 | 									 									 <span class="editeur_notCourte"><a href="./index.php?lvl=publisher_see&amp;id=431">Oxford university Press</a></span>
+																						
+																													
+														
+																																		 | 																		 <span class="annee_notCourte">1979</span>
+																					</div>
+										
+																				</div>
+									<!-- Plus d'informations -->
+					<div class="plusN">
+						<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=2403">Plus d'information...</a>
+					</div>
+							</div>
+		
+			<div class="panier_avis_notCourte">
+													
+																		<!-- Ajouter au panier -->
+						<div class="onglet_basketNoticeCourte ui-panel-basket-item">
+							<div id="record_container_2403_cart" class="ui-flex ui-flex-middle">
+																	<a href="cart_info.php?id=2403&amp;header=Social+problems+and+the+city+%3A+Geographical+perspectives" target="cart_info" class="img_basketNotCourte" title="Ajouter au panier">
+										<span class="icon_basketNot"><img src="./styles/common/images/white_basket.png" style="border:0px" alt="Ajouter au panier"></span>
+									</a>
+									<a href="cart_info.php?id=2403&amp;header=Social+problems+and+the+city+%3A+Geographical+perspectives" target="cart_info" class="label_basketNotCourte" title="Ajouter au panier">
+										<span class="label_basketNot">Ajouter au panier</span>
+									</a>
+															</div>
+						</div>
+											
+				
+
+													
+											
+													
+				
+										
+															
+							<!-- Documents numeriques -->
+									</div>
+		<div class="clear"></div>
+	
+			<div class="footer_notice">
+																									<!-- Bouton de pnb -->
+													
+																																											<!-- Bouton de reservation -->
+																																		<div id="resa_notice-2403" class="resa_notice">
+											<h3>
+												<a href="#" onclick="if(confirm('Voulez-vous vraiment r&eacute;server ce document ?')){w=window.open('./do_resa.php?lvl=resa&amp;id_notice=2403&amp;id_bulletin=0&amp;oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa_NotCourte-2403" class="bt_resa_NotCourte">R&eacute;server</a>
+											</h3>
+										</div>
+																																			
+													<!-- Voir les disponibilites -->
+							<div class="dispoLien_notice">
+								<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=2403#zone_exemplaires">
+																			<span class="notice_dispo">Disponible</span>
+																	</a>
+							</div>
+																				</div>
+		
+				<!-- Exemplaire -->
+		<div id="zone_exemplaires">
+			
+<h3><span id="titre_exemplaires" class="titre_exemplaires">Exemplaires (2)</span></h3>
+<table cellpadding="2" class="exemplaires" style="width:100%">
+<tr class="thead"><th class="expl_header_expl_cb">Code-barres</th><th class="expl_header_expl_cote">Cote</th><th class="expl_header_tdoc_libelle">Support</th><th class="expl_header_location_libelle">Localisation</th><th class="expl_header_section_libelle">Section</th><th class="expl_header_statut">Disponibilit&eacute;</th></tr><tr class="item_expl expl_available"><td id="expl_5712" class="Code-barres">5531</td><td class="Cote">711.1/HER</td><td class="Support">Biblio</td><td class="Localisation">Salle de lecture</td><td class="Section">Urbanisme</td><td class="Disponibilit&eacute;">Consultation sur place<br><strong>Disponible</strong> </td></tr><tr class="item_expl expl_available"><td id="expl_5713" class="Code-barres">5532</td><td class="Cote">711.1/HER</td><td class="Support">Biblio</td><td class="Localisation">Salle de lecture</td><td class="Section">Urbanisme</td><td class="Disponibilit&eacute;">Consultation sur place<br><strong>Disponible</strong> </td></tr>
+</table>
+		</div>
+		
+	<div class="clear"></div>
+</div><!-- $Id: record_in_result_display.tpl.html,v 1.62 2019/11/07 14:41:14 ngantier Exp $ -->
+
+<div id="record_container_3254" class="parentNotCourte uk-clearfix">
+				
+ 			<div class="vignetteimgNot">
+														<!-- Vignette de la notice -->
+						<div class="vignetteDocNot">
+							<img class="vignetteNot" src="./styles/inau_yandev_theme/images/no_image.jpg" alt="The Chalenger of linking .City- to- city cooperation as a development mordality for the 21st century.">
+						</div>						
+						
+						
+							<p class="typeDoc_notCourte">
+											texte imprim&eacute;
+									</p>
+			 
+		</div>
+		
+				<!-- Contenu de la notice -->
+			<div class="notice_corps">
+				<div class="descr_notice_corps">
+											<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=The%20Chalenger%20of%20linking%20.City-%20to-%20city%20cooperation%20as%20a%20development%20mordality%20for%20the%2021st%20century.&amp;rft.title=The%20Chalenger%20of%20linking%20.City-%20to-%20city%20cooperation%20as%20a%20development%20mordality%20for%20the%2021st%20century.&amp;rft.date=2000&amp;rft_id=&amp;rft.pub=UNDP&amp;rft.au=UND&amp;rft.aulast=UND&amp;rft.aufirst="></span>
+										
+											<div class="title_notCourte">
+							<h3><a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=3254">
+																																																				
+																	<span class="tit1_notCourte">The Chalenger of linking .City- to- city cooperation as a development mordality for the 21st century.</span>
+															</a></h3>
+						</div>
+										
+											<div class="infoCompl_notCourte">
+																																		<span class="auteur_notCourte">
+																			<a href="./index.php?lvl=author_see&amp;id=348">UND</a>																			</span>
+																															
+																								 									 	 | 									 									 <span class="editeur_notCourte"><a href="./index.php?lvl=publisher_see&amp;id=917">UNDP</a></span>
+																						
+																													
+														
+																																		 | 																		 <span class="annee_notCourte">2000</span>
+																					</div>
+										
+																				</div>
+									<!-- Plus d'informations -->
+					<div class="plusN">
+						<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=3254">Plus d'information...</a>
+					</div>
+							</div>
+		
+			<div class="panier_avis_notCourte">
+													
+																		<!-- Ajouter au panier -->
+						<div class="onglet_basketNoticeCourte ui-panel-basket-item">
+							<div id="record_container_3254_cart" class="ui-flex ui-flex-middle">
+																	<a href="cart_info.php?id=3254&amp;header=The+Chalenger+of+linking+.City-+to-+city+cooperation+as+a+development+mordality+for+the+21st+century." target="cart_info" class="img_basketNotCourte" title="Ajouter au panier">
+										<span class="icon_basketNot"><img src="./styles/common/images/white_basket.png" style="border:0px" alt="Ajouter au panier"></span>
+									</a>
+									<a href="cart_info.php?id=3254&amp;header=The+Chalenger+of+linking+.City-+to-+city+cooperation+as+a+development+mordality+for+the+21st+century." target="cart_info" class="label_basketNotCourte" title="Ajouter au panier">
+										<span class="label_basketNot">Ajouter au panier</span>
+									</a>
+															</div>
+						</div>
+											
+				
+
+													
+											
+													
+				
+										
+															
+							<!-- Documents numeriques -->
+									</div>
+		<div class="clear"></div>
+	
+			<div class="footer_notice">
+																									<!-- Bouton de pnb -->
+													
+																																											<!-- Bouton de reservation -->
+																																		<div id="resa_notice-3254" class="resa_notice">
+											<h3>
+												<a href="#" onclick="if(confirm('Voulez-vous vraiment r&eacute;server ce document ?')){w=window.open('./do_resa.php?lvl=resa&amp;id_notice=3254&amp;id_bulletin=0&amp;oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa_NotCourte-3254" class="bt_resa_NotCourte">R&eacute;server</a>
+											</h3>
+										</div>
+																																			
+													<!-- Voir les disponibilites -->
+							<div class="dispoLien_notice">
+								<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=3254#zone_exemplaires">
+																			<span class="notice_dispo">Disponible</span>
+																	</a>
+							</div>
+																				</div>
+		
+				<!-- Exemplaire -->
+		<div id="zone_exemplaires">
+			
+<h3><span id="titre_exemplaires" class="titre_exemplaires">Exemplaires (1)</span></h3>
+<table cellpadding="2" class="exemplaires" style="width:100%">
+<tr class="thead"><th class="expl_header_expl_cb">Code-barres</th><th class="expl_header_expl_cote">Cote</th><th class="expl_header_tdoc_libelle">Support</th><th class="expl_header_location_libelle">Localisation</th><th class="expl_header_section_libelle">Section</th><th class="expl_header_statut">Disponibilit&eacute;</th></tr><tr class="item_expl expl_available"><td id="expl_7163" class="Code-barres">6957</td><td class="Cote">UNDP.1</td><td class="Support">Biblio</td><td class="Localisation">Salle de lecture</td><td class="Section">Urbanisme</td><td class="Disponibilit&eacute;">Consultation sur place<br><strong>Disponible</strong> </td></tr>
+</table>
+		</div>
+		
+	<div class="clear"></div>
+</div><!-- $Id: record_in_result_display.tpl.html,v 1.62 2019/11/07 14:41:14 ngantier Exp $ -->
+
+<div id="record_container_2397" class="parentNotCourte uk-clearfix">
+				
+ 			<div class="vignetteimgNot">
+														<!-- Vignette de la notice -->
+						<div class="vignetteDocNot">
+							<img class="vignetteNot" src="https://inau.ac.ma/binau/getimage.php?url_image=http%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=684129698&amp;entity_id=2397&amp;vigurl=" alt="The city of man : A new approach of the recovery of beauty in american cities">
+						</div>						
+						
+						
+							<p class="typeDoc_notCourte">
+											texte imprim&eacute;
+									</p>
+			 
+		</div>
+		
+				<!-- Contenu de la notice -->
+			<div class="notice_corps">
+				<div class="descr_notice_corps">
+											<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=The%20city%20of%20man%20%3A%20A%20new%20approach%20of%20the%20recovery%20of%20beauty%20in%20american%20cities&amp;rft.title=The%20city%20of%20man%20%3A%20A%20new%20approach%20of%20the%20recovery%20of%20beauty%20in%20american%20cities&amp;rft.isbn=684-12969-8&amp;rft.date=1970&amp;rft_id=&amp;rft.pub=Charles%20Scribrener&amp;rft.au=Cristopher%20TUNNARD&amp;rft.aulast=TUNNARD&amp;rft.aufirst=Cristopher"></span>
+										
+											<div class="title_notCourte">
+							<h3><a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=2397">
+																																																				
+																	<span class="tit1_notCourte">The city of man : A new approach of the recovery of beauty in american cities</span>
+															</a></h3>
+						</div>
+										
+											<div class="infoCompl_notCourte">
+																																		<span class="auteur_notCourte">
+																			<a href="./index.php?lvl=author_see&amp;id=1871">Cristopher TUNNARD</a>																			</span>
+																															
+																								 									 	 | 									 									 <span class="editeur_notCourte"><a href="./index.php?lvl=publisher_see&amp;id=726">Charles Scribrener</a></span>
+																						
+																													
+														
+																																		 | 																		 <span class="annee_notCourte">1970</span>
+																					</div>
+										
+																				</div>
+									<!-- Plus d'informations -->
+					<div class="plusN">
+						<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=2397">Plus d'information...</a>
+					</div>
+							</div>
+		
+			<div class="panier_avis_notCourte">
+													
+																		<!-- Ajouter au panier -->
+						<div class="onglet_basketNoticeCourte ui-panel-basket-item">
+							<div id="record_container_2397_cart" class="ui-flex ui-flex-middle">
+																	<a href="cart_info.php?id=2397&amp;header=The+city+of+man+%3A+A+new+approach+of+the+recovery+of+beauty+in+american+cities" target="cart_info" class="img_basketNotCourte" title="Ajouter au panier">
+										<span class="icon_basketNot"><img src="./styles/common/images/white_basket.png" style="border:0px" alt="Ajouter au panier"></span>
+									</a>
+									<a href="cart_info.php?id=2397&amp;header=The+city+of+man+%3A+A+new+approach+of+the+recovery+of+beauty+in+american+cities" target="cart_info" class="label_basketNotCourte" title="Ajouter au panier">
+										<span class="label_basketNot">Ajouter au panier</span>
+									</a>
+															</div>
+						</div>
+											
+				
+
+													
+											
+													
+				
+										
+															
+							<!-- Documents numeriques -->
+									</div>
+		<div class="clear"></div>
+	
+			<div class="footer_notice">
+																									<!-- Bouton de pnb -->
+													
+																																											<!-- Bouton de reservation -->
+																																		<div id="resa_notice-2397" class="resa_notice">
+											<h3>
+												<a href="#" onclick="if(confirm('Voulez-vous vraiment r&eacute;server ce document ?')){w=window.open('./do_resa.php?lvl=resa&amp;id_notice=2397&amp;id_bulletin=0&amp;oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa_NotCourte-2397" class="bt_resa_NotCourte">R&eacute;server</a>
+											</h3>
+										</div>
+																																			
+													<!-- Voir les disponibilites -->
+							<div class="dispoLien_notice">
+								<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=2397#zone_exemplaires">
+																			<span class="notice_dispo">Disponible</span>
+																	</a>
+							</div>
+																				</div>
+		
+				<!-- Exemplaire -->
+		<div id="zone_exemplaires">
+			
+<h3><span id="titre_exemplaires" class="titre_exemplaires">Exemplaires (1)</span></h3>
+<table cellpadding="2" class="exemplaires" style="width:100%">
+<tr class="thead"><th class="expl_header_expl_cb">Code-barres</th><th class="expl_header_expl_cote">Cote</th><th class="expl_header_tdoc_libelle">Support</th><th class="expl_header_location_libelle">Localisation</th><th class="expl_header_section_libelle">Section</th><th class="expl_header_statut">Disponibilit&eacute;</th></tr><tr class="item_expl expl_available"><td id="expl_5701" class="Code-barres">5521</td><td class="Cote">711.1/TUN</td><td class="Support">Biblio</td><td class="Localisation">Salle de lecture</td><td class="Section">Urbanisme</td><td class="Disponibilit&eacute;">Consultation sur place<br><strong>Disponible</strong> </td></tr>
+</table>
+		</div>
+		
+	<div class="clear"></div>
+</div><!-- $Id: record_in_result_display.tpl.html,v 1.62 2019/11/07 14:41:14 ngantier Exp $ -->
+
+<div id="record_container_4833" class="parentNotCourte uk-clearfix">
+				
+ 			<div class="vignetteimgNot">
+														<!-- Vignette de la notice -->
+						<div class="vignetteDocNot">
+							<img class="vignetteNot" src="https://inau.ac.ma/binau/getimage.php?url_image=http%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9780691070636&amp;entity_id=4833&amp;vigurl=" alt="The global city, new york , london , tokyo">
+						</div>						
+						
+						
+							<p class="typeDoc_notCourte">
+											texte imprim&eacute;
+									</p>
+			 
+		</div>
+		
+				<!-- Contenu de la notice -->
+			<div class="notice_corps">
+				<div class="descr_notice_corps">
+											<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=The%20global%20city%2C%20new%20york%20%2C%20london%20%2C%20tokyo&amp;rft.title=The%20global%20city%2C%20new%20york%20%2C%20london%20%2C%20tokyo&amp;rft.isbn=978-0-691-07063-6&amp;rft.date=2001&amp;rft_id=&amp;rft.pub=princeton%20university%20press&amp;rft.au=Saskia%20SASSEN&amp;rft.aulast=SASSEN&amp;rft.aufirst=Saskia"></span>
+										
+											<div class="title_notCourte">
+							<h3><a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=4833">
+																																																				
+																	<span class="tit1_notCourte">The global city, new york , london , tokyo</span>
+															</a></h3>
+						</div>
+										
+											<div class="infoCompl_notCourte">
+																																		<span class="auteur_notCourte">
+																			<a href="./index.php?lvl=author_see&amp;id=3371">Saskia SASSEN</a>																			</span>
+																															
+																								 									 	 | 									 									 <span class="editeur_notCourte"><a href="./index.php?lvl=publisher_see&amp;id=1097">princeton university press</a></span>
+																						
+																													
+														
+																																		 | 																		 <span class="annee_notCourte">2001</span>
+																					</div>
+										
+																				</div>
+									<!-- Plus d'informations -->
+					<div class="plusN">
+						<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=4833">Plus d'information...</a>
+					</div>
+							</div>
+		
+			<div class="panier_avis_notCourte">
+													
+																		<!-- Ajouter au panier -->
+						<div class="onglet_basketNoticeCourte ui-panel-basket-item">
+							<div id="record_container_4833_cart" class="ui-flex ui-flex-middle">
+																	<a href="cart_info.php?id=4833&amp;header=The+global+city%2C+new+york+%2C+london+%2C+tokyo" target="cart_info" class="img_basketNotCourte" title="Ajouter au panier">
+										<span class="icon_basketNot"><img src="./styles/common/images/white_basket.png" style="border:0px" alt="Ajouter au panier"></span>
+									</a>
+									<a href="cart_info.php?id=4833&amp;header=The+global+city%2C+new+york+%2C+london+%2C+tokyo" target="cart_info" class="label_basketNotCourte" title="Ajouter au panier">
+										<span class="label_basketNot">Ajouter au panier</span>
+									</a>
+															</div>
+						</div>
+											
+				
+
+													
+											
+													
+				
+										
+															
+							<!-- Documents numeriques -->
+									</div>
+		<div class="clear"></div>
+	
+			<div class="footer_notice">
+																									<!-- Bouton de pnb -->
+													
+																																											<!-- Bouton de reservation -->
+																																		<div id="resa_notice-4833" class="resa_notice">
+											<h3>
+												<a href="#" onclick="if(confirm('Voulez-vous vraiment r&eacute;server ce document ?')){w=window.open('./do_resa.php?lvl=resa&amp;id_notice=4833&amp;id_bulletin=0&amp;oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa_NotCourte-4833" class="bt_resa_NotCourte">R&eacute;server</a>
+											</h3>
+										</div>
+																																			
+													<!-- Voir les disponibilites -->
+							<div class="dispoLien_notice">
+								<a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=4833#zone_exemplaires">
+																			<span class="notice_dispo">Disponible</span>
+																	</a>
+							</div>
+																				</div>
+		
+				<!-- Exemplaire -->
+		<div id="zone_exemplaires">
+			
+<h3><span id="titre_exemplaires" class="titre_exemplaires">Exemplaires (1)</span></h3>
+<table cellpadding="2" class="exemplaires" style="width:100%">
+<tr class="thead"><th class="expl_header_expl_cb">Code-barres</th><th class="expl_header_expl_cote">Cote</th><th class="expl_header_tdoc_libelle">Support</th><th class="expl_header_location_libelle">Localisation</th><th class="expl_header_section_libelle">Section</th><th class="expl_header_statut">Disponibilit&eacute;</th></tr><tr class="item_expl expl_available"><td id="expl_10088" class="Code-barres">9809</td><td class="Cote">711.2/SAS</td><td class="Support">Biblio</td><td class="Localisation">Salle de lecture</td><td class="Section">Urbanisme</td><td class="Disponibilit&eacute;">Consultation sur place<br><strong>Disponible</strong> </td></tr>
+</table>
+		</div>
+		
+	<div class="clear"></div>
+</div></blockquote></div></div></div><form name="mc_values" action="./index.php?lvl=more_results" style="display:none" method="post">
+<input type="hidden" name="search[]" value="s_4"><input type="hidden" name="inter_0_s_4" value=""><input type="hidden" name="op_0_s_4" value="EQ"><input type="hidden" name="field_0_s_4[]" value='a:2:{s:17:"serialized_search";s:287:"a:2:{s:6:"SEARCH";a:1:{i:0;s:3:"f_7";}i:0;a:7:{s:6:"SEARCH";s:3:"f_7";s:2:"OP";s:7:"BOOLEAN";s:5:"FIELD";a:1:{i:0;s:14:"The green city";}s:6:"FIELD1";s:0:"";s:5:"INTER";s:0:"";s:8:"FIELDVAR";a:2:{s:6:"is_num";a:1:{i:0;s:1:"0";}s:10:"ck_affiche";a:1:{i:0;s:1:"0";}}s:8:"FIELDLIB";a:0:{}}}";s:11:"search_type";s:20:"search_simple_fields";}'><input type="hidden" name="count" value="110"><input type="hidden" name="page" value="1">
+			<input type="hidden" name="nb_per_page_custom" value="">
+</form><form name="form_values" action="./index.php?lvl=more_results" method="post">
+<input type="hidden" value="" id="filtre_compare_form_values" name="filtre_compare"><input type="hidden" name="user_query" value="The green city">
+<input type="hidden" name="mode" value="tous">
+<input type="hidden" name="count" value="110">
+<input type="hidden" name="typdoc" value=""><input type="hidden" name="id_authperso" value="0"><input type="hidden" name="clause" value="">
+<input type="hidden" name="clause_bull" value="">
+<input type="hidden" name="clause_bull_num_notice" value="">
+<input type="hidden" name="join" value="">
+<input type="hidden" name="tri" value="">
+<input type="hidden" name="pert" value="">
+<input type="hidden" name="l_typdoc" value="a">
+
+
+<input type="hidden" name="surligne" value="1">
+<input type="hidden" name="tags" value="">
+<input type="hidden" name="page" value="1">
+				<input type="hidden" name="nb_per_page_custom" value="">
+<input type="hidden" name="nbexplnum_to_photo" value="">
+</form><form name="cart_values" action="./cart_info.php?lvl=more_results" method="post" target="cart_info">
+<input type="hidden" name="user_query" value="The green city">
+<input type="hidden" name="mode" value="tous">
+<input type="hidden" name="count" value="110">
+<input type="hidden" name="typdoc" value=""><input type="hidden" name="id_authperso" value="0"><input type="hidden" name="clause" value="">
+<input type="hidden" name="clause_bull" value="">
+<input type="hidden" name="clause_bull_num_notice" value="">
+<input type="hidden" name="join" value="">
+<input type="hidden" name="tri" value="">
+<input type="hidden" name="pert" value="">
+<input type="hidden" name="l_typdoc" value="a">
+<input type="hidden" id="author_type" name="author_type" value="">
+<input type="hidden" id="id_thes" name="id_thes" value="">
+<input type="hidden" name="surligne" value="1">
+<input type="hidden" name="tags" value="">
+</form><br><div id="navbar" style="position: static; left: 0px; top: 0px;"><hr>
+<div style="text-align:center">
+<script type="text/javascript">
+<!--
+	function test_form(form)
+	{
+
+		if (form.page.value > 8)
+		{
+			alert("Num&eacute;ro de page trop &eacute;lev&eacute; !");
+			form.page.focus();
+			return false;
+		}
+
+		return true;
+	}
+-->
+</script><div class="navbar">
+<form name="form" action="javascript:document.form_values.page.value=document.form.page.value;%20document.form_values.submit()" method="post" onsubmit="return test_form(form)">
+<img src="./images/first-grey.png" alt="premi&egrave;re page">
+<img src="./images/prev-grey.png" alt="page pr&eacute;c&eacute;dente">
+<strong>1</strong> <a class="navbar_page" href="javascript:document.form_values.page.value=2;%20document.form_values.submit()">2</a> <a class="navbar_page" href="javascript:document.form_values.page.value=3;%20document.form_values.submit()">3</a> <a class="navbar_page" href="javascript:document.form_values.page.value=4;%20document.form_values.submit()">4</a> <a class="navbar_page" href="javascript:document.form_values.page.value=5;%20document.form_values.submit()">5</a> <a class="navbar_page" href="javascript:document.form_values.page.value=6;%20document.form_values.submit()">6</a> <a class="navbar_next" href="javascript:document.form_values.page.value=2;%20document.form_values.submit()"><img src="./images/next.png" alt="page suivante" style="border:0px" title="page suivante"></a>
+<a class="navbar_last" href="javascript:document.form_values.page.value=8;%20document.form_values.submit()"><img src="./images/last.png" alt="derni&egrave;re page" style="border:0px" title="derni&egrave;re page"></a>
+ (1 - 15 / 110)<span style="float:right;"> Par page :  <a class="navbar_custom" href="javascript:document.form_values.nb_per_page_custom.value=25;javascript:document.form_values.page.value=1;%20document.form_values.submit()">25</a>  <a class="navbar_custom" href="javascript:document.form_values.nb_per_page_custom.value=50;javascript:document.form_values.page.value=1;%20document.form_values.submit()">50</a>  <a class="navbar_custom" href="javascript:document.form_values.nb_per_page_custom.value=100;javascript:document.form_values.page.value=1;%20document.form_values.submit()">100</a>  <a class="navbar_custom" href="javascript:document.form_values.nb_per_page_custom.value=110;javascript:document.form_values.page.value=1;%20document.form_values.submit()">Tout afficher</a> </span></form>
+</div>
+</div></div>	
+		<div id="cms_module_articleslist_117" class="cms_module_articleslist cms_module"></div><div id="cms_module_sectionslist_118" class="cms_module_sectionslist cms_module"></div></div><!-- fin DIV main_hors_footer --> 
+
+		</div><!-- /div id=main -->
+
+		<!-- /div id=intro -->		
+		<div id="bandeau" fixed="yes">
+<div id="cms_module_search_22" class="cms_module_search cms_module" style="position: static; left: 0px; top: 0px; visibility: visible; display: block;">
+			<form method="post" class="searchbox" action="./index.php?lvl=more_results&amp;autolevel1=1" name="cms_module_search_22_searchbox" onsubmit="if (cms_module_search_22_searchbox.user_query.value.length == 0) { cms_module_search_22_searchbox.user_query.value='*';}cms_module_search_22_change_dest();">
+				
+				<input type="hidden" value="1" name="look_ALL">
+			<h4 class="searchbox_title">Je cherche, je trouve...</h4><span class="research_inputs">
+				<input type="text" name="user_query" value="The green city" placeholder="Rechercher...">
+				<input class="bouton" type="submit" value="Rechercher">
+				<input class="bouton button_search_help" title="Aide" type="button" onclick='window.open("./help.php?whatis=simple_search", "search_help", "scrollbars=yes, toolbar=no, dependent=yes, width=400, height=400, resizable=yes"); return false' value="Aide"></span><br>
+						<span class="search_radio_button" id="search_radio_button_0"><input type="radio" name="dest" value="0" default_segment="0" universe="" checked>&nbsp;Dans le catalogue</span>
+						<span class="search_radio_button" id="search_radio_button_1"><input type="radio" name="dest" value="11" default_segment="0" universe="">&nbsp;Dans le site</span>
+				<p class="search_advanced_link"><a href="./index.php?search_type_asked=simple_search" title="Recherche avanc&eacute;e"> Recherche avanc&eacute;e</a></p>		
+			</form></div><div id="resume_panier" fixed="yes" style="visibility: visible; display: block;">
+			<iframe recept="yes" recepttype="cart" frameborder="0" id="iframe_resume_panier" name="cart_info" allowtransparency="true" src="" scrolling="no" scrollbar="0"></iframe>
+			<script type="text/javascript">
+				addLoadEvent(function() {
+					document.getElementById('iframe_resume_panier').src = 'cart_info.php';
+				});
+			</script>
+		</div><div id="accueil" fixed="yes">
+
+<h3><span onclick='document.location="./index.php?"' style="cursor: pointer;">Accueil</span></h3>
+<p class="centered"><a href="./index.php?"><img src="images/site/livre.png" alt="Accueil" style="border:0px" class="center"></a></p>
+<div id="lang_select"><h3><span>S&eacute;lection de la langue</span></h3><form method="post" action="index.php?lvl=more_results&amp;autolevel1=1"><input type="hidden" name="look_ALL" value="1"><input type="hidden" name="user_query" value="The green city"><select name="lang_sel" onchange="this.form.submit();"><option value="fr_FR" selected>Fran&ccedil;ais </option><option value="en_UK">English (UK)</option><option value="es_ES">Espa&ntilde;ol</option><option value="it_IT">Italiano</option><option value="de_DE">Deutsch</option></select></form></div>
+
+					</div><!-- fermeture #accueil -->
+<div id="lvl1" fixed="yes" style="position: static; left: 0px; top: 0px;"><script>var tosubmit="look_ALL=1&user_query=The%20green%20city&lvl=more_results&autolevel1=1";
+						var cms_build_activate="0";function updateLevel1(result) {
+							if(result != '') {
+								document.getElementById('lvl1').innerHTML=result;
+							} else {
+								if(!cms_build_activate) {
+									require(['dojo/ready', 'dojo/dom-construct'], function(ready, domConstruct){
+										ready(function(){
+											domConstruct.destroy('lvl1');
+										});
+									});
+								}
+							}
+						}
+						getlevel2=new http_request();
+						getlevel2.request('./ajax.php?module=ajax&categ=level1',true,tosubmit,true,updateLevel1);</script><h3>Recherche</h3>
+<img src="./images/patience.gif" id="wait_level1"></div><div id="facette" fixed="yes" style="position: static; left: 0px; top: 0px;">
+				
+				
+		<script src="./includes/javascript/select.js" type="text/javascript"></script>
+		<script type="text/javascript"> 		
+			function test(elmt_id){
+				var elmt_list=document.getElementById(elmt_id);
+
+                if(elmt_list.className.includes('facette_expande')){
+                    elmt_list.setAttribute('class', 'facette_collapsed');
+                } else {
+                    elmt_list.setAttribute('class', 'facette_expande');
+                }
+
+				for(i in elmt_list.rows){
+					if(elmt_list.rows[i].firstElementChild && elmt_list.rows[i].firstElementChild.nodeName!='TH'){
+						if(elmt_list.rows[i].style.display == 'none'){
+							elmt_list.rows[i].style.display = 'block';
+                            elmt_list.rows[i].setAttribute('class', 'facette_tr'); 
+						}else{
+							elmt_list.rows[i].style.display = 'none';
+                            elmt_list.rows[i].setAttribute('class', 'facette_tr_hidden uk-hidden'); 
+						}
+					}
+				}
+			}
+			
+			function facette_see_more(id,json_facette_plus){
+				
+				var myTable = document.getElementById('facette_list_'+id);
+				
+				if (json_facette_plus == null) {
+					var childs = myTable.childNodes;
+					var nb_childs = childs.length;
+					
+					for(var i = 0; i < nb_childs; i++){
+						if (childs[i].getAttribute('facette_ajax_loaded')!=null) {
+							if (childs[i].getAttribute('style')=='display:block') {
+								childs[i].setAttribute('style','display:none');
+								childs[i].setAttribute('expanded','false');
+							} else {
+								childs[i].setAttribute('style','display:block');
+								childs[i].setAttribute('expanded','true');
+							}
+						}
+					}
+				
+					var see_more_less = document.getElementById('facette_see_more_less_'+id);
+					see_more_less.innerHTML='';
+					var span = document.createElement('span');
+					if (see_more_less.getAttribute('etat')=='plus') {
+						span.className='facette_moins_link';
+						span.innerHTML='[-]';
+						see_more_less.setAttribute('etat','moins');
+					} else {
+						span.className='facette_plus_link';
+						span.innerHTML='[+]';
+						see_more_less.setAttribute('etat','plus');		
+					}
+					see_more_less.appendChild(span);
+					
+				} else {
+					var req = new http_request();
+					var sended_datas={'json_facette_plus':json_facette_plus};
+					req.request("./ajax.php?module=ajax&categ=facettes&sub=see_more",true,'sended_datas='+encodeURIComponent(JSON.stringify(sended_datas)),true,function(data){
+						
+						var jsonArray = JSON.parse(data);
+						//on supprime la ligne '+'
+						myTable.tBodies[0].removeChild(myTable.rows[myTable.rows.length-1]);
+						//on ajoute les lignes au tableau
+						for(var i=0;i<jsonArray.length;i++) {
+							var tr = document.createElement('tr');
+							tr.setAttribute('style','display:block');
+							tr.setAttribute('class', 'facette_tr');
+							tr.setAttribute('expanded','true');
+							tr.setAttribute('facette_ajax_loaded','1');
+				        	var td = tr.appendChild(document.createElement('td'));
+							td.setAttribute('class','facette_col_coche');
+				        	td.innerHTML = "<span class='facette_coche'><input type='checkbox' name='check_facette[]' value='" + jsonArray[i]['facette_value'] + "'>";
+				        	var td2 = tr.appendChild(document.createElement('td'));
+							td2.setAttribute('class','facette_col_info');
+                            var aonclick = td2.appendChild(document.createElement('a'));
+                            aonclick.setAttribute('style', 'cursor:pointer;');
+                            aonclick.setAttribute('rel', 'nofollow');
+                            aonclick.setAttribute('class', 'facet-link');
+                            if(jsonArray[i]['facette_link']) {
+                                aonclick.setAttribute('onclick', jsonArray[i]['facette_link']);
+                            } else {console.log('evt searchSegment', aonclick);
+                                //Evt vers SearchSegmentController pour l'initialisation du clic
+                                require(['dojo/topic'], function(topic){
+            						topic.publish('FacettesRoot', 'FacettesRoot', 'initFacetLink', {elem: aonclick}); 
+            					}); 
+                            }
+                            var span_facette_link = aonclick.appendChild(document.createElement('span'));
+                            span_facette_link.setAttribute('class', 'facette_libelle');
+				        	span_facette_link.innerHTML = jsonArray[i]['facette_libelle'];
+							aonclick.appendChild(document.createTextNode(' '));
+                            var span_facette_number = aonclick.appendChild(document.createElement('span'));
+                            span_facette_number.setAttribute('class', 'facette_number');
+                            span_facette_number.innerHTML = "[" + jsonArray[i]['facette_number'] + "]";
+				        	myTable.appendChild(tr);
+	
+						}
+						//Ajout du see_less
+						var tr = document.createElement('tr');
+						tr.setAttribute('style','display:block');
+						tr.setAttribute('see_less','1');
+						tr.setAttribute('class','facette_tr_see_more');
+							
+						var td = tr.appendChild(document.createElement('td'));
+						td.setAttribute('colspan','3');
+							
+						var ahref = td.appendChild(document.createElement('a'));
+						ahref.setAttribute('id','facette_see_more_less_'+id);
+						ahref.setAttribute('etat','moins');
+						ahref.setAttribute('onclick','javascript:facette_see_more(' + id + ',null);');
+						ahref.setAttribute('style','cursor:pointer');
+						ahref.innerHTML='';
+							
+						var span = document.createElement('span');
+						span.className='facette_moins_link';
+						span.innerHTML='[-]';								
+						ahref.appendChild(span);
+								
+						myTable.appendChild(tr);
+					});
+				}
+			}
+			function valid_facettes_compare(){
+				
+				var form = document.facettes_multi;
+				if(form.elements.length>0){
+					
+					var form_values_compare_input_array=new Array();
+					
+					for(var i=0; i<form.elements.length;i++){
+						
+						if(form.elements[i].name=='check_facette[]' && form.elements[i].checked){
+							//on transforme les case ? coch? en element du tableau des facettes	
+							//on ajoute dans le tableau des facettes
+							var value=form.elements[i].value;
+							var jsonArray=JSON.parse(value);
+							
+							//On ajoute dans le formulaire de postage g?n?ral
+							var form_values_compare_input=document.createElement('input');
+							form_values_compare_input.setAttribute('name','check_facette_compare[]');
+							form_values_compare_input.setAttribute('type','hidden');
+							form_values_compare_input.setAttribute('value',value);
+							form_values_compare_input_array.push(form_values_compare_input);
+						}
+					}
+					
+					var post=false;
+					var form_values=document.form_values;
+					for(var i=0;i<form_values_compare_input_array.length;i++) {
+						form_values.appendChild(form_values_compare_input_array[i]);
+					}
+					
+					for(var i=0; i<form_values.elements.length;i++){
+						if(form_values.elements[i].name=='check_facette_compare[]' && form_values.elements[i].value!=''){
+							if(document.getElementById('filtre_compare_facette')) {
+								document.getElementById('filtre_compare_facette').value='compare';
+							}
+							if(document.getElementById('filtre_compare_form_values')) {
+								document.getElementById('filtre_compare_form_values').value='compare';
+							}
+							form_values.submit();
+							post=true;
+						}
+					}
+					if(post == false){
+						alert('Pas de crit&egrave;re de comparaison.');
+					}
+				}else{
+					alert('Pas de crit&egrave;re de comparaison.');
+				}
+			}
+			
+			function valid_compare(){
+				var form_values=document.form_values;
+				var post=false;
+				
+				for(var i=0; i<form_values.elements.length;i++){
+					if(form_values.elements[i].name=='check_facette_compare[]' && form_values.elements[i].value!=''){
+						if(document.getElementById('filtre_compare_facette')) {
+							document.getElementById('filtre_compare_facette').value='compare';
+						}
+						if(document.getElementById('filtre_compare_form_values')) {
+							document.getElementById('filtre_compare_form_values').value='compare';
+						}
+						form_values.submit();
+						post=true;
+					}
+				}
+				if(post == false){
+					alert('Pas de crit&egrave;re de comparaison.');
+				}
+			}
+			
+			function remove_compare_facette(value){
+				
+				var jsonArray = JSON.parse(value);
+				
+				//on supprime l'?lement du tableau des facettes
+				elem=document.getElementById('compare_facette_'+jsonArray[4]);
+				elem.parentNode.removeChild(elem);
+				
+				//on supprime l'?l?ment du formulaire g?n?ral aussi
+				var form_values=document.form_values;
+				for(var i in form_values.elements){
+					if(form_values.elements[i] && form_values.elements[i].value && form_values.elements[i].name=='check_facette_compare[]'){
+						form_values_json_array=JSON.parse(form_values.elements[i].value);
+						
+						if(form_values_json_array[4]==jsonArray[4]){
+							elem=form_values.elements[i];
+							elem.parentNode.removeChild(elem);
+						}
+					}
+				}
+				var post=true;
+				for(var i in form_values.elements){
+					if(form_values.elements[i] && form_values.elements[i].value && form_values.elements[i].name=='check_facette_compare[]'){
+						valid_facettes_compare();
+						post=false;
+					}
+				}
+
+				if(post){
+					if('facette_search_compare' == 'facettes_external_search_compare') {
+						var input_form_values = document.createElement('input');
+						input_form_values.setAttribute('type', 'hidden');
+						input_form_values.setAttribute('name', 'reinit_compare');
+						input_form_values.setAttribute('value', '1');
+						document.forms['form_values'].appendChild(input_form_values);
+						document.form_values.submit();
+					} else {
+						document.location.href='./index.php?lvl=more_results&get_last_query=1&reinit_compare=1';
+					}
+				}
+			}
+			
+			function group_by(groupBy){
+				
+				var jsonArray=JSON.parse(groupBy);
+			
+				//on vide les elements group_by
+				var group_by_elements=document.getElementsByName('check_facette_groupby[]');
+				
+				var nodes_to_remove;
+				
+				for(var i in group_by_elements){
+					if(group_by_elements[i].nodeName=='INPUT'){
+						if(group_by_elements[i].getAttribute('id')!='facette_groupby_'+jsonArray[3]){
+							
+							if(group_by_elements[i].parentNode.getAttribute('name')!='form_values' && group_by_elements[i].parentNode.getAttribute('name')!='cart_values'){
+								
+								var group_by_elements_img=group_by_elements[i].previousElementSibling.firstChild;
+									
+								group_by_elements_img.setAttribute('src','./images/group_by_grey.png');
+								group_by_elements[i].setAttribute('value','');
+								
+							}else{
+								nodes_to_remove=[i=[group_by_elements[i],group_by_elements[i].parentNode]];
+							}
+						}
+					}
+				}
+				
+				if(nodes_to_remove && nodes_to_remove.length>0){
+					for(var i in nodes_to_remove){
+						nodes_to_remove[i][1].removeChild(nodes_to_remove[i][0]);
+					}
+				}
+				
+				element=document.getElementById('facette_groupby_'+jsonArray[3]);
+				var img=element.previousElementSibling.firstChild;
+				
+				var table_groupby=document.getElementById('facette_groupby');
+				
+				if(element.getAttribute('value')==''){
+					element.setAttribute('value',JSON.stringify(groupBy));
+					
+					//On ajoute dans le formulaire de postage g?n?ral
+					var form_values=document.form_values;
+					var form_values_groupby_input=document.createElement('input');
+					form_values_groupby_input.setAttribute('name','check_facette_groupby[]');
+					form_values_groupby_input.setAttribute('type','hidden');
+					form_values_groupby_input.setAttribute('value',groupBy);
+					form_values.appendChild(form_values_groupby_input);
+					
+					
+				}
+				valid_facettes_compare();
+			}
+		</script>
+		<script type="text/javascript">
+			function valid_facettes_multi(){
+				//on bloque si aucune case coch?e
+				var form = document.facettes_multi;
+				for (i=0, n=form.elements.length; i<n; i++){
+					if ((form.elements[i].checked == true)) {
+						if(document.getElementById('filtre_compare_facette')) {
+							document.getElementById('filtre_compare_facette').value='filter';
+						}
+						if(document.getElementById('filtre_compare_form_values')) {
+							document.getElementById('filtre_compare_form_values').value='filter';
+						}
+						form.submit();
+						return true;
+					}
+				}
+				return false;
+			}
+		</script>
+				<div id="facette_wrapper">
+					<img src="./images/patience.gif">
+					<script type="text/javascript">
+						var req = new http_request();
+						req.request("./ajax.php?module=ajax&categ=facettes&sub=get_data&facet_type=notices",false,null,true,function(data){
+							var response = JSON.parse(data);
+							document.getElementById('facette_wrapper').innerHTML=response.display;
+						    require(['dojo/query', 'dojo/dom-construct'], function(query, domConstruct){
+    						    query('#facette_wrapper script').forEach(function(node) {
+                					domConstruct.create('script', {
+                						innerHTML: node.innerHTML,
+                						type: 'text/javascript'
+                					}, node, 'replace');
+                				});
+						    });
+							if(!response.exists_with_results) {
+								require(['dojo/ready', 'dojo/dom-construct'], function(ready, domConstruct){
+									ready(function(){
+						                if (document.getElementById('segment_searches')) {
+										    domConstruct.destroy('facette_wrapper');
+						                } else {
+						                    domConstruct.destroy('facette');
+						                }
+						    
+									});
+								});
+							}
+							if(response.map_location) {
+								if(document.getElementById('map_location_search')) {
+									document.getElementById('map_location_search').innerHTML=response.map_location;
+									if(typeof(dojo) == 'object'){
+										dojo.require('dojo.parser');
+										dojo.parser.parse(document.getElementById('map_location_search'));
+									}
+								}
+							}
+                            hide_element_by_its_hidden_children('bandeau');
+						}, '', '', true);
+					</script>
+				</div>
+			</div><div id="cms_module_htmlcode_141" class="cms_module_htmlcode cms_module" style="position: static; left: 0px; top: 0px; visibility: visible; display: block;"><div id="lienHistorique">
+    <a href="./index.php?lvl=search_history" title="Historique des recherches">Historique</a>
+</div></div><div id="connexion" fixed="yes">
+
+			<h3 class="login_invite">Se connecter</h3><div id="login_form"><form action="index.php?lvl=more_results&amp;autolevel1=1" method="post" name="myform"><input type="hidden" name="look_ALL" value="1"><input type="hidden" name="user_query" value="The green city"><label>acc&eacute;der &agrave; votre compte de lecteur</label><br>
+				<input type="text" name="login" class="login" size="14" placeholder="identifiant"><br>
+				<input type="password" name="password" class="password" size="8" placeholder="Mot de passe" value="">
+                <input type="hidden" name="force_login" value="1">
+				<input type="submit" name="ok" value="ok" class="bouton"></form><a class="mdp_forgotten" href="./askmdp.php">Mot de passe oubli&eacute; ?</a></div>
+
+			</div><!-- fermeture #connexion -->
+
+			<div id="post_adress" fixed="yes">
+
+		<span><h3>Horaires d'ouverture</h3>
+<p><b>Du lundi au Vendredi : </b><br>de 09h00 &agrave; 16h30 <br>
+</p>
+		</span>	
+	    </div><div id="adresse" fixed="yes">
+
+		<h3>Adresse</h3>
+
+		<span>
+			<br>
+			<br>
+			 <br>
+			&nbsp;<br>
+			<br><span id="opac_biblio_email">
+			<a href="mailto:oussama.hamal@inau.ac.ma" title="oussama.hamal@inau.ac.ma">contact</a></span></span>
+	    </div><!-- fermeture #adresse --><!-- fermeture #post_adress --><div id="cms_module_articleslist_130" class="cms_module_articleslist cms_module" style="visibility: visible; display: none; left: auto; top: auto; height: 804px; width: 256px; margin: 0px; padding: 0px; float: none; position: static;"></div></div><div id="bandeau_2" fixed="yes"></div><div id="footer" fixed="yes">
+
+<div id="cms_module_htmlcode_134" class="cms_module_htmlcode cms_module" style="visibility: visible; display: block;"><div class="Ancre">
+	<a href="#logo" title="Top">&Lambda;</a>
+</div></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module" style="visibility: visible; display: block;"></div><span id="footer_rss" fixed="yes">
+	
+</span>
+<span id="footer_link_sup" fixed="yes">
+		 &nbsp;
+</span>
+
+<span id="footer_link_website" fixed="yes">
+	<a class="footer_biblio_name" href="https://inau.ac.ma/" title=""></a> &nbsp;
+</span>	
+
+<span id="footer_link_pmb" fixed="yes">
+
+
+
+  <title>INAU Contact</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://inau.ac.ma/binau/styles/inau_yandev_them/style_footer.css">
+  <!-- <link rel="stylesheet" href="style_footer.css"> -->
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+
+
+
+  <footer class="footer">
+     <div class="container">
+      <div class="row">
+        <div class="footer-col">
+          <h4>HORAIRES</h4>
+          <ul>
+            <li><a href="#">Du lundi au vendredi : de 09h00 &agrave; 16h30</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>ADRESSE</h4>
+          <ul>
+            <li><a href="#">Madinat AL IRFANE Avenue Allal Al Fassi,<br> BP : 6215 &ndash; Rabat Instituts, Maroc</a></li>
+          </ul>
+        </div>
+		
+		<div class="footer-col">
+          <h4>CONTACT</h4>
+          <ul>
+            <li><a href="#">T&eacute;l : +212 537686991</a></li>
+            <li style="color:#FFF">E-mail :<a href="mailto:hamal.oussama@inau.ac.ma"> </a><a href="mailto:hamal.oussama@inau.ac.ma">hamal.oussama@inau.ac.ma</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-col">
+          <h4>R&Eacute;SEAUX SOCIAUX</h4>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+		  <img src="http://inau.ac.ma/binau/styles/inau_yandev_theme/images/inau_nobg.png" alt="INAU LOGO" width="80%">
+        </div>
+      </div>
+     </div>
+	 
+	 <div class="copyright">
+				<p>&copy; Tous droits r&eacute;serv&eacute;s 2022 <a href="https://inau.ac.ma/">INAU</a>
+				<span class="sep"> | </span>
+            R&eacute;alis&eacute; par: <a href="https://yandev-it.com/">Yandev IT</a> </p>
+								</div>
+	 
+  </footer>
+
+
+ &nbsp;
+		<a class="lien_pmb_footer" href="https://www.sigb.net" title="...une solution libre pour la m&eacute;diath&egrave;que..." target="_blank">pmb</a> 	
+</span>		
+		
+<div id="accessibility" fixed="yes" style="visibility: visible; display: block;">
+
+		<ul class="accessibility_font_size">
+			<li class="accessibility_font_size_small"><a href="javascript:set_font_size(-1);" title="R&eacute;duire le texte">A-</a></li>
+			<li class="accessibility_font_size_normal"><a href="javascript:set_font_size(0);" title="R&eacute;initialiser le texte">A</a></li>
+			<li class="accessibility_font_size_big"><a href="javascript:set_font_size(1);" title="Agrandir le texte">A+</a></li>
+		</ul>
+		</div></div></div><!-- /div id=container -->
+		
+		<script type="text/javascript">init_drag();	rechercher(1);</script> 
+		
+			<script type="text/javascript">
+				var tarteaucitron_messages = pmbDojo.messages.getMessages("tarteaucitron");
+				if(tarteaucitron_messages.length) {
+					tarteaucitronCustomText = {};
+					tarteaucitron_messages.forEach(function(message) {
+						if(parseInt(message.code.indexOf(":")) !== -1) {
+							let tarteaucitron_messages_group = message.code.split(":");
+							if(typeof tarteaucitronCustomText[tarteaucitron_messages_group[0]] == "undefined") {
+								tarteaucitronCustomText[tarteaucitron_messages_group[0]] = {};
+							}
+							tarteaucitronCustomText[tarteaucitron_messages_group[0]][tarteaucitron_messages_group[1]] = message.message; 
+						} else {
+							tarteaucitronCustomText[message.code] = message.message;
+						}
+					});
+				}
+			</script>
+			<script type="text/javascript" src="./includes/javascript/tarteaucitron/tarteaucitron.js"></script>
+		<script type="text/javascript">
+	        tarteaucitron.init({
+	    	  "privacyUrl": "", /* Privacy policy url */
+	
+	    	  "hashtag": "#PhpMyBibli-COOKIECONSENT", /* Open the panel with this hashtag */
+	    	  "cookieName": "PhpMyBibli-COOKIECONSENT", /* Cookie name */
+	    
+	    	  "orientation": "bottom", /* Banner position (top - bottom - popup) */
+	       
+	          "groupServices": true, /* Group services by category */
+	                           
+	    	  "showAlertSmall": false, /* Show the small banner on bottom right */
+	    	  "cookieslist": false, /* Show the cookie list */
+				                           
+	          "closePopup": false, /* Show a close X on the banner */
+	
+	          "showIcon": false, /* Show cookie icon to manage cookies */
+	          "iconSrc": "./images/cookie.png", /* Optionnal: URL or base64 encoded image */
+	          "iconPosition": "BottomRight", /* BottomRight, BottomLeft, TopRight and TopLeft */
+	
+	    	  "adblocker": false, /* Show a Warning if an adblocker is detected */
+	                           
+	          "DenyAllCta" : true, /* Show the deny all button */
+	          "AcceptAllCta" : true, /* Show the accept all button when highPrivacy on */
+	          "highPrivacy": true, /* HIGHLY RECOMMANDED Disable auto consent */
+	                           
+	    	  "handleBrowserDNTRequest": false, /* If Do Not Track == 1, disallow all */
+	
+	    	  "removeCredit": true, /* Remove credit link */
+	    	  "moreInfoLink": false, /* Show more info link */
+	
+	          "useExternalCss": false, /* If false, the tarteaucitron.css file will be loaded */
+	          "useExternalJs": false, /* If false, the tarteaucitron.js file will be loaded */
+				
+	    	  //"cookieDomain": ".my-multisite-domaine.fr", /* Shared cookie for multisite */
+	                          
+	          "readmoreLink": "", /* Change the default readmore link */
+	
+	          "mandatory": true, /* Show a message about mandatory cookies */
+	        });
+ 
+        </script>
+		 <script type="text/javascript">
+        	(tarteaucitron.job = tarteaucitron.job || []).push("addthis");
+        </script>
+		
+		</body>
+		</html>

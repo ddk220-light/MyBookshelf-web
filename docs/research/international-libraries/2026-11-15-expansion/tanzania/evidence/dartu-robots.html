@@ -1,0 +1,2005 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: errorpage.tt -->
+
+
+
+
+
+
+
+
+
+<html lang="en" class="no-js">
+<head>
+
+<title
+    >An error has occurred &rsaquo; DarTU Library catalog</title
+>
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha" />
+<!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="csrf-token" content="[REDACTED_ANONYMOUS_FORM_TOKEN]" />
+
+
+<link rel="shortcut icon" href="https://dartu.ac.tz/assets/images/logo.png" type="image/x-icon" />
+<link rel="apple-touch-icon" href="https://dartu.ac.tz/assets/images/logo.png" type="image/x-icon" />
+
+    
+        
+    
+
+
+    <link type="text/css" rel="stylesheet" href="/opac-tmpl/bootstrap/css/opac_25.1108000.css">
+
+
+
+
+    <link media="print" href="/opac-tmpl/bootstrap/css/print_25.1108000.css" rel="stylesheet" type="text/css">
+
+
+    <!-- prettier-ignore-start -->
+    <style>/* ================================
+   DarTU OPAC Hero Banner
+   ================================ */
+
+
+/* Hide the standard Koha OPAC logo/branding */
+#logo {
+    display: none !important;
+}
+
+
+#dartu-hero {
+    width: 100%;
+}
+
+.dartu-hero {
+    background: linear-gradient(135deg, #7650a5, #895bb5);
+    min-height: 390px;
+    margin: 0 0 30px 0;
+    padding: 40px 20px 50px;
+    border-radius: 6px;
+    box-sizing: border-box;
+    text-align: center;
+    color: #ffffff;
+}
+
+/* DarTU Logo */
+.dartu-hero-logo {
+    margin-bottom: 15px;
+}
+
+.dartu-hero-logo img {
+    width: 145px;
+    height: 145px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Main heading */
+.dartu-hero h1 {
+    color: #ffffff;
+    font-size: 38px;
+    font-weight: 700;
+    margin: 5px 0 15px;
+    text-shadow: 0 2px 3px rgba(0,0,0,0.20);
+}
+
+/* Tagline */
+.dartu-hero .dartu-tagline {
+    color: #ffffff;
+    font-size: 21px;
+    margin: 0 0 30px;
+}
+
+/* Search area */
+.dartu-search {
+    display: flex;
+    max-width: 650px;
+    margin: 0 auto;
+    height: 52px;
+}
+
+/* Search input */
+.dartu-search input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 0 25px;
+    font-size: 16px;
+    font-style: italic;
+    background: rgba(255,255,255,0.30);
+    color: #ffffff;
+    border-radius: 28px 0 0 28px;
+    box-shadow: none;
+}
+
+.dartu-search input::placeholder {
+    color: rgba(255,255,255,0.90);
+}
+
+/* Search button */
+.dartu-search button {
+    border: none;
+    background: #ffb900;
+    color: #4d2b72;
+    padding: 0 30px;
+    font-size: 17px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 0 28px 28px 0;
+}
+
+.dartu-search button:hover {
+    background: #f5aa00;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+
+    .dartu-hero {
+        min-height: 360px;
+        padding: 30px 15px 40px;
+    }
+
+    .dartu-hero-logo img {
+        width: 110px;
+        height: 110px;
+    }
+
+    .dartu-hero h1 {
+        font-size: 28px;
+    }
+
+    .dartu-hero .dartu-tagline {
+        font-size: 17px;
+    }
+
+    .dartu-search {
+        height: 48px;
+    }
+
+    .dartu-search input {
+        min-width: 0;
+        padding: 0 15px;
+    }
+
+    .dartu-search button {
+        padding: 0 20px;
+    }
+}
+</style>
+    <!-- prettier-ignore-end -->
+
+
+
+
+    <link rel="search" type="application/opensearchdescription+xml" href="https://elibrary.dartu.ac.tz/cgi-bin/koha/opac-search.pl?format=opensearchdescription" title="Search DarTU Library" />
+    <link rel="unapi-server" type="application/xml" title="unAPI" href="https://elibrary.dartu.ac.tz/cgi-bin/koha/unapi" />
+
+
+<script>
+    var Koha = {};
+    function _(s) { return s } // dummy function for gettext
+    const is_logged_in = false
+</script>
+
+<script src="/opac-tmpl/bootstrap/js/Gettext_25.1108000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/i18n_25.1108000.js"></script>
+
+<link type="text/css" rel="stylesheet" href="/opac-tmpl/lib/fontawesome/css/fontawesome.min_25.1108000.css">
+<link type="text/css" rel="stylesheet" href="/opac-tmpl/lib/fontawesome/css/brands.min_25.1108000.css">
+<link type="text/css" rel="stylesheet" href="/opac-tmpl/lib/fontawesome/css/solid.min_25.1108000.css">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body id="error404" class="error">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<button id="scrolltocontent">Skip to main content</button>
+<!-- prettier-ignore-start -->
+<!-- closed in opac-bottom.inc -->
+<div id="wrapper">
+<!-- prettier-ignore-end -->
+<header id="header-region" class="noprint">
+    <nav class="navbar navbar-expand">
+        <div id="logo">
+            <a class="navbar-brand" href="/cgi-bin/koha/opac-main.pl">
+                
+                    DarTU Library
+                
+            </a>
+        </div>
+        
+            
+            <ul id="cart-list-nav" class="navbar-nav">
+                
+                <li role="presentation" class="divider-vertical"></li>
+                
+                    
+                        <li class="nav-item dropdown">
+                            <a
+                                href="/cgi-bin/koha/opac-shelves.pl"
+                                title="Show lists"
+                                class="nav-link dropdown-toggle"
+                                id="listsmenu"
+                                data-bs-toggle="dropdown"
+                                role="button"
+                                aria-label="Show dropdown with detailed list information"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                                ><i class="fa fa-list fa-fw fa-icon-black" aria-hidden="true"></i> <span class="listslabel">Lists</span>
+                            </a>
+                            <div aria-labelledby="listsmenu" role="menu" class="dropdown-menu">
+                                
+                                
+                                
+                                    <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=0" tabindex="0" role="menuitem"><strong>Your lists</strong></a>
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=add_form" tabindex="0" role="menuitem">Log in to create your own lists</a>
+                                    
+                                
+                            </div>
+                            <!-- / .dropdown-menu -->
+                        </li>
+                        <!-- / .nav-item.dropdown -->
+                    
+                
+                
+            </ul>
+            <!-- / .navbar-nav -->
+        
+        
+            
+            
+            <ul id="members" class="navbar-nav">
+                <li class="nav-item dropdown dropdown-menu-end">
+                    
+                        
+                            
+                                <a href="/cgi-bin/koha/opac-user.pl" class="nav-link login-link loginModal-trigger" aria-label="Log in to your account"
+                                    ><i class="fa fa-user fa-fw fa-icon-black fa-fw" aria-hidden="true"></i> <span class="userlabel">Log in to your account</span></a
+                                >
+                            
+                        
+                    
+
+                    
+                </li>
+                <!-- Cookie consent button for non logged-in users -->
+                
+                    <li role="presentation" style="display:none" id="cookieConsentDivider" class="divider-vertical" aria-hidden="true"></li>
+                    <li style="display:none" id="cookieConsentLi" class="nav-item" aria-hidden="true">
+                        <a id="cookieConsentButton" href="#" name="Your cookies" class="nav-link" title="View and amend cookies you have consented to" role="button">
+                            <i class="fa fa-cookie-bite fa-fw fa-icon-black" aria-hidden="true"></i>
+                            <span class="cookieconsentlabel">Your cookies</span>
+                        </a>
+                    </li>
+                
+                
+                    
+                        <li role="presentation" class="divider-vertical"></li>
+                        <li class="nav-item search_history">
+                            <a class="nav-link" href="/cgi-bin/koha/opac-search-history.pl" title="View your search history">
+                                <i class="fa fa-calendar-days fa-fw fa-icon-black" aria-hidden="true"></i>
+                                <span class="search_history_label">Search history</span>
+                            </a>
+                        </li>
+                    
+                
+            </ul>
+        
+    </nav>
+    <!-- /navbar -->
+
+    
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col"> 
+    
+        <div id="opacheader">
+            
+                <div class="en_item">
+                    
+                    <div class="en_body"><style>
+    /* Reset and base styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Arial', sans-serif;
+        line-height: 1.6;
+        color: #333;
+    }
+
+    /* Navigation styles */
+    .dartu-nav {
+        background-color: #662D91;
+        padding: 10px 0;
+    }
+
+    .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+    }
+
+    .logo a {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: #fff;
+    }
+
+    .logo img {
+        width: 50px;
+        height: auto;
+        margin-right: 10px;
+    }
+
+    .logo span {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    .menu-toggle span {
+        display: block;
+        width: 25px;
+        height: 3px;
+        background-color: #fff;
+        margin: 5px 0;
+    }
+
+    .nav-menu {
+        list-style-type: none;
+        display: flex;
+        margin: 0;
+        padding: 0;
+    }
+
+    .nav-menu>li {
+        position: relative;
+    }
+
+    .nav-menu>li>a {
+        color: #fff;
+        text-decoration: none;
+        padding: 10px 15px;
+        display: block;
+    }
+
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        background-color: #fff;
+        min-width: 200px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+    }
+
+    .dropdown-menu a {
+        color: #333;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+
+    .dropdown:hover .dropdown-menu {
+        display: block;
+    }
+
+    /* Header styles */
+
+
+    .header img {
+        max-width: 150px;
+        height: auto;
+        margin-bottom: 20px;
+    }
+
+    .header {
+        background-image: linear-gradient(rgba(102, 45, 145, 0.8), rgba(102, 45, 145, 0.8)), url('https://tudarco.ac.tz/wp-content/uploads/2024/05/tumaini-building-2-768x509.jpg');
+        background-size: cover;
+        background-position: center;
+        min-height: 400px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .header h1 {
+        color: #fff;
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .header p {
+        color: #fff;
+        font-size: 1.2rem;
+        max-width: 600px;
+        margin-bottom: 30px;
+    }
+
+    .search-container {
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .search-form {
+        display: flex;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 30px;
+        overflow: hidden;
+    }
+
+    .search-input {
+        flex-grow: 1 !important;
+        padding: 10px 20px !important;
+        border: none !important;
+        background: transparent !important;
+        color: #fff !important;
+        font-size: 1rem !important;
+        margin-top: 5px !important;
+        outline: none !important;
+
+    }
+
+        .search-input::placeholder {
+        
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .search-button {
+        background-color: #FFB606;
+        color: #662D91;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .search-button:hover {
+        background-color: #FFA500;
+    }
+
+    /* Responsive adjustments */
+    @media screen and (max-width: 1024px) {
+        .header h1 {
+            font-size: 2.2rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+        }
+    }
+
+    @media screen and (max-width: 768px) {
+        .menu-toggle {
+            display: block;
+        }
+
+        .nav-menu {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            position: absolute;
+            top: 70px;
+            left: 0;
+            background-color: #662D91;
+        }
+
+        .nav-menu.active {
+            display: flex;
+        }
+
+        .nav-menu>li {
+            width: 100%;
+        }
+
+        .dropdown-menu {
+            position: static;
+            display: none;
+            width: 100%;
+            background-color: #7e3eb0;
+        }
+
+        .dropdown-menu a {
+            color: #fff;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            display: none;
+        }
+
+        .dropdown.active .dropdown-menu {
+            display: block;
+        }
+
+        .header {
+            min-height: 300px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+        }
+
+        .header p {
+            font-size: 1rem;
+        }
+    }
+
+    @media screen and (max-width: 480px) {
+        .header h1 {
+            font-size: 1.8rem;
+        }
+
+        .header p {
+            font-size: 0.9rem;
+        }
+
+        .search-input,
+        .search-button {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media screen and (max-width: 320px) {
+        .header img {
+            max-width: 100px;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+        }
+
+        .header p {
+            font-size: 0.8rem;
+        }
+
+        .search-input,
+        .search-button {
+            font-size: 0.8rem;
+            padding: 8px 15px;
+        }
+    }
+
+    /* Smartwatch styles */
+    @media screen and (max-width: 280px) {
+        .header img {
+            max-width: 80px;
+        }
+
+        .header h1 {
+            font-size: 1.2rem;
+        }
+
+        .header p {
+            font-size: 0.7rem;
+        }
+
+        .search-form {
+            flex-direction: column;
+        }
+
+        .search-input,
+        .search-button {
+            width: 100%;
+            border-radius: 15px;
+            margin-bottom: 5px;
+        }
+    }
+</style>
+<header class="header" style="border-radius: 5px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);"><center><img src="https://elibrary.dartu.ac.tz/opac-tmpl/bootstrap/images/dartu-logo.png" alt="DarTU Logo" /></center>
+<h1>Welcome to DarTU Library</h1>
+<p>Discover a world of knowledge at your fingertips</p>
+<div class="search-container"><form class="search-form" action="/cgi-bin/koha/opac-search.pl" method="get"><input type="text" class="search-input" name="q" placeholder="Search for books, articles, and more..." /> <button type="submit" class="search-button">Search</button></form></div>
+</header><!-- Main content area -->
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navMenu = document.querySelector('.nav-menu');
+            const dropdowns = document.querySelectorAll('.dropdown');
+
+            menuToggle.addEventListener('click', function() {
+                navMenu.classList.toggle('active');
+            });
+
+            dropdowns.forEach(dropdown => {
+                dropdown.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 768) {
+                        e.preventDefault();
+                        this.classList.toggle('active');
+                    }
+                });
+            });
+        });
+    </script></div>
+                </div>
+            
+        </div>
+    
+ </div>
+            </div>
+        </div>
+    
+</header>
+<!-- / header-region -->
+
+
+    <div class="container-fluid">
+        
+            <div class="row">
+                <div class="col">
+                    <div id="opac-main-search" class="mastheadsearch">
+                        
+                            <form name="searchform" method="get" action="/cgi-bin/koha/opac-search.pl" id="searchform" role="search">
+                                <div class="row gx-2">
+                                    <div class="col-sm-auto order-2 order-sm-2">
+                                        <label for="masthead_search" class="visually-hidden">Search the catalog by:</label>
+                                        <select name="idx" id="masthead_search" class="form-select">
+                                            
+                                                <option value="" data-placeholder="Search the catalog">Library catalog</option>
+                                            
+                                            
+                                                <option value="ti" data-placeholder="Search the catalog by title">Title</option>
+                                            
+                                            
+                                                <option value="au" data-placeholder="Search the catalog by author">Author</option>
+                                            
+                                            
+                                                <option value="su" data-placeholder="Search the catalog by subject">Subject</option>
+                                            
+                                            
+                                                <option value="nb" data-placeholder="Search the catalog by ISBN">ISBN</option>
+                                            
+                                            
+                                                <option value="ns" data-placeholder="Search the catalog by ISSN">ISSN</option>
+                                            
+                                            
+                                                <option value="se" data-placeholder="Search the catalog by series">Series</option>
+                                            
+                                            
+                                                
+                                                    <option value="callnum" data-placeholder="Search the catalog by call number">Call number</option>
+                                                
+                                            
+                                        </select>
+                                    </div>
+                                    <!-- /.col-sm-auto -->
+
+                                    <div class="col order-4 order-sm-3">
+                                        
+                                            <label for="translControl1" class="visually-hidden">Search the catalog</label>
+                                            <input type="text" class="transl1 form-control" id="translControl1" name="q" value="" placeholder="Search the catalog" /><span id="translControl"></span>
+                                        
+                                    </div>
+                                    <!-- /.col -->
+
+                                    
+                                        
+                                            
+                                        
+                                    
+
+                                    <div class="order-5 col-sm-auto">
+                                        <button type="submit" id="searchsubmit" class="btn btn-primary" title="Search" aria-label="Search">
+                                            <i class="fa fa-search" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- /.form-row -->
+                                <input type="hidden" name="weight_search" value="1" />
+                            </form>
+                         </div
+                    ><!-- /#opac-main-search -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        
+
+        <div class="row">
+            <ul class="nav" id="moresearches">
+                <li class="nav-item">
+                    <a href="/cgi-bin/koha/opac-search.pl">Advanced search</a>
+                </li>
+                
+                
+                
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-authorities-home.pl">Authority search</a>
+                    </li>
+                
+                
+                
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-tags.pl">Tag cloud</a>
+                    </li>
+                
+                
+                
+                
+                
+                
+                    <li class="nav-item">
+                        <a id="library_page" href="/cgi-bin/koha/opac-library.pl">
+                            
+                                <span>Contact</span>
+                            
+                        </a>
+                    </li>
+                
+                
+    
+
+            </ul>
+            <!-- /.nav#moresearches -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+
+
+
+    <!-- Login form hidden by default, used for modal window -->
+    <div id="loginModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title" id="modalLoginLabel">Log in to your account</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="modalAuth">
+                    <input type="hidden" name="csrf_token" value="[REDACTED_ANONYMOUS_FORM_TOKEN]" />
+
+                    <input type="hidden" name="has-search-query" id="has-search-query" value="" />
+                    <div class="modal-body">
+                        
+                        
+                        
+                            
+                            
+                            <input type="hidden" name="koha_login_context" value="opac" />
+                            <fieldset class="brief">
+                                <div class="local-login">
+                                    
+    <label for="muserid">Card number or username:</label>
+<input type="text" id="muserid" name="login_userid" autocomplete="off" /> <label for="mpassword">Password:</label
+                                    ><input type="password" id="mpassword" name="login_password" autocomplete="off" />
+                                    <fieldset class="action">
+                                        <input type="hidden" name="login_op" value="cud-login" />
+                                        <input type="submit" class="btn btn-primary" value="Log in" />
+                                    </fieldset>
+                                </div>
+                                
+                                
+                                
+                            </fieldset>
+                        
+                    </div>
+                </form>
+                <!-- /#auth -->
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /#modalAuth  -->
+
+
+
+
+
+<main class="main">
+    
+    <nav id="breadcrumbs" aria-label="Breadcrumb" class="breadcrumbs">
+        <ol class="breadcrumb">
+            
+            
+                
+    
+        <li class="breadcrumb-item"> 
+                    <a href="/cgi-bin/koha/opac-main.pl" title="Home">Home</a>
+                 </li>
+    
+
+                <li class="breadcrumb-item active">
+            <a aria-current="page" aria-disabled="true" tabindex="-1"> 
+            <span>An error has occurred</span>
+         </a>
+        </li>
+            
+        </ol>
+    </nav>
+
+
+    <div class="container-fluid">
+        <div class="row">
+            
+            
+                
+                <div class="col-lg-2">
+                    <div id="navigation"> 
+
+
+    
+    
+        <div id="OpacNav">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body"><style>
+/* opacMainUserBlock styles */
+#opacMainUserBlock {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+#opacMainUserBlock h2 {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--secondary-color);
+    padding-bottom: 10px;
+}
+
+.user-block-section {
+    margin-bottom: 20px;
+}
+
+.user-block-section h3 {
+    color: var(--accent-color);
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.user-block-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.user-block-list li {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.user-block-list li i {
+    color: var(--secondary-color);
+    margin-right: 10px;
+    font-size: 1.1rem;
+}
+
+.user-block-cta {
+    background-color: var(--highlight-color);
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+}
+
+.user-block-cta:hover {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+@media (max-width: 768px) {
+    #opacMainUserBlock {
+        padding: 15px;
+    }
+
+    #opacMainUserBlock h2 {
+        font-size: 1.3rem;
+    }
+
+    .user-block-section h3 {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #opacMainUserBlock h2 {
+        font-size: 1.2rem;
+    }
+
+    .user-block-section h3 {
+        font-size: 1rem;
+    }
+
+    .user-block-list li {
+        font-size: 0.9rem;
+    }
+}
+</style>
+<div id="opacMainUserBlock">
+<h2>RESOURCES</h2>
+<div class="user-block-section">
+<h3>Quick Links</h3>
+<ul class="user-block-list">
+<li><i class="fa fa-search"></i><a href="/cgi-bin/koha/opac-search.pl">Advanced Search</a></li>
+<li><i class="fa fa-book"></i><a href="/cgi-bin/koha/opac-shelves.pl">Public Lists</a></li>
+<li><i class="fa fa-calendar"></i><a href="/cgi-bin/koha/opac-main.pl#library-hours">Library Hours</a></li>
+<li><i class="fa fa-question-circle"></i><a href="/cgi-bin/koha/opac-main.pl#faq">FAQ</a></li>
+</ul>
+</div>
+<div class="user-block-section">
+<h3>e-Resources</h3>
+<ul class="user-block-list">
+<li><i class="fa fa-digital-tachograph"></i><a href="#" target="_blank" rel="noopener">Digital Library</a></li>
+<li><i class="fa fa-landmark"></i><a href="https://www.elibrary.imf.org/" target="_blank" rel="noopener">IMF e-Library</a></li>
+<li><i class="fa fa-gem"></i><a href="https://www.emerald.com/insight/" target="_blank" rel="noopener">Emerald</a></li>
+<li><i class="fa fa-unlock-alt"></i><a href="https://doaj.org/" target="_blank" rel="noopener">DOAJ</a></li>
+<li><i class="fa fa-book-reader"></i><a href="#" target="_blank" rel="noopener">TLA</a></li>
+<li><i class="fa fa-microscope"></i><a href="https://www.research4life.org/" target="_blank" rel="noopener">Research4Life</a></li>
+<li><i class="fa fa-book-open"></i><a href="https://z-lib.org/" target="_blank" rel="noopener">Z-Library</a></li>
+<li><i class="fa fa-database"></i><a href="https://search.ebscohost.com/" target="_blank" rel="noopener">EBSCO Host</a></li>
+<li><i class="fa fa-file-pdf"></i><a href="https://www.pdfdrive.com/" target="_blank" rel="noopener">PDF Drive</a></li>
+<li><i class="fa fa-search-plus"></i><a href="https://www.google.com/advanced_search" target="_blank" rel="noopener">Google Advanced Search</a></li>
+</ul>
+</div>
+<div class="user-block-section">
+<h3>DarTU Links</h3>
+<ul class="user-block-list">
+<li><i class="fa fa-university"></i><a href="https://www.dartu.ac.tz/" target="_blank" rel="noopener">DarTU</a></li>
+<li><i class="fa fa-graduation-cap"></i><a href="https://osim.dartu.ac.tz/" target="_blank" rel="noopener">OSIM</a></li>
+<li><i class="fa fa-school"></i><a href="https://www.makumira.ac.tz/" target="_blank" rel="noopener">Tumaini Makumira</a></li>
+</ul>
+</div>
+</div></div>
+                </div>
+            
+        </div>
+    
+
+
+
+
+
+
+    
+    
+        <div id="OpacNavBottom">
+            
+                <div class="default_item">
+                    
+                    <div class="default_body">    <br><br><br>
+    <div class="dartu-library-link">
+        <a href="https://tudarco.ac.tz/library-services/" target="_blank">
+            <img src="https://tudarco.ac.tz/wp-content/uploads/2024/04/4-768x576.jpg" alt="DarTU Library Catalog" title="DarTU Library Catalog" />
+        </a>
+    </div>
+
+    <style>
+        .dartu-library-link {
+            display: none;
+            max-width: 100%;
+            margin-bottom: 10px;
+            margin: 0 auto;
+        }
+
+        .dartu-library-link img {
+            width: 100%;
+            height: auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .dartu-library-link {
+                display: block;
+            }
+        }
+    </style>
+</body>
+</html></div>
+                </div>
+            
+        </div>
+    
+
+
+ </div>
+                </div>
+            
+
+            <div class="col-10 order-first order-md-first order-lg-2">
+                <div id="errormsg404">
+                    <h1>Sorry, the requested page is not available</h1>
+                    <h2>Error 404</h2>
+                    <p><strong>This message can have the following reason(s):</strong></p>
+                    <ul>
+                        
+
+                        
+
+                        
+
+                        
+
+                        
+                            <li>You made use of an external link to a catalog item that is no longer available.</li>
+                            <li>You followed an outdated link e.g. from a search engine or a bookmark.</li>
+                            <li>You tried to access a page that needs authentication.</li>
+                            <li>An internal link in our catalog home page is broken and the page does not exist.</li>
+                        
+                        
+                    </ul>
+                    <h2>What's next?</h2>
+                    <ul>
+                        
+                        <li>You can use the menu and links at the top of the page</li>
+                        <li>You can search our catalog using the search form at the top of this page.</li>
+                        <li><a href="/cgi-bin/koha/opac-main.pl">Return to the catalog home page.</a></li>
+                    </ul>
+                    <h2>Report issues and broken links</h2>
+                    <ul>
+                        <li>To report this error, please contact the Koha Administrator. <a href="mailto:root%40localhost">Send email</a>.</li>
+                    </ul>
+                </div>
+                <!-- / #errormsg404 -->
+            </div>
+            <!-- / .col-lg10/12 -->
+        </div>
+        <!-- / .row -->
+    </div>
+    <!-- / .container-fluid -->
+</main>
+<!-- / .main -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col"> 
+    
+        <div id="opaccredits">
+            
+                <div class="en_item">
+                    
+                    <div class="en_body"><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+<style>
+        #dartu-footer {
+            background-image: url('https://tudarco.ac.tz/wp-content/uploads/2024/05/tumaini-building-2-768x509.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        #dartu-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(102, 45, 145, 0.9); /* #662D91 with 90% opacity */
+            z-index: 1;
+        }
+
+        .footer-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .footer-logo {
+            flex: 0 0 15%;
+        }
+
+        .footer-logo img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .footer-info {
+            flex: 0 0 80%;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .footer-section {
+            flex: 1;
+            margin-right: 20px;
+        }
+
+        .footer-section:last-child {
+            margin-right: 0;
+        }
+
+        .footer-section h3 {
+            color: #FFB606;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        .footer-section ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 5px;
+        }
+
+        .footer-section a {
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .footer-section a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-map-social {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .footer-map {
+            flex: 0 0 70%;
+        }
+
+        .footer-map iframe {
+            width: 100%;
+            height: 150px;
+        }
+
+        .social-icons {
+            flex: 0 0 25%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .social-icons a {
+            margin: 5px 0;
+            font-size: 24px;
+            color: #ffffff;
+        }
+
+        .footer-motto {
+            font-style: italic;
+            text-align: center;
+            margin: 20px 0;
+            font-size: 0.9em;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 10px;
+            font-size: 0.9em;
+            position: relative;
+            z-index: 2;
+        }
+
+        @media (max-width: 768px) {
+            .footer-content, .footer-info, .footer-map-social {
+                flex-direction: column;
+            }
+            
+            .footer-logo, .footer-section, .footer-map, .social-icons {
+                flex: 0 0 100%;
+                margin-bottom: 20px;
+            }
+
+            .social-icons {
+                flex-direction: row;
+                justify-content: center;
+            }
+
+            .social-icons a {
+                margin: 0 10px;
+            }
+        }
+    </style>
+<footer id="dartu-footer">
+<div class="footer-content">
+<div class="footer-logo"><center><img src="https://tudarco.ac.tz/wp-content/uploads/2023/07/DARTU-OFFICIAL-LOGO-2024-JAN-23-revision-1-150x150.png" alt="DarTU Logo" /></center>
+<p style="text-align: center;">"Where Morals, Positive Mindset and Attitudes are Inculcated for Assured Students Learning, Responsible Citizenry and Prosperity"</p>
+</div>
+<div class="footer-info">
+<div class="footer-section">
+<h3>Postal Address</h3>
+<p>The Vice Chancellor<br />Dar es Salaam Tumaini University<br />P. O. Box 77588<br />Dar es Salaam, Tanzania.</p>
+<h3>Contact us</h3>
+<p>Tel: +255 222 702 028 | +255 778 929 670<br />Mob: +255 786 929 770 | +255 736 929 770<br />Email: <a href="mailto:vc@dartu.ac.tz" target="_blank" rel="noopener">vc@dartu.ac.tz</a><br />Website: <a href="http://www.dartu.ac.tz" target="_blank" rel="noopener">www.dartu.ac.tz</a></p>
+</div>
+<div class="footer-section">
+<h3>Related Links</h3>
+<ul>
+<li><a href="https://www.tcra.go.tz/" target="_blank" rel="noopener">TCRA</a></li>
+<li><a href="https://www.moe.go.tz/" target="_blank" rel="noopener">MoEST</a></li>
+<li><a href="https://www.costech.or.tz/" target="_blank" rel="noopener">COSTECH</a></li>
+<li><a href="https://www.mawasiliano.go.tz/" target="_blank" rel="noopener">MICIT</a></li>
+</ul>
+</div>
+<div class="footer-section">
+<h3>ICT Services</h3>
+<ul>
+<li><a href="https://osim.tudarco.ac.tz" target="_blank" rel="noopener">Osim</a></li>
+<li><a href="http://elearning.dartu.ac.tz" target="_blank" rel="noopener">e-learning</a></li>
+<li><a href="http://elibrary.dartu.ac.tz:5000/" target="_blank" rel="noopener">e-library</a></li>
+<li><a href="http://ejournal.dartu.ac.tz/" target="_blank" rel="noopener">e-journal</a></li>
+<li><a href="https://www.turnitin.com/login_page.asp?lang=en_us" target="_blank" rel="noopener">Anti-plagiarism</a></li>
+</ul>
+</div>
+<div class="footer-section">
+<h3>Help & Support</h3>
+<ul>
+<li>Site Map</li>
+<li>ICT-R</li>
+</ul>
+<h3>Location</h3>
+<div class="footer-map-social">
+<div class="footer-map"><iframe loading="lazy" src="https://maps.google.com/maps?q=Coca%20Cola%20Road%2C%20Dar%20es%20Salaam%20Tumaini%20University&t=m&z=10&output=embed&iwloc=near" title="Coca Cola Road, Dar es Salaam Tumaini University" aria-label="Coca Cola Road, Dar es Salaam Tumaini University"></iframe></div>
+<div class="social-icons"><a href="https://www.facebook.com/tudarco1/?_rdr" target="_blank" rel="noopener"><i class="fab fa-facebook-f"></i></a> <a href="https://x.com/dartuofficial?t=FNR1YhGXgwy_kKOV9gvkTA&s=09" target="_blank" rel="noopener"><i class="fab fa-twitter"></i></a> <a href="#" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a> <a href="https://www.instagram.com/dartuofficial/?igsh=ejV6NjY2MzdxMGsw" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a></div>
+</div>
+</div>
+</div>
+</div>
+<div class="footer-bottom">
+<p>©2024 All right Reserved, DarTU</p>
+</div>
+</footer></div>
+                </div>
+            
+        </div>
+    
+ </div>
+            </div>
+        </div>
+    
+    <!-- prettier-ignore-start -->
+    </div> <!-- / #wrapper in masthead.inc -->
+    <!-- prettier-ignore-end -->
+
+    
+
+
+
+
+<!-- CookieConsentedJS code that may run -->
+
+
+<!-- JavaScript includes -->
+<script src="/opac-tmpl/lib/jquery/jquery-3.6.0.min_25.1108000.js"></script>
+<script src="/opac-tmpl/lib/jquery/jquery-migrate-3.3.2.min_25.1108000.js"></script>
+<script src="/opac-tmpl/lib/bootstrap/js/bootstrap.bundle.min_25.1108000.js"></script>
+<script src="/opac-tmpl/lib/fontfaceobserver/fontfaceobserver.min_25.1108000.js"></script>
+<script src="/opac-tmpl/lib/enquire/enquire.min_25.1108000.js"></script>
+<script>
+    let logged_in_user_id = "";
+</script>
+<script src="/opac-tmpl/bootstrap/js/global_25.1108000.js"></script>
+<script type="module" src="/opac-tmpl/bootstrap/js/form-submit_25.1108000.js"></script>
+
+<script>
+    
+
+    
+    $(".print-large").on("click",function(){
+        window.print();
+        return false;
+    });
+    $(".addtoshelf").on("click",function(e){
+        e.preventDefault();
+        Dopop( this.href );
+    });
+    $("body").on("click", ".addtocart", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        addRecord( biblionumber );
+    });
+    $("body").on("click", ".cartRemove", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        delSingleRecord( biblionumber );
+    });
+</script>
+
+    <script src="/opac-tmpl/bootstrap/js/basket_25.1108000.js"></script>
+
+
+<script src="/opac-tmpl/bootstrap/js/tags_25.1108000.js"></script>
+
+
+
+
+
+
+
+
+
+<script src="/opac-tmpl/lib/js-cookie/js.cookie-3.0.1.min_25.1108000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/show-password-toggle_25.1108000.js"></script>
+<script>
+    $(document).ready(function () {
+        if ($("#searchsubmit").length) {
+            $(document).on("click", "#searchsubmit", function (e) {
+                Cookies.remove("form_serialized", { path: "/" });
+                Cookies.remove("form_serialized_limits", { path: "/" });
+                Cookies.remove("search_path_code", { path: "/" });
+            });
+        }
+    });
+</script>
+
+
+
+
+<script src="/opac-tmpl/lib/dayjs/dayjs.min_25.1108000.js"></script>
+<script src="/opac-tmpl/lib/dayjs/plugin/timezone_25.1108000.js"></script>
+<script src="/opac-tmpl/lib/dayjs/plugin/utc_25.1108000.js"></script>
+<script>
+    dayjs.extend(window.dayjs_plugin_utc);
+    dayjs.extend(window.dayjs_plugin_timezone);
+</script>
+<!-- js-date-format.inc -->
+<script>
+    (function() {
+        var def_date_format = 'us';
+        var def_time_format = '24hr';
+        var def_tz = 'Africa/Johannesburg';
+
+        var get_date_pattern = function(format) {
+            var date_pattern = 'YYYY-MM-DD';
+            if(format == 'us') date_pattern = 'MM/DD/YYYY';
+            if(format == 'metric') date_pattern = 'DD/MM/YYYY';
+            if(format == 'dmydot') date_pattern = 'DD.MM.YYYY';
+            return date_pattern;
+        };
+
+        var get_time_pattern = function(format) {
+            var time_pattern = 'HH:mm';
+            if(format == '12hr') time_pattern = 'hh:mm a';
+            return time_pattern;
+        };
+
+        /*
+         * A JS equivalent of the KohaDates TT Plugin. Passed an rfc3339 formatted date string,
+         * or JS Date, the function will return a date string formatted as per the koha instance config.
+         * Optionally accepts a dateformat parameter to allow override of the configured output format
+         * as well as a 'withtime' boolean denoting whether to include time or not in the output string.
+         */
+        window.$date = function(value, options) {
+            if(!value) return '';
+            var tz = (options&&options.tz)||def_tz;
+            var m = dayjs(value);
+            if ( ! value.match(/^\d{4}-\d{2}-\d{2}$/ ) ) {
+                m = m.tz(tz);
+            }
+
+            var dateformat = (options&&options.dateformat)||def_date_format;
+            var withtime = (options&&options.withtime)||false;
+
+            if(dateformat=='rfc3339' && withtime) return m.format();
+
+            var timeformat = (options&&options.timeformat)||def_time_format;
+            var date_pattern = get_date_pattern(dateformat);
+            var time_pattern = !withtime?'':' '+get_time_pattern(timeformat);
+
+            return m.format(date_pattern+time_pattern);
+        }
+
+        window.$datetime = function(value, options) {
+            options = options||{};
+            options.withtime = true;
+            return $date(value, options);
+        };
+
+        window.$time = function(value, options) {
+            if(!value) return '';
+            var tz = (options&&options.tz)||def_tz;
+            var m = dayjs(value);
+            if(tz) m = m.tz(tz);
+
+            var dateformat = (options&&options.dateformat);
+            var timeformat = (dateformat=='rfc3339'&&'24hr')||(options&&options.timeformat)||def_time_format;
+
+            return m.format(get_time_pattern(timeformat)+(dateformat=='rfc3339'?':ss'+(!m.isUTC()?'Z':''):''))+(dateformat=='rfc3339' && m.isUTC()?'Z':'');
+        }
+
+    })();
+</script>
+<!-- / js-date-format.inc -->
+
+
+<script>
+    (function () {
+        /**
+         * Format the biblio response from a Koha RESTful API request.
+         * @param  {Object}  biblio  The biblio json object as returned from the Koha RESTful API
+         * @param  {Object}  config  A configuration object
+         *                           Valid keys are: `link`
+         * @return {string}          The formatted HTML string
+         */
+        window.$biblio_to_html = function (biblio, config) {
+            if (biblio === undefined) {
+                return ""; // empty string for no biblio
+            }
+
+            var title = '<span class="biblio-title">';
+            if (biblio.title != null && biblio.title != "") {
+                title += escape_str(biblio.title);
+            } else {
+                title += _("No title");
+            }
+            title += "</span>";
+
+            // add subtitle
+            if (biblio.subtitle != null && biblio.subtitle != "") {
+                title += ' <span class="biblio-subtitle">' + escape_str(biblio.subtitle) + "</span>";
+            }
+
+            // set title as link
+            if (config && config.link) {
+                if (config.link === "marcdetail") {
+                    title = '<a href="/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                } else if (config.link === "labeled_marc") {
+                    title = '<a href="/cgi-bin/koha/opac-labeledMARCdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                } else if (config.link === "isbd") {
+                    title = '<a href="/cgi-bin/koha/opac-ISBDdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                } else {
+                    title = '<a href="/cgi-bin/koha/opac-detail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + "</a>";
+                }
+            }
+
+            // add medium
+            if (biblio.medium != null && biblio.medium != "") {
+                title += ' <span class="biblio-medium">' + escape_str(biblio.medium) + "</span>";
+            }
+
+            // add part numbers/names
+            let part_numbers = typeof biblio.part_number === "string" ? biblio.part_number.split("|") : [];
+            let part_names = typeof biblio.part_name === "string" ? biblio.part_name.split("|") : [];
+            let i = 0;
+            while (part_numbers[i] || part_names[i]) {
+                if (part_numbers[i]) {
+                    title += ' <span class="part-number">' + escape_str(part_numbers[i]) + "</span>";
+                }
+                if (part_names[i]) {
+                    title += ' <span class="part-name">' + escape_str(part_names[i]) + "</span>";
+                }
+                i++;
+            }
+
+            return title;
+        };
+    })();
+</script>
+
+
+
+
+    <script>
+          $("select[name='idx'] option:first").text('Keyword');
+
+$(document).ready(function(){
+            $('.dartu-book-carousel').slick({
+                dots: true,
+                infinite: true,
+                speed: 300,
+                slidesToShow: 5,
+                slidesToScroll: 1,
+                prevArrow: '<button type="button" class="slick-prev"><i class="fas fa-chevron-left"></i></button>',
+                nextArrow: '<button type="button" class="slick-next"><i class="fas fa-chevron-right"></i></button>',
+                responsive: [
+                    {
+                        breakpoint: 1200,
+                        settings: {
+                            slidesToShow: 4,
+                            slidesToScroll: 1,
+                        }
+                    },
+                    {
+                        breakpoint: 992,
+                        settings: {
+                            slidesToShow: 3,
+                            slidesToScroll: 1,
+                        }
+                    },
+                    {
+                        breakpoint: 768,
+                        settings: {
+                            slidesToShow: 2,
+                            slidesToScroll: 1
+                        }
+                    },
+                    {
+                        breakpoint: 480,
+                        settings: {
+                            slidesToShow: 1,
+                            slidesToScroll: 1
+                        }
+                    }
+                ]
+            });
+        });
+
+    </script>
+
+
+
+
+
+
+</body>
+<!-- prettier-ignore-start -->
+</html>
+<!-- prettier-ignore-end -->
+
+

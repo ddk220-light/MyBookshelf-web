@@ -1,0 +1,817 @@
+
+
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: errorpage.tt -->
+
+
+
+
+
+<html lang="es-ES" class="no-js">
+<head>
+
+<title>Un error ha ocurido &rsaquo; Tu Biblioteca UTP catálogo</title>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha 22.0517000" /> <!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="shortcut icon" href="/opac-tmpl/skyblue/images/favicon.ico" type="image/x-icon" />
+
+ <link href="/opac-tmpl/skyblue/lib/jquery/jquery-ui-1.13.1.min_22.0517000.css" type="text/css" rel="stylesheet">
+
+
+ 
+ 
+ 
+
+
+ <link rel="stylesheet" href="/opac-tmpl/skyblue/css/opac_22.0517000.css" type="text/css">
+
+
+ 
+ 
+ <link rel="stylesheet" type="text/css" href="/opac-tmpl/skyblue/css/custom.css" />
+ 
+
+
+
+ <link type="text/css" href="/opac-tmpl/skyblue/css/print_22.0517000.css" media="print" rel="stylesheet">
+
+
+
+
+ <link href="https://tubiblioteca.utp.edu.pe/cgi-bin/koha/opac-search.pl?format=opensearchdescription" rel="search" title="Buscar Tu Biblioteca UTP" type="application/opensearchdescription+xml">
+ <link rel="unapi-server" type="application/xml" title="unAPI" href="https://tubiblioteca.utp.edu.pe/cgi-bin/koha/unapi" />
+
+
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-582FV6G2');</script>
+<!-- End Google Tag Manager -->
+
+
+<script>
+    var Koha = {};
+    function _(s) { return s } // dummy function for gettext
+</script>
+
+ <script src="/opac-tmpl/skyblue/es-ES/js/locale_data_22.0517000.js"></script>
+
+<script src="/opac-tmpl/skyblue/js/Gettext_22.0517000.js"></script>
+<script src="/opac-tmpl/skyblue/js/i18n_22.0517000.js"></script>
+
+<link rel="stylesheet" type="text/css" href="/opac-tmpl/skyblue/lib/font-awesome/css/font-awesome.min_22.0517000.css">
+
+
+
+
+
+
+
+
+
+</head>
+<body id="error404" class="error">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<button id="scrolltocontent">Saltar al contenido principal</button>
+<div id="wrapper">
+    <div id="header-region" class="noprint">
+
+
+	<nav id="default-navbar" class="navbar navbar-expand">
+	    <div id="logo2">
+		<a class="navbar-brand" href="/cgi-bin/koha/opac-main.pl">
+		     Tu Biblioteca UTP  </a>
+	    </div>
+	    
+	    <ul id="cart-list-nav" class="navbar-nav">
+		
+		<li class="divider-vertical"></li>
+		
+		<li class="nav-item dropdown">
+		    <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown" href="/cgi-bin/koha/opac-shelves.pl" id="listsmenu" role="button" title="Mostrar listas"><i class="fa fa-list fa-icon-black" aria-hidden="true"></i> <span class="listslabel">Listas</span>
+		    </a>
+		    <div aria-labelledby="listsmenu" role="menu" class="dropdown-menu">
+			
+			
+			
+			<a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=0" tabindex="-1" role="menuitem"><strong>Sus listas</strong></a>
+			
+			<a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=add_form" tabindex="-1" role="menuitem">Ingrese para crear sus propias listas</a>
+			
+			
+		    </div> <!-- / .dropdown-menu -->
+		</li> <!-- / .nav-item.dropdown -->
+		
+	    </ul> <!-- / .navbar-nav -->
+
+	    <!-- Custom code -->
+
+
+
+
+
+
+	    
+	    
+	    <ul id="members" class="navbar-nav">
+		<li class="nav-item dropdown">
+		    
+		    
+		    
+		    <a href="/cgi-bin/koha/opac-user.pl" class="nav-link login-link loginModal-trigger"><i class="fa fa-user fa-icon-black fa-fw" aria-hidden="true"></i> <span class="userlabel">Ingresar a su cuenta</span></a>
+		    
+		    
+		    
+
+		    
+		</li>
+		
+		
+		<li class="nav-item search_history">
+		    <a class="nav-link login-link" href="/cgi-bin/koha/opac-search-history.pl" title="Ver su historial de búsqueda">Historial de búsqueda</a>
+		</li>
+		<li class="divider-vertical"></li>
+		<li class="nav-item">
+		    <a class="nav-link logout clearsh" href="/cgi-bin/koha/opac-search-history.pl?action=delete" title="Eliminar historial de búsqueda"><i class="fa fa-trash" aria-hidden="true"></i> Limpiar</a>
+		</li>
+		
+		
+	    </ul>
+	    
+	</nav> <!-- /navbar -->
+
+
+
+	<div id="custom-navbar-desktop" class="navbar navbar-expand bg-white d-flex justify-content-between w-100 fixed-top container-nav menu-descktop d-xl-block">
+    <div class="container pl-3" style="max-width: 1310px;">
+	<div class="logo">
+            <a id="logoUTP-d" href="/cgi-bin/koha/opac-main.pl" ><img src="/opac-tmpl/skyblue/images/icons/UTP+biblio.svg" alt="UTP+biblio" /></a>
+	</div>
+	<div class="d-flex justify-content-end items-menu-container pr-3">
+            <div id="catalogo-desktop-menu" class="item-menu text-nowrap nav-item Body-02 Text-02 py-auto my-auto"><a class="catalogo-menu-link" href="/cgi-bin/koha/TB-search.pl">Catálogo</a></div>
+            <div id="base-de-datos-desktop-menu" class="item-menu text-nowrap nav-item Body-02 Text-02 py-auto my-auto"><a class="basededatos-menu-link" href="/cgi-bin/koha/TB-pages.pl?pg=PG_DATABASES">Recursos virtuales</a></div>
+
+            <div id="otros-servicios-desktop-menu" class="item-menu nav-item dropdown Body-02 Text-02 my-auto">
+		<span class="otros-servicios-menu-link text-nowrap Body-02 Text-02 dd-menu" >
+                    Otros servicios
+                    <svg class="icon-im" width="14" height="8" viewBox="0 0 14 8" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M13.7 0.3C13.3 -0.1 12.7 -0.1 12.3 0.3L7 5.6L1.7 0.3C1.3 -0.1 0.7 -0.1 0.3 0.3C-0.1 0.7 -0.1 1.3 0.3 1.7L6.3 7.7C6.5 7.9 6.8 8 7 8C7.2 8 7.5 7.9 7.7 7.7L13.7 1.7C14.1 1.3 14.1 0.7 13.7 0.3Z" />
+                    </svg>
+		</span>
+		<div class="dropdown-m dropdown-menu-1 border">
+                    <a class="lectura-recreativa-menu-link submenu-item Body-02 Text-02 d-flex flex-wrap m-3" href="/cgi-bin/koha/TB-recreationalreadings.pl">Lectura recreativa</a>
+                    <a class="material-de-aprendizaje-menu-link submenu-item Body-02 Text-02 d-flex flex-wrap m-3" href="/cgi-bin/koha/TB-pages.pl?pg=PG_LEARNING">Material de aprendizaje</a>
+                    <a target="_blank" class="reserva-de-salas-grupales-menu-link submenu-item Body-02 Text-02 d-flex flex-wrap m-3" href="https://sso.utp.edu.pe/auth/realms/Xpedition/protocol/openid-connect/auth?client_id=utpmas-web&redirect_uri=https%3A%2F%2Fportal.utp.edu.pe%2Fservicios%2Frecursos&state=130b1218-8738-44a5-8316-f362c9123d4f&response_mode=fragment&response_type=code&scope=openid&nonce=12fcf775-2c44-4584-a290-aebf9ad328e8">Reserva de salas grupales, tablets y PCs</a>
+                    <!-- <a target="_blank" class="submenu-item Body-02 Text-02 d-flex flex-wrap m-3" href="https://tubiblioteca.utp.edu.pe/opac-tmpl/bootstrap/resources/donacion_de_recursos.pdf">Donanción de recursos</a> -->
+                    <a target="_blank" class="repositorio-institucional-menu-link submenu-item Body-02 Text-02 d-flex flex-wrap m-3" href="https://repositorio.utp.edu.pe/">Repositorio institucional</a>
+		</div>
+            </div>
+
+            <div id="donacion-de-recursos-desktop-menu" class="item-menu text-nowrap nav-item Body-02 Text-02 my-auto">
+		<a class="donacion-de-recursos-menu-link" href="/opac-tmpl/bootstrap/resources/donacion_de_recursos_utp.pdf" target="_blank">Donación de recursos</a>
+            </div>
+
+            <div id="ayuda-desktop-menu" class="item-menu nav-item dropdown Body-02 Text-02 my-auto">
+		<span class="ayuda-menu-link text-nowrap Body-02 Text-02 dd-menu">
+                    Ayuda
+                    <svg class="icon-im" width="14" height="8" viewBox="0 0 14 8" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M13.7 0.3C13.3 -0.1 12.7 -0.1 12.3 0.3L7 5.6L1.7 0.3C1.3 -0.1 0.7 -0.1 0.3 0.3C-0.1 0.7 -0.1 1.3 0.3 1.7L6.3 7.7C6.5 7.9 6.8 8 7 8C7.2 8 7.5 7.9 7.7 7.7L13.7 1.7C14.1 1.3 14.1 0.7 13.7 0.3Z" />
+                    </svg>
+		</span>
+		<div class="dropdown-m dropdown-menu-1 border">
+                    <a class="preguntas-frecuentes-menu-link submenu-item Body-02 Text-02 d-flex flex-wrap m-3 " href="/cgi-bin/koha/TB-pages.pl?pg=PG_QUESTIONS">Preguntas frecuentes</a>
+                    <a target="_blank" class="manuales-de-ayuda-menu-link submenu-item Body-02 Text-02 d-flex flex-wrap m-3 " href="https://view.genial.ly/60ecb115d84c080d883bf9f9">Manuales de ayuda</a>
+                    <a target="_blank" class="normas-de-uso-menu-link submenu-item Body-02 Text-02 d-flex flex-wrap m-3 " href="https://tubiblioteca.utp.edu.pe/opac-tmpl/bootstrap/resources/normas_de uso_sistema_biblioteca_utp.pdf">Normas de uso</a>
+		</div>
+            </div>
+
+	    
+	    <div class="user-container p-0" style="width: 174px;">
+		<a href="/cgi-bin/koha/TB-user.pl?ref=%2Fcgi-bin%2Fkoha%2FTB-search.pl" class="ingresar-menu-link btn btn-secondary btn-block koha-utp-btn-01 size-btn-1 mt-3 mx-3 mr-lg-0">Ingresar</a>
+	    </div>
+	    
+
+
+	</div>
+    </div>
+</div>
+
+
+
+	<!-- Custom -->
+
+	<nav id="custom-navbar" class="navbar fixed-top navbar-light bg-light d-xl-none">
+    <button id="koha-menu-button" class="navbar-toggler koha-menu-icon" type="button" data-toggle="collapse" data-target="#koha-menu" aria-controls="koha-menu" aria-expanded="false" aria-label="Toggle navigation">
+	<span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse vh-100 p-0" id="koha-menu">
+	<div class="top-nav container w-100 px-3 px-auto pt-4"">
+	    <div></div>
+	    <img class="" id="close" src="/opac-tmpl/skyblue/images/icons/close-black.png" alt="">
+	</div>
+	<div class="container principal h-auto mx-auto p-0 border-0 mb-0">
+	    <div id="menu-principal" class="w-100">
+		
+		<div class="user-container">
+		    <a href="/cgi-bin/koha/TB-user.pl?ref=%2Fcgi-bin%2Fkoha%2FTB-search.pl" class="ingresar-menu-link btn btn-secondary btn-block size-btn-1">Ingresar</a>
+		</div>
+		
+		<ul class="menu h-auto" >
+    		    
+		    <li  class="menu-item" id="mi-catalogo">
+			<img class="state-bar-menu" src="/opac-tmpl/skyblue/images/icons/state-bar-menu.png" alt="">
+			<div class="item-container">
+			    <div class="icon-container">
+				<img src="/opac-tmpl/skyblue/images/icons/Catalogo.png" alt="">
+			    </div>
+			    <div>
+				<a class="catalogo-menu-link Body-02 Text-02" href="/cgi-bin/koha/TB-search.pl">Catálogo</a>
+			    </div>
+			</div>
+		    </li>
+    		    
+		    <li class="menu-item" id="mi-otrosServicios">
+			<div class="dropdowm-container">
+			    <img class="state-bar-menu" src="/opac-tmpl/skyblue/images/icons/state-bar-menu.png" alt="">
+			    <div class="item-container">
+				<div class="icon-container">
+				    <img src="/opac-tmpl/skyblue/images/icons/others-services.png" alt="">
+				</div>
+				<div>
+				    <span class="otros-servicios-menu-link Body-02 Text-02">Otros servicios</span>
+				</div>
+			    </div>
+			    <div>
+				<img class="icon-im" src="/opac-tmpl/skyblue/images/icons/Open-menu.png" alt="">
+			    </div>
+			</div>
+			<div class="contenido d-none" id="OtrosServivios">
+			    <ul class="menu-sercundario" >
+				<li class="menu-item">
+				    <a href="/cgi-bin/koha/TB-recreationalreadings.pl" class="lectura-recreativa-menu-link Body-02 Text-02">Lectura recreativa</a>
+				</li>
+				<li id="menu-material-de-aprendizaje" class="menu-item">
+				    <a href="/cgi-bin/koha/TB-pages.pl?pg=PG_LEARNING" class="material-de-aprendizaje-menu-link  Body-02 Text-02">Material de aprendizaje</a>
+				</li>
+				<li class="menu-item">
+				    <a target="_blank" href="https://sso.utp.edu.pe/auth/realms/Xpedition/protocol/openid-connect/auth?client_id=utpmas-web&redirect_uri=https%3A%2F%2Fportal.utp.edu.pe%2Fservicios%2Frecursos&state=130b1218-8738-44a5-8316-f362c9123d4f&response_mode=fragment&response_type=code&scope=openid&nonce=12fcf775-2c44-4584-a290-aebf9ad328e8" class="reserva-de-salas-grupales-menu-link Body-02 Text-02">Reserva de salas grupales, tablets y PCs</a>
+				</li>
+				<!-- <li class="menu-item">
+				    <a target="_blank" href="https://tubiblioteca.utp.edu.pe/opac-tmpl/bootstrap/resources/donacion_de_recursos.pdf" class="Body-02 Text-02">Donanción de recursos</a>
+				</li> -->
+				<li class="menu-item">
+				    <a target="_blank" href="https://repositorio.utp.edu.pe/" class="repositorio-institucional-menu-link Body-02 Text-02">Repositorio institucional</a>
+				</li>
+			    </ul>
+			</div>
+		    </li>
+		    <li  class="menu-item" id="mi-donacionDeRecursos">
+			<img class="state-bar-menu" src="/opac-tmpl/skyblue/images/icons/state-bar-menu.png" alt="">
+			<div class="item-container">
+			    <div class="icon-container">
+				<img src="/opac-tmpl/skyblue/images/icons/donation.png" alt="">
+			    </div>
+			    <div>
+				<a href="/opac-tmpl/skyblue/resources/donacion_de_recursos.pdf" target="_blank"><span class="donacion-de-recursos-menu-link Body-02 Text-02">Donación de recursos</span></a>
+			    </div>
+			</div>
+		    </li>
+		    <li class="menu-item" id="mi-ayuda">
+			<div class="dropdowm-container">
+			    <img class="state-bar-menu" src="/opac-tmpl/skyblue/images/icons/state-bar-menu.png" alt="">
+			    <div class="item-container">
+				<div class="icon-container">
+				    <img src="/opac-tmpl/skyblue/images/icons/help.png" alt="">
+				</div>
+				<div>
+				    <span class="ayuda-menu-link Body-02 Text-02">Ayuda</span>
+				</div>
+			    </div>
+			    <div>
+				<img class="icon-im" src="/opac-tmpl/skyblue/images/icons/Open-menu.png" alt="">
+			    </div>
+			</div>
+			<div class="contenido d-none" id="Ayuda">
+			    <ul class="menu-sercundario" >
+				<li id="menu-preguntas-frecuentes" class="menu-item">
+				    <a href="/cgi-bin/koha/TB-pages.pl?pg=PG_QUESTIONS" class="preguntas-frecuentes-menu-link Body-02 Text-02">Preguntas frecuentes</a>
+				</li>
+				<li class="menu-item">
+				    <a target="_blank" href="https://view.genial.ly/60ecb115d84c080d883bf9f9" class="manuales-de-ayuda-menu-link Body-02 Text-02">Manuales de ayuda</a>
+				</li>
+				<li class="menu-item">
+				    <a target="_blank" href="https://tubiblioteca.utp.edu.pe/opac-tmpl/bootstrap/resources/normas_de_uso_biblioteca_utp.pdf" class="normas-de-uso-menu-link Body-02 Text-02">Normas de uso</a>
+				</li>
+			    </ul>
+			</div>
+		    </li>
+		</ul>
+   		
+	    </div>
+	</div>
+    </div>
+
+    <div class="nav-container d-flex justify-content-between">
+	<div>
+	<a id="logoUTP" href="/cgi-bin/koha/opac-main.pl" ><img src="/opac-tmpl/skyblue/images/icons/UTP+biblio.svg" alt="UTP+biblio" /></a>
+	</div>
+	
+	<div>
+	    <a id="header-login-button" role="button" class="btn btn-secondary koha-utp-btn-02 size-btn-2" href="/cgi-bin/koha/TB-user.pl?ref=%2Fcgi-bin%2Fkoha%2FTB-search.pl">Ingresar</a>
+	</div>
+
+	
+    </div>
+	<div class="overlay-logout"></div>
+	
+</nav> <!-- custom-navbar -->
+
+
+	<div class="alert-logout inactive-alert">
+            <div class="close-icon-content">
+		<img class="close-icon" src="/opac-tmpl/skyblue/images/icons/close-alert.png" alt="">
+            </div>
+            <div class="alert-content">
+		<div class="title-container">
+		    <span class="Subtitle-02-bold Text-02">¿Deseas cerrar tu sesión?</span>
+		</div>
+		<div class="text-container">
+		    <span class="text text-2">Recuerda que puedes volver a ingresar cuando desees</span>
+		</div>
+            </div>
+
+            <div class="button-container">
+		<span class="btn button-Secundario" id="cancel-alert">Cancelar</span>
+		<a href="/cgi-bin/koha/opac-main.pl?logout.x=1" class="cerrar-session-menu-link btn button-Principal" id="cancel-alert">Cerrar sesión</a>
+            </div>
+	</div>
+
+
+
+
+	
+
+    </div> <!-- / header-region -->
+
+    
+
+
+
+<!-- Login form hidden by default, used for modal window -->
+
+
+
+
+    <div class="main">
+
+	
+
+
+
+	
+	    <div id="not-found" class="container">
+    <div class="row">
+	<div class="col-lg-6 offset-lg-3 col-sm-12">
+	    <img src="/opac-tmpl/skyblue/images/empty.png" class="rounded mx-auto d-block" />
+	    <h5 class="Title-01-black text-center">La página no existe</h5>
+	    <p class="Body-02 text-center">Lo sentimos, no se encontró la página porque no existe.</p>
+	</div>
+	<div class="col-lg-6 offset-lg-3 col-sm-12">
+	    <a type="button" class="btn btn-block btn-primary button-Principal" href="/cgi-bin/koha/opac-main.pl">Volver a home</a>
+	</div>
+    </div>
+</div>
+	
+
+	
+
+	    </div> <!-- / .main -->
+
+
+
+	    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div id="offline" class="container">
+    <div class="row">
+	<div class="col-lg-6 offset-lg-3 col-sm-12">
+	    <img src="/opac-tmpl/skyblue/images/offline.png" class="rounded mx-auto d-block" />
+	    <h5 class="Title-01-black text-center">Sin conexión a internet</h5>
+	    <p class="Body-02 text-center">Por favor, revisa tu conexión a internet y vuelve a intentarlo</p>
+	</div>
+	<div class="col-lg-6 offset-lg-3 col-sm-12">
+	    <button type="button" class="btn btn-block btn-primary button-Principal" onclick="location.reload();">Volver a cargar</button>
+	</div>
+    </div>
+</div>
+
+
+
+
+
+
+
+</div> <!-- / #wrapper in masthead.inc -->
+
+<div id="loading" class="container">
+    <div class="row align-items-center">
+	<div class="col text-center">
+	    <h5 class="Body-01-bold text-center text-white">Cargando...</h5>
+	    <img id="loading-img" class="rotating" src="/opac-tmpl/skyblue/images/loading.png" />
+	</div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<footer class="container-fluid bg-white pt-lg-4 screen">
+    <div class="container">
+	<div class="row align-items-left mb-lg-4">
+	    <div class="col-lg-3 mt-2 d-lg-flex justify-content-left d-none d-lg-block">
+		<div class="logo"><img src="/opac-tmpl/skyblue/images/icons/UTP+biblio.svg" alt="UTP+biblio" /></div>
+	    </div>
+	    <div class="col-12 col-lg-5 px-0">
+		<div class="card servicios-item border-0">
+		    <div class="card-body">
+			<h4 class="card-title text-center text-lg-left">
+			    <span class="subtitle-01-black text-02">Contáctanos</span>
+			</h4>
+			<p class=" Body-01-regular text-center text-lg-left">
+			    Servicio de atención al estudiante (SAE)
+			</p>
+			<div id="phones" class="d-block">
+			    <p class=" Body-01-regular text-center text-lg-left mr-lg-4">
+				<img src="/opac-tmpl/skyblue/images/icons/footer-telefono.svg" alt="Teléfono" />
+				<span class="ml-3">Lima (01) 315 9600</span>
+			    </p>
+			    <p class=" Body-01-regular text-center text-lg-left">
+				<img src="/opac-tmpl/skyblue/images/icons/footer-telefono.svg" alt="Teléfono" />
+				<span class="ml-3">Provincia 0800 71099 (opción 1)</span>
+			    </p>
+			</div>
+
+		    </div>
+		</div>
+	    </div>
+
+	    <div class="col-12 col-lg-4 px-0">
+		<div class="card servicios-item border-0">
+		    <div class="card-body">
+			<h4 class="card-title text-center text-lg-left">
+			    <span class="subtitle-01-black text-02">Enlaces informativos</span>
+			</h4>
+			<div id="terms-and-policies" class="d-block">
+			    <p class=" Body-01-regular text-center text-lg-left mr-lg-4"><ins style="color: #5B36F2;">
+				<a class="Primario-UTP footer-politicasdeprivacidad" href="/cgi-bin/koha/TB-pages.pl?pg=PG_PRIVACY">Políticas de privacidad</a>
+			    </ins></p>
+			    <p class=" Body-01-regular text-center text-lg-left"><ins style="color: #5B36F2;">
+				<a class="Primario-UTP footer-terminosycondiciones" href="/cgi-bin/koha/TB-pages.pl?pg=PG_TERMS">Términos y condiciones</a>
+			    </ins></p>
+			</div>
+
+		    </div>
+		</div>
+	    </div>
+	</div>
+
+
+
+    </div>
+
+
+    <div class="row border-top">
+	<div class="col-12">
+	    <div class="card border-0">
+		<div id="footer-credits" class="card-body text-center">
+		    <span class="derechos card-text body-02-regular text-02 text-center">Todos los derechos reservados</span>
+		    <span class="guion card-text body-02-regular text-02  text-center"> - </span>
+		    <span class="universidad card-text body-02-regular text-02 text-center">Universidad Tecnológica del Perú</span>
+		</div>
+	    </div>
+	</div>
+    </div>
+</footer>
+
+
+
+<a id="whatsapp" class="btn screen" href="https://wa.me/51960252970?text=Hola.%20Quiero%20comunicarme%20con%20el%20personal%20de%20la%20UTP." target="_blank" data-toggle="tooltip" title="¿Tienes alguna duda?"><i class="fa fa-whatsapp fa-lg" aria-hidden="true"></i></a>
+<div class="overlay"></div>
+
+
+
+
+
+
+
+
+
+<script>
+ let userid = "";
+ let cardnumber = "";
+ //console.log("cardnumber: " + cardnumber);
+ let name = "";
+ let lastname = "";
+ let categorycode = "";
+</script>
+
+<!-- JavaScript includes -->
+<script src="/opac-tmpl/skyblue/lib/jquery/jquery-3.6.0.min_22.0517000.js"></script>
+<script src="/opac-tmpl/skyblue/lib/jquery/jquery-migrate-3.3.2.min_22.0517000.js"></script>
+<script src="/opac-tmpl/skyblue/lib/jquery/jquery-ui-1.13.1.min_22.0517000.js"></script>
+<script src="/opac-tmpl/skyblue/lib/jquery/plugins/jquery.validate.min_22.0517000.js"></script>
+<script src="/opac-tmpl/skyblue/lib/jquery/plugins/jquery.deserialize.min_22.0517000.js"></script>
+<script src="/opac-tmpl/skyblue/lib/bootstrap/js/bootstrap.bundle.min_22.0517000.js"></script>
+<script src="/opac-tmpl/skyblue/lib/fontfaceobserver.min_22.0517000.js"></script>
+<script src="/opac-tmpl/skyblue/lib/enquire.min_22.0517000.js"></script>
+<script src="/opac-tmpl/skyblue/js/global_22.0517000.js"></script>
+<script src="/opac-tmpl/skyblue/js/MenuPrincipal_22.0517000.js"></script>
+<script src="/opac-tmpl/skyblue/js/PreguntasFrecuentes_22.0517000.js"></script>
+<script src="/opac-tmpl/skyblue/es-ES/js/Catalogo_22.0517000.js"></script>
+<script src="/opac-tmpl/skyblue/es-ES/js/LibrosCarrera_22.0517000.js"></script>
+<script src="/opac-tmpl/skyblue/js/MenuFiltro_22.0517000.js"></script>
+<script src="/opac-tmpl/skyblue/js/MenuOrdenar_22.0517000.js"></script>
+<script src="/opac-tmpl/skyblue/js/HistorialBusqueda_22.0517000.js"></script>
+<script src="/opac-tmpl/skyblue/js/paginacion_22.0517000.js"></script>
+<script src="/opac-tmpl/skyblue/js/custom-image-management_22.0517000.js"></script>
+
+
+<script>
+ var NO_AMAZON_IMAGE = _("No hay imagen de cubierta disponible");
+</script>
+<script src="/opac-tmpl/skyblue/js/amazonimages_22.0517000.js"></script>
+
+
+<script>
+ $(document).ready(function() {
+
+     // Verificar la conexión a Internet cuando cambia el estado
+     window.addEventListener('online', function() {
+         $('.main').show();
+	 $('.carousel').show();
+	 $('#opaccredits').show();
+	 $('.footer').show();
+	 $('#offline').hide();
+     });
+
+     window.addEventListener('offline', function() {
+         // applyStyles();
+	 console.log('offline!');
+	 $('.main').hide();
+	 $('.carousel').hide();
+	 $('#opaccredits').hide();
+	 $('.footer').hide();
+	 $('#offline').show();
+     });
+ });
+</script>
+
+
+
+<script>
+
+ var MSG_CONFIRM_AGAIN = _("Advertencia: No puede deshacerse. Por favor confirmar nuevamente")
+ var MSG_DELETE_SEARCH_HISTORY = _("¿Está seguro que desea eliminar su historial de búsqueda?");
+ var MSG_NO_SUGGESTION_SELECTED = _("No se seleccionó ninguna sugerencia");
+ var MSG_SEARCHING = _("Buscando %s...");
+ var MSG_ERROR_SEARCHING_COLLECTION = _("Error de la búsqueda en la colección %s");
+ var MSG_NO_RESULTS_FOUND_IN_COLLECTION = _("No se han encontrado resultados en la colección de la biblioteca %s");
+ var MSG_RESULTS_FOUND_IN_COLLECTION = _("Se encontraron %s resultados en la colección de la biblioteca %s");
+ var MSG_BY = _("por");
+ var MSG_TYPE = _("Tipo");
+ var MSG_NEXT = _("Siguiente");
+ var MSG_PREVIOUS = _("Previo");
+ var MSG_CHECKOUTS = _("Préstamos");
+ var MSG_NO_CHECKOUTS = _("Sin préstamos");
+ var MSG_CHECK_OUT = _("Préstamo");
+ var MSG_CHECK_OUT_CONFIRM = _("¿Está seguro de querer prestar esta éste ítem?");
+ var MSG_CHECKED_OUT_UNTIL = _("Prestado hasta %s");
+ var MSG_CHECK_IN = _("Devolución");
+ var MSG_CHECK_IN_CONFIRM = _("¿Está seguro de querer devolver éste ítem?");
+ var MSG_NO_CHECKOUTS = _("Sin préstamos");
+ var MSG_DOWNLOAD = _("Bajar");
+ var MSG_HOLDS = _("Reservas");
+ var MSG_NO_HOLDS = _("Sin reservas");
+ var MSG_PLACE_HOLD = _("Hacer reserva");
+ var MSG_CANCEL_HOLD = _("Cancelar");
+ var MSG_CANCEL_HOLD_CONFIRM = _("¿Está seguro que desea cancelar esta reserva?");
+ var MSG_ON_HOLD = _("Reservado");
+
+ 
+ 
+ 
+
+ 
+ $(window).load(function() {
+     verify_images();
+ });
+ 
+ $(".print-large").on("click",function(){
+     window.print();
+     return false;
+ });
+ $(".addtoshelf").on("click",function(e){
+     e.preventDefault();
+     Dopop( this.href );
+ });
+ $("body").on("click", ".addtocart", function(e){
+     e.preventDefault();
+     var biblionumber = $(this).data("biblionumber");
+     addRecord( biblionumber );
+ });
+ $("body").on("click", ".cartRemove", function(e){
+     e.preventDefault();
+     var biblionumber = $(this).data("biblionumber");
+     delSingleRecord( biblionumber );
+ });
+ $(".clearsh").on("click", function(){
+     return confirmDelete(MSG_DELETE_SEARCH_HISTORY);
+ });
+
+</script>
+
+
+<script src="/opac-tmpl/skyblue/js/basket_22.0517000.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/opac-tmpl/lib/js-cookie/js.cookie-3.0.1.min_22.0517000.js"></script>
+
+<script>
+ function authenticate_elibro(){
+     /* var item = $(".revisarelibro").attr("data-item"); */
+     var item = cardnumber;
+	 var cat=categorycode;
+     $.post("/cgi-bin/koha/elibro.php",
+            {
+		name: item,
+		category:cat
+            },
+            function(data, status){
+		if(data){
+                    var info=JSON.parse(data);
+                    var url=info.url;
+                    window.open(url);
+		}
+     });
+ }
+</script>
+
+<script>
+ $(document).ready(function() {
+     if($('#searchsubmit').length) {
+         $(document).on("click", '#searchsubmit', function(e) {
+             Cookies.remove("form_serialized", { path: '/'});
+             Cookies.remove("form_serialized_limits", { path: '/'});
+             Cookies.remove("search_path_code", { path: '/'});
+         });
+
+     }
+
+     /* console.log("Loading!"); */
+
+     // Customization code
+     $('#koha-carousel').carousel();
+
+     $('#terminos-y-condiciones-toogle-link').click(function() {
+	 $('#terminos-y-condiciones').modal('toggle');
+     });
+
+     $('#politicas-de-privacidad-toogle-link').click(function () {
+	 $('#politicas-de-privacidad').modal('toggle');
+     });
+
+
+     $('#menu-login-button').click(function () {
+	 $('#loginModal2').modal('toggle');
+     });
+
+     $('#koha-menu-button').click(function () {
+	 $('#header-login-button').toggle();
+	 $('#koha-menu').toggle();
+     });
+
+     $('#menu-modal-close').click(function () {
+	 $('#header-login-button').toggle();
+     });
+
+     $('#custom-navbar #close').click(function(){
+	 /* console.log('Me quieren cerrar!'); */
+	 $('#header-login-button').toggle();
+	 $('#koha-menu').toggle();
+     });
+
+     /* console.log($(".user-name").html()); */
+     /* let name = $(".user-name").html().trim().split(" ")[0]; */
+     /* console.log("name: " + name); */
+     /* let lastname = $(".user-name").html().trim().split(" ")[1]; */
+     /* console.log("lastname: " + lastname);	 */
+
+     /* let mcgrawhill_link = $("#mcgraw-hill-link");
+      * console.log(mcgrawhill_link.prop("href")); */
+     let new_mcgrahill_href = $("#mcgraw-hill-link").prop("href") + "?e=" + cardnumber + "&n=" + name + "&l=" + lastname;
+     /* console.log(new_mcgrahill_href); */
+     $(".mcgraw-hill-link").attr("href", new_mcgrahill_href);
+	 
+	 $("#cengage-link").attr("href", new_mcgrahill_href);
+
+     $(".elibro-link").click(authenticate_elibro);
+ });
+</script>
+
+
+
+
+
+<script>
+  function zonaservicios(show){
+	 if(show){
+		document.getElementsByClassName("zonaservicios-content")[0].style.display = "block"; 
+		document.getElementsByClassName("zonaservicios-icon")[0].style.display = "none"; 
+		return false;
+	 }
+	 else{
+		document.getElementsByClassName("zonaservicios-content")[0].style.display = "none"; 
+		document.getElementsByClassName("zonaservicios-icon")[0].style.display = "block"; 
+		return false;
+	 }
+ }
+
+
+$(document).ready(function(){
+	$("#myCarousel").carousel();
+});
+
+
+
+</script>
+
+
+
+
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-582FV6G2"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+</body>
+</html>
+
+	    

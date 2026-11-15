@@ -1,0 +1,470 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>
+	LibMax:: OPAC Online Public Access Catalouge
+</title><meta name="description" content="Libmax is product of Max Intelligence, developed on latest Microsoft web technologies using best DB-design practices and security model, and have multi-tier graphical user interface with built-in role base application providing over 500 functionalities. To ensure high-end security application is separated into discrete programs (modules), which are then integrated into a unified interface. 
+
+All library processes are catered in Libmax including acquisitions (ordering, receiving, and invoicing materials), cataloging (classifying and indexing materials), circulation (lending materials to patrons and receiving them back), serials (tracking magazine and newspaper holdings), and have independent but tightly integrated modules of OPAC and Digital Library.
+" />
+
+    <style type="text/css">
+        .auto-style1 {
+           display: inline-block;
+  padding: 6px 6px 4px;
+  border-radius: 3px;
+  background: #b09dc4;
+  margin-right: 5px;
+   color: #fff;
+  font-size: 22px;
+        }
+    </style>
+</head>
+ <link href="styles/opaque.css" rel="stylesheet" type="text/css">
+    <link type="text/css" href="../Styles/SearchDetail.css" rel="Stylesheet" />
+    <link type="text/css" href="../Styles/dialog.css" rel="Stylesheet" />
+    <script type="text/javascript">
+    
+        function InvertImage(obj, state)
+        {
+            var name = obj.value;
+            name += "_btn_";
+            
+            if ( state == true )
+                name += "1.gif";
+            else
+                name += "0.gif";
+                
+            obj.src.images = "images/" + name;    
+        }
+        function searchbook() {
+
+            var ctrl = document.getElementById('ctl00$ddsearch');
+
+            var criteria = document.getElementById('txtsearch').value;
+            if (criteria == null || criteria.trim() == "") {
+                alert('Please Enter some thing.');
+                var focus = document.getElementById('txtsearch').focus();
+                return false;
+            }
+            var column = ctrl.options[ctrl.selectedIndex].value;
+            var pagenum = 1;
+
+            window.location = "SearchBook.aspx?pagenumber=" + pagenum + "&column=" + "Title" + "&criteria=" + criteria;
+            return false;
+        }
+    </script>
+<body>
+    <form name="aspnetForm" method="post" action="./index.aspx" id="aspnetForm">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUKMTQzODUwNTg5MQ9kFgJmD2QWAgIDD2QWBgIEDxYCHglpbm5lcmh0bWwFzAE8c3BhbiBjbGFzcz0iYXV0by1zdHlsZTEiPjE8L3NwYW4+PHNwYW4gY2xhc3M9ImF1dG8tc3R5bGUxIj44PC9zcGFuPjxzcGFuIGNsYXNzPSJhdXRvLXN0eWxlMSI+MTwvc3Bhbj48c3BhbiBjbGFzcz0iYXV0by1zdHlsZTEiPjM8L3NwYW4+PHNwYW4gY2xhc3M9ImF1dG8tc3R5bGUxIj42PC9zcGFuPjxzcGFuIGNsYXNzPSJhdXRvLXN0eWxlMSI+MTwvc3Bhbj5kAgUPZBYCAgMPFgIfAAXdCzxwIHN0eWxlPSJMSU5FLUhFSUdIVDogMjBweDsgVEVYVC1BTElHTjoganVzdGlmeSI+PHNwYW4gc3R5bGU9ImZvbnQtc2l6ZToxMi4wcHQ7bGluZS1oZWlnaHQ6MTA3JTsgZm9udC1mYW1pbHk6IkNhbGlicmkiLHNhbnMtc2VyaWY7bXNvLWFzY2lpLXRoZW1lLWZvbnQ6bWlub3ItbGF0aW47bXNvLWZhcmVhc3QtZm9udC1mYW1pbHk6IENhbGlicmk7bXNvLWZhcmVhc3QtdGhlbWUtZm9udDptaW5vci1sYXRpbjttc28taGFuc2ktdGhlbWUtZm9udDptaW5vci1sYXRpbjsgbXNvLWJpZGktZm9udC1mYW1pbHk6QXJpYWw7bXNvLWJpZGktdGhlbWUtZm9udDptaW5vci1iaWRpO21zby1hbnNpLWxhbmd1YWdlOiBFTi1VUzttc28tZmFyZWFzdC1sYW5ndWFnZTpFTi1VUzttc28tYmlkaS1sYW5ndWFnZTpBUi1TQSI+VGhlIFNpciBTeWVkIExpYnJhcnkgKENlbnRyYWwgTGlicmFyeSkgd2FzIGZvdW5kZWQgd2l0aCB0aGUgZXN0YWJsaXNobWVudCBvZiBOYXRpb25hbCBJbnN0aXR1dGUgb2YgTW9kZXJuIExhbmd1YWdlcyAoTklNTCkgaW4gMTk3MC4gVGhlIGluc3RpdHV0ZSB3YXMgZWxldmF0ZWQgdG8gdGhlIHN0YXR1cyBvZiBOYXRpb25hbCBVbml2ZXJzaXR5IG9mIE1vZGVybiBMYW5ndWFnZXMgKE5VTUwpIGluIE1heSAyMDAwLiBUaGUgTGlicmFyeSBpcyBob3VzZWQgaW4gYSB0d28gc3RvcmV5ZWQgYnVpbGRpbmcgaGF2aW5nIHRvdGFsIGNvdmVyZWQgYXJlYSBvZiA0MzY4MSBzcS5mdC4gVGhlIExpYnJhcnkgaXMgd2VsbCBmdXJuaXNoZWQgYW5kIGZ1bGx5IGFpci1jb25kaXRpb25lZC4gVGhlIHByZXNlbnQgbGlicmFyeSBob2xkaW5ncyBpcyBvdmVyIG9uZSBsYWMgZm9ydHkgdGhvdXNhbmQgKDEsNDAsMDAwKSBjb21wcmlzaW5nIGJvb2tzLCBqb3VybmFscywgZG9jdW1lbnRzIGFuZCBub24tYm9vayBtYXRlcmlhbCBvbiB2YXJpb3VzIGRpc2NpcGxpbmVzLiBGdW5jdGlvbmluZyBhcyBsYW5ndWFnZSBpbnN0aXR1dGUgYW5kIGxhdGVyIGFzIGEgZnVsbC1mbGVkZ2VkIFVuaXZlcnNpdHksIG1ham9yIHBhcnQgb2YgdGhlIGxpYnJhcnkgY29sbGVjdGlvbiBjb25zaXN0cyBvZiB0aGUgc291cmNlIG1hdGVyaWFsIGluaXRpYWwgb24gbGFuZ3VhZ2VzLiBIb3dldmVyLCB3aXRoIHRoZSBpbnRyb2R1Y3Rpb24gb2YgbmV3IGRpc2NpcGxpbmVzIGxpa2UgRWR1Y2F0aW9uLCBNYXNzIENvbW11bmljYXRpb24sIEludGVybmF0aW9uYWwgUmVsYXRpb25zLCBQZWFjZSBhbmQgQ29uZmxpY3QgU3R1ZGllcywgR292ZXJuYW5jZSBhbmQgUHVibGljIFBvbGljeSBTdHVkaWVzLCBFY29ub21pY3MsIEVuZ2luZWVyaW5nLCBJbmZvcm1hdGlvbiBUZWNobm9sb2d5IGFuZCBNYW5hZ2VtZW50IFNjaWVuY2VzLCB0aGUgTGlicmFyeSBoYXMgYWNxdWlyZWQgYWRlcXVhdGUgbnVtYmVyIG9mIGJvb2tzIGluIHRoZXNlIGRpc2NpcGxpbmVzIGFzIHdlbGwuPC9zcGFuPjwvcD4KPHAgc3R5bGU9IkxJTkUtSEVJR0hUOiAyMHB4OyBURVhULUFMSUdOOiBqdXN0aWZ5Ij7CoDwvcD5kAgYPFgIfAAXjATx0YWJsZSBjZWxscGFkZGluZz0nMCc+PHRyPjx0cj48dGQ+PC90ZD48dGQ+PGEgaHJlZj0nU2VhcmNoUGVyaW9kaWNhbC5hc3B4P2tleT1CYWJlbCZ0eXBlPVRpdGxlJz5CYWJlbDwvYT48YnI+PC90ZD48L3RyPjx0cj48dHI+PHRkPjwvdGQ+PHRkPjxhIGhyZWY9J1NlYXJjaFBlcmlvZGljYWwuYXNweD9rZXk9VGFyZ2V0JnR5cGU9VGl0bGUnPlRhcmdldDwvYT48YnI+PC90ZD48L3RyPjwvdGFibGU+ZBgBBR5fX0NvbnRyb2xzUmVxdWlyZVBvc3RCYWNrS2V5X18WAQUSY3RsMDAkSW1hZ2VCdXR0b24xxp+iSfjIEw/91JcFBd9a/MmdxrD9WqgiuL4c3qg997A=" />
+
+
+<script src="/lib/ScriptResource.axd?d=a0Jsb8fREKQtvzQnbNYSueg_fjGyaNMY01LpNPH2UDS2oCs3L-lCx82QghNmU1ApFnA8v5FXuPmJi4kI3Iw029nLTi5qgG3x0Qt7tbKNZUynK5_cqU6RX9ginDBqKIuK0&amp;t=23c9c237" type="text/javascript"></script>
+<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="58F0F309" />
+<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="/wEdAAh8rq5+4QTcsDZeHk4Q9PijsFaUcnfkG9SxOvK9TARpUGa5cjM7/PnfWQzIXZZ1S14Or9w+CbCVGw0SAuObur++JfmEYkVroUSgn/EgnsSP6xvlqTI003pgzSxZh4AluwBmeifYibJ/joHs9WLp6S8UD4zZrxX92uOlyIx1SyGTQjMwTJ0Yq08QWuJhTPQLWwAilQwy9MGxnSC5YCsT8Sxx" />
+    
+    <div id="main_div">
+        
+        
+        <div id="header_div">
+            <img src="images/opec.jpg" alt="NDU Library" width="976px" height="125px" />
+        </div>
+        
+        <center>
+            <div id="menu_btns">
+        
+            <center>
+                <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                     <tr>
+                        
+                        <td class="Home_btn" align="center" onmouseover="this.className='Home_btn_on'" onmouseout="this.className='Home_btn'">
+                            <div class="Menu_font"> <a href="index.aspx"  class="white_anchor"> Home </a></div>
+                        </td>
+                    
+                        <td class="btn_Spacer">
+                        </td>
+                        
+                        <td class="Login_btn" align="center" onmouseover="this.className='Login_btn_on'" onmouseout="this.className='Login_btn'">
+                            <div class="Menu_font"> <a href="../member/login.aspx"  class="white_anchor"> Login </a></div>
+                        </td>
+                        
+                        <td class="btn_Spacer">
+                        </td>
+                        
+                        <td class="Library_btn" align="center" onmouseover="this.className='Library_btn_on'" onmouseout="this.className='Library_btn'">
+                            <div class="Menu_font"> <a href="aboutlib.aspx" class="white_anchor"> About Library </a></div>
+                        </td>
+                        
+                         <td class="btn_Spacer">
+                        </td>
+                        
+                        <td class="Staff_btn" align="center" onmouseover="this.className='Staff_btn_on'" onmouseout="this.className='Staff_btn'">
+                            <div class="Menu_font"><a href="libtiming.aspx" class="white_anchor">  Library Timings </a> </div>
+                        </td>
+                        
+                        <td class="btn_Spacer">
+                        </td>
+                        
+                        <td class="Contact_btn" align="center" onmouseover="this.className='Contact_btn_on'" onmouseout="this.className='Contact_btn'">
+                            <div class="Menu_font"><a href="Contact.aspx"  class="white_anchor">  Contact</a> </div>
+                        </td>
+
+                        <td class="btn_Spacer">
+                        </td>
+                                            
+                        <td class="Staff_btn" align="center" onmouseover="this.className='Staff_btn_on'" onmouseout="this.className='Staff_btn'">
+                            <div class="Menu_font"><a href="StaffD.aspx"  class="white_anchor">  Staff Directory</a> </div>
+                        </td>
+                        
+                        <td class="btn_Spacer">
+                        </td>
+                                            
+                        <td class="Help_btn" align="center" onmouseover="this.className='Help_btn_on'" onmouseout="this.className='Help_btn'">
+                             <div class="Menu_font"> <a href="help.aspx"  class="white_anchor"> Help</a> </div>
+                        </td>
+                        
+                    </tr>
+                </table>
+            </center>
+        
+        </div>
+        </center>
+        
+        <center>
+            <div id="content_div">
+                <table cellpadding="0" cellspacing="0" border="0" width="100%" class="content_table">
+                    <tr>
+                        <td colspan="5">
+                            <img src="images/Content_top.gif" alt="Missing Image" width="805px" height="16px" />
+                        </td>
+                    </tr>
+                    
+                   
+                    
+                    <!--Content Row Start-->
+                    <tr>
+                        <td colspan="6">
+                            <div id="content_center_div">
+                              
+                                <!--Left Menu Div start-->
+                                <div id="left_div">
+                                    
+                                     <!--First Div box start-->
+                                 
+                                          <div id="options_box">
+                                        <div id="box_heading_div">
+                                            <b>
+                                                <span class="text_font">
+                                                    Quick Search
+                                                </span>
+                                            </b>
+                                        </div>
+                                        
+                                       
+                                            <table cellpadding="0" cellspacing="0" border="0" style="width: 123px" >
+                                                <tr>
+                                                    <td colspan="2" style="line-height: 20px;">
+                                                        <span class="text_font">
+                                                            Search Terms:
+                                                        </span>
+                                                    </td>
+                                                </tr>    
+                                                
+                                                <tr>
+                                                    <td colspan="2" style="line-height: 13px;">
+                                                    <input name="ctl00$quicksearch" type="text" id="ctl00_quicksearch" class="search_text" />
+                                                          
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                <td colspan="2">
+                                              <span id="ctl00_RadioButtonList1" class="text_font"><input id="ctl00_RadioButtonList1_0" type="radio" name="ctl00$RadioButtonList1" value="Books" checked="checked" /><label for="ctl00_RadioButtonList1_0">Books</label><br /><input id="ctl00_RadioButtonList1_1" type="radio" name="ctl00$RadioButtonList1" value="Periodicals" /><label for="ctl00_RadioButtonList1_1">Periodicals</label><br /><input id="ctl00_RadioButtonList1_2" type="radio" name="ctl00$RadioButtonList1" value="Periodical Articles" /><label for="ctl00_RadioButtonList1_2">Periodical Articles</label><br /><input id="ctl00_RadioButtonList1_3" type="radio" name="ctl00$RadioButtonList1" value="Newspapers Articles" /><label for="ctl00_RadioButtonList1_3">Newspapers Articles</label></span>
+                                              </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <br />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <input type="image" name="ctl00$ImageButton1" id="ctl00_ImageButton1" src="images/Search_btn.gif" border="0" />
+                                                         
+                                                    </td>
+                                                </tr>
+                                                
+                                            </table>
+                                        </div>
+                                        
+                                
+                                    <!--First Div box end-->
+                             
+                                 <div id="ctl00_div_counter"><span class="auto-style1">1</span><span class="auto-style1">8</span><span class="auto-style1">1</span><span class="auto-style1">3</span><span class="auto-style1">6</span><span class="auto-style1">1</span></div>
+                                              
+                                           
+                                    <br />
+                                   
+                                      
+                                       
+                                    
+                                    <!--Second Div box start-->
+                                   
+                                    <!--Second Div box end-->
+                                  
+                                </div>
+                                <!--Left Menu Div end-->
+                                
+                                <!--Content Menu Div start-->
+                                
+                                 <div class="mid_div" >
+                                    
+    <div id="mid_div">
+                                    
+                                    <div id="top_div">
+                                        <table cellpadding="0" cellspacing="0" border="0" width="100%" style="text-align: left;">
+                                            <tr>
+                                                <td class="left_bar">
+                                                </td>
+                                                <td class="mid_bar" align="left">
+                                                    <div class="Menu_font">Library</div>
+                                                </td>
+                                                <td class="right_bar">
+                                                </td> 
+                                            </tr>
+                                            
+                                        
+                                            
+                                          
+                                            
+                                            <tr>
+                                                <td colspan="3">
+                                                <center>
+                                                <br />
+                                                <img id="ctl00_ContentPlaceHolder1_Image1" src="images/lib1.jpg" height="210" width="361" border="0" />
+                                                    </center>
+                                                    <br />
+                                                    <br />
+                                                    <div id="ctl00_ContentPlaceHolder1_divhome" class="text_font"><p style="LINE-HEIGHT: 20px; TEXT-ALIGN: justify"><span style="font-size:12.0pt;line-height:107%; font-family:"Calibri",sans-serif;mso-ascii-theme-font:minor-latin;mso-fareast-font-family: Calibri;mso-fareast-theme-font:minor-latin;mso-hansi-theme-font:minor-latin; mso-bidi-font-family:Arial;mso-bidi-theme-font:minor-bidi;mso-ansi-language: EN-US;mso-fareast-language:EN-US;mso-bidi-language:AR-SA">The Sir Syed Library (Central Library) was founded with the establishment of National Institute of Modern Languages (NIML) in 1970. The institute was elevated to the status of National University of Modern Languages (NUML) in May 2000. The Library is housed in a two storeyed building having total covered area of 43681 sq.ft. The Library is well furnished and fully air-conditioned. The present library holdings is over one lac forty thousand (1,40,000) comprising books, journals, documents and non-book material on various disciplines. Functioning as language institute and later as a full-fledged University, major part of the library collection consists of the source material initial on languages. However, with the introduction of new disciplines like Education, Mass Communication, International Relations, Peace and Conflict Studies, Governance and Public Policy Studies, Economics, Engineering, Information Technology and Management Sciences, the Library has acquired adequate number of books in these disciplines as well.</span></p>
+<p style="LINE-HEIGHT: 20px; TEXT-ALIGN: justify"> </p></div>
+                                                </td>
+                                            </tr>
+                                            
+                                        </table>
+                                    </div>
+                                    
+                                  
+                                    
+                                </div>
+
+                                </div>
+                                
+                                <!--Content Menu Div end-->
+                                
+                                <!--Right Menu Div start-->
+                                <div id="right_div">
+                                           <!--First Div box start-->
+                                    <div id="options_box">
+                                        
+                                        <div id="box_heading_div">
+                                            <b>
+                                                <span class="text_font">
+                                                    Catalogue
+                                                </span>
+                                            </b>
+                                        </div>
+                                        
+                                        <div id="options_div">
+                                            <table width="100%">
+                                                <tr>
+                                                <td>
+                                                    <b><span class="text_font">Books</span></b>
+                                                        <table cellpadding="0" cellpadding="0" >
+                                                            <tr>
+                                                                <td>
+                                                                    
+                                                                </td>
+                                                                <td>
+                                                                    <a href="FreshBooks.aspx" >Fresh Arrivals
+                                                                    </a>
+                                                                </td>
+                                                             </tr>
+                                                            <tr>
+                                                                <td>
+                                                                   
+                                                                </td>
+                                                                <td>
+                                                                    <a href="SearchBook.aspx" >Search</a>
+                                                                 </td>
+                                                            </tr>
+                                                                 <tr>
+                                                                <td>
+                                                                  
+                                                                </td>
+                                                                <td>
+                                                                   
+                                                                 </td>
+                                                            </tr>
+                                                    
+                                                            </table>
+                                                   
+                                                 </td>
+                                             </tr>       
+                                                <tr>
+                                                    <td>
+                                                         <b><span class="text_font">Periodicals</span></b>
+                                                          <table cellpadding="0" cellpadding="0" >
+                                                            <tr>
+                                                                <td>
+                                                                  
+                                                                </td>
+                                                                <td>
+                                                                    <a href="FreshPeriodicals.aspx" >Fresh Arrivals
+                                                                    </a>
+                                                                </td>
+                                                             </tr>
+                                                                <tr>
+                                                                <td>
+                                                                 
+                                                                </td>
+                                                                <td>
+                                                                    <a href="PeriodicalList.aspx">Periodicals List</a>
+                                                                 </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                              
+                                                                </td>
+                                                                <td>
+                                                                    <a href="SearchPeriodical.aspx">Periodical Search</a>
+                                                                 </td>
+                                                            </tr>
+                                                       <tr>
+                                                                <td>
+                                                                   
+                                                                </td>
+                                                                <td>
+                                                                    <a href="ArticalSearch.aspx">Periodical Articles</a>
+                                                                 </td>
+                                                            </tr>
+                                                             <tr>
+                                                                <td>
+                                                                  
+                                                                </td>
+                                                                <td>
+                                                                   
+                                                                 </td>
+                                                            </tr>
+                                                            </table>
+                                                            </td>
+                                                </tr>
+                                                
+                                            
+                                                <tr>
+                                                    <td>           
+                                                        <b><span class="text_font">Newspapers</span></b>
+                                                        <table cellpadding="0">
+                                                            <tr>
+                                                                <td>
+                                                                 
+                                                                </td>
+                                                                <td>
+                                                                    <a href="NArticleSearch.aspx">Article Search</a>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                               
+                                                                </td>
+                                                                <td>
+                                                                    <a href="TopNArticle.aspx">Latest Articles</a>
+                                                                </td>
+                                                            </tr>
+                                                          
+                                                           
+                                                        </table>
+                                                        <br>
+                                                   </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>           
+                                                        <b><span class="text_font"> Publications</span></b>
+                                                        <div id="ctl00_coursediv"><table cellpadding='0'><tr><tr><td></td><td><a href='SearchPeriodical.aspx?key=Babel&type=Title'>Babel</a><br></td></tr><tr><tr><td></td><td><a href='SearchPeriodical.aspx?key=Target&type=Title'>Target</a><br></td></tr></table></div>
+                                                        
+                                                        <br/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>          
+                                                        <b><span class="text_font">Research Papers</span></b>
+                                                        <table cellpadding="0">
+                                                            <tr>
+                                                                <td>
+                                                                   
+                                                                </td>
+                                                                <td>
+                                                                    <a href="TopRPapers.aspx">
+                                                                        Latest Papers</a>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                
+                                                                </td>
+                                                                <td>
+                                                                    <a href="SearchPapers.aspx">
+                                                                        Search</a>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                  
+                                                                </td>
+                                                                <td>
+                                                                   
+                                                                 </td>
+                                                            </tr>
+                                                        </table>
+                                                   </td>
+                                                </tr>
+                                          </table>              
+                                        </div>
+                                        
+                                    </div>
+                                    <!--First Div box end-->
+                                </div>
+                                <!--Right Menu Div end-->
+                                
+                            </div> 
+                        </td>
+                    </tr>
+                    <!--Content Row Ends-->
+                    
+                    <tr>
+                        <td colspan="6">
+                            <br />
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer Row Start-->
+                    <tr>
+                        <td colspan="6">
+                            <center>
+                                <div>
+                                     <div class="Footer_font">   © 2010-2026 Powered By <a href="http://www.max-intell.com">Max Intelligence</a>. All rights reserved. </div> 
+                                </div>
+                            </center>         
+                        </td>
+                    </tr>    
+                    <!-- Footer Row End-->
+                    
+                    
+                </table>
+            </div>
+        </center>
+    </div>
+   
+    </form>
+</body>
+</html>

@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bayero University Library</title>
+
+  <!-- Mobile -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="css/font-awesome.min.css">
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Owl Carousel -->
+  <link rel="stylesheet" href="css/owl.carousel.min.css">
+  <link rel="stylesheet" href="css/owl.theme.default.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    body {
+      font-family: 'Open Sans', sans-serif;
+      line-height: 1.7;
+    }
+
+    section {
+      padding: 80px 0;
+    }
+
+    .hero img {
+      height: 90vh;
+      object-fit: cover;
+    }
+
+    .hero-overlay {
+      background: rgba(0,0,0,0.55);
+      position: absolute;
+      inset: 0;
+    }
+
+    .hero-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      text-align: center;
+      z-index: 2;
+    }
+
+    .card-hover {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card-hover:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+
+/* ===== E-RESOURCES ===== */
+.resource-card {
+  border: none;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.resource-card img {
+  height: 220px;
+  object-fit: cover;
+}
+
+.resource-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 18px 35px rgba(0,0,0,0.15);
+}
+
+/* =====================
+   NEW ACADEMIC THEME
+===================== */
+
+:root {
+  --primary: #0a3a6a;
+  --secondary: #2563eb;
+  --muted: #6b7280;
+  --bg-light: #f7f9fc;
+  --border-light: #e5e7eb;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  background-color: var(--bg-light);
+  color: #1f2937;
+}
+
+/* Sections */
+section {
+  padding: 100px 0;
+  background: #fff;
+}
+
+section.bg-soft {
+  background: var(--bg-light);
+}
+
+/* Headings */
+h2 {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+p {
+  color: var(--muted);
+}
+
+/* Navbar – flat, portal-style */
+.navbar {
+  background: #fff !important;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.navbar-brand,
+.nav-link {
+  color: var(--primary) !important;
+  font-weight: 600;
+}
+
+.nav-link:hover {
+  color: var(--secondary) !important;
+}
+
+/* Remove old shadows */
+.card,
+.resource-icon-card {
+  box-shadow: none !important;
+}
+
+
+/* ===== HORIZONTAL RESOURCE STRIP ===== */
+
+.resource-strip {
+  display: flex;
+  gap: 20px;
+}
+
+.resource-tile {
+  min-width: 220px;
+  background: #fff;
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  padding: 30px 20px;
+  text-align: center;
+  text-decoration: none;
+  color: var(--primary);
+  transition: all 0.3s ease;
+}
+
+.resource-tile i {
+  font-size: 28px;
+  margin-bottom: 12px;
+  display: block;
+  color: var(--secondary);
+}
+
+.resource-tile span {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.resource-tile:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+.resource-tile:hover i {
+  color: #fff;
+}
+
+/* ===== LIBRARY SEARCH ===== */
+
+.library-search {
+  display: flex;
+  background: #fff;
+  border-radius: 50px;
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+}
+
+.library-search input {
+  flex: 1;
+  padding: 18px 24px;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+}
+
+.library-search button {
+  background: var(--primary);
+  border: none;
+  padding: 0 26px;
+  color: #fff;
+  font-size: 1.2rem;
+}
+
+/* ===== MODERN FORM ===== */
+
+.modern-form input,
+.modern-form textarea {
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  border: 1px solid var(--border-light);
+  outline: none;
+}
+
+.modern-form input:focus,
+.modern-form textarea:focus {
+  border-color: var(--secondary);
+}
+
+/* ===== DEPARTMENTS ===== */
+
+.dept-card {
+  background: #fff;
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  padding: 35px;
+  text-align: center;
+  transition: background 0.3s ease;
+}
+
+.dept-card i {
+  font-size: 28px;
+  color: var(--secondary);
+  margin-bottom: 12px;
+}
+
+.dept-card:hover {
+  background: var(--bg-light);
+}
+
+/* ===== NEWS ===== */
+
+.news-item {
+  border-left: 3px solid var(--secondary);
+  padding-left: 20px;
+  margin-bottom: 25px;
+}
+
+.news-item span {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* ===== DARK MODE ===== */
+
+body.dark {
+  background: #0b1220;
+  color: #e5e7eb;
+}
+
+body.dark section {
+  background: #0b1220;
+}
+
+body.dark .navbar {
+  background: #0b1220 !important;
+}
+
+body.dark .resource-tile,
+body.dark .dept-card {
+  background: #111827;
+  border-color: #1f2937;
+}
+
+
+
+  </style>
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center" href="#">
+      <img src="img/buklogo2.jpg" alt="BUK Logo" width="45" class="me-2">
+      BUK Library
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="https://www.buk.edu.ng/About_Us_Lib">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="#Departments">Departments</a></li>
+        <li class="nav-item"><a class="nav-link" href="#branches">Branches</a></li>
+        <li class="nav-item"><a class="nav-link" href="#E-Resources">E-Resources</a></li>
+        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+      </ul>
+    </div>
+<button class="btn btn-sm btn-outline-primary ms-3" onclick="toggleDarkMode()">
+  🌙
+</button>
+
+  </div>
+
+</nav>
+
+<!-- ================= HERO ================= -->
+<section id="home" class="hero position-relative">
+  <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img src="img/front_view1.jpg" class="d-block w-100" alt="">
+      </div>
+      <div class="carousel-item">
+        <img src="img/document.jpg" class="d-block w-100" alt="">
+      </div>
+      <div class="carousel-item">
+        <img src="img/information_resources.jpg" class="d-block w-100" alt="">
+      </div>
+    </div>
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-text">
+  <div>
+    <h1 class="fw-bold mb-3">Bayero University Library</h1>
+    <p class="fs-5">
+      Knowledge • Research • Innovation
+    </p>
+    <a href="#E-Resources" class="btn btn-primary mt-3">
+      Explore Resources
+    </a>
+  </div>
+</div>
+
+  </div>
+</section>
+
+<!-- ================= LIBRARY SEARCH ================= -->
+<section class="bg-soft">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 text-center">
+
+        <h2 class="fw-bold mb-3">Search the Library</h2>
+        <p class="mb-4">Books, journals, theses, databases and digital collections</p>
+
+        <form class="library-search">
+          <input
+            type="text"
+            placeholder="Search by title, author, subject, ISBN..."
+          >
+          <button type="submit">
+            <i class="fa fa-search"></i>
+          </button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ================= ABOUT ================= -->
+<section id="about" class="bg-light">
+  <div class="container text-center">
+    <h2 class="fw-bold mb-4">About Us</h2>
+    <p class="mb-5">
+      Bayero University Library has evolved from a single-site library to a
+      multi-branch academic information hub since 1964.
+    </p>
+
+    <img src="img/librarian3.jpg" class="rounded-circle mb-3" width="160" alt="">
+    <h5 class="fw-bold">Dr. Kabiru Dahiru Abbas</h5>
+    <p>University Librarian</p>
+  </div>
+</section>
+
+<!-- ================= VISION / MISSION ================= -->
+<section>
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card card-hover h-100 text-center p-4">
+          <img src="img/comuter3.jpg" class="img-fluid mb-3" alt="">
+          <h4>Vision</h4>
+          <p>To be a pivot of ICT-driven academic excellence in Africa.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card card-hover h-100 text-center p-4">
+          <img src="img/mission2.jpg" class="img-fluid mb-3" alt="">
+          <h4>Mission</h4>
+          <p>Ensuring innovative access to information resources and services.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card card-hover h-100 text-center p-4">
+          <img src="img/history3.jpg" class="img-fluid mb-3" alt="">
+          <h4>Objectives</h4>
+          <p>Support teaching, research, and global knowledge collaboration.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DEPARTMENTS ================= -->
+<section id="Departments" class="bg-soft">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold">Library Departments</h2>
+      <p>Administrative and operational units of the University Library</p>
+    </div>
+
+    <div class="row g-4">
+
+      <div class="col-md-4">
+        <div class="dept-card">
+          <i class="fa fa-book"></i>
+          <h6>Arabic & Islamic Resources</h6>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="dept-card">
+          <i class="fa fa-users"></i>
+          <h6>User Services</h6>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="dept-card">
+          <i class="fa fa-laptop"></i>
+          <h6>ICT Department</h6>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="dept-card">
+          <i class="fa fa-database"></i>
+          <h6>Information Resources Development</h6>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="dept-card">
+          <i class="fa fa-graduation-cap"></i>
+          <h6>Reference & Research Services</h6>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ================= DIGITAL RESOURCES STRIP ================= -->
+<section id="E-Resources" class="bg-soft">
+  <div class="container-fluid px-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2 class="fw-bold">Digital Resources</h2>
+        <p>Access databases, publications, staff profiles and updates</p>
+      </div>
+    </div>
+
+    <!-- Horizontal Slider -->
+    <div class="resource-strip owl-carousel">
+
+      <a href="htmls/libriupdate.html" class="resource-tile">
+        <i class="fa fa-newspaper-o"></i>
+        <span>LibriUpdate</span>
+      </a>
+
+      <a href="annaouncement/auwalu-announcement.pdf" class="resource-tile">
+        <i class="fa fa-bullhorn"></i>
+        <span>Announcements</span>
+      </a>
+
+      <a href="htmls/staff-prophile.html" class="resource-tile">
+        <i class="fa fa-users"></i>
+        <span>Staff Profiles</span>
+      </a>
+
+      <a href="htmls/data-bases.html" class="resource-tile">
+        <i class="fa fa-database"></i>
+        <span>Databases</span>
+      </a>
+
+      <a href="https://bjim.com.ng" target="_blank" class="resource-tile">
+        <i class="fa fa-book"></i>
+        <span>BJIM Journal</span>
+      </a>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= NEWS ================= -->
+<section class="bg-soft">
+  <div class="container">
+    <h2 class="fw-bold mb-5 text-center">Library News & Updates</h2>
+
+    <div class="news-item">
+      <span>Jan 2026</span>
+      <p>BUK Library subscribes to new academic databases.</p>
+    </div>
+
+    <div class="news-item">
+      <span>Dec 2025</span>
+      <p>Library extended hours during examination period.</p>
+    </div>
+
+  </div>
+</section>
+
+
+
+<!-- ================= BRANCHES ================= -->
+<section id="branches">
+  <div class="container">
+    <h2 class="text-center fw-bold mb-4">Library Branches</h2>
+
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th>#</th>
+            <th>Library</th>
+            <th>Location</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Agric Library</td><td>Main Campus</td></tr>
+          <tr><td>2</td><td>Education Library</td><td>Main Campus</td></tr>
+          <tr><td>3</td><td>Engineering Library</td><td>Main Campus</td></tr>
+          <tr><td>4</td><td>Natural & Pharmaceutical Sciences</td><td>Old Campus</td></tr>
+          <tr><td>5</td><td>Law Library</td><td>Main Campus</td></tr>
+          <tr><td>6</td><td>Health Sciences</td><td>AKTH Kano</td></tr>
+          <tr><td>7</td><td>Mudi Sipikin Library</td><td>Gwamaja, Kano</td></tr>
+          <tr><td>8</td><td>SMS Library</td><td>Main Campus</td></tr>
+          <tr><td>9</td><td>SCE Library</td><td>Main Campus</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ASK A LIBRARIAN ================= -->
+<section id="contact">
+  <div class="container">
+    <div class="row justify-content-between align-items-center">
+
+      <div class="col-lg-5">
+        <h2 class="fw-bold mb-3">Ask a Librarian</h2>
+        <p>
+          Need help finding resources, citations, or databases?
+          Our librarians are here to assist you.
+        </p>
+
+        <ul class="list-unstyled mt-4 text-muted">
+          <li><i class="fa fa-envelope me-2"></i> librarian@buk.edu.ng</li>
+          <li><i class="fa fa-map-marker me-2"></i> Bayero University, Kano</li>
+        </ul>
+      </div>
+
+      <div class="col-lg-6">
+        <form class="modern-form">
+          <input type="text" placeholder="Your Name" required>
+          <input type="email" placeholder="Your Email" required>
+          <textarea rows="5" placeholder="How can we help you?" required></textarea>
+          <button type="submit" class="btn btn-primary w-100">
+            Send Message
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ================= FOOTER ================= -->
+<footer class="bg-dark text-white text-center py-4">
+  <p class="mb-1">Bayero University, Kano</p>
+  <small>&copy; All Rights Reserved</small>
+</footer>
+
+<!-- ================= SCRIPTS ================= -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/jquery-2.1.1.js"></script>
+<script src="js/owl.carousel.min.js"></script>
+
+
+<script>
+$(document).ready(function(){
+  $(".resource-strip").owlCarousel({
+    loop: true,
+    margin: 20,
+    nav: true,
+    dots: false,
+    autoplay: false,
+    responsive:{
+      0:{ items:1.3 },
+      600:{ items:2.5 },
+      1000:{ items:4.5 }
+    }
+  });
+});
+</script>
+
+<script>
+function toggleDarkMode() {
+  document.body.classList.toggle("dark");
+}
+</script>
+
+
+</body>
+</html>

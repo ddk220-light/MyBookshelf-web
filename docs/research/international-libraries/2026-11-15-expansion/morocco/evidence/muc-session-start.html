@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<!--
+Copyright (c) 2016 Deep Web Technologies, Inc.  All rights reserved.
+Coral 5 Platform detector script
+2.51.4
+2022-11-10T19:50:50Z
+-->
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height">
+</head>
+<body>
+<noscript>This site requires Javascript.</noscript>
+<script>
+    // dependencies inject via properties
+    var supportedLanguages = ["fr"];
+    var supportedDevices = ["desktop","mobile"];
+    var rootUrl = "http://muc.deepwebaccess.com/mucsearch-fr";
+    var agentPattern = /android|blackberry|iemobile|iphone|ipod|webos|opera mini/i;
+    var useViewWidth = false;
+    var mobileWidth = 768;
+
+    var language = null,
+        device = null,
+        path = null;
+
+    // get original path from query param
+    if (match = /originalPath=([^&]*)/.exec(window.location.search.substring(1))) {
+        path = decodeURIComponent(match[1]);
+        if (!/^\//.test(path)) path = '/' + path;
+    } else {
+        path = '/';
+    }
+
+    // check for existing variant prefix in path
+    var variantPattern = /^\/?([a-z]{6,})\/([a-z]{2,5}[A-Z]{0,5})\//;
+    var parts = variantPattern.exec(path);
+    if (parts) {
+        device = parts[1];
+        language = parts[2];
+
+        if (path.indexOf(parts[0]) === 0) {
+            path = path.substring(parts[0].length);
+        } else {
+            path = '';
+        }
+    } else {
+        device = supportedDevices[0];
+        language = supportedLanguages[0];
+    }
+
+    // guess mobile - remember to link mobile site in case we guess wrong
+    if (useViewWidth) {
+        try {
+            if (window.matchMedia("max-width: " + mobileWidth).matches ||
+                window.matchMedia("max-height: " + mobileWidth).matches) {
+                device = 'mobile';
+            } else {
+                device = 'desktop';
+            }
+        } catch (e) {
+            device = 'desktop';
+        }
+    } else {
+        if (agentPattern.test(navigator.userAgent)) {
+            device = 'mobile';
+        } else {
+            device = 'desktop';
+        }
+    }
+
+
+    // no Array.prototype.indexOf in ie8
+    function indexOf(array, value) {
+        for (var i = 0; i < array.length; ++i) {
+            if (array[i] === value) { return i; }
+        }
+        return -1;
+    }
+
+    if (indexOf(supportedDevices, device) < 0) {
+        device = supportedDevices[0];
+    }
+
+    // TODO check acceptLanguage parameter
+    if (indexOf(supportedLanguages, language) < 0) {
+        language = supportedLanguages[0];
+    }
+
+    window.location.href = [rootUrl, device, language].join('/') + path;
+
+</script>
+</body>
+</html>

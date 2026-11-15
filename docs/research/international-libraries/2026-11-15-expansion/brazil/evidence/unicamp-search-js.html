@@ -1,0 +1,467 @@
+﻿'use strict';
+
+angular.module('terminalApp').controller('BuscaRapidaController', ['buscaRapidaService', '$scope', '$window', function (buscaRapidaService, $scope, $window) {
+	var self = this;
+	let dropdown = angular.element('header nav#busca-rapida .dropdown');
+	let dropdownToggle = angular.element('header nav#busca-rapida .dropdown-toggle');
+	let codigoTipoBuscaGuid = 0;
+	const ID_NORMA = '#Norma_multiselect';
+	const ID_ORGAO = '#Orgao_multiselect';
+
+	self.legislacao = { normaSet: [], orgaoSet: [] };
+	self.iniciadoCom = false;
+	self.btnDisabled = false;
+	self.tipoBuscaTerminalSet = buscaRapidaService.tipoBuscaTerminalSet;
+
+	angular.element("#Numero").on("input", function () {
+		let valor = angular.element(this).val();
+		valor = valor.replace(/[^a-zA-Z0-9\s\-\/_\.]/g, "");
+		angular.element(this).val(valor);
+	});
+
+	angular.element("#Ano").on("input", function () {
+		let valor = angular.element(this).val();
+		valor = valor.replace(/\D/g, "");
+		angular.element(this).val(valor);
+	});
+
+	angular.element("#formCampoBusca").on("submit", function (event) {
+		const inputNumero = angular.element("#Numero")[0];
+		const inputAno = angular.element("#Ano")[0];
+
+		if (inputNumero && inputNumero.value) {
+			let sanitizedNumero = inputNumero.value.replace(/[^a-zA-Z0-9\s\-\/_.]/g, "");
+			inputNumero.value = sanitizedNumero;
+			angular.element("#Numero").val(sanitizedNumero);
+		}
+
+		if (inputAno && inputAno.value) {
+			let sanitizedAno = inputAno.value.replace(/\D/g, "");
+			inputAno.value = sanitizedAno;
+			angular.element("#Ano").val(sanitizedAno);
+		}
+
+		if (inputNumero && !inputNumero.checkValidity()) {
+			event.preventDefault();
+			inputNumero.reportValidity();
+			return;
+		}
+
+		if (inputAno && !inputAno.checkValidity()) {
+			event.preventDefault();
+			inputAno.reportValidity();
+			return;
+		}
+	});
+
+	const _changeHeigthsLegislacao = () => {
+		const heightPadraoCampo = 38;
+		const larguraJanela = angular.element($window).width();
+		const resolucaoMobile = (larguraJanela < 768);
+		let aditionalHeightNormas = 0;
+		let aditionalHeightOrgao = 0;
+		if (_buscaLegislacaoSelecionada()) {
+			aditionalHeightNormas = angular.element("#divMultiSelecaoNormasBuscaRapidaLegislacao").height() - heightPadraoCampo;
+			if (aditionalHeightNormas < 0) aditionalHeightNormas = 0;
+
+			aditionalHeightOrgao = angular.element("#divMultiSelecaoOrgaoBuscaRapidaLegislacao").height() - heightPadraoCampo;
+			if (aditionalHeightOrgao < 0) aditionalHeightOrgao = 0;
+			aditionalHeightOrgao += heightPadraoCampo + 10;
+		}
+
+		let aditionalHeigth = -10;
+		let aditionalHeigthHeader = resolucaoMobile ? 70 : 0;
+		if (_buscaLegislacaoSelecionada()) aditionalHeigth = heightPadraoCampo;
+		if (self.buscaAutoridadesSelecionada() && resolucaoMobile) aditionalHeigth = 10;
+		if (larguraJanela >= 752 && larguraJanela <= 767) aditionalHeigthHeader = 0
+		angular.element("header").height(163 + aditionalHeigth + aditionalHeigthHeader + aditionalHeightNormas + aditionalHeightOrgao);
+		angular.element("#busca-rapida").height(68 + aditionalHeigth + aditionalHeightNormas + aditionalHeightOrgao);
+		angular.element("#divBuscaRapidaLegislacao").height((_buscaLegislacaoSelecionada() ? 48 : 0) + aditionalHeightNormas + aditionalHeightOrgao);
+	};
+
+	const _changeTagMode = (multiselect, seletorElemento) => {
+		let opcoesSet = multiselect.value();
+		let atualTagMode = multiselect.options.tagMode;
+		let ateUmItem = opcoesSet.length <= 1;
+		let novoTagMode = ateUmItem ? 'multiple' : 'single';
+		let novaTagTemplate = ateUmItem ? null : kendo.template(angular.element(seletorElemento).html());
+		if (novoTagMode !== atualTagMode) {
+			multiselect.value([]);
+			multiselect.setOptions({ tagMode: novoTagMode, tagTemplate: novaTagTemplate });
+			multiselect.value(opcoesSet);
+		}
+	};
+
+	const _changeNorma = function () {
+		_changeTagMode(angular.element(ID_NORMA).data("kendoMultiSelect"), "#tagTemplateNorma");
+		_changeHeigthsLegislacao();
+	};
+
+	const _changeOrgao = function () {
+		_changeTagMode(angular.element(ID_ORGAO).data("kendoMultiSelect"), "#tagTemplateOrgao");
+		_changeHeigthsLegislacao();
+	};
+
+	const _setarClassHeader = () => {
+		if (self.buscaAutoridadesSelecionada()) {
+			angular.element("header").addClass("header-autoridades");
+			angular.element("header").removeClass("header-legislacao");
+		} else if (_buscaLegislacaoSelecionada()) {
+			angular.element("header").removeClass("header-autoridades");
+			angular.element("header").addClass("header-legislacao");
+		} else {
+			angular.element("header").removeClass("header-autoridades");
+			angular.element("header").removeClass("header-legislacao");
+		}
+		_changeHeigthsLegislacao();
+	};
+
+	const _buscaLegislacaoSelecionada = () => self.tipoBuscaTerminalSelecionada.Codigo === TipoBuscaTerminal.Legislacao;
+
+	const _obterValorEnumOpcao = (parametro, enumOpcao) => {
+		if (parametro === "serie") return enumOpcao.Colecao;
+		for (let prop in enumOpcao)
+			if (prop.toLowerCase() === parametro) return enumOpcao[prop];
+		return null;
+	};
+
+	const _obterPosicao = (controller, action, parametro, codigoTipoBuscaTerminalSelecionada) => {
+		let posicao = _opterOpcaoPadrao(codigoTipoBuscaTerminalSelecionada);
+		if (parametro && controller && controller.toLowerCase() === "busca" && (action === "autoridades" || action === "acervo")) {
+			let codigoTipoBuscaTerminal = _obterValorEnumOpcao(parametro,
+				action === "autoridades" ? MarcAutoridadeTag : TipoBuscaRapidaAcervo);
+			if (codigoTipoBuscaTerminal) posicao = self.tipoBuscaTerminalSelecionada.OpcaoSet.findIndex((t) => t.Codigo === codigoTipoBuscaTerminal);
+			if (posicao === -1) posicao = 0;
+		}
+		return posicao;
+	};
+
+	const _setarTipoBuscaTerminal = function () {
+		var partes = location.pathname.split("/");
+		var parametroInicial = 0;
+		var CONTROLLER = "busca";
+		for (var i = 0; i < partes.length; i++)
+		{
+			if (partes[i].toLowerCase() == CONTROLLER)
+				parametroInicial = i;
+		}
+		const ACTION = partes.length > parametroInicial + 1 ? partes[parametroInicial + 1].toLowerCase() : undefined;
+		var PARAMETRO = partes.length > parametroInicial + 2 ? partes[parametroInicial + 2].toLowerCase() : undefined;
+
+		let indexTipoBuscaTerminal = 0;
+		let tipoBuscaDefinidoPelaUrl = false;
+
+		if (terminalAtosOficiais) {
+			indexTipoBuscaTerminal = self.tipoBuscaTerminalSet.indexOf(self.tipoBuscaTerminalSet.find((t) => t.Codigo == TipoBuscaTerminal.Legislacao));
+			tipoBuscaDefinidoPelaUrl = true;
+		} else if (CONTROLLER && CONTROLLER === "busca" && ACTION === "acervo") {
+			tipoBuscaDefinidoPelaUrl = true;
+		} else if (CONTROLLER && CONTROLLER === "busca" && ACTION === "autoridades" && usaBuscaCatalogoAutoridades) {
+			indexTipoBuscaTerminal = 1;
+			tipoBuscaDefinidoPelaUrl = true;
+		} else if (CONTROLLER && CONTROLLER === "busca" && ACTION === "legislacao" && usaBuscaLegislacao) {
+			indexTipoBuscaTerminal = self.tipoBuscaTerminalSet.indexOf(self.tipoBuscaTerminalSet.find((t) => t.Codigo == TipoBuscaTerminal.Legislacao));
+			tipoBuscaDefinidoPelaUrl = true;
+		} else if (location.pathname.toLowerCase().indexOf("/resultado/listar") != -1
+			&& location.pathname.toLowerCase().indexOf("/resultado/listarlegislacao") == -1) {
+			tipoBuscaDefinidoPelaUrl = true;
+		}
+
+		self.tipoBuscaTerminalSelecionada = self.tipoBuscaTerminalSet[indexTipoBuscaTerminal];
+
+		self.opcaoSelecionada
+			= self.tipoBuscaTerminalSelecionada.OpcaoSet[_obterPosicao(CONTROLLER, ACTION, PARAMETRO, self.tipoBuscaTerminalSet[indexTipoBuscaTerminal].Codigo)];
+
+		if (localStorage.hasOwnProperty(tw.CODIGO_TIPO_BUSCA) && !tipoBuscaDefinidoPelaUrl && (usaBuscaCatalogoAutoridades || usaBuscaLegislacao)) {
+			self.trocarTipoBuscaTerminal(parseInt(localStorage.getItem(tw.CODIGO_TIPO_BUSCA)));
+		} else {
+			localStorage.setItem(tw.CODIGO_TIPO_BUSCA, self.tipoBuscaTerminalSelecionada.Codigo);
+			_setarClassHeader();
+		}
+	};
+
+	const _tratarUrlBuscaRapida = () => {
+		let action = `${sophiaConfig.serviceBaseUrl}Busca/RapidaAcervo?bibliotecas=${getBibliotecasLocalStorage()}&localizacoes=${getLocalizacaoLocalStorage()}`;
+		if (self.buscaAutoridadesSelecionada()) {
+			action = `${sophiaConfig.serviceBaseUrl}Busca/RapidaAutoridades`;
+		} else if (_buscaLegislacaoSelecionada()) {
+			action = `${sophiaConfig.serviceBaseUrl}Busca/RapidaLegislacao?bibliotecas=${getBibliotecasLocalStorage()}`;
+		}
+		angular.element("#formCampoBusca").attr('action', action);
+	};
+
+	const _removeOpen = function () {
+		dropdown.removeClass("open");
+		dropdownToggle.removeClass("open");
+	};
+
+	const _obterFiltro = function () {
+		if (self.guid) {
+			let filtro = tw.obterSessionStorageBuscaRapidaPorGuid(self.guid);
+			if (filtro) {
+				self.trocarTipoBuscaTerminal(filtro.tipoBuscaTerminal);
+				self.trocarOpcao(filtro.opcao);
+				$scope.palavraChave = filtro.termo;
+				if (self.buscaAutoridadesSelecionada()) self.iniciadoCom = filtro.iniciadoCom;
+				else if (_buscaLegislacaoSelecionada()) {
+					self.legislacao = filtro.legislacao;
+					setTimeout(function () {
+						_changeOrgao();
+						_changeNorma();
+					}, 50);
+				}
+			}
+		}
+		if (sessionStorage.hasOwnProperty(tw.FILTRO_BUSCA_AVANCADA)
+			&& sessionStorage.getItem(tw.FILTRO_BUSCA_AVANCADA) !== sessionStorage.getItem(tw.NEW_FILTRO_BUSCA_AVANCADA)) {
+			self.filtroBuscaAvancada = angular.fromJson(sessionStorage.getItem(tw.FILTRO_BUSCA_AVANCADA));
+			if (self.filtroBuscaAvancada.OrigemBusca === OrigemBusca.TerminalLegislacaoAvancada) {
+				self.trocarTipoBuscaTerminal(TipoBuscaTerminal.Legislacao);
+				self.trocarOpcao(self.filtroBuscaAvancada.Legislacao.PalavraChave || !self.filtroBuscaAvancada.Legislacao.Apelido
+					? TipoBuscaLegislacao.TodosOsCampos
+					: TipoBuscaLegislacao.Apelido);
+				$scope.palavraChave = self.filtroBuscaAvancada.Legislacao.PalavraChave || self.filtroBuscaAvancada.Legislacao.Apelido;
+				self.legislacao = {
+					normaSet: self.filtroBuscaAvancada.Legislacao.NormaSet,
+					orgaoSet: self.filtroBuscaAvancada.Legislacao.OrgaoOrigemSet,
+					numero: self.filtroBuscaAvancada.Legislacao.Numero,
+					ano: self.filtroBuscaAvancada.Legislacao.Ano
+				};
+				setTimeout(function () {
+					_changeOrgao();
+					_changeNorma();
+				}, 50);
+			}
+		}
+		self.btnDisabled = false;
+	};
+
+	const _buscaKeepAlive = function () {
+		setInterval(function () {
+			$.ajax({
+				url: sophiaConfig.serviceBaseUrl + 'Busca/RenovarGuid',
+				type: 'POST',
+				data: { guid: self.guid }
+			});
+		}, 300000);
+	};
+
+	const _tratarHoverDropdownBuscaRapida = function () {
+		dropdown.hover(function () {
+			dropdown.addClass("open");
+			dropdownToggle.addClass("open");
+		});
+
+		dropdown.mouseleave(_removeOpen);
+	};
+
+	const _obterDataSourceNorma = () => {
+		buscaRapidaService.ListarNormaSet().then((result) => {
+			localStorage.setItem('normaSet', angular.toJson(result.data), 1440);
+			let multiSelect = angular.element(ID_NORMA).data("kendoMultiSelect");
+			multiSelect.setDataSource(new kendo.data.DataSource({
+				data: result.data.map((d) => Object.assign({}, d, { DescricaoSemDiacritics: removeDiacritics(d.Descricao).toLowerCase() }))
+			}));
+			let values = multiSelect.value();
+			multiSelect.value(values);
+		});
+	};
+
+	const _obterDataSourceOrgao = () => {
+		buscaRapidaService.ListarOrgaoOrigemSet().then((result) => {
+			localStorage.setItem('orgaoSet', angular.toJson(result.data), 1440);
+			let multiSelect = angular.element(ID_ORGAO).data("kendoMultiSelect");
+			multiSelect.setDataSource(new kendo.data.DataSource({
+				data: result.data.map((d) => Object.assign({}, d, { DescricaoSemDiacritics: removeDiacritics(d.Descricao).toLowerCase() }))
+			}));
+			let values = multiSelect.value();
+			multiSelect.value(values);
+		});
+	};
+
+	const _prepararBotaoLimpezaMultiSelecao = function (selectorRegiao, callback) {
+		if (!callback) return;
+
+		angular.element(selectorRegiao).on("click", "div.k-multiselect span.k-clear-value", callback);
+	}
+
+	const _prepararLegislacao = () => {
+		_prepararBotaoLimpezaMultiSelecao("#divMultiSelecaoOrgaoBuscaRapidaLegislacao", function () {
+			self.legislacao.orgaoSet = [];
+			let multiSelect = angular.element(ID_ORGAO).data("kendoMultiSelect");
+			multiSelect.trigger('change');
+
+		});
+		_prepararBotaoLimpezaMultiSelecao("#divMultiSelecaoNormasBuscaRapidaLegislacao", function () {
+			self.legislacao.normaSet = [];
+			let multiSelect = angular.element(ID_NORMA).data("kendoMultiSelect");
+			multiSelect.trigger('change');
+		});
+
+		_obterDataSourceNorma();
+		_obterDataSourceOrgao();
+		angular.element($window).resize(_changeNorma);
+		angular.element($window).resize(_changeOrgao);
+		buscaRapidaService.temPersonalizacaoHintNumero() && angular.element('#Numero').attr('title', personalizado.busca.hintNumero);
+	};
+
+	const _validacaoCamposLegislacao = () => !self.legislacao.normaSet.length && !self.legislacao.ano && !self.legislacao.numero &&
+		!self.legislacao.orgaoSet.length;
+
+	const _temPersonalizacaoApelidoDefault = () => personalizado
+		&& personalizado.busca
+		&& personalizado.busca.rapida
+		&& personalizado.busca.rapida.legislacao
+		&& personalizado.busca.rapida.legislacao.apelidoDefault;
+
+	const _opterOpcaoPadrao = (codigo) =>
+		codigo === TipoBuscaTerminal.Legislacao && _temPersonalizacaoApelidoDefault()
+			? _obterIndiceOpcaoApelido()
+			: 0;
+
+	const _obterIndiceOpcaoApelido = () => self.tipoBuscaTerminalSelecionada.OpcaoSet
+		.indexOf(self.tipoBuscaTerminalSelecionada.OpcaoSet
+			.find(o => o.Codigo === TipoBuscaLegislacao.Apelido));
+
+	const _controlarTamanhoMaximoMenu = () => {
+		angular.element('#divBuscaRapida .opcao-busca .dropdown-menu')
+			.css('max-height', angular.element($window).height() - 150);
+	};
+
+	const _montarGuidParaBuscaAvancada = () => {
+		self.guidBuscaAvancada = self.guid && self.guid.trim() && self.tipoBuscaTerminalSelecionada.Codigo == codigoTipoBuscaGuid
+			? `?guid=${self.guid}`
+			: '';
+	};
+
+	self.buscaLegislacaoSelecionada = _buscaLegislacaoSelecionada;
+
+	self.ObterClasseFormulario = function () {
+		return _buscaLegislacaoSelecionada() ? "botoes-separados" : "";
+	}
+
+	self.trocarTipoBuscaTerminal = function (codigo) {
+		_removeOpen();
+		self.tipoBuscaTerminalSelecionada = self.tipoBuscaTerminalSet.find((t) => t.Codigo === codigo);
+		self.opcaoSelecionada = self.tipoBuscaTerminalSelecionada.OpcaoSet[_opterOpcaoPadrao(codigo)];
+
+		localStorage.setItem(tw.CODIGO_TIPO_BUSCA, self.tipoBuscaTerminalSelecionada.Codigo);
+		_montarGuidParaBuscaAvancada();
+
+		_setarClassHeader();
+	};
+
+	self.trocarOpcao = function (codigo) {
+		_removeOpen();
+		self.opcaoSelecionada = self.tipoBuscaTerminalSelecionada.OpcaoSet.find((o) => o.Codigo === codigo);
+	};
+
+	self.classLiTipoBuscaTerminal = (codigo) => ({ selecionado: codigo === self.tipoBuscaTerminalSelecionada.Codigo });
+
+	self.classLiOpcao = (codigo) => ({ selecionado: codigo === self.opcaoSelecionada.Codigo });
+
+	self.tabIndexBtnOpcao = () => _buscaLegislacaoSelecionada() ? -1 : 0;
+
+	self.classIconeBuscaAvancada = () => "mdi-filter" + (self.filtroBuscaAvancada ? "" : "-outline");
+
+	self.buscaAutoridadesSelecionada = function () { return self.tipoBuscaTerminalSelecionada.Codigo === TipoBuscaTerminal.Autoridades; };
+
+	self.clickIniciadoCom = () => self.iniciadoCom = !self.iniciadoCom;
+
+	self.classIniciadoCom = () => ({ "mdi-checkbox-blank-outline": !self.iniciadoCom, "mdi-checkbox-marked": self.iniciadoCom });
+
+	self.selectOptionsNorma = {
+		dataTextField: "Descricao",
+		dataValueField: "Codigo",
+		valuePrimitive: true,
+		autoBind: false,
+		placeholder: GetTermo(T1368, "Todas as normas"),
+		filtering: tw.filteringSemDiacritics,
+		change: _changeNorma,
+		dataSource: []
+	};
+
+	self.selectOptionsOrgao = {
+		dataTextField: "Descricao",
+		dataValueField: "Codigo",
+		valuePrimitive: true,
+		autoBind: false,
+		placeholder: GetTermo(T8168, "Todos os órgãos de origem"),
+		filtering: tw.filteringSemDiacritics,
+		change: _changeOrgao,
+		dataSource: []
+	};
+
+	self.codigosNorma = function () { return self.legislacao.normaSet.map((n) => n.Codigo).join(','); };
+
+	self.codigosOrgao = function () { return self.legislacao.orgaoSet.map((n) => n.Codigo).join(','); };
+
+	self.validacaoPalavraChave = () => {
+		let msgValidacao = GetTermo(T1278, 'Você precisa digitar no mínimo uma palavra com {0} ou mais caracteres para a busca.', null, '3');
+		return !_buscaLegislacaoSelecionada() && (!$scope.palavraChave || $scope.palavraChave.length < 3)
+			? msgValidacao
+			: _buscaLegislacaoSelecionada() && _validacaoCamposLegislacao() && $scope.palavraChave && $scope.palavraChave.length < 3
+				? msgValidacao
+				: '';
+	};
+
+	self.validacaoLegislacao = () => {
+		return _buscaLegislacaoSelecionada() && _validacaoCamposLegislacao() && !$scope.palavraChave
+			? GetTermo(T9932, 'Você precisa preencher algum campo antes de buscar.')
+			: '';
+	};
+
+	self.buscar = function () {
+		self.guid = gerarGuid();
+		self.btnDisabled = true;
+		angular.element('#Guid').val(self.guid);
+
+		_tratarUrlBuscaRapida();
+
+		let paramBuscaRapida = {
+			termo: $scope.palavraChave,
+			tipoBuscaTerminal: self.tipoBuscaTerminalSelecionada.Codigo,
+			opcao: self.opcaoSelecionada.Codigo
+		};
+		if (self.buscaAutoridadesSelecionada()) paramBuscaRapida.iniciadoCom = self.iniciadoCom;
+		else if (_buscaLegislacaoSelecionada()) {
+			paramBuscaRapida.legislacao = {
+				normaSet: self.legislacao.normaSet,
+				numero: self.legislacao.numero,
+				ano: self.legislacao.ano,
+				orgaoSet: self.legislacao.orgaoSet,
+			};
+		}
+		tw.atualizarSessionStorageBuscaRapida(paramBuscaRapida, self.guid);
+	};
+
+	self.limparBusca = function () {
+		self.legislacao.orgaoSet = [];
+		self.legislacao.normaSet = [];
+		self.legislacao.numero = null;
+		self.legislacao.ano = null;
+		$scope.palavraChave = null;
+	}
+
+	const _init = function () {
+		if (angular.element(document).getUrlParam('guid')) self.guid = angular.element(document).getUrlParam('guid');
+
+		angular.element("#formCampoBusca").submit(self.buscar);
+
+		if (self.guid) _buscaKeepAlive();
+
+		_tratarHoverDropdownBuscaRapida();
+
+		_setarTipoBuscaTerminal();
+
+		if (angular.element(ID_NORMA)[0]) _prepararLegislacao();
+
+		_obterFiltro();
+
+		codigoTipoBuscaGuid = self.tipoBuscaTerminalSelecionada.Codigo;
+		_montarGuidParaBuscaAvancada();
+
+		angular.element($window).resize(_controlarTamanhoMaximoMenu);
+		_controlarTamanhoMaximoMenu();
+	}();
+}]);

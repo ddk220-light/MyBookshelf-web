@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang='es'>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="">
+			<meta charset="utf-8" />
+			<meta name="author" content="noindex" />
+
+			<meta name="keywords" content="noindex" />
+			<meta name="description" content="noindex" /><meta name='robots' content='all' />
+			<!--IE et son enfer de compatibilit�-->
+			<meta http-equiv='X-UA-Compatible' content='IE=Edge' />
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3" />
+	<title>Catálogo en línea </title>
+	
+	
+<link rel='stylesheet' type='text/css' href='./styles/common/ai_search.css?1719308059' />
+<link rel='stylesheet' type='text/css' href='./styles/common/animation_display.css?1615825938' />
+<link rel='stylesheet' type='text/css' href='./styles/common/common.css?1720098068' />
+<link rel='stylesheet' type='text/css' href='./styles/common/contrib.css?1673276618' />
+<link rel='stylesheet' type='text/css' href='./styles/common/dGrowl.css?1657616134' />
+<link rel='stylesheet' type='text/css' href='./styles/common/dsi.css?1699607986' />
+<link rel='stylesheet' type='text/css' href='./styles/common/font-awesome.css?1478593624' />
+<link rel='stylesheet' type='text/css' href='./styles/common/open-sans.css?1479312986' />
+<link rel='stylesheet' type='text/css' href='./styles/common/pagination.css?1532013719' />
+<link rel='stylesheet' type='text/css' href='./styles/common/record_display.css?1692887340' />
+<link rel='stylesheet' type='text/css' href='./styles/common/visionneuse.css?1711723334' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/colonnes.css?1343806866' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/gallerie_photos.css?1297066640' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/genbib.css?1498048756' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/liste_bulletins.css?1297066639' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/print.css?1297066639' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/tags.css?1297066639' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/visionneuse.css?1297066640' /><script>var opac_style= 'genbib';</script>
+	<!-- css_authentication -->	<link rel='SHORTCUT ICON' href='./images/site/favicon.ico' />
+	<script src="includes/javascript/drag_n_drop.js"></script>
+	<script src="includes/javascript/handle_drop.js"></script>
+	<script src="includes/javascript/popup.js"></script>
+	<script>
+			// Fonction a utiliser pour l'encodage des URLs en javascript
+			function encode_URL(data){
+				var docCharSet = document.characterSet ? document.characterSet : document.charset;
+				if(docCharSet == "UTF-8"){
+	    			return encodeURIComponent(data);
+	    		}else{
+	    			return escape(data);
+	    		}
+	    	}
+	    </script>
+	<script>
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName =
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i);
+				    }
+				 }
+				return items;
+			 }
+		}
+	</script>
+
+		<link rel='stylesheet' type='text/css' href='./includes/javascript/dojo/dijit/themes/tundra/tundra.css' />
+		<script>
+			var dojoConfig = {
+				parseOnLoad: true,
+				locale: 'es-es',
+				isDebug: false,
+				usePlainJson: true,
+				packages: [{
+						name: 'pmbBase',
+						location:'../../../..'
+					},{
+						name: 'd3',
+						location:'../../d3'
+					}],
+				deps: ['apps/pmb/MessagesStore', 'dgrowl/dGrowl', 'dojo/ready', 'apps/pmb/ImagesStore'],
+				callback:function(MessagesStore, dGrowl, ready, ImagesStore){
+					window.pmbDojo = {};
+					pmbDojo.messages = new MessagesStore({url:'./ajax.php?module=ajax&categ=messages', directInit:false, lastModified:'1755079154'});
+					pmbDojo.images = new ImagesStore({url:'./ajax.php?module=ajax&categ=images', directInit:false});
+					ready(function(){
+						new dGrowl({'channels':[{'name':'info','pos':2},{'name':'error', 'pos':1}]});
+					});
+
+				},
+			};
+		</script>
+		<script src='./includes/javascript/dojo/dojo/dojo.js'></script>
+		<script>
+		dojo.addOnLoad(function () {
+			// Ajout du theme Dojo
+			dojo.addClass(dojo.body(),'tundra');
+		})
+		</script>
+		<script>
+	var pmb_img_patience = './images/patience.gif';
+</script><script>
+			var opac_show_social_network =0;
+		</script>
+	<script src='./includes/javascript/http_request.js'></script>
+	<script src='./includes/javascript/track_clicks.js'></script>
+	
+</head>
+
+<body onload="window.defaultStatus='PMB : Acceso público';"  id="pmbopac">
+		<script>
+		function findNoticeElement(id){
+			var ul=null;
+			//cas des notices classiques
+			var domNotice = document.getElementById('el'+id+'Child');
+			//notice_display
+			if(!domNotice) domNotice = document.getElementById('notice');
+			if(domNotice){
+				var uls = domNotice.getElementsByTagName('ul');
+				for (var i=0 ; i<uls.length ; i++){
+					if(uls[i].getAttribute('id') == 'onglets_isbd_public'+id){
+						var ul = uls[i];
+						break;
+					}
+				}
+			} else{
+				var li = document.getElementById('onglet_isbd'+id);
+				if(!li) var li = document.getElementById('onglet_public'+id);
+				if(!li) var li = document.getElementById('onglet_detail'+id);
+				if(li) var ul = li.parentNode;
+			}
+			return ul;
+		}
+		function show_what(quoi, id) {
+			switch(quoi){
+				case 'EXPL_LOC' :
+					document.getElementById('div_expl_loc' + id).style.display = 'block';
+					document.getElementById('div_expl' + id).style.display = 'none';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_inactive';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_active';
+					break;
+				case 'EXPL' :
+					document.getElementById('div_expl_loc' + id).style.display = 'none';
+					document.getElementById('div_expl' + id).style.display = 'block';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_active';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_inactive';
+					break;
+				default :
+					quoi= quoi.toLowerCase();
+					var ul = findNoticeElement(id);
+					if (ul) {
+						var items  = ul.getElementsByTagName('li');
+						for (var i=0 ; i<items.length ; i++){
+							if(items[i].getAttribute('id')){
+								if(items[i].getAttribute('id') == 'onglet_'+quoi+id){
+									items[i].className = 'isbd_public_active';
+									document.getElementById('div_'+quoi+id).style.display = 'block';
+								}else{
+									if(items[i].className != 'onglet_tags' && items[i].className != 'onglet_avis' && items[i].className != 'onglet_sugg' && items[i].className != 'onglet_basket' && items[i].className != 'onglet_liste_lecture'){
+										items[i].className = 'isbd_public_inactive';
+										document.getElementById(items[i].getAttribute('id').replace('onglet','div')).style.display = 'none';
+									}
+								}
+							}
+						}
+					}
+					break;
+			}
+		}
+		</script>
+	<script src='./includes/javascript/tablist_ajax.js'></script>
+<script src='./includes/javascript/tablist.js'></script>
+<script src='./includes/javascript/misc.js'></script>
+	<div id='att' style='z-Index:1000'></div>
+	<div id="container"><div id="main"><div id='main_header'></div><div id="main_hors_footer">
+						
+
+<script src='./includes/javascript/auth_popup.js'></script>
+<script src='./includes/javascript/pnb.js'></script><div id="intro_message"><div class="p1"><!--<a href="index.php?lvl=index"><img src="./images/bar_spacer.gif" id="map_lien_retour" alt="" /></a> 
+<a href="http://www.sigb.net" id="puce">Sigb.Net</a>
+<a href="http://www.sigb.net/wiki/" id="puce">WiKi PMB</a>
+<a href="http://fr.wikipedia.org" id="puce">WiKipedia</a>
+--></div><div class="p2"></div></div><div id='navigator'>
+<table role='presentation' style='width:100%'><tr><td class='navig_actions_first_screen' ><a href="./index.php?lvl=index" class='navig_etageres'><span>Volver a la pantalla de inicio ...</span></a></td>
+</tr></table></div><!-- fermeture de #navigator -->
+<div id='resume_panier' class='empty'></div>
+<script>
+<!--
+	function test_form(form)
+	{
+
+		return true;
+	}
+-->
+</script><div id='search' role='search'><ul class='search_tabs'><li id='current' aria-current='page'><a href="./index.php?search_type_asked=simple_search">Búsqueda simple</a></li><li ><a href="./index.php?search_type_asked=search_perso">Predefinido</a></li><li  >
+			<a href="javascript:document.forms['search_form1'].submit();" data-search-perso-id='1'>Documentos digitales</a><form name='search_form1' action='./index.php?search_type_asked=extended_search&onglet_persopac=1&limitsearch=0' style='display:none' method='post'>
+<input type='hidden' name='search[]' value='f_44'/><input type='hidden' name='inter_0_f_44' value=''/><input type='hidden' name='op_0_f_44' value='EQ'/><input type='hidden' name='field_0_f_44[]' value='application/pdf'/><input type='hidden' name='page' value=''/>
+			<input type="hidden" name="nb_per_page_custom" value="">
+</form></li><li ><a href="./index.php?search_type_asked=extended_search">Búsqueda avanzada</a></li></ul><div id='search_crl'></div><div class='row'>
+		<form name='search_input' action='./index.php?lvl=search_result' method='post' onSubmit="if (search_input.user_query.value.length == 0) { search_input.user_query.value='*'; return true; }">
+			
+			
+			<br />
+			<input type='hidden' name='surligne' value=''/>
+				<label for='user_query_lib' class='visually-hidden'>B&uacute;squeda</label>
+				<input type='text' name='user_query' title='' id='user_query_lib' class='text_query' value="" size='65' />
+<input type='submit' name='ok' value='Buscar' class='boutonrechercher'/>
+<input type='button' value='Ayuda' class='bouton button_search_help' onClick='window.open("./help.php?whatis=simple_search", "search_help", "scrollbars=yes, toolbar=no, dependent=yes, width=400, height=400, resizable=yes"); return false' />
+<div id='simple_search_zone'><div class='row'>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_TITLE' id='look_TITLE' value='1'  /><label for='look_TITLE'> Títulos </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_AUTHOR' id='look_AUTHOR' value='1'  /><label for='look_AUTHOR'> Autores </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_PUBLISHER' id='look_PUBLISHER' value='1'  /><label for='look_PUBLISHER'> Editoriales </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_CATEGORY' id='look_CATEGORY' value='1'  /><label for='look_CATEGORY'> Materias </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_ABSTRACT' id='look_ABSTRACT' value='1'  /><label for='look_ABSTRACT'> Resumen y notas </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_ALL' id='look_ALL' value='1' checked  /><label for='look_ALL'> Todos los campos </label></span></div><div style='clear: both;'><input type='hidden' name='look_FIRSTACCESS' value='1' /></div></div></form>
+		<script src='./includes/javascript/ajax.js'></script>
+		<script>
+
+                if (document.forms['search_input'] && document.forms['search_input'].elements['user_query']) {
+                    document.forms["search_input"].elements["user_query"].focus();
+					
+                }
+		</script></div></div><div id="location"><h3 ><span >No se le ocurre nada para buscar? Ingrese a las colecciones de la biblioteca...</span></h3><div id='location-container'><b>Tiene un título o un autor en mente: <a href='index.php?'> haga clic aquí para realizar una búsqueda </a>, o explore las estanterías...</b><br /><br />
+	<script>
+		function opac_sections_ui_sort_by(criteria, asc_desc, indice) {
+			var url = './ajax.php?module=empr&lvl=index&action=list&sort_by='+criteria;
+			if(asc_desc == 'desc') {
+				//on repasse en tri croissant
+				url += '&sort_asc_desc=asc';
+			} else if(asc_desc == 'asc') {
+				//on repasse en tri d�croissant
+				url += '&sort_asc_desc=desc';
+			}
+			var req = new http_request();
+			if(document.getElementById('opac_sections_ui_json_filters_'+indice)) {
+				var filters = document.getElementById('opac_sections_ui_json_filters_'+indice).value;
+			} else if(document.getElementById('opac_sections_ui_json_filters')) {
+				var filters = document.getElementById('opac_sections_ui_json_filters').value;
+			} else {
+				var filters = '';
+			}
+			if(document.getElementById('opac_sections_ui_pager_'+indice)) {
+				var pager = document.getElementById('opac_sections_ui_pager_'+indice).value;
+			} else if(document.getElementById('opac_sections_ui_pager')) {
+				var pager = document.getElementById('opac_sections_ui_pager').value;
+			} else {
+				var pager = '';
+			}
+			if(document.getElementById('opac_sections_ui_ancre_'+indice)) {
+				var ancre = document.getElementById('opac_sections_ui_ancre_'+indice).value;
+			} else if(document.getElementById('opac_sections_ui_ancre')) {
+				var ancre = document.getElementById('opac_sections_ui_ancre').value;
+			} else {
+				var ancre = '';
+			}
+            if(document.getElementById('opac_sections_ui_list_'+indice)) {
+				var table = document.getElementById('opac_sections_ui_list_'+indice);
+			} else if(document.getElementById('opac_sections_ui_list_0')) {
+				var table = document.getElementById('opac_sections_ui_list_0');
+			} else {
+				var table = document.getElementById('opac_sections_ui_list');
+			}
+            table.innerHTML = '<tr><td><img src="./images/patience.gif"/></td></tr>';
+			req.request(url,1, 'object_type=opac_sections_ui&filters='+encodeURIComponent(filters)+'&pager='+pager+'&ancre='+ancre, true, function(response) {
+                table.innerHTML = response;
+    			if(document.getElementById('opac_sections_ui_applied_sort_by_0')) {
+    				var options = document.getElementById('opac_sections_ui_applied_sort_by_0').options;
+    				for (var i= 0; i < options.length; i++) {
+    				    if (options[i].value === criteria) {
+    				        options[i].selected= true;
+    				        break;
+    				    }
+    				}
+    				switch(asc_desc) {
+    					case 'asc': //on repasse en tri d�croissant
+    						document.getElementById('opac_sections_ui_applied_sort_asc_0').removeAttribute('checked');
+    						document.getElementById('opac_sections_ui_applied_sort_desc_0').setAttribute('checked', 'checked');
+    						break;
+    					case 'desc': //on repasse en tri croissant
+    					default:
+    						document.getElementById('opac_sections_ui_applied_sort_asc_0').setAttribute('checked', 'checked');
+    						document.getElementById('opac_sections_ui_applied_sort_desc_0').removeAttribute('checked');
+    						break;
+    				}
+    			}
+				if(ancre) {
+					window.location='#'+ancre;
+				}
+				if(typeof initIt !== 'undefined') {
+					initIt();
+				}
+            });
+		}
+	</script>
+<table class='center' style='width:100%' role='presentation'><tr><td class='center' style='width:120px'>
+                <a href='./index.php?lvl=section_see&location=1&id=28'>
+                    <img src='./images/rayonnage-small.png' style='border:0px' alt='Colecci&oacute;n Folleteria Siglo XIX y XX' title='Colecci&oacute;n Folleteria Siglo XIX y XX'/>
+                </a>
+                <br />
+                <a href='./index.php?lvl=section_see&location=1&id=28'>
+                    <b>Colección Folleteria Siglo XIX y XX</b>
+                </a></td><td class='center' style='width:120px'>
+                <a href='./index.php?lvl=section_see&location=1&id=35'>
+                    <img src='./images/rayonnage-small.png' style='border:0px' alt='Colecci&oacute;n Folletos' title='Colecci&oacute;n Folletos'/>
+                </a>
+                <br />
+                <a href='./index.php?lvl=section_see&location=1&id=35'>
+                    <b>Colección Folletos</b>
+                </a></td><td class='center' style='width:120px'>
+                <a href='./index.php?lvl=section_see&location=1&id=27'>
+                    <img src='./images/rayonnage-small.png' style='border:0px' alt='Colecci&oacute;n General' title='Colecci&oacute;n General'/>
+                </a>
+                <br />
+                <a href='./index.php?lvl=section_see&location=1&id=27'>
+                    <b>Colección General</b>
+                </a></td><td class='center' style='width:120px'>
+                <a href='./index.php?lvl=section_see&location=1&id=30'>
+                    <img src='./images/rayonnage-small.png' style='border:0px' alt='Colecci&oacute;n Libros raros y curiosos' title='Colecci&oacute;n Libros raros y curiosos'/>
+                </a>
+                <br />
+                <a href='./index.php?lvl=section_see&location=1&id=30'>
+                    <b>Colección Libros raros y curiosos</b>
+                </a></td><td class='center' style='width:120px'>
+                <a href='./index.php?lvl=section_see&location=1&id=41'>
+                    <img src='./images/rayonnage-small.png' style='border:0px' alt='Coordinaci&oacute;n biblioteca' title='Coordinaci&oacute;n biblioteca'/>
+                </a>
+                <br />
+                <a href='./index.php?lvl=section_see&location=1&id=41'>
+                    <b>Coordinación biblioteca</b>
+                </a></td><td class='center' style='width:120px'>
+                <a href='./index.php?lvl=section_see&location=1&id=38'>
+                    <img src='./images/rayonnage-small.png' style='border:0px' alt='Fondo Archivos Documentales' title='Fondo Archivos Documentales'/>
+                </a>
+                <br />
+                <a href='./index.php?lvl=section_see&location=1&id=38'>
+                    <b>Fondo Archivos Documentales</b>
+                </a></td></tr><tr><td class='center' style='width:120px'>
+                <a href='./index.php?lvl=section_see&location=1&id=37'>
+                    <img src='./images/rayonnage-small.png' style='border:0px' alt='Presidencia ACH' title='Presidencia ACH'/>
+                </a>
+                <br />
+                <a href='./index.php?lvl=section_see&location=1&id=37'>
+                    <b>Presidencia ACH</b>
+                </a></td><td class='center' style='width:120px'>
+                <a href='./index.php?lvl=section_see&location=1&id=36'>
+                    <img src='./images/rayonnage-small.png' style='border:0px' alt='Referencia' title='Referencia'/>
+                </a>
+                <br />
+                <a href='./index.php?lvl=section_see&location=1&id=36'>
+                    <b>Referencia</b>
+                </a></td><td class='center' style='width:120px'>
+                <a href='./index.php?lvl=section_see&location=1&id=39'>
+                    <img src='./images/rayonnage-small.png' style='border:0px' alt='Secretar&iacute;a General' title='Secretar&iacute;a General'/>
+                </a>
+                <br />
+                <a href='./index.php?lvl=section_see&location=1&id=39'>
+                    <b>Secretaría General</b>
+                </a></td></table></div></div><div id='last_entries'><h3 ><span >&Uacute;ltimas adquisiciones</span></h3><div id='last_entries-container'>Está visualizando los últimos documentos introducidos en el catálogo :<br />
+            <span class='expandAll'>
+                <a href='javascript:expandAll_ajax(1);'>
+                    <img class='img_plusplus' src='./images/expand_all.gif' style='border:0px' id='expandall'>
+                </a>
+            </span><span class="espaceResultSearch">&nbsp;</span>
+            <span class='collapseAll'>
+                <a href='javascript:collapseAll()'>
+                    <img class='img_moinsmoins' src='./images/collapse_all.gif' style='border:0px' id='collapseall'>
+                </a>
+            </span>
+				<div id="el24531Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el24531Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A24531%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.academiahistoria.org.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.academiahistoria.org.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%22bd1254f46b16ca284275cb9568e6b1a9%22%2C%22datetime%22%3A1794730161%7D' onClick="expandBase_ajax('el24531', true,this.getAttribute('param'));  return false;" /><img src="https://biblioteca.academiahistoria.org.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24531"><span class="statutnot1" ></span><span  notice='24531'  class='header_title'>Viaje al corazón de Barranquilla</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=19184'>Stevenson Díaz, José G.</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Viaje%20al%20coraz%C3%B3n%20de%20Barranquilla&amp;rft.title=Viaje%20al%20coraz%C3%B3n%20de%20Barranquilla%20%3A%20Rutas%20de%20aprendizaje%20en%20el%20centro%20hist%C3%B3rico&amp;rft.isbn=9786280243733&amp;rft.tpages=360%20p%C3%A1ginas&amp;rft.date=2026&amp;rft_id=&amp;rft.pub=Navegario%20Editores&amp;rft.place=Barranquilla&amp;rft.au=Stevenson%20D%C3%ADaz%2C%20Jos%C3%A9%20G.&amp;rft.aulast=Stevenson%20D%C3%ADaz%2C%20Jos%C3%A9%20G.&amp;rft.aufirst='></span></span>
+		    	<br />
+				</div>
+				<div id="el24531Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.academiahistoria.org.co/pmb/opac_css/index.php?lvl=notice_display&id=24531" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24530Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el24530Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A24530%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.academiahistoria.org.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.academiahistoria.org.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%2257cce85625ca53c6706472dd8a648344%22%2C%22datetime%22%3A1794730161%7D' onClick="expandBase_ajax('el24530', true,this.getAttribute('param'));  return false;" /><img src="https://biblioteca.academiahistoria.org.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24530"><span class="statutnot1" ></span><span  notice='24530'  class='header_title'>Gamonales</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=7253'>Alonso Valencia Llano</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Gamonales&amp;rft.title=Gamonales%20%3A%20Las%20pr%C3%A1cticas%20pol%C3%ADticas%20de%20Juan%20Evangelista%20Conde%20y%20de%20Ernesto%20Cerruti&amp;rft.isbn=9786280168388&amp;rft.tpages=194%20p%C3%A1ginas&amp;rft.date=2025&amp;rft_id=&amp;rft.pub=Centro%20de%20Estudios%20Regionales%2C%20Universidad%20del%20Valle%20%3B%20Centro%20de%20Historia%20de%20Tulu%C3%A1&amp;rft.place=Columbia&amp;rft.au=Alonso%20Valencia%20Llano&amp;rft.aulast=Valencia%20Llano&amp;rft.aufirst=Alonso'></span></span>
+		    	<br />
+				</div>
+				<div id="el24530Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.academiahistoria.org.co/pmb/opac_css/index.php?lvl=notice_display&id=24530" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24529Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el24529Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A24529%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.academiahistoria.org.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.academiahistoria.org.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%221d8b7ec011f0776bb21163a8709cf8cd%22%2C%22datetime%22%3A1794730161%7D' onClick="expandBase_ajax('el24529', true,this.getAttribute('param'));  return false;" /><img src="https://biblioteca.academiahistoria.org.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24529"><span class="statutnot1" ></span><span  notice='24529'  class='header_title'>El congreso hace historia</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=19181'>Orjuela López, Ximena,</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=El%20congreso%20hace%20historia&amp;rft.title=El%20congreso%20hace%20historia%20%3A%20Colombia%201819-1929&amp;rft.isbn=978-958-8160-71-9&amp;rft.tpages=269%20p%C3%A1ginas&amp;rft.date=2004&amp;rft_id=&amp;rft.pub=Villegas%20Editores&amp;rft.place=Bogot%C3%A1%20&amp;rft.au=Orjuela%20L%C3%B3pez%2C%20Ximena%2C&amp;rft.au=Vargas%20Lleras%2C%20Germ%C3%A1n%2C&amp;rft.aulast=Orjuela%20L%C3%B3pez%2C%20Ximena%2C&amp;rft.aufirst='></span></span>
+		    	<br />
+				</div>
+				<div id="el24529Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.academiahistoria.org.co/pmb/opac_css/index.php?lvl=notice_display&id=24529" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24528Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el24528Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A24528%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.academiahistoria.org.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.academiahistoria.org.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%2223f4f1fc94f5ef662753cdda5177f0bd%22%2C%22datetime%22%3A1794730161%7D' onClick="expandBase_ajax('el24528', true,this.getAttribute('param'));  return false;" /><img src="https://biblioteca.academiahistoria.org.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24528"><span class="statutnot1" ></span><span  notice='24528'  class='header_title'>Elogio de Gregorio Cerra</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=18801'>Hernán Urbina Joiro</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Elogio%20de%20Gregorio%20Cerra&amp;rft.title=Elogio%20de%20Gregorio%20Cerra%20%3A%20primer%20bi%C3%B3grafo%20de%20Padilla&amp;rft.isbn=9786289744538&amp;rft.tpages=109%20p%C3%A1ginas&amp;rft.date=2026&amp;rft_id=&amp;rft.pub=Ediciones%20Voces%20del%20Mar&amp;rft.place=Cartagena&amp;rft.au=Hern%C3%A1n%20Urbina%20Joiro&amp;rft.aulast=Urbina%20Joiro&amp;rft.aufirst=Hern%C3%A1n'></span></span>
+		    	<br />
+				</div>
+				<div id="el24528Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.academiahistoria.org.co/pmb/opac_css/index.php?lvl=notice_display&id=24528" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24527Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el24527Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A24527%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.academiahistoria.org.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.academiahistoria.org.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%223930dd47c11959b954fd37563e2df5b5%22%2C%22datetime%22%3A1794730161%7D' onClick="expandBase_ajax('el24527', true,this.getAttribute('param'));  return false;" /><img src="https://biblioteca.academiahistoria.org.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24527"><span class="statutnot1" ></span><span  notice='24527'  class='header_title'>Diarios de ofensa y defensa : ataque inglés sobre Cartagena de Indias, compilación histórica</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=19177'>Lezo, Blas de</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Diarios%20de%20ofensa%20y%20defensa%20%3A%20ataque%20ingl%C3%A9s%20sobre%20Cartagena%20de%20Indias%2C%20compilaci%C3%B3n%20hist%C3%B3rica&amp;rft.title=Diarios%20de%20ofensa%20y%20defensa%20%3A%20ataque%20ingl%C3%A9s%20sobre%20Cartagena%20de%20Indias%2C%20compilaci%C3%B3n%20hist%C3%B3rica&amp;rft.isbn=978-958-46-6686-4&amp;rft.tpages=5%20vol%C3%BAmenes&amp;rft.date=2015&amp;rft_id=&amp;rft.pub=Francisco%20Hernando%20Mu%C3%B1oz%20Atuesta%20%3A%20Panamericana%20Formas%20e%20Impresos%20%3A%20Ediciones%20Genealog%C3%ADa%20e%20Historia&amp;rft.place=Bogot%C3%A1&amp;rft.au=Lezo%2C%20Blas%20de&amp;rft.au=Edward%20Vernon&amp;rft.aulast=Lezo%2C%20Blas%20de&amp;rft.aufirst='></span></span>
+		    	<br />
+				</div>
+				<div id="el24527Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.academiahistoria.org.co/pmb/opac_css/index.php?lvl=notice_display&id=24527" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24526Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el24526Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A24526%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.academiahistoria.org.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.academiahistoria.org.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%22a0aedb263776d6b7824fea52fa365573%22%2C%22datetime%22%3A1794730161%7D' onClick="expandBase_ajax('el24526', true,this.getAttribute('param'));  return false;" /><img src="https://biblioteca.academiahistoria.org.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24526"><span class="statutnot1" ></span><span  notice='24526'  class='header_title'>El incendio del 7 de diciembre de 1889</span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=El%20incendio%20del%207%20de%20diciembre%20de%201889&amp;rft.title=El%20incendio%20del%207%20de%20diciembre%20de%201889&amp;rft.tpages=48%20p%C3%A1ginas&amp;rft.date=1889&amp;rft_id=&amp;rft.pub=Bogot%C3%A1%20%3A%20Imprenta%20de%20%22La%20Luz%22'></span></span>
+		    	<br />
+				</div>
+				<div id="el24526Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.academiahistoria.org.co/pmb/opac_css/index.php?lvl=notice_display&id=24526" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24525Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el24525Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A24525%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.academiahistoria.org.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.academiahistoria.org.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%228a7c2ee7386bce3b89198c2cb5835c1c%22%2C%22datetime%22%3A1794730161%7D' onClick="expandBase_ajax('el24525', true,this.getAttribute('param'));  return false;" /><img src="https://biblioteca.academiahistoria.org.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24525"><span class="statutnot1" ></span><span  notice='24525'  class='header_title'>Corladura en escultura policromada colonial</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=19179'>Amaya Quintero, Manuel</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Corladura%20en%20escultura%20policromada%20colonial&amp;rft.title=Corladura%20en%20escultura%20policromada%20colonial&amp;rft.tpages=82%20p%C3%A1ginas&amp;rft.date=2006&amp;rft_id=&amp;rft.pub=Universidad%20Externado%20de%20Colombia.%20Facultad%20de%20Estudios%20del%20Patrimonio%20Cultural.%20Programa%20de%20Conservaci%C3%B3n%20y%20Restauraci%C3%B3n%20de%20Bienes%20Muebles&amp;rft.place=Bogot%C3%A1&amp;rft.au=Amaya%20Quintero%2C%20Manuel&amp;rft.au=Garnica%2C%20Vanessa&amp;rft.aulast=Amaya%20Quintero%2C%20Manuel&amp;rft.aufirst='></span></span>
+		    	<br />
+				</div>
+				<div id="el24525Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.academiahistoria.org.co/pmb/opac_css/index.php?lvl=notice_display&id=24525" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24524Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el24524Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A24524%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.academiahistoria.org.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.academiahistoria.org.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%220cd277e0b56531847eabc09797837d4b%22%2C%22datetime%22%3A1794730161%7D' onClick="expandBase_ajax('el24524', true,this.getAttribute('param'));  return false;" /><img src="https://biblioteca.academiahistoria.org.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24524"><span class="statutnot1" ></span><span  notice='24524'  class='header_title'>Las ermitañas del mar</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=19178'>Jaramillo Morales, Alejandra</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Las%20ermita%C3%B1as%20del%20mar&amp;rft.title=Las%20ermita%C3%B1as%20del%20mar&amp;rft.isbn=9786287880542&amp;rft.tpages=204%20p%C3%A1ginas&amp;rft_id=&amp;rft.pub=Alfaguara&amp;rft.place=Bogot%C3%A1&amp;rft.au=Jaramillo%20Morales%2C%20Alejandra&amp;rft.aulast=Jaramillo%20Morales%2C%20Alejandra&amp;rft.aufirst='></span></span>
+		    	<br />
+				</div>
+				<div id="el24524Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.academiahistoria.org.co/pmb/opac_css/index.php?lvl=notice_display&id=24524" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24523Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el24523Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A24523%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.academiahistoria.org.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.academiahistoria.org.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%226b1df00eae9f14514a8c7c139a3f0cd2%22%2C%22datetime%22%3A1794730161%7D' onClick="expandBase_ajax('el24523', true,this.getAttribute('param'));  return false;" /><img src="https://biblioteca.academiahistoria.org.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24523"><span class="statutnot1" ></span><span  notice='24523'  class='header_title'>Los pueblos indígenas del Nuevo Reino de Granada en los siglos XVI y XVII</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=18919'>Jorge Augusto, 1970- Gamboa Mendoza</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Los%20pueblos%20ind%C3%ADgenas%20del%20Nuevo%20Reino%20de%20Granada%20en%20los%20siglos%20XVI%20y%20XVII&amp;rft.title=Los%20pueblos%20ind%C3%ADgenas%20del%20Nuevo%20Reino%20de%20Granada%20en%20los%20siglos%20XVI%20y%20XVII%20%3A%20Los%20muiscas%20entre%20la%20adaptaci%C3%B3n%2C%20la%20asimilaci%C3%B3n%20y%20el%20equilibrio%20%281537-1650%29&amp;rft.isbn=9786287774247&amp;rft.tpages=264%20p%C3%A1ginas&amp;rft.date=2025&amp;rft_id=&amp;rft.series=Espiral&amp;rft.pub=Instituto%20Colombiano%20de%20Antropolog%C3%ADa%20e%20Historia&amp;rft.place=Bogot%C3%A1%20&amp;rft.au=Jorge%20Augusto%2C%201970-%20Gamboa%20Mendoza&amp;rft.aulast=Gamboa%20Mendoza&amp;rft.aufirst=Jorge%20Augusto%2C%201970-'></span></span>
+		    	<br />
+				</div>
+				<div id="el24523Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.academiahistoria.org.co/pmb/opac_css/index.php?lvl=notice_display&id=24523" style="display:none;">Permalink</a>
+			
+		
+				<div id="el24522Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el24522Img" title="+ info" alt="+ info" style='border:0px' param='%7B%22id%22%3A24522%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.academiahistoria.org.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fbiblioteca.academiahistoria.org.co%5C%2Fpmb%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%222%22%2C%22token%22%3A%22433b5f946e8e3e837576f3581a6c8b0c%22%2C%22datetime%22%3A1794730161%7D' onClick="expandBase_ajax('el24522', true,this.getAttribute('param'));  return false;" /><img src="https://biblioteca.academiahistoria.org.co/pmb/opac_css/images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_24522"><span class="statutnot1" ></span><span  notice='24522'  class='header_title'>Catedral de Bogotá</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=19129'>Moreno Bogoya, Camilo Andrés</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Catedral%20de%20Bogot%C3%A1&amp;rft.title=Catedral%20de%20Bogot%C3%A1%20%3A%20Teolog%C3%ADa%2C%20Historia%20y%20Arte&amp;rft.isbn=978-958-8486-72-7&amp;rft.tpages=164%20p%C3%A1ginas&amp;rft.date=2024&amp;rft_id=&amp;rft.pub=Fundaci%C3%B3n%20Universitaria%20Unimonserrate%20%3B%20Arquidi%C3%B3cesis%20de%20Bogot%C3%A1&amp;rft.place=Bogot%C3%A1&amp;rft.au=Moreno%20Bogoya%2C%20Camilo%20Andr%C3%A9s&amp;rft.au=Gil%20Plata%2C%20Mart%C3%ADn&amp;rft.au=Contreras-Guerrero%2C%20Adri%C3%A1n&amp;rft.au=Gonz%C3%A1lez%20Correra%2C%20Olga%20Luc%C3%ADa&amp;rft.au=Rodr%C3%ADguez%20Mu%C3%B1oz%2C%20Diana%20Farley&amp;rft.aulast=Moreno%20Bogoya%2C%20Camilo%20Andr%C3%A9s&amp;rft.aufirst='></span></span>
+		    	<br />
+				</div>
+				<div id="el24522Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="https://biblioteca.academiahistoria.org.co/pmb/opac_css/index.php?lvl=notice_display&id=24522" style="display:none;">Permalink</a>
+			
+		</div>
+	</div>
+		</div><!-- fin DIV  -->
+<div id="footer">
+    <span id="footer_rss"></span>
+    <span id="footer_link_sup"><a href="https://www.biteca.com/">Implementado por Biteca</a>&nbsp;</span>
+    <span id="footer_link_website">
+        <a class="footer_biblio_name" href="http://www.academiahistoria.org.co/" title=""></a> &nbsp;
+    </span>
+    <span id="footer_link_pmb"><a href=http://www.google.es target=_blank>Buscar en Google</a>&nbsp;
+        <a class="lien_pmb_footer" href="https://www.sigb.net" title="pmb una solución libre para la mediateca" target="_blank">pmb</a>
+    </span>
+</div> 
+
+		</div><!-- /div id=main -->
+
+		<div id="intro">
+<div id="intro_bibli">
+			<h3></h3>
+			<div class="p1"><img src="./styles/genbib/images/ach2.jpg" />
+<!--<img src="./styles/genbib/images/image1.jpg" />
+<img src="./styles/genbib/images/image2.jpg" />
+<img src="./styles/genbib/images/image3.jpg" />-->
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TDWS9FF"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) --></div>
+			<div class="p2"><ul id="menuDeroulant">
+
+<li><a href="./index.php">Inicio</a></li>
+<li><a href="./index.php?lvl=infopages&amp;pagesid=3">Colecciones</a>
+<li><a href="./index.php?lvl=infopages&amp;pagesid=2">Servicios</a></li>
+<li><a href="./index.php?lvl=infopages&amp;pagesid=6">Contacto</a></li>
+
+</ul></div>
+			</div>
+		</div><!-- /div id=intro -->
+		<div id="bandeau"><!-- $Id: accessibility.tpl.html,v 1.4 2023/10/02 14:33:32 jparis Exp $ -->
+
+
+<div id="accessibility">
+    	<input type="hidden" id="opacAccessibility" name="opacAccessibility" value="1"/>
+	<ul class="accessibility_font_size">
+		<li class="accessibility_font_size_small">
+			<a href="javascript:accessibilityFontSize(1);" title="Reducir el texto">A-</a>
+		</li>
+		<li class="accessibility_font_size_normal">
+			<a href="javascript:accessibilityFontSize(0);" title="Restablecer texto">A</a>
+		</li>
+		<li class="accessibility_font_size_big">
+			<a href="javascript:accessibilityFontSize(2);" title="Ampliar texto">A+</a>
+		</li>
+	</ul>
+</div>
+
+
+<script src="./includes/javascript/accessibility.js"></script>
+
+
+<div id="accueil">
+
+<h3><span onclick='document.location="./index.php?"' style='cursor: pointer;'>Inicio</span></h3>
+<p class="centered"><a href='./index.php?'><img src='images/site/escudo.jpg' alt='Inicio'  style='border:0px' class='center'/></a></p>
+
+					</div><!-- fermeture #accueil -->
+<div id="adresse">
+
+		<h3>Dirección</h3>
+
+		<span>
+			<br />
+			Calle 10 No. 8-95<br />
+			 Bogotá<br />
+			Colombia&nbsp;<br />
+			+ 57 (1) 7420848 Ext. 108<br /><span id='opac_biblio_email'>
+			<a href="mailto:biblioteca@academiahistoria.org.co" title="contacto">contacto</a></span></span>
+	    </div><!-- fermeture #adresse --></div><div id="bandeau_2"></div></div><!-- /div id=container -->
+		
+		<script>init_drag();	//rechercher!!</script>
+		
+			<script>
+				var tarteaucitron_messages = pmbDojo.messages.getMessages("tarteaucitron");
+				if(tarteaucitron_messages.length) {
+					tarteaucitronCustomText = {};
+					tarteaucitron_messages.forEach(function(message) {
+						if(parseInt(message.code.indexOf(":")) !== -1) {
+							let tarteaucitron_messages_group = message.code.split(":");
+							if(typeof tarteaucitronCustomText[tarteaucitron_messages_group[0]] == "undefined") {
+								tarteaucitronCustomText[tarteaucitron_messages_group[0]] = {};
+							}
+							tarteaucitronCustomText[tarteaucitron_messages_group[0]][tarteaucitron_messages_group[1]] = message.message;
+						} else {
+							tarteaucitronCustomText[message.code] = message.message;
+						}
+					});
+				}
+			</script>
+			<script src="./includes/javascript/tarteaucitron/tarteaucitron.js"></script>
+		<script>
+	        tarteaucitron.init({
+	    	  "privacyUrl": "", /* Privacy policy url */
+	
+	    	  "hashtag": "#PhpMyBibli-COOKIECONSENT", /* Open the panel with this hashtag */
+	    	  "cookieName": "PhpMyBibli-COOKIECONSENT", /* Cookie name */
+	    
+	    	  "orientation": "bottom", /* Banner position (top - bottom - popup) */
+	       
+	          "groupServices": true, /* Group services by category */
+	                           
+	    	  "showAlertSmall": false, /* Show the small banner on bottom right */
+	    	  "cookieslist": false, /* Show the cookie list */
+				                           
+	          "closePopup": false, /* Show a close X on the banner */
+	
+	          "showIcon": false, /* Show cookie icon to manage cookies */
+	          "iconSrc": "./images/cookie.png", /* Optionnal: URL or base64 encoded image */
+	          "iconPosition": "BottomRight", /* BottomRight, BottomLeft, TopRight and TopLeft */
+	
+	    	  "adblocker": false, /* Show a Warning if an adblocker is detected */
+	                           
+	          "DenyAllCta" : true, /* Show the deny all button */
+	          "AcceptAllCta" : true, /* Show the accept all button when highPrivacy on */
+	          "highPrivacy": true, /* HIGHLY RECOMMANDED Disable auto consent */
+	                           
+	    	  "handleBrowserDNTRequest": false, /* If Do Not Track == 1, disallow all */
+	
+	    	  "removeCredit": true, /* Remove credit link */
+	    	  "moreInfoLink": false, /* Show more info link */
+	
+	          "useExternalCss": false, /* If false, the tarteaucitron.css file will be loaded */
+	          "useExternalJs": false, /* If false, the tarteaucitron.js file will be loaded */
+				
+	    	  //"cookieDomain": ".my-multisite-domaine.fr", /* Shared cookie for multisite */
+	                          
+	          "readmoreLink": "", /* Change the default readmore link */
+	
+	          "mandatory": true, /* Show a message about mandatory cookies */
+	        });
+ 
+        </script>
+		<script>
+		tarteaucitron.services.pmbstatopac = {
+		  	"key": "pmbstatopac",
+			"type": "analytic",
+			"name": "PMB (Estadísticas)",
+			"needConsent": true,
+			"cookies": [],
+			"uri": "https://biblioteca.academiahistoria.org.co/pmb/opac_css/",
+			"readmoreLink": "", // If you want to change readmore link
+			"js": function () {
+			    "use strict";
+			    // When user allow cookie
+		  	},
+		  	"fallback": function () {
+		    	"use strict";
+		    	// when use deny cookie
+		  	}
+		};
+		</script>
+		<script>
+        	(tarteaucitron.job = tarteaucitron.job || []).push("pmbstatopac");
+        </script>
+		 <script>
+        	(tarteaucitron.job = tarteaucitron.job || []).push("gtag");
+        </script>
+		<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-170073600-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-170073600-1');
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PDFJEKJFHD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-PDFJEKJFHD');
+</script>
+		</body>
+		</html>
+		

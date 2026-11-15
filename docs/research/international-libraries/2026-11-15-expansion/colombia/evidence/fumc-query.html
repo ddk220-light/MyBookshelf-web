@@ -1,0 +1,1110 @@
+<!--BEGIN QUALTRICS WEBSITE FEEDBACK SNIPPET-->
+<script type='text/javascript'>
+(function(){var g=function(e,h,f,g){
+this.get=function(a){for(var a=a+"=",c=document.cookie.split(";"),b=0,e=c.length;b<e;b++){for(var d=c[b];" "==d.charAt(0);)d=d.substring(1,d.length);if(0==d.indexOf(a))return d.substring(a.length,d.length)}return null};
+this.set=function(a,c){var b="",b=new Date;b.setTime(b.getTime()+6048E5);b="; expires="+b.toGMTString();document.cookie=a+"="+c+b+"; path=/; "};
+this.check=function(){var a=this.get(f);if(a)a=a.split(":");else if(100!=e)"v"==h&&(e=Math.random()>=e/100?0:100),a=[h,e,0],this.set(f,a.join(":"));else return!0;var c=a[1];if(100==c)return!0;switch(a[0]){case "v":return!1;case "r":return c=a[2]%Math.floor(100/c),a[2]++,this.set(f,a.join(":")),!c}return!0};
+this.go=function(){if(this.check()){var a=document.createElement("script");a.type="text/javascript";a.src=g;document.body&&document.body.appendChild(a)}};
+this.start=function(){var t=this;"complete"!==document.readyState?window.addEventListener?window.addEventListener("load",function(){t.go()},!1):window.attachEvent&&window.attachEvent("onload",function(){t.go()}):t.go()};};
+try{(new g(100,"r","QSI_S_ZN_3rAkACXHgbtUt2m","https://zn3rakacxhgbtut2m-elogimsas.siteintercept.qualtrics.com/SIE/?Q_ZID=ZN_3rAkACXHgbtUt2m")).start()}catch(i){}})();
+</script><div id='ZN_3rAkACXHgbtUt2m'><!--DO NOT REMOVE-CONTENTS PLACED HERE--></div>
+<!--END WEBSITE FEEDBACK SNIPPET-->
+<!DOCTYPE html>
+<html lang='es'>
+<head>
+    
+	<meta charset="utf-8" />
+	<meta name="author" content="PMB Group" />
+
+	<meta name="keywords" content="OPAC, web, library, opensource, catalog, catalogue, catálogo, biblioteca, bibliothèque, mediateca, librería, médiathèque, pmb, phpmybibli" />
+	<meta name="description" content="Catálogo en línea Biblioteca FUMC." /><meta name='robots' content='all' />
+	<!--IE et son enfer de compatibilit?-->
+	<meta http-equiv='X-UA-Compatible' content='IE=Edge' />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+			
+	<title>Catálogo en línea Biblioteca FUMC</title>
+	
+	
+<link rel='stylesheet' type='text/css' href='./styles/common/animation_display.css?1615807938' />
+<link rel='stylesheet' type='text/css' href='./styles/common/common.css?1623389548' />
+<link rel='stylesheet' type='text/css' href='./styles/common/contrib.css?1614764986' />
+<link rel='stylesheet' type='text/css' href='./styles/common/dGrowl.css?1598518188' />
+<link rel='stylesheet' type='text/css' href='./styles/common/font-awesome.css?1478575624' />
+<link rel='stylesheet' type='text/css' href='./styles/common/open-sans.css?1479294986' />
+<link rel='stylesheet' type='text/css' href='./styles/common/pagination.css?1531995718' />
+<link rel='stylesheet' type='text/css' href='./styles/common/record_display.css?1540543362' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/colonnes.css?1343788866' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/gallerie_photos.css?1297048640' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/genbib.css?1627984906' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/liste_bulletins.css?1297048638' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/print.css?1297048638' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/tags.css?1297048638' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/visionneuse.css?1297048640' /><script type='text/javascript'>var opac_style= 'genbib';</script>
+	<!-- css_authentication -->	<link rel='SHORTCUT ICON' href='images/site/favicon.ico' />
+	<script type="text/javascript" src="includes/javascript/drag_n_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/handle_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/popup.js"></script>
+	<script type='text/javascript'>
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName = 
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {  
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i); 
+				    }
+				 }
+				return items;
+			 }
+		}
+		// Fonction a utilisier pour l'encodage des URLs en javascript
+		function encode_URL(data){
+			var docCharSet = document.characterSet ? document.characterSet : document.charset;
+			if(docCharSet == "UTF-8"){
+				return encodeURIComponent(data);
+			}else{
+				return escape(data);
+			}
+		}
+	</script>
+
+<link rel='stylesheet' type='text/css' href='./includes/javascript/dojo/dijit/themes/tundra/tundra.css' />
+<script type='text/javascript'>
+	var dojoConfig = {
+		parseOnLoad: true,
+		locale: 'es-es',
+		isDebug: false,
+		usePlainJson: true,
+		packages: [{
+			name: 'pmbBase',
+			location:'../../../..'
+		},{
+			name: 'd3',
+			location:'../../d3'
+		}],
+		deps: ['apps/pmb/MessagesStore', 'dgrowl/dGrowl', 'dojo/ready', 'apps/pmb/ImagesStore'],
+		callback:function(MessagesStore, dGrowl, ready, ImagesStore){
+			window.pmbDojo = {};
+			pmbDojo.messages = new MessagesStore({url:'./ajax.php?module=ajax&categ=messages', directInit:false});
+			pmbDojo.images = new ImagesStore({url:'./ajax.php?module=ajax&categ=images', directInit:false});
+			ready(function(){
+				new dGrowl({'channels':[{'name':'info','pos':2},{'name':'error', 'pos':1}]});
+			});
+		
+		},
+	};
+</script>
+<script type='text/javascript' src='./includes/javascript/dojo/dojo/dojo.js'></script>
+<script type='text/javascript'>
+	dojo.addOnLoad(function () {
+		// Ajout du theme Dojo
+		dojo.addClass(dojo.body(),'tundra');
+    })
+</script>
+<script type='text/javascript'>
+	var opac_show_social_network =0;
+	var pmb_img_patience = './images/patience.gif';
+</script>
+	<script type='text/javascript' src='./includes/javascript/http_request.js'></script>
+	
+</head>
+
+<body onload="window.defaultStatus='PMB: Acceso público';"  id="pmbopac">
+<script type='text/javascript'>
+	function findNoticeElement(id){
+		var ul=null;
+		//cas des notices classiques
+		var domNotice = document.getElementById('el'+id+'Child');
+		//notice_display
+		if(!domNotice) domNotice = document.getElementById('notice');
+		if(domNotice){
+			var uls = domNotice.getElementsByTagName('ul');
+			for (var i=0 ; i<uls.length ; i++){
+				if(uls[i].getAttribute('id') == 'onglets_isbd_public'+id){
+					var ul = uls[i];
+					break;
+				}
+			}
+		} else{
+			var li = document.getElementById('onglet_isbd'+id);
+			if(!li) var li = document.getElementById('onglet_public'+id);
+			if(!li) var li = document.getElementById('onglet_detail'+id);
+			if(li) var ul = li.parentNode;
+		}
+		return ul;
+	}
+	function show_what(quoi, id) {
+		switch(quoi){
+			case 'EXPL_LOC' :
+				document.getElementById('div_expl_loc' + id).style.display = 'block';
+				document.getElementById('div_expl' + id).style.display = 'none';		
+				document.getElementById('onglet_expl' + id).className = 'isbd_public_inactive';		
+				document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_active';
+				break;
+			case 'EXPL' :
+				document.getElementById('div_expl_loc' + id).style.display = 'none';
+				document.getElementById('div_expl' + id).style.display = 'block';
+				document.getElementById('onglet_expl' + id).className = 'isbd_public_active';
+				document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_inactive';
+				break;
+			default :
+				quoi= quoi.toLowerCase();
+				var ul = findNoticeElement(id);
+				if (ul) {
+					var items  = ul.getElementsByTagName('li');
+					for (var i=0 ; i<items.length ; i++){
+						if(items[i].getAttribute('id')){
+							if(items[i].getAttribute('id') == 'onglet_'+quoi+id){
+								items[i].className = 'isbd_public_active';
+								document.getElementById('div_'+quoi+id).style.display = 'block';
+							}else{
+								if(items[i].className != 'onglet_tags' && items[i].className != 'onglet_avis' && items[i].className != 'onglet_sugg' && items[i].className != 'onglet_basket' && items[i].className != 'onglet_liste_lecture'){
+									items[i].className = 'isbd_public_inactive';	
+									document.getElementById(items[i].getAttribute('id').replace('onglet','div')).style.display = 'none';
+								}
+							}
+						}
+					}			
+				}
+				break;
+		}
+	}
+</script>
+	<script type='text/javascript' src='./includes/javascript/tablist_ajax.js'></script>
+<script type='text/javascript' src='./includes/javascript/tablist.js'></script>
+<script type='text/javascript' src='./includes/javascript/misc.js'></script>
+	<div id='att' style='z-Index:1000'></div>
+	<div id="container"><div id="main"><div id='main_header'><h3>Servicios Bibliotecarios</h3></div><div id="main_hors_footer">
+						
+
+<script type='text/javascript' src='./includes/javascript/auth_popup.js'></script>	
+<script type='text/javascript' src='./includes/javascript/pnb.js'></script><div id="intro_message"><div class="p1"><a href="index.php?lvl=index"><img src="./images/bar_spacer.gif" id="map_lien_retour" alt="" /></a> 
+</div><div class="p2"></div></div><div id='navigator'>
+<table style='width:100%'><tr><td class='navig_actions_last_search' ><a href="index.php?lvl=search_result&get_query=1" class='actions_last_search'><span>Volver a la pantalla de resultados de la última búsqueda</span></a></td>
+<td class='navig_actions_history' ><a href="index.php?lvl=search_history" class='actions_history'><span>Consultar el historial de búsquedas</span></a></td>
+<td class='navig_actions_first_screen' ><a href="./index.php?lvl=index" class='navig_marguerite'><span>Nueva búsqueda</span></a></td>
+</tr></table></div><!-- fermeture de #navigator -->
+<div id='resume_panier' class='empty'></div><script type='text/javascript' src='./includes/javascript/misc.js'></script><script type='text/javascript'>
+	var terms=new Array('cien','anos','soledad');
+	var terms_litteraux=new Array('cien anos de soledad');
+	var codes=new Array();
+			
+	function remplacer_carac(mot) {
+		var x;
+		var reg;				
+		var chaine=mot;
+			reg=new RegExp(codes['a'], 'g');
+	chaine=chaine.replace(reg, 'a');
+	reg=new RegExp(codes['A'], 'g');
+	chaine=chaine.replace(reg, 'A');
+	reg=new RegExp(codes['c'], 'g');
+	chaine=chaine.replace(reg, 'c');
+	reg=new RegExp(codes['C'], 'g');
+	chaine=chaine.replace(reg, 'C');
+	reg=new RegExp(codes['e'], 'g');
+	chaine=chaine.replace(reg, 'e');
+	reg=new RegExp(codes['E'], 'g');
+	chaine=chaine.replace(reg, 'E');
+	reg=new RegExp(codes['i'], 'g');
+	chaine=chaine.replace(reg, 'i');
+	reg=new RegExp(codes['I'], 'g');
+	chaine=chaine.replace(reg, 'I');
+	reg=new RegExp(codes['n'], 'g');
+	chaine=chaine.replace(reg, 'n');
+	reg=new RegExp(codes['N'], 'g');
+	chaine=chaine.replace(reg, 'N');
+	reg=new RegExp(codes['o'], 'g');
+	chaine=chaine.replace(reg, 'o');
+	reg=new RegExp(codes['O'], 'g');
+	chaine=chaine.replace(reg, 'O');
+	reg=new RegExp(codes['u'], 'g');
+	chaine=chaine.replace(reg, 'u');
+	reg=new RegExp(codes['U'], 'g');
+	chaine=chaine.replace(reg, 'U');
+		
+		return(chaine);		
+	}
+</script><script type='text/javascript' src='./temp/surligner_codes.js'></script><script type='text/javascript' src='./includes/javascript/surligner.js'></script>	
+            <div id="resultatrech"><h3 class='searchResult-title'>Resultado de la búsqueda</h3>
+				<div id="resultatrech_container">
+				    <div id="resultatrech_see"><h3 class='searchResult-search'>
+				<span class='searchResult-equation'>
+					<b>2647</b>  títulos encontrados para la búsqueda <b>
+					'Cien a&ntilde;os de soledad'</b></span>&nbsp;&nbsp;&nbsp;<img style='border:0px' class='center' src="./images/text_horizontalrule.png" onMouseOver="this.style.cursor='pointer'" alt='Resaltar las palabras buscadas' title='Resaltar las palabras buscadas' onClick='document.form_values.surligne.value=1;document.form_values.submit();'/></h3>
+
+					</div><div id="resultatrech_liste"><span class="expandAll"><a href='javascript:expandAll_ajax(1);'><img class='img_plusplus' src='./images/expand_all.gif' style='border:0px' id='expandall'></a></span><span class="espaceResultSearch">&nbsp;</span><span class="collapseAll"><a href='javascript:collapseAll()'><img class='img_moinsmoins' src='./images/collapse_all.gif' style='border:0px' id='collapseall'></a></span><span class='print_search_result'><span class="printSearchResult">
+<a href='#' onClick="openPopUp('./print.php?lvl=search&current_search=0','print'); w.focus(); return false;" title="Imprimer la page de recherche courante...">
+	<img src='./images/print.gif' style='border:0px' class='align_bottom' alt="Imprimer la page de recherche courante..."/>
+</a>
+</span></span><span class="espaceResultSearch">&nbsp;</span><span class="espaceResultSearch">&nbsp;&nbsp;</span><span class="affiner_recherche"><a href='./index.php?search_type_asked=extended_search&mode_aff=aff_simple_search' title='Refinar búsqueda'>Refinar búsqueda</a></span><span class="espaceResultSearch">&nbsp;&nbsp;</span><span class="short_url"><a target='_blank' href='./s.php?h=810737383075842b22f609927f68f2a0' title='Générer le flux rss de la recherche'>Générer le flux rss de la recherche</a></span>
+					<script type='text/javascript'>
+						require(['dojo/on', 'dojo/topic', 'apps/pmb/sharelink/SharePopup'], function(on, topic, SharePopup){
+						window.copy_shorturl_to_clipboard = function() {
+								new SharePopup('./s.php?h=ab2683d7c01e74972a904e21bc9e772e');
+							}					
+						});
+					</script><span class="espaceResultSearch">&nbsp;&nbsp;</span><span class="short_url_permalink"><a href='#' onclick='copy_shorturl_to_clipboard(); return false;' title='Lien permanent de la recherche'>Lien permanent de la recherche</a></span><span class="espaceResultSearch">&nbsp;&nbsp;</span><span class="search_bt_external"><a href='./index.php?search_type_asked=external_search&mode_aff=aff_simple_search&external_type=simple' title='Consulta a fuentes externas'>Consulta a fuentes externas</a></span><blockquote>
+			<div id="el1902Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el1902Img" title="+ info" alt="+ info" style='border:0px' onClick="expandBase('el1902', true);  return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_1902"><span class="statutnot1" title="Dep&oacute;sito"></span><span  notice='1902'  class='header_title'>Cien años de soledad</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=13474'>Gabriel García Márquez</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Cien%20a%C3%B1os%20de%20soledad&amp;rft.title=Cien%20a%C3%B1os%20de%20soledad&amp;rft.isbn=978-958-8089-12-6&amp;rft_id=&amp;rft.pub=El%20Tiempo&amp;rft.place=Bogota&amp;rft.au=Gabriel%20Garc%C3%ADa%20M%C3%A1rquez&amp;rft.aulast=Garc%C3%ADa%20M%C3%A1rquez&amp;rft.aufirst=Gabriel'></span></span>
+	    		<br />
+				</div>
+				<div id="el1902Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='c0fac31823b1b6a1b87bd6cc9857647e' datetime='1794730302'><table style='width:100%'><tr><td>
+		<ul id='onglets_isbd_public1902' class='onglets_isbd_public'>
+	  			<li id='onglet_public1902' class='isbd_public_active'><a href='#' title="Publico" onclick="show_what('PUBLIC', '1902'); return false;">Público</a></li>
+				<li id='onglet_isbd1902' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '1902'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public1902' style='display:block;'><table><tr class='tr_title'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Título :</span></td>
+					<td class='public_line_value'><span class='public_title'>Cien años de soledad</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Tipo de documento:</span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texto impreso</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Autores:</span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=13474' >Gabriel García Márquez</a></span></td>
+				</tr><tr class='tr_ed1'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Editorial:</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=813' >Bogota : El Tiempo</a></span></td>
+				</tr><tr class='tr_ed2'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Otro editor:</span></td>
+					<td class='public_line_value'><span class='public_ed2'><a href='./index.php?lvl=publisher_see&id=94' >2001</a></span></td>
+				</tr><tr class='tr_size'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Dimensiones:</span></td>
+					<td class='public_line_value'><span class='public_size'>318 p</span></td>
+				</tr><tr class='tr_code'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>ISBN/ISSN/DL:</span></td>
+					<td class='public_line_value'><span class='public_code'>978-958-8089-12-6</span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Palabras clave:</span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=LITERATURA+COLOMBIANA&tags=ok' >LITERATURA COLOMBIANA</a></span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd1902' style='display:none;'>Cien años de soledad [texto impreso] / <a href='./index.php?lvl=author_see&id=13474' >Gabriel García Márquez</a>&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=813' >Bogota : El Tiempo</a>&nbsp;: <a href='./index.php?lvl=publisher_see&id=94' >2001</a>, [s.d.]&nbsp;.&nbsp;-&nbsp;&nbsp;; 318 p.<br /><b>ISBN</b>&nbsp;: 978-958-8089-12-6<table><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Palabras clave:</span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=LITERATURA+COLOMBIANA&tags=ok' >LITERATURA COLOMBIANA</a></span></td>
+				</tr></table></div></td></tr></table>
+					<h3>Reserva</h3><a href='#' onClick="if(confirm('¿Realmente desea reservar este documento?')){w=window.open('./do_resa.php?lvl=resa&id_notice=1902&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Reservar este documento</a><br />
+<h3><span id='titre_exemplaires' class='titre_exemplaires'>Ejemplares (1)</span></h3>
+<table cellpadding='2' class='exemplaires' style='width:100%'>
+<tr class='thead'><th class='expl_header_expl_cb'>C&oacute;digo de barras</th><th class='expl_header_expl_cote'>Signatura</th><th class='expl_header_tdoc_libelle'>Tipo de medio</th><th class='expl_header_location_libelle'>Ubicaci&oacute;n</th><th class='expl_header_section_libelle'>Secci&oacute;n</th><th class='expl_header_statut'>Estado</th></tr><tr class='even item_expl expl_available'><td id='expl_2506' class='expl_cb'>00001163</td><td class='expl_cote'>Co863.6/G216c</td><td class='tdoc_libelle'>Libro</td><td class='location_libelle'>Biblioteca Principal -Medell&iacute;n</td><td class='section_libelle'>Literatura</td><td class='expl_situation'><strong>Disponible</strong> </td></tr>
+</table></div>
+			<div id="el3878Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el3878Img" title="+ info" alt="+ info" style='border:0px' onClick="expandBase('el3878', true);  return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_3878"><span class="statutnot1" title="Dep&oacute;sito"></span><span  notice='3878'  class='header_title'>Del tranvía de mulas al metro de Medellin</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=2924'>Restrepo Botero, Antonio</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Del%20tranv%C3%ADa%20de%20mulas%20al%20metro%20de%20Medellin&amp;rft.title=Del%20tranv%C3%ADa%20de%20mulas%20al%20metro%20de%20Medellin%20%3A%20cien%20a%C3%B1os%20de%20esfuerzos%20para%20desarrollar%20un%20sistema%20de%20transporte%20masivo%20en%20el%20Vallde%20Aburra&amp;rft.tpages=T.%201&amp;rft.date=2004&amp;rft_id=&amp;rft.pub=Temis&amp;rft.place=Bogota&amp;rft.edition=1%20ed&amp;rft.au=Restrepo%20Botero%2C%20Antonio&amp;rft.aulast=Restrepo%20Botero%2C%20Antonio&amp;rft.aufirst='></span></span>
+	    		<br />
+				</div>
+				<div id="el3878Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='a98738bcf535c5cfb9bda0dfe7b5574a' datetime='1794730302'><table style='width:100%'><tr><td>
+		<ul id='onglets_isbd_public3878' class='onglets_isbd_public'>
+	  			<li id='onglet_public3878' class='isbd_public_active'><a href='#' title="Publico" onclick="show_what('PUBLIC', '3878'); return false;">Público</a></li>
+				<li id='onglet_isbd3878' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '3878'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public3878' style='display:block;'><table><tr class='tr_title'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Título :</span></td>
+					<td class='public_line_value'><span class='public_title'>Del tranvía de mulas al metro de Medellin&nbsp;: cien años de esfuerzos para desarrollar un sistema de transporte masivo en el Vallde Aburra</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Tipo de documento:</span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texto impreso</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Autores:</span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=2924' >Restrepo Botero, Antonio</a></span></td>
+				</tr><tr class='tr_mention'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Mención de edición:</span></td>
+					<td class='public_line_value'><span class='public_mention'>1 ed</span></td>
+				</tr><tr class='tr_ed1'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Editorial:</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=1274' >Bogota : Temis</a></span></td>
+				</tr><tr class='tr_year'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Fecha de publicación:</span></td>
+					<td class='public_line_value'><span class='public_year'>2004</span></td>
+				</tr><tr class='tr_npages'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Número de páginas:</span></td>
+					<td class='public_line_value'><span class='public_npages'>T. 1</span></td>
+				</tr><tr class='tr_ill'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Il.:</span></td>
+					<td class='public_line_value'><span class='public_ill'>il,</span></td>
+				</tr><tr class='tr_size'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Dimensiones:</span></td>
+					<td class='public_line_value'><span class='public_size'>Pasta dura</span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Palabras clave:</span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=HISTOR%C3%8DA+DEL+TRANSPORTE%2C+MEDELLIN-ANTIOQUIA%2C+SERVICIOS+PUBLICOS%2C+TRANSPORTE+DE+CARGA%2C+TRANSPORTE+DE+PASAJEROS%2C+TRANSPORTE+URBAJO%2C+++TRANV%C3%8DAS&tags=ok' >HISTORÍA DEL TRANSPORTE, MEDELLIN-ANTIOQUIA, SERVICIOS PUBLICOS, TRANSPORTE DE CARGA, TRANSPORTE DE PASAJEROS, TRANSPORTE URBAJO,   TRANVÍAS</a></span></td>
+				</tr><tr class='tr_contenu'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Nota de contenido:</span></td>
+					<td class='public_line_value'><span class='public_contenu'>Presentación // Capitulo 1. El transporte en Medellín o el eterno retorno // Capitulo 2. El tranvía de mulas: sueño de modernidad // Capitulo 3. El tranvía eléctrico: materialización del progreso // Capitulo 4. El inverosímil tranvía de Oriente // capítulo 5. La secuencia de los hechos // capítulo 6. Los planos de Medellín anticipan la ciudad futura // capítulo 7. La memoria visual del tranvía // capítulo 8. Fuentes primarias y secundarias.</span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd3878' style='display:none;'>Del tranvía de mulas al metro de Medellin&nbsp;: cien años de esfuerzos para desarrollar un sistema de transporte masivo en el Vallde Aburra [texto impreso] / <a href='./index.php?lvl=author_see&id=2924' >Restrepo Botero, Antonio</a> &nbsp;. -&nbsp; 1 ed&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=1274' >Bogota : Temis</a>, 2004&nbsp;.&nbsp;-&nbsp;T. 1&nbsp;: il,&nbsp;; Pasta dura.<table><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Palabras clave:</span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=HISTOR%C3%8DA+DEL+TRANSPORTE%2C+MEDELLIN-ANTIOQUIA%2C+SERVICIOS+PUBLICOS%2C+TRANSPORTE+DE+CARGA%2C+TRANSPORTE+DE+PASAJEROS%2C+TRANSPORTE+URBAJO%2C+++TRANV%C3%8DAS&tags=ok' >HISTORÍA DEL TRANSPORTE, MEDELLIN-ANTIOQUIA, SERVICIOS PUBLICOS, TRANSPORTE DE CARGA, TRANSPORTE DE PASAJEROS, TRANSPORTE URBAJO,   TRANVÍAS</a></span></td>
+				</tr><tr class='tr_contenu'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Nota de contenido:</span></td>
+					<td class='public_line_value'><span class='public_contenu'>Presentación // Capitulo 1. El transporte en Medellín o el eterno retorno // Capitulo 2. El tranvía de mulas: sueño de modernidad // Capitulo 3. El tranvía eléctrico: materialización del progreso // Capitulo 4. El inverosímil tranvía de Oriente // capítulo 5. La secuencia de los hechos // capítulo 6. Los planos de Medellín anticipan la ciudad futura // capítulo 7. La memoria visual del tranvía // capítulo 8. Fuentes primarias y secundarias.</span></td>
+				</tr></table></div></td></tr></table>
+					<h3>Reserva</h3><a href='#' onClick="if(confirm('¿Realmente desea reservar este documento?')){w=window.open('./do_resa.php?lvl=resa&id_notice=3878&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Reservar este documento</a><br />
+<h3><span id='titre_exemplaires' class='titre_exemplaires'>Ejemplares (1)</span></h3>
+<table cellpadding='2' class='exemplaires' style='width:100%'>
+<tr class='thead'><th class='expl_header_expl_cb'>C&oacute;digo de barras</th><th class='expl_header_expl_cote'>Signatura</th><th class='expl_header_tdoc_libelle'>Tipo de medio</th><th class='expl_header_location_libelle'>Ubicaci&oacute;n</th><th class='expl_header_section_libelle'>Secci&oacute;n</th><th class='expl_header_statut'>Estado</th></tr><tr class='even item_expl expl_available'><td id='expl_5300' class='expl_cb'>00006199</td><td class='expl_cote'>388.09/R436</td><td class='tdoc_libelle'>Libro</td><td class='location_libelle'>Biblioteca Principal -Medell&iacute;n</td><td class='section_libelle'>Colecci&oacute;n General</td><td class='expl_situation'><strong>Disponible</strong> </td></tr>
+</table></div>
+			<div id="el11936Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el11936Img" title="+ info" alt="+ info" style='border:0px' onClick="expandBase('el11936', true);  return false;" hspace="3" /><img src="./images/icon_art_16x16.gif" alt='Article: texto impreso' title='Article: texto impreso'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_11936"><span class="statutnot1" title="Dep&oacute;sito"></span><span  notice='11936'  class='header_title'>La experiencia real es clave para formar emprendedores</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=13812'>Blanca Narváez Vega de Seoane</a></span> <span class='header_perio'><i>en Emprendedores, No. 228 (Septiembre de 2016)</i></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rft.genre=article&amp;rft.atitle=La%20experiencia%20real%20es%20clave%20para%20formar%20emprendedores&amp;rft.jtitle=Emprendedores&amp;rft.issue=No.%20228&amp;rft.date=Septiembre%20de%202016&amp;rft.epage=p.%2016&amp;rft_id=&amp;rft.au=Blanca%20Narv%C3%A1ez%20Vega%20de%20Seoane&amp;rft.aulast=Narv%C3%A1ez%20Vega%20de%20Seoane&amp;rft.aufirst=Blanca'></span></span>
+	    		<br />
+				</div>
+				<div id="el11936Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='ba5eb4d35695e3699ff094412fdef8d7' datetime='1794730302'><table style='width:100%'><tr><td>
+		<ul id='onglets_isbd_public11936' class='onglets_isbd_public'>
+	  			<li id='onglet_public11936' class='isbd_public_active'><a href='#' title="Publico" onclick="show_what('PUBLIC', '11936'); return false;">Público</a></li>
+				<li id='onglet_isbd11936' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '11936'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public11936' style='display:block;'><span class='fond-article'>[artículo]</span>&nbsp;<table><tr class='tr_title'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Título :</span></td>
+					<td class='public_line_value'><span class='public_title'>La experiencia real es clave para formar emprendedores</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Tipo de documento:</span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texto impreso</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Autores:</span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=13812' >Blanca Narváez Vega de Seoane</a>, Autor</span></td>
+				</tr><tr class='tr_year'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Fecha de publicación:</span></td>
+					<td class='public_line_value'><span class='public_year'>2016</span></td>
+				</tr><tr class='tr_npages'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Artículo en la página:</span></td>
+					<td class='public_line_value'><span class='public_npages'>p. 16</span></td>
+				</tr><tr class='tr_langues'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Idioma :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Español (<i>spa</i>)</span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Palabras clave:</span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=FORMACI%C3%93N+DE+EMPRENDEDORES%2C+BLANCA+NARV%C3%81EZ+VEGA+DE+SEOANE-ENTREVISTA%2C+ENTREVISTA%2C+FUNDACI%C3%93N+JUNIOR+ACHIEVEMENT&tags=ok' >FORMACIÓN DE EMPRENDEDORES, BLANCA NARVÁEZ VEGA DE SEOANE-ENTREVISTA, ENTREVISTA, FUNDACIÓN JUNIOR ACHIEVEMENT</a></span></td>
+				</tr><tr class='tr_nresume'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Resumen:</span></td>
+					<td class='public_line_value'><span class='public_nresume'>La Fundación que dirige lleva cien años impulsando el emprendimiento desde EEUU. En 2001 llegó a España y desde entonces dan formación a cinco mil chicos españoles que desde los diez años aprenden a transformar sus ideas en una empresa real</span></td>
+				</tr><br /><b>in</b> <a href='./index.php?lvl=notice_display&id=10599' ><span class='perio_title'>Emprendedores</span></a> > <a href='./index.php?lvl=bulletin_display&id=370' ><span class='bull_title'>No. 228  (Septiembre de 2016)</span></a> .&nbsp;-&nbsp;p. 16</table>
+</div>
+					<div id='div_isbd11936' style='display:none;'><span class='fond-article'>[artículo]</span>&nbsp;La experiencia real es clave para formar emprendedores [texto impreso] / <a href='./index.php?lvl=author_see&id=13812' >Blanca Narváez Vega de Seoane</a>, Autor&nbsp;.&nbsp;-&nbsp;2016&nbsp;.&nbsp;-&nbsp;p. 16.<br /><span class='etiq_champ'>Idioma</span>&nbsp;: Español (<i>spa</i>)<br /><b>in</b> <a href='./index.php?lvl=notice_display&id=10599' ><span class='perio_title'>Emprendedores</span></a> > <a href='./index.php?lvl=bulletin_display&id=370' ><span class='bull_title'>No. 228  (Septiembre de 2016)</span></a> .&nbsp;-&nbsp;p. 16<table><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Palabras clave:</span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=FORMACI%C3%93N+DE+EMPRENDEDORES%2C+BLANCA+NARV%C3%81EZ+VEGA+DE+SEOANE-ENTREVISTA%2C+ENTREVISTA%2C+FUNDACI%C3%93N+JUNIOR+ACHIEVEMENT&tags=ok' >FORMACIÓN DE EMPRENDEDORES, BLANCA NARVÁEZ VEGA DE SEOANE-ENTREVISTA, ENTREVISTA, FUNDACIÓN JUNIOR ACHIEVEMENT</a></span></td>
+				</tr><tr class='tr_nresume'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Resumen:</span></td>
+					<td class='public_line_value'><span class='public_nresume'>La Fundación que dirige lleva cien años impulsando el emprendimiento desde EEUU. En 2001 llegó a España y desde entonces dan formación a cinco mil chicos españoles que desde los diez años aprenden a transformar sus ideas en una empresa real</span></td>
+				</tr></table></div></td></tr></table>
+					</div>
+			<div id="el12591Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el12591Img" title="+ info" alt="+ info" style='border:0px' onClick="expandBase('el12591', true);  return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_12591"><span class="statutnot4" title="Disponible"></span><span  notice='12591'  class='header_title'>Fidelización de clientes</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=15302'>Juan Carlos Alcaide</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Fidelizaci%C3%B3n%20de%20clientes&amp;rft.title=Fidelizaci%C3%B3n%20de%20clientes&amp;rft.isbn=978-84-15986-89-8&amp;rft.tpages=415%20p&amp;rft.date=2015&amp;rft_id=&amp;rft.pub=Madrid%20%3A%20Esic%20editorial&amp;rft.edition=2a%20ed&amp;rft.au=Juan%20Carlos%20Alcaide&amp;rft.aulast=Alcaide&amp;rft.aufirst=Juan%20Carlos'></span></span>
+	    		<br />
+				</div>
+				<div id="el12591Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='5666312ee0c563f632758655323b789b' datetime='1794730302'><table style='width:100%'><tr><td>
+		<ul id='onglets_isbd_public12591' class='onglets_isbd_public'>
+	  			<li id='onglet_public12591' class='isbd_public_active'><a href='#' title="Publico" onclick="show_what('PUBLIC', '12591'); return false;">Público</a></li>
+				<li id='onglet_isbd12591' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '12591'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public12591' style='display:block;'><table><tr class='tr_title'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Título :</span></td>
+					<td class='public_line_value'><span class='public_title'>Fidelización de clientes</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Tipo de documento:</span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texto impreso</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Autores:</span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=15302' >Juan Carlos Alcaide</a>, Autor</span></td>
+				</tr><tr class='tr_mention'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Mención de edición:</span></td>
+					<td class='public_line_value'><span class='public_mention'>2a ed</span></td>
+				</tr><tr class='tr_ed1'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Editorial:</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=2052' >Madrid : Esic editorial</a></span></td>
+				</tr><tr class='tr_year'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Fecha de publicación:</span></td>
+					<td class='public_line_value'><span class='public_year'>2015</span></td>
+				</tr><tr class='tr_npages'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Número de páginas:</span></td>
+					<td class='public_line_value'><span class='public_npages'>415 p</span></td>
+				</tr><tr class='tr_ill'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Il.:</span></td>
+					<td class='public_line_value'><span class='public_ill'>il.</span></td>
+				</tr><tr class='tr_size'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Dimensiones:</span></td>
+					<td class='public_line_value'><span class='public_size'>Rústica</span></td>
+				</tr><tr class='tr_code'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>ISBN/ISSN/DL:</span></td>
+					<td class='public_line_value'><span class='public_code'>978-84-15986-89-8</span></td>
+				</tr><tr class='tr_langues'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Idioma :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Español (<i>spa</i>)</span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Palabras clave:</span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=COMPORTAMIENTO+DEL+CONSUMIDOR%2C+LEALTAD+DEL+CONSUMIDOR%2C+PSICOLOG%C3%8DA+DEL+CONSUMIDOR%2C+COMUNICACI%C3%93N+EN+ADMINISTRACI%C3%93N&tags=ok' >COMPORTAMIENTO DEL CONSUMIDOR, LEALTAD DEL CONSUMIDOR, PSICOLOGÍA DEL CONSUMIDOR, COMUNICACIÓN EN ADMINISTRACIÓN</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Clasificación:</span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=1382' >658.834 – Administración general – Administración de la distribución (Mercadeo) – Investigación y análisis de mercados – Investigación del consumidor – Actitudes, preferencias, reacciones de consumidor</a> <span></span></span></td>
+				</tr><tr class='tr_nresume'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Resumen:</span></td>
+					<td class='public_line_value'><span class='public_nresume'>La calidad ya no se limita a cumplir con unos atributos o beneficios básicos de un producto o servicio (que se consideran naturales). No es tanto el QUÉ se cede a cambio de un precio, sino el CÓMO se entrega, lo que influye en la percepción de valor. La fidelización de clientes se ha convertido en los últimos años en una quimera y en una utopía, de la que todo el mundo habla, pero pocos la han visto. Y sin embargo, existe. Algunas empresas han logrado recurrencia de sus clientes, vía satisfacción y enriquecimiento emocional de la relación. Menos puntos, más cariño y emociones. Esa parece haber sido la moraleja que nos ha enseñado el mercado en los últimos años. Calidad, calidez y precio justo. Experiencias dignas de ser contadas. Empleados fieles. CRM adecuado y segmentación con base tecnológica. ¿Qué es en realidad lo que influye de verdad en la fidelización de la clientela? Todos esos aspectos se analizan de forma minuciosa en este libro de Juan Carlos Alcaide. Un texto muy didáctico, donde se sigue un mismo esquema en todos los capítulos: una introducción consistente en un recordatorio de lo visto en el anterior capítulo, el desarrollo de la temática y finalmente unas conclusiones seguidas por un apartado de ejemplos, casos y vivencias que ilustran la teoría.<br />
+Juan Carlos Alcaide es sociólogo especializado en Marketingy consultor desde hace veinte años. Es profesor de ESIC y otros centros de formación directiva desde hace varios lustros. Dirige la consultora MdS (www.marketingdeservicios. com) y ha trabajado en más de cien empresas líderes en proyectos de fidelización, servicio y gestión de clientes.</span></td>
+				</tr><tr class='tr_contenu'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Nota de contenido:</span></td>
+					<td class='public_line_value'><span class='public_contenu'>Contenido: Capítulo 1. Planteamientos básicos: el trébol de la fidelización. // Capítulo 2. Información del cliente. // Capítulo 3. Marketing interno. // Capítulo 4. Comunicación. // Capítulo 5. Gestión de la experiencia del cliente. // Capítulo 6. Incentivos y privilegios</span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd12591' style='display:none;'>Fidelización de clientes [texto impreso] / <a href='./index.php?lvl=author_see&id=15302' >Juan Carlos Alcaide</a>, Autor &nbsp;. -&nbsp; 2a ed&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=2052' >Madrid : Esic editorial</a>, 2015&nbsp;.&nbsp;-&nbsp;415 p&nbsp;: il.&nbsp;; Rústica.<br /><b>ISBN</b>&nbsp;: 978-84-15986-89-8<br /><span class='etiq_champ'>Idioma</span>&nbsp;: Español (<i>spa</i>)<table><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Palabras clave:</span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=COMPORTAMIENTO+DEL+CONSUMIDOR%2C+LEALTAD+DEL+CONSUMIDOR%2C+PSICOLOG%C3%8DA+DEL+CONSUMIDOR%2C+COMUNICACI%C3%93N+EN+ADMINISTRACI%C3%93N&tags=ok' >COMPORTAMIENTO DEL CONSUMIDOR, LEALTAD DEL CONSUMIDOR, PSICOLOGÍA DEL CONSUMIDOR, COMUNICACIÓN EN ADMINISTRACIÓN</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Clasificación:</span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=1382' >658.834 – Administración general – Administración de la distribución (Mercadeo) – Investigación y análisis de mercados – Investigación del consumidor – Actitudes, preferencias, reacciones de consumidor</a> <span></span></span></td>
+				</tr><tr class='tr_nresume'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Resumen:</span></td>
+					<td class='public_line_value'><span class='public_nresume'>La calidad ya no se limita a cumplir con unos atributos o beneficios básicos de un producto o servicio (que se consideran naturales). No es tanto el QUÉ se cede a cambio de un precio, sino el CÓMO se entrega, lo que influye en la percepción de valor. La fidelización de clientes se ha convertido en los últimos años en una quimera y en una utopía, de la que todo el mundo habla, pero pocos la han visto. Y sin embargo, existe. Algunas empresas han logrado recurrencia de sus clientes, vía satisfacción y enriquecimiento emocional de la relación. Menos puntos, más cariño y emociones. Esa parece haber sido la moraleja que nos ha enseñado el mercado en los últimos años. Calidad, calidez y precio justo. Experiencias dignas de ser contadas. Empleados fieles. CRM adecuado y segmentación con base tecnológica. ¿Qué es en realidad lo que influye de verdad en la fidelización de la clientela? Todos esos aspectos se analizan de forma minuciosa en este libro de Juan Carlos Alcaide. Un texto muy didáctico, donde se sigue un mismo esquema en todos los capítulos: una introducción consistente en un recordatorio de lo visto en el anterior capítulo, el desarrollo de la temática y finalmente unas conclusiones seguidas por un apartado de ejemplos, casos y vivencias que ilustran la teoría.<br />
+Juan Carlos Alcaide es sociólogo especializado en Marketingy consultor desde hace veinte años. Es profesor de ESIC y otros centros de formación directiva desde hace varios lustros. Dirige la consultora MdS (www.marketingdeservicios. com) y ha trabajado en más de cien empresas líderes en proyectos de fidelización, servicio y gestión de clientes.</span></td>
+				</tr><tr class='tr_contenu'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Nota de contenido:</span></td>
+					<td class='public_line_value'><span class='public_contenu'>Contenido: Capítulo 1. Planteamientos básicos: el trébol de la fidelización. // Capítulo 2. Información del cliente. // Capítulo 3. Marketing interno. // Capítulo 4. Comunicación. // Capítulo 5. Gestión de la experiencia del cliente. // Capítulo 6. Incentivos y privilegios</span></td>
+				</tr></table></div></td></tr></table>
+					<h3>Reserva</h3><a href='#' onClick="if(confirm('¿Realmente desea reservar este documento?')){w=window.open('./do_resa.php?lvl=resa&id_notice=12591&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Reservar este documento</a><br />
+<h3><span id='titre_exemplaires' class='titre_exemplaires'>Ejemplares (1)</span></h3>
+<table cellpadding='2' class='exemplaires' style='width:100%'>
+<tr class='thead'><th class='expl_header_expl_cb'>C&oacute;digo de barras</th><th class='expl_header_expl_cote'>Signatura</th><th class='expl_header_tdoc_libelle'>Tipo de medio</th><th class='expl_header_location_libelle'>Ubicaci&oacute;n</th><th class='expl_header_section_libelle'>Secci&oacute;n</th><th class='expl_header_statut'>Estado</th></tr><tr class='even item_expl expl_available'><td id='expl_18578' class='expl_cb'>00006836</td><td class='expl_cote'>658.8343/A346</td><td class='tdoc_libelle'>Libro</td><td class='location_libelle'>Biblioteca Principal -Medell&iacute;n</td><td class='section_libelle'>Colecci&oacute;n General</td><td class='expl_situation'><strong>Disponible</strong> </td></tr>
+</table></div>
+			<div id="el10173Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el10173Img" title="+ info" alt="+ info" style='border:0px' onClick="expandBase('el10173', true);  return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_10173"><span class="statutnot1" title="Dep&oacute;sito"></span><span  notice='10173'  class='header_title'>Historia de la psicología</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=9992'>Tortosa, Francisco</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Historia%20de%20la%20psicolog%C3%ADa&amp;rft.title=Historia%20de%20la%20psicolog%C3%ADa&amp;rft.isbn=978-84-481-9824-4&amp;rft.tpages=518&amp;rft.date=2006&amp;rft_id=&amp;rft.pub=McGraw-Hill&amp;rft.place=Madrid&amp;rft.au=Tortosa%2C%20Francisco&amp;rft.au=Civera%2C%20Cristina&amp;rft.aulast=Tortosa%2C%20Francisco&amp;rft.aufirst='></span></span>
+	    		<br />
+				</div>
+				<div id="el10173Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='87d2dcb75956e21fded5e633cbed36f9' datetime='1794730302'><table style='width:100%'><tr><td>
+		<ul id='onglets_isbd_public10173' class='onglets_isbd_public'>
+	  			<li id='onglet_public10173' class='isbd_public_active'><a href='#' title="Publico" onclick="show_what('PUBLIC', '10173'); return false;">Público</a></li>
+				<li id='onglet_isbd10173' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '10173'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public10173' style='display:block;'><table><tr class='tr_title'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Título :</span></td>
+					<td class='public_line_value'><span class='public_title'>Historia de la psicología</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Tipo de documento:</span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texto impreso</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Autores:</span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=9992' >Tortosa, Francisco</a> ; <a href='./index.php?lvl=author_see&id=7879' >Civera, Cristina</a>, Autor</span></td>
+				</tr><tr class='tr_ed1'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Editorial:</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=186' >Madrid : McGraw-Hill</a></span></td>
+				</tr><tr class='tr_year'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Fecha de publicación:</span></td>
+					<td class='public_line_value'><span class='public_year'>2006</span></td>
+				</tr><tr class='tr_npages'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Número de páginas:</span></td>
+					<td class='public_line_value'><span class='public_npages'>518</span></td>
+				</tr><tr class='tr_ill'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Il.:</span></td>
+					<td class='public_line_value'><span class='public_ill'>il.</span></td>
+				</tr><tr class='tr_size'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Dimensiones:</span></td>
+					<td class='public_line_value'><span class='public_size'>Rústica</span></td>
+				</tr><tr class='tr_code'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>ISBN/ISSN/DL:</span></td>
+					<td class='public_line_value'><span class='public_code'>978-84-481-9824-4</span></td>
+				</tr><tr class='tr_ngen'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Nota general:</span></td>
+					<td class='public_line_value'><span class='public_ngen'>Incluye &iacute;ndice</span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Palabras clave:</span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=CONDUCTA%28PSICOLOGIA%29%2C+HISTORIA+DE+LA+PSICOLOGIA%2C+PSICOANALISIS%2C+PSICOLOGIA%2C+PSICOLOGIA-ESCUELAS%2C+PSICOLOGIA-TEORIA%2C+REFLEXOLOGIA&tags=ok' >CONDUCTA(PSICOLOGIA), HISTORIA DE LA PSICOLOGIA, PSICOANALISIS, PSICOLOGIA, PSICOLOGIA-ESCUELAS, PSICOLOGIA-TEORIA, REFLEXOLOGIA</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Clasificación:</span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=476' >150.9 - Psicología - Tratamiento histórico, geográfico, de personas</a> <span></span></span></td>
+				</tr><tr class='tr_nresume'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Resumen:</span></td>
+					<td class='public_line_value'><span class='public_nresume'>La reconstrucción de esos poco más de cien años de historia de la psicología en las principales áreas geo-político-lingüísticas de Europa, en EE.UU., y en el mundo de habla castellana, constituye el núcleo del libro. Además, se incluye una parte dedicada a los albores de la psicología como disciplina, donde, desde el Renacimiento, se trazan, en las ciencias del espíritu y en las naturales, las líneas maestras que llevaron a las primeras propuestas formalmente psicológicas de mediados del siglo XIX, y otra, muy amplia, se ocupa de la práctica psicotecnológica, una especie de cenicienta en los no muy numerosos manuales que la incluyen. Todo ello, junto a los frecuentes esbozos biográficos y una cuidada selección de imágenes y fotografías, permite al lector la construcción de su propio mapa cognitivo, en el que el devenir de la psicología queda conectado con eventos históricos acontecidos en diversos escenarios, incluidos los cotidianos.</span></td>
+				</tr><tr class='tr_contenu'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Nota de contenido:</span></td>
+					<td class='public_line_value'><span class='public_contenu'>Contenido: CAPÍTULO 1. Ciencia e Historia de la Ciencia. // CAPÍTULO 2. Psicología e Historia de la Psicología. // CAPÍTULO 3. Primeros Planteamientos Psicológicos en las Ciencias del Espíritu. // CAPÍTULO 4. “Lo Psicológico” en la primera mitad del siglo XIX. // CAPÍTULO 5. El planteamiento de lo “Psicológico” en la segunda mitad del siglo XIX. // CAPÍTULO 6. Formulación canónica de la Psicología en Europa. La Propuesta de Wilhelm Wundt. // CAPÍTULO 7. Otras Psicologías en el mundo de habla alemana. // CAPÍTULO 8. Nacimiento y primeros desarrollos de la Psicología científica en las Islas Británicas. // CAPÍTULO 9. Inicios de la Psicología en Francia. // CAPÍTULO 10. Inicios de la Psicología en Rusia. // CAPÍTULO 11. La psicología en Norteamérica. Los inicios de la tradición disciplinar. Primera formulación canónica. // CAPÍTULO 12. El despegue de la Psicología en EE.UU. // CAPÍTULO 13. La respuesta (psico)tecnológica. Psicotecnia y Psicología Clínica. // CAPÍTULO 14. La Psicología se constituye como disciplina en Europa. // CAPÍTULO 15. Estructuralismo frente a funcionalismo. // CAPÍTULO 16. El Psicoanálisis. // CAPÍTULO 17. La Reflexología. // CAPÍTULO 18. La conducta manifiesta al poder. // CAPÍTULO 19. La Gestalt y escuelas menores en la Psicología Académica en ALEMANIA. // CAPÍTULO 20. Nuevas fórmulas para el conductismo: Tolman y Hull. // CAPÍTULO 21. La Psicología francófona del período entreguerras. 22. Los inicios de una Psicología Soviética. El caso de la Teoría Socio-Histórica de L. S. Vygotski. // CAPÍTULO 23. Nacimiento y primeros desarrollos de Psicología en España. // CAPÍTULO 24. El Período formativo: La Psicología en América Latina durante la primera mitad del siglo XX. // CAPÍTULO 25. Profesionalización: La Psicología se sitúa en el mapa. // CAPÍTULO 26. La Psicología se ha consolidado como disciplina. // CAPÍTULO 27. Primera fuerza: El experimentalismo (ahora centrado sobre la conducta manifiesta). CAPÍTULO 28. Segunda fuerza: El Psicoanálisis. // CAPÍTULO 29. Tercera fuerza: La Psicología humanista. // CAPÍTULO 30. Primera fuerza: Siempre el Experimentalismo (ahora centrado de nuevo sobre la mente. // CAPÍTULO 31. Psicología Latinoamericana. El período contemporáneo. // CAPÍTULO 32. Psicología y profesión en la España contemporánea. // CAPÍTULO 33. Principios y conceptos básicos de la ética y la deontología del  psicólogo profesional. // CAPÍTULO 34. A modo de conclusión.</span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd10173' style='display:none;'>Historia de la psicología [texto impreso] / <a href='./index.php?lvl=author_see&id=9992' >Tortosa, Francisco</a> ; <a href='./index.php?lvl=author_see&id=7879' >Civera, Cristina</a>, Autor&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=186' >Madrid : McGraw-Hill</a>, 2006&nbsp;.&nbsp;-&nbsp;518&nbsp;: il.&nbsp;; Rústica.<br /><b>ISBN</b>&nbsp;: 978-84-481-9824-4<br />Incluye &iacute;ndice<table><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Palabras clave:</span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=CONDUCTA%28PSICOLOGIA%29%2C+HISTORIA+DE+LA+PSICOLOGIA%2C+PSICOANALISIS%2C+PSICOLOGIA%2C+PSICOLOGIA-ESCUELAS%2C+PSICOLOGIA-TEORIA%2C+REFLEXOLOGIA&tags=ok' >CONDUCTA(PSICOLOGIA), HISTORIA DE LA PSICOLOGIA, PSICOANALISIS, PSICOLOGIA, PSICOLOGIA-ESCUELAS, PSICOLOGIA-TEORIA, REFLEXOLOGIA</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Clasificación:</span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=476' >150.9 - Psicología - Tratamiento histórico, geográfico, de personas</a> <span></span></span></td>
+				</tr><tr class='tr_nresume'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Resumen:</span></td>
+					<td class='public_line_value'><span class='public_nresume'>La reconstrucción de esos poco más de cien años de historia de la psicología en las principales áreas geo-político-lingüísticas de Europa, en EE.UU., y en el mundo de habla castellana, constituye el núcleo del libro. Además, se incluye una parte dedicada a los albores de la psicología como disciplina, donde, desde el Renacimiento, se trazan, en las ciencias del espíritu y en las naturales, las líneas maestras que llevaron a las primeras propuestas formalmente psicológicas de mediados del siglo XIX, y otra, muy amplia, se ocupa de la práctica psicotecnológica, una especie de cenicienta en los no muy numerosos manuales que la incluyen. Todo ello, junto a los frecuentes esbozos biográficos y una cuidada selección de imágenes y fotografías, permite al lector la construcción de su propio mapa cognitivo, en el que el devenir de la psicología queda conectado con eventos históricos acontecidos en diversos escenarios, incluidos los cotidianos.</span></td>
+				</tr><tr class='tr_contenu'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Nota de contenido:</span></td>
+					<td class='public_line_value'><span class='public_contenu'>Contenido: CAPÍTULO 1. Ciencia e Historia de la Ciencia. // CAPÍTULO 2. Psicología e Historia de la Psicología. // CAPÍTULO 3. Primeros Planteamientos Psicológicos en las Ciencias del Espíritu. // CAPÍTULO 4. “Lo Psicológico” en la primera mitad del siglo XIX. // CAPÍTULO 5. El planteamiento de lo “Psicológico” en la segunda mitad del siglo XIX. // CAPÍTULO 6. Formulación canónica de la Psicología en Europa. La Propuesta de Wilhelm Wundt. // CAPÍTULO 7. Otras Psicologías en el mundo de habla alemana. // CAPÍTULO 8. Nacimiento y primeros desarrollos de la Psicología científica en las Islas Británicas. // CAPÍTULO 9. Inicios de la Psicología en Francia. // CAPÍTULO 10. Inicios de la Psicología en Rusia. // CAPÍTULO 11. La psicología en Norteamérica. Los inicios de la tradición disciplinar. Primera formulación canónica. // CAPÍTULO 12. El despegue de la Psicología en EE.UU. // CAPÍTULO 13. La respuesta (psico)tecnológica. Psicotecnia y Psicología Clínica. // CAPÍTULO 14. La Psicología se constituye como disciplina en Europa. // CAPÍTULO 15. Estructuralismo frente a funcionalismo. // CAPÍTULO 16. El Psicoanálisis. // CAPÍTULO 17. La Reflexología. // CAPÍTULO 18. La conducta manifiesta al poder. // CAPÍTULO 19. La Gestalt y escuelas menores en la Psicología Académica en ALEMANIA. // CAPÍTULO 20. Nuevas fórmulas para el conductismo: Tolman y Hull. // CAPÍTULO 21. La Psicología francófona del período entreguerras. 22. Los inicios de una Psicología Soviética. El caso de la Teoría Socio-Histórica de L. S. Vygotski. // CAPÍTULO 23. Nacimiento y primeros desarrollos de Psicología en España. // CAPÍTULO 24. El Período formativo: La Psicología en América Latina durante la primera mitad del siglo XX. // CAPÍTULO 25. Profesionalización: La Psicología se sitúa en el mapa. // CAPÍTULO 26. La Psicología se ha consolidado como disciplina. // CAPÍTULO 27. Primera fuerza: El experimentalismo (ahora centrado sobre la conducta manifiesta). CAPÍTULO 28. Segunda fuerza: El Psicoanálisis. // CAPÍTULO 29. Tercera fuerza: La Psicología humanista. // CAPÍTULO 30. Primera fuerza: Siempre el Experimentalismo (ahora centrado de nuevo sobre la mente. // CAPÍTULO 31. Psicología Latinoamericana. El período contemporáneo. // CAPÍTULO 32. Psicología y profesión en la España contemporánea. // CAPÍTULO 33. Principios y conceptos básicos de la ética y la deontología del  psicólogo profesional. // CAPÍTULO 34. A modo de conclusión.</span></td>
+				</tr></table></div></td></tr></table>
+					<h3>Reserva</h3><a href='#' onClick="if(confirm('¿Realmente desea reservar este documento?')){w=window.open('./do_resa.php?lvl=resa&id_notice=10173&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Reservar este documento</a><br />
+<h3><span id='titre_exemplaires' class='titre_exemplaires'>Ejemplares (1)</span></h3>
+<table cellpadding='2' class='exemplaires' style='width:100%'>
+<tr class='thead'><th class='expl_header_expl_cb'>C&oacute;digo de barras</th><th class='expl_header_expl_cote'>Signatura</th><th class='expl_header_tdoc_libelle'>Tipo de medio</th><th class='expl_header_location_libelle'>Ubicaci&oacute;n</th><th class='expl_header_section_libelle'>Secci&oacute;n</th><th class='expl_header_statut'>Estado</th></tr><tr class='even item_expl expl_available'><td id='expl_14113' class='expl_cb'>00001526</td><td class='expl_cote'>150.9/T712/Ej: 2</td><td class='tdoc_libelle'>Libro</td><td class='location_libelle'>Biblioteca Principal -Medell&iacute;n</td><td class='section_libelle'>Colecci&oacute;n General</td><td class='expl_situation'><strong>Disponible</strong> </td></tr>
+</table></div>
+				<div id="el13816Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el13816Img" title="+ info" alt="+ info" style='border:0px' param='a%3A11%3A%7Bs%3A2%3A%22id%22%3Bi%3A13816%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A14%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A68%3A%22.%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_concept%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%3Bs%3A19%3A%22lien_rech_authperso%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3Bs%3A5%3A%22token%22%3Bs%3A32%3A%221b39ec2af2ac7c82c06c25dcfd2e5ee6%22%3Bs%3A8%3A%22datetime%22%3Bi%3A1794730302%3B%7D' onClick="expandBase_ajax('el13816', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="./images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_13816"><span class="statutnot4" title="Disponible"></span><span  notice='13816'  class='header_title'>La historia universal en 100 preguntas</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=17100'>Iñigo Fernandez, Luis E.</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=La%20historia%20universal%20en%20100%20preguntas&amp;rft.title=La%20historia%20universal%20en%20100%20preguntas&amp;rft.isbn=978-84-9967-796-5&amp;rft.tpages=350%20p&amp;rft.date=2016&amp;rft_id=&amp;rft.pub=Madrid%3A%20Nowtilus&amp;rft.au=I%C3%B1igo%20Fernandez%2C%20Luis%20E.&amp;rft.aulast=I%C3%B1igo%20Fernandez%2C%20Luis%20E.&amp;rft.aufirst='></span></span>
+		    	<br />
+				</div>
+				<div id="el13816Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="./index.php?lvl=notice_display&id=13816" style="display:none;">Permalink</a>
+			
+		
+				<div id="el11772Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el11772Img" title="+ info" alt="+ info" style='border:0px' param='a%3A11%3A%7Bs%3A2%3A%22id%22%3Bi%3A11772%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A14%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A68%3A%22.%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_concept%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%3Bs%3A19%3A%22lien_rech_authperso%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3Bs%3A5%3A%22token%22%3Bs%3A32%3A%22707be7e38e31f7f02ca146ae79aa44fb%22%3Bs%3A8%3A%22datetime%22%3Bi%3A1794730302%3B%7D' onClick="expandBase_ajax('el11772', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="./images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_11772"><span class="statutnot4" title="Disponible"></span><span  notice='11772'  class='header_title'>Management</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=13244'>Colección Finanzas y Negocios</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Management&amp;rft.title=Management%20%3A%20Las%20100%20ideas%20que%20hicieron%20historia&amp;rft.isbn=978-987-1456-14-7&amp;rft.tpages=243%20p&amp;rft.date=2008&amp;rft_id=&amp;rft.series=Finanzas&amp;rft.pub=Buenos%20Aires%20%3A%20Cuatro%20Media&amp;rft.au=Colecci%C3%B3n%20Finanzas%20y%20Negocios&amp;rft.au=Tim%20Hindle&amp;rft.aulast=Colecci%C3%B3n%20Finanzas%20y%20Negocios&amp;rft.aufirst='></span></span>
+		    	<br />
+				</div>
+				<div id="el11772Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="./index.php?lvl=notice_display&id=11772" style="display:none;">Permalink</a>
+			
+		
+				<div id="el6910Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el6910Img" title="+ info" alt="+ info" style='border:0px' param='a%3A11%3A%7Bs%3A2%3A%22id%22%3Bi%3A6910%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A14%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A68%3A%22.%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_concept%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%3Bs%3A19%3A%22lien_rech_authperso%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3Bs%3A5%3A%22token%22%3Bs%3A32%3A%22e7fdde8ca956ad887bb305e5132b8993%22%3Bs%3A8%3A%22datetime%22%3Bi%3A1794730302%3B%7D' onClick="expandBase_ajax('el6910', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="./images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_6910"><span class="statutnot1" title="Dep&oacute;sito"></span><span  notice='6910'  class='header_title'>150 Juegos para la estimulacion adecuada : Actividades para acompanar el desarrollo del nino desde su nacimiento a los tres anos</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=5186'>Batllori, Jorge</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=150%20Juegos%20para%20la%20estimulacion%20adecuada%20%3A%20Actividades%20para%20acompanar%20el%20desarrollo%20del%20nino%20desde%20su%20nacimiento%20a%20los%20tres%20anos&amp;rft.title=150%20Juegos%20para%20la%20estimulacion%20adecuada%20%3A%20Actividades%20para%20acompanar%20el%20desarrollo%20del%20nino%20desde%20su%20nacimiento%20a%20los%20tres%20anos&amp;rft.isbn=978-84-342-2915-0&amp;rft.date=2008&amp;rft_id=&amp;rft.pub=Parramon&amp;rft.place=Barcelona&amp;rft.au=Batllori%2C%20Jorge&amp;rft.au=V%C3%ADctor%20Escandell&amp;rft.aulast=Batllori%2C%20Jorge&amp;rft.aufirst='></span></span>
+		    	<br />
+				</div>
+				<div id="el6910Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="./index.php?lvl=notice_display&id=6910" style="display:none;">Permalink</a>
+			
+		
+				<div id="el11469Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el11469Img" title="+ info" alt="+ info" style='border:0px' param='a%3A11%3A%7Bs%3A2%3A%22id%22%3Bi%3A11469%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A14%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A68%3A%22.%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_concept%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%3Bs%3A19%3A%22lien_rech_authperso%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3Bs%3A5%3A%22token%22%3Bs%3A32%3A%22046e6210e4090c83b8f908d4616a2698%22%3Bs%3A8%3A%22datetime%22%3Bi%3A1794730302%3B%7D' onClick="expandBase_ajax('el11469', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="./images/icon_art_16x16.gif" alt='Article: texto impreso' title='Article: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_11469"><span class="statutnot1" title="Dep&oacute;sito"></span><span  notice='11469'  class='header_title'>20 años de la Ley de Prevención de Riesgos Laborales</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=11771'>Mario Grau Ríos</a></span> <span class='header_perio'><i>en Formación de Seguridad Laboral, No. 144 (Diciembre de 2015)</i></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rft.genre=article&amp;rft.atitle=20%20a%C3%B1os%20de%20la%20Ley%20de%20Prevenci%C3%B3n%20de%20Riesgos%20Laborales&amp;rft.jtitle=Formaci%C3%B3n%20de%20Seguridad%20Laboral&amp;rft.issue=No.%20144&amp;rft.date=Diciembre%20de%202015&amp;rft.epage=p.%2093%20-%2094&amp;rft_id=&amp;rft.au=Mario%20Grau%20R%C3%ADos&amp;rft.aulast=Grau%20R%C3%ADos&amp;rft.aufirst=Mario'></span></span>
+		    	<br />
+				</div>
+				<div id="el11469Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="./index.php?lvl=notice_display&id=11469" style="display:none;">Permalink</a>
+			
+		
+				<div id="el11928Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el11928Img" title="+ info" alt="+ info" style='border:0px' param='a%3A11%3A%7Bs%3A2%3A%22id%22%3Bi%3A11928%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A14%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A68%3A%22.%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_concept%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%3Bs%3A19%3A%22lien_rech_authperso%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3Bs%3A5%3A%22token%22%3Bs%3A32%3A%2238ea249910c1b85908d5e9114dde4381%22%3Bs%3A8%3A%22datetime%22%3Bi%3A1794730302%3B%7D' onClick="expandBase_ajax('el11928', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="./images/icon_a_16x16.gif" alt='Monograph: texto impreso' title='Monograph: texto impreso'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_11928"><span class="statutnot1" title="Dep&oacute;sito"></span><span  notice='11928'  class='header_title'>30 Años del impuesto y algo más</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=13695'>Horacio Ayala Vela</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=30%20A%C3%B1os%20del%20impuesto%20y%20algo%20m%C3%A1s&amp;rft.title=30%20A%C3%B1os%20del%20impuesto%20y%20algo%20m%C3%A1s&amp;rft.isbn=978-958-98637-9-4&amp;rft.tpages=267%20p&amp;rft.date=2012&amp;rft_id=&amp;rft.pub=Bogot%C3%A1%20%3A%20Instituto%20Colombiano%20de%20Derecho%20Tributario&amp;rft.au=Horacio%20Ayala%20Vela&amp;rft.aulast=Ayala%20Vela&amp;rft.aufirst=Horacio'></span></span>
+		    	<br />
+				</div>
+				<div id="el11928Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="./index.php?lvl=notice_display&id=11928" style="display:none;">Permalink</a>
+			
+		</blockquote></div></div></div><form name='mc_values' action='./index.php?lvl=more_results' style='display:none' method='post'>
+<input type='hidden' name='search[]' value='s_4'/><input type='hidden' name='inter_0_s_4' value=''/><input type='hidden' name='op_0_s_4' value='EQ'/><input type='hidden' name='field_0_s_4[]' value='a:2:{s:17:&quot;serialized_search&quot;;s:273:&quot;a:2:{s:6:&quot;SEARCH&quot;;a:1:{i:0;s:3:&quot;f_7&quot;;}i:0;a:6:{s:6:&quot;SEARCH&quot;;s:3:&quot;f_7&quot;;s:2:&quot;OP&quot;;s:7:&quot;BOOLEAN&quot;;s:5:&quot;FIELD&quot;;a:1:{i:0;s:21:&quot;Cien a&ntilde;os de soledad&quot;;}s:6:&quot;FIELD1&quot;;s:0:&quot;&quot;;s:5:&quot;INTER&quot;;s:0:&quot;&quot;;s:8:&quot;FIELDVAR&quot;;a:2:{s:6:&quot;is_num&quot;;a:1:{i:0;s:1:&quot;0&quot;;}s:10:&quot;ck_affiche&quot;;a:1:{i:0;s:1:&quot;0&quot;;}}}}&quot;;s:11:&quot;search_type&quot;;s:20:&quot;search_simple_fields&quot;;}'/><input type='hidden' name='count' value='2647'/><input type='hidden' name='page' value='1'/>
+			<input type="hidden" name="nb_per_page_custom" value="">
+</form><form name="form_values" action="./index.php?lvl=more_results" method="post">
+<input type='hidden' value='' id='filtre_compare_form_values' name='filtre_compare'><input type="hidden" name="user_query" value="Cien a&ntilde;os de soledad">
+<input type="hidden" name="mode" value="tous">
+<input type="hidden" name="count" value="2647">
+<input type="hidden" name="typdoc" value=""><input type="hidden" name="id_authperso" value="0"><input type="hidden" name="clause" value="">
+<input type="hidden" name="clause_bull" value="">
+<input type="hidden" name="clause_bull_num_notice" value="">
+<input type="hidden" name="join" value="">
+<input type="hidden" name="tri" value="">
+<input type="hidden" name="pert" value="">
+<input type="hidden" name="l_typdoc" value="a">
+<input type="hidden" id='author_type' name="author_type" value="">
+<input type="hidden" id="id_thes" name="id_thes" value="">
+<input type="hidden" name="surligne" value="0">
+<input type="hidden" name="tags" value="">
+<input type="hidden" name="page" value="1">
+				<input type="hidden" name="nb_per_page_custom" value="">
+<input type="hidden" name="nbexplnum_to_photo" value="">
+</form><br/><div id='navbar'><hr />
+<div style='text-align:center'>
+<script type='text/javascript'>
+<!--
+	function test_form(form)
+	{
+
+		if (form.page.value > 265)
+		{
+			alert("¡Número de página demasiado elevado!");
+			form.page.focus();
+			return false;
+		}
+
+		return true;
+	}
+-->
+</script><div class="navbar">
+<form name='form' action='javascript:document.form_values.page.value=document.form.page.value; document.form_values.submit()' method='post' onsubmit='return test_form(form)'>
+<img src='./images/first-grey.png' alt='primera página'>
+<img src='./images/prev-grey.png' alt='página anterior'>
+<strong>1</strong> <a class='navbar_page' href='javascript:document.form_values.page.value=2; document.form_values.submit()' >2</a> <a class='navbar_page' href='javascript:document.form_values.page.value=3; document.form_values.submit()' >3</a> <a class='navbar_page' href='javascript:document.form_values.page.value=4; document.form_values.submit()' >4</a> <a class='navbar_page' href='javascript:document.form_values.page.value=5; document.form_values.submit()' >5</a> <a class='navbar_page' href='javascript:document.form_values.page.value=6; document.form_values.submit()' >6</a> <a class='navbar_next' href='javascript:document.form_values.page.value=2; document.form_values.submit()'><img src='./images/next.png' alt='página siguiente' style='border:0px' title='página siguiente'></a>
+<a class='navbar_last' href='javascript:document.form_values.page.value=265; document.form_values.submit()'><img src='./images/last.png' alt='última página' style='border:0px' title='última página'></a>
+ (1 - 10 / 2647)<span style='float:right;'> Par page :  <a class='navbar_custom' href='javascript:document.form_values.nb_per_page_custom.value=25;javascript:document.form_values.page.value=1; document.form_values.submit()'>25</a>  <a class='navbar_custom' href='javascript:document.form_values.nb_per_page_custom.value=50;javascript:document.form_values.page.value=1; document.form_values.submit()'>50</a>  <a class='navbar_custom' href='javascript:document.form_values.nb_per_page_custom.value=100;javascript:document.form_values.page.value=1; document.form_values.submit()'>100</a>  <a class='navbar_custom' href='javascript:document.form_values.nb_per_page_custom.value=200;javascript:document.form_values.page.value=1; document.form_values.submit()'>200</a> </span></form>
+</div>
+</div></div>	
+		</div><!-- fin DIV main_hors_footer --><div id="footer">
+
+<span id="footer_rss">
+	
+</span>
+<span id="footer_link_sup">
+		<a href="./index.php?lvl=infopages&amp;pagesid=7">Condiciones legales</a> &nbsp;
+</span>
+
+<span id="footer_link_website">
+	<a class="footer_biblio_name" href="http://ciad.fumc.edu.co" title="Biblioteca FUMC">Biblioteca FUMC</a> &nbsp;
+</span>	
+
+<span id="footer_link_pmb">
+<a href=http://www.google.es target=_blank>Buscar en Google</a> &nbsp;
+		<a class="lien_pmb_footer" href="https://www.sigb.net" title="una solución libre para la mediateca" target='_blank'>pmb</a> 	
+</span>		
+		
+</div> 
+
+		</div><!-- /div id=main -->
+
+		<div id="intro">
+<div id="intro_bibli">
+			<h3>Biblioteca FUMC</h3>
+			<div class="p1"><img src="./styles/genbib/images/image1.jpg" />
+<img src="./styles/genbib/images/image2.jpg" />
+<img src="./styles/genbib/images/image3.jpg" /></div>
+			<div class="p2"><ul id="menuDeroulant">
+
+<li><a href="./index.php">Inicio</a></li>
+<li><a href="./index.php?lvl=infopages&amp;pagesid=4">Calendario</a></li>
+<li><a href="./index.php?lvl=infopages&amp;pagesid=3">Ayuda en L&iacute;nea</a>
+</li>
+
+<li><a href="./index.php?lvl=infopages&amp;pagesid=6">Ubicaci&oacute;n</a></li>
+
+</ul></div>
+			</div>
+		</div><!-- /div id=intro -->		
+		<div id="bandeau"><div id='accessibility'>
+
+		<ul class='accessibility_font_size'>
+			<li class='accessibility_font_size_small'><a href='javascript:set_font_size(-1);' title='Réduire le texte'>A-</a></li>
+			<li class='accessibility_font_size_normal'><a href='javascript:set_font_size(0);' title='Réinitialiser le texte'>A</a></li>
+			<li class='accessibility_font_size_big'><a href='javascript:set_font_size(1);' title='Agrandir le texte'>A+</a></li>
+		</ul>
+		</div>
+<div id="accueil">
+
+<h3><span onclick='document.location="./index.php?"' style='cursor: pointer;'>Inicio</span></h3>
+<p class="centered"><a href='./index.php?'><img src='images/site/livre.png' alt='Inicio'  style='border:0px' class='center'/></a></p>
+<div id='lang_select'><h3 ><span>Elige idioma</span></h3><form method="post" action="index.php?lvl=more_results&autolevel1=1" ><input type='hidden' name="user_query" value="Cien a&ntilde;os de soledad" /><input type='hidden' name="look_TITLE" value="1" /><input type='hidden' name="look_FIRSTACCESS" value="1" /><input type='hidden' name="surligne" value="" /><input type='hidden' name="ok" value="Buscar" /><select name="lang_sel" onchange="this.form.submit();"><option value='fr_FR'>Français</option><option value='it_IT'>Italiano</option><option value='es_ES' selected>Español </option><option value='ca_ES'>Català</option><option value='en_UK'>English (UK)</option><option value='nl_NL'>Nederlands</option><option value='oc_FR'>Occitan</option></select></form></div>
+
+					</div><!-- fermeture #accueil -->
+<div id="connexion">
+
+			<h3 class="login_invite">Conectarse</h3><div id='login_form'><form action='index.php?lvl=more_results&autolevel1=1' method='post' name='myform'><input type='hidden' name="user_query" value="Cien a&ntilde;os de soledad" /><input type='hidden' name="look_TITLE" value="1" /><input type='hidden' name="look_FIRSTACCESS" value="1" /><input type='hidden' name="surligne" value="" /><input type='hidden' name="ok" value="Buscar" /><label>acceder a su cuenta de usuario</label><br />
+				<input type='text' name='login' class='login' size='14' placeholder='identificador' ><br />
+				<input type='password' name='password' class='password' size='8' placeholder='Mot de passe' value=''/>
+                <input type='hidden' name='force_login' value='1'/>
+				<input type='submit' name='ok' value='ok' class='bouton'></form><a  class='mdp_forgotten' href='./askmdp.php'>Olvidé mi contraseña</a></div>
+
+			</div><!-- fermeture #connexion -->
+<div id='lvl1'><script>var tosubmit="user_query=Cien%20a%C3%B1os%20de%20soledad&look_TITLE=1&look_FIRSTACCESS=1&surligne=&ok=Buscar&lvl=more_results&autolevel1=1";
+						var cms_build_activate="0";function updateLevel1(result) {
+							if(result != '') {
+								document.getElementById('lvl1').innerHTML=result;
+							} else {
+								if(!cms_build_activate) {
+									require(['dojo/ready', 'dojo/dom-construct'], function(ready, domConstruct){
+										ready(function(){
+											domConstruct.destroy('lvl1');
+										});
+									});
+								}
+							}
+						}
+						getlevel2=new http_request();
+						getlevel2.request('./ajax.php?module=ajax&categ=level1',true,tosubmit,true,updateLevel1);</script><h3>Recherche</h3>
+<img src='./images/patience.gif' id='wait_level1'/></div>
+			<div id='facette'>
+				
+				
+		<script src='./includes/javascript/select.js' type='text/javascript'></script>
+		<script type='text/javascript'> 		
+			function test(elmt_id){
+				var elmt_list=document.getElementById(elmt_id);
+
+                if(elmt_list.className.includes('facette_expande')){
+                    elmt_list.setAttribute('class', 'facette_collapsed');
+                } else {
+                    elmt_list.setAttribute('class', 'facette_expande');
+                }
+
+				for(i in elmt_list.rows){
+					if(elmt_list.rows[i].firstElementChild && elmt_list.rows[i].firstElementChild.nodeName!='TH'){
+						if(elmt_list.rows[i].style.display == 'none'){
+							elmt_list.rows[i].style.display = 'block';
+                            elmt_list.rows[i].setAttribute('class', 'facette_tr'); 
+						}else{
+							elmt_list.rows[i].style.display = 'none';
+                            elmt_list.rows[i].setAttribute('class', 'facette_tr_hidden uk-hidden'); 
+						}
+					}
+				}
+			}
+			
+			function facette_see_more(id,json_facette_plus){
+				
+				var myTable = document.getElementById('facette_list_'+id);
+				
+				if (json_facette_plus == null) {
+					var childs = myTable.childNodes;
+					var nb_childs = childs.length;
+					
+					for(var i = 0; i < nb_childs; i++){
+						if (childs[i].getAttribute('facette_ajax_loaded')!=null) {
+							if (childs[i].getAttribute('style')=='display:block') {
+								childs[i].setAttribute('style','display:none');
+								childs[i].setAttribute('expanded','false');
+							} else {
+								childs[i].setAttribute('style','display:block');
+								childs[i].setAttribute('expanded','true');
+							}
+						}
+					}
+				
+					var see_more_less = document.getElementById('facette_see_more_less_'+id);
+					see_more_less.innerHTML='';
+					var span = document.createElement('span');
+					if (see_more_less.getAttribute('etat')=='plus') {
+						span.className='facette_moins_link';
+						span.innerHTML='[-]';
+						see_more_less.setAttribute('etat','moins');
+					} else {
+						span.className='facette_plus_link';
+						span.innerHTML='[+]';
+						see_more_less.setAttribute('etat','plus');		
+					}
+					see_more_less.appendChild(span);
+					
+				} else {
+					var req = new http_request();
+					var sended_datas={'json_facette_plus':json_facette_plus};
+					req.request("./ajax.php?module=ajax&categ=facettes&sub=see_more",true,'sended_datas='+encodeURIComponent(JSON.stringify(sended_datas)),true,function(data){
+						
+						var jsonArray = JSON.parse(data);
+						//on supprime la ligne '+'
+						myTable.tBodies[0].removeChild(myTable.rows[myTable.rows.length-1]);
+						//on ajoute les lignes au tableau
+						for(var i=0;i<jsonArray.length;i++) {
+							var tr = document.createElement('tr');
+							tr.setAttribute('style','display:block');
+							tr.setAttribute('class', 'facette_tr');
+							tr.setAttribute('expanded','true');
+							tr.setAttribute('facette_ajax_loaded','1');
+				        	var td = tr.appendChild(document.createElement('td'));
+							td.setAttribute('class','facette_col_coche');
+				        	td.innerHTML = "<span class='facette_coche'><input type='checkbox' name='check_facette[]' value='" + jsonArray[i]['facette_value'] + "'></span>";
+				        	var td2 = tr.appendChild(document.createElement('td'));
+							td2.setAttribute('class','facette_col_info');
+                            var aonclick = td2.appendChild(document.createElement('a'));
+                            aonclick.setAttribute('style', 'cursor:pointer;');
+                            aonclick.setAttribute('rel', 'nofollow');
+                            aonclick.setAttribute('class', 'facet-link');
+                            if(jsonArray[i]['facette_link']) {
+                                aonclick.setAttribute('onclick', jsonArray[i]['facette_link']);
+                            } else {console.log('evt searchSegment', aonclick);
+                                //Evt vers SearchSegmentController pour l'initialisation du clic
+                                require(['dojo/topic'], function(topic){
+            						topic.publish('FacettesRoot', 'FacettesRoot', 'initFacetLink', {elem: aonclick}); 
+            					}); 
+                            }
+                            var span_facette_link = aonclick.appendChild(document.createElement('span'));
+                            span_facette_link.setAttribute('class', 'facette_libelle');
+				        	span_facette_link.innerHTML = jsonArray[i]['facette_libelle'];
+							aonclick.appendChild(document.createTextNode(' '));
+                            var span_facette_number = aonclick.appendChild(document.createElement('span'));
+                            span_facette_number.setAttribute('class', 'facette_number');
+                            span_facette_number.innerHTML = "[" + jsonArray[i]['facette_number'] + "]";
+				        	myTable.appendChild(tr);
+	
+						}
+						//Ajout du see_less
+						var tr = document.createElement('tr');
+						tr.setAttribute('style','display:block');
+						tr.setAttribute('see_less','1');
+						tr.setAttribute('class','facette_tr_see_more');
+							
+						var td = tr.appendChild(document.createElement('td'));
+						td.setAttribute('colspan','3');
+							
+						var ahref = td.appendChild(document.createElement('a'));
+						ahref.setAttribute('id','facette_see_more_less_'+id);
+						ahref.setAttribute('etat','moins');
+						ahref.setAttribute('onclick','javascript:facette_see_more(' + id + ',null);');
+						ahref.setAttribute('style','cursor:pointer');
+						ahref.innerHTML='';
+							
+						var span = document.createElement('span');
+						span.className='facette_moins_link';
+						span.innerHTML='[-]';								
+						ahref.appendChild(span);
+								
+						myTable.appendChild(tr);
+					});
+				}
+			}
+			function valid_facettes_compare(){
+				
+				var form = document.facettes_multi;
+				if(form.elements.length>0){
+					
+					var form_values_compare_input_array=new Array();
+					
+					for(var i=0; i<form.elements.length;i++){
+						
+						if(form.elements[i].name=='check_facette[]' && form.elements[i].checked){
+							//on transforme les case ? coch? en element du tableau des facettes	
+							//on ajoute dans le tableau des facettes
+							var value=form.elements[i].value;
+							var jsonArray=JSON.parse(value);
+							
+							//On ajoute dans le formulaire de postage g?n?ral
+							var form_values_compare_input=document.createElement('input');
+							form_values_compare_input.setAttribute('name','check_facette_compare[]');
+							form_values_compare_input.setAttribute('type','hidden');
+							form_values_compare_input.setAttribute('value',value);
+							form_values_compare_input_array.push(form_values_compare_input);
+						}
+					}
+					
+					var post=false;
+					var form_values=document.form_values;
+					for(var i=0;i<form_values_compare_input_array.length;i++) {
+						form_values.appendChild(form_values_compare_input_array[i]);
+					}
+					
+					for(var i=0; i<form_values.elements.length;i++){
+						if(form_values.elements[i].name=='check_facette_compare[]' && form_values.elements[i].value!=''){
+							if(document.getElementById('filtre_compare_facette')) {
+								document.getElementById('filtre_compare_facette').value='compare';
+							}
+							if(document.getElementById('filtre_compare_form_values')) {
+								document.getElementById('filtre_compare_form_values').value='compare';
+							}
+							form_values.submit();
+							post=true;
+						}
+					}
+					if(post == false){
+						alert('Pas de critère de comparaison.');
+					}
+				}else{
+					alert('Pas de critère de comparaison.');
+				}
+			}
+			
+			function valid_compare(){
+				var form_values=document.form_values;
+				var post=false;
+				
+				for(var i=0; i<form_values.elements.length;i++){
+					if(form_values.elements[i].name=='check_facette_compare[]' && form_values.elements[i].value!=''){
+						if(document.getElementById('filtre_compare_facette')) {
+							document.getElementById('filtre_compare_facette').value='compare';
+						}
+						if(document.getElementById('filtre_compare_form_values')) {
+							document.getElementById('filtre_compare_form_values').value='compare';
+						}
+						form_values.submit();
+						post=true;
+					}
+				}
+				if(post == false){
+					alert('Pas de critère de comparaison.');
+				}
+			}
+			
+			function remove_compare_facette(value){
+				
+				var jsonArray = JSON.parse(value);
+				
+				//on supprime l'?lement du tableau des facettes
+				elem=document.getElementById('compare_facette_'+jsonArray[4]);
+				elem.parentNode.removeChild(elem);
+				
+				//on supprime l'?l?ment du formulaire g?n?ral aussi
+				var form_values=document.form_values;
+				for(var i in form_values.elements){
+					if(form_values.elements[i] && form_values.elements[i].value && form_values.elements[i].name=='check_facette_compare[]'){
+						form_values_json_array=JSON.parse(form_values.elements[i].value);
+						
+						if(form_values_json_array[4]==jsonArray[4]){
+							elem=form_values.elements[i];
+							elem.parentNode.removeChild(elem);
+						}
+					}
+				}
+				var post=true;
+				for(var i in form_values.elements){
+					if(form_values.elements[i] && form_values.elements[i].value && form_values.elements[i].name=='check_facette_compare[]'){
+						valid_facettes_compare();
+						post=false;
+					}
+				}
+
+				if(post){
+					if('facette_search_compare' == 'facettes_external_search_compare') {
+						var input_form_values = document.createElement('input');
+						input_form_values.setAttribute('type', 'hidden');
+						input_form_values.setAttribute('name', 'reinit_compare');
+						input_form_values.setAttribute('value', '1');
+						document.forms['form_values'].appendChild(input_form_values);
+						document.form_values.submit();
+					} else {
+						document.location.href='./index.php?lvl=more_results&get_last_query=1&reinit_compare=1';
+					}
+				}
+			}
+			
+			function group_by(groupBy){
+				
+				var jsonArray=JSON.parse(groupBy);
+			
+				//on vide les elements group_by
+				var group_by_elements=document.getElementsByName('check_facette_groupby[]');
+				
+				var nodes_to_remove;
+				
+				for(var i in group_by_elements){
+					if(group_by_elements[i].nodeName=='INPUT'){
+						if(group_by_elements[i].getAttribute('id')!='facette_groupby_'+jsonArray[3]){
+							
+							if(group_by_elements[i].parentNode.getAttribute('name')!='form_values' && group_by_elements[i].parentNode.getAttribute('name')!='cart_values'){
+								
+								var group_by_elements_img=group_by_elements[i].previousElementSibling.firstChild;
+									
+								group_by_elements_img.setAttribute('src','./images/group_by_grey.png');
+								group_by_elements[i].setAttribute('value','');
+								
+							}else{
+								nodes_to_remove=[i=[group_by_elements[i],group_by_elements[i].parentNode]];
+							}
+						}
+					}
+				}
+				
+				if(nodes_to_remove && nodes_to_remove.length>0){
+					for(var i in nodes_to_remove){
+						nodes_to_remove[i][1].removeChild(nodes_to_remove[i][0]);
+					}
+				}
+				
+				element=document.getElementById('facette_groupby_'+jsonArray[3]);
+				var img=element.previousElementSibling.firstChild;
+				
+				var table_groupby=document.getElementById('facette_groupby');
+				
+				if(element.getAttribute('value')==''){
+					element.setAttribute('value',JSON.stringify(groupBy));
+					
+					//On ajoute dans le formulaire de postage g?n?ral
+					var form_values=document.form_values;
+					var form_values_groupby_input=document.createElement('input');
+					form_values_groupby_input.setAttribute('name','check_facette_groupby[]');
+					form_values_groupby_input.setAttribute('type','hidden');
+					form_values_groupby_input.setAttribute('value',groupBy);
+					form_values.appendChild(form_values_groupby_input);
+					
+					
+				}
+				valid_facettes_compare();
+			}
+		</script>
+		<script type='text/javascript'>
+			function valid_facettes_multi(){
+				//on bloque si aucune case coch?e
+				var form = document.facettes_multi;
+				for (i=0, n=form.elements.length; i<n; i++){
+					if ((form.elements[i].checked == true)) {
+						if(document.getElementById('filtre_compare_facette')) {
+							document.getElementById('filtre_compare_facette').value='filter';
+						}
+						if(document.getElementById('filtre_compare_form_values')) {
+							document.getElementById('filtre_compare_form_values').value='filter';
+						}
+						form.submit();
+						return true;
+					}
+				}
+				return false;
+			}
+		</script>
+				<div id='facette_wrapper'>
+					<img src='./images/patience.gif'/>
+					<script type='text/javascript'>
+						var req = new http_request();
+						req.request("./ajax.php?module=ajax&categ=facettes&sub=get_data&facet_type=notices",false,null,true,function(data){
+							var response = JSON.parse(data);
+							document.getElementById('facette_wrapper').innerHTML=response.display;
+						    require(['dojo/query', 'dojo/dom-construct'], function(query, domConstruct){
+    						    query('#facette_wrapper script').forEach(function(node) {
+                					domConstruct.create('script', {
+                						innerHTML: node.innerHTML,
+                						type: 'text/javascript'
+                					}, node, 'replace');
+                				});
+						    });
+							if(!response.exists_with_results) {
+								require(['dojo/ready', 'dojo/dom-construct'], function(ready, domConstruct){
+									ready(function(){
+						                if (document.getElementById('segment_searches')) {
+										    domConstruct.destroy('facette_wrapper');
+						                } else {
+						                    domConstruct.destroy('facette');
+						                }
+						    
+									});
+								});
+							}
+							if(response.map_location) {
+								if(document.getElementById('map_location_search')) {
+									document.getElementById('map_location_search').innerHTML=response.map_location;
+									if(typeof(dojo) == 'object'){
+										dojo.require('dojo.parser');
+										dojo.parser.parse(document.getElementById('map_location_search'));
+									}
+								}
+							}
+						}, '', '', true);
+					</script>
+				</div>
+			</div><div id="adresse">
+
+		<h3>Dirección</h3>
+
+		<span>
+			Biblioteca FUMC<br />
+			Calle 56 No.41-90<br />
+			574  Medellín, Antioquia<br />
+			Colombia&nbsp;<br />
+			57 4 4025500 - 108,259<br /><span id='opac_biblio_email'>
+			<a href="mailto:ciad@fumc.edu.co" title="ciad@fumc.edu.co">contacto</a></span></span>
+	    </div><!-- fermeture #adresse --></div><div id="bandeau_2"></div></div><!-- /div id=container -->
+		
+		<script type='text/javascript'>init_drag();	</script> 
+		
+		</body>
+		</html>
+		

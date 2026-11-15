@@ -1,0 +1,40 @@
+# ==========================================
+# DSpace Repository Robots.txt
+# ==========================================
+
+User-agent: *
+
+# Allow Crawling of Public Pages & Items
+Allow: /
+Allow: /dspace/
+Allow: /server/api/core/bitstreams/
+
+# Block Administrative & Internal System Paths
+Disallow: /admin
+Disallow: /profile
+Disallow: /forgot
+Disallow: /login
+Disallow: /register
+Disallow: /reload-page
+Disallow: /bitstream/
+
+# Block Dynamic Search & Query Operations (To Prevent Crawl Loops)
+Disallow: /search
+Disallow: /browse
+Disallow: /browse/*
+Disallow: /*?
+Disallow: /*&
+
+# Block Search Engine Bots from High-Frequency API Requests
+User-agent: Googlebot
+Allow: /
+Disallow: /admin
+Disallow: /search
+
+User-agent: bingbot
+Allow: /
+Disallow: /admin
+Disallow: /search
+
+# Dynamic Sitemap Location
+Sitemap: https://jldmlibrary.aup.edu.ph/sitemap.xml

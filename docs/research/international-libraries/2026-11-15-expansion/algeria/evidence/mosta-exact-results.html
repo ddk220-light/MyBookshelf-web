@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang='fr'>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="">
+			<meta charset="utf-8" />
+			<meta name="author" content="Bibliothèque Centrale" />
+			<meta name="description" content="Catalogue en ligne Bibliothèque Centrale." />
+			<script async defer src="./includes/altcha/altcha.js" type="module"></script><meta name='robots' content='all' />
+			<!--IE et son enfer de compatibilit�-->
+			<meta http-equiv='X-UA-Compatible' content='IE=Edge' />
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3" />
+	<title>Catalogue en ligne Bibliothèque Centrale</title>
+	
+	
+<link rel='stylesheet' type='text/css' href='./styles/common/404.css?1767969253' />
+<link rel='stylesheet' type='text/css' href='./styles/common/a2z.css?1780564124' />
+<link rel='stylesheet' type='text/css' href='./styles/common/accessibility.css?1760709535' />
+<link rel='stylesheet' type='text/css' href='./styles/common/ai_search.css?1776777583' />
+<link rel='stylesheet' type='text/css' href='./styles/common/altcha.css?1779977774' />
+<link rel='stylesheet' type='text/css' href='./styles/common/animation_display.css?1615825938' />
+<link rel='stylesheet' type='text/css' href='./styles/common/authority_rgaa.css?1780392189' />
+<link rel='stylesheet' type='text/css' href='./styles/common/calendar.css?1751552125' />
+<link rel='stylesheet' type='text/css' href='./styles/common/cms-editorial.css?1791453470' />
+<link rel='stylesheet' type='text/css' href='./styles/common/cms.css?1735641814' />
+<link rel='stylesheet' type='text/css' href='./styles/common/common.css?1789563768' />
+<link rel='stylesheet' type='text/css' href='./styles/common/connexion.css?1788966852' />
+<link rel='stylesheet' type='text/css' href='./styles/common/contact.css?1790781748' />
+<link rel='stylesheet' type='text/css' href='./styles/common/contrib.css?1787920774' />
+<link rel='stylesheet' type='text/css' href='./styles/common/cookies.css?1760709535' />
+<link rel='stylesheet' type='text/css' href='./styles/common/dGrowl.css?1657616134' />
+<link rel='stylesheet' type='text/css' href='./styles/common/demand.css?1782138251' />
+<link rel='stylesheet' type='text/css' href='./styles/common/demandes_sp.css?1785332719' />
+<link rel='stylesheet' type='text/css' href='./styles/common/dsi.css?1769693988' />
+<link rel='stylesheet' type='text/css' href='./styles/common/font-awesome.css?1478593624' />
+<link rel='stylesheet' type='text/css' href='./styles/common/list_ui.css?1792746697' />
+<link rel='stylesheet' type='text/css' href='./styles/common/mfa.css?1760709535' />
+<link rel='stylesheet' type='text/css' href='./styles/common/modal.css?1791905913' />
+<link rel='stylesheet' type='text/css' href='./styles/common/notices_externes.css?1768400027' />
+<link rel='stylesheet' type='text/css' href='./styles/common/notification.css?1759400143' />
+<link rel='stylesheet' type='text/css' href='./styles/common/opac_dashboard.css?1792419423' />
+<link rel='stylesheet' type='text/css' href='./styles/common/open-sans.css?1479312986' />
+<link rel='stylesheet' type='text/css' href='./styles/common/pagination.css?1532013719' />
+<link rel='stylesheet' type='text/css' href='./styles/common/print.css?1783687159' />
+<link rel='stylesheet' type='text/css' href='./styles/common/record_display.css?1692887340' />
+<link rel='stylesheet' type='text/css' href='./styles/common/rmc_fix.css?1778570648' />
+<link rel='stylesheet' type='text/css' href='./styles/common/scan_request.css?1760709535' />
+<link rel='stylesheet' type='text/css' href='./styles/common/sort.css?1789723381' />
+<link rel='stylesheet' type='text/css' href='./styles/common/visionneuse.css?1711723334' />
+<link rel='stylesheet' type='text/css' href='./styles/common/web.css?1789654699' />
+<link rel='stylesheet' type='text/css' href='./styles/common/zone-container.css?1761036331' />
+<link rel='stylesheet' type='text/css' href='./styles/umab/umab.css?1793573421' />
+<script src='./styles/umab/umab-login.js?1793573286' ></script><script>var opac_style= 'umab';</script>
+	<!-- css_authentication -->	<link rel='SHORTCUT ICON' href='./images/site/favicon.ico' />
+	<script src="includes/javascript/drag_n_drop.js"></script>
+	<script src="includes/javascript/handle_drop.js"></script>
+	<script src="includes/javascript/popup.js"></script>
+	<script>
+			// Fonction a utiliser pour l'encodage des URLs en javascript
+			function encode_URL(data){
+				var docCharSet = document.characterSet ? document.characterSet : document.charset;
+				if(docCharSet == "UTF-8"){
+	    			return encodeURIComponent(data);
+	    		}else{
+	    			return escape(data);
+	    		}
+	    	}
+	    </script>
+	<script>
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName =
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i);
+				    }
+				 }
+				return items;
+			 }
+		}
+	</script>
+
+		<link rel='stylesheet' type='text/css' href='./includes/javascript/dojo/dijit/themes/tundra/tundra.css' />
+		<script>
+			var dojoConfig = {
+				parseOnLoad: true,
+				locale: 'fr-fr',
+				isDebug: false,
+				usePlainJson: true,
+				packages: [{
+						name: 'pmbBase',
+						location:'../../../..'
+					},{
+						name: 'd3',
+						location:'../../d3'
+					}],
+				deps: ['apps/pmb/MessagesStore', 'dgrowl/dGrowl', 'dojo/ready', 'apps/pmb/ImagesStore'],
+				callback:function(MessagesStore, dGrowl, ready, ImagesStore){
+					window.pmbDojo = {};
+					pmbDojo.messages = new MessagesStore({url:'./ajax.php?module=ajax&categ=messages', directInit:false, lastModified:'1793471502'});
+					pmbDojo.images = new ImagesStore({url:'./ajax.php?module=ajax&categ=images', directInit:false});
+					ready(function(){
+						new dGrowl({'channels':[{'name':'info','pos':2},{'name':'error', 'pos':1}]});
+					});
+
+				},
+			};
+		</script>
+		<script src='./includes/javascript/dojo/dojo/dojo.js'></script>
+		<script>
+		dojo.addOnLoad(function () {
+			// Ajout du theme Dojo
+			dojo.addClass(dojo.body(),'tundra');
+		})
+		</script>
+		<script>
+	var pmb_img_patience = './images/patience.gif';
+</script><script>
+			var opac_show_social_network =0;
+		</script>
+	<script src='includes/javascript/affiliate_search.js'></script>
+	<script src='includes/javascript/simili_search.js'></script>
+	<script src='./includes/javascript/http_request.js'></script>
+	
+</head>
+
+<body onload="window.defaultStatus='PMB : Accès public';"  id="pmbopac">
+		<script>
+		function findNoticeElement(id){
+			var ul=null;
+			//cas des notices classiques
+			var domNotice = document.getElementById('el'+id+'Child');
+			//notice_display
+			if(!domNotice) domNotice = document.getElementById('notice');
+			if(domNotice){
+				var uls = domNotice.getElementsByTagName('ul');
+				for (var i=0 ; i<uls.length ; i++){
+					if(uls[i].getAttribute('id') == 'onglets_isbd_public'+id){
+						var ul = uls[i];
+						break;
+					}
+				}
+			} else{
+				var li = document.getElementById('onglet_isbd'+id);
+				if(!li) var li = document.getElementById('onglet_public'+id);
+				if(!li) var li = document.getElementById('onglet_detail'+id);
+				if(li) var ul = li.parentNode;
+			}
+			return ul;
+		}
+		function show_what(quoi, id) {
+			switch(quoi){
+				case 'EXPL_LOC' :
+					document.getElementById('div_expl_loc' + id).style.display = 'block';
+					document.getElementById('div_expl' + id).style.display = 'none';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_inactive';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_active';
+					break;
+				case 'EXPL' :
+					document.getElementById('div_expl_loc' + id).style.display = 'none';
+					document.getElementById('div_expl' + id).style.display = 'block';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_active';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_inactive';
+					break;
+				default :
+					quoi= quoi.toLowerCase();
+					var ul = findNoticeElement(id);
+					if (ul) {
+						var items  = ul.getElementsByTagName('li');
+						for (var i=0 ; i<items.length ; i++){
+							if(items[i].getAttribute('id')){
+								if(items[i].getAttribute('id') == 'onglet_'+quoi+id){
+									items[i].className = 'isbd_public_active';
+									document.getElementById('div_'+quoi+id).style.display = 'block';
+								}else{
+									if(items[i].className != 'onglet_tags' && items[i].className != 'onglet_avis' && items[i].className != 'onglet_sugg' && items[i].className != 'onglet_basket' && items[i].className != 'onglet_liste_lecture'){
+										items[i].className = 'isbd_public_inactive';
+										document.getElementById(items[i].getAttribute('id').replace('onglet','div')).style.display = 'none';
+									}
+								}
+							}
+						}
+					}
+					break;
+			}
+		}
+		</script>
+	<script src='./includes/javascript/tablist_ajax.js'></script>
+<script src='./includes/javascript/tablist.js'></script>
+<script src='./includes/javascript/misc.js'></script>
+	<div id='att' style='z-Index:1000'></div>
+	<div id="container"><div id="main"><div id='main_header'><h1
+style="font-weight:oblique;text-align: right;color:#000000;  fond-size:40px;"> 
+ الفهرس الالي للمكتبة المركزية بجامعة عبد الحميد بن باديس - مستغانم
+
+</h1>
+</div><div id="main_hors_footer">
+						
+
+<script src='./includes/javascript/auth_popup.js'></script>
+<script src='./includes/javascript/pnb.js'></script><div id="intro_message"><div class="p1"><marquee direction="left" width="751" height="50" style=" font-size: 25px;
+color:##ffffff;   scrolldelay="50"
+scrollamount="3">
+<a style="font-weight:bold; color:#0347d8;  fond-size:40px;"> Bienvenue a la bibliothèque universitaire Abdelhamid Ibn Badis Mostaganem
+ </a>
+</marquee>
+</div><div class="p2"></div></div>
+	<div id='navigator'>
+		<table role='presentation' style='width:100%'>
+			<tr><td class='navig_actions_last_search' ><a href="index.php?lvl=search_result&get_query=1" class='actions_last_search'><span>Modifier la recherche</span></a></td>
+<td class='navig_actions_history' ><a href="index.php?lvl=search_history" class='actions_history'><span>Historique</span></a></td>
+<td class='navig_actions_first_screen' ><a href="./index.php?lvl=index" class='navig_etageres'><span>Nouvelle recherche</span></a></td>
+</tr>
+		</table>
+	</div><!-- fermeture de #navigator -->
+<div id='resume_panier' class='empty'></div><script src='./includes/javascript/misc.js'></script><script>
+	var terms=new Array('');
+	var terms_litteraux=new Array('le petit prince');
+	if (!codes) {
+		var codes = {};
+	}
+
+	function remplacer_carac(mot) {
+		var x;
+		var reg;				
+		var chaine=mot;
+			reg=new RegExp(codes['a'], 'g');
+	chaine=chaine.replace(reg, 'a');
+	reg=new RegExp(codes['A'], 'g');
+	chaine=chaine.replace(reg, 'A');
+	reg=new RegExp(codes['c'], 'g');
+	chaine=chaine.replace(reg, 'c');
+	reg=new RegExp(codes['C'], 'g');
+	chaine=chaine.replace(reg, 'C');
+	reg=new RegExp(codes['e'], 'g');
+	chaine=chaine.replace(reg, 'e');
+	reg=new RegExp(codes['E'], 'g');
+	chaine=chaine.replace(reg, 'E');
+	reg=new RegExp(codes['i'], 'g');
+	chaine=chaine.replace(reg, 'i');
+	reg=new RegExp(codes['I'], 'g');
+	chaine=chaine.replace(reg, 'I');
+	reg=new RegExp(codes['n'], 'g');
+	chaine=chaine.replace(reg, 'n');
+	reg=new RegExp(codes['N'], 'g');
+	chaine=chaine.replace(reg, 'N');
+	reg=new RegExp(codes['o'], 'g');
+	chaine=chaine.replace(reg, 'o');
+	reg=new RegExp(codes['O'], 'g');
+	chaine=chaine.replace(reg, 'O');
+	reg=new RegExp(codes['u'], 'g');
+	chaine=chaine.replace(reg, 'u');
+	reg=new RegExp(codes['U'], 'g');
+	chaine=chaine.replace(reg, 'U');
+		
+		return(chaine);		
+	}
+</script><script src='./temp/surligner_codes.js'></script><script src='./includes/javascript/surligner.js'></script>
+<div id="resultatrech"><h3 class='searchResult-title'><span >R&eacute;sultat de la recherche</span></h3>
+	<div id='search_onglet'>
+        <br/>
+		<ul id='search_tabs' class='search_tabs'>
+			<li id='search_tabs_catalog' class='current'><a href='#' onclick='showSearchTab("catalog",false);return false;'>Dans le catalogue</a></li>
+			<li id='search_tabs_affiliate' ><a href='#' onclick='showSearchTab("affiliate",false);return false;'>Dans les sources affiliées</a></li>
+		</ul>
+	</div><h3 class='searchResult-search' id='searchResult-search' >
+				<span class='searchResult-equation'>
+					<span class='searchResult-nbResults' id='searchResult-nbResults'><b>0</b></span> titres trouvés pour la recherche <b>
+					'&quot;Le petit prince&quot;'</b></span><img alt='Surligner les mots recherchés' title='Surligner les mots recherchés'
+		    style='border:0px'
+		    class='center'
+		    src='./images/text_horizontalrule.png'
+	        onMouseOver="this.style.cursor='pointer'" onClick='document.form_values.surligne.value=1;document.form_values.submit();'/></h3>
+<div id="resultatrech_liste">
+            <span class='expandAll'>
+                <a href='javascript:expandAll_ajax(1);show_simili_search_all();show_expl_voisin_search_all();'>
+                    <img class='img_plusplus' src='./images/expand_all.gif' style='border:0px' id='expandall'>
+                </a>
+            </span><span class="espaceResultSearch">&nbsp;</span>
+            <span class='collapseAll'>
+                <a href='javascript:collapseAll()'>
+                    <img class='img_moinsmoins' src='./images/collapse_all.gif' style='border:0px' id='collapseall'>
+                </a>
+            </span><span class='print_search_result'><span class="printSearchResult">
+    <a href='#' onClick="openPopUp('./print.php?lvl=search&current_search=0','print'); w.focus(); return false;" title="Imprimer la page de recherche courante...">
+    	<img src='./images/print.gif' style='border:0px' class='align_bottom' alt="Imprimer la page de recherche courante..."/>
+    </a>
+    </span></span><span class="triContainer"><span class="espaceResultSearch">&nbsp;</span><script src='./includes/javascript/select.js'></script>
+						<script>
+							var ajax_get_sort=new http_request();
+
+							function get_sort_content(del_sort, ids) {
+								var url = './ajax.php?module=ajax&categ=sort&sub=get_sort&raz_sort='+(typeof(del_sort) != 'undefined' ? del_sort : '')+'&suppr_ids='+(typeof(ids) != 'undefined' ? ids : '')+'&page_en_cours=lvl%3Dmore_results&sort_name=notices';
+								ajax_get_sort.request(url,0,'',1,show_sort_content,0,0);
+							}
+
+                            function show_sort_layer_title() {
+                                if (document.getElementById('frame_notice_preview')) {
+                                    document.getElementById('frame_notice_preview').setAttribute('title', 'A-Z - Tris disponibles');
+                                }
+                            }
+
+							function show_sort_content(response) {
+								document.getElementById('frame_notice_preview').innerHTML=ajax_get_sort.get_text();
+								var tags = document.getElementById('frame_notice_preview').getElementsByTagName('script');
+					       		for(var i=0;i<tags.length;i++){
+									window.eval(tags[i].text);
+					        	}
+                                if (typeof focus_trap == 'function') {
+								    focus_trap(document.getElementById('frame_notice_preview'));
+                                }
+								document.addEventListener('keydown', function(event){
+									if(event.key === 'Escape'){
+										kill_sort_frame();
+									}
+								})
+							}
+							function kill_sort_frame() {
+								let sort_view = document.getElementById('frame_notice_preview');
+								document.getElementById('triSelectorBtn').focus();
+
+								if (sort_view) {
+									sort_view.parentNode.removeChild(sort_view);
+								}
+
+								let sort_view_container = document.getElementById('frame_notice_preview_container');
+								if (sort_view_container) {
+									sort_view_container.remove();
+								}
+
+								const container = document.getElementById('container');
+								if(container) {
+									container.onmousedown = '';
+								}
+
+								document.onmousedown = '';
+
+								document.body.style.overflow = null;
+							}
+						</script><span class='triSelector'>
+            <a id='triSelectorBtn' onClick='show_layer(); show_sort_layer_title(); get_sort_content();' title="A-Z - Tris disponibles" style='cursor : pointer;'>
+				<img src='./images/orderby_az.gif' alt="A-Z - Tris disponibles" class='align_bottom' style='border:0px' id='sort_icon'>
+			</a></span><span class='sort'>tri&eacute;(s) par <span class="triDescription"><span class="triLabel"></span> <span class="triDetail">(Pertinence décroissant(e), Titre croissant(e))</span></span><span class="espaceCartAction espaceResultSearch">&nbsp;</span></span></span><span class="espaceResultSearch">&nbsp;&nbsp;</span>
+        <span class="exportSearchResult">
+        <a href='#' onclick="openPopUp('./export.php?action=select&export_scope=search&mode=title','exporter_le_resultat'); return false;" title="Exporter le r&eacute;sultat">Exporter le r&eacute;sultat</a>
+        </span><span class="espaceResultSearch">&nbsp;&nbsp;</span><span class="affiner_recherche"><a href='./index.php?search_type_asked=extended_search&mode_aff=aff_simple_search' title='Affiner la recherche'>Affiner la recherche</a></span>
+                <script>
+                    function register_shorturl(hash) {
+                        return fetch('./ajax.php?module=ajax&categ=shorturl&action=register&h=' + encodeURIComponent(hash), {
+                            cache: 'no-store'
+                        });
+                    }
+                    function open_shorturl(link, hash) {
+                        var target_window = window.open('', '_blank');
+                        var go = function() {
+                            if (target_window) {
+                                target_window.opener = null;
+                                target_window.location.href = link.href;
+                            } else {
+                                window.location.href = link.href;
+                            }
+                        };
+                        register_shorturl(hash).then(go, go);
+                        return false;
+                    }
+                </script>
+                <span class="espaceResultSearch">&nbsp;&nbsp;</span>
+                <span class="short_url">
+                    <a target='_blank' rel='nofollow' href='./s.php?h=691e3074e96317a8ce9f0a7e8172ee13&database=pmbdb_utf8_test' onclick='return open_shorturl(this, "691e3074e96317a8ce9f0a7e8172ee13");' title='Générer le flux rss - Nouvelle fenêtre'>Générer le flux rss de la recherche</a>
+                </span>
+                <script>
+                    require(['dojo/on', 'dojo/topic', 'apps/pmb/sharelink/SharePopup'], function(on, topic, SharePopup){
+                        window.copy_shorturl_to_clipboard = function(domNodeSource) {
+                            var params = {'domNodeSource': domNodeSource };
+                            new SharePopup('./s.php?h=80b9d060e73f04584c3e7bc081f4891e&database=pmbdb_utf8_test', params);
+                        };
+                    });
+                </script><span class='espaceResultSearch'>&nbsp;&nbsp;</span>
+    			    <span class='short_url_permalink'>
+    			        <a href='#' onclick='register_shorturl("80b9d060e73f04584c3e7bc081f4891e"); copy_shorturl_to_clipboard(this); return false;' title='Partager le r&eacute;sultat de cette recherche'>
+    			            Partager le résultat de cette recherche
+		                </a></span><span class="espaceResultSearch">&nbsp;&nbsp;</span><span class="search_bt_external"><a href='./index.php?search_type_asked=external_search&mode_aff=aff_simple_search&external_type=simple' title='Interroger des sources externes'>Interroger des sources externes</a></span><blockquote role='presentation'></blockquote></div>
+</div><form id='mc_values' name='mc_values' action='./index.php?lvl=more_results' style='display:none' method='post'>
+<input type='hidden' name='search[]' value='s_4'/><input type='hidden' name='inter_0_s_4' value=''/><input type='hidden' name='op_0_s_4' value='EQ'/><input type='hidden' name='field_0_s_4[]' value='a:2:{s:17:&quot;serialized_search&quot;;s:402:&quot;a:3:{s:6:&quot;SEARCH&quot;;a:2:{i:0;s:3:&quot;f_6&quot;;i:1;s:3:&quot;f_9&quot;;}i:0;a:7:{s:6:&quot;SEARCH&quot;;s:3:&quot;f_6&quot;;s:2:&quot;OP&quot;;s:7:&quot;BOOLEAN&quot;;s:5:&quot;FIELD&quot;;a:1:{i:0;s:17:&quot;&quot;Le petit prince&quot;&quot;;}s:6:&quot;FIELD1&quot;;s:0:&quot;&quot;;s:5:&quot;INTER&quot;;s:0:&quot;&quot;;s:8:&quot;FIELDVAR&quot;;a:0:{}s:8:&quot;FIELDLIB&quot;;a:0:{}}i:1;a:7:{s:6:&quot;SEARCH&quot;;s:3:&quot;f_9&quot;;s:2:&quot;OP&quot;;s:2:&quot;EQ&quot;;s:5:&quot;FIELD&quot;;a:1:{i:0;s:1:&quot;a&quot;;}s:6:&quot;FIELD1&quot;;s:0:&quot;&quot;;s:5:&quot;INTER&quot;;s:3:&quot;and&quot;;s:8:&quot;FIELDVAR&quot;;a:0:{}s:8:&quot;FIELDLIB&quot;;a:0:{}}}&quot;;s:11:&quot;search_type&quot;;s:20:&quot;search_simple_fields&quot;;}'/><input type='hidden' name='page' value='1'/>
+			<input type="hidden" name="nb_per_page_custom" value="">
+</form><form name='form_values' action='./index.php?lvl=more_results' method='post'>
+<input type='hidden' value='' id='filtre_compare_form_values' name='filtre_compare'><input type='hidden' name='user_query' value='&quot;Le petit prince&quot;'>
+<input type='hidden' name='mode' value='title'>
+<input type='hidden' name='count' value='0'>
+<input type='hidden' name='typdoc' value='a'><input type='hidden' name='id_authperso' value='0'><input type='hidden' name='clause' value=''>
+<input type='hidden' name='clause_bull' value=''>
+<input type='hidden' name='clause_bull_num_notice' value=''>
+<input type='hidden' name='join' value=''>
+<input type='hidden' name='tri' value=''>
+<input type='hidden' name='pert' value=''>
+<input type='hidden' name='l_typdoc' value=''>
+<input type='hidden' name='author_type' value=''>
+<input type='hidden' name='id_thes' value=''>
+<input type='hidden' name='surligne' value='0'>
+<input type='hidden' name='tags' value=''>
+
+				    <input type='hidden' name='page' value='1'>
+				    <input type='hidden' name='nb_per_page_custom' value=''>
+<input type='hidden' name='catalog_page' value='1'>
+<input type='hidden' name='affiliate_page' value='1'>
+<input type='hidden' name='nbexplnum_to_photo' value=''>
+</form><br/><div id='navbar'><hr />
+<div style='text-align:center'><!-- $Id: paginator.html,v 1.5 2025/01/29 09:12:05 dgoron Exp $ -->
+<div class="navbar">
+	
+<script>
+<!--
+	function test_form(form)
+	{
+
+
+		return true;
+	}
+-->
+</script>
+	<form name='form' action='javascript:document.form_values.page.value=document.form.page.value; if(document.form_values.catalog_page) document.form_values.catalog_page.value=document.form_values.page.value; document.form_values.action = "./index.php?lvl=more_results&tab=catalog"; document.form_values.submit()' method='post' onsubmit="return test_form(form)">
+			<img src='./images/first-grey.png' alt="Aller à la première page">
+				<img src='./images/prev-grey.png' alt='Aller à la page précédente'>
+					<img src='./images/next-grey.png' alt='Aller à la page suivante'>
+			
+		<a class='navbar_last' href='javascript:document.form_values.page.value=0; if(document.form_values.catalog_page)document.form_values.catalog_page.value=document.form_values.page.value; document.form_values.action = "./index.php?lvl=more_results&tab=catalog"; document.form_values.submit()' onclick=''><img src='./images/last.png' alt='Aller à la dernière page' style='border:0px' title='Aller à la dernière page'></a>
+		(1 - 0 / 0)
+	
+				<!-- $Id: selector_in_result.html,v 1.3 2025/12/22 10:09:43 lpedeville Exp $ -->
+<span class="navbar_per_page_items" style='float:right;'>Par page :
+						<a class='navbar_custom' href='javascript:document.form_values.nb_per_page_custom.value=25;javascript:document.form_values.page.value=1; if(document.form_values.catalog_page)document.form_values.catalog_page.value=document.form_values.page.value; document.form_values.action = "./index.php?lvl=more_results&tab=catalog"; document.form_values.submit()'>25</a>
+								<a class='navbar_custom' href='javascript:document.form_values.nb_per_page_custom.value=50;javascript:document.form_values.page.value=1; if(document.form_values.catalog_page)document.form_values.catalog_page.value=document.form_values.page.value; document.form_values.action = "./index.php?lvl=more_results&tab=catalog"; document.form_values.submit()'>50</a>
+								<a class='navbar_custom' href='javascript:document.form_values.nb_per_page_custom.value=100;javascript:document.form_values.page.value=1; if(document.form_values.catalog_page)document.form_values.catalog_page.value=document.form_values.page.value; document.form_values.action = "./index.php?lvl=more_results&tab=catalog"; document.form_values.submit()'>100</a>
+								<a class='navbar_custom' href='javascript:document.form_values.nb_per_page_custom.value=200;javascript:document.form_values.page.value=1; if(document.form_values.catalog_page)document.form_values.catalog_page.value=document.form_values.page.value; document.form_values.action = "./index.php?lvl=more_results&tab=catalog"; document.form_values.submit()'>200</a>
+			</span>
+	
+
+
+
+
+
+		
+			</form>
+</div></div></div>
+		</div><!-- fin DIV  -->
+<div id="footer">
+    <span id="footer_rss"></span>
+    <span id="footer_link_sup">&nbsp;</span>
+    <span id="footer_link_website">
+        <a class="footer_biblio_name" href="https://www.univ-mosta.dz" title="Bibliothèque Centrale">Bibliothèque Centrale</a> &nbsp;
+    </span>
+    <span id="footer_link_pmb">&nbsp;
+        <a class="lien_pmb_footer" href="https://www.sigb.net" title="pmb ...une solution libre pour la médiathèque..." target="_blank">pmb</a>
+    </span>
+</div> 
+
+		</div><!-- /div id=main -->
+
+		<div id="intro">
+<div id="intro_bibli">
+			<h3>Bibliothèque Centrale</h3>
+			<div class="p1"></div>
+			<div class="p2"><ul id="menuDeroulant">
+
+   <li><a href="./index.php">Accueil</a></li>
+   <li><a href="">Bibliothèque éléctronique</a>
+         <ul class="sousMenu">
+               <li><a href="https://www.sndl.cerist.dz">SNDL</a></li>
+               <li><a href="http://E-biblio.univ-mosta.dz">DSPACE</a></li>
+               <li><a href="https://www.ccdz.cerist.dz/">CCDZ</a></li>
+			   <li><a href="https://www.pnst.cerist.dz/">PNST</a></li>
+         </ul></li>
+      <li><a href="./index.php">Catalogues des Facultés</a>
+          <ul class="sousMenu">
+               <li><a href="http://catalogue.univ-mosta.dz/bc">Bibliothèque Centrale</a></li>
+               <li><a href="http://catalogue.univ-mosta.dz/fdsp">Bibliothèque FDSP</a></li>
+               <li><a href="http://catalogue.univ-mosta.dz/medecine">Bibliothèque F Médecine</a></li>
+			   <li><a href="http://catalogue.univ-mosta.dz/fle">Bibliothèque FLE</a></li>
+			   <li><a href="http://catalogue.univ-mosta.dz/flaa">Bibliothèque FLAA</a></li>
+			   <li><a href="http://catalogue.univ-mosta.dz/fsnv">Bibliothèque FSNV</a></li>
+			   <li><a href="http://catalogue.univ-mosta.dz/fsecsg">Bibliothèque FSECSG</a></li>
+			   <li><a href="http://catalogue.univ-mosta.dz/fst">Bibliothèque FST</a></li>
+			   <li><a href="http://catalogue.univ-mosta.dz/fsei">Bibliothèque FSEI</a></li>
+			   <li><a href="http://catalogue.univ-mosta.dz/fss">Bibliothèque FSS</a></li>
+			   <li><a href="http://catalogue.univ-mosta.dz/ieps">Bibliothèque IEPS</a></li>
+         </ul></li>
+
+<li><a href="./index.php?lvl=infopages&amp;pagesid=6">Nous trouver</a></li>
+
+</ul></div>
+			</div>
+		</div><!-- /div id=intro -->
+		<div id="bandeau"><!-- $Id: accessibility.tpl.html,v 1.7 2026/02/26 13:23:01 dbellamy Exp $ -->
+
+
+<div id="accessibility">
+    	<input type="hidden" id="opacAccessibility" name="opacAccessibility" value="1"/>
+			<ul class="accessibility_font_size">
+			<li class="accessibility_font_size_small">
+				<a href="javascript:accessibilityFontSize(1);" title="Réduire le texte">A-</a>
+			</li>
+			<li class="accessibility_font_size_normal">
+				<a href="javascript:accessibilityFontSize(0);" title="Réinitialiser le texte">A</a>
+			</li>
+			<li class="accessibility_font_size_big">
+				<a href="javascript:accessibilityFontSize(2);" title="Agrandir le texte">A+</a>
+			</li>
+		</ul>
+	
+			<script src="./includes/javascript/accessibility.js"></script>
+		
+			</div><div id="accueil">
+
+<h3><span onclick='document.location="./index.php?"' style='cursor: pointer;'>Accueil</span></h3>
+<p class="centered"><a href='./index.php?'><img src='images/site/logo.jpg' alt='Accueil'  style='border:0px' class='center'/></a></p>
+<div id='lang_select'><h3><span>Sélection de la langue</span></h3><form method="post" action="index.php?lvl=more_results" ><input type='hidden' name='user_query' value='&quot;Le petit prince&quot;' /><input type='hidden' name='mode' value='title' /><input type='hidden' name='search_type_asked' value='simple_search' /><input type='hidden' name='count' value='0' /><input type='hidden' name='typdoc' value='a' /><input type='hidden' name='l_typdoc' value='' /><select id="lang_sel_selector" name="lang_sel" onchange="this.form.submit();" title="S&eacute;lection de la langue"><option value='fr_FR' lang='fr' selected>Français</option><option value='it_IT' lang='it'>Italiano</option><option value='es_ES' lang='es'>Español</option><option value='ca_ES' lang='ca'>Català</option><option value='en_UK' lang='en'>English (UK)</option><option value='nl_NL' lang='nl'>Nederlands</option><option value='' lang=''></option></select></form></div>
+
+					</div><!-- fermeture #accueil -->
+<div id='connexion'>
+		<h3 class="login_invite">Se connecter</h3>
+        <div id='login_form'><form action='index.php?lvl=more_results' method='post' name='myform' data-csrf='true'><input type='hidden' name='user_query' value='&quot;Le petit prince&quot;' /><input type='hidden' name='mode' value='title' /><input type='hidden' name='search_type_asked' value='simple_search' /><input type='hidden' name='count' value='0' /><input type='hidden' name='typdoc' value='a' /><input type='hidden' name='l_typdoc' value='' /><label>accéder à votre compte de lecteur</label><br />
+        <input type='text' name='login' class='login' size='14' placeholder='identifiant' /><br />
+        <div class='myform-password-text-visually'>
+            <input type='password' id='myform-password' name='password' class='password' size='8' placeholder='Mot de passe' value=''/>
+            <button type='button' class='btn-icon password-toggle' id='myform-password-visually' onclick='toggle_password(this, "myform-password");' title='Afficher le mot de passe' aria-label='Afficher le mot de passe' role='switch' aria-checked='false'><i class='fa fa-eye password-toggle-show' aria-hidden='true'></i><i class='fa fa-eye-slash password-toggle-hide' aria-hidden='true'></i></button>
+        </div>
+        <input type='hidden' name='force_login' value='1'/>
+        <input type='submit' name='ok' value='Ok' class='bouton' />
+    </form><a  class='mdp_forgotten' href='./askmdp.php'>Mot de passe oublié ?</a></div>
+	</div>
+    <!-- fermeture #connexion --><div id="meteo">
+
+		<h3>Météo</h3>
+
+		<p class="centered"><div id="cont_OTg3MDZ8MXwxfDF8MXxGRkZGRjB8MXxGRkZGRkZ8Y3wx"><div id="spa_OTg3MDZ8MXwxfDF8MXxGRkZGRjB8MXxGRkZGRkZ8Y3wx"><a id="a_OTg3MDZ8MXwxfDF8MXxGRkZGRjB8MXxGRkZGRkZ8Y3wx" href="http://www.meteocity.com/algerie/mostaganem_v98706/" target="_blank" style="color:#333;text-decoration:none;">Météo Mostaganem</a> ©<a href="http://www.meteocity.com">meteocity.com</a></div><script type="text/javascript" src="http://widget.meteocity.com/js/OTg3MDZ8MXwxfDF8MXxGRkZGRjB8MXxGRkZGRkZ8Y3wx"></script></div></p>
+
+		<small>la météo à MOSTAGANEM</small>
+
+		</div><!-- fermeture # meteo -->
+<div id='lvl1'></div>
+			<div id='facette'>
+				
+				
+		<script src='./includes/javascript/select.js' ></script>
+        <script type='text/javascript'>
+            var facettes_hidden_form_name = 'form_values';
+            var facettes_ajax_see_more_url = './ajax.php?module=ajax&categ=facettes&search_mode=extended_search&sub=see_more';
+            var facettes_ajax_filtered_data_url = './ajax.php?module=ajax&categ=facettes&search_mode=extended_search&sub=get_filtered_data&hidden_form_name=form_values&facet_type=notices';
+            var facettes_ajax_filters_get_elements_url = './ajax.php?module=ajax&categ=facettes&search_mode=extended_search&sub=filters&action=get_elements&facet_type=notices&hidden_form_name=form_values&elements_list_nb_per_page=20';
+            var facettes_ajax_session_default_values_url = './ajax.php?module=ajax&categ=facettes&search_mode=extended_search&sub=session_default_values&facet_type=notices';
+			var facettes_display_fieldsets = '';
+            var facettes_modal_activate = '0';
+        </script>
+        <script src='./includes/javascript/facettes.js' type='text/javascript'></script>
+		<script>
+			function facettes_get_mode() {
+                return 'search';
+            }
+
+			function facette_see_more(id, json_facette_plus) {
+				const usingModal = '0' == 1;
+				var myList = document.getElementById('facette_list_'+id);
+
+				if (json_facette_plus == null) {
+
+                    if (usingModal) {
+                        if (typeof openModal == 'function') {
+                            return openModal(id);
+                        } else {
+                            console.error('[facettes_modal] : openModal is not a function !')
+                            return false;
+                        }
+                    }
+                    if (facettes_display_fieldsets) {
+                        var childs = myList.querySelectorAll('ul[id^=\'facette_body\'] .facette_tr');
+                    } else {
+                        var childs = myList.querySelectorAll('tbody[id^=\'facette_body\'] .facette_tr');
+                    }
+					var nb_childs = childs.length;
+					for(var i = 0; i < nb_childs; i++){
+						if (childs[i].getAttribute('data-facette-ajax-loaded')!=null) {
+							if (childs[i].getAttribute('style')=='display:block') {
+								childs[i].setAttribute('style','display:none');
+								childs[i].setAttribute('data-facette-expanded','false');
+							} else {
+								childs[i].setAttribute('style','display:block');
+								childs[i].setAttribute('data-facette-expanded','true');
+							}
+						}
+					}
+
+					var see_more_less = document.getElementById('facette_see_more_less_'+id);
+					see_more_less.innerHTML='';
+					var span = document.createElement('span');
+					if (see_more_less.getAttribute('data-etat')=='plus') {
+						span.className='facette_moins_link';
+						span.innerHTML=pmbDojo.messages.getMessage('facettes', 'facette_moins_link');
+						see_more_less.setAttribute('data-etat','moins');
+                        see_more_less.setAttribute('aria-label', pmbDojo.messages.getMessage('facettes', 'facette_moins_label'));
+					} else {
+						span.className='facette_plus_link';
+						span.innerHTML =pmbDojo.messages.getMessage('facettes', 'facette_plus_link');
+						see_more_less.setAttribute('data-etat','plus');
+                        see_more_less.setAttribute('aria-label', pmbDojo.messages.getMessage('facettes', 'facette_plus_label'));
+					}
+					see_more_less.appendChild(span);
+
+				} else {
+					var req = new http_request();
+					var sended_datas = {'json_facette_plus': json_facette_plus };
+					req.request("./ajax.php?module=ajax&categ=facettes&search_mode=extended_search&sub=see_more", true, 'sended_datas='+encodeURIComponent(JSON.stringify(sended_datas)), true, function(response) {
+                        if (usingModal) {
+                            if (typeof callback_see_more_modal == 'function') {
+                                callback_see_more_modal(id, myList, response)
+                            } else {
+                                console.error('[facettes_modal] : callback_see_more_modal is not a function !')
+                            }
+                        } else {
+                            callback_see_more(id, myList, response);
+                        }
+                    });
+				}
+			}
+
+            function facettes_get_see_less_span_node() {
+                var span = document.createElement('span');
+                span.className='facette_moins_link';
+                if (parseInt(facettes_modal_activate)) {
+                    span.innerHTML='[+]';
+                } else {
+                    span.innerHTML='[-]';
+                }
+                return span;
+            }
+            
+			function valid_facettes_compare(){
+
+				var form = document.facettes_multi;
+				if(form.elements.length>0){
+
+					var form_values_compare_input_array=new Array();
+
+					for(var i=0; i<form.elements.length;i++){
+
+						if(form.elements[i].name=='check_facette[]' && form.elements[i].checked){
+							//on transforme les case � coch� en element du tableau des facettes
+							//on ajoute dans le tableau des facettes
+							var value=form.elements[i].value;
+							var jsonArray=JSON.parse(value);
+
+							//On ajoute dans le formulaire de postage g�n�ral
+							var form_values_compare_input=document.createElement('input');
+							form_values_compare_input.setAttribute('name','check_facette_compare[]');
+							form_values_compare_input.setAttribute('type','hidden');
+							form_values_compare_input.setAttribute('value',value);
+							form_values_compare_input_array.push(form_values_compare_input);
+						}
+					}
+
+					var post=false;
+					var form_values=document.form_values;
+					for(var i=0;i<form_values_compare_input_array.length;i++) {
+						form_values.appendChild(form_values_compare_input_array[i]);
+					}
+
+					for(var i=0; i<form_values.elements.length;i++){
+						if(form_values.elements[i].name=='check_facette_compare[]' && form_values.elements[i].value!=''){
+							if(document.getElementById('filtre_compare_facette')) {
+								document.getElementById('filtre_compare_facette').value='compare';
+							}
+							if(document.getElementById('filtre_compare_form_values')) {
+								document.getElementById('filtre_compare_form_values').value='compare';
+							}
+							form_values.submit();
+							post=true;
+						}
+					}
+					if(post == false){
+						alert(pmbDojo.messages.getMessage('facettes', 'facette_compare_not_selected'));
+					}
+				}else{
+					alert(pmbDojo.messages.getMessage('facettes', 'facette_compare_not_selected'));
+				}
+			}
+
+			function valid_compare(){
+				var form_values=document.form_values;
+				var post=false;
+
+				for(var i=0; i<form_values.elements.length;i++){
+					if(form_values.elements[i].name=='check_facette_compare[]' && form_values.elements[i].value!=''){
+						if(document.getElementById('filtre_compare_facette')) {
+							document.getElementById('filtre_compare_facette').value='compare';
+						}
+						if(document.getElementById('filtre_compare_form_values')) {
+							document.getElementById('filtre_compare_form_values').value='compare';
+						}
+						form_values.submit();
+						post=true;
+					}
+				}
+				if(post == false){
+					alert(pmbDojo.messages.getMessage('facettes', 'facette_compare_not_selected'));
+				}
+			}
+
+			function remove_compare_facette(value){
+
+				var jsonArray = JSON.parse(value);
+
+				//on supprime l'�lement du tableau des facettes
+				elem=document.getElementById('compare_facette_'+jsonArray[4]);
+				elem.parentNode.removeChild(elem);
+
+				//on supprime l'�l�ment du formulaire g�n�ral aussi
+				var form_values=document.form_values;
+				for(var i in form_values.elements){
+					if(form_values.elements[i] && form_values.elements[i].value && form_values.elements[i].name=='check_facette_compare[]'){
+						form_values_json_array=JSON.parse(form_values.elements[i].value);
+
+						if(form_values_json_array[4]==jsonArray[4]){
+							elem=form_values.elements[i];
+							elem.parentNode.removeChild(elem);
+						}
+					}
+				}
+				var post=true;
+				for(var i in form_values.elements){
+					if(form_values.elements[i] && form_values.elements[i].value && form_values.elements[i].name=='check_facette_compare[]'){
+						valid_facettes_compare();
+						post=false;
+					}
+				}
+
+				if(post){
+					if('facette_search_compare' == 'facettes_external_search_compare') {
+						var input_form_values = document.createElement('input');
+						input_form_values.setAttribute('type', 'hidden');
+						input_form_values.setAttribute('name', 'reinit_compare');
+						input_form_values.setAttribute('value', '1');
+						document.forms['form_values'].appendChild(input_form_values);
+						document.form_values.submit();
+					} else {
+						document.location.href='./index.php?lvl=more_results&get_last_query=1&reinit_compare=1';
+					}
+				}
+			}
+
+			function group_by(groupBy){
+
+				var jsonArray=JSON.parse(groupBy);
+
+				//on vide les elements group_by
+				var group_by_elements=document.getElementsByName('check_facette_groupby[]');
+
+				var nodes_to_remove = [];
+
+				for(var i in group_by_elements){
+					if(group_by_elements[i].nodeName=='INPUT'){
+						if(group_by_elements[i].getAttribute('id')!='facette_groupby_'+jsonArray[3]){
+
+							if(group_by_elements[i].parentNode.getAttribute('name')!='form_values' && group_by_elements[i].parentNode.getAttribute('name')!='cart_values'){
+								var group_by_elements_img=group_by_elements[i].previousElementSibling.firstChild;
+
+								group_by_elements_img.setAttribute('src','./images/group_by_grey.png');
+								group_by_elements[i].setAttribute('value','');
+
+							}else{
+								nodes_to_remove.push([group_by_elements[i],group_by_elements[i].parentNode]);
+							}
+						}
+					}
+				}
+
+				for(var i = 0; i < nodes_to_remove.length; i++){
+					nodes_to_remove[i][1].removeChild(nodes_to_remove[i][0]);
+				}
+
+				//l'element peut etre absent si la facette n'est plus affichee (suppression depuis la liste des regroupements)
+				var element=document.getElementById('facette_groupby_'+jsonArray[3]);
+
+				if(element && element.getAttribute('value')==''){
+					element.setAttribute('value',JSON.stringify(groupBy));
+
+					//On ajoute dans le formulaire de postage g�n�ral
+					var form_values=document.form_values;
+					var form_values_groupby_input=document.createElement('input');
+					form_values_groupby_input.setAttribute('name','check_facette_groupby[]');
+					form_values_groupby_input.setAttribute('type','hidden');
+					form_values_groupby_input.setAttribute('value',groupBy);
+					form_values.appendChild(form_values_groupby_input);
+
+
+				}
+				valid_facettes_compare();
+			}
+		</script>
+				<div id='facette_wrapper'>
+					<img src='./images/patience.gif'/>
+					<script>
+                        document.addEventListener('DOMContentLoaded', () => {
+    						var req = new http_request();
+    						req.request("./ajax.php?module=ajax&categ=facettes&search_mode=extended_search&sub=get_data&hidden_form_name=form_values&facet_type=notices",false,null,true,function(data){
+    							var response = JSON.parse(data);
+    							document.getElementById('facette_wrapper').innerHTML=response.display;
+    						    require(['dojo/query', 'dojo/dom-construct'], function(query, domConstruct){
+        						    query('#facette_wrapper script').forEach(function(node) {
+                    					domConstruct.create('script', {
+                    						innerHTML: node.innerHTML
+                    					}, node, 'replace');
+                    				});
+    						    });
+    							if(!response.exists_with_results) {
+    								require(['dojo/ready', 'dojo/dom-construct'], function(ready, domConstruct){
+    									ready(function(){
+    						                if (document.getElementById('segment_searches')) {
+    										    domConstruct.destroy('facette_wrapper');
+    						                } else {
+    						                    domConstruct.destroy('facette');
+    						                }
+
+    									});
+    								});
+    							}
+    							if(response.map_location) {
+    								if(document.getElementById('map_location_search')) {
+    									document.getElementById('map_location_search').innerHTML=response.map_location;
+    									if(typeof(dojo) == 'object'){
+    										dojo.require('dojo.parser');
+    										dojo.parser.parse(document.getElementById('map_location_search'));
+    									}
+    								}
+    							}
+                                hide_element_by_its_hidden_children('bandeau');
+    						}, '', '', true);
+                        });
+					</script>
+				</div>
+			</div><div id="adresse">
+
+		<h3>Adresse</h3>
+
+		<span>
+			Bibliothèque Centrale<br />
+			Avenue Hamadou Hossine, Mostaganem<br />
+			27000 MOSTAGANEM<br />
+			Algerie&nbsp;<br />
+			045 41 69 34<br /><span id='opac_biblio_email'>bcmunivmosta@gmail.com</span></span>
+	    </div><!-- fermeture #adresse --></div><div id="bandeau_2"></div></div><!-- /div id=container -->
+		
+		<script>init_drag();	</script>
+		
+			<script>
+				var tarteaucitron_messages = pmbDojo.messages.getMessages("tarteaucitron");
+				if(tarteaucitron_messages.length) {
+					tarteaucitronCustomText = {};
+					tarteaucitron_messages.forEach(function(message) {
+						if(parseInt(message.code.indexOf(":")) !== -1) {
+							let tarteaucitron_messages_group = message.code.split(":");
+							if(typeof tarteaucitronCustomText[tarteaucitron_messages_group[0]] == "undefined") {
+								tarteaucitronCustomText[tarteaucitron_messages_group[0]] = {};
+							}
+							tarteaucitronCustomText[tarteaucitron_messages_group[0]][tarteaucitron_messages_group[1]] = message.message;
+						} else {
+							tarteaucitronCustomText[message.code] = message.message;
+						}
+					});
+				}
+			</script>
+			<script src="./includes/javascript/tarteaucitron/tarteaucitron.js"></script>
+		<script>
+	        tarteaucitron.init({
+	    	  "privacyUrl": "", /* Privacy policy url */
+	
+	    	  "hashtag": "#PhpMyBibli-COOKIECONSENT", /* Open the panel with this hashtag */
+	    	  "cookieName": "PhpMyBibli-COOKIECONSENT", /* Cookie name */
+	    
+	    	  "orientation": "bottom", /* Banner position (top - bottom - popup) */
+	       
+	          "groupServices": true, /* Group services by category */
+	                           
+	    	  "showAlertSmall": false, /* Show the small banner on bottom right */
+	    	  "cookieslist": false, /* Show the cookie list */
+				                           
+	          "closePopup": false, /* Show a close X on the banner */
+	
+	          "showIcon": false, /* Show cookie icon to manage cookies */
+	          "iconSrc": "./images/cookie.png", /* Optionnal: URL or base64 encoded image */
+	          "iconPosition": "BottomRight", /* BottomRight, BottomLeft, TopRight and TopLeft */
+	
+	    	  "adblocker": false, /* Show a Warning if an adblocker is detected */
+	                           
+	          "DenyAllCta" : true, /* Show the deny all button */
+	          "AcceptAllCta" : true, /* Show the accept all button when highPrivacy on */
+	          "highPrivacy": true, /* HIGHLY RECOMMANDED Disable auto consent */
+	                           
+	    	  "handleBrowserDNTRequest": false, /* If Do Not Track == 1, disallow all */
+	
+	    	  "removeCredit": true, /* Remove credit link */
+	    	  "moreInfoLink": false, /* Show more info link */
+	
+	          "useExternalCss": false, /* If false, the tarteaucitron.css file will be loaded */
+	          "useExternalJs": false, /* If false, the tarteaucitron.js file will be loaded */
+				
+	    	  //"cookieDomain": ".my-multisite-domaine.fr", /* Shared cookie for multisite */
+	                          
+	          "readmoreLink": "", /* Change the default readmore link */
+	
+	          "mandatory": true, /* Show a message about mandatory cookies */
+
+              "bodyPosition": "bottom", /* Apply a first-child of the body for better accessibility */
+	        });
+ 
+        </script>
+		</body>
+		</html>
+		

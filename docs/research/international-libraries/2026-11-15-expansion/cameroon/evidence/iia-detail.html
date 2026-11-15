@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang='fr'>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="">
+			<meta charset="utf-8" />
+			<meta name="author" content="PMB Group" />
+
+			<meta name="keywords" content="OPAC, web, library, opensource, catalog, catalogue, bibliothèque, médiathèque, pmb, phpmybibli" />
+			<meta name="description" content="Catalogue en ligne Bibliothèque de l'IIA." /><meta name='robots' content='all' />
+			<!--IE et son enfer de compatibilit�-->
+			<meta http-equiv='X-UA-Compatible' content='IE=Edge' />
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+	<title>Catalogue en ligne Bibliothèque de l'IIA</title>
+	
+	
+<link rel='stylesheet' type='text/css' href='./styles/common/animation_display.css?1712012223' />
+<link rel='stylesheet' type='text/css' href='./styles/common/common.css?1712012223' />
+<link rel='stylesheet' type='text/css' href='./styles/common/contrib.css?1712012223' />
+<link rel='stylesheet' type='text/css' href='./styles/common/dGrowl.css?1712012223' />
+<link rel='stylesheet' type='text/css' href='./styles/common/dsi.css?1712012223' />
+<link rel='stylesheet' type='text/css' href='./styles/common/font-awesome.css?1712012223' />
+<link rel='stylesheet' type='text/css' href='./styles/common/open-sans.css?1712012223' />
+<link rel='stylesheet' type='text/css' href='./styles/common/pagination.css?1712012223' />
+<link rel='stylesheet' type='text/css' href='./styles/common/record_display.css?1712012223' />
+<link rel='stylesheet' type='text/css' href='./styles/common/visionneuse.css?1712012223' />
+<link rel='stylesheet' type='text/css' href='./styles/iia/colonnes.css?1789662451' />
+<link rel='stylesheet' type='text/css' href='./styles/iia/gallerie_photos.css?1789662451' />
+<link rel='stylesheet' type='text/css' href='./styles/iia/iia.css?1789991435' />
+<link rel='stylesheet' type='text/css' href='./styles/iia/liste_bulletins.css?1789662451' />
+<link rel='stylesheet' type='text/css' href='./styles/iia/print.css?1789662451' />
+<link rel='stylesheet' type='text/css' href='./styles/iia/tags.css?1789662451' />
+<link rel='stylesheet' type='text/css' href='./styles/iia/visionneuse.css?1789662451' />
+<script src='./styles/iia/javascript/iia_home.js?1789990523' ></script>
+<script src='./styles/iia/javascript/resa_inline.js?1789740315' ></script><script type='text/javascript'>var opac_style= 'iia';</script>
+	<!-- css_authentication -->	<link rel='SHORTCUT ICON' href='./images/site/favicon.ico' />
+	<script type="text/javascript" src="includes/javascript/drag_n_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/handle_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/popup.js"></script>
+	<script type='text/javascript'>
+			// Fonction a utiliser pour l'encodage des URLs en javascript
+			function encode_URL(data){
+				var docCharSet = document.characterSet ? document.characterSet : document.charset;
+				if(docCharSet == "UTF-8"){
+	    			return encodeURIComponent(data);
+	    		}else{
+	    			return escape(data);
+	    		}
+	    	}
+	    </script>
+	<script type='text/javascript'>
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName =
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i);
+				    }
+				 }
+				return items;
+			 }
+		}
+	</script>
+
+		<link rel='stylesheet' type='text/css' href='./includes/javascript/dojo/dijit/themes/tundra/tundra.css' />
+		<script type='text/javascript'>
+			var dojoConfig = {
+				parseOnLoad: true,
+				locale: 'fr-fr',
+				isDebug: false,
+				usePlainJson: true,
+				packages: [{
+						name: 'pmbBase',
+						location:'../../../..'
+					},{
+						name: 'd3',
+						location:'../../d3'
+					}],
+				deps: ['apps/pmb/MessagesStore', 'dgrowl/dGrowl', 'dojo/ready', 'apps/pmb/ImagesStore'],
+				callback:function(MessagesStore, dGrowl, ready, ImagesStore){
+					window.pmbDojo = {};
+					pmbDojo.messages = new MessagesStore({url:'./ajax.php?module=ajax&categ=messages', directInit:false});
+					pmbDojo.images = new ImagesStore({url:'./ajax.php?module=ajax&categ=images', directInit:false});
+					ready(function(){
+						new dGrowl({'channels':[{'name':'info','pos':2},{'name':'error', 'pos':1}]});
+					});
+
+				},
+			};
+		</script>
+		<script type='text/javascript' src='./includes/javascript/dojo/dojo/dojo.js'></script>
+		<script type='text/javascript'>
+		dojo.addOnLoad(function () {
+			// Ajout du theme Dojo
+			dojo.addClass(dojo.body(),'tundra');
+		})
+		</script>
+		<script type='text/javascript'>
+	var pmb_img_patience = './images/patience.gif';
+</script><script type='text/javascript'>
+			var opac_show_social_network =0;
+		</script>
+	<script type='text/javascript' src='./includes/javascript/http_request.js'></script>
+	<script type='text/javascript' src='./includes/javascript/track_clicks.js'></script>
+	
+</head>
+
+<body onload="window.defaultStatus='PMB : Accès public';"  id="pmbopac">
+		<script type='text/javascript'>
+		function findNoticeElement(id){
+			var ul=null;
+			//cas des notices classiques
+			var domNotice = document.getElementById('el'+id+'Child');
+			//notice_display
+			if(!domNotice) domNotice = document.getElementById('notice');
+			if(domNotice){
+				var uls = domNotice.getElementsByTagName('ul');
+				for (var i=0 ; i<uls.length ; i++){
+					if(uls[i].getAttribute('id') == 'onglets_isbd_public'+id){
+						var ul = uls[i];
+						break;
+					}
+				}
+			} else{
+				var li = document.getElementById('onglet_isbd'+id);
+				if(!li) var li = document.getElementById('onglet_public'+id);
+				if(!li) var li = document.getElementById('onglet_detail'+id);
+				if(li) var ul = li.parentNode;
+			}
+			return ul;
+		}
+		function show_what(quoi, id) {
+			switch(quoi){
+				case 'EXPL_LOC' :
+					document.getElementById('div_expl_loc' + id).style.display = 'block';
+					document.getElementById('div_expl' + id).style.display = 'none';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_inactive';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_active';
+					break;
+				case 'EXPL' :
+					document.getElementById('div_expl_loc' + id).style.display = 'none';
+					document.getElementById('div_expl' + id).style.display = 'block';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_active';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_inactive';
+					break;
+				default :
+					quoi= quoi.toLowerCase();
+					var ul = findNoticeElement(id);
+					if (ul) {
+						var items  = ul.getElementsByTagName('li');
+						for (var i=0 ; i<items.length ; i++){
+							if(items[i].getAttribute('id')){
+								if(items[i].getAttribute('id') == 'onglet_'+quoi+id){
+									items[i].className = 'isbd_public_active';
+									document.getElementById('div_'+quoi+id).style.display = 'block';
+								}else{
+									if(items[i].className != 'onglet_tags' && items[i].className != 'onglet_avis' && items[i].className != 'onglet_sugg' && items[i].className != 'onglet_basket' && items[i].className != 'onglet_liste_lecture'){
+										items[i].className = 'isbd_public_inactive';
+										document.getElementById(items[i].getAttribute('id').replace('onglet','div')).style.display = 'none';
+									}
+								}
+							}
+						}
+					}
+					break;
+			}
+		}
+		</script>
+	<script type='text/javascript' src='./includes/javascript/tablist_ajax.js'></script>
+<script type='text/javascript' src='./includes/javascript/tablist.js'></script>
+<script type='text/javascript' src='./includes/javascript/misc.js'></script>
+	<div id='att' style='z-Index:1000'></div>
+	<div id="container"><div id="main"><div id='main_header'><h3>Bibliothèque de l'IIA en ligne</h3></div><div id="main_hors_footer">
+						
+
+<script type='text/javascript' src='./includes/javascript/auth_popup.js'></script>
+<script type='text/javascript' src='./includes/javascript/pnb.js'></script><div id="intro_message"><div class="p1"><!--<a href="index.php?lvl=index"><img src="./images/bar_spacer.gif" id="map_lien_retour" alt="" /></a>---> 
+<!---<a href="http://www.sigb.net" id="puce">Sigb.Net</a>--->
+<!---<a href="http://www.sigb.net/wiki/" id="puce">WiKi PMB</a>--->
+<!---<a href="http://fr.wikipedia.org" id="puce">WiKipedia</a>--->
+</div><div class="p2"></div></div><div id='navigator'>
+<table style='width:100%'><tr><td class='navig_actions_first_screen' ><a href="./index.php?lvl=index" class='navig_etageres'><span>Nouvelle recherche</span></a></td>
+</tr></table></div><!-- fermeture de #navigator -->
+<div id='resume_panier' class='empty'></div>
+<div id='notice'>
+<br />
+			<script type='text/javascript'>
+				if(param_social_network){
+					creeAddthis('el121');
+				}else{
+					waitingAddthisLoaded('el121');
+				}
+			</script>
+			<div id='el121Parent' class='parent'><img src="https://books.iiayaounde.com/opac_css/images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/><span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_121"><span class="statutnot1" ></span><span  notice='121'  class='header_title'>Les 201 Mots Clés de L'assurance</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=177'>Jean-Pierre Lambert</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Les%20201%20Mots%20Cl%C3%A9s%20de%20L%27assurance&amp;rft.title=Les%20201%20Mots%20Cl%C3%A9s%20de%20L%27assurance&amp;rft.isbn=978-2-902189-03-8&amp;rft.tpages=114%20p.&amp;rft.date=1985&amp;rft_id=&amp;rft.pub=%C3%A9d.%20l%27Assurance%20fran%C3%A7aise&amp;rft.place=Paris&amp;rft.au=Jean-Pierre%20Lambert&amp;rft.aulast=Lambert&amp;rft.aufirst=Jean-Pierre'></span></span><table style='width:100%'><tr><td style='vertical-align:top'>
+		<ul id='onglets_isbd_public121' class='onglets_isbd_public'>
+	  			<li id='onglet_public121' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '121'); return false;">Public</a></li>
+				<li id='onglet_isbd121' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '121'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public121' style='display:block;'><table><tr class='tr_title'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>Les 201 Mots Clés de L'assurance</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texte imprimé</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=177' >Jean-Pierre Lambert</a>, Auteur</span></td>
+				</tr><tr class='tr_ed1'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=184' >Paris : éd. l'Assurance française</a></span></td>
+				</tr><tr class='tr_year'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_year'>1985</span></td>
+				</tr><tr class='tr_npages'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>114 p.</span></td>
+				</tr><tr class='tr_ill'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Présentation : </span></td>
+					<td class='public_line_value'><span class='public_ill'>couv. ill. en coul.</span></td>
+				</tr><tr class='tr_size'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Format : </span></td>
+					<td class='public_line_value'><span class='public_size'>17 cm</span></td>
+				</tr><tr class='tr_code'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>ISBN/ISSN/EAN&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_code'>978-2-902189-03-8</span></td>
+				</tr><tr class='tr_prix'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Prix : </span></td>
+					<td class='public_line_value'><span class='public_prix'>28 F</span></td>
+				</tr><tr class='tr_langues'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>)</span></td>
+				</tr><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=4' >Livres:Livres traitant des assurances </a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Assurance&tags=ok' >Assurance</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Dictionnaires&tags=ok' >Dictionnaires</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4863' >413 L</a> <span></span></span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd121' style='display:none;'>Les 201 Mots Clés de L'assurance [texte imprimé] / <a href='./index.php?lvl=author_see&id=177' >Jean-Pierre Lambert</a>, Auteur&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=184' >Paris : éd. l'Assurance française</a>, 1985&nbsp;.&nbsp;-&nbsp;114 p.&nbsp;: couv. ill. en coul.&nbsp;; 17 cm.<br /><b>ISBN</b>&nbsp;: 978-2-902189-03-8&nbsp;: 28 F<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr class='tr_categ'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=4' >Livres:Livres traitant des assurances </a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Assurance&tags=ok' >Assurance</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Dictionnaires&tags=ok' >Dictionnaires</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td class='align_right bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4863' >413 L</a> <span></span></span></td>
+				</tr></table></div></td><td class='align_right' style='vertical-align:top'><img class='vignetteimg align_right' src='https://books.iiayaounde.com/opac_css/thumbnail.php?type=1&id=121' title="Les 201 Mots Cl&eacute;s de L&#039;assurance" hspace='4' vspace='2' alt='vignette' /></td></tr></table>
+					<h3>Réservation</h3><a href='#' onClick="if(confirm('Voulez-vous vraiment réserver ce document ?')){w=window.open('./do_resa.php?lvl=resa&id_notice=121&id_bulletin=0&oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Réserver ce document</a><br /><!-- $Id: expl_list.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<h3>
+	<span id='titre_exemplaires' class='titre_exemplaires'>
+		Exemplaires(4)
+	</span>
+</h3>
+	<!-- $Id: expl_table.tpl.html,v 1.1.2.2 2023/05/03 10:22:13 jparis Exp $ -->
+<table cellpadding='2' class='exemplaires' style='width:100%'>
+		<tr class='thead'>
+									<th class='expl_header_expl_cb'>Code-barres</th>
+						
+																																																																																																																																																																																																																																<th class='expl_header_expl_cote'>Cote</th>
+						
+																																																																																																																																																																																																																																<th class='expl_header_tdoc_libelle'>Support</th>
+						
+																																																																																																																																																																																																																																<th class='expl_header_location_libelle'>Localisation</th>
+						
+																																																																																																																																																																																																																																<th class='expl_header_section_libelle'>Section</th>
+						
+																																																																																																																																																																																																																											<th class='expl_header_statut'>Disponibilité</th>
+	</tr>
+						<tr class='odd item_expl expl_available'>
+																																			<td id='expl_202' class='expl_cb'>
+							82
+						</td>
+																																																																		<td class='expl_cote'>413 LAM</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliothèque principale</td>
+																																													<td id='expl_202' class='section_libelle'>
+															Documentaires
+													</td>
+																								<td class='expl_situation'><strong>Disponible</strong></td>
+
+																																																	</tr>
+					<tr class='even item_expl expl_available'>
+																																			<td id='expl_203' class='expl_cb'>
+							3160
+						</td>
+																																																																		<td class='expl_cote'>413 LAM</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliothèque principale</td>
+																																													<td id='expl_203' class='section_libelle'>
+															Documentaires
+													</td>
+																								<td class='expl_situation'><strong>Disponible</strong></td>
+
+																																																	</tr>
+					<tr class='odd item_expl expl_available'>
+																																			<td id='expl_204' class='expl_cb'>
+							3161
+						</td>
+																																																																		<td class='expl_cote'>413 LAM</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliothèque principale</td>
+																																													<td id='expl_204' class='section_libelle'>
+															Documentaires
+													</td>
+																								<td class='expl_situation'><strong>Disponible</strong></td>
+
+																																																	</tr>
+					<tr class='even item_expl expl_available'>
+																																			<td id='expl_205' class='expl_cb'>
+							3904
+						</td>
+																																																																		<td class='expl_cote'>413 LAM</td>
+																																																		<td class='tdoc_libelle'>Livre</td>
+																																																		<td class='location_libelle'>Bibliothèque principale</td>
+																																													<td id='expl_205' class='section_libelle'>
+															Documentaires
+													</td>
+																								<td class='expl_situation'><strong>Disponible</strong></td>
+
+																																																	</tr>
+			</table></div>
+</div>
+
+		</div><!-- fin DIV main_hors_footer --><div id="footer">
+
+<span id="footer_rss">
+	
+</span>
+<span id="footer_link_sup">
+		<a href="./index.php?lvl=infopages&amp;pagesid=7">Mentions légales</a> &nbsp;
+</span>
+
+<span id="footer_link_website">
+	<a class="footer_biblio_name" href="http://www.books.iiayaounde.com" title="Bibliothèque de l'IIA">Bibliothèque de l'IIA</a> &nbsp;
+</span>
+
+<span id="footer_link_pmb">
+<!--<a href=http://www.google.fr target=_blank>Faire une recherche avec Google</a>--> &nbsp;
+		<a class="lien_pmb_footer" href="https://www.sigb.net" title="...une solution libre pour la médiathèque..." target='_blank'>pmb</a>
+</span>
+
+</div> 
+
+		</div><!-- /div id=main -->
+
+		<div id="intro">
+<div id="intro_bibli">
+			<h3>Bibliothèque de l'IIA</h3>
+			<div class="p1"><img src="./styles/iia/images/image1.jpg" />
+<img src="./styles/iia/images/image2.jpg" />
+</div>
+			<div class="p2"><ul id="menuDeroulant">
+
+<li><a href="./index.php">Accueil</a></li>
+<!--<li><a href="./index.php?lvl=infopages&amp;pagesid=4"></a></li>-->
+<li><a href="./index.php?lvl=infopages&amp;pagesid=1">Actualités de la bibliothèque de l'IIA</a>
+<li><a href="./index.php?lvl=infopages&amp;pagesid=6">Nous trouver</a></li>
+<ul class="sousMenu">
+<!---<li><a href="./index.php?lvl=infopages&amp;pagesid=3">Aide en ligne</a></li>--->
+<!---<li><a href="./index.php?lvl=infopages&amp;pagesid=2">Version 7.3 !</a></li>
+</ul>--->
+</li>
+</ul></div>
+			</div>
+		</div><!-- /div id=intro -->
+		<div id="bandeau"><!-- $Id: accessibility.tpl.html,v 1.2.4.1 2023/10/02 14:33:32 jparis Exp $ -->
+
+
+<div id="accessibility">
+    	<input type="hidden" id="opacAccessibility" name="opacAccessibility" value="1"/>
+	<ul class="accessibility_font_size">
+		<li class="accessibility_font_size_small">
+			<a href="javascript:accessibilityFontSize(1);" title="Réduire le texte">A-</a>
+		</li>
+		<li class="accessibility_font_size_normal">
+			<a href="javascript:accessibilityFontSize(0);" title="Réinitialiser le texte">A</a>
+		</li>
+		<li class="accessibility_font_size_big">
+			<a href="javascript:accessibilityFontSize(2);" title="Agrandir le texte">A+</a>
+		</li>
+	</ul>
+</div>
+
+
+<script type="text/javascript" src="./includes/javascript/accessibility.js"></script>
+
+
+<div id="accueil">
+
+<h3><span onclick='document.location="./index.php?"' style='cursor: pointer;'>Accueil</span></h3>
+<p class="centered"><a href='./index.php?'><img src='images/site/livre.png' alt='Accueil'  style='border:0px' class='center'/></a></p>
+<div id='lang_select'><h3 ><span>Sélection de la langue</span></h3><form method="post" action="index.php?lvl=notice_display&id=121" ><select name="lang_sel" onchange="this.form.submit();"><option value='fr_FR' selected>Français </option><option value='it_IT'>Italiano</option><option value='es_ES'>Español</option><option value='ca_ES'>Català</option><option value='en_UK'>English (UK)</option><option value='nl_NL'>Nederlands</option><option value='oc_FR'>Occitan</option></select></form></div>
+
+					</div><!-- fermeture #accueil -->
+<div id="connexion">
+
+			<h3 class="login_invite">Se connecter</h3><div id='login_form'><form action='index.php?lvl=notice_display&id=121' method='post' name='myform' data-csrf='true'><label>accéder à votre compte de lecteur</label><br />
+				<input type='text' name='login' class='login' size='14' placeholder='identifiant' ><br />
+                <div class='myform-password-text-visually'>
+                    <input type='password' id='myform-password' name='password' class='password' size='8' placeholder='Mot de passe' value=''/>
+                    <button type='button' class='fa fa-eye' id='myform-password-visually' onclick='toggle_password(this, "myform-password");' title='Afficher ou masquer le mot de passe'></button>
+                </div>
+                <input type='hidden' name='force_login' value='1'/>
+				<input type='submit' name='ok' value='ok' class='bouton'></form><a  class='mdp_forgotten' href='./askmdp.php'>Mot de passe oublié ?</a><br /><a class='subs_not_yet_subscriber' href='./subscribe.php'>Pas encore inscrit ?</a></div>
+
+			</div><!-- fermeture #connexion -->
+<div id="adresse">
+
+		<h3>Adresse</h3>
+
+		<span>
+			Bibliothèque de l'IIA<br />
+			Yaoundé, Titi garage-Cameroun
+BP 1575<br />
+			 Yaoundé<br />
+			Cameroun&nbsp;<br />
+			+237 222 207 152<br /><span id='opac_biblio_email'>
+			<a href="mailto:books@iiayaounde.com" title="books@iiayaounde.com">contact</a></span></span>
+	    </div><!-- fermeture #adresse --></div><div id="bandeau_2"></div></div><!-- /div id=container -->
+		
+		<script type='text/javascript'>init_drag();	//rechercher!!</script>
+		
+			<script type="text/javascript">
+				var tarteaucitron_messages = pmbDojo.messages.getMessages("tarteaucitron");
+				if(tarteaucitron_messages.length) {
+					tarteaucitronCustomText = {};
+					tarteaucitron_messages.forEach(function(message) {
+						if(parseInt(message.code.indexOf(":")) !== -1) {
+							let tarteaucitron_messages_group = message.code.split(":");
+							if(typeof tarteaucitronCustomText[tarteaucitron_messages_group[0]] == "undefined") {
+								tarteaucitronCustomText[tarteaucitron_messages_group[0]] = {};
+							}
+							tarteaucitronCustomText[tarteaucitron_messages_group[0]][tarteaucitron_messages_group[1]] = message.message;
+						} else {
+							tarteaucitronCustomText[message.code] = message.message;
+						}
+					});
+				}
+			</script>
+			<script type="text/javascript" src="./includes/javascript/tarteaucitron/tarteaucitron.js"></script>
+		<script type="text/javascript">
+	        tarteaucitron.init({
+	    	  "privacyUrl": "", /* Privacy policy url */
+	
+	    	  "hashtag": "#PhpMyBibli-COOKIECONSENT", /* Open the panel with this hashtag */
+	    	  "cookieName": "PhpMyBibli-COOKIECONSENT", /* Cookie name */
+	    
+	    	  "orientation": "bottom", /* Banner position (top - bottom - popup) */
+	       
+	          "groupServices": true, /* Group services by category */
+	                           
+	    	  "showAlertSmall": false, /* Show the small banner on bottom right */
+	    	  "cookieslist": false, /* Show the cookie list */
+				                           
+	          "closePopup": false, /* Show a close X on the banner */
+	
+	          "showIcon": false, /* Show cookie icon to manage cookies */
+	          "iconSrc": "./images/cookie.png", /* Optionnal: URL or base64 encoded image */
+	          "iconPosition": "BottomRight", /* BottomRight, BottomLeft, TopRight and TopLeft */
+	
+	    	  "adblocker": false, /* Show a Warning if an adblocker is detected */
+	                           
+	          "DenyAllCta" : true, /* Show the deny all button */
+	          "AcceptAllCta" : true, /* Show the accept all button when highPrivacy on */
+	          "highPrivacy": true, /* HIGHLY RECOMMANDED Disable auto consent */
+	                           
+	    	  "handleBrowserDNTRequest": false, /* If Do Not Track == 1, disallow all */
+	
+	    	  "removeCredit": true, /* Remove credit link */
+	    	  "moreInfoLink": false, /* Show more info link */
+	
+	          "useExternalCss": false, /* If false, the tarteaucitron.css file will be loaded */
+	          "useExternalJs": false, /* If false, the tarteaucitron.js file will be loaded */
+				
+	    	  //"cookieDomain": ".my-multisite-domaine.fr", /* Shared cookie for multisite */
+	                          
+	          "readmoreLink": "", /* Change the default readmore link */
+	
+	          "mandatory": true, /* Show a message about mandatory cookies */
+	        });
+ 
+        </script>
+		<script type="text/javascript">
+		tarteaucitron.services.pmbstatopac = {
+		  	"key": "pmbstatopac",
+			"type": "analytic",
+			"name": "PMB (Statistiques)",
+			"needConsent": true,
+			"cookies": [],
+			"uri": "https://books.iiayaounde.com/opac_css/",
+			"readmoreLink": "", // If you want to change readmore link
+			"js": function () {
+			    "use strict";
+			    // When user allow cookie
+		  	},
+		  	"fallback": function () {
+		    	"use strict";
+		    	// when use deny cookie
+		  	}
+		};
+		</script>
+		<script type="text/javascript">
+        	(tarteaucitron.job = tarteaucitron.job || []).push("pmbstatopac");
+        </script>
+		</body>
+		</html>
+		

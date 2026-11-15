@@ -1,0 +1,21 @@
+# =====================================================================
+# NHRC Koha OPAC crawler policy
+# =====================================================================
+
+User-agent: *
+
+# Do not crawl generated Koha searches.
+Disallow: /cgi-bin/koha/opac-search.pl
+
+# Authentication / patron actions.
+Disallow: /cgi-bin/koha/opac-user.pl
+Disallow: /cgi-bin/koha/opac-reserve.pl
+Disallow: /cgi-bin/koha/opac-memberentry.pl
+Disallow: /cgi-bin/koha/opac-password-recovery.pl
+
+# VuFind is currently disabled.
+Disallow: /vufind/
+
+# Bibliographic detail pages are intentionally NOT disallowed.
+#
+# /cgi-bin/koha/opac-detail.pl remains crawlable.

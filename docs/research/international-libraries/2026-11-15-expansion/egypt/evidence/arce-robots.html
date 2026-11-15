@@ -1,0 +1,960 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: opac-auth.tt -->
+
+
+
+
+
+
+
+
+
+<html lang="en" class="no-js">
+<head>
+
+<title>
+
+    Log in to your account
+ &rsaquo;
+ ARCE Library catalog
+</title>
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha" /> <!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="csrf-token" content="34378ec23184a8547fd2d8632baf3b7480d76fd5,f1e7f025c9cbe94bb72288d2ec7b4636d1627201,1794728006">
+<link href="/opac-tmpl/bootstrap/lib/jquery/responsive.dataTables.min_24.0505000.css" type="text/css" rel="stylesheet">
+
+<link rel="shortcut icon" href="https://library.arce.org/logo.ico" type="image/x-icon" />
+<link rel="apple-touch-icon" href="https://library.arce.org/logo.ico" type="image/x-icon" />
+
+    
+        
+    
+
+
+    <link href="/opac-tmpl/bootstrap/css/opac_24.0505000.css" type="text/css" rel="stylesheet">
+
+
+
+
+    <link href="/opac-tmpl/bootstrap/css/print_24.0505000.css" media="print" type="text/css" rel="stylesheet">
+
+
+
+
+
+    <link rel="search" type="application/opensearchdescription+xml" href="https://library.arce.org/cgi-bin/koha/opac-search.pl?format=opensearchdescription" title="Search ARCE Library">
+    <link rel="unapi-server" type="application/xml" title="unAPI" href="https://library.arce.org/cgi-bin/koha/unapi" />
+
+
+<script>
+    var Koha = {};
+    function _(s) { return s } // dummy function for gettext
+    const is_logged_in = false
+</script>
+
+<script src="/opac-tmpl/bootstrap/js/Gettext_24.0505000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/i18n_24.0505000.js"></script>
+
+<link rel="stylesheet" type="text/css" href="/opac-tmpl/lib/fontawesome/css/fontawesome.min_24.0505000.css">
+<link href="/opac-tmpl/lib/fontawesome/css/brands.min_24.0505000.css" type="text/css" rel="stylesheet">
+<link href="/opac-tmpl/lib/fontawesome/css/solid.min_24.0505000.css" type="text/css" rel="stylesheet">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+
+
+
+    
+
+
+    
+
+
+
+
+    
+
+<body ID="opac-login-page" class="branch-default scrollto" >
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<button id="scrolltocontent">Skip to main content</button>
+<div id="wrapper">
+    <div id="header-region" class="noprint">
+        <nav class="navbar navbar-expand">
+            <div id="logo">
+            <a class="navbar-brand" href="/cgi-bin/koha/opac-main.pl">
+                
+                    ARCE Library
+                
+            </a>
+            </div>
+            
+            
+                
+                    
+
+    <div id="header_langmenu">
+        <ul class="navbar-nav">
+            <li class="dropdown">
+              <a href="#" title="Switch languages" class="nav-link dropdown-toggle" id="langmenu" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-flag fa-icon-black" aria-hidden="true"></i> <span class="langlabel">Languages</span> <b class="caret"></b></a>
+                <div aria-labelledby="langmenu" role="menu" class="dropdown-menu dropdown-menu-right">
+                    
+                        
+                            
+                                
+                                    
+                                        <a class="dropdown-item menu-inactive" href="#" tabindex="-1" role="menuitem">
+                                            
+                                                English
+                                            &nbsp;<i class="fa fa-check" aria-hidden="true"></i>
+                                        </a>
+                                    
+                                
+                            
+                        
+                    
+                        
+                            
+                                
+                                    
+                                        <a class="dropdown-item" href="/cgi-bin/koha/opac-changelanguage.pl?language=ar-Arab"  tabindex="-1" role="menuitem">
+                                            
+                                                العربية
+                                            
+                                        </a>
+                                    
+                                
+                            
+                        
+                    
+                </div> <!-- /# .dropdown-menu -->
+            </li> <!-- / .dropdown -->
+        </ul> <!-- /.nav.pull-right -->
+    </div> <!-- /#header_langmenu -->
+
+
+                
+                <ul id="members" class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        
+                            
+                                
+                                    <a href="/cgi-bin/koha/opac-user.pl" class="nav-link login-link loginModal-trigger" aria-label="Log in to your account"><i class="fa fa-user fa-icon-black fa-fw" aria-hidden="true"></i> <span class="userlabel">Log in to your account</span></a>
+                                
+                            
+                        
+
+                        
+                    </li>
+                    <!-- Cookie consent button for non logged-in users -->
+                    
+                        <li style="display:none" id="cookieConsentDivider" class="divider-vertical" aria-hidden="true"></li>
+                        <li style="display:none" id="cookieConsentLi" class="nav-item" aria-hidden="true">
+                            <a id="cookieConsentButton" href="#" name="Your cookies" class="nav-link" title="View and amend cookies you have consented to" role="button">
+                                <i class="fa fa-cookie-bite" aria-hidden="true"></i>
+                                <span class="cookieconsentlabel">Your cookies</span>
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+            
+        </nav> <!-- /navbar -->
+
+        
+
+    </div> <!-- / header-region -->
+
+    
+
+    <!-- Login form hidden by default, used for modal window -->
+    <div id="loginModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modalLoginLabel">Log in to your account</h2>
+                    <button type="button" class="closebtn" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="modalAuth">
+                    <input type="hidden" name="csrf_token" value="34378ec23184a8547fd2d8632baf3b7480d76fd5,f1e7f025c9cbe94bb72288d2ec7b4636d1627201,1794728006" />
+
+                    <input type="hidden" name="has-search-query" id="has-search-query" value="" />
+                    <div class="modal-body">
+                        
+                        
+                            
+                                <h3 class="shib_title">Shibboleth login</h3>
+                                <p><a id="shib_url" class="shib_url" href="https://library.arce.org/Shibboleth.sso/Login?target=https://library.arce.org/cgi-bin/koha/errors/404.pl">Log in using a Shibboleth account</a>.</p>
+                                
+                                    <h3 class="shib_local_title">Local login</h3>
+                                
+                            
+                        
+                        
+                            
+                            
+                            <input type="hidden" name="koha_login_context" value="opac" />
+                            <fieldset class="brief">
+                                <div class="local-login">
+                                    <label for="muserid">Login:</label><input type="text" id="muserid" name="login_userid" autocomplete="off" />
+                                    <label for="mpassword">Password:</label><input type="password" id="mpassword" name="login_password" autocomplete="off" />
+                                    <fieldset class="action">
+                                        <input type="hidden" name="op" value="cud-login" />
+                                        <input type="submit" class="btn btn-primary" value="Log in" />
+                                    </fieldset>
+                                </div>
+                                
+                                
+                                
+                            </fieldset>
+                        
+                    </div>
+                </form> <!-- /#auth -->
+            </div> <!-- /.modal-content -->
+        </div> <!-- /.modal-dialog -->
+    </div>  <!-- /#modalAuth  -->
+    
+
+
+<div class="main">
+    
+    <nav id="breadcrumbs" aria-label="Breadcrumb" class="breadcrumbs">
+        <ol class="breadcrumb">
+            
+            
+                
+    
+        <li class="breadcrumb-item">
+            
+                    <a href="/cgi-bin/koha/opac-main.pl" title="Home">Home</a>
+                
+        </li>
+    
+
+                <li class="breadcrumb-item active">
+            <a href="#" aria-current="page">
+                
+            <span>Log in</span>
+        
+            </a>
+        </li>
+            
+        </ol>
+    </nav>
+
+
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-6">
+                <div id="opac-auth" class="maincontent">
+                    <!--CONTENT-->
+                    
+                        
+
+                        
+                            <!-- login prompt time-->
+                            <h1>Log in to your account</h1>
+
+                            
+
+                            
+
+
+                            
+
+                            
+
+                            
+                                
+                                    <h2 class="shib_title">Shibboleth login</h2>
+                                    <p><a class="shib_url" href="https://library.arce.org/Shibboleth.sso/Login?target=https://library.arce.org/cgi-bin/koha/errors/404.pl">Log in using a Shibboleth account.</a></p>
+                                
+                                
+                                    
+                                        <h2 class="shib_local_title">Local login</h2>
+                                        <p class="shib_local_text">If you do not have a Shibboleth account, but you do have a local login, then you may login below.</p>
+                                    
+                                
+                            
+
+                        
+                            
+
+                            
+                            
+
+                            
+                        
+
+                        
+                            
+                                <form action="/cgi-bin/koha/errors/404.pl" name="auth" id="auth" method="post" autocomplete="off">
+                            
+                                     <input type="hidden" name="csrf_token" value="34378ec23184a8547fd2d8632baf3b7480d76fd5,f1e7f025c9cbe94bb72288d2ec7b4636d1627201,1794728006" />
+
+                                <input type="hidden" name="op" value="cud-login" />
+                                <input type="hidden" name="koha_login_context" value="opac" />
+
+                                <div class="local-login">
+                                    <fieldset class="brief">
+                                        
+                                        <div class="form-group">
+                                            <label for="userid">Login:</label>
+                                            <input class="form-control" type="text"  size="25" id="userid"  name="login_userid" autocomplete="off" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="password">Password:</label>
+                                            <input class="form-control" type="password"  size="25" id="password"  name="login_password" autocomplete="off" />
+                                        </div>
+                                        <fieldset class="action">
+                                            <input type="submit" value="Log in" class="btn btn-primary" />
+                                        </fieldset>
+                                    </fieldset>
+                                </div>
+
+                                <div id="nologininstructions">
+                                    
+                                        <h2>Don't have a password yet?</h2>
+                                        <p>If you don't have a password yet, stop by the circulation desk the next time you're in the library. We'll happily set one up for you.</p>
+                                        <h2>Don't have a library card?</h2>
+                                        <p>If you don't have a library card, stop by your local library to sign up.</p>
+                                    
+                                </div>
+                                
+                                
+                            </form>
+                        
+                    
+
+                    
+
+                </div> <!-- /.opac-auth -->
+            </div> <!-- /.col-md-10 col-lg-6 -->
+        </div> <!-- /.row -->
+    </div> <!-- /.container-fluid -->
+</div> <!-- /.main -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+    </div> <!-- / #wrapper in masthead.inc -->
+
+    
+
+    
+        
+            
+                
+                    <footer id="changelanguage"  class="noprint">
+                        <ul class="nav">
+                            <li class="nav-item">
+                                <span class="navbar-text">Languages:</span>
+                            </li>
+                            
+                                
+                                    
+                                        
+                                            
+                                                <li class="nav-item">
+                                                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">
+                                                        
+                                                            English
+                                                        
+                                                    </a> <!-- /.nav-link -->
+                                                </li> <!-- /.nav-item -->
+                                            
+                                        
+                                    
+                                
+                            
+                                
+                                    
+                                        
+                                            
+                                                <li class="nav-item">
+                                                    <a class="nav-link" href="/cgi-bin/koha/opac-changelanguage.pl?language=ar-Arab">
+                                                        
+                                                            العربية
+                                                        
+                                                    </a> <!-- /.nav-link -->
+                                                </li> <!-- /.nav-item -->
+                                            
+                                        
+                                    
+                                
+                            
+                        </ul> <!-- /.nav -->
+                    </footer> <!-- / #changelanguage -->
+                
+            
+        
+    
+
+
+
+
+<!-- CookieConsentedJS code that may run -->
+
+
+<!-- JavaScript includes -->
+<script src="/opac-tmpl/lib/jquery/jquery-3.6.0.min_24.0505000.js"></script>
+<script src="/opac-tmpl/lib/jquery/jquery-migrate-3.3.2.min_24.0505000.js"></script>
+<script src="/opac-tmpl/lib/bootstrap/js/bootstrap.bundle.min_24.0505000.js"></script>
+<script src="/opac-tmpl/lib/fontfaceobserver/fontfaceobserver.min_24.0505000.js"></script>
+<script src="/opac-tmpl/lib/enquire/enquire.min_24.0505000.js"></script>
+<script>
+    let logged_in_user_id = "";
+</script>
+<script src="/opac-tmpl/bootstrap/js/global_24.0505000.js"></script>
+
+
+<script>
+    
+
+    
+    $(".print-large").on("click",function(){
+        window.print();
+        return false;
+    });
+    $(".addtoshelf").on("click",function(e){
+        e.preventDefault();
+        Dopop( this.href );
+    });
+    $("body").on("click", ".addtocart", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        addRecord( biblionumber );
+    });
+    $("body").on("click", ".cartRemove", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        delSingleRecord( biblionumber );
+    });
+    $(".clearsh").on("click", function(){
+        return confirmDelete( _("Are you sure you want to delete your search history?") );
+    });
+
+</script>
+
+
+    <script src="/opac-tmpl/bootstrap/js/basket_24.0505000.js"></script>
+
+
+<script src="/opac-tmpl/bootstrap/js/tags_24.0505000.js"></script>
+
+
+
+
+
+
+
+
+
+<script src="/opac-tmpl/lib/js-cookie/js.cookie-3.0.1.min_24.0505000.js"></script>
+<script>
+$(document).ready(function() {
+    if($('#searchsubmit').length) {
+        $(document).on("click", '#searchsubmit', function(e) {
+            Cookies.remove("form_serialized", { path: '/'});
+            Cookies.remove("form_serialized_limits", { path: '/'});
+            Cookies.remove("search_path_code", { path: '/'});
+        });
+    }
+});
+</script>
+
+
+
+
+<script src="/opac-tmpl/lib/dayjs/dayjs.min_24.0505000.js"></script>
+<script src="/opac-tmpl/lib/dayjs/plugin/timezone_24.0505000.js"></script>
+<script src="/opac-tmpl/lib/dayjs/plugin/utc_24.0505000.js"></script>
+<script>
+    dayjs.extend(window.dayjs_plugin_utc);
+    dayjs.extend(window.dayjs_plugin_timezone);
+</script>
+
+<!-- js-date-format.inc -->
+<script>
+    (function() {
+        var def_date_format = 'us';
+        var def_time_format = '24hr';
+        var def_tz = 'UTC';
+
+        var get_date_pattern = function(format) {
+            var date_pattern = 'YYYY-MM-DD';
+            if(format == 'us') date_pattern = 'MM/DD/YYYY';
+            if(format == 'metric') date_pattern = 'DD/MM/YYYY';
+            if(format == 'dmydot') date_pattern = 'DD.MM.YYYY';
+            return date_pattern;
+        };
+
+        var get_time_pattern = function(format) {
+            var time_pattern = 'HH:mm';
+            if(format == '12hr') time_pattern = 'hh:mm a';
+            return time_pattern;
+        };
+
+        /*
+         * A JS equivilent of the KohaDates TT Plugin. Passed an rfc3339 formatted date string,
+         * or JS Date, the function will return a date string formatted as per the koha instance config.
+         * Optionally accepts a dateformat parameter to allow override of the configured output format
+         * as well as a 'withtime' boolean denoting whether to include time or not in the output string.
+         */
+        window.$date = function(value, options) {
+            if(!value) return '';
+            var tz = (options&&options.tz)||def_tz;
+            var m = dayjs(value);
+            if ( ! value.match(/^\d{4}-\d{2}-\d{2}$/ ) ) {
+                m = m.tz(tz);
+            }
+
+            var dateformat = (options&&options.dateformat)||def_date_format;
+            var withtime = (options&&options.withtime)||false;
+
+            if(dateformat=='rfc3339' && withtime) return m.format();
+
+            var timeformat = (options&&options.timeformat)||def_time_format;
+            var date_pattern = get_date_pattern(dateformat);
+            var time_pattern = !withtime?'':' '+get_time_pattern(timeformat);
+
+            return m.format(date_pattern+time_pattern);
+        }
+
+        window.$datetime = function(value, options) {
+            options = options||{};
+            options.withtime = true;
+            return $date(value, options);
+        };
+
+        window.$time = function(value, options) {
+            if(!value) return '';
+            var tz = (options&&options.tz)||def_tz;
+            var m = dayjs(value);
+            if(tz) m = m.tz(tz);
+
+            var dateformat = (options&&options.dateformat);
+            var timeformat = (dateformat=='rfc3339'&&'24hr')||(options&&options.timeformat)||def_time_format;
+
+            return m.format(get_time_pattern(timeformat)+(dateformat=='rfc3339'?':ss'+(!m.isUTC()?'Z':''):''))+(dateformat=='rfc3339' && m.isUTC()?'Z':'');
+        }
+
+    })();
+</script>
+<!-- / js-date-format.inc -->
+
+<script>
+    (function() {
+        /**
+         * Format the biblio response from a Koha RESTful API request.
+         * @param  {Object}  biblio  The biblio json object as returned from the Koha RESTful API
+         * @param  {Object}  config  A configuration object
+         *                           Valid keys are: `link`
+         * @return {string}          The formatted HTML string
+         */
+        window.$biblio_to_html = function(biblio, config) {
+
+            if (biblio === undefined) {
+                return ''; // empty string for no biblio
+            }
+
+            var title = '<span class="biblio-title">';
+            if (biblio.title != null && biblio.title != '') {
+                title += escape_str(biblio.title);
+            } else {
+                title += _("No title");
+            }
+            title += '</span>';
+
+            // add subtitle
+            if (biblio.subtitle != null && biblio.subtitle != '') {
+                title += ' <span class="biblio-subtitle">' + escape_str(biblio.subtitle) + '</span>';
+            }
+
+            // set title as link
+            if (config && config.link) {
+                if (config.link === 'marcdetail') {
+                    title = '<a href="/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + '</a>';
+                } else if (config.link === 'labeled_marc') {
+                    title = '<a href="/cgi-bin/koha/opac-labeledMARCdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + '</a>';
+                } else if (config.link === 'isbd') {
+                    title = '<a href="/cgi-bin/koha/opac-ISBDdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + '</a>';
+                } else {
+                    title = '<a href="/cgi-bin/koha/opac-detail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + '</a>';
+                }
+            }
+
+            // add medium
+            if (biblio.medium != null && biblio.medium != '') {
+                title += ' <span class="biblio-medium">' + escape_str(biblio.medium) + '</span>';
+            }
+
+            // add part numbers/names
+            let part_numbers = (typeof biblio.part_number === 'string') ? biblio.part_number.split("|") : [];
+            let part_names = (typeof biblio.part_name === 'string') ? biblio.part_name.split("|") : [];
+            let i = 0;
+            while (part_numbers[i] || part_names[i]) {
+                if (part_numbers[i]) {
+                    title += ' <span class="part-number">' + escape_str(part_numbers[i]) + '</span>';
+                }
+                if (part_names[i]) {
+                    title += ' <span class="part-name">' + escape_str(part_names[i]) + '</span>';
+                }
+                i++;
+            }
+
+            return title;
+        };
+    })();
+</script>
+
+
+<script>
+    // Hide circular 'Log in to Your Account' link in opac-auth.pl
+    $(document).ready(function() {
+        if ( $("#auth" ) ) { $("#members ul li a").hide(); }
+    });
+</script>
+
+
+    <script>
+        $("select[name='idx']").append("<option value='bc'>Accession No.</option>");
+$(document).ready(function(){
+    $('.no-image').remove();
+});
+
+/**Autocomplete Search**/
+$(document).ready(function(){
+	$("#translControl1").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: "https://en.wikipedia.org/w/api.php",
+                dataType: "jsonp",
+                data: {
+                    'action': "opensearch",
+                    'format': "json",
+                    'search': request.term
+                },
+                success: function(data) {
+                    response(data[1]);
+                }
+            });
+        },
+        open: function() {
+            $('.ui-autocomplete');
+       }
+    });
+});
+    </script>
+
+
+
+
+
+
+</body>
+</html>
+
+

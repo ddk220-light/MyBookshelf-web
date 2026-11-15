@@ -1,0 +1,1589 @@
+{
+  "country": "Thailand",
+  "country_code": "THA",
+  "research_date_utc": "2026-11-15",
+  "status": "complete",
+  "observed_count": 12,
+  "selected_count": 10,
+  "reserve_count": 2,
+  "query_count_note": "12 documented institution observations from THREE UC-TAL title queries to ONE public union-search endpoint. Not twelve distinct searches/endpoints; UC-TAL itself not counted. Further incidental institutions in raw responses not assessed as separate dossiers.",
+  "market": {
+    "summary": "A strong academic-union opportunity with broad Thai/local-language coverage, alongside substantial national and municipal public libraries. Major university catalogs are heterogeneous and migrating: WALAI AutoLib and ALIST are locally developed families; Innovative, Koha and Alma/Primo also occur. Public university discovery does not establish general-public lending.",
+    "platform_strategy": "Prioritize a dedicated UC-TAL/WALAI union adapter for institution-listed holdings, then investigate permissioned direct circulation adapters. ALIST merits a second family prototype; current PSU React/API frontend differs from older ASP.NET routes. Do not deploy automatic Primo scraping across disallowed search paths. Existing Koha adapter is only a separate candidate at allowed local installations.",
+    "adoption_evidence": [
+      {
+        "claim": "1 August 2015 institutional survey lists ALIST 27 adopters, WALAI AutoLib 68, LM-SomSook 2. Historical scoped counts, not current national market shares.",
+        "scope": "Historical 2015 Thai higher-education-supported LMS account, not national census",
+        "date": "2015-08-01",
+        "source_url": "https://snc.lib.su.ac.th/snclibblog/?p=49920"
+      },
+      {
+        "claim": "March 2025 Alma training for 38 network libraries explicitly prepares Sierra-to-Alma migration.",
+        "scope": "Mahidol network only",
+        "date": "2025-03-21",
+        "source_url": "https://www.li.mahidol.ac.th/news/21mar2025-2"
+      },
+      {
+        "claim": "Kasetsart live homepage displays WebPAC PRO / Innovative Interfaces; search blocked by robots.",
+        "scope": "Kasetsart catalog only",
+        "date": "2026-11-15",
+        "source_url": "https://intanin.lib.ku.ac.th/"
+      },
+      {
+        "claim": "NSTDA knowledge-sharing article identifies Thai-developed ULibM and standards-based interoperability; no present-day adoption census.",
+        "scope": "ULibM product/development evidence, not adoption share",
+        "date": "2014-08-04",
+        "source_url": "https://www.thailibrary.in.th/2014/08/04/ulibm/"
+      }
+    ],
+    "network_opportunities": [
+      {
+        "name": "UC-TAL / ThaiLIS",
+        "scope": "Academic bibliographic union; 2023 source says over 100 institutions and over 2.2 million bibliographic records, mixed formats",
+        "source_url": "https://uc.thailis.or.th/",
+        "verification": "Three public anonymous API title searches returned books and exact institution member IDs; eight distinct GetAllLibrary record lookups mapped local links. KU live-item call failed.",
+        "integration_implication": "One new family can cover heterogeneous local systems at institution-listed level. Keep local IDs, edition metadata, refresh uncertainty and member-code scope."
+      },
+      {
+        "name": "PULINET / ThaiLIS cooperation",
+        "scope": "Provincial university resource sharing, not provincial municipal public-library network; TDC is digital/full-text repository distinct from book union",
+        "source_url": "https://snc.lib.su.ac.th/snclibblog/?p=51468",
+        "verification": "Institutional network explanation; PULINET discovery/ILL shown on Silpakorn site, not independently searched",
+        "integration_implication": "Useful institutional discovery/distribution partner route; no double count with UC-TAL members."
+      },
+      {
+        "name": "National Library and regional branches",
+        "scope": "National cultural/deposit services plus provincial National Library sites",
+        "source_url": "https://www.nlt.go.th/library?id=25",
+        "verification": "Official directory read; central Primo search disallowed; no individual regional book query",
+        "integration_implication": "Keep large public-service opportunity visible; obtain a legitimate supported/allowed route before integration."
+      },
+      {
+        "name": "Bangkok Metropolitan Administration libraries",
+        "scope": "36 public libraries, 139 book houses in policy; physical and ebook systems must stay distinct",
+        "source_url": "https://policy.bangkok.go.th/watch/apolicies261/view?code=P169&id=169",
+        "verification": "Official indexed policy and library portal; robots503 stops physical-catalog verification",
+        "integration_implication": "Potential high public-reader value but current physical union search and cross-branch availability unverified; ebook targets are not collection totals."
+      }
+    ]
+  },
+  "major_library_priorities": [
+    {
+      "name": "National Library of Thailand and regional National Library network",
+      "size_claim": "5,368,998 physical items, calendar 2023 country report; not book-only or branch-specific.",
+      "source_url": "https://www.ndl.go.jp/en/cdnlao/meetings/pdf/2024%20thailand-%20report.pdf",
+      "outcome": "Priority retained, not selected: official Primo NDE search and /primaws prohibited by robots."
+    },
+    {
+      "name": "Bangkok Metropolitan Administration public-library network",
+      "size_claim": "36 public libraries and 139 book houses in official BMA policy; network proxy, no collection-volume total.",
+      "source_url": "https://policy.bangkok.go.th/watch/apolicies261/view?code=P169&id=169",
+      "outcome": "Priority retained, not selected: bangkoklibrary.go.th robots HTTP503; no automated catalog query."
+    },
+    {
+      "name": "Chulalongkorn University Library",
+      "size_claim": "Central Library: over 1,000,000 books; 2023 prospectus. This is a central-library size claim, not a count of all CU union holdings.",
+      "source_url": "https://www.inter.chula.ac.th/wp-content/uploads/2023/03/Prospectus2023_Reduced.pdf",
+      "outcome": "Selected: institution-specific book listing in UC-TAL; current copy availability unknown."
+    },
+    {
+      "name": "Thammasat University Library",
+      "size_claim": "More than 1.3 million physical books; nine branches and one learning center.",
+      "source_url": "https://www.openathens.net/case-studies/how-thammasat-university-is-achieving-the-highest-library-service-standard-in-thailand/",
+      "outcome": "Selected: institution-specific book listing in UC-TAL; current copy availability unknown."
+    },
+    {
+      "name": "Silpakorn University Library",
+      "size_claim": "Central Library operates across three campuses: Thapra, Sanamchandra and Phetchaburi. Numeric book counter rendered zero placeholders and is not used.",
+      "source_url": "https://lib.su.ac.th/en/about-us-en/",
+      "outcome": "Selected: institution-specific book listing in UC-TAL; current copy availability unknown."
+    },
+    {
+      "name": "Burapa University Library",
+      "size_claim": "2024 university poster lists 271,811 Books, separate from articles, computer files and other material. Unit as printed; not assumed physical copies.",
+      "source_url": "https://www.mdri.cmu.ac.th/asiahub2024/assets/pdf/posters/Thailand/08.Burapha%20University%20%281%29.pdf",
+      "outcome": "Selected: institution-specific book listing in UC-TAL; current copy availability unknown."
+    },
+    {
+      "name": "Kasetsart University Library",
+      "size_claim": "Official campus site describes KU catalog covering university resources and KU+ search across 15 other Thai institutions. KU is selected as a university library network; the 15 are not a KU branch count.",
+      "source_url": "https://library.kps.ku.ac.th/2022/index.php",
+      "outcome": "Selected: institution-specific book listing in UC-TAL; current copy availability unknown."
+    },
+    {
+      "name": "King Mongkut's University of Technology North Bangkok Library",
+      "size_claim": "August 2025 student handbook, Facilities and Academic Support / KMUTNB Library: more than 200,000 books.",
+      "source_url": "https://tggs.kmutnb.ac.th/wp-content/uploads/2025/07/TGGS_Undergraduate-Student_Handbook_2025-1.pdf",
+      "outcome": "Selected: institution-specific book listing in UC-TAL; current copy availability unknown."
+    },
+    {
+      "name": "Ubon Ratchathani University Library",
+      "size_claim": "Official 2024 public-access report identifies Office of Academic Resources and libraries in nine faculties; 71 external people / 3,291 visits. Visits are not books.",
+      "source_url": "https://sdg.ubu.ac.th/sdg_tab.php?sdg=sdg11",
+      "outcome": "Selected: institution-specific book listing in UC-TAL; current copy availability unknown."
+    },
+    {
+      "name": "King Mongkut's Institute of Technology Ladkrabang Library",
+      "size_claim": "Institution-wide Lifelong Learning Center / Digital Library and physical catalog. Selected on institutional scope. A separate architecture faculty page says 300,000 books but has ambiguous scope and is not used as KMITL-wide size.",
+      "source_url": "https://www.kllc.kmitl.ac.th/home/database/",
+      "outcome": "Selected: institution-specific book listing in UC-TAL; current copy availability unknown."
+    },
+    {
+      "name": "Mahidol University Library",
+      "size_claim": "Over 1.1 million books, theses, research reports and bound journals; mixed units, not all books. Older page describes 25 branches; 2025 Alma migration report covers 38 libraries.",
+      "source_url": "https://www.ict.mahidol.ac.th/en/facilities/",
+      "outcome": "Selected: institution-specific book listing in UC-TAL; current copy availability unknown."
+    },
+    {
+      "name": "Khon Kaen University Library",
+      "size_claim": "Graduate School learning-support guide identifies the Central Library; selected as the university-wide academic library. No defensible numeric collection count established.",
+      "source_url": "https://app.gs.kku.ac.th/gs/th/publicationfile/item/study-life-kku/learning-support/learning-support.pdf",
+      "outcome": "Selected: institution-specific book listing in UC-TAL; current copy availability unknown."
+    },
+    {
+      "name": "Chiang Mai University Library",
+      "size_claim": "About 1,000,000 print volumes, main library and 17 branches; February 2023 staff-reported visiting-library account.",
+      "source_url": "https://library.dukekunshan.edu.cn/events_news/duke-kunshan-university-librarian-visited-chiang-mai-university-library/",
+      "outcome": "Priority retained, not selected: old official search.lib.cmu.ac.th robots DNS failure; union facets alone do not verify CMU holding."
+    },
+    {
+      "name": "Prince of Songkla University — Khunying Long Athakravisunthorn Learning Resources Center",
+      "size_claim": "169,042 printed information-resource titles in academic-year 2022 QA; center scope, not whole university.",
+      "source_url": "https://clib.psu.ac.th/images/PDF_file/AUN_QA/AUN-QA_Information_Academic_Year_2022.pdf",
+      "outcome": "API responds, but bounded Harry Potter query first five rows were videorecordings; no book success counted."
+    }
+  ],
+  "libraries": [
+    {
+      "id": "tha-cu",
+      "name": "Chulalongkorn University Library",
+      "recommendation": "verified_target",
+      "scope": "One university library network as named by UC-TAL member CU / 24; only this contributed record holding verified. Branch/campus and completeness of university coverage unknown.",
+      "size": {
+        "value": 1000000,
+        "unit": "books, more than",
+        "date": "2023",
+        "source_url": "https://www.inter.chula.ac.th/wp-content/uploads/2023/03/Prospectus2023_Reduced.pdf",
+        "evidence_path": "evidence/size-discovery.json",
+        "quality": "indexed official",
+        "note": "Central Library: over 1,000,000 books; 2023 prospectus. This is a central-library size claim, not a count of all CU union holdings."
+      },
+      "platform": {
+        "family": "WALAI AutoLib / UC-TAL",
+        "name": "UC-TAL public union API, v1; not necessarily the institution LMS",
+        "proof": "Public uc.thailis.or.th frontend calls ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch and Biblio/GetAllLibrary.",
+        "evidence_path": "evidence/uctal-main.html",
+        "local_platform_observation": "Union mapper emits old Innovative-style /record=b1619111X; primary catalog robots HTTP503, so local system not freshly verified."
+      },
+      "query": {
+        "text": "Harry Potter",
+        "method": "POST",
+        "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch?npage=1&perpage=10&orderby=&ipaddress=",
+        "payload": [
+          {
+            "field": "TITLE",
+            "value": "Harry Potter",
+            "operator": ""
+          }
+        ],
+        "checked_at_utc": "2026-11-15T07:59:29.814708+00:00",
+        "http_status": 200,
+        "effective_url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch?npage=1&perpage=10&orderby=&ipaddress=",
+        "result_count": 275,
+        "count_note": "Total union result count, not this institution count. Only ten results requested on page 1. Institution proved by this record infoExt.libraries and GetAllLibrary response. No facet-only institution counted.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/uctal-search.html",
+        "metadata_path": "evidence/uctal-search.json",
+        "request_recipe": "POST published /v1/Token/Issue with empty JSON object; retain resulting anonymous bearer in memory only, then POST this public search. No fallback app key, patron login or cookie persistence. Token response excluded from evidence."
+      },
+      "books": [
+        {
+          "title": "The Irresistible rise of Harry Potter /  Andrew Blake.",
+          "author": "Blake, Andrew,  1955-",
+          "record_id": "b01360417",
+          "record_url": "http://library.car.chula.ac.th/record=b1619111X",
+          "isbn": null,
+          "holdings": "UC-TAL lists Chulalongkorn University (CU, locationID 24) as a holding institution for this exact union record. Local link returned: http://library.car.chula.ac.th/record=b1619111X. Copy count, branch, shelf and circulation availability unknown; source refresh date unknown.",
+          "evidence_path": "evidence/uctal-search.html",
+          "holdings_evidence_path": "evidence/uctal-cu-locations.html",
+          "holdings_metadata_path": "evidence/uctal-cu-locations.json",
+          "imprint_as_returned": "London :  Verso,  2002.",
+          "call_number_as_returned": "823.914  B636I",
+          "local_record_url_status": "Returned by union; not followed or certified current.",
+          "isbn_note": "Cover URL identifiers deliberately not promoted to authoritative ISBNs.",
+          "identity_note": "Related-title nonfiction book about the Harry Potter phenomenon/cookery; not a Rowling novel."
+        }
+      ],
+      "robots": {
+        "url": "https://ucopacapi.walaiautolib.com/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T07:57:34.151645+00:00",
+        "evidence_path": "evidence/uctal-api-robots.html",
+        "metadata_path": "evidence/uctal-api-robots.json",
+        "decision": "allowed_path",
+        "note": "Shared longest-match check: no applicable prohibitions. Body is explanatory content-signal comments with no User-agent or actual Content-Signal values; no affirmative licence. Frontend /robots.txt is ordinary Angular shell fallback, manually inspected; API origin policy checked separately."
+      },
+      "reader_access": "Official 2023 prospectus says central library serves students, faculty and the public; borrowing fees/eligibility were not verified. Public anonymous UC-TAL discovery observed. UC-TAL ILL requires registration and current membership of an academic library (Silpakorn 2023 guide); this does not prove walk-in access or external borrowing rights at this institution. No requests/holds made.",
+      "integration": {
+        "existing_adapter": "new family: public UC-TAL/WALAI union adapter; local Koha or Innovative reuse is separate and untested",
+        "needs": [
+          "Map union bibID + member locationID + local record ID without merging editions",
+          "Keep institution-listed holding separate from live copy availability",
+          "Use public anonymous token in memory; refresh normally, never persist bearer",
+          "Confirm permitted ongoing reuse and operational rate budget",
+          "Validate Thai script, doubled apostrophes, Buddhist-era dates and mixed material types",
+          "Refresh stale local deep links after LMS migrations"
+        ],
+        "blockers": [
+          "No production adapter/app test; union update freshness and coverage unknown",
+          "Copy count and circulation status not established"
+        ],
+        "live_app_tested": false
+      },
+      "institution_mapping": {
+        "locationID": "24",
+        "locationNameTh": "จุฬาลงกรณ์มหาวิทยาลัย",
+        "locationNameEn": "Chulalongkorn University",
+        "locationSymbol": "CU",
+        "linkToLibrary": ""
+      },
+      "holding_detail": {
+        "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Biblio/GetAllLibrary?bibid=b01360417",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T08:02:33.660085+00:00",
+        "http_status": 200,
+        "evidence_path": "evidence/uctal-cu-locations.html"
+      }
+    },
+    {
+      "id": "tha-tu",
+      "name": "Thammasat University Library",
+      "recommendation": "verified_target",
+      "scope": "One university library network as named by UC-TAL member TU / 25; only this contributed record holding verified. Branch/campus and completeness of university coverage unknown.",
+      "size": {
+        "value": 1300000,
+        "unit": "physical books, more than",
+        "date": "2021-09-07",
+        "source_url": "https://www.openathens.net/case-studies/how-thammasat-university-is-achieving-the-highest-library-service-standard-in-thailand/",
+        "evidence_path": "evidence/source-pages-2.json",
+        "quality": "secondary vendor case study",
+        "note": "More than 1.3 million physical books; nine branches and one learning center."
+      },
+      "platform": {
+        "family": "WALAI AutoLib / UC-TAL",
+        "name": "UC-TAL public union API, v1; not necessarily the institution LMS",
+        "proof": "Public uc.thailis.or.th frontend calls ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch and Biblio/GetAllLibrary.",
+        "evidence_path": "evidence/uctal-main.html",
+        "local_platform_observation": "Union returns /cgi-bin/koha/opac-detail.pl?biblionumber=712096; Koha route corroborated by institutional announcements. Local robots timed out; no local search made."
+      },
+      "query": {
+        "text": "Harry Potter",
+        "method": "POST",
+        "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch?npage=1&perpage=10&orderby=&ipaddress=",
+        "payload": [
+          {
+            "field": "TITLE",
+            "value": "Harry Potter",
+            "operator": ""
+          }
+        ],
+        "checked_at_utc": "2026-11-15T07:59:29.814708+00:00",
+        "http_status": 200,
+        "effective_url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch?npage=1&perpage=10&orderby=&ipaddress=",
+        "result_count": 275,
+        "count_note": "Total union result count, not this institution count. Only ten results requested on page 1. Institution proved by this record infoExt.libraries and GetAllLibrary response. No facet-only institution counted.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/uctal-search.html",
+        "metadata_path": "evidence/uctal-search.json",
+        "request_recipe": "POST published /v1/Token/Issue with empty JSON object; retain resulting anonymous bearer in memory only, then POST this public search. No fallback app key, patron login or cookie persistence. Token response excluded from evidence."
+      },
+      "books": [
+        {
+          "title": "Harry Potter & the philosopher's stone / J.K. Rowling.",
+          "author": "Rowling, J. k.",
+          "record_id": "b02979010",
+          "record_url": "https://koha.library.tu.ac.th/cgi-bin/koha/opac-detail.pl?biblionumber=712096",
+          "isbn": null,
+          "holdings": "UC-TAL lists Thammasat University (TU, locationID 25) as a holding institution for this exact union record. Local link returned: https://koha.library.tu.ac.th/cgi-bin/koha/opac-detail.pl?biblionumber=712096. Copy count, branch, shelf and circulation availability unknown; source refresh date unknown.",
+          "evidence_path": "evidence/uctal-search.html",
+          "holdings_evidence_path": "evidence/uctal-tu-locations.html",
+          "holdings_metadata_path": "evidence/uctal-tu-locations.json",
+          "imprint_as_returned": "London : Bloomsbury, 2013.",
+          "call_number_as_returned": null,
+          "local_record_url_status": "Returned by union; not followed or certified current.",
+          "isbn_note": "Cover URL identifiers deliberately not promoted to authoritative ISBNs."
+        }
+      ],
+      "robots": {
+        "url": "https://ucopacapi.walaiautolib.com/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T07:57:34.151645+00:00",
+        "evidence_path": "evidence/uctal-api-robots.html",
+        "metadata_path": "evidence/uctal-api-robots.json",
+        "decision": "allowed_path",
+        "note": "Shared longest-match check: no applicable prohibitions. Body is explanatory content-signal comments with no User-agent or actual Content-Signal values; no affirmative licence. Frontend /robots.txt is ordinary Angular shell fallback, manually inspected; API origin policy checked separately."
+      },
+      "reader_access": "Public anonymous UC-TAL discovery observed. UC-TAL ILL requires registration and current membership of an academic library (Silpakorn 2023 guide); this does not prove walk-in access or external borrowing rights at this institution. No requests/holds made.",
+      "integration": {
+        "existing_adapter": "new family: public UC-TAL/WALAI union adapter; local Koha or Innovative reuse is separate and untested",
+        "needs": [
+          "Map union bibID + member locationID + local record ID without merging editions",
+          "Keep institution-listed holding separate from live copy availability",
+          "Use public anonymous token in memory; refresh normally, never persist bearer",
+          "Confirm permitted ongoing reuse and operational rate budget",
+          "Validate Thai script, doubled apostrophes, Buddhist-era dates and mixed material types",
+          "Refresh stale local deep links after LMS migrations"
+        ],
+        "blockers": [
+          "No production adapter/app test; union update freshness and coverage unknown",
+          "Copy count and circulation status not established"
+        ],
+        "live_app_tested": false
+      },
+      "institution_mapping": {
+        "locationID": "25",
+        "locationNameTh": "มหาวิทยาลัยธรรมศาสตร์",
+        "locationNameEn": "Thammasat University",
+        "locationSymbol": "TU",
+        "linkToLibrary": ""
+      },
+      "holding_detail": {
+        "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Biblio/GetAllLibrary?bibid=b02979010",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T08:02:34.185512+00:00",
+        "http_status": 200,
+        "evidence_path": "evidence/uctal-tu-locations.html"
+      }
+    },
+    {
+      "id": "tha-su",
+      "name": "Silpakorn University Library",
+      "recommendation": "verified_target",
+      "scope": "One university library network as named by UC-TAL member SU / 9; only this contributed record holding verified. Branch/campus and completeness of university coverage unknown.",
+      "size": {
+        "value": 3,
+        "unit": "campus libraries (institutional proxy)",
+        "date": "undated; accessed 2026-11-15",
+        "source_url": "https://lib.su.ac.th/en/about-us-en/",
+        "evidence_path": "evidence/source-pages-1.json",
+        "quality": "official",
+        "note": "Central Library operates across three campuses: Thapra, Sanamchandra and Phetchaburi. Numeric book counter rendered zero placeholders and is not used."
+      },
+      "platform": {
+        "family": "WALAI AutoLib / UC-TAL",
+        "name": "UC-TAL public union API, v1; not necessarily the institution LMS",
+        "proof": "Public uc.thailis.or.th frontend calls ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch and Biblio/GetAllLibrary.",
+        "evidence_path": "evidence/uctal-main.html",
+        "local_platform_observation": "Current suopac.lib.su.ac.th WALAI AutoLib frontend is indexed; official 2026 notice describes URL migration. Union still emits an old Innovative-style URL: staleness risk."
+      },
+      "query": {
+        "text": "Harry Potter",
+        "method": "POST",
+        "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch?npage=1&perpage=10&orderby=&ipaddress=",
+        "payload": [
+          {
+            "field": "TITLE",
+            "value": "Harry Potter",
+            "operator": ""
+          }
+        ],
+        "checked_at_utc": "2026-11-15T07:59:29.814708+00:00",
+        "http_status": 200,
+        "effective_url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch?npage=1&perpage=10&orderby=&ipaddress=",
+        "result_count": 275,
+        "count_note": "Total union result count, not this institution count. Only ten results requested on page 1. Institution proved by this record infoExt.libraries and GetAllLibrary response. No facet-only institution counted.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/uctal-search.html",
+        "metadata_path": "evidence/uctal-search.json",
+        "request_recipe": "POST published /v1/Token/Issue with empty JSON object; retain resulting anonymous bearer in memory only, then POST this public search. No fallback app key, patron login or cookie persistence. Token response excluded from evidence."
+      },
+      "books": [
+        {
+          "title": "The unofficial Harry Potter cookbook :  from cauldron cakes to knickerbocker glory--more than 150 magical recipes for wizards and non-wizards alike /  Dinah Bucholz.",
+          "author": "Bucholz, Dinah.",
+          "record_id": "b00712827",
+          "record_url": "http://www.opac.lib.su.ac.th/record=b1401078X",
+          "isbn": null,
+          "holdings": "UC-TAL lists Silpakorn University (SU, locationID 9) as a holding institution for this exact union record. Local link returned: http://www.opac.lib.su.ac.th/record=b1401078X. Copy count, branch, shelf and circulation availability unknown; source refresh date unknown.",
+          "evidence_path": "evidence/uctal-search.html",
+          "holdings_evidence_path": "evidence/uctal-su-locations.html",
+          "holdings_metadata_path": "evidence/uctal-su-locations.json",
+          "imprint_as_returned": "Avon, Mass. :  Adams Media,  c2010.",
+          "call_number_as_returned": "TX717  .B87 2010",
+          "local_record_url_status": "Returned by union; not followed or certified current.",
+          "isbn_note": "Cover URL identifiers deliberately not promoted to authoritative ISBNs.",
+          "identity_note": "Related-title nonfiction book about the Harry Potter phenomenon/cookery; not a Rowling novel."
+        }
+      ],
+      "robots": {
+        "url": "https://ucopacapi.walaiautolib.com/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T07:57:34.151645+00:00",
+        "evidence_path": "evidence/uctal-api-robots.html",
+        "metadata_path": "evidence/uctal-api-robots.json",
+        "decision": "allowed_path",
+        "note": "Shared longest-match check: no applicable prohibitions. Body is explanatory content-signal comments with no User-agent or actual Content-Signal values; no affirmative licence. Frontend /robots.txt is ordinary Angular shell fallback, manually inspected; API origin policy checked separately."
+      },
+      "reader_access": "Published 2025 membership regulations exist; general borrowing requires an eligible membership, not just public catalog access. Public anonymous UC-TAL discovery observed. UC-TAL ILL requires registration and current membership of an academic library (Silpakorn 2023 guide); this does not prove walk-in access or external borrowing rights at this institution. No requests/holds made.",
+      "integration": {
+        "existing_adapter": "new family: public UC-TAL/WALAI union adapter; local Koha or Innovative reuse is separate and untested",
+        "needs": [
+          "Map union bibID + member locationID + local record ID without merging editions",
+          "Keep institution-listed holding separate from live copy availability",
+          "Use public anonymous token in memory; refresh normally, never persist bearer",
+          "Confirm permitted ongoing reuse and operational rate budget",
+          "Validate Thai script, doubled apostrophes, Buddhist-era dates and mixed material types",
+          "Refresh stale local deep links after LMS migrations"
+        ],
+        "blockers": [
+          "No production adapter/app test; union update freshness and coverage unknown",
+          "Copy count and circulation status not established"
+        ],
+        "live_app_tested": false
+      },
+      "institution_mapping": {
+        "locationID": "9",
+        "locationNameTh": "มหาวิทยาลัยศิลปากร",
+        "locationNameEn": "Silpakorn University",
+        "locationSymbol": "SU",
+        "linkToLibrary": ""
+      },
+      "holding_detail": {
+        "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Biblio/GetAllLibrary?bibid=b00712827",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T08:02:35.030740+00:00",
+        "http_status": 200,
+        "evidence_path": "evidence/uctal-su-locations.html"
+      }
+    },
+    {
+      "id": "tha-buu",
+      "name": "Burapa University Library",
+      "recommendation": "verified_target",
+      "scope": "One university library network as named by UC-TAL member BUU / 4; only this contributed record holding verified. Branch/campus and completeness of university coverage unknown.",
+      "size": {
+        "value": 271811,
+        "unit": "Books (poster label)",
+        "date": "2024-11",
+        "source_url": "https://www.mdri.cmu.ac.th/asiahub2024/assets/pdf/posters/Thailand/08.Burapha%20University%20%281%29.pdf",
+        "evidence_path": "evidence/size-discovery.json",
+        "quality": "indexed official",
+        "note": "2024 university poster lists 271,811 Books, separate from articles, computer files and other material. Unit as printed; not assumed physical copies."
+      },
+      "platform": {
+        "family": "WALAI AutoLib / UC-TAL",
+        "name": "UC-TAL public union API, v1; not necessarily the institution LMS",
+        "proof": "Public uc.thailis.or.th frontend calls ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch and Biblio/GetAllLibrary.",
+        "evidence_path": "evidence/uctal-main.html",
+        "local_platform_observation": "Burapha institutional WALAI AutoLib Ultimate announcement and union local /bibitem route support local WALAI family."
+      },
+      "query": {
+        "text": "Harry Potter and the philosopher",
+        "method": "POST",
+        "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch?npage=1&perpage=10&orderby=&ipaddress=",
+        "payload": [
+          {
+            "field": "TITLE",
+            "value": "Harry Potter and the philosopher",
+            "operator": ""
+          }
+        ],
+        "checked_at_utc": "2026-11-15T08:00:02.619926+00:00",
+        "http_status": 200,
+        "effective_url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch?npage=1&perpage=10&orderby=&ipaddress=",
+        "result_count": 6,
+        "count_note": "Total union result count, not this institution count. Only ten results requested on page 1. Institution proved by this record infoExt.libraries and GetAllLibrary response. No facet-only institution counted.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/uctal-specific.html",
+        "metadata_path": "evidence/uctal-specific.json",
+        "request_recipe": "POST published /v1/Token/Issue with empty JSON object; retain resulting anonymous bearer in memory only, then POST this public search. No fallback app key, patron login or cookie persistence. Token response excluded from evidence."
+      },
+      "books": [
+        {
+          "title": "Harry Potter and the philosopher''s stone / J. K. Rowling ; illustrated by Jim Kay.",
+          "author": "Rowling, J. k.",
+          "record_id": "b02423648",
+          "record_url": "https://webopac.lib.buu.ac.th/bibitem?bibid=b00252862",
+          "isbn": null,
+          "holdings": "UC-TAL lists Burapa University (BUU, locationID 4) as a holding institution for this exact union record. Local link returned: https://webopac.lib.buu.ac.th/bibitem?bibid=b00252862. Copy count, branch, shelf and circulation availability unknown; source refresh date unknown.",
+          "evidence_path": "evidence/uctal-specific.html",
+          "holdings_evidence_path": "evidence/uctal-philosopher-holdings.html",
+          "holdings_metadata_path": "evidence/uctal-philosopher-holdings.json",
+          "imprint_as_returned": "London : Bloomsbury Children''s Books, 2018, c2015.",
+          "call_number_as_returned": "F  R884H",
+          "local_record_url_status": "Returned by union; not followed or certified current.",
+          "isbn_note": "Cover URL identifiers deliberately not promoted to authoritative ISBNs."
+        }
+      ],
+      "robots": {
+        "url": "https://ucopacapi.walaiautolib.com/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T07:57:34.151645+00:00",
+        "evidence_path": "evidence/uctal-api-robots.html",
+        "metadata_path": "evidence/uctal-api-robots.json",
+        "decision": "allowed_path",
+        "note": "Shared longest-match check: no applicable prohibitions. Body is explanatory content-signal comments with no User-agent or actual Content-Signal values; no affirmative licence. Frontend /robots.txt is ordinary Angular shell fallback, manually inspected; API origin policy checked separately."
+      },
+      "reader_access": "Public anonymous UC-TAL discovery observed. UC-TAL ILL requires registration and current membership of an academic library (Silpakorn 2023 guide); this does not prove walk-in access or external borrowing rights at this institution. No requests/holds made.",
+      "integration": {
+        "existing_adapter": "new family: public UC-TAL/WALAI union adapter; local Koha or Innovative reuse is separate and untested",
+        "needs": [
+          "Map union bibID + member locationID + local record ID without merging editions",
+          "Keep institution-listed holding separate from live copy availability",
+          "Use public anonymous token in memory; refresh normally, never persist bearer",
+          "Confirm permitted ongoing reuse and operational rate budget",
+          "Validate Thai script, doubled apostrophes, Buddhist-era dates and mixed material types",
+          "Refresh stale local deep links after LMS migrations"
+        ],
+        "blockers": [
+          "No production adapter/app test; union update freshness and coverage unknown",
+          "Copy count and circulation status not established"
+        ],
+        "live_app_tested": false
+      },
+      "institution_mapping": {
+        "locationID": "4",
+        "locationNameTh": "มหาวิทยาลัยบูรพา",
+        "locationNameEn": "Burapa University",
+        "locationSymbol": "BUU",
+        "linkToLibrary": ""
+      },
+      "holding_detail": {
+        "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Biblio/GetAllLibrary?bibid=b02423648",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T08:00:31.067497+00:00",
+        "http_status": 200,
+        "evidence_path": "evidence/uctal-philosopher-holdings.html"
+      }
+    },
+    {
+      "id": "tha-ku",
+      "name": "Kasetsart University Library",
+      "recommendation": "verified_target",
+      "scope": "One university library network as named by UC-TAL member KU / 13; only this contributed record holding verified. Branch/campus and completeness of university coverage unknown.",
+      "size": {
+        "value": null,
+        "unit": "university library network (institutional proxy)",
+        "date": "undated; accessed 2026-11-15",
+        "source_url": "https://library.kps.ku.ac.th/2022/index.php",
+        "evidence_path": "evidence/final-source-check.json",
+        "quality": "indexed official",
+        "note": "Official campus site describes KU catalog covering university resources and KU+ search across 15 other Thai institutions. KU is selected as a university library network; the 15 are not a KU branch count."
+      },
+      "platform": {
+        "family": "WALAI AutoLib / UC-TAL",
+        "name": "UC-TAL public union API, v1; not necessarily the institution LMS",
+        "proof": "Public uc.thailis.or.th frontend calls ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch and Biblio/GetAllLibrary.",
+        "evidence_path": "evidence/uctal-main.html",
+        "local_platform_observation": "Live homepage footer explicitly WebPAC PRO, Innovative Interfaces; /search restricted by robots. Union only used for this record."
+      },
+      "query": {
+        "text": "Harry Potter and the philosopher",
+        "method": "POST",
+        "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch?npage=1&perpage=10&orderby=&ipaddress=",
+        "payload": [
+          {
+            "field": "TITLE",
+            "value": "Harry Potter and the philosopher",
+            "operator": ""
+          }
+        ],
+        "checked_at_utc": "2026-11-15T08:00:02.619926+00:00",
+        "http_status": 200,
+        "effective_url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch?npage=1&perpage=10&orderby=&ipaddress=",
+        "result_count": 6,
+        "count_note": "Total union result count, not this institution count. Only ten results requested on page 1. Institution proved by this record infoExt.libraries and GetAllLibrary response. No facet-only institution counted.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/uctal-specific.html",
+        "metadata_path": "evidence/uctal-specific.json",
+        "request_recipe": "POST published /v1/Token/Issue with empty JSON object; retain resulting anonymous bearer in memory only, then POST this public search. No fallback app key, patron login or cookie persistence. Token response excluded from evidence."
+      },
+      "books": [
+        {
+          "title": "Harry Potter and the philosopher''s stone / J. K. Rowling ; illustrated by Jim Kay.",
+          "author": "Rowling, J. k.",
+          "record_id": "b02423648",
+          "record_url": "http://intanin.lib.ku.ac.th/record=b1541812X",
+          "isbn": null,
+          "holdings": "UC-TAL lists Kasetsart University (KU, locationID 13) as a holding institution for this exact union record. Local link returned: http://intanin.lib.ku.ac.th/record=b1541812X. Copy count, branch, shelf and circulation availability unknown; source refresh date unknown.",
+          "evidence_path": "evidence/uctal-specific.html",
+          "holdings_evidence_path": "evidence/uctal-philosopher-holdings.html",
+          "holdings_metadata_path": "evidence/uctal-philosopher-holdings.json",
+          "imprint_as_returned": "London : Bloomsbury Children''s Books, 2018, c2015.",
+          "call_number_as_returned": "F  R884H",
+          "local_record_url_status": "Returned by union; not followed or certified current.",
+          "isbn_note": "Cover URL identifiers deliberately not promoted to authoritative ISBNs."
+        }
+      ],
+      "robots": {
+        "url": "https://ucopacapi.walaiautolib.com/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T07:57:34.151645+00:00",
+        "evidence_path": "evidence/uctal-api-robots.html",
+        "metadata_path": "evidence/uctal-api-robots.json",
+        "decision": "allowed_path",
+        "note": "Shared longest-match check: no applicable prohibitions. Body is explanatory content-signal comments with no User-agent or actual Content-Signal values; no affirmative licence. Frontend /robots.txt is ordinary Angular shell fallback, manually inspected; API origin policy checked separately."
+      },
+      "reader_access": "Public anonymous UC-TAL discovery observed. UC-TAL ILL requires registration and current membership of an academic library (Silpakorn 2023 guide); this does not prove walk-in access or external borrowing rights at this institution. No requests/holds made.",
+      "integration": {
+        "existing_adapter": "new family: public UC-TAL/WALAI union adapter; local Koha or Innovative reuse is separate and untested",
+        "needs": [
+          "Map union bibID + member locationID + local record ID without merging editions",
+          "Keep institution-listed holding separate from live copy availability",
+          "Use public anonymous token in memory; refresh normally, never persist bearer",
+          "Confirm permitted ongoing reuse and operational rate budget",
+          "Validate Thai script, doubled apostrophes, Buddhist-era dates and mixed material types",
+          "Refresh stale local deep links after LMS migrations"
+        ],
+        "blockers": [
+          "No production adapter/app test; union update freshness and coverage unknown",
+          "Live copy/status retrieval unverified; KU item endpoint returned HTTP500"
+        ],
+        "live_app_tested": false
+      },
+      "institution_mapping": {
+        "locationID": "13",
+        "locationNameTh": "มหาวิทยาลัยเกษตรศาสตร์",
+        "locationNameEn": "Kasetsart University",
+        "locationSymbol": "KU",
+        "linkToLibrary": ""
+      },
+      "holding_detail": {
+        "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Biblio/GetAllLibrary?bibid=b02423648",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T08:00:31.067497+00:00",
+        "http_status": 200,
+        "evidence_path": "evidence/uctal-philosopher-holdings.html"
+      }
+    },
+    {
+      "id": "tha-kmutnb",
+      "name": "King Mongkut's University of Technology North Bangkok Library",
+      "recommendation": "verified_target",
+      "scope": "One university library network as named by UC-TAL member KMUTNB / 6; only this contributed record holding verified. Branch/campus and completeness of university coverage unknown.",
+      "size": {
+        "value": 200000,
+        "unit": "books, more than",
+        "date": "2025-08",
+        "source_url": "https://tggs.kmutnb.ac.th/wp-content/uploads/2025/07/TGGS_Undergraduate-Student_Handbook_2025-1.pdf",
+        "evidence_path": "evidence/final-source-check.json",
+        "quality": "official",
+        "note": "August 2025 student handbook, Facilities and Academic Support / KMUTNB Library: more than 200,000 books."
+      },
+      "platform": {
+        "family": "WALAI AutoLib / UC-TAL",
+        "name": "UC-TAL public union API, v1; not necessarily the institution LMS",
+        "proof": "Public uc.thailis.or.th frontend calls ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch and Biblio/GetAllLibrary.",
+        "evidence_path": "evidence/uctal-main.html",
+        "local_platform_observation": "Union mapper emits injan.kmutnb.ac.th/record=b1618601X; Innovative-style route is a clue, not verified local platform/version."
+      },
+      "query": {
+        "text": "Harry Potter and the philosopher",
+        "method": "POST",
+        "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch?npage=1&perpage=10&orderby=&ipaddress=",
+        "payload": [
+          {
+            "field": "TITLE",
+            "value": "Harry Potter and the philosopher",
+            "operator": ""
+          }
+        ],
+        "checked_at_utc": "2026-11-15T08:00:02.619926+00:00",
+        "http_status": 200,
+        "effective_url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch?npage=1&perpage=10&orderby=&ipaddress=",
+        "result_count": 6,
+        "count_note": "Total union result count, not this institution count. Only ten results requested on page 1. Institution proved by this record infoExt.libraries and GetAllLibrary response. No facet-only institution counted.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/uctal-specific.html",
+        "metadata_path": "evidence/uctal-specific.json",
+        "request_recipe": "POST published /v1/Token/Issue with empty JSON object; retain resulting anonymous bearer in memory only, then POST this public search. No fallback app key, patron login or cookie persistence. Token response excluded from evidence."
+      },
+      "books": [
+        {
+          "title": "Harry Potter and the philosopher''s stone / J. K. Rowling ; illustrated by Jim Kay.",
+          "author": "Rowling, J. k.",
+          "record_id": "b02423648",
+          "record_url": "http://injan.kmutnb.ac.th/record=b1618601X",
+          "isbn": null,
+          "holdings": "UC-TAL lists King Mongkut's University of Technology North Bangkok (KMUTNB, locationID 6) as a holding institution for this exact union record. Local link returned: http://injan.kmutnb.ac.th/record=b1618601X. Copy count, branch, shelf and circulation availability unknown; source refresh date unknown.",
+          "evidence_path": "evidence/uctal-specific.html",
+          "holdings_evidence_path": "evidence/uctal-philosopher-holdings.html",
+          "holdings_metadata_path": "evidence/uctal-philosopher-holdings.json",
+          "imprint_as_returned": "London : Bloomsbury Children''s Books, 2018, c2015.",
+          "call_number_as_returned": "F  R884H",
+          "local_record_url_status": "Returned by union; not followed or certified current.",
+          "isbn_note": "Cover URL identifiers deliberately not promoted to authoritative ISBNs."
+        }
+      ],
+      "robots": {
+        "url": "https://ucopacapi.walaiautolib.com/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T07:57:34.151645+00:00",
+        "evidence_path": "evidence/uctal-api-robots.html",
+        "metadata_path": "evidence/uctal-api-robots.json",
+        "decision": "allowed_path",
+        "note": "Shared longest-match check: no applicable prohibitions. Body is explanatory content-signal comments with no User-agent or actual Content-Signal values; no affirmative licence. Frontend /robots.txt is ordinary Angular shell fallback, manually inspected; API origin policy checked separately."
+      },
+      "reader_access": "University TGGS page explicitly includes general-public access to academic information resources. Borrowing membership conditions remain unverified. Public anonymous UC-TAL discovery observed. UC-TAL ILL requires registration and current membership of an academic library (Silpakorn 2023 guide); this does not prove walk-in access or external borrowing rights at this institution. No requests/holds made.",
+      "integration": {
+        "existing_adapter": "new family: public UC-TAL/WALAI union adapter; local Koha or Innovative reuse is separate and untested",
+        "needs": [
+          "Map union bibID + member locationID + local record ID without merging editions",
+          "Keep institution-listed holding separate from live copy availability",
+          "Use public anonymous token in memory; refresh normally, never persist bearer",
+          "Confirm permitted ongoing reuse and operational rate budget",
+          "Validate Thai script, doubled apostrophes, Buddhist-era dates and mixed material types",
+          "Refresh stale local deep links after LMS migrations"
+        ],
+        "blockers": [
+          "No production adapter/app test; union update freshness and coverage unknown",
+          "Copy count and circulation status not established"
+        ],
+        "live_app_tested": false
+      },
+      "institution_mapping": {
+        "locationID": "6",
+        "locationNameTh": "มหาวิทยาลัยเทคโนโลยีพระจอมเกล้าพระนครเหนือ",
+        "locationNameEn": "King Mongkut's University of Technology North Bangkok",
+        "locationSymbol": "KMUTNB",
+        "linkToLibrary": ""
+      },
+      "holding_detail": {
+        "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Biblio/GetAllLibrary?bibid=b02423648",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T08:00:31.067497+00:00",
+        "http_status": 200,
+        "evidence_path": "evidence/uctal-philosopher-holdings.html"
+      }
+    },
+    {
+      "id": "tha-ubu",
+      "name": "Ubon Ratchathani University Library",
+      "recommendation": "verified_target",
+      "scope": "One university library network as named by UC-TAL member UBU / 23; only this contributed record holding verified. Branch/campus and completeness of university coverage unknown.",
+      "size": {
+        "value": 9,
+        "unit": "faculty libraries alongside central library (institutional proxy)",
+        "date": "2024",
+        "source_url": "https://sdg.ubu.ac.th/sdg_tab.php?sdg=sdg11",
+        "evidence_path": "evidence/size-discovery.json",
+        "quality": "official",
+        "note": "Official 2024 public-access report identifies Office of Academic Resources and libraries in nine faculties; 71 external people / 3,291 visits. Visits are not books."
+      },
+      "platform": {
+        "family": "WALAI AutoLib / UC-TAL",
+        "name": "UC-TAL public union API, v1; not necessarily the institution LMS",
+        "proof": "Public uc.thailis.or.th frontend calls ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch and Biblio/GetAllLibrary.",
+        "evidence_path": "evidence/uctal-main.html",
+        "local_platform_observation": "Union mapper points to opac.lib.ubu.ac.th/bibitem; local family unverified beyond WALAI-style path."
+      },
+      "query": {
+        "text": "Harry Potter and the philosopher",
+        "method": "POST",
+        "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch?npage=1&perpage=10&orderby=&ipaddress=",
+        "payload": [
+          {
+            "field": "TITLE",
+            "value": "Harry Potter and the philosopher",
+            "operator": ""
+          }
+        ],
+        "checked_at_utc": "2026-11-15T08:00:02.619926+00:00",
+        "http_status": 200,
+        "effective_url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch?npage=1&perpage=10&orderby=&ipaddress=",
+        "result_count": 6,
+        "count_note": "Total union result count, not this institution count. Only ten results requested on page 1. Institution proved by this record infoExt.libraries and GetAllLibrary response. No facet-only institution counted.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/uctal-specific.html",
+        "metadata_path": "evidence/uctal-specific.json",
+        "request_recipe": "POST published /v1/Token/Issue with empty JSON object; retain resulting anonymous bearer in memory only, then POST this public search. No fallback app key, patron login or cookie persistence. Token response excluded from evidence."
+      },
+      "books": [
+        {
+          "title": "แฮร์รี่พอตเตอร์กับศิลาอาถรรพ์ / J.K. Rowling, เขียน ; สุมาลี, แปล .",
+          "author": "โรว์ลิ่ง, เจ.เค.",
+          "record_id": "b01674663",
+          "record_url": "https://opac.lib.ubu.ac.th/bibitem?bibid=b00033800",
+          "isbn": null,
+          "holdings": "UC-TAL lists Ubon Ratchathani University (UBU, locationID 23) as a holding institution for this exact union record. Local link returned: https://opac.lib.ubu.ac.th/bibitem?bibid=b00033800. Copy count, branch, shelf and circulation availability unknown; source refresh date unknown.",
+          "evidence_path": "evidence/uctal-specific.html",
+          "holdings_evidence_path": "evidence/uctal-thai-holdings.html",
+          "holdings_metadata_path": "evidence/uctal-thai-holdings.json",
+          "imprint_as_returned": "กรุงเทพฯ :  นานมีบุ๊คส์,  2544.",
+          "call_number_as_returned": "น ร942ฮ 2545",
+          "local_record_url_status": "Returned by union; not followed or certified current.",
+          "isbn_note": "Cover URL identifiers deliberately not promoted to authoritative ISBNs.",
+          "identity_note": "Thai-language record retained verbatim. Union imprint says 2544; facetYear says 2545. Do not silently reconcile these or merge with other editions."
+        }
+      ],
+      "robots": {
+        "url": "https://ucopacapi.walaiautolib.com/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T07:57:34.151645+00:00",
+        "evidence_path": "evidence/uctal-api-robots.html",
+        "metadata_path": "evidence/uctal-api-robots.json",
+        "decision": "allowed_path",
+        "note": "Shared longest-match check: no applicable prohibitions. Body is explanatory content-signal comments with no User-agent or actual Content-Signal values; no affirmative licence. Frontend /robots.txt is ordinary Angular shell fallback, manually inspected; API origin policy checked separately."
+      },
+      "reader_access": "University SDG report explicitly documents outsider library use, including nine faculty libraries; 71 outsiders made 3,291 visits in 2024. Borrowing limits not independently checked. Public anonymous UC-TAL discovery observed. UC-TAL ILL requires registration and current membership of an academic library (Silpakorn 2023 guide); this does not prove walk-in access or external borrowing rights at this institution. No requests/holds made.",
+      "integration": {
+        "existing_adapter": "new family: public UC-TAL/WALAI union adapter; local Koha or Innovative reuse is separate and untested",
+        "needs": [
+          "Map union bibID + member locationID + local record ID without merging editions",
+          "Keep institution-listed holding separate from live copy availability",
+          "Use public anonymous token in memory; refresh normally, never persist bearer",
+          "Confirm permitted ongoing reuse and operational rate budget",
+          "Validate Thai script, doubled apostrophes, Buddhist-era dates and mixed material types",
+          "Refresh stale local deep links after LMS migrations"
+        ],
+        "blockers": [
+          "No production adapter/app test; union update freshness and coverage unknown",
+          "Copy count and circulation status not established"
+        ],
+        "live_app_tested": false
+      },
+      "institution_mapping": {
+        "locationID": "23",
+        "locationNameTh": "มหาวิทยาลัยอุบลราชธานี",
+        "locationNameEn": "Ubon Ratchathani University",
+        "locationSymbol": "UBU",
+        "linkToLibrary": ""
+      },
+      "holding_detail": {
+        "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Biblio/GetAllLibrary?bibid=b01674663",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T08:00:31.709135+00:00",
+        "http_status": 200,
+        "evidence_path": "evidence/uctal-thai-holdings.html"
+      }
+    },
+    {
+      "id": "tha-kmitl",
+      "name": "King Mongkut's Institute of Technology Ladkrabang Library",
+      "recommendation": "verified_target",
+      "scope": "One university library network as named by UC-TAL member KMITL / 12; only this contributed record holding verified. Branch/campus and completeness of university coverage unknown.",
+      "size": {
+        "value": null,
+        "unit": "institutional learning-center/library proxy",
+        "date": "undated; accessed 2026-11-15",
+        "source_url": "https://www.kllc.kmitl.ac.th/home/database/",
+        "evidence_path": "evidence/final-source-check.json",
+        "quality": "indexed official",
+        "note": "Institution-wide Lifelong Learning Center / Digital Library and physical catalog. Selected on institutional scope. A separate architecture faculty page says 300,000 books but has ambiguous scope and is not used as KMITL-wide size."
+      },
+      "platform": {
+        "family": "WALAI AutoLib / UC-TAL",
+        "name": "UC-TAL public union API, v1; not necessarily the institution LMS",
+        "proof": "Public uc.thailis.or.th frontend calls ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch and Biblio/GetAllLibrary.",
+        "evidence_path": "evidence/uctal-main.html",
+        "local_platform_observation": "Union mapper points to opac.lib.kmitl.ac.th/Catalog/BibItem.aspx; do not infer local LMS solely from this path."
+      },
+      "query": {
+        "text": "Harry Potter and the philosopher",
+        "method": "POST",
+        "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch?npage=1&perpage=10&orderby=&ipaddress=",
+        "payload": [
+          {
+            "field": "TITLE",
+            "value": "Harry Potter and the philosopher",
+            "operator": ""
+          }
+        ],
+        "checked_at_utc": "2026-11-15T08:00:02.619926+00:00",
+        "http_status": 200,
+        "effective_url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch?npage=1&perpage=10&orderby=&ipaddress=",
+        "result_count": 6,
+        "count_note": "Total union result count, not this institution count. Only ten results requested on page 1. Institution proved by this record infoExt.libraries and GetAllLibrary response. No facet-only institution counted.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/uctal-specific.html",
+        "metadata_path": "evidence/uctal-specific.json",
+        "request_recipe": "POST published /v1/Token/Issue with empty JSON object; retain resulting anonymous bearer in memory only, then POST this public search. No fallback app key, patron login or cookie persistence. Token response excluded from evidence."
+      },
+      "books": [
+        {
+          "title": "แฮร์รี่ พอตเตอร์กับศิลาอาถรรพ์ = Harry Potter and the philosopher''s stone / J.K. Rowling ; สุมาลี, แปล ; Arch Aplar, ภาพปกและภาพประกอบ ; พรกวินทร์ แสงสินชัย, บรรณาธิการ.",
+          "author": "โรว์ลิ่ง, เจ.เค.",
+          "record_id": "b03545563",
+          "record_url": "http://opac.lib.kmitl.ac.th/Catalog/BibItem.aspx?BibID=b00293604",
+          "isbn": null,
+          "holdings": "UC-TAL lists King Mongkut's Institute of Technology Ladkrabang (KMITL, locationID 12) as a holding institution for this exact union record. Local link returned: http://opac.lib.kmitl.ac.th/Catalog/BibItem.aspx?BibID=b00293604. Copy count, branch, shelf and circulation availability unknown; source refresh date unknown.",
+          "evidence_path": "evidence/uctal-specific.html",
+          "holdings_evidence_path": "evidence/uctal-illustrated-holdings.html",
+          "holdings_metadata_path": "evidence/uctal-illustrated-holdings.json",
+          "imprint_as_returned": "กรุงเทพฯ : นานมีบุ๊คส์, 2566.",
+          "call_number_as_returned": null,
+          "local_record_url_status": "Returned by union; not followed or certified current.",
+          "isbn_note": "Cover URL identifiers deliberately not promoted to authoritative ISBNs."
+        }
+      ],
+      "robots": {
+        "url": "https://ucopacapi.walaiautolib.com/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T07:57:34.151645+00:00",
+        "evidence_path": "evidence/uctal-api-robots.html",
+        "metadata_path": "evidence/uctal-api-robots.json",
+        "decision": "allowed_path",
+        "note": "Shared longest-match check: no applicable prohibitions. Body is explanatory content-signal comments with no User-agent or actual Content-Signal values; no affirmative licence. Frontend /robots.txt is ordinary Angular shell fallback, manually inspected; API origin policy checked separately."
+      },
+      "reader_access": "Public anonymous UC-TAL discovery observed. UC-TAL ILL requires registration and current membership of an academic library (Silpakorn 2023 guide); this does not prove walk-in access or external borrowing rights at this institution. No requests/holds made.",
+      "integration": {
+        "existing_adapter": "new family: public UC-TAL/WALAI union adapter; local Koha or Innovative reuse is separate and untested",
+        "needs": [
+          "Map union bibID + member locationID + local record ID without merging editions",
+          "Keep institution-listed holding separate from live copy availability",
+          "Use public anonymous token in memory; refresh normally, never persist bearer",
+          "Confirm permitted ongoing reuse and operational rate budget",
+          "Validate Thai script, doubled apostrophes, Buddhist-era dates and mixed material types",
+          "Refresh stale local deep links after LMS migrations"
+        ],
+        "blockers": [
+          "No production adapter/app test; union update freshness and coverage unknown",
+          "Copy count and circulation status not established"
+        ],
+        "live_app_tested": false
+      },
+      "institution_mapping": {
+        "locationID": "12",
+        "locationNameTh": "สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง",
+        "locationNameEn": "King Mongkut's Institute of Technology Ladkrabang",
+        "locationSymbol": "KMITL",
+        "linkToLibrary": ""
+      },
+      "holding_detail": {
+        "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Biblio/GetAllLibrary?bibid=b03545563",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T08:00:32.280049+00:00",
+        "http_status": 200,
+        "evidence_path": "evidence/uctal-illustrated-holdings.html"
+      }
+    },
+    {
+      "id": "tha-mu",
+      "name": "Mahidol University Library",
+      "recommendation": "verified_target",
+      "scope": "One university library network as named by UC-TAL member MU / 20; only this contributed record holding verified. Branch/campus and completeness of university coverage unknown.",
+      "size": {
+        "value": 1100000,
+        "unit": "books, theses, research reports and bound journals, more than",
+        "date": "undated; accessed 2026-11-15",
+        "source_url": "https://www.ict.mahidol.ac.th/en/facilities/",
+        "evidence_path": "evidence/source-pages-1.json",
+        "quality": "official",
+        "note": "Over 1.1 million books, theses, research reports and bound journals; mixed units, not all books. Older page describes 25 branches; 2025 Alma migration report covers 38 libraries."
+      },
+      "platform": {
+        "family": "WALAI AutoLib / UC-TAL",
+        "name": "UC-TAL public union API, v1; not necessarily the institution LMS",
+        "proof": "Public uc.thailis.or.th frontend calls ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch and Biblio/GetAllLibrary.",
+        "evidence_path": "evidence/uctal-main.html",
+        "local_platform_observation": "Official 21 March 2025 announcement documents Sierra-to-Alma migration training across 38 libraries; current homepage links Primo. Union still emits pre-migration /record=b1346475X."
+      },
+      "query": {
+        "text": "Pride and prejudice",
+        "method": "POST",
+        "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch?npage=1&perpage=10&orderby=&ipaddress=",
+        "payload": [
+          {
+            "field": "TITLE",
+            "value": "Pride and prejudice",
+            "operator": ""
+          }
+        ],
+        "checked_at_utc": "2026-11-15T08:00:48.782004+00:00",
+        "http_status": 200,
+        "effective_url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch?npage=1&perpage=10&orderby=&ipaddress=",
+        "result_count": 82,
+        "count_note": "Total union result count, not this institution count. Only ten results requested on page 1. Institution proved by this record infoExt.libraries and GetAllLibrary response. No facet-only institution counted.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/uctal-pride.html",
+        "metadata_path": "evidence/uctal-pride.json",
+        "request_recipe": "POST published /v1/Token/Issue with empty JSON object; retain resulting anonymous bearer in memory only, then POST this public search. No fallback app key, patron login or cookie persistence. Token response excluded from evidence."
+      },
+      "books": [
+        {
+          "title": "Pride and prejudice / Jane Austen",
+          "author": "Austen, Jane",
+          "record_id": "b02279024",
+          "record_url": "https://www.li.mahidol.ac.th//record=b1346475X",
+          "isbn": null,
+          "holdings": "UC-TAL lists Mahidol University (MU, locationID 20) as a holding institution for this exact union record. Local link returned: https://www.li.mahidol.ac.th//record=b1346475X. Copy count, branch, shelf and circulation availability unknown; source refresh date unknown.",
+          "evidence_path": "evidence/uctal-pride.html",
+          "holdings_evidence_path": "evidence/uctal-mu-locations.html",
+          "holdings_metadata_path": "evidence/uctal-mu-locations.json",
+          "imprint_as_returned": "Oxford : Penguin Books, c1994.",
+          "call_number_as_returned": null,
+          "local_record_url_status": "Returned by union; not followed or certified current.",
+          "isbn_note": "Cover URL identifiers deliberately not promoted to authoritative ISBNs."
+        }
+      ],
+      "robots": {
+        "url": "https://ucopacapi.walaiautolib.com/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T07:57:34.151645+00:00",
+        "evidence_path": "evidence/uctal-api-robots.html",
+        "metadata_path": "evidence/uctal-api-robots.json",
+        "decision": "allowed_path",
+        "note": "Shared longest-match check: no applicable prohibitions. Body is explanatory content-signal comments with no User-agent or actual Content-Signal values; no affirmative licence. Frontend /robots.txt is ordinary Angular shell fallback, manually inspected; API origin policy checked separately."
+      },
+      "reader_access": "Current library site distinguishes public Primo discovery from subscribed electronic resources needing a Mahidol account; visitor borrowing conditions not verified. Public anonymous UC-TAL discovery observed. UC-TAL ILL requires registration and current membership of an academic library (Silpakorn 2023 guide); this does not prove walk-in access or external borrowing rights at this institution. No requests/holds made.",
+      "integration": {
+        "existing_adapter": "new family: public UC-TAL/WALAI union adapter; local Koha or Innovative reuse is separate and untested",
+        "needs": [
+          "Map union bibID + member locationID + local record ID without merging editions",
+          "Keep institution-listed holding separate from live copy availability",
+          "Use public anonymous token in memory; refresh normally, never persist bearer",
+          "Confirm permitted ongoing reuse and operational rate budget",
+          "Validate Thai script, doubled apostrophes, Buddhist-era dates and mixed material types",
+          "Refresh stale local deep links after LMS migrations"
+        ],
+        "blockers": [
+          "No production adapter/app test; union update freshness and coverage unknown",
+          "Copy count and circulation status not established"
+        ],
+        "live_app_tested": false
+      },
+      "institution_mapping": {
+        "locationID": "20",
+        "locationNameTh": "มหาวิทยาลัยมหิดล",
+        "locationNameEn": "Mahidol University",
+        "locationSymbol": "MU",
+        "linkToLibrary": ""
+      },
+      "holding_detail": {
+        "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Biblio/GetAllLibrary?bibid=b02279024",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T08:02:35.440145+00:00",
+        "http_status": 200,
+        "evidence_path": "evidence/uctal-mu-locations.html"
+      }
+    },
+    {
+      "id": "tha-kku",
+      "name": "Khon Kaen University Library",
+      "recommendation": "verified_target",
+      "scope": "One university library network as named by UC-TAL member KKU / 5; only this contributed record holding verified. Branch/campus and completeness of university coverage unknown.",
+      "size": {
+        "value": null,
+        "unit": "central university library (institutional proxy)",
+        "date": "undated; indexed in 2026",
+        "source_url": "https://app.gs.kku.ac.th/gs/th/publicationfile/item/study-life-kku/learning-support/learning-support.pdf",
+        "evidence_path": "evidence/final-source-check.json",
+        "quality": "indexed official",
+        "note": "Graduate School learning-support guide identifies the Central Library; selected as the university-wide academic library. No defensible numeric collection count established."
+      },
+      "platform": {
+        "family": "WALAI AutoLib / UC-TAL",
+        "name": "UC-TAL public union API, v1; not necessarily the institution LMS",
+        "proof": "Public uc.thailis.or.th frontend calls ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch and Biblio/GetAllLibrary.",
+        "evidence_path": "evidence/uctal-main.html",
+        "local_platform_observation": "Union mapper points to opac.kku.ac.th/bibitem; local family unverified beyond WALAI-style path."
+      },
+      "query": {
+        "text": "Pride and prejudice",
+        "method": "POST",
+        "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch?npage=1&perpage=10&orderby=&ipaddress=",
+        "payload": [
+          {
+            "field": "TITLE",
+            "value": "Pride and prejudice",
+            "operator": ""
+          }
+        ],
+        "checked_at_utc": "2026-11-15T08:00:48.782004+00:00",
+        "http_status": 200,
+        "effective_url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch?npage=1&perpage=10&orderby=&ipaddress=",
+        "result_count": 82,
+        "count_note": "Total union result count, not this institution count. Only ten results requested on page 1. Institution proved by this record infoExt.libraries and GetAllLibrary response. No facet-only institution counted.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/uctal-pride.html",
+        "metadata_path": "evidence/uctal-pride.json",
+        "request_recipe": "POST published /v1/Token/Issue with empty JSON object; retain resulting anonymous bearer in memory only, then POST this public search. No fallback app key, patron login or cookie persistence. Token response excluded from evidence."
+      },
+      "books": [
+        {
+          "title": "Pride and prejudice :  notes.",
+          "author": "Austen, Jane 1775-1817.",
+          "record_id": "b01903581",
+          "record_url": "https://opac.kku.ac.th/bibitem?bibid=b00089195",
+          "isbn": null,
+          "holdings": "UC-TAL lists Khon Kaen University (KKU, locationID 5) as a holding institution for this exact union record. Local link returned: https://opac.kku.ac.th/bibitem?bibid=b00089195. Copy count, branch, shelf and circulation availability unknown; source refresh date unknown.",
+          "evidence_path": "evidence/uctal-pride.html",
+          "holdings_evidence_path": "evidence/uctal-kku-locations.html",
+          "holdings_metadata_path": "evidence/uctal-kku-locations.json",
+          "imprint_as_returned": "Lincoln, Neb. :  Cliff's Notes,  [1966]",
+          "call_number_as_returned": null,
+          "local_record_url_status": "Returned by union; not followed or certified current.",
+          "isbn_note": "Cover URL identifiers deliberately not promoted to authoritative ISBNs.",
+          "identity_note": "This is a Cliff’s Notes study guide, not the complete Austen novel; related-title result retained explicitly."
+        }
+      ],
+      "robots": {
+        "url": "https://ucopacapi.walaiautolib.com/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T07:57:34.151645+00:00",
+        "evidence_path": "evidence/uctal-api-robots.html",
+        "metadata_path": "evidence/uctal-api-robots.json",
+        "decision": "allowed_path",
+        "note": "Shared longest-match check: no applicable prohibitions. Body is explanatory content-signal comments with no User-agent or actual Content-Signal values; no affirmative licence. Frontend /robots.txt is ordinary Angular shell fallback, manually inspected; API origin policy checked separately."
+      },
+      "reader_access": "Public anonymous UC-TAL discovery observed. UC-TAL ILL requires registration and current membership of an academic library (Silpakorn 2023 guide); this does not prove walk-in access or external borrowing rights at this institution. No requests/holds made.",
+      "integration": {
+        "existing_adapter": "new family: public UC-TAL/WALAI union adapter; local Koha or Innovative reuse is separate and untested",
+        "needs": [
+          "Map union bibID + member locationID + local record ID without merging editions",
+          "Keep institution-listed holding separate from live copy availability",
+          "Use public anonymous token in memory; refresh normally, never persist bearer",
+          "Confirm permitted ongoing reuse and operational rate budget",
+          "Validate Thai script, doubled apostrophes, Buddhist-era dates and mixed material types",
+          "Refresh stale local deep links after LMS migrations"
+        ],
+        "blockers": [
+          "No production adapter/app test; union update freshness and coverage unknown",
+          "Copy count and circulation status not established"
+        ],
+        "live_app_tested": false
+      },
+      "institution_mapping": {
+        "locationID": "5",
+        "locationNameTh": "มหาวิทยาลัยขอนแก่น",
+        "locationNameEn": "Khon Kaen University",
+        "locationSymbol": "KKU",
+        "linkToLibrary": ""
+      },
+      "holding_detail": {
+        "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Biblio/GetAllLibrary?bibid=b01903581",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T08:02:35.952619+00:00",
+        "http_status": 200,
+        "evidence_path": "evidence/uctal-kku-locations.html"
+      }
+    },
+    {
+      "id": "tha-rbru",
+      "name": "Rambhai Barni Rajabhat University Library",
+      "recommendation": "reserve",
+      "scope": "One university library network as named by UC-TAL member RBRU / 78; only this contributed record holding verified. Branch/campus and completeness of university coverage unknown.",
+      "size": {
+        "value": null,
+        "unit": "unquantified university library",
+        "date": "2026-11-15",
+        "source_url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Biblio/GetAllLibrary?bibid=b01674663",
+        "evidence_path": "evidence/uctal-thai-holdings.html",
+        "quality": "institutional proxy",
+        "note": "Institution-specific union member and local Koha record identified; scale not independently established."
+      },
+      "platform": {
+        "family": "WALAI AutoLib / UC-TAL",
+        "name": "UC-TAL public union API, v1; not necessarily the institution LMS",
+        "proof": "Public uc.thailis.or.th frontend calls ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch and Biblio/GetAllLibrary.",
+        "evidence_path": "evidence/uctal-main.html",
+        "local_platform_observation": "Returned local URL is Koha /cgi-bin/koha/opac-detail.pl?biblionumber=24615; local endpoint not queried."
+      },
+      "query": {
+        "text": "Harry Potter and the philosopher",
+        "method": "POST",
+        "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch?npage=1&perpage=10&orderby=&ipaddress=",
+        "payload": [
+          {
+            "field": "TITLE",
+            "value": "Harry Potter and the philosopher",
+            "operator": ""
+          }
+        ],
+        "checked_at_utc": "2026-11-15T08:00:02.619926+00:00",
+        "http_status": 200,
+        "effective_url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch?npage=1&perpage=10&orderby=&ipaddress=",
+        "result_count": 6,
+        "count_note": "Total union result count, not this institution count. Only ten results requested on page 1. Institution proved by this record infoExt.libraries and GetAllLibrary response. No facet-only institution counted.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/uctal-specific.html",
+        "metadata_path": "evidence/uctal-specific.json",
+        "request_recipe": "POST published /v1/Token/Issue with empty JSON object; retain resulting anonymous bearer in memory only, then POST this public search. No fallback app key, patron login or cookie persistence. Token response excluded from evidence."
+      },
+      "books": [
+        {
+          "title": "แฮร์รี่พอตเตอร์กับศิลาอาถรรพ์ / J.K. Rowling, เขียน ; สุมาลี, แปล .",
+          "author": "โรว์ลิ่ง, เจ.เค.",
+          "record_id": "b01674663",
+          "record_url": "http://opac01.rbru.ac.th/cgi-bin/koha/opac-detail.pl?biblionumber=24615",
+          "isbn": null,
+          "holdings": "UC-TAL lists Rambhai Barni Rajabhat University (RBRU, locationID 78) as a holding institution for this exact union record. Local link returned: http://opac01.rbru.ac.th/cgi-bin/koha/opac-detail.pl?biblionumber=24615. Copy count, branch, shelf and circulation availability unknown; source refresh date unknown.",
+          "evidence_path": "evidence/uctal-specific.html",
+          "holdings_evidence_path": "evidence/uctal-thai-holdings.html",
+          "holdings_metadata_path": "evidence/uctal-thai-holdings.json",
+          "imprint_as_returned": "กรุงเทพฯ :  นานมีบุ๊คส์,  2544.",
+          "call_number_as_returned": "น ร942ฮ 2545",
+          "local_record_url_status": "Returned by union; not followed or certified current.",
+          "isbn_note": "Cover URL identifiers deliberately not promoted to authoritative ISBNs.",
+          "identity_note": "Thai-language record retained verbatim. Union imprint says 2544; facetYear says 2545. Do not silently reconcile these or merge with other editions."
+        }
+      ],
+      "robots": {
+        "url": "https://ucopacapi.walaiautolib.com/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T07:57:34.151645+00:00",
+        "evidence_path": "evidence/uctal-api-robots.html",
+        "metadata_path": "evidence/uctal-api-robots.json",
+        "decision": "allowed_path",
+        "note": "Shared longest-match check: no applicable prohibitions. Body is explanatory content-signal comments with no User-agent or actual Content-Signal values; no affirmative licence. Frontend /robots.txt is ordinary Angular shell fallback, manually inspected; API origin policy checked separately."
+      },
+      "reader_access": "Public anonymous UC-TAL discovery observed. UC-TAL ILL requires registration and current membership of an academic library (Silpakorn 2023 guide); this does not prove walk-in access or external borrowing rights at this institution. No requests/holds made.",
+      "integration": {
+        "existing_adapter": "new family: public UC-TAL/WALAI union adapter; local Koha or Innovative reuse is separate and untested",
+        "needs": [
+          "Map union bibID + member locationID + local record ID without merging editions",
+          "Keep institution-listed holding separate from live copy availability",
+          "Use public anonymous token in memory; refresh normally, never persist bearer",
+          "Confirm permitted ongoing reuse and operational rate budget",
+          "Validate Thai script, doubled apostrophes, Buddhist-era dates and mixed material types",
+          "Refresh stale local deep links after LMS migrations"
+        ],
+        "blockers": [
+          "No production adapter/app test; union update freshness and coverage unknown",
+          "Copy count and circulation status not established"
+        ],
+        "live_app_tested": false
+      },
+      "institution_mapping": {
+        "locationID": "78",
+        "locationNameTh": "มหาวิทยาลัยราชภัฏรำไพพรรณี",
+        "locationNameEn": "Rambhai Barni Rajabhat University",
+        "locationSymbol": "RBRU",
+        "linkToLibrary": ""
+      },
+      "holding_detail": {
+        "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Biblio/GetAllLibrary?bibid=b01674663",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T08:00:31.709135+00:00",
+        "http_status": 200,
+        "evidence_path": "evidence/uctal-thai-holdings.html"
+      }
+    },
+    {
+      "id": "tha-snru",
+      "name": "Sakon Nakhon Rajabhat University Library",
+      "recommendation": "reserve",
+      "scope": "One university library network as named by UC-TAL member SNRU / 70; only this contributed record holding verified. Branch/campus and completeness of university coverage unknown.",
+      "size": {
+        "value": null,
+        "unit": "unquantified university library",
+        "date": "2016",
+        "source_url": "https://arit.snru.ac.th/topics/2968",
+        "evidence_path": "evidence/discovery-1.json",
+        "quality": "institutional proxy",
+        "note": "Institutional announcement documents ALIST acquisition; collection scale not established."
+      },
+      "platform": {
+        "family": "WALAI AutoLib / UC-TAL",
+        "name": "UC-TAL public union API, v1; not necessarily the institution LMS",
+        "proof": "Public uc.thailis.or.th frontend calls ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch and Biblio/GetAllLibrary.",
+        "evidence_path": "evidence/uctal-main.html",
+        "local_platform_observation": "Institutional ALIST acquisition announcement and returned alist.snru.ac.th/BibDetail.aspx?bibno=28228 identify ALIST; local endpoint not queried."
+      },
+      "query": {
+        "text": "Harry Potter and the philosopher",
+        "method": "POST",
+        "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch?npage=1&perpage=10&orderby=&ipaddress=",
+        "payload": [
+          {
+            "field": "TITLE",
+            "value": "Harry Potter and the philosopher",
+            "operator": ""
+          }
+        ],
+        "checked_at_utc": "2026-11-15T08:00:02.619926+00:00",
+        "http_status": 200,
+        "effective_url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Retrive/KeywordSearch?npage=1&perpage=10&orderby=&ipaddress=",
+        "result_count": 6,
+        "count_note": "Total union result count, not this institution count. Only ten results requested on page 1. Institution proved by this record infoExt.libraries and GetAllLibrary response. No facet-only institution counted.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/uctal-specific.html",
+        "metadata_path": "evidence/uctal-specific.json",
+        "request_recipe": "POST published /v1/Token/Issue with empty JSON object; retain resulting anonymous bearer in memory only, then POST this public search. No fallback app key, patron login or cookie persistence. Token response excluded from evidence."
+      },
+      "books": [
+        {
+          "title": "แฮร์รี่พอตเตอร์กับศิลาอาถรรพ์ / J.K. Rowling, เขียน ; สุมาลี, แปล .",
+          "author": "โรว์ลิ่ง, เจ.เค.",
+          "record_id": "b01674663",
+          "record_url": "https://alist.snru.ac.th/BibDetail.aspx?bibno=28228",
+          "isbn": null,
+          "holdings": "UC-TAL lists Sakon Nakhon Rajabhat University (SNRU, locationID 70) as a holding institution for this exact union record. Local link returned: https://alist.snru.ac.th/BibDetail.aspx?bibno=28228. Copy count, branch, shelf and circulation availability unknown; source refresh date unknown.",
+          "evidence_path": "evidence/uctal-specific.html",
+          "holdings_evidence_path": "evidence/uctal-thai-holdings.html",
+          "holdings_metadata_path": "evidence/uctal-thai-holdings.json",
+          "imprint_as_returned": "กรุงเทพฯ :  นานมีบุ๊คส์,  2544.",
+          "call_number_as_returned": "น ร942ฮ 2545",
+          "local_record_url_status": "Returned by union; not followed or certified current.",
+          "isbn_note": "Cover URL identifiers deliberately not promoted to authoritative ISBNs.",
+          "identity_note": "Thai-language record retained verbatim. Union imprint says 2544; facetYear says 2545. Do not silently reconcile these or merge with other editions."
+        }
+      ],
+      "robots": {
+        "url": "https://ucopacapi.walaiautolib.com/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T07:57:34.151645+00:00",
+        "evidence_path": "evidence/uctal-api-robots.html",
+        "metadata_path": "evidence/uctal-api-robots.json",
+        "decision": "allowed_path",
+        "note": "Shared longest-match check: no applicable prohibitions. Body is explanatory content-signal comments with no User-agent or actual Content-Signal values; no affirmative licence. Frontend /robots.txt is ordinary Angular shell fallback, manually inspected; API origin policy checked separately."
+      },
+      "reader_access": "Public anonymous UC-TAL discovery observed. UC-TAL ILL requires registration and current membership of an academic library (Silpakorn 2023 guide); this does not prove walk-in access or external borrowing rights at this institution. No requests/holds made.",
+      "integration": {
+        "existing_adapter": "new family: public UC-TAL/WALAI union adapter; local Koha or Innovative reuse is separate and untested",
+        "needs": [
+          "Map union bibID + member locationID + local record ID without merging editions",
+          "Keep institution-listed holding separate from live copy availability",
+          "Use public anonymous token in memory; refresh normally, never persist bearer",
+          "Confirm permitted ongoing reuse and operational rate budget",
+          "Validate Thai script, doubled apostrophes, Buddhist-era dates and mixed material types",
+          "Refresh stale local deep links after LMS migrations"
+        ],
+        "blockers": [
+          "No production adapter/app test; union update freshness and coverage unknown",
+          "Copy count and circulation status not established"
+        ],
+        "live_app_tested": false
+      },
+      "institution_mapping": {
+        "locationID": "70",
+        "locationNameTh": "มหาวิทยาลัยราชภัฏสกลนคร",
+        "locationNameEn": "Sakon Nakhon Rajabhat University",
+        "locationSymbol": "SNRU",
+        "linkToLibrary": ""
+      },
+      "holding_detail": {
+        "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Biblio/GetAllLibrary?bibid=b01674663",
+        "method": "GET",
+        "checked_at_utc": "2026-11-15T08:00:31.709135+00:00",
+        "http_status": 200,
+        "evidence_path": "evidence/uctal-thai-holdings.html"
+      }
+    }
+  ],
+  "blocked_or_unverified": [
+    {
+      "name": "National Library of Thailand",
+      "url": "https://nlt.primo.exlibrisgroup.com/nde/search",
+      "reason": "Explicit wildcard Disallow /nde/search, /discovery/search and /primaws; no search sent.",
+      "evidence_path": "evidence/nlt-primo-robots.html",
+      "metadata_path": "evidence/nlt-primo-robots.json",
+      "http_status": 200,
+      "checked_at_utc": "2026-11-15T07:56:58.549679+00:00"
+    },
+    {
+      "name": "Chulalongkorn primary catalog",
+      "url": "https://library.car.chula.ac.th/",
+      "reason": "Robots HTTP503; no primary search. UC-TAL is an independently permitted public source.",
+      "evidence_path": "evidence/chula-robots.html",
+      "metadata_path": "evidence/chula-robots.json",
+      "http_status": 503,
+      "checked_at_utc": "2026-11-15T07:56:08.285660+00:00"
+    },
+    {
+      "name": "Thammasat main website",
+      "url": "https://library.tu.ac.th/",
+      "reason": "Disallow /; no page/search fetched.",
+      "evidence_path": "evidence/tu-robots.html",
+      "metadata_path": "evidence/tu-robots.json",
+      "http_status": 200,
+      "checked_at_utc": "2026-11-15T07:56:37.378497+00:00"
+    },
+    {
+      "name": "Thammasat Koha",
+      "url": "https://koha.library.tu.ac.th/punsarn/opac/main/",
+      "reason": "Robots request timed out; no catalog request. UC-TAL success is separate.",
+      "evidence_path": "evidence/tu-koha-robots.json",
+      "metadata_path": "evidence/tu-koha-robots.json",
+      "http_status": null,
+      "checked_at_utc": "2026-11-15T07:58:18.659267+00:00"
+    },
+    {
+      "name": "Kasetsart WebPAC",
+      "url": "https://intanin.lib.ku.ac.th/search",
+      "reason": "Homepage allowed but /search expressly disallowed; no local query.",
+      "evidence_path": "evidence/ku-robots.html",
+      "metadata_path": "evidence/ku-robots.json",
+      "http_status": 200,
+      "checked_at_utc": "2026-11-15T07:58:18.660088+00:00"
+    },
+    {
+      "name": "Kasetsart live-item relay",
+      "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Biblio/GetItemByLocation?bibid=b02423648&locationid=13",
+      "reason": "HTTP500: could not fetch from API; stop item lookup, retain institution-listed holding only.",
+      "evidence_path": "evidence/uctal-ku-items.html",
+      "metadata_path": "evidence/uctal-ku-items.json",
+      "http_status": 500,
+      "checked_at_utc": "2026-11-15T08:01:02.578374+00:00"
+    },
+    {
+      "name": "Chiang Mai University old OPAC",
+      "url": "https://search.lib.cmu.ac.th/",
+      "reason": "Robots DNS/connectivity failure, not evidence of absence.",
+      "evidence_path": "evidence/cmu-robots.json",
+      "metadata_path": "evidence/cmu-robots.json",
+      "http_status": null,
+      "checked_at_utc": "2026-11-15T07:58:18.660990+00:00"
+    },
+    {
+      "name": "Bangkok public libraries",
+      "url": "https://www.bangkoklibrary.go.th/",
+      "reason": "Robots HTTP503 connect timeout; no automated query.",
+      "evidence_path": "evidence/bkk-robots.html",
+      "metadata_path": "evidence/bkk-robots.json",
+      "http_status": 503,
+      "checked_at_utc": "2026-11-15T08:04:06.730207+00:00"
+    },
+    {
+      "name": "Maejo University",
+      "url": "https://opac.library.mju.ac.th/",
+      "reason": "Robots DNS/connectivity failure; no query.",
+      "evidence_path": "evidence/mju-robots.json",
+      "metadata_path": "evidence/mju-robots.json",
+      "http_status": null,
+      "checked_at_utc": "2026-11-15T07:59:39.234858+00:00"
+    },
+    {
+      "name": "University of Phayao",
+      "url": "https://clm.up.ac.th/",
+      "reason": "Robots HTTP503 connection timeout; no query.",
+      "evidence_path": "evidence/phayao-robots.html",
+      "metadata_path": "evidence/phayao-robots.json",
+      "http_status": 503,
+      "checked_at_utc": "2026-11-15T07:59:39.235494+00:00"
+    },
+    {
+      "name": "Prince of Songkla Khunying Long OPAC",
+      "url": "https://opac.psu.ac.th/",
+      "reason": "Public API HTTP200, 20 matches; first five requested rows are Visual Materials/videorecordings. Not book successes. Robots is manually inspected ordinary React shell fallback.",
+      "evidence_path": "evidence/psu-search.html",
+      "metadata_path": "evidence/psu-search.json",
+      "http_status": 200,
+      "checked_at_utc": "2026-11-15T07:58:52.892150+00:00"
+    }
+  ],
+  "limitations": [
+    "No national largest-ten ranking established; size dates, units and institutional proxies cannot be compared as ranks.",
+    "Ten selected institutional observations are based on three shared union queries, not ten independent endpoint tests.",
+    "Union named holding institutions and local record links were returned. No campus, exact shelf, copy count, refresh date or live circulation status established.",
+    "Primary catalog restrictions remain in force; separate UC-TAL observations do not grant permission to query restricted local endpoints.",
+    "Union deep links for Mahidol and Silpakorn visibly lag their newer platform/routes; a returned URL is not a verified working link.",
+    "Related-title works, a Cliff’s Notes guide, Thai translations and illustrated editions were preserved as separate identities; no cover ISBNs promoted to record ISBNs.",
+    "Empty Holding/GetHolding arrays for five books are not absence: returned institution mappings exist; that endpoint supplies serial-style holdings.",
+    "UC-TAL frontend robots is ordinary Angular fallback; API robots has explanatory comments only. Neither establishes reuse licence.",
+    "No patron authentication, outreach, hold requests, catalog harvesting, application edits or live app integration test.",
+    "Regional and municipal public libraries remain unverified; the feasible selected sample is academic and must not imply representative nationwide LMS market share."
+  ],
+  "sources": [
+    {
+      "url": "https://www.inter.chula.ac.th/wp-content/uploads/2023/03/Prospectus2023_Reduced.pdf",
+      "claim": "Central Library: over 1,000,000 books; 2023 prospectus. This is a central-library size claim, not a count of all CU union holdings.",
+      "evidence_path": "evidence/size-discovery.json"
+    },
+    {
+      "url": "https://www.openathens.net/case-studies/how-thammasat-university-is-achieving-the-highest-library-service-standard-in-thailand/",
+      "claim": "More than 1.3 million physical books; nine branches and one learning center.",
+      "evidence_path": "evidence/source-pages-2.json"
+    },
+    {
+      "url": "https://lib.su.ac.th/en/about-us-en/",
+      "claim": "Central Library operates across three campuses: Thapra, Sanamchandra and Phetchaburi. Numeric book counter rendered zero placeholders and is not used.",
+      "evidence_path": "evidence/source-pages-1.json"
+    },
+    {
+      "url": "https://www.mdri.cmu.ac.th/asiahub2024/assets/pdf/posters/Thailand/08.Burapha%20University%20%281%29.pdf",
+      "claim": "2024 university poster lists 271,811 Books, separate from articles, computer files and other material. Unit as printed; not assumed physical copies.",
+      "evidence_path": "evidence/size-discovery.json"
+    },
+    {
+      "url": "https://library.kps.ku.ac.th/2022/index.php",
+      "claim": "Official campus site describes KU catalog covering university resources and KU+ search across 15 other Thai institutions. KU is selected as a university library network; the 15 are not a KU branch count.",
+      "evidence_path": "evidence/final-source-check.json"
+    },
+    {
+      "url": "https://tggs.kmutnb.ac.th/wp-content/uploads/2025/07/TGGS_Undergraduate-Student_Handbook_2025-1.pdf",
+      "claim": "August 2025 student handbook, Facilities and Academic Support / KMUTNB Library: more than 200,000 books.",
+      "evidence_path": "evidence/final-source-check.json"
+    },
+    {
+      "url": "https://sdg.ubu.ac.th/sdg_tab.php?sdg=sdg11",
+      "claim": "Official 2024 public-access report identifies Office of Academic Resources and libraries in nine faculties; 71 external people / 3,291 visits. Visits are not books.",
+      "evidence_path": "evidence/size-discovery.json"
+    },
+    {
+      "url": "https://www.kllc.kmitl.ac.th/home/database/",
+      "claim": "Institution-wide Lifelong Learning Center / Digital Library and physical catalog. Selected on institutional scope. A separate architecture faculty page says 300,000 books but has ambiguous scope and is not used as KMITL-wide size.",
+      "evidence_path": "evidence/final-source-check.json"
+    },
+    {
+      "url": "https://www.ict.mahidol.ac.th/en/facilities/",
+      "claim": "Over 1.1 million books, theses, research reports and bound journals; mixed units, not all books. Older page describes 25 branches; 2025 Alma migration report covers 38 libraries.",
+      "evidence_path": "evidence/source-pages-1.json"
+    },
+    {
+      "url": "https://app.gs.kku.ac.th/gs/th/publicationfile/item/study-life-kku/learning-support/learning-support.pdf",
+      "claim": "Graduate School learning-support guide identifies the Central Library; selected as the university-wide academic library. No defensible numeric collection count established.",
+      "evidence_path": "evidence/final-source-check.json"
+    },
+    {
+      "url": "https://ucopacapi.walaiautolib.com/ucopacapi/v1/Biblio/GetAllLibrary?bibid=b01674663",
+      "claim": "Institution-specific union member and local Koha record identified; scale not independently established.",
+      "evidence_path": "evidence/uctal-thai-holdings.html"
+    },
+    {
+      "url": "https://arit.snru.ac.th/topics/2968",
+      "claim": "Institutional announcement documents ALIST acquisition; collection scale not established.",
+      "evidence_path": "evidence/discovery-1.json"
+    },
+    {
+      "url": "https://www.ndl.go.jp/en/cdnlao/meetings/pdf/2024%20thailand-%20report.pdf",
+      "claim": "NLT country report presented November 2024 covers calendar 2023: 5,368,998 physical items; The Reader postal service.",
+      "evidence_path": "evidence/source-pages-1.json"
+    },
+    {
+      "url": "https://www.nlt.go.th/library?id=25",
+      "claim": "Official regional library directory includes Suphan Buri, Songkhla, Chon Buri, Nakhon Phanom and other provincial National Library sites; no distinct branch query certified.",
+      "evidence_path": "evidence/nlt-regional.html"
+    },
+    {
+      "url": "https://policy.bangkok.go.th/watch/apolicies261/view?code=P169&id=169",
+      "claim": "BMA policy describes 36 public libraries and 139 book houses; planned online/cross-library lending and at least 10,000 ebooks are targets, not physical-book holdings.",
+      "evidence_path": "evidence/market-discovery.json"
+    },
+    {
+      "url": "https://snc.lib.su.ac.th/kmblog/?p=10510",
+      "claim": "April/August 2023 institutional explanation: UC-TAL over 100 institutions and over 2.2 million bibliographic records; ILL requires current academic-library membership.",
+      "evidence_path": "evidence/source-pages-2.json"
+    },
+    {
+      "url": "https://snc.lib.su.ac.th/snclibblog/?p=49920",
+      "claim": "1 August 2015 institutional survey lists ALIST 27 adopters, WALAI AutoLib 68, LM-SomSook 2. Historical scoped counts, not current national market shares.",
+      "evidence_path": "evidence/source-pages-2.json"
+    },
+    {
+      "url": "https://www.thailibrary.in.th/2014/08/04/ulibm/",
+      "claim": "NSTDA knowledge-sharing article identifies Thai-developed ULibM and standards-based interoperability; no present-day adoption census.",
+      "evidence_path": null
+    },
+    {
+      "url": "https://www.li.mahidol.ac.th/news/21mar2025-2",
+      "claim": "March 2025 Alma training for 38 network libraries explicitly prepares Sierra-to-Alma migration.",
+      "evidence_path": "evidence/platform-discovery.json"
+    },
+    {
+      "url": "https://www.lib.buu.ac.th/walai-autolib-ultimate-2/",
+      "claim": "Burapha institutional WALAI AutoLib Ultimate project announcement.",
+      "evidence_path": "evidence/platform-discovery.json"
+    },
+    {
+      "url": "https://library.dukekunshan.edu.cn/events_news/duke-kunshan-university-librarian-visited-chiang-mai-university-library/",
+      "claim": "10 February 2023 official visiting-library report quotes CMU staff: about one million print volumes, main library and 17 branches.",
+      "evidence_path": "evidence/size-discovery.json"
+    },
+    {
+      "url": "https://clib.psu.ac.th/images/PDF_file/AUN_QA/AUN-QA_Information_Academic_Year_2022.pdf",
+      "claim": "PSU Khunying Long academic-year 2022 QA table lists 169,042 printed information-resource titles; documents ALIST OPAC. Do not treat as whole PSU collection.",
+      "evidence_path": null
+    }
+  ]
+}

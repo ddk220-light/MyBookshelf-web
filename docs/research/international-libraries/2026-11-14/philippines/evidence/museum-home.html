@@ -1,0 +1,723 @@
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: opac-main.tt -->
+
+
+
+
+
+<html lang="en" class="no-js">
+<head>
+
+<title>National Museum of the Philippines catalog</title>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha 20.1119000" /> <!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+
+    <link rel="stylesheet" href="/opac-tmpl/bootstrap/lib/jquery/jquery-ui-1.12.1.min_20.1119000.css" type="text/css">
+
+
+    
+        
+    
+
+
+    <link href="/opac-tmpl/bootstrap/css/opac_20.1119000.css" rel="stylesheet" type="text/css">
+
+
+
+
+    <link media="print" type="text/css" href="/opac-tmpl/bootstrap/css/print_20.1119000.css" rel="stylesheet">
+
+
+
+
+
+<script>
+    var Koha = {};
+    function _(s) { return s } // dummy function for gettext
+</script>
+
+<script src="/opac-tmpl/bootstrap/js/Gettext_20.1119000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/i18n_20.1119000.js"></script>
+
+<script src="/opac-tmpl/bootstrap/lib/modernizr.min_20.1119000.js"></script>
+<link href="/opac-tmpl/bootstrap/lib/font-awesome/css/font-awesome.min_20.1119000.css" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+</head>
+
+
+
+
+    
+
+
+
+
+
+    
+
+<body ID="opac-main" class="branch-default" >
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<button id="scrolltocontent">Skip to main content</button>
+<div id="wrapper">
+    <div id="header-region" class="noprint">
+        <nav class="navbar navbar-expand">
+            <h1 id="logo">
+                <a class="navbar-brand" href="/cgi-bin/koha/opac-main.pl">
+                    
+                        National Museum of the Philippines
+                    
+                </a>
+            </h1>
+            
+                <div id="cartDetails" class="cart-message">Your cart is empty.</div>
+            
+            <ul id="cart-list-nav" class="navbar-nav">
+                
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" title="Collect items you are interested in" id="cartmenulink" role="button">
+                            <i id="carticon" class="fa fa-shopping-cart fa-icon-black" aria-hidden="true"></i> <span class="cartlabel">Cart</span> <span id="basketcount"></span>
+                        </a>
+                    </li>
+                
+                <li class="divider-vertical"></li>
+                
+                    <li class="nav-item dropdown">
+                        <a href="#" title="Show lists" class="nav-link dropdown-toggle" id="listsmenu" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
+                            ><i class="fa fa-list fa-icon-black" aria-hidden="true"></i> <span class="listslabel">Lists</span>
+                        </a>
+                        <div aria-labelledby="listsmenu" role="menu" class="dropdown-menu">
+                            
+                            
+                            
+                                <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;category=1" tabindex="-1" role="menuitem"><strong>Your lists</strong></a>
+                                
+                                    <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=add_form" tabindex="-1" role="menuitem">Log in to create your own lists</a>
+                                
+                            
+                        </div> <!-- / .dropdown-menu -->
+                    </li> <!-- / .nav-item.dropdown -->
+                
+            </ul> <!-- / .navbar-nav -->
+
+            
+                
+                <ul id="members" class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        
+                            
+                                
+                                    <a href="/cgi-bin/koha/opac-user.pl" class="nav-link login-link loginModal-trigger"><i class="fa fa-user fa-icon-black fa-fw" aria-hidden="true"></i> <span class="userlabel">Log in to your account</span></a>
+                                
+                            
+                        
+
+                        
+                    </li>
+                    
+                        
+                            <li class="nav-item search_history">
+                                <a class="nav-link login-link" href="/cgi-bin/koha/opac-search-history.pl" title="View your search history">Search history</a>
+                            </li>
+                            <li class="divider-vertical"></li>
+                            <li class="nav-item">
+                                <a class="nav-link logout clearsh" href="/cgi-bin/koha/opac-search-history.pl?action=delete" title="Delete your search history"><i class="fa fa-trash" aria-hidden="true"></i> Clear</a>
+                            </li>
+                        
+                    
+                </ul>
+            
+        </nav> <!-- /navbar -->
+
+        
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col">
+                        
+    
+        <div id="opacheader">
+            
+                <div class="opacheader_en_item">
+                    
+                    <div class="opacheader_en_body"><img src="/cgi-bin/koha/opac-retrieve-file.pl?id=8f69e2872a6df52b96a630b502f97fe1" alt="" style="width: 100%; height: auto;" /></div>
+                </div>
+            
+        </div>
+    
+
+                    </div>
+                </div>
+            </div>
+        
+
+    </div> <!-- / header-region -->
+
+    
+        <div class="container-fluid">
+            
+                <div class="row">
+                    <div class="col">
+                            <div id="opac-main-search" class="mastheadsearch">
+                                
+                                    <form name="searchform" method="get" action="/cgi-bin/koha/opac-search.pl" id="searchform">
+                                        <div class="form-row align-items-center">
+                                            <div class="col-sm-auto order-1 order-sm-1">
+                                                <label for="masthead_search"> Search
+                                                    
+                                                        
+                                                    
+                                                </label>
+                                            </div>
+                                            <div class="col-sm-auto order-2 order-sm-2">
+                                                <select name="idx" id="masthead_search" class="form-control">
+                                                    
+                                                        <option value="">Library catalog</option>
+                                                    
+                                                    
+                                                        <option value="ti">Title</option>
+                                                    
+                                                    
+                                                        <option value="au">Author</option>
+                                                    
+                                                    
+                                                        <option value="su">Subject</option>
+                                                    
+                                                    
+                                                        <option value="nb">ISBN</option>
+                                                    
+                                                    
+                                                        <option value="ns">ISSN</option>
+                                                    
+                                                    
+                                                        <option value="se">Series</option>
+                                                    
+                                                    
+                                                        
+                                                            <option value="callnum">Call number</option>
+                                                        
+                                                    
+                                                </select>
+                                            </div> <!-- /.col-sm-auto -->
+
+                                            <div class="col order-4 order-sm-3">
+                                                
+                                                    <input type="text" title="Type search term" class="transl1 form-control" id="translControl1" name="q" /><span id="translControl"></span>
+                                                
+                                            </div> <!-- /.col -->
+
+                                            
+                                                
+                                                    
+                                                
+                                                <div class="order-5 col-sm-auto">
+                                                    <button type="submit" id="searchsubmit" class="btn btn-primary">Go</button>
+                                                </div>
+                                            
+                                        </div> <!-- /.form-row -->
+                                        <input type="hidden" name="weight_search" value="1">
+                                    </form>
+                                
+                            </div><!-- /#opac-main-search -->
+                    </div> <!-- /.col -->
+                </div> <!-- /.row -->
+            
+
+            <div class="row">
+                <ul class="nav" id="moresearches">
+                    <li class="nav-item">
+                        <a href="/cgi-bin/koha/opac-search.pl">Advanced search</a>
+                    </li>
+                    
+                    
+                    
+                        <li class="nav-item">
+                            <a href="/cgi-bin/koha/opac-authorities-home.pl">Authority search</a>
+                        </li>
+                    
+                    
+                    
+                        <li class="nav-item">
+                            <a href="/cgi-bin/koha/opac-tags.pl">Tag cloud</a>
+                        </li>
+                    
+                    
+                    
+                    
+                    
+                        
+                    
+                    <li class="nav-item">
+                        <a id="library_page" href="/cgi-bin/koha/opac-library.pl">
+                            
+                                Library
+                            
+                        </a>
+                    </li>
+                    
+                </ul> <!-- /.nav#moresearches -->
+            </div> <!-- /.row -->
+        </div> <!-- /.container-fluid -->
+    
+
+    <!-- Login form hidden by default, used for modal window -->
+    <div id="loginModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modalLoginLabel">Log in to your account</h2>
+                    <button type="button" class="closebtn" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="modalAuth">
+                    <input type="hidden" name="has-search-query" id="has-search-query" value="" />
+                    <div class="modal-body">
+                        
+                        
+                            <input type="hidden" name="koha_login_context" value="opac" />
+                            <fieldset class="brief">
+                                <label for="muserid">Login:</label><input type="text" id="muserid" name="userid" />
+                                <label for="mpassword">Password:</label><input type="password" id="mpassword" name="password" />
+                                
+                                
+                                
+                                    <div id="patronregistration-modal" class="patronregistration">
+                                        <p>Don't have an account? <a href="/cgi-bin/koha/opac-memberentry.pl">Register here.</a></p>
+                                    </div>
+                                
+                            </fieldset>
+                        
+                    </div>
+                    
+                        <div class="modal-footer">
+                            <input type="submit" class="btn btn-primary" value="Log in" />
+                        </div>
+                    
+                </form> <!-- /#auth -->
+            </div> <!-- /.modal-content -->
+        </div> <!-- /.modal-dialog -->
+    </div>  <!-- /#modalAuth  -->
+
+
+<div class="main">
+    <nav aria-label="breadcrumb">
+        <ul class="breadcrumb">
+            
+                <li class="breadcrumb-item active" aria-current="page">
+                    <a href="/cgi-bin/koha/opac-main.pl">Home</a>
+                </li>
+            
+        </ul>
+    </nav>
+
+    
+        
+            <div id="notloggedin" class="container-fluid">
+        
+    
+
+    <div class="row">
+        
+            <div class="col-12 col-lg-2 order-3 order-lg-1">
+                <div id="navigation">
+                    
+<div id="opacnav"><table>
+  <tr>
+    <th>Digital resource</th> 
+  </tr>
+  <tr>
+    <td align="center"><a href="/digital-collection" target="_new"><font size="2">Tekno-Aklatan</font></a></td>
+  </tr>
+</table> </div>
+
+<div id="opacnavbottom"><table>
+  <tr>
+    <th>Library Hours</th> 
+  </tr>
+  <tr>
+    <td><p><strong><span>For NMP employees<br></span></strong></p></td> 
+  </tr>
+  <tr>
+    <td><span>Mondays to Fridays<br></span></td>
+  </tr>
+  <tr>
+    <td><span>8:00 a.m. to 5:00 p.m.<br><br></span></td>
+  </tr>
+  <tr>
+    <td><strong><span>For General public<br></span></strong></td>
+  </tr>
+  <tr>
+    <td><strong><span>By Appointment<br></span></strong></td>
+  </tr>
+  <tr>
+    <td><span>Monday to Wednesday<br></span></td>
+  </tr>
+  <tr>
+    <td><span>9:00 a.m. to 5:00 p.m.<br><br></span></td>
+  </tr>
+  <tr>
+    <td><strong><span>Walk-in<br></span></strong></td>
+  </tr>
+  <tr>
+    <td><span>Thursday to Friday<br></span></td>
+  </tr>
+  <tr>
+    <td><span>9:00 a.m. to 5:00 p.m.<br><br></span></td>
+  </tr>
+</table></div>
+
+                </div>
+            </div>
+        
+
+        
+            
+            <div class="col-12 col-lg-7 order-md-1 maincontent">
+        
+
+        
+
+         <!-- koha news -->
+            
+
+        
+
+        
+            
+
+            
+                
+    
+        <div id="OpacMainUserBlock">
+            
+                <div class="OpacMainUserBlock_en_item">
+                    
+                    <div class="OpacMainUserBlock_en_body"><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<div id="myCarousel" class="carousel slide col-sm-12" data-ride="carousel"><!-- Indicators -->
+<ol class="carousel-indicators">
+<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+<li data-target="#myCarousel" data-slide-to="1"></li>
+<li data-target="#myCarousel" data-slide-to="2"></li>
+</ol>
+<!-- Wrapper for slides -->
+<div class="carousel-inner" style="width: 100%;">
+<div class="item active"><img src="/cgi-bin/koha/opac-retrieve-file.pl?id=d9e2a41d2455f53d25bb5f3c2dfcdff1" alt="Chicago" style="width: 100%;" /></div>
+<div class="item"><img src="/cgi-bin/koha/opac-retrieve-file.pl?id=d3ca97ade1b0b9ab437c3996f4fee49d" alt="New york" style="width: 100%;" /></div>
+<div class="item"><img src="/cgi-bin/koha/opac-retrieve-file.pl?id=b6a1633dfaf9e1138f1c689fad44444a" alt="New york" style="width: 100%;" /></div>
+</div>
+<!-- Left and right controls --> <a class="left carousel-control" href="#myCarousel" data-slide="prev"> <span class="glyphicon glyphicon-chevron-left"></span> <span class="sr-only">Previous</span> </a> <a class="right carousel-control" href="#myCarousel" data-slide="next"> <span class="glyphicon glyphicon-chevron-right"></span> <span class="sr-only">Next</span> </a></div></div>
+                </div>
+            
+        </div>
+    
+
+            
+        
+
+        </div> <!-- / .col 6/8 -->
+
+        
+            <div class="col-12 col-lg-3 order-md-2">
+                
+                    
+                        
+                            <div id="login">
+                                <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="auth" autocomplete="off">
+                                    <input type="hidden" name="koha_login_context" value="opac" />
+                                    <fieldset class="brief">
+                                        <legend>Log in to your account:</legend>
+                                        <label for="userid">Login:</label>
+                                        <input class="form-control" type="text" id="userid" name="userid" />
+                                        <label for="password">Password:</label>
+                                        <input class="form-control" type="password" id="password" name="password" />
+                                        <fieldset class="action">
+                                            <input type="submit" value="Log in" class="btn btn-primary" />
+                                        </fieldset>
+                                        
+                                        
+                                        
+                                            <div id="patronregistration-main" class="patronregistration">
+                                                <p>Don't have an account? <a href="/cgi-bin/koha/opac-memberentry.pl">Register here.</a></p>
+                                            </div>
+                                        
+                                    </fieldset>
+                                </form>
+                            </div> <!-- /#login -->
+                        
+                    
+                
+                
+    
+
+            </div> <!-- / .col -->
+        
+
+        </div> <!-- /.container-fluid -->
+    </div> <!-- /.row -->
+</div> <!-- /.main -->
+
+
+
+
+
+
+
+
+
+
+        
+        
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col">
+                        
+    
+        <div id="opaccredits">
+            
+                <div class="opaccredits_en_item">
+                    
+                    <div class="opaccredits_en_body"><footer>
+<div class="container"><center>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt; text-align: center;">Central Library and Archives<o:p></o:p></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt; text-align: center;">P. Burgos Drive, Rizal Park, Manila<o:p></o:p></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt; text-align: center;">libraryandarchives@nationalmuseum.gov.ph <o:p></o:p></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt; text-align: center;">Trunkline: (+632) 8298-1100 loc. 2001 (LIBRARY)<br /><br /><br /><o:p></o:p></p>
+<p class="MsoNormal"><br />&copy;2021 National Museum of the Philippines. All rights reserved.</p>
+</center></div>
+</footer></div>
+                </div>
+            
+        </div>
+    
+
+                    </div>
+                </div>
+            </div>
+        
+
+        
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col">
+                        <div id="report-koha-url">
+                            <div class="row justify-content-between">
+                                
+                                
+                                    <div class="col">
+                                        <div id="koha_url" class="clearfix noprint">
+                                            <p>Powered by
+                                            
+                                                <a class="koha_url" href="http://koha-community.org">Koha</a>
+                                            </p>
+                                        </div> <!-- /#koha_url -->
+                                    </div> <!-- /.col -->
+                                
+                            </div> <!-- /.row.justify-content-between -->
+                        </div> <!-- /#report-koha-url -->
+                    </div> <!-- /.col -->
+                </div> <!-- /.row -->
+            </div> <!-- /.container-fluid -->
+        
+    </div> <!-- / #wrapper in masthead.inc -->
+
+    
+        
+    
+
+
+<!-- JavaScript includes -->
+<script src="/opac-tmpl/bootstrap/lib/jquery/jquery-3.4.1.min_20.1119000.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/jquery/jquery-migrate-3.1.0.min_20.1119000.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/jquery/jquery-ui-1.12.1.min_20.1119000.js"></script>
+<script>
+// Resolve name collision between jQuery UI and Twitter Bootstrap
+$.widget.bridge('uitooltip', $.ui.tooltip);
+</script>
+<script src="/opac-tmpl/bootstrap/lib/bootstrap/js/bootstrap.bundle.min_20.1119000.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/fontfaceobserver.min_20.1119000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/global_20.1119000.js"></script>
+<script>
+    Modernizr.load([
+        // Test need for polyfill
+        {
+            test: window.matchMedia,
+            nope: "/opac-tmpl/bootstrap/lib/media.match.min_20.1119000.js"
+        },
+        // and then load enquire
+        "/opac-tmpl/bootstrap/lib/enquire.min_20.1119000.js",
+        "/opac-tmpl/bootstrap/js/script_20.1119000.js",
+    ]);
+
+    // Fix for datepicker in a modal
+    $.fn.modal.Constructor.prototype.enforceFocus = function () {};
+</script>
+
+<script>
+        var NO_AMAZON_IMAGE = _("No cover image available");
+
+</script>
+<script src="/opac-tmpl/bootstrap/js/amazonimages_20.1119000.js"></script>
+
+
+<script>
+
+    var MSG_CONFIRM_AGAIN = _("Warning: Cannot be undone. Please confirm once again")
+    var MSG_DELETE_SEARCH_HISTORY = _("Are you sure you want to delete your search history?");
+    var MSG_NO_SUGGESTION_SELECTED = _("No suggestion was selected");
+    var MSG_SEARCHING = _("Searching %s...");
+    var MSG_ERROR_SEARCHING_COLLECTION = _("Error searching %s collection");
+    var MSG_NO_RESULTS_FOUND_IN_COLLECTION = _("No results found in the library's %s collection");
+    var MSG_RESULTS_FOUND_IN_COLLECTION = _("Found %s results in the library's %s collection");
+    var MSG_BY = _("by");
+    var MSG_TYPE = _("Type");
+    var MSG_NEXT = _("Next");
+    var MSG_PREVIOUS = _("Previous");
+    var MSG_CHECKOUTS = _("Checkouts");
+    var MSG_NO_CHECKOUTS = _("No checkouts");
+    var MSG_CHECK_OUT = _("Check out");
+    var MSG_CHECK_OUT_CONFIRM = _("Are you sure you want to check out this item?");
+    var MSG_CHECKED_OUT_UNTIL = _("Checked out until %s");
+    var MSG_CHECK_IN = _("Check in");
+    var MSG_CHECK_IN_CONFIRM = _("Are you sure you want to return this item?");
+    var MSG_NO_CHECKOUTS = _("No checkouts");
+    var MSG_DOWNLOAD = _("Download");
+    var MSG_HOLDS = _("Holds");
+    var MSG_NO_HOLDS = _("No holds");
+    var MSG_PLACE_HOLD = _("Place hold");
+    var MSG_CANCEL_HOLD = _("Cancel");
+    var MSG_CANCEL_HOLD_CONFIRM = _("Are you sure you want to cancel this hold?");
+    var MSG_ON_HOLD = _("On hold");
+
+    
+        var MSG_TAGS_DISABLED = _("Sorry, tags are not enabled on this system.");
+        var MSG_TAG_ALL_BAD = _("Error! Your tag was entirely markup code.  It was NOT added.  Please try again with plain text.");
+        var MSG_ILLEGAL_PARAMETER = _("Error! Illegal parameter");
+        var MSG_TAG_SCRUBBED = _("Note: your tag contained markup code that was removed. The tag was added as ");
+        var MSG_ADD_TAG_FAILED = _("Error! Adding tags failed at");
+        var MSG_ADD_TAG_FAILED_NOTE = _("Note: you can only tag an item with a given term once.  Check 'My Tags' to see your current tags.");
+        var MSG_DELETE_TAG_FAILED = _("Error! You cannot delete the tag");
+        var MSG_DELETE_TAG_FAILED_NOTE = _("Note: you can only delete your own tags.")
+        var MSG_LOGIN_REQUIRED = _("You must be logged in to add tags.");
+        var MSG_TAGS_ADDED = _("Tags added: ");
+        var MSG_TAGS_DELETED = _("Tags added: ");
+        var MSG_TAGS_ERRORS = _("Errors: ");
+        var MSG_MULTI_ADD_TAG_FAILED = _("Unable to add one or more tags.");
+        var MSG_NO_TAG_SPECIFIED = _("No tag was specified.");
+    
+    
+    
+    
+
+    
+        $(window).load(function() {
+            verify_images();
+         });
+    
+    $(".print-large").on("click",function(){
+        window.print();
+        return false;
+    });
+    $(".addtoshelf").on("click",function(e){
+        e.preventDefault();
+        Dopop( this.href );
+    });
+    $("body").on("click", ".addtocart", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        addRecord( biblionumber );
+    });
+    $("body").on("click", ".cartRemove", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        delSingleRecord( biblionumber );
+    });
+    $(".clearsh").on("click", function(){
+        return confirmDelete(MSG_DELETE_SEARCH_HISTORY);
+    });
+
+</script>
+
+
+    <script src="/opac-tmpl/bootstrap/js/basket_20.1119000.js"></script>
+
+
+<script src="/opac-tmpl/bootstrap/js/tags_20.1119000.js"></script>
+
+
+
+
+    <script src="/opac-tmpl/bootstrap/js/localcovers_20.1119000.js"></script>
+    <script>
+
+    var NO_LOCAL_JACKET = _("No cover image available");
+
+    </script>
+
+
+
+
+
+
+
+
+<script src="/opac-tmpl/bootstrap/lib/jquery/plugins/jquery.cookie.min_20.1119000.js"></script>
+<script>
+$(document).ready(function() {
+    if($('#searchsubmit').length) {
+        $(document).on("click", '#searchsubmit', function(e) {
+            jQuery.removeCookie("form_serialized", { path: '/'});
+            jQuery.removeCookie("form_serialized_limits", { path: '/'});
+            jQuery.removeCookie("search_path_code", { path: '/'});
+        });
+    }
+});
+</script>
+
+
+    <script>
+        $("#logo").hide();
+$("#login").hide();
+    </script>
+
+
+
+</body>
+</html>
+
+

@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta http-equiv="Content-Security-Policy" content="">
+			<meta charset="utf-8">
+			<meta name="author" content="PMB Group">
+
+			<meta name="keywords" content="OPAC, web, library, opensource, catalog, catalogue, bibliothèque, médiathèque, pmb, phpmybibli">
+			<meta name="description" content="Catalogue en ligne Bib'Doc."><meta name="robots" content="all">
+			
+			<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3">
+	<title>Catalogue en ligne Bib'Doc</title>
+	
+	
+				<script src="./styles/common/toolkits/jquery/versions/jquery-2.2.4.min.js"></script>
+				
+				
+				<!--[if lte IE 8]>
+				  <script src='./styles/common/toolkits/jquery/components/jquery-1.9.1.min.js'></script>
+				<![endif]--><script src="./styles/common/toolkits/jquery/components/jquery.mobile.custom.min.js"></script><script src="./styles/common/toolkits/uikit/js/uikit.min.js"></script><link rel="stylesheet" type="text/css" href="./styles/common/toolkits/uikit/css/uikit.min.css?1747313006"><script src="./styles/common/toolkits/uikit/js/components/init-responsive.min.js"></script><link rel="stylesheet" type="text/css" href="./styles/common/toolkits/uikit/css/components/init-responsive.min.css?1747313006"><script src="./styles/common/toolkits/uikit/js/components/set-grid-footer.min.js"></script><script src="./styles/common/toolkits/uikit/js/components/set-grid-intro.min.js"></script><script src="./styles/common/toolkits/uikit/js/components/set-grid-main-uncolored.min.js"></script><link rel="stylesheet" type="text/css" href="./styles/common/toolkits/uikit/css/components/set-grid-main-uncolored.min.css?1747313006"><script src="./styles/common/toolkits/uikit/js/components/sticky.min.js"></script><link rel="stylesheet" type="text/css" href="./styles/common/toolkits/uikit/css/components/sticky.min.css?1747313006"><script src="./styles/common/toolkits/uikit/js/components/touch-user-box-tgle.min.js"></script><link rel="stylesheet" type="text/css" href="./styles/common/toolkits/uikit/css/components/touch-user-box-tgle.min.css?1747313006"><script src="./styles/common/toolkits/uikit/js/components/uikit-tab-display.min.js"></script><link rel="stylesheet" type="text/css" href="./styles/common/toolkits/uikit/css/components/uikit-tab-display.min.css?1747313006">
+<link rel="stylesheet" type="text/css" href="./styles/common/ai_search.css?1747312732">
+<link rel="stylesheet" type="text/css" href="./styles/common/animation_display.css?1747312732">
+<link rel="stylesheet" type="text/css" href="./styles/common/common.css?1747312733">
+<link rel="stylesheet" type="text/css" href="./styles/common/contrib.css?1747312733">
+<link rel="stylesheet" type="text/css" href="./styles/common/dGrowl.css?1747312734">
+<link rel="stylesheet" type="text/css" href="./styles/common/dsi.css?1747312734">
+<link rel="stylesheet" type="text/css" href="./styles/common/font-awesome.css?1747312736">
+<link rel="stylesheet" type="text/css" href="./styles/common/open-sans.css?1747312735">
+<link rel="stylesheet" type="text/css" href="./styles/common/pagination.css?1747312736">
+<link rel="stylesheet" type="text/css" href="./styles/common/record_display.css?1747312737">
+<link rel="stylesheet" type="text/css" href="./styles/common/visionneuse.css?1747312738">
+<link rel="stylesheet" type="text/css" href="./styles/solo/1-grid.css?1747307363">
+<link rel="stylesheet" type="text/css" href="./styles/solo/2-base.css?1747307364">
+<link rel="stylesheet" type="text/css" href="./styles/solo/fontAcontent.css?1747307365">
+<link rel="stylesheet" type="text/css" href="./styles/solo/pagination.css?1747307365">
+<link rel="stylesheet" type="text/css" href="./styles/solo/record-display-cutsom.css?1747307366">
+<link rel="stylesheet" type="text/css" href="./styles/solo/solo.css?1747307368">
+<link rel="stylesheet" type="text/css" href="./styles/solo/solo_color_pre_set.css?1747307367">
+<link rel="stylesheet" type="text/css" href="./styles/solo/z_responsive.css?1747307368"><script>var opac_style= 'solo';</script><style type="text/css">/* Param&egrave;tres des couleurs
+
+========================================================================== */
+/* Couleur principale : fond de page et bandeau sup&eacute;rieur
+========================================================================== */
+
+/* Couleur de fond de titre et modules
+------------------------------------- */
+.SliderArt h3.titleInside,
+.SliderArt .bx-wrapper .bx-pager.bx-default-pager a:hover,
+.SliderArt .bx-wrapper .bx-pager.bx-default-pager a.active,
+.listselect .itemVign .imgL.uk-panel-box,
+#resume_panier,
+#lienHistorique,
+#adresse,
+.titleContenu,
+.listArticlesGen .itemAbrege>h3,
+.listeSameArticle .itemAbrege>h3,
+.listItemsEvent .itemAbrege>h3,
+.listResultArticles .itemAbrege>h3,
+.listArticlesGen .itemAbrege>a>h3,
+.MenuCanvas.uk-button,
+.wl-tgl-nav .uk-button,
+#intro,
+.MenuHoriz .Nav>li,
+.solo-picture .uk-grid-width-1-3 li,
+body#pmbopac,
+#footer,
+#footer .Ancre a,
+#accessibility,
+.MenuHoriz .uk-dropdown,
+.uk-offcanvas-bar-custom .uk-nav-side > li > a:hover,
+.uk-offcanvas-bar-custom .uk-nav-side > li > a:focus,
+.wl-tgl-nav .uk-navbar-nav>li.uk-open>a,
+.wl-tgl-nav .uk-navbar-nav>li:hover>a,
+.wl-tgl-nav .uk-navbar-nav>li>a:focus {
+    background-color: #1974D2;
+}
+
+/* Couleur des bordures
+------------------------------------- */
+.NavResponsive .SousNavResponsive li:hover>a:before,
+.itemSolo h4,
+.listProd>h3,
+.listEtageresRub>h3,
+.fluxRSSRub>h3,
+.infosArt>h3,
+.SameNot>h3,
+.SliderHoriz>h3,
+#aut_details_liste>h3 span.aut_details_liste_titre,
+.listArticlesGen>h3,
+.listeSameArticle>h3,
+.listItemsEvent>h3,
+.listResultArticles>h3,
+.fluxRSSPage>h3,
+.document_list>h3,
+ul.empr_tabs li.subTabCurrent,
+ul.onglets_isbd_public li.isbd_public_active,
+ul.empr_tabs #current,
+ul.search_tabs li#current,
+ul.empr_tabs li.subTabCurrent,
+ul.empr_tabs li.subTabCurrent:hover,
+.solo-picture .uk-grid-width-1-3 li {
+    border-color: #6fb8e2;
+}
+
+/*=========================================================================*/
+/* Couleur compl&eacute;mentaire : liens et soulignement des titres
+==========================================================================*/
+
+/* Couleur de fond de titre et modules
+------------------------------------- */
+.searchbox,
+.brevesBandeau,
+.uk-nav-navbar>li>a:focus,
+.uk-nav-navbar>li>a:hover,
+.TgllSearch,
+.rubContent>h3:hover:after,
+.listItemsGen .itemAbrege:hover h3:after,
+span.imgComment,
+span.imgStatutPartN,
+.onglet_basketNotCourte .img_basketNotCourte img,
+.onglet_basketNot .img_basketNot img,
+div[class='onglet_basketNotCourte'],
+div[class='avisNCourte'],
+div[class='tagsNCourte'],
+div[class='listeLectureNCourte'] a,
+div[class='suggestNCourte'],
+div[class='onglet_basketNot'] a.img_basketNot,
+div[class='tagsN'],
+div[class='suggestN'],
+div[class='docnumNCourte docnumNCourtePermalink'],
+div[class='docnumNCourte'],
+div[class='listeLectureN'] a,
+span.imgComment,
+span.imgStatutPartN,
+span.imgDocNum,
+.avisN,
+.searchbox input[value="Aide"],
+#search .boutonrechercher,
+input[type="submit"].bouton,
+input[type="button"].bouton,
+#search input[type="submit"],
+#search input[value="Aide"],
+#account #login_form input.bouton,
+.tundra .dijitCalendarMonthContainer th,
+.tundra .dijitMenu,
+.tundra .dijitMenuBar,
+.TglUser,
+.fluxRSS>h3,
+#widget>h3,
+.tb_pret_location_row,
+#cms_module_agenda_85 td.cms_module_agenda_event_13,
+#cms_module_agenda_85 td.cms_module_agenda_event_3,
+#cms_module_agenda_85 > div.row > div > div:first-child,
+.dijitCalendarMonthContainer ,#login_form input[type="submit"].bouton,
+#facette_wrapper table th,
+.AllRecords a,
+.AllRecords span, 
+div.lienP {
+    background-color: #f58289;
+}
+
+/* Couleur des bordures
+------------------------------------- */
+.NavResponsive li:hover>a:before,
+ul.search_tabs li:hover,
+ul.empr_tabs li:hover,
+ul.list_tabs li:hover,
+ul.empr_tabs #current,
+.listEtageres>h3 a:hover,
+.searchbox_title:first-letter,
+#connexion h3:first-letter,
+#connexion #login_form>b:first-letter,
+.infosBandeau .itemAbrege h3:first-letter,
+.logosBandeau h3:first-letter,
+.brevesBandeau h3:first-letter,
+#lvl1>h3:first-letter,
+#facette_wrapper > form > h3.facette_compare_listTitle:first-letter,
+#search_result>h3,
+#location h3,
+#last_entries h3,
+#etageres h3,
+.notice_contenu,
+ul.empr_subtabs li.subTabCurrent,
+.itemSolo h4,
+.listProd>h3,
+.listEtageresRub>h3,
+.fluxRSSRub>h3,
+.infosArt>h3,
+.SameNot>h3,
+.SliderHoriz>h3,
+#aut_details_liste>h3 span.aut_details_liste_titre,
+.listArticlesGen>h3,
+.listeSameArticle>h3,
+.listItemsEvent>h3,
+.listResultArticles>h3,
+.fluxRSSPage>h3,
+.document_list>h3,
+#empr-resa>h3,
+#empr-all>h3,
+#location h3,
+#last_entries>h3,
+#etageres>h3,
+div .itemSolo h2,
+.listArticlesGen h2,
+.listeSameArticle h2,
+.listItemsEvent h2,
+.listResultArticles h2,
+.introVue>h3,
+#resultatrech>h3,
+.introDossier h2,
+#resultatrechBis>h3,
+.blocCnx>h2,
+#titre-popup,
+#aut_details>h3,
+.wl-title-news:before, .wl-title-article:before,
+.SliderArt h3,
+.SliderNot>h3,
+.listselect>h3,
+.ListActus>h3,
+.listBibli>h3,
+.listEtageres>h3,
+.listBreves>h3,
+.infosPage h3,
+.fluxRSS>h3,
+#rechercheForm>h3,
+#webdoc>h3,
+#search_result>h3,
+.listRubs h2,
+.listRubsAbbr>h2,
+.itemSoloFlux h2,
+.SliderVertic>h3,
+.fluxRSSJuridique>h2,
+.fluxRSSJuridique>h3,
+#make_sugg h3,
+#searchWebdoc h3,
+#listeFlux h3,
+.titleContenu {
+    border-color: #f58289;
+}
+
+/* Couleur des textes fonc&eacute;
+------------------------------------- */
+h1#titre-Portail  .subTitle,
+ul.search_tabs li a, ul.empr_tabs li a,
+ul.empr_subtabs li.subTabCurrent{
+    color: #f58289;    
+}
+
+/* Couleur au survol
+------------------------------------- */
+.Rub .infosRub:hover .resume,
+.listEtageres>h3 a:hover,
+.uk-tab>li.uk-open>a, .uk-tab>li>a:focus, .uk-tab>li>a:hover {
+    color: #f58289;
+}
+
+/*Couleur liens
+------------------------------------- */
+.uk-link,
+a,
+.liensExtrn li a,
+.brevesBandeau .lirePlus {
+    color: #f58289;
+}
+
+/*Couleur liens au survol
+------------------------------------- */
+.ItemResume:hover h4,
+.ItemResume:hover .lirePlus,
+.tundra .dijitCalendarDayLabelTemplate,
+.fluxRSS>.itemAbrege h4 a  {
+    color: #f58289;
+}
+</style>
+		<link rel="SHORTCUT ICON" href="./styles/solo/images/favicon.ico">
+	<script src="includes/javascript/drag_n_drop.js"></script>
+	<script src="includes/javascript/handle_drop.js"></script>
+	<script src="includes/javascript/popup.js"></script>
+	<script>
+			// Fonction a utiliser pour l'encodage des URLs en javascript
+			function encode_URL(data){
+				var docCharSet = document.characterSet ? document.characterSet : document.charset;
+				if(docCharSet == "UTF-8"){
+	    			return encodeURIComponent(data);
+	    		}else{
+	    			return escape(data);
+	    		}
+	    	}
+	    </script>
+	<script>
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName =
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i);
+				    }
+				 }
+				return items;
+			 }
+		}
+	</script>
+<link rel="stylesheet" type="text/css" href="./includes/javascript/openlayers/theme/default/style.css"><script src="./includes/javascript/openlayers/lib/OpenLayers.js"></script>
+		<link rel="stylesheet" type="text/css" href="./includes/javascript/dojo/dijit/themes/tundra/tundra.css">
+		<script>
+			var dojoConfig = {
+				parseOnLoad: true,
+				locale: 'fr-fr',
+				isDebug: false,
+				usePlainJson: true,
+				packages: [{
+						name: 'pmbBase',
+						location:'../../../..'
+					},{
+						name: 'd3',
+						location:'../../d3'
+					}],
+				deps: ['apps/pmb/MessagesStore', 'dgrowl/dGrowl', 'dojo/ready', 'apps/pmb/ImagesStore'],
+				callback:function(MessagesStore, dGrowl, ready, ImagesStore){
+					window.pmbDojo = {};
+					pmbDojo.messages = new MessagesStore({url:'./ajax.php?module=ajax&categ=messages', directInit:false, lastModified:'1747292550'});
+					pmbDojo.images = new ImagesStore({url:'./ajax.php?module=ajax&categ=images', directInit:false});
+					ready(function(){
+						new dGrowl({'channels':[{'name':'info','pos':2},{'name':'error', 'pos':1}]});
+					});
+
+				},
+			};
+		</script>
+		<script src="./includes/javascript/dojo/dojo/dojo.js"></script>
+		<script>
+		dojo.addOnLoad(function () {
+			// Ajout du theme Dojo
+			dojo.addClass(dojo.body(),'tundra');
+		})
+		</script>
+		<script src="./includes/javascript/dojo/dojo/pmbmaps.js"></script><script>
+	var pmb_img_patience = './images/patience.gif';
+</script><script>
+			var opac_show_social_network =0;
+		</script>
+	<script src="./includes/javascript/http_request.js"></script>
+	
+<script>
+				dojo.addOnLoad(function (){
+					//on balance un evenement pour les initialiser les modules si besoin...
+					dojo.publish('init',['cms_dojo_init',{}]);
+				});
+			</script>
+<script src="./cms/modules/common/includes/javascript/jquery.bxsliderv4.min.js"></script>
+<script>
+		document.addEventListener('DOMContentLoaded', function(){
+		if (navigator.userAgent.search("Firefox") >= 0) {
+		    var ff_version = navigator.userAgent.match(/Firefox\/([\d]+\.[\d])+/);
+		    ff_version = parseFloat(ff_version[1]);
+		    if(ff_version == 0 || ff_version >= 59) {
+		        $('body').on('mousedown', '.bx-viewport a', function() {
+		            var ff_link = $(this);
+		            var ff_href = ff_link.attr('href');
+		            if(ff_href) {
+		                location.href = ff_href;
+		                return false;
+		            }
+		        });
+		    }
+		}})</script>
+<link rel="stylesheet" type="text/css" href="./cms/modules/common/includes/css/jquery.bxslider.css"><meta http-equiv="Content-Type" content="charset=utf-8"></head>
+
+<body onload="window.defaultStatus='PMB : Accès public';" id="pmbopac">
+		<script>
+		function findNoticeElement(id){
+			var ul=null;
+			//cas des notices classiques
+			var domNotice = document.getElementById('el'+id+'Child');
+			//notice_display
+			if(!domNotice) domNotice = document.getElementById('notice');
+			if(domNotice){
+				var uls = domNotice.getElementsByTagName('ul');
+				for (var i=0 ; i<uls.length ; i++){
+					if(uls[i].getAttribute('id') == 'onglets_isbd_public'+id){
+						var ul = uls[i];
+						break;
+					}
+				}
+			} else{
+				var li = document.getElementById('onglet_isbd'+id);
+				if(!li) var li = document.getElementById('onglet_public'+id);
+				if(!li) var li = document.getElementById('onglet_detail'+id);
+				if(li) var ul = li.parentNode;
+			}
+			return ul;
+		}
+		function show_what(quoi, id) {
+			switch(quoi){
+				case 'EXPL_LOC' :
+					document.getElementById('div_expl_loc' + id).style.display = 'block';
+					document.getElementById('div_expl' + id).style.display = 'none';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_inactive';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_active';
+					break;
+				case 'EXPL' :
+					document.getElementById('div_expl_loc' + id).style.display = 'none';
+					document.getElementById('div_expl' + id).style.display = 'block';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_active';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_inactive';
+					break;
+				default :
+					quoi= quoi.toLowerCase();
+					var ul = findNoticeElement(id);
+					if (ul) {
+						var items  = ul.getElementsByTagName('li');
+						for (var i=0 ; i<items.length ; i++){
+							if(items[i].getAttribute('id')){
+								if(items[i].getAttribute('id') == 'onglet_'+quoi+id){
+									items[i].className = 'isbd_public_active';
+									document.getElementById('div_'+quoi+id).style.display = 'block';
+								}else{
+									if(items[i].className != 'onglet_tags' && items[i].className != 'onglet_avis' && items[i].className != 'onglet_sugg' && items[i].className != 'onglet_basket' && items[i].className != 'onglet_liste_lecture'){
+										items[i].className = 'isbd_public_inactive';
+										document.getElementById(items[i].getAttribute('id').replace('onglet','div')).style.display = 'none';
+									}
+								}
+							}
+						}
+					}
+					break;
+			}
+		}
+		</script>
+	<script src="./includes/javascript/tablist_ajax.js"></script>
+<script src="./includes/javascript/tablist.js"></script>
+<script src="./includes/javascript/misc.js"></script>
+	<div id="att" style="z-Index:1000"></div>
+	<div id="container"><div id="intro" fixed="yes">
+<div id="intro_bibli" fixed="yes">
+			<h3>Bib'Doc</h3>
+			<div class="p1"><img src="./styles/genbib/images/image1.jpg" loading="lazy">
+<img src="./styles/genbib/images/image2.jpg" loading="lazy">
+<img src="./styles/genbib/images/image3.jpg" loading="lazy"></div>
+			<div class="p2"><ul id="menuDeroulant">
+
+<li><a href="./index.php">Accueil</a></li>
+<li><a href="./index.php?lvl=infopages&amp;pagesid=4">Calendrier</a></li>
+<li><a href="./index.php?lvl=infopages&amp;pagesid=1">Actualités BnF</a>
+<ul class="sousMenu">
+<li><a href="./index.php?lvl=infopages&amp;pagesid=3">Aide en ligne</a></li>
+<li><a href="./index.php?lvl=infopages&amp;pagesid=2">Version 4.0 !</a></li>
+</ul>
+</li>
+
+<li><a href="./index.php?lvl=infopages&amp;pagesid=6">Nous trouver</a></li>
+
+</ul></div>
+			</div>
+		<div id="cms_module_htmlcode_175" class="cms_module_htmlcode cms_module"><div id="home-tracker"></div></div><div id="resume_panier" class="empty" fixed="yes"></div><div id="cms_module_htmlcode_174" class="cms_module_htmlcode cms_module uk-hidden-large wl-tgl-nav uk-clearfix "><div data-uk-sticky="{top:-200, animation: 'uk-animation-slide-top'}">
+<div id="btnMenu" class="uk-navbar">
+    <ul class="uk-navbar-nav">
+        <li class="tgLbtnMenu">
+            <a class="MenuCanvas uk-button" href="#cms_module_sectionslist_173" data-uk-offcanvas="{mode:'slide'}"><i class="fa fa-bars"></i></a>
+        </li>
+        <li class="tgLbtnMenu uk-hidden" id="tgle-facette">
+            <a class="MenuCanvas filter-canvas uk-button" href="#facette" data-uk-offcanvas="{mode:'slide'}"><i class="fa fa-search-plus" aria-hidden="true"></i></a>
+        </li>
+        <li id="TglUser" class="TglUser uk-visible-small">
+            <a class="Tgllogin uk-button" data-uk-toggle="{target:'#connexion', animation:'uk-animation-slide-top, uk-animation-slide-top', cls:'uk-visible-large'}">
+                <span class="user"><i class="fa fa-user"></i></span>        
+            </a>
+        </li>     
+    </ul>
+</div>
+</div></div><div id="cms_module_section_126" class="cms_module_section cms_module uk-width-large-1-1 uk-width-medium-1-1 uk-width-1-1 main-title"></div><div id="cms_module_sectionslist_173" class="cms_module_sectionslist cms_module uk-offcanvas"><div class="uk-offcanvas-bar uk-offcanvas-bar-custom">
+	<div class="MenuVertResp uk-panel uk-panel-box">
+		<ul class="NavResponsive uk-nav uk-nav-side">
+		
+					<li>
+				<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=36" title="A propos">A propos</a>
+							</li>
+					<li>
+				<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=97" title="Actualités">Actualités</a>
+									<ul class="SousNavResponsive">
+					      
+					      						  <li>
+						      <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=100" title="Clôture à Kinshasa du projet de « Gestion et promotion de la documentation géologique et minière de la RDC, au SGN-C »  (juillet 2024)">Clôture à Kinshasa du projet de « Gestion et promotion de la documentation géologique et minière de la RDC, au SGN-C »  (juillet 2024)</a>
+						      						  </li>
+					      						  <li>
+						      <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=98" title="Formation aux techniques documentaires pour les cadres du Ministère des Mines (mai 2024)">Formation aux techniques documentaires pour les cadres du Ministère des Mines (mai 2024)</a>
+						      						  </li>
+					      						  <li>
+						      <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=99" title="Audit documentaire au sein des organismes sous tutelle du Ministère des Mines (novembre 2023)">Audit documentaire au sein des organismes sous tutelle du Ministère des Mines (novembre 2023)</a>
+						      						  </li>
+					      					</ul>
+							</li>
+					<li>
+				<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=22" title="Infos pratiques">Infos pratiques</a>
+							</li>
+				</ul>
+	</div>
+</div></div><div id="cms_module_sectionslist_180" class="cms_module_sectionslist cms_module uk-width-1-1"><div class="solo-picture">
+					<ul class="uk-grid uk-grid-width-1-1 uk-grid-collapse">
+			<li><img src="https://sgnc.pmb.cd/opac_css/cms_vign.php?type=section&amp;id=85&amp;database=coregbxq_bibli&amp;mode=custom_1098"></li>
+		</ul>	
+			</div></div><div id="cms_module_sectionslist_120" class="cms_module_sectionslist cms_module uk-width-large-1-1 uk-width-medium-1-1 uk-width-1-1">    <div class="uk-visible-large">
+	<div class="MenuHoriz uk-navbar uk-container uk-flex uk-flex-middle uk-flex-space-between" id="wyr-justify-nav">
+	    <ul class="Nav uk-navbar-nav">
+	    
+	    		<li class="uk-parent" data-uk-dropdown="{remaintime:'800', hoverDelayIdle:'0'}">
+		    <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=36" title="A propos">A propos</a>
+		    		</li>
+	    		<li class="uk-parent" data-uk-dropdown="{remaintime:'800', hoverDelayIdle:'0'}">
+		    <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=97" title="Actualités">Actualités</a>
+		    		    <div class="uk-dropdown uk-dropdown-navbar uk-dropdown-bottom">
+			<ul class="SousNav uk-nav uk-nav-navbar">
+			    
+			    				<li>
+				    <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=100" title="Clôture à Kinshasa du projet de « Gestion et promotion de la documentation géologique et minière de la RDC, au SGN-C »  (juillet 2024)">Clôture à Kinshasa du projet de « Gestion et promotion de la documentation géologique et minière de la RDC, au SGN-C »  (juillet 2024)</a>
+				</li>
+			    				<li>
+				    <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=98" title="Formation aux techniques documentaires pour les cadres du Ministère des Mines (mai 2024)">Formation aux techniques documentaires pour les cadres du Ministère des Mines (mai 2024)</a>
+				</li>
+			    				<li>
+				    <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=99" title="Audit documentaire au sein des organismes sous tutelle du Ministère des Mines (novembre 2023)">Audit documentaire au sein des organismes sous tutelle du Ministère des Mines (novembre 2023)</a>
+				</li>
+			    			</ul>
+		    </div>   
+		    		</li>
+	    		<li class="uk-parent" data-uk-dropdown="{remaintime:'800', hoverDelayIdle:'0'}">
+		    <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=22" title="Infos pratiques">Infos pratiques</a>
+		    		</li>
+	    	    </ul>
+	</div>            
+    </div>
+</div></div><div id="main" fixed="yes"><div id="main_header"><h3>La bibliothèque géologique et minière de la République Démocratique du Congo</h3></div><div id="main_hors_footer">
+						
+
+<script src="./includes/javascript/auth_popup.js"></script>
+<script src="./includes/javascript/pnb.js"></script><div id="navigator" fixed="yes">
+<table role="presentation" style="width:100%"><tr><td class="navig_actions_first_screen"><a href="./index.php?lvl=index" class="navig_etageres"><span>Nouvelle recherche</span></a></td>
+</tr></table></div><div id="cms_module_sectionslist_183" class="cms_module_sectionslist cms_module uk-width-large-1-1 uk-width-medium-1-1 uk-width-1-1"></div><div id="cms_module_recordslist_23" class="cms_module_recordslist cms_module uk-width-large-1-1 uk-width-medium-1-1 uk-width-1-1"></div><div id="search" role="search"><ul class="search_tabs"><li id="current" aria-current="page"><a href="./index.php?search_type_asked=simple_search">Recherche simple</a></li><li><a href="./index.php?search_type_asked=extended_search">Recherche multi-critères</a></li></ul><div id="search_crl"></div><div class="row">
+		<form name="search_input" action="./index.php?lvl=search_result" method="post" onsubmit="if (search_input.user_query.value.length == 0) { search_input.user_query.value='*'; return true; }">
+			<label for="typdoc_select" class="visually-hidden">Sélectionner un type de document</label><select name="typdoc" id="typdoc_select" title="Sélectionner un type de document">  <option value="" selected>Tout type de document</option>
+  <option value="a">ouvrage</option>
+  <option value="b">rapport extérieur</option>
+  <option value="d">thèse</option>
+  <option value="e">carte</option>
+  <option value="f">rapport</option>
+  <option value="j">article</option>
+  <option value="l">notice explicative</option>
+</select>
+			
+			<br>
+			<input type="hidden" name="surligne" value="">
+				<label for="user_query_lib" class="visually-hidden">Recherche</label>
+				<input type="text" name="user_query" title="Rechercher un document" id="user_query_lib" class="text_query" value="" size="65">
+<input type="submit" name="ok" value="Rechercher" class="boutonrechercher">
+<input type="button" value="Aide" class="bouton button_search_help" onclick='window.open("./help.php?whatis=simple_search", "search_help", "scrollbars=yes, toolbar=no, dependent=yes, width=400, height=400, resizable=yes"); return false'>
+<div id="simple_search_zone">
+		<div class="row"></div>
+		<div id="zsimples" class="notice-parent">
+		    
+			<img src="./getgif.php?nomgif=plus" name="imEx" id="zsimplesImg" title="détail" style="border:0px" onclick="expandBase('zsimples', true); return false;" loading="lazy">
+		
+			<span class="notice-heada" id="zsimplesLabelChild">Rechercher dans...</span>
+		</div>
+		<div role="region" id="zsimplesChild" aria-labelledby="zsimplesLabelChild" class="notice-child" style="margin-bottom:6px;display:none;width:94%"><div class="row">
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_TITLE" id="look_TITLE" value="1"><label for="look_TITLE"> Titres </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_AUTHOR" id="look_AUTHOR" value="1"><label for="look_AUTHOR"> Auteurs </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_PUBLISHER" id="look_PUBLISHER" value="1"><label for="look_PUBLISHER"> Editeurs </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_TITRE_UNIFORME" id="look_TITRE_UNIFORME" value="1"><label for="look_TITRE_UNIFORME"> Oeuvres / Expressions </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_CATEGORY" id="look_CATEGORY" value="1"><label for="look_CATEGORY"> Catégories </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_INDEXINT" id="look_INDEXINT" value="1"><label for="look_INDEXINT"> Indexations décimales </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_KEYWORDS" id="look_KEYWORDS" value="1"><label for="look_KEYWORDS"> Mots-clés</label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_ABSTRACT" id="look_ABSTRACT" value="1"><label for="look_ABSTRACT"> Résumé et notes </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_ALL" id="look_ALL" value="1" checked><label for="look_ALL"> Tous les champs </label></span></div><div style="clear: both;"><input type="hidden" name="look_FIRSTACCESS" value="1"></div></div>
+	</div>
+				<div class="row">
+					<label class="etiquette">Carte</label>
+				</div>
+				<div class="row">
+					<div id="map_search" data-dojo-type="apps/map/map_controler" style="width:100%; height:480px;" data-dojo-props='baseLayerType: dojox.geo.openlayers.BaseLayerType.OSM,mode:"search_criteria",hiddenField:"map_emprises_query",initialFit:["15.04 "," -8.46 "," 30.74 "," 3.18"],searchHolds:[]'></div>
+				</div><input type="hidden" name="csrf_token" value="76b32c73c1b044074ccacbeddea1e1c3bce1f2f1"></form>
+		<script src="./includes/javascript/ajax.js"></script>
+		<script>
+
+                if (document.forms['search_input'] && document.forms['search_input'].elements['user_query']) {
+                    document.forms["search_input"].elements["user_query"].focus();
+					
+                }
+		</script></div></div><div id="infopages"></div><div id="location"><h3><span>Vous n'avez pas d'idée pour chercher ? Entrez dans la bibliothèque...</span></h3><div id="location-container">
+	<script>
+		function opac_locations_ui_sort_by(criteria, asc_desc, indice) {
+			var url = './ajax.php?module=empr&lvl=index&action=list&sort_by='+criteria;
+			if(asc_desc == 'desc') {
+				//on repasse en tri croissant
+				url += '&sort_asc_desc=asc';
+			} else if(asc_desc == 'asc') {
+				//on repasse en tri d?croissant
+				url += '&sort_asc_desc=desc';
+			}
+			var req = new http_request();
+			if(document.getElementById('opac_locations_ui_json_filters_'+indice)) {
+				var filters = document.getElementById('opac_locations_ui_json_filters_'+indice).value;
+			} else if(document.getElementById('opac_locations_ui_json_filters')) {
+				var filters = document.getElementById('opac_locations_ui_json_filters').value;
+			} else {
+				var filters = '';
+			}
+			if(document.getElementById('opac_locations_ui_pager_'+indice)) {
+				var pager = document.getElementById('opac_locations_ui_pager_'+indice).value;
+			} else if(document.getElementById('opac_locations_ui_pager')) {
+				var pager = document.getElementById('opac_locations_ui_pager').value;
+			} else {
+				var pager = '';
+			}
+			if(document.getElementById('opac_locations_ui_ancre_'+indice)) {
+				var ancre = document.getElementById('opac_locations_ui_ancre_'+indice).value;
+			} else if(document.getElementById('opac_locations_ui_ancre')) {
+				var ancre = document.getElementById('opac_locations_ui_ancre').value;
+			} else {
+				var ancre = '';
+			}
+            if(document.getElementById('opac_locations_ui_list_'+indice)) {
+				var table = document.getElementById('opac_locations_ui_list_'+indice);
+			} else if(document.getElementById('opac_locations_ui_list_0')) {
+				var table = document.getElementById('opac_locations_ui_list_0');
+			} else {
+				var table = document.getElementById('opac_locations_ui_list');
+			}
+            table.innerHTML = '<tr><td><img src="./images/patience.gif"/>';
+			req.request(url,1, 'object_type=opac_locations_ui&filters='+encodeURIComponent(filters)+'&pager='+pager+'&ancre='+ancre, true, function(response) {
+                table.innerHTML = response;
+    			if(document.getElementById('opac_locations_ui_applied_sort_by_0')) {
+    				var options = document.getElementById('opac_locations_ui_applied_sort_by_0').options;
+    				for (var i= 0; i < options.length; i++) {
+    				    if (options[i].value === criteria) {
+    				        options[i].selected= true;
+    				        break;
+    				    }
+    				}
+    				switch(asc_desc) {
+    					case 'asc': //on repasse en tri d?croissant
+    						document.getElementById('opac_locations_ui_applied_sort_asc_0').removeAttribute('checked');
+    						document.getElementById('opac_locations_ui_applied_sort_desc_0').setAttribute('checked', 'checked');
+    						break;
+    					case 'desc': //on repasse en tri croissant
+    					default:
+    						document.getElementById('opac_locations_ui_applied_sort_asc_0').setAttribute('checked', 'checked');
+    						document.getElementById('opac_locations_ui_applied_sort_desc_0').removeAttribute('checked');
+    						break;
+    				}
+    			}
+				if(ancre) {
+					window.location='#'+ancre;
+				}
+				if(typeof initIt !== 'undefined') {
+					initIt();
+				}
+            });
+		}
+	</script>
+<table class="center" style="width:100%" role="presentation"><tr><td class="center">
+                <a href="./index.php?lvl=section_see&amp;location=3">
+                    <img src="./images/bibli-small.png" style="border:0px" alt="CAMI" title="CAMI" loading="lazy">
+                </a>
+				<br>
+                <a href="./index.php?lvl=section_see&amp;location=3"><b>CAMI</b></a></td><td class="center">
+                <a href="./index.php?lvl=section_see&amp;location=2">
+                    <img src="./images/bibli-small.png" style="border:0px" alt="CTCPM" title="CTCPM" loading="lazy">
+                </a>
+				<br>
+                <a href="./index.php?lvl=section_see&amp;location=2"><b>CTCPM</b></a></td><td class="center">
+                <a href="./index.php?lvl=section_see&amp;location=6">
+                    <img src="./images/bibli-small.png" style="border:0px" alt="MISEDERE" title="MISEDERE" loading="lazy">
+                </a>
+				<br>
+                <a href="./index.php?lvl=section_see&amp;location=6"><b>MISEDERE</b></a></td><td class="center">
+                <a href="./index.php?lvl=section_see&amp;location=5">
+                    <img src="./images/bibli-small.png" style="border:0px" alt="SGMINES" title="SGMINES" loading="lazy">
+                </a>
+				<br>
+                <a href="./index.php?lvl=section_see&amp;location=5"><b>SGMINES</b></a></td><td class="center">
+                <a href="./index.php?lvl=section_see&amp;location=1">
+                    <img src="./images/bibli-small.png" style="border:0px" alt="SGN-C" title="SGN-C" loading="lazy">
+                </a>
+				<br>
+                <a href="./index.php?lvl=section_see&amp;location=1"><b>SGN-C</b></a></td></tr></table></div></div><div id="intro_message"><div class="p1"><a href="index.php?lvl=index"><img src="./images/bar_spacer.gif" id="map_lien_retour" alt="" loading="lazy"></a> 
+<a href="http://www.sigb.net" id="puce">Sigb.Net</a>
+<a href="http://www.sigb.net/wiki/" id="puce">WiKi PMB</a>
+<a href="http://fr.wikipedia.org" id="puce">WiKipedia</a>
+</div><div class="p2"></div></div>
+
+<script>
+<!--
+	function test_form(form)
+	{
+
+		return true;
+	}
+-->
+</script>
+		</div>
+ 
+
+		</div>
+
+		
+		<div id="bandeau" fixed="yes">
+
+
+<div id="cms_module_section_178" class="cms_module_section cms_module uk-width-1-1"><div id="titrePortail">
+    <div id="logo">
+        <a href="index.php" title="Logo portail"><img src="https://sgnc.pmb.cd/opac_css/cms_vign.php?type=section&amp;id=79&amp;database=coregbxq_bibli&amp;mode=medium" alt="Logo portail"></a>
+    </div>
+</div></div><div id="accueil" fixed="yes">
+
+<h3><span onclick='document.location="./index.php?"' style="cursor: pointer;">Accueil</span></h3>
+<p class="centered"><a href="./index.php?"><img src="images/site/livre.png" alt="Accueil" style="border:0px" class="center" loading="lazy"></a></p>
+
+					</div><div id="adresse" fixed="yes">
+
+		<h3>Adresse</h3>
+
+		<span>
+			Bib'Doc<br>
+			ZI de Mont/Loir
+BP 10023<br>
+			72500 CHATEAU DU LOIR<br>
+			France <br>
+			02 43 440 660<br><span id="opac_biblio_email">
+			<a href="mailto:pmb@sigb.net" title="contact">contact</a></span></span>
+	    </div><div id="cms_module_sectionslist_179" class="cms_module_sectionslist cms_module uk-width-large-1-1 uk-width-medium-1-1 uk-width-1-1">    <div class="infosBandeau">
+		     <div class="itemAbrege">
+		    <h3>Adresse</h3>
+		    <div class="resume">
+			<p><b>Service Géologique National</b></p><p><b>SGN-C</b></p><p>Immeuble GECAMINES </p><p>(3ème étage)</p><p>Boulevard du 30 Juin - Kinshasa</p><p><b>Cadastre Minier</b></p><p><b>CAMI</b></p><p>37, Mpolo - Kinshasa</p><p><b>Cellule technique de Coordination et de Planification Minière</b></p><p><b>CTCPM</b></p><p>52 Avenue des travailleurs - Kinshasa</p><p><br></p><p><br></p>
+		    </div> 
+	    </div>
+	     </div>
+</div>
+
+
+<script src="./includes/javascript/accessibility.js"></script>
+
+
+
+</div><div id="bandeau_2" fixed="yes"></div><div id="footer" fixed="yes">
+    <div id="cms_module_htmlcode_134" class="cms_module_htmlcode cms_module"><div class="Ancre">
+	<a href="#intro" title="Top" data-uk-smooth-scroll>Λ</a>
+</div></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module uk-width-1-1 bottom-nav uk-grid-margin"><div class="liensFooter">
+	<div class="uk-flex uk-flex-right">
+        <ul class="navFooter">
+                          
+            <li>
+            <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=50" title="Mentions légales">Mentions légales</a>
+            </li>
+                          
+            <li>
+            <a href="./index.php?lvl=index" title="Catalogue">Catalogue</a>
+            </li>
+                          
+            <li>
+            <a href="https://sgnc.cd/" target="_blank" title="SGN-C">SGN-C</a>
+            </li>
+                     </ul>
+    </div>
+</div>
+</div><span id="footer_rss" fixed="yes"></span>
+    <span id="footer_link_sup" fixed="yes"><a href="./index.php?lvl=infopages&amp;pagesid=7">Mentions légales</a> </span>
+    <span id="footer_link_website" fixed="yes">
+        <a class="footer_biblio_name" href="http://www.sigb.net" title="Bib'Doc">Bib'Doc</a>  
+    </span>
+    <span id="footer_link_pmb" fixed="yes"><a href="http://www.google.fr" target="_blank">Faire une recherche avec Google</a> 
+        <a class="lien_pmb_footer" href="https://www.sigb.net" title="pmb ...une solution libre pour la médiathèque..." target="_blank">pmb</a>
+    </span>
+<div id="accessibility" fixed="yes">
+    	<input type="hidden" id="opacAccessibility" name="opacAccessibility" value="1">
+	<ul class="accessibility_font_size">
+		<li class="accessibility_font_size_small">
+			<a href="javascript:accessibilityFontSize(1);" title="Réduire le texte">A-</a>
+		</li>
+		<li class="accessibility_font_size_normal">
+			<a href="javascript:accessibilityFontSize(0);" title="Réinitialiser le texte">A</a>
+		</li>
+		<li class="accessibility_font_size_big">
+			<a href="javascript:accessibilityFontSize(2);" title="Agrandir le texte">A+</a>
+		</li>
+	</ul>
+</div></div></div>
+		
+		<script>init_drag();	//rechercher!!</script>
+		
+			<script>
+				var tarteaucitron_messages = pmbDojo.messages.getMessages("tarteaucitron");
+				if(tarteaucitron_messages.length) {
+					tarteaucitronCustomText = {};
+					tarteaucitron_messages.forEach(function(message) {
+						if(parseInt(message.code.indexOf(":")) !== -1) {
+							let tarteaucitron_messages_group = message.code.split(":");
+							if(typeof tarteaucitronCustomText[tarteaucitron_messages_group[0]] == "undefined") {
+								tarteaucitronCustomText[tarteaucitron_messages_group[0]] = {};
+							}
+							tarteaucitronCustomText[tarteaucitron_messages_group[0]][tarteaucitron_messages_group[1]] = message.message;
+						} else {
+							tarteaucitronCustomText[message.code] = message.message;
+						}
+					});
+				}
+			</script>
+			<script src="./includes/javascript/tarteaucitron/tarteaucitron.js"></script>
+		<script>
+	        tarteaucitron.init({
+	    	  "privacyUrl": "", /* Privacy policy url */
+	
+	    	  "hashtag": "#PhpMyBibli-COOKIECONSENT", /* Open the panel with this hashtag */
+	    	  "cookieName": "PhpMyBibli-COOKIECONSENT", /* Cookie name */
+	    
+	    	  "orientation": "bottom", /* Banner position (top - bottom - popup) */
+	       
+	          "groupServices": true, /* Group services by category */
+	                           
+	    	  "showAlertSmall": false, /* Show the small banner on bottom right */
+	    	  "cookieslist": false, /* Show the cookie list */
+				                           
+	          "closePopup": false, /* Show a close X on the banner */
+	
+	          "showIcon": false, /* Show cookie icon to manage cookies */
+	          "iconSrc": "./images/cookie.png", /* Optionnal: URL or base64 encoded image */
+	          "iconPosition": "BottomRight", /* BottomRight, BottomLeft, TopRight and TopLeft */
+	
+	    	  "adblocker": false, /* Show a Warning if an adblocker is detected */
+	                           
+	          "DenyAllCta" : true, /* Show the deny all button */
+	          "AcceptAllCta" : true, /* Show the accept all button when highPrivacy on */
+	          "highPrivacy": true, /* HIGHLY RECOMMANDED Disable auto consent */
+	                           
+	    	  "handleBrowserDNTRequest": false, /* If Do Not Track == 1, disallow all */
+	
+	    	  "removeCredit": true, /* Remove credit link */
+	    	  "moreInfoLink": false, /* Show more info link */
+	
+	          "useExternalCss": false, /* If false, the tarteaucitron.css file will be loaded */
+	          "useExternalJs": false, /* If false, the tarteaucitron.js file will be loaded */
+				
+	    	  //"cookieDomain": ".my-multisite-domaine.fr", /* Shared cookie for multisite */
+	                          
+	          "readmoreLink": "", /* Change the default readmore link */
+	
+	          "mandatory": true, /* Show a message about mandatory cookies */
+	        });
+ 
+        </script>
+		</body>
+		</html>

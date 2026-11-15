@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Security-Policy" content="">
+			<meta charset="utf-8">
+			<meta name="author" content="PMB Group">
+
+			<meta name="keywords" content="OPAC, web, library, opensource, catalog, catalogue, bibliothèque, médiathèque, pmb, phpmybibli">
+			<meta name="description" content="Online catalogue DRKRM Library."><meta name="robots" content="all">
+			
+			<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<title>Online catalogue DRKRM Library</title>
+	
+	
+<link rel="stylesheet" type="text/css" href="./styles/common/animation_display.css?1615825938">
+<link rel="stylesheet" type="text/css" href="./styles/common/common.css?1758718758">
+<link rel="stylesheet" type="text/css" href="./styles/common/contrib.css?1673276618">
+<link rel="stylesheet" type="text/css" href="./styles/common/dGrowl.css?1657616134">
+<link rel="stylesheet" type="text/css" href="./styles/common/dsi.css?1699608113">
+<link rel="stylesheet" type="text/css" href="./styles/common/font-awesome.css?1478593624">
+<link rel="stylesheet" type="text/css" href="./styles/common/open-sans.css?1479312986">
+<link rel="stylesheet" type="text/css" href="./styles/common/pagination.css?1532013719">
+<link rel="stylesheet" type="text/css" href="./styles/common/record_display.css?1540561363">
+<link rel="stylesheet" type="text/css" href="./styles/common/visionneuse.css?1646663637">
+<link rel="stylesheet" type="text/css" href="./styles/zen/base.css?1638198092">
+<link rel="stylesheet" type="text/css" href="./styles/zen/fontAcontent.css?1456910813">
+<link rel="stylesheet" type="text/css" href="./styles/zen/zen.css?1551948582">
+<link rel="stylesheet" type="text/css" href="./styles/zen/zen_color_pre_set.css?1526368617">
+<link rel="stylesheet" type="text/css" href="./styles/zen/zonepageo_a.css?1456910813">
+<link rel="stylesheet" type="text/css" href="./styles/zen/zzen_responsive.css?1635417586"><script type="text/javascript">var opac_style= 'zen';</script>
+		<link rel="SHORTCUT ICON" href="http://nkcs.org.np/dkrml/catalog/opac_css/cms_vign.php?type=section&amp;id=62&amp;mode=large">
+	<script type="text/javascript" src="includes/javascript/drag_n_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/handle_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/popup.js"></script>
+	<script type="text/javascript">
+			// Fonction a utiliser pour l'encodage des URLs en javascript
+			function encode_URL(data){
+				var docCharSet = document.characterSet ? document.characterSet : document.charset;
+				if(docCharSet == "UTF-8"){
+	    			return encodeURIComponent(data);
+	    		}else{
+	    			return escape(data);
+	    		}
+	    	}
+	    </script>
+	<script type="text/javascript">
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName =
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i);
+				    }
+				 }
+				return items;
+			 }
+		}
+	</script>
+
+		<link rel="stylesheet" type="text/css" href="./includes/javascript/dojo/dijit/themes/tundra/tundra.css">
+		<script type="text/javascript">
+			var dojoConfig = {
+				parseOnLoad: true,
+				locale: 'en-uk',
+				isDebug: false,
+				usePlainJson: true,
+				packages: [{
+						name: 'pmbBase',
+						location:'../../../..'
+					},{
+						name: 'd3',
+						location:'../../d3'
+					}],
+				deps: ['apps/pmb/MessagesStore', 'dgrowl/dGrowl', 'dojo/ready', 'apps/pmb/ImagesStore'],
+				callback:function(MessagesStore, dGrowl, ready, ImagesStore){
+					window.pmbDojo = {};
+					pmbDojo.messages = new MessagesStore({url:'./ajax.php?module=ajax&categ=messages', directInit:false, lastModified:'1791040027'});
+					pmbDojo.images = new ImagesStore({url:'./ajax.php?module=ajax&categ=images', directInit:false});
+					ready(function(){
+						new dGrowl({'channels':[{'name':'info','pos':2},{'name':'error', 'pos':1}]});
+					});
+
+				},
+			};
+		</script>
+		<script type="text/javascript" src="./includes/javascript/dojo/dojo/dojo.js"></script>
+		<script type="text/javascript">
+		dojo.addOnLoad(function () {
+			// Ajout du theme Dojo
+			dojo.addClass(dojo.body(),'tundra');
+		})
+		</script>
+		<script type="text/javascript">
+	var pmb_img_patience = './images/patience.gif';
+</script><script type="text/javascript">
+			var opac_show_social_network =0;
+		</script>
+	<script type="text/javascript" src="./includes/javascript/http_request.js"></script>
+	
+<script>
+				dojo.addOnLoad(function (){
+					//on balance un evenement pour les initialiser les modules si besoin...
+					dojo.publish('init',['cms_dojo_init',{}]);
+				});
+			</script>
+
+		<script>
+			function cms_module_search_22_change_dest(){
+				var page = 0;
+                var universe = 0;
+                var default_segment = 0;
+				if(document.forms['cms_module_search_22_searchbox'].dest) {
+					var dests = document.forms['cms_module_search_22_searchbox'].dest;
+					for(var i = 0; i < dests.length; i++){
+    					if(dests[i].checked || dests[i].selected ){
+    						page = dests[i].getAttribute('page');
+	                        universe = dests[i].getAttribute('universe');
+	                        default_segment = dests[i].getAttribute('default_segment');
+							break;
+						}
+					}
+				}
+                if(universe > 0){
+                    if(default_segment > 0){
+                        document.forms['cms_module_search_22_searchbox'].action = './index.php?lvl=search_segment&action=segment_results&id='+default_segment;
+                    } else {
+                        document.forms['cms_module_search_22_searchbox'].action = './index.php?lvl=search_universe&id='+universe;
+                    }
+                } else if(page>0){
+					document.forms['cms_module_search_22_searchbox'].action = './index.php?lvl=cmspage&pageid='+page;
+				}
+                if (page.toString().indexOf('view_') != -1) {
+					var view_id = page.substr(5);
+				    document.forms['cms_module_search_22_searchbox'].action += '&opac_view='+view_id;
+				}
+			}
+		</script><script type="text/javascript" src="./cms/modules/common/includes/javascript/jquery-2.1.1.min.js"></script><script type="text/javascript" src="./styles/zen/uitkit/js/uikit.min.js"></script><script type="text/javascript" src="./styles/zen/uitkit/js/components/sticky.min.js"></script><script type="text/javascript" src="./styles/zen/uitkit/js/components/grid.min.js"></script><script type="text/javascript" src="./cms/modules/common/includes/javascript/jquery.bxsliderv4.min.js"></script><link rel="stylesheet" href="./styles/zen/uitkit/css/uikit.min.css"><link rel="stylesheet" href="./styles/zen/addcss/home.css"><link rel="stylesheet" href="./styles/zen/uitkit/css/components/sticky.almost-flat.min.css"><link rel="stylesheet" href="./styles/zen/addcss/calendar.css"><meta http-equiv="Content-Type" content="charset=utf-8"></head>
+
+<body onload="window.defaultStatus='PMB: Public Access';" id="pmbopac">
+		<script type="text/javascript">
+		function findNoticeElement(id){
+			var ul=null;
+			//cas des notices classiques
+			var domNotice = document.getElementById('el'+id+'Child');
+			//notice_display
+			if(!domNotice) domNotice = document.getElementById('notice');
+			if(domNotice){
+				var uls = domNotice.getElementsByTagName('ul');
+				for (var i=0 ; i<uls.length ; i++){
+					if(uls[i].getAttribute('id') == 'onglets_isbd_public'+id){
+						var ul = uls[i];
+						break;
+					}
+				}
+			} else{
+				var li = document.getElementById('onglet_isbd'+id);
+				if(!li) var li = document.getElementById('onglet_public'+id);
+				if(!li) var li = document.getElementById('onglet_detail'+id);
+				if(li) var ul = li.parentNode;
+			}
+			return ul;
+		}
+		function show_what(quoi, id) {
+			switch(quoi){
+				case 'EXPL_LOC' :
+					document.getElementById('div_expl_loc' + id).style.display = 'block';
+					document.getElementById('div_expl' + id).style.display = 'none';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_inactive';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_active';
+					break;
+				case 'EXPL' :
+					document.getElementById('div_expl_loc' + id).style.display = 'none';
+					document.getElementById('div_expl' + id).style.display = 'block';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_active';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_inactive';
+					break;
+				default :
+					quoi= quoi.toLowerCase();
+					var ul = findNoticeElement(id);
+					if (ul) {
+						var items  = ul.getElementsByTagName('li');
+						for (var i=0 ; i<items.length ; i++){
+							if(items[i].getAttribute('id')){
+								if(items[i].getAttribute('id') == 'onglet_'+quoi+id){
+									items[i].className = 'isbd_public_active';
+									document.getElementById('div_'+quoi+id).style.display = 'block';
+								}else{
+									if(items[i].className != 'onglet_tags' && items[i].className != 'onglet_avis' && items[i].className != 'onglet_sugg' && items[i].className != 'onglet_basket' && items[i].className != 'onglet_liste_lecture'){
+										items[i].className = 'isbd_public_inactive';
+										document.getElementById(items[i].getAttribute('id').replace('onglet','div')).style.display = 'none';
+									}
+								}
+							}
+						}
+					}
+					break;
+			}
+		}
+		</script>
+	<script type="text/javascript" src="./includes/javascript/tablist_ajax.js"></script>
+<script type="text/javascript" src="./includes/javascript/tablist.js"></script>
+<script type="text/javascript" src="./includes/javascript/misc.js"></script>
+	<div id="att" style="z-Index:1000"></div>
+	<div id="container"><div id="intro" fixed="yes">
+<div id="intro_bibli" fixed="yes">
+			<h3>DRKRM Library</h3>
+			<div class="p1"></div>
+			<div class="p2"></div>
+			</div>
+		<div id="cms_module_sectionslist_174" class="cms_module_sectionslist cms_module" style="visibility: visible; position: static; left: 0px; top: 0px; display: block;"><div id="offcanvas" class="uk-offcanvas">
+	<div class="uk-offcanvas-bar">
+			<div class="MenuVertResp">
+			<ul class="NavResponsive">
+			
+							<li>
+					<a href="./index.php" title="Home">Home</a>
+									</li>
+							<li>
+					<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=37" title="Catalogue">Catalogue</a>
+											<ul class="SousNavResponsive">
+				
+															<li>
+									<a href="./index.php?lvl=index" title="Simple Search">Simple Search</a>
+								</li>
+															<li>
+									<a href="./index.php?search_type_asked=perio_a2z" title="Periodicals">Periodicals</a>
+								</li>
+													</ul>
+									</li>
+							<li>
+					<a href="https://nkcs.org.np/dkrml/elibrary/" target="_blank" title="E-library">E-library</a>
+									</li>
+							<li>
+					<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=7" title="New Additions">New Additions</a>
+									</li>
+							<li>
+					<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=4" title="About the library">About the library</a>
+									</li>
+						</ul>
+		</div>
+		</div>
+</div></div><div id="cms_module_htmlcode_176" class="cms_module_htmlcode cms_module" style="visibility: visible; position: static; left: 0px; top: 0px; display: block;"><div class="TglUser " data-uk-button>
+	<a class="Tgllogin" data-uk-toggle="{target:'#connexion', cls:'heightZero'}">
+		<span class="user"><i class="fa fa-user"></i></span>
+	</a>
+</div></div><div id="cms_module_htmlcode_175" class="cms_module_htmlcode cms_module" style="visibility: visible; position: static; left: 0px; top: 0px;"><div id="btnMenu" class="temp">
+	<div class="tgLbtnMenu">
+		<a class="MenuCanvas uk-button" href="#offcanvas" data-uk-offcanvas><i class="fa fa-bars"></i></a>
+	</div>
+</div></div><div id="cms_module_htmlcode_178" class="cms_module_htmlcode cms_module" style="visibility: visible; position: static; left: 0px; top: 0px;"><div class="TgllSearch" data-uk-button>
+	<a data-uk-toggle="{target:'.searchbox', cls:'heightZero'}">
+		<span class="user"><i class="fa fa-search"></i></span>
+	</a>
+</div></div><div id="cms_module_section_177" class="cms_module_section cms_module" style="visibility: visible; display: block; position: static; left: 0px; top: 0px;"><div class="uk-grid uk-grid-collapse" data-uk-grid-match="{target:'.titrePortail'}" data-uk-grid-margin>
+	<div class="uk-width-1-3">
+        <div id="logo" class="titrePortail">
+            <a href="./index.php" title="DRKRM Library"><img src="https://nkcs.org.np/dkrml/catalog/opac_css/cms_vign.php?type=section&amp;id=62&amp;database=dkrml&amp;mode=large" alt="DRKRM Library"></a>
+        </div>
+    </div>
+	<div class="uk-width-2-3"> 
+        <div id="titrePortail" class="titrePortail">
+            <h1>
+                <span class="mainTitle">DRKRM Library</span>
+                <span class="subTitle">Online Catalog</span>
+            </h1>
+        </div>
+     </div>        
+</div></div><div id="cms_module_section_173" class="cms_module_section cms_module" style="visibility: visible; position: static; left: 0px; top: 0px;"><div id="Introbandeau"><img src="https://nkcs.org.np/dkrml/catalog/opac_css/cms_vign.php?type=section&amp;id=79&amp;database=dkrml&amp;mode=large" alt="Photo bandeau superieur"></div>
+</div><div id="cms_module_section_125" class="cms_module_section cms_module" style="visibility: visible; display: none; left: auto; top: auto; height: 157px; width: 1024px; margin: 0px; padding: 0px; float: none; position: static;"><div id="logo">
+	<a href="./index.php" title="DRKRM Library"><img src="https://nkcs.org.np/dkrml/catalog/opac_css/cms_vign.php?type=section&amp;id=62&amp;database=dkrml&amp;mode=large" alt="DRKRM Library"></a>
+</div></div><div id="cms_module_metadatas_172" class="cms_module_metadatas cms_module" style="visibility: visible; display: block;"></div><div id="cms_module_section_126" class="cms_module_section cms_module" style="visibility: visible; display: none; left: auto; top: auto; height: 160px; width: 1024px; margin: 0px; padding: 0px; float: none; position: static;"><div id="titrePortail">
+	<h1>
+        <span class="mainTitle">DRKRM Library</span>
+        <span class="subTitle">Online Catalog</span>
+	</h1>
+</div></div><div id="cms_module_htmlcode_137" class="cms_module_htmlcode cms_module"><div class="clear"></div></div><div id="cms_module_sectionslist_120" class="cms_module_sectionslist cms_module" style="visibility: visible; display: block;"><div class="uk-flex uk-flex-center uk-hidden-small uk-hidden-medium">
+    <div class="MenuHoriz uk-navbar uk-container">
+        <ul class="Nav uk-navbar-nav">
+        
+                    <li>
+                <a href="./index.php" title="Home">Home</a>
+                            </li>
+                    <li class="uk-parent" data-uk-dropdown="{pos:'bottom-center',remaintime:'550'}">
+                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=37" title="Catalogue">Catalogue</a>
+                                <div class="uk-dropdown uk-dropdown-navbar">
+                    <ul class="SousNav uk-nav uk-nav-navbar">
+			
+                                                    <li>
+                                <a href="./index.php?lvl=index">Simple Search</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?search_type_asked=perio_a2z">Periodicals</a>
+                            </li>
+                                            </ul>
+                </div>      
+                            </li>
+                    <li>
+                <a href="https://nkcs.org.np/dkrml/elibrary/" target="_blank" title="E-library">E-library</a>
+                            </li>
+                    <li>
+                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=7" title="New Additions">New Additions</a>
+                            </li>
+                    <li>
+                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=4" title="About the library">About the library</a>
+                            </li>
+                </ul>
+    </div>
+</div>    
+</div></div><div id="main" style="position: static; left: 0px; top: 0px;" fixed="yes"><div id="main_header"></div><div id="main_hors_footer">
+						
+
+<script type="text/javascript" src="./includes/javascript/auth_popup.js"></script>
+<script type="text/javascript" src="./includes/javascript/pnb.js"></script><div id="add_div_cms_module_articleslist_21" class="row"></div><div id="navigator" class="empty" fixed="yes"></div><div id="intro_message"><div class="p2"></div></div><div id="search"><ul class="search_tabs"><li id="current"><a href="./index.php?search_type_asked=simple_search">Quick search</a></li><li><a href="./index.php?search_type_asked=extended_search">Advanced search</a></li><li><a href="./index.php?search_type_asked=term_search">Search by terms</a></li></ul><div id="search_crl"></div><div class="row">
+		<form name="search_input" action="./index.php?lvl=more_results&amp;autolevel1=1" method="post" onsubmit="if (search_input.user_query.value.length == 0) { search_input.user_query.value='*'; return true; }">
+			 <select name="typdoc">  <option value="" selected>All material types</option>
+  <option value="a">printed text</option>
+</select>
+			
+			<br>
+			<input type="hidden" name="surligne" value="">
+					<input type="text" name="user_query" id="user_query_lib" class="text_query" value="" size="65">
+<input type="submit" name="ok" value="Search" class="boutonrechercher">
+<input type="button" value="Help" class="bouton button_search_help" onclick='window.open("./help.php?whatis=simple_search", "search_help", "scrollbars=yes, toolbar=no, dependent=yes, width=400, height=400, resizable=yes"); return false'>
+<div id="simple_search_zone">
+		<div class="row"></div>
+		<div id="zsimples" class="notice-parent">
+			<img src="./getgif.php?nomgif=plus" name="imEx" id="zsimplesImg" title="more info" style="border:0px" onclick="expandBase('zsimples', true); return false;" hspace="3" loading="lazy">
+			<span class="notice-heada">
+				Search in...
+			</span>
+		</div>
+		<div id="zsimplesChild" class="notice-child" style="margin-bottom:6px;display:none;width:94%">
+			<div class="row">
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_TITLE" id="look_TITLE" value="1"><label for="look_TITLE"> Titles </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_AUTHOR" id="look_AUTHOR" value="1"><label for="look_AUTHOR"> Authors </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_PUBLISHER" id="look_PUBLISHER" value="1"><label for="look_PUBLISHER"> Publishers </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_TITRE_UNIFORME" id="look_TITRE_UNIFORME" value="1"><label for="look_TITRE_UNIFORME"> Uniform Titles </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_CATEGORY" id="look_CATEGORY" value="1"><label for="look_CATEGORY"> Descriptors </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_INDEXINT" id="look_INDEXINT" value="1"><label for="look_INDEXINT"> Class numbers </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_KEYWORDS" id="look_KEYWORDS" value="1"><label for="look_KEYWORDS"> Keywords</label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_ABSTRACT" id="look_ABSTRACT" value="1"><label for="look_ABSTRACT"> Abstract and notes </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_ALL" id="look_ALL" value="1" checked onclick="return false;" title="All fields search can not be unchecked."><label for="look_ALL"> All fields </label></span></div><div style="clear: both;"><input type="hidden" name="look_FIRSTACCESS" value="1"></div>
+		</div>
+	</div><input type="hidden" name="csrf_token" value="9f6a5656e1ac03772116bbabf9b5beab95816b4b"></form>
+		<script type="text/javascript" src="./includes/javascript/ajax.js"></script>
+		<script type="text/javascript">
+
+                if (document.forms['search_input'] && document.forms['search_input'].elements['user_query']) {
+                    document.forms["search_input"].elements["user_query"].focus();
+					
+                }
+		</script></div></div>
+<script type="text/javascript">
+<!--
+	function test_form(form)
+	{
+
+		return true;
+	}
+-->
+</script><div id="infopages"><p><b>Search Tip:</b> नेपाली भाषामा Search गर्दा शब्द लाई कोटेशन चिन्ह " भित्र राखौं, जस्तो: "पुरुषोत्तम" "दाहाल" </p></div>
+		</div> 
+
+		</div>
+
+		
+		<div id="bandeau" fixed="yes">
+
+
+<div id="cms_module_search_22" class="cms_module_search cms_module" style="position: static; left: 0px; top: 0px;">
+			<form method="post" class="searchbox " action="./index.php?lvl=search_result&amp;search_type_asked=simple_search" name="cms_module_search_22_searchbox" onsubmit="if (cms_module_search_22_searchbox.user_query.value.length == 0) { cms_module_search_22_searchbox.user_query.value='*';}if (typeof cms_module_search_22_change_dest == 'function') { cms_module_search_22_change_dest(); }">
+				
+				<input type="hidden" value="1" name="look_ALL">
+				<h4 class="searchbox_title">We search.. We find.....</h4><span class="research_inputs">
+					<input type="text" name="user_query" value="" placeholder="Search.......">
+				<input class="bouton" type="submit" value="Search">
+				<input class="bouton button_search_help" title="Help" type="button" onclick='window.open("./help.php?whatis=simple_search", "search_help", "scrollbars=yes, toolbar=no, dependent=yes, width=400, height=400, resizable=yes"); return false' value="Help"></span><br>
+					<span class="search_radio_button" id="search_radio_button_0"><input type="radio" name="dest" value="dest_0" default_segment="0" page="0" universe="" checked> Find in catalogue</span>
+					<span class="search_radio_button" id="search_radio_button_1"><input type="radio" name="dest" value="dest_1" default_segment="0" page="11" universe=""> Find in site</span>
+					<p class="search_advanced_link"><a href="./index.php?search_type_asked=simple_search" title="Advanced search"> Advanced search</a></p>
+			<input type="hidden" name="csrf_token" value="070464f4776c2fac9fc291efe7324bc6f23f8a85"></form></div><div id="resume_panier" class="empty" fixed="yes" style="visibility: visible; display: block;"></div><div id="accueil" fixed="yes">
+
+<h3><span onclick='document.location="./index.php?"' style="cursor: pointer;">Home</span></h3>
+<p class="centered"><a href="./index.php?"><img src="images/site/livre.png" alt="Home" style="border:0px" class="center" loading="lazy"></a></p>
+
+					</div>
+<div id="cms_module_htmlcode_141" class="cms_module_htmlcode cms_module" style="position: static; left: 0px; top: 0px;"><div id="lienHistorique">
+    <a href="./index.php?lvl=search_history" title="Historique des recherches">History...</a>
+</div></div><div id="connexion" fixed="yes">
+
+			<h3 class="login_invite">Login</h3><div id="login_form"><form action="index.php?lvl=index" method="post" name="myform"><label>user name</label><br>
+				<input type="text" name="login" class="login" size="14" placeholder="user name"><br>
+                <div class="myform-password-text-visually">
+                    <input type="password" id="myform-password" name="password" class="password" size="8" placeholder="Password" value="">
+                    <button type="button" class="fa fa-eye" id="myform-password-visually" onclick='toggle_password(this, "myform-password");' title="Afficher ou masquer le mot de passe"></button>
+                </div>
+                <input type="hidden" name="force_login" value="1">
+				<input type="submit" name="ok" value="ok" class="bouton"><input type="hidden" name="csrf_token" value="a75cb81805f0fabbf66ae8a23b3e04ae75a99742"></form><a class="mdp_forgotten" href="./askmdp.php">Forgotten password?</a></div>
+
+			</div>
+<div id="adresse" fixed="yes">
+
+		<h3>Address</h3>
+
+		<span>
+			DRKRM Library<br>
+			Lazimpat<br>
+			 Kathmandu<br>
+			Nepal <br>
+			<br><span id="opac_biblio_email">
+			<a href="mailto:bholashresthame@gmail.com" title="bholashresthame@gmail.com">contact</a></span></span>
+	    </div><div id="cms_module_articleslist_130" class="cms_module_articleslist cms_module" style="visibility: visible; display: block;"></div></div><div id="bandeau_2" fixed="yes"></div><div id="footer" fixed="yes">
+
+<div id="cms_module_htmlcode_134" class="cms_module_htmlcode cms_module"><div class="Ancre">
+	<a href="#logo" title="Top">Λ</a>
+</div></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><span id="footer_rss" fixed="yes">
+	
+</span>
+<span id="footer_link_sup" fixed="yes">
+		<a href="./index.php?lvl=infopages&amp;pagesid=7">Mentions légales</a>  
+</span>
+
+<span id="footer_link_website" fixed="yes">
+	<a class="footer_biblio_name" href="http://www.sigb.net" title="DRKRM Library">DRKRM Library</a>  
+</span>
+
+<span id="footer_link_pmb" fixed="yes">
+<a href="http://www.google.fr" target="_blank">Faire une recherche avec Google</a>  
+		<a class="lien_pmb_footer" href="https://www.sigb.net" title="a free solution for libraries" target="_blank">pmb</a>
+</span>
+
+<div id="accessibility" fixed="yes" style="visibility: visible; display: block;">
+    	<input type="hidden" id="opacAccessibility" name="opacAccessibility" value="1">
+			<ul class="accessibility_font_size">
+			<li class="accessibility_font_size_small">
+				<a href="javascript:accessibilityFontSize(1);" title="Reduce the text">A-</a>
+			</li>
+			<li class="accessibility_font_size_normal">
+				<a href="javascript:accessibilityFontSize(0);" title="Reset the size of the text">A</a>
+			</li>
+			<li class="accessibility_font_size_big">
+				<a href="javascript:accessibilityFontSize(2);" title="Widen the text">A+</a>
+			</li>
+		</ul>
+	
+			<script src="./includes/javascript/accessibility.js"></script>
+		
+			</div></div></div>
+		
+		<script type="text/javascript">init_drag();	//rechercher!!</script>
+		
+			<script type="text/javascript">
+				var tarteaucitron_messages = pmbDojo.messages.getMessages("tarteaucitron");
+				if(tarteaucitron_messages.length) {
+					tarteaucitronCustomText = {};
+					tarteaucitron_messages.forEach(function(message) {
+						if(parseInt(message.code.indexOf(":")) !== -1) {
+							let tarteaucitron_messages_group = message.code.split(":");
+							if(typeof tarteaucitronCustomText[tarteaucitron_messages_group[0]] == "undefined") {
+								tarteaucitronCustomText[tarteaucitron_messages_group[0]] = {};
+							}
+							tarteaucitronCustomText[tarteaucitron_messages_group[0]][tarteaucitron_messages_group[1]] = message.message;
+						} else {
+							tarteaucitronCustomText[message.code] = message.message;
+						}
+					});
+				}
+			</script>
+			<script type="text/javascript" src="./includes/javascript/tarteaucitron/tarteaucitron.js"></script>
+		<script type="text/javascript">
+	        tarteaucitron.init({
+	    	  "privacyUrl": "", /* Privacy policy url */
+	
+	    	  "hashtag": "#PhpMyBibli-COOKIECONSENT", /* Open the panel with this hashtag */
+	    	  "cookieName": "PhpMyBibli-COOKIECONSENT", /* Cookie name */
+	    
+	    	  "orientation": "bottom", /* Banner position (top - bottom - popup) */
+	       
+	          "groupServices": true, /* Group services by category */
+	                           
+	    	  "showAlertSmall": false, /* Show the small banner on bottom right */
+	    	  "cookieslist": false, /* Show the cookie list */
+				                           
+	          "closePopup": false, /* Show a close X on the banner */
+	
+	          "showIcon": false, /* Show cookie icon to manage cookies */
+	          "iconSrc": "./images/cookie.png", /* Optionnal: URL or base64 encoded image */
+	          "iconPosition": "BottomRight", /* BottomRight, BottomLeft, TopRight and TopLeft */
+	
+	    	  "adblocker": false, /* Show a Warning if an adblocker is detected */
+	                           
+	          "DenyAllCta" : true, /* Show the deny all button */
+	          "AcceptAllCta" : true, /* Show the accept all button when highPrivacy on */
+	          "highPrivacy": true, /* HIGHLY RECOMMANDED Disable auto consent */
+	                           
+	    	  "handleBrowserDNTRequest": false, /* If Do Not Track == 1, disallow all */
+	
+	    	  "removeCredit": true, /* Remove credit link */
+	    	  "moreInfoLink": false, /* Show more info link */
+	
+	          "useExternalCss": false, /* If false, the tarteaucitron.css file will be loaded */
+	          "useExternalJs": false, /* If false, the tarteaucitron.js file will be loaded */
+				
+	    	  //"cookieDomain": ".my-multisite-domaine.fr", /* Shared cookie for multisite */
+	                          
+	          "readmoreLink": "", /* Change the default readmore link */
+	
+	          "mandatory": true, /* Show a message about mandatory cookies */
+	        });
+ 
+        </script>
+		</body>
+		</html>

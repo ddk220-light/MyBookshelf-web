@@ -1,0 +1,947 @@
+{
+  "country": "Democratic Republic of the Congo",
+  "country_code": "COD",
+  "research_date_utc": "2026-11-15",
+  "status": "complete",
+  "counts": {
+    "observed_successes": 7,
+    "selected": 6,
+    "reserves": 1,
+    "major_priorities": 14,
+    "selected_shortfall": 4
+  },
+  "market": {
+    "summary": "DR Congo (COD) has public universities, national/legal-deposit services, confessional institutions, specialist documentation centers and diplomatic/community reading services. Current national library/system totals are not available from this research. PMB is the best evidenced reusable public-catalog family in this feasibility sample; Koha is historically documented at UNIKIN/CEDESURK, and CD-ISIS is a documented predecessor at UPC. This is not LMS market share.",
+    "platform_strategy": "Build a general PMB public-form/record/holding adapter with deployment profiles and strict institution mapping, then a separate CEPAS GET frontend adapter. Prioritize Mikanda shared-catalog institution mappings and SGN-C/IFRDC network profiles. Keep Koha as a secondary discovery/reactivation prospect until legitimate public endpoints can be verified. Preserve physical-book status and do not treat electronic databases, theses repositories or nominal catalog views as print holdings.",
+    "adoption_evidence": [
+      {
+        "claim": "Observed PMB catalog forms, records and physical holdings at Mikanda (UPC/Karibuni), ULPGL, UDBL, SGN-C and Institut Français RDC; CEPAS explicitly identifies a PMB-backed custom frontend.",
+        "scope": "Seven successful collection units across six public catalog origins, feasibility selected",
+        "date": "2026-11-15",
+        "source_url": "https://katalog.mikanda.info/pmb/opac_css/"
+      },
+      {
+        "claim": "UPC librarian reports prior CD-ISIS catalog and migration to PMB; roughly 29,400 volumes in 2015.",
+        "scope": "UPC only; historical institutional paper, not national adoption",
+        "date": "2015-09-14",
+        "source_url": "https://repository.ifla.org/bitstreams/f6541a03-e351-498b-9cd7-77ce63faec91/download"
+      },
+      {
+        "claim": "UNIKIN implementation case documents Koha and a central/faculty network.",
+        "scope": "UNIKIN historical case, published 2008; not live operational validation",
+        "date": "2008",
+        "source_url": "https://repository.ifla.org/bitstreams/41855b8d-0e59-4abe-a7e7-ec8f80f168d1/download"
+      },
+      {
+        "claim": "Published study identifies UNIKIN Koha route as intranet, and gives CEDESURK Koha route.",
+        "scope": "Cahiers Economiques et Sociaux 2023, referring to 2017 catalog sources; indexed page 103",
+        "date": "2023",
+        "source_url": "https://www.cahierseconomiquesetsociaux.cd/Publications/CES_vol39_n%C2%B01/CES_vol_39_n%C2%B01_04.pdf"
+      }
+    ],
+    "network_opportunities": [
+      {
+        "name": "Réseau Mikanda",
+        "scope": "Shared PMB catalog with independently named institutional locations, plus training/mutualization",
+        "source_url": "https://mikanda.info/",
+        "verification": "UPC and Karibuni physical copies actually returned. Other selectors, including UCC, do not prove operational collection access.",
+        "integration_implication": "One shared PMB profile can expose distinct institutions only when returned holdings prove the mapping. Do not count union network plus constituents."
+      },
+      {
+        "name": "SGN-C geological/mining documentation network",
+        "scope": "Five agency selectors; only CTCPM physical book holding observed",
+        "source_url": "https://sgnc.pmb.cd/opac_css/",
+        "verification": "Haut-Uele book and CTCPM copy returned; network treated as one unit.",
+        "integration_implication": "PMB with fresh anonymous CSRF session; separate map/report types from books."
+      },
+      {
+        "name": "Institut Français RDC médiathèques",
+        "scope": "Four city views; only IF Lubumbashi holding observed",
+        "source_url": "https://mediatheques-ifrdc.org/",
+        "verification": "Droit de la concurrence returned with IF Lubumbashi on-loan copy.",
+        "integration_implication": "One network profile initially; validate each city before offering separately filtered results."
+      },
+      {
+        "name": "CEDESURK",
+        "scope": "Interuniversity documentation/capacity-building organization",
+        "source_url": "https://orbi.uliege.be/bitstream/2268/188554/1/Livre%20Pacodel.pdf",
+        "verification": "Historical role sourced; catalog robots 503 unresolved today.",
+        "integration_implication": "Institutional shared-service opportunity, not a verified endpoint."
+      }
+    ]
+  },
+  "major_library_priorities": [
+    {
+      "name": "Bibliothèque nationale du Congo, Kinshasa",
+      "size_claim": "National legal-deposit and heritage mandate is the scale proxy; no current physical collection total verified.",
+      "source_url": "https://acp.cd/culture/litterature-lexistence-des-bibliotheques-assure-la-perennite-de-lecriture-directeur-de-la-bibliotheque-nationale/",
+      "outcome": "No public physical-book OPAC established; retain as major priority, not a successful lookup.",
+      "evidence_path": "evidence/acp-national.html"
+    },
+    {
+      "name": "Université de Kinshasa (UNIKIN)",
+      "size_claim": "Official faculty page describes central library plus 10 faculty and 6 research/large-school libraries; institutional network proxy.",
+      "source_url": "https://www.unikin.ac.cd/fac/fpsysed/?page_id=88",
+      "outcome": "Koha installation documented historically; 2023 study labels koha.unikin.cd as intranet. No internal probing; current public page has no book search.",
+      "evidence_path": "evidence/unikin-faculty.html"
+    },
+    {
+      "name": "Université de Lubumbashi (UNILU)",
+      "size_claim": "Official page: central >29,000 volumes and 4,300 periodicals; faculty collections 11,200 and 6,350 periodicals; central +14 faculties +4 documentation centers. Units/date are not nationally comparable.",
+      "source_url": "https://www.unilu.ac.cd/bibliotheques-de-luniversite-de-lubumbashi/",
+      "outcome": "Substantial collection identified; no supported public book-query route found on reviewed institutional page.",
+      "evidence_path": "evidence/unilu-home.html"
+    },
+    {
+      "name": "Université de Kisangani (UNIKIS)",
+      "size_claim": "Official central library service within the major public university; numerical collection total unknown.",
+      "source_url": "https://unikis.ac.cd/services",
+      "outcome": "Services page is not an OPAC; no returned physical-book search. Do not confuse UNIKIS with Kindu/UNIKI or Université Libre de Kisangani.",
+      "evidence_path": "evidence/unikis-services.html"
+    },
+    {
+      "name": "Université Pédagogique Nationale (UPN)",
+      "size_claim": "Central university library serving the national pedagogical university; institutional proxy, no numeric total.",
+      "source_url": "https://upn.ac.cd/upn/bibliotheque.php",
+      "outcome": "Official central virtual library links theses and DEA dissertations, not a verified physical-book catalog. Astria news does not establish print holdings.",
+      "evidence_path": "evidence/upn-library.html"
+    },
+    {
+      "name": "Université Catholique du Congo (UCC)",
+      "size_claim": "Approximately 90,100 volumes reported in 2015 institutional conference study; historical, not current total.",
+      "source_url": "https://repository.ifla.org/bitstreams/f6541a03-e351-498b-9cd7-77ce63faec91/download",
+      "outcome": "Mikanda lists UCC but exploratory title produced no result; no UCC holding verified. Do not count selector or UCC-as-publisher as collection evidence.",
+      "evidence_path": "evidence/ifla-upc.html"
+    },
+    {
+      "name": "Université Catholique de Bukavu (UCB)",
+      "size_claim": "Current official page describes thousands of books, journals and physical/digital collections; institutional proxy.",
+      "source_url": "https://ucbukavu.ac.cd/etudiants/",
+      "outcome": "No public physical-book search exposed. Earlier indexed 38,295-volume document returned HTTP 404; current claim remains qualitative.",
+      "evidence_path": "evidence/ucb-current.html"
+    },
+    {
+      "name": "Centre d’Études Pour l’Action Sociale — Bibliothèque CEPAS",
+      "size_claim": "Official page states more than 45,000 books and 1,600 periodical titles; catalog separately displays 34,165 indexed notices, including articles.",
+      "source_url": "https://www.cepas.online/secteurs/bibliotheque",
+      "outcome": "Verified query; One institutional library, Kinshasa; do not count its Mikanda representation separately",
+      "evidence_path": "evidence/cepas-home.html"
+    },
+    {
+      "name": "Université Protestante au Congo — Bibliothèque Universitaire Centrale",
+      "size_claim": "UPC librarian reports ~29,400 volumes; historical scale only. Current official page confirms service to five faculties.",
+      "source_url": "https://repository.ifla.org/bitstreams/f6541a03-e351-498b-9cd7-77ce63faec91/download",
+      "outcome": "Verified query; One university library verified by UPC copy in the Mikanda shared catalog; Mikanda network is not separately counted",
+      "evidence_path": "evidence/ifla-upc.html"
+    },
+    {
+      "name": "Université Libre des Pays des Grands Lacs — Bibliothèque universitaire, Goma",
+      "size_claim": "Total is mixed physical/digital and must not be presented as 32,246 physical books. Two-campus network stated.",
+      "source_url": "https://bu-ulpgl.net/collections-courantes/",
+      "outcome": "Verified query; One university network across its faculties; BIFAD copy proven, no faculty counted separately",
+      "evidence_path": "evidence/ulpgl-collections.html"
+    },
+    {
+      "name": "Université Don Bosco de Lubumbashi — library network (Theologicum holding)",
+      "size_claim": "Official university library page names Saint François de Sales and Ladrille sites; catalog holds Theologicum material. No defensible collection total was found.",
+      "source_url": "https://udbl.ac.cd/public/index.php?page=biblioth-que",
+      "outcome": "Verified query using explicit institutional/network scale proxy; One UDBL institutional catalog; observed holding is Bibliothèque Theologicum. Do not count the separate Theologicum hostname as another institution",
+      "evidence_path": "evidence/udbl-library-source.html"
+    },
+    {
+      "name": "Service Géologique National du Congo — geological and mining documentation network",
+      "size_claim": "Catalog names CAMI, CTCPM, MISEDERE, SGMINES and SGN-C; not five separately tested collections and not a book total.",
+      "source_url": "https://sgnc.pmb.cd/opac_css/",
+      "outcome": "Verified query using explicit institutional/network scale proxy; One shared ministry/agency documentation network; CTCPM book holding proven. CAMI/SGMINES/MISEDERE/SGN-C selectors are not separately verified institutions",
+      "evidence_path": "evidence/sgnc-home.html"
+    },
+    {
+      "name": "Institut Français RDC — shared médiathèque catalog (Lubumbashi holding)",
+      "size_claim": "Catalog exposes Kinshasa, Lubumbashi, Bukavu and Goma. This does not establish each city is operational or collection size; Cairn ebook totals are not local holdings.",
+      "source_url": "https://mediatheques-ifrdc.org/",
+      "outcome": "Verified query using explicit institutional/network scale proxy; One shared four-city catalog; only IF Lubumbashi physical holding is verified. Kinshasa, Bukavu and Goma are not counted independently",
+      "evidence_path": "evidence/ifrdc-home.html"
+    },
+    {
+      "name": "CEDESURK — interuniversity documentation center",
+      "size_claim": "Interuniversity documentation and capacity-building center; 120 reading places reported by institutional cooperation publication (2016), not a current collection count.",
+      "source_url": "https://orbi.uliege.be/bitstream/2268/188554/1/Livre%20Pacodel.pdf",
+      "outcome": "Historical Koha endpoint koha.cedesurk.org robots HTTP503; stopped without searching. Important shared-service prospect.",
+      "evidence_path": "evidence/discovery-s4.json"
+    }
+  ],
+  "libraries": [
+    {
+      "id": "cod-cepas",
+      "name": "Centre d’Études Pour l’Action Sociale — Bibliothèque CEPAS",
+      "recommendation": "verified_target",
+      "scope": "One institutional library, Kinshasa; do not count its Mikanda representation separately",
+      "size": {
+        "value": 45000,
+        "unit": "volumes (more than)",
+        "date": "undated page, checked 2026-11-15",
+        "source_url": "https://www.cepas.online/secteurs/bibliotheque",
+        "evidence_path": "evidence/cepas-home.html",
+        "quality": "official",
+        "note": "Official page states more than 45,000 books and 1,600 periodical titles; catalog separately displays 34,165 indexed notices, including articles."
+      },
+      "platform": {
+        "family": "PMB/custom",
+        "name": "PMB with custom Laravel Livewire frontend",
+        "proof": "Institutional page names PMB; custom catalog URL parameters q and notice declared in public Livewire URL effects.",
+        "evidence_path": "evidence/cepas-exact.html"
+      },
+      "query": {
+        "text": "Forced adjustment",
+        "method": "GET",
+        "url": "https://www.cepas.online/catalogue-bibliotheque?q=Forced%20adjustment&notice=13789",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T07:52:14.688811+00:00",
+        "http_status": 200,
+        "effective_url": "https://www.cepas.online/catalogue-bibliotheque?q=Forced%20adjustment&notice=13789",
+        "result_count": 1,
+        "count_note": "Displayed result count; broad token matching can include unrelated records. Not a collection or edition count.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/cepas-exact.html",
+        "metadata_path": "evidence/cepas-exact.json"
+      },
+      "books": [
+        {
+          "title": "Forced adjustment [the expert collapse in sub-saharan Africa]",
+          "author": "Roy Culpeper",
+          "record_id": "13789",
+          "record_url": "https://www.cepas.online/catalogue-bibliotheque?q=Forced%20adjustment&notice=13789",
+          "isbn": null,
+          "holdings": "1 copy; number 22305; ECO.5.J.68; Bibliothèque du CEPAS; Economie du développement; Consultation sur place; Livre",
+          "evidence_path": "evidence/cepas-exact.html"
+        }
+      ],
+      "robots": {
+        "url": "https://www.cepas.online/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T07:47:04.578868+00:00",
+        "evidence_path": "evidence/cepas-robots.json",
+        "decision": "allowed_path",
+        "note": "Checked public catalog path; CEPAS /livewire/ is disallowed and was not requested."
+      },
+      "reader_access": "Public online search. Physical consultation and paid subscriptions described on official library page; current visitor conditions not tested.",
+      "integration": {
+        "existing_adapter": "new custom frontend adapter",
+        "needs": [
+          "Preserve record/edition and institution identity",
+          "Preserve excluded-from-loan, consultation-only and loaned statuses",
+          "Return could-not-check on failures; do not infer not-held",
+          "Use public GET q/notice URL mapping; do not call robots-disallowed /livewire/",
+          "Catalog subtitle contains “expert”, transcribed as returned rather than silently corrected"
+        ],
+        "blockers": [
+          "Not integrated or tested in the live application; reuse rights and current operational access not established"
+        ],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "cod-upc",
+      "name": "Université Protestante au Congo — Bibliothèque Universitaire Centrale",
+      "recommendation": "verified_target",
+      "scope": "One university library verified by UPC copy in the Mikanda shared catalog; Mikanda network is not separately counted",
+      "size": {
+        "value": 29400,
+        "unit": "volumes, approximately",
+        "date": "2015",
+        "source_url": "https://repository.ifla.org/bitstreams/f6541a03-e351-498b-9cd7-77ce63faec91/download",
+        "evidence_path": "evidence/ifla-upc.html",
+        "quality": "primary institutional conference paper",
+        "note": "UPC librarian reports ~29,400 volumes; historical scale only. Current official page confirms service to five faculties."
+      },
+      "platform": {
+        "family": "PMB",
+        "name": "PMB; version not established",
+        "proof": "PMB footer and public OPAC form/routes; bibliography and local copy table returned.",
+        "evidence_path": "evidence/mikanda-upc-query.html"
+      },
+      "query": {
+        "text": "\"La publicité est dans le film\"",
+        "method": "POST",
+        "url": "https://katalog.mikanda.info/pmb/opac_css/index.php?lvl=more_results&autolevel1=1",
+        "payload": {
+          "typdoc": "",
+          "user_query": "\"La publicité est dans le film\"",
+          "look_TITLE": "1",
+          "look_FIRSTACCESS": "1",
+          "ok": "Rechercher"
+        },
+        "checked_at_utc": "2026-11-15T07:51:00.642210+00:00",
+        "http_status": 200,
+        "effective_url": "https://katalog.mikanda.info/pmb/opac_css/index.php?lvl=more_results&autolevel1=1",
+        "result_count": 1,
+        "count_note": "Displayed result count; broad token matching can include unrelated records. Not a collection or edition count.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/mikanda-upc-query.html",
+        "metadata_path": "evidence/mikanda-upc-query.json",
+        "request_chain": [
+          {
+            "metadata_path": "evidence/mikanda-upc-query-form.json",
+            "method": "GET",
+            "url": "https://katalog.mikanda.info/pmb/opac_css/"
+          },
+          {
+            "metadata_path": "evidence/mikanda-upc-query.json",
+            "method": "POST",
+            "url": "https://katalog.mikanda.info/pmb/opac_css/index.php?lvl=more_results&autolevel1=1"
+          }
+        ]
+      },
+      "books": [
+        {
+          "title": "La publicité est dans le film : placement de produits et stratégie de marque au cinéma, dans les chansons, dans les jeux vidéo ...",
+          "author": "Jean-Marc Lehu; Christian Polge (preface)",
+          "record_id": "2744",
+          "record_url": "https://katalog.mikanda.info/pmb/opac_css/index.php?lvl=notice_display&id=2744",
+          "isbn": "978-2-7081-3643-4",
+          "holdings": "1 copy; barcode 0101032; 659.1 LEH 2007; UPC; récent; Exclu du prêt",
+          "evidence_path": "evidence/upc-detail.html"
+        }
+      ],
+      "robots": {
+        "url": "https://katalog.mikanda.info/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T07:46:57.583808+00:00",
+        "evidence_path": "evidence/mikanda-robots.json",
+        "decision": "allowed_path",
+        "note": "Wildcard allows paths, Crawl-delay 10 seconds."
+      },
+      "reader_access": "Public catalog; this copy is excluded from lending. Current university page directs readers to the library for visitor/loan rules.",
+      "integration": {
+        "existing_adapter": "PMB family generalization required; existing PMB integration is deployment-specific",
+        "needs": [
+          "Preserve record/edition and institution identity",
+          "Preserve excluded-from-loan, consultation-only and loaned statuses",
+          "Return could-not-check on failures; do not infer not-held",
+          "Enforce Mikanda 10-second per-origin crawl delay",
+          "Validate local institution from holdings, never from author/publisher or a branch selector alone"
+        ],
+        "blockers": [
+          "Not integrated or tested in the live application; reuse rights and current operational access not established"
+        ],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "cod-ulpgl",
+      "name": "Université Libre des Pays des Grands Lacs — Bibliothèque universitaire, Goma",
+      "recommendation": "verified_target",
+      "scope": "One university network across its faculties; BIFAD copy proven, no faculty counted separately",
+      "size": {
+        "value": 32246,
+        "unit": "books, including 2,000 ebooks",
+        "date": "undated page, checked 2026-11-15",
+        "source_url": "https://bu-ulpgl.net/collections-courantes/",
+        "evidence_path": "evidence/ulpgl-collections.html",
+        "quality": "official",
+        "note": "Total is mixed physical/digital and must not be presented as 32,246 physical books. Two-campus network stated."
+      },
+      "platform": {
+        "family": "PMB",
+        "name": "PMB; version not established",
+        "proof": "PMB footer and public OPAC form/routes; bibliography and local copy table returned.",
+        "evidence_path": "evidence/opac-ulpgl-query-2-results.html"
+      },
+      "query": {
+        "text": "Sociologie des médias",
+        "method": "POST",
+        "url": "https://opac.bu-ulpgl.net/opac_css/index.php?lvl=more_results",
+        "payload": {
+          "mode": "title",
+          "typdoc": "",
+          "count": "82",
+          "user_query": "Sociologie des médias",
+          "l_typdoc": "a"
+        },
+        "checked_at_utc": "2026-11-15T07:50:51.273468+00:00",
+        "http_status": 200,
+        "effective_url": "https://opac.bu-ulpgl.net/opac_css/index.php?lvl=more_results",
+        "result_count": 82,
+        "count_note": "Displayed result count; broad token matching can include unrelated records. Not a collection or edition count.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/opac-ulpgl-query-2-results.html",
+        "metadata_path": "evidence/opac-ulpgl-query-2-results.json",
+        "request_chain": [
+          {
+            "metadata_path": "evidence/opac-ulpgl-query-2-form.json",
+            "method": "GET",
+            "url": "https://opac.bu-ulpgl.net/opac_css/"
+          },
+          {
+            "metadata_path": "evidence/opac-ulpgl-query-2.json",
+            "method": "POST",
+            "url": "https://opac.bu-ulpgl.net/opac_css/index.php?lvl=search_result"
+          },
+          {
+            "metadata_path": "evidence/opac-ulpgl-query-2-results.json",
+            "method": "POST",
+            "url": "https://opac.bu-ulpgl.net/opac_css/index.php?lvl=more_results"
+          }
+        ]
+      },
+      "books": [
+        {
+          "title": "Sociologie des médias",
+          "author": "Rémy Rieffel",
+          "record_id": "7182",
+          "record_url": "https://opac.bu-ulpgl.net/opac_css/index.php?lvl=notice_display&id=7182",
+          "isbn": "978-2-7298-0596-8",
+          "holdings": "1 copy; BU0005955; 302.23 RIE; Livre; BIFAD; Généralités; Disponible",
+          "evidence_path": "evidence/ulpgl-detail.html"
+        }
+      ],
+      "robots": {
+        "url": "https://opac.bu-ulpgl.net/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T07:48:20.439308+00:00",
+        "evidence_path": "evidence/opac-ulpgl-robots.json",
+        "decision": "no_published_rules",
+        "note": "HTTP 404 does not grant reuse rights."
+      },
+      "reader_access": "Public OPAC. Official pages disagree on whether on-site consultation is free or paid; borrowing needs registration. Do not settle fee conflict from search results.",
+      "integration": {
+        "existing_adapter": "PMB family generalization required; existing PMB integration is deployment-specific",
+        "needs": [
+          "Preserve record/edition and institution identity",
+          "Preserve excluded-from-loan, consultation-only and loaned statuses",
+          "Return could-not-check on failures; do not infer not-held",
+          "Official library catalog page links opac.bu-ulpgl.net; do not substitute catalogue.bu-ulpgl.net, which has demo-like content",
+          "First POST search_result then follow returned POST more_results form; preserve semantic payload and fresh session"
+        ],
+        "blockers": [
+          "Not integrated or tested in the live application; reuse rights and current operational access not established"
+        ],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "cod-udbl",
+      "name": "Université Don Bosco de Lubumbashi — library network (Theologicum holding)",
+      "recommendation": "verified_target",
+      "scope": "One UDBL institutional catalog; observed holding is Bibliothèque Theologicum. Do not count the separate Theologicum hostname as another institution",
+      "size": {
+        "value": null,
+        "unit": "university library network",
+        "date": "current official site, checked 2026-11-15",
+        "source_url": "https://udbl.ac.cd/public/index.php?page=biblioth-que",
+        "evidence_path": "evidence/udbl-library-source.html",
+        "quality": "institutional proxy",
+        "note": "Official university library page names Saint François de Sales and Ladrille sites; catalog holds Theologicum material. No defensible collection total was found."
+      },
+      "platform": {
+        "family": "PMB",
+        "name": "PMB; version not established",
+        "proof": "PMB footer and public OPAC form/routes; bibliography and local copy table returned.",
+        "evidence_path": "evidence/udbl-title-final.html"
+      },
+      "query": {
+        "text": "\"Manon Lescaut\"",
+        "method": "POST",
+        "url": "https://bibliotheque-udbl.org/pmb/opac_css/index.php?lvl=more_results&autolevel1=1",
+        "payload": {
+          "typdoc": "",
+          "user_query": "\"Manon Lescaut\"",
+          "look_TITLE": "1",
+          "look_FIRSTACCESS": "1",
+          "ok": "Rechercher"
+        },
+        "checked_at_utc": "2026-11-15T07:54:15.014315+00:00",
+        "http_status": 200,
+        "effective_url": "https://bibliotheque-udbl.org/pmb/opac_css/index.php?lvl=more_results&autolevel1=1",
+        "result_count": 2,
+        "count_note": "Displayed result count; broad token matching can include unrelated records. Not a collection or edition count.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/udbl-title-final.html",
+        "metadata_path": "evidence/udbl-title-final.json"
+      },
+      "books": [
+        {
+          "title": "Manon Lescaut",
+          "author": "Antoine François Prévost",
+          "record_id": "78384",
+          "record_url": "https://bibliotheque-udbl.org/pmb/opac_css/index.php?lvl=notice_display&id=78384",
+          "isbn": null,
+          "holdings": "1 copy; LL 54.005; 809.3; Livre; Bibliothèque Theologicum; Exclu du prêt",
+          "evidence_path": "evidence/udbl-detail.html"
+        }
+      ],
+      "robots": {
+        "url": "https://bibliotheque-udbl.org/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T07:46:57.584743+00:00",
+        "evidence_path": "evidence/udbl-robots.json",
+        "decision": "no_published_rules",
+        "note": "HTTP 404 does not grant reuse rights."
+      },
+      "reader_access": "Anonymous electronic catalog is described as accessible to visitors; the selected physical copy is excluded from lending. Physical entry eligibility unverified.",
+      "integration": {
+        "existing_adapter": "PMB family generalization required; existing PMB integration is deployment-specific",
+        "needs": [
+          "Preserve record/edition and institution identity",
+          "Preserve excluded-from-loan, consultation-only and loaned statuses",
+          "Return could-not-check on failures; do not infer not-held",
+          "Exact title retry followed broad unrelated “Analyse microéconomique” results and a zero-result phrase; these do not show book absence",
+          "Official legal template reserves database/content rights; public lookup is not bulk reuse permission"
+        ],
+        "blockers": [
+          "Not integrated or tested in the live application; reuse rights and current operational access not established"
+        ],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "cod-sgnc",
+      "name": "Service Géologique National du Congo — geological and mining documentation network",
+      "recommendation": "verified_target",
+      "scope": "One shared ministry/agency documentation network; CTCPM book holding proven. CAMI/SGMINES/MISEDERE/SGN-C selectors are not separately verified institutions",
+      "size": {
+        "value": 5,
+        "unit": "named agency collections in the shared catalog",
+        "date": "2026-11-15",
+        "source_url": "https://sgnc.pmb.cd/opac_css/",
+        "evidence_path": "evidence/sgnc-home.html",
+        "quality": "institutional proxy",
+        "note": "Catalog names CAMI, CTCPM, MISEDERE, SGMINES and SGN-C; not five separately tested collections and not a book total."
+      },
+      "platform": {
+        "family": "PMB",
+        "name": "PMB; version not established",
+        "proof": "PMB footer and public OPAC form/routes; bibliography and local copy table returned.",
+        "evidence_path": "evidence/sgnc-query-3-results.html"
+      },
+      "query": {
+        "text": "haut- Uele",
+        "method": "POST",
+        "url": "https://sgnc.pmb.cd/opac_css/index.php?lvl=more_results",
+        "payload": {
+          "user_query": "haut- Uele",
+          "mode": "title",
+          "search_type_asked": "simple_search",
+          "count": "21",
+          "typdoc": "",
+          "l_typdoc": "b,e,a",
+          "csrf_token": "0678d208420a3d9453073269d390cf48322abc0a"
+        },
+        "checked_at_utc": "2026-11-15T07:50:51.638578+00:00",
+        "http_status": 200,
+        "effective_url": "https://sgnc.pmb.cd/opac_css/index.php?lvl=more_results",
+        "result_count": 21,
+        "count_note": "Displayed result count; broad token matching can include unrelated records. Not a collection or edition count.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/sgnc-query-3-results.html",
+        "metadata_path": "evidence/sgnc-query-3-results.json",
+        "request_chain": [
+          {
+            "metadata_path": "evidence/sgnc-query-3-form.json",
+            "method": "GET",
+            "url": "https://sgnc.pmb.cd/opac_css/"
+          },
+          {
+            "metadata_path": "evidence/sgnc-query-3.json",
+            "method": "POST",
+            "url": "https://sgnc.pmb.cd/opac_css/index.php?lvl=search_result"
+          },
+          {
+            "metadata_path": "evidence/sgnc-query-3-results.json",
+            "method": "POST",
+            "url": "https://sgnc.pmb.cd/opac_css/index.php?lvl=more_results"
+          }
+        ]
+      },
+      "books": [
+        {
+          "title": "haut- Uele : trésor touristique",
+          "author": "Jean Omasombo Tshonda (director of publication)",
+          "record_id": "215",
+          "record_url": "https://sgnc.pmb.cd/opac_css/index.php?lvl=notice_display&id=215",
+          "isbn": "978-2-87106-578-4",
+          "holdings": "1 copy; barcode 1001; DP247; papier/numérique; CTCPM; BIBLIOTHEQUE; Disponible. Separate public PDF link also listed.",
+          "evidence_path": "evidence/sgnc-detail.html"
+        }
+      ],
+      "robots": {
+        "url": "https://sgnc.pmb.cd/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T07:47:00.656321+00:00",
+        "evidence_path": "evidence/sgnc-robots.json",
+        "decision": "no_published_rules",
+        "note": "HTTP 404 does not grant reuse rights."
+      },
+      "reader_access": "Anonymous catalog. Physical access and borrowing rules unverified; this is a book with a local copy, not merely a repository PDF.",
+      "integration": {
+        "existing_adapter": "PMB family generalization required; existing PMB integration is deployment-specific",
+        "needs": [
+          "Preserve record/edition and institution identity",
+          "Preserve excluded-from-loan, consultation-only and loaned statuses",
+          "Return could-not-check on failures; do not infer not-held",
+          "Query is title fragment “haut- Uele”; result includes the matching book and maps/reports",
+          "Fresh anonymous session required: GET form, POST search_result, then returned POST more_results with freshly emitted csrf_token",
+          "Replace nonce each run; captured request metadata is evidence, not a durable replay credential",
+          "Generic PMB vendor address in footer is not the library location; use holder CTCPM and institutional addresses"
+        ],
+        "blockers": [
+          "Not integrated or tested in the live application; reuse rights and current operational access not established"
+        ],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "cod-ifrdc",
+      "name": "Institut Français RDC — shared médiathèque catalog (Lubumbashi holding)",
+      "recommendation": "verified_target",
+      "scope": "One shared four-city catalog; only IF Lubumbashi physical holding is verified. Kinshasa, Bukavu and Goma are not counted independently",
+      "size": {
+        "value": 4,
+        "unit": "city catalog views (network proxy)",
+        "date": "2026-11-15",
+        "source_url": "https://mediatheques-ifrdc.org/",
+        "evidence_path": "evidence/ifrdc-home.html",
+        "quality": "institutional proxy",
+        "note": "Catalog exposes Kinshasa, Lubumbashi, Bukavu and Goma. This does not establish each city is operational or collection size; Cairn ebook totals are not local holdings."
+      },
+      "platform": {
+        "family": "PMB",
+        "name": "PMB; version not established",
+        "proof": "PMB footer and public OPAC form/routes; bibliography and local copy table returned.",
+        "evidence_path": "evidence/ifrdc-query2.html"
+      },
+      "query": {
+        "text": "Droit de la concurrence",
+        "method": "POST",
+        "url": "https://mediatheques-ifrdc.org/index.php?lvl=more_results&autolevel1=1",
+        "payload": {
+          "look_ALL": "1",
+          "user_query": "Droit de la concurrence",
+          "dest": "dest_0",
+          "csrf_token": "7f61694354bc451948d52c443f68a5362d035813"
+        },
+        "checked_at_utc": "2026-11-15T07:55:07.083522+00:00",
+        "http_status": 200,
+        "effective_url": "https://mediatheques-ifrdc.org/index.php?lvl=more_results&autolevel1=1",
+        "result_count": 2439,
+        "count_note": "Displayed result count; broad token matching can include unrelated records. Not a collection or edition count.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/ifrdc-query2.html",
+        "metadata_path": "evidence/ifrdc-query2.json",
+        "request_chain": [
+          {
+            "metadata_path": "evidence/ifrdc-query2-form.json",
+            "method": "GET",
+            "url": "https://mediatheques-ifrdc.org/index.php?lvl=index&opac_view=2"
+          },
+          {
+            "metadata_path": "evidence/ifrdc-query2.json",
+            "method": "POST",
+            "url": "https://mediatheques-ifrdc.org/index.php?lvl=more_results&autolevel1=1"
+          }
+        ]
+      },
+      "books": [
+        {
+          "title": "Droit de la concurrence",
+          "author": "Marie-Anne Frison-Roche; Jean-Christophe Roda",
+          "record_id": "31397",
+          "record_url": "https://mediatheques-ifrdc.org/index.php?lvl=notice_display&id=31397",
+          "isbn": "978-2-247-20572-1",
+          "holdings": "1 copy; LU304447; 343 FRI; LIVRE; IF Lubumbashi; Documentaire Adulte; Document pouvant être prêté; Sorti jusqu’au 21/11/2026",
+          "evidence_path": "evidence/ifrdc-detail.html"
+        }
+      ],
+      "robots": {
+        "url": "https://mediatheques-ifrdc.org/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T07:53:26.022620+00:00",
+        "evidence_path": "evidence/ifrdc-robots.json",
+        "decision": "no_published_rules",
+        "note": "HTTP 404 does not grant reuse rights."
+      },
+      "reader_access": "Public OPAC; Lubumbashi official page describes paid annual memberships and two loanable books for two weeks. Selected copy is on loan, not available.",
+      "integration": {
+        "existing_adapter": "PMB family generalization required; existing PMB integration is deployment-specific",
+        "needs": [
+          "Preserve record/edition and institution identity",
+          "Preserve excluded-from-loan, consultation-only and loaned statuses",
+          "Return could-not-check on failures; do not infer not-held",
+          "Start fresh anonymous form at index.php?lvl=index&opac_view=2; carry csrf_token in memory to normal POST",
+          "Do not assume the root/default view or union results prove every city",
+          "A prior quoted Le petit prince returned zero; not evidence of absence"
+        ],
+        "blockers": [
+          "Not integrated or tested in the live application; reuse rights and current operational access not established"
+        ],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "cod-karibuni",
+      "name": "Bibliothèque Karibuni, Kinshasa",
+      "recommendation": "reserve",
+      "scope": "One community/study library proven by Karibuni holding within Mikanda; network not separately counted",
+      "size": {
+        "value": null,
+        "unit": "unquantified study/community library",
+        "date": "2026-11-15",
+        "source_url": "https://mikanda.info/",
+        "evidence_path": "evidence/mikanda-members.html",
+        "quality": "institutional network source",
+        "note": "Mikanda official site describes its 20th anniversary, educational activities and staff/volunteers; scale is insufficient to call it a major national collection."
+      },
+      "platform": {
+        "family": "PMB",
+        "name": "PMB; version not established",
+        "proof": "PMB footer and public OPAC form/routes; bibliography and local copy table returned.",
+        "evidence_path": "evidence/mikanda-query.html"
+      },
+      "query": {
+        "text": "Le petit prince",
+        "method": "POST",
+        "url": "https://katalog.mikanda.info/pmb/opac_css/index.php?lvl=more_results&autolevel1=1",
+        "payload": {
+          "typdoc": "",
+          "surligne": "",
+          "user_query": "Le petit prince",
+          "ok": "Rechercher",
+          "look_TITLE": "1",
+          "look_FIRSTACCESS": "1"
+        },
+        "checked_at_utc": "2026-11-15T07:48:06.949442+00:00",
+        "http_status": 200,
+        "effective_url": "https://katalog.mikanda.info/pmb/opac_css/index.php?lvl=more_results&autolevel1=1",
+        "result_count": 3063,
+        "count_note": "Displayed result count; broad token matching can include unrelated records. Not a collection or edition count.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/mikanda-query.html",
+        "metadata_path": "evidence/mikanda-query.json"
+      },
+      "books": [
+        {
+          "title": "Le Petit Prince",
+          "author": "Antoine de Saint-Exupéry",
+          "record_id": "161504",
+          "record_url": "https://katalog.mikanda.info/pmb/opac_css/index.php?lvl=notice_display&id=161504",
+          "isbn": null,
+          "holdings": "1 copy; BK 1757; R SAI P; Karibuni; indéterminé; Disponible",
+          "evidence_path": "evidence/karibuni-detail.html"
+        }
+      ],
+      "robots": {
+        "url": "https://katalog.mikanda.info/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T07:46:57.583808+00:00",
+        "evidence_path": "evidence/mikanda-robots.json",
+        "decision": "allowed_path",
+        "note": "Wildcard allows paths, Crawl-delay 10 seconds."
+      },
+      "reader_access": "Public catalog; community/study library. Physical visitor and loan eligibility not tested.",
+      "integration": {
+        "existing_adapter": "PMB family generalization required; existing PMB integration is deployment-specific",
+        "needs": [
+          "Preserve record/edition and institution identity",
+          "Preserve excluded-from-loan, consultation-only and loaned statuses",
+          "Return could-not-check on failures; do not infer not-held",
+          "Enforce per-origin 10-second delay",
+          "Only the first returned exact-title book is cited; other keyword results must not be treated as that work"
+        ],
+        "blockers": [
+          "Not integrated or tested in the live application; reuse rights and current operational access not established"
+        ],
+        "live_app_tested": false
+      }
+    }
+  ],
+  "blocked_or_unverified": [
+    {
+      "name": "Bibliothèque nationale du Congo, Kinshasa",
+      "url": "https://acp.cd/culture/litterature-lexistence-des-bibliotheques-assure-la-perennite-de-lecriture-directeur-de-la-bibliotheque-nationale/",
+      "reason": "No public physical-book OPAC established; retain as major priority, not a successful lookup.",
+      "evidence_path": "evidence/acp-national.html"
+    },
+    {
+      "name": "Université de Kinshasa (UNIKIN)",
+      "url": "https://www.unikin.ac.cd/fac/fpsysed/?page_id=88",
+      "reason": "Koha installation documented historically; 2023 study labels koha.unikin.cd as intranet. No internal probing; current public page has no book search.",
+      "evidence_path": "evidence/unikin-faculty.html"
+    },
+    {
+      "name": "Université de Lubumbashi (UNILU)",
+      "url": "https://www.unilu.ac.cd/bibliotheques-de-luniversite-de-lubumbashi/",
+      "reason": "Substantial collection identified; no supported public book-query route found on reviewed institutional page.",
+      "evidence_path": "evidence/unilu-home.html"
+    },
+    {
+      "name": "Université de Kisangani (UNIKIS)",
+      "url": "https://unikis.ac.cd/services",
+      "reason": "Services page is not an OPAC; no returned physical-book search. Do not confuse UNIKIS with Kindu/UNIKI or Université Libre de Kisangani.",
+      "evidence_path": "evidence/unikis-services.html"
+    },
+    {
+      "name": "Université Pédagogique Nationale (UPN)",
+      "url": "https://upn.ac.cd/upn/bibliotheque.php",
+      "reason": "Official central virtual library links theses and DEA dissertations, not a verified physical-book catalog. Astria news does not establish print holdings.",
+      "evidence_path": "evidence/upn-library.html"
+    },
+    {
+      "name": "Université Catholique du Congo (UCC)",
+      "url": "https://repository.ifla.org/bitstreams/f6541a03-e351-498b-9cd7-77ce63faec91/download",
+      "reason": "Mikanda lists UCC but exploratory title produced no result; no UCC holding verified. Do not count selector or UCC-as-publisher as collection evidence.",
+      "evidence_path": "evidence/ifla-upc.html"
+    },
+    {
+      "name": "Université Catholique de Bukavu (UCB)",
+      "url": "https://ucbukavu.ac.cd/etudiants/",
+      "reason": "No public physical-book search exposed. Earlier indexed 38,295-volume document returned HTTP 404; current claim remains qualitative.",
+      "evidence_path": "evidence/ucb-current.html"
+    },
+    {
+      "name": "CEDESURK",
+      "url": "http://koha.cedesurk.org/robots.txt",
+      "reason": "Robots HTTP503: unresolved. No automated catalog search attempted.",
+      "evidence_path": "evidence/cedesurk-robots.json"
+    },
+    {
+      "name": "CENCO library",
+      "url": "https://cencordc.org/robots.txt",
+      "reason": "HTTP200 verification challenge, not ordinary HTML fallback. Stopped.",
+      "evidence_path": "evidence/cenco-robots.html"
+    },
+    {
+      "name": "Université Loyola du Congo / Saint-Pierre Canisius",
+      "url": "https://www.uloyola.cd/bibliotheque/",
+      "reason": "Current page describes resources and subscriptions but no public physical catalog. Historical bibliospcanisius.org robots returned 403 (no approved upstream IPv4); stopped.",
+      "evidence_path": "evidence/loyola-library.html"
+    },
+    {
+      "name": "Université du Lac Albert — Marbella",
+      "url": "https://pmb.unilac.cd/opac_css/",
+      "reason": "Officially linked public OPAC exists but has generic template; PMB landing displays only 223 notices. Not prioritized as a substantial collection; no book-query success claimed.",
+      "evidence_path": "evidence/unilac-opac.html"
+    },
+    {
+      "name": "Université Protestante de Lubumbashi (UPL)",
+      "url": "https://bibliotheque.upl-univ.ac/catalogue",
+      "reason": "Catalog landing lists 1,949 mixed records and public Livewire search UI. No specific book query executed; landing results are not a success.",
+      "evidence_path": "evidence/upl-home.html"
+    },
+    {
+      "name": "ULPGL alternate catalog hostname",
+      "url": "https://catalogue.bu-ulpgl.net/opac_css/",
+      "reason": "Contains PMB demo-like Bibliobus/Loire material. Official library page instead links opac.bu-ulpgl.net, used for successful physical-copy verification; alternate is not counted.",
+      "evidence_path": "evidence/ulpgl-home.html"
+    },
+    {
+      "name": "Theologicum separate hostname",
+      "url": "https://biblio-theologicum.org/pmb/opac_css/",
+      "reason": "Robots redirects to ordinary PMB homepage. Not separately searched/counted because UDBL catalog explicitly returns Theologicum holdings; avoid double counting.",
+      "evidence_path": "evidence/theologicum-robots.html"
+    }
+  ],
+  "limitations": [
+    "No national largest-ten ranking established;14 priorities are not a ranked size league table.",
+    "Seven observed successes: six selected candidates and one reserve; the ten-substantial-query goal remains four selected candidates short.",
+    "UDBL, SGN-C and IFRDC selection rests on explicit institutional/network proxies, not audited book totals; do not present them as the six largest libraries.",
+    "Only UPC/Karibuni are proven within Mikanda; CTCPM within SGN-C; IF Lubumbashi within IFRDC. Unqueried selectors do not establish holdings.",
+    "Historical counts, mixed book/ebook totals, periodicals and indexed notices are different units and must not be summed.",
+    "Normal anonymous sessions were memory-only; no accounts, cookies, authentication or reader actions were saved/performed. CSRF fields in bounded raw responses/request metadata are historical form evidence and must be freshly obtained.",
+    "One unsuccessful Mikanda UCC exploratory form/query/result chain did not enforce its 10-second crawl delay. Subsequent successful UPC sequence was corrected with explicit 10-second wait. This deviation is retained rather than represented as fully compliant.",
+    "UCC programme PDF was bounded to 2 MB of an 8 MB file and cannot validate its indexed 100,000-volume claim; use the complete 2015 primary paper for historical scale.",
+    "Public lookup is not permission to bulk reuse bibliographic databases; reader entry/borrowing rules and operational reliability need separate confirmation.",
+    "Research only: no product configuration, adapter, outreach or deployment changes; live_app_tested=false throughout."
+  ],
+  "sources": [
+    {
+      "url": "https://www.cepas.online/secteurs/bibliotheque",
+      "claim": "Official collection scale, PMB identification and consultation rules",
+      "evidence_path": "evidence/cepas-home.html"
+    },
+    {
+      "url": "https://repository.ifla.org/bitstreams/f6541a03-e351-498b-9cd7-77ce63faec91/download",
+      "claim": "Historical UPC/UCC scale and UPC CD-ISIS-to-PMB evidence",
+      "evidence_path": "evidence/ifla-upc.html"
+    },
+    {
+      "url": "https://repository.ifla.org/bitstreams/41855b8d-0e59-4abe-a7e7-ec8f80f168d1/download",
+      "claim": "Historical UNIKIN Koha implementation",
+      "evidence_path": "evidence/ifla-unikin.html"
+    },
+    {
+      "url": "https://www.unikin.ac.cd/fac/fpsysed/?page_id=88",
+      "claim": "UNIKIN institutional library network",
+      "evidence_path": "evidence/unikin-faculty.html"
+    },
+    {
+      "url": "https://www.unilu.ac.cd/bibliotheques-de-luniversite-de-lubumbashi/",
+      "claim": "UNILU collection quantities and network structure",
+      "evidence_path": "evidence/unilu-home.html"
+    },
+    {
+      "url": "https://unikis.ac.cd/services",
+      "claim": "UNIKIS central library service",
+      "evidence_path": "evidence/unikis-services.html"
+    },
+    {
+      "url": "https://upn.ac.cd/upn/bibliotheque.php",
+      "claim": "UPN central virtual library routes are theses/dissertations",
+      "evidence_path": "evidence/upn-library.html"
+    },
+    {
+      "url": "https://ucbukavu.ac.cd/etudiants/",
+      "claim": "Current qualitative UCB library scale",
+      "evidence_path": "evidence/ucb-current.html"
+    },
+    {
+      "url": "https://acp.cd/culture/litterature-lexistence-des-bibliotheques-assure-la-perennite-de-lecriture-directeur-de-la-bibliotheque-nationale/",
+      "claim": "National library mandate, director interview",
+      "evidence_path": "evidence/acp-national.html"
+    },
+    {
+      "url": "https://bu-ulpgl.net/collections-courantes/",
+      "claim": "Mixed physical/digital book total and two campuses",
+      "evidence_path": "evidence/ulpgl-collections.html"
+    },
+    {
+      "url": "https://bu-ulpgl.net/page-catalogue/",
+      "claim": "Official provenance of opac.bu-ulpgl.net",
+      "evidence_path": "evidence/ulpgl-catalog-link.html"
+    },
+    {
+      "url": "https://udbl.ac.cd/public/index.php?page=biblioth-que",
+      "claim": "Official UDBL network and catalog link; rights language",
+      "evidence_path": "evidence/udbl-library-source.html"
+    },
+    {
+      "url": "https://sgnc.pmb.cd/opac_css/",
+      "claim": "Agency network and PMB platform",
+      "evidence_path": "evidence/sgnc-home.html"
+    },
+    {
+      "url": "https://mediatheques-ifrdc.org/",
+      "claim": "Four-city shared catalog",
+      "evidence_path": "evidence/ifrdc-home.html"
+    },
+    {
+      "url": "https://mediatheques-ifrdc.org/index.php?lvl=cmspage&pageid=6&id_rubrique=105&opac_view=2",
+      "claim": "IF Lubumbashi membership and circulation rules",
+      "evidence_path": "evidence/ifrdc-size.html"
+    },
+    {
+      "url": "https://mikanda.info/",
+      "claim": "Mikanda role and Karibuni background",
+      "evidence_path": "evidence/mikanda-members.html"
+    },
+    {
+      "url": "https://rel.bib.umontreal.ca/bibliotheques-a-l-international3/chapter/republique-democratique-du-congo/",
+      "claim": "Scoped secondary country synthesis: fragmented urban/public/institutional provision; stale national statistics. Direct HTTP403; indexed text retained, not a catalog success.",
+      "evidence_path": "evidence/discovery-s10.json"
+    },
+    {
+      "url": "https://www.cahierseconomiquesetsociaux.cd/Publications/CES_vol39_n%C2%B01/CES_vol_39_n%C2%B01_04.pdf",
+      "claim": "2023 article page 103 explicitly labels UNIKIN catalog intranet and cites CEDESURK; use indexed extraction for this passage.",
+      "evidence_path": "evidence/discovery-s8.json"
+    }
+  ]
+}

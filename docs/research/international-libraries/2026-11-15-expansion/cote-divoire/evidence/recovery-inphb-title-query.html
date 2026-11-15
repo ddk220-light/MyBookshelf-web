@@ -1,0 +1,1150 @@
+<!-- resources/views/resources/search.blade.php -->
+
+
+
+<!-- resources/views/layouts/app.blade.php -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résultats de recherche - Bibliothèque en ligne INP-HB</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <!-- AOS Animation Library -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <!-- Styles personnalisés -->
+    <style>
+        :root {
+            --primary-color: #128a43; /* Vert du logo INP-HB */
+            --primary-dark: #0a6e34;
+            --primary-light: #5eb98a;
+            --primary-transparent: rgba(18, 138, 67, 0.9);
+            --secondary-color: #f37a1f; /* Orange du logo INP-HB */
+            --secondary-dark: #d15f08;
+            --secondary-light: #f79e5a;
+            --light-bg: #f8f9fa;
+            --dark-bg: #212529;
+            --text-color: #333333;
+            --light-text: #ffffff;
+            --border-radius: 8px;
+            --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+        }
+        
+        /* Barre de navigation stylisée */
+        .navbar {
+            background-color: var(--primary-color);
+            padding: 15px 0;
+            transition: var(--transition);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar.scrolled {
+            padding: 10px 0;
+            background-color: var(--primary-transparent);
+            backdrop-filter: blur(10px);
+        }
+        
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+        }
+        
+        .navbar-brand img {
+            height: 45px;
+            filter: drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.2));
+            transition: var(--transition);
+        }
+        
+        .navbar-brand span {
+            margin-left: 10px;
+            font-size: 1.4rem;
+            background: linear-gradient(45deg, var(--light-text) 30%, var(--secondary-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-nav .nav-link {
+            color: var(--light-text);
+            font-weight: 500;
+            padding: 10px 16px;
+            margin: 0 5px;
+            border-radius: 50px;
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .navbar-nav .nav-link:hover, 
+        .navbar-nav .nav-link:focus,
+        .navbar-nav .nav-item.active .nav-link {
+            color: var(--secondary-color);
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background-color: var(--secondary-color);
+            transition: var(--transition);
+        }
+        
+        .navbar-nav .nav-link:hover::after {
+            width: 50%;
+        }
+        
+        /* Dropdown menu styling */
+        .dropdown-menu {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 10px;
+            min-width: 200px;
+            margin-top: 15px;
+            animation: dropdownAnimation 0.3s ease forwards;
+        }
+        
+        @keyframes dropdownAnimation {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .dropdown-menu::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 20px;
+            width: 15px;
+            height: 15px;
+            background: var(--primary-light);
+            transform: rotate(45deg);
+        }
+        
+        .dropdown-item {
+            color: var(--light-text);
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+        
+        .dropdown-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--light-text);
+            transform: translateX(5px);
+        }
+        
+        .dropdown-divider {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Boutons stylisés */
+        .btn {
+            border-radius: 50px;
+            padding: 10px 25px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: var(--transition);
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-color), var(--primary-dark));
+            border: none;
+            box-shadow: 0 4px 15px rgba(18, 138, 67, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(45deg, var(--primary-dark), var(--primary-color));
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(18, 138, 67, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(45deg, var(--secondary-color), var(--secondary-dark));
+            border: none;
+            box-shadow: 0 4px 15px rgba(243, 122, 31, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            background: linear-gradient(45deg, var(--secondary-dark), var(--secondary-color));
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(243, 122, 31, 0.4);
+        }
+        
+        /* Cartes stylisées */
+        .card {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            overflow: hidden;
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 0;
+            background: linear-gradient(var(--primary-color), var(--secondary-color));
+            transition: var(--transition);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card:hover::before {
+            height: 100%;
+        }
+        
+        .card-header {
+            background: linear-gradient(to right, rgba(18, 138, 67, 0.1), transparent);
+            border-bottom: 1px solid rgba(18, 138, 67, 0.1);
+            padding: 15px 20px;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .card-footer {
+            background-color: rgba(248, 249, 250, 0.5);
+            border-top: 1px solid rgba(18, 138, 67, 0.1);
+            padding: 15px 20px;
+        }
+        
+        /* Barre de recherche stylisée */
+        .search-bar {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 2;
+            border-top: 4px solid var(--secondary-color);
+            border-bottom: 4px solid var(--primary-color);
+        }
+        
+        .search-bar .form-control,
+        .search-bar .form-select {
+            border-radius: 50px;
+            padding: 12px 20px;
+            border: 1px solid rgba(18, 138, 67, 0.2);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+        }
+        
+        .search-bar .form-control:focus,
+        .search-bar .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(18, 138, 67, 0.2);
+        }
+        
+        /* Section héroïque stylisée */
+        .hero-section {
+            position: relative;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: var(--light-text);
+            padding: 80px 0;
+            margin-bottom: 50px;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255, 255, 255, 0.1)" d="M0,288L48,272C96,256,192,224,288,197.3C384,171,480,149,576,165.3C672,181,768,235,864,229.3C960,224,1056,160,1152,144C1248,128,1344,160,1392,176L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-repeat: no-repeat;
+            background-position: bottom;
+            background-size: cover;
+            opacity: 0.5;
+        }
+        
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .hero-section p.lead {
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-bottom: 30px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Pied de page stylisé */
+        footer {
+            background-color: var(--dark-bg);
+            color: var(--light-text);
+            padding: 50px 0 20px;
+            margin-top: 80px;
+            position: relative;
+        }
+        
+        footer::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: linear-gradient(135deg, var(--primary-color) 25%, transparent 25%) -10px 0,
+                        linear-gradient(225deg, var(--primary-color) 25%, transparent 25%) -10px 0,
+                        linear-gradient(315deg, var(--primary-color) 25%, transparent 25%),
+                        linear-gradient(45deg, var(--primary-color) 25%, transparent 25%);
+            background-size: 20px 20px;
+            background-color: var(--secondary-color);
+        }
+        
+        footer h5 {
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            position: relative;
+            padding-left: 15px;
+        }
+        
+        footer h5::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: var(--secondary-color);
+            border-radius: 2px;
+        }
+        
+        footer a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        footer a:hover {
+            color: var(--secondary-color);
+            text-decoration: none;
+            transform: translateX(5px);
+        }
+        
+        footer .list-unstyled li {
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        footer .list-unstyled li::before {
+            content: '\f054';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 2px;
+            color: var(--secondary-color);
+            font-size: 12px;
+        }
+        
+        footer hr {
+            border-color: rgba(255, 255, 255, 0.1);
+            margin: 30px 0;
+        }
+        
+        footer .text-center p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        /* Animation du loader de page */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--light-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        
+        .loader-hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .loader-logo {
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                opacity: 0.7;
+            }
+            50% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0.95);
+                opacity: 0.7;
+            }
+        }
+        
+        /* Responsive design */
+        @media (max-width: 992px) {
+            .navbar-collapse {
+                background-color: var(--primary-dark);
+                border-radius: var(--border-radius);
+                padding: 15px;
+                margin-top: 10px;
+            }
+            
+            .navbar-nav .nav-link {
+                margin: 5px 0;
+            }
+            
+            .dropdown-menu {
+                background: rgba(0, 0, 0, 0.1);
+                box-shadow: none;
+                margin-top: 0;
+            }
+            
+            .dropdown-menu::before {
+                display: none;
+            }
+            
+            .hero-section h1 {
+                font-size: 2.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 50px 0;
+            }
+            
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+            
+            .search-bar {
+                padding: 20px;
+            }
+        }
+        
+        /* Badges personnalisés */
+        .badge {
+            padding: 8px 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            border-radius: 20px;
+        }
+        
+        .badge.bg-secondary {
+            background: linear-gradient(45deg, var(--secondary-color), var(--secondary-light)) !important;
+            box-shadow: 0 2px 5px rgba(243, 122, 31, 0.3);
+        }
+        
+        /* Effet de survol pour les liens */
+        a {
+            transition: var(--transition);
+        }
+        
+        /* Animations personnalisées */
+        .fade-in {
+            animation: fadeIn 1s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    </head>
+<body>
+    <!-- Page Loader -->
+    <div class="page-loader">
+        <img src="https://bibliotheque.inphb.ci/images/logo-inp-hb.png" alt="Chargement..." class="loader-logo" width="80">
+    </div>
+
+    <!-- Barre de navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="https://bibliotheque.inphb.ci">
+                <img src="https://bibliotheque.inphb.ci/images/logo-inp-hb.png" alt="Logo INP-HB">
+                <span>Bibliothèque INP-HB</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://bibliotheque.inphb.ci">
+                            <i class="fas fa-home me-1"></i> Accueil
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://bibliotheque.inphb.ci/ressources">
+                            <i class="fas fa-book me-1"></i> Catalogue
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-th-list me-1"></i> Catégories
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="https://bibliotheque.inphb.ci/ressources/categorie/informatique">
+                                <i class="fas fa-laptop-code me-2"></i> Informatique
+                            </a></li>
+                            <li><a class="dropdown-item" href="https://bibliotheque.inphb.ci/ressources/categorie/mathematiques">
+                                <i class="fas fa-square-root-alt me-2"></i> Mathématiques
+                            </a></li>
+                            <li><a class="dropdown-item" href="https://bibliotheque.inphb.ci/ressources/categorie/physique">
+                                <i class="fas fa-atom me-2"></i> Physique
+                            </a></li>
+                            <li><a class="dropdown-item" href="https://bibliotheque.inphb.ci/ressources/categorie/chimie">
+                                <i class="fas fa-flask me-2"></i> Chimie
+                            </a></li>
+                            <li><a class="dropdown-item" href="https://bibliotheque.inphb.ci/ressources/categorie/genie-civil">
+                                <i class="fas fa-hard-hat me-2"></i> Génie Civil
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://bibliotheque.inphb.ci/contact">
+                            <i class="fas fa-envelope me-1"></i> Contact
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu principal -->
+    <main>
+        <div class="container my-5">
+    <div class="search-bar">
+        <form action="https://bibliotheque.inphb.ci/ressources/recherche" method="GET">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <input type="text" name="query" class="form-control form-control-lg" placeholder="Rechercher par titre, auteur, mots-clés..." value="Algèbre linéaire">
+                </div>
+                <div class="col-md-3">
+                    <select name="type" class="form-select form-select-lg">
+                        <option value="">Tous les types</option>
+                        <option value="livre" >Livres</option>
+                        <option value="article" >Articles</option>
+                        <option value="these" >Thèses & Mémoires</option>
+                        <option value="cours" >Cours</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-secondary btn-lg w-100">
+                        <i class="fas fa-search"></i> Rechercher
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="row">
+        <!-- Filtres à gauche -->
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Filtres</h5>
+                </div>
+                <div class="card-body">
+                    <form action="https://bibliotheque.inphb.ci/ressources/recherche" method="GET">
+                        <input type="hidden" name="query" value="Algèbre linéaire">
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Catégories</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="categories[]" value="informatique" id="cat-informatique" >
+                                <label class="form-check-label" for="cat-informatique">Informatique</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="categories[]" value="mathematiques" id="cat-mathematiques" >
+                                <label class="form-check-label" for="cat-mathematiques">Mathématiques</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="categories[]" value="physique" id="cat-physique" >
+                                <label class="form-check-label" for="cat-physique">Physique</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="categories[]" value="chimie" id="cat-chimie" >
+                                <label class="form-check-label" for="cat-chimie">Chimie</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="categories[]" value="genie-civil" id="cat-genie-civil" >
+                                <label class="form-check-label" for="cat-genie-civil">Génie Civil</label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Type de ressource</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="type" value="" id="type-all" checked>
+                                <label class="form-check-label" for="type-all">Tous</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="type" value="livre" id="type-livre" >
+                                <label class="form-check-label" for="type-livre">Livres</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="type" value="article" id="type-article" >
+                                <label class="form-check-label" for="type-article">Articles</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="type" value="these" id="type-these" >
+                                <label class="form-check-label" for="type-these">Thèses & Mémoires</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="type" value="cours" id="type-cours" >
+                                <label class="form-check-label" for="type-cours">Cours</label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Langue</label>
+                            <select class="form-select" name="language">
+                                <option value="">Toutes les langues</option>
+                                <option value="Français" >Français</option>
+                                <option value="Anglais" >Anglais</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">Appliquer les filtres</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Résultats de recherche à droite -->
+        <div class="col-md-9">
+            <h2>Résultats de recherche pour "Algèbre linéaire"</h2>
+            <p>10 ressources trouvées</p>
+            
+                                            <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="badge bg-secondary mb-2">Livre</span>
+                                <h4 class="card-title">Géométrie Analytique</h4>
+                                <p class="text-muted">
+                                    <small>Auteur: V. Iline, E. Pozniak | Catégorie: Mathematiques | Langue: fre</small>
+                                </p>
+                                <p class="card-text">Cet ouvrage a son origine dans les cours lus par les auteurs depuis plusieurs années à la faculté de physique de l’Université de Moscou. Quelles sont ses principales qualités? Tout d’abord, le plan et...</p>
+                                
+                                <div class="mt-3">
+                                    <a href="https://bibliotheque.inphb.ci/ressources/v.-iline-e.-pozniak-geometrie-analytique-mir-1985" class="btn btn-sm btn-primary">Consulter</a>
+                                                                        <a href="https://bibliotheque.inphb.ci/ressources/v.-iline-e.-pozniak-geometrie-analytique-mir-1985/telecharger" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-download"></i> Télécharger
+                                    </a>
+                                                                                                            <a href="https://archive.org/details/v.-iline-e.-pozniak-geometrie-analytique-mir-1985" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-external-link-alt"></i> Lien externe
+                                    </a>
+                                                                    </div>
+                            </div>
+                            
+                            <div class="ms-3">
+                                                                <img src="https://bibliotheque.inphb.ci/images/book-cover.png" alt="Couverture" class="img-thumbnail" style="width: 80px;">
+                                                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="badge bg-secondary mb-2">Livre</span>
+                                <h4 class="card-title">Maths exercices et problèmes</h4>
+                                <p class="text-muted">
+                                    <small>Auteur: Christine Feuillet | Catégorie: Mathematiques | Langue: fre</small>
+                                </p>
+                                <p class="card-text">-algèbre générale; compléments d&#039;algèbre linéaire; sous-espaces stables et réduction des endomorphismes; formes bilinéaires symétriques et formes quadratiques; espaces vectoriels euclidiens; espace pr...</p>
+                                
+                                <div class="mt-3">
+                                    <a href="https://bibliotheque.inphb.ci/ressources/christine-feuillet.-maths-exercices-et-problemes-2e-annee" class="btn btn-sm btn-primary">Consulter</a>
+                                                                        <a href="https://bibliotheque.inphb.ci/ressources/christine-feuillet.-maths-exercices-et-problemes-2e-annee/telecharger" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-download"></i> Télécharger
+                                    </a>
+                                                                                                            <a href="https://archive.org/details/christine-feuillet.-maths-exercices-et-problemes-2e-annee" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-external-link-alt"></i> Lien externe
+                                    </a>
+                                                                    </div>
+                            </div>
+                            
+                            <div class="ms-3">
+                                                                <img src="https://bibliotheque.inphb.ci/images/book-cover.png" alt="Couverture" class="img-thumbnail" style="width: 80px;">
+                                                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="badge bg-secondary mb-2">Livre</span>
+                                <h4 class="card-title">Elementary linear algebra with applications</h4>
+                                <p class="text-muted">
+                                    <small>Auteur: Anton, Howard, Rorres, Chris | Catégorie: Mathematiques | Langue: eng</small>
+                                </p>
+                                <p class="card-text">Includes bibliographical references and index</p>
+                                
+                                <div class="mt-3">
+                                    <a href="https://bibliotheque.inphb.ci/ressources/elementarylinea00anto" class="btn btn-sm btn-primary">Consulter</a>
+                                                                        <a href="https://bibliotheque.inphb.ci/ressources/elementarylinea00anto/telecharger" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-download"></i> Télécharger
+                                    </a>
+                                                                                                            <a href="https://archive.org/details/elementarylinea00anto" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-external-link-alt"></i> Lien externe
+                                    </a>
+                                                                    </div>
+                            </div>
+                            
+                            <div class="ms-3">
+                                                                <img src="https://bibliotheque.inphb.ci/images/book-cover.png" alt="Couverture" class="img-thumbnail" style="width: 80px;">
+                                                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="badge bg-secondary mb-2">Livre</span>
+                                <h4 class="card-title">Leçons De Géométrie IIe Semestre Algèbre Linéaire Et Géométrie Différentielle</h4>
+                                <p class="text-muted">
+                                    <small>Auteur: M. Postnikov | Catégorie: Mathematiques | Langue: fre</small>
+                                </p>
+                                <p class="card-text">Ce livre continue la Géométrie analytique *) et reproduit presque textuellement les conférences faites par l&#039;auteur (dans le cadre du cours d’Algèbre linéaire et de Géométrie analytique) à l’intention...</p>
+                                
+                                <div class="mt-3">
+                                    <a href="https://bibliotheque.inphb.ci/ressources/postnikov-lecons-de-geometrie-iie-semestre-algebre-lineaire-et-geometrie-differentielle-mir-1981" class="btn btn-sm btn-primary">Consulter</a>
+                                                                        <a href="https://bibliotheque.inphb.ci/ressources/postnikov-lecons-de-geometrie-iie-semestre-algebre-lineaire-et-geometrie-differentielle-mir-1981/telecharger" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-download"></i> Télécharger
+                                    </a>
+                                                                                                            <a href="https://archive.org/details/postnikov-lecons-de-geometrie-iie-semestre-algebre-lineaire-et-geometrie-differentielle-mir-1981" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-external-link-alt"></i> Lien externe
+                                    </a>
+                                                                    </div>
+                            </div>
+                            
+                            <div class="ms-3">
+                                                                <img src="https://bibliotheque.inphb.ci/images/book-cover.png" alt="Couverture" class="img-thumbnail" style="width: 80px;">
+                                                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="badge bg-secondary mb-2">Livre</span>
+                                <h4 class="card-title">Linear algebra</h4>
+                                <p class="text-muted">
+                                    <small>Auteur: Bloch, Norman J, Michaels, John G., joint author | Catégorie: Mathematiques | Langue: eng</small>
+                                </p>
+                                <p class="card-text">Includes index</p>
+                                
+                                <div class="mt-3">
+                                    <a href="https://bibliotheque.inphb.ci/ressources/linearalgebra00bloc" class="btn btn-sm btn-primary">Consulter</a>
+                                                                        <a href="https://bibliotheque.inphb.ci/ressources/linearalgebra00bloc/telecharger" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-download"></i> Télécharger
+                                    </a>
+                                                                                                            <a href="https://archive.org/details/linearalgebra00bloc" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-external-link-alt"></i> Lien externe
+                                    </a>
+                                                                    </div>
+                            </div>
+                            
+                            <div class="ms-3">
+                                                                <img src="https://bibliotheque.inphb.ci/images/book-cover.png" alt="Couverture" class="img-thumbnail" style="width: 80px;">
+                                                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="badge bg-secondary mb-2">Livre</span>
+                                <h4 class="card-title">Differential equations and linear algebra</h4>
+                                <p class="text-muted">
+                                    <small>Auteur: Goode, Stephen W., 1957- | Catégorie: Mathematiques | Langue: eng</small>
+                                </p>
+                                <p class="card-text">Includes bibliographical references and index</p>
+                                
+                                <div class="mt-3">
+                                    <a href="https://bibliotheque.inphb.ci/ressources/differentialequa00good" class="btn btn-sm btn-primary">Consulter</a>
+                                                                        <a href="https://bibliotheque.inphb.ci/ressources/differentialequa00good/telecharger" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-download"></i> Télécharger
+                                    </a>
+                                                                                                            <a href="https://archive.org/details/differentialequa00good" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-external-link-alt"></i> Lien externe
+                                    </a>
+                                                                    </div>
+                            </div>
+                            
+                            <div class="ms-3">
+                                                                <img src="https://bibliotheque.inphb.ci/images/book-cover.png" alt="Couverture" class="img-thumbnail" style="width: 80px;">
+                                                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="badge bg-secondary mb-2">Livre</span>
+                                <h4 class="card-title">Linear algebra</h4>
+                                <p class="text-muted">
+                                    <small>Auteur: Shields, Paul C | Catégorie: Mathematiques | Langue: eng</small>
+                                </p>
+                                <p class="card-text">Bibliography: p. 265</p>
+                                
+                                <div class="mt-3">
+                                    <a href="https://bibliotheque.inphb.ci/ressources/linearalgebra00shie" class="btn btn-sm btn-primary">Consulter</a>
+                                                                        <a href="https://bibliotheque.inphb.ci/ressources/linearalgebra00shie/telecharger" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-download"></i> Télécharger
+                                    </a>
+                                                                                                            <a href="https://archive.org/details/linearalgebra00shie" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-external-link-alt"></i> Lien externe
+                                    </a>
+                                                                    </div>
+                            </div>
+                            
+                            <div class="ms-3">
+                                                                <img src="https://bibliotheque.inphb.ci/images/book-cover.png" alt="Couverture" class="img-thumbnail" style="width: 80px;">
+                                                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="badge bg-secondary mb-2">Livre</span>
+                                <h4 class="card-title">Elementary differential equations with linear algebra</h4>
+                                <p class="text-muted">
+                                    <small>Auteur: Rabenstein, Albert L | Catégorie: Mathematiques | Langue: eng</small>
+                                </p>
+                                <p class="card-text">Includes index</p>
+                                
+                                <div class="mt-3">
+                                    <a href="https://bibliotheque.inphb.ci/ressources/elementarydiffer00rabe" class="btn btn-sm btn-primary">Consulter</a>
+                                                                        <a href="https://bibliotheque.inphb.ci/ressources/elementarydiffer00rabe/telecharger" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-download"></i> Télécharger
+                                    </a>
+                                                                                                            <a href="https://archive.org/details/elementarydiffer00rabe" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-external-link-alt"></i> Lien externe
+                                    </a>
+                                                                    </div>
+                            </div>
+                            
+                            <div class="ms-3">
+                                                                <img src="https://bibliotheque.inphb.ci/images/book-cover.png" alt="Couverture" class="img-thumbnail" style="width: 80px;">
+                                                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="badge bg-secondary mb-2">Livre</span>
+                                <h4 class="card-title">Algebre Lineaire et Programmation Lineaire</h4>
+                                <p class="text-muted">
+                                    <small>Auteur: Jean Acher | Catégorie: Informatique | Langue: Fre</small>
+                                </p>
+                                <p class="card-text">Pas de description disponible</p>
+                                
+                                <div class="mt-3">
+                                    <a href="https://bibliotheque.inphb.ci/ressources/algebrelineairee0005jean" class="btn btn-sm btn-primary">Consulter</a>
+                                                                        <a href="https://bibliotheque.inphb.ci/ressources/algebrelineairee0005jean/telecharger" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-download"></i> Télécharger
+                                    </a>
+                                                                                                            <a href="https://archive.org/details/algebrelineairee0005jean" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-external-link-alt"></i> Lien externe
+                                    </a>
+                                                                    </div>
+                            </div>
+                            
+                            <div class="ms-3">
+                                                                <img src="https://bibliotheque.inphb.ci/images/book-cover.png" alt="Couverture" class="img-thumbnail" style="width: 80px;">
+                                                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="badge bg-secondary mb-2">Livre</span>
+                                <h4 class="card-title">Linear algebra</h4>
+                                <p class="text-muted">
+                                    <small>Auteur: Hadley, G. (George), 1930- | Catégorie: Mathematiques | Langue: eng</small>
+                                </p>
+                                <p class="card-text">290 p. 24 cm</p>
+                                
+                                <div class="mt-3">
+                                    <a href="https://bibliotheque.inphb.ci/ressources/linearalgebra00hadlrich" class="btn btn-sm btn-primary">Consulter</a>
+                                                                        <a href="https://bibliotheque.inphb.ci/ressources/linearalgebra00hadlrich/telecharger" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-download"></i> Télécharger
+                                    </a>
+                                                                                                            <a href="https://archive.org/details/linearalgebra00hadlrich" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-external-link-alt"></i> Lien externe
+                                    </a>
+                                                                    </div>
+                            </div>
+                            
+                            <div class="ms-3">
+                                                                <img src="https://bibliotheque.inphb.ci/images/book-cover.png" alt="Couverture" class="img-thumbnail" style="width: 80px;">
+                                                            </div>
+                        </div>
+                    </div>
+                </div>
+                                
+                <!-- Pagination -->
+                <div class="d-flex justify-content-center mt-4">
+                    <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center justify-between">
+        <div class="flex justify-between flex-1 sm:hidden">
+                            <span class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default leading-5 rounded-md dark:text-gray-600 dark:bg-gray-800 dark:border-gray-600">
+                    &laquo; Previous
+                </span>
+            
+                            <a href="https://bibliotheque.inphb.ci/ressources/recherche?query=Alg%C3%A8bre%20lin%C3%A9aire&amp;page=2" class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 rounded-md hover:text-gray-500 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:focus:border-blue-700 dark:active:bg-gray-700 dark:active:text-gray-300">
+                    Next &raquo;
+                </a>
+                    </div>
+
+        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div>
+                <p class="text-sm text-gray-700 leading-5 dark:text-gray-400">
+                    Showing
+                                            <span class="font-medium">1</span>
+                        to
+                        <span class="font-medium">10</span>
+                                        of
+                    <span class="font-medium">31</span>
+                    results
+                </p>
+            </div>
+
+            <div>
+                <span class="relative z-0 inline-flex rtl:flex-row-reverse shadow-sm rounded-md">
+                    
+                                            <span aria-disabled="true" aria-label="&amp;laquo; Previous">
+                            <span class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-l-md leading-5 dark:bg-gray-800 dark:border-gray-600" aria-hidden="true">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </span>
+                        </span>
+                    
+                    
+                                            
+                        
+                        
+                                                                                                                        <span aria-current="page">
+                                        <span class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default leading-5 dark:bg-gray-800 dark:border-gray-600">1</span>
+                                    </span>
+                                                                                                                                <a href="https://bibliotheque.inphb.ci/ressources/recherche?query=Alg%C3%A8bre%20lin%C3%A9aire&amp;page=2" class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:text-gray-500 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:text-gray-300 dark:active:bg-gray-700 dark:focus:border-blue-800" aria-label="Go to page 2">
+                                        2
+                                    </a>
+                                                                                                                                <a href="https://bibliotheque.inphb.ci/ressources/recherche?query=Alg%C3%A8bre%20lin%C3%A9aire&amp;page=3" class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:text-gray-500 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:text-gray-300 dark:active:bg-gray-700 dark:focus:border-blue-800" aria-label="Go to page 3">
+                                        3
+                                    </a>
+                                                                                                                                <a href="https://bibliotheque.inphb.ci/ressources/recherche?query=Alg%C3%A8bre%20lin%C3%A9aire&amp;page=4" class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:text-gray-500 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:text-gray-300 dark:active:bg-gray-700 dark:focus:border-blue-800" aria-label="Go to page 4">
+                                        4
+                                    </a>
+                                                                                                        
+                    
+                                            <a href="https://bibliotheque.inphb.ci/ressources/recherche?query=Alg%C3%A8bre%20lin%C3%A9aire&amp;page=2" rel="next" class="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150 dark:bg-gray-800 dark:border-gray-600 dark:active:bg-gray-700 dark:focus:border-blue-800" aria-label="Next &amp;raquo;">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                                    </span>
+            </div>
+        </div>
+    </nav>
+
+                </div>
+                    </div>
+    </div>
+</div>
+    </main>
+
+    <!-- Pied de page -->
+    <footer class="footer mt-auto">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Bibliothèque en ligne INP-HB</h5>
+                    <p>Accédez à des milliers de ressources académiques gratuites pour vos études.</p>
+                    <div class="mt-4">
+                        <img src="https://bibliotheque.inphb.ci/images/logo-inp-hb.png" alt="Logo INP-HB" width="120" class="mb-3">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h5>Liens rapides</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="https://bibliotheque.inphb.ci">Accueil</a></li>
+                        <li><a href="https://bibliotheque.inphb.ci/ressources">Catalogue</a></li>
+                        <li><a href="https://bibliotheque.inphb.ci/ressources/categories">Catégories</a></li>
+                        <li><a href="https://bibliotheque.inphb.ci/contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact</h5>
+                    <address>
+                        <div class="d-flex mb-3">
+                            <i class="fas fa-map-marker-alt me-3 mt-1"></i>
+                            <div>INP-HB, Yamoussoukro<br>Côte d'Ivoire</div>
+                        </div>
+                        <div class="d-flex mb-3">
+                            <i class="fas fa-envelope me-3 mt-1"></i>
+                            <div>bibliotheque@inphb.ci</div>
+                        </div>
+                        <div class="d-flex">
+                            <i class="fas fa-phone me-3 mt-1"></i>
+                            <div>+225 27 30 64 00 00</div>
+                        </div>
+                    </address>
+                    <div class="mt-4">
+                        <a href="#" class="me-3 text-white"><i class="fab fa-facebook-f fa-lg"></i></a>
+                        <a href="#" class="me-3 text-white"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="#" class="me-3 text-white"><i class="fab fa-linkedin-in fa-lg"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-instagram fa-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center">
+                <p>&copy; 2026 Institut National Polytechnique Félix Houphouët-Boigny. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        // Animation au défilement
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialiser AOS
+            AOS.init({
+                duration: 800,
+                easing: 'ease-in-out',
+                once: true
+            });
+            
+            // Gérer le loader de page
+            setTimeout(function() {
+                const loader = document.querySelector('.page-loader');
+                loader.classList.add('loader-hidden');
+            }, 800);
+            
+            // Navbar scrolled effect
+            window.addEventListener('scroll', function() {
+                const navbar = document.querySelector('.navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+            
+            // Activer le lien de navigation actif
+            const currentLocation = location.pathname;
+            const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+            
+            navLinks.forEach(link => {
+                const navLinkPath = link.getAttribute('href');
+                if (navLinkPath === currentLocation || (currentLocation.includes(navLinkPath) && navLinkPath !== '#')) {
+                    link.closest('.nav-item').classList.add('active');
+                }
+            });
+        });
+    </script>
+    </body>
+</html>

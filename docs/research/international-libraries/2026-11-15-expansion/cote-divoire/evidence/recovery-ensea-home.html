@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta http-equiv="Content-Security-Policy" content="">
+			<meta charset="utf-8">
+			<meta name="author" content="Bibliothèque de l'ENSEA">
+			<meta name="description" content="Catalogue en ligne Bibliothèque de l'ENSEA.">
+			<script async defer src="./includes/altcha/altcha.js" type="module"></script><meta name="robots" content="index, follow">
+			
+			<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3">
+	<title>Catalogue en ligne Bibliothèque de l'ENSEA</title>
+	
+	
+<link rel="stylesheet" type="text/css" href="./styles/common/404.css?1767971761">
+<link rel="stylesheet" type="text/css" href="./styles/common/accessibility.css?1760709604">
+<link rel="stylesheet" type="text/css" href="./styles/common/ai_search.css?1770127230">
+<link rel="stylesheet" type="text/css" href="./styles/common/animation_display.css?1615825938">
+<link rel="stylesheet" type="text/css" href="./styles/common/authority_rgaa.css?1772451750">
+<link rel="stylesheet" type="text/css" href="./styles/common/calendar.css?1751552291">
+<link rel="stylesheet" type="text/css" href="./styles/common/cms.css?1735641815">
+<link rel="stylesheet" type="text/css" href="./styles/common/common.css?1761036408">
+<link rel="stylesheet" type="text/css" href="./styles/common/contact.css?1760709604">
+<link rel="stylesheet" type="text/css" href="./styles/common/contrib.css?1673276618">
+<link rel="stylesheet" type="text/css" href="./styles/common/cookies.css?1760709604">
+<link rel="stylesheet" type="text/css" href="./styles/common/dGrowl.css?1657616134">
+<link rel="stylesheet" type="text/css" href="./styles/common/demand.css?1760709604">
+<link rel="stylesheet" type="text/css" href="./styles/common/dsi.css?1769694056">
+<link rel="stylesheet" type="text/css" href="./styles/common/font-awesome.css?1478593624">
+<link rel="stylesheet" type="text/css" href="./styles/common/list_ui.css?1760709604">
+<link rel="stylesheet" type="text/css" href="./styles/common/mfa.css?1760709604">
+<link rel="stylesheet" type="text/css" href="./styles/common/modal.css?1761036407">
+<link rel="stylesheet" type="text/css" href="./styles/common/notices_externes.css?1768399773">
+<link rel="stylesheet" type="text/css" href="./styles/common/notification.css?1759400269">
+<link rel="stylesheet" type="text/css" href="./styles/common/open-sans.css?1479312986">
+<link rel="stylesheet" type="text/css" href="./styles/common/pagination.css?1532013719">
+<link rel="stylesheet" type="text/css" href="./styles/common/record_display.css?1692887340">
+<link rel="stylesheet" type="text/css" href="./styles/common/rmc_fix.css?1772112762">
+<link rel="stylesheet" type="text/css" href="./styles/common/scan_request.css?1760709604">
+<link rel="stylesheet" type="text/css" href="./styles/common/sort.css?1760709604">
+<link rel="stylesheet" type="text/css" href="./styles/common/visionneuse.css?1711723334">
+<link rel="stylesheet" type="text/css" href="./styles/common/zone-container.css?1761036408">
+<link rel="stylesheet" type="text/css" href="./styles/bretagne3/bretagne3.css?1423039030">
+<link rel="stylesheet" type="text/css" href="./styles/bretagne3/colonnes.css?1370943026">
+<link rel="stylesheet" type="text/css" href="./styles/bretagne3/ext_search.css?1370943026">
+<link rel="stylesheet" type="text/css" href="./styles/bretagne3/gallerie_photos.css?1370943026">
+<link rel="stylesheet" type="text/css" href="./styles/bretagne3/liste_bulletins.css?1370943026">
+<link rel="stylesheet" type="text/css" href="./styles/bretagne3/print.css?1370943026">
+<link rel="stylesheet" type="text/css" href="./styles/bretagne3/tags.css?1370943026">
+<link rel="stylesheet" type="text/css" href="./styles/bretagne3/visionneuse.css?1370943026">
+<script>var opac_style= 'bretagne3';</script>
+		<link rel="SHORTCUT ICON" href="./images/site/favicon.ico">
+	<script src="includes/javascript/drag_n_drop.js"></script>
+	<script src="includes/javascript/handle_drop.js"></script>
+	<script src="includes/javascript/popup.js"></script>
+	<script>
+			// Fonction a utiliser pour l'encodage des URLs en javascript
+			function encode_URL(data){
+				var docCharSet = document.characterSet ? document.characterSet : document.charset;
+				if(docCharSet == "UTF-8"){
+	    			return encodeURIComponent(data);
+	    		}else{
+	    			return escape(data);
+	    		}
+	    	}
+	    </script>
+	<script>
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName =
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i);
+				    }
+				 }
+				return items;
+			 }
+		}
+	</script>
+
+		<link rel="stylesheet" type="text/css" href="./includes/javascript/dojo/dijit/themes/tundra/tundra.css">
+		<script>
+			var dojoConfig = {
+				parseOnLoad: true,
+				locale: 'fr-fr',
+				isDebug: false,
+				usePlainJson: true,
+				packages: [{
+						name: 'pmbBase',
+						location:'../../../..'
+					},{
+						name: 'd3',
+						location:'../../d3'
+					}],
+				deps: ['apps/pmb/MessagesStore', 'dgrowl/dGrowl', 'dojo/ready', 'apps/pmb/ImagesStore'],
+				callback:function(MessagesStore, dGrowl, ready, ImagesStore){
+					window.pmbDojo = {};
+					pmbDojo.messages = new MessagesStore({url:'./ajax.php?module=ajax&categ=messages', directInit:false, lastModified:'1780568767'});
+					pmbDojo.images = new ImagesStore({url:'./ajax.php?module=ajax&categ=images', directInit:false});
+					ready(function(){
+						new dGrowl({'channels':[{'name':'info','pos':2},{'name':'error', 'pos':1}]});
+					});
+
+				},
+			};
+		</script>
+		<script src="./includes/javascript/dojo/dojo/dojo.js"></script>
+		<script>
+		dojo.addOnLoad(function () {
+			// Ajout du theme Dojo
+			dojo.addClass(dojo.body(),'tundra');
+		})
+		</script>
+		<script>
+	var pmb_img_patience = './images/patience.gif';
+</script><script>
+			var opac_show_social_network =0;
+		</script>
+	<script src="includes/javascript/affiliate_search.js"></script>
+	<script src="./includes/javascript/http_request.js"></script>
+	<script src="./includes/javascript/track_clicks.js"></script>
+	
+<meta http-equiv="Content-Type" content="charset=utf-8">
+<link rel="canonical" href="https://labiblio.ensea.ed.ci/opac_css/index.php">
+</head>
+
+<body onload="window.defaultStatus='PMB : Accès public';" id="pmbopac">
+		<script>
+		function findNoticeElement(id){
+			var ul=null;
+			//cas des notices classiques
+			var domNotice = document.getElementById('el'+id+'Child');
+			//notice_display
+			if(!domNotice) domNotice = document.getElementById('notice');
+			if(domNotice){
+				var uls = domNotice.getElementsByTagName('ul');
+				for (var i=0 ; i<uls.length ; i++){
+					if(uls[i].getAttribute('id') == 'onglets_isbd_public'+id){
+						var ul = uls[i];
+						break;
+					}
+				}
+			} else{
+				var li = document.getElementById('onglet_isbd'+id);
+				if(!li) var li = document.getElementById('onglet_public'+id);
+				if(!li) var li = document.getElementById('onglet_detail'+id);
+				if(li) var ul = li.parentNode;
+			}
+			return ul;
+		}
+		function show_what(quoi, id) {
+			switch(quoi){
+				case 'EXPL_LOC' :
+					document.getElementById('div_expl_loc' + id).style.display = 'block';
+					document.getElementById('div_expl' + id).style.display = 'none';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_inactive';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_active';
+					break;
+				case 'EXPL' :
+					document.getElementById('div_expl_loc' + id).style.display = 'none';
+					document.getElementById('div_expl' + id).style.display = 'block';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_active';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_inactive';
+					break;
+				default :
+					quoi= quoi.toLowerCase();
+					var ul = findNoticeElement(id);
+					if (ul) {
+						var items  = ul.getElementsByTagName('li');
+						for (var i=0 ; i<items.length ; i++){
+							if(items[i].getAttribute('id')){
+								if(items[i].getAttribute('id') == 'onglet_'+quoi+id){
+									items[i].className = 'isbd_public_active';
+									document.getElementById('div_'+quoi+id).style.display = 'block';
+								}else{
+									if(items[i].className != 'onglet_tags' && items[i].className != 'onglet_avis' && items[i].className != 'onglet_sugg' && items[i].className != 'onglet_basket' && items[i].className != 'onglet_liste_lecture'){
+										items[i].className = 'isbd_public_inactive';
+										document.getElementById(items[i].getAttribute('id').replace('onglet','div')).style.display = 'none';
+									}
+								}
+							}
+						}
+					}
+					break;
+			}
+		}
+		</script>
+	<script src="./includes/javascript/tablist_ajax.js"></script>
+<script src="./includes/javascript/tablist.js"></script>
+<script src="./includes/javascript/misc.js"></script>
+	<div id="att" style="z-Index:1000"></div>
+	<div id="container">
+<div id="main">
+<div id="main_header"><h1>BIBLIOTHÈQUE DE L'ENSEA</h1></div>
+<div id="main_hors_footer">
+						
+
+<script src="./includes/javascript/auth_popup.js"></script>
+<script src="./includes/javascript/pnb.js"></script><div id="intro_message">
+<div class="p1"><map name="map_lien_retour" id="map_lien_retour">
+<area shape="rect" coords="0,0,250,100" href="index.php?%0Alvl=index" alt="Retour à l'accueil">
+</map></div>
+<div class="p2"></div>
+</div>
+<div id="navigator">
+<table role="presentation" style="width:100%"><tr>
+<td class="navig_actions_last_search"><a href="index.php?lvl=search_result&amp;get_query=0" class="actions_last_search"><span>Modifier la recherche</span></a></td>
+<td class="navig_actions_first_screen"><a href="./index.php?lvl=index" class="navig_etageres"><span>Nouvelle recherche</span></a></td>
+</tr></table>
+</div>
+<div id="resume_panier" class="empty"></div>
+<script>
+<!--
+	function test_form(form)
+	{
+
+		return true;
+	}
+-->
+</script><div id="search" role="search">
+<ul class="search_tabs">
+<li id="current" aria-current="page"><a href="./index.php?search_type_asked=simple_search">Recherche simple</a></li>
+<li><a href="./index.php?search_type_asked=extended_search">Recherche multi-critères</a></li>
+<li><a href="./index.php?search_type_asked=term_search">Recherche par termes</a></li>
+<li><a href="./index.php?search_type_asked=tags_search">Recherche par tags</a></li>
+<li><a href="./index.php?search_type_asked=external_search&amp;external_type=simple">Interrogation externe</a></li>
+</ul>
+<div id="search_crl"></div>
+<div class="row">
+		<form name="search_input" action="./index.php?lvl=more_results&amp;autolevel1=1" method="post" onsubmit="if (search_input.user_query.value.length == 0) { search_input.user_query.value='*'; return true; }">
+			<label for="typdoc_select" class="visually-hidden">Sélectionner un type de document</label><select name="typdoc" id="typdoc_select" title="Sélectionner un type de document">  <option value="" selected>Tout type de document</option>
+  <option value="a">texte imprimé</option>
+  <option value="b">texte manuscrit</option>
+  <option value="j">enregistrement sonore musical</option>
+  <option value="m">document multimédia</option>
+</select>
+			
+			<br>
+			<input type="hidden" name="surligne" value="">
+				<label for="user_query_lib" class="visually-hidden">Recherche</label>
+				<input type="text" name="user_query" title="Rechercher un document" id="user_query_lib" class="text_query" value="" size="65">
+<input type="submit" name="ok" value="Rechercher" class="boutonrechercher">
+<input type="button" value="Aide" class="bouton button_search_help" onclick='window.open("./help.php?whatis=simple_search", "search_help", "scrollbars=yes, toolbar=no, dependent=yes, width=400, height=400, resizable=yes"); return false'>
+<div id="simple_search_zone">
+		<div class="row"></div>
+		<div id="zsimples" class="notice-parent">
+		    
+			<img src="./getgif.php?nomgif=plus" name="imEx" id="zsimplesImg" title="détail" style="border:0px" onclick="expandBase('zsimples', true); return false;" loading="lazy">
+		
+			<span class="notice-heada" id="zsimplesLabelChild">Rechercher dans...</span>
+		</div>
+		<div role="region" id="zsimplesChild" aria-labelledby="zsimplesLabelChild" class="notice-child" style="margin-bottom:6px;display:none;width:94%">
+<div class="row">
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_TITLE" id="look_TITLE" value="1"><label for="look_TITLE"> Titres </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_AUTHOR" id="look_AUTHOR" value="1"><label for="look_AUTHOR"> Auteurs </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_PUBLISHER" id="look_PUBLISHER" value="1"><label for="look_PUBLISHER"> Editeurs </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_TITRE_UNIFORME" id="look_TITRE_UNIFORME" value="1"><label for="look_TITRE_UNIFORME"> Oeuvres / Expressions </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_COLLECTION" id="look_COLLECTION" value="1"><label for="look_COLLECTION"> Collections </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_CATEGORY" id="look_CATEGORY" value="1"><label for="look_CATEGORY"> Catégories </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_INDEXINT" id="look_INDEXINT" value="1"><label for="look_INDEXINT"> Indexations décimales </label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_KEYWORDS" id="look_KEYWORDS" value="1"><label for="look_KEYWORDS"> Tags</label></span>
+<span style="width: 30%; float: left;"><input type="checkbox" name="look_ALL" id="look_ALL" value="1" checked onclick="return false;" title="La recherche Tous les champs ne peut être décochée."><label for="look_ALL"> Tous les champs </label></span>
+</div>
+<div style="clear: both;"><input type="hidden" name="look_FIRSTACCESS" value="1"></div>
+</div>
+	</div>
+<input type="hidden" name="csrf_token" value="[REDACTED anonymous form token]">
+</form>
+		<script src="./includes/javascript/ajax.js"></script>
+		<script>
+
+                if (document.forms['search_input'] && document.forms['search_input'].elements['user_query']) {
+                    document.forms["search_input"].elements["user_query"].focus();
+					
+                }
+		</script>
+</div>
+</div>
+<div id="location">
+<h3><span>Vous n'avez pas d'idée pour chercher ? Entrez dans la bibliothèque...</span></h3>
+<div id="location-container">
+<b>Vous avez un titre ou un auteur en tête : <a href="index.php?">cliquez ici pour faire une recherche</a>, sinon explorez les rayons...</b><br><br>
+	<script>
+		function opac_sections_ui_sort_by(criteria, asc_desc, indice) {
+			var url = './ajax.php?module=empr&lvl=index&action=list&sort_by='+criteria;
+			if(asc_desc == 'desc') {
+				//on repasse en tri croissant
+				url += '&sort_asc_desc=asc';
+			} else if(asc_desc == 'asc') {
+				//on repasse en tri decroissant
+				url += '&sort_asc_desc=desc';
+			}
+			var req = new http_request();
+			if(document.getElementById('opac_sections_ui_json_filters_'+indice)) {
+				var filters = document.getElementById('opac_sections_ui_json_filters_'+indice).value;
+			} else if(document.getElementById('opac_sections_ui_json_filters')) {
+				var filters = document.getElementById('opac_sections_ui_json_filters').value;
+			} else {
+				var filters = '';
+			}
+			if(document.getElementById('opac_sections_ui_pager_'+indice)) {
+				var pager = document.getElementById('opac_sections_ui_pager_'+indice).value;
+			} else if(document.getElementById('opac_sections_ui_pager')) {
+				var pager = document.getElementById('opac_sections_ui_pager').value;
+			} else {
+				var pager = '';
+			}
+			if(document.getElementById('opac_sections_ui_ancre_'+indice)) {
+				var ancre = document.getElementById('opac_sections_ui_ancre_'+indice).value;
+			} else if(document.getElementById('opac_sections_ui_ancre')) {
+				var ancre = document.getElementById('opac_sections_ui_ancre').value;
+			} else {
+				var ancre = '';
+			}
+            if(document.getElementById('opac_sections_ui_list_'+indice)) {
+				var table = document.getElementById('opac_sections_ui_list_'+indice);
+			} else if(document.getElementById('opac_sections_ui_list_0')) {
+				var table = document.getElementById('opac_sections_ui_list_0');
+			} else {
+				var table = document.getElementById('opac_sections_ui_list');
+			}
+            table.innerHTML = '<tr><td><img src="./images/patience.gif"\/><\/td><\/tr>';
+			req.request(url,1, 'object_type=opac_sections_ui&filters='+encodeURIComponent(filters)+'&pager='+pager+'&ancre='+ancre, true, function(response) {
+                table.innerHTML = response;
+    			if(document.getElementById('opac_sections_ui_applied_sort_by_0')) {
+    				var options = document.getElementById('opac_sections_ui_applied_sort_by_0').options;
+    				for (var i= 0; i < options.length; i++) {
+    				    if (options[i].value === criteria) {
+    				        options[i].selected= true;
+    				        break;
+    				    }
+    				}
+    				switch(asc_desc) {
+    					case 'asc': //on repasse en tri decroissant
+    						document.getElementById('opac_sections_ui_applied_sort_asc_0').removeAttribute('checked');
+    						document.getElementById('opac_sections_ui_applied_sort_desc_0').setAttribute('checked', 'checked');
+    						break;
+    					case 'desc': //on repasse en tri croissant
+    					default:
+    						document.getElementById('opac_sections_ui_applied_sort_asc_0').setAttribute('checked', 'checked');
+    						document.getElementById('opac_sections_ui_applied_sort_desc_0').removeAttribute('checked');
+    						break;
+    				}
+    			}
+				if(ancre) {
+					window.location='#'+ancre;
+				}
+				if(typeof initIt !== 'undefined') {
+					initIt();
+				}
+            });
+		}
+	</script>
+<table class="center" style="width:100%" role="presentation">
+<tr>
+<td class="center" style="width:120px">
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=32">
+                    <img src="./images/rayonnage-small.png" style="border:0px" alt="DEMOGRAPHIE" title="DEMOGRAPHIE" loading="lazy">
+                </a>
+                <br>
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=32">
+                    <b>DEMOGRAPHIE</b>
+                </a>
+</td>
+<td class="center" style="width:120px">
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=39">
+                    <img src="./images/rayonnage-small.png" style="border:0px" alt="DIVERS" title="DIVERS" loading="lazy">
+                </a>
+                <br>
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=39">
+                    <b>DIVERS</b>
+                </a>
+</td>
+<td class="center" style="width:120px">
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=33">
+                    <img src="./images/rayonnage-small.png" style="border:0px" alt="ECONOMIE" title="ECONOMIE" loading="lazy">
+                </a>
+                <br>
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=33">
+                    <b>ECONOMIE</b>
+                </a>
+</td>
+<td class="center" style="width:120px">
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=34">
+                    <img src="./images/rayonnage-small.png" style="border:0px" alt="GENRE ET DEVELOPPEMENT" title="GENRE ET DEVELOPPEMENT" loading="lazy">
+                </a>
+                <br>
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=34">
+                    <b>GENRE ET DEVELOPPEMENT</b>
+                </a>
+</td>
+<td class="center" style="width:120px">
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=35">
+                    <img src="./images/rayonnage-small.png" style="border:0px" alt="INFORMATIQUE" title="INFORMATIQUE" loading="lazy">
+                </a>
+                <br>
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=35">
+                    <b>INFORMATIQUE</b>
+                </a>
+</td>
+<td class="center" style="width:120px">
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=38">
+                    <img src="./images/rayonnage-small.png" style="border:0px" alt="LANGUE ET LITTERATURE" title="LANGUE ET LITTERATURE" loading="lazy">
+                </a>
+                <br>
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=38">
+                    <b>LANGUE ET LITTERATURE</b>
+                </a>
+</td>
+</tr>
+<tr>
+<td class="center" style="width:120px">
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=28">
+                    <img src="./images/rayonnage-small.png" style="border:0px" alt="MATHEMATIQUES" title="MATHEMATIQUES" loading="lazy">
+                </a>
+                <br>
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=28">
+                    <b>MATHEMATIQUES</b>
+                </a>
+</td>
+<td class="center" style="width:120px">
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=27">
+                    <img src="./images/rayonnage-small.png" style="border:0px" alt="OUVRAGE DE REFERENCE" title="OUVRAGE DE REFERENCE" loading="lazy">
+                </a>
+                <br>
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=27">
+                    <b>OUVRAGE DE REFERENCE</b>
+                </a>
+</td>
+<td class="center" style="width:120px">
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=42">
+                    <img src="./images/rayonnage-small.png" style="border:0px" alt="PERIODIQUE" title="PERIODIQUE" loading="lazy">
+                </a>
+                <br>
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=42">
+                    <b>PERIODIQUE</b>
+                </a>
+</td>
+<td class="center" style="width:120px">
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=40">
+                    <img src="./images/rayonnage-small.png" style="border:0px" alt="RAPPORT DE STAGE" title="RAPPORT DE STAGE" loading="lazy">
+                </a>
+                <br>
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=40">
+                    <b>RAPPORT DE STAGE</b>
+                </a>
+</td>
+<td class="center" style="width:120px">
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=37">
+                    <img src="./images/rayonnage-small.png" style="border:0px" alt="SCIENCES HUMAINES" title="SCIENCES HUMAINES" loading="lazy">
+                </a>
+                <br>
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=37">
+                    <b>SCIENCES HUMAINES</b>
+                </a>
+</td>
+<td class="center" style="width:120px">
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=36">
+                    <img src="./images/rayonnage-small.png" style="border:0px" alt="SCIENCES JURIDIQUES, POLITIQUES ET SOCIALES" title="SCIENCES JURIDIQUES, POLITIQUES ET SOCIALES" loading="lazy">
+                </a>
+                <br>
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=36">
+                    <b>SCIENCES JURIDIQUES, POLITIQUES ET SOCIALES</b>
+                </a>
+</td>
+</tr>
+<tr>
+<td class="center" style="width:120px">
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=30">
+                    <img src="./images/rayonnage-small.png" style="border:0px" alt="STATISTIQUE APPLIQUEES A CARACTERES ECONOMIQUE" title="STATISTIQUE APPLIQUEES A CARACTERES ECONOMIQUE" loading="lazy">
+                </a>
+                <br>
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=30">
+                    <b>STATISTIQUE APPLIQUEES A CARACTERES ECONOMIQUE</b>
+                </a>
+</td>
+<td class="center" style="width:120px">
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=31">
+                    <img src="./images/rayonnage-small.png" style="border:0px" alt="STATISTIQUE APPLIQUEES A CARACTERES SOCIAL" title="STATISTIQUE APPLIQUEES A CARACTERES SOCIAL" loading="lazy">
+                </a>
+                <br>
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=31">
+                    <b>STATISTIQUE APPLIQUEES A CARACTERES SOCIAL</b>
+                </a>
+</td>
+<td class="center" style="width:120px">
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=29">
+                    <img src="./images/rayonnage-small.png" style="border:0px" alt="STATISTIQUE THEORIQUE" title="STATISTIQUE THEORIQUE" loading="lazy">
+                </a>
+                <br>
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=29">
+                    <b>STATISTIQUE THEORIQUE</b>
+                </a>
+</td>
+<td class="center" style="width:120px">
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=43">
+                    <img src="./images/rayonnage-small.png" style="border:0px" alt="THESE" title="THESE" loading="lazy">
+                </a>
+                <br>
+                <a href="./index.php?lvl=section_see&amp;location=1&amp;id=43">
+                    <b>THESE</b>
+                </a>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div id="last_entries">
+<h3><span>Dernières acquisitions</span></h3>
+<div id="last_entries-container">Voici les derniers ouvrages saisis dans le catalogue :<br>
+            <span class="expandAll">
+                <a href="javascript:expandAll_ajax(1);">
+                    <img class="img_plusplus" src="./images/expand_all.gif" style="border:0px" id="expandall" loading="lazy">
+                </a>
+            </span><span class="espaceResultSearch"> </span>
+            <span class="collapseAll">
+                <a href="javascript:collapseAll()">
+                    <img class="img_moinsmoins" src="./images/collapse_all.gif" style="border:0px" id="collapseall" loading="lazy">
+                </a>
+            </span>
+				<div id="el12767Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el12767Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A12767%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22060f9f40941081d89e8531d7c2ddae0c%22%2C%22datetime%22%3A1794732043%7D" onclick="expandBase_ajax('el12767', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://labiblioensea.com/biblio/opac_css/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_12767"><span class="statutnot1"></span><span notice="12767" class="header_title">The learners</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=13100">academique cisco</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=The%20learners&amp;rft.title=The%20learners&amp;rft.tpages=50%20p&amp;rft.date=2026&amp;rft_id=&amp;rft.pub=netacad&amp;rft.au=academique%20cisco&amp;rft.aulast=cisco&amp;rft.aufirst=academique"></span></span><img src="./images/globe_rouge.png" alt="Des documents numériques sont associés" title="Des documents numériques sont associés" style="border:0px" class="align_middle" loading="lazy">
+		    	<br>
+				</div>
+				<div id="el12767Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div>
+<a href="https://labiblioensea.com/biblio/opac_css/index.php?lvl=notice_display&amp;id=12767" style="display:none;">Permalink</a>
+			
+		
+				<div id="el12766Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el12766Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A12766%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22844c186633ed1d825913dd3c6dbaee3b%22%2C%22datetime%22%3A1794732043%7D" onclick="expandBase_ajax('el12766', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://labiblioensea.com/biblio/opac_css/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_12766"><span class="statutnot1"></span><span notice="12766" class="header_title">test info</span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=test%20info&amp;rft.title=test%20info%20%3A%20cas%20de%20l%27ensea&amp;rft_id="></span></span>
+		    	<br>
+				</div>
+				<div id="el12766Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div>
+<a href="https://labiblioensea.com/biblio/opac_css/index.php?lvl=notice_display&amp;id=12766" style="display:none;">Permalink</a>
+			
+		
+				<div id="el12765Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el12765Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A12765%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%220a99a2a6ec7c6fdbd962cfa6c23cc1bf%22%2C%22datetime%22%3A1794732043%7D" onclick="expandBase_ajax('el12765', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://labiblioensea.com/biblio/opac_css/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_12765"><span class="statutnot1"></span><span notice="12765" class="header_title">ANALYSE DES FACTEURS AFFECTANT LA RETENTION DES SAIGNEURS DANS LE SECTEUR DE LA SAIGNEE D'HEVEA EN CÔTE D'IVOIRE</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=13098">OHOU Wilfried Herman BALLE</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=ANALYSE%20DES%20FACTEURS%20AFFECTANT%20LA%20RETENTION%20DES%20SAIGNEURS%20DANS%20LE%20SECTEUR%20DE%20LA%20SAIGNEE%20D%27HEVEA%20EN%20C%C3%94TE%20D%27IVOIRE&amp;rft.title=ANALYSE%20DES%20FACTEURS%20AFFECTANT%20LA%20RETENTION%20DES%20SAIGNEURS%20DANS%20LE%20SECTEUR%20DE%20LA%20SAIGNEE%20D%27HEVEA%20EN%20C%C3%94TE%20D%27IVOIRE&amp;rft.tpages=51%20p.%2B%20Annexes&amp;rft.date=2024&amp;rft_id=&amp;rft.pub=ENSEA%20ABIDJAN&amp;rft.edition=Master%20Statistiques%20Agricole&amp;rft.au=OHOU%20Wilfried%20Herman%20BALLE&amp;rft.au=Ankouvi%20NAYO&amp;rft.aulast=BALLE&amp;rft.aufirst=OHOU%20Wilfried%20Herman"></span></span>
+		    	<br>
+				</div>
+				<div id="el12765Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div>
+<a href="https://labiblioensea.com/biblio/opac_css/index.php?lvl=notice_display&amp;id=12765" style="display:none;">Permalink</a>
+			
+		
+				<div id="el12764Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el12764Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A12764%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22a619a3b2b9a00c931cd0ffb6c4b0a433%22%2C%22datetime%22%3A1794732043%7D" onclick="expandBase_ajax('el12764', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://labiblioensea.com/biblio/opac_css/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_12764"><span class="statutnot1"></span><span notice="12764" class="header_title">DÉTERMINANTS DES PERTES POST-RÉCOLTE DANS LA CACAOCULTURE</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=13097">Yerayou Céline épse MONSIA OUATTARA</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=D%C3%89TERMINANTS%20DES%20PERTES%20POST-R%C3%89COLTE%20DANS%20LA%20CACAOCULTURE&amp;rft.title=D%C3%89TERMINANTS%20DES%20PERTES%20POST-R%C3%89COLTE%20DANS%20LA%20CACAOCULTURE&amp;rft.tpages=48p.%2B%20annexes&amp;rft.date=2025&amp;rft_id=&amp;rft.pub=ENSEA%20ABIDJAN&amp;rft.edition=Master%20Statistiques%20Agricole&amp;rft.au=Yerayou%20C%C3%A9line%20%C3%A9pse%20MONSIA%20OUATTARA&amp;rft.au=Ankouvi%20NAYO&amp;rft.aulast=OUATTARA&amp;rft.aufirst=Yerayou%20C%C3%A9line%20%C3%A9pse%20MONSIA"></span></span>
+		    	<br>
+				</div>
+				<div id="el12764Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div>
+<a href="https://labiblioensea.com/biblio/opac_css/index.php?lvl=notice_display&amp;id=12764" style="display:none;">Permalink</a>
+			
+		
+				<div id="el12763Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el12763Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A12763%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%229f88e37d25e7a92949cc68009e440ee2%22%2C%22datetime%22%3A1794732043%7D" onclick="expandBase_ajax('el12763', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://labiblioensea.com/biblio/opac_css/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_12763"><span class="statutnot1"></span><span notice="12763" class="header_title">DETERMINANTS INSTITUTIONNELS DU TOURISME INTERNATIONAL EN COTE D’IVOIRE</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=13095">MOUAYE YANN CEDRIC KOFFI</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=DETERMINANTS%20INSTITUTIONNELS%20DU%20TOURISME%20INTERNATIONAL%20EN%20COTE%20D%E2%80%99IVOIRE&amp;rft.title=DETERMINANTS%20INSTITUTIONNELS%20DU%20TOURISME%20INTERNATIONAL%20EN%20COTE%20D%E2%80%99IVOIRE&amp;rft.tpages=44p.%2B%20annexes&amp;rft.date=2025&amp;rft_id=&amp;rft.pub=ENSEA%20ABIDJAN&amp;rft.edition=ISE%203&amp;rft.au=MOUAYE%20YANN%20CEDRIC%20KOFFI&amp;rft.au=SERGE%20ASSIGNO&amp;rft.aulast=KOFFI&amp;rft.aufirst=MOUAYE%20YANN%20CEDRIC"></span></span> <span>
+					<a href="https://labiblioensea.com/biblio/opac_css/doc_num.php?explnum_id=672" target="_blank"><img src="./images/globe_orange.png" style="border:0px" class="align_middle" alt="DETERMINANTS INSTITUTIONNELS DU TOURISME INTERNATIONAL EN COTE D’IVOIRE" title="DETERMINANTS INSTITUTIONNELS DU TOURISME INTERNATIONAL EN COTE D’IVOIRE" loading="lazy"></a></span>
+		    	<br>
+				</div>
+				<div id="el12763Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div>
+<a href="https://labiblioensea.com/biblio/opac_css/index.php?lvl=notice_display&amp;id=12763" style="display:none;">Permalink</a>
+			
+		
+				<div id="el12762Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el12762Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A12762%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22e0757353a3bfde004c3e9e4a5908f62f%22%2C%22datetime%22%3A1794732043%7D" onclick="expandBase_ajax('el12762', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://labiblioensea.com/biblio/opac_css/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_12762"><span class="statutnot1"></span><span notice="12762" class="header_title">ANALYSE DES DETERMINANTS DE L’EFFICACITE TECHNIQUE DES ENTREPRISES INDUSTRIELLES EN CÔTE D’IVOIRE</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=13093">Attiman Kouassi Enoc KOUADIO</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=ANALYSE%20DES%20DETERMINANTS%20DE%20L%E2%80%99EFFICACITE%20TECHNIQUE%20DES%20ENTREPRISES%20INDUSTRIELLES%20EN%20C%C3%94TE%20D%E2%80%99IVOIRE&amp;rft.title=ANALYSE%20DES%20DETERMINANTS%20DE%20L%E2%80%99EFFICACITE%20TECHNIQUE%20DES%20ENTREPRISES%20INDUSTRIELLES%20EN%20C%C3%94TE%20D%E2%80%99IVOIRE&amp;rft.tpages=48p.%2B%20annexes&amp;rft.date=2025&amp;rft_id=&amp;rft.pub=ENSEA%20ABIDJAN&amp;rft.edition=AS3&amp;rft.au=Attiman%20Kouassi%20Enoc%20KOUADIO&amp;rft.au=TRAORE%20Wapori&amp;rft.aulast=KOUADIO&amp;rft.aufirst=Attiman%20Kouassi%20Enoc"></span></span> <span>
+					<a href="https://labiblioensea.com/biblio/opac_css/doc_num.php?explnum_id=671" target="_blank"><img src="./images/globe_orange.png" style="border:0px" class="align_middle" alt="ANALYSE DES DETERMINANTS DE L’EFFICACITE TECHNIQUE DES ENTREPRISES INDUSTRIELLES EN CÔTE D’IVOIRE" title="ANALYSE DES DETERMINANTS DE L’EFFICACITE TECHNIQUE DES ENTREPRISES INDUSTRIELLES EN CÔTE D’IVOIRE" loading="lazy"></a></span>
+		    	<br>
+				</div>
+				<div id="el12762Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div>
+<a href="https://labiblioensea.com/biblio/opac_css/index.php?lvl=notice_display&amp;id=12762" style="display:none;">Permalink</a>
+			
+		
+				<div id="el12761Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el12761Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A12761%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22b10c3e978fce7cde6b18d8160f528b40%22%2C%22datetime%22%3A1794732043%7D" onclick="expandBase_ajax('el12761', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://labiblioensea.com/biblio/opac_css/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_12761"><span class="statutnot1"></span><span notice="12761" class="header_title">OPTIMISATION DES STRATEGIES MULTIFACTORIELLES SUR LES PORTEFEUILLES ACTIONS DANS L’ENVIRONNEMENT DE LA BRVM</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=13091">Kagninninbin COULIBALY</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=OPTIMISATION%20DES%20STRATEGIES%20MULTIFACTORIELLES%20SUR%20LES%20PORTEFEUILLES%20ACTIONS%20DANS%20L%E2%80%99ENVIRONNEMENT%20DE%20LA%20BRVM&amp;rft.title=OPTIMISATION%20DES%20STRATEGIES%20MULTIFACTORIELLES%20SUR%20LES%20PORTEFEUILLES%20ACTIONS%20DANS%20L%E2%80%99ENVIRONNEMENT%20DE%20LA%20BRVM%20%3A%20APPROCHE%20SMART%20BETA&amp;rft.tpages=83%20p.%2B%20Annexes&amp;rft.date=2025&amp;rft_id=&amp;rft.pub=ENSEA%20ABIDJAN&amp;rft.edition=ISE%203&amp;rft.au=Kagninninbin%20COULIBALY&amp;rft.au=SIBI%20Cheickna&amp;rft.aulast=COULIBALY&amp;rft.aufirst=Kagninninbin"></span></span>
+		    	<br>
+				</div>
+				<div id="el12761Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div>
+<a href="https://labiblioensea.com/biblio/opac_css/index.php?lvl=notice_display&amp;id=12761" style="display:none;">Permalink</a>
+			
+		
+				<div id="el12760Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el12760Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A12760%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22aae2dc4c80c02035d5ce958625c60de4%22%2C%22datetime%22%3A1794732043%7D" onclick="expandBase_ajax('el12760', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://labiblioensea.com/biblio/opac_css/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_12760"><span class="statutnot1"></span><span notice="12760" class="header_title">Analyse des déterminants de la vaccination des enfants de moins de 5 ans ayant participe au projet FISSA</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=13090">Komlan Richard AGBOGLA</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Analyse%20des%20d%C3%A9terminants%20de%20la%20vaccination%20des%20enfants%20de%20moins%20de%205%20ans%20ayant%20participe%20au%20projet%20FISSA&amp;rft.title=Analyse%20des%20d%C3%A9terminants%20de%20la%20vaccination%20des%20enfants%20de%20moins%20de%205%20ans%20ayant%20participe%20au%20projet%20FISSA&amp;rft.tpages=49p.%2B%20annexes&amp;rft.date=2025&amp;rft_id=&amp;rft.pub=ENSEA%20ABIDJAN&amp;rft.edition=AS3&amp;rft.au=Komlan%20Richard%20AGBOGLA&amp;rft.au=Menan%20Gerard%20KOUAME&amp;rft.aulast=AGBOGLA&amp;rft.aufirst=Komlan%20Richard"></span></span>
+		    	<br>
+				</div>
+				<div id="el12760Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div>
+<a href="https://labiblioensea.com/biblio/opac_css/index.php?lvl=notice_display&amp;id=12760" style="display:none;">Permalink</a>
+			
+		
+				<div id="el12759Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el12759Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A12759%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22265c773d9739da6a45f9bbc8ede0f61b%22%2C%22datetime%22%3A1794732043%7D" onclick="expandBase_ajax('el12759', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://labiblioensea.com/biblio/opac_css/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_12759"><span class="statutnot1"></span><span notice="12759" class="header_title">PROFILS PAYS ET EVALUATION DU POTENTIEL COMMERCIAL DES PAYS AFRICAINS PRODUCTEURS DE CAFE</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=13089">Kabran N'Pangni Aimé-Désiré AGNIMOU</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=PROFILS%20PAYS%20ET%20EVALUATION%20DU%20POTENTIEL%20COMMERCIAL%20DES%20PAYS%20AFRICAINS%20PRODUCTEURS%20DE%20CAFE&amp;rft.title=PROFILS%20PAYS%20ET%20EVALUATION%20DU%20POTENTIEL%20COMMERCIAL%20DES%20PAYS%20AFRICAINS%20PRODUCTEURS%20DE%20CAFE&amp;rft.tpages=51%20p.%2B%20Annexes&amp;rft.date=2025&amp;rft_id=&amp;rft.pub=ENSEA%20ABIDJAN&amp;rft.edition=ISE%203&amp;rft.au=Kabran%20N%27Pangni%20Aim%C3%A9-D%C3%A9sir%C3%A9%20AGNIMOU&amp;rft.au=Doukour%C3%83%C2%A9%20Charles%20FE&amp;rft.aulast=AGNIMOU&amp;rft.aufirst=Kabran%20N%27Pangni%20Aim%C3%A9-D%C3%A9sir%C3%A9"></span></span>
+		    	<br>
+				</div>
+				<div id="el12759Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div>
+<a href="https://labiblioensea.com/biblio/opac_css/index.php?lvl=notice_display&amp;id=12759" style="display:none;">Permalink</a>
+			
+		
+				<div id="el12758Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el12758Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A12758%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22903feaf021f39d3bcc6e08e4d49dadb1%22%2C%22datetime%22%3A1794732043%7D" onclick="expandBase_ajax('el12758', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://labiblioensea.com/biblio/opac_css/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_12758"><span class="statutnot1"></span><span notice="12758" class="header_title">Analyse du changement de la structure des importations par quotité tarifaire sur les recettes douanières de la Côte d'Ivoire</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=13088">Sonde Moussa KONATE</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Analyse%20du%20changement%20de%20la%20structure%20des%20importations%20par%20quotit%C3%A9%20tarifaire%20sur%20les%20recettes%20douani%C3%A8res%20de%20la%20C%C3%B4te%20d%27Ivoire&amp;rft.title=Analyse%20du%20changement%20de%20la%20structure%20des%20importations%20par%20quotit%C3%A9%20tarifaire%20sur%20les%20recettes%20douani%C3%A8res%20de%20la%20C%C3%B4te%20d%27Ivoire&amp;rft.tpages=75%20p.%2B%20Annexes&amp;rft.date=2024&amp;rft_id=&amp;rft.pub=ENSEA%20ABIDJAN&amp;rft.edition=ISE%203&amp;rft.au=Sonde%20Moussa%20KONATE&amp;rft.au=Arouna%20N%27DIA&amp;rft.aulast=KONATE&amp;rft.aufirst=Sonde%20Moussa"></span></span>
+		    	<br>
+				</div>
+				<div id="el12758Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div>
+<a href="https://labiblioensea.com/biblio/opac_css/index.php?lvl=notice_display&amp;id=12758" style="display:none;">Permalink</a>
+			
+		
+				<div id="el12757Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el12757Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A12757%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%2254457a605dd6ecd87d2dba792b766167%22%2C%22datetime%22%3A1794732043%7D" onclick="expandBase_ajax('el12757', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://labiblioensea.com/biblio/opac_css/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_12757"><span class="statutnot1"></span><span notice="12757" class="header_title">Evaluation des provisions non vie</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=13087">Jordan Steve TCHATCHOU NANA</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Evaluation%20des%20provisions%20non%20vie&amp;rft.title=Evaluation%20des%20provisions%20non%20vie%20%3A%20comment%20se%20concilient%20les%20fonctions%20de%20provisionnement%20et%20de%20tarification%20en%20r%C3%A9assurance&amp;rft.tpages=66%20p.%2Bannexes&amp;rft.date=2023&amp;rft_id=&amp;rft.pub=ENSEA%20ABIDJAN&amp;rft.edition=ISE%203&amp;rft.au=Jordan%20Steve%20TCHATCHOU%20NANA&amp;rft.au=Kouam%C3%83%C2%A9%20Augustin%20N%27DRI&amp;rft.aulast=TCHATCHOU%20NANA&amp;rft.aufirst=Jordan%20Steve"></span></span>
+		    	<br>
+				</div>
+				<div id="el12757Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div>
+<a href="https://labiblioensea.com/biblio/opac_css/index.php?lvl=notice_display&amp;id=12757" style="display:none;">Permalink</a>
+			
+		
+				<div id="el12756Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el12756Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A12756%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%224b65f3ec4856582c262242dee47c1eff%22%2C%22datetime%22%3A1794732043%7D" onclick="expandBase_ajax('el12756', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://labiblioensea.com/biblio/opac_css/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_12756"><span class="statutnot1"></span><span notice="12756" class="header_title">Rendements de l’éducation et dividende démographique</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=13086">Diané Sylvain Sylvestre ASSI</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Rendements%20de%20l%E2%80%99%C3%A9ducation%20et%20dividende%20d%C3%A9mographique&amp;rft.title=Rendements%20de%20l%E2%80%99%C3%A9ducation%20et%20dividende%20d%C3%A9mographique&amp;rft.tpages=54p.&amp;rft.date=2016&amp;rft_id=&amp;rft.pub=ENSEA%20ABIDJAN&amp;rft.edition=ISE%203&amp;rft.au=Dian%C3%A9%20Sylvain%20Sylvestre%20ASSI&amp;rft.au=Hinin%20Daniel%20MOUSTAPHA&amp;rft.aulast=ASSI&amp;rft.aufirst=Dian%C3%A9%20Sylvain%20Sylvestre"></span></span>
+		    	<br>
+				</div>
+				<div id="el12756Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div>
+<a href="https://labiblioensea.com/biblio/opac_css/index.php?lvl=notice_display&amp;id=12756" style="display:none;">Permalink</a>
+			
+		
+				<div id="el12755Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el12755Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A12755%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%224eb091b4503e571ee95605071612967e%22%2C%22datetime%22%3A1794732043%7D" onclick="expandBase_ajax('el12755', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://labiblioensea.com/biblio/opac_css/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_12755"><span class="statutnot1"></span><span notice="12755" class="header_title">ANALYSE DE LA PAUVRETE MULTIDIMENSIONNELLE DANS LA BOUCLE DU MOUHOUN AU COURS DE LA PERIODE 2020 A 2024</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=13084">Abdoulaye COULIBALY</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=ANALYSE%20DE%20LA%20PAUVRETE%20MULTIDIMENSIONNELLE%20DANS%20LA%20BOUCLE%20DU%20MOUHOUN%20AU%20COURS%20DE%20LA%20PERIODE%202020%20A%202024&amp;rft.title=ANALYSE%20DE%20LA%20PAUVRETE%20MULTIDIMENSIONNELLE%20DANS%20LA%20BOUCLE%20DU%20MOUHOUN%20AU%20COURS%20DE%20LA%20PERIODE%202020%20A%202024&amp;rft.tpages=67%20p.%2Bannexes&amp;rft.date=2025&amp;rft_id=&amp;rft.pub=ENSEA%20ABIDJAN&amp;rft.edition=AS3&amp;rft.au=Abdoulaye%20COULIBALY&amp;rft.au=Aristide%20OUEDRAOGO&amp;rft.aulast=COULIBALY&amp;rft.aufirst=Abdoulaye"></span></span> <span>
+					<a href="https://labiblioensea.com/biblio/opac_css/doc_num.php?explnum_id=699" target="_blank"><img src="./images/globe_orange.png" style="border:0px" class="align_middle" alt="ANALYSE DE LA PAUVRETE MULTIDIMENSIONNELLE DANS LA BOUCLE DU MOUHOUN AU COURS DE LA PERIODE 2020 A 2024" title="ANALYSE DE LA PAUVRETE MULTIDIMENSIONNELLE DANS LA BOUCLE DU MOUHOUN AU COURS DE LA PERIODE 2020 A 2024" loading="lazy"></a></span>
+		    	<br>
+				</div>
+				<div id="el12755Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div>
+<a href="https://labiblioensea.com/biblio/opac_css/index.php?lvl=notice_display&amp;id=12755" style="display:none;">Permalink</a>
+			
+		
+				<div id="el12754Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el12754Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A12754%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22f07bd77543cb7f78f5a788122ad232f7%22%2C%22datetime%22%3A1794732043%7D" onclick="expandBase_ajax('el12754', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://labiblioensea.com/biblio/opac_css/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_12754"><span class="statutnot1"></span><span notice="12754" class="header_title">ANALYSE DE L’EFFET DE LA VARIATION DES PRIX A L’IMPORT DE MARCHANDISES GENERALES SUR LES TAXES ET DROITS DE DOUANE EN CÔTE D’IVOIRE</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=13083">Kadidia Danielle SYLLA</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=ANALYSE%20DE%20L%E2%80%99EFFET%20DE%20LA%20VARIATION%20DES%20PRIX%20A%20L%E2%80%99IMPORT%20DE%20MARCHANDISES%20GENERALES%20SUR%20LES%20TAXES%20ET%20DROITS%20DE%20DOUANE%20EN%20C%C3%94TE%20D%E2%80%99IVOIRE&amp;rft.title=ANALYSE%20DE%20L%E2%80%99EFFET%20DE%20LA%20VARIATION%20DES%20PRIX%20A%20L%E2%80%99IMPORT%20DE%20MARCHANDISES%20GENERALES%20SUR%20LES%20TAXES%20ET%20DROITS%20DE%20DOUANE%20EN%20C%C3%94TE%20D%E2%80%99IVOIRE&amp;rft.tpages=56%20p.%2B%20Annexes&amp;rft.date=2024&amp;rft_id=&amp;rft.pub=ENSEA%20ABIDJAN&amp;rft.edition=ISE%203&amp;rft.au=Kadidia%20Danielle%20SYLLA&amp;rft.au=Arouna%20N%27DIA&amp;rft.aulast=SYLLA&amp;rft.aufirst=Kadidia%20Danielle"></span></span> <span>
+					<a href="https://labiblioensea.com/biblio/opac_css/doc_num.php?explnum_id=667" target="_blank"><img src="./images/globe_orange.png" style="border:0px" class="align_middle" alt="ANALYSE DE L’EFFET DE LA VARIATION DES  PRIX A L’IMPORT DE MARCHANDISES  GENERALES SUR LES TAXES ET DROITS DE  DOUANE EN CÔTE D’IVOIRE" title="ANALYSE DE L’EFFET DE LA VARIATION DES  PRIX A L’IMPORT DE MARCHANDISES  GENERALES SUR LES TAXES ET DROITS DE  DOUANE EN CÔTE D’IVOIRE" loading="lazy"></a></span>
+		    	<br>
+				</div>
+				<div id="el12754Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div>
+<a href="https://labiblioensea.com/biblio/opac_css/index.php?lvl=notice_display&amp;id=12754" style="display:none;">Permalink</a>
+			
+		
+				<div id="el12753Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el12753Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A12753%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%228730d1b9a975382c88039599920bae0f%22%2C%22datetime%22%3A1794732043%7D" onclick="expandBase_ajax('el12753', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://labiblioensea.com/biblio/opac_css/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_12753"><span class="statutnot1"></span><span notice="12753" class="header_title">Analyse de la satisfaction des abonnés à l'internet fixe en Côte d'Ivoire</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=13082">Abdoul Magid YAHAYA NAFIOU</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Analyse%20de%20la%20satisfaction%20des%20abonn%C3%A9s%20%C3%A0%20l%27internet%20fixe%20en%20C%C3%B4te%20d%27Ivoire&amp;rft.title=Analyse%20de%20la%20satisfaction%20des%20abonn%C3%A9s%20%C3%A0%20l%27internet%20fixe%20en%20C%C3%B4te%20d%27Ivoire%20%3A%20Influence%20du%20parcours%20client%20et%20de%20l%27offre&amp;rft.tpages=56%20p.%2B%20Annexes&amp;rft.date=2025&amp;rft_id=&amp;rft.pub=ENSEA%20ABIDJAN&amp;rft.edition=AS3&amp;rft.au=Abdoul%20Magid%20YAHAYA%20NAFIOU&amp;rft.au=Evelyne%20KOBOU&amp;rft.aulast=YAHAYA%20NAFIOU&amp;rft.aufirst=Abdoul%20Magid"></span></span> <span>
+					<a href="https://labiblioensea.com/biblio/opac_css/doc_num.php?explnum_id=696" target="_blank"><img src="./images/globe_orange.png" style="border:0px" class="align_middle" alt="Analyse de la satisfaction des abonnés à l'internet fixe en Côte d'Ivoire : Influence du parcours client et de l'offre" title="Analyse de la satisfaction des abonnés à l'internet fixe en Côte d'Ivoire : Influence du parcours client et de l'offre" loading="lazy"></a></span>
+		    	<br>
+				</div>
+				<div id="el12753Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div>
+<a href="https://labiblioensea.com/biblio/opac_css/index.php?lvl=notice_display&amp;id=12753" style="display:none;">Permalink</a>
+			
+		
+				<div id="el12752Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el12752Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A12752%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%229ef306de4071e6dc1ff1beacc5c3a234%22%2C%22datetime%22%3A1794732043%7D" onclick="expandBase_ajax('el12752', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://labiblioensea.com/biblio/opac_css/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_12752"><span class="statutnot1"></span><span notice="12752" class="header_title">ANALYSE DES TENDANCES DES SORTIES DE CARRIERES DES FONCTIONNAIRES SELON LE GRADE ET LA FAMILLE D’EMPLOI DE 2014 A 2024 DANS L’ADMINISTRATION PUBLIQUE IVOIRIENN</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=13081">Clayere Abdoulaye TRAORE</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=ANALYSE%20DES%20TENDANCES%20DES%20SORTIES%20DE%20CARRIERES%20DES%20FONCTIONNAIRES%20SELON%20LE%20GRADE%20ET%20LA%20FAMILLE%20D%E2%80%99EMPLOI%20DE%202014%20A%202024%20DANS%20L%E2%80%99ADMINISTRATION%20PUBLIQUE%20IVOIRIENN&amp;rft.title=ANALYSE%20DES%20TENDANCES%20DES%20SORTIES%20DE%20CARRIERES%20DES%20FONCTIONNAIRES%20SELON%20LE%20GRADE%20ET%20LA%20FAMILLE%20D%E2%80%99EMPLOI%20DE%202014%20A%202024%20DANS%20L%E2%80%99ADMINISTRATION%20PUBLIQUE%20IVOIRIENN&amp;rft.tpages=53%20p.%2B%20Annexes&amp;rft.date=2026&amp;rft_id=&amp;rft.pub=ENSEA%20ABIDJAN&amp;rft.edition=AS3&amp;rft.au=Clayere%20Abdoulaye%20TRAORE&amp;rft.au=Alexandre%20GUEU&amp;rft.aulast=TRAORE&amp;rft.aufirst=Clayere%20Abdoulaye"></span></span>
+		    	<br>
+				</div>
+				<div id="el12752Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div>
+<a href="https://labiblioensea.com/biblio/opac_css/index.php?lvl=notice_display&amp;id=12752" style="display:none;">Permalink</a>
+			
+		
+				<div id="el12751Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el12751Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A12751%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%2294b3ad66b0d2011be5a41a04de8fa544%22%2C%22datetime%22%3A1794732043%7D" onclick="expandBase_ajax('el12751', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://labiblioensea.com/biblio/opac_css/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_12751"><span class="statutnot1"></span><span notice="12751" class="header_title">DYNAMIQUE ENTREPREUNARIALE EN CÔTE D'IVOIRE</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=13080">Duc Hildry POUMBOU-KIMBATSA</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=DYNAMIQUE%20ENTREPREUNARIALE%20EN%20C%C3%94TE%20D%27IVOIRE&amp;rft.title=DYNAMIQUE%20ENTREPREUNARIALE%20EN%20C%C3%94TE%20D%27IVOIRE%20%3A%20DETERMINANTS%20SOCIO-ECONOMIQUES%20DE%20LA%20CREATION%20D%27ENTREPRISES&amp;rft.tpages=40p.%2B%20annexes&amp;rft.date=2025&amp;rft_id=&amp;rft.pub=ENSEA%20ABIDJAN&amp;rft.edition=AS3&amp;rft.au=Duc%20Hildry%20POUMBOU-KIMBATSA&amp;rft.au=Flora%20St%C3%83%C2%A9phanie%20KACOU&amp;rft.aulast=POUMBOU-KIMBATSA&amp;rft.aufirst=Duc%20Hildry"></span></span> <span>
+					<a href="https://labiblioensea.com/biblio/opac_css/doc_num.php?explnum_id=682" target="_blank"><img src="./images/globe_orange.png" style="border:0px" class="align_middle" alt="DYNAMIQUE ENTREPREUNARIALE EN CÔTE D'IVOIRE : DETERMINANTS SOCIO-ECONOMIQUES DE LA CREATION D'ENTREPRISES" title="DYNAMIQUE ENTREPREUNARIALE EN CÔTE D'IVOIRE : DETERMINANTS SOCIO-ECONOMIQUES DE LA CREATION D'ENTREPRISES" loading="lazy"></a></span>
+		    	<br>
+				</div>
+				<div id="el12751Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div>
+<a href="https://labiblioensea.com/biblio/opac_css/index.php?lvl=notice_display&amp;id=12751" style="display:none;">Permalink</a>
+			
+		
+				<div id="el12750Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el12750Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A12750%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22f6056695f912c53a479435b252935e96%22%2C%22datetime%22%3A1794732043%7D" onclick="expandBase_ajax('el12750', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://labiblioensea.com/biblio/opac_css/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_12750"><span class="statutnot1"></span><span notice="12750" class="header_title">EFFET DE L’ÉMIGRATION SUR LE BIEN-ÊTRE DES MÉNAGES D’ORIGINE</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=13079">Yann Muriel OKOUA</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=EFFET%20DE%20L%E2%80%99%C3%89MIGRATION%20SUR%20LE%20BIEN-%C3%8ATRE%20DES%20M%C3%89NAGES%20D%E2%80%99ORIGINE&amp;rft.title=EFFET%20DE%20L%E2%80%99%C3%89MIGRATION%20SUR%20LE%20BIEN-%C3%8ATRE%20DES%20M%C3%89NAGES%20D%E2%80%99ORIGINE&amp;rft.tpages=60%20p.%2Bannexes&amp;rft.date=2023&amp;rft_id=&amp;rft.pub=ENSEA%20ABIDJAN&amp;rft.edition=ISE%203&amp;rft.au=Yann%20Muriel%20OKOUA&amp;rft.au=Richard%20MOUSSA&amp;rft.aulast=OKOUA&amp;rft.aufirst=Yann%20Muriel"></span></span>
+		    	<br>
+				</div>
+				<div id="el12750Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div>
+<a href="https://labiblioensea.com/biblio/opac_css/index.php?lvl=notice_display&amp;id=12750" style="display:none;">Permalink</a>
+			
+		
+				<div id="el12749Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el12749Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A12749%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22a727b8f0b348fbbef551ab6a288e13e7%22%2C%22datetime%22%3A1794732043%7D" onclick="expandBase_ajax('el12749', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://labiblioensea.com/biblio/opac_css/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_12749"><span class="statutnot1"></span><span notice="12749" class="header_title">ANALYSE COMPARATIVE DES INDICATEURS DE RISQUE POUR L’OPTIMISATION DE PORTEFEUILLE</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=13077">Méfoua Rayan Aziz-Habib KONE</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=ANALYSE%20COMPARATIVE%20DES%20INDICATEURS%20DE%20RISQUE%20POUR%20L%E2%80%99OPTIMISATION%20DE%20PORTEFEUILLE&amp;rft.title=ANALYSE%20COMPARATIVE%20DES%20INDICATEURS%20DE%20RISQUE%20POUR%20L%E2%80%99OPTIMISATION%20DE%20PORTEFEUILLE%20%3A%20CAS%20DE%20LA%20BRVM&amp;rft.tpages=73P.&amp;rft.date=2023&amp;rft_id=&amp;rft.pub=ENSEA%20ABIDJAN&amp;rft.edition=ISE%203&amp;rft.au=M%C3%A9foua%20Rayan%20Aziz-Habib%20KONE&amp;rft.au=Franck%20GNEBEI&amp;rft.aulast=KONE&amp;rft.aufirst=M%C3%A9foua%20Rayan%20Aziz-Habib"></span></span>
+		    	<br>
+				</div>
+				<div id="el12749Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div>
+<a href="https://labiblioensea.com/biblio/opac_css/index.php?lvl=notice_display&amp;id=12749" style="display:none;">Permalink</a>
+			
+		
+				<div id="el12748Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el12748Img" title="détail" alt="détail" style="border:0px" param="%7B%22id%22%3A12748%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Flabiblioensea.com%5C%2Fbiblio%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22a67099a59f36919b55a704df111e6a7a%22%2C%22datetime%22%3A1794732043%7D" onclick="expandBase_ajax('el12748', true,this.getAttribute('param'));  return false;" loading="lazy"><img src="https://labiblioensea.com/biblio/opac_css/images/icon_a_16x16.gif" alt="Document: texte imprimé" title="Document: texte imprimé" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_12748"><span class="statutnot1"></span><span notice="12748" class="header_title">VERS UNE MEILLEURE CONNAISSANCE DE L'INDUSTRIE MINIERE ET DES MEMBRES DU GPMCI PAR L'INTELLIGENCE ARTIFICIELLE</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=13075">Kell Yoric NGOUDJO DEUMAGA</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=VERS%20UNE%20MEILLEURE%20CONNAISSANCE%20DE%20L%27INDUSTRIE%20MINIERE%20ET%20DES%20MEMBRES%20DU%20GPMCI%20PAR%20L%27INTELLIGENCE%20ARTIFICIELLE&amp;rft.title=VERS%20UNE%20MEILLEURE%20CONNAISSANCE%20DE%20L%27INDUSTRIE%20MINIERE%20ET%20DES%20MEMBRES%20DU%20GPMCI%20PAR%20L%27INTELLIGENCE%20ARTIFICIELLE&amp;rft.tpages=45p.%2B%20annexes&amp;rft.date=2025&amp;rft_id=&amp;rft.pub=ENSEA%20ABIDJAN&amp;rft.edition=AS3&amp;rft.au=Kell%20Yoric%20NGOUDJO%20DEUMAGA&amp;rft.au=D%C3%A9sir%C3%A9e%20AMON&amp;rft.aulast=NGOUDJO%20DEUMAGA&amp;rft.aufirst=Kell%20Yoric"></span></span> <span>
+					<a href="https://labiblioensea.com/biblio/opac_css/doc_num.php?explnum_id=697" target="_blank"><img src="./images/globe_orange.png" style="border:0px" class="align_middle" alt="VERS UNE MEILLEURE CONNAISSANCE DE L'INDUSTRIE MINIERE ET DES MEMBRES DU GPMCI PAR L'INTELLIGENCE ARTIFICIELLE" title="VERS UNE MEILLEURE CONNAISSANCE DE L'INDUSTRIE MINIERE ET DES MEMBRES DU GPMCI PAR L'INTELLIGENCE ARTIFICIELLE" loading="lazy"></a></span>
+		    	<br>
+				</div>
+				<div id="el12748Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div>
+<a href="https://labiblioensea.com/biblio/opac_css/index.php?lvl=notice_display&amp;id=12748" style="display:none;">Permalink</a>
+			
+		</div>
+	</div>
+<script>
+    fetch('./ajax.php?module=ajax&categ=log&action=valid', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'no-cache': true
+        },
+        body: 'log_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9sb2ciOjk1Nzd9.ZKqEgqE2ftLTc%2ByYZZYJPlMhM9yn8lGPEaU1jZ%2Bd8vc%3D'
+    });
+</script>
+		</div>
+<div id="footer">
+    <span id="footer_rss"></span>
+    <span id="footer_link_sup"><a href="http://www.ensea.ed.ci" target="_blank">ENSEA</a> </span>
+    <span id="footer_link_website">
+        <a class="footer_biblio_name" href="https://labiblioensea.com/biblio/opac_css/" title="Bibliothèque de l'ENSEA">Bibliothèque de l'ENSEA</a>  
+    </span>
+    <span id="footer_link_pmb"><a href="http://www.google.fr" target="_blank">Faire une recherche avec Google</a> 
+        <a class="lien_pmb_footer" href="https://www.sigb.net" title="pmb ...une solution libre pour la médiathèque..." target="_blank">pmb</a>
+    </span>
+</div> 
+
+		</div>
+
+		<div id="intro">
+<div id="intro_bibli">
+			<h3>Bibliothèque de l'ENSEA</h3>
+			<div class="p1">
+<a href="./"><img src="./styles/bretagne3/images/ensealg.png" align="middle" loading="lazy"></a> </div>
+			<div class="p2">
+<li><a href="./index.php?lvl=infopages&amp;pagesid=9">Connaître la Bibliothèque</a></li>
+
+<li>
+<a href="./index.php?lvl=infopages&amp;pagesid=8">Plan</a>
+<ul class="sousMenu">
+<li><a href="./index.php?lvl=infopages&amp;pagesid=3">Aide en ligne</a></li>
+</ul>
+</li>
+</div>
+			</div>
+		</div>
+		<div id="bandeau">
+
+
+<div id="accessibility">
+    	<input type="hidden" id="opacAccessibility" name="opacAccessibility" value="1">
+			<ul class="accessibility_font_size">
+			<li class="accessibility_font_size_small">
+				<a href="javascript:accessibilityFontSize(1);" title="Réduire le texte">A-</a>
+			</li>
+			<li class="accessibility_font_size_normal">
+				<a href="javascript:accessibilityFontSize(0);" title="Réinitialiser le texte">A</a>
+			</li>
+			<li class="accessibility_font_size_big">
+				<a href="javascript:accessibilityFontSize(2);" title="Agrandir le texte">A+</a>
+			</li>
+		</ul>
+	
+			<script src="./includes/javascript/accessibility.js"></script>
+		
+			</div>
+<div id="accueil">
+
+<h3><span onclick='document.location="./index.php?"' style="cursor: pointer;">Accueil</span></h3>
+<p class="centered"><a href="./index.php?"><img src="images/site/livre.png" alt="Accueil" style="border:0px" class="center" loading="lazy"></a></p>
+<div id="lang_select">
+<h3><span>Sélection de la langue</span></h3>
+<form method="post" action="index.php">
+<select id="lang_sel_selector" name="lang_sel" onchange="this.form.submit();" title="Sélection de la langue"><option value="fr_FR" lang="fr" selected>Français</option>
+<option value="it_IT" lang="it">Italiano</option>
+<option value="es_ES" lang="es">Español</option>
+<option value="ca_ES" lang="ca">Català</option>
+<option value="en_UK" lang="en">English (UK)</option>
+<option value="nl_NL" lang="nl">Nederlands</option>
+<option value="oc_FR" lang="oc">Occitan</option></select><input type="hidden" name="csrf_token" value="[REDACTED anonymous form token]">
+</form>
+</div>
+
+					</div>
+<div id="connexion">
+		<h3 class="login_invite">Se connecter</h3>
+        <div id="login_form">
+<form action="index.php" method="post" name="myform">
+<label>accéder à votre compte de lecteur</label><br>
+        <input type="text" name="login" class="login" size="14" placeholder="identifiant"><br>
+        <div class="myform-password-text-visually">
+            <input type="password" id="myform-password" name="password" class="password" size="8" placeholder="Mot de passe" value="">
+            <button type="button" class="fa fa-eye" id="myform-password-visually" onclick='toggle_password(this, "myform-password");' title="Afficher le mot de passe" role="switch" aria-checked="false"></button>
+        </div>
+        <input type="hidden" name="force_login" value="1">
+        <input type="submit" name="ok" value="Ok" class="bouton">
+    <input type="hidden" name="csrf_token" value="[REDACTED anonymous form token]">
+</form>
+<a class="mdp_forgotten" href="./askmdp.php">Mot de passe oublié ?</a>
+</div>
+	</div>
+    
+    <div id="adresse">
+
+		<h3>Adresse</h3>
+
+		<span>
+			Bibliothèque de l'ENSEA<br>
+			Rues, des Ã©coles<br>
+			08 BP 3 ABIDJAN<br>
+			COTE D'IVOIRE <br>
+			22 48 32 10<br><span id="opac_biblio_email">taki;taki.kouame@ensea.ed.ci</span></span>
+	    </div>
+</div>
+<div id="bandeau_2"></div>
+</div>
+		
+		<script>init_drag();	//rechercher!!</script>
+		
+			<script>
+				var tarteaucitron_messages = pmbDojo.messages.getMessages("tarteaucitron");
+				if(tarteaucitron_messages.length) {
+					tarteaucitronCustomText = {};
+					tarteaucitron_messages.forEach(function(message) {
+						if(parseInt(message.code.indexOf(":")) !== -1) {
+							let tarteaucitron_messages_group = message.code.split(":");
+							if(typeof tarteaucitronCustomText[tarteaucitron_messages_group[0]] == "undefined") {
+								tarteaucitronCustomText[tarteaucitron_messages_group[0]] = {};
+							}
+							tarteaucitronCustomText[tarteaucitron_messages_group[0]][tarteaucitron_messages_group[1]] = message.message;
+						} else {
+							tarteaucitronCustomText[message.code] = message.message;
+						}
+					});
+				}
+			</script>
+			<script src="./includes/javascript/tarteaucitron/tarteaucitron.js"></script>
+		<script>
+	        tarteaucitron.init({
+	    	  "privacyUrl": "", /* Privacy policy url */
+	
+	    	  "hashtag": "#PhpMyBibli-COOKIECONSENT", /* Open the panel with this hashtag */
+	    	  "cookieName": "PhpMyBibli-COOKIECONSENT", /* Cookie name */
+	    
+	    	  "orientation": "bottom", /* Banner position (top - bottom - popup) */
+	       
+	          "groupServices": true, /* Group services by category */
+	                           
+	    	  "showAlertSmall": false, /* Show the small banner on bottom right */
+	    	  "cookieslist": false, /* Show the cookie list */
+				                           
+	          "closePopup": false, /* Show a close X on the banner */
+	
+	          "showIcon": false, /* Show cookie icon to manage cookies */
+	          "iconSrc": "./images/cookie.png", /* Optionnal: URL or base64 encoded image */
+	          "iconPosition": "BottomRight", /* BottomRight, BottomLeft, TopRight and TopLeft */
+	
+	    	  "adblocker": false, /* Show a Warning if an adblocker is detected */
+	                           
+	          "DenyAllCta" : true, /* Show the deny all button */
+	          "AcceptAllCta" : true, /* Show the accept all button when highPrivacy on */
+	          "highPrivacy": true, /* HIGHLY RECOMMANDED Disable auto consent */
+	                           
+	    	  "handleBrowserDNTRequest": false, /* If Do Not Track == 1, disallow all */
+	
+	    	  "removeCredit": true, /* Remove credit link */
+	    	  "moreInfoLink": false, /* Show more info link */
+	
+	          "useExternalCss": false, /* If false, the tarteaucitron.css file will be loaded */
+	          "useExternalJs": false, /* If false, the tarteaucitron.js file will be loaded */
+				
+	    	  //"cookieDomain": ".my-multisite-domaine.fr", /* Shared cookie for multisite */
+	                          
+	          "readmoreLink": "", /* Change the default readmore link */
+	
+	          "mandatory": true, /* Show a message about mandatory cookies */
+
+              "bodyPosition": "bottom", /* Apply a first-child of the body for better accessibility */
+	        });
+ 
+        </script>
+		<script>
+		tarteaucitron.services.pmbstatopac = {
+		  	"key": "pmbstatopac",
+			"type": "analytic",
+			"name": "PMB (Statistiques)",
+			"needConsent": true,
+			"cookies": [],
+			"uri": "https://labiblioensea.com/biblio/opac_css/",
+			"readmoreLink": "", // If you want to change readmore link
+			"js": function () {
+			    "use strict";
+			    // When user allow cookie
+		  	},
+		  	"fallback": function () {
+		    	"use strict";
+		    	// when use deny cookie
+		  	}
+		};
+		</script>
+		<script>
+        	(tarteaucitron.job = tarteaucitron.job || []).push("pmbstatopac");
+        </script>
+		 <script>
+        	(tarteaucitron.job = tarteaucitron.job || []).push("addthis");
+        </script>
+		
+		</body>
+		</html>

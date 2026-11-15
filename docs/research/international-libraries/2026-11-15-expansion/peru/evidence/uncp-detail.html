@@ -1,0 +1,1260 @@
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: opac-detail.tt -->
+
+
+
+
+<html lang="es-ES" class="no-js">
+<head>
+
+<title>Catálogo en línea Koha &rsaquo; Detalles para: CIEN AÑOS DE SOLEDAD</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha 19.0501000" /> <!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="shortcut icon" href="/opac-tmpl/bootstrap/images/favicon.ico" type="image/x-icon" />
+
+ <link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/lib/bootstrap/css/bootstrap.min_19.0501000.css">
+
+
+
+ <link type="text/css" href="/opac-tmpl/bootstrap/lib/jquery/jquery-ui_19.0501000.css" rel="stylesheet">
+
+
+
+
+ <link type="text/css" href="/opac-tmpl/bootstrap/css/opac_19.0501000.css" rel="stylesheet">
+
+
+ 
+ <link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/css/colors.css" />
+ 
+
+
+<link type="text/css" href="/opac-tmpl/bootstrap/css/print_19.0501000.css" rel="stylesheet" media="print">
+
+<style>/* Cambiar el color de la barra de navegación azul*/
+.navbar-inverse .navbar-inner {
+    background-image: linear-gradient(to bottom, #3168D5, #3168D5);
+    border-color: #3168D5;
+    background-color: #3168D5;
+}
+ 
+/* Cambia la fuente de la barra de navegación a blanco */
+.navbar-inverse .brand, .navbar-inverse .nav > li > a, #members a {
+    color: #fff !important;
+}
+ 
+/* Elimina las barras negras de la barra de navegación*/
+.navbar-inverse .divider-vertical {
+    border-left: none;
+    border-right: none;
+}</style>
+
+<link rel="unapi-server" type="application/xml" title="unAPI" href="/cgi-bin/koha/unapi" />
+
+<!-- Respond.js brings responsive layout behavior to IE < v.9 -->
+<!--[if lt IE 9]>
+ <script src="/opac-tmpl/bootstrap/lib/respond.min.js"></script>
+<![endif]-->
+<script>
+    function _(s) { return s } // dummy function for gettext
+</script>
+<script src="/opac-tmpl/bootstrap/lib/modernizr.min_19.0501000.js"></script>
+<link href="/opac-tmpl/bootstrap/lib/font-awesome/css/font-awesome.min_19.0501000.css" type="text/css" rel="stylesheet">
+
+
+
+
+
+
+ <link rel="stylesheet" type="text/css" href="/opac-tmpl/lib/emoji-picker/css/emoji_19.0501000.css">
+</head>
+
+
+
+
+ 
+
+
+ 
+
+
+
+
+ 
+
+<body ID="opac-detail" class="branch-default scrollto" >
+
+
+
+
+
+
+<div id="wrap">
+ <div id="header-region" class="noprint">
+ <div class="navbar navbar-inverse navbar-static-top">
+ <div class="navbar-inner">
+ <div class="container-fluid">
+ <h1 id="logo">
+ <a class="brand" href="/cgi-bin/koha/opac-main.pl">
+  Catálogo en línea  </a>
+ </h1>
+ 
+ <ul class="nav">
+ 
+ 
+ 
+ <li class="dropdown">
+ <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="listsmenu" role="button" title="Mostrar listas"><i class="fa fa-list fa-icon-white"></i> <span class="listslabel">Listas</span> <b class="caret"></b></a>
+ <ul aria-labelledby="listsmenu" role="menu" class="dropdown-menu">
+ 
+ <li role="presentation"><a href="#" tabindex="-1" class="menu-inactive" role="menuitem">No hay listas públicas</a></li>
+ 
+ <li class="divider" role="presentation"></li>
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;category=1" tabindex="-1" role="menuitem"><strong>Sus listas</strong></a></li>
+ 
+ 
+ <li role="presentation"><a href="/cgi-bin/koha/opac-user.pl" tabindex="-1" class="menu-inactive loginModal-trigger" role="menuitem">Ingrese para crear sus propias listas</a></li>
+ 
+ 
+ 
+ </ul> <!-- / .dropdown-menu -->
+ </li> <!-- / .dropdown -->
+ 
+ </ul> <!-- / .nav -->
+ <div id="listsDetails"></div>
+ 
+ <a id="user-menu-trigger" class="pull-right" href="#"><i class="fa fa-user fa-icon-white"></i> <span class="caret"></span></a>
+ <div id="members">
+ <ul class="nav pull-right">
+
+ 
+
+
+
+ 
+ 
+ 
+ <li><a href="/cgi-bin/koha/opac-user.pl" class="login-link loginModal-trigger" role="button" data-toggle="modal">Ingresar a su cuenta</a></li>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ </ul>
+ </div> <!-- /members -->
+ 
+ </div> <!-- /container-fluid -->
+ </div> <!-- /navbar-inner -->
+ </div> <!-- /navbar -->
+
+ 
+ </div> <!-- / header-region -->
+
+ <div class="container-fluid">
+ <div class="row-fluid">
+ <div id="opac-main-search">
+ <div class="span12">
+ 
+ 
+ 
+ <div class="mastheadsearch librarypulldown">
+ 
+ 
+ <form name="searchform" method="get" action="/cgi-bin/koha/opac-search.pl" id="searchform" class="form-inline">
+ <label for="masthead_search"> Buscar  </label>
+
+ <select name="idx" id="masthead_search">
+ 
+ <option value="">Catálogo de biblioteca</option>
+ 
+ 
+ <option value="ti">Título</option>
+ 
+ 
+ <option value="au">Autor</option>
+ 
+ 
+ <option value="su">Tema</option>
+ 
+ 
+ <option value="nb">ISBN</option>
+ 
+ 
+ <option value="ns">ISSN</option>
+ 
+ 
+ <option value="se">Series</option>
+ 
+ 
+ 
+ <option value="callnum">Signatura</option>
+ 
+ 
+ </select>
+
+ 
+ 
+ <input class="transl1" id="translControl1" name="q" title="Escriba el término de búsqueda" type="text" /><span id="translControl"></span>
+ 
+
+ 
+
+ 
+ <div class="input-append">
+ <select name="branch_group_limit" id="select_library">
+ <option value="">Todas las bibliotecas</option>
+
+ 
+
+ 
+ 
+ <option value="branch:BC">Biblioteca Central</option>
+ 
+ 
+ 
+ <option value="branch:CCAA">Ciencias Agrarias</option>
+ 
+ 
+ 
+ <option value="branch:FE">Facultad de Educación</option>
+ 
+ 
+ 
+ <option value="branch:MAIN">Main Library</option>
+ 
+ 
+
+ 
+ </select>
+ <button type="submit" id="searchsubmit" class="btn btn-primary">Ir</button>
+ </div>
+ 
+
+ </form>
+ 
+ </div> <!-- / .mastheadsearch -->
+ 
+
+ <div class="row-fluid">
+ <div id="moresearches">
+ <ul>
+ <li><a href="/cgi-bin/koha/opac-search.pl">Búsqueda avanzada</a></li>
+ 
+ 
+ <li><a href="/cgi-bin/koha/opac-authorities-home.pl">Búsqueda de autoridad</a></li>
+ 
+ <li><a href="/cgi-bin/koha/opac-tags.pl">Nube de etiquetas</a></li>
+ 
+ 
+ 
+ 
+ 
+ 
+ </ul>
+ </div> <!-- /#moresearches -->
+ </div> <!-- /.row-fluid -->
+
+ 
+ </div> <!-- /.span10 -->
+ </div> <!-- /.opac-main-search -->
+ </div> <!-- / .row-fluid -->
+ </div> <!-- /.container-fluid -->
+
+ <!-- Login form hidden by default, used for modal window -->
+ <div id="loginModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+ <div class="modal-header">
+ <button type="button" class="closebtn" data-dismiss="modal" aria-hidden="true">×</button>
+ <h3 id="modalLoginLabel">Ingresar a su cuenta</h3>
+ </div>
+ <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="modalAuth">
+ <input type="hidden" name="has-search-query" id="has-search-query" value="" />
+ <div class="modal-body">
+ 
+ <input type="hidden" name="koha_login_context" value="opac" />
+ <fieldset class="brief">
+ <label for="muserid">Usuario:</label><input type="text" id="muserid" name="userid" />
+ <label for="mpassword">Contraseña:</label><input type="password" id="mpassword" name="password" />
+ 
+ 
+ 
+ </fieldset>
+ </div>
+ <div class="modal-footer">
+ <input class="btn btn-primary" type="submit" value="Ingresar" />
+ </div>
+ </form> <!-- /#auth -->
+ </div> <!-- /#modalAuth -->
+
+
+<div class="main">
+ <ul class="breadcrumb">
+ <li><a href="/cgi-bin/koha/opac-main.pl">Inicio</a> <span class="divider">&rsaquo;</span></li>
+ <li><a href="#"><span>Detalles para: </span>CIEN AÑOS DE SOLEDAD</a></li>
+ </ul>
+
+ <div class="container-fluid">
+ <div class="row-fluid">
+ <div class="span9">
+ <div id="catalogue_detail_biblio" class="maincontent">
+
+ <div id="bookcover">
+ 
+ <div title="54734" class="54734" id="local-thumbnail-preview"></div>
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <div title="54734" class="" id="gbs-thumbnail-preview"></div>
+ 
+ 
+ 
+ 
+ 
+ </div><!-- / #bookcover -->
+
+ <abbr class="unapi-id" title="koha:biblionumber:54734"><!-- unAPI --></abbr>
+ 
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;amp;rft.genre=book&amp;amp;rft.btitle=CIEN%20A%C3%91OS%20DE%20SOLEDAD&amp;amp;rft.au=GARC%C3%8DA%20M%C3%81RQUEZ%2C%20GABRIEL"></span>
+ 
+
+ <div id="views">
+ <span class="view current-view"><span id="Normalview">Vista normal</span></span>
+ <span class="view"><a id="MARCview" href="/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=54734">Vista MARC</a></span>
+ <span class="view"><a id="ISBDview" href="/cgi-bin/koha/opac-ISBDdetail.pl?biblionumber=54734">Vista ISBD</a></span>
+ </div>
+ 
+ 
+
+<div class="record" vocab="http://schema.org/" typeof="CreativeWork Producto" resource="#registro">
+<h1 class="title" property="name">CIEN AÑOS DE SOLEDAD </h1>
+<h5 class="author">Por: <a href="/cgi-bin/koha/opac-search.pl?q=au:%22GARC%C3%8DA%20M%C3%81RQUEZ%2C%20GABRIEL%22"><span resource="#record"><span property="autor" typeof="Persona"><span property="name">GARCÍA MÁRQUEZ, GABRIEL</span></span></span></a>.</h5>
+<span class="results_summary type"><span class="label">Tipo de material: </span><img src="/opac-tmpl/lib/famfamfam/BK.png" alt="Texto" class="materialtype mt_icon_BK">Texto</span><span class="results_summary publisher"><span class="label">Editor: </span><span property="publisher" typeof="Organization"><span property="location">57a ed. Buenos Aires, Sudamericana, 1982</span> </span> </span><span class="results_summary description"><span class="label">Descripción: </span><span property="description">359 páginas</span>; <span property="description">Ejemplares: 01</span>; <span property="description">Ubicación: Tercer piso - Referencias. Código: 869.634/C49/1982</span>.</span><span class="results_summary ddc"><span class="label">Clasificación CDD: </span>869.634/C49/1982 </span><div class="results_summary contents">
+<span class="label">Contenidos:</span><div class="contentblock" property="description"><span class="a">LITERATURA COLOMBIANA - SIGLO XX</span></div>
+</div>
+</div>
+
+
+
+ 
+
+ <!-- This puts the LTFL reviews in, and if TabbedView is not set, puts the remaining content above the Tabs instead of in them -->
+ 
+
+ <!--This grabs all of the lists a bib record appears in -->
+ 
+
+ 
+ <div class="results_summary tags">
+ 
+ <span class="label">Etiquetas de esta biblioteca:</span> <span class="notags">No hay etiquetas de esta biblioteca para este título.</span>
+ 
+ 
+ 
+ <span id="login4tags">
+ 
+ <a class="loginModal-trigger" data-toggle="modal" role="button" href="/cgi-bin/koha/opac-user.pl">Ingresar para agregar etiquetas.</a>
+ 
+ </span>
+ 
+ 
+ </div>
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ </div> <!-- / #catalogue_detail_biblio -->
+
+ <div id="bibliodescriptions" class="toptabs">
+ <ul>
+ 
+ <li id="tab_holdings">
+ 
+ 
+ <a href="#holdings"><span>Existencias</span>  ( 1 )</a>
+ </li>
+ 
+ 
+ <li id="tab_descriptions"> <a href="#descriptions">Notas de título</a></li>
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ <li id="tab_comments"><a href="#comments">Comentarios ( 0 )</a></li>
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ </ul>
+
+ 
+
+
+ <div id="holdings">
+ 
+ 
+ <table class="table table-bordered table-striped" id="holdingst">
+ <thead>
+ <tr>
+ 
+ <th id="item_itemtype" data-colname="item_itemtype" class="itype">Tipo de ítem</th>
+ 
+ 
+ <th id="item_home_location" data-colname="item_home_location" class="item_location">Biblioteca de origen</th>
+ 
+ 
+ <th id="item_callnumber" data-colname="item_callnumber" class="call_no">Signatura</th>
+ 
+ <th id="item_enumchron" data-colname="item_enumchron" class="vol_info">Info Vol</th>
+ 
+ 
+ <th id="item_status" data-colname="item_status" class="status">Estado</th>
+ 
+ <th id="item_datedue" data-colname="item_datedue" class="date_due">Fecha de vencimiento</th>
+ <th id="item_barcode" data-colname="item_barcode" class="barcode">Código de barras</th>
+ 
+ 
+ </tr>
+ </thead>
+ <tbody>
+ 
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+ 
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/liblime-kids/book-icon-mystery2.gif" title="Libros" alt="Libros" />
+ 
+ 
+ Libros
+ </td>
+ 
+ 
+
+ 
+ <td class="location" property="seller">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+ <span class="" title="">
+ 
+ <span>Biblioteca Central</span>
+ 
+ </span>
+ <div class="branch-info-tooltip"></div>
+
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+ 869.634/C49/1982
+ 
+ 
+ (<a href="/cgi-bin/koha/opac-detail.pl?biblionumber=54734&amp;shelfbrowse_itemnumber=54734#holdings">Navegar estantería</a>)
+ 
+ 
+ 
+ </td>
+ 
+ <td class="vol_info">
+ 
+ <span class="enum">000008465</span>
+ 
+ 
+ </td>
+ 
+ 
+ 
+ <td class="status">
+ <link property="availability" href="http://schema.org/InStock" />
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <span class="item-status available">Disponible </span>
+
+</td>
+ 
+ <td class="date_due"><span title=""></span></td>
+ <td class="barcode" property="serialNumber">2018054734</td>
+ 
+ 
+ </tr>
+ 
+ </tbody>
+ </table>
+
+ 
+ 
+ 
+ 
+
+ 
+ 
+
+ <br style="clear:both;" />
+ </div> <!-- / #holdings -->
+
+ 
+
+ 
+ <div id="descriptions">
+ <div class="content_set">
+
+ 
+
+ 
+ <div id="marcnotes">
+ 
+ <p>
+ 
+ LITERATURA COLOMBIANA - SIGLO XX
+ 
+ </p>
+ 
+ </div>
+ 
+
+ </div>
+ </div> <!-- / #descriptions -->
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <div id="comments">
+ <div id="newcomment"></div>
+ 
+ <p>No hay comentarios para este ejemplar.</p>
+ 
+
+ 
+ <div id="addcomment"><a href="/cgi-bin/koha/opac-user.pl">Ingresar a su cuenta</a> para colocar un comentario.</div>
+ 
+ </div> <!-- / #comments -->
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ </div> <!-- / #bibliodescriptions -->
+
+ 
+
+ 
+
+ 
+ 
+
+
+
+ </div> <!-- /.span9 -->
+
+ <div class="span3">
+ <div id="ulactioncontainer">
+
+ 
+
+ 
+
+<ul id="action">
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ <li><a class="print-large" href="#">Imprimir</a></li>
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ <li>
+ <div id="export">
+ <div class="dropdown">
+ <a id="format" class="dropdown-toggle" data-toggle="dropdown" href="#">Guardar registro <b class="caret"></b></a>
+ <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="format">
+ 
+ 
+ <li>
+ <a role="menuitem" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=54734&amp;format=bibtex">
+ BIBTEX  </a>
+ </li>
+ 
+ 
+ 
+ <li><a role="menuitem" href="#" data-toggle="modal" data-target="#exportModal_">Dublin Core</a></li>
+ 
+ 
+ 
+ <li>
+ <a role="menuitem" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=54734&amp;format=marcxml">
+ MARCXML  </a>
+ </li>
+ 
+ 
+ 
+ <li>
+ <a role="menuitem" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=54734&amp;format=marc8">
+ MARC (no-Unicode/MARC-8)  </a>
+ </li>
+ 
+ 
+ 
+ <li>
+ <a role="menuitem" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=54734&amp;format=utf8">
+ MARC (Unicode/UTF-8)  </a>
+ </li>
+ 
+ 
+ 
+ <li>
+ <a role="menuitem" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=54734&amp;format=marcstd">
+ MARC (Unicode/UTF-8, estándar)  </a>
+ </li>
+ 
+ 
+ 
+ <li>
+ <a role="menuitem" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=54734&amp;format=mods">
+ MODS (XML)  </a>
+ </li>
+ 
+ 
+ 
+ <li>
+ <a role="menuitem" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=54734&amp;format=ris">
+ RIS  </a>
+ </li>
+ 
+ 
+ </ul>
+ </div>
+ </div>
+ </li>
+ 
+
+ 
+ <li>
+ <div id="moresearches_menu">
+ <div class="dropdown">
+ <a id="furthersearches" class="dropdown-toggle" data-toggle="dropdown" href="#">Más búsquedas <b class="caret"></b></a>
+ <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="furthersearches">
+ <li><a href="#" class="menu-inactive">Buscar este título en:</a></li>
+ <li><a  href="http://worldcat.org/search?q=CIEN%20A%C3%91OS%20DE%20SOLEDAD" target="_blank">Other Libraries (WorldCat)</a></li>
+<li><a href="https://scholar.google.com/scholar?q=CIEN%20A%C3%91OS%20DE%20SOLEDAD" target="_blank">Other Databases (Google Scholar)</a></li>
+<li><a href="http://www.bookfinder.com/search/?author=GARC%C3%8DA%20M%C3%81RQUEZ%2C%20GABRIEL&amp;title=CIEN%20A%C3%91OS%20DE%20SOLEDAD&amp;st=xl&amp;ac=qr" target="_blank">Online Stores (Bookfinder.com)</a></li>
+<li><a href="http://openlibrary.org/search/?author=(GARC%C3%8DA%20M%C3%81RQUEZ%2C%20GABRIEL)&title=(CIEN%20A%C3%91OS%20DE%20SOLEDAD)" target="_blank">Open Library (openlibrary.org)</a></li>
+ </ul>
+ </div>
+ </div>
+ </li>
+ 
+</ul>
+
+<!-- Dublin Core Modal Form -->
+<div class="modal hide" id="exportModal_" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
+ <div class="modal-header">
+ <button type="button" class="closebtn" data-dismiss="modal" aria-hidden="true">&times;</button>
+ <h3 class="modal-title" id="exportModalLabel">Exportando a Dublin Core...</h3>
+ </div>
+ <form method="get" action="/cgi-bin/koha/opac-export.pl">
+ <div class="modal-body">
+ <fieldset id="dc_fieldset">
+ <input id="input-simple" type="radio" name="format" value="rdfdc">
+ <label class="label_dc" for="input-simple">DC-RDF simple</label>
+ <br>
+ <input id="input-oai" type="radio" name="format" value="oaidc" checked>
+ <label class="label_dc" for="input-oai">OAI-DC</label>
+ <br>
+ <input id="input-srw" type="radio" name="format" value="srwdc">
+ <label class="label_dc" for="input-srw">SRW-DC</label>
+ <br>
+ <input type="hidden" name="op" value="export">
+ <input type="hidden" name="bib" value="54734">
+ </fieldset>
+ </div>
+ <div class="modal-footer">
+ <button type="submit" class="btn">Exportar</button>
+ <button class="btn btn-link" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+ </div>
+ </form>
+</div>
+
+
+ 
+
+ 
+
+ 
+ </div> <!-- / .ulactioncontainer -->
+ </div> <!-- / .span4 -->
+ </div> <!-- / .row-fluid -->
+ <div class="row-fluid">
+ 
+
+ 
+
+ 
+ </div> <!-- / .row-fluid -->
+</div> <!-- / .container-fluid -->
+</div> <!-- / .main -->
+
+
+
+
+ 
+ 
+ <div class="container-fluid">
+ <div class="row-fluid">
+ <div class="span12">
+ <div id="opaccredits" class="noprint">
+ <p style="text-align: center;"><span style="font-size: 12px;"><span style="color: #008080;"><img style="float: left;" src="data:image/png;base64,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" alt="" width="100" height="94" /></span></span></p>
+<p style="text-align: left;"><span style="font-size: 12px;"><span style="color: #008080;"><span style="color: #ffffff;">--</span>Copyright &copy; 2018, Universidad Nacional del Centro del Per&uacute;.</span><br /><span style="color: #008080;"><span style="color: #ffffff;">--</span>Centro de Recursos para el Aprendizaje y la Investigaci&oacute;n</span><br /><span style="color: #008080;"><span style="color: #ffffff;">--</span>Av. Mariscal Castilla N&deg; 3909 - El Tambo - Huancayo</span><br /><span style="color: #008080;"><span style="color: #ffffff;">--</span>Central Telef&oacute;nica: (064) 48 10 60 - Fax: (064) 24 85 95</span></span></p>
+<p style="text-align: center;"><span style="font-size: 12px;"><span style="color: #008080;"><br /></span></span></p>
+ </div>
+ </div>
+ </div>
+ </div>
+ 
+
+ 
+
+</div> <!-- / #wrap in masthead.inc -->
+
+ 
+
+
+
+
+<!-- JavaScript includes -->
+<script src="/opac-tmpl/bootstrap/lib/jquery/jquery_19.0501000.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/jquery/jquery-ui_19.0501000.js"></script>
+<script>
+// Resolve name collision between jQuery UI and Twitter Bootstrap
+$.widget.bridge('uitooltip', $.ui.tooltip);
+</script>
+<script src="/opac-tmpl/bootstrap/lib/bootstrap/js/bootstrap.min_19.0501000.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/fontfaceobserver.min_19.0501000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/global_19.0501000.js"></script>
+<script>
+    Modernizr.load([
+        // Test need for polyfill
+        {
+            test: window.matchMedia,
+            nope: "/opac-tmpl/bootstrap/lib/media.match.min_19.0501000.js"
+        },
+        // and then load enquire
+        "/opac-tmpl/bootstrap/lib/enquire.min_19.0501000.js",
+        "/opac-tmpl/bootstrap/js/script_19.0501000.js",
+    ]);
+
+    // Fix for datepicker in a modal
+    $.fn.modal.Constructor.prototype.enforceFocus = function () {};
+</script>
+
+
+<script src="/opac-tmpl/lib/emoji-picker/js/config_19.0501000.js"></script>
+<script src="/opac-tmpl/lib/emoji-picker/js/util_19.0501000.js"></script>
+<script src="/opac-tmpl/lib/emoji-picker/js/jquery.emojiarea_19.0501000.js"></script>
+<script src="/opac-tmpl/lib/emoji-picker/js/emoji-picker_19.0501000.js"></script>
+
+<script>
+    //<![CDATA[
+    var MSG_CONFIRM_AGAIN = _("Advertencia: No puede deshacerse. Por favor confirmar nuevamente")
+    var MSG_DELETE_SEARCH_HISTORY = _("¿Está seguro que desea eliminar su historial de búsqueda?");
+    var MSG_NO_SUGGESTION_SELECTED = _("No se seleccionó ninguna sugerencia");
+    var MSG_SEARCHING = _("Buscando %s...");
+    var MSG_ERROR_SEARCHING_COLLECTION = _("Error de la búsqueda en la colección %s");
+    var MSG_NO_RESULTS_FOUND_IN_COLLECTION = _("No se han encontrado resultados en la colección de la biblioteca %s");
+    var MSG_RESULTS_FOUND_IN_COLLECTION = _("Se encontraron %s resultados en la colección de la biblioteca %s");
+    var MSG_BY = _("por");
+    var MSG_TYPE = _("Tipo");
+    var MSG_NEXT = _("Siguiente");
+    var MSG_PREVIOUS = _("Previo");
+    var MSG_CHECKOUTS = _("Préstamos");
+    var MSG_NO_CHECKOUTS = _("Sin préstamos");
+    var MSG_CHECK_OUT = _("Préstamo");
+    var MSG_CHECK_OUT_CONFIRM = _("¿Está seguro de querer prestar esta éste ítem?");
+    var MSG_CHECKED_OUT_UNTIL = _("Prestado hasta %s");
+    var MSG_CHECK_IN = _("Devolución");
+    var MSG_CHECK_IN_CONFIRM = _("¿Está seguro de querer devolver éste ítem?");
+    var MSG_NO_CHECKOUTS = _("Sin préstamos");
+    var MSG_DOWNLOAD = _("Bajar");
+    var MSG_HOLDS = _("Reservas");
+    var MSG_NO_HOLDS = _("Sin reservas");
+    var MSG_PLACE_HOLD = _("Hacer reserva");
+    var MSG_CANCEL_HOLD = _("Cancelar");
+    var MSG_CANCEL_HOLD_CONFIRM = _("¿Está seguro que desea cancelar esta reserva?");
+    var MSG_ON_HOLD = _("Reservado");
+    
+        var MSG_BASKET_EMPTY = _("Su carrito está vacío");
+        var MSG_RECORD_IN_BASKET = _("Este ejemplar ya se encuentra en su carrito");
+        var MSG_RECORD_ADDED = _("Este ejemplar ha sido agregado a su carrito");
+        var MSG_RECORD_REMOVED = _("Este ejemplar ha sido eliminado de su carrito");
+        var MSG_NRECORDS_ADDED = _(" ejemplar(es) agregado(s) a su carrito");
+        var MSG_NRECORDS_IN_BASKET = _("ya está en su carrito");
+        var MSG_NO_RECORD_SELECTED = _("Ningún ítem fue seleccionado");
+        var MSG_NO_RECORD_ADDED = _("No se agregaron ítems a su carrito");
+        var MSG_CONFIRM_DEL_BASKET = _("¿Está seguro de querer vaciar su carrito?");
+        var MSG_CONFIRM_DEL_RECORDS = _("¿Está seguro de querer eliminar los ítems seleccionados?");
+        var MSG_ITEM_IN_CART = _("En su carrito");
+        var MSG_ITEM_NOT_IN_CART = _("Agregar a su carrito");
+    
+    
+        var MSG_TAGS_DISABLED = _("Lo sentimos, las etiquetas no están habilitadas en este sistema.");
+        var MSG_TAG_ALL_BAD = _("Error! Su etiqueta tenía código ilegal. NO ha sido agregada. Intente nuevamente con texto plano.");
+        var MSG_ILLEGAL_PARAMETER = _("¡Error! Parámetro ilegal");
+        var MSG_TAG_SCRUBBED = _("Nota: su etiqueta contenía código que fue removido. La etiqueta fue agregada como ");
+        var MSG_ADD_TAG_FAILED = _("¡Error! La adición de etiquetas falló en");
+        var MSG_ADD_TAG_FAILED_NOTE = _("Nota: solo puede etiquetar un ítem con determinado término una vez. Vea 'Mis Etiquetas' para ver sus etiquetas actuales.");
+        var MSG_DELETE_TAG_FAILED = _("Error! No puede eliminar la etiqueta");
+        var MSG_DELETE_TAG_FAILED_NOTE = _("Nota: sólo puede eliminar sus propias etiquetas.")
+        var MSG_LOGIN_REQUIRED = _("Debe ingresar a su cuenta para agregar etiquetas.");
+        var MSG_TAGS_ADDED = _("Etiquetas agregadas: ");
+        var MSG_TAGS_DELETED = _("Etiquetas agregadas: ");
+        var MSG_TAGS_ERRORS = _("Errores: ");
+        var MSG_MULTI_ADD_TAG_FAILED = _("No se pudo agregar una o más etiquetas.");
+        var MSG_NO_TAG_SPECIFIED = _("No se especificó etiqueta.");
+    
+    
+    $(".print-large").on("click",function(){
+        window.print();
+        return false;
+    });
+    $("#ulactioncontainer > ul > li > a.addtoshelf").on("click",function(){
+        Dopop('opac-addbybiblionumber.pl?biblionumber=54734');
+        return false;
+    });
+    $("body").on("click", ".addtocart", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        addRecord( biblionumber );
+    });
+    $("body").on("click", ".cartRemove", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        delSingleRecord( biblionumber );
+    });
+    $(".clearsh").on("click", function(){
+        return confirmDelete(MSG_DELETE_SEARCH_HISTORY);
+    });
+    //]]>
+</script>
+
+
+ <script src="/opac-tmpl/bootstrap/js/basket_19.0501000.js"></script>
+
+
+<script src="/opac-tmpl/bootstrap/js/tags_19.0501000.js"></script>
+
+ <script src="/opac-tmpl/bootstrap/js/google-jackets_19.0501000.js"></script>
+ <script>
+        //<![CDATA[
+        var NO_GOOGLE_JACKET = _("No hay imagen de cubierta disponible");
+        //]]>
+    </script>
+
+
+
+
+
+
+ <script src="/opac-tmpl/bootstrap/js/localcovers_19.0501000.js"></script>
+ <script>
+    //<![CDATA[
+    var NO_LOCAL_JACKET = _("No hay imagen de cubierta disponible");
+    //]]>
+    </script>
+
+
+
+
+
+
+
+
+
+<script src="/opac-tmpl/bootstrap/lib/jquery/plugins/jquery.cookie.min_19.0501000.js"></script>
+<script>
+$(document).ready(function() {
+    if($('#searchsubmit').length) {
+        $(document).on("click", '#searchsubmit', function(e) {
+            jQuery.removeCookie("form_serialized", { path: '/'});
+            jQuery.removeCookie("form_serialized_limits", { path: '/'});
+            jQuery.removeCookie("num_paragraph", { path: '/'});
+            jQuery.removeCookie("search_path_code", { path: '/'});
+        });
+    }
+
+    window.emojiPicker = new EmojiPicker({
+      emojiable_selector: '[data-emojiable=true]',
+      assetsPath: '/opac-tmpl/lib/emoji-picker/img/',
+      popupButtonClasses: 'fa fa-smile-o'
+    });
+    window.emojiPicker.discover();
+});
+</script>
+
+
+
+<script src="/opac-tmpl/lib/jquery/plugins/jquery.dataTables.min_19.0501000.js"></script>
+<script>
+//<![CDATA[
+    var MSG_DT_FIRST = _("Primero");
+    var MSG_DT_LAST = _("Último");
+    var MSG_DT_NEXT = _("Siguiente");
+    var MSG_DT_PREVIOUS = _("Previo");
+    var MSG_DT_EMPTY_TABLE = _("No hay datos disponibles en tabla");
+    var MSG_DT_INFO = _("Mostrando _START_ a _END_ de _TOTAL_");
+    var MSG_DT_INFO_EMPTY = _("No hay entradas para mostrar");
+    var MSG_DT_INFO_FILTERED = _("(filtrado de _MAX_ entradas totales)");
+    var MSG_DT_LENGTH_MENU = _("Mostrar _MENU_ entradas");
+    var MSG_DT_LOADING_RECORDS = _("Cargando...");
+    var MSG_DT_PROCESSING = _("Procesando...");
+    var MSG_DT_SEARCH = _("Buscar:");
+    var MSG_DT_ZERO_RECORDS = _("No se encontraron registros coincidentes");
+    var CONFIG_EXCLUDE_ARTICLES_FROM_SORT = _("el la los");
+//]]>
+</script>
+<script src="/opac-tmpl/bootstrap/js/datatables_19.0501000.js"></script>
+
+
+
+<script>
+function KohaTable(selector, dt_parameters, columns_settings) {
+    var id = 0;
+    var hidden_ids = [];
+    var included_ids = [];
+    $(columns_settings).each( function() {
+        var named_id = $( 'thead th[data-colname="' + this.columnname + '"]', selector ).index( selector+' th' );
+
+        var used_id = dt_parameters.bKohaColumnsUseNames ? named_id : id;
+        if ( used_id == -1 ) return;
+
+        if ( this['is_hidden'] == "1" ) {
+            hidden_ids.push( used_id );
+        }
+        if ( this['cannot_be_toggled'] == "0" ) {
+            included_ids.push( used_id );
+        }
+        id++;
+    });
+    dt_parameters[ "buttons" ] = [
+        {
+            extend: 'colvis',
+            columns: included_ids,
+            text: _("Visibilidad de la columna"),
+        }
+    ];
+    var table = $(selector).dataTable($.extend(true, {}, dataTablesDefaults, dt_parameters));
+
+    $(hidden_ids).each(function(index, value) {
+        table.fnSetColumnVis( value, false );
+    });
+
+    return table;
+}
+
+</script>
+
+
+
+<script>
+    var GB_ROOT_DIR = "/opac-tmpl/bootstrap/lib/greybox/";
+</script>
+<script src="/opac-tmpl/bootstrap/lib/greybox/AJS_19.0501000.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/greybox/AJS_fx_19.0501000.js"></script>
+<script src="/opac-tmpl/bootstrap/lib/greybox/gb_scripts_19.0501000.js"></script>
+<link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/lib/greybox/gb_styles_19.0501000.css">
+
+
+
+
+<script src="/opac-tmpl/bootstrap/lib/jquery/plugins/jquery.highlight-3_19.0501000.js"></script>
+
+<script>
+    
+        var q_array = new Array();  // holds search terms if available
+
+        function highlightOff() {
+            $("#catalogue_detail_biblio").removeHighlight();
+            $(".highlight_toggle").toggle();
+        }
+        function highlightOn() {
+            var x;
+            for (x in q_array) {
+                if ( q_array[x].length > 0 ) {
+                    q_array[x] = q_array[x].replace(/\w*:([\w])/, "$1");
+                    q_array[x] = q_array[x].toLowerCase();
+                    var myStopwords = "and|or|not".toLowerCase().split('|');
+                    if( $.inArray(q_array[x], myStopwords) == -1 ) {
+                        $(".title").highlight(q_array[x]);
+                        $(".author").highlight(q_array[x]);
+                        $(".results_summary").highlight(q_array[x]);
+                    }
+                }
+            }
+            $(".highlight_toggle").toggle();
+        }
+    
+
+     $(document).ready(function() {
+        $('#bibliodescriptions').tabs();
+        $(".branch-info-tooltip-trigger").uitooltip({
+            position: { my: "left+15 center", at: "right center" },
+            show: 50,
+            hide: 50,
+            content: function(){
+                var element = $(this).next("div");
+                return element.html();
+            }
+        });
+
+        
+
+        var columns_settings = [{"columnname":"item_itemtype","cannot_be_modified":0,"cannot_be_toggled":0,"is_hidden":0},{"columnname":"item_current_location","cannot_be_modified":0,"cannot_be_toggled":0,"is_hidden":0},{"cannot_be_modified":0,"columnname":"item_home_location","is_hidden":0,"cannot_be_toggled":0},{"columnname":"item_shelving_location","cannot_be_modified":0,"cannot_be_toggled":0,"is_hidden":"1"},{"columnname":"item_ccode","cannot_be_modified":0,"cannot_be_toggled":0,"is_hidden":0},{"columnname":"item_callnumber","cannot_be_modified":0,"cannot_be_toggled":0,"is_hidden":0},{"columnname":"item_enumchron","cannot_be_modified":0,"cannot_be_toggled":0,"is_hidden":0},{"columnname":"item_url","cannot_be_modified":0,"cannot_be_toggled":0,"is_hidden":0},{"is_hidden":0,"cannot_be_toggled":0,"cannot_be_modified":0,"columnname":"item_copy"},{"is_hidden":0,"cannot_be_toggled":0,"cannot_be_modified":0,"columnname":"item_status"},{"cannot_be_toggled":0,"is_hidden":0,"columnname":"item_notes","cannot_be_modified":0},{"columnname":"item_datedue","cannot_be_modified":0,"cannot_be_toggled":0,"is_hidden":0},{"columnname":"item_barcode","cannot_be_modified":0,"cannot_be_toggled":"0","is_hidden":"0"},{"columnname":"item_holds","cannot_be_modified":0,"cannot_be_toggled":0,"is_hidden":0},{"columnname":"item_priority","cannot_be_modified":0,"cannot_be_toggled":0,"is_hidden":0},{"is_hidden":0,"cannot_be_toggled":0,"cannot_be_modified":0,"columnname":"item_coursereserves"}];
+
+        KohaTable("#holdingst", {
+            dom: '<"clearfix">t',
+            "columnDefs": [
+                { "targets": [ -1 ], "sortable": false, "searchable": false },
+                { "type": "title-string", "targets" : [ "title-string" ] }
+                ],
+            "bKohaColumnsUseNames": true,
+            "autoWidth": false
+        }, columns_settings);
+
+        KohaTable("#otherholdingst", {
+            dom: '<"clearfix">t',
+            "columnDefs": [
+                { "targets": [ -1 ], "sortable": false, "searchable": false },
+                { "type": "title-string", "targets" : [ "title-string" ] }
+                ],
+            "bKohaColumnsUseNames": true,
+            "autoWidth": false
+        }, columns_settings);
+
+        var serial_column_settings = [{"cannot_be_modified":0,"columnname":"serial_serialseq","is_hidden":0,"cannot_be_toggled":0},{"cannot_be_modified":0,"columnname":"serial_publisheddate","is_hidden":0,"cannot_be_toggled":0},{"is_hidden":0,"cannot_be_toggled":0,"cannot_be_modified":0,"columnname":"serial_planneddate"},{"is_hidden":0,"cannot_be_toggled":0,"cannot_be_modified":0,"columnname":"serial_status"},{"columnname":"serial_notes","cannot_be_modified":0,"cannot_be_toggled":0,"is_hidden":0}];
+
+        KohaTable("#subscriptionst", {
+            dom: '<"clearfix">t',
+            "sorting": [[ 1, "desc" ]],
+            "columnDefs": [
+                { "type": "title-string", "targets" : [ "title-string" ] }
+                ],
+            "autoWidth": false,
+            "bKohaColumnsUseNames": true
+        }, serial_column_settings);
+
+
+
+        
+        
+            var default_order_index = 0;
+        
+
+        
+    
+        KOHA.Google.GetCoverFromIsbn(false);
+    
+    
+
+    
+    
+        KOHA.LocalCover.GetCoverFromBibnumber(true);
+    
+    
+
+
+
+    (function prepareShelfBrowser(){
+
+        $(".main").on("click",".close_shelf",function(e){
+            e.preventDefault();
+            $("#shelfbrowser").toggle();
+        });
+        $(".main").on("click", "#browser_previous a", function(e){
+            e.preventDefault();
+            $.ajax({
+                url: "/cgi-bin/koha/svc/shelfbrowser.pl",
+                type: "POST",
+                data: {
+                    "shelfbrowse_itemnumber": $("#browser_previous a").data( "prev-itemnumber" )
+                },
+                success: function(data){
+                    $("#shelfbrowser").replaceWith(data);
+                    
+                      KOHA.Google.GetCoverFromIsbn(false);
+                    
+                    
+                    
+                    
+                      KOHA.LocalCover.GetCoverFromBibnumber(true);
+                    
+                }
+            });
+        });
+
+        $(".main").on("click", "#browser_next a", function(e){
+            e.preventDefault();
+            $.ajax({
+                  url: "/cgi-bin/koha/svc/shelfbrowser.pl",
+                  type: "POST",
+                  data: {
+                    "shelfbrowse_itemnumber": $("#browser_next a").data( "next-itemnumber" )
+                },
+                success: function(data){
+                    $("#shelfbrowser").replaceWith(data);
+                    
+                      KOHA.Google.GetCoverFromIsbn(false);
+                    
+                    
+                    
+                    
+                      KOHA.LocalCover.GetCoverFromBibnumber(true);
+                    
+                }
+            });
+        });
+    }());
+
+
+
+
+
+});
+    
+</script>
+
+
+
+
+ <script>
+        //Place cursor in search box
+$('#searchform .transl1').focus();
+//Add placeholder to search box: "Search the catalog"
+$( ".transl1" ).attr( "placeholder", "Escriba aquí término(s) de búsqueda" );
+//Change "Library Catalog" to "Keyword" in search dropdown menu
+$("#masthead_search option:first").text("Todos los campos");
+    </script>
+
+
+
+</body>
+</html>
+
+
+
+
+
+
+

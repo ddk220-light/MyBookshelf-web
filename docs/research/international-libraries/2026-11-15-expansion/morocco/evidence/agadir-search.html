@@ -1,0 +1,277 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" charset='utf-8'>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="author" content="PMB Group" />
+
+	<meta name="keywords" content="OPAC, web, library, opensource, catalog, catalogue, biblioth�que, m�diath�que, pmb, phpmybibli" />
+	<meta name="description" content="Catalogue en ligne مرحبا بكم على الموقع الإلكتروني -الفهرس الإلكتروني- لخزانة محمد المنوني بكلية الآداب و العلوم الإنسانية بأكادير.
+
+La Bibliothèque Mohammed Al-Manouni de la Faculté des Lettres et des Sciences Humaine d'Agadir.
+Bienvenue
+
+
+
+
+." />
+
+	<meta name="robots" content="all" />
+
+	<title>Catalogue en ligne مرحبا بكم على الموقع الإلكتروني -الفهرس الإلكتروني- لخزانة محمد المنوني بكلية الآداب و العلوم الإنسانية بأكادير.
+
+La Bibliothèque Mohammed Al-Manouni de la Faculté des Lettres et des Sciences Humaine d'Agadir.
+Bienvenue
+
+
+
+
+.</title>
+	
+	
+	<link rel='stylesheet' type='text/css' href='./styles/pmb/pmb.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/pmb/print.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/pmb/liste_bulletins.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/pmb/tags.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/pmb/colonnes.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/pmb/ext_search.css' />
+	<link rel='stylesheet' type='text/css' href='./styles/pmb/gallerie_photos.css' />
+	<link rel="SHORTCUT ICON" href="images/site/favicon.ico">
+	<script type="text/javascript" src="includes/javascript/drag_n_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/handle_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/popup.js"></script>
+	
+</head>
+
+<body onload="window.defaultStatus='PMB : Accès public';" id="pmbopac">
+<script type='text/javascript'>
+function show_what(quoi, id) {
+	var whichISBD = document.getElementById('div_isbd' + id);
+	var whichPUBLIC = document.getElementById('div_public' + id);
+	var whichongletISBD = document.getElementById('onglet_isbd' + id);
+	var whichongletPUBLIC = document.getElementById('onglet_public' + id);
+	if (quoi == 'ISBD') {
+		whichISBD.style.display  = 'block';
+		whichPUBLIC.style.display = 'none';
+		whichongletPUBLIC.className = 'isbd_public_inactive';
+		whichongletISBD.className = 'isbd_public_active';
+		} else {
+			whichISBD.style.display = 'none';
+			whichPUBLIC.style.display = 'block';
+  			whichongletPUBLIC.className = 'isbd_public_active';
+			whichongletISBD.className = 'isbd_public_inactive';
+			}
+  	}
+</script>
+
+<script type='text/javascript' src='./includes/javascript/tablist.js'></script>
+	<div id='att' style='z-Index:1000'></div>
+	<div id="container"><div id="main"><div id='main_header'></div><div id="main_hors_footer">
+						
+<div id='navigator'>
+<strong>A partir de cette page vous pouvez :</strong>
+<table width='100%'><tr><td ><a href="./index.php?lvl=index" class='avec_recherches'><span>Retourner au premier écran avec les recherches...</span></a></td>
+</tr></table></div><!-- fermeture de #navigator -->
+<script>
+terms=new Array('مقدمة','ابن','خلدون');
+terms_litteraux=new Array('');
+
+codes=new Array();
+codes['a']='[àáâãäåÀÁÂÃÄÅA]';
+codes['c']='[çÇC]';
+codes['e']='[éèêëÈÉÊËE]';
+codes['i']='[ìíîïIÌÍÎÏ]';
+codes['n']='[ñÑnN]';
+codes['o']='[òóôõöOÒÓÔÕÖ]';
+codes['u']='[ùúûüUÙÚÛÜ]';
+
+function remplacer_carac(mot)
+{
+var x;	
+var chaine;
+var reg;				
+chaine=mot;
+reg=new RegExp(codes['a'], 'g');
+chaine=chaine.replace(reg, 'a');
+reg=new RegExp(codes['c'], 'g');
+chaine=chaine.replace(reg, 'c');
+reg=new RegExp(codes['e'], 'g');
+chaine=chaine.replace(reg, 'e');
+reg=new RegExp(codes['i'], 'g');
+chaine=chaine.replace(reg, 'i');
+reg=new RegExp(codes['n'], 'g');
+chaine=chaine.replace(reg, 'n');
+reg=new RegExp(codes['o'], 'g');
+chaine=chaine.replace(reg, 'o');
+reg=new RegExp(codes['u'], 'g');
+chaine=chaine.replace(reg, 'u');
+return(chaine);		
+} 	
+		
+function trouver_mots_f(obj,mot,couleur,litteral,onoff) {
+	var i;
+	var chaine;
+	if (obj.hasChildNodes()) {
+		var childs=new Array();
+		childs=obj.childNodes;
+		
+		for (i=0; i<childs.length; i++) {
+			
+			if (childs[i].nodeType==3) {
+				if (litteral==0)
+				{
+					chaine=childs[i].data.toLowerCase();
+					chaine=remplacer_carac(chaine);
+				}
+				else
+				{
+					chaine=childs[i].data;
+				}
+				if (chaine.indexOf(mot)!=-1) {
+					reg=chaine.indexOf(mot);
+					if (onoff==1) {
+						after_shave=childs[i].data.substring(reg+mot.length);
+						sp=document.createElement('span');
+						if (couleur % 6!=0) {
+							sp.className='text_search'+couleur;
+						} else {
+							sp.className='text_search0';
+						}
+						nmot=document.createTextNode(childs[i].data.substring(reg,reg+mot.length));
+						childs[i].data=childs[i].data.substring(0,reg);
+						sp.appendChild(nmot);
+					
+						if (after_shave) {
+							var aftern=document.createTextNode(after_shave);
+						} else var aftern='';
+					
+						if (i<childs.length-1) {
+							obj.insertBefore(sp,childs[i+1]);
+							if (aftern) { obj.insertBefore(aftern,childs[i+2]); }
+						} else {
+							obj.appendChild(sp);
+							if (aftern) obj.appendChild(aftern);
+						}
+						i++;
+					} else {
+						obj.replaceChild(childs[i],obj);
+					}
+				}
+			} else if (childs[i].nodeType==1){
+				trouver_mots_f(childs[i],mot,couleur,litteral,onoff);
+			}
+		}
+	}
+}
+		
+function rechercher(onoff) {
+	obj=document.getElementById('res_first_page');
+	if (!obj) {
+		obj=document.getElementById('resultatrech_liste');
+		if (obj.getElementsByTagName('blockquote')[0]) {
+			obj=obj.getElementsByTagName('blockquote')[0];
+		}
+	}
+	if (obj) {
+		if (terms[0]!='')
+		{
+			for (var i=0; i<terms.length; i++) {
+				trouver_mots_f(obj,terms[i],i,0,onoff);
+			
+			}
+		}
+		if (terms_litteraux[0]!='')
+		{
+			for (var i=0; i<terms_litteraux.length; i++) {
+				trouver_mots_f(obj,terms_litteraux[i],i+terms.length,1,onoff);			
+			}
+		}
+	}
+}
+	
+	
+
+
+</script>
+<script type='text/javascript'>
+<!--
+	function test_form(form)
+	{
+
+		return true;
+	}
+-->
+</script>
+			<div id="search">
+
+			<ul class='search_tabs'><li id='current'>Recherche simple</li><li><a href="./index.php?search_type_asked=extended_search">Recherche multi-critères</a></li></ul><div id='search_crl'></div>
+
+			<p class="p1"><span>Vous pouvez lancer une recherche portant sur un ou plusieurs mots (titre, auteur, éditeur, ...).</span></p>
+
+			<div class='row'>
+
+			<form name='search_input' action='./index.php?lvl=search_result' method='post' onSubmit="if (search_input.user_query.value.length == 0) { search_input.user_query.value='*'; return true; }">
+
+				 <select name='typdoc'>  <option  value='' selected>tout type de document</option>
+  <option  value='a'>texte imprim&eacute;</option>
+</select><br/>
+
+				<input type='hidden' name='surligne' value=''/>
+				<input type='text' name='user_query' class='text_query' value="مقدمة ابن خلدون" size='65' />
+
+				<input type='submit' name='ok' value='Rechercher' class='boutonrechercher'/>
+<input type='button' value='Aide' class='bouton' onClick='window.open("./help.php?whatis=simple_search", "search_help", "scrollbars=yes, toolbar=no, dependent=yes, width=400, height=400, resizable=yes"); return false' />
+		<div id='simple_search_zone'><div class='row'>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_TITLE' id='look_TITLE' value='1' checked /><label for='look_TITLE'> Titres </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_AUTHOR' id='look_AUTHOR' value='1'  /><label for='look_AUTHOR'> Auteurs </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_PUBLISHER' id='look_PUBLISHER' value='1'  /><label for='look_PUBLISHER'> Editeurs </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_COLLECTION' id='look_COLLECTION' value='1'  /><label for='look_COLLECTION'> Collections </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_CATEGORY' id='look_CATEGORY' value='1'  /><label for='look_CATEGORY'> Catégories </label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_KEYWORDS' id='look_KEYWORDS' value='1'  /><label for='look_KEYWORDS'> Mots-clés</label></span>
+<span style='width: 30%; float: left;'><input type='checkbox' name='look_ALL' id='look_ALL' value='1'  /><label for='look_ALL'> Tous les champs </label></span></div><div style='clear: both;'><input type='hidden' name='look_FIRSTACCESS' value='1' /></div></div>
+
+			</form>
+
+			</div>
+
+			<script type='text/javascript'>
+
+				document.search_input.user_query.focus();
+
+				</script>
+	
+		</div><div><span><div id="search_result">
+<h3><span>résultat de la recherche pour le(s) mot(s) <b>مقدمة ابن خلدون</b></span></h3><strong>Titres</strong> 382 résultat(s) <a href="javascript:document.forms['search_objects'].submit()">afficher&nbsp;<img src='./images/search.gif' border='0' align='absmiddle'/></a><div style=search_result><form name="search_objects" action="./index.php?lvl=more_results" method="post"><input type="hidden" name="user_query" value="مقدمة ابن خلدون">
+<input type="hidden" name="mode" value="titre">
+<input type="hidden" name="count" value="382">
+<input type="hidden" name="clause" value="where (index_sew like &#039;% مقدمة %&#039; or index_sew like &#039;% ابن %&#039; or index_sew like &#039;% خلدون %&#039; ) and (statut=id_notice_statut and ((notice_visible_opac=1 and notice_visible_opac_abon=0)))">
+<input type="hidden" name="pert" value="((index_sew like &#039;% مقدمة %&#039;)+(index_sew like &#039;% ابن %&#039;)+(index_sew like &#039;% خلدون %&#039;)) as pert">
+<input type="hidden" name="l_typdoc" value="a">
+<input type="hidden" name="tri" value="order by pert desc, index_serie, tnvol, index_sew"></form></div>
+</div></span></div>	
+		 
+
+		</div><!-- /div id=main -->
+
+		<div id="intro">
+<div id="intro_bibli">
+			<h3>مرحبا بكم على الموقع الإلكتروني -الفهرس الإلكتروني- لخزانة محمد المنوني بكلية الآداب و العلوم الإنسانية بأكادير.
+
+La Bibliothèque Mohammed Al-Manouni de la Faculté des Lettres et des Sciences Humaine d'Agadir.
+Bienvenue
+
+
+
+
+</h3>
+			<div class="p1">Université Ibn Zohr
+Agadir.</div>
+			<div class="p2"></div>
+			</div>
+		</div><!-- /div id=intro -->		
+		</div><!-- /div id=container -->
+		<script type='text/javascript'>init_drag();	//rechercher!!</script> 
+		</body>
+		</html>
+		

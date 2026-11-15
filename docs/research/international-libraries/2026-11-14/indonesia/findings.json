@@ -1,0 +1,883 @@
+{
+  "country": "Indonesia",
+  "research_checked_utc": "2026-11-15T06:28:53.842207+00:00",
+  "directory_date_note": "Folder uses parent study start 2026-11-14; actual verification timestamps 15 Nov 2026 UTC.",
+  "live_query_success_count": 11,
+  "definitive_largest_ten_ranking": false,
+  "selection_statement": "Ten major institutions/networks with demonstrated title searches; not the ten objectively largest Indonesian libraries. Comparable current collection census missing and some very large institutions blocked. Continuation preserves the original ten selected institutions and adds UI Fasilkom as a separately scoped reserve; eleven observed successes in total.",
+  "marketplace": {
+    "conclusion": "Best breadth investments are new SLiMS and INLISLite adapters; no defensible current national LMS-share ranking established. Indonesia OneSearch is largest identified discovery partnership route, but OAI metadata does not provide live item state.",
+    "largest_network_unlock": "OneSearch 4,215 institutions (2025); partnership/API/metadata rights and live holdings require separate work.",
+    "suggested_pilots": [
+      "Jakarta public-library network: clear branch-level available print copies and public membership",
+      "Airlangga and Brawijaya: reusable INLISLite family",
+      "Padjadjaran and Diponegoro: SLiMS union variants"
+    ],
+    "sources": [
+      {
+        "url": "https://slims.web.id/web/news/daftar-pengguna-slims/",
+        "claim": "1,923 Indonesian registered institutions and 52 UCS users; historical list updated 11 Feb 2020. Not current active deployments/share.",
+        "date": "2020-02-11",
+        "verification": "official page or catalog inspected"
+      },
+      {
+        "url": "https://www.perpusnas.go.id/p3smpt/inlislite/",
+        "claim": "National-library supported INLISLite automation ecosystem; verified deployments here include Brawijaya/Airlangga, WestJava home.",
+        "date": "2026-02-27",
+        "verification": "official search-index evidence and live OPAC footers"
+      },
+      {
+        "url": "https://jdih.perpusnas.go.id/file_peraturan/SK_19_2016_Penetapan_INLIS_ttd.pdf",
+        "claim": "Official 2016 designation of INLIS/INLISLite.",
+        "date": "2016",
+        "verification": "official page or catalog inspected"
+      },
+      {
+        "url": "https://www.perpusnas.go.id/berita/dukung-akses-informasi-publik-tanpa-batas-perpusnas-tunjukkan-inovasi-dalam-keterbukaan-dan-layanan-inklusif",
+        "claim": "Indonesia OneSearch connected 4,215 institutions; metadata aggregation, not live physical availability.",
+        "date": "2025-11-18",
+        "verification": "official page indexed by web search; direct fetch403"
+      },
+      {
+        "url": "https://www.perpusnas.go.id/berita/koordinasi-dan-advokasi-dengan-mitra-jejaring-mitra-indonesia-one-search-di-sumatera-utara-tahun-anggaran-2023",
+        "claim": "OneSearch partner OAI-PMH setup supports SLiMS/INLISLite metadata harvesting.",
+        "date": "2023",
+        "verification": "official search-index evidence"
+      }
+    ]
+  },
+  "libraries": [
+    {
+      "id": "jakarta",
+      "name": "Perpustakaan Jakarta / Jaklitera public-library network",
+      "city": "Jakarta",
+      "type": "provincial public-library network",
+      "selection_basis": {
+        "summary": "141,896 titles and 583,315 copies, government report 9 May 2025. Scope combines formats/collections; do not treat all as unique print books or only Cikini.",
+        "source_url": "https://m.beritajakarta.id/read/144445/pramono-apresiasi-layanan-perpustakaan-jakarta-pds-hb-jassin",
+        "source_date": "2025-05-09",
+        "measurement_kind": "reported titles and copies, mixed scope",
+        "evidence": "evidence/jakarta-size.html"
+      },
+      "platform": "Jaklitera custom frontend; INLIS-style record identifiers, underlying backend version unverified",
+      "platform_proof": "jaklitera-print-detail",
+      "verification_status": "live_specific_book_query_succeeded",
+      "query": {
+        "method": "GET",
+        "text": "Laskar Pelangi",
+        "url": "https://perpustakaan.jakarta.go.id/book?keyword=Laskar+Pelangi",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T06:15:16.251058+00:00",
+        "http_status": 200,
+        "final_url": "https://perpustakaan.jakarta.go.id/book?keyword=Laskar+Pelangi",
+        "raw_evidence": "evidence/jaklitera-specific.html",
+        "metadata_evidence": "evidence/jaklitera-specific.json",
+        "displayed_result_count": 12,
+        "result_count_note": "12 visible cards; no declared full total"
+      },
+      "results": [
+        {
+          "title": "Laskar pelangi",
+          "author": "Andrea Hirata; editor Suhindrati A. Shinta",
+          "record_id": "JAKPU-12139000001531",
+          "record_url": "https://perpustakaan.jakarta.go.id/book/detail?cn=JAKPU-12139000001531",
+          "detail_evidence": "evidence/jaklitera-print-detail.html",
+          "holdings": "Print edition: 4 available copies at Cikini; 1 checked out at Koja. Search also returned a Daisy talking-book edition, which must not be conflated with print."
+        }
+      ],
+      "policy": {
+        "robots_url": "https://perpustakaan.jakarta.go.id/robots.txt",
+        "robots_checked_at_utc": "2026-11-15T06:14:52.317023+00:00",
+        "robots_http_status": 200,
+        "robots_evidence": "evidence/jaklitera-robots.html",
+        "assessment": "200 generic empty Disallow; public search/detail accessible.",
+        "terms_or_license": "No explicit bulk-reuse license/partner permission verified; robots and public access are not permission clearance."
+      },
+      "public_eligibility": "Public search; official report includes Jakarta and non-Jakarta members. Registration and loan eligibility remain library-controlled.",
+      "integration_path": "New Jaklitera adapter: GET /book?keyword=, detail keyed cn, parse per-branch copies and status; preserve ISBN/format. Eight location filters observed.",
+      "product_integration_tested": false,
+      "permission_cleared": false,
+      "recommendation": "verified_target"
+    },
+    {
+      "id": "airlangga",
+      "name": "Universitas Airlangga Library / AILiS",
+      "city": "Surabaya",
+      "type": "public university library network",
+      "selection_basis": {
+        "summary": "Official live dashboard displays 246,606 physical copies, observed 15 Nov 2026; not a count of unique book titles.",
+        "source_url": "https://ailisx.lib.unair.ac.id/stats-ailis/index",
+        "source_date": "2026-11-15",
+        "measurement_kind": "live physical-copy dashboard",
+        "evidence": "evidence/unair-size.html"
+      },
+      "platform": "INLISLite X AILIS (explicit footer)",
+      "platform_proof": "unair-detail",
+      "verification_status": "live_specific_book_query_succeeded",
+      "query": {
+        "method": "GET",
+        "text": "Metode penelitian sosial",
+        "url": "https://ailisx.lib.unair.ac.id/opac/pencarian-sederhana?action=pencarianSederhana&katakunci=Metode+penelitian+sosial&ruas=Judul&bahan=Semua+Jenis+Bahan&location=Perpustakaan+Pusat",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T06:12:41.843765+00:00",
+        "http_status": 200,
+        "final_url": "https://ailisx.lib.unair.ac.id/opac/pencarian-sederhana?action=pencarianSederhana&katakunci=Metode+penelitian+sosial&ruas=Judul&bahan=Semua+Jenis+Bahan&location=Perpustakaan+Pusat",
+        "raw_evidence": "evidence/unair-search2.html",
+        "metadata_evidence": "evidence/unair-search2.json",
+        "displayed_result_count": 15,
+        "result_count_note": "Displayed count, not library collection size"
+      },
+      "results": [
+        {
+          "title": "Metode penelitian sosial",
+          "author": "Ulber Silalahi",
+          "record_id": "271a48ea5da859f9d7b0d3a86a9b5b09ea2eb504",
+          "record_url": "https://ailisx.lib.unair.ac.id/opac/detail-opac?id=271a48ea5da859f9d7b0d3a86a9b5b09ea2eb504",
+          "detail_evidence": "evidence/unair-detail.html",
+          "holdings": "Barcode220912211, call 001.42 Sil m3, central RBU KKC, Koleksi Umum, Tersedia, Dapat dipinjam. ISBN979-1073-61-9."
+        }
+      ],
+      "policy": {
+        "robots_url": "https://ailisx.lib.unair.ac.id/robots.txt",
+        "robots_checked_at_utc": "2026-11-15T06:10:55.008000+00:00",
+        "robots_http_status": 200,
+        "robots_evidence": "evidence/ailisx.lib.unair.ac.id-robots.html",
+        "assessment": "200; named AhrefsBot/PetalBot/Amazonbot exclusions, no matching generic disallow for research paths.",
+        "terms_or_license": "No explicit bulk-reuse license/partner permission verified; robots and public access are not permission clearance."
+      },
+      "public_eligibility": "Public metadata and copy status; university circulation membership and external visitor rights require institution-specific confirmation.",
+      "integration_path": "New INLISLite family adapter; AILiS hashed record IDs and location parameter are variants. Preserve central/faculty rooms; count 15 search results.",
+      "product_integration_tested": false,
+      "permission_cleared": false,
+      "recommendation": "verified_target"
+    },
+    {
+      "id": "brawijaya",
+      "name": "Universitas Brawijaya Library",
+      "city": "Malang",
+      "type": "public university library",
+      "selection_basis": {
+        "summary": "68,152 book titles reported during PIP Semarang library’s July 2018 institutional visit, published 14 Nov 2018. Historical book-title evidence, not a current census. The 2009 government directory reports a different mixed-format scope.",
+        "source_url": "https://elibrary.pip-semarang.ac.id/perpustakaan-pip-semarang-kunjungan-studi-banding-ke-perpustakaan-universitas-brawijaya-malang-830b07",
+        "source_date": "2018-11-14",
+        "measurement_kind": "historical book titles reported by visiting public institution",
+        "evidence": "continuation-evidence/ub-2018-size.html"
+      },
+      "platform": "INLISLite v3.0 (footer)",
+      "platform_proof": "ub-detail",
+      "verification_status": "live_specific_book_query_succeeded",
+      "query": {
+        "method": "GET",
+        "text": "Calculus with analytic geometry",
+        "url": "https://digilib.ub.ac.id/opac/pencarian-sederhana?action=pencarianSederhana&katakunci=Calculus+with+analytic+geometry&ruas=Judul&bahan=Semua+Jenis+Bahan",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T06:12:45.559806+00:00",
+        "http_status": 200,
+        "final_url": "https://digilib.ub.ac.id/opac/pencarian-sederhana?action=pencarianSederhana&katakunci=Calculus+with+analytic+geometry&ruas=Judul&bahan=Semua+Jenis+Bahan",
+        "raw_evidence": "evidence/ub-specific.html",
+        "metadata_evidence": "evidence/ub-specific.json",
+        "displayed_result_count": 10,
+        "result_count_note": "Displayed count, not library collection size"
+      },
+      "results": [
+        {
+          "title": "Calculus with analytic geometry",
+          "author": "Edwin J. Purcell",
+          "record_id": "1364 / INLIS000000000001364",
+          "record_url": "https://digilib.ub.ac.id/opac/detail-opac?id=1364",
+          "detail_evidence": "evidence/ub-detail.html",
+          "holdings": "Search displays1 of1 copies; detail barcode018901355, call515.15 PUR c k.1, Dapat dipinjam, Perpustakaan Pusat RUANG LABEL MERAH. Detail status cell not independently interpretable in text."
+        }
+      ],
+      "policy": {
+        "robots_url": "https://digilib.ub.ac.id/robots.txt",
+        "robots_checked_at_utc": "2026-11-15T06:10:57.133374+00:00",
+        "robots_http_status": 200,
+        "robots_evidence": "evidence/digilib.ub.ac.id-robots.html",
+        "assessment": "200 generic empty Disallow.",
+        "terms_or_license": "No explicit bulk-reuse license/partner permission verified; robots and public access are not permission clearance."
+      },
+      "public_eligibility": "Public catalog; borrowing and visitor access depend on university membership rules, not catalog visibility.",
+      "integration_path": "New INLISLite adapter. Direct title GET returned 10 bibliographic records; detail provides MARC and Dublin Core export links.",
+      "product_integration_tested": false,
+      "permission_cleared": false,
+      "recommendation": "verified_target",
+      "initial_selection_basis": {
+        "summary": "Large national public university selected as institution proxy; comparable current collection total not verified.",
+        "source_url": "https://lib.ub.ac.id/",
+        "source_date": null,
+        "measurement_kind": "major institution proxy",
+        "evidence": null
+      },
+      "supplementary_collection_size_evidence": [
+        {
+          "source_url": "https://repositori.kemendikdasmen.go.id/12869/1/Direktori%20Profil%20Perpusdiknas%202009.pdf",
+          "source_date": "2009",
+          "titles": 133834,
+          "copies": 287888,
+          "scope": "mixed printed books, e-journals, research reports and electronic academic works; not comparable to the 2018 book-title count",
+          "evidence": "continuation-evidence/government-directory-2009-selected-pages.txt"
+        }
+      ]
+    },
+    {
+      "id": "diponegoro",
+      "name": "Universitas Diponegoro Integrated Library",
+      "city": "Semarang",
+      "type": "public university union catalog",
+      "selection_basis": {
+        "summary": "Economics and Business faculty alone reports 17,598 book titles / 31,715 copies through 2024 in its official 2025/26 handbook, p105. This is a faculty subset; the whole university union-catalog total remains unknown.",
+        "source_url": "https://feb.undip.ac.id/wp-content/dokumen/buku_pedoman_akademik/Buku%20Pedoman%20Akademik%20FEB%20Undip%202025.pdf",
+        "source_date": "2024",
+        "measurement_kind": "official faculty-only book titles and copies; not university aggregate",
+        "evidence": "continuation-evidence/undip-feb-2024-size-selected-pages.txt"
+      },
+      "platform": "SLiMS; explicit footer",
+      "platform_proof": "undip-detail",
+      "verification_status": "live_specific_book_query_succeeded",
+      "query": {
+        "method": "GET",
+        "text": "Harry Potter and the Deathly Hallows",
+        "url": "https://lib.undip.ac.id/index.php?search=search&keywords=Harry%20Potter%20and%20the%20Deathly%20Hallows",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T06:14:52.319664+00:00",
+        "http_status": 200,
+        "final_url": "https://lib.undip.ac.id/index.php?search=search&keywords=Harry%20Potter%20and%20the%20Deathly%20Hallows",
+        "raw_evidence": "evidence/undip-specific.html",
+        "metadata_evidence": "evidence/undip-specific.json",
+        "displayed_result_count": 3,
+        "result_count_note": "Displayed count, not library collection size"
+      },
+      "results": [
+        {
+          "title": "Harry Potter and the Deathly Hallows : Harry Potter dan Relikui Kematian",
+          "author": "J.K. Rowling",
+          "record_id": "Fakultas Ilmu Budaya:7128",
+          "record_url": "https://lib.undip.ac.id/index.php?p=show_detail&id=7128&in=Fakultas%20Ilmu%20Budaya",
+          "detail_evidence": "evidence/undip-detail.html",
+          "holdings": "Detail item 33930PC1 says Tersedia; header also says Tidak Tersedia and location is unset. Treat as conflicting availability, not unequivocally borrowable."
+        }
+      ],
+      "policy": {
+        "robots_url": "https://lib.undip.ac.id/robots.txt",
+        "robots_checked_at_utc": "2026-11-15T06:11:57.110817+00:00",
+        "robots_http_status": 200,
+        "robots_evidence": "evidence/undip-robots.html",
+        "assessment": "200 generic empty Disallow.",
+        "terms_or_license": "No explicit bulk-reuse license/partner permission verified; robots and public access are not permission clearance."
+      },
+      "public_eligibility": "Public catalog; no universal external borrowing entitlement verified.",
+      "integration_path": "New SLiMS adapter with union variant; record key must include in=faculty plus id. Three records matched. Parse item-level state and retain conflicting header as unknown.",
+      "product_integration_tested": false,
+      "permission_cleared": false,
+      "recommendation": "verified_target",
+      "initial_selection_basis": {
+        "summary": "Major public university and multi-faculty union catalog; current comparable book total not verified. Query location filters cover central/faculty/program libraries.",
+        "source_url": "https://digilib.undip.ac.id/en/services/",
+        "source_date": null,
+        "measurement_kind": "major institution proxy",
+        "evidence": null
+      },
+      "rejected_collection_size_evidence": [
+        {
+          "source_url": "https://repositori.kemendikdasmen.go.id/12869/1/Direktori%20Profil%20Perpusdiknas%202009.pdf",
+          "source_date": "2009",
+          "reason": "Directory p30 reports 57,986 titles but 25,761 copies; inconsistent units/count relationship. Not corrected by assumption or used for ranking.",
+          "evidence": "continuation-evidence/government-directory-2009-selected-pages.txt"
+        }
+      ]
+    },
+    {
+      "id": "itb",
+      "name": "Institut Teknologi Bandung Library",
+      "city": "Bandung",
+      "type": "public technical university library network",
+      "selection_basis": {
+        "summary": "Government directory (2009), p23: 228,393 titles / 238,246 copies across mixed formats. ITB’s own 3 May 2006 article separately reports 227,000 book copies. Historical scale only; current total unverified.",
+        "source_url": "https://repositori.kemendikdasmen.go.id/12869/1/Direktori%20Profil%20Perpusdiknas%202009.pdf",
+        "source_date": "2009",
+        "measurement_kind": "historical mixed-format titles and copies",
+        "evidence": "continuation-evidence/government-directory-2009-selected-pages.txt"
+      },
+      "platform": "Custom ITB WebPAC; no vendor inferred",
+      "platform_proof": "itb-detail",
+      "verification_status": "live_specific_book_query_succeeded",
+      "query": {
+        "method": "GET",
+        "text": "Calculus and linear algebra",
+        "url": "https://webpac.lib.itb.ac.id/find/goMatch?q=Calculus+and+linear+algebra&bFind=title",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T06:12:43.040948+00:00",
+        "http_status": 200,
+        "final_url": "https://webpac.lib.itb.ac.id/find/goMatch?q=Calculus+and+linear+algebra&bFind=title",
+        "raw_evidence": "evidence/itb-specific.html",
+        "metadata_evidence": "evidence/itb-specific.json",
+        "displayed_result_count": 69533,
+        "result_count_note": "Displayed69.533; broad token semantics, not exact title matching"
+      },
+      "results": [
+        {
+          "title": "Calculus and linear algebra, vol.1: vectors in the plane and one-variable calculus",
+          "author": "Wilfred Kaplan; Donald J. Lewis",
+          "record_id": "68422",
+          "record_url": "https://webpac.lib.itb.ac.id/find/detail/68422",
+          "detail_evidence": "evidence/itb-detail.html",
+          "holdings": "Central library has one cataloged copy, accession 19731675, marked Penyiangan 1 (weeded). This proves record discovery, not present circulation availability."
+        }
+      ],
+      "policy": {
+        "robots_url": "https://webpac.lib.itb.ac.id/robots.txt",
+        "robots_checked_at_utc": "2026-11-15T06:10:55.006861+00:00",
+        "robots_http_status": 200,
+        "robots_evidence": "evidence/webpac.lib.itb.ac.id-robots.html",
+        "assessment": "200 HTML404 page at robots route, no usable robots rules; policy unknown.",
+        "terms_or_license": "No explicit bulk-reuse license/partner permission verified; robots and public access are not permission clearance."
+      },
+      "public_eligibility": "Public catalog; lending privileges vary by member category.",
+      "integration_path": "Custom adapter /find/goMatch?q=&bFind=title and /find/detail/{id}; displayed 69.533 results appears broad token matching, not exact-title count. Holdings need status vocabulary including withdrawn/weeded.",
+      "product_integration_tested": false,
+      "permission_cleared": false,
+      "recommendation": "verified_target",
+      "initial_selection_basis": {
+        "summary": "Major technical university; central/faculty/campus selector evidences broad network. Current collection size not verified.",
+        "source_url": "https://itb.ac.id/library",
+        "source_date": null,
+        "measurement_kind": "major institution proxy",
+        "evidence": null
+      },
+      "supplementary_collection_size_evidence": [
+        {
+          "source_url": "https://itb.ac.id/berita/mengenal-lebih-jauh-perpustakaan-itb-2/1044",
+          "source_date": "2006-05-03",
+          "book_copies": 227000,
+          "scope": "central library book copies, explicitly separate from 790 serial titles",
+          "evidence": "continuation-evidence/itb-2006-size.html"
+        }
+      ]
+    },
+    {
+      "id": "its",
+      "name": "Institut Teknologi Sepuluh Nopember Library",
+      "city": "Surabaya",
+      "type": "public technical university library",
+      "selection_basis": {
+        "summary": "42,753 textbook titles/100,171 copies on official undated collection page. Reserve-book text says 22,846, table 22,868; do not sum possibly overlapping counts.",
+        "source_url": "https://www.its.ac.id/perpustakaan/koleksi-umum-dan-tandon/",
+        "source_date": null,
+        "measurement_kind": "official textbook count; undated",
+        "evidence": "evidence/its-size.html"
+      },
+      "platform": "SPITS; engine supported by Linspro (footer)",
+      "platform_proof": "its-detail",
+      "verification_status": "live_specific_book_query_succeeded",
+      "query": {
+        "method": "POST",
+        "text": "Brief calculus with applications",
+        "url": "https://library.its.ac.id/opac/",
+        "payload": {
+          "f": "judul",
+          "q": "Brief calculus with applications",
+          "Submit": "Cari"
+        },
+        "checked_at_utc": "2026-11-15T06:12:44.529023+00:00",
+        "http_status": 200,
+        "final_url": "https://library.its.ac.id/opac/",
+        "raw_evidence": "evidence/its-specific.html",
+        "metadata_evidence": "evidence/its-specific.json",
+        "displayed_result_count": 2,
+        "result_count_note": "Displayed count, not library collection size"
+      },
+      "results": [
+        {
+          "title": "Brief calculus with applications",
+          "author": "James W. Burgmeier; Monte B. Boisen Jr.; Max D. Larsen",
+          "record_id": "007557411X",
+          "record_url": "https://library.its.ac.id/opac/index.php?go=detil",
+          "detail_evidence": "evidence/its-detail.html",
+          "holdings": "Two item barcodes 3100093027024 and 3100093027025, both DI-GUDANG-KAN (stored in warehouse). Returned book is not immediately borrowable."
+        }
+      ],
+      "policy": {
+        "robots_url": "https://library.its.ac.id/robots.txt",
+        "robots_checked_at_utc": "2026-11-15T06:10:56.308167+00:00",
+        "robots_http_status": 200,
+        "robots_evidence": "evidence/library.its.ac.id-robots.html",
+        "assessment": "robots route returns an HTML portal/network-restriction notice; usable robots rules unknown. Public catalog query/detail itself succeeds.",
+        "terms_or_license": "No explicit bulk-reuse license/partner permission verified; robots and public access are not permission clearance."
+      },
+      "public_eligibility": "Public search. Official lending-rules page distinguishes internal members and external reading-on-site: https://www.its.ac.id/perpustakaan/id/aturan-peminjaman/",
+      "integration_path": "Custom POST adapter. Search payload f=judul,q=title,Submit=Cari. Detail POST /opac/index.php?go=detil with id=007557411X; preserve ISBN-like id, not numeric-only. Two search records.",
+      "product_integration_tested": false,
+      "permission_cleared": false,
+      "recommendation": "verified_target"
+    },
+    {
+      "id": "ipb",
+      "name": "IPB University Library / Readily",
+      "city": "Bogor",
+      "type": "public university library network",
+      "selection_basis": {
+        "summary": "Historical 2010 holdings: 45,837 text/research-report titles 72,201 copies plus 5,221 reference titles; official profile published 1 Jan 2011. Dated scale evidence, not current census.",
+        "source_url": "https://lib.ipb.ac.id/2011/01/profil/",
+        "source_date": "2011-01-01",
+        "measurement_kind": "historical mixed text/research-report titles and copies",
+        "evidence": "evidence/ipb-size.html"
+      },
+      "platform": "Readily custom public JSON frontend; older INLIS lineage not assumed current API contract",
+      "platform_proof": "ipb-detail",
+      "verification_status": "live_specific_book_query_succeeded",
+      "query": {
+        "method": "GET",
+        "text": "Kimia dasar",
+        "url": "https://readily.ipb.ac.id/opac/search?q=Kimia%20dasar&category=judul_buku&page=1&per_page=10",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T06:13:26.995951+00:00",
+        "http_status": 200,
+        "final_url": "https://readily.ipb.ac.id/opac/search?q=Kimia%20dasar&category=judul_buku&page=1&per_page=10",
+        "raw_evidence": "evidence/ipb-specific.html",
+        "metadata_evidence": "evidence/ipb-specific.json",
+        "displayed_result_count": 86,
+        "result_count_note": "meta.total 86 but data array has3 records on per_page10 request"
+      },
+      "results": [
+        {
+          "title": "Kimia dasar",
+          "author": "Not supplied by returned record",
+          "record_id": "52722",
+          "record_url": "https://readily.ipb.ac.id/opac/detail-buku?id=52722",
+          "detail_evidence": "evidence/ipb-detail.html",
+          "holdings": "Search JSON JML_BUKU 1 / ALL_BUKU 1 but meanings not independently established; detail HTML copy table empty (likely client-loaded). Do not call confirmed live availability."
+        }
+      ],
+      "policy": {
+        "robots_url": "https://readily.ipb.ac.id/robots.txt",
+        "robots_checked_at_utc": "2026-11-15T06:10:55.007478+00:00",
+        "robots_http_status": null,
+        "robots_evidence": null,
+        "assessment": "robots route404; public frontend-disclosed search API accessible without login.",
+        "terms_or_license": "No explicit bulk-reuse license/partner permission verified; robots and public access are not permission clearance."
+      },
+      "public_eligibility": "Public search. University and branch-specific access eligibility unresolved; subscriptions are separate from catalog discovery.",
+      "integration_path": "Custom Readily adapter GET /opac/search?q=&category=judul_buku&page=1&per_page=10. API meta total 86 but returned data array 3 (pagination/filter discrepancy). CatalogId stable; detail /opac/detail-buku?id=. Public JS evidence ipb-js.html.",
+      "product_integration_tested": false,
+      "permission_cleared": false,
+      "recommendation": "verified_target"
+    },
+    {
+      "id": "uinsuka",
+      "name": "UIN Sunan Kalijaga Library",
+      "city": "Yogyakarta",
+      "type": "public Islamic university library",
+      "selection_basis": {
+        "summary": "Official Data & Facts page displays 124,281 Buku (books), 58,563 final projects and 3,328 references, observed 15 Nov 2026. The page does not specify whether Buku counts titles or copies or state a census date; do not sum categories or use as a comparable print-title total.",
+        "source_url": "https://lib.uin-suka.ac.id/data-fakta",
+        "source_date": null,
+        "measurement_kind": "official observed book-category count with unit/census-date ambiguity",
+        "evidence": "continuation-evidence/uinsuka-facts.html"
+      },
+      "platform": "Custom OPAC; explicitly advertises SRU 1.1 and OAI. Backend LMS unverified.",
+      "platform_proof": "uinsuka-sru",
+      "verification_status": "live_specific_book_query_succeeded",
+      "query": {
+        "method": "GET",
+        "text": "Harry Potter And The Cursed Child",
+        "url": "https://opac.uin-suka.ac.id/?version=1.1&operation=searchRetrieve&query=Harry%20Potter%20And%20The%20Cursed%20Child",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T06:18:28.749743+00:00",
+        "http_status": 200,
+        "final_url": "https://opac.uin-suka.ac.id/?version=1.1&operation=searchRetrieve&query=Harry%20Potter%20And%20The%20Cursed%20Child",
+        "raw_evidence": "evidence/uinsuka-sru.html",
+        "metadata_evidence": "evidence/uinsuka-sru.json",
+        "displayed_result_count": 1,
+        "result_count_note": "Displayed count, not library collection size"
+      },
+      "results": [
+        {
+          "title": "Harry Potter and the cursed child",
+          "author": "J.K. Rowling",
+          "record_id": "No stable record ID exposed; SRU position1 is not an ID",
+          "record_url": null,
+          "detail_evidence": null,
+          "holdings": "SRU returns 1 DC record. Separate HTML title search identifies floor 4, rack 700, call SR792.028 ROW h, Sphere 2017, 329 pages, John Tiffany coauthor. Copy/circulation state not exposed."
+        }
+      ],
+      "policy": {
+        "robots_url": "https://opac.uin-suka.ac.id/robots.txt",
+        "robots_checked_at_utc": "2026-11-15T06:12:41.843327+00:00",
+        "robots_http_status": null,
+        "robots_evidence": null,
+        "assessment": "robots route404. Public OPAC explicitly advertises SRU developer support; bulk reuse still not authorized.",
+        "terms_or_license": "No explicit bulk-reuse license/partner permission verified; robots and public access are not permission clearance."
+      },
+      "public_eligibility": "Public catalog and shelf location. Circulation is member-controlled; reference/reserve books may be onsite-only per official services: https://lib.uin-suka.ac.id/layanan/read/sirkulasi",
+      "integration_path": "Prefer advertised SRU endpoint; response has DC title/creator/date/publisher but no identifier/ISBN. Need stable-record mapping agreement or link to reproducible search; cannot invent record IDs. POST title form behaves differently from SRU (full-title POST returned none, SRU succeeded).",
+      "product_integration_tested": false,
+      "permission_cleared": false,
+      "supplementary_evidence": [
+        "evidence/uinsuka-specific.html",
+        "evidence/uinsuka-exact.json"
+      ],
+      "recommendation": "verified_target",
+      "initial_selection_basis": {
+        "summary": "Major national Islamic university selected as institution proxy; current comparable total not verified.",
+        "source_url": "https://lib.uin-suka.ac.id/",
+        "source_date": null,
+        "measurement_kind": "major institution proxy",
+        "evidence": null
+      },
+      "record_mapping_followup": {
+        "status": "unresolved_after_bounded_protocol_checks",
+        "assessment": "Original SRU title query remains a genuine book search success. No stable identifier for that book was established. Neither the OAI links nor RSS links resolved individual records. No mapping from response position or title similarity was invented.",
+        "checks": [
+          {
+            "request": "GET https://opac.uin-suka.ac.id/?verb=Identify",
+            "result": "OAI-PMH2.0 repository identified; no book-specific identifier",
+            "evidence": "continuation-evidence/uinsuka-identify.html"
+          },
+          {
+            "request": "GET https://opac.uin-suka.ac.id/?version=1.1&operation=explain",
+            "result": "Minimal Explain document without useful index/record identifier contract",
+            "evidence": "continuation-evidence/uinsuka-explain.html"
+          },
+          {
+            "request": "GET https://opac.uin-suka.ac.id/?verb=ListMetadataFormats",
+            "result": "Only oai_dc advertised",
+            "evidence": "continuation-evidence/uinsuka-metadataformats.html"
+          },
+          {
+            "request": "GET https://opac.uin-suka.ac.id/?verb=ListRecords&metadataPrefix=oai_dc&from=2019-01-10T00%3A00%3A00Z&until=2019-01-10T23%3A59%3A59Z",
+            "result": "Returned first five records from 2004; date restriction appears ignored. No pagination/harvest attempted.",
+            "evidence": "continuation-evidence/uinsuka-entryday.html"
+          },
+          {
+            "request": "GET https://opac.uin-suka.ac.id/?i=60",
+            "result": "Advertised OAI identifier link returned only search-home frame",
+            "evidence": "continuation-evidence/uinsuka-oai-record60.html"
+          },
+          {
+            "request": "GET https://opac.uin-suka.ac.id/?rss=Pemasaran%20umkm%20melalui%20media%20sosial",
+            "result": "RSS item permalink also returned only search-home frame",
+            "evidence": "continuation-evidence/uinsuka-rss-permalink.html"
+          },
+          {
+            "request": "GET https://libpps.uin-suka.ac.id/robots.txt",
+            "result": "Official postgraduate SLiMS alternate host returned tunnel403; stopped without a title query",
+            "evidence": "continuation-evidence/uinsuka-pasca-robots.json"
+          }
+        ],
+        "production_effect": "Keep UIN as search feasibility evidence, not a ready stable-record adapter. Request documented record mapping/partner support before implementing persistent identities."
+      }
+    },
+    {
+      "id": "telkom",
+      "name": "Telkom University Open Library",
+      "city": "Bandung, Jakarta, Purwokerto, Surabaya",
+      "type": "private university multi-campus library network",
+      "selection_basis": {
+        "summary": "Official university facilities page reports >80,500 collection titles/123,937 copies; page indexed as 2019, underlying count date unspecified and mixed collection types. Current four-campus scope differs.",
+        "source_url": "https://telkomuniversity.ac.id/en/fasilitas-belajar/",
+        "source_date": null,
+        "measurement_kind": "historical/undated official collection statement; search-index corroboration only",
+        "evidence": null
+      },
+      "platform": "Custom Open Library; vendor/backend unverified",
+      "platform_proof": "telkom-detail",
+      "verification_status": "live_specific_book_query_succeeded",
+      "query": {
+        "method": "POST",
+        "text": "Laskar Pelangi",
+        "url": "https://openlibrary.telkomuniversity.ac.id/home/catalog.html",
+        "payload": {
+          "search[title]": "Laskar Pelangi",
+          "submit": "Cari"
+        },
+        "checked_at_utc": "2026-11-15T06:21:38.618478+00:00",
+        "http_status": 200,
+        "final_url": "https://openlibrary.telkomuniversity.ac.id/home/catalog.html",
+        "raw_evidence": "evidence/telkom-specific.html",
+        "metadata_evidence": "evidence/telkom-specific.json",
+        "displayed_result_count": 5,
+        "result_count_note": "Displayed count, not library collection size"
+      },
+      "results": [
+        {
+          "title": "Laskar pelangi",
+          "author": "Andrea Hirata",
+          "record_id": "220777 / ittp.0003396",
+          "record_url": "https://openlibrary.telkomuniversity.ac.id/home/catalog/id/220777/slug/laskar-pelangi.html",
+          "detail_evidence": "evidence/telkom-detail.html",
+          "holdings": "Four available print copies: 3 at Purwokerto Rectorate floor 1, 1 at floor 5; barcode A5889,A5903,A5944,A5940. ISBN979-3062-79-7. Five query results include DVD and thesis: filter by type."
+        }
+      ],
+      "policy": {
+        "robots_url": "https://openlibrary.telkomuniversity.ac.id/robots.txt",
+        "robots_checked_at_utc": "2026-11-15T06:21:07.226274+00:00",
+        "robots_http_status": 200,
+        "robots_evidence": "evidence/telkom-robots.html",
+        "assessment": "Named GPTBot, ClaudeBot, Amazonbot and SemrushBot disallowed; Googlebot allowed; no generic rule. Technical test used unchanged transparent MyBookshelfResearch UA. Do not infer permission for AI crawlers or production; policy agreement required.",
+        "terms_or_license": "No explicit bulk-reuse license/partner permission verified; robots and public access are not permission clearance."
+      },
+      "public_eligibility": "Public online search. Official 2022 regulations allow external visitors with ID but prohibit take-home borrowing for non-civitas: https://openlibrary.telkomuniversity.ac.id/uploads/Peraturan%20perpustakaan_2022.pdf",
+      "integration_path": "Custom POST adapter search[title]=,submit=Cari at /home/catalog.html; returned detail path /home/catalog/id/{id}/slug/{slug}. Preserve campus/location and type. No named generic product adapter.",
+      "product_integration_tested": false,
+      "permission_cleared": false,
+      "recommendation": "verified_target"
+    },
+    {
+      "id": "padjadjaran",
+      "name": "Universitas Padjadjaran / Kandaga Library",
+      "city": "Jatinangor / Bandung",
+      "type": "public university union catalog",
+      "selection_basis": {
+        "summary": "Government directory (2009), p25: 62,708 copies at CISRAL, the central library predecessor. Historical central-library scope, not the current multi-faculty union total; 19 catalog location filters observed.",
+        "source_url": "https://repositori.kemendikdasmen.go.id/12869/1/Direktori%20Profil%20Perpusdiknas%202009.pdf",
+        "source_date": "2009",
+        "measurement_kind": "historical central-library copies; current union total unknown",
+        "evidence": "continuation-evidence/government-directory-2009-selected-pages.txt"
+      },
+      "platform": "SLiMS union OPAC; modern Kandaga custom public API also verified",
+      "platform_proof": "unpad-detail",
+      "verification_status": "live_specific_book_query_succeeded",
+      "query": {
+        "method": "GET",
+        "text": "Dasar-dasar mikrobiologi",
+        "url": "https://opac.unpad.ac.id/index.php?search=search&keywords=Dasar-dasar%20mikrobiologi",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T06:23:06.005841+00:00",
+        "http_status": 200,
+        "final_url": "https://opac.unpad.ac.id/index.php?search=search&keywords=Dasar-dasar%20mikrobiologi",
+        "raw_evidence": "evidence/unpad-opac-specific.html",
+        "metadata_evidence": "evidence/unpad-opac-specific.json",
+        "displayed_result_count": null,
+        "result_count_note": "Many title-matching records across pages; no reliable overall total extracted"
+      },
+      "results": [
+        {
+          "title": "Dasar-dasar mikrobiologi",
+          "author": "Michael J. Pelzcar [catalog spelling]; E.C.S. Chan",
+          "record_id": "Fakultas Perikanan dan Ilmu Kelautan:6634",
+          "record_url": "https://opac.unpad.ac.id/index.php?node=Fakultas+Perikanan+dan+Ilmu+Kelautan&p=show_detail&id=6634&keywords=Dasar-dasar+mikrobiologi",
+          "detail_evidence": "evidence/unpad-detail.html",
+          "holdings": "Eleven displayed copies at Fisheries/Marine Science faculty, barcodesTbD100486 throughTbD100496, all Tersedia, call2D1. ISBN979-8034-57-0."
+        }
+      ],
+      "policy": {
+        "robots_url": "https://opac.unpad.ac.id/robots.txt",
+        "robots_checked_at_utc": "2026-11-15T06:22:38.343927+00:00",
+        "robots_http_status": 200,
+        "robots_evidence": "evidence/unpad-opac-robots.html",
+        "assessment": "200 explicit User-agent:* Allow:/. Kandaga separate host robots404; public documented API uses status=published,access_level=public.",
+        "terms_or_license": "No explicit bulk-reuse license/partner permission verified; robots and public access are not permission clearance."
+      },
+      "public_eligibility": "Public search and availability. Reference materials onsite-only; general borrowing membership needs confirmation: https://kandaga.unpad.ac.id/panduan/layanan-koleksi",
+      "integration_path": "New SLiMS union adapter; key by node+id, not id alone. Also verified public Kandaga API title Damar Wulan, author Zuber Usman, UUID 1a95b854-2e35-4b14-8877-66042676b36a; detail shows 2 available copies. Do not double-count both frontends as separate institutions.",
+      "product_integration_tested": false,
+      "permission_cleared": false,
+      "supplementary_evidence": [
+        "evidence/unpad-api-specific.html",
+        "evidence/unpad-modern-detail.html",
+        "evidence/unpad-libraryjs.html",
+        "evidence/unpad-public-search-contract.txt"
+      ],
+      "recommendation": "verified_target",
+      "initial_selection_basis": {
+        "summary": "Major multi-faculty public university selected as proxy; current union book total not verified. 19 central/faculty/campus filters observed; no national size rank asserted.",
+        "source_url": "https://kandaga.unpad.ac.id/profil",
+        "source_date": null,
+        "measurement_kind": "major institution proxy",
+        "evidence": null
+      }
+    },
+    {
+      "id": "ui_fasilkom",
+      "recommendation": "reserve",
+      "name": "Universitas Indonesia — Faculty of Computer Science Library (Fasilkom only)",
+      "city": "Depok",
+      "type": "public university faculty library",
+      "selection_basis": {
+        "summary": "Official faculty-catalog homepage displays 12,034 book-category records on 15 Nov 2026. Faculty-only scope, not the central UI catalog or a national largest-ten claim.",
+        "source_url": "https://lontar.cs.ui.ac.id/Lontar/opac/themes/newui/index.jsp",
+        "source_date": "2026-11-15",
+        "measurement_kind": "live faculty book-category catalog-record count, not physical copies",
+        "evidence": "continuation-evidence/ui-computing-home.html"
+      },
+      "platform": "LONTAR (Library Automation and Digital Archive)",
+      "platform_proof": "Official catalog header names LONTAR and Fasilkom UI; public JSP search and detail forms.",
+      "verification_status": "live_specific_book_query_succeeded",
+      "query": {
+        "method": "GET",
+        "text": "Introduction to Natural Language Processing",
+        "url": "https://lontar.cs.ui.ac.id/Lontar/opac/themes/newui/hasilcari.jsp?query=Introduction%20to%20Natural%20Language%20Processing",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T07:09:29.849064+00:00",
+        "http_status": 200,
+        "final_url": "https://lontar.cs.ui.ac.id/Lontar/opac/themes/newui/hasilcari.jsp?query=Introduction%20to%20Natural%20Language%20Processing",
+        "raw_evidence": "continuation-evidence/ui-computing-specific.html",
+        "metadata_evidence": "continuation-evidence/ui-computing-specific.json",
+        "displayed_result_count": 3559,
+        "result_count_note": "Broad token search returns 3,559 mixed documents; exact requested book appears as the second search row. This is not an exact-title count."
+      },
+      "results": [
+        {
+          "title": "Introduction to Natural Language Processing",
+          "author": "Jacob Eisenstein",
+          "record_id": "57139|lokasi=lokal",
+          "record_url": "https://lontar.cs.ui.ac.id/Lontar/opac/themes/newui/detail.jsp?id=57139&lokasi=lokal",
+          "detail_evidence": "continuation-evidence/ui-computing-detail.html",
+          "holdings": "Faculty library call006.35 Eis i; item26/13254 marked fotocopy with return date2027-05-02, so no currently available copy established. Catalog reports MIT Press2018; do not correct edition metadata by title matching."
+        },
+        {
+          "title": "Natural language processing in LISP: an introduction to computational linguistics",
+          "author": "Gerald Gazdar",
+          "record_id": "29764|lokasi=lokal",
+          "record_url": "https://lontar.cs.ui.ac.id/Lontar/opac/themes/newui/detail.jsp?id=29764&lokasi=lokal",
+          "detail_evidence": "continuation-evidence/ui-computing-gazdar-detail.html",
+          "holdings": "Addison-Wesley1989; faculty item91/1023 call410.28 Gaz n marked TERSEDIA (available). Same item row appears twice; count as one unique item, not two copies."
+        }
+      ],
+      "policy": {
+        "robots_url": "https://lontar.cs.ui.ac.id/robots.txt",
+        "robots_checked_at_utc": "2026-11-15T07:08:39.987715+00:00",
+        "robots_http_status": 404,
+        "robots_evidence": "continuation-evidence/ui-computing-robots.json",
+        "assessment": "robots.txt returned HTTP404; no explicit exclusion obtained. Current app treats ordinary404 as no disallow rules. This does not establish reuse permission. No credentials, login or access bypass used.",
+        "terms_or_license": "No specific catalog reuse license or bulk permission verified."
+      },
+      "public_eligibility": "Anonymous catalog search works. Official faculty profile says service extends to UI and other public/private-university students; general-public borrowing rights not established.",
+      "integration_path": "New LONTAR JSP adapter. Parse actual search rows, preserve id plus lokasi, fetch stock tab data included in detail HTML, normalize availability and deduplicate repeated item IDs. Faculty coverage only; central UI remains unresolved.",
+      "product_integration_tested": false,
+      "permission_cleared": false,
+      "supplementary_evidence": [
+        "continuation-evidence/ui-computing-profile.html"
+      ]
+    }
+  ],
+  "blocked_candidates": [
+    {
+      "name": "National Library of Indonesia / Perpusnas",
+      "url": "https://opac.perpusnas.go.id/",
+      "reason": "HTTP403; no book query success",
+      "size": "Official 13 Aug 2026 reports >3.6 million titles / 9.9 million copies, mixed formats; not all necessarily indexed online.",
+      "size_source": "https://perpusnas.go.id/berita/siaran-pers-pustakawan-penjaga-memori-kolektif-identitas-dan-pengetahuan-bangsa-di-era-teknologi-digital"
+    },
+    {
+      "name": "Universitas Gadjah Mada",
+      "url": "https://opac.lib.ugm.ac.id/",
+      "reason": "Home200; exact title form POST repeatedly returns application error including same-session submission. Not query verified.",
+      "size": "423,979 book titles reported 2023 across university collections.",
+      "size_source": "https://ugm.ac.id/en/news/ugm-library-holds-423979-book-titles-in-its-collection/",
+      "evidence": "evidence/ugm-specific.json",
+      "continuation": {
+        "new_official_route_source": "https://lib.ugm.ac.id/en/home/",
+        "query_url": "https://opac.lib.ugm.ac.id/?q=Laskar%20Pelangi",
+        "result": "Official homepage advertises this GET form. Request returned unchanged latest-books homepage, without query results. Not counted; no further retry.",
+        "evidence": "continuation-evidence/ugm-official-get-search.html"
+      }
+    },
+    {
+      "name": "Universitas Indonesia",
+      "url": "https://lib.ui.ac.id/",
+      "reason": "25second read timeout; official alternate Lontar robots request tunnel403. No query verified.",
+      "size": "Official faculty page describes 1.5 million collections across central/faculties, undated/mixed; not comparable print-title total.",
+      "size_source": "https://ir.fisip.ui.ac.id/fasilitas/",
+      "continuation": {
+        "result": "Central catalog still unresolved. Separate Fasilkom faculty catalog verified and retained as reserve ui_fasilkom; its success does not clear central-catalog failure."
+      }
+    },
+    {
+      "name": "Universitas Hasanuddin",
+      "url": "https://opac-library.unhas.ac.id/opac/",
+      "reason": "robots disallow all; no catalog query performed.",
+      "size": "Official profile ≈516,000 volumes, mixed books/theses/reports/serials/electronic/audio-visual.",
+      "size_source": "https://library.unhas.ac.id/profil-perpustakaan-en/",
+      "evidence": "evidence/opac-library.unhas.ac.id-robots.html"
+    },
+    {
+      "name": "Universitas Sebelas Maret (UNS)",
+      "url": "https://unsla.uns.ac.id/",
+      "reason": "SLiMS home reachable; robots wildcard exclusions cover search and keywords query parameters. No query performed.",
+      "evidence": "evidence/uns-robots.html"
+    },
+    {
+      "name": "UIN Syarif Hidayatullah Jakarta",
+      "url": "https://tulis.uinjkt.ac.id/",
+      "reason": "Home reachable but robots disallow all; no query.",
+      "size": "48,363 book titles, official 2025.",
+      "size_source": "https://www.uinjkt.ac.id/index.php/id/perkuat-literasi-dan-riset-perpustakaan-uin-jakarta-tambah-koleksi-hingga-48363-judul-buku",
+      "evidence": "evidence/uinjkt-robots.html"
+    },
+    {
+      "name": "West Java provincial public library",
+      "url": "https://ilms.jabarprov.go.id/opac",
+      "reason": "INLISLite 3.1 home 200; two actual title-query variants 404. Indexed search results alone do not count. Named GPTBot exclusion also present.",
+      "evidence": "evidence/jabar-search2.json"
+    },
+    {
+      "name": "Universitas Muhammadiyah Surakarta",
+      "url": "https://opac-lib.ums.ac.id/",
+      "reason": "Koha home 200; actual title query 200 only koha_fast_challenge script stub; stopped without solving challenge.",
+      "evidence": "evidence/ums-specific.html"
+    },
+    {
+      "name": "Universitas Pendidikan Indonesia",
+      "url": "https://perpustakaan.upi.edu/opacnew/opac/",
+      "reason": "HTTP503"
+    },
+    {
+      "name": "Universitas Negeri Yogyakarta",
+      "url": "https://opac.uny.ac.id/search/index.php",
+      "reason": "Tunnel403"
+    },
+    {
+      "name": "Universitas Sumatera Utara",
+      "url": "https://digilib.usu.ac.id/",
+      "reason": "HTTP503"
+    },
+    {
+      "name": "Universitas Negeri Malang",
+      "url": "https://opac.lib.um.ac.id/",
+      "reason": "Official library home 418; dedicated OPAC tunnel403."
+    },
+    {
+      "name": "Soeman HS / Riau provincial library",
+      "url": "https://pustaka.riau.go.id/",
+      "reason": "HTTP503"
+    },
+    {
+      "name": "Grhatama / Yogyakarta provincial library",
+      "url": "https://balaiyanpus.jogjaprov.go.id/opac/",
+      "reason": "HTTP503"
+    }
+  ],
+  "limitations": [
+    "No current comparable national collection census; titles/copies/digital records not summed.",
+    "All 10 are Java-based; infrastructure-constrained rural/outer-island coverage is not demonstrated by this pilot sample.",
+    "No product adapter execution, production registration, permissions outreach or integration was performed.",
+    "No access controls/TLS checks disabled or challenges solved; blocked catalogs retained as failures.",
+    "A query success establishes metadata retrieval, not take-home eligibility, live availability accuracy, or license permission.",
+    "Result counts can be mixed media, OR-token matches, stale or internally inconsistent; direct book records used as proof."
+  ],
+  "selected_target_count": 10,
+  "reserve_query_success_count": 1,
+  "continuation_checked_utc": "2026-11-15",
+  "continuation_summary": {
+    "original_ten_preserved": true,
+    "new_reserve_id": "ui_fasilkom",
+    "improved_collection_evidence_ids": [
+      "brawijaya",
+      "diponegoro",
+      "itb",
+      "uinsuka",
+      "padjadjaran"
+    ],
+    "largest_ten_proven": false,
+    "limits": [
+      "UIN stable-record mapping remains unresolved.",
+      "New UGM official GET route is a homepage, not search results.",
+      "National Library had no new confirmed physical-catalog route; its restricted OPAC was not retried.",
+      "Historical, faculty-only, ambiguous-unit and live catalog-record counts cannot be ranked together."
+    ],
+    "policy_method": "Applied current app semantics: longest matching robots path, wildcard support, exact MyBookshelf product group then generic group; no first-match urllib.robotparser decisions used.",
+    "evidence_directory": "continuation-evidence/"
+  }
+}

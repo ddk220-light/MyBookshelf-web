@@ -1,0 +1,101 @@
+# Sri Lanka: library catalog expansion research
+
+**10 observed institutional book-search successes: 4 selected targets and 6 reserves. Five use direct Koha catalogs; five use actual library-filtered searches in the shared VuFind union. The target of ten substantial selected institutions remains six short. Eight searches include exact or parallel-title matches; two reserves returned related titles by different authors.**
+
+The best next investment is Koha compatibility, followed by a deployment-specific VuFind connector for the public-library union. University Koha adoption has strong scoped evidence, but most major university catalog origins could not pass the robots/reachability check in this environment. National Library, Rajarata University, Batticaloa and Badulla are selected research candidates, with explicit policy, scale and access limitations below. No integration or app changes were made.
+
+Research date: **15 November 2026 UTC**. Exact request URLs, timestamps, statuses, identifiers and paths are in [findings.json](findings.json); bounded raw responses and request metadata are under [evidence/](evidence/).
+
+## Market and shared-service opportunity
+
+A NILIS symposium study evaluated all 15 state-university OPACs simultaneously and reported 93% using Koha. This is a university study presented on 23 January 2021, not a 2026 market-share census of every Sri Lankan library. The primary proceedings and extracted page 41 are retained: [proceedings](https://nilis.cmb.ac.lk/wp-content/uploads/2021/03/NRS2020_Proceedings_20210323.pdf), [local extraction](evidence/adoption-study.txt). Moratuwa independently describes its customized Koha system, MoraLs, introduced in 2015; earlier Alice/Libsys references should not be treated as current deployments. [Moratuwa history](https://uom.lk/lib/history).
+
+The National Library publishes a national public-library union built on VuFind and advertises 25 public libraries plus the National Library. The rendered member list contains 25 labels including the National Library, so the advertised total is not independently reconciled. Five separate filtered requests demonstrated specific member collections. The union itself is **not counted** in addition to its members. [National discovery services](https://www.natlib.lk/NLSL/discover/), [broad query evidence](evidence/union-query.html).
+
+Union inventory is not live circulation: the sampled Ampara detail explicitly says **System Under Maintenance** and that holdings/item availability are unavailable. Search rows retain “Loading” placeholders. Batticaloa also returned 15 direct records while the union facet advertised 16. A connector must retain the institution filter and prefixed record ID, and show current copy status as unknown until the holdings service is verified. [Ampara detail evidence](evidence/ampara-union-detail.html).
+
+University ILL cooperation and shared journal subscriptions do not establish a unified physical-book catalog. Colombo describes UGC/SCOLIS lending rules separately from publisher journal subscriptions. SERLIN is a useful South Eastern University partnership covering public, college and school libraries in Ampara district, but no shared holdings endpoint was verified. [Colombo services](https://lib.cmb.ac.lk/services/), [journal subscriptions](https://lib.cmb.ac.lk/periodical-collection/), [SERLIN](https://www.seu.ac.lk/library/serlin/aboutus.php).
+
+For MyBookshelf readers, municipal lending libraries offer a different benefit from reference-led national collections and university membership systems. Anonymous catalog discovery does not establish entry, borrowing rights or a reuse licence. Sinhala, Tamil and English collections require separate query and edition tests; only English query text was submitted here, although Sinhala translated records appeared.
+
+## Ten major priorities retained
+
+This is a priority list, **not a size ranking**. Units and source dates differ, and mixed materials, records, ebooks and branches cannot be added together. Institution proxies are marked where no numerical count was established.
+
+| Priority | Scale and provenance | Observed outcome |
+|---|---|---|
+| National Library of Sri Lanka | Over 500,000 volumes on Discover/catalog; conflicting homepage says over 1 million books. Both undated. [Source](https://www.natlib.lk/NLSL/discover/); [saved evidence](evidence/national-source.html) | Verified selected |
+| Colombo Public Library | Nearly 1 million books,57 newspapers and 111 periodical titles; official municipal page, undated. [Source](https://www.colombo.mc.gov.lk/public-library.php); [saved evidence](evidence/public-source.html) | Unverified: current municipal OPAC link is an application SPA; independently documented historical Koha origin robots returned 503. |
+| University of Peradeniya Library Network | Over 800,000 items across Main+8 branch libraries; nearly 400,000 bibliographic records, institutional PGIHS page, undated. [Source](https://web.pgihs.ac.lk/index.php/library-facilities/); [saved evidence](evidence/peradeniya-directory.html) | Unverified: library website 503; published legacy catalog-origin robots timed out. |
+| University of Colombo Library Network | 400,000+items; University 2019 conference site; historical main+2 branch scope, current source lists more branches. [Source](https://auayf.cmb.ac.lk/the-university-of-colombo/); [saved evidence](evidence/colombo-size.html) | Unverified: current Koha robots 503; independent legacy Alice origin also 503. |
+| University of Kelaniya Library | Over 248,078 printed books; ebooks/journals excluded; undated official history. [Source](https://lib.kln.ac.lk/about/about-library/history); [saved evidence](evidence/kelaniya-size.html) | Unverified: linked legacy JOPAC port 7009 robots timed out; current page does not expose a usable public form. |
+| University of Moratuwa Library | Over 100,000 books; undated official history; Koha-customized MoraLs introduced 2015. [Source](https://uom.lk/lib/history); [saved evidence](evidence/moratuwa-size.html) | Unverified: officially linked opac.lib.uom.lk robots timed out. |
+| University of Jaffna Library Network | Main library+7 branch libraries; official institutional proxy, no current volume count collected. [Source](https://lib.jfn.ac.lk/); [saved evidence](evidence/jaffna-source.html) | Unverified: public libcat robots 503. Private 192.168 address listed by source was not probed. |
+| University of Ruhuna Library | About 280,000 legal-deposit items, including books, newspapers, journals, government documents, etc.; this is a subcollection, not book count or network total. [Source](https://www.lib.ruh.ac.lk/?page_id=1313); [saved evidence](evidence/ruhuna-size.html) | Unverified: official Koha robots 503. |
+| University of Sri Jayewardenepura Library Network | Main+3 branch libraries; official institutional proxy; no numerical collection total collected. [Source](https://lib.sjp.ac.lk/introduction/); [saved evidence](evidence/sjp-size.html) | Unverified: officially linked Koha robots 503. |
+| Open University of Sri Lanka Library Network | Main central library+8 regional libraries; official institutional proxy; no numerical total collected. [Source](https://lib.ou.ac.lk/); [saved evidence](evidence/open-source.html) | Unverified: official Koha robots 503. |
+
+The additional selected targets are Rajarata (a substantial university network, assessed through an institutional proxy), Batticaloa (library-site claim of 50,000+ titles/books) and Badulla (library-site claim of about 60,000 books). These do not establish national top-ten placement. Batticaloa’s site ownership could not be independently confirmed through the unavailable municipal website; Badulla’s collection statement is self-published on its library Blogger site. Both scale claims are undated. Kurunegala and the five union-only successes remain reserves because scale was not established.
+
+## Actual book queries
+
+All ten requests below returned **HTTP 200 book results**. Every row except Rajarata submitted `The old man and the sea`; Rajarata submitted `Research methodology` in the title field. No search snippets, homepages, member lists or branch selectors count as successes.
+
+| Institution / tier | Actual returned book, author and source ID | Observed holdings / qualification | UTC request; evidence |
+|---|---|---|
+| National Library of Sri Lanka — selected | [The old man and the sea](https://libcat.natlib.lk/cgi-bin/koha/opac-detail.pl?biblionumber=149977) — Hemingway, Ernest; `149977` | 1 holding at National Library and Documentation Services Board, Sri Lanka; Not for loan; barcode 172770. DDC 823; row call number not shown.  | 07:59:30; [query](evidence/national-query.html); [request](evidence/national-query.json) |
+| Rajarata University of Sri Lanka Library System — selected | [Research methodology](http://192.248.95.20/cgi-bin/koha/opac-detail.pl?biblionumber=36878) — Panneerselvam , R; `36878` | 1 Lending Books copy; Applied Sciences Library, Lending Section; call number 001.42PAN; Available; barcode I00742.  | 08:02:04; [query](evidence/rajarata-query.html); [request](evidence/rajarata-query.json) |
+| Batticaloa Public Library — selected | [The Old Man and The Sea;](https://batticaloa.dlp.gov.lk/cgi-bin/koha/opac-detail.pl?biblionumber=36657) — Ernest Hemingway; `36657` | 2 copies available for loan at Batticaloa Public Library; Lending Section;823 HEM. Other records include reference-only and no-items-available copies, not collapsed.  | 08:02:19; [query](evidence/batticaloa-query.html); [request](evidence/batticaloa-query.json) |
+| Senarath Paranavithana Public Library - Badulla — selected | [The Old Man And The Sea /](https://badulla.dlp.gov.lk/cgi-bin/koha/opac-detail.pl?biblionumber=15258) — Hemingway, Ernest; `15258` | 1 item available for loan; call number 823 HEM. Separate Sinhala translation record 23560 is checked out; Gary Carey record 7794 has no items available.  | 08:02:19; [query](evidence/badulla-query.html); [request](evidence/badulla-query.json) |
+| Kurunegala Public Library — reserve | [The old man and the sea](https://kurunegala.dlp.gov.lk/cgi-bin/koha/opac-detail.pl?biblionumber=34461) — Hemingway, Ernest; `34461` | Items available: Adult Lending-Sinhala(1). Edition, ISBN and copy barcode not exposed in returned search row.  | 08:02:19; [query](evidence/kurunegala-query.html); [request](evidence/kurunegala-query.json) |
+| Ampara Public Library — reserve | [The old man and the sea / Ernest Hemingway](https://unioncatalogue.dlp.gov.lk/Record/ampa.18354?sid=34413115) — Hemingway, Ernest; `ampa.18354` | Collection attribution proved by returned Library filter Ampara Public Library. Copy/location/status fields remain Loading in search HTML; live availability unknown. Opened record detail explicitly says System Under Maintenance and holdings/item availability unavailable.  | 08:03:18; [query](evidence/ampara-union-query.html); [request](evidence/ampara-union-query.json) |
+| Ambalangoda Public Library — reserve | [Old Man Of The Sea /](https://unioncatalogue.dlp.gov.lk/Record/amba.853?sid=34413120) — Fernando, Erica; `amba.853` | Collection attribution proved by returned Library filter Ambalangoda Public Library. Copy/location/status fields remain Loading in search HTML; live availability unknown. **Related-title result; no Hemingway identity claim.** | 08:03:23; [query](evidence/ambalangoda-union-query.html); [request](evidence/ambalangoda-union-query.json) |
+| Veyangoda Public Library — reserve | [මහල්ලා සහ මුහුද = The old man and the sea /](https://unioncatalogue.dlp.gov.lk/Record/veya.11607?sid=34413126) — හෙමිංවේ, අර්නස්ට්; `veya.11607` | Collection attribution proved by returned Library filter Veyangoda Public Library. Copy/location/status fields remain Loading in search HTML; live availability unknown.  | 08:03:27; [query](evidence/veyangoda-union-query.html); [request](evidence/veyangoda-union-query.json) |
+| Kirimetiyana Public Library — reserve | [මහල්ලා සහ මුහුද :The old man and the sea](https://unioncatalogue.dlp.gov.lk/Record/kiri.10742?sid=34413135) — හෙමින්ග්වේ, අර්නස්ට්; `kiri.10742` | Collection attribution proved by returned Library filter Kirimetiyana Public Library. Copy/location/status fields remain Loading in search HTML; live availability unknown.  | 08:03:31; [query](evidence/kirimetiyana-union-query.html); [request](evidence/kirimetiyana-union-query.json) |
+| Doluwa Public Library — reserve | [The Old man and the sea /](https://unioncatalogue.dlp.gov.lk/Record/dolu.8081?sid=34413141) — Lall,Ramji; `dolu.8081` | Collection attribution proved by returned Library filter Doluwa Public Library. Copy/location/status fields remain Loading in search HTML; live availability unknown. **Related-title result; no Hemingway identity claim.** | 08:03:35; [query](evidence/doluwa-union-query.html); [request](evidence/doluwa-union-query.json) |
+
+The National Library’s opened edition has ISBN **9780099273967**; Rajarata’s Panneerselvam edition has ISBN **9788120324577**. No ISBN was inferred for the other rows. Badulla’s Gary Carey record and Ambalangoda’s Erica Fernando title are distinct from Hemingway. The Doluwa record attributes the title to Ramji Lall and remains a related-title result; it is not silently merged into the Hemingway work. Sinhala parallel titles at Veyangoda and Kirimetiyana preserve their own record identities.
+
+### Reader access and technical limits
+
+- **National Library:** general public and foreign visitors are eligible, but facility users must register. The undated membership page lists a one-day membership at Rs 100, annual membership at Rs 1,000 and life membership at Rs 2,500. This selected copy is not for loan. [Eligibility](https://www.natlib.lk/NLSL/who-can-use-our-services/), [membership](https://www.natlib.lk/NLSL/membership/).
+- **Rajarata:** official lending guidance covers university students, faculty and staff. The verified copy is in Applied Sciences. The current official link uses public IP `192.248.95.20` over HTTP; the old hostname returned an Apache default page. No private IP was requested. [Official route](https://lib.rjt.ac.lk/opac/), [membership scope](https://lib.rjt.ac.lk/book-collections/).
+- **Batticaloa and Badulla:** public catalog requests expose lending and reference states. Membership eligibility and current fees remain unverified. Batticaloa’s registration page returned HTTP 500; Badulla’s joining page exposed no policy text. The catalog’s availability indication cannot grant the reader borrowing rights.
+- **Kurunegala:** the catalog links separate membership forms for residents, non-residents and other categories. Conditions were not inspected. An English title in the “Adult Lending-Sinhala” location does not prove edition language.
+- **Union reserves:** each actual query returned its requested Library filter and book records. Copy state, local entry and borrowing rights remain unknown. They are five independent municipal/public collections, not branches counted from a selector.
+- **Adapters:** Koha is a reuse candidate, not a completed integration. Templates vary, including Kurunegala’s older result markup. Preserve record IDs, “Not for loan”, “No items available”, checked-out states and branch/call-number attribution. The existing VuFind implementation is deployment-specific and would need new work for this union.
+
+## Blocked and unverified alternatives
+
+| Institution | Specific observed blocker | Evidence |
+|---|---|---|
+| Colombo Public Library | Historical Koha catalog route robots 503; current municipal Apply link returns application shell for robots (no catalog form). No query submitted. | [request metadata](evidence/public-legacy-robots.json) |
+| University of Peradeniya | Robots timeout on published legacy library/catalog origin; main HTTPS source returned 503. Current searchable route unverified. | [request metadata](evidence/peradeniya-robots.json) |
+| University of Colombo | Current Koha robots 503; legacy Alice opac.cmb.ac.lk also 503; no search sent. | [request metadata](evidence/colombo-robots.json) |
+| University of Kelaniya | Publicly documented JOPAC origin port 7009 robots timeout; no query. | [request metadata](evidence/kelaniya-catalog-robots.json) |
+| University of Moratuwa | Official catalog robots timeout; no query. | [request metadata](evidence/moratuwa-robots.json) |
+| University of Jaffna | Public catalog robots 503; no query. Source also advertises private LAN catalog; no private probe. | [request metadata](evidence/jaffna-robots.json) |
+| University of Ruhuna | Official Koha robots 503; no query. | [request metadata](evidence/ruhuna-robots.json) |
+| University of Sri Jayewardenepura | Official catalog robots 503; no query. | [request metadata](evidence/sjp-robots.json) |
+| Open University of Sri Lanka | Official Koha robots 503; no query. | [request metadata](evidence/open-robots.json) |
+| South Eastern University of Sri Lanka | Official Koha catalog robots timeout; no query. | [request metadata](evidence/southeastern-robots.json) |
+| Sabaragamuwa University | Wildcard robots explicitly disallow /cgi-bin/koha/opac-search.pl; no search sent. | [request metadata](evidence/sabaragamuwa-robots.json) |
+| Wayamba University Library Network | Wildcard robots explicitly disallow catalog search; named bots also barred; no search sent. | [request metadata](evidence/wayamba-robots.json) |
+| General Sir John Kotelawala Defence University | Official lis.kdu.ac.lk catalog robots timeout; no query. | [request metadata](evidence/kdu-robots.json) |
+| Uva Wellassa University | Published public catalog robots timeout; no query. | [request metadata](evidence/uwu-robots.json) |
+| Eastern University, Sri Lanka | Indexed public Koha catalog robots 503; no query. | [request metadata](evidence/eastern-robots.json) |
+| National Science Library and Resource Centre / NSF | Indexed national scientific catalog robots 503; no query. | [request metadata](evidence/nsf-robots.json) |
+
+The municipal `Apply.colombo.mc.gov.lk` link returned an application shell rather than an observable catalog form. A legacy Colombo Koha origin identified by the [official ICTA launch article](https://www.icta.lk/media/news/colombo-digital-public-library-launched) was also checked, without querying after its robots failure. Jaffna’s website advertises a private LAN OPAC as well as its public route; the private route was not used.
+
+## Policy and evidence discipline
+
+Robots decisions used the shared longest-match implementation; [policy decisions](evidence/policy-decisions.json) retain the outcomes. National Library’s longer search/detail `Allow` rules override its shorter `/cgi-bin/koha/` disallow. Sabaragamuwa and Wayamba explicitly disallow catalog search and were not queried. Timeouts and 503s were treated as unresolved, not clearance.
+
+Batticaloa, Badulla and Kurunegala returned ordinary HTTP 200 Koha **Error 404** pages for robots. Each page was manually inspected for denial/challenge content and a public search form; the protocol’s soft404 exception was used for one bounded anonymous title request per origin. Separate manual review JSON files are retained. These observations are not a continuing reuse licence. Union and Rajarata robots returned actual HTTP 404; normal TLS verification was retained on HTTPS routes.
+
+No cookies, authenticated state or browser profiles were saved; no login, hold, message, outreach, challenge bypass or TLS bypass was performed. Public form fields present in bounded raw HTML are anonymous response content. Sources and query metadata include UTC timestamps and response hashes.
+
+## Remaining limitations
+
+The selected target is six short. Additional small or unquantified successes are explicitly reserves and do not replace inaccessible major research collections. Errors may arise along the execution environment’s network/proxy path; they do not prove that a library is globally offline or lacks a requested book. Native Sinhala/Tamil input, ISBN matching, recurring reliability, union freshness, exact borrowing eligibility, parser behavior and continuing access policy need validation before integration. No application tests were run because only research files changed.

@@ -1,0 +1,318 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<LINK REL="stylesheet" TYPE="text/css" HREF="/CSS/default.css">
+		<LINK REL="stylesheet" TYPE="text/css" HREF="/PACThemes/Go Green/theme.css">
+		<script type="text/javascript">var gsImageFolderPath = '/PACThemes/Go Green/Button Sets/Icon/';</script><SCRIPT TYPE="text/javascript" SRC="/JS/rollover.js"></SCRIPT>
+<SCRIPT TYPE="text/javascript" SRC="/JS/default.js"></SCRIPT>
+ 
+		<title>Library.Solution PAC - Search</title>
+	</head>
+	<body>
+		<NOSCRIPT>
+<CENTER><FONT Color=Red Size=+1>JavaScript must be enabled on your browser for this PAC to work properly.</FONT></CENTER><BR>
+</NOSCRIPT>
+<script type="text/javascript">
+var gsSelectLocationsMsg = 'Select Location(s)';
+var gsSelectLocationsReadingProgMsg = 'Search for tests in only the selected schools';
+</script>
+<script type="text/javascript" src="/JS/searchform.js"></script>
+<script type="text/javascript">
+var gsHideFormMessage = 'Hide Search Form';
+var gsShowFormMessage = 'Show Search Form';
+var gsCannotSortMessage = 'Your search yielded more than 250 hits, results will not be sorted.';
+var gsCheckItemsToSaveMessage = 'Please check one or more items to save';
+var gsCheckItemsToRemoveMessage = 'Please check one or more items to remove';
+var gsCheckItemsGenericMessage = 'Please check one or more items';
+var gsSetLimitsLink = '/TLCScripts/interpac.dll?LimitsForm&FormId=0&LimitsId=&Config=SAMPLE&Branch=,0,&SearchAvailableOnly=0';
+
+</script>
+<script type="text/javascript" src="/JS/search.js"></script>
+<style>
+	#banner { position:relative; background: url("/TLCImages/banner.jpg") no-repeat; height:100px; width: 100%; font-family: Verdana, Arial, Helvetica, sans-serif; }
+	#banner div { font-size:20pt; font-weight:bold; text-align:center; padding:5px; }
+</style>
+<div id="banner"><div><p><b><center><FONT Face="Tahoma" color="darkgreen" SIZE="4">University of San Carlos, Library System<br><font size=6>Online Public Access Catalog</font></center></b></p></div></div>
+<script type="text/javascript" language="JavaScript1.2" src="/JS/RoboHelp_CSH.js"></script>
+<div id="toolbar" align="center"><a href="/TLCScripts/interpac.dll?Refresh&GoHome=1&Config=sample&Branch=,0,"><img src="/PACThemes/Go Green/Button Sets/Icon/Home.gif" name="home" alt="Home" title="Home" border="0" onload="Rollovers.add(this)" /></a><a id="HelpLink" href="javascript:RH_ShowHelp(0, '/TLCHelp/Library.Solution_PAC_4.htm', HH_HELP_CONTEXT, 100)"><img src="/PACThemes/Go Green/Button Sets/Icon/Help.gif" name="help" alt="Help" title="Help" border="0" onload="Rollovers.add(this)" /></a><A HREF="/TLCScripts/interpac.dll?SearchForm&Directions=1&Config=sample&Branch=,0,&FormId=0"><img src="/PACThemes/Go Green/Button Sets/Icon/Search.gif" name="search" alt="Search" title="Search" border="0" onload="Rollovers.add(this)" /></A><!-- toolbar tool suppression --><!-- toolbar tool suppression --><!-- toolbar tool suppression --><!-- toolbar tool suppression --><A ID="FetchListTool" HREF="/TLCScripts/interpac.dll?FetchList&Config=sample&Branch=,0,&FormId=0" style="display: none"><img src="/PACThemes/Go Green/Button Sets/Icon/FetchList.gif" name="ReviewList" alt="Review List" title="Review List" border="0" onload="Rollovers.add(this)" /></A><A HREF="/TLCScripts/interpac.dll?PatronForm&Config=sample&Branch=,0,&FormId=0"><img src="/PACThemes/Go Green/Button Sets/Icon/pReview.gif" name="pReview" alt="My Account" title="My Account" border="0" onload="Rollovers.add(this)" /></A><!-- toolbar tool suppression --><!-- toolbar tool suppression --><A HREF="/TLCScripts/interpac.dll?Reserve&Config=sample&Branch=,0,&FormId=0"><img src="/PACThemes/Go Green/Button Sets/Icon/ViewReserves.gif" alt="Reserve" title="Reserve" border="0" onload="Rollovers.add(this)" /></A>
+</div><!-- end toolbar div -->
+		<div id="searchbar" align="left">
+			<div id="searchbargadget">
+				<img id="searching" name="searching" src="/PACThemes/Go Green/TLCImages/searching.gif" alt=""/>
+			</div>
+		</div>
+		<div style="width: 100%; margin-top: 20px;" align="center">
+			<div id="tabsdiv" align="left">
+								<div id="KeywordTab" class="tab taboff search"><a href="javascript:fnChangeTab(0)" class="tab">Keyword Search</a></div>
+				<div id="BrowseTab" class="tab taboff browse"><a href="javascript:fnChangeTab(1)" class="tab">Browse</a></div>
+				<div id="AdvancedTab" class="tab taboff combin"><a href="javascript:fnChangeTab(2)" class="tab">Advanced</a></div>
+				<div id="NewItemsTab" class="tab taboff new"><a href="javascript:fnChangeTab(3)" class="tab">New Items</a></div>
+
+				<div id="formcontainer" class="search">
+										<!---Keyword Search Tab--->
+					<div id="searchdiv" class="formdiv">
+						<p align="center"><b>To search the catalog, select the appropriate search category, click the empty search box, type your search <nobr>word(s)</nobr> and click or select "Search."</b></p>
+						<form class="formclass" name="SearchForm" action="/TLCScripts/interpac.dll?Search" METHOD="post" onSubmit="return AllowSearch(this);">
+							<input type="hidden" name="ItemsPerPage">
+							<input type="hidden" name="SearchAvailableOnly">
+							<input type="hidden" name="Branch">
+							<input type="hidden" name="FormId" value="0">
+							<input type="hidden" name="Config" value="sample">
+							<input type="hidden" name="LimitsId" value="0">
+							<input type="hidden" name="StartIndex" value="0">
+							<input type="hidden" name="PeriodLimit" value="-1">
+							<input type="hidden" name="CheckSavedItem" value="1">
+							<table cellspacing="0" cellpadding="0" border="0">
+								<tr>
+									<td align="left">Find:</td>
+									<td align="left"><select class="searchformselect" name="SearchField" onChange="DataChange();">
+<option value="16777216">Keywords
+<option value="1" selected="selected">Titles
+<option value="2">Authors
+<option value="4">Subjects
+<option value="8">Notes
+<option value="262144">Publisher
+<option value="1572864">Series
+<option value="4096">ISBN
+</select>
+</td>
+									<td align="left">that</td>
+									<td align="left"><SELECT class="searchformselect" NAME="SearchType" onChange="DataChange ();">
+<option value="0" selected="selected">begin with
+<option value="1">contain
+<option value="6">closely match
+<option value="5">stem from
+<option value="7">sound like
+</SELECT>
+</td>
+									<td align="left">the word(s)</td>
+									<td><INPUT class="searchform" Type="Text" Name="SearchData" MaxLength="250" Value="" Size="25" onChange="DataChange ();">
+</td>
+									<td><input class="searchform button clickable submit" type="submit" value="Search"></td>
+								</tr>
+							</table>
+						</form>
+					</div>
+					<!---Browse Tab--->
+					<div id="browsediv" class="formdiv">
+						<p align="center"><b>To browse the catalog, select the category to be searched, type your browse word(s) or numbers  and click or select "Search."</b></p>
+						<form class="formclass" name="BrowseForm" ACTION="/TLCScripts/interpac.dll?Browse" method="post" onSubmit="return AllowSearch(this);">
+							<input type="hidden" name="ItemsPerPage">
+							<input type="hidden" name="SearchAvailableOnly">
+							<input type="hidden" name="Branch">
+							<input type="hidden" name="FormId" value="0">
+							<input type="hidden" name="Config" value="sample">
+							<input type="hidden" name="LimitsId" value="0">
+							<input type="HIDDEN" name="SearchType" value="0"/>
+
+							<input type="hidden" name="Direction" value="0">
+							<input type="hidden" name="CheckSavedItem" value="1">
+							<table border="0">
+								<tr>
+									<td align="left">Browse: </TD>
+									<td align="left"><select class="searchformselect" name="SearchField" onChange="DataChange();">
+<option value="1" selected="selected">Titles
+<option value="2">Authors
+<option value="4">Subjects
+<option value="8">Notes
+<option value="262144">Publisher
+<option value="1572864">Series
+<option value="131072">Local Call
+<option value="32768">Dewey
+<option value="2048">GPO
+<option value="8192">ISSN
+<option value="65536">LC Call
+<option value="16384">LCCN
+<option value="20480">LCCN 2000+
+</select>
+</td>
+									<td align="left">for</td>
+									<td><INPUT class="searchform" Type="Text" Name="SearchData" MaxLength="250" Value="" Size="25" onChange="DataChange ();">
+</td>
+									<td><input class="searchform button clickable submit" type="submit" value="Search"></td>
+								</tr>
+							</table>
+						</form>
+					</div>
+					<!--- Advanced Tab--->
+					<div id="combindiv" class="formdiv">
+						<p align="center"><b>To perform an advanced search, type your search word(s) next to the appropriate search type, and click or select "Search." You can search one or more categories simultaneously.</b></p>
+						<form class="formclass" name="CombinationSearchForm" action="/TLCScripts/interpac.dll?CrossField"	method="POST" onsubmit="return AllowSearch(this);">
+							<input type="hidden" name="ItemsPerPage">
+							<input type="hidden" name="SearchAvailableOnly">
+							<input type="hidden" name="Branch">
+							<input type="Hidden" name="FormId" value="0">
+							<input type="Hidden" name="LimitsId" value="0">
+							<input type="Hidden" name="Config" value="sample">
+							<input type="Hidden" name="StartIndex" value="0">
+							<input type="hidden" name="CheckSavedItem" value="1">
+							<table border="0" cellpadding="0" cellspacing="0">
+								<tr>
+									<td align="right">Find : </td>
+									<td><INPUT class="searchform" Type="Text" Name="Term1Data" MaxLength="250" Value="" Size="25" onChange="DataChange ();">
+</td>
+									<td> as a </td>
+									<td><SELECT class="searchformselect" Name="Term1Field" onChange="DataChange ();"><option value="1" selected="selected">Title
+<option value="2">Author
+<option value="4">Subject
+<option value="8">Note
+</SELECT>
+</td>
+									<td> (Term 1)</td>
+									<td> <input class="searchform button clickable submit" type="submit" value="Search" /></td>
+								</tr>
+								<tr>
+									<td align="right"><select class="searchformselect" onchange="DataChange();" name="Operator1">
+<option value="0" selected="selected">AND (+)
+<option value="1">OR  (|)
+<option value="2">NOT (-)
+</select>
+</td>
+									<td><INPUT class="searchform" Type="Text" Name="Term2Data" MaxLength="250" Value="" Size="25" onChange="DataChange ();">
+</td>
+									<td> as a </td>
+									<td><SELECT class="searchformselect" Name="Term2Field" onChange="DataChange ();"><option value="1">Title
+<option value="2" selected="selected">Author
+<option value="4">Subject
+<option value="8">Note
+</SELECT>
+</td>
+									<td> (Term 2)</td>
+								</tr>
+								<tr>
+									<td align="right"><select class="searchformselect" onchange="DataChange();" name="Operator2">
+<option value="0" selected="selected">AND (+)
+<option value="1">OR  (|)
+<option value="2">NOT (-)
+</select>
+</td>
+									<td><INPUT class="searchform" Type="Text" Name="Term3Data" MaxLength="250" Value="" Size="25" onChange="DataChange ();">
+</td>
+									<td> as a </td>
+									<td><SELECT class="searchformselect" Name="Term3Field" onChange="DataChange ();"><option value="1">Title
+<option value="2">Author
+<option value="4" selected="selected">Subject
+<option value="8">Note
+</SELECT>
+</td>
+									<td> (Term 3)</td>
+								</tr>
+								<tr>
+									<td align="right">Group terms like :</td>
+									<td valign="Top" colspan="6"><input type="RADIO" name="TermGrouping" value="1" CHECKED onClick="DataChange ();"/>
+ <B>( </B>Term 1 * Term 2<B> )</B> * Term 3  <B><FONT Size=-1>e.g. ;(Red AND White) NOT Blue</FONT></B><br/><input type="RADIO" name="TermGrouping" value="2" onClick="DataChange ();"/>
+ Term 1 * <B>( </B>Term 2 * Term 3<B> )</B>  <B><FONT Size=-1>e.g. Red OR (White AND Blue)</FONT></B><br/></td>
+								</tr>
+							</table>
+						</form>
+					</div>
+   					<div id="branchdiv">
+						<div style="width: 100%; text-align: center">
+							<input id="SetLimitsButton" type="button" class="searchform button clickable submit" value="Set Limits" onclick="jsShowSetLimitsWindow()" />
+						</div>
+						<form id="BranchesForm" name="BranchesForm" onsubmit="return false;">
+							<input id="LimitsIdInput" type="Hidden" name="LimitsId" value="0">
+							<table border="0" cellpadding="0" cellspacing="0" style="width: 100%">
+								<tr>
+									<td align="center">
+										<table border="0" cellpadding="0" cellspacing="0">
+											<tr>
+												<td valign="middle">Return </td>
+												<td valign="middle"><select id="ItemsPerPageInput" class="searchformselect" name="ItemsPerPage" onChange="DataChange ();">
+<option value="10" selected="selected">10
+<option value="20">20
+<option value="30">30
+<option value="40">40
+<option value="50">50
+<option value="60">60
+<option value="100">100
+</select>
+</td>
+												<td valign="middle"> per page.</td>
+											</tr>
+											<tr>
+												<td valign="middle" colspan="3">
+													<input type="checkbox" name="SearchAvailableOnly" value="1" id="SrchAvailableOnlyInput"/>
+Available Items Only
+												</td>
+											</tr>
+										</table>
+									</td>
+									<td id="NewItemsTD" align="center">
+														<div>
+					<span class="head">Received Since </span>
+					<select id="PeriodLimitInput" class="searchformselect" NAME="PeriodLimit" onChange="DataChange()">
+<option value="-1" selected="selected">All
+<option value="15">This Month
+<option value="30">Last Month
+<option value="60">September 2026
+<option value="90">August 2026
+<option value="180">May 2026
+<option value="365">November 2025
+					</select>				</div>									</td>
+									<td align="center">
+										<table><tr>
+<td align="right"><span id="LocationsMsgSpan">Select Location(s)</span>: <p/>
+<div style="text-align: center">
+	<a href="javascript:fnCheckAllBranches(true)">Check All</a>
+	<br/>
+	<a href="javascript:fnCheckAllBranches(false)">Uncheck All</div>
+</td><td align="left"><div style="background-color: white; clear: both; height: 100px; width: 200px; overflow: auto; border: black 1px solid">
+<input type="CHECKBOX" name="Branch" value="0"  CHECKED onClick="DataChange ();"/>
+All Branches<br/>
+<input type="checkbox" name="Branch" value="5" onClick="DataChange ();"/>
+BPI<br/>
+<input type="checkbox" name="Branch" value="1" onClick="DataChange ();"/>
+Main<br/>
+<input type="checkbox" name="Branch" value="6" onClick="DataChange ();"/>
+Monte<br/>
+<input type="checkbox" name="Branch" value="3" onClick="DataChange ();"/>
+North<br/>
+<input type="checkbox" name="Branch" value="4" onClick="DataChange ();"/>
+South <br/>
+<input type="checkbox" name="Branch" value="2" onClick="DataChange ();"/>
+Talamban<br/>
+<input type="checkbox" name="Branch" value="7" onClick="DataChange ();"/>
+Tertiary<br/>
+</div>
+</td></tr>
+</table>
+									</td>
+								</tr>
+							</table>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="ResultMsgPane" class="popup">
+				<div id="ResultMsgDiv">
+					 				</div>
+		</div>
+		 		<div id="editpane" class="hidden"></div>
+			<table id="readingprograms" class="popup nowrap" cellpadding="0" cellspacing="0"><tr><td>
+		<div class="PopUpTitle">
+			<img class="clickable" onclick="RH_ShowHelp(0, '/TLCHelp/Library.Solution_PAC_4.htm', HH_HELP_CONTEXT, 121)" src="/PACThemes/Default/TLCImages/help-small.gif" alt="Help" title="Help" />
+			<span>Reading Programs</span>
+		</div>
+		<div class="popcontent">
+			<form name="ReadingProgramsChoiceForm">
+				<table border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td valign="middle" align="left"> <INPUT TYPE="CHECKBOX" NAME="RPNAMES" VALUE="ACCELERATED READER" CHECKED>ACCELERATED READER<BR><INPUT TYPE="CHECKBOX" NAME="RPNAMES" VALUE="ACCELERATED READER AR" CHECKED>ACCELERATED READER AR<BR><INPUT TYPE="CHECKBOX" NAME="RPNAMES" VALUE="READING COUNTS." CHECKED>READING COUNTS.<BR></td>
+					</tr>
+				</table>
+				<div align="center" id="programsbuttonsdiv">
+					<input type="button" class="searchform button clickable submit" value="OK" onclick="savePrograms()">&nbsp;					<input type="button" class="searchform button clickable submit" value="Cancel" onclick="cancelPrograms()">
+				</div>
+			</form>
+		</div>
+	</td></tr></table>
+		<iframe id="popup" src="about:blank" frameborder="0" scrolling="no" class="popup"></iframe>
+		<!-- Footer -->
+<script type="text/javascript">
+fnChangeTab(0);
+</script>
+
+	</body>
+</html>

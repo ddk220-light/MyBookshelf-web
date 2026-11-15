@@ -1,0 +1,1834 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: opac-main.tt -->
+
+
+
+
+
+
+
+
+
+<html lang="es-ES" class="no-js">
+<head>
+
+<title>Catálogo en línea Koha</title>
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha" /> <!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" type="text/css" href="/opac-tmpl/bootstrap/lib/jquery/responsive.dataTables.min_23.1110000.css">
+
+<link rel="shortcut icon" href="/opac-tmpl/bootstrap/images/favicon.ico" type="image/x-icon" />
+<link rel="apple-touch-icon" href="/opac-tmpl/bootstrap/images/favicon.ico" type="image/x-icon" />
+
+ 
+ 
+ 
+
+
+ <link href="/opac-tmpl/bootstrap/css/opac_23.1110000.css" rel="stylesheet" type="text/css">
+
+
+
+
+ <link href="/opac-tmpl/bootstrap/css/print_23.1110000.css" rel="stylesheet" type="text/css" media="print">
+
+
+ <style>#available-items { display: none; } #pubrange { display: none; } #langfilter { display: none; }</style>
+
+
+
+
+ <link href="https://catalogo.bibliotecasguanajuato.gob.mx/cgi-bin/koha/opac-search.pl?format=opensearchdescription" rel="search" title="Buscar " type="application/opensearchdescription+xml">
+ <link rel="unapi-server" type="application/xml" title="unAPI" href="https://catalogo.bibliotecasguanajuato.gob.mx/cgi-bin/koha/unapi" />
+
+
+<script>
+    var Koha = {};
+    function _(s) { return s } // dummy function for gettext
+    const is_logged_in = false
+</script>
+
+ <script src="/opac-tmpl/bootstrap/es-ES/js/locale_data_23.1110000.js"></script>
+
+<script src="/opac-tmpl/bootstrap/js/Gettext_23.1110000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/i18n_23.1110000.js"></script>
+
+<link type="text/css" rel="stylesheet" href="/opac-tmpl/lib/fontawesome/css/fontawesome.min_23.1110000.css">
+<link rel="stylesheet" type="text/css" href="/opac-tmpl/lib/fontawesome/css/brands.min_23.1110000.css">
+<link type="text/css" rel="stylesheet" href="/opac-tmpl/lib/fontawesome/css/solid.min_23.1110000.css">
+
+
+               
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/opac-tmpl/bootstrap/images/gua/bootstrap.min.css">
+  <script src="/opac-tmpl/bootstrap/images/gua/jquery.min.js"></script>
+  <script src="/opac-tmpl/bootstrap/images/gua/bootstrap.min.js"></script>
+  
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-99172876-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+	<style>
+#opacheader { display:none;}	
+	
+	@media only screen and (max-width: 600px){
+		.ocultar-div{
+		display:none;
+		}
+		
+	}
+	
+	@media only screen and (min-width: 600px)
+	{
+		.ocultardiv{
+		display:none;
+		}
+	}
+	
+	.multi-item-carousel{
+  .carousel-inner{
+    > .item{
+      transition: 500ms ease-in-out left;
+    }
+    .active{
+      &.left{
+        left:-33%;
+      }
+      &.right{
+        left:33%;
+      }
+    }
+    .next{
+      left: 33%;
+    }
+    .prev{
+      left: -33%;
+    }
+    @media all and (transform-3d), (-webkit-transform-3d) {
+      > .item{
+        // use your favourite prefixer here
+        transition: 500ms ease-in-out left;
+        transition: 500ms ease-in-out all;
+        backface-visibility: visible;
+        transform: none!important;
+      }
+    }
+  }
+  .carouse-control{
+    &.left, &.right{
+      background-image: none;
+    }
+  }
+}
+
+// non-related styling:
+body{
+  background: #333;
+  color: #ddd;
+}
+h1{
+  color: white;
+  font-size: 2.25em;
+  text-align: center;
+  margin-top: 1em;
+  margin-bottom: 2em;
+  text-shadow: 0px 2px 0px rgba(0, 0, 0, 1);
+}
+.card{ background-color: #fff; border: 1px solid transparent; border-radius: 6px; }
+.card > .card-link{ color: #333; }
+.card > .card-link:hover{  text-decoration: none; }
+.card > .card-link .card-img img{ border-radius: 6px 6px 0 0; }
+.card .card-img{ position: relative; padding: 0; display: table; }
+.card .card-img .card-caption{
+  position: absolute;
+  right: 0;
+  bottom: 16px;
+  left: 0;
+}
+.card .card-body{ display: table; width: 100%; padding: 12px; }
+.card .card-header{ border-radius: 6px 6px 0 0; padding: 8px; }
+.card .card-footer{ border-radius: 0 0 6px 6px; padding: 8px; }
+.card .card-left{ position: relative; float: left; padding: 0 0 8px 0; }
+.card .card-right{ position: relative; float: left; padding: 8px 0 0 0; }
+.card .card-body h1:first-child,
+.card .card-body h2:first-child,
+.card .card-body h3:first-child, 
+.card .card-body h4:first-child,
+.card .card-body .h1,
+.card .card-body .h2,
+.card .card-body .h3, 
+.card .card-body .h4{ margin-top: 0; }
+.card .card-body .heading{ display: block;  }
+.card .card-body .heading:last-child{ margin-bottom: 0; }
+
+.card .card-body .lead{ text-align: center; }
+
+@media( min-width: 768px ){
+  .card .card-left{ float: left; padding: 0 8px 0 0; }
+  .card .card-right{ float: left; padding: 0 0 0 8px; }
+    
+  .card .card-4-8 .card-left{ width: 33.33333333%; }
+  .card .card-4-8 .card-right{ width: 66.66666667%; }
+
+  .card .card-5-7 .card-left{ width: 41.66666667%; }
+  .card .card-5-7 .card-right{ width: 58.33333333%; }
+  
+  .card .card-6-6 .card-left{ width: 50%; }
+  .card .card-6-6 .card-right{ width: 50%; }
+  
+  .card .card-7-5 .card-left{ width: 58.33333333%; }
+  .card .card-7-5 .card-right{ width: 41.66666667%; }
+  
+  .card .card-8-4 .card-left{ width: 66.66666667%; }
+  .card .card-8-4 .card-right{ width: 33.33333333%; }
+}
+
+/* -- default theme ------ */
+.card-default{ 
+  border-color: #ddd;
+  background-color: #fff;
+  margin-bottom: 24px;
+}
+.card-default > .card-header,
+.card-default > .card-footer{ color: #333; background-color: #ddd; }
+.card-default > .card-header{ border-bottom: 1px solid #ddd; padding: 8px; }
+.card-default > .card-footer{ border-top: 1px solid #ddd; padding: 8px; }
+.card-default > .card-body{  }
+.card-default > .card-img:first-child img{ border-radius: 6px 6px 0 0; }
+.card-default > .card-left{ padding-right: 4px; }
+.card-default > .card-right{ padding-left: 4px; }
+.card-default p:last-child{ margin-bottom: 0; }
+.card-default .card-caption { color: #fff; text-align: center; text-transform: uppercase; }
+
+
+/* -- price theme ------ */
+.card-price{ border-color: #999; background-color: #ededed; margin-bottom: 24px; }
+.card-price > .card-heading,
+.card-price > .card-footer{ color: #333; background-color: #fdfdfd; }
+.card-price > .card-heading{ border-bottom: 1px solid #ddd; padding: 8px; }
+.card-price > .card-footer{ border-top: 1px solid #ddd; padding: 8px; }
+.card-price > .card-img:first-child img{ border-radius: 6px 6px 0 0; }
+.card-price > .card-left{ padding-right: 4px; }
+.card-price > .card-right{ padding-left: 4px; }
+.card-price .card-caption { color: #fff; text-align: center; text-transform: uppercase; }
+.card-price p:last-child{ margin-bottom: 0; }
+
+.card-price .price{ 
+  text-align: center; 
+  color: #337ab7; 
+  font-size: 3em; 
+  text-transform: uppercase;
+  line-height: 0.7em; 
+  margin: 24px 0 16px;
+}
+.card-price .price small{ font-size: 0.4em; color: #66a5da; }
+.card-price .details{ list-style: none; margin-bottom: 24px; padding: 0 18px; }
+.card-price .details li{ text-align: center; margin-bottom: 8px; }
+.card-price .buy-now{ text-transform: uppercase; }
+.card-price table .price{ font-size: 1.2em; font-weight: 700; text-align: left; }
+.card-price table .note{ color: #666; font-size: 0.8em; }
+
+ul.modify {
+  list-style: none;
+	}
+
+ul.modify li::before {
+  
+   content: "\25AA";   
+   color: #FF8400;  
+   display: inline-block;  
+    
+   margin-left: -30px; 
+   font-weight: bold; 
+   font-size: 63px; 
+ 
+}
+
+
+.modal-backdrop{ background-color:transparent; }; 
+
+.modal { position:fixed;left:50%;};
+
+.modal-dialog {position:fixed;left:50%;};
+
+ 
+
+</style>
+
+</head>
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+<body ID="opac-main" class="branch-default" >
+
+
+
+
+
+
+
+
+
+               
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<button id="scrolltocontent">Saltar al contenido principal</button>
+<div id="wrapper">
+ <div id="header-region" class="noprint">
+ <nav class="navbar navbar-expand">
+ <div id="logo">
+ <a class="navbar-brand" href="https://bibliotecasguanajuato.gob.mx">
+  Catálogo en línea  </a>
+ </div>
+ 
+ 
+ <div id="cartDetails" class="cart-message">Su carrito está vacío.</div>
+ 
+ <ul id="cart-list-nav" class="navbar-nav">
+ 
+ <li class="nav-item js-show">
+ <a aria-label="Carrito" class="nav-link" href="#" id="cartmenulink" role="button" title="Reunir ítems en los que esta interesado">
+ <i id="carticon" class="fa fa-shopping-cart fa-icon-black" aria-hidden="true"></i> <span class="cartlabel">Carrito</span> <span id="basketcount"></span>
+ </a>
+ </li>
+ 
+ <li class="divider-vertical"></li>
+ 
+ <li class="nav-item dropdown">
+ <a aria-expanded="false" aria-haspopup="true" aria-label="Listas" class="nav-link dropdown-toggle" data-toggle="dropdown" href="/cgi-bin/koha/opac-shelves.pl" id="listsmenu" role="button" title="Mostrar listas"><i class="fa fa-list fa-icon-black" aria-hidden="true"></i> <span class="listslabel">Listas</span>
+ </a>
+ <div aria-labelledby="listsmenu" role="menu" class="dropdown-menu">
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=1" tabindex="-1" role="menuitem"><strong>Listas públicas</strong></a>
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=197&amp;sortfield=title" tabindex="-1" role="menuitem">Japonés</a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=161&amp;sortfield=title" tabindex="-1" role="menuitem">REALISMO SUCIO</a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=546&amp;sortfield=title" tabindex="-1" role="menuitem">clásicos</a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=528&amp;sortfield=title" tabindex="-1" role="menuitem">empresas, inversiones y economía</a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=523&amp;sortfield=title" tabindex="-1" role="menuitem">programación (coding)</a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=285&amp;sortfield=title" tabindex="-1" role="menuitem">Próximos a leer</a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=286&amp;sortfield=title" tabindex="-1" role="menuitem">Sala General-Literatura en inglés</a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=290&amp;sortfield=title" tabindex="-1" role="menuitem">Sala Fondos Especiales: Círculo Leonés Mutualista Literatura en inglés</a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=298&amp;sortfield=title" tabindex="-1" role="menuitem">programacion</a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=51&amp;sortfield=title" tabindex="-1" role="menuitem">Camila</a>
+ 
+ 
+ 
+ <a class="dropdown-item listmenulink" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=1" tabindex="-1" role="menuitem">Ver todo</a>
+ 
+ 
+ 
+ <div class="dropdown-divider"></div>
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=0" tabindex="-1" role="menuitem"><strong>Sus listas</strong></a>
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=add_form" tabindex="-1" role="menuitem">Ingrese para crear sus propias listas</a>
+ 
+ 
+ </div> <!-- / .dropdown-menu -->
+ </li> <!-- / .nav-item.dropdown -->
+ 
+ 
+
+ </ul> <!-- / .navbar-nav -->
+ 
+ 
+ 
+ <ul id="members" class="navbar-nav">
+ <li class="nav-item dropdown">
+ 
+ 
+ 
+ <a aria-label="Ingresar a su cuenta" class="nav-link login-link loginModal-trigger" href="/cgi-bin/koha/opac-user.pl"><i class="fa fa-user fa-icon-black fa-fw" aria-hidden="true"></i> <span class="userlabel">Ingresar a su cuenta</span></a>
+ 
+ 
+ 
+
+ 
+ </li>
+ <!-- Cookie consent button for non logged-in users -->
+ 
+ <li style="display:none" id="cookieConsentDivider" class="divider-vertical" aria-hidden="true"></li>
+ <li style="display:none" id="cookieConsentLi" class="nav-item" aria-hidden="true">
+ <a class="nav-link" href="#" id="cookieConsentButton" name="Your cookies" role="button" title="Ver y ajustar cookies que haya consentido">
+ <i class="fa fa-cookie-bite" aria-hidden="true"></i>
+ <span class="cookieconsentlabel">Sus cookies consentidas</span>
+ </a>
+ </li>
+ 
+ 
+ 
+ <li class="divider-vertical"></li>
+ <li class="nav-item search_history">
+ <a class="nav-link login-link" href="/cgi-bin/koha/opac-search-history.pl" title="Ver su historial de búsqueda">Historial de búsqueda</a>
+ </li>
+ <li class="divider-vertical"></li>
+ <li class="nav-item">
+ <a class="nav-link logout clearsh" href="/cgi-bin/koha/opac-search-history.pl?action=delete" title="Eliminar historial de búsqueda"><i class="fa fa-trash-can" aria-hidden="true"></i> Limpiar</a>
+ </li>
+ 
+ 
+ </ul>
+ 
+ </nav> <!-- /navbar -->
+
+ 
+ <div class="container-fluid">
+ <div class="row">
+ <div class="col">
+ 
+ 
+ <div id="opacheader">
+ 
+ <div class="default_item">
+ 
+ <div class="default_body"></div>
+ </div>
+ 
+ </div>
+  
+ </div>
+ </div>
+ </div>
+ 
+
+ </div> <!-- / header-region -->
+
+ 
+ <div class="container-fluid">
+ 
+ <div class="row">
+ <div class="col">
+ <div id="opac-main-search" class="mastheadsearch">
+ 
+ <form name="searchform" method="get" action="/cgi-bin/koha/opac-search.pl" id="searchform">
+ <div class="form-row align-items-center">
+ <div class="col-sm-auto order-2 order-sm-2">
+ <select name="idx" id="masthead_search" class="form-control">
+ 
+ <option value="">Catálogo de biblioteca</option>
+ 
+ 
+ <option value="ti">Título</option>
+ 
+ 
+ <option value="au">Autor</option>
+ 
+ 
+ <option value="su">Tema</option>
+ 
+ 
+ <option value="nb">ISBN</option>
+ 
+ 
+ <option value="ns">ISSN</option>
+ 
+ 
+ <option value="se">Series</option>
+ 
+ 
+ 
+ <option value="callnum">Signatura topográfica</option>
+ 
+ 
+ </select>
+ </div> <!-- /.col-sm-auto -->
+
+ <div class="col order-4 order-sm-3">
+ 
+ <input type="text" class="transl1 form-control" id="translControl1" name="q" value="" /><span id="translControl"></span>
+ 
+ </div> <!-- /.col -->
+
+ 
+ 
+ 
+ 
+ 
+
+ <div class="order-5 col-sm-auto">
+ <button aria-label="Buscar" class="btn btn-primary" id="searchsubmit" title="Buscar" type="submit">
+ <i class="fa fa-search" aria-hidden="true"></i>
+ </button>
+ </div>
+
+ </div> <!-- /.form-row -->
+ <input type="hidden" name="weight_search" value="1">
+ </form>
+ 
+ </div><!-- /#opac-main-search -->
+ </div> <!-- /.col -->
+ </div> <!-- /.row -->
+ 
+
+ <div class="row">
+ <ul class="nav" id="moresearches">
+ <li class="nav-item">
+ <a href="/cgi-bin/koha/opac-search.pl">Búsqueda avanzada</a>
+ </li>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <li class="nav-item">
+ <a id="library_page" href="/cgi-bin/koha/opac-library.pl">
+ 
+ <span>Bibliotecas</span>
+ 
+ </a>
+ </li>
+ 
+  
+ </ul> <!-- /.nav#moresearches -->
+ </div> <!-- /.row -->
+ </div> <!-- /.container-fluid -->
+ 
+
+ <!-- Login form hidden by default, used for modal window -->
+ <div id="loginModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+ <div class="modal-dialog">
+ <div class="modal-content">
+ <div class="modal-header">
+ <h2 class="modal-title" id="modalLoginLabel">Ingresar a su cuenta</h2>
+ <button aria-label="Cerrar" class="closebtn" data-dismiss="modal" type="button">
+ <span aria-hidden="true">&times;</span>
+ </button>
+ </div>
+ <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="modalAuth">
+ <input type="hidden" name="has-search-query" id="has-search-query" value="" />
+ <div class="modal-body">
+ 
+ 
+ 
+ 
+ 
+ <input type="hidden" name="koha_login_context" value="opac" />
+ <fieldset class="brief">
+ <div class="local-login">
+ <label for="muserid">Usuario:</label><input type="text" id="muserid" name="userid" autocomplete="off" />
+ <label for="mpassword">Contraseña:</label><input type="password" id="mpassword" name="password" autocomplete="off" />
+ <fieldset class="action">
+ <input class="btn btn-primary" type="submit" value="Ingresar" />
+ </fieldset>
+ </div>
+ 
+ 
+ <div id="forgotpassword-modal" class="forgotpassword">
+ <p><a href="/cgi-bin/koha/opac-password-recovery.pl">¿Olvidó su contraseña?</a></p>
+ </div>
+ 
+ 
+ <div id="patronregistration-modal" class="patronregistration">
+ <p><a href="/cgi-bin/koha/opac-memberentry.pl">Crear una cuenta</a></p>
+ </div>
+ 
+ </fieldset>
+ 
+ </div>
+ </form> <!-- /#auth -->
+ </div> <!-- /.modal-content -->
+ </div> <!-- /.modal-dialog -->
+ </div> <!-- /#modalAuth -->
+ 
+
+
+<div class = "ocultar-div"> 
+ 
+ <div class = "col-md-12" style = "margin-top: 20px" >
+ 
+	<div class= "col-lg-3 col-md-3" style = "margin-top: 10px; margin-buttom: 20px;">
+			<img class="img-responsive" src="/opac-tmpl/bootstrap/images/gua/nuevos/okLogos IEC.png" width="351"  height="200px" style ="width: 312px;"  alt=""/>
+	</div>
+
+	<div class= "col-lg-5 col-md-5" style = "margin-top: 20px">
+			<img class="img-responsive" src="/opac-tmpl/bootstrap/images/gua/biblioteca.jpg" width="550"  height="100px"  alt=""/>
+	</div>
+
+	<div class = "col-lg-4 col-md-4" align = "left" style = "float:right">
+	  
+	  <div class = "col-lg-7 col-md-7" id="loginModal">
+		<form  action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="auth" autocomplete="off">
+			
+		  	<input type="hidden" name="koha_login_context" value="opac" />
+			<fieldset class="brief" style="margin-left: 146px;">
+
+			<label>Ingrese a su cuenta:</label>
+			<div class="form-group">
+				<label for="muserid">Usuario</label>
+				<input type="text" class="form-control" id="muserid" name="userid" aria-describedby="emailHelp" placeholder="" style = "height:30px;">
+			</div>
+		    
+			<div class="form-group">
+				<label for="exampleInputPassword1">Contraseña</label>
+				<input type="password" class="form-control" id="exampleInputPassword1" placeholder="" name = "password" style = "height:30px;">
+			</div>
+			</fieldset>	
+	  </div>
+	  
+	  <div class = "col-lg-2 col-md-2" style = "margin-top: 85px">
+		
+		<button type="submit" class="btn btn-secondary">Ingresar</button>
+			
+		</form>
+
+
+		
+	  </div>
+			
+	</div>
+	
+	
+  </div>	
+<div id="forgotpassword">
+ <a href="/cgi-bin/koha/opac-password-recovery.pl">¿Olvidó su contraseña?</a>
+ </div>
+ 
+ <div id="nologininstructions">
+ 
+ <h3>¿No tiene una contraseña aún?</h3>
+ <p>Si todavía no tiene contraseña, pase por el mostrador de circulación la próxima vez que venga a la biblioteca. Se le proporcionará una.</p>
+ <h3>¿No tiene carné de la biblioteca?</h3>
+ <p>Si no posee carné de la biblioteca, pase por la administración de su biblioteca local y asóciese.</p>
+ 
+
+ <span id="registrationinstructions"><a href="/cgi-bin/koha/opac-memberentry.pl">Usted puede registrarse aquí.</a></span>
+ 
+ </div>	
+ </div> 
+
+<div class = "ocultar-div">
+	<div class = "col-lg-12 col-md-12 col-xs-12" style = "padding-left:0px;">
+		<!--<button  class="btn btn-secondary" style = "background-color: #FF8400; color: #fff; font-size: 20px;">Catalogo público</button>-->
+		<div class = "col-lg-2 col-md-2 col-xs-2" style = "background-color: #FF8400; color: #fff; font-size: 20px; border-top-left-radius:10px;border-top-right-radius:10px;">
+			Catalogo público
+		</div>
+		
+	</div>
+	
+	<div class = "col-lg-12 col-md-12 col-xs-10" style = "padding:20px; background-color: #FF8400;">
+        <form name="searchform" class = "form-inline" method="get" action="/cgi-bin/koha/opac-search.pl" id="searchform" target="_parent">  
+           
+                       
+						
+						
+						<div class = "col-lg-4 col-md-4 col-xs-4 form-group" style = "padding-right: -100px;">
+						<label for="idx" >Buscar</label>
+                        <select name="idx" id="masthead_search" class="form-control" >
+                          <option selected value=""></option>
+                           <option value="ti">Titulo</option>
+                           <option value="au">Autor</option>
+                           <option value="su">Tema</option>
+                           <option value="nb">ISBN</option>
+                           <option value="se">Series</option>
+                           <option value="callnum">Signatura topografica</option>
+                         </select>
+						 
+						</div>
+					
+				
+                    	<div class="form-group col-lg-9 col-md-9  col-sm-9 col-xs-9" style = "margin-left: -160px;">
+                      		<input type="text" id="transl1" name="q" class="form-control" style ="width:94%; height:34px;">
+							<button type="submit" class="btn btn-primary" id="searchsubmit" >Ir</button>
+                      	</div>
+					<!--		
+                  		<div class="form-group col-lg-2 col-md-2  col-sm-12 col-xs-12">  
+                        <input value="Buscar" id="searchsubmit" class="left" type="image">
+                         </div>
+						 style="padding-left:0px;padding-right:0px;"
+                     -->  
+                        
+                        
+                         
+        </form>
+		<a href="/cgi-bin/koha/opac-search.pl">Busqueda avanzada</a>
+               
+	</div>
+</div>
+
+<div class = "ocultar-div" >
+
+ <div class= "col-lg-12 col-md-12 col-xs-12" style = "padding-left:0px;padding-right:0px"> 
+
+	<div class= "col-lg-2 col-md-2 col-xs-2" style="padding-left:0px;padding-right:0px">
+			<img class="img-responsive" src="/opac-tmpl/bootstrap/images/gua/encabezado y botones/boton conocenos 50.png" style = "width:100%;cursor: pointer"  alt=""  data-toggle="modal" data-target="#Modalm0"/>
+	</div>
+
+<div class="modal fade bd-example-modal-lg"  tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="Modalm0">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+	
+      <div class="modal-header" style = "padding:0px; background-color:#60AB50">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+		  </div>
+		
+		<div class="modal-body" align = "center">
+           <video width="700" controls>
+			<source src="/opac-tmpl/bootstrap/images/gua/bib 4.mp4" type="video/mp4">
+			
+			</video>
+        </div>
+	  
+    </div>
+  </div>
+</div>
+	<div class= "col-lg-2 col-md-2 col-xs-2" style="padding-left:0px;padding-right:0px">
+			<img class="img-responsive" src="/opac-tmpl/bootstrap/images/gua/encabezado y botones/boton eventos 50.png" style = "width:100%;cursor: pointer"  alt=""  data-toggle="modal" data-target="#Modalm2"/>
+	</div>
+	
+<!-- qué está pasando la biblioteca 2-->
+<div class="modal fade bd-example-modal-lg"  tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="Modalm2">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+	
+      <div class="modal-header" style = "padding:0px; background-color:#60AB50">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+		  </div>
+		
+		<div class="modal-body" align = "center">
+          <img src="/opac-tmpl/bootstrap/images/gua/IMG-20200505-WA0007.jpg" class="img-responsive"  >
+        </div>
+	  
+    </div>
+  </div>
+</div>	
+	
+	<div class= "col-lg-2 col-md-2 col-xs-2" style="padding-left:0px;padding-right:0px">
+			<img class="img-responsive" src="/opac-tmpl/bootstrap/images/gua/nuevos/boton credenciales 50 Cambio.png"  style = "width:100%;cursor: pointer" alt=""  data-toggle="modal" data-target="#Modalm1"/>
+	</div>
+	
+	
+<!-- qué está pasando la biblioteca 2-->
+<div class="modal fade bd-example-modal-lg"  tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="Modalm1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+	
+      <div class="modal-header" style = "padding:0px; background-color:#FF5DE5">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+		  </div>
+		
+		<div class="modal-body" align = "center">
+          <video width="700" controls>
+			<source src="/opac-tmpl/bootstrap/images/gua/Tramita tu credencial (1).mp4" type="video/mp4">
+			
+			</video>
+        </div>
+	  
+    </div>
+  </div>
+</div>
+
+	
+	<div class= "col-lg-2 col-md-2 col-xs-2" style="padding-left:0px;padding-right:0px">
+			<img class="img-responsive" src="/opac-tmpl/bootstrap/images/gua/encabezado y botones/boton de renovacion 50.png"  style = "width:100%;cursor: pointer" alt=""/>
+	</div>
+	<div class= "col-lg-2 col-md-2 col-xs-2" style="padding-left:0px;padding-right:0px">
+			<img class="img-responsive" src="/opac-tmpl/bootstrap/images/gua/encabezado y botones/boton de Serv Bibliotecarios 50.png"  style = "width:100%;cursor: pointer" alt=""/>
+	</div>
+	<div class= "col-lg-2 col-md-2 col-xs-2" style="padding-left:0px;padding-right:0px">
+			<img class="img-responsive" src="/opac-tmpl/bootstrap/images/gua/nuevos/boton Formacion de usuarios   50.png"  style = "width:100%;cursor: pointer" alt=""/>
+	</div>
+ </div>
+</div>
+
+<div class = "ocultar-div">
+<div id="myCarousel" class="carousel slide col-lg-12 col-md-12" data-ride="carousel" style = "padding-left:0px;padding-right:0px;margin-bottom: -50px;">
+ <!--
+  <ol class="carousel-indicators">
+    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+    <li data-target="#myCarousel" data-slide-to="1"></li>
+    <li data-target="#myCarousel" data-slide-to="2"></li>
+	<li data-target="#myCarousel" data-slide-to="3"></li>
+	<li data-target="#myCarousel" data-slide-to="4"></li>
+	<li data-target="#myCarousel" data-slide-to="5"></li>
+	<li data-target="#myCarousel" data-slide-to="6"></li>
+	<li data-target="#myCarousel" data-slide-to="7"></li>
+	<li data-target="#myCarousel" data-slide-to="8"></li>
+	<li data-target="#myCarousel" data-slide-to="9"></li>
+  </ol>
+ -->
+
+  <div class="carousel-inner">
+    <div class="item active" style = " border-style: hidden;">
+      <img src="/opac-tmpl/bootstrap/images/gua/fotos para banner/1.jpg"  style = "height:450px; width:100%">
+      
+    </div>
+
+    <div class="item" style = " border-style: none;">
+      <img src="/opac-tmpl/bootstrap/images/gua/fotos para banner/2.jpg"   style = "height:450px; width:100%">
+      
+    </div>
+
+    <div class="item" style = " border-style: none;">
+      <img src="/opac-tmpl/bootstrap/images/gua/fotos para banner/3.jpg"  style = "height:450px; width:100%">
+      
+    </div>
+	
+	    <div class="item" style = " border-style: none;">
+      <img src="/opac-tmpl/bootstrap/images/gua/fotos para banner/4.jpg"  style = "height:450px; width:100%">
+      
+    </div>
+
+    <div class="item" style = " border-style: none;">
+      <img src="/opac-tmpl/bootstrap/images/gua/fotos para banner/5.jpg"  style = "height:450px; width:100%">
+      
+    </div>
+
+    <div class="item" style = " border-style: none;">
+      <img src="/opac-tmpl/bootstrap/images/gua/fotos para banner/6.jpg" style = "height:450px; width:100%">
+      
+    </div>
+	
+	    <div class="item " style = "border-style: none;">
+      <img src="/opac-tmpl/bootstrap/images/gua/fotos para banner/7.jpg"  style = "height:450px; width:100%">
+      
+    </div>
+
+    <div class="item" style = " border-style: none;">
+      <img src="/opac-tmpl/bootstrap/images/gua/fotos para banner/8.jpg"  style = "height:450px; width:100%">
+    
+    </div>
+
+    <div class="item" style = " border-style: none;">
+      <img src="/opac-tmpl/bootstrap/images/gua/fotos para banner/9.jpg"  style = "height:450px; width:100%">
+     
+    </div>
+	
+	<div class="item" style = " border-style: none;">
+      <img src="/opac-tmpl/bootstrap/images/gua/fotos para banner/10.jpg"  style = "height:450px; width:100%">
+    
+    </div>
+	
+  </div>
+
+<!--
+
+  <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+    <span class="glyphicon glyphicon-chevron-left"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="right carousel-control" href="#myCarousel" data-slide="next">
+    <span class="glyphicon glyphicon-chevron-right"></span>
+    <span class="sr-only">Next</span>
+  </a>
+
+ -->  
+ 
+</div>
+</div>
+
+
+<div class = "ocultar-div" >
+
+	<div class= "col-lg-10 col-md-10 col-xs-10" style = "margin-top:90px;margin-bottom:20px;text-align: -webkit-center;margin-left:130px;" >
+			<img class="img-responsive" src="/opac-tmpl/bootstrap/images/gua/novedades bibliograficas.jpg" width="100%"  alt=""/>
+	</div>
+	
+
+	
+	
+
+<div class="container" style = "margin-bottom: -60px;">
+<div class="col-xs-12">
+
+
+        
+    <div class="carousel slide" id="myCarousel1" >
+        <div class="carousel-inner" style = "margin-left:180px;">
+            <div class="item active">
+                    <ul class="thumbnails" >
+                        <li class="col-sm-2">
+    						<div class="fff">
+								<div class="thumbnail" style = "border-style: none;">
+									<a href="#"><img src="/opac-tmpl/bootstrap/images/gua/nuevos/1.png" alt=""></a>
+								</div>
+								
+                            </div>
+                        </li>
+                        <li class="col-sm-2">
+							<div class="fff">
+								<div class="thumbnail" style = "border-style: none;">
+									<a href="#"><img src="/opac-tmpl/bootstrap/images/gua/nuevos/2.png" alt=""></a>
+								</div>
+								
+                            </div>
+                        </li>
+                        <li class="col-sm-2">
+							<div class="fff">
+								<div class="thumbnail" style = "border-style: none;">
+									<a href="#"><img src="/opac-tmpl/bootstrap/images/gua/nuevos/3.png" alt=""></a>
+								</div>
+								
+                            </div>
+                        </li>
+                        <li class="col-sm-2">
+							<div class="fff">
+								<div class="thumbnail" style = "border-style: none;">
+									<a href="#"><img src="/opac-tmpl/bootstrap/images/gua/nuevos/4.png" alt=""></a>
+								</div>
+								
+                            </div>
+                        </li>
+                    </ul>
+              </div><!-- /Slide1 --> 
+            <div class="item">
+                    <ul class="thumbnails">
+                        <li class="col-sm-2">
+							<div class="fff">
+								<div class="thumbnail" style = "border-style: none;">
+									<a href="#"><img src="/opac-tmpl/bootstrap/images/gua/nuevos/5.png" alt=""></a>
+								</div>
+								
+                            </div>
+                        </li>
+                        <li class="col-sm-2">
+							<div class="fff">
+								<div class="thumbnail" style = "border-style: none;">
+									<a href="#"><img src="/opac-tmpl/bootstrap/images/gua/nuevos/6.png" alt=""></a>
+								</div>
+								
+                            </div>
+                        </li>
+						
+						
+                    </ul>
+              </div><!-- /Slide2 --> 
+            
+        </div>
+        
+    <!--   
+	   <nav>
+			<ul class="control-box pager">
+				<li><a data-slide="prev" href="#myCarousel1" class=""><i class="glyphicon glyphicon-chevron-left"></i></a></li>
+				<li><a data-slide="next" href="#myCarousel1" class=""><i class="glyphicon glyphicon-chevron-right"></i></li>
+			</ul>
+		</nav>
+	-->
+	   <!-- /.control-box -->   
+                              
+    </div><!-- /#myCarousel -->
+        
+</div><!-- /.col-xs-12 -->
+</div>	
+	<div class= "col-lg-10 col-md-10 col-xs-10" style = "margin-top:0px;text-align: -webkit-center;margin-left:10%" >
+			<img class="img-responsive" src="/opac-tmpl/bootstrap/images/gua/nuevos/boton novedades.png"  style = "cursor: pointer" alt=""/>
+	</div>
+	
+
+</div>
+
+<div class = "ocultar-div" >
+
+<div class= "col-lg-10 col-md-10 col-xs-10" style = "margin-top:50px;text-align: -webkit-center;margin-left:130px" >
+			<img class="img-responsive" src="/opac-tmpl/bootstrap/images/gua/nuevos/que esta pasando en l biblio CORREGIDO.png" width="100%"  alt=""/>
+	</div>
+
+<div class = "col-md-10" style = "margin-left:250px; margin-bottom: 50px;margin-top:25px;">
+
+<div class="col-sm-3" style = "margin-right:40px;">
+<div class="card card-default">
+  
+  <div class="card-img">
+    <img src="/opac-tmpl/bootstrap/images/gua/biblioteca/Jueves-en-la-ciencia.jpg" class="img-responsive">
+  </div>
+  <div class="card-body" style = "font-size: 17px;">
+    <!--<h4>Heading One Two Three</h4> -->
+	<ul class ="modify">
+		<li class ="modify"><p style ="float:right;text-align: justify;">El IEC presentó dos conferencias en el marco del programa Jueves en la Ciencia.</p></li>
+	</ul>
+    <img class="img-responsive" src="/opac-tmpl/bootstrap/images/gua/mas.jpg"   alt="" style = "cursor: pointer" data-toggle="modal" data-target="#Modal1"/>
+  </div>
+</div>	 
+</div>
+
+<!-- qué está pasando la biblioteca 1-->
+<div class="modal fade bd-example-modal-lg"  tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="Modal1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+	
+      <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+		  <img class="img-responsive" src="/opac-tmpl/bootstrap/images/gua/nuevos/okLogos IEC.png" width="200"  height="100px"  alt="" align = "left"/>
+          <h4 class="modal-title" align = "right" style = "text-align: center; margin-top:34px;margin-left:10px;margin-right:10px;color: black;">EL IEC presentó dos conferencias en el marco del programa Jueves en la Ciencia.</h4>
+        </div>
+		
+		<div class="modal-body">
+          <p style = "text-align: justify; color: black;">
+			<img src="/opac-tmpl/bootstrap/images/gua/biblioteca/Jueves-en-la-ciencia.jpg" class="img-responsive col-md-4"  align = "left">
+			El Instituto Estatal de la Cultura en colaboración con la Academia Mexicana de  Ciencias  realizó dos conferencias impartidas por el Dr. Francisco Miguel Vargas Luna este 5 de marzo  en  la Sala Vasconcelos de la Biblioteca Central Estatal de Guanajuato, como parte del programa “Jueves en  la Ciencia”.
+			<br><br>
+			En el primer encuentro, titulado “Acupuntura, entre el mito y la ciencia” el Dr. Vargas Luna, físico de profesión, hizo un recorrido histórico por la Acupuntura y explicó de manera amena y sencilla la ciencia detrás de esta milenaria práctica, y el porqué de su relevancia como terapia alternativa. 
+			<br><br>
+			Para su segunda conferencia, el Dr. Vargas, presentó frente a una audiencia conformada principalmente por estudiantes de nivel medio superior, su tema actual de investigación “La resistencia eléctrica del cuerpo humano. Qué información nos proporciona?” donde ligó lo presentado en su charla anterior y habló de la importancia de la investigación científica y su relación con la práctica clínica.
+			<br><br>
+			Durante las conferencias, el académico compartió con el público su experiencia como investigador alrededor del mundo, y exhortó a su audiencia a seguir creciendo en lo que les gusta hacer, “tomar cualquier cosa y mejorarla. Todo es perfectible” finalizó el Dr. Vargas, quien de manera animada procedió a contestar preguntas de la audiencia.
+			<br><br>
+			Miembro de la Academia Mexicana de las Ciencias, el Dr. Francisco Miguel Vargas Luna es académico e investigador del Departamento de Ingeniería Física de la División de Ciencias e Ingenierías de la Universidad de Guanajuato. 
+		</p>
+        </div>
+	  
+    </div>
+  </div>
+</div>
+
+<div class="col-sm-3" style = "margin-right:40px;">
+<div class="card card-default">
+  
+  <div class="card-img">
+    <img src="/opac-tmpl/bootstrap/images/gua/biblioteca/Martes-de-la-UNAM.jpg" class="img-responsive">
+  </div>
+  <div class="card-body" style = "font-size: 17px;">
+    <!--<h4>Heading One Two Three</h4> -->
+	<ul class ="modify">
+		<li class ="modify"><p style ="float:right;text-align: justify;">Martes de la UNAM en la biblioteca presentó la conferencia “valor de los dos Méxicos”.</p></li>
+	</ul>
+    <img class="img-responsive" src="/opac-tmpl/bootstrap/images/gua/mas.jpg" style = "cursor: pointer"  alt=""  data-toggle="modal" data-target="#Modal2"/>
+  </div>
+</div>
+</div>
+
+<!-- qué está pasando la biblioteca 2-->
+<div class="modal fade bd-example-modal-lg"  tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="Modal2">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+	
+      <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+		  <img class="img-responsive" src="/opac-tmpl/bootstrap/images/gua/nuevos/okLogos IEC.png" width="200"  height="100px"  alt="" align = "left"/>
+          <h4 class="modal-title" align = "right" style = "text-align: center; margin-top:34px;margin-left:10px;margin-right:10px;color: black;">Martes de la UNAM en la biblioteca presentó la conferencia “Las cadenas de valor en los dos Méxicos”.</h4>
+        </div>
+		
+		<div class="modal-body">
+          <p style = "text-align: justify; color: black;">
+			<img src="/opac-tmpl/bootstrap/images/gua/biblioteca/Martes-de-la-UNAM.jpg" class="img-responsive col-md-4"  align = "left">
+			El Instituto Estatal de la Cultura, a través de la Biblioteca Central Estatal, y la Escuela Nacional de Estudios Superiores, Unidad León, de la UNAM, presentaron la conferencia “Las cadenas de valor en los dos Méxicos” a cargo del  Mtro. Salvador Andrade Ortiz ayer 3 de marzo, a las 18:00 horas.
+			<br><br>
+			En la conferencia, el Mtro. Salvador Andrade Ortiz abordó uno de los temas más relevantes en la actualidad: la brecha socioeconómica existente entre las regiones sur y norte de nuestro país. El académico utilizó el concepto de las denominadas cadenas de valor para explicar la desigualdad existente entre ambas zonas de nuestro país, que se ve reflejado con el uso de la expresión ‘’dos Méxicos”.
+			<br><br>
+			El Mtro. Andrade Ortiz explicó también la insuficiencia de los indicadores globales de crecimiento económico para explicar una situación multidimensional como lo es el fenómeno de la desigualdad socioeconómica en nuestro país.  A su vez, se habló también de los distintos proyectos destinados a impulsar el progreso al sur de nuestro país, que a pesar del histórico descuido que ha sufrido, cuenta con un potencial inmenso de desarrollo, especialmente en el sector agropecuario.
+			<br><br>
+			El Mtro. Salvador Andrade Ortiz es ingeniero industrial por el Instituto Tecnológico de Estudios Superiores de Monterrey. En su desarrollo profesional ha ocupado puestos en áreas comerciales de empresas globales como Grupo Bimbo y DOW Química. Como docente ha impartido diversas asignaturas y cursos de educación continua en la ENES-UNAM Unidad León.
+			<br><br>
+			Recientemente realizó una estancia en la Universidad de Toyo en Tokio, Japón donde continuó su trabajo de investigación en los temas de las redes y cadenas de valor.
+			</p>
+        </div>
+	  
+    </div>
+  </div>
+</div>
+
+
+<div class="col-sm-3">
+<div class="card card-default">
+  
+  <div class="card-img">
+    <img src="/opac-tmpl/bootstrap/images/gua/biblioteca/PAICE.jpg" class="img-responsive">
+  </div>
+  <div class="card-body"  style = "font-size: 17px;">
+    <!--<h4>Heading One Two Three</h4> -->
+	
+	<ul class ="modify">
+		<li class ="modify"><p style ="float:right;text-align: justify;">Con recurso del PAICE el IEC rehabilita la BCEG y apoya el fomento a la lectura.           </p></li>
+	</ul>
+    <img class="img-responsive" src="/opac-tmpl/bootstrap/images/gua/mas.jpg"   alt="" style = "cursor: pointer" data-toggle="modal" data-target="#Modal3">
+  </div>
+</div>
+</div>
+
+<!-- qué está pasando la biblioteca 2-->
+<div class="modal fade bd-example-modal-lg"  tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="Modal3">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+	
+      <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+		  <img class="img-responsive" src="/opac-tmpl/bootstrap/images/gua/nuevos/okLogos IEC.png" width="200"  height="100px"  alt="" align = "left"/>
+          <h4 class="modal-title" align = "right" style = "text-align: center; margin-top:34px;margin-left:10px;margin-right:10px;color: black;">Con recurso del PAICE el IEC rehabilita la BCEG y apoya el fomento a la lectura en jóvenes.</h4>
+        </div>
+		
+		<div class="modal-body">
+          <p style = "text-align: justify; color: black;">
+			<img src="/opac-tmpl/bootstrap/images/gua/biblioteca/PAICE.jpg" class="img-responsive col-md-4"  align = "left">
+			Con una inversión de 1 millón de pesos, provenientes del Programa de Apoyo a la Infraestructura Cultural de los Estados, la Biblioteca Central Estatal de Guanajuato realiza desde hace unas semanas obras de rehabilitación y mantenimiento.
+			<br><br>
+			El Programa de Apoyo a la Infraestructura Cultural de los Estados (PAICE), de la Secretaría de Cultura, destina recursos económicos para financiar proyectos culturales que tengan como propósito rehabilitar, construir, equipar y dotar de programación cultural espacios destinados al quehacer artístico y cultural como: casas de cultura, centros culturales, centros de formación y producción artística, bibliotecas, museos, archivos históricos, teatros, entre otros.
+			<br><br>
+			Este año la Biblioteca Central Estatal de Guanajuato resultó beneficiada en el rubro de infraestructura y el apoyo se está aplicando en mantenimiento, que consiste en rehabilitación de acceso principal en rampas, sellado de cristales en domo principal, sellado de cristales en cubo de escalera de caracol, en cuanto a instalación hidráulica se hará cambio de válvulas de seccionamiento para facilitar las labores de reparación.
+			<br><br>
+			En la Comicteca se instaló cancelería de aluminio para delimitar el área y que funcione también como salón de usos múltiples, además se está realizando la impermeabilización y sellado de cristales en fachada principal. Las obras iniciaron en marzo y están contempladas terminar a finales de abril.
+			<br><br>
+			El PAICE también apoyo a la Biblioteca Central Estatal en el rubro “Vida a la infraestructura cultural”, con 200 mil pesos que se canalizaron para la realización, en febrero, del Festival del Cómic, con el objetivo de que los jóvenes se sumerjan en la lectura echando mano de todos los soportes que nos ofrece este mundo contemporáneo, libros, comics, novelas gráficas, cine, internet entre otros.
+			<br><br>
+			En este Festival se contó con la presencia de creadores de cómic y novela gráfica, como BEF, Alejandro Herrerías, Paulina Márquez y John Marceline entre otros.  Se desarrollaron mesas de diálogo sobre el panorama del cómic en México y la incursión de las mujeres en este ámbito.
+			<br><br>
+			Entre las presentaciones editoriales estuvieron Paulina Márquez con "Tormenta de mayo", premio Nacional de novela gráfica y "Un camino de leyenda" de Alejandro Herrerías, así como La caída de Tenochtitlán/ Marambo Cómix/ Siglo XX el último tramo de José Luis Pescador.
+			<br><br>
+			También se apoyó a los jóvenes creadores con obra en el género cómic e ilustradores con orientación sobre su trabajo con la revisión de portafolios de creadores locales, pasillo de oferta y venta de cómics de creadores mexicanos y talleres de apreciación y dibujo de cómic y novela gráfica.
+			<br><br>
+			Para verificar el adecuado uso del recurso brindado para este proyecto, se conformó el Comité de Contraloría Social de PAICE, en el que participan miembros de la sociedad civil y que están ligados al ámbito cultural.
+			<br><br>
+			Es importante mencionar que este es el tercer año que la BCEG se ve beneficiada de este programa, lo que permite contar con mejores instalaciones y dar un servicio de calidad a todos los usuarios.
+			</p>
+        </div>
+	  
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+</div>
+
+<div class = "ocultardiv">
+	
+	<div class= "col-lg-10 col-md-10 col-xs-12" style = "margin-top:50px;text-align: -webkit-center;" >
+			<img class="img-responsive" src="/opac-tmpl/bootstrap/images/gua/logog.png" width="251"  height="100px"  alt=""/>
+	</div>
+
+	<div class= "col-lg-10 col-md-10 col-xs-12" style = "margin-top:50px;text-align: -webkit-center;" >
+			<img class="img-responsive" src="/opac-tmpl/bootstrap/images/gua/biblioteca.jpg" width="251"  height="100px"  alt=""/>
+	</div>
+
+</div>
+ 
+<div class = "ocultardiv"> 
+ 
+ <div class = "col-md-12 col-xs-12" style = "margin-top: 20px" >
+ 
+
+	<div class = "col-lg-4 col-md-4 col-xs-12">
+	  
+	  <div class = "col-lg-7 col-md-7" col-xs-12>
+		<form  action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="auth">
+			<label>Ingrese a su cuenta:</label>
+			<div class="form-group">
+				<label for="usuario">Usuario</label>
+				<input type="text" class="form-control" id="usuario" aria-describedby="emailHelp" placeholder="" name = "userid" style = "height:30px;">
+			</div>
+		    
+			<div class="form-group">
+				<label for="exampleInputPassword1">Contraseña</label>
+				<input type="password" class="form-control" id="exampleInputPassword1" placeholder="" name = "password" style = "height:30px;">
+			</div>	
+	  </div>
+	  
+	  <div class = "col-lg-2 col-md-2">
+		
+		<button type="submit" class="btn btn-secondary">Ingresar</button>
+			
+		</form>
+	  </div>
+			
+	</div>
+	
+	
+  </div>	
+	
+ </div> 
+
+<div class = "ocultardiv">
+	<div class = "col-lg-12 col-md-12 col-xs-12" style = "padding-left:0px; margin-left:20px;">
+		<!--<button  class="btn btn-secondary" style = "background-color: #FF8400; color: #fff; font-size: 20px;">Catalogo público</button>-->
+		<div class = "col-lg-2 col-md-2 col-xs-9" style = "background-color: #FF8400; color: #fff; font-size: 20px; border-top-left-radius:10px;border-top-right-radius:10px;">
+			Catalogo público
+		</div>
+		
+	</div>
+	
+	<div class = "col-lg-12 col-md-12 col-xs-10" style = "padding:20px; margin-left:20px; background-color: #FF8400;">
+        <form name="form" method="get" action="/cgi-bin/koha/opac-search.pl" id="searchform" target="_parent">  
+           
+                       
+						
+						
+						<div class = "col-lg-4 col-md-4 col-xs-12 form-group" >
+						<label for="idx" >Buscar</label>
+                        <select name="idx" id="masthead_search" class="form-control" > 
+                          <option selected value=""></option>
+                           <option value="ti">Titulo</option>
+                           <option value="au">Autor</option>
+                           <option value="su">Tema</option>
+                           <option value="nb">ISBN</option>
+                           <option value="se">Series</option>
+                           <option value="callnum">Signatura topografica</option>
+                         </select>
+						 
+						</div>
+					
+				
+                    	<div class="form-group col-lg-9    col-xs-12" style = "">
+                      		<input type="text" id="transl1" name="q" class="form-control" style ="width:94%; height:34px;">
+							<button type="submit" class="btn btn-primary" id="searchsubmit" >Ir</button>
+                      	</div>
+					<!--		
+                  		<div class="form-group col-lg-2 col-md-2  col-sm-12 col-xs-12">  
+                        <input value="Buscar" id="searchsubmit" class="left" type="image">
+                         </div>
+						 style="padding-left:0px;padding-right:0px;"
+                     -->  
+                        
+                        
+                         
+        </form>               
+	</div>
+
+</div>
+
+
+<div class="main"  style="display:none; visibility:hidden">
+ 
+ <nav id="breadcrumbs" aria-label="Breadcrumb" class="breadcrumbs">
+ <ol class="breadcrumb">
+ 
+ 
+ 
+ 
+ <li class="breadcrumb-item active">
+ <a href="#" aria-current="page">
+ 
+ <span>Inicio</span>
+ 
+ </a>
+ </li>
+ 
+
+ 
+ </ol>
+ </nav>
+
+
+ 
+ 
+ <div id="notloggedin" class="container-fluid">
+ 
+ 
+
+ <div class="row">
+ 
+
+ 
+ 
+ <div class="col-12 col-lg-9 order-md-1 maincontent">
+ 
+
+ <h1 class="sr-only">Inicio</h1>
+
+ 
+
+ 
+ 
+ 
+  <!-- koha news -->
+ 
+
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ <div id="OpacMainUserBlock">
+ 
+ <div class="default_item">
+ 
+ <div class="default_body"></div>
+ </div>
+ 
+ </div>
+  
+ 
+ 
+
+ </div> <!-- / .col 6/8 -->
+
+ 
+ <div class="col-12 col-lg-3 order-md-2">
+ 
+ 
+ 
+ <div id="login">
+ <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="auth" autocomplete="off">
+ <input type="hidden" name="koha_login_context" value="opac" />
+ <fieldset class="brief">
+ <legend>Ingrese a su cuenta:</legend>
+ 
+ 
+ 
+ <div class="local-login">
+ <label for="userid">Usuario:</label>
+ <input class="form-control" type="text" id="userid" name="userid" autocomplete="off" />
+ <label for="password">Contraseña:</label>
+ <input class="form-control" type="password" id="password" name="password" autocomplete="off" />
+ <fieldset class="action">
+ <input class="btn btn-primary" type="submit" value="Ingresar" />
+ </fieldset>
+ </div>
+ 
+ 
+ <div id="forgotpassword-main" class="forgotpassword">
+ <p><a href="/cgi-bin/koha/opac-password-recovery.pl">¿Olvidó su contraseña?</a></p>
+ </div>
+ 
+ 
+ <div id="patronregistration-main" class="patronregistration">
+ <p><a href="/cgi-bin/koha/opac-memberentry.pl">Crear una cuenta</a></p>
+ </div>
+ 
+ </fieldset>
+ </form>
+ </div> <!-- /#login -->
+ 
+ 
+ 
+ 
+  
+ </div> <!-- / .col -->
+ 
+
+ </div> <!-- /.container-fluid -->
+ </div> <!-- /.row -->
+</div> <!-- /.main -->
+
+<script>
+
+// Instantiate the Bootstrap carousel
+$('.multi-item-carousel').carousel({
+  interval: false
+});
+
+// for every slide in carousel, copy the next slide's item in the slide.
+// Do the same for the next, next item.
+$('.multi-item-carousel .item').each(function(){
+  var next = $(this).next();
+  if (!next.length) {
+    next = $(this).siblings(':first');
+  }
+  next.children(':first-child').clone().appendTo($(this));
+  
+  if (next.next().length>0) {
+    next.next().children(':first-child').clone().appendTo($(this));
+  } else {
+  	$(this).siblings(':first').children(':first-child').clone().appendTo($(this));
+  }
+});
+</script>
+
+<script>
+
+  $(document).ready(function() {
+    $('.carousel').carousel({
+      interval: 6000
+    })
+  });
+
+</script>
+
+
+
+
+
+
+
+
+
+               
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+ <div class="container-fluid">
+ <div class="row">
+ <div class="col">
+ 
+ 
+ <div id="opaccredits">
+ 
+ <div class="default_item">
+ 
+ <div class="default_body"></div>
+ </div>
+ 
+ </div>
+  
+ </div>
+ </div>
+ </div>
+ 
+
+ 
+ </div> <!-- / #wrapper in masthead.inc -->
+
+ 
+ 
+ 
+
+
+
+
+<!-- CookieConsentedJS code that may run -->
+
+
+<!-- JavaScript includes -->
+<script src="/opac-tmpl/lib/jquery/jquery-3.6.0.min_23.1110000.js"></script>
+<script src="/opac-tmpl/lib/jquery/jquery-migrate-3.3.2.min_23.1110000.js"></script>
+<script src="/opac-tmpl/lib/bootstrap/js/bootstrap.bundle.min_23.1110000.js"></script>
+<script src="/opac-tmpl/lib/fontfaceobserver.min_23.1110000.js"></script>
+<script src="/opac-tmpl/lib/enquire.min_23.1110000.js"></script>
+<script>
+    let logged_in_user_id = "";
+</script>
+<script src="/opac-tmpl/bootstrap/js/global_23.1110000.js"></script>
+
+
+<script>
+    
+
+    
+    $(".print-large").on("click",function(){
+        window.print();
+        return false;
+    });
+    $(".addtoshelf").on("click",function(e){
+        e.preventDefault();
+        Dopop( this.href );
+    });
+    $("body").on("click", ".addtocart", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        addRecord( biblionumber );
+    });
+    $("body").on("click", ".cartRemove", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        delSingleRecord( biblionumber );
+    });
+    $(".clearsh").on("click", function(){
+        return confirmDelete( _("¿Está seguro que desea eliminar su historial de búsqueda?") );
+    });
+
+</script>
+
+
+ <script src="/opac-tmpl/bootstrap/js/basket_23.1110000.js"></script>
+
+
+
+
+
+
+
+ <script src="/opac-tmpl/bootstrap/js/localcovers_23.1110000.js"></script>
+
+
+
+
+
+
+<script src="/opac-tmpl/lib/js-cookie/js.cookie-3.0.1.min_23.1110000.js"></script>
+<script>
+$(document).ready(function() {
+    if($('#searchsubmit').length) {
+        $(document).on("click", '#searchsubmit', function(e) {
+            Cookies.remove("form_serialized", { path: '/'});
+            Cookies.remove("form_serialized_limits", { path: '/'});
+            Cookies.remove("search_path_code", { path: '/'});
+        });
+    }
+});
+</script>
+
+
+
+
+<script src="/opac-tmpl/lib/dayjs/dayjs.min_23.1110000.js"></script>
+<script src="/opac-tmpl/lib/dayjs/plugin/timezone_23.1110000.js"></script>
+<script src="/opac-tmpl/lib/dayjs/plugin/utc_23.1110000.js"></script>
+<script>
+    dayjs.extend(window.dayjs_plugin_utc);
+    dayjs.extend(window.dayjs_plugin_timezone);
+</script>
+
+<!-- js-date-format.inc -->
+<script>
+    (function() {
+        var def_date_format = 'metric';
+        var def_time_format = '12hr';
+        var def_tz = 'America/Mexico_City';
+
+        var get_date_pattern = function(format) {
+            var date_pattern = 'YYYY-MM-DD';
+            if(format == 'us') date_pattern = 'MM/DD/YYYY';
+            if(format == 'metric') date_pattern = 'DD/MM/YYYY';
+            if(format == 'dmydot') date_pattern = 'DD.MM.YYYY';
+            return date_pattern;
+        };
+
+        var get_time_pattern = function(format) {
+            var time_pattern = 'HH:mm';
+            if(format == '12hr') time_pattern = 'hh:mm a';
+            return time_pattern;
+        };
+
+        /*
+         * A JS equivilent of the KohaDates TT Plugin. Passed an rfc3339 formatted date string,
+         * or JS Date, the function will return a date string formatted as per the koha instance config.
+         * Optionally accepts a dateformat parameter to allow override of the configured output format
+         * as well as a 'withtime' boolean denoting whether to include time or not in the output string.
+         */
+        window.$date = function(value, options) {
+            if(!value) return '';
+            var tz = (options&&options.tz)||def_tz;
+            var m = dayjs(value);
+            if ( ! value.match(/^\d{4}-\d{2}-\d{2}$/ ) ) {
+                m = m.tz(tz);
+            }
+
+            var dateformat = (options&&options.dateformat)||def_date_format;
+            var withtime = (options&&options.withtime)||false;
+
+            if(dateformat=='rfc3339' && withtime) return m.format();
+
+            var timeformat = (options&&options.timeformat)||def_time_format;
+            var date_pattern = get_date_pattern(dateformat);
+            var time_pattern = !withtime?'':' '+get_time_pattern(timeformat);
+
+            return m.format(date_pattern+time_pattern);
+        }
+
+        window.$datetime = function(value, options) {
+            options = options||{};
+            options.withtime = true;
+            return $date(value, options);
+        };
+
+        window.$time = function(value, options) {
+            if(!value) return '';
+            var tz = (options&&options.tz)||def_tz;
+            var m = dayjs(value);
+            if(tz) m = m.tz(tz);
+
+            var dateformat = (options&&options.dateformat);
+            var timeformat = (dateformat=='rfc3339'&&'24hr')||(options&&options.timeformat)||def_time_format;
+
+            return m.format(get_time_pattern(timeformat)+(dateformat=='rfc3339'?':ss'+(!m.isUTC()?'Z':''):''))+(dateformat=='rfc3339' && m.isUTC()?'Z':'');
+        }
+
+    })();
+</script>
+<!-- / js-date-format.inc -->
+
+<script>
+    (function() {
+        /**
+         * Format the biblio response from a Koha RESTful API request.
+         * @param  {Object}  biblio  The biblio json object as returned from the Koha RESTful API
+         * @param  {Object}  config  A configuration object
+         *                           Valid keys are: `link`
+         * @return {string}          The formatted HTML string
+         */
+        window.$biblio_to_html = function(biblio, config) {
+
+            if (biblio === undefined) {
+                return ''; // empty string for no biblio
+            }
+
+            var title = '<span class="biblio-title">';
+            if (biblio.title != null && biblio.title != '') {
+                title += escape_str(biblio.title);
+            } else {
+                title += _("Sin título");
+            }
+            title += '</span>';
+
+            // add subtitle
+            if (biblio.subtitle != null && biblio.subtitle != '') {
+                title += ' <span class="biblio-subtitle">' + escape_str(biblio.subtitle) + '</span>';
+            }
+
+            // set title as link
+            if (config && config.link) {
+                if (config.link === 'marcdetail') {
+                    title = '<a href="/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + '</a>';
+                } else if (config.link === 'labeled_marc') {
+                    title = '<a href="/cgi-bin/koha/opac-labeledMARCdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + '</a>';
+                } else if (config.link === 'isbd') {
+                    title = '<a href="/cgi-bin/koha/opac-ISBDdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + '</a>';
+                } else {
+                    title = '<a href="/cgi-bin/koha/opac-detail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + '</a>';
+                }
+            }
+
+            // add medium
+            if (biblio.medium != null && biblio.medium != '') {
+                title += ' <span class="biblio-medium">' + escape_str(biblio.medium) + '</span>';
+            }
+
+            // add part numbers/names
+            let part_numbers = (typeof biblio.part_number === 'string') ? biblio.part_number.split("|") : [];
+            let part_names = (typeof biblio.part_name === 'string') ? biblio.part_name.split("|") : [];
+            let i = 0;
+            while (part_numbers[i] || part_names[i]) {
+                if (part_numbers[i]) {
+                    title += ' <span class="part-number">' + escape_str(part_numbers[i]) + '</span>';
+                }
+                if (part_names[i]) {
+                    title += ' <span class="part-name">' + escape_str(part_names[i]) + '</span>';
+                }
+                i++;
+            }
+
+            return title;
+        };
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>
+
+

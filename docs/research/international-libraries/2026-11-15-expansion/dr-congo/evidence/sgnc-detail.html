@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta http-equiv="Content-Security-Policy" content="">
+			<meta charset="utf-8">
+			<meta name="author" content="PMB Group">
+
+			<meta name="keywords" content="OPAC, web, library, opensource, catalog, catalogue, bibliothèque, médiathèque, pmb, phpmybibli">
+			<meta name="description" content="Catalogue en ligne Bib'Doc."><meta name="robots" content="all">
+			
+			<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3">
+	<title>Catalogue en ligne Bib'Doc</title>
+	
+	
+				<script src="./styles/common/toolkits/jquery/versions/jquery-2.2.4.min.js"></script>
+				
+				
+				<!--[if lte IE 8]>
+				  <script src='./styles/common/toolkits/jquery/components/jquery-1.9.1.min.js'></script>
+				<![endif]--><script src="./styles/common/toolkits/jquery/components/jquery.mobile.custom.min.js"></script><script src="./styles/common/toolkits/uikit/js/uikit.min.js"></script><link rel="stylesheet" type="text/css" href="./styles/common/toolkits/uikit/css/uikit.min.css?1747313006"><script src="./styles/common/toolkits/uikit/js/components/init-responsive.min.js"></script><link rel="stylesheet" type="text/css" href="./styles/common/toolkits/uikit/css/components/init-responsive.min.css?1747313006"><script src="./styles/common/toolkits/uikit/js/components/set-grid-footer.min.js"></script><script src="./styles/common/toolkits/uikit/js/components/set-grid-intro.min.js"></script><script src="./styles/common/toolkits/uikit/js/components/set-grid-main-uncolored.min.js"></script><link rel="stylesheet" type="text/css" href="./styles/common/toolkits/uikit/css/components/set-grid-main-uncolored.min.css?1747313006"><script src="./styles/common/toolkits/uikit/js/components/sticky.min.js"></script><link rel="stylesheet" type="text/css" href="./styles/common/toolkits/uikit/css/components/sticky.min.css?1747313006"><script src="./styles/common/toolkits/uikit/js/components/touch-user-box-tgle.min.js"></script><link rel="stylesheet" type="text/css" href="./styles/common/toolkits/uikit/css/components/touch-user-box-tgle.min.css?1747313006"><script src="./styles/common/toolkits/uikit/js/components/uikit-tab-display.min.js"></script><link rel="stylesheet" type="text/css" href="./styles/common/toolkits/uikit/css/components/uikit-tab-display.min.css?1747313006">
+<link rel="stylesheet" type="text/css" href="./styles/common/ai_search.css?1747312732">
+<link rel="stylesheet" type="text/css" href="./styles/common/animation_display.css?1747312732">
+<link rel="stylesheet" type="text/css" href="./styles/common/common.css?1747312733">
+<link rel="stylesheet" type="text/css" href="./styles/common/contrib.css?1747312733">
+<link rel="stylesheet" type="text/css" href="./styles/common/dGrowl.css?1747312734">
+<link rel="stylesheet" type="text/css" href="./styles/common/dsi.css?1747312734">
+<link rel="stylesheet" type="text/css" href="./styles/common/font-awesome.css?1747312736">
+<link rel="stylesheet" type="text/css" href="./styles/common/open-sans.css?1747312735">
+<link rel="stylesheet" type="text/css" href="./styles/common/pagination.css?1747312736">
+<link rel="stylesheet" type="text/css" href="./styles/common/record_display.css?1747312737">
+<link rel="stylesheet" type="text/css" href="./styles/common/visionneuse.css?1747312738">
+<link rel="stylesheet" type="text/css" href="./styles/solo/1-grid.css?1747307363">
+<link rel="stylesheet" type="text/css" href="./styles/solo/2-base.css?1747307364">
+<link rel="stylesheet" type="text/css" href="./styles/solo/fontAcontent.css?1747307365">
+<link rel="stylesheet" type="text/css" href="./styles/solo/pagination.css?1747307365">
+<link rel="stylesheet" type="text/css" href="./styles/solo/record-display-cutsom.css?1747307366">
+<link rel="stylesheet" type="text/css" href="./styles/solo/solo.css?1747307368">
+<link rel="stylesheet" type="text/css" href="./styles/solo/solo_color_pre_set.css?1747307367">
+<link rel="stylesheet" type="text/css" href="./styles/solo/z_responsive.css?1747307368"><script>var opac_style= 'solo';</script><style type="text/css">/* Param&egrave;tres des couleurs
+
+========================================================================== */
+/* Couleur principale : fond de page et bandeau sup&eacute;rieur
+========================================================================== */
+
+/* Couleur de fond de titre et modules
+------------------------------------- */
+.SliderArt h3.titleInside,
+.SliderArt .bx-wrapper .bx-pager.bx-default-pager a:hover,
+.SliderArt .bx-wrapper .bx-pager.bx-default-pager a.active,
+.listselect .itemVign .imgL.uk-panel-box,
+#resume_panier,
+#lienHistorique,
+#adresse,
+.titleContenu,
+.listArticlesGen .itemAbrege>h3,
+.listeSameArticle .itemAbrege>h3,
+.listItemsEvent .itemAbrege>h3,
+.listResultArticles .itemAbrege>h3,
+.listArticlesGen .itemAbrege>a>h3,
+.MenuCanvas.uk-button,
+.wl-tgl-nav .uk-button,
+#intro,
+.MenuHoriz .Nav>li,
+.solo-picture .uk-grid-width-1-3 li,
+body#pmbopac,
+#footer,
+#footer .Ancre a,
+#accessibility,
+.MenuHoriz .uk-dropdown,
+.uk-offcanvas-bar-custom .uk-nav-side > li > a:hover,
+.uk-offcanvas-bar-custom .uk-nav-side > li > a:focus,
+.wl-tgl-nav .uk-navbar-nav>li.uk-open>a,
+.wl-tgl-nav .uk-navbar-nav>li:hover>a,
+.wl-tgl-nav .uk-navbar-nav>li>a:focus {
+    background-color: #1974D2;
+}
+
+/* Couleur des bordures
+------------------------------------- */
+.NavResponsive .SousNavResponsive li:hover>a:before,
+.itemSolo h4,
+.listProd>h3,
+.listEtageresRub>h3,
+.fluxRSSRub>h3,
+.infosArt>h3,
+.SameNot>h3,
+.SliderHoriz>h3,
+#aut_details_liste>h3 span.aut_details_liste_titre,
+.listArticlesGen>h3,
+.listeSameArticle>h3,
+.listItemsEvent>h3,
+.listResultArticles>h3,
+.fluxRSSPage>h3,
+.document_list>h3,
+ul.empr_tabs li.subTabCurrent,
+ul.onglets_isbd_public li.isbd_public_active,
+ul.empr_tabs #current,
+ul.search_tabs li#current,
+ul.empr_tabs li.subTabCurrent,
+ul.empr_tabs li.subTabCurrent:hover,
+.solo-picture .uk-grid-width-1-3 li {
+    border-color: #6fb8e2;
+}
+
+/*=========================================================================*/
+/* Couleur compl&eacute;mentaire : liens et soulignement des titres
+==========================================================================*/
+
+/* Couleur de fond de titre et modules
+------------------------------------- */
+.searchbox,
+.brevesBandeau,
+.uk-nav-navbar>li>a:focus,
+.uk-nav-navbar>li>a:hover,
+.TgllSearch,
+.rubContent>h3:hover:after,
+.listItemsGen .itemAbrege:hover h3:after,
+span.imgComment,
+span.imgStatutPartN,
+.onglet_basketNotCourte .img_basketNotCourte img,
+.onglet_basketNot .img_basketNot img,
+div[class='onglet_basketNotCourte'],
+div[class='avisNCourte'],
+div[class='tagsNCourte'],
+div[class='listeLectureNCourte'] a,
+div[class='suggestNCourte'],
+div[class='onglet_basketNot'] a.img_basketNot,
+div[class='tagsN'],
+div[class='suggestN'],
+div[class='docnumNCourte docnumNCourtePermalink'],
+div[class='docnumNCourte'],
+div[class='listeLectureN'] a,
+span.imgComment,
+span.imgStatutPartN,
+span.imgDocNum,
+.avisN,
+.searchbox input[value="Aide"],
+#search .boutonrechercher,
+input[type="submit"].bouton,
+input[type="button"].bouton,
+#search input[type="submit"],
+#search input[value="Aide"],
+#account #login_form input.bouton,
+.tundra .dijitCalendarMonthContainer th,
+.tundra .dijitMenu,
+.tundra .dijitMenuBar,
+.TglUser,
+.fluxRSS>h3,
+#widget>h3,
+.tb_pret_location_row,
+#cms_module_agenda_85 td.cms_module_agenda_event_13,
+#cms_module_agenda_85 td.cms_module_agenda_event_3,
+#cms_module_agenda_85 > div.row > div > div:first-child,
+.dijitCalendarMonthContainer ,#login_form input[type="submit"].bouton,
+#facette_wrapper table th,
+.AllRecords a,
+.AllRecords span, 
+div.lienP {
+    background-color: #f58289;
+}
+
+/* Couleur des bordures
+------------------------------------- */
+.NavResponsive li:hover>a:before,
+ul.search_tabs li:hover,
+ul.empr_tabs li:hover,
+ul.list_tabs li:hover,
+ul.empr_tabs #current,
+.listEtageres>h3 a:hover,
+.searchbox_title:first-letter,
+#connexion h3:first-letter,
+#connexion #login_form>b:first-letter,
+.infosBandeau .itemAbrege h3:first-letter,
+.logosBandeau h3:first-letter,
+.brevesBandeau h3:first-letter,
+#lvl1>h3:first-letter,
+#facette_wrapper > form > h3.facette_compare_listTitle:first-letter,
+#search_result>h3,
+#location h3,
+#last_entries h3,
+#etageres h3,
+.notice_contenu,
+ul.empr_subtabs li.subTabCurrent,
+.itemSolo h4,
+.listProd>h3,
+.listEtageresRub>h3,
+.fluxRSSRub>h3,
+.infosArt>h3,
+.SameNot>h3,
+.SliderHoriz>h3,
+#aut_details_liste>h3 span.aut_details_liste_titre,
+.listArticlesGen>h3,
+.listeSameArticle>h3,
+.listItemsEvent>h3,
+.listResultArticles>h3,
+.fluxRSSPage>h3,
+.document_list>h3,
+#empr-resa>h3,
+#empr-all>h3,
+#location h3,
+#last_entries>h3,
+#etageres>h3,
+div .itemSolo h2,
+.listArticlesGen h2,
+.listeSameArticle h2,
+.listItemsEvent h2,
+.listResultArticles h2,
+.introVue>h3,
+#resultatrech>h3,
+.introDossier h2,
+#resultatrechBis>h3,
+.blocCnx>h2,
+#titre-popup,
+#aut_details>h3,
+.wl-title-news:before, .wl-title-article:before,
+.SliderArt h3,
+.SliderNot>h3,
+.listselect>h3,
+.ListActus>h3,
+.listBibli>h3,
+.listEtageres>h3,
+.listBreves>h3,
+.infosPage h3,
+.fluxRSS>h3,
+#rechercheForm>h3,
+#webdoc>h3,
+#search_result>h3,
+.listRubs h2,
+.listRubsAbbr>h2,
+.itemSoloFlux h2,
+.SliderVertic>h3,
+.fluxRSSJuridique>h2,
+.fluxRSSJuridique>h3,
+#make_sugg h3,
+#searchWebdoc h3,
+#listeFlux h3,
+.titleContenu {
+    border-color: #f58289;
+}
+
+/* Couleur des textes fonc&eacute;
+------------------------------------- */
+h1#titre-Portail  .subTitle,
+ul.search_tabs li a, ul.empr_tabs li a,
+ul.empr_subtabs li.subTabCurrent{
+    color: #f58289;    
+}
+
+/* Couleur au survol
+------------------------------------- */
+.Rub .infosRub:hover .resume,
+.listEtageres>h3 a:hover,
+.uk-tab>li.uk-open>a, .uk-tab>li>a:focus, .uk-tab>li>a:hover {
+    color: #f58289;
+}
+
+/*Couleur liens
+------------------------------------- */
+.uk-link,
+a,
+.liensExtrn li a,
+.brevesBandeau .lirePlus {
+    color: #f58289;
+}
+
+/*Couleur liens au survol
+------------------------------------- */
+.ItemResume:hover h4,
+.ItemResume:hover .lirePlus,
+.tundra .dijitCalendarDayLabelTemplate,
+.fluxRSS>.itemAbrege h4 a  {
+    color: #f58289;
+}
+</style>
+		<link rel="SHORTCUT ICON" href="./styles/solo/images/favicon.ico">
+	<script src="includes/javascript/drag_n_drop.js"></script>
+	<script src="includes/javascript/handle_drop.js"></script>
+	<script src="includes/javascript/popup.js"></script>
+	<script>
+			// Fonction a utiliser pour l'encodage des URLs en javascript
+			function encode_URL(data){
+				var docCharSet = document.characterSet ? document.characterSet : document.charset;
+				if(docCharSet == "UTF-8"){
+	    			return encodeURIComponent(data);
+	    		}else{
+	    			return escape(data);
+	    		}
+	    	}
+	    </script>
+	<script>
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName =
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i);
+				    }
+				 }
+				return items;
+			 }
+		}
+	</script>
+<link rel="stylesheet" type="text/css" href="./includes/javascript/openlayers/theme/default/style.css"><script src="./includes/javascript/openlayers/lib/OpenLayers.js"></script>
+		<link rel="stylesheet" type="text/css" href="./includes/javascript/dojo/dijit/themes/tundra/tundra.css">
+		<script>
+			var dojoConfig = {
+				parseOnLoad: true,
+				locale: 'fr-fr',
+				isDebug: false,
+				usePlainJson: true,
+				packages: [{
+						name: 'pmbBase',
+						location:'../../../..'
+					},{
+						name: 'd3',
+						location:'../../d3'
+					}],
+				deps: ['apps/pmb/MessagesStore', 'dgrowl/dGrowl', 'dojo/ready', 'apps/pmb/ImagesStore'],
+				callback:function(MessagesStore, dGrowl, ready, ImagesStore){
+					window.pmbDojo = {};
+					pmbDojo.messages = new MessagesStore({url:'./ajax.php?module=ajax&categ=messages', directInit:false, lastModified:'1747292550'});
+					pmbDojo.images = new ImagesStore({url:'./ajax.php?module=ajax&categ=images', directInit:false});
+					ready(function(){
+						new dGrowl({'channels':[{'name':'info','pos':2},{'name':'error', 'pos':1}]});
+					});
+
+				},
+			};
+		</script>
+		<script src="./includes/javascript/dojo/dojo/dojo.js"></script>
+		<script>
+		dojo.addOnLoad(function () {
+			// Ajout du theme Dojo
+			dojo.addClass(dojo.body(),'tundra');
+		})
+		</script>
+		<script src="./includes/javascript/dojo/dojo/pmbmaps.js"></script><script>
+	var pmb_img_patience = './images/patience.gif';
+</script><script>
+			var opac_show_social_network =0;
+		</script>
+	<script src="./includes/javascript/http_request.js"></script>
+	
+<script>
+				dojo.addOnLoad(function (){
+					//on balance un evenement pour les initialiser les modules si besoin...
+					dojo.publish('init',['cms_dojo_init',{}]);
+				});
+			</script><meta http-equiv="Content-Type" content="charset=utf-8"></head>
+
+<body onload="window.defaultStatus='PMB : Accès public';" id="pmbopac">
+		<script>
+		function findNoticeElement(id){
+			var ul=null;
+			//cas des notices classiques
+			var domNotice = document.getElementById('el'+id+'Child');
+			//notice_display
+			if(!domNotice) domNotice = document.getElementById('notice');
+			if(domNotice){
+				var uls = domNotice.getElementsByTagName('ul');
+				for (var i=0 ; i<uls.length ; i++){
+					if(uls[i].getAttribute('id') == 'onglets_isbd_public'+id){
+						var ul = uls[i];
+						break;
+					}
+				}
+			} else{
+				var li = document.getElementById('onglet_isbd'+id);
+				if(!li) var li = document.getElementById('onglet_public'+id);
+				if(!li) var li = document.getElementById('onglet_detail'+id);
+				if(li) var ul = li.parentNode;
+			}
+			return ul;
+		}
+		function show_what(quoi, id) {
+			switch(quoi){
+				case 'EXPL_LOC' :
+					document.getElementById('div_expl_loc' + id).style.display = 'block';
+					document.getElementById('div_expl' + id).style.display = 'none';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_inactive';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_active';
+					break;
+				case 'EXPL' :
+					document.getElementById('div_expl_loc' + id).style.display = 'none';
+					document.getElementById('div_expl' + id).style.display = 'block';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_active';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_inactive';
+					break;
+				default :
+					quoi= quoi.toLowerCase();
+					var ul = findNoticeElement(id);
+					if (ul) {
+						var items  = ul.getElementsByTagName('li');
+						for (var i=0 ; i<items.length ; i++){
+							if(items[i].getAttribute('id')){
+								if(items[i].getAttribute('id') == 'onglet_'+quoi+id){
+									items[i].className = 'isbd_public_active';
+									document.getElementById('div_'+quoi+id).style.display = 'block';
+								}else{
+									if(items[i].className != 'onglet_tags' && items[i].className != 'onglet_avis' && items[i].className != 'onglet_sugg' && items[i].className != 'onglet_basket' && items[i].className != 'onglet_liste_lecture'){
+										items[i].className = 'isbd_public_inactive';
+										document.getElementById(items[i].getAttribute('id').replace('onglet','div')).style.display = 'none';
+									}
+								}
+							}
+						}
+					}
+					break;
+			}
+		}
+		</script>
+	<script src="./includes/javascript/tablist_ajax.js"></script>
+<script src="./includes/javascript/tablist.js"></script>
+<script src="./includes/javascript/misc.js"></script>
+	<div id="att" style="z-Index:1000"></div>
+	<div id="container"><div id="intro" fixed="yes">
+<div id="intro_bibli" fixed="yes">
+			<h3>Bib'Doc</h3>
+			<div class="p1"><img src="./styles/genbib/images/image1.jpg" loading="lazy">
+<img src="./styles/genbib/images/image2.jpg" loading="lazy">
+<img src="./styles/genbib/images/image3.jpg" loading="lazy"></div>
+			<div class="p2"><ul id="menuDeroulant">
+
+<li><a href="./index.php">Accueil</a></li>
+<li><a href="./index.php?lvl=infopages&amp;pagesid=4">Calendrier</a></li>
+<li><a href="./index.php?lvl=infopages&amp;pagesid=1">Actualités BnF</a>
+<ul class="sousMenu">
+<li><a href="./index.php?lvl=infopages&amp;pagesid=3">Aide en ligne</a></li>
+<li><a href="./index.php?lvl=infopages&amp;pagesid=2">Version 4.0 !</a></li>
+</ul>
+</li>
+
+<li><a href="./index.php?lvl=infopages&amp;pagesid=6">Nous trouver</a></li>
+
+</ul></div>
+			</div>
+		<div id="resume_panier" class="empty" fixed="yes"></div><div id="cms_module_htmlcode_174" class="cms_module_htmlcode cms_module uk-hidden-large wl-tgl-nav uk-clearfix "><div data-uk-sticky="{top:-200, animation: 'uk-animation-slide-top'}">
+<div id="btnMenu" class="uk-navbar">
+    <ul class="uk-navbar-nav">
+        <li class="tgLbtnMenu">
+            <a class="MenuCanvas uk-button" href="#cms_module_sectionslist_173" data-uk-offcanvas="{mode:'slide'}"><i class="fa fa-bars"></i></a>
+        </li>
+        <li class="tgLbtnMenu uk-hidden" id="tgle-facette">
+            <a class="MenuCanvas filter-canvas uk-button" href="#facette" data-uk-offcanvas="{mode:'slide'}"><i class="fa fa-search-plus" aria-hidden="true"></i></a>
+        </li>
+        <li id="TglUser" class="TglUser uk-visible-small">
+            <a class="Tgllogin uk-button" data-uk-toggle="{target:'#connexion', animation:'uk-animation-slide-top, uk-animation-slide-top', cls:'uk-visible-large'}">
+                <span class="user"><i class="fa fa-user"></i></span>        
+            </a>
+        </li>     
+    </ul>
+</div>
+</div></div><div id="cms_module_section_126" class="cms_module_section cms_module uk-width-large-1-1 uk-width-medium-1-1 uk-width-1-1 main-title"></div><div id="cms_module_sectionslist_173" class="cms_module_sectionslist cms_module uk-offcanvas"><div class="uk-offcanvas-bar uk-offcanvas-bar-custom">
+	<div class="MenuVertResp uk-panel uk-panel-box">
+		<ul class="NavResponsive uk-nav uk-nav-side">
+		
+					<li>
+				<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=36" title="A propos">A propos</a>
+							</li>
+					<li>
+				<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=97" title="Actualités">Actualités</a>
+									<ul class="SousNavResponsive">
+					      
+					      						  <li>
+						      <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=100" title="Clôture à Kinshasa du projet de « Gestion et promotion de la documentation géologique et minière de la RDC, au SGN-C »  (juillet 2024)">Clôture à Kinshasa du projet de « Gestion et promotion de la documentation géologique et minière de la RDC, au SGN-C »  (juillet 2024)</a>
+						      						  </li>
+					      						  <li>
+						      <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=98" title="Formation aux techniques documentaires pour les cadres du Ministère des Mines (mai 2024)">Formation aux techniques documentaires pour les cadres du Ministère des Mines (mai 2024)</a>
+						      						  </li>
+					      						  <li>
+						      <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=99" title="Audit documentaire au sein des organismes sous tutelle du Ministère des Mines (novembre 2023)">Audit documentaire au sein des organismes sous tutelle du Ministère des Mines (novembre 2023)</a>
+						      						  </li>
+					      					</ul>
+							</li>
+					<li>
+				<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=22" title="Infos pratiques">Infos pratiques</a>
+							</li>
+				</ul>
+	</div>
+</div></div><div id="cms_module_sectionslist_180" class="cms_module_sectionslist cms_module uk-width-1-1"><div class="solo-picture">
+					<ul class="uk-grid uk-grid-width-1-1 uk-grid-collapse">
+			<li><img src="https://sgnc.pmb.cd/opac_css/cms_vign.php?type=section&amp;id=85&amp;database=coregbxq_bibli&amp;mode=custom_1098"></li>
+		</ul>	
+			</div></div><div id="cms_module_sectionslist_120" class="cms_module_sectionslist cms_module uk-width-large-1-1 uk-width-medium-1-1 uk-width-1-1">    <div class="uk-visible-large">
+	<div class="MenuHoriz uk-navbar uk-container uk-flex uk-flex-middle uk-flex-space-between" id="wyr-justify-nav">
+	    <ul class="Nav uk-navbar-nav">
+	    
+	    		<li class="uk-parent" data-uk-dropdown="{remaintime:'800', hoverDelayIdle:'0'}">
+		    <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=36" title="A propos">A propos</a>
+		    		</li>
+	    		<li class="uk-parent" data-uk-dropdown="{remaintime:'800', hoverDelayIdle:'0'}">
+		    <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=97" title="Actualités">Actualités</a>
+		    		    <div class="uk-dropdown uk-dropdown-navbar uk-dropdown-bottom">
+			<ul class="SousNav uk-nav uk-nav-navbar">
+			    
+			    				<li>
+				    <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=100" title="Clôture à Kinshasa du projet de « Gestion et promotion de la documentation géologique et minière de la RDC, au SGN-C »  (juillet 2024)">Clôture à Kinshasa du projet de « Gestion et promotion de la documentation géologique et minière de la RDC, au SGN-C »  (juillet 2024)</a>
+				</li>
+			    				<li>
+				    <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=98" title="Formation aux techniques documentaires pour les cadres du Ministère des Mines (mai 2024)">Formation aux techniques documentaires pour les cadres du Ministère des Mines (mai 2024)</a>
+				</li>
+			    				<li>
+				    <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=99" title="Audit documentaire au sein des organismes sous tutelle du Ministère des Mines (novembre 2023)">Audit documentaire au sein des organismes sous tutelle du Ministère des Mines (novembre 2023)</a>
+				</li>
+			    			</ul>
+		    </div>   
+		    		</li>
+	    		<li class="uk-parent" data-uk-dropdown="{remaintime:'800', hoverDelayIdle:'0'}">
+		    <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=22" title="Infos pratiques">Infos pratiques</a>
+		    		</li>
+	    	    </ul>
+	</div>            
+    </div>
+</div></div><div id="main" fixed="yes"><div id="main_header"><h3>La bibliothèque géologique et minière de la République Démocratique du Congo</h3></div><div id="main_hors_footer">
+						
+
+<script src="./includes/javascript/auth_popup.js"></script>
+<script src="./includes/javascript/pnb.js"></script><div id="navigator" fixed="yes">
+<table role="presentation" style="width:100%"><tr><td class="navig_actions_first_screen"><a href="./index.php?lvl=index" class="navig_etageres"><span>Nouvelle recherche</span></a></td>
+</tr></table></div><div id="notice">
+<br>
+			<script>
+				if(param_social_network){
+					creeAddthis('el215');
+				}else{
+					waitingAddthisLoaded('el215');
+				}
+			</script>
+			<div id="el215Parent" class="parent"><img src="https://sgnc.pmb.cd/opac_css/images/precasem/ouvrage.png" alt="Document: ouvrage" title="Document: ouvrage" loading="lazy"><span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_215"><span class="statutnot2" title="Accès immédiat"></span><span notice="215" class="header_title">haut- Uele : trésor touristique</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=233">Jean Omasombo Tshonda</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=haut-%20Uele%20%3A%20tr%C3%A9sor%20touristique&amp;rft.title=haut-%20Uele%20%3A%20tr%C3%A9sor%20touristique&amp;rft.isbn=978-2-87106-578-4&amp;rft.tpages=436%20p.%2C%20une%20carte%20H.P.%2C%20Ill.%2C%20ref.%20bibl&amp;rft.date=2011&amp;rft_id=https%3A%2F%2Fwww.africamuseum.be%2Ffr%2Fresearch%2Fdiscover%2Fpublications%2Fopen-access%2Fmonographies-rdc&amp;rft.series=Provinces&amp;rft.pub=MRAC&amp;rft.place=Tervuren&amp;rft.au=Jean%20Omasombo%20Tshonda&amp;rft.aulast=Omasombo%20Tshonda&amp;rft.aufirst=Jean"></span></span>
+			 <span class="notice_link">
+			<a href="https://www.africamuseum.be/fr/research/discover/publications/open-access/monographies-rdc" target="_blank" type="external_url_notice">
+				<img src="https://sgnc.pmb.cd/opac_css/styles/solo/images/globe.gif" style="border:0px" class="align_middle" alt="Ouvrir le lien " title="Ouvrir le lien " loading="lazy">
+			</a></span> <span>
+					<a href="https://sgnc.pmb.cd/opac_css/doc_num.php?explnum_id=220" target="_blank"><img src="./styles/solo/images/globe_orange.gif" style="border:0px" class="align_middle" alt="Ouvrir le document haut-uele-pdf_MRAC.pdf" title="Ouvrir le document haut-uele-pdf_MRAC.pdf" loading="lazy"></a></span><table style="width:100%" role="presentation"><tr><td style="vertical-align:top">
+		<ul id="onglets_isbd_public215" class="onglets_isbd_public">
+	  			<li id="onglet_public215" class="isbd_public_active"><a href="#" title="Public" onclick="show_what('PUBLIC', '215'); return false;">Public</a></li>
+				<li id="onglet_isbd215" class="isbd_public_inactive"><a href="#" title="ISBD" onclick="show_what('ISBD', '215'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class="row"></div>
+					<div id="div_public215" style="display:block;"><table role="presentation"><tr class="tr_title">
+					<td class="align_right bg-grey"><span class="etiq_champ">Titre :</span></td>
+					<td class="public_line_value"><span class="public_title">haut- Uele : trésor touristique</span></td>
+				</tr><tr class="tr_typdoc">
+					<td class="align_right bg-grey"><span class="etiq_champ">Type de document : </span></td>
+					<td class="public_line_value"><span class="public_typdoc">ouvrage</span></td>
+				</tr><tr class="tr_auteurs">
+					<td class="align_right bg-grey"><span class="etiq_champ">Auteurs : </span></td>
+					<td class="public_line_value"><span class="public_auteurs"><a href="./index.php?lvl=author_see&amp;id=233">Jean Omasombo Tshonda</a>, Directeur de publication</span></td>
+				</tr><tr class="tr_ed1">
+					<td class="align_right bg-grey"><span class="etiq_champ">Editeur :</span></td>
+					<td class="public_line_value"><span class="public_ed1"><a href="./index.php?lvl=publisher_see&amp;id=23">Tervuren [Belgique] : MRAC</a></span></td>
+				</tr><tr class="tr_year">
+					<td class="align_right bg-grey"><span class="etiq_champ">Année de publication : </span></td>
+					<td class="public_line_value"><span class="public_year">2011</span></td>
+				</tr><tr class="tr_coll">
+					<td class="align_right bg-grey"><span class="etiq_champ">Collection : </span></td>
+					<td class="public_line_value"><span class="public_coll"><a href="./index.php?lvl=coll_see&amp;id=5">Provinces</a> num. 2 </span></td>
+				</tr><tr class="tr_npages">
+					<td class="align_right bg-grey"><span class="etiq_champ">Importance : </span></td>
+					<td class="public_line_value"><span class="public_npages">436 p., une carte H.P., Ill., ref. bibl</span></td>
+				</tr><tr class="tr_code">
+					<td class="align_right bg-grey"><span class="etiq_champ">ISBN/ISSN/EAN : </span></td>
+					<td class="public_line_value"><span class="public_code">978-2-87106-578-4</span></td>
+				</tr><tr class="tr_ngen">
+					<td class="align_right bg-grey"><span class="etiq_champ">Note générale : </span></td>
+					<td class="public_line_value"><span class="public_ngen">La présente étude, issue du projet «  Provinces  », soutenu financièrement par la DGD et coordonné par la section d’Histoire du Temps présent du Musée royal de l’Afrique centrale, est le fruit d’une collaboration entre chercheurs des diverses sections du MRAC, chercheurs des instituts partenaires congolais (CEP, CERDAC et CRGM), qui se sont réparti le territoire de la RD Congo, et chercheurs identifiés à l’intérieur de chaque entité administrative (qu’il s’agisse des actuels « districts » ou, pour quelques-unes de ces entités, déjà de « provinces », qui attendent d’accéder au statut de province, comme le prévoit la Constitution de la RD Congo promulguée le 18 février 2006). Les instituts partenaires (CEP et CERDAC) ont eu pour tâches de collecter la documentation écrite existante sur chaque entité (dans les universités, instituts nationaux, archives nationales, bibliothèques spécialisées, administration centrale....), de mettre celle-ci à la disposition des équipes locales sur le terrain, mais aussi de répertorier toutes les archives et autres documents pertinents et d’en transmettre des copies aux équipes locales et au MRAC. Le CRGM se charge de l’élaboration des textes sur le relief, la géologie et l’hydrographie. Les équipes locales, quant à elles, ont été chargées à la fois de la collecte des données au niveau de la province et de l’élaboration d’une première ébauche de la monographie. <br>
+Le MRAC a été à la fois la structure pourvoyeuse de la logistique pour la gestion des fonds du projet et un partenaire de recherche. À ce titre, l’ébauche de monographie fournie par les équipes sur le terrain a été soumise aux chercheurs des différentes sections qui composent le MRAC, qui l’ont complétée. Le MRAC a, enfin, assuré la responsabilité de la publication des monographies. Cet ouvrage est le fruit de cette collaboration, comme en témoignent les différentes contributions.</span></td>
+				</tr><tr class="tr_langues">
+					<td class="align_right bg-grey"><span class="etiq_champ">Langues :</span></td>
+					<td class="public_line_value"><span class="public_langues">Français (<i>fre</i>)</span></td>
+				</tr><tr class="tr_categ">
+					<td class="align_right bg-grey"><span class="etiq_champ">Catégories : </span></td>
+					<td class="public_line_value"><span class="public_categ">[Mots clés scientifiques] <a href="./index.php?lvl=categ_see&amp;id=40263">ELEMENT CHIMIQUE:METAL:CUIVRE</a><br>[Mots clés scientifiques] <a href="./index.php?lvl=categ_see&amp;id=40531">GITOLOGIE:MINERALISATION:GISEMENT</a><br>[Mots clés scientifiques] <a href="./index.php?lvl=categ_see&amp;id=40543">GITOLOGIE:MINERALISATION:MINERAI</a><br>[Mots clés scientifiques] <a href="./index.php?lvl=categ_see&amp;id=41173">OUVRAGE:BASSIN</a><br>[Mots clés scientifiques] <a href="./index.php?lvl=categ_see&amp;id=42123">SILEXITE:QUARTZ</a><br>[Mots clés géographiques] <a href="./index.php?lvl=categ_see&amp;id=50053">LIMITES ADMINISTRATIVES:REPUBLIQUE DEMOCRATIQUE DU CONGO:HAUT-UELE (CD53)</a><br></span></td>
+				</tr><tr class="tr_lien">
+					<td class="align_right bg-grey"><span class="etiq_champ">En ligne : </span></td>
+					<td class="public_line_value"><span class="public_lien"><a href="https://www.africamuseum.be/fr/research/discover/publications/open-access/monographies-rdc" target="top" class="lien856" type="external_url_notice">https://www.africamuseum.be/fr/research/discover/publications/open-access/monogr</a> [...]</span></td>
+				</tr></table>
+</div>
+					<div id="div_isbd215" style="display:none;">haut- Uele : trésor touristique [ouvrage] / <a href="./index.php?lvl=author_see&amp;id=233">Jean Omasombo Tshonda</a>, Directeur de publication . - <a href="./index.php?lvl=publisher_see&amp;id=23">Tervuren [Belgique] : MRAC</a>, 2011 . - 436 p., une carte H.P., Ill., ref. bibl. - (<a href="./index.php?lvl=coll_see&amp;id=5">Provinces</a>; 2) .<br><b>ISBN</b> : 978-2-87106-578-4<br>La présente étude, issue du projet «  Provinces  », soutenu financièrement par la DGD et coordonné par la section d’Histoire du Temps présent du Musée royal de l’Afrique centrale, est le fruit d’une collaboration entre chercheurs des diverses sections du MRAC, chercheurs des instituts partenaires congolais (CEP, CERDAC et CRGM), qui se sont réparti le territoire de la RD Congo, et chercheurs identifiés à l’intérieur de chaque entité administrative (qu’il s’agisse des actuels « districts » ou, pour quelques-unes de ces entités, déjà de « provinces », qui attendent d’accéder au statut de province, comme le prévoit la Constitution de la RD Congo promulguée le 18 février 2006). Les instituts partenaires (CEP et CERDAC) ont eu pour tâches de collecter la documentation écrite existante sur chaque entité (dans les universités, instituts nationaux, archives nationales, bibliothèques spécialisées, administration centrale....), de mettre celle-ci à la disposition des équipes locales sur le terrain, mais aussi de répertorier toutes les archives et autres documents pertinents et d’en transmettre des copies aux équipes locales et au MRAC. Le CRGM se charge de l’élaboration des textes sur le relief, la géologie et l’hydrographie. Les équipes locales, quant à elles, ont été chargées à la fois de la collecte des données au niveau de la province et de l’élaboration d’une première ébauche de la monographie. <br>
+Le MRAC a été à la fois la structure pourvoyeuse de la logistique pour la gestion des fonds du projet et un partenaire de recherche. À ce titre, l’ébauche de monographie fournie par les équipes sur le terrain a été soumise aux chercheurs des différentes sections qui composent le MRAC, qui l’ont complétée. Le MRAC a, enfin, assuré la responsabilité de la publication des monographies. Cet ouvrage est le fruit de cette collaboration, comme en témoignent les différentes contributions.<br><span class="etiq_champ">Langues</span> : Français (<i>fre</i>)<table><tr class="tr_categ">
+					<td class="align_right bg-grey"><span class="etiq_champ">Catégories : </span></td>
+					<td class="public_line_value"><span class="public_categ">[Mots clés scientifiques] <a href="./index.php?lvl=categ_see&amp;id=40263">ELEMENT CHIMIQUE:METAL:CUIVRE</a><br>[Mots clés scientifiques] <a href="./index.php?lvl=categ_see&amp;id=40531">GITOLOGIE:MINERALISATION:GISEMENT</a><br>[Mots clés scientifiques] <a href="./index.php?lvl=categ_see&amp;id=40543">GITOLOGIE:MINERALISATION:MINERAI</a><br>[Mots clés scientifiques] <a href="./index.php?lvl=categ_see&amp;id=41173">OUVRAGE:BASSIN</a><br>[Mots clés scientifiques] <a href="./index.php?lvl=categ_see&amp;id=42123">SILEXITE:QUARTZ</a><br>[Mots clés géographiques] <a href="./index.php?lvl=categ_see&amp;id=50053">LIMITES ADMINISTRATIVES:REPUBLIQUE DEMOCRATIQUE DU CONGO:HAUT-UELE (CD53)</a><br></span></td>
+				</tr><tr class="tr_lien">
+					<td class="align_right bg-grey"><span class="etiq_champ">En ligne : </span></td>
+					<td class="public_line_value"><span class="public_lien"><a href="https://www.africamuseum.be/fr/research/discover/publications/open-access/monographies-rdc" target="top" class="lien856" type="external_url_notice">https://www.africamuseum.be/fr/research/discover/publications/open-access/monogr</a> [...]</span></td>
+				</tr></table></div></td><td class="align_right" style="vertical-align:top"><img class="vignetteimg align_right" src="https://sgnc.pmb.cd/opac_css/thumbnail.php?type=1&amp;id=215" title="haut- Uele : trésor touristique" alt="vignette" loading="lazy"></td></tr></table>
+					
+<h3>
+	<span id="titre_exemplaires" class="titre_exemplaires">
+		Exemplaires(1)
+	</span>
+</h3>
+
+	
+<table class="exemplaires" style="width:100%; border-spacing:2px">
+			<tr class="thead">
+									<th class="expl_header_expl_cb" role="columnheader">Code-barres</th>
+						
+																							<th class="expl_header_expl_cote" role="columnheader">Cote</th>
+						
+																							<th class="expl_header_tdoc_libelle" role="columnheader">Support</th>
+						
+																							<th class="expl_header_location_libelle" role="columnheader">Localisation</th>
+						
+																							<th class="expl_header_section_libelle" role="columnheader">Section</th>
+						
+																		<th class="expl_header_statut" role="columnheader">Disponibilité</th>
+	</tr>
+						<tr class="even item_expl expl_available">
+																																			<td class="expl_cb">
+							1001
+						</td>
+																																																																		<td class="expl_cote">DP247</td>
+																																																		<td class="tdoc_libelle">papier/numérique</td>
+																																																		<td class="location_libelle">CTCPM</td>
+																																													<td id="expl_7" class="section_libelle">
+															BIBLIOTHEQUE
+													</td>
+																								<td class="expl_situation"><strong>Disponible</strong></td>
+
+							</tr>
+			</table><a name="docnum"><h3><span id="titre_explnum">Documents numériques</span></h3></a><table class="docnum" role="presentation"><tr><td id="explnum_220" class="docnum center" style="width:33%"><a href="https://sgnc.pmb.cd/opac_css/doc_num.php?explnum_id=220" title="haut-uele-pdf_MRAC.pdf - application/pdf" target="_blank"><img src="./vig_num.php?explnum_id=220" alt="haut-uele-pdf_MRAC.pdf - application/pdf" title="haut-uele-pdf_MRAC.pdf - application/pdf" loading="lazy"></a>
+					<div id="zoom_statut_docnum220" style="border: 2px solid rgb(85, 85, 85); background-color: rgb(255, 255, 255); position: absolute; z-index: 2000; display: none;">
+						<b>Visible par tous</b>
+					</div>
+				<a href="#" onmouseout="z=document.getElementById('zoom_statut_docnum220'); z.style.display='none'; " onmouseover="z=document.getElementById('zoom_statut_docnum220'); z.style.display=''; ">
+						<div class="vignette_doc_num"><img class="docnum_statutnot3" width="10" height="10" src="./images/spacer.gif" aria-hidden="true" loading="lazy"></div>
+					</a><br><span class="title_docnum">haut-uele-pdf_MRAC.pdf</span><div class="explnum_type">Adobe Acrobat PDF</div></td><td class="docnum center" style="width:33%"> </td><td class="docnum center" style="width:33%"> </td></tr></table></div>
+</div><div id="intro_message"><div class="p1"><a href="index.php?lvl=index"><img src="./images/bar_spacer.gif" id="map_lien_retour" alt="" loading="lazy"></a> 
+<a href="http://www.sigb.net" id="puce">Sigb.Net</a>
+<a href="http://www.sigb.net/wiki/" id="puce">WiKi PMB</a>
+<a href="http://fr.wikipedia.org" id="puce">WiKipedia</a>
+</div><div class="p2"></div></div>
+
+
+
+		</div>
+ 
+
+		</div>
+
+		
+		<div id="bandeau" fixed="yes">
+
+
+<div id="cms_module_section_178" class="cms_module_section cms_module uk-width-1-1"><div id="titrePortail">
+    <div id="logo">
+        <a href="index.php" title="Logo portail"><img src="https://sgnc.pmb.cd/opac_css/cms_vign.php?type=section&amp;id=79&amp;database=coregbxq_bibli&amp;mode=medium" alt="Logo portail"></a>
+    </div>
+</div></div><div id="accueil" fixed="yes">
+
+<h3><span onclick='document.location="./index.php?"' style="cursor: pointer;">Accueil</span></h3>
+<p class="centered"><a href="./index.php?"><img src="images/site/livre.png" alt="Accueil" style="border:0px" class="center" loading="lazy"></a></p>
+
+					</div><div id="adresse" fixed="yes">
+
+		<h3>Adresse</h3>
+
+		<span>
+			Bib'Doc<br>
+			ZI de Mont/Loir
+BP 10023<br>
+			72500 CHATEAU DU LOIR<br>
+			France <br>
+			02 43 440 660<br><span id="opac_biblio_email">
+			<a href="mailto:pmb@sigb.net" title="contact">contact</a></span></span>
+	    </div>
+
+
+<script src="./includes/javascript/accessibility.js"></script>
+
+
+
+</div><div id="bandeau_2" fixed="yes"></div><div id="footer" fixed="yes">
+    <div id="cms_module_htmlcode_134" class="cms_module_htmlcode cms_module"><div class="Ancre">
+	<a href="#intro" title="Top" data-uk-smooth-scroll>Λ</a>
+</div></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module uk-width-1-1 bottom-nav uk-grid-margin"><div class="liensFooter">
+	<div class="uk-flex uk-flex-right">
+        <ul class="navFooter">
+                          
+            <li>
+            <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=50" title="Mentions légales">Mentions légales</a>
+            </li>
+                          
+            <li>
+            <a href="./index.php?lvl=index" title="Catalogue">Catalogue</a>
+            </li>
+                          
+            <li>
+            <a href="https://sgnc.cd/" target="_blank" title="SGN-C">SGN-C</a>
+            </li>
+                     </ul>
+    </div>
+</div>
+</div><span id="footer_rss" fixed="yes"></span>
+    <span id="footer_link_sup" fixed="yes"><a href="./index.php?lvl=infopages&amp;pagesid=7">Mentions légales</a> </span>
+    <span id="footer_link_website" fixed="yes">
+        <a class="footer_biblio_name" href="http://www.sigb.net" title="Bib'Doc">Bib'Doc</a>  
+    </span>
+    <span id="footer_link_pmb" fixed="yes"><a href="http://www.google.fr" target="_blank">Faire une recherche avec Google</a> 
+        <a class="lien_pmb_footer" href="https://www.sigb.net" title="pmb ...une solution libre pour la médiathèque..." target="_blank">pmb</a>
+    </span>
+<div id="accessibility" fixed="yes">
+    	<input type="hidden" id="opacAccessibility" name="opacAccessibility" value="1">
+	<ul class="accessibility_font_size">
+		<li class="accessibility_font_size_small">
+			<a href="javascript:accessibilityFontSize(1);" title="Réduire le texte">A-</a>
+		</li>
+		<li class="accessibility_font_size_normal">
+			<a href="javascript:accessibilityFontSize(0);" title="Réinitialiser le texte">A</a>
+		</li>
+		<li class="accessibility_font_size_big">
+			<a href="javascript:accessibilityFontSize(2);" title="Agrandir le texte">A+</a>
+		</li>
+	</ul>
+</div></div></div>
+		
+		<script>init_drag();	//rechercher!!</script>
+		
+			<script>
+				var tarteaucitron_messages = pmbDojo.messages.getMessages("tarteaucitron");
+				if(tarteaucitron_messages.length) {
+					tarteaucitronCustomText = {};
+					tarteaucitron_messages.forEach(function(message) {
+						if(parseInt(message.code.indexOf(":")) !== -1) {
+							let tarteaucitron_messages_group = message.code.split(":");
+							if(typeof tarteaucitronCustomText[tarteaucitron_messages_group[0]] == "undefined") {
+								tarteaucitronCustomText[tarteaucitron_messages_group[0]] = {};
+							}
+							tarteaucitronCustomText[tarteaucitron_messages_group[0]][tarteaucitron_messages_group[1]] = message.message;
+						} else {
+							tarteaucitronCustomText[message.code] = message.message;
+						}
+					});
+				}
+			</script>
+			<script src="./includes/javascript/tarteaucitron/tarteaucitron.js"></script>
+		<script>
+	        tarteaucitron.init({
+	    	  "privacyUrl": "", /* Privacy policy url */
+	
+	    	  "hashtag": "#PhpMyBibli-COOKIECONSENT", /* Open the panel with this hashtag */
+	    	  "cookieName": "PhpMyBibli-COOKIECONSENT", /* Cookie name */
+	    
+	    	  "orientation": "bottom", /* Banner position (top - bottom - popup) */
+	       
+	          "groupServices": true, /* Group services by category */
+	                           
+	    	  "showAlertSmall": false, /* Show the small banner on bottom right */
+	    	  "cookieslist": false, /* Show the cookie list */
+				                           
+	          "closePopup": false, /* Show a close X on the banner */
+	
+	          "showIcon": false, /* Show cookie icon to manage cookies */
+	          "iconSrc": "./images/cookie.png", /* Optionnal: URL or base64 encoded image */
+	          "iconPosition": "BottomRight", /* BottomRight, BottomLeft, TopRight and TopLeft */
+	
+	    	  "adblocker": false, /* Show a Warning if an adblocker is detected */
+	                           
+	          "DenyAllCta" : true, /* Show the deny all button */
+	          "AcceptAllCta" : true, /* Show the accept all button when highPrivacy on */
+	          "highPrivacy": true, /* HIGHLY RECOMMANDED Disable auto consent */
+	                           
+	    	  "handleBrowserDNTRequest": false, /* If Do Not Track == 1, disallow all */
+	
+	    	  "removeCredit": true, /* Remove credit link */
+	    	  "moreInfoLink": false, /* Show more info link */
+	
+	          "useExternalCss": false, /* If false, the tarteaucitron.css file will be loaded */
+	          "useExternalJs": false, /* If false, the tarteaucitron.js file will be loaded */
+				
+	    	  //"cookieDomain": ".my-multisite-domaine.fr", /* Shared cookie for multisite */
+	                          
+	          "readmoreLink": "", /* Change the default readmore link */
+	
+	          "mandatory": true, /* Show a message about mandatory cookies */
+	        });
+ 
+        </script>
+		</body>
+		</html>

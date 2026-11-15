@@ -1,0 +1,2126 @@
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Main Site</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brandPrimary: '#9E0000',
+                        brandSecondary: '#470000',
+                        brandAccent: '#FF5757',
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #9E0000;
+            --secondary: #470000;
+            --accent: #FF5757;
+            --primary-rgb: 158,0,0;
+            --secondary-rgb: 71,0,0;
+            --accent-rgb: 255,87,87;
+                                                --card-title-color: #ffffff;
+        }
+        
+        body {
+                    }
+                        .text-hero-title { color: var(--hero-color, #ffffff) !important; }
+        .text-card-title { color: var(--card-title-color) !important; }
+        .text-brandPrimary { color: var(--primary); }
+        .bg-brandPrimary { background-color: var(--primary); }
+        .border-brandPrimary { border-color: var(--primary); }
+        .text-brandSecondary { color: var(--secondary); }
+        .bg-brandSecondary { background-color: var(--secondary); }
+        .text-brandAccent { color: var(--accent); }
+        .bg-brandAccent { background-color: var(--accent); }
+        h1, h2, h3, h4, h5, h6, .font-heading {
+            font-family: 'Outfit', sans-serif !important;
+        }
+        .header-glass {
+            background: linear-gradient(120deg, rgba(2, 6, 23, 0.75), rgba(15, 23, 42, 0.85));
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .header-brand-gradient { background: linear-gradient(135deg, var(--primary), var(--secondary)); }
+        .site-topbar {
+            background: linear-gradient(90deg, color-mix(in srgb, var(--secondary) 90%, black), color-mix(in srgb, var(--primary) 75%, #0f172a));
+            color: #e5e7eb;
+            border-bottom: 1px solid color-mix(in srgb, var(--primary) 40%, #1f2937);
+        }
+        .site-topbar a:hover { color: var(--accent); }
+        .header-surface {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        .header-link-active { background: var(--primary); color: #fff; }
+        .header-link-idle { color: #334155; }
+        .header-link-idle:hover { color: var(--primary); background: color-mix(in srgb, var(--primary) 10%, white); }
+        .header-cta-primary { background: var(--primary); color: #fff; }
+        .header-cta-primary:hover { filter: brightness(0.95); }
+        .header-cta-secondary { border-color: var(--primary); color: var(--primary); }
+        .header-cta-secondary:hover { background: color-mix(in srgb, var(--primary) 8%, white); }
+        .header-theme-dark { background: linear-gradient(120deg, color-mix(in srgb, var(--secondary) 85%, #020617), color-mix(in srgb, var(--primary) 70%, #020617)); }
+        .site-footer-theme {
+            background: linear-gradient(160deg, color-mix(in srgb, var(--secondary) 88%, #020617), color-mix(in srgb, var(--primary) 70%, #020617));
+            border-top-color: var(--accent);
+        }
+        .site-footer-theme a:hover { color: var(--accent); }
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(22px) scale(0.99);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+            will-change: opacity, transform;
+        }
+        .reveal-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        .reveal-fast { transition-duration: 0.45s; }
+        .reveal-slow { transition-duration: 0.9s; }
+        .site-shell-bg { background: color-mix(in srgb, var(--primary) 4%, #f8fafc); }
+        .sidebar-active { background: var(--primary); color: #fff; }
+        .sidebar-idle:hover { background: color-mix(in srgb, var(--primary) 9%, white); color: var(--primary); }
+        .site-logo {
+            height: 44px;
+            width: auto;
+            object-fit: contain;
+        }
+        @media (min-width: 768px) {
+            .site-logo { height: 70px; }
+        }
+        .theme-card-border {
+            border-color: rgba(var(--primary-rgb), 0.22);
+            border-color: color-mix(in srgb, var(--primary) 24%, #e2e8f0);
+        }
+        .theme-soft-bg {
+            background-color: rgba(var(--primary-rgb), 0.10);
+            background-color: color-mix(in srgb, var(--primary) 10%, white);
+        }
+        .theme-soft-bg-secondary {
+            background-color: rgba(var(--secondary-rgb), 0.10);
+            background-color: color-mix(in srgb, var(--secondary) 10%, white);
+        }
+        .theme-soft-bg-accent {
+            background-color: rgba(var(--accent-rgb), 0.10);
+            background-color: color-mix(in srgb, var(--accent) 10%, white);
+        }
+        .theme-surface-bg {
+            background-color: rgba(var(--primary-rgb), 0.06);
+            background-color: color-mix(in srgb, var(--primary) 5%, #ffffff);
+        }
+        .theme-icon-bg { background-color: var(--primary); }
+        .theme-btn-bg { background-color: var(--primary); }
+        .theme-btn-bg:hover { filter: brightness(0.95); }
+
+        /* Unified Hero Banner Styles across all sub-pages */
+        .page-hero-banner {
+            height: 240px !important;
+            min-height: 240px !important;
+            max-height: 240px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            box-sizing: border-box !important;
+        }
+        @media (min-width: 768px) {
+            .page-hero-banner {
+                height: 320px !important;
+                min-height: 320px !important;
+                max-height: 320px !important;
+            }
+        }
+        .page-hero-banner .container {
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+        }
+
+        /* High Contrast Mode overrides */
+        html.high-contrast {
+            filter: invert(1) hue-rotate(180deg) !important;
+        }
+        html.high-contrast img, 
+        html.high-contrast video, 
+        html.high-contrast canvas,
+        html.high-contrast iframe,
+        html.high-contrast [style*="background-image"],
+        html.high-contrast #chatbotWindow,
+        html.high-contrast #civicChatbot {
+            filter: invert(1) hue-rotate(180deg) !important;
+        }
+
+        /* Font Scaling Classes */
+        html.text-size-sm { font-size: 14px !important; }
+        html.text-size-md { font-size: 16px !important; }
+        html.text-size-lg { font-size: 18px !important; }
+    </style>
+</head>
+<body class="theme-skin-full site-shell-bg min-h-screen flex flex-col relative z-0">
+        <canvas id="global-particles-canvas" class="fixed inset-0 w-full h-full z-[9999] pointer-events-none" style="opacity: 0.35;"></canvas>
+    
+    <!-- Main Sticky Header Wrapper -->
+    <div class="sticky top-0 z-[90] w-full flex flex-col">
+        <!-- Official Government Banner -->
+        <div class="bg-slate-950 border-b border-slate-800 text-[10px] text-slate-400 py-1.5 font-sans relative z-[60]">
+        <div class="container mx-auto px-4 md:px-8 flex flex-wrap items-center justify-end gap-2">
+            <!-- Accessibility Toolbar -->
+            <div class="flex items-center gap-3 text-[10px] font-black uppercase tracking-wider">
+                <div class="flex items-center gap-1 border-r border-slate-800 pr-2">
+                    <span class="text-slate-500">Contrast:</span>
+                    <button onclick="toggleContrast()" class="hover:text-white p-1 rounded hover:bg-slate-900" title="Toggle Contrast Mode">
+                        <i data-lucide="contrast" class="w-3.5 h-3.5 text-brandAccent"></i>
+                    </button>
+                </div>
+                <div class="flex items-center gap-1.5 border-r border-slate-800 pr-2">
+                    <span class="text-slate-500">Font Size:</span>
+                    <button onclick="changeFontSize(-1)" class="hover:text-white px-1 py-0.5 rounded hover:bg-slate-900 font-extrabold" title="Decrease size">A-</button>
+                    <button onclick="changeFontSize(0)" class="hover:text-white px-1 py-0.5 rounded hover:bg-slate-900 font-extrabold" title="Default size">A</button>
+                    <button onclick="changeFontSize(1)" class="hover:text-white px-1 py-0.5 rounded hover:bg-slate-900 font-extrabold" title="Increase size">A+</button>
+                </div>
+                <div class="flex items-center gap-1">
+                    <span class="text-slate-500">Voice Assist:</span>
+                    <button onclick="toggleAudioAssistant()" id="audioAssistantBtn" class="hover:text-white px-2 py-0.5 rounded hover:bg-slate-900 flex items-center gap-1" title="Read on hover">
+                        <i data-lucide="volume-2" id="audioIcon" class="w-3.5 h-3.5 text-brandAccent"></i>
+                        <span id="audioStatusText" class="text-slate-400">Off</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+        <div class="site-topbar py-2">
+        <div class="container mx-auto px-4 md:px-8 flex flex-wrap justify-between items-center gap-3 text-[11px] font-bold uppercase tracking-widest">
+            <div class="flex items-center gap-4 flex-wrap">
+                                    <a href="tel:0552245775" class="hover:text-white flex items-center gap-1.5">
+                        <i data-lucide="phone" class="w-3.5 h-3.5 text-brandAccent shrink-0"></i>
+                        <span>0552245775</span>
+                    </a>
+                                                    <a href="mailto:meegahakiulaps@gmail.com" class="hover:text-white flex items-center gap-1.5">
+                        <i data-lucide="mail" class="w-3.5 h-3.5 text-brandAccent shrink-0"></i>
+                        <span class="lowercase tracking-wider">meegahakiulaps@gmail.com</span>
+                    </a>
+                                <!-- Simulated Live Weather Widget -->
+                <div class="hidden sm:flex items-center gap-1.5 text-slate-300 font-bold border-l border-slate-700 pl-3">
+                    <i data-lucide="cloud-sun" class="w-3.5 h-3.5 text-brandAccent"></i>
+                    <span>Badulla: 24°C • Humid</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                                                                                                                                <span class="w-px h-4 bg-slate-700"></span>
+                    <a href="https://badulla.mc.gov.lk/home/lang/en?return=" class="text-brandAccent">EN</a>
+                    <a href="https://badulla.mc.gov.lk/home/lang/si?return=" class="">SI</a>
+                    <a href="https://badulla.mc.gov.lk/home/lang/ta?return=" class="">TA</a>
+                                                    <span class="w-px h-4 bg-slate-700"></span>
+                    <span id="realtime-clock" class="text-slate-300 font-bold inline-block text-right"></span>
+                    <script>
+                        function updateClock() {
+                            const now = new Date();
+                            const timeStr = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                            const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                            const clockEl = document.getElementById('realtime-clock');
+                            if (clockEl) clockEl.innerText = dateStr + ' • ' + timeStr;
+                        }
+                        setInterval(updateClock, 1000);
+                        updateClock();
+                    </script>
+                            </div>
+        </div>
+    </div>
+    
+
+
+        <header class="header-surface border-b">
+        <div class="container mx-auto px-4 md:px-8 h-20 flex items-center justify-between gap-4">
+            <a href="https://badulla.mc.gov.lk" class="flex items-center gap-2.5 min-w-0">
+                                                            <img src="https://badulla.mc.gov.lk/uploads/branding/1/logo_en_20260616110258_b2fbffa5.png" class="site-logo shrink-0" alt="Site Logo">
+                                                    <div class="min-w-0 leading-tight">
+                    <div class="text-sm md:text-base font-semibold text-slate-700 truncate">ප්‍රධාන ආයතනය</div>                    <div class="text-sm md:text-base font-semibold text-slate-700 truncate">முதன்மை நிறுவனம்</div>                    <div class="text-lg font-bold text-slate-900 tracking-tight truncate">Main Site</div>
+                </div>
+            </a>
+                        <nav class="hidden md:flex items-center gap-2">
+                                                            <a href="https://badulla.mc.gov.lk" class="px-3 py-2 text-sm font-medium rounded-md transition-colors header-link-active">Home</a>
+                                                                                <a href="https://badulla.mc.gov.lk/about" class="px-3 py-2 text-sm font-medium rounded-md transition-colors header-link-idle">About</a>
+                                                                                <a href="https://badulla.mc.gov.lk/services" class="px-3 py-2 text-sm font-medium rounded-md transition-colors header-link-idle">Services</a>
+                                                                                <a href="https://badulla.mc.gov.lk/news" class="px-3 py-2 text-sm font-medium rounded-md transition-colors header-link-idle">News</a>
+                                                                                <a href="https://badulla.mc.gov.lk/tenders" class="px-3 py-2 text-sm font-medium rounded-md transition-colors header-link-idle">Tenders</a>
+                                                                                <a href="https://badulla.mc.gov.lk/gallery" class="px-3 py-2 text-sm font-medium rounded-md transition-colors header-link-idle">Gallery</a>
+                                                                                <a href="https://badulla.mc.gov.lk/downloads" class="px-3 py-2 text-sm font-medium rounded-md transition-colors header-link-idle">Downloads</a>
+                                                                                <a href="https://badulla.mc.gov.lk/contact" class="px-3 py-2 text-sm font-medium rounded-md transition-colors header-link-idle">Contact</a>
+                                                </nav>
+                        <div class="flex items-center gap-3">
+                <a href="https://badulla.mc.gov.lk/meegahakiula/services" class="hidden sm:inline-flex items-center px-5 py-2.5 rounded-full header-cta-primary text-sm font-medium transition-colors">Quick Access</a>                <button id="openSidebar" class="md:hidden p-2.5 rounded-lg border border-slate-300"><i data-lucide="menu" class="w-5 h-5"></i></button>
+            </div>
+        </div>
+    </header>
+        </div> <!-- End Main Sticky Header Wrapper -->
+
+    <div id="mobileSidebar" class="fixed inset-0 z-[100] invisible pointer-events-none transition-all duration-300">
+        <div id="sidebarOverlay" class="absolute inset-0 bg-slate-900/60 opacity-0 transition-opacity duration-300"></div>
+        <div id="sidebarPanel" class="absolute right-0 top-0 h-full w-80 bg-white shadow-2xl translate-x-full transition-transform duration-300 flex flex-col">
+            <div class="p-5 border-b border-slate-200 flex items-center justify-between"><strong>Menu</strong><button id="closeSidebar"><i data-lucide="x" class="w-5 h-5"></i></button></div>
+            <nav class="p-4 space-y-1.5">
+                                <a href="https://badulla.mc.gov.lk" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-bold transition-colors sidebar-active">
+                    <i data-lucide="home" class="w-4 h-4"></i> Home                </a>
+                                                <a href="https://badulla.mc.gov.lk/about" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-bold transition-colors text-slate-700 sidebar-idle">
+                    <i data-lucide="info" class="w-4 h-4"></i> About                </a>
+                                                <a href="https://badulla.mc.gov.lk/services" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-bold transition-colors text-slate-700 sidebar-idle">
+                    <i data-lucide="layers" class="w-4 h-4"></i> Services                </a>
+                                                <a href="https://badulla.mc.gov.lk/news" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-bold transition-colors text-slate-700 sidebar-idle">
+                    <i data-lucide="newspaper" class="w-4 h-4"></i> News                </a>
+                                                <a href="https://badulla.mc.gov.lk/tenders" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-bold transition-colors text-slate-700 sidebar-idle">
+                    <i data-lucide="file-text" class="w-4 h-4"></i> Tenders                </a>
+                                                <a href="https://badulla.mc.gov.lk/gallery" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-bold transition-colors text-slate-700 sidebar-idle">
+                    <i data-lucide="image" class="w-4 h-4"></i> Gallery                </a>
+                                                <a href="https://badulla.mc.gov.lk/downloads" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-bold transition-colors text-slate-700 sidebar-idle">
+                    <i data-lucide="download-cloud" class="w-4 h-4"></i> Downloads                </a>
+                                                <a href="https://badulla.mc.gov.lk/contact" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-bold transition-colors text-slate-700 sidebar-idle">
+                    <i data-lucide="phone" class="w-4 h-4"></i> Contact                </a>
+                                            </nav>
+        </div>
+    </div>
+
+    <main class="flex-1 relative z-10">
+<style>
+  .reveal { opacity: 0; transform: translateY(18px); transition: all 700ms ease; }
+  .reveal.reveal-visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 120ms; }
+  .reveal-delay-2 { transition-delay: 220ms; }
+  .reveal-delay-3 { transition-delay: 320ms; }
+  .hero-mask { background: linear-gradient(90deg, rgba(2,6,23,0.88) 0%, rgba(2,6,23,0.5) 55%, rgba(2,6,23,0.2) 100%); }
+  .hero-mask-center { background: linear-gradient(180deg, rgba(2,6,23,0.70) 0%, rgba(2,6,23,0.35) 70%, rgba(2,6,23,0.65) 100%); }
+
+  /* Hero Search Bar */
+  .hero-search-wrap { position: relative; max-width: 520px; }
+  .hero-search-input {
+    width: 100%; height: 52px;
+    padding: 0 52px 0 20px;
+    border-radius: 14px;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    outline: none;
+    transition: border 0.25s, background 0.25s;
+  }
+  .hero-search-input::placeholder { color: rgba(255,255,255,0.55); }
+  .hero-search-input:focus { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.18); }
+  .hero-search-btn {
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    width: 36px; height: 36px; border-radius: 10px;
+    background: var(--primary); color: #fff; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: filter 0.2s;
+  }
+  .hero-search-btn:hover { filter: brightness(1.12); transform: scale(1.05); box-shadow: 0 0 15px var(--primary); }
+  .hero-search-btn svg { color: #fff; width: 16px; height: 16px; }
+
+  /* Stats Counter Section */
+  .stat-counter-val { font-variant-numeric: tabular-nums; }
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  @keyframes float-card {
+    0% { transform: translateY(0px) scale(1.02); }
+    50% { transform: translateY(-4px) scale(1.02); }
+    100% { transform: translateY(0px) scale(1.02); }
+  }
+  @media (min-width: 1024px) {
+    .animate-float-lg {
+      animation: float-card 4s ease-in-out infinite;
+    }
+  }
+
+  /* Transition for all service cards and text elements */
+  .service-card {
+    position: relative;
+    z-index: 20;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), color 0.5s ease !important;
+    color: #1e293b;
+  }
+  .service-card h3 {
+    color: #1e293b;
+    transition: color 0.5s ease;
+  }
+  .service-card p {
+    color: #64748b;
+    transition: color 0.5s ease;
+  }
+  .service-card .icon-wrap {
+    background-color: #ffffff;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .service-card .icon-wrap i {
+    color: var(--primary);
+    transition: color 0.5s ease;
+  }
+  .divider-element {
+    transition: opacity 0.4s ease;
+  }
+
+  /* Active/Highlighted Card Styles (when .is-active is present) */
+  @media (min-width: 1024px) {
+    .service-card.is-active {
+      color: #ffffff !important;
+    }
+    .service-card.is-active h3 {
+      color: #ffffff !important;
+    }
+    .service-card.is-active p {
+      color: rgba(255, 255, 255, 0.85) !important;
+    }
+    .service-card.is-active .icon-wrap {
+      background-color: rgba(255, 255, 255, 0.2) !important;
+      border-color: transparent !important;
+      box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06) !important;
+    }
+    .service-card.is-active .icon-wrap i {
+      color: #ffffff !important;
+    }
+    .service-card.is-active .divider-element {
+      opacity: 0 !important;
+    }
+  }
+
+  /* Hover translation behavior for cards */
+  @media (min-width: 1024px) {
+    .service-card:hover {
+      transform: translateY(-8px) scale(1.03) !important;
+      z-index: 30 !important;
+    }
+  }
+
+  /* Sliding Background transition properties */
+  #active-bg {
+    transition: left 0.5s cubic-bezier(0.16, 1, 0.3, 1), width 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+  }
+</style>
+
+<section class="hero-section relative min-h-[50vh] overflow-visible">
+          <div class="absolute inset-0 bg-cover bg-center" id="hero-bg" style="background-image: url('https://badulla.mc.gov.lk/uploads/hero/27/1774337059_0_slide1.jpg');"></div>
+  
+  <div class="absolute inset-0 hero-mask"></div>
+
+  <div class="relative z-10 container mx-auto px-4 md:px-8 py-12">
+        <div class="max-w-2xl">
+      <div>
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white/80 text-[10px] font-black uppercase tracking-[0.3em] backdrop-blur-md border border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.1)] reveal reveal-visible">
+          Main Site        </div>
+        <h1 class="font-heading text-5xl md:text-7xl font-black mt-5 leading-tight tracking-tight drop-shadow-lg reveal reveal-delay-1 reveal-visible text-hero-title text-left">A Proud City</h1>
+        <p class="text-white/80 text-lg md:text-xl font-medium mt-5 max-w-xl  reveal reveal-delay-2 reveal-visible">Providing modern technological infrastructure and resources to improve public living standards and digital economy.</p>
+        <div class="mt-8 flex flex-wrap gap-4 ">
+                                  <a href="https://badulla.mc.gov.lk/services" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-brandPrimary text-white text-xs font-black uppercase tracking-[0.2em] shadow-[0_8px_30px_rgb(var(--primary-rgb),0.4)] hover:shadow-[0_10px_40px_rgb(var(--primary-rgb),0.6)] hover:-translate-y-1 transition-all duration-300">
+              Explore Services            </a>
+                                            <a href="https://badulla.mc.gov.lk/news" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl border border-white/40 bg-white/5 backdrop-blur-md text-white text-xs font-black uppercase tracking-[0.2em] hover:bg-white/15 hover:-translate-y-1 transition-all duration-300">
+              Latest Announcements            </a>
+                  </div>
+        <!-- Hero Search Bar -->
+        <div class="mt-6 hero-search-wrap">
+          <form action="https://badulla.mc.gov.lk/search" method="GET" role="search">
+            <input type="text" name="q" class="hero-search-input" placeholder="Search services, notices, tenders..." aria-label="Search civic portal">
+            <button type="submit" class="hero-search-btn" aria-label="Submit search">
+              <i data-lucide="search"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Overlapping Capsule Pill Bar (Adjusted Design without rails) -->
+<style>
+  .tiles-pill-wrap {
+    position: relative;
+    z-index: 30;
+    margin-top: -2.25rem;
+    padding: 0 1rem;
+    max-width: 1140px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+  }
+  .tiles-pill-bar {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    border-radius: 40px;
+    overflow: hidden;
+    box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    position: relative;
+    background: linear-gradient(90deg, 
+      var(--primary) 0%, 
+      color-mix(in srgb, var(--primary) 65%, var(--secondary)) 25%,
+      var(--secondary) 50%, 
+      color-mix(in srgb, var(--primary) 65%, var(--secondary)) 75%,
+      var(--primary) 100%
+    );
+  }
+  .tile-pill-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 68px;
+    padding: 14px 18px;
+    flex: 1;
+    text-decoration: none;
+    position: relative;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    background: transparent;
+    transition: background 0.3s ease, backdrop-filter 0.3s ease;
+  }
+  .tile-pill-card:first-child {
+    padding-left: 28px;
+  }
+  .tile-pill-card:last-child {
+    padding-right: 28px;
+  }
+  .tile-pill-card:hover {
+    background: rgba(255, 255, 255, 0.18) !important;
+    backdrop-filter: brightness(1.15);
+    z-index: 5;
+  }
+  .tile-pill-title {
+    color: #ffffff !important;
+    font-size: 13.5px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    line-height: 1.25;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    position: relative;
+    z-index: 10;
+    user-select: none;
+  }
+  @media (max-width: 1200px) {
+    .tile-pill-card {
+      min-height: 64px;
+      padding: 12px 14px;
+    }
+    .tile-pill-title {
+      font-size: 12px;
+    }
+  }
+  @media (max-width: 900px) {
+    .tiles-pill-wrap {
+      margin-top: -1.85rem;
+      padding: 0 0.5rem;
+    }
+    .tiles-pill-bar {
+      border-radius: 34px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .tiles-pill-bar::-webkit-scrollbar {
+      display: none;
+    }
+    .tile-pill-card {
+      min-width: 135px;
+      min-height: 58px;
+      padding: 10px 14px;
+    }
+    .tile-pill-card:first-child {
+      padding-left: 22px;
+    }
+    .tile-pill-card:last-child {
+      padding-right: 22px;
+    }
+    .tile-pill-title {
+      font-size: 11px;
+    }
+  }
+</style>
+<div class="tiles-pill-wrap">
+  <div class="tiles-pill-bar">
+        <a href="https://badulla.mc.gov.lk/payments" class="tile-pill-card">
+            <span class="tile-pill-title">Pay Taxes Online</span>
+    </a>
+        <a href="https://badulla.mc.gov.lk/tenders" class="tile-pill-card">
+            <span class="tile-pill-title">Tender Notices</span>
+    </a>
+        <a href="https://badulla.mc.gov.lk/downloads" class="tile-pill-card">
+            <span class="tile-pill-title">Downloads</span>
+    </a>
+        <a href="https://badulla.mc.gov.lk/contact" class="tile-pill-card">
+            <span class="tile-pill-title">Contact Us</span>
+    </a>
+        <a href="https://badulla.mc.gov.lk/news" class="tile-pill-card">
+            <span class="tile-pill-title">News &amp; Events</span>
+    </a>
+      </div>
+</div>
+
+
+
+<section class="pt-20 pb-16 bg-slate-50">
+  <div class="container mx-auto px-4 md:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- COLUMN 1: NEWS -->
+      <div class="flex flex-col space-y-4">
+        <!-- Column Header -->
+        <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+          <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
+            <i data-lucide="newspaper" class="w-4 h-4 text-brandPrimary"></i>
+            News          </h3>
+          <a href="https://badulla.mc.gov.lk/news" class="text-[10px] font-black text-slate-400 hover:text-brandPrimary uppercase tracking-wider flex items-center gap-1 transition-colors">
+            See All <i data-lucide="chevron-right" class="w-3 h-3"></i>
+          </a>
+        </div>
+
+                  <!-- Featured News Card -->
+          <div onclick="window.location='https://badulla.mc.gov.lk/news/show/272'" class="relative rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 group cursor-pointer h-[260px] flex flex-col justify-end">
+            <img src="https://badulla.mc.gov.lk/public/uploads/news/news_20260922124128_53cc9c1b.png" alt="News featured image" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-black/10"></div>
+            
+            <div class="relative z-10 p-6 flex flex-col h-full justify-between">
+              <div class="flex justify-between items-start">
+                <span class="text-[10px] uppercase tracking-[0.24em] font-black text-white/90 bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm border border-white/10">News</span>
+                <div class="w-8 h-8 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center border border-white/10">
+                    <i data-lucide="newspaper" class="w-4 h-4 text-white/90"></i>
+                </div>
+              </div>
+              
+              <div class="mt-auto relative z-10">
+                <p class="text-[10px] text-brandAccent font-bold mb-2 uppercase tracking-widest bg-black/40 inline-block px-2 py-1 rounded backdrop-blur-md border border-white/10">September 22, 2026</p>
+                <h3 class="font-heading text-xl md:text-2xl font-black line-clamp-2 leading-tight drop-shadow-2xl mb-4 text-card-title text-left">බල්ලා ඉබි මස් කනවා</h3>
+                
+                <div class="flex justify-between items-center border-t border-white/20 pt-4">
+                  <span class="inline-flex items-center gap-2 bg-brandPrimary hover:bg-brandPrimary/90 text-white text-[10px] font-black uppercase tracking-[0.2em] px-5 py-2.5 rounded-xl shadow-[0_0_15px_rgba(0,0,0,0.3)] transition-all hover:scale-105">
+                    Read More <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        
+        <!-- Sub-News Grid -->
+        <div class="grid grid-cols-3 gap-3">
+                      <div onclick="window.location='https://badulla.mc.gov.lk/news/show/177'" class="relative rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer h-[120px] flex flex-col justify-end">
+              <img src="https://badulla.mc.gov.lk/public/uploads/global_news/gn_featured_20260812105528_688d147b.jpg" alt="Sub news image" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/10"></div>
+              <div class="relative z-10 p-2.5">
+                <p class="text-[7px] text-white/70 font-bold mb-1 uppercase tracking-widest">Aug 12</p>
+                <h4 class="text-[9px] md:text-[10px] font-extrabold text-white leading-tight line-clamp-3 group-hover:text-red-400 transition-colors">Hon. Member of Pradeshiya Sabha Meegahakiula</h4>
+              </div>
+            </div>
+                                <div onclick="window.location='https://badulla.mc.gov.lk/news/show/142'" class="relative rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer h-[120px] flex flex-col justify-end">
+              <img src="https://badulla.mc.gov.lk/public/uploads/global_news/gn_featured_20260812101627_5bbaea17.jpg" alt="Sub news image" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/10"></div>
+              <div class="relative z-10 p-2.5">
+                <p class="text-[7px] text-white/70 font-bold mb-1 uppercase tracking-widest">Aug 12</p>
+                <h4 class="text-[9px] md:text-[10px] font-extrabold text-white leading-tight line-clamp-3 group-hover:text-red-400 transition-colors">Test Global News For All Sites</h4>
+              </div>
+            </div>
+                                <div onclick="window.location='https://badulla.mc.gov.lk/news/show/107'" class="relative rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer h-[120px] flex flex-col justify-end">
+              <img src="https://badulla.mc.gov.lk/public/uploads/global_news/gn_featured_20260812101529_649d7091.jpg" alt="Sub news image" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/10"></div>
+              <div class="relative z-10 p-2.5">
+                <p class="text-[7px] text-white/70 font-bold mb-1 uppercase tracking-widest">Aug 12</p>
+                <h4 class="text-[9px] md:text-[10px] font-extrabold text-white leading-tight line-clamp-3 group-hover:text-red-400 transition-colors">Test Global News For All Sites</h4>
+              </div>
+            </div>
+                            </div>
+      </div>
+
+      <!-- COLUMN 2: TENDERS -->
+      <div class="flex flex-col space-y-4">
+        <!-- Column Header -->
+        <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+          <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
+            <i data-lucide="file-text" class="w-4 h-4 text-brandPrimary"></i>
+            Procurement &amp; Tenders          </h3>
+          <a href="https://badulla.mc.gov.lk/tenders" class="text-[10px] font-black text-slate-400 hover:text-brandPrimary uppercase tracking-wider flex items-center gap-1 transition-colors">
+            See All <i data-lucide="chevron-right" class="w-3 h-3"></i>
+          </a>
+        </div>
+
+        <!-- Stacked Tenders (Exact Height Aligning) -->
+        <div class="flex-grow flex flex-col justify-between gap-3 lg:h-[396px] h-auto">
+                      <div onclick="window.location='https://badulla.mc.gov.lk/tenders/show/2'" class="bg-white border border-slate-100 hover:border-brandPrimary/30 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all flex flex-col justify-between cursor-pointer group flex-1 min-h-[116px]">
+              <div>
+                <div class="flex items-center justify-between gap-2 mb-2">
+                  <span class="text-[8px] font-extrabold text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200/50">Ref: </span>
+                                      <span class="text-[8px] font-black text-red-500 bg-red-50 px-2 py-0.5 rounded border border-red-100">Closed</span>
+                                  </div>
+                <h4 class="text-xs md:text-sm font-extrabold text-slate-800 line-clamp-2 leading-tight group-hover:text-brandPrimary transition-colors">නව දෙමහල් ගොඩනැඟිල්ලේ පහළ මහළ බදු දීම</h4>
+              </div>
+              
+              <div class="flex items-center justify-between pt-2 border-t border-slate-50 mt-1">
+                <span class="text-[9px] text-brandPrimary font-bold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                  Read More <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                </span>
+                              </div>
+            </div>
+                                <div onclick="window.location='https://badulla.mc.gov.lk/tenders/show/1'" class="bg-white border border-slate-100 hover:border-brandPrimary/30 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all flex flex-col justify-between cursor-pointer group flex-1 min-h-[116px]">
+              <div>
+                <div class="flex items-center justify-between gap-2 mb-2">
+                  <span class="text-[8px] font-extrabold text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200/50">Ref: </span>
+                                      <span class="text-[8px] font-black text-red-500 bg-red-50 px-2 py-0.5 rounded border border-red-100">Closed</span>
+                                  </div>
+                <h4 class="text-xs md:text-sm font-extrabold text-slate-800 line-clamp-2 leading-tight group-hover:text-brandPrimary transition-colors">කරමැටිය කඩ කාමර අංක 02 බදු දීම</h4>
+              </div>
+              
+              <div class="flex items-center justify-between pt-2 border-t border-slate-50 mt-1">
+                <span class="text-[9px] text-brandPrimary font-bold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                  Read More <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                </span>
+                              </div>
+            </div>
+                                <div class="bg-white/50 border border-dashed border-slate-200 rounded-2xl flex items-center justify-center flex-1 min-h-[116px]">
+              <p class="text-[10px] text-slate-400 font-medium italic">No active tender</p>
+            </div>
+                            </div>
+      </div>
+
+      <!-- COLUMN 3: NOTICES -->
+      <div class="flex flex-col space-y-4">
+        <!-- Column Header -->
+        <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+          <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
+            <i data-lucide="bell" class="w-4 h-4 text-brandPrimary"></i>
+            Special Notices          </h3>
+          <a href="https://badulla.mc.gov.lk/notices" class="text-[10px] font-black text-slate-400 hover:text-brandPrimary uppercase tracking-wider flex items-center gap-1 transition-colors">
+            See All <i data-lucide="chevron-right" class="w-3 h-3"></i>
+          </a>
+        </div>
+
+                  <!-- Featured Notice Card -->
+          <div onclick="window.open('https://badulla.mc.gov.lk/notices', '_blank')" class="relative rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 group cursor-pointer h-[260px] flex flex-col justify-end">
+            <img src="https://badulla.mc.gov.lk/uploads/notices/notice_1773896786_Logo3.png" alt="Notices featured image" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-black/10"></div>
+            
+            <div class="relative z-10 p-6 flex flex-col h-full justify-between">
+              <div class="flex justify-between items-start">
+                <span class="text-[10px] uppercase tracking-[0.24em] font-black text-white/90 bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm border border-white/10">Notices</span>
+                <div class="w-8 h-8 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center border border-white/10">
+                    <i data-lucide="bell" class="w-4 h-4 text-white/90"></i>
+                </div>
+              </div>
+              
+              <div class="mt-auto relative z-10">
+                <p class="text-[10px] text-brandAccent font-bold mb-2 uppercase tracking-widest bg-black/40 inline-block px-2 py-1 rounded backdrop-blur-md border border-white/10">March 17, 2026</p>
+                <h3 class="font-heading text-xl md:text-2xl font-black line-clamp-2 leading-tight drop-shadow-2xl mb-4 text-card-title text-left">ගම්මැද්දේ කළාලය වැඩසටහන – 2026 මාර්තු</h3>
+                
+                <div class="flex justify-between items-center border-t border-white/20 pt-4">
+                  <span class="inline-flex items-center gap-2 bg-brandPrimary hover:bg-brandPrimary/90 text-white text-[10px] font-black uppercase tracking-[0.2em] px-5 py-2.5 rounded-xl shadow-[0_0_15px_rgba(0,0,0,0.3)] transition-all hover:scale-105">
+                    Read More <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        
+        <!-- Sub-Notices Grid -->
+        <div class="grid grid-cols-3 gap-3">
+                      <div onclick="window.open('https://badulla.mc.gov.lk/notices', '_blank')" class="relative rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer h-[120px] flex flex-col justify-end">
+              <img src="https://badulla.mc.gov.lk/uploads/notices/notice_1773896804_unnamed.jpg" alt="Sub notice image" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/10"></div>
+              <div class="relative z-10 p-2.5">
+                <p class="text-[7px] text-white/70 font-bold mb-1 uppercase tracking-widest">Mar 17</p>
+                <h4 class="text-[9px] md:text-[10px] font-extrabold text-white leading-tight line-clamp-3 group-hover:text-red-400 transition-colors">කරමැටිය කඩ කාමර අංක 02 බදු දීම</h4>
+              </div>
+            </div>
+                                <div class="bg-white border border-slate-100 rounded-xl flex items-center justify-center h-[120px]">
+              <i data-lucide="minus" class="w-4 h-4 text-slate-300"></i>
+            </div>
+                                <div class="bg-white border border-slate-100 rounded-xl flex items-center justify-center h-[120px]">
+              <i data-lucide="minus" class="w-4 h-4 text-slate-300"></i>
+            </div>
+                            </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Institute Overview (Redesigned Modern 3-Column Asymmetric Section - Compact) -->
+<section class="py-20 bg-slate-50/50 border-t border-slate-100 relative overflow-hidden">
+    <!-- Ambient glowing backgrounds for extra premium feel -->
+    <div class="absolute top-1/4 left-0 w-80 h-80 bg-brandPrimary/5 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-1/4 right-0 w-96 h-96 bg-brandSecondary/5 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="container mx-auto px-4 md:px-8 relative z-10">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-0 items-stretch">
+            
+            <!-- Column 1: Single Image with Modern Asymmetric Rounded Corners (Grid Span 5) -->
+            <div class="lg:col-span-5 relative z-10 pr-0 lg:pr-6">
+                                <div class="relative overflow-hidden rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-xl rounded-bl-xl shadow-md h-[356px] group border border-slate-200/40 bg-white">
+                    <img src="https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&amp;fit=crop&amp;w=600&amp;q=80" alt="About image" class="w-full h-full object-cover transform scale-100 group-hover:scale-105 transition duration-700 ease-out" />
+                </div>
+            </div>
+
+            <!-- Column 2: Vision & Mission - Center Card with Gradient Background (Grid Span 4 - Overlays Column 1) -->
+            <div class="lg:col-span-4 bg-gradient-to-br from-brandSecondary to-brandPrimary/90 text-white rounded-[2rem] p-8 flex flex-col justify-between shadow-xl relative lg:-translate-y-4 lg:scale-105 lg:-ml-12 border border-white/10 z-20">
+                <div class="space-y-5">
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 text-white text-[9px] font-black uppercase tracking-widest border border-white/10">
+                        <span class="w-1.5 h-1.5 rounded-full bg-brandAccent animate-pulse"></span>
+                        Vision & Mission
+                    </div>
+                    <h3 class="text-2xl font-black tracking-tight leading-none text-brandPrimary text-left">Our Core Directives</h3>
+
+                    <div class="space-y-4">
+                        <!-- Vision -->
+                        <div class="flex items-start gap-3 group">
+                            <div class="w-10 h-10 rounded-lg bg-white/15 text-white flex items-center justify-center shrink-0 transition-transform group-hover:scale-110">
+                                <i data-lucide="eye" class="w-4.5 h-4.5"></i>
+                            </div>
+                            <div class="space-y-0.5">
+                                <h4 class="text-[11px] font-black text-white uppercase tracking-widest">Our Vision</h4>
+                                <p class="text-white/75 text-[11px] leading-relaxed font-medium">
+                                    To be the leader in digital innovation.                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Mission -->
+                        <div class="flex items-start gap-3 group">
+                            <div class="w-10 h-10 rounded-lg bg-white/15 text-white flex items-center justify-center shrink-0 transition-transform group-hover:scale-110">
+                                <i data-lucide="target" class="w-4.5 h-4.5"></i>
+                            </div>
+                            <div class="space-y-0.5">
+                                <h4 class="text-[11px] font-black text-white uppercase tracking-widest">Our Mission</h4>
+                                <p class="text-white/75 text-[11px] leading-relaxed font-medium">
+                                    Empowering citizens through accessible technology.                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Citizen First -->
+                        <div class="flex items-start gap-3 group">
+                            <div class="w-10 h-10 rounded-lg bg-white/15 text-white flex items-center justify-center shrink-0 transition-transform group-hover:scale-110">
+                                <i data-lucide="shield" class="w-4.5 h-4.5"></i>
+                            </div>
+                            <div class="space-y-0.5">
+                                <h4 class="text-[11px] font-black text-white uppercase tracking-widest">Citizen First</h4>
+                                <p class="text-white/75 text-[11px] leading-relaxed font-medium">
+                                    Prioritizing accessibility, efficiency, and absolute operational transparency.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 3: About Our Institute - Right Card (Grid Span 3) -->
+            <div class="lg:col-span-3 bg-white/90 backdrop-blur-md border border-slate-100/80 rounded-[2rem] p-6 shadow-lg flex flex-col justify-between gap-5 relative z-10 lg:pl-8">
+                <div class="space-y-4">
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-brandPrimary/10 text-brandPrimary text-[9px] font-black uppercase tracking-widest border border-brandPrimary/10">
+                        <span class="w-1.5 h-1.5 rounded-full bg-brandPrimary animate-pulse"></span>
+                        Overview
+                    </div>
+                    <h3 class="text-xl font-black text-slate-900 tracking-tight">About Our Institute</h3>
+                    <p class="text-slate-500 text-[11px] leading-relaxed font-medium">
+                        Welcome to our Department                    </p>
+                </div>
+                <div>
+                    <a href="https://badulla.mc.gov.lk/about" class="w-full inline-flex items-center justify-center px-5 py-3 rounded-lg bg-brandPrimary text-white hover:bg-brandPrimary/90 font-black text-[10px] tracking-widest uppercase transition-all shadow-md shadow-brandPrimary/20 transform hover:-translate-y-0.5">
+                        Learn More <i data-lucide="arrow-right" class="w-3.5 h-3.5 ml-1.5"></i>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Welcome Messages -->
+<section class="py-24 bg-white overflow-hidden border-t border-gray-100">
+    <div class="container mx-auto px-4 md:px-8">
+        <div class="text-left w-full mb-16">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brandPrimary/10 border border-brandPrimary/20 text-brandPrimary text-[10px] font-black uppercase tracking-widest mb-4">
+                <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+                Leadership
+            </div>
+            <h2 class="text-3xl font-black text-brandPrimary text-left">Welcome Messages</h2>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            
+            <!-- Head of Institute -->
+                        <div class="group relative bg-slate-50 border border-slate-200/60 rounded-3xl p-8 md:p-10 shadow-sm hover:shadow-md transition-all duration-300">
+                <div class="relative flex flex-col md:flex-row gap-6 items-start">
+                    <div class="w-24 h-24 md:w-32 md:h-32 shrink-0 rounded-2xl overflow-hidden shadow-md border-2 border-white transform transition-transform group-hover:scale-105 duration-300">
+                        <img src="https://badulla.mc.gov.lk/uploads/home/1/chairman_1774338505_151scaled.png" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1">
+                        <div class="mb-4">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-brandPrimary mb-1">Chairman</p>
+                            <h3 class="text-xl font-black text-slate-900 leading-tight">T.M Kumarathissa</h3>
+                        </div>
+                        <div class="relative">
+                            <i data-lucide="quote" class="absolute -top-2 -left-2 w-8 h-8 text-slate-200/50 -z-10"></i>
+                            <p class="text-slate-600 text-sm leading-relaxed italic line-clamp-3 pl-3 border-l-2 border-brandPrimary/30">
+                                "As Mayor of Badulla, I am honored to share our commitment to building a city that reflects both the aspirations of our people and the progressive vision of Sri Lanka’s new government policy. At the heart of this journey is our dedication to responsible waste management—creating a cleaner, greener Badulla through recycling, reducing pollution, and protecting the environment for generations to come.
+Equally, we are stepping confidently into the digital future. By expanding e-governance and online services, we are making municipal services more transparent, efficient, and accessible, ensuring that every citizen benefits from technology and innovation. Together, let us move forward with unity and determination to create a sustainable, smart, and vibrant city—a Badulla that we can all be proud to call home."
+                            </p>
+                        </div>
+                                                <button onclick='showLeadershipModal({&quot;name&quot;:&quot;T.M Kumarathissa&quot;,&quot;role&quot;:&quot;Chairman&quot;,&quot;image&quot;:&quot;https:\/\/badulla.mc.gov.lk\/uploads\/home\/1\/chairman_1774338505_151scaled.png&quot;,&quot;statement&quot;:&quot;As Mayor of Badulla, I am honored to share our commitment to building a city that reflects both the aspirations of our people and the progressive vision of Sri Lanka\u2019s new government policy. At the heart of this journey is our dedication to responsible waste management\u2014creating a cleaner, greener Badulla through recycling, reducing pollution, and protecting the environment for generations to come.\r\nEqually, we are stepping confidently into the digital future. By expanding e-governance and online services, we are making municipal services more transparent, efficient, and accessible, ensuring that every citizen benefits from technology and innovation. Together, let us move forward with unity and determination to create a sustainable, smart, and vibrant city\u2014a Badulla that we can all be proud to call home.&quot;})' class="mt-4 text-[10px] font-black uppercase tracking-widest text-brandPrimary hover:brightness-110 transition-colors flex items-center gap-1.5 focus:outline-none">
+                            Read More <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                        </button>
+                                            </div>
+                </div>
+            </div>
+            
+            <!-- Administrative Head -->
+                        <div class="group relative bg-slate-50 border border-slate-200/60 rounded-3xl p-8 md:p-10 shadow-sm hover:shadow-md transition-all duration-300">
+                <div class="relative flex flex-col md:flex-row gap-6 items-start">
+                    <div class="w-24 h-24 md:w-32 md:h-32 shrink-0 rounded-2xl overflow-hidden shadow-md border-2 border-white transform transition-transform group-hover:scale-105 duration-300">
+                        <img src="https://badulla.mc.gov.lk/uploads/home/1/secretary_1774338505_1.png" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1">
+                        <div class="mb-4">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-brandSecondary mb-1">Secretary</p>
+                            <h3 class="text-xl font-black text-slate-900 leading-tight">D.M.K.D Dissanayake</h3>
+                        </div>
+                        <div class="relative">
+                            <i data-lucide="quote" class="absolute -top-2 -left-2 w-8 h-8 text-slate-200/50 -z-10"></i>
+                            <p class="text-slate-600 text-sm leading-relaxed italic line-clamp-3 pl-3 border-l-2 border-brandSecondary/30">
+                                "It is a privilege to serve the people of Badulla at a time when our city is embracing both tradition and transformation. Inspired by Sri Lanka’s new government policy, we are committed to building a community that is sustainable, people-focused, and ready for the future.
+Our waste management initiatives are not just about cleaner streets—they are about creating a healthier environment, protecting our natural resources, and instilling a sense of responsibility in all of us. Alongside this, we are moving confidently into the digital era, where technology and innovation will make our services more efficient, transparent, and accessible to every citizen. Together, with the dedication of our staff and the support of our people, we can shape a Badulla that is greener, smarter, and stronger—a city that inspires pride today and hope for tomorrow."
+                            </p>
+                        </div>
+                                                <button onclick='showLeadershipModal({&quot;name&quot;:&quot;D.M.K.D Dissanayake&quot;,&quot;role&quot;:&quot;Secretary&quot;,&quot;image&quot;:&quot;https:\/\/badulla.mc.gov.lk\/uploads\/home\/1\/secretary_1774338505_1.png&quot;,&quot;statement&quot;:&quot;It is a privilege to serve the people of Badulla at a time when our city is embracing both tradition and transformation. Inspired by Sri Lanka\u2019s new government policy, we are committed to building a community that is sustainable, people-focused, and ready for the future.\r\nOur waste management initiatives are not just about cleaner streets\u2014they are about creating a healthier environment, protecting our natural resources, and instilling a sense of responsibility in all of us. Alongside this, we are moving confidently into the digital era, where technology and innovation will make our services more efficient, transparent, and accessible to every citizen. Together, with the dedication of our staff and the support of our people, we can shape a Badulla that is greener, smarter, and stronger\u2014a city that inspires pride today and hope for tomorrow.&quot;})' class="mt-4 text-[10px] font-black uppercase tracking-widest text-brandSecondary hover:brightness-110 transition-colors flex items-center gap-1.5 focus:outline-none">
+                            Read More <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                        </button>
+                                            </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</section>
+
+
+
+<!-- Leadership Message Modal -->
+<div id="leadershipModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-white/10 rounded-[2rem] shadow-2xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+        <div class="px-6 py-4 border-b border-white/5 flex justify-between items-center bg-slate-950/40">
+            <h3 class="text-xs font-black text-white uppercase tracking-[0.2em]" id="leaderModalTitle">Leadership Message</h3>
+            <button onclick="closeLeadershipModal()" class="text-white/60 hover:text-white transition-colors focus:outline-none">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+        <div class="p-8 space-y-6 max-h-[70vh] overflow-y-auto">
+            <div class="flex items-center gap-4 border-b border-white/5 pb-4">
+                <img id="leaderModalImage" src="" class="w-20 h-20 rounded-full object-cover border-2 border-blue-500/40 shadow-lg shadow-blue-500/10">
+                <div>
+                    <p id="leaderModalRole" class="text-xs font-black uppercase tracking-[0.2em] text-white/50">Role</p>
+                    <h4 id="leaderModalName" class="text-2xl font-black text-white mt-1">Name</h4>
+                </div>
+            </div>
+            <p id="leaderModalStatement" class="text-white/80 text-base leading-relaxed whitespace-pre-wrap italic pl-4 border-l-2 border-blue-500/30">
+                Statement
+            </p>
+        </div>
+        <div class="px-6 py-4 border-t border-white/5 bg-slate-950/20 flex justify-end">
+            <button onclick="closeLeadershipModal()" class="px-5 py-2.5 rounded-xl bg-white text-slate-950 font-black text-xs uppercase tracking-wider hover:bg-slate-200 transition-colors focus:outline-none">Close</button>
+        </div>
+    </div>
+</div>
+
+<section class="py-20 bg-white">
+  <div class="container mx-auto px-4 md:px-8">
+    <div class="flex items-end justify-between gap-6 mb-12">
+      <div class="space-y-3">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brandPrimary/10 text-brandPrimary text-[10px] font-black uppercase tracking-widest">
+            <i data-lucide="layers" class="w-3.5 h-3.5"></i> public_services        </div>
+        <h2 class="text-3xl font-black text-brandPrimary text-left">Popular Services</h2>
+      </div>
+      <a href="https://badulla.mc.gov.lk/services" class="group inline-flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-brandPrimary transition-colors cursor-pointer">
+        View All <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+      </a>
+    </div>
+
+          <!-- Connected Horizontal Panel: stacks on mobile/tablet, side-by-side on desktop -->
+      <div id="services-panel" class="relative w-full rounded-3xl border border-slate-200/60 flex flex-col lg:flex-row lg:items-stretch py-6 lg:py-0 px-6 lg:px-2 gap-6 lg:gap-0 reveal" style="background-color: color-mix(in srgb, var(--primary) 6%, #f8fafc);">
+        <!-- Sliding magnetic highlight background block -->
+        <div id="active-bg" class="absolute bg-brandPrimary rounded-3xl shadow-xl z-10 hidden lg:block" style="background-color: var(--primary); top: -12px; bottom: -12px; left: 0; width: 0; opacity: 0;"></div>
+        
+                            
+                      <!-- Standard Flat Card: Pops up dynamically and shifts upward on hover -->
+            <a href="https://badulla.mc.gov.lk/services/show/3" 
+               class="service-card flex-grow lg:flex-1 text-center py-8 px-6 flex flex-col items-center justify-center group relative">
+              <div class="icon-wrap w-14 h-14 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                <i data-lucide="shield-check" class="w-6 h-6"></i>
+              </div>
+              <h3 class="text-lg font-black tracking-wide">Cybersecurity Auditing</h3>
+              <p class="text-xs mt-2 line-clamp-2 max-w-xs">Comprehensive security reviews for public sector frameworks and private infrastructure partners.</p>
+              
+              <!-- Subtle vertical divider on desktop, except next to/on the highlighted card -->
+                              <div class="divider-element hidden lg:block absolute right-0 top-12 bottom-12 w-px bg-slate-200/60 transition-opacity group-hover:opacity-0"></div>
+                          </a>
+                    
+                            
+                      <!-- Standard Flat Card: Pops up dynamically and shifts upward on hover -->
+            <a href="https://badulla.mc.gov.lk/services/show/2" 
+               class="service-card flex-grow lg:flex-1 text-center py-8 px-6 flex flex-col items-center justify-center group relative">
+              <div class="icon-wrap w-14 h-14 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                <i data-lucide="cloud" class="w-6 h-6"></i>
+              </div>
+              <h3 class="text-lg font-black tracking-wide">Municipal Cloud Storage</h3>
+              <p class="text-xs mt-2 line-clamp-2 max-w-xs">Government-grade cloud infrastructure for local councils and tech startups to host public datasets.</p>
+              
+              <!-- Subtle vertical divider on desktop, except next to/on the highlighted card -->
+                          </a>
+                    
+                            
+                      <!-- Highlighted/Popped-out Card (Third Item) with continuous float and dynamic hover zoom -->
+            <a href="https://badulla.mc.gov.lk/services/show/1" 
+               class="service-card default-active-card flex-grow lg:flex-1 text-center py-10 px-6 lg:py-11 lg:scale-[1.02] relative rounded-3xl flex flex-col items-center justify-center group animate-float-lg">
+              <div class="icon-wrap w-14 h-14 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                <i data-lucide="user-check" class="w-6 h-6"></i>
+              </div>
+              <h3 class="text-lg font-black tracking-wide">Digital Identity Verification</h3>
+              <p class="text-xs mt-2 line-clamp-2 max-w-xs">Secure biometrics and digital ID enrollment for all citizens to access government portals seamlessly.</p>
+            </a>
+                    
+                
+      </div>
+      </div>
+</section>
+
+<!-- Unified Impact & Latest Projects Section -->
+<section class="py-20 bg-slate-50 border-t border-slate-100" id="statsCounterSection">
+    <div class="container mx-auto px-4 md:px-8">
+        
+                
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-10">
+            
+            <!-- Left Column: Impact Metrics (col-span-1) -->
+            <div class="lg:col-span-1 bg-gradient-to-br from-brandPrimary via-brandSecondary to-brandPrimary/80 rounded-3xl relative overflow-hidden text-white flex flex-col justify-center reveal shadow-xl shadow-brandPrimary/10">
+                <!-- SVG Texture Background -->
+                <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+                
+                <div class="relative z-10 p-8 lg:p-10 space-y-10">
+                    
+                    <div class="text-left">
+                        <p class="text-4xl lg:text-5xl font-black stat-counter-val mb-1.5" data-target="45000" data-suffix="+">0</p>
+                        <p class="text-[10px] lg:text-[11px] font-black uppercase tracking-[0.2em] text-white/70">Citizens Served</p>
+                    </div>
+                    
+                    <div class="text-left reveal reveal-delay-1">
+                        <p class="text-4xl lg:text-5xl font-black stat-counter-val mb-1.5" data-target="120" data-suffix="+">0</p>
+                        <p class="text-[10px] lg:text-[11px] font-black uppercase tracking-[0.2em] text-white/70">Development Projects</p>
+                    </div>
+                    
+                    <div class="text-left reveal reveal-delay-2">
+                        <p class="text-4xl lg:text-5xl font-black stat-counter-val mb-1.5" data-target="38" data-suffix="+">0</p>
+                        <p class="text-[10px] lg:text-[11px] font-black uppercase tracking-[0.2em] text-white/70">Online Services</p>
+                    </div>
+                    
+                    <div class="text-left reveal reveal-delay-3">
+                        <p class="text-4xl lg:text-5xl font-black stat-counter-val mb-1.5" data-target="18" data-suffix="">0</p>
+                        <p class="text-[10px] lg:text-[11px] font-black uppercase tracking-[0.2em] text-white/70">GN Divisions</p>
+                    </div>
+
+                </div>
+            </div>
+
+                        <!-- Right Column: Latest Projects (col-span-3) -->
+            <div class="lg:col-span-3 flex flex-col">
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 reveal">
+                    <div class="space-y-3">
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brandPrimary/10 text-brandPrimary text-[10px] font-black uppercase tracking-widest">
+                            <i data-lucide="hard-hat" class="w-3.5 h-3.5"></i> Development Projects                        </div>
+                        <h2 class="text-3xl font-black text-brandPrimary text-left">
+                            Latest Projects                        </h2>
+                    </div>
+                    <a href="https://badulla.mc.gov.lk/projects" class="group inline-flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-brandPrimary transition-colors relative z-20 cursor-pointer">
+                        View All Projects <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 flex-1">
+                                        <article class="group bg-white rounded-3xl border border-slate-200 overflow-hidden hover:shadow-xl hover:shadow-brandPrimary/5 transition-all duration-300 flex flex-col h-full hover:-translate-y-1 reveal ">
+                        <div class="aspect-video bg-slate-100 relative overflow-hidden">
+                                                            <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&amp;q=80" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="Project Image">
+                                                        <div class="absolute top-4 left-4">
+                                <span class="px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-white/90 backdrop-blur-md text-brandPrimary shadow-sm">
+                                    In Progress                                </span>
+                            </div>
+                        </div>
+                        <div class="p-6 md:p-8 flex-1 flex flex-col">
+                            <div class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3">
+                                Education                            </div>
+                            <h3 class="text-[17px] font-black text-slate-900 leading-tight mb-4 group-hover:text-brandPrimary transition-colors line-clamp-2">
+                                GovTech Residency 2026                            </h3>
+                            <p class="text-sm text-slate-500 leading-relaxed mb-6 line-clamp-3 flex-1">
+                                Providing 50 tech startups with direct access to government datasets to build citizen-centric application prototypes.                            </p>
+                            
+                            <div class="pt-5 border-t border-slate-100 mt-auto">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">estimated_cost</span>
+                                    <span class="text-xs font-black text-slate-700">N/A</span>
+                                </div>
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">progress</span>
+                                    <span class="text-[10px] font-black text-brandPrimary">0%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                                    <div class="bg-brandPrimary h-1.5 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                                        <article class="group bg-white rounded-3xl border border-slate-200 overflow-hidden hover:shadow-xl hover:shadow-brandPrimary/5 transition-all duration-300 flex flex-col h-full hover:-translate-y-1 reveal reveal-delay-1">
+                        <div class="aspect-video bg-slate-100 relative overflow-hidden">
+                                                            <img src="https://images.unsplash.com/photo-1544928147-79a2dbc1f389?w=600&amp;q=80" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="Project Image">
+                                                        <div class="absolute top-4 left-4">
+                                <span class="px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-white/90 backdrop-blur-md text-brandPrimary shadow-sm">
+                                    Active                                </span>
+                            </div>
+                        </div>
+                        <div class="p-6 md:p-8 flex-1 flex flex-col">
+                            <div class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3">
+                                Infrastructure                            </div>
+                            <h3 class="text-[17px] font-black text-slate-900 leading-tight mb-4 group-hover:text-brandPrimary transition-colors line-clamp-2">
+                                Smart City Sensor Grid                            </h3>
+                            <p class="text-sm text-slate-500 leading-relaxed mb-6 line-clamp-3 flex-1">
+                                Deployment of 5,000+ IoT sensors across the capital to monitor air quality and traffic flow in real-time.                            </p>
+                            
+                            <div class="pt-5 border-t border-slate-100 mt-auto">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">estimated_cost</span>
+                                    <span class="text-xs font-black text-slate-700">N/A</span>
+                                </div>
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">progress</span>
+                                    <span class="text-[10px] font-black text-brandPrimary">0%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                                    <div class="bg-brandPrimary h-1.5 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                                    </div>
+            </div>
+            
+        </div>
+    </div>
+</section>
+
+
+
+
+<section class="py-16 bg-slate-50 border-t border-slate-100">
+  <div class="container mx-auto px-4 md:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+      
+      <!-- Left Column: Stay Connected -->
+      <div class="space-y-6">
+        <p class="text-[10px] uppercase tracking-[0.3em] text-slate-400 font-black">Stay Connected</p>
+        <h2 class="text-3xl font-black text-brandPrimary text-left">Need help or want to report a civic issue?</h2>
+        <p class="text-slate-600 text-base leading-relaxed">Reach our citizen support desk or submit service requests online.</p>
+        <div class="pt-4 flex flex-wrap gap-4">
+          <a href="https://badulla.mc.gov.lk/contact" class="px-7 py-3 rounded-xl bg-brandPrimary hover:bg-brandPrimary/90 text-white text-xs font-black uppercase tracking-[0.2em] shadow-lg shadow-brandPrimary/20 transition-all">Contact Us</a>
+          <a href="https://badulla.mc.gov.lk/services" class="px-7 py-3 rounded-xl border-2 border-brandPrimary text-brandPrimary hover:bg-brandPrimary hover:text-white text-xs font-black uppercase tracking-[0.2em] transition-all">Submit Request</a>
+        </div>
+      </div>
+
+      <!-- Right Column: Complaints Call to Action -->
+      <div class="bg-slate-50 border border-slate-200/60 rounded-3xl p-8 shadow-sm flex flex-col items-center text-center justify-center">
+        <div class="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mb-6">
+            <i data-lucide="alert-triangle" class="w-8 h-8"></i>
+        </div>
+        <h3 class="text-2xl font-black mb-4 text-brandPrimary text-left">Submit a Civic Complaint</h3>
+        <p class="text-slate-500 text-sm mb-8 max-w-md mx-auto">
+            Your complaint will be recorded in our administration system and instantly routed to our officers.        </p>
+        
+        <a href="https://badulla.mc.gov.lk/complaint" class="w-full max-w-xs py-4 rounded-xl bg-brandPrimary hover:bg-brandPrimary/90 text-white text-sm font-black uppercase tracking-[0.2em] shadow-lg shadow-brandPrimary/20 transition-all flex items-center justify-center gap-2">
+          <i data-lucide="edit-3" class="w-5 h-5 text-white/80"></i> Submit a Civic Complaint        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const slides = document.querySelectorAll('.hero-slide');
+    if (slides.length > 1) {
+        let current = 0;
+        const duration = 5000;
+        setInterval(() => {
+            slides[current].classList.add('opacity-0');
+            slides[current].classList.remove('active');
+            current = (current + 1) % slides.length;
+            slides[current].classList.remove('opacity-0');
+            slides[current].classList.add('active');
+        }, duration);
+    }
+});
+window.showLeadershipModal = function(data) {
+    document.getElementById('leaderModalName').innerText = data.name;
+    document.getElementById('leaderModalRole').innerText = data.role;
+    document.getElementById('leaderModalImage').src = data.image;
+    document.getElementById('leaderModalStatement').innerText = data.statement;
+    document.getElementById('leadershipModal').classList.remove('hidden');
+    lucide.createIcons();
+};
+
+window.closeLeadershipModal = function() {
+    document.getElementById('leadershipModal').classList.add('hidden');
+};
+
+(() => {
+  // Reveal-on-scroll animation
+  const elements = document.querySelectorAll('.reveal');
+  if (elements.length) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('reveal-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    elements.forEach(el => observer.observe(el));
+  }
+
+  // Animated Stat Counters triggered by IntersectionObserver
+  function animateCounter(el) {
+    const target  = parseInt(el.getAttribute('data-target'), 10);
+    const suffix  = el.getAttribute('data-suffix') || '';
+    const dur     = 1800;
+    const start   = performance.now();
+    const easeOut = t => 1 - Math.pow(1 - t, 3);
+    function step(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / dur, 1);
+      const value = Math.round(easeOut(progress) * target);
+      el.textContent = value.toLocaleString() + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  const statEls = document.querySelectorAll('.stat-counter-val');
+  if (statEls.length) {
+    const statObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounter(entry.target);
+          statObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    statEls.forEach(el => statObserver.observe(el));
+  }
+
+  const slides = ["\/uploads\/hero\/27\/1774337059_0_slide1.jpg"];
+  if (slides.length > 1 && document.getElementById('hero-bg')) {
+    let idx = 0;
+    setInterval(() => {
+      idx = (idx + 1) % slides.length;
+      document.getElementById('hero-bg').style.backgroundImage = `url('${slides[idx]}')`;
+    }, 6000);
+  }
+
+  // Dynamic Services Magnetic Highlight sliding background
+  const servicesPanel = document.getElementById('services-panel');
+  const activeBg = document.getElementById('active-bg');
+  const serviceCards = document.querySelectorAll('.service-card');
+  const defaultCard = document.querySelector('.default-active-card');
+
+  if (servicesPanel && activeBg && serviceCards.length) {
+    function updateSlidingBg(targetCard) {
+      if (!targetCard) {
+        activeBg.style.opacity = '0';
+        return;
+      }
+      const containerRect = servicesPanel.getBoundingClientRect();
+      const targetRect = targetCard.getBoundingClientRect();
+      const left = targetRect.left - containerRect.left;
+      const width = targetRect.width;
+
+      activeBg.style.left = `${left}px`;
+      activeBg.style.width = `${width}px`;
+      activeBg.style.opacity = '1';
+
+      serviceCards.forEach(card => {
+        if (card === targetCard) {
+          card.classList.add('is-active');
+        } else {
+          card.classList.remove('is-active');
+        }
+      });
+    }
+
+    // Set initial position
+    setTimeout(() => {
+      updateSlidingBg(defaultCard);
+    }, 200);
+
+    serviceCards.forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        updateSlidingBg(card);
+      });
+    });
+
+    servicesPanel.addEventListener('mouseleave', () => {
+      updateSlidingBg(defaultCard);
+    });
+
+    window.addEventListener('resize', () => {
+      const activeCard = document.querySelector('.service-card.is-active') || defaultCard;
+      updateSlidingBg(activeCard);
+    });
+  }
+})();
+</script>
+</main>
+
+    <div id="quickLinksDock" class="fixed right-5 bottom-24 z-[95]">
+        <div class="relative group">
+            <button id="quickLinksToggle" class="w-14 h-14 rounded-2xl header-cta-primary shadow-2xl flex items-center justify-center border border-white/20 transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-brandAccent" title="Quick Links">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+            </button>
+            <div id="quickLinksPanel" class="absolute bottom-16 right-0 w-56 bg-white border border-slate-200 rounded-2xl shadow-xl p-3 opacity-0 pointer-events-none translate-y-2 transition-all duration-200">
+                <a href="https://badulla.mc.gov.lk/services" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-50">
+                    <i data-lucide="layers" class="w-4 h-4 text-brandPrimary"></i> Services
+                </a>
+                <a href="https://badulla.mc.gov.lk/tenders" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-50">
+                    <i data-lucide="file-text" class="w-4 h-4 text-brandPrimary"></i> Tenders
+                </a>
+                <a href="https://badulla.mc.gov.lk/news" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-50">
+                    <i data-lucide="newspaper" class="w-4 h-4 text-brandPrimary"></i> News
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <button id="backToTopBtn" class="fixed right-5 bottom-6 z-[95] w-12 h-12 rounded-xl bg-brandPrimary text-white shadow-lg flex items-center justify-center opacity-0 pointer-events-none transition-all duration-200"><i data-lucide="arrow-up" class="w-5 h-5"></i></button>
+
+    <footer class="relative bg-gradient-to-br from-[#0c1e35] via-[#091527] to-[#070f1c] text-slate-300 py-10 mt-auto border-t border-slate-800/60 font-sans overflow-hidden">
+        <canvas id="footer-particles-canvas" class="absolute inset-0 w-full h-full z-0 pointer-events-none opacity-50"></canvas>
+        <div class="container mx-auto px-4 md:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6">
+                <!-- Left Column Area: Logo, Name & Social Links -->
+                <div class="lg:col-span-4 space-y-4">
+                    <!-- Title & Logo -->
+                    <div class="flex items-center gap-3">
+                                                    <img src="https://badulla.mc.gov.lk/uploads/branding/1/logo_en_20260616110258_b2fbffa5.png" class="h-10 w-auto object-contain shrink-0" alt="Site Logo">
+                                                <div class="leading-tight">
+                            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">ප්‍රධාන ආයතනය</div>                            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">முதன்மை நிறுவனம்</div>                            <div class="text-2xl font-black text-white tracking-tight">Main Site</div>
+                        </div>
+                    </div>
+
+                    <!-- Social / Contact Links directly below (no description text) -->
+                    <div class="flex items-center gap-4 mt-6">
+                        
+                                                <a href="mailto:meegahakiulaps@gmail.com" class="group w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-amber-500/20 hover:border-amber-500/30 transition-all hover:-translate-y-1" title="Email Us">
+                            <i data-lucide="mail" class="w-4 h-4 text-white group-hover:text-amber-400 transition-colors"></i>
+                        </a>
+                        
+                        
+                                            </div>
+                </div>
+
+                <!-- Middle Column Area: Two columns of links side-by-side without headings -->
+                <div class="lg:col-span-4 grid grid-cols-2 gap-4 md:pt-2">
+                    <!-- Column 1 -->
+                    <ul class="space-y-2">
+                                                <li>
+                            <a href="#" class="text-sm font-semibold text-slate-300 hover:text-amber-500 transition-colors">
+                                Home                            </a>
+                        </li>
+                                                <li>
+                            <a href="https://badulla.mc.gov.lk/about" class="text-sm font-semibold text-slate-300 hover:text-amber-500 transition-colors">
+                                About                            </a>
+                        </li>
+                                                <li>
+                            <a href="https://badulla.mc.gov.lk/services" class="text-sm font-semibold text-slate-300 hover:text-amber-500 transition-colors">
+                                Services                            </a>
+                        </li>
+                                            </ul>
+                    <!-- Column 2 -->
+                    <ul class="space-y-2">
+                                                <li>
+                            <a href="https://badulla.mc.gov.lk/news" class="text-sm font-semibold text-slate-300 hover:text-amber-500 transition-colors">
+                                News                            </a>
+                        </li>
+                                                <li>
+                            <a href="https://badulla.mc.gov.lk/tenders" class="text-sm font-semibold text-slate-300 hover:text-amber-500 transition-colors">
+                                Tenders                            </a>
+                        </li>
+                                                <li>
+                            <a href="https://badulla.mc.gov.lk/downloads" class="text-sm font-semibold text-slate-300 hover:text-amber-500 transition-colors">
+                                Downloads                            </a>
+                        </li>
+                                                <li>
+                            <a href="https://badulla.mc.gov.lk/contact" class="text-sm font-semibold text-slate-300 hover:text-amber-500 transition-colors">
+                                Contact                            </a>
+                        </li>
+                                            </ul>
+                </div>
+
+                <!-- Right Column Area: Contact details & Call-to-action button -->
+                <div class="lg:col-span-4 lg:pl-8 flex flex-col justify-between">
+                    <div>
+                        <h4 class="text-lg font-bold text-white mb-3">Contact Us</h4>
+                        
+                        <div class="space-y-3 text-sm text-slate-300">
+                                                        <p class="leading-relaxed">Kandy Road , Meegahakiula</p>
+                                                        
+                                                        <p><a href="tel:0552245775" class="hover:text-amber-500 transition-colors">0552245775</a></p>
+                                                        
+                                                        <p><a href="mailto:meegahakiulaps@gmail.com" class="hover:text-amber-500 transition-colors">meegahakiulaps@gmail.com</a></p>
+                                                    </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+            <!-- Bottom Row: Copyright & Social -->
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 border-t border-slate-800/80 mt-10 pt-6 text-xs text-slate-500">
+                <div>© 2026 Department of National Technology. All rights reserved.</div>
+                <div class="flex items-center gap-6">
+                    <a href="https://badulla.mc.gov.lk" class="hover:text-slate-300 transition-colors flex items-center gap-1.5 pr-4 border-r border-slate-700/50">
+                        <i data-lucide="globe" class="w-3.5 h-3.5"></i>
+                        <span>badulla.mc.gov.lk</span>
+                    </a>
+                    
+                    <div class="flex items-center gap-4">
+                                                <a href="mailto:meegahakiulaps@gmail.com" class="text-slate-500 hover:text-amber-400 transition-colors" title="Email" aria-label="Email">
+                            <i data-lucide="mail" class="w-4 h-4"></i>
+                        </a>
+                        
+                        
+                        
+                        
+                                            </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        const sidebar = document.getElementById('mobileSidebar');
+        const sidebarPanel = document.getElementById('sidebarPanel');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const openBtns = [
+            document.getElementById('openSidebar'),
+            document.getElementById('openSidebar2'),
+            document.getElementById('openSidebar3'),
+            document.getElementById('openSidebar4')
+        ];
+        const closeBtn = document.getElementById('closeSidebar');
+
+        function toggleSidebar(open) {
+            if (!sidebar || !sidebarPanel || !sidebarOverlay) return;
+            if (open) {
+                sidebar.classList.remove('invisible', 'pointer-events-none');
+                sidebarPanel.classList.remove('translate-x-full');
+                sidebarOverlay.classList.remove('opacity-0');
+                document.body.style.overflow = 'hidden';
+            } else {
+                sidebarPanel.classList.add('translate-x-full');
+                sidebarOverlay.classList.add('opacity-0');
+                document.body.style.overflow = '';
+                setTimeout(() => sidebar.classList.add('invisible', 'pointer-events-none'), 250);
+            }
+        }
+
+        openBtns.forEach(btn => btn && btn.addEventListener('click', () => toggleSidebar(true)));
+        closeBtn && closeBtn.addEventListener('click', () => toggleSidebar(false));
+        sidebarOverlay && sidebarOverlay.addEventListener('click', () => toggleSidebar(false));
+
+        const quickDock = document.getElementById('quickLinksDock');
+        const quickToggle = document.getElementById('quickLinksToggle');
+        const quickPanel = document.getElementById('quickLinksPanel');
+        let quickOpen = false;
+        function setQuickOpen(state) {
+            quickOpen = state;
+            if (!quickPanel) return;
+            if (state) {
+                quickPanel.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-2');
+            } else {
+                quickPanel.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+            }
+        }
+        quickToggle && quickToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            setQuickOpen(!quickOpen);
+        });
+        document.addEventListener('click', () => setQuickOpen(false));
+
+        document.addEventListener('mousemove', (e) => {
+            if (!quickDock) return;
+            const x = ((window.innerWidth - e.clientX) / window.innerWidth - 0.5) * 8;
+            const y = ((window.innerHeight - e.clientY) / window.innerHeight - 0.5) * 8;
+            quickDock.style.transform = `translate(${x}px, ${y}px)`;
+        });
+
+        const backToTopBtn = document.getElementById('backToTopBtn');
+        const syncBackToTop = () => {
+            if (!backToTopBtn) return;
+            if (window.scrollY > 320) {
+                backToTopBtn.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                backToTopBtn.classList.add('opacity-0', 'pointer-events-none');
+            }
+        };
+        window.addEventListener('scroll', syncBackToTop);
+        syncBackToTop();
+        backToTopBtn && backToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+        // Global scroll reveal animation for all pages
+        const revealCandidates = document.querySelectorAll(
+            'main section, main article, main .rounded-xl, main .rounded-2xl, main .rounded-3xl, main .card, main .group'
+        );
+        revealCandidates.forEach((el, idx) => {
+            if (el.closest('header, footer, nav')) return;
+            if (el.classList.contains('reveal-on-scroll')) return;
+            el.classList.add('reveal-on-scroll');
+            el.style.transitionDelay = `${Math.min((idx % 6) * 55, 220)}ms`;
+        });
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -8% 0px' });
+
+        document.querySelectorAll('.reveal-on-scroll').forEach((el) => revealObserver.observe(el));
+        const fcanvas = document.getElementById('footer-particles-canvas');
+        if (fcanvas) {
+            const fctx = fcanvas.getContext('2d');
+            let w, h;
+            const resizeFCanvas = () => { w = fcanvas.width = fcanvas.offsetWidth; h = fcanvas.height = fcanvas.offsetHeight; };
+            window.addEventListener('resize', resizeFCanvas);
+            resizeFCanvas();
+
+            const ANIM_TYPE = 'particles';
+
+            // ---- PARTICLES ----
+            if (ANIM_TYPE === 'particles') {
+                let mouse = { x: -9999, y: -9999 };
+                const colors = ['#f59e0b','#3b82f6','#ef4444','#10b981','#8b5cf6','#ec4899'];
+                const pts = Array.from({length: Math.min(Math.floor(w/12),150)}, () => ({
+                    x: Math.random()*w, y: Math.random()*h,
+                    vx:(Math.random()-.5)*1.5, vy:(Math.random()-.5)*1.5,
+                    size:Math.random()*2+1, alpha:Math.random()*.6+.2,
+                    color:colors[Math.floor(Math.random()*colors.length)]
+                }));
+                const loop = () => {
+                    fctx.clearRect(0,0,w,h);
+                    pts.forEach(p => {
+                        p.x+=p.vx; p.y+=p.vy;
+                        if(p.x<0||p.x>w) p.vx*=-1;
+                        if(p.y<0||p.y>h) p.vy*=-1;
+                        fctx.save(); fctx.globalAlpha=p.alpha; fctx.fillStyle=p.color;
+                        fctx.beginPath(); fctx.arc(p.x,p.y,p.size,0,Math.PI*2); fctx.fill(); fctx.restore();
+                    });
+                    requestAnimationFrame(loop);
+                }; loop();
+            }
+            // ---- CONSTELLATION ----
+            else if (ANIM_TYPE === 'constellation') {
+                const count = Math.min(Math.floor(w/16), 100);
+                const pts = Array.from({length:count}, () => ({
+                    x:Math.random()*w, y:Math.random()*h,
+                    vx:(Math.random()-.5)*.5, vy:(Math.random()-.5)*.5
+                }));
+                const loop = () => {
+                    fctx.clearRect(0,0,w,h);
+                    pts.forEach(p => {
+                        p.x+=p.vx; p.y+=p.vy;
+                        if(p.x<0||p.x>w) p.vx*=-1;
+                        if(p.y<0||p.y>h) p.vy*=-1;
+                    });
+                    for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
+                        const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y, d=Math.sqrt(dx*dx+dy*dy);
+                        if(d<130){fctx.save(); fctx.globalAlpha=(130-d)/130*.45; fctx.strokeStyle='#60a5fa'; fctx.lineWidth=.8; fctx.beginPath(); fctx.moveTo(pts[i].x,pts[i].y); fctx.lineTo(pts[j].x,pts[j].y); fctx.stroke(); fctx.restore();}
+                    }
+                    pts.forEach(p => {fctx.save(); fctx.fillStyle='#93c5fd'; fctx.globalAlpha=.75; fctx.beginPath(); fctx.arc(p.x,p.y,2,0,Math.PI*2); fctx.fill(); fctx.restore();});
+                    requestAnimationFrame(loop);
+                }; loop();
+            }
+            // ---- AURORA ----
+            else if (ANIM_TYPE === 'aurora') {
+                let t=0;
+                const blobs=[
+                    {x:.25,y:.35,r:.35,col:'rgba(139,92,246,'},
+                    {x:.72,y:.28,r:.30,col:'rgba(59,130,246,'},
+                    {x:.55,y:.72,r:.32,col:'rgba(16,185,129,'},
+                    {x:.15,y:.65,r:.28,col:'rgba(236,72,153,'}
+                ];
+                const loop = () => {
+                    fctx.clearRect(0,0,w,h);
+                    blobs.forEach((b,i) => {
+                        const ox=Math.sin(t*.35+i*1.4)*w*.15;
+                        const oy=Math.cos(t*.28+i*1.1)*h*.15;
+                        const rad=b.r*Math.min(w,h);
+                        const grd=fctx.createRadialGradient(b.x*w+ox,b.y*h+oy,0,b.x*w+ox,b.y*h+oy,rad);
+                        grd.addColorStop(0,b.col+'0.28)');
+                        grd.addColorStop(1,b.col+'0)');
+                        fctx.fillStyle=grd;
+                        fctx.beginPath(); fctx.arc(b.x*w+ox,b.y*h+oy,rad,0,Math.PI*2); fctx.fill();
+                    });
+                    t+=0.018;
+                    requestAnimationFrame(loop);
+                }; loop();
+            }
+            // ---- BOKEH ----
+            else if (ANIM_TYPE === 'bokeh') {
+                const cols=['rgba(139,92,246','rgba(59,130,246','rgba(16,185,129','rgba(236,72,153'];
+                const bks=Array.from({length:40}, () => ({
+                    x:Math.random()*w, y:h+Math.random()*h,
+                    r:Math.random()*30+10, vy:Math.random()*.7+.2,
+                    a:Math.random()*.3+.08, col:cols[Math.floor(Math.random()*cols.length)]
+                }));
+                const loop = () => {
+                    fctx.clearRect(0,0,w,h);
+                    bks.forEach(b => {
+                        b.y-=b.vy;
+                        if(b.y<-b.r*2){b.y=h+b.r; b.x=Math.random()*w;}
+                        const grd=fctx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r);
+                        grd.addColorStop(0,b.col+','+b.a+')');
+                        grd.addColorStop(1,b.col+',0)');
+                        fctx.fillStyle=grd;
+                        fctx.beginPath(); fctx.arc(b.x,b.y,b.r,0,Math.PI*2); fctx.fill();
+                    });
+                    requestAnimationFrame(loop);
+                }; loop();
+            }
+            // ---- MATRIX ----
+            else if (ANIM_TYPE === 'matrix') {
+                const fontSize=14;
+                const cols=Math.floor(w/fontSize);
+                const drops=Array.from({length:cols},()=>Math.floor(Math.random()*(h/fontSize)));
+                const chars='アイウエオカキクケコサシスセソタチツテトナニヌネノ0123456789ABCDEF';
+                const loop = () => {
+                    fctx.globalCompositeOperation = 'destination-out';
+                    fctx.fillStyle = 'rgba(0,0,0,0.05)';
+                    fctx.fillRect(0,0,w,h);
+                    fctx.globalCompositeOperation = 'source-over';
+                    
+                    fctx.font=fontSize+'px monospace';
+                    drops.forEach((y,i) => {
+                        const ch=chars[Math.floor(Math.random()*chars.length)];
+                        fctx.fillStyle=`hsl(${120+Math.random()*30},100%,${50+Math.random()*20}%)`;
+                        fctx.fillText(ch,i*fontSize,y*fontSize);
+                        if(y*fontSize>h&&Math.random()>.975) drops[i]=0;
+                        drops[i]++;
+                    });
+                    requestAnimationFrame(loop);
+                }; loop();
+            }
+        }
+
+        /* Global Background Animation — type: particles */
+        (function() {
+            const gcanvas = document.getElementById('global-particles-canvas');
+            if (!gcanvas) return;
+            const gctx = gcanvas.getContext('2d');
+            let gw, gh;
+
+            const resizeG = () => { gw = gcanvas.width = window.innerWidth; gh = gcanvas.height = window.innerHeight; };
+            window.addEventListener('resize', resizeG);
+            resizeG();
+
+            const ANIM_TYPE = 'particles';
+
+            // ---- PARTICLES ----
+            if (ANIM_TYPE === 'particles') {
+                let mouse = { x: -9999, y: -9999 };
+                window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+                window.addEventListener('mouseout', () => { mouse.x = -9999; mouse.y = -9999; });
+
+                const colors = ['#f59e0b','#3b82f6','#ef4444','#10b981','#8b5cf6','#ec4899'];
+                const pts = Array.from({length: Math.min(Math.floor(window.innerWidth/12),150)}, () => ({
+                    x: Math.random()*gw, y: Math.random()*gh,
+                    vx:(Math.random()-.5)*1.5, vy:(Math.random()-.5)*1.5,
+                    size:Math.random()*2+1, alpha:Math.random()*.6+.2,
+                    color:colors[Math.floor(Math.random()*colors.length)]
+                }));
+                const loop = () => {
+                    gctx.clearRect(0,0,gw,gh);
+                    pts.forEach(p => {
+                        p.x+=p.vx; p.y+=p.vy;
+                        if(p.x<0||p.x>gw) p.vx*=-1;
+                        if(p.y<0||p.y>gh) p.vy*=-1;
+                        const dx=mouse.x-p.x, dy=mouse.y-p.y, dist=Math.sqrt(dx*dx+dy*dy);
+                        if(dist<120&&dist>0){const f=(120-dist)/120; p.x-=(dx/dist)*f*3.5; p.y-=(dy/dist)*f*3.5;}
+                        gctx.save(); gctx.globalAlpha=p.alpha; gctx.fillStyle=p.color;
+                        gctx.beginPath(); gctx.arc(p.x,p.y,p.size,0,Math.PI*2); gctx.fill(); gctx.restore();
+                    });
+                    requestAnimationFrame(loop);
+                }; loop();
+            }
+
+            // ---- CONSTELLATION ----
+            else if (ANIM_TYPE === 'constellation') {
+                let mouse = { x: -9999, y: -9999 };
+                window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+                window.addEventListener('mouseout', () => { mouse.x = -9999; mouse.y = -9999; });
+
+                const count = Math.min(Math.floor(gw/16), 100);
+                const pts = Array.from({length:count}, () => ({
+                    x:Math.random()*gw, y:Math.random()*gh,
+                    vx:(Math.random()-.5)*.5, vy:(Math.random()-.5)*.5
+                }));
+                const loop = () => {
+                    gctx.clearRect(0,0,gw,gh);
+                    pts.forEach(p => {
+                        p.x+=p.vx; p.y+=p.vy;
+                        if(p.x<0||p.x>gw) p.vx*=-1;
+                        if(p.y<0||p.y>gh) p.vy*=-1;
+                        const mdx=mouse.x-p.x, mdy=mouse.y-p.y, md=Math.sqrt(mdx*mdx+mdy*mdy);
+                        if(md<100&&md>0){p.x-=(mdx/md)*1.2; p.y-=(mdy/md)*1.2;}
+                    });
+                    for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
+                        const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y, d=Math.sqrt(dx*dx+dy*dy);
+                        if(d<130){gctx.save(); gctx.globalAlpha=(130-d)/130*.45; gctx.strokeStyle='#60a5fa'; gctx.lineWidth=.8; gctx.beginPath(); gctx.moveTo(pts[i].x,pts[i].y); gctx.lineTo(pts[j].x,pts[j].y); gctx.stroke(); gctx.restore();}
+                    }
+                    pts.forEach(p => {gctx.save(); gctx.fillStyle='#93c5fd'; gctx.globalAlpha=.75; gctx.beginPath(); gctx.arc(p.x,p.y,2,0,Math.PI*2); gctx.fill(); gctx.restore();});
+                    requestAnimationFrame(loop);
+                }; loop();
+            }
+
+            // ---- AURORA ----
+            else if (ANIM_TYPE === 'aurora') {
+                let t=0;
+                const blobs=[
+                    {x:.25,y:.35,r:.35,col:'rgba(139,92,246,'},
+                    {x:.72,y:.28,r:.30,col:'rgba(59,130,246,'},
+                    {x:.55,y:.72,r:.32,col:'rgba(16,185,129,'},
+                    {x:.15,y:.65,r:.28,col:'rgba(236,72,153,'},
+                    {x:.8,y:.6,r:.25,col:'rgba(245,158,11,'},
+                ];
+                const loop = () => {
+                    gctx.clearRect(0,0,gw,gh);
+                    blobs.forEach((b,i) => {
+                        const ox=Math.sin(t*.35+i*1.4)*gw*.15;
+                        const oy=Math.cos(t*.28+i*1.1)*gh*.15;
+                        const rad=b.r*Math.min(gw,gh);
+                        const grd=gctx.createRadialGradient(b.x*gw+ox,b.y*gh+oy,0,b.x*gw+ox,b.y*gh+oy,rad);
+                        grd.addColorStop(0,b.col+'0.28)');
+                        grd.addColorStop(1,b.col+'0)');
+                        gctx.fillStyle=grd;
+                        gctx.beginPath(); gctx.arc(b.x*gw+ox,b.y*gh+oy,rad,0,Math.PI*2); gctx.fill();
+                    });
+                    t+=0.018;
+                    requestAnimationFrame(loop);
+                }; loop();
+            }
+
+            // ---- BOKEH ----
+            else if (ANIM_TYPE === 'bokeh') {
+                const cols=['rgba(139,92,246','rgba(59,130,246','rgba(16,185,129','rgba(236,72,153','rgba(248,113,113','rgba(245,158,11'];
+                const bks=Array.from({length:60}, () => ({
+                    x:Math.random()*gw, y:gh+Math.random()*gh,
+                    r:Math.random()*30+10, vy:Math.random()*.7+.2,
+                    a:Math.random()*.3+.08, col:cols[Math.floor(Math.random()*cols.length)]
+                }));
+                const loop = () => {
+                    gctx.clearRect(0,0,gw,gh);
+                    bks.forEach(b => {
+                        b.y-=b.vy;
+                        if(b.y<-b.r*2){b.y=gh+b.r; b.x=Math.random()*gw;}
+                        const grd=gctx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r);
+                        grd.addColorStop(0,b.col+','+b.a+')');
+                        grd.addColorStop(1,b.col+',0)');
+                        gctx.fillStyle=grd;
+                        gctx.beginPath(); gctx.arc(b.x,b.y,b.r,0,Math.PI*2); gctx.fill();
+                    });
+                    requestAnimationFrame(loop);
+                }; loop();
+            }
+
+            // ---- MATRIX ----
+            else if (ANIM_TYPE === 'matrix') {
+                const fontSize=14;
+                const cols=Math.floor(gw/fontSize);
+                const drops=Array.from({length:cols},()=>Math.floor(Math.random()*(gh/fontSize)));
+                const chars='アイウエオカキクケコサシスセソタチツテトナニヌネノ0123456789ABCDEF';
+                const loop = () => {
+                    gctx.globalCompositeOperation = 'destination-out';
+                    gctx.fillStyle = 'rgba(0,0,0,0.05)';
+                    gctx.fillRect(0,0,gw,gh);
+                    gctx.globalCompositeOperation = 'source-over';
+                    
+                    gctx.font=fontSize+'px monospace';
+                    drops.forEach((y,i) => {
+                        const ch=chars[Math.floor(Math.random()*chars.length)];
+                        gctx.fillStyle=`hsl(${120+Math.random()*30},100%,${50+Math.random()*20}%)`;
+                        gctx.fillText(ch,i*fontSize,y*fontSize);
+                        if(y*fontSize>gh&&Math.random()>.975) drops[i]=0;
+                        drops[i]++;
+                    });
+                    requestAnimationFrame(loop);
+                }; loop();
+            }
+        })();
+    </script>
+
+    <!-- Chatbot Widget -->
+    <div id="civicChatbot" class="fixed right-5 bottom-24 z-[100] flex flex-col items-end">
+        <!-- Collapsible Chat Window -->
+        <div id="chatbotWindow" class="w-80 h-[380px] bg-slate-900 border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden mb-3 translate-y-4 opacity-0 pointer-events-none transition-all duration-300">
+            <!-- Header -->
+            <div class="px-4 py-3 bg-slate-950 border-b border-white/5 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <div class="w-6 h-6 rounded-full bg-brandPrimary flex items-center justify-center text-white">
+                        <i data-lucide="bot" class="w-3.5 h-3.5"></i>
+                    </div>
+                    <div class="leading-none">
+                        <h4 class="text-xs font-bold text-white uppercase tracking-wider">Civic Assistant</h4>
+                        <span class="text-[8px] text-green-400 font-bold uppercase tracking-widest">Online</span>
+                    </div>
+                </div>
+                <button onclick="toggleChatbot(false)" class="text-white/60 hover:text-white transition-colors">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <!-- Message area -->
+            <div id="chatbotMessages" class="flex-grow p-4 overflow-y-auto space-y-3 font-sans text-xs text-slate-300">
+                <!-- Bot Welcome Message -->
+                <div class="flex gap-2">
+                    <div class="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center shrink-0">
+                        <i data-lucide="bot" class="w-3.5 h-3.5 text-brandAccent"></i>
+                    </div>
+                    <div class="bg-white/5 border border-white/5 rounded-2xl rounded-tl-none p-3 max-w-[85%] leading-relaxed">
+                        Hello! Welcome to the official civic portal assistant. How can I help you today?
+                    </div>
+                </div>
+            </div>
+            <!-- Quick Options -->
+            <div id="chatbotOptions" class="px-3 py-2 bg-slate-950 border-t border-white/5 flex flex-wrap gap-1.5 justify-center shrink-0">
+                <button onclick="selectChatOption('pay_tax')" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-brandPrimary hover:text-white border border-white/10 text-[9px] font-bold tracking-tight text-slate-300 transition-all">Pay Taxes</button>
+                <button onclick="selectChatOption('notices')" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-brandPrimary hover:text-white border border-white/10 text-[9px] font-bold tracking-tight text-slate-300 transition-all">Notices & Tenders</button>
+                <button onclick="selectChatOption('complaint')" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-brandPrimary hover:text-white border border-white/10 text-[9px] font-bold tracking-tight text-slate-300 transition-all">Lodge Complaint</button>
+                <button onclick="selectChatOption('downloads')" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-brandPrimary hover:text-white border border-white/10 text-[9px] font-bold tracking-tight text-slate-300 transition-all">Download Forms</button>
+            </div>
+            <!-- Message Input -->
+            <div class="px-3 py-2 bg-slate-950 border-t border-white/5 flex items-center gap-2 shrink-0">
+                <input type="text" id="chatbotInput" placeholder="Type a message..." class="flex-grow bg-slate-900 border border-white/10 text-slate-300 text-[11px] rounded-full px-3 py-1.5 focus:outline-none focus:border-brandAccent" onkeypress="handleChatInput(event)">
+                <button onclick="sendChatMessage()" class="w-7 h-7 rounded-full bg-brandPrimary text-white flex items-center justify-center shrink-0 hover:bg-brandPrimary/90 transition-colors">
+                    <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Floating Chat Button -->
+        <button id="chatbotToggleBtn" onclick="toggleChatbot()" class="w-14 h-14 rounded-full bg-brandPrimary text-white shadow-2xl flex items-center justify-center border-2 border-white transition-all duration-300 hover:scale-105" title="Civic Assistant Chat">
+            <i data-lucide="bot" class="w-6 h-6 animate-pulse"></i>
+        </button>
+    </div>
+
+    <!-- Accessibility and Chatbot Scripts -->
+    <script>
+        // --- Gov Drawer ---
+        function toggleGovDrawer() {
+            const drawer = document.getElementById('govDrawer');
+            const chevron = document.getElementById('govChevron');
+            if (drawer) {
+                drawer.classList.toggle('hidden');
+                if (drawer.classList.contains('hidden')) {
+                    chevron.style.transform = 'rotate(0deg)';
+                } else {
+                    chevron.style.transform = 'rotate(180deg)';
+                }
+            }
+        }
+
+        // --- Contrast Toggle ---
+        function toggleContrast() {
+            const html = document.documentElement;
+            html.classList.toggle('high-contrast');
+            const isHC = html.classList.contains('high-contrast');
+            localStorage.setItem('high-contrast', isHC ? '1' : '0');
+        }
+        if (localStorage.getItem('high-contrast') === '1') {
+            document.documentElement.classList.add('high-contrast');
+        }
+
+        // --- Font Resizing ---
+        function changeFontSize(direction) {
+            const html = document.documentElement;
+            html.classList.remove('text-size-sm', 'text-size-md', 'text-size-lg');
+            if (direction === -1) {
+                html.classList.add('text-size-sm');
+                localStorage.setItem('font-scale', 'sm');
+            } else if (direction === 1) {
+                html.classList.add('text-size-lg');
+                localStorage.setItem('font-scale', 'lg');
+            } else {
+                html.classList.add('text-size-md');
+                localStorage.setItem('font-scale', 'md');
+            }
+        }
+        const savedScale = localStorage.getItem('font-scale');
+        if (savedScale) {
+            document.documentElement.classList.add('text-size-' + savedScale);
+        }
+
+        // --- Voice Assistant (TTS on hover) ---
+        let audioAssistantEnabled = false;
+        function toggleAudioAssistant() {
+            audioAssistantEnabled = !audioAssistantEnabled;
+            const btn = document.getElementById('audioAssistantBtn');
+            const statusText = document.getElementById('audioStatusText');
+            
+            if (audioAssistantEnabled) {
+                btn.classList.add('bg-brandPrimary/20', 'text-brandAccent');
+                statusText.innerText = 'On';
+                statusText.style.color = 'var(--accent)';
+                speakText("Voice assistant enabled. Hover over text to hear speech.");
+            } else {
+                btn.classList.remove('bg-brandPrimary/20', 'text-brandAccent');
+                statusText.innerText = 'Off';
+                statusText.style.color = '';
+                window.speechSynthesis.cancel();
+            }
+        }
+
+        function speakText(text) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        document.addEventListener('mouseover', (e) => {
+            if (!audioAssistantEnabled) return;
+            const target = e.target.closest('h1, h2, h3, h4, h5, h6, a, p, button, label, span.tile-title');
+            if (!target) return;
+            
+            if (target.dataset.lastSpoken && Date.now() - parseInt(target.dataset.lastSpoken) < 1500) {
+                return;
+            }
+            
+            const textToSpeak = target.innerText || target.getAttribute('aria-label') || target.getAttribute('title') || '';
+            if (textToSpeak.trim().length > 0) {
+                target.dataset.lastSpoken = Date.now();
+                speakText(textToSpeak);
+            }
+        });
+
+        // --- Chatbot Assistant ---
+        let chatOpen = false;
+        function toggleChatbot(forceState) {
+            chatOpen = (forceState !== undefined) ? forceState : !chatOpen;
+            const windowEl = document.getElementById('chatbotWindow');
+            if (chatOpen) {
+                windowEl.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+                const m = document.getElementById('chatbotMessages');
+                m.scrollTop = m.scrollHeight;
+            } else {
+                windowEl.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+            }
+        }
+
+        const dialogueResponses = {
+            pay_tax: {
+                q: "How do I pay taxes online?",
+                r: "You can pay your taxes, utility bills, and other council fees securely online. Visit our <a href='https://badulla.mc.gov.lk/payments' class='text-brandAccent underline font-bold'>Online Payments Portal</a>, select the tax category (Property, Business, Assessment), enter your account details, and complete the transaction."
+            },
+            notices: {
+                q: "Where can I check notices and tenders?",
+                r: "Official announcements, special alerts, and procurement requests are updated daily. Check the <a href='https://badulla.mc.gov.lk/notices' class='text-brandAccent underline font-bold'>Notices Board</a> or access the <a href='https://badulla.mc.gov.lk/tenders' class='text-brandAccent underline font-bold'>Tenders Procurement Panel</a> to download bidding documents."
+            },
+            complaint: {
+                q: "How do I lodge a civic complaint?",
+                r: "You can report issues like broken street lamps, non-collected garbage, or road hazards. Use the submission form at the bottom of our Home page, or visit the <a href='https://badulla.mc.gov.lk/contact' class='text-brandAccent underline font-bold'>Contact & Grievances Desk</a>."
+            },
+            downloads: {
+                q: "Where are the downloadable forms?",
+                r: "All official documents, permit application templates, and tax forms can be found in our centralized <a href='https://badulla.mc.gov.lk/downloads' class='text-brandAccent underline font-bold'>Downloads Center</a>."
+            }
+        };
+
+        let aiChatHistory = [];
+
+        function handleChatInput(e) {
+            if (e.key === 'Enter') {
+                sendChatMessage();
+            }
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatbotInput');
+            const val = input.value.trim();
+            if (!val) return;
+            input.value = '';
+
+            const messagesContainer = document.getElementById('chatbotMessages');
+                
+                // Append User Message
+                const userMsg = document.createElement('div');
+                userMsg.className = 'flex justify-end';
+                userMsg.innerHTML = `<div class="bg-brandPrimary text-white rounded-2xl rounded-tr-none p-3 max-w-[85%] font-sans font-semibold">${val}</div>`;
+                messagesContainer.appendChild(userMsg);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                
+                // Append Typing Indicator
+                const botTypingMsg = document.createElement('div');
+                botTypingMsg.className = 'flex gap-2 bot-typing';
+                botTypingMsg.innerHTML = `<div class="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center shrink-0">
+                                            <i data-lucide="bot" class="w-3.5 h-3.5 text-brandAccent"></i>
+                                          </div>
+                                          <div class="bg-white/5 border border-white/5 rounded-2xl rounded-tl-none p-3 max-w-[85%] flex items-center gap-1.5">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce"></span>
+                                            <span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce [animation-delay:0.2s]"></span>
+                                            <span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce [animation-delay:0.4s]"></span>
+                                          </div>`;
+                messagesContainer.appendChild(botTypingMsg);
+                lucide.createIcons();
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                
+                // Fetch Data
+                fetch('https://badulla.mc.gov.lk/search/chatbot', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: val, history: aiChatHistory })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        botTypingMsg.remove();
+                        let rText = '';
+                        if (data.ai_response) {
+                            rText = data.ai_response;
+                            
+                            aiChatHistory.push({ role: 'user', text: val });
+                            aiChatHistory.push({ role: 'model', text: data.ai_response.replace(/<[^>]*>?/gm, '') });
+                            if (aiChatHistory.length > 10) aiChatHistory = aiChatHistory.slice(aiChatHistory.length - 10);
+
+                        } else {
+                            rText = "Here are the direct links I found for <strong>'" + val + "'</strong>:<br><ul class='mt-2 space-y-1.5'>";
+                            if (data.results && data.results.length > 0) {
+                                data.results.forEach(item => {
+                                    rText += "<li><a href='" + item.url + "' class='text-brandAccent hover:text-white underline flex items-center gap-1.5 transition-colors'><i data-lucide='link-2' class='w-3 h-3'></i>" + item.title + "</a></li>";
+                                });
+                                rText += "</ul>";
+                            } else {
+                                rText = "I'm sorry, I couldn't find any direct links for '" + val + "'. Please try using keywords like 'tax', 'notices', 'forms', or 'complaint'. Alternatively, visit our <a href='https://badulla.mc.gov.lk/contact' class='text-brandAccent underline font-bold'>Contact Page</a>.";
+                            }
+                        }
+                        
+                        const botMsg = document.createElement('div');
+                        botMsg.className = 'flex gap-2';
+                        botMsg.innerHTML = `<div class="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center shrink-0">
+                                                <i data-lucide="bot" class="w-3.5 h-3.5 text-brandAccent"></i>
+                                            </div>
+                                            <div class="bg-white/5 border border-white/5 rounded-2xl rounded-tl-none p-3 max-w-[85%] leading-relaxed text-[11px]">
+                                                ${rText}
+                                            </div>`;
+                        messagesContainer.appendChild(botMsg);
+                        lucide.createIcons();
+                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                        
+                        if (audioAssistantEnabled) {
+                            speakText(rText.replace(/<[^>]*>/g, ''));
+                        }
+                    })
+                    .catch(err => {
+                        botTypingMsg.remove();
+                        const errText = "I'm having trouble connecting to the search right now. Please try again later.";
+                        const botMsg = document.createElement('div');
+                        botMsg.className = 'flex gap-2';
+                        botMsg.innerHTML = `<div class="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center shrink-0">
+                                                <i data-lucide="bot" class="w-3.5 h-3.5 text-brandAccent"></i>
+                                            </div>
+                                            <div class="bg-white/5 border border-white/5 rounded-2xl rounded-tl-none p-3 max-w-[85%] leading-relaxed">
+                                                ${errText}
+                                            </div>`;
+                        messagesContainer.appendChild(botMsg);
+                        lucide.createIcons();
+                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    });
+        }
+
+        function selectChatOption(key, overrideUserText = null) {
+            const data = dialogueResponses[key];
+            if (!data) return;
+            
+            const messagesContainer = document.getElementById('chatbotMessages');
+            
+            // Append User message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'flex justify-end';
+            userMsg.innerHTML = `<div class="bg-brandPrimary text-white rounded-2xl rounded-tr-none p-3 max-w-[85%] font-sans font-semibold">${overrideUserText ? overrideUserText : data.q}</div>`;
+            messagesContainer.appendChild(userMsg);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // Append typing placeholder
+            const botTypingMsg = document.createElement('div');
+            botTypingMsg.className = 'flex gap-2 bot-typing';
+            botTypingMsg.innerHTML = `<div class="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center shrink-0">
+                                        <i data-lucide="bot" class="w-3.5 h-3.5 text-brandAccent"></i>
+                                      </div>
+                                      <div class="bg-white/5 border border-white/5 rounded-2xl rounded-tl-none p-3 max-w-[85%] flex items-center gap-1.5">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce"></span>
+                                        <span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce [animation-delay:0.2s]"></span>
+                                        <span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce [animation-delay:0.4s]"></span>
+                                      </div>`;
+            messagesContainer.appendChild(botTypingMsg);
+            lucide.createIcons();
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // Append response after brief typing animation
+            setTimeout(() => {
+                botTypingMsg.remove();
+                const botMsg = document.createElement('div');
+                botMsg.className = 'flex gap-2';
+                botMsg.innerHTML = `<div class="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center shrink-0">
+                                        <i data-lucide="bot" class="w-3.5 h-3.5 text-brandAccent"></i>
+                                    </div>
+                                    <div class="bg-white/5 border border-white/5 rounded-2xl rounded-tl-none p-3 max-w-[85%] leading-relaxed">
+                                        ${data.r}
+                                    </div>`;
+                messagesContainer.appendChild(botMsg);
+                lucide.createIcons();
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                
+                if (audioAssistantEnabled) {
+                    const rawText = data.r.replace(/<[^>]*>/g, '');
+                    speakText(rawText);
+                }
+            }, 800);
+        }
+    </script>
+</body>
+</html>

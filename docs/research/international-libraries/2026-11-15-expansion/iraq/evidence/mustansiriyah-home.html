@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="Y0cpc46GXr2eHilnHROxBVsT6mYGG0umRFKFnGNO">
+    <title>المكتبة المركزية - الجامعة المستنصرية</title>
+
+    
+    <link rel="icon" type="image/png" href="/logomus.png">
+    <link rel="shortcut icon" type="image/png" href="/logomus.png">
+    <link rel="apple-touch-icon" href="/logomus.png">
+
+    
+    <meta property="og:type"        content="website">
+    <meta property="og:url"         content="https://libraryapp.uomustansiriyah.edu.iq/search">
+    <meta property="og:title"       content="المكتبة المركزية - الجامعة المستنصرية">
+    <meta property="og:description" content="بوابة البحث في مجموعات المكتبة المركزية للجامعة المستنصرية">
+    <meta property="og:image"       content="/logomus.png">
+    <meta property="og:locale"      content="ar_IQ">
+
+    
+    <meta name="twitter:card"        content="summary">
+    <meta name="twitter:url"         content="https://libraryapp.uomustansiriyah.edu.iq/search">
+    <meta name="twitter:title"       content="المكتبة المركزية - الجامعة المستنصرية">
+    <meta name="twitter:description" content="بوابة البحث في مجموعات المكتبة المركزية للجامعة المستنصرية">
+    <meta name="twitter:image"       content="/logomus.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: "Scheherazade New", serif;
+            background: #f5f6fa;
+            min-height: 100vh;
+            color: #2c3e50;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* ===== العلامة المائية ===== */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: min(80vw, 900px);
+            height: min(80vw, 900px);
+            transform: translate(-50%, -50%);
+            background-image: url("/logomus.png");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body > * { position: relative; z-index: 1; }
+
+        /* ===== Hero ===== */
+        .hero-section {
+            position: relative;
+            width: 100%;
+            height: 420px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: height 0.4s ease;
+        }
+
+        .hero-bg { position: absolute; inset: 0; z-index: 1; }
+
+        .hero-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            animation: heroZoomOut 12s ease-out forwards;
+        }
+
+        @keyframes heroZoomOut {
+            0% { transform: scale(1.25); }
+            100% { transform: scale(1); }
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.65) 100%);
+            z-index: 2;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+        }
+
+        .uni-logo {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 3px solid rgba(255,255,255,0.5);
+            padding: 6px;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(6px);
+            margin: 0 auto 12px;
+            display: block;
+            transition: all 0.4s ease;
+        }
+
+        .hero-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+        }
+
+        .hero-subtitle {
+            font-size: 17px;
+            font-weight: 400;
+            color: rgba(255,255,255,0.9);
+            text-shadow: 0 1px 6px rgba(0,0,0,0.3);
+        }
+
+        /* ===== Top Bar ===== */
+        .top-bar {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px 20px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .header-link {
+            color: rgba(255,255,255,0.88);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            background: rgba(255,255,255,0.12);
+            padding: 7px 14px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .header-link:hover {
+            background: rgba(255,255,255,0.25);
+            color: #fff;
+        }
+
+        .footer-admin-link {
+            color: rgba(255,255,255,0.55);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 5px 14px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .footer-admin-link:hover {
+            color: #fff;
+            border-color: rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.08);
+        }
+
+        /* ===== Search Card ===== */
+        .search-section {
+            max-width: 880px;
+            margin: -55px auto 30px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .search-card {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+            padding: 30px 30px 24px;
+        }
+
+        .search-card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .search-card-title i { color: #c8a415; font-size: 22px; }
+
+        .search-box {
+            position: relative;
+            width: 100%;
+            margin-bottom: 18px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 16px 55px 16px 50px;
+            font-size: 18px;
+            font-family: "Scheherazade New", serif;
+            border: 2px solid #e8e8e8;
+            border-radius: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+            background: #fafafa;
+            color: #333;
+        }
+
+        .search-box input:hover { border-color: #c8a415; background: #fff; }
+        .search-box input:focus {
+            border-color: #c8a415; background: #fff;
+            box-shadow: 0 0 0 4px rgba(200,164,21,0.12);
+        }
+
+        .search-box .search-icon {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #c8a415;
+            font-size: 18px;
+            pointer-events: none;
+        }
+
+        .search-box .clear-btn {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9aa0a6;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 6px;
+        }
+
+        .search-box .clear-btn:hover { color: #333; }
+
+        /* ===== فلاتر التصنيف ===== */
+        .category-pills {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .category-pills label { cursor: pointer; }
+        .category-pills input[type="radio"] { display: none; }
+
+        .category-pills .pill {
+            display: inline-block;
+            padding: 8px 16px;
+            font-size: 15px;
+            font-family: "Scheherazade New", serif;
+            border-radius: 10px;
+            border: 1.5px solid #e4e4e4;
+            color: #6b7280;
+            background: #fafafa;
+            transition: all 0.25s ease;
+            user-select: none;
+            font-weight: 500;
+        }
+
+        .category-pills .pill:hover {
+            background: #fff8e1;
+            border-color: #c8a415;
+            color: #8b7000;
+        }
+
+        .category-pills input[type="radio"]:checked + .pill {
+            background: linear-gradient(135deg, #c8a415, #a68b00);
+            color: #fff;
+            border-color: #c8a415;
+            font-weight: 700;
+            box-shadow: 0 2px 10px rgba(200,164,21,0.3);
+        }
+
+        .search-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 13px 40px;
+            font-size: 17px;
+            font-family: "Scheherazade New", serif;
+            font-weight: 700;
+            color: #fff;
+            background: linear-gradient(135deg, #c8a415, #a68b00);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(200,164,21,0.3);
+        }
+
+        .search-btn:hover {
+            background: linear-gradient(135deg, #a68b00, #8b7500);
+            box-shadow: 0 6px 20px rgba(200,164,21,0.4);
+            transform: translateY(-2px);
+        }
+
+        .search-btn:disabled {
+            opacity: 0.7;
+            cursor: wait;
+            transform: none;
+        }
+
+        /* ===== Loading Overlay ===== */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .loading-overlay.active { display: flex; }
+
+        .loading-overlay .loader-logo {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            animation: loaderPulse 1.4s ease-in-out infinite;
+        }
+
+        .loading-overlay .loader-text {
+            font-size: 18px;
+            color: #2c3e50;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .loading-overlay .loader-text .dots::after {
+            content: '';
+            display: inline-block;
+            width: 18px;
+            text-align: left;
+            animation: loaderDots 1.2s steps(4, end) infinite;
+        }
+
+        @keyframes loaderPulse {
+            0%, 100% { transform: scale(1); opacity: 0.85; }
+            50% { transform: scale(1.1); opacity: 1; filter: drop-shadow(0 0 18px rgba(200,164,21,0.55)); }
+        }
+
+        @keyframes loaderDots {
+            0%   { content: ''; }
+            25%  { content: '.'; }
+            50%  { content: '..'; }
+            75%  { content: '...'; }
+            100% { content: ''; }
+        }
+
+        /* ===== شريط النتائج ===== */
+        .results-section {
+            max-width: 1100px;
+            margin: 10px auto 40px;
+            padding: 0 20px;
+        }
+
+        .results-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            border-radius: 12px;
+            padding: 14px 22px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .results-stats {
+            color: #4d5156;
+            font-size: 16px;
+        }
+
+        .results-stats strong {
+            color: #c8a415;
+            font-weight: 700;
+        }
+
+        .view-toggle {
+            display: inline-flex;
+            background: #f1f3f4;
+            border-radius: 10px;
+            padding: 4px;
+            gap: 2px;
+        }
+
+        .view-toggle button {
+            border: none;
+            background: transparent;
+            padding: 9px 14px;
+            font-size: 18px;
+            color: #5f6368;
+            cursor: pointer;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 44px;
+            transition: all 0.2s ease;
+        }
+
+        .view-toggle button:hover { color: #c8a415; }
+
+        .view-toggle button.active {
+            background: #fff;
+            color: #c8a415;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        }
+
+        /* ===== عرض الكارت ===== */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+            gap: 18px;
+        }
+
+        .result-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 20px 22px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border-top: 4px solid #c8a415;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .result-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("/logomus.png");
+            background-size: 75% auto;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.06;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .result-card > * { position: relative; z-index: 1; }
+
+        .result-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(200,164,21,0.18);
+            border-top-color: #a68b00;
+        }
+
+        .result-card .badge {
+            display: inline-block;
+            font-size: 12px;
+            color: #fff;
+            background: linear-gradient(135deg, #c8a415, #a68b00);
+            padding: 3px 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            align-self: flex-start;
+            font-weight: 600;
+        }
+
+        .result-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .result-card h3 a {
+            color: #1a0dab;
+            text-decoration: none;
+        }
+
+        .result-card h3 a:hover { text-decoration: underline; }
+
+        .result-card .meta {
+            font-size: 15px;
+            color: #4d5156;
+            line-height: 1.7;
+            margin-top: auto;
+        }
+
+        .result-card .meta-row {
+            display: flex;
+            gap: 6px;
+            align-items: flex-start;
+            padding-top: 4px;
+        }
+
+        .result-card .meta-row i {
+            color: #c8a415;
+            font-size: 13px;
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+
+        .result-card .meta-row span { word-break: break-word; }
+
+        /* ===== عرض الجدول ===== */
+        .results-table-wrap {
+            background: #fff;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            overflow-x: auto;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 16px;
+        }
+
+        .results-table thead {
+            background: linear-gradient(135deg, #c8a415, #a68b00);
+            color: #fff;
+        }
+
+        .results-table th {
+            padding: 14px 16px;
+            text-align: right;
+            font-weight: 700;
+            font-size: 16px;
+            white-space: nowrap;
+        }
+
+        .results-table tbody tr {
+            border-bottom: 1px solid #eef0f3;
+            transition: background 0.2s;
+        }
+
+        .results-table tbody tr:hover { background: #fffbe6; }
+
+        .results-table td {
+            padding: 14px 16px;
+            color: #2c3e50;
+            vertical-align: top;
+        }
+
+        .results-table td a {
+            color: #1a0dab;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .results-table td a:hover { text-decoration: underline; }
+
+        .results-table .badge {
+            display: inline-block;
+            font-size: 12px;
+            color: #fff;
+            background: linear-gradient(135deg, #c8a415, #a68b00);
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .hidden { display: none !important; }
+
+        /* ===== لا يوجد نتائج ===== */
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+
+        .no-results i {
+            font-size: 60px;
+            color: #dadce0;
+            margin-bottom: 18px;
+        }
+
+        .no-results h2 {
+            font-size: 22px;
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .no-results p { font-size: 16px; color: #70757a; }
+
+        /* ===== Footer ===== */
+        .footer {
+            text-align: center;
+            padding: 22px 20px;
+            margin-top: auto;
+            background: #1a1a2e;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .footer-content {
+            max-width: 880px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .footer-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+        }
+
+        .footer span { font-size: 14px; font-weight: 500; }
+
+        @media (max-width: 768px) {
+            .hero-section { height: 320px; }
+            .hero-title { font-size: 26px; }
+            .uni-logo { width: 85px; height: 85px; }
+            .search-card { padding: 22px 18px; }
+            .category-pills .pill { padding: 6px 12px; font-size: 13px; }
+            .results-table th, .results-table td { padding: 10px 8px; font-size: 14px; }
+            .results-toolbar { flex-direction: column; align-items: stretch; text-align: center; }
+
+            .top-bar {
+                padding: 8px 10px;
+                gap: 5px;
+            }
+
+            .header-link {
+                font-size: 11px;
+                padding: 5px 10px;
+                gap: 4px;
+            }
+
+            .header-link i {
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .top-bar {
+                padding: 6px 8px;
+                gap: 4px;
+            }
+
+            .header-link {
+                font-size: 10px;
+                padding: 4px 8px;
+                border-radius: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <section class="hero-section">
+        <div class="hero-bg">
+            <img src="/library_uni.png" alt="المكتبة المركزية - الجامعة المستنصرية">
+        </div>
+        <div class="hero-overlay"></div>
+
+        <div class="top-bar">
+            <a href="https://uomustansiriyah.edu.iq/web_center.php?id_dept=120&lang=ar" class="header-link" target="_blank" rel="noopener noreferrer">
+                <i class="fas fa-book-open"></i> الموقع الإلكتروني للمكتبة
+            </a>
+            <a href="https://uomustansiriyah.edu.iq/" class="header-link" target="_blank" rel="noopener noreferrer">
+                <i class="fas fa-university"></i> موقع الجامعة
+            </a>
+            <a href="https://uomustansiriyah.edu.iq/e-learn/globresearch7.php" class="header-link" target="_blank" rel="noopener noreferrer">
+                <i class="fas fa-database"></i> المستودع الرقمي
+            </a>
+        </div>
+
+        <div class="hero-content">
+            <img src="/logomus.png" alt="شعار الجامعة المستنصرية" class="uni-logo">
+            <h1 class="hero-title">المكتبة المركزية</h1>
+            <p class="hero-subtitle">في الجامعة المستنصرية </p>
+        </div>
+    </section>
+
+    <div class="search-section">
+        <div class="search-card">
+            
+
+            <form action="https://libraryapp.uomustansiriyah.edu.iq/search" method="GET" id="searchForm">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" name="q" value="" placeholder="ابحث عن كتاب، رسالة، مقالة، باحث..." autocomplete="off" autofocus required minlength="2">
+                                    </div>
+
+                <div class="category-pills">
+                                                                <label>
+                            <input type="radio" name="category" value="all" checked>
+                            <span class="pill"><i class="fas fa-layer-group"></i> الكل</span>
+                        </label>
+                                            <label>
+                            <input type="radio" name="category" value="abstract_theses" >
+                            <span class="pill"><i class="fas fa-file-alt"></i> المستخلصات</span>
+                        </label>
+                                            <label>
+                            <input type="radio" name="category" value="printed_theses" >
+                            <span class="pill"><i class="fas fa-scroll"></i> الرسائل المطبوعة</span>
+                        </label>
+                                            <label>
+                            <input type="radio" name="category" value="electronic_messages" >
+                            <span class="pill"><i class="fas fa-envelope-open-text"></i> الرسائل الإلكترونية</span>
+                        </label>
+                                            <label>
+                            <input type="radio" name="category" value="ebooks" >
+                            <span class="pill"><i class="fas fa-tablet-alt"></i> الكتب الإلكترونية</span>
+                        </label>
+                                            <label>
+                            <input type="radio" name="category" value="reference_books" >
+                            <span class="pill"><i class="fas fa-atlas"></i> كتب المراجع</span>
+                        </label>
+                                            <label>
+                            <input type="radio" name="category" value="loans" >
+                            <span class="pill"><i class="fas fa-hand-holding"></i> الإعارة</span>
+                        </label>
+                                            <label>
+                            <input type="radio" name="category" value="periodicals" >
+                            <span class="pill"><i class="fas fa-calendar-alt"></i> الدوريات</span>
+                        </label>
+                                            <label>
+                            <input type="radio" name="category" value="research_papers" >
+                            <span class="pill"><i class="fas fa-microscope"></i> البحوث العلمية</span>
+                        </label>
+                                    </div>
+
+                <div style="text-align: center;">
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-search"></i> بحث
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    
+    <footer class="footer">
+        <div class="footer-content">
+            <img src="/logomus.png" alt="شعار الجامعة" class="footer-logo">
+            <span>المكتبة المركزية - الجامعة المستنصرية &copy; 2026</span>
+        </div>
+        <div style="text-align:center;">
+                        <a href="https://libraryapp.uomustansiriyah.edu.iq/login" class="footer-admin-link">
+                <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+            </a>
+                    </div>
+    </footer>
+
+    <div id="loadingOverlay" class="loading-overlay" aria-hidden="true">
+        <img src="/logomus.png" alt="جاري البحث" class="loader-logo">
+        <div class="loader-text"><span>جاري البحث</span><span class="dots"></span></div>
+    </div>
+
+    <script>
+        (function () {
+            var form = document.getElementById('searchForm');
+            var overlay = document.getElementById('loadingOverlay');
+            if (!form || !overlay) return;
+            form.addEventListener('submit', function () {
+                overlay.classList.add('active');
+                overlay.setAttribute('aria-hidden', 'false');
+                var btn = form.querySelector('.search-btn');
+                if (btn) btn.disabled = true;
+            });
+            // إخفاء التحميل عند العودة للصفحة عبر زر الرجوع
+            window.addEventListener('pageshow', function () {
+                overlay.classList.remove('active');
+                overlay.setAttribute('aria-hidden', 'true');
+                var btn = form.querySelector('.search-btn');
+                if (btn) btn.disabled = false;
+            });
+        })();
+    </script>
+
+    <script>
+        (function () {
+            var cardsBtn = document.getElementById('viewCardsBtn');
+            var tableBtn = document.getElementById('viewTableBtn');
+            var cardsView = document.getElementById('cardsView');
+            var tableView = document.getElementById('tableView');
+            if (!cardsBtn || !tableBtn) return;
+
+            var savedView = localStorage.getItem('searchViewMode') || 'cards';
+            applyView(savedView);
+
+            cardsBtn.addEventListener('click', function () { applyView('cards'); });
+            tableBtn.addEventListener('click', function () { applyView('table'); });
+
+            function applyView(mode) {
+                if (mode === 'table') {
+                    cardsView.classList.add('hidden');
+                    tableView.classList.remove('hidden');
+                    tableBtn.classList.add('active');
+                    cardsBtn.classList.remove('active');
+                } else {
+                    tableView.classList.add('hidden');
+                    cardsView.classList.remove('hidden');
+                    cardsBtn.classList.add('active');
+                    tableBtn.classList.remove('active');
+                }
+                localStorage.setItem('searchViewMode', mode);
+            }
+        })();
+    </script>
+
+</body>
+</html>

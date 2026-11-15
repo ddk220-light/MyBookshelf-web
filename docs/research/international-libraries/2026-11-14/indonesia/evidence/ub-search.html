@@ -1,0 +1,1828 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-param" content="_OpacInlislite">
+    <meta name="csrf-token" content="Ymx6bDRVTXoQPx5YVyI/HxgFMT5abB8cJTUKAF8BeRgIIgNdBScmLg==">
+    <title>Online Public Access Catalog - Perpusnas RI</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="shortcut icon" type='image/x-icon' href="/opac/../uploaded_files/aplikasi/favicon.png">
+
+
+    <!--  <link rel="shortcut icon" type='image/x-icon' href="../.../uploaded_files/aplikasi/favicon.png"> -->
+
+    <link href="/opac/assets/a8752da5/css/bootstrap.css" rel="stylesheet">
+<link href="/opac/assets_b/css/_all-skins.css" rel="stylesheet">
+<link href="/opac/assets_b/css/ionicons.min.css" rel="stylesheet">
+<link href="/opac/assets_b/css/bootstrap.css" rel="stylesheet">
+<link href="/opac/assets_b/css/font-awesome.min.css" rel="stylesheet">
+<link href="/opac/assets_b/css/style-slider.css" rel="stylesheet">
+<link href="/opac/assets_b/css/datatables.css" rel="stylesheet">
+<link href="/opac/assets_b/css/AdminLTE.css" rel="stylesheet">
+<link href="/opac/assets_b/css/site.css" rel="stylesheet">
+<link href="/opac/assets_b/css/styles.css" rel="stylesheet">
+</head>
+
+
+<body onload="startTime()" class="skin-blue layout-top-nav">
+    <div class="wrapper" style=" background-color: #FFF;">
+        <!-- Header web -->
+        <header class="main-header">
+            <!-- navbar -->
+            <nav class="navbar navbar-static-top">
+                <div class="container">
+                    <div class="navbar-header">
+                        <div class="title">
+                           <!--  <div class="image"> <a href='/opac/'> <img src=".././uploaded_files/aplikasi/logo_perpusnas_2015.png" class="img-logo" height="65" width="70"> </a></div> -->
+                           <!--  <div class="image"> <a href='/opac/'> <img src="/opac/../uploaded_files/aplikasi/logo_perpusnas_2015.png" class="img-logo" height="65" width="70"> </a></div> -->
+                            <div class="image"><a href="/opac/"><img src="/opac/../uploaded_files/aplikasi/logo_perpusnas_2015.png" class="img-logo" height="65" width="70"></a></div> 
+                            <div class="text">
+                                <h3 style="margin-top: 20px;">Online Public Access Catalog</h3>
+                                <div class="clear"></div>
+                                <div class="time">Universitas Brawijaya</div><br/>
+                                <div class="clear"></div>
+                                <div class="timeddr" style="margin-bottom: 10px"></div>
+                                <div class="clear"></div>
+                            </div>
+                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <div class="clear">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <div class="collapse navbar-collapse pull-right" id="navbar-collapse">
+                        <span class="pull-right" style="color:#fff; margin-right:5px; margin-top:5px" id="clocktime" ></span><br>
+                        <ul class="nav navbar-nav pull-right">        
+            
+              
+                          
+                  </ul>
+
+                    </div><!-- /.navbar-collapse -->
+                    <!-- Navbar Right Menu -->
+                    <!-- /.navbar-custom-menu -->
+                </div><!-- /.container-fluid -->
+            </nav>
+            <!-- /navbar -->
+        </header>
+
+                           <section class="content-search">
+                  <div class="container">
+                    <div class="row">
+                      <div class="col-sm-12">
+                      <span class="nav-tabs-custom">
+                          <ul class="nav nav-tabs">
+                            <li class="active"> <a href="#tab_1" data-toggle="tab">Cari</a> </li>
+                    <li> <a href="/opac/browse">Browse</a> </li>
+
+                          </ul>
+                        </span>
+                        </div>
+                        </div>
+                    <form action="/opac/pencarian-sederhana" method="GET"/>
+                    <input type="hidden" name="action" value="pencarianSederhana"/>
+
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tab_1">
+                  <div class="col-sm-4"><div class="form-group">
+                          <input type="text" class="form-control" name="katakunci" id="KataKunci" placeholder="Kata Kunci" size="25" ></div></div>
+                      <div class="col-sm-4"><div class="form-group">
+
+                    <select  class="form-control" name="ruas">
+                      <option value="Judul">Judul</option>
+                      <option value="Pengarang">Pengarang</option>
+                      <option value="Penerbit">Penerbitan</option>
+                      <option value="Subyek">Subyek</option>
+                      <option value="Nomor Panggil">Nomor Panggil</option>
+                      <option value="ISBN">ISBN</option>
+                      <option value="ISSN">ISSN</option>                    
+                      <option value="ISMN">ISMN</option>
+                      <option value="Semua Ruas">Sembarang</option> 
+
+                    </select>
+                              </form>
+                      </div></div>
+                      <div class="col-sm-3"><div class="form-group">
+
+                              <select class="form-control" name="bahan" onChange="getData(this);" >
+                      <option value ='1'>Monograf</option> <option value ='4'>Terbitan Berkala</option> <option value ='68'>Skripsi</option> <option value ='69'>Tesis</option> <option value ='6'>Bahan Grafis</option> <option value ='7'>Rekaman Video</option> <option value ='8'>Musik</option> <option value ='5'>Bahan Kartografis</option> <option value ='9'>Bahan Campuran</option> <option value ='2'>Sumber Elektronik</option> <option value ='10'>Rekaman Suara</option> <option value ='3'>Film</option> <option value ='11'>Bentuk Mikro</option> <option value ='12'>Manuskrip</option> <option value ='15'>Bahan Ephemeral</option> <option value ='14'>Braille</option> 
+                      <option value="Semua Jenis Bahan" selected>Semua Bahan</option>
+
+                    </select>
+                              
+                      </div></div>
+                      <div class="col-sm-1"><input class="btn btn-success" type="submit" value="Cari"  align="right"></div>
+                   </div>
+
+                   </div>
+                  <div class="row">&nbsp;</div>
+                  <div class="row">
+                  <div class="col-sm-12">&nbsp; &nbsp; <a href="/opac/pencarian-lanjut">Pencarian lanjut </a> - <a href="/opac/riwayat-pencarian">Riwayat Pencarian </a> - <a href="" data-toggle="modal" data-target="#modalBantuan">Bantuan</a> </div>
+                  </div>
+                  
+
+                 <!-- Modal -->
+                  <div class="modal fade" id="modalBantuan" role="dialog">
+                    <div class="modal-dialog">
+
+                      <!-- Modal content-->
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          <h4 class="modal-title">Bantuan</h4>
+                        </div>
+                        <div class="modal-body">
+
+                            <ul>
+                            <li> Pencarian sederhana adalah pencarian koleksi dengan menggunakan hanya satu kriteria pencarian saja. </li>
+                            <li> Ketikkan kata kunci pencarian, misalnya : " Sosial kemasyarakatan "  </li>
+                            <li> Pilih ruas yang dicari, misalnya : " Judul " . </li>
+                            <li> Pilih jenis koleksi misalnya  " Monograf(buku) ", atau biarkan pada  pilihan " Semua Jenis Bahan "</li>
+                            <li> Klik tombol "Cari" atau tekan tombol Enter pada keyboard </li>
+
+                        </ul>
+
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                    
+                    </div>
+                </section>
+                         <!-- Full Width Column -->
+          <div id="alert">
+          </div>
+          <div id="usulan">
+          </div>
+                <div class="content-wrapper" style="min-height: 507px;">
+            <div class="container">
+                <!-- Content Header (Page header) -->
+
+                <!-- Main content -->
+                <section class="content">
+                 <!--     -->
+                    <div class="box box-default">
+                        <meta name="csrf-param" content="_OpacInlislite">
+    <meta name="csrf-token" content="Ymx6bDRVTXoQPx5YVyI/HxgFMT5abB8cJTUKAF8BeRgIIgNdBScmLg==">
+<script type="text/javascript">
+
+  function favorite(id) {
+        //var id = $("#catalogID").val();
+        $.ajax({
+          type     :"POST",
+          cache    : false,
+          url  : "?action=favourite&catID="+id,
+        success  : function(response) {
+			$("#favourite"+id).html(response);
+		}
+
+        });
+
+
+      }
+
+	function collection(CatID,Serial) {
+		//var id = $("#catalogID").val();
+		$.ajax({
+			type     :"POST",
+			cache    : false,
+			url  : "?action=showCollection&catID="+CatID+"&serial="+Serial,
+			success  : function(response) {
+				$("#collectionShow"+CatID).html(response);
+			}
+		});
+
+
+	}
+	function search(id,pos) {
+		//var id = $("#catalogID").val();
+		$.ajax({
+			type     :"POST",
+			cache    : false,
+			url  : "?action=search&catID="+id+"&pos="+pos,
+			success  : function(response) {
+				$("#search"+id).html(response);
+			}
+		});
+
+
+	}
+
+	function kontenDigital(id) {
+		//var id = $("#catalogID").val();
+		$.ajax({
+			type     :"POST",
+			cache    : false,
+			url  : "?action=showKontenDigital&catID="+id,
+			success  : function(response) {
+				$("#kontenDigitalShow"+id).html(response);
+			}
+		});
+
+
+	}
+
+
+
+
+	function usulanKoleksi() {
+	 	var formData = {
+            'NomorAnggota'  : $('input[name=NomorAnggota]').val(),
+            'JenisBahan'    : $('#JenisBahan').val(),
+            'Judul'  	    : $('input[name=Judul]').val(),
+            'Pengarang'  	: $('input[name=Pengarang]').val(),
+            'KotaTerbit'    : $('input[name=KotaTerbit]').val(),
+            'Penerbit'  	: $('input[name=Penerbit]').val(),
+            'TahunTerbit'   : $('input[name=TahunTerbit]').val(),
+            'Keterangan'    : $('textarea#Keterangan').val()
+
+        };
+		$.ajax({
+	        url: '/opac/pencarian-sederhana/usulan',
+	        type: 'post',
+	        data: {
+	        		formData,
+	                _csrf : 'Ymx6bDRVTXoQPx5YVyI/HxgFMT5abB8cJTUKAF8BeRgIIgNdBScmLg=='
+	             },
+	        success  : function(response) {
+				$("#modalUsulan").modal('hide');
+				$("#usulan").html(response);
+
+			}
+
+  		});
+
+
+	}
+
+
+
+</script>
+
+
+
+	<section class="content">
+	<div class="box box-default">
+		<div class="box-body" style="padding:20px 0">
+			<div class="breadcrumb">
+				<ol class="breadcrumb">
+					<li><a href="/opac/">Home</a></li>
+					<li>Pencarian Sederhana</li>
+					<li class="active">Calculus</li>
+				</ol>
+			</div>
+
+<!-- Modal -->
+
+			<div class="row">
+			<div class="col-sm-12">
+			Menampilkan <b>1 - 10</b> dari <b>138</b> hasil <br> <br>
+
+			<script language="JavaScript">
+			function toggle(source) {
+			checkboxes = document.getElementsByName('catID[]');
+			for(var i=0, n=checkboxes.length;i<n;i++) {
+				checkboxes[i].checked = source.checked;
+			}
+			}
+			</script>
+		<!-- Modal -->
+
+
+
+
+
+
+
+
+			</div>
+
+			</div>
+
+			<div class="row">
+				<div class="col-sm-9">
+					<form id="theForm" method="POST" action="">
+					<input type="checkbox" onClick="toggle(this)"> Pilih semua &nbsp; &nbsp; &nbsp;
+					<input type="submit" class="btn btn-default btn-xs navbar-btn" value="Tambah ke tampung">
+					<input type="hidden" value="keranjang" name="action"/>
+					<input type="hidden" name="_OpacInlislite" value="Ymx6bDRVTXoQPx5YVyI/HxgFMT5abB8cJTUKAF8BeRgIIgNdBScmLg==" />
+					<table class="table2 table-striped" width="100%">
+
+															<tr><td>
+								<div id="search395">
+								<div class="row">
+									<div class="col-sm-1">1 &nbsp;
+									<input type="checkbox" name="catID[]" value="395"  >
+									 <input type="hidden"  id='catalogID395'  name="catalogID" value="395"> &nbsp;
+									 	<div id="favourite395">
+									 <a href="javascript:void(0)" onclick="tampilLogin()"title="Tambah ke Favorite"><span class="glyphicon glyphicon-star"></span></a>										
+
+										</div></div>
+									<div class="col-sm-2"><a ><img src="../uploaded_files/sampul_koleksi/original/Monograf/tdkada.gif" style="width:97px ; height:144px" ></a></div>
+									<div class="col-sm-9">
+										<table class="table2" style="background:transparent" width="100%">
+											<tr>
+
+												<th colspan="2"> <a href="https://digilib.ub.ac.id/opac/detail-opac?id=395" class="topnav-content"> Microeconomics : theory and applications with calculus / Jeffrey M. Perloff </a></th>
+												</tr>
+											<tr>
+												<td width="22%">Jenis Bahan</td>
+												<td width="78%">Monograf</td>
+											</tr>
+											
+												<tr>
+												<td>Pengarang</td>
+												<td><a href="?action=pencarianSederhana&ruas=Pengarang&bahan=1&katakunci=Perloff, Jeffrey M."> Perloff, Jeffrey M. </a></td>
+
+											</tr>
+
+
+												
+
+
+											<tr>
+												<td valign=top>Penerbitan</td>
+												<td>
+													
+												Boston : Pearson, 2008 <br>
+
+												</td>
+											</tr>
+											<tr>
+												<td>Konten Digital</td>
+												<td> Tidak Ada Data </td>
+											</tr>
+											<tr>
+												<td>Ketersediaan</td>
+												<td> <a data-toggle='collapse' data-target='#collapsecollection395'  id='showmenu395' onclick='collection(395,0)' href='javascript:void(0)' >2 dari 2 ekslempar </a></td>
+												<!-- <td>  </a></td> -->
+											</tr>
+										</table>
+									</div>
+								</div>
+
+
+
+								<div class="row">
+									<div class="col-sm-1">&nbsp;</div>
+									<div class="col-sm-11">
+
+										<div class="collapse" id="collapseKontenDigital395">
+											<div id="kontenDigitalShow395">
+
+											</div>
+										</div>
+										<br>
+									</div>
+								</div>
+																<div class="row">
+									<div class="col-sm-1">&nbsp;</div>
+									<div class="col-sm-11">
+
+										<div class="collapse" id="collapsecollection395">
+											<div id="collectionShow395">
+
+											</div>
+										</div>
+									</div>
+								</div>
+								</div>
+									</td></tr>
+
+
+
+																	<tr><td>
+								<div id="search1006">
+								<div class="row">
+									<div class="col-sm-1">2 &nbsp;
+									<input type="checkbox" name="catID[]" value="1006"  >
+									 <input type="hidden"  id='catalogID1006'  name="catalogID" value="1006"> &nbsp;
+									 	<div id="favourite1006">
+									 <a href="javascript:void(0)" onclick="tampilLogin()"title="Tambah ke Favorite"><span class="glyphicon glyphicon-star"></span></a>										
+
+										</div></div>
+									<div class="col-sm-2"><a ><img src="../uploaded_files/sampul_koleksi/original/Monograf/tdkada.gif" style="width:97px ; height:144px" ></a></div>
+									<div class="col-sm-9">
+										<table class="table2" style="background:transparent" width="100%">
+											<tr>
+
+												<th colspan="2"> <a href="https://digilib.ub.ac.id/opac/detail-opac?id=1006" class="topnav-content"> Calculus : analytic geometry and calculus, with vectors </a></th>
+												</tr>
+											<tr>
+												<td width="22%">Jenis Bahan</td>
+												<td width="78%">Monograf</td>
+											</tr>
+											
+												<tr>
+												<td>Pengarang</td>
+												<td><a href="?action=pencarianSederhana&ruas=Pengarang&bahan=1&katakunci=Agnew, Ralph Palmer"> Agnew, Ralph Palmer </a></td>
+
+											</tr>
+
+
+												
+
+
+											<tr>
+												<td valign=top>Penerbitan</td>
+												<td>
+													
+												New York McGraw-Hill 1962 <br>
+
+												</td>
+											</tr>
+											<tr>
+												<td>Konten Digital</td>
+												<td> Tidak Ada Data </td>
+											</tr>
+											<tr>
+												<td>Ketersediaan</td>
+												<td> <a data-toggle='collapse' data-target='#collapsecollection1006'  id='showmenu1006' onclick='collection(1006,0)' href='javascript:void(0)' >1 dari 1 ekslempar </a></td>
+												<!-- <td>  </a></td> -->
+											</tr>
+										</table>
+									</div>
+								</div>
+
+
+
+								<div class="row">
+									<div class="col-sm-1">&nbsp;</div>
+									<div class="col-sm-11">
+
+										<div class="collapse" id="collapseKontenDigital1006">
+											<div id="kontenDigitalShow1006">
+
+											</div>
+										</div>
+										<br>
+									</div>
+								</div>
+																<div class="row">
+									<div class="col-sm-1">&nbsp;</div>
+									<div class="col-sm-11">
+
+										<div class="collapse" id="collapsecollection1006">
+											<div id="collectionShow1006">
+
+											</div>
+										</div>
+									</div>
+								</div>
+								</div>
+									</td></tr>
+
+
+
+																	<tr><td>
+								<div id="search1012">
+								<div class="row">
+									<div class="col-sm-1">3 &nbsp;
+									<input type="checkbox" name="catID[]" value="1012"  >
+									 <input type="hidden"  id='catalogID1012'  name="catalogID" value="1012"> &nbsp;
+									 	<div id="favourite1012">
+									 <a href="javascript:void(0)" onclick="tampilLogin()"title="Tambah ke Favorite"><span class="glyphicon glyphicon-star"></span></a>										
+
+										</div></div>
+									<div class="col-sm-2"><a ><img src="../uploaded_files/sampul_koleksi/original/Monograf/1012.jpg" style="width:97px ; height:144px" ></a></div>
+									<div class="col-sm-9">
+										<table class="table2" style="background:transparent" width="100%">
+											<tr>
+
+												<th colspan="2"> <a href="https://digilib.ub.ac.id/opac/detail-opac?id=1012" class="topnav-content"> Analytic geometry and calculus </a></th>
+												</tr>
+											<tr>
+												<td width="22%">Jenis Bahan</td>
+												<td width="78%">Monograf</td>
+											</tr>
+											
+												<tr>
+												<td>Pengarang</td>
+												<td><a href="?action=pencarianSederhana&ruas=Pengarang&bahan=1&katakunci=Hart, William L."> Hart, William L. </a></td>
+
+											</tr>
+
+
+												
+
+
+											<tr>
+												<td valign=top>Penerbitan</td>
+												<td>
+													
+												Boston D.C. Heth and Co. 1963 <br>
+
+												</td>
+											</tr>
+											<tr>
+												<td>Konten Digital</td>
+												<td> Tidak Ada Data </td>
+											</tr>
+											<tr>
+												<td>Ketersediaan</td>
+												<td> <a data-toggle='collapse' data-target='#collapsecollection1012'  id='showmenu1012' onclick='collection(1012,0)' href='javascript:void(0)' >2 dari 2 ekslempar </a></td>
+												<!-- <td>  </a></td> -->
+											</tr>
+										</table>
+									</div>
+								</div>
+
+
+
+								<div class="row">
+									<div class="col-sm-1">&nbsp;</div>
+									<div class="col-sm-11">
+
+										<div class="collapse" id="collapseKontenDigital1012">
+											<div id="kontenDigitalShow1012">
+
+											</div>
+										</div>
+										<br>
+									</div>
+								</div>
+																<div class="row">
+									<div class="col-sm-1">&nbsp;</div>
+									<div class="col-sm-11">
+
+										<div class="collapse" id="collapsecollection1012">
+											<div id="collectionShow1012">
+
+											</div>
+										</div>
+									</div>
+								</div>
+								</div>
+									</td></tr>
+
+
+
+																	<tr><td>
+								<div id="search1051">
+								<div class="row">
+									<div class="col-sm-1">4 &nbsp;
+									<input type="checkbox" name="catID[]" value="1051"  >
+									 <input type="hidden"  id='catalogID1051'  name="catalogID" value="1051"> &nbsp;
+									 	<div id="favourite1051">
+									 <a href="javascript:void(0)" onclick="tampilLogin()"title="Tambah ke Favorite"><span class="glyphicon glyphicon-star"></span></a>										
+
+										</div></div>
+									<div class="col-sm-2"><a ><img src="../uploaded_files/sampul_koleksi/original/Monograf/1051.jpg" style="width:97px ; height:144px" ></a></div>
+									<div class="col-sm-9">
+										<table class="table2" style="background:transparent" width="100%">
+											<tr>
+
+												<th colspan="2"> <a href="https://digilib.ub.ac.id/opac/detail-opac?id=1051" class="topnav-content"> Elements of calculus analytic and geometry </a></th>
+												</tr>
+											<tr>
+												<td width="22%">Jenis Bahan</td>
+												<td width="78%">Monograf</td>
+											</tr>
+											
+												<tr>
+												<td>Pengarang</td>
+												<td><a href="?action=pencarianSederhana&ruas=Pengarang&bahan=1&katakunci=Thomas, George B."> Thomas, George B. </a></td>
+
+											</tr>
+
+
+												
+
+
+											<tr>
+												<td valign=top>Penerbitan</td>
+												<td>
+													
+												Reading, Mass Addison-Wesley Pub 1959 <br>
+
+												</td>
+											</tr>
+											<tr>
+												<td>Konten Digital</td>
+												<td> Tidak Ada Data </td>
+											</tr>
+											<tr>
+												<td>Ketersediaan</td>
+												<td> <a data-toggle='collapse' data-target='#collapsecollection1051'  id='showmenu1051' onclick='collection(1051,0)' href='javascript:void(0)' >2 dari 2 ekslempar </a></td>
+												<!-- <td>  </a></td> -->
+											</tr>
+										</table>
+									</div>
+								</div>
+
+
+
+								<div class="row">
+									<div class="col-sm-1">&nbsp;</div>
+									<div class="col-sm-11">
+
+										<div class="collapse" id="collapseKontenDigital1051">
+											<div id="kontenDigitalShow1051">
+
+											</div>
+										</div>
+										<br>
+									</div>
+								</div>
+																<div class="row">
+									<div class="col-sm-1">&nbsp;</div>
+									<div class="col-sm-11">
+
+										<div class="collapse" id="collapsecollection1051">
+											<div id="collectionShow1051">
+
+											</div>
+										</div>
+									</div>
+								</div>
+								</div>
+									</td></tr>
+
+
+
+																	<tr><td>
+								<div id="search1364">
+								<div class="row">
+									<div class="col-sm-1">5 &nbsp;
+									<input type="checkbox" name="catID[]" value="1364"  >
+									 <input type="hidden"  id='catalogID1364'  name="catalogID" value="1364"> &nbsp;
+									 	<div id="favourite1364">
+									 <a href="javascript:void(0)" onclick="tampilLogin()"title="Tambah ke Favorite"><span class="glyphicon glyphicon-star"></span></a>										
+
+										</div></div>
+									<div class="col-sm-2"><a ><img src="../uploaded_files/sampul_koleksi/original/Monograf/tdkada.gif" style="width:97px ; height:144px" ></a></div>
+									<div class="col-sm-9">
+										<table class="table2" style="background:transparent" width="100%">
+											<tr>
+
+												<th colspan="2"> <a href="https://digilib.ub.ac.id/opac/detail-opac?id=1364" class="topnav-content"> Calculus with analytic geometry </a></th>
+												</tr>
+											<tr>
+												<td width="22%">Jenis Bahan</td>
+												<td width="78%">Monograf</td>
+											</tr>
+											
+												<tr>
+												<td>Pengarang</td>
+												<td><a href="?action=pencarianSederhana&ruas=Pengarang&bahan=1&katakunci=Purcell, Edwin J."> Purcell, Edwin J. </a></td>
+
+											</tr>
+
+
+												
+
+
+											<tr>
+												<td valign=top>Penerbitan</td>
+												<td>
+													
+												New York Appleton-Century-Crofts 1965 <br>
+
+												</td>
+											</tr>
+											<tr>
+												<td>Konten Digital</td>
+												<td> Tidak Ada Data </td>
+											</tr>
+											<tr>
+												<td>Ketersediaan</td>
+												<td> <a data-toggle='collapse' data-target='#collapsecollection1364'  id='showmenu1364' onclick='collection(1364,0)' href='javascript:void(0)' >1 dari 1 ekslempar </a></td>
+												<!-- <td>  </a></td> -->
+											</tr>
+										</table>
+									</div>
+								</div>
+
+
+
+								<div class="row">
+									<div class="col-sm-1">&nbsp;</div>
+									<div class="col-sm-11">
+
+										<div class="collapse" id="collapseKontenDigital1364">
+											<div id="kontenDigitalShow1364">
+
+											</div>
+										</div>
+										<br>
+									</div>
+								</div>
+																<div class="row">
+									<div class="col-sm-1">&nbsp;</div>
+									<div class="col-sm-11">
+
+										<div class="collapse" id="collapsecollection1364">
+											<div id="collectionShow1364">
+
+											</div>
+										</div>
+									</div>
+								</div>
+								</div>
+									</td></tr>
+
+
+
+																	<tr><td>
+								<div id="search1377">
+								<div class="row">
+									<div class="col-sm-1">6 &nbsp;
+									<input type="checkbox" name="catID[]" value="1377"  >
+									 <input type="hidden"  id='catalogID1377'  name="catalogID" value="1377"> &nbsp;
+									 	<div id="favourite1377">
+									 <a href="javascript:void(0)" onclick="tampilLogin()"title="Tambah ke Favorite"><span class="glyphicon glyphicon-star"></span></a>										
+
+										</div></div>
+									<div class="col-sm-2"><a ><img src="../uploaded_files/sampul_koleksi/original/Monograf/tdkada.gif" style="width:97px ; height:144px" ></a></div>
+									<div class="col-sm-9">
+										<table class="table2" style="background:transparent" width="100%">
+											<tr>
+
+												<th colspan="2"> <a href="https://digilib.ub.ac.id/opac/detail-opac?id=1377" class="topnav-content"> Elementary calculus </a></th>
+												</tr>
+											<tr>
+												<td width="22%">Jenis Bahan</td>
+												<td width="78%">Monograf</td>
+											</tr>
+											
+												<tr>
+												<td>Pengarang</td>
+												<td><a href="?action=pencarianSederhana&ruas=Pengarang&bahan=1&katakunci=Masani, P.R."> Masani, P.R. </a></td>
+
+											</tr>
+
+
+												
+
+
+											<tr>
+												<td valign=top>Penerbitan</td>
+												<td>
+													
+												New York Academic Press 1965 <br>
+
+												</td>
+											</tr>
+											<tr>
+												<td>Konten Digital</td>
+												<td> Tidak Ada Data </td>
+											</tr>
+											<tr>
+												<td>Ketersediaan</td>
+												<td> <a data-toggle='collapse' data-target='#collapsecollection1377'  id='showmenu1377' onclick='collection(1377,0)' href='javascript:void(0)' >1 dari 1 ekslempar </a></td>
+												<!-- <td>  </a></td> -->
+											</tr>
+										</table>
+									</div>
+								</div>
+
+
+
+								<div class="row">
+									<div class="col-sm-1">&nbsp;</div>
+									<div class="col-sm-11">
+
+										<div class="collapse" id="collapseKontenDigital1377">
+											<div id="kontenDigitalShow1377">
+
+											</div>
+										</div>
+										<br>
+									</div>
+								</div>
+																<div class="row">
+									<div class="col-sm-1">&nbsp;</div>
+									<div class="col-sm-11">
+
+										<div class="collapse" id="collapsecollection1377">
+											<div id="collectionShow1377">
+
+											</div>
+										</div>
+									</div>
+								</div>
+								</div>
+									</td></tr>
+
+
+
+																	<tr><td>
+								<div id="search1477">
+								<div class="row">
+									<div class="col-sm-1">7 &nbsp;
+									<input type="checkbox" name="catID[]" value="1477"  >
+									 <input type="hidden"  id='catalogID1477'  name="catalogID" value="1477"> &nbsp;
+									 	<div id="favourite1477">
+									 <a href="javascript:void(0)" onclick="tampilLogin()"title="Tambah ke Favorite"><span class="glyphicon glyphicon-star"></span></a>										
+
+										</div></div>
+									<div class="col-sm-2"><a ><img src="../uploaded_files/sampul_koleksi/original/Monograf/tdkada.gif" style="width:97px ; height:144px" ></a></div>
+									<div class="col-sm-9">
+										<table class="table2" style="background:transparent" width="100%">
+											<tr>
+
+												<th colspan="2"> <a href="https://digilib.ub.ac.id/opac/detail-opac?id=1477" class="topnav-content"> Calculus </a></th>
+												</tr>
+											<tr>
+												<td width="22%">Jenis Bahan</td>
+												<td width="78%">Monograf</td>
+											</tr>
+											
+												<tr>
+												<td>Pengarang</td>
+												<td><a href="?action=pencarianSederhana&ruas=Pengarang&bahan=1&katakunci=Moise, Edwin E."> Moise, Edwin E. </a></td>
+
+											</tr>
+
+
+												
+
+
+											<tr>
+												<td valign=top>Penerbitan</td>
+												<td>
+													
+												Reading Addison Wesley Publishing Company 1967 <br>
+
+												</td>
+											</tr>
+											<tr>
+												<td>Konten Digital</td>
+												<td> Tidak Ada Data </td>
+											</tr>
+											<tr>
+												<td>Ketersediaan</td>
+												<td> <a data-toggle='collapse' data-target='#collapsecollection1477'  id='showmenu1477' onclick='collection(1477,0)' href='javascript:void(0)' >2 dari 2 ekslempar </a></td>
+												<!-- <td>  </a></td> -->
+											</tr>
+										</table>
+									</div>
+								</div>
+
+
+
+								<div class="row">
+									<div class="col-sm-1">&nbsp;</div>
+									<div class="col-sm-11">
+
+										<div class="collapse" id="collapseKontenDigital1477">
+											<div id="kontenDigitalShow1477">
+
+											</div>
+										</div>
+										<br>
+									</div>
+								</div>
+																<div class="row">
+									<div class="col-sm-1">&nbsp;</div>
+									<div class="col-sm-11">
+
+										<div class="collapse" id="collapsecollection1477">
+											<div id="collectionShow1477">
+
+											</div>
+										</div>
+									</div>
+								</div>
+								</div>
+									</td></tr>
+
+
+
+																	<tr><td>
+								<div id="search1478">
+								<div class="row">
+									<div class="col-sm-1">8 &nbsp;
+									<input type="checkbox" name="catID[]" value="1478"  >
+									 <input type="hidden"  id='catalogID1478'  name="catalogID" value="1478"> &nbsp;
+									 	<div id="favourite1478">
+									 <a href="javascript:void(0)" onclick="tampilLogin()"title="Tambah ke Favorite"><span class="glyphicon glyphicon-star"></span></a>										
+
+										</div></div>
+									<div class="col-sm-2"><a ><img src="../uploaded_files/sampul_koleksi/original/Monograf/1478.jpg" style="width:97px ; height:144px" ></a></div>
+									<div class="col-sm-9">
+										<table class="table2" style="background:transparent" width="100%">
+											<tr>
+
+												<th colspan="2"> <a href="https://digilib.ub.ac.id/opac/detail-opac?id=1478" class="topnav-content"> Analytic geometry and calculus </a></th>
+												</tr>
+											<tr>
+												<td width="22%">Jenis Bahan</td>
+												<td width="78%">Monograf</td>
+											</tr>
+											
+												<tr>
+												<td>Pengarang</td>
+												<td><a href="?action=pencarianSederhana&ruas=Pengarang&bahan=1&katakunci=Schartz, Abraham"> Schartz, Abraham </a></td>
+
+											</tr>
+
+
+												
+
+
+											<tr>
+												<td valign=top>Penerbitan</td>
+												<td>
+													
+												New York Holt, Rinehart & Winston 1960 <br>
+
+												</td>
+											</tr>
+											<tr>
+												<td>Konten Digital</td>
+												<td> Tidak Ada Data </td>
+											</tr>
+											<tr>
+												<td>Ketersediaan</td>
+												<td> <a data-toggle='collapse' data-target='#collapsecollection1478'  id='showmenu1478' onclick='collection(1478,0)' href='javascript:void(0)' >7 dari 7 ekslempar </a></td>
+												<!-- <td>  </a></td> -->
+											</tr>
+										</table>
+									</div>
+								</div>
+
+
+
+								<div class="row">
+									<div class="col-sm-1">&nbsp;</div>
+									<div class="col-sm-11">
+
+										<div class="collapse" id="collapseKontenDigital1478">
+											<div id="kontenDigitalShow1478">
+
+											</div>
+										</div>
+										<br>
+									</div>
+								</div>
+																<div class="row">
+									<div class="col-sm-1">&nbsp;</div>
+									<div class="col-sm-11">
+
+										<div class="collapse" id="collapsecollection1478">
+											<div id="collectionShow1478">
+
+											</div>
+										</div>
+									</div>
+								</div>
+								</div>
+									</td></tr>
+
+
+
+																	<tr><td>
+								<div id="search1480">
+								<div class="row">
+									<div class="col-sm-1">9 &nbsp;
+									<input type="checkbox" name="catID[]" value="1480"  >
+									 <input type="hidden"  id='catalogID1480'  name="catalogID" value="1480"> &nbsp;
+									 	<div id="favourite1480">
+									 <a href="javascript:void(0)" onclick="tampilLogin()"title="Tambah ke Favorite"><span class="glyphicon glyphicon-star"></span></a>										
+
+										</div></div>
+									<div class="col-sm-2"><a ><img src="../uploaded_files/sampul_koleksi/original/Monograf/tdkada.gif" style="width:97px ; height:144px" ></a></div>
+									<div class="col-sm-9">
+										<table class="table2" style="background:transparent" width="100%">
+											<tr>
+
+												<th colspan="2"> <a href="https://digilib.ub.ac.id/opac/detail-opac?id=1480" class="topnav-content"> Calculus </a></th>
+												</tr>
+											<tr>
+												<td width="22%">Jenis Bahan</td>
+												<td width="78%">Monograf</td>
+											</tr>
+											
+												<tr>
+												<td>Pengarang</td>
+												<td><a href="?action=pencarianSederhana&ruas=Pengarang&bahan=1&katakunci=Moise, Edwin E"> Moise, Edwin E </a></td>
+
+											</tr>
+
+
+												
+
+
+											<tr>
+												<td valign=top>Penerbitan</td>
+												<td>
+													
+												Reading Addison Wesley Publishing Company 1966 <br>
+
+												</td>
+											</tr>
+											<tr>
+												<td>Konten Digital</td>
+												<td> Tidak Ada Data </td>
+											</tr>
+											<tr>
+												<td>Ketersediaan</td>
+												<td> <a data-toggle='collapse' data-target='#collapsecollection1480'  id='showmenu1480' onclick='collection(1480,0)' href='javascript:void(0)' >2 dari 2 ekslempar </a></td>
+												<!-- <td>  </a></td> -->
+											</tr>
+										</table>
+									</div>
+								</div>
+
+
+
+								<div class="row">
+									<div class="col-sm-1">&nbsp;</div>
+									<div class="col-sm-11">
+
+										<div class="collapse" id="collapseKontenDigital1480">
+											<div id="kontenDigitalShow1480">
+
+											</div>
+										</div>
+										<br>
+									</div>
+								</div>
+																<div class="row">
+									<div class="col-sm-1">&nbsp;</div>
+									<div class="col-sm-11">
+
+										<div class="collapse" id="collapsecollection1480">
+											<div id="collectionShow1480">
+
+											</div>
+										</div>
+									</div>
+								</div>
+								</div>
+									</td></tr>
+
+
+
+																	<tr><td>
+								<div id="search1485">
+								<div class="row">
+									<div class="col-sm-1">10 &nbsp;
+									<input type="checkbox" name="catID[]" value="1485"  >
+									 <input type="hidden"  id='catalogID1485'  name="catalogID" value="1485"> &nbsp;
+									 	<div id="favourite1485">
+									 <a href="javascript:void(0)" onclick="tampilLogin()"title="Tambah ke Favorite"><span class="glyphicon glyphicon-star"></span></a>										
+
+										</div></div>
+									<div class="col-sm-2"><a ><img src="../uploaded_files/sampul_koleksi/original/Monograf/tdkada.gif" style="width:97px ; height:144px" ></a></div>
+									<div class="col-sm-9">
+										<table class="table2" style="background:transparent" width="100%">
+											<tr>
+
+												<th colspan="2"> <a href="https://digilib.ub.ac.id/opac/detail-opac?id=1485" class="topnav-content"> Calculus with analytic geometry </a></th>
+												</tr>
+											<tr>
+												<td width="22%">Jenis Bahan</td>
+												<td width="78%">Monograf</td>
+											</tr>
+											
+												<tr>
+												<td>Pengarang</td>
+												<td><a href="?action=pencarianSederhana&ruas=Pengarang&bahan=1&katakunci=Smith, William K."> Smith, William K. </a></td>
+
+											</tr>
+
+
+												
+
+
+											<tr>
+												<td valign=top>Penerbitan</td>
+												<td>
+													
+												London Collier Macmillan Limited 1969 <br>
+
+												</td>
+											</tr>
+											<tr>
+												<td>Konten Digital</td>
+												<td> Tidak Ada Data </td>
+											</tr>
+											<tr>
+												<td>Ketersediaan</td>
+												<td> <a data-toggle='collapse' data-target='#collapsecollection1485'  id='showmenu1485' onclick='collection(1485,0)' href='javascript:void(0)' >1 dari 1 ekslempar </a></td>
+												<!-- <td>  </a></td> -->
+											</tr>
+										</table>
+									</div>
+								</div>
+
+
+
+								<div class="row">
+									<div class="col-sm-1">&nbsp;</div>
+									<div class="col-sm-11">
+
+										<div class="collapse" id="collapseKontenDigital1485">
+											<div id="kontenDigitalShow1485">
+
+											</div>
+										</div>
+										<br>
+									</div>
+								</div>
+																<div class="row">
+									<div class="col-sm-1">&nbsp;</div>
+									<div class="col-sm-11">
+
+										<div class="collapse" id="collapsecollection1485">
+											<div id="collectionShow1485">
+
+											</div>
+										</div>
+									</div>
+								</div>
+								</div>
+									</td></tr>
+
+
+
+								
+
+						</table>
+					</form>
+
+					<!--awal paging -->
+					<div class="text-center">
+												<ul class="pagination pagination-lg" >
+							<li class="disable"> </li>
+							<li class="active"><a href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=&page=1&limit=10    '>1</a></li><li ><a href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=&page=2&limit=10    '>2</a></li><li ><a href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=&page=3&limit=10    '>3</a></li><li ><a href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=&page=4&limit=10    '>4</a></li><li ><a href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=&page=5&limit=10    '>5</a></li><li ><a href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=&page=6&limit=10    '>6</a></li><li ><a href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=&page=7&limit=10    '>7</a></li><li ><a href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=&page=8&limit=10    '>8</a></li><li ><a href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=&page=9&limit=10    '>9</a></li><li ><a href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=&page=10&limit=10    '>10</a></li><li> <a href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=&page=11&limit=10    '> &raquo;</a></li>
+
+						</ul><br>
+					</div> <!--end paging -->
+				</div>
+
+
+				<div class="col-sm-3">
+				<span style="margin-bottom:13px"><strong>Lebih Spesifik :</strong></span>
+				<div class="list-group facet" id="side-panel-authorStr">
+      			<div class="list-group-item title" >
+      				<a data-toggle="collapse"  href="#side-collapse-authorStr">Pengarang </a>
+					
+      				     </div>
+			     <div id="side-collapse-authorStr" class="collapse in">
+
+					
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=Barnett%2C+Raymond+A.&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=     '>Barnett, Raymond A.<span class="badge">8</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=Apostol%2C+Tom+M.&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=     '>Apostol, Tom M.<span class="badge">6</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=Kaplan%2C+Wilfred&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=     '>Kaplan, Wilfred<span class="badge">6</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=Thomas%2C+George+B.&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=     '>Thomas, George B.<span class="badge">6</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=Finney%2C+Ross+L.&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=     '>Finney, Ross L.<span class="badge">6</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=Lightstone%2C+A.+H.&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=     '>Lightstone, A. H.<span class="badge">6</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=Edwards%2C+Bruce&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=     '>Edwards, Bruce<span class="badge">6</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=Grossman%2C+Stanley+I.&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=     '>Grossman, Stanley I.<span class="badge">5</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=Ellis%2C+Robert%2C+1938-&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=     '>Ellis, Robert, 1938-<span class="badge">5</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=Purcell%2C+Edwin+J.&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=     '>Purcell, Edwin J.<span class="badge">4</span></a>
+					
+						  <div class="facedHidden" >
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=Morrey%2C+Charles+B.&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=     '>Morrey, Charles B.<span class="badge">4</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=Fulks%2C+Watson&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=     '>Fulks, Watson<span class="badge">4</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=Anton%2C+Howard&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=     '>Anton, Howard<span class="badge">4</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=Courant%2C+Richard&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=     '>Courant, Richard<span class="badge">4</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=Whipkey%2C+Kenneth+L.&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=     '>Whipkey, Kenneth L.<span class="badge">4</span></a>
+					
+						  </div><a  href="#" style="padding: 8px 40px 8px 8px;" class="list-group-item faced"  >Show More</a>
+ 				</div>
+
+			    </div>
+			    <div class="list-group facet" id="side-panel-publisherStr">
+      			<div class="list-group-item title" >
+      				<a data-toggle="collapse"  href="#side-collapse-publisherStr">Penerbit </a>
+					
+      				     </div>
+			     <div id="side-collapse-publisherStr" class="collapse in">
+
+					
+							<a style="padding: 8px 40px 8px 8px;"class="list-group-item "href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=McGraw-Hill&fPublishLoc=&fPublishYear=&fSubject=     '>McGraw-Hill<span class="badge">13</span></a>
+						
+						  
+							<a style="padding: 8px 40px 8px 8px;"class="list-group-item "href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=John+Wiley+%26+Sons&fPublishLoc=&fPublishYear=&fSubject=     '>John Wiley & Sons<span class="badge">10</span></a>
+						
+						  
+							<a style="padding: 8px 40px 8px 8px;"class="list-group-item "href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=Addison-Wesley&fPublishLoc=&fPublishYear=&fSubject=     '>Addison-Wesley<span class="badge">9</span></a>
+						
+						  
+							<a style="padding: 8px 40px 8px 8px;"class="list-group-item "href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=Brooks%2FCole&fPublishLoc=&fPublishYear=&fSubject=     '>Brooks/Cole<span class="badge">7</span></a>
+						
+						  
+							<a style="padding: 8px 40px 8px 8px;"class="list-group-item "href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=Harcourt+Brace+Jovanovich&fPublishLoc=&fPublishYear=&fSubject=     '>Harcourt Brace Jovanovich<span class="badge">6</span></a>
+						
+						  
+							<a style="padding: 8px 40px 8px 8px;"class="list-group-item "href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=Harper+%26+Row&fPublishLoc=&fPublishYear=&fSubject=     '>Harper & Row<span class="badge">5</span></a>
+						
+						  
+							<a style="padding: 8px 40px 8px 8px;"class="list-group-item "href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=Addison-Wesley+Pub.&fPublishLoc=&fPublishYear=&fSubject=     '>Addison-Wesley Pub.<span class="badge">4</span></a>
+						
+						  
+							<a style="padding: 8px 40px 8px 8px;"class="list-group-item "href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=Prentice-Hall&fPublishLoc=&fPublishYear=&fSubject=     '>Prentice-Hall<span class="badge">3</span></a>
+						
+						  
+							<a style="padding: 8px 40px 8px 8px;"class="list-group-item "href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=Pearson&fPublishLoc=&fPublishYear=&fSubject=     '>Pearson<span class="badge">3</span></a>
+						
+						  
+							<a style="padding: 8px 40px 8px 8px;"class="list-group-item "href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=John+Wiley&fPublishLoc=&fPublishYear=&fSubject=     '>John Wiley<span class="badge">3</span></a>
+						
+						  <div class="facedHidden" >
+							<a style="padding: 8px 40px 8px 8px;"class="list-group-item "href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=Addison+Wesley+Publishing+Company&fPublishLoc=&fPublishYear=&fSubject=     '>Addison Wesley Publishing Company<span class="badge">2</span></a>
+						
+						  
+							<a style="padding: 8px 40px 8px 8px;"class="list-group-item "href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=Academic+Press&fPublishLoc=&fPublishYear=&fSubject=     '>Academic Press<span class="badge">2</span></a>
+						
+						  
+							<a style="padding: 8px 40px 8px 8px;"class="list-group-item "href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=Addison-Wesley+Pub&fPublishLoc=&fPublishYear=&fSubject=     '>Addison-Wesley Pub<span class="badge">2</span></a>
+						
+						  
+							<a style="padding: 8px 40px 8px 8px;"class="list-group-item "href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=Pearson%2C&fPublishLoc=&fPublishYear=&fSubject=     '>Pearson,<span class="badge">2</span></a>
+						
+						  
+							<a style="padding: 8px 40px 8px 8px;"class="list-group-item "href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=Appleton-Century-Crofts&fPublishLoc=&fPublishYear=&fSubject=     '>Appleton-Century-Crofts<span class="badge">2</span></a>
+						
+						  </div><a  href="#" style="padding: 8px 40px 8px 8px;" class="list-group-item faced"  >Show More</a>
+ 				</div>
+
+			    </div>
+
+			    <div class="list-group facet" id="side-panel-publislocationStr">
+      			<div class="list-group-item title" >
+      				<a data-toggle="collapse"  href="#side-collapse-publislocationStr">Lokasi Terbitan </a>
+					
+      				     </div>
+			     <div id="side-collapse-publislocationStr" class="collapse in">
+
+					
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=New+York&fPublishYear=&fSubject=     '>New York<span class="badge">47</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=Boston&fPublishYear=&fSubject=     '>Boston<span class="badge">12</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=Australia&fPublishYear=&fSubject=     '>Australia<span class="badge">6</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=San+Diego&fPublishYear=&fSubject=     '>San Diego<span class="badge">5</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=New+Jersey&fPublishYear=&fSubject=     '>New Jersey<span class="badge">5</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=London&fPublishYear=&fSubject=     '>London<span class="badge">5</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=Lexington%2C+Mass.&fPublishYear=&fSubject=     '>Lexington, Mass.<span class="badge">4</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=Reading%2C+Mass.&fPublishYear=&fSubject=     '>Reading, Mass.<span class="badge">4</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=Massachusetts&fPublishYear=&fSubject=     '>Massachusetts<span class="badge">3</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=Reading%2C+Massachusetts&fPublishYear=&fSubject=     '>Reading, Massachusetts<span class="badge">3</span></a>
+					
+						  <div class="facedHidden" >
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=Fort+Worth&fPublishYear=&fSubject=     '>Fort Worth<span class="badge">2</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=New+York%2C+N.Y.&fPublishYear=&fSubject=     '>New York, N.Y.<span class="badge">2</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=Boston+%3A&fPublishYear=&fSubject=     '>Boston :<span class="badge">2</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=Reading%2C+Mass&fPublishYear=&fSubject=     '>Reading, Mass<span class="badge">2</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=Reading&fPublishYear=&fSubject=     '>Reading<span class="badge">2</span></a>
+					
+						  </div><a  href="#" style="padding: 8px 40px 8px 8px;" class="list-group-item faced"  >Show More</a>
+ 				</div>
+
+			    </div>
+			   	<div class="list-group facet" id="side-panel-publisyearStr">
+      			<div class="list-group-item title" >
+      				<a data-toggle="collapse"  href="#side-collapse-publisyearStr">Tahun Terbit </a>
+					
+      				     </div>
+			     <div id="side-collapse-publisyearStr" class="collapse in">
+
+					
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=1965&fSubject=     '>1965<span class="badge">9</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=1967&fSubject=     '>1967<span class="badge">7</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=1968&fSubject=     '>1968<span class="badge">6</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=2014&fSubject=     '>2014<span class="badge">5</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=2008&fSubject=     '>2008<span class="badge">5</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=1992&fSubject=     '>1992<span class="badge">4</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=1990&fSubject=     '>1990<span class="badge">4</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=2002&fSubject=     '>2002<span class="badge">4</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=2003&fSubject=     '>2003<span class="badge">4</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=1986&fSubject=     '>1986<span class="badge">4</span></a>
+					
+						  <div class="facedHidden" >
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=1979&fSubject=     '>1979<span class="badge">4</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=1962&fSubject=     '>1962<span class="badge">4</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=1964&fSubject=     '>1964<span class="badge">4</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=1989&fSubject=     '>1989<span class="badge">4</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=1988&fSubject=     '>1988<span class="badge">4</span></a>
+					
+						  </div><a  href="#" style="padding: 8px 40px 8px 8px;" class="list-group-item faced"  >Show More</a>
+ 				</div>
+
+			    </div>
+			    <div class="list-group facet" id="side-panel-subjectStr">
+      			<div class="list-group-item title" >
+      				<a data-toggle="collapse"  href="#side-collapse-subjectStr">Subyek </a>
+					
+      				     </div>
+			     <div id="side-collapse-subjectStr" class="collapse in">
+
+					
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=CALCULUS.     '>CALCULUS.<span class="badge">45</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=CALCULUS.+--+GEOMETRY%2C+ANALYTIC.     '>CALCULUS. -- GEOMETRY, ANALYTIC.<span class="badge">17</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=CALCULUS     '>CALCULUS<span class="badge">15</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=CALCULUS+--+GEOMETRY%2C+ANALYTIC     '>CALCULUS -- GEOMETRY, ANALYTIC<span class="badge">8</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=CALCULUS.+--+MATHEMATICAL+ANALYSIS.     '>CALCULUS. -- MATHEMATICAL ANALYSIS.<span class="badge">3</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=CALCULUS.+--+MATHEMATICS.     '>CALCULUS. -- MATHEMATICS.<span class="badge">3</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=ALGEBRA-GRAPHIC+METHODS.+--+FUNCTIONS.     '>ALGEBRA-GRAPHIC METHODS. -- FUNCTIONS.<span class="badge">3</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=CALCULUS.+--+GEOMETRY%2C+ANALYTICS.     '>CALCULUS. -- GEOMETRY, ANALYTICS.<span class="badge">2</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=MULTIVARIATE+ANALYSIS.     '>MULTIVARIATE ANALYSIS.<span class="badge">2</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=CALCULUS%2C+APPLIED     '>CALCULUS, APPLIED<span class="badge">2</span></a>
+					
+						  <div class="facedHidden" >
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=ALGEBRA.+--+TRIGONOMETRY.     '>ALGEBRA. -- TRIGONOMETRY.<span class="badge">2</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=ALGEBRAS%2C+LINEAR.+--+CALCULUS.+--+DIFFERENTIAL+EQUATIONS.     '>ALGEBRAS, LINEAR. -- CALCULUS. -- DIFFERENTIAL EQUATIONS.<span class="badge">2</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=MATHEMATICS.     '>MATHEMATICS.<span class="badge">2</span></a>
+					
+						  
+					
+							<a style="padding: 8px 40px 8px 8px;" class="list-group-item " href='?action=pencarianSederhana&katakunci=Calculus&ruas=Judul&bahan=Semua+Jenis+Bahan&fAuthor=&fPublisher=&fPublishLoc=&fPublishYear=&fSubject=MICROECONOMICS     '>MICROECONOMICS<span class="badge">1</span></a>
+					
+						  </div><a  href="#" style="padding: 8px 40px 8px 8px;" class="list-group-item faced"  >Show More</a>
+
+
+
+
+
+
+ 				</div>
+
+			    </div>
+
+					</p>
+									</div>
+			</div>
+					</div>
+	</div>
+
+          </section><!-- /.content -->
+
+                    </div>
+                </section><!-- /.content -->
+            </div><!-- /.container -->
+        </div><!-- /.content-wrapper -->
+
+
+    <footer class="footer main-footer">
+      <div class="container">
+        <div class="pull-right hidden-sm" style="font-family: "Corbel", Arial, Helvetica, sans-serif;">
+          INLISLite v3.0        </div>
+        Hak Cipta &copy; 2026 <a href="http://inlislite.perpusnas.go.id" target="_blank">Perpustakaan Nasional Republik Indonesia</a>      </div> <!-- /.container -->
+    </footer>
+        <script src="/opac/assets/14404e1f/jquery.js"></script>
+<script src="/opac/assets/e319bf8e/yii.js"></script>
+<script src="/opac/assets_b/js/app.js"></script>
+<script src="/opac/assets_b/js/bootstrap.min.js"></script>
+<script src="/opac/assets_b/js/datatables.js"></script>
+<script type="text/javascript">jQuery(document).ready(function () {
+
+
+						$(document).ready(
+						    function() {
+						        $('a.bookmarkShow').text('Keranjang(1)');
+						    }
+						);
+						
+
+
+						$('.facedHidden').hide();
+
+						// Make sure all the elements with a class of "clickme" are visible and bound
+						// with a click event to toggle the "box" state
+						$('.faced').each(function() {
+						    $(this).show(0).on('click', function(e) {
+						        // This is only needed if your using an anchor to target the "box" elements
+						        e.preventDefault();
+						        
+						        // Find the next "box" element in the DOM
+						        $(this).prev('.facedHidden').slideToggle('fast');
+						        if ( $(this).text() == "Show More") {
+								$(this).text("Show Less")
+
+								} else
+								{
+								$(this).text("Show More");
+								}		
+
+
+						    });
+						});
+  		
+						
+
+						$(document).ready(function(){
+
+
+
+							$(".toggler1").click(function(e){
+								e.preventDefault();
+								$('.auth'+$(this).attr('facedAuthor')).toggle();
+							});
+							$(".toggler2").click(function(e){
+								e.preventDefault();
+								$('.pub'+$(this).attr('facedPublisher')).toggle();
+							});
+							$(".toggler3").click(function(e){
+								e.preventDefault();
+								$('.publoc'+$(this).attr('facedPublishLocation')).toggle();
+							});
+							$(".toggler4").click(function(e){
+								e.preventDefault();
+								$('.pubyear'+$(this).attr('facedPublishYear')).toggle();
+							});
+
+
+						});
+
+
+
+					
+
+        $(document).ready(
+            function() {
+                $('a.bookmarkShow').hide();
+            }
+        );
+        
+});</script>    </div><!-- ./wrapper -->
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"d7da89452fea4bb28a2893afc7db16f6","spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>
+
+<script>
+    //alert(Date());
+  function startTime()
+  {   var today=new Date();
+    var weekday=new Array(7);
+    var weekday=["Minggu","Senin","Selasa","Rabu","Kamis","Jum'at","Sabtu"];
+    var monthname=new Array(12);
+    var monthname=["","Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","Septeber","Oktober","November","Desember"];
+    var dayname=weekday[0];
+    var day=15;
+    var month=monthname[11];
+    var year=2026;
+    var h=01;
+    var m=12;
+    var s=08;
+    h=checkTime(h);
+    m=checkTime(m);
+    s=checkTime(s);
+    document.getElementById('clocktime').innerHTML=dayname+", "+day+" "+month+" "+year+", "+h+":"+m+":"+s;
+    t=setTimeout(function(){startTime()},500);
+  }
+  // function checkTime to add a zero in front of numbers < 10
+  function checkTime(i)
+  {   if(i<10){i="0"+i;}
+    return i;
+  }
+  function getData(dropdown) {
+    var value = dropdown.options[dropdown.selectedIndex].value;
+    if(document.getElementById("dariTGL").style.display == "inline"){
+
+    }
+    document.getElementById("dariTGL").style.display = "none"
+    document.getElementById("sampaiTGL").style.display = "none"
+    if (value == '4'){   
+      document.getElementById("dariTGL").style.display = "inline"
+      document.getElementById("sampaiTGL").style.display = "inline"
+    }
+  }
+    function tampilBooking() {
+        $.ajax({
+            type: "POST",
+            cache: false,
+            url: "booking?action=showBookingDetail",
+            success: function (response) {
+                $("#modalBooking").modal('show');
+                $("#BookingShow").html(response);
+            }
+        });
+    }
+    function tampilUsulan() {
+        $.ajax({
+            type: "POST",
+            cache: false,
+            url: "usulan-koleksi?action=showUsulan",
+            success: function (response) {
+                $("#modalUsulan").modal('show');
+                $("#UsulanShow").html(response);
+            }
+        });
+    }
+
+      function tampilLogin() {
+        $.ajax({
+            type: "POST",
+            cache: false,
+            url: "site/login",
+            success: function (response) {
+                $("#modalLogin").modal('show');
+                $("#LoginShow").html(response);
+            }
+        });
+
+    }
+
+    function cancelBooking(id) {
+        $.ajax({
+            type: "POST",
+            cache: false,
+            url: "booking?action=cancelBooking&colID="+id,
+            success: function (response) {
+                $("#modalBooking").modal('hide');
+                $("#alert").html(response);
+            }
+        });
+    }
+
+    function loginAnggota() {
+        $.ajax({
+            type: "POST",
+            cache: false,
+            url: "site/loginanggota",
+            data : $("#login-anggota").serialize(), 
+            success: function (response) {
+                console.log(response);
+                if (response) {
+                  $("#error-login-opac-123-321").html(response);
+                }
+            }
+
+        });
+    }
+
+
+  var MaxInputs = 50;
+  var Dynamic = $("#Dynamic");
+  var i = $("#Dynamic div").size() + 1;
+
+  $("#AddInpElem").click( function () {
+    if (i <= MaxInputs) {
+      $("<div> <div class=\"row\">  <div class=\"col-sm-1\"></div>  <div class=\"col-sm-1\"><div class=\"form-group\"><select name=\"danAtau[]\" class=\"form-control\"><option value=\"and\">dan</option>  <option value=\"or\">atau</option>   <option value=\"selain\">selain</option>      </select></div></div><div class=\"col-sm-3\"><div class=\"form-group\">  <input name=\"katakunci[]\"  type=\"text\" class=\"form-control login-field\"  /></div></div><div class=\"col-sm-2\"><div class=\"form-group\"> <select name=\"jenis[]\" class=\"form-control\"><option>di dalam</option><option >di awal</option><option >di akhir</option> </select></div></div><div class=\"col-sm-3\"><div class=\"form-group\"><select   name=\"tag[]\" class=\"form-control\"> <option value=\"Judul\">Judul</option> <option value=\"Pengarang\">Pengarang</option> <option value=\"Penerbitan\">Penerbitan</option> <option value=\"Edisi\">Edisi</option> <option value=\"Deskripsi Fisik\">Deskripsi Fisik</option> <option value=\"Jenis Konten\">Jenis Konten</option> <option value=\"Jenis Media\">Jenis Media</option> <option value=\"Media Carrier\">Media Carrier</option> <option value=\"Subyek\">Subyek</option> <option value=\"ISBN\">ISBN</option> <option value=\"ISSN\">ISSN</option> <option value=\"ISMN\">ISMN</option> <option value=\"Nomor Panggil\">ISBN</option> <option value=\"Sembarang Ruas\">Sembarang Ruas </option>       </select> </div></div><a href=\"javascript:void(0)\" class=\"RemInpElem\"><span class=\"glyphicon glyphicon-minus-sign\"></span></a> &nbsp; </div> </div>").appendTo(Dynamic);
+      i++;
+    }
+    return false;
+  });
+
+
+$("body").on("click",".RemInpElem", function(){
+  if (i > 2) {
+    $(this).parent("div").remove();
+    i--;
+  }
+  return false;
+}) 
+
+
+</script>
+
+<div class="modal fade" id="modalBooking" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Booking Detail</h4>
+            </div>
+            <div class="modal-body">
+                <p id="demo"></p>
+                <div id="BookingShow">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="javascript:void(0)" id="PrintButton" class="btn btn-primary"> <span class="glyphicon glyphicon-print"></span>  Print  </a>&nbsp;&nbsp;
+                <button type="button" class="btn btn-default" data-dismiss="modal">&nbsp;Tutup&nbsp;</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalUsulan" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Usulan Koleksi</h4>
+            </div>
+            <div class="modal-body">
+                <p id="demo"></p>
+                <div id="UsulanShow">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalLogin" role="dialog">
+    <div class="modal-dialog modal-sm" >       
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Login Anggota</h4>
+            </div>
+            <div class="modal-body ">
+                <p id="demo"></p>
+                <div id="LoginShow">
+
+
+
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="modalBantuan" role="dialog">
+    <div class="modal-dialog">       
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Bantuan</h4>
+            </div>
+            <div class="modal-body">
+                <ul>
+              <li> Pencarian sederhana adalah pencarian koleksi dengan menggunakan hanya satu kriteria pencarian saja. </li>
+              <li> Ketikkan kata kunci pencarian, misalnya : " Sosial kemasyarakatan "  </li>
+              <li> Pilih ruas yang dicari, misalnya : " Judul " . </li>
+              <li> Pilih jenis koleksi misalnya  " Monograf(buku) ", atau biarkan pada  pilihan " Semua Jenis Bahan "</li>
+              <li> Klik tombol "Cari" atau tekan tombol Enter pada keyboard </li>
+          </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+ 

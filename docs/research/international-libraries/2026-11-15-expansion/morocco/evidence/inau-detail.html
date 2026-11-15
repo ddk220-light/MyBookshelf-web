@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    
+			<meta charset="utf-8">
+			<meta name="author" content="PMB Group">
+					
+			<meta name="keywords" content="OPAC, web, library, opensource, catalog, catalogue, biblioth&egrave;que, m&eacute;diath&egrave;que, pmb, phpmybibli">
+			<meta name="description" content="Catalogue en ligne ."><meta name="robots" content="all">
+			<!--IE et son enfer de compatibilit?-->
+			<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	
+	
+	
+<link rel="stylesheet" type="text/css" href="./styles/common/HRM_common.css?1669590040">
+<link rel="stylesheet" type="text/css" href="./styles/common/animation_display.css?1615829538">
+<link rel="stylesheet" type="text/css" href="./styles/common/common.css?1641316188">
+<link rel="stylesheet" type="text/css" href="./styles/common/contrib.css?1629374426">
+<link rel="stylesheet" type="text/css" href="./styles/common/dGrowl.css?1598536188">
+<link rel="stylesheet" type="text/css" href="./styles/common/font-awesome.css?1478593624">
+<link rel="stylesheet" type="text/css" href="./styles/common/open-sans.css?1479312986">
+<link rel="stylesheet" type="text/css" href="./styles/common/pagination.css?1532013718">
+<link rel="stylesheet" type="text/css" href="./styles/common/record_display.css?1540561362">
+<link rel="stylesheet" type="text/css" href="./styles/inau_yandev_theme/base.css?1670463328">
+<link rel="stylesheet" type="text/css" href="./styles/inau_yandev_theme/fontAcontent.css?1456928812">
+<link rel="stylesheet" type="text/css" href="./styles/inau_yandev_theme/grayscale_css.css?1670390036">
+<link rel="stylesheet" type="text/css" href="./styles/inau_yandev_theme/style_footer.css?1681958179">
+<link rel="stylesheet" type="text/css" href="./styles/inau_yandev_theme/zen.css?1670457134">
+<link rel="stylesheet" type="text/css" href="./styles/inau_yandev_theme/zen_color_pre_set.css?1670469501">
+<link rel="stylesheet" type="text/css" href="./styles/inau_yandev_theme/zonepageo_a.css?1670445670">
+<link rel="stylesheet" type="text/css" href="./styles/inau_yandev_theme/zzen_responsive.css?1665979722"><script type="text/javascript">var opac_style= 'inau_yandev_theme';</script>
+	<!-- css_authentication -->	<link rel="SHORTCUT ICON" href="styles/inau_yandev_theme/images/favicon.ico">
+	<script type="text/javascript" src="includes/javascript/drag_n_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/handle_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/popup.js"></script>
+	<script type="text/javascript">
+			// Fonction a utiliser pour l'encodage des URLs en javascript
+			function encode_URL(data){
+				var docCharSet = document.characterSet ? document.characterSet : document.charset;
+				if(docCharSet == "UTF-8"){
+	    			return encodeURIComponent(data);
+	    		}else{
+	    			return escape(data);
+	    		}
+	    	}
+	    </script>
+	<script type="text/javascript">
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName = 
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {  
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i); 
+				    }
+				 }
+				return items;
+			 }
+		}
+	</script>
+
+		<link rel="stylesheet" type="text/css" href="./includes/javascript/dojo/dijit/themes/tundra/tundra.css">
+		<script type="text/javascript">
+			var dojoConfig = {
+				parseOnLoad: true,
+				locale: 'fr-fr',
+				isDebug: false,
+				usePlainJson: true,
+				packages: [{
+						name: 'pmbBase',
+						location:'../../../..'
+					},{
+						name: 'd3',
+						location:'../../d3'
+					}],
+				deps: ['apps/pmb/MessagesStore', 'dgrowl/dGrowl', 'dojo/ready', 'apps/pmb/ImagesStore'],
+				callback:function(MessagesStore, dGrowl, ready, ImagesStore){
+					window.pmbDojo = {};
+					pmbDojo.messages = new MessagesStore({url:'./ajax.php?module=ajax&categ=messages', directInit:false});
+					pmbDojo.images = new ImagesStore({url:'./ajax.php?module=ajax&categ=images', directInit:false});
+					ready(function(){
+						new dGrowl({'channels':[{'name':'info','pos':2},{'name':'error', 'pos':1}]});
+					});
+						
+				},
+			};
+		</script>
+		<script type="text/javascript" src="./includes/javascript/dojo/dojo/dojo.js"></script>
+		<script type="text/javascript">
+		dojo.addOnLoad(function () {
+			// Ajout du theme Dojo
+			dojo.addClass(dojo.body(),'tundra');
+		})
+		</script>
+		<script type="text/javascript">
+	var pmb_img_patience = './images/patience.gif';
+</script><script type="text/javascript">
+			var opac_show_social_network =0;
+		</script>
+	<script type="text/javascript" src="includes/javascript/simili_search.js"></script>
+	<script type="text/javascript" src="./visionneuse/javascript/visionneuse.js"></script>
+	<script type="text/javascript" src="./includes/javascript/http_request.js"></script>
+	<!-- Script d'enrichissement pour wikipedia-->
+<script type="text/javascript">
+			function load_wiki(notice_id,type,label){
+				var	wiki= new http_request();
+				var content = document.getElementById('div_'+type+notice_id);
+				content.innerHTML = '';
+				var patience= document.createElement('img');
+				patience.setAttribute('src','./images/patience.gif');
+				patience.setAttribute('align','middle');
+				patience.setAttribute('id','patience'+notice_id);
+				content.appendChild(patience);
+				wiki.request('./ajax.php?module=ajax&categ=enrichment&action=enrichment&type='+type+'&id='+notice_id,true,'&enrich_params[label]='+label,true,gotEnrichment);
+			}
+		</script>
+<!-- Script d'enrichissement pour Youtube-->
+
+	<!-- Enrichissement de notice en Ajax-->
+	<script type="text/javascript" src="./includes/javascript/enrichment.js"></script>
+<script>
+				dojo.addOnLoad(function (){
+					//on balance un evenement pour les initialiser les modules si besoin...
+					dojo.publish('init',['cms_dojo_init',{}]);
+				});
+			</script>
+
+		<script type="text/javascript">
+			function cms_module_search_22_change_dest(){
+				var page = 0;
+                var universe = 0;
+                var default_segment = 0;
+                if(document.forms['cms_module_search_22_searchbox'].dest) {
+    				var dests = document.forms['cms_module_search_22_searchbox'].dest;
+    				for(var i = 0; i < dests.length; i++){
+    					if(dests[i].checked){
+    						page = dests[i].value;
+                            universe = dests[i].getAttribute('universe');
+                            default_segment = dests[i].getAttribute('default_segment');
+    						break;
+    					}
+    				}
+                }
+                if(universe > 0){
+                    if(default_segment > 0){
+                        document.forms['cms_module_search_22_searchbox'].action = './index.php?lvl=search_segment&action=segment_results&id='+default_segment;
+                    } else {
+                        document.forms['cms_module_search_22_searchbox'].action = './index.php?lvl=search_universe&id='+universe;   
+                    }  
+                } else if(page>0){
+					document.forms['cms_module_search_22_searchbox'].action = './index.php?lvl=cmspage&pageid='+page;
+				}
+                if (page.toString().indexOf('view_') != -1) {
+					var view_id = page.substr(5);
+				    document.forms['cms_module_search_22_searchbox'].action += '&opac_view='+view_id;
+                }
+			}
+		</script>
+<meta property="og:title" content="The green city">
+<meta property="og:type" content="notice">
+<meta property="og:url" content="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=2473">
+<meta name="twitter:title" content="The green city"><title>The green city Catalogue en ligne</title><script type="text/javascript" src="./cms/modules/common/includes/javascript/jquery-2.1.1.min.js"></script><script type="text/javascript" src="./styles/zen/uitkit/js/uikit.min.js"></script><script type="text/javascript" src="./styles/zen/uitkit/js/components/sticky.min.js"></script><script type="text/javascript" src="./styles/zen/uitkit/js/components/grid.min.js"></script><script type="text/javascript" src="./cms/modules/common/includes/javascript/jquery.bxsliderv4.min.js"></script><link rel="stylesheet" href="./styles/zen/uitkit/css/uikit.min.css"><link rel="stylesheet" href="./styles/zen/addcss/home.css"><link rel="stylesheet" href="./styles/zen/uitkit/css/components/sticky.almost-flat.min.css"><link rel="stylesheet" href="./styles/zen/addcss/calendar.css"></head>
+
+<body onload="window.defaultStatus='PMB : Acc&egrave;s public';" id="pmbopac">
+	<script type="text/javascript" src="./includes/javascript/tablist_ajax.js"></script>
+<script type="text/javascript" src="./includes/javascript/tablist.js"></script>
+<script type="text/javascript" src="./includes/javascript/misc.js"></script>
+	<div id="att" style="z-Index:1000"></div>
+	<div id="container"><div id="intro" fixed="yes">
+<div id="intro_bibli" fixed="yes">
+			<h3></h3>
+			<div class="p1"></div>
+			<div class="p2"><br><br><br><br><br><br><br><br><br><br><br>
+<br>
+
+<li><p align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="./index.php?lvl=show_cart">
+<!--img src="./images/basket_small_20x20.png"--><img src="" width="65" height="20"></a></p></li>
+</div>
+			</div>
+		<div id="cms_module_sectionslist_174" class="cms_module_sectionslist cms_module" style="visibility: visible; position: static; left: 0px; top: 0px; display: block;"><div id="offcanvas" class="uk-offcanvas">
+	<div class="uk-offcanvas-bar">
+			<div class="MenuVertResp">
+			<ul class="NavResponsive">
+			<!-- rubriques niveau 1 -->
+							<li>
+					<a href="./index.php" title="Accueil">Accueil</a>
+									</li>
+							<li>
+					<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=37" title="Catalogue">Catalogue</a>
+											<ul class="SousNavResponsive">
+				<!-- rubriques niveau 2 -->
+															<li>
+									<a href="./index.php?lvl=index" title="Recherche simple">Recherche simple</a>
+								</li>
+															<li>
+									<a href="./index.php?search_type_asked=perio_a2z" title="P&eacute;riodiques">P&eacute;riodiques</a>
+								</li>
+													</ul>
+									</li>
+							<li>
+					<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=1" title="Actualit&eacute;s">Actualit&eacute;s</a>
+											<ul class="SousNavResponsive">
+				<!-- rubriques niveau 2 -->
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=4" title="Agenda">Agenda</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=7" title="Nouveaut&eacute;s">Nouveaut&eacute;s</a>
+								</li>
+													</ul>
+									</li>
+							<li>
+					<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=71" title="Ressources num&eacute;riques">Ressources num&eacute;riques</a>
+									</li>
+						</ul>
+		</div>
+		</div>
+</div></div><div id="cms_module_htmlcode_176" class="cms_module_htmlcode cms_module" style="visibility: visible; position: static; left: 0px; top: 0px; display: block;"><div class="TglUser " data-uk-button>
+	<a class="Tgllogin" data-uk-toggle="{target:'#connexion', cls:'heightZero'}">
+		<span class="user"><i class="fa fa-user"></i></span>
+	</a>
+</div></div><div id="cms_module_htmlcode_175" class="cms_module_htmlcode cms_module" style="visibility: visible; position: static; left: 0px; top: 0px; display: block;"><div id="btnMenu" class="temp">
+	<div class="tgLbtnMenu">
+		<a class="MenuCanvas uk-button" href="#offcanvas" data-uk-offcanvas><i class="fa fa-bars"></i></a>
+	</div>
+</div></div><div id="cms_module_htmlcode_178" class="cms_module_htmlcode cms_module" style="visibility: visible; position: static; left: 0px; top: 0px; display: block;"><div class="TgllSearch" data-uk-button>
+	<a data-uk-toggle="{target:'.searchbox', cls:'heightZero'}">
+		<span class="user"><i class="fa fa-search"></i></span>
+	</a>
+</div></div><div id="cms_module_section_177" class="cms_module_section cms_module" style="visibility: visible; display: block; position: static; left: 0px; top: 0px;"><div class="uk-grid uk-grid-collapse" data-uk-grid-match="{target:'.titrePortail'}" data-uk-grid-margin>
+	<div class="uk-width-1-3">
+        <div id="logo" class="titrePortail">
+            <a href="./index.php" title="PMB Services"><img src="https://inau.ac.ma/binau/cms_vign.php?type=section&amp;id=62&amp;mode=large" alt="PMB Services"></a>
+        </div>
+    </div>
+	<div class="uk-width-2-3"> 
+        <div id="titrePortail" class="titrePortail">
+            <h1>
+                <span class="mainTitle">PMB Services</span>
+                <span class="subTitle">r&eacute;seau mediath&egrave;ques</span>
+            </h1>
+        </div>
+     </div>        
+</div></div><div id="cms_module_section_173" class="cms_module_section cms_module" style="visibility: visible; position: static; left: 0px; top: 0px; display: block;"><div id="Introbandeau"><img src="https://inau.ac.ma/binau/cms_vign.php?type=section&amp;id=79&amp;mode=large%20alt=" photo bandeau superieur></div>
+</div><div id="cms_module_section_125" class="cms_module_section cms_module" style="visibility: visible; display: none; left: auto; top: auto; height: 156px; width: 1023px; margin: 0px; padding: 0px; float: none; position: static;"><div id="logo">
+	<a href="./index.php" title="PMB Services"><img src="https://inau.ac.ma/binau/cms_vign.php?type=section&amp;id=62&amp;mode=large" alt="PMB Services"></a>
+</div></div><div id="cms_module_metadatas_172" class="cms_module_metadatas cms_module" style="visibility: visible; display: block;"></div><div id="cms_module_section_126" class="cms_module_section cms_module" style="visibility: visible; display: none; left: auto; top: auto; height: 159px; width: 1023px; margin: 0px; padding: 0px; float: none; position: static;"><div id="titrePortail">
+	<h1>
+        <span class="mainTitle">PMB Services</span>
+        <span class="subTitle">r&eacute;seau mediath&egrave;ques</span>
+	</h1>
+</div></div><div id="cms_module_htmlcode_137" class="cms_module_htmlcode cms_module" style="visibility: visible; display: block;"><div class="clear"></div></div><div id="cms_module_sectionslist_120" class="cms_module_sectionslist cms_module" style="visibility: visible; display: block;"><div class="uk-flex uk-flex-center uk-hidden-small uk-hidden-medium">
+    <div class="MenuHoriz uk-navbar uk-container">
+        <ul class="Nav uk-navbar-nav">
+        <!-- rubriques niveau 1 -->
+                    <li>
+                <a href="./index.php" title="Accueil">Accueil</a>
+                            </li>
+                    <li class="uk-parent" data-uk-dropdown="{pos:'bottom-center',remaintime:'550'}">
+                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=37" title="Catalogue">Catalogue</a>
+                                <div class="uk-dropdown uk-dropdown-navbar">
+                    <ul class="SousNav uk-nav uk-nav-navbar">
+			<!-- rubriques niveau 2 -->
+                                                    <li>
+                                <a href="./index.php?lvl=index">Recherche simple</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?search_type_asked=perio_a2z">P&eacute;riodiques</a>
+                            </li>
+                                            </ul>
+                </div>      
+                            </li>
+                    <li class="uk-parent" data-uk-dropdown="{pos:'bottom-center',remaintime:'550'}">
+                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=1" title="Actualit&eacute;s">Actualit&eacute;s</a>
+                                <div class="uk-dropdown uk-dropdown-navbar">
+                    <ul class="SousNav uk-nav uk-nav-navbar">
+			<!-- rubriques niveau 2 -->
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=4">Agenda</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=7">Nouveaut&eacute;s</a>
+                            </li>
+                                            </ul>
+                </div>      
+                            </li>
+                    <li>
+                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=71" title="Ressources num&eacute;riques">Ressources num&eacute;riques</a>
+                            </li>
+                </ul>
+    </div>
+</div>    
+</div></div><div id="main" style="position: static; left: 0px; top: 0px;" fixed="yes"><div id="main_header"><link href="https://fonts.googleapis.com/css?family=Dosis:400,500" rel="stylesheet" type="text/css"></div><div id="main_hors_footer" style="position: relative; left: 0px; top: 0px;">
+						
+
+<script type="text/javascript" src="./includes/javascript/auth_popup.js"></script>	
+<script type="text/javascript" src="./includes/javascript/pnb.js"></script><div id="cms_module_metadatas_157" class="cms_module_metadatas cms_module"></div><div id="add_div_cms_module_articleslist_21" class="row"></div><div id="cms_module_htmlcode_170" class="cms_module_htmlcode cms_module"><div id="boutonRetour">
+<a href="javascript:history.go(-1)" title="Retour">&gt;&gt; Retour</a>
+</div>
+<div class="clear"></div> </div><div id="navigator" fixed="yes">
+<table style="width:100%"><tr><td class="navig_actions_first_screen"><a href="./index.php?lvl=index" class="navig_etageres"><span>Nouvelle recherche</span></a></td>
+</tr></table></div><div id="intro_message"><div class="p2"></div></div><!-- fermeture de #navigator -->
+
+<div id="notice">
+<br><!-- $Id: record_extended_display.tpl.html,v 1.102 2021/04/02 12:39:00 dgoron Exp $ -->
+	<style type="text/css">
+		
+	</style>
+<div id="noticeNot" data-record-id="2473">
+	<div class="parentNot">
+		<div id="blocNotice_descr">
+			
+			<!-- Affichage des onglets d'enrichissement -->
+							<ul id="onglets_isbd_public2473" class="onglets_isbd_publicNot">
+					<li id="onglet_detail2473" class="isbd_public_active"><a href="#" onclick="display_tab(this, 'detail', 2473); return false;"><span>D&eacute;tail</span></a></li>
+						
+				</ul>
+																
+			<!-- div conteneurs des onglets perso -->
+						
+			<!-- div conteneur des enrichissements -->
+			<div id="div_detail2473">
+									<div class="asideContentNot">
+																		<!-- Vignette de la notice -->
+							<div class="vignetteimgNot">
+								<div class="vignetteDocNot">
+									<img class="vignetteNot" src="./styles/inau_yandev_theme/images/no_image.jpg" alt="The green city">
+								</div>
+							</div>
+																
+																					
+																					
+																		<!-- Ajouter au panier -->
+							<div class="onglet_basketNot ui-panel-basket-item">
+								<div id="record_container_2473_cart" class="ui-flex ui-flex-middle">
+																			<a href="cart_info.php?id=2473&amp;header=The+green+city" title="Ajouter au panier" target="cart_info" class="img_basketNot">
+											<span class="icon_basketNot"><img src="./styles/common/images/white_basket.png" style="border:0px" alt="Ajouter au panier"></span>
+										</a>
+										<a href="cart_info.php?id=2473&amp;header=The+green+city" title="Ajouter au panier" target="cart_info" class="label_basketNot">
+											<span class="label_basketNot">Ajouter au panier</span>
+										</a>
+																	</div>
+							</div>	
+																						<!-- Bouton de pnb -->
+												
+																<!-- Bouton edition -->
+										
+																										
+																																																																					
+																		<!-- Permalink -->
+							<div class="lienP">
+								<span class="img_permalink"><i class="fa fa-clipboard" aria-hidden="true"></i></span>
+								<span class="label_permalink"><a href="https://inau.ac.ma/binau/index.php?lvl=notice_display&amp;id=2473" title="Lien vers la notice">Lien vers la notice</a></span>
+							</div>
+																</div>
+								
+																	
+				<!-- Contenu de la notice -->
+				<div class="notice_contenu">
+					<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=The%20green%20city&amp;rft.title=The%20green%20city&amp;rft.date=1979&amp;rft_id=&amp;rft.pub=The%20MacMillan%20Company&amp;rft.au=Roger%20JOHNSON&amp;rft.aulast=JOHNSON&amp;rft.aufirst=Roger"></span>
+											<table class="descr_notice">
+							<tbody>
+																	<tr class="record_tit1">
+										<td class="labelNot">
+											<span>Titre : </span>
+										</td>
+										<td class="labelContent">
+											<span id="exempl_titleNot">The green city</span>
+										</td>
+									</tr>
+																
+																																		
+																																		
+																																	
+																																																				
+																																						<tr class="record_responsabilites">
+												<td class="labelNot">
+													<span>Auteurs : </span>
+												</td>
+												<td class="labelContent">
+													<span>
+																				<a href="./index.php?lvl=author_see&amp;id=1934" title="Roger JOHNSON">Roger JOHNSON</a>																							</span>
+												</td>
+											</tr>
+																																											
+																											<tr class="record_tdoc">
+											<td class="labelNot">
+												<span>Type de document&nbsp;: </span> <!-- Type de document-->
+											</td>
+											<td class="labelContent">
+												<span>
+																											texte imprim&eacute;
+																									</span>
+											</td>
+										</tr>
+																									
+																																	
+																
+																											<tr class="record_publishers">
+											<td class="labelNot">
+												<span>Editeur :</span> <!-- Edition, Annee-->
+											</td>
+											<td class="labelContent">
+												<span><a href="./index.php?lvl=publisher_see&amp;id=481">The MacMillan Company</a>, 1979</span>
+											</td>
+										</tr>
+																									
+																																	
+																
+																																	
+																																	
+																																	
+																																	
+																											<tr class="record_size">
+											<td class="labelNot">
+												<span>Format : </span>
+											</td>
+											<td class="labelContent">
+												<span>163p</span>
+											</td>
+										</tr>
+																									
+																																	
+																																	
+																											<tr class="record_langues">
+											<td class="labelNot">
+												<span>Langues:</span>
+											</td>
+											<td class="labelContent">
+																																							<span>Anglais</span>
+																																				</td>
+										</tr>
+																									
+																																	
+																																	
+																																	
+																																	
+																											<tr class="record_mots_cles">
+											<td class="labelNot">
+																									<span>Mots-cl&eacute;s:</span>
+																							</td>
+											<td class="labelContent">
+																																						<a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=centre+ville&amp;tags=ok"> centre ville </a> 
+																																							;
+																										<a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Petite+ville&amp;tags=ok"> Petite ville </a> 
+																																							;
+																										<a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Architecture&amp;tags=ok"> Architecture </a> 
+																																							;
+																										<a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=transport&amp;tags=ok"> transport </a> 
+																							</td>
+										</tr>
+																									
+																																	
+																																	
+																																	
+								<!--Autorit?s persos-->
+																									                                
+																																	
+																																	
+																																</tbody>
+						</table>
+									</div>
+			</div>
+		</div>
+		<div class="clear"></div>
+																				<!-- Bouton de reservation -->
+																														<div id="resa_notice-2473" class="resa_notice">
+										<a href="#" onclick="if(confirm('Voulez-vous vraiment r&eacute;server ce document ?')){w=window.open('./do_resa.php?lvl=resa&amp;id_notice=2473&amp;id_bulletin=0&amp;oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa_NotCourte-2473" class="bt_resa_NotCourte">R&eacute;server</a>
+																			</div>
+									<div class="clear"></div>
+																																						
+						
+														<!-- Exemplaire -->
+					<div id="zone_exemplaires">
+						
+<h3><span id="titre_exemplaires" class="titre_exemplaires">Exemplaires (1)</span></h3>
+<table cellpadding="2" class="exemplaires" style="width:100%">
+<tr class="thead"><th class="expl_header_expl_cb">Code-barres</th><th class="expl_header_expl_cote">Cote</th><th class="expl_header_tdoc_libelle">Support</th><th class="expl_header_location_libelle">Localisation</th><th class="expl_header_section_libelle">Section</th><th class="expl_header_statut">Disponibilit&eacute;</th></tr><tr class="item_expl expl_available"><td id="expl_5814" class="Code-barres">5621</td><td class="Cote">710/JOH</td><td class="Support">Biblio</td><td class="Localisation">Salle de lecture</td><td class="Section">Urbanisme</td><td class="Disponibilit&eacute;">Consultation sur place<br><strong>Disponible</strong> </td></tr>
+</table>
+					</div>
+											
+									
+									
+					<div id="docnum">
+				
+			</div>
+				
+					
+				
+							 
+		
+									
+									
+					<div id="expl_voisin_search_2473" class="expl_voisin_search"></div>
+					<div id="simili_search_2473" class="simili_search"></div>
+					<script type="text/javascript">
+						show_simili_search('2473');show_expl_voisin_search('2473');
+					</script>
+							
+								</div>
+</div><script type="text/javascript">getEnrichment('2473');</script>
+</div>
+	
+		<div id="cms_module_articleslist_46" class="cms_module_articleslist cms_module"></div></div><!-- fin DIV main_hors_footer --> 
+
+		</div><!-- /div id=main -->
+
+		<!-- /div id=intro -->		
+		<div id="bandeau" fixed="yes">
+<div id="cms_module_search_22" class="cms_module_search cms_module" style="position: static; left: 0px; top: 0px; visibility: visible; display: block;">
+			<form method="post" class="searchbox" action="./index.php?lvl=more_results&amp;autolevel1=1" name="cms_module_search_22_searchbox" onsubmit="if (cms_module_search_22_searchbox.user_query.value.length == 0) { cms_module_search_22_searchbox.user_query.value='*';}cms_module_search_22_change_dest();">
+				
+				<input type="hidden" value="1" name="look_ALL">
+			<h4 class="searchbox_title">Je cherche, je trouve...</h4><span class="research_inputs">
+				<input type="text" name="user_query" value="" placeholder="Rechercher...">
+				<input class="bouton" type="submit" value="Rechercher">
+				<input class="bouton button_search_help" title="Aide" type="button" onclick='window.open("./help.php?whatis=simple_search", "search_help", "scrollbars=yes, toolbar=no, dependent=yes, width=400, height=400, resizable=yes"); return false' value="Aide"></span><br>
+						<span class="search_radio_button" id="search_radio_button_0"><input type="radio" name="dest" value="0" default_segment="0" universe="" checked>&nbsp;Dans le catalogue</span>
+						<span class="search_radio_button" id="search_radio_button_1"><input type="radio" name="dest" value="11" default_segment="0" universe="">&nbsp;Dans le site</span>
+				<p class="search_advanced_link"><a href="./index.php?search_type_asked=simple_search" title="Recherche avanc&eacute;e"> Recherche avanc&eacute;e</a></p>		
+			</form></div><div id="resume_panier" fixed="yes" style="visibility: visible; display: block;">
+			<iframe recept="yes" recepttype="cart" frameborder="0" id="iframe_resume_panier" name="cart_info" allowtransparency="true" src="" scrolling="no" scrollbar="0"></iframe>
+			<script type="text/javascript">
+				addLoadEvent(function() {
+					document.getElementById('iframe_resume_panier').src = 'cart_info.php';
+				});
+			</script>
+		</div><div id="accueil" fixed="yes">
+
+<h3><span onclick='document.location="./index.php?"' style="cursor: pointer;">Accueil</span></h3>
+<p class="centered"><a href="./index.php?"><img src="images/site/livre.png" alt="Accueil" style="border:0px" class="center"></a></p>
+<div id="lang_select"><h3><span>S&eacute;lection de la langue</span></h3><form method="post" action="index.php?lvl=notice_display&amp;id=2473"><select name="lang_sel" onchange="this.form.submit();"><option value="fr_FR" selected>Fran&ccedil;ais </option><option value="en_UK">English (UK)</option><option value="es_ES">Espa&ntilde;ol</option><option value="it_IT">Italiano</option><option value="de_DE">Deutsch</option></select></form></div>
+
+					</div><!-- fermeture #accueil -->
+<div id="cms_module_htmlcode_141" class="cms_module_htmlcode cms_module" style="position: static; left: 0px; top: 0px; visibility: visible; display: block;"><div id="lienHistorique">
+    <a href="./index.php?lvl=search_history" title="Historique des recherches">Historique</a>
+</div></div><div id="connexion" fixed="yes">
+
+			<h3 class="login_invite">Se connecter</h3><div id="login_form"><form action="index.php?lvl=notice_display&amp;id=2473" method="post" name="myform"><label>acc&eacute;der &agrave; votre compte de lecteur</label><br>
+				<input type="text" name="login" class="login" size="14" placeholder="identifiant"><br>
+				<input type="password" name="password" class="password" size="8" placeholder="Mot de passe" value="">
+                <input type="hidden" name="force_login" value="1">
+				<input type="submit" name="ok" value="ok" class="bouton"></form><a class="mdp_forgotten" href="./askmdp.php">Mot de passe oubli&eacute; ?</a></div>
+
+			</div><!-- fermeture #connexion -->
+<div id="post_adress" fixed="yes">
+
+		<span><h3>Horaires d'ouverture</h3>
+<p><b>Du lundi au Vendredi : </b><br>de 09h00 &agrave; 16h30 <br>
+</p>
+		</span>	
+	    </div><div id="adresse" fixed="yes">
+
+		<h3>Adresse</h3>
+
+		<span>
+			<br>
+			<br>
+			 <br>
+			&nbsp;<br>
+			<br><span id="opac_biblio_email">
+			<a href="mailto:oussama.hamal@inau.ac.ma" title="oussama.hamal@inau.ac.ma">contact</a></span></span>
+	    </div><!-- fermeture #adresse --><!-- fermeture #post_adress --><div id="cms_module_articleslist_130" class="cms_module_articleslist cms_module" style="visibility: visible; display: none; left: auto; top: auto; height: 804px; width: 256px; margin: 0px; padding: 0px; float: none; position: static;"></div></div><div id="bandeau_2" fixed="yes"></div><div id="footer" fixed="yes">
+
+<div id="cms_module_htmlcode_134" class="cms_module_htmlcode cms_module" style="visibility: visible; display: block;"><div class="Ancre">
+	<a href="#logo" title="Top">&Lambda;</a>
+</div></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module" style="visibility: visible; display: block;"></div><span id="footer_rss" fixed="yes">
+	
+</span>
+<span id="footer_link_sup" fixed="yes">
+		 &nbsp;
+</span>
+
+<span id="footer_link_website" fixed="yes">
+	<a class="footer_biblio_name" href="https://inau.ac.ma/" title=""></a> &nbsp;
+</span>	
+
+<span id="footer_link_pmb" fixed="yes">
+
+
+
+  <title>INAU Contact</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://inau.ac.ma/binau/styles/inau_yandev_them/style_footer.css">
+  <!-- <link rel="stylesheet" href="style_footer.css"> -->
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+
+
+
+  <footer class="footer">
+     <div class="container">
+      <div class="row">
+        <div class="footer-col">
+          <h4>HORAIRES</h4>
+          <ul>
+            <li><a href="#">Du lundi au vendredi : de 09h00 &agrave; 16h30</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>ADRESSE</h4>
+          <ul>
+            <li><a href="#">Madinat AL IRFANE Avenue Allal Al Fassi,<br> BP : 6215 &ndash; Rabat Instituts, Maroc</a></li>
+          </ul>
+        </div>
+		
+		<div class="footer-col">
+          <h4>CONTACT</h4>
+          <ul>
+            <li><a href="#">T&eacute;l : +212 537686991</a></li>
+            <li style="color:#FFF">E-mail :<a href="mailto:hamal.oussama@inau.ac.ma"> </a><a href="mailto:hamal.oussama@inau.ac.ma">hamal.oussama@inau.ac.ma</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-col">
+          <h4>R&Eacute;SEAUX SOCIAUX</h4>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+		  <img src="http://inau.ac.ma/binau/styles/inau_yandev_theme/images/inau_nobg.png" alt="INAU LOGO" width="80%">
+        </div>
+      </div>
+     </div>
+	 
+	 <div class="copyright">
+				<p>&copy; Tous droits r&eacute;serv&eacute;s 2022 <a href="https://inau.ac.ma/">INAU</a>
+				<span class="sep"> | </span>
+            R&eacute;alis&eacute; par: <a href="https://yandev-it.com/">Yandev IT</a> </p>
+								</div>
+	 
+  </footer>
+
+
+ &nbsp;
+		<a class="lien_pmb_footer" href="https://www.sigb.net" title="...une solution libre pour la m&eacute;diath&egrave;que..." target="_blank">pmb</a> 	
+</span>		
+		
+<div id="accessibility" fixed="yes" style="visibility: visible; display: block;">
+
+		<ul class="accessibility_font_size">
+			<li class="accessibility_font_size_small"><a href="javascript:set_font_size(-1);" title="R&eacute;duire le texte">A-</a></li>
+			<li class="accessibility_font_size_normal"><a href="javascript:set_font_size(0);" title="R&eacute;initialiser le texte">A</a></li>
+			<li class="accessibility_font_size_big"><a href="javascript:set_font_size(1);" title="Agrandir le texte">A+</a></li>
+		</ul>
+		</div></div></div><!-- /div id=container -->
+		
+		<script type="text/javascript">init_drag();	//rechercher!!</script> 
+		
+			<script type="text/javascript">
+				var tarteaucitron_messages = pmbDojo.messages.getMessages("tarteaucitron");
+				if(tarteaucitron_messages.length) {
+					tarteaucitronCustomText = {};
+					tarteaucitron_messages.forEach(function(message) {
+						if(parseInt(message.code.indexOf(":")) !== -1) {
+							let tarteaucitron_messages_group = message.code.split(":");
+							if(typeof tarteaucitronCustomText[tarteaucitron_messages_group[0]] == "undefined") {
+								tarteaucitronCustomText[tarteaucitron_messages_group[0]] = {};
+							}
+							tarteaucitronCustomText[tarteaucitron_messages_group[0]][tarteaucitron_messages_group[1]] = message.message; 
+						} else {
+							tarteaucitronCustomText[message.code] = message.message;
+						}
+					});
+				}
+			</script>
+			<script type="text/javascript" src="./includes/javascript/tarteaucitron/tarteaucitron.js"></script>
+		<script type="text/javascript">
+	        tarteaucitron.init({
+	    	  "privacyUrl": "", /* Privacy policy url */
+	
+	    	  "hashtag": "#PhpMyBibli-COOKIECONSENT", /* Open the panel with this hashtag */
+	    	  "cookieName": "PhpMyBibli-COOKIECONSENT", /* Cookie name */
+	    
+	    	  "orientation": "bottom", /* Banner position (top - bottom - popup) */
+	       
+	          "groupServices": true, /* Group services by category */
+	                           
+	    	  "showAlertSmall": false, /* Show the small banner on bottom right */
+	    	  "cookieslist": false, /* Show the cookie list */
+				                           
+	          "closePopup": false, /* Show a close X on the banner */
+	
+	          "showIcon": false, /* Show cookie icon to manage cookies */
+	          "iconSrc": "./images/cookie.png", /* Optionnal: URL or base64 encoded image */
+	          "iconPosition": "BottomRight", /* BottomRight, BottomLeft, TopRight and TopLeft */
+	
+	    	  "adblocker": false, /* Show a Warning if an adblocker is detected */
+	                           
+	          "DenyAllCta" : true, /* Show the deny all button */
+	          "AcceptAllCta" : true, /* Show the accept all button when highPrivacy on */
+	          "highPrivacy": true, /* HIGHLY RECOMMANDED Disable auto consent */
+	                           
+	    	  "handleBrowserDNTRequest": false, /* If Do Not Track == 1, disallow all */
+	
+	    	  "removeCredit": true, /* Remove credit link */
+	    	  "moreInfoLink": false, /* Show more info link */
+	
+	          "useExternalCss": false, /* If false, the tarteaucitron.css file will be loaded */
+	          "useExternalJs": false, /* If false, the tarteaucitron.js file will be loaded */
+				
+	    	  //"cookieDomain": ".my-multisite-domaine.fr", /* Shared cookie for multisite */
+	                          
+	          "readmoreLink": "", /* Change the default readmore link */
+	
+	          "mandatory": true, /* Show a message about mandatory cookies */
+	        });
+ 
+        </script>
+		 <script type="text/javascript">
+        	(tarteaucitron.job = tarteaucitron.job || []).push("addthis");
+        </script>
+		
+		</body>
+		</html>

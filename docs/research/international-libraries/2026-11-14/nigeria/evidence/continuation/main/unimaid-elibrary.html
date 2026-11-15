@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Library - Ramat Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .hero {
+            min-height: 50vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(10, 36, 99, 0.95), rgba(62, 146, 204, 0.85)), url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=1920') center/cover;
+            color: white;
+        }
+        .hero-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--dark);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        .section {
+            padding: 60px 0;
+            background: var(--light);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .search-box {
+            max-width: 600px;
+            margin: 0 auto 40px;
+            display: flex;
+            gap: 10px;
+        }
+        .search-box input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid var(--gray-300);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        .search-box button {
+            padding: 15px 30px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+        .filter-btn {
+            padding: 10px 25px;
+            background: white;
+            border: 2px solid var(--gray-300);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .library-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        .library-item {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+        }
+        .library-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        .item-header {
+            padding: 20px;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .item-header h4 {
+            flex: 1;
+            font-size: 1rem;
+        }
+        .item-body {
+            padding: 20px;
+        }
+        .item-body p {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-open { background: #d1fae5; color: #065f46; }
+        .badge-subscribed { background: #fef3c7; color: #92400e; }
+        .item-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 0.8rem;
+            color: var(--gray-500);
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .btn-view {
+            padding: 8px 15px;
+            background: var(--secondary);
+            color: white;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="index.html" class="logo">
+                <img src="logo.jpg" alt="Ramat Library Logo" style="height: 50px;">
+                <div class="logo-text">Ramat Library<span>University of Maiduguri</span></div>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li class="dropdown"><a href="#" class="active">Resources</a>
+                    <div class="dropdown-menu">
+                        <a href="resources.html">Open Access</a>
+                        <a href="resources.html">Subscribed</a>
+                        <a href="elibrary.html">E-Library</a>
+                    </div>
+                </li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="nav-auth">
+                <a href="login.html" class="btn btn-outline">Login</a>
+                <a href="register.html" class="btn btn-primary">Register</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <span class="hero-badge">Digital Library</span>
+            <h1>E-<span>Library</span></h1>
+            <p>Search and access our digital collection of books, journals, and theses</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Search by title, author, or keywords...">
+                <button onclick="searchResources()"><i class="fas fa-search"></i></button>
+            </div>
+            
+            <div class="filters">
+                <button class="filter-btn active" onclick="filterResources('all')">All</button>
+                <button class="filter-btn" onclick="filterResources('Books')">Books</button>
+                <button class="filter-btn" onclick="filterResources('Journals')">Journals</button>
+                <button class="filter-btn" onclick="filterResources('Theses')">Theses</button>
+            </div>
+            
+            <div class="library-grid" id="library-grid">
+                <div style="text-align: center; padding: 40px;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 2rem;"></i>
+                    <p>Loading resources...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div style="text-align: center; opacity: 0.6;">
+                <p>&copy; 2026 University of Maiduguri Ramat Library. All rights reserved by ICA.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        let allResources = [];
+        
+        async function loadLibraryResources() {
+            try {
+                const response = await fetch('../api/index.php?path=resources');
+                allResources = await response.json();
+                displayResources(allResources);
+            } catch (e) {
+                console.error('Failed to load:', e);
+                document.getElementById('library-grid').innerHTML = '<p style="text-align: center;">Failed to load resources</p>';
+            }
+        }
+        
+        function displayResources(resources) {
+            const grid = document.getElementById('library-grid');
+            if (!resources || resources.length === 0) {
+                grid.innerHTML = '<p style="text-align: center;">No resources found</p>';
+                return;
+            }
+            grid.innerHTML = resources.map(r => {
+            let fileUrl = r.file_url || '';
+            if (fileUrl && !fileUrl.startsWith('http')) {
+                fileUrl = '../api/' + fileUrl;
+            }
+            return `
+                <div class="library-item">
+                    <div class="item-header">
+                        <i class="fas fa-${r.category === 'Journals' ? 'newspaper' : r.category === 'Theses' ? 'file-alt' : 'book'}"></i>
+                        <h4>${r.title}</h4>
+                    </div>
+                    <div class="item-body">
+                        <p>${r.description || ''}</p>
+                        <span class="badge ${r.type === 'open' ? 'badge-open' : 'badge-subscribed'}">
+                            ${r.type === 'open' ? 'Open Access' : 'Subscribed'}
+                        </span>
+                        <div class="item-meta">
+                            <span>By ${r.author || 'Unknown'}</span>
+                            <span>${r.category}</span>
+                        </div>
+                        ${fileUrl ? '<a href="' + fileUrl + '" target="_blank" class="btn-view" style="display:inline-block;text-decoration:none;">View / Download</a>' : '<span class="btn-view">View Details</span>'}
+                    </div>
+                </div>
+            `;
+        }).join('');
+        }
+        
+        function filterResources(category) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (category === 'all') {
+                displayResources(allResources);
+            } else {
+                displayResources(allResources.filter(r => r.category === category));
+            }
+        }
+        
+        function searchResources() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const filtered = allResources.filter(r => 
+                r.title.toLowerCase().includes(query) || 
+                (r.author && r.author.toLowerCase().includes(query))
+            );
+            displayResources(filtered);
+        }
+        
+        loadLibraryResources();
+    </script>
+</body>
+</html>

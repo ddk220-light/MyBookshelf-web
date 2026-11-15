@@ -1,0 +1,1442 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <title>MARC - Resultado página 1   </title>    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />    <link rel="stylesheet" href="/iah/css/stylesheet.css" type="text/css" media="screen" />
+</head>
+<body><div class="container"><div class="bar"><a href="/cgi-bin/wxis.exe/iah/scripts/?IsisScript=iah.xis&base=MARC&lang=es&form=F">español</a> | <a href="/cgi-bin/wxis.exe/iah/scripts/?IsisScript=iah.xis&base=MARC&lang=en&form=F">english</a> | <a href="/cgi-bin/wxis.exe/iah/scripts/?IsisScript=iah.xis&base=MARC&lang=fr&form=F">français</a></div><div class="top">
+        <h1><a href="/site/php/index.php"><img src="/iah/pt/image/logoabcd.jpg" border="0" alt="logo" /></a></h1>
+        <h2><a title="Pesquisa em bases de dados" href="/iah/pt/index.htm"><span>Pesquisa em bases de dados</span></a></h2>
+            <div class="spacer"> </div>
+            <a name="top"></a>
+    </div>
+
+<script type="text/javascript">
+    function AnySelected(){
+        var any = false;
+        var count = 0;
+
+        while(!any && count < document.forms[0].listChecked.length) {
+            any = (document.forms[0].listChecked[count].checked || document.forms[0].listChecked[count].type == "hidden");
+            count++;
+        }
+        if (!any)
+        {
+            alert("No reference was selected");
+            return false;
+        }
+        else{
+            document.forms[0].nextAction.value="your_selection";
+            document.forms[0].submit();
+            return true;
+        }
+    }
+
+
+    //CVLACS functions
+    function goCVLACS1(parametros)
+    {
+        //var str_aux = "http://genos.cnpq.br:12010/dwlattes/owa/prc_imp_cv_int?"+parametros;
+        var str_aux = "http://buscatextual.cnpq.br/buscatextual/visualizacv.jsp?id=" + parametros;
+        janela = window.open(str_aux,"CVLACS","width=640,height=480,resizable=yes,toolbar=no,location=no,menubar=no,scrollbars=yes,status=yes");
+        janela.focus();
+
+    }
+
+    function relatedDocs(mfn)
+    {
+        targetId = "related";
+        form = document.forms[0];
+        form.related.value = mfn;
+        form.nextAction.value = "list_related";
+
+        form.target = targetId;
+        relatedWindow = window.open("",targetId, "scrollbars=yes,toolbar=yes,top=2,left=160,width=638");
+        relatedWindow.focus();
+        form.submit();
+        form.target = "";
+        return;
+    }
+
+    function isFormComplete()
+    {
+        // somente pode realizar o submit caso todo o formulario tenha sido carregado (campo de exprSearch presente)
+        if (document.search.exprSearch != null){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    function showDecsDetail(term){
+        term = term.replace(/&/g,"&amp;");
+        var decsHref   = "http://decs.bvs.br/cgi-bin/wxis1660.exe/decsserver/?IsisScript=../cgi-bin/decsserver/decsserver.xis&task=exact_term&previous_page=homepage&interface_language=p&search_language=p&search_exp=" + term + "&show_tree_number=T";
+        decsWindow = window.open(decsHref,"descritor");
+        decsWindow.focus();
+        return false;
+    }
+    function OpenNewfacic(id) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=busca_facic.xis&base=TITLE&id=" + id + "&lang=pt";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+    // for availability check
+	function checkAvailability(inventario)
+	{
+		var str_aux = "/central/availability.php?copyId="+inventario+"&lang=pt";
+        janela = window.open(str_aux,"EMPWeb","width=600,height=300,resizable=yes,toolbar=no,location=no,menubar=no,scrollbars=yes,status=no");
+        janela.focus()
+
+	}
+</script>
+
+<form action="/cgi-bin/wxis.exe/iah/scripts/" method="POST" name="search" onsubmit="return isFormComplete()">
+    <!-- v5001=search^sSEARCH--><input type="hidden" name="IsisScript" value="iah.xis">
+<input type="hidden" name="environment" value="^d/iah/^c/ABCD/www/htdocs/iah/scripts/^b/ABCD/www/bases/^p/ABCD/www/bases/par/^siah.xis^v3.1.1">
+<input type="hidden" name="avaibleFormats" value="^nstandard.pft^1Padrão^2Largo^3Large^4Grand">
+<input type="hidden" name="avaibleFormats" value="^ndetailed.pft^1Detalhado^2Detallado^3Detailed^4Détaillée">
+<input type="hidden" name="avaibleFormats" value="^nDEFAULT^fstandard.pft">
+<input type="hidden" name="apperance" value="^eia@hmy-server.domain^rON^mON^apt, es, en, fr">
+<input type="hidden" name="helpInfo" value="^nHELP FORM^vhelp_form_lilacs.htm">
+<input type="hidden" name="helpInfo" value="^nNOTE FORM^vnote_form1_lilacs.htm">
+<input type="hidden" name="gizmoDecod" value="">
+<input type="hidden" name="avaibleForms" value="F,A">
+<input type="hidden" name="logoImage" value="logoabcd.jpg">
+<input type="hidden" name="logoURL" value="^1/site/php/index.php^2/site/php/index.php^3/site/php/index.php^4/site/php/index.php">
+<input type="hidden" name="headerImage" value="online.gif">
+<input type="hidden" name="headerURL" value="^1/iah/pt/index.htm^2/iah/es/index.htm^3/iah/en/index.htm^4/iah/fr/index.htm">
+<input type="hidden" name="form" value="F">
+<input type="hidden" name="pathImages" value="/iah/pt/image/">
+<input type="hidden" name="navBar" value="ON">
+<input type="hidden" name="hits" value="20">
+<input type="hidden" name="format" value="standard.pft">
+<input type="hidden" name="lang" value="pt">
+<input type="hidden" name="isisTotal" value="9">
+<input type="hidden" name="isisFrom" value="1">
+<input type="hidden" name="user" value="GUEST">
+<input type="hidden" name="baseFeatures" value="^eOFF^fXML">
+<input type="hidden" name="related" value="">
+
+
+
+    <input type="hidden" name="nextAction" value="refine/resubmit" />
+
+    <div class="contain">
+        <div class="barNavTop">
+            
+                    <input type="button" class="defaultButton submit" value="your selection" name="yselect" onclick="javascript:void(AnySelected())" />
+                    <input type="submit" class="defaultButton submit" name="list.x" value="send result" />
+                    <input type="submit" class="defaultButton submit" name="new search.x" value="new search" />
+                    <input type="submit" class="defaultButton submit" name="config.x" value="configure" />
+                    <input type="button" class="defaultButton submit" onclick=window.location="#bottom" value="page bottom" />
+
+                        
+        </div>
+
+        <div class="rowResult">
+            <div class="columnA">Database:</div>
+            <div class="columnB"><b>MARC</b></div>
+        </div>
+
+        <div class="rowResult">
+            <div class="columnA">Search:</div>
+            <div class="columnB"><b>
+                        Introduction&nbsp;AND&nbsp;to&nbsp;AND&nbsp;psychology
+                        </b>
+                                                            
+            </div>
+        </div>
+
+        <div class="rowResult">
+            <div class="columnA">References found:</div>
+            <div class="columnB">
+                        <b>9</b>&nbsp;&nbsp;
+                        [<a href="#refine">Refine the search</a>]
+            </div>
+        </div>
+
+                
+        <div class="rowResult">
+            <div class="columnA">Showing:</div>
+            <div class="columnB">
+                        <b>1 .. 9</b>&nbsp;&nbsp;
+
+                        
+
+                        in format [<b>Padrão</b>]
+            </div>
+        </div>
+                
+    </div>
+
+    <!-- monta navegacao entre as paginas do resultado -->
+    <div class="rowResult">
+            <div class="colPg"><sup>página 1 de 1</sup></div>
+            <div class="colPgNav"></div>
+        </div>
+
+
+
+        <div class="barNav">
+            <div class="leftCol">&nbsp;
+            
+            
+                <a name="first"></a>
+            
+            <a name="1"><b>1 / 9</b></a>
+            </div>
+            <div class="centerCol">MARC</div>
+            <div class="rightCol">
+                    <!--img src="/iah/pt/image/help.gif" border="0"-->            
+                    
+                    
+                    
+                          <a href="#2"><img src="/iah/pt/image/next.gif" border="0" /></a>
+                    
+                    
+                          <a href="#last"><img src="/iah/pt/image/bott.gif" border="0" /></a>
+                    
+            </div>
+        </div>
+
+
+
+    <!-- begin display of record -->
+
+    <div class="contain">
+        <div class="selectCol">
+            <div class="rowHigh">
+                <span class="colMark"><input type="checkbox" name="listChecked" value="^m49347^h1"  /></span>
+                <span class="lablSmall"><i>selecionar</i></span>
+            </div>
+            <div class="rowHigh">
+                <span class="colMark"><input type="image" name="toprint^m49347" src="/iah/pt/image/toprint.gif" border="0" /></span>
+                <span class="lablSmall"><i>imprimir</i></span>
+            </div>
+            <div style=width:50><input type="button" value="Disponibilidade" style="font-family: Verdana; font-size:8pt" onClick="javascript:checkAvaibility('16050')"></div><script type="text/javascript">
+    function OpenNewCite(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=CITE.PFT";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewCite('49347')"><img src="/iah/pt/image/fulltxt.gif" border="0" name="texto"></a></td><td width="72%"><font face=verdana size="1"><i>Como citar este artigo</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportBT(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_BibTex.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportBT('49347')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para BibTex</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportRM(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_ReferenceManager.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportRM('49347')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Reference Manager</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportPC(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_ProCite.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportPC('49347')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Pro Cite</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportEN(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_EndNote.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportEN('49347')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para End Note</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportRw(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_Refworks.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportRw('49347')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Refworks</i></font></td></tr>
+        </div>
+        <div class="resultCol">
+
+        <!-- formato de apresentacao da base -->
+<table width=90% border=0>
+<td class=textbody03 colspan=3 >
+<td>Tipo de material: Livro<br><br>
+</td></b></font>
+<tr>
+<td width=10> </td>
+<font face="verdana" size=2>
+<td valign=top width=90 align=center>
+<font face="verdana" size=2>
+<script>
+a="159.9^bH545i"
+     i=82
+     while (i>=0) {
+        i=a.indexOf("^",0)
+        if (i>=0) {            a=a.substring(0,i)+"<br>"+a.substring(i+2,a.length)
+         }
+      }
+document.write(""+a+"")
+</script>
+</TD><td width=5> </td>
+<td><font face="verdana" size=2>
+HERGENHAHN, B. R.<br>
+      
+<b>An introduction to the history of psychology</b> . -- California : Brooks Cole, 1992<br>       594p.
+<p>
+      ISBN 0-534-16812-4<br>
+<p>
+      
+Psicologia -- Historia da psicologia
+;    HERGENHAHN, B. R.
+<br><br><br><p></td>
+</table>
+<br>
+<font class=texto_n>
+</table><br></table>
+<table width=90%><tr><td width=10% valign=top><font face=arial size=2><b>Copies info : </b></td><td width=90% valign=top> <font face=arial size=2></TD></TR></table></div></div>
+
+        <div class="barNav">
+            <div class="leftCol">&nbsp;
+            
+            
+            <a name="2"><b>2 / 9</b></a>
+            </div>
+            <div class="centerCol">MARC</div>
+            <div class="rightCol">
+                    <!--img src="/iah/pt/image/help.gif" border="0"-->            
+                    
+                          <a href="#first"><img src="/iah/pt/image/top.gif" border="0" /></a>
+                    
+                    
+                          <a href="#1"><img src="/iah/pt/image/prev.gif" border="0" /></a>
+                    
+                    
+                          <a href="#3"><img src="/iah/pt/image/next.gif" border="0" /></a>
+                    
+                    
+                          <a href="#last"><img src="/iah/pt/image/bott.gif" border="0" /></a>
+                    
+            </div>
+        </div>
+
+
+
+    <!-- begin display of record -->
+
+    <div class="contain">
+        <div class="selectCol">
+            <div class="rowHigh">
+                <span class="colMark"><input type="checkbox" name="listChecked" value="^m44507^h2"  /></span>
+                <span class="lablSmall"><i>selecionar</i></span>
+            </div>
+            <div class="rowHigh">
+                <span class="colMark"><input type="image" name="toprint^m44507" src="/iah/pt/image/toprint.gif" border="0" /></span>
+                <span class="lablSmall"><i>imprimir</i></span>
+            </div>
+            <div style=width:50><input type="button" value="Disponibilidade" style="font-family: Verdana; font-size:8pt" onClick="javascript:checkAvaibility('11059')"></div><script type="text/javascript">
+    function OpenNewCite(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=CITE.PFT";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewCite('44507')"><img src="/iah/pt/image/fulltxt.gif" border="0" name="texto"></a></td><td width="72%"><font face=verdana size="1"><i>Como citar este artigo</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportBT(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_BibTex.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportBT('44507')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para BibTex</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportRM(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_ReferenceManager.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportRM('44507')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Reference Manager</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportPC(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_ProCite.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportPC('44507')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Pro Cite</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportEN(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_EndNote.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportEN('44507')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para End Note</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportRw(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_Refworks.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportRw('44507')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Refworks</i></font></td></tr>
+        </div>
+        <div class="resultCol">
+
+        <!-- formato de apresentacao da base -->
+<table width=90% border=0>
+<td class=textbody03 colspan=3 >
+<td>Tipo de material: Livro<br><br>
+</td></b></font>
+<tr>
+<td width=10> </td>
+<font face="verdana" size=2>
+<td valign=top width=90 align=center>
+<font face="verdana" size=2>
+<script>
+a="159.9^bK141i"
+     i=82
+     while (i>=0) {
+        i=a.indexOf("^",0)
+        if (i>=0) {            a=a.substring(0,i)+"<br>"+a.substring(i+2,a.length)
+         }
+      }
+document.write(""+a+"")
+</script>
+</TD><td width=5> </td>
+<td><font face="verdana" size=2>
+KALAT, James W.<br>
+      
+<b>Introduction to psychology</b> . -- California : Brooks/Cole, 1993<br>       718p.
+<p>
+      ISBN 0-534-17238-5<br>
+<p>
+      
+Psicologia
+;    KALAT, James W.
+<br><br><br><p></td>
+</table>
+<br>
+<font class=texto_n>
+</table><br></table>
+<table width=90%><tr><td width=10% valign=top><font face=arial size=2><b>Copies info : </b></td><td width=90% valign=top> <font face=arial size=2>No. of copies : 1<br/>Barcode:1000000058402 - Shelf-mark:<BR></TD></TR></table></div></div>
+
+        <div class="barNav">
+            <div class="leftCol">&nbsp;
+            
+            
+            <a name="3"><b>3 / 9</b></a>
+            </div>
+            <div class="centerCol">MARC</div>
+            <div class="rightCol">
+                    <!--img src="/iah/pt/image/help.gif" border="0"-->            
+                    
+                          <a href="#first"><img src="/iah/pt/image/top.gif" border="0" /></a>
+                    
+                    
+                          <a href="#2"><img src="/iah/pt/image/prev.gif" border="0" /></a>
+                    
+                    
+                          <a href="#4"><img src="/iah/pt/image/next.gif" border="0" /></a>
+                    
+                    
+                          <a href="#last"><img src="/iah/pt/image/bott.gif" border="0" /></a>
+                    
+            </div>
+        </div>
+
+
+
+    <!-- begin display of record -->
+
+    <div class="contain">
+        <div class="selectCol">
+            <div class="rowHigh">
+                <span class="colMark"><input type="checkbox" name="listChecked" value="^m44193^h3"  /></span>
+                <span class="lablSmall"><i>selecionar</i></span>
+            </div>
+            <div class="rowHigh">
+                <span class="colMark"><input type="image" name="toprint^m44193" src="/iah/pt/image/toprint.gif" border="0" /></span>
+                <span class="lablSmall"><i>imprimir</i></span>
+            </div>
+            <div style=width:50><input type="button" value="Disponibilidade" style="font-family: Verdana; font-size:8pt" onClick="javascript:checkAvaibility('10739')"></div><script type="text/javascript">
+    function OpenNewCite(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=CITE.PFT";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewCite('44193')"><img src="/iah/pt/image/fulltxt.gif" border="0" name="texto"></a></td><td width="72%"><font face=verdana size="1"><i>Como citar este artigo</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportBT(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_BibTex.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportBT('44193')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para BibTex</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportRM(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_ReferenceManager.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportRM('44193')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Reference Manager</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportPC(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_ProCite.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportPC('44193')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Pro Cite</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportEN(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_EndNote.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportEN('44193')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para End Note</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportRw(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_Refworks.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportRw('44193')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Refworks</i></font></td></tr>
+        </div>
+        <div class="resultCol">
+
+        <!-- formato de apresentacao da base -->
+<table width=90% border=0>
+<td class=textbody03 colspan=3 >
+<td>Tipo de material: Livro<br><br>
+</td></b></font>
+<tr>
+<td width=10> </td>
+<font face="verdana" size=2>
+<td valign=top width=90 align=center>
+<font face="verdana" size=2>
+<script>
+a="316.6^bH613i"
+     i=82
+     while (i>=0) {
+        i=a.indexOf("^",0)
+        if (i>=0) {            a=a.substring(0,i)+"<br>"+a.substring(i+2,a.length)
+         }
+      }
+document.write(""+a+"")
+</script>
+</TD><td width=5> </td>
+<td><font face="verdana" size=2>
+HEWSTONE, Miles<br>
+      
+<b>Introduction to social psychology : a european perspective</b> . -- Oxford : Blackwell, 1996<br>       698p.
+<p>
+      ISBN 0-631-18585-2<br>
+<p>
+      
+Psicologia social
+;    HEWSTONE, Miles
+<br><br><br><p></td>
+</table>
+<br>
+<font class=texto_n>
+</table><br></table>
+<table width=90%><tr><td width=10% valign=top><font face=arial size=2><b>Copies info : </b></td><td width=90% valign=top> <font face=arial size=2>No. of copies : 1<br/>Barcode:1000000015729 - Shelf-mark:<BR></TD></TR></table></div></div>
+
+        <div class="barNav">
+            <div class="leftCol">&nbsp;
+            
+            
+            <a name="4"><b>4 / 9</b></a>
+            </div>
+            <div class="centerCol">MARC</div>
+            <div class="rightCol">
+                    <!--img src="/iah/pt/image/help.gif" border="0"-->            
+                    
+                          <a href="#first"><img src="/iah/pt/image/top.gif" border="0" /></a>
+                    
+                    
+                          <a href="#3"><img src="/iah/pt/image/prev.gif" border="0" /></a>
+                    
+                    
+                          <a href="#5"><img src="/iah/pt/image/next.gif" border="0" /></a>
+                    
+                    
+                          <a href="#last"><img src="/iah/pt/image/bott.gif" border="0" /></a>
+                    
+            </div>
+        </div>
+
+
+
+    <!-- begin display of record -->
+
+    <div class="contain">
+        <div class="selectCol">
+            <div class="rowHigh">
+                <span class="colMark"><input type="checkbox" name="listChecked" value="^m43148^h4"  /></span>
+                <span class="lablSmall"><i>selecionar</i></span>
+            </div>
+            <div class="rowHigh">
+                <span class="colMark"><input type="image" name="toprint^m43148" src="/iah/pt/image/toprint.gif" border="0" /></span>
+                <span class="lablSmall"><i>imprimir</i></span>
+            </div>
+            <div style=width:50><input type="button" value="Disponibilidade" style="font-family: Verdana; font-size:8pt" onClick="javascript:checkAvaibility('9637')"></div><script type="text/javascript">
+    function OpenNewCite(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=CITE.PFT";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewCite('43148')"><img src="/iah/pt/image/fulltxt.gif" border="0" name="texto"></a></td><td width="72%"><font face=verdana size="1"><i>Como citar este artigo</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportBT(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_BibTex.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportBT('43148')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para BibTex</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportRM(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_ReferenceManager.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportRM('43148')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Reference Manager</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportPC(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_ProCite.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportPC('43148')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Pro Cite</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportEN(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_EndNote.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportEN('43148')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para End Note</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportRw(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_Refworks.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportRw('43148')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Refworks</i></font></td></tr>
+        </div>
+        <div class="resultCol">
+
+        <!-- formato de apresentacao da base -->
+<table width=90% border=0>
+<td class=textbody03 colspan=3 >
+<td>Tipo de material: Livro<br><br>
+</td></b></font>
+<tr>
+<td width=10> </td>
+<font face="verdana" size=2>
+<td valign=top width=90 align=center>
+<font face="verdana" size=2>
+<script>
+a="159.9^bS757i"
+     i=82
+     while (i>=0) {
+        i=a.indexOf("^",0)
+        if (i>=0) {            a=a.substring(0,i)+"<br>"+a.substring(i+2,a.length)
+         }
+      }
+document.write(""+a+"")
+</script>
+</TD><td width=5> </td>
+<td><font face="verdana" size=2>
+SPINELLI,Ernesto<br>
+      
+<b>An introduction to phenomenological psychology</b> . -- New Delhi : Sage, 1989<br>       210p.
+<p>
+      
+Psicologia
+;    SPINELLI,Ernesto
+<br><br><br><p></td>
+</table>
+<br>
+<font class=texto_n>
+</table><br></table>
+<table width=90%><tr><td width=10% valign=top><font face=arial size=2><b>Copies info : </b></td><td width=90% valign=top> <font face=arial size=2>No. of copies : 2<br/>Barcode:1000000015389 - Shelf-mark:<BR>Barcode:1000000072794 - Shelf-mark:<BR></TD></TR></table></div></div>
+
+        <div class="barNav">
+            <div class="leftCol">&nbsp;
+            
+            
+            <a name="5"><b>5 / 9</b></a>
+            </div>
+            <div class="centerCol">MARC</div>
+            <div class="rightCol">
+                    <!--img src="/iah/pt/image/help.gif" border="0"-->            
+                    
+                          <a href="#first"><img src="/iah/pt/image/top.gif" border="0" /></a>
+                    
+                    
+                          <a href="#4"><img src="/iah/pt/image/prev.gif" border="0" /></a>
+                    
+                    
+                          <a href="#6"><img src="/iah/pt/image/next.gif" border="0" /></a>
+                    
+                    
+                          <a href="#last"><img src="/iah/pt/image/bott.gif" border="0" /></a>
+                    
+            </div>
+        </div>
+
+
+
+    <!-- begin display of record -->
+
+    <div class="contain">
+        <div class="selectCol">
+            <div class="rowHigh">
+                <span class="colMark"><input type="checkbox" name="listChecked" value="^m36153^h5"  /></span>
+                <span class="lablSmall"><i>selecionar</i></span>
+            </div>
+            <div class="rowHigh">
+                <span class="colMark"><input type="image" name="toprint^m36153" src="/iah/pt/image/toprint.gif" border="0" /></span>
+                <span class="lablSmall"><i>imprimir</i></span>
+            </div>
+            <div style=width:50><input type="button" value="Disponibilidade" style="font-family: Verdana; font-size:8pt" onClick="javascript:checkAvaibility('2477')"></div><script type="text/javascript">
+    function OpenNewCite(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=CITE.PFT";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewCite('36153')"><img src="/iah/pt/image/fulltxt.gif" border="0" name="texto"></a></td><td width="72%"><font face=verdana size="1"><i>Como citar este artigo</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportBT(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_BibTex.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportBT('36153')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para BibTex</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportRM(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_ReferenceManager.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportRM('36153')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Reference Manager</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportPC(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_ProCite.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportPC('36153')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Pro Cite</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportEN(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_EndNote.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportEN('36153')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para End Note</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportRw(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_Refworks.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportRw('36153')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Refworks</i></font></td></tr>
+        </div>
+        <div class="resultCol">
+
+        <!-- formato de apresentacao da base -->
+<table width=90% border=0>
+<td class=textbody03 colspan=3 >
+<td>Tipo de material: Livro<br><br>
+</td></b></font>
+<tr>
+<td width=10> </td>
+<font face="verdana" size=2>
+<td valign=top width=90 align=center>
+<font face="verdana" size=2>
+<script>
+a="159.9^bP728i"
+     i=82
+     while (i>=0) {
+        i=a.indexOf("^",0)
+        if (i>=0) {            a=a.substring(0,i)+"<br>"+a.substring(i+2,a.length)
+         }
+      }
+document.write(""+a+"")
+</script>
+</TD><td width=5> </td>
+<td><font face="verdana" size=2>
+PLOTNIK, Rod<br>
+      
+<b>Introduction to psychology</b> . -- California : Brooks/Cooler, 1993<br>       XXXII, 699p.
+<p>
+      ISBN 0-534-16446-3<br>
+<p>
+      
+Psicologia
+;    PLOTNIK, Rod
+<br><br><br><p></td>
+</table>
+<br>
+<font class=texto_n>
+</table><br></table>
+<table width=90%><tr><td width=10% valign=top><font face=arial size=2><b>Copies info : </b></td><td width=90% valign=top> <font face=arial size=2></TD></TR></table></div></div>
+
+        <div class="barNav">
+            <div class="leftCol">&nbsp;
+            
+            
+            <a name="6"><b>6 / 9</b></a>
+            </div>
+            <div class="centerCol">MARC</div>
+            <div class="rightCol">
+                    <!--img src="/iah/pt/image/help.gif" border="0"-->            
+                    
+                          <a href="#first"><img src="/iah/pt/image/top.gif" border="0" /></a>
+                    
+                    
+                          <a href="#5"><img src="/iah/pt/image/prev.gif" border="0" /></a>
+                    
+                    
+                          <a href="#7"><img src="/iah/pt/image/next.gif" border="0" /></a>
+                    
+                    
+                          <a href="#last"><img src="/iah/pt/image/bott.gif" border="0" /></a>
+                    
+            </div>
+        </div>
+
+
+
+    <!-- begin display of record -->
+
+    <div class="contain">
+        <div class="selectCol">
+            <div class="rowHigh">
+                <span class="colMark"><input type="checkbox" name="listChecked" value="^m21640^h6"  /></span>
+                <span class="lablSmall"><i>selecionar</i></span>
+            </div>
+            <div class="rowHigh">
+                <span class="colMark"><input type="image" name="toprint^m21640" src="/iah/pt/image/toprint.gif" border="0" /></span>
+                <span class="lablSmall"><i>imprimir</i></span>
+            </div>
+            <div style=width:50><input type="button" value="Disponibilidade" style="font-family: Verdana; font-size:8pt" onClick="javascript:checkAvaibility('105533')"></div><script type="text/javascript">
+    function OpenNewCite(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=CITE.PFT";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewCite('21640')"><img src="/iah/pt/image/fulltxt.gif" border="0" name="texto"></a></td><td width="72%"><font face=verdana size="1"><i>Como citar este artigo</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportBT(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_BibTex.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportBT('21640')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para BibTex</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportRM(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_ReferenceManager.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportRM('21640')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Reference Manager</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportPC(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_ProCite.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportPC('21640')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Pro Cite</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportEN(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_EndNote.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportEN('21640')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para End Note</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportRw(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_Refworks.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportRw('21640')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Refworks</i></font></td></tr>
+        </div>
+        <div class="resultCol">
+
+        <!-- formato de apresentacao da base -->
+<table width=90% border=0>
+<td class=textbody03 colspan=3 >
+<td>Tipo de material: Livro<br><br>
+</td></b></font>
+<tr>
+<td width=10> </td>
+<font face="verdana" size=2>
+<td valign=top width=90 align=center>
+<font face="verdana" size=2>
+<script>
+a="159.9^bM137i"
+     i=82
+     while (i>=0) {
+        i=a.indexOf("^",0)
+        if (i>=0) {            a=a.substring(0,i)+"<br>"+a.substring(i+2,a.length)
+         }
+      }
+document.write(""+a+"")
+</script>
+</TD><td width=5> </td>
+<td><font face="verdana" size=2>
+McDOUALL, William<br>
+      
+<b>An introduction to social psychology</b> . -- London : University Paperbacks, 1960<br>       524p.
+<p>
+<p>
+      
+Psicologia -- Psicologia social
+;    McDOUALL, William
+<br><br><br><p></td>
+</table>
+<br>
+<font class=texto_n>
+</table><br></table>
+<table width=90%><tr><td width=10% valign=top><font face=arial size=2><b>Copies info : </b></td><td width=90% valign=top> <font face=arial size=2>No. of copies : 0<br/><BR></TD></TR></table></div></div>
+
+        <div class="barNav">
+            <div class="leftCol">&nbsp;
+            
+            
+            <a name="7"><b>7 / 9</b></a>
+            </div>
+            <div class="centerCol">MARC</div>
+            <div class="rightCol">
+                    <!--img src="/iah/pt/image/help.gif" border="0"-->            
+                    
+                          <a href="#first"><img src="/iah/pt/image/top.gif" border="0" /></a>
+                    
+                    
+                          <a href="#6"><img src="/iah/pt/image/prev.gif" border="0" /></a>
+                    
+                    
+                          <a href="#8"><img src="/iah/pt/image/next.gif" border="0" /></a>
+                    
+                    
+                          <a href="#last"><img src="/iah/pt/image/bott.gif" border="0" /></a>
+                    
+            </div>
+        </div>
+
+
+
+    <!-- begin display of record -->
+
+    <div class="contain">
+        <div class="selectCol">
+            <div class="rowHigh">
+                <span class="colMark"><input type="checkbox" name="listChecked" value="^m13576^h7"  /></span>
+                <span class="lablSmall"><i>selecionar</i></span>
+            </div>
+            <div class="rowHigh">
+                <span class="colMark"><input type="image" name="toprint^m13576" src="/iah/pt/image/toprint.gif" border="0" /></span>
+                <span class="lablSmall"><i>imprimir</i></span>
+            </div>
+            <div style=width:50><input type="button" value="Disponibilidade" style="font-family: Verdana; font-size:8pt" onClick="javascript:checkAvaibility('13543')"></div><script type="text/javascript">
+    function OpenNewCite(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=CITE.PFT";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewCite('13576')"><img src="/iah/pt/image/fulltxt.gif" border="0" name="texto"></a></td><td width="72%"><font face=verdana size="1"><i>Como citar este artigo</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportBT(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_BibTex.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportBT('13576')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para BibTex</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportRM(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_ReferenceManager.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportRM('13576')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Reference Manager</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportPC(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_ProCite.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportPC('13576')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Pro Cite</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportEN(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_EndNote.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportEN('13576')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para End Note</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportRw(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_Refworks.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportRw('13576')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Refworks</i></font></td></tr>
+        </div>
+        <div class="resultCol">
+
+        <!-- formato de apresentacao da base -->
+<table width=90% border=0>
+<td class=textbody03 colspan=3 >
+<td>Tipo de material: Desconhecido<br><br>
+</td></b></font>
+<tr>
+<td width=10> </td>
+<font face="verdana" size=2>
+<td valign=top width=90 align=center>
+<font face="verdana" size=2>
+<script>
+a="159.9 ^aM137i"
+     i=82
+     while (i>=0) {
+        i=a.indexOf("^",0)
+        if (i>=0) {            a=a.substring(0,i)+"<br>"+a.substring(i+2,a.length)
+         }
+      }
+document.write(""+a+"")
+</script>
+</TD><td width=5> </td>
+<td><font face="verdana" size=2>
+MC DOUGALL, William<br>
+      
+<b>An introduction to social psychology</b> . -- London  : Paperbacks , 1960<br>       XX,524p.
+<p>
+      
+ Psicologia social
+;    MC DOUGALL, William
+<br><br><br><p></td>
+</table>
+<br>
+<font class=texto_n>
+</table><br></table>
+<table width=90%><tr><td width=10% valign=top><font face=arial size=2><b>Copies info : </b></td><td width=90% valign=top> <font face=arial size=2></TD></TR></table></div></div>
+
+        <div class="barNav">
+            <div class="leftCol">&nbsp;
+            
+            
+            <a name="8"><b>8 / 9</b></a>
+            </div>
+            <div class="centerCol">MARC</div>
+            <div class="rightCol">
+                    <!--img src="/iah/pt/image/help.gif" border="0"-->            
+                    
+                          <a href="#first"><img src="/iah/pt/image/top.gif" border="0" /></a>
+                    
+                    
+                          <a href="#7"><img src="/iah/pt/image/prev.gif" border="0" /></a>
+                    
+                    
+                          <a href="#9"><img src="/iah/pt/image/next.gif" border="0" /></a>
+                    
+                    
+                          <a href="#last"><img src="/iah/pt/image/bott.gif" border="0" /></a>
+                    
+            </div>
+        </div>
+
+
+
+    <!-- begin display of record -->
+
+    <div class="contain">
+        <div class="selectCol">
+            <div class="rowHigh">
+                <span class="colMark"><input type="checkbox" name="listChecked" value="^m13423^h8"  /></span>
+                <span class="lablSmall"><i>selecionar</i></span>
+            </div>
+            <div class="rowHigh">
+                <span class="colMark"><input type="image" name="toprint^m13423" src="/iah/pt/image/toprint.gif" border="0" /></span>
+                <span class="lablSmall"><i>imprimir</i></span>
+            </div>
+            <div style=width:50><input type="button" value="Disponibilidade" style="font-family: Verdana; font-size:8pt" onClick="javascript:checkAvaibility('13390')"></div><script type="text/javascript">
+    function OpenNewCite(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=CITE.PFT";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewCite('13423')"><img src="/iah/pt/image/fulltxt.gif" border="0" name="texto"></a></td><td width="72%"><font face=verdana size="1"><i>Como citar este artigo</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportBT(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_BibTex.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportBT('13423')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para BibTex</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportRM(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_ReferenceManager.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportRM('13423')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Reference Manager</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportPC(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_ProCite.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportPC('13423')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Pro Cite</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportEN(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_EndNote.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportEN('13423')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para End Note</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportRw(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_Refworks.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportRw('13423')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Refworks</i></font></td></tr>
+        </div>
+        <div class="resultCol">
+
+        <!-- formato de apresentacao da base -->
+<table width=90% border=0>
+<td class=textbody03 colspan=3 >
+<td>Tipo de material: Desconhecido<br><br>
+</td></b></font>
+<tr>
+<td width=10> </td>
+<font face="verdana" size=2>
+<td valign=top width=90 align=center>
+<font face="verdana" size=2>
+<script>
+a="159.9^bS689i"
+     i=82
+     while (i>=0) {
+        i=a.indexOf("^",0)
+        if (i>=0) {            a=a.substring(0,i)+"<br>"+a.substring(i+2,a.length)
+         }
+      }
+document.write(""+a+"")
+</script>
+</TD><td width=5> </td>
+<td><font face="verdana" size=2>
+SOLSO, Robert L.<br>
+      
+<b>An Introduction to experimental design in psychology : a case approach</b> . -- New York : Harper, 1984<br>       XI,285p.il.
+<p>
+      
+Psicologia Experimental
+;    Johnson, Homer H.
+;    SOLSO, Robert L.
+<br><br><br><p></td>
+</table>
+<br>
+<font class=texto_n>
+</table><br></table>
+<table width=90%><tr><td width=10% valign=top><font face=arial size=2><b>Copies info : </b></td><td width=90% valign=top> <font face=arial size=2>No. of copies : 1<br/>Barcode:1000046482 - Shelf-mark:<BR></TD></TR></table></div></div>
+
+        <div class="barNav">
+            <div class="leftCol">&nbsp;
+            
+                 <a name="last"></a>
+            
+            
+            <a name="9"><b>9 / 9</b></a>
+            </div>
+            <div class="centerCol">MARC</div>
+            <div class="rightCol">
+                    <!--img src="/iah/pt/image/help.gif" border="0"-->            
+                    
+                          <a href="#first"><img src="/iah/pt/image/top.gif" border="0" /></a>
+                    
+                    
+                          <a href="#8"><img src="/iah/pt/image/prev.gif" border="0" /></a>
+                    
+                    
+                    
+            </div>
+        </div>
+
+
+
+    <!-- begin display of record -->
+
+    <div class="contain">
+        <div class="selectCol">
+            <div class="rowHigh">
+                <span class="colMark"><input type="checkbox" name="listChecked" value="^m12888^h9"  /></span>
+                <span class="lablSmall"><i>selecionar</i></span>
+            </div>
+            <div class="rowHigh">
+                <span class="colMark"><input type="image" name="toprint^m12888" src="/iah/pt/image/toprint.gif" border="0" /></span>
+                <span class="lablSmall"><i>imprimir</i></span>
+            </div>
+            <div style=width:50><input type="button" value="Disponibilidade" style="font-family: Verdana; font-size:8pt" onClick="javascript:checkAvaibility('12857')"></div><script type="text/javascript">
+    function OpenNewCite(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=CITE.PFT";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewCite('12888')"><img src="/iah/pt/image/fulltxt.gif" border="0" name="texto"></a></td><td width="72%"><font face=verdana size="1"><i>Como citar este artigo</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportBT(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_BibTex.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportBT('12888')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para BibTex</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportRM(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_ReferenceManager.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportRM('12888')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Reference Manager</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportPC(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_ProCite.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportPC('12888')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Pro Cite</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportEN(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_EndNote.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportEN('12888')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para End Note</i></font></td></tr><script type="text/javascript">
+    function OpenNewExportRw(mfn) {
+        var theURL = "/cgi-bin/wxis.exe/iah/scripts/?IsisScript=citar.xis&base=MARC&mfn=" + mfn + "&lang=pt&format=export_Refworks.pft&nextAction=EXPORTACAO";
+        janela=window.open(theURL,"facic","left=240,top=225,width=670,height=550,toolbar=no,resizable=yes,menubar=no,scrollbars=yes");
+        janela.moveTo(0,0);
+        janela.focus();
+        return;
+    }
+</script><tr><td width="28%"><font face="arial" size=2 ><br><a href="javascript:onClick=OpenNewExportRw('12888')"><img src="/iah/pt/image/arrow.gif" border="0" name="texto"></a></td><td width="72%" nowspan valign=middle><font face=verdana size="1"><i>Exportar para Refworks</i></font></td></tr>
+        </div>
+        <div class="resultCol">
+
+        <!-- formato de apresentacao da base -->
+<table width=90% border=0>
+<td class=textbody03 colspan=3 >
+<td>Tipo de material: Desconhecido<br><br>
+</td></b></font>
+<tr>
+<td width=10> </td>
+<font face="verdana" size=2>
+<td valign=top width=90 align=center>
+<font face="verdana" size=2>
+<script>
+a="159.9^bF712i"
+     i=82
+     while (i>=0) {
+        i=a.indexOf("^",0)
+        if (i>=0) {            a=a.substring(0,i)+"<br>"+a.substring(i+2,a.length)
+         }
+      }
+document.write(""+a+"")
+</script>
+</TD><td width=5> </td>
+<td><font face="verdana" size=2>
+FORDHAM, Frieda<br>
+      
+<b>An Introduction to jungs psychology</b> . -- London : penguin books, 1991<br>       158p
+<p>
+      
+Psicologia
+;    FORDHAM, Frieda
+<br><br><br><p></td>
+</table>
+<br>
+<font class=texto_n>
+</table><br></table>
+<table width=90%><tr><td width=10% valign=top><font face=arial size=2><b>Copies info : </b></td><td width=90% valign=top> <font face=arial size=2>No. of copies : 1<br/>Barcode:1000000055397 - Shelf-mark:<BR></TD></TR></table></div></div>
+
+    <br />
+    <div class="row"><hr class="ruler" /></div>
+
+    <!-- monta navegacao entre as paginas do resultado -->
+    <div class="rowResult">
+            <div class="colPg"><sup>página 1 de 1</sup></div>
+            <div class="colPgNav"></div>
+        </div>
+    <a name="bottom"></a>
+
+        <div class="barNavTop">
+                
+                    <input type="button" class="defaultButton submit" value="sua seleção" name="yselect" onclick="javascript:void(AnySelected())" />
+                
+                    <input type="button" class="defaultButton submit" onclick=window.location="#top" value="ínicio da página" />
+        </div>
+
+<br />
+
+    <div class="contain">
+        <div class="rowHigh">
+            <span class="colPg"><a name="refine">Refinar a pesquisa</a></span>
+            <span class="colPgNav">&nbsp;</span>
+        </div>
+    </div>
+
+
+
+<script type="text/javascript">
+function changeForm(valor)
+{
+    document.forms[0].form.value=valor;
+    document.forms[0].nextAction.value="CHANGE FORM";
+    document.forms[0].submit();
+}
+</script>
+
+
+
+
+    <!-- FORMULARIO FREE -->
+    <div class="middle">
+      <div class="formHead">
+            <h3 class="context">
+                Base de dados&nbsp;
+            <input type="hidden" name="base" value="MARC" />MARC
+                : Formulário livre
+            </h3>
+            <div class="formOptions">
+                
+
+                 <a class="changeForm" href="javascript:void(changeForm('A'))">Formulário avançado</a>
+            </div>
+            <div class="spacer"> </div>
+        </div>
+    </div>
+
+    <div class="midd">
+        <div class="row">   <!--row 0-->
+            <div class="firstCol">&nbsp;&nbsp;&nbsp;</div>
+                <div class="secondCol"><span>Entre uma ou mais palavras</span></div>
+        </div>
+
+        <div class="row">   <!--row 1-->
+            <div class="firstCol">&nbsp;&nbsp;&nbsp;</div>
+                <div class="secondCol">
+                    <div class="ExprFree">
+                    <input type="text" name="exprSearch" value='Introduction to psychology' onKeyDown="if(event.keyCode==13) document.search.submit();" />
+                    </div>
+                </div>
+        </div>
+
+        <div class="row">   <!--row 2-->
+            <div class="firstCol">&nbsp;&nbsp;&nbsp;</div>
+                <div class="secondCol">
+                    <span class="labl">
+                    <input type="radio" name="conectSearch" value="and" checked />Todas as palavras <b>(AND)</b>&nbsp;&nbsp;&nbsp;
+                    <input type="radio" name="conectSearch" value="or"   />Qualquer palavra <b>(OR)</b>
+                    </span>
+                </div>
+    
+        </div>
+
+        <div class="rowAction">
+            <div class="columnA">&nbsp;</div>
+            <div class="columnB">
+                <input type="submit" class="defaultButton submit" value="configurar" name="config.x" />
+                <input type="submit" class="defaultButton submit" value="Pesquisar" />
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+
+
+
+
+</form>
+
+
+
+
+</div>      <!-- end content -->
+
+   <div class="footer">
+        <div class="copyright">
+        <p>        </p>
+        <p>Search engine: <a href="http://bvsmodelo.bvsalud.org/php/level.php?lang=pt&component=28&item=3"><b>iAH</b></a> v3.1.1 powered by <a href="http://bvsmodelo.bvsalud.org/php/level.php?lang=pt&component=28&item=2">WWWISIS</a>
+        </p>
+        <p>BIREME/OPAS/OMS - Centro Latino-Americano e do Caribe de Informação em Ciências da Saúde</p>
+        </div>
+    </div>
+
+
+</body>
+</html>

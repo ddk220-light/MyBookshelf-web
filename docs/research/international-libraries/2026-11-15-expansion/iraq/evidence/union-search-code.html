@@ -1,0 +1,571 @@
+<template>
+<div class="container ">
+<form v-on:submit.prevent="reloadPage()" id="searchFrm">
+    <div class="row"></div>
+        <div class="searchBox card">
+            <div class="input-group">
+              <input type="text" class="form-control border-0 p-0" :autocomplete="Top.isMobile==true?'off':'on'" :placeholder="$t('Enter your search keyword here')+' ...'" name="q" v-model="params.q">
+              <f class="h5 lh-base" href="#" v-on:click.prevent="refresh();"  v-if="params.q != ''">close</f>
+              <a class="text-warning mt-1 px-2 f hand" v-on:click.prevent="reloadPage()" id="search_btn" href="#">search</a>
+            </div>
+        </div>
+        <div class="searchBox2 text-center" v-on:change="reloadPage()">
+          <span class="px-2">
+              <dropdown class="d-lg-none" :data="itemtypes" input_name="itype2" :def="$t('item_types')" v-model="params.itype"></dropdown>
+              <span class="d-lg-inline d-none">
+                <input class="form-check-input" type="radio" name="itype" v-model="params.itype" id="itype_any" value="" checked>
+                  <label class="form-check-label btn btn-light border" for="itype_any">{{$t('item_types')}}</label>
+                  <span v-for="(value,key) in itemtypes">
+                      <input class="form-check-input " type="radio" name="itype" :id="'itype'+key" :value="key" v-model="params.itype">
+                      <label class="form-check-label btn btn-light border" :for="'itype'+key">{{$t(value)}}</label>
+                </span>
+              </span>
+          </span>
+          <dropdown class="px-2" :data="Libraries" input_name="Libraries_select" :def="$t('all_library')" v-model="params.branch"></dropdown>
+          <dropdown class="px-2" :data="$t('idxs')" input_name="idx" v-model="params.idx" ></dropdown>
+        </div>
+
+          <div class="alert mb-10 p-2 d-flex justify-content-between alert-danger" v-if="!pending && data.total == 0">
+              <span v-html="$t('no_thing_found', { msg: query })"></span>
+          </div>
+          <div class="alert alert-success mb-10 p-2 d-flex justify-content-between " v-if="!pending && data.total > 0">
+            <div>
+            <span v-if="data.total">{{$t('search_for')}} <b class="alert-warning">[ {{query}} ]</b> <b v-if="AuthTitle!=''">{{$t('subject')}}: {{ AuthTitle }}</b>
+                {{data.total}} {{$t('results')}} ({{resTime}} {{$t('seconds')}}) </span>
+              </div>
+              <dropdown icon="sort_by_alpha" :data="$t('sorts')" input_name="sort_by" v-model="params.sort_by"></dropdown>
+          </div>
+          <div class="alert alert-warning mb-10 p-2 " v-if="!pending && limits.length > 0">
+            {{ $t("filter") }}: <span v-for="l in limits"><filterlink :title="l"></filterlink></span>
+          </div>
+</form>
+  <div class="sk-list" v-if="pending" aria-hidden="true">
+    <div class="sk-hit" v-for="n in 4" :key="'sk' + n">
+      <i class="bone"></i><i class="bone w2"></i><i class="bone w3"></i>
+    </div>
+  </div>
+  <div class="card mb-3 result" v-for="item in data.items" :key="item.id" v-if="!pending">
+      <div class="card-header">
+          <router-link :to="{ name: 'biblio' ,params:{biblio: item.biblionumber}, query: params.q ? { q: params.q } : {} }"> <label class="btn-light border px-2 p-0 rounded text-muted" style="user-select: none;">{{$t(item.itype)}}</label> <span class="m-0 h5" v-html="highlighter(query,item.title)"></span></router-link>
+      </div>
+
+      <div class="card-body">
+        <div class='XSLT' v-html="item.XSLT">
+        </div>
+        <div :id="'items-tab-'+item.biblionumber" >
+              <a href="javascript://" data-bs-toggle="collapse"
+                  :data-bs-target="'.item_'+item.biblionumber"
+                  v-if="(displayItems(item).length > maxItem)" aria-expanded="false"
+                  class="text-center collapsed">{{$t('full_view')}} ({{displayItems(item).length}})
+                  {{$t('items')}} <i class="fas fa-angle-double-up">
+                  </i>
+              </a>
+              <div v-for="(i,n) in displayItems(item)" 
+                  :class="{'collapse' : (n >= maxItem),['item_'+item.biblionumber]:(n >= maxItem)}"
+                  class="item-row py-1"
+                  >
+                  <f class="small text-muted me-1" style="font-size:16px;vertical-align:middle;">bookmark</f>
+                  <span v-if="i.p"><b >{{$t('barcode')}}</b> : {{i.p}}</span> 
+                  <span v-if="i.o" class="ms-2"><b>{{$t('call_number')}}</b> : <span style="display:inline-block;direction:ltr;">‎{{i.o}}</span> </span>
+                  <span v-if="i.t" class="ms-2"><b>{{$t('copy_number')}}</b> : {{i.t}}</span>
+                  <span v-if="i['3']" class="ms-2"><b>{{$t('vol_number')}}</b> : {{i['3']}}</span>
+                  <span v-if="i.z" class="ms-2"><b> </b> : {{i.z}}</span>
+				  <span v-if="i.i" class="ms-2"><b>{{$t('stocknumber')}}</b> : {{i.i}}</span>
+
+                  <span class="ms-2"><b>{{$t('library')}}</b> : {{(Libraries[i.a]?Libraries[i.a]:i.a) }}</span>
+                  <span v-if="i.e && i.e != ''" class="ms-2"> - <b>{{$t('location')}}</b> : {{i.e}}</span>
+
+                  <span v-if="i.u" class="ms-2"><a :href="resolveItemUrl(i.u)" target="_blank"> <f class="text-warning">link</f> {{$t('link')}} </a></span>
+              </div>
+        </div>
+      </div>
+  </div>
+  <div class="col-md-12 text-center mb-3" v-if="!pending">
+      <div class="btn-group" v-if="data.total > count ">
+          <a class="btn btn-light border-primary f px-1" href="#" v-on:click="goto(2)" :title="$t('first')">last_page</a>
+          <a class="btn btn-light border-primary f px-1" href="#" v-on:click="goto(-1)" :title="$t('prev')">chevron_right</a>
+          <a v-for="index in pages"
+              :id="'p'+index" 
+              v-bind:class="{
+                  active:(index==page),
+                  btn:1,
+                  'border-primary':1,
+                  'd-none':(index > page + 2 || index < page - 2),
+                  'd-lg-inline':(index!=page),
+                  'btn-light':(index!=page),
+                  'btn-primary':(index==page)
+              }"
+              href="#"
+              v-on:click="goto($event.target)">{{index}}</a>
+          <a class="btn btn-light border-primary f px-1" href="#" v-on:click="goto(+1)" :title="$t('next')">chevron_left</a>
+          <a class="btn btn-light border-primary f px-1" href="#"  v-on:click="goto(3)" :title="$t('last')">first_page</a>
+      </div>
+  </div>
+</div>
+</template>
+
+<script>
+function inline_serach() {
+	setTimeout(function(){
+    document.querySelectorAll('.record .bg-info, .record .highlight-match').forEach(function (i, o) {
+      i.outerHTML = i.innerHTML;
+    });
+
+		var qInput = $$('[name=q]');
+		if (qInput && typeof highlighter === 'function') {
+			highlighter(qInput.value, document.querySelectorAll('.record'));
+		}
+		$$(".record a").forEach((el) => {
+			el.addEventListener("click", (event) => {
+			  var rawHref = el.getAttribute("href") || "";
+			  if (rawHref.indexOf("q=") > -1) {
+					event.preventDefault();
+				  var rawQueryPart = rawHref.split("q=")[1] || "";
+				  if (rawQueryPart.indexOf("&") > -1) {
+					rawQueryPart = rawQueryPart.substring(0, rawQueryPart.indexOf("&"));
+				  }
+				  var a = decodeURIComponent(rawQueryPart.replace(/\+/g, " "));
+				  var colonIdx = a.indexOf(":");
+				  if (colonIdx > -1) {
+					var linkIdx = a.substring(0, colonIdx);
+					var linkQ = a.substring(colonIdx + 1).replace(/^["']|["']$/g, '').trim();
+					myPage.activeIdx = linkIdx;
+					if (linkIdx === 'su' || linkIdx === 'an') {
+						myPage.resetIdxAfterFetch = true;
+					}
+					myPage.isResettingIdx = true;
+					myPage.params.idx = linkIdx;
+					myPage.params.q = linkQ;
+				  } else {
+					myPage.activeIdx = "";
+					myPage.resetIdxAfterFetch = false;
+					myPage.isResettingIdx = true;
+					myPage.params.idx = "";
+					myPage.params.q = a.replace(/^["']|["']$/g, '').trim();
+				  }
+				  myPage.$nextTick(() => {
+					myPage.isResettingIdx = false;
+				  });
+				  myPage.page = 1;
+				  myPage.say();
+				  return false;
+			  }
+			});
+		});
+	}, 100);
+}
+
+module.exports = {
+ watch: {
+    $route: function () {
+      if (this.isInternalNav) {
+        this.isInternalNav = false;
+        return;
+      }
+      this.isLoadingRoute = true;
+      this.pre_load();
+      this.set_url();
+      this.fetch_data();
+      this.$nextTick(() => {
+        this.isLoadingRoute = false;
+      });
+    },
+    'params.branch': function (newVal, oldVal) {
+      if (!this.isLoadingRoute && newVal !== oldVal) {
+        this.reloadPage();
+      }
+    },
+    'params.itype': function (newVal, oldVal) {
+      if (!this.isLoadingRoute && newVal !== oldVal) {
+        this.reloadPage();
+      }
+    },
+    'params.idx': function (newVal, oldVal) {
+      if (this.isResettingIdx) {
+        return;
+      }
+      if (!this.isLoadingRoute && newVal !== oldVal) {
+        this.reloadPage();
+      }
+    },
+    'params.sort_by': function (newVal, oldVal) {
+      if (!this.isLoadingRoute && newVal !== oldVal) {
+        this.reloadPage();
+      }
+    },
+    pages: function (o,i){
+		  setTimeout(inline_serach, 10);
+    }
+  },
+  components: {
+    dropdown: httpVueLoader("/components/dropdown.vue"),
+    filterlink: httpVueLoader("/components/filterlink.vue"),
+  },
+  data: function () {
+    return {
+      data: [],
+      query: "",
+      maxFacet: 5,
+      maxItem: 1,
+      total: 0,
+      search: "",
+      Libraries: {},
+      CCODE: {},
+      LOC:{},
+      limits: [],
+      page: 1,
+      page2: 1,
+      pageNumber: true,
+      pages: [],
+      AuthTitle:'',
+      resTime: 0,
+      took_ms: 0,
+      isLoadingRoute: false,
+      isInternalNav: false,
+      activeIdx: "",
+      resetIdxAfterFetch: false,
+      isResettingIdx: false,
+      _reloadTimer: null,
+      params: {
+        q: "",
+        offset: 0,
+        sort_by: "relevance",
+        idx: "",
+        itype: "",
+        branch: "",
+      },
+      count: 10,
+      pending: false,
+      url: "",
+      url2: "",
+    };
+  },
+  created: function () {
+    $$('.content').classList.remove('d-flex');
+    myPage = this;
+    if (!Top) Top = this.$parent;
+    if (typeof Top.$options.components.facet == "undefined") {
+      Vue.component("facet", httpVueLoader("/components/facet.vue?v=3"));
+    }
+
+    this.Libraries = Top.Libraries;
+    this.itemtypes = Top.itemtypes;
+    this.CCODE = Top.CCODE;
+    this.LOC = Top.LOC;
+
+    Top.enlarged = false;
+
+    if (this.$route.query.hasOwnProperty("q") || this.$route.query.hasOwnProperty("branch") || this.$route.query.hasOwnProperty("itype") || this.$route.query.hasOwnProperty("limit")) {
+      this.pre_load();
+      this.say();
+    }
+  },
+  methods: {
+    reloadPage: function () {
+      if (this._reloadTimer) {
+        clearTimeout(this._reloadTimer);
+      }
+      this._reloadTimer = setTimeout(() => {
+        this.page = 1;
+        this.page2 = 1;      
+        this.limits = [];
+        this.params.offset = 0;
+        if (['an', 'Provider', 'se,phr', 'index-term-genre'].indexOf(this.params.idx) > -1) {
+          this.params.idx = '';
+        }
+        this.activeIdx = this.params.idx;
+        Top.enlarged = false;
+        this.say();
+        myPage.page = 1;
+      }, 25);
+    },
+    pre_load: function () {
+      this.params = {
+        q: "",
+        offset: 0,
+        sort_by: "relevance",
+        idx: "",
+        itype: "",
+        branch: "",
+      };
+      this.limits = [];
+      for (var key in this.$route.query) {
+        if (key != "limit" && key != "limit[]" && key != "r" && this.params.hasOwnProperty(key)) {
+          var val = this.$route.query[key];
+          this.params[key] = (typeof val === 'string') ? val.replace(/\+/g, ' ') : val;
+        }
+      }
+      if (this.params.q) {
+        this.params.q = this.params.q.replace(/\+/g, ' ');
+        var qStr = this.params.q;
+        var colonIdx = qStr.indexOf(':');
+        if (colonIdx > 0 && colonIdx < 18 && ['ti', 'au', 'su', 'callnum', 'bc', 'isbn', 'Provider', 'se', 'se,phr', 'an', 'index-term-genre'].indexOf(qStr.substring(0, colonIdx)) > -1) {
+          this.params.idx = qStr.substring(0, colonIdx);
+          this.params.q = qStr.substring(colonIdx + 1).replace(/^["']|["']$/g, '').trim();
+        }
+      }
+      this.activeIdx = this.params.idx;
+      if (this.params.idx === 'su' || this.params.idx === 'an') {
+        this.resetIdxAfterFetch = true;
+      }
+      var rawLim = this.$route.query.limit || this.$route.query['limit[]'];
+      if (rawLim) {
+        var arr = Array.isArray(rawLim) ? rawLim : [rawLim];
+        this.limits = arr.filter(function (l) {
+          if (!l || typeof l !== 'string') return false;
+          var colonIdx = l.indexOf(':');
+          if (colonIdx === -1) return false;
+          var val = l.substring(colonIdx + 1).trim();
+          return val !== '';
+        });
+      }
+      this.page = parseInt((this.params.offset || 0) / this.count) + 1;
+    },
+    displayItems: function (item) {
+      if (!item || !item.items || !item.items.length) return [];
+      var selectedBranch = (this.params && this.params.branch ? this.params.branch : "").trim();
+      if (!selectedBranch && this.limits && this.limits.length) {
+        for (var idx = 0; idx < this.limits.length; idx++) {
+          var lim = this.limits[idx];
+          if (typeof lim === 'string') {
+            if (lim.startsWith('branch:') || lim.startsWith('homebranch:') || lim.startsWith('holdingbranch:')) {
+              selectedBranch = lim.split(':')[1].trim();
+              break;
+            }
+          }
+        }
+      }
+      if (!selectedBranch) {
+        return item.items;
+      }
+      var bLower = selectedBranch.toLowerCase();
+      var filtered = item.items.filter(function (i) {
+        var h = (i.a || i.homebranch || "").toString().toLowerCase();
+        var hl = (i.b || "").toString().toLowerCase();
+        return h === bLower || hl === bLower;
+      });
+      return filtered.length > 0 ? filtered : item.items;
+    },
+    resolveItemUrl: function (url) {
+      if (!url) return '';
+      url = (url + '').trim();
+      var match = url.match(/opac-detail\.pl\?[^#]*\bbiblionumber=(\d+)/i);
+      if (match) {
+        var bibNo = match[1];
+        var hostMatch = url.match(/https?:\/\/([a-zA-Z0-9.-]+)/i);
+        if (hostMatch) {
+          var origHost = hostMatch[1].toLowerCase();
+          var cleanHost = origHost.replace(/\.koha\.lib\.iq$/i, '.lib.iq');
+          if (cleanHost === 'iquc.lib.iq' || cleanHost === 'koha.lib.iq') {
+            cleanHost = 'lib.iq';
+          }
+          return 'https://' + cleanHost + '/biblio/' + bibNo;
+        }
+        return '/biblio/' + bibNo;
+      }
+      return url;
+    },
+    getOnlineResources: function (item) {
+      if (!item) return [];
+      var res = item['Online resources'] || item.online_resources;
+      if (!res) return [];
+      if (typeof res === 'string') {
+        var s = res.trim();
+        return s ? [{ url: s, text: '' }] : [];
+      }
+      if (Array.isArray(res)) {
+        var out = [];
+        for (var i = 0; i < res.length; i++) {
+          var r = res[i];
+          if (!r) continue;
+          if (typeof r === 'string') {
+            var str = r.trim();
+            if (str) out.push({ url: str, text: '' });
+          } else if (typeof r === 'object' && r.url) {
+            out.push(r);
+          }
+        }
+        return out;
+      }
+      return [];
+    },
+    limit: function (b) {
+      var raw = typeof b === 'string' ? b : (b.getAttribute ? (b.getAttribute('href') || b.href) : b.href);
+      var target = decodeURI(raw || '');
+      if (target.indexOf('/') > -1) {
+        target = target.substring(target.lastIndexOf('/') + 1);
+      }
+      var i = this.limits.findIndex((a) => a == target);
+      if (i >= 0) {
+        this.limits.splice(i, 1);
+      } else if (target && target.indexOf(':') > -1 && target.split(':')[1].trim() !== '') {
+        this.limits.push(target);
+      }
+      this.params.offset = 0;
+      this.page = 1;
+      this.say();
+      return false;
+    },
+    goto: function (a) {
+      if (this.page < 1) this.page = 1;
+      this.page = parseInt(this.page);
+      if (typeof a == "object") {
+        this.page = parseInt(a.innerText);
+      } else {
+        switch (a) {
+          case 2:
+            this.page = 1;
+            break;
+          case 3:
+            this.page = parseInt(this.data.total / this.count);
+            break;
+          default:
+            this.page += a;
+            break;
+        }
+      }
+      this.say();
+      return false;
+    },
+    fetch_data: function () {
+      var a = new Date();
+      this.pending = true;
+      fetch(this.url)
+        .then((response) => response.json())
+        .then((data) => {
+          var b = new Date();
+          this.resTime = ((b.getTime() - a.getTime()) / 1000).toFixed(3);
+          this.took_ms = data.took_ms || 0;
+          this.pages = [];
+
+          if (data.AuthTitle) {
+            this.AuthTitle = data.AuthTitle;
+          } else {
+            this.AuthTitle = "";
+          }
+          var start = parseInt(this.page) - 5;
+          if (start < 1) start = 1;
+
+          var max = start + 10;
+          if (data.total / this.count < max) {
+            max = parseInt(data.total / this.count) + 1;
+          }
+          
+          for (var i = start; i <= max; i++) {
+            this.pages.push(i);
+          }
+
+          this.data = data;
+
+          if (this.resetIdxAfterFetch || this.params.idx === 'su' || this.params.idx === 'an') {
+            this.resetIdxAfterFetch = false;
+            this.isResettingIdx = true;
+            this.params.idx = '';
+            this.$nextTick(() => {
+              this.isResettingIdx = false;
+            });
+          }
+
+          // Load facets into sidebar
+          Top.sideBar = "facet";
+          Top.sideBarData = {
+            facet: this.data.facet,
+            CCODE: this.CCODE,
+          };
+
+          this.query = this.params.q;
+          if (this.query == '*') {
+            this.query = this.$t('item_types') || 'جميع المواد';
+          }
+
+          $$("footer").style.display = 'flex';
+          this.pending = false;
+        })
+        .catch((error) => {
+          $$("footer").style.display = 'flex';
+          this.pending = false;
+          this.data = [];
+          throw error;
+        });
+    },
+    set_url: function () {
+      let url = new URL(location.protocol + "//" + location.hostname + "/api/fast-search.php");
+      let inst = (typeof instanceName !== 'undefined' && instanceName) ? instanceName : 'iquc';
+      url.searchParams.append("instance", inst);
+      var lang = (this.$t && this.$t("name")) || (Top && Top.i18n ? Top.i18n.locale : "ar");
+      url.searchParams.append("language", lang);
+
+      for (var idx = 0; idx < this.limits.length; idx++) {
+        var limVal = this.limits[idx];
+        if (limVal && typeof limVal === 'string' && limVal.indexOf(':') > -1 && limVal.split(':')[1].trim() !== '') {
+          url.searchParams.append("limit[]", limVal);
+        }
+      }
+      url.searchParams.append("q", this.params.q);
+
+      if (this.params.branch != "") url.searchParams.append("branch", this.params.branch);
+      if (this.params.itype != "") url.searchParams.append("itype", this.params.itype);
+      var currentIdx = (this.activeIdx !== undefined && this.activeIdx !== null && this.activeIdx !== '') ? this.activeIdx : this.params.idx;
+      if (currentIdx != "") url.searchParams.append("idx", currentIdx);
+      url.searchParams.append("offset", (this.page - 1) * this.count);
+      if (this.params.sort_by != 'relevance') url.searchParams.append("sort_by", this.params.sort_by);
+
+      var basePath = (this.$route && this.$route.path && this.$route.path.startsWith('/fast-search')) ? '/fast-search' : '/search';
+      var c = basePath + url.search;
+      c = c.replace(/limit(\[\])?=branch%3A/g, "branch=");
+      c = c.replace(/limit(\[\])?=itype%3A/g, "itype=");
+      c = c.replace(/limit(\[\])?=holdingbranch%3A(&|$)/g, "");
+      this.url2 = c.replace(/\+/g, '%20');
+
+      url.searchParams.append("count", this.count);
+      this.url = url;
+    },
+    refresh: function () {
+      this.activeIdx = "";
+      this.resetIdxAfterFetch = false;
+      this.params = {
+        q: "",
+        offset: 0,
+        sort_by: "relevance",
+        idx: "",
+        itype: "",
+        branch: "",
+      };
+    },
+    say: function () {
+      this.params.q = (this.params.q || '').replace(/\+/g, ' ').replace(/[!@#$<>؛{}%^&()_?؟=\]\\;'"!٬٫٪×،]/g, ' ').replace(/\s+/g, ' ').trim();
+      if (this.params.q == "") {
+        if (this.params.branch != "" || this.params.itype != "" || (this.limits && this.limits.length > 0)) {
+          this.params.q = "*";
+        } else {
+          return false;
+        }
+      }
+      this.pending = true;
+
+      document.documentElement.scrollTop = 0;
+      if (Top.isMobile) {
+        Top.enlarged = false;
+      }
+      if (this.page < 1) this.page = 1;
+      this.set_url();
+
+      // Immediately fetch data for zero-latency instant response
+      this.fetch_data();
+
+      // Synchronize route URL in browser history
+      this.isInternalNav = true;
+      if (this.$router) {
+        var targetUrl = this.url2 + "&r=" + parseInt(Math.random() * 1000);
+        this.$router.push(targetUrl);
+      }
+    },
+  },
+};
+</script>
+
+<style>
+.flex-container {
+  display: block !important;
+}
+</style>

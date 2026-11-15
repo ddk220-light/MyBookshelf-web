@@ -1,0 +1,2199 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="app">
+<head id="Head1"><meta charset="utf-8" /><title>
+	Thư viện trường Đại Học Bình Dương
+</title><meta name="description" content="blank page" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta http-equiv="X-UA-Compatible" content="IE=edge" /><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><link rel="shortcut icon" type="image/png" href="/Resources/assets/index/imgs/favicon.ico" />
+    <!--Basic Styles-->
+    <link href="/App/Admin/assets/css/bootstrap.min.css" rel="stylesheet" /><link href="/App/Admin/assets/css/font-awesome.min.css" rel="stylesheet" /><link href="/App/Admin/assets/css/weather-icons.min.css" rel="stylesheet" />
+    <!--Fonts-->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300" rel="stylesheet" type="text/css" /><link href="/App/Admin/assets/css/demo.min.css" rel="stylesheet" /><link href="/App/Admin/assets/css/typicons.min.css" rel="stylesheet" /><link href="/App/Admin/assets/css/animate.min.css" rel="stylesheet" /><link href="/App/Admin/assets/css/skins/gray.css" rel="stylesheet" type="text/css" /><link href="/CSS/SearchThumb.css" rel="stylesheet" /><link href="/CSS/zebra_dialog.css" rel="stylesheet" /><link href="/App/Admin/lib/modules/angularjs-toaster/toaster.css" rel="stylesheet" /><link href="/App/Admin/lib/WebImageMaker/jquery.fileupload.css" rel="stylesheet" />
+
+    
+	<script type="application/javascript" src="/Scripts/zliscontrols.js"></script>	
+	<script type="application/javascript" src="/Scripts/zlisscript.js"></script>
+    <link href="../Resources/assets/index/resourcesTV/css/style.css" rel="stylesheet" /><link rel="stylesheet" href="/CSS/balloon.min.css" /><link href="/Lightbox2/css/lightbox.min.css" rel="stylesheet" />
+	<script src="/Lightbox2/js/lightbox-plus-jquery.min.js"></script>
+	
+	
+	
+	    
+	<!--script type="application/javascript">
+    	    $(document).ready(function () {
+    	        ReaderVerify();
+    	        let readerCookie = $.cookie('ReaderCookie');
+    	        if (readerCookie != null && readerCookie != "") {
+    	            let readerData = JSON.parse($.cookie('ReaderCookie'));
+    	            if (readerData.Token != "") {
+    	                ReaderVerify();
+    	            }
+    	        }
+
+    	        function setCookie(cname, cvalue, exdays) {
+    	            var d = new Date();
+    	            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    	            var expires = "expires=" + d.toUTCString();
+    	            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    	        }
+                
+    	        function ReaderVerify() {
+    	            let readerData = JSON.parse($.cookie('ReaderCookie'));
+    	            $.ajax({
+    	                headers: {
+    	                    'Token': readerData.Token,
+    	                    'Content-Type': 'application/json'
+    	                },
+    	                type: "GET",
+    	                url: `${getZlisApi()}api/Reader/Verify`,
+    	                contentType: "application/json"
+    	            })
+                    .done(responseData => {
+                        
+                        
+                        if(responseData.Token === null)
+                        {
+                            alert(responseData.Message);
+                            setCookie('ReaderCookie', JSON.stringify(responseData), -1);
+                        }
+                        else {
+                            setCookie('ReaderCookie', JSON.stringify(responseData), 30);
+                            //alert(responseData.UnreadMessages);
+                            //if (!readerData){  }
+                        }
+                    });
+    	        }
+
+    	    });
+	</script-->
+    
+
+   <!-- Scripts -->
+    <script src="/App/Admin/lib/angular/angular-datetimepicker/moment.js"></script>
+    <script src="/App/Admin/lib/jquery/jquery.min.js"></script>    
+    <script src="/App/Admin/lib/angular/angular-datetimepicker/bootstrap-datetimepicker.js"></script>
+    <script src="/App/Admin/lib/angular/angular.js"></script>
+    <script src="/App/Admin/lib/utilities.js"></script>
+    <script src="/App/Admin/lib/angular/angular-animate/angular-animate.js"></script>
+    <script src="/App/Admin/lib/angular/angular-cookies/angular-cookies.js"></script>
+    <script src="/App/Admin/lib/angular/angular-resource/angular-resource.js"></script>
+    <script src="/App/Admin/lib/angular/angular-sanitize/angular-sanitize.js"></script>
+    <script src="/App/Admin/lib/angular/angular-touch/angular-touch.js"></script>
+    <script src="/App/Admin/lib/angular/angular-ui-router/angular-ui-router.js"></script>
+    <script src="/App/Admin/lib/angular/angular-ocLazyLoad/ocLazyLoad.js"></script>
+    <script src="/App/Admin/lib/angular/angular-ngStorage/ngStorage.js"></script>
+    <script src="/App/Admin/lib/angular/angular-ui-utils/angular-ui-utils.js"></script>
+    <script src="/App/Admin/lib/angular/angular-breadcrumb/angular-breadcrumb.js"></script>
+    <script src="/App/Admin/lib/angular/angular-ui-bootstrap/ui-bootstrap.js"></script>
+    <script src="/App/Admin/lib/jquery/slimscroll/jquery.slimscroll.js"></script>
+    <script src="/App/Admin/lib/modules/ui-select-master/dist/select.js"></script>
+    <script src="/App/Admin/lib/modules/angularjs-toaster/toaster.js"></script>
+    <script src="/App/Admin/lib/angular/angular-file-upload/angular-file-upload.min.js"></script>
+     <script src="/App/Admin/lib/angular/angular-datetimepicker/angular-eonasdan-datetimepicker.js"></script>
+    <!-- App Con/fig and Routing Scripts -->
+    <script src="/App/Admin/app/app.js"></script>
+    <script src="/App/Admin/app/config.js"></script>
+    <script src="/App/Admin/app/beyond.js"></script>
+    <!-- Layout R/elated Directives -->
+    <script src="/App/Admin/app/directives/loading.js"></script>
+    <script src="/App/Admin/app/directives/skin.js"></script>
+    <script src="/App/Admin/app/directives/sidebar.js"></script>
+    <script src="/App/Admin/app/directives/header.js"></script>
+    <script src="/App/Admin/app/directives/navbar.js"></script>
+    <script src="/App/Admin/app/directives/chatbar.js"></script>
+    <script src="/App/Admin/app/directives/widget.js"></script>
+    <script src="/App/Admin/app/controllers/ModuleController.js"></script>
+    <script src="/App/Admin/app/services/ModuleService.js"></script>
+    <script src="/App/Admin/app/services/UploadImgService.js" type="text/javascript"></script>
+    <script src="/App/Admin/app/directives/UploadImgDirective.js" type="text/javascript"></script>
+<link href="/WebResource.axd?d=Hr4Q5BbhACEcHNwMiwUxYq3WQgxqhDWlE1sTEhADDQ5I3pgLbU89EoKcYiSfpkWezM9ysecbV5yvQxPO33MYk8UYPaP04hdqEh7RMQL-fvLUE_HhqKBFnSRda8wdFwgW9kvH7Q2&amp;t=636457680680000000" type="text/css" rel="stylesheet" class="Telerik_stylesheet" /><link href="/WebResource.axd?d=5SKMTUiFyCIs89TaZc1eW4nL1b_Cq0ZKkSMHFLpPy7wbrgWABb5XkbxyVGVhqAgRF0txWlzroh1I-hx1VtffQFM0gqM87NgSsNpT0BlxmyHzsuHD_fYAip2bD9AUDqckftdDmCaZJd9Uldyqf1VLpJdioFE1&amp;t=636457680680000000" type="text/css" rel="stylesheet" class="Telerik_stylesheet" /></head>
+
+
+
+<body >
+    
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = 'https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v3.0&appId=195786024374615&autoLogAppEvents=1';
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+    
+
+    <form name="form1" method="post" action="./tim-sach" id="form1">
+<input type="hidden" name="RadScriptManager1_TSM" id="RadScriptManager1_TSM" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPaA8FDzhkZjQzMjVhY2Q0MzQ3MxgBBR5fX0NvbnRyb2xzUmVxdWlyZVBvc3RCYWNrS2V5X18WAQURUmFkV2luZG93TWFuYWdlcjFuH1dngqjpHr/0U5Cfe0YibEc8jg==" />
+
+
+<script src="/Telerik.Web.UI.WebResource.axd?_TSM_HiddenField_=RadScriptManager1_TSM&amp;compress=1&amp;_TSM_CombinedScripts_=%3b%3bSystem.Web.Extensions%2c+Version%3d4.0.0.0%2c+Culture%3dneutral%2c+PublicKeyToken%3d31bf3856ad364e35%3avi-VN%3add3ac3d5-1e29-4112-8fed-529caffa8f24%3aea597d4b%3bTelerik.Web.UI%2c+Version%3d2014.2.618.40%2c+Culture%3dneutral%2c+PublicKeyToken%3d121fae78165ba3d4%3avi-VN%3a15590aec-52e9-4282-8ed4-e91eae292c7b%3a16e4e7cd%3af7645509%3a24ee1bba%3a92fe8ea0%3af46195d3%3afa31b949%3a874f8ea2%3ac128760b%3a19620875%3a490a9d4e%3abd8f85e4" type="text/javascript"></script>
+<script src="../Services/PortletProxy.asmx/js" type="text/javascript"></script>
+<script src="../Services/ModuleProxy.asmx/js" type="text/javascript"></script>
+<script src="../Services/CMS.asmx/js" type="text/javascript"></script>
+<script src="../Services/WeatherService.asmx/js" type="text/javascript"></script>
+<script src="../Services/DMSSearch.asmx/js" type="text/javascript"></script>
+<script src="../Services/AuthorCMS.asmx/js" type="text/javascript"></script>
+<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="CA0B0334" />
+        <div id="mainwrap">
+				
+        <div id="RadWindowManager1" style="display:none;">
+	<!-- 2014.2.618.40 --><div id="RadWindowManager1_alerttemplate" style="display:none;">
+		<div class="rwDialogPopup radalert">			
+			<div class="rwDialogText">
+			{1}				
+			</div>
+			
+			<div>
+				<a  onclick="$find('{0}').close(true);"
+				class="rwPopupButton" href="javascript:void(0);">
+					<span class="rwOuterSpan">
+						<span class="rwInnerSpan">##LOC[OK]##</span>
+					</span>
+				</a>				
+			</div>
+		</div>
+		</div><div id="RadWindowManager1_prompttemplate" style="display:none;">
+		 <div class="rwDialogPopup radprompt">			
+			    <div class="rwDialogText">
+			    {1}				
+			    </div>		
+			    <div>
+				    <script type="text/javascript">
+				    function RadWindowprompt_detectenter(id, ev, input)
+				    {							
+					    if (!ev) ev = window.event;                
+					    if (ev.keyCode == 13)
+					    {															        
+					        var but = input.parentNode.parentNode.getElementsByTagName("A")[0];					        
+					        if (but)
+						    {							
+							    if (but.click) but.click();
+							    else if (but.onclick)
+							    {
+							        but.focus(); var click = but.onclick; but.onclick = null; if (click) click.call(but);							 
+							    }
+						    }
+					       return false;
+					    } 
+					    else return true;
+				    }	 
+				    </script>
+				    <input title="Enter Value" onkeydown="return RadWindowprompt_detectenter('{0}', event, this);" type="text"  class="rwDialogInput" value="{2}" />
+			    </div>
+			    <div>
+				    <a onclick="$find('{0}').close(this.parentNode.parentNode.getElementsByTagName('input')[0].value);"				
+					    class="rwPopupButton" href="javascript:void(0);" ><span class="rwOuterSpan"><span class="rwInnerSpan">##LOC[OK]##</span></span></a>
+				    <a onclick="$find('{0}').close(null);" class="rwPopupButton"  href="javascript:void(0);"><span class="rwOuterSpan"><span class="rwInnerSpan">##LOC[Cancel]##</span></span></a>
+			    </div>
+		    </div>				       
+		</div><div id="RadWindowManager1_confirmtemplate" style="display:none;">
+		<div class="rwDialogPopup radconfirm">			
+			<div class="rwDialogText">
+			{1}				
+			</div>						
+			<div>
+				<a onclick="$find('{0}').close(true);"  class="rwPopupButton" href="javascript:void(0);" ><span class="rwOuterSpan"><span class="rwInnerSpan">##LOC[OK]##</span></span></a>
+				<a onclick="$find('{0}').close(false);" class="rwPopupButton"  href="javascript:void(0);"><span class="rwOuterSpan"><span class="rwInnerSpan">##LOC[Cancel]##</span></span></a>
+			</div>
+		</div>		
+		</div><input id="RadWindowManager1_ClientState" name="RadWindowManager1_ClientState" type="hidden" />
+</div>
+        
+        
+
+<!--font-awesome-->
+<link href="/Resources/lib/hover-min.css" rel="stylesheet" />
+<link href="/Resources/lib/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+<!-- smart menu -->
+<link href="/Resources/lib/smartmenus-1.0.1/addons/bootstrap/jquery.smartmenus.bootstrap.css" rel="stylesheet" />
+<link href="/Resources/assets/index/templates/css/template-default.css" rel="stylesheet" />
+
+<script src="/Resources/assets/index/resourcesTV/js/jquery.cookie.js"></script>
+
+
+<!-- media -->
+<link href="/Resources/assets/index/media/mod_languages/css/template.css" rel="stylesheet" />
+<link href="/Resources/assets/index/templates/css/responsive.css" rel="stylesheet" />
+<link href="/Resources/assets/index/modules/mod_sj_k2_mega_news/assets/css/styles-responsive.css" rel="stylesheet" type="text/css"/>
+<!-- slider -->
+<link href="/Resources/assets/index/modules/mod_sj_k2_slickslider/assets/css/sj-slickslider.css" rel="stylesheet" type="text/css"/>
+<!-- tin mới nhất -->
+<link href="/Resources/assets/index/modules/mod_sj_k2_slider/assets/css/slider.css" rel="stylesheet" type="text/css"/>
+<!-- sự kiện nổi bật -->
+<link href="/Resources/assets/index/modules/mod_sj_k2_extraslider/assets/css/style.css" rel="stylesheet" type="text/css"/>
+<link href="/Resources/assets/index/modules/mod_sj_k2_extraslider/assets/css/css3.css" rel="stylesheet" type="text/css"/>
+<!-- owl.carousel -->
+<link href="/Resources/lib/OwlCarousel2-2.2.1/dist/assets/owl.carousel.min.css" rel="stylesheet" />
+<link href="/Resources/lib/OwlCarousel2-2.2.1/dist/assets/owl.theme.default.min.css" rel="stylesheet" />
+<!-- hỏi đáp nhanh -->
+<link href="/Resources/assets/index/templates/html/mod_sj_content_accordion/css/sj-accordion.css" rel="stylesheet" type="text/css"/>
+<!-- sinh viên tiêu biểu -->
+<link href="/Resources/assets/index/plugins/system/ytshortcodes/assets/css/shortcodes.css" rel="stylesheet" type="text/css"/>
+<!-- khám phá hbu -->
+<link href="/Resources/assets/index/modules/mod_sj_k2_scattered_gallery/assets/css/style.css" rel="stylesheet" type="text/css"/>
+<link href="/Resources/lib/MaterialDesign-Webfont/css/materialdesignicons.min.css" rel="stylesheet">
+<!-- QNU -->
+<link href="/Resources/assets/index/css/QNU.css" rel="stylesheet" />
+<link href="/Resources/assets/index/css/release.css" rel="stylesheet" />
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>	
+<script src="/Resources/lib/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<!-- defind msie -->    
+<script src="/Resources/assets/index/media/jui/js/jquery-migrate.min.js" type="text/javascript"></script>
+<!-- slider-->
+<script src="/Resources/assets/index/modules/mod_sj_k2_extraslider/assets/js/jcarousel.js" type="text/javascript"></script>
+<script src="/Resources/assets/index/modules/mod_sj_k2_slickslider/assets/js/jquery.cj-swipe.js" type="text/javascript"></script>
+<!-- tin mới nhất -->
+<script src="/Resources/assets/index/modules/mod_sj_k2_slider/assets/js/slider.js" type="text/javascript"></script>
+<script src="/Resources/assets/index/modules/mod_sj_k2_slider/assets/js/jquery.cj-swipe.js" type="text/javascript"></script>
+<!-- sự kiện nổi bật -->	
+<script src="/Resources/assets/index/modules/mod_sj_k2_extraslider/assets/js/jquery.mousewheel.js" type="text/javascript"></script>
+<script src="/Resources/assets/index/modules/mod_sj_k2_extraslider/assets/js/jquery.touchwipe.1.1.1.js" type="text/javascript"></script>
+	<!-- hỏi đáp nhanh -->
+<script src="/Resources/assets/index/modules/mod_sj_content_accordion/assets/js/jquery.sj_accordion.js" type="text/javascript"></script>
+<!-- sinh viên tiêu biểu -->
+<script src="/Resources/assets/index/plugins/system/ytshortcodes/assets/js/shortcodes.js" type="text/javascript"></script>
+ <script src="/Resources/assets/index/js/slider.js"></script>
+
+
+        
+
+<div id="bd" class="homepage home-layout1 res">
+    <div id="yt_wrapper">
+	
+<div id="psc-divPanelWrapper">
+	<div id="psc-divPanelTop" style="width:100%;float:left">
+		<div id="psc-divPanelTop-Content" style="min-height: 30px;">
+			<div id="psc-divPortlet-f628b9fe-0548-47a5-be04-1aad71dd10ee" class="psc-divPortlet-Wrapper" style="">
+				<div class="psc-divPortlet-Content">
+					
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hover.css/2.3.1/css/hover.css"/>
+
+<style>
+	#userlog2{
+		position: relative;
+		float: left;
+		top: 30px;
+		left: -25px;
+		color: aliceblue;
+		border-radius: 5px;
+		background-color: #a1a1a1;
+		border: 2px;
+		padding: 8px;
+	}
+    .navbar-nav .dropdown-menu > li > a:hover {
+        color:white;
+    }
+    #imgUser{
+        margin-top: -15px;
+    }
+    ul li a.loginul { color: #000; }
+    .caret { color: #fff; }
+    .dropdown-toggle
+    {
+        cursor: pointer !important;
+        width: 35px;
+        margin-top: 20px;
+    }
+    .dropdown-toggle:hover { -webkit-filter: brightness(150%);  }
+    .OpenObject{ position: relative;top: 20px; }
+    #mesagenumber a {
+        width: 26px;
+        background-color: red;
+        color: #fff;    
+        height: 8px;
+        padding: 10px;
+        position: fixed;
+        top: 28px;
+        right: 10px;
+        border-radius: 5px;
+    }
+    @media screen and (max-width: 978px) {
+        .dropdown-toggle{
+			cursor: pointer !important;
+			width: 35px;
+			margin-top: -12px;
+            float:right;
+		}
+        #userlog2{
+			left: -60px;
+		}
+    }
+     .loginWin{
+        font-weight: bold;
+        border: 1px;
+        width: 450px;
+        height: 80px;
+        display: block;
+        margin-left: -35px;
+        margin-right: auto;
+        color: #263d84;
+        padding-top: 8px;
+        background: #e4e7ec;
+        font-size: 11pt;
+    }
+     
+     .loginWin i{
+         color: #263d84;
+     }
+
+    @media screen and (max-width: 550px) {
+         .loginWin{
+            font-weight: bold;
+            border: 1px;
+            width: 450px;
+            height: 80px;
+            display: block;
+            margin-left: -35px;
+            margin-right: auto;
+            color: #263d84;
+            padding-top: 8px;
+            background: #e4e7ec;
+            font-size: 11pt;
+        }
+    }
+    @media screen and (max-width: 280px) {
+         .loginWin{
+            font-weight: bold;
+            border: 1px;
+            width: 270px;
+            height: 80px;
+            display: block;
+            margin-left: -35px;
+            margin-right: auto;
+            color: #263d84;
+            padding-top: 8px;
+            background: #e4e7ec;
+            font-size: 6.5pt;
+        }
+    }
+    @media screen and (max-width: 500px){
+		#userlog2{
+			position: relative;
+			float: left;
+			top: 25px;
+			color: aliceblue;
+			border-radius: 5px;
+			background-color: #a1a1a1;
+			border: 2px;
+			padding: 8px;
+            width:max-content;
+            font-size:9pt;
+		}
+		.dropdown-toggle {  float: right; }
+		
+		.OpenObject { position: relative;top: 20px; }
+		#listmenupanel li a:hover { color: #fff !important; }
+		.dropdown-menu {
+			border-radius: 5px !important;
+			color: #000 !important;
+			position: absolute;
+			top: 100%;
+			left: 0;
+			z-index: 1000;
+			display: none;
+			float: left;
+			min-width: 160px;
+			padding: 5px 0;
+			margin: 2px 0 0;
+			margin-top: 2px;
+			margin-right: 0px;
+			margin-left: 0px;
+			font-size: 14px;
+			text-align: left;
+			list-style: none;
+			background-color: #fff !important;
+			-webkit-background-clip: padding-box;
+			background-clip: padding-box;
+			border: 1px solid rgba(0,0,0,.15);
+			border: 1px solid rgba(0,0,0,.15);
+			border-radius: 4px;
+			-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+			box-shadow: 0 6px 12px rgba(0,0,0,.175);
+		}
+
+		.dropdown-toggle{
+			cursor: pointer !important;
+			width: 35px;
+		}
+		#mesagenumber a {
+			width: 27px;
+			background-color: red;
+			color: #fff;
+			height: 8px;
+			padding: 10px;
+			position: relative !important;
+			top: 10px !important;
+			left: -0px !important;
+			border-radius: 5px;
+			z-index: 989898989898; 
+			margin: 5px;
+			float: right;
+		}
+        #message{
+            top: -5.5rem;
+            right:-3rem;
+        }
+        .login .left-item a {
+            margin-right: 10px;
+        }
+         #imgUser{
+            margin-top: 0px;
+        }
+        
+     
+     .loginWin i{
+         color: #263d84;
+     }
+	}
+    
+     @media screen and (max-width: 415px) {
+         .loginWin{
+            font-weight: bold;
+            border: 1px;
+            width: 391px;
+            height: 80px;
+            display: block;
+            margin-left: -35px;
+            margin-right: auto;
+            color: #263d84;
+            padding-top: 8px;
+            background: #e4e7ec;
+            font-size: 9pt;
+        }
+    }
+      @media screen and (max-width: 400px) {
+         .loginWin{
+            font-weight: bold;
+            border: 1px;
+            width: 380px;
+            height: 80px;
+            display: block;
+            margin-left: -35px;
+            margin-right: auto;
+            color: #263d84;
+            padding-top: 8px;
+            background: #e4e7ec;
+            font-size: 9pt;
+        }
+    }
+    
+    @media screen and (max-width: 375px) {
+         .loginWin{
+            font-weight: bold;
+            border: 1px;
+            width: 355px;
+            height: 80px;
+            display: block;
+            margin-left: -35px;
+            margin-right: auto;
+            color: #263d84;
+            padding-top: 8px;
+            background: #e4e7ec;
+            font-size: 8.6pt;
+        }
+    }
+    
+      @media screen and (max-width: 360px) {
+         .loginWin{
+            font-weight: bold;
+            border: 1px;
+            width: 340px;
+            height: 80px;
+            display: block;
+            margin-left: -35px;
+            margin-right: auto;
+            color: #263d84;
+            padding-top: 8px;
+            background: #e4e7ec;
+            font-size: 8.3pt;
+        }
+    }
+       @media screen and (max-width: 320px) {
+         .loginWin{
+            font-weight: bold;
+            border: 1px;
+            width: 310px;
+            height: 80px;
+            display: block;
+            margin-left: -35px;
+            margin-right: auto;
+            color: #263d84;
+            padding-top: 8px;
+            background: #e4e7ec;
+            font-size: 7.5pt;
+        }
+         .dropdown-toggle{
+			cursor: pointer !important;
+			width: 35px;
+			margin-right: 0;
+		}
+    }
+    @media screen and (min-width: 500px) {
+        .loginWin{
+        font-weight: bold;
+        border: 1px;
+        width: 380px;
+        height: 80px;
+        display: block;
+        margin-left: -35px;
+        margin-right: auto;
+        color: #263d84;
+        padding-top: 8px;
+        background: #e4e7ec;
+        font-size: 9pt;
+    }
+    }
+    @media screen and (min-width: 768px) {
+         .loginWin{
+            font-weight: bold;
+            border: 1px;
+            width: 450px;
+            height: 80px;
+            display: block;
+            margin-left: -35px;
+            margin-right: auto;
+            color: #263d84;
+            padding-top: 8px;
+            background: #e4e7ec;
+            font-size: 11pt;
+        }
+    }
+    @media screen and (max-width: 768px) {
+          #imgUser {
+            margin-top: 0;
+        }
+    }
+    @media screen and (min-width: 1024px) {
+         .loginWin{
+            font-weight: bold;
+            border: 1px;
+            width: 450px;
+            height: 80px;
+            display: block;
+            margin-left: -35px;
+            margin-right: auto;
+            color: #263d84;
+            padding-top: 8px;
+            background: #e4e7ec;
+            font-size: 11pt;
+        }
+    }
+    @media screen and (max-width: 320px) /*iphone5se*/
+	{
+		.OpenObject { position: relative;}
+		.right-item { width: auto; }
+	}
+    #message{
+        position: relative;
+        border-radius: 2.75rem;
+        min-width: .6875rem;
+        line-height: 1.2em;
+        /*padding: 0 .3125rem;*/
+        text-align: center;
+        /*height: 1.5rem;*/
+        border: .125rem solid #ff0000;
+        color: #ff0000;
+        background-color: #fff;
+        top: -4.5rem;
+        right:-3rem;
+        font-size:8pt;
+        width:2.1rem;
+    }
+    
+    #loginModal{
+        margin: 0px auto;
+        left: 0px;
+        right: 0px;
+        display: none;
+        position: absolute;
+        z-index: 99999;
+    }
+    .login-box .close1{
+        width: 26px;
+        height: 26px;
+        color: #fff;
+        float: right;
+        font-size: 21px;
+        font-weight: 300;
+        line-height: 1;
+        opacity: 1;
+        text-shadow: none;
+        background: #005fab;
+    }
+    .icon1 {
+        color: #f3e89e;
+        background: #263d84;
+        font-size: 60px;
+        font-weight: bold;
+        line-height: 90px;
+        height: 90px;
+        width: 90px;
+        margin: 0 auto 5px;
+        border-radius: 50%;
+        text-align: center;
+        margin-top: -50px;
+    }
+    .hvr-icon-forward {
+     display: inline-block; 
+     vertical-align: middle; 
+     -webkit-transform: perspective(1px) translateZ(0); 
+     transform: perspective(1px) translateZ(0); 
+     box-shadow: 0 0 1px rgba(0, 0, 0, 0); 
+     -webkit-transition-duration: 0.1s; 
+     transition-duration: 0.1s; 
+}
+    .hvr-icon-forward .hvr-icon {
+     -webkit-transform: translateZ(0); 
+     transform: translateZ(0); 
+     -webkit-transition-duration: 0.1s; 
+     transition-duration: 0.1s; 
+     -webkit-transition-property: transform; 
+     transition-property: transform; 
+     -webkit-transition-timing-function: ease-out; 
+     transition-timing-function: ease-out; 
+}
+</style>
+
+<script>
+    
+    $(document).ready(function () {
+
+        $('#LoadingPanelImgLogin').hide();
+        $('#btnLogin').click(function () { ReaderLogin(); });
+        $('#clickkk').click(function () {
+            ReaderLogout();
+        });
+        UpdateReaderStatus();
+        $("a.OpenObject").click(function () { $("#loginwindow").show(); });
+        $("button.close").click(function () { $("#loginwindow").hide(); });
+        getlink();
+        $("button.close1").click(function(){
+        $("#loginwindow").hide();
+    })
+    });
+   
+	function getlink() {
+	    homehref.innerHTML = `
+			<a title='Home' href='${getLinkHomepage()}'><i class='fa fa-home' aria-hidden='true' style='font-size: 20pt;color: white;'></i></a>
+			<a class="facebook" target="_blank" href="http://www.facebook.com/sharer.php?u=${getLinkHomepage()}">
+			  <span class="fa fa-facebook"></span>
+			</a>
+			
+			<a class ="twitter" target="_blank" href="https://twitter.com/intent/tweet?source=sharethiscom&text=Thư viện&url=${getLinkHomepage()}">
+			  <span class="fa fa-twitter"></span>
+			</a>
+	    `;
+    }
+
+    function UpdateReaderStatus() {
+		let readerCookie = $.cookie('ReaderCookie');
+		if (readerCookie != null && readerCookie != "") {
+			$("#loginpanel").hide();
+			$("#logoutpanel").show();
+            if ($.cookie('ReaderCookie') != null) {
+				$("#mesagenumber").show();
+                
+                let readerData = JSON.parse($.cookie('ReaderCookie'));
+				$("#userlog").append(readerData.ReaderName);
+                $("#userlog2").append(`<p style="min-height:0; margin: 3px 0px 3px">${readerData.ReaderName}</p>`);
+                $.ajax({
+                headers: { 'Token': GetReaderData().Token },
+                type: "GET",
+                data: JSON.stringify(),
+                url: `${getZlisApi()}api/ReaderMessages/Get?status=unread&index=0&count=20`,
+                contentType: "application/json"
+                }).done(responseData => {
+					dropdownToggle.innerHTML = `<img src='${readerData.PhotoUrl}' class="dropdown-image" />`;
+                    $("#mesagepanel").append(`Tin nhắn (${responseData.length})`);
+                    if (responseData.length == 0) {
+					$("#mesagenumber").hide();
+				    }
+                    else {
+                        dropdownToggle.innerHTML = `<div id="imgUser"><img src='${readerData.PhotoUrl}' class="dropdown-image" />
+                                                </div><div id="message">${responseData.length}</div>`;
+                       
+				    };
+                });
+				
+			}
+		    else $("#mesagenumber").hide();
+		} else {
+			$("#loginpanel").show();
+			$("#logoutpanel").hide();
+			$("#userlog2").hide();
+		}
+	}
+
+	function ReaderLogout() {
+	    setCookie('ReaderCookie', "", -1);
+	    location.reload();
+	    UpdateReaderStatus();
+	}
+
+	function setCookie(cname, cvalue, exdays) {
+		var d = new Date();
+		d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+		var expires = "expires=" + d.toUTCString();
+		document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+	}
+	
+	function KeyDownLogin(event) {
+		if (event.keyCode == 13) {
+			ReaderLogin();
+			return false;
+		} else return true;
+	}
+	
+    function ReaderLogin() {
+	    $('#LoadingPanelImgLogin').show();
+	    let username = document.getElementById('txtUserName').value;
+	    let password = document.getElementById('txtPassword').value;
+
+	    let loginmodel = {
+	        "authenticationtype": "password",
+	        "device": "online",
+	        "username": username,
+	        "password": password
+	    };
+
+	    $.ajax({
+	        type: "POST",
+	        data: JSON.stringify(loginmodel),
+	        url: `${getZlisApi()}api/Reader/Login`,
+	        contentType: "application/json"
+	    })
+		.done(responseData => {
+			console.log(responseData.Success);
+			$('#LoadingPanelImgLogin').hide();
+			if (!responseData || !responseData.Success)
+				msgpanel.innerHTML = `<div class="alert alert-warning"><strong> ${responseData.Message} </strong></div>`;
+			else {
+				$("#loginwindow").hide();
+				setCookie('ReaderCookie', JSON.stringify(responseData), 30);
+				UpdateReaderStatus();
+				msgpanel.innerHTML = "";
+				location.reload();
+		    }
+		});
+	}
+</script>
+
+<div id="LoadingPanelImgLogin" style="position: fixed; margin: 0px auto; left: 40%; top: 40%; z-index: 92939949; display: none;">
+	
+    <i class="fa fa-spinner fa-3x fa-spin"></i>
+</div>
+<section class="login mt-20">
+	<div class="container">
+		<div class="left-item">
+			<div id="homehref" style="margin-top:10px"></div>
+		</div><!-- ./left-item -->
+		<div class="right-item" style="z-index: 99999; line-height: 0px;">
+			<div id="userlog2"></div>
+			<div id="mesagenumber"></div>
+			<ul class="nav navbar-nav navbar-right" id="logoutpanel" style="line-height: 0px;">
+				<li class="dropdown" style="line-height: 0px;">
+					<div id="dropdownToggle" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						
+					</div>
+					<ul id="listmenupanel" class="dropdown-menu dropdown-menu-right" role="menu" style="line-height: 0px;line-height: 0px;position: absolute;left: -140px;z-index: 999999999;">
+						<li role="presentation"><a id="userlog" class="loginul"></a></li>
+						<li role="presentation"><a href="/module/chi-tiet-doc-gia" class="loginul">Xem thông tin </a></li>
+						<li role="presentation"><a href="/module/lich-su-muon-tra" class="loginul" target="_blank">Lịch sử mượn trả </a></li>
+						<li role="presentation"><a href="/module/danh-sach-yeu-cau-dat-truoc-tai-lieu" target="_blank" class="loginul">Danh sách tài liệu đặt trước</a></li>
+						
+						
+						<li role="presentation"><a id="mesagepanel" class="loginul" href="/module/thong-bao"></a></li>
+						<li role="presentation"><a href="/module/doi-mat-khau" class="loginul">Đổi mật mã</a></li>
+						<li role="presentation">
+							<a href="javascript:void(0)" class="loginul" id="clickkk">Đăng xuất</a>                  
+						</li>
+					</ul>
+				</li>
+			</ul>
+			<div id="loginpanel">                  
+				<a href="javascript:void(0)" class="OpenObject" title="Đăng nhập">
+					<i class="fa fa-user" aria-hidden="true" style='color: white;'></i>
+					<span>Đăng nhập</span>
+				</a>
+			</div>
+		</div><!-- .right-item -->
+	</div><!-- ./container -->
+</section>
+
+<!--log in box-->
+<div id="loginwindow" >
+	<div class="login-box">
+		<div role="dialog" tabindex="-1" style="display: block;" aria-hidden="false">
+			<div role="document" class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header"> 
+						<button aria-label="Close" data-dismiss="modal" class="close1" type="button"><span aria-hidden="true" onclick="close()">×</span></button>
+						<h3>Đăng nhập</h3>
+						<div class="login-socail">
+							<div id="panel111" style="display: none;">
+								<a class="facebook" href="#"><em aria-hidden="true" class="fa fa-facebook"></em><p class="socialp">Đăng nhập bằng facebook</p></a>
+								<a class="twitter" href="#"><em aria-hidden="true" class="fa fa-twitter"></em><p class="socialp">Đăng nhập bằng Office 365</p></a>
+								<a class="gplus" href="#"><em aria-hidden="true" class="fa fa-google-plus"></em><p class="socialp">Đăng nhập bằng gmail+</p></a>
+							</div>
+							<div id="panel222" style="display: none;"> 
+								<a class="facebook" href="#"><em aria-hidden="true" class="fa fa-facebook"></em>Đăng nhập bằng facebook</a>
+								<a class="twitter" href="#"><em aria-hidden="true" class="fa fa-twitter"></em>Đăng nhập bằng Office 365</a> 
+								<a class="gplus" href="#"><em aria-hidden="true" class="fa fa-google-plus"></em>Đăng nhập bằng gmail+</a>
+							</div>
+						</div>
+					</div>
+					<div class="modal-body">
+						<form id="form01" action="#">
+							<div class="outer-input"> 
+								<label><i aria-hidden="true" class="fa fa-user"></i>Tên người dùng</label>   
+								<input id="txtUserName" type="text" onkeydown='return KeyDownLogin(event);'/>                    
+							</div>
+							<div class="outer-input"> 
+								<label><i aria-hidden="true" class="fa fa-lock"></i>Mật khẩu</label> 
+								<input id="txtPassword" type="password" onkeydown='return KeyDownLogin(event);'/>
+							</div> 
+							<div class="LoginButton" style="width: 25%;position: relative;top: 10px;float: right;">
+								<a href="javascript:void(0)" id="btnLogin" class="btn btn-success logintext" onkeydown='return KeyDownLogin(event);'>Đăng nhập</a>
+							</div>
+							<div style="width: 35%;position: relative;top: 10px;float: left;">
+								<a href="/module/quen-mat-ma">Quên mật mã !</a>
+							</div>
+							<br />
+							<div id="msgpanel" class="col-md-12" style="float: left; margin-top: 15px;"></div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+				</div>
+			</div><div id="psc-divPortlet-d6ec3c76-737e-4486-88bd-1cd448b3f0ff" class="psc-divPortlet-Wrapper" style="">
+				<div class="psc-divPortlet-Content">
+					<style>
+    .OpenTime{
+    width: 303px; position: relative; float: right;
+    }
+    @media screen and (max-width: 500px)
+    {
+    abc div
+    {
+    /*width: 100% !important;
+    margin: 5px;
+    float: left;*/
+    }
+    }
+    @media screen and (max-width: 768px)
+    {
+    }
+    .abc div
+    {
+    /*width: 100% !important;
+    margin: 5px;
+    float: left;*/
+    }
+</style>
+<script>
+function ReturnHomePage()
+{
+	var linkk = getLinkHomepage();
+	$('#ReturnHomePage').append(`
+	
+		<a href='https://www.bdu.edu.vn/' target="_blank"><img alt="logo" src="/Temp/SiteImage/Banner.png" class="img-responsive" style="width:  70%; float: left;" /></a>
+	
+	`);
+}
+
+$(function (){
+	ReturnHomePage();
+})
+</script>
+<div id="ReturnHomePage">&nbsp;</div>
+<div>
+<div class="OpenTime"><!-- style="border: 1px solid #01863e;" -->
+<span style="color: #ff0000;">
+<!-- style="text-align: center; vertical-align: top; font-family: verdana, arial, helvetica, sans-serif; font-size: 11px; font-weight: bold;" -->
+</span>
+<table>
+    <tbody>
+        <tr>
+            <td style="text-align: left; width: 235px; height: 1px;"><img alt="" src="/Temp/Image/OpenTime.png" style="width: 120px; padding-left: 54px;" />&nbsp;</td>
+        </tr>
+        <tr>
+            <td>
+            <p><strong><span style="font-family: Arial; color: #ff0000;">Thời gian phục vụ từ thứ 2 - thứ 7</span></strong></p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<span style="color: #ff0000;">
+<!-- style="text-align: center; vertical-align: top; font-family: verdana, arial, helvetica, sans-serif; font-size: 12px; width: 250px;" -->
+</span><span style="color: #ff0000;">
+<!-- text-align: center; vertical-align: top; font-family: verdana, arial, helvetica, sans-serif; font-size: 12px; width: 232px; font-weight: bold; -->
+</span>
+<table style="width: 269px; height: 99px; left: 380px;">
+    <tbody>
+        <tr>
+            <td style="text-align: left; font-family: verdana, arial, helvetica, sans-serif; font-size: 12px;"><span style="color: #ff0000;"><img alt="" src="/Temp/Image/Clock.png" style="width: 15px; height: 15px;" />&nbsp;<strong><span style="font-size: 12px; font-family: Arial;">B&igrave;nh Dương&nbsp;</span></strong><span style="text-align: center; vertical-align: top; font-weight: bold; font-family: Arial;">:&nbsp; 07h00 - 20h00&nbsp;</span></span></td>
+        </tr>
+        <tr>
+        </tr>
+        <tr>
+            <td style="text-align: left; font-family: verdana, arial, helvetica, sans-serif; font-size: 12px;">
+            <p><span style="font-family: Arial; color: #ff0000;"><img alt="" src="/Temp/Image/Clock.png" style="width: 15px; height: 15px;" />&nbsp;</span><span style="text-align: left; vertical-align: top; width: 232px; font-weight: bold; font-size: 12px; font-family: Arial; color: #ff0000;">PH C&agrave; Mau:&nbsp; &nbsp; &nbsp;07h00 - 11h00&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<span style="font-size: 12px; font-weight: 700; font-family: Arial; color: #ff0000;">13h00 - 17h00</span><br />
+            </span></p>
+            <p><span style="text-align: left; vertical-align: top; width: 232px; font-weight: bold; font-size: 12px; font-family: Arial; color: #ff0000;"></span><span style="font-weight: 700; font-family: Arial; color: #ff0000;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p>
+            <p><span style="text-align: left; vertical-align: top; width: 232px; font-weight: bold; font-size: 12px; font-family: Arial;"><br />
+            </span></p>
+            </td>
+            <!-- style="text-align: center; vertical-align: top; width: 232px;" -->
+        </tr>
+        <tr>
+            <!-- style="text-align: center; vertical-align: top; font-family: verdana, arial, helvetica, sans-serif; font-size: 12px; width: 232px; font-weight: bold;" -->
+        </tr>
+    </tbody>
+</table>
+</div>
+</div>
+
+				</div>
+			</div><div id="psc-divPortlet-a3b434c9-5a7f-4ffa-aee2-da94cd262e03" class="psc-divPortlet-Wrapper" style="">
+				<div class="psc-divPortlet-Content">
+					
+
+<style>
+    .navbar-nav li{
+        
+    }
+</style>
+
+<!-- Display -->
+<div class="main-menu width-common">
+		<div class="bg-header" >
+			<div class="header-top" id="print-header">
+				<div class="container ">
+					<div class="logo">
+						
+					</div>
+				</div>
+			</div>
+			<div class="top-menu width-common">
+				<!-- Navbar static top -->
+				<div class="navbar navbar-default navbar-static-top" role="navigation">
+					<div class="container ">
+						<div class="navbar-header">								
+							<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+								<span class="sr-only">Toggle navigation</span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+							</button>
+						</div>
+						<div class="navbar-collapse collapse">
+							<!-- Right nav -->
+							<ul class="nav navbar-nav">	
+                                        						
+								<li ><a  href='/trang-chu'>Trang chủ</a></li><li ><a  href='/module/tai-lieu-theo-bo-suu-tap'>Bộ sưu tập tài liệu</a></li><li><a  >Cơ sở dữ liệu <span class='caret'></span></a><ul class='dropdown-menu'><li><a class='wobble-horizontal' title='Cơ sở dữ liệu mua quyền truy cập'><span class='fa fa-angle-double-right' aria-hidden='true'></span>Cơ sở dữ liệu mua quyền truy cập<span class='caret'></span></a><ul class='dropdown-menu'><li   class=''><a target='_blank' class='wobble-horizontal' title='Proquest Central' href='http://lhtv.vista.vn/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Proquest Central</a></li></ul></li><li><a class='wobble-horizontal' title='Cơ sở dữ liệu miễn phí'><span class='fa fa-angle-double-right' aria-hidden='true'></span>Cơ sở dữ liệu miễn phí<span class='caret'></span></a><ul class='dropdown-menu'><li   class=''><a target='_blank' class='wobble-horizontal' title='Website học tiếng Anh miễn phí' href='https://www.duolingo.com/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Website học tiếng Anh miễn phí</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Thư viện học liệu mở Việt Nam' href='https://voer.edu.vn/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Thư viện học liệu mở Việt Nam</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Cơ sở dữ liệu quốc gia về văn bản Luật' href='http://vbpl.vn/pages/portal.aspx'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Cơ sở dữ liệu quốc gia về văn bản Luật</a></li></ul></li></ul></li><li ><a  href='/module/tai-lieu-so'>Tài liệu số</a></li><li ><a  href='/module/danh-sach-nganh'>Đề cương môn học</a></li><li><a  >Thư viện liên kết<span class='caret'></span></a><ul class='dropdown-menu'><li><a class='wobble-horizontal' title='Tra cứu liên thư viện'><span class='fa fa-angle-double-right' aria-hidden='true'></span>Tra cứu liên thư viện<span class='caret'></span></a><ul class='dropdown-menu'><li   class=''><a target='_blank' class='wobble-horizontal' title='Thư viện Khoa học Xã hội vùng Nam bộ' href='http://libsiss.org.vn/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Thư viện Khoa học Xã hội vùng Nam bộ</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Thư viện tỉnh Bình Dương' href='http://www.thuvienbinhduong.org.vn/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Thư viện tỉnh Bình Dương</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Thư viện tỉnh Cà Mau' href='http://thuvien.camau.gov.vn/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Thư viện tỉnh Cà Mau</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Thư viện Trường Cao đẳng Công thương Tp. Hồ Chí Minh' href='http://thuvien.hitu.edu.vn/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Thư viện Trường Cao đẳng Công thương Tp. Hồ Chí Minh</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Thư viện Trường Đại học Bà Rịa - Vũng Tàu' href='http://bvu.edu.vn/web/thu-vien'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Thư viện Trường Đại học Bà Rịa - Vũng Tàu</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Thư viện Trường Đại học Khánh Hòa' href='http://lib.ukh.edu.vn/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Thư viện Trường Đại học Khánh Hòa</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Thư viện Trường Đại học Ngân hàng Tp. Hồ Chí Minh' href='http://library.buh.edu.vn/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Thư viện Trường Đại học Ngân hàng Tp. Hồ Chí Minh</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Thư viện Trường Đại học Sư phạm Kỹ thuật Tp. Hồ Chí Minh' href='http://lib.hcmute.edu.vn/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Thư viện Trường Đại học Sư phạm Kỹ thuật Tp. Hồ Chí Minh</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Thư viện Trường Đại học Sư phạm Tp. Hồ Chí Minh' href='http://lib.hcmup.edu.vn/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Thư viện Trường Đại học Sư phạm Tp. Hồ Chí Minh</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Trung tâm Học liệu Đại học Cần Thơ' href='http://digital.lrc.ctu.edu.vn/digital/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Trung tâm Học liệu Đại học Cần Thơ</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Trung tâm Thông tin - Thư viện Đại học Công nghệ Đồng Nai' href='http://tv.dntu.edu.vn/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Trung tâm Thông tin - Thư viện Đại học Công nghệ Đồng Nai</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Trung tâm Thông tin - Thư viện Đại học Công nghiệp Thực phẩm Tp. Hồ Chí Minh' href='http://thuvien.hufi.edu.vn/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Trung tâm Thông tin - Thư viện Đại học Công nghiệp Thực phẩm Tp. Hồ Chí Minh</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Trung tâm Thông tin - Thư viện Đại học Đồng Nai' href='http://dnulib.edu.vn/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Trung tâm Thông tin - Thư viện Đại học Đồng Nai</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Trung tâm Thông tin - Thư viện Đại học Luật Thành phố Hồ Chí Minh' href='http://library.hcmulaw.edu.vn/index.php/vi/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Trung tâm Thông tin - Thư viện Đại học Luật Thành phố Hồ Chí Minh</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Trung tâm Thông tin - Thư viện Đại học Nguyễn Tất Thành' href='http://elib.ntt.edu.vn/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Trung tâm Thông tin - Thư viện Đại học Nguyễn Tất Thành</a></li><li   class=''><a target='_blank' class='wobble-horizontal' title='Trung tâm Thông tin và Thư viện Đại học Kiến Trúc Tp. Hồ Chí Minh' href='http://lib.uah.edu.vn/'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Trung tâm Thông tin và Thư viện Đại học Kiến Trúc Tp. Hồ Chí Minh</a></li></ul></li><li  class=''><a V     class='wobble-horizontal' title='Nội dung mở liên thư viện' href='/module/z3950-oca'> <span class='fa fa-angle-double-right' aria-hidden='true'></span>Nội dung mở liên thư viện</a></li></ul></li>
+																		
+							</ul>
+						</div>
+						<!--/.nav-collapse -->
+					</div>			
+				</div>
+				<!-- /.navbar -->
+			</div>
+			<!-- ./top-menu -->	
+		</div>
+							
+	</div>	
+	<!-- / MENU -->
+<script src="/Resources/assets/index/js/script.js"></script>
+
+
+
+
+
+
+                                       
+
+
+				</div>
+			</div>
+		</div>
+	</div><div id="psc-divPanelMid">
+		<div id="psc-divPanelCenter" style="width:100%;float:left">
+			<div id="psc-divPanelCenter-Content" style="min-height: 30px;">
+				
+
+<!-- Book_SearchOnlineBack -->
+
+<link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.dataTables.min.css" rel="stylesheet" />
+<script type="application/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="application/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+<script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+<script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+<script type="application/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
+
+<script type="text/javascript">
+	$(function() { 
+		FillControlTitle('Book_SearchOnline', 'bannersection','');
+	});
+</script>
+<style>
+	.ckbHavefile{ text-align: left; border: 0px; }
+	#tab111 table tbody tr td { padding: 10px; font-size:13pt }
+	.ebooktypepanel li{ width: 100%; }
+	.opac_next{ float: left; top: 15px; position: relative; width: 100%; }
+	.opac_next a{ color: #000; padding: 10px; }
+	@media screen and (max-width: 1280px) { .opac_next { } }
+	@media screen and (max-width: 500px) { .opac_next { margin-left: 0px; float: left;} }
+ .dropdownlist { width: 100%; font-size: 13pt; height:40px}
+	.selectpicker { margin: 8px; width: 10%; }
+	.txtSearch0 { float: left; width: 75%; height:40px }
+	.tabletitle { background-color: gainsboro; }
+	.pad-left-right{padding-top: 10px;}
+	.selectpicker{width:100px; font-size:13pt; height:40px}
+	#tab111 table tbody tr td { padding: 10px; }
+	@media screen and (max-width: 1280px) { .opac_next { } }
+	@media screen and (max-width: 500px) { .opac_next { margin-left: 0px; float: left;} }
+	@media screen and (max-width: 500px) {
+		.selectpicker { margin-left: 0px; margin-top: 10px; margin-bottom: 10px; width: 100%;  }
+		.txtSearch0 { float: left; width: 100%; }
+		#ddlTypeOfLibraries{width: 100%;}
+	}
+	.pad-left-right{padding-top: 10px;}
+</style>
+<style>
+	.prev, .next {
+    /*position: fixed;*/
+    top: 50%;
+    font-weight: bold;
+	}
+	.prev { left: 10px; }
+	.next { right: 10px; }
+	.content { width: 50%; margin: 0 auto; }
+</style>
+
+<section class="banner-contact width-100f" id="bannersection" style="margin-bottom: 10px; background:url('../zlisimages/Banner_Search.jpg') no-repeat; background-size: cover;"></section>
+<div id="LoadingPanelImgSearch" style="position: fixed; margin: 0px auto; left: 40%; top: 40%; z-index: 92939949; ">
+	<i class="fa fa-spinner fa-3x fa-spin"></i>
+</div>
+
+<div class="container">
+	<div class="tab-content">
+		<div id="pnSearchHistory"></div>
+		<div id="tab111" class="tab-pane active width-100f">
+			<table class="width-100f">
+				<tbody>
+					<tr>
+						<td>
+							<select id="ddlRecordGroup" class="dropdownlist">
+								<option value="0">Bộ sưu tập: Tất cả</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<select ID="ddlInventory" class="dropdownlist">
+								<option value="0">Kho: Tất cả</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<select ID="ddlSort" class="dropdownlist">
+								<option value="date_1" selected>Sắp xếp theo tài liệu mới nhất</option>
+								<option value="title">Sắp xếp theo Nhan đề</option>
+								<option value="author">Sắp xếp theo Tác giả</option>
+								<option value="date_publication_1">Sắp xếp theo Năm xuất bản (tăng)</option>
+								<option value="date_publication_2">Sắp xếp theo Năm xuất bản (giảm)</option>
+							</select>
+							<input id="ckbHavefile" type="checkbox" style="width: 30px; font-size:13pt" />Tìm file
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<table id="tblSearchContent" class="table-responsive">
+								<tbody>
+									<tr>
+										<td style="width:5%">&nbsp;</td>
+										<td style="width:60%">
+											<input id="txtSearch0" class="txtSearch0" style="width:100%; font-size:13pt" type="text" placeholder="Nhập nội dung tìm kiếm..." onkeydown="return KeyDownSearch(event);" autofocus/>
+										</td>
+										<td style="width:15%">
+											<select id='ddlStructure0' class="selectpicker" style="width:100%"></select>
+										</td>
+										<td style="width:15%">
+											<select id='ddlField0' class="selectpicker" style="width:100%"></select>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<a href="javascript:void(0)" onclick="AddNewSearchRow()" style='color:#000'>
+							<img style="width: 20px !important;padding-left: 5px;" src="../zlisimages/ic_add_new_100.png"> Thêm điều kiện ...</a>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<a id="btnSearch" class="btn btn-success hvr-glow" onclick="ZlisSearch(true)" style="font-size:13pt">Tìm</a>
+						</td>
+						<td>
+							<a style="display: none;" href="javascript:void(0)" class="btn btn-success" onclick="postBackSearch()">Back</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<div class="prev nextArraypanel">
+	<a class="Prev" href="javascript:void(0)" onclick='Prev()'>
+		<i class ="fa fa-angle-double-left" aria-hidden="true" title="Prev" style="font-size: 40pt;"></i>
+	</a>
+</div>
+<section class="lists-book-fullscreen width-100f">
+	<div class="container" id="SearchHomeContainer" style="display: none;">
+		<div class="tab-ds-theloai">
+			<div class="heading1"><span id="resulttitle">Kết quả tìm kiếm </span></div>
+		</div>
+		<div class="tab-content11">
+			<div class="heading2">
+				<span id="ctl22_ctl03_Label1" class="btn-all wobble-horizontal" style="float: left;"></span>
+				<span id="list-style-buttons" class="list-style-buttons" style="display: block;">
+					<div class="col-sx-2 col-md-2 viewtype">
+						<a href="javascript:void(0);" id="gridview" class="switcher">
+							<i class ="fa fa-th hvr-glow" aria-hidden="true" title="Xem dạng danh sách" style="font-size: 20pt;padding: 5px;"></i>
+						</a>
+						<a href="javascript:void(0);" id="listview" class="switcher">
+							<i class ="fa fa-list hvr-glow" aria-hidden="true" title="Xem dạng lưới" style="font-size: 20pt;padding: 5px;"></i>
+						</a>
+					</div>
+					<div id="libDataExport" class="col-md-4"></div>
+					<div id="pnSearchTotal"></div>
+				</span>
+			</div>
+			<div id="tab1" class="tab-pane active">
+				<div class="row">
+					<ul class="width-100f list-inline" id="listbooks" style=" margin-top: 10px;"></ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<div class="container" id="pnSearchMessage"></div>
+<div class="boxes" id="boxes" style="display: none;"></div>
+<div id="page_container">
+	<div class="page_navigation"></div>
+	<ul class="content"></ul>
+</div>
+<div class="next nextArraypanel">
+	<a class="Next" href="javascript:void(0)" onclick='Next()' >
+		<i class ="fa fa-angle-double-right" aria-hidden="true" title="Next" style="font-size: 40pt;"></i>
+	</a>
+</div>
+<style>
+	.nextArraypanel { z-index: 9898789997989; }
+  .nextArraypanel a { }
+  .nextArraypanel a.Next { }
+  .nextArraypanel a.Prev { }
+	@media screen and (max-width: 500px) {
+  	.nextArraypanel { }
+		.nextArraypanel a { }
+		.nextArraypanel a.Next { }
+		.nextArraypanel a.Prev { }
+  }
+</style>
+<script>
+	let searchIndex = 0
+			, searchTotalRecords = 0
+			, searchCount = 20
+			, searchCondIndex = 0
+			, resultDisplay = 1;
+		const syntaxQueues = [];
+		const dicQueues = [];
+		let queueIndex = -1;
+
+	function KeyDownSearch(event) {
+		if (event.keyCode == 13) {
+			ZlisSearch(true);
+			return false;
+		} else return true;
+	}
+
+	$(document).ready(function () {
+		$('.nextArraypanel').hide();
+		$('#LoadingPanelImgSearch').hide();	
+		FillRecordGroups();
+		FillInventories();
+		FillIfHaveParameters();
+	});
+
+	function FillRecordGroups() {
+		$.ajax({
+			type: "GET",
+			url: getZlisApi() + "api/Dics/RecordGroups?type=0",
+			contentType: "application/json"
+		})
+		.done(responseData => {
+			responseData.forEach(item => {
+				$("#ddlRecordGroup").append(`<option value='${item.ID}' >${item.Name}</option>`);
+			})
+		});
+	}
+
+	function FillInventories() {
+		$.ajax({
+			type: "GET",
+			url: getZlisApi() + "api/Dics/Inventories?campusId=#",
+			contentType: "application/json"
+		})
+		.done(responseData => {
+			responseData.forEach(item => {
+				$("#ddlInventory").append(`<option value='${item.InventoryID}' >${item.InventoryName}</option>`);
+			})
+		});
+	}
+
+	function FillIfHaveParameters() {
+		FillBookSearchStructure('ddlStructure0');
+		FillBookSearchFields('ddlField0');
+
+		hu = window.location.search.substring(1);
+		var Searchkey, recordgroupidkey, inventoryidhkey, ddlSortidkey;
+		if (hu != "") {
+			par = unescape(hu);
+			gy = par.split("&");
+			for (i = 0; i < gy.length; i++) {
+					ft = gy[i].split("=");
+					switch (ft[0]) {
+							case "Searchkey": Searchkey = ft[1]; break;
+							case "recordgroupidkey": recordgroupidkey = ft[1]; break;
+							case "inventoryidhkey": inventoryidhkey = ft[1]; break;
+							case "ddlSortidkey": ddlSortidkey = ft[1]; break;
+					}
+			}
+			if (Searchkey) {
+				document.getElementById("txtSearch0").value = Searchkey;
+			}
+			if (recordgroupidkey) {
+				document.getElementById("ddlRecordGroup").value = recordgroupidkey;
+			}
+			if (inventoryidhkey) {
+				document.getElementById("ddlInventory").value = inventoryidhkey;
+			}
+			if (ddlSortidkey) {
+				document.getElementById("ddlSort").value = ddlSortidkey;
+			}
+		}
+		setTimeout(function () { ZlisSearch(true); }, 100);
+	}
+			
+	$('#gridview').click(function () {
+		resultDisplay = 1;
+		changeView(resultDisplay);
+	});
+
+	$('#listview').click(function () {
+		resultDisplay = 2;
+		changeView(resultDisplay);
+	});
+
+	function AddNewSearchRow() {
+		searchCondIndex += 1;
+		$('#tblSearchContent tbody').append(`
+			<tr>
+				<td><select id='ddlOperators${searchCondIndex}' class='selectpicker' style='width:100%'></select></td>
+				<td><input id='txtSearch${searchCondIndex}' class='txtSearch0' style='width:100%; font-size:13pt' type='text' placeholder='Nhập nội dung tìm kiếm...' onkeydown='return KeyDownSearch(event);'/></td>
+				<td><select id='ddlStructure${searchCondIndex}' class='selectpicker' style='width:100%'></select></td>
+				<td><select id='ddlField${searchCondIndex}' class='selectpicker' style='width:100%'></select></td>
+			</tr>`);
+		FillBookSearchOperators(`ddlOperators${searchCondIndex}`);
+		FillBookSearchStructure(`ddlStructure${searchCondIndex}`);
+		FillBookSearchFields(`ddlField${searchCondIndex}`);
+	}
+		
+	function changeView(type) {
+		if (type == 1) { // gridview
+			$('.Titlelink').css({ 'max-height': '70px','overflow': 'hidden'});
+			$('.li-list').css({ 'width': '230px', 'min-height': '355px' });
+			$('.name-authors').css({ 'display': 'block' });
+			$('.img-thumb').css({ 'display': 'block' });
+			$('.detailbtn').css({ 'display': 'block' });
+			$('.lists-book-fullscreen .img-thumb, .danhsach-theloai .img-thumb').css({
+					'box-shadow': '0 1px 5px 0 rgba(50, 50, 50, 0.67)',
+				'border-radius': '3px',
+				'width': '125px',
+				'margin': '15px auto 15px',
+				'display': 'block',
+				'overflow': 'hidden',
+				'height': '190px',
+				'float': 'none'
+			});
+			$('.thumb').css({ 'min-height': '380px', 'overflow': 'hidden' });
+			$('lists-book-fullscreen .thumb').css({'padding': '5px', 'border': '1px solid #e7e7e7','background': '#f8f8f8',	            'margin-bottom': '25px',
+				'min-height': '340px',
+				'border-radius': '5px 5px 5px 5px'
+			});
+			$('.text-thumb').css({ 'height': '80px', 'width': '100%' });
+			$('.iconfile').css({ 'padding-top': '10px', 'position': 'relative', 'margin': '0px auto', 'text-align': 'left', 'float': 'left', 'width': '80%' });
+		} else if (type == 2) { // listview
+			$('.Titlelink').css({ 'min-height': 'auto' });
+			$('.detailbtn').css({ 'display': 'none' });
+				$('.li-list').css({ 'width': '100%', 'min-height': '0px' });
+				$('.img-thumb').css({ 'float': 'left', 'height': 'auto', 'margin-left': '10px', 'display': 'none' });
+				$('.name-authors').css({ 'display': 'none'});
+				$('.text-thumb').css({ 'float': 'left', 'padding-left': '10px', 'width': '100%', 'min-height': '70px' });
+				$('.thumb').css({ 'min-height': '85px', 'overflow': 'hidden' });
+				$('.name-publishyear').css({ 'display': 'block' });
+				$('.name-subject').css({ 'display': 'block' });
+				$('.name-abtract').css({ 'display': 'block', 'word-wrap': 'break-word' });
+				$('.name-numberofpage').css({ 'display': 'block' });
+				$('.name-description').css({ 'display': 'block' });
+				$('.iconfile').css({'padding-top':'10px','position': 'relative', 'margin': '10px', 'text-align': 'left', 'float': 'left', 'width': '60%', 'margin-left': '10px !important'});
+		}
+	}
+
+	function getSortValue() {
+		let sortValue = document.getElementById("ddlSort").value;
+		switch (sortValue) {
+			case "title": return { "Field": "title", "Range": "asc" };
+			case "author": return { "Field": "author", "Range": "asc" };
+			case "date_publication_1": return { "Field": "date_publication", "Range": "asc" };
+			case "date_publication_2": return { "Field": "date_publication", "Range": "dsc" };
+			default: return { "Field": "date", "Range": "dsc" };
+		}
+	}
+
+	function searchOnPage(newIndex) {
+		searchIndex = newIndex;
+		ZlisSearch(false);
+	}
+
+	function GetSearchData(isNew) {
+		let txtSearch0Value = document.getElementById("txtSearch0").value;
+		let ddlStructure0Value = document.getElementById("ddlStructure0").value;
+		let ddlField0Value = document.getElementById("ddlField0").value;
+
+		let listSyntax = [];
+		if (txtSearch0Value != "") {
+			listSyntax.push({ "Field": ddlField0Value, "Structure": ddlStructure0Value, "Value": txtSearch0Value, "Relation": "", "Position": "", "Truncate": truncate_kind, "Completeness": "", "SortType": "", "Operator": "" });
+			let searchCondIndexCheck = 0;
+			while (searchCondIndexCheck < searchCondIndex) {
+				searchCondIndexCheck += 1;
+				if (document.getElementById(`txtSearch${searchCondIndexCheck}`).value === "") break;
+				listSyntax.push({
+					"Field": document.getElementById(`ddlField${searchCondIndexCheck}`).value, 
+					"Structure": document.getElementById(`ddlStructure${searchCondIndexCheck}`).value, 
+					"Value": document.getElementById(`txtSearch${searchCondIndexCheck}`).value, 
+					"Relation": "", "Position": "", "Truncate": "", "Completeness": "", "SortType": "", 
+					"Operator": document.getElementById(`ddlOperators${searchCondIndexCheck}`).value
+				});
+			}
+		}
+		
+		let sortData = getSortValue();
+		listSyntax.push({
+			"Field": sortData.Field,
+			"SortType": sortData.Range,
+			"Operator": "or",
+			"Value": "0",
+			"Structure": "", "Relation": "", "Position": "", "Truncate": "", "Completeness": ""
+		});
+
+		//Add To Queue
+		if (isNew) {
+			if (queueIndex && queueIndex >= 0 && queueIndex != syntaxQueues.length - 1) {
+				syntaxQueues.splice(queueIndex, syntaxQueues.length - queueIndex);
+			} else { queueIndex = 0; }
+			dicQueues.push({
+				"Recordgroup": document.getElementById("ddlRecordGroup").value,
+				"Inventory": document.getElementById("ddlInventory").value,
+				"Sort": document.getElementById("ddlSort").value,
+				"Page": 0
+			})
+			syntaxQueues.push(listSyntax);
+			queueIndex = syntaxQueues.length - 1;
+		}
+		return listSyntax;
+	}
+
+	function ZlisSearch(isNew) {
+		if (isNew) {
+			searchIndex = 0;
+			searchTotalRecords = 0;
+		}
+
+		let recordgroupid = document.getElementById("ddlRecordGroup").value;
+		let inventoryid = document.getElementById("ddlInventory").value;
+		let ddlSortid = document.getElementById("ddlSort").value;
+		let ckbHavefile = document.getElementById("ckbHavefile").checked;
+		let txtSearch0Value1 = document.getElementById("txtSearch0").value;
+
+		pnSearchMessage.innerHTML = "";
+		pnSearchTotal.innerHTML = "";
+		$('#listbooks').empty();
+		$('#LoadingPanelImgSearch').show();
+
+		$.ajax({
+			type: "POST",
+			data: JSON.stringify(GetSearchData(isNew)),
+			url: `${getZlisApi()}api/Book/SearchOpac?recordGroupId=${recordgroupid}&inventoryId=${inventoryid}&ebookSearch=${ckbHavefile}&startIndex=${searchIndex}&count=${searchCount}`,
+			contentType: "application/json"
+		})
+		.done(function (responseData) {
+			$('#LoadingPanelImgSearch').hide();
+			if (responseData.length === 1 && responseData[0].RecordID === "-1") {
+				pnSearchMessage.innerHTML = `<div class="alert alert-danger col-md-12"><strong>Lỗi!</strong> ${responseData[0].Title}</div>`;
+				return;
+			}
+			bookArray = responseData;
+			if (responseData.length == 0) {
+				$('#SearchHomeContainer').css({ 'display': 'block' });
+				$('#listbooks').empty();
+				$('#listbooks').append(`<div class="alert alert-warning">Không tìm thấy tài liệu nào!</div>`);
+				resulttitle.innerHTML = "";
+				resulttitle.innerHTML = `Tìm được <b>0</b> tài liệu`;
+				$('#list-style-buttons').hide();
+			} else if (bookArray.length == 1 && !bookArray[0].Success) {
+				$('#listbooks').empty();
+				$('#listbooks').append(`<div class="alert alert-error">${bookArray[0].Message}</div>`);
+				resulttitle.innerHTML = "";
+				resulttitle.innerHTML = `Tìm được <b>0</b> tài liệu`;
+				$('#list-style-buttons').hide();
+			} else if(responseData.length > 0) {
+				responseData.forEach(book => {
+                    resulttitle.innerHTML = "";
+					searchTotalRecords = book.TotalRecords;
+					resulttitle.innerHTML = `Tìm được ${searchTotalRecords} tài liệu`;
+					$('#listbooks').append(CreateBookItemHtml3(book));
+				});
+				$('#listbooks').append(ZlisSearchPaging(searchIndex, searchCount, searchTotalRecords, 'searchOnPage'));
+				$('#list-style-buttons').show();
+				$('#SearchHomeContainer').css({ 'display': 'block' });
+				changeView(resultDisplay);
+			}
+			setTimeout(() => {
+				UpdatePostBackButtons();
+				exportSearchResult(responseData);
+			}, 100);
+		});
+	}
+
+	function UpdatePostBackButtons() {
+		document.getElementById("pnSearchHistory").innerHTML = "";
+		let postbackHtml = "<ul class='pager'>";
+		if (queueIndex > 0) {
+			let syntax = syntaxQueues[queueIndex - 1];
+			postbackHtml += `
+				<li class='previous'>
+					<a style='cursor:pointer' onclick='SearchOnQueueIndex(${queueIndex - 1})'>
+						<span aria-hidden='true'>←</span>${syntax[0].Field == "date" ? "Tất cả" : syntax[0].Value}
+					</a>
+				</li>`
+			postbackHtml += "</button>";
+		}
+		if (queueIndex < syntaxQueues.length - 1) {
+			let syntax = syntaxQueues[queueIndex + 1];
+			postbackHtml += `
+				<li class='next'>
+					<a style='cursor:pointer' onclick='SearchOnQueueIndex(${queueIndex + 1})'>
+						<span aria-hidden='true'>→</span>${syntax[0].Field == "date" ? "Tất cả" : syntax[0].Value}
+					</a>
+				</li>`
+			postbackHtml += "</button>";
+		}
+		postbackHtml += '</ul>';
+		document.getElementById("pnSearchHistory").innerHTML = postbackHtml;
+	}
+
+	function SearchOnQueueIndex(index) {
+		queueIndex = index;
+		let table = document.getElementById('tblSearchContent');
+		let tableRef = table.getElementsByTagName('tbody')[0];
+		tableRef.parentNode.removeChild(tableRef);
+		$('#tblSearchContent').append(`
+			<tbody>
+				<tr>
+					<td style='width:5%'>&nbsp;</td>
+					<td style='width:60%'>
+						<input id='txtSearch0' class='txtSearch0' style='width:100%' type='text' placeholder='Nhập nội dung tìm kiếm...' onkeydown='return KeyDownSearch(event);' autofocus/>
+					</td>
+					<td style='width:15%'>
+						<select id='ddlStructure0' class='selectpicker' style='width:100%'></select>
+					</td>
+					<td style='width:15%'>
+						<select id='ddlField0' class='selectpicker' style='width:100%'></select>
+					</td>
+				</tr>
+			</tbody>
+		`);
+		FillBookSearchOperators(`ddlOperators0`);
+		FillBookSearchStructure(`ddlStructure0`);
+		FillBookSearchFields(`ddlField0`);
+		var listSyntax = syntaxQueues[queueIndex];
+		var dicSelected = dicQueues[queueIndex];
+		document.getElementById("ddlRecordGroup").value = dicSelected["Recordgroup"];
+		document.getElementById("ddlInventory").value = dicSelected["Inventory"];
+		document.getElementById("ddlSort").value = dicSelected["Sort"];
+		setTimeout(() => {
+			let totalSyntax = listSyntax.length;
+			if (totalSyntax > 1) {
+				searchCondIndex = 0;
+				listSyntax.forEach((syntax, index) => {
+					if (index < totalSyntax - 1) {
+						if (index > 0) {
+							AddNewSearchRow();
+							document.getElementById(`ddlOperators${index}`).value = syntax['Operator'];
+						}
+						document.getElementById(`ddlField${index}`).value = syntax['Field'];
+						document.getElementById(`ddlStructure${index}`).value = syntax['Structure'];
+						document.getElementById(`txtSearch${index}`).value = syntax['Value'];
+					}
+				});
+			}
+			setTimeout(function () { ZlisSearch(false); }, 100);
+			}, 100);
+	}
+
+	//Tìm kiếm trên nhiều mảng khác nhau
+	function findIndex(arr, checkFunction) {
+		for (i = 0; i < arr.length; i++) {
+			if (checkFunction(arr[i])) return i;
+		}
+		return -1;
+	}
+
+	function openNextBookDetail111(bookId) {
+		if (!bookArray) return;
+		let bookIndex = bookArray.findIndex(book => book.RecordID == bookId);
+		bookIndex = 0;
+		let nextBookIndex = bookIndex + 1;
+		if (bookIndex == bookArray.length - 1) bookIndex = 0;
+		$('#bookDetailModal').find('.modal-body').html(`
+			<iframe src="${getBookDetailModule()}?RecordID=${bookArray[nextBookIndex].RecordID}" width="100%" height="100%"></iframe>
+		`);
+	}
+</script>
+
+<!-- NEXT PREV -->
+<script type="text/javascript"> 
+	let bookId = 0;
+  var bookIndex1 = 0;//Cur...rent;
+  function Next() {
+		if (bookIndex1 == bookArray.length - 1) { bookIndex1= 0}
+    else { bookIndex1++; }
+		$('#bookDetailModal').find('.modal-body').html(`
+			<iframe src="${getBookDetailModule()}?RecordID=${bookArray[bookIndex1].RecordID}" width="100%" height="100%"></iframe>
+		`);
+		$('#bookDetailModal').modal();
+	}
+	function Prev() {
+		if (bookIndex1 == 0) {
+			bookIndex1 = bookArray.length - 1;
+		} else { bookIndex1--; }
+		$('#bookDetailModal').find('.modal-body').html(`
+			<iframe src="${getBookDetailModule()}?RecordID=${bookArray[bookIndex1].RecordID}" width="100%" height="100%"></iframe>
+		`);
+		$('#bookDetailModal').modal();
+	}
+</script>
+			</div>
+		</div>
+	</div><div id="psc-divPanelBottom" style="width:100%;float:left">
+		<div id="psc-divPanelBottom-Content" style="min-height: 30px;">
+			<div id="psc-divPortlet-2bf53576-05b0-4783-aec9-21f58e96c2eb" class="psc-divPortlet-Wrapper" style="">
+				<div class="psc-divPortlet-Content">
+					
+
+<!-- Display_All -->
+
+<style>
+	
+	footer{
+	margin-top: 40px !important;
+	}
+    
+	#fbpanel{
+        float: left; width: 300px;
+    }
+
+    @media screen and (max-width: 500px) /*mobile*/
+    {
+            #fbpanel{
+            float: left; width: 100%;
+            padding: 3px;
+        }
+
+            .copyright{
+                width: 100% !important;
+            }
+    }
+
+    @media screen and (max-width: 768px) /*ipad*/
+    {
+        .HomePage-coutting .pull-right {
+            width: 98% !important;
+        }
+    }
+
+    @media screen and (max-width: 1024px) /*ipad*/
+    {
+        .HomePage-coutting .pull-right {
+            width: 98% !important;
+        }
+    }
+
+</style>
+
+<style>
+	/*.HomePage-coutting{
+		background-color: #a31a16;
+	}*/
+    .section-coutting{
+    float: left;
+    background: #fff;
+    }
+    .coutting-row article{
+        padding: 3px 0px;
+    }
+    @media (min-width: 1200px) {
+        .HomePage-coutting .pull-right{
+            margin-right:30px;
+        }
+    }
+    @media (max-width: 1199px) {
+       .HomePage-coutting .pull-right{
+            float:left!important;
+        }
+    }
+</style>
+
+
+<!--   FOOTER  -->
+
+<footer id="yt_footer" class="block">
+
+<!-- Contact -->
+<div id="yt_copyright" class="col-sm-12" style="float: left;">
+<div class="container">
+<div class="row">
+
+<div class="footerpanel">
+<div class="HomePage HomePage-coutting">
+
+
+<div class="ContentEditable">
+
+    
+        <style>
+    .block div{
+    padding-bottom: 5px;
+    }
+    .td_uid_53_5b694e6cf2c4b .tdm-social-text {
+    display: none;
+    }
+    .td_uid_53_5b694e6cf2c4b .tdm-social-item {
+    margin: 5px 10px 5px 0;
+    }
+    .td_uid_53_5b694e6cf2c4b .tdm-social-item {
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    }
+    .tdm-social-item-wrap {
+    display: inline-block;
+    }
+    .td_uid_21_5b694e6cbcd8c_rand .td_block_wrap {
+    text-align: left;
+    }
+</style>
+<div class="block col-md-8">
+<div class="bl1dc1" style="margin-bottom: 5px; text-align: left; font-size: 13px; line-height: 24px;"><strong><span style="font-family: 'Times New Roman'; font-size: 18px; color: #ffffff;">Trụ sở ch&iacute;nh</span></strong><span style="font-family: 'Times New Roman'; font-size: 18px; color: #ffffff;">: Số 504 Đại lộ B&igrave;nh Dương, P. Ph&uacute; Lợi, TP. Hồ Ch&iacute; Minh</span></div>
+<div class="bl1dc1" style="margin-bottom: 5px; text-align: left; font-size: 13px; line-height: 24px;"><span style="font-family: 'Times New Roman'; font-size: 18px; color: #ffffff;">
+<em class="fa fa-phone" aria-hidden="true"></em>(0274) 3 837 208<br />
+<em class="fa fa-internet-explorer" aria-hidden="true"></em><a href="http://lib.bdu.edu.vn" target="_blank">http://lib.bdu.edu.vn</a><br />
+<em class="fa fa-envelope-o" aria-hidden="true"></em><a href="mailto:thuvien@bdu.edu.vn">thuvien@bdu.edu.vn</a></span></div>
+<p class="bl1dc1" style="margin-bottom: 5px; text-align: left; font-size: 13px; line-height: 24px;"><span style="font-family: 'Times New Roman'; font-size: 18px; color: #ffffff;"><a href="https://www.facebook.com/thuvien.bdu.edu.vn/">https://www.facebook.com/thuvien.bdu.edu.vn/</a><br />
+</span></p>
+<div class="bl1dc1" style="margin-bottom: 5px; text-align: left; font-size: 13px; line-height: 24px;"><span style="font-family: 'Times New Roman'; font-size: 18px; color: #ffffff;"><strong>P</strong><strong>H C&agrave; Mau:</strong>&nbsp;Số 3, Đường L&ecirc; Thị Ri&ecirc;ng, P.T&acirc;n Th&agrave;nh, C&agrave; Mau.</span></div>
+</div>
+<div class="block col-md-8">
+<div class="block col-md-2"><span style="font-size: 18px; color: #ffffff;">&nbsp;</span></div>
+</div>
+<!-- Zalo SDK -->
+<script src="https://sp.zalo.me/plugins/sdk.js"></script>
+<!-- Zalo Chat Widget -->
+<div class="zalo-chat-widget" data-oaid="2128217749550650935" data-welcome-message="Rất vui khi được hỗ trợ bạn!" data-autopopup="0" data-width="350" data-height="420" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
+</div>
+
+        
+</div>
+
+<section class="section-coutting pull-right col-md-3 col-sm-12 col-xs-12">
+    <div class="box ">
+    <div class="countingpn">
+				<div class="coutting-right">
+					<div class="coutting-wrapper">						
+						<div class="box-header"><a href="#" title="">Truy cập</a></div>
+						<div class="coutting-body">
+							<div class="coutting-row">
+                                <article>							
+									<span class="out-line truy-cap"><img src="/Resources/ImagePhoto/icon-hn.png" />Đang online:</span>
+									<a class="title" href="#" title="Truy cập hôm nay"><span id="ctl22_psc-portlet-2bf53576-05b0-4783-aec9-21f58e96c2eb_LblOnline">1368</span></a>
+								</article>                                 
+								<article>							
+									<span class="out-line truy-cap"><img src="/Resources/ImagePhoto/icon-hn.png" />Truy cập hôm nay:</span>
+									<a class="title" href="#" title="Truy cập hôm nay"><span id="ctl22_psc-portlet-2bf53576-05b0-4783-aec9-21f58e96c2eb_lblhomnay">1597</span></a>
+								</article>
+                                <article>							
+									<span class="out-line truy-cap"><img src="/Resources/ImagePhoto/icon-hq.png" />Truy cập hôm qua:</span>
+									<a class="title" href="#" title="Truy cập hôm qua"><span id="ctl22_psc-portlet-2bf53576-05b0-4783-aec9-21f58e96c2eb_lblhomqua">1848</span></a>
+								</article>
+                                <article>							
+									<span class="out-line truy-cap"><img src="/Resources/ImagePhoto/icon-tn.png" />Truy cập tuần này:</span>
+									<a class="title" href="#" title="Truy cập tuần này"><span id="ctl22_psc-portlet-2bf53576-05b0-4783-aec9-21f58e96c2eb_lbltuannay">1597</span></a>
+								</article>
+                                <article>							
+									<span class="out-line truy-cap"><img src="/Resources/ImagePhoto/icon-tq.png" />Truy cập tuần trước:</span>
+									<a class="title" href="#" title="Truy cập tuần trước"><span id="ctl22_psc-portlet-2bf53576-05b0-4783-aec9-21f58e96c2eb_lbltuanqua">11639</span></a>
+								</article>
+                                <article>							
+									<span class="out-line truy-cap"><img src="/Resources/ImagePhoto/icon-thangn.png" />Truy cập tháng này:</span>
+									<a class="title" href="#" title="Truy cập tháng này"><span id="ctl22_psc-portlet-2bf53576-05b0-4783-aec9-21f58e96c2eb_lblthangnay">28845</span></a>
+								</article>
+                                 <article>							
+									<span class="out-line truy-cap"><img src="/Resources/ImagePhoto/icon-thangtr.png" />Truy cập tháng trước:</span>
+									<a class="title" href="#" title="Truy cập tháng trước"><span id="ctl22_psc-portlet-2bf53576-05b0-4783-aec9-21f58e96c2eb_lblthangtruoc">71929</span></a>
+								</article>
+                                 <article>							
+									<span class="out-line truy-cap"><img src="/Resources/ImagePhoto/icon-all.png" />Tổng truy cập:</span>
+									<a class="title" href="#" title="Tổng truy cập"><span id="ctl22_psc-portlet-2bf53576-05b0-4783-aec9-21f58e96c2eb_lblAll">11351910</span></a>
+								</article>
+							</div>
+						</div>
+					</div>
+				</div>
+    </div>
+                
+    </div>
+</section>
+ </div>
+ </div>
+
+</div>
+</div>
+</div>
+<!-- Contact -->
+
+    <!-- FB -->
+    <div class="FBsocial" style="float: right; display: none;">
+        <div class="container">
+            <div class="row">
+                <div id="bottom4" class="col-md-4 col-sm-6">
+                    <div class="module  clients-say " style="float: left; width: 300px;">
+                        <!--h3 class="modtitle">Mạng x&atilde; hội</h3-->
+                        <div class="modcontent clearfix">
+                            <iframe src="//www.facebook.com/plugins/likebox.php?href=https://www.facebook.com/facebook?fref=ts
+                            ref=stream;width=300&amp;height=590&amp;colorscheme=light&amp;show_faces=true&amp;header=false&amp;stream=false&amp;show_border=true" scrolling="no" style="border: medium none; overflow: hidden; width: 300px; height: 210px;" allowtransparency="f" frameborder="0"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- FB -->
+
+</footer>
+<!-- / FOOTER -->
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+        </div>
+</div>
+
+
+<!--smartmenus-->
+<script src="/Resources/lib/smartmenus-1.0.1/jquery.smartmenus.min.js"></script>
+<script src="/Resources/lib/smartmenus-1.0.1/addons/bootstrap/jquery.smartmenus.bootstrap.min.js"></script>
+<script src="/Resources/lib/OwlCarousel2-2.2.1/dist/owl.carousel.min.js"></script>
+
+<script type="text/javascript">										
+										$(document).ready(function($) {
+								
+											var ua = navigator.userAgent,
+												_device = (ua.match(/iPad/i) || ua.match(/iPhone/i) || ua.match(/iPod/i)) ? "smartphone" : "desktop";
+
+											if (_device == "desktop") {
+												$(".mod-languages").hover(function() {
+								
+													$(this).children(".dropdown-toggle").addClass(function() {
+														if ($(this).hasClass("open")) {
+															$(this).removeClass("open");
+															return "";
+														}
+														return "open";
+													});
+													$(this).children(".dropdown-menu").slideToggle();
+												});
+											} else {
+												$('.mod-languages .dropdown-toggle').bind('touchstart', function() {
+													$('.mod-languages .dropdown-menu').toggle();
+												});
+											}
+										});
+</script>
+
+<script type="text/javascript">
+			    $(window).scroll(function () {
+			        if ($(this).scrollTop() > 50) {
+			            $('.backtotop').fadeIn();
+					} else {
+			            $('.backtotop').fadeOut();
+					}
+				});
+
+			    $('.backtotop').click(function () {
+			        $('body,html').animate({
+						scrollTop: 0
+					}, 1200);
+					return false;
+				});
+</script>
+        <a id="yt-totop" class="backtotop" href="#"><i class="fa fa-angle-up"></i>Top </a>
+        
+
+		
+		
+        <div id="articleModal" class="modal fade" role="form">
+            <div class="modal-dialog modal-lg vertical-align-center-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Some text in the modal.</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+</div> 
+        
+    
+
+<script type="text/javascript">
+//<![CDATA[
+Sys.Application.add_init(function() {
+    $create(Telerik.Web.UI.RadWindowManager, {"clientStateFieldID":"RadWindowManager1_ClientState","formID":"form1","iconUrl":"","minimizeIconUrl":"","name":"RadWindowManager1","skin":"Default","windowControls":"[]"}, null, null, $get("RadWindowManager1"));
+});
+//]]>
+</script>
+</form>
+
+    
+
+
+
+     <script type="text/javascript">
+
+         (function () {
+             var elms = document.getElementsByTagName("*"), i, len, ids = {}, id;
+             for (i = 0, len = elms.length; i < len; i += 1) {
+                 id = elms[i].id || null;
+                 if (id) {
+                     ids[id] = ids.hasOwnProperty(id) ? ids[id] += 1 : 0;
+                 }
+             }
+             for (id in ids) {
+                 if (ids.hasOwnProperty(id)) {
+                     if (ids[id]) {
+                         console.warn("Multiple IDs #" + id);
+                     }
+                 }
+             }
+         }());
+
+         //  var $ = jQuery.noConflict();
+
+         function SearchProcess(event, query) {
+             if (event.keyCode == 13) {
+                 OnSearch(query);
+                 return false;
+             }
+             return true;
+         }
+         function OnSearch(query) {
+             PSCPortal.Services.CMS.SearchAndPaging(query, currentPage, OnSearchSuccess, OnSearchFailed);
+         }
+
+         function OnSearchSuccess(results, context, methodName) {
+
+             LoadContentAndPaging(results);
+         }
+         function OnSearchFailed(results, context, methodName) {
+         }
+
+         function retitleUrl(str) {
+             str = str.replace(/^\s+|\s+$/g, ''); // trim
+             str = str.toLowerCase();
+             // remove accents, swap ñ for n, etc
+             var from = "àáảãạăằắẳẵặâầấẩẫậđèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵ·/_,:;";
+             var to = "aaaaaaaaaaaaaaaaadeeeeeeeeeeeiiiiiooooooooooooooooouuuuuuuuuuuyyyyy------";
+             for (var i = 0, l = from.length ; i < l ; i++) {
+                 str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+             }
+             str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+                 .replace(/\s+/g, '-') // collapse whitespace and replace by -
+                 .replace(/-+/g, '-'); // collapse dashes
+             return str;
+         };
+
+         function popunder() {
+             $('a').not('[href^="http"],[href^="https"],[href^="mailto:"],[href^="#"]').each(function () {
+                 $(this).attr('href', function (index, value) {
+                     if (value != undefined) {
+                         var index = value.indexOf("Default.aspx");
+                         if (index >= 0)
+                             return value = "/" + value.substring(index, value.length);
+
+                     }
+                 });
+             });
+         }
+         //popup dialog
+         function showDialogInfomation(dialogId) {
+             PSCPortal.Services.CMS.GetArticleContent(dialogId, GetArticleContentCallback);
+         }
+         function GetArticleContentCallback(result) {
+
+             $('#articleModal').find('.modal-body').html(result);
+             $('#articleModal').modal();
+
+             $('#articleModal').find('.modal-body').html(result);
+             $('#articleModal').modal();
+
+         }
+
+
+         //smooth scroll to top
+         //pscjqback_to_top.on('click', function (event) {
+         //    event.preventDefault();
+         //    $('body,html').animate({
+         //        scrollTop: 0,
+         //    }, scroll_top_duration);
+         //});
+
+
+         $(window).scroll(function () {
+             if ($(this).scrollTop() > 50) {
+                 $('.backtotop').fadeIn();
+                 $('.backtotop').css("display", "block");
+             } else {
+                 $('.backtotop').fadeOut();
+             }
+         });
+         //$.scrollSpeed(100, 800);
+
+        </script>
+
+    	<!--  GO TO TOP -->	
+			<script type="text/javascript">
+			    $(window).scroll(function () {
+			        if ($(this).scrollTop() > 50) {
+			            $('.backtotop').fadeIn();
+			        } else {
+			            $('.backtotop').fadeOut();
+			        }
+			    });
+
+			    $('.backtotop').click(function () {
+			        $('body,html').animate({
+			            scrollTop: 0
+			        }, 1200);
+			        return false;
+			    });
+
+
+
+			</script>
+			<!-- /GO TO TOP -->
+<script type="text/html" id="search-binding-template">
+        <div class="s-tintuc">
+            <div class='result_lucene'>
+                <a style="color:#337ab7;" data-bind="html: 'Kết quả tìm thấy: ' + Count" href='#'></a>
+            </div>
+            
+
+<section class="topic-content">
+    <div class="container">
+        <div class="row mt-40">
+            <div class="col-sm-8">
+
+                     <div class="article">
+                        <div class="article-thumb-search">
+                            <a class="hvr-grow"  data-bind="attr: {href:Link}" %>
+                                                    <img data-bind="attr: {src: ImageUrl}" />
+                                </a>
+                        </div> 
+                         <div class="article-content">					  
+                    <h4><a style="font-weight:700;color: #337ab7;"  class="title_topicdisplay" data-bind="attr: { href: Link }, html: Highligth"></a></h4>
+                    <h5 class="h3_content" data-bind="html: Title + '...'"></h5>
+                            <p class="txt-date fa fa-clock-o"  aria-hidden="true" data-bind="date:  CreatedDate"></p>
+                </div>
+                         </div>
+                <!-- /ko -->
+                <div align='center' id='pagingContentHolder' class='ct_topic_r1'></div>
+            </div>
+            <div id="top5" class="col-lg-4 col-sm-4 ">
+							<div class="module  cus-admissions ">
+								 <div class="modcontent clearfix">
+<ul>
+    <li>
+    <div class="icon"> <img src="/Resources/assets/index/imgs/icon-tinmoi/icon_dang_ky.png" alt="khảo sát"/></div>
+    <div class="content">
+    <h3 class="title"><a href="#">Đăng ký học phần</a></h3>
+    </div>
+    </li>
+    <li>
+    <div class="icon"> <img src="/Resources/assets/index/imgs/icon-tinmoi/icon_tra_cuu.png" alt="Tra cứu điểm"/></div>
+    <div class="content">
+    <h3 class="title"><a href="#">tra cứu điểm 2017</a></h3>
+    </div>
+    </li>
+    <li>
+    <div class="icon"> <img src="/Resources/assets/index/imgs/icon-tinmoi/icon_vb_tai_lieu.png" alt="Văn bản tài liệu"/></div>
+    <div class="content">
+    <h3 class="title"><a href="#">Văn bản tài liệu</a></h3>
+    </div>
+    </li>
+    <li>
+    <div class="icon"> <img src="/Resources/assets/index/imgs/icon-tinmoi/icon_thoi_khoa_bieu.png" alt="Giáo trình học liệu"/></div>
+    <div class="content">
+    <h3 class="title"><a href="#">Giáo trình học liệu</a></h3>
+    </div>
+    </li>
+    <li>
+    <div class="icon"> <img src="/Resources/assets/index/imgs/icon-tinmoi/icon_album.png" alt="Album hình ảnh"/></div>
+    <div class="content">
+    <h3 class="title"><a href="#">Album hình ảnh</a></h3>
+    </div>
+    </li>
+        <li>
+    <div class="icon"> <img src="/Resources/assets/index/imgs/icon-tinmoi/icon-video.png" alt="Video Clip" /></div>
+    <div class="content">
+    <h3 class="title"><a href="#">Video Clip</a></h3>
+    </div>
+    </li>
+
+</ul>
+</div>
+							</div><!-- /.admissions -->
+						</div>
+
+
+        </div>
+
+
+
+
+    </div>
+    </section>
+
+
+        </div>
+    </script>
+
+    <script type="text/javascript" src="/Scripts/knockout-2.3.0.js"></script>
+    <script src="/Scripts/Common.js" type="text/javascript"></script>
+    <script src="/Scripts/PagingContent.js" type="text/javascript"></script>
+    <script src="/Scripts/zebra_dialog.js" type="text/javascript"></script>
+   
+    
+     
+    <script type="text/javascript">
+        $(function () {
+            /* slider have img kesach*/
+            $('#owl-demo-kesach').owlCarousel({
+                loop: true,
+                responsiveClass: true,
+                nav: true,
+                autoplay: true,
+                margin: 10,
+                dots: false,
+                responsive: {
+                    300: {
+                        items: 1,
+                    },
+                    700: {
+                        items: 2,
+                    },
+                    // 750:{
+                    //     items:3,
+                    // },
+                    850: {
+                        items: 3,
+                    },
+                    992: {
+                        items: 5,
+                    }
+                }
+            })
+            /* slider last*/
+
+            /* Book slider 2 effect config */
+            $('#owl-slider-book-horizontal2').owlCarousel({
+                loop: true,
+                responsiveClass: true,
+                nav: true,
+                autoplay: true,
+                margin: 10,
+                dots: false,
+                responsive: {
+                    300: {
+                        items: 1,
+                    },
+                    700: {
+                        items: 2,
+                    },
+                    750: {
+                        items: 3,
+                    },
+                    850: {
+                        items: 4,
+                    },
+                    992: {
+                        items: 5,
+                    }
+                }
+            })
+
+
+        });
+    </script>
+	
+	<!-- Trang thu vien -->
+	<script src="/Resources/assets/index/resourcesTV/js/jquery.cookie.js"></script>   
+	
+	<div id="bookDetailModal" class="modal fade" role="dialog" style="z-index: 96969696;" onclick=" $('.nextArraypanel').hide();">
+		<div class="modal-dialog modal-lg" style="width:95%;height:90%;">
+			<div class="modal-content" style="height:100%">
+				<div class="modal-header">
+					<i class ="close fa fa-window-close" aria-hidden="true" style="color: #ff0b00;font-size: 30pt;position: relative;left: 10px;top: -5px;" data-dismiss="modal" onclick=" $('.nextArraypanel').hide();"></i>
+					<!--button type="button" class="close" ></button-->
+					<h4 class="modal-title">Thông tin tài liệu</h4>
+				</div>
+				<div class="modal-body" style="width:100%;height:90%"></div>
+			</div>
+		</div>
+	</div>
+	
+</body>
+</html>

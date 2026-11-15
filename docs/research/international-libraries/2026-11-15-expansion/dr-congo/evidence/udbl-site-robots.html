@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil - UDBL</title>
+    
+    <!-- Polices Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Open+Sans:wght@400;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Intégration des Assets du projet -->
+    <link rel="stylesheet" href="https://udbl.ac.cd/public/assets/css/bootstrap.min.css">
+    <link href="https://udbl.ac.cd/public/assets/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://udbl.ac.cd/public/assets/img/logo_1.png" rel="icon" type="image/png">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- GLightbox CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" />
+    <!-- Style personnalisé -->
+    <!--<link rel="stylesheet" href="--><?//= BASE_URL ?><!--assets/css/style.min.css?v=--><?// file_exists(ROOT_PATH . 'public/assets/css/style.min.css') ? filemtime(ROOT_PATH . 'public/assets/css/style.min.css') : time() ?><!--">-->
+    <link rel="stylesheet" href="https://udbl.ac.cd/public/assets/css/style.css?v=1792047253">
+    
+    
+    <!--<script src="https://cdn.tiny.cloud/1/6eiv43vddqxmyn60nzqydm71ptmrewj6z7e38ha56dyrjz5w/tinymce/8/tinymce.min.js" referrerpolicy="origin" crossorigin="anonymous"></script>-->
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-inverse navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.php">
+                <img src="https://udbl.ac.cd/public/assets/img/LOGO-UDBL1.png" alt="Logo UDBL" class="navbar-brand-logo">
+                UDBL
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                                        
+                    <!-- Navigation contextuelle : Si on est dans l'admin, on affiche un lien Dashboard -->
+                                            <li class="nav-item"><a class="nav-link" href="index.php"><i class="fas fa-home me-1"></i> Accueil</a></li><li class="nav-item dropdown"><a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-university me-1"></i> Facultés <span class="caret"></span></a><ul class="dropdown-menu"><li><a class="dropdown-item" href="index.php?page=actualites&amp;faculte=1"><i class="fas fa-university me-1"></i> Faculté de Sciences Informatique</a></li><li><a class="dropdown-item" href="index.php?page=actualites&amp;faculte=4"><i class="fas fa-university me-1"></i> Faculté de Gestion et Ingénierie</a></li><li><a class="dropdown-item" href="index.php?page=actualites&amp;faculte=5"><i class="fas fa-university me-1"></i> Faculté de Science de l&#039;Homme et de la Société</a></li><li><a class="dropdown-item" href="index.php?page=actualites&amp;faculte=6"><i class="fas fa-university me-1"></i> Faculté de Théologie</a></li></ul></li><li class="nav-item dropdown"><a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-graduation-cap me-1"></i> Formation <span class="caret"></span></a><ul class="dropdown-menu"><li><a class="dropdown-item" href="index.php?page=horaires"><i class="fas fa-clock me-1"></i> Horaires</a></li><li><a class="dropdown-item" href="https://www.esisalama.net/elearning/"><i class="fas fa-chevron-right me-1"></i> E-Learning</a></li></ul></li><li class="nav-item dropdown"><a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-microscope me-1"></i> Recherche <span class="caret"></span></a><ul class="dropdown-menu"><li><a class="dropdown-item" href="index.php?page=publications"><i class="fas fa-file-alt me-1"></i> PUBLICATIONS</a></li><li><a class="dropdown-item" href="index.php?page=biblioth-que"><i class="fas fa-book me-1"></i> Bibliothèque</a></li><li><a class="dropdown-item" href="https://bibliotheque-udbl.org/"><i class="fas fa-chevron-right me-1"></i> Catalogue</a></li><li><a class="dropdown-item" href="index.php?page=centre-d-excellence"><i class="fas fa-chevron-right me-1"></i> Centre d&#039;Excellence</a></li><li><a class="dropdown-item" href="index.php?page=laboratoire"><i class="fas fa-flask me-1"></i> Laboratoire</a></li><li><a class="dropdown-item" href="index.php?page=journ-es-scientifiques"><i class="fas fa-chevron-right me-1"></i> Journées scientifiques</a></li></ul></li><li class="nav-item"><a class="nav-link" href="index.php?page=cellule-interne-d-assurance-qualit"><i class="fas fa-shield-alt me-1"></i> CIAQ</a></li><li class="nav-item"><a class="nav-link" href="index.php?page=a-propos-de-nous"><i class="fas fa-info-circle me-1"></i> A propos</a></li>                                                            
+                    <!-- Partie à ajouter dans votre menu -->
+                                            <!--<li class="nav-item"><a class="nav-link" href="index.php?page=login">Connexion</a></li>-->
+                                        
+
+                </ul>
+                
+                <!-- Formulaire de recherche dans le menu -->
+                <form class="d-flex" action="index.php" method="get">
+                    <input type="hidden" name="page" value="search">
+                    <input class="form-control me-2" type="search" name="q" placeholder="Rechercher..." aria-label="Search" value="">
+                    <button class="btn btn-outline-light" type="submit"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <div class="container main-content-container">
+        <!-- Le contenu de la page sera injecté ici -->
+</div> <!-- Fermeture du container principal pour affichage plein écran -->
+
+    <div id="myCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000" style="margin-bottom: 30px; min-height: 400px; background-color: #e9ecef;">
+        
+        <!-- Fil d'ariane / Barre d'information (Flash Info) - Superposé au carrousel -->
+        
+        <!-- Indicateurs -->
+        <div class="carousel-indicators">
+                            <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                    </div>
+
+        <!-- Slides -->
+        <div class="carousel-inner" role="listbox" style="min-height: 400px;">
+                            <div class="carousel-item active">
+                    <img src="https://udbl.ac.cd/public/assets/img/uploads/carousel/69e0b3a7514a1.jpg" 
+                         alt=" " 
+                         width="1920" height="400"
+                         style="width:100%; height: 400px; object-fit: cover;">
+                    <!--<div class="carousel-caption">
+                        <h3><?//= htmlspecialchars($slide['titre']) ?></h3>                        <p><?//= htmlspecialchars($slide['description']) ?></p>                                                    <a href="<?//= htmlspecialchars($slide['lien']) ?>" class="btn btn-primary">En savoir plus</a>
+                        <?//php endif; ?>
+                    </div>-->
+                </div>
+                    </div>
+
+        <!-- Contrôles -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Précédent</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Suivant</span>
+        </button>
+    </div>
+
+<!-- Réouverture du container pour le contenu suivant -->
+<div class="container">
+
+    <!-- Section Facultés (Style Grille) -->
+    <div class="row mb-5 mt-4">
+        <div class="col-12 text-center mb-4">
+             <h2 style="color: #003366; font-weight: 700; text-transform: uppercase; position: relative; display: inline-block; padding-bottom: 15px;">
+                Nos Facultés
+                <span style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 60px; height: 4px; background-color: #ffc107;"></span>
+            </h2>
+        </div>
+                                    <div class="col-md-3 col-sm-6 mb-4">
+                    <a href="index.php?page=actualites&faculte=4" class="text-decoration-none">
+                        <div class="card h-100 shadow-sm border-0 card-hover-effect text-center py-4" style="transition: all 0.3s;">
+                            <div class="card-body">
+                                <div class="icon-box bg-light text-primary mx-auto mb-3" style="width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; color: #003366 !important;">
+                                    <i class="fas fa-university"></i>
+                                </div>
+                                <h6 class="card-title text-dark fw-bold">Gestion et Ingénierie Financières</h6>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                            <div class="col-md-3 col-sm-6 mb-4">
+                    <a href="index.php?page=actualites&faculte=5" class="text-decoration-none">
+                        <div class="card h-100 shadow-sm border-0 card-hover-effect text-center py-4" style="transition: all 0.3s;">
+                            <div class="card-body">
+                                <div class="icon-box bg-light text-primary mx-auto mb-3" style="width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; color: #003366 !important;">
+                                    <i class="fas fa-university"></i>
+                                </div>
+                                <h6 class="card-title text-dark fw-bold">Science de l&#039;homme et de la Société</h6>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                            <div class="col-md-3 col-sm-6 mb-4">
+                    <a href="index.php?page=actualites&faculte=1" class="text-decoration-none">
+                        <div class="card h-100 shadow-sm border-0 card-hover-effect text-center py-4" style="transition: all 0.3s;">
+                            <div class="card-body">
+                                <div class="icon-box bg-light text-primary mx-auto mb-3" style="width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; color: #003366 !important;">
+                                    <i class="fas fa-university"></i>
+                                </div>
+                                <h6 class="card-title text-dark fw-bold">Sciences Informatiques</h6>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                            <div class="col-md-3 col-sm-6 mb-4">
+                    <a href="index.php?page=actualites&faculte=6" class="text-decoration-none">
+                        <div class="card h-100 shadow-sm border-0 card-hover-effect text-center py-4" style="transition: all 0.3s;">
+                            <div class="card-body">
+                                <div class="icon-box bg-light text-primary mx-auto mb-3" style="width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; color: #003366 !important;">
+                                    <i class="fas fa-university"></i>
+                                </div>
+                                <h6 class="card-title text-dark fw-bold">Théologie</h6>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                        </div>
+
+<div class="row">
+    <!-- Colonne Gauche : Actualités -->
+    <div class="col-lg-8">
+        <h3 class="mb-4" style="border-left: 5px solid #ffc107; padding-left: 15px; color: #003366; font-weight: bold;">
+            Actualités récentes 
+            <small class="pull-right" style="font-size: 0.6em; margin-top: 5px;"><a href="index.php?page=actualites" class="text-muted">Voir toutes <i class="fas fa-arrow-right"></i></a></small>
+        </h3>
+        <div class="row">
+                                                <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <img src="https://udbl.ac.cd/public/assets/img/uploads/Sciences_Informatiques/6af46f8b2f293.jpeg" class="card-img-top"
+                                 alt="VISITE PROSPECTIVE DU CHESD À LA FACULTÉ DES SCIENCES INFORMATIQUES DE L’UDBL : CAP SUR L&#039;INNOVATION ET LES PARTENARIATS TECHNOLOGIQUES" 
+                                 style="height: 200px; width: 100%; object-fit: cover; background-color: #f8f9fa;" loading="lazy">
+                            <div class="card-body">
+                                <h5 class="card-title">VISITE PROSPECTIVE DU CHESD À LA FACULTÉ DES SCIEN...</h5>
+                                <p class="card-text"><small class="text-muted"><i class="fas fa-calendar-alt"></i> 10/11/2026</small></p>
+                                <p class="card-text">Ce mardi 10 novembre 2026, la Faculté des Sciences Informatiques de l’Université Don Bosco de Lubumb...</p>
+                                <a href="index.php?page=article&id=131" class="btn btn-primary">Lire la suite</a>
+                            </div>
+                        </div>
+                    </div>
+                                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <img src="https://udbl.ac.cd/public/assets/img/uploads/UDBL/6af42cbe0290c.jpeg" class="card-img-top"
+                                 alt="PREMIÈRE RENCONTRE CONJOINTE ENTRE LE CONSEIL D’ADMINISTRATION ET LES AUTORITÉS ACADÉMIQUES" 
+                                 style="height: 200px; width: 100%; object-fit: cover; background-color: #f8f9fa;" loading="lazy">
+                            <div class="card-body">
+                                <h5 class="card-title">PREMIÈRE RENCONTRE CONJOINTE ENTRE LE CONSEIL D’AD...</h5>
+                                <p class="card-text"><small class="text-muted"><i class="fas fa-calendar-alt"></i> 09/11/2026</small></p>
+                                <p class="card-text">Réunis ce lundi 9 novembre autour du Père Guillermo Basañes, les membres du Conseil d’administration...</p>
+                                <a href="index.php?page=article&id=130" class="btn btn-primary">Lire la suite</a>
+                            </div>
+                        </div>
+                    </div>
+                                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <img src="https://udbl.ac.cd/public/assets/img/uploads/Sciences_Informatiques/6af2ee51876a5.jpg" class="card-img-top"
+                                 alt="FACULTÉ DES SCIENCES INFORMATIQUES : ASSEMBLÉE GÉNÉRALE DES ENSEIGNANTS ET GRANDES ORIENTATIONS POUR L’ANNÉE ACADÉMIQUE 2026-2027" 
+                                 style="height: 200px; width: 100%; object-fit: cover; background-color: #f8f9fa;" loading="lazy">
+                            <div class="card-body">
+                                <h5 class="card-title">FACULTÉ DES SCIENCES INFORMATIQUES : ASSEMBLÉE GÉN...</h5>
+                                <p class="card-text"><small class="text-muted"><i class="fas fa-calendar-alt"></i> 07/11/2026</small></p>
+                                <p class="card-text">En marge de l’ouverture de l’année académique 2026-2027, la Faculté des Sciences Informatiques de l&#039;...</p>
+                                <a href="index.php?page=article&id=129" class="btn btn-primary">Lire la suite</a>
+                            </div>
+                        </div>
+                    </div>
+                                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <img src="https://udbl.ac.cd/public/assets/img/uploads/Sciences_Informatiques/6ae19b3ab7557.jpeg" class="card-img-top"
+                                 alt="ACCUEIL DES NOUVEAUX ÉTUDIANTS DE MASTER À LA FACULTÉ DES SCIENCES INFORMATIQUES" 
+                                 style="height: 200px; width: 100%; object-fit: cover; background-color: #f8f9fa;" loading="lazy">
+                            <div class="card-body">
+                                <h5 class="card-title">ACCUEIL DES NOUVEAUX ÉTUDIANTS DE MASTER À LA FACU...</h5>
+                                <p class="card-text"><small class="text-muted"><i class="fas fa-calendar-alt"></i> 26/10/2026</small></p>
+                                <p class="card-text">Dans le cadre de la vision institutionnelle de l&#039;Université Don Bosco de Lubumbashi « UDBL, former a...</p>
+                                <a href="index.php?page=article&id=128" class="btn btn-primary">Lire la suite</a>
+                            </div>
+                        </div>
+                    </div>
+                                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <img src="https://udbl.ac.cd/public/assets/img/uploads/UDBL/6ae0a58e0dc00.jpg" class="card-img-top"
+                                 alt="CÉLÉBRATION EUCHARISTIQUE À L&#039;ESPRIT SAINT POUR L’OUVERTURE DE L&#039;ANNÉE ACADÉMIQUE 2026-2027" 
+                                 style="height: 200px; width: 100%; object-fit: cover; background-color: #f8f9fa;" loading="lazy">
+                            <div class="card-body">
+                                <h5 class="card-title">CÉLÉBRATION EUCHARISTIQUE À L&#039;ESPRIT SAINT POUR L’...</h5>
+                                <p class="card-text"><small class="text-muted"><i class="fas fa-calendar-alt"></i> 24/10/2026</small></p>
+                                <p class="card-text">La communauté de l&#039;Université Don Bosco de Lubumbashi (UDBL) s&#039;est réunie ce samedi 24 août 2026 pou...</p>
+                                <a href="index.php?page=article&id=127" class="btn btn-primary">Lire la suite</a>
+                            </div>
+                        </div>
+                    </div>
+                                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <img src="https://udbl.ac.cd/public/assets/img/uploads/UDBL/6ad89457631f6.jpg" class="card-img-top"
+                                 alt="RENTRÉE ACADÉMIQUE 2026-2027 À L’UDBL : ACCUEIL SOLENNEL DES NOUVEAUX ÉTUDIANTS EN SCIENCES INFORMATIQUES ET EN GESTION &amp; INGÉNIERIE FINANCIÈRE" 
+                                 style="height: 200px; width: 100%; object-fit: cover; background-color: #f8f9fa;" loading="lazy">
+                            <div class="card-body">
+                                <h5 class="card-title">RENTRÉE ACADÉMIQUE 2026-2027 À L’UDBL : ACCUEIL SO...</h5>
+                                <p class="card-text"><small class="text-muted"><i class="fas fa-calendar-alt"></i> 19/10/2026</small></p>
+                                <p class="card-text">Fidèle à sa tradition d&#039;excellence et d&#039;accompagnement intégral, l’Université Don Bosco de Lubumbash...</p>
+                                <a href="index.php?page=article&id=126" class="btn btn-primary">Lire la suite</a>
+                            </div>
+                        </div>
+                    </div>
+                                    </div>
+    </div>
+
+    <!-- Colonne Droite : Événements (Sidebar) -->
+    <div class="col-lg-4">
+        <div class="panel panel-default" style="border-top: 3px solid #003366;">
+            <div class="panel-heading" style="background-color: #fff; color: #003366; border-bottom: 1px solid #eee;">
+                <h3 class="panel-title" style="font-weight: bold;"><i class="fas fa-calendar-alt text-warning"></i> Événements à venir</h3>
+            </div>
+            <div class="list-group">
+                                    <div class="list-group-item">Aucun événement à venir.</div>
+                                <a href="index.php?page=events" class="list-group-item text-center active" style="background-color: #003366; border-color: #003366;">Voir tous les événements (y compris passés)</a>
+            </div>
+        </div>
+
+        <!-- Widget Documents Publics -->
+        <div class="panel panel-default" style="margin-top: 20px; border-top: 3px solid #07ff51;">
+            <div class="panel-heading" style="background-color: #fff; color: #003366; border-bottom: 1px solid #eee;">
+                <h3 class="panel-title" style="font-weight: bold;"><i class="fas fa-file-download text-warning"></i> Documents Utiles</h3>
+            </div>
+            <div class="list-group">
+                                                                                    <a href="https://udbl.ac.cd/public/assets/uploads/documents/6ae1ac51c9fa5_Calendrier-Academique-2026-2027.pdf"
+                           class="list-group-item" 
+                           target="_blank"  download>
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div class="d-flex align-items-center" style="overflow: hidden;">
+                                    <i class="fas fa-file-pdf text-danger fa-2x" style="width: 40px;"></i>
+                                    <h5 class="list-group-item-heading" style="font-size: 14px; font-weight: bold; margin-bottom: 2px;">
+                                        Calendrier academique 2026-2027                                    </h5>
+                                    <p class="list-group-item-text text-muted small mb-0">Calendrier</p>
+                                </div>
+                                <small class="text-primary" style="white-space: nowrap; margin-left: 10px;">
+                                    <i class="fas fa-download"></i>
+                                    Télécharger                                </small>
+                            </div>
+                        </a>
+                                                                    <a href="https://udbl.ac.cd/public/assets/uploads/documents/6a290757d5515_ACTIVITES-ACADEMIQUES-FIN-D-ANNEE-2025-2026.pdf"
+                           class="list-group-item" 
+                           target="_blank"  download>
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div class="d-flex align-items-center" style="overflow: hidden;">
+                                    <i class="fas fa-file-pdf text-danger fa-2x" style="width: 40px;"></i>
+                                    <h5 class="list-group-item-heading" style="font-size: 14px; font-weight: bold; margin-bottom: 2px;">
+                                        Fac SHS - ACTIVITES ACADEMIQUES DE LA FIN DU SECOND SEMESTRE 2025-2026                                    </h5>
+                                    <p class="list-group-item-text text-muted small mb-0">Communiqué</p>
+                                </div>
+                                <small class="text-primary" style="white-space: nowrap; margin-left: 10px;">
+                                    <i class="fas fa-download"></i>
+                                    Télécharger                                </small>
+                            </div>
+                        </a>
+                                                                    <a href="https://udbl.ac.cd/public/assets/uploads/documents/6a2907277ec25_DEPOT-TRAVAUX-2025-2026.pdf"
+                           class="list-group-item" 
+                           target="_blank"  download>
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div class="d-flex align-items-center" style="overflow: hidden;">
+                                    <i class="fas fa-file-pdf text-danger fa-2x" style="width: 40px;"></i>
+                                    <h5 class="list-group-item-heading" style="font-size: 14px; font-weight: bold; margin-bottom: 2px;">
+                                        Fac SHS - Dépot des Travaux Académiques                                    </h5>
+                                    <p class="list-group-item-text text-muted small mb-0">Communiqué</p>
+                                </div>
+                                <small class="text-primary" style="white-space: nowrap; margin-left: 10px;">
+                                    <i class="fas fa-download"></i>
+                                    Télécharger                                </small>
+                            </div>
+                        </a>
+                                                                    <a href="javascript:void(0);"
+                           class="list-group-item" 
+                            onclick="openDocModal('https://view.officeapps.live.com/op/embed.aspx?src=https%3A%2F%2Fudbl.ac.cd%2Fpublic%2Fassets%2Fuploads%2Fdocuments%2F69e0a6afbc19b_SituationDiplmesESIS.xlsx', 'Diplomes disponibles - ESISALAMA')" >
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div class="d-flex align-items-center" style="overflow: hidden;">
+                                    <i class="fas fa-file-excel text-success fa-2x" style="width: 40px;"></i>
+                                    <h5 class="list-group-item-heading" style="font-size: 14px; font-weight: bold; margin-bottom: 2px;">
+                                        Diplomes disponibles - ESISALAMA                                    </h5>
+                                    <p class="list-group-item-text text-muted small mb-0">Autre</p>
+                                </div>
+                                <small class="text-primary" style="white-space: nowrap; margin-left: 10px;">
+                                    <i class="fas fa-eye"></i>
+                                    Consulter                                </small>
+                            </div>
+                        </a>
+                                                                    <a href="https://udbl.ac.cd/public/assets/uploads/documents/6985e5851b375_Calendrier_25-26.pdf"
+                           class="list-group-item" 
+                           target="_blank"  download>
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div class="d-flex align-items-center" style="overflow: hidden;">
+                                    <i class="fas fa-file-pdf text-danger fa-2x" style="width: 40px;"></i>
+                                    <h5 class="list-group-item-heading" style="font-size: 14px; font-weight: bold; margin-bottom: 2px;">
+                                        Calendrier academique 2025-2026                                    </h5>
+                                    <p class="list-group-item-text text-muted small mb-0">Calendrier</p>
+                                </div>
+                                <small class="text-primary" style="white-space: nowrap; margin-left: 10px;">
+                                    <i class="fas fa-download"></i>
+                                    Télécharger                                </small>
+                            </div>
+                        </a>
+                                                                    <a href="https://udbl.ac.cd/public/assets/uploads/documents/6985e26777923_GuidedelEtudiant_V_1_025.pdf"
+                           class="list-group-item" 
+                           target="_blank"  download>
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div class="d-flex align-items-center" style="overflow: hidden;">
+                                    <i class="fas fa-file-pdf text-danger fa-2x" style="width: 40px;"></i>
+                                    <h5 class="list-group-item-heading" style="font-size: 14px; font-weight: bold; margin-bottom: 2px;">
+                                        Règlement d’ordre intérieur  « POUR ÉTUDIANT »                                    </h5>
+                                    <p class="list-group-item-text text-muted small mb-0">Règlement</p>
+                                </div>
+                                <small class="text-primary" style="white-space: nowrap; margin-left: 10px;">
+                                    <i class="fas fa-download"></i>
+                                    Télécharger                                </small>
+                            </div>
+                        </a>
+                                                </div>
+        </div>
+    </div>
+</div>
+
+<!-- Section Mot du Recteur -->
+<div class="row mb-5 reveal">
+    <div class="col-md-12">
+        <div class="card border-0 shadow-sm" style="background-color: #f8f9fa; border-left: 5px solid #003366 !important;">
+            <div class="row g-0 align-items-center">
+                <div class="col-md-3 text-center p-4">
+                                            <img src="https://udbl.ac.cd/public/assets/img/uploads/pages/6986526b30c30.png" class="img-fluid rounded-circle shadow bg-white" alt="Le Recteur" style="width: 180px; height: 180px; object-fit: cover; padding: 5px;" loading="lazy">
+                                    </div>
+                <div class="col-md-9">
+                    <div class="card-body p-4">
+                        <h3 class="card-title mb-3" style="color: #003366; font-weight: bold;">mot-du-recteur</h3>
+                        <div class="card-text lead" style="font-style: italic; color: #555; font-size: 1.1rem;">
+                            <!-- Affichage du contenu HTML venant de la BDD -->
+                            <div class="col-md-9">
+<div class="card-body p-4">
+<h3 class="card-title mb-3" style="color: #003366; font-weight: bold;">Le Mot du Recteur</h3>
+<p class="card-text lead" style="font-style: italic; color: #555; font-size: 1.1rem;">"Bienvenue à l'Université Don Bosco de Lubumbashi. Notre institution s'engage à former non seulement des experts compétents, mais aussi des citoyens responsables et porteurs de valeurs humaines. Ensemble, construisons l'avenir avec excellence et intégrité."</p>
+<div class="text-end mt-4">
+<h5 class="mb-0 fw-bold" style="color: #003366;">Père Jean-Luc Vande Kerkhove</h5>
+<small class="text-muted text-uppercase" style="letter-spacing: 1px;">Recteur de l'UDBL</small>
+<div class="mt-2" style="font-family: 'Brush Script MT', cursive; font-size: 1.8em; color: #003366;">J.L. Vande Kerkhove</div>
+</div>
+</div>
+</div>                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Animation Scroll Reveal */
+.reveal {
+  position: relative;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: 1s all ease;
+}
+.reveal.active {
+  transform: translateY(0);
+  opacity: 1;
+}
+</style>
+
+<script>
+function reveal() {
+  var reveals = document.querySelectorAll(".reveal");
+  for (var i = 0; i < reveals.length; i++) {
+    var windowHeight = window.innerHeight;
+    var elementTop = reveals[i].getBoundingClientRect().top;
+    var elementVisible = 100;
+    if (elementTop < windowHeight - elementVisible) {
+      reveals[i].classList.add("active");
+    }
+  }
+}
+window.addEventListener("scroll", reveal);
+// Déclenchement au chargement pour les éléments déjà visibles
+reveal();
+</script>
+
+<!-- Pagination -->
+<div class="row text-center">
+    <ul class="pagination">
+                    <li class="active">
+                <a href="index.php?page=home&p=1">1</a>
+            </li>
+                    <li class="">
+                <a href="index.php?page=home&p=2">2</a>
+            </li>
+                    <li class="">
+                <a href="index.php?page=home&p=3">3</a>
+            </li>
+                    <li class="">
+                <a href="index.php?page=home&p=4">4</a>
+            </li>
+                    <li class="">
+                <a href="index.php?page=home&p=5">5</a>
+            </li>
+                    <li class="">
+                <a href="index.php?page=home&p=6">6</a>
+            </li>
+                    <li class="">
+                <a href="index.php?page=home&p=7">7</a>
+            </li>
+                    <li class="">
+                <a href="index.php?page=home&p=8">8</a>
+            </li>
+                    <li class="">
+                <a href="index.php?page=home&p=9">9</a>
+            </li>
+                    <li class="">
+                <a href="index.php?page=home&p=10">10</a>
+            </li>
+                    <li class="">
+                <a href="index.php?page=home&p=11">11</a>
+            </li>
+                    <li class="">
+                <a href="index.php?page=home&p=12">12</a>
+            </li>
+            </ul>
+</div>
+
+<!-- Modal Document Viewer -->
+<div class="modal fade" id="docPreviewModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width: 90%; max-width: 1000px; height: 90vh; margin: 5vh auto;">
+        <div class="modal-content" style="height: 100%;">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h5 class="modal-title" id="docPreviewTitle" style="margin:0; font-weight:bold;">Consultation du document</h5>
+                <button type="button" class="close btn-close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close" style="background:transparent; border:none; font-size:1.5rem; cursor:pointer;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="height: calc(100% - 56px); padding: 0;">
+                <iframe id="docPreviewIframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+function openDocModal(url, title) {
+    document.getElementById('docPreviewIframe').src = url;
+    if(title) document.getElementById('docPreviewTitle').innerText = title;
+    if (typeof bootstrap !== 'undefined' && typeof bootstrap.Modal !== 'undefined') {
+        var myModal = new bootstrap.Modal(document.getElementById('docPreviewModal'));
+        myModal.show();
+    } else if (typeof $ !== 'undefined') {
+        $('#docPreviewModal').modal('show');
+    }
+}
+document.addEventListener('DOMContentLoaded', function() {
+    var modalEl = document.getElementById('docPreviewModal');
+    if(modalEl) {
+        modalEl.addEventListener('hidden.bs.modal', function () { document.getElementById('docPreviewIframe').src = ''; });
+        if (typeof $ !== 'undefined') { $(modalEl).on('hidden.bs.modal', function () { document.getElementById('docPreviewIframe').src = ''; }); }
+    }
+});
+</script>
+    </div> <!-- Fin du container principal -->
+
+    <footer class="footer footer-main">
+        <div class="container">
+            <div class="row">
+                
+            <!-- Colonne 1 : Coordonnées -->
+                <div class="col-md-4">
+                    <h4 class="text-white mb-4 footer-heading">COORDONNÉES</h4> 
+                    <p><i class="fas fa-map-marker-alt me-2"></i> Lubumbashi, Haut-Katanga<br>République Démocratique du Congo</p> 
+                    <p><i class="fas fa-phone-alt me-2"></i> +(243) 822 267 472</p> 
+                    <p>
+                    <a href="mailto:infos@udbl.ac.cd" class="footer-link"> 
+                        <i class="fas fa-envelope me-2"></i> infos@udbl.ac.cd
+                    </a>
+                    </p> 
+                </div>
+
+                <!-- Colonne 2 : Liens Rapides -->
+                 <div class="col-md-4">
+                    <h4 class="text-white mb-4 footer-heading">LIENS UTILES</h4> 
+                    
+                    <ul class="list-unstyled footer-list">                    
+                        <li><a href="index.php?page=a-propos-de-nous" class="footer-link"><i class="fas fa-angle-right me-2"></i> À propos</a></li>
+                        <li><a href="index.php?page=contact" class="footer-link"><i class="fas fa-angle-right me-2"></i> Contactez-nous</a></li>
+                        <li><a href="index.php?page=a-propos-de-nous" class="footer-link"><i class="fas fa-angle-right me-2"></i> Inscription</a></li>
+                        <li><a href="index.php?page=actualites" class="footer-link"><i class="fas fa-angle-right me-2"></i> Actualités</a></li>
+                        <li><a href="index.php?page=horaires" class="footer-link"><i class="fas fa-angle-right me-2"></i> Horaires des cours</a></li>
+                        <li><a href="index.php?page=admin" class="footer-link"><i class="fas fa-angle-right me-2"></i> Administration</a></li>
+                    </ul>
+                </div>
+
+               
+                <!-- Colonne 4 : Réseaux sociaux -->
+                <div class="col-md-4">
+                    <h4 class="text-white mb-4 footer-heading">SUIVEZ-NOUS</h4> 
+                    <div class="footer-socials">
+                        <a href="https://web.facebook.com/profile.php?id=61554199889188" target="_blank" class="btn btn-outline-light btn-sm footer-social-link">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/company/universit%C3%A9-don-bosco-de-lubumbashi/" target="_blank" class="btn btn-outline-light btn-sm footer-social-link">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="btn btn-outline-light btn-sm footer-social-link">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </div>
+                    <p class="mt-4 small text-muted">Restez connecté pour ne rien manquer des actualités de l'UDBL.</p>
+                </div>
+            </div>
+            <hr class="footer-divider">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <p class="small mb-0">&copy; 2026 <strong>UDBL</strong>. Tous droits réservés. 
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bouton Retour en Haut -->
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <!-- Toast Notification Container -->
+    <div class="position-fixed bottom-0 end-0 p-3 toast-container-custom">
+        <div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-primary text-white">
+                <strong class="me-auto"><i class="fas fa-bell"></i> Nouvelle Publication</strong>
+                <small>À l'instant</small>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                <a href="#" id="toastLink" class="toast-custom-link">
+                    <span id="toastMessage">Nouveau contenu disponible !</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    
+
+    <!-- jQuery (nécessaire pour les plugins JavaScript de Bootstrap comme le carrousel) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    // Gestion du bouton Retour en Haut
+    let backtotop = document.querySelector('.back-to-top');
+    if (backtotop) {
+        const toggleBacktotop = () => {
+            if (window.scrollY > 100) {
+                backtotop.classList.add('active');
+            } else {
+                backtotop.classList.remove('active');
+            }
+        }
+        window.addEventListener('load', toggleBacktotop);
+        window.addEventListener('scroll', toggleBacktotop);
+        backtotop.addEventListener('click', function(e) { e.preventDefault(); window.scrollTo({top: 0, behavior: 'smooth'}); });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialisation du Toast
+        var toastEl = document.getElementById('liveToast');
+        var toast = new bootstrap.Toast(toastEl);
+        
+        // Stockage local du dernier ID connu
+        var lastKnownId = localStorage.getItem('udbl_last_article_id') || 0;
+
+        // Fonction de vérification
+        function checkNotifications() {
+            fetch('index.php?page=check_notifications')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.latest_id > lastKnownId) {
+                        // Si c'est la première visite, on ne notifie pas, on met juste à jour
+                        if (lastKnownId != 0) {
+                            document.getElementById('toastMessage').textContent = data.article.grand_titre;
+                            document.getElementById('toastLink').href = 'index.php?page=article&id=' + data.latest_id;
+                            toast.show();
+                        }
+                        
+                        lastKnownId = data.latest_id;
+                        localStorage.setItem('udbl_last_article_id', lastKnownId);
+                    }
+                })
+                .catch(err => console.error('Erreur notif:', err));
+        }
+
+        // Vérifier toutes les 30 secondes
+        setInterval(checkNotifications, 30000);
+        // Vérification immédiate au chargement (optionnel, pour mettre à jour le localStorage)
+        checkNotifications();
+    });
+    </script>
+    <script src="https://udbl.ac.cd/public/assets/js/compressor.js"></script>
+</body>
+</html>

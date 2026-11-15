@@ -1,0 +1,461 @@
+﻿const truncate_kind = "right_truncation";
+var bookArray = [];
+
+function ShowModal(modalname, closebutton, contentid, modalcontent) {
+    // Khởi tạo
+    var modal = document.getElementById(modalname);             // Đối tượng modal cần hiện
+    var modalcontentntnt = document.getElementById(contentid);  // Đối tượng chứa nội dung
+    var btn = document.getElementById(closebutton);             // Nút tắt
+    var span = document.getElementsByClassName("close")[0];     // Nút tắt 2
+
+    // Click hiện đối tượng modal
+    modal.style.display = "block";
+    // Tắt đối tượng
+    btn.onclick = function () {
+        modal.style.display = "none";
+    }
+    // Tắt cửa sổ khi bấm bất kỳ
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    if (modalcontent) {
+        modalcontentntnt.innerHTML = modalcontent;
+    }
+
+    else {
+        modalcontentntnt.innerHTML = "<p><b>Lỗi</b> chưa có nội dung.</p>";
+    }
+
+}
+
+function MessageModal2(text) {
+    if (text == "" || text == null) {
+        text = "Chưa có nội dung.";
+    }
+    let content = "";
+
+    content += `
+
+            <div class ="modal fade ShowLoginMessageModal" role="dialog">
+	            <div class ="modal-dialog modal-lg">
+		            <div class ="modal-content" style=" width: 70%; ">
+			            <div class ="modal-header">
+				            <button type="button" class ="close" data-dismiss="modal">
+                                <!--i class ="close fa fa-window-close" aria-hidden="true" style="color: #ff0b00;font-size: 30pt;position: relative;left: 10px;top: -5px;" data-dismiss="modal"></i-->
+				            </button>
+				            <h4 class ="modal-title">Thông báo</h4>
+			            </div>
+			            <div class ="modal-body" style=" width: 100%; ">
+				            <p>${text}</p>
+			            </div>
+			            <div class ="modal-footer">
+				            <button type="button" class ="btn btn-default" data-dismiss="modal">Đóng</button>
+			            </div>
+		            </div>
+	            </div>
+            </div>
+
+`;
+    return content;
+}
+
+function MessageModal(text) {
+    if (text == "" || text == null) {
+        text = "Chưa có nội dung.";
+    }
+    let content = "";
+
+    content += `
+
+            <div class ="modal ShowLoginMessageModal">
+              <div class ="modal-content" style='width: 50%; margin: 0px auto; position: relative; top: 30%;'>
+                <!--span class ="close">
+                    <i class ="close fa fa-window-close" aria-hidden="true" style="color: #ff0b00;font-size: 30pt;position: relative;left: 5px;top: 10px;" data-dismiss="modal"></i>
+                </span-->
+                <div class ="modal-body" >
+                    <p style="font-size: 12pt; font-weight: bold;text-transform: uppercase; ">${text}</p><!--img class="image-responsive" src="/Temp/SiteImage/not-login-icon.png" alt="Not Login"/-->
+                    <i class ="fa fa-info-circle" aria-hidden="true" style="font-size: 30pt;"></i>
+                </div>
+                <div class ="modal-footer">
+				    <button type="button" class ="btn btn-default" data-dismiss="modal">Đóng</button>
+			    </div>
+              </div>
+            </div>
+
+`;
+    return content;
+}
+
+function pagetitle(text) {
+	let pgtitle = document.title = text;
+	return pgtitle;
+}
+
+function FillControlTitle(controlId, panelId, booktitle) {
+
+	let controluuuid = document.getElementById(panelId);
+	$(controluuuid).empty();
+
+	let findControl = zliscontrols.find(x => x.ControlID === controlId);
+
+	if (booktitle === "" || booktitle == null) {
+	    booktitle = findControl.Title;
+	}
+
+	if (controlId === "" || controlId == null)
+	{
+	    booktitle += "Chưa có Control.";
+	}
+
+	if (!findControl) return;
+    
+	controluuuid.innerHTML = `
+            <h1 class ="moduletitle" style="color: #034ea2; opacity:0.8; font-size: 36px; text-transform:uppercase;">
+                ${booktitle}
+            </h1>
+        `;
+
+	document.title = findControl.Title;
+}
+
+function FillControlTitle2(controlId, panelId, booktitle) {
+
+	let controluuuid = document.getElementById(panelId);
+	$(controluuuid).empty();
+
+	let findControl = zliscontrols.find(x => x.ControlID === controlId);
+
+	if (booktitle === "" || booktitle == null) {
+	    booktitle = findControl.Title;
+	}
+
+	if (!findControl) return;
+    
+	controluuuid.innerHTML = `
+
+            <div class ="alert alert-success" style='text-transform: uppercase; text-align: center;'>${booktitle}</div>
+        `;
+
+	document.title = findControl.Title;
+}
+
+function getLinkHomepage()
+{
+    return 'https://' + window.location.hostname + '/';
+}
+
+function getZlisApi() {
+    return getLinkHomepage();
+}
+function getBookDetailModule() {
+    return getLinkHomepage() + 'module/chi-tiet-sach';
+}
+
+function translateMessage(msg) {
+    switch (msg) {
+        case "NOT_LOGIN": return "Chưa đăng nhập";
+        default: return msg;
+    }
+}
+
+function GetCurrentDay() {
+	let today = new Date();
+	return today.getDay();
+}
+
+function GetCurrentMonth() {
+	let today = new Date();
+	return today.getMonth() + 1;
+}
+
+function GetCurrentYear() {
+	let today = new Date();
+	return today.getYear() + 1900;
+}
+
+function GetCurrentDateString() {
+	return `${GetCurrentDay().slice(0, 10)}/${GetCurrentMonth().slice(0, 10)}/${GetCurrentYear()}`;
+}
+
+function GetReaderData() {
+	if ($.cookie('ReaderCookie'))
+		return JSON.parse($.cookie('ReaderCookie'));
+	return null;
+}
+
+function GetReaderDataPortal() {
+    if ($.cookie('ReaderCookie'))
+        return JSON.parse($.cookie('ReaderCookie'));
+    return null;
+}
+
+function GetLoadingMessageHtml(message) {
+	return `<div><img src='../zlisimages/waitcircle.gif' />${message}</div>`;
+}
+
+function FillBookSearchOperators(containId) {
+	$(`#${containId}`).append(`<option value='and'>AND</option><option value='or'>OR</option><option value='not'>NOT</option>`);
+}
+function FillBookSearchStructure(containId) {
+	$(`#${containId}`).append(`<option value='phrase' selected>Chính xác</option><option value='word_list'>Gần giống</option>`);
+}
+function FillBookSearchFields(containId) {
+	$(`#${containId}`).append(`
+		<option value='any'>Tất cả</option>
+		<option value='title'>Nhan đề</option>
+		<option value='author'>Tác giả</option>
+		<option value='subject'>Chủ đề</option>
+		<option value='isbn'>ISBN</option>
+		<option value='issn'>ISSN</option>
+		<option value='date_publication'>Năm XB</option>
+		<option value='classification_dewey'>Ký hiệu phân loại</option>
+		<option value='code_institution'>Số ĐKCb</option>
+	`);
+}
+
+function FillZ3950SearchFields(containId) {
+	$(`#${containId}`).append(`<option value='title'>Nhan đề</option>
+		<option value='author'>Tác giả</option>
+		<option value='subject'>Chủ đề</option>
+		<option value='isbn'>ISBN</option>
+		<option value='issn'>ISSN</option>
+		<option value='date_publication'>Năm XB</option>
+		<option value='classification_dewey'>Ký hiệu phân loại</option>
+	`);
+}
+
+//Z39.50 Search
+function CreateBookItemHtml1(book) {
+	let bookHtml = "";
+	let bookAuthorHtml = "";
+	book.Author.forEach(bookAuthor => bookAuthorHtml = (bookAuthorHtml === "" ? "" : ", ") + bookAuthor);
+	let bookSubjectHtml = "";
+	book.Subject.forEach(bookSubject => bookSubjectHtml = (bookSubjectHtml === "" ? "" : ", ") + bookSubject);
+	let bookUrmHtml = "";
+	book.Url.forEach(bookUrl => bookUrmHtml = (bookUrmHtml === "" ? "" : ", ") + bookUrl);
+	
+	bookHtml += `<div class='BorderBackground'> `;
+	bookHtml += `  <div class='ProductImage'><img src='${book.CoverUrl}'></div>`;
+	bookHtml += `  <div class='ContentPanel'>`;
+	bookHtml += `    <b>${book.Title2}</br>`;
+	bookHtml += book.ISBN ? `<div>ISBN:${book.ISBN}</div>` : '';
+	bookHtml += book.Author.length > 0 ? `<div>Tác giả: ${bookAuthorHtml}</div>` : '';
+	bookHtml += book.Subject.length > 0 ? `<div>Chủ đề: ${bookSubjectHtml}</div>` : '';
+	bookHtml += book.NumberOfPages ? `<div>Số trang:${book.NumberOfPages}</div>` : '';
+	bookHtml += book.PublisherInfo ? `<div>Nhà xuất bản:${book.PublisherInfo}</div>` : '';
+	bookHtml += book.Dewey ? `<div>Dewey:${book.Dewey}</div>` : '';
+	bookHtml += book.Descriptions ? `<div>Mô tả vật lý:${book.Descriptions}</div>` : '';
+	bookHtml += book.Url.length > 0 ? `<div>Liên kết: ${bookUrmHtml}</div>` : '';
+	bookHtml += '  <div>';
+	bookHtml += '</div>';
+	return bookHtml;
+}
+
+//li
+function CreateBookItemHtml2(book) {
+	let bookHtml = "";
+	let bookAuthorHtml = "";
+	book.Author.forEach(bookAuthor => bookAuthorHtml = (bookAuthorHtml === "" ? "" : ", ") + bookAuthor);
+	let bookAbstractHtml = "";
+	book.Abstract.forEach(bookAbstract => bookAbstractHtml = (bookAbstractHtml === "" ? "" : ", ") + bookAbstract);
+	
+	bookHtml = `
+		<li class ="col-md-3 col-sm-6 col-xs-12 li-list " id="bookstyle" style="width: 25%;">
+			<div class ="thumb">
+				<div class ="img-thumb"><a target='_blank' onclick="openBookDetail(${book.RecordID});"><img src= "${book.CoverUrl}" alt=""></a></div>
+				<div class ="text-thumb mt-10 " id="textthumbstyle" style="height: 80px;padding-left: 5px !important;overflow: hidden;">
+					<a class ="name-book" target='_blank' onclick="openBookDetail(${book.RecordID});">${book.Title2}</a>
+					<p class ="name-authors">${bookAuthorHtml}</p>
+				</div>
+				<div id="iconf" class ="iconfile iconfilestyle" style="padding-left: 5px !important;float: left;">
+                    <!--a class ="savefile"><i class ='fa fa-floppy-o savefile' aria-hidden='true'></i><a class ="afile">${book.NumberOfFiles}</a></a>
+					<a class ="havefile"><i class ='fa fa-book savefile' aria-hidden='true'></i><a class ="afile" href="javascript:void(0);">${book.NumberOfCopies}</a></a-->
+
+                    <a id='BookFile${book.RecordID}' data-balloon='Có ${book.NumberOfFiles} file.' data-balloon-pos="up" style='color: gray;'><i class ='fa fa-floppy-o savefile' aria-hidden='true'></i>${book.NumberOfFiles}<a/>
+
+                    <a id='BookPaper${book.RecordID}' data-balloon='Có ${book.NumberOfCopies} bản giấy.' data-balloon-pos="up" style='color: gray;'><i class ='fa fa-book savefile' aria-hidden='true'></i>${book.NumberOfCopies}</a>
+				</div>
+				<div class ="row rowstyle" style="padding-left: 5px !important;">
+					<div class ="col-xs-12 col-md-6">
+						<a class ="btn btn-success" target='_blank' onclick="openBookDetail(${book.RecordID});" style="vertical-align: middle; display: inline-block; position: relative;">Chi tiết</a>
+					</div>
+				</div>
+			</div>
+		</li>
+
+        `;
+	return bookHtml;
+}
+
+function CreateBookItemHtml4(book) {
+    let bookHtml = "";
+    let bookAuthorHtml = "";
+    book.Author.forEach(bookAuthor => bookAuthorHtml = (bookAuthorHtml === "" ? "" : ", ") + bookAuthor);
+    let bookAbstractHtml = "";
+    book.Abstract.forEach(bookAbstract => bookAbstractHtml = (bookAbstractHtml === "" ? "" : ", ") + bookAbstract);
+
+    bookHtml = `
+		
+        <div class ="item  col-xs-4 col-lg-4">
+            <div class ="thumbnail">
+                <a target='_blank' onclick="openBookDetail(${book.RecordID});"><img class ="group list-group-image" src= "${book.CoverUrl}" alt=""></a>
+                <div class ="caption">
+                    <h4 class ="group inner list-group-item-heading"><a target='_blank' onclick="openBookDetail(${book.RecordID});">${book.Title2}</a></h4>
+                    <p class ="name-authors">${bookAuthorHtml}</p>
+                    <p class ="group inner list-group-item-text">
+                        Product description... Lorem ipsum dolor sit amet, consectetuer adipiscing elit,
+                        sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+                    <div class ="row">
+                        <div class ="col-xs-12 col-md-6">
+                            <p class ="lead">
+                                <a class ="savefile"><i class ='fa fa-floppy-o savefile' aria-hidden='true'></i><a class ="afile">${book.NumberOfFiles}</a></a>
+					            <a class ="havefile"><i class ='fa fa-book savefile' aria-hidden='true'></i><a class ="afile" href="javascript:void(0);">${book.NumberOfCopies}</a></a>
+                            </p>
+                        </div>
+                        <div class ="col-xs-12 col-md-6">
+                            <a class ="btn btn-success" target='_blank' onclick="openBookDetail(${book.RecordID});" style="vertical-align: middle; display: inline-block; position: relative;">Chi tiết</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        `;
+    return bookHtml;
+}
+
+function CreateBookItemHtml3(book) {
+    let bookHtml = "";
+    let bookAuthorHtml = "";
+    book.Author.forEach(bookAuthor => bookAuthorHtml = (bookAuthorHtml === "" ? "" : ", ") + bookAuthor);
+    let bookAbstractHtml = "";
+    book.Abstract.forEach(bookAbstract => bookAbstractHtml = (bookAbstractHtml === "" ? "" : ", ") + bookAbstract);
+
+    bookHtml = `
+
+        <li class ="col-md-3 col-sm-6 col-xs-12 li-list" data-role="page" data-dom-cache="true">
+			<div class ="thumb">
+				<div class ="img-thumb"><a target='_blank' onclick="openBookDetail(${book.RecordID});"><img src= "${book.CoverUrl}" alt=""></a></div>
+				<div class ="text-thumb mt-10 col-md-12">
+                    <div class ="Titlelink">
+					    <a target='_blank' class ="name-book" onclick="openBookDetail(${book.RecordID});">${book.Title2}</a>
+					    <p class ="name-authors">${bookAuthorHtml}</p>
+                    </div>
+                    <div class ="IconPanel">
+                        <div class ="icon">
+                           
+                            <a id='BookFile${book.RecordID}' data-balloon='Có ${book.NumberOfFiles} file.' data-balloon-pos="up" style='color: gray;'><i class ='fa fa-floppy-o savefile' aria-hidden='true'></i>${book.NumberOfFiles}<a/>
+
+                             <a id='BookPaper${book.RecordID}' data-balloon='Có ${book.NumberOfCopies} bản giấy.' data-balloon-pos="right" style='color: gray;'><i class ='fa fa-book savefile' aria-hidden='true'></i>${book.NumberOfCopies}</a>
+                        </div>
+						<a class ="btn btn-success detailbtn hvr-glow" target='_blank' onclick="openBookDetail(${book.RecordID});" style="vertical-align: middle; display: inline-block; position: relative;">Chi tiết</a>
+
+                    </div>
+
+				</div>
+			</div>
+		</li>
+
+	`;
+
+    $(`#BookFile${book.RecordID}`).popover({ trigger: "hover" });
+
+    return bookHtml;
+}
+
+function openBookDetail(bookId) {
+	$('#bookDetailModal').find('.modal-body').html(`<iframe src="${getBookDetailModule()}?RecordID=${bookId}" width="100%" height="100%"></iframe>`);
+	$('#bookDetailModal').modal();
+	$('.nextArraypanel').show();
+    //href="${getBookDetailModule()}?RecordID=${book.RecordID}"
+	
+}
+
+
+function ZlisSearchPaging(iIndex, iCount, iTotal, funcName) {
+	if (iTotal === 0) return "";
+    let totalPages = parseInt((iTotal / iCount) + (iTotal % iCount === 0 ? 0 : 1));
+    let pageCurrent = iIndex / iCount;
+    let pageCurrent2 = (iIndex / iCount) + 1;
+	let arrPage = [];
+	if (pageCurrent > 0 && pageCurrent + 1 < totalPages) arrPage.push(pageCurrent + 1);
+	if (pageCurrent > 1) arrPage.unshift(pageCurrent);
+	if (pageCurrent > 2) arrPage.unshift(pageCurrent - 1);
+	if (totalPages > pageCurrent + 2) arrPage.push(pageCurrent + 2);
+	if (totalPages > pageCurrent + 3) arrPage.push(pageCurrent + 3);
+	
+	let selectedCss = " style='background-color: #005fab;color: white;border-radius: 4px;margin: 5px;padding: 5px;' ";
+	
+	
+	let pageHtml = "<div class='opac_next' >";
+	//Prev Page<img src='/Temp/SiteImage/ic_previous_48.png' alt='Trang trước' width='30'/>
+	pageHtml += "<a href='javascript:void(0)' " + (pageCurrent == 0 ? "" : (`onclick='${funcName}(` + (iCount * (pageCurrent - 1)) + ");'")) + "><i class ='fa fa-angle-double-left' aria-hidden='true' title='Prev' style='font-size: 20pt;'></i></a>";
+	//First Page
+	pageHtml += "<a href='javascript:void(0)' " + (pageCurrent == 0 ? selectedCss : "") + (pageCurrent == 0 ? "" : (`onclick='${funcName}(0);'`)) + ">1</a>";
+
+	if (arrPage.length > 0 && arrPage[0] != 2) pageHtml += "...";
+	//Nest Pages
+	arrPage.forEach(page => {
+		pageHtml += "<a href='javascript:void(0)' " + (pageCurrent == page - 1 ? selectedCss : "") + (pageCurrent == page - 1 ? "" : (`onclick='${funcName}(` + (iCount * (page - 1)) + ");'")) + ">" + page + "</a>";
+	})
+    if (arrPage.length > 0 && arrPage[arrPage.length - 1] != totalPages - 1) pageHtml += "...";
+
+	//Last Page
+	if (totalPages > 1) {
+		pageHtml += "<a href='javascript:void(0)' " + (pageCurrent == totalPages - 1 ? selectedCss : "") + (pageCurrent == totalPages - 1 ? "" : (`onclick='${funcName}(` + (iCount * (totalPages - 1)) + ");'")) + ">" + totalPages + "</a>";
+	}
+	//Next Page<img src='/Temp/SiteImage/ic_next_48.png' alt='Trang sau' width='30'/>
+	pageHtml += "<a href='javascript:void(0)' " + (pageCurrent == totalPages - 1 ? "" : (`onclick='${funcName}(` + (iCount * (pageCurrent + 1)) + ");'")) + "><i class ='fa fa-angle-double-right' aria-hidden='true' title='Next' style='font-size: 20pt;'></i></a>";
+    
+    pageHtml += "</div>";
+    return pageHtml;
+
+    let ChangeViewDataPG = sessionStorage.getItem('ChangeView');
+    setTimeout(function () {
+        changeView(ChangeViewDataPG);
+    }, 100);
+
+    console.log(bookArray);
+}
+
+function exportSearchResult(listbooks)
+{
+	document.getElementById("libDataExport").innerHTML = "";
+	let tableHtml = "<table id='libDataTable' class='display' style='width:100%;visibility:hidden'><thead><tr>"
+		+ "<th>Mã</th><th>Tên sách</th><th>Tác giả</th><th>Năm</th><th>Chủ đề</th>"
+		+ "</tr></thead><tbody></tbody></table>";
+	document.getElementById("libDataExport").innerHTML = tableHtml;
+	listbooks.forEach(book => {
+		let bookAuthors = "", bookSubjects = "";
+		book.Author.forEach(bookAuthor => bookAuthors = (bookAuthors === "" ? "" : ", ") + bookAuthor);
+		book.Subject.forEach(bookSbj => bookSubjects = (bookSubjects === "" ? "" : ", ") + bookSbj);
+		
+		$('#libDataTable tbody').append(`
+			<tr>
+				<td>${book.RecordID}</td>
+				<td>${book.Title2}</td>
+				<td>${bookAuthors}</td>
+				<td>${book.PublishYear}</td>
+				<td>${bookSubjects}</td>
+			</tr>
+		`);
+	});
+	
+    $('#libDataTable').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            'copyHtml5',
+            'excelHtml5',
+            'csvHtml5',
+            'pdfHtml5'
+        ]
+    } );
+	$("#libDataTable_filter").hide();
+	$("#libDataTable").hide();
+	$("#libDataTable_info").hide();
+	$("#libDataTable_paginate").hide();
+	
+}

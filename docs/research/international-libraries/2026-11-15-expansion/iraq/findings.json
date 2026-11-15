@@ -1,0 +1,1007 @@
+{
+  "country": "Iraq",
+  "country_code": "IRQ",
+  "research_date_utc": "2026-11-15",
+  "status": "complete_with_shortfall",
+  "observed_successes": 7,
+  "selected_successes": 5,
+  "reserve_successes": 2,
+  "target_selected": 10,
+  "market": {
+    "summary": "Prioritize university central libraries and substantial public/research shrine libraries. IFLA describes public libraries as locally managed and universities under university presidencies/Ministry of Higher Education. The evidence supports Koha as a practical adapter priority, not a measured national market share. Physical books must be separated from repositories, electronic book services and thesis unions.",
+    "platform_strategy": "First pilot Baghdad Koha and build narrow adapters for the national OPAC and Mustansiriyah physical-loans catalog. Investigate lib.iq public JSON union frontend with library-item filtering and edition safeguards; it offers the clearest demonstrated multi-institution reach. Reliability and reuse conditions need resolution before integration. WinISIS and SLiMS evidence is institution-specific.",
+    "adoption_evidence": [
+      {
+        "claim": "Baghdad direct OPAC is Koha; Mosul unified network homepage and official2026 training/update reports identify Koha.",
+        "scope": "Two university deployments, not national share",
+        "date": "2026-11-15 observation;2026 official reports",
+        "source_url": "https://uomosul.edu.iq/en/libcentral/2026/10/13/the-director-of-mosul-university-libraries-holds-a-meeting-with-the-librarians-of-the-branch-librarians-to-follow-up-on-the-development-of-work-and-the-digital-transformation/"
+      },
+      {
+        "claim": "Basrah2026 announcement adopts Koha with Imam Hussain hosting.",
+        "scope": "One announced university implementation",
+        "date": "2026",
+        "source_url": "https://en.uobasrah.edu.iq/news/14353"
+      },
+      {
+        "claim": "National2023 annual report and Tikrit automated-systems division describe WinISIS.",
+        "scope": "Institution-specific legacy/back-office evidence; public search backend unproven",
+        "date": "2023 / undated page",
+        "source_url": "https://en.tulib.tu.edu.iq/index.php/university-council/division-of-automated-systems"
+      },
+      {
+        "claim": "Indexed Salahaddin eLibrary footer names SLiMS.",
+        "scope": "One electronic-library service, physical holdings not verified",
+        "date": "indexed2026-11-15",
+        "source_url": "https://elibrary.su.edu.krd/"
+      }
+    ],
+    "network_opportunities": [
+      {
+        "name": "lib.iq Iraqi Union Catalog",
+        "scope": "Public Libraries metadata lists25 labels, including schools, colleges, central university libraries and shrine/public libraries; neither25 independent large institutions nor full Iraqi coverage.",
+        "source_url": "https://lib.iq/about",
+        "verification": "Actual public JSON query returned books with IHL, kufa_ma, alzahraa and TQ institution-specific items. Network itself is not added as another success.",
+        "integration_implication": "Public /api/fast-search.php route is allowed under wildcard rules; /cgi-bin/ is prohibited. New frontend adapter; strict holding filtering and local-ID/edition handling; later503 reliability blocker."
+      },
+      {
+        "name": "University of Mosul unified catalog",
+        "scope": "Central library and affiliated faculty/research branches",
+        "source_url": "https://uomosul.edu.iq/en/libcentral/2025/05/14/continuous-efforts-to-build-unified-automated-catalog-using-koha-system/",
+        "verification": "Homepage and branch selector observed; title searches blank.",
+        "integration_implication": "Koha reuse candidate after search reliability fixed; do not count branches individually."
+      },
+      {
+        "name": "Iraqi Electronic Union Library / Arab Union Catalog and Iraqi Knowledge Portal",
+        "scope": "Separate national discovery initiatives described by IFLA; not assumed identical to lib.iq or each other.",
+        "source_url": "https://librarymap.ifla.org/countries/iraq",
+        "verification": "Institutional narrative only; no individually attributed book queries verified here.",
+        "integration_implication": "Worth future scope/API investigation; IQDR135,000 theses narrative cannot substitute for physical-book holdings."
+      }
+    ]
+  },
+  "major_library_priorities": [
+    {
+      "name": "Iraq National Library and Archive",
+      "size_claim": "National library mandate; current indexed holdings unknown.",
+      "source_url": "https://www.iraqnla.gov.iq/opac/index.php?hl=eng",
+      "outcome": "Selected: book result and inventory/copy detail verified."
+    },
+    {
+      "name": "University of Baghdad Central Library and university catalog",
+      "size_claim": "University central network; official result names central library and college facets.",
+      "source_url": "https://lib.uobaghdad.edu.iq/",
+      "outcome": "Selected: book and available central-library copy verified."
+    },
+    {
+      "name": "University of Mosul Central Library and branch network",
+      "size_claim": "Official unified central/branch catalog; million-title figure describes pre-destruction holdings, not current stock.",
+      "source_url": "https://uomosul.edu.iq/en/libcentral/2025/05/14/continuous-efforts-to-build-unified-automated-catalog-using-koha-system/",
+      "outcome": "Unverified: Koha homepage loads; two normal title form queries returned empty HTTP200 bodies."
+    },
+    {
+      "name": "University of Basrah Central Library",
+      "size_claim": "Official page says approximately one million mixed resources through 2025: books, journals, newspapers, theses, CDs and ebooks.",
+      "source_url": "https://library.uobasrah.edu.iq/About%20the%20Central%20Library",
+      "outcome": "Unverified: official linked bvl catalog robots HTTP503; stopped."
+    },
+    {
+      "name": "Mustansiriyah University Central Library",
+      "size_claim": "Established central university library; separately searchable lending/reference/thesis collections.",
+      "source_url": "https://libraryapp.uomustansiriyah.edu.iq/search",
+      "outcome": "Selected: physical-loans book and serial verified."
+    },
+    {
+      "name": "University of Kufa Central Library",
+      "size_claim": "Official central and college library management catalog described; DSpace explicitly campus-only and thesis index separately described.",
+      "source_url": "https://uokufa.edu.iq/المكتبات/المكتبة-المركزية",
+      "outcome": "Unverified: official origin robots Disallow:/; no request to campus-only repository."
+    },
+    {
+      "name": "Salahaddin University–Erbil Central Library",
+      "size_claim": "Polish government project article (2026) reports nearly 300,000 items, including 2,000 manuscripts; mixed collection, not indexed books.",
+      "source_url": "https://www.gov.pl/web/iraq/polish-aid-development-project-implemented-in-erbil",
+      "outcome": "Unverified: eLibrary robots HTTP403 challenge; indexed SLiMS pages alone do not establish physical-book holdings."
+    },
+    {
+      "name": "University of Sulaimani Central Library",
+      "size_claim": "Official central library established with university in 1968; OPAC coverage exclusions documented.",
+      "source_url": "https://cl.univsul.edu.iq/about/",
+      "outcome": "Unverified: c-library.univsul.edu.iq robots tunnel HTTP403; official WordPress page is not OPAC result."
+    },
+    {
+      "name": "University of Duhok Central Library",
+      "size_claim": "Official home displays 54,941 books; 7,948 theses, 4,000 references and 10,000 periodicals separately. No measurement date given.",
+      "source_url": "https://library.uod.ac/",
+      "outcome": "Unverified: linked app.uod.ac catalog robots resolves to 302 error route; policy unresolved."
+    },
+    {
+      "name": "Imam Hussain Holy Shrine Library",
+      "size_claim": "Official 2020 report: more than 120,000 physical books, separately from digital resources.",
+      "source_url": "https://imamhussain.gov.iq/english/30075",
+      "outcome": "Selected: institution-filtered union query and IHL item verified."
+    },
+    {
+      "name": "Great Mosque of Kufa Public Library",
+      "size_claim": "Official 2017 report: more than 20,000 printed books; electronic books separately counted.",
+      "source_url": "https://masjed-alkufa.com/index.php/permalink/3868.html",
+      "outcome": "Selected: explicit kufa_ma holding in successful union query; later filtered request503."
+    },
+    {
+      "name": "Al-Abbas Holy Shrine Library and House of Manuscripts",
+      "size_claim": "Major public/research institution proxy; IFLA describes national training, authority-file and knowledge-portal services.",
+      "source_url": "https://librarymap.ifla.org/countries/iraq",
+      "outcome": "Not verified: iquc.org/en404 and root503; do not confuse Al-Abbas with Imam Hussain library or Al-Kafeel University."
+    },
+    {
+      "name": "University of Technology Central Library",
+      "size_claim": "Central university library proxy; official instructions identify Koha.",
+      "source_url": "https://gscl.uotechnology.edu.iq/library-instructions/",
+      "outcome": "Unverified: robots HTTP403 challenge."
+    },
+    {
+      "name": "American University of Iraq, Sulaimani — Moulakis Library",
+      "size_claim": "Official core collection in English, Arabic and Kurdish; supporting whole university.",
+      "source_url": "https://www.auis.edu.krd/index.php/library",
+      "outcome": "Unverified: official linked library.auis.edu.krd robots503."
+    }
+  ],
+  "libraries": [
+    {
+      "id": "irq-baghdad",
+      "name": "University of Baghdad Central Library and university catalog",
+      "recommendation": "verified_target",
+      "scope": "University catalog; sampled holdings explicitly name University of Baghdad / General Secretariat of the Central Library. Colleges in facets are not counted separately.",
+      "size": {
+        "value": null,
+        "unit": "university central-library network proxy",
+        "date": "observed 2026-11-15",
+        "source_url": "https://lib.uobaghdad.edu.iq/",
+        "evidence_path": "evidence/baghdad-search.html",
+        "quality": "official institutional proxy",
+        "note": "Official university domain and returned central-library plus college facets establish scope. No current total holdings claimed."
+      },
+      "platform": {
+        "family": "Koha",
+        "name": "Koha",
+        "proof": "cgi-bin/koha search/detail routes, biblionumber, Koha OPAC templates and Arabic holdings.",
+        "evidence_path": "evidence/baghdad-search.html"
+      },
+      "query": {
+        "text": "Calculus",
+        "method": "GET",
+        "url": "https://lib.uobaghdad.edu.iq/cgi-bin/koha/opac-search.pl?idx=ti&q=Calculus",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T08:18:10.242842+00:00",
+        "http_status": 200,
+        "effective_url": "https://lib.uobaghdad.edu.iq/cgi-bin/koha/opac-search.pl?idx=ti&q=Calculus",
+        "result_count": 962,
+        "count_note": "Returned mixed title matches; listed book is an exact title match.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/baghdad-search.html",
+        "metadata_path": "evidence/baghdad-search.json"
+      },
+      "books": [
+        {
+          "title": "Calculus",
+          "author": "Stewart.James.",
+          "record_id": "215229",
+          "record_url": "https://lib.uobaghdad.edu.iq/cgi-bin/koha/opac-detail.pl?biblionumber=215229",
+          "isbn": null,
+          "holdings": "Search: one loanable item at جامعة بغداد / الامانة العامة للمكتبة المركزية. Detail: Holdings (1), status المتاح (Available), barcode 3\\ 305631; DDC 515 S449. Detail current-location cell is blank. Publication Newyork, Colepub, 1999; catalog description 130p:ill retained without correction.",
+          "evidence_path": "evidence/baghdad-detail.html"
+        }
+      ],
+      "robots": {
+        "url": "https://lib.uobaghdad.edu.iq/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T08:17:47.671352+00:00",
+        "evidence_path": "evidence/baghdad-robots.json",
+        "decision": "no_published_rules",
+        "note": "HTTP404; not an affirmative reuse licence",
+        "path_check": {
+          "decision": "no_published_rules",
+          "allowed": true,
+          "delay_seconds": 0,
+          "note": "HTTP404; not an affirmative reuse licence"
+        }
+      },
+      "reader_access": "Anonymous catalog access observed; visitor access and borrowing eligibility not verified.",
+      "integration": {
+        "existing_adapter": "candidate reuse",
+        "needs": [
+          "Arabic/RTL templates; exact local record identities; preserve no-items versus unavailable distinction.",
+          "Normalize display cautiously while retaining source data."
+        ],
+        "blockers": [
+          "No live MyBookshelf adapter test; malformed bibliographic values and duplicate-looking records observed."
+        ],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "irq-national",
+      "name": "Iraq National Library and Archive",
+      "recommendation": "verified_target",
+      "scope": "National-library public book OPAC; not the archive, thesis or periodical databases.",
+      "size": {
+        "value": null,
+        "unit": "national library mandate proxy",
+        "date": "observed 2026-11-15",
+        "source_url": "https://www.iraqnla.gov.iq/opac/index.php?hl=eng",
+        "evidence_path": "evidence/national-home.html",
+        "quality": "official institutional proxy",
+        "note": "National-library identity; no post-conflict/current indexed collection size asserted."
+      },
+      "platform": {
+        "family": "Custom PHP OPAC; WinISIS institutional background",
+        "name": "Custom PHP OPAC; WinISIS institutional background",
+        "proof": "Public index.php?q and fullrecr.php?nid routes. National 2023 annual achievement source documents WinISIS input; this does not prove the live OPAC implementation uses WinISIS.",
+        "evidence_path": "evidence/national-detail.html"
+      },
+      "query": {
+        "text": "calculus",
+        "method": "GET",
+        "url": "https://www.iraqnla.gov.iq/opac/index.php?q=calculus&bInvia=search&hl=eng",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T08:19:19.414748+00:00",
+        "http_status": 200,
+        "effective_url": "https://www.iraqnla.gov.iq/opac/index.php?q=calculus&bInvia=search&hl=eng",
+        "result_count": 165,
+        "count_note": "Returned mixed title matches; listed book is an exact title match.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/national-title-search.html",
+        "metadata_path": "evidence/national-title-search.json"
+      },
+      "books": [
+        {
+          "title": "calculus",
+          "author": "apostol,tom m.",
+          "record_id": "173046",
+          "record_url": "https://www.iraqnla.gov.iq/opac/fullrecr.php?nid=173046&hl=eng",
+          "isbn": "0-471-00000",
+          "holdings": "Inventory 32266; Type B; language EN; call number 515; author number a645; Number of copies: 1; 2nd edition, 1967, 666 pages. No current loan availability exposed. ISBN is the incomplete value returned by source.",
+          "evidence_path": "evidence/national-detail.html"
+        }
+      ],
+      "robots": {
+        "url": "https://www.iraqnla.gov.iq/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T08:17:49.177395+00:00",
+        "evidence_path": "evidence/national-robots.json",
+        "decision": "allowed_path",
+        "note": "Public research path check; no reuse licence inferred",
+        "path_check": {
+          "decision": "allowed_path",
+          "allowed": true,
+          "delay_seconds": 0,
+          "agents": [
+            {
+              "agent": "mybookshelfresearch",
+              "allowed": true,
+              "matching_rule": "/"
+            },
+            {
+              "agent": "mybookshelf",
+              "allowed": true,
+              "matching_rule": "/"
+            },
+            {
+              "agent": "chatgpt-user",
+              "allowed": true,
+              "matching_rule": "/"
+            },
+            {
+              "agent": "oai-searchbot",
+              "allowed": true,
+              "matching_rule": "/"
+            }
+          ],
+          "note": "Public research path check; no reuse licence inferred"
+        }
+      },
+      "reader_access": "Anonymous catalog access observed; visitor access and borrowing eligibility not verified.",
+      "integration": {
+        "existing_adapter": "new family / custom",
+        "needs": [
+          "Custom search and detail adapter; support English and Arabic; preserve nid and inventory separately.",
+          "Treat number of copies as catalog inventory, not live circulation."
+        ],
+        "blockers": [
+          "Legacy Beta version footer Copyright 2006 does not establish update freshness.",
+          "Source ISBN incomplete; edition matching requires care."
+        ],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "irq-mustansiriyah",
+      "name": "Mustansiriyah University Central Library",
+      "recommendation": "verified_target",
+      "scope": "Central-library loans (الإعارة) category only; ebooks, theses, reference books and journals are separately selectable.",
+      "size": {
+        "value": null,
+        "unit": "university central-library proxy",
+        "date": "observed 2026-11-15",
+        "source_url": "https://libraryapp.uomustansiriyah.edu.iq/search",
+        "evidence_path": "evidence/mustansiriyah-home.html",
+        "quality": "official institutional proxy",
+        "note": "University-domain central library with separately cataloged loans and references; no total size obtained."
+      },
+      "platform": {
+        "family": "Custom public search/view application",
+        "name": "Custom public search/view application",
+        "proof": "GET /search?q=...&category=loans and /view/loan/{id}; official site separately advertises a Koha catalog, but this observed application is not a Koha OPAC.",
+        "evidence_path": "evidence/mustansiriyah-home.html"
+      },
+      "query": {
+        "text": "calculus",
+        "method": "GET",
+        "url": "https://libraryapp.uomustansiriyah.edu.iq/search?q=calculus&category=loans",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T08:19:19.415793+00:00",
+        "http_status": 200,
+        "effective_url": "https://libraryapp.uomustansiriyah.edu.iq/search?q=calculus&category=loans",
+        "result_count": 50,
+        "count_note": "Page reports 50 results in loans; no pagination shown. This may be a server result cap, so it is not a total collection or exhaustive-match count.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/mustansiriyah-search.html",
+        "metadata_path": "evidence/mustansiriyah-search.json"
+      },
+      "books": [
+        {
+          "title": "Calculus",
+          "author": "Lester E.Ford",
+          "record_id": "loan/132051",
+          "record_url": "https://libraryapp.uomustansiriyah.edu.iq/view/loan/132051",
+          "isbn": null,
+          "holdings": "Physical loans category; serial number 5/4159, year 1963, descriptor Algebra. No copy count or live circulation status supplied.",
+          "evidence_path": "evidence/mustansiriyah-detail.html"
+        }
+      ],
+      "robots": {
+        "url": "https://libraryapp.uomustansiriyah.edu.iq/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T08:18:13.114300+00:00",
+        "evidence_path": "evidence/mustansiriyah-robots.json",
+        "decision": "allowed_path",
+        "note": "Public research path check; no reuse licence inferred",
+        "path_check": {
+          "decision": "allowed_path",
+          "allowed": true,
+          "delay_seconds": 0,
+          "agents": [
+            {
+              "agent": "mybookshelfresearch",
+              "allowed": true,
+              "matching_rule": null
+            },
+            {
+              "agent": "mybookshelf",
+              "allowed": true,
+              "matching_rule": null
+            },
+            {
+              "agent": "chatgpt-user",
+              "allowed": true,
+              "matching_rule": null
+            },
+            {
+              "agent": "oai-searchbot",
+              "allowed": true,
+              "matching_rule": null
+            }
+          ],
+          "note": "Public research path check; no reuse licence inferred"
+        }
+      },
+      "reader_access": "Anonymous catalog access observed; visitor access and borrowing eligibility not verified.",
+      "integration": {
+        "existing_adapter": "new family / custom",
+        "needs": [
+          "Custom category-aware adapter; preserve compound record identity loan/132051.",
+          "Do not confuse category loans with a currently available loan."
+        ],
+        "blockers": [
+          "Unknown result cap, copy/location fields and circulation freshness."
+        ],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "irq-imam-hussain",
+      "name": "Imam Hussain Holy Shrine Library",
+      "recommendation": "verified_target",
+      "scope": "One named institution/holding in lib.iq union catalog; the union network is not additionally counted.",
+      "size": {
+        "value": 120000,
+        "unit": "books (source states more than)",
+        "date": "2020",
+        "source_url": "https://imamhussain.gov.iq/english/30075",
+        "evidence_path": "evidence/indexed-size-sources.json",
+        "quality": "indexed official",
+        "note": "Dated official article distinguishes more than 120,000 physical books from digital collections; not a current indexed total."
+      },
+      "platform": {
+        "family": "Koha-backed custom Vue/JSON union portal",
+        "name": "Koha-backed custom Vue/JSON union portal",
+        "proof": "About page states MARC21, Koha and Z39.50. Public page loads pages/fast-search.vue which calls /api/fast-search.php; response supplies biblionumber and homebranch. This is a new frontend contract, not the existing Koha HTML parser.",
+        "evidence_path": "evidence/union-search-code.html"
+      },
+      "query": {
+        "text": "Calculus",
+        "method": "GET",
+        "url": "https://lib.iq/api/fast-search.php?instance=iquc&language=ar&q=Calculus&idx=ti&branch=IHL&itype=BK&offset=0&count=3",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T08:20:56.463249+00:00",
+        "http_status": 200,
+        "effective_url": "https://lib.iq/api/fast-search.php?instance=iquc&language=ar&q=Calculus&idx=ti&branch=IHL&itype=BK&offset=0&count=3",
+        "result_count": 8,
+        "count_note": "IHL-filtered query returned 8 records.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/union-ihl-query.html",
+        "metadata_path": "evidence/union-ihl-query.json"
+      },
+      "books": [
+        {
+          "title": "Calculus /",
+          "author": "Thomas, George Brinton, 1914-",
+          "record_id": "80316",
+          "record_url": "https://ih.lib.iq/biblio/672783",
+          "isbn": "0201193434",
+          "holdings": "Returned item homebranch=IHL; itemnumber=174515; barcode field=IHL0000148682; call number=QA303 .F4 1989 QA303 .F4 1990; local record=https://ih.lib.iq/biblio/672783. No live availability/status supplied. The same union record includes Al-Zahraa holdings whose publication-note year is 1993, while IHL is 1999; do not propagate a union ISBN/year across those holdings.",
+          "evidence_path": "evidence/union-ihl-query.html"
+        }
+      ],
+      "robots": {
+        "url": "https://lib.iq/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T08:17:47.673191+00:00",
+        "evidence_path": "evidence/union-robots.json",
+        "decision": "allowed_path",
+        "note": "Public research path check; no reuse licence inferred",
+        "path_check": {
+          "decision": "allowed_path",
+          "allowed": true,
+          "delay_seconds": 0,
+          "agents": [
+            {
+              "agent": "mybookshelfresearch",
+              "allowed": true,
+              "matching_rule": "/"
+            },
+            {
+              "agent": "mybookshelf",
+              "allowed": true,
+              "matching_rule": "/"
+            },
+            {
+              "agent": "chatgpt-user",
+              "allowed": true,
+              "matching_rule": "/"
+            },
+            {
+              "agent": "oai-searchbot",
+              "allowed": true,
+              "matching_rule": "/"
+            }
+          ],
+          "note": "Public research path check; no reuse licence inferred"
+        }
+      },
+      "reader_access": "Anonymous catalog access observed; visitor access and borrowing eligibility not verified.",
+      "integration": {
+        "existing_adapter": "new family / custom",
+        "needs": [
+          "New JSON adapter for the observed public frontend.",
+          "Map homebranch to official Libraries metadata; filter holdings client-side as branch-filtered results can include other institutions.",
+          "Keep union and local IDs distinct; reconcile edition conflicts using local record before matching ISBN."
+        ],
+        "blockers": [
+          "Union later returned HTTP503 on a Kufa-filtered query; no further automated union requests made.",
+          "No live availability exposed; local record links were returned but not fetched.",
+          "No reuse licence established."
+        ],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "irq-kufa-mosque",
+      "name": "Great Mosque of Kufa Public Library",
+      "recommendation": "verified_target",
+      "scope": "One named institution/holding in lib.iq union catalog; the union network is not additionally counted.",
+      "size": {
+        "value": 20000,
+        "unit": "printed books (source states more than)",
+        "date": "2017",
+        "source_url": "https://masjed-alkufa.com/index.php/permalink/3868.html",
+        "evidence_path": "evidence/indexed-size-sources.json",
+        "quality": "indexed official",
+        "note": "Official historical source separately reports over 20,000 printed and over 30,000 electronic books. This is not University of Kufa and is not a current count."
+      },
+      "platform": {
+        "family": "Koha-backed custom Vue/JSON union portal",
+        "name": "Koha-backed custom Vue/JSON union portal",
+        "proof": "About page states MARC21, Koha and Z39.50. Public page loads pages/fast-search.vue which calls /api/fast-search.php; response supplies biblionumber and homebranch. This is a new frontend contract, not the existing Koha HTML parser.",
+        "evidence_path": "evidence/union-search-code.html"
+      },
+      "query": {
+        "text": "Calculus",
+        "method": "GET",
+        "url": "https://lib.iq/api/fast-search.php?instance=iquc&language=ar&q=Calculus&idx=ti&offset=0&count=10",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T08:20:24.603457+00:00",
+        "http_status": 200,
+        "effective_url": "https://lib.iq/api/fast-search.php?instance=iquc&language=ar&q=Calculus&idx=ti&offset=0&count=10",
+        "result_count": 40,
+        "count_note": "Unfiltered union query returned 40 total records and 10 rows; institution attribution rests on an actual matching item homebranch, not on selector membership. Count is union-wide.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/union-search.html",
+        "metadata_path": "evidence/union-search.json"
+      },
+      "books": [
+        {
+          "title": "Calculus",
+          "author": "Robert t.smith – roland b. minton",
+          "record_id": "201347",
+          "record_url": "https://kufa.lib.iq/biblio/12313",
+          "isbn": null,
+          "holdings": "Returned item homebranch=kufa_ma; itemnumber=500015; barcode field=kufa_maNOBAR-20720; call number=not supplied; local record=https://kufa.lib.iq/biblio/12313. No live availability/status supplied. Additional source item field i=M53 R1 K1; meaning not independently established. Publication date 9999 is a placeholder.",
+          "evidence_path": "evidence/union-search.html"
+        }
+      ],
+      "robots": {
+        "url": "https://lib.iq/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T08:17:47.673191+00:00",
+        "evidence_path": "evidence/union-robots.json",
+        "decision": "allowed_path",
+        "note": "Public research path check; no reuse licence inferred",
+        "path_check": {
+          "decision": "allowed_path",
+          "allowed": true,
+          "delay_seconds": 0,
+          "agents": [
+            {
+              "agent": "mybookshelfresearch",
+              "allowed": true,
+              "matching_rule": "/"
+            },
+            {
+              "agent": "mybookshelf",
+              "allowed": true,
+              "matching_rule": "/"
+            },
+            {
+              "agent": "chatgpt-user",
+              "allowed": true,
+              "matching_rule": "/"
+            },
+            {
+              "agent": "oai-searchbot",
+              "allowed": true,
+              "matching_rule": "/"
+            }
+          ],
+          "note": "Public research path check; no reuse licence inferred"
+        }
+      },
+      "reader_access": "Anonymous catalog access observed; visitor access and borrowing eligibility not verified.",
+      "integration": {
+        "existing_adapter": "new family / custom",
+        "needs": [
+          "New JSON adapter for the observed public frontend.",
+          "Map homebranch to official Libraries metadata; filter holdings client-side as branch-filtered results can include other institutions.",
+          "Keep union and local IDs distinct; reconcile edition conflicts using local record before matching ISBN."
+        ],
+        "blockers": [
+          "Union later returned HTTP503 on a Kufa-filtered query; no further automated union requests made.",
+          "No live availability exposed; local record links were returned but not fetched.",
+          "No reuse licence established."
+        ],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "irq-alzahraa",
+      "name": "Al-Zahraa University Library",
+      "recommendation": "reserve",
+      "scope": "One named institution/holding in lib.iq union catalog; the union network is not additionally counted.",
+      "size": {
+        "value": null,
+        "unit": "university library proxy",
+        "date": "observed 2026-11-15",
+        "source_url": "https://lib.iq/libraries",
+        "evidence_path": "evidence/union-data.html",
+        "quality": "official union metadata",
+        "note": "Named university branch and actual book item established; substantial collection scale not independently established."
+      },
+      "platform": {
+        "family": "Koha-backed custom Vue/JSON union portal",
+        "name": "Koha-backed custom Vue/JSON union portal",
+        "proof": "About page states MARC21, Koha and Z39.50. Public page loads pages/fast-search.vue which calls /api/fast-search.php; response supplies biblionumber and homebranch. This is a new frontend contract, not the existing Koha HTML parser.",
+        "evidence_path": "evidence/union-search-code.html"
+      },
+      "query": {
+        "text": "Calculus",
+        "method": "GET",
+        "url": "https://lib.iq/api/fast-search.php?instance=iquc&language=ar&q=Calculus&idx=ti&offset=0&count=10",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T08:20:24.603457+00:00",
+        "http_status": 200,
+        "effective_url": "https://lib.iq/api/fast-search.php?instance=iquc&language=ar&q=Calculus&idx=ti&offset=0&count=10",
+        "result_count": 40,
+        "count_note": "Unfiltered union query returned 40 total records and 10 rows; institution attribution rests on an actual matching item homebranch, not on selector membership. Count is union-wide.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/union-search.html",
+        "metadata_path": "evidence/union-search.json"
+      },
+      "books": [
+        {
+          "title": "Tensor calculus /",
+          "author": "Synge, J. L.",
+          "record_id": "144863",
+          "record_url": "https://alzahraa.lib.iq/biblio/168",
+          "isbn": "0486636127 :",
+          "holdings": "Returned item homebranch=alzahraa; itemnumber=446256; barcode field=alzahraa2612; call number=QA433 .S9 1978; local record=https://alzahraa.lib.iq/biblio/168. No live availability/status supplied.",
+          "evidence_path": "evidence/union-search.html"
+        }
+      ],
+      "robots": {
+        "url": "https://lib.iq/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T08:17:47.673191+00:00",
+        "evidence_path": "evidence/union-robots.json",
+        "decision": "allowed_path",
+        "note": "Public research path check; no reuse licence inferred",
+        "path_check": {
+          "decision": "allowed_path",
+          "allowed": true,
+          "delay_seconds": 0,
+          "agents": [
+            {
+              "agent": "mybookshelfresearch",
+              "allowed": true,
+              "matching_rule": "/"
+            },
+            {
+              "agent": "mybookshelf",
+              "allowed": true,
+              "matching_rule": "/"
+            },
+            {
+              "agent": "chatgpt-user",
+              "allowed": true,
+              "matching_rule": "/"
+            },
+            {
+              "agent": "oai-searchbot",
+              "allowed": true,
+              "matching_rule": "/"
+            }
+          ],
+          "note": "Public research path check; no reuse licence inferred"
+        }
+      },
+      "reader_access": "Anonymous catalog access observed; visitor access and borrowing eligibility not verified.",
+      "integration": {
+        "existing_adapter": "new family / custom",
+        "needs": [
+          "New JSON adapter for the observed public frontend.",
+          "Map homebranch to official Libraries metadata; filter holdings client-side as branch-filtered results can include other institutions.",
+          "Keep union and local IDs distinct; reconcile edition conflicts using local record before matching ISBN."
+        ],
+        "blockers": [
+          "Union later returned HTTP503 on a Kufa-filtered query; no further automated union requests made.",
+          "No live availability exposed; local record links were returned but not fetched.",
+          "No reuse licence established."
+        ],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "irq-southern-technical-engineering",
+      "name": "Southern Technical University, Engineering Technical College Library",
+      "recommendation": "reserve",
+      "scope": "One named institution/holding in lib.iq union catalog; the union network is not additionally counted.",
+      "size": {
+        "value": null,
+        "unit": "college library proxy",
+        "date": "observed 2026-11-15",
+        "source_url": "https://lib.iq/libraries",
+        "evidence_path": "evidence/union-data.html",
+        "quality": "official union metadata",
+        "note": "Only the named college library is verified; does not establish the whole Southern Technical University network or a major collection size."
+      },
+      "platform": {
+        "family": "Koha-backed custom Vue/JSON union portal",
+        "name": "Koha-backed custom Vue/JSON union portal",
+        "proof": "About page states MARC21, Koha and Z39.50. Public page loads pages/fast-search.vue which calls /api/fast-search.php; response supplies biblionumber and homebranch. This is a new frontend contract, not the existing Koha HTML parser.",
+        "evidence_path": "evidence/union-search-code.html"
+      },
+      "query": {
+        "text": "Calculus",
+        "method": "GET",
+        "url": "https://lib.iq/api/fast-search.php?instance=iquc&language=ar&q=Calculus&idx=ti&offset=0&count=10",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T08:20:24.603457+00:00",
+        "http_status": 200,
+        "effective_url": "https://lib.iq/api/fast-search.php?instance=iquc&language=ar&q=Calculus&idx=ti&offset=0&count=10",
+        "result_count": 40,
+        "count_note": "Unfiltered union query returned 40 total records and 10 rows; institution attribution rests on an actual matching item homebranch, not on selector membership. Count is union-wide.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/union-search.html",
+        "metadata_path": "evidence/union-search.json"
+      },
+      "books": [
+        {
+          "title": "Calculus",
+          "author": "Howard anton",
+          "record_id": "149602",
+          "record_url": "https://taqniya.lib.iq/biblio/320",
+          "isbn": null,
+          "holdings": "Returned item homebranch=TQ; itemnumber=457951; barcode field=TQNOBAR-320; call number=1A1; local record=https://taqniya.lib.iq/biblio/320. No live availability/status supplied. TQNOBAR-320 appears synthetic; do not present it as a verified physical barcode.",
+          "evidence_path": "evidence/union-search.html"
+        }
+      ],
+      "robots": {
+        "url": "https://lib.iq/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T08:17:47.673191+00:00",
+        "evidence_path": "evidence/union-robots.json",
+        "decision": "allowed_path",
+        "note": "Public research path check; no reuse licence inferred",
+        "path_check": {
+          "decision": "allowed_path",
+          "allowed": true,
+          "delay_seconds": 0,
+          "agents": [
+            {
+              "agent": "mybookshelfresearch",
+              "allowed": true,
+              "matching_rule": "/"
+            },
+            {
+              "agent": "mybookshelf",
+              "allowed": true,
+              "matching_rule": "/"
+            },
+            {
+              "agent": "chatgpt-user",
+              "allowed": true,
+              "matching_rule": "/"
+            },
+            {
+              "agent": "oai-searchbot",
+              "allowed": true,
+              "matching_rule": "/"
+            }
+          ],
+          "note": "Public research path check; no reuse licence inferred"
+        }
+      },
+      "reader_access": "Anonymous catalog access observed; visitor access and borrowing eligibility not verified.",
+      "integration": {
+        "existing_adapter": "new family / custom",
+        "needs": [
+          "New JSON adapter for the observed public frontend.",
+          "Map homebranch to official Libraries metadata; filter holdings client-side as branch-filtered results can include other institutions.",
+          "Keep union and local IDs distinct; reconcile edition conflicts using local record before matching ISBN."
+        ],
+        "blockers": [
+          "Union later returned HTTP503 on a Kufa-filtered query; no further automated union requests made.",
+          "No live availability exposed; local record links were returned but not fetched.",
+          "No reuse licence established."
+        ],
+        "live_app_tested": false
+      }
+    }
+  ],
+  "blocked_or_unverified": [
+    {
+      "name": "University of Mosul",
+      "url": "https://centrallibrary.uomosul.edu.iq/",
+      "reason": "Title queries returned HTTP200 zero-byte bodies twice (normal title form, then including observed weight_search=1); homepage is not a search success.",
+      "evidence_path": "evidence/mosul-search.json"
+    },
+    {
+      "name": "University of Basrah",
+      "url": "https://bvl.contact.uobasrah.edu.iq/",
+      "reason": "Official Student Services links this electronic catalog. Robots returned503; no query attempted.",
+      "evidence_path": "evidence/basrah-catalog-robots.json"
+    },
+    {
+      "name": "University of Kufa",
+      "url": "https://uokufa.edu.iq/",
+      "reason": "Wildcard robots Disallow:/; separate crawl-delay group does not override prohibition. Indexed official description retained only.",
+      "evidence_path": "evidence/kufa-robots.json"
+    },
+    {
+      "name": "Salahaddin University",
+      "url": "https://elibrary.su.edu.krd/",
+      "reason": "Robots403 Just a moment challenge; stopped. Electronic collection/SLiMS evidence alone cannot count physical-books success.",
+      "evidence_path": "evidence/salahaddin-robots.json"
+    },
+    {
+      "name": "University of Sulaimani",
+      "url": "https://c-library.univsul.edu.iq/",
+      "reason": "Officially named catalog origin; robots tunnel403. No TLS/private-network workaround.",
+      "evidence_path": "evidence/sulaimani-catalog-robots.json"
+    },
+    {
+      "name": "University of Duhok",
+      "url": "https://app.uod.ac/Home",
+      "reason": "Official linked catalog; robots ended at HTTP302 /Error/Status/404, no interpretable policy. Not treated as clear404.",
+      "evidence_path": "evidence/duhok-catalog-robots.json"
+    },
+    {
+      "name": "University of Technology",
+      "url": "https://gscl.uotechnology.edu.iq/",
+      "reason": "Robots403 Just a moment challenge.",
+      "evidence_path": "evidence/technology-robots.json"
+    },
+    {
+      "name": "Al-Kafeel University",
+      "url": "https://library.alkafeel.edu.iq/",
+      "reason": "Robots timed out; no catalog query. Institution differs from Al-Abbas Holy Shrine Library.",
+      "evidence_path": "evidence/alkafeel-robots.json"
+    },
+    {
+      "name": "University of Hamdaniya",
+      "url": "https://koha.uohamdaniya.edu.iq/",
+      "reason": "English title Calculus gave zero results; Arabic title نهج البلاغة returned503; neither a success. No further queries.",
+      "evidence_path": "evidence/hamdaniya-arabic-search.json"
+    },
+    {
+      "name": "Moulakis Library, AUIS",
+      "url": "https://library.auis.edu.krd/",
+      "reason": "Official linked catalog robots503; no query.",
+      "evidence_path": "evidence/auis-catalog-robots.json"
+    },
+    {
+      "name": "Al-Alamain Public Library",
+      "url": "https://library.alalamain.edu.iq/",
+      "reason": "Indexed official site advertises Koha; robots503, no query.",
+      "evidence_path": "evidence/alalamain-robots.json"
+    },
+    {
+      "name": "Iraqi Union Catalog legacy iquc.org route",
+      "url": "https://iquc.org/",
+      "reason": "Indexed /en route404; legitimate root independently linked by Basrah returned503. lib.iq is a separately discovered active public union front, not assumed identical collection.",
+      "evidence_path": "evidence/iquc-root.json"
+    },
+    {
+      "name": "lib.iq continued verification",
+      "url": "https://lib.iq/api/fast-search.php",
+      "reason": "After successful union and IHL-filtered query, Kufa-filtered request503. Stopped further requests; other institutions counted only where successful prior response contains actual holdings.",
+      "evidence_path": "evidence/union-kufa-query.json"
+    }
+  ],
+  "limitations": [
+    "Five selected and two reserves: short by five selected, despite fourteen substantial priorities and meaningful alternatives.",
+    "No national largest-ten ranking or LMS market share established. Dated collection totals and institutional proxies are not directly comparable.",
+    "Union count includes four distinct institutions proven by returned item holdings, not a union plus branches. Imam Hussain Babylon branch is not separately counted.",
+    "Union rows can merge different publication years under one record; preserve institution item provenance and do not assume edition identity.",
+    "Root diagnostic controls independently showed identical proxy503 on example.com, World Bank, NOUN and CERN during the late failure wave. Late503s are execution-network failures, not evidence of Iraq-specific outages or absence of holdings.",
+    "English queries succeeded; Arabic Hamdaniya query failed503. Kurdish not exercised because relevant catalog access was unresolved.",
+    "No app changes, live adapter integration, authentication, challenge/TLS bypass, private-IP fetches, cookies/account persistence or outreach.",
+    "No library reuse licence or general borrowing/visitor eligibility established."
+  ],
+  "sources": [
+    {
+      "url": "https://www.iraqnla.gov.iq/opac/index.php?hl=eng",
+      "claim": "National library mandate; current indexed holdings unknown.",
+      "evidence_path": null
+    },
+    {
+      "url": "https://lib.uobaghdad.edu.iq/",
+      "claim": "University central network; official result names central library and college facets.",
+      "evidence_path": null
+    },
+    {
+      "url": "https://uomosul.edu.iq/en/libcentral/2025/05/14/continuous-efforts-to-build-unified-automated-catalog-using-koha-system/",
+      "claim": "Official unified central/branch catalog; million-title figure describes pre-destruction holdings, not current stock.",
+      "evidence_path": null
+    },
+    {
+      "url": "https://library.uobasrah.edu.iq/About%20the%20Central%20Library",
+      "claim": "Official page says approximately one million mixed resources through 2025: books, journals, newspapers, theses, CDs and ebooks.",
+      "evidence_path": null
+    },
+    {
+      "url": "https://libraryapp.uomustansiriyah.edu.iq/search",
+      "claim": "Established central university library; separately searchable lending/reference/thesis collections.",
+      "evidence_path": null
+    },
+    {
+      "url": "https://uokufa.edu.iq/المكتبات/المكتبة-المركزية",
+      "claim": "Official central and college library management catalog described; DSpace explicitly campus-only and thesis index separately described.",
+      "evidence_path": null
+    },
+    {
+      "url": "https://www.gov.pl/web/iraq/polish-aid-development-project-implemented-in-erbil",
+      "claim": "Polish government project article (2026) reports nearly 300,000 items, including 2,000 manuscripts; mixed collection, not indexed books.",
+      "evidence_path": "evidence/indexed-market-sources.json"
+    },
+    {
+      "url": "https://cl.univsul.edu.iq/about/",
+      "claim": "Official central library established with university in 1968; OPAC coverage exclusions documented.",
+      "evidence_path": null
+    },
+    {
+      "url": "https://library.uod.ac/",
+      "claim": "Official home displays 54,941 books; 7,948 theses, 4,000 references and 10,000 periodicals separately. No measurement date given.",
+      "evidence_path": null
+    },
+    {
+      "url": "https://imamhussain.gov.iq/english/30075",
+      "claim": "Official 2020 report: more than 120,000 physical books, separately from digital resources.",
+      "evidence_path": null
+    },
+    {
+      "url": "https://masjed-alkufa.com/index.php/permalink/3868.html",
+      "claim": "Official 2017 report: more than 20,000 printed books; electronic books separately counted.",
+      "evidence_path": null
+    },
+    {
+      "url": "https://librarymap.ifla.org/countries/iraq",
+      "claim": "Major public/research institution proxy; IFLA describes national training, authority-file and knowledge-portal services.",
+      "evidence_path": null
+    },
+    {
+      "url": "https://gscl.uotechnology.edu.iq/library-instructions/",
+      "claim": "Central university library proxy; official instructions identify Koha.",
+      "evidence_path": null
+    },
+    {
+      "url": "https://www.auis.edu.krd/index.php/library",
+      "claim": "Official core collection in English, Arabic and Kurdish; supporting whole university.",
+      "evidence_path": null
+    },
+    {
+      "url": "https://librarymap.ifla.org/countries/iraq",
+      "claim": "August2025 country profile describes decentralized public libraries, university administration, national associations and distinct union/repository initiatives. Historical service-point table has2019/2021 data;2024 administrative-unit numbers are a different metric.",
+      "evidence_path": "evidence/ifla-country.html"
+    },
+    {
+      "url": "https://lib.iq/about",
+      "claim": "Union describes Koha, MARC21 and Z39.50; public frontend API verified.",
+      "evidence_path": "evidence/union-about.html"
+    },
+    {
+      "url": "https://lib.iq/data.php?host=lib.iq",
+      "claim": "Public page-loaded Libraries map resolves item homebranch to institution names.",
+      "evidence_path": "evidence/union-data.html"
+    },
+    {
+      "url": "https://uomosul.edu.iq/en/libcentral/2026/10/13/the-director-of-mosul-university-libraries-holds-a-meeting-with-the-librarians-of-the-branch-librarians-to-follow-up-on-the-development-of-work-and-the-digital-transformation/",
+      "claim": "Official2026 report describes ongoing Koha bibliographic updates across branch libraries.",
+      "evidence_path": "evidence/indexed-market-sources.json"
+    },
+    {
+      "url": "https://en.uobasrah.edu.iq/news/14353",
+      "claim": "June2026 official report announces Koha adoption with free hosting by Imam Hussain Shrine; announcement not a verified live catalog.",
+      "evidence_path": "evidence/indexed-market-sources.json"
+    },
+    {
+      "url": "https://www.iraqnla.gov.iq/nwe%20site/Achievements/pdf/2023/%D8%A7%D9%84%D9%85%D9%86%D8%AC%D8%B2%20%D8%A7%D9%84%D8%AB%D9%82%D8%A7%D9%81%D9%8A%202023.pdf",
+      "claim": "Indexed2023 national annual-achievement text mentions entering records into WinISIS; does not prove public OPAC backend.",
+      "evidence_path": null
+    },
+    {
+      "url": "https://en.tulib.tu.edu.iq/index.php/university-council/division-of-automated-systems",
+      "claim": "Official Tikrit library division describes installing/maintaining WinISIS; scoped evidence, not national adoption share.",
+      "evidence_path": "evidence/indexed-market-sources.json"
+    },
+    {
+      "url": "https://iasj.mohesr.gov.iq/journals/journal/issue/12755",
+      "claim": "2023 issue abstract reports study of100 shared book records across3 catalogs, finding duplicate and inconsistent descriptions in Iraqi union; sample cannot establish national prevalence.",
+      "evidence_path": null
+    },
+    {
+      "url": "https://elibrary.su.edu.krd/",
+      "claim": "Indexed SULIB footer names SLiMS; physical holdings not verified because robots challenge.",
+      "evidence_path": null
+    }
+  ]
+}

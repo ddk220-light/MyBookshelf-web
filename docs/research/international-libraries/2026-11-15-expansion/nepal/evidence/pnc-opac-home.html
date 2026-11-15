@@ -1,0 +1,449 @@
+
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="author" content="colorlib.com">
+    <title>Online Public Access Catalouge</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.js" type="text/javascript"></script>
+    <link href="/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/main.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="/css/buttons.dataTables.min.css" rel="stylesheet" type="text/css">
+    <link href="/fontawesome-free-5.15.3-web/css/all.min.css" rel="stylesheet" />
+    <style>
+        .dataTables_wrapper {
+            background-color: ghostwhite;
+            margin-top: 10px;
+            padding: 10px;
+        }
+
+        .s131 form fieldset {
+            margin-bottom: 50px;
+        }
+
+            .s131 form fieldset legend {
+                font-size: 36px;
+                font-weight: bold;
+                color: grey;
+                /*font-family: 'Poppins', sans-serif;*/
+                text-align: center;
+                border-bottom: 0px;
+            }
+
+        .view-detail {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="s131">
+        <div style="background-color: rgba(8, 11, 121, 1);position: fixed;top: 10px;right: 1px;padding: 5px;">
+            <div style="float: left;margin-right: 11px;">
+                    <a id="signIn" href="#"><span class="fas fa-user" style="color: lightgrey;font-size: 22px;">&nbsp; Sign In</span></a>
+            </div>
+            <div style="float: left">
+                <div class="dropdown">
+                    <a class="dropdown-toggle" role="button" id="listSetting" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <i class="fas fa-cog" style="color: lightgrey;font-size: 22px;"><i class="caret"></i></i>
+                    </a>
+                    <ul class="dropdown-menu" style="left: -136px;" aria-labelledby="listSetting">
+                        <li><a id="listBook" href="/Home/Index">Book</a></li>
+                        <li><a id="listReport" href="/Home/Report">Report</a></li>
+                        <li><a id="listArticle" href="/Home/Article">Journal Article</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <form id="CatalogSearchForm" style="margin-top: -150px;">
+            <fieldset>
+                <legend>Prithvi Narayan Campus, Pokhara<br /><span style="font-size: 24px">Online Public Access Catalouge - OPAC</span></legend>
+            </fieldset>
+            <div class="inner-form">
+                <div class="input-field first-wrap">
+                    <input id="search" type="text" placeholder="What are you searching for?" style="background: #2a6131;color: #ddd;" />
+                </div>
+                <div class="input-field second-wrap">
+                    <div class="input-select">
+                        <select id="searchBy" data-trigger="" name="choices-single-defaul">
+                            <option value="title">Title</option>
+                            <option value="author">Author</option>
+                            <option value="publicationPlace">Publication Place</option>
+                            <option value="publisher">Publisher</option>
+                            
+                            <option value="keyword">Keyword</option>
+                            <option value="publicationYear">Publication Year</option>
+                            <option value="subject">Subject</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-field third-wrap">
+                    <button class="btn-search" id="btnSearch" type="button">SEARCH</button>
+                </div>
+            </div>
+            <div>
+                <table id="example" class="display">
+                    <thead>
+                        <tr>
+                            <th>S.N.</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </form>
+    </div>
+    <script src="/Scripts/bootstrap.min.js"></script>
+    <script src="/js/extention/choices.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.flash.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.html5.min.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.print.min.js" type="text/javascript"></script>
+    <script>
+        const choices = new Choices('[data-trigger]',
+            {
+                searchEnabled: false
+            });
+    </script>
+    <script>
+        var s = '';
+        $(document).ready(function () {
+            $('.choices__list').css('background-color', '#3b8282');
+            $('.choices__list--single .choices__item').css('padding-left', '30px');
+
+            $(".display").hide();
+            $(document).on('click', '.view-detail', function (e) {
+                e.preventDefault();
+                var bookId = $(this).data('bookid');
+                $('#myModal').find('.modal-title').html('Book Detail');
+                var htmldata = `<ul id="profile-nav" class="nav nav-tabs">
+                                        <li role="presentation"><a id="bookDetail-tab" href="#bookDetail">Detail</a></li>
+                                        <li role="presentation"><a id="bookAccession-tab" href="#bookAccession">Accession</a></li>
+                                        <li role="presentation"><a id="bookStatus-tab" href="#bookStatus">Status</a></li>
+                                    </ul>
+                                    <div id="profile-tab" class="tab-content">
+                                        <div class="tab-pane" id="bookDetail" role="tabpanel"></div>
+                                        <div class="tab-pane" id="bookAccession" role="tabpanel"></div>
+                                        <div class="tab-pane" id="bookStatus" role="tabpanel"></div>
+                                    </div>`;
+                $('#myModal').find('.modal-body').html(htmldata);
+                var ajaxCalls = [];
+                var bookDetail = $.ajax({ url: '/Catalouge/BookDetail?bookId=' + bookId, type: 'get', dataType: 'html' })
+                    .done(function (data) {
+                        $('#myModal').find('#bookDetail').html(data);
+                    })
+                    .fail(function (error) {
+                        alert("An error occurred.");
+                    });
+                ajaxCalls.push(bookDetail);
+                var bookAccession = $.ajax({ url: '/Catalouge/BookAccessionList?bookId=' + bookId, type: 'get', dataType: 'html' })
+                    .done(function (data) {
+                        $('#myModal').find('#bookAccession').html(data);
+                    })
+                    .fail(function (error) {
+                        alert("An error occurred.");
+                    });
+                ajaxCalls.push(bookAccession);
+                var bookStatus = $.ajax({ url: '/Catalouge/BookStatus?bookId=' + bookId, type: 'get', dataType: 'html' })
+                    .done(function (data) {
+                        $('#myModal').find('#bookStatus').html(data);
+                    })
+                    .fail(function (error) {
+                        alert("An error occurred.");
+                    });
+                ajaxCalls.push(bookStatus);
+
+                $.when.apply(ajaxCalls).then(function () {
+                    $('#myModal').modal('show');
+                    BookButtonEvents();
+                    $('#bookDetail-tab').trigger('click');
+                });
+            });
+            $("#btnSearch").click(function (e) {
+                e.preventDefault();
+                SearchButtonEvent();
+            });
+        });
+        var replaceImage = function (e) {
+            var name = e.src;
+            e.src = name + ".jpg";
+            e.onerror = function () {
+                e.src = name + ".jpeg";
+                e.onerror = function () {
+                    e.src = name + ".png";
+                    e.onerror = function () {
+                        $(e).replaceWith('<span class="fas fa-user" style="color: lightgrey;font-size: 40px;"> </span>');
+                    };
+                };
+            };
+        };
+        var BookButtonEvents = function () {
+            $('#bookDetail-tab').on('click', function (e) {
+                e.preventDefault();
+                if ($(this).parents('li').first().hasClass('active')) {
+                    return;
+                }
+                $(this).tab('show');
+            });
+            $('#bookAccession-tab').on('click', function (e) {
+                e.preventDefault();
+                if ($(this).parents('li').first().hasClass('active')) {
+                    return;
+                }
+                $(this).tab('show');
+            });
+            $('#bookStatus-tab').on('click', function (e) {
+                e.preventDefault();
+                if ($(this).parents('li').first().hasClass('active')) {
+                    return;
+                }
+                $(this).tab('show');
+            });
+
+            $(document).on('click', '.reserveBook', function (e) {
+                e.preventDefault();
+                var accessionNo = $(this).data('id');
+                if (accessionNo == undefined) {
+                    return;
+                }
+                ReserveButtonEvent(accessionNo);
+            });
+            $(document).on('click', '.renewBook', function (e) {
+                e.preventDefault();
+                var accessionNo = $(this).data('id');
+                if (accessionNo == undefined) {
+                    return;
+                }
+                RenewButtonEvent(accessionNo);
+            });
+        };
+        var fixNewLinePrint = {
+            exportOptions: {
+                format: {
+                    body: function (data, column, row) {
+                        return data;
+                    }
+                }
+            }
+        };
+        var fixNewLineExport = {
+            exportOptions: {
+                format: {
+                    body: function (data, column, row) {
+                        // THIS WORKS:          data.replace(/test/ig, "blablabla"):
+                        data = data.replace(/<br\s*\/?>/ig, "\n");
+                        data = data.replace(/<b>/ig, "");
+                        data = data.replace(/<\/b>/ig, "");
+                        return data;
+                    }
+                }
+            }
+        };
+        var SearchButtonEvent = function () {
+            $(".display").show();
+            var searchby = $('#searchBy').val() || '';
+            s = $('#search').val() || '';
+            $('#example').DataTable({
+                destroy: true,
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "/Catalouge/SearchBook?searchby=" + searchby + "&s=" + s,
+                    type: "POST"
+                },
+                columns:
+                    [
+                        {
+                            "data": function (data, type, item) {
+                                return data.SN + '.';
+                            }
+                        },
+                        {
+                            "data": function (data, type, item) {
+                                var html = '<div class="row view-detail" data-bookid="' + data.BookID + '"><div class="col-2" style="position: absolute;"><img src="/images/NoCover.jpg" style="height: 110px; width: 90px;" /></div><div class="col-10" style="margin-left: 150px;"><span style="font-weight: bold;color: grey;font-size: 12px;">' + data.MediaType + '</span><br /><br /><span style="color: #2a6496;">' + data.Title + '</span><br />By <span style="font-weight:bold">' + data.ResTitle + '</span>'/*' / / ' + ((parseInt(data.RemainingQuantity) | 0) > 0 ? '<span style="color: green">Available</span>' : '<span style="color: red">Not Available</span>') + ' / <span style="font-weight: bold">' + data.RemainingQuantity + '</span> copies/' + data.PhysicalDescription */ + '<br /><br /><span style="color:grey">' + data.Place + ': ' + data.Publisher + ', ' + data.YEAR + '</span><br /></div></div>';
+                                return html;
+                            },
+                        },
+                    ],
+                dom: 'Bfrtip',
+                buttons: [
+                    $.extend(true, {}, fixNewLineExport, {
+                        extend: 'pdf'
+                    }),
+                    $.extend(true, {}, fixNewLinePrint, {
+                        extend: 'print'
+                    }),
+                    $.extend(true, {}, fixNewLineExport, {
+                        extend: 'excel'
+                    })
+                    // /*'copy', 'csv', 'excel',*/ 'pdf', 'print'
+                ],
+                rowCallback: function (row, data) {
+                },
+                order: [[1, 'asc']]
+            });
+        };
+    </script>
+    <script>
+        $('#signIn').on('click', function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: '/Account/Login',
+                type: 'get',
+                contentType: 'html'
+            }).done(function (data) {
+                $('#myModal').find('.modal-title').html('OPAC Login Form');
+                $('#myModal').find('.modal-dialog').removeClass().addClass("modal-dialog modal-sm");
+                $('#myModal').find('.modal-body').html(data);
+                $('#myModal').modal('show');
+                $('#btnSubmit').on('click', function (e) {
+                    e.preventDefault();
+                    if ($('#loginForm').valid() == false) {
+                        return;
+                    }
+                    $.ajax({ url: '/Account/Login', type: 'post', data: $('#loginForm').serialize(), processData: false, dataType: 'json', contentType: 'application/x-www-form-urlencoded; charset=UTF-8' })
+                        .done(function (data) {
+                            if (data.success) { location.reload(); }
+                            else { $('#errorMessage').html(data.message); }
+                        }).fail(function (error) {
+                            alert("An error occurred.");
+                        });
+                });
+            }).fail(function (error) {
+                alert("Error: Couldn't open login form.");
+            });
+        });
+        $('#userProfile').on('click', function (e) {
+            e.preventDefault();
+            $.ajax({ url: '/Account/Profile', type: 'get', contentType: 'html' })
+                .done(function (data) {
+                    $('#myModal').find('.modal-title').html('User Profile');
+                    $('#myModal').find('.modal-dialog').removeClass().addClass("modal-dialog modal-lg");
+                    $('#myModal').find('.modal-body').html(data);
+                    $('#myModal').modal('show');
+                    ProfileButtonEvents();
+                    $('#bookIssue-tab').trigger('click');
+                }).fail(function (error) {
+                    alert('An error occurred.');
+                });
+        });
+        var ProfileButtonEvents = function () {
+            $('#bookIssue-tab').on('click', function (e) {
+                e.preventDefault();
+                if ($(this).parents('li').first().hasClass('active')) {
+                    return;
+                }
+                $(this).tab('show');
+                $('#profile-tab').children().html('');
+                $.ajax({ url: '/Book/BookIssue', type: 'get', contentType: 'html' })
+                    .done(function (data) {
+                        $('#bookIssue').html(data);
+                        $('.renewBook').on('click', function (e) {
+                            e.preventDefault();
+                            var accessionNo = $(this).data('id');
+                            if (accessionNo == undefined) {
+                                return;
+                            }
+                            RenewButtonEvent(accessionNo);
+                        });
+                    })
+                    .fail(function (error) {
+                        alert('An error occurred.');
+                    });
+            });
+            $('#bookFine-tab').on('click', function (e) {
+                e.preventDefault();
+                if ($(this).parents('li').first().hasClass('active')) {
+                    return;
+                }
+                $(this).tab('show');
+                $('#profile-tab').children().html('');
+                $.ajax({ url: '/Book/BookFine', type: 'get', contentType: 'html' })
+                    .done(function (data) {
+                        $('#bookFine').html(data);
+                    })
+                    .fail(function (error) {
+                        alert('An error occurred.');
+                    });
+            });
+            $('#bookHistory-tab').on('click', function (e) {
+                e.preventDefault();
+                if ($(this).parents('li').first().hasClass('active')) {
+                    return;
+                }
+                $(this).tab('show');
+                $('#profile-tab').children().html('');
+                $.ajax({ url: '/Book/BookHistory', type: 'get', contentType: 'html' })
+                    .done(function (data) {
+                        $('#bookHistory').html(data);
+                    })
+                    .fail(function (error) {
+                        alert('An error occurred.');
+                    });
+            });
+            $('#bookReserve-tab').on('click', function (e) {
+                e.preventDefault();
+                if ($(this).parents('li').first().hasClass('active')) {
+                    return;
+                }
+                $(this).tab('show');
+                $('#profile-tab').children().html('');
+                $.ajax({ url: '/Book/BookReserve', type: 'get', contentType: 'html' })
+                    .done(function (data) {
+                        $('#bookReserve').html(data);
+                        $('.reserveBook').on('click', function (e) {
+                            e.preventDefault();
+                            var accessionNo = $(this).data('id');
+                            if (accessionNo == undefined) {
+                                return;
+                            }
+                            ReserveButtonEvent(accessionNo);
+                        });
+                    })
+                    .fail(function (error) {
+                        alert('An error occurred.');
+                    });
+            });
+        };
+        var RenewButtonEvent = function (accessionNo) {
+            $.ajax({ url: '/Book/UserBookRenew?accessionNo=' + accessionNo, type: 'post', dataType: 'json' })
+                .done(function (data) {
+                    alert(data.message);
+                })
+                .fail(function (error) {
+                    alert("An error occurred.");
+                });
+        };
+        var ReserveButtonEvent = function (accessionNo) {
+            $.ajax({ url: '/Book/UserBookReserve?accessionNo=' + accessionNo, type: 'post', dataType: 'json' })
+                .done(function (data) {
+                    alert(data.message);
+                })
+                .fail(function (error) {
+                    alert("An error occurred.");
+                });
+        };
+    </script>
+    <!-- Modal -->
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content" style="border-radius: 0;">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Modal Header</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Some text in the modal.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,66 @@
+# Block GPTBot completely
+User-agent: GPTBot
+Disallow: /
+
+# (Optional) block other AI / scraping bots
+User-agent: ChatGPT-User
+Disallow: /
+User-agent: anthropic-ai
+Disallow: /
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Sogou web spider
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: Barkrowler
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+# Optional: disallow heavy Koha pages for *all* bots
+User-agent: *
+Disallow: /cgi-bin/koha/opac-MARCdetail.pl
+Disallow: /cgi-bin/koha/opac-export.pl
+Disallow: /cgi-bin/koha/opac-ISBDdetail.pl
+Disallow: /opac/opac-search.pl
+Disallow: /opac/opac-addbybiblionumber.pl
+Disallow: /opac/opac-authoritiesdetail.pl
+Disallow: /opac/opac-ISBDdetail.pl
+Disallow: /opac/opac-export.pl
+
+Disallow: /cgi-bin/koha/opac-search.pl
+Disallow: /cgi-bin/koha/opac-addbybiblionumber.pl
+Disallow: /cgi-bin/koha/opac-authoritiesdetail.pl
+Disallow: /cgi-bin/koha/opac-ISBDdetail.pl
+Disallow: /cgi-bin/koha/opac-export.pl
+
+# Leave normal search engines allowed
+User-agent: *
+Disallow:
+# Ancient Windows versions – almost never used legitimately on modern web
+BrowserMatchNoCase "Windows 95"            bad_bot
+BrowserMatchNoCase "Windows 98"            bad_bot
+BrowserMatchNoCase "Windows NT 4\.0"       bad_bot
+BrowserMatchNoCase "Windows NT 5\.0"       bad_bot
+BrowserMatchNoCase "Windows NT 5\.01"      bad_bot
+BrowserMatchNoCase "Windows NT 5\.1"       bad_bot
+BrowserMatchNoCase "Windows NT 5\.2"       bad_bot
+BrowserMatchNoCase "Windows CE"            bad_bot
+
+# Obviously ancient/fake Safari + AppleWebKit combos
+BrowserMatchNoCase "PPC Mac OS X 10_8_"    bad_bot
+BrowserMatchNoCase "PPC Mac OS X 10_9_"    bad_bot
+BrowserMatchNoCase "iPhone OS 3_"          bad_bot
+BrowserMatchNoCase "iPhone OS 4_"          bad_bot
+BrowserMatchNoCase "iPad OS 5_"            bad_bot
+
+# Opera Presto-based 8.x and 9.x – now almost entirely bot traffic
+BrowserMatchNoCase "Opera/8\."             bad_bot
+BrowserMatchNoCase "Opera/9\.[0-9]"        bad_bot
+BrowserMatchNoCase "Presto/2\.9\."         bad_bot
+

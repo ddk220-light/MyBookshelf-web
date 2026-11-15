@@ -1,0 +1,301 @@
+if(typeof iMan == "undefined") iMan={};
+if(typeof iMan.Opac == "undefined") iMan.Opac={};
+if(typeof iMan.Opac.FrontEnd == "undefined") iMan.Opac.FrontEnd={};
+if(typeof iMan.Opac.FrontEnd.iSearchProcess_class == "undefined") iMan.Opac.FrontEnd.iSearchProcess_class={};
+iMan.Opac.FrontEnd.iSearchProcess_class = function() {};
+Object.extend(iMan.Opac.FrontEnd.iSearchProcess_class.prototype, Object.extend(new AjaxPro.AjaxClass(), {
+	ServerSendDigitalRequest: function(SiteId, BibId, DigitalFileId) {
+		return this.invoke("ServerSendDigitalRequest", {"SiteId":SiteId, "BibId":BibId, "DigitalFileId":DigitalFileId}, this.ServerSendDigitalRequest.getArguments().slice(3));
+	},
+	ServerReturnBorrowFile: function(SiteId, RequestId) {
+		return this.invoke("ServerReturnBorrowFile", {"SiteId":SiteId, "RequestId":RequestId}, this.ServerReturnBorrowFile.getArguments().slice(2));
+	},
+	ServerResultRSKeywordGroup: function(SiteId, DBSource, Keyword, CurrentPage, SearchSessionId) {
+		return this.invoke("ServerResultRSKeywordGroup", {"SiteId":SiteId, "DBSource":DBSource, "Keyword":Keyword, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId}, this.ServerResultRSKeywordGroup.getArguments().slice(5));
+	},
+	ServerDLBibLinkPagingOnChange: function(SiteId, DBSource, Keyword, CurrentPage, SearchSessionId) {
+		return this.invoke("ServerDLBibLinkPagingOnChange", {"SiteId":SiteId, "DBSource":DBSource, "Keyword":Keyword, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId}, this.ServerDLBibLinkPagingOnChange.getArguments().slice(5));
+	},
+	ServerResultRSClassGroup: function(SiteId, DBSource, Keyword, CurrentPage, SearchSessionId) {
+		return this.invoke("ServerResultRSClassGroup", {"SiteId":SiteId, "DBSource":DBSource, "Keyword":Keyword, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId}, this.ServerResultRSClassGroup.getArguments().slice(5));
+	},
+	ServerResultRSSubjectGroup: function(SiteId, DBSource, Keyword, CurrentPage, SearchSessionId) {
+		return this.invoke("ServerResultRSSubjectGroup", {"SiteId":SiteId, "DBSource":DBSource, "Keyword":Keyword, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId}, this.ServerResultRSSubjectGroup.getArguments().slice(5));
+	},
+	ServerUserLoginV2: function(SiteId, LoginName, Password, loginCode) {
+		return this.invoke("ServerUserLoginV2", {"SiteId":SiteId, "LoginName":LoginName, "Password":Password, "loginCode":loginCode}, this.ServerUserLoginV2.getArguments().slice(4));
+	},
+	ServerMemberLogout: function() {
+		return this.invoke("ServerMemberLogout", {}, this.ServerMemberLogout.getArguments().slice(0));
+	},
+	BuildLoadingText: function(SiteId) {
+		return this.invoke("BuildLoadingText", {"SiteId":SiteId}, this.BuildLoadingText.getArguments().slice(1));
+	},
+	ServerChangeSource: function(SiteId, DataId) {
+		return this.invoke("ServerChangeSource", {"SiteId":SiteId, "DataId":DataId}, this.ServerChangeSource.getArguments().slice(2));
+	},
+	ServerRefineLinkData: function(SiteId, DBSource, Keyword, CurrentPage, SearchSessionId) {
+		return this.invoke("ServerRefineLinkData", {"SiteId":SiteId, "DBSource":DBSource, "Keyword":Keyword, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId}, this.ServerRefineLinkData.getArguments().slice(5));
+	},
+	DrawRefineSearchByTabSearch: function(SiteId, Keyword, TabSearch, CurrentRefinePage) {
+		return this.invoke("DrawRefineSearchByTabSearch", {"SiteId":SiteId, "Keyword":Keyword, "TabSearch":TabSearch, "CurrentRefinePage":CurrentRefinePage}, this.DrawRefineSearchByTabSearch.getArguments().slice(4));
+	},
+	DrawMoreRefineSearchByTabSearch: function(SiteId, SessionId, TabSearch, ViewCount) {
+		return this.invoke("DrawMoreRefineSearchByTabSearch", {"SiteId":SiteId, "SessionId":SessionId, "TabSearch":TabSearch, "ViewCount":ViewCount}, this.DrawMoreRefineSearchByTabSearch.getArguments().slice(4));
+	},
+	ServerDrawFromSearchGroupTopicKeyWord: function(SiteId, DBSource, SessionId, Keyword, CurrentPage) {
+		return this.invoke("ServerDrawFromSearchGroupTopicKeyWord", {"SiteId":SiteId, "DBSource":DBSource, "SessionId":SessionId, "Keyword":Keyword, "CurrentPage":CurrentPage}, this.ServerDrawFromSearchGroupTopicKeyWord.getArguments().slice(5));
+	},
+	ServerDrawFromSearchGroupTopicClass: function(SiteId, DBSource, SessionId, Keyword, CurrentPage) {
+		return this.invoke("ServerDrawFromSearchGroupTopicClass", {"SiteId":SiteId, "DBSource":DBSource, "SessionId":SessionId, "Keyword":Keyword, "CurrentPage":CurrentPage}, this.ServerDrawFromSearchGroupTopicClass.getArguments().slice(5));
+	},
+	ServerDrawFromSearchGroupTopic: function(SiteId, DBSource, SessionId, Keyword, CurrentPage) {
+		return this.invoke("ServerDrawFromSearchGroupTopic", {"SiteId":SiteId, "DBSource":DBSource, "SessionId":SessionId, "Keyword":Keyword, "CurrentPage":CurrentPage}, this.ServerDrawFromSearchGroupTopic.getArguments().slice(5));
+	},
+	ServerViewMoreRefineSearch: function(SiteId, SessionId, TableName, ViewCount, TabSearch) {
+		return this.invoke("ServerViewMoreRefineSearch", {"SiteId":SiteId, "SessionId":SessionId, "TableName":TableName, "ViewCount":ViewCount, "TabSearch":TabSearch}, this.ServerViewMoreRefineSearch.getArguments().slice(5));
+	},
+	ServerSearchInRefineQuickSearch: function(SiteId, SearchTextRS, FieldSearch, Keyword, KeyWordInRefine, ItemsPerRow, NoOfVisiblePage, CurrentPage, JumpJavaScript, ItemsPerSegment, NewSessionId) {
+		return this.invoke("ServerSearchInRefineQuickSearch", {"SiteId":SiteId, "SearchTextRS":SearchTextRS, "FieldSearch":FieldSearch, "Keyword":Keyword, "KeyWordInRefine":KeyWordInRefine, "ItemsPerRow":ItemsPerRow, "NoOfVisiblePage":NoOfVisiblePage, "CurrentPage":CurrentPage, "JumpJavaScript":JumpJavaScript, "ItemsPerSegment":ItemsPerSegment, "NewSessionId":NewSessionId}, this.ServerSearchInRefineQuickSearch.getArguments().slice(11));
+	},
+	ServerExportToFile: function(SiteId, FileType, DataToExports) {
+		return this.invoke("ServerExportToFile", {"SiteId":SiteId, "FileType":FileType, "DataToExports":DataToExports}, this.ServerExportToFile.getArguments().slice(3));
+	},
+	ServerExportBibReport: function(SiteId, fileType, strBib, searchValue, Keyword) {
+		return this.invoke("ServerExportBibReport", {"SiteId":SiteId, "fileType":fileType, "strBib":strBib, "searchValue":searchValue, "Keyword":Keyword}, this.ServerExportBibReport.getArguments().slice(5));
+	},
+	ServerExportLinkBib: function(SiteId, fileType, strBib, SearchText, SearchType, FromType) {
+		return this.invoke("ServerExportLinkBib", {"SiteId":SiteId, "fileType":fileType, "strBib":strBib, "SearchText":SearchText, "SearchType":SearchType, "FromType":FromType}, this.ServerExportLinkBib.getArguments().slice(6));
+	},
+	ServerExportBib: function(SiteId, fileType, strBib, searchValue) {
+		return this.invoke("ServerExportBib", {"SiteId":SiteId, "fileType":fileType, "strBib":strBib, "searchValue":searchValue}, this.ServerExportBib.getArguments().slice(4));
+	},
+	ServerCheckMoney: function(SiteId, BibId, FileId, Type, Ext) {
+		return this.invoke("ServerCheckMoney", {"SiteId":SiteId, "BibId":BibId, "FileId":FileId, "Type":Type, "Ext":Ext}, this.ServerCheckMoney.getArguments().slice(5));
+	},
+	ServerCheckMoneyUser: function(SiteId, BibId, FileId, Type) {
+		return this.invoke("ServerCheckMoneyUser", {"SiteId":SiteId, "BibId":BibId, "FileId":FileId, "Type":Type}, this.ServerCheckMoneyUser.getArguments().slice(4));
+	},
+	ServerDownLoadDigitalFile: function(SiteId, BibId, FileId, isDownload) {
+		return this.invoke("ServerDownLoadDigitalFile", {"SiteId":SiteId, "BibId":BibId, "FileId":FileId, "isDownload":isDownload}, this.ServerDownLoadDigitalFile.getArguments().slice(4));
+	},
+	ServerViewDigitalFile: function(SiteId, BibId, FileId, isDownload) {
+		return this.invoke("ServerViewDigitalFile", {"SiteId":SiteId, "BibId":BibId, "FileId":FileId, "isDownload":isDownload}, this.ServerViewDigitalFile.getArguments().slice(4));
+	},
+	ServerViewFlashFile: function(SiteId, CurrentSiteId, BibId, DigitalFileId, FlashFolderName, Ext) {
+		return this.invoke("ServerViewFlashFile", {"SiteId":SiteId, "CurrentSiteId":CurrentSiteId, "BibId":BibId, "DigitalFileId":DigitalFileId, "FlashFolderName":FlashFolderName, "Ext":Ext}, this.ServerViewFlashFile.getArguments().slice(6));
+	},
+	ServerDownFlashFile: function(SiteId, BibId, DigitalFileId, FlashFolderName) {
+		return this.invoke("ServerDownFlashFile", {"SiteId":SiteId, "BibId":BibId, "DigitalFileId":DigitalFileId, "FlashFolderName":FlashFolderName}, this.ServerDownFlashFile.getArguments().slice(4));
+	},
+	ServerUpdateRating: function(SiteId, BibId, RateOption) {
+		return this.invoke("ServerUpdateRating", {"SiteId":SiteId, "BibId":BibId, "RateOption":RateOption}, this.ServerUpdateRating.getArguments().slice(3));
+	},
+	ServerDrawRatingResult1: function(SiteId, BibId) {
+		return this.invoke("ServerDrawRatingResult1", {"SiteId":SiteId, "BibId":BibId}, this.ServerDrawRatingResult1.getArguments().slice(2));
+	},
+	ServerViewDocDetail: function(SiteId, CurrentSiteId, DBSource, iSearchId, CurrentPage) {
+		return this.invoke("ServerViewDocDetail", {"SiteId":SiteId, "CurrentSiteId":CurrentSiteId, "DBSource":DBSource, "iSearchId":iSearchId, "CurrentPage":CurrentPage}, this.ServerViewDocDetail.getArguments().slice(5));
+	},
+	ServerBibDetailViewDBSource: function(SiteId, CurrentSiteId, DBSource, Bib_id) {
+		return this.invoke("ServerBibDetailViewDBSource", {"SiteId":SiteId, "CurrentSiteId":CurrentSiteId, "DBSource":DBSource, "Bib_id":Bib_id}, this.ServerBibDetailViewDBSource.getArguments().slice(4));
+	},
+	ServerBibDetailViewInfo: function(SiteId, Bib_id, DBSource) {
+		return this.invoke("ServerBibDetailViewInfo", {"SiteId":SiteId, "Bib_id":Bib_id, "DBSource":DBSource}, this.ServerBibDetailViewInfo.getArguments().slice(3));
+	},
+	ServerBibSearchTabProcess: function(SiteId, Keyword, BibId, DbSources) {
+		return this.invoke("ServerBibSearchTabProcess", {"SiteId":SiteId, "Keyword":Keyword, "BibId":BibId, "DbSources":DbSources}, this.ServerBibSearchTabProcess.getArguments().slice(4));
+	},
+	TabFormRender: function(SiteId, SearchType) {
+		return this.invoke("TabFormRender", {"SiteId":SiteId, "SearchType":SearchType}, this.TabFormRender.getArguments().slice(2));
+	},
+	ServerBibDetailViewDigitalFile: function(SiteId, CurrentSiteId, DBSource, Bib_id) {
+		return this.invoke("ServerBibDetailViewDigitalFile", {"SiteId":SiteId, "CurrentSiteId":CurrentSiteId, "DBSource":DBSource, "Bib_id":Bib_id}, this.ServerBibDetailViewDigitalFile.getArguments().slice(4));
+	},
+	ServerPreviewDigitalFile: function(SiteId, BibId, DigitalFileId, Ext) {
+		return this.invoke("ServerPreviewDigitalFile", {"SiteId":SiteId, "BibId":BibId, "DigitalFileId":DigitalFileId, "Ext":Ext}, this.ServerPreviewDigitalFile.getArguments().slice(4));
+	},
+	ServerFullPreviewDigitalFile: function(SiteId, BibId, DigitalFileId, Ext) {
+		return this.invoke("ServerFullPreviewDigitalFile", {"SiteId":SiteId, "BibId":BibId, "DigitalFileId":DigitalFileId, "Ext":Ext}, this.ServerFullPreviewDigitalFile.getArguments().slice(4));
+	},
+	ServerBibDetailViewDigitalFileV2: function(SiteId, CurrentSiteId, DBSource, DigitalFileId, iSearchId) {
+		return this.invoke("ServerBibDetailViewDigitalFileV2", {"SiteId":SiteId, "CurrentSiteId":CurrentSiteId, "DBSource":DBSource, "DigitalFileId":DigitalFileId, "iSearchId":iSearchId}, this.ServerBibDetailViewDigitalFileV2.getArguments().slice(5));
+	},
+	ServerDrawRequestBorrow: function(SiteId, CirId, BibId, RegId, CirName) {
+		return this.invoke("ServerDrawRequestBorrow", {"SiteId":SiteId, "CirId":CirId, "BibId":BibId, "RegId":RegId, "CirName":CirName}, this.ServerDrawRequestBorrow.getArguments().slice(5));
+	},
+	ServerCareBookPaging: function(SiteId, BDType, Keyword, ItemsPerSegment, MaxItem, ItemsPerRow, NoOfVisiblePage, CurrentPage, SearchSessionId, JumpJavaScript) {
+		return this.invoke("ServerCareBookPaging", {"SiteId":SiteId, "BDType":BDType, "Keyword":Keyword, "ItemsPerSegment":ItemsPerSegment, "MaxItem":MaxItem, "ItemsPerRow":ItemsPerRow, "NoOfVisiblePage":NoOfVisiblePage, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId, "JumpJavaScript":JumpJavaScript}, this.ServerCareBookPaging.getArguments().slice(10));
+	},
+	TestAjax: function(siteId, val) {
+		return this.invoke("TestAjax", {"siteId":siteId, "val":val}, this.TestAjax.getArguments().slice(2));
+	},
+	ServerRequestBorrow: function(SiteId, Bib_Id, Reader_Id, Cirplace_Id, Status, Reg_Id) {
+		return this.invoke("ServerRequestBorrow", {"SiteId":SiteId, "Bib_Id":Bib_Id, "Reader_Id":Reader_Id, "Cirplace_Id":Cirplace_Id, "Status":Status, "Reg_Id":Reg_Id}, this.ServerRequestBorrow.getArguments().slice(6));
+	},
+	ServerBibTabProcess: function(SiteId, CurrentSiteId, ActionType, iSearchId, DbBibId, DbSource, CurrentPage) {
+		return this.invoke("ServerBibTabProcess", {"SiteId":SiteId, "CurrentSiteId":CurrentSiteId, "ActionType":ActionType, "iSearchId":iSearchId, "DbBibId":DbBibId, "DbSource":DbSource, "CurrentPage":CurrentPage}, this.ServerBibTabProcess.getArguments().slice(7));
+	},
+	CreateCaptcha: function(SiteId) {
+		return this.invoke("CreateCaptcha", {"SiteId":SiteId}, this.CreateCaptcha.getArguments().slice(1));
+	},
+	ServerUpdateForm: function(SiteId, Id, Username, Email, Phone, Content, SecCode) {
+		return this.invoke("ServerUpdateForm", {"SiteId":SiteId, "Id":Id, "Username":Username, "Email":Email, "Phone":Phone, "Content":Content, "SecCode":SecCode}, this.ServerUpdateForm.getArguments().slice(7));
+	},
+	ServerBibTabProcessV2: function(SiteId, CurrentSiteId, ActionType, iSearchId, iLibId, dLibId, DbSource, CurrentPage) {
+		return this.invoke("ServerBibTabProcessV2", {"SiteId":SiteId, "CurrentSiteId":CurrentSiteId, "ActionType":ActionType, "iSearchId":iSearchId, "iLibId":iLibId, "dLibId":dLibId, "DbSource":DbSource, "CurrentPage":CurrentPage}, this.ServerBibTabProcessV2.getArguments().slice(8));
+	},
+	ServerViewBibDetailV2: function(SiteId, BibId, IsearchId) {
+		return this.invoke("ServerViewBibDetailV2", {"SiteId":SiteId, "BibId":BibId, "IsearchId":IsearchId}, this.ServerViewBibDetailV2.getArguments().slice(3));
+	},
+	ServerLinkLibSearchFromGrid: function(SiteId, DBSource, BibId, Keyword, TotalItem) {
+		return this.invoke("ServerLinkLibSearchFromGrid", {"SiteId":SiteId, "DBSource":DBSource, "BibId":BibId, "Keyword":Keyword, "TotalItem":TotalItem}, this.ServerLinkLibSearchFromGrid.getArguments().slice(5));
+	},
+	ServerBibViewType: function(SiteId, DBSource, iSearchId, ViewType) {
+		return this.invoke("ServerBibViewType", {"SiteId":SiteId, "DBSource":DBSource, "iSearchId":iSearchId, "ViewType":ViewType}, this.ServerBibViewType.getArguments().slice(4));
+	},
+	ServerResultSearchBydLib: function(SiteId, DBSource, MaxItem, Fieldsearch, Keyword, ItemsPerRow, NoOfVisiblePage, CurrentPage, JumpJavaScript, ItemsPerSegment) {
+		return this.invoke("ServerResultSearchBydLib", {"SiteId":SiteId, "DBSource":DBSource, "MaxItem":MaxItem, "Fieldsearch":Fieldsearch, "Keyword":Keyword, "ItemsPerRow":ItemsPerRow, "NoOfVisiblePage":NoOfVisiblePage, "CurrentPage":CurrentPage, "JumpJavaScript":JumpJavaScript, "ItemsPerSegment":ItemsPerSegment}, this.ServerResultSearchBydLib.getArguments().slice(10));
+	},
+	ServerResultSearchByTaiLieu: function(SiteId, drSourceUrl, DBSource, TotalItem, Fieldsearch, Keyword, ItemsPerRow, NoOfVisiblePage, CurrentPage, JumpJavaScript, ItemsPerSegment) {
+		return this.invoke("ServerResultSearchByTaiLieu", {"SiteId":SiteId, "drSourceUrl":drSourceUrl, "DBSource":DBSource, "TotalItem":TotalItem, "Fieldsearch":Fieldsearch, "Keyword":Keyword, "ItemsPerRow":ItemsPerRow, "NoOfVisiblePage":NoOfVisiblePage, "CurrentPage":CurrentPage, "JumpJavaScript":JumpJavaScript, "ItemsPerSegment":ItemsPerSegment}, this.ServerResultSearchByTaiLieu.getArguments().slice(11));
+	},
+	ServerResultSearchByXBTC: function(SiteId, drSourceUrl, DBSource, TotalItem, Fieldsearch, Keyword, ItemsPerRow, NoOfVisiblePage, CurrentPage, JumpJavaScript, ItemsPerSegment) {
+		return this.invoke("ServerResultSearchByXBTC", {"SiteId":SiteId, "drSourceUrl":drSourceUrl, "DBSource":DBSource, "TotalItem":TotalItem, "Fieldsearch":Fieldsearch, "Keyword":Keyword, "ItemsPerRow":ItemsPerRow, "NoOfVisiblePage":NoOfVisiblePage, "CurrentPage":CurrentPage, "JumpJavaScript":JumpJavaScript, "ItemsPerSegment":ItemsPerSegment}, this.ServerResultSearchByXBTC.getArguments().slice(11));
+	},
+	ServerResultSearchByTaiLieu_Bak: function(SiteId, DBSource, TotalItem, Fieldsearch, Keyword, ItemsPerRow, NoOfVisiblePage, CurrentPage, JumpJavaScript, ItemsPerSegment) {
+		return this.invoke("ServerResultSearchByTaiLieu_Bak", {"SiteId":SiteId, "DBSource":DBSource, "TotalItem":TotalItem, "Fieldsearch":Fieldsearch, "Keyword":Keyword, "ItemsPerRow":ItemsPerRow, "NoOfVisiblePage":NoOfVisiblePage, "CurrentPage":CurrentPage, "JumpJavaScript":JumpJavaScript, "ItemsPerSegment":ItemsPerSegment}, this.ServerResultSearchByTaiLieu_Bak.getArguments().slice(10));
+	},
+	ServerBookMarkBib: function(SiteId, BibId) {
+		return this.invoke("ServerBookMarkBib", {"SiteId":SiteId, "BibId":BibId}, this.ServerBookMarkBib.getArguments().slice(2));
+	},
+	ServerDeleteAllMarkBib: function(SiteId, BibId) {
+		return this.invoke("ServerDeleteAllMarkBib", {"SiteId":SiteId, "BibId":BibId}, this.ServerDeleteAllMarkBib.getArguments().slice(2));
+	},
+	ServerExcecuteReport: function(SiteId, ReportId, SearchFieldText) {
+		return this.invoke("ServerExcecuteReport", {"SiteId":SiteId, "ReportId":ReportId, "SearchFieldText":SearchFieldText}, this.ServerExcecuteReport.getArguments().slice(3));
+	},
+	ServerLinkBibSearch: function(SiteId, DBSources, Keyword, CurrentPage) {
+		return this.invoke("ServerLinkBibSearch", {"SiteId":SiteId, "DBSources":DBSources, "Keyword":Keyword, "CurrentPage":CurrentPage}, this.ServerLinkBibSearch.getArguments().slice(4));
+	},
+	ServerSendComment: function(SiteId, BibId, Title, Rating, VoteContent, CurrentPage) {
+		return this.invoke("ServerSendComment", {"SiteId":SiteId, "BibId":BibId, "Title":Title, "Rating":Rating, "VoteContent":VoteContent, "CurrentPage":CurrentPage}, this.ServerSendComment.getArguments().slice(6));
+	},
+	ServerLinkBibRefineSearchv2: function(SiteId, DBSources, Keyword, CurrentPage) {
+		return this.invoke("ServerLinkBibRefineSearchv2", {"SiteId":SiteId, "DBSources":DBSources, "Keyword":Keyword, "CurrentPage":CurrentPage}, this.ServerLinkBibRefineSearchv2.getArguments().slice(4));
+	},
+	ServerLinkBibRefineSearch: function(SiteId, DBSources, Keyword, CurrentPage) {
+		return this.invoke("ServerLinkBibRefineSearch", {"SiteId":SiteId, "DBSources":DBSources, "Keyword":Keyword, "CurrentPage":CurrentPage}, this.ServerLinkBibRefineSearch.getArguments().slice(4));
+	},
+	ServerResultSearchProquest: function(SiteId, Keyword, CurrentPage, SearchSessionId, SearchTypePro) {
+		return this.invoke("ServerResultSearchProquest", {"SiteId":SiteId, "Keyword":Keyword, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId, "SearchTypePro":SearchTypePro}, this.ServerResultSearchProquest.getArguments().slice(5));
+	},
+	ServerResultSearchSpringer: function(SiteId, Keyword, CurrentPage, SearchSessionId, SearchType) {
+		return this.invoke("ServerResultSearchSpringer", {"SiteId":SiteId, "Keyword":Keyword, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId, "SearchType":SearchType}, this.ServerResultSearchSpringer.getArguments().slice(5));
+	},
+	ServerResultLinkBibSearch: function(SiteId, DBSource, Keyword, CurrentPage, SearchSessionId) {
+		return this.invoke("ServerResultLinkBibSearch", {"SiteId":SiteId, "DBSource":DBSource, "Keyword":Keyword, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId}, this.ServerResultLinkBibSearch.getArguments().slice(5));
+	},
+	ServerResultLinkBibSearchDetail: function(SiteId, DBSource, BibId, Keyword, CurrentPage, SearchSessionId) {
+		return this.invoke("ServerResultLinkBibSearchDetail", {"SiteId":SiteId, "DBSource":DBSource, "BibId":BibId, "Keyword":Keyword, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId}, this.ServerResultLinkBibSearchDetail.getArguments().slice(6));
+	},
+	ServerResultProquestLinkSearchContent: function(SiteId, DBSource, TotalItem, xmlSearch, CurrentPage, SearchSessionId, strwhere) {
+		return this.invoke("ServerResultProquestLinkSearchContent", {"SiteId":SiteId, "DBSource":DBSource, "TotalItem":TotalItem, "xmlSearch":xmlSearch, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId, "strwhere":strwhere}, this.ServerResultProquestLinkSearchContent.getArguments().slice(7));
+	},
+	ServerResultSpringerLinkSearchContent: function(SiteId, DBSource, TotalItem, xmlSearch, CurrentPage, SearchSessionId) {
+		return this.invoke("ServerResultSpringerLinkSearchContent", {"SiteId":SiteId, "DBSource":DBSource, "TotalItem":TotalItem, "xmlSearch":xmlSearch, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId}, this.ServerResultSpringerLinkSearchContent.getArguments().slice(6));
+	},
+	ServerResultLinkBibSearchContent: function(SiteId, DBSource, TotalItem, xmlSearch, CurrentPage, SearchSessionId) {
+		return this.invoke("ServerResultLinkBibSearchContent", {"SiteId":SiteId, "DBSource":DBSource, "TotalItem":TotalItem, "xmlSearch":xmlSearch, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId}, this.ServerResultLinkBibSearchContent.getArguments().slice(6));
+	},
+	ServerResultLinkBibSearchFullContentV2: function(SiteId, DBSource, TotalItem, Keyword, CurrentPage, SearchSessionId) {
+		return this.invoke("ServerResultLinkBibSearchFullContentV2", {"SiteId":SiteId, "DBSource":DBSource, "TotalItem":TotalItem, "Keyword":Keyword, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId}, this.ServerResultLinkBibSearchFullContentV2.getArguments().slice(6));
+	},
+	ServerResultLinkBibSearchFullContent: function(SiteId, DBSource, TotalItem, Keyword, CurrentPage, SearchSessionId) {
+		return this.invoke("ServerResultLinkBibSearchFullContent", {"SiteId":SiteId, "DBSource":DBSource, "TotalItem":TotalItem, "Keyword":Keyword, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId}, this.ServerResultLinkBibSearchFullContent.getArguments().slice(6));
+	},
+	ServerResultQuickSearch: function(SiteId, DBSource, Keyword, SortFieldVal, CurrentPage, SearchSessionId) {
+		return this.invoke("ServerResultQuickSearch", {"SiteId":SiteId, "DBSource":DBSource, "Keyword":Keyword, "SortFieldVal":SortFieldVal, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId}, this.ServerResultQuickSearch.getArguments().slice(6));
+	},
+	ServerFullTextSearch: function(SiteId, DBSource, Keyword, SortFieldVal, CurrentPage, SearchSessionId) {
+		return this.invoke("ServerFullTextSearch", {"SiteId":SiteId, "DBSource":DBSource, "Keyword":Keyword, "SortFieldVal":SortFieldVal, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId}, this.ServerFullTextSearch.getArguments().slice(6));
+	},
+	ServerPagingOnChange: function(SiteId, CurrentSiteId, xmlSearch, CurrentPage, SearchSessionId, ItemsPerRow, NoOfVisiblePage) {
+		return this.invoke("ServerPagingOnChange", {"SiteId":SiteId, "CurrentSiteId":CurrentSiteId, "xmlSearch":xmlSearch, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId, "ItemsPerRow":ItemsPerRow, "NoOfVisiblePage":NoOfVisiblePage}, this.ServerPagingOnChange.getArguments().slice(7));
+	},
+	ServerInputMoneyPagingOnChange: function(SiteId, DBSource, CurrentSiteId, Keyword, CurrentPage, SearchSessionId) {
+		return this.invoke("ServerInputMoneyPagingOnChange", {"SiteId":SiteId, "DBSource":DBSource, "CurrentSiteId":CurrentSiteId, "Keyword":Keyword, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId}, this.ServerInputMoneyPagingOnChange.getArguments().slice(6));
+	},
+	ServerOutPutMoneyPagingOnChange: function(SiteId, DBSource, CurrentSiteId, Keyword, CurrentPage, SearchSessionId) {
+		return this.invoke("ServerOutPutMoneyPagingOnChange", {"SiteId":SiteId, "DBSource":DBSource, "CurrentSiteId":CurrentSiteId, "Keyword":Keyword, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId}, this.ServerOutPutMoneyPagingOnChange.getArguments().slice(6));
+	},
+	ServerRSKeywordGroupPagingOnChange: function(SiteId, DBSource, CurrentSiteId, Keyword, CurrentPage, SearchSessionId) {
+		return this.invoke("ServerRSKeywordGroupPagingOnChange", {"SiteId":SiteId, "DBSource":DBSource, "CurrentSiteId":CurrentSiteId, "Keyword":Keyword, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId}, this.ServerRSKeywordGroupPagingOnChange.getArguments().slice(6));
+	},
+	ServerRSClassGroupPagingOnChange: function(SiteId, DBSource, CurrentSiteId, Keyword, CurrentPage, SearchSessionId) {
+		return this.invoke("ServerRSClassGroupPagingOnChange", {"SiteId":SiteId, "DBSource":DBSource, "CurrentSiteId":CurrentSiteId, "Keyword":Keyword, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId}, this.ServerRSClassGroupPagingOnChange.getArguments().slice(6));
+	},
+	ServerRSSubjectGroupPagingOnChange: function(SiteId, DBSource, CurrentSiteId, Keyword, CurrentPage, SearchSessionId) {
+		return this.invoke("ServerRSSubjectGroupPagingOnChange", {"SiteId":SiteId, "DBSource":DBSource, "CurrentSiteId":CurrentSiteId, "Keyword":Keyword, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId}, this.ServerRSSubjectGroupPagingOnChange.getArguments().slice(6));
+	},
+	ServerPagingPositionBooksOnChange: function(SiteId, CurrentSiteId, BIB_Id, CurrentPage, SearchSessionId) {
+		return this.invoke("ServerPagingPositionBooksOnChange", {"SiteId":SiteId, "CurrentSiteId":CurrentSiteId, "BIB_Id":BIB_Id, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId}, this.ServerPagingPositionBooksOnChange.getArguments().slice(5));
+	},
+	ServerRecordPageOnchange: function(SiteId, xmlSearch, RecordVal, CurrentPage, SearchSessionId) {
+		return this.invoke("ServerRecordPageOnchange", {"SiteId":SiteId, "xmlSearch":xmlSearch, "RecordVal":RecordVal, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId}, this.ServerRecordPageOnchange.getArguments().slice(5));
+	},
+	ServerFieldSortOnchange: function(SiteId, xmlSearch, SortVal, CurrentPage, SearchSessionId, RecordVal) {
+		return this.invoke("ServerFieldSortOnchange", {"SiteId":SiteId, "xmlSearch":xmlSearch, "SortVal":SortVal, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId, "RecordVal":RecordVal}, this.ServerFieldSortOnchange.getArguments().slice(6));
+	},
+	ServerDeleteSearchHistory: function(SiteId, DataId) {
+		return this.invoke("ServerDeleteSearchHistory", {"SiteId":SiteId, "DataId":DataId}, this.ServerDeleteSearchHistory.getArguments().slice(2));
+	},
+	ServerResultAdvanceSearch: function(SiteId, xmlSearch, CurrentPage, SearchSessionId) {
+		return this.invoke("ServerResultAdvanceSearch", {"SiteId":SiteId, "xmlSearch":xmlSearch, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId}, this.ServerResultAdvanceSearch.getArguments().slice(4));
+	},
+	ServerFilterDetail: function(SiteId, xmlSearch, CurrentPage, SearchSessionId) {
+		return this.invoke("ServerFilterDetail", {"SiteId":SiteId, "xmlSearch":xmlSearch, "CurrentPage":CurrentPage, "SearchSessionId":SearchSessionId}, this.ServerFilterDetail.getArguments().slice(4));
+	},
+	ServerResultRefineSimpleSearch: function(SiteId, DBSource, SearchParam, BibType, Exactly, Unsigned, SortField, SortType, ItemsPerRow, NoOfVisiblePage, CurrentPage, JumpJavaScript, ItemsPerSegment, SearchSessionId) {
+		return this.invoke("ServerResultRefineSimpleSearch", {"SiteId":SiteId, "DBSource":DBSource, "SearchParam":SearchParam, "BibType":BibType, "Exactly":Exactly, "Unsigned":Unsigned, "SortField":SortField, "SortType":SortType, "ItemsPerRow":ItemsPerRow, "NoOfVisiblePage":NoOfVisiblePage, "CurrentPage":CurrentPage, "JumpJavaScript":JumpJavaScript, "ItemsPerSegment":ItemsPerSegment, "SearchSessionId":SearchSessionId}, this.ServerResultRefineSimpleSearch.getArguments().slice(14));
+	},
+	ServerResultPagingQuickSearch: function(SiteId, DBSource, SearchParam, Keyword, MaxItem, ItemsPerRow, NoOfVisiblePage, CurrentPage, JumpJavaScript, ItemsPerSegment, SearchSessionId) {
+		return this.invoke("ServerResultPagingQuickSearch", {"SiteId":SiteId, "DBSource":DBSource, "SearchParam":SearchParam, "Keyword":Keyword, "MaxItem":MaxItem, "ItemsPerRow":ItemsPerRow, "NoOfVisiblePage":NoOfVisiblePage, "CurrentPage":CurrentPage, "JumpJavaScript":JumpJavaScript, "ItemsPerSegment":ItemsPerSegment, "SearchSessionId":SearchSessionId}, this.ServerResultPagingQuickSearch.getArguments().slice(11));
+	},
+	ServerResultSimpleSearch: function(SiteId, DBSource, SearchParam, BibType, Exactly, Unsigned, SortField, SortType, ItemsPerRow, NoOfVisiblePage, CurrentPage, JumpJavaScript, ItemsPerSegment, SearchSessionId) {
+		return this.invoke("ServerResultSimpleSearch", {"SiteId":SiteId, "DBSource":DBSource, "SearchParam":SearchParam, "BibType":BibType, "Exactly":Exactly, "Unsigned":Unsigned, "SortField":SortField, "SortType":SortType, "ItemsPerRow":ItemsPerRow, "NoOfVisiblePage":NoOfVisiblePage, "CurrentPage":CurrentPage, "JumpJavaScript":JumpJavaScript, "ItemsPerSegment":ItemsPerSegment, "SearchSessionId":SearchSessionId}, this.ServerResultSimpleSearch.getArguments().slice(14));
+	},
+	ServerSearchKeyword: function(SiteId, TableName, Keyword, BibType, Exactly, Unsigned, SortField, SortType, ItemsPerRow, NoOfVisiblePage, CurrentPage, JumpJavaScript, ItemsPerSegment, SearchSessionId) {
+		return this.invoke("ServerSearchKeyword", {"SiteId":SiteId, "TableName":TableName, "Keyword":Keyword, "BibType":BibType, "Exactly":Exactly, "Unsigned":Unsigned, "SortField":SortField, "SortType":SortType, "ItemsPerRow":ItemsPerRow, "NoOfVisiblePage":NoOfVisiblePage, "CurrentPage":CurrentPage, "JumpJavaScript":JumpJavaScript, "ItemsPerSegment":ItemsPerSegment, "SearchSessionId":SearchSessionId}, this.ServerSearchKeyword.getArguments().slice(14));
+	},
+	ServerSearchInRefineSimpleSearch: function(SiteId, SearchTextRS, SearchFieldText, KeywordInRefine, BibType, Exactly, Unsigned, SortField, SortType, ItemsPerRow, NoOfVisiblePage, CurrentPage, JumpJavaScript, ItemsPerSegment, SearchSessionId) {
+		return this.invoke("ServerSearchInRefineSimpleSearch", {"SiteId":SiteId, "SearchTextRS":SearchTextRS, "SearchFieldText":SearchFieldText, "KeywordInRefine":KeywordInRefine, "BibType":BibType, "Exactly":Exactly, "Unsigned":Unsigned, "SortField":SortField, "SortType":SortType, "ItemsPerRow":ItemsPerRow, "NoOfVisiblePage":NoOfVisiblePage, "CurrentPage":CurrentPage, "JumpJavaScript":JumpJavaScript, "ItemsPerSegment":ItemsPerSegment, "SearchSessionId":SearchSessionId}, this.ServerSearchInRefineSimpleSearch.getArguments().slice(15));
+	},
+	ServerSearchInRefineAdvanceSearch: function(SiteId, SearchTextRS, SearchFieldText, KeywordInRefine, BibType, Exactly, Unsigned, SortField, SortType, ItemsPerRow, NoOfVisiblePage, CurrentPage, JumpJavaScript, ItemsPerSegment, SearchSessionId) {
+		return this.invoke("ServerSearchInRefineAdvanceSearch", {"SiteId":SiteId, "SearchTextRS":SearchTextRS, "SearchFieldText":SearchFieldText, "KeywordInRefine":KeywordInRefine, "BibType":BibType, "Exactly":Exactly, "Unsigned":Unsigned, "SortField":SortField, "SortType":SortType, "ItemsPerRow":ItemsPerRow, "NoOfVisiblePage":NoOfVisiblePage, "CurrentPage":CurrentPage, "JumpJavaScript":JumpJavaScript, "ItemsPerSegment":ItemsPerSegment, "SearchSessionId":SearchSessionId}, this.ServerSearchInRefineAdvanceSearch.getArguments().slice(15));
+	},
+	ServerResultAdvSearch: function(SiteId, DBSource, SearchParam, BibType, Exactly, Unsigned, SortField, SortType, ItemsPerRow, NoOfVisiblePage, CurrentPage, JumpJavaScript, ItemsPerSegment, SearchSessionId) {
+		return this.invoke("ServerResultAdvSearch", {"SiteId":SiteId, "DBSource":DBSource, "SearchParam":SearchParam, "BibType":BibType, "Exactly":Exactly, "Unsigned":Unsigned, "SortField":SortField, "SortType":SortType, "ItemsPerRow":ItemsPerRow, "NoOfVisiblePage":NoOfVisiblePage, "CurrentPage":CurrentPage, "JumpJavaScript":JumpJavaScript, "ItemsPerSegment":ItemsPerSegment, "SearchSessionId":SearchSessionId}, this.ServerResultAdvSearch.getArguments().slice(14));
+	},
+	ServerReformatKeyword: function(SiteId, Keyword) {
+		return this.invoke("ServerReformatKeyword", {"SiteId":SiteId, "Keyword":Keyword}, this.ServerReformatKeyword.getArguments().slice(2));
+	},
+	ServerResultSearchByLib: function(SiteId, DBSource, Keyword, ItemsPerRow, NoOfVisiblePage, CurrentPage, JumpJavaScript, ItemsPerSegment, SearchSessionId) {
+		return this.invoke("ServerResultSearchByLib", {"SiteId":SiteId, "DBSource":DBSource, "Keyword":Keyword, "ItemsPerRow":ItemsPerRow, "NoOfVisiblePage":NoOfVisiblePage, "CurrentPage":CurrentPage, "JumpJavaScript":JumpJavaScript, "ItemsPerSegment":ItemsPerSegment, "SearchSessionId":SearchSessionId}, this.ServerResultSearchByLib.getArguments().slice(9));
+	},
+	ServerGetDataRegisterShort: function(SiteId, StrBib) {
+		return this.invoke("ServerGetDataRegisterShort", {"SiteId":SiteId, "StrBib":StrBib}, this.ServerGetDataRegisterShort.getArguments().slice(2));
+	},
+	ServerViewRefineSearch: function(SiteId, FieldTextSearch, TabSearch, IsRefine) {
+		return this.invoke("ServerViewRefineSearch", {"SiteId":SiteId, "FieldTextSearch":FieldTextSearch, "TabSearch":TabSearch, "IsRefine":IsRefine}, this.ServerViewRefineSearch.getArguments().slice(4));
+	},
+	ServerSearchHistoryKeyword: function(SiteId, DataId) {
+		return this.invoke("ServerSearchHistoryKeyword", {"SiteId":SiteId, "DataId":DataId}, this.ServerSearchHistoryKeyword.getArguments().slice(2));
+	},
+	ServerSyncSearchHistory: function(SiteId, FieldTextSearch, SubCount) {
+		return this.invoke("ServerSyncSearchHistory", {"SiteId":SiteId, "FieldTextSearch":FieldTextSearch, "SubCount":SubCount}, this.ServerSyncSearchHistory.getArguments().slice(3));
+	},
+	url: '/ajaxpro/iMan.Opac.FrontEnd.iSearchProcess,iMan.Opac.FrontEnd.ashx'
+}));
+iMan.Opac.FrontEnd.iSearchProcess = new iMan.Opac.FrontEnd.iSearchProcess_class();
+

@@ -1,0 +1,806 @@
+<!doctype html>
+<html lang="0">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<title>İSAM Kütüphanesi 21.6</title>
+	<base href="/yordam/" />
+	<meta name="description" content="İSAM Kütüphanesi Katalog Tarama Otomasyonu - Yordam 21.6" />
+	<meta name="keywords" content="İSAM Kütüphanesi Katalog Tarama Otomasyonu - Yordam 21.6" />
+	<meta name="viewport" id="viewport" content="width=device-width, initial-scale=1.0" />
+	<!--<meta name="viewport" id="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no, user-scalable=no"/>-->
+	<meta http-equiv="Cache-control" content="max-age=604800">
+
+	<meta property="og:url" content="https://katalog.isam.org.tr/?dil=0">
+	<meta property="og:type" content="article" />
+	<meta property="og:title" content="İSAM Kütüphanesi " />
+	<meta property="og:description" content="Kütüphane, library" />
+	<meta property="og:image" content="https://katalog.isam.org.tr/yordam/kurumsal/logo.png" />
+	<meta name="google-site-verification" content="NM6HxunFJQUy3SQO11hh2-JWr-kJzy-gkHJjlgeofp0" />
+	<link href="https://katalog.isam.org.tr/yordam/kurumsal/logo.png" rel="shortcut icon" type="image/png" />
+	<link href="css/theme.css" rel="stylesheet">
+	<link href="css/font.css" rel="stylesheet">
+	<link href="css/stil.css?v=1" rel="stylesheet">
+
+			<meta name="apple-itunes-app" content="app-id=1075763051">
+		<meta name="google-play-app" content="app-id=com.yordam.cep.kutuphanem">
+	
+	<script nonce=78073f28b57dbf4816971461aff044a2>
+		if (window.location.hash != '') window.location.hash = window.location.hash.replace(/[^a-zA-Z_\d=]/ig, "")
+
+		var ss = ["uyeFavori", "uyari", "favori", "tkSecililer", "seciliTarih", "seciliSaat", "boyutOran", "ayirtmaDevam", "depoDevam", "gizlilik", "parametreler"]
+		var ls = ["uyeFavori", "uyeKodKN", "sifre"]
+
+
+		ss.forEach(function(item, index) {
+			if (sessionStorage.getItem(item) != null && sessionStorage.getItem(item) != undefined) {
+				sessionStorage.setItem(item, sessionStorage.getItem(item).replace(/[^a-zA-ZüğışçöÜĞIŞÇÖ\/\d\s,\.:x'"|]/ig, ""))
+			}
+		})
+		ls.forEach(function(item, index) {
+			if (localStorage.getItem(item) != null && localStorage.getItem(item) != undefined) {
+				localStorage.setItem(item, localStorage.getItem(item).replace(/[^a-zA-ZüğışçöÜĞIŞÇÖ\/\d\s,\.:x'"|]/ig, ""))
+			}
+		})
+	</script>
+
+
+	<script nonce=78073f28b57dbf4816971461aff044a2>
+		nonce = "78073f28b57dbf4816971461aff044a2"
+		dil = "0";
+		_kapat = "Kapat";
+		_detay = "Ayrıntı";
+		_evet = "Evet";
+		_hayir = "Hayır";
+		_iptal = "İptal";
+		_silinecek = "Silmek istediğinziden emin misiniz?";
+		_islembasarili = "İşlem başarılı";
+		_hatatekrardene = "Bir hata oluştu. Lütfen tekrar deneyin.";
+		_eminmisiniz = "Emin misiniz?";
+		_dahafazla = "Daha fazlası";
+		_onayla = "Onayla";
+		_onaylama = "Reddet";
+		_aydinlatmametni = "Aydınlatma Metni";
+		_acikrizametni = "Açık Rıza Metni";
+		_depobaslik = "Depo istekleriniz ilgili birime iletilecektir. SMS aldığınızda belirlediğiniz konuma gidip eseri alabilirsiniz.";
+		_kopyalandi = "Kopyalandı";
+		_marckaydet = "MARC Kaydet";
+		_yordamaktarim = "Yordam Aktar";
+		_marcgorunum = "MARC Görünüm";
+		_fisyazdirilacak = "Fiş Yazdırılacak";
+		_tiklayiniz = "Tıklayınız";
+		_aramagir = "Aramanızı girin";
+		_uygunformattadegil = "Uygun formatta değil.";
+		_bulunamadi = "Bulunamadı";
+		_acilirpencereyeizingerekir = "Bu içerik yeni pencerede açılacak. Tarayıcınıza açılır pencere engelleyici varsa izin vermeniz gerekir.";
+		_sozlesmeuyari = "Üyelik sözleşmesini okuyup kabul etmediğiniz takdirde, oturumla yapılan işlemleri kullanamayacaksınız.";
+
+		uyeKodKN = "";
+		uyeKartKN = "";
+		yazilim = "yordam";
+		webYayin = "/yordam";
+		ipYayin = "https://katalog.isam.org.tr/yordam";
+		ipHost = "https://katalog.isam.org.tr";
+		domain = "https://katalog.isam.org.tr";
+		sso = "";
+		cikisLinki = "";
+		otomatikTamamlama = "1";
+		p = "0";
+		kiosk = "0";
+		q = "";
+		alan = "";
+		tip = "";
+		tk = "";
+		ek = "";
+		kioskFisTuru = "";
+		kioskKutuphane = "";
+		kioskLogo = "";
+		url = ipYayin + "/?dil=0";
+		dosyaUzantilari = JSON.parse('{"mp3":"far fa-file-audio","mp4":"far fa-file-video","pdf":"far fa-file-pdf","jpg":"far fa-file-image","jpeg":"far fa-file-image","gif":"far fa-file-image","docx":"far fa-file-word","xlsx":"far fa-file-excel","png":"far fa-file-image","doc":"far fa-file-word","rar":"far fa-file-archive","zip":"far fa-file-archive","xls":"far fa-file-excel","txt":"far fa-file","link":"fas fa-external-link-square-alt","list":"fas fa-list"}');
+		token = "090719a9dd95e9989932e00ff804687c";
+		cn = "";
+		sosyalMedyalar = JSON.parse('[]');
+		renkler = JSON.parse('["#c9713b","#eee6b8","#6dab63","#c28b8b","#67d3ff","#ccb080","#5e846b","#446b75","#5b6c60","#531632","#f28080","#2d534b","#1c1c3b","#f4bc8d","#330000","#936b21","#bcbcb5","#c56666","#7d2626","#b5b51e","#593872","#438243","#5e5d5d","#4b4747","#008fff","#422c37","#804040","#004040","#5d4ef5","#8be4f2","#eb2b50","#d9c1b5"]');
+		devam = "https://katalog.isam.org.tr/yordam/?p=2&dil=0&devam=68747470733a2f2f6b6174616c6f672e6973616d2e6f72672e74722f3f64696c3d30";
+	</script>
+
+
+
+
+	<script nonce=78073f28b57dbf4816971461aff044a2 type="text/javascript" src="plugins/jquery-3.7.1.min.js"></script>
+
+	
+	<script nonce=78073f28b57dbf4816971461aff044a2 type="text/javascript" src="plugins/popper.min.js"></script>
+	<script nonce=78073f28b57dbf4816971461aff044a2 type="text/javascript" src="plugins/qrcode.min.js?v=1"></script>
+	<script nonce=78073f28b57dbf4816971461aff044a2 type="text/javascript" src="plugins/bootstrap.min.js"></script>
+		<script nonce=78073f28b57dbf4816971461aff044a2 type="text/javascript" src="plugins/typeahead/jquery.typeahead.min.js"></script>
+	<link href="plugins/typeahead/jquery.typeahead.min.css" rel="stylesheet">
+	<script nonce=78073f28b57dbf4816971461aff044a2 type="text/javascript" src="js/fonksiyon.js?v=9"></script>
+
+   <script nonce=78073f28b57dbf4816971461aff044a2 type="text/javascript" src="plugins/chart.min.js"></script>
+
+
+
+	<script nonce=78073f28b57dbf4816971461aff044a2>
+		//
+	</script>
+
+	<script nonce=78073f28b57dbf4816971461aff044a2 async src='https://www.googletagmanager.com/gtag/js?id=G-MFRKVFV05X'></script> <script nonce=78073f28b57dbf4816971461aff044a2>   window.dataLayer = window.dataLayer || [];   function gtag(){dataLayer.push(arguments);}   gtag('js', new Date());   gtag('config', 'G-MFRKVFV05X'); </script>
+
+	<style>
+		.ust3 {
+			background-image: url("/yordam/kurumsal/ustkusak.jpg")
+		}
+	</style>
+
+	
+
+</head>
+
+
+
+<body data-kiosk='0' data-p='0' data-yazilim='yordam'>
+<script nonce=78073f28b57dbf4816971461aff044a2 type="text/javascript">
+	$(document).ready(function() {
+
+		//alert(navigator.userAgent);
+
+		var str = navigator.userAgent;
+		try {
+			var tmp = str.match(/CPU iPhone OS (\d+)_/i);
+			var ver = tmp[1];
+			if (ver < 14) {
+				alertOzel("Tarayıcınız güncel değil lütfen güncel bir sürüm yükleyiniz.");
+			}
+		} catch (e) {
+			//console.log(e)
+		}
+
+		kioskOturum("60");
+
+		//sozlesme kontrol
+		if (0) {
+			pencereSozlesme("<div class='text-left'></div>", "", "");
+		}
+
+
+		/*
+		//adres satirinda demirbas varsa
+		if (window.location.href.match(/&demirbas=(.*)/g) && p == 1) {
+			var dizi = window.location.href.split("&");
+			var demirbas = "";
+			$.each(dizi, function() {
+				if (this.indexOf("demirbas") > -1) {
+					demirbas = this.split("=")[1];
+				}
+			})
+
+			//pencereDetay(detayGetir(demirbas, q));
+		}
+		*/
+
+		if (sessionStorage.favori == null || sessionStorage.favori.match(/undefined/)) sessionStorage.favori = "";
+
+		$("a.cikis").click(function(e) {
+			e.preventDefault();
+			var cikisLinki = $(this).attr("href");
+			$(this).after(yukleniyor());
+			$(this).remove();
+			if (cikisLinki != "#" && sso == "1") {
+				cikis()
+				var geciciPencere = window.open(cikisLinki, "", "width=600,height=400");
+				setTimeout(function() {
+					geciciPencere.close();
+					location.reload();
+				}, 5000);
+			} else {
+				cikis()
+			}
+		})
+
+		function cikis() {
+			$.post("inc/islem.fm.inc.php", {
+				islem: "cikis",
+				dil: "0"
+			}, function(data) {
+				localStorage.clear();
+				sessionStorage.clear();
+				if (sso != "1") {
+					location.reload();
+				}
+			});
+		}
+
+		//sepet islemleri
+		//sepet islemleri
+		//sepet islemleri
+
+		$("a.sepetUst[href='#']").click(function(e) {
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			//$("a.sepetUst").popover({title: "Header", html:true, content: $(".tmp").html(), placement: "bottom"}).popover("show");  return false;
+			//uye olmayan icin modal aciyoruz
+			$("body").append("<div class='tmp'></div>");
+			$(".tmp").load("sayfa/favori.php?nonce=" + nonce, function(response, status, xhr) {
+				pencere("Okuma Listem", $(".tmp").html(), "modal-md");
+				$(".tmp").remove();
+			});
+		})
+
+
+
+		
+			$(document).on("click", ".kutu .favori", function(e) {
+				e.preventDefault();
+				e.stopImmediatePropagation();
+				var kutu = $(e.target).parents(".kutu");
+				var demirbas = kutu.data("demirbas");
+				var eseradi = kutu.data("eseradi");
+				kutu.find(".favori i.fa-star").addClass("alarmKisa");
+				if (sessionStorage.favori.indexOf(demirbas + "|") < 0) {
+					sessionStorage.favori += demirbas + "|" + eseradi + "|||";
+					sepetUcma(kutu.find(".gorsel img"), $("a.sepetUst"));
+				} else sessionStorage.favori = sessionStorage.favori.replace(demirbas + "|" + eseradi + "|||", "");
+				favoriKontrol();
+			})
+			favoriKontrol();
+
+
+		
+		$("[name=dil]").change(function() {
+			$("#dilForm").submit();
+		})
+
+
+
+	})
+</script>
+
+
+<div class="container-fluid ustKusak p0">
+
+
+	<div class="ust1">
+		<div class="container">
+			<div class="row">
+				<div class='logoKapsayan col-md-4'>
+					<div class='logoKapsayanIcerik d-flex align-items-center'>
+
+													<div class=''><a href="https://katalog.isam.org.tr/yordam/?p=0&dil=0"><img class='logo' src='kurumsal/logo.png' alt='logo' /></a></div>
+							<div class='ml-2 logoMetin d-none d-xl-block'>
+								<a href="https://katalog.isam.org.tr/yordam/?p=0&dil=0">
+									<h3>İSAM Kütüphanesi</h3>
+								</a>
+							</div>
+											</div>
+				</div>
+
+				<div class='col-md-8 my-auto'>
+
+					<nav class='navbar navbar-expand-lg p-0 float-right'>
+
+						<button class="navbar-toggler position-fixed ustSagNavigasyonBtn" type="button" data-toggle="collapse" data-target="#ustSagNavigasyon">
+							<i class='fa fa-bars'></i>
+						</button>
+
+						<div class='collapse navbar-collapse' id="ustSagNavigasyon">
+
+							<ul class='navbar mb-0 p-0 sag small'>
+
+																								
+								
+								
+
+								
+									
+									
+								
+
+								
+
+								
+									
+								<li class='nav-item'>
+									              <a href='/yordam/?p=2&dil=0&devam=2f3f64696c3d30#girisFormKapsayan' class='nav-link py-0 px-2 small oturumAcBtn' data-toggle='tooltip' title='Admin'>
+									                  <i class='fas fa-key'></i> Admin
+									              </a>
+									          </li>
+								
+								<li class='nav-item dil'>
+									<form method='get' id='dilForm' class='form'>
+										<select class='form-control form-control-sm pr-4 border-0 bg-transparent text-primary' name='dil' ><option value='0' selected>Türkçe</option><option value='2' >Русский</option><option value='3' >English</option><option value='8' >العربية</option></select>									</form>
+								</li>
+							</ul>
+						</div>
+						<!--navbar-collapse-->
+					</nav>
+				</div>
+			</div>
+			<!--row-->
+		</div>
+		<!--container-->
+
+	</div>
+
+</div>
+<!--container-fluid-->
+
+
+<span class='dilSecimSablon d-none'>
+	<select class='form-control form-control-lg custom-select' name="q">
+		<option value='tur'>Türkçe</option><option value=abk >Abhazca </option><option value=ady1 >Adigece </option><option value=pus >Afganca/Peştuca </option><option value=akk >Akadca </option><option value=ger >Almanca </option><option value=alt >Altay Türkçesi </option><option value=tut >Altay Türkçesi </option><option value=amh >Amharca </option><option value=arc >Aramice </option><option value=ara >Arapça </option><option value=alb >Arnavutça </option><option value=ava >Avarca </option><option value=aze >Azerbaycan Türkçesi </option><option value=akk >Babilce </option><option value=bam >Bambaraca </option><option value=baq >Baskça </option><option value=bak >Başkurt Türkçesi </option><option value=bel >Belarusça </option><option value=ben >Bengalce </option><option value=bos >Boşnakça </option><option value=bul >Bulgarca </option><option value=bua >Buryatça </option><option value=dan >Danca </option><option value=dari >Dari-Farsça </option><option value=ind >Endonezyaca </option><option value=arm >Ermenice </option><option value=tut5 >Eski Uygur Türkçesi </option><option value=epo >Esperanto </option><option value=est >Estonca </option><option value=gez >Ethiopic </option><option value=fao >Faroece </option><option value=per >Farsça </option><option value=dut1 >Felemenkçe </option><option value=dutb >Felemenkçe </option><option value=fil >Filipince </option><option value=fin >Fince </option><option value=fre >Fransızca </option><option value=tut1 >Gagauz Türkçesi </option><option value=glg >Galiçyaca </option><option value=gil >Gilbertese </option><option value=tup >Guarani </option><option value=guj >Guceratça </option><option value=geo >Gürcüce </option><option value=hat >Haiti </option><option value=kha >Hakas Türkçesi </option><option value=tut2 >Harezm Türkçesi </option><option value=hau >Hausaca </option><option value=haw >Havaice </option><option value=hin >Hintçe </option><option value=dut >Hollandaca </option><option value=hrv >Hırvatça </option><option value=scr >Hırvatça </option><option value=jpn >Japonca </option><option value=kbd >Kabardeyce </option><option value=xal >Kalmuk Türkçesi </option><option value=cnr >Karadağca </option><option value=tut4 >Karahanlı Türkçesi/Hakaniye Türkçesi </option><option value=kaa >Karakalpak Türkçesi </option><option value=kar >Karamanlı Türkçesi </option><option value=krc >Karaçay-Balkar Türkçesi </option><option value=cat >Katalanca </option><option value=kaz >Kazak Türkçesi </option><option value=khm >Kmerce </option><option value=kor >Korece </option><option value=cos >Korsikaca </option><option value=tut7 >Kuman Türkçesi (Bozkır Kıpçakçası) </option><option value=kum >Kumuk Türkçesi </option><option value=tut6 >Köktürk Türkçesi </option><option value=kur >Kürtçe </option><option value=kir >Kırgız Türkçesi </option><option value=tat >Kırım Tatar Türkçesi-Kazan Tatar Türkçesi </option><option value=lat >Latince </option><option value=laz >Lazca </option><option value=lav >Letonca </option><option value=lit >Litvanca </option><option value=lug >Lugandaca </option><option value=luo >Luo </option><option value=hun >Macarca </option><option value=mlg >Madagaskarca </option><option value=mac >Makedonca </option><option value=may >Malayca </option><option value=mar >Marathice </option><option value=chm >Marice </option><option value=min >Megrelce </option><option value=mol >Moldovca </option><option value=mos >Morece </option><option value=mon >Moğolca </option><option value=egy >Mısırca </option><option value=nep >Nepalce </option><option value=nic >Nijer-Kordofan </option><option value=nog >Nogay Türkçesi </option><option value=nor >Norveççe </option><option value=ota >Osmanlı Türkçesi </option><option value=tut8 >Oğuz Türkçesi </option><option value=pol >Polca/Lehçe </option><option value=por >Portekizce </option><option value=sai >Pume </option><option value=rom >Romani </option><option value=grc >Rumca </option><option value=rum >Rumence </option><option value=rus >Rusça </option><option value=cab >Sabuanca </option><option value=smi >Sami </option><option value=smo >Samoaca </option><option value=san >Sanskritçe </option><option value=sin >Seylanca </option><option value=sla >Slavca </option><option value=slo >Slovakça </option><option value=slv >Slovence </option><option value=som >Somalice </option><option value=swa >Svahili </option><option value=sux >Sümerce </option><option value=syc >Süryanice </option><option value=scc >Sırpça </option><option value=tg >Tacikçe </option><option value=tgk >Tacikçe </option><option value=tam >Tamilce </option><option value=tut3 >Tatar Türkçesi </option><option value=tha >Tayca </option><option value=tib >Tibetçe </option><option value=tir >Tigrinya </option><option value=tvl >Tuva Türkçesi </option><option value=tuk >Türkmen Türkçesi </option><option value=tur >Türkçe </option><option value=ukr >Ukraynaca </option><option value=urd >Urduca </option><option value=uig >Uygur Türkçesi </option><option value=vie >Vietnamca </option><option value=sah >Yakut Türkçesi </option><option value=gre >Yunanca </option><option value=son >Zarma </option><option value=zaz >Zazaca </option><option value=zza >Zaza </option><option value=zul >Zuluca (Afrikan) </option><option value=chg >Çağatay Türkçesi </option><option value=cze >Çekçe </option><option value=ady >Çerkesçe </option><option value=nya >Çevaca </option><option value=che >Çeçence </option><option value=chi >Çince </option><option value=mul >Çok dilli </option><option value=chv >Çuvaş Türkçesi </option><option value=uzb >Özbek Türkçesi </option><option value=heb >İbranice </option><option value=eng >İngilizce </option><option value=gle >İrlandaca </option><option value=sco >İskoçça (Cermen dili) </option><option value=gla >İskoçça (Kelt dili) </option><option value=spa >İspanyolca </option><option value=swe >İsveççe </option><option value=ita >İtalyanca </option><option value=ice >İzlandaca </option><option value=sna >Şona </option>	</select>
+</span>
+
+
+
+
+
+
+
+
+   <script nonce=78073f28b57dbf4816971461aff044a2>
+      $(document).ready(function() {
+         setTimeout(function() {
+            $("#cepKutuphanemMarketPenceresi").modal("show");
+         }, 1000);
+      })
+   </script>
+
+
+
+
+<script nonce=78073f28b57dbf4816971461aff044a2 type="text/javascript" src="plugins/chart.min.js"></script>
+
+
+<div class="container-fluid p0">
+
+   <div class="ust3" style='background-image:url(/yordam/kurumsal/anasayfaarkaplan.jpg)'>
+
+      <div class="container h-100">
+         <div class="row h-100">
+            <div class='col-md-3'></div>
+            <div class="col-md-6 my-auto w-100 text-center">
+
+               <div class="aramaFormKapsayan">
+                  <div class='row mb-2'>
+                     <div class='col-md-12'>
+                        
+
+
+
+<script nonce=78073f28b57dbf4816971461aff044a2>
+   $(document).ready(function() {
+
+      if (alan == 'qDil_txt') {
+         $("select[name=q] option[value=" + q + "]").prop("selected", true);
+      }
+
+      //var u = new SpeechSynthesisUtterance();
+      //u.text = 'test';
+      //u.lang = 'en-US';
+      //u.rate = 1.2;
+      //speechSynthesis.speak(u);
+
+      if ("webkitSpeechRecognition" in window) {
+
+         var recognition = new webkitSpeechRecognition();
+
+         $("input[name='q']").addClass("pl-4")
+         //recognition.continuous = true;
+         $(".mikrofon").removeClass("d-none");
+         $(".mikrofon").click(function() {
+            if ($(this).hasClass("aktif")) {
+               $(this).removeClass("aktif");
+               recognition.stop();
+            } else {
+               $(this).addClass("aktif");
+               recognition.start();
+            }
+         })
+
+         recognition.onresult = function(event) {
+            if (event.results.length > 0) {
+               var deger = $("input[name='q']").val();
+               $("input[name='q']").val(deger + " " + event.results[0][0].transcript);
+               recognition.stop();
+               setTimeout(function() {
+                  recognition.start();
+               }, 500)
+               //q.form.submit();
+            }
+         } //onresult
+
+      } //webkitSpeechRecognition
+
+   })
+</script>
+
+
+<form action='' method='get' class='aramaForm w-100'>
+
+   <input type='hidden' name="dil" value="0"/>
+   <input type="hidden" name='p' value='1' />
+
+   
+   <div class="form-group formSatir mb-0 mt-4">
+
+      <div class="typeahead__container">
+         <div class="typeahead__field">
+            <div class="typeahead__query">
+               <div class="input-group qKapsayan">
+
+                  <input type="text" class="form-control form-control-lg arama" name='q' autocomplete="off" spellcheck="false" placeholder="Aramanızı girin" value="">
+                  <i class='fas fa-microphone mikrofon d-none'></i>
+                  <div class="input-group-append a1">
+                     <select class='form-control  form-control-lg custom-select' name="alan" data-onceki=''>
+                        <option value='tum_txt' >Tüm Alanlarda</option><option value='qYazarlar_txt' >Yazar</option><option value='qEser_txt' >Eser Adı</option><option value='qKonu_txt' >Konu</option><option value='kunyeDilKN_str' >Dil</option><option value='qYayinTarihi_txt' >Yayın Tarihi</option><option value='kunyeYayinlayan_txt' >Yayınlayan</option><option value='kunyeYayinYeri_txt' >Yayın Yeri</option><option value='kunyeSiniflamaYer_txt' >Sınıflama yer bilgisi</option><option value='kunyeISBNISSN_txt' >ISBN</option><option value='kunyeDemirbasKN_txt' >Demirbaş</option>                     </select>
+                  </div>
+                  <div class="input-group-append a2">
+                     <button class="btn btn-primary btn-lg" type="submit" data-toggle='tooltip' title='Arama'><i class='fas fa-search'></i> Arama</button>
+                  </div>
+                                       <div class="input-group-append a3 ml-lg-4">
+                        <a href='?p=1&dil=0&q=&alan=&tip=gelismis&gorunum=liste' class="btn btn-primary border btn-lg detayliAramaBtn" data-toggle='tooltip' title='Detaylı Arama'>
+                           <span class="small"><i class='fas fa-list'></i></span>
+                        </a>
+                     </div>
+                                 </div>
+            </div>
+            <!--typeahead__query-->
+         </div>
+         <!--typeahead__field_-->
+      </div>
+      <!--typeahead__container-->
+
+   </div>
+
+</form>                     </div>
+                  </div>
+                  <div class='row px-3 py-1'>
+      <div class='col-md-12'>
+      <div class='adetler d-flex flex-wrap justify-content-around text-white p-3'><div class=''>
+               <span class='px-3'>Kitap</span>
+               <h4 class='saydir'>335545</h4>
+               </div><div class=''>
+               <span class='px-3'>Tez</span>
+               <h4 class='saydir'>15258</h4>
+               </div><div class=''>
+               <span class='px-3'>Süreli</span>
+               <h4 class='saydir'>4658</h4>
+               </div></div></div></div>
+                                       <!--slogan-->
+                     <div class="row px-3  py-2 mb-3">
+                        <div class="col-md-12">
+                           <div class="p-3 text-center text-white sloganKapsayan">
+                              <h4 class='mb-1'>ARAMA İPUCU</h4>
+                              <p class='text-white-50'>Aradığınız eserin künyesine süratle ulaşmak için sorgulamanızı aralarında boşluk bırakarak eser ve yazar isminden birkaç kelime yazarak yapınız.  Örnek: Nabia Abbott     papyri</p>
+                           </div>
+                        </div>
+                     </div>
+                                 </div>
+               <!--aramaFormKapsayan-->
+            </div>
+            <div class='col-md-3'></div>
+         </div>
+      </div>
+   </div>
+
+
+</div>
+
+
+<div class="container pb-5">
+   <div class='anasayfaTabKapsayan text-center pb-3'>
+
+      <ul class="nav nav-tabs justify-content-center pb-0" role="tablist">
+         <li class='nav-item'>
+            <a class='nav-link' data-toggle='tab' href='#_konular'><i class='fas fa-list'></i> Konular</a>
+            </li><li class='nav-item'>
+            <a class='nav-link' data-toggle='tab' href='#_yeniler'><i class='fas fa-angle-double-down'></i> Yeni Gelenler</a>
+            </li><li class='nav-item'>
+            <a class='nav-link' data-toggle='tab' href='#_kutuphanekullanimi'><i class='fas fa-chart-line'></i> Kütüphane Kullanımı</a>
+            </li><li class='nav-item'>
+            <a class='nav-link' data-toggle='tab' href='#_istatistik'><i class='fas fa-chart-pie'></i> İstatistik</a>
+            </li>
+      </ul>
+   </div>
+
+   <div class="tab-content anasayfaTabIcerikKapsayan col-md-12">
+
+      <!--sekme-->
+               <div id="_kutuphanekullanimi" class="tab-pane fade mt-3">
+            <div class='row kutuphanekullanimi'></div>
+         </div>
+         <!--tab-pane-->
+      
+      <!--sekme-->
+      
+      <!--sekme-->
+               <div id="_istatistik" class="tab-pane fade mt-3">
+            <div class='row istatistik'></div>
+         </div>
+         <!--tab-pane-->
+      
+      <!--sekme-->
+               <div id="_konular" class="tab-pane fade mt-3">
+            <div class='row'>
+               <div class='col-md-12 konular'></div>
+               <!--col-->
+            </div>
+            <!--row-->
+         </div>
+         <!--tab-pane-->
+      
+      <!--sekme-->
+               <div id="_yeniler" class="tab-pane fade mt-3">
+            <div class='row'>
+               <div class='col-md-12 px-0 yeniler'></div>
+            </div>
+         </div>
+         <!--tab-pane-->
+      
+      <!--sekme-->
+      
+      <!--sekme-->
+      
+   </div>
+   <!--tab-content-->
+
+</div>
+<!--container-->
+
+
+<script nonce=78073f28b57dbf4816971461aff044a2>
+   $(document).ready(function() {
+
+
+      //$(".anasayfaTabKapsayan a[data-toggle='tab']:first").tab("show");
+
+      //ilk sekme ve verisini getirelim 
+      $('.anasayfaTabKapsayan .nav-link:first').tab('show')
+      let islem = $('.anasayfaTabKapsayan .nav-link:first').attr("href").replace(/#|_/g, "")
+      sekmeGetir(islem)
+
+
+      $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+         e.stopImmediatePropagation()
+         let islem = $(e.target).attr("href").replace(/#|_/g, "")
+         sekmeGetir(islem)
+      })
+
+      function sekmeGetir(islem) {
+         $(".tab-content  ." + islem).html(yukleniyor("position-relative"))
+         $.post("inc/anasayfa.inc.php", {
+            islem: islem,
+            dil: "0",
+            nonce: "78073f28b57dbf4816971461aff044a2"
+         }, function(data) {
+
+            $(".tab-content ." + islem).html(data)
+
+            if ($('.owl-carousel.yatayGaleri').length > 0) {
+
+               $('.owl-carousel.yatayGaleri').owlCarousel({
+                  loop: false,
+                  margin: 10,
+                  nav: false,
+                  dots: true,
+                  autoplay: true,
+                  lazyLoad: true,
+                  responsive: {
+                     0: {
+                        items: 1
+                     },
+                     600: {
+                        items: 3
+                     },
+                     1000: {
+                        items: 8
+                     }
+                  }
+               })
+            }
+         })
+      }
+
+
+
+      saydir();
+
+
+
+
+      
+
+
+
+      /*
+      var i = 0;
+      var navEleman = $(".anasayfaTabKapsayan ul.nav-tabs > li.nav-item > a.nav-link");
+      var navElemanAdet = navEleman.length;
+      setInterval(function(){
+      if( i < navElemanAdet-1 ){
+      i++;
+   } else {
+   i=0;
+}
+navEleman.eq(i).click();
+},3000);
+*/
+
+   })
+</script>
+
+
+
+<script nonce=78073f28b57dbf4816971461aff044a2>
+	$(document).ready(function() {
+
+
+		$('.owl-carousel.duyuruListe').owlCarousel({
+			loop: true,
+			margin: 0,
+			nav: false,
+			dots: true,
+			autoplay: true,
+			lazyLoad: true,
+			items: 1
+		})
+
+		$(".gizlilikKabulBtn").click(function(e) {
+			e.stopImmediatePropagation();
+			$(".gizlilik").addClass("d-none");
+			sessionStorage.gizlilik = 1;
+		})
+		if (sessionStorage.gizlilik == null) {
+			$(".gizlilik").removeClass("d-none");
+		}
+
+		//anketler icin
+		$("#anketPencere").modal("show");
+		if ($("#anketPencere.zorunlu1").length > 0) {
+			$(".container-fluid,.container").remove()
+		}
+
+
+		//duyuru icin
+		$("#duyuruPencere").modal("show");
+
+		//dogrulama
+		$("#dogrulamaPencere").modal("show");
+		$("form.smsForm, form.ePostaForm").on("submit", function(e) {
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			var form = $(this);
+			var kutu = form.find(".form-control[name]");
+			var deger = kutu.val();
+			var islem = form.find("[name=islem]").val();
+			var gidenData = {
+				islem: islem,
+				deger: deger
+			}
+
+			if (form.hasClass("dogrula") && !deger.match(/^(\d){4}$/)) {
+				alertOzel("Kod geçersiz");
+				return false;
+			}
+
+
+
+			$.post("inc/islem.fm.inc.php", gidenData, function(data) {
+				alertOzel(data, function() {
+					if (form.hasClass("dogrula")) {
+
+						if (data.match(/\[hata\]/i)) {
+							alertOzel("Bir hata oluştu");
+						} else location.reload();
+
+					} else {
+
+						if (data.match(/\[hata\]/i)) {
+							alertOzel("Bir hata oluştu");
+
+						} else if (!data.match(/hata/i)) {
+							form.find("label").text("Gelen kodu buraya yazınız.");
+							form.addClass("dogrula");
+							kutu.val('').attr("type", "number").attr("pattern", "^(\\d){4}$").focus();
+							form.find("[type=submit]").text("Gönder");
+
+						} else location.reload();
+					}
+				})
+			})
+		})
+
+		//chekboxlarda gereklilik icin
+		$("#anketForm input[type='checkbox']").change(function(e) {
+			e.stopImmediatePropagation();
+			var bu = $(this);
+			var satir = bu.parents(".row.formSatir");
+
+			if (!bu.is(':checked') && satir.find("input:checked").length == 0) {
+				satir.find("input[type='checkbox']").prop('required', true);
+			} else {
+				satir.find("input[type='checkbox']").prop('required', false);
+			}
+
+		});
+
+
+	})
+</script>
+
+
+
+
+
+<footer id="footer" class="page-footer py-1 mt-4 bg-dark small fixed-bottom text-white">
+
+	<div class="container">
+
+		<div class="row">
+						<div class="col-2 col-sm-6 px-2 small text-white-50">
+				<span class='d-inline-block'><img class='logo' alt='Logo' src='img/logoyordam.png'/></span>
+			</div>
+			<div class="col-10 col-sm-6 px-2 text-right  my-auto">
+				<span class="mr-2 d-none d-lg-inline-block" style='opacity:0.2'>0.027 sn.</span>
+				<span class='d-none d-lg-inline-block'><a href='https://www.yordam.com' rel='noopener noreferrer'><img class='logoyordam' alt='Yordam BT' src='kurumsal/logoyordam.png'/></a></span>
+
+
+							</div>
+		</div>
+	</div>
+</footer>
+
+
+
+
+
+
+
+
+		<div class="modal fade" id="duyuruPencere" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+			<div class="modal-dialog modal-md modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-header text-white bg-dark text-white">
+						<h5 class="modal-title"></h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true" class='text-white '>✕</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class='duyuruListe owl-carousel owl-theme'><div class='kutu'>
+					<img src='http://katalog.isam.org.tr/yordam/kurumsal/tanitimekrani/67adce6386984.png'  />
+					<span><div style="text-align: center;"> <p><strong>İSAM Kütüphanesi, İSAM Makaleler veri tabanını (<a href="https://makale.isam.org.tr/home">https://makale.isam.org.tr/home</a>) zenginleştirerek araştırmacıların erişimine sunmaya devam ediyor!</strong></p> <p>Her türlü kullanıcı alışkanlıkları dikkate alınarak isteyen kullanıcıların eskiden olduğu gibi <a href="https://makale.isam.org.tr/search?spc.page=1&f.isPartOf=%C4%B0lahiyat%20Makaleleri%20Veri%20Taban%C4%B1,equals"><i>İlahiyat Makaleleri Veri Tabanı</i></a>, <a href="https://makale.isam.org.tr/search?f.isPartOf=T%C3%BCrk%20Tarih,%20Edebiyat,%20K%C3%BClt%C3%BCr%20ve%20Sanat%20Tarihi%20Makaleleri%20Veri%20Taban%C4%B1,equals">Türk Tarih, Edebiyat, Kültür ve Sanat Tarihi Makaleleri Veri Tabanı</a> ve <a href="https://makale.isam.org.tr/search?spc.page=1&f.isPartOf=Osmanl%C4%B1ca%20Makaleler%20Veri%20Taban%C4%B1,equals">Osmanlıca Makaleler Veri Tabanı</a>nda yer alan makaleleri ayrı ayrı tarayabilmelerine de imkân verilmiştir. Yaklaşık 322.000 makalenin künye bilgilerine, 292.000 makalenin ise tam metin PDF’sine bu veri tabanlarından erişebilirsiniz.</p> </div></span>
+					</div></div>					</div>
+					<!--modal-body-->
+				</div>
+			</div>
+		</div>
+
+
+
+
+
+
+
+
+
+
+<div class="sayfaBasinaDon"><i class='fas fa-arrow-up text-warning'></i></div>
+
+
+
+<!--font face-->
+<link href="css/all.css" rel="stylesheet">
+<!--ikonlar-->
+<link href="css/animate.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/owl.carousel.min.css" />
+<link rel="stylesheet" href="css/owl.theme.default.min.css" />
+<script nonce=78073f28b57dbf4816971461aff044a2 type="text/javascript" src="plugins/owl.carousel.min.js"></script>
+
+
+
+</body>
+
+</html>

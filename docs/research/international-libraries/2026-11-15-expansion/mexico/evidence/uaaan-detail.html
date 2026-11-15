@@ -1,0 +1,2620 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: opac-detail.tt -->
+
+
+
+
+
+
+
+
+
+<html lang="es-ES" class="no-js">
+<head>
+
+<title>Detalles de:  Sin título        &rsaquo; DR. Egidio G. Rebonato Koha</title>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha 23.0508000" /> <!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="/opac-tmpl/bootstrap/lib/jquery/responsive.dataTables.min_23.0508000.css" type="text/css" rel="stylesheet">
+
+<link rel="shortcut icon" href="https://biblioteca.uaaan.mx/opac-tmpl/bootstrap/images/favicon-16x16.png" type="image/x-icon" />
+<link rel="apple-touch-icon" href="https://biblioteca.uaaan.mx/opac-tmpl/bootstrap/images/favicon-16x16.png" type="image/x-icon" />
+
+ 
+ 
+ 
+
+
+ <link href="/opac-tmpl/bootstrap/css/opac_23.0508000.css" type="text/css" rel="stylesheet">
+
+
+
+
+ <link type="text/css" href="/opac-tmpl/bootstrap/css/print_23.0508000.css" media="print" rel="stylesheet">
+
+
+ <style>button#dropdownMenu1 {
+    padding: 12px 20px;
+    color: #000;
+    text-decoration: none;
+}
+.container-fluid, .main {
+    max-width: 1200px;
+    margin: auto;
+}
+img.menI {
+    margin-right: 5px;
+    margin-bottom: 2px;
+}
+.mastheadsearch.librarypulldown h1 {
+    text-align: center;
+}
+img#banner {
+    border-radius: 0px;
+}
+div#opacheader {
+    margin: 10px 0;
+    box-shadow: 10px 10px 10px #ddd;
+}
+.navbar-inverse .brand, .navbar-inverse .nav>li>a {
+    color: #FFF;
+}
+#members a {
+    color: #FFF;
+}
+#members a:hover, .navbar-inverse .brand:hover, .navbar-inverse .nav>li>a:hover {
+  color: #d4af37;    
+/*  color: #53AB28;  VERDE */
+}
+.dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus, .dropdown-submenu:hover>a, .dropdown-submenu:focus>a {
+    text-decoration: none;
+    color: #ffffff;
+    background-color: #d4af37;  /*background-color: #53AB28;    */
+    background-image: -moz-linear-gradient(top, #d4af37, #d4af37);  
+/* background-image: -moz-linear-gradient(top, #53AB28, #53AB28); */
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#d4af37), to(#d4af37));
+/*  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#53AB28), to(#53AB28));  */
+    background-image: -webkit-linear-gradient(top, #d4af37, #d4af37);
+/*     background-image: -webkit-linear-gradient(top, #53AB28, #53AB28);  */
+    background-image: -o-linear-gradient(top, #d4af37, #d4af37);
+/*      background-image: -o-linear-gradient(top, #53AB28, #53AB28);  */
+    background-image: linear-gradient(to bottom, #d4af37, #d4af37);
+/*      background-image: linear-gradient(to bottom, #d4af37, #d4af37);  */
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#d4af37', endColorstr='#d4af37', GradientType=0);
+
+/* filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#53AB28', endColorstr='#53AB28', GradientType=0);  */
+}
+
+
+div#menuCentral {
+    background-color: #FFF;
+}
+#menuPrincipal ul, #menuRedes ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#menuPrincipal  ul li, #menuRedes ul li {
+    float: left;
+}
+
+#menuPrincipal ul li a, #menuRedes ul li a {
+    display: block;
+    color: #000;
+    text-align: center;
+    padding: 14px 20px;
+    text-decoration: none;
+}
+
+#menuPrincipal ul li a:hover {
+    background-color: #DDD;
+}
+div#menuPrincipal {
+    float: left;
+    width: 80%;
+    display: inline;
+}
+div#menuRedes {
+    text-align: right;
+    display: inline;
+}
+#menuRedes ul li a {
+    padding: 8px 7px;
+}
+.imgopacity:hover{
+  -moz-transform: scale(1.1);
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+}
+
+div#opacheader {
+    background-color: #FFF;
+}
+
+.iframe-16-9 {
+    position: relative;
+    padding-bottom: 20%;
+    padding-top: 35px;
+    height: 0;
+    overflow: hidden;
+    width: 100%;
+    min-height: 200px;
+}
+.iframe-16-9  iframe {
+    position: absolute;
+    top:0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.object-16-9 {
+    position: relative;
+    padding-bottom: 56.25%;
+    padding-top: 35px;
+    height: 0;
+    overflow: hidden;
+}
+
+.object-16-9  object {
+    position: absolute;
+    top:0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+
+ul.breadcrumb {
+    background-color: #101010;
+    border-radius: 1px;
+}
+
+.breadcrumb li a {
+    color: #FFF;
+    text-shadow: 0 0px 0 #ffffff;
+}
+
+.nav-pills>.active>a, .nav-pills>.active>a:hover, .nav-pills>.active>a:focus {
+    background-color: #d4af37; /*  background-color: #53AB28;    */
+    margin-top: 0px;
+    border-radius: 0px;
+}
+
+ul.nav.nav-pills.nav-stacked {
+    border-radius: 5px;
+    border-color: #d4af37;  /*  border-color: #53AB28;  */
+    border-style: solid;
+    border-width: 1px;
+}
+
+a, a:visited {
+    color: #666666;
+}
+ 
+.enlacesExternos a img {
+    margin: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+.enlacesExternos, .divNoticias {
+    padding: 5px;
+}
+
+
+.newsheader {
+    background-color: #FFF;
+    border-bottom: 0px solid #FFF;
+    margin: 0;
+    padding: 5px;
+}
+
+.newscontainer {
+    border: 0px solid #FFF;
+    border-bottom-width: 0;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+}
+.newsbody p {
+    text-align: justify;
+}
+
+div#pie {
+    color: #FFF;
+}
+div#opaccredits {
+    background-color: #222;
+    padding: 10px;
+}
+
+div#opac-main-search div {
+    background-color: #FFF;
+}
+
+.main {
+    border: 1px solid #FFF;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+}
+
+
+.mastheadsearch {
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+    padding: .8em;
+    margin: .5em 0;
+    background: #FFF;
+    background: -moz-linear-gradient(top, #FFF 38%, #FFF 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(38%, #FFF), color-stop(100%, #FFF));
+    background: -webkit-linear-gradient(top, #FFF 38%, #FFF 100%);
+    background: -o-linear-gradient(top, #FFF 38%, #FFF 100%);
+    background: -ms-linear-gradient(top, #FFF 38%, #FFF 100%);
+    background: linear-gradient(to bottom, #FFF 38%, #FFF 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFF', endColorstr='#FFF', GradientType=0);
+}
+
+#opac-main-search select {
+    width: auto;
+    max-width: 13em;
+}
+
+div#moresearches {
+    text-align: center;
+}
+
+.btn-primary, .btn-success {
+    color: #ffffff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    background-color: #006dcc;
+    background-image: -moz-linear-gradient(top, #555555, #666);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#555555), to(#666));
+    background-image: -webkit-linear-gradient(top, #555555, #666);
+    background-image: -o-linear-gradient(top, #555555, #666);
+    background-image: linear-gradient(to bottom, #555555, #666);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#555555', endColorstr='#666', GradientType=0);
+    border-color: #555555 #555555 #666;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+}
+
+
+#search-facets, #menu {
+    border: 1px solid #d4af37;    /*  border: 1px solid #53AB28;    */
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+}
+#search-facets h4 a, #menu h4 a {
+    background-color: #d4af37;   /* background-color: #53AB28;   */
+    border-radius: 0px;
+    border-bottom: 1px solid #FFF;
+    display: block;
+    font-weight: bold;
+    padding: 5px 2px;
+    text-decoration: none;
+    color: #FFF;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+#search-facets ul, #menu ul {
+    padding: 0;
+}
+
+li#availability_facet li {
+    border-top: 1px solid #d4af37;   /* border-top: 1px solid #53AB28; */
+    padding-top: 10px;
+}
+
+h5#facet-authors, #facet-holding-libraries, #facet-itemtypes, #facet-series, #facet-topics {
+    margin-top: 20px;
+    border: 1px solid #d4af37;   /* border: 1px solid #53AB28;  */
+    background-color: #d4af37;   /* background-color: #53AB28;  */
+    color: #FFF;
+    padding: 2px 5px;
+}
+
+#search-facets a, #menu a {
+    text-decoration: none;
+}</style>
+
+
+
+ <link href="http://biblioteca.uaaan.mx/cgi-bin/koha/opac-search.pl?format=opensearchdescription" rel="search" title="Buscar DR. Egidio G. Rebonato" type="application/opensearchdescription+xml">
+ <link rel="unapi-server" type="application/xml" title="unAPI" href="http://biblioteca.uaaan.mx/cgi-bin/koha/unapi" />
+
+
+<script>
+    var Koha = {};
+    function _(s) { return s } // dummy function for gettext
+    const is_logged_in = false
+</script>
+
+ <script src="/opac-tmpl/bootstrap/es-ES/js/locale_data_23.0508000.js"></script>
+
+<script src="/opac-tmpl/bootstrap/js/Gettext_23.0508000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/i18n_23.0508000.js"></script>
+
+<link type="text/css" href="/opac-tmpl/lib/font-awesome/css/font-awesome.min_23.0508000.css" rel="stylesheet">
+
+
+               
+
+
+
+
+
+
+
+
+
+
+
+ <link rel="stylesheet" href="/opac-tmpl/lib/emoji-picker/css/emoji_23.0508000.css" type="text/css">
+ 
+ <link href="/opac-tmpl/lib/Chocolat/css/chocolat_23.0508000.css" type="text/css" rel="stylesheet">
+</head>
+
+
+
+
+
+ 
+
+
+ 
+
+
+
+
+ 
+
+<body ID="opac-detail" class="branch-default scrollto" >
+
+
+
+
+
+
+
+
+
+               
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<button id="scrolltocontent">Saltar al contenido principal</button>
+<div id="wrapper">
+ <div id="header-region" class="noprint">
+ <nav class="navbar navbar-expand">
+ <div id="logo">
+ <a class="navbar-brand" href="/cgi-bin/koha/opac-main.pl">
+  DR. Egidio G. Rebonato  </a>
+ </div>
+ 
+ <div id="cartDetails" class="cart-message">Su carrito está vacío.</div>
+ 
+ <ul id="cart-list-nav" class="navbar-nav">
+ 
+ <li class="nav-item js-show">
+ <a class="nav-link" href="#" id="cartmenulink" role="button" title="Reunir ítems en los que esta interesado">
+ <i id="carticon" class="fa fa-shopping-cart fa-icon-black" aria-hidden="true"></i> <span class="cartlabel">Carrito</span> <span id="basketcount"></span>
+ </a>
+ </li>
+ 
+ <li class="divider-vertical"></li>
+ 
+ <li class="nav-item dropdown">
+ <a aria-expanded="false" aria-haspopup="true" aria-label="Mostrar desplegable con información detallada de lista" class="nav-link dropdown-toggle" data-toggle="dropdown" href="/cgi-bin/koha/opac-shelves.pl" id="listsmenu" role="button" title="Mostrar listas"><i class="fa fa-list fa-icon-black" aria-hidden="true"></i> <span class="listslabel">Listas</span>
+ </a>
+ <div aria-labelledby="listsmenu" role="menu" class="dropdown-menu">
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=0" tabindex="-1" role="menuitem"><strong>Sus listas</strong></a>
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=add_form" tabindex="-1" role="menuitem">Ingrese para crear sus propias listas</a>
+ 
+ 
+ </div> <!-- / .dropdown-menu -->
+ </li> <!-- / .nav-item.dropdown -->
+ 
+ </ul> <!-- / .navbar-nav -->
+
+ 
+ 
+ <ul id="members" class="navbar-nav">
+ <li class="nav-item dropdown">
+ 
+ 
+ 
+ <a href="/cgi-bin/koha/opac-user.pl" class="nav-link login-link loginModal-trigger"><i class="fa fa-user fa-icon-black fa-fw" aria-hidden="true"></i> <span class="userlabel">Ingresar a su cuenta</span></a>
+ 
+ 
+ 
+
+ 
+ </li>
+ 
+ 
+ <li class="nav-item search_history">
+ <a class="nav-link login-link" href="/cgi-bin/koha/opac-search-history.pl" title="Ver su historial de búsqueda">Historial de búsqueda</a>
+ </li>
+ <li class="divider-vertical"></li>
+ <li class="nav-item">
+ <a class="nav-link logout clearsh" href="/cgi-bin/koha/opac-search-history.pl?action=delete" title="Eliminar historial de búsqueda"><i class="fa fa-trash" aria-hidden="true"></i> Limpiar</a>
+ </li>
+ 
+ 
+ </ul>
+ 
+ </nav> <!-- /navbar -->
+
+ 
+ <div class="container-fluid">
+ <div class="row">
+ <div class="col">
+ 
+ 
+ <div id="opacheader">
+ 
+ <div class="default_item">
+ 
+ <div class="default_body"><!-- ********BANNER ORIGINAL 02 Feb 2023 Inicio******** --> <!--<center><img id="banner" src="/opac-tmpl/bootstrap/images/banner.png" class="img-rounded"> --> <!--</center> --> <!-- ********BANNER ORIGINAL 02 Feb 2023 Final******** --><center><img id="banner" src="https://tutorias.uaaan.mx/SPA/imagesCID/BannerCID.png" class="img-rounded" /></center><!-- **************************************** -->
+<div id="menuCentral">
+<div id="menuPrincipal">
+<ul style="overflow: inherit;">
+<li><a href="/">Inicio</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=quien">Qui&eacute;nes somos</a></li>
+<li class="dropdown"><button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"> &Aacute;reas <span class="caret"></span> </button>
+<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+<li><a href="/cgi-bin/koha/pages.pl?p=areabiblioteca">&Aacute;REA DE BIBLIOTECA</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=areabanco">&Aacute;REA DE BANCOS DE INFORMACI&Oacute;N</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=areaservicios">&Aacute;REA DE SERVICIOS DE INFORMACI&Oacute;N</a></li>
+<!--<li><a href="#">ARCHIVO HISTÓRICO Y MUSEO</a></li>--></ul>
+</li>
+<li class="dropdown"><button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"> Secciones <span class="caret"></span> </button>
+<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+<li><a href="/cgi-bin/koha/pages.pl?p=procesos">SECCI&Oacute;N DE PROCESOS T&Eacute;CNICOS</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=hemeroteca">SECCI&Oacute;N DE HEMEROTECA</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=seccionoficiales">SECCI&Oacute;N DE INEGI</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=seccionrefe">SECCI&Oacute;N DE REFERENCIA</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=seccionsalas">SECCI&Oacute;N. DE SALAS DE CONSULTA</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=prestamo">SECCI&Oacute;N DE CONTROL DE PRESTAMO</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=seccionbanco">SECCI&Oacute;N BANCO DE TESIS</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=serviciospublico">SECCI&Oacute;N DE SERVICIOS AL P&Uacute;BLICO</a></li>
+</ul>
+</li>
+<li><a href="/cgi-bin/koha/pages.pl?p=directorio">Directorio</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=reglamento">Reglamento</a></li>
+<li><a href="/cgi-bin/koha/pages.pl?p=contacto">Contacto</a></li>
+</ul>
+</div>
+<div id="menuRedes">
+<ul>
+<li><a href="https://es-es.facebook.com/pages/UNIVERSIDAD-AUTONOMA-AGRARIA-ANTONIO-NARRO/111622832251681"><img alt="Facebook" src="/opac-tmpl/bootstrap/images/facebook.png" class="imgopacity" /></a></li>
+<li><a href="https://twitter.com/uaaanoficial"><img alt="Twitter" src="/opac-tmpl/bootstrap/images/twitter.png" class="imgopacity" /></a></li>
+<li><a href="https://www.youtube.com/user/UAAANOFICIAL"><img alt="Twitter" src="/opac-tmpl/bootstrap/images/youtube.png" class="imgopacity" /></a></li>
+</ul>
+</div>
+</div>
+<!-- ******************Inicio Ebsco
+Implementación caja EBSCO
+Fecha: 26 Agosto 2019
+Inicio--><center><link href="https://code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="https://code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
+<script type="text/javascript" src="https://imageserver.ebscohost.com/branding/tabbedsearch/js/FormProcessing.js"></script>
+<script type="text/javascript" src="https://imageserver.ebscohost.com/branding/tabbedsearch/js/simpletabs_1.3.packed.js"></script>
+<script type="text/javascript" src="https://imageserver.ebscohost.com/branding/tabbedsearch/js/roundies.js"></script>
+<link href="https://imageserver.ebscohost.com/branding/tabbedsearch/css/simpletabs.css" rel="stylesheet" />
+<style>
+/*AUTOCOMPLETE STYLES*/
+#auto-results {
+    border: 1px black solid;
+    font-family: Helvetica,Arial,sans-serif;
+    background-color:white;
+    position:absolute;
+    padding:10px;
+    z-index:1000;
+    width: 350px;
+}
+#auto-results li:hover {
+    background-color: #3875D7;
+    color: white;
+    font-weight:bold;
+    cursor: pointer;
+}
+#auto-results li {
+    border: medium none;
+    list-style: outside none none;
+    padding-left: 5px;
+}
+/*END AUTOCOMPLETE STYLES*/
+</style>
+<style>
+div.simpleTabs {font:11pt Tahoma;border:3px double #EFEFEF;background-color:#FFFFFF}
+ ul.simpleTabsNavigation li a {border:1px solid #d4af37; background:#BCBEC0; color:#000000;}
+ ul.simpleTabsNavigation li a:hover {background-color:#ECB73E;color:#FFFFFF;}
+ ul.simpleTabsNavigation li a.current {background:#d4af37; color:#222222; border-bottom:2px solid #d4af37; }
+ div.simpleTabsContent { border:1px solid #d4af37;background-color:#FFFFFF;border-top: 6px solid #d4af37;}
+</style>
+<style>
+/*     Es el original y se cancela el
+      2 de febrero del 2023
+div.simpleTabs {font:11pt Tahoma;border:3px double #EFEFEF;background-color:#FFFFFF}
+ ul.simpleTabsNavigation li a {border:1px solid #53AB28; background:#BCBEC0; color:#000000;}
+ ul.simpleTabsNavigation li a:hover {background-color:#ECB73E;color:#FFFFFF;}
+ ul.simpleTabsNavigation li a.current {background:#53AB28; color:#222222; border-bottom:2px solid #53AB28; }
+ div.simpleTabsContent { border:1px solid #53AB28;background-color:#FFFFFF;border-top: 6px solid #53AB28;}
+fin del style cancelado */
+</style>
+<div class="simpleTabs">
+<p style="margin: -5px 0 10px; display: none;">EBSCO Discovery Service</p>
+<ul class="simpleTabsNavigation">
+<li><a class="nav " href="#">Recursos electr&oacute;nicos</a></li>
+<li><a class="nav " href="#">Cat&aacute;logo biblioteca</a></li>
+<li><a class="nav " href="#">eBooks</a></li>
+<!--<li ><a class="nav " href="#">Revistas A-Z</a></li>-->
+<li style="visibility: hidden; float: right;"><a class="nav " href="#"></a></li>
+<li style="visibility: hidden; float: right;"><a class="nav " href="#"></a></li>
+<li style="visibility: hidden; float: right;"><a class="nav " href="#"></a></li>
+<li style="visibility: hidden; float: right;"><a class="nav " href="#"></a></li>
+<li style="visibility: hidden; float: right;"><a class="nav " href="#"></a></li>
+</ul>
+<div class="simpleTabsContent"><!-- BEGIN: General Custom Search Box--><form action="https://search.ebscohost.com/login.aspx" method="get" target="_blank" onsubmit="ebscoPreProcess(this)">
+<p></p>
+<!-- Dropdown menu to prepend the selected value below to the user's search term --><select onchange="#" size="1" name="search_prefix" style="width: 120px;">
+<option selected="selected" value="">Palabra Clave</option>
+<option value="TI ">T&iacute;tulo</option>
+<option value="AU ">Autor</option>
+</select><input name="direct" value="true" type="hidden" /><input name="scope" value="site" type="hidden" /><input name="FT" value="y" type="hidden" /> <!-- target an EDS profile --> <input name="site" value="eds-live" type="hidden" /><input name="profile" value="eds" type="hidden" /> <!-- Auth type --> <input name="authtype" value="ip,guest,uid" type="hidden" /><input name="custid" value="s1203672" type="hidden" /><input name="groupid" value="main" type="hidden" /><input value="es" type="hidden" /><input name="cli0" value="FT" type="hidden" /><input name="clv0" value="Y" type="hidden" /> <!-- search box and submit button --> <input name="bquery" id="bquery" value="" type="hidden" /> <input name="uquery" id="uquery" size="65" type="text" placeholder="Buscar..." autocomplete="off" onkeyup="autocomp();" /> <span id="edsSearchWrapper"></span><!-- EDS automplete: Necesario para mostrar las opciones de autocompletado--> <input value="Buscar" type="submit" /><br /><br /><!-- Limiter Check Boxes: To display, adjust the html comment tags at desired 3s --> <!-- Limiter: Full Text --> <!--<input name="cli0" value="FT" type="hidden"><input name="clv0" type="hidden" value='N'><input  type="checkbox" name="fulltext_checkbox" id="fulltext_checkbox_all" onclick="limittoFullText(this.form)" ><label  for="fulltext_checkbox_all">Texto Completo</label>--> <!-- Limiter: Scholarly/Peer-Reviewed --> <!--<input name="cli1" value="RV" type="hidden"><input name="clv1"  type="hidden" value='N'><input  name="scholarly_checkbox" id="scholarly_checkbox_articles" onclick="limittoScholarly(this.form)" type="checkbox"><label  for="scholarly_checkbox_articles"> Publicaciones arbitradas </label>--> <!-- Limiter: Catalog Only --> <!--<input name="cli2" value="FC" type="hidden"><input name="clv2" type="hidden" value='N'><input  name="catalog_only_checkbox" id="catalog_only_checkbox" onclick="limittoCatalog(this.form)" type="checkbox"><label  for="catalog_only_checkbox">Solo en el catálogo </label>--> <!-- Limiter: Institutional Repositories Only --> <!--<input name="cli3" value="FC1" type="hidden"><input name="clv3" type="hidden" value='N'><input  style='display:none' name="IR_only_checkbox" id="IR_only_checkbox" onclick="limittoIR(this.form)" type="checkbox"><label  style='display:none' for="IR_only_checkbox">Institutional Repositories Only</label>--></form><a href="https://search.ebscohost.com/login.aspx?direct=true&amp;site=eds-live&amp;scope=site&amp;type=1&amp;groupid=main&amp;profile=eds&amp;lang=es&amp;authtype=ip,guest,uid&amp;custid=s1203672" target="_blank" rel="noopener">B&uacute;squeda Avanzada</a></div>
+<div class="simpleTabsContent"><form action="https://biblioteca.uaaan.mx/cgi-bin/koha/opac-search.pl?q=" method="get"><select name="idx">
+<option value="" select="selected">Palabra Clave</option>
+<option value="ti">T&iacute;tulo</option>
+<option value="au">Autor</option>
+</select><input name="q" size="65" type="text" /> <input value="Buscar" type="submit" /><br /><br /></form></div>
+<!-- eBooks-->
+<div class="simpleTabsContent"><!-- BEGIN: General Custom Search Box--><form action="https://search.ebscohost.com/login.aspx" method="get" target="_blank" onsubmit="this.uquery.value=this.uquery.value+' AND PT ebook'; ebscoPreProcess(this)">
+<p></p>
+<!-- Dropdown menu to prepend the selected value below to the user's search term --><select onchange="#" size="1" name="search_prefix" style="width: 120px;">
+<option selected="selected" value="">Palabra Clave</option>
+<option value="TI ">T&iacute;tulo</option>
+<option value="AU ">Autor</option>
+</select><input name="direct" value="true" type="hidden" /><input name="scope" value="site" type="hidden" /><input name="FT" value="y" type="hidden" /> <!-- target an EDS profile --> <input name="site" value="eds-live" type="hidden" /><input name="profile" value="eds" type="hidden" /> <!-- Auth type --> <input name="authtype" value="ip,guest,uid" type="hidden" /><input name="custid" value="s1203672" type="hidden" /><input name="groupid" value="main" type="hidden" /><input value="es" type="hidden" /><input name="cli0" value="FT" type="hidden" /><input name="clv0" value="Y" type="hidden" /> <!-- search box and submit button --> <input name="bquery" id="bquery" value="" type="hidden" /> <input name="uquery" id="uquery" size="65" type="text" placeholder="Buscar..." autocomplete="off" onkeyup="autocomp();" /> <span id="edsSearchWrapper"></span><!-- EDS automplete: Necesario para mostrar las opciones de autocompletado--> <input value="Buscar" type="submit" /><br /><br /><!-- Limiter Check Boxes: To display, adjust the html comment tags at desired 3s --> <!-- Limiter: Full Text --> <!--<input name="cli0" value="FT" type="hidden"><input name="clv0" type="hidden" value='N'><input  type="checkbox" name="fulltext_checkbox" id="fulltext_checkbox_all" onclick="limittoFullText(this.form)" ><label  for="fulltext_checkbox_all">Texto Completo</label>--> <!-- Limiter: Scholarly/Peer-Reviewed --> <!--<input name="cli1" value="RV" type="hidden"><input name="clv1"  type="hidden" value='N'><input  name="scholarly_checkbox" id="scholarly_checkbox_articles" onclick="limittoScholarly(this.form)" type="checkbox"><label  for="scholarly_checkbox_articles"> Publicaciones arbitradas </label>--> <!-- Limiter: Catalog Only --> <!--<input name="cli2" value="FC" type="hidden"><input name="clv2" type="hidden" value='N'><input  name="catalog_only_checkbox" id="catalog_only_checkbox" onclick="limittoCatalog(this.form)" type="checkbox"><label  for="catalog_only_checkbox">Solo en el catálogo </label>--> <!-- Limiter: Institutional Repositories Only --> <!--<input name="cli3" value="FC1" type="hidden"><input name="clv3" type="hidden" value='N'><input  style='display:none' name="IR_only_checkbox" id="IR_only_checkbox" onclick="limittoIR(this.form)" type="checkbox"><label  style='display:none' for="IR_only_checkbox">Institutional Repositories Only</label>--></form><a href="https://search.ebscohost.com/login.aspx?direct=true&amp;site=eds-live&amp;scope=site&amp;type=1&amp;groupid=main&amp;profile=eds&amp;lang=es&amp;authtype=ip,guest,uid&amp;custid=s1203672" target="_blank" rel="noopener">B&uacute;squeda Avanzada</a></div>
+<!-- Fin de eBooks -->
+<div class="simpleTabsContent" style="visibility: hidden; float: right;">
+<p></p>
+Enter HTML here</div>
+<div class="simpleTabsContent" style="visibility: hidden; float: right;">
+<p></p>
+Enter HTML here</div>
+<div class="simpleTabsContent" style="visibility: hidden; float: right;">
+<p></p>
+Enter HTML here</div>
+<div class="simpleTabsContent" style="visibility: hidden; float: right;">
+<p></p>
+Enter HTML here</div>
+<div class="simpleTabsContent" style="visibility: hidden; float: right;">
+<p></p>
+Enter HTML here</div>
+</div>
+<script type="text/javascript">
+  /* IE only */
+  curvy_roundies.addRule('.nav', '7px 7px 0px 0px');
+</script>
+<!-- [if IE]>
+<link rel="stylesheet" href="https://imageserver.ebscohost.com/branding/tabbedsearch/css/IEsimpletabs.css" type="text/css" media="screen"/>
+<![endif]--> <!--End of Tabbed Search--> <!--Inicio: EDS Automplete config-->
+<script type="text/javascript">
+  //##### Required Variables #####
+  //ID of form for submission of terms to search
+  var searchformid = 'ebscohostCustomSearchBox';
+  //ID of search box input field
+  var searchboxid = 'uquery';
+  //ID of div or span that the autocomplete results will appear below
+  var appenddiv = 'edsSearchWrapper';
+  //determines if search happens when autocomplete term is clicked
+  var searchOnClick = true;
+  //##### End Variables #####
+</script>
+<script src="https://widgets.ebscohost.com/prod/simplekey/autocomplete/autocomp.js"></script>
+<!--Fin: Autocompete config -->
+<style>
+.mastheadsearch .librarypulldown {
+display:none !important;
+}
+.span12 {display: none !important;}
+</style>
+<!--*******************************************Fin Ebsco
+Implementación caja EBSCO
+Fecha: 26 Agosto 2019
+Fin-->
+<div id="menuSlider">
+<div id="menuSlider1" style="display: inline-block; width: 55%;">
+<div class="iframe-16-9"><!--– <iframe src="/opac-tmpl/slider.html" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"--> --&gt; <iframe src="https://tutorias.uaaan.mx/SPA/sliderCID/slider.html" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe></div>
+</div>
+<div id="menuSlider2" style="display: inline-block; width: 40%;">
+<div class="iframe-16-9"><!-- <iframe src="/opac-tmpl/slider2.html" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>  --> <iframe src="https://tutorias.uaaan.mx/SPA/sliderCID/slider2.htm" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe></div>
+</div>
+</div>
+</center></div>
+ </div>
+ 
+ </div>
+  
+ </div>
+ </div>
+ </div>
+ 
+
+ </div> <!-- / header-region -->
+
+ 
+ <div class="container-fluid">
+ 
+ <div class="row">
+ <div class="col">
+ <div id="opac-main-search" class="mastheadsearch">
+ 
+ 
+ 
+ <div id="OpacCustomSearch">
+ 
+ <div class="es-ES_item">
+ 
+ <div class="es-ES_body">
+
+
+  </div>
+ </div>
+ 
+ <div class="default_item">
+ 
+ <div class="default_body"></div>
+ </div>
+ 
+ <div class="default_item">
+ 
+ <div class="default_body"></div>
+ </div>
+ 
+ </div>
+  
+ 
+ </div><!-- /#opac-main-search -->
+ </div> <!-- /.col -->
+ </div> <!-- /.row -->
+ 
+
+ <div class="row">
+ <ul class="nav" id="moresearches">
+ <li class="nav-item">
+ <a href="/cgi-bin/koha/opac-search.pl">Búsqueda avanzada</a>
+ </li>
+ 
+ 
+ 
+ <li class="nav-item">
+ <a href="/cgi-bin/koha/opac-authorities-home.pl">Búsqueda de autoridad</a>
+ </li>
+ 
+ 
+ 
+ <li class="nav-item">
+ <a href="/cgi-bin/koha/opac-tags.pl">Nube de etiquetas</a>
+ </li>
+ 
+ 
+ 
+ 
+ 
+ <li class="nav-item">
+ <a id="library_page" href="/cgi-bin/koha/opac-library.pl">
+ 
+ <span>Bibliotecas</span>
+ 
+ </a>
+ </li>
+ 
+  
+ </ul> <!-- /.nav#moresearches -->
+ </div> <!-- /.row -->
+ </div> <!-- /.container-fluid -->
+ 
+
+ <!-- Login form hidden by default, used for modal window -->
+ <div id="loginModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+ <div class="modal-dialog">
+ <div class="modal-content">
+ <div class="modal-header">
+ <h2 class="modal-title" id="modalLoginLabel">Ingresar a su cuenta</h2>
+ <button aria-label="Cerrar" class="closebtn" data-dismiss="modal" type="button">
+ <span aria-hidden="true">&times;</span>
+ </button>
+ </div>
+ <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="modalAuth">
+ <input type="hidden" name="has-search-query" id="has-search-query" value="" />
+ <div class="modal-body">
+ 
+ 
+ 
+ 
+ 
+ <input type="hidden" name="koha_login_context" value="opac" />
+ <fieldset class="brief">
+ <div class="local-login">
+ <label for="muserid">Usuario:</label><input type="text" id="muserid" name="userid" autocomplete="off" />
+ <label for="mpassword">Contraseña:</label><input type="password" id="mpassword" name="password" autocomplete="off" />
+ <fieldset class="action">
+ <input class="btn btn-primary" type="submit" value="Ingresar" />
+ </fieldset>
+ </div>
+ 
+ <div id="nologininstructions-modal" class="nologininstructions">
+ 
+ 
+ <div id="OpacLoginInstructions">
+ 
+ <div class="es-ES_item">
+ 
+ <div class="es-ES_body"><p style="text-align: justify;"><span style="font-family: Arial, serif;">Para ingresar a su cuenta en el OPAC proporcione la siguiente información:</span></p>
+<p style="text-align: justify;"><span style="font-family: Arial, serif;"><strong>Alumnos</strong></span></p>
+<p style="text-align: justify;"><span style="font-family: Arial, serif;">Usuario: Matrícula</span></p>
+<p style="text-align: justify;"><span style="font-family: Arial, serif;">Contraseña: Proporcionada en control escolar</span></p>
+<p style="text-align: justify;"><span style="font-family: Arial, serif;"><strong>Maestros y empleados</strong></span></p>
+<p style="text-align: justify;"><span style="font-family: Arial, serif;">Usuario: Expediente</span></p>
+<p style="text-align: justify;"><span style="font-family: Arial, serif;">Contraseña: Proporcionada en control escolar</span></p></div>
+ </div>
+ 
+ <div class="default_item">
+ 
+ <div class="default_body"></div>
+ </div>
+ 
+ <div class="default_item">
+ 
+ <div class="default_body"></div>
+ </div>
+ 
+ </div>
+  
+ </div>
+ 
+ 
+ 
+ </fieldset>
+ 
+ </div>
+ </form> <!-- /#auth -->
+ </div> <!-- /.modal-content -->
+ </div> <!-- /.modal-dialog -->
+ </div> <!-- /#modalAuth -->
+
+
+<div class="main">
+ <nav id="breadcrumbs" aria-label="Breadcrumb" class="breadcrumbs">
+ <ol class="breadcrumb">
+ <li class="breadcrumb-item">
+ <a href="/cgi-bin/koha/opac-main.pl">Inicio</a>
+ </li>
+ <li class="breadcrumb-item active">
+ <a href="#" aria-current="page"><span>Detalles para: </span> <span class="biblio-no-title">Sin título</span></a>
+ </li>
+ </ol>
+ </nav> <!-- /#breadcrumbs -->
+
+ <div class="container-fluid">
+ <div class="row">
+ <div class="col-lg-9">
+ <div id="catalogue_detail_biblio" class="maincontent" data-biblionumber="16264">
+
+ <div class="bookcover">
+
+ <div id="biblio-cover-slider" class="cover-slider cover-slides" data-isbn="">
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ <div class="cover-image" id="googlejacket-coverimg">
+ <div title="" class="" id="gbs-thumbnail-preview" data-use-data-link="1"></div>
+ <div class="hint">Imagen de Google Jackets</div>
+ </div>
+ 
+
+ 
+
+ 
+ <div class="cover-image" id="openlibrary-coverimg">
+ <div title="" class="" id="openlibrary-thumbnail-preview" data-use-data-link="1"></div>
+ <div class="hint">Imagen de OpenLibrary</div>
+ </div>
+ 
+
+ 
+ 
+
+ 
+ </div> <!-- /.cover-slider -->
+
+ </div><!-- / .bookcover -->
+
+ <abbr class="unapi-id" title="koha:biblionumber:16264"><!-- unAPI --></abbr>
+ 
+ <span class="Z3988" title="ctx_ver=Z39.88-2004&amp;amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;amp;rft.genre=book&amp;amp;rft.btitle=Principles%20of%20genetics.&amp;amp;rft.au=%20Sinnott%2C%20Edmund%20W.%20&amp;amp;rft.au=Dunn%2C%20L.C.&amp;amp;rft.pub=McGraw-Hill%2C&amp;amp;rft.date=%201950"></span>
+ 
+
+ <div id="views">
+ <span class="view current-view"><span id="Normalview"><i class="fa fa-file-text-o" aria-hidden="true"></i> Vista normal</span></span>
+ <span class="view">
+ <a id="MARCview" class="btn btn-link" href="/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=16264"><i class="fa fa-list-alt" aria-hidden="true"></i> Vista MARC</a>
+ </span>
+ 
+ <span class="view"><a id="ISBDview" class="btn btn-link" href="/cgi-bin/koha/opac-ISBDdetail.pl?biblionumber=16264"><i class="fa fa-list-ul" aria-hidden="true"></i> Vista ISBD</a></span>
+ 
+ </div>
+
+ 
+
+<div class="record" vocab="http://schema.org/" typeof="CreativeWork Producto" resource="#registro">
+<h1 class="title" property="name">Principles of genetics. </h1>
+<span class="results_summary author h3"><span class="byAuthor">Por: </span><ul class="resource_list"><li>
+<a href="/cgi-bin/koha/opac-search.pl?q=au:%22%20Sinnott%2C%20Edmund%20W.%20%22" class="colaboradores"><span resource="#record"><span property="Autor" typeof="Persona"><span property="name"> Sinnott, Edmund W</span></span></span></a><a class="authlink" href="/cgi-bin/koha/opac-authoritiesdetail.pl?authid=1728"><i class="fa fa-search"></i></a>
+</li></ul></span><span class="results_summary author h3">Colaborador(es): <ul class="resource_list">
+<li>
+<a href="/cgi-bin/koha/opac-search.pl?q=au:%22Dunn%2C%20L.C.%22" class="colaboradores"><span resource="#record"><span property="contribuidor" typeof="Persona"><span property="name">Dunn, L.C</span></span></span></a><a class="authlink" href="/cgi-bin/koha/opac-authoritiesdetail.pl?authid=1730"><i class="fa fa-search"></i></a>
+</li>
+<li>
+<a href="/cgi-bin/koha/opac-search.pl?q=au:%22Dobzhansky%2C%20T.H.%22" class="colaboradores"><span resource="#record"><span property="contribuidor" typeof="Persona"><span property="name">Dobzhansky, T.H</span></span></span></a><a class="authlink" href="/cgi-bin/koha/opac-authoritiesdetail.pl?authid=1731"><i class="fa fa-search"></i></a>
+</li>
+</ul></span><span class="results_summary type"><span class="label">Tipo de material: </span><img src="/opac-tmpl/lib/famfamfam/BK.png" alt="Texto" class="materialtype mt_icon_BK">Texto</span><span class="results_summary languages"><span class="language"><span class="label">Idioma: </span><span class="lang_code-Ingles">Ingles</span><span class="separator"> </span></span></span><span class="results_summary publisher"><span class="label">Detalles de publicación: </span><span class="publisher_place" property="location"><a href="/cgi-bin/koha/opac-search.pl?q=pl:%22New%20York%2C%22">New York,</a></span> <span property="publisher" typeof="Organization"><span property="name" class="publisher_name"><a href="/cgi-bin/koha/opac-search.pl?q=Provider:McGraw-Hill%2C">McGraw-Hill,</a></span></span> <span property="datePublished" class="publisher_date"><a href="/cgi-bin/koha/opac-search.pl?q=copydate:%22%201950%22"> 1950</a></span></span><span class="results_summary edition"><span class="label">Edición: </span><span property="bookEdition">4</span></span><span class="results_summary description"><span class="label">Descripción: </span><span property="description">505 P. 23 Cm</span></span><span class="results_summary subjects"><span class="label">Tema(s): </span><ul class="resource_list"><li>
+<span property="keywords"><a class="asunto" href="/cgi-bin/koha/opac-search.pl?q=su:%22Genetica.%22">Genetica. --  Variation</a></span><a class="authlink" href="/cgi-bin/koha/opac-authoritiesdetail.pl?authid=1729"><i class="fa fa-search"></i></a>
+</li></ul></span><span class="results_summary loc"><span class="label">Clasificación LoC:</span><ul class="resource_list"><li>QH431  .S65</li></ul></span>
+</div>
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+ <div class="results_summary tags">
+ 
+ <span class="label">Etiquetas de esta biblioteca:</span>
+ <span class="notags">No hay etiquetas de esta biblioteca para este título.</span>
+ 
+ 
+ 
+ <span class="login4tags">
+ 
+ <a class="loginModal-trigger" data-toggle="modal" role="button" href="/cgi-bin/koha/opac-user.pl">Ingresar para agregar etiquetas.</a>
+ 
+ </span>
+ 
+ 
+ </div> <!-- /.results_summary.tags -->
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+
+
+
+ 
+ <form method="post" action="/cgi-bin/koha/opac-ratings.pl">
+ <legend class="sr-only">Valoración</legend>
+ <div class="results_summary ratings" id="rating-16264">
+
+ 
+ 
+
+ 
+ <select id="star_rating" class="star_rating" name="rating" disabled="disabled" autocomplete="off">
+ 
+ 
+ <option value="" selected="selected"></option>
+ 
+ 
+ 
+ <option value="1">1</option>
+ 
+ 
+ 
+ <option value="2">2</option>
+ 
+ 
+ 
+ <option value="3">3</option>
+ 
+ 
+ 
+ <option value="4">4</option>
+ 
+ 
+ 
+ <option value="5">5</option>
+ 
+ 
+ </select>
+ <img id="rating-loading" class="rating-loading" style="display:none" src="/opac-tmpl/bootstrap/images/spinner-small.gif" alt="" />
+
+ <!-- define some hidden vars for ratings -->
+
+ <input  type="hidden" name='biblionumber'  value="16264" />
+ <input  type="hidden" name='rating_value' id='rating_value' class="rating_value" value="" />
+
+ &nbsp; <input name="rate_button" type="submit" value="Valóreme" />&nbsp;
+
+ 
+ <span id="rating_value_text" class="rating_value_text"></span>
+ <span id="cancel_rating_text" class="cancel_rating_text" style="display: none;"><a href="#" data-context="star_rating"><i class="fa fa-remove" aria-hidden="true"></i> Cancelar calificación.</a></span>
+ 
+
+ <span id="rating_text" class="rating_text">Valoración media: 0.0 (0 votos)</span>
+ </div>
+ </form>
+ 
+
+ 
+
+ 
+
+ 
+
+ </div> <!-- / #catalogue_detail_biblio -->
+
+   <div id="bibliodescriptions" class="toptabs">
+ 
+ 
+ 
+ <ul class="nav nav-tabs" role="tablist">
+ 
+ 
+ <li class="nav-item" role="presentation">
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <a href="#holdings_panel" class="nav-link" id="holdings-tab" data-toggle="tab" data-target="#holdings_panel" data-tabname="holdings" aria-controls="holdings_panel" role="tab" aria-selected="false">
+ 
+ 
+ 
+ 
+ 
+ <span>Existencias</span>
+ 
+ 
+   ( 1 )
+ 
+ </a>
+ </li>
+
+
+ 
+
+ 
+ 
+ <li class="nav-item" role="presentation">
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <a href="#descriptions_panel" class="nav-link" id="descriptions-tab" data-toggle="tab" data-target="#descriptions_panel" data-tabname="descriptions" aria-controls="descriptions_panel" role="tab" aria-selected="false">
+ 
+ 
+ 
+ 
+ 
+ 
+ <span>Notas de título ( 1 )</span>
+ 
+ </a>
+ </li>
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ <li class="nav-item" role="presentation">
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <a href="#comments_panel" class="nav-link" id="comments-tab" data-toggle="tab" data-target="#comments_panel" data-tabname="comments" aria-controls="comments_panel" role="tab" aria-selected="false">
+ 
+ <span>Comentarios ( 0 )</span>
+ 
+ </a>
+ </li>
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ </ul>
+
+
+ 
+ 
+ <div class="tab-content">
+ 
+ 
+ 
+
+ 
+ 
+ <div role="tabpanel" class="tab-pane" id="holdings_panel" aria-labelledby="holdings-tab">
+ 
+ 
+ 
+ 
+ <table class="table table-bordered table-striped" id="holdingst">
+ <caption class="sr-only">Existencias</caption>
+ <thead>
+ <tr>
+
+ 
+ 
+ <th id="item_itemtype" data-colname="item_itemtype" class="itype">Tipo de ítem</th>
+ 
+ 
+ <th id="item_current_location" data-colname="item_current_location" class="item_location">Biblioteca actual</th>
+ 
+ 
+ 
+ <th id="item_ccode" data-colname="item_ccode" class="collection">Colección</th>
+ 
+ 
+ <th id="item_callnumber" data-colname="item_callnumber" class="call_no">Signatura topográfica</th>
+ 
+ 
+ 
+ 
+ <th id="item_copy" data-colname="item_copy" class="copynumber">Copia número</th>
+ 
+ <th id="item_status" data-colname="item_status" class="status">Estado</th>
+ 
+ <th id="item_notes" data-colname="item_notes" class="notes">Notas</th>
+ 
+ <th id="item_datedue" data-colname="item_datedue" class="date_due">Fecha de vencimiento</th>
+ <th id="item_barcode" data-colname="item_barcode" class="barcode">Código de barras</th>
+ 
+ 
+ <th></th>
+ </tr>
+ </thead>
+ <tbody>
+ 
+ <tr vocab="http://schema.org/" typeof="Offer">
+
+ 
+
+ 
+ <td class="itype">
+ 
+ 
+ <img src="/opac-tmpl/bootstrap/itemtypeimg/crystal-clear/books-open-32.png" title="Libro" alt="Libro" />
+ 
+ 
+ <span class="itypetext">Libro</span>
+ </td>
+ 
+ 
+ 
+ 
+ 
+ <td class="location" property="seller" data-order="Dr. Egidio G. Rebonato">
+ <link property="itemOffered" href="#record" />
+ <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut">
+
+ 
+ <a href="" class="library_info" data-info="&lt;p&gt;Encargado de la Biblioteca:&amp;nbsp;&lt;strong style=&quot;color: #333333; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 12.6px;&quot;&gt;MC. Jos&amp;eacute; Armando N&amp;aacute;jera Castro&lt;/strong&gt;&lt;span style=&quot;color: #333333; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 12.6px;&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Contacto del encargado:&amp;nbsp;&lt;a style=&quot;color: #666666; text-decoration-line: none; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 12.6px;&quot; href=&quot;mailto:nacasaar@gmail.com&quot;&gt;nacasaar@gmail.com&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;" data-name="Dr. Egidio G. Rebonato">
+ <i class="fa fa-info-circle" aria-hidden="true"></i> Dr. Egidio G. Rebonato
+ </a>
+ 
+
+ 
+ <span class="shelvingloc"></span>
+ 
+
+ </td>
+ 
+
+ 
+
+ 
+ <td class="collection">Colección de Consulta</td>
+ 
+
+ 
+
+ <td class="call_no" property="sku">
+ 
+  QH431  .S65 1939
+ 
+ 
+ (<a href="/cgi-bin/koha/opac-detail.pl?biblionumber=16264&amp;shelfbrowse_itemnumber=127696#holdings">Navegar estantería<span class="sr-only">(Abre debajo)</span></a>)
+ 
+ 
+ 
+ </td>
+
+ 
+
+ 
+ 
+ <td class="copynumber">Ej. 1</td>
+ <td class="status">
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ <link property="availability" href="http://schema.org/InStock" />
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ <span class="item-status available">Disponible </span>
+
+</td>
+ <td class="notes" property="description">Disponible para prestamo</td>
+ 
+ <td class="date_due"></td>
+ 
+
+ <td class="barcode" property="serialNumber">52015</td>
+ 
+ 
+ <td></td>
+ </tr>
+ 
+ </tbody>
+ </table>
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+ </div>
+
+
+ 
+
+ 
+ 
+ 
+ <div role="tabpanel" class="tab-pane" id="descriptions_panel" aria-labelledby="descriptions-tab">
+ 
+ 
+ <div class="content_set">
+
+ 
+
+ 
+ <div id="marcnotes">
+ 
+ <p>
+ 
+ dISPONIBLE SALA CIMMYT
+ 
+ </p>
+ 
+ </div>
+ 
+
+ </div> <!-- /.content_set -->
+ 
+ </div>
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ <div role="tabpanel" class="tab-pane" id="comments_panel" aria-labelledby="comments-tab">
+ 
+ 
+ <div id="newcomment"></div>
+ 
+ <p>No hay comentarios en este titulo.</p>
+ 
+
+ 
+ <div id="addcomment">
+ <a class="login-link loginModal-trigger" role="button" data-toggle="modal" data-return="true" data-tab="comment" href="/cgi-bin/koha/opac-user.pl">Ingresar a su cuenta</a> para colocar un comentario. </div>
+ 
+ 
+ </div>
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ </div>
+
+ 
+ </div>
+
+
+ 
+
+ </div> <!-- /.col-lg-10 -->
+
+ <div class="col-lg-3">
+ <div id="ulactioncontainer">
+
+ 
+
+ 
+
+<ul id="action">
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ <li><a class="print-large btn btn-link btn-lg" href="#"><i class="fa fa-fw fa-print" aria-hidden="true"></i> Imprimir</a></li>
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ <li><a data-biblionumber="16264" class="addtocart cart16264 addrecord btn btn-link btn-lg" href="#"><i class="fa fa-fw fa-shopping-cart" aria-hidden="true"></i> Agregar a su carrito</a> <a style="display:none;" data-biblionumber="16264" class="cartRemove cartR16264" href="#">(remover)</a></li>
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+
+ 
+
+ 
+ 
+ <li>
+ <div id="export">
+ <div class="dropdown">
+ <a id="format" class="btn btn-link btn-lg dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-fw fa-download" aria-hidden="true"></i> Guardar registro <b class="caret"></b></a>
+ <div class="dropdown-menu dropdown-menu-right" aria-labelledby="format">
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=16264&amp;format=bibtex">
+ <span>BIBTEX</span>
+ 
+ </a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="#" data-toggle="modal" data-target="#exportModal_">Dublin Core</a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=16264&amp;format=marcxml">
+ <span>MARCXML</span>
+ 
+ </a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=16264&amp;format=marc8">
+ <span>MARC (no-Unicode/MARC-8)</span>
+ 
+ </a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=16264&amp;format=utf8">
+ <span>MARC (Unicode/UTF-8)</span>
+ 
+ </a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=16264&amp;format=marcstd">
+ <span>MARC (Unicode/UTF-8, Estándar)</span>
+ 
+ </a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=16264&amp;format=mods">
+ <span>MODS (XML)</span>
+ 
+ </a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-export.pl?op=export&amp;bib=16264&amp;format=ris">
+ <span>RIS</span>
+ 
+ </a>
+ 
+ 
+ </div> <!-- /.dropdown-menu -->
+ </div> <!-- /.dropdown -->
+ </div> <!-- /#export -->
+ </li>
+ 
+
+ 
+ <li>
+ <div id="moresearches_menu">
+ <div class="dropdown">
+ <a id="furthersearches" class="btn btn-link btn-lg dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+ <i class="fa fa-fw fa-search" aria-hidden="true"></i> Más búsquedas </a>
+ <div class="dropdown-menu dropdown-menu-right" aria-labelledby="furthersearches">
+ <div class="dropdown-header">Buscar este título en:</div>
+ <a  href="https://worldcat.org/search?q=" target="_blank">Other Libraries (WorldCat)</a>
+<a href="https://scholar.google.com/scholar?q=" target="_blank">Other Databases (Google Scholar)</a>
+<a href="https://www.bookfinder.com/search/?author=%20Sinnott%2C%20Edmund%20W.%20&amp;title=&amp;st=xl&amp;ac=qr" target="_blank">Online Stores (Bookfinder.com)</a>
+<a href="http://openlibrary.org/search/?author=(%20Sinnott%2C%20Edmund%20W.%20)&title=()" target="_blank">Open Library (openlibrary.org)</a>
+ </div>
+ </div>
+ </div>
+ </li>
+ 
+</ul>
+
+<!-- Dublin Core Modal Form -->
+<div class="modal" id="exportModal_" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
+ <div class="modal-dialog">
+ <div class="modal-content">
+ <div class="modal-header">
+ <h3 class="modal-title" id="exportModalLabel">Exportando a Dublin Core...</h3>
+ <button type="button" class="closebtn" data-dismiss="modal" aria-hidden="true">&times;</button>
+ </div>
+ <form method="get" action="/cgi-bin/koha/opac-export.pl">
+ <div class="modal-body">
+ <fieldset id="dc_fieldset">
+ <input id="input-simple" type="radio" name="format" value="rdfdc">
+ <label class="label_dc" for="input-simple">DC-RDF simple</label>
+ <br>
+ <input id="input-oai" type="radio" name="format" value="oaidc" checked>
+ <label class="label_dc" for="input-oai">OAI-DC</label>
+ <br>
+ <input id="input-srw" type="radio" name="format" value="srwdc">
+ <label class="label_dc" for="input-srw">SRW-DC</label>
+ <br>
+ <input type="hidden" name="op" value="export">
+ <input type="hidden" name="bib" value="16264">
+ </fieldset>
+ </div>
+ <div class="modal-footer">
+ <button type="submit" class="btn btn-primary">Exportar</button>
+ <button class="btn btn-link btn-lg" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+ </div>
+ </form>
+ </div> <!-- /.modal-content -->
+ </div> <!-- /.modal-dialog -->
+</div> <!-- /.modal -->
+
+
+ 
+
+ 
+
+ 
+ <div id="social_networks" class="clearfix">
+ <span>Compartir</span>
+ 
+ 
+  <div><a href="mailto:?subject=&body=%20(http://biblioteca.uaaan.mx/cgi-bin/koha/opac-detail.pl?biblionumber=16264)" id="email" title="Compartir por correo electrónico"><i class="fa fa-envelope-o" aria-hidden="true"></i></a></div>
+  
+  <div><a href="https://www.facebook.com/sharer.php?u=http://biblioteca.uaaan.mx/cgi-bin/koha/opac-detail.pl?biblionumber=16264&t=" id="facebook" title="Compartir en Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a></div>
+  
+  <div><a href="https://www.linkedin.com/shareArticle?mini=true&url=http://biblioteca.uaaan.mx/cgi-bin/koha/opac-detail.pl?biblionumber=16264&title=" id="linkedin" title="Compartir en LinkedIn"><i class="fa fa-linkedin" aria-hidden="true"></i></a></div>
+  
+  <div><a class="twitter-share-button" data-count="none" data-lang="es-ES" href="https://twitter.com/share?url=http://biblioteca.uaaan.mx/cgi-bin/koha/opac-detail.pl?biblionumber=16264&text=" id="twitter" title="Compartir en Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a></div>
+  
+ </div> <!-- /#social_networks -->
+ 
+ </div> <!-- / .ulactioncontainer -->
+ </div> <!-- / .col-lg-3 -->
+ </div> <!-- / .row -->
+ <div class="row">
+ 
+
+ 
+
+ 
+ </div> <!-- / .row -->
+ </div> <!-- / .container-fluid -->
+</div> <!-- / .main -->
+
+
+ <!-- Modal -->
+ <div class="modal" id="multiSearch" tabindex="-1" role="dialog" aria-labelledby="multiSearchLabel">
+ <div class="modal-dialog" role="document">
+ <div class="modal-content">
+ <div class="modal-header">
+ <h1 id="multiSearchLabel">Seleccionar ejemplar(es) a buscar</h1>
+ <button aria-label="Cerrar" class="closebtn" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+ </div>
+ <div class="modal-body">
+ <a href="#" class="check_all btn btn-link btn-sm"><i class="fa fa-check" aria-hidden="true"></i> Seleccionar todo</a> <span class="sep">|</span>
+ <a href="#" class="check_none btn btn-link btn-sm"><i class="fa fa-remove" aria-hidden="true"></i> No seleccionar nada</a>
+ <ul id="termsList">
+ </ul>
+ </div>
+ <div class="modal-footer">
+ <button id="validMultiSearch" class="btn btn-primary">Buscar</button>
+ <a href="#" class="cancel" data-dismiss="modal" aria-hidden="true">Cancelar</a>
+ </div>
+ </div> <!-- /.modal-content -->
+ </div> <!-- /.modal-dialog -->
+ </div> <!-- /#myModal -->
+
+
+<!-- Library Info Modal -->
+<div class="modal" id="libraryInfoModal" tabindex="-1" aria-labelledby="libraryInfoModalLabel" aria-hidden="true">
+ <div class="modal-dialog">
+ <div class="modal-content">
+ <div class="modal-header">
+ <h5 class="modal-title" id="libraryInfoModalLabel"></h5>
+ <button aria-label="Cerrar" class="closebtn" data-dismiss="modal" type="button">
+ <span aria-hidden="true">&times;</span>
+ </button>
+ </div>
+ <div class="modal-body">
+ <div id="libraryInfo"></div>
+ </div>
+ <div class="modal-footer">
+ <a id="libraryInfoLink" href="" class="btn btn-primary">Visitar sitio web</a>
+ <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+ </div>
+ </div> <!-- /.modal-content -->
+ </div> <!-- /.modal-dialog -->
+</div> <!-- /.modal -->
+
+
+
+
+
+
+
+               
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+ <div class="container-fluid">
+ <div class="row">
+ <div class="col">
+ 
+ 
+ <div id="opaccredits">
+ 
+ <div class="default_item">
+ 
+ <div class="default_body">
+<div id="pie" align="center">
+
+Universidad Autónoma Agraria Antonio Narro<br/>
+Dirección: Blvd. Antonio Narro s/n. Buenavista. Saltillo. Coahuila C.P. 25315. México.<br/>
+</div>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-64757528-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-L7B291CXGG"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-L7B291CXGG');
+</script></div>
+ </div>
+ 
+ </div>
+  
+ </div>
+ </div>
+ </div>
+ 
+
+ 
+ <div class="container-fluid">
+ <div class="row">
+ <div class="col">
+ <div id="report-koha-url">
+ <div class="row justify-content-between">
+ 
+ 
+ <div class="col">
+ <div id="koha_url" class="clearfix noprint">
+ <p>Con tecnología 
+ <a class="koha_url" rel="nofollow" href="http://koha-community.org">Koha</a>
+ </p>
+ </div> <!-- /#koha_url -->
+ </div> <!-- /.col -->
+ 
+ </div> <!-- /.row.justify-content-between -->
+ </div> <!-- /#report-koha-url -->
+ </div> <!-- /.col -->
+ </div> <!-- /.row -->
+ </div> <!-- /.container-fluid -->
+ 
+ </div> <!-- / #wrapper in masthead.inc -->
+
+ 
+ 
+ 
+
+
+<!-- JavaScript includes -->
+<script src="/opac-tmpl/lib/jquery/jquery-3.6.0.min_23.0508000.js"></script>
+<script src="/opac-tmpl/lib/jquery/jquery-migrate-3.3.2.min_23.0508000.js"></script>
+<script src="/opac-tmpl/lib/bootstrap/js/bootstrap.bundle.min_23.0508000.js"></script>
+<script src="/opac-tmpl/lib/fontfaceobserver.min_23.0508000.js"></script>
+<script src="/opac-tmpl/lib/enquire.min_23.0508000.js"></script>
+<script>
+    let logged_in_user_id = "";
+</script>
+<script src="/opac-tmpl/bootstrap/js/global_23.0508000.js"></script>
+
+ <script>
+        var NO_AMAZON_IMAGE = _("No hay imagen de cubierta disponible");
+    </script>
+ <script src="/opac-tmpl/bootstrap/js/amazonimages_23.0508000.js"></script>
+
+
+<script>
+
+    var MSG_CONFIRM_AGAIN = _("Advertencia: No puede deshacerse. Por favor confirmar nuevamente")
+    var MSG_DELETE_SEARCH_HISTORY = _("¿Está seguro que desea eliminar su historial de búsqueda?");
+    var MSG_NO_SUGGESTION_SELECTED = _("No se seleccionó ninguna sugerencia");
+    var MSG_SEARCHING = _("Buscando %s...");
+    var MSG_ERROR_SEARCHING_COLLECTION = _("Error de la búsqueda en la colección %s");
+    var MSG_NO_RESULTS_FOUND_IN_COLLECTION = _("No se han encontrado resultados en la colección de la biblioteca %s");
+    var MSG_RESULTS_FOUND_IN_COLLECTION = _("Se encontraron %s resultados en la colección de la biblioteca %s");
+    var MSG_BY = _("por");
+    var MSG_TYPE = _("Tipo");
+    var MSG_NEXT = _("Siguiente");
+    var MSG_PREVIOUS = _("Previo");
+    var MSG_CHECKOUTS = _("Préstamos");
+    var MSG_NO_CHECKOUTS = _("Sin préstamos");
+    var MSG_CHECK_OUT = _("Préstamo");
+    var MSG_CHECK_OUT_CONFIRM = _("¿Está seguro de querer prestar esta éste ítem?");
+    var MSG_CHECKED_OUT_UNTIL = _("Prestado hasta %s");
+    var MSG_CHECK_IN = _("Devolución");
+    var MSG_CHECK_IN_CONFIRM = _("¿Está seguro de querer devolver éste ítem?");
+    var MSG_NO_CHECKOUTS = _("Sin préstamos");
+    var MSG_DOWNLOAD = _("Descargar");
+    var MSG_HOLDS = _("Reservas");
+    var MSG_NO_HOLDS = _("Sin reservas");
+    var MSG_PLACE_HOLD = _("Hacer reserva");
+    var MSG_CANCEL_HOLD = _("Cancelar");
+    var MSG_CANCEL_HOLD_CONFIRM = _("¿Está seguro que desea cancelar esta reserva?");
+    var MSG_ON_HOLD = _("Con reserva");
+
+    
+        var MSG_TAGS_DISABLED = _("Lo sentimos, las etiquetas no están habilitadas en este sistema.");
+        var MSG_TAG_ALL_BAD = _("Error! Su etiqueta tenía código ilegal. NO ha sido agregada. Intente nuevamente con texto plano.");
+        var MSG_ILLEGAL_PARAMETER = _("¡Error! Parámetro ilegal");
+        var MSG_TAG_SCRUBBED = _("Nota: su etiqueta contenía código que fue removido. La etiqueta fue agregada como ");
+        var MSG_ADD_TAG_FAILED = _("¡Error! La adición de etiquetas falló en");
+        var MSG_ADD_TAG_FAILED_NOTE = _("Nota: solo puede etiquetar un ítem con determinado término una vez. Vea 'Mis Etiquetas' para ver sus etiquetas actuales.");
+        var MSG_DELETE_TAG_FAILED = _("Error! No puede eliminar la etiqueta");
+        var MSG_DELETE_TAG_FAILED_NOTE = _("Nota: sólo puede eliminar sus propias etiquetas.")
+        var MSG_LOGIN_REQUIRED = _("Debe ingresar a su cuenta para agregar etiquetas.");
+        var MSG_TAGS_ADDED = _("Etiquetas agregadas: ");
+        var MSG_TAGS_DELETED = _("Etiquetas agregadas: ");
+        var MSG_TAGS_ERRORS = _("Errores: ");
+        var MSG_MULTI_ADD_TAG_FAILED = _("No se pudo agregar una o más etiquetas.");
+        var MSG_NO_TAG_SPECIFIED = _("No se especificó etiqueta.");
+    
+    
+        var NO_OL_JACKET = _("No hay imagen de cubierta disponible");
+    
+    
+
+    
+        $(window).load(function() {
+            verify_images();
+         });
+    
+    $(".print-large").on("click",function(){
+        window.print();
+        return false;
+    });
+    $(".addtoshelf").on("click",function(e){
+        e.preventDefault();
+        Dopop( this.href );
+    });
+    $("body").on("click", ".addtocart", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        addRecord( biblionumber );
+    });
+    $("body").on("click", ".cartRemove", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        delSingleRecord( biblionumber );
+    });
+    $(".clearsh").on("click", function(){
+        return confirmDelete(MSG_DELETE_SEARCH_HISTORY);
+    });
+
+</script>
+
+
+ <script src="/opac-tmpl/bootstrap/js/basket_23.0508000.js"></script>
+
+
+<script src="/opac-tmpl/bootstrap/js/tags_23.0508000.js"></script>
+
+ <script src="/opac-tmpl/bootstrap/js/google-jackets_23.0508000.js"></script>
+ <script>
+
+        var NO_GOOGLE_JACKET = _("No hay imagen de cubierta disponible");
+
+    </script>
+
+
+
+
+ <script src="/opac-tmpl/bootstrap/js/localcovers_23.0508000.js"></script>
+ <script>
+
+    var NO_LOCAL_JACKET = _("No hay imagen de cubierta disponible");
+
+    </script>
+
+
+
+
+
+
+<script src="/opac-tmpl/lib/js-cookie/js.cookie-3.0.1.min_23.0508000.js"></script>
+<script>
+$(document).ready(function() {
+    if($('#searchsubmit').length) {
+        $(document).on("click", '#searchsubmit', function(e) {
+            Cookies.remove("form_serialized", { path: '/'});
+            Cookies.remove("form_serialized_limits", { path: '/'});
+            Cookies.remove("search_path_code", { path: '/'});
+        });
+    }
+});
+</script>
+
+ 
+ 
+
+<script src="/opac-tmpl/lib/jquery/plugins/jquery.dataTables.min_23.0508000.js"></script>
+<script src="/opac-tmpl/lib/jquery/plugins/dataTables.responsive.min_23.0508000.js"></script>
+<script>
+    var MSG_DT_FIRST = _("Primero");
+    var MSG_DT_LAST = _("Último");
+    var MSG_DT_NEXT = _("Siguiente");
+    var MSG_DT_PREVIOUS = _("Previo");
+    var MSG_DT_EMPTY_TABLE = _("No hay datos disponibles en tabla");
+    var MSG_DT_INFO = _("Mostrando _START_ a _END_ de _TOTAL_");
+    var MSG_DT_INFO_EMPTY = _("No hay entradas para mostrar");
+    var MSG_DT_INFO_FILTERED = _("(filtrado de _MAX_ entradas totales)");
+    var MSG_DT_LENGTH_MENU = _("Mostrar _MENU_ entradas");
+    var MSG_DT_LOADING_RECORDS = _("Cargando...");
+    var MSG_DT_PROCESSING = _("Procesando...");
+    var MSG_DT_SEARCH = _("Buscar:");
+    var MSG_DT_ZERO_RECORDS = _("No se encontraron registros coincidentes");
+    var MSG_DT_COPY_TO_CLIPBOARD = _("Copiar al portapapeles");
+    var MSG_DT_COPY_KEYS = _("Presione <i>ctrl</i> or <i>⌘</i> + <i>C</i> para copiar los datos de la tabla<br>al portapapeles de su sistema.<br><br>Para cancelar, haga clic en este mensaje o presione escape.");
+    var MSG_DT_COPIED_ROWS = _("Copiado %d filas al portapapeles");
+    var MSG_DT_COPIED_ONE_ROW = _("Copiado al portapeles una fila");
+    var MSG_CLEAR_FILTER = _("Limpiar filtro");
+    var MSG_DT_ALL = _("Todo");
+    var CONFIG_EXCLUDE_ARTICLES_FROM_SORT = _("el la los");
+</script>
+<script src="/opac-tmpl/bootstrap/js/datatables_23.0508000.js"></script>
+
+ 
+
+<script>
+function KohaTable(selector, dt_parameters, columns_settings) {
+    var id = 0;
+    var hidden_ids = [];
+    var included_ids = [];
+    $(columns_settings).each( function() {
+        var named_id = $( 'thead th[data-colname="' + this.columnname + '"]', selector ).index( selector+' th' );
+
+        var used_id = dt_parameters.bKohaColumnsUseNames ? named_id : id;
+        if ( used_id == -1 ) return;
+
+        if ( this['is_hidden'] == "1" ) {
+            hidden_ids.push( used_id );
+        }
+        if ( this['cannot_be_toggled'] == "0" ) {
+            included_ids.push( used_id );
+        }
+        id++;
+    });
+
+    // By default we include all visible columns in exports and print unless they have the "noExport" class
+    var exportColumns = ":visible:not(.noExport)";
+    if( dt_parameters.hasOwnProperty("exportColumns") ){
+        // A custom buttons configuration has been passed from the page
+        exportColumns = dt_parameters["exportColumns"];
+    }
+    // Data which has the "noExport" class should not appear in print or export
+    var export_format = {
+        body: function ( data, row, column, node ) {
+            var newnode = $(node);
+
+            if ( newnode.find(".noExport").length > 0 ) {
+                newnode = newnode.clone();
+                newnode.find(".noExport").remove();
+            }
+
+            return newnode.text().replace( /\n/g, ' ' ).trim();
+        }
+    }
+
+    // Add a "Clear filter" button to table filter form field
+    dt_parameters[ "buttons" ] = [
+        {
+            fade: 100,
+            className: "dt_button_clear_filter",
+            titleAttr: _("Limpiar filtro"),
+            enabled: false,
+            text: '<i class="fa fa-lg fa-remove" aria-hidden="true"></i> <span class="dt-button-text">' + _("Limpiar filtro") + '</span>',
+            action: function ( e, dt, node, config ) {
+                dt.search( "" ).draw("page");
+                node.addClass("disabled");
+            }
+        },
+        {
+            extend: 'csvHtml5',
+            text: _("CSV"),
+            exportOptions: {
+                columns: exportColumns,
+                format: export_format
+            },
+        },
+        {
+            extend: 'copyHtml5',
+            text: _("Copiar"),
+            exportOptions: {
+                columns: exportColumns,
+                format: export_format
+            },
+        },
+        {
+            extend: 'print',
+            text: _("Imprimir"),
+            exportOptions: {
+                columns: exportColumns,
+                format: export_format
+            },
+        }
+    ];
+
+    if( included_ids.length > 0 ){
+        dt_parameters[ "buttons" ].push(
+            {
+                extend: 'colvis',
+                fade: 100,
+                columns: included_ids,
+                className: "columns_controls",
+                titleAttr: _("Configuración de columnas"),
+                text: '<i class="fa fa-lg fa-gear" aria-hidden="true"></i> <span class="dt-button-text">' + _("Columnas") + '</span>',
+                exportOptions: {
+                    columns: exportColumns
+                }
+            }
+        );
+    }
+
+    var table = $(selector);
+    var new_parameters = {}
+    $.extend(true, new_parameters, dataTablesDefaults, dt_parameters);
+    var default_column_defs = [
+        { "aTargets": ["string-sort"], "sType": "string" },
+        { "aTargets": ["anti-the"], "sType": "anti-the" },
+        { "aTargets": ["NoSort"], "bSortable": false, "bSearchable": false }
+    ];
+    if (new_parameters["aoColumnDefs"] === undefined) {
+        new_parameters["aoColumnDefs"] = default_column_defs;
+    } else {
+        $.extend(true, new_parameters, default_column_defs);
+    }
+
+    table.dataTable(new_parameters);
+    table.DataTable().on("column-visibility.dt", function () {
+        if (typeof columnsInit == 'function') {
+            // This function can be created separately and used to trigger
+            // an event after the DataTable has loaded AND column visibility
+            // has been updated according to the table's configuration
+            columnsInit();
+        }
+    }).columns(hidden_ids).visible(false);
+
+    $(".dt_button_clear_filter, .columns_controls, .export_controls").tooltip();
+
+    return table;
+}
+
+</script>
+
+ 
+
+<script>
+    var GB_ROOT_DIR = "/opac-tmpl/lib/greybox/";
+</script>
+<script src="/opac-tmpl/lib/greybox/AJS_23.0508000.js"></script>
+<script src="/opac-tmpl/lib/greybox/AJS_fx_23.0508000.js"></script>
+<script src="/opac-tmpl/lib/greybox/gb_scripts_23.0508000.js"></script>
+<link rel="stylesheet" type="text/css" href="/opac-tmpl/lib/greybox/gb_styles_23.0508000.css">
+
+ 
+ <script src="/opac-tmpl/lib/jquery/plugins/jquery.barrating.min_23.0508000.js"></script>
+ <script src="/opac-tmpl/bootstrap/js/ratings_23.0508000.js"></script>
+ 
+
+ 
+
+ <script src="/opac-tmpl/lib/jquery/plugins/jquery.highlight-5_23.0508000.js"></script>
+ 
+
+ <script src="/opac-tmpl/lib/Chocolat/js/chocolat_23.0508000.js"></script>
+
+ 
+ <script src="/opac-tmpl/lib/emoji-picker/js/emoji-picker-all.min_23.0508000.js"></script>
+ 
+ <script src="/opac-tmpl/bootstrap/js/openlibrary_23.0508000.js"></script>
+ 
+
+ <script>
+        window.emojiPicker = new EmojiPicker({
+        emojiable_selector: '[data-emojiable=true]',
+        assetsPath: '/opac-tmpl/lib/emoji-picker/img/',
+        popupButtonClasses: 'fa fa-smile-o'
+        });
+        window.emojiPicker.discover();
+
+        var OPACPopupAuthorsSearch = "1";
+        
+            var q_array = new Array();  // holds search terms if available
+
+            function highlightOff() {
+                $("#catalogue_detail_biblio").removeHighlight();
+                $(".highlight_toggle").toggle();
+            }
+            function highlightOn() {
+                var x;
+                for (x in q_array) {
+                    if ( q_array[x].length > 0 ) {
+                        q_array[x] = q_array[x].replace(/\w*:([\w])/, "$1");
+                        q_array[x] = q_array[x].toLowerCase();
+                        var myStopwords = "and|or|not".toLowerCase().split('|');
+                        if( $.inArray(q_array[x], myStopwords) == -1 ) {
+                            $(".title").highlight(q_array[x]);
+                            $(".author").highlight(q_array[x]);
+                            $(".results_summary").highlight(q_array[x]);
+                        }
+                    }
+                }
+                $(".highlight_toggle").toggle();
+            }
+        
+
+        function verify_cover_images() {
+            // Loop over each container in the template which contains covers
+            $(".cover-slider").each(function( index ){
+                var lightbox_descriptions = [];
+                var first_shown = 0;
+                $(this).find(".cover-image").each( function( index ){
+                    var div = $(this);
+                    // Find the image in the container
+                    var img = div.find("img")[0];
+                    if( img && $(img).length > 0 ){
+                        var description = "";
+                        if( img.naturalHeight == 0 && div.attr("id") != "googlejacket-coverimg" && div.hasClass('coce-coverimg') ){
+                            // No image loaded in the container. Remove the slide
+                            div.remove();
+                        } else {
+                            // All slides start hidden. If this is the first one, show it.
+                            if( first_shown == 0 ){
+                                div.show();
+                                first_shown = 1;
+                            }
+                            // Check if Amazon image is present
+                            if ( div.attr("id") == "amazon-bookcoverimg"  ) {
+                                w = img.width;
+                                h = img.height;
+                                if ((w == 1) || (h == 1)) {
+                                    // Amazon returned single-pixel placeholder
+                                    // Remove the container
+                                    div.remove();
+                                } else {
+                                    lightbox_descriptions.push(_("Cubierta de Amazon (<a href='%s'>ver imagen original</a>)").format($(img).data('link')));
+                                }
+                            } else if( div.attr("id") == "custom-coverimg" ){
+                                if ( (img.complete != null) && (!img.complete) || img.naturalHeight == 0 ) {
+                                    // No image was loaded via the CustomCoverImages system preference
+                                    // Remove the container
+                                    div.remove();
+                                } else {
+                                    lightbox_descriptions.push(_("Imagen de portada propia"));
+                                }
+                            } else if( div.attr("id") == "syndetics-coverimg" ){
+                                lightbox_descriptions.push(_("Imagen de Syndetics"))
+                            } else if( div.attr("id") == "googlejacket-coverimg" ){
+                                lightbox_descriptions.push(_("Imágen de Google Books (<a href='%s'>ver imagen original</a>)").format($(img).data('link')));
+                            } else if( div.attr("id") == "openlibrary-coverimg" ){
+                                lightbox_descriptions.push(_("Imagen de OpenLibrary (<a href='%s'>ver imagen original</a>)").format($(img).data('link')));
+                            } else if( div.hasClass("coce-coverimg" ) ){
+                                // Identify which service's image is being loaded by Coce
+                                var coce_description;
+                                if( $(img).attr("src").indexOf('amazon.com') >= 0 ){
+                                    coce_description = _("Imagen Coce desde Amazon.com");
+                                } else if( $(img).attr("src").indexOf('google.com') >= 0 ){
+                                    coce_description = _("Imagen Coce desde Google Books");
+                                } else if( $(img).attr("src").indexOf('openlibrary.org') >= 0 ){
+                                    coce_description = _("Imagen Coce desde Open Library");
+                                }
+                                div.find(".hint").html(coce_description);
+                                lightbox_descriptions.push(coce_description);
+                            } else if ( div.attr("id") == "bakertaylor-coverimg" ){
+                                lightbox_descriptions.push(_("Imágen de Baker & Taylor"));
+                            } else if ( div.attr("class") == "cover-image local-coverimg" ) {
+                                lightbox_descriptions.push(_("Imagen de cubierta local"));
+                            } else {
+                                lightbox_descriptions.push(_("Imágen de cubierta de fuente desconocida"));
+                            }
+                        }
+                    } else {
+                        div.remove();
+                    }
+                });
+
+                // Lightbox for cover images
+                Chocolat(this.querySelectorAll('.cover-image a'), {
+                    description: function(){
+                        return lightbox_descriptions[this.settings.currentImageIndex];
+                    }
+                });
+
+            });
+
+            $(".cover-slider").each(function(){
+                var coverSlide = this;
+                var coverImages = $(this).find(".cover-image");
+                if( coverImages.length > 1 ){
+                    coverImages.each(function( index ){
+                        // If more that one image is present, add a navigation link
+                        // for activating the slide
+                        var covernav = $("<a href=\"#\" data-num=\"" + index + "\" class=\"cover-nav\"></a>");
+                        if( index == 0 ){
+                            // Set the first navigation link as active
+                            $(covernav).addClass("nav-active");
+                        }
+                        $(covernav).html("<i class=\"fa fa-circle\"></i>");
+                        $(coverSlide).append( covernav );
+                    });
+                }
+
+                if( $(coverSlide).find(".cover-image:visible").length < 1 ){
+                    $(coverSlide).remove();
+                } else {
+                    // This is a suboptimal workaround; we should do this via load, but
+                    // the image code is scattered all over now. We come here now after
+                    // window load and wait_for_images (so load completed).
+                    var check_complete = 1;
+                    $(coverSlide).find("img").each( function() {
+                        if( !this.complete || this.naturalHeight == 0 ) check_complete = 0;
+                    });
+                    if( check_complete ) $(coverSlide).removeClass('cover-slides');
+                }
+            });
+
+            $(".cover-slider").on("click",".cover-nav", function(e){
+                e.preventDefault();
+                var cover_slider = $(this).parent();
+                // Adding click handler for cover image navigation links
+                var num = $(this).data("num");
+                $(cover_slider).find(".cover-nav").removeClass("nav-active");
+                $(this).addClass("nav-active");
+                $(cover_slider).find(".cover-image").hide();
+                $(cover_slider).find(".cover-image").eq( num ).show();
+            });
+
+            $("#editions img").each(function(i){
+                if ( this.src.indexOf('amazon.com') >= 0 ) {
+                    w = this.width;
+                    h = this.height;
+                    if ((w == 1) || (h == 1)) {
+                        this.src = 'https://images-na.ssl-images-amazon.com/images/G/01/x-site/icons/no-img-sm.gif';
+                    } else if ( (this.complete != null) && (!this.complete) || this.naturalHeight == 0 ) {
+                        this.src = 'https://images-na.ssl-images-amazon.com/images/G/01/x-site/icons/no-img-sm.gif';
+                    }
+                }
+            });
+        } /* /verify_images */
+
+        let counter_wait = 0;
+        function wait_for_images(cb){
+
+            var loaded = 1;
+            counter_wait++;
+
+            
+                if ( loaded ) {
+                    loaded = KOHA.Google.done;
+                }
+            
+
+            
+                if ( loaded ) {
+                    loaded = KOHA.OpenLibrary.done;
+                }
+            
+
+            
+
+            if (!loaded && counter_wait < 50) {// Do not wait more than 5 seconds
+                window.setTimeout(function(){wait_for_images(cb);}, 100);
+            } else {
+                if (counter_wait >= 50 ) {
+                    console.log("Could not retrieve the images")
+                }
+                cb();
+            }
+        }
+
+        $(window).load(function() {
+            wait_for_images(verify_cover_images);
+        });
+
+        $(document).ready(function() {
+
+            
+
+                            showBsTab("bibliodescriptions", "subscriptions");
+            
+            let urlParams = new URLSearchParams(window.location.search);
+            if ( urlParams.has('tab') ) {
+                let tab = urlParams.get('tab');
+                if ( tab == 'comment' ) {
+                    showBsTab("bibliodescriptions", "comments");
+                }
+            }
+
+            
+
+            var columns_settings = [{"is_hidden":0,"columnname":"item_cover","cannot_be_modified":0,"cannot_be_toggled":0},{"columnname":"item_itemtype","is_hidden":0,"cannot_be_modified":0,"cannot_be_toggled":0},{"cannot_be_modified":0,"cannot_be_toggled":0,"columnname":"item_current_location","is_hidden":0},{"cannot_be_toggled":0,"cannot_be_modified":0,"columnname":"item_home_location","is_hidden":0},{"cannot_be_toggled":0,"cannot_be_modified":0,"is_hidden":1,"columnname":"item_shelving_location"},{"columnname":"item_ccode","is_hidden":0,"cannot_be_modified":0,"cannot_be_toggled":0},{"cannot_be_toggled":0,"cannot_be_modified":0,"is_hidden":0,"columnname":"item_callnumber"},{"cannot_be_modified":0,"cannot_be_toggled":0,"is_hidden":1,"columnname":"item_materials"},{"cannot_be_toggled":0,"cannot_be_modified":0,"columnname":"item_enumchron","is_hidden":0},{"columnname":"item_url","is_hidden":0,"cannot_be_toggled":0,"cannot_be_modified":0},{"columnname":"item_copy","is_hidden":0,"cannot_be_toggled":0,"cannot_be_modified":0},{"is_hidden":0,"columnname":"item_status","cannot_be_toggled":0,"cannot_be_modified":0},{"cannot_be_modified":0,"cannot_be_toggled":0,"is_hidden":0,"columnname":"item_notes"},{"is_hidden":0,"columnname":"item_datedue","cannot_be_toggled":0,"cannot_be_modified":0},{"cannot_be_toggled":0,"cannot_be_modified":0,"is_hidden":0,"columnname":"item_barcode"},{"is_hidden":0,"columnname":"item_holds","cannot_be_toggled":0,"cannot_be_modified":0},{"cannot_be_toggled":0,"cannot_be_modified":0,"columnname":"item_priority","is_hidden":0},{"is_hidden":0,"columnname":"item_coursereserves","cannot_be_modified":0,"cannot_be_toggled":0}];
+
+            KohaTable("#holdingst", {
+                dom: '<"clearfix">t',
+                "aoColumnDefs": [
+                    { "className": "dtr-control", "orderable": false, "targets": -1 }
+                ],
+                "bKohaColumnsUseNames": true,
+                "autoWidth": false,
+                "responsive": {
+                    "details": { "type": 'column', "target": -1 }
+                }
+            }, columns_settings);
+
+            KohaTable("#otherholdingst", {
+                dom: '<"clearfix">t',
+                "aoColumnDefs": [
+                    { "className": "dtr-control", "orderable": false, "targets": -1 }
+                ],
+                "bKohaColumnsUseNames": true,
+                "autoWidth": false,
+                "responsive": {
+                    "details": { "type": 'column', "target": -1 }
+                }
+            }, columns_settings);
+
+            var serial_column_settings = [{"columnname":"serial_serialseq","is_hidden":0,"cannot_be_modified":0,"cannot_be_toggled":0},{"cannot_be_modified":0,"cannot_be_toggled":0,"is_hidden":0,"columnname":"serial_publisheddate"},{"columnname":"serial_planneddate","is_hidden":0,"cannot_be_modified":0,"cannot_be_toggled":0},{"is_hidden":0,"columnname":"serial_status","cannot_be_modified":0,"cannot_be_toggled":0},{"is_hidden":0,"columnname":"serial_notes","cannot_be_toggled":0,"cannot_be_modified":0}];
+
+            KohaTable("#subscriptionst", {
+                dom: '<"clearfix">t',
+                "sorting": [[ 1, "desc" ]],
+                "autoWidth": false,
+                "bKohaColumnsUseNames": true,
+                "responsive": {
+                    "details": { "type": 'column', "target": -1 }
+                },
+                "aoColumnDefs": [
+                    { "className": "dtr-control", "orderable": false, "targets": -1 }
+                ],
+            }, serial_column_settings);
+
+            var dTables = $("#holdingst,#subscriptionst,#otherholdingst");
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (event) {
+                dTables.DataTable().responsive.recalc();
+            } );
+
+            
+
+            
+            
+                var default_order_index = 0;
+            
+
+            
+
+            
+                KOHA.Google.GetCoverFromIsbn(false);
+            
+
+            
+
+            
+                KOHA.OpenLibrary.GetCoverFromIsbn();
+            
+
+            
+
+            
+                // Focus on shelf browser if present
+                var shelfbrowser = $("#shelfbrowser");
+                if (shelfbrowser.length > 0) {
+                    $('html,body').animate({
+                        scrollTop: shelfbrowser.first().offset().top
+                    },
+                    'slow');
+                    shelfbrowser.first().find(':focusable').eq(0).focus();
+                }
+
+                (function prepareShelfBrowser(){
+
+                    $(".main").on("click",".close_shelf",function(e){
+                        e.preventDefault();
+                        $("#shelfbrowser").toggle();
+                    });
+                    $(".main").on("click", "#browser_previous a", function(e){
+                        e.preventDefault();
+                        $.ajax({
+                            url: "/cgi-bin/koha/svc/shelfbrowser.pl",
+                            type: "POST",
+                            data: {
+                                "shelfbrowse_itemnumber": $("#browser_previous a").data( "prev-itemnumber" )
+                            },
+                            success: function(data){
+                                $("#shelfbrowser").replaceWith(data);
+                                
+                                    KOHA.Google.GetCoverFromIsbn(false);
+                                
+                                
+                                
+                                    KOHA.OpenLibrary.GetCoverFromIsbn();
+                                
+                                
+                                    KOHA.LocalCover.GetCoverFromBibnumber(true);
+                                
+                            }
+                        });
+                    });
+
+                    $(".main").on("click", "#browser_next a", function(e){
+                        e.preventDefault();
+                        $.ajax({
+                            url: "/cgi-bin/koha/svc/shelfbrowser.pl",
+                            type: "POST",
+                            data: {
+                                "shelfbrowse_itemnumber": $("#browser_next a").data( "next-itemnumber" )
+                            },
+                            success: function(data){
+                                $("#shelfbrowser").replaceWith(data);
+                                
+                                    KOHA.Google.GetCoverFromIsbn(false);
+                                
+                                
+                                
+                                    KOHA.OpenLibrary.GetCoverFromIsbn();
+                                
+                                
+                                    KOHA.LocalCover.GetCoverFromBibnumber(true);
+                                
+                            }
+                        });
+                    });
+                }());
+            
+
+            $(".edit_comment").on("click", function(e){
+                e.preventDefault();
+                Dopop( this.href );
+            });
+        });
+
+        $(document).ready(function() {
+            if( OPACPopupAuthorsSearch == "1" ){
+                var terms = {
+                    contributors : {
+                        "label" : "author",
+                        "keyword_search" : "au:",
+                    },
+                    subject : {
+                        "label" : "subject",
+                        "keyword_search" : "su:",
+                    }
+                }
+                $(".contributors,.subject").on("click", function(e){
+                    e.preventDefault();
+                    var term = $(this).attr("class");
+                    var selected_term = $(this).text();
+                    var term_links = $("." + term );
+                    if( term_links.length > 1 ){
+                        term_links.each(function( index ){
+                            var authid = "";
+                            var preselected = false;
+                            var search_label = $(this).text().trim();
+                            if( $(this).text() == selected_term ){ preselected = true }
+                            if( $(this).hasClass("authority_link") ){
+                                authid = $(this).data("authid");
+                                search_string = "an:" + authid;
+                            } else {
+                                search_string = terms[term]["keyword_search"] + encodeURIComponent( search_label );
+                            }
+                            var termLink = $("<li>")
+                                .append( $("<input>", { type: "checkbox", class: "select_term", value: search_string, id: terms[term]["label"] + index } ).prop("checked", preselected ) )
+                                .append("&nbsp;")
+                                .append( $("<label>", { for: terms[term]["label"] + index, text: search_label } ) )
+                            $("#termsList").append( termLink );
+                            $("#multiSearch").modal("show");
+                        });
+                    } else {
+                        location.href = $(this).attr("href");
+                    }
+                });
+
+                $("#multiSearch").on("hide.bs.modal", function(){
+                    $("#termsList").html("");
+                });
+
+                $(".check_all").on("click", function(e){
+                    e.preventDefault();
+                    $(".select_term").each(function(){
+                        $(this).prop("checked", true );
+                    });
+                });
+
+                $(".check_none").on("click", function(e){
+                    e.preventDefault();
+                    $(".select_term").each(function(){
+                        $(this).prop("checked", false );
+                    });
+                });
+
+                $("#validMultiSearch").on("click", function(e){
+                    e.preventDefault();
+                    multiSearchRequest();
+                });
+            } /* if( OPACPopupAuthorsSearch == "1" ) */
+
+            $(".library_info").on("click", function(e){
+                e.preventDefault();
+                var library_name = $(this).data("name");
+                var opac_info = $(this).data("info");
+                var url = $(this).attr("href");
+                if( 1 ) {
+                    $("#libraryInfoModalLabel").html( library_name );
+                    $("#libraryInfo").html( opac_info );
+                    if( url ){
+                        $("#libraryInfoLink").attr("href", url );
+                        $("#libraryInfoLink").show();
+                    } else {
+                        $("#libraryInfoLink").hide();
+                    }
+                    $("#libraryInfoModal").modal("show");
+                } else { // FIXME Temporary disabled: see BZ 29144
+                    $.ajax({
+                        url: "/api/v1/public/libraries/" + branchcode,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(result) {
+                            $("#libraryInfoModalLabel").html( result.name );
+                            $("#libraryInfo").html( opac_info );
+                            if( result.url ){
+                                $("#libraryInfoLink").attr("href", result.url );
+                                $("#libraryInfoLink").show();
+                            } else {
+                                $("#libraryInfoLink").hide();
+                            }
+                            $("#libraryInfoModal").modal("show");
+                        },
+                        error: function(xhr, status, error) {
+                            if( url ){
+                                location.href = url;
+                            }
+                        }
+                    });
+                }
+            });
+            $("#libraryInfoModal").on("hide.bs.modal", function(){
+                $("#libraryInfoModalLabel, #libraryInfo").html("");
+                $("#libraryInfoLink").attr("href", "");
+            });
+        });
+
+        function showBsTab( container, panelid ){
+            if( $( "#" + panelid + "_panel" ).length == 1 ){
+                $("#" + container + " a[href='#" + panelid + "_panel']").tab("show");
+            } else {
+                $("#" + container + " a:first").tab("show");
+            }
+        }
+
+        function multiSearchRequest(){
+            var values = [];
+            $(".select_term").each(function(){
+                if( $(this).prop("checked") ){
+                    values.push( $(this).val() );
+                }
+            });
+
+            if (values.length > 0) {
+                var request = "/cgi-bin/koha/opac-search.pl?q=" + values.join(' and ');
+                location.href = request;
+            }
+
+        }
+    </script>
+
+
+ <script>
+         $( document ).ready(function() { 
+        $("#news").appendTo(".divNoticias");
+        var uri = window.location+"";
+        if( !uri.endsWith( "mx/" ) && !uri.endsWith( "opac-main.pl" ) ){
+           $('#menuSlider').attr('style','display:none;visibility:hidden;');
+        }
+        $(".mastheadsearch.librarypulldown").prepend("<b><p>Localiza tu libro aquí:</p></b>");
+        $(".mastheadsearch.librarypulldown").prepend("<h1>Catálogo en línea</h1>");
+ });
+        $('[name="q"]').attr( "placeholder", "Escribe el título del libro" );
+
+
+
+$( document ).ready(function() {
+$.fn.dataTable.ext.errMode = 'throw';
+  var bibli = $('#biblioId');
+  if( $.trim(bibli.text() )== '02') {
+     $("#banner").attr('src','/opac-tmpl/bootstrap/images/cento2.jpg');
+  }
+
+ if(  $.trim($("h1.title").html())!='')
+{
+      $( "h1.title" ).each(function( index ) {
+          var tituloLista = $( this ).text();
+          $( this ).parent().append( $( "<iframe frameborder='0' height='40' scrolling='no' src='https://repositorio.uaaan.mx:8080/OpenSearch/crearLink.jsp?titulo="+tituloLista+"'></iframe>" ) );
+      });
+
+}
+//Escire
+   if(  $.trim($("a.title").html())!='')
+{
+      $( "a.title" ).each(function( index ) {
+          var tituloLista = $( this ).text();
+if(tituloLista!='')
+{
+          $( this ).parent().append( $( "<iframe frameborder='0' height='40' scrolling='no' src='https://repositorio.uaaan.mx:8080/OpenSearch/crearLink.jsp?titulo="+tituloLista+"'></iframe>" ) );
+
+}
+      });
+
+}
+//Escire  
+var bc = $("#bread_crumb").clone();
+$("#bread_crumb").remove();
+$(".main").prepend(bc);
+
+var breadc =$(".breadcrumb").clone();
+$(".breadcrumb").remove();
+$("#izquierda").append(breadc);
+
+//eScire
+
+var lista = $("ul.nav li:eq(0)").clone();
+$("ul.nav li:eq(0)").remove();
+$("ul.nav").append(lista);
+
+$("#members li #cartmenulink").remove(); 
+
+$(".container-fluid h1#logo").remove();
+
+$("a.loginModal-trigger").html('<i class="icon-user icon-white"></i> Ingrese a su cuenta');
+
+$("input.transl1").attr("placeholder", "Buscar...").val("").focus().blur();
+//Escire
+});
+
+
+
+    </script>
+
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+

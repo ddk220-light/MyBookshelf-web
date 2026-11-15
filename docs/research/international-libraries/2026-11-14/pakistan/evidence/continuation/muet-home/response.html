@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUET Library & Online Information Centre</title>
+
+    <style>
+        :root {
+            --primary: #2f5f8f;
+            --dark: #1f4e7a;
+            --light: #f4f8fc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #eef3f8;
+            color: #1f2a35;
+        }
+
+        /* ================= HEADER ================= */
+
+        header {
+            background: #4f7da6;
+            color: white;
+            padding: 8px 0px 2px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-left img {
+            height: 65px;
+            background: white;
+            padding: 4px;
+            border-radius: 6px;
+        }
+
+        .header-text h1 {
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .header-text p {
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .search-box {
+            display: flex;
+        }
+
+        .search-box input {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 4px 0 0 4px;
+            outline: none;
+        }
+
+        .search-box button {
+            padding: 6px 12px;
+            border: none;
+            background: #174a87;
+            color: white;
+            cursor: pointer;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .search-box button:hover {
+            background: #0f3a6b;
+        }
+
+        /* ================= SLIDESHOW ================= */
+
+        .slideshow-container {
+            max-width: 1200px;
+            margin: 25px auto;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            background: white;
+            aspect-ratio: 16/6;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .slide-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(31, 78, 122, 0.8);
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-size: 18px;
+            border-radius: 50%;
+        }
+
+        .prev {
+            left: 15px;
+        }
+
+        .next {
+            right: 15px;
+        }
+
+        /* ================= MAIN ================= */
+
+        main {
+            max-width: 1200px;
+            margin: 35px auto;
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 25px;
+            padding: 0 15px;
+        }
+
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+        }
+
+        .section h2 {
+            font-size: 1.5rem;
+            color: var(--dark);
+            margin-bottom: 12px;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 6px;
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar-box {
+            background: var(--light);
+            padding: 18px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            transition: 0.3s ease;
+        }
+
+        .sidebar-box:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-box h3 {
+            margin-bottom: 12px;
+            color: var(--dark);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 6px;
+        }
+
+        .sidebar-box ul {
+            list-style: none;
+        }
+
+        .sidebar-box li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-box a {
+            text-decoration: none;
+            color: #1f4e7a;
+            font-weight: 500;
+        }
+
+        .sidebar-box a:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* ================= FOOTER ================= */
+
+        footer {
+            background: var(--primary);
+            color: white;
+            margin-top: 40px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .footer-links {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media(max-width:900px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="header-left">
+            <img src="logo.png" alt="MUET Logo">
+            <div class="header-text">
+                <h1 style="font-size: 30px; font-weight:bold;">MUET Library and Online Information Center, Jamshoro</h1>
+                
+            </div>
+        </div>
+
+        <nav style="margin-left: 680px; display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+                <a href="home.html">Home</a>
+                <a href="ebooks.html">Electronic Resources</a>
+                <a href="Services.html">Services</a>
+                <a href="Facalities.html">Facilities</a>
+				<a href="opac.html">Library Catalog</a>
+                <a href="contact.html">Contact Us</a>
+                <a href="admin.html">Admin</a>
+            
+            <form class="search-box" onsubmit="library_search(this.query.value); return false;">
+                <input type="text" name="query" placeholder="Search library...">
+                <button type="submit">Book Search</button>
+            </form>
+        </nav>
+    </header>
+
+    <!-- SLIDER -->
+    <div class="slideshow-container">
+        <div class="slide active"><img src="images/slide1.jpg"></div>
+        <div class="slide"><img src="images/slide2.jpg"></div>
+        <div class="slide"><img src="images/slide3.jpg"></div>
+		 <div class="slide"><img src="images/slide4.jpg"></div>
+		  <div class="slide"><img src="images/slide5.jpg"></div>
+		   <div class="slide"><img src="images/slide6.jpg"></div>
+		    <div class="slide"><img src="images/slide7.jpg"></div>
+        <button class="slide-btn prev" onclick="prevSlide()">&#10094;</button>
+        <button class="slide-btn next" onclick="nextSlide()">&#10095;</button>
+    </div>
+
+    <main>
+
+        <section>
+            <div class="section">
+                <h2>About MUET Library</h2>
+                <p align=justify >The Central Library of the University contains more than 180,700 books related to Engineering Science and Technology. Access to 15,000 plus electronics journals is available on-line within the university campus under Digital Library Program; a Project of Higher Education Commission, most of these resources are available full text.
+There are more than 32000 (approx) text books in the Book Bank, which are loaned to students for one term on nominal rent. The collection of books is updated continuously and new books are acquired on the recommendations of experienced faculty members, which makes collection most suited and beneficial to graduate and under-graduate students. In addition, latest reference and other books are also acquired every year to keep the users of the library abreast with the latest information on Science & Technology specially engineering and its allied subjects.
+In addition to providing the readers with in-house collection, services are also provided for inter-library loan and photocopying of literature including technical articles from other national and international libraries. Literature search services are also provided on request in cooperation with technical information centers within and outside Pakistan. This service is further enhanced by cooperation among Muslim Countries under COMSTECH.
+Students and faculty members are also provided with Internet facility in the Library. Students are encouraged to use computer for their project work for which PCs are installed in the Internet section of the library with a network printer and photocopier. The Catalog of books is computerized and accessible through library of congress get way serving one point access interface for books catalog, full-text electronic journals and other electronic resources on the web. Subject bibliographies can be produced on request.
+The library is heavily used by the students, faculty members and researchers and is open from 8:00 am to 12:00 p.m. throughout the year with professional staff available at service points to meet needs of the readers. Besides the central Library, individual departments have established their own seminar libraries, which cater to the specific needs of the departments. A union catalogue of books available on Campus is also functional.
+Library system covers 17 seminar libraries in all major disciplines of Engineering and Technology. The university not only caters to the needs of its students, faculty and researchers but also the industry, the library keeps itself ready to meet the ever growing information requirements of its clients.
+The collection of books is updated continuously and new books are acquired on recommendation of experienced faculty members which makes collection most suited and beneficial.
+.</p>
+            </div>
+        </section>
+
+        <aside class="sidebar">
+
+            <div class="sidebar-box">
+                <h3>Library Timing</h3>
+                <ul>
+                    <li>Monday to Thursday 08:30AM to 12:00 Mid night</li>
+                    <li>Fiday 08:30AM to 1:00 and 3:00PM to 12:00 Mid night</li>
+                    <li>Saturday and Sunday 8:30AM to 12:00 Mid night</li>
+                </ul>
+            </div>
+			<div class="sidebar-box">
+                <h3>Library Blogs</h3>
+                <ul>
+                    <li><a href="https://muetdigitallibrary.blogspot.com/">MUET Digital Library</a></li>
+                    <li><a href="https://muetloiceresources.blogspot.com/">MUET E-Resources</a></li>
+                    <li><a href="#">Research Insights</a></li>
+                    <li><a href="#">Digital Learning World</a></li>
+                </ul>
+            </div>
+
+			<div class="sidebar-box">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="https://www.muet.edu.pk/">University Website</a></li>
+                    <li><a href="https://mis.muet.edu.pk/"> University Dpt MIS Website</a></li>
+                    <li><a href="https://exam.muet.edu.pk/website/">Exmination Website</a></li>
+					<li><a href="https://admissions.muet.edu.pk/">Admission Website</a></li>
+                </ul>
+            </div>
+
+            
+            <div class="sidebar-box">
+                <h3>Social Media</h3>
+                <ul>
+                    <li>
+                        <a href="https://www.facebook.com/" target="_blank">
+                            📘 Visit Our Facebook Page
+                        </a>
+                    </li>
+                </ul>
+            </div>
+			 <div class="sidebar-box">
+                <h3>Events</h3>
+                <ul>
+                    <li>
+                        <a href="https://www.facebook.com/" target="_blank">
+                            📘 Visit Our Facebook Page
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+
+        </aside>
+
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-links">
+                <a href="home.html">Home</a>
+                <a href="Edu-resources.html">Educational Resources</a>
+                <a href="about.html">About Us</a>
+                <a href="events.html">Events</a>
+                <a href="Facalities.html">Facilities</a>
+                <a href="contact.html">Contact Us</a>
+                <a href="admin.html">Admin</a>
+            </div>
+            © 2026 MUET Library and Online Information Center, Jamshoro
+        </div>
+    </footer>
+
+    <script>
+        function library_search(query) {
+            const baseUrl = "http://121.52.154.142/cgi-bin/koha/opac-search.pl";
+            const url = `${baseUrl}?idx=&q=${encodeURIComponent(query)}&weight_search=1`;
+            window.location.href = url;
+        }
+
+        let slides = document.querySelectorAll(".slide");
+        let index = 0;
+        setInterval(nextSlide, 4000);
+
+        function showSlide(i) {
+            slides[index].classList.remove("active");
+            index = (i + slides.length) % slides.length;
+            slides[index].classList.add("active");
+        }
+
+        function nextSlide() { showSlide(index + 1); }
+        function prevSlide() { showSlide(index - 1); }
+    </script>
+
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"42fd1fb6e73f40648c9445084bf33a00","spa":2}' crossorigin="anonymous"></script>
+</body>
+
+</html>

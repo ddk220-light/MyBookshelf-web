@@ -1,0 +1,1062 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns/fb#" >
+<head>
+	
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" /> 
+	<meta name="Author" content="Primasoft" />
+	<meta name="keywords" content="biblioteca, sophia, digital, artigo, teses, dissertacoes, livro, e-print,
+	emprestimo, acervo, consulta, on-line, material audiovisual, bibliotecario, serviço de informação e
+	documentação" />
+	<meta name="Rating" content="general" />
+	<meta name="Robots" content="index,follow" />
+	<meta name="revisit-after" content="7 days" />
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+
+	<script type="text/javascript">
+		var codigo_sophia = '';
+		var codigo_levantamento = '';
+		var idioma = '';
+		var somente_midia = '';
+		var busca = '';
+		var banner = '';
+		var menu = '';
+		var palavra_chave = '';
+		var tmp = '';
+		var somente_legislacao = '';
+		var id_FGV = '';
+		var twri = '';
+		var menu_servicos = null;
+		var usuario = '';
+		var veioDeUnificado = '';
+
+		if (isParametro() || parent.hiddenFrame == undefined) {
+			window.sessionStorage.setItem("codigo_sophia", codigo_sophia);
+			window.sessionStorage.setItem("codigo_levantamento", codigo_levantamento);
+			window.sessionStorage.setItem("palavra_chave", palavra_chave);
+			window.sessionStorage.setItem("tmp", tmp);
+			window.sessionStorage.setItem("idfgv", id_FGV);
+			window.sessionStorage.setItem("twri", twri);
+			window.sessionStorage.setItem("usuario", usuario);
+			window.location = "index.html";
+		}
+
+		function escondeMenus() {
+			//Esconde os menus suspensos se estiver instanciado
+			if (menu_servicos != null) {
+				menu_servicos.EsconderMenu();
+			}
+		}
+
+		function isParametro() {
+			return (
+				isValidSophiAParam(codigo_sophia) || isValidSophiAParam(idioma) ||
+				isValidSophiAParam(codigo_levantamento) || 
+				isValidSophiAParam(somente_midia) || isValidSophiAParam(busca) ||
+				isValidSophiAParam(menu) || isValidSophiAParam(palavra_chave) ||
+				isValidSophiAParam(tmp) || isValidSophiAParam(somente_legislacao) ||
+				isValidSophiAParam(banner) || isValidSophiAParam(id_FGV) ||
+				isValidSophiAParam(veioDeUnificado)
+			);
+		}
+
+		function isValidSophiAParam(parametro) {
+			return (parametro != null && parametro != '');
+		}
+
+	</script>
+	
+	<script type="text/javascript">
+        function getTermo(idioma,id,descricao,caixa) {
+            var msgAux = "";
+            try {
+                msgAux = eval("id_" + id + "_" + idioma);
+				if (msgAux == "") {
+					msgAux = descricao;
+				}
+            } catch(e) {
+                msgAux = descricao;
+            }
+            if (caixa == 1) {
+                msgAux = msgAux.toUpperCase();
+            } else if (caixa == 2) {
+                msgAux = msgAux.toLowerCase();
+            }
+			if ( msgAux.indexOf("'") != -1 ){
+				msgAux = msgAux.replace("'", "\'");
+			}else {
+			    msgAux = msgAux.replace('\'', '\\\'');
+            }
+            return msgAux;
+        }
+    </script>
+
+<script type="text/javascript">
+
+if (parent.hiddenFrame != undefined) {
+	parent.hiddenFrame.iIdioma = 0;
+}
+
+
+var global_numero_serie = '3245';
+var global_hab_bus_leg = '1';
+var global_aba_ativa = '';
+var global_aba_inativa = '';
+var global_busca_contornos = '';
+var global_css_detalhe_esquerda = '#DDDDDD';
+var global_versao = '1';
+var global_limite_min_busca = '3';
+var global_ultimas_aquisicoes = '0';
+var global_facebook_appid = '';
+var global_espanha = '0';
+var global_leg_ordenacao = "publicacaoDESC";
+var global_leg_filtro = "palavra_chave";
+var global_dias_ultimas_aquisicoes = '0';
+var global_comb_ordenacao = "titulo";
+var global_integracao_rybena = '0';
+
+if (global_numero_serie == 5613) {
+	global_comb_ordenacao = "dataDESC";
+} else {
+	global_comb_ordenacao = "titulo";
+	var global_session_data = 0;
+	
+		var global_session_tabopc = 0;
+	
+}
+if (global_numero_serie == 2518) {
+	var global_campo_default1 = "titulo";
+	var global_campo_default2 = "autor";
+	var global_campo_default3 = "assunto";
+	var global_campo_default4 = "palavra_chave";
+} else {
+	var global_campo_default1 = "palavra_chave";
+	var global_campo_default2 = "titulo";
+	var global_campo_default3 = "autor";
+	var global_campo_default4 = "assunto";
+}
+	if (parent.hiddenFrame != undefined) {
+		if (parent.hiddenFrame.comb_ordenacao == "") {
+			parent.hiddenFrame.comb_ordenacao = global_comb_ordenacao;
+		}
+		if (parent.hiddenFrame.leg_ordenacao == "") {
+			parent.hiddenFrame.leg_ordenacao = global_leg_ordenacao;
+		}
+		if (parent.hiddenFrame.comb_filtro1 == "") {
+			parent.hiddenFrame.comb_filtro1 = global_campo_default1;
+		}
+		if (parent.hiddenFrame.comb_filtro2 == "") {
+			parent.hiddenFrame.comb_filtro2 = global_campo_default2;
+		}
+		if (parent.hiddenFrame.comb_filtro3 == "") {
+			parent.hiddenFrame.comb_filtro3 = global_campo_default3;
+		}
+		if (parent.hiddenFrame.comb_filtro4 == "") {
+			parent.hiddenFrame.comb_filtro4 = global_campo_default4;
+		}
+		if (parent.hiddenFrame.leg_filtro == "") {
+			parent.hiddenFrame.leg_filtro = global_leg_filtro;
+		}
+	
+			parent.hiddenFrame.iMultiServbib = 0;
+	
+			parent.hiddenFrame.alturaJanelaLogin = 250;
+	
+}
+</script>
+
+	<title>.: SophiA Biblioteca - Terminal Web :.</title>
+
+	<script type="text/javascript">
+		if (parent != undefined) {
+			parent.document.title = ".: SophiA Biblioteca - Terminal Web :.";
+		}
+	</script>
+
+	
+
+	<link href="inc/estilo_padrao.css" rel="stylesheet" type="text/css" />
+	<link href="inc/estilo_customizado.css" rel="stylesheet" type="text/css" />
+	<link href="inc/imagem_padrao.css" rel="stylesheet" type="text/css" />
+	
+		<link href="libasp/estilo.asp?idioma=0" rel="stylesheet" type="text/css" />
+	
+
+	<style type="text/css">
+		.td_cabecalho
+		{
+			background-image: url(imagens/banner.png);
+			background-repeat: no-repeat;
+			background-position: center center;
+		}
+
+		.td_home
+		{
+			background-image: url(imagens/background.jpg);
+			background-repeat: no-repeat;
+		}
+	   
+	</style>
+	
+	<script type="text/javascript" src="scripts/jquery/jquery-3.4.0.min.js"></script>
+	<script>
+		// Criado para o IE8 - Alternativa ao CSS last-child 
+		// Usado para ajustar o último bloco de opções do menu principal (superior)
+		
+		$(function() {
+			$(".span-menu-item:last-child").addClass("ultimo-span-menu-item");
+		});
+
+	</script>
+	
+	<script type="text/javascript" src="scripts/jquery/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="scripts/jquery.cookie.js"></script>
+	<script type="text/javascript" src="scripts/localization/jquery.ui.datepicker-pt-BR.js"></script>
+	<script type="text/javascript" src="scripts/localization/jquery.ui.datepicker-es.js"></script>
+	<script type="text/javascript" src="scripts/localization/jquery.ui.datepicker-ca.js"></script>
+	<script type="text/javascript" src="scripts/localization/jquery.ui.datepicker-gl.js"></script>
+	<script type="text/javascript" src="scripts/localization/jquery.ui.datepicker-eu.js"></script>
+	
+	<script type="text/javascript" src="scripts/kendo/kendo.core.min.js"></script>
+	<script type="text/javascript" src="scripts/kendo/kendo.data.min.js"></script>
+	<script type="text/javascript" src="scripts/kendo/kendo.popup.min.js"></script>
+	<script type="text/javascript" src="scripts/kendo/kendo.list.min.js"></script>
+	<script type="text/javascript" src="scripts/kendo/kendo.dropdownlist.min.js"></script>
+
+	<script type="text/javascript" src="scripts/jquery.treeview.js"></script>
+	<script type="text/javascript" src="scripts/combo.init.js"></script>
+	<script type="text/javascript" src="scripts/jquery.multiselect.js"></script>
+	<script type="text/javascript" src="scripts/jquery.multiselect.filter.js"></script>
+
+	<script type="text/javascript" src="scripts/modernizr-custom.js"></script>
+
+	<link href="scripts/css/kendo/kendo.common.min.css" rel="stylesheet" type="text/css" />
+	<link href="scripts/css/kendo/kendo.metro.min.css" rel="stylesheet" type="text/css" />
+	<link href="scripts/css/estilo_idioma.css" rel="stylesheet" type="text/css" />
+	<link href="scripts/css/jquery-ui-1.8.18.datepicker.css" rel="stylesheet" />
+	<link href="scripts/css/jquery.multiselect.css" rel="stylesheet" />
+	<link href="scripts/css/jquery.multiselect.filter.css" rel="stylesheet" />
+	<link href="scripts/css/multiselect-custom.css" rel="stylesheet" />
+	<link href="scripts/css/pubtype-icons.css" rel="stylesheet" type="text/css" />
+	<link href="scripts/css/jquery.treeview.css" rel="stylesheet" type="text/css" />
+
+	<script type="text/javascript" src="scripts/modal.js"></script>
+	<link href="scripts/css/modal.css" rel="stylesheet" type="text/css" />
+
+	<script type="text/javascript" src="scripts/menu.js"></script>
+	<script type="text/javascript" src="scripts/index.js"></script>
+	<script type="text/javascript" src="scripts/funcoes.js?b=2014.1.150.126"></script>
+	<script type="text/javascript" src="scripts/favoritos.js"></script>
+
+	<script type="text/javascript" src="scripts/solicitar-Imagem.js"></script>
+
+	<link href="inc/contraste.css" rel="stylesheet" type="text/css" />
+	<link href="inc/imagem_contraste.css" rel="stylesheet" type="text/css" />
+
+	<script type='text/javascript'>LayerX();</script><script type='text/javascript'>LayerY();</script>
+
+</head>
+
+
+					<body onclick="escondeMenus();" onload="mantemFoco('rapida');mantemLinks();" onunload="armazena_selecao();">
+				
+	<iframe name="ajxFrame" id="ajxFrame" src="about:blank" style="display: none;"></iframe>
+
+	
+
+	<div class="divMain">
+		<form name='frm_geral' target='mainFrame' method='post'>
+			
+
+			<div id="div_cabecalho" class="div_cabecalho"> 
+				<table class="remover_bordas_padding max_width tab_div tab_div_principal" id="tab_principal">
+				
+
+						<tr> 
+
+						
+								<td class="td_cabecalho" style=" text-align: center; vertical-align:middle ;" colspan="2">
+							
+								<span class="span-banner">&nbsp;Sistema de Bibliotecas Integradas do IFSC&nbsp;</span>
+							    
+							</td>
+
+						
+
+				</tr>
+
+				
+				<tr> 
+					<td style="height: 50px; text-align:center;" colspan="2"> 
+					
+<table class="max_width tab_menu">
+<tr>
+<td class="centro" style="height: 33px; white-space: nowrap;">
+	<span class='span-menu-item' style='width:190px;'><a class=link_menu2 href="javascript:LinkHome(parent.hiddenFrame.modo_busca);"><span class='transparent-icon span_imagem icon_20 icon-home'></span>&nbsp;Home</a></span><span class='span-menu-item' style='width:190px;'><a class=link_menu1 href="javascript:LinkPesquisa(parent.hiddenFrame.modo_busca);"><span class='transparent-icon span_imagem icon_20 icon-search'></span>&nbsp;Pesquisa</a></span><span class='span-menu-item' style='width:190px;'><a class=link_menu1 href="javascript:LinkAutoridades(parent.hiddenFrame.modo_busca);"><span class='transparent-icon span_imagem icon_20 icon-user'></span>&nbsp;Autoridades</a></span><span class='span-menu-item' style='width:190px;'><a class=link_menu1 href="javascript:LinkSelecao(parent.hiddenFrame.modo_busca);"><span class='transparent-icon span_imagem icon_20 icon-selecao'></span>&nbsp;Minha seleção</a></span><span class='span-menu-item' style='width:190px;'><a class=link_menu1 href="javascript:LinkMensagens(parent.hiddenFrame.modo_busca);"><span class='transparent-icon span_imagem icon_20 icon-services'></span>&nbsp;Serviços</a></span>
+</td>
+</tr>
+</table>
+					</td>
+				</tr>
+				
+				<tr>
+					<td class='menu_acessibilidade'><span class='span_acessibilidade'><a class=link_menu1 title='Ajuda' style='cursor:pointer;' href='#' onclick="javascript:window.open('help/ptbr/index.html','Ajuda','location=no,scrollbars=auto,menubars=no,toolbars=no,top=20,left=5,resizable=yes,width=775,height=480');">&nbsp;Ajuda</a>&nbsp;</span><span class='pipeAcessibilidade'>|</span><span class='span_acessibilidade'><a class=link_menu1 title='Acessibilidade' style='cursor:pointer;' href="javascript:abrePopup('asp/acessibilidade_pt-br.asp','Acessibilidade',900,800,true,true,null,true,900);">Acessibilidade</a></span><span class='pipeAcessibilidade'>|</span><span class='span_acessibilidade'><a class=link_menu1 title='Alto contraste' href="javascript:LinkContraste();">Alto contraste</a></span></td><td class='menu_acessibilidade area_login_menu_principal td_acessibilidade'><a class=link_menu1 href="javascript:LinkLogin();"><span class='transparent-icon span_imagem icon-key-login'></span>&nbsp;Entrar</a></td>
+					</td>
+				</tr>
+
+				
+				<tr class="background_buscas"> 
+					<td class="esquerda" style="height: 26px;"> 
+					
+						<table class="remover_bordas_padding">
+							<tr> 
+								
+										<td id="tab_rap" class="centralizar_xy td_abas td_abas_esquerda background_aba_ativa">
+										<a name="link_rap" class="link_abas" id="lk_rap" href="#" onclick="move_layer('rapida', parent.hiddenFrame.layerX);">
+										
+											<span id="aba_rap" class="text-aba">Busca rápida</span>
+										
+										</a></td>
+										
+										<td class="centralizar_xy td_abas td_abas_centro background_aba_inativa" id="tab_comb">
+										<a class="link_abas" id="lk_comb" href="#" name="link_comb" onclick="atribuiComb();move_layer('combinada', parent.hiddenFrame.layerX);">
+										
+											<span id="aba_comb" class="text-aba">Busca combinada</span>
+														
+										</a></td>
+								
+								
+							</tr>
+						</table>
+					
+					</td>
+					<td class="direita">
+						<table class="max_width">
+							<tr> 
+								<td class="direita" style="height: 30px;"> &nbsp;&nbsp;
+								
+			<select class="select_biblioteca" name="geral_bib" id="geral_bib" multiple="multiple" onKeyPress="return validaTecla(this,event,1,3245)" onChange="atualizaGeral();">
+	<option value='123'>CERFEAD</option><option value='42'>IF-SC - Araranguá</option><option value='68'>IFSC - Caçador</option><option value='63'>IFSC - Canoinhas</option><option value='22'>IF-SC - Chapecó </option><option value='66'>IFSC - Criciúma</option><option value='1'>IFSC - Florianópolis</option><option value='23'>IFSC - Fpolis Continente</option><option value='69'>IFSC - Garopaba</option><option value='64'>IFSC - Gaspar</option><option value='62'>IF-SC - Itajaí</option><option value='2'>IFSC - Jaraguá do Sul - Centro</option><option value='65'>IFSC - Jaraguá do Sul - Rau</option><option value='4'>IFSC - Joinville</option><option value='67'>IFSC - Lages</option><option value='71'>IFSC - Palhoça Bilíngue</option><option value='124'>IFSC - São Carlos</option><option value='3'>IF-SC - São José</option><option value='125'>IFSC - São Lourenço</option><option value='72'>IFSC - São Miguel do Oeste</option><option value='122'>IFSC - Tubarão</option><option value='102'>IFSC - Urupema</option><option value='70'>IFSC - Xanxerê</option>   	</select><input type="hidden" id="geral_bib_codigos" name="geral_bib_codigos"/>
+	
+<script type='text/javascript'>
+	if (parent.hiddenFrame != null) {
+		if (parent.hiddenFrame.iBusca_Projeto > 0)  {
+			if (document.frm_combinada != null) {
+				if (document.frm_combinada.comb_bib != null) {
+					document.frm_combinada.comb_bib.style.visibility = "hidden";
+				}
+			}
+			if (document.frm_geral != null) {
+				if (document.frm_geral.geral_bib != null) {
+					document.frm_geral.geral_bib.style.visibility = "hidden";
+				}
+			}
+			if (document.frm_rapida != null) {
+				if (document.frm_rapida.rapida_bib != null) {
+					document.frm_rapida.rapida_bib.style.visibility = "hidden";
+				}
+			}
+			if (document.frm_aut != null) {
+				if (document.frm_aut.aut_bib != null) {
+					document.frm_aut.aut_bib.style.visibility = "hidden";
+				}
+			}
+		}
+		if ((parent.hiddenFrame.iFixarBibUsu == 1) || (parent.hiddenFrame.iFixarBib == 1)) {
+			if (document.frm_combinada != null) {
+				if (document.frm_combinada.comb_bib != null) {
+					document.frm_combinada.comb_bib.disabled = true;
+				}
+			}
+			if (document.frm_geral != null) {
+				if (document.frm_geral.geral_bib != null) {
+				    document.frm_geral.geral_bib.disabled = true;
+				}
+			}
+			if (document.frm_rapida != null) {
+				if (document.frm_rapida.rapida_bib != null) {
+					document.frm_rapida.rapida_bib.disabled = true;
+				}
+			}
+			if (document.frm_aut != null) {
+				if (document.frm_aut.aut_bib != null) {
+					document.frm_aut.aut_bib.disabled = true;
+				}
+			}
+		}
+	}
+</script>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				
+				</table>
+			</div>    
+		</form>
+		
+				<div id="div_rap" class="div_rap visible"> 
+					<table class="remover_bordas_padding max_width tab_div">
+					
+	<tr>
+	<td class="background_aba_ativa td_busca_rapida">
+		<form name='frm_rapida' action='index.asp?modo_busca=rapida&content=resultado&iBanner=0&iEscondeMenu=0&iIdioma=0' method='post'>
+			
+
+			&nbsp;&nbsp;
+			<select class="select_busca_rapida styled_combo" name="rapida_filtro" id="rapida_filtro" onkeypress="return validaTecla(1,this,event,1,3245);" onchange="atualizaRapida();">
+			<option value="palavra_chave">Todos os campos</option>
+
+			
+
+			<option value="titulo">Título</option>
+			<option value="autor">
+				Autor</option>
+			
+			<option value="assunto">Assunto</option>
+			
+				<option value="editora">
+					Editora
+				</option>
+			
+				<option value="isbn_issn">ISBN / ISSN</option>
+				<option value="serie">Série</option>
+			
+					<option value="dgm">Desc. compl.</option>
+				
+			<!--<option value="idioma">Idioma</option>-->
+			<!--<option value="resumo">Resumo</option>-->
+			</select>
+			<input class="input_busca" type="text" name="rapida_campo" onkeypress="return validaTecla(0,this,event,1,3245)" value="" onchange="atualizaRapida();" maxlength="500" />
+			<input class="button_busca" type="button" title="Submeter busca" onclick="return Confere(3245,1,'','rapida')" value="Buscar" />
+			<input class="button_busca" type="button" title="Limpar campos" onclick="Reset_rapida();atribuiRapida();" value="Limpar" />
+			<input type="hidden" name="rapida_bib" value="0" />
+			<input type="hidden" name="rapida_subloc" value="0" />
+			<input type="hidden" name="submeteu" value="rapida" />
+			<span id='buscaMidiaSpan'><input type='checkbox' name='busca_midia' value='1' onChange='atualizaRapida();' />Registros com conteúdo digital</span>
+		</form>
+	</td>
+	</tr>
+
+					</table>
+				</div>
+				<div id="div_comb" class="div_comb"> 
+					<table class="remover_bordas_padding max_width tab_div">
+					
+	<td>
+	<form name="frm_combinada" action="index.asp?modo_busca=combinada&content=resultado&Servidor=1&iBanner=0&iEscondeMenu=0&iIdioma=0" method="post">	
+		
+
+	<tr>
+	
+		<td class="td_center_middle background_aba_ativa td_busca_avancada1" style="padding-top:10px;vertical-align: top;">
+	
+	
+	<table class="table-filtros" style="border-spacing: 2px; padding: 0;">
+	<tr><td>
+	&nbsp;
+	<select class='select_busca styled_combo' id="comb_filtro1" name="comb_filtro1" onkeypress="return validaTecla(1,this,event,3,3245,'','rapida',0)" onchange="atualizaComb_filtros();">
+	<option value='palavra_chave' >Todos os campos</option>
+	<option value='titulo'>Título</option>
+	<option value='autor' >
+		Autor</option>
+	
+	<option value='assunto' >Assunto</option>
+	
+		<option value='editora' >
+			Editora
+		</option>
+
+		<option value='isbn_issn' >ISBN / ISSN</option>
+		<option value='serie' >Série</option>
+	
+			<option value='dgm' >Desc. compl.</option>
+		
+	<!--<option value='idioma' >Idioma</option>-->
+	<!--<option value='resumo' >Resumo</option>-->
+	</select>
+</td><td> <input class="input_busca" type="text" name="comb_campo1" onkeypress="return validaTecla(1,this,event,3,3245,'','rapida',0)" value='' onchange="atualizaComb_campos();" maxlength="500" /></td><td>
+	<select class='select_logica styled_combo' id="comb_logica1" name="comb_logica1" onkeypress="return validaTecla(1,this,event,3,3245,'','rapida',0)" onchange="atualizaComb_logica();">
+	<option value='E'>E</option>
+	<option value='OU'>OU</option>
+	<option value='NAO'>E NÃO</option>
+	</select>
+</td></tr>
+	<tr><td>
+	&nbsp;
+	<select class='select_busca styled_combo' id="comb_filtro2" name="comb_filtro2" onkeypress="return validaTecla(1,this,event,3,3245,'','rapida',0)" onchange="atualizaComb_filtros();">
+	<option value='palavra_chave' >Todos os campos</option>
+	<option value='titulo'>Título</option>
+	<option value='autor' >
+		Autor</option>
+	
+	<option value='assunto' >Assunto</option>
+	
+		<option value='editora' >
+			Editora
+		</option>
+
+		<option value='isbn_issn' >ISBN / ISSN</option>
+		<option value='serie' >Série</option>
+	
+			<option value='dgm' >Desc. compl.</option>
+		
+	<!--<option value='idioma' >Idioma</option>-->
+	<!--<option value='resumo' >Resumo</option>-->
+	</select>
+</td><td> <input class="input_busca" type="text" name="comb_campo2" onkeypress="return validaTecla(1,this,event,3,3245,'','rapida',0)" value='' onchange="atualizaComb_campos();" maxlength="500" /></td><td>
+	<select class='select_logica styled_combo' id="comb_logica2" name="comb_logica2" onkeypress="return validaTecla(1,this,event,3,3245,'','rapida',0)" onchange="atualizaComb_logica();">
+	<option value='E'>E</option>
+	<option value='OU'>OU</option>
+	<option value='NAO'>E NÃO</option>
+	</select>
+</td></tr>
+	<tr><td>
+	&nbsp;
+	<select class='select_busca styled_combo' id="comb_filtro3" name="comb_filtro3" onkeypress="return validaTecla(1,this,event,3,3245,'','rapida',0)" onchange="atualizaComb_filtros();">
+	<option value='palavra_chave' >Todos os campos</option>
+	<option value='titulo'>Título</option>
+	<option value='autor' >
+		Autor</option>
+	
+	<option value='assunto' >Assunto</option>
+	
+		<option value='editora' >
+			Editora
+		</option>
+
+		<option value='isbn_issn' >ISBN / ISSN</option>
+		<option value='serie' >Série</option>
+	
+			<option value='dgm' >Desc. compl.</option>
+		
+	<!--<option value='idioma' >Idioma</option>-->
+	<!--<option value='resumo' >Resumo</option>-->
+	</select>
+</td><td> <input class="input_busca" type="text" name="comb_campo3" onkeypress="return validaTecla(1,this,event,3,3245,'','rapida',0)" value='' onchange="atualizaComb_campos();" maxlength="500" /></td><td>
+	<select class='select_logica styled_combo' id="comb_logica3" name="comb_logica3" onkeypress="return validaTecla(1,this,event,3,3245,'','rapida',0)" onchange="atualizaComb_logica();">
+	<option value='E'>E</option>
+	<option value='OU'>OU</option>
+	<option value='NAO'>E NÃO</option>
+	</select>
+</td></tr>
+	<tr><td>
+	&nbsp;
+	<select class='select_busca styled_combo' id="comb_filtro4" name="comb_filtro4" onkeypress="return validaTecla(1,this,event,3,3245,'','rapida',0)" onchange="atualizaComb_filtros();">
+	<option value='palavra_chave' >Todos os campos</option>
+	<option value='titulo'>Título</option>
+	<option value='autor' >
+		Autor</option>
+	
+	<option value='assunto' >Assunto</option>
+	
+		<option value='editora' >
+			Editora
+		</option>
+
+		<option value='isbn_issn' >ISBN / ISSN</option>
+		<option value='serie' >Série</option>
+	
+			<option value='dgm' >Desc. compl.</option>
+		
+	<!--<option value='idioma' >Idioma</option>-->
+	<!--<option value='resumo' >Resumo</option>-->
+	</select>
+</td><td> <input class="input_busca" type="text" name="comb_campo4" onkeypress="return validaTecla(1,this,event,3,3245,'','rapida',0)" value='' onchange="atualizaComb_campos();" maxlength="500" /></td><td>&nbsp;</td></tr>
+		
+    
+	</table>
+	</td>
+	<td class="td_center_middle background_aba_ativa td_busca_avancada2" style="padding-top:10px;vertical-align: top;">
+	<table class="table-filtros" style="border-spacing: 2px; padding: 0; display: inline-block;">
+	<tr>
+	<td class="td-label" style="width: 77px">
+	  Ano edição
+	</td>
+	<td>
+	<input class="input_ano" onkeyup="return validaTecla(1,this,event,3,3245,'','rapida',0)" type="text" name="comb_ano1" value='' onchange="atualizaComb_opcoes();" maxlength="500" />
+	
+		<label class="label_entre_anos">a</label>
+		<input class="input_ano" onkeyup="return validaTecla(1,this,event,3,3245,'','rapida',0)" type="text" name="comb_ano2" value='' onchange="atualizaComb_opcoes();" maxlength="500" />
+	
+	&nbsp;</td></tr>
+	
+	
+		<tr><td class="td-label">Material</td><td>
+		<select name="comb_material" id="comb_material" multiple="multiple" class="select_avancada" onKeyPress="return validaTecla(1,this,event,3,3245,'','rapida',0);" onChange="atualizaCombMaterial_opcoes();"><option value='59'>Almanaque                     </option><option value='73'>Anais                         </option><option value='83'>Analítica de Obras            </option><option value='84'>Analítica de Periódicos       </option><option value='31'>Apostilas                     </option><option value='57'>Atlas                         </option><option value='194'>Blu-ray</option><option value='58'>Boletim                       </option><option value='204'>Boletim de Pesquisa</option><option value='213'>Boletim Técnico</option><option value='208'>Cartilha</option><option value='34'>Catálogos                     </option><option value='42'>CD-ROM                        </option><option value='203'>Circular Técnica</option><option value='206'>Comunicado Técnico</option><option value='79'>Dicionário                    </option><option value='39'>Dissertações                  </option><option value='197'>Dissertações on-line</option><option value='205'>Documentos</option><option value='43'>DVD                           </option><option value='71'>Encarte                       </option><option value='214'>Encarte Técnico</option><option value='80'>Enciclopédia                  </option><option value='62'>Fita VHS                      </option><option value='53'>Folheto                       </option><option value='195'>Globo</option><option value='74'>Guia</option><option value='224'>História em quadrinhos</option><option value='219'>Jogos</option><option value='220'>Jogos de tabuleiro</option><option value='49'>Jornais                       </option><option value='91'>Kit didático</option><option value='202'>Livreto</option><option value='217'>Livro eletrônico</option><option value='207'>Livro em Audio</option><option value='37'>Livros                        </option><option value='23'>Livros de literatura          </option><option value='27'>Mapas                         </option><option value='223'>Material grafotátil</option><option value='56'>Material textual (impresso)   </option><option value='81'>Monografia de Pós-Graduação   </option><option value='199'>Monografia de Pós-Graduação  on-line</option><option value='29'>Normas                        </option><option value='222'>Objeto</option><option value='46'>Obras de referência           </option><option value='192'>Página da Web</option><option value='210'>Periódico</option><option value='70'>Periódicos                    </option><option value='54'>Pré-Projeto S. Intermediária  </option><option value='193'>Projeto</option><option value='50'>Projeto Integrador            </option><option value='55'>Projeto Saída Intermediária   </option><option value='40'>Relatório</option><option value='68'>Suplemento                    </option><option value='30'>Teses                         </option><option value='196'>Teses  on-line</option><option value='51'>Trabalho de Conclusão de Curso</option><option value='198'>Trabalho de Conclusão de Curso  on-line</option></select><input type="hidden" id="comb_material_codigos" name="comb_material_codigos"/>
+		</td></tr>
+		
+			<tr><td class="td-label">Idioma</td><td>
+			<select name="comb_idioma" id="comb_idioma" class="select_avancada styled_combo" onKeyPress="return validaTecla(1,this,event,3,3245,'','rapida',0);" onChange="atualizaComb_opcoes();"><option value=0 selected>Qualquer</option><option value='178'>Alemão</option><option value='168'>Aramaico</option><option value='158'>Chinês</option><option value='32'>Espanhol</option><option value='6'>Francês</option><option value='8'>Guarani                       </option><option value='2'>Inglês</option><option value='4'>Italiano</option><option value='214'>Japonês</option><option value='234'>Kaingang</option><option value='11'>Latim                         </option><option value='150'>Libras</option><option value='31'>Português</option><option value='9'>Russo                         </option></select>
+			</td></tr>
+			
+	<tr>
+		<td class="td-label">Ordenação</td><td>
+		<select class="select_avancada styled_combo" id="comb_ordenacao" name="comb_ordenacao" onkeypress="return validaTecla(0,this,event,3,3245,'','rapida',0)" onChange="atualizaComb_opcoes();">
+			
+			<option value="titulo">Título - crescente</option>
+			<option value="tituloDESC">Título - decrescente</option>
+		
+			<option value="autor">Autor - crescente</option>
+			<option value="autorDESC">Autor - decrescente</option>
+			<option value="assunto">Assunto - crescente</option>
+			<option value="assuntoDESC">Assunto - decrescente</option>
+			
+		</select>
+		</td>
+	</tr>
+	
+		<tr><td>&nbsp;</td>
+			<td class ="td-check"> 
+				<span id="buscaMidiaSpanComb">
+					<input type="checkbox" name="busca_midia" value="1" onchange="atualizaComb_opcoes();" />Registros com conteúdo digital 
+				</span>
+				&nbsp;
+			</td>
+		</tr>
+	
+	</table>
+	</td>
+	
+		<td class="td_center_top background_aba_ativa td_busca_avancada3" style="padding-top:10px;">
+	
+	<input style="margin-bottom: 5px;" title="Submeter busca" class="button_busca" name="bt_comb" type="button" onclick="return Confere(3245,3,'','rapida')" value="Buscar" />
+	<input title="Limpar campos" class="button_busca" name="bt_limpar" type="button" onClick="Resetar();atribuiComb();" value="Limpar" />
+	</td></tr>	
+	</table>
+	<input type="hidden" name="comb_bib" value="0" />
+	<input type="hidden" name="comb_subloc" value="0" />
+	<input type="hidden" name="submeteu" value="combinada" />
+  
+   
+</form>	</td>
+					</table>
+				</div>
+				
+					<div id="div_leg" class="div_leg"> 
+						<table class="remover_bordas_padding max_width tab_div">
+						<script type="text/javascript">
+	$(function () {
+		$.datepicker.setDefaults($.datepicker.regional['pt-BR']);
+		$("#data_ass_inicio").datepicker({
+			showOn: "both",
+			buttonImage: "scripts/css/images/calendario.png",
+			buttonImageOnly: true,
+			minDate: new Date(1753, 1 - 1, 1),
+			buttonText: ""
+		});
+		$("#data_ass_fim").datepicker({
+			showOn: "both",
+			buttonImage: "scripts/css/images/calendario.png",
+			buttonImageOnly: true,
+			minDate: new Date(1753, 1 - 1, 1),
+			buttonText: ""
+		});
+		$("#data_pub_inicio").datepicker({
+			showOn: "both",
+			buttonImage: "scripts/css/images/calendario.png",
+			buttonImageOnly: true,
+			minDate: new Date(1753, 1 - 1, 1),
+			buttonText: ""
+		});
+		$("#data_pub_fim").datepicker({
+			showOn: "both",
+			buttonImage: "scripts/css/images/calendario.png",
+			buttonImageOnly: true,
+			minDate: new Date(1753, 1 - 1, 1),
+			buttonText: ""
+		});
+
+		// Espanhol
+		
+
+
+    });
+</script>
+
+<td>
+<form name="frm_legislacao" action="index.asp?modo_busca=legislacao&content=resultado&iBanner=0&iEscondeMenu=0&iSomenteLegislacao=0&iIdioma=0" method="post">
+	
+
+	<tr>
+	<td class="background_aba_ativa td_busca_leg1 td_center_middle" style="padding-top: 6px;">
+	
+        <!-- Busca simplificada -->
+        <table style="height: 54px;" class="remover_bordas_padding max_width">
+	    <tr>
+			
+				<td style="width: 150px; height: 30px">&nbsp;&nbsp;Todos os campos</td>
+			
+
+			<td><input tabindex="1" style="margin-top: 0px" class="inputLegEsq" type="text" name="leg_campo1" onkeypress="return validaTecla(1,this,event,5,3245,'','parent.hiddenFrame.modo_busca',0)" value='' onchange="atualizaLeg_campos();" maxlength="500" /></td>		
+	        <td style="padding-left: 16px;">Ordenação</td>
+			<td>
+				<select class="select_legislacao styled_combo" id="leg_ordenacao" name="leg_ordenacao" onkeypress="return validaTecla(0,this,event,3,3245,'','rapida',0)" onChange="atualizaLeg_campos();">
+					<option value="publicacaoDESC">Data de publicação - decrescente</option>
+					<option value="publicacao">Data de publicação - crescente</option>
+					<option value="titulo">Norma</option>
+				</select>
+			</td>
+		</tr>
+	    <tr>
+	        <td class="esquerda">&nbsp;&nbsp;Norma</td>
+            <td style="width: 307px">
+				
+						<select tabindex="2" id="leg_normas" name="leg_normas" class="select_normas styled_combo"  onkeypress="return validaTecla(1,this,event,5,3245,'','parent.hiddenFrame.modo_busca',0)" onchange="atualizaLeg_campos();">
+						<option value=-1 selected>Todas as normas</option>
+						</select>
+				
+			</td>
+	        <td style="width: 75px; padding-left: 16px;">Número</td>
+            <td>
+				
+		            <input tabindex="3" style="width: 180px; margin-right: 3px;" type="text" name="leg_numero" onkeypress="return validaTecla(1,this,event,5,3245,'','parent.hiddenFrame.modo_busca',0)" value='' onchange="atualizaLeg_campos();" maxlength="500" />
+	            
+	
+				<label style="display:inline-block; width: 28px;">Ano</label>
+				<input tabindex="4" style="width: 91px;" type="text" name="ano_ass" onkeypress="return (BloqueiaNaoNumerico(event) && validaTecla(1,this,event,5,3245,'','parent.hiddenFrame.modo_busca',0));" value=''  onchange="atualizaLeg_campos();" maxlength="500" />
+			</td>
+	    </tr>
+	    </table>
+
+        <!-- Busca Avançada -->
+        <div id="div_leg_avancada" style="display: none">
+            <table style="height: 150px; border-spacing: 2px" class="max_width">
+	        <tr>
+				<td style="width: 150px; height: 28px">&nbsp;&nbsp;Órgão de origem</td>
+				<td style="width: 307px">
+				
+							<select tabindex="5" style="margin-top: 5px;" id="leg_orgao_origem" name="leg_orgao_origem" class="select_orgao_origem styled_combo" onkeypress="return validaTecla(1,this,event,5,3245,'','parent.hiddenFrame.modo_busca',0)" onchange="atualizaLeg_campos();">
+						<option value=-1 selected>Todos os órgãos de origem</option>
+						</select>
+				
+
+				</td>
+				<td style="width: 75px; padding-left: 16px;">Assinatura</td>
+                <td>
+					<select tabindex="6" id="sel_data_ass" name="sel_data_ass" class="select_data styled_combo" onchange="habilitaEntre('ass');atualizaLeg_campos();">
+			            <option value="0">igual a</option>
+			            <option value="1">menor que</option>
+			            <option value="2">maior que</option>
+			            <option value="3">entre</option>
+			        </select>
+
+					<input tabindex="7" type="text" maxlength="10" class="input_data" id="data_ass_inicio" name="data_ass_inicio" onkeypress="return formataCampoDatePicker(this, event)" onChange="atualizaLeg_campos(); validarCampoData(this);" />
+			        <span id="data_ass_a" class="invisible"><label style="display:inline-block; width: 30px; text-align: center;">a</label></span>
+			        <span id="data_ass_comp" class="invisible">
+						<input tabindex="8" type="text" maxlength="10" class="input_data" id="data_ass_fim" name="data_ass_fim" onkeypress="return formataCampoDatePicker(this, event)" onChange="atualizaLeg_campos(); validarCampoData(this);" />
+					</span>
+				</td>
+	        </tr>
+            <tr>
+	            <td>&nbsp;&nbsp;Ementa</td>
+                <td><input tabindex="9" class="inputLegEsq" type="text" name="leg_campo5" onkeypress="return validaTecla(1,this,event,5,3245,'','parent.hiddenFrame.modo_busca',0)" value='' onchange="atualizaLeg_campos();" maxlength="500" /></td>	
+	            <td style="padding-left: 16px;">Publicação</td>
+                <td>
+					<select tabindex="10" id="sel_data_pub" name="sel_data_pub" class="select_data styled_combo" onchange="habilitaEntre('pub');atualizaLeg_campos();">
+	                    <option value="0">igual a</option>
+	                    <option value="1">menor que</option>
+	                    <option value="2">maior que</option>
+	                    <option value="3">entre</option>
+	                </select>
+					
+					<input tabindex="11" type="text" maxlength="10" class="input_data" id="data_pub_inicio" name="data_pub_inicio" onkeypress="return formataCampoDatePicker(this, event)" onChange="atualizaLeg_campos(); validarCampoData(this);"/>
+	                <span id="data_pub_a" class="invisible"><label style="display:inline-block; width: 30px; text-align: center;">a</label></span>
+	                <span id="data_pub_comp" class="invisible">
+						<input tabindex="12" type="text" maxlength="10" class="input_data" id="data_pub_fim" name="data_pub_fim" onkeypress="return formataCampoDatePicker(this, event)" onChange="atualizaLeg_campos(); validarCampoData(this);" />
+					</span>
+				</td>
+	        </tr>
+	        <tr>
+	            <td>&nbsp;&nbsp;Texto integral</td>
+                <td><input tabindex="13" class="inputLegEsq" type="text" name="leg_campo6" onkeypress="return validaTecla(1,this,event,5,3245,'','parent.hiddenFrame.modo_busca',0)" value='' onchange="atualizaLeg_campos();" maxlength="500" /></td>	        
+                 
+					<td style="padding-left: 16px;">Processo</td>
+					<td><input tabindex="14" class="inputLeg" type="text" name="processo" onkeypress="return validaTecla(1,this,event,5,3245,'','parent.hiddenFrame.modo_busca',0)" value='' onchange="atualizaLeg_campos();" maxlength="500" /></td>
+				
+	        </tr>
+            <tr>
+			    <td>&nbsp;&nbsp;Assuntos</td>
+			    <td style="width: 307px">
+					<input tabindex="15" class="inputLegEsq" type="text" name="leg_campo4" onkeypress="return validaTecla(1,this,event,5,3245,'','parent.hiddenFrame.modo_busca',0)" value='' onchange="atualizaLeg_campos();" maxlength="500" />
+			        
+			    </td>
+				
+					<td colspan="2" rowspan="2">
+						<fieldset class="fieldset-group">
+							<legend><b>Projeto de lei</b></legend>
+							<table style="height: 25px" class="remover_bordas_padding max_width">
+							<tr>
+								<td style="width: 81px">&nbsp;&nbsp;Autoria</td>
+								<td style="width: 201px"><input style="width: 180px" tabindex="17" class="inputLeg" type="text" name="leg_autoria" onKeyPress="return validaTecla(1,this,event,5,3245,'','parent.hiddenFrame.modo_busca',1)" value="" onChange="atualizaLeg_campos();" maxlength="500"></td>
+								<td style="width: 22px">Nº</td>
+								<td><input style="width: 91px" tabindex="18" class="inputLeg" type="text" name="leg_numero_projeto" onKeyPress="return validaTecla(1,this,event,5,3245,'','parent.hiddenFrame.modo_busca',1)" value="" onChange="atualizaLeg_campos();" maxlength="500"></td>
+							</tr>
+							</table>
+						</fieldset>
+					</td>
+				
+	        </tr>
+            <tr>
+	            <td>&nbsp;&nbsp;Resp. intelectual</td>
+	            <td>
+					<input tabindex="16" class="inputLegEsq" type="text" name="leg_campo2" onkeypress="return validaTecla(1,this,event,5,3245,'','parent.hiddenFrame.modo_busca',0)" value='' onchange="atualizaLeg_campos();" maxlength="500" />
+	            </td>
+	        </tr>
+            
+                <tr><td style="padding-top: 5px">&nbsp;</td>
+                    <td class ="td-check">
+      	                <span id="buscaMidiaSpanLeg">
+                        <input type="checkbox" name="busca_midia" value="1" onchange="atualizaLeg_campos();" />Registros com conteúdo digital 
+                        </span>
+                        &nbsp;
+                    </td>
+                </tr>
+             
+	        </table>
+        </div>
+
+        <!-- Separação da busca avançada -->
+        <div style="margin-top: 16px; padding: 4px; padding-left: 95px">
+            <a id="buscaAvancadaLegLink" tabindex="19" href="#" class="link_abas" style="font-weight: bold">Exibir busca avançada</a>
+        </div>
+
+	</td>
+	<td class="background_aba_ativa td_center_top" style="padding-top:10px;">
+	    <input style="margin-bottom: 5px;" tabindex="20" title="Submeter busca" class="button_busca" name="bt_comb" type="button" onclick="return Confere(3245,5,'',parent.hiddenFrame.modo_busca)" value="Buscar" />
+	    <input tabindex="21" title="Limpar campos" class="button_busca" name="bt_limpar" type="button" onClick="Resetar();atribuiLegs();" value="Limpar" />
+	</td>
+    </tr>	
+	</table>
+	<input type="hidden" name="leg_bib" value="0" />
+	<input type="hidden" name="submeteu" value="legislacao" />
+</form></td>
+
+<script type="text/javascript">
+	var msgFiltro = 'Filtro'; 
+	var msg = 'Digite aqui';
+	$(document).ready(function () {
+		$("#leg_orgao_origem").multiselect({
+			header: true
+		}).multiselectfilter({ label: msgFiltro, placeholder: msg, width: 200, autoReset: true });
+	});
+
+	$(document).ready(function () {
+		$("#leg_normas").multiselect({ 
+			header: true
+		}).multiselectfilter({ label: msgFiltro, placeholder: msg, width: 200, autoReset: true});
+	});
+</script>
+
+						</table>
+					</div>
+				
+		<div id="div_conteudo" class="div_conteudo"> 
+		
+			<table class="remover_bordas_padding max_width tab_div tab_div_conteudo">
+				<tr> 
+					<td class="centro" style="height: 15px;">&nbsp;</td>
+				</tr>
+				<tr> 
+					<td class="td_center_top"> 
+						
+
+<table class="max_width max_height">
+
+<tr>
+	<td class="td_center_middle td_home">
+		<div id="home_slide_content_div">
+   
+    
+		</div>
+        </td>
+</tr>
+</table>
+							<script type="text/javascript"> if (parent.hiddenFrame) { parent.hiddenFrame.content = ""; } </script>
+							                
+
+						<table class="remover_bordas_padding max_width">
+							<tr> 
+								<td class="esquerda logo_rodape background_rodape" style="height: 50px; background-repeat:no-repeat; background-position:right; padding-left: 8px">
+								
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>	
+
+		
+
+			<div id="div_rodape">
+				<div class="centro">
+					<br />
+					
+						<div style="color: #000000">
+					Desenvolvido por
+							<a class="link_prima" href="http://www.sophia.com.br" target="_blank">
+						
+						Prima
+						
+							</a> 
+						
+					
+					</div>
+				</div>
+				<br />    
+			</div>
+		</div>
+	</div>
+
+
+
+	<script type="text/javascript">
+					function criaLink() {
+						//Cria um link logo abaixo do banner (Adequação metodista - BBLA)
+						if (parent.hiddenFrame != undefined) {
+							if ((parent.hiddenFrame.iBusca_Projeto > 0) && (global_numero_serie == 3386)) {
+								var oTable = document.getElementById('tab_principal');
+
+								var oRow1 = oTable.insertRow(1);
+
+								var aRows = oTable.rows;
+
+								var aCells = oRow1.cells;
+
+								var oCell1_1 = aRows(oRow1.rowIndex).insertCell(aCells.length);
+
+								oCell1_1.innerHTML = "&nbsp;&nbsp;<a class='link_menu1' href='http://www.metodista.br/biblica' target='_top'><img src='imagens/casa.gif' alt='' />&nbsp;Voltar à Página Inicial</a>&nbsp;";
+								oCell1_1.bgColor = "#0070C0";
+
+								oCell1_1.colSpan = 2;
+								oCell1_1.height = 20;
+								oCell1_1.align = "left";
+							}
+						}
+					}
+
+					if (parent.hiddenFrame != null) {
+						if (parent.hiddenFrame.iBuscaMidia == 1) {
+							if (document.frm_rapida != null) {
+								var buscaMidia = $('#buscaMidiaSpan');
+								if (buscaMidia.length) {
+									buscaMidia.hide();
+								}
+							}
+							if (document.frm_combinada != null) {
+								var buscaMidia = $('#buscaMidiaSpanComb');
+								if (buscaMidia.length) {
+									buscaMidia.hide();
+								}
+							}
+							if (document.frm_legislacao != null) {
+								var buscaMidia = $('#buscaMidiaSpanLeg');
+								if (buscaMidia.length) {
+									buscaMidia.hide();
+								}
+							}
+						}
+					}
+
+					marca_selecao();
+
+					var mainResize = function () {
+						var winH = $(window).height();
+						var mainH = $('.divMain').height();
+
+						if (winH > 970) {
+							$('.divMain').css('min-height', winH + 'px');
+						} else {
+							$('.divMain').css('min-height', '970px');
+						}
+					};
+
+					$(function () {
+
+						$(window).resize(mainResize);
+						mainResize();
+
+						var caption = 'Qualquer biblioteca';
+			
+					if (parent.hiddenFrame != null) {
+							if (parent.hiddenFrame.iBusca_Projeto == 0) {
+								if (document.frm_combinada != null) {
+									if (document.frm_combinada.comb_bib != null) {
+										if ($("#geral_bib").val() != 0) {
+											$("#geral_bib").multiselect({
+												header: false,
+												checkAllText: ' ',
+												uncheckAllText: ' ',
+												noneSelectedText: caption,
+												selectedText: '# itens selecionados',
+												selectedList: 1
+											});
+										}
+									}
+								}
+							}
+						}
+			
+		  
+							$("#comb_material").multiselect({
+								checkAllText: 'Todos',
+								uncheckAllText: 'Limpar',
+								noneSelectedText: 'Qualquer',
+								selectedText: '# itens selecionados',
+								selectedList: 1
+							});
+
+			$("#comb_colecao").multiselect({
+							checkAllText: 'Todos',
+							uncheckAllText: 'Limpar',
+							noneSelectedText: 'Qualquer',
+							selectedText: '# itens selecionados',
+							selectedList: 1
+						});
+
+			$("#comb_nivel").multiselect({
+							checkAllText: 'Todos',
+							uncheckAllText: 'Limpar',
+							noneSelectedText: 'Indiferente',
+							selectedText: '# itens selecionados',
+							selectedList: 1
+						});
+
+			$("#comb_meiofisico").multiselect({
+							checkAllText: 'Todos',
+							uncheckAllText: 'Limpar',
+							noneSelectedText: 'Qualquer',
+							selectedText: '# itens selecionados',
+							selectedList: 1
+						});
+
+			$("#comb_formaregistro").multiselect({
+							checkAllText: 'Todos',
+							uncheckAllText: 'Limpar',
+							noneSelectedText: 'Qualquer',
+							selectedText: '# itens selecionados',
+							selectedList: 1
+						});
+
+			$("#comb_reposdigital").multiselect({
+								checkAllText: 'Todos',
+								uncheckAllText: 'Limpar',
+								noneSelectedText: 'Qualquer',
+								selectedText: '# itens selecionados',
+								selectedList: 1
+						});
+
+						iniciouCombos = true;
+
+			
+			
+		});
+	</script>
+
+
+</body>
+</html>

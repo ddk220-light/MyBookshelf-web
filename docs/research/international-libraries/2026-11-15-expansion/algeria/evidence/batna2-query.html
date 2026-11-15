@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="author" content="PMB Group" />
+
+	<meta name="keywords" content="OPAC, web, library, opensource, catalog, catalogue, bibliothèque, médiathèque, pmb, phpmybibli" />
+	<meta name="description" content="Catalogue en ligne Bibliothèque Centrale." />
+		<meta name="robots" content="all" />
+	<!--IE et son enfer de compatibilit�-->
+	<meta http-equiv='X-UA-Compatible' content='IE=Edge' />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+			
+	<title>Catalogue en ligne Bibliothèque Centrale</title>
+	
+	
+	<link rel='stylesheet' type='text/css' href='./styles/common/common.css?1534412382' />
+	<link rel='stylesheet' type='text/css' href='./styles/common/contrib.css?1531398200' />
+	<link rel='stylesheet' type='text/css' href='./styles/common/dGrowl.css?1458295376' />
+	<link rel='stylesheet' type='text/css' href='./styles/common/font-awesome.css?1478597224' />
+	<link rel='stylesheet' type='text/css' href='./styles/common/open-sans.css?1479316586' />
+	<link rel='stylesheet' type='text/css' href='./styles/common/pagination.css?1532020920' />
+	<link rel='stylesheet' type='text/css' href='./styles/common/record_display.css?1540568230' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/colonnes.css?1343814066' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/gallerie_photos.css?1297070240' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/genbib.css?1498055956' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/liste_bulletins.css?1297070240' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/print.css?1297070240' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/tags.css?1297070240' />
+	<link rel='stylesheet' type='text/css' href='./styles/genbib/visionneuse.css?1297070240' /><script type='text/javascript'>var opac_style= 'genbib';</script>
+	<!-- css_authentication -->	<link rel='SHORTCUT ICON' href='images/site/favicon.ico' />
+	<script type="text/javascript" src="includes/javascript/drag_n_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/handle_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/popup.js"></script>
+	<script type='text/javascript'>
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName = 
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {  
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i); 
+				    }
+				 }
+				return items;
+			 }
+		}
+		// Fonction a utilisier pour l'encodage des URLs en javascript
+		function encode_URL(data){
+			var docCharSet = document.characterSet ? document.characterSet : document.charset;
+			if(docCharSet == "UTF-8"){
+				return encodeURIComponent(data);
+			}else{
+				return escape(data);
+			}
+		}
+	</script>
+
+<link rel='stylesheet' type='text/css' href='./includes/javascript/dojo/dijit/themes/tundra/tundra.css' />
+<script type='text/javascript'>
+	var dojoConfig = {
+		parseOnLoad: true,
+		locale: 'fr-fr',
+		isDebug: false,
+		usePlainJson: true,
+		packages: [{
+			name: 'pmbBase',
+			location:'../../../..'
+		},{
+			name: 'd3',
+			location:'../../d3'
+		}],
+		deps: ['apps/pmb/MessagesStore', 'dgrowl/dGrowl', 'dojo/ready'],
+		callback:function(MessagesStore, dGrowl, ready){
+			window.pmbDojo = {};
+			pmbDojo.messages = new MessagesStore({url:'./ajax.php?module=ajax&categ=messages', directInit:false});
+			ready(function(){
+				new dGrowl({'channels':[{'name':'info','pos':2},{'name':'error', 'pos':1}]});
+			});
+		
+		},
+	};
+</script>
+<script type='text/javascript' src='./includes/javascript/dojo/dojo/dojo.js'></script>
+<script type='text/javascript'>var opac_show_social_network =0;</script>
+	<script type='text/javascript' src='./includes/javascript/http_request.js'></script>
+	
+</head>
+
+<body onload="window.defaultStatus='PMB : Accès public';"  id="pmbopac">
+<script type='text/javascript'>
+	function findNoticeElement(id){
+		var ul=null;
+		//cas des notices classiques
+		var domNotice = document.getElementById('el'+id+'Child');
+		//notice_display
+		if(!domNotice) domNotice = document.getElementById('notice');
+		if(domNotice){
+			var uls = domNotice.getElementsByTagName('ul');
+			for (var i=0 ; i<uls.length ; i++){
+				if(uls[i].getAttribute('id') == 'onglets_isbd_public'+id){
+					var ul = uls[i];
+					break;
+				}
+			}
+		} else{
+			var li = document.getElementById('onglet_isbd'+id);
+			if(!li) var li = document.getElementById('onglet_public'+id);
+			if(li) var ul = li.parentNode;
+		}
+		return ul;
+	}
+	function show_what(quoi, id) {
+		switch(quoi){
+			case 'EXPL_LOC' :
+				document.getElementById('div_expl_loc' + id).style.display = 'block';
+				document.getElementById('div_expl' + id).style.display = 'none';		
+				document.getElementById('onglet_expl' + id).className = 'isbd_public_inactive';		
+				document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_active';
+				break;
+			case 'EXPL' :
+				document.getElementById('div_expl_loc' + id).style.display = 'none';
+				document.getElementById('div_expl' + id).style.display = 'block';
+				document.getElementById('onglet_expl' + id).className = 'isbd_public_active';
+				document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_inactive';
+				break;
+			default :
+				quoi= quoi.toLowerCase();
+				var ul = findNoticeElement(id);
+				if (ul) {
+					var items  = ul.getElementsByTagName('li');
+					for (var i=0 ; i<items.length ; i++){
+						if(items[i].getAttribute('id')){
+							if(items[i].getAttribute('id') == 'onglet_'+quoi+id){
+								items[i].className = 'isbd_public_active';
+								document.getElementById('div_'+quoi+id).style.display = 'block';
+							}else{
+								if(items[i].className != 'onglet_tags' && items[i].className != 'onglet_avis' && items[i].className != 'onglet_sugg' && items[i].className != 'onglet_basket' && items[i].className != 'onglet_liste_lecture'){
+									items[i].className = 'isbd_public_inactive';	
+									document.getElementById(items[i].getAttribute('id').replace('onglet','div')).style.display = 'none';
+								}
+							}
+						}
+					}			
+				}
+				break;
+		}
+	}
+</script>
+	<script type='text/javascript' src='./includes/javascript/tablist_ajax.js'></script>
+<script type='text/javascript' src='./includes/javascript/tablist.js'></script>
+<script type='text/javascript' src='./includes/javascript/misc.js'></script>
+	<div id='att' style='z-Index:1000'></div>
+	<div id="container"><div id="main"><div id='main_header'></div><div id="main_hors_footer">
+						
+<script type='text/javascript' src='./includes/javascript/auth_popup.js'></script>	
+<div id="intro_message"><div class="p2"></div></div><div id='navigator'>
+<table width='100%'><tr><td class='navig_actions_last_search' ><a href="index.php?lvl=search_result&get_query=1" class='actions_last_search'><span>Modifier la recherche</span></a></td>
+<td class='navig_actions_history' ><a href="index.php?lvl=search_history" class='actions_history'><span>Historique</span></a></td>
+<td class='navig_actions_first_screen' ><a href="./index.php?lvl=index" class='navig_categ'><span>Nouvelle recherche</span></a></td>
+</tr></table></div><!-- fermeture de #navigator -->
+<div id='resume_panier' class='empty'></div><script type='text/javascript' src='./includes/javascript/misc.js'></script><script type='text/javascript'>
+	var terms=new Array('');
+	var terms_litteraux=new Array('algebre lineaire');
+	var codes=new Array();
+			
+	function remplacer_carac(mot) {
+		var x;
+		var reg;				
+		var chaine=mot;
+			reg=new RegExp(codes['a'], 'g');
+	chaine=chaine.replace(reg, 'a');
+	reg=new RegExp(codes['c'], 'g');
+	chaine=chaine.replace(reg, 'c');
+	reg=new RegExp(codes['e'], 'g');
+	chaine=chaine.replace(reg, 'e');
+	reg=new RegExp(codes['i'], 'g');
+	chaine=chaine.replace(reg, 'i');
+	reg=new RegExp(codes['n'], 'g');
+	chaine=chaine.replace(reg, 'n');
+	reg=new RegExp(codes['o'], 'g');
+	chaine=chaine.replace(reg, 'o');
+	reg=new RegExp(codes['u'], 'g');
+	chaine=chaine.replace(reg, 'u');
+		
+		return(chaine);		
+	}
+</script><script type='text/javascript' src='./includes/javascript/surligner.js.php'></script><script type='text/javascript' src='./includes/javascript/surligner.js'></script>	<div id="resultatrech"><h3 class='searchResult-title'>Résultat de la recherche</h3>
+
+		<div id="resultatrech_container">
+		<div id="resultatrech_see"><h3 class='searchResult-search'><span class='searchResult-equation'><span class='search-found'>26  titres trouvés pour la recherche '&quot;Alg&egrave;bre lin&eacute;aire&quot;'</span></span>&nbsp;&nbsp;&nbsp;<img border='0' align='center' src="./images/text_horizontalrule.png" onMouseOver="this.style.cursor='pointer'" alt='Surligner les mots recherchés' title='Surligner les mots recherchés' onClick='document.form_values.surligne.value=1;document.form_values.submit();'/></h3>
+			</div>
+			<div id="resultatrech_liste"><span class="expandAll"><a href='javascript:expandAll_ajax(1);'><img class='img_plusplus' src='./images/expand_all.gif' border='0' id='expandall'></a></span><span class="espaceResultSearch">&nbsp;</span><span class="collapseAll"><a href='javascript:collapseAll()'><img class='img_moinsmoins' src='./images/collapse_all.gif' border='0' id='collapseall'></a></span><span class='print_search_result'><span class="printSearchResult">
+<a href='#' onClick="openPopUp('./print.php?lvl=search&current_search=0','print',500,600,-2,-2,'scrollbars=yes,menubar=0'); w.focus(); return false;" title="Imprimer la page de recherche courante...">
+	<img src='./images/print.gif' border='0' align='bottom' alt="Imprimer la page de recherche courante..."/>
+</a>
+</span></span><span class="espaceResultSearch">&nbsp;</span><script type='text/javascript' src='./includes/javascript/select.js'></script>
+						<script>
+							var ajax_get_sort=new http_request();
+			
+							function get_sort_content(del_sort, ids) {
+								var url = './ajax.php?module=ajax&categ=sort&sub=get_sort&raz_sort='+(typeof(del_sort) != 'undefined' ? del_sort : '')+'&suppr_ids='+(typeof(ids) != 'undefined' ? ids : '')+'&page_en_cours=lvl%3Dmore_results%26autolevel1%3D1';
+								  ajax_get_sort.request(url,0,'',1,show_sort_content,0,0);
+							}
+			
+							function show_sort_content(response) {
+								document.getElementById('frame_notice_preview').innerHTML=ajax_get_sort.get_text();
+								var tags = document.getElementById('frame_notice_preview').getElementsByTagName('script');
+					       		for(var i=0;i<tags.length;i++){
+									window.eval(tags[i].text);
+					        	}
+							}
+							function kill_sort_frame() {
+								var sort_view=document.getElementById('frame_notice_preview');
+								if (sort_view)
+									sort_view.parentNode.removeChild(sort_view);
+							}
+						</script>
+						<span class="triSelector"><a onClick='show_layer(); get_sort_content();' title="Tris disponibles" style='cursor : pointer;'><img src='./images/orderby_az.gif' alt="Tris disponibles" align='bottom' hspace='3' border='0' id='sort_icon'></a></span><span class="espaceResultSearch">&nbsp;&nbsp;</span><span class="affiner_recherche"><a href='./index.php?search_type_asked=extended_search&mode_aff=aff_simple_search' title='Affiner la recherche'>Affiner la recherche</a></span><span class="espaceResultSearch">&nbsp;&nbsp;</span><span class="short_url"><a target='_blank' href='./s.php?h=bcc3be6f3d4889736afa174f9c657c83&database=Biblio_Centrale' title='Générer le flux rss de la recherche'>Générer le flux rss de la recherche</a></span>
+					<script type='text/javascript'>
+						require(['dojo/on', 'dojo/topic', 'apps/pmb/sharelink/SharePopup'], function(on, topic, SharePopup){
+						window.copy_shorturl_to_clipboard = function() {
+								new SharePopup('./s.php?h=0d5490b49a96f1f6158365d9537ff270&database=Biblio_Centrale');
+							}					
+						});
+					</script><span class="espaceResultSearch">&nbsp;&nbsp;</span><span class="short_url_permalink"><a href='#' onclick='copy_shorturl_to_clipboard(); return false;' title='Partager le résultat de cette recherche'>Partager le résultat de cette recherche</a></span><span class="espaceResultSearch">&nbsp;&nbsp;</span><span class="search_bt_external"><a href='./index.php?search_type_asked=external_search&mode_aff=aff_simple_search&external_type=simple' title='Interroger des sources externes'>Interroger des sources externes</a></span><blockquote>
+			<div id="el558Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el558Img" title="détail" alt="détail" border="0" onClick="expandBase('el558', true);  return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_558"><span class="statutnot1" ></span><span  notice='558'  class='header_title'>Algèbre linéaire</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=705'>Joseph Grifone</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Alg%C3%A8bre%20lin%C3%A9aire&amp;rft.title=Alg%C3%A8bre%20lin%C3%A9aire&amp;rft.isbn=978-2-36493-673-7&amp;rft.tpages=1%20vol.%20%28VI-455%20p.%29&amp;rft.date=DL%202018&amp;rft_id=&amp;rft.pub=C%C3%A9padu%C3%A8s%20%C3%A9ditions&amp;rft.place=Toulouse&amp;rft.edition=6e%20%C3%A9d.&amp;rft.aulast=Grifone&amp;rft.aufirst=Joseph'></span></span>
+	    		<br />
+				</div>
+				<div id="el558Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='e321efc8a730a0e122bf8536aec32fb2' datetime='1794730480'><table width='100%'><tr><td valign='top'>
+		<ul id='onglets_isbd_public558' class='onglets_isbd_public'>
+	  			<li id='onglet_public558' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '558'); return false;">Public</a></li>
+				<li id='onglet_isbd558' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '558'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public558' style='display:block;'><table><tr class='tr_title'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>Algèbre linéaire</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texte imprimé</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=705' >Joseph Grifone (1940-....)</a>, Auteur</span></td>
+				</tr><tr class='tr_mention'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mention d'édition :</span></td>
+					<td class='public_line_value'><span class='public_mention'>6e éd.</span></td>
+				</tr><tr class='tr_ed1'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=128' >Toulouse : Cépaduès éditions</a></span></td>
+				</tr><tr class='tr_year'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_year'>DL 2018</span></td>
+				</tr><tr class='tr_npages'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>1 vol. (VI-455 p.)</span></td>
+				</tr><tr class='tr_ill'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Présentation : </span></td>
+					<td class='public_line_value'><span class='public_ill'>ill.</span></td>
+				</tr><tr class='tr_size'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Format : </span></td>
+					<td class='public_line_value'><span class='public_size'>24 cm</span></td>
+				</tr><tr class='tr_code'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>ISBN/ISSN/EAN&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_code'>978-2-36493-673-7</span></td>
+				</tr><tr class='tr_langues'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>)</span></td>
+				</tr><tr class='tr_categ'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=7103' >1- Sciences Exactes et Informatique</a><br /><a href='./index.php?lvl=categ_see&id=7107' >1- Sciences Exactes et Informatique:Mathématiques</a><br /><a href='./index.php?lvl=categ_see&id=7199' >1- Sciences Exactes et Informatique:Mathématiques:512 Algèbre:512.5 Algèbre linéaire</a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Alg%C3%A8bre+lin%C3%A9aire&tags=ok' >Algèbre linéaire</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Manuels+d%27enseignement+sup%C3%A9rieur&tags=ok' >Manuels d'enseignement supérieur</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4876' >512.5</a> <span>Alg&egrave;bre lin&eacute;aire</span></span></td>
+				</tr><tr class='tr_nresume'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Résumé : </span></td>
+					<td class='public_line_value'><span class='public_nresume'>Cet ouvrage de référence présente un cours complet d'algèbre linéaire recouvrant les programmes du premier cycle des Universités et des Classes Préparatoires. L'algèbre linéaire a sans doute une place spéciale parmi les disciplines enseignées en premier cycle. - D'une part parce qu'elle est utilisée pratiquement dans toutes les branches scientifiques: la physique, l'économie, la chimie, l'informatique... Sa connaissance fait partie du bagage indispensable au futur chercheur, ingénieur ou agrégatif. - D'autre part en vertu de son caractère pédagogique, car l'algèbre et la géométrie se mêlent constamment et l'imagination est sans cesse sollicitée. L'auteur s'est efforcé de rédiger un ouvrage qui, sans sacrifier à la rigueur, présente les différents sujets avec clarté et simplicité. Dans cette nouvelle édition, ont été ajoutées quelques références bibliographiques, ainsi qu'un Appendice consacré aux espaces symplectiques, à cause de l'importance que ceux-ci ont acquise en diverses branches des Mathématiques et de la Physique Théorique.</span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd558' style='display:none;'>Algèbre linéaire [texte imprimé] / <a href='./index.php?lvl=author_see&id=705' >Joseph Grifone (1940-....)</a>, Auteur &nbsp;. -&nbsp; 6e éd.&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=128' >Toulouse : Cépaduès éditions</a>, DL 2018&nbsp;.&nbsp;-&nbsp;1 vol. (VI-455 p.)&nbsp;: ill.&nbsp;; 24 cm.<br /><b>ISBN</b>&nbsp;: 978-2-36493-673-7<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr class='tr_categ'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=7103' >1- Sciences Exactes et Informatique</a><br /><a href='./index.php?lvl=categ_see&id=7107' >1- Sciences Exactes et Informatique:Mathématiques</a><br /><a href='./index.php?lvl=categ_see&id=7199' >1- Sciences Exactes et Informatique:Mathématiques:512 Algèbre:512.5 Algèbre linéaire</a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Alg%C3%A8bre+lin%C3%A9aire&tags=ok' >Algèbre linéaire</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Manuels+d%27enseignement+sup%C3%A9rieur&tags=ok' >Manuels d'enseignement supérieur</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4876' >512.5</a> <span>Alg&egrave;bre lin&eacute;aire</span></span></td>
+				</tr><tr class='tr_nresume'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Résumé : </span></td>
+					<td class='public_line_value'><span class='public_nresume'>Cet ouvrage de référence présente un cours complet d'algèbre linéaire recouvrant les programmes du premier cycle des Universités et des Classes Préparatoires. L'algèbre linéaire a sans doute une place spéciale parmi les disciplines enseignées en premier cycle. - D'une part parce qu'elle est utilisée pratiquement dans toutes les branches scientifiques: la physique, l'économie, la chimie, l'informatique... Sa connaissance fait partie du bagage indispensable au futur chercheur, ingénieur ou agrégatif. - D'autre part en vertu de son caractère pédagogique, car l'algèbre et la géométrie se mêlent constamment et l'imagination est sans cesse sollicitée. L'auteur s'est efforcé de rédiger un ouvrage qui, sans sacrifier à la rigueur, présente les différents sujets avec clarté et simplicité. Dans cette nouvelle édition, ont été ajoutées quelques références bibliographiques, ainsi qu'un Appendice consacré aux espaces symplectiques, à cause de l'importance que ceux-ci ont acquise en diverses branches des Mathématiques et de la Physique Théorique.</span></td>
+				</tr></table></div></td><td valign='top' align='right'><img class='vignetteimg' src='./images/vide.png' title="Alg&egrave;bre lin&eacute;aire" align='right' hspace='4' vspace='2' vigurl="./getimage.php?url_image=http%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9782364936737&amp;vigurl=https%3A%2F%2Fwww.cepadues.com%2F3406-pdt_540%2Falgebre-lineaire-6e-edition.jpg" alt='vignette' /></td></tr></table>
+					
+<h3><span id='titre_exemplaires'>Exemplaires (3)</span></h3>
+<table cellpadding='2' class='exemplaires' width='100%'>
+<tr class='thead'><th class='expl_header_expl_cb'>Code-barres</th><th class='expl_header_expl_cote'>Cote</th><th class='expl_header_tdoc_libelle'>Support</th><th class='expl_header_location_libelle'>Localisation</th><th class='expl_header_section_libelle'>Section</th><th class='expl_header_statut'>Disponibilité</th><th class='expl_header_tdoc_libelle'>Inventaire</th></tr><tr class='even item_expl expl_available'><td id='expl_1171' class='expl_cb'>9782364936737BC001</td><td class='expl_cote'>512.5/002</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>Biblio Centrale</td><td class='section_libelle'>1-Sciences Exactes et informatique </td><td class='expl_situation'><strong>Disponible</strong> </td><td class='p_perso'>&nbsp;</td></tr><tr class='odd item_expl expl_available'><td id='expl_1172' class='expl_cb'>9782364936737BC002</td><td class='expl_cote'>512.5/002</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>Biblio Centrale</td><td class='section_libelle'>1-Sciences Exactes et informatique </td><td class='expl_situation'><strong>Disponible</strong> </td><td class='p_perso'>&nbsp;</td></tr><tr class='even item_expl expl_available'><td id='expl_1173' class='expl_cb'>9782364936737BC003</td><td class='expl_cote'>512.5/002</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>Biblio Centrale</td><td class='section_libelle'>1-Sciences Exactes et informatique </td><td class='expl_situation'><strong>Disponible</strong> </td><td class='p_perso'>&nbsp;</td></tr>
+</table></div>
+			<div id="el553Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el553Img" title="détail" alt="détail" border="0" onClick="expandBase('el553', true);  return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_553"><span class="statutnot1" ></span><span  notice='553'  class='header_title'>Algèbre linéaire et applications</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=695'>David C. Lay</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Alg%C3%A8bre%20lin%C3%A9aire%20et%20applications&amp;rft.title=Alg%C3%A8bre%20lin%C3%A9aire%20et%20applications&amp;rft.isbn=978-2-7440-7583-4&amp;rft.tpages=1%20vol.%20%28pagination%20multiple%20527-%5B84%5D%20p.%29&amp;rft.date=cop.%202012&amp;rft_id=&amp;rft.pub=Pearson&amp;rft.place=Montreuil&amp;rft.edition=4e%20%C3%A9d.&amp;rft.aulast=Lay&amp;rft.aufirst=David%20C.'></span></span>
+	    		<br />
+				</div>
+				<div id="el553Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='c0eda2ee7033263e5cbfb99372744f2d' datetime='1794730481'><table width='100%'><tr><td valign='top'>
+		<ul id='onglets_isbd_public553' class='onglets_isbd_public'>
+	  			<li id='onglet_public553' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '553'); return false;">Public</a></li>
+				<li id='onglet_isbd553' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '553'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public553' style='display:block;'><table><tr class='tr_title'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>Algèbre linéaire et applications</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texte imprimé</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=695' >David C. Lay</a>, Auteur ; <a href='./index.php?lvl=author_see&id=696' >Michel Henri (19..-....)</a>, Traducteur</span></td>
+				</tr><tr class='tr_mention'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mention d'édition :</span></td>
+					<td class='public_line_value'><span class='public_mention'>4e éd.</span></td>
+				</tr><tr class='tr_ed1'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=126' >Montreuil : Pearson</a></span></td>
+				</tr><tr class='tr_year'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_year'>cop. 2012</span></td>
+				</tr><tr class='tr_npages'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>1 vol. (pagination multiple 527-[84] p.)</span></td>
+				</tr><tr class='tr_ill'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Présentation : </span></td>
+					<td class='public_line_value'><span class='public_ill'>ill.</span></td>
+				</tr><tr class='tr_size'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Format : </span></td>
+					<td class='public_line_value'><span class='public_size'>26 cm</span></td>
+				</tr><tr class='tr_accomp'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Accompagnement&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_accomp'>1 carte</span></td>
+				</tr><tr class='tr_code'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>ISBN/ISSN/EAN&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_code'>978-2-7440-7583-4</span></td>
+				</tr><tr class='tr_langues'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>) <span class='etiq_champ'>Langues originales :</span> Anglais (<i>eng</i>)</span></td>
+				</tr><tr class='tr_categ'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=7103' >1- Sciences Exactes et Informatique</a><br /><a href='./index.php?lvl=categ_see&id=7107' >1- Sciences Exactes et Informatique:Mathématiques</a><br /><a href='./index.php?lvl=categ_see&id=7199' >1- Sciences Exactes et Informatique:Mathématiques:512 Algèbre:512.5 Algèbre linéaire</a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Alg%C3%A8bre+lin%C3%A9aire&tags=ok' >Algèbre linéaire</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4876' >512.5</a> <span>Alg&egrave;bre lin&eacute;aire</span></span></td>
+				</tr><tr class='tr_nresume'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Résumé : </span></td>
+					<td class='public_line_value'><span class='public_nresume'>Que ce soit pour étudier les ondes sismiques, les migrations démographiques, l'évolution d'un écosystème, pour concevoir des puces électroniques, des avions, des systèmes de pilotage, la maîtrise de l'algèbre linéaire est incontournable aussi bien en sciences fondamentales (physique, chimie, biologie), qu'en sciences de l'ingénieur, économie, sciences sociales et informatique.L'objectif principal de ce livre est de présenter les concepts de base de l'algèbre linéaire ainsi que les outils dont les étudiants auront besoin dans leur vie professionnelle.Chaque chapitre commence par un exemple destiné à illustrer l'introduction d'une notion et sur lequel on revient plus loin à la lumière de ce qui a été appris. Une large sélection d'applications montre la puissance de l'algèbre linéaire pour expliquer les principes fondamentaux et simplifier les calculs en informatique, en physique, en biologie ou en économie.Le cours est ponctué de très nombreux exemples et propose un millier d'exercices dont la moitié est corrigée. Les exercices prennent en compte les difficultés réelles rencontrées par les étudiants : applications immédiates, tests de compréhension des concepts, vrai-faux, utilisation des logiciels tels que MATLAB", MapleTM, Mathematica", MathCad", etc.Les remarques numériques attirent l'attention sur les résultats obtenus par ordinateur et mettent en garde sur d'éventuelles difficultés spécifiques aux applications numériques.Un glossaire permet de retrouver rapidement la signification de plus de 300 notions.Cette quatrième édition comporte de nombreux exercices nouveaux, notamment informatiques, ainsi qu'un chapitre supplémentaire, Géométrie des espaces vectoriels, qui présente des outils géométriques fondamentaux et leurs applications, en particulier dans les logiciels tels qu'Adobe" Illustrator".Pearson eText : Le livre au format électronique, les ressources et les outils de lecture interactive réunis en un seul et unique espace de travail en ligne.- Une solution simple d'accès : ni téléchargement, ni installation, code d'accès fourni avec le livre pour un an, accessible en ligne ou sur iPad.- Des outils performants pour une lecture active et personnalisée : surlignage, annotations, marque-page, affichage double-page ou plein écran, zoom sur un paragraphe...- Ressources interactives pour réviser et consolider les connaissances : un index interactif, un moteur de recherche performant.- Pour les enseignants, des outils à la pointe du numérique : une sélection de chapitres et de ressources, partage des annotations et des liens web avec les étudiants, possibilité de projeter l'eText en classe avec les outils du Tableau Blanc Interactif.</span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd553' style='display:none;'>Algèbre linéaire et applications [texte imprimé] / <a href='./index.php?lvl=author_see&id=695' >David C. Lay</a>, Auteur ; <a href='./index.php?lvl=author_see&id=696' >Michel Henri (19..-....)</a>, Traducteur &nbsp;. -&nbsp; 4e éd.&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=126' >Montreuil : Pearson</a>, cop. 2012&nbsp;.&nbsp;-&nbsp;1 vol. (pagination multiple 527-[84] p.)&nbsp;: ill.&nbsp;; 26 cm&nbsp;+ 1 carte.<br /><b>ISBN</b>&nbsp;: 978-2-7440-7583-4<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>) <span class='etiq_champ'>Langues originales</span>&nbsp;: Anglais (<i>eng</i>)<table><tr class='tr_categ'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=7103' >1- Sciences Exactes et Informatique</a><br /><a href='./index.php?lvl=categ_see&id=7107' >1- Sciences Exactes et Informatique:Mathématiques</a><br /><a href='./index.php?lvl=categ_see&id=7199' >1- Sciences Exactes et Informatique:Mathématiques:512 Algèbre:512.5 Algèbre linéaire</a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Alg%C3%A8bre+lin%C3%A9aire&tags=ok' >Algèbre linéaire</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4876' >512.5</a> <span>Alg&egrave;bre lin&eacute;aire</span></span></td>
+				</tr><tr class='tr_nresume'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Résumé : </span></td>
+					<td class='public_line_value'><span class='public_nresume'>Que ce soit pour étudier les ondes sismiques, les migrations démographiques, l'évolution d'un écosystème, pour concevoir des puces électroniques, des avions, des systèmes de pilotage, la maîtrise de l'algèbre linéaire est incontournable aussi bien en sciences fondamentales (physique, chimie, biologie), qu'en sciences de l'ingénieur, économie, sciences sociales et informatique.L'objectif principal de ce livre est de présenter les concepts de base de l'algèbre linéaire ainsi que les outils dont les étudiants auront besoin dans leur vie professionnelle.Chaque chapitre commence par un exemple destiné à illustrer l'introduction d'une notion et sur lequel on revient plus loin à la lumière de ce qui a été appris. Une large sélection d'applications montre la puissance de l'algèbre linéaire pour expliquer les principes fondamentaux et simplifier les calculs en informatique, en physique, en biologie ou en économie.Le cours est ponctué de très nombreux exemples et propose un millier d'exercices dont la moitié est corrigée. Les exercices prennent en compte les difficultés réelles rencontrées par les étudiants : applications immédiates, tests de compréhension des concepts, vrai-faux, utilisation des logiciels tels que MATLAB", MapleTM, Mathematica", MathCad", etc.Les remarques numériques attirent l'attention sur les résultats obtenus par ordinateur et mettent en garde sur d'éventuelles difficultés spécifiques aux applications numériques.Un glossaire permet de retrouver rapidement la signification de plus de 300 notions.Cette quatrième édition comporte de nombreux exercices nouveaux, notamment informatiques, ainsi qu'un chapitre supplémentaire, Géométrie des espaces vectoriels, qui présente des outils géométriques fondamentaux et leurs applications, en particulier dans les logiciels tels qu'Adobe" Illustrator".Pearson eText : Le livre au format électronique, les ressources et les outils de lecture interactive réunis en un seul et unique espace de travail en ligne.- Une solution simple d'accès : ni téléchargement, ni installation, code d'accès fourni avec le livre pour un an, accessible en ligne ou sur iPad.- Des outils performants pour une lecture active et personnalisée : surlignage, annotations, marque-page, affichage double-page ou plein écran, zoom sur un paragraphe...- Ressources interactives pour réviser et consolider les connaissances : un index interactif, un moteur de recherche performant.- Pour les enseignants, des outils à la pointe du numérique : une sélection de chapitres et de ressources, partage des annotations et des liens web avec les étudiants, possibilité de projeter l'eText en classe avec les outils du Tableau Blanc Interactif.</span></td>
+				</tr></table></div></td><td valign='top' align='right'><img class='vignetteimg' src='./images/vide.png' title="Alg&egrave;bre lin&eacute;aire et applications" align='right' hspace='4' vspace='2' vigurl="./getimage.php?url_image=http%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9782744075834&amp;vigurl=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F7159hg7d-XL._AC_UY218_.jpg" alt='vignette' /></td></tr></table>
+					
+<h3><span id='titre_exemplaires'>Exemplaires (5)</span></h3>
+<table cellpadding='2' class='exemplaires' width='100%'>
+<tr class='thead'><th class='expl_header_expl_cb'>Code-barres</th><th class='expl_header_expl_cote'>Cote</th><th class='expl_header_tdoc_libelle'>Support</th><th class='expl_header_location_libelle'>Localisation</th><th class='expl_header_section_libelle'>Section</th><th class='expl_header_statut'>Disponibilité</th><th class='expl_header_tdoc_libelle'>Inventaire</th></tr><tr class='even item_expl expl_available'><td id='expl_1195' class='expl_cb'>9782744075834BC001</td><td class='expl_cote'>512.5/008</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>Biblio Centrale</td><td class='section_libelle'>1-Sciences Exactes et informatique </td><td class='expl_situation'><strong>Disponible</strong> </td><td class='p_perso'>00909</td></tr><tr class='odd item_expl expl_available'><td id='expl_1196' class='expl_cb'>9782744075834BC002</td><td class='expl_cote'>512.5/008</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>Biblio Centrale</td><td class='section_libelle'>1-Sciences Exactes et informatique </td><td class='expl_situation'><strong>Disponible</strong> </td><td class='p_perso'>00910</td></tr><tr class='even item_expl expl_available'><td id='expl_1197' class='expl_cb'>9782744075834BC003</td><td class='expl_cote'>512.5/008</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>Biblio Centrale</td><td class='section_libelle'>1-Sciences Exactes et informatique </td><td class='expl_situation'><strong>Disponible</strong> </td><td class='p_perso'>00911</td></tr><tr class='odd item_expl expl_available'><td id='expl_1198' class='expl_cb'>9782744075834BC004</td><td class='expl_cote'>512.5/008</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>Biblio Centrale</td><td class='section_libelle'>1-Sciences Exactes et informatique </td><td class='expl_situation'><strong>Disponible</strong> </td><td class='p_perso'>00912</td></tr><tr class='even item_expl expl_available'><td id='expl_1199' class='expl_cb'>9782744075834BC005</td><td class='expl_cote'>512.5/008</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>Biblio Centrale</td><td class='section_libelle'>1-Sciences Exactes et informatique </td><td class='expl_situation'><strong>Disponible</strong> </td><td class='p_perso'>00913</td></tr>
+</table></div>
+			<div id="el557Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el557Img" title="détail" alt="détail" border="0" onClick="expandBase('el557', true);  return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_557"><span class="statutnot1" ></span><span  notice='557'  class='header_title'>Algèbre linéaire et applications</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=695'>David C. Lay</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Alg%C3%A8bre%20lin%C3%A9aire%20et%20applications&amp;rft.title=Alg%C3%A8bre%20lin%C3%A9aire%20et%20applications&amp;rft.isbn=978-2-7613-7652-5&amp;rft.tpages=1%20vol.%20%28pagination%20multiple%29&amp;rft.date=2017&amp;rft_id=&amp;rft.series=ERPI%20sciences&amp;rft.pub=Pearson&amp;rft.place=Montr%C3%A9al&amp;rft.edition=5e%20%C3%A9d.&amp;rft.aulast=Lay&amp;rft.aufirst=David%20C.'></span></span>
+	    		<br />
+				</div>
+				<div id="el557Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='eb752aa2b0f8c840e9f0bcf01bb76c3f' datetime='1794730481'><table width='100%'><tr><td valign='top'>
+		<ul id='onglets_isbd_public557' class='onglets_isbd_public'>
+	  			<li id='onglet_public557' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '557'); return false;">Public</a></li>
+				<li id='onglet_isbd557' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '557'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public557' style='display:block;'><table><tr class='tr_title'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>Algèbre linéaire et applications</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texte imprimé</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=695' >David C. Lay</a>, Auteur ; <a href='./index.php?lvl=author_see&id=703' >Steven R. Lay (1944-....)</a>, Auteur ; <a href='./index.php?lvl=author_see&id=704' >Judi J. McDonald</a>, Auteur</span></td>
+				</tr><tr class='tr_mention'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mention d'édition :</span></td>
+					<td class='public_line_value'><span class='public_mention'>5e éd.</span></td>
+				</tr><tr class='tr_ed1'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=127' >Montréal : Pearson</a></span></td>
+				</tr><tr class='tr_year'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_year'>2017</span></td>
+				</tr><tr class='tr_coll'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Collection : </span></td>
+					<td class='public_line_value'><span class='public_coll'><a href='./index.php?lvl=coll_see&id=180' >ERPI sciences</a> </span></td>
+				</tr><tr class='tr_npages'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>1 vol. (pagination multiple)</span></td>
+				</tr><tr class='tr_ill'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Présentation : </span></td>
+					<td class='public_line_value'><span class='public_ill'>ill.</span></td>
+				</tr><tr class='tr_size'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Format : </span></td>
+					<td class='public_line_value'><span class='public_size'>26 cm</span></td>
+				</tr><tr class='tr_code'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>ISBN/ISSN/EAN&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_code'>978-2-7613-7652-5</span></td>
+				</tr><tr class='tr_langues'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>) <span class='etiq_champ'>Langues originales :</span> Anglais (<i>eng</i>)</span></td>
+				</tr><tr class='tr_categ'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=7103' >1- Sciences Exactes et Informatique</a><br /><a href='./index.php?lvl=categ_see&id=7107' >1- Sciences Exactes et Informatique:Mathématiques</a><br /><a href='./index.php?lvl=categ_see&id=7199' >1- Sciences Exactes et Informatique:Mathématiques:512 Algèbre:512.5 Algèbre linéaire</a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Alg%C3%A8bre+lin%C3%A9aire&tags=ok' >Algèbre linéaire</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4876' >512.5</a> <span>Alg&egrave;bre lin&eacute;aire</span></span></td>
+				</tr><tr class='tr_nresume'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Résumé : </span></td>
+					<td class='public_line_value'><span class='public_nresume'>Tous les concepts de base de l'algèbre linéaire de niveau universitaire enseignés de façon plus accessible ? Oui, c'est possible. - Un millier d'exercices et de très nombreux exemples - Une structure de texte qui évite aux élèves les mauvaises surprises devant les concepts plus abstraits - Toute la puissance de l'algèbre présentée à travers une vaste sélection d'applications Ce que l'étudiant apprend dans son cours d'algèbre linéaire lui servira tout au cours de sa vie professionnelle.<br />
+Alors, aussi bien l'apprendre de la façon la plus efficace possible ! Ce manuel a justement été conçu pour que même les concepts les plus abstraits soient compris en les présentant progressivement dès les premiers chapitres. Tout au long du manuel, l'apprentissage est soutenu par de très nombreux exemples et plus d'un millier d'exercices qui tiennent compte des difficultés réelles rencontrées par les étudiants.<br />
+Dans cette nouvelle édition, plus de 25% des exercices sont nouveaux ou mis à jour et de nouveaux problèmes de pratique conceptuelle ont été ajoutés dans la plupart des sections pour assurer un soutien supplémentaire à l'apprentissage. L'algèbre, c'est parfois plus simple qu'on le croit. Obtenez-en plus avec l'Edition en ligne et avec MonLab Profitez des outils en ligne pour accompagner l'étudiant dans son apprentissage.<br />
+Pour les étudiants Plus de 500 exercices avec rétroactions automatiques et solutions détaillées Pour les professeurs - Un solutionnaire complet des exercices - Deux chapitres supplémentaires sur l'optimisation et les chaînes de Markov.<br />
+</span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd557' style='display:none;'>Algèbre linéaire et applications [texte imprimé] / <a href='./index.php?lvl=author_see&id=695' >David C. Lay</a>, Auteur ; <a href='./index.php?lvl=author_see&id=703' >Steven R. Lay (1944-....)</a>, Auteur ; <a href='./index.php?lvl=author_see&id=704' >Judi J. McDonald</a>, Auteur &nbsp;. -&nbsp; 5e éd.&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=127' >Montréal : Pearson</a>, 2017&nbsp;.&nbsp;-&nbsp;1 vol. (pagination multiple)&nbsp;: ill.&nbsp;; 26 cm.&nbsp;-&nbsp;(<a href='./index.php?lvl=coll_see&id=180' >ERPI sciences</a>) .<br /><b>ISBN</b>&nbsp;: 978-2-7613-7652-5<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>) <span class='etiq_champ'>Langues originales</span>&nbsp;: Anglais (<i>eng</i>)<table><tr class='tr_categ'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=7103' >1- Sciences Exactes et Informatique</a><br /><a href='./index.php?lvl=categ_see&id=7107' >1- Sciences Exactes et Informatique:Mathématiques</a><br /><a href='./index.php?lvl=categ_see&id=7199' >1- Sciences Exactes et Informatique:Mathématiques:512 Algèbre:512.5 Algèbre linéaire</a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Alg%C3%A8bre+lin%C3%A9aire&tags=ok' >Algèbre linéaire</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4876' >512.5</a> <span>Alg&egrave;bre lin&eacute;aire</span></span></td>
+				</tr><tr class='tr_nresume'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Résumé : </span></td>
+					<td class='public_line_value'><span class='public_nresume'>Tous les concepts de base de l'algèbre linéaire de niveau universitaire enseignés de façon plus accessible ? Oui, c'est possible. - Un millier d'exercices et de très nombreux exemples - Une structure de texte qui évite aux élèves les mauvaises surprises devant les concepts plus abstraits - Toute la puissance de l'algèbre présentée à travers une vaste sélection d'applications Ce que l'étudiant apprend dans son cours d'algèbre linéaire lui servira tout au cours de sa vie professionnelle.<br />
+Alors, aussi bien l'apprendre de la façon la plus efficace possible ! Ce manuel a justement été conçu pour que même les concepts les plus abstraits soient compris en les présentant progressivement dès les premiers chapitres. Tout au long du manuel, l'apprentissage est soutenu par de très nombreux exemples et plus d'un millier d'exercices qui tiennent compte des difficultés réelles rencontrées par les étudiants.<br />
+Dans cette nouvelle édition, plus de 25% des exercices sont nouveaux ou mis à jour et de nouveaux problèmes de pratique conceptuelle ont été ajoutés dans la plupart des sections pour assurer un soutien supplémentaire à l'apprentissage. L'algèbre, c'est parfois plus simple qu'on le croit. Obtenez-en plus avec l'Edition en ligne et avec MonLab Profitez des outils en ligne pour accompagner l'étudiant dans son apprentissage.<br />
+Pour les étudiants Plus de 500 exercices avec rétroactions automatiques et solutions détaillées Pour les professeurs - Un solutionnaire complet des exercices - Deux chapitres supplémentaires sur l'optimisation et les chaînes de Markov.<br />
+</span></td>
+				</tr></table></div></td><td valign='top' align='right'><img class='vignetteimg' src='./images/vide.png' title="Alg&egrave;bre lin&eacute;aire et applications" align='right' hspace='4' vspace='2' vigurl="./getimage.php?url_image=http%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9782761376525&amp;vigurl=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F51jgAq%2ByMvL._AC_UY218_.jpg" alt='vignette' /></td></tr></table>
+					
+<h3><span id='titre_exemplaires'>Exemplaires (4)</span></h3>
+<table cellpadding='2' class='exemplaires' width='100%'>
+<tr class='thead'><th class='expl_header_expl_cb'>Code-barres</th><th class='expl_header_expl_cote'>Cote</th><th class='expl_header_tdoc_libelle'>Support</th><th class='expl_header_location_libelle'>Localisation</th><th class='expl_header_section_libelle'>Section</th><th class='expl_header_statut'>Disponibilité</th><th class='expl_header_tdoc_libelle'>Inventaire</th></tr><tr class='even item_expl expl_available'><td id='expl_1178' class='expl_cb'>9782761376525BC001</td><td class='expl_cote'>512.5/004</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>Biblio Centrale</td><td class='section_libelle'>1-Sciences Exactes et informatique </td><td class='expl_situation'><strong>Disponible</strong> </td><td class='p_perso'>&nbsp;</td></tr><tr class='odd item_expl expl_available'><td id='expl_1179' class='expl_cb'>9782761376525BC002</td><td class='expl_cote'>512.5/004</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>Biblio Centrale</td><td class='section_libelle'>1-Sciences Exactes et informatique </td><td class='expl_situation'><strong>Disponible</strong> </td><td class='p_perso'>&nbsp;</td></tr><tr class='even item_expl expl_available'><td id='expl_1180' class='expl_cb'>9782761376525BC003</td><td class='expl_cote'>512.5/004</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>Biblio Centrale</td><td class='section_libelle'>1-Sciences Exactes et informatique </td><td class='expl_situation'><strong>Disponible</strong> </td><td class='p_perso'>&nbsp;</td></tr><tr class='odd item_expl expl_available'><td id='expl_1181' class='expl_cb'>9782761376525BC004</td><td class='expl_cote'>512.5/004</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>Biblio Centrale</td><td class='section_libelle'>1-Sciences Exactes et informatique </td><td class='expl_situation'><strong>Disponible</strong> </td><td class='p_perso'>&nbsp;</td></tr>
+</table></div>
+			<div id="el552Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el552Img" title="détail" alt="détail" border="0" onClick="expandBase('el552', true);  return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_552"><span class="statutnot1" ></span><span  notice='552'  class='header_title'>Algèbre linéaire</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=693'>Roger Mansuy</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Alg%C3%A8bre%20lin%C3%A9aire&amp;rft.title=Alg%C3%A8bre%20lin%C3%A9aire%20%3A%20r%C3%A9duction%20des%20endomorphismes%20%3B%20cours%20%26%20exercices%20corrig%C3%A9s&amp;rft.isbn=978-2-311-00285-0&amp;rft.tpages=1%20vol.%20%28180%20p.%29&amp;rft.date=DL%202012&amp;rft_id=&amp;rft.pub=Vuibert&amp;rft.place=Paris&amp;rft.aulast=Mansuy&amp;rft.aufirst=Roger'></span></span>
+	    		<br />
+				</div>
+				<div id="el552Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='92b31a1ffdf7ef5e56fdb3bb045dd0ab' datetime='1794730481'><table width='100%'><tr><td valign='top'>
+		<ul id='onglets_isbd_public552' class='onglets_isbd_public'>
+	  			<li id='onglet_public552' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '552'); return false;">Public</a></li>
+				<li id='onglet_isbd552' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '552'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public552' style='display:block;'><table><tr class='tr_title'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>Algèbre linéaire&nbsp;: réduction des endomorphismes ; cours & exercices corrigés</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texte imprimé</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=693' >Roger Mansuy (1977-....)</a>, Auteur ; <a href='./index.php?lvl=author_see&id=694' >Rached Mneimné</a>, Collaborateur</span></td>
+				</tr><tr class='tr_ed1'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=12' >Paris : Vuibert</a></span></td>
+				</tr><tr class='tr_year'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_year'>DL 2012</span></td>
+				</tr><tr class='tr_npages'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>1 vol. (180 p.)</span></td>
+				</tr><tr class='tr_ill'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Présentation : </span></td>
+					<td class='public_line_value'><span class='public_ill'>couv. ill. en coul.</span></td>
+				</tr><tr class='tr_size'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Format : </span></td>
+					<td class='public_line_value'><span class='public_size'>24 cm</span></td>
+				</tr><tr class='tr_code'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>ISBN/ISSN/EAN&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_code'>978-2-311-00285-0</span></td>
+				</tr><tr class='tr_ngen'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Note générale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_ngen'>La p. de titre et la couv. portent en plus : &quot;licence math&eacute;matiques, classes pr&eacute;paratoires scientifiques&quot;. &quot;La couv. porte en plus : &quot;cours complet, commentaires et d&eacute;veloppements, plus de 120 exercices corrig&eacute;s&quot;<br />
+</span></td>
+				</tr><tr class='tr_langues'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>)</span></td>
+				</tr><tr class='tr_categ'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=7103' >1- Sciences Exactes et Informatique</a><br /><a href='./index.php?lvl=categ_see&id=7107' >1- Sciences Exactes et Informatique:Mathématiques</a><br /><a href='./index.php?lvl=categ_see&id=7199' >1- Sciences Exactes et Informatique:Mathématiques:512 Algèbre:512.5 Algèbre linéaire</a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Alg%C3%A8bre+lin%C3%A9aire&tags=ok' >Algèbre linéaire</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Probl%C3%A8mes+et+exercices&tags=ok' >Problèmes et exercices</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Endomorphismes+%28th%C3%A9orie+des+groupes%29&tags=ok' >Endomorphismes (théorie des groupes)</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4876' >512.5</a> <span>Alg&egrave;bre lin&eacute;aire</span></span></td>
+				</tr><tr class='tr_nresume'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Résumé : </span></td>
+					<td class='public_line_value'><span class='public_nresume'>Rédigé à l'attention des étudiants en Licence de mathématiques et des classes préparatoires scientifiques, l'ouvrage est constitué d'un cours complet, de commentaires et développements et de 120 exercices corrigés. Afin d'aborder les différents aspects de la théorie de la réduction, les premiers chapitres détaillent avec soin les objets et concepts de l'algèbre linéaire. Les chapitres suivants présentent aussi bien les critères pratiques que leurs utilisations théoriques, à l'appui de nombreux exemples.<br />
+Cette approche pédagogique offre également une base solide de révision pour tous les candidats qui se préparent aux concours de l'enseignement.<br />
+Sommaire<br />
+POLYNOMES D'ENDOMORPHISMES<br />
+SOUS-ESPACES STABLES<br />
+COMMUTATION<br />
+LEMME DES NOYAUX<br />
+ELEMENTS PROPRES, CARACTERISTIQUES<br />
+ENDOMORPHISMES CYCLIQUES<br />
+THEOREME DE CAYLEY & HAMILTON<br />
+DIAGONALISATION<br />
+TRIGONALISATION<br />
+REDUCTION DE JORDAN<br />
+</span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd552' style='display:none;'>Algèbre linéaire&nbsp;: réduction des endomorphismes ; cours & exercices corrigés [texte imprimé] / <a href='./index.php?lvl=author_see&id=693' >Roger Mansuy (1977-....)</a>, Auteur ; <a href='./index.php?lvl=author_see&id=694' >Rached Mneimné</a>, Collaborateur&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=12' >Paris : Vuibert</a>, DL 2012&nbsp;.&nbsp;-&nbsp;1 vol. (180 p.)&nbsp;: couv. ill. en coul.&nbsp;; 24 cm.<br /><b>ISBN</b>&nbsp;: 978-2-311-00285-0<br />La p. de titre et la couv. portent en plus : &quot;licence math&eacute;matiques, classes pr&eacute;paratoires scientifiques&quot;. &quot;La couv. porte en plus : &quot;cours complet, commentaires et d&eacute;veloppements, plus de 120 exercices corrig&eacute;s&quot;<br />
+<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr class='tr_categ'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=7103' >1- Sciences Exactes et Informatique</a><br /><a href='./index.php?lvl=categ_see&id=7107' >1- Sciences Exactes et Informatique:Mathématiques</a><br /><a href='./index.php?lvl=categ_see&id=7199' >1- Sciences Exactes et Informatique:Mathématiques:512 Algèbre:512.5 Algèbre linéaire</a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Alg%C3%A8bre+lin%C3%A9aire&tags=ok' >Algèbre linéaire</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Probl%C3%A8mes+et+exercices&tags=ok' >Problèmes et exercices</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Endomorphismes+%28th%C3%A9orie+des+groupes%29&tags=ok' >Endomorphismes (théorie des groupes)</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4876' >512.5</a> <span>Alg&egrave;bre lin&eacute;aire</span></span></td>
+				</tr><tr class='tr_nresume'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Résumé : </span></td>
+					<td class='public_line_value'><span class='public_nresume'>Rédigé à l'attention des étudiants en Licence de mathématiques et des classes préparatoires scientifiques, l'ouvrage est constitué d'un cours complet, de commentaires et développements et de 120 exercices corrigés. Afin d'aborder les différents aspects de la théorie de la réduction, les premiers chapitres détaillent avec soin les objets et concepts de l'algèbre linéaire. Les chapitres suivants présentent aussi bien les critères pratiques que leurs utilisations théoriques, à l'appui de nombreux exemples.<br />
+Cette approche pédagogique offre également une base solide de révision pour tous les candidats qui se préparent aux concours de l'enseignement.<br />
+Sommaire<br />
+POLYNOMES D'ENDOMORPHISMES<br />
+SOUS-ESPACES STABLES<br />
+COMMUTATION<br />
+LEMME DES NOYAUX<br />
+ELEMENTS PROPRES, CARACTERISTIQUES<br />
+ENDOMORPHISMES CYCLIQUES<br />
+THEOREME DE CAYLEY & HAMILTON<br />
+DIAGONALISATION<br />
+TRIGONALISATION<br />
+REDUCTION DE JORDAN<br />
+</span></td>
+				</tr></table></div></td><td valign='top' align='right'><img class='vignetteimg' src='./images/vide.png' title="Alg&egrave;bre lin&eacute;aire" align='right' hspace='4' vspace='2' vigurl="./getimage.php?url_image=http%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9782311002850&amp;vigurl=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F51lEn%2BGp%2BSL._AC_UY218_.jpg" alt='vignette' /></td></tr></table>
+					
+<h3><span id='titre_exemplaires'>Exemplaires (5)</span></h3>
+<table cellpadding='2' class='exemplaires' width='100%'>
+<tr class='thead'><th class='expl_header_expl_cb'>Code-barres</th><th class='expl_header_expl_cote'>Cote</th><th class='expl_header_tdoc_libelle'>Support</th><th class='expl_header_location_libelle'>Localisation</th><th class='expl_header_section_libelle'>Section</th><th class='expl_header_statut'>Disponibilité</th><th class='expl_header_tdoc_libelle'>Inventaire</th></tr><tr class='even item_expl expl_available'><td id='expl_1200' class='expl_cb'>9782311002850BC001</td><td class='expl_cote'>512.5/009</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>Biblio Centrale</td><td class='section_libelle'>1-Sciences Exactes et informatique </td><td class='expl_situation'><strong>Disponible</strong> </td><td class='p_perso'>00678</td></tr><tr class='odd item_expl expl_available'><td id='expl_1201' class='expl_cb'>9782311002850BC002</td><td class='expl_cote'>512.5/009</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>Biblio Centrale</td><td class='section_libelle'>1-Sciences Exactes et informatique </td><td class='expl_situation'><strong>Disponible</strong> </td><td class='p_perso'>00679</td></tr><tr class='even item_expl expl_available'><td id='expl_1202' class='expl_cb'>9782311002850BC003</td><td class='expl_cote'>512.5/009</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>Biblio Centrale</td><td class='section_libelle'>1-Sciences Exactes et informatique </td><td class='expl_situation'><strong>Disponible</strong> </td><td class='p_perso'>00680</td></tr><tr class='odd item_expl expl_available'><td id='expl_1203' class='expl_cb'>9782311002850BC004</td><td class='expl_cote'>512.5/009</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>Biblio Centrale</td><td class='section_libelle'>1-Sciences Exactes et informatique </td><td class='expl_situation'><strong>Disponible</strong> </td><td class='p_perso'>00681</td></tr><tr class='even item_expl expl_available'><td id='expl_1204' class='expl_cb'>9782311002850BC005</td><td class='expl_cote'>512.5/009</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>Biblio Centrale</td><td class='section_libelle'>1-Sciences Exactes et informatique </td><td class='expl_situation'><strong>Disponible</strong> </td><td class='p_perso'>00682</td></tr>
+</table></div>
+			<div id="el556Parent" class="notice-parent">
+			
+			<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el556Img" title="détail" alt="détail" border="0" onClick="expandBase('el556', true);  return false;" hspace="3" /><img src="./images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_556"><span class="statutnot1" ></span><span  notice='556'  class='header_title'>Algèbre linéaire</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=693'>Roger Mansuy</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Alg%C3%A8bre%20lin%C3%A9aire&amp;rft.title=Alg%C3%A8bre%20lin%C3%A9aire%20%3A%20r%C3%A9duction%20des%20endomorphismes%20%3B%20cours%20%26%20exercices%20corrig%C3%A9s%20%3B%20licence%20math%C3%A9matiques%2C%20classes%20pr%C3%A9paratoires%20scientifiques&amp;rft.isbn=978-2-311-40405-0&amp;rft.tpages=1%20vol.%20%28X-194%20p.%29&amp;rft.date=cop.%202016&amp;rft_id=&amp;rft.pub=Vuibert&amp;rft.place=Paris&amp;rft.edition=2e%20%C3%A9d.&amp;rft.aulast=Mansuy&amp;rft.aufirst=Roger'></span></span>
+	    		<br />
+				</div>
+				<div id="el556Child" class="notice-child" style="margin-bottom:6px;display:none;"   token='e28bbac27b7e2f842b56d54f6e9ac04a' datetime='1794730481'><table width='100%'><tr><td valign='top'>
+		<ul id='onglets_isbd_public556' class='onglets_isbd_public'>
+	  			<li id='onglet_public556' class='isbd_public_active'><a href='#' title="Public" onclick="show_what('PUBLIC', '556'); return false;">Public</a></li>
+				<li id='onglet_isbd556' class='isbd_public_inactive'><a href='#' title="ISBD" onclick="show_what('ISBD', '556'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class='row'></div>
+					<div id='div_public556' style='display:block;'><table><tr class='tr_title'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Titre :</span></td>
+					<td class='public_line_value'><span class='public_title'>Algèbre linéaire&nbsp;: réduction des endomorphismes ; cours & exercices corrigés ; licence mathématiques, classes préparatoires scientifiques</span></td>
+				</tr><tr class='tr_typdoc'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Type de document&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_typdoc'>texte imprimé</span></td>
+				</tr><tr class='tr_auteurs'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Auteurs : </span></td>
+					<td class='public_line_value'><span class='public_auteurs'><a href='./index.php?lvl=author_see&id=693' >Roger Mansuy (1977-....)</a>, Auteur ; <a href='./index.php?lvl=author_see&id=702' >Rached Mneimné (1951-....)</a>, Collaborateur</span></td>
+				</tr><tr class='tr_mention'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mention d'édition :</span></td>
+					<td class='public_line_value'><span class='public_mention'>2e éd.</span></td>
+				</tr><tr class='tr_ed1'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Editeur :</span></td>
+					<td class='public_line_value'><span class='public_ed1'><a href='./index.php?lvl=publisher_see&id=12' >Paris : Vuibert</a></span></td>
+				</tr><tr class='tr_year'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Année de publication&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_year'>cop. 2016</span></td>
+				</tr><tr class='tr_npages'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Importance : </span></td>
+					<td class='public_line_value'><span class='public_npages'>1 vol. (X-194 p.)</span></td>
+				</tr><tr class='tr_ill'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Présentation : </span></td>
+					<td class='public_line_value'><span class='public_ill'>ill.</span></td>
+				</tr><tr class='tr_size'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Format : </span></td>
+					<td class='public_line_value'><span class='public_size'>24 cm</span></td>
+				</tr><tr class='tr_code'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>ISBN/ISSN/EAN&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_code'>978-2-311-40405-0</span></td>
+				</tr><tr class='tr_langues'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Langues :</span></td>
+					<td class='public_line_value'><span class='public_langues'>Français (<i>fre</i>)</span></td>
+				</tr><tr class='tr_categ'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=7103' >1- Sciences Exactes et Informatique</a><br /><a href='./index.php?lvl=categ_see&id=7107' >1- Sciences Exactes et Informatique:Mathématiques</a><br /><a href='./index.php?lvl=categ_see&id=7199' >1- Sciences Exactes et Informatique:Mathématiques:512 Algèbre:512.5 Algèbre linéaire</a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Alg%C3%A8bre+lin%C3%A9aire&tags=ok' >Algèbre linéaire</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Endomorphismes+%28th%C3%A9orie+des+groupes%29&tags=ok' >Endomorphismes (théorie des groupes)</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4876' >512.5</a> <span>Alg&egrave;bre lin&eacute;aire</span></span></td>
+				</tr><tr class='tr_nresume'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Résumé : </span></td>
+					<td class='public_line_value'><span class='public_nresume'>Un manuel concis pour maîtriser l'algèbre linéaire, indispensable en mathématiques, avec un cours complet, des exercices corrigés et des développements commentés. Après de nombreux rappels sur les fondements de la théorie de la dimension, du rang et des systèmes linéaires, qui sont au coeur de l'enseignement de l'Algèbre linéaire de L1 ou de Math Sup, le livre procède très vite à la mise en place des méthodes et des objets fondamentaux de la réduction des endomorphismes.<br />
+Chaque énoncé d'exercice, accompagné d'un rappel de cours, est l'occasion d'en présenter la thématique qui le replace dans un contexte mathématique signifiant (et non pas déconnecté de l'apprentissage). Les auteurs en proposent un éclairage multiple, et livrent une (ou plusieurs) solution(s) ainsi que divers développements apparentés. Sommaire : 1. Polynômes d'endomorphismes - 2. Sous-espaces stables - 3.<br />
+Commutation - 4. Lemme des noyaux - 5. Eléments propres - 6. Endomorphismes cycliques - 7. Théorème de Cayley & Hamilton - 8. Diagonalisation - 9. Trigonalisation - 10. Réduction de Jordan - 11. Réduction de Frobenius - 12. Topologie des classes de similitudes - 13. Localisation des valeurs propres - 14. Application aux chaînes de Markov finies - Notations Cette deuxième édition refondue, augmentée de quelques exercices complémentaires, intègre maintenant plusieurs annexes consacrées à des développements mal compris par les lecteurs.<br />
+</span></td>
+				</tr></table>
+</div>
+					<div id='div_isbd556' style='display:none;'>Algèbre linéaire&nbsp;: réduction des endomorphismes ; cours & exercices corrigés ; licence mathématiques, classes préparatoires scientifiques [texte imprimé] / <a href='./index.php?lvl=author_see&id=693' >Roger Mansuy (1977-....)</a>, Auteur ; <a href='./index.php?lvl=author_see&id=702' >Rached Mneimné (1951-....)</a>, Collaborateur &nbsp;. -&nbsp; 2e éd.&nbsp;.&nbsp;-&nbsp;<a href='./index.php?lvl=publisher_see&id=12' >Paris : Vuibert</a>, cop. 2016&nbsp;.&nbsp;-&nbsp;1 vol. (X-194 p.)&nbsp;: ill.&nbsp;; 24 cm.<br /><b>ISBN</b>&nbsp;: 978-2-311-40405-0<br /><span class='etiq_champ'>Langues</span>&nbsp;: Français (<i>fre</i>)<table><tr class='tr_categ'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Catégories&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_categ'><a href='./index.php?lvl=categ_see&id=7103' >1- Sciences Exactes et Informatique</a><br /><a href='./index.php?lvl=categ_see&id=7107' >1- Sciences Exactes et Informatique:Mathématiques</a><br /><a href='./index.php?lvl=categ_see&id=7199' >1- Sciences Exactes et Informatique:Mathématiques:512 Algèbre:512.5 Algèbre linéaire</a><br /></span></td>
+				</tr><tr class='tr_keywords'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Mots-clés&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_keywords'><a href='./index.php?lvl=more_results&mode=keyword&user_query=Alg%C3%A8bre+lin%C3%A9aire&tags=ok' >Algèbre linéaire</a>&nbsp; <a href='./index.php?lvl=more_results&mode=keyword&user_query=Endomorphismes+%28th%C3%A9orie+des+groupes%29&tags=ok' >Endomorphismes (théorie des groupes)</a></span></td>
+				</tr><tr class='tr_indexint'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Index. décimale&nbsp;: </span></td>
+					<td class='public_line_value'><span class='public_indexint'><a href='./index.php?lvl=indexint_see&id=4876' >512.5</a> <span>Alg&egrave;bre lin&eacute;aire</span></span></td>
+				</tr><tr class='tr_nresume'>
+					<td align='right' class='bg-grey'><span class='etiq_champ'>Résumé : </span></td>
+					<td class='public_line_value'><span class='public_nresume'>Un manuel concis pour maîtriser l'algèbre linéaire, indispensable en mathématiques, avec un cours complet, des exercices corrigés et des développements commentés. Après de nombreux rappels sur les fondements de la théorie de la dimension, du rang et des systèmes linéaires, qui sont au coeur de l'enseignement de l'Algèbre linéaire de L1 ou de Math Sup, le livre procède très vite à la mise en place des méthodes et des objets fondamentaux de la réduction des endomorphismes.<br />
+Chaque énoncé d'exercice, accompagné d'un rappel de cours, est l'occasion d'en présenter la thématique qui le replace dans un contexte mathématique signifiant (et non pas déconnecté de l'apprentissage). Les auteurs en proposent un éclairage multiple, et livrent une (ou plusieurs) solution(s) ainsi que divers développements apparentés. Sommaire : 1. Polynômes d'endomorphismes - 2. Sous-espaces stables - 3.<br />
+Commutation - 4. Lemme des noyaux - 5. Eléments propres - 6. Endomorphismes cycliques - 7. Théorème de Cayley & Hamilton - 8. Diagonalisation - 9. Trigonalisation - 10. Réduction de Jordan - 11. Réduction de Frobenius - 12. Topologie des classes de similitudes - 13. Localisation des valeurs propres - 14. Application aux chaînes de Markov finies - Notations Cette deuxième édition refondue, augmentée de quelques exercices complémentaires, intègre maintenant plusieurs annexes consacrées à des développements mal compris par les lecteurs.<br />
+</span></td>
+				</tr></table></div></td><td valign='top' align='right'><img class='vignetteimg' src='./images/vide.png' title="Alg&egrave;bre lin&eacute;aire" align='right' hspace='4' vspace='2' vigurl="./getimage.php?url_image=http%3A%2F%2Fimages-eu.amazon.com%2Fimages%2FP%2F%21%21isbn%21%21.08.MZZZZZZZ.jpg&amp;noticecode=9782311404050&amp;vigurl=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F71b3mqExxtL._AC_UY218_.jpg" alt='vignette' /></td></tr></table>
+					
+<h3><span id='titre_exemplaires'>Exemplaires (4)</span></h3>
+<table cellpadding='2' class='exemplaires' width='100%'>
+<tr class='thead'><th class='expl_header_expl_cb'>Code-barres</th><th class='expl_header_expl_cote'>Cote</th><th class='expl_header_tdoc_libelle'>Support</th><th class='expl_header_location_libelle'>Localisation</th><th class='expl_header_section_libelle'>Section</th><th class='expl_header_statut'>Disponibilité</th><th class='expl_header_tdoc_libelle'>Inventaire</th></tr><tr class='even item_expl expl_available'><td id='expl_1182' class='expl_cb'>9782311404050BC001</td><td class='expl_cote'>512.5/005</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>Biblio Centrale</td><td class='section_libelle'>1-Sciences Exactes et informatique </td><td class='expl_situation'><strong>Disponible</strong> </td><td class='p_perso'>&nbsp;</td></tr><tr class='odd item_expl expl_available'><td id='expl_1183' class='expl_cb'>9782311404050BC002</td><td class='expl_cote'>512.5/005</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>Biblio Centrale</td><td class='section_libelle'>1-Sciences Exactes et informatique </td><td class='expl_situation'><strong>Disponible</strong> </td><td class='p_perso'>&nbsp;</td></tr><tr class='even item_expl expl_available'><td id='expl_1184' class='expl_cb'>9782311404050BC003</td><td class='expl_cote'>512.5/005</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>Biblio Centrale</td><td class='section_libelle'>1-Sciences Exactes et informatique </td><td class='expl_situation'><strong>Disponible</strong> </td><td class='p_perso'>&nbsp;</td></tr><tr class='odd item_expl expl_available'><td id='expl_1185' class='expl_cb'>9782311404050BC004</td><td class='expl_cote'>512.5/005</td><td class='tdoc_libelle'>Livre</td><td class='location_libelle'>Biblio Centrale</td><td class='section_libelle'>1-Sciences Exactes et informatique </td><td class='expl_situation'><strong>Disponible</strong> </td><td class='p_perso'>&nbsp;</td></tr>
+</table></div>
+				<div id="el554Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el554Img" title="détail" alt="détail" border="0" param='a%3A11%3A%7Bs%3A2%3A%22id%22%3Bi%3A554%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A14%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A68%3A%22.%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_concept%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%3Bs%3A19%3A%22lien_rech_authperso%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3Bs%3A5%3A%22token%22%3Bs%3A32%3A%223887f4d8a7c500bd3ceb9eb34d6817fa%22%3Bs%3A8%3A%22datetime%22%3Bi%3A1794730481%3B%7D' onClick="expandBase_ajax('el554', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="./images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_554"><span class="statutnot1" ></span><span  notice='554'  class='header_title'>Algèbre et géométrie linéaires</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=697'>A. I. Kostrikin</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Alg%C3%A8bre%20et%20g%C3%A9om%C3%A9trie%20lin%C3%A9aires&amp;rft.title=Alg%C3%A8bre%20et%20g%C3%A9om%C3%A9trie%20lin%C3%A9aires&amp;rft.isbn=978-2-84225-254-0&amp;rft.tpages=1%20vol.%20%28VI-324%20p.%29&amp;rft.date=DL%202021&amp;rft_id=&amp;rft.series=Enseignement%20des%20math%C3%A9matiques&amp;rft.pub=Cassini&amp;rft.place=Paris&amp;rft.aulast=Kostrikin&amp;rft.aufirst=A.%20I.'></span></span>
+		    	<br />
+				</div>
+				<div id="el554Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="./index.php?lvl=notice_display&id=554" style="display:none;">Permalink</a>
+			
+		
+				<div id="el555Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el555Img" title="détail" alt="détail" border="0" param='a%3A11%3A%7Bs%3A2%3A%22id%22%3Bi%3A555%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A14%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A68%3A%22.%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_concept%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%3Bs%3A19%3A%22lien_rech_authperso%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3Bs%3A5%3A%22token%22%3Bs%3A32%3A%22a8c41c8e0523fc3789eb6cb74b62226b%22%3Bs%3A8%3A%22datetime%22%3Bi%3A1794730481%3B%7D' onClick="expandBase_ajax('el555', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="./images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_555"><span class="statutnot1" ></span><span  notice='555'  class='header_title'>Analyse linéaire dans les espaces de dimensions finies</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=700'>Izrail Markovich Glazman</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Analyse%20lin%C3%A9aire%20dans%20les%20espaces%20de%20dimensions%20finies&amp;rft.title=Analyse%20lin%C3%A9aire%20dans%20les%20espaces%20de%20dimensions%20finies%20%3A%20manuel%20en%20probl%C3%A8mes&amp;rft.isbn=978-2-7298-7358-5&amp;rft.tpages=1%20vol.%20%28400%20p.%29&amp;rft.date=DL%202013&amp;rft_id=&amp;rft.pub=Ellipses&amp;rft.place=Paris&amp;rft.edition=%5BReproduction%20en%20fac-simil%C3%A9%5D&amp;rft.aulast=Glazman&amp;rft.aufirst=Izrail%20Markovich'></span></span>
+		    	<br />
+				</div>
+				<div id="el555Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="./index.php?lvl=notice_display&id=555" style="display:none;">Permalink</a>
+			
+		
+				<div id="el909Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el909Img" title="détail" alt="détail" border="0" param='a%3A11%3A%7Bs%3A2%3A%22id%22%3Bi%3A909%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A14%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A68%3A%22.%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_concept%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%3Bs%3A19%3A%22lien_rech_authperso%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3Bs%3A5%3A%22token%22%3Bs%3A32%3A%2246f42ed903d8335b47598a22a64a1d76%22%3Bs%3A8%3A%22datetime%22%3Bi%3A1794730481%3B%7D' onClick="expandBase_ajax('el909', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="./images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_909"><span class="statutnot1" ></span><span  notice='909'  class='header_title'>Algèbre linéaire et géométrie vectorielle</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=1101'>Gilles Charron</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Alg%C3%A8bre%20lin%C3%A9aire%20et%20g%C3%A9om%C3%A9trie%20vectorielle&amp;rft.title=Alg%C3%A8bre%20lin%C3%A9aire%20et%20g%C3%A9om%C3%A9trie%20vectorielle&amp;rft.isbn=978-2-7650-5348-4&amp;rft.date=2018&amp;rft_id=&amp;rft.pub=Cheneli%C3%A8re%20%C3%A9ducation&amp;rft.place=Montr%C3%A9al&amp;rft.edition=5%20%C3%A9d.&amp;rft.aulast=Charron&amp;rft.aufirst=Gilles'></span></span>
+		    	<br />
+				</div>
+				<div id="el909Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="./index.php?lvl=notice_display&id=909" style="display:none;">Permalink</a>
+			
+		
+				<div id="el580Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el580Img" title="détail" alt="détail" border="0" param='a%3A11%3A%7Bs%3A2%3A%22id%22%3Bi%3A580%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A14%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A68%3A%22.%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_concept%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%3Bs%3A19%3A%22lien_rech_authperso%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3Bs%3A5%3A%22token%22%3Bs%3A32%3A%22b9470ff1fa3c4dbc7ca01810b07e8ea3%22%3Bs%3A8%3A%22datetime%22%3Bi%3A1794730481%3B%7D' onClick="expandBase_ajax('el580', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="./images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_580"><span class="statutnot1" ></span><span  notice='580'  class='header_title'>Agrégation interne</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=726'>Georges Skandalis</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Agr%C3%A9gation%20interne&amp;rft.title=Agr%C3%A9gation%20interne%20%3A%20alg%C3%A8bre%20g%C3%A9n%C3%A9rale%2C%20alg%C3%A8bre%20lin%C3%A9aire%20et%20un%20peu%20de%20g%C3%A9om%C3%A9trie&amp;rft.isbn=978-2-916352-35-0&amp;rft.tpages=1%20vol.%20%28XIII-350%20p.%29&amp;rft.date=DL%202017&amp;rft_id=&amp;rft.series=Im-et-Ker&amp;rft.pub=Calvage%20%26%20Mounet&amp;rft.place=Paris&amp;rft.aulast=Skandalis&amp;rft.aufirst=Georges'></span></span>
+		    	<br />
+				</div>
+				<div id="el580Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="./index.php?lvl=notice_display&id=580" style="display:none;">Permalink</a>
+			
+		
+				<div id="el559Parent" class="notice-parent">
+				
+		    	<img class='img_plus' src="./getgif.php?nomgif=plus" name="imEx" id="el559Img" title="détail" alt="détail" border="0" param='a%3A11%3A%7Bs%3A2%3A%22id%22%3Bi%3A559%3Bs%3A16%3A%22function_to_call%22%3Bs%3A10%3A%22aff_notice%22%3Bs%3A8%3A%22aj_liens%22%3Ba%3A14%3A%7Bs%3A16%3A%22lien_rech_notice%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_auteur%22%3Bs%3A36%3A%22.%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_editeur%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%3Bs%3A24%3A%22lien_rech_titre_uniforme%22%3Bs%3A44%3A%22.%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_serie%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%3Bs%3A20%3A%22lien_rech_collection%22%3Bs%3A34%3A%22.%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A23%3A%22lien_rech_subcollection%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_indexint%22%3Bs%3A38%3A%22.%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%3Bs%3A16%3A%22lien_rech_motcle%22%3Bs%3A68%3A%22.%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%3Bs%3A15%3A%22lien_rech_categ%22%3Bs%3A35%3A%22.%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%3Bs%3A15%3A%22lien_rech_perio%22%3Bs%3A40%3A%22.%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%3Bs%3A18%3A%22lien_rech_bulletin%22%3Bs%3A42%3A%22.%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%3Bs%3A17%3A%22lien_rech_concept%22%3Bs%3A37%3A%22.%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%3Bs%3A19%3A%22lien_rech_authperso%22%3Bs%3A39%3A%22.%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%3B%7Ds%3A7%3A%22aj_cart%22%3Bi%3A0%3Bs%3A11%3A%22aj_to_print%22%3Bi%3A0%3Bs%3A14%3A%22aj_header_only%22%3Bi%3A0%3Bs%3A12%3A%22aj_no_header%22%3Bb%3A0%3Bs%3A11%3A%22aj_nodocnum%22%3Bi%3A0%3Bs%3A11%3A%22aj_type_aff%22%3Bs%3A1%3A%224%22%3Bs%3A5%3A%22token%22%3Bs%3A32%3A%2254072d0c12396d6f7d0d988219c468e4%22%3Bs%3A8%3A%22datetime%22%3Bi%3A1794730481%3B%7D' onClick="expandBase_ajax('el559', true,this.getAttribute('param'));  return false;" hspace="3"/><img src="./images/icon_a_16x16.gif" alt='Document: texte imprim&eacute;' title='Document: texte imprim&eacute;'/>
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_559"><span class="statutnot1" ></span><span  notice='559'  class='header_title'>Quaternions réels, duaux et complexes</span><span class='header_authors'> / <a href='./index.php?lvl=author_see&id=706'>Jean Hladik</a></span><span class='Z3988' title='ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Quaternions%20r%C3%A9els%2C%20duaux%20et%20complexes&amp;rft.title=Quaternions%20r%C3%A9els%2C%20duaux%20et%20complexes%20%3A%20applications%20en%20robotique%2C%20imagerie%20num%C3%A9rique%2C%20a%C3%A9rospatiale%2C%20biom%C3%A9canique%2C%20physique%20relativiste%20et%20quantique&amp;rft.isbn=978-2-340-01046-8&amp;rft.tpages=1%20vol.%20%28343%20p.%29&amp;rft.date=DL%202016&amp;rft_id=&amp;rft.pub=Ellipses&amp;rft.place=Paris&amp;rft.aulast=Hladik&amp;rft.aufirst=Jean'></span></span>
+		    	<br />
+				</div>
+				<div id="el559Child" class="notice-child" style="margin-bottom:6px;display:none;"  >
+		    	</div><a href="./index.php?lvl=notice_display&id=559" style="display:none;">Permalink</a>
+			
+		</blockquote>
+	</div></div></div><form name='mc_values' action='./index.php?lvl=more_results' style='display:none' method='post'>
+<input type='hidden' name='search[]' value='s_4'/><input type='hidden' name='inter_0_s_4' value=''/><input type='hidden' name='op_0_s_4' value='EQ'/><input type='hidden' name='field_0_s_4[]' value='a:2:{s:17:&quot;serialized_search&quot;;s:431:&quot;a:3:{s:6:&quot;SEARCH&quot;;a:2:{i:0;s:3:&quot;f_7&quot;;i:1;s:3:&quot;f_9&quot;;}i:0;a:6:{s:6:&quot;SEARCH&quot;;s:3:&quot;f_7&quot;;s:2:&quot;OP&quot;;s:7:&quot;BOOLEAN&quot;;s:5:&quot;FIELD&quot;;a:1:{i:0;s:20:&quot;&quot;Alg&egrave;bre lin&eacute;aire&quot;&quot;;}s:6:&quot;FIELD1&quot;;s:0:&quot;&quot;;s:5:&quot;INTER&quot;;s:0:&quot;&quot;;s:8:&quot;FIELDVAR&quot;;a:2:{s:6:&quot;is_num&quot;;a:1:{i:0;s:1:&quot;0&quot;;}s:10:&quot;ck_affiche&quot;;a:1:{i:0;s:1:&quot;0&quot;;}}}i:1;a:6:{s:6:&quot;SEARCH&quot;;s:3:&quot;f_9&quot;;s:2:&quot;OP&quot;;s:2:&quot;EQ&quot;;s:5:&quot;FIELD&quot;;a:1:{i:0;s:1:&quot;a&quot;;}s:6:&quot;FIELD1&quot;;s:0:&quot;&quot;;s:5:&quot;INTER&quot;;s:3:&quot;and&quot;;s:8:&quot;FIELDVAR&quot;;s:0:&quot;&quot;;}}&quot;;s:11:&quot;search_type&quot;;s:20:&quot;search_simple_fields&quot;;}'/><input type='hidden' name='page' value='1'/>
+			<input type="hidden" name="nb_per_page_custom" value="">
+</form><form name="form_values" action="./index.php?lvl=more_results" method="post">
+<input type='hidden' value='' id='filtre_compare_form_values' name='filtre_compare'><input type="hidden" name="user_query" value="&quot;Alg&egrave;bre lin&eacute;aire&quot;">
+<input type="hidden" name="mode" value="tous">
+<input type="hidden" name="count" value="26">
+<input type="hidden" name="typdoc" value="a"><input type="hidden" name="clause" value="">
+<input type="hidden" name="clause_bull" value="">
+<input type="hidden" name="clause_bull_num_notice" value="">
+<input type="hidden" name="tri" value="">
+<input type="hidden" name="pert" value="">
+<input type="hidden" name="l_typdoc" value="a">
+<input type="hidden" id=author_type name="author_type" value="">
+<input type="hidden" id="id_thes" name="id_thes" value="">
+<input type="hidden" name="surligne" value="0">
+<input type="hidden" name="tags" value="">
+<input type="hidden" name="page" value="1">
+				<input type="hidden" name="nb_per_page_custom" value="">
+<input type="hidden" name="nbexplnum_to_photo" value="">
+</form><div class='row'>&nbsp;</div><div id='navbar'><hr />
+<center>
+<script type='text/javascript'>
+<!--
+	function test_form(form)
+	{
+
+		if (form.page.value > 3)
+		{
+			alert("Numéro de page trop élevé !");
+			form.page.focus();
+			return false;
+		}
+
+		return true;
+	}
+-->
+</script><div class="navbar">
+<form name='form' action='javascript:document.form_values.page.value=document.form.page.value; document.form_values.submit()' method='post' onsubmit='return test_form(form)'>
+<img src='./images/first-grey.png' alt='first'>
+<img src='./images/prev-grey.png' alt='previous'>
+<strong>1</strong> <a class='navbar_page' href='javascript:document.form_values.page.value=2; document.form_values.submit()' >2</a> <a class='navbar_page' href='javascript:document.form_values.page.value=3; document.form_values.submit()' >3</a><a class='navbar_next' href='javascript:document.form_values.page.value=2; document.form_values.submit()'><img src='./images/next.png' alt='next' border='0' title='page suivante'></a>
+<a class='navbar_last' href='javascript:document.form_values.page.value=3; document.form_values.submit()'><img src='./images/last.png' alt='last' border='0' title='dernière page'></a>
+ (1 - 10 / 26)<span style='float:right;'> Par page :  <a class='navbar_custom' href='javascript:document.form_values.nb_per_page_custom.value=25;javascript:document.form_values.page.value=1; document.form_values.submit()'>25</a>  <a class='navbar_custom' href='javascript:document.form_values.nb_per_page_custom.value=26;javascript:document.form_values.page.value=1; document.form_values.submit()'>Tout afficher</a> </span></form>
+</div>
+</center></div>	
+		</div><!-- fin DIV main_hors_footer --><div id="footer">
+
+<span id="footer_rss">
+	
+</span>
+<span id="footer_link_sup">
+		 &nbsp;
+</span>
+
+<span id="footer_link_pmb">
+ &nbsp;
+		<a class="lien_pmb_footer" href="http://www.sigb.net" title="...une solution libre pour la médiathèque..." target='_blank'>pmb</a> 	
+</span>		
+		
+</div> 
+
+		</div><!-- /div id=main -->
+
+		<div id="intro">
+<div id="intro_bibli">
+			<h3>Bibliothèque Centrale</h3>
+			<div class="p1"><img src="https://pmb.univ-batna2.dz/opac_css/styles/genbib/images/BC1.jpg" />
+<img src="https://pmb.univ-batna2.dz/opac_css/styles/genbib/images/BC2.jpg" />
+<img src="https://pmb.univ-batna2.dz/opac_css/styles/genbib/images/BC3.jpg" /></div>
+			<div class="p2"></div>
+			</div>
+		</div><!-- /div id=intro -->		
+		<div id="bandeau"><div id='accessibility'>
+
+		<ul class='accessibility_font_size'>
+			<li class='accessibility_font_size_small'><a href='javascript:set_font_size(-1);' title='Réduire le texte'>A-</a></li>
+			<li class='accessibility_font_size_normal'><a href='javascript:set_font_size(0);' title='Réinitialiser le texte'>A</a></li>
+			<li class='accessibility_font_size_big'><a href='javascript:set_font_size(1);' title='Agrandir le texte'>A+</a></li>
+		</ul>
+		</div>
+<div id="accueil">
+
+<h3><span onclick='document.location="./index.php?"' style='cursor: pointer;'>Accueil</span></h3>
+<p class="centered"><a href='./index.php?'><img src='https://pmb.univ-batna2.dz/opac_css/images/site/logo_univ_batna2.png
+
+'  border='0' align='center'/></a></p>
+<div id='lang_select'><h3 ><span>Sélection de la langue</span></h3><span><form method="post" action="index.php" ><select name="lang_sel" onchange="this.form.submit();"><option value='fr_FR' selected>Français </option><option value='en_UK'>English (UK)</option></select></form></span></div>
+
+					</div><!-- fermeture #accueil -->
+<div id="connexion">
+
+			<h3 class="login_invite">Se connecter</h3><span id='login_form'><form action='empr.php' method='post' name='myform'>
+				<label>accéder à votre compte de lecteur</label><br />
+				<input type='text' name='login' class='login' size='14' placeholder='identifiant' ><br />
+				<input type='password' name='password' class='password' size='8' placeholder='Mot de passe' value=''/>
+				<input type='submit' name='ok' value='ok' class='bouton'></form><a  class='mdp_forgotten' href='./askmdp.php'>Mot de passe oublié ?</a></span>
+
+			</div><!-- fermeture #connexion -->
+<div id='lvl1'><script>var tosubmit="surligne=&look_FIRSTACCESS=1&user_query=%22Alg%C3%A8bre%20lin%C3%A9aire%22&look_TITLE=1&typdoc=a&lvl=more_results&autolevel1=1";
+						var cms_build_activate="0";function updateLevel1(result) {
+							if(result != '') {
+								document.getElementById('lvl1').innerHTML=result;
+							} else {
+								if(!cms_build_activate) {
+									require(['dojo/ready', 'dojo/dom-construct'], function(ready, domConstruct){
+										ready(function(){
+											domConstruct.destroy('lvl1');
+										});
+									});
+								}
+							}
+						}
+						getlevel2=new http_request();
+						getlevel2.request('./ajax.php?module=ajax&categ=level1',true,tosubmit,true,updateLevel1);</script><h3>Recherche</h3>
+<img src='./images/patience.gif' id='wait_level1'/></div>
+			<div id='facette'>
+				
+		<script src='./includes/javascript/select.js' type='text/javascript'></script>
+		<script type='text/javascript'> 		
+			function test(elmt_id){
+				var elmt_list=document.getElementById(elmt_id);
+				for(i in elmt_list.rows){
+					if(elmt_list.rows[i].firstElementChild && elmt_list.rows[i].firstElementChild.nodeName!='TH'){
+						if(elmt_list.rows[i].style.display == 'none'){
+							elmt_list.rows[i].style.display = 'block';
+						}else{
+							elmt_list.rows[i].style.display = 'none';
+						}
+					}
+				}
+			}
+			
+			function facette_see_more(id,json_facette_plus){
+				
+				var myTable = document.getElementById('facette_list_'+id);
+				
+				if (json_facette_plus == null) {
+					var childs = myTable.childNodes;
+					var nb_childs = childs.length;
+					
+					for(var i = 0; i < nb_childs; i++){
+						if (childs[i].getAttribute('facette_ajax_loaded')!=null) {
+							if (childs[i].getAttribute('style')=='display:block') {
+								childs[i].setAttribute('style','display:none');
+								childs[i].setAttribute('expanded','false');
+							} else {
+								childs[i].setAttribute('style','display:block');
+								childs[i].setAttribute('expanded','true');
+							}
+						}
+					}
+				
+					var see_more_less = document.getElementById('facette_see_more_less_'+id);
+					see_more_less.innerHTML='';
+					var span = document.createElement('span');
+					if (see_more_less.getAttribute('etat')=='plus') {
+						span.className='facette_moins_link';
+						span.innerHTML='[-]';
+						see_more_less.setAttribute('etat','moins');
+					} else {
+						span.className='facette_plus_link';
+						span.innerHTML='[+]';
+						see_more_less.setAttribute('etat','plus');		
+					}
+					see_more_less.appendChild(span);
+					
+				} else {
+					var req = new http_request();
+					var sended_datas={'json_facette_plus':json_facette_plus};
+					req.request("./ajax.php?module=ajax&categ=facettes&sub=see_more",true,'sended_datas='+encodeURIComponent(JSON.stringify(sended_datas)),true,function(data){
+						
+						var jsonArray = JSON.parse(data);
+						//on supprime la ligne '+'
+						myTable.tBodies[0].removeChild(myTable.rows[myTable.rows.length-1]);
+						//on ajoute les lignes au tableau
+						for(var i=0;i<jsonArray.length;i++) {
+							var tr = document.createElement('tr');
+							tr.setAttribute('style','display:block');
+							tr.setAttribute('expanded','true');
+							tr.setAttribute('facette_ajax_loaded','1');
+				        	var td = tr.appendChild(document.createElement('td'));
+				        	td.innerHTML = "<span class='facette_coche'><input type='checkbox' name='check_facette[]' value='" + jsonArray[i]['facette_value'] + "'></span>";
+				        	var td2 = tr.appendChild(document.createElement('td'));
+				        	td2.innerHTML = "<a class='facette_link' onclick='" + jsonArray[i]['facette_link'] + "' style='cursor:pointer;'>"
+												+ "<span class='facette_libelle'>" + jsonArray[i]['facette_libelle'] + "</span> "
+												+ "<span class='facette_number'>[" + jsonArray[i]['facette_number'] + "]</span>"
+												+ "</a>";
+				        	myTable.appendChild(tr);
+	
+						}
+						//Ajout du see_less
+						var tr = document.createElement('tr');
+						tr.setAttribute('style','display:block');
+						tr.setAttribute('see_less','1');
+						tr.setAttribute('class','facette_tr_see_more');
+							
+						var td = tr.appendChild(document.createElement('td'));
+						td.setAttribute('colspan','3');
+							
+						var ahref = td.appendChild(document.createElement('a'));
+						ahref.setAttribute('id','facette_see_more_less_'+id);
+						ahref.setAttribute('etat','moins');
+						ahref.setAttribute('onclick','javascript:facette_see_more(' + id + ',null);');
+						ahref.setAttribute('style','cursor:pointer');
+						ahref.innerHTML='';
+							
+						var span = document.createElement('span');
+						span.className='facette_moins_link';
+						span.innerHTML='[-]';								
+						ahref.appendChild(span);
+								
+						myTable.appendChild(tr);
+					});
+				}
+			}
+			function valid_facettes_compare(){
+				
+				var form = document.facettes_multi;
+				if(form.elements.length>0){
+					
+					var form_values_compare_input_array=new Array();
+					
+					for(var i=0; i<form.elements.length;i++){
+						
+						if(form.elements[i].name=='check_facette[]' && form.elements[i].checked){
+							//on transforme les case � coch� en element du tableau des facettes	
+							//on ajoute dans le tableau des facettes
+							var value=form.elements[i].value;
+							var jsonArray=JSON.parse(value);
+							
+							//On ajoute dans le formulaire de postage g�n�ral
+							var form_values_compare_input=document.createElement('input');
+							form_values_compare_input.setAttribute('name','check_facette_compare[]');
+							form_values_compare_input.setAttribute('type','hidden');
+							form_values_compare_input.setAttribute('value',value);
+							form_values_compare_input_array.push(form_values_compare_input);
+						}
+					}
+					
+					var post=false;
+					var form_values=document.form_values;
+					for(var i=0;i<form_values_compare_input_array.length;i++) {
+						form_values.appendChild(form_values_compare_input_array[i]);
+					}
+					
+					for(var i=0; i<form_values.elements.length;i++){
+						if(form_values.elements[i].name=='check_facette_compare[]' && form_values.elements[i].value!=''){
+							document.getElementById('filtre_compare_facette').value='compare';
+							document.getElementById('filtre_compare_form_values').value='compare';
+							form_values.submit();
+							post=true;
+						}
+					}
+					if(post == false){
+						alert('Pas de critère de comparaison.');
+					}
+				}else{
+					alert('Pas de critère de comparaison.');
+				}
+			}
+			
+			function valid_compare(){
+				var form_values=document.form_values;
+				var post=false;
+				
+				for(var i=0; i<form_values.elements.length;i++){
+					if(form_values.elements[i].name=='check_facette_compare[]' && form_values.elements[i].value!=''){
+						document.getElementById('filtre_compare_facette').value='compare';
+						document.getElementById('filtre_compare_form_values').value='compare';
+						form_values.submit();
+						post=true;
+					}
+				}
+				if(post == false){
+					alert('Pas de critère de comparaison.');
+				}
+			}
+			
+			function remove_compare_facette(value){
+				
+				var jsonArray = JSON.parse(value);
+				
+				//on supprime l'�lement du tableau des facettes
+				elem=document.getElementById('compare_facette_'+jsonArray[4]);
+				elem.parentNode.removeChild(elem);
+				
+				//on supprime l'�l�ment du formulaire g�n�ral aussi
+				var form_values=document.form_values;
+				for(var i in form_values.elements){
+					if(form_values.elements[i] && form_values.elements[i].value && form_values.elements[i].name=='check_facette_compare[]'){
+						form_values_json_array=JSON.parse(form_values.elements[i].value);
+						
+						if(form_values_json_array[4]==jsonArray[4]){
+							elem=form_values.elements[i];
+							elem.parentNode.removeChild(elem);
+						}
+					}
+				}
+				var post=true;
+				for(var i in form_values.elements){
+					if(form_values.elements[i] && form_values.elements[i].value && form_values.elements[i].name=='check_facette_compare[]'){
+						valid_facettes_compare();
+						post=false;
+					}
+				}
+
+				if(post){
+					if('facette_search_compare' == 'facettes_external_search_compare') {
+						var input_form_values = document.createElement('input');
+						input_form_values.setAttribute('type', 'hidden');
+						input_form_values.setAttribute('name', 'reinit_compare');
+						input_form_values.setAttribute('value', '1');
+						document.forms['form_values'].appendChild(input_form_values);
+						document.form_values.submit();
+					} else {
+						document.location.href='./index.php?lvl=more_results&get_last_query=1&reinit_compare=1';
+					}
+				}
+			}
+			
+			function group_by(groupBy){
+				
+				var jsonArray=JSON.parse(groupBy);
+			
+				//on vide les elements group_by
+				var group_by_elements=document.getElementsByName('check_facette_groupby[]');
+				
+				var nodes_to_remove;
+				
+				for(var i in group_by_elements){
+					if(group_by_elements[i].nodeName=='INPUT'){
+						if(group_by_elements[i].getAttribute('id')!='facette_groupby_'+jsonArray[3]){
+							
+							if(group_by_elements[i].parentNode.getAttribute('name')!='form_values' && group_by_elements[i].parentNode.getAttribute('name')!='cart_values'){
+								
+								var group_by_elements_img=group_by_elements[i].previousElementSibling.firstChild;
+									
+								group_by_elements_img.setAttribute('src','./images/group_by_grey.png');
+								group_by_elements[i].setAttribute('value','');
+								
+							}else{
+								nodes_to_remove=[i=[group_by_elements[i],group_by_elements[i].parentNode]];
+							}
+						}
+					}
+				}
+				
+				if(nodes_to_remove && nodes_to_remove.length>0){
+					for(var i in nodes_to_remove){
+						nodes_to_remove[i][1].removeChild(nodes_to_remove[i][0]);
+					}
+				}
+				
+				element=document.getElementById('facette_groupby_'+jsonArray[3]);
+				var img=element.previousElementSibling.firstChild;
+				
+				var table_groupby=document.getElementById('facette_groupby');
+				
+				if(element.getAttribute('value')==''){
+					element.setAttribute('value',JSON.stringify(groupBy));
+					
+					//On ajoute dans le formulaire de postage g�n�ral
+					var form_values=document.form_values;
+					var form_values_groupby_input=document.createElement('input');
+					form_values_groupby_input.setAttribute('name','check_facette_groupby[]');
+					form_values_groupby_input.setAttribute('type','hidden');
+					form_values_groupby_input.setAttribute('value',groupBy);
+					form_values.appendChild(form_values_groupby_input);
+					
+					
+				}
+				valid_facettes_compare();
+			}
+		</script>
+		<script type='text/javascript'>
+			function valid_facettes_multi(){
+				//on bloque si aucune case coch�e
+				var form = document.facettes_multi;
+				for (i=0, n=form.elements.length; i<n; i++){
+					if ((form.elements[i].checked == true)) {
+						document.getElementById('filtre_compare_facette').value='filter';
+						document.getElementById('filtre_compare_form_values').value='filter';
+						form.submit();
+						return true;
+					}
+				}
+				return false;
+			}
+		</script>
+				<div id='facette_wrapper'>
+					<img src='./images/patience.gif' alt=''/>
+					<script type='text/javascript'>
+						var req = new http_request();
+						req.request("./ajax.php?module=ajax&categ=facettes&sub=get_data",false,null,true,function(data){
+							var response = JSON.parse(data);
+							document.getElementById('facette_wrapper').innerHTML=response.display;
+							if(!response.exists_with_results) {
+								require(['dojo/ready', 'dojo/dom-construct'], function(ready, domConstruct){
+									ready(function(){
+										domConstruct.destroy('facette');
+									});
+								});
+							}
+							if(response.map_location) {
+								if(document.getElementById('map_location_search')) {
+									document.getElementById('map_location_search').innerHTML=response.map_location;
+									if(typeof(dojo) == 'object'){
+										dojo.require('dojo.parser');
+										dojo.parser.parse(document.getElementById('map_location_search'));
+									}
+								}
+							}
+						});
+					</script>
+				</div>
+			</div><div id="adresse">
+
+		<h3>Adresse</h3>
+
+		<span>
+			Bibliothèque Centrale<br />
+			Université Batna 2<br />
+			05078 Route de Constantine N°53 Fesdis Batna <br />
+			Algérie &nbsp;<br />
+			02 43 440 660<br /></span>
+	    </div><!-- fermeture #adresse --></div><div id="bandeau_2"></div></div><!-- /div id=container -->
+		
+		<script type='text/javascript'>init_drag();	</script> 
+		
+		</body>
+		</html>
+		

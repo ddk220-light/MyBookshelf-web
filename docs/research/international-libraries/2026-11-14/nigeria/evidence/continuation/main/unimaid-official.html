@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University of Maiduguri Ramat Library</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .home-sections {
+            border: 3px solid #0a2463;
+            margin: 20px 0;
+            padding: 30px;
+            background: #f9f9f9;
+        }
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(10, 36, 99, 0.9), rgba(62, 146, 204, 0.8));
+            color: white;
+            position: relative;
+        }
+        .hero-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--dark);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        .hero h1 span {
+            color: var(--accent);
+        }
+        .hero p {
+            font-size: 1.3rem;
+            margin: 0 auto 30px;
+            max-width: 600px;
+            opacity: 0.9;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .hero-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            pointer-events: none;
+            z-index: 10;
+        }
+        .hero-nav button {
+            pointer-events: auto;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+        }
+        .hero-nav button:hover {
+            background: rgba(255,255,255,0.4);
+            transform: scale(1.1);
+        }
+        .hero-dots {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+        .hero-dots button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid white;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .hero-dots button.active {
+            background: white;
+            transform: scale(1.2);
+        }
+        .btn-accent {
+            background: var(--accent);
+            color: var(--dark);
+            padding: 15px 35px;
+            border-radius: 8px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-accent:hover {
+            background: var(--accent-light);
+            transform: translateY(-2px);
+        }
+        .section {
+            padding: 80px 0;
+            background: var(--light);
+        }
+        .section:nth-child(even) {
+            background: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .section h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        .line {
+            width: 80px;
+            height: 4px;
+            background: var(--accent);
+            margin: 0 auto 20px;
+        }
+        .section > .container > p {
+            text-align: center;
+            color: var(--gray-500);
+            margin-bottom: 50px;
+            font-size: 1.1rem;
+        }
+        .leaders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .leader-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
+        }
+        .leader-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-xl);
+        }
+        .leader-image {
+            height: 250px;
+            background: var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50px 50px 0 0;
+            overflow: hidden;
+        }
+        .leader-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center center;
+            background: var(--gray-100);
+        }
+        .leader-image svg {
+            width: 80px;
+            height: 80px;
+            color: var(--gray-400);
+        }
+        .leader-info {
+            padding: 25px;
+        }
+        .leader-info h3 {
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        .leader-info .role {
+            color: var(--secondary);
+            font-weight: 600;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+        .gallery-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            aspect-ratio: 4/3;
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .info-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+        }
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        .info-card .icon {
+            width: 70px;
+            height: 70px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 1.5rem;
+        }
+        .info-card h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 60px 0 20px;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        .footer h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+        .footer h4 {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+        .footer ul {
+            list-style: none;
+        }
+        .footer li {
+            margin-bottom: 10px;
+        }
+        .footer a {
+            opacity: 0.8;
+            transition: var(--transition);
+        }
+        .footer a:hover {
+            opacity: 1;
+            color: var(--accent);
+        }
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 20px;
+            text-align: center;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="index.html" class="logo">
+                <img src="logo.jpg" alt="Ramat Library Logo" style="height:50px;width:auto;margin-right:12px;">
+                <div class="logo-text" style="display:flex;flex-direction:column;">
+                    <span style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:#0a2463;">Ramat Library</span>
+                    <span style="font-size:0.7rem;font-family:'Poppins',sans-serif;color:#6b7280;">University of Maiduguri</span>
+                </div>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li class="dropdown">
+                    <a href="#">Resources</a>
+                    <div class="dropdown-menu">
+                        <a href="resources.html">Open Access</a>
+                        <a href="resources.html">Subscribed Resources</a>
+                        <a href="elibrary.html">E-Library</a>
+                    </div>
+                </li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="nav-auth">
+                <a href="login.html" class="btn btn-outline">Login</a>
+                <a href="register.html" class="btn btn-primary">Register</a>
+            </div>
+            <div class="mobile-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+    
+<section class="hero" id="hero-section">
+        <div class="hero-nav">
+            <button onclick="changeSlide(-1)" style="position:absolute;left:20px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.3);border:none;color:white;width:50px;height:50px;border-radius:50%;cursor:pointer;z-index:10;">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button onclick="changeSlide(1)" style="position:absolute;right:20px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.3);border:none;color:white;width:50px;height:50px;border-radius:50%;cursor:pointer;z-index:10;">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+        <div class="hero-content" id="hero-content">
+            <span class="hero-badge" id="hero-badge">Academic Excellence Since 1975</span>
+            <h1>Welcome to <span>Ramat Library</span></h1>
+            <p id="hero-desc">The central knowledge hub of the University of Maiduguri, providing world-class academic resources, research materials, and digital services to support learning and scholarship.</p>
+            <div class="hero-buttons" id="hero-buttons">
+                <a href="elibrary.html" class="btn btn-accent">
+                    <i class="fas fa-search"></i> Search Library
+                </a>
+                <a href="about.html" class="btn btn-outline" style="border: 2px solid white; color: white;">
+                    Learn More
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <h2>Quick Access</h2>
+            <div class="line"></div>
+            <p>Explore our digital resources and services</p>
+            
+            <div class="info-cards">
+                <div class="info-card">
+                    <div class="icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3>E-Library</h3>
+                    <p>Access thousands of e-books, journals, and digital resources online.</p>
+                    <a href="elibrary.html" style="color: var(--secondary); font-weight: 600; margin-top: 15px; display: block;">Explore E-Library <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="info-card">
+                    <div class="icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3>Databases</h3>
+                    <p>Access subscribed academic databases and research platforms.</p>
+                    <a href="resources.html" style="color: var(--secondary); font-weight: 600; margin-top: 15px; display: block;">View Resources <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="info-card">
+                    <div class="icon">
+                        <i class="fas fa-newspaper"></i>
+                    </div>
+                    <h3>Journals</h3>
+                    <p>Browse our collection of academic journals and publications.</p>
+                    <a href="resources.html" style="color: var(--secondary); font-weight: 600; margin-top: 15px; display: block;">Browse Journals <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="info-card">
+                    <div class="icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Research</h3>
+                    <p>Access theses, dissertations, and research papers.</p>
+                    <a href="resources.html" style="color: var(--secondary); font-weight: 600; margin-top: 15px; display: block;">View Research <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<section class="section" style="background: white;">
+        <div class="container">
+
+            <h2>University Leadership</h2>
+            <div class="line"></div>
+            <p>Meet the dedicated leaders driving academic excellence at the University of Maiduguri</p>
+            
+            <div class="leaders-grid" id="leaders-grid">
+                <div class="leader-card">
+                    <div class="leader-image">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                    <div class="leader-info">
+                        <h3>Loading...</h3>
+                        <span class="role">Please wait</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <h2>Library Gallery</h2>
+            <div class="line"></div>
+            <p>Explore our state-of-the-art facilities and learning spaces</p>
+            
+            <div class="gallery-grid" id="gallery-grid">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=600" alt="Library Interior">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=600" alt="Reading Area">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600" alt="Book Collection">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=600" alt="Study Space">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" style="background: white;">
+        <div class="container">
+            <h2>Heads of Units</h2>
+            <div class="line"></div>
+            <p>Meet the heads of our library departments</p>
+            
+            <div class="leaders-grid" id="heads-grid">
+                <div class="leader-card">
+                    <div class="leader-image">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                    <div class="leader-info">
+                        <h3>Loading...</h3>
+                        <span class="role">Please wait</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="about-home" style="background: linear-gradient(to bottom, #f8f9fa, #fff);">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 50px;">
+                <h2 style="color: #0a2463; font-size: 2.5rem; margin-bottom: 15px;">About Ramat Library</h2>
+                <div style="width: 80px; height: 4px; background: #d4af37; margin: 0 auto;"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px;">
+                <div style="background: white; padding: 35px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); text-align: left; border-top: 4px solid #0a2463;">
+                    <div style="width: 60px; height: 60px; background: #0a2463; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                        <i class="fas fa-info-circle" style="color: white; font-size: 1.5rem;"></i>
+                    </div>
+                    <h3 style="color: #0a2463; margin-bottom: 15px; font-size: 1.4rem;">About Us</h3>
+                    <p style="color: #555; line-height: 1.8;">Ramat Library is a modern library with a rich collection of print and electronic resources. We have 9 divisions, 13 branch libraries, an American Space section and also an International Institute of Islamic Thought section which provide access to information and knowledge to our users.</p>
+                </div>
+                <div style="background: white; padding: 35px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); text-align: left; border-top: 4px solid #d4af37;">
+                    <div style="width: 60px; height: 60px; background: #d4af37; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                        <i class="fas fa-bullseye" style="color: white; font-size: 1.5rem;"></i>
+                    </div>
+                    <h3 style="color: #0a2463; margin-bottom: 15px; font-size: 1.4rem;">Our Mission</h3>
+                    <p style="color: #555; line-height: 1.8;">Our mission is to provide quality library services, promote information literacy, and support the university's academic and research programs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 80px 0;">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 50px;">
+                <h2 style="color: #0a2463; font-size: 2.5rem; margin-bottom: 15px;">Organization Structure</h2>
+                <div style="width: 80px; height: 4px; background: #d4af37; margin: 0 auto;"></div>
+            </div>
+            
+            <!-- Stats Row -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; margin-bottom: 50px;">
+                <div style="background: linear-gradient(135deg, #0a2463, #1e3a8a); color: white; padding: 30px 20px; border-radius: 15px; text-align: center; box-shadow: 0 10px 30px rgba(10, 36, 99, 0.2);">
+                    <i class="fas fa-calendar-alt" style="font-size: 2.5rem; color: #d4af37; margin-bottom: 15px;"></i>
+                    <div style="font-size: 2.8rem; font-weight: 700; margin-bottom: 5px;">1975</div>
+                    <div style="font-size: 0.95rem; opacity: 0.9;">Established</div>
+                </div>
+                <div style="background: white; padding: 30px 20px; border-radius: 15px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border-top: 4px solid #3e92cc;">
+                    <i class="fas fa-sitemap" style="font-size: 2.5rem; color: #3e92cc; margin-bottom: 15px;"></i>
+                    <div style="font-size: 2.8rem; font-weight: 700; color: #0a2463;">9</div>
+                    <div style="font-size: 0.95rem; color: #555;">Divisions</div>
+                </div>
+                <div style="background: white; padding: 30px 20px; border-radius: 15px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border-top: 4px solid #d4af37;">
+                    <i class="fas fa-building" style="font-size: 2.5rem; color: #d4af37; margin-bottom: 15px;"></i>
+                    <div style="font-size: 2.8rem; font-weight: 700; color: #0a2463;">16</div>
+                    <div style="font-size: 0.95rem; color: #555;">Branch Libraries</div>
+                </div>
+                <div style="background: white; padding: 30px 20px; border-radius: 15px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border-top: 4px solid #10b981;">
+                    <i class="fas fa-chair" style="font-size: 2.5rem; color: #10b981; margin-bottom: 15px;"></i>
+                    <div style="font-size: 2.8rem; font-weight: 700; color: #0a2463;">2,220</div>
+                    <div style="font-size: 0.95rem; color: #555;">Seating Capacity</div>
+                </div>
+            </div>
+            
+            <!-- Collection Stats -->
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; margin-bottom: 50px;">
+                <div style="background: white; padding: 35px; border-radius: 15px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.08);">
+                    <i class="fas fa-books" style="font-size: 3rem; color: #e74c3c; margin-bottom: 15px;"></i>
+                    <div style="font-size: 3rem; font-weight: 700; color: #0a2463; margin-bottom: 5px;">350,711</div>
+                    <div style="font-size: 1.1rem; color: #555;">Volumes of Books</div>
+                </div>
+                <div style="background: white; padding: 35px; border-radius: 15px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.08);">
+                    <i class="fas fa-newspaper" style="font-size: 3rem; color: #9b59b6; margin-bottom: 15px;"></i>
+                    <div style="font-size: 3rem; font-weight: 700; color: #0a2463; margin-bottom: 5px;">842</div>
+                    <div style="font-size: 1.1rem; color: #555;">Journal Titles</div>
+                </div>
+            </div>
+            
+            <!-- Divisions & Branches -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 40px;">
+                <div style="background: white; padding: 40px; border-radius: 20px; text-align: left; box-shadow: 0 15px 40px rgba(0,0,0,0.1); position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: linear-gradient(90deg, #0a2463, #3e92cc);"></div>
+                    <h3 style="color: #0a2463; margin-bottom: 15px; font-size: 1.5rem; display: flex; align-items: center;"><i class="fas fa-sitemap" style="color: #3e92cc; margin-right: 12px; font-size: 1.3rem;"></i>Library Divisions</h3>
+                    <p style="color: #555; margin-bottom: 25px; line-height: 1.7; font-size: 1rem;">Since 1975, Ramat Library has grown into a comprehensive academic resource center serving the University community.</p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 14px 18px; border-radius: 10px; display: flex; align-items: center; font-size: 0.95rem; font-weight: 500; color: #0a2463; border: 1px solid #dee2e6; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 5px 15px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none';"><i class="fas fa-user-tie" style="color: #10b981; margin-right: 10px;"></i>Library Administration</div>
+                        <div style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 14px 18px; border-radius: 10px; display: flex; align-items: center; font-size: 0.95rem; font-weight: 500; color: #0a2463; border: 1px solid #dee2e6; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 5px 15px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none';"><i class="fas fa-layer-group" style="color: #10b981; margin-right: 10px;"></i>Collection Development</div>
+                        <div style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 14px 18px; border-radius: 10px; display: flex; align-items: center; font-size: 0.95rem; font-weight: 500; color: #0a2463; border: 1px solid #dee2e6; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 5px 15px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none';"><i class="fas fa-tags" style="color: #10b981; margin-right: 10px;"></i>Cataloguing</div>
+                        <div style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 14px 18px; border-radius: 10px; display: flex; align-items: center; font-size: 0.95rem; font-weight: 500; color: #0a2463; border: 1px solid #dee2e6; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 5px 15px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none';"><i class="fas fa-users" style="color: #10b981; margin-right: 10px;"></i>Readers Services</div>
+                        <div style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 14px 18px; border-radius: 10px; display: flex; align-items: center; font-size: 0.95rem; font-weight: 500; color: #0a2463; border: 1px solid #dee2e6; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 5px 15px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none';"><i class="fas fa-search" style="color: #10b981; margin-right: 10px;"></i>Research & Bibliographic</div>
+                        <div style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 14px 18px; border-radius: 10px; display: flex; align-items: center; font-size: 0.95rem; font-weight: 500; color: #0a2463; border: 1px solid #dee2e6; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 5px 15px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none';"><i class="fas fa-file-periodical" style="color: #10b981; margin-right: 10px;"></i>Serials</div>
+                        <div style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 14px 18px; border-radius: 10px; display: flex; align-items: center; font-size: 0.95rem; font-weight: 500; color: #0a2463; border: 1px solid #dee2e6; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 5px 15px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none';"><i class="fas fa-graduation-cap" style="color: #10b981; margin-right: 10px;"></i>Education & Information</div>
+                        <div style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 14px 18px; border-radius: 10px; display: flex; align-items: center; font-size: 0.95rem; font-weight: 500; color: #0a2463; border: 1px solid #dee2e6; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 5px 15px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none';"><i class="fas fa-laptop" style="color: #10b981; margin-right: 10px;"></i>E-Library Resources</div>
+                        <div style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 14px 18px; border-radius: 10px; display: flex; align-items: center; font-size: 0.95rem; font-weight: 500; color: #0a2463; border: 1px solid #dee2e6; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 5px 15px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none';"><i class="fas fa-tools" style="color: #10b981; margin-right: 10px;"></i>Bindery</div>
+                    </div>
+                </div>
+                <div style="background: white; padding: 40px; border-radius: 20px; text-align: left; box-shadow: 0 15px 40px rgba(0,0,0,0.1); position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: linear-gradient(90deg, #d4af37, #f4d03f);"></div>
+                    <h3 style="color: #0a2463; margin-bottom: 15px; font-size: 1.5rem; display: flex; align-items: center;"><i class="fas fa-building" style="color: #d4af37; margin-right: 12px; font-size: 1.3rem;"></i>Branch Libraries</h3>
+                    <p style="color: #555; margin-bottom: 25px; line-height: 1.7; font-size: 1rem;">Specialized branch libraries serving various faculties and research needs across the campus.</p>
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+                        <div style="background: linear-gradient(135deg, #fff, #f8f9fa); padding: 14px 18px; border-radius: 10px; display: flex; align-items: center; font-size: 0.95rem; border-left: 4px solid #27ae60; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateX(5px)';this.style.boxShadow='0 5px 15px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='translateX(0)';this.style.boxShadow='none';"><i class="fas fa-seedling" style="color: #27ae60; margin-right: 12px;"></i>Faculty of Agriculture Library</div>
+                        <div style="background: linear-gradient(135deg, #fff, #f8f9fa); padding: 14px 18px; border-radius: 10px; display: flex; align-items: center; font-size: 0.95rem; border-left: 4px solid #e67e22; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateX(5px)';this.style.boxShadow='0 5px 15px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='translateX(0)';this.style.boxShadow='none';"><i class="fas fa-cogs" style="color: #e67e22; margin-right: 12px;"></i>Faculty of Engineering Library</div>
+                        <div style="background: linear-gradient(135deg, #fff, #f8f9fa); padding: 14px 18px; border-radius: 10px; display: flex; align-items: center; font-size: 0.95rem; border-left: 4px solid #8e44ad; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateX(5px)';this.style.boxShadow='0 5px 15px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='translateX(0)';this.style.boxShadow='none';"><i class="fas fa-gavel" style="color: #8e44ad; margin-right: 12px;"></i>Aminu Kano Law Library</div>
+                        <div style="background: linear-gradient(135deg, #fff, #f8f9fa); padding: 14px 18px; border-radius: 10px; display: flex; align-items: center; font-size: 0.95rem; border-left: 4px solid #e74c3c; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateX(5px)';this.style.boxShadow='0 5px 15px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='translateX(0)';this.style.boxShadow='none';"><i class="fas fa-user-md" style="color: #e74c3c; margin-right: 12px;"></i>Harold Scarborough Medical Library</div>
+                        <div style="background: linear-gradient(135deg, #fff, #f8f9fa); padding: 14px 18px; border-radius: 10px; display: flex; align-items: center; font-size: 0.95rem; border-left: 4px solid #16a085; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateX(5px)';this.style.boxShadow='0 5px 15px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='translateX(0)';this.style.boxShadow='none';"><i class="fas fa-paw" style="color: #16a085; margin-right: 12px;"></i>Faculty of Veterinary Medicine</div>
+                        <div style="background: linear-gradient(135deg, #fff, #f8f9fa); padding: 14px 18px; border-radius: 10px; display: flex; align-items: center; font-size: 0.95rem; border-left: 4px solid #3498db; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateX(5px)';this.style.boxShadow='0 5px 15px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='translateX(0)';this.style.boxShadow='none';"><i class="fas fa-chalkboard-teacher" style="color: #3498db; margin-right: 12px;"></i>J. D. Amin Library (Education)</div>
+                        <div style="background: linear-gradient(135deg, #fff, #f8f9fa); padding: 14px 18px; border-radius: 10px; display: flex; align-items: center; font-size: 0.95rem; border-left: 4px solid #9b59b6; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateX(5px)';this.style.boxShadow='0 5px 15px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='translateX(0)';this.style.boxShadow='none';"><i class="fas fa-palette" style="color: #9b59b6; margin-right: 12px;"></i>Faculty of Arts Library</div>
+                        <div style="background: linear-gradient(135deg, #fff, #f8f9fa); padding: 14px 18px; border-radius: 10px; display: flex; align-items: center; font-size: 0.95rem; border-left: 4px solid #27ae60; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateX(5px)';this.style.boxShadow='0 5px 15px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='translateX(0)';this.style.boxShadow='none';"><i class="fas fa-leaf" style="color: #27ae60; margin-right: 12px;"></i>Environmental Studies Library</div>
+                        <div style="background: linear-gradient(135deg, #fff, #f8f9fa); padding: 14px 18px; border-radius: 10px; display: flex; align-items: center; font-size: 0.95rem; border-left: 4px solid #c0392b; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateX(5px)';this.style.boxShadow='0 5px 15px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='translateX(0)';this.style.boxShadow='none';"><i class="fas fa-mosque" style="color: #c0392b; margin-right: 12px;"></i>Arabic & Islamic Studies</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="special-centers" style="background: linear-gradient(135deg, #0a2463, #1e3a8a); color: white; padding: 80px 0;">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 50px;">
+                <h2 style="font-size: 2.5rem; margin-bottom: 15px; color: #d4af37;">Special Information Centers</h2>
+                <div style="width: 80px; height: 4px; background: #d4af37; margin: 0 auto;"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px;">
+                <div style="background: rgba(255,255,255,0.1); padding: 40px; border-radius: 15px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
+                    <div style="width: 70px; height: 70px; background: #d4af37; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 25px;">
+                        <i class="fas fa-globe-americas" style="color: #0a2463; font-size: 2rem;"></i>
+                    </div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">American Space</h3>
+                    <p style="opacity: 0.9; line-height: 1.8;">Located at the first floor of the Ramat Library main building. Provides resources on American culture, literature, and society, with access to free online databases and study materials. Free internet laptops for research and online programs.</p>
+                </div>
+                <div style="background: rgba(255,255,255,0.1); padding: 40px; border-radius: 15px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
+                    <div style="width: 70px; height: 70px; background: #d4af37; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 25px;">
+                        <i class="fas fa-islam" style="color: #0a2463; font-size: 2rem;"></i>
+                    </div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 15px;">International Institute of Islamic Thought (IIIT)</h3>
+                    <p style="opacity: 0.9; line-height: 1.8;">The premier international organization focusing on providing a platform for the unique perspective of Muslim thinkers, scholars and practitioners in the humanities and social sciences.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" style="background: white;">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 50px;">
+                <h2 style="color: #0a2463; font-size: 2.5rem; margin-bottom: 15px;">Library Services & Regulations</h2>
+                <div style="width: 80px; height: 4px; background: #d4af37; margin: 0 auto;"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+                <div style="text-align: center; padding: 30px; background: #f8f9fa; border-radius: 15px; transition: transform 0.3s;">
+                    <div style="width: 70px; height: 70px; background: linear-gradient(135deg, #0a2463, #3e92cc); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                        <i class="fas fa-book-reader" style="color: white; font-size: 1.8rem;"></i>
+                    </div>
+                    <h3 style="color: #0a2463; margin-bottom: 15px;">Research Services</h3>
+                    <p style="color: #666; line-height: 1.7;">Materials in the Research and Bibliographic Services Division may not be borrowed except with special permission of the University Librarian.</p>
+                </div>
+                <div style="text-align: center; padding: 30px; background: #f8f9fa; border-radius: 15px; transition: transform 0.3s;">
+                    <div style="width: 70px; height: 70px; background: linear-gradient(135deg, #d4af37, #f4d03f); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                        <i class="fas fa-journal-whills" style="color: #0a2463; font-size: 1.8rem;"></i>
+                    </div>
+                    <h3 style="color: #0a2463; margin-bottom: 15px;">Serials Division</h3>
+                    <p style="color: #666; line-height: 1.7;">Current and backsets of periodicals may be borrowed by senior members of staff for overnight loan only.</p>
+                </div>
+                <div style="text-align: center; padding: 30px; background: #f8f9fa; border-radius: 15px; transition: transform 0.3s;">
+                    <div style="width: 70px; height: 70px; background: linear-gradient(135deg, #3e92cc, #0a2463); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                        <i class="fas fa-laptop" style="color: white; font-size: 1.8rem;"></i>
+                    </div>
+                    <h3 style="color: #0a2463; margin-bottom: 15px;">E-Library Resources</h3>
+                    <p style="color: #666; line-height: 1.7;">The e-library has fifty (50) databases both open and subscribed. Access via our library website.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="library-fines" style="background: #f8f9fa;">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 50px;">
+                <h2 style="color: #0a2463; font-size: 2.5rem; margin-bottom: 15px;">Library Penalties & Fines</h2>
+                <div style="width: 80px; height: 4px; background: #dc2626; margin: 0 auto;"></div>
+            </div>
+            <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); max-width: 700px; margin: 0 auto; border-left: 5px solid #dc2626;">
+                <h3 style="color: #dc2626; margin-bottom: 25px; font-size: 1.4rem;"><i class="fas fa-exclamation-triangle" style="margin-right: 10px;"></i>Overdue Fines</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="padding: 20px; background: #fef2f2; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #dc2626; display: flex; align-items: center;">
+                        <i class="fas fa-clock" style="color: #dc2626; margin-right: 15px; font-size: 1.2rem;"></i>
+                        <div><strong>Failure to return books</strong><br><span style="color: #666;">₦100 per day up to 7 days, then ₦500 per day</span></div>
+                    </li>
+                    <li style="padding: 20px; background: #fef2f2; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #dc2626; display: flex; align-items: center;">
+                        <i class="fas fa-exclamation-circle" style="color: #dc2626; margin-right: 15px; font-size: 1.2rem;"></i>
+                        <div><strong>Failure to return recalled books</strong><br><span style="color: #666;">₦500 per day</span></div>
+                    </li>
+                    <li style="padding: 20px; background: #fef2f2; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #dc2626; display: flex; align-items: center;">
+                        <i class="fas fa-user-tie" style="color: #dc2626; margin-right: 15px; font-size: 1.2rem;"></i>
+                        <div><strong>Staff on study leave</strong><br><span style="color: #666;">₦500 per day per book until returned</span></div>
+                    </li>
+                    <li style="padding: 20px; background: #fef2f2; border-radius: 10px; border-left: 4px solid #dc2626; display: flex; align-items: center;">
+                        <i class="fas fa-lock" style="color: #dc2626; margin-right: 15px; font-size: 1.2rem;"></i>
+                        <div><strong>Closed Access materials</strong><br><span style="color: #666;">₦200 per hour after 8:00 a.m due time</span></div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <h3>Ramat Library</h3>
+                    <p>The University of Maiduguri Ramat Library is committed to providing excellent information services to support teaching, learning, and research.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="elibrary.html">E-Library</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="resources.html">Open Access</a></li>
+                        <li><a href="resources.html">Subscribed Resources</a></li>
+                        <li><a href="elibrary.html">E-Books</a></li>
+                        <li><a href="elibrary.html">Journals</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li>University of Maiduguri</li>
+                        <li>Borno State, Nigeria</li>
+                        <li><i class="fas fa-envelope"></i> library@unimaid.edu.ng</li>
+                        <li><i class="fas fa-phone"></i> +234 76 123 456</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 University of Maiduguri Ramat Library. All rights reserved by ICA.</p>
+            </div>
+        </div>
+    </footer>
+
+<script src="js/main.js"></script>
+    <script>
+        let allSlides = [];
+        let currentSlide = 0;
+
+        // Load Hero Slides and About content
+        function loadHeroSlides() {
+            // Load welcome content from about section
+            fetch('../api/index.php?path=about')
+                .then(response => response.json())
+                .then(sections => {
+                    const welcome = sections.find(s => s.section_key === 'welcome');
+                    if (welcome) {
+                        const heroDesc = document.getElementById('hero-desc');
+                        if (heroDesc) heroDesc.innerHTML = welcome.content;
+                    }
+                })
+                .catch(err => console.error('Error loading about:', err));
+            
+            // Load hero slides
+            fetch('../api/index.php?path=hero-slides')
+                .then(response => response.json())
+                .then(slides => {
+                    if (slides.length > 0) {
+                        allSlides = slides;
+                        currentSlide = 0;
+                        showSlide(0);
+                    }
+                })
+                .catch(err => console.error('Error loading slides:', err));
+        }
+
+        function showSlide(index) {
+            if (allSlides.length === 0) return;
+            
+            const slide = allSlides[index];
+            const heroSection = document.getElementById('hero-section');
+            const heroContent = document.getElementById('hero-content');
+            
+            if (slide.image_url) {
+                let bgUrl = slide.image_url;
+                if (!bgUrl.startsWith('http')) {
+                    bgUrl = 'api/' + bgUrl;
+                }
+                heroSection.setAttribute('style', 'background: linear-gradient(135deg, rgba(10, 36, 99, 0.85), rgba(62, 146, 204, 0.75)), url("' + bgUrl + '") center/cover no-repeat');
+            } else {
+                heroSection.setAttribute('style', 'background: linear-gradient(135deg, rgba(10, 36, 99, 0.9), rgba(62, 146, 204, 0.8))');
+            }
+            
+            heroContent.innerHTML = 
+                (slide.badge ? '<span class="hero-badge">' + slide.badge + '</span>' : '') +
+                '<h1>' + slide.title + '</h1>' +
+                '<p>' + (slide.description || '') + '</p>' +
+                '<div class="hero-buttons">' +
+                '<a href="' + (slide.button_url || 'elibrary.html') + '" class="btn btn-accent">' +
+                '<i class="fas fa-search"></i> ' + (slide.button_text || 'Search Library') +
+                '</a>' +
+                '<a href="about.html" class="btn btn-outline" style="border: 2px solid white; color: white;">Learn More</a>' +
+                '</div>';
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            if (currentSlide < 0) currentSlide = allSlides.length - 1;
+            if (currentSlide >= allSlides.length) currentSlide = 0;
+            showSlide(currentSlide);
+        }
+
+        // Auto-rotate every 5 seconds
+        setInterval(() => {
+            if (allSlides.length > 1) {
+                changeSlide(1);
+            }
+        }, 5000);
+
+        // Load Gallery
+        function loadGallery() {
+            fetch('../api/index.php?path=gallery')
+                .then(response => response.json())
+                .then(images => {
+                    const grid = document.getElementById('gallery-grid');
+                    if (images.length > 0) {
+                        grid.innerHTML = images.map(img => {
+                            let url = img.image_url || '';
+                            if (!url.startsWith('http') && url) {
+                                url = 'api/' + url;
+                            }
+                            return '<div class="gallery-item"><img src="' + url + '" alt="' + (img.alt_text || 'Gallery') + '"></div>';
+                        }).join('');
+                    }
+                })
+                .catch(err => console.error('Error loading gallery:', err));
+        }
+
+        // Load Staff
+        function loadStaff() {
+            fetch('../api/index.php?path=staff')
+                .then(response => response.json())
+                .then(staff => {
+                    const grid = document.getElementById('leaders-grid');
+                    if (staff.length > 0) {
+                        grid.innerHTML = staff.map(s => {
+                            let img = s.image || '';
+                            if (!img.startsWith('http') && img) {
+                                if (img.startsWith('uploads/')) {
+                                    img = 'api/' + img;
+                                } else {
+                                    img = img.replace('../', '');
+                                }
+                            }
+                            return '<div class="leader-card">' +
+                                '<div class="leader-image">' +
+                                (img ? '<img src="' + img + '" alt="' + s.name + '">' : '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>') +
+                                '</div>' +
+                                '<div class="leader-info"><h3>' + s.name + '</h3><span class="role">' + (s.title || s.role) + '</span><p>' + (s.description || '') + '</p></div></div>';
+                        }).join('');
+                    }
+                })
+                .catch(err => console.error('Error loading staff:', err));
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadHeroSlides();
+            loadGallery();
+            loadStaff();
+            
+            // Load Heads
+            fetch('../api/index.php?path=heads-of-units')
+                .then(response => response.json())
+                .then(heads => {
+                    const grid = document.getElementById('heads-grid');
+                    if (heads.length > 0) {
+                        grid.innerHTML = heads.map(h => {
+                            let img = h.image || '';
+                            if (!img.startsWith('http') && img) {
+                                if (img.startsWith('uploads/')) {
+                                    img = 'api/' + img;
+                                } else {
+                                    img = img.replace('../', '');
+                                }
+                            }
+                            return '<div class="leader-card">' +
+                                '<div class="leader-image">' +
+                                (img ? '<img src="' + img + '" alt="' + h.name + '">' : '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>') +
+                                '</div>' +
+                                '<div class="leader-info"><h3>' + h.name + '</h3><span class="role">' + h.unit + '</span><p>' + (h.bio || '') + '</p></div></div>';
+                        }).join('');
+                    }
+                })
+                .catch(err => console.error('Error loading heads:', err));
+        });
+    </script>
+</body>
+</html>

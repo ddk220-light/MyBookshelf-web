@@ -1,0 +1,1013 @@
+{
+  "country": "Angola",
+  "country_code": "AGO",
+  "research_date_utc": "2026-11-15",
+  "status": "complete_with_verification_shortfall",
+  "verification_summary": {
+    "observed_successes": 3,
+    "selected": 3,
+    "reserves": 0,
+    "target_selected": 10,
+    "selected_shortfall": 7,
+    "major_priorities": 14,
+    "reason": "Three substantial institutions/networks returned actual title-query books. Fourteen major priorities and meaningful alternatives were researched; search exclusions, challenge, broken queries/routes and lack of a public holdings endpoint prevent ten verified targets.",
+    "source_study_complete": true,
+    "live_verification_target_met": false
+  },
+  "market": {
+    "summary": "Angola has distinct national/legal-deposit, municipal public, ReMA multimedia, university and specialist collections. Biblioteca Nacional coordinates the public-library system and has a collective-catalog mandate, but this does not prove a live countrywide holdings union. ReMA has a shared OPAC link and geographical reach; central and regional university libraries remain material targets even where public holdings searches were not found. Portuguese is the primary observed catalog language. No national LMS market-share survey was established.",
+    "platform_strategy": "Start with Portuguese Koha at BNA and Lusíada: both returned exact-title records and holdings; existing app adapter is a reuse candidate, not yet live-tested. The other observed Koha deployments cannot be assumed ready: ISA prohibits search paths, Metodista searches returned zero despite a readable holding, and Parliament returned an origin DNS error. ReMA is the strongest evidenced shared public-network service; one custom POST adapter can potentially reach its branches, but only Luanda holdings were verified and metadata/circulation limitations must be retained. ISPTEC requires a Pergamum public-API adapter and resolution of its observed database error. ISAF documents Nyron but challenges public access; Sol Nascente prohibits its search path. ISPEKA Biblivre 5 is campus-only. No Angolan PMB or SophiA deployment was substantiated; the observed sample does not establish national market share.",
+    "adoption_evidence": [
+      {
+        "claim": "Koha at Biblioteca Nacional de Angola",
+        "scope": "One national library; live Koha exact-title query, record and holding",
+        "date": "Observed 2026-11-15",
+        "source_url": "https://catalogo.bibliotecanacional.ao/cgi-bin/koha/opac-search.pl",
+        "evidence_path": "evidence/bna-query2.html"
+      },
+      {
+        "claim": "Koha at Lusíada with general and postgraduate branches",
+        "scope": "One university catalog with general/postgraduate branches; live title query and postgraduate holding",
+        "date": "Observed 2026-11-15",
+        "source_url": "https://catalogo.renascerdosaber.com/",
+        "evidence_path": "evidence/ula-query.html"
+      },
+      {
+        "claim": "Koha at Biblioteca da Metodista",
+        "scope": "One university; live Koha detail record, but title and ISBN searches returned zero",
+        "date": "Observed 2026-11-15",
+        "source_url": "https://biblioteca.mutue.ao/",
+        "evidence_path": "evidence/uma-detail.html"
+      },
+      {
+        "claim": "Official ISA library page explicitly identifies Koha",
+        "scope": "One institute, physical library at Sequele; remote digital platform separate",
+        "date": "Undated; observed 2026-11-15",
+        "source_url": "https://isa.ao/investigacao/biblioteca",
+        "evidence_path": "evidence/discovery-2.json"
+      },
+      {
+        "claim": "ISPTEC public frontend identifies Pergamum and exposes an anonymous /api/consulta search route",
+        "scope": "One institutional React catalog; search returned a database error",
+        "date": "Undated; observed 2026-11-15",
+        "source_url": "http://biblioteca.isptec.co.ao/",
+        "evidence_path": "evidence/isptec-home.html"
+      },
+      {
+        "claim": "ISAF documents migration from Winlib 200 to Nyron",
+        "scope": "One academic/community library",
+        "date": "Undated; observed 2026-11-15",
+        "source_url": "https://isaf.co.ao/biblioteca/",
+        "evidence_path": "evidence/discovery-9.json"
+      },
+      {
+        "claim": "ISPEKA names campus-only SIGB with Biblivre 5 route",
+        "scope": "One institute; internal-only access explicitly stated, private address never requested",
+        "date": "2026-10-27",
+        "source_url": "https://mail.ispeka.ao/noticias/a-biblioteca-do-ispeka-agora-digital/",
+        "evidence_path": "evidence/discovery-8.json"
+      },
+      {
+        "claim": "2018 academic-reference-services study found developing provision in a limited institutional sample",
+        "scope": "Historical qualitative interviews, visits and website analysis; neither a current LMS census nor national share",
+        "date": "2018-01-19 repository record",
+        "source_url": "https://repositorio.ulisboa.pt/entities/publication/eabb7c32-dd91-4b1e-91b4-102fa84cf415",
+        "evidence_path": "evidence/discovery-7.json"
+      },
+      {
+        "claim": "ReMA uses a custom REMAGEST PHP public search/detail service",
+        "scope": "One public network; branch-filtered Luanda books verified, other branches not individually verified",
+        "date": "Observed 2026-11-15",
+        "source_url": "https://remagest.gov.ao/catalogo/",
+        "evidence_path": "evidence/rema-home.html"
+      },
+      {
+        "claim": "A 2019 STF cooperation report described adapted archival software at Angola Tribunal Constitucional and recommended Koha",
+        "scope": "Historical study of one court library, not evidence that Koha was adopted or national adoption share",
+        "date": "Field work 2019-02-05 through 2019-02-14; publication 2019",
+        "source_url": "https://portal.febab.org.br/cbbd2019/article/view/2052/2053",
+        "evidence_path": "evidence/discovery-13.json"
+      }
+    ],
+    "network_opportunities": [
+      {
+        "name": "ReMA shared public OPAC",
+        "scope": "Network, counted once; official history lists 8 opened mediatecas and current navigation 10 names",
+        "source_url": "https://www.mediatecas.gov.ao/",
+        "verification": "Officially linked REMAGEST catalog returned Mayombe with branch 14 filter and Luanda holding/detail. Sixteen selector entries include libraries/proximity/administrative entries; other branch collections not proved.",
+        "integration_implication": "One custom POST adapter is the strongest evidenced public-network opportunity. Count network once; reject malformed ISBN/year/edition fields, retain unknown circulation and reconcile governance/branch scope."
+      },
+      {
+        "name": "BNA public-library coordination / Catálogo Colectivo Nacional mandate",
+        "scope": "National coordinating role, not verified union coverage",
+        "source_url": "https://www.bibliotecanacional.ao/missao/",
+        "verification": "Official coordinating mandate plus BNA-only exact-title holding verified; no other public-library union holdings established.",
+        "integration_implication": "Potential standards/metadata partnership route; do not expose all public libraries as searchable from BNA-only records."
+      },
+      {
+        "name": "Portuguese Koha deployment cluster",
+        "scope": "Four primary institutional Koha candidates plus parliamentary discovery; not a consortium",
+        "source_url": "https://isa.ao/investigacao/biblioteca",
+        "verification": "BNA and Lusíada title searches verified; ISA search excluded; Metodista detail available but title/ISBN search fails; Parliament catalog origin DNS error.",
+        "integration_implication": "Reuse candidate for Portuguese and English Koha templates; preserve redirect-to-detail behavior, branch/edition identity and availability notes. Every origin needs its own policy and search-health check."
+      },
+      {
+        "name": "UMN coordinated university libraries",
+        "scope": "Five named faculty/institute libraries, counted as one institutional network",
+        "source_url": "https://umn.edu.ao/umn/index.php/umn/informacao-util/bibliotecas",
+        "verification": "Official network description; no shared holdings endpoint discovered",
+        "integration_implication": "Keep network as a substantial priority; external ebook lists cannot answer physical availability."
+      },
+      {
+        "name": "UAN–ReMA cooperation",
+        "scope": "2023 visit seeking partnership",
+        "source_url": "https://www.mediatecas.gov.ao/public/noticia/BIBLIOTECA%2BCENTRAL%2BDA%2BUNIVERSIDADE%2BAGOSTINHO%2BNETO%2BE%2BREDE%2BDE%2BMEDIATECAS%2BDE%2BANGOLA%2BBUSCAM%2BPARCERIA",
+        "verification": "Official visit report only; no completed union/technical integration established",
+        "integration_implication": "Potential coordination evidence, not a reusable live connector."
+      }
+    ]
+  },
+  "major_library_priorities": [
+    {
+      "id": "ago-bna",
+      "name": "Biblioteca Nacional de Angola",
+      "scope": "National library, one institution",
+      "size_claim": "150,000 mixed-document titles (more than); National legal-deposit and bibliographic role; mixed formats, not book copies.",
+      "source_url": "https://www.gov.br/bn/pt-br/central-de-conteudos/producao/publicacoes/colecoes/revista-do-livro-da-biblioteca-nacional/revista-do-livro-n.59/revista-do-livro59_03jan25.pdf",
+      "outcome": "Verified exact-title search returned record 88 and one available BNA holding after transport recovery; selected.",
+      "size": {
+        "value": 150000,
+        "unit": "mixed-document titles (more than)",
+        "date": "2025 publication; measurement date unspecified",
+        "source_url": "https://www.gov.br/bn/pt-br/central-de-conteudos/producao/publicacoes/colecoes/revista-do-livro-da-biblioteca-nacional/revista-do-livro-n.59/revista-do-livro59_03jan25.pdf",
+        "evidence_path": "evidence/discovery-3.json",
+        "quality": "indexed official",
+        "note": "National legal-deposit and bibliographic role; mixed formats, not book copies."
+      },
+      "platform_candidate": "Koha"
+    },
+    {
+      "id": "ago-bml",
+      "name": "Biblioteca Municipal de Luanda",
+      "scope": "Municipal public library, one institution",
+      "size_claim": "39,000 volumes and periodicals (estimate); Historical/public collection; contemporary OPAC not found.",
+      "source_url": "https://www.opais.ao/cultura/biblioteca-municipal-de-luanda-aposta-na-projeccao-de-obras-em-braile-para-leitores-invisuais/",
+      "outcome": "No observed public catalog route; keep substantial public collection visible.",
+      "size": {
+        "value": 39000,
+        "unit": "volumes and periodicals (estimate)",
+        "date": "2023-12-08",
+        "source_url": "https://www.opais.ao/cultura/biblioteca-municipal-de-luanda-aposta-na-projeccao-de-obras-em-braile-para-leitores-invisuais/",
+        "evidence_path": "evidence/discovery-12.json",
+        "quality": "secondary",
+        "note": "Historical/public collection; contemporary OPAC not found."
+      },
+      "platform_candidate": "Unknown"
+    },
+    {
+      "id": "ago-rema",
+      "name": "Rede de Mediatecas de Angola (ReMA)",
+      "scope": "One public multimedia-library network",
+      "size_claim": "8 opened mediatecas in history page; Navigation lists 10 sites; not additive. Network scope/provincial governance needs reconciliation.",
+      "source_url": "https://www.mediatecas.gov.ao/Historial-da-ReMA",
+      "outcome": "Verified Mayombe POST search, Luanda filter 14, and detail 1048; selected as one network. Metadata fields are corrupt and circulation status unknown.",
+      "size": {
+        "value": 8,
+        "unit": "opened mediatecas in history page",
+        "date": "Undated; observed 2026-11-15",
+        "source_url": "https://www.mediatecas.gov.ao/Historial-da-ReMA",
+        "evidence_path": "evidence/discovery-6.json",
+        "quality": "institutional proxy",
+        "note": "Navigation lists 10 sites; not additive. Network scope/provincial governance needs reconciliation."
+      },
+      "platform_candidate": "REMAGEST custom PHP catalog"
+    },
+    {
+      "id": "ago-uan",
+      "name": "Biblioteca Central da Universidade Agostinho Neto",
+      "scope": "One central university library/network",
+      "size_claim": "Official central library serving UAN students/staff; no source-backed contemporary collection total.",
+      "source_url": "https://www.uan.ao/detalhes/noticia/tomada-de-posse-na-universidade-agostinho-neto-novos-directores-para-assuntos-academicos-e-biblioteca-central",
+      "outcome": "No public physical-book query route established; digital repository not substituted.",
+      "size": {
+        "value": null,
+        "unit": "institutional proxy",
+        "date": "2025-06-10",
+        "source_url": "https://www.uan.ao/detalhes/noticia/tomada-de-posse-na-universidade-agostinho-neto-novos-directores-para-assuntos-academicos-e-biblioteca-central",
+        "evidence_path": "evidence/discovery-12.json",
+        "quality": "institutional proxy",
+        "note": "Official central library serving UAN students/staff; no source-backed contemporary collection total."
+      },
+      "platform_candidate": "Unknown"
+    },
+    {
+      "id": "ago-ucan",
+      "name": "Biblioteca Monsenhor José Alves Cachadinha — Universidade Católica de Angola",
+      "scope": "One university library/network",
+      "size_claim": "Central support library with over 26 years serving a multi-faculty university.",
+      "source_url": "https://www.ucan.co.ao/biblioteca/",
+      "outcome": "Official library and academic portal found; no public holdings query established.",
+      "size": {
+        "value": null,
+        "unit": "institutional proxy",
+        "date": "2026 official page; undated library description",
+        "source_url": "https://www.ucan.co.ao/biblioteca/",
+        "evidence_path": "evidence/discovery-6.json",
+        "quality": "institutional proxy",
+        "note": "Central support library with over 26 years serving a multi-faculty university."
+      },
+      "platform_candidate": "Unknown"
+    },
+    {
+      "id": "ago-ula",
+      "name": "Biblioteca da Universidade Lusíada de Angola",
+      "scope": "One university catalog including general and postgraduate branches",
+      "size_claim": "Library explicitly supports undergraduate, masters and doctoral education; no source-backed collection total.",
+      "source_url": "https://www.ula.co.ao/biblioteca",
+      "outcome": "Verified exact-title search redirected to record 2124 with one available postgraduate-library holding; selected once for university scope.",
+      "size": {
+        "value": null,
+        "unit": "institutional proxy",
+        "date": "Undated; observed 2026-11-15",
+        "source_url": "https://www.ula.co.ao/biblioteca",
+        "evidence_path": "evidence/discovery-2.json",
+        "quality": "institutional proxy",
+        "note": "Library explicitly supports undergraduate, masters and doctoral education; no source-backed collection total."
+      },
+      "platform_candidate": "Koha"
+    },
+    {
+      "id": "ago-umn",
+      "name": "Bibliotecas da Universidade Mandume ya Ndemufayo",
+      "scope": "One university network, 5 named faculty/institute libraries",
+      "size_claim": "5 faculty/institute libraries; Law, Medicine, Economics, Huíla Polytechnic, Ondjiva Polytechnic; library network proxy.",
+      "source_url": "https://umn.edu.ao/umn/index.php/umn/informacao-util/bibliotecas",
+      "outcome": "Official page names library network but links ebooks/repositories rather than local holdings search.",
+      "size": {
+        "value": 5,
+        "unit": "faculty/institute libraries",
+        "date": "Undated page references 2021 statute; observed 2026-11-15",
+        "source_url": "https://umn.edu.ao/umn/index.php/umn/informacao-util/bibliotecas",
+        "evidence_path": "evidence/discovery-6.json",
+        "quality": "institutional proxy",
+        "note": "Law, Medicine, Economics, Huíla Polytechnic, Ondjiva Polytechnic; library network proxy."
+      },
+      "platform_candidate": "Unknown"
+    },
+    {
+      "id": "ago-ukb",
+      "name": "Bibliotecas da Universidade Katyavala Bwila",
+      "scope": "One regional university library network",
+      "size_claim": "4 academic units (institutional proxy); Medical library separately reports more than 2,000 books; not extrapolated to entire university.",
+      "source_url": "https://ukb.edu.ao/",
+      "outcome": "Four medical book showcases are not a submitted search and have no stable record/edition identifiers.",
+      "size": {
+        "value": 4,
+        "unit": "academic units (institutional proxy)",
+        "date": "Undated; observed 2026-11-15",
+        "source_url": "https://ukb.edu.ao/",
+        "evidence_path": "evidence/discovery-12.json",
+        "quality": "institutional proxy",
+        "note": "Medical library separately reports more than 2,000 books; not extrapolated to entire university."
+      },
+      "platform_candidate": "Unknown / website showcase"
+    },
+    {
+      "id": "ago-isptec",
+      "name": "Biblioteca do Instituto Superior Politécnico de Tecnologias e Ciências",
+      "scope": "One institutional library",
+      "size_claim": "23,734 physical books; 4,095 distinct titles; Uses physical holdings total; 150,000 capacity excluded; undated >25,000 claim not combined.",
+      "source_url": "https://www.isptec.co.ao/public/assets/uploads/docs/PDI_ISPTEC_2025.pdf",
+      "outcome": "Official link has host typo; independently documented HTTP Pergamum route opens. Public frontend search API returned HTTP 500 database error; not selected.",
+      "size": {
+        "value": 23734,
+        "unit": "physical books; 4,095 distinct titles",
+        "date": "PDI 2025–2029",
+        "source_url": "https://www.isptec.co.ao/public/assets/uploads/docs/PDI_ISPTEC_2025.pdf",
+        "evidence_path": "evidence/discovery-3.json",
+        "quality": "official",
+        "note": "Uses physical holdings total; 150,000 capacity excluded; undated >25,000 claim not combined."
+      },
+      "platform_candidate": "Pergamum; React public frontend observed"
+    },
+    {
+      "id": "ago-isa",
+      "name": "Biblioteca Central do Instituto Superior de Angola",
+      "scope": "One institutional library, Sequele campus",
+      "size_claim": "25,000 physical volumes (more than); Official distinguishes physical Koha and institutional-credential virtual library.",
+      "source_url": "https://isa.ao/investigacao/biblioteca",
+      "outcome": "Robots explicitly Disallow /cgi-bin/koha/opac-search.pl; no automated query sent.",
+      "size": {
+        "value": 25000,
+        "unit": "physical volumes (more than)",
+        "date": "Undated; observed 2026-11-15",
+        "source_url": "https://isa.ao/investigacao/biblioteca",
+        "evidence_path": "evidence/discovery-2.json",
+        "quality": "official",
+        "note": "Official distinguishes physical Koha and institutional-credential virtual library."
+      },
+      "platform_candidate": "Koha (official statement)"
+    },
+    {
+      "id": "ago-uma",
+      "name": "Biblioteca da Universidade Metodista de Angola",
+      "scope": "One university library/network",
+      "size_claim": "Multi-faculty university;engineering/architecture faculty alone has 7 courses. No holdings total.",
+      "source_url": "https://www.uma.co.ao/faculdade1",
+      "outcome": "Two title searches and one ISBN search returned zero; direct record 250 exposes an available book. Search failure is not absence of holdings; not selected.",
+      "size": {
+        "value": null,
+        "unit": "institutional proxy",
+        "date": "Undated; observed 2026-11-15",
+        "source_url": "https://www.uma.co.ao/faculdade1",
+        "evidence_path": "evidence/discovery-4.json",
+        "quality": "institutional proxy",
+        "note": "Multi-faculty university;engineering/architecture faculty alone has 7 courses. No holdings total."
+      },
+      "platform_candidate": "Koha"
+    },
+    {
+      "id": "ago-piaget",
+      "name": "Biblioteca da Universidade Jean Piaget de Angola",
+      "scope": "One university library, Viana campus",
+      "size_claim": "8,000 works (approximately); 270 seats/400 m² are separate capacity measures. Indexed official source has 404 open failures.",
+      "source_url": "https://mail.unipiaget-angola.org/servicos?apresentacao=&biblioteca=",
+      "outcome": "Official archive route returned HTTP 404 after robots 404; no stable anonymous holdings query.",
+      "size": {
+        "value": 8000,
+        "unit": "works (approximately)",
+        "date": "Undated; indexed 2026-11-15",
+        "source_url": "https://mail.unipiaget-angola.org/servicos?apresentacao=&biblioteca=",
+        "evidence_path": "evidence/discovery-2.json",
+        "quality": "indexed official",
+        "note": "270 seats/400 m² are separate capacity measures. Indexed official source has 404 open failures."
+      },
+      "platform_candidate": "Piagest mention; LMS unconfirmed"
+    },
+    {
+      "id": "ago-isaf",
+      "name": "Biblioteca da Academia BAI / Instituto Superior de Administração e Finanças",
+      "scope": "One institutional library",
+      "size_claim": "8,468 books; 93 reader places; physical academic and community access. Kandengue transferred 2024 not counted separately.",
+      "source_url": "https://isaf.co.ao/biblioteca/",
+      "outcome": "Robots permits public paths for this use; catalog home returned HTTP 403 JavaScript/cookie challenge. Stopped; not selected.",
+      "size": {
+        "value": 8468,
+        "unit": "books",
+        "date": "Undated current official description; observed 2026-11-15",
+        "source_url": "https://isaf.co.ao/biblioteca/",
+        "evidence_path": "evidence/discovery-9.json",
+        "quality": "official",
+        "note": "93 reader places; physical academic and community access. Kandengue transferred 2024 not counted separately."
+      },
+      "platform_candidate": "Nyron (formerly Winlib 200)"
+    },
+    {
+      "id": "ago-tribunal",
+      "name": "Biblioteca do Tribunal Constitucional de Angola",
+      "scope": "One specialist legal/research library",
+      "size_claim": "Institutional proxy: national constitutional court research collection; public title/author catalog and 2019 professional cooperation study. No contemporary collection total.",
+      "source_url": "https://www.tribunalconstitucional.ao/pt/biblioteca/catalogo/",
+      "outcome": "HTTP 200 static title/author tables; no search form or item record route established. Not a successful submitted book query.",
+      "size": {
+        "value": null,
+        "unit": "institutional proxy",
+        "date": "Current public catalog observed 2026-11-15; professional study 2019",
+        "source_url": "https://www.tribunalconstitucional.ao/pt/biblioteca/catalogo/",
+        "evidence_path": "evidence/tribunal-catalog.html",
+        "quality": "institutional proxy",
+        "note": "Substantial specialist collection proxy from court role and published catalog, not a book count or national size ranking."
+      },
+      "platform_candidate": "Static public HTML catalog; 2019 study described adapted archival software, suggested Koha without proving adoption"
+    }
+  ],
+  "libraries": [
+    {
+      "id": "ago-bna",
+      "name": "Biblioteca Nacional de Angola",
+      "recommendation": "verified_target",
+      "scope": "National library, one institution",
+      "size": {
+        "value": 150000,
+        "unit": "mixed-document titles (more than)",
+        "date": "2025 publication; measurement date unspecified",
+        "source_url": "https://www.gov.br/bn/pt-br/central-de-conteudos/producao/publicacoes/colecoes/revista-do-livro-da-biblioteca-nacional/revista-do-livro-n.59/revista-do-livro59_03jan25.pdf",
+        "evidence_path": "evidence/discovery-3.json",
+        "quality": "indexed official",
+        "note": "National legal-deposit and bibliographic role; mixed formats, not book copies."
+      },
+      "platform": {
+        "family": "Koha",
+        "name": "Koha; version not inferred",
+        "proof": "/cgi-bin/koha search redirected to opac-detail; Portuguese Koha title and holdings table.",
+        "evidence_path": "evidence/bna-query2.html"
+      },
+      "query": {
+        "text": "A Demanda do Santo Graal",
+        "method": "GET",
+        "url": "https://catalogo.bibliotecanacional.ao/cgi-bin/koha/opac-search.pl?idx=ti&q=A+Demanda+do+Santo+Graal&weight_search=1",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T08:38:31.602954+00:00",
+        "http_status": 200,
+        "effective_url": "https://catalogo.bibliotecanacional.ao/cgi-bin/koha/opac-detail.pl?biblionumber=88",
+        "result_count": 1,
+        "count_note": "One matching record through automatic search-to-detail redirect; not a catalog total.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/bna-query2.html",
+        "metadata_path": "evidence/bna-query2.json"
+      },
+      "books": [
+        {
+          "title": "A Demanda do Santo Graal",
+          "author": "NUNES, Irene Freire",
+          "record_id": "88",
+          "record_url": "https://catalogo.bibliotecanacional.ao/cgi-bin/koha/opac-detail.pl?biblionumber=88",
+          "isbn": null,
+          "holdings": "Exemplares (1): LIVRO; Biblioteca Nacional de Angola; cota 2.1.1; Disponível; barcode 1.",
+          "publication": "2005; publisher/ISBN not exposed in the inspected normal view",
+          "note": "Author label retained exactly as catalog supplied; no attribution-role inference. Status is observed at request time, not promised future circulation.",
+          "evidence_path": "evidence/bna-query2.html"
+        }
+      ],
+      "robots": {
+        "url": "https://catalogo.bibliotecanacional.ao/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T08:37:06.376359+00:00",
+        "evidence_path": "evidence/bna-robots-recovery.json",
+        "decision": "no_published_rules",
+        "note": "HTTP 404 ordinary Koha error page; no published robots rule, not a reuse licence. An earlier proxy 503 is preserved separately; recovery check preceded queries."
+      },
+      "reader_access": "Public anonymous catalog verified. Official site publishes weekday reader hours; visitor admission, borrowing entitlement and digital-resource access are not established by the catalog.",
+      "integration": {
+        "existing_adapter": "candidate reuse: Koha",
+        "needs": [
+          "Portuguese labels and exact edition/record identities",
+          "Handle a one-result search redirect to detail",
+          "Preserve Disponível with observation timestamp; do not infer national-union coverage"
+        ],
+        "blockers": [
+          "No live MyBookshelf adapter test performed",
+          "Public search does not establish borrowing eligibility or metadata reuse permission"
+        ],
+        "live_app_tested": false
+      },
+      "other_observations": [
+        {
+          "query": "Mayombe",
+          "result": "HTTP 200 zero results; not absence of a held book",
+          "metadata_path": "evidence/bna-query.json"
+        }
+      ]
+    },
+    {
+      "id": "ago-ula",
+      "name": "Biblioteca da Universidade Lusíada de Angola",
+      "recommendation": "verified_target",
+      "scope": "One university catalog including general and postgraduate branches",
+      "size": {
+        "value": null,
+        "unit": "institutional proxy",
+        "date": "Undated; observed 2026-11-15",
+        "source_url": "https://www.ula.co.ao/biblioteca",
+        "evidence_path": "evidence/discovery-2.json",
+        "quality": "institutional proxy",
+        "note": "Library explicitly supports undergraduate, masters and doctoral education; no source-backed collection total."
+      },
+      "platform": {
+        "family": "Koha",
+        "name": "Koha; version not inferred",
+        "proof": "Lusíada branded Koha search/detail paths, general/postgraduate selector and holdings table.",
+        "evidence_path": "evidence/ula-query.html"
+      },
+      "query": {
+        "text": "Pricípio de Direito dos Contratos",
+        "method": "GET",
+        "url": "https://catalogo.renascerdosaber.com/cgi-bin/koha/opac-search.pl?idx=ti&q=Pric%C3%ADpio+de+Direito+dos+Contratos&weight_search=1",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T08:35:42.497324+00:00",
+        "http_status": 200,
+        "effective_url": "https://catalogo.renascerdosaber.com/cgi-bin/koha/opac-detail.pl?biblionumber=2124",
+        "result_count": 1,
+        "count_note": "One matching record via automatic search-to-detail redirect. Catalog title misspelling retained exactly.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/ula-query.html",
+        "metadata_path": "evidence/ula-query.json"
+      },
+      "books": [
+        {
+          "title": "Pricípio de Direito dos Contratos",
+          "author": "OLIVEIRA, Nuno Manuel Pinto",
+          "record_id": "2124",
+          "record_url": "https://catalogo.renascerdosaber.com/cgi-bin/koha/opac-detail.pl?biblionumber=2124",
+          "isbn": "978-972-32-1915-9",
+          "holdings": "Holdings (1): Livros; Biblioteca de Posgraduação- Universidade Lusíada de Angola; call number 347.4/OLI/P; Available.",
+          "publication": "Coimbra: Coimbra Editora, S.A., Maio de 2011; 1ª Edição; Volume I; 1035p",
+          "evidence_path": "evidence/ula-query.html"
+        }
+      ],
+      "robots": {
+        "url": "https://catalogo.renascerdosaber.com/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T08:34:05.305610+00:00",
+        "evidence_path": "evidence/ula-robots.json",
+        "decision": "no_published_rules",
+        "note": "HTTP 404 ordinary Koha error page with public search form; no published rule, not a reuse licence."
+      },
+      "reader_access": "Anonymous catalog lookup verified. Library supports undergraduate through doctoral programs; external visitor entry and lending eligibility not established.",
+      "integration": {
+        "existing_adapter": "candidate reuse: Koha",
+        "needs": [
+          "Preserve misspelled source title and ISBN/edition identity",
+          "Handle single-result redirect and mixed English/Portuguese interface labels",
+          "Count university once; distinguish general and postgraduate holding locations"
+        ],
+        "blockers": [
+          "No collection total; selected on substantial university-library proxy",
+          "No live MyBookshelf adapter test performed"
+        ],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "ago-rema",
+      "name": "Rede de Mediatecas de Angola (ReMA)",
+      "recommendation": "verified_target",
+      "scope": "One ReMA public network; only Mediateca de Luanda holding verified. No branch counted separately.",
+      "size": {
+        "value": 8,
+        "unit": "opened mediatecas in history page",
+        "date": "Undated; observed 2026-11-15",
+        "source_url": "https://www.mediatecas.gov.ao/Historial-da-ReMA",
+        "evidence_path": "evidence/discovery-6.json",
+        "quality": "institutional proxy",
+        "note": "Navigation lists 10 sites; not additive. Network scope/provincial governance needs reconciliation."
+      },
+      "platform": {
+        "family": "Custom",
+        "name": "REMAGEST PHP public catalog",
+        "proof": "Official ReMA link and public homepage JavaScript expose POST chama_pesquisa.php and detalhe_books.php; real response includes books/branch.",
+        "evidence_path": "evidence/rema-home.html"
+      },
+      "query": {
+        "text": "Mayombe",
+        "method": "POST",
+        "url": "https://remagest.gov.ao/catalogo/partes/chama_pesquisa.php",
+        "payload": {
+          "pesquisa": "Mayombe",
+          "genero": "todos",
+          "mediateca": "14"
+        },
+        "checked_at_utc": "2026-11-15T08:39:43.114809+00:00",
+        "http_status": 200,
+        "effective_url": "https://remagest.gov.ao/catalogo/partes/chama_pesquisa.php",
+        "result_count": 3,
+        "count_note": "Response says 3 de 3. Two rows have exact title Mayombe; the third row is malformed and is not accepted as a separate matching book. Filter mediateca=14 and returned Luanda location agree.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/rema-query-filtered.html",
+        "metadata_path": "evidence/rema-query-filtered.json"
+      },
+      "books": [
+        {
+          "title": "Mayombe",
+          "author": "PEPETELA, Arthur Carlos MaurÃ­cio Pestana dos Santos",
+          "record_id": "1048",
+          "record_url": null,
+          "isbn": null,
+          "record_request": {
+            "method": "POST",
+            "url": "https://remagest.gov.ao/catalogo/detalhe_books.php",
+            "payload": {
+              "id": "1048",
+              "pesquisa": "Mayombe"
+            },
+            "checked_at_utc": "2026-11-15T08:38:31.603764+00:00",
+            "http_status": 200,
+            "metadata_path": "evidence/rema-detail.json"
+          },
+          "holdings": "Local: Mediateca de Luanda /Luanda. No copy-level circulation status or reliable availability is exposed.",
+          "note": "Catalog author contains mojibake, preserved here. ISBN LD, pages LIV, edition 5491 and year fields [1941- ]/DOA are corrupt or misaligned; none is accepted as ISBN, publication year, edition or copy count.",
+          "evidence_path": "evidence/rema-detail.html"
+        }
+      ],
+      "robots": {
+        "url": "https://remagest.gov.ao/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T08:36:17.745160+00:00",
+        "evidence_path": "evidence/rema-robots.json",
+        "decision": "no_published_rules",
+        "note": "HTTP 404 ordinary server error page; no published robots rules, not permission or a reuse licence."
+      },
+      "reader_access": "Public anonymous search verified. Official usage policy describes a personal card, ID documentation and one-time 2,000-kwanza issuance charge (undated; current fee not independently confirmed). Borrowing eligibility is not proved by a listed location.",
+      "integration": {
+        "existing_adapter": "new family: custom REMAGEST POST adapter",
+        "needs": [
+          "Search POST pesquisa/genero/mediateca, with branch IDs read from the public form",
+          "Detail is POST id/pesquisa; do not publish a false GET record link",
+          "Validate title/author alignment and reject corrupt ISBN/year/edition values",
+          "Keep circulation unknown; reconcile branch names and provincial governance",
+          "Preserve one network scope; other branches need filtered holding proof"
+        ],
+        "blockers": [
+          "Severe field misalignment and encoding defects in observed records",
+          "No reliable ISBN, edition or live circulation for the sampled title",
+          "No live MyBookshelf adapter test performed"
+        ],
+        "live_app_tested": false
+      },
+      "request_recipe": {
+        "form_page": "https://remagest.gov.ao/catalogo/",
+        "search_route": "partes/chama_pesquisa.php",
+        "detail_route": "detalhe_books.php",
+        "branch": "14 = Mediateca de Luanda /Luanda",
+        "anonymous_state": "No account, cookie persistence or authentication used; routes and parameters observed in public frontend JavaScript.",
+        "additional_evidence": [
+          "evidence/rema-query.json",
+          "evidence/rema-home.html",
+          "evidence/rema-detail.json"
+        ]
+      }
+    }
+  ],
+  "blocked_or_unverified": [
+    {
+      "name": "Instituto Superior de Angola",
+      "url": "https://biblioteca.isa.ao/cgi-bin/koha/opac-search.pl",
+      "reason": "Robots HTTP 200 explicitly Disallow /cgi-bin/koha/opac-search.pl. Allow on detail does not override the search exclusion. No search sent and no alternate route used to evade it.",
+      "evidence_path": "evidence/isa-robots.json",
+      "classification": "robots_search_excluded"
+    },
+    {
+      "name": "Instituto Superior Politécnico Sol Nascente",
+      "url": "https://biblioteca.ispsn.org/",
+      "reason": "Catalog robots explicitly Disallow /busca/ despite broader Allow /. Longest matching path governs; no search sent. Separate institutional website challenge also not bypassed. Scale remains unverified.",
+      "evidence_path": "evidence/ispsn-robots.json",
+      "classification": "robots_search_excluded"
+    },
+    {
+      "name": "Universidade Metodista de Angola",
+      "url": "https://biblioteca.mutue.ao/",
+      "reason": "Robots contained comments only and no operative restriction. Redes de Computadores and Protecção Jurídica do Software title queries and ISBN 9789727227815 each returned HTTP 200 zero results. Direct record 250 nevertheless showed REDES DE COMPUTADORES by JOSE GOUVEIA E ALBERTO MAGALHAES, Lisboa FCA 2009, ISBN 9789727227815, one Available Metodista Non-fiction copy. Direct record alone is not a successful submitted book search; no further retries.",
+      "evidence_path": "evidence/uma-isbn-query.json",
+      "classification": "search_unproductive_despite_known_record",
+      "evidence_paths": [
+        "evidence/uma-robots.json",
+        "evidence/uma-query.json",
+        "evidence/uma-query2.json",
+        "evidence/uma-isbn-query.json",
+        "evidence/uma-detail.json"
+      ]
+    },
+    {
+      "name": "ISPTEC",
+      "url": "http://biblioteca.isptec.co.ao/",
+      "reason": "Official library link misspells bibloteca; that route failed. Correctly spelled HTTP origin is independently documented by a historical study and confirmed by its live Pergamum frontend. Robots HTTP 200 allows public paths. One public anonymous title request for Fundamentos de física to observed /api/consulta returned HTTP 500 PDOException / Database error. This is a failed observed request, not proof of absent holdings; no retry or internal endpoint access.",
+      "evidence_path": "evidence/isptec-query.json",
+      "classification": "public_query_database_error",
+      "evidence_paths": [
+        "evidence/isptec-robots.json",
+        "evidence/isptec-historical-http-robots.json",
+        "evidence/isptec-home.json",
+        "evidence/isptec-script.json",
+        "evidence/isptec-query.json",
+        "evidence/discovery-7.json"
+      ]
+    },
+    {
+      "name": "Academia BAI / ISAF",
+      "url": "https://biblioteca.academiabai.co.ao/",
+      "reason": "Official institution documents Nyron. After robots allowed public paths for this reference use, home returned HTTP 403 Just a moment / Enable JavaScript and cookies. Stopped; no challenge bypass or title query.",
+      "evidence_path": "evidence/isaf-home.json",
+      "classification": "access_challenge",
+      "evidence_paths": [
+        "evidence/isaf-robots.json",
+        "evidence/isaf-home.json"
+      ]
+    },
+    {
+      "name": "Biblioteca da Assembleia Nacional de Angola",
+      "url": "https://catalogo.parlamento.ao/",
+      "reason": "Catalog linked by official BNA page and discovered as Koha. After robots HTTP 200 Allow / for reference use, title query A Casa do Mistério ou a Casa do Renascimento returned HTTP 530 Origin DNS error 1016. No record/holding verified and no retry.",
+      "evidence_path": "evidence/parliament-query.json",
+      "classification": "origin_dns_error",
+      "evidence_paths": [
+        "evidence/bna-home.json",
+        "evidence/parliament-robots.json",
+        "evidence/parliament-query.json"
+      ]
+    },
+    {
+      "name": "Biblioteca do Tribunal Constitucional de Angola",
+      "url": "https://www.tribunalconstitucional.ao/pt/biblioteca/catalogo/",
+      "reason": "Robots HTTP 404; official catalog HTTP 200 is a static table of titles/authors without an observed search form, item records or circulation. No submitted-query success. Historical 2019 software recommendation is not proof of current Koha adoption.",
+      "evidence_path": "evidence/tribunal-catalog.json",
+      "classification": "static_catalog_without_query",
+      "evidence_paths": [
+        "evidence/tribunal-robots.json",
+        "evidence/tribunal-catalog.json",
+        "evidence/discovery-13.json"
+      ]
+    },
+    {
+      "name": "UAN; UCAN; UMN",
+      "url": "https://www.ucan.co.ao/biblioteca/",
+      "reason": "Substantial central/faculty library networks confirmed, but no usable anonymous physical-book search route established. Portals, external ebook lists and repositories are not local physical holdings verification.",
+      "evidence_path": "evidence/discovery-6.json",
+      "classification": "no_public_route_established"
+    },
+    {
+      "name": "Universidade Jean Piaget de Angola",
+      "url": "https://www.unipiaget-angola.org/servicos?arquivos=&biblioteca=",
+      "reason": "Indexed official collection estimate and Piagest references retained. Robots returned 404, then official archive route returned 404. No stable anonymous query route or holding; Piagest not established as an LMS.",
+      "evidence_path": "evidence/piaget-archive.json",
+      "classification": "official_route_unavailable",
+      "evidence_paths": [
+        "evidence/piaget-robots.json",
+        "evidence/piaget-archive.json",
+        "evidence/discovery-2.json"
+      ]
+    },
+    {
+      "name": "Katyavala Bwila medical library",
+      "url": "https://www.fmukb.edu.ao/library/",
+      "reason": "Official page showcases Medicina interna de Harrison and other books with availability words, but no submitted search, record link, edition identity or item evidence. Not counted as a successful query.",
+      "evidence_path": "evidence/discovery-12.json",
+      "classification": "showcase_only"
+    },
+    {
+      "name": "Biblioteca Municipal de Luanda",
+      "url": "https://www.opais.ao/cultura/biblioteca-municipal-de-luanda-aposta-na-projeccao-de-obras-em-braile-para-leitores-invisuais/",
+      "reason": "Substantial public collection retained despite no public OPAC discovered. News evidence of digitization/modernization does not establish query availability.",
+      "evidence_path": "evidence/discovery-12.json",
+      "classification": "no_public_route_established"
+    },
+    {
+      "name": "Instituto Superior Politécnico Kalandula de Angola",
+      "url": "https://mail.ispeka.ao/noticias/a-biblioteca-do-ispeka-agora-digital/",
+      "reason": "Official 27 October 2026 announcement explicitly says campus network access and points to Biblivre 5 at a private address. No private-IP request made; not a public web candidate.",
+      "evidence_path": "evidence/discovery-8.json",
+      "classification": "internal_only"
+    },
+    {
+      "name": "Universidade José Eduardo dos Santos",
+      "url": "https://ujes.ao/investigacao/publicacao",
+      "reason": "Regional academic alternative; official digital-library page explicitly lists external resources, not necessarily owned by UJES. Physical holdings not verified.",
+      "evidence_path": "evidence/discovery-9.json",
+      "classification": "external_resources_not_local_holdings"
+    },
+    {
+      "name": "Instituto Guimarães Rosa, Angola collection",
+      "url": "https://igr.opac.ar/pergamo/opac.php?l=PT",
+      "reason": "Shared international catalog offers an Angola filter, but branch-specific query and returned holding were not verified. A selector alone cannot count as an Angolan institution.",
+      "evidence_path": "evidence/discovery-7.json",
+      "classification": "union_scope_unverified"
+    },
+    {
+      "name": "INSUTEC virtual library",
+      "url": "https://biblioteca.insutec.ao/",
+      "reason": "Self-described virtual/digital platform; millions-of-books claim not accepted as physical holdings scale or book-query success.",
+      "evidence_path": "evidence/discovery-2.json",
+      "classification": "digital_only_not_physical_catalog"
+    }
+  ],
+  "limitations": [
+    "No national largest-ten ranking established. Fourteen substantial institutional/network priorities are not fourteen verified catalogs.",
+    "Three observed successful catalog targets, all selected; zero reserves. Ten-target goal has shortfall seven after major institutions and meaningful alternatives were investigated.",
+    "A network counts once: Lusíada branches are not separate targets, and ReMA is not counted again as Luanda. Other ReMA branches remain unverified.",
+    "Initial proxy failures were a research transport incident. BNA recovered under one bounded policy recheck; original timestamps and control evidence remain.",
+    "Robots 404 means no published rule, not permission. ISA/Sol Nascente search exclusions were respected; ISAF challenge, parliamentary DNS failure and ISPTEC query error were not bypassed or repeatedly retried.",
+    "Web discovery may be indexed/cached; only direct query responses establish observed title/holding success. Static lists, showcases, repositories and direct record-only evidence do not satisfy the submitted-search target.",
+    "Collection dates and units differ: mixed-document titles, volumes/periodicals, physical books, works, capacity and institutional proxies are not combined into a national ranking.",
+    "BNA >150,000 figure is mixed-document titles from a 2025 publication, measurement date unknown, indexed official excerpt only. ISPTEC 150,000 is capacity; its PDI 2025–2029 gives 23,734 books / 4,095 titles.",
+    "ReMA history lists eight opened mediatecas, menu ten names and catalog sixteen selector entries; none are additive or individually proven. Provincial management transfers require governance reconciliation.",
+    "ReMA has malformed ISBN, year, edition and author encoding; title plus Luanda location is verified, but edition identity, copy count and circulation remain unknown.",
+    "Observed Koha deployments are a feasibility-selected institutional sample, not national LMS share. No scoped Angolan PMB/SophiA deployment was substantiated, without claiming absence.",
+    "Public catalog lookup does not establish visitor admission, borrowing entitlement, metadata reuse permission or future circulation. Observed Available/Disponível labels are time-specific.",
+    "No app integration, code/configuration, authentication, outreach, account-state persistence, holds or production changes; every selected live_app_tested is false."
+  ],
+  "sources": [
+    {
+      "key": "bna_mission",
+      "url": "https://www.bibliotecanacional.ao/missao/",
+      "claim": "National bibliographic agency, legal deposit, public-library coordination and collective-catalog mandate; official route links national Koha OPAC.",
+      "evidence_path": "evidence/discovery-2.json"
+    },
+    {
+      "key": "bna_size",
+      "url": "https://www.gov.br/bn/pt-br/central-de-conteudos/producao/publicacoes/colecoes/revista-do-livro-da-biblioteca-nacional/revista-do-livro-n.59/revista-do-livro59_03jan25.pdf",
+      "claim": "Revista do Livro n.59 reports more than 150,000 mixed-document titles for Angola BNA; this is not a book-copy count. Indexed excerpt retained; full PDF exceeds web-tool size limit.",
+      "evidence_path": "evidence/discovery-3.json"
+    },
+    {
+      "key": "bna_koha",
+      "url": "https://catalogo.bibliotecanacional.ao/cgi-bin/koha/opac-search.pl",
+      "claim": "Live Koha title query redirected to record 88 with a BNA holding and Disponível status.",
+      "evidence_path": "evidence/bna-query2.html"
+    },
+    {
+      "key": "bml",
+      "url": "https://www.opais.ao/cultura/biblioteca-municipal-de-luanda-aposta-na-projeccao-de-obras-em-braile-para-leitores-invisuais/",
+      "claim": "8 December 2023 reporting estimates 39,000 volumes and periodicals, 35 reader places, ID registration for physical access; catalog digitization remains distinct from a verified public search.",
+      "evidence_path": "evidence/discovery-12.json"
+    },
+    {
+      "key": "rema",
+      "url": "https://www.mediatecas.gov.ao/Historial-da-ReMA",
+      "claim": "Official history lists 8 opened mediatecas; current menu lists 10 named sites. Counts are differently dated/specified and not additive.",
+      "evidence_path": "evidence/discovery-6.json"
+    },
+    {
+      "key": "rema_portal",
+      "url": "https://www.mediatecas.gov.ao/",
+      "claim": "Official OPAC link to remagest.gov.ao/catalogo; current site also records 2024 provincial management transfers, so shared technical and governance scope needs verification.",
+      "evidence_path": "evidence/discovery-10.json"
+    },
+    {
+      "key": "rema_access",
+      "url": "https://www.mediatecas.gov.ao/Pol%C3%ADticas-de-utilizacao",
+      "claim": "Official policy describes identity document, personal card and one-time 2,000 kwanza issuance fee; current fee not independently checked.",
+      "evidence_path": "evidence/discovery-6.json"
+    },
+    {
+      "key": "uan",
+      "url": "https://www.uan.ao/detalhes/noticia/tomada-de-posse-na-universidade-agostinho-neto-novos-directores-para-assuntos-academicos-e-biblioteca-central",
+      "claim": "10 June 2025 official appointment confirms central library serving university students and teaching staff; institutional proxy, no collection total.",
+      "evidence_path": "evidence/discovery-12.json"
+    },
+    {
+      "key": "uan_rema",
+      "url": "https://www.mediatecas.gov.ao/public/noticia/BIBLIOTECA%2BCENTRAL%2BDA%2BUNIVERSIDADE%2BAGOSTINHO%2BNETO%2BE%2BREDE%2BDE%2BMEDIATECAS%2BDE%2BANGOLA%2BBUSCAM%2BPARCERIA",
+      "claim": "2023 official visit sought cooperation and discussed cataloging; not proof of shared OPAC or a completed integration.",
+      "evidence_path": "evidence/discovery-4.json"
+    },
+    {
+      "key": "ucan",
+      "url": "https://www.ucan.co.ao/biblioteca/",
+      "claim": "Official central support unit BMJAC serving teaching, research and extension for over 26 years; no collection count or public holdings-search link exposed.",
+      "evidence_path": "evidence/discovery-6.json"
+    },
+    {
+      "key": "ucan_open",
+      "url": "https://www.ucan.co.ao/biblioteca-da-ucan-promove-5-a-edicao-do-open-day-para-orientacao-academica-e-vocacional/",
+      "claim": "9 June 2026 official report identifies library outreach and faculty/institute scope.",
+      "evidence_path": "evidence/discovery-5.json"
+    },
+    {
+      "key": "ula",
+      "url": "https://www.ula.co.ao/biblioteca",
+      "claim": "Official library page describes support from undergraduate through doctoral programs and a catalog link; indexed excerpt only for library text because direct web extraction is empty.",
+      "evidence_path": "evidence/discovery-2.json"
+    },
+    {
+      "key": "ula_koha",
+      "url": "https://catalogo.renascerdosaber.com/",
+      "claim": "Live Lusíada Koha title query and postgraduate holding; general/postgraduate branch selector supports one university scope.",
+      "evidence_path": "evidence/ula-query.html"
+    },
+    {
+      "key": "umn",
+      "url": "https://umn.edu.ao/umn/index.php/umn/informacao-util/bibliotecas",
+      "claim": "Official page names 5 faculty/institute libraries under UMN and central coordination; external ebook links are not UMN physical holdings.",
+      "evidence_path": "evidence/discovery-6.json"
+    },
+    {
+      "key": "ukb",
+      "url": "https://ukb.edu.ao/",
+      "claim": "Official regional university profile gives 4 academic units; institutional proxy for university network.",
+      "evidence_path": "evidence/discovery-12.json"
+    },
+    {
+      "key": "ukb_med",
+      "url": "https://www.fmukb.edu.ao/library/",
+      "claim": "Official medicine-faculty page states more than 2,000 books in statistical panel, although opening description mixes books/articles; showcases four books with status labels but no submitted search, edition identity or record links.",
+      "evidence_path": "evidence/discovery-12.json"
+    },
+    {
+      "key": "isptec",
+      "url": "https://www.isptec.co.ao/public/assets/uploads/docs/PDI_ISPTEC_2025.pdf",
+      "claim": "PDI 2025–2029 section 8.2.2 (p. 49) gives 23,734 physical books and 4,095 titles; section 8.2.1 describes institution-member lending. Indexed fulltext excerpt retained.",
+      "evidence_path": "evidence/discovery-3.json"
+    },
+    {
+      "key": "isptec_platform",
+      "url": "https://www.isptec.co.ao/biblioteca/",
+      "claim": "Official link labeled Pergamum points to bibloteca.isptec.co.ao; 150,000 is shelving capacity, not holdings; undated page says >25,000 copies and includes 2017 table.",
+      "evidence_path": "evidence/discovery-3.json"
+    },
+    {
+      "key": "isa",
+      "url": "https://isa.ao/investigacao/biblioteca",
+      "claim": "Official page reports >25,000 physical volumes at Sequele; names Koha at biblioteca.isa.ao and separates credentialed virtual content.",
+      "evidence_path": "evidence/discovery-2.json"
+    },
+    {
+      "key": "uma_platform",
+      "url": "https://biblioteca.mutue.ao/",
+      "claim": "Live Koha record 250 has an available physical book, while two title queries and its ISBN query return zero. Search failure is not absence.",
+      "evidence_path": "evidence/uma-detail.html"
+    },
+    {
+      "key": "uma_proxy",
+      "url": "https://www.uma.co.ao/faculdade1",
+      "claim": "Official engineering/architecture faculty has 7 courses; institutional proxy for a substantial multi-faculty university library, no book total.",
+      "evidence_path": "evidence/discovery-4.json"
+    },
+    {
+      "key": "piaget",
+      "url": "https://mail.unipiaget-angola.org/servicos?apresentacao=&biblioteca=",
+      "claim": "Indexed official service page reports approximately 8,000 works, 400 m² and 270 seats; underlying date unknown. Open fetch returned 404.",
+      "evidence_path": "evidence/discovery-2.json"
+    },
+    {
+      "key": "piaget_home",
+      "url": "https://www.unipiaget-angola.org/",
+      "claim": "Official current website lists library and Piagest resources; clicked book archive route yielded no stable query verification.",
+      "evidence_path": "evidence/discovery-8.json"
+    },
+    {
+      "key": "isaf",
+      "url": "https://isaf.co.ao/biblioteca/",
+      "claim": "Official library history reports 8,468 books, 93 places and 12 computers; confirms migration Winlib 200 → Nyron and public community access.",
+      "evidence_path": "evidence/discovery-9.json"
+    },
+    {
+      "key": "ispsn",
+      "url": "https://www.ispsn.org/page/biblioteca/apresentacao",
+      "claim": "Institutional description of Sol Nascente library; site challenge seen. Public catalog on separate official subdomain separates physical/digital collections, scale unverified.",
+      "evidence_path": "evidence/discovery-8.json"
+    },
+    {
+      "key": "ispsn_catalog",
+      "url": "https://biblioteca.ispsn.org/",
+      "claim": "Indexed physical catalog contains Portuguese books and category counts; no submitted title-search response.",
+      "evidence_path": "evidence/discovery-8.json"
+    },
+    {
+      "key": "ispeka",
+      "url": "https://mail.ispeka.ao/noticias/a-biblioteca-do-ispeka-agora-digital/",
+      "claim": "27 October 2026 official announcement says SIGB-ISPEKA is available only over campus network and reveals Biblivre 5 route. Private address not probed.",
+      "evidence_path": "evidence/discovery-8.json"
+    },
+    {
+      "key": "ujes",
+      "url": "https://ujes.ao/investigacao/publicacao",
+      "claim": "Official digital-library page links external databases and platforms explicitly not necessarily belonging to university; not local physical holdings proof.",
+      "evidence_path": "evidence/discovery-9.json"
+    },
+    {
+      "key": "study",
+      "url": "https://repositorio.ulisboa.pt/entities/publication/eabb7c32-dd91-4b1e-91b4-102fa84cf415",
+      "claim": "João Evangelista Huvi 2018 master's dissertation studied academic reference services with interviews, visits and website observation; historical contextual study, not current LMS market share.",
+      "evidence_path": "evidence/discovery-7.json"
+    },
+    {
+      "key": "rema_live",
+      "url": "https://remagest.gov.ao/catalogo/",
+      "claim": "Public frontend POST routes and branch 14; filtered Mayombe query and detail identify Luanda, with malformed metadata and unknown circulation.",
+      "evidence_path": "evidence/rema-query-filtered.json"
+    },
+    {
+      "key": "isptec_live",
+      "url": "http://biblioteca.isptec.co.ao/",
+      "claim": "Pergamum public frontend, no-auth search contract; one title query returned database error, not books.",
+      "evidence_path": "evidence/isptec-query.json"
+    },
+    {
+      "key": "tribunal",
+      "url": "https://www.tribunalconstitucional.ao/pt/biblioteca/catalogo/",
+      "claim": "Official title/author tables for court legal collection; no observed public search form or item record contract.",
+      "evidence_path": "evidence/tribunal-catalog.html"
+    },
+    {
+      "key": "tribunal_study",
+      "url": "https://portal.febab.org.br/cbbd2019/article/view/2052/2053",
+      "claim": "James and Pestano (STF), 2019 professional cooperation report; describes adapted archival software and suggests Koha, without establishing adoption.",
+      "evidence_path": "evidence/discovery-13.json"
+    },
+    {
+      "key": "parliament",
+      "url": "https://catalogo.parlamento.ao/",
+      "claim": "Official BNA homepage links parliamentary catalog; attempted title query returned HTTP 530 Origin DNS error.",
+      "evidence_path": "evidence/parliament-query.json"
+    }
+  ],
+  "transport_incident": {
+    "initial_controls": "Unrelated destinations returned identical proxy upstream-connect 503 bodies at about 08:24 UTC. This is a research transport incident, not an Angola-wide service failure.",
+    "bna_initial": {
+      "checked_at_utc": "2026-11-15T08:30:41.915074+00:00",
+      "status": 503,
+      "evidence_path": "evidence/bna-robots.json",
+      "action": "Query stopped while policy unresolved."
+    },
+    "bna_recovery": {
+      "checked_at_utc": "2026-11-15T08:37:06.376359+00:00",
+      "status": 404,
+      "evidence_path": "evidence/bna-robots-recovery.json",
+      "action": "One recovery policy check after independent origins returned catalog responses; ordinary Koha 404 then permitted bounded public-form research under protocol."
+    },
+    "controls": [
+      "evidence/execution-network-controls.json",
+      "evidence/execution-client-comparison.json"
+    ],
+    "note": "No failed origin repeatedly retried; explicit search exclusions and challenge were never retried or bypassed."
+  }
+}

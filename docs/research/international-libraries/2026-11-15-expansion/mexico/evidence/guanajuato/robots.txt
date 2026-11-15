@@ -1,0 +1,864 @@
+
+
+
+
+<!DOCTYPE html>
+<!-- TEMPLATE FILE: errorpage.tt -->
+
+
+
+
+
+
+
+
+
+<html lang="es-ES" class="no-js">
+<head>
+
+<title>Un error ha ocurido &rsaquo; Koha en línea catálogo</title>
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Koha" /> <!-- leave this for stats -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="/opac-tmpl/bootstrap/lib/jquery/responsive.dataTables.min_23.1110000.css" rel="stylesheet" type="text/css">
+
+<link rel="shortcut icon" href="/opac-tmpl/bootstrap/images/favicon.ico" type="image/x-icon" />
+<link rel="apple-touch-icon" href="/opac-tmpl/bootstrap/images/favicon.ico" type="image/x-icon" />
+
+ 
+ 
+ 
+
+
+ <link href="/opac-tmpl/bootstrap/css/opac_23.1110000.css" type="text/css" rel="stylesheet">
+
+
+
+
+ <link media="print" href="/opac-tmpl/bootstrap/css/print_23.1110000.css" type="text/css" rel="stylesheet">
+
+
+ <style>#available-items { display: none; } #pubrange { display: none; } #langfilter { display: none; }</style>
+
+
+
+
+ <link href="https://catalogo.bibliotecasguanajuato.gob.mx/cgi-bin/koha/opac-search.pl?format=opensearchdescription" rel="search" title="Buscar " type="application/opensearchdescription+xml">
+ <link rel="unapi-server" type="application/xml" title="unAPI" href="https://catalogo.bibliotecasguanajuato.gob.mx/cgi-bin/koha/unapi" />
+
+
+<script>
+    var Koha = {};
+    function _(s) { return s } // dummy function for gettext
+    const is_logged_in = false
+</script>
+
+ <script src="/opac-tmpl/bootstrap/es-ES/js/locale_data_23.1110000.js"></script>
+
+<script src="/opac-tmpl/bootstrap/js/Gettext_23.1110000.js"></script>
+<script src="/opac-tmpl/bootstrap/js/i18n_23.1110000.js"></script>
+
+<link rel="stylesheet" type="text/css" href="/opac-tmpl/lib/fontawesome/css/fontawesome.min_23.1110000.css">
+<link type="text/css" rel="stylesheet" href="/opac-tmpl/lib/fontawesome/css/brands.min_23.1110000.css">
+<link href="/opac-tmpl/lib/fontawesome/css/solid.min_23.1110000.css" rel="stylesheet" type="text/css">
+
+
+               
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body id="error404" class="error">
+
+
+
+
+
+
+
+
+               
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<button id="scrolltocontent">Saltar al contenido principal</button>
+<div id="wrapper">
+ <div id="header-region" class="noprint">
+ <nav class="navbar navbar-expand">
+ <div id="logo">
+ <a class="navbar-brand" href="https://bibliotecasguanajuato.gob.mx">
+  Catálogo en línea  </a>
+ </div>
+ 
+ 
+ <div id="cartDetails" class="cart-message">Su carrito está vacío.</div>
+ 
+ <ul id="cart-list-nav" class="navbar-nav">
+ 
+ <li class="nav-item js-show">
+ <a aria-label="Carrito" class="nav-link" href="#" id="cartmenulink" role="button" title="Reunir ítems en los que esta interesado">
+ <i id="carticon" class="fa fa-shopping-cart fa-icon-black" aria-hidden="true"></i> <span class="cartlabel">Carrito</span> <span id="basketcount"></span>
+ </a>
+ </li>
+ 
+ <li class="divider-vertical"></li>
+ 
+ <li class="nav-item dropdown">
+ <a aria-expanded="false" aria-haspopup="true" aria-label="Listas" class="nav-link dropdown-toggle" data-toggle="dropdown" href="/cgi-bin/koha/opac-shelves.pl" id="listsmenu" role="button" title="Mostrar listas"><i class="fa fa-list fa-icon-black" aria-hidden="true"></i> <span class="listslabel">Listas</span>
+ </a>
+ <div aria-labelledby="listsmenu" role="menu" class="dropdown-menu">
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=1" tabindex="-1" role="menuitem"><strong>Listas públicas</strong></a>
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=197&amp;sortfield=title" tabindex="-1" role="menuitem">Japonés</a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=161&amp;sortfield=title" tabindex="-1" role="menuitem">REALISMO SUCIO</a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=546&amp;sortfield=title" tabindex="-1" role="menuitem">clásicos</a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=528&amp;sortfield=title" tabindex="-1" role="menuitem">empresas, inversiones y economía</a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=523&amp;sortfield=title" tabindex="-1" role="menuitem">programación (coding)</a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=285&amp;sortfield=title" tabindex="-1" role="menuitem">Próximos a leer</a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=286&amp;sortfield=title" tabindex="-1" role="menuitem">Sala General-Literatura en inglés</a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=290&amp;sortfield=title" tabindex="-1" role="menuitem">Sala Fondos Especiales: Círculo Leonés Mutualista Literatura en inglés</a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=298&amp;sortfield=title" tabindex="-1" role="menuitem">programacion</a>
+ 
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=view&amp;shelfnumber=51&amp;sortfield=title" tabindex="-1" role="menuitem">Camila</a>
+ 
+ 
+ 
+ <a class="dropdown-item listmenulink" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=1" tabindex="-1" role="menuitem">Ver todo</a>
+ 
+ 
+ 
+ <div class="dropdown-divider"></div>
+ 
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=list&amp;public=0" tabindex="-1" role="menuitem"><strong>Sus listas</strong></a>
+ 
+ <a class="dropdown-item" href="/cgi-bin/koha/opac-shelves.pl?op=add_form" tabindex="-1" role="menuitem">Ingrese para crear sus propias listas</a>
+ 
+ 
+ </div> <!-- / .dropdown-menu -->
+ </li> <!-- / .nav-item.dropdown -->
+ 
+ 
+
+ </ul> <!-- / .navbar-nav -->
+ 
+ 
+ 
+ <ul id="members" class="navbar-nav">
+ <li class="nav-item dropdown">
+ 
+ 
+ 
+ <a aria-label="Ingresar a su cuenta" class="nav-link login-link loginModal-trigger" href="/cgi-bin/koha/opac-user.pl"><i class="fa fa-user fa-icon-black fa-fw" aria-hidden="true"></i> <span class="userlabel">Ingresar a su cuenta</span></a>
+ 
+ 
+ 
+
+ 
+ </li>
+ <!-- Cookie consent button for non logged-in users -->
+ 
+ <li style="display:none" id="cookieConsentDivider" class="divider-vertical" aria-hidden="true"></li>
+ <li style="display:none" id="cookieConsentLi" class="nav-item" aria-hidden="true">
+ <a class="nav-link" href="#" id="cookieConsentButton" name="Your cookies" role="button" title="Ver y ajustar cookies que haya consentido">
+ <i class="fa fa-cookie-bite" aria-hidden="true"></i>
+ <span class="cookieconsentlabel">Sus cookies consentidas</span>
+ </a>
+ </li>
+ 
+ 
+ 
+ <li class="divider-vertical"></li>
+ <li class="nav-item search_history">
+ <a class="nav-link login-link" href="/cgi-bin/koha/opac-search-history.pl" title="Ver su historial de búsqueda">Historial de búsqueda</a>
+ </li>
+ <li class="divider-vertical"></li>
+ <li class="nav-item">
+ <a class="nav-link logout clearsh" href="/cgi-bin/koha/opac-search-history.pl?action=delete" title="Eliminar historial de búsqueda"><i class="fa fa-trash-can" aria-hidden="true"></i> Limpiar</a>
+ </li>
+ 
+ 
+ </ul>
+ 
+ </nav> <!-- /navbar -->
+
+ 
+ <div class="container-fluid">
+ <div class="row">
+ <div class="col">
+ 
+ 
+ <div id="opacheader">
+ 
+ <div class="default_item">
+ 
+ <div class="default_body"></div>
+ </div>
+ 
+ </div>
+  
+ </div>
+ </div>
+ </div>
+ 
+
+ </div> <!-- / header-region -->
+
+ 
+ <div class="container-fluid">
+ 
+ <div class="row">
+ <div class="col">
+ <div id="opac-main-search" class="mastheadsearch">
+ 
+ <form name="searchform" method="get" action="/cgi-bin/koha/opac-search.pl" id="searchform">
+ <div class="form-row align-items-center">
+ <div class="col-sm-auto order-2 order-sm-2">
+ <select name="idx" id="masthead_search" class="form-control">
+ 
+ <option value="">Catálogo de biblioteca</option>
+ 
+ 
+ <option value="ti">Título</option>
+ 
+ 
+ <option value="au">Autor</option>
+ 
+ 
+ <option value="su">Tema</option>
+ 
+ 
+ <option value="nb">ISBN</option>
+ 
+ 
+ <option value="ns">ISSN</option>
+ 
+ 
+ <option value="se">Series</option>
+ 
+ 
+ 
+ <option value="callnum">Signatura topográfica</option>
+ 
+ 
+ </select>
+ </div> <!-- /.col-sm-auto -->
+
+ <div class="col order-4 order-sm-3">
+ 
+ <input type="text" class="transl1 form-control" id="translControl1" name="q" value="" /><span id="translControl"></span>
+ 
+ </div> <!-- /.col -->
+
+ 
+ 
+ 
+ 
+ 
+
+ <div class="order-5 col-sm-auto">
+ <button aria-label="Buscar" class="btn btn-primary" id="searchsubmit" title="Buscar" type="submit">
+ <i class="fa fa-search" aria-hidden="true"></i>
+ </button>
+ </div>
+
+ </div> <!-- /.form-row -->
+ <input type="hidden" name="weight_search" value="1">
+ </form>
+ 
+ </div><!-- /#opac-main-search -->
+ </div> <!-- /.col -->
+ </div> <!-- /.row -->
+ 
+
+ <div class="row">
+ <ul class="nav" id="moresearches">
+ <li class="nav-item">
+ <a href="/cgi-bin/koha/opac-search.pl">Búsqueda avanzada</a>
+ </li>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <li class="nav-item">
+ <a id="library_page" href="/cgi-bin/koha/opac-library.pl">
+ 
+ <span>Bibliotecas</span>
+ 
+ </a>
+ </li>
+ 
+  
+ </ul> <!-- /.nav#moresearches -->
+ </div> <!-- /.row -->
+ </div> <!-- /.container-fluid -->
+ 
+
+ <!-- Login form hidden by default, used for modal window -->
+ <div id="loginModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="modalLoginLabel" aria-hidden="true">
+ <div class="modal-dialog">
+ <div class="modal-content">
+ <div class="modal-header">
+ <h2 class="modal-title" id="modalLoginLabel">Ingresar a su cuenta</h2>
+ <button aria-label="Cerrar" class="closebtn" data-dismiss="modal" type="button">
+ <span aria-hidden="true">&times;</span>
+ </button>
+ </div>
+ <form action="/cgi-bin/koha/opac-user.pl" method="post" name="auth" id="modalAuth">
+ <input type="hidden" name="has-search-query" id="has-search-query" value="" />
+ <div class="modal-body">
+ 
+ 
+ 
+ 
+ 
+ <input type="hidden" name="koha_login_context" value="opac" />
+ <fieldset class="brief">
+ <div class="local-login">
+ <label for="muserid">Usuario:</label><input type="text" id="muserid" name="userid" autocomplete="off" />
+ <label for="mpassword">Contraseña:</label><input type="password" id="mpassword" name="password" autocomplete="off" />
+ <fieldset class="action">
+ <input class="btn btn-primary" type="submit" value="Ingresar" />
+ </fieldset>
+ </div>
+ 
+ 
+ <div id="forgotpassword-modal" class="forgotpassword">
+ <p><a href="/cgi-bin/koha/opac-password-recovery.pl">¿Olvidó su contraseña?</a></p>
+ </div>
+ 
+ 
+ <div id="patronregistration-modal" class="patronregistration">
+ <p><a href="/cgi-bin/koha/opac-memberentry.pl">Crear una cuenta</a></p>
+ </div>
+ 
+ </fieldset>
+ 
+ </div>
+ </form> <!-- /#auth -->
+ </div> <!-- /.modal-content -->
+ </div> <!-- /.modal-dialog -->
+ </div> <!-- /#modalAuth -->
+ 
+
+
+ <div class="main">
+ 
+ <nav id="breadcrumbs" aria-label="Breadcrumb" class="breadcrumbs">
+ <ol class="breadcrumb">
+ 
+ 
+ 
+ 
+ <li class="breadcrumb-item">
+ 
+ <a href="/cgi-bin/koha/opac-main.pl" title="Inicio">Inicio</a>
+ 
+ </li>
+ 
+
+ <li class="breadcrumb-item active">
+ <a href="#" aria-current="page">
+ 
+ <span>Ha ocurrido un error</span>
+ 
+ </a>
+ </li>
+ 
+ </ol>
+ </nav>
+
+
+ <div class="container-fluid">
+ <div class="row">
+ 
+ <div class="col order-first order-md-first order-lg-2">
+ 
+ <div id="errormsg404">
+ <h1>Lo sentimos, la página solicitada no se encuentra disponible</h1>
+ <h2>Error 404</h2>
+ <p><strong>Este mensaje puede tener la(s) razón(es) siguiente(s):</strong></p>
+ <ul>
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ <li>Usted ha hecho uso de un enlace externo a un ejemplar de catálogo que ya no está disponible.</li>
+ <li>Ha seguido un enlace antiguo, ejemplo, a partir de un motor de búsqueda o un marcador.</li>
+ <li>Ha intentado acceder a una página que requiere autenticación.</li>
+ <li>Un enlace interno en nuestra página web principal del catálogo se ha roto y la página no existe.</li>
+ 
+ 
+ </ul>
+ <h2>¿Qué será lo próximo?</h2>
+ <ul>
+ 
+ <li>Puede utilizar el menú y enlaces en el tope de la página</li>
+ <li>Puede buscar en el catálogo usando el formulario de búsqueda en la parte superior de esta página.</li>
+ <li><a href="/cgi-bin/koha/opac-main.pl">Regresar a la página principal del catálogo.</a></li>
+ </ul>
+ <h2>Informar problemas y enlaces rotos</h2>
+ <ul>
+ <li>Para informar sobre este error, por favor, póngase en contacto con el Administrador de Koha. <a href="mailto:root%40localhost">Enviar correo electrónico</a>.</li>
+ </ul>
+ </div> <!-- / #errormsg404 -->
+ </div> <!-- / .col-lg10/12 -->
+ </div> <!-- / .row -->
+ </div> <!-- / .container-fluid -->
+ </div> <!-- / .main -->
+
+
+
+
+
+
+
+
+               
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+ <div class="container-fluid">
+ <div class="row">
+ <div class="col">
+ 
+ 
+ <div id="opaccredits">
+ 
+ <div class="default_item">
+ 
+ <div class="default_body"></div>
+ </div>
+ 
+ </div>
+  
+ </div>
+ </div>
+ </div>
+ 
+
+ 
+ </div> <!-- / #wrapper in masthead.inc -->
+
+ 
+ 
+ 
+
+
+
+
+<!-- CookieConsentedJS code that may run -->
+
+
+<!-- JavaScript includes -->
+<script src="/opac-tmpl/lib/jquery/jquery-3.6.0.min_23.1110000.js"></script>
+<script src="/opac-tmpl/lib/jquery/jquery-migrate-3.3.2.min_23.1110000.js"></script>
+<script src="/opac-tmpl/lib/bootstrap/js/bootstrap.bundle.min_23.1110000.js"></script>
+<script src="/opac-tmpl/lib/fontfaceobserver.min_23.1110000.js"></script>
+<script src="/opac-tmpl/lib/enquire.min_23.1110000.js"></script>
+<script>
+    let logged_in_user_id = "";
+</script>
+<script src="/opac-tmpl/bootstrap/js/global_23.1110000.js"></script>
+
+
+<script>
+    
+
+    
+    $(".print-large").on("click",function(){
+        window.print();
+        return false;
+    });
+    $(".addtoshelf").on("click",function(e){
+        e.preventDefault();
+        Dopop( this.href );
+    });
+    $("body").on("click", ".addtocart", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        addRecord( biblionumber );
+    });
+    $("body").on("click", ".cartRemove", function(e){
+        e.preventDefault();
+        var biblionumber = $(this).data("biblionumber");
+        delSingleRecord( biblionumber );
+    });
+    $(".clearsh").on("click", function(){
+        return confirmDelete( _("¿Está seguro que desea eliminar su historial de búsqueda?") );
+    });
+
+</script>
+
+
+ <script src="/opac-tmpl/bootstrap/js/basket_23.1110000.js"></script>
+
+
+
+
+
+
+
+ <script src="/opac-tmpl/bootstrap/js/localcovers_23.1110000.js"></script>
+
+
+
+
+
+
+<script src="/opac-tmpl/lib/js-cookie/js.cookie-3.0.1.min_23.1110000.js"></script>
+<script>
+$(document).ready(function() {
+    if($('#searchsubmit').length) {
+        $(document).on("click", '#searchsubmit', function(e) {
+            Cookies.remove("form_serialized", { path: '/'});
+            Cookies.remove("form_serialized_limits", { path: '/'});
+            Cookies.remove("search_path_code", { path: '/'});
+        });
+    }
+});
+</script>
+
+
+
+
+<script src="/opac-tmpl/lib/dayjs/dayjs.min_23.1110000.js"></script>
+<script src="/opac-tmpl/lib/dayjs/plugin/timezone_23.1110000.js"></script>
+<script src="/opac-tmpl/lib/dayjs/plugin/utc_23.1110000.js"></script>
+<script>
+    dayjs.extend(window.dayjs_plugin_utc);
+    dayjs.extend(window.dayjs_plugin_timezone);
+</script>
+
+<!-- js-date-format.inc -->
+<script>
+    (function() {
+        var def_date_format = 'metric';
+        var def_time_format = '12hr';
+        var def_tz = 'America/Mexico_City';
+
+        var get_date_pattern = function(format) {
+            var date_pattern = 'YYYY-MM-DD';
+            if(format == 'us') date_pattern = 'MM/DD/YYYY';
+            if(format == 'metric') date_pattern = 'DD/MM/YYYY';
+            if(format == 'dmydot') date_pattern = 'DD.MM.YYYY';
+            return date_pattern;
+        };
+
+        var get_time_pattern = function(format) {
+            var time_pattern = 'HH:mm';
+            if(format == '12hr') time_pattern = 'hh:mm a';
+            return time_pattern;
+        };
+
+        /*
+         * A JS equivilent of the KohaDates TT Plugin. Passed an rfc3339 formatted date string,
+         * or JS Date, the function will return a date string formatted as per the koha instance config.
+         * Optionally accepts a dateformat parameter to allow override of the configured output format
+         * as well as a 'withtime' boolean denoting whether to include time or not in the output string.
+         */
+        window.$date = function(value, options) {
+            if(!value) return '';
+            var tz = (options&&options.tz)||def_tz;
+            var m = dayjs(value);
+            if ( ! value.match(/^\d{4}-\d{2}-\d{2}$/ ) ) {
+                m = m.tz(tz);
+            }
+
+            var dateformat = (options&&options.dateformat)||def_date_format;
+            var withtime = (options&&options.withtime)||false;
+
+            if(dateformat=='rfc3339' && withtime) return m.format();
+
+            var timeformat = (options&&options.timeformat)||def_time_format;
+            var date_pattern = get_date_pattern(dateformat);
+            var time_pattern = !withtime?'':' '+get_time_pattern(timeformat);
+
+            return m.format(date_pattern+time_pattern);
+        }
+
+        window.$datetime = function(value, options) {
+            options = options||{};
+            options.withtime = true;
+            return $date(value, options);
+        };
+
+        window.$time = function(value, options) {
+            if(!value) return '';
+            var tz = (options&&options.tz)||def_tz;
+            var m = dayjs(value);
+            if(tz) m = m.tz(tz);
+
+            var dateformat = (options&&options.dateformat);
+            var timeformat = (dateformat=='rfc3339'&&'24hr')||(options&&options.timeformat)||def_time_format;
+
+            return m.format(get_time_pattern(timeformat)+(dateformat=='rfc3339'?':ss'+(!m.isUTC()?'Z':''):''))+(dateformat=='rfc3339' && m.isUTC()?'Z':'');
+        }
+
+    })();
+</script>
+<!-- / js-date-format.inc -->
+
+<script>
+    (function() {
+        /**
+         * Format the biblio response from a Koha RESTful API request.
+         * @param  {Object}  biblio  The biblio json object as returned from the Koha RESTful API
+         * @param  {Object}  config  A configuration object
+         *                           Valid keys are: `link`
+         * @return {string}          The formatted HTML string
+         */
+        window.$biblio_to_html = function(biblio, config) {
+
+            if (biblio === undefined) {
+                return ''; // empty string for no biblio
+            }
+
+            var title = '<span class="biblio-title">';
+            if (biblio.title != null && biblio.title != '') {
+                title += escape_str(biblio.title);
+            } else {
+                title += _("Sin título");
+            }
+            title += '</span>';
+
+            // add subtitle
+            if (biblio.subtitle != null && biblio.subtitle != '') {
+                title += ' <span class="biblio-subtitle">' + escape_str(biblio.subtitle) + '</span>';
+            }
+
+            // set title as link
+            if (config && config.link) {
+                if (config.link === 'marcdetail') {
+                    title = '<a href="/cgi-bin/koha/opac-MARCdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + '</a>';
+                } else if (config.link === 'labeled_marc') {
+                    title = '<a href="/cgi-bin/koha/opac-labeledMARCdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + '</a>';
+                } else if (config.link === 'isbd') {
+                    title = '<a href="/cgi-bin/koha/opac-ISBDdetail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + '</a>';
+                } else {
+                    title = '<a href="/cgi-bin/koha/opac-detail.pl?biblionumber=' + encodeURIComponent(biblio.biblio_id) + '" class="title">' + title + '</a>';
+                }
+            }
+
+            // add medium
+            if (biblio.medium != null && biblio.medium != '') {
+                title += ' <span class="biblio-medium">' + escape_str(biblio.medium) + '</span>';
+            }
+
+            // add part numbers/names
+            let part_numbers = (typeof biblio.part_number === 'string') ? biblio.part_number.split("|") : [];
+            let part_names = (typeof biblio.part_name === 'string') ? biblio.part_name.split("|") : [];
+            let i = 0;
+            while (part_numbers[i] || part_names[i]) {
+                if (part_numbers[i]) {
+                    title += ' <span class="part-number">' + escape_str(part_numbers[i]) + '</span>';
+                }
+                if (part_names[i]) {
+                    title += ' <span class="part-name">' + escape_str(part_names[i]) + '</span>';
+                }
+                i++;
+            }
+
+            return title;
+        };
+    })();
+</script>
+
+
+
+
+
+
+
+
+
+</body>
+</html>
+
+

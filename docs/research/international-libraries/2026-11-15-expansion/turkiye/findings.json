@@ -1,0 +1,667 @@
+{
+  "country": "Türkiye",
+  "country_code": "TUR",
+  "research_date_utc": "2026-11-15",
+  "status": "complete",
+  "market": {
+    "summary": "Large centralized public-library sector plus university, municipal, national/archive and specialist research libraries. Koha has the strongest evidenced nationwide public-network leverage. University discovery is heterogeneous; Yordam, Koha, SirsiDynix Enterprise-style routes, Innovative-style catalogs and Alma/Primo occur. No national LMS market-share estimate is established.",
+    "platform_strategy": "Prioritize an authorized KYGM network connection and TO-KAT agreement for breadth; neither is currently open to this automated research. Start technical exploration with verified Yordam and a small Koha reserve. Yordam needs a new adapter and institutional delay/challenge handling. Union metadata supports discovery, not current circulation or universal borrowing.",
+    "adoption_evidence": [
+      {
+        "claim": "Ministry 2023 note: centralized Koha used by 1,300 public/specialist libraries including Rami, with 21 million registered materials; began in 2014. Koha 20.11 in January 2023, not asserted current.",
+        "scope": "Explicit source scope only; not national market share",
+        "date": "2023",
+        "source_url": "https://kygm.ktb.gov.tr/Eklenti/118018%2Ckygm-koha-bilgilendirme-notu---2023pdf.pdf?0="
+      },
+      {
+        "claim": "Official division: public libraries use Koha; National Library KAŞİF; TO-KAT university/research union.",
+        "scope": "Explicit source scope only; not national market share",
+        "date": "observed 2026-11-15",
+        "source_url": "https://kygm.ktb.gov.tr/TR-135/katalog-tarama.html"
+      },
+      {
+        "claim": "TO-KAT has 200+ collections and 14m+ records; 179 universities in 2025. Counts can differ from institutions; all material types, not physical-book inventory.",
+        "scope": "Explicit source scope only; not national market share",
+        "date": "observed 2026-11-15",
+        "source_url": "https://veri.ulakbim.gov.tr/hizmet/14"
+      },
+      {
+        "claim": "Vendor names numerous university/municipal/research customers; a vendor reference list, not an audited current market share.",
+        "scope": "Explicit source scope only; not national market share",
+        "date": "observed 2026-11-15",
+        "source_url": "https://www.yordam.com/tr/referanslar"
+      },
+      {
+        "claim": "Official METU page confirms Koha and public Z39.50 configuration; endpoint not exercised.",
+        "scope": "Explicit source scope only; not national market share",
+        "date": "observed 2026-11-15",
+        "source_url": "https://lib.metu.edu.tr/en/z3950-configuration"
+      }
+    ],
+    "network_opportunities": [
+      {
+        "name": "KYGM national public-library Koha",
+        "scope": "1,300 libraries/21m registered materials in 2023; one network, including Rami",
+        "source_url": "https://kygm.ktb.gov.tr/Eklenti/118018%2Ckygm-koha-bilgilendirme-notu---2023pdf.pdf?0=",
+        "verification": "Official ministry architecture note; search prohibited by robots, no live book query",
+        "integration_implication": "Largest evidenced public reach from one service; existing Koha adapter only a candidate after access authorization."
+      },
+      {
+        "name": "TO-KAT",
+        "scope": "200+ collections, 14m+ records; 179 universities in 2025",
+        "source_url": "https://veri.ulakbim.gov.tr/hizmet/14",
+        "verification": "Official statistics verified; robots403 prevents union book query",
+        "integration_implication": "High academic discovery leverage; preserve institution-attributed records and refresh dates, never represent union holdings as live circulation."
+      },
+      {
+        "name": "biblioPera",
+        "scope": "Beyoğlu research-center union; official site links Koha catalog",
+        "source_url": "https://bibliopera.org/",
+        "verification": "Homepage/form verified, catalog robots503; zero member holdings verified",
+        "integration_implication": "A useful specialist network reserve; no separate member counts without attributed book evidence."
+      }
+    ]
+  },
+  "major_library_priorities": [
+    {
+      "name": "Kültür ve Turizm Bakanlığı / KYGM public-library network",
+      "size_claim": "1,300 libraries; 21 million registered materials (2023; includes Rami; not all books).",
+      "source_url": "https://kygm.ktb.gov.tr/Eklenti/118018%2Ckygm-koha-bilgilendirme-notu---2023pdf.pdf?0=",
+      "outcome": "Restricted: wildcard Disallow /; no book query. Largest evidenced centralized public-network leverage here.",
+      "evidence_path": "evidence/koha-national-note.txt"
+    },
+    {
+      "name": "Cumhurbaşkanlığı Millet Kütüphanesi",
+      "size_claim": "5,190,940 printed resources; undated current homepage snapshot, 2026-11-15.",
+      "source_url": "https://mk.gov.tr/",
+      "outcome": "Verified Yordam title response and CMK shelf holdings.",
+      "evidence_path": "evidence/millet-site.html"
+    },
+    {
+      "name": "Millî Kütüphane",
+      "size_claim": "1,989,018 books (2025; TÜİK statistics reported by Anadolu Agency).",
+      "source_url": "https://www.aa.com.tr/tr/gundem/turkiyede-kutuphane-sayisi-2025-yili-itibariyla-45-bin-327-oldu/3963613",
+      "outcome": "KAŞİF robots timed out; no query or reader eligibility established.",
+      "evidence_path": null
+    },
+    {
+      "name": "İstanbul Üniversitesi",
+      "size_claim": "1,628,309 TO-KAT records (portal default 2025; all types, proxy).",
+      "source_url": "https://veri.ulakbim.gov.tr/hizmet/14",
+      "outcome": "Catalog wildcard Disallow /; no query.",
+      "evidence_path": "evidence/ulakbim-stats.html"
+    },
+    {
+      "name": "Ankara Üniversitesi",
+      "size_claim": "731,459 TO-KAT records (portal default 2025; all types, proxy).",
+      "source_url": "https://veri.ulakbim.gov.tr/hizmet/14",
+      "outcome": "Catalog wildcard Disallow /; no query.",
+      "evidence_path": "evidence/ulakbim-stats.html"
+    },
+    {
+      "name": "Marmara Üniversitesi",
+      "size_claim": "718,372 TO-KAT records (portal default 2025; all types, proxy).",
+      "source_url": "https://veri.ulakbim.gov.tr/hizmet/14",
+      "outcome": "Yordam homepage slider verification; stopped.",
+      "evidence_path": "evidence/ulakbim-stats.html"
+    },
+    {
+      "name": "Orta Doğu Teknik Üniversitesi (ODTÜ / METU)",
+      "size_claim": "542,728 printed books; current official page, observed 2026-11-15.",
+      "source_url": "https://lib.metu.edu.tr/tr/kitap-koleksiyonu",
+      "outcome": "Koha catalog robots HTTP503; no query.",
+      "evidence_path": "evidence/metu-source.html"
+    },
+    {
+      "name": "İhsan Doğramacı Bilkent Üniversitesi",
+      "size_claim": "614,303 books combining print, electronic and audio; undated official facts page.",
+      "source_url": "https://w3.bilkent.edu.tr/bilkent/university-facts/",
+      "outcome": "Enterprise-style public route; robots HTTP403.",
+      "evidence_path": "evidence/bilkent-size.html"
+    },
+    {
+      "name": "Boğaziçi Üniversitesi",
+      "size_claim": "878,481 works; undated official page.",
+      "source_url": "https://bogazici.edu.tr/tr/pages/kutuphane/79",
+      "outcome": "Current collections catalog robots returned explicit verification page; stopped.",
+      "evidence_path": "evidence/bogazici-size.html"
+    },
+    {
+      "name": "Hacettepe Üniversitesi",
+      "size_claim": "Four university libraries across two campuses; institutional network proxy.",
+      "source_url": "https://universitem.hacettepe.edu.tr/kutuphaneler/",
+      "outcome": "Catalog robots HTTP403; no query.",
+      "evidence_path": "evidence/hacettepe-size.html"
+    }
+  ],
+  "libraries": [
+    {
+      "id": "tur-millet",
+      "name": "Cumhurbaşkanlığı Millet Kütüphanesi",
+      "recommendation": "verified_target",
+      "scope": "Single presidential library; internal departments and named collections not counted separately",
+      "size": {
+        "value": 5190940,
+        "unit": "printed resources (mixed material types)",
+        "date": "undated; observed 2026-11-15",
+        "source_url": "https://mk.gov.tr/",
+        "evidence_path": "evidence/millet-site.html",
+        "quality": "official",
+        "note": "Not a physical-book total. National statistics distinguish books from serials; avoid combining with ebook/archive counts."
+      },
+      "platform": {
+        "family": "Yordam",
+        "name": "Yordam",
+        "proof": "Footer links www.yordam.com; Yordam export control; observed HTML result cards with data-recordid and data-demirbas.",
+        "evidence_path": "evidence/millet-nutuk.html"
+      },
+      "query": {
+        "text": "Nutuk",
+        "method": "GET",
+        "url": "https://katalog.mk.gov.tr/?p=1&q=Nutuk&alan=qEser_txt",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T08:14:36.981470+00:00",
+        "http_status": 200,
+        "effective_url": "https://katalog.mk.gov.tr/?p=1&q=Nutuk&alan=qEser_txt",
+        "result_count": 1440,
+        "count_note": "Broad title-field result set includes editions and related titles; only first page inspected.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/millet-nutuk.html",
+        "metadata_path": "evidence/millet-nutuk.json"
+      },
+      "books": [
+        {
+          "title": "Nutuk (Söylev) : günümüz Türkçesi ile (fotoğraflı ve genişletilmiş)",
+          "author": "Mustafa Kemal Atatürk; hazırlayan Ahmet Köklügiller",
+          "record_id": "2766999",
+          "accession": "00013931",
+          "record_url": null,
+          "record_link_note": "Result title opens JavaScript detail; no durable GET record URL verified. Exact saved search and data-recordid identify this edition.",
+          "isbn": null,
+          "publisher": "Milliyet Yayınları",
+          "publication_year": "1996",
+          "holdings": "CMK; Gençlik Kütüphanesi; Zemin Kat; DR 592 .K4 A3 1996; Rafta (on shelf). This is not a promise of external borrowing.",
+          "evidence_path": "evidence/millet-nutuk.html"
+        }
+      ],
+      "robots": {
+        "url": "https://katalog.mk.gov.tr/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T08:09:26.289397+00:00",
+        "evidence_path": "evidence/millet-home-robots.json",
+        "decision": "allowed_path",
+        "note": "Public research path check; no reuse licence inferred Crawl-delay 300 seconds."
+      },
+      "reader_access": "Anonymous discovery. General collections open-shelf; rare works closed-stack. Search also returns Ödünç Verilemez (cannot be loaned) on rare-item rows; must retain both shelf and loan restrictions. Reader identity/entry and external loan rights not established by this query.",
+      "integration": {
+        "existing_adapter": "new family",
+        "needs": [
+          "New Yordam HTML adapter; Turkish and Ottoman titles/diacritics",
+          "Preserve data-recordid separately from accession and edition",
+          "Honor 300-second delay; durable cache/permission strategy required for interactive use",
+          "Preserve Rafta alongside Ödünç Verilemez and room/department",
+          "JavaScript detail routing not verified"
+        ],
+        "blockers": [],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "tur-isparta-applied",
+      "name": "Isparta Uygulamalı Bilimler Üniversitesi Merkez Kütüphanesi",
+      "recommendation": "reserve",
+      "scope": "One university library; not Süleyman Demirel University",
+      "size": {
+        "value": 5428,
+        "unit": "printed books",
+        "date": "undated; indexed official page observed 2026-11-15",
+        "source_url": "https://kutuphane.isparta.edu.tr/",
+        "evidence_path": "evidence/indexed-source-notes.json",
+        "quality": "indexed official",
+        "note": "Small print collection; no promotion to selected substantial target."
+      },
+      "platform": {
+        "family": "Koha",
+        "name": "Koha",
+        "proof": "Powered by Koha; footer says adapted and installed by ZeGeSoft; /cgi-bin/koha routes.",
+        "evidence_path": "evidence/isparta-nutuk.html"
+      },
+      "query": {
+        "text": "Nutuk",
+        "method": "GET",
+        "url": "https://opac.isparta.edu.tr/cgi-bin/koha/opac-search.pl?idx=ti&q=Nutuk",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T08:09:44.266400+00:00",
+        "http_status": 200,
+        "effective_url": "https://opac.isparta.edu.tr/cgi-bin/koha/opac-detail.pl?biblionumber=1790",
+        "result_count": 1,
+        "count_note": "One bibliographic record returned via search-to-detail redirect; no separate search-total field was shown. The record separately displays one holding.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/isparta-nutuk.html",
+        "metadata_path": "evidence/isparta-nutuk.json"
+      },
+      "books": [
+        {
+          "title": "Nutuk",
+          "author": "Atatürk, Mustafa Kemal, 1881-1938",
+          "record_id": "1790",
+          "record_url": "https://opac.isparta.edu.tr/cgi-bin/koha/opac-detail.pl?biblionumber=1790",
+          "isbn": "9789752206960",
+          "edition": "5. basım : Kasım 2019",
+          "publisher": "Bilgi Yayınevi",
+          "publication_year": "2019",
+          "holdings": "1 Kitap; Isparta Uygulamalı Bilimler Üniversitesi Merkez Kütüphanesi; Genel Koleksiyon; Roman dışı; 815.42 ATA 2019; k.1; Available; barcode 001185.",
+          "evidence_path": "evidence/isparta-nutuk.html"
+        }
+      ],
+      "robots": {
+        "url": "https://opac.isparta.edu.tr/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T08:09:26.288787+00:00",
+        "evidence_path": "evidence/isparta-home-robots.json",
+        "decision": "no_published_rules",
+        "note": "HTTP404; not an affirmative reuse licence"
+      },
+      "reader_access": "Anonymous catalog and holdings observed. Institutional membership, visitor entry and borrowing rights not verified. Homepage also links a VuFind discovery interface; it is the same institution, not another target.",
+      "integration": {
+        "existing_adapter": "candidate reuse",
+        "needs": [
+          "Candidate Koha adapter reuse",
+          "Verify Turkish labels, exact edition matching and search-to-detail redirect",
+          "Do not conflate this university with SDÜ or its shared reader-access arrangements"
+        ],
+        "blockers": [],
+        "live_app_tested": false
+      }
+    }
+  ],
+  "blocked_or_unverified": [
+    {
+      "name": "İSAM Kütüphanesi",
+      "url": "https://katalog.isam.org.tr/?dil=0&p=1&q=Nutuk&alan=qEser_txt",
+      "reason": "Allowed Yordam homepage reports 335,545 book records; policy-compliant Nutuk query after the 300-second delay returned HTTP503. No book result verified.",
+      "evidence_path": "evidence/isam-nutuk.json"
+    },
+    {
+      "name": "TO-KAT",
+      "url": "https://toplukatalog.tr/robots.txt",
+      "reason": "403 robots; official legacy gov.tr route redirects to same blocked origin.",
+      "evidence_path": "evidence/tokat-robots.json"
+    },
+    {
+      "name": "KYGM public-library network",
+      "url": "https://koha.ekutuphane.gov.tr/robots.txt",
+      "reason": "Wildcard Disallow /; no search.",
+      "evidence_path": "evidence/koha-robots.json"
+    },
+    {
+      "name": "Millî Kütüphane / KAŞİF",
+      "url": "https://kasif.mkutup.gov.tr/robots.txt",
+      "reason": "Robots read timeout; policy unresolved.",
+      "evidence_path": "evidence/national-home-robots.json"
+    },
+    {
+      "name": "Bilkent",
+      "url": "https://librarycatalog.bilkent.edu.tr/robots.txt",
+      "reason": "HTTP403 robots.",
+      "evidence_path": "evidence/bilkent-robots.json"
+    },
+    {
+      "name": "METU",
+      "url": "https://librarycatalog.metu.edu.tr/robots.txt",
+      "reason": "HTTP503 robots.",
+      "evidence_path": "evidence/metu-robots.json"
+    },
+    {
+      "name": "Hacettepe",
+      "url": "https://katalog.hacettepe.edu.tr/robots.txt",
+      "reason": "HTTP403 robots.",
+      "evidence_path": "evidence/hacettepe-robots.json"
+    },
+    {
+      "name": "İstanbul Üniversitesi",
+      "url": "https://katalog.istanbul.edu.tr/robots.txt",
+      "reason": "Wildcard Disallow /.",
+      "evidence_path": "evidence/istanbul-robots.json"
+    },
+    {
+      "name": "Ankara Üniversitesi",
+      "url": "https://katalog.ankara.edu.tr/robots.txt",
+      "reason": "Wildcard Disallow /.",
+      "evidence_path": "evidence/ankara-robots.json"
+    },
+    {
+      "name": "İstanbul Teknik Üniversitesi",
+      "url": "https://katalog.kutuphane.itu.edu.tr/robots.txt",
+      "reason": "Explicit ChatGPT-User and OAI-SearchBot Disallow /; not only a training restriction.",
+      "evidence_path": "evidence/itu-robots.json"
+    },
+    {
+      "name": "Marmara",
+      "url": "https://katalog.marmara.edu.tr/yordam/",
+      "reason": "Explicit slider security challenge on open catalog; no bypass.",
+      "evidence_path": "evidence/marmara-home.json"
+    },
+    {
+      "name": "Sakarya",
+      "url": "https://w3.sakarya.edu.tr/yordam/",
+      "reason": "Explicit slider security challenge; no bypass.",
+      "evidence_path": "evidence/sakarya-home.json"
+    },
+    {
+      "name": "Afyon Kocatepe",
+      "url": "https://tarama.aku.edu.tr/yordambt/yordam.php",
+      "reason": "Explicit slider security challenge; no bypass.",
+      "evidence_path": "evidence/afyon-home.json"
+    },
+    {
+      "name": "Çanakkale Onsekiz Mart",
+      "url": "https://catlib.comu.edu.tr/yordam/",
+      "reason": "Explicit slider security challenge; no bypass.",
+      "evidence_path": "evidence/comu-home.json"
+    },
+    {
+      "name": "Boğaziçi",
+      "url": "https://collections.library.bogazici.edu.tr/robots.txt",
+      "reason": "HTTP200 robots is explicit security verification, not a soft404.",
+      "evidence_path": "evidence/bogazici-home-robots.json"
+    },
+    {
+      "name": "Gazi",
+      "url": "https://kutuphane.gazi.edu.tr/robots.txt",
+      "reason": "/search path disallowed; stopped.",
+      "evidence_path": "evidence/gazi-home-robots.json"
+    },
+    {
+      "name": "Sabancı",
+      "url": "https://icsearch.sabanciuniv.edu/robots.txt",
+      "reason": "/discovery/search disallowed; stopped.",
+      "evidence_path": "evidence/sabanci-home-robots.json"
+    },
+    {
+      "name": "Koç",
+      "url": "https://library.ku.edu.tr/robots.txt",
+      "reason": "Official library-site robots HTTP403; discovery route not verified.",
+      "evidence_path": "evidence/koc-site-robots.json"
+    },
+    {
+      "name": "İstanbul Bilgi",
+      "url": "https://www.opac.bilgi.edu.tr/robots.txt",
+      "reason": "HTTP503 robots.",
+      "evidence_path": "evidence/bilgi-home-robots.json"
+    },
+    {
+      "name": "İstanbul Gelişim",
+      "url": "https://kutuphane.gelisim.edu.tr/robots.txt",
+      "reason": "HTTP503 robots; 192,025 print books (2025-10-01) makes it a substantial blocked alternative.",
+      "evidence_path": "evidence/gelisim-home-robots.json"
+    },
+    {
+      "name": "Bursa Uludağ central",
+      "url": "https://tarama.uludag.edu.tr/robots.txt",
+      "reason": "HTTP503 robots.",
+      "evidence_path": "evidence/uludag-home-robots.json"
+    },
+    {
+      "name": "Bursa Uludağ theology",
+      "url": "https://ilahiyatkutuphane.uludag.edu.tr/robots.txt",
+      "reason": "HTTP503 robots; partial faculty route, not a second university.",
+      "evidence_path": "evidence/uludag-theology-home-robots.json"
+    },
+    {
+      "name": "Atatürk Üniversitesi",
+      "url": "https://kutuphane.atauni.edu.tr/robots.txt",
+      "reason": "Official library-site robots HTTP500.",
+      "evidence_path": "evidence/ataturk-site-robots.json"
+    },
+    {
+      "name": "Başkent",
+      "url": "https://katalog.baskent.edu.tr/robots.txt",
+      "reason": "HTTP503 catalog robots; official site describes 12,500 m²/1,627 seats.",
+      "evidence_path": "evidence/baskent-home-robots.json"
+    },
+    {
+      "name": "Anadolu",
+      "url": "https://kdm.anadolu.edu.tr/robots.txt",
+      "reason": "Official library-site robots HTTP503.",
+      "evidence_path": "evidence/anadolu-site-robots.json"
+    },
+    {
+      "name": "Fırat",
+      "url": "https://cb.firat.edu.tr/robots.txt",
+      "reason": "Official library-site robots HTTP503; current catalog endpoint not established.",
+      "evidence_path": "evidence/firat-site-robots.json"
+    },
+    {
+      "name": "Yıldız Teknik",
+      "url": "https://yordam.yildiz.edu.tr/robots.txt",
+      "reason": "HTTP503 catalog robots.",
+      "evidence_path": "evidence/yildiz-home-robots.json"
+    },
+    {
+      "name": "TOBB ETÜ",
+      "url": "https://koha.etu.edu.tr/robots.txt",
+      "reason": "HTTP503 robots.",
+      "evidence_path": "evidence/tobb-home-robots.json"
+    },
+    {
+      "name": "Balıkesir",
+      "url": "https://katalog.balikesir.edu.tr/robots.txt",
+      "reason": "Robots request failed; details in evidence.",
+      "evidence_path": "evidence/balikesir-home-robots.json"
+    },
+    {
+      "name": "Bilecik Şeyh Edebali",
+      "url": "https://katalog.bilecik.edu.tr/robots.txt",
+      "reason": "Koha search path explicitly disallowed; permitted homepage not counted.",
+      "evidence_path": "evidence/bilecik-home-robots.json"
+    },
+    {
+      "name": "Süleyman Demirel",
+      "url": "https://tara.sdu.edu.tr/robots.txt",
+      "reason": "VuFind robots HTTP503.",
+      "evidence_path": "evidence/sdu-home-robots.json"
+    },
+    {
+      "name": "İzmir Yüksek Teknoloji Enstitüsü",
+      "url": "https://catalog.iyte.edu.tr/robots.txt",
+      "reason": "HTTP403 robots.",
+      "evidence_path": "evidence/iyte-home-robots.json"
+    },
+    {
+      "name": "Ankara Bilim",
+      "url": "https://koha.ankarabilim.edu.tr/robots.txt",
+      "reason": "HTTP503 robots; smaller alternative not selected.",
+      "evidence_path": "evidence/ankara-bilim-home-robots.json"
+    },
+    {
+      "name": "biblioPera research network",
+      "url": "https://katalog.bibliopera.org/robots.txt",
+      "reason": "Official homepage exposes Koha search, but catalog robots HTTP503. No union members counted.",
+      "evidence_path": "evidence/bibliopera-home-robots.json"
+    },
+    {
+      "name": "TBMM parliamentary library",
+      "url": "https://kutuphane.tbmm.gov.tr/robots.txt",
+      "reason": "HTTP503 robots.",
+      "evidence_path": "evidence/tbmm-home-robots.json"
+    },
+    {
+      "name": "Agriculture and Forestry library",
+      "url": "https://kutuphane.tarimorman.gov.tr/robots.txt",
+      "reason": "HTTP503 robots; digital repository and book circulation must be separated.",
+      "evidence_path": "evidence/tarim-home-robots.json"
+    },
+    {
+      "name": "Selçuklu municipality",
+      "url": "https://kutuphane.selcuklu.bel.tr/robots.txt",
+      "reason": "HTTP503 robots.",
+      "evidence_path": "evidence/selcuklu-home-robots.json"
+    },
+    {
+      "name": "Ankara metropolitan network",
+      "url": "https://katalog.ankara.bel.tr/robots.txt",
+      "reason": "HTTP503 robots.",
+      "evidence_path": "evidence/ankara-city-home-robots.json"
+    },
+    {
+      "name": "İBB Atatürk Kitaplığı/network",
+      "url": "https://katalog.ibb.gov.tr/robots.txt",
+      "reason": "HTTP503 robots.",
+      "evidence_path": "evidence/ibb-home-robots.json"
+    },
+    {
+      "name": "İzmir Millî Kütüphane",
+      "url": "https://www.izmirmillikutuphane.com/robots.txt",
+      "reason": "Official source robots HTTP503.",
+      "evidence_path": "evidence/izmir-national-site-robots.json"
+    },
+    {
+      "name": "Ege Üniversitesi",
+      "url": "https://kutuphane.ege.edu.tr/",
+      "reason": "Current official catalog tile points to TO-KAT, whose robots are blocked; no independent query.",
+      "evidence_path": "evidence/ege-site.json"
+    }
+  ],
+  "limitations": [
+    "Ten major priorities are not a national largest-ten ranking. Dates, materials, records and format coverage differ.",
+    "Target of ten selected substantial institutions not reached. Broad blocked sampling retained; a small successful reserve is not padded into the selected count.",
+    "No union result or union-member holding was obtained; no branch double-counting.",
+    "No app integration, live adapter test, login, hold, outreach, TLS bypass or challenge bypass was performed.",
+    "One procedural lapse: the initial Millet homepage immediately followed its robots fetch before the newly discovered 300-second delay was enforced. The actual title query followed the homepage by more than 307 seconds. Helper was corrected to defer delayed origins.",
+    "ISPARTA size source is indexed official evidence only because live source robots failed.",
+    "Many HTTP503 responses report upstream connection timeout and may be environment/transient failures; none imply an absent book or permanent inaccessible institution."
+  ],
+  "sources": [
+    {
+      "url": "https://kygm.ktb.gov.tr/Eklenti/118018%2Ckygm-koha-bilgilendirme-notu---2023pdf.pdf?0=",
+      "claim": "Ministry 2023 note: centralized Koha used by 1,300 public/specialist libraries including Rami, with 21 million registered materials; began in 2014. Koha 20.11 in January 2023, not asserted current.",
+      "evidence_path": "evidence/koha-national-note.html"
+    },
+    {
+      "url": "https://kygm.ktb.gov.tr/TR-135/katalog-tarama.html",
+      "claim": "Official division: public libraries use Koha; National Library KAŞİF; TO-KAT university/research union.",
+      "evidence_path": "evidence/ministry-source.html"
+    },
+    {
+      "url": "https://veri.ulakbim.gov.tr/hizmet/14",
+      "claim": "TO-KAT has 200+ collections and 14m+ records; 179 universities in 2025. Counts can differ from institutions; all material types, not physical-book inventory.",
+      "evidence_path": "evidence/ulakbim-stats.html"
+    },
+    {
+      "url": "https://www.yordam.com/tr/referanslar",
+      "claim": "Vendor names numerous university/municipal/research customers; a vendor reference list, not an audited current market share.",
+      "evidence_path": "evidence/yordam-references.html"
+    },
+    {
+      "url": "https://lib.metu.edu.tr/en/z3950-configuration",
+      "claim": "Official METU page confirms Koha and public Z39.50 configuration; endpoint not exercised.",
+      "evidence_path": "evidence/metu-platform.html"
+    },
+    {
+      "url": "https://lib.metu.edu.tr/tr/kitap-koleksiyonu",
+      "claim": "542,728 printed books; ebooks separately reported.",
+      "evidence_path": "evidence/metu-source.html"
+    },
+    {
+      "url": "https://mk.gov.tr/",
+      "claim": "Undated current homepage: 5,190,940 printed resources. Mixed material total, not a book count.",
+      "evidence_path": "evidence/millet-site.html"
+    },
+    {
+      "url": "https://mk.gov.tr/icerik/detay/basili-koleksiyon",
+      "claim": "Open shelves for general collections, closed stacks for rare works.",
+      "evidence_path": "evidence/millet-collection.html"
+    },
+    {
+      "url": "https://w3.bilkent.edu.tr/bilkent/university-facts/",
+      "claim": "614,303 books, combining print/electronic/audio; not physical holdings.",
+      "evidence_path": "evidence/bilkent-size.html"
+    },
+    {
+      "url": "https://bogazici.edu.tr/tr/pages/kutuphane/79",
+      "claim": "878,481 works and electronic publications separately; undated total not a current physical-book count.",
+      "evidence_path": "evidence/bogazici-size.html"
+    },
+    {
+      "url": "https://universitem.hacettepe.edu.tr/kutuphaneler/",
+      "claim": "Four libraries across two campuses; institutional network proxy.",
+      "evidence_path": "evidence/hacettepe-size.html"
+    },
+    {
+      "url": "https://kddb.gelisim.edu.tr/tr/idari-icerik-igu-kutuphane-istatistikleri",
+      "claim": "192,025 print books at 2025-10-01 for the 2025–2026 row; substantial blocked alternative.",
+      "evidence_path": "evidence/gelisim-size.html"
+    },
+    {
+      "url": "https://lib.baskent.edu.tr/tr/hakkimizda/kutuphanemiz-hakkinda",
+      "claim": "Official institutional proxy: library building 12,500 square metres and 1,627 seats; not a collection count.",
+      "evidence_path": "evidence/baskent-site.html"
+    },
+    {
+      "url": "https://www.isam.org.tr/kutuphane/kutuphane-hakkinda",
+      "claim": "Specialist research library established in 1984; collection and user services; updated 2024-02-27.",
+      "evidence_path": "evidence/isam-about.html"
+    },
+    {
+      "url": "https://katalog.isam.org.tr/?dil=0",
+      "claim": "Catalog homepage reports 335,545 books, 15,258 theses and 4,658 serials; record-type counts, not physical volumes.",
+      "evidence_path": "evidence/isam-home.html"
+    },
+    {
+      "url": "https://kutuphane.isparta.edu.tr/",
+      "claim": "Official homepage indexed by web discovery reports 5,428 printed books; live origin robots HTTP503 prevented raw page retrieval. Kept as a small reserve.",
+      "evidence_path": "evidence/indexed-source-notes.json"
+    },
+    {
+      "url": "https://www.aa.com.tr/tr/gundem/turkiyede-kutuphane-sayisi-2025-yili-itibariyla-45-bin-327-oldu/3963613",
+      "claim": "June 2026 Anadolu Agency report of TÜİK 2025 statistics: 1,989,018 books at National Library; 1,302 public libraries with 26,041,029 books and 557 university libraries with 22,899,378 books. Branch count, not university count.",
+      "evidence_path": "evidence/indexed-source-notes.json"
+    }
+  ],
+  "verification_counts": {
+    "selected_institutions": 1,
+    "reserve_institutions": 1,
+    "successful_title_queries": 2,
+    "attempted_title_queries": 3,
+    "title_query_origins": 3,
+    "successful_query_origins": 2,
+    "union_member_institutions": 0,
+    "blocked_or_unverified_routes": 41
+  },
+  "title_query_attempts": [
+    {
+      "name": "millet-nutuk",
+      "url": "https://katalog.mk.gov.tr/?p=1&q=Nutuk&alan=qEser_txt",
+      "method": "GET",
+      "payload": null,
+      "checked_at_utc": "2026-11-15T08:14:36.981470+00:00",
+      "status": 200,
+      "effective_url": "https://katalog.mk.gov.tr/?p=1&q=Nutuk&alan=qEser_txt",
+      "evidence_path": "evidence/millet-nutuk.html",
+      "metadata_path": "evidence/millet-nutuk.json"
+    },
+    {
+      "name": "isparta-nutuk",
+      "url": "https://opac.isparta.edu.tr/cgi-bin/koha/opac-search.pl?idx=ti&q=Nutuk",
+      "method": "GET",
+      "payload": null,
+      "checked_at_utc": "2026-11-15T08:09:44.266400+00:00",
+      "status": 200,
+      "effective_url": "https://opac.isparta.edu.tr/cgi-bin/koha/opac-detail.pl?biblionumber=1790",
+      "evidence_path": "evidence/isparta-nutuk.html",
+      "metadata_path": "evidence/isparta-nutuk.json"
+    },
+    {
+      "name": "isam-nutuk",
+      "url": "https://katalog.isam.org.tr/?dil=0&p=1&q=Nutuk&alan=qEser_txt",
+      "method": "GET",
+      "payload": null,
+      "checked_at_utc": "2026-11-15T08:21:46.276406+00:00",
+      "status": 503,
+      "effective_url": "https://katalog.isam.org.tr/?dil=0&p=1&q=Nutuk&alan=qEser_txt",
+      "evidence_path": "evidence/isam-nutuk.html",
+      "metadata_path": "evidence/isam-nutuk.json"
+    }
+  ]
+}

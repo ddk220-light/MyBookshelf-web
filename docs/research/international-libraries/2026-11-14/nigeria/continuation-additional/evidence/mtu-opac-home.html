@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <!-- Essential Metadata -->
+<title>Online Public Access Catalog › Mountain Top University Library Catalog</title>
+<meta name="description" content="Search Mountain Top University Library catalog. Discover books, periodicals, theses, and digital academic research resources.">
+<meta name="keywords" content="Mountain Top University Library, MTU Library, OPAC, Lopac, Library Catalog, Academic Books, Research Journals, Theses, Nigeria University Libraries">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://opac.mtu.edu.ng">
+
+<!-- Open Graph Protocols (Facebook, LinkedIn, WhatsApp) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Mountain Top University Library Catalog">
+<meta property="og:title" content="Online Public Access Catalog › Mountain Top University Library Catalog">
+<meta property="og:description" content="Search Mountain Top University Library catalog. Discover books, periodicals, theses, and digital academic research resources.">
+<meta property="og:url" content="https://opac.mtu.edu.ng">
+<meta property="og:image" content="https://opac.mtu.edu.ng//images/og-library.svg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_NG">
+
+<!-- Twitter Card Protocols -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@MTULibrary">
+<meta name="twitter:creator" content="@MTULibrary">
+<meta name="twitter:title" content="Online Public Access Catalog › Mountain Top University Library Catalog">
+<meta name="twitter:description" content="Search Mountain Top University Library catalog. Discover books, periodicals, theses, and digital academic research resources.">
+<meta name="twitter:image" content="https://opac.mtu.edu.ng//images/og-library.svg">
+
+<!-- Linked Schema.org Knowledge Graph (JSON-LD) -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@context": "https://schema.org",
+            "@type": "Library",
+            "@id": "https://opac.mtu.edu.ng#library",
+            "name": "Mountain Top University Library",
+            "legal_name": "Mountain Top University Library & Resource Center",
+            "url": "https://opac.mtu.edu.ng/",
+            "logo": "https://opac.mtu.edu.ng//images/og-library.svg",
+            "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "Kilometre 12, Lagos-Ibadan Expressway, Prayer City",
+                "addressLocality": "Ibafo",
+                "addressRegion": "Ogun State",
+                "addressCountry": "NG"
+            },
+            "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+234-803-000-0000",
+                "contactType": "Library Information Services",
+                "email": "library@mtu.edu.ng"
+            }
+        },
+        {
+            "@type": "WebSite",
+            "@id": "https://opac.mtu.edu.ng#website",
+            "url": "https://opac.mtu.edu.ng",
+            "name": "Mountain Top University Library Catalog",
+            "description": "Explore the academic holdings of Mountain Top University Library. Search books, journals, theses, digital media, and research databases.",
+            "publisher": {
+                "@id": "https://opac.mtu.edu.ng#library"
+            },
+            "potentialAction": {
+                "@type": "SearchAction",
+                "target": {
+                    "@type": "EntryPoint",
+                    "urlTemplate": "https://opac.mtu.edu.ng/search?q={search_term_string}"
+                },
+                "query-input": "required name=search_term_string"
+            }
+        }
+    ]
+}
+</script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://opac.mtu.edu.ng/css/pagination.css">
+
+    <style>
+        /* =========================================
+           MTU OPAC — Modern Facelift (Lopac Layout)
+           Legacy structure · Modern aesthetics
+           ========================================= */
+
+        /* ---- DESIGN TOKENS ---- */
+        :root {
+            /* Legacy palette — polished */
+            --navy:        #2d2d52;
+            --navy-light:  #3a3a5c;
+            --blue:        #4272a8;
+            --blue-mid:    #4f7fb5;
+            --blue-light:  #6a98c8;
+            --purple:      #7b5ea7;
+            --purple-mid:  #9170be;
+            --green:       #4e9232;
+            --green-mid:   #5a9e3c;
+            --red:         #c32d2d;
+
+            /* Neutrals */
+            --bg:          #f4f6fb;
+            --surface:     #ffffff;
+            --border:      #e2e8f4;
+            --border-mid:  #ccd6e8;
+            --text:        #22243a;
+            --text-muted:  #5a627a;
+            --text-light:  #8a93aa;
+
+            /* Shadows */
+            --shadow-xs:   0 1px 3px rgba(44,60,110,0.07);
+            --shadow-sm:   0 2px 8px rgba(44,60,110,0.10);
+            --shadow-md:   0 4px 20px rgba(44,60,110,0.13);
+            --shadow-lg:   0 8px 32px rgba(44,60,110,0.16);
+
+            /* Layout */
+            --max-w:       1060px;
+            --radius-sm:   6px;
+            --radius-md:   10px;
+            --radius-lg:   16px;
+
+            /* Transitions */
+            --t-fast:      0.15s ease;
+            --t-mid:       0.25s ease;
+        }
+
+        /* ---- RESET & BASE ---- */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 13.5px;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.55;
+        }
+
+        a {
+            color: var(--blue);
+            text-decoration: none;
+            transition: color var(--t-fast);
+        }
+        a:hover { color: var(--red); }
+
+        /* ---- TOP UTILITY BAR ---- */
+        #top-bar {
+            background: linear-gradient(90deg, var(--navy) 0%, #26265e 100%);
+            border-bottom: 2px solid var(--purple);
+        }
+        #top-bar-inner {
+            max-width: var(--max-w);
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 16px;
+        }
+        #top-bar .left-links a,
+        #top-bar .right-links a {
+            color: #b8c2d8;
+            font-size: 11.5px;
+            font-weight: 500;
+            margin-right: 16px;
+            letter-spacing: 0.02em;
+            transition: color var(--t-fast);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        #top-bar .left-links a:hover,
+        #top-bar .right-links a:hover { color: #fff; }
+        #top-bar .right-links { text-align: right; }
+        #top-bar .right-links a { margin-right: 0; margin-left: 14px; }
+        #top-bar .right-links span { color: #b8c2d8; font-size: 11.5px; margin-left: 14px; }
+
+        .tb-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            background: rgba(123,94,167,0.55);
+            border-radius: 4px;
+            font-size: 9px;
+            color: white;
+        }
+
+        /* ---- HEADER / LOGO AREA ---- */
+        #header-wrap {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            box-shadow: var(--shadow-xs);
+        }
+        #header {
+            max-width: var(--max-w);
+            margin: 0 auto;
+            padding: 14px 16px 12px;
+        }
+        #koha-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        #koha-logo > a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        #koha-logo img {
+            height: 52px;
+            width: auto;
+        }
+        #koha-text-fallback {
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+        .lopac-badge {
+            background: linear-gradient(135deg, var(--navy), var(--purple));
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            padding: 7px 14px;
+            border-radius: var(--radius-sm);
+            letter-spacing: 0.04em;
+            box-shadow: var(--shadow-sm);
+        }
+        .lib-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--navy);
+            letter-spacing: -0.01em;
+        }
+        .lib-sub {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            margin-top: 1px;
+            font-weight: 400;
+        }
+
+        /* ---- SEARCH BAR (glassmorphism) ---- */
+        #search-bar-wrap {
+            background: linear-gradient(135deg, var(--blue-mid) 0%, var(--navy) 60%, var(--purple) 100%);
+            padding: 16px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        #search-bar-wrap::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+        #search-bar-inner {
+            max-width: var(--max-w);
+            margin: 0 auto;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+        #search-bar-inner label {
+            color: rgba(255,255,255,0.92);
+            font-weight: 600;
+            font-size: 13px;
+            white-space: nowrap;
+            letter-spacing: 0.02em;
+        }
+        #search-type, #library-select {
+            padding: 8px 10px;
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: var(--radius-sm);
+            font-size: 12.5px;
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(8px);
+            color: #fff;
+            cursor: pointer;
+            transition: border-color var(--t-fast), background var(--t-fast);
+            outline: none;
+            font-family: 'Inter', sans-serif;
+        }
+        #search-type option, #library-select option {
+            background: var(--navy);
+            color: #fff;
+        }
+        #search-type:focus, #library-select:focus {
+            border-color: rgba(255,255,255,0.6);
+            background: rgba(255,255,255,0.18);
+        }
+        #search-input {
+            flex: 1;
+            padding: 9px 14px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: var(--radius-sm);
+            font-size: 13.5px;
+            font-family: 'Inter', sans-serif;
+            background: rgba(255,255,255,0.95);
+            color: var(--text);
+            outline: none;
+            transition: border-color var(--t-fast), box-shadow var(--t-fast);
+        }
+        #search-input::placeholder { color: var(--text-light); }
+        #search-input:focus {
+            border-color: rgba(255,255,255,0.9);
+            box-shadow: 0 0 0 3px rgba(255,255,255,0.18);
+        }
+        #search-btn {
+            padding: 9px 20px;
+            background: linear-gradient(135deg, var(--green-mid), var(--green));
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: transform var(--t-fast), box-shadow var(--t-fast), filter var(--t-fast);
+            box-shadow: 0 2px 8px rgba(78,146,50,0.35);
+            letter-spacing: 0.03em;
+        }
+        #search-btn:hover {
+            filter: brightness(1.1);
+            box-shadow: 0 4px 14px rgba(78,146,50,0.45);
+            transform: translateY(-1px);
+        }
+        #search-btn:active { transform: translateY(0); }
+
+        .cart-btn, .lists-btn {
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: transform var(--t-fast), filter var(--t-fast);
+        }
+        .cart-btn {
+            background: linear-gradient(135deg, var(--green-mid), var(--green));
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 2px 6px rgba(78,146,50,0.3);
+        }
+        .lists-btn {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(8px);
+            border-color: rgba(255,255,255,0.3);
+            color: #fff;
+        }
+        .cart-btn:hover, .lists-btn:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.1);
+        }
+
+        /* ---- SUB NAV ---- */
+        #sub-nav {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+        #sub-nav-inner {
+            max-width: var(--max-w);
+            margin: 0 auto;
+            padding: 0 16px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0;
+        }
+        #sub-nav-inner a {
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 500;
+            padding: 9px 10px;
+            display: inline-block;
+            border-bottom: 2px solid transparent;
+            transition: color var(--t-fast), border-color var(--t-fast);
+            white-space: nowrap;
+        }
+        #sub-nav-inner a:hover {
+            color: var(--blue-mid);
+            border-bottom-color: var(--blue-mid);
+        }
+        #sub-nav-inner span.sep {
+            color: var(--border-mid);
+            align-self: center;
+            font-size: 11px;
+        }
+
+        /* ---- BREADCRUMB ---- */
+        #breadcrumb {
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+        }
+        #breadcrumb-inner {
+            max-width: var(--max-w);
+            margin: 0 auto;
+            padding: 7px 16px;
+            font-size: 11.5px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        #breadcrumb-inner a {
+            color: var(--blue-mid);
+            font-weight: 500;
+        }
+        #breadcrumb-inner .sep {
+            color: var(--border-mid);
+            font-size: 13px;
+        }
+
+        /* ---- MAIN CONTENT WRAPPER ---- */
+        #content-wrapper {
+            max-width: var(--max-w);
+            margin: 20px auto;
+            padding: 0 16px;
+            display: flex;
+            gap: 20px;
+            min-height: 500px;
+        }
+
+        /* ---- LEFT SIDEBAR ---- */
+        #sidebar {
+            width: 190px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow-xs);
+        }
+        .sidebar-title {
+            font-weight: 700;
+            font-size: 11px;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        .sidebar-links a {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--blue-mid);
+            font-size: 12.5px;
+            padding: 5px 0;
+            border-radius: 4px;
+            transition: color var(--t-fast), padding-left var(--t-fast);
+            font-weight: 500;
+        }
+        .sidebar-links a::before {
+            content: '›';
+            font-size: 14px;
+            color: var(--border-mid);
+            transition: color var(--t-fast);
+        }
+        .sidebar-links a:hover {
+            color: var(--blue);
+            padding-left: 4px;
+        }
+        .sidebar-links a:hover::before { color: var(--blue); }
+
+        /* Refine sidebar */
+        .refine-section { margin-bottom: 16px; }
+        .refine-section:last-child { margin-bottom: 0; }
+        .refine-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            padding-bottom: 6px;
+            margin-bottom: 6px;
+            border-bottom: 1px solid var(--border);
+        }
+        .refine-link {
+            display: block;
+            color: var(--blue-mid);
+            font-size: 12px;
+            padding: 3px 0;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            font-weight: 500;
+            transition: color var(--t-fast);
+        }
+        .refine-link:hover { color: var(--red); }
+
+        /* ---- MAIN AREA ---- */
+        #main-content { flex: 1; min-width: 0; }
+
+        /* ---- FOOTER ---- */
+        #footer {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            margin-top: 32px;
+        }
+        #footer-inner {
+            max-width: var(--max-w);
+            margin: 0 auto;
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+        #footer-inner a {
+            color: var(--blue-mid);
+            font-weight: 500;
+        }
+
+        /* ---- BOTTOM BAND ---- */
+        #bottom-band {
+            background: linear-gradient(90deg, var(--navy), var(--purple), var(--blue-mid));
+            height: 4px;
+        }
+
+        /* ---- UTILITY ---- */
+        .hidden { display: none !important; }
+
+        /* ---- RESPONSIVE ---- */
+        @media (max-width: 720px) {
+            #content-wrapper { flex-direction: column; }
+            #sidebar { width: 100%; }
+            #search-bar-inner { flex-wrap: wrap; }
+            #search-input { min-width: 160px; }
+            #sub-nav-inner { justify-content: flex-start; overflow-x: auto; }
+            #footer-inner { flex-direction: column; text-align: center; }
+        }
+        @media (max-width: 480px) {
+            .lib-name { font-size: 15px; }
+        }
+    </style>
+    <style>
+    /* ---- HOME PAGE SPECIFIC STYLES ---- */
+    #home-content { padding: 4px 0; }
+
+    .home-welcome {
+        font-family: 'Outfit', sans-serif;
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--navy);
+        margin-bottom: 5px;
+        letter-spacing: -0.02em;
+    }
+    .home-sub {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-bottom: 20px;
+    }
+
+    /* Popular search tags */
+    .popular-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--text-light);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 10px;
+    }
+    .quick-tags-wrap { margin-bottom: 22px; }
+    a.quick-tag, span.quick-tag {
+        display: inline-block;
+        background: #eef3fc;
+        border: 1px solid #d0dcf5;
+        border-radius: 20px;
+        padding: 4px 13px;
+        font-size: 12px;
+        color: var(--blue-mid);
+        margin: 3px 3px 3px 0;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast), transform var(--t-fast);
+        text-decoration: none;
+    }
+    a.quick-tag:hover, span.quick-tag:hover {
+        background: var(--blue-mid);
+        color: #fff;
+        border-color: var(--blue-mid);
+        transform: translateY(-1px);
+    }
+
+    /* News cards grid */
+    .news-cards-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-top: 4px;
+    }
+    @media (max-width: 680px) {
+        .news-cards-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Card base */
+    .info-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 18px 20px;
+        box-shadow: var(--shadow-xs);
+        transition: box-shadow var(--t-mid), transform var(--t-mid);
+        position: relative;
+        overflow: hidden;
+    }
+    .info-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 3px;
+        border-radius: var(--radius-md) var(--radius-md) 0 0;
+    }
+    .info-card:hover {
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+    }
+    .info-card.blue::before  { background: linear-gradient(90deg, var(--blue-mid), var(--purple)); }
+    .info-card.amber::before { background: linear-gradient(90deg, #e8a020, #e05c20); }
+
+    .info-card h3 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--navy);
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+    /* News items */
+    .news-item {
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border);
+    }
+    .news-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .news-item:first-child { padding-top: 0; }
+    .news-item-title {
+        font-weight: 600;
+        font-size: 13px;
+        color: var(--text);
+    }
+    .news-item-date {
+        font-size: 11px;
+        color: var(--text-light);
+        margin-left: 5px;
+        font-weight: 400;
+    }
+    .news-item-body {
+        font-size: 12.5px;
+        color: var(--text-muted);
+        margin-top: 4px;
+        line-height: 1.55;
+    }
+
+    /* New arrivals items */
+    .arrival-item {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border);
+        transition: background var(--t-fast);
+    }
+    .arrival-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .arrival-item:first-child { padding-top: 0; }
+    .arrival-cover {
+        width: 42px;
+        height: 56px;
+        object-fit: cover;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        box-shadow: var(--shadow-xs);
+        flex-shrink: 0;
+    }
+    .arrival-info { flex: 1; min-width: 0; }
+    .arrival-title {
+        font-weight: 600;
+        font-size: 13px;
+        color: var(--navy);
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transition: color var(--t-fast);
+    }
+    .arrival-title:hover { color: var(--blue-mid); }
+    .arrival-meta {
+        font-size: 11.5px;
+        color: var(--text-light);
+        margin-top: 3px;
+    }
+</style>
+</head>
+<body>
+
+<!-- ===== TOP UTILITY BAR ===== -->
+<div id="top-bar">
+    <div id="top-bar-inner">
+        <div class="left-links">
+            <a href="#" onclick="openCart(); return false;"><span class="tb-icon">🛒</span> Cart</a>
+            <a href="https://opac.mtu.edu.ng/lists"><span class="tb-icon">≡</span> Lists</a>
+        </div>
+        <div class="right-links">
+                            <a href="https://opac.mtu.edu.ng/login" style="background:rgba(255,255,255,0.15); padding:2px 8px; border-radius:4px; color:#fff; font-weight:600;">🔒 Log in to your account</a>
+                        <a href="https://opac.mtu.edu.ng/account/history">Search history</a>
+        </div>
+    </div>
+</div>
+
+<!-- ===== HEADER LOGO ===== -->
+<div id="header-wrap">
+    <div id="header">
+        <div id="koha-logo">
+            <a href="https://opac.mtu.edu.ng">
+                <img src="/images/lopac_logo_2.png" alt="Lopac library management system logo"
+                     onerror="this.style.display='none'; document.getElementById('koha-text-fallback').style.display='flex'">
+                <div id="koha-text-fallback">
+                    <div class="lopac-badge">lopac</div>
+                </div>
+            </a>
+            <div>
+                <div class="lib-name">Mountain Top University Library</div>
+                <div class="lib-sub">Mountain Top University — Library Catalog</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== SEARCH BAR (glassmorphism) ===== -->
+<div id="search-bar-wrap">
+    <form action="https://opac.mtu.edu.ng/search" method="GET" id="search-bar-inner">
+        <label for="search-type">Search</label>
+        <select id="search-type" name="idx">
+            <option value="kw">Library catalog</option>
+            <option value="ti">Title</option>
+            <option value="au">Author</option>
+            <option value="su">Subject</option>
+            <option value="nb">ISBN</option>
+            <option value="ns">ISSN</option>
+            <option value="call">Call number</option>
+        </select>
+        <input type="text" id="search-input" name="q" placeholder="Enter search terms..." value="">
+        <select id="library-select" name="branch">
+            <option value="">All libraries</option>
+                            <option value="MTU-C" >
+                    CBAS Library (MTU-C)
+                </option>
+                            <option value="MTU-H" >
+                    CHMS Library (MTU-H)
+                </option>
+                            <option value="MTU-M" >
+                    Main Library (MTU-M)
+                </option>
+                            <option value="MTUM" >
+                    Medical Library (MTUM)
+                </option>
+                    </select>
+        <button id="search-btn" type="submit">Go</button>
+        &nbsp;
+        <button class="cart-btn" type="button" onclick="openCart()">🛒 Cart <span id="cart-count">(0)</span></button>
+        <button class="lists-btn" type="button" onclick="window.location.href='https://opac.mtu.edu.ng/lists'">≡ Lists ▾</button>
+    </form>
+</div>
+
+<!-- ===== SUB NAV ===== -->
+<div id="sub-nav">
+    <div id="sub-nav-inner">
+        <a href="https://opac.mtu.edu.ng/search">Advanced search</a> <span class="sep">|</span>
+        <a href="#">Course reserves</a> <span class="sep">|</span>
+        <a href="https://opac.mtu.edu.ng/authorities">Authority search</a> <span class="sep">|</span>
+        <a href="https://opac.mtu.edu.ng/tags">Tag cloud</a> <span class="sep">|</span>
+        <a href="https://opac.mtu.edu.ng/search?sort=popular">Most popular</a>
+    </div>
+</div>
+
+<!-- ===== BREADCRUMB ===== -->
+<div id="breadcrumb">
+    <div id="breadcrumb-inner">
+        <a href="https://opac.mtu.edu.ng">Home</a>
+            <span class="sep">›</span>
+    <span>Home</span>
+    </div>
+</div>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div id="content-wrapper">
+    <!-- LEFT SIDEBAR -->
+    <div id="sidebar">
+            <div class="sidebar-section">
+        <div class="sidebar-title">Quick Links</div>
+        <div class="sidebar-links">
+                            <a href="https://mtu.edu.ng" target="_blank" title="Official MTU Portal">Mountain Top University Portal</a>
+                            <a href="https://lms.mtu.edu.ng" target="_blank" title="Student e-learning portal">MTU Student LMS / E-Learning</a>
+                            <a href="/opac/lists" target="_self" title="Opening hours and info">Library Hours &amp; Services</a>
+                            <a href="mailto:library@mtu.edu.ng" target="_self" title="Enquiries &amp; Research help">Ask a Librarian / Support</a>
+                    </div>
+    </div>
+    <div class="sidebar-section">
+        <div class="sidebar-title">Online Resources</div>
+        <div class="sidebar-links">
+                            <a href="http://www.fao.org/agora" target="_blank" title="Access to agriculture, biological, food &amp; environmental sciences journals.">AGORA (FAO Agricultural Science Database)</a>
+                            <a href="https://www.jstor.org" target="_blank" title="Peer-reviewed academic journals, books, and primary sources across humanities &amp; sciences.">JSTOR Academic Digital Library</a>
+                            <a href="https://www.who.int/hinari" target="_blank" title="World Health Organization portal for major journals in medicine, nursing &amp; health sciences.">HINARI Health &amp; Biomedical Portal (WHO)</a>
+                            <a href="https://search.ebscohost.com" target="_blank" title="Multi-disciplinary academic e-books, journals, business &amp; computer science databases.">EBSCOhost Research Databases</a>
+                            <a href="https://www.research4life.org" target="_blank" title="Access to 150,000+ leading peer-reviewed journals, books, and reference works worldwide.">Research4Life Global Portal</a>
+                            <a href="https://www.sciencedirect.com" target="_blank" title="Premier database for peer-reviewed scientific, technical, and medical research.">ScienceDirect (Elsevier Publications)</a>
+                            <a href="https://ieeexplore.ieee.org" target="_blank" title="Leading scientific journal for electrical engineering, computer science &amp; electronics.">IEEE Xplore Digital Library</a>
+                            <a href="https://doaj.org" target="_blank" title="Independent index of over 17,500 peer-reviewed open access journals.">DOAJ (Directory of Open Access Journals)</a>
+                            <a href="https://www.doabooks.org" target="_blank" title="Discovery service for peer-reviewed open access books and monographs.">DOAB (Directory of Open Access Books)</a>
+                            <a href="https://scholar.google.com" target="_blank" title="Search across diverse disciplines for articles, theses, books, and abstracts.">Google Scholar Academic Gateway</a>
+                            <a href="https://www.ncbi.nlm.nih.gov/pmc/" target="_blank" title="Free full-text archive of biomedical and life sciences journal literature.">PubMed Central (NIH/NLM)</a>
+                            <a href="vhttps://v2.sherpa.ac.uk/opendoar/" target="_self" title="Quality-assured global directory of academic open access repositories.">Directory of Open Access Repositories (OpenDOAR)</a>
+                            <a href="https://www.base-search.net" target="_blank" title="One of the world&#039;s most voluminous search engines for academic web resources.">BASE (Bielefeld Academic Search Engine)</a>
+                            <a href="https://core.ac.uk" target="_blank" title="World&#039;s largest collection of open access research papers.">CORE (COnnecting REpositories)</a>
+                            <a href="https://www.ajol.info" target="_blank" title="The world&#039;s largest collection of peer-reviewed, African-published scholarly journals.">African Journals OnLine (AJOL)</a>
+                            <a href="https://journals.plos.org/plosone/" target="_blank" title="Peer-reviewed open access journal covering primary research in science and medicine.">PLOS ONE (Public Library of Science)</a>
+                            <a href="https://www.biomedcentral.com" target="_blank" title="Pioneer of open access publishing with 300+ peer-reviewed journals in biology &amp; health.">BioMed Central (BMC Open Access)</a>
+                            <a href="https://www.ssrn.com" target="_blank" title="Preprints and working papers across economics, law, management &amp; humanities.">SSRN (Social Science Research Network)</a>
+                            <a href="https://arxiv.org" target="_blank" title="Open-access archive for 2+ million articles in physics, mathematics, computer science &amp; statistics.">arXiv Open Archive (Cornell University)</a>
+                            <a href="http://repec.org" target="_blank" title="Collaborative effort to enhance the dissemination of research in Economics and related sciences.">RePEc (Research Papers in Economics)</a>
+                            <a href="https://eric.ed.gov" target="_blank" title="Comprehensive database of educational literature and academic resources.">Eric Educational Resources Information Center</a>
+                            <a href="https://archive.org/details/texts" target="_blank" title="Digital library offering free access to millions of books, documents, and historical texts.">Internet Archive Books &amp; Texts</a>
+                            <a href="https://www.gutenberg.org" target="_blank" title="Library of over 70,000 free eBooks, with focus on older literary works.">Project Gutenberg E-Book Library</a>
+                            <a href="https://openknowledge.worldbank.org" target="_blank" title="Open access research outputs and development data from the World Bank.">World Bank Open Data &amp; Knowledge Repository</a>
+                            <a href="https://unesdoc.unesco.org" target="_blank" title="Full-text UNESCO publications, policy papers, and education documents.">UNiDATA &amp; UNESCO Digital Library</a>
+                            <a href="https://repository.mtu.edu.ng" target="_blank" title="Mountain Top University institutional research repository, theses, and faculty publications.">MTU Institutional Repository (E-Theses &amp; Papers)</a>
+                            <a href="https://open.umn.edu/opentextbooks" target="_blank" title="Peer-reviewed open textbooks that can be downloaded at no cost.">Open Textbook Library (UMN)</a>
+                    </div>
+    </div>
+    </div>
+
+    <!-- MAIN CONTENT AREA -->
+    <div id="main-content">
+            <div id="home-content">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:15px;">
+                <div>
+                    <div class="home-welcome">Welcome to Mountain Top University — Library Catalog</div>
+                    <p class="home-sub" style="margin-bottom:0;">
+                        Search the MTU library collection of books, journals, theses, and digital resources.
+                    </p>
+                </div>
+                <div>
+                    <a href="https://opac.mtu.edu.ng/login" style="background: var(--blue-mid); color: white; font-weight: 600; padding: 7px 16px; border-radius: var(--radius-sm); text-decoration: none; font-size: 12.5px; display:inline-flex; align-items:center; gap:5px;">🔒 Sign In to Your Account</a>
+                </div>
+            </div>
+        
+        <div class="quick-tags-wrap">
+            <div class="popular-label">Popular searches</div>
+            <a href="https://opac.mtu.edu.ng/search?q=marine+ecology" class="quick-tag">marine ecology</a>
+            <a href="https://opac.mtu.edu.ng/search?q=Irish+history" class="quick-tag">Irish history</a>
+            <a href="https://opac.mtu.edu.ng/search?q=engineering" class="quick-tag">engineering</a>
+            <a href="https://opac.mtu.edu.ng/search?q=business+management" class="quick-tag">business management</a>
+            <a href="https://opac.mtu.edu.ng/search?q=nursing" class="quick-tag">nursing</a>
+            <a href="https://opac.mtu.edu.ng/search?q=biodiversity" class="quick-tag">biodiversity</a>
+            <a href="https://opac.mtu.edu.ng/search?q=data+science" class="quick-tag">data science</a>
+        </div>
+
+        <div class="news-cards-grid">
+
+            
+            <div class="info-card blue">
+                <h3>📢 Library News</h3>
+                                    <div class="news-item">
+                        <div>
+                            <span class="news-item-title">🎓 MTU Library Services &amp; Digital Catalog Upgrade</span>
+                            <span class="news-item-date">(2026-07-29)</span>
+                        </div>
+                        <p class="news-item-body">Welcome to the updated Mountain Top University Library Catalog! Access digital databases, check holdings, place holds, and explore our collection of physical &amp; e-resources.</p>
+                    </div>
+                                    <div class="news-item">
+                        <div>
+                            <span class="news-item-title">📚 Extended Opening Hours During Exams</span>
+                            <span class="news-item-date">(2026-07-28)</span>
+                        </div>
+                        <p class="news-item-body">The Main Library will remain open from 7:30 AM to 10:00 PM on weekdays and 10:00 AM to 6:00 PM on Saturdays throughout the examination session.</p>
+                    </div>
+                                    <div class="news-item">
+                        <div>
+                            <span class="news-item-title">🌐 Access to AGORA, JSTOR &amp; Research4Life E-Databases</span>
+                            <span class="news-item-date">(2026-07-25)</span>
+                        </div>
+                        <p class="news-item-body">Students and staff can now access full-text peer-reviewed research papers and journals on campus or via student credentials.</p>
+                    </div>
+                            </div>
+
+            
+            <div class="info-card amber">
+                <h3>📚 New Arrivals</h3>
+                                    <div class="arrival-item">
+                        <img src="/images/book3.png"
+                             alt="The Culture Of The Second Cold War cover"
+                             class="arrival-cover"
+                             onerror="this.style.display='none'">
+                        <div class="arrival-info">
+                            <a href="https://opac.mtu.edu.ng/record/9208" class="arrival-title">The Culture Of The Second Cold War</a>
+                            <div class="arrival-meta">Anthem Press, 2025</div>
+                        </div>
+                    </div>
+                                    <div class="arrival-item">
+                        <img src="/images/book2.png"
+                             alt="Domestic And External Issues In International Security cover"
+                             class="arrival-cover"
+                             onerror="this.style.display='none'">
+                        <div class="arrival-info">
+                            <a href="https://opac.mtu.edu.ng/record/9207" class="arrival-title">Domestic And External Issues In International Security</a>
+                            <div class="arrival-meta">Indiana University Press, 2025</div>
+                        </div>
+                    </div>
+                                    <div class="arrival-item">
+                        <img src="/images/book1.png"
+                             alt="The Morality Of Politics[ States, Honour, And War] cover"
+                             class="arrival-cover"
+                             onerror="this.style.display='none'">
+                        <div class="arrival-info">
+                            <a href="https://opac.mtu.edu.ng/record/9206" class="arrival-title">The Morality Of Politics[ States, Honour, And War]</a>
+                            <div class="arrival-meta">Anthem Press, 2025</div>
+                        </div>
+                    </div>
+                                    <div class="arrival-item">
+                        <img src="/images/book5.png"
+                             alt="Corruption Eradication And The Nigerian Ethical Revolution cover"
+                             class="arrival-cover"
+                             onerror="this.style.display='none'">
+                        <div class="arrival-info">
+                            <a href="https://opac.mtu.edu.ng/record/9205" class="arrival-title">Corruption Eradication And The Nigerian Ethical Revolution</a>
+                            <div class="arrival-meta">Kwality Printing And Packaging Limited</div>
+                        </div>
+                    </div>
+                                    <div class="arrival-item">
+                        <img src="/images/book4.png"
+                             alt="Introduction To Conflict Resolution cover"
+                             class="arrival-cover"
+                             onerror="this.style.display='none'">
+                        <div class="arrival-info">
+                            <a href="https://opac.mtu.edu.ng/record/9204" class="arrival-title">Introduction To Conflict Resolution</a>
+                            <div class="arrival-meta">Rowman And Littlefield Intrnational Limited, 2020</div>
+                        </div>
+                    </div>
+                            </div>
+
+        </div>
+    </div>
+    </div>
+</div>
+
+<!-- ===== CART MODAL ===== -->
+<div id="cart-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:10px; width:480px; max-width:92vw; box-shadow:0 8px 30px rgba(0,0,0,0.25); overflow:hidden;">
+        <div style="background:linear-gradient(135deg, var(--navy), var(--blue-mid)); color:#fff; padding:14px 18px; display:flex; justify-content:space-between; align-items:center;">
+            <h4 style="margin:0; font-size:15px; font-weight:700;">🛒 Your Book Cart</h4>
+            <span onclick="closeCart()" style="cursor:pointer; font-size:20px; font-weight:bold;">&times;</span>
+        </div>
+        <div id="cart-items-body" style="padding:16px; max-height:340px; overflow-y:auto; font-size:13px;">
+            <!-- Cart items populated via JavaScript -->
+        </div>
+        <div style="background:#f8f9fa; padding:12px 18px; border-top:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+            <button onclick="clearCart()" style="background:#dc3545; color:#fff; border:none; padding:6px 12px; border-radius:4px; font-size:12px; cursor:pointer;">Clear Cart</button>
+            <button onclick="closeCart()" style="background:#6c757d; color:#fff; border:none; padding:6px 14px; border-radius:4px; font-size:12px; cursor:pointer;">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- ---- FOOTER ---- -->
+<div id="footer">
+    <div id="footer-inner">
+        <span>Powered by <a href="https://opac.mtu.edu.ng">Lopac</a> — Open Source Library System</span>
+        <span>&copy; 2026 Mountain Top University Library Services · All rights reserved</span>
+    </div>
+</div>
+
+<!-- ---- BOTTOM BAND ---- -->
+<div id="bottom-band"></div>
+
+<script>
+function getCart() {
+    return JSON.parse(localStorage.getItem('lopac_cart') || '[]');
+}
+
+function updateCartUI() {
+    let cart = getCart();
+    let countEls = document.querySelectorAll('#cart-count');
+    countEls.forEach(el => {
+        el.innerText = '(' + cart.length + ')';
+    });
+}
+
+function openCart() {
+    let cart = getCart();
+    let body = document.getElementById('cart-items-body');
+    if (cart.length === 0) {
+        body.innerHTML = '<div style="text-align:center; color:#777; padding:20px 0;">Your cart is currently empty. Browse the catalog to add books to your cart!</div>';
+    } else {
+        let html = '<ul style="list-style:none; padding:0; margin:0;">';
+        cart.forEach((item, index) => {
+            html += '<li style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #eee;">' +
+                        '<div>' +
+                            '<a href="/opac/record/' + item.id + '" style="font-weight:bold; color:#1b4880; text-decoration:none;">' + escapeHtml(item.title) + '</a>' +
+                        '</div>' +
+                        '<button onclick="removeFromCart(' + index + ')" style="background:#ffc107; color:#000; border:none; padding:3px 8px; border-radius:3px; font-size:11px; cursor:pointer;">🗑️ Remove</button>' +
+                    '</li>';
+        });
+        html += '</ul>';
+        body.innerHTML = html;
+    }
+    document.getElementById('cart-modal').style.display = 'flex';
+}
+
+function closeCart() {
+    document.getElementById('cart-modal').style.display = 'none';
+}
+
+function removeFromCart(index) {
+    let cart = getCart();
+    cart.splice(index, 1);
+    localStorage.setItem('lopac_cart', JSON.stringify(cart));
+    updateCartUI();
+    openCart();
+}
+
+function clearCart() {
+    localStorage.removeItem('lopac_cart');
+    updateCartUI();
+    openCart();
+}
+
+function escapeHtml(text) {
+    return text ? text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") : '';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    updateCartUI();
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Security-Policy" content="">
+			<meta charset="utf-8">
+			<meta name="author" content="PMB Group">
+
+			<meta name="keywords" content="OPAC, web, library, opensource, catalog, catalogue, bibliothèque, médiathèque, pmb, phpmybibli">
+			<meta name="description" content="Online catalogue DRKRM Library."><meta name="robots" content="all">
+			
+			<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<title>Online catalogue DRKRM Library</title>
+	
+	
+<link rel="stylesheet" type="text/css" href="./styles/common/animation_display.css?1615825938">
+<link rel="stylesheet" type="text/css" href="./styles/common/common.css?1758718758">
+<link rel="stylesheet" type="text/css" href="./styles/common/contrib.css?1673276618">
+<link rel="stylesheet" type="text/css" href="./styles/common/dGrowl.css?1657616134">
+<link rel="stylesheet" type="text/css" href="./styles/common/dsi.css?1699608113">
+<link rel="stylesheet" type="text/css" href="./styles/common/font-awesome.css?1478593624">
+<link rel="stylesheet" type="text/css" href="./styles/common/open-sans.css?1479312986">
+<link rel="stylesheet" type="text/css" href="./styles/common/pagination.css?1532013719">
+<link rel="stylesheet" type="text/css" href="./styles/common/record_display.css?1540561363">
+<link rel="stylesheet" type="text/css" href="./styles/common/visionneuse.css?1646663637">
+<link rel="stylesheet" type="text/css" href="./styles/zen/base.css?1638198092">
+<link rel="stylesheet" type="text/css" href="./styles/zen/fontAcontent.css?1456910813">
+<link rel="stylesheet" type="text/css" href="./styles/zen/zen.css?1551948582">
+<link rel="stylesheet" type="text/css" href="./styles/zen/zen_color_pre_set.css?1526368617">
+<link rel="stylesheet" type="text/css" href="./styles/zen/zonepageo_a.css?1456910813">
+<link rel="stylesheet" type="text/css" href="./styles/zen/zzen_responsive.css?1635417586"><script type="text/javascript">var opac_style= 'zen';</script>
+		<link rel="SHORTCUT ICON" href="http://nkcs.org.np/dkrml/catalog/opac_css/cms_vign.php?type=section&amp;id=62&amp;mode=large">
+	<script type="text/javascript" src="includes/javascript/drag_n_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/handle_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/popup.js"></script>
+	<script type="text/javascript">
+			// Fonction a utiliser pour l'encodage des URLs en javascript
+			function encode_URL(data){
+				var docCharSet = document.characterSet ? document.characterSet : document.charset;
+				if(docCharSet == "UTF-8"){
+	    			return encodeURIComponent(data);
+	    		}else{
+	    			return escape(data);
+	    		}
+	    	}
+	    </script>
+	<script type="text/javascript">
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName =
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i);
+				    }
+				 }
+				return items;
+			 }
+		}
+	</script>
+
+		<link rel="stylesheet" type="text/css" href="./includes/javascript/dojo/dijit/themes/tundra/tundra.css">
+		<script type="text/javascript">
+			var dojoConfig = {
+				parseOnLoad: true,
+				locale: 'en-uk',
+				isDebug: false,
+				usePlainJson: true,
+				packages: [{
+						name: 'pmbBase',
+						location:'../../../..'
+					},{
+						name: 'd3',
+						location:'../../d3'
+					}],
+				deps: ['apps/pmb/MessagesStore', 'dgrowl/dGrowl', 'dojo/ready', 'apps/pmb/ImagesStore'],
+				callback:function(MessagesStore, dGrowl, ready, ImagesStore){
+					window.pmbDojo = {};
+					pmbDojo.messages = new MessagesStore({url:'./ajax.php?module=ajax&categ=messages', directInit:false, lastModified:'1791040027'});
+					pmbDojo.images = new ImagesStore({url:'./ajax.php?module=ajax&categ=images', directInit:false});
+					ready(function(){
+						new dGrowl({'channels':[{'name':'info','pos':2},{'name':'error', 'pos':1}]});
+					});
+
+				},
+			};
+		</script>
+		<script type="text/javascript" src="./includes/javascript/dojo/dojo/dojo.js"></script>
+		<script type="text/javascript">
+		dojo.addOnLoad(function () {
+			// Ajout du theme Dojo
+			dojo.addClass(dojo.body(),'tundra');
+		})
+		</script>
+		<script type="text/javascript">
+	var pmb_img_patience = './images/patience.gif';
+</script><script type="text/javascript">
+			var opac_show_social_network =0;
+		</script>
+	<script type="text/javascript" src="./includes/javascript/http_request.js"></script>
+	
+<script>
+				dojo.addOnLoad(function (){
+					//on balance un evenement pour les initialiser les modules si besoin...
+					dojo.publish('init',['cms_dojo_init',{}]);
+				});
+			</script>
+
+		<script>
+			function cms_module_search_22_change_dest(){
+				var page = 0;
+                var universe = 0;
+                var default_segment = 0;
+				if(document.forms['cms_module_search_22_searchbox'].dest) {
+					var dests = document.forms['cms_module_search_22_searchbox'].dest;
+					for(var i = 0; i < dests.length; i++){
+    					if(dests[i].checked || dests[i].selected ){
+    						page = dests[i].getAttribute('page');
+	                        universe = dests[i].getAttribute('universe');
+	                        default_segment = dests[i].getAttribute('default_segment');
+							break;
+						}
+					}
+				}
+                if(universe > 0){
+                    if(default_segment > 0){
+                        document.forms['cms_module_search_22_searchbox'].action = './index.php?lvl=search_segment&action=segment_results&id='+default_segment;
+                    } else {
+                        document.forms['cms_module_search_22_searchbox'].action = './index.php?lvl=search_universe&id='+universe;
+                    }
+                } else if(page>0){
+					document.forms['cms_module_search_22_searchbox'].action = './index.php?lvl=cmspage&pageid='+page;
+				}
+                if (page.toString().indexOf('view_') != -1) {
+					var view_id = page.substr(5);
+				    document.forms['cms_module_search_22_searchbox'].action += '&opac_view='+view_id;
+				}
+			}
+		</script><script type="text/javascript" src="./cms/modules/common/includes/javascript/jquery-2.1.1.min.js"></script><script type="text/javascript" src="./styles/zen/uitkit/js/uikit.min.js"></script><script type="text/javascript" src="./styles/zen/uitkit/js/components/sticky.min.js"></script><script type="text/javascript" src="./styles/zen/uitkit/js/components/grid.min.js"></script><script type="text/javascript" src="./cms/modules/common/includes/javascript/jquery.bxsliderv4.min.js"></script><link rel="stylesheet" href="./styles/zen/uitkit/css/uikit.min.css"><link rel="stylesheet" href="./styles/zen/addcss/home.css"><link rel="stylesheet" href="./styles/zen/uitkit/css/components/sticky.almost-flat.min.css"><link rel="stylesheet" href="./styles/zen/addcss/calendar.css"><meta http-equiv="Content-Type" content="charset=utf-8"></head>
+
+<body onload="window.defaultStatus='PMB: Public Access';" id="pmbopac">
+		<script type="text/javascript">
+		function findNoticeElement(id){
+			var ul=null;
+			//cas des notices classiques
+			var domNotice = document.getElementById('el'+id+'Child');
+			//notice_display
+			if(!domNotice) domNotice = document.getElementById('notice');
+			if(domNotice){
+				var uls = domNotice.getElementsByTagName('ul');
+				for (var i=0 ; i<uls.length ; i++){
+					if(uls[i].getAttribute('id') == 'onglets_isbd_public'+id){
+						var ul = uls[i];
+						break;
+					}
+				}
+			} else{
+				var li = document.getElementById('onglet_isbd'+id);
+				if(!li) var li = document.getElementById('onglet_public'+id);
+				if(!li) var li = document.getElementById('onglet_detail'+id);
+				if(li) var ul = li.parentNode;
+			}
+			return ul;
+		}
+		function show_what(quoi, id) {
+			switch(quoi){
+				case 'EXPL_LOC' :
+					document.getElementById('div_expl_loc' + id).style.display = 'block';
+					document.getElementById('div_expl' + id).style.display = 'none';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_inactive';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_active';
+					break;
+				case 'EXPL' :
+					document.getElementById('div_expl_loc' + id).style.display = 'none';
+					document.getElementById('div_expl' + id).style.display = 'block';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_active';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_inactive';
+					break;
+				default :
+					quoi= quoi.toLowerCase();
+					var ul = findNoticeElement(id);
+					if (ul) {
+						var items  = ul.getElementsByTagName('li');
+						for (var i=0 ; i<items.length ; i++){
+							if(items[i].getAttribute('id')){
+								if(items[i].getAttribute('id') == 'onglet_'+quoi+id){
+									items[i].className = 'isbd_public_active';
+									document.getElementById('div_'+quoi+id).style.display = 'block';
+								}else{
+									if(items[i].className != 'onglet_tags' && items[i].className != 'onglet_avis' && items[i].className != 'onglet_sugg' && items[i].className != 'onglet_basket' && items[i].className != 'onglet_liste_lecture'){
+										items[i].className = 'isbd_public_inactive';
+										document.getElementById(items[i].getAttribute('id').replace('onglet','div')).style.display = 'none';
+									}
+								}
+							}
+						}
+					}
+					break;
+			}
+		}
+		</script>
+	<script type="text/javascript" src="./includes/javascript/tablist_ajax.js"></script>
+<script type="text/javascript" src="./includes/javascript/tablist.js"></script>
+<script type="text/javascript" src="./includes/javascript/misc.js"></script>
+	<div id="att" style="z-Index:1000"></div>
+	<div id="container"><div id="intro" fixed="yes">
+<div id="intro_bibli" fixed="yes">
+			<h3>DRKRM Library</h3>
+			<div class="p1"></div>
+			<div class="p2"></div>
+			</div>
+		<div id="cms_module_sectionslist_174" class="cms_module_sectionslist cms_module" style="visibility: visible; position: static; left: 0px; top: 0px; display: block;"><div id="offcanvas" class="uk-offcanvas">
+	<div class="uk-offcanvas-bar">
+			<div class="MenuVertResp">
+			<ul class="NavResponsive">
+			
+							<li>
+					<a href="./index.php" title="Home">Home</a>
+									</li>
+							<li>
+					<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=37" title="Catalogue">Catalogue</a>
+											<ul class="SousNavResponsive">
+				
+															<li>
+									<a href="./index.php?lvl=index" title="Simple Search">Simple Search</a>
+								</li>
+															<li>
+									<a href="./index.php?search_type_asked=perio_a2z" title="Periodicals">Periodicals</a>
+								</li>
+													</ul>
+									</li>
+							<li>
+					<a href="https://nkcs.org.np/dkrml/elibrary/" target="_blank" title="E-library">E-library</a>
+									</li>
+							<li>
+					<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=7" title="New Additions">New Additions</a>
+									</li>
+							<li>
+					<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=4" title="About the library">About the library</a>
+									</li>
+						</ul>
+		</div>
+		</div>
+</div></div><div id="cms_module_htmlcode_176" class="cms_module_htmlcode cms_module" style="visibility: visible; position: static; left: 0px; top: 0px; display: block;"><div class="TglUser " data-uk-button>
+	<a class="Tgllogin" data-uk-toggle="{target:'#connexion', cls:'heightZero'}">
+		<span class="user"><i class="fa fa-user"></i></span>
+	</a>
+</div></div><div id="cms_module_htmlcode_175" class="cms_module_htmlcode cms_module" style="visibility: visible; position: static; left: 0px; top: 0px;"><div id="btnMenu" class="temp">
+	<div class="tgLbtnMenu">
+		<a class="MenuCanvas uk-button" href="#offcanvas" data-uk-offcanvas><i class="fa fa-bars"></i></a>
+	</div>
+</div></div><div id="cms_module_htmlcode_178" class="cms_module_htmlcode cms_module" style="visibility: visible; position: static; left: 0px; top: 0px;"><div class="TgllSearch" data-uk-button>
+	<a data-uk-toggle="{target:'.searchbox', cls:'heightZero'}">
+		<span class="user"><i class="fa fa-search"></i></span>
+	</a>
+</div></div><div id="cms_module_section_177" class="cms_module_section cms_module" style="visibility: visible; display: block; position: static; left: 0px; top: 0px;"><div class="uk-grid uk-grid-collapse" data-uk-grid-match="{target:'.titrePortail'}" data-uk-grid-margin>
+	<div class="uk-width-1-3">
+        <div id="logo" class="titrePortail">
+            <a href="./index.php" title="DRKRM Library"><img src="https://nkcs.org.np/dkrml/catalog/opac_css/cms_vign.php?type=section&amp;id=62&amp;database=dkrml&amp;mode=large" alt="DRKRM Library"></a>
+        </div>
+    </div>
+	<div class="uk-width-2-3"> 
+        <div id="titrePortail" class="titrePortail">
+            <h1>
+                <span class="mainTitle">DRKRM Library</span>
+                <span class="subTitle">Online Catalog</span>
+            </h1>
+        </div>
+     </div>        
+</div></div><div id="cms_module_section_173" class="cms_module_section cms_module" style="visibility: visible; position: static; left: 0px; top: 0px;"><div id="Introbandeau"><img src="https://nkcs.org.np/dkrml/catalog/opac_css/cms_vign.php?type=section&amp;id=79&amp;database=dkrml&amp;mode=large" alt="Photo bandeau superieur"></div>
+</div><div id="cms_module_section_125" class="cms_module_section cms_module" style="visibility: visible; display: none; left: auto; top: auto; height: 157px; width: 1024px; margin: 0px; padding: 0px; float: none; position: static;"><div id="logo">
+	<a href="./index.php" title="DRKRM Library"><img src="https://nkcs.org.np/dkrml/catalog/opac_css/cms_vign.php?type=section&amp;id=62&amp;database=dkrml&amp;mode=large" alt="DRKRM Library"></a>
+</div></div><div id="cms_module_metadatas_172" class="cms_module_metadatas cms_module" style="visibility: visible; display: block;"></div><div id="cms_module_section_126" class="cms_module_section cms_module" style="visibility: visible; display: none; left: auto; top: auto; height: 160px; width: 1024px; margin: 0px; padding: 0px; float: none; position: static;"><div id="titrePortail">
+	<h1>
+        <span class="mainTitle">DRKRM Library</span>
+        <span class="subTitle">Online Catalog</span>
+	</h1>
+</div></div><div id="cms_module_htmlcode_137" class="cms_module_htmlcode cms_module"><div class="clear"></div></div><div id="cms_module_sectionslist_120" class="cms_module_sectionslist cms_module" style="visibility: visible; display: block;"><div class="uk-flex uk-flex-center uk-hidden-small uk-hidden-medium">
+    <div class="MenuHoriz uk-navbar uk-container">
+        <ul class="Nav uk-navbar-nav">
+        
+                    <li>
+                <a href="./index.php" title="Home">Home</a>
+                            </li>
+                    <li class="uk-parent" data-uk-dropdown="{pos:'bottom-center',remaintime:'550'}">
+                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=37" title="Catalogue">Catalogue</a>
+                                <div class="uk-dropdown uk-dropdown-navbar">
+                    <ul class="SousNav uk-nav uk-nav-navbar">
+			
+                                                    <li>
+                                <a href="./index.php?lvl=index">Simple Search</a>
+                            </li>
+                                                    <li>
+                                <a href="./index.php?search_type_asked=perio_a2z">Periodicals</a>
+                            </li>
+                                            </ul>
+                </div>      
+                            </li>
+                    <li>
+                <a href="https://nkcs.org.np/dkrml/elibrary/" target="_blank" title="E-library">E-library</a>
+                            </li>
+                    <li>
+                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=7" title="New Additions">New Additions</a>
+                            </li>
+                    <li>
+                <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=4" title="About the library">About the library</a>
+                            </li>
+                </ul>
+    </div>
+</div>    
+</div></div><div id="main" style="position: static; left: 0px; top: 0px;" fixed="yes"><div id="main_header"></div><div id="main_hors_footer">
+						
+
+<script type="text/javascript" src="./includes/javascript/auth_popup.js"></script>
+<script type="text/javascript" src="./includes/javascript/pnb.js"></script><div id="cms_module_htmlcode_170" class="cms_module_htmlcode cms_module"><div id="boutonRetour">
+<a href="javascript:history.go(-1)" title="Retour">&gt;&gt; Return</a>
+</div>
+<div class="clear"></div> </div><div id="add_div_cms_module_articleslist_21" class="row"></div><div id="navigator" fixed="yes">
+<table style="width:100%"><tr><td class="navig_actions_last_search"><a href="index.php?lvl=search_result&amp;get_query=1" class="actions_last_search"><span>Update search</span></a></td>
+<td class="navig_actions_history"><a href="index.php?lvl=search_history" class="actions_history"><span>Search history</span></a></td>
+<td class="navig_actions_first_screen"><a href="./index.php?lvl=index" class="avec_recherches"><span>Home</span></a></td>
+</tr></table></div><div id="intro_message"><div class="p2"></div></div>
+<input type="hidden" id="author_type" name="author_type" value=""><input type="hidden" id="id_thes" name="id_thes" value=""><div id="resultatrech" style="position: static; left: 0px; top: 0px;"><h3 class="searchResult-title">Search results</h3>
+				<div id="resultatrech_container">
+				    <div id="resultatrech_see"><h3 class="searchResult-search">
+				<span class="searchResult-equation">
+					<b>24</b>  title(s) found <b>
+					'Ancient Nepal'</b></span>   <img style="border:0px" class="center" src="./images/text_horizontalrule.png" onmouseover="this.style.cursor='pointer'" alt="Highlight searched words" title="Highlight searched words" onclick="document.form_values.surligne.value=1;document.form_values.submit();" loading="lazy"></h3>
+
+					</div><div id="resultatrech_liste"><span class="expandAll"><a href="javascript:expandAll_ajax(1);"><img class="img_plusplus" src="./images/expand_all.gif" style="border:0px" id="expandall" loading="lazy"></a></span><span class="espaceResultSearch"> </span><span class="collapseAll"><a href="javascript:collapseAll()"><img class="img_moinsmoins" src="./images/collapse_all.gif" style="border:0px" id="collapseall" loading="lazy"></a></span><span class="print_search_result"><span class="printSearchResult">
+<a href="#" onclick="openPopUp('./print.php?lvl=search&amp;current_search=0','print'); w.focus(); return false;" title="Print the current search page...">
+	<img src="./images/print.gif" style="border:0px" class="align_bottom" alt="Print the current search page..." loading="lazy">
+</a>
+</span></span><span class="espaceResultSearch"> </span><script type="text/javascript" src="./includes/javascript/select.js"></script>
+						<script>
+							var ajax_get_sort=new http_request();
+
+							function get_sort_content(del_sort, ids) {
+								var url = './ajax.php?module=ajax&categ=sort&sub=get_sort&raz_sort='+(typeof(del_sort) != 'undefined' ? del_sort : '')+'&suppr_ids='+(typeof(ids) != 'undefined' ? ids : '')+'&page_en_cours=lvl%3Dmore_results%26autolevel1%3D1&sort_name=notices';
+								ajax_get_sort.request(url,0,'',1,show_sort_content,0,0);
+							}
+
+							function show_sort_content(response) {
+								document.getElementById('frame_notice_preview').innerHTML=ajax_get_sort.get_text();
+								var tags = document.getElementById('frame_notice_preview').getElementsByTagName('script');
+					       		for(var i=0;i<tags.length;i++){
+									window.eval(tags[i].text);
+					        	}
+							}
+							function kill_sort_frame() {
+								var sort_view=document.getElementById('frame_notice_preview');
+								if (sort_view) {
+									sort_view.parentNode.removeChild(sort_view);
+								}
+
+								const container = document.getElementById('container');
+								if(container) {
+									container.onmousedown = '';
+								}
+							
+								document.onmousedown = '';
+							}
+						</script>
+					<span class="triSelector">
+							<a onclick="show_layer(); get_sort_content();" title="Sort available" style="cursor : pointer;">
+                                <img src="./images/orderby_az.gif" alt="Sort available" class="align_bottom" hspace="3" style="border:0px" id="sort_icon" loading="lazy">
+						</a>
+					</span><span class="espaceResultSearch">  </span><span class="affiner_recherche"><a href="./index.php?search_type_asked=extended_search&amp;mode_aff=aff_simple_search" title="Refine your search">Refine your search</a></span><span class="espaceResultSearch">  </span><span class="short_url"><a target="_blank" href="https://nkcs.org.np/dkrml/catalog/opac_css/s.php?h=6faea78cb957d512222138d1b0f5d439" title="Generate the RSS feed of the search">Generate the RSS feed of the search</a></span>
+					<script type="text/javascript">
+						require(['dojo/on', 'dojo/topic', 'apps/pmb/sharelink/SharePopup'], function(on, topic, SharePopup){
+						window.copy_shorturl_to_clipboard = function() {
+								new SharePopup('https://nkcs.org.np/dkrml/catalog/opac_css/s.php?h=95a7315581afcef5109538686cf6473d');
+							}					
+						});
+					</script><span class="espaceResultSearch">  </span><span class="short_url_permalink"><a href="#" onclick="copy_shorturl_to_clipboard(); return false;" title="Search permalink">Search permalink</a></span><blockquote>
+			<div id="el3673Parent" class="notice-parent">
+			
+			<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el3673Img" title="details" alt="details" style="border:0px" onclick="expandBase('el3673', true);  return false;" hspace="3" loading="lazy"><img src="https://nkcs.org.np/dkrml/catalog/opac_css/images/icon_a_16x16.gif" alt="Monograph: printed text" title="Monograph: printed text" loading="lazy">
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_3673"><span class="statutnot1"></span><span notice="3673" class="header_title">Ancient Nepal</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=1200">D.R. Regmi</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Ancient%20Nepal&amp;rft.title=Ancient%20Nepal&amp;rft.tpages=p.%20214%20%2C%20ill.&amp;rft.date=1960&amp;rft_id=&amp;rft.pub=Firma%20K.L.%20Mukhopadhyay&amp;rft.place=Calcutta&amp;rft.au=D.R.%20Regmi&amp;rft.aulast=Regmi&amp;rft.aufirst=D.R."></span></span>
+	    		<br>
+				</div>
+				<div id="el3673Child" class="notice-child" style="margin-bottom:6px;display:none;" token="8e0b96b759ca922b0d96a306b1eeb586" datetime="1794729339"><table style="width:100%"><tr><td style="vertical-align:top">
+		<ul id="onglets_isbd_public3673" class="onglets_isbd_public">
+	  			<li id="onglet_public3673" class="isbd_public_active"><a href="#" title="Public" onclick="show_what('PUBLIC', '3673'); return false;">Public</a></li>
+				<li id="onglet_isbd3673" class="isbd_public_inactive"><a href="#" title="ISBD" onclick="show_what('ISBD', '3673'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class="row"></div>
+					<div id="div_public3673" style="display:block;"><table><tr class="tr_title">
+					<td class="align_right bg-grey"><span class="etiq_champ">Title :</span></td>
+					<td class="public_line_value"><span class="public_title">Ancient Nepal</span></td>
+				</tr><tr class="tr_typdoc">
+					<td class="align_right bg-grey"><span class="etiq_champ">Material Type: </span></td>
+					<td class="public_line_value"><span class="public_typdoc">printed text</span></td>
+				</tr><tr class="tr_auteurs">
+					<td class="align_right bg-grey"><span class="etiq_champ">Authors: </span></td>
+					<td class="public_line_value"><span class="public_auteurs"><a href="./index.php?lvl=author_see&amp;id=1200">D.R. Regmi</a></span></td>
+				</tr><tr class="tr_ed1">
+					<td class="align_right bg-grey"><span class="etiq_champ">Publisher:</span></td>
+					<td class="public_line_value"><span class="public_ed1"><a href="./index.php?lvl=publisher_see&amp;id=833">Calcutta : Firma K.L. Mukhopadhyay</a></span></td>
+				</tr><tr class="tr_year">
+					<td class="align_right bg-grey"><span class="etiq_champ">Publication Date: </span></td>
+					<td class="public_line_value"><span class="public_year">1960</span></td>
+				</tr><tr class="tr_npages">
+					<td class="align_right bg-grey"><span class="etiq_champ">Pagination: </span></td>
+					<td class="public_line_value"><span class="public_npages">p. 214 , ill.</span></td>
+				</tr><tr class="tr_keywords">
+					<td class="align_right bg-grey"><span class="etiq_champ">Keywords: </span></td>
+					<td class="public_line_value"><span class="public_keywords"><a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=History&amp;tags=ok">History</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Ancient+history&amp;tags=ok">Ancient history</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Nepal&amp;tags=ok">Nepal</a></span></td>
+				</tr><tr class="tr_indexint">
+					<td class="align_right bg-grey"><span class="etiq_champ">Class number: </span></td>
+					<td class="public_line_value"><span class="public_indexint"><a href="./index.php?lvl=indexint_see&amp;id=59">954.9</a> <span></span></span></td>
+				</tr></table>
+</div>
+					<div id="div_isbd3673" style="display:none;">Ancient Nepal [printed text] / <a href="./index.php?lvl=author_see&amp;id=1200">D.R. Regmi</a> . - <a href="./index.php?lvl=publisher_see&amp;id=833">Calcutta : Firma K.L. Mukhopadhyay</a>, 1960 . - p. 214 , ill.<table><tr class="tr_keywords">
+					<td class="align_right bg-grey"><span class="etiq_champ">Keywords: </span></td>
+					<td class="public_line_value"><span class="public_keywords"><a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=History&amp;tags=ok">History</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Ancient+history&amp;tags=ok">Ancient history</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Nepal&amp;tags=ok">Nepal</a></span></td>
+				</tr><tr class="tr_indexint">
+					<td class="align_right bg-grey"><span class="etiq_champ">Class number: </span></td>
+					<td class="public_line_value"><span class="public_indexint"><a href="./index.php?lvl=indexint_see&amp;id=59">954.9</a> <span></span></span></td>
+				</tr></table></div></td><td class="align_right" style="vertical-align:top"><img class="vignetteimg align_right" src="https://nkcs.org.np/dkrml/catalog/opac_css/images/vide.png" title="Ancient Nepal" hspace="4" vspace="2" vigurl="https://nkcs.org.np/dkrml/catalog/opac_css/thumbnail.php?type=1&amp;id=3673" alt="thumbnail" loading="lazy"></td></tr></table>
+					
+<h3>
+	<span id="titre_exemplaires" class="titre_exemplaires">
+		Copies(0)
+	</span>
+</h3>
+	
+<table cellpadding="2" class="exemplaires" style="width:100%">
+		<tr class="thead">
+				<th class="expl_header_statut">Status</th>
+	</tr>
+			<tr class="even">
+			<td colspan="6">No copy</td>
+		</tr>
+	</table></div>
+			<div id="el3877Parent" class="notice-parent">
+			
+			<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el3877Img" title="details" alt="details" style="border:0px" onclick="expandBase('el3877', true);  return false;" hspace="3" loading="lazy"><img src="https://nkcs.org.np/dkrml/catalog/opac_css/images/icon_a_16x16.gif" alt="Monograph: printed text" title="Monograph: printed text" loading="lazy">
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_3877"><span class="statutnot1"></span><span notice="3877" class="header_title">Ancient Nepal</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=1200">D.R. Regmi</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Ancient%20Nepal&amp;rft.title=Ancient%20Nepal&amp;rft.tpages=p.%20xxiii%3B%20364%20ill&amp;rft.date=1969&amp;rft_id=&amp;rft.pub=Firma%20K.L.%20Mukhopadhyay&amp;rft.place=Calcutta&amp;rft.au=D.R.%20Regmi&amp;rft.aulast=Regmi&amp;rft.aufirst=D.R."></span></span>
+	    		<br>
+				</div>
+				<div id="el3877Child" class="notice-child" style="margin-bottom:6px;display:none;" token="68197b0d93996333d6b3ec8851b33afd" datetime="1794729339"><table style="width:100%"><tr><td style="vertical-align:top">
+		<ul id="onglets_isbd_public3877" class="onglets_isbd_public">
+	  			<li id="onglet_public3877" class="isbd_public_active"><a href="#" title="Public" onclick="show_what('PUBLIC', '3877'); return false;">Public</a></li>
+				<li id="onglet_isbd3877" class="isbd_public_inactive"><a href="#" title="ISBD" onclick="show_what('ISBD', '3877'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class="row"></div>
+					<div id="div_public3877" style="display:block;"><table><tr class="tr_title">
+					<td class="align_right bg-grey"><span class="etiq_champ">Title :</span></td>
+					<td class="public_line_value"><span class="public_title">Ancient Nepal</span></td>
+				</tr><tr class="tr_typdoc">
+					<td class="align_right bg-grey"><span class="etiq_champ">Material Type: </span></td>
+					<td class="public_line_value"><span class="public_typdoc">printed text</span></td>
+				</tr><tr class="tr_auteurs">
+					<td class="align_right bg-grey"><span class="etiq_champ">Authors: </span></td>
+					<td class="public_line_value"><span class="public_auteurs"><a href="./index.php?lvl=author_see&amp;id=1200">D.R. Regmi</a></span></td>
+				</tr><tr class="tr_ed1">
+					<td class="align_right bg-grey"><span class="etiq_champ">Publisher:</span></td>
+					<td class="public_line_value"><span class="public_ed1"><a href="./index.php?lvl=publisher_see&amp;id=833">Calcutta : Firma K.L. Mukhopadhyay</a></span></td>
+				</tr><tr class="tr_year">
+					<td class="align_right bg-grey"><span class="etiq_champ">Publication Date: </span></td>
+					<td class="public_line_value"><span class="public_year">1969</span></td>
+				</tr><tr class="tr_npages">
+					<td class="align_right bg-grey"><span class="etiq_champ">Pagination: </span></td>
+					<td class="public_line_value"><span class="public_npages">p. xxiii; 364 ill</span></td>
+				</tr><tr class="tr_keywords">
+					<td class="align_right bg-grey"><span class="etiq_champ">Keywords: </span></td>
+					<td class="public_line_value"><span class="public_keywords"><a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=History&amp;tags=ok">History</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Ancient+history&amp;tags=ok">Ancient history</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Nepal&amp;tags=ok">Nepal</a></span></td>
+				</tr><tr class="tr_indexint">
+					<td class="align_right bg-grey"><span class="etiq_champ">Class number: </span></td>
+					<td class="public_line_value"><span class="public_indexint"><a href="./index.php?lvl=indexint_see&amp;id=59">954.9</a> <span></span></span></td>
+				</tr></table>
+</div>
+					<div id="div_isbd3877" style="display:none;">Ancient Nepal [printed text] / <a href="./index.php?lvl=author_see&amp;id=1200">D.R. Regmi</a> . - <a href="./index.php?lvl=publisher_see&amp;id=833">Calcutta : Firma K.L. Mukhopadhyay</a>, 1969 . - p. xxiii; 364 ill.<table><tr class="tr_keywords">
+					<td class="align_right bg-grey"><span class="etiq_champ">Keywords: </span></td>
+					<td class="public_line_value"><span class="public_keywords"><a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=History&amp;tags=ok">History</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Ancient+history&amp;tags=ok">Ancient history</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Nepal&amp;tags=ok">Nepal</a></span></td>
+				</tr><tr class="tr_indexint">
+					<td class="align_right bg-grey"><span class="etiq_champ">Class number: </span></td>
+					<td class="public_line_value"><span class="public_indexint"><a href="./index.php?lvl=indexint_see&amp;id=59">954.9</a> <span></span></span></td>
+				</tr></table></div></td><td class="align_right" style="vertical-align:top"><img class="vignetteimg align_right" src="https://nkcs.org.np/dkrml/catalog/opac_css/images/vide.png" title="Ancient Nepal" hspace="4" vspace="2" vigurl="https://nkcs.org.np/dkrml/catalog/opac_css/thumbnail.php?type=1&amp;id=3877" alt="thumbnail" loading="lazy"></td></tr></table>
+					
+<h3>
+	<span id="titre_exemplaires" class="titre_exemplaires">
+		Copies(0)
+	</span>
+</h3>
+	
+<table cellpadding="2" class="exemplaires" style="width:100%">
+		<tr class="thead">
+				<th class="expl_header_statut">Status</th>
+	</tr>
+			<tr class="even">
+			<td colspan="6">No copy</td>
+		</tr>
+	</table></div>
+			<div id="el13531Parent" class="notice-parent">
+			
+			<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el13531Img" title="details" alt="details" style="border:0px" onclick="expandBase('el13531', true);  return false;" hspace="3" loading="lazy"><img src="https://nkcs.org.np/dkrml/catalog/opac_css/images/icon_a_16x16.gif" alt="Monograph: printed text" title="Monograph: printed text" loading="lazy">
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_13531"><span class="statutnot1"></span><span notice="13531" class="header_title">Ancient Nepal</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=458">D. R. Regmi</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Ancient%20Nepal&amp;rft.title=Ancient%20Nepal&amp;rft.isbn=978-81-291-1098-5&amp;rft.tpages=395%20p.&amp;rft.date=2007&amp;rft_id=https%3A%2F%2Fnkcs.org.np%2Fdkrml%2Felibrary%2F%3Fr%3D2&amp;rft.pub=Rupa%20and%20co&amp;rft.place=New%20Delhi&amp;rft.edition=3d%20ed.&amp;rft.au=D.%20R.%20Regmi&amp;rft.aulast=Regmi&amp;rft.aufirst=D.%20R."></span></span>
+			 <span class="notice_link">
+			<a href="https://nkcs.org.np/dkrml/elibrary/?r=2" target="_blank" type="external_url_notice">
+				<img src="https://nkcs.org.np/dkrml/catalog/opac_css/styles/zen/images/globe.gif" style="border:0px" class="align_middle" hspace="3" alt="Open link" title="Open link" loading="lazy">
+			</a></span>
+	    		<br>
+				</div>
+				<div id="el13531Child" class="notice-child" style="margin-bottom:6px;display:none;" token="32128aabeeefc7400fb08432d3188e38" datetime="1794729339"><table style="width:100%"><tr><td style="vertical-align:top">
+		<ul id="onglets_isbd_public13531" class="onglets_isbd_public">
+	  			<li id="onglet_public13531" class="isbd_public_active"><a href="#" title="Public" onclick="show_what('PUBLIC', '13531'); return false;">Public</a></li>
+				<li id="onglet_isbd13531" class="isbd_public_inactive"><a href="#" title="ISBD" onclick="show_what('ISBD', '13531'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class="row"></div>
+					<div id="div_public13531" style="display:block;"><table><tr class="tr_title">
+					<td class="align_right bg-grey"><span class="etiq_champ">Title :</span></td>
+					<td class="public_line_value"><span class="public_title">Ancient Nepal</span></td>
+				</tr><tr class="tr_typdoc">
+					<td class="align_right bg-grey"><span class="etiq_champ">Material Type: </span></td>
+					<td class="public_line_value"><span class="public_typdoc">printed text</span></td>
+				</tr><tr class="tr_auteurs">
+					<td class="align_right bg-grey"><span class="etiq_champ">Authors: </span></td>
+					<td class="public_line_value"><span class="public_auteurs"><a href="./index.php?lvl=author_see&amp;id=458">D. R. Regmi</a>, Author</span></td>
+				</tr><tr class="tr_mention">
+					<td class="align_right bg-grey"><span class="etiq_champ">Edition statement:</span></td>
+					<td class="public_line_value"><span class="public_mention">3d ed.</span></td>
+				</tr><tr class="tr_ed1">
+					<td class="align_right bg-grey"><span class="etiq_champ">Publisher:</span></td>
+					<td class="public_line_value"><span class="public_ed1"><a href="./index.php?lvl=publisher_see&amp;id=2361">New Delhi : Rupa and co</a></span></td>
+				</tr><tr class="tr_year">
+					<td class="align_right bg-grey"><span class="etiq_champ">Publication Date: </span></td>
+					<td class="public_line_value"><span class="public_year">2007</span></td>
+				</tr><tr class="tr_ed2">
+					<td class="align_right bg-grey"><span class="etiq_champ">Other publisher:</span></td>
+					<td class="public_line_value"><span class="public_ed2"><a href="./index.php?lvl=publisher_see&amp;id=6825">Dilli Raman Regmi Memorial Library</a></span></td>
+				</tr><tr class="tr_npages">
+					<td class="align_right bg-grey"><span class="etiq_champ">Pagination: </span></td>
+					<td class="public_line_value"><span class="public_npages">395 p.</span></td>
+				</tr><tr class="tr_code">
+					<td class="align_right bg-grey"><span class="etiq_champ">ISBN (or other code): </span></td>
+					<td class="public_line_value"><span class="public_code">978-81-291-1098-5</span></td>
+				</tr><tr class="tr_ngen">
+					<td class="align_right bg-grey"><span class="etiq_champ">General note: </span></td>
+					<td class="public_line_value"><span class="public_ngen">First published 1965</span></td>
+				</tr><tr class="tr_langues">
+					<td class="align_right bg-grey"><span class="etiq_champ">Languages :</span></td>
+					<td class="public_line_value"><span class="public_langues">English (<i>eng</i>)</span></td>
+				</tr><tr class="tr_keywords">
+					<td class="align_right bg-grey"><span class="etiq_champ">Keywords: </span></td>
+					<td class="public_line_value"><span class="public_keywords"><a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=History&amp;tags=ok">History</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Nepal&amp;tags=ok">Nepal</a></span></td>
+				</tr><tr class="tr_lien">
+					<td class="align_right bg-grey"><span class="etiq_champ">Link for e-copy: </span></td>
+					<td class="public_line_value"><span class="public_lien"><a href="https://nkcs.org.np/dkrml/elibrary/?r=2" target="top" class="lien856" type="external_url_notice">https://nkcs.org.np/dkrml/elibrary/?r=2</a></span></td>
+				</tr></table>
+</div>
+					<div id="div_isbd13531" style="display:none;">Ancient Nepal [printed text] / <a href="./index.php?lvl=author_see&amp;id=458">D. R. Regmi</a>, Author  . -  3d ed. . - <a href="./index.php?lvl=publisher_see&amp;id=2361">New Delhi : Rupa and co</a> : <a href="./index.php?lvl=publisher_see&amp;id=6825">Dilli Raman Regmi Memorial Library</a>, 2007 . - 395 p.<br><b>ISBN</b> : 978-81-291-1098-5<br>First published 1965<br><span class="etiq_champ">Languages</span> : English (<i>eng</i>)<table><tr class="tr_keywords">
+					<td class="align_right bg-grey"><span class="etiq_champ">Keywords: </span></td>
+					<td class="public_line_value"><span class="public_keywords"><a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=History&amp;tags=ok">History</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Nepal&amp;tags=ok">Nepal</a></span></td>
+				</tr><tr class="tr_lien">
+					<td class="align_right bg-grey"><span class="etiq_champ">Link for e-copy: </span></td>
+					<td class="public_line_value"><span class="public_lien"><a href="https://nkcs.org.np/dkrml/elibrary/?r=2" target="top" class="lien856" type="external_url_notice">https://nkcs.org.np/dkrml/elibrary/?r=2</a></span></td>
+				</tr></table></div></td><td class="align_right" style="vertical-align:top"><img class="vignetteimg align_right" src="https://nkcs.org.np/dkrml/catalog/opac_css/images/vide.png" title="Ancient Nepal" hspace="4" vspace="2" vigurl="https://nkcs.org.np/dkrml/catalog/opac_css/thumbnail.php?type=1&amp;id=13531" alt="thumbnail" loading="lazy"></td></tr></table>
+					
+<h3>
+	<span id="titre_exemplaires" class="titre_exemplaires">
+		Copies(0)
+	</span>
+</h3>
+	
+<table cellpadding="2" class="exemplaires" style="width:100%">
+		<tr class="thead">
+				<th class="expl_header_statut">Status</th>
+	</tr>
+			<tr class="even">
+			<td colspan="6">No copy</td>
+		</tr>
+	</table></div>
+			<div id="el13248Parent" class="notice-parent">
+			
+			<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el13248Img" title="details" alt="details" style="border:0px" onclick="expandBase('el13248', true);  return false;" hspace="3" loading="lazy"><img src="https://nkcs.org.np/dkrml/catalog/opac_css/images/icon_a_16x16.gif" alt="Monograph: printed text" title="Monograph: printed text" loading="lazy">
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_13248"><span class="statutnot1"></span><span notice="13248" class="header_title">Ancient bronzes of Nepal: A catalogue of the sculptures and jewelry from the Changu Narayan temple</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=10739">Khanal, Mohan Prasad</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Ancient%20bronzes%20of%20Nepal%3A%20A%20catalogue%20of%20the%20sculptures%20and%20jewelry%20from%20the%20Changu%20Narayan%20temple&amp;rft.title=Ancient%20bronzes%20of%20Nepal%3A%20A%20catalogue%20of%20the%20sculptures%20and%20jewelry%20from%20the%20Changu%20Narayan%20temple&amp;rft.isbn=978-9937-715-30-0&amp;rft.tpages=302p.%3B%20photos&amp;rft.date=2018&amp;rft_id=&amp;rft.pub=Kathmandu%3A%20Vidarthi%20Pustak%20Bhandar&amp;rft.au=Khanal%2C%20Mohan%20Prasad&amp;rft.aulast=Khanal%2C%20Mohan%20Prasad&amp;rft.aufirst="></span></span>
+	    		<br>
+				</div>
+				<div id="el13248Child" class="notice-child" style="margin-bottom:6px;display:none;" token="a180a37bd136fd582cbbc39cc479d15d" datetime="1794729339"><table style="width:100%"><tr><td style="vertical-align:top">
+		<ul id="onglets_isbd_public13248" class="onglets_isbd_public">
+	  			<li id="onglet_public13248" class="isbd_public_active"><a href="#" title="Public" onclick="show_what('PUBLIC', '13248'); return false;">Public</a></li>
+				<li id="onglet_isbd13248" class="isbd_public_inactive"><a href="#" title="ISBD" onclick="show_what('ISBD', '13248'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class="row"></div>
+					<div id="div_public13248" style="display:block;"><table><tr class="tr_title">
+					<td class="align_right bg-grey"><span class="etiq_champ">Title :</span></td>
+					<td class="public_line_value"><span class="public_title">Ancient bronzes of Nepal: A catalogue of the sculptures and jewelry from the Changu Narayan temple</span></td>
+				</tr><tr class="tr_typdoc">
+					<td class="align_right bg-grey"><span class="etiq_champ">Material Type: </span></td>
+					<td class="public_line_value"><span class="public_typdoc">printed text</span></td>
+				</tr><tr class="tr_auteurs">
+					<td class="align_right bg-grey"><span class="etiq_champ">Authors: </span></td>
+					<td class="public_line_value"><span class="public_auteurs"><a href="./index.php?lvl=author_see&amp;id=10739">Khanal, Mohan Prasad</a>, Author</span></td>
+				</tr><tr class="tr_ed1">
+					<td class="align_right bg-grey"><span class="etiq_champ">Publisher:</span></td>
+					<td class="public_line_value"><span class="public_ed1"><a href="./index.php?lvl=publisher_see&amp;id=6741">Kathmandu: Vidarthi Pustak Bhandar</a></span></td>
+				</tr><tr class="tr_year">
+					<td class="align_right bg-grey"><span class="etiq_champ">Publication Date: </span></td>
+					<td class="public_line_value"><span class="public_year">2018</span></td>
+				</tr><tr class="tr_npages">
+					<td class="align_right bg-grey"><span class="etiq_champ">Pagination: </span></td>
+					<td class="public_line_value"><span class="public_npages">302p.; photos</span></td>
+				</tr><tr class="tr_code">
+					<td class="align_right bg-grey"><span class="etiq_champ">ISBN (or other code): </span></td>
+					<td class="public_line_value"><span class="public_code">978-9937-715-30-0</span></td>
+				</tr><tr class="tr_langues">
+					<td class="align_right bg-grey"><span class="etiq_champ">Languages :</span></td>
+					<td class="public_line_value"><span class="public_langues">English (<i>eng</i>)</span></td>
+				</tr><tr class="tr_keywords">
+					<td class="align_right bg-grey"><span class="etiq_champ">Keywords: </span></td>
+					<td class="public_line_value"><span class="public_keywords"><a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Arts&amp;tags=ok">Arts</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Sculptures&amp;tags=ok">Sculptures</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Jewelry&amp;tags=ok">Jewelry</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Catalogue&amp;tags=ok">Catalogue</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Temple&amp;tags=ok">Temple</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Changu+Narayan+Temple&amp;tags=ok">Changu Narayan Temple</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Nepal&amp;tags=ok">Nepal</a></span></td>
+				</tr><tr class="tr_indexint">
+					<td class="align_right bg-grey"><span class="etiq_champ">Class number: </span></td>
+					<td class="public_line_value"><span class="public_indexint"><a href="./index.php?lvl=indexint_see&amp;id=1700">739.512095496</a> <span></span></span></td>
+				</tr></table>
+</div>
+					<div id="div_isbd13248" style="display:none;">Ancient bronzes of Nepal: A catalogue of the sculptures and jewelry from the Changu Narayan temple [printed text] / <a href="./index.php?lvl=author_see&amp;id=10739">Khanal, Mohan Prasad</a>, Author . - <a href="./index.php?lvl=publisher_see&amp;id=6741">Kathmandu: Vidarthi Pustak Bhandar</a>, 2018 . - 302p.; photos.<br><b>ISBN</b> : 978-9937-715-30-0<br><span class="etiq_champ">Languages</span> : English (<i>eng</i>)<table><tr class="tr_keywords">
+					<td class="align_right bg-grey"><span class="etiq_champ">Keywords: </span></td>
+					<td class="public_line_value"><span class="public_keywords"><a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Arts&amp;tags=ok">Arts</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Sculptures&amp;tags=ok">Sculptures</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Jewelry&amp;tags=ok">Jewelry</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Catalogue&amp;tags=ok">Catalogue</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Temple&amp;tags=ok">Temple</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Changu+Narayan+Temple&amp;tags=ok">Changu Narayan Temple</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Nepal&amp;tags=ok">Nepal</a></span></td>
+				</tr><tr class="tr_indexint">
+					<td class="align_right bg-grey"><span class="etiq_champ">Class number: </span></td>
+					<td class="public_line_value"><span class="public_indexint"><a href="./index.php?lvl=indexint_see&amp;id=1700">739.512095496</a> <span></span></span></td>
+				</tr></table></div></td><td class="align_right" style="vertical-align:top"><img class="vignetteimg align_right" src="https://nkcs.org.np/dkrml/catalog/opac_css/images/vide.png" title="Ancient bronzes of Nepal: A catalogue of the sculptures and jewelry from the Changu Narayan temple" hspace="4" vspace="2" vigurl="https://nkcs.org.np/dkrml/catalog/opac_css/thumbnail.php?type=1&amp;id=13248" alt="thumbnail" loading="lazy"></td></tr></table>
+					<h3>Hold</h3><a href="#" onclick="if(confirm('Do you really want to place a hold on this document ?')){w=window.open('./do_resa.php?lvl=resa&amp;id_notice=13248&amp;id_bulletin=0&amp;oresa=popup','doresa','scrollbars=yes,width=500,height=600,menubar=0,resizable=yes'); w.focus(); return false;}else return false;" id="bt_resa">Place a hold on this item</a><br>
+<h3>
+	<span id="titre_exemplaires" class="titre_exemplaires">
+		Copies(1)
+	</span>
+</h3>
+	
+<table cellpadding="2" class="exemplaires" style="width:100%">
+		<tr class="thead">
+									<th class="expl_header_expl_cb">Barcode</th>
+						
+																																																																	<th class="expl_header_expl_cote">Call number</th>
+						
+																																																																	<th class="expl_header_tdoc_libelle">Media type</th>
+						
+																																																																	<th class="expl_header_location_libelle">Location</th>
+						
+																																																																	<th class="expl_header_section_libelle">Section</th>
+						
+																																																												<th class="expl_header_statut">Status</th>
+	</tr>
+						<tr class="odd item_expl expl_available">
+																																			<td id="expl_6978" class="expl_cb" data-column-name="Barcode">
+							29244
+						</td>
+																																																																		<td class="expl_cote" data-column-name="Call number">739.512095496 K527a</td>
+																																																		<td class="tdoc_libelle" data-column-name="Media type">Livre</td>
+																																																		<td class="location_libelle" data-column-name="Location">DKRML</td>
+																																													<td id="expl_6978" class="section_libelle" data-column-name="Section">
+															Documentaires
+													</td>
+																								<td class="expl_situation" data-column-name="Status"><strong>Available</strong></td>
+
+																																																	</tr>
+			</table></div>
+			<div id="el3675Parent" class="notice-parent">
+			
+			<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el3675Img" title="details" alt="details" style="border:0px" onclick="expandBase('el3675', true);  return false;" hspace="3" loading="lazy"><img src="https://nkcs.org.np/dkrml/catalog/opac_css/images/icon_a_16x16.gif" alt="Monograph: printed text" title="Monograph: printed text" loading="lazy">
+			<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_3675"><span class="statutnot1"></span><span notice="3675" class="header_title">Ancient and Medieval Nepal</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=1200">D.R. Regmi</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Ancient%20and%20Medieval%20Nepal&amp;rft.title=Ancient%20and%20Medieval%20Nepal&amp;rft.tpages=p.%20178&amp;rft.date=1952&amp;rft_id=&amp;rft.pub=D.R.%20Regmi&amp;rft.place=Kathmandu&amp;rft.au=D.R.%20Regmi&amp;rft.aulast=Regmi&amp;rft.aufirst=D.R."></span></span>
+	    		<br>
+				</div>
+				<div id="el3675Child" class="notice-child" style="margin-bottom:6px;display:none;" token="89d02139f5158f4b4605c57770c4fa37" datetime="1794729339"><table style="width:100%"><tr><td style="vertical-align:top">
+		<ul id="onglets_isbd_public3675" class="onglets_isbd_public">
+	  			<li id="onglet_public3675" class="isbd_public_active"><a href="#" title="Public" onclick="show_what('PUBLIC', '3675'); return false;">Public</a></li>
+				<li id="onglet_isbd3675" class="isbd_public_inactive"><a href="#" title="ISBD" onclick="show_what('ISBD', '3675'); return false;">ISBD</a></li>
+					
+					
+					</ul>
+					<div class="row"></div>
+					<div id="div_public3675" style="display:block;"><table><tr class="tr_title">
+					<td class="align_right bg-grey"><span class="etiq_champ">Title :</span></td>
+					<td class="public_line_value"><span class="public_title">Ancient and Medieval Nepal</span></td>
+				</tr><tr class="tr_typdoc">
+					<td class="align_right bg-grey"><span class="etiq_champ">Material Type: </span></td>
+					<td class="public_line_value"><span class="public_typdoc">printed text</span></td>
+				</tr><tr class="tr_auteurs">
+					<td class="align_right bg-grey"><span class="etiq_champ">Authors: </span></td>
+					<td class="public_line_value"><span class="public_auteurs"><a href="./index.php?lvl=author_see&amp;id=1200">D.R. Regmi</a></span></td>
+				</tr><tr class="tr_ed1">
+					<td class="align_right bg-grey"><span class="etiq_champ">Publisher:</span></td>
+					<td class="public_line_value"><span class="public_ed1"><a href="./index.php?lvl=publisher_see&amp;id=2107">Kathmandu : D.R. Regmi</a></span></td>
+				</tr><tr class="tr_year">
+					<td class="align_right bg-grey"><span class="etiq_champ">Publication Date: </span></td>
+					<td class="public_line_value"><span class="public_year">1952</span></td>
+				</tr><tr class="tr_npages">
+					<td class="align_right bg-grey"><span class="etiq_champ">Pagination: </span></td>
+					<td class="public_line_value"><span class="public_npages">p. 178</span></td>
+				</tr><tr class="tr_keywords">
+					<td class="align_right bg-grey"><span class="etiq_champ">Keywords: </span></td>
+					<td class="public_line_value"><span class="public_keywords"><a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=History&amp;tags=ok">History</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Ancient+history&amp;tags=ok">Ancient history</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Medieval+history&amp;tags=ok">Medieval history</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Nepal&amp;tags=ok">Nepal</a></span></td>
+				</tr><tr class="tr_indexint">
+					<td class="align_right bg-grey"><span class="etiq_champ">Class number: </span></td>
+					<td class="public_line_value"><span class="public_indexint"><a href="./index.php?lvl=indexint_see&amp;id=59">954.9</a> <span></span></span></td>
+				</tr></table>
+</div>
+					<div id="div_isbd3675" style="display:none;">Ancient and Medieval Nepal [printed text] / <a href="./index.php?lvl=author_see&amp;id=1200">D.R. Regmi</a> . - <a href="./index.php?lvl=publisher_see&amp;id=2107">Kathmandu : D.R. Regmi</a>, 1952 . - p. 178.<table><tr class="tr_keywords">
+					<td class="align_right bg-grey"><span class="etiq_champ">Keywords: </span></td>
+					<td class="public_line_value"><span class="public_keywords"><a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=History&amp;tags=ok">History</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Ancient+history&amp;tags=ok">Ancient history</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Medieval+history&amp;tags=ok">Medieval history</a>  <a href="./index.php?lvl=more_results&amp;mode=keyword&amp;user_query=Nepal&amp;tags=ok">Nepal</a></span></td>
+				</tr><tr class="tr_indexint">
+					<td class="align_right bg-grey"><span class="etiq_champ">Class number: </span></td>
+					<td class="public_line_value"><span class="public_indexint"><a href="./index.php?lvl=indexint_see&amp;id=59">954.9</a> <span></span></span></td>
+				</tr></table></div></td><td class="align_right" style="vertical-align:top"><img class="vignetteimg align_right" src="https://nkcs.org.np/dkrml/catalog/opac_css/images/vide.png" title="Ancient and Medieval Nepal" hspace="4" vspace="2" vigurl="https://nkcs.org.np/dkrml/catalog/opac_css/thumbnail.php?type=1&amp;id=3675" alt="thumbnail" loading="lazy"></td></tr></table>
+					
+<h3>
+	<span id="titre_exemplaires" class="titre_exemplaires">
+		Copies(0)
+	</span>
+</h3>
+	
+<table cellpadding="2" class="exemplaires" style="width:100%">
+		<tr class="thead">
+				<th class="expl_header_statut">Status</th>
+	</tr>
+			<tr class="even">
+			<td colspan="6">No copy</td>
+		</tr>
+	</table></div>
+				<div id="el8165Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el8165Img" title="details" alt="details" style="border:0px" param="%7B%22id%22%3A8165%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fnkcs.org.np%5C%2Fdkrml%5C%2Fcatalog%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fnkcs.org.np%5C%2Fdkrml%5C%2Fcatalog%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22a90fcd09b52618859e93d909bd814386%22%2C%22datetime%22%3A1794729339%7D" onclick="expandBase_ajax('el8165', true,this.getAttribute('param'));  return false;" hspace="3" loading="lazy"><img src="https://nkcs.org.np/dkrml/catalog/opac_css/images/icon_a_16x16.gif" alt="Monograph: printed text" title="Monograph: printed text" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_8165"><span class="statutnot1"></span><span notice="8165" class="header_title">Ancient and medieval Nepal</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=831">Rishikesh Shaha</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Ancient%20and%20medieval%20Nepal&amp;rft.title=Ancient%20and%20medieval%20Nepal&amp;rft.tpages=p.%20115%20ill&amp;rft.date=1997&amp;rft_id=&amp;rft.pub=Manohar&amp;rft.au=Rishikesh%20Shaha&amp;rft.aulast=Shaha&amp;rft.aufirst=Rishikesh"></span></span>
+		    	<br>
+				</div>
+				<div id="el8165Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://nkcs.org.np/dkrml/catalog/opac_css/index.php?lvl=notice_display&amp;id=8165" style="display:none;">Permalink</a>
+			
+		
+				<div id="el3330Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el3330Img" title="details" alt="details" style="border:0px" param="%7B%22id%22%3A3330%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fnkcs.org.np%5C%2Fdkrml%5C%2Fcatalog%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fnkcs.org.np%5C%2Fdkrml%5C%2Fcatalog%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22ff9ed9346ca0f70bda0999faf925da55%22%2C%22datetime%22%3A1794729339%7D" onclick="expandBase_ajax('el3330', true,this.getAttribute('param'));  return false;" hspace="3" loading="lazy"><img src="https://nkcs.org.np/dkrml/catalog/opac_css/images/icon_a_16x16.gif" alt="Monograph: printed text" title="Monograph: printed text" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_3330"><span class="statutnot1"></span><span notice="3330" class="header_title">Ancient paper of Nepal: results of ethno-technological field work on its manufacture, uses and history- with technical analyses of bast, paper and manuscripts</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=2963">Jesper Trier</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Ancient%20paper%20of%20Nepal%3A%20results%20of%20ethno-technological%20field%20work%20on%20its%20manufacture%2C%20uses%20and%20history-%20with%20technical%20analyses%20of%20bast%2C%20paper%20and%20manuscripts&amp;rft.title=Ancient%20paper%20of%20Nepal%3A%20results%20of%20ethno-technological%20field%20work%20on%20its%20manufacture%2C%20uses%20and%20history-%20with%20technical%20analyses%20of%20bast%2C%20paper%20and%20manuscripts&amp;rft.tpages=p.%20271p.%20%2C%20ill.&amp;rft.date=1972&amp;rft_id=&amp;rft.pub=Jutland%20archaeological%20society%20publications&amp;rft.place=Copenhagen&amp;rft.au=Jesper%20Trier&amp;rft.aulast=Trier&amp;rft.aufirst=Jesper"></span></span>
+		    	<br>
+				</div>
+				<div id="el3330Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://nkcs.org.np/dkrml/catalog/opac_css/index.php?lvl=notice_display&amp;id=3330" style="display:none;">Permalink</a>
+			
+		
+				<div id="el3875Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el3875Img" title="details" alt="details" style="border:0px" param="%7B%22id%22%3A3875%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fnkcs.org.np%5C%2Fdkrml%5C%2Fcatalog%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fnkcs.org.np%5C%2Fdkrml%5C%2Fcatalog%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%227171c644b22c2f221e305fb7ac3e66b3%22%2C%22datetime%22%3A1794729339%7D" onclick="expandBase_ajax('el3875', true,this.getAttribute('param'));  return false;" hspace="3" loading="lazy"><img src="https://nkcs.org.np/dkrml/catalog/opac_css/images/icon_a_16x16.gif" alt="Monograph: printed text" title="Monograph: printed text" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_3875"><span class="statutnot1"></span><span notice="3875" class="header_title">The Brick and the bull : an account of handigaun, the ancient capital of Nepal</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=3472">Sudarshan Raj Tiwari</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=The%20Brick%20and%20the%20bull%20%3A%20an%20account%20of%20handigaun%2C%20the%20ancient%20capital%20of%20Nepal&amp;rft.title=The%20Brick%20and%20the%20bull%20%3A%20an%20account%20of%20handigaun%2C%20the%20ancient%20capital%20of%20Nepal&amp;rft.tpages=p.%20x%3B%20225%20%2C%20ill.&amp;rft.date=2002&amp;rft_id=&amp;rft.pub=Himal%20books&amp;rft.place=Lalitpur&amp;rft.au=Sudarshan%20Raj%20Tiwari&amp;rft.aulast=Tiwari&amp;rft.aufirst=Sudarshan%20Raj"></span></span>
+		    	<br>
+				</div>
+				<div id="el3875Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://nkcs.org.np/dkrml/catalog/opac_css/index.php?lvl=notice_display&amp;id=3875" style="display:none;">Permalink</a>
+			
+		
+				<div id="el3191Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el3191Img" title="details" alt="details" style="border:0px" param="%7B%22id%22%3A3191%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fnkcs.org.np%5C%2Fdkrml%5C%2Fcatalog%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fnkcs.org.np%5C%2Fdkrml%5C%2Fcatalog%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22e1d5521f6d555200dbc447dd1e2ac6ab%22%2C%22datetime%22%3A1794729339%7D" onclick="expandBase_ajax('el3191', true,this.getAttribute('param'));  return false;" hspace="3" loading="lazy"><img src="https://nkcs.org.np/dkrml/catalog/opac_css/images/icon_a_16x16.gif" alt="Monograph: printed text" title="Monograph: printed text" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_3191"><span class="statutnot1"></span><span notice="3191" class="header_title">Inscriptions of ancient Nepal</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=1200">D.R. Regmi</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Inscriptions%20of%20ancient%20Nepal&amp;rft.title=Inscriptions%20of%20ancient%20Nepal&amp;rft.tpages=p.%20761p.&amp;rft.date=1983&amp;rft_id=&amp;rft.pub=Abhinav%20Pub.&amp;rft.place=New%20Delhi&amp;rft.au=D.R.%20Regmi&amp;rft.aulast=Regmi&amp;rft.aufirst=D.R."></span></span>
+		    	<br>
+				</div>
+				<div id="el3191Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://nkcs.org.np/dkrml/catalog/opac_css/index.php?lvl=notice_display&amp;id=3191" style="display:none;">Permalink</a>
+			
+		
+				<div id="el14841Parent" class="notice-parent">
+				
+		    	<img class="img_plus" src="./getgif.php?nomgif=plus" name="imEx" id="el14841Img" title="details" alt="details" style="border:0px" param="%7B%22id%22%3A14841%2C%22function_to_call%22%3A%22aff_notice%22%2C%22aj_liens%22%3A%7B%22lien_rech_notice%22%3A%22https%3A%5C%2F%5C%2Fnkcs.org.np%5C%2Fdkrml%5C%2Fcatalog%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_auteur%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthor_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_editeur%22%3A%22.%5C%2Findex.php%3Flvl%3Dpublisher_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_titre_uniforme%22%3A%22.%5C%2Findex.php%3Flvl%3Dtitre_uniforme_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_serie%22%3A%22.%5C%2Findex.php%3Flvl%3Dserie_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_collection%22%3A%22.%5C%2Findex.php%3Flvl%3Dcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_subcollection%22%3A%22.%5C%2Findex.php%3Flvl%3Dsubcoll_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_indexint%22%3A%22.%5C%2Findex.php%3Flvl%3Dindexint_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_motcle%22%3A%22.%5C%2Findex.php%3Flvl%3Dmore_results%26mode%3Dkeyword%26user_query%3D%21%21mot%21%21%26tags%3Dok%22%2C%22lien_rech_categ%22%3A%22.%5C%2Findex.php%3Flvl%3Dcateg_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_perio%22%3A%22.%5C%2Findex.php%3Flvl%3Dnotice_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_bulletin%22%3A%22https%3A%5C%2F%5C%2Fnkcs.org.np%5C%2Fdkrml%5C%2Fcatalog%5C%2Fopac_css%5C%2Findex.php%3Flvl%3Dbulletin_display%26id%3D%21%21id%21%21%22%2C%22lien_rech_concept%22%3A%22.%5C%2Findex.php%3Flvl%3Dconcept_see%26id%3D%21%21id%21%21%22%2C%22lien_rech_authperso%22%3A%22.%5C%2Findex.php%3Flvl%3Dauthperso_see%26id%3D%21%21id%21%21%22%7D%2C%22aj_cart%22%3A0%2C%22aj_to_print%22%3A0%2C%22aj_header_only%22%3A0%2C%22aj_no_header%22%3Afalse%2C%22aj_nodocnum%22%3A0%2C%22aj_type_aff%22%3A%224%22%2C%22token%22%3A%22a12b789c6e7975347dbec8ef3e9ab788%22%2C%22datetime%22%3A1794729339%7D" onclick="expandBase_ajax('el14841', true,this.getAttribute('param'));  return false;" hspace="3" loading="lazy"><img src="https://nkcs.org.np/dkrml/catalog/opac_css/images/icon_a_16x16.gif" alt="Monograph: printed text" title="Monograph: printed text" loading="lazy">
+				<span class="notice-heada" draggable="yes" dragtype="notice" id="drag_noti_14841"><span class="statutnot1"></span><span notice="14841" class="header_title">Short history of Nepal: from ancient to modern times</span><span class="header_authors"> / <a href="./index.php?lvl=author_see&amp;id=11745">Shreeram Prasad Upadhya</a></span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Short%20history%20of%20Nepal%3A%20from%20ancient%20to%20modern%20times&amp;rft.title=Short%20history%20of%20Nepal%3A%20from%20ancient%20to%20modern%20times&amp;rft.isbn=978-81-8250-017-4&amp;rft.tpages=260%20p.&amp;rft.date=2021%20A.D.&amp;rft_id=&amp;rft.pub=Nirala%20Publication&amp;rft.place=New%20Delhi&amp;rft.au=Shreeram%20Prasad%20Upadhya&amp;rft.aulast=Upadhya&amp;rft.aufirst=Shreeram%20Prasad"></span></span>
+		    	<br>
+				</div>
+				<div id="el14841Child" class="notice-child" style="margin-bottom:6px;display:none;">
+		    	</div><a href="https://nkcs.org.np/dkrml/catalog/opac_css/index.php?lvl=notice_display&amp;id=14841" style="display:none;">Permalink</a>
+			
+		</blockquote></div></div></div><div id="navbar" style="position: static; left: 0px; top: 0px;"><hr>
+<div style="text-align:center">
+<div class="navbar">
+	
+<script type="text/javascript">
+<!--
+	function test_form(form)
+	{
+
+		if (form.page.value > 3)
+		{
+			alert("Page number too high!");
+			form.page.focus();
+			return false;
+		}
+
+		return true;
+	}
+-->
+</script>
+	<form name="form" action="javascript:document.form_values.page.value=document.form.page.value;%20document.form_values.submit()" method="post" onsubmit="return test_form(form)">
+			<img src="./images/first-grey.png" alt="first page" loading="lazy">
+				<img src="./images/prev-grey.png" alt="previous page" loading="lazy">
+							<strong>1</strong>
+								<a class="navbar_page" href="javascript:document.form_values.page.value=2;%20document.form_values.submit()">2</a>
+								<a class="navbar_page" href="javascript:document.form_values.page.value=3;%20document.form_values.submit()">3</a>
+					
+		<a class="navbar_next" href="javascript:document.form_values.page.value=2;%20document.form_values.submit()"><img src="./images/next.png" alt="next page" style="border:0px" title="next page" loading="lazy"></a>
+			
+		<a class="navbar_last" href="javascript:document.form_values.page.value=3;%20document.form_values.submit()"><img src="./images/last.png" alt="last page" style="border:0px" title="last page" loading="lazy"></a>
+		(1 - 10 / 24)
+	
+				
+<span style="float:right;">Per page :
+						<a class="navbar_custom" href="javascript:document.form_values.nb_per_page_custom.value=25;javascript:document.form_values.page.value=1;%20document.form_values.submit()">25</a>
+								<a class="navbar_custom" href="javascript:document.form_values.nb_per_page_custom.value=50;javascript:document.form_values.page.value=1;%20document.form_values.submit()">50</a>
+								<a class="navbar_custom" href="javascript:document.form_values.nb_per_page_custom.value=100;javascript:document.form_values.page.value=1;%20document.form_values.submit()">100</a>
+								<a class="navbar_custom" href="javascript:document.form_values.nb_per_page_custom.value=200;javascript:document.form_values.page.value=1;%20document.form_values.submit()">200</a>
+			</span>
+	
+
+
+
+
+
+		
+			<input type="hidden" name="csrf_token" value="5f1881bff1bf7a8c8a016e88a9ad0631012f0990"></form>
+</div></div></div><div id="cms_module_articleslist_117" class="cms_module_articleslist cms_module"></div><div id="cms_module_sectionslist_118" class="cms_module_sectionslist cms_module"></div><script type="text/javascript" src="./includes/javascript/misc.js"></script><script type="text/javascript">
+	var terms=new Array('ancient','nepal');
+	var terms_litteraux=new Array('ancient nepal');
+	if (!codes) {
+		var codes = {};
+	}
+
+	function remplacer_carac(mot) {
+		var x;
+		var reg;				
+		var chaine=mot;
+			reg=new RegExp(codes['a'], 'g');
+	chaine=chaine.replace(reg, 'a');
+	reg=new RegExp(codes['A'], 'g');
+	chaine=chaine.replace(reg, 'A');
+	reg=new RegExp(codes['c'], 'g');
+	chaine=chaine.replace(reg, 'c');
+	reg=new RegExp(codes['C'], 'g');
+	chaine=chaine.replace(reg, 'C');
+	reg=new RegExp(codes['e'], 'g');
+	chaine=chaine.replace(reg, 'e');
+	reg=new RegExp(codes['E'], 'g');
+	chaine=chaine.replace(reg, 'E');
+	reg=new RegExp(codes['i'], 'g');
+	chaine=chaine.replace(reg, 'i');
+	reg=new RegExp(codes['I'], 'g');
+	chaine=chaine.replace(reg, 'I');
+	reg=new RegExp(codes['n'], 'g');
+	chaine=chaine.replace(reg, 'n');
+	reg=new RegExp(codes['N'], 'g');
+	chaine=chaine.replace(reg, 'N');
+	reg=new RegExp(codes['o'], 'g');
+	chaine=chaine.replace(reg, 'o');
+	reg=new RegExp(codes['O'], 'g');
+	chaine=chaine.replace(reg, 'O');
+	reg=new RegExp(codes['u'], 'g');
+	chaine=chaine.replace(reg, 'u');
+	reg=new RegExp(codes['U'], 'g');
+	chaine=chaine.replace(reg, 'U');
+		
+		return(chaine);		
+	}
+</script><script type="text/javascript" src="./temp/surligner_codes.js"></script><script type="text/javascript" src="./includes/javascript/surligner.js"></script>	
+            <form name="mc_values" action="./index.php?lvl=more_results" style="display:none" method="post">
+<input type="hidden" name="search[]" value="s_4"><input type="hidden" name="inter_0_s_4" value=""><input type="hidden" name="op_0_s_4" value="EQ"><input type="hidden" name="field_0_s_4[]" value='a:2:{s:17:"serialized_search";s:461:"a:3:{s:6:"SEARCH";a:2:{i:0;s:3:"f_7";i:1;s:4:"f_32";}i:0;a:7:{s:6:"SEARCH";s:3:"f_7";s:2:"OP";s:7:"BOOLEAN";s:5:"FIELD";a:1:{i:0;s:13:"Ancient Nepal";}s:6:"FIELD1";s:0:"";s:5:"INTER";s:0:"";s:8:"FIELDVAR";a:2:{s:6:"is_num";a:1:{i:0;s:1:"0";}s:10:"ck_affiche";a:1:{i:0;s:1:"0";}}s:8:"FIELDLIB";a:0:{}}i:1;a:7:{s:6:"SEARCH";s:4:"f_32";s:2:"OP";s:8:"CONTAINS";s:5:"FIELD";a:0:{}s:6:"FIELD1";s:0:"";s:5:"INTER";s:3:"and";s:8:"FIELDVAR";a:0:{}s:8:"FIELDLIB";a:0:{}}}";s:11:"search_type";s:20:"search_simple_fields";}'><input type="hidden" name="count" value="24"><input type="hidden" name="page" value="1">
+			<input type="hidden" name="nb_per_page_custom" value="10">
+<input type="hidden" name="csrf_token" value="d7eab2173a23f2e580b0e0be576dc0e261848b50"></form><form name="form_values" action="./index.php?lvl=more_results" method="post">
+<input type="hidden" value="" id="filtre_compare_form_values" name="filtre_compare"><input type="hidden" name="user_query" value="Ancient Nepal">
+<input type="hidden" name="mode" value="tous">
+<input type="hidden" name="count" value="24">
+<input type="hidden" name="typdoc" value=""><input type="hidden" name="id_authperso" value="0"><input type="hidden" name="clause" value="">
+<input type="hidden" name="clause_bull" value="">
+<input type="hidden" name="clause_bull_num_notice" value="">
+<input type="hidden" name="join" value="">
+<input type="hidden" name="tri" value="">
+<input type="hidden" name="pert" value="">
+<input type="hidden" name="l_typdoc" value="a">
+
+
+<input type="hidden" name="surligne" value="0">
+<input type="hidden" name="tags" value="">
+<input type="hidden" name="page" value="1">
+				<input type="hidden" name="nb_per_page_custom" value="10">
+<input type="hidden" name="nbexplnum_to_photo" value="">
+<input type="hidden" name="csrf_token" value="cb671508fda6fee988eb5333ef79199cbe7f5aa6"></form><br>
+		</div> 
+
+		</div>
+
+		
+		<div id="bandeau" fixed="yes">
+
+
+<div id="cms_module_search_22" class="cms_module_search cms_module" style="position: static; left: 0px; top: 0px;">
+			<form method="post" class="searchbox " action="./index.php?lvl=search_result&amp;search_type_asked=simple_search" name="cms_module_search_22_searchbox" onsubmit="if (cms_module_search_22_searchbox.user_query.value.length == 0) { cms_module_search_22_searchbox.user_query.value='*';}if (typeof cms_module_search_22_change_dest == 'function') { cms_module_search_22_change_dest(); }">
+				
+				<input type="hidden" value="1" name="look_ALL">
+				<h4 class="searchbox_title">We search.. We find.....</h4><span class="research_inputs">
+					<input type="text" name="user_query" value="Ancient Nepal" placeholder="Search.......">
+				<input class="bouton" type="submit" value="Search">
+				<input class="bouton button_search_help" title="Help" type="button" onclick='window.open("./help.php?whatis=simple_search", "search_help", "scrollbars=yes, toolbar=no, dependent=yes, width=400, height=400, resizable=yes"); return false' value="Help"></span><br>
+					<span class="search_radio_button" id="search_radio_button_0"><input type="radio" name="dest" value="dest_0" default_segment="0" page="0" universe="" checked> Find in catalogue</span>
+					<span class="search_radio_button" id="search_radio_button_1"><input type="radio" name="dest" value="dest_1" default_segment="0" page="11" universe=""> Find in site</span>
+					<p class="search_advanced_link"><a href="./index.php?search_type_asked=simple_search" title="Advanced search"> Advanced search</a></p>
+			<input type="hidden" name="csrf_token" value="d48b0cfcc693c3409f341e37429572bf06c53e3c"></form></div><div id="resume_panier" class="empty" fixed="yes" style="visibility: visible; display: block;"></div><div id="accueil" fixed="yes">
+
+<h3><span onclick='document.location="./index.php?"' style="cursor: pointer;">Home</span></h3>
+<p class="centered"><a href="./index.php?"><img src="images/site/livre.png" alt="Home" style="border:0px" class="center" loading="lazy"></a></p>
+
+					</div>
+<div id="lvl1" fixed="yes" style="position: static; left: 0px; top: 0px;"><script>var tosubmit="surligne=&look_FIRSTACCESS=1&csrf_token=792c8694defeb9ab90ff319dee53890de04bb8e8&user_query=Ancient%20Nepal&look_TITLE=1&typdoc=&ok=Search&lvl=more_results&autolevel1=1";
+						var cms_build_activate="0";function updateLevel1(result) {
+							if(result != '') {
+								document.getElementById('lvl1').innerHTML=result;
+							} else {
+								if(!cms_build_activate) {
+									require(['dojo/ready', 'dojo/dom-construct'], function(ready, domConstruct){
+										ready(function(){
+											domConstruct.destroy('lvl1');
+										});
+									});
+								}
+							}
+						}
+                        
+                        document.addEventListener('DOMContentLoaded', () => {
+    						getlevel2=new http_request();
+					        getlevel2.request('./ajax.php?module=ajax&categ=level1',true,tosubmit,true,updateLevel1);
+                        });</script><h3>Search</h3>
+<img src="./images/patience.gif" id="wait_level1" loading="lazy"></div><div id="facette" fixed="yes" style="position: static; left: 0px; top: 0px;">
+				
+				
+		<script src="./includes/javascript/select.js" type="text/javascript"></script>
+		<script type="text/javascript"> 		
+			function test(elmt_id){
+				var elmt_list=document.getElementById(elmt_id);
+
+                if(elmt_list.className.includes('facette_expande')){
+                    elmt_list.setAttribute('class', 'facette_collapsed');
+                } else {
+                    elmt_list.setAttribute('class', 'facette_expande');
+                }
+
+				for(i in elmt_list.rows){
+					if(elmt_list.rows[i].firstElementChild && elmt_list.rows[i].firstElementChild.nodeName!='TH'){
+						if(elmt_list.rows[i].style.display == 'none'){
+							elmt_list.rows[i].style.display = 'block';
+                            elmt_list.rows[i].setAttribute('class', 'facette_tr'); 
+						}else{
+							elmt_list.rows[i].style.display = 'none';
+                            elmt_list.rows[i].setAttribute('class', 'facette_tr_hidden uk-hidden'); 
+						}
+					}
+				}
+			}
+			
+			function facette_see_more(id, json_facette_plus) {
+				
+				const usingModal = '0' == 1;
+				var myTable = document.getElementById('facette_list_'+id);
+				
+				if (json_facette_plus == null) {
+
+                    if (usingModal) {
+                        if (typeof openModal == 'function') {
+                            return openModal(id);
+                        } else {
+                            console.error('[facettes_modal] : openModal is not a function !')
+                            return false;
+                        } 
+                    }
+
+					var childs = myTable.childNodes;
+					var nb_childs = childs.length;
+					
+					for(var i = 0; i < nb_childs; i++){
+						if (childs[i].getAttribute('facette_ajax_loaded')!=null) {
+							if (childs[i].getAttribute('style')=='display:block') {
+								childs[i].setAttribute('style','display:none');
+								childs[i].setAttribute('expanded','false');
+							} else {
+								childs[i].setAttribute('style','display:block');
+								childs[i].setAttribute('expanded','true');
+							}
+						}
+					}
+				
+					var see_more_less = document.getElementById('facette_see_more_less_'+id);
+					see_more_less.innerHTML='';
+					var span = document.createElement('span');
+					if (see_more_less.getAttribute('etat')=='plus') {
+						span.className='facette_moins_link';
+						span.innerHTML='[-]';
+						see_more_less.setAttribute('etat','moins');
+					} else {
+						span.className='facette_plus_link';
+						span.innerHTML='[+]';
+						see_more_less.setAttribute('etat','plus');		
+					}
+					see_more_less.appendChild(span);
+					
+				} else {
+					var req = new http_request();
+					var sended_datas = {'json_facette_plus': json_facette_plus };
+					req.request("./ajax.php?module=ajax&categ=facettes&sub=see_more", true, 'sended_datas='+encodeURIComponent(JSON.stringify(sended_datas)), true, function(response) {
+                        if (usingModal) {
+                            if (typeof callback_see_more_modal == 'function') {
+                                callback_see_more_modal(id, myTable, response)
+                            } else {
+                                console.error('[facettes_modal] : callback_see_more_modal is not a function !')
+                            } 
+                        } else {
+                            callback_see_more(id, myTable, response);
+                        }
+                    });
+				}
+			}
+
+            function callback_see_more(id, myTable, data) {
+    			var jsonArray = JSON.parse(data);
+    			//on supprime la ligne '+'
+    			myTable.tBodies[0].removeChild(myTable.rows[myTable.rows.length-1]);
+    			//on ajoute les lignes au tableau
+    			for(var i=0;i<jsonArray.length;i++) {
+    				var tr = document.createElement('tr');
+    				tr.setAttribute('style','display:block');
+    				tr.setAttribute('class', 'facette_tr');
+    				tr.setAttribute('expanded','true');
+    				tr.setAttribute('facette_ajax_loaded','1');
+    	        	var td = tr.appendChild(document.createElement('td'));
+    				td.setAttribute('class','facette_col_coche');
+    	        	td.innerHTML = "<span class='facette_coche'><input type='checkbox' name='check_facette[]' value='" + jsonArray[i]['facette_value'] + "'>";
+    	        	var td2 = tr.appendChild(document.createElement('td'));
+    				td2.setAttribute('class','facette_col_info');
+                    var aonclick = td2.appendChild(document.createElement('a'));
+                    aonclick.setAttribute('style', 'cursor:pointer;');
+                    aonclick.setAttribute('rel', 'nofollow');
+                    aonclick.setAttribute('class', 'facet-link');
+                    if (jsonArray[i]['facette_link']) {
+                        aonclick.setAttribute('onclick', jsonArray[i]['facette_link']);
+                    } else {
+                        //Evt vers SearchSegmentController pour l'initialisation du clic
+                        require(['dojo/topic'], function(topic){
+    						topic.publish('FacettesRoot', 'FacettesRoot', 'initFacetLink', {elem: aonclick}); 
+    					}); 
+                    }
+                    var span_facette_link = aonclick.appendChild(document.createElement('span'));
+                    span_facette_link.setAttribute('class', 'facette_libelle');
+    	        	span_facette_link.innerHTML = jsonArray[i]['facette_libelle'];
+    				aonclick.appendChild(document.createTextNode(' '));
+                    var span_facette_number = aonclick.appendChild(document.createElement('span'));
+                    span_facette_number.setAttribute('class', 'facette_number');
+                    span_facette_number.innerHTML = "[" + jsonArray[i]['facette_number'] + "]";
+    	        	myTable.appendChild(tr);
+    			}
+
+                add_see_less(myTable, id);
+    		}
+            
+            function add_see_less(myTable, id) {
+    			//Ajout du see_less
+    			var tr = document.createElement('tr');
+    			tr.setAttribute('style','display:block');
+    			tr.setAttribute('see_less','1');
+    			tr.setAttribute('class','facette_tr_see_more');
+    				
+    			var td = tr.appendChild(document.createElement('td'));
+    			td.setAttribute('colspan','3');
+    				
+    			var ahref = td.appendChild(document.createElement('a'));
+    			ahref.setAttribute('id','facette_see_more_less_'+id);
+    			ahref.setAttribute('etat','moins');
+    			ahref.setAttribute('onclick','javascript:facette_see_more(' + id + ',null);');
+    			ahref.setAttribute('style','cursor:pointer');
+    			ahref.innerHTML='';
+    				
+    			var span = document.createElement('span');
+    			span.className='facette_moins_link';
+    			span.innerHTML='[-]';
+    			ahref.appendChild(span);
+				
+    			myTable.appendChild(tr);
+            }
+			function valid_facettes_compare(){
+				
+				var form = document.facettes_multi;
+				if(form.elements.length>0){
+					
+					var form_values_compare_input_array=new Array();
+					
+					for(var i=0; i<form.elements.length;i++){
+						
+						if(form.elements[i].name=='check_facette[]' && form.elements[i].checked){
+							//on transforme les case ? coch? en element du tableau des facettes	
+							//on ajoute dans le tableau des facettes
+							var value=form.elements[i].value;
+							var jsonArray=JSON.parse(value);
+							
+							//On ajoute dans le formulaire de postage g?n?ral
+							var form_values_compare_input=document.createElement('input');
+							form_values_compare_input.setAttribute('name','check_facette_compare[]');
+							form_values_compare_input.setAttribute('type','hidden');
+							form_values_compare_input.setAttribute('value',value);
+							form_values_compare_input_array.push(form_values_compare_input);
+						}
+					}
+					
+					var post=false;
+					var form_values=document.form_values;
+					for(var i=0;i<form_values_compare_input_array.length;i++) {
+						form_values.appendChild(form_values_compare_input_array[i]);
+					}
+					
+					for(var i=0; i<form_values.elements.length;i++){
+						if(form_values.elements[i].name=='check_facette_compare[]' && form_values.elements[i].value!=''){
+							if(document.getElementById('filtre_compare_facette')) {
+								document.getElementById('filtre_compare_facette').value='compare';
+							}
+							if(document.getElementById('filtre_compare_form_values')) {
+								document.getElementById('filtre_compare_form_values').value='compare';
+							}
+							form_values.submit();
+							post=true;
+						}
+					}
+					if(post == false){
+						alert('No comparison standard.');
+					}
+				}else{
+					alert('No comparison standard.');
+				}
+			}
+			
+			function valid_compare(){
+				var form_values=document.form_values;
+				var post=false;
+				
+				for(var i=0; i<form_values.elements.length;i++){
+					if(form_values.elements[i].name=='check_facette_compare[]' && form_values.elements[i].value!=''){
+						if(document.getElementById('filtre_compare_facette')) {
+							document.getElementById('filtre_compare_facette').value='compare';
+						}
+						if(document.getElementById('filtre_compare_form_values')) {
+							document.getElementById('filtre_compare_form_values').value='compare';
+						}
+						form_values.submit();
+						post=true;
+					}
+				}
+				if(post == false){
+					alert('No comparison standard.');
+				}
+			}
+			
+			function remove_compare_facette(value){
+				
+				var jsonArray = JSON.parse(value);
+				
+				//on supprime l'?lement du tableau des facettes
+				elem=document.getElementById('compare_facette_'+jsonArray[4]);
+				elem.parentNode.removeChild(elem);
+				
+				//on supprime l'?l?ment du formulaire g?n?ral aussi
+				var form_values=document.form_values;
+				for(var i in form_values.elements){
+					if(form_values.elements[i] && form_values.elements[i].value && form_values.elements[i].name=='check_facette_compare[]'){
+						form_values_json_array=JSON.parse(form_values.elements[i].value);
+						
+						if(form_values_json_array[4]==jsonArray[4]){
+							elem=form_values.elements[i];
+							elem.parentNode.removeChild(elem);
+						}
+					}
+				}
+				var post=true;
+				for(var i in form_values.elements){
+					if(form_values.elements[i] && form_values.elements[i].value && form_values.elements[i].name=='check_facette_compare[]'){
+						valid_facettes_compare();
+						post=false;
+					}
+				}
+
+				if(post){
+					if('facette_search_compare' == 'facettes_external_search_compare') {
+						var input_form_values = document.createElement('input');
+						input_form_values.setAttribute('type', 'hidden');
+						input_form_values.setAttribute('name', 'reinit_compare');
+						input_form_values.setAttribute('value', '1');
+						document.forms['form_values'].appendChild(input_form_values);
+						document.form_values.submit();
+					} else {
+						document.location.href='./index.php?lvl=more_results&get_last_query=1&reinit_compare=1';
+					}
+				}
+			}
+			
+			function group_by(groupBy){
+				
+				var jsonArray=JSON.parse(groupBy);
+			
+				//on vide les elements group_by
+				var group_by_elements=document.getElementsByName('check_facette_groupby[]');
+				
+				var nodes_to_remove;
+				
+				for(var i in group_by_elements){
+					if(group_by_elements[i].nodeName=='INPUT'){
+						if(group_by_elements[i].getAttribute('id')!='facette_groupby_'+jsonArray[3]){
+							
+							if(group_by_elements[i].parentNode.getAttribute('name')!='form_values' && group_by_elements[i].parentNode.getAttribute('name')!='cart_values'){
+								
+								var group_by_elements_img=group_by_elements[i].previousElementSibling.firstChild;
+									
+								group_by_elements_img.setAttribute('src','./images/group_by_grey.png');
+								group_by_elements[i].setAttribute('value','');
+								
+							}else{
+								nodes_to_remove=[i=[group_by_elements[i],group_by_elements[i].parentNode]];
+							}
+						}
+					}
+				}
+				
+				if(nodes_to_remove && nodes_to_remove.length>0){
+					for(var i in nodes_to_remove){
+						nodes_to_remove[i][1].removeChild(nodes_to_remove[i][0]);
+					}
+				}
+				
+				element=document.getElementById('facette_groupby_'+jsonArray[3]);
+				var img=element.previousElementSibling.firstChild;
+				
+				var table_groupby=document.getElementById('facette_groupby');
+				
+				if(element.getAttribute('value')==''){
+					element.setAttribute('value',JSON.stringify(groupBy));
+					
+					//On ajoute dans le formulaire de postage g?n?ral
+					var form_values=document.form_values;
+					var form_values_groupby_input=document.createElement('input');
+					form_values_groupby_input.setAttribute('name','check_facette_groupby[]');
+					form_values_groupby_input.setAttribute('type','hidden');
+					form_values_groupby_input.setAttribute('value',groupBy);
+					form_values.appendChild(form_values_groupby_input);
+					
+					
+				}
+				valid_facettes_compare();
+			}
+		</script>
+		<script type="text/javascript">
+			function valid_facettes_multi(){
+				//on bloque si aucune case coch?e
+				var form = document.facettes_multi;
+				for (i=0, n=form.elements.length; i<n; i++){
+					if ((form.elements[i].checked == true)) {
+						if(document.getElementById('filtre_compare_facette')) {
+							document.getElementById('filtre_compare_facette').value='filter';
+						}
+						if(document.getElementById('filtre_compare_form_values')) {
+							document.getElementById('filtre_compare_form_values').value='filter';
+						}
+						form.submit();
+						return true;
+					}
+				}
+				return false;
+			}
+		</script>
+				<div id="facette_wrapper">
+					<img src="./images/patience.gif" loading="lazy">
+					<script type="text/javascript">
+                        document.addEventListener('DOMContentLoaded', () => {
+    						var req = new http_request();
+    						req.request("./ajax.php?module=ajax&categ=facettes&sub=get_data&facet_type=notices",false,null,true,function(data){
+    							var response = JSON.parse(data);
+    							document.getElementById('facette_wrapper').innerHTML=response.display;
+    						    require(['dojo/query', 'dojo/dom-construct'], function(query, domConstruct){
+        						    query('#facette_wrapper script').forEach(function(node) {
+                    					domConstruct.create('script', {
+                    						innerHTML: node.innerHTML,
+                    						type: 'text/javascript'
+                    					}, node, 'replace');
+                    				});
+    						    });
+    							if(!response.exists_with_results) {
+    								require(['dojo/ready', 'dojo/dom-construct'], function(ready, domConstruct){
+    									ready(function(){
+    						                if (document.getElementById('segment_searches')) {
+    										    domConstruct.destroy('facette_wrapper');
+    						                } else {
+    						                    domConstruct.destroy('facette');
+    						                }
+    						    
+    									});
+    								});
+    							}
+    							if(response.map_location) {
+    								if(document.getElementById('map_location_search')) {
+    									document.getElementById('map_location_search').innerHTML=response.map_location;
+    									if(typeof(dojo) == 'object'){
+    										dojo.require('dojo.parser');
+    										dojo.parser.parse(document.getElementById('map_location_search'));
+    									}
+    								}
+    							}
+                                hide_element_by_its_hidden_children('bandeau');
+    						}, '', '', true);
+                        });
+					</script>
+				</div>
+			</div><div id="cms_module_htmlcode_141" class="cms_module_htmlcode cms_module" style="position: static; left: 0px; top: 0px;"><div id="lienHistorique">
+    <a href="./index.php?lvl=search_history" title="Historique des recherches">History...</a>
+</div></div><div id="connexion" fixed="yes">
+
+			<h3 class="login_invite">Login</h3><div id="login_form"><form action="index.php?lvl=more_results&amp;autolevel1=1" method="post" name="myform"><input type="hidden" name="surligne" value=""><input type="hidden" name="look_FIRSTACCESS" value="1"><input type="hidden" name="csrf_token" value="792c8694defeb9ab90ff319dee53890de04bb8e8"><input type="hidden" name="user_query" value="Ancient Nepal"><input type="hidden" name="look_TITLE" value="1"><input type="hidden" name="typdoc" value=""><input type="hidden" name="ok" value="Search"><label>user name</label><br>
+				<input type="text" name="login" class="login" size="14" placeholder="user name"><br>
+                <div class="myform-password-text-visually">
+                    <input type="password" id="myform-password" name="password" class="password" size="8" placeholder="Password" value="">
+                    <button type="button" class="fa fa-eye" id="myform-password-visually" onclick='toggle_password(this, "myform-password");' title="Afficher ou masquer le mot de passe"></button>
+                </div>
+                <input type="hidden" name="force_login" value="1">
+				<input type="submit" name="ok" value="ok" class="bouton"><input type="hidden" name="csrf_token" value="ad38fa87b2c044fbb274e0fe53e5a8db3b608369"></form><a class="mdp_forgotten" href="./askmdp.php">Forgotten password?</a></div>
+
+			</div>
+
+			<div id="adresse" fixed="yes">
+
+		<h3>Address</h3>
+
+		<span>
+			DRKRM Library<br>
+			Lazimpat<br>
+			 Kathmandu<br>
+			Nepal <br>
+			<br><span id="opac_biblio_email">
+			<a href="mailto:bholashresthame@gmail.com" title="bholashresthame@gmail.com">contact</a></span></span>
+	    </div><div id="cms_module_articleslist_130" class="cms_module_articleslist cms_module" style="visibility: visible; display: block;"></div></div><div id="bandeau_2" fixed="yes"></div><div id="footer" fixed="yes">
+
+<div id="cms_module_htmlcode_134" class="cms_module_htmlcode cms_module"><div class="Ancre">
+	<a href="#logo" title="Top">Λ</a>
+</div></div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module"></div><span id="footer_rss" fixed="yes">
+	
+</span>
+<span id="footer_link_sup" fixed="yes">
+		<a href="./index.php?lvl=infopages&amp;pagesid=7">Mentions légales</a>  
+</span>
+
+<span id="footer_link_website" fixed="yes">
+	<a class="footer_biblio_name" href="http://www.sigb.net" title="DRKRM Library">DRKRM Library</a>  
+</span>
+
+<span id="footer_link_pmb" fixed="yes">
+<a href="http://www.google.fr" target="_blank">Faire une recherche avec Google</a>  
+		<a class="lien_pmb_footer" href="https://www.sigb.net" title="a free solution for libraries" target="_blank">pmb</a>
+</span>
+
+<div id="accessibility" fixed="yes" style="visibility: visible; display: block;">
+    	<input type="hidden" id="opacAccessibility" name="opacAccessibility" value="1">
+			<ul class="accessibility_font_size">
+			<li class="accessibility_font_size_small">
+				<a href="javascript:accessibilityFontSize(1);" title="Reduce the text">A-</a>
+			</li>
+			<li class="accessibility_font_size_normal">
+				<a href="javascript:accessibilityFontSize(0);" title="Reset the size of the text">A</a>
+			</li>
+			<li class="accessibility_font_size_big">
+				<a href="javascript:accessibilityFontSize(2);" title="Widen the text">A+</a>
+			</li>
+		</ul>
+	
+			<script src="./includes/javascript/accessibility.js"></script>
+		
+			</div></div></div>
+		
+		<script type="text/javascript">init_drag();	</script>
+		
+			<script type="text/javascript">
+				var tarteaucitron_messages = pmbDojo.messages.getMessages("tarteaucitron");
+				if(tarteaucitron_messages.length) {
+					tarteaucitronCustomText = {};
+					tarteaucitron_messages.forEach(function(message) {
+						if(parseInt(message.code.indexOf(":")) !== -1) {
+							let tarteaucitron_messages_group = message.code.split(":");
+							if(typeof tarteaucitronCustomText[tarteaucitron_messages_group[0]] == "undefined") {
+								tarteaucitronCustomText[tarteaucitron_messages_group[0]] = {};
+							}
+							tarteaucitronCustomText[tarteaucitron_messages_group[0]][tarteaucitron_messages_group[1]] = message.message;
+						} else {
+							tarteaucitronCustomText[message.code] = message.message;
+						}
+					});
+				}
+			</script>
+			<script type="text/javascript" src="./includes/javascript/tarteaucitron/tarteaucitron.js"></script>
+		<script type="text/javascript">
+	        tarteaucitron.init({
+	    	  "privacyUrl": "", /* Privacy policy url */
+	
+	    	  "hashtag": "#PhpMyBibli-COOKIECONSENT", /* Open the panel with this hashtag */
+	    	  "cookieName": "PhpMyBibli-COOKIECONSENT", /* Cookie name */
+	    
+	    	  "orientation": "bottom", /* Banner position (top - bottom - popup) */
+	       
+	          "groupServices": true, /* Group services by category */
+	                           
+	    	  "showAlertSmall": false, /* Show the small banner on bottom right */
+	    	  "cookieslist": false, /* Show the cookie list */
+				                           
+	          "closePopup": false, /* Show a close X on the banner */
+	
+	          "showIcon": false, /* Show cookie icon to manage cookies */
+	          "iconSrc": "./images/cookie.png", /* Optionnal: URL or base64 encoded image */
+	          "iconPosition": "BottomRight", /* BottomRight, BottomLeft, TopRight and TopLeft */
+	
+	    	  "adblocker": false, /* Show a Warning if an adblocker is detected */
+	                           
+	          "DenyAllCta" : true, /* Show the deny all button */
+	          "AcceptAllCta" : true, /* Show the accept all button when highPrivacy on */
+	          "highPrivacy": true, /* HIGHLY RECOMMANDED Disable auto consent */
+	                           
+	    	  "handleBrowserDNTRequest": false, /* If Do Not Track == 1, disallow all */
+	
+	    	  "removeCredit": true, /* Remove credit link */
+	    	  "moreInfoLink": false, /* Show more info link */
+	
+	          "useExternalCss": false, /* If false, the tarteaucitron.css file will be loaded */
+	          "useExternalJs": false, /* If false, the tarteaucitron.js file will be loaded */
+				
+	    	  //"cookieDomain": ".my-multisite-domaine.fr", /* Shared cookie for multisite */
+	                          
+	          "readmoreLink": "", /* Change the default readmore link */
+	
+	          "mandatory": true, /* Show a message about mandatory cookies */
+	        });
+ 
+        </script>
+		</body>
+		</html>

@@ -17,6 +17,21 @@ retired authentication and unrelated research archives are outside its scope.
   in the app at `/app/privacy`, `/app/terms` and `/app/about`. The effective
   date and version are filled at release; legal review is a release item.
 
+## International library expansion (2026-11-14–15)
+
+- [International library expansion research: all 30 countries](research/international-libraries/README.md):
+  200 institutions/networks with observed book-query results (151 selected, 49 reserves),
+  exact query evidence, size/access qualifications and combined CSV/JSON inventories.
+- [Additional 25-country analysis](research/international-libraries/2026-11-15-expansion/README.md):
+  352 major library priorities; 144 observations (105 selected, 39 reserves).
+  Brazil, Vietnam, Thailand and Algeria each reached ten selected candidates.
+  The requested 250 selected targets remain 145 short, with blockers documented.
+  Includes a cross-country adapter roadmap and independent evidence review.
+- [Initial five-country analysis](research/international-libraries/2026-11-14/README.md):
+  Bangladesh, Pakistan, Nigeria, Philippines and Indonesia; 56 observations
+  (46 selected, 10 reserves). National largest-ten rankings remain unproven in
+  both cohorts. Research only; no product providers were enabled.
+
 ## Adoption readiness review (2026-11-11)
 
 - [Product, infrastructure and adoption review](plans/2026-11-11-adoption-readiness-review.md):

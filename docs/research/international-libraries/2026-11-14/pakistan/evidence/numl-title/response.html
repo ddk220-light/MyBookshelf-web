@@ -1,0 +1,702 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>
+	LibMax:: OPAC Online Public Access Catalouge
+</title><meta name="description" content="Libmax is product of Max Intelligence, developed on latest Microsoft web technologies using best DB-design practices and security model, and have multi-tier graphical user interface with built-in role base application providing over 500 functionalities. To ensure high-end security application is separated into discrete programs (modules), which are then integrated into a unified interface. 
+
+All library processes are catered in Libmax including acquisitions (ordering, receiving, and invoicing materials), cataloging (classifying and indexing materials), circulation (lending materials to patrons and receiving them back), serials (tracking magazine and newspaper holdings), and have independent but tightly integrated modules of OPAC and Digital Library.
+" />
+
+
+    <style type="text/css">
+        .auto-style1 {
+           display: inline-block;
+  padding: 6px 6px 4px;
+  border-radius: 3px;
+  background: #b09dc4;
+  margin-right: 5px;
+   color: #fff;
+  font-size: 22px;
+        }
+    </style>
+</head>
+ <link href="styles/opaque.css" rel="stylesheet" type="text/css">
+    <link type="text/css" href="../Styles/SearchDetail.css" rel="Stylesheet" />
+    <link type="text/css" href="../Styles/dialog.css" rel="Stylesheet" />
+    <script type="text/javascript">
+    
+        function InvertImage(obj, state)
+        {
+            var name = obj.value;
+            name += "_btn_";
+            
+            if ( state == true )
+                name += "1.gif";
+            else
+                name += "0.gif";
+                
+            obj.src.images = "images/" + name;    
+        }
+        function searchbook() {
+
+            var ctrl = document.getElementById('ctl00$ddsearch');
+
+            var criteria = document.getElementById('txtsearch').value;
+            if (criteria == null || criteria.trim() == "") {
+                alert('Please Enter some thing.');
+                var focus = document.getElementById('txtsearch').focus();
+                return false;
+            }
+            var column = ctrl.options[ctrl.selectedIndex].value;
+            var pagenum = 1;
+
+            window.location = "SearchBook.aspx?pagenumber=" + pagenum + "&column=" + "Title" + "&criteria=" + criteria;
+            return false;
+        }
+    </script>
+<body>
+    <form name="aspnetForm" method="post" action="./SearchBook.aspx?pagenumber=1&amp;column=Title&amp;criteria=Constitutional+and+political+history+of+Pakistan" id="aspnetForm">
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="btnsearch" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwULLTExOTk2MTY2OTUPZBYCZg9kFgICAw9kFgYCBA8WAh4JaW5uZXJodG1sBcwBPHNwYW4gY2xhc3M9ImF1dG8tc3R5bGUxIj4xPC9zcGFuPjxzcGFuIGNsYXNzPSJhdXRvLXN0eWxlMSI+ODwvc3Bhbj48c3BhbiBjbGFzcz0iYXV0by1zdHlsZTEiPjE8L3NwYW4+PHNwYW4gY2xhc3M9ImF1dG8tc3R5bGUxIj4zPC9zcGFuPjxzcGFuIGNsYXNzPSJhdXRvLXN0eWxlMSI+Njwvc3Bhbj48c3BhbiBjbGFzcz0iYXV0by1zdHlsZTEiPjE8L3NwYW4+ZAIFD2QWAgIDDxYCHgtfIUl0ZW1Db3VudAIDFgYCAQ9kFg4CAg8VATBDb25zdGl0dXRpb25hbCBhbmQgcG9saXRpY2FsIGhpc3Rvcnkgb2YgUGFraXN0YW5kAgQPFQEKSGFtaWQgS2hhbmQCBg8VAQo5NTQuOTEgSEFDZAIIDxUBF094Zm9yZCBVbml2ZXJzaXR5IFByZXNzZAIKDxUBBk94Zm9yZGQCDA8VAQQyMDA1ZAIUDxUBBjIzMjg5OWQCAg9kFg4CAg8VAT5Db25zdGl0dXRpb25hbCBhbmQgcG9saXRpY2FsIGhpc3Rvcnkgb2YgUGFraXN0YW4gKDNyZCBFZGl0aW9uKWQCBA8VAQpIYW1pZCBLaGFuZAIGDxUBCjk1NC45MSBIQUNkAggPFQEXT3hmb3JkIFVuaXZlcnNpdHkgUHJlc3NkAgoPFQEGT3hmb3JkZAIMDxUBBDIwMTlkAhQPFQEGMjYzNjg2ZAIDD2QWDgICDxUBMUNvbnN0aXR1dGlvbmFsIGFuZCBwb2xpdGljYWwgaGlzdG9yeSBvZiBQYWtpc3Rhbi9kAgQPFQEKSGFtaWQgS2hhbmQCBg8VAQo5NTQuOTEgSEFDZAIIDxUBF094Zm9yZCBVbml2ZXJzaXR5IFByZXNzZAIKDxUBBk94Zm9yZGQCDA8VAQQyMDIyZAIUDxUBBjI3MDA0OGQCBg8WAh8ABeMBPHRhYmxlIGNlbGxwYWRkaW5nPScwJz48dHI+PHRyPjx0ZD48L3RkPjx0ZD48YSBocmVmPSdTZWFyY2hQZXJpb2RpY2FsLmFzcHg/a2V5PUJhYmVsJnR5cGU9VGl0bGUnPkJhYmVsPC9hPjxicj48L3RkPjwvdHI+PHRyPjx0cj48dGQ+PC90ZD48dGQ+PGEgaHJlZj0nU2VhcmNoUGVyaW9kaWNhbC5hc3B4P2tleT1UYXJnZXQmdHlwZT1UaXRsZSc+VGFyZ2V0PC9hPjxicj48L3RkPjwvdHI+PC90YWJsZT5kGAEFHl9fQ29udHJvbHNSZXF1aXJlUG9zdEJhY2tLZXlfXxYBBRJjdGwwMCRJbWFnZUJ1dHRvbjHsDjKo+9LZyHoJIO8LhQyya0xQil4P5uAsOUx2YLEtjA==" />
+
+
+<script src="/lib/ScriptResource.axd?d=a0Jsb8fREKQtvzQnbNYSueg_fjGyaNMY01LpNPH2UDS2oCs3L-lCx82QghNmU1ApFnA8v5FXuPmJi4kI3Iw029nLTi5qgG3x0Qt7tbKNZUynK5_cqU6RX9ginDBqKIuK0&amp;t=23c9c237" type="text/javascript"></script>
+<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="70188935" />
+<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="/wEdABFA/61uGcuGnYhqKQIJgC6csFaUcnfkG9SxOvK9TARpUGa5cjM7/PnfWQzIXZZ1S14Or9w+CbCVGw0SAuObur++JfmEYkVroUSgn/EgnsSP6xvlqTI003pgzSxZh4AluwBmeifYibJ/joHs9WLp6S8UD4zZrxX92uOlyIx1SyGTQn1i+WmhzB8jRCGh7/E6ip6PXXKZvZb8niJi6gs29zUHo+4W+c71adaDURn0IfvpnWlqckKjfVJZSs4R3sDT1MQ3F4aulWvbaqqexiIjTv2T0AOzHezqGRcMMVscS4OKR04tS6JJTyyCul8ELKh2V9Iyd2WmGy3gV3hhmgf09mVdWQpzpW5pGRKXJ1i1Cl5vb6cqItgLwOYQr5qXnIbt/WmBMDMovJx3JyU4k0Sjzu7c" />
+    
+    <div id="main_div">
+        
+        
+        <div id="header_div">
+            <img src="images/opec.jpg" alt="NDU Library" width="976px" height="125px" />
+        </div>
+        
+        <center>
+            <div id="menu_btns">
+        
+            <center>
+                <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                     <tr>
+                        
+                        <td class="Home_btn" align="center" onmouseover="this.className='Home_btn_on'" onmouseout="this.className='Home_btn'">
+                            <div class="Menu_font"> <a href="index.aspx"  class="white_anchor"> Home </a></div>
+                        </td>
+                    
+                        <td class="btn_Spacer">
+                        </td>
+                        
+                        <td class="Login_btn" align="center" onmouseover="this.className='Login_btn_on'" onmouseout="this.className='Login_btn'">
+                            <div class="Menu_font"> <a href="../member/login.aspx"  class="white_anchor"> Login </a></div>
+                        </td>
+                        
+                        <td class="btn_Spacer">
+                        </td>
+                        
+                        <td class="Library_btn" align="center" onmouseover="this.className='Library_btn_on'" onmouseout="this.className='Library_btn'">
+                            <div class="Menu_font"> <a href="aboutlib.aspx" class="white_anchor"> About Library </a></div>
+                        </td>
+                        
+                         <td class="btn_Spacer">
+                        </td>
+                        
+                        <td class="Staff_btn" align="center" onmouseover="this.className='Staff_btn_on'" onmouseout="this.className='Staff_btn'">
+                            <div class="Menu_font"><a href="libtiming.aspx" class="white_anchor">  Library Timings </a> </div>
+                        </td>
+                        
+                        <td class="btn_Spacer">
+                        </td>
+                        
+                        <td class="Contact_btn" align="center" onmouseover="this.className='Contact_btn_on'" onmouseout="this.className='Contact_btn'">
+                            <div class="Menu_font"><a href="Contact.aspx"  class="white_anchor">  Contact</a> </div>
+                        </td>
+
+                        <td class="btn_Spacer">
+                        </td>
+                                            
+                        <td class="Staff_btn" align="center" onmouseover="this.className='Staff_btn_on'" onmouseout="this.className='Staff_btn'">
+                            <div class="Menu_font"><a href="StaffD.aspx"  class="white_anchor">  Staff Directory</a> </div>
+                        </td>
+                        
+                        <td class="btn_Spacer">
+                        </td>
+                                            
+                        <td class="Help_btn" align="center" onmouseover="this.className='Help_btn_on'" onmouseout="this.className='Help_btn'">
+                             <div class="Menu_font"> <a href="help.aspx"  class="white_anchor"> Help</a> </div>
+                        </td>
+                        
+                    </tr>
+                </table>
+            </center>
+        
+        </div>
+        </center>
+        
+        <center>
+            <div id="content_div">
+                <table cellpadding="0" cellspacing="0" border="0" width="100%" class="content_table">
+                    <tr>
+                        <td colspan="5">
+                            <img src="images/Content_top.gif" alt="Missing Image" width="805px" height="16px" />
+                        </td>
+                    </tr>
+                    
+                   
+                    
+                    <!--Content Row Start-->
+                    <tr>
+                        <td colspan="6">
+                            <div id="content_center_div">
+                              
+                                <!--Left Menu Div start-->
+                                <div id="left_div">
+                                    
+                                     <!--First Div box start-->
+                                 
+                                          <div id="options_box">
+                                        <div id="box_heading_div">
+                                            <b>
+                                                <span class="text_font">
+                                                    Quick Search
+                                                </span>
+                                            </b>
+                                        </div>
+                                        
+                                       
+                                            <table cellpadding="0" cellspacing="0" border="0" style="width: 123px" >
+                                                <tr>
+                                                    <td colspan="2" style="line-height: 20px;">
+                                                        <span class="text_font">
+                                                            Search Terms:
+                                                        </span>
+                                                    </td>
+                                                </tr>    
+                                                
+                                                <tr>
+                                                    <td colspan="2" style="line-height: 13px;">
+                                                    <input name="ctl00$quicksearch" type="text" id="ctl00_quicksearch" class="search_text" />
+                                                          
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                <td colspan="2">
+                                              <span id="ctl00_RadioButtonList1" class="text_font"><input id="ctl00_RadioButtonList1_0" type="radio" name="ctl00$RadioButtonList1" value="Books" checked="checked" /><label for="ctl00_RadioButtonList1_0">Books</label><br /><input id="ctl00_RadioButtonList1_1" type="radio" name="ctl00$RadioButtonList1" value="Periodicals" /><label for="ctl00_RadioButtonList1_1">Periodicals</label><br /><input id="ctl00_RadioButtonList1_2" type="radio" name="ctl00$RadioButtonList1" value="Periodical Articles" /><label for="ctl00_RadioButtonList1_2">Periodical Articles</label><br /><input id="ctl00_RadioButtonList1_3" type="radio" name="ctl00$RadioButtonList1" value="Newspapers Articles" /><label for="ctl00_RadioButtonList1_3">Newspapers Articles</label></span>
+                                              </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <br />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <input type="image" name="ctl00$ImageButton1" id="ctl00_ImageButton1" src="images/Search_btn.gif" border="0" />
+                                                         
+                                                    </td>
+                                                </tr>
+                                                
+                                            </table>
+                                        </div>
+                                        
+                                
+                                    <!--First Div box end-->
+                             
+                                 <div id="ctl00_div_counter"><span class="auto-style1">1</span><span class="auto-style1">8</span><span class="auto-style1">1</span><span class="auto-style1">3</span><span class="auto-style1">6</span><span class="auto-style1">1</span></div>
+                                              
+                                           
+                                    <br />
+                                   
+                                      
+                                       
+                                    
+                                    <!--Second Div box start-->
+                                   
+                                    <!--Second Div box end-->
+                                  
+                                </div>
+                                <!--Left Menu Div end-->
+                                
+                                <!--Content Menu Div start-->
+                                
+                                 <div class="mid_div" >
+                                    
+    &nbsp;<script language="javascript" type="text/javascript">
+function getdetail(btn)
+{
+window.location="BookDetail.aspx?id="+btn.id;
+return false;
+}
+
+//ctl00_ContentPlaceHolder1_txtCriteria
+function gotonext()
+{
+    if (document.getElementById('ctl00_ContentPlaceHolder1_txtCriteria').value.length < 1)
+return;
+var criteria = document.getElementById('ctl00_ContentPlaceHolder1_txtCriteria').value;
+var column = document.getElementById('ctl00_ContentPlaceHolder1_txtColumnName').value;
+if (document.getElementById('ctl00_ContentPlaceHolder1_fldPageNumber').value.length > 0)
+{
+    var page = document.getElementById('ctl00_ContentPlaceHolder1_fldPageNumber').value;
+page++;
+window.location="SearchBook.aspx?pagenumber="+page+"&criteria="+criteria+"&column="+column;
+}
+else
+window.location="SearchBook.aspx?pagenumber="+"1"+"&criteria="+criteria+"&column="+column;
+}
+function gotoprev()
+{
+        if(document.getElementById('ctl00_ContentPlaceHolder1_txtCriteria').value.length<1)
+        return;
+        var criteria=document.getElementById('ctl00_ContentPlaceHolder1_txtCriteria').value;
+        var column=document.getElementById('ctl00_ContentPlaceHolder1_txtColumnName').value;
+        if(document.getElementById('ctl00_ContentPlaceHolder1_fldPageNumber').value.length>0)
+        {
+        var page=document.getElementById('ctl00_ContentPlaceHolder1_fldPageNumber').value;
+        page--;
+        window.location="SearchBook.aspx?pagenumber="+page+"&criteria="+criteria+"&column="+column;
+        }
+        else
+        window.location="SearchBook.aspx?pagenumber="+"1"+"&criteria="+criteria+"&column="+column;
+}
+function gotospecific()
+{
+if(document.getElementById('ctl00_ContentPlaceHolder1_txtCriteria').value.length<1)
+        return;
+        var criteria=document.getElementById('ctl00_ContentPlaceHolder1_txtCriteria').value;
+        var column=document.getElementById('ctl00_ContentPlaceHolder1_txtColumnName').value;
+        var page=document.getElementById('ctl00_ContentPlaceHolder1_GoToSpecificPage').value;
+ window.location="SearchBook.aspx?pagenumber="+page+"&criteria="+criteria+"&column="+column;
+}
+function gotofirst()
+{
+var criteria=document.getElementById('ctl00_ContentPlaceHolder1_txtCriteria').value;
+        var column=document.getElementById('ctl00_ContentPlaceHolder1_txtColumnName').value;
+ window.location="SearchBook.aspx?pagenumber="+"1"+"&criteria="+criteria+"&column="+column;
+}
+ function searchbook()
+    {
+
+    var ctrl=document.getElementById('ctl00_ContentPlaceHolder1_ddsearch');
+    
+    var criteria=document.getElementById('ctl00_ContentPlaceHolder1_txtsearch').value;
+   
+   var column=ctrl.options[ctrl.selectedIndex].value;
+   var pagenum=1;
+  
+   window.location="SearchBook.aspx?pagenumber="+pagenum+"&column="+column+"&criteria="+criteria;
+  return false;
+    }
+    </script><div id="mid_div">
+        <div id="top_div">
+            <div id="ctl00_ContentPlaceHolder1_panSearch">
+	
+                <table cellpadding="0" cellspacing="0" border="0" width="100%" style="text-align: left;
+                    color: #0000FF;">
+                    <tr>
+                        <td class="left_bar">
+                        </td>
+                        <td class="mid_bar" align="left">
+                            <div class="Menu_font">
+                                Book Search <b>
+                                    (Records Found: 3)</b></div>
+                        </td>
+                        <td class="right_bar">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            
+                            <table>
+                                <tr>
+                                    <td>
+                                        <span class="text_font">Search:</span>
+                                    </td>
+                                    <td>
+                                        <input name="ctl00$ContentPlaceHolder1$txtsearch" type="text" id="ctl00_ContentPlaceHolder1_txtsearch" class="search_text" value="Constitutional and political history of Pakistan" />
+                                    </td>
+                                    <td>
+                                        <select name="ctl00$ContentPlaceHolder1$ddsearch" id="ctl00_ContentPlaceHolder1_ddsearch" class="lblNormal">
+		<option value="Author">Author</option>
+		<option selected="selected" value="Title">Title</option>
+		<option value="Subject">Subject</option>
+		<option value="CallNo">CallNo</option>
+		<option value="Keyword">Keyword</option>
+		<option value="All">All</option>
+
+	</select>
+                                    </td>
+                                    <td align="left">
+                                        <input type="submit" name="ctl00$ContentPlaceHolder1$btnsearch" value="Search" onclick=" return searchbook();" id="ctl00_ContentPlaceHolder1_btnsearch" class="button" />
+                                    </td>
+                                    <td>
+                                        <a id="ctl00_ContentPlaceHolder1_HyperLink1" href="SearchBookAdvance.aspx" style="font-weight: 700">Advance Search</a> || 
+                                        <a id="ctl00_ContentPlaceHolder1_HyperLink2" href="SearchUrduBooks.aspx" style="font-weight: 600">Urdu Search</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            
+</div>
+            
+                    <table width="100%" border="0" cellspacing="0" class="lbleNormal" cellpadding="0"
+                        style="margin-left: 5px;">
+                
+                    <tr align="left" style="width: 100%">
+                        <td>
+                            <br />
+                            <b>Title:
+                                <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl01_img11" />
+                                Constitutional and political history of Pakistan
+                            </b>
+                        </td>
+                    </tr>
+                    <tr style="width: 100%">
+                        <td align="left">
+                            Author:
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl01_img10" />
+                            Hamid Khan
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left">
+                            Call No:
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl01_img9" />
+                            954.91 HAC
+                        </td>
+                    </tr>
+                    <tr style="width: 100%">
+                        <td align="left">
+                            Publisher:
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl01_img2" />
+                            Oxford University Press
+                            ,<img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl01_img1" />
+                            Oxford
+                            ,<img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl01_img4" />
+                            2005
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl01_img5" />
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl01_img6" />
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl01_img7" />
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl01_img8" />
+                            <a href="BookDetail.aspx?id=232899" style="color: Blue;"><b>Detail</b></a>
+                        </td>
+                    </tr>
+                    <tr style="width: 100%">
+                        <td align="left">
+                            <img src="../Images/Backgrounds/a-bg.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl01_img3" />
+                        </td>
+                    </tr>
+                
+                    <tr align="left" style="width: 100%">
+                        <td>
+                            <br />
+                            <b>Title:
+                                <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl02_img11" />
+                                Constitutional and political history of Pakistan (3rd Edition)
+                            </b>
+                        </td>
+                    </tr>
+                    <tr style="width: 100%">
+                        <td align="left">
+                            Author:
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl02_img10" />
+                            Hamid Khan
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left">
+                            Call No:
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl02_img9" />
+                            954.91 HAC
+                        </td>
+                    </tr>
+                    <tr style="width: 100%">
+                        <td align="left">
+                            Publisher:
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl02_img2" />
+                            Oxford University Press
+                            ,<img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl02_img1" />
+                            Oxford
+                            ,<img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl02_img4" />
+                            2019
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl02_img5" />
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl02_img6" />
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl02_img7" />
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl02_img8" />
+                            <a href="BookDetail.aspx?id=263686" style="color: Blue;"><b>Detail</b></a>
+                        </td>
+                    </tr>
+                    <tr style="width: 100%">
+                        <td align="left">
+                            <img src="../Images/Backgrounds/a-bg.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl02_img3" />
+                        </td>
+                    </tr>
+                
+                    <tr align="left" style="width: 100%">
+                        <td>
+                            <br />
+                            <b>Title:
+                                <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl03_img11" />
+                                Constitutional and political history of Pakistan/
+                            </b>
+                        </td>
+                    </tr>
+                    <tr style="width: 100%">
+                        <td align="left">
+                            Author:
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl03_img10" />
+                            Hamid Khan
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left">
+                            Call No:
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl03_img9" />
+                            954.91 HAC
+                        </td>
+                    </tr>
+                    <tr style="width: 100%">
+                        <td align="left">
+                            Publisher:
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl03_img2" />
+                            Oxford University Press
+                            ,<img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl03_img1" />
+                            Oxford
+                            ,<img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl03_img4" />
+                            2022
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl03_img5" />
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl03_img6" />
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl03_img7" />
+                            <img src="../Images/HomeImages/spacer.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl03_img8" />
+                            <a href="BookDetail.aspx?id=270048" style="color: Blue;"><b>Detail</b></a>
+                        </td>
+                    </tr>
+                    <tr style="width: 100%">
+                        <td align="left">
+                            <img src="../Images/Backgrounds/a-bg.gif" id="ctl00_ContentPlaceHolder1_repTasksList_ctl03_img3" />
+                        </td>
+                    </tr>
+                
+                    </table>
+                
+            
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <input name="ctl00$ContentPlaceHolder1$txtHidden" type="hidden" id="ctl00_ContentPlaceHolder1_txtHidden" style="width: 28px" value="1" />
+            
+        </div>
+    </div>
+
+                                </div>
+                                
+                                <!--Content Menu Div end-->
+                                
+                                <!--Right Menu Div start-->
+                                <div id="right_div">
+                                           <!--First Div box start-->
+                                    <div id="options_box">
+                                        
+                                        <div id="box_heading_div">
+                                            <b>
+                                                <span class="text_font">
+                                                    Catalogue
+                                                </span>
+                                            </b>
+                                        </div>
+                                        
+                                        <div id="options_div">
+                                            <table width="100%">
+                                                <tr>
+                                                <td>
+                                                    <b><span class="text_font">Books</span></b>
+                                                        <table cellpadding="0" cellpadding="0" >
+                                                            <tr>
+                                                                <td>
+                                                                    
+                                                                </td>
+                                                                <td>
+                                                                    <a href="FreshBooks.aspx" >Fresh Arrivals
+                                                                    </a>
+                                                                </td>
+                                                             </tr>
+                                                            <tr>
+                                                                <td>
+                                                                   
+                                                                </td>
+                                                                <td>
+                                                                    <a href="SearchBook.aspx" >Search</a>
+                                                                 </td>
+                                                            </tr>
+                                                                 <tr>
+                                                                <td>
+                                                                  
+                                                                </td>
+                                                                <td>
+                                                                   
+                                                                 </td>
+                                                            </tr>
+                                                    
+                                                            </table>
+                                                   
+                                                 </td>
+                                             </tr>       
+                                                <tr>
+                                                    <td>
+                                                         <b><span class="text_font">Periodicals</span></b>
+                                                          <table cellpadding="0" cellpadding="0" >
+                                                            <tr>
+                                                                <td>
+                                                                  
+                                                                </td>
+                                                                <td>
+                                                                    <a href="FreshPeriodicals.aspx" >Fresh Arrivals
+                                                                    </a>
+                                                                </td>
+                                                             </tr>
+                                                                <tr>
+                                                                <td>
+                                                                 
+                                                                </td>
+                                                                <td>
+                                                                    <a href="PeriodicalList.aspx">Periodicals List</a>
+                                                                 </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                              
+                                                                </td>
+                                                                <td>
+                                                                    <a href="SearchPeriodical.aspx">Periodical Search</a>
+                                                                 </td>
+                                                            </tr>
+                                                       <tr>
+                                                                <td>
+                                                                   
+                                                                </td>
+                                                                <td>
+                                                                    <a href="ArticalSearch.aspx">Periodical Articles</a>
+                                                                 </td>
+                                                            </tr>
+                                                             <tr>
+                                                                <td>
+                                                                  
+                                                                </td>
+                                                                <td>
+                                                                   
+                                                                 </td>
+                                                            </tr>
+                                                            </table>
+                                                            </td>
+                                                </tr>
+                                                
+                                            
+                                                <tr>
+                                                    <td>           
+                                                        <b><span class="text_font">Newspapers</span></b>
+                                                        <table cellpadding="0">
+                                                            <tr>
+                                                                <td>
+                                                                 
+                                                                </td>
+                                                                <td>
+                                                                    <a href="NArticleSearch.aspx">Article Search</a>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                               
+                                                                </td>
+                                                                <td>
+                                                                    <a href="TopNArticle.aspx">Latest Articles</a>
+                                                                </td>
+                                                            </tr>
+                                                          
+                                                           
+                                                        </table>
+                                                        <br>
+                                                   </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>           
+                                                        <b><span class="text_font"> Publications</span></b>
+                                                        <div id="ctl00_coursediv"><table cellpadding='0'><tr><tr><td></td><td><a href='SearchPeriodical.aspx?key=Babel&type=Title'>Babel</a><br></td></tr><tr><tr><td></td><td><a href='SearchPeriodical.aspx?key=Target&type=Title'>Target</a><br></td></tr></table></div>
+                                                        
+                                                        <br/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>          
+                                                        <b><span class="text_font">Research Papers</span></b>
+                                                        <table cellpadding="0">
+                                                            <tr>
+                                                                <td>
+                                                                   
+                                                                </td>
+                                                                <td>
+                                                                    <a href="TopRPapers.aspx">
+                                                                        Latest Papers</a>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                
+                                                                </td>
+                                                                <td>
+                                                                    <a href="SearchPapers.aspx">
+                                                                        Search</a>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                  
+                                                                </td>
+                                                                <td>
+                                                                   
+                                                                 </td>
+                                                            </tr>
+                                                        </table>
+                                                   </td>
+                                                </tr>
+                                          </table>              
+                                        </div>
+                                        
+                                    </div>
+                                    <!--First Div box end-->
+                                </div>
+                                <!--Right Menu Div end-->
+                                
+                            </div> 
+                        </td>
+                    </tr>
+                    <!--Content Row Ends-->
+                    
+                    <tr>
+                        <td colspan="6">
+                            <br />
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer Row Start-->
+                    <tr>
+                        <td colspan="6">
+                            <center>
+                                <div>
+                                     <div class="Footer_font">   © 2010-2026 Powered By <a href="http://www.max-intell.com">Max Intelligence</a>. All rights reserved. </div> 
+                                </div>
+                            </center>         
+                        </td>
+                    </tr>    
+                    <!-- Footer Row End-->
+                    
+                    
+                </table>
+            </div>
+        </center>
+    </div>
+   
+    </form>
+</body>
+</html>

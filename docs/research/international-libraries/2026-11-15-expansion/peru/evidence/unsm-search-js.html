@@ -1,0 +1,50 @@
+$(() => {
+
+    $.ajax({
+        url: `/bibliotecas/get`.proto().parseURL()
+    })
+        .done(function (data) {
+            data.items.unshift({ id: '-', text: 'Todas' });
+
+            const $select = $('#search-bar-library');
+            $select.empty();
+            for (let i = 0; i < data.items.length; i++) {
+                $select.append(`<option value="${data.items[i].id}">${data.items[i].text}</option>`);
+            }
+            $select.change();
+
+            if (libraryDefault) {
+                $select.val(libraryDefault).change();
+            }
+        });
+
+    if (typeDefault) {
+        $("#search-bar-type").val(typeDefault).trigger("change");
+    }
+    $("#search-bar-input").val(searchDefault);
+
+    $("#search-bar-btn").on('click', function () {
+        const search = $('#search-bar-input').val();
+        const type = $('#search-bar-type').val();
+        const library = $('#search-bar-library').val();
+
+        let url = new URL(`${window.location.origin}/catalogo`);
+        if (search != null && search !== "")
+        {
+            url.searchParams.append("search[0].filter", type);
+            url.searchParams.append("search[0].text", search);
+        }
+        if (library !== "-")
+        {
+            url.searchParams.append("library", library);
+        }
+        window.location.href = url.href;
+    });
+
+    const searchInput = document.getElementById('search-bar-input');
+    searchInput.addEventListener('keypress', function (event) {
+        if (!isTextKeyWithAccentMark(event)) {
+            event.preventDefault(); // Bloquea caracteres no permitidos
+        }
+    });
+});

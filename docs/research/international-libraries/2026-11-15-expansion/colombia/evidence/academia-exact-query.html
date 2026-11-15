@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang='es'>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="">
+			<meta charset="utf-8" />
+			<meta name="author" content="noindex" />
+
+			<meta name="keywords" content="noindex" />
+			<meta name="description" content="noindex" /><meta name='robots' content='all' />
+			<!--IE et son enfer de compatibilit�-->
+			<meta http-equiv='X-UA-Compatible' content='IE=Edge' />
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3" />
+	<title>Catálogo en línea </title>
+	
+	
+<link rel='stylesheet' type='text/css' href='./styles/common/ai_search.css?1719308059' />
+<link rel='stylesheet' type='text/css' href='./styles/common/animation_display.css?1615825938' />
+<link rel='stylesheet' type='text/css' href='./styles/common/common.css?1720098068' />
+<link rel='stylesheet' type='text/css' href='./styles/common/contrib.css?1673276618' />
+<link rel='stylesheet' type='text/css' href='./styles/common/dGrowl.css?1657616134' />
+<link rel='stylesheet' type='text/css' href='./styles/common/dsi.css?1699607986' />
+<link rel='stylesheet' type='text/css' href='./styles/common/font-awesome.css?1478593624' />
+<link rel='stylesheet' type='text/css' href='./styles/common/open-sans.css?1479312986' />
+<link rel='stylesheet' type='text/css' href='./styles/common/pagination.css?1532013719' />
+<link rel='stylesheet' type='text/css' href='./styles/common/record_display.css?1692887340' />
+<link rel='stylesheet' type='text/css' href='./styles/common/visionneuse.css?1711723334' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/colonnes.css?1343806866' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/gallerie_photos.css?1297066640' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/genbib.css?1498048756' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/liste_bulletins.css?1297066639' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/print.css?1297066639' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/tags.css?1297066639' />
+<link rel='stylesheet' type='text/css' href='./styles/genbib/visionneuse.css?1297066640' /><script>var opac_style= 'genbib';</script>
+	<!-- css_authentication -->	<link rel='SHORTCUT ICON' href='./images/site/favicon.ico' />
+	<script src="includes/javascript/drag_n_drop.js"></script>
+	<script src="includes/javascript/handle_drop.js"></script>
+	<script src="includes/javascript/popup.js"></script>
+	<script>
+			// Fonction a utiliser pour l'encodage des URLs en javascript
+			function encode_URL(data){
+				var docCharSet = document.characterSet ? document.characterSet : document.charset;
+				if(docCharSet == "UTF-8"){
+	    			return encodeURIComponent(data);
+	    		}else{
+	    			return escape(data);
+	    		}
+	    	}
+	    </script>
+	<script>
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName =
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i);
+				    }
+				 }
+				return items;
+			 }
+		}
+	</script>
+
+		<link rel='stylesheet' type='text/css' href='./includes/javascript/dojo/dijit/themes/tundra/tundra.css' />
+		<script>
+			var dojoConfig = {
+				parseOnLoad: true,
+				locale: 'es-es',
+				isDebug: false,
+				usePlainJson: true,
+				packages: [{
+						name: 'pmbBase',
+						location:'../../../..'
+					},{
+						name: 'd3',
+						location:'../../d3'
+					}],
+				deps: ['apps/pmb/MessagesStore', 'dgrowl/dGrowl', 'dojo/ready', 'apps/pmb/ImagesStore'],
+				callback:function(MessagesStore, dGrowl, ready, ImagesStore){
+					window.pmbDojo = {};
+					pmbDojo.messages = new MessagesStore({url:'./ajax.php?module=ajax&categ=messages', directInit:false, lastModified:'1755079154'});
+					pmbDojo.images = new ImagesStore({url:'./ajax.php?module=ajax&categ=images', directInit:false});
+					ready(function(){
+						new dGrowl({'channels':[{'name':'info','pos':2},{'name':'error', 'pos':1}]});
+					});
+
+				},
+			};
+		</script>
+		<script src='./includes/javascript/dojo/dojo/dojo.js'></script>
+		<script>
+		dojo.addOnLoad(function () {
+			// Ajout du theme Dojo
+			dojo.addClass(dojo.body(),'tundra');
+		})
+		</script>
+		<script>
+	var pmb_img_patience = './images/patience.gif';
+</script><script>
+			var opac_show_social_network =0;
+		</script>
+	<script src='./includes/javascript/http_request.js'></script>
+	<script src='./includes/javascript/track_clicks.js'></script>
+	
+</head>
+
+<body onload="window.defaultStatus='PMB : Acceso público';"  id="pmbopac">
+		<script>
+		function findNoticeElement(id){
+			var ul=null;
+			//cas des notices classiques
+			var domNotice = document.getElementById('el'+id+'Child');
+			//notice_display
+			if(!domNotice) domNotice = document.getElementById('notice');
+			if(domNotice){
+				var uls = domNotice.getElementsByTagName('ul');
+				for (var i=0 ; i<uls.length ; i++){
+					if(uls[i].getAttribute('id') == 'onglets_isbd_public'+id){
+						var ul = uls[i];
+						break;
+					}
+				}
+			} else{
+				var li = document.getElementById('onglet_isbd'+id);
+				if(!li) var li = document.getElementById('onglet_public'+id);
+				if(!li) var li = document.getElementById('onglet_detail'+id);
+				if(li) var ul = li.parentNode;
+			}
+			return ul;
+		}
+		function show_what(quoi, id) {
+			switch(quoi){
+				case 'EXPL_LOC' :
+					document.getElementById('div_expl_loc' + id).style.display = 'block';
+					document.getElementById('div_expl' + id).style.display = 'none';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_inactive';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_active';
+					break;
+				case 'EXPL' :
+					document.getElementById('div_expl_loc' + id).style.display = 'none';
+					document.getElementById('div_expl' + id).style.display = 'block';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_active';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_inactive';
+					break;
+				default :
+					quoi= quoi.toLowerCase();
+					var ul = findNoticeElement(id);
+					if (ul) {
+						var items  = ul.getElementsByTagName('li');
+						for (var i=0 ; i<items.length ; i++){
+							if(items[i].getAttribute('id')){
+								if(items[i].getAttribute('id') == 'onglet_'+quoi+id){
+									items[i].className = 'isbd_public_active';
+									document.getElementById('div_'+quoi+id).style.display = 'block';
+								}else{
+									if(items[i].className != 'onglet_tags' && items[i].className != 'onglet_avis' && items[i].className != 'onglet_sugg' && items[i].className != 'onglet_basket' && items[i].className != 'onglet_liste_lecture'){
+										items[i].className = 'isbd_public_inactive';
+										document.getElementById(items[i].getAttribute('id').replace('onglet','div')).style.display = 'none';
+									}
+								}
+							}
+						}
+					}
+					break;
+			}
+		}
+		</script>
+	<script src='./includes/javascript/tablist_ajax.js'></script>
+<script src='./includes/javascript/tablist.js'></script>
+<script src='./includes/javascript/misc.js'></script>
+	<div id='att' style='z-Index:1000'></div>
+	<div id="container"><div id="main"><div id='main_header'></div><div id="main_hors_footer">
+						
+
+<script src='./includes/javascript/auth_popup.js'></script>
+<script src='./includes/javascript/pnb.js'></script><div id="intro_message"><div class="p1"><!--<a href="index.php?lvl=index"><img src="./images/bar_spacer.gif" id="map_lien_retour" alt="" /></a> 
+<a href="http://www.sigb.net" id="puce">Sigb.Net</a>
+<a href="http://www.sigb.net/wiki/" id="puce">WiKi PMB</a>
+<a href="http://fr.wikipedia.org" id="puce">WiKipedia</a>
+--></div><div class="p2"></div></div><div id='navigator'>
+<table role='presentation' style='width:100%'><tr><td class='navig_actions_first_screen' ><a href="./index.php?lvl=index" class='navig_etageres'><span>Volver a la pantalla de inicio ...</span></a></td>
+</tr></table></div><!-- fermeture de #navigator -->
+<div id='resume_panier' class='empty'></div><div id='search' role='search'><ul class='search_tabs'><li ><a href="./index.php?search_type_asked=simple_search">Búsqueda simple</a></li><li ><a href="./index.php?search_type_asked=search_perso">Predefinido</a></li><li  id='current' aria-current='page'  >
+			<a href="javascript:document.forms['search_form1'].submit();" data-search-perso-id='1'>Documentos digitales</a><form name='search_form1' action='./index.php?search_type_asked=extended_search&onglet_persopac=1&limitsearch=0' style='display:none' method='post'>
+<input type='hidden' name='search[]' value='f_44'/><input type='hidden' name='inter_0_f_44' value=''/><input type='hidden' name='op_0_f_44' value='EQ'/><input type='hidden' name='field_0_f_44[]' value='application/pdf'/><input type='hidden' name='page' value=''/>
+			<input type="hidden" name="nb_per_page_custom" value="">
+</form></li><li><a href="./index.php?search_type_asked=extended_search">Búsqueda avanzada</a></li></ul><div id='search_crl'></div><div class='row'>
+		<script src="./includes/javascript/ajax.js"></script>
+		<script>var operators_to_enable = new Array();</script><form class='form-' name='search_form' id='search_form' action='./index.php?lvl=index&search_type_asked=extended_search' method='post'  onsubmit='enable_operators();valid_form_extented_search();'>
+			<div class='form-contenu'><div id='choose_criteria'>Añadir un campo de búsqueda por</div>  <script>
+            function verify(){
+                if (this.form.add_field.value != '') {
+                    enable_operators();
+                    this.form.action='./index.php?lvl=index&search_type_asked=extended_search';
+                    this.form.target='';
+                    if(this.form.launch_search) {
+                        this.form.launch_search.value=0;
+                        this.form.submit();
+                    } else {
+                        alert('Seleccione un campo de b&uacute;squeda');
+                    }
+                }
+            }
+        </script><select name='add_field' id='add_field' onChange='verify.call(this)' style='width: 300px;'>
+<option value='' style='color:#000000'>Seleccione un campo de b&uacute;squeda</option>
+<option class='select-group' disabled value='' class='optgroup_multicriteria' style='color:#000; font-weight:bold;'>Campos principales</option>
+<option class='select-option' value='f_1' style='color:#000000'>T&iacute;tulo</option>
+<option class='select-option' value='f_42' style='color:#000000'>Todos los campos</option>
+<option class='select-option' value='f_2' style='color:#000000'>Autor</option>
+<option class='select-option' value='f_25' style='color:#000000'>Tipo de autor </option>
+<option class='select-option' value='f_3' style='color:#000000'>Editor</option>
+<option class='select-option' value='f_23' style='color:#000000'>Fecha de publicaci&oacute;n o a&ntilde;o de edici&oacute;n</option>
+<option class='select-option' value='f_4' style='color:#000000'>Colecci&oacute;n</option>
+<option class='select-option' value='f_5' style='color:#000000'>Subcolecci&oacute;n</option>
+<option class='select-option' value='f_6' style='color:#000000'>Serie</option>
+<option class='select-option' value='f_22' style='color:#000000'>ISBN o ISSN</option>
+<option class='select-option' value='f_51' style='color:#000000'>T&iacute;tulo uniforme</option>
+<option class='select-option' value='f_72' style='color:#000000'>Contenido de los documentos digitales</option>
+<option class='select-option' value='f_45' style='color:#000000'>V&iacute;nculo electr&oacute;nico en el registro</option>
+<option class='select-option' value='f_46' style='color:#000000'>Formato electr&oacute;nico del recurso</option>
+<option class='select-option' value='f_58' style='color:#000000'>Novedades</option>
+<option class='select-option' value='f_102' style='color:#000000'>Digital</option>
+<option class='select-option' value='f_44' style='color:#000000'>Documentos electr&oacute;nicos</option>
+<option class='select-option' value='f_73' style='color:#000000'>Estado del documento digital</option>
+<option class='select-option' value='f_94' style='color:#000000'>Propietario del documento digital</option>
+<option class='select-option' value='f_95' style='color:#000000'>Ubicaci&oacute;n del documento digital</option>
+<option class='select-group' disabled value='' class='optgroup_multicriteria' style='color:#000; font-weight:bold;'>Notas</option>
+<option class='select-option' value='f_7' style='color:#000000'>Nota general</option>
+<option class='select-option' value='f_8' style='color:#000000'>Nota de contenido</option>
+<option class='select-option' value='f_9' style='color:#000000'>Nota de resumen</option>
+<option class='select-option' value='f_10' style='color:#000000'>Todas las notas</option>
+<option class='select-group' disabled value='' class='optgroup_multicriteria' style='color:#000; font-weight:bold;'>Indexaci&oacute;n</option>
+<option class='select-option' value='f_11' style='color:#000000'>Categor&iacute;as</option>
+<option class='select-option' value='f_12' style='color:#000000'>Indexaci&oacute;n decimal</option>
+<option class='select-option' value='f_13' style='color:#000000'>Palabras claves</option>
+<option class='select-group' disabled value='' class='optgroup_multicriteria' style='color:#000; font-weight:bold;'>Idioma</option>
+<option class='select-option' value='f_20' style='color:#000000'>Idioma de la publicaci&oacute;n</option>
+<option class='select-option' value='f_21' style='color:#000000'>Idioma original</option>
+<option class='select-group' disabled value='' class='optgroup_multicriteria' style='color:#000; font-weight:bold;'>Tipos</option>
+<option class='select-option' value='f_14' style='color:#000000'>Documento/revista/art&iacute;culo</option>
+<option class='select-option' value='f_15' style='color:#000000'>Tipo de documento</option>
+<option class='select-group' disabled value='' class='optgroup_multicriteria' style='color:#000; font-weight:bold;'>Ejemplares</option>
+<option class='select-option' value='f_16' style='color:#000000'>Localizaci&oacute;n</option>
+<option class='select-option' value='f_17' style='color:#000000'>Secci&oacute;n</option>
+<option class='select-option' value='f_18' style='color:#000000'>Propietarios</option>
+<option class='select-option' value='f_19' style='color:#000000'>Soporte</option>
+<option class='select-option' value='f_24' style='color:#000000'>Ubicaci&oacute;n f&iacute;sica</option>
+<option class='select-option' value='f_32' style='color:#000000'>C&oacute;digo estad&iacute;stico</option>
+<option class='select-group' disabled value='' class='optgroup_multicriteria' style='color:#000; font-weight:bold;'>Publicaciones peri&oacute;dicas</option>
+<option class='select-option' value='f_28' style='color:#000000'>Fecha de publicaci&oacute;n del bolet&iacute;n</option>
+<option class='select-option' value='f_34' style='color:#000000'>T&iacute;tulo de la publicaci&oacute;n peri&oacute;dica</option>
+<option class='select-option' value='f_35' style='color:#000000'>N&uacute;mero de bolet&iacute;n</option>
+<option class='select-option' value='f_56' style='color:#000000'>Estado de colecciones localizadas</option>
+<option class='select-group' disabled value='' class='optgroup_multicriteria' style='color:#000; font-weight:bold;'>Obras / Expresiones</option>
+<option class='select-option' value='f_7001' style='color:#000000'>tipo de trabajo</option>
+<option class='select-option' value='f_7002' style='color:#000000'>Tipo de trabajo</option>
+<option class='select-option' value='f_7003' style='color:#000000'>nombre del trabajo</option>
+<option class='select-option' value='f_7007' style='color:#000000'>autor de la obra</option>
+<option class='select-option' value='f_7027' style='color:#000000'>Int&eacute;rprete de la obra</option>
+<option class='select-option' value='f_7008' style='color:#000000'>Forma de la obra (Entrada libre)</option>
+<option class='select-option' value='f_7009' style='color:#000000'>Forma de trabajo (Lista)</option>
+<option class='select-option' value='f_7010' style='color:#000000'>fecha de trabajo</option>
+<option class='select-option' value='f_7011' style='color:#000000'>Lugar de origen de la obra</option>
+<option class='select-option' value='f_7012' style='color:#000000'>tema de la obra</option>
+<option class='select-option' value='f_7013' style='color:#000000'>P&uacute;blico objetivo de la obra</option>
+<option class='select-option' value='f_7014' style='color:#000000'>historia de la obra</option>
+<option class='select-option' value='f_7015' style='color:#000000'>Contexto de la obra</option>
+<option class='select-option' value='f_7016' style='color:#000000'>Distribuci&oacute;n instrumental y vocal de la obra</option>
+<option class='select-option' value='f_7017' style='color:#000000'>Referencia num&eacute;rica de la obra</option>
+<option class='select-option' value='f_7018' style='color:#000000'>Tono (Entrada libre) de la obra</option>
+<option class='select-option' value='f_7019' style='color:#000000'>Tonalidad (Lista) de la obra</option>
+<option class='select-option' value='f_7020' style='color:#000000'>Coordenadas (trabajo de mapeo)</option>
+<option class='select-option' value='f_7021' style='color:#000000'>Equinoccio (obra cartogr&aacute;fica)</option>
+<option class='select-option' value='f_7022' style='color:#000000'>Subdivisi&oacute;n de forma (trabajo)</option>
+<option class='select-option' value='f_7023' style='color:#000000'>Caracter&iacute;sticas de la obra</option>
+<option class='select-option' value='f_7024' style='color:#000000'>comentario de la obra</option>
+<option class='select-option' value='f_7026' style='color:#000000'>Integridad del trabajo</option>
+<option class='select-group' disabled value='' class='optgroup_multicriteria' style='color:#000; font-weight:bold;'>Campos personalizados de registros.</option>
+<option class='select-option' value='d_1' style='color:#000000'>Pieza</option>
+<option class='select-group' disabled value='' class='optgroup_multicriteria' style='color:#000; font-weight:bold;'>B&uacute;squedas</option>
+<option class='select-option' value='s_1' style='color:#000000'>Hist&oacute;rico de las b&uacute;squedas</option>
+<option class='select-option' value='s_13' style='color:#000000'>msg:ai_search_criteria_rmc</option>
+</select> <script src='./includes/javascript/select_filter.js'></script><input type='button' class='bouton button_search_help' name='?' value='Ayuda' onClick='window.open("./help.php?whatis=search_multi", "search_help", "scrollbars=yes, toolbar=no, dependent=yes, width=400, height=400, resizable=yes"); return false' /><br /><br />
+				<div class='row search_perso'>
+					<table id='extended-search-container' class='table-no-border' role='presentation'><tr><td ><input type='hidden' name='search[]' value='f_44'></td><td class='search_first_column' >&nbsp;</td><td ><span class='search_critere'>Documentos electr&oacute;nicos</span></td><td ><span class='search_sous_critere'><select name='op_0_f_44' id='op_0_f_44' onchange='operatorChanged("0_f_44",this.value, "query_list");' >
+<option value='EQ'  selected>=</option>
+</select></span></td><td   class='td-border-display'><span class='search_value'><select name='field_0_f_44[]' multiple size='5' class="ext_search_txt"><option value='application/data' >application/data</option><option value='application/pdf'  selected>application/pdf</option></select></span></td><td ><span class='search_cancel'><input id='delete_field_button_0' type='button' class='bouton' value='X' onClick="enable_operators(); this.form.delete_field.value='0'; this.form.action='./index.php?lvl=index&search_type_asked=extended_search'; this.form.target=''; this.form.submit();"></span></td></tr>
+
+<tr><td colspan='6' class='center' id='td_search_submit'><span class='search_submit'><input type='submit' id='search_form_submit' class='bouton boutonrechercher' value='Buscar'/></span>
+</td></tr></table>
+<input type='hidden' name='explicit_search' value='1'/>
+<input type='hidden' name='search_xml_file' value='search_fields'/>
+
+				</div>
+			</div>
+			<input type='hidden' name='delete_field' value=''/>
+			<input type='hidden' name='launch_search' value=''/>
+			<input type='hidden' name='page' value='0'/>
+			<input type='hidden' name='no_search' value='0'/>
+			<input type='hidden' name='onglet_persopac' value='1'/>
+		</form>
+		<script>ajax_parse_dom();</script>
+
+
+		<script>
+
+			function valid_form_extented_search() {
+				document.search_form.launch_search.value=1;
+				document.search_form.action='./index.php?lvl=search_result&search_type_asked=extended_search';
+				document.search_form.page.value='';
+				
+				// pour retrouver les valeurs des champs si retour par la barre de navigation
+				//active_autocomplete();
+				document.search_form.submit();
+			}
+
+			function change_source_checkbox(changing_control, source_id) {
+				var i=0; var count=0;
+				onoff = changing_control.checked;
+				for(i=0; i<document.search_form.elements.length; i++) {
+					if(document.search_form.elements[i].name == 'source[]')	{
+						if (document.search_form.elements[i].value == source_id)
+							document.search_form.elements[i].checked = onoff;
+					}
+				}
+			}
+
+			function date_flottante_type_onchange(varname, operator) {
+				if(!document.getElementById(varname + '_date_begin_zone_label')) return;
+				switch(operator) {
+					case 'ISEMPTY': // vide
+					case 'ISNOTEMPTY': // pas vide
+						document.getElementById(varname + '_date_begin_zone').style.display = 'none';
+						document.getElementById(varname + '_date_end_zone').style.display = 'none';
+						break;
+					case 'BETWEEN': // interval date
+						document.getElementById(varname + '_date_begin_zone').style.display = '';
+						document.getElementById(varname + '_date_begin_zone_label').style.display = '';
+						document.getElementById(varname + '_date_end_zone').style.display = '';
+						break;
+					default:
+						// NEAR, =, <=, >=
+						document.getElementById(varname + '_date_begin_zone').style.display = '';
+						document.getElementById(varname + '_date_begin_zone_label').style.display = 'none';
+						document.getElementById(varname + '_date_end_zone').style.display = 'none';
+						break;
+				}
+			}
+
+			function getFieldDate(field_name, field_value) {
+				var field = document.createElement('input');
+				field.setAttribute('type', 'text');
+				field.setAttribute('id', 'field_' +field_name+'[]');
+				field.setAttribute('name', 'field_' +field_name+'[]');
+				field.setAttribute('style', 'width: 10em;');
+				field.setAttribute('value',field_value);
+				field.setAttribute('data-dojo-type','dijit/form/DateTextBox');
+				field.setAttribute('constraints','{datePattern:"dd/MM/yyyy"}');
+				field.setAttribute('required','false');
+				return field;
+			}
+
+			function getFieldDateNumber(field_name, field_value) {
+				var field = document.createElement('input');
+				field.setAttribute('type', 'text');
+				field.setAttribute('id', 'field_' +field_name+'[]');
+				field.setAttribute('name', 'field_' +field_name+'[]');
+				field.setAttribute('style', 'width: 10em;');
+				field.setAttribute('value',field_value);
+				return field;
+			}
+
+			//callback du selecteur d'op�rateur
+			function operatorChanged(field,operator,datatype) {
+				if(datatype == 'small_text') {
+					date_flottante_type_onchange('field_' + field, operator);
+				}
+				if(datatype == 'date') {
+					switch(operator) {
+						case 'BETWEEN': // 2eme champ date visible
+							var part = document.getElementById('field_'+field+'_start_part[]');
+							if(part){
+								part.style.display='inline';
+								part.title='Fecha de inicio. Si está vacío, no hay límite anterior'
+							}
+							var part = document.getElementById('field_'+field+'_end_part[]');
+							if(part){
+								part.style.display='inline';
+								part.title='Fecha final. Si está vacío, no hay límite de finalización'
+							}
+							break;
+						case 'ISEMPTY':
+						case 'ISNOTEMPTY':
+						case 'THIS_WEEK':
+						case 'LAST_WEEK':
+						case 'THIS_MONTH':
+						case 'LAST_MONTH':
+						case 'THIS_YEAR': // aucun champ date visible
+							var part = document.getElementById('field_'+field+'_start_part[]');
+							if(part) part.style.display='none';
+							var part = document.getElementById('field_'+field+'_end_part[]');
+							if(part) part.style.display='none';
+							break;
+						case 'LESS_THAN_DAYS':
+						case 'MORE_THAN_DAYS':
+							var part = document.getElementById('field_'+field+'_start_part[]');
+							if(part){
+								part.style.display='block';
+								part.title=''
+							}
+							var part = document.getElementById('field_'+field+'_end_part[]');
+							if(part) part.style.display='none';
+							break;
+						default : // un seul champ date
+							var part = document.getElementById('field_'+field+'_start_part[]');
+							if(part){
+								part.style.display='block';
+								part.title=''
+							}
+							var part = document.getElementById('field_'+field+'_end_part[]');
+							if(part) part.style.display='none';
+						break;
+					}
+					return;
+				}
+				if(	!document.getElementById('field_'+field+'_max_aut') ) return;
+				for(i=0;i<=document.getElementById('field_'+field+'_max_aut').value;i++) {
+					var f_lib = document.getElementById('field_'+field+'_lib_'+i);
+					var f_id = document.getElementById('field_'+field+'_id_'+i);
+					var f = document.getElementById('field_'+field+'_'+i);
+					if(operator == 'AUTHORITY' || (f_lib.getAttribute('completion') && (operator == 'EQ'))) {
+		//				var authority_id = document.getElementById('fieldvar_'+field+'_authority_id');
+		//				f_lib.setAttribute('class','authorities ext_search_txt');
+		//				if(authority_id.value != 0) f.value = authority_id.value;
+					}else {
+						f_lib.setAttribute('class','ext_search_txt');
+						f.value = f_lib.value;
+					}
+				}
+			}
+
+			//callback du selecteur AJAX
+			function selectionSelected(infield) {
+				//on enl�ve le dernier _X
+				var tmp_infield = infield.split('_');
+				var tmp_infield_length = tmp_infield.length;
+				//var inc = tmp_infield[tmp_infield_length-1];
+				tmp_infield.pop();
+				infield = tmp_infield.join('_');
+				//pour assurer la compatibilit� avec le selecteur AJAX
+				infield=infield.replace('_lib','');
+
+				var op_name =infield.replace('field','op');
+				var op_selector = document.forms['search_form'][op_name];
+				//on passe le champ en selecteur simple !
+				for (var i=0 ; i<op_selector.options.length ; i++) {
+					if(op_selector.options[i].value == 'EQ')
+						op_selector.options[i].selected = true;
+				}
+				var empty_line=false;
+				for(i=0;i<=document.getElementById(infield+'_max_aut').value;i++) {
+					var searchField = document.getElementById(infield+'_'+i);
+					var f_lib = document.getElementById(infield+'_lib'+'_'+i);
+					var f_id = document.getElementById(infield+'_id'+'_'+i);
+
+					if(f_lib) {
+                        f_lib.setAttribute('class','ext_search_txt');
+                    }
+					if(f_id && f_id.value=='') {
+						f_id.value=0;
+					}
+                    if(f_id) {
+						if(f_id.value == 0) {
+                            empty_line = true;
+                        }
+                        searchField.value=f_id.value;
+					}
+				}
+				if(!empty_line) {
+					add_line(infield, 'EQ');
+				}
+			}
+
+			//callback du selecteur AJAX pour les autorit�s
+			function authoritySelected(infield) {
+				//on enl�ve le dernier _X
+				var tmp_infield = infield.split('_');
+				var tmp_infield_length = tmp_infield.length;
+				//var inc = tmp_infield[tmp_infield_length-1];
+				tmp_infield.pop();
+				infield = tmp_infield.join('_');
+				//pour assurer la compatibilit� avec le selecteur AJAX
+				infield=infield.replace('_lib','');
+				infield=infield.replace('_authority_label','');
+
+				var op_name =infield.replace('field','op');
+				var op_selector = document.forms['search_form'][op_name];
+				//on passe le champ en selecteur d'autorit� !
+				for (var i=0 ; i<op_selector.options.length ; i++) {
+					if(op_selector.options[i].value == 'AUTHORITY') {
+						op_selector.options[i].selected = true;
+					    op_selector.disabled=true;
+					}
+				}
+				var empty_line=false;
+				var max_aut = document.getElementById(infield+'_max_aut');
+				if (max_aut) {
+    				for(i=0;i<=max_aut.value;i++) {
+						var searchField = document.getElementById(infield+'_'+i);
+						var f_lib = document.getElementById(infield+'_lib'+'_'+i);
+						var f_id = document.getElementById(infield+'_id'+'_'+i);
+						var authority_id = document.getElementById(infield.replace('field','fieldvar')+'_authority_id'+'_'+i);
+
+						if(f_lib) {
+                            f_lib.setAttribute('class','authorities ext_search_txt');
+                        }
+						if(f_id && f_id.value=='') {
+							f_id.value=0;
+						}
+						if(f_id) {
+							if(f_id.value == 0) {
+                                empty_line = true;
+                            }
+                            searchField.value=f_id.value;
+                            authority_id.value= f_id.value;
+						}
+					}
+    				if(!empty_line && op_selector.value == 'AUTHORITY') {
+						add_line(infield, 'AUTHORITY');
+					}
+				}
+			}
+
+			//callback sur la saisie libre
+			function fieldChanged(id,inc,value,e) {
+				var ma_touche;
+				if(window.event){
+					ma_touche=window.event.keyCode;
+				}else{
+					ma_touche=e.keyCode;
+				}
+				var f_lib = document.getElementById(id+'_lib_'+inc);
+				var f_id = document.getElementById(id+'_id_'+inc);
+				var f = document.getElementById(id+'_'+inc);
+				var selector = document.forms['search_form'][id.replace('field','op')];
+				if (selector.options[selector.selectedIndex].value != 'AUTHORITY')
+					f.value = value;
+				else if(ma_touche != 13) {
+					var max_aut=document.getElementById(id+'_max_aut').value;
+					if(max_aut>0) {
+						//Plus d'un champ : on bloque
+						return;
+					}
+					f_lib.setAttribute('class','ext_search_txt');
+					for (var i=0 ; i<selector.options.length ; i++) {
+						if (selector.options[i].value == 'BOOLEAN')
+						selector.selectedIndex = i;
+					}
+					selector.options[0].selected = true;
+					f.value = f_lib.value;
+					if(document.getElementById(id.replace('field','fieldvar')+'_authority_id'+'_'+inc)) {
+						var authority_id = document.getElementById(id.replace('field','fieldvar')+'_authority_id'+'_'+inc);
+						authority_id.value = '';
+					}
+				}
+			}
+
+			function raz_line(fnamesans, inc) {
+                var fname_id=fnamesans+'_id';
+				var fnamesanslib=fnamesans+'_lib';
+                if(document.getElementById(fnamesanslib+'_'+inc)) {
+                    document.getElementById(fnamesanslib+'_'+inc).value = '';
+                }
+                if(document.getElementById(fname_id+'_'+inc)) {
+                    document.getElementById(fname_id+'_'+inc).value = '0';
+                }
+                if(document.getElementById('fieldvar_'+fname_id+'_authority_id')) {
+                    document.getElementById('fieldvar_'+fname_id+'_authority_id').value = '0';
+                }
+                if(document.getElementById(fnamesans+'_'+inc)) {
+                    document.getElementById(fnamesans+'_'+inc).value = '0';
+                }
+            }
+
+			function add_line(fnamesans, type) {
+
+				var fname=fnamesans+'[]';
+				var fname_id=fnamesans+'_id';
+				var fnamesanslib=fnamesans+'_lib';
+				var fnamelib=fnamesans+'_lib[]';
+				var op=fnamesans.replace('field','op');
+				var tmp_fnamesans = fnamesans.split('_');
+				var search_field_id=tmp_fnamesans[2]+'_'+tmp_fnamesans[3];
+
+				var template = document.getElementById('el'+fnamesans);
+				var inc=document.getElementById(fnamesans+'_max_aut').value;
+				inc++;
+		        var line=document.createElement('div');
+				line.setAttribute('class', 'search_group');
+
+				var f_id = document.createElement('input');
+				f_id.setAttribute('id',fnamesans+'_'+inc);
+				f_id.setAttribute('name',fname);
+				f_id.setAttribute('value','');
+				f_id.setAttribute('type','hidden');
+
+				var f_lib = document.createElement('input');
+				f_lib.setAttribute('autfield',fname_id+'_'+inc);
+				f_lib.setAttribute('onkeyup','fieldChanged(\''+fnamesans+'\',\''+inc+'\',this.value,event)');
+				if(document.getElementById(fnamesanslib+'_0').getAttribute('completion')){
+					f_lib.setAttribute('completion',document.getElementById(fnamesanslib+'_0').getAttribute('completion'));
+					if(f_lib.getAttribute('completion') == 'onto') {
+						f_lib.setAttribute('att_id_filter', 'http://www.w3.org/2004/02/skos/core#Concept');
+    				}
+				}
+				switch(type) {
+					case 'AUTHORITY':
+						f_lib.setAttribute('callback','authoritySelected');
+						var fname_name_aut_id=fnamesans+'[authority_id][]';
+						var fname_name_aut_id=fname_name_aut_id.replace('field','fieldvar');
+						var fname_aut_id=fnamesans+'_authority_id';
+						var fname_aut_id=fname_aut_id.replace('field','fieldvar');
+						var f_aut = document.createElement('input');
+						f_aut.setAttribute('type','hidden');
+						f_aut.setAttribute('value','');
+						f_aut.setAttribute('id',fname_aut_id+'_'+inc);
+						f_aut.setAttribute('name',fname_name_aut_id);
+						break;
+					case 'EQ':
+						f_lib.setAttribute('callback','selectionSelected');
+						f_lib.setAttribute('param1', 'search_fields');
+						f_lib.setAttribute('param2', search_field_id);
+						break;
+				}
+				f_lib.setAttribute('id',fnamesanslib+'_'+inc);
+				f_lib.setAttribute('name',fnamelib);
+				f_lib.setAttribute('value','');
+				f_lib.setAttribute('type','text');
+				f_lib.setAttribute('class','ext_search_txt');
+				if(document.getElementById(fnamesanslib+'_0').getAttribute('linkfield')){
+					f_lib.setAttribute('linkfield',document.getElementById(fnamesanslib+'_0').getAttribute('linkfield'));
+				}
+				var op_selected = document.getElementById(op).options[document.getElementById(op).selectedIndex].value;
+				if (op_selected == 'AUTHORITY'){
+					f_lib.setAttribute('class','authorities ext_search_txt');
+				} else if(f_lib.getAttribute('completion') && (op_selected == 'EQ')) {
+					f_lib.setAttribute('class','ext_search_txt');
+				}
+
+			    var f_search_span = document.createElement('span');
+				f_search_span.setAttribute('class','search_value');
+			    f_search_span.appendChild(f_lib);
+
+				f_dico_img = document.createElement('img');
+				f_dico_img.setAttribute('src','./images/dictionnaire.png');
+				f_dico_img.setAttribute('align','middle');
+				f_dico_img.setAttribute('onclick','document.getElementById(\''+fnamesanslib+'_'+inc+'\').focus();simulate_event(\''+fnamesanslib+'_'+inc+'\');');
+				f_dico_span = document.createElement('span');
+				f_dico_span.setAttribute('class','search_dico');
+				f_dico_span.appendChild(f_dico_img);
+
+				var f_del = document.createElement('input');
+				f_del.setAttribute('class','bouton vider');
+				f_del.setAttribute('type','button');
+				f_del.setAttribute('onclick','raz_line(\''+fnamesans+'\', \''+inc+'\');');
+				f_del.setAttribute('value','X');
+
+				var f_id2 = document.createElement('input');
+				f_id2.setAttribute('type','hidden');
+				f_id2.setAttribute('value','');
+				f_id2.setAttribute('id',fname_id+'_'+inc);
+				f_id2.setAttribute('name',fname_id);
+
+		        line.appendChild(f_id);
+		        line.appendChild(f_search_span);
+		        line.appendChild(f_dico_span);
+				line.appendChild(f_del);
+		        if(type == 'AUTHORITY') {
+					line.appendChild(f_aut);
+				}
+		        line.appendChild(f_id2);
+
+		        template.appendChild(line);
+
+				ajax_pack_element(f_lib);
+				f_lib.focus();
+
+		        document.getElementById(fnamesans+'_max_aut').value=inc;
+
+				//Plus d'un champ : on bloque
+				var selector = document.getElementById(op);
+				selector.disabled=true;
+				if(operators_to_enable.indexOf(op) === -1) {
+					operators_to_enable.push(op);
+				}
+			}
+
+			function enable_operators() {
+				if(operators_to_enable.length>0){
+					for	(index = operators_to_enable.length; index >= 0; index--) {
+					    if(document.getElementById(operators_to_enable[index])) {
+							document.getElementById(operators_to_enable[index]).disabled=false;
+						} else {
+							operators_to_enable.splice(index,1);
+						}
+					}
+				}
+			}
+
+			function enable_operator(fnamesans, index) {
+				var empty = true;
+				var max = document.getElementById(fnamesans+'_max_aut').value;
+				for(var i = 0; i < max; i++) {
+					if(parseInt(document.getElementById(fnamesans+'_id_'+i).value) != 0) {
+						empty = false;
+					}
+				}
+				var op_name =fnamesans.replace('field','op');
+                if(empty && operators_to_enable.indexOf(op_name) !== -1) {
+					document.getElementById(op_name).disabled=false;
+				}
+			}
+			 operatorChanged('0_f_44', document.getElementById('op_0_f_44') ? document.getElementById('op_0_f_44').value : null,'query_list'); 
+		</script></div></div>
+		</div><!-- fin DIV  -->
+<div id="footer">
+    <span id="footer_rss"></span>
+    <span id="footer_link_sup"><a href="https://www.biteca.com/">Implementado por Biteca</a>&nbsp;</span>
+    <span id="footer_link_website">
+        <a class="footer_biblio_name" href="http://www.academiahistoria.org.co/" title=""></a> &nbsp;
+    </span>
+    <span id="footer_link_pmb"><a href=http://www.google.es target=_blank>Buscar en Google</a>&nbsp;
+        <a class="lien_pmb_footer" href="https://www.sigb.net" title="pmb una solución libre para la mediateca" target="_blank">pmb</a>
+    </span>
+</div> 
+
+		</div><!-- /div id=main -->
+
+		<div id="intro">
+<div id="intro_bibli">
+			<h3></h3>
+			<div class="p1"><img src="./styles/genbib/images/ach2.jpg" />
+<!--<img src="./styles/genbib/images/image1.jpg" />
+<img src="./styles/genbib/images/image2.jpg" />
+<img src="./styles/genbib/images/image3.jpg" />-->
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TDWS9FF"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) --></div>
+			<div class="p2"><ul id="menuDeroulant">
+
+<li><a href="./index.php">Inicio</a></li>
+<li><a href="./index.php?lvl=infopages&amp;pagesid=3">Colecciones</a>
+<li><a href="./index.php?lvl=infopages&amp;pagesid=2">Servicios</a></li>
+<li><a href="./index.php?lvl=infopages&amp;pagesid=6">Contacto</a></li>
+
+</ul></div>
+			</div>
+		</div><!-- /div id=intro -->
+		<div id="bandeau"><!-- $Id: accessibility.tpl.html,v 1.4 2023/10/02 14:33:32 jparis Exp $ -->
+
+
+<div id="accessibility">
+    	<input type="hidden" id="opacAccessibility" name="opacAccessibility" value="1"/>
+	<ul class="accessibility_font_size">
+		<li class="accessibility_font_size_small">
+			<a href="javascript:accessibilityFontSize(1);" title="Reducir el texto">A-</a>
+		</li>
+		<li class="accessibility_font_size_normal">
+			<a href="javascript:accessibilityFontSize(0);" title="Restablecer texto">A</a>
+		</li>
+		<li class="accessibility_font_size_big">
+			<a href="javascript:accessibilityFontSize(2);" title="Ampliar texto">A+</a>
+		</li>
+	</ul>
+</div>
+
+
+<script src="./includes/javascript/accessibility.js"></script>
+
+
+<div id="accueil">
+
+<h3><span onclick='document.location="./index.php?"' style='cursor: pointer;'>Inicio</span></h3>
+<p class="centered"><a href='./index.php?'><img src='images/site/escudo.jpg' alt='Inicio'  style='border:0px' class='center'/></a></p>
+
+					</div><!-- fermeture #accueil -->
+<div id="adresse">
+
+		<h3>Dirección</h3>
+
+		<span>
+			<br />
+			Calle 10 No. 8-95<br />
+			 Bogotá<br />
+			Colombia&nbsp;<br />
+			+ 57 (1) 7420848 Ext. 108<br /><span id='opac_biblio_email'>
+			<a href="mailto:biblioteca@academiahistoria.org.co" title="contacto">contacto</a></span></span>
+	    </div><!-- fermeture #adresse --></div><div id="bandeau_2"></div></div><!-- /div id=container -->
+		
+		<script>init_drag();	//rechercher!!</script>
+		
+			<script>
+				var tarteaucitron_messages = pmbDojo.messages.getMessages("tarteaucitron");
+				if(tarteaucitron_messages.length) {
+					tarteaucitronCustomText = {};
+					tarteaucitron_messages.forEach(function(message) {
+						if(parseInt(message.code.indexOf(":")) !== -1) {
+							let tarteaucitron_messages_group = message.code.split(":");
+							if(typeof tarteaucitronCustomText[tarteaucitron_messages_group[0]] == "undefined") {
+								tarteaucitronCustomText[tarteaucitron_messages_group[0]] = {};
+							}
+							tarteaucitronCustomText[tarteaucitron_messages_group[0]][tarteaucitron_messages_group[1]] = message.message;
+						} else {
+							tarteaucitronCustomText[message.code] = message.message;
+						}
+					});
+				}
+			</script>
+			<script src="./includes/javascript/tarteaucitron/tarteaucitron.js"></script>
+		<script>
+	        tarteaucitron.init({
+	    	  "privacyUrl": "", /* Privacy policy url */
+	
+	    	  "hashtag": "#PhpMyBibli-COOKIECONSENT", /* Open the panel with this hashtag */
+	    	  "cookieName": "PhpMyBibli-COOKIECONSENT", /* Cookie name */
+	    
+	    	  "orientation": "bottom", /* Banner position (top - bottom - popup) */
+	       
+	          "groupServices": true, /* Group services by category */
+	                           
+	    	  "showAlertSmall": false, /* Show the small banner on bottom right */
+	    	  "cookieslist": false, /* Show the cookie list */
+				                           
+	          "closePopup": false, /* Show a close X on the banner */
+	
+	          "showIcon": false, /* Show cookie icon to manage cookies */
+	          "iconSrc": "./images/cookie.png", /* Optionnal: URL or base64 encoded image */
+	          "iconPosition": "BottomRight", /* BottomRight, BottomLeft, TopRight and TopLeft */
+	
+	    	  "adblocker": false, /* Show a Warning if an adblocker is detected */
+	                           
+	          "DenyAllCta" : true, /* Show the deny all button */
+	          "AcceptAllCta" : true, /* Show the accept all button when highPrivacy on */
+	          "highPrivacy": true, /* HIGHLY RECOMMANDED Disable auto consent */
+	                           
+	    	  "handleBrowserDNTRequest": false, /* If Do Not Track == 1, disallow all */
+	
+	    	  "removeCredit": true, /* Remove credit link */
+	    	  "moreInfoLink": false, /* Show more info link */
+	
+	          "useExternalCss": false, /* If false, the tarteaucitron.css file will be loaded */
+	          "useExternalJs": false, /* If false, the tarteaucitron.js file will be loaded */
+				
+	    	  //"cookieDomain": ".my-multisite-domaine.fr", /* Shared cookie for multisite */
+	                          
+	          "readmoreLink": "", /* Change the default readmore link */
+	
+	          "mandatory": true, /* Show a message about mandatory cookies */
+	        });
+ 
+        </script>
+		<script>
+		tarteaucitron.services.pmbstatopac = {
+		  	"key": "pmbstatopac",
+			"type": "analytic",
+			"name": "PMB (Estadísticas)",
+			"needConsent": true,
+			"cookies": [],
+			"uri": "https://biblioteca.academiahistoria.org.co/pmb/opac_css/",
+			"readmoreLink": "", // If you want to change readmore link
+			"js": function () {
+			    "use strict";
+			    // When user allow cookie
+		  	},
+		  	"fallback": function () {
+		    	"use strict";
+		    	// when use deny cookie
+		  	}
+		};
+		</script>
+		<script>
+        	(tarteaucitron.job = tarteaucitron.job || []).push("pmbstatopac");
+        </script>
+		 <script>
+        	(tarteaucitron.job = tarteaucitron.job || []).push("gtag");
+        </script>
+		<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-170073600-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-170073600-1');
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PDFJEKJFHD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-PDFJEKJFHD');
+</script>
+		</body>
+		</html>
+		

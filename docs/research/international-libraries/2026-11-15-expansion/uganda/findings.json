@@ -1,0 +1,875 @@
+{
+  "country": "Uganda",
+  "country_code": "UGA",
+  "research_date_utc": "2026-11-15",
+  "status": "complete",
+  "coverage": {
+    "observed_institutions": 6,
+    "selected": 4,
+    "reserves": 2,
+    "selected_target": 10,
+    "selected_shortfall": 6
+  },
+  "market": {
+    "summary": "Uganda has academic multi-campus catalogs, national legal-deposit/public-library coordination and municipal libraries. CUUL coordinates research-information access; its VuFind site is a promising but unverified union-holdings route. Library subscriptions and repositories are separate from physical availability.",
+    "platform_strategy": "Prioritize bounded Koha adapter reuse for Gulu, MUBS and KIU, plus a custom permitted frontend for Bugema. Reuse is a candidate only: no app integration or market-share claim. Preserve reference/reserve/Not For Loan/in-transit statuses. Investigate CUUL/RENU agreements and indexed institutional provenance before treating its discovery interface as a network unlock.",
+    "adoption_evidence": [
+      {
+        "claim": "Koha observed in five successful native OPAC deployments (Gulu, MUBS, KIU, MMU, Ibanda); Bugema public frontend links records to Koha.",
+        "scope": "Feasibility-selected institutional sample, not national market share",
+        "date": "2026-11-15",
+        "source_url": "https://library.mubs.ac.ug/cgi-bin/koha/opac-search.pl?idx=ti&q=Principles+of+marketing"
+      },
+      {
+        "claim": "Muni official history says Koha was installed in2016, converting4,227 catalogue cards by January2017.",
+        "scope": "One university; historical adoption statement",
+        "date": "2016–2017; official history updated2025",
+        "source_url": "https://lib.muni.ac.ug/library-history/"
+      },
+      {
+        "claim": "Kyambogo official online-resources page identifies its Koha integrated library system.",
+        "scope": "One university; indexed official source; catalog unreachable in this session",
+        "date": "Undated",
+        "source_url": "https://lib.kyu.ac.ug/online-resources/"
+      },
+      {
+        "claim": "Makerere CoBAMS2023 annual report explicitly records entries into Virtua; direct catalog route is the makula port8080 service.",
+        "scope": "Makerere institutional system; not a current version verification",
+        "date": "2023",
+        "source_url": "https://news.mak.ac.ug/wp-content/uploads/2024/05/Makerere-CoBAMS-Annual-Report-2023.pdf"
+      }
+    ],
+    "network_opportunities": [
+      {
+        "name": "CUUL and RENU discovery/cooperation",
+        "scope": "University and degree-awarding institutional cooperation; observed VuFind landing page names six institutions",
+        "source_url": "https://cuulsearch.renu.ac.ug/vufind/",
+        "verification": "Homepage declares Powered by VuFind, Hosted by RENU; actual Title and AllFields queries both zero. No holdings verified.",
+        "integration_implication": "Potential one discovery adapter/shared agreement, contingent on functioning indexed holdings, institution filters, provenance and terms. Existing VuFind adapter is not automatically universal."
+      },
+      {
+        "name": "National Library of Uganda public/community library support",
+        "scope": "National legal deposit and public/community library development",
+        "source_url": "https://nlu.go.ug/library-backgrund",
+        "verification": "Official national role and >50 library distribution/support claim; catalog blocked at robots fetch.",
+        "integration_implication": "Strong nationwide coordination prospect; no evidence of one operational live-circulation endpoint for every public library. Do not turn supported libraries into separately verified targets."
+      },
+      {
+        "name": "Institutional multi-campus catalogs",
+        "scope": "Gulu, MUBS, KIU, Bugema and other university branches",
+        "source_url": "https://lib.bugemauniv.ac.ug/services/",
+        "verification": "Named current library holdings and branch filters appear in saved results; five-campus Bugema services source.",
+        "integration_implication": "One institutional connector can expose multiple locations, while counting the institution once and preserving branch/status distinctions."
+      }
+    ]
+  },
+  "major_library_priorities": [
+    {
+      "name": "Makerere University Library",
+      "size_claim": "Over 600,000 monographs; separate Book Bank over 250,000 copies, undated official page; do not sum without overlap evidence.",
+      "source_url": "https://mulib.mak.ac.ug/about-us/",
+      "outcome": "Direct catalog robots503; CUUL two queries returned zero; not verified."
+    },
+    {
+      "name": "National Library of Uganda / public-library cooperation",
+      "size_claim": "National legal-deposit/bibliographic mandate and support to over 50 public/community libraries; distribution claim over 30,000 books is a flow, not stock.",
+      "source_url": "https://nlu.go.ug/library-backgrund",
+      "outcome": "Catalog robots503; no automated search; no branches counted."
+    },
+    {
+      "name": "Kyambogo University Library",
+      "size_claim": "Institutional network proxy: Central, Barclays, Special Needs/Rehabilitation, Education and West End service centres; no harmonized stock count.",
+      "source_url": "https://lib.kyu.ac.ug/",
+      "outcome": "Catalog robots503; primary site also503; no automated search."
+    },
+    {
+      "name": "Busitema University Library",
+      "size_claim": "Over 65,000 print volumes across campus libraries, undated official article.",
+      "source_url": "https://library.busitema.ac.ug/library-news/busitema-university-library-website-redesigned-digital-gateway-enhanced-learning-and",
+      "outcome": "Catalog robots read timeout; stopped."
+    },
+    {
+      "name": "Uganda Christian University Libraries",
+      "size_claim": "140,000 volumes, secondary libraries.org listing modified 2025-04-10; not a fresh stock census.",
+      "source_url": "https://librarytechnology.org/library/42035",
+      "outcome": "Explicit ChatGPT-User / restriction and Koha search exclusion; not queried."
+    },
+    {
+      "name": "Gulu University Library",
+      "size_claim": "Over 40,000 mixed books, theses and government publications, undated official page.",
+      "source_url": "https://gu.ac.ug/university_unit/university-library/",
+      "outcome": "Selected: exact-title search redirected to record602 with14 holdings."
+    },
+    {
+      "name": "Mbarara University of Science and Technology Library",
+      "size_claim": "Institutional network proxy: two library branches plus two mini libraries; indexed OPAC description cites 700 city-campus seats and over1,000 Kihumuro seats, undated.",
+      "source_url": "https://elib.must.ac.ug/cgi-bin/koha/opac-main.pl",
+      "outcome": "Search returned koha_fast_challenge shell; stopped."
+    },
+    {
+      "name": "Makerere University Business School Library",
+      "size_claim": "1,200 seats, 7,200m² main building and five annexes, official April2016 newsletter; facility proxy.",
+      "source_url": "https://mubs.ac.ug/docs/newsletters/April_2016.pdf",
+      "outcome": "Selected: Principles of marketing,27 results; exact record1706 with1 available copy."
+    },
+    {
+      "name": "Kampala International University / Iddi Basajjabalaba Memorial Library",
+      "size_claim": "Official central university service with main, postgraduate/research, law and health-sciences collections; institutional proxy, no volume count.",
+      "source_url": "https://library.kiu.ac.ug/about/about-the-library",
+      "outcome": "Selected: Things fall apart,3 results, exact record10595 with4 copies."
+    },
+    {
+      "name": "Uganda Martyrs University / Archbishop Kiwanuka Memorial Library",
+      "size_claim": "25,000 volumes in libraries.org secondary listing; stock date not established.",
+      "source_url": "https://librarytechnology.org/library/32292",
+      "outcome": "Robots excludes all /cgi-bin/koha/ paths; not queried."
+    },
+    {
+      "name": "Kampala University Library",
+      "size_claim": "Over32,000 print volumes, over500 journal titles and over900 dissertations, undated official page; not additive comparable units.",
+      "source_url": "https://library.ku.ac.ug/",
+      "outcome": "Official catalog at elibrary.ku.ac.ug robots timed out."
+    },
+    {
+      "name": "Law Development Centre Library",
+      "size_claim": "Over15,000 volumes including books/law reports/periodicals/laws/research papers; two-library network, undated official page.",
+      "source_url": "https://www.ldc.ac.ug/ldc-library/",
+      "outcome": "Robots excludes Koha search/detail; not queried."
+    },
+    {
+      "name": "Kabale University Mukombe Library",
+      "size_claim": "10,990 hard copies including books and periodicals, undated official page.",
+      "source_url": "https://www.kab.ac.ug/university_unit/university-library/",
+      "outcome": "Catalog robots403; stopped."
+    },
+    {
+      "name": "Muni University Library",
+      "size_claim": "10,449 textbooks as of2025; official history.",
+      "source_url": "https://lib.muni.ac.ug/library-history/",
+      "outcome": "Robots Disallow / for wildcard; not queried."
+    },
+    {
+      "name": "Bugema University Library",
+      "size_claim": "7,844+ physical titles /15,688+ copies displayed2026-11-15; five-campus service proxy.",
+      "source_url": "https://lib.bugemauniv.ac.ug/physical-books/",
+      "outcome": "Selected on public custom frontend: exact title record5983,1 available copy."
+    },
+    {
+      "name": "Kampala Library and Information Centre / KCCA",
+      "size_claim": "City public-library role; adult/children services plus Lubaga branch proxy; no total stock count.",
+      "source_url": "https://www.kcca.go.ug/library/library",
+      "outcome": "ksmartmarket catalog robots503; stopped."
+    },
+    {
+      "name": "Uganda Management Institute Library",
+      "size_claim": "Degree-awarding management/research institution; Kampala and regional service proxy; no total stock count.",
+      "source_url": "https://umi.ac.ug/library/",
+      "outcome": "lib.umi catalog robots503; stopped."
+    },
+    {
+      "name": "Bishop Stuart University Library",
+      "size_claim": "University main library plus Law and Nursing/Health Sciences branches proxy.",
+      "source_url": "https://library.bsu.ac.ug/about/",
+      "outcome": "Catalog robots403; stopped."
+    },
+    {
+      "name": "Lira University Library",
+      "size_claim": "Public university main/medical library proxy; no total stock count.",
+      "source_url": "https://library.lirauni.ac.ug/index.php/frequently-asked-questions/",
+      "outcome": "Robots excludes search; not queried."
+    },
+    {
+      "name": "Soroti University Library",
+      "size_claim": "University library institution proxy; no total stock count.",
+      "source_url": "https://opac.lib.sun.ac.ug/",
+      "outcome": "Catalog robots503; stopped."
+    }
+  ],
+  "libraries": [
+    {
+      "id": "uga-gulu",
+      "name": "Gulu University Library",
+      "recommendation": "verified_target",
+      "scope": "One institutional library service; branches are not separate successes",
+      "size": {
+        "value": 40000,
+        "unit": "books, theses and government publications (over)",
+        "date": "Undated official page, observed 2026-11-15",
+        "source_url": "https://gu.ac.ug/university_unit/university-library/",
+        "evidence_path": "evidence/gulu-size-source.html",
+        "quality": "official",
+        "note": "Mixed-unit collection claim; not 40,000 monograph titles. University network counted once."
+      },
+      "platform": {
+        "family": "Koha",
+        "name": "Koha; version not established",
+        "proof": "Observed Koha /cgi-bin/koha/opac-search.pl and bibliographic-detail routes, institutional heading and template.",
+        "evidence_path": "evidence/gulu-query.html"
+      },
+      "query": {
+        "text": "Things fall apart",
+        "method": "GET",
+        "url": "https://opac.gu.ac.ug/cgi-bin/koha/opac-search.pl?idx=ti&q=Things+fall+apart",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T07:46:10.003811+00:00",
+        "http_status": 200,
+        "effective_url": "https://opac.gu.ac.ug/cgi-bin/koha/opac-detail.pl?biblionumber=602",
+        "result_count": null,
+        "count_note": "Search automatically redirects to one bibliographic record; total search count not separately displayed.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/gulu-query.html",
+        "metadata_path": "evidence/gulu-query.json"
+      },
+      "books": [
+        {
+          "title": "Things fall apart.",
+          "author": "Achebe, Chinua.",
+          "record_id": "602",
+          "record_url": "https://opac.gu.ac.ug/cgi-bin/koha/opac-detail.pl?biblionumber=602",
+          "isbn": "9780435913502",
+          "holdings": "14 holdings: 5 Available, 4 Not For Loan, 5 In transit. Main Library East/West Wing; call 823.914 ACH. Example available barcode GUL24100362; not-for-loan GUL24100363.",
+          "evidence_path": "evidence/gulu-query.html"
+        }
+      ],
+      "robots": {
+        "url": "https://opac.gu.ac.ug/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T07:45:45.715340+00:00",
+        "evidence_path": "evidence/gulu-robots.json",
+        "decision": "no_published_rules",
+        "note": "HTTP404; not an affirmative reuse licence"
+      },
+      "reader_access": "Anonymous catalog search works. University service is primarily academic; visitor-entry and borrowing eligibility were not established. The returned record explicitly separates Not For Loan and In transit from Available.",
+      "integration": {
+        "existing_adapter": "candidate reuse",
+        "needs": [
+          "Keep biblionumber and edition identity; confirm ISBN separately.",
+          "Preserve current/home location, restricted shelving, copy notes and circulation states.",
+          "Confirm operator reuse terms and request budget before production.",
+          "Single-hit search redirects directly to detail; support both response types."
+        ],
+        "blockers": [
+          "No live application integration tested; public OPAC access is not a reuse licence."
+        ],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "uga-mubs",
+      "name": "Makerere University Business School Library",
+      "recommendation": "verified_target",
+      "scope": "One institutional library service; branches are not separate successes",
+      "size": {
+        "value": 1200,
+        "unit": "seats (main building capacity proxy)",
+        "date": "April 2016",
+        "source_url": "https://mubs.ac.ug/docs/newsletters/April_2016.pdf",
+        "evidence_path": "evidence/final-size-discovery.json",
+        "quality": "indexed official",
+        "note": "Official newsletter describes five-storey 7,200 m² main library and five annexes; this is a dated facility proxy, not collection size. Separate catalog/service from Makerere University."
+      },
+      "platform": {
+        "family": "Koha",
+        "name": "Koha; version not established",
+        "proof": "Observed Koha /cgi-bin/koha/opac-search.pl and bibliographic-detail routes, institutional heading and template.",
+        "evidence_path": "evidence/mubs-query.html"
+      },
+      "query": {
+        "text": "Principles of marketing",
+        "method": "GET",
+        "url": "https://library.mubs.ac.ug/cgi-bin/koha/opac-search.pl?idx=ti&q=Principles+of+marketing",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T07:46:47.069376+00:00",
+        "http_status": 200,
+        "effective_url": "https://library.mubs.ac.ug/cgi-bin/koha/opac-search.pl?idx=ti&q=Principles+of+marketing",
+        "result_count": 27,
+        "count_note": "Displayed search response count; exact title matching still requires record-level inspection.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/mubs-query.html",
+        "metadata_path": "evidence/mubs-query.json"
+      },
+      "books": [
+        {
+          "title": "Principles Of Marketing",
+          "author": "Kotler Phillip & Armstrong G",
+          "record_id": "1706",
+          "record_url": "https://library.mubs.ac.ug/cgi-bin/koha/opac-detail.pl?biblionumber=1706",
+          "isbn": "0137018304",
+          "holdings": "1 Available book at Mubs Main Library, collection STOCK TAKING 2026, call KOT, barcode MUBS00039744; 3rd edition, New Delhi/Prentice Hall, 1986.",
+          "evidence_path": "evidence/mubs-detail.html"
+        }
+      ],
+      "robots": {
+        "url": "https://library.mubs.ac.ug/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T07:46:12.221912+00:00",
+        "evidence_path": "evidence/mubs-robots.json",
+        "decision": "no_published_rules",
+        "note": "HTTP404; not an affirmative reuse licence"
+      },
+      "reader_access": "Official rules allow current MUBS members as readers/borrowers after registration; former students and staff may apply as external users. April 2016 newsletter also describes fee-based external membership; current fees not verified. Reference and special materials have separate restrictions. See source-discovery.json and final-size-discovery.json.",
+      "integration": {
+        "existing_adapter": "candidate reuse",
+        "needs": [
+          "Keep biblionumber and edition identity; confirm ISBN separately.",
+          "Preserve current/home location, restricted shelving, copy notes and circulation states.",
+          "Confirm operator reuse terms and request budget before production.",
+          "Search returns 27 records including related titles and multiple editions; selected exact-title record is 1706."
+        ],
+        "blockers": [
+          "No live application integration tested; public OPAC access is not a reuse licence."
+        ],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "uga-kiu",
+      "name": "Kampala International University — Iddi Basajjabalaba Memorial Library",
+      "recommendation": "verified_target",
+      "scope": "One institutional library service; branches are not separate successes",
+      "size": {
+        "value": null,
+        "unit": "central university library and specialist services proxy",
+        "date": "Undated official page, observed 2026-11-15",
+        "source_url": "https://library.kiu.ac.ug/about/about-the-library",
+        "evidence_path": "evidence/kiu-size-source.html",
+        "quality": "institutional proxy",
+        "note": "Official central service supports university students, staff and researchers, with main, postgraduate/research, law and health-sciences services. No audited collection count established; record IDs are not a size estimate."
+      },
+      "platform": {
+        "family": "Koha",
+        "name": "Koha; version not established",
+        "proof": "Observed Koha /cgi-bin/koha/opac-search.pl and bibliographic-detail routes, institutional heading and template.",
+        "evidence_path": "evidence/kiu-query.html"
+      },
+      "query": {
+        "text": "Things fall apart",
+        "method": "GET",
+        "url": "https://opac.kiu.ac.ug/cgi-bin/koha/opac-search.pl?idx=ti&q=Things+fall+apart",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T07:47:49.388885+00:00",
+        "http_status": 200,
+        "effective_url": "https://opac.kiu.ac.ug/cgi-bin/koha/opac-search.pl?idx=ti&q=Things+fall+apart",
+        "result_count": 3,
+        "count_note": "Displayed search response count; exact title matching still requires record-level inspection.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/kiu-query.html",
+        "metadata_path": "evidence/kiu-query.json"
+      },
+      "books": [
+        {
+          "title": "Things fall apart/",
+          "author": "Achebe, Chinua",
+          "record_id": "10595",
+          "record_url": "https://opac.kiu.ac.ug/cgi-bin/koha/opac-detail.pl?biblionumber=10595",
+          "isbn": "9966463631",
+          "holdings": "4 Available hard-copy holdings, Open Shelves, The Iddi Basajjabalaba Memorial Library; call PR9387.9 .A3 T5 1966; barcodes IBML12050049–IBML12050052.",
+          "evidence_path": "evidence/kiu-detail.html"
+        }
+      ],
+      "robots": {
+        "url": "https://opac.kiu.ac.ug/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T07:47:20.050052+00:00",
+        "evidence_path": "evidence/kiu-robots.json",
+        "decision": "no_published_rules",
+        "note": "HTTP404; not an affirmative reuse licence"
+      },
+      "reader_access": "Anonymous search works. Official borrowing guidance specifies registered students, academic and administrative staff and approved users with valid KIU identification. Visitor access and off-campus electronic access require eligibility. See evidence/kiu-policy-source.html.",
+      "integration": {
+        "existing_adapter": "candidate reuse",
+        "needs": [
+          "Keep biblionumber and edition identity; confirm ISBN separately.",
+          "Preserve current/home location, restricted shelving, copy notes and circulation states.",
+          "Confirm operator reuse terms and request budget before production.",
+          "Search includes a reader’s guide and a different poverty title; select Achebe record 10595, not all 3 results."
+        ],
+        "blockers": [
+          "No live application integration tested; public OPAC access is not a reuse licence."
+        ],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "uga-bugema",
+      "name": "Bugema University Library",
+      "recommendation": "verified_target",
+      "scope": "One institutional library service; branches are not separate successes",
+      "size": {
+        "value": 7844,
+        "unit": "physical titles (site displays 7,844+)",
+        "date": "Live site claim observed 2026-11-15",
+        "source_url": "https://lib.bugemauniv.ac.ug/physical-books/",
+        "evidence_path": "evidence/bugema-source.html",
+        "quality": "official",
+        "note": "Same page displays 15,688+ copies; counts are website claims, not independently audited. Services page describes five campuses. Selected as a regional university target, not a largest-national-library claim."
+      },
+      "platform": {
+        "family": "Custom frontend backed by Koha",
+        "name": "Custom frontend backed by Koha; version not established",
+        "proof": "Custom physical-books search page links returned records to the separately hosted Koha OPAC; Koha native search is robots-restricted.",
+        "evidence_path": "evidence/bugema-query.html"
+      },
+      "query": {
+        "text": "Things fall apart",
+        "method": "GET",
+        "url": "https://lib.bugemauniv.ac.ug/physical-books/?q=Things+fall+apart",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T07:48:39.221093+00:00",
+        "http_status": 200,
+        "effective_url": "https://lib.bugemauniv.ac.ug/physical-books/?q=Things+fall+apart",
+        "result_count": 2,
+        "count_note": "Displayed search response count; exact title matching still requires record-level inspection.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/bugema-query.html",
+        "metadata_path": "evidence/bugema-query.json"
+      },
+      "books": [
+        {
+          "title": "Things Fall Apart",
+          "author": "Achebe Chinua",
+          "record_id": "5983",
+          "record_url": "https://bulibrary.bugemauniv.ac.ug/cgi-bin/koha/opac-detail.pl?biblionumber=5983",
+          "isbn": null,
+          "holdings": "1 of 1 Available on Shelf; Main Campus Library (Bugema), General Collection (GEN), call 808.83 ACH, barcode 0000011896; date 2011 shown.",
+          "evidence_path": "evidence/bugema-query.html"
+        }
+      ],
+      "robots": {
+        "url": "https://lib.bugemauniv.ac.ug/robots.txt",
+        "status": 200,
+        "checked_at_utc": "2026-11-15T07:47:31.168353+00:00",
+        "evidence_path": "evidence/bugema-site-robots.json",
+        "decision": "allowed_path",
+        "note": "Public research path check; no reuse licence inferred Public custom frontend allows /; native bulibrary.bugemauniv.ac.ug search remains explicitly excluded (bugema-robots evidence). No request was made to the excluded search route."
+      },
+      "reader_access": "Anonymous physical-books search exposes holdings. Services page describes inter-campus borrowing across five campuses and institutional-email remote access. OPAC accounts are required for reserving/renewing. General visitor entry and borrowing rules were not established. See evidence/bugema-services-source.html.",
+      "integration": {
+        "existing_adapter": "custom",
+        "needs": [
+          "Keep biblionumber and edition identity; confirm ISBN separately.",
+          "Preserve current/home location, restricted shelving, copy notes and circulation states.",
+          "Confirm operator reuse terms and request budget before production.",
+          "Implement custom /physical-books/?q= search parser or obtain a permitted API agreement; do not reuse the robots-excluded Koha search route.",
+          "Second result is The humanities in Western culture, not the requested title; result count must not drive identity."
+        ],
+        "blockers": [
+          "No live application integration tested; public OPAC access is not a reuse licence."
+        ],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "uga-mmu",
+      "name": "Mountains of the Moon University Library",
+      "recommendation": "reserve",
+      "scope": "One institutional library service; branches are not separate successes",
+      "size": {
+        "value": null,
+        "unit": "university library institutional proxy",
+        "date": "Undated official page, observed 2026-11-15",
+        "source_url": "https://mmu.ac.ug/university-library/",
+        "evidence_path": "evidence/mmu-size-source.html",
+        "quality": "institutional proxy",
+        "note": "Current official page describes print/electronic teaching and research service; quantitative collection scale not established, so reserve."
+      },
+      "platform": {
+        "family": "Koha",
+        "name": "Koha; version not established",
+        "proof": "Observed Koha /cgi-bin/koha/opac-search.pl and bibliographic-detail routes, institutional heading and template.",
+        "evidence_path": "evidence/mmu-query.html"
+      },
+      "query": {
+        "text": "Research methods",
+        "method": "GET",
+        "url": "https://library.mmu.ac.ug/cgi-bin/koha/opac-search.pl?idx=ti&q=Research+methods",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T07:49:01.327517+00:00",
+        "http_status": 200,
+        "effective_url": "https://library.mmu.ac.ug/cgi-bin/koha/opac-search.pl?idx=ti&q=Research+methods",
+        "result_count": 15,
+        "count_note": "Displayed search response count; exact title matching still requires record-level inspection.",
+        "match_type": "related_titles",
+        "evidence_path": "evidence/mmu-query.html",
+        "metadata_path": "evidence/mmu-query.json"
+      },
+      "books": [
+        {
+          "title": "Research Methods: Concepts, Process and Practice /",
+          "author": "Agrawal, Rashmi; BVLN, Rao",
+          "record_id": "223",
+          "record_url": "https://library.mmu.ac.ug/cgi-bin/koha/opac-detail.pl?biblionumber=223",
+          "isbn": "9788175416741",
+          "holdings": "3 Available hard-copy Text Books at Main Library, Reserved Books Section, call 301.072 AGR; barcodes MMU25040123, MMU25040124, MMU26090120.",
+          "evidence_path": "evidence/mmu-detail.html"
+        }
+      ],
+      "robots": {
+        "url": "https://library.mmu.ac.ug/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T07:48:35.809255+00:00",
+        "evidence_path": "evidence/mmu-robots.json",
+        "decision": "no_published_rules",
+        "note": "HTTP404; not an affirmative reuse licence"
+      },
+      "reader_access": "Anonymous search works. Returned items are in Reserved Books Section despite status Available; loan eligibility cannot be inferred. Visitor and borrowing rules not established.",
+      "integration": {
+        "existing_adapter": "candidate reuse",
+        "needs": [
+          "Keep biblionumber and edition identity; confirm ISBN separately.",
+          "Preserve current/home location, restricted shelving, copy notes and circulation states.",
+          "Confirm operator reuse terms and request budget before production.",
+          "Broad title phrase returns 15 related titles; selected full title is explicitly a related-title observation.",
+          "Reserved shelving must remain visible even when Available is displayed."
+        ],
+        "blockers": [
+          "No live application integration tested; public OPAC access is not a reuse licence."
+        ],
+        "live_app_tested": false
+      }
+    },
+    {
+      "id": "uga-ibanda",
+      "name": "Ibanda University Library",
+      "recommendation": "reserve",
+      "scope": "One institutional library service; branches are not separate successes",
+      "size": {
+        "value": null,
+        "unit": "university library institutional proxy",
+        "date": "Observed 2026-11-15",
+        "source_url": "https://koha.ibandauniversity.ac.ug/",
+        "evidence_path": "evidence/ibanda-home.html",
+        "quality": "institutional proxy",
+        "note": "Official OPAC describes university books, journals and theses; quantitative scale not established. Main and postgraduate holdings are not separate institutions."
+      },
+      "platform": {
+        "family": "Koha",
+        "name": "Koha; version not established",
+        "proof": "Observed Koha /cgi-bin/koha/opac-search.pl and bibliographic-detail routes, institutional heading and template.",
+        "evidence_path": "evidence/ibanda-query.html"
+      },
+      "query": {
+        "text": "Principles of management",
+        "method": "GET",
+        "url": "https://koha.ibandauniversity.ac.ug/cgi-bin/koha/opac-search.pl?idx=ti&q=Principles+of+management",
+        "payload": null,
+        "checked_at_utc": "2026-11-15T07:49:01.328572+00:00",
+        "http_status": 200,
+        "effective_url": "https://koha.ibandauniversity.ac.ug/cgi-bin/koha/opac-search.pl?idx=ti&q=Principles+of+management",
+        "result_count": 3,
+        "count_note": "Displayed search response count; exact title matching still requires record-level inspection.",
+        "match_type": "exact_title",
+        "evidence_path": "evidence/ibanda-query.html",
+        "metadata_path": "evidence/ibanda-query.json"
+      },
+      "books": [
+        {
+          "title": "Principles of management /",
+          "author": "Morden, Tony",
+          "record_id": "758",
+          "record_url": "https://koha.ibandauniversity.ac.ug/cgi-bin/koha/opac-detail.pl?biblionumber=758",
+          "isbn": "0754619842",
+          "holdings": "24 Available Books at Ibanda University Main Library, General Section, call 658 MOR; example barcode 001247; 2nd edition, Ashgate, 2004.",
+          "evidence_path": "evidence/ibanda-detail.html"
+        }
+      ],
+      "robots": {
+        "url": "https://koha.ibandauniversity.ac.ug/robots.txt",
+        "status": 404,
+        "checked_at_utc": "2026-11-15T07:48:35.810023+00:00",
+        "evidence_path": "evidence/ibanda-robots.json",
+        "decision": "no_published_rules",
+        "note": "HTTP404; not an affirmative reuse licence"
+      },
+      "reader_access": "Anonymous search works; patron account required for renewal/reservation. Public admission and borrowing eligibility not established. No account used.",
+      "integration": {
+        "existing_adapter": "candidate reuse",
+        "needs": [
+          "Keep biblionumber and edition identity; confirm ISBN separately.",
+          "Preserve current/home location, restricted shelving, copy notes and circulation states.",
+          "Confirm operator reuse terms and request budget before production.",
+          "Other returned records concern risk management and managerial finance; retain record 758 exact title identity."
+        ],
+        "blockers": [
+          "No live application integration tested; public OPAC access is not a reuse licence."
+        ],
+        "live_app_tested": false
+      }
+    }
+  ],
+  "blocked_or_unverified": [
+    {
+      "name": "Makerere University Library",
+      "url": "http://www.makula.mak.ac.ug:8080/robots.txt",
+      "reason": "HTTP503 connection termination; no catalog query. Official Virtua route retained as a major priority.",
+      "evidence_path": "evidence/makerere-robots.json"
+    },
+    {
+      "name": "National Library of Uganda",
+      "url": "https://catalogue.nlu.go.ug/robots.txt",
+      "reason": "HTTP503 remote connection failure; no query.",
+      "evidence_path": "evidence/nlu-robots.json"
+    },
+    {
+      "name": "Kyambogo University Library",
+      "url": "https://libcat.kyu.ac.ug/robots.txt",
+      "reason": "HTTP503 remote connection failure; no query.",
+      "evidence_path": "evidence/kyambogo-robots.json"
+    },
+    {
+      "name": "Busitema University Library",
+      "url": "https://libcat.busitema.ac.ug/robots.txt",
+      "reason": "Read timeout; no query.",
+      "evidence_path": "evidence/busitema-robots.json"
+    },
+    {
+      "name": "Uganda Christian University Libraries",
+      "url": "https://catalogue.library.ucu.ac.ug/robots.txt",
+      "reason": "ChatGPT-User Disallow / plus wildcard Koha search exclusion; no query. Empty Disallow in later wildcard group does not erase prior rules.",
+      "evidence_path": "evidence/ucu-robots.json"
+    },
+    {
+      "name": "Uganda Martyrs University Library",
+      "url": "https://catalogue.umu.ac.ug/robots.txt",
+      "reason": "Wildcard excludes all /cgi-bin/koha/ including search and detail, crawl-delay10; no query.",
+      "evidence_path": "evidence/umu-robots.json"
+    },
+    {
+      "name": "Mbarara University of Science and Technology Library",
+      "url": "https://elib.must.ac.ug/cgi-bin/koha/opac-search.pl?idx=ti&q=Principles+of+economics",
+      "reason": "HTTP200 315-byte JavaScript challenge (koha_fast_challenge); no book result and no bypass.",
+      "evidence_path": "evidence/must-query.json"
+    },
+    {
+      "name": "CUUL / RENU VuFind union discovery",
+      "url": "https://cuulsearch.renu.ac.ug/vufind/",
+      "reason": "Two genuine searches returned zero results: Things fall apart (Title), research (AllFields). Member labels do not verify member holdings. Search/index health remains unknown.",
+      "evidence_path": "evidence/cuul-query2.json"
+    },
+    {
+      "name": "Uganda Management Institute Library",
+      "url": "https://lib.umi.ac.ug/robots.txt",
+      "reason": "HTTP503 connection timeout; no query.",
+      "evidence_path": "evidence/umi-robots.json"
+    },
+    {
+      "name": "Kabale University Library",
+      "url": "https://opac.library.kab.ac.ug/robots.txt",
+      "reason": "HTTP403; no query.",
+      "evidence_path": "evidence/kabale-robots.json"
+    },
+    {
+      "name": "Kampala University Library",
+      "url": "http://elibrary.ku.ac.ug/robots.txt",
+      "reason": "Timed out on directly linked official catalog origin; no query.",
+      "evidence_path": "evidence/ku-robots.json"
+    },
+    {
+      "name": "Bishop Stuart University Library",
+      "url": "https://opac.library.bsu.ac.ug/robots.txt",
+      "reason": "HTTP403; no query.",
+      "evidence_path": "evidence/bsu-robots.json"
+    },
+    {
+      "name": "Soroti University Library",
+      "url": "https://opac.lib.sun.ac.ug/robots.txt",
+      "reason": "HTTP503; no query.",
+      "evidence_path": "evidence/soroti-robots.json"
+    },
+    {
+      "name": "Kampala Library and Information Centre",
+      "url": "https://ksmartmarket.kcca.go.ug/robots.txt",
+      "reason": "HTTP503; no query.",
+      "evidence_path": "evidence/kcca-robots.json"
+    },
+    {
+      "name": "Muni University Library",
+      "url": "https://opac.muni.ac.ug/robots.txt",
+      "reason": "Wildcard Disallow /; no query.",
+      "evidence_path": "evidence/muni-robots.json"
+    },
+    {
+      "name": "Lira University Library",
+      "url": "https://opac.library.lirauni.ac.ug/robots.txt",
+      "reason": "Search path explicitly excluded; no query.",
+      "evidence_path": "evidence/lira-robots.json"
+    },
+    {
+      "name": "Law Development Centre Library",
+      "url": "https://koha.ldc.ac.ug/robots.txt",
+      "reason": "Search/detail paths explicitly excluded; no query.",
+      "evidence_path": "evidence/ldc-robots.json"
+    },
+    {
+      "name": "Uganda Communications Commission Library",
+      "url": "https://library.ucc.co.ug/robots.txt",
+      "reason": "HTTP503; no query.",
+      "evidence_path": "evidence/ucc-robots.json"
+    },
+    {
+      "name": "National Curriculum Development Centre Library",
+      "url": "https://libstaff.ncdc.go.ug/cgi-bin/koha/opac-search.pl?idx=ti&q=Curriculum+development",
+      "reason": "Two public OPAC queries returned no results (Things fall apart; Curriculum development); no success asserted. This is the public OPAC even though host contains libstaff.",
+      "evidence_path": "evidence/ncdc-query2.json"
+    },
+    {
+      "name": "Ndejje University Library",
+      "url": "https://ndejjeuniversity.ac.ug/campus-services/",
+      "reason": "Official main library plus three branches found; no directly observed public physical-book search route established; repository is not equivalent.",
+      "evidence_path": "evidence/alternatives-discovery.json"
+    },
+    {
+      "name": "Nkumba University Library",
+      "url": "https://nkumbauniversity.ac.ug/academics/library/",
+      "reason": "Official library and open-access ebook portal found; no observed physical catalog route established. Ebooks not counted as physical holdings.",
+      "evidence_path": "evidence/alternatives-discovery.json"
+    }
+  ],
+  "limitations": [
+    "Ten substantial selected libraries were not verified: four selected and two reserves; six selected-target shortfall.",
+    "No national largest-ten ranking established; dates and units differ, and two selected institutions use explicit facility/institutional proxies.",
+    "No national LMS market-share denominator; sample is shaped by discoverability, robots policy and server reachability.",
+    "Public OPAC results do not grant visitor entry, borrowing rights, metadata reuse or live circulation guarantees.",
+    "No credentials, sessions, holds, outreach, application changes, authentication or challenge bypass; no robots-excluded search routes requested.",
+    "Search failure or zero results does not mean a library lacks a title.",
+    "CUUL member cards and catalog branch selectors are not independent verified institutions.",
+    "Source-index snippets are labelled where direct raw source was not obtained; recrawl dates are not collection census dates."
+  ],
+  "sources": [
+    {
+      "url": "https://gu.ac.ug/university_unit/university-library/",
+      "claim": "Gulu scope and mixed collection over40,000.",
+      "evidence_path": "evidence/gulu-size-source.html"
+    },
+    {
+      "url": "https://mubs.ac.ug/docs/newsletters/April_2016.pdf",
+      "claim": "MUBS April2016 facility capacity, annexes, Koha and membership.",
+      "evidence_path": "evidence/final-size-discovery.json"
+    },
+    {
+      "url": "https://mainlibrary.mubs.ac.ug/docs/Rules%20and%20Regulations.pdf",
+      "claim": "MUBS registration and reader/borrower eligibility; search-indexed official PDF, direct origin unreachable.",
+      "evidence_path": "evidence/source-discovery.json"
+    },
+    {
+      "url": "https://library.kiu.ac.ug/about/about-the-library",
+      "claim": "KIU central institutional library role.",
+      "evidence_path": "evidence/kiu-size-source.html"
+    },
+    {
+      "url": "https://library.kiu.ac.ug/services/borrowing-and-circulation",
+      "claim": "KIU borrower eligibility.",
+      "evidence_path": "evidence/kiu-policy-source.html"
+    },
+    {
+      "url": "https://lib.bugemauniv.ac.ug/physical-books/",
+      "claim": "Bugema physical stock claims and public GET form.",
+      "evidence_path": "evidence/bugema-source.html"
+    },
+    {
+      "url": "https://lib.bugemauniv.ac.ug/services/",
+      "claim": "Bugema five-campus services.",
+      "evidence_path": "evidence/bugema-services-source.html"
+    },
+    {
+      "url": "https://mulib.mak.ac.ug/about-us/",
+      "claim": "Makerere collection and national reference role.",
+      "evidence_path": "evidence/makerere-size-source.html"
+    },
+    {
+      "url": "https://nlu.go.ug/library-backgrund",
+      "claim": "NLU national/public network role.",
+      "evidence_path": "evidence/nlu-background-source.html"
+    },
+    {
+      "url": "https://nlu.go.ug/rules-and-regulations",
+      "claim": "NLU fee-paid entry pass and reading-room-only materials.",
+      "evidence_path": "evidence/nlu-policy-source.html"
+    },
+    {
+      "url": "https://cuul.or.ug/",
+      "claim": "CUUL collaborative research-information services.",
+      "evidence_path": "evidence/cuul-network-source.html"
+    },
+    {
+      "url": "https://cuulsearch.renu.ac.ug/vufind/",
+      "claim": "VuFind/RENU platform and six member labels.",
+      "evidence_path": "evidence/cuul-home.html"
+    },
+    {
+      "url": "https://lib.muni.ac.ug/library-history/",
+      "claim": "Muni10,449 textbooks2025 and Koha adoption history.",
+      "evidence_path": "evidence/muni-size-source.html"
+    },
+    {
+      "url": "https://mmu.ac.ug/university-library/",
+      "claim": "MMU institutional library role.",
+      "evidence_path": "evidence/mmu-size-source.html"
+    },
+    {
+      "url": "https://library.busitema.ac.ug/library-news/busitema-university-library-website-redesigned-digital-gateway-enhanced-learning-and",
+      "claim": "Busitema>65,000 print volumes.",
+      "evidence_path": "evidence/busitema-size-source.html"
+    },
+    {
+      "url": "https://www.ldc.ac.ug/ldc-library/",
+      "claim": "LDC>15,000 mixed volumes and paid visitor access.",
+      "evidence_path": "evidence/alternatives4-discovery.json"
+    },
+    {
+      "url": "https://librarytechnology.org/library/42035",
+      "claim": "UCU140,000 volumes; secondary listing last modified2025-04-10.",
+      "evidence_path": "evidence/major-size-discovery.json"
+    },
+    {
+      "url": "https://library.ku.ac.ug/",
+      "claim": "Kampala University>32,000 print volumes, journal/dissertation counts and catalog link.",
+      "evidence_path": "evidence/ku-source.html"
+    },
+    {
+      "url": "https://lib.kyu.ac.ug/",
+      "claim": "Institutional network proxy: Central, Barclays, Special Needs/Rehabilitation, Education and West End service centres; no harmonized stock count.",
+      "evidence_path": null
+    },
+    {
+      "url": "https://elib.must.ac.ug/cgi-bin/koha/opac-main.pl",
+      "claim": "Institutional network proxy: two library branches plus two mini libraries; indexed OPAC description cites 700 city-campus seats and over1,000 Kihumuro seats, undated.",
+      "evidence_path": null
+    },
+    {
+      "url": "https://librarytechnology.org/library/32292",
+      "claim": "25,000 volumes in libraries.org secondary listing; stock date not established.",
+      "evidence_path": null
+    },
+    {
+      "url": "https://www.kab.ac.ug/university_unit/university-library/",
+      "claim": "10,990 hard copies including books and periodicals, undated official page.",
+      "evidence_path": null
+    },
+    {
+      "url": "https://www.kcca.go.ug/library/library",
+      "claim": "City public-library role; adult/children services plus Lubaga branch proxy; no total stock count.",
+      "evidence_path": null
+    },
+    {
+      "url": "https://umi.ac.ug/library/",
+      "claim": "Degree-awarding management/research institution; Kampala and regional service proxy; no total stock count.",
+      "evidence_path": null
+    },
+    {
+      "url": "https://library.bsu.ac.ug/about/",
+      "claim": "University main library plus Law and Nursing/Health Sciences branches proxy.",
+      "evidence_path": null
+    },
+    {
+      "url": "https://library.lirauni.ac.ug/index.php/frequently-asked-questions/",
+      "claim": "Public university main/medical library proxy; no total stock count.",
+      "evidence_path": null
+    },
+    {
+      "url": "https://opac.lib.sun.ac.ug/",
+      "claim": "University library institution proxy; no total stock count.",
+      "evidence_path": null
+    }
+  ]
+}
