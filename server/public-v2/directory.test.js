@@ -155,3 +155,11 @@ test('only reviewed Koha HTTP pins advertise public availability without exposin
     assert.equal(toPublicLibrary({ ...entry, ...overrides }).capabilities.publicAvailability, false);
   }
 });
+
+test('Koha catalogs checked in the November follow-up are offered to readers as connected', () => {
+  for (const id of ['koha:arul-anandar', 'koha:panjab-laws']) {
+    const library = toPublicLibrary(getLibraryById(id));
+    assert.equal(library.capabilities.catalogLookup, true, id);
+    assert.equal(library.capabilities.publicAvailability, true, id);
+  }
+});
