@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-11-15T20:36:06.364Z",
+  "commit": "b12d1bdbe96977686296e1f012da6023184294a3",
+  "userAgent": "MyBookshelf/1.0 (web; +https://mybookshelf.cloud/privacy)",
+  "method": "Per host: robots.txt, then the member catalog page, then one app search for \"history\" under the app request budget. Stops at the first policy refusal. Not book checks.",
+  "hosts": [
+    {
+      "group": "Goa Institute of Management",
+      "member": "koha:goa-institute-management",
+      "host": "webopac.gim.ac.in",
+      "steps": [
+        {
+          "step": "robots.txt",
+          "url": "https://webopac.gim.ac.in/robots.txt",
+          "at": "2026-11-15T20:36:06.374Z",
+          "status": 503,
+          "durationMs": 880,
+          "bytes": 108,
+          "bodyStart": "<html><body><h1>503 Service Unavailable</h1> No server is available to handle this request. </body></html>",
+          "outcome": "server_error"
+        }
+      ],
+      "outcome": "unreachable",
+      "stoppedAt": "robots.txt 5xx/429 (temporarily disallowed, RFC 9309)"
+    },
+    {
+      "group": "Ramanujan College",
+      "member": "koha:ramanujan-college",
+      "host": "library.rcmoocs.in",
+      "steps": [
+        {
+          "step": "robots.txt",
+          "url": "https://library.rcmoocs.in/robots.txt",
+          "at": "2026-11-15T20:36:07.255Z",
+          "error": "TypeError: fetch failed (ECONNREFUSED connect ECONNREFUSED 125.63.65.171:443)",
+          "durationMs": 302,
+          "outcome": "network_error"
+        },
+        {
+          "step": "search page",
+          "url": "https://library.rcmoocs.in",
+          "at": "2026-11-15T20:36:07.557Z",
+          "error": "TypeError: fetch failed (ECONNREFUSED connect ECONNREFUSED 125.63.65.171:443)",
+          "durationMs": 281,
+          "outcome": "network_error"
+        },
+        {
+          "step": "app search",
+          "at": "2026-11-15T20:36:07.839Z",
+          "ok": false,
+          "query": "history",
+          "code": "CATALOG_UNAVAILABLE",
+          "message": "Koha could not complete the public catalog request",
+          "durationMs": 593,
+          "outcome": "error"
+        }
+      ],
+      "outcome": "unreachable"
+    },
+    {
+      "group": "SCERT Assam",
+      "member": "koha:scert-assam",
+      "host": "scert.libraryopac.in",
+      "steps": [
+        {
+          "step": "robots.txt",
+          "url": "https://scert.libraryopac.in/robots.txt",
+          "at": "2026-11-15T20:36:08.434Z",
+          "error": "TypeError: fetch failed (UNABLE_TO_VERIFY_LEAF_SIGNATURE unable to verify the first certificate)",
+          "durationMs": 352,
+          "outcome": "network_error"
+        },
+        {
+          "step": "search page",
+          "url": "https://scert.libraryopac.in/",
+          "at": "2026-11-15T20:36:08.786Z",
+          "error": "TypeError: fetch failed (UNABLE_TO_VERIFY_LEAF_SIGNATURE unable to verify the first certificate)",
+          "durationMs": 348,
+          "outcome": "network_error"
+        },
+        {
+          "step": "app search",
+          "at": "2026-11-15T20:36:09.134Z",
+          "ok": false,
+          "query": "history",
+          "code": "CATALOG_UNAVAILABLE",
+          "message": "Koha could not complete the public catalog request",
+          "durationMs": 694,
+          "outcome": "error"
+        }
+      ],
+      "outcome": "unreachable"
+    },
+    {
+      "group": "IIT Dharwad",
+      "member": "koha:iit-dharwad",
+      "host": "opac.iitdh.ac.in",
+      "steps": [
+        {
+          "step": "robots.txt",
+          "url": "https://opac.iitdh.ac.in/robots.txt",
+          "at": "2026-11-15T20:36:09.828Z",
+          "status": 502,
+          "durationMs": 8676,
+          "server": "nginx",
+          "bytes": 150,
+          "bodyStart": "<html> <head><title>502 Bad Gateway</title></head> <body> <center><h1>502 Bad Gateway</h1></center> <hr><center>nginx</center> </body> </html>",
+          "outcome": "server_error"
+        }
+      ],
+      "outcome": "unreachable",
+      "stoppedAt": "robots.txt 5xx/429 (temporarily disallowed, RFC 9309)"
+    }
+  ],
+  "finishedAt": "2026-11-15T20:36:18.504Z",
+  "rawRequestsSent": 6,
+  "appSearchRequests": 0
+}

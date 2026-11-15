@@ -23,6 +23,11 @@ export const RECHECK_GROUPS = [
   { group: 'KLH Global Business School', member: 'koha:klh-global-business-school' },
   { group: 'IIM Visakhapatnam', member: 'koha:iim-visakhapatnam' },
   { group: 'Indian Institute of Astrophysics', member: 'koha:indian-institute-astrophysics' },
+  // Added for the 15 November local-machine recheck of remote-unchecked hosts.
+  { group: 'Goa Institute of Management', member: 'koha:goa-institute-management' },
+  { group: 'Ramanujan College', member: 'koha:ramanujan-college' },
+  { group: 'SCERT Assam', member: 'koha:scert-assam' },
+  { group: 'IIT Dharwad', member: 'koha:iit-dharwad' },
 ];
 const TIMEOUT_MS = 15_000;
 const SEARCH_QUERY = 'history';

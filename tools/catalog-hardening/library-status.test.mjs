@@ -19,6 +19,8 @@ test('a failed or stopped check is never read as empty', () => {
   assert.equal(describeAttempt({ status: 'failed', discovery: [{ query: 'history', records: [], error: { code: 'AbortError' } }], books: [] }).revisit, 'unreachable');
   assert.equal(describeAttempt({ status: 'failed', discovery: [{ query: 'history', records: [] }], books: [] }).revisit, 'empty');
   assert.equal(describeAttempt({ status: 'failed', discovery: [{ query: 'history', ok: true, records: 3 }], books: [{}] }).revisit, 'inconclusive');
+  // An answer the adapter did not recognize is inconclusive, not unreachable.
+  assert.equal(describeAttempt({ status: 'failed', discovery: [{ query: 'history', ok: false, records: 0, code: 'CATALOG_UNRECOGNIZED' }], books: [] }).revisit, 'inconclusive');
 });
 
 test('revisit dates follow the stated rules', () => {

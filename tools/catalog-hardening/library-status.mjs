@@ -14,13 +14,18 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const EVIDENCE = 'docs/research/india-library-hardening';
 const OUTPUT = 'docs/research/india-library-status';
 
-export const STATUSES = ['verified', 'listed-unverified', 'hidden-empty', 'blocked', 'remote-unchecked', 'unsupported'];
+export const STATUSES = ['verified', 'listed-unverified', 'hidden-empty', 'blocked', 'remote-unchecked', 'unreachable', 'unsupported'];
 
 // Statuses a check from the remote test machine could not settle: the catalog
 // did not answer there (network failure, timeout, HTTP 5xx, robots.txt 5xx) or a
 // CDN refused that machine's region. They are marked `remote-unchecked` so a
 // local machine can try them; a robots refusal or a login is never in this set.
 export const REMOTE_UNCHECKED_FROM = new Set(['blocked', 'listed-unverified']);
+
+// Evidence files written from a local machine (15 November 2026 local recheck).
+// An unreachable answer in one of these is not a remote-machine artifact: the
+// library is `unreachable` (tried from both), not `remote-unchecked`.
+export const LOCAL_EVIDENCE = /^local-/;
 
 // Days after last_checked before a library is due for another check. `null`
 // means never: a login is not worked around and a link-only entry needs an
@@ -42,23 +47,26 @@ export const REVISIT_DAYS = {
 export const RECORDED = {
   hosts: {
     // Reachable from production (a definite answer), so not blocked for readers.
-    'kalnet.kshec.kerala.gov.in': { status: 'listed-unverified', revisit: 'unreachable', file: 'recheck-20261115-results.json', checked: '2026-11-15',
-      reason: 'unreachable from the test environment (egress connection failure; TLS reset earlier); one production check answered not found' },
-    'ideal.egranth.ac.in': { status: 'blocked', revisit: 'unreachable', file: 'recheck-20261115-results.json', checked: '2026-11-15',
-      reason: 'unreachable: egress remote connection failure; production check couldn\'t check (20.5 s)' },
-    'koha-opac.somaiya.edu': { status: 'remote-unchecked', revisit: 'unreachable', file: 'recheck-20261115-results.json', checked: '2026-11-15',
-      reason: 'CloudFront 403 from US edge; production check couldn\'t check' },
+    // KALNET is read from its local one-book run (local-20261115-kalnet-results.json).
+    'ideal.egranth.ac.in': { status: 'blocked', revisit: 'unreachable', file: 'local-20261115-recheck-results.json', checked: '2026-11-15',
+      reason: 'unreachable from the remote machine (egress connection failure) and a local machine (ENETUNREACH); production check couldn\'t check (20.5 s)' },
+    'koha-opac.somaiya.edu': { status: 'blocked', revisit: 'refusal', file: 'local-20261115-recheck-results.json', checked: '2026-11-15',
+      reason: 'CloudFront 403 from US edges (remote machine and a local machine); regional refusal, not worked around' },
     'dhegoalib.unifyed.com': { status: 'listed-unverified', revisit: 'slow', file: 'connector-host-diagnostics.json', checked: '2026-11-15',
       reason: 'search 35.5 s > 30 s budget; branch-limited search HTTP 410' },
     'library.mes.ac.in': { status: 'blocked', revisit: 'refusal', file: 'connector-host-diagnostics.json', checked: '2026-11-15', reason: 'robots refusal' },
     'opac.rayatlibrarynetwork.org': { status: 'blocked', revisit: 'refusal', file: 'connector-host-diagnostics.json', checked: '2026-11-15', reason: 'robots refusal' },
   },
   ids: {
-    'chamo:iit-madras': { status: 'blocked', revisit: 'unreachable', file: 'recheck-20261115-results.json', checked: '2026-11-15', reason: 'DNS ENOTFOUND' },
-    'koha:national-science-library': { status: 'blocked', revisit: 'unreachable', file: 'recheck-20261115-results.json', checked: '2026-11-15', reason: 'connect timeout (robots.txt and catalog page)' },
-    'koha:klh-global-business-school': { status: 'blocked', revisit: 'unreachable', file: 'recheck-20261115-results.json', checked: '2026-11-15', reason: 'no response in 15 s; TLS reset earlier' },
-    'koha:indian-institute-astrophysics': { status: 'unsupported', revisit: 'unreachable', file: 'recheck-20261115-results.json', checked: '2026-11-15', reason: 'link-only; robots.txt and catalog page no response in 15 s' },
-    'koha:iit-dharwad': { status: 'blocked', revisit: 'unreachable', file: 'connector-host-diagnostics.json', checked: '2026-11-15', reason: 'site HTTP 502' },
+    'chamo:iit-madras': { status: 'blocked', revisit: 'unreachable', file: 'local-20261115-recheck-results.json', checked: '2026-11-15', reason: 'DNS ENOTFOUND (remote and local); hostname may have moved' },
+    'koha:national-science-library': { status: 'blocked', revisit: 'unreachable', file: 'local-20261115-recheck-results.json', checked: '2026-11-15', reason: 'connect timeout (remote); DNS ENOTFOUND for opac.niscair.res.in (local); hostname may have moved' },
+    'koha:klh-global-business-school': { status: 'blocked', revisit: 'unreachable', file: 'local-20261115-recheck-results.json', checked: '2026-11-15', reason: 'no response (remote and local connect timeout)' },
+    'koha:indian-institute-astrophysics': { status: 'unsupported', revisit: 'unreachable', file: 'local-20261115-recheck-results.json', checked: '2026-11-15', reason: 'link-only; robots.txt and catalog page no response (remote and local)' },
+    'koha:iit-dharwad': { status: 'blocked', revisit: 'unreachable', file: 'local-20261115-recheck-extra-results.json', checked: '2026-11-15', reason: 'site HTTP 502 (remote and local)' },
+    'koha:goa-institute-management': { status: 'blocked', revisit: 'unreachable', file: 'local-20261115-recheck-extra-results.json', checked: '2026-11-15', reason: 'robots.txt HTTP 503 (temporarily disallowed; remote and local)' },
+    'koha:ramanujan-college': { status: 'blocked', revisit: 'unreachable', file: 'local-20261115-recheck-extra-results.json', checked: '2026-11-15', reason: 'robots.txt HTTP 503 (remote); connection refused (local)' },
+    'koha:scert-assam': { status: 'listed-unverified', revisit: 'inconclusive', file: 'local-20261115-recheck-extra-results.json', checked: '2026-11-15',
+      reason: 'reachable locally, but the server omits its Let\'s Encrypt intermediate (UNABLE_TO_VERIFY_LEAF_SIGNATURE); adapter needs a validated intermediate like KALNET' },
     'koha:bhatkhande': { status: 'unsupported', revisit: 'unreachable', file: 'connector-host-diagnostics.json', checked: '2026-11-15', reason: 'link-only; search HTTP 500' },
     'koha:cmd-kerala': { status: 'unsupported', revisit: 'inconclusive', file: 'connector-host-diagnostics.json', checked: '2026-11-15', reason: 'link-only; search page has no Koha results markup' },
     'koha:st-xaviers-jaipur': { status: 'unsupported', revisit: 'inconclusive', file: 'connector-host-diagnostics.json', checked: '2026-11-15', reason: 'link-only; every item type is Stack' },
@@ -70,7 +78,6 @@ export const RECORDED = {
     'discovery-academic:autolib-patna-spjain': { status: 'blocked', revisit: 'refusal', file: 'connector-host-diagnostics.json', checked: '2026-11-15', reason: 'robots refusal' },
     'discovery-academic:librarika-bncollege': { status: 'blocked', revisit: 'refusal', file: 'connector-host-diagnostics.json', checked: '2026-11-15', reason: 'access challenge' },
     'discovery-academic:easylib-sjec': { status: 'listed-unverified', revisit: 'slow', file: 'academic-sjec-recheck-results.json', checked: '2026-11-15', reason: 'cold lookups > 20 s book budget' },
-    'indcat:indcat-ggsi-110403': { status: 'listed-unverified', revisit: 'unreachable', file: 'indcat-remaining-results.json', checked: '2026-11-15', reason: 'IndCat record pages fail (PHP fatal error)' },
     'indcat:indcat-gkvv-249404': { status: 'listed-unverified', revisit: 'inconclusive', file: 'indcat-remaining-results.json', checked: '2026-11-15', reason: 'IndCat record pages name no holding institution' },
     'libsys:nit-trichy': { status: 'listed-unverified', revisit: 'unsupported', file: 'small-families-results.json', checked: '2026-11-15', reason: 'ISBN-only adapter; catalog-origin check cannot be measured' },
   },
@@ -132,6 +139,8 @@ export function describeAttempt(record) {
     return { reason: `all seed searches empty (${discovery.map((stage) => stage.query).join(', ')})`, revisit: 'empty', status: 'listed-unverified' };
   }
   const codes = [...new Set(discovery.filter((stage) => !stage.ok).map((stage) => stage.code || 'error'))];
+  // The catalog answered, but not in a shape the adapter recognized: not a network failure.
+  if (codes.length && codes.every((code) => code === 'CATALOG_UNRECOGNIZED')) return { reason: 'catalog answered, response not recognized (CATALOG_UNRECOGNIZED)', revisit: 'inconclusive', status: 'listed-unverified' };
   if (codes.length) return { reason: `search errors: ${codes.join(', ')}`, revisit: 'unreachable', status: 'listed-unverified' };
   return { reason: 'inconclusive check', revisit: 'inconclusive', status: 'listed-unverified' };
 }
@@ -184,7 +193,9 @@ export function buildRows(inputs) {
   return entries.map((entry) => markRemote(rowFor(entry)));
 
   function markRemote(item) {
-    if (item.revisitClass === 'unreachable' && REMOTE_UNCHECKED_FROM.has(item.status)) return { ...item, status: 'remote-unchecked' };
+    if (item.revisitClass === 'unreachable' && REMOTE_UNCHECKED_FROM.has(item.status)) {
+      return { ...item, status: LOCAL_EVIDENCE.test(item.evidence_file) ? 'unreachable' : 'remote-unchecked' };
+    }
     return item;
   }
 
@@ -287,15 +298,21 @@ export function renderReadme(rows) {
     const ids = items.map((item) => item.library_id);
     return [dates[0], dates.at(-1), reason, status, ids.length, ids.slice(0, 3).map((id) => `\`${id}\``).join(', ') + (ids.length > 3 ? ', …' : '')];
   }).sort((a, b) => due(a[0]).localeCompare(due(b[0])) || b[4] - a[4]);
+  const groupRows = (list) => {
+    const groups = new Map();
+    for (const item of list) {
+      const key = item.platform + '\u0000' + reasonGroup(item.reason);
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(item);
+    }
+    return [...groups.entries()].sort((a, b) => b[1].length - a[1].length)
+      .map(([key, items]) => { const [platform, reason] = key.split('\u0000'); return [platform, reason, items.length, items.slice(0, 3).map((item) => '`' + item.library_id + '`').join(', ')]; });
+  };
   const remote = rows.filter((item) => item.status === 'remote-unchecked');
-  const remoteGroups = new Map();
-  for (const item of remote) {
-    const key = item.platform + '\u0000' + reasonGroup(item.reason);
-    if (!remoteGroups.has(key)) remoteGroups.set(key, []);
-    remoteGroups.get(key).push(item);
-  }
-  const remoteRows = [...remoteGroups.entries()].sort((a, b) => b[1].length - a[1].length)
-    .map(([key, items]) => { const [platform, reason] = key.split('\u0000'); return [platform, reason, items.length, items.slice(0, 3).map((item) => '`' + item.library_id + '`').join(', ')]; });
+  const remoteRows = groupRows(remote);
+  const unreachable = rows.filter((item) => item.status === 'unreachable');
+  const local = rows.filter((item) => LOCAL_EVIDENCE.test(item.evidence_file));
+  const localCount = (status) => local.filter((item) => item.status === status).length;
   const never = [...count(rows.filter((item) => item.revisit_after === 'never'), 'status').entries()].map(([status, n]) => `${n} ${status}`).join(', ');
   const verifiedDue = [...new Set(rows.filter((item) => item.status === 'verified').map((item) => item.revisit_after))].sort();
   return `# Indian library status
@@ -306,7 +323,7 @@ Generated by \`tools/catalog-hardening/library-status.mjs\` from the directory,
 [status.csv](status.csv) has one row per Indian directory entry
 (${rows.length.toLocaleString('en-US')} rows).
 
-A failed or blocked check is never "empty": \`blocked\`, \`remote-unchecked\` and
+A failed or blocked check is never "empty": \`blocked\`, \`remote-unchecked\`, \`unreachable\` and
 \`listed-unverified\` mean we could not confirm a book, not that the library lacks it.
 
 ## Status
@@ -316,6 +333,7 @@ A failed or blocked check is never "empty": \`blocked\`, \`remote-unchecked\` an
 - \`hidden-empty\`: left out of the finder because its catalog showed no books (\`india-catalogs-hidden.json\`).
 - \`blocked\`: refused by robots rules, an access challenge or a login. Still in the finder. Never worked around.
 - \`remote-unchecked\`: could not be checked from the remote test machine (network failure, timeout, HTTP 5xx, robots.txt 5xx, or a CDN refusing that machine's region). Still in the finder. Try these from a local machine.
+- \`unreachable\`: could not be reached from the remote test machine or from a local machine (network failure, DNS, timeout, HTTP 5xx or robots.txt 5xx). Still in the finder.
 - \`unsupported\`: link-only in the app, no adapter.
 
 ${table(['Status', 'Libraries'], STATUSES.map((status) => [status, byStatus.get(status) || 0]))}
@@ -328,7 +346,18 @@ runners and pacing in \`tools/catalog-hardening/\` (see the hardening
 [README](../india-library-hardening/README.md)). Stop at once on a robots refusal; never
 work around a block. Then add the result files and regenerate this tracker.
 
-${table(['Platform', 'Reason', 'Libraries', 'Examples'], remoteRows)}
+${remoteRows.length ? table(['Platform', 'Reason', 'Libraries', 'Examples'], remoteRows) : 'None are left: every library the remote machine could not reach has been tried from a local machine.'}
+
+## Local-machine recheck (15 November 2026)
+
+The libraries the remote machine left \`remote-unchecked\` were tried from a local
+machine with the same runners, seeds, pacing and stop rules (evidence files
+\`local-20261115-*\`). ${local.length.toLocaleString('en-US')} libraries now take their status from that evidence:
+${localCount('verified')} verified, ${localCount('listed-unverified')} listed-unverified (answered, but no book passed or the catalog
+was cleanly empty), ${localCount('blocked')} blocked, ${localCount('unreachable')} unreachable and ${localCount('unsupported')} unsupported. ${unreachable.length.toLocaleString('en-US')} libraries are \`unreachable\` from both
+machines:
+
+${unreachable.length ? table(['Platform', 'Reason', 'Libraries', 'Examples'], groupRows(unreachable)) : 'None.'}
 
 ## By platform
 

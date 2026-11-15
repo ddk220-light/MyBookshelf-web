@@ -35,6 +35,19 @@ again, so 1,889 remain hidden; the same list now also holds 155 LIBMAN tenants
 whose latest seed searches were all clean and empty. Per-library status and
 revisit dates: [india-library-status](../india-library-status/README.md).
 
+**Local-machine recheck, 15 November 2026.** The 343 libraries the remote test
+machine could not reach were tried from a local machine with the same runners,
+seeds, pacing and stop rules (`local-20261115-*` evidence and manifests). KALNET
+answers locally through the app's validated intermediate certificate: 98 of its
+102 building scopes passed a one-book check. Seven of the ten e-Granthalaya
+libraries that had failed with HTTP 503 passed. Somaiya's CloudFront refuses US
+edges from both machines and is now `blocked` (regional refusal, not worked
+around). IDEAL and six single hosts are `unreachable` from both machines; IIT
+Madras and National Science Library hostnames no longer resolve. SCERT Assam
+answers but omits its TLS intermediate, so its adapter needs a validated
+intermediate like KALNET's. See the
+[status tracker](../india-library-status/README.md#local-machine-recheck-15-november-2026).
+
 ## Selection and evidence
 
 [The frozen cohort](candidates.json) contains 50 institutions selected before

@@ -1,0 +1,275 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-11-15T20:23:45.325Z",
+  "commit": "b12d1bdbe96977686296e1f012da6023184294a3",
+  "userAgent": "MyBookshelf/1.0 (web; +https://mybookshelf.cloud/privacy)",
+  "method": "Per host: robots.txt, then the member catalog page, then one app search for \"history\" under the app request budget. Stops at the first policy refusal. Not book checks.",
+  "hosts": [
+    {
+      "group": "KALNET",
+      "prefix": "vufind:kalnet-",
+      "member": "vufind:kalnet-018aae537f54",
+      "host": "kalnet.kshec.kerala.gov.in",
+      "steps": [
+        {
+          "step": "robots.txt",
+          "url": "https://kalnet.kshec.kerala.gov.in/robots.txt",
+          "at": "2026-11-15T20:23:45.335Z",
+          "error": "TypeError: fetch failed (UNABLE_TO_VERIFY_LEAF_SIGNATURE unable to verify the first certificate)",
+          "durationMs": 2165,
+          "outcome": "network_error"
+        },
+        {
+          "step": "search page",
+          "url": "https://kalnet.kshec.kerala.gov.in/vufind/Search/Results?lookfor=&type=AllFields&limit=5&filter%5B%5D=institution%3A%22MG+University%22&filter%5B%5D=building%3A%22School+of+Biosciences%22",
+          "at": "2026-11-15T20:23:47.500Z",
+          "error": "TypeError: fetch failed (UNABLE_TO_VERIFY_LEAF_SIGNATURE unable to verify the first certificate)",
+          "durationMs": 612,
+          "outcome": "network_error"
+        },
+        {
+          "step": "app search",
+          "at": "2026-11-15T20:23:48.113Z",
+          "ok": true,
+          "query": "history",
+          "records": 1,
+          "requests": 1,
+          "durationMs": 2072,
+          "outcome": "answered"
+        }
+      ],
+      "outcome": "answers"
+    },
+    {
+      "group": "IDEAL",
+      "prefix": "koha:ideal-",
+      "member": "koha:ideal-aaua",
+      "host": "ideal.egranth.ac.in",
+      "steps": [
+        {
+          "step": "robots.txt",
+          "url": "http://ideal.egranth.ac.in/robots.txt",
+          "at": "2026-11-15T20:23:50.185Z",
+          "error": "TypeError: fetch failed (ENETUNREACH connect ENETUNREACH 14.139.56.78:80)",
+          "durationMs": 7499,
+          "outcome": "network_error"
+        },
+        {
+          "step": "search page",
+          "url": "http://ideal.egranth.ac.in/cgi-bin/koha/opac-search.pl?branch_group_limit=branch%3AAAUA",
+          "at": "2026-11-15T20:23:57.684Z",
+          "error": "TypeError: fetch failed (ENETUNREACH connect ENETUNREACH 14.139.56.78:80)",
+          "durationMs": 7358,
+          "outcome": "network_error"
+        },
+        {
+          "step": "app search",
+          "at": "2026-11-15T20:24:05.043Z",
+          "ok": false,
+          "query": "history",
+          "code": "CATALOG_UNAVAILABLE",
+          "message": "Koha could not complete the public catalog request",
+          "durationMs": 10410,
+          "outcome": "error"
+        }
+      ],
+      "outcome": "unreachable"
+    },
+    {
+      "group": "Somaiya",
+      "prefix": "vufind:somaiya-",
+      "member": "vufind:somaiya-aubl",
+      "host": "koha-opac.somaiya.edu",
+      "steps": [
+        {
+          "step": "robots.txt",
+          "url": "https://koha-opac.somaiya.edu/robots.txt",
+          "at": "2026-11-15T20:24:15.454Z",
+          "status": 403,
+          "durationMs": 114,
+          "server": "CloudFront",
+          "cache": "Error from cloudfront",
+          "bytes": 919,
+          "bodyStart": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\"> <HTML><HEAD><META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text",
+          "outcome": "cdn_refusal"
+        }
+      ],
+      "outcome": "refused",
+      "stoppedAt": "robots.txt CDN refusal"
+    },
+    {
+      "group": "IIT Madras",
+      "member": "chamo:iit-madras",
+      "host": "webopac.iitm.ac.in",
+      "steps": [
+        {
+          "step": "robots.txt",
+          "url": "https://webopac.iitm.ac.in/robots.txt",
+          "at": "2026-11-15T20:24:15.568Z",
+          "error": "TypeError: fetch failed (ENOTFOUND getaddrinfo ENOTFOUND webopac.iitm.ac.in)",
+          "durationMs": 28,
+          "outcome": "network_error"
+        },
+        {
+          "step": "search page",
+          "url": "https://webopac.iitm.ac.in",
+          "at": "2026-11-15T20:24:15.596Z",
+          "error": "TypeError: fetch failed (ENOTFOUND getaddrinfo ENOTFOUND webopac.iitm.ac.in)",
+          "durationMs": 5,
+          "outcome": "network_error"
+        },
+        {
+          "step": "app search",
+          "at": "2026-11-15T20:24:15.601Z",
+          "ok": false,
+          "code": "CATALOG_UNSUPPORTED",
+          "durationMs": 0,
+          "outcome": "error"
+        }
+      ],
+      "outcome": "unreachable"
+    },
+    {
+      "group": "National Science Library",
+      "member": "koha:national-science-library",
+      "host": "opac.niscair.res.in",
+      "steps": [
+        {
+          "step": "robots.txt",
+          "url": "https://opac.niscair.res.in/robots.txt",
+          "at": "2026-11-15T20:24:15.602Z",
+          "error": "TypeError: fetch failed (ENOTFOUND getaddrinfo ENOTFOUND opac.niscair.res.in)",
+          "durationMs": 2052,
+          "outcome": "network_error"
+        },
+        {
+          "step": "search page",
+          "url": "https://opac.niscair.res.in",
+          "at": "2026-11-15T20:24:17.654Z",
+          "error": "TypeError: fetch failed (ENOTFOUND getaddrinfo ENOTFOUND opac.niscair.res.in)",
+          "durationMs": 5,
+          "outcome": "network_error"
+        },
+        {
+          "step": "app search",
+          "at": "2026-11-15T20:24:17.660Z",
+          "ok": false,
+          "query": "history",
+          "code": "CATALOG_UNAVAILABLE",
+          "message": "Koha could not complete the public catalog request",
+          "durationMs": 7,
+          "outcome": "error"
+        }
+      ],
+      "outcome": "unreachable"
+    },
+    {
+      "group": "KLH Global Business School",
+      "member": "koha:klh-global-business-school",
+      "host": "gbslibrary.klh.edu.in",
+      "steps": [
+        {
+          "step": "robots.txt",
+          "url": "https://gbslibrary.klh.edu.in/robots.txt",
+          "at": "2026-11-15T20:24:17.667Z",
+          "error": "TypeError: fetch failed (UND_ERR_CONNECT_TIMEOUT Connect Timeout Error (attempted address: gbslibrary.klh.edu.in:443, timeout: 10000ms))",
+          "durationMs": 10096,
+          "outcome": "timeout"
+        },
+        {
+          "step": "search page",
+          "url": "https://gbslibrary.klh.edu.in",
+          "at": "2026-11-15T20:24:27.763Z",
+          "error": "TypeError: fetch failed (UND_ERR_CONNECT_TIMEOUT Connect Timeout Error (attempted address: gbslibrary.klh.edu.in:443, timeout: 10000ms))",
+          "durationMs": 10515,
+          "outcome": "timeout"
+        },
+        {
+          "step": "app search",
+          "at": "2026-11-15T20:24:38.278Z",
+          "ok": false,
+          "query": "history",
+          "code": "CATALOG_UNAVAILABLE",
+          "message": "Koha could not complete the public catalog request",
+          "durationMs": 15033,
+          "outcome": "error"
+        }
+      ],
+      "outcome": "unreachable"
+    },
+    {
+      "group": "IIM Visakhapatnam",
+      "member": "koha:iim-visakhapatnam",
+      "host": "libopac.iimv.ac.in",
+      "steps": [
+        {
+          "step": "robots.txt",
+          "url": "https://libopac.iimv.ac.in/robots.txt",
+          "at": "2026-11-15T20:24:53.311Z",
+          "status": 404,
+          "durationMs": 2862,
+          "server": "Apache/2.4.58 (Ubuntu)",
+          "bytes": 31463,
+          "bodyStart": "<!DOCTYPE html> <!-- TEMPLATE FILE: errorpage.tt --> <html lang=\"en\" class=\"no-js\"> <head> <title>An error has occurred &rsaquo; Indian Institute of Management ",
+          "outcome": "client_error"
+        },
+        {
+          "step": "search page",
+          "url": "https://libopac.iimv.ac.in",
+          "at": "2026-11-15T20:24:56.174Z",
+          "status": 200,
+          "durationMs": 1180,
+          "server": "Apache/2.4.58 (Ubuntu)",
+          "bytes": 56653,
+          "outcome": "answered"
+        },
+        {
+          "step": "app search",
+          "at": "2026-11-15T20:24:57.354Z",
+          "ok": true,
+          "query": "history",
+          "records": 10,
+          "requests": 1,
+          "durationMs": 4352,
+          "outcome": "answered"
+        }
+      ],
+      "outcome": "answers"
+    },
+    {
+      "group": "Indian Institute of Astrophysics",
+      "member": "koha:indian-institute-astrophysics",
+      "host": "library.iiap.res.in",
+      "steps": [
+        {
+          "step": "robots.txt",
+          "url": "https://library.iiap.res.in/robots.txt",
+          "at": "2026-11-15T20:25:01.707Z",
+          "error": "TypeError: fetch failed (UND_ERR_CONNECT_TIMEOUT Connect Timeout Error (attempted address: library.iiap.res.in:443, timeout: 10000ms))",
+          "durationMs": 10510,
+          "outcome": "timeout"
+        },
+        {
+          "step": "search page",
+          "url": "https://library.iiap.res.in",
+          "at": "2026-11-15T20:25:12.217Z",
+          "error": "TypeError: fetch failed (UND_ERR_CONNECT_TIMEOUT Connect Timeout Error (attempted address: library.iiap.res.in:443, timeout: 10000ms))",
+          "durationMs": 10522,
+          "outcome": "timeout"
+        },
+        {
+          "step": "app search",
+          "at": "2026-11-15T20:25:22.739Z",
+          "ok": false,
+          "code": "CATALOG_UNSUPPORTED",
+          "durationMs": 0,
+          "outcome": "error"
+        }
+      ],
+      "outcome": "unreachable"
+    }
+  ],
+  "finishedAt": "2026-11-15T20:25:22.739Z",
+  "rawRequestsSent": 15,
+  "appSearchRequests": 2
+}
