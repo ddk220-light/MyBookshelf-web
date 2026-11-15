@@ -165,3 +165,46 @@ it("retains the expiry explanation when a private 401 first makes identity uncer
   fireEvent.click(screen.getByRole("button", { name: "Continue as guest" }));
   expect(screen.queryByText("Session ended")).not.toBeInTheDocument();
 });
+
+it("a guest tab never re-checks on focus; a signed-in tab at most once a minute; a page back from the back/forward cache always", async () => {
+  vi.stubGlobal("BroadcastChannel", undefined);
+  let reply: object = { status: "guest" };
+  const fetch = vi.fn(async () => new Response(JSON.stringify(reply), { status: 200 }));
+  vi.stubGlobal("fetch", fetch);
+  const now = vi.spyOn(Date, "now");
+  let clock = 1_000_000;
+  now.mockImplementation(() => clock);
+  try {
+    render(
+      <AccountSessionProvider>
+        <Probe />
+      </AccountSessionProvider>,
+    );
+    expect(await screen.findByText("guest")).toBeInTheDocument();
+    expect(fetch).toHaveBeenCalledTimes(1);
+    const events = () => {
+      window.dispatchEvent(new Event("focus"));
+      document.dispatchEvent(new Event("visibilitychange"));
+      window.dispatchEvent(new Event("online"));
+      window.dispatchEvent(new PageTransitionEvent("pageshow", { persisted: false }));
+    };
+    clock += 120_000;
+    await act(async () => events());
+    expect(fetch).toHaveBeenCalledTimes(1);
+
+    reply = { status: "authenticated", user: { id: "test-a", name: "Private name", email: "private@example.test", emailVerified: true }, csrfToken: "synthetic-csrf" };
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Explicit sign in" })));
+    expect(await screen.findByText("Private name")).toBeInTheDocument();
+    expect(fetch).toHaveBeenCalledTimes(2);
+    clock += 59_000;
+    await act(async () => events());
+    expect(fetch).toHaveBeenCalledTimes(2);
+    clock += 2_000;
+    await act(async () => events());
+    await waitFor(() => expect(fetch).toHaveBeenCalledTimes(3));
+    await act(async () => window.dispatchEvent(new PageTransitionEvent("pageshow", { persisted: true })));
+    await waitFor(() => expect(fetch).toHaveBeenCalledTimes(4));
+  } finally {
+    now.mockRestore();
+  }
+});

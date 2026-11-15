@@ -23,6 +23,9 @@ import type {
   RecentSource,
 } from "../types";
 
+/** A signed-in shelf reloads on focus at most this often. */
+export const SHELF_RELOAD_MS = 60_000;
+
 /**
  * Plan 3.3 and 4.7: a book whose bookKey or ISBN-13 is already saved counts as
  * saved without a request; every book open is recorded in the account's
@@ -53,6 +56,9 @@ export function AccountLibraryStateProvider({
     revision: number;
     until: number;
   } | null>(null);
+  // When the shelf was last read from the account (focus reloads it at most
+  // once a minute; changes and explicit refreshes always reload).
+  const loadedAt = useRef(0);
   const onRetrySuccess = useRef<((value: unknown) => void) | undefined>();
   const fail = useCallback(
     (error: unknown) => {
@@ -83,6 +89,7 @@ export function AccountLibraryStateProvider({
     try {
       const next = await repo.loadSnapshot();
       if (active.current && repository.current === repo) {
+        loadedAt.current = Date.now();
         setSnapshot(next);
         setLoading(false);
       }
@@ -108,7 +115,9 @@ export function AccountLibraryStateProvider({
     repository.current = repo;
     void refresh();
     const focus = () => {
-      if (document.visibilityState === "visible") void refresh();
+      if (document.visibilityState !== "visible") return;
+      if (Date.now() - loadedAt.current < SHELF_RELOAD_MS) return;
+      void refresh();
     };
     window.addEventListener("focus", focus);
     document.addEventListener("visibilitychange", focus);
@@ -146,7 +155,10 @@ export function AccountLibraryStateProvider({
         onRetrySuccess.current = undefined;
         try {
           const next = await repo.loadSnapshot();
-          if (active.current && repository.current === repo) setSnapshot(next);
+          if (active.current && repository.current === repo) {
+            loadedAt.current = Date.now();
+            setSnapshot(next);
+          }
         } catch (error) {
           if (active.current)
             setNotice(
