@@ -10,6 +10,8 @@ import {
 } from "./security.js";
 import { readAccountConfig } from "./config.js";
 import { readingRoute } from "./reading-routes.js";
+import { hasSessionCookie } from "../auth/cookies.js";
+import { createMailDispatcher } from "../jobs/mail-dispatch.js";
 
 const RESERVED_AUTH =
   /^\/api\/auth\/(?:ok|get-session|sign-up\/email|sign-in\/(?:email|social)|sign-out|verify-email|send-verification-email|request-password-reset|reset-password|callback\/[^/]+|change-password|change-email|link-social|unlink-account|delete-user|list-sessions|revoke-session|revoke-sessions|revoke-other-sessions|update-user|set-password)(?:\/|$)/;
@@ -34,6 +36,7 @@ export function createAccountMiddleware({
     return createAccountService(config);
   },
   retryAfterMs = 5000,
+  mail = createMailDispatcher(),
 } = {}) {
   let service,
     pending,
@@ -92,7 +95,10 @@ export function createAccountMiddleware({
     }
     return headers;
   };
-  async function accounts(req, res, next) {
+  // Mail queued while handling a request is sent right after its response.
+  const accounts = (req, res, next) =>
+    mail.track(res, () => handleAccounts(req, res, next));
+  async function handleAccounts(req, res, next) {
     const path = req.path;
     if (
       !(
@@ -181,6 +187,10 @@ export function createAccountMiddleware({
               message: "The request origin is not allowed.",
             },
           });
+      // A browser without a session cookie is a guest: answer exactly what the
+      // service would, without starting it (and waking its database).
+      if (path === "/api/account/session" && !hasSessionCookie(req.get("Cookie")))
+        return res.json({ status: "guest" });
       if (!service) {
         try { await getService(config); } catch { return unavailable(res); }
       }
