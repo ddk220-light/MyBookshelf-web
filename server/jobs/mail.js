@@ -8,6 +8,7 @@ import {
 } from "node:crypto";
 import { getCurrentAdapter } from "@better-auth/core/context";
 import { createEmailVerificationToken } from "better-auth/api";
+import { noteQueuedMail } from "./mail-dispatch.js";
 
 function key(secret) {
   if (typeof secret !== "string" || secret.length < 32)
@@ -134,6 +135,9 @@ export async function enqueueAccountMail(auth, config, kind, data, token) {
     },
     forceAllowId: true,
   });
+  // Sent right after this request's response when the worker is configured
+  // (mail-dispatch.js); otherwise, or if that fails, by the scheduled job.
+  noteQueuedMail(id, config);
   return id;
 }
 
@@ -244,7 +248,7 @@ export function renderAccountMail(payload) {
 export async function runMailBatch(
   pool,
   config,
-  { transport, limit = 10, jobId = null } = {},
+  { transport, limit = 10, jobId = null, cleanup = true } = {},
 ) {
   const worker = randomUUID();
   // Lease rather than hold a DB transaction while talking to the provider.
@@ -288,14 +292,16 @@ export async function runMailBatch(
         [job.id, worker],
       );
     } catch {
+      // Retried by the next hourly run, until the link inside expires.
       await pool.query(
         `UPDATE account_mail_jobs SET status='queued',"leaseUntil"=NULL,"leaseOwner"=NULL,"lastError"='delivery_failed',
-        "availableAt"=now()+CASE attempts WHEN 1 THEN 60 WHEN 2 THEN 300 WHEN 3 THEN 900 WHEN 4 THEN 3600 ELSE 14400 END * interval '1 second'
+        "availableAt"=now()+interval '60 seconds'
         WHERE id=$1 AND "leaseOwner"=$2`,
         [job.id, worker],
       );
     }
   }
+  if (!cleanup) return { processed: rows.length };
   await pool.query(
     `UPDATE account_mail_jobs SET status='expired',payload='',"leaseUntil"=NULL,"leaseOwner"=NULL,"lastError"=NULL WHERE "expiresAt"<=now()+interval '10 seconds' AND status NOT IN ('sent','expired')`,
   );

@@ -12,6 +12,7 @@ import { providerIntents } from "./provider-intents.js";
 import { passwordRotation } from "./password-rotation.js";
 import { passwordBudget } from "./password-budget.js";
 import {deletionSchema} from './deletion-schema.js';
+import { AUTH_COOKIE_PREFIX } from "./cookies.js";
 
 export function authOptions({
   pool,
@@ -72,7 +73,7 @@ export function authOptions({
     },
     hooks: { before: beforeOAuth },
     advanced: {
-      cookiePrefix: "mybookshelf_auth",
+      cookiePrefix: AUTH_COOKIE_PREFIX,
       useSecureCookies: config.secureCookies,
       defaultCookieAttributes: { httpOnly: true, sameSite: "lax", path: "/" },
     },
