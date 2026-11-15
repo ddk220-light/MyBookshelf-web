@@ -1,0 +1,199 @@
+{
+  "schemaVersion": 1,
+  "method": "One cold title query, readRecord with explicit scoped ID, then cold lookupBook; production route budgets and robots; other hosts blocked before network.",
+  "libraries": [
+    {
+      "libraryId": "indcat:indcat-mizu-796012",
+      "name": "Mizoram University, Aizwal",
+      "route": "totalit-webopac:mizoram-university",
+      "books": [
+        {
+          "title": "A gender atlas india",
+          "recordId": "alt.a1c100fb2707.a1_WyJBIGdlbmRlciBhdGxhcyBpbmRpYSIsIjNlZTU2ZjcyZDliYjZjNmIxY2Y1Il0",
+          "startedAt": "2026-11-15T07:39:57.505Z",
+          "search": {
+            "query": "A gender atlas india",
+            "matchingRecord": true,
+            "matchedRecordId": "alt.a1c100fb2707.a1_WyJBIGdlbmRlciBhdGxhcyBpbmRpYSIsIjNlZTU2ZjcyZDliYjZjNmIxY2Y1Il0",
+            "count": 1
+          },
+          "resolve": {
+            "ok": true,
+            "recordId": "alt.a1c100fb2707.a1_WyJBIGdlbmRlciBhdGxhcyBpbmRpYSIsIjNlZTU2ZjcyZDliYjZjNmIxY2Y1Il0",
+            "title": "A gender atlas india",
+            "observation": {
+              "outcome": "in_catalog",
+              "matchKind": "verified_work",
+              "recognizedExact": true,
+              "totalCopies": 1,
+              "callNumber": ""
+            }
+          },
+          "lookup": {
+            "outcome": "found",
+            "evidence": "catalog_record",
+            "recordId": "alt.a1c100fb2707.a1_WyJBIGdlbmRlciBhdGxhcyBpbmRpYSIsIjNlZTU2ZjcyZDliYjZjNmIxY2Y1Il0",
+            "requests": 3,
+            "durationMs": 1739,
+            "source": "live"
+          },
+          "pass": true
+        }
+      ]
+    }
+  ],
+  "httpRequests": [
+    {
+      "stage": "search",
+      "host": "14.139.209.219",
+      "path": "/robots.txt",
+      "method": "GET"
+    },
+    {
+      "stage": "search",
+      "host": "14.139.209.219",
+      "path": "/webopac/Normal.aspx",
+      "method": "GET"
+    },
+    {
+      "stage": "search",
+      "host": "14.139.209.219",
+      "path": "/webopac/Normal.aspx",
+      "method": "POST"
+    },
+    {
+      "stage": "search",
+      "host": "14.139.209.219",
+      "path": "/webopac/BriefResult.aspx",
+      "method": "GET"
+    },
+    {
+      "stage": "readRecord",
+      "host": "14.139.209.219",
+      "path": "/webopac/Normal.aspx",
+      "method": "GET"
+    },
+    {
+      "stage": "readRecord",
+      "host": "14.139.209.219",
+      "path": "/webopac/Normal.aspx",
+      "method": "POST"
+    },
+    {
+      "stage": "readRecord",
+      "host": "14.139.209.219",
+      "path": "/webopac/BriefResult.aspx",
+      "method": "GET"
+    },
+    {
+      "stage": "lookup",
+      "host": "14.139.209.219",
+      "path": "/webopac/Normal.aspx",
+      "method": "GET"
+    },
+    {
+      "stage": "lookup",
+      "host": "14.139.209.219",
+      "path": "/webopac/Normal.aspx",
+      "method": "POST"
+    },
+    {
+      "stage": "lookup",
+      "host": "14.139.209.219",
+      "path": "/webopac/BriefResult.aspx",
+      "method": "GET"
+    }
+  ],
+  "hostSlots": [
+    {
+      "stage": "search",
+      "host": "14.139.209.219",
+      "perMinute": 10,
+      "spacingMs": 0,
+      "deadlineRemainingMs": 29001
+    },
+    {
+      "stage": "search",
+      "host": "14.139.209.219",
+      "perMinute": 10,
+      "spacingMs": 0,
+      "deadlineRemainingMs": 27953
+    },
+    {
+      "stage": "search",
+      "host": "14.139.209.219",
+      "perMinute": 10,
+      "spacingMs": 0,
+      "deadlineRemainingMs": 27032
+    },
+    {
+      "stage": "readRecord",
+      "host": "14.139.209.219",
+      "perMinute": 10,
+      "spacingMs": 0,
+      "deadlineRemainingMs": 19997
+    },
+    {
+      "stage": "readRecord",
+      "host": "14.139.209.219",
+      "perMinute": 10,
+      "spacingMs": 0,
+      "deadlineRemainingMs": 19508
+    },
+    {
+      "stage": "readRecord",
+      "host": "14.139.209.219",
+      "perMinute": 10,
+      "spacingMs": 0,
+      "deadlineRemainingMs": 19020
+    },
+    {
+      "stage": "lookup",
+      "host": "14.139.209.219",
+      "perMinute": 10,
+      "spacingMs": 0,
+      "deadlineRemainingMs": 19998
+    },
+    {
+      "stage": "lookup",
+      "host": "14.139.209.219",
+      "perMinute": 10,
+      "spacingMs": 0,
+      "deadlineRemainingMs": 19510
+    },
+    {
+      "stage": "lookup",
+      "host": "14.139.209.219",
+      "perMinute": 10,
+      "spacingMs": 0,
+      "deadlineRemainingMs": 19022
+    }
+  ],
+  "hostGuards": [
+    {
+      "stage": "readRecord",
+      "host": "14.139.209.219",
+      "limit": 1,
+      "released": true
+    },
+    {
+      "stage": "lookup",
+      "host": "14.139.209.219",
+      "limit": 1,
+      "released": true
+    }
+  ],
+  "recorded": [
+    {
+      "stage": "lookup",
+      "libraryId": "indcat:indcat-mizu-796012",
+      "host": "14.139.209.219",
+      "platform": "discovery-academic",
+      "outcome": "found",
+      "live": true,
+      "requests": 3
+    }
+  ],
+  "refusedHosts": [],
+  "finishedAt": "2026-11-15T07:40:04.816Z"
+}
