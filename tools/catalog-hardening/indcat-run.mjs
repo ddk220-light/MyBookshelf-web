@@ -6,6 +6,7 @@
 // Directory and public contribution counts default to committed/current inputs.
 // --directory and --counts override them for frozen replay. --manifest accepts
 // { cohort: 'wider-one-book', libraries: [{ libraryId: 'indcat:...' }] }.
+// --resume completed skips scopes an earlier interrupted run already finished.
 // Candidates come from the selected member's catalog. Each pass requires a new
 // title search returning the same record, a scoped record read, and the actual
 // catalog-lookup result. A row/HTTP 200 alone never counts as a verified holding.
@@ -146,6 +147,9 @@ for (const code of codes) {
   if (!library) { log({ event: 'unknown-library', code }); continue; }
   let evidence = report.libraries.find(entry => entry.code === code);
   if (evidence?.books.filter(book => book.passed).length >= target) continue;
+  // `--resume completed` continues an interrupted sweep without re-querying
+  // scopes that already finished (including honest failures).
+  if (args.get('resume') === 'completed' && evidence?.completed) continue;
   if (!evidence) {
     evidence = { id: library.id, code, name: library.name, rankedIndcatRecords: counts[code]?.count,
       startedAt: new Date().toISOString(), books: [], discovery: [], errors: [] };
