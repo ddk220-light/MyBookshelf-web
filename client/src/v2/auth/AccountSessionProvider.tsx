@@ -97,6 +97,10 @@ function broadcast(guestOverride: boolean, sender: string) {
     /* Focus always revalidates. */
   }
 }
+// A signed-in, unverified or uncertain tab re-checks its session on focus at
+// most this often. A plain guest tab never does: signing in or out in another
+// tab reaches it through the BroadcastChannel and storage events below.
+export const SESSION_RECHECK_MS = 60_000;
 const key = (s: Pick<AccountSession, "status" | "user">) =>
   s.status === "authenticated" || s.status === "unverified"
     ? s.status + ":" + s.user?.id
@@ -113,7 +117,8 @@ export function AccountSessionProvider({ children, disabledMeansGuest = false }:
   const current = useRef(session),
     request = useRef(0),
     guestLock = useRef(override()),
-    pending = useRef<Promise<void> | null>(null);
+    pending = useRef<Promise<void> | null>(null),
+    lastCheck = useRef(0);
   const identityIntent = useRef(0),
     accessEndLock = useRef<object | null>(null);
   const logoutCsrf = useRef<string>();
@@ -179,6 +184,7 @@ export function AccountSessionProvider({ children, disabledMeansGuest = false }:
         pending.current = null;
       }
       if (pending.current) return pending.current.then(() => current.current);
+      lastCheck.current = Date.now();
       const version = ++request.current;
       sessionController.current?.abort();
       const controller = new AbortController();
@@ -377,8 +383,18 @@ export function AccountSessionProvider({ children, disabledMeansGuest = false }:
   useEffect(() => {
     setReaderIdentityScope("checking");
     void refresh();
-    const focus = () => {
-      if (document.visibilityState === "visible") void refresh();
+    const focus = (event: Event) => {
+      if (document.visibilityState !== "visible") return;
+      // A page restored from the back/forward cache missed every message
+      // while it was frozen: always check it.
+      if (event.type === "pageshow") {
+        if ((event as PageTransitionEvent).persisted) void refresh();
+        return;
+      }
+      const { status, logoutPending } = current.current;
+      if (status === "checking" || (status === "guest" && !logoutPending)) return;
+      if (Date.now() - lastCheck.current < SESSION_RECHECK_MS) return;
+      void refresh();
     };
     const changed = (event: StorageEvent) => {
       if (event.key === EVENT || event.key === OVERRIDE) {
