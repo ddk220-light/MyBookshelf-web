@@ -86,6 +86,18 @@ test('a guest session request without a session cookie never initializes the acc
   assert.equal(calls, 1);
 });
 
+test('capabilities are read from configuration without starting the account service', async () => {
+  let calls = 0;
+  const app = createApplication({ accounts: createAccountMiddleware({ env: enabled, initialize: async () => { calls++; throw Error(); } }) });
+  const response = await request(app).get('/api/account/capabilities');
+  assert.equal(response.status, 200);
+  assert.deepEqual(response.body, { email: false, google: false, apple: false, canonicalOrigin: 'http://localhost:3000' });
+  const mail = createApplication({ accounts: createAccountMiddleware({ env: { ...enabled, ACCOUNTS_JOB_SECRET: 'x'.repeat(32), ACCOUNTS_MAIL_FROM: 'accounts@example.test', RESEND_API_KEY: 'synthetic' }, initialize: async () => { calls++; throw Error(); } }) });
+  assert.equal((await request(mail).get('/api/account/capabilities')).body.email, true);
+  assert.equal((await request(app).get('/api/account/capabilities').set('Origin', 'https://attacker.test')).status, 403);
+  assert.equal(calls, 0);
+});
+
 test('the session cookie names match the auth library\'s own', async () => {
   const { getCookies } = await import('better-auth/cookies');
   const { authOptions } = await import('../auth/auth.js');
