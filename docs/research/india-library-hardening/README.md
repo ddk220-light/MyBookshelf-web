@@ -1,7 +1,10 @@
 # Indian catalog hardening — 15 November 2026
 
-Live validation is complete on `harden-india-top50-2026-11-14`, based on
-`61a3e505bb1f554b5e924752089f49c104068936`. These changes have not been deployed.
+The completed work is available on `hardening-indian-libraries`, carrying the
+runtime and evidence from `harden-india-top50-2026-11-14` (`f29eeda`, `d3ac08a`),
+based on `61a3e505bb1f554b5e924752089f49c104068936`. These changes have not been
+deployed. Start with [how library access was unlocked](UNLOCKS.md) for the
+library-by-library blockers, fixes, measured recoveries and remaining gaps.
 
 The owner requested ten book queries at each of 50 large connected Indian
 libraries, including public and university libraries, fixes for broken

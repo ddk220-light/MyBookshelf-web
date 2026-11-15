@@ -4,6 +4,11 @@ Validation date: 15 November 2026 UTC. Runtime changes are committed as
 `f29eeda` on `harden-india-top50-2026-11-14`, based on
 `61a3e505bb1f554b5e924752089f49c104068936`.
 
+The work is also carried on `hardening-indian-libraries`, created from evidence
+commit `d3ac08a`. Its additional change documents
+[how access was unlocked](UNLOCKS.md); runtime code and historical evidence are
+unchanged from the validated implementation.
+
 ## Automated checks
 
 - `npm test --workspace=server`: **838 tests, 814 passed, 24 skipped, zero

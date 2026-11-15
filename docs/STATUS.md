@@ -1,8 +1,10 @@
 # MyBookshelf web handoff
 
 **Indian library hardening, 15 November 2026 (completed, not deployed):**
-`harden-india-top50-2026-11-14` contains runtime fixes (`f29eeda`) and reproducible
-live evidence: 67 institutions passed ten books each. The frozen size-led cohort
+`hardening-indian-libraries` carries the runtime fixes (`f29eeda`) and reproducible
+evidence (`d3ac08a`) from `harden-india-top50-2026-11-14`, plus
+[how access was unlocked](research/india-library-hardening/UNLOCKS.md).
+Live evidence: 67 institutions passed ten books each. The frozen size-led cohort
 finished at 48/50; National Science Library and IIT Madras remain unreachable
 from the test environment. IIT Roorkee and Anna University are explicit extra
 ten-book reserves. Mixed collection units and missing physical-size evidence

@@ -85,6 +85,9 @@ the overview records the provenance and evidence limits.
 - [Indian library hardening](research/india-library-hardening/README.md): frozen
   size-led 50-library cohort, live book-query evidence, provider fixes, wider
   coverage, and reproducible validation tools.
+- [How Indian library access was unlocked](research/india-library-hardening/UNLOCKS.md):
+  library-by-library blockers, fixes and measured recoveries on
+  `hardening-indian-libraries`.
 - [Credential setup and verified Projects MCP access](development/credentials.md).
 - [Repository completeness audit](development/2026-10-31-repository-handoff.md).
 - [Root README](../README.md), [agent instructions](../AGENTS.md),
