@@ -21,6 +21,16 @@ one book**, out of 848 attempted and 1,168 reviewed. This includes the 19 extra
 ten-book passes. See [the complete results](RESULTS.md) for the separate
 denominators and [coverage.csv](coverage.csv) for every connection.
 
+**e-Granthalaya fifty-title audit, 10 November 2026.** A separate audit searched
+all 5,036 e-Granthalaya libraries in the directory for the same fifty titles:
+3,135 returned books, 1,890 returned a valid empty result for all fifty and 11
+had request or setup errors. The owner decided to leave the 1,890 out of finding
+a library until their catalogs show books; they are listed in
+[india-catalog-hidden.json](../../../server/data/india-catalog-hidden.json) and
+still resolve for readers who already chose one. The 11 error cases stay listed.
+See [the audit evidence](egranthalaya-audit-20261110/README.md) (summary files
+only; per-batch evidence stays on `feat/library-connector-audit`).
+
 ## Selection and evidence
 
 [The frozen cohort](candidates.json) contains 50 institutions selected before

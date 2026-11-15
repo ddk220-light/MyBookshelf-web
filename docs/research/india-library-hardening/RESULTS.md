@@ -103,6 +103,10 @@ Only connections outside the frozen 50 appear here. Family labels follow the can
 | libman | 636 | 636 | 469 | 4 |
 | vufind | 1 | 1 | 0 | 0 |
 
+## e-Granthalaya fifty-title audit
+
+A separate audit on 10 November 2026 searched all 5,036 e-Granthalaya libraries in the directory for the same fifty titles: 3,135 returned books, 1,890 returned a valid empty result for all fifty and 11 had request or setup errors. The 1,890 are left out of finding a library until their catalogs show books ([server/data/india-catalog-hidden.json](../../../server/data/india-catalog-hidden.json)); they still resolve for readers who already chose one. See [the audit evidence](egranthalaya-audit-20261110/README.md).
+
 ## Inspecting or updating results
 
 [coverage.csv](coverage.csv) provides a sortable row for every reviewed connection. [summary.json](summary.json) links each counted record to its original evidence files and lists all reviewed entries, including those with no verified books. The source files preserve failures and timing. No stored answer, periodical, title-only guess, or other institution's record can satisfy the count.
