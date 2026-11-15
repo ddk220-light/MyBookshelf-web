@@ -2,7 +2,7 @@ import libraries from '../data/libraries.json' with { type: 'json' };
 import researched from '../data/india-catalogs.json' with { type: 'json' };
 import discovered from '../data/discovered-catalogs.json' with { type: 'json' };
 import presentationReviews from '../../data/library-presentation-reviews.json' with { type: 'json' };
-import hiddenList from '../data/india-catalog-hidden.json' with { type: 'json' };
+import hiddenList from '../data/india-catalogs-hidden.json' with { type: 'json' };
 const NEARBY_CUTOFF_KM = 80.5;
 
 function canonicalPlatform(platform) {
