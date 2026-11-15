@@ -625,6 +625,21 @@ test('a reader who stops reading marks does not hold the host’s marking slot',
   slot();
 });
 
+// 15 November 2026: a slow academic catalog's timed-out cold lookup was
+// recorded with `requests: 0` although its request had been sent and was
+// cancelled at the deadline. A timeout must report what actually went out.
+test('a lookup that times out still reports the catalog requests it sent', async () => {
+  let sent = 0;
+  global.fetch = (url, options) => { sent++; return new Promise((_, reject) => options.signal.addEventListener('abort', () => reject(Object.assign(new Error('aborted'), { name: 'AbortError' })))); };
+  const provider = { checkAvailability: async () => { await getText('https://slow.example/search?q=1', { retries: 0 }); return { outcome: 'available', matchKind: 'exact_isbn', recognizedExact: true }; } };
+  const { lookup } = harness({ providerFor: () => provider });
+  const answer = await lookup.lookupBook({ library: { id: 'vega:slow', platform: 'vega', catalogUrl: 'https://slow.example' },
+    book: { bookKey: 'k', isbn13: '9788173711466' }, editionScope: 'exact', deadlineAt: Date.now() + 60 });
+  assert.deepEqual([answer.outcome, answer.reason], ['couldnt_check', 'timeout']);
+  assert.equal(sent, 1);
+  assert.equal(answer.requests, 1);
+});
+
 test('an edition profile that fails or is too slow is not counted against the catalog', async () => {
   let catalogCalls = 0;
   const provider = { checkAvailability: async () => { catalogCalls++; return { outcome: 'available', matchKind: 'exact_isbn', recognizedExact: true }; } };
