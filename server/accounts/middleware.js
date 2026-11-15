@@ -11,6 +11,7 @@ import {
 import { readAccountConfig } from "./config.js";
 import { readingRoute } from "./reading-routes.js";
 import { hasSessionCookie } from "../auth/cookies.js";
+import { accountCapabilities } from "./capabilities.js";
 import { createMailDispatcher } from "../jobs/mail-dispatch.js";
 
 const RESERVED_AUTH =
@@ -191,6 +192,8 @@ export function createAccountMiddleware({
       // service would, without starting it (and waking its database).
       if (path === "/api/account/session" && !hasSessionCookie(req.get("Cookie")))
         return res.json({ status: "guest" });
+      if (path === "/api/account/capabilities")
+        return res.json(accountCapabilities(config));
       if (!service) {
         try { await getService(config); } catch { return unavailable(res); }
       }
@@ -249,8 +252,6 @@ export function createAccountMiddleware({
               ];
         return res.json(await service.reading[reading.action](...args));
       }
-      if (path === "/api/account/capabilities")
-        return res.json(service.actions.capabilities());
       if(path==='/api/account/deletion/status')return res.json(await service.actions.deletionStatus(req.body,requestIP(req,env)));
       if (path === "/api/account/sign-up")
         return res
