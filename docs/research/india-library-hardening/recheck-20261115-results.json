@@ -1,0 +1,434 @@
+{
+  "schemaVersion": 1,
+  "recheckDate": "2026-11-15",
+  "window": {
+    "thisMachineUtc": "2026-11-15T16:24:52.396Z to 2026-11-15T16:28:57.769Z",
+    "productionUtc": "2026-11-15T16:29:28Z to 2026-11-15T16:29:56Z"
+  },
+  "commit": "19aec7d1d8c79de9e348679520b1a06aace33fbf",
+  "method": {
+    "thisMachine": "tools/catalog-hardening/host-recheck.mjs: per host, robots.txt, then the member catalog page, then one app search for \"history\" under the app request budget and robots policy, stopping at the first policy refusal. Pass 2 (KALNET, IDEAL) continued past robots.txt because its 503 came from the execution egress proxy, not the site. A host that answered got the existing one-book runner (koha-run.mjs). These are reachability diagnostics, not book checks, and a failure is never absence.",
+    "production": "One POST https://mybookshelf.cloud/api/v2/holdings/check per group, body {libraryId, bookKey: \"v1:isbn:9788173711466\"} (Wings of Fire, an ordinary ISBN key). Answers: found, not_found, unknown (couldn't check) or unconfirmed. Not repeated."
+  },
+  "groups": [
+    {
+      "group": "KALNET",
+      "idPrefix": "vufind:kalnet-",
+      "member": "vufind:kalnet-018aae537f54",
+      "host": "kalnet.kshec.kerala.gov.in",
+      "directoryEntries": 102,
+      "earlierOutcome": "TLS connection reset by peer through the egress proxy; robots.txt no response (11:13Z, 12:23Z)",
+      "thisMachine": {
+        "pass1": {
+          "outcome": "unreachable",
+          "stoppedAt": "robots.txt 5xx/429 (temporarily disallowed, RFC 9309)",
+          "steps": [
+            {
+              "step": "robots.txt",
+              "url": "https://kalnet.kshec.kerala.gov.in/robots.txt",
+              "at": "2026-11-15T16:24:52.408Z",
+              "status": 503,
+              "durationMs": 2583,
+              "bytes": 121,
+              "bodyStart": "upstream connect error or disconnect/reset before headers. retried and the latest reset reason: remote connection failure",
+              "outcome": "server_error"
+            }
+          ]
+        },
+        "pass2": {
+          "outcome": "refused",
+          "steps": [
+            {
+              "step": "robots.txt",
+              "url": "https://kalnet.kshec.kerala.gov.in/robots.txt",
+              "at": "2026-11-15T16:27:35.019Z",
+              "status": 503,
+              "durationMs": 4430,
+              "bytes": 121,
+              "bodyStart": "upstream connect error or disconnect/reset before headers. retried and the latest reset reason: remote connection failure",
+              "outcome": "egress_connect_failure"
+            },
+            {
+              "step": "search page",
+              "url": "https://kalnet.kshec.kerala.gov.in/vufind/Search/Results?lookfor=&type=AllFields&limit=5&filter%5B%5D=institution%3A%22MG+University%22&filter%5B%5D=building%3A%22School+of+Biosciences%22",
+              "at": "2026-11-15T16:27:39.449Z",
+              "status": 503,
+              "durationMs": 2248,
+              "bytes": 121,
+              "bodyStart": "upstream connect error or disconnect/reset before headers. retried and the latest reset reason: remote connection failure",
+              "outcome": "egress_connect_failure"
+            },
+            {
+              "step": "app search",
+              "at": "2026-11-15T16:27:41.698Z",
+              "ok": false,
+              "query": "history",
+              "code": "CATALOG_PROVIDER_BLOCKED",
+              "message": "The catalog’s robots rules do not allow this request",
+              "durationMs": 1764,
+              "outcome": "refused"
+            }
+          ]
+        }
+      },
+      "production": {
+        "libraryId": "vufind:kalnet-018aae537f54",
+        "at": "2026-11-15T16:29:28Z",
+        "httpStatus": 200,
+        "durationS": 6.57,
+        "response": {
+          "answer": "not_found",
+          "catalogUrl": "https://kalnet.kshec.kerala.gov.in/vufind/Search/Results?lookfor=9788173711466&type=ISN&filter%5B%5D=institution%3A%22MG+University%22&filter%5B%5D=building%3A%22School+of+Biosciences%22"
+        },
+        "reading": "not found: a definite answer for this ISBN, so the production server reached KALNET and the catalog answered. The block seen from this machine is specific to this environment."
+      }
+    },
+    {
+      "group": "IDEAL",
+      "idPrefix": "koha:ideal-",
+      "member": "koha:ideal-aaua",
+      "host": "ideal.egranth.ac.in",
+      "directoryEntries": 195,
+      "earlierOutcome": "egress proxy 503 \"remote connection failure\"; robots.txt no response or 503",
+      "thisMachine": {
+        "pass1": {
+          "outcome": "unreachable",
+          "stoppedAt": "robots.txt 5xx/429 (temporarily disallowed, RFC 9309)",
+          "steps": [
+            {
+              "step": "robots.txt",
+              "url": "http://ideal.egranth.ac.in/robots.txt",
+              "at": "2026-11-15T16:24:54.992Z",
+              "status": 503,
+              "durationMs": 12457,
+              "bytes": 121,
+              "bodyStart": "upstream connect error or disconnect/reset before headers. retried and the latest reset reason: remote connection failure",
+              "outcome": "server_error"
+            }
+          ]
+        },
+        "pass2": {
+          "outcome": "unreachable",
+          "steps": [
+            {
+              "step": "robots.txt",
+              "url": "http://ideal.egranth.ac.in/robots.txt",
+              "at": "2026-11-15T16:27:43.463Z",
+              "status": 503,
+              "durationMs": 8251,
+              "bytes": 121,
+              "bodyStart": "upstream connect error or disconnect/reset before headers. retried and the latest reset reason: remote connection failure",
+              "outcome": "egress_connect_failure"
+            },
+            {
+              "step": "search page",
+              "url": "http://ideal.egranth.ac.in/cgi-bin/koha/opac-search.pl?branch_group_limit=branch%3AAAUA",
+              "at": "2026-11-15T16:27:51.714Z",
+              "status": 503,
+              "durationMs": 9795,
+              "bytes": 121,
+              "bodyStart": "upstream connect error or disconnect/reset before headers. retried and the latest reset reason: remote connection failure",
+              "outcome": "egress_connect_failure"
+            },
+            {
+              "step": "app search",
+              "at": "2026-11-15T16:28:01.509Z",
+              "ok": false,
+              "query": "history",
+              "code": "CATALOG_UNAVAILABLE",
+              "message": "Koha returned HTTP 503",
+              "durationMs": 13305,
+              "outcome": "error"
+            }
+          ]
+        }
+      },
+      "production": {
+        "libraryId": "koha:ideal-aaua",
+        "at": "2026-11-15T16:29:35Z",
+        "httpStatus": 200,
+        "durationS": 20.48,
+        "response": {
+          "answer": "unknown",
+          "catalogUrl": "http://ideal.egranth.ac.in/cgi-bin/koha/opac-search.pl?idx=nb&q=9788173711466&branch_group_limit=branch%3AAAUA"
+        },
+        "reading": "couldn't check after 20.5 s. The production server also did not get an answer within the check budget."
+      }
+    },
+    {
+      "group": "Somaiya",
+      "idPrefix": "vufind:somaiya-",
+      "member": "vufind:somaiya-aubl",
+      "host": "koha-opac.somaiya.edu",
+      "directoryEntries": 28,
+      "earlierOutcome": "CloudFront 403 \"Request blocked\" to robots.txt and search (US edge IAD55)",
+      "thisMachine": {
+        "pass1": {
+          "outcome": "refused",
+          "stoppedAt": "robots.txt CDN refusal",
+          "steps": [
+            {
+              "step": "robots.txt",
+              "url": "https://koha-opac.somaiya.edu/robots.txt",
+              "at": "2026-11-15T16:25:07.449Z",
+              "status": 403,
+              "durationMs": 161,
+              "server": "CloudFront",
+              "cache": "Error from cloudfront",
+              "bytes": 919,
+              "bodyStart": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\"> <HTML><HEAD><META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text",
+              "outcome": "cdn_refusal"
+            }
+          ]
+        }
+      },
+      "production": {
+        "libraryId": "vufind:somaiya-aubl",
+        "at": "2026-11-15T16:29:55Z",
+        "httpStatus": 200,
+        "durationS": 0.54,
+        "response": {
+          "answer": "unknown",
+          "catalogUrl": "https://koha-opac.somaiya.edu/Search/Results?lookfor=9788173711466&type=ISN&filter%5B%5D=institution%3A%22AUBL%22"
+        },
+        "reading": "couldn't check in 0.5 s, consistent with the production server also being refused or the host already marked unhealthy; the reason is not visible in the public answer."
+      }
+    },
+    {
+      "group": "IIT Madras",
+      "member": "chamo:iit-madras",
+      "host": "webopac.iitm.ac.in",
+      "directoryEntries": 1,
+      "earlierOutcome": "DNS ENOTFOUND",
+      "thisMachine": {
+        "pass1": {
+          "outcome": "unreachable",
+          "steps": [
+            {
+              "step": "robots.txt",
+              "url": "https://webopac.iitm.ac.in/robots.txt",
+              "at": "2026-11-15T16:25:07.610Z",
+              "error": "TypeError: fetch failed (ENOTFOUND getaddrinfo ENOTFOUND webopac.iitm.ac.in)",
+              "durationMs": 296,
+              "outcome": "network_error"
+            },
+            {
+              "step": "search page",
+              "url": "https://webopac.iitm.ac.in",
+              "at": "2026-11-15T16:25:07.907Z",
+              "error": "TypeError: fetch failed (ENOTFOUND getaddrinfo ENOTFOUND webopac.iitm.ac.in)",
+              "durationMs": 2,
+              "outcome": "network_error"
+            },
+            {
+              "step": "app search",
+              "at": "2026-11-15T16:25:07.910Z",
+              "ok": false,
+              "code": "CATALOG_UNSUPPORTED",
+              "durationMs": 0,
+              "outcome": "error"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "group": "National Science Library",
+      "member": "koha:national-science-library",
+      "host": "opac.niscair.res.in",
+      "directoryEntries": 1,
+      "earlierOutcome": "robots.txt timed out",
+      "thisMachine": {
+        "pass1": {
+          "outcome": "unreachable",
+          "steps": [
+            {
+              "step": "robots.txt",
+              "url": "https://opac.niscair.res.in/robots.txt",
+              "at": "2026-11-15T16:25:07.910Z",
+              "error": "TypeError: fetch failed (UND_ERR_CONNECT_TIMEOUT Connect Timeout Error (attempted address: opac.niscair.res.in:443, timeout: 10000ms))",
+              "durationMs": 10032,
+              "outcome": "timeout"
+            },
+            {
+              "step": "search page",
+              "url": "https://opac.niscair.res.in",
+              "at": "2026-11-15T16:25:17.942Z",
+              "error": "TypeError: fetch failed (UND_ERR_CONNECT_TIMEOUT Connect Timeout Error (attempted address: opac.niscair.res.in:443, timeout: 10000ms))",
+              "durationMs": 10494,
+              "outcome": "timeout"
+            },
+            {
+              "step": "app search",
+              "at": "2026-11-15T16:25:28.437Z",
+              "ok": false,
+              "query": "history",
+              "code": "CATALOG_UNAVAILABLE",
+              "message": "Koha could not complete the public catalog request",
+              "durationMs": 15002,
+              "outcome": "error"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "group": "KLH Global Business School",
+      "member": "koha:klh-global-business-school",
+      "host": "gbslibrary.klh.edu.in",
+      "directoryEntries": 1,
+      "earlierOutcome": "TLS reset; egress proxy 503",
+      "thisMachine": {
+        "pass1": {
+          "outcome": "unreachable",
+          "steps": [
+            {
+              "step": "robots.txt",
+              "url": "https://gbslibrary.klh.edu.in/robots.txt",
+              "at": "2026-11-15T16:25:43.439Z",
+              "error": "AbortError: This operation was aborted",
+              "durationMs": 15002,
+              "outcome": "timeout"
+            },
+            {
+              "step": "search page",
+              "url": "https://gbslibrary.klh.edu.in",
+              "at": "2026-11-15T16:25:58.441Z",
+              "error": "AbortError: This operation was aborted",
+              "durationMs": 15001,
+              "outcome": "timeout"
+            },
+            {
+              "step": "app search",
+              "at": "2026-11-15T16:26:13.442Z",
+              "ok": false,
+              "query": "history",
+              "code": "CATALOG_UNAVAILABLE",
+              "message": "Koha returned HTTP 503",
+              "durationMs": 20088,
+              "outcome": "error"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "group": "IIM Visakhapatnam",
+      "member": "koha:iim-visakhapatnam",
+      "host": "libopac.iimv.ac.in",
+      "directoryEntries": 1,
+      "earlierOutcome": "robots.txt and searches timed out (11:28Z, 11:42Z)",
+      "thisMachine": {
+        "pass1": {
+          "outcome": "answers",
+          "steps": [
+            {
+              "step": "robots.txt",
+              "url": "https://libopac.iimv.ac.in/robots.txt",
+              "at": "2026-11-15T16:26:33.531Z",
+              "status": 404,
+              "durationMs": 2388,
+              "server": "Apache/2.4.58 (Ubuntu)",
+              "bytes": 31463,
+              "bodyStart": "<!DOCTYPE html> <!-- TEMPLATE FILE: errorpage.tt --> <html lang=\"en\" class=\"no-js\"> <head> <title>An error has occurred &rsaquo; Indian Institute of Management ",
+              "outcome": "client_error"
+            },
+            {
+              "step": "search page",
+              "url": "https://libopac.iimv.ac.in",
+              "at": "2026-11-15T16:26:35.920Z",
+              "status": 200,
+              "durationMs": 1897,
+              "server": "Apache/2.4.58 (Ubuntu)",
+              "bytes": 56653,
+              "outcome": "answered"
+            },
+            {
+              "step": "app search",
+              "at": "2026-11-15T16:26:37.817Z",
+              "ok": true,
+              "query": "history",
+              "records": 10,
+              "requests": 1,
+              "durationMs": 4162,
+              "outcome": "answered"
+            }
+          ]
+        },
+        "oneBookCheck": {
+          "evidenceFile": "recheck-20261115-koha-results.json",
+          "manifest": "tools/catalog-hardening/manifests/recheck-20261115-koha.json",
+          "status": "passed",
+          "passedBooks": 1,
+          "at": "2026-11-15T16:28:44.517Z",
+          "book": {
+            "title": "Sapiens : a brief history of humankind / by Yuval Noah Harari.",
+            "recordId": "1008",
+            "lookup": {
+              "outcome": "found",
+              "evidence": "catalog_record",
+              "recordId": "1008",
+              "catalogUrl": "https://libopac.iimv.ac.in/cgi-bin/koha/opac-detail.pl?biblionumber=1008",
+              "requests": 1,
+              "durationMs": 3311,
+              "source": "live"
+            }
+          }
+        }
+      }
+    },
+    {
+      "group": "Indian Institute of Astrophysics",
+      "member": "koha:indian-institute-astrophysics",
+      "host": "library.iiap.res.in",
+      "directoryEntries": 1,
+      "earlierOutcome": "robots.txt timed out (link-only entry)",
+      "thisMachine": {
+        "pass1": {
+          "outcome": "unreachable",
+          "steps": [
+            {
+              "step": "robots.txt",
+              "url": "https://library.iiap.res.in/robots.txt",
+              "at": "2026-11-15T16:26:41.979Z",
+              "error": "AbortError: This operation was aborted",
+              "durationMs": 15001,
+              "outcome": "timeout"
+            },
+            {
+              "step": "search page",
+              "url": "https://library.iiap.res.in",
+              "at": "2026-11-15T16:26:56.980Z",
+              "error": "AbortError: This operation was aborted",
+              "durationMs": 15003,
+              "outcome": "timeout"
+            },
+            {
+              "step": "app search",
+              "at": "2026-11-15T16:27:11.983Z",
+              "ok": false,
+              "code": "CATALOG_UNSUPPORTED",
+              "durationMs": 0,
+              "outcome": "error"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "requests": {
+    "thisMachine": "About 32 HTTP requests attempted: 17 raw diagnostic reads (13 in pass 1, 4 in pass 2; several never connected: DNS failure, connect timeouts), about 10 for 5 app search attempts with their robots.txt reads (IIT Madras and the link-only Astrophysics entry have no app search), and about 5 for the IIM Visakhapatnam one-book check.",
+    "production": 3
+  },
+  "summary": {
+    "KALNET": "This machine: unreachable (egress proxy 503 \"remote connection failure\" for robots.txt and the search page; the app held back under its robots rule). Production: answered (not found for the test ISBN).",
+    "IDEAL": "This machine: unreachable (egress proxy 503 for robots.txt and the search page; app search HTTP 503). Production: couldn't check (20.5 s).",
+    "Somaiya": "This machine: refused (CloudFront 403 to robots.txt; stopped there). Production: couldn't check (0.5 s).",
+    "IIT Madras": "Unreachable: DNS ENOTFOUND.",
+    "National Science Library": "Unreachable: connect timeout (10 s) to robots.txt and the catalog page; app search CATALOG_UNAVAILABLE.",
+    "KLH Global Business School": "Unreachable: robots.txt and catalog page no response in 15 s; app search HTTP 503 from the egress proxy.",
+    "IIM Visakhapatnam": "Answers again: robots.txt 404 (no rules), catalog page 200, app search 10 records; one-book check passed (Sapiens, record 1008, live found).",
+    "Indian Institute of Astrophysics": "Unreachable: robots.txt and catalog page no response in 15 s (link-only entry, no app search)."
+  },
+  "permanentlyGone": "None. No group showed a definitive, permanent removal (no DNS removal of a whole network, no HTTP 410 for the catalog). IIT Madras DNS failure is the closest and is recorded as unreachable, for the owner to judge."
+}

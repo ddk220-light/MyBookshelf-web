@@ -26,10 +26,14 @@ all 5,036 e-Granthalaya libraries in the directory for the same fifty titles:
 3,135 returned books, 1,890 returned a valid empty result for all fifty and 11
 had request or setup errors. The owner decided to leave the 1,890 out of finding
 a library until their catalogs show books; they are listed in
-[india-catalog-hidden.json](../../../server/data/india-catalog-hidden.json) and
+[india-catalogs-hidden.json](../../../server/data/india-catalogs-hidden.json) and
 still resolve for readers who already chose one. The 11 error cases stay listed.
 See [the audit evidence](egranthalaya-audit-20261110/README.md) (summary files
-only; per-batch evidence stays on `feat/library-connector-audit`).
+only; per-batch evidence stays on `feat/library-connector-audit`). IUCAA
+(`egranthalaya:universities-iucaa`) later passed a one-book check and is listed
+again, so 1,889 remain hidden; the same list now also holds 155 LIBMAN tenants
+whose latest seed searches were all clean and empty. Per-library status and
+revisit dates: [india-library-status](../india-library-status/README.md).
 
 ## Selection and evidence
 

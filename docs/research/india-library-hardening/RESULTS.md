@@ -107,7 +107,7 @@ Only connections outside the frozen 50 appear here. Family labels follow the can
 
 ## e-Granthalaya fifty-title audit
 
-A separate audit on 10 November 2026 searched all 5,036 e-Granthalaya libraries in the directory for the same fifty titles: 3,135 returned books, 1,890 returned a valid empty result for all fifty and 11 had request or setup errors. The 1,890 are left out of finding a library until their catalogs show books ([server/data/india-catalog-hidden.json](../../../server/data/india-catalog-hidden.json)); they still resolve for readers who already chose one. See [the audit evidence](egranthalaya-audit-20261110/README.md).
+A separate audit on 10 November 2026 searched all 5,036 e-Granthalaya libraries in the directory for the same fifty titles: 3,135 returned books, 1,890 returned a valid empty result for all fifty and 11 had request or setup errors. The 1,890 are left out of finding a library until their catalogs show books, except IUCAA, which later passed a one-book check ([server/data/india-catalogs-hidden.json](../../../server/data/india-catalogs-hidden.json), which also lists 155 empty LIBMAN tenants); they still resolve for readers who already chose one. See [the audit evidence](egranthalaya-audit-20261110/README.md).
 
 ## Inspecting or updating results
 

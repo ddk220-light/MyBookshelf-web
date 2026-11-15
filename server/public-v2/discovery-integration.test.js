@@ -22,9 +22,10 @@ test('every imported inline library has search, durable reopening, and availabil
       assert.equal(dto.capabilities.publicAvailability, false);
     }
   }
-  // 1,890 e-Granthalaya libraries are in the hidden list (server/data/india-catalog-hidden.json).
-  assert.equal(createDiscoveryService().search({ country: 'IN' }).total, 6701 - 1890);
-  assert.equal(createDiscoveryService().search({}).total, 7086 - 1890);
+  // 2,044 libraries are in the hidden list (server/data/india-catalogs-hidden.json):
+  // 1,889 e-Granthalaya and 155 LIBMAN.
+  assert.equal(createDiscoveryService().search({ country: 'IN' }).total, 6701 - 2044);
+  assert.equal(createDiscoveryService().search({}).total, 7086 - 2044);
   assert.equal(createDiscoveryService({ entries: getAllLibraries }).search({}).total, 7086);
   assert.equal(new Set(getAllLibraries().map(r => r.id)).size, getAllLibraries().length);
 });

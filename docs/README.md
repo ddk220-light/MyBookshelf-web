@@ -88,6 +88,9 @@ the overview records the provenance and evidence limits.
 - [How Indian library access was unlocked](research/india-library-hardening/UNLOCKS.md):
   library-by-library blockers, fixes and measured recoveries on
   `hardening-indian-libraries`.
+- [Indian library status tracker](research/india-library-status/README.md):
+  generated status, reason and revisit date for every Indian directory entry;
+  [15 November host recheck](research/india-library-hardening/recheck-20261115.md).
 - [Credential setup and verified Projects MCP access](development/credentials.md).
 - [Repository completeness audit](development/2026-10-31-repository-handoff.md).
 - [Root README](../README.md), [agent instructions](../AGENTS.md),

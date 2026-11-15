@@ -1,5 +1,26 @@
 # MyBookshelf web handoff
 
+**Indian library tracker, empty LIBMAN tenants hidden and host recheck, 15 November 2026 (branch `claude/india-library-tracker` from `main`, not deployed):**
+The hidden list is now `server/data/india-catalogs-hidden.json`, one list and
+one filter with criteria and evidence per platform in its header. It adds the
+155 LIBMAN tenants with no verified book whose latest seed searches all answered
+with zero records and no errors (147 from the sweep plus 8 host-busy tenants
+that came back empty on recheck). IUCAA (`egranthalaya:universities-iucaa`)
+passed a one-book check after the audit and is listed again, so 1,889
+e-Granthalaya libraries stay hidden: 2,044 in all, none a public guide. Finder
+totals: India 4,811 to 4,657, all countries 5,196 to 5,042. A generated
+[status tracker](research/india-library-status/README.md) gives every Indian
+directory entry a status, recorded reason and revisit date
+(`node tools/catalog-hardening/library-status.mjs`). The
+[host recheck](research/india-library-hardening/recheck-20261115.md) found IIM
+Visakhapatnam answering again (one book verified); KALNET, IDEAL, IIT Madras,
+National Science Library, KLH GBS and IIA still unreachable and Somaiya still
+CloudFront-refused from the test environment. One production check each: KALNET
+answered (not found), so production reaches it; IDEAL and Somaiya couldn't check.
+Nothing was found permanently gone. Checks: server 822 passed, 24 database skips
+(no test database configured); client 303; type checking; build; SEO 7;
+deployment 4; catalog tooling 20. Browser journeys not run.
+
 **Empty e-Granthalaya libraries hidden from finding a library, 15 November 2026 (branch `claude/india-directory-cleanup` from `hardening-indian-libraries`, not deployed):**
 The 10 November audit searched all 5,036 e-Granthalaya libraries for fifty titles:
 3,135 returned books, 1,890 returned valid empty results for all fifty, 11 had
