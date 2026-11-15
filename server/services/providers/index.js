@@ -36,7 +36,9 @@ function primaryProvider(library) {
   const normalize = (check) => async (...args) => normalizeAvailability(await check(...args));
   switch (library.platform) {
     case 'vpl':
-      return { checkAvailability: () => visakhapatnam.checkPublicAvailability(), isbnLookup: false,
+      // Record IDs here are reverified title/author identities, not catalog
+      // record numbers: an own-record check is a title_author lookup.
+      return { checkAvailability: () => visakhapatnam.checkPublicAvailability(), isbnLookup: false, recordLookupKind: 'title_author',
         findBookCandidates: book => visakhapatnam.searchBookCandidates(library, book),
         searchCatalog: query => visakhapatnam.searchPublicCatalog(library, query),
         resolveCatalogRecord: async recordId => ({ ...await visakhapatnam.resolvePublicCatalogRecord(library, recordId), observation: await visakhapatnam.checkPublicRecordAvailability(library, recordId) }),

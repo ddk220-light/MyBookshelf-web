@@ -181,3 +181,32 @@ test('the robots.txt crawl delay spaces successive requests within one search, n
     assert.ok(Date.now() - started < 100);
   } finally { configureVisakhapatnamPacing({ crawlDelayMs: 0 }); }
 });
+
+// 15 November 2026: a live one-book audit found the title query and record
+// resolution, then the app's own lookup answered couldn't check
+// ("unrecognized") for the same record. The lookup layer treated the
+// title/author identity as a numbered catalog record, so the adapter's
+// verified title/author observation could never produce an answer.
+test('the app lookup answers found for this library’s own title/author record', async () => {
+  const { createCatalogLookup, createHostGuard, PLATFORMS } = await import('../catalog-lookup/index.js');
+  const { getLibraryById } = await import('../directory.js');
+  const entry = getLibraryById(library.id);
+  const platforms = Object.fromEntries(Object.entries(PLATFORMS).map(([id, value]) => [id, { ...value, minIntervalMs: 0 }]));
+  const lookup = createCatalogLookup({ guard: createHostGuard(), platforms, env: { CATALOG_LOOKUP_V2: 'all' } });
+  const urls = [];
+  global.fetch = async url => { urls.push(String(url)); return response(url, issued); };
+  const answer = await lookup.lookupBook({ library: entry, storedChecked: true,
+    book: { bookKey: createCatalogBookKey(library.id, id), recordId: id, recordLibraryId: library.id, title, authors: [author] } });
+  assert.equal(answer.outcome, 'found');
+  assert.equal(answer.recordId, id);
+  assert.equal(answer.source, 'live');
+  const reads = urls.filter(url => new URL(url).pathname === '/books');
+  assert.equal(reads.length, 1);
+  assert.equal(new URL(reads[0]).searchParams.get('title'), 'Premante enti');
+  // A different title/author identity is still not answered by this row.
+  clearHttpCache();
+  const other = createTitleAuthorId(title, 'Someone Else');
+  const missing = await lookup.lookupBook({ library: entry, storedChecked: true,
+    book: { bookKey: createCatalogBookKey(library.id, other), recordId: other, recordLibraryId: library.id, title, authors: ['Someone Else'] } });
+  assert.equal(missing.outcome, 'couldnt_check');
+});

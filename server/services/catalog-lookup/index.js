@@ -304,7 +304,11 @@ export function createCatalogLookup({
     if (stored) return { ...stored, requests: 0, durationMs: now() - startedAt, source: 'stored' };
     const isbn13 = validateAndNormalize(book.isbn13 || '');
     const parsed = own ? { kind: 'catalog', libraryId, recordId: book.recordId } : parsePublicBookKey(book.bookKey || '');
-    const lookupKind = own ? (providerFor(entry)?.checkRecordAvailability ? 'catalog_record' : 'verified_work') : isbn13 ? 'exact_isbn' : 'verified_work';
+    // A provider whose record IDs are reverified title/author identities
+    // (Visakhapatnam) proves that identity, not a numbered catalog record.
+    const ownProvider = own ? providerFor(entry) : null;
+    const lookupKind = own ? (ownProvider?.recordLookupKind === 'title_author' ? 'title_author'
+      : ownProvider?.checkRecordAvailability ? 'catalog_record' : 'verified_work') : isbn13 ? 'exact_isbn' : 'verified_work';
     const books = profile && editionScope === 'work' && !own ? { searchProfile: async () => profile } : null;
     const result = await checkBook({ entry, library: publicLibrary, book: { ...book, isbn13: isbn13 || undefined, title: book.title || '', authors: book.authors || [] },
       bookKey: book.bookKey, parsed, ownRecord: own, lookupKind, editionScope, books, attemptedAt: new Date(startedAt).toISOString(), signal, deadlineAt });
