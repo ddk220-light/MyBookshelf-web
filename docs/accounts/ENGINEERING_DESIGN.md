@@ -277,9 +277,13 @@ must be documented in the privacy text before release.
 
 Durable Postgres outbox plus an authenticated scheduled worker is sufficient for
 v1; do not rely on in-process timers surviving a Vercel request. Lease jobs with
-bounded batches, backoff and idempotent effects. Proposed mail attempts: immediate,
-1,5,15 minutes, then hourly until token expiry; terminal failure prompts resend
-and alerts the operator. Expired tokens are never emailed. A mail provider's
+bounded batches, backoff and idempotent effects. Mail attempts: immediate (the
+worker role sends it once the response of the request that queued it has
+finished, kept alive by the platform's waitUntil, under the job's lease and
+idempotency key), then each hourly scheduled run until token expiry; mail still
+queued after two hours alerts the operator. The scheduled worker runs hourly and
+its monitor every six hours (freshness three hours); no schedule runs more often
+than hourly, so an unused deployment lets the database scale to zero. Expired tokens are never emailed. A mail provider's
 accepted response means submitted, not delivered. Dead-letter jobs expose safe
 metadata to operations, never message/token contents.
 

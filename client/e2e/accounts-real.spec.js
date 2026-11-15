@@ -161,7 +161,13 @@ test.describe("account browser → real API → isolated Postgres", () => {
       await dialog.getByRole("button", { name: "Continue", exact: true }).click();
       await dialog.getByRole("button", { name: "Sign out this device", exact: true }).click();
       await expect(page.getByText("Signed out that device.", { exact: true })).toBeVisible();
-      await other.evaluate(() => window.dispatchEvent(new Event("focus")));
+      // A signed-in tab re-checks its session on focus at most once a minute:
+      // move this page's clock past that minute, then focus it.
+      await other.evaluate(() => {
+        const real = Date.now.bind(Date);
+        Date.now = () => real() + 61_000;
+        window.dispatchEvent(new Event("focus"));
+      });
       await expect.poll(() => sessionStatus(other)).toBe("guest");
       await other.goto("/app/shelf");
       await expect(other.getByRole("link", { name: "Synthetic guest book 1 by Synthetic author" })).toHaveCount(0);

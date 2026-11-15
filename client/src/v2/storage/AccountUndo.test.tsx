@@ -59,3 +59,28 @@ it('signed in: opening another book keeps the Undo; adding the removed book back
   expect(result).toBe('saved');
   expect(library().removedBook).toBeNull();
 });
+
+it('signed in: focus reloads the shelf (and re-checks the session) at most once a minute', async () => {
+  account();
+  let clock = 5_000_000;
+  const now = vi.spyOn(Date, 'now').mockImplementation(() => clock);
+  try {
+    const library = renderAccount();
+    await waitFor(() => expect(library().state.savedBooks).toHaveLength(1));
+    const fetch = vi.mocked(globalThis.fetch);
+    const count = (part: string) => fetch.mock.calls.filter(([input]) => String(input).includes(part)).length;
+    await waitFor(() => expect(count('/api/account/state')).toBe(1));
+    expect(count('/api/account/session')).toBe(1);
+    const focus = () => { window.dispatchEvent(new Event('focus')); document.dispatchEvent(new Event('visibilitychange')); };
+    clock += 30_000;
+    await act(async () => focus());
+    expect(count('/api/account/state')).toBe(1);
+    expect(count('/api/account/session')).toBe(1);
+    clock += 31_000;
+    await act(async () => focus());
+    await waitFor(() => expect(count('/api/account/state')).toBe(2));
+    expect(count('/api/account/books?')).toBe(2);
+    expect(count('/api/account/history')).toBe(2);
+    expect(count('/api/account/session')).toBe(2);
+  } finally { now.mockRestore(); }
+});

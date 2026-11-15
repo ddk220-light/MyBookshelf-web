@@ -87,18 +87,20 @@ export function createJobMiddleware({ env = process.env } = {}) {
       });
       const mail =
         env.RESEND_API_KEY && env.ACCOUNTS_MAIL_FROM
-          ? await runMailBatch(pool, config, { limit: 2 })
+          ? await runMailBatch(pool, config, { limit: 5 })
           : { processed: 0, unavailable: true };
       await pool.query("SELECT public.account_retention()");
       if (ledger) {
         await ledger.providerJobs();
         await ledger.pruneExpired();
       }
+      // The job runs hourly (vercel.json); mail is normally sent right after
+      // it is queued, so mail still queued after two runs is delayed.
       const alerts = (
         await pool.query(`SELECT
     EXISTS(SELECT 1 FROM account_deletions WHERE status<>'cleaned' AND "requestedAt"<now()-interval '24 hours') AS "deletionOverdue",
     EXISTS(SELECT 1 FROM account_provider_cleanup WHERE status IN ('queued','running','expired') AND "createdAt"<now()-interval '24 hours') AS "providerCleanupOverdue",
-    EXISTS(SELECT 1 FROM account_mail_jobs WHERE status='queued' AND "createdAt"<now()-interval '1 hour') AS "mailDelayed"`)
+    EXISTS(SELECT 1 FROM account_mail_jobs WHERE status='queued' AND "createdAt"<now()-interval '2 hours') AS "mailDelayed"`)
       ).rows[0];
       const unhealthy =
         deletion.unavailable ||

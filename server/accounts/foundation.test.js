@@ -6,6 +6,7 @@ import { createAccountMiddleware } from './middleware.js';
 import { readAccountConfig, AccountConfigurationError } from './config.js';
 import { APIError } from 'better-auth/api';
 
+const SESSION_COOKIE = 'mybookshelf_auth.session_token=synthetic.value';
 const enabled = { ACCOUNTS_ENABLED: 'true', ACCOUNTS_ENVIRONMENT: 'development', BETTER_AUTH_URL: 'http://localhost:3000',
   BETTER_AUTH_SECRET: 'test-only-account-secret-with-more-than-32-characters', ACCOUNTS_AUTH_DATABASE_URL: 'postgres://test:test@localhost/accounts_test' };
 
@@ -40,7 +41,7 @@ test('database initialization failures are bounded and retry without blocking pu
   const response = await request(app).get('/api/auth/ok');
   assert.equal(response.status, 503); assert.ok(!response.text.includes('sensitive'));
   assert.equal(response.body.error.code, 'ACCOUNT_UNAVAILABLE');
-  assert.equal((await request(app).get('/api/account/session')).status, 503); assert.equal(calls, 1);
+  assert.equal((await request(app).get('/api/account/session').set('Cookie', SESSION_COOKIE)).status, 503); assert.equal(calls, 1);
   assert.equal((await request(app).get('/api/health')).status, 200);
 });
 
@@ -58,6 +59,53 @@ test('sensitive raw routes remain gated; origin rejects precede database work', 
   assert.deepEqual((await request(app).get('/api/account/session').set('Origin', enabled.BETTER_AUTH_URL)).body, { status: 'guest' });
 });
 
+test('a guest session request without a session cookie never initializes the account service', async () => {
+  let calls = 0;
+  const app = createApplication({ accounts: createAccountMiddleware({ env: enabled, initialize: async () => {
+    calls++; return { session: async () => ({ status: 'authenticated' }) };
+  } }) });
+  for (const cookie of [undefined, 'theme=lamplight; mybookshelf_auth.dont_remember=x', 'mybookshelf_auth.session_token_x=1']) {
+    const call = request(app).get('/api/account/session');
+    const response = await (cookie ? call.set('Cookie', cookie) : call);
+    assert.equal(response.status, 200);
+    assert.deepEqual(response.body, { status: 'guest' });
+    assert.equal(response.headers['cache-control'], 'private, no-store');
+    assert.equal(response.headers['set-cookie'], undefined);
+  }
+  assert.deepEqual((await request(app).get('/api/account/session').set('Origin', enabled.BETTER_AUTH_URL)).body, { status: 'guest' });
+  // Guards that answer before it keep their order: a foreign origin, a wrong
+  // method and accounts switched off answer as before.
+  assert.equal((await request(app).get('/api/account/session').set('Origin', 'https://attacker.test')).status, 403);
+  assert.equal((await request(app).post('/api/account/session').send({})).status, 405);
+  const off = createApplication({ accounts: createAccountMiddleware({ env: {}, initialize: async () => { calls++; } }) });
+  assert.equal((await request(off).get('/api/account/session')).body.error.code, 'ACCOUNT_DISABLED');
+  assert.equal(calls, 0);
+  // With either session cookie name the service answers.
+  for (const name of ['mybookshelf_auth.session_token', '__Secure-mybookshelf_auth.session_token'])
+    assert.deepEqual((await request(app).get('/api/account/session').set('Cookie', 'a=b; ' + name + '=v')).body, { status: 'authenticated' });
+  assert.equal(calls, 1);
+});
+
+test('capabilities are read from configuration without starting the account service', async () => {
+  let calls = 0;
+  const app = createApplication({ accounts: createAccountMiddleware({ env: enabled, initialize: async () => { calls++; throw Error(); } }) });
+  const response = await request(app).get('/api/account/capabilities');
+  assert.equal(response.status, 200);
+  assert.deepEqual(response.body, { email: false, google: false, apple: false, canonicalOrigin: 'http://localhost:3000' });
+  const mail = createApplication({ accounts: createAccountMiddleware({ env: { ...enabled, ACCOUNTS_JOB_SECRET: 'x'.repeat(32), ACCOUNTS_MAIL_FROM: 'accounts@example.test', RESEND_API_KEY: 'synthetic' }, initialize: async () => { calls++; throw Error(); } }) });
+  assert.equal((await request(mail).get('/api/account/capabilities')).body.email, true);
+  assert.equal((await request(app).get('/api/account/capabilities').set('Origin', 'https://attacker.test')).status, 403);
+  assert.equal(calls, 0);
+});
+
+test('the session cookie names match the auth library\'s own', async () => {
+  const { getCookies } = await import('better-auth/cookies');
+  const { authOptions } = await import('../auth/auth.js');
+  const { SESSION_COOKIE_NAMES } = await import('../auth/cookies.js');
+  const names = [false, true].map(secureCookies => getCookies(authOptions({ pool: null, config: { baseURL: 'http://localhost:3000', secret: enabled.BETTER_AUTH_SECRET, secureCookies } })).sessionToken.name);
+  assert.deepEqual(names, [...SESSION_COOKIE_NAMES]);
+});
+
 test('native forbidden errors distinguish verification, recent auth and other denials', async () => {
   for(const [native,expected] of [
     ['EMAIL_NOT_VERIFIED','VERIFY_EMAIL_REQUIRED'],
@@ -69,7 +117,7 @@ test('native forbidden errors distinguish verification, recent auth and other de
         throw APIError.fromStatus('FORBIDDEN',{code:native,message:'Private native error details'});
       }}),
     })});
-    const response=await request(app).get('/api/account/session');
+    const response=await request(app).get('/api/account/session').set('Cookie',SESSION_COOKIE);
     assert.equal(response.status,403);
     assert.equal(response.body.error.code,expected);
     assert.ok(!response.text.includes('Private native error details'));
