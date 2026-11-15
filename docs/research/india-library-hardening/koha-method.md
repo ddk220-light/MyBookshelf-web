@@ -31,3 +31,44 @@ node tools/catalog-hardening/koha-run.mjs \
 ```
 
 Both modes use runtime directory IDs, robots checks, app request/deadline limits, at most three distinct native hosts concurrently, and sequential member checks within each host. Probe operations share a conservative 15-request-per-minute gate and three-second spacing; the app lookup applies its own production gate and limits. A policy refusal stops further requests to that shared host. Three successive member discovery errors also stop that host's group. Remaining members are `not_attempted`, never inferred passes or failures. `--resume` skips completed rows and preserves any interrupted attempts separately. These tools do not write accounts, production catalog stores, or deployments.
+
+## Follow-up of the stopped and failed connections (later run, 15 November 2026)
+
+The 308 broad-run members recorded as `not_attempted` were stopped for two different reasons. The [host diagnostics](connector-host-diagnostics.json) separate them:
+
+| Host | Members not attempted | Why the run stopped | Current state |
+| --- | ---: | --- | --- |
+| `ideal.egranth.ac.in` | 192 | Three successive discovery errors (HTTP 503), not a policy refusal | Still unreachable. The 503 comes from the execution egress proxy ("remote connection failure"), not from a catalog page. Not attempted again. |
+| `opac.rayatlibrarynetwork.org` | 42 | Policy refusal | `robots.txt` still says `Disallow: /`. No request sent. |
+| `dhegoalib.unifyed.com` | 33 | Three successive discovery errors | The union search the app uses took 35.5 s, longer than the 30 s Koha budget. A branch-limited search answered HTTP 410 Gone. Not attempted again. |
+| `library.mes.ac.in` | 28 | Policy refusal | `robots.txt` still disallows `opac-search.pl`. No request sent. |
+| `unionopac.cusat.ac.in` | 13 | Three successive timeouts | Reachable again. Retested together with its six earlier failures. |
+
+[koha-followup-manifest.json](koha-followup-manifest.json) fixed 27 one-book rechecks in advance:
+
+- the 19 CUSAT union scopes;
+- four connections that had failed with HTTP 502/503;
+- SRHU, with health-sciences seeds;
+- three link-only entries whose robots rules allow search and whose public Koha search answered a diagnostic query.
+
+Robots refusals were excluded. The runner, pacing and pass rule are unchanged. [koha-followup-results.json](koha-followup-results.json) records **20 passes**:
+
+- 17 of the 19 CUSAT union scopes. `cusat-union-doe` and `cusat-union-ses` returned clean empty results for all three seeds, so they stay unconfirmed.
+- IIT Goa, whose earlier searches had returned HTTP 502/503.
+- Arul Anandar College and Panjab University's Department of Laws, after their link-only directory entries were connected (see [UNLOCKS.md](UNLOCKS.md)).
+
+Still failing:
+
+- IIM Visakhapatnam: timeouts.
+- KLH Global Business School: TLS connection reset.
+- IIT Dharwad: the site's own nginx answers 502.
+- SRHU: the sampled item types are `Medicine`, `Community ...`, serials or blank, so nothing counts under the monograph rule.
+- St. Xavier's College Jaipur: search and record reads worked while it was temporarily connected for this check, but every sampled item type was `Stack`, so no book qualified. Its directory entry was returned to link-only.
+
+MAC Ramapuram is also not counted. Its holdings table has an Item type column, but the cells are empty. The MARC material type shows Book, but the item-type rule was kept unchanged.
+
+```sh
+node tools/catalog-hardening/koha-run.mjs \
+  docs/research/india-library-hardening/koha-followup-manifest.json \
+  docs/research/india-library-hardening/koha-followup-results.json --resume
+```

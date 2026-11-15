@@ -1,10 +1,10 @@
 # Indian library validation results
 
-Snapshot: 2026-11-15T08:05:13.910Z. Re-run the summary tool after updating evidence.
+Snapshot: 2026-11-15T12:44:41.098Z. Re-run the summary tool after updating evidence.
 
 **Frozen cohort: 48/50 institutions have ten verified books.** 19 additional entries have ten. The size-led cohort is not an exact national ranking; [selection and sources](ranking-notes.md) explain the limits.
 
-Across wider checks, **612 additional directory entries have at least one verified book**, out of 848 actually attempted and 1168 reviewed. This includes the additional ten-book entries. These are catalog connections; branches and uncertain duplicate institutions must not be presented as a unique-library census. Deferred members of a blocked host are excluded from the attempted count.
+Across wider checks, **977 additional directory entries have at least one verified book**, out of 1196 actually attempted and 1626 reviewed. This includes the additional ten-book entries. These are catalog connections; branches and uncertain duplicate institutions must not be presented as a unique-library census. Deferred members of a blocked host are excluded from the attempted count.
 
 A pass requires an explicit matching query, a resolved record with matching title, and a live app answer in one complete attempt. Ten must pass on one route. Failed attempts, cold ISBN checks, cache conditions, non-book exclusions, and endpoint diagnostics remain in the [source evidence](README.md). A holding does not necessarily mean a borrowable copy.
 
@@ -96,12 +96,14 @@ Only connections outside the frozen 50 appear here. Family labels follow the can
 | Directory family | Reviewed | Attempted | At least one book | Ten books |
 | --- | ---: | ---: | ---: | ---: |
 | discovery-academic | 36 | 36 | 30 | 3 |
-| discovery-community | 47 | 47 | 24 | 0 |
+| discovery-community | 47 | 47 | 31 | 0 |
 | egranthalaya | 32 | 32 | 29 | 3 |
-| indcat | 39 | 39 | 39 | 3 |
-| koha | 377 | 57 | 21 | 6 |
-| libman | 636 | 636 | 469 | 4 |
-| vufind | 1 | 1 | 0 | 0 |
+| indcat | 366 | 366 | 364 | 3 |
+| koha | 377 | 73 | 41 | 6 |
+| libman | 636 | 636 | 481 | 4 |
+| libsys | 1 | 0 | 0 | 0 |
+| vpl | 1 | 1 | 1 | 0 |
+| vufind | 130 | 5 | 0 | 0 |
 
 ## Inspecting or updating results
 

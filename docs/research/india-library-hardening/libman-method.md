@@ -49,3 +49,15 @@ Focused provider regressions cover repeated-space recovery across cache expiry, 
 All ten follow-up institutions passed on their first candidate attempt. Seven title checks exercised the bounded word retry; `libman:798` passed with the improved punctuation segment, `libman:599` passed with `Instant English` (record `5531781`), and `libman:255` passed with its consistently decoded original record. Each passed its own title query, record resolution, and cold actual app lookup within the existing budgets. There were no host refusals.
 
 The strict summarizer, run against the original sweep plus the follow-up, counts **465 of 632 institutions with at least one eligible book verified; 167 remain unconfirmed**. This is ten additional institutions relative to the corrected original 455. It is a one-book reliability check, not a ten-book claim for every institution, and unconfirmed institutions are not classified as lacking books.
+
+## Search errors and clean-empty sample (later run, 15 November 2026)
+
+The 20 tenants reported as search errors were `libman:35`, `libman:36` and `libman:348`–`libman:365`. Their errors were not catalog failures. Every discovery query failed in 0–1 ms with `CATALOG_HOST_BUSY`: the original bulk run had exhausted its own per-minute host allowance, so it sent no catalog request for them. [libman-busy-and-empty-sample.json](../../../tools/catalog-hardening/manifests/libman-busy-and-empty-sample.json) reran these 20 with the original seeds and the corrected 1.1 s pacing. **12 now pass.** The other eight (`libman:348`, `353`, `354`, `355`, `360`, `361`, `362`, `363`) returned clean empty results for `science`, `history` and `india`, so they stay unconfirmed.
+
+The same manifest fixed a sample in advance: every 15th of the 147 clean-empty tenants by tenant number, ten in all (`libman:146`, `303`, `460`, `538`, `553`, `568`, `584`, `601`, `785`, `839`). Each was searched with five different seeds: `english`, `mathematics`, `commerce`, `computer` and `book`. All 50 searches returned a recognized empty answer and none errored. Together with the original three seeds, eight common title words found nothing in these tenants. The evidence therefore points to tenants whose public OPAC search exposes no titles, rather than to unlucky seeds. That is still an observation about the public search, not proof that the libraries hold no books: they remain unconfirmed. The remaining 137 were not resampled. See [libman-recheck-results.json](libman-recheck-results.json).
+
+```sh
+node tools/catalog-hardening/run.mjs \
+  tools/catalog-hardening/manifests/libman-busy-and-empty-sample.json \
+  docs/research/india-library-hardening/libman-recheck-results.json --resume
+```

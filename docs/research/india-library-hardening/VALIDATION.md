@@ -29,6 +29,21 @@ The changes are server adapters, lookup execution, directory corrections and
 audit tooling. No UI or browser journey was changed. Local browser checks and
 production deployment checks were not run; no release is part of this task.
 
+### Non-eGranthalaya follow-up checks
+
+These checks ran after the follow-up in [CONNECTOR-FOLLOWUP.md](CONNECTOR-FOLLOWUP.md):
+
+- `npm test --workspace=server`: **840 tests, 816 passed, 24 skipped, zero failures**. The skips are the account database tests, which need a disposable local Postgres.
+- `node --test tools/catalog-hardening/*.test.mjs`: **14 passed**.
+- `npm run build` and `npm run test:seo`: the build passed and all 7 SEO tests passed, with the same 12 library pages.
+
+The follow-up adds two regression tests:
+
+- the Visakhapatnam own-record lookup answering `found`, and still refusing a different title/author identity;
+- a timed-out lookup reporting the request it sent.
+
+Both fail without their fixes. A runner test also covers the new shared-host failure stop.
+
 ## Live evidence and independent review
 
 [RESULTS.md](RESULTS.md), [coverage.csv](coverage.csv) and

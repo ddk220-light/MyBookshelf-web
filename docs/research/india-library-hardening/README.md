@@ -120,6 +120,24 @@ endpoint is unavailable. These results do not certify the preferred KALNET route
   required. Indian scripts with combining marks do not enter the new token
   fallback because that upstream search behavior has not been verified.
 
+## Later non-eGranthalaya follow-up
+
+[The connection follow-up](CONNECTOR-FOLLOWUP.md) measures the remaining
+non-eGranthalaya families with one-book checks under the same pass rule:
+
+- **IndCat:** 325 of the 327 untested scopes pass.
+- **Koha:** 20 more connections pass, and the 308-member host stops are
+  explained.
+- **VuFind:** all 130 are refused or unreachable from this environment.
+- **LIBMAN, community and Visakhapatnam:** recovered entries.
+
+It repairs Visakhapatnam's app lookup and two link-only Koha directory
+entries, and lists every refused or unreachable host with its IDs in
+[connector-host-diagnostics.json](connector-host-diagnostics.json). The run
+sent 2,879 live requests ([ledger](request-ledger.json)). The regenerated
+[RESULTS.md](RESULTS.md), [summary.json](summary.json) and
+[coverage.csv](coverage.csv) include these files.
+
 ## Family evidence
 
 - [IndCat method and replay commands](INDCAT.md), with independent public
