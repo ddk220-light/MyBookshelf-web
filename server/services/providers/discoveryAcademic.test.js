@@ -30,6 +30,27 @@ test('Darshan combines duplicate copy rows and reads its labeled ISBN-13 detail 
  const r=parseAcademicResponse('darshan',fixture('darshan.html')).records[0];assert.equal(r.totalCopies,2);assert.equal(r.availableCopies,1);assert.equal(r.outcome,'available');assert.equal(parseDarshanIsbn(fixture('darshan-record.html')),'9788173711466');assert.equal(parseDarshanIsbn('<p>Search 9788173711466</p>'),null);
  const encoded=fixture('darshan.html').replaceAll('xD8N4hmE0U0','Uf-0OVL-lwU');assert.equal(parseAcademicResponse('darshan',encoded).records[0].sourceId,'Uf-0OVL-lwU=');
 });
+test('Darshan encrypted dollar IDs remain searchable and are encoded unchanged for record enrichment',async()=>{
+ const captured=fixture('darshan-dollar-id.html');
+ const [record]=parseAcademicResponse('darshan',captured).records;
+ assert.equal(record.sourceId,'O$$Sel08eL0=');
+ assert.match(record.title,/Short History of Wars in India/);
+ const calls=[];
+ global.fetch=async(url,options)=>{
+  calls.push(url);
+  if(url.includes('/BookInformation'))return reply(`<h5>${record.title}</h5><table><tr><td>Author</td><td>${record.authors[0]}</td></tr><tr><td>Publication</td><td>${record.publisher}</td></tr></table>`,url);
+  return reply(options.method==='POST'?captured:'<html>Catalog</html>',url);
+ };
+ const lib=library('dlib:darshan'),[hit]=await searchCatalog(lib,'India');
+ const resolved=await resolveCatalogRecord(lib,hit.recordId);
+ assert.equal(resolved.sourceId,record.sourceId);
+ assert.equal(resolved.observation.matchKind,'verified_work');
+ const detail=calls.find(url=>url.includes('/BookInformation'));
+ assert.ok(detail,'enrichment must not silently skip the observed encrypted ID');
+ assert.equal(new URL(detail).searchParams.get('Enc_MaterialID'),record.sourceId);
+ assert.equal(new URL(detail).origin,'https://library.darshan.ac.in');
+ assert.throws(()=>parseAcademicResponse('darshan',captured.replace('O%24%24Sel08eL0%3D','bad%3Fpath')),{code:'CATALOG_UNRECOGNIZED'});
+});
 const separateDarshanRecords=()=>fixture('darshan.html').replace(/(Enc_MaterialID=xD8N4hmE0U0%3D[\s\S]*?Enc_MaterialID=)xD8N4hmE0U0%3D/,'$1DifferentId%3D');
 function darshanFetch(searchHtml,detail=(url)=>fixture('darshan-record.html')){
  return async(url,options)=>reply(url.includes('/BookInformation')?await detail(url):options.method==='POST'?searchHtml:'<html>Catalog</html>',url);
@@ -38,12 +59,13 @@ test('all exact-edition records are examined and any available copy wins without
  const details=[];global.fetch=darshanFetch(separateDarshanRecords(),url=>{details.push(new URL(url).searchParams.get('Enc_MaterialID'));return fixture('darshan-record.html');});
  const value=await checkAvailability(library('dlib:darshan'),'9788173711466',null,null);
  assert.equal(value.outcome,'available');assert.equal(value.matchKind,'exact_isbn');assert.equal(value.totalCopies,undefined);assert.equal(value.availableCopies,undefined);assert.ok(details.includes('xD8N4hmE0U0='));assert.ok(details.includes('DifferentId='));assert.match(value.catalogUrl,/DifferentId/);
+ assert.deepEqual(value.locations,[{name:'GN',status:'available'}]);
 });
 test('uninspected exact-edition candidates prevent a false none-available result',async()=>{
  global.fetch=darshanFetch(separateDarshanRecords(),url=>{if(url.includes('DifferentId'))throw Object.assign(Error('timeout'),{name:'AbortError'});return fixture('darshan-record.html');});
  const value=await checkAvailability(library('dlib:darshan'),'9788173711466',null,null);assert.equal(value.outcome,'in_catalog');assert.equal(value.matchKind,'exact_isbn');assert.equal(value.availableCopies,undefined);assert.equal(value.totalCopies,undefined);
 });
-test('a later ISBN query failure preserves a positive exact-edition observation',async()=>{
+test('a confirmed edition does not depend on the equivalent-ISBN endpoint',async()=>{
  global.fetch=async(url,options)=>{if(options.method==='POST'&&new URLSearchParams(options.body).get('F_FieldValue')==='8173711461')throw Object.assign(Error('timeout'),{name:'AbortError'});return darshanFetch(fixture('darshan.html'))(url,options);};
  const value=await checkAvailability(library('dlib:darshan'),'9788173711466',null,null);assert.equal(value.outcome,'available');assert.equal(value.matchKind,'exact_isbn');assert.equal(value.availableCopies,undefined);assert.equal(value.totalCopies,undefined);
 });
@@ -96,6 +118,16 @@ test('ISBN absence needs both equivalent ISBN queries to finish, and timeout nev
  const no=await checkAvailability(library('public-aspx:baba-mastnath-university'),'9788173711466',null,null);assert.equal(no.outcome,'not_found');assert.deepEqual(posts,['9788173711466','8173711461']);
  global.fetch=async(url,options)=>{if(options.method==='POST')throw Object.assign(Error('timeout'),{name:'AbortError'});return reply(form,url);};await assert.rejects(checkAvailability(library('public-aspx:baba-mastnath-university'),'9788173711466',null,null),{name:'AbortError'});
 });
+test('Darshan empty ISBN indexes cannot disprove a detail-page ISBN, and title recovery still verifies the edition',async()=>{
+ const empty=fixture('darshan.html').replace(/<tbody>[\s\S]*?<\/tbody>/,'<tbody></tbody>');
+ global.fetch=async(url,options)=>{
+  if(options.method==='POST'&&new URLSearchParams(options.body).get('F_FieldName')==='ISBN')return reply(empty,url);
+  return darshanFetch(fixture('darshan.html'))(url,options);
+ };
+ await assert.rejects(checkAvailability(library('dlib:darshan'),'9788173711466',null,null),{code:'CATALOG_HOLDING_UNCONFIRMED'});
+ const recovered=await checkAvailability(library('dlib:darshan'),'9788173711466','Wings of Fire','Kalam');
+ assert.equal(recovered.matchKind,'exact_isbn');assert.equal(recovered.recognizedExact,true);
+});
 test('title fallback is a possible match and rejects a clearly different author',async()=>{
  global.fetch=async url=>reply(parsed('srms.json'),url);const lib=library('srms:1');const value=await checkAvailability(lib,'9788173711466','Wings of Fire','A. P. J. Abdul Kalam');assert.equal(value.matchKind,'possible_match');assert.equal(value.recognizedExact,false);assert.equal(value.outcome,'in_catalog');await assert.rejects(checkAvailability(lib,'9788173711466','Wings of Fire','Tui Sutherland'),{code:'CATALOG_HOLDING_UNCONFIRMED'});
  global.fetch=async url=>reply([],url);await assert.rejects(checkAvailability(lib,'9788173711466','Wings of Fire','Kalam'),{code:'CATALOG_HOLDING_UNCONFIRMED'});
@@ -103,6 +135,19 @@ test('title fallback is a possible match and rejects a clearly different author'
 test('IUST session JSON proves the edition only from the record-owned ISBN',async()=>{
  const calls=[];global.fetch=async(url,options)=>{calls.push({url,options});return reply(url.includes('EmployeeDataHandler')?parsed('iust.json'):'<html>Results</html>',url,{headers:new Headers({'Set-Cookie':'session=fresh; Path=/'})});};
  const value=await checkAvailability(library('soul:iust'),'9788173711466',null,null);assert.equal(value.matchKind,'exact_isbn');assert.equal(value.outcome,'in_catalog');assert.equal(value.availableCopies,undefined);assert.match(calls[0].url,/cmbval=ISBN%2FISSN/);assert.equal(calls[1].options.headers.Cookie,'session=fresh');
+});
+test('a proven exact ISBN finishes before an equivalent query can exhaust the session catalog budget',async()=>{
+ const calls=[];
+ global.fetch=async(url)=>{calls.push(url);assert.ok(calls.length<=2,'an exact match must not start another session');return reply(url.includes('EmployeeDataHandler')?parsed('iust.json'):'<html>Results</html>',url);};
+ const value=await checkAvailability(library('soul:iust'),'9788173711466',null,null);
+ assert.equal(value.matchKind,'exact_isbn');assert.equal(value.recognizedExact,true);assert.equal(value.outcome,'in_catalog');assert.equal(calls.length,2);
+});
+test('early ISBN presence does not claim complete counts or all copies unavailable',async()=>{
+ global.fetch=darshanFetch(fixture('darshan.html').replaceAll('<b>1</b>','<b>0</b>'));
+ const value=await checkAvailability(library('dlib:darshan'),'9788173711466',null,null);
+ assert.equal(value.matchKind,'exact_isbn');assert.equal(value.outcome,'in_catalog');
+ assert.equal(value.totalCopies,undefined);assert.equal(value.availableCopies,undefined);
+ assert.deepEqual(value.locations,[{name:'GN',status:'unknown'}]);
 });
 test('oversized responses stay errors',async()=>{
  global.fetch=async url=>reply('too big',url,{headers:new Headers({'Content-Length':String(20*1024*1024)})});await assert.rejects(searchCatalog(library('srms:1'),'Wings'),/response body too large/);

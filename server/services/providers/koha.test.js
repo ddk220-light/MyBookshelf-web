@@ -47,6 +47,24 @@ test('reopened Koha records retain author metadata when the ISBN is missing', as
   assert.equal(record.observation.outcome, 'available');
 });
 
+test('captured UAS Dharwad record preserves a corporate author without repeating its labelled wrapper', async () => {
+  const html = fs.readFileSync(new URL('../../test/fixtures/koha/uas-dharwad-record.html', import.meta.url), 'utf8');
+  global.fetch = async url => response(url, html);
+  const record = await resolveCatalogRecord({ id: 'koha:uas-dharwad', baseUrl: 'https://opac.uasd.edu' }, '42715');
+  assert.equal(record.title, 'Indian livestock census 1982');
+  assert.deepEqual(record.authors, ['Department of Agriculture and Cooperation, MInistry of Agriculture, Government of India']);
+  assert.equal(record.isbn, null);
+  assert.equal(record.observation.totalCopies, 1);
+  assert.equal(record.observation.loanRestriction, 'not_for_loan');
+});
+
+test('nested author lists retain each contributor without an aggregate author', async () => {
+  const html = '<h1 class="title">Wings of Fire</h1><span class="author">By: <a href="?q=au:Kalam"><span property="author">Kalam, A. P. J.</span></a>; <a href="?idx=au&q=Tiwari"><span property="contributor">Tiwari, Arun</span></a></span>' + fixture.replaceAll(ISBN, '');
+  global.fetch = async url => response(url, html);
+  const record = await resolveCatalogRecord(library, '22365');
+  assert.deepEqual(record.authors, ['Kalam, A. P. J.', 'Tiwari, Arun']);
+});
+
 test('captured CUTN holdings show four borrowable copies and one reference-only physical copy', () => {
   assert.deepEqual(parseKohaPublicRecord(fixture, ISBN), expected);
   assert.equal(Object.hasOwn(expected.locations[0], 'availableCopies'), false);

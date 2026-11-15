@@ -157,7 +157,10 @@ export function parseAcademicResponse(kind, payload, { query = '', isbn = null }
     const dataRows=rows(t);if(dataRows.some(r=>r.length!==8))throw catalogError('Darshan result columns changed');
     const records=dataRows.map(r=>{
       const href=[...r[0].matchAll(/<a\b([^>]*)>/gi)].map(m=>attributes(m[1]).href).find(Boolean),u=new URL(href||'https://invalid.invalid','https://library.darshan.ac.in');
-      if(u.origin!=='https://library.darshan.ac.in'||u.pathname!=='/Home/BookInformation'||!/^[A-Za-z0-9+/_=-]{1,80}$/.test(u.searchParams.get('Enc_MaterialID')||''))throw catalogError('Unexpected Darshan book link');
+      // Darshan's encrypted public IDs use '$' as well as the ordinary
+      // base64 characters (observed in its India results, 15 Nov 2026).
+      // Keep the origin/path pinned; URLSearchParams handles the token as data.
+      if(u.origin!=='https://library.darshan.ac.in'||u.pathname!=='/Home/BookInformation'||!/^[A-Za-z0-9+/_=$-]{1,80}$/.test(u.searchParams.get('Enc_MaterialID')||''))throw catalogError('Unexpected Darshan book link');
       const total=integer(text(r[5])),avail=integer(text(r[6]));if(total===undefined||avail===undefined||avail>total)throw catalogError('Invalid copy counts');
       return book(r[0],r[1],{sourceId:u.searchParams.get('Enc_MaterialID'),publisher:text(r[2]),format:text(r[3]),totalCopies:total,availableCopies:avail,outcome:avail?'available':'none_available',locations:[{name:text(r[7])||'Library',status:avail?'available':'unavailable',totalCopies:total,availableCopies:avail}]});
     });return proof(grouped(records,true),true,!records.length);

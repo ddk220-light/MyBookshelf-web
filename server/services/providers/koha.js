@@ -308,11 +308,17 @@ export async function resolveCatalogRecord(library, recordId, options = {}) {
       const a = attrs(m[1]); return a.property === 'isbn' || (a.class || '').split(/\s+/).includes('isbn');
     });
     const isbn = fields.map(m => firstIsbn(contents(clean, m, 'span'))).find(Boolean) || null;
-    const authors = [...new Set([...clean.matchAll(/<(a|span)\b([^>]*)>/gi)].flatMap(m => {
+    const authorFields = [...clean.matchAll(/<(a|span)\b([^>]*)>/gi)].flatMap(m => {
       const a = attrs(m[2]);
-      return a.property === 'author' || a.property === 'contributor' || /(?:^|\s)author(?:\s|$)/.test(a.class || '')
-        || /(?:[?&]q=au[,:]|[?&]idx=au)/i.test(a.href || '') ? [text(contents(clean, m, m[1])).slice(0, 240)] : [];
-    }).filter(Boolean))];
+      if (!(a.property === 'author' || a.property === 'contributor' || /(?:^|\s)author(?:\s|$)/.test(a.class || '')
+        || /(?:[?&]q=au[,:]|[?&]idx=au)/i.test(a.href || ''))) return [];
+      const inside = contents(clean, m, m[1]);
+      return inside == null ? [] : [{ start: m.index, end: m.index + m[0].length + inside.length, inside }];
+    });
+    // Modern Koha nests author links and schema.org fields inside a labelled
+    // author list. Read each innermost name once, not the "By:" list as a name.
+    const authors = [...new Set(authorFields.filter(field => !authorFields.some(child => child.start > field.start && child.start < field.end))
+      .map(field => cleanAuthor(text(field.inside).replace(/^By:\s*/i, '')).slice(0, 240)).filter(Boolean))].slice(0, 20);
     const observation = parseHoldings(clean, { matchKind: 'verified_work', recognizedExact: true }, library);
     if (!title || !observation || (library.kohaBranchCode && !observation.totalCopies)) throw publicError('CATALOG_UNRECOGNIZED', 'Catalog did not confirm this branch’s record');
     return { recordId, title, authors, isbn, catalogUrl: url.toString(), observation: {
