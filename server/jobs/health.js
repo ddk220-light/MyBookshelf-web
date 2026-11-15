@@ -40,9 +40,11 @@ export function createAccountHealthMiddleware({ env = process.env } = {}) {
       ).rows[0];
       if (!role || role.rolsuper || role.rolbypassrls || role.owns_jobs)
         return unavailable();
+      // The job runs hourly; three hours allows two missed runs before the
+      // six-hourly monitor fails.
       const health = (
         await pool.query(
-          `SELECT last_succeeded>=now()-interval '15 minutes' AS fresh FROM account_job_health WHERE name='account-maintenance'`,
+          `SELECT last_succeeded>=now()-interval '3 hours' AS fresh FROM account_job_health WHERE name='account-maintenance'`,
         )
       ).rows[0];
       if (!health?.fresh) return unavailable();

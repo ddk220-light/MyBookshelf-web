@@ -2,7 +2,10 @@ name: Production account health
 on:
   workflow_dispatch:
   schedule:
-    - cron: '2,7,12,17,22,27,32,37,42,47,52,57 * * * *'
+    # Every six hours, three minutes after the hourly account job (vercel.json,
+    # minute 43), so the check usually finds the database still awake from it.
+    # Readiness requires a successful job run within the last three hours.
+    - cron: '46 */6 * * *'
 permissions: {}
 concurrency:
   group: account-production-health

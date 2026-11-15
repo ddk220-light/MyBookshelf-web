@@ -72,14 +72,14 @@ test(
       "absent successful run is unavailable",
     );
     await isolated.query(
-      "INSERT INTO account_job_health(name,last_started,last_succeeded) VALUES('account-maintenance',now(),now()-interval '16 minutes')",
+      "INSERT INTO account_job_health(name,last_started,last_succeeded) VALUES('account-maintenance',now(),now()-interval '3 hours 1 minute')",
     );
     assert.equal(
       (await request(monitored).get(healthPath)).status,
       503,
       "stale worker is unavailable",
     );
-    await isolated.query("UPDATE account_job_health SET last_succeeded=now()");
+    await isolated.query("UPDATE account_job_health SET last_succeeded=now()-interval '2 hours 59 minutes'");
     const ready = await request(monitored).get(healthPath);
     assert.equal(ready.status, 200);
     assert.deepEqual(ready.body, { status: "ready" });

@@ -1,8 +1,11 @@
 name: Review free-content catalog refresh
 on:
+  # Paused: free reading is hidden in the app (VITE_CONTENT_DISCOVERY_ENABLED),
+  # so the daily refresh is not needed. Run it by hand from the Actions tab, or
+  # turn it back on with free reading by restoring:
+  #   schedule:
+  #     - cron: '23 5 * * *'
   workflow_dispatch:
-  schedule:
-    - cron: '23 5 * * *'
 permissions:
   contents: write
   pull-requests: write
