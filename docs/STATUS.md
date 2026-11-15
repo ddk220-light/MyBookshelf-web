@@ -1,5 +1,20 @@
 # MyBookshelf web handoff
 
+**Empty e-Granthalaya libraries hidden from finding a library, 15 November 2026 (branch `claude/india-directory-cleanup` from `hardening-indian-libraries`, not deployed):**
+The 10 November audit searched all 5,036 e-Granthalaya libraries for fifty titles:
+3,135 returned books, 1,890 returned valid empty results for all fifty, 11 had
+request or setup errors. By owner decision the 1,890 are listed in
+`server/data/india-catalog-hidden.json` and filtered once in
+`server/services/directory.js`: left out of pop-up search, browse, near me and
+the public API listings, still resolvable by ID and selection link. The 11 stay
+listed; none of the 1,890 is a public library page. Library finder totals: India
+6,701 to 4,811, all countries 7,086 to 5,196. Evidence:
+[audit summary](research/india-library-hardening/egranthalaya-audit-20261110/README.md).
+To restore a library, remove its ID from the list once its catalog shows books.
+Checks: server 818 passed, 24 database skips (no test database configured);
+client 303; type checking; build; SEO 7; deployment 4; audit tooling 13;
+Chromium + mobile Chromium 254 passed, 118 env-gated skips.
+
 **Indian library hardening, 15 November 2026 (completed, not deployed):**
 `hardening-indian-libraries` carries the runtime fixes (`f29eeda`) and reproducible
 evidence (`d3ac08a`) from `harden-india-top50-2026-11-14`, plus

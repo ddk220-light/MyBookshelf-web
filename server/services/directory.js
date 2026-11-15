@@ -2,6 +2,7 @@ import libraries from '../data/libraries.json' with { type: 'json' };
 import researched from '../data/india-catalogs.json' with { type: 'json' };
 import discovered from '../data/discovered-catalogs.json' with { type: 'json' };
 import presentationReviews from '../../data/library-presentation-reviews.json' with { type: 'json' };
+import hiddenList from '../data/india-catalog-hidden.json' with { type: 'json' };
 const NEARBY_CUTOFF_KM = 80.5;
 
 function canonicalPlatform(platform) {
@@ -35,7 +36,13 @@ for (const [id, review] of Object.entries(presentationReviews.libraries)) {
 }
 const entries = [...merged.values()];
 const byId = new Map(entries.map((entry) => [entry.id, entry]));
+// The one place hidden libraries leave the directory: every way of finding a
+// library (search, browse, near me, public API listings) reads `listed`.
+// Hidden IDs still resolve, so a saved choice or a direct link keeps working.
+const hidden = new Set(hiddenList.libraryIds);
+const listed = entries.filter((entry) => !hidden.has(entry.id));
 export function getAllLibraries() { return entries; }
+export function getListedLibraries() { return listed; }
 
 export function getLibraryById(id) {
   return typeof id === 'string' ? byId.get(discovered.aliases[id] || id) || null : null;
@@ -69,7 +76,7 @@ export function publicLibrary(entry, distanceKm) {
 export function searchLibraries(query, limit = 25) {
   const needle = String(query || '').trim().toLocaleLowerCase();
   if (!needle) return [];
-  return entries
+  return listed
     .filter((entry) => {
       const branchNames = (entry.branches || []).map((branch) => branch.name).join(' ');
       return [entry.name, entry.city, entry.region, entry.country, entry.address, branchNames, ...(entry.searchAliases || [])]
@@ -82,7 +89,7 @@ export function searchLibraries(query, limit = 25) {
 export function getLibrariesByRegion(country, region) {
   const countryCode = String(country).toUpperCase();
   const regionName = String(region).trim().toLocaleLowerCase();
-  return entries.filter((entry) => entry.country === countryCode
+  return listed.filter((entry) => entry.country === countryCode
     && String(entry.region || '').toLocaleLowerCase() === regionName);
 }
 
@@ -102,7 +109,7 @@ export function nearbyLibraries(lat, lon, limit = 25) {
       || !Number.isFinite(longitude) || longitude < -180 || longitude > 180) {
     return null;
   }
-  return entries
+  return listed
     .filter((entry) => Number.isFinite(entry.lat) && Number.isFinite(entry.lon))
     .map((entry) => ({ entry, distance: haversineKm(latitude, longitude, entry.lat, entry.lon) }))
     .filter(({ distance }) => distance <= NEARBY_CUTOFF_KM)

@@ -11,7 +11,9 @@ redirect to it. The app shows found / not found / couldn't check for the chosen
 library, never copy counts, due dates, floors or shelf numbers.
 Use README.md for commands. Run client/server tests, type checking, build, SEO
 checks and browser journeys before releasing. Provider keys stay server-side.
-The full directory remains usable in the app; shared/seo-libraries.json controls
+The full directory remains usable in the app, except that libraries in
+server/data/india-catalog-hidden.json are left out of finding a library (kept
+resolvable for readers who already chose one); shared/seo-libraries.json controls
 only public library pages. Never treat failed checks as absence or merge editions
 for identity or availability from similar titles (search cards may group
 same-title, same-author records for display only). Respect catalog access restrictions and reduced motion.
