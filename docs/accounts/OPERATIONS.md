@@ -31,6 +31,12 @@ Google and Apple all disabled. Do not add credentials or turn these on implicitl
 
 ## Environments and credentials
 
+**Staging was removed on 2026-11-14.** The Vercel project
+`mybookshelf-accounts-staging` and its Blob stores were deleted; the owner chose a
+single `mybookshelf` project that deploys only `main` and `staging` branches
+(`git.deploymentEnabled` in `vercel.json`). The notes below describe the former
+staging setup and are kept for history only.
+
 Staging uses Vercel project `mybookshelf-accounts-staging`
 (`prj_tlwAzT2LGtV1HDRfW7DzhiWWihFF`), team `ddk220`, region iad1, Node 22.
 Stable origin: `https://mybookshelf-accounts-staging.vercel.app`, mapped to the
@@ -196,27 +202,11 @@ beyond one hour. Resolve provider cleanup within 30 days; its encrypted material
 is removed at the deadline and an expired failure must be investigated. Suppression
 records remain for 35 days **after** live cleanup, outside database snapshots.
 
-`.github/workflows/account-maintenance.yml` provides a five-minute staging schedule
-and manual dispatch. It is inactive until repository variable
-`ACCOUNTS_STAGING_JOBS_ENABLED=true`. Configure the `accounts-staging` environment
-with `ACCOUNTS_STAGING_CRON_SECRET` and `ACCOUNTS_STAGING_DEPLOYMENT_BYPASS`, matching
-the staging server's bearer value and a dedicated Vercel automation bypass. Restrict
-that environment to trusted branches/operators. The workflow reads the fixed
-staging origin and prints only safe aggregate health; failed/overdue results fail
-its check. GitHub schedules run from the default branch, so the workflow must be
-present there before relying on scheduled execution. Enable failure notifications
-and verify consecutive runs and health timestamps before release.
-
-This optional staging schedule remains inactive. The current GitHub connection
-returned HTTP 403 for the Actions secrets public-key API. That restricts this
-particular scheduling option; no GitHub permission change is requested now.
-Do not pass credentials as workflow inputs, commit them, disable deployment
-protection, or treat the checked-in workflow as a running job. Native Vercel Cron
-runs every five minutes on the existing production Pro plan. Consecutive successful
-runs, real cleanup and independent failure notification are verified in the release
-acceptance; the staging workflow remains inactive. A trusted operator may run
-`tools/accounts/run-maintenance.mjs` with secrets supplied by their secret manager
-for controlled staging validation. Never rely on website visits to drive cleanup.
+Native Vercel Cron runs account maintenance every five minutes on the production
+project. Consecutive successful runs, real cleanup and independent failure
+notification are verified in the release acceptance. Never rely on website visits
+to drive cleanup. (The old staging GitHub schedule and its runner script were removed
+on 2026-11-14 together with the staging project.)
 
 ## Mail and identity providers
 
