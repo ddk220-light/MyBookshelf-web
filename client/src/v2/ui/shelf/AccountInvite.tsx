@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAccountSession } from '../../auth/AccountSessionProvider';
 import { accountRequest } from '../../auth/accountClient';
 import { dismissAccountInvite, readOneShelfState } from '../../oneShelfState';
+import { knownEmailAccounts, rememberEmailAccounts } from './capabilitiesMemo';
 
 /**
  * "Take your shelf with you": shown to guests once they have saved a book,
@@ -17,13 +18,13 @@ export function AccountInvite({ savedCount }: { savedCount: number }) {
   // Accounts switched off: no invite (and no capabilities request).
   const guest = session.status === 'guest' && !session.availability;
   const [dismissed, setDismissed] = useState(() => Boolean(readOneShelfState().accountInviteDismissed));
-  const [emailAccounts, setEmailAccounts] = useState<boolean | null>(null);
+  const [emailAccounts, setEmailAccounts] = useState<boolean | null>(knownEmailAccounts);
   const wanted = guest && savedCount > 0 && !dismissed;
   useEffect(() => {
     if (!wanted || emailAccounts !== null) return;
     const controller = new AbortController();
     accountRequest<{ email?: unknown }>('/capabilities', { signal: controller.signal })
-      .then(value => setEmailAccounts(value.email === true))
+      .then(value => { rememberEmailAccounts(value.email === true); setEmailAccounts(value.email === true); })
       .catch(() => { if (!controller.signal.aborted) setEmailAccounts(false); });
     return () => controller.abort();
   }, [wanted, emailAccounts]);
