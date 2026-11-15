@@ -107,5 +107,12 @@ the parser cases used by regression tests.
 The wider manifest fixes the next 30 candidate institutions by documented
 priority order, excluding the frozen primary institutions and the two explicit
 ten-book reserves. It has a lower, one-book bar and is not a census of all 407
-connected institution scopes. Roorkee's late size evidence remains a separate
+connected institution scopes. A later
+[remaining-scope manifest](indcat-remaining-manifest.json) checked every one of
+the 327 scopes not attempted here. **325 passed one book**
+([results](indcat-remaining-results.json),
+[capture audit](indcat-remaining-capture-audit.json)). Gurukula Kangri's
+record pages name no holding institution, and Guru Gobind Singh Indraprastha
+University's record pages answer with a PHP fatal error; see
+[the follow-up](CONNECTOR-FOLLOWUP.md). Roorkee's late size evidence remains a separate
 cohort sensitivity; neither reserve replaces a failed frozen institution.

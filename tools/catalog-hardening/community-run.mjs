@@ -12,8 +12,13 @@ import { parseReplayId, normalized } from '../../server/services/providers/commu
 // may run together; each host has one stream and production robots/host limits.
 // --smoke checks one member of each other community family, outside the cohort.
 // --wide uses the frozen remaining-entry manifest, serialized by shared host.
+// --wide --manifest file --output file reruns a later bounded manifest into
+// its own result file, leaving the original wide evidence unchanged.
+const argValue = name => { const index = process.argv.indexOf(name); return index > 0 ? process.argv[index + 1] : null; };
 const wide = process.argv.includes('--wide');
-const manifest = wide ? JSON.parse(fs.readFileSync(new URL('./manifests/community-wide.json', import.meta.url), 'utf8')) : null;
+const manifestPath = argValue('--manifest'), outputPath = argValue('--output');
+if (Boolean(manifestPath) !== Boolean(outputPath) || (manifestPath && !wide)) throw new Error('Use --wide --manifest file --output file together');
+const manifest = wide ? JSON.parse(fs.readFileSync(manifestPath || new URL('./manifests/community-wide.json', import.meta.url), 'utf8')) : null;
 const smoke = wide || process.argv.includes('--smoke');
 const required = smoke ? 1 : 10;
 const ids = wide ? manifest.libraries.map(item => item.libraryId) : smoke ? [
@@ -24,11 +29,12 @@ const ids = wide ? manifest.libraries.map(item => item.libraryId) : smoke ? [
   'discovery-community:shodhak-rajkot',
   'discovery-community:sindhi-sanchaya-indian-institute-of-sindhology',
 ] : ['discovery-community:rmrl-chennai', 'discovery-community:surat-1'];
-const file = new URL(`../../docs/research/india-library-hardening/community-${wide ? 'wide-' : smoke ? 'smoke-' : ''}results.json`, import.meta.url);
+const file = outputPath ? new URL(outputPath, `file://${process.cwd()}/`)
+  : new URL(`../../docs/research/india-library-hardening/community-${wide ? 'wide-' : smoke ? 'smoke-' : ''}results.json`, import.meta.url);
 const reports = {
   observedOn: new Date().toISOString().slice(0, 10),
   cohort: wide ? 'remaining community directory entries; not the frozen 50' : smoke ? 'wider community family smoke; not the frozen 50' : 'frozen 50 community members',
-  ...(wide ? { manifest: 'tools/catalog-hardening/manifests/community-wide.json', plannedEntries: ids.length, stoppedHosts: [] } : {}),
+  ...(wide ? { manifest: manifestPath || 'tools/catalog-hardening/manifests/community-wide.json', plannedEntries: ids.length, stoppedHosts: [] } : {}),
   method: 'One sequential stream per host; production robots policy and host gate; at least 7-second diagnostic pacing, with production pacing for cold app lookup. Each book is rediscovered by its own title, source identity and exact normalized title confirmed, resolved, then read cold through createCatalogLookup. Replay IDs embed the query, so their explicit source ID is compared across queries.',
   libraries: [],
 };

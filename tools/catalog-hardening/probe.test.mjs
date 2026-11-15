@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createProbeRunner, verifiedBooks } from './probe.mjs';
+import { createProbeRunner, verifiedBooks, hostFailureCount } from './probe.mjs';
 import { clearHttpCache } from '../../server/services/providers/http.js';
 
 const good = (id,title) => ({recordId:id,title,search:{matchingRecord:true},resolve:{ok:true},lookup:{outcome:'found',source:'live'}});
@@ -43,4 +43,14 @@ test('a public catalog refusal stops remaining book and discovery queries', asyn
       assert.equal(result.verified, 0);
     }
   } finally { global.fetch = originalFetch; clearHttpCache(); }
+});
+
+test('only successive members whose every discovery query failed advance a shared-host stop', () => {
+  const failed = { discovery: [{ ok: false, code: 'CATALOG_UNAVAILABLE' }, { ok: false, code: 'TypeError' }], books: [] };
+  assert.equal(hostFailureCount(2, failed), 3);
+  assert.equal(hostFailureCount(2, { discovery: [{ ok: true, records: 0 }], books: [] }), 0);
+  assert.equal(hostFailureCount(2, { discovery: [{ ok: false }, { ok: true, records: 3 }], books: [] }), 0);
+  assert.equal(hostFailureCount(2, { ...failed, books: [{ recordId: '1' }] }), 0);
+  assert.equal(hostFailureCount(1, { discovery: [], books: [] }), 0);
+  assert.equal(hostFailureCount(1, { ...failed, refused: true }), 0);
 });

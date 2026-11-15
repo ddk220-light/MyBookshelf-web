@@ -121,3 +121,13 @@ export function createProbeRunner({ onProgress = () => {}, seeds = ['history', '
   }
   return { probeLibrary };
 }
+
+/** A shared-host stop for errors, like koha-run's: a member counts only when
+ * it produced no candidate book and every discovery query failed. Clean
+ * empty searches, refusals (handled separately) and partial successes reset
+ * the count. Returns the new successive-failure count for the host. */
+export function hostFailureCount(previous, library) {
+  const failed = !library.refused && !library.books?.length && library.discovery?.length > 0
+    && library.discovery.every(stage => stage.ok === false);
+  return failed ? previous + 1 : 0;
+}
