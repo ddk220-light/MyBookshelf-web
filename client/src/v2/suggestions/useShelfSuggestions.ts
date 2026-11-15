@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useSyncExternalStore } from 'react';
 import type { RecentBook } from '../types';
 import { pickSuggestions, type SuggestedBook } from './pickSuggestions';
 import { SEED_SUGGESTIONS } from './seed';
-import { reportShown, serverSuggestions } from './serverSource';
+import { serverSuggestions } from './serverSource';
 
 /**
  * What a source may use to choose its books: the saved books, Viewed before
@@ -46,7 +46,7 @@ type Visit = Readonly<{
    * `settled`: every later refresh replaces the books as it answers.
    */
   phase: 'waiting' | 'late' | 'settled';
-  /** Refresh results this visit; "shown" is reported once for each. */
+  /** Refresh results this visit. */
   result: number;
   /** The result that replaced the seed list shown for a late answer: it is drawn without motion. */
   quiet: number;
@@ -55,11 +55,9 @@ const newVisit = (): Visit => ({ refresh: null, loaded: {}, phase: 'waiting', re
 let visit = newVisit();
 // Also per visit, but they never change what is drawn: when the hold ends,
 // the refresh the slots were last held for (only its answer can find the
-// seed list standing in), whether the reader has touched a suggestion, and
-// the last result counted as shown.
+// seed list standing in) and whether the reader has touched a suggestion.
 let hold: { until: number | null; first: string | null } = { until: null, first: null };
 let interacted = false;
-let reported = 0;
 const listeners = new Set<() => void>();
 function update(next: Partial<Visit>) {
   visit = { ...visit, ...next };
@@ -72,7 +70,6 @@ const currentVisit = () => visit;
 export function forgetSuggestionVisit() {
   hold = { until: null, first: null };
   interacted = false;
-  reported = 0;
   update(newVisit());
 }
 
@@ -101,7 +98,7 @@ export type ShelfSuggestions = {
   held: boolean;
   /** These books replaced the seed list shown for a late first answer: no motion for that change. */
   quiet: boolean;
-  /** Which refresh result these books are (0 before the first), for counting "shown" once each. */
+  /** Which refresh result these books are (0 before the first). */
   result: number;
 };
 
@@ -165,17 +162,4 @@ export function useShelfSuggestions(savedBooks: readonly RecentBook[], libraryId
   const books = useMemo(() => (held ? [] : pickSuggestions([...sources.map(source => state.loaded[source.id] || []), SEED_SUGGESTIONS], savedBooks)),
     [held, sources, state.loaded, savedBooks]);
   return { books, held, quiet: state.quiet > 0 && state.quiet === state.result, result: state.result };
-}
-
-/**
- * Counts in the anonymous log the suggestions drawn for each refresh result,
- * once per result and only while the shelf is shown (`visible`; search
- * results hide it). A result never drawn is never counted.
- */
-export function useReportShown({ books, held, result }: ShelfSuggestions, visible: boolean): void {
-  useEffect(() => {
-    if (!visible || held || !result || result <= reported) return;
-    reported = result;
-    reportShown(books.map(book => book.bookKey));
-  }, [visible, held, result, books]);
 }

@@ -116,15 +116,12 @@ test('validation: only libraryId, recentBookKeys (≤3) and excludeKeys (≤200)
   }
   assert.equal((await event(app, { event: 'opened', bookKey: 'v1:openlibrary:OL1W' })).status, 202);
   assert.equal((await event(app, { event: 'saved', bookKey: `v1:isbn:${isbn(1)}` })).status, 202);
-  // "Shown": the one to five books the app drew for one refresh.
-  assert.equal((await event(app, { event: 'shown', bookKeys: ['v1:openlibrary:OL1W'] })).status, 202);
-  assert.equal((await event(app, { event: 'shown', bookKeys: [1, 2, 3, 4, 5].map(n => `v1:openlibrary:${work(n)}`) })).status, 202);
+  // "Shown" is no longer counted, in either shape.
   for (const body of [{}, { event: 'opened' }, { event: 'opened', bookKey: 'x' }, { event: 'clicked', bookKey: 'v1:openlibrary:OL1W' },
     { event: 'opened', bookKey: 'v1:openlibrary:OL1W', libraryId: LIBRARY }, { event: 'opened', bookKeys: ['v1:openlibrary:OL1W'] },
     { event: 'opened', bookKey: 'v1:catalog:koha:test-library:123' }, { event: 'saved', bookKey: 'v1:googlebooks:abc' },
-    { event: 'shown', bookKey: 'v1:openlibrary:OL1W' }, { event: 'shown', bookKeys: [] }, { event: 'shown', bookKeys: 'v1:openlibrary:OL1W' },
-    { event: 'shown', bookKeys: [1, 2, 3, 4, 5, 6].map(n => `v1:openlibrary:${work(n)}`) }, { event: 'shown', bookKeys: ['v1:openlibrary:OL1W', 'v1:openlibrary:OL1W'] },
-    { event: 'shown', bookKeys: ['v1:openlibrary:OL1W', 'v1:catalog:koha:test-library:123'] }, { event: 'shown', bookKeys: ['v1:openlibrary:OL1W'], bookKey: 'v1:openlibrary:OL1W' },
+    { event: 'shown', bookKey: 'v1:openlibrary:OL1W' }, { event: 'shown', bookKeys: ['v1:openlibrary:OL1W'] },
+    { event: 'shown', bookKeys: [1, 2, 3, 4, 5].map(n => `v1:openlibrary:${work(n)}`) },
   ]) assert.equal((await event(app, body)).status, 400, JSON.stringify(body));
 });
 
@@ -394,30 +391,29 @@ test('the anonymous log gets counts only, from the app: the books it showed, ope
     .send({ libraryId: LIBRARY, recentBookKeys: ['v1:openlibrary:OL100W'], excludeKeys: [SEED[0].bookKey] });
   assert.equal(response.status, 200);
   await new Promise(resolve => setImmediate(resolve));
-  // The suggestions request itself writes nothing: the app says what it showed.
+  // The suggestions request itself writes nothing, and neither do "shown" reports.
   assert.deepEqual(logged, []);
   const shown = ['v1:openlibrary:OL201W', ...SEED.slice(1, 5).map(book => book.bookKey)];
-  assert.equal((await event(app, { event: 'shown', bookKeys: shown }).set('X-Forwarded-For', '203.0.113.7')).status, 202);
-  await event(app, { event: 'opened', bookKey: 'v1:openlibrary:OL201W' });
+  assert.equal((await event(app, { event: 'shown', bookKeys: shown }).set('X-Forwarded-For', '203.0.113.7')).status, 400);
+  await event(app, { event: 'opened', bookKey: 'v1:openlibrary:OL201W' }).set('X-Forwarded-For', '203.0.113.7');
   await event(app, { event: 'saved', bookKey: 'v1:openlibrary:OL201W' });
   await new Promise(resolve => setImmediate(resolve));
-  assert.deepEqual(logged.map(row => [row.kind, row.bookKey, row.outcome]), [...shown.map(bookKey => ['suggestion', bookKey, 'shown']),
-    ['suggestion', 'v1:openlibrary:OL201W', 'opened'], ['suggestion', 'v1:openlibrary:OL201W', 'saved']]);
+  assert.deepEqual(logged.map(row => [row.kind, row.bookKey, row.outcome]),
+    [['suggestion', 'v1:openlibrary:OL201W', 'opened'], ['suggestion', 'v1:openlibrary:OL201W', 'saved']]);
   for (const row of logged) {
     assert.deepEqual([row.queryText, row.libraryId, row.resultCount, row.foundCount, row.source, row.durationMs, row.appVersion], [null, null, null, null, null, null, null]);
   }
   const stored = JSON.stringify(logged);
   for (const secret of ['203.0.113.7', 'Synthetic-Agent', 'OL100W', LIBRARY, SEED[0].bookKey]) assert.ok(!stored.includes(secret), secret);
   // A refused event logs nothing.
-  await event(app, { event: 'shown', bookKeys: [...shown, 'v1:openlibrary:OL9W'] });
   await event(app, { event: 'opened', bookKey: 'v1:catalog:koha:test-library:1' });
   await new Promise(resolve => setImmediate(resolve));
-  assert.equal(logged.length, 7);
+  assert.equal(logged.length, 2);
 
   const off = harness({ openLibrary: fakeOpenLibrary() });
   await post(off.app, { recentBookKeys: [], excludeKeys: [] });
   await event(off.app, { event: 'opened', bookKey: 'v1:openlibrary:OL1W' });
-  await event(off.app, { event: 'shown', bookKeys: ['v1:openlibrary:OL1W'] });
+  await event(off.app, { event: 'saved', bookKey: 'v1:openlibrary:OL1W' });
   await new Promise(resolve => setImmediate(resolve));
   assert.deepEqual(off.logged, []);
 });
@@ -435,7 +431,7 @@ test('the router never writes the request body to platform logs or telemetry', a
     await post(app, body);
     await post(app, { ...body, extra: 'v1:openlibrary:OL999W' });
     await event(app, { event: 'opened', bookKey: 'v1:openlibrary:OL666W' });
-    await event(app, { event: 'shown', bookKeys: ['v1:openlibrary:OL555W'] });
+    await event(app, { event: 'saved', bookKey: 'v1:openlibrary:OL555W' });
   } finally { Object.assign(console, original); }
   assert.deepEqual(printed, []);
   const events = JSON.stringify(telemetry.events());

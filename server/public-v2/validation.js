@@ -168,10 +168,11 @@ export function parseHoldingsCheck(body) {
 // kinds of key a suggestion can have are accepted: an ISBN edition
 // (`v1:isbn:…`) and an Open Library work (`v1:openlibrary:OL…W`), never a
 // library's own record (whose key names the library) or another source's.
-export const SUGGESTION_LIMITS = Object.freeze({ recentBookKeys: 3, excludeKeys: 200, shown: 5, keyLength: 512 });
+export const SUGGESTION_LIMITS = Object.freeze({ recentBookKeys: 3, excludeKeys: 200, keyLength: 512 });
 const SUGGESTION_FIELDS = new Set(['libraryId', 'recentBookKeys', 'excludeKeys']);
-const SUGGESTION_EVENT_FIELDS = new Set(['event', 'bookKey', 'bookKeys']);
-export const SUGGESTION_EVENTS = Object.freeze(['shown', 'opened', 'saved']);
+const SUGGESTION_EVENT_FIELDS = new Set(['event', 'bookKey']);
+// "Shown" is no longer counted: a database write per page view was not worth it.
+export const SUGGESTION_EVENTS = Object.freeze(['opened', 'saved']);
 const OPEN_LIBRARY_WORK = /^OL\d+W$/;
 
 function onlyFields(value, allowed) {
@@ -202,21 +203,10 @@ export function parseSuggestions(body) {
   };
 }
 
-/**
- * `{ event: 'shown', bookKeys }` (the one to five suggestions the app drew
- * for one refresh, each once) or `{ event: 'opened' | 'saved', bookKey }`;
- * either way `{ event, bookKeys }`.
- */
+/** `{ event: 'opened' | 'saved', bookKey }`, returned as `{ event, bookKeys }`. */
 export function parseSuggestionEvent(body) {
   const value = bodyObject(body);
   onlyFields(value, SUGGESTION_EVENT_FIELDS);
   if (!SUGGESTION_EVENTS.includes(value.event)) throw new PublicV2ValidationError();
-  if (value.event === 'shown') {
-    if (value.bookKey !== undefined || !Array.isArray(value.bookKeys) || !value.bookKeys.length) throw new PublicV2ValidationError();
-    const bookKeys = bookKeyList(value.bookKeys, SUGGESTION_LIMITS.shown);
-    if (bookKeys.length !== value.bookKeys.length) throw new PublicV2ValidationError();
-    return { event: 'shown', bookKeys };
-  }
-  if (value.bookKeys !== undefined) throw new PublicV2ValidationError();
   return { event: value.event, bookKeys: [suggestionBookKey(value.bookKey)] };
 }

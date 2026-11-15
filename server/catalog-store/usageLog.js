@@ -14,9 +14,10 @@ import { validateAndNormalize } from '../services/isbn.js';
 export const USAGE_KINDS = Object.freeze(['book_search', 'book_check', 'result_marks', 'library_finder', 'near_me', 'suggestion']);
 const KINDS = new Set(USAGE_KINDS);
 // Shelf suggestions (plan 2026-11-14, Part 2): one row per suggested book
-// shown, opened or saved. Counts only: the row holds the book key and one of
-// these words, never a library, text, timing or anything from the request.
-export const SUGGESTION_OUTCOMES = Object.freeze(['shown', 'opened', 'saved']);
+// opened or saved ("shown" is no longer counted; the table still accepts it
+// from older rows). Counts only: the row holds the book key and one of these
+// words, never a library, text, timing or anything from the request.
+export const SUGGESTION_OUTCOMES = Object.freeze(['opened', 'saved']);
 const SUGGESTION_OUTCOME = new Set(SUGGESTION_OUTCOMES);
 const SOURCES = new Set(['stored', 'live', 'mixed', 'public_data']);
 const ALLOWED_KEYS = new Set(['kind', 'queryText', 'libraryId', 'bookKey', 'outcome', 'resultCount', 'foundCount', 'source', 'durationMs', 'appVersion']);
@@ -82,7 +83,7 @@ export function usageRow(event, at = Date.now()) {
   const occurredHour = Math.floor(at / HOUR) * HOUR;
   if (event.kind === 'suggestion') {
     const bookKey = boundedText(event.bookKey, 512);
-    if (!bookKey || !SUGGESTION_OUTCOME.has(outcome)) throw new TypeError('A suggestion row needs a book key and shown, opened or saved');
+    if (!bookKey || !SUGGESTION_OUTCOME.has(outcome)) throw new TypeError('A suggestion row needs a book key and opened or saved');
     return Object.freeze({ occurredHour, kind: 'suggestion', queryText: null, libraryId: null, bookKey, outcome,
       resultCount: null, foundCount: null, source: null, durationMs: null, appVersion: null });
   }

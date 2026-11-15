@@ -145,14 +145,13 @@ for (const route of [
     expect(
       await screen.findByRole("link", { name: "Synthetic browser shelf by Synthetic author" }),
     ).toBeInTheDocument();
-    // Nothing was submitted: the only POSTs are the shelf's own suggestions
-    // request and its "shown" count to the anonymous API (book keys only, no
-    // account data).
+    // Nothing was submitted: the only POST is the shelf's own suggestions
+    // request to the anonymous API (book keys only, no account data).
     expect(
       fetch.mock.calls.every(
         (args) =>
           (args as unknown as [string, RequestInit])[1]?.method !== "POST"
-          || ["/api/v2/suggestions", "/api/v2/suggestions/events"].includes((args as unknown as [string, RequestInit])[0]),
+          || (args as unknown as [string, RequestInit])[0] === "/api/v2/suggestions",
       ),
     ).toBe(true);
   });

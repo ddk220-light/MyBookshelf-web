@@ -104,20 +104,20 @@ test.describe('Shelf suggestions on a phone', () => {
     expect(calls.filter(call => call.endpoint.startsWith('/holdings/') || call.endpoint === '/availability')).toEqual([]);
     expect(page.url()).toMatch(/\/app\/shelf$/);
     expect((await axe(page)).violations).toEqual([]);
-    // The five drawn are counted as shown, once (book keys only).
-    const shown = { event: 'shown', bookKeys: [FOUND_HERE, RELATED, ...SEED.slice(0, 3)].map(book => book.bookKey) };
-    await expect.poll(() => asked.events).toEqual([shown]);
+    // Drawing the five is not counted (only opened and saved are).
+    await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 300)));
+    expect(asked.events).toEqual([]);
     // Opening it is counted (book key only); the book page asks the library as for any book.
     await badged.click();
     await expect(page).toHaveURL(new RegExp('/app/books/' + encodeURIComponent(FOUND_HERE.bookKey) + '$'));
     await expect(page.getByRole('heading', { level: 1, name: FOUND_HERE.title })).toBeVisible();
-    await expect.poll(() => asked.events).toEqual([shown, { event: 'opened', bookKey: FOUND_HERE.bookKey }]);
+    await expect.poll(() => asked.events).toEqual([{ event: 'opened', bookKey: FOUND_HERE.bookKey }]);
     expect(asked.suggestions).toHaveLength(1);
     // Back to the same shelf: nothing new is counted.
     await page.getByRole('link', { name: 'Back' }).click();
     await expect(page.getByRole('link', { name: /, suggested$/ })).toHaveCount(5);
     await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 100)));
-    expect(asked.events).toHaveLength(2);
+    expect(asked.events).toHaveLength(1);
   });
 
   test('a first answer that comes late does not change the books under the reader, and focus stays put', async ({ page }) => {
@@ -139,8 +139,8 @@ test.describe('Shelf suggestions on a phone', () => {
     await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 100)));
     expect(await shelfNames(page)).toEqual(suggestedNames(SEED.slice(0, 5)));
     await expect(third).toBeFocused();
-    // What stayed is what is counted.
-    await expect.poll(() => asked.events).toEqual([{ event: 'shown', bookKeys: SEED.slice(0, 5).map(book => book.bookKey) }]);
+    // Nothing is counted for books only drawn.
+    expect(asked.events).toEqual([]);
   });
 
   test.describe('with motion', () => {

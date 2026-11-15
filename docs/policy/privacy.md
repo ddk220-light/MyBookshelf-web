@@ -42,7 +42,7 @@ involved, what happened (found, not found, couldn't check), how many results
 came back and how long it took. We keep no account ID, no IP address and no
 device identifier with it, so we cannot tell who searched. Search words are
 never put in web addresses. We also count how often each suggested book is
-shown, opened and saved, with nothing else attached.
+opened and saved, with nothing else attached.
 
 **Which libraries have which books.** When we check a library, we keep the
 answer ("found" or "not found") for that library and book for six months, so

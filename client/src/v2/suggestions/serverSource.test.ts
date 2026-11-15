@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { RecentBook } from '../types';
-import { EXCLUDE_KEYS, isSuggestionKey, parseServerSuggestions, reportShown, reportSuggestion, serverHasSomethingToAdd, serverKeys, serverSuggestions, suggestionRequest, validIsbn13 } from './serverSource';
+import { EXCLUDE_KEYS, isSuggestionKey, parseServerSuggestions, reportSuggestion, serverHasSomethingToAdd, serverKeys, serverSuggestions, suggestionRequest, validIsbn13 } from './serverSource';
 
 // Valid ISBN-13s (978 + 9 digits + check digit).
 const isbn = (n: number) => { const body = '978' + String(n).padStart(9, '0'); const sum = [...body].reduce((total, digit, index) => total + Number(digit) * (index % 2 ? 3 : 1), 0); return body + ((10 - (sum % 10)) % 10); };
@@ -119,18 +119,16 @@ describe('the server’s answer', () => {
     expect(await serverSuggestions.load(context, new AbortController().signal, previous)).toEqual([]);
   });
 
-  it('counts are fire-and-forget, work and ISBN keys only; "shown" carries the five drawn for one refresh', async () => {
+  it('counts are fire-and-forget, work and ISBN keys only, opened and saved only', async () => {
     const sent: unknown[] = [];
     vi.stubGlobal('fetch', vi.fn((path: string, init: RequestInit) => { sent.push([path, JSON.parse(String(init.body))]); return Promise.reject(new TypeError('offline')); }));
     expect(() => reportSuggestion('opened', 'v1:openlibrary:OL1W')).not.toThrow();
     reportSuggestion('saved', 'v1:catalog:koha:x:1');
-    reportShown(['v1:openlibrary:OL1W', 'v1:isbn:' + isbn(2), 'v1:openlibrary:OL1W', 'v1:googlebooks:x', 'v1:openlibrary:OL3W', 'v1:openlibrary:OL4W',
-      'v1:openlibrary:OL5W', 'v1:openlibrary:OL6W']);
-    reportShown(['v1:catalog:koha:x:1']);
+    reportSuggestion('saved', 'v1:isbn:' + isbn(2));
     await Promise.resolve();
     expect(sent).toEqual([
       ['/api/v2/suggestions/events', { event: 'opened', bookKey: 'v1:openlibrary:OL1W' }],
-      ['/api/v2/suggestions/events', { event: 'shown', bookKeys: ['v1:openlibrary:OL1W', 'v1:isbn:' + isbn(2), 'v1:openlibrary:OL3W', 'v1:openlibrary:OL4W', 'v1:openlibrary:OL5W'] }],
+      ['/api/v2/suggestions/events', { event: 'saved', bookKey: 'v1:isbn:' + isbn(2) }],
     ]);
     expect(isSuggestionKey('v1:openlibrary:OL1W')).toBe(true);
     expect(isSuggestionKey('v1:openlibrary:OL1M')).toBe(false);

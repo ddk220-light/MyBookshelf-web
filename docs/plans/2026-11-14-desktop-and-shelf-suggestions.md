@@ -91,8 +91,9 @@ Order of work: build the desktop layout first, then suggestions on both mobile a
     English or transliterated titles, so search and library checks work on them.
 12. **Privacy.** To get related suggestions, the app sends the server the book keys of a few
     recent books. Nothing about the reader is stored, and the request is not linked to an
-    account. The anonymous log records only how many suggestions were shown, opened and saved,
-    per book, which the published privacy text's "anonymous log" already covers. Search text
+    account. The anonymous log records only how many suggestions were opened and saved, per book
+    ("shown" was counted at first and removed on 15 November 2026: a database write per page view
+    was not worth it), which the published privacy text's "anonymous log" already covers. Search text
     rules are unchanged.
 13. **Cost.** One server request per refresh, none when the server has nothing to add (no
     chosen library and no recent books). Related-book lists are cached on the server for 24
@@ -147,10 +148,9 @@ Order of work: build the desktop layout first, then suggestions on both mobile a
     Kalam") match a saved book, nor the work of a saved edition whose work the book page knew
     (`workId`, kept on saved and viewed records in the browser; accounts do not keep it). Both
     are for display only, as for another edition of the same work.
-  - Counts: `POST /api/v2/suggestions/events` with `{ event: shown, bookKeys[1–5] }` from the
-    app, for the books it draws for each refresh result (once each, only while the shelf is
-    shown, never for an aborted refresh), and `{ event: opened|saved, bookKey }` from the book
-    page, marked by router state only, an open counted once per history entry. Catalog migration
+  - Counts: `POST /api/v2/suggestions/events` with `{ event: opened|saved, bookKey }` from the
+    book page, marked by router state only (a `shown` count, sent for the books drawn on each
+    refresh, was removed on 15 November 2026 and is now refused), an open counted once per history entry. Catalog migration
     `002-suggestion-counts.sql` adds the `suggestion` kind to the anonymous log.
 - Client: a suggestions hook on the home screen, shelf layout that appends the five faded
   covers after saved books, the "Suggested" plank label, list-view rows, refresh triggers.

@@ -278,16 +278,15 @@ describe('one-shelf home', () => {
     expect(calls.some(call => /\/holdings\/(check|search)$/.test(call.path))).toBe(false);
     expect(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)).not.toContain('OL900W');
     expect(sessionStorage.length).toBe(0);
-    // The five drawn are counted as shown, once, by the app.
-    const events = (kind?: string) => calls.filter(call => call.path.endsWith('/suggestions/events')).map(call => call.body).filter(body => !kind || body.event === kind);
-    const drawn = [inLibrary.bookKey, related.bookKey, ...SEED_SUGGESTIONS.slice(0, 3).map(item => item.bookKey)];
-    await waitFor(() => expect(events('shown')).toEqual([{ event: 'shown', bookKeys: drawn }]));
+    // Drawing the five is not counted: only opened and saved are.
+    const events = () => calls.filter(call => call.path.endsWith('/suggestions/events')).map(call => call.body);
+    expect(events()).toEqual([]);
 
     fireEvent.click(badged);
     await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/app/books/' + encodeURIComponent(inLibrary.bookKey)));
     fireEvent.click(await screen.findByRole('button', { name: 'Add to my shelf' }));
     expect(await screen.findByRole('button', { name: 'On my shelf' })).toBeInTheDocument();
-    await waitFor(() => expect(events().filter(body => body.event !== 'shown'))
+    await waitFor(() => expect(events())
       .toEqual([{ event: 'opened', bookKey: inLibrary.bookKey }, { event: 'saved', bookKey: inLibrary.bookKey }]));
     // Remembered as a direct open, as before.
     expect(JSON.parse(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)!).recentBooks[0]).toMatchObject({ bookKey: inLibrary.bookKey, source: 'direct' });
@@ -299,18 +298,15 @@ describe('one-shelf home', () => {
     await waitFor(() => expect(calls.filter(call => call.path === '/api/v2/suggestions')).toHaveLength(2));
     expect(calls.filter(call => call.path === '/api/v2/suggestions')[1].body.excludeKeys).toEqual([inLibrary.bookKey, book(1).bookKey]);
     expect(screen.getByRole('link', { name: 'Related Book by Related Author, suggested' })).toBeInTheDocument();
-    // The refresh after saving: its five counted once more.
-    await waitFor(() => expect(events('shown')).toHaveLength(2));
-    expect(events('shown')[1]).toEqual({ event: 'shown', bookKeys: [related.bookKey, ...SEED_SUGGESTIONS.slice(0, 4).map(item => item.bookKey)] });
     // An ordinary book opened from the shelf is not counted.
     fireEvent.click(document.querySelector<HTMLElement>('.bay-books a[aria-label^="Book 1 by Author 1"]')!);
     await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/app/books/' + encodeURIComponent(book(1).bookKey)));
     await screen.findByRole('link', { name: 'Back' });
-    expect(events().filter(body => body.event !== 'shown')).toHaveLength(2);
-    // Back again: the same results drawn again are not counted again.
+    expect(events()).toHaveLength(2);
+    // Back again: drawing the shelf counts nothing.
     fireEvent.click(screen.getByRole('link', { name: 'Back' }));
     await screen.findByRole('heading', { name: 'My shelf' });
-    expect(events('shown')).toHaveLength(2);
+    expect(events()).toHaveLength(2);
     view.unmount();
   });
 

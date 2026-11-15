@@ -3,7 +3,7 @@ import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import type { RecentBook } from '../types';
 import type { SuggestedBook } from './pickSuggestions';
 import { SEED_SUGGESTIONS } from './seed';
-import { forgetSuggestionVisit, noteSuggestionInteraction, SUGGESTION_HOLD_MS, SUGGESTION_SOURCES, suggestionRefreshKey, useReportShown, useShelfSuggestions as useSuggestions,
+import { forgetSuggestionVisit, noteSuggestionInteraction, SUGGESTION_HOLD_MS, SUGGESTION_SOURCES, suggestionRefreshKey, useShelfSuggestions as useSuggestions,
   type SuggestionSource } from './useShelfSuggestions';
 
 // The books only (most tests); `useSuggestions` gives the whole answer.
@@ -195,32 +195,15 @@ describe('useShelfSuggestions', () => {
     expect(load.mock.calls[1][2]).toEqual([book(10)]);
   });
 
-  it('"shown" is counted once per refresh result, for the books drawn, only while the shelf is shown; never for an aborted refresh', async () => {
-    const events: unknown[] = [];
-    vi.stubGlobal('fetch', vi.fn((path: string, init: RequestInit) => { events.push([path, JSON.parse(String(init.body))]); return Promise.resolve(new Response('{}', { status: 202 })); }));
-    const answers: Array<ReturnType<typeof deferred<SuggestedBook[]>>> = [];
-    const sources: SuggestionSource[] = [{ id: 'server', load: () => { const answer = deferred<SuggestedBook[]>(); answers.push(answer); return answer.promise; } }];
-    const { rerender } = renderHook(({ shelf, visible }) => { const suggestions = useSuggestions(shelf, 'lib:a', sources); useReportShown(suggestions, visible); return suggestions; },
-      { initialProps: { shelf: [] as RecentBook[], visible: true } });
-    // Held: nothing drawn, nothing counted.
-    expect(events).toEqual([]);
-    await act(async () => { answers[0].resolve([book(10)]); await answers[0].promise; });
-    const shown = (bookKeys: string[]) => ['/api/v2/suggestions/events', { event: 'shown', bookKeys }];
-    expect(events).toEqual([shown([book(10).bookKey, ...keys(SEED_SUGGESTIONS.slice(0, 4))])]);
-    // Drawn again with nothing new: not counted again.
-    rerender({ shelf: [], visible: true });
-    expect(events).toHaveLength(1);
-    // A refresh that a newer one aborts counts nothing; the newer one counts once.
-    rerender({ shelf: [saved('v1:openlibrary:OL1W')], visible: true });
-    rerender({ shelf: [saved('v1:openlibrary:OL1W'), saved('v1:openlibrary:OL2W')], visible: true });
-    await act(async () => { answers[1].resolve([book(90)]); await answers[1].promise; });
-    expect(events).toHaveLength(1);
-    // Answered while search results hide the shelf: counted when the shelf shows again.
-    rerender({ shelf: [saved('v1:openlibrary:OL1W'), saved('v1:openlibrary:OL2W')], visible: false });
-    await act(async () => { answers[2].resolve([book(91)]); await answers[2].promise; });
-    expect(events).toHaveLength(1);
-    rerender({ shelf: [saved('v1:openlibrary:OL1W'), saved('v1:openlibrary:OL2W')], visible: true });
-    expect(events).toEqual([events[0], shown([book(91).bookKey, ...keys(SEED_SUGGESTIONS.slice(0, 4))])]);
+  it('reports nothing when suggestions are drawn: only opened and saved are counted', async () => {
+    const fetch = vi.fn(() => Promise.resolve(new Response('{}', { status: 202 })));
+    vi.stubGlobal('fetch', fetch);
+    const answer = deferred<SuggestedBook[]>();
+    const sources: SuggestionSource[] = [{ id: 'server', load: () => answer.promise }];
+    const { result } = renderHook(() => useSuggestions([], 'lib:a', sources));
+    await act(async () => { answer.resolve([book(10)]); await answer.promise; });
+    expect(result.current.books.length).toBeGreaterThan(0);
+    expect(fetch).not.toHaveBeenCalled();
   });
 
   it('keeps nothing in browser storage', async () => {

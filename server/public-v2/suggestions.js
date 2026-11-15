@@ -11,7 +11,7 @@ import { peekOpenLibraryRead } from '../services/workDiscovery.js';
 //
 //   POST /suggestions         { libraryId?, recentBookKeys[≤3], excludeKeys[≤200] }
 //                             -> { books: [{ bookKey, title, authors, coverUrl?, isbn13?, workId?, inLibrary? }], partial? }
-//   POST /suggestions/events  { event: 'shown', bookKeys[1–5] } | { event: 'opened' | 'saved', bookKey } -> 202
+//   POST /suggestions/events  { event: 'opened' | 'saved', bookKey } -> 202
 //
 // Candidates come from public lists only, in order: books related to the
 // newest recent book (its author's most-read other works, then the most-read
@@ -36,7 +36,7 @@ import { peekOpenLibraryRead } from '../services/workDiscovery.js';
 // by SUGGESTIONS_DEADLINE_MS.
 //
 // The anonymous log (USAGE_LOG_ENABLED) gets one row per book the app reports
-// shown, opened or saved: the book key and that word, nothing else. The
+// opened or saved: the book key and that word, nothing else. The
 // request bodies are never logged anywhere.
 
 export const SUGGESTIONS_RETURNED = 15;

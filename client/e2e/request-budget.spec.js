@@ -32,6 +32,8 @@ async function setup(page, { saved = [], libraryId = null } = {}) {
       return route.fulfill(found ? { json: { book: found } } : { status: 404, json: { error: { code: 'BOOK_NOT_FOUND', message: 'No public book details were found.' } } });
     }
     if (path === '/api/v2/holdings/check') return route.fulfill({ json: { answer: 'found' } });
+    if (path === '/api/v2/suggestions') return route.fulfill({ json: { books: [] } });
+    if (path === '/api/v2/suggestions/events') return route.fulfill({ status: 202, json: {} });
     return route.fulfill({ status: 404, json: { error: { code: 'INVALID_REQUEST', message: 'The request is invalid.' } } });
   });
   await page.addInitScript(({ KEY, PREFERENCES, saved, libraryId, library }) => {
@@ -65,6 +67,8 @@ test.describe('Request budget', () => {
     await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
     await settle(page);
     expect(accountCalls(calls)).toEqual(['GET /api/account/session']);
+    // No library and nothing viewed: the seed suggestions need no request.
+    expect(calls.filter(call => call.includes('/suggestions'))).toEqual([]);
     for (const call of new Set(calls)) expect(count(calls, call), call).toBe(1);
     const loaded = calls.length;
     // Ten seconds open and untouched: nothing at all.
@@ -86,6 +90,9 @@ test.describe('Request budget', () => {
     expect(accountCalls(calls)).toEqual(['GET /api/account/session', 'GET /api/account/capabilities']);
     expect(count(calls, 'POST /api/v2/libraries/resolve')).toBe(1);
     expect(count(calls, 'POST /api/v2/holdings/lookup')).toBe(1);
+    // Shelf suggestions: asked once; drawing them writes nothing.
+    expect(count(calls, 'POST /api/v2/suggestions')).toBe(1);
+    expect(count(calls, 'POST /api/v2/suggestions/events')).toBe(0);
     for (const call of new Set(calls)) expect(count(calls, call), call).toBe(1);
     await tabSwitches(page, 5);
     await settle(page);

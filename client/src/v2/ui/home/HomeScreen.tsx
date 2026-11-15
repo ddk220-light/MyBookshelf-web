@@ -16,7 +16,7 @@ import { ScanDialog, type ScanAnswer, type ScanSource } from '../scan/ScanDialog
 import { LibraryPickerDialog } from '../library/LibraryPickerDialog';
 import { libraryLinkMessage, type LibraryLinkNotice } from '../library/SelectLibraryLink';
 import { SUGGESTION_COUNT } from '../../suggestions/pickSuggestions';
-import { noteSuggestionInteraction, SUGGESTION_SOURCES, useReportShown, useShelfSuggestions } from '../../suggestions/useShelfSuggestions';
+import { noteSuggestionInteraction, SUGGESTION_SOURCES, useShelfSuggestions } from '../../suggestions/useShelfSuggestions';
 import { AccountInvite } from '../shelf/AccountInvite';
 import { Bookcase } from '../shelf/Bookcase';
 import { EmptyShelf } from '../shelf/EmptyShelf';
@@ -301,8 +301,6 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null }: 
 
   const empty = entries.length === 0;
   const count = entries.length;
-  // Counted once per refresh result, while the shelf (not search results) is shown.
-  useReportShown(suggestions, !showResults);
   useShelfFocusKeeper(home, [showResults, view, perBay, ...withSuggestions.map(entry => entry.key)].join('\n'));
   const resultsStatus = search.status === 'searching' ? 'searching' : search.status === 'failed' ? 'failed' : 'results';
   // The chosen library's background check for these results (plan Phase 8).

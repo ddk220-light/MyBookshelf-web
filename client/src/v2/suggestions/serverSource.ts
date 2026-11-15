@@ -15,8 +15,6 @@ export const EXCLUDE_KEYS = 200;
 const MAX_BOOKS = 20;
 /** A partial answer's books, then the last ones, up to this many. */
 const MAX_MERGED = 30;
-/** "Shown" is reported for the books drawn for one refresh: at most five. */
-export const SHOWN_KEYS = 5;
 const WORK_KEY = /^v1:openlibrary:OL\d+W$/;
 const ISBN_KEY = /^v1:isbn:(97[89]\d{10})$/;
 // Hosts the app's security policy lets a cover load from.
@@ -134,11 +132,4 @@ export const serverSuggestions: SuggestionSource = {
 export function reportSuggestion(event: 'opened' | 'saved', bookKey: string): void {
   if (!isSuggestionKey(bookKey)) return;
   void publicApi.suggestionEvent({ event, bookKey }).catch(() => { /* Counts only: never retried. */ });
-}
-
-/** Counts the suggestions drawn for one refresh, at most five, each once; a failure changes nothing. */
-export function reportShown(bookKeys: readonly string[]): void {
-  const shown = [...new Set(bookKeys.filter(isSuggestionKey))].slice(0, SHOWN_KEYS);
-  if (!shown.length) return;
-  void publicApi.suggestionEvent({ event: 'shown', bookKeys: shown }).catch(() => { /* Counts only: never retried. */ });
 }

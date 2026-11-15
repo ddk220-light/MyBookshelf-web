@@ -150,15 +150,16 @@ test('anonymous log, submissions and the host gate as the runtime role', { skip,
   log.record({ kind: 'book_search', queryText: 'wings of fire reader@example.com', outcome: 'results', resultCount: 9, source: 'public_data', durationMs: 900 });
   log.record({ kind: 'near_me', outcome: 'results', resultCount: 4 });
   await settled();
-  // Shelf suggestions (migration 002): a book key and shown/opened/saved only.
-  log.record({ kind: 'suggestion', bookKey: 'v1:openlibrary:OL1W', outcome: 'shown', queryText: 'never kept', libraryId: 'koha:a' });
+  // Shelf suggestions (migration 002): a book key and opened/saved only (the
+  // table also still accepts "shown", which the app no longer reports).
+  log.record({ kind: 'suggestion', bookKey: 'v1:openlibrary:OL1W', outcome: 'opened', queryText: 'never kept', libraryId: 'koha:a' });
   log.record({ kind: 'suggestion', bookKey: 'v1:openlibrary:OL1W', outcome: 'saved' });
   await settled();
   const { rows } = await admin.query('SELECT kind, query_text, occurred_hour = date_trunc(\'hour\', occurred_hour, \'UTC\') AS hour FROM usage_events ORDER BY kind, id');
   assert.deepEqual(rows, [{ kind: 'book_search', query_text: 'wings of fire [removed]', hour: true }, { kind: 'near_me', query_text: null, hour: true },
     { kind: 'suggestion', query_text: null, hour: true }, { kind: 'suggestion', query_text: null, hour: true }]);
   assert.deepEqual((await admin.query(`SELECT book_key, outcome, library_id FROM usage_events WHERE kind = 'suggestion' ORDER BY id`)).rows,
-    [{ book_key: 'v1:openlibrary:OL1W', outcome: 'shown', library_id: null }, { book_key: 'v1:openlibrary:OL1W', outcome: 'saved', library_id: null }]);
+    [{ book_key: 'v1:openlibrary:OL1W', outcome: 'opened', library_id: null }, { book_key: 'v1:openlibrary:OL1W', outcome: 'saved', library_id: null }]);
   // The table refuses anything else for a suggestion row, and book keys on other kinds stay refused.
   for (const values of [`'suggestion', 'x', NULL, 'v1:openlibrary:OL1W', 'shown'`, `'suggestion', NULL, 'koha:a', 'v1:openlibrary:OL1W', 'shown'`,
     `'suggestion', NULL, NULL, 'v1:openlibrary:OL1W', 'clicked'`, `'suggestion', NULL, NULL, NULL, 'shown'`, `'book_search', 'x', NULL, 'v1:openlibrary:OL1W', 'none'`]) {

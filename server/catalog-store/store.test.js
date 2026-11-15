@@ -45,16 +45,16 @@ test('the log accepts only allowlisted fields and never an address, agent, devic
   assert.equal(usageRow({ kind: 'book_search', queryText: 'x', bookKey: 'v1:isbn:9788173711466', outcome: 'none' }).bookKey, null);
 });
 
-test('a suggestion row is a book key and shown, opened or saved: no text, library, timing or anything else', () => {
+test('a suggestion row is a book key and opened or saved ("shown" is refused): no text, library, timing or anything else', () => {
   const at = Date.UTC(2026, 11, 14, 9, 41, 7);
-  const row = usageRow({ kind: 'suggestion', bookKey: 'v1:openlibrary:OL1W', outcome: 'shown', queryText: 'wings of fire', libraryId: 'koha:x',
+  const row = usageRow({ kind: 'suggestion', bookKey: 'v1:openlibrary:OL1W', outcome: 'opened', queryText: 'wings of fire', libraryId: 'koha:x',
     resultCount: 5, foundCount: 1, source: 'stored', durationMs: 40, appVersion: '1.0' }, at);
   assert.deepEqual({ ...row }, { occurredHour: Date.UTC(2026, 11, 14, 9), kind: 'suggestion', queryText: null, libraryId: null, bookKey: 'v1:openlibrary:OL1W',
-    outcome: 'shown', resultCount: null, foundCount: null, source: null, durationMs: null, appVersion: null });
+    outcome: 'opened', resultCount: null, foundCount: null, source: null, durationMs: null, appVersion: null });
   for (const outcome of ['opened', 'saved']) assert.equal(usageRow({ kind: 'suggestion', bookKey: 'v1:isbn:9788173711466', outcome }).outcome, outcome);
-  assert.throws(() => usageRow({ kind: 'suggestion', bookKey: 'v1:openlibrary:OL1W', outcome: 'clicked' }), /suggestion/);
-  assert.throws(() => usageRow({ kind: 'suggestion', outcome: 'shown' }), /suggestion/);
-  assert.throws(() => usageRow({ kind: 'suggestion', bookKey: 'v1:openlibrary:OL1W', outcome: 'shown', ip: '203.0.113.7' }), /not permitted/);
+  for (const outcome of ['clicked', 'shown']) assert.throws(() => usageRow({ kind: 'suggestion', bookKey: 'v1:openlibrary:OL1W', outcome }), /suggestion/);
+  assert.throws(() => usageRow({ kind: 'suggestion', outcome: 'opened' }), /suggestion/);
+  assert.throws(() => usageRow({ kind: 'suggestion', bookKey: 'v1:openlibrary:OL1W', outcome: 'opened', ip: '203.0.113.7' }), /not permitted/);
 });
 
 test('query text is scrubbed of emails, URLs and long digit runs, and keeps valid ISBNs', () => {
