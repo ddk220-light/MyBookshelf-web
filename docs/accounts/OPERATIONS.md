@@ -61,8 +61,8 @@ with no persistent export file or URL. Do not start retaining export copies.
 The existing production project's persistent Git connection now points to
 `ddk220-light/MyBookshelf-web/main` (repo 1440561024), verified on 2026-11-05.
 Dedicated production Neon and private ledger resources are separate from staging.
-Production uses Resend, native five-minute Vercel Cron and the independent public
-health monitor. Read [the release acceptance](RELEASE_ACCEPTANCE.md) for actual
+Production uses Resend, an hourly native Vercel Cron and the independent public
+health monitor (every six hours). Read [the release acceptance](RELEASE_ACCEPTANCE.md) for actual
 received-mail, cleanup and failure-notification evidence. Do not reuse staging
 credentials. The sections below retain the staging setup and common runbook.
 
@@ -184,7 +184,15 @@ sessions cannot authorize this endpoint. Account entry may be disabled while
 maintenance continues. Keep normal deployment/environment checks intact.
 
 Each invocation processes a bounded deletion batch, provider revocations and
-mail, then purges expired transient state and old ledger records. Jobs use leases,
+mail (up to five retries), then purges expired transient state and old ledger
+records. Account mail is normally sent right after it is queued: once the
+response of the request that queued it has finished, the worker role
+(`ACCOUNTS_WORKER_DATABASE_URL`) leases that mail and sends it, with the same
+lease and idempotency key as the job (`server/jobs/mail-dispatch.js`). A failed
+or interrupted immediate send leaves the mail queued; the next hourly run
+retries it, then each later run until its link expires (reset and new-address
+links after 30 minutes, so a reader whose first send fails may need to ask for
+a new link). Without the worker setting, mail waits for the job as before. Jobs use leases,
 fencing, backoff and stable mail idempotency IDs. A failed worker can be retried;
 do not manually recreate deletion requests. Deletion first disables the account
 and revokes sessions atomically. It persists a minimal independent suppression
@@ -196,16 +204,24 @@ provider outage; provider cleanup continues, with a 30-day maximum for its mater
 
 `account_job_health` contains only fixed job name/start/success times. Responses
 contain aggregate processed counts and boolean alerts, not emails/book contents.
-Alert the operator if a run fails, freshness exceeds 15 minutes, live deletion
-exceeds 24 hours, provider cleanup exceeds 24 hours, or account mail is delayed
-beyond one hour. Resolve provider cleanup within 30 days; its encrypted material
+Alert the operator if a run fails, freshness exceeds 3 hours (two missed hourly
+runs), live deletion exceeds 24 hours, provider cleanup exceeds 24 hours, or
+account mail is delayed beyond two hours. Resolve provider cleanup within 30 days; its encrypted material
 is removed at the deadline and an expired failure must be investigated. Suppression
 records remain for 35 days **after** live cleanup, outside database snapshots.
 
-Native Vercel Cron runs account maintenance every five minutes on the production
-project. Consecutive successful runs, real cleanup and independent failure
-notification are verified in the release acceptance. Never rely on website visits
-to drive cleanup. (The old staging GitHub schedule and its runner script were removed
+Native Vercel Cron runs account maintenance once an hour, at minute 43
+(`vercel.json`), on the production project; the independent monitor
+(`account-production-health.yml`) runs every six hours at minute 46, while the
+database is usually still awake from that run, and fails unless the job
+succeeded within three hours. Until 15 November 2026 both ran every five
+minutes, which kept the Neon database from ever scaling to zero; no schedule
+may now run more often than hourly (`tools/deployment/schedules.test.mjs`).
+A guest's session check (no session cookie) and the capabilities check are
+answered without starting the account service, so guests never wake the
+accounts database. Consecutive successful runs, real cleanup and independent
+failure notification are verified in the release acceptance (then at the
+five-minute schedule). Never rely on website visits to drive cleanup. (The old staging GitHub schedule and its runner script were removed
 on 2026-11-14 together with the staging project.)
 
 ## Mail and identity providers

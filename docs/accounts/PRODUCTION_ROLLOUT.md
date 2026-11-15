@@ -36,12 +36,16 @@ records the full activation workflow.
   `MyBookshelf <accounts@mybookshelf.cloud>`. Received verification/recovery/security/
   change emails work. After adding `_dmarc` TXT `v=DMARC1; p=none`, observed reset,
   security and new-address messages pass SPF, DKIM and DMARC.
-- Native `/api/internal/account-jobs` Vercel Cron runs every five minutes.
+- Native `/api/internal/account-jobs` Vercel Cron ran every five minutes; since
+  15 November 2026 it runs hourly at minute 43, and account mail is sent right
+  after it is queued (the job only retries).
   Consecutive successes, sent/purged mail and actual fixture deletion cleanup
   were observed. Unauthenticated maintenance is denied. Partial/overdue work
   returns 503 and does not advance `last_succeeded`.
 - The independent `account-production-health.yml` workflow checks aggregate
-  readiness/freshness every five minutes without app secrets. Real earlier failure
+  readiness/freshness without app secrets: every five minutes with a 15-minute
+  window at acceptance, every six hours with a three-hour window since
+  15 November 2026. Real earlier failure
   notification reached the owner; subsequent monitor runs are green (#152).
 - The saved Vercel Git link now points to `ddk220-light/MyBookshelf-web/main`,
   repo 1440561024. Readback verified the same project and unchanged build and
