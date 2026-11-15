@@ -109,6 +109,40 @@ test('title-query identities resolve again with a fresh process and cannot silen
   await assert.rejects(resolveCatalogRecord(selected, records[4].recordId), { code: 'CATALOG_HOLDING_UNCONFIRMED' });
 });
 
+test('Santhom recovers a displayed long title with catalog whitespace without changing its replay identity', async () => {
+  const selected = library('santhom'), queries = [];
+  const title = 'the church in india before and afterthe synod of diamper';
+  const stored = { title: title.replace('and afterthe', 'and  afterthe'), author: 'GEORGE,V.C',
+    call_no: '275.4 GEO - C', year_published: 1977, isbn: '-', status: 'In Library', type: 'book' };
+  global.fetch = async url => {
+    const query = new URL(url).searchParams.get('title');
+    queries.push(query);
+    const items = query === 'the church in india' ? [stored,
+      { ...stored, title: 'the church in india and another unrelated history', call_no: 'OTHER' }] : [];
+    return response(url, { success: true, total: items.length, items });
+  };
+  const records = await searchCatalog(selected, title);
+  assert.equal(records.length, 1);
+  assert.equal(records[0].title, title);
+  assert.equal(records.searchComplete, false);
+  assert.equal(parseReplayId(records[0].recordId).query, title);
+  assert.deepEqual(queries, [title, 'the church in india']);
+  clearHttpCache();
+  const resolved = await resolveCatalogRecord(selected, records[0].recordId);
+  assert.equal(resolved.recordId, records[0].recordId);
+  assert.deepEqual(queries, [title, 'the church in india', title, 'the church in india']);
+});
+
+test('Santhom does not broaden a failed request or a short empty query', async () => {
+  let calls = 0;
+  global.fetch = async url => { calls += 1; return response(url, { error: 'down' }, 503); };
+  await assert.rejects(searchCatalog(library('santhom'), 'the church in india before and after'), { code: 'CATALOG_UNAVAILABLE' });
+  assert.equal(calls, 1);
+  global.fetch = async url => { calls += 1; return response(url, { success: true, total: 0, items: [] }); };
+  assert.deepEqual(await searchCatalog(library('santhom'), 'Absent book'), []);
+  assert.equal(calls, 2);
+});
+
 test('NMMC excludes signed image and encrypted navigation tokens from returned books', () => {
   const source = data('nmmc.json');
   source[0].front_page_photo = 'https://storage.example.test/?X-Amz-Signature=private';

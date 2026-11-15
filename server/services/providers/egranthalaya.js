@@ -7,6 +7,7 @@ import isbnRanges from './egranthalaya-isbn-ranges.json' with { type: 'json' };
 const ORIGIN = 'https://eg4.nic.in';
 const TIMEOUT_MS = 100_000;
 const MEMBER_PROBE_MS = 15_000;
+const MAX_MEMBER_PROBE_MS = 35_000;
 const MAX_RESPONSE_BYTES = 4 * 1024 * 1024;
 // Search rows let a book open when its record page comes back empty. They hold
 // only the row's own bibliographic fields, keyed by member and record ID.
@@ -388,12 +389,16 @@ export async function checkAvailability(library, value) {
   blocked();
   if (library.egranthalayaSearchScope === 'cluster') {
     const deadlineAt = Date.now() + TIMEOUT_MS;
-    const sharedQueriesCompleted = isbnQueries(isbn).every(query =>
+    // A measured slow member may need longer than the default probe. This
+    // never extends the app's outer deadline and still leaves cluster fallback.
+    const memberProbeMs = Number.isFinite(library.egranthalayaMemberProbeMs)
+      ? Math.max(MEMBER_PROBE_MS, Math.min(MAX_MEMBER_PROBE_MS, library.egranthalayaMemberProbeMs)) : MEMBER_PROBE_MS;
+    const sharedQueriesCompleted = isbnQueries(isbn, library).every(query =>
       peekCachedTask(`egranthalaya:cluster-variant:${library.egranthalayaCluster}:${isbn}:${query}`) !== undefined);
     let memberNoMatch = false;
     try {
       const member = await checkMemberAvailability(library, isbn, { url, libraryCode,
-        deadlineAt: Math.min(deadlineAt, Date.now() + (sharedQueriesCompleted ? TIMEOUT_MS : MEMBER_PROBE_MS)) });
+        deadlineAt: Math.min(deadlineAt, Date.now() + (sharedQueriesCompleted ? TIMEOUT_MS : memberProbeMs)) });
       if (member.outcome !== 'not_found') return member;
       memberNoMatch = true;
     } catch (error) {
@@ -452,7 +457,7 @@ export function clusterIsbnQuery(value) {
   return isbn ? (isbn.startsWith('978') ? isbn.slice(3, -1) : isbn) : null;
 }
 
-export function parseCatalogSearch(html, libraryCode) {
+function parseCatalogSearchRows(html, libraryCode) {
   const clean = withoutScripts(html);
   if (selectedOption(clean, 'DDL_Library')?.selected !== libraryCode) throw providerError('CATALOG_UNRECOGNIZED', 'Catalog search scope changed');
   const count = spanById(clean, 'Label37')?.match(/^Your Search Returned\s+(\d+)\s+Record\(s\)$/i);
@@ -470,7 +475,11 @@ export function parseCatalogSearch(html, libraryCode) {
       ...(copies ? { totalCopies: Number(copies[1]) } : {}) });
   }
   if (Number(count[1]) && !books.length) throw providerError('CATALOG_UNRECOGNIZED', 'Catalog records missing');
-  return books.slice(0, 10);
+  return books.slice(0, 20);
+}
+
+export function parseCatalogSearch(html, libraryCode) {
+  return parseCatalogSearchRows(html, libraryCode).slice(0, 10);
 }
 
 // "By  Abdul Kalam (APJ).." -> "Abdul Kalam (APJ)". A final period after an
@@ -487,13 +496,26 @@ export async function searchCatalog(library, query) {
     blocked();
     const options = { deadlineAt, maxResponseBytes: MAX_RESPONSE_BYTES, redirect: 'manual', retries: 0 };
     const home = await getText(url, options); requireResponse(home, '/OPAC/Default.aspx');
-    const fields = searchForm(home.text, { libraryCode, query }), cookie = sessionCookie(home.headers);
-    if (!fields || !cookie) throw providerError('CATALOG_UNRECOGNIZED', 'Catalog search form changed');
-    blocked();
-    const response = await getText(url, { ...options, method: 'POST', body: fields.toString(),
-      headers: { Cookie: cookie, Referer: url, 'Content-Type': 'application/x-www-form-urlencoded' } });
-    requireResponse(response, '/OPAC/Default.aspx');
-    const books = parseCatalogSearch(response.text, libraryCode);
+    // eG displays title, subtitle and parallel title together, but its LIKE
+    // search indexes those fields separately. Retry a clean zero once with
+    // the main title; keep record IDs and member scope as the evidence.
+    const queries = [query], mainTitle = String(query || '').split(':')[0].trim();
+    const mainTitleLength = mainTitle.match(/[\p{L}\p{N}\p{M}]/gu)?.length || 0;
+    if (String(query || '').includes(':') && mainTitle !== query && mainTitleLength >= 3
+        && /[\p{L}\p{N}]/u.test(mainTitle)) queries.push(mainTitle);
+    let page = home.text, cookie = sessionCookie(home.headers), books = [];
+    for (const term of queries) {
+      const fields = searchForm(page, { libraryCode, query: term });
+      if (!fields || !cookie) throw providerError('CATALOG_UNRECOGNIZED', 'Catalog search form changed');
+      blocked();
+      const response = await getText(url, { ...options, method: 'POST', body: fields.toString(),
+        headers: { Cookie: cookie, Referer: url, 'Content-Type': 'application/x-www-form-urlencoded' } });
+      requireResponse(response, '/OPAC/Default.aspx');
+      books = parseCatalogSearch(response.text, libraryCode);
+      if (books.length) break;
+      page = response.text;
+      cookie = sessionCookie(response.headers, cookie);
+    }
     // This member-scoped search confirms each row's record in this library.
     for (const book of books) await cachedTask(searchRowKey(library, libraryCode, book.recordId), () => book, { ttlMs: SEARCH_ROW_TTL_MS });
     return books;
@@ -529,13 +551,26 @@ export async function resolveCatalogRecord(library, recordId) {
     if (!own?.length) {
       // Some public records have no accessioned copy. Confirm membership with
       // a fresh member-scoped title search before reporting catalog presence.
-      const fields = searchForm(home.text, { libraryCode, query: firstIsbn(spanById(html, 'Lbl_ISBN')) || (title.match(/[\p{L}\p{N}]{3,}/u)?.[0] || title).slice(0, 160) });
-      if (!fields) throw providerError('CATALOG_UNRECOGNIZED', 'Catalog search form changed');
-      blocked();
-      const confirmation = await getText(url, { ...options, method: 'POST', body: fields.toString(),
-        headers: { Cookie: page.cookie, Referer: url, 'Content-Type': 'application/x-www-form-urlencoded' } });
-      requireResponse(confirmation, '/OPAC/Default.aspx');
-      if (!parseCatalogSearch(confirmation.text, libraryCode).some(book => book.recordId === recordId)) throw providerError('CATALOG_UNRECOGNIZED', 'Catalog did not confirm this member’s record');
+      // Plain normalized ISBNs can miss a hyphen-indexed member, and a first
+      // title word can bury this record beyond the first page. The main title
+      // uses the same field boundary as the public title-search recovery.
+      const mainTitle = (title.split(':')[0].trim() || title).slice(0, 160);
+      // A broad main title may fill the page with other records. Retain the
+      // exact ISBN confirmation for those cases, within the same deadline.
+      const queries = [...new Set([mainTitle, firstIsbn(spanById(html, 'Lbl_ISBN'))].filter(Boolean))];
+      let confirmationPage = home.text, confirmationCookie = page.cookie, confirmed = false;
+      for (const query of queries) {
+        const fields = searchForm(confirmationPage, { libraryCode, query });
+        if (!fields) throw providerError('CATALOG_UNRECOGNIZED', 'Catalog search form changed');
+        blocked();
+        const confirmation = await getText(url, { ...options, method: 'POST', body: fields.toString(),
+          headers: { Cookie: confirmationCookie, Referer: url, 'Content-Type': 'application/x-www-form-urlencoded' } });
+        requireResponse(confirmation, '/OPAC/Default.aspx');
+        if (parseCatalogSearchRows(confirmation.text, libraryCode).some(book => book.recordId === recordId)) { confirmed = true; break; }
+        confirmationPage = confirmation.text;
+        confirmationCookie = sessionCookie(confirmation.headers, confirmationCookie);
+      }
+      if (!confirmed) throw providerError('CATALOG_UNRECOGNIZED', 'Catalog did not confirm this member’s record');
     }
     const observation = scopedHoldingResult(evidence, { libraryCode, libraryName: library.name, referenceOnly: library.egranthalayaReferenceOnly })
       || { outcome: 'in_catalog', locations: [{ name: library.name, status: 'unknown' }] };
@@ -544,10 +579,13 @@ export async function resolveCatalogRecord(library, recordId) {
   }, { deadlineAt }), { deadlineAt });
 }
 
-function isbnQueries(isbn) {
+function isbnQueries(isbn, library) {
   const hyphenated = hyphenatedIsbn(isbn);
-  return [...new Set([clusterIsbnQuery(isbn), hyphenated &&
+  const queries = [...new Set([clusterIsbnQuery(isbn), hyphenated &&
     (isbn.startsWith('978') ? hyphenated.slice(4, -2) : hyphenated)].filter(Boolean))];
+  // Some member indexes retain ISBN punctuation. Prefer their known
+  // spelling without dropping the other variant or widening member scope.
+  return library?.egranthalayaHyphenatedIsbnFirst === true ? queries.reverse() : queries;
 }
 
 function memberObservation(library, results) {
@@ -577,7 +615,7 @@ async function checkMemberAvailability(library, isbn, { url, libraryCode, deadli
     const home = await getText(url, options);
     requireResponse(home, '/OPAC/Default.aspx');
     let page = home.text, cookie = sessionCookie(home.headers), allEmpty = true;
-    for (const query of isbnQueries(isbn)) {
+    for (const query of isbnQueries(isbn, library)) {
       const parsed = await cachedTask(`${key}:empty-variant:${query}`, async () => {
         const fields = searchForm(page, { libraryCode, query });
         if (!fields || !cookie) throw providerError('CATALOG_UNRECOGNIZED', 'e-Granthalaya public member form is incomplete');
@@ -645,7 +683,7 @@ export async function checkClusterAvailability(library, value, { deadlineAt = Da
       .map((option) => option.value).filter((code) => /^[A-Z0-9_]{1,32}$/.test(code)) || [];
     // Search the shared title digits in both plain and assigned-hyphen forms.
     // Each term covers equivalent 10/13-digit forms; record ISBNs still prove identity.
-    const queries = isbnQueries(isbn);
+    const queries = isbnQueries(isbn, library);
     const records = [], seen = new Set(), unreadable = new Set();
     let allEmpty = true, partial = false;
     for (const query of queries) {

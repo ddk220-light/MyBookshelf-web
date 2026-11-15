@@ -6,7 +6,7 @@ import request from 'supertest';
 import { createPlaceSearch } from './places.js';
 import { searchIndiaPlaces } from './indiaPlaces.js';
 import { createDiscoveryService } from './discovery.js';
-import { getLibraryById } from '../services/directory.js';
+import { getAllLibraries, getLibraryById } from '../services/directory.js';
 import { createPublicDirectoryService } from './directory.js';
 import { libraryLinks } from './libraryLinks.js';
 import { makeTestApp } from '../test/helpers.js';
@@ -113,6 +113,7 @@ test('generated data records its source checksums and unresolved location covera
   for (const [name, source] of Object.entries(sources.sources)) assert.equal(index.sourceChecksums[name], source.sha256);
   const hash = createHash('sha256').update(readFileSync(new URL('../../data/india-administrative-aliases.json', import.meta.url))).digest('hex');
   assert.equal(index.aliasesSha256, hash);
-  assert.equal(coverage.eligibleLibraries, discovery.search({ country: 'IN' }).total);
+  // Location coverage describes the whole directory, hidden libraries included.
+  assert.equal(coverage.eligibleLibraries, createDiscoveryService({ entries: getAllLibraries }).search({ country: 'IN' }).total);
   assert.equal(coverage.localityMatched + coverage.unresolvedLocalities, coverage.eligibleLibraries);
 });

@@ -1,6 +1,6 @@
 import ISBN from 'isbn3';
 import { cachedTask, getJson } from './http.js';
-import { catalogError, firstIsbn, text } from './catalogMarkup.js';
+import { catalogError, decode, firstIsbn, text } from './catalogMarkup.js';
 import { validateAndNormalize } from '../isbn.js';
 
 const BASE = 'https://libcloud.mastersofterp.in/OPAC_V3';
@@ -9,8 +9,12 @@ const MAX_BOOKS = 10;
 const MAX_DETAILS = 6;
 const DEADLINE_MS = 45_000;
 const count = value => value != null && Number.isInteger(Number(value)) && Number(value) >= 0 ? Number(value) : undefined;
-const clean = value => text(value).replace(/^(?:N\/A|null|-)$/i, '');
+// The API sometimes double-escapes entities. Detail metadata is sanitized both
+// before caching and when parsed; normalize the observed two layers in search
+// too, so an extra detail pass cannot change the displayed title's identity.
+const clean = value => decode(text(value)).replace(/^(?:N\/A|null|-)$/i, '');
 const titleKey = value => clean(value).split(/\s*[:/]\s*/)[0].toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+const fullTitleKey = value => clean(value).toLocaleLowerCase().replace(/[^\p{L}\p{M}\p{N}]+/gu, ' ').trim();
 
 function settings(library) {
   const base = String(library.baseUrl || BASE).replace(/\/+$/, '');
@@ -57,14 +61,33 @@ export function parseLibmanSearch(json) {
 
 async function search(library, query, type, deadlineAt) {
   const { base, tenant } = settings(library);
-  // The published UI permits letters, numbers, spaces and commas only. A title
-  // prefix before punctuation remains a valid search, unlike replaying a colon
-  // or apostrophe from the catalog's own title (the API returns error -100).
-  const q = (type === 'TITLE' ? clean(query).replace(/^[^\p{L}\p{N}]+/u, '').split(/[^\p{L}\p{N}\s,]/u)[0].trim() : clean(query)).slice(0, 200);
+  // The published UI permits letters, numbers, spaces and commas only. Use a
+  // contiguous safe segment: the first segment can be just "A" in "A+ ..." or
+  // "The" in "(The) ...", which buries the desired book in unrelated matches.
+  const original = clean(query);
+  const hasCombiningMarks = /\p{M}/u.test(original);
+  const segments = original.replace(/^[^\p{L}\p{N}]+/u, '').split(/[^\p{L}\p{N}\s,]/u).map(part => part.trim());
+  // The API's handling of combining-mark scripts has not been verified. Keep
+  // their existing first-segment behavior and never invent a syllable retry.
+  const q = (type === 'TITLE' ? (hasCombiningMarks ? segments[0] : segments.sort((a, b) => b.length - a.length)[0]) : original).slice(0, 200);
   if (!q) throw catalogError('Empty LIBMAN query');
-  const url = new URL(`${base}/GetBookSearchData/`);
-  for (const [key, value] of Object.entries({ SearchCriteria: type, SearchText: q, Libraryid: tenant, SERIESCODE: '', BOOKCATEGORY: '' })) url.searchParams.set(key, value);
-  return cachedTask(`libman:search:${tenant}:${type}:${q}`, async () => parseLibmanSearch(await readJson(url.toString(), deadlineAt)), { deadlineAt });
+  const read = value => {
+    const url = new URL(`${base}/GetBookSearchData/`);
+    for (const [key, item] of Object.entries({ SearchCriteria: type, SearchText: value, Libraryid: tenant, SERIESCODE: '', BOOKCATEGORY: '' })) url.searchParams.set(key, item);
+    return cachedTask(`libman:search:${tenant}:${type}:${value}`, async () => parseLibmanSearch(await readJson(url.toString(), deadlineAt)), { deadlineAt });
+  };
+  const result = await read(q);
+  if (type !== 'TITLE' || result.total > 0 || hasCombiningMarks) return result;
+  // Some catalogs store repeated spaces but search literal phrases. Only after
+  // an explicit clean zero, retry one substantial word and retain full-title
+  // matches. This does not turn an error or a broad word hit into membership.
+  const words = original.match(/[\p{L}\p{N}]+/gu) || [];
+  const token = [...words].sort((a, b) => b.length - a.length)[0];
+  if (words.length < 2 || !token || token.length < 5 || token === q) return result;
+  const retry = await read(token.slice(0, 200));
+  const key = fullTitleKey(original);
+  const records = retry.records.filter(row => fullTitleKey(row.title) === key);
+  return { records, total: records.length };
 }
 
 function selectedDetail(json, recordId, tenant) {

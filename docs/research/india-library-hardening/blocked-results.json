@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "observedOn": "2026-11-15",
+  "method": "Bounded anonymous endpoint/robots diagnostics. No successful book query; these are unresolved, never ten-book passes.",
+  "libraries": [
+    {
+      "libraryId": "koha:national-science-library",
+      "name": "National Science Library, CSIR-NIScPR",
+      "status": "unreachable_from_execution_environment",
+      "books": [],
+      "configuredBefore": "https://opac.niscpr.res.in",
+      "configuredAfter": "https://opac.niscair.res.in",
+      "sourceUrl": "https://opac.niscair.res.in/",
+      "sourceNote": "Publicly indexed catalog identifies National Science Library and CSIR-NIScPR. Hostname corrected; live behavior not established.",
+      "discovery": [
+        {
+          "url": "https://opac.niscair.res.in/robots.txt",
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "at": "2026-11-15T06:36:49.002Z",
+          "url": "https://opac.niscair.res.in/cgi-bin/koha/opac-search.pl?idx=kw&q=science",
+          "error": "fetch failed",
+          "cause": "Request was cancelled.",
+          "causeCode": 0,
+          "durationMs": 13097
+        },
+        {
+          "url": "http://opac.niscair.res.in/robots.txt",
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "at": "2026-11-15T06:37:02.099Z",
+          "url": "http://opac.niscair.res.in/cgi-bin/koha/opac-search.pl?idx=kw&q=science",
+          "status": 502,
+          "bytes": 0,
+          "durationMs": 15008,
+          "snippet": ""
+        }
+      ]
+    },
+    {
+      "libraryId": "chamo:iit-madras",
+      "name": "Indian Institute of Technology Madras",
+      "status": "unreachable_from_execution_environment",
+      "books": [],
+      "configuredUrl": "https://webopac.iitm.ac.in",
+      "sourceUrl": "https://cenlib.iitm.ac.in/",
+      "sourceNote": "Current library homepage links HTTPS catalog; 2024\u201325 annual report also names public HTTP port8080. Neither worked from this execution environment; no catalog authentication or access restriction was bypassed.",
+      "discovery": [
+        {
+          "at": "2026-11-15T06:35:51Z",
+          "url": "http://webopac.iitm.ac.in:8080/robots.txt",
+          "status": 403,
+          "server": "envoy",
+          "message": "No approved upstream IPv4 address"
+        },
+        {
+          "url": "https://webopac.iitm.ac.in",
+          "status": 403,
+          "stage": "proxy CONNECT",
+          "message": "Execution egress blocked the connection before a catalog response"
+        }
+      ]
+    }
+  ]
+}

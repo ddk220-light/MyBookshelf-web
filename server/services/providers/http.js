@@ -40,6 +40,36 @@ export function withCatalogOperation({ maxRequests = Infinity, signal = null, mi
   return operations.run(store, () => task(store));
 }
 
+// An explicit route scope adds its own cap without replacing the reader's
+// aggregate budget. Ordinary nested withCatalogOperation calls still reuse
+// their current scope. Cancelling one route does not cancel sibling fallbacks.
+// A supplied gate replaces the inherited gate so one request reserves one host
+// slot; that route gate must retain the outer operation's deadline restriction.
+export function withCatalogSuboperation(options = {}, task) {
+  const parent = operations.getStore();
+  if (!parent) return withCatalogOperation(options, task);
+  const signals = [...new Set([parent.signal, options.signal].filter(Boolean))];
+  const signal = signals.length > 1 ? AbortSignal.any(signals) : signals[0] || null;
+  let robots = parent.robots;
+  if (options.robots && options.robots !== robots) {
+    const inherited = robots;
+    robots = inherited ? async url => {
+      const outer = await inherited(url);
+      if (!outer?.allowed) return outer;
+      const inner = await options.robots(url);
+      return { allowed: Boolean(inner?.allowed), delayMs: Math.max(outer.delayMs || 0, inner?.delayMs || 0) };
+    } : options.robots;
+  }
+  const store = {
+    parent, maxRequests: options.maxRequests ?? Infinity, requests: 0,
+    lastByHost: parent.lastByHost, signal, robots,
+    gate: options.gate ?? parent.gate,
+    minIntervalMs: Math.max(parent.minIntervalMs || 0, options.minIntervalMs || 0),
+    noRetries: Boolean(parent.noRetries || options.noRetries),
+  };
+  return operations.run(store, () => task(store));
+}
+
 function abortedError() {
   return Object.assign(new Error('Catalog operation was cancelled'), { name: 'AbortError', code: 'CATALOG_ABORTED' });
 }
@@ -54,6 +84,16 @@ export function catalogOperation() {
 
 function budgetError() {
   return Object.assign(new Error('Catalog request budget exhausted'), { code: 'CATALOG_REQUEST_BUDGET' });
+}
+
+function checkRequestBudgets(operation) {
+  for (let scope = operation; scope; scope = scope.parent) {
+    if (scope.requests >= scope.maxRequests) throw budgetError();
+  }
+}
+
+function countRequest(operation) {
+  for (let scope = operation; scope; scope = scope.parent) scope.requests += 1;
 }
 
 const sleep = ms => new Promise(resolve => { setTimeout(resolve, ms); });
@@ -297,7 +337,7 @@ async function requestOnce(url, options = {}) {
   let spacing = minIntervalMs;
   if (operation) {
     if (operation.signal?.aborted) throw abortedError();
-    if (operation.requests >= operation.maxRequests) throw budgetError();
+    checkRequestBudgets(operation);
     if (operation.robots) {
       const policy = await operation.robots(url);
       if (!policy?.allowed) throw robotsError();
@@ -306,13 +346,13 @@ async function requestOnce(url, options = {}) {
     spacing = Math.max(spacing || 0, operation.minIntervalMs || 0);
     await paceRequest(operation, hostOf(url), spacing, deadlineAt);
     if (operation.signal?.aborted) throw abortedError();
-    if (operation.requests >= operation.maxRequests) throw budgetError();
+    checkRequestBudgets(operation);
     if (operation.gate) {
       await operation.gate(hostOf(url), { spacingMs: spacing || 0, deadlineAt, signal: operation.signal });
       if (operation.signal?.aborted) throw abortedError();
-      if (operation.requests >= operation.maxRequests) throw budgetError();
+      checkRequestBudgets(operation);
     }
-    operation.requests += 1;
+    countRequest(operation);
   }
   const settled = () => { if (operation && spacing > 0) operation.lastByHost.set(hostOf(url), Date.now()); };
 

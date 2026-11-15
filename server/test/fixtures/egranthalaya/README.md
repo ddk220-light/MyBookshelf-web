@@ -48,3 +48,14 @@ styles, images, presentation attributes and every opaque hidden value were remov
   page (right form action, blank fields, no holdings table). Record 101722 came back
   empty on all three reads in three sessions. Across three PYLIB/PUBLICLIBRARIES
   libraries 10 of 13 record reads were empty; the cause is not known.
+
+## Displayed subtitles (15 November 2026)
+
+`hkms-subtitle-search.html` is a reduced regression fixture with the title,
+record ID and copy count of HKMSLIB record 526126, captured from the member's
+public `India` search. Its one-result count and selected-member controls are
+constructed for the test; it is not a complete saved response. The live full
+displayed-title query returned a scoped zero; a separate main-title query
+returned this exact record. The fixture tests bounded
+main-title recovery, fresh form/session state and unchanged member scope.
+Live before/after evidence is in `docs/research/india-library-hardening/`.

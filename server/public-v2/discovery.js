@@ -1,4 +1,4 @@
-import { getAllLibraries, haversineKm } from '../services/directory.js';
+import { getListedLibraries, haversineKm } from '../services/directory.js';
 import { toPublicLibrary } from './directory.js';
 import { searchableCatalog } from './catalog-method.js';
 import { libraryLocations, libraryPoint } from './locations.js';
@@ -12,7 +12,7 @@ const compareNames = (a, b) => a.entry.name.localeCompare(b.entry.name) || a.ent
 const unique = values => [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b));
 const counts = (rows, field) => Object.fromEntries(unique(rows.map(r => r[field])).map(name => [name, rows.filter(r => r[field] === name).length]));
 
-export function createDiscoveryService({ entries = getAllLibraries } = {}) {
+export function createDiscoveryService({ entries = getListedLibraries } = {}) {
   const eligible = () => [...new Map(entries().filter(searchableCatalog).map(entry => [entry.id, entry])).values()];
   return {
     areas({ country, region } = {}) {
