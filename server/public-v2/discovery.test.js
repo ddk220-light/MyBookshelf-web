@@ -35,7 +35,8 @@ test('network methods admit unsampled members, while research-only listings stay
   const entries = getAllLibraries();
   const kvs = entries.find(l => l.egranthalayaCluster === 'KVS3');
   assert.ok(kvs?.publicCatalogMethodValidated);
-  const service = createDiscoveryService();
+  // Method eligibility is about the whole directory; the hidden list is a separate step.
+  const service = createDiscoveryService({ entries: getAllLibraries });
   assert.ok(service.search({ query: kvs.name }).libraries.some(l => l.id === kvs.id));
   assert.ok(service.search({ country: 'IN' }).total > 5000);
   assert.equal(entries.filter(l => l.egranthalayaCluster === 'UPSC').length, 0);

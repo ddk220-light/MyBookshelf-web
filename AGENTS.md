@@ -13,7 +13,9 @@ Keep the handoff accurate when completing substantial work.
 - Keep provider credentials server-side. Never commit secrets, local environment
   values, account data or browser state. `.env.example` contains names only.
 - `shared/seo-libraries.json` controls public SEO publication: seven India, four
-  US and one Japan guide. The full directory remains available inside the app.
+  US and one Japan guide. The full directory remains available inside the app,
+  except that libraries in `server/data/india-catalog-hidden.json` are left out
+  of finding a library (kept resolvable for readers who already chose one).
 - Preserve edition/catalog identities. Do not merge works or editions from
   similar titles for identity, ISBNs or availability (search cards may show
   same-title, same-author records together for display only; see
