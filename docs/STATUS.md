@@ -7,7 +7,7 @@
 - It holds 4,139 Indian libraries:
   - 1,034 with a strictly verified book: a specific book was searched, its catalog record resolved, and the app's own live lookup answered "found".
   - 3,105 where the 10 November e-Granthalaya audit found books for at least one of fifty titles, with no record or lookup confirmation (`egranthalayaAuditOnly`).
-- `tools/catalog-hardening/library-status.mjs` generates the list. It only ever adds IDs; removal is by hand.
+- `tools/catalog-hardening/library-status.mjs` generates the list. A listed ID stays when a later check fails. It leaves only through the hand-kept `removed` list (`id`, `reason`, `date`; empty now), which wins even over a new verification, or when its current status is `blocked` (robots refusal, access challenge, login), which the retained rule never keeps. This changed no listed ID: none of the 4,139 is blocked or retained.
 - Unlisted IDs still resolve, and libraries outside India are unaffected.
 - The old hidden list now lives at `docs/research/india-library-status/empty-catalogs.json` as evidence.
 - Finder totals: India 4,657 → 4,139, all countries 5,042 → 4,524.

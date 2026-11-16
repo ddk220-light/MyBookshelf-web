@@ -16,8 +16,9 @@ Keep the handoff accurate when completing substantial work.
   US and one Japan guide. Indian libraries are offered when finding a
   library only if `server/data/india-catalogs-listed.json` lists them (a
   strictly verified book or an e-Granthalaya audit that found books; generated
-  by `tools/catalog-hardening/library-status.mjs`, IDs only ever added, removal
-  by hand). Unlisted IDs stay resolvable for readers who already chose one;
+  by `tools/catalog-hardening/library-status.mjs`; listed IDs are kept when a
+  later check fails, except a `blocked` library, and never re-added once in the
+  hand-kept `removed` list with id, reason and date). Unlisted IDs stay resolvable for readers who already chose one;
   libraries outside India are not affected. Indian libraries without a source
   state get one from `server/data/india-library-regions.json`
   (`tools/directory/india-regions.mjs`): published state, a single-state PIN or

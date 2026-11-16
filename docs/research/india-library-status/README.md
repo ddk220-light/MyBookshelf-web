@@ -20,21 +20,28 @@ listings): **4,139 libraries**, 1,034 with a strictly verified book and
 column says which. Every other Indian library still resolves by ID, so a reader who
 already chose one keeps it. Libraries outside India are not affected.
 
-The generator only ever adds IDs: a listed library stays listed when a later check
-fails (0 are listed now without current qualifying evidence). Failed lookups are
-logged for manual review; a library leaves the list only when someone deletes its ID
-by hand.
+A listed library stays listed when a later check fails or cannot reach it
+(0 are listed now without current qualifying evidence). Failed lookups are
+logged for manual review. A library leaves the list in two ways only: someone adds
+it to the hand-kept `removed` list in the allowlist (0 now), which the
+generator honours even when the library qualifies again, or its current status
+becomes `blocked` (a robots refusal, an access challenge or a login), which is
+never kept on the list for having been listed before.
 
 A failed or blocked check is never "empty": `blocked`, `remote-unchecked`, `unreachable` and
 `unverified` mean we could not confirm a book, not that the library lacks it.
 
+## Removed by hand
+
+None.
+
 ## Status
 
-- `verified`: at least one book confirmed by the strict standard (query match, the same record resolved, and a live `found` from the app's own lookup). Listed.
-- `audit-found`: e-Granthalaya library whose catalog returned books for at least one of the fifty audit titles (10 November 2026); the stricter one-book check was not run. Listed.
+- `verified`: at least one book confirmed by the strict standard (query match, the same record resolved, and a live `found` from the app's own lookup). Listed unless removed by hand.
+- `audit-found`: e-Granthalaya library whose catalog returned books for at least one of the fifty audit titles (10 November 2026); the stricter one-book check was not run. Listed unless removed by hand.
 - `unverified`: never tested, or tested without a confirmed book (too slow, answered but no book passed, clean empty searches not yet in the empty list).
 - `empty-catalog`: its catalog showed no books ([empty-catalogs.json](empty-catalogs.json)).
-- `blocked`: refused by robots rules, an access challenge, a regional CDN refusal or a login. Never worked around.
+- `blocked`: refused by robots rules, an access challenge, a regional CDN refusal or a login. Never worked around, and not listed.
 - `remote-unchecked`: could not be checked from the remote test machine (network failure, timeout, HTTP 5xx, robots.txt 5xx, or a CDN refusing that machine's region). Try these from a local machine.
 - `unreachable`: could not be reached from the remote test machine or from a local machine (network failure, DNS, timeout, HTTP 5xx or robots.txt 5xx).
 - `unsupported`: link-only in the app, no adapter.
@@ -175,13 +182,14 @@ for 90 days. Successes update `library_health`. To review:
 3. Read `listed` (verified, egranthalaya-audit, not-listed), `failures` and the
    failure classes against `checks`, and `error_codes` (for example
    `CATALOG_ROBOTS_DISALLOWED`, `CATALOG_TIMEOUT`, `CATALOG_UNAVAILABLE:ECONNREFUSED`).
-4. To take a library off the finder, delete its ID from
-   `server/data/india-catalogs-listed.json` by hand and say why in the commit;
-   the generator never removes one. A robots or access refusal should be removed
-   promptly; a timeout alone is not absence.
+4. To take a library off the finder, add `{ "id", "reason", "date" }` to `removed`
+   in `server/data/india-catalogs-listed.json` by hand, say why in the commit and
+   regenerate this tracker; the generator then never lists that ID, even when it
+   is verified again. A robots or access refusal recorded in the evidence
+   (`blocked`) leaves the list on regeneration; a timeout alone is not absence.
 
 ## Add a library to the finder
 
 1. Run a fresh one-book check with the existing runners (`tools/catalog-hardening/`), respecting pacing, robots rules and refusals.
-2. Add the result file to `docs/research/india-library-hardening/`, regenerate `summary.json` and then this tracker. A library with a verified book joins the allowlist automatically.
+2. Add the result file to `docs/research/india-library-hardening/`, regenerate `summary.json` and then this tracker. A library with a verified book joins the allowlist automatically, unless it is in `removed` (delete that entry to list it again).
 3. Update the expected counts in `server/services/directory.test.js` and `server/public-v2/discovery-integration.test.js`, then run the server tests.
