@@ -31,7 +31,7 @@ async function request(path) {
     if (delay) await new Promise(resolve => setTimeout(resolve, delay));
     nextRequestAt = Date.now() + 1000;
     const response = await getJson(`https://openlibrary.org${path}`, {
-      deadlineAt, retries: 0,
+      deadlineAt, retries: 0, catalogConnection: false,
       headers: { 'User-Agent': 'MyBookshelf/1.0 (book discovery; https://mybookshelf.cloud/privacy)' },
     });
     if (response.status === 404) return null;

@@ -123,6 +123,12 @@ test('robots.txt is read over the catalog\'s own validated transport and with a 
   const policy = createRobotsPolicy();
   assert.equal((await policy.check('https://kalnet.kshec.kerala.gov.in/vufind/Search/Results?lookfor=x')).allowed, false);
   assert.ok(seen.dispatcher, 'the KALNET dispatcher is passed to the robots.txt read');
-  // High-latency dual-stack hosts need more than Node's 250 ms per address attempt.
-  assert.ok(net.getDefaultAutoSelectFamilyAttemptTimeout() >= 2_500);
+  assert.equal(seen.dispatcher, kalnetTransportOptions('https://kalnet.kshec.kerala.gov.in/robots.txt').dispatcher);
+  // Other origins use the catalog dispatcher, whose connections allow 2.5 s per
+  // address attempt for high-latency dual-stack hosts (network.test.js). The
+  // process-wide default stays Node's own.
+  const { catalogDispatcher } = await import('./network.js');
+  await createRobotsPolicy().check('https://c.example/search');
+  assert.equal(seen.dispatcher, catalogDispatcher());
+  assert.ok(net.getDefaultAutoSelectFamilyAttemptTimeout() < 2_500);
 });

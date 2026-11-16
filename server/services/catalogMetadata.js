@@ -7,7 +7,7 @@ const description = value => typeof value === 'string' ? value : value?.value;
 const cover = value => Number.isInteger(value) && value > 0 ? `https://covers.openlibrary.org/b/id/${value}-M.jpg` : undefined;
 
 async function readOpenLibrary(path, deadlineAt) {
-  const response = await getJson(`https://openlibrary.org${path}`, { deadlineAt, retries: 0 });
+  const response = await getJson(`https://openlibrary.org${path}`, { deadlineAt, retries: 0, catalogConnection: false });
   if (response.status === 404) return null;
   if (!response.ok || response.unreadable) throw new Error('Book metadata unavailable');
   return response.json;

@@ -1,8 +1,8 @@
-import './network.js';
 import http from 'node:http';
 import https from 'node:https';
 import { constants as cryptoConstants } from 'node:crypto';
 import { AsyncLocalStorage } from 'node:async_hooks';
+import { catalogAgent, catalogDispatcher } from './network.js';
 
 const DEFAULT_TIMEOUT_MS = 30_000;
 const CACHE_TTL_MS = 60_000;
@@ -34,6 +34,11 @@ const operations = new AsyncLocalStorage();
 //   throws when that slot is past the deadline.
 // - `noRetries`: every request is sent once, with no transport retry (used
 //   while a host's circuit is open: the book page tries once).
+//
+// Requests connect with the catalog connection settings in network.js (a 2.5 s
+// attempt per address). A caller that is not reading a library catalog, such
+// as the Open Library metadata reads, passes `catalogConnection: false` and
+// gets Node's defaults. A caller's own `dispatcher` (KALNET) is used as given.
 export function withCatalogOperation({ maxRequests = Infinity, signal = null, minIntervalMs = 0, robots = null, gate = null, noRetries = false } = {}, task) {
   const current = operations.getStore();
   if (current) return task(current);
@@ -222,6 +227,7 @@ function legacyHttpsRequest(url, options, timeoutMs, redirects = 0, originalHost
       method: options.method || 'GET',
       headers: options.headers,
       signal: options.signal,
+      ...(options.catalogConnection ? { agent: catalogAgent(parsed.protocol) } : {}),
       secureOptions: cryptoConstants.SSL_OP_LEGACY_SERVER_CONNECT,
     }, (response) => {
       const chunks = [];
@@ -328,6 +334,7 @@ async function requestOnce(url, options = {}) {
     deadlineAt = Date.now() + timeoutMs,
     maxResponseBytes = MAX_RESPONSE_BYTES,
     minIntervalMs,
+    catalogConnection = true,
     ...fetchOptions
   } = options;
   if (cacheKey) {
@@ -374,11 +381,11 @@ async function requestOnce(url, options = {}) {
     try {
       let response;
       try {
-        response = await fetch(url, { ...fetchOptions, headers, signal: controller.signal });
+        response = await fetch(url, { ...(catalogConnection ? { dispatcher: catalogDispatcher() } : {}), ...fetchOptions, headers, signal: controller.signal });
       } catch (error) {
         const errorText = `${error.code || ''} ${error.message || ''} ${error.cause?.code || ''} ${error.cause?.message || ''}`;
         if (parsed.protocol !== 'https:' || !errorText.match(/LEGACY_RENEGOTIATION|unsafe legacy renegotiation/i)) throw error;
-        response = await legacyHttpsRequest(url, { ...fetchOptions, headers, signal: controller.signal }, requestTimeout);
+        response = await legacyHttpsRequest(url, { ...fetchOptions, catalogConnection, headers, signal: controller.signal }, requestTimeout);
       }
       let text;
       if (typeof response.text === 'function') {

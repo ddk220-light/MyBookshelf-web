@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import { X509Certificate } from 'node:crypto';
 import { checkServerIdentity, rootCertificates } from 'node:tls';
 import { Agent } from 'undici';
+import { CATALOG_CONNECT_OPTIONS } from './network.js';
 
 const ORIGIN = 'https://kalnet.kshec.kerala.gov.in';
 const FINGERPRINT = '8C:54:C3:34:B6:6B:A4:E4:26:77:2A:F4:A3:F9:13:6C:19:A1:AE:C7:29:FD:B2:8C:53:5C:07:A5:A4:EF:22:E0';
@@ -31,7 +32,8 @@ export function kalnetTransportOptions(value) {
   dispatcher ||= new Agent({
     connections: 2,
     pipelining: 1,
-    connect: { ca: [...rootCertificates, validatedKalnetIntermediate()], rejectUnauthorized: true, allowPartialTrustChain: false, checkServerIdentity },
+    // The catalog connection attempt (network.js), as for every other catalog.
+    connect: { ...CATALOG_CONNECT_OPTIONS, ca: [...rootCertificates, validatedKalnetIntermediate()], rejectUnauthorized: true, allowPartialTrustChain: false, checkServerIdentity },
   });
   return { dispatcher };
 }

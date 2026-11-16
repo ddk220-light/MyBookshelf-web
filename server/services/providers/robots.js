@@ -1,5 +1,5 @@
-import './network.js';
 import { kalnetTransportOptions } from './kalnet-tls.js';
+import { catalogDispatcher } from './network.js';
 // robots.txt rules for the catalog lookup layer. The parser follows the
 // connector audit's transport (feat/library-connector-audit,
 // server/services/catalog-connectors/transport.js): the most specific
@@ -112,8 +112,9 @@ export async function defaultFetchPolicy(url) {
   const timer = setTimeout(() => controller.abort(), POLICY_TIMEOUT_MS);
   try {
     // Read robots.txt over the same validated transport as the catalog itself,
-    // so a chain the app completes for catalog requests cannot hide the rules.
-    const response = await fetch(url, { redirect: 'follow', signal: controller.signal, ...kalnetTransportOptions(url),
+    // so a chain the app completes for catalog requests cannot hide the rules,
+    // and with the catalog connection attempt (network.js).
+    const response = await fetch(url, { redirect: 'follow', signal: controller.signal, dispatcher: catalogDispatcher(), ...kalnetTransportOptions(url),
       headers: { 'User-Agent': 'MyBookshelf/1.0 (web; +https://mybookshelf.cloud/privacy)', Accept: 'text/plain' } });
     const text = response.ok ? (await response.text()).slice(0, MAX_POLICY_BYTES) : '';
     return { status: response.status, text };

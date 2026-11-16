@@ -28,7 +28,7 @@
   - Somaiya: regional CloudFront refusal.
 
 *Connection fix*
-- `server/services/providers/network.js` raises Node's per-address happy-eyeballs attempt to 2.5 s.
+- `server/services/providers/network.js` gives library-catalog connections a 2.5 s per-address happy-eyeballs attempt: the fetch dispatcher and legacy-renegotiation agents in `http.js`, the robots.txt read and the KALNET transport. Node's process-wide default is unchanged, so databases and book-metadata reads (Open Library passes `catalogConnection: false`) keep Node's 250 ms.
 - Hosts with an unreachable AAAA record and a ~270 ms IPv4 round trip had been failing in under 300 ms.
 
 *States*
