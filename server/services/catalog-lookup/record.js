@@ -220,7 +220,8 @@ export function createLookupRecorder({ answers = null, health = null, telemetry 
         const ok = answer.outcome !== 'couldnt_check';
         if (ok || isHealthFailure(answer.reason)) {
           await safely(() => health.recordOutcome({ libraryId, platform, host, ok, reason: answer.reason, at: now(),
-            operation: kind === 'results' ? 'marks' : 'book_check', durationMs: Math.max(0, Math.round(durationMs)), requests }))();
+            operation: kind === 'results' ? 'marks' : 'book_check', durationMs: Math.max(0, Math.round(durationMs)), requests,
+            errorCode: ok ? null : answer.errorCode || null }))();
         }
       }
       if (live && telemetry && answer) {

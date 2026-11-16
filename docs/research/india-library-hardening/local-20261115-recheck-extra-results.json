@@ -115,5 +115,15 @@
   ],
   "finishedAt": "2026-11-15T20:36:18.504Z",
   "rawRequestsSent": 6,
-  "appSearchRequests": 0
+  "appSearchRequests": 0,
+  "followUp": [
+    {
+      "host": "scert.libraryopac.in",
+      "libraryId": "koha:scert-assam",
+      "at": "2026-11-15T22:28:58Z",
+      "method": "robots.txt read with curl (system trust store, which completes the Let's Encrypt Root YE chain Node 22 lacks)",
+      "robotsTxt": "User-agent: *\nDisallow: /cgi-bin/\nDisallow: /cgi-bin/koha/\n\n# User & search pages\nDisallow: /opac-search.pl\nDisallow: /opac-user.pl\nDisallow: /opac-shelves.pl\n\n# Technical / duplicate views\nDisallow: /opac-ISBDdetail.pl\nDisallow: /opac-MARCdetail.pl\nDisallow: /opac-authoritiesdetail.pl\nDisallow: /opac-subjects.pl\n\nAllow: /",
+      "finding": "Disallow: /cgi-bin/ and /cgi-bin/koha/ cover the Koha search the app uses: a robots refusal. Not recoverable; the missing intermediate is moot."
+    }
+  ]
 }

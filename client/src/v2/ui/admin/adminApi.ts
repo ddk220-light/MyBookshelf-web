@@ -22,9 +22,12 @@ export type HealthRow = {
   medianMs: number | null; medianFailureMs: number | null;
   lastSuccessAt: string | null; lastFailureAt: string | null; lastFailure: string | null; failuresSinceSuccess: number;
   acknowledgedAt: string | null; ownerNote: string | null;
+  errorCodes?: Record<string, number>; listed?: 'verified' | 'egranthalaya-audit' | 'not-listed' | 'outside-india' | null;
   recentFailures: { occurredAt: string; operation: string; failure: string; errorCode: string | null; durationMs: number; requests: number }[];
 };
-export type HealthView = { usageLogEnabled: boolean; checkTotalsFromLog: boolean; libraries: HealthRow[] };
+export const HEALTH_WINDOWS = [7, 30, 60, 90] as const;
+export type HealthWindow = typeof HEALTH_WINDOWS[number];
+export type HealthView = { usageLogEnabled: boolean; checkTotalsFromLog: boolean; windowDays?: number; libraries: HealthRow[] };
 
 export const REQUEST_STATUSES = ['open', 'added', 'declined', 'spam'] as const;
 export type RequestStatus = typeof REQUEST_STATUSES[number];

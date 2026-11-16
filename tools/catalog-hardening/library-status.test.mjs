@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { RECORDED, REVISIT_DAYS, STATUSES, addDays, buildRows, describeAttempt, loadInputs, renderCsv, renderReadme } from './library-status.mjs';
+import { LISTED, LISTED_STATUSES, RECORDED, REVISIT_DAYS, STATUSES, addDays, buildAllowlist, buildRows, describeAttempt, loadInputs, renderCsv, renderReadme } from './library-status.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const EVIDENCE = resolve(ROOT, 'docs/research/india-library-hardening');
@@ -37,16 +37,20 @@ test('the tracker has one row per Indian directory entry and matches the committ
   assert.equal(rows.length, inputs.entries.length);
   assert.equal(new Set(rows.map((row) => row.library_id)).size, rows.length);
   const hidden = new Set(inputs.hidden.libraryIds);
+  const listed = new Set(rows.allowlist.libraryIds);
   for (const row of rows) {
     assert.ok(STATUSES.includes(row.status), row.library_id);
-    assert.equal(row.in_finder, hidden.has(row.library_id) ? 'no' : 'yes', row.library_id);
-    assert.equal(row.status === 'hidden-empty', hidden.has(row.library_id), row.library_id);
+    assert.equal(row.in_finder, listed.has(row.library_id) ? 'yes' : 'no', row.library_id);
+    assert.equal(row.status === 'empty-catalog', hidden.has(row.library_id), row.library_id);
+    // Verified and audit-found libraries are always listed; nothing else is listed unless it was listed before.
+    if (LISTED_STATUSES.has(row.status)) assert.equal(row.in_finder, 'yes', row.library_id);
     assert.ok(row.reason, row.library_id);
     if (!row.last_checked) assert.match(row.reason, /not tested|link-only/, row.library_id);
     if (row.evidence_file) assert.ok(existsSync(resolve(EVIDENCE, row.evidence_file)), row.evidence_file);
     assert.match(row.revisit_after, /^(\d{4}-\d{2}-\d{2}|now|never)$/, row.library_id);
   }
   // Generated, never hand-edited.
+  assert.deepEqual(JSON.parse(readFileSync(resolve(ROOT, LISTED), 'utf8')), rows.allowlist);
   assert.equal(readFileSync(resolve(ROOT, 'docs/research/india-library-status/status.csv'), 'utf8'), renderCsv(rows));
   assert.equal(readFileSync(resolve(ROOT, 'docs/research/india-library-status/README.md'), 'utf8'), renderReadme(rows));
 });
@@ -58,4 +62,24 @@ test('every recorded cause names an ID or host that its evidence file mentions',
     assert.ok(text.includes(id) || text.includes(id.split(':')[1]), id);
     assert.ok(Object.hasOwn(REVISIT_DAYS, rule.revisit), id);
   }
+});
+
+test('the allowlist only grows: a listed library stays listed when its evidence lapses', () => {
+  const rows = [
+    { library_id: 'a', platform: 'koha', status: 'verified' },
+    { library_id: 'b', platform: 'egranthalaya', status: 'audit-found' },
+    { library_id: 'c', platform: 'koha', status: 'unreachable' },
+    { library_id: 'd', platform: 'koha', status: 'blocked' },
+  ];
+  const first = buildAllowlist(rows, null);
+  assert.deepEqual(first.libraryIds, ['a', 'b']);
+  assert.deepEqual(first.egranthalayaAuditOnly, ['b']);
+  // Later 'a' fails and 'b' becomes strictly verified: both stay, 'a' is retained for review.
+  const later = buildAllowlist([{ ...rows[0], status: 'unreachable' }, { ...rows[1], status: 'verified' }, rows[2], rows[3]], first);
+  assert.deepEqual(later.libraryIds, ['a', 'b']);
+  assert.deepEqual(later.egranthalayaAuditOnly, []);
+  assert.deepEqual(later.retainedWithoutCurrentEvidence, ['a']);
+  // An ID removed by hand from the previous list is not re-added unless it qualifies again.
+  const edited = buildAllowlist([{ ...rows[0], status: 'unreachable' }, rows[1], rows[2], rows[3]], { ...first, libraryIds: ['b'] });
+  assert.deepEqual(edited.libraryIds, ['b']);
 });

@@ -22,9 +22,12 @@ export function validatedKalnetIntermediate() {
 
 // The upstream currently omits an intermediate. Add its independently validated
 // public chain certificate only here; retain Node's standard hostname verifier.
+// /robots.txt uses the same transport: without it the policy read fails on the
+// chain, which the robots policy would read as "no restrictions" and miss the
+// site's real rules (15 Nov 2026: User-agent: * / Disallow: /).
 export function kalnetTransportOptions(value) {
   const url = new URL(value);
-  if (url.origin !== ORIGIN || !url.pathname.startsWith('/vufind/') || url.username || url.password) return {};
+  if (url.origin !== ORIGIN || !(url.pathname.startsWith('/vufind/') || url.pathname === '/robots.txt') || url.username || url.password) return {};
   dispatcher ||= new Agent({
     connections: 2,
     pipelining: 1,

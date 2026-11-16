@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAccountSession } from '../../auth/AccountSessionProvider';
 import {
   AdminApiError, adminRequest, formatTime, FAILURE_CLASSES, REPORT_STATUSES, REQUEST_STATUSES,
-  type AdminSummary, type HealthRow, type HealthView, type LibraryRequest, type ProblemReport, type ReportStatus,
+  type AdminSummary, HEALTH_WINDOWS, type HealthRow, type HealthView, type HealthWindow, type LibraryRequest, type ProblemReport, type ReportStatus,
   type ReportsView, type RequestStatus, type RequestsView, type UsageView,
 } from './adminApi';
 import './admin.css';
@@ -120,7 +120,8 @@ export default AdminPage;
 // ---- Library health ------------------------------------------------------
 
 function HealthTab({ enabled, csrf, onChange }: { enabled: boolean; csrf?: string; onChange: () => void }) {
-  const view = useView<HealthView>('/library-health', enabled);
+  const [days, setDays] = useState<HealthWindow>(7);
+  const view = useView<HealthView>(`/library-health?days=${days}`, enabled);
   if (!enabled) return null;
   const rows = view.value?.libraries || [];
   const flagged = rows.filter(row => row.flagged);
@@ -128,13 +129,18 @@ function HealthTab({ enabled, csrf, onChange }: { enabled: boolean; csrf?: strin
   return <>
     <ErrorLine error={view.error} />
     {view.value && !view.value.checkTotalsFromLog && <p className="admin-note">Check totals and failure rates need the anonymous log; only failures are counted here.</p>}
-    <Section title={`Flagged as failing (${flagged.length})`} actions={<a className="admin-link" href="/api/admin/library-health.csv" download>Download CSV</a>}>
+    <label className="admin-note">Review window{' '}
+      <select value={days} onChange={event => setDays(Number(event.target.value) as HealthWindow)}>
+        {HEALTH_WINDOWS.map(value => <option key={value} value={value}>{value} days</option>)}
+      </select>
+    </label>
+    <Section title={`Flagged as failing (${flagged.length})`} actions={<a className="admin-link" href={`/api/admin/library-health.csv?days=${days}`} download>Download CSV</a>}>
       {view.loading && !view.value ? <p role="status">Loading…</p> : flagged.length ? flagged.map(row => <FlaggedLibrary key={row.libraryId} row={row} csrf={csrf} onSaved={() => { void view.reload(); onChange(); }} />)
         : <p>No library is flagged.</p>}
     </Section>
-    <Section title={`Libraries checked in the last 7 days (${others.length})`}>
+    <Section title={`Libraries checked in the last ${days} days (${others.length})`}>
       {others.length ? <div className="admin-scroll"><table className="admin-table">
-        <thead><tr><th scope="col">Library</th><th scope="col">Platform</th><th scope="col">Failures 7d</th><th scope="col">Checks 7d</th><th scope="col">Failure rate</th><th scope="col">Last success</th><th scope="col">Last failure</th><th scope="col">Note</th></tr></thead>
+        <thead><tr><th scope="col">Library</th><th scope="col">Platform</th><th scope="col">Failures</th><th scope="col">Checks</th><th scope="col">Failure rate</th><th scope="col">Last success</th><th scope="col">Last failure</th><th scope="col">Note</th></tr></thead>
         <tbody>{others.map(row => <tr key={row.libraryId}>
           <td><LibraryName id={row.libraryId} name={row.name} /></td><td>{row.platform}</td><td>{row.failures7d}</td><td>{row.checks7d ?? '—'}</td>
           <td>{row.failureRate == null ? '—' : `${Math.round(row.failureRate * 100)}%`}</td><td>{formatTime(row.lastSuccessAt)}</td>

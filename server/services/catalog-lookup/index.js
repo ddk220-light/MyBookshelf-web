@@ -6,7 +6,7 @@ import { validateAndNormalize } from '../isbn.js';
 import { parsePublicBookKey } from '../../public-v2/contracts.js';
 import { runBookCheck } from './check.js';
 import { normalizeProviderObservation } from './observation.js';
-import { answerFromCheck, answerFromResponse, couldntCheck, isHealthFailure, reasonForError } from './outcome.js';
+import { answerFromCheck, answerFromResponse, couldntCheck, couldntCheckFor, isHealthFailure } from './outcome.js';
 import { PLATFORMS, platformFor, hostFor, bookDeadlineMs, lookupV2Enabled } from './platforms.js';
 import { createHostGuard } from './budget.js';
 import { createLookupRecorder, createMemoryHealthRecord, identitiesFor, askedIdentity, storedAnswer } from './record.js';
@@ -145,7 +145,7 @@ export function createCatalogLookup({
         }
       } catch (error) {
         // Waiting for our own slot is not a failed catalog request.
-        event.answer = couldntCheck(reasonForError(error));
+        event.answer = couldntCheckFor(error);
         throw error;
       }
       const controller = new AbortController();
@@ -161,7 +161,7 @@ export function createCatalogLookup({
         event.answer = observed(route, value);
         return value;
       } catch (error) {
-        event.answer = couldntCheck(reasonForError(error));
+        event.answer = couldntCheckFor(error);
         throw error;
       } finally {
         // A route timeout may be followed by the next catalog. Stop the old
@@ -434,7 +434,7 @@ export function createCatalogLookup({
             rememberRows(key, rows);
             runAnswer = { outcome: 'checked' };
           } catch (error) {
-            runAnswer = couldntCheck(signal?.aborted ? 'cancelled' : reasonForError(error));
+            runAnswer = signal?.aborted ? couldntCheck('cancelled') : couldntCheckFor(error);
             endRun();
             yield { done: true, notAttempted: [...pending.keys()], unmatched };
             return;
@@ -478,7 +478,7 @@ export function createCatalogLookup({
           answers = await withResultsBudget(platform, deadline, signal, () => provider.checkMany(isbns), routes);
           runAnswer = { outcome: 'checked' };
         } catch (error) {
-          runAnswer = couldntCheck(signal?.aborted ? 'cancelled' : reasonForError(error));
+          runAnswer = signal?.aborted ? couldntCheck('cancelled') : couldntCheckFor(error);
           endRun();
           yield { done: true, notAttempted: [...pending.keys()], unmatched };
           return;
@@ -538,7 +538,7 @@ export function createCatalogLookup({
         const definite = settled.find(item => item.answer.outcome !== 'couldnt_check');
         runAnswer = definite ? { outcome: 'checked' }
           : signal?.aborted ? couldntCheck('cancelled')
-          : failure ? couldntCheck(reasonForError(failure))
+          : failure ? couldntCheckFor(failure)
           : settled[0]?.answer || null;
         endRun();
         for (const { book, answer } of settled) {

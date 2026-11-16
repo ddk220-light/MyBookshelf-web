@@ -16,7 +16,7 @@ function mount(routes: Record<string, () => Response>) {
   const calls: { url: string; init?: RequestInit }[] = [];
   vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => {
     calls.push({ url, init });
-    const path = url.replace('/api/admin', '');
+    const path = url.replace('/api/admin', '').split('?')[0];
     const handler = routes[`${init?.method || 'GET'} ${path}`] || routes[path];
     return handler ? handler() : fail(404, 'NOT_FOUND');
   }));
@@ -94,5 +94,8 @@ describe('AdminPage', () => {
     await waitFor(() => expect(calls.some(call => call.init?.method === 'PATCH')).toBe(true));
     const patch = calls.find(call => call.init?.method === 'PATCH')!;
     expect(JSON.parse(String(patch.init?.body))).toEqual({ acknowledged: true, note: '' });
+    // The review window defaults to a week; the CSV link follows it.
+    expect(calls.some(call => call.url.endsWith('/library-health?days=7'))).toBe(true);
+    expect(screen.getByRole('link', { name: 'Download CSV' }).getAttribute('href')).toBe('/api/admin/library-health.csv?days=7');
   });
 });

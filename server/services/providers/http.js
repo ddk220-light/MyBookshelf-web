@@ -1,3 +1,4 @@
+import './network.js';
 import http from 'node:http';
 import https from 'node:https';
 import { constants as cryptoConstants } from 'node:crypto';

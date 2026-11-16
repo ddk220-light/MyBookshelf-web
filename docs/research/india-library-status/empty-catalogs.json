@@ -1,6 +1,6 @@
 {
-  "reason": "Indian directory libraries whose public catalog search showed no books in the recorded evidence. They are left out of finding a library (pop-up search, browse, near me and public API listings) until their catalogs show books. They stay resolvable by ID, so a reader who already chose one keeps it. A library with errors, a refusal or no test is never listed here.",
-  "restore": "When a fresh check finds a book in a library's catalog, remove its ID from libraryIds, lower its platform count and the total, and update the expected counts in server/services/directory.test.js. See docs/research/india-library-status/README.md.",
+  "reason": "Indian directory libraries whose public catalog search showed no books in the recorded evidence. Evidence for the status tracker's empty-catalog status (tools/catalog-hardening/library-status.mjs). The directory does not read this file: only libraries on server/data/india-catalogs-listed.json are offered when finding a library. A library with errors, a refusal or no test is never listed here.",
+  "restore": "When a fresh check finds a book in a library's catalog, remove its ID from libraryIds, lower its platform count and the total, update the expected counts in server/services/directory.test.js, and regenerate the tracker; a verified library then joins the allowlist.",
   "platforms": {
     "egranthalaya": {
       "auditDate": "2026-11-10",

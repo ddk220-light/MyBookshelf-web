@@ -150,10 +150,12 @@ export function createAdminMiddleware({ env = process.env, identify = null, conn
       const db = await database(queries);
       let value;
       try {
-        if (target.action === 'health') value = { ...meta, ...await queries.libraryHealth(db) };
+        // ?days=7|30|60|90 widens the review window (failed checks are kept 90 days).
+        if (target.action === 'health') value = { ...meta, ...await queries.libraryHealth(db, { days: req.query?.days }) };
         else if (target.action === 'healthCsv') {
-          const csv = queries.libraryHealthCsv(await queries.libraryHealth(db));
-          res.set({ 'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': 'attachment; filename="library-health.csv"' });
+          const report = await queries.libraryHealth(db, { days: req.query?.days });
+          const csv = queries.libraryHealthCsv(report);
+          res.set({ 'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': `attachment; filename="library-health-${report.windowDays}d.csv"` });
           return res.send(csv);
         } else if (target.action === 'requests') value = await queries.listLibraryRequests(db);
         else if (target.action === 'reports') value = await queries.listProblemReports(db);

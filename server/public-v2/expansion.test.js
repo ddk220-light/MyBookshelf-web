@@ -1,6 +1,12 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createPublicDirectoryService } from './directory.js';
+import { createPublicDirectoryService as createListedDirectoryService } from './directory.js';
+import { getAllLibrariesByRegion, searchAllLibraries } from '../services/directory.js';
+
+// Adapter and handoff behaviour for specific libraries, over the whole directory:
+// whether a library is offered at all is the India allowlist's job
+// (services/directory.test.js).
+const createPublicDirectoryService = () => createListedDirectoryService({ search: searchAllLibraries, listByRegion: getAllLibrariesByRegion });
 import { createPublicAvailabilityService } from './availability.js';
 import { getProvider } from '../services/providers/index.js';
 import { readFileSync } from 'node:fs';

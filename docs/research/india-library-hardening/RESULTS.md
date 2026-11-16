@@ -1,10 +1,10 @@
 # Indian library validation results
 
-Snapshot: 2026-11-15T21:09:44.522Z. Re-run the summary tool after updating evidence.
+Snapshot: 2026-11-15T22:19:49.609Z. Re-run the summary tool after updating evidence.
 
 **Frozen cohort: 48/50 institutions have ten verified books.** 19 additional entries have ten. The size-led cohort is not an exact national ranking; [selection and sources](ranking-notes.md) explain the limits.
 
-Across wider checks, **1083 additional directory entries have at least one verified book**, out of 1305 actually attempted and 1636 reviewed. This includes the additional ten-book entries. These are catalog connections; branches and uncertain duplicate institutions must not be presented as a unique-library census. Deferred members of a blocked host are excluded from the attempted count.
+Across wider checks, **985 additional directory entries have at least one verified book**, out of 1206 actually attempted and 1636 reviewed. This includes the additional ten-book entries. These are catalog connections; branches and uncertain duplicate institutions must not be presented as a unique-library census. Deferred members of a blocked host are excluded from the attempted count.
 
 A pass requires an explicit matching query, a resolved record with matching title, and a live app answer in one complete attempt. Ten must pass on one route. Failed attempts, cold ISBN checks, cache conditions, non-book exclusions, and endpoint diagnostics remain in the [source evidence](README.md). A holding does not necessarily mean a borrowable copy.
 
@@ -103,7 +103,7 @@ Only connections outside the frozen 50 appear here. Family labels follow the can
 | libman | 636 | 636 | 481 | 4 |
 | libsys | 1 | 0 | 0 | 0 |
 | vpl | 1 | 1 | 1 | 0 |
-| vufind | 130 | 104 | 98 | 0 |
+| vufind | 130 | 5 | 0 | 0 |
 
 ## e-Granthalaya fifty-title audit
 
