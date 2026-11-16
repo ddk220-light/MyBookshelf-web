@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { LISTED, LISTED_STATUSES, RECORDED, REVISIT_DAYS, STATUSES, addDays, buildAllowlist, buildRows, describeAttempt, loadInputs, renderCsv, renderReadme } from './library-status.mjs';
+import { LISTED, LISTED_STATUSES, RECORDED, REVISIT_DAYS, STATUSES, addDays, buildAllowlist, buildRows, describeAttempt, loadInputs, renderCsv, renderAllowedCsv, renderReadme } from './library-status.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const EVIDENCE = resolve(ROOT, 'docs/research/india-library-hardening');
@@ -52,6 +52,9 @@ test('the tracker has one row per Indian directory entry and matches the committ
   // Generated, never hand-edited.
   assert.deepEqual(JSON.parse(readFileSync(resolve(ROOT, LISTED), 'utf8')), rows.allowlist);
   assert.equal(readFileSync(resolve(ROOT, 'docs/research/india-library-status/status.csv'), 'utf8'), renderCsv(rows));
+  const allowed = readFileSync(resolve(ROOT, 'docs/research/india-library-status/allowed-libraries.csv'), 'utf8');
+  assert.equal(allowed, renderAllowedCsv(rows));
+  assert.equal(allowed.trim().split('\n').length - 1, rows.allowlist.count);
   assert.equal(readFileSync(resolve(ROOT, 'docs/research/india-library-status/README.md'), 'utf8'), renderReadme(rows));
 });
 
