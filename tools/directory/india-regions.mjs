@@ -13,9 +13,12 @@
 //   3. Exactly one Indian state or union territory named in the published address.
 //   4. Parts of the published address (split on commas, full stops and "Dist.")
 //      that exactly match a GeoNames district or place name (or alias), when the
-//      matched parts share exactly one state. A part that lies only in two or more
-//      states, with nothing to narrow it, leaves the library unresolved: no
-//      popularity tie-break.
+//      matched parts share exactly one state and either two distinct parts agree
+//      on it or a part names a district of it. A single town name is not enough:
+//      the place index holds about 7,700 places, so a name unique there is not
+//      unique in India ("Seawoods, Nerul, Navi-Mumbai" is not in Goa's Nerul).
+//      A part that lies in two or more states, with nothing to narrow it, leaves
+//      the library unresolved: no popularity tie-break.
 // Never a library's name: "Air Force School Jaisalmer" is not evidence of a
 // state (data/india-administrative-aliases.json: never infer from a name).
 //
@@ -70,20 +73,43 @@ export function createResolver({ places, aliases }) {
     if (district) addPlace(district, region);
   }
   for (const [region, districts] of Object.entries(aliases.districts || {})) for (const [alias] of Object.entries(districts)) addPlace(alias, region);
+  // District names, from every source that names one: the places' districts, the
+  // postcodes' districts and the district aliases. Unlike the ~7,700 places,
+  // India's districts are all here, so a district name in one state is evidence
+  // on its own; a town name unique in this index is not unique in India
+  // ("Nerul" is both a Navi Mumbai node and a Goa village, and only the second
+  // is a GeoNames place here).
+  const districtStates = new Map();
+  const addDistrict = (name, region) => {
+    const key = norm(name);
+    if (key.length < 4) return;
+    if (!districtStates.has(key)) districtStates.set(key, new Set());
+    districtStates.get(key).add(toCanonical(region));
+  };
+  for (const place of places.places) if (place.at(5) && place.at(7)) addDistrict(place.at(7), place.at(5));
+  for (const [, region, district] of places.postcodes) if (region && district) addDistrict(district, region);
+  for (const [region, districts] of Object.entries(aliases.districts || {})) {
+    for (const [alias, name] of Object.entries(districts)) { addDistrict(alias, region); addDistrict(name, region); }
+  }
   const GENERIC = new Set(['main road', 'road', 'district', 'india', 'na', 'city', 'town', 'college', 'campus', 'library', 'central library']);
   const statesOfPlaces = (text) => {
     const parts = String(text || '').split(/[,;/()\n]|\.(?!\w\.)|\bdist(?:rict)?\b\.?|\btal(?:uka)?\b\.?/i).map(norm).filter((part) => part && !GENERIC.has(part));
     const found = new Map();
     for (const part of parts) {
       const states = placeStates.get(part);
-      if (states) found.set(part, states);
+      // A matched part that is also a district name anywhere counts that state too.
+      if (states) found.set(part, new Set([...states, ...(districtStates.get(part) || [])]));
     }
     // States every matched part agrees on: "Sakri, Dhule" is Maharashtra because
     // Dhule lies only there, even though another Sakri lies elsewhere.
     const sets = [...found.values()];
     const shared = sets.length ? new Set([...sets[0]].filter((state) => sets.every((states) => states.has(state)))) : new Set();
     const union = new Set(sets.flatMap((states) => [...states]));
-    return { shared, union, matched: [...found.keys()] };
+    const matched = [...found.keys()];
+    // Enough to fill a state: two distinct parts agreeing on it, or a part that
+    // names a district of it. One town name alone is not.
+    const districts = matched.filter((part) => shared.size === 1 && districtStates.get(part)?.has([...shared][0]));
+    return { shared, union, matched, districts, settled: shared.size === 1 && (matched.length >= 2 || districts.length > 0) };
   };
   const normalizeState = (value) => canonical.get(String(value || '').trim().toLowerCase().replace(/\s+/g, ' ')) || null;
   const pinsIn = (text) => [...new Set(String(text || '').replace(/(\d{3})\s(\d{3})/g, '$1$2').match(/(?<!\d)[1-9]\d{5}(?!\d)/g) || [])];
@@ -138,7 +164,8 @@ export function createResolver({ places, aliases }) {
     if (named.length === 1) return { region: named[0], evidence: { kind: 'address-state-name', value: addressText.slice(0, 160), sourceUrl: published?.sourceUrl || entry.addressSourceUrl } };
     if (named.length > 1) return { unresolved: `address names ${named.join(', ')}` };
     const placeMatch = statesOfPlaces(addressText);
-    if (placeMatch.shared.size === 1) return { region: [...placeMatch.shared][0], evidence: { kind: 'address-place', value: placeMatch.matched.join(', '), sourceUrl: published?.sourceUrl || entry.addressSourceUrl } };
+    if (placeMatch.settled) return { region: [...placeMatch.shared][0], evidence: { kind: 'address-place', value: placeMatch.matched.join(', '), sourceUrl: published?.sourceUrl || entry.addressSourceUrl } };
+    if (placeMatch.shared.size === 1) return { unresolved: `one town name only (${placeMatch.matched[0]}, ${[...placeMatch.shared][0]} in the place index): needs a second agreeing part or a district` };
     if (placeMatch.union.size > 1) return { unresolved: `address places ${placeMatch.matched.join(', ')} lie in ${[...placeMatch.union].join(', ')}` };
     if (pinSources.length) return { unresolved: `PIN ${pinSources.map((source) => source.pin).join(', ')} not in one GeoNames state` };
     if (contact && contact.outcome !== 'answered') return { unresolved: `contact page ${contact.outcome}` };
@@ -163,7 +190,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1
   const listedMissing = Object.entries(unresolved).filter(([, item]) => item.listed).length;
   const output = {
     version: 1,
-    basis: 'State (and an unambiguous district) for Indian directory libraries that have none, from published evidence only: the library\'s own published state field, a PIN code GeoNames places in exactly one state, or exactly one state named in its published address. Never from a library\'s name. Generated by tools/directory/india-regions.mjs; do not edit by hand.',
+    basis: 'State (and an unambiguous district) for Indian directory libraries that have none, from published evidence only: the library\'s own published state field, a PIN code GeoNames places in exactly one state, exactly one state named in its published address, or address place names that share one state when two distinct parts agree or one names a district (never a lone town name). Never from a library\'s name. Generated by tools/directory/india-regions.mjs; do not edit by hand.',
     counts: { filled: Object.keys(libraries).length, unresolved: Object.keys(unresolved).length, unresolvedListed: listedMissing },
     libraries: Object.fromEntries(Object.entries(libraries).sort()),
     unresolved: Object.fromEntries(Object.entries(unresolved).sort()),

@@ -43,6 +43,37 @@ test('district and place names in a published address count only when they share
   assert.match(ambiguous.unresolved, /lie in/);
 });
 
+test('one town name that is unique in the place index is not enough for a state', () => {
+  // Ghogaon is a GeoNames place only in Madhya Pradesh, but the institution
+  // publishing just "Ghogaon" is in Satara, Maharashtra.
+  const lone = resolve({ id: 'libman:lone', address: 'Ghogaon' });
+  assert.equal(lone.region, undefined);
+  assert.match(lone.unresolved, /one town name only \(ghogaon/);
+  // A second part agreeing on the same state, or a district of it, still settles it.
+  assert.equal(resolve({ id: 'libman:two', address: 'Shirpur, Dist. Dhule' }).region, 'Maharashtra');
+  assert.equal(resolve({ id: 'libman:district', address: 'Tal. Chandgad Dist. Kolhapur' }).region, 'Maharashtra');
+  assert.equal(resolve({ id: 'libman:district-alias', address: 'Belgaum' }).region, 'Karnataka');
+});
+
+test('Nerul in Navi Mumbai is not filled as Goa, where the place index has its only Nerul', () => {
+  for (const address of ['Kurup Vidyanagri, Plot no. 31, Sector -25, Seawoods, Nerul, Navi-Mumbai', 'NERUL']) {
+    const result = resolve({ id: 'libman:nerul', address });
+    assert.equal(result.region, undefined, address);
+    assert.match(result.unresolved, /one town name only \(nerul, Goa/, address);
+  }
+  // The committed file leaves the confirmed cases without a state rather than guess.
+  for (const id of ['libman:401', 'libman:440', 'libman:508', 'libman:332', 'libman:391']) {
+    assert.equal(regions.libraries[id], undefined, id);
+    assert.ok(regions.unresolved[id], id);
+    assert.equal(getLibraryById(id).region ?? '', '', id);
+  }
+  for (const fill of Object.values(regions.libraries)) {
+    if (fill.evidence.kind === 'address-place' && !fill.evidence.value.includes(', ')) {
+      assert.ok(resolve({ id: 'libman:check', address: fill.evidence.value }).region, `${fill.evidence.value} must be a district`);
+    }
+  }
+});
+
 test('a library name is never evidence', () => {
   const result = resolve({ id: 'egranthalaya:aps-x', name: 'Air Force School Jaisalmer Library' });
   assert.equal(result.region, undefined);
