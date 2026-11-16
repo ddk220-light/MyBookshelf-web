@@ -45,6 +45,7 @@
 *Checks*
 - Server: 827 passed, 24 database skips, 1 failure. The failure is `admin/admin.test.js:57`, a pre-existing flake that also fails on `main` about 1 run in 5: supertest's `127.0.0.1` connection can land on another local loopback listener.
 - Client 303; type checking; build; SEO 7; deployment 4; catalog and directory tooling 28.
+- After the state, allowlist-removal and connection fixes (16 November): server 832 passed, 24 database skips, 0 failures; client 303; type checking; build; SEO 7; deployment 4; catalog and directory tooling 34. Browser journeys not rerun.
 - WebKit journeys: 121 passed, 5 failed. The same 5 keyboard and focus journeys fail on `main` on this Mac.
 - Chromium journeys not run (Playwright Chromium not installed locally).
 
