@@ -11,8 +11,9 @@ import { enqueueTask, getJson } from './providers/http.js';
 //   authorWorks(authorKey)  /search.json?author_key=…&sort=readinglog   the author's most-read works
 //   relatedWorks(query)     /search.json?q=subject:"…" place:"…"&sort=readinglog
 //                           (or two specific subjects; never a single subject)
-// Related books need a cover, a title in Latin letters, and nothing for
-// adults or extremist; see `blockedBook`.
+// Related books need a cover, a title in Latin letters, nothing for adults
+// or extremist (`blockedBook`), and no school anthology or textbook
+// (`collectionOrTextbook`).
 
 const ORIGIN = 'https://openlibrary.org';
 const USER_AGENT = 'MyBookshelf/1.0 (book suggestions; https://mybookshelf.cloud/privacy)';
@@ -39,6 +40,29 @@ const EXTREMIST = /\b(national socialism|nazi\w*|neo-?nazi\w*|anti-?semiti\w*|wh
 /** A book never suggested: for adults only, or naming extremism, in its title or subjects. */
 export function blockedBook(title, subjects = []) {
   return forAdults(title || '', subjects) || EXTREMIST.test(title || '') || subjects.some(subject => EXTREMIST.test(subject));
+}
+// Nor school anthologies or textbooks: a work with many authors (a
+// "Prentice Hall Literature" volume lists about a hundred, all read out as
+// its name), or a title that names a collection or a school book. The title
+// is lowercased, apostrophes dropped and other punctuation spaced, so
+// "Teacher's Edition" reads "teachers edition". Each rule needs a school
+// word: "The Reader", "The English Teacher", "Sixth Grade Secrets" and
+// "Level 26" are novels and stay.
+export const MAX_SUGGESTED_AUTHORS = 3;
+const COLLECTION_TITLES = [
+  /\banthology\b|\banthologies\b/, // "The Norton Anthology of …" (not "The Anthologist")
+  /\btext ?books?\b|\bwork ?books?\b/,
+  /\bgrades? ?(\d|k\b)|\bclass ?\d/, // "Grade 7", "Grades K-2", "Class 10"
+  /\bliterature\b.*\b(level|course)\b|\b(level|course)\b.*\bliterature\b/, // "… Literature, Gold Level", "Elements of Literature: Third Course"
+  /\breaders?\b.*\b(level|stage) ?\d|\b(level|stage) ?\d.*\breaders?\b/, // "Penguin Readers Level 2"
+  /\b(students?|teachers?) (annotated )?edition\b|\bannotated teachers?\b/,
+];
+const schoolTitle = value => String(value || '').normalize('NFKC').toLocaleLowerCase('en').replace(/['’‘`]/g, '').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+/** A school anthology or textbook, never suggested: more than three authors, or a title naming a collection or school book. */
+export function collectionOrTextbook(title, authors = []) {
+  if (new Set((Array.isArray(authors) ? authors : []).map(schoolTitle).filter(Boolean)).size > MAX_SUGGESTED_AUTHORS) return true;
+  const words = schoolTitle(title);
+  return COLLECTION_TITLES.some(rule => rule.test(words));
 }
 // Related books come from Open Library's worldwide popularity list, so only
 // titles written in Latin letters (accents allowed) are suggested from it.
@@ -126,8 +150,9 @@ export function relatedQuery({ subjects = [], places = [] } = {}) {
 
 /**
  * Search docs to suggestion books: Open Library works with a title in Latin
- * letters, an author and a cover, nothing for adults or extremist, and only
- * the first of several works with the same title.
+ * letters, an author and a cover, nothing for adults or extremist, no school
+ * anthology or textbook, and only the first of several works with the same
+ * title.
  */
 export function parseSubjectWorks(data) {
   const books = [];
@@ -138,7 +163,7 @@ export function parseSubjectWorks(data) {
     const authors = names(doc?.author_name);
     const coverUrl = coverOf(doc?.cover_i);
     if (!workId || !title || !authors.length || !coverUrl) continue;
-    if (!LATIN_TITLE.test(title) || blockedBook(title, parseSubjects(doc?.subject))) continue;
+    if (!LATIN_TITLE.test(title) || blockedBook(title, parseSubjects(doc?.subject)) || collectionOrTextbook(title, authors)) continue;
     const key = titleKey(title);
     if (titles.has(key)) continue;
     titles.add(key);

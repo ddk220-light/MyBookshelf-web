@@ -2,7 +2,7 @@ import { parsePublicBookKey } from './contracts.js';
 import { sanitizePublicCoverUrl } from './metadata.js';
 import { parseRelatedSuggestions, parseSuggestionEvent } from './validation.js';
 import { validateAndNormalize } from '../services/isbn.js';
-import { blockedBook, createOpenLibrarySuggestionReads, parseWorkRecord, relatedQuery, titleKey } from '../services/openLibrarySuggestions.js';
+import { blockedBook, collectionOrTextbook, createOpenLibrarySuggestionReads, parseWorkRecord, relatedQuery, titleKey } from '../services/openLibrarySuggestions.js';
 import { peekOpenLibraryRead } from '../services/workDiscovery.js';
 
 // Shelf suggestions (docs/plans/2026-11-14-desktop-and-shelf-
@@ -16,10 +16,12 @@ import { peekOpenLibraryRead } from '../services/workDiscovery.js';
 // reader: its first author's most-read other works, then the most-read works
 // on its subject in its place, or on two of its specific subjects (never one
 // subject alone). Covers only, Latin-letter titles, nothing for adults or
-// naming extremism, one work per title. The address names only that book (an
-// ISBN key or an Open Library work key) and the answer holds nothing about the
-// reader, so Vercel's CDN and the browser keep it (RELATED_CACHE): a repeat
-// lookup costs no function run. The app merges up to three such lists, adds
+// naming extremism, no school anthology or textbook (more than three
+// authors, or a title such as "… Literature, Gold Level"), one work per
+// title. The address names only that book (an ISBN key or an Open Library
+// work key) and the answer holds nothing about the reader, so Vercel's CDN
+// and the browser keep it (RELATED_CACHE): a repeat lookup costs no function
+// run. The app merges up to three such lists, adds
 // its seed list, leaves out its saved books and picks five; it asks the
 // chosen library's stored answers itself (POST /holdings/lookup).
 //
@@ -28,7 +30,10 @@ import { peekOpenLibraryRead } from '../services/workDiscovery.js';
 // the subject-and-place list); each is also cached in this instance's memory
 // for 24 hours. A slow or failing Open Library gives fewer books (possibly
 // none) with 200 and `partial: true` by SUGGESTIONS_DEADLINE_MS; a partial
-// answer is kept by the CDN for a minute only and never by the browser.
+// answer is kept by the CDN for a minute only and never by the browser. An
+// empty complete answer (an unknown book, or Open Library's 404 or empty
+// list, which may be passing) is kept by the CDN for an hour and never by the
+// browser.
 //
 // The anonymous log (USAGE_LOG_ENABLED) gets one row per book the app reports
 // opened or saved: the book key and that word, nothing else. Neither the
@@ -47,14 +52,20 @@ const WORK_ID = /^OL\d+W$/;
  * `Cache-Control` and then sends the browser `max-age=0`, so the browser's
  * day is given separately.) A complete answer: a day in both, and the CDN
  * may serve it a week longer while it refreshes in the background. A
- * partial one: a minute at the CDN, so a failing Open Library is not asked
- * on every visit, and never in the browser. Errors keep the router's
- * `no-store`.
+ * complete answer with no books: an hour at the CDN and never in the
+ * browser, so a passing 404 or empty answer from Open Library does not stick
+ * for a day. A partial one: a minute at the CDN, so a failing Open Library is
+ * not asked on every visit, and never in the browser. Errors keep the
+ * router's `no-store`.
  */
 export const RELATED_CACHE = Object.freeze({
   complete: Object.freeze({ 'Cache-Control': 'public, max-age=86400', 'Vercel-CDN-Cache-Control': 'public, max-age=86400, stale-while-revalidate=604800' }),
+  empty: Object.freeze({ 'Cache-Control': 'no-store', 'Vercel-CDN-Cache-Control': 'public, max-age=3600' }),
   partial: Object.freeze({ 'Cache-Control': 'no-store', 'Vercel-CDN-Cache-Control': 'public, max-age=60' }),
 });
+
+/** The cache headers for a related answer: partial, empty or complete. */
+export const relatedCacheFor = ({ books, partial }) => (partial ? RELATED_CACHE.partial : books.length ? RELATED_CACHE.complete : RELATED_CACHE.empty);
 
 const text = (value, maximum) => (typeof value === 'string' && value.trim() ? value.trim().slice(0, maximum) : null);
 
@@ -162,7 +173,7 @@ export function createSuggestionService({ reads = createOpenLibrarySuggestionRea
     return value;
   }
 
-  const usable = book => book?.coverUrl && book.authors.length;
+  const usable = book => book?.coverUrl && book.authors.length && !collectionOrTextbook(book.title, book.authors);
 
   /**
    * `{ books, partial }` for one book: its first author's most-read other
@@ -216,7 +227,7 @@ export function createSuggestionRoutes({ store = null, ...options } = {}) {
     let result;
     // Fails open: whatever is known, possibly nothing; the app adds its seed list.
     try { result = await service.related(bookKey); } catch { result = { books: [], partial: true }; }
-    res.set(result.partial ? RELATED_CACHE.partial : RELATED_CACHE.complete);
+    res.set(relatedCacheFor(result));
     res.json({ books: result.books, ...(result.partial ? { partial: true } : {}) });
   }
 

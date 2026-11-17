@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import request from 'supertest';
 import { makeTestApp } from '../test/helpers.js';
@@ -7,7 +8,7 @@ import { createRedactedTelemetrySink } from './telemetry.js';
 import { OUTBOUND_CAP, RELATED_CACHE, RELATED_RETURNED, SUGGESTION_CACHE_TTL_MS } from './suggestions.js';
 import { createCatalogStore } from '../catalog-store/index.js';
 import { readCatalogStoreConfig } from '../catalog-store/config.js';
-import { blockedBook, createOpenLibrarySuggestionReads, isBroadSubject, isJunkSubject, parseSubjectWorks, parseWorkRecord, readOpenLibrary,
+import { blockedBook, collectionOrTextbook, createOpenLibrarySuggestionReads, isBroadSubject, isJunkSubject, parseSubjectWorks, parseWorkRecord, readOpenLibrary,
   relatedQuery } from '../services/openLibrarySuggestions.js';
 import { clearHttpCache } from '../services/providers/http.js';
 
@@ -111,8 +112,10 @@ test('validation: exactly one `book`, an ISBN key or an Open Library work key; n
   ]) assert.equal((await event(app, body)).status, 400, JSON.stringify(body));
 });
 
-test('cache headers: a complete answer is kept a day by the browser and Vercel’s CDN; a partial one a minute by the CDN only', async () => {
+test('cache headers: a complete answer is kept a day by the browser and Vercel’s CDN; an empty one an hour by the CDN only; a partial one a minute by the CDN only', async () => {
   assert.deepEqual(RELATED_CACHE.complete, { 'Cache-Control': 'public, max-age=86400', 'Vercel-CDN-Cache-Control': 'public, max-age=86400, stale-while-revalidate=604800' });
+  assert.deepEqual(RELATED_CACHE.empty, { 'Cache-Control': 'no-store', 'Vercel-CDN-Cache-Control': 'public, max-age=3600' });
+  assert.deepEqual(RELATED_CACHE.partial, { 'Cache-Control': 'no-store', 'Vercel-CDN-Cache-Control': 'public, max-age=60' });
   const fine = harness({ openLibrary: fakeOpenLibrary({ works: RECENT, related: { [ROCKETRY_IN_INDIA]: [relatedWork(201)] } }) });
   const good = await related(fine.app, 'v1:openlibrary:OL100W');
   assert.equal(good.status, 200);
@@ -121,9 +124,15 @@ test('cache headers: a complete answer is kept a day by the browser and Vercel�
   // Never a cookie, and nothing that varies by reader.
   assert.equal(good.headers['set-cookie'], undefined);
   assert.ok(!/cookie|authorization/i.test(good.headers.vary || ''), good.headers.vary);
-  // A complete answer with no related books is still complete.
-  const none = await related(harness().app, 'v1:openlibrary:OL5W');
-  assert.deepEqual([none.body, ...cacheHeaders(none)], [{ books: [] }, 'public, max-age=86400', 'public, max-age=86400, stale-while-revalidate=604800']);
+  // A complete answer with no related books (a book Open Library does not know, or a 404 or empty
+  // list that may be passing) is kept an hour at the CDN and never by the browser, not a day.
+  const none = await related(harness().app, 'v1:openlibrary:OL99999999999W');
+  assert.deepEqual([none.status, none.body, ...cacheHeaders(none)], [200, { books: [] }, 'no-store', 'public, max-age=3600']);
+  // Lists that answered but left nothing to suggest (only the book itself, or no cover) count as empty too.
+  const leftOut = harness({ openLibrary: fakeOpenLibrary({ works: RECENT, authors: { OL100A: [relatedWork(100)] },
+    related: { [ROCKETRY_IN_INDIA]: [{ ...relatedWork(202), coverUrl: undefined }] } }) });
+  const nothing = await related(leftOut.app, 'v1:openlibrary:OL100W');
+  assert.deepEqual([nothing.body, ...cacheHeaders(nothing)], [{ books: [] }, 'no-store', 'public, max-age=3600']);
   // Open Library down: partial, kept a minute at the CDN and not at all in the browser.
   const down = harness({ openLibrary: fakeOpenLibrary({ fail: true }) });
   const partial = await related(down.app, 'v1:openlibrary:OL100W');
@@ -181,12 +190,12 @@ test('related: a work with one specific subject and no place gets only its autho
   const response = await related(harness({ openLibrary }).app, 'v1:openlibrary:OL100W');
   assert.deepEqual(keys(response), ['v1:openlibrary:OL201W']);
   assert.deepEqual(openLibrary.calls.map(([kind]) => kind), ['work', 'author']);
-  // A book that names extremism or is for adults leads to nothing related at all (a complete answer).
+  // A book that names extremism or is for adults leads to nothing related at all (a complete answer, kept as an empty one).
   for (const subjects of [['National socialism', 'Germany'], ['Erotic literature', 'France']]) {
     const blocked = fakeOpenLibrary({ works: { [work(100)]: record(100, { subjects, places: ['Germany'] }) }, authors: { OL100A: [relatedWork(201)] } });
     const answer = await related(harness({ openLibrary: blocked }).app, 'v1:openlibrary:OL100W');
     assert.deepEqual(answer.body, { books: [] });
-    assert.equal(answer.headers['cache-control'], 'public, max-age=86400');
+    assert.deepEqual(cacheHeaders(answer), ['no-store', 'public, max-age=3600']);
     assert.deepEqual(blocked.calls.map(([kind]) => kind), ['work']);
   }
 });
@@ -442,4 +451,50 @@ test('Open Library reads are sent once, never retried, and a 404 is no record', 
     assert.equal(await readOpenLibrary('/works/OL2W.json'), null);
     assert.equal(calls, 2);
   } finally { globalThis.fetch = realFetch; }
+});
+
+// R. K. Narayan's most-read works as Open Library gave them on 17 November 2026
+// (author_name trimmed to 24 names): two "Prentice Hall Literature" school
+// anthologies came back among his novels after viewing Malgudi Days.
+const NARAYAN = JSON.parse(readFileSync(new URL('../test/fixtures/suggestions/author-rk-narayan.json', import.meta.url), 'utf8')).response;
+
+test('anthologies and textbooks: the Prentice Hall anthologies after Malgudi Days are left out; Narayan’s novels stay', async () => {
+  const prenticeHall = NARAYAN.docs.filter(doc => /^Prentice Hall Literature/.test(doc.title));
+  assert.equal(prenticeHall.length, 2);
+  assert.ok(prenticeHall.every(doc => doc.author_name.length > 20), 'each lists dozens of authors');
+  const parsed = parseSubjectWorks(NARAYAN);
+  assert.deepEqual(parsed.map(book => book.title), ['Malgudi days', 'Swami and Friends', 'The painter of signs', 'The English teacher', 'The Guide',
+    'The dark room', 'The vendor of sweets']);
+  // Through the route: the viewed book's author list as parsed, never an anthology, never the book itself.
+  const openLibrary = fakeOpenLibrary({ works: { OL1057177W: { workId: 'OL1057177W', title: 'Malgudi days', subjects: ['India', 'fiction', 'classics'], places: [],
+    authorKeys: ['OL5911201A'] } }, authors: { OL5911201A: parsed } });
+  const response = await related(harness({ openLibrary }).app, 'v1:openlibrary:OL1057177W');
+  assert.deepEqual(response.body.books.map(book => book.title), ['Swami and Friends', 'The painter of signs', 'The English teacher', 'The Guide', 'The dark room',
+    'The vendor of sweets']);
+  // The route checks every list again (as for covers and authors): an anthology from any list is dropped.
+  const raw = fakeOpenLibrary({ works: RECENT, related: { [ROCKETRY_IN_INDIA]: [
+    { ...relatedWork(401), authors: ['A', 'B', 'C', 'D'] }, { ...relatedWork(402), title: 'Prentice Hall Literature Grade 8' }, relatedWork(403)] } });
+  assert.deepEqual(keys(await related(harness({ openLibrary: raw }).app, 'v1:openlibrary:OL100W')), ['v1:openlibrary:OL403W']);
+});
+
+test('anthologies and textbooks: more than three authors, or a title naming a collection or school book; near-miss titles stay', () => {
+  const one = ['Some Author'];
+  // More than three different authors; three is still a book.
+  assert.equal(collectionOrTextbook('Stories', ['A', 'B', 'C', 'D']), true);
+  assert.equal(collectionOrTextbook('Good Omens', ['Terry Pratchett', 'Neil Gaiman']), false);
+  assert.equal(collectionOrTextbook('Three Hands', ['A', 'B', 'C']), false);
+  assert.equal(collectionOrTextbook('Same Name Twice', ['A', 'a', 'B', 'C']), false);
+  for (const title of [
+    'Prentice Hall Literature--Timeless Voices, Timeless Themes--Gold Level', 'Prentice Hall Literature Grade 8', 'Prentice Hall Literature, Penguin Edition, Grade 10',
+    'The Norton Anthology of English Literature', 'An Anthology of Indian Poetry', 'Anthologies for Young Readers',
+    'Mathematics Textbook for Class 10', 'NCERT Science Class 7', 'English Workbook', 'Spelling Work Book Grades K-2', 'Text Book of Botany',
+    'Grade 5 Reading Comprehension', 'Elements of Literature: Third Course', 'Literature, Silver Level',
+    'Penguin Readers Level 2: The Railway Children', 'Level 3 Reader: Animals', 'Holt Literature and Language Arts, Student Edition',
+    "Literature: Teacher's Edition", 'Teachers’ Edition: World History', "Annotated Teacher's Edition",
+  ]) assert.equal(collectionOrTextbook(title, one), true, title);
+  for (const title of [
+    'The Reader', 'Reading Lolita in Tehran', 'A Grade of Gold', 'Sixth Grade Secrets', 'The English Teacher', 'Teacher Man', 'The Anthologist',
+    'Level 26: Dark Origins', 'A Class Apart', 'First Class Murder', 'The Class', 'Malgudi Days', 'The Literature Police', 'The Student',
+    'The Book Thief', 'Wings of Fire', 'Classic Stories', 'The Text', 'Class of 1999', 'The Reader’s Edition',
+  ]) assert.equal(collectionOrTextbook(title, one), false, title);
 });

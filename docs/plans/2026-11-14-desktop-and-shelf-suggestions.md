@@ -100,9 +100,9 @@ Order of work: build the desktop layout first, then suggestions on both mobile a
     rules are unchanged.
 13. **Cost.** Per refresh, up to three related-list GETs and, with a library chosen, one
     stored-answers lookup; nothing when there is no chosen library and no recent book. A related
-    list is kept a day by the browser and by Vercel's CDN (a week longer while it refreshes), so a
-    repeat costs no function run; behind that, each instance also caches its Open Library reads
-    for 24 hours. The store is read once per refresh, about the candidates only. No catalog
+    list is kept a day by the browser and by Vercel's CDN (a week longer while it refreshes; an
+    empty one an hour, by the CDN only), so a repeat costs no function run; behind that, each
+    instance also caches its Open Library reads for 24 hours. The store is read once per refresh, about the candidates only. No catalog
     requests are made for suggestions.
 14. **Reduced motion.** Suggestions appear and turn solid without animation.
 15. **Clearing browser data or signing out** returns a guest to the cold open.
@@ -117,9 +117,11 @@ Order of work: build the desktop layout first, then suggestions on both mobile a
   `Cache-Control: public, max-age=86400` for the browser and
   `Vercel-CDN-Cache-Control: public, max-age=86400, stale-while-revalidate=604800` for Vercel's CDN
   (Vercel consumes an `s-maxage` in `Cache-Control` and then sends the browser `max-age=0`, so
-  the two are given separately). A partial answer (Open Library failed or was slow) carries
-  `no-store` for the browser and a minute at the CDN; errors keep `no-store`. It never reads the
-  catalog store. The client (`client/src/v2/suggestions/serverSource.ts`) asks for up to three
+  the two are given separately). A complete answer with no books (a book Open Library does not
+  know, or a 404 or empty list that may be passing) carries `no-store` for the browser and
+  `public, max-age=3600` for the CDN, so it does not stick for a day. A partial answer (Open
+  Library failed or was slow) carries `no-store` for the browser and a minute at the CDN;
+  errors keep `no-store`. It never reads the catalog store. The client (`client/src/v2/suggestions/serverSource.ts`) asks for up to three
   recent books' lists, merges them newest first, then the seed list, leaves out saved books
   (`suggestionCandidates`: the pick's rules without one-per-author), bounds the candidates to
   100 (the lookup's limit), and with a library chosen asks `POST /api/v2/holdings/lookup` once
@@ -159,6 +161,13 @@ Order of work: build the desktop layout first, then suggestions on both mobile a
       alone gave American politics for *Wings of Fire*.
     - Covers only, titles in Latin letters, and nothing for adults or naming extremism (titles and
       subjects). Nothing is suggested from a recent book that is itself blocked.
+    - No school anthologies or textbooks (17 November 2026: after *Malgudi Days*, two "Prentice
+      Hall Literature" anthologies, about a hundred authors each, came back from R. K. Narayan's
+      list): a work with more than three authors, or a title naming a collection or school book
+      ("anthology", "textbook", "workbook", "Grade 7", "Class 10", "literature" with a level
+      or course, "reader" with a level or stage, "student/teacher's edition";
+      `collectionOrTextbook` in `server/services/openLibrarySuggestions.js`). Novels such as
+      *The Reader*, *The English Teacher* or *Sixth Grade Secrets* stay.
   - At most 3 Open Library requests per suggestion request: the recent work's record, the author's
     list and the subject-and-place list; the library's part costs none. Each is cached in each
     instance's memory for 24 hours. No catalog request is ever made.
