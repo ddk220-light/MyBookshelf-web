@@ -145,10 +145,11 @@ for (const route of [
     expect(
       await screen.findByRole("link", { name: "Synthetic browser shelf by Synthetic author" }),
     ).toBeInTheDocument();
+    // Nothing was submitted: the shelf's own suggestions only ask with GET
+    // (book keys only, no account data), so nothing was posted.
     expect(
       fetch.mock.calls.every(
-        (args) =>
-          (args as unknown as [string, RequestInit])[1]?.method !== "POST",
+        (args) => (args as unknown as [string, RequestInit])[1]?.method !== "POST",
       ),
     ).toBe(true);
   });

@@ -7,9 +7,12 @@ import { useCatalogMetadata } from '../../catalogMetadata';
 import { goodreadsUrl, messageFor, sourceFromLocation, useLibrary } from '../../context';
 import { SAVED_BOOKS_CAP } from '../../localState';
 import { findSavedBook } from '../../oneShelfState';
+import { reportSuggestion } from '../../suggestions/serverSource';
 import type { PublicBook } from '../../types';
 import { useCoverImage } from '../BookCard';
+import { useDeskSlot } from '../desk/layoutMode';
 import { BackGlyph, ExternalGlyph } from '../home/homeIcons';
+import { SlotClose } from '../panel/PanelPage';
 import { useHistoryOverlay } from '../home/useHistoryOverlay';
 import { LibraryPickerDialog } from '../library/LibraryPickerDialog';
 import { spinePalette } from '../shelf/spineColors';
@@ -45,6 +48,16 @@ export function openLibraryUrl(book: Pick<PublicBook, 'bookKey' | 'workId' | 'is
   return book.isbn13 ? 'https://openlibrary.org/isbn/' + book.isbn13 : null;
 }
 
+// The history entries whose suggestion open was counted, for this page load
+// only (memory, never browser storage).
+const countedOpens = new Set<string>();
+function firstOpen(entry: string): boolean {
+  if (countedOpens.has(entry)) return false;
+  countedOpens.add(entry);
+  if (countedOpens.size > 500) countedOpens.delete(countedOpens.values().next().value as string);
+  return true;
+}
+
 /**
  * The one-shelf book page (Book, BookChecked and BookStates boards): the
  * cover standing up, title, author, first published and ISBN; one button to
@@ -53,8 +66,14 @@ export function openLibraryUrl(book: Pick<PublicBook, 'bookKey' | 'workId' | 'is
  * Goodreads and Open Library. A placeholder record (no public data for an
  * ISBN) shows only what is known. Choosing a library here opens the library
  * pop-up over the page and checks this book without leaving it.
+ *
+ * In the desktop middle slot (DeskBook board) the page has a close button (×)
+ * instead of Back, the library picker is the layout's (the left column at
+ * wide widths), and no "Added to your shelf" notice is needed at wide widths:
+ * the shelf beside the book shows it.
  */
 export function ShelfBookPage() {
+  const slot = useDeskSlot();
   const { bookKey } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
@@ -91,6 +110,14 @@ export function ShelfBookPage() {
     return () => document.removeEventListener('visibilitychange', record);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [book?.bookKey, rememberBook, libraryState.loadingAccount]);
+  // Opened from a shelf suggestion (router state only): counted in the
+  // anonymous log, with the book key and nothing else, once per history entry
+  // (the page drawn again, or Back and Forward to it, is the same open).
+  const fromSuggestion = Boolean(navigation?.suggested && navigation.book?.bookKey === bookKey);
+  useEffect(() => {
+    if (!fromSuggestion || !bookKey || !firstOpen(location.key)) return;
+    reportSuggestion('opened', bookKey);
+  }, [fromSuggestion, bookKey, location.key]);
   useEffect(() => {
     if (book && opened.current === book.bookKey && libraryState.updateRecentDisplay) void libraryState.updateRecentDisplay(book);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -106,7 +133,8 @@ export function ShelfBookPage() {
       navigate(-1);
     }
   };
-  const back = <Link className="back-link shelf-book-back" to="/app/shelf" state={backState} onClick={goBack}><BackGlyph size={20} />Back</Link>;
+  const back = slot ? <SlotClose label="Close the book" onClose={slot.close} />
+    : <Link className="back-link shelf-book-back" to="/app/shelf" state={backState} onClick={goBack}><BackGlyph size={20} />Back</Link>;
 
   // Library pop-up over the book (its own history entry).
   const picker = useHistoryOverlay('library');
@@ -154,6 +182,7 @@ export function ShelfBookPage() {
         return;
       }
       const result = await saveBook(book);
+      if (result === 'saved' && fromSuggestion) reportSuggestion('saved', book.bookKey);
       if (result === 'saved' || result === 'already-saved') { setPopTick(true); setAdded(true); setAnnouncement('Added to your shelf'); return; }
       const message = result === 'full' ? 'Shelf full' : result === 'recovery' ? 'Reload your saved shelf before making changes.' : 'Couldn’t save this book. Try again.';
       setSaveError(message); setAnnouncement(message);
@@ -208,8 +237,9 @@ export function ShelfBookPage() {
     </section>
 
     <p className="visually-hidden" role="status">{announcement}</p>
-    {added && saved && <div className="undo-notice shelf-book-toast"><span>Added to your shelf</span><Link to="/app/shelf">See my shelf</Link></div>}
-    <LibraryPickerDialog open={picker.open} onClose={picker.close} returnFocus={pickerReturn} />
+    {added && saved && slot?.mode !== 'wide' && <div className="undo-notice shelf-book-toast"><span>Added to your shelf</span>
+      {slot ? <button type="button" onClick={slot.close}>See my shelf</button> : <Link to="/app/shelf">See my shelf</Link>}</div>}
+    {!slot && <LibraryPickerDialog open={picker.open} onClose={picker.close} returnFocus={pickerReturn} />}
   </section>;
 }
 

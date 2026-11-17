@@ -1,7 +1,25 @@
 import { readFile } from 'node:fs/promises';
 
+// Taking an advisory lock does not make a session read the shared role
+// catalog afresh, so right after another file's role changes commit, an ALTER
+// ROLE can still meet the old row and fail with "tuple concurrently updated"
+// (XX000). The whole setup is idempotent: it is run again, a few times.
+async function retryCatalogRace(work) {
+  for (let attempt = 1; ; attempt++) {
+    try { return await work(); }
+    catch (error) {
+      if (attempt >= 3 || !/tuple concurrently (updated|deleted)/.test(String(error?.message))) throw error;
+      await new Promise(resolve => setTimeout(resolve, 50 * attempt));
+    }
+  }
+}
+
 // Only called after each integration suite checks its disposable local *_test URL.
 export async function prepareTestRoles(admin) {
+  return retryCatalogRace(() => prepareTestRolesOnce(admin));
+}
+
+async function prepareTestRolesOnce(admin) {
   const c = await admin.connect();
   try {
     await c.query('BEGIN');
@@ -13,7 +31,7 @@ export async function prepareTestRoles(admin) {
       END $$`);
     await c.query(await readFile(new URL('../db/runtime-grants.sql', import.meta.url), 'utf8'));
     await c.query('COMMIT');
-  } catch (error) { await c.query('ROLLBACK'); throw error; }
+  } catch (error) { await c.query('ROLLBACK').catch(() => {}); throw error; }
   finally { c.release(); }
 }
 

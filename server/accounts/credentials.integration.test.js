@@ -47,8 +47,8 @@ test('fresh proof rotates the current session; password/reset notices and revoca
  const current=await identity(headers);
  await assert.rejects(credentials.changePassword({password:nextPassword+'x',currentPassword:password,proof:proof.proof},current,headers,()=>{}),e=>e.code==='RECENT_AUTH_REQUIRED');
  const known=await credentials.recover({email},'192.0.2.10');const unknown=await credentials.recover({email:`${randomUUID()}@example.test`},'192.0.2.10');assert.deepEqual(known,unknown);assert.equal(reset.length,1);
- await admin.query(`CREATE FUNCTION test_security_mail_failure() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.kind='passwordChanged' THEN RAISE EXCEPTION 'injected_security_mail_failure'; END IF; RETURN NEW; END $$`);
- await admin.query('CREATE TRIGGER test_security_mail_failure BEFORE INSERT ON account_mail_jobs FOR EACH ROW EXECUTE FUNCTION test_security_mail_failure()');
+ await admin.query(`CREATE FUNCTION test_security_mail_failure() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.kind='passwordChanged' AND NEW."authUserId"=TG_ARGV[0] THEN RAISE EXCEPTION 'injected_security_mail_failure'; END IF; RETURN NEW; END $$`);
+ await admin.query(`CREATE TRIGGER test_security_mail_failure BEFORE INSERT ON account_mail_jobs FOR EACH ROW EXECUTE FUNCTION test_security_mail_failure('${current.authUserId.replaceAll("'","''")}')`);
  const resetPassword=`reset synthetic password ${randomUUID()}`;
  await assert.rejects(credentials.reset({token:reset[0].token,password:resetPassword},'192.0.2.10'));
  assert.ok(await auth.api.getSession({headers}));

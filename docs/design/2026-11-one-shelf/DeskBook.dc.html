@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Desktop book open</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#2f5340}a:hover{color:#1f3a2c}
+@keyframes desk-left-narrow{from{flex-basis:300px;width:300px}to{flex-basis:248px;width:248px}}
+@keyframes desk-book-in{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes desk-book-width{from{flex-basis:0;width:0}to{flex-basis:600px;width:600px}}
+@keyframes desk-shelf-push{from{transform:translateX(-548px)}to{transform:none}}
+@keyframes desk-scrim-in{from{opacity:0}to{opacity:1}}
+.desk-left{animation:desk-left-narrow 480ms cubic-bezier(.22,.8,.2,1) both}
+.desk-book-slot{animation:desk-book-width 480ms cubic-bezier(.22,.8,.2,1) both}
+.desk-book{animation:desk-book-in 420ms 120ms cubic-bezier(.22,.8,.2,1) both}
+.desk-shelf{animation:desk-shelf-push 480ms cubic-bezier(.22,.8,.2,1) both}
+.desk-scrim{animation:desk-scrim-in 480ms ease both}
+@media (prefers-reduced-motion: reduce){.desk-left,.desk-book-slot,.desk-book,.desk-shelf,.desk-scrim{animation:none}}
+</style>
+</helmet>
+<div style="width: 100%; height: 900px; display: flex; background: #faf7f1; color: #1f1a17; font-family: 'Work Sans', sans-serif; font-size: 15px; line-height: 1.5; overflow: hidden">
+
+<aside class="desk-left" aria-label="Library and account" style="flex: 0 0 248px; width: 248px; box-sizing: border-box; height: 900px; background: #f3ede2; border-right: 1px solid #e2d9ca; padding: 28px 20px 24px; display: flex; flex-direction: column; gap: 30px; overflow: hidden">
+<div style="font-family: Newsreader, serif; font-size: 26px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.1; white-space: nowrap">MyBookshelf</div>
+<section aria-labelledby="lib-h" style="display: flex; flex-direction: column; gap: 10px">
+<h2 id="lib-h" style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #6b6259">My library</h2>
+<div style="display: flex; align-items: center; gap: 10px">
+<span aria-hidden="true" style="flex-shrink: 0; width: 40px; height: 40px; box-sizing: border-box; border-radius: 10px; background: #faf7f1; border: 1px solid #d6cdbf; display: flex; align-items: center; justify-content: center">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4a423b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16M6 20V9l6-4 6 4v11M10 20v-5h4v5"></path></svg>
+</span>
+<div style="display: flex; flex-direction: column; min-width: 0">
+<div style="font-weight: 600; line-height: 1.3">Anna Centenary Library</div>
+<div style="font-size: 14px; color: #6b6259">Kotturpuram, Chennai</div>
+</div>
+</div>
+<a href="DeskLibrary.dc.html" style="align-self: flex-start; min-height: 44px; display: flex; align-items: center; font-weight: 600; text-decoration: none">Change</a>
+</section>
+<section aria-labelledby="acct-h" style="display: flex; flex-direction: column; gap: 6px">
+<h2 id="acct-h" style="margin: 0 0 4px; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #6b6259">Account</h2>
+<div style="display: flex; align-items: center; gap: 10px; min-height: 44px">
+<span aria-hidden="true" style="flex-shrink: 0; width: 34px; height: 34px; border-radius: 17px; background: #2f5340; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 600">D</span>
+<div style="font-size: 14px; color: #4a423b; overflow-wrap: anywhere">[EMAIL]</div>
+</div>
+<a href="#" style="min-height: 40px; display: flex; align-items: center; font-weight: 500; text-decoration: none">Account settings</a>
+<a href="#" style="min-height: 40px; display: flex; align-items: center; font-weight: 500; text-decoration: none">Log out</a>
+</section>
+<section aria-labelledby="light-h" style="display: flex; flex-direction: column; gap: 10px">
+<h2 id="light-h" style="margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #6b6259">Reading light</h2>
+<div role="group" aria-labelledby="light-h" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid #d6cdbf; border-radius: 10px; overflow: hidden; background: #ffffff">
+<button aria-pressed="true" style="height: 44px; border: 0; padding: 0; background: #e3ecdf; color: #1f3a2c; font: inherit; font-size: 12px; font-weight: 600">Daylight</button>
+<button aria-pressed="false" style="height: 44px; border: 0; padding: 0; border-left: 1px solid #d6cdbf; background: #ffffff; color: #4a423b; font: inherit; font-size: 12px">Lamplight</button>
+<button aria-pressed="false" style="height: 44px; border: 0; padding: 0; border-left: 1px solid #d6cdbf; background: #ffffff; color: #4a423b; font: inherit; font-size: 12px">Ink</button>
+</div>
+</section>
+<nav aria-label="Help" style="margin-top: auto; display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 14px">
+<a href="#" style="min-height: 36px; display: flex; align-items: center; text-decoration: none; color: #4a423b">Report a problem</a>
+<a href="#" style="min-height: 36px; display: flex; align-items: center; text-decoration: none; color: #4a423b">Privacy</a>
+<a href="#" style="min-height: 36px; display: flex; align-items: center; text-decoration: none; color: #4a423b">About</a>
+</nav>
+</aside>
+
+<div class="desk-book-slot" style="flex: 0 0 600px; width: 600px; height: 900px; position: relative; z-index: 2">
+<article class="desk-book" aria-labelledby="book-title" style="position: absolute; inset: 0; box-sizing: border-box; background: #fffdf8; box-shadow: 0 0 0 1px #e7e0d5, 0 0 48px rgba(31,26,23,.18); padding: 24px 40px 32px; display: flex; flex-direction: column; overflow: hidden">
+<a href="DeskShelf.dc.html" aria-label="Close the book" style="position: absolute; top: 14px; right: 14px; width: 44px; height: 44px; border-radius: 22px; display: flex; align-items: center; justify-content: center; color: #4a423b">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+</a>
+
+<div style="margin-top: 22px; display: flex; gap: 32px; align-items: flex-end">
+<div aria-hidden="true" style="flex-shrink: 0; position: relative; width: 150px; height: 225px; margin: 10px 10px 0 0; box-shadow: 10px 8px 18px -6px rgba(31,26,23,.4)">
+<span style="position: absolute; left: 0; bottom: 100%; width: 100%; height: 10px; transform: skewX(-45deg); transform-origin: 0 100%; background: repeating-linear-gradient(0deg, #f6efe0 0 1px, #ddd2bc 1px 2px)"></span>
+<span style="position: absolute; left: 100%; top: 0; width: 10px; height: 100%; transform: skewY(-45deg); transform-origin: 0 0; background: repeating-linear-gradient(90deg, #e9dfca 0 1px, #cdbfa5 1px 2px)"></span>
+<span style="position: absolute; inset: 0; box-sizing: border-box; padding: 14px 12px 14px 20px; border-radius: 1px 3px 3px 1px; background: linear-gradient(90deg, rgba(0,0,0,.3) 0, rgba(255,255,255,.16) 4px, rgba(0,0,0,.14) 9px, rgba(0,0,0,0) 16px), linear-gradient(115deg, rgba(255,255,255,.16), rgba(255,255,255,0) 45%), #7a2e2e; color: #fbf3e4; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 11px; text-align: center; font-family: Newsreader, serif; font-size: 20px; line-height: 1.2">
+<span>Wings of Fire</span>
+<span style="width: 26px; height: 1px; background: rgba(251,243,228,.65)"></span>
+<span style="font-family: 'Work Sans', sans-serif; font-size: 13px; line-height: 1.25">A. P. J. Abdul Kalam</span>
+</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px; min-width: 0; padding-bottom: 4px">
+<h1 id="book-title" style="margin: 0; font-family: Newsreader, serif; font-weight: 500; font-size: 32px; line-height: 1.1; letter-spacing: -0.025em">Wings of Fire: An Autobiography</h1>
+<div style="font-size: 17px; color: #4a423b">A. P. J. Abdul Kalam</div>
+<div style="font-size: 14px; color: #6b6259">First published 1999</div>
+<div style="font-size: 14px; color: #6b6259">ISBN 9788173711466</div>
+</div>
+</div>
+
+<button aria-pressed="true" style="margin-top: 26px; height: 52px; flex-shrink: 0; border: 1.500px solid #2f5340; border-radius: 12px; background: #e3ecdf; color: #1f3a2c; display: flex; align-items: center; justify-content: center; gap: 10px; font: inherit; font-size: 16px; font-weight: 600">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.400" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.500l4.500 4.500L19 7.500"></path></svg>
+On my shelf
+</button>
+
+<div role="group" aria-label="Found in Anna Centenary Library" style="margin-top: 14px; min-height: 60px; flex-shrink: 0; box-sizing: border-box; padding: 8px 8px 8px 14px; border-radius: 12px; background: #e3ecdf; border: 1px solid #b9d0b6; display: flex; align-items: center; gap: 10px">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f5a37" stroke-width="2.400" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.500l3 3 5-6"></path></svg>
+<span aria-hidden="true" style="flex-shrink: 0; width: 32px; height: 32px; box-sizing: border-box; border-radius: 8px; background: #faf7f1; border: 1px solid #d6cdbf; display: flex; align-items: center; justify-content: center">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4a423b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16M6 20V9l6-4 6 4v11M10 20v-5h4v5"></path></svg>
+</span>
+<span style="flex-grow: 1; font-weight: 600; color: #1f3a2c">Anna Centenary Library</span>
+<a href="#" style="min-height: 44px; padding: 0 8px; display: flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 600; text-decoration: none">
+Catalog
+<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5h5v5M19 5l-8 8M11 7H6v11h11v-5"></path></svg>
+</a>
+</div>
+
+<h2 style="margin: 28px 0 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #6b6259">About this book</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.6">Kalam’s own account of his life, from a boyhood in Rameswaram to his years leading India’s space and missile programmes.</p>
+
+<h2 style="margin: 26px 0 2px; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #6b6259">Read more elsewhere</h2>
+<a href="#" style="height: 46px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e7e0d5; text-decoration: none; font-weight: 500">
+Reviews on Goodreads
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5h5v5M19 5l-8 8M11 7H6v11h11v-5"></path></svg>
+</a>
+<a href="#" style="height: 46px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; text-decoration: none; font-weight: 500">
+All editions on Open Library
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5h5v5M19 5l-8 8M11 7H6v11h11v-5"></path></svg>
+</a>
+</article>
+</div>
+
+<div style="flex: 1 1 auto; min-width: 0; height: 900px; position: relative; overflow: hidden">
+<div class="desk-shelf" aria-hidden="true" style="width: 1140px; box-sizing: border-box; height: 900px; padding: 24px 40px 0">
+<div style="height: 52px; max-width: 680px; box-sizing: border-box; background: #ffffff; border: 1px solid #cfc6b8; border-radius: 14px"></div>
+<div style="margin: 22px 0 12px; font-family: Newsreader, serif; font-size: 34px; line-height: 1.1; letter-spacing: -0.025em">My shelf</div>
+<sc-for list="{{rows}}" as="row" hint-placeholder-count="2">
+<div style="display: flex; flex-direction: column; margin-bottom: 8px">
+<div style="margin-inline: -40px; padding: 18px 40px 0; background: linear-gradient(180deg, rgba(31,26,23,.13), rgba(31,26,23,0) 18px), repeating-linear-gradient(90deg, rgba(120,84,48,.04) 0 2px, rgba(120,84,48,0) 2px 9px), #efe5d3">
+<div style="position: relative; z-index: 1; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 28px; align-items: end; height: 192px">
+<sc-for list="{{row.books}}" as="book" hint-placeholder-count="6">
+<div style="display: flex; justify-content: center">
+<div style="position: relative; width: 120px; height: 180px; box-shadow: 7px 5px 12px -5px rgba(31,26,23,.4); outline: {{book.ring}}; outline-offset: 6px; border-radius: 2px">
+<span style="position: absolute; left: 0; bottom: 100%; width: 100%; height: 8px; transform: skewX(-45deg); transform-origin: 0 100%; background: repeating-linear-gradient(0deg, #f6efe0 0 1px, #ddd2bc 1px 2px)"></span>
+<span style="position: absolute; left: 100%; top: 0; width: 8px; height: 100%; transform: skewY(-45deg); transform-origin: 0 0; background: repeating-linear-gradient(90deg, #e9dfca 0 1px, #cdbfa5 1px 2px)"></span>
+<span style="position: absolute; inset: 0; box-sizing: border-box; padding: 12px 10px 12px 16px; border-radius: 1px 2px 2px 1px; background: linear-gradient(90deg, rgba(0,0,0,.3) 0, rgba(255,255,255,.16) 3px, rgba(0,0,0,.14) 7px, rgba(0,0,0,0) 13px), {{book.bg}}; color: #fbf3e4; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 9px; text-align: center; font-family: Newsreader, serif; font-size: 16px; line-height: 1.2; overflow-wrap: anywhere">
+<span>{{book.title}}</span>
+<span style="width: 22px; height: 1px; background: rgba(251,243,228,.65)"></span>
+<span style="font-family: 'Work Sans', sans-serif; font-size: 12px; line-height: 1.25">{{book.author}}</span>
+</span>
+</div>
+</div>
+</sc-for>
+</div>
+<div style="height: 12px; margin: -12px -40px 0; background: linear-gradient(180deg, #b88959, #d6ab7c)"></div>
+</div>
+<div style="height: 16px; margin-inline: -40px; box-sizing: border-box; border-top: 1px solid #e9c59b; background: linear-gradient(180deg, #cb9a66 0, #b9854f 55%, #a47340 100%)"></div>
+<div style="height: 10px; margin-inline: -40px; background: linear-gradient(180deg, rgba(31,26,23,.22), rgba(31,26,23,0))"></div>
+</div>
+</sc-for>
+</div>
+<a href="DeskShelf.dc.html" class="desk-scrim" aria-label="Back to my shelf" style="position: absolute; inset: 0; background: rgba(250,247,241,.42)"></a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() {
+const b = (title, author, bg, open) => ({ title, author, bg, ring: open ? '3px solid #2f5340' : '0 solid transparent' });
+return {
+rows: [
+{ books: [
+b('Wings of Fire', 'A. P. J. Abdul Kalam', '#7a2e2e', true),
+b('Ponniyin Selvan', 'Kalki', '#1f5a57'),
+b('Malgudi Days', 'R. K. Narayan', '#8a4a1f'),
+b('The God of Small Things', 'Arundhati Roy', '#3f5a2a'),
+b('The Discovery of India', 'Jawaharlal Nehru', '#274b6d'),
+b('Thirukkural', 'Thiruvalluvar', '#4a2f5e')
+] },
+{ books: [
+b('Gitanjali', 'Rabindranath Tagore', '#6d2742'),
+b('The Guide', 'R. K. Narayan', '#2f4f6d'),
+b('Train to Pakistan', 'Khushwant Singh', '#5a4a2a'),
+b('Godaan', 'Premchand', '#704030'),
+b('A Suitable Boy', 'Vikram Seth', '#6b6b5e'),
+b('Midnight’s Children', 'Salman Rushdie', '#5e3a6b')
+] }
+]
+};
+}
+}
+</script>
+</body>
+</html>

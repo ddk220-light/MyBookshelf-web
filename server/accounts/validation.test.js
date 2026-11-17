@@ -30,3 +30,8 @@ test('breach screening sends only a hash prefix and fails closed on provider fai
   await assert.rejects(checkCompromisedPassword(password,provider),e=>e.code==='PASSWORD_CHECK_UNAVAILABLE');
  }
 });
+test('a device book’s display-only Open Library work (shelf suggestions) is accepted and not kept by the account',async()=>{
+ const { bookSnapshot } = await import('./books.js');
+ const book={bookKey:'v1:isbn:9788173711466',title:'Wings of Fire: An Autobiography',authors:['A. P. J. Abdul Kalam'],isbn13:'9788173711466',workId:'OL1037811W',source:'direct',viewedAt:'2026-11-01T00:00:00.000Z'};
+ assert.deepEqual(bookSnapshot(book),{bookKey:book.bookKey,snapshot:{title:book.title,authors:book.authors,isbn13:book.isbn13}});
+});

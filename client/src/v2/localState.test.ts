@@ -13,6 +13,7 @@ import {
   withoutSavedBook,
   withSelectedLibrary,
   writeAnonymousWebState,
+  keepUnchanged,
 } from './localState';
 import { READING_LIGHT_STORAGE_KEY } from './readingLight';
 import { DOG_ANIMATION_STORAGE_KEY } from './localState';
@@ -50,6 +51,28 @@ describe('anonymous browser state', () => {
       savedBooks: [],
       savedContent: [],
     });
+  });
+
+  it('keeps a saved or viewed book’s Open Library work (display only), and still reads records without one', () => {
+    const storage = new MemoryStorage();
+    const edition = { ...book, workId: 'OL1037811W' };
+    const state = withSavedBook(withRecentBook(readAnonymousWebState(storage), edition, 'direct', '2026-11-14T10:00:00.000Z'), edition);
+    expect(state.savedBooks[0].workId).toBe('OL1037811W');
+    expect(writeAnonymousWebState(state, storage)).toBe(true);
+    const reopened = readAnonymousWebStateWithStatus(storage);
+    expect(reopened.status).toBe('ok');
+    expect(reopened.state.savedBooks[0]).toMatchObject({ bookKey: book.bookKey, workId: 'OL1037811W' });
+    expect(reopened.state.recentBooks[0]).toMatchObject({ bookKey: book.bookKey, workId: 'OL1037811W' });
+    // The record keeps its version and shape: an older record without it reads as before, and
+    // anything that is not a work ID is dropped without marking the record damaged.
+    const older = new MemoryStorage();
+    older.setItem(ANONYMOUS_WEB_STORAGE_KEY, JSON.stringify({ version: 2, selectedLibraryId: null, savedContent: [],
+      recentBooks: [{ ...book, source: 'direct', viewedAt: '2026-11-01T00:00:00.000Z' }],
+      savedBooks: [{ ...book, source: 'direct', viewedAt: '2026-11-01T00:00:00.000Z', workId: 'not a work' }, { ...book, bookKey: 'v1:openlibrary:OL2W', source: 'direct', viewedAt: '2026-11-01T00:00:00.000Z', workId: 7 }] }));
+    const read = readAnonymousWebStateWithStatus(older);
+    expect(read.status).toBe('ok');
+    expect(read.state.savedBooks.map(item => 'workId' in item)).toEqual([false, false]);
+    expect(read.state.recentBooks[0]).toEqual({ ...book, source: 'direct', viewedAt: '2026-11-01T00:00:00.000Z' });
   });
 
   it('deduplicates a revisited book and retains the newest result', () => {
@@ -176,5 +199,29 @@ describe('one-shelf de-duplication', () => {
     expect(read.state.savedBooks.map(item => item.title)).toEqual(['New']);
     // The plain reader (used by older bundles) is unchanged.
     expect(readAnonymousWebStateWithStatus(storage).state.savedBooks).toHaveLength(2);
+  });
+});
+
+describe('keepUnchanged', () => {
+  const saved = { bookKey: 'v1:isbn:9780262033848', isbn13: '9780262033848', title: 'Saved', authors: ['Author'], source: 'direct' as const, viewedAt: '2026-10-01T00:00:00.000Z' };
+  const book = { bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466', title: 'Viewed', authors: ['Author'] };
+  const previous = { ...emptyState(), savedBooks: [saved], recentBooks: [] };
+  // Every change starts from a fresh read of storage: equal lists, new objects.
+  const reread = () => JSON.parse(JSON.stringify(previous)) as typeof previous;
+
+  it('keeps the saved books when only Viewed before changes (opening a book)', () => {
+    const next = keepUnchanged(previous, withRecentBook(reread(), book, 'direct'));
+    expect(next).not.toBe(previous);
+    expect(next.savedBooks).toBe(previous.savedBooks);
+    expect(next.savedContent).toBe(previous.savedContent);
+    expect(next.recentBooks.map(item => item.bookKey)).toEqual([book.bookKey]);
+  });
+
+  it('keeps the whole state when nothing changed, and takes a changed list', () => {
+    expect(keepUnchanged(previous, reread())).toBe(previous);
+    const added = keepUnchanged(previous, withSavedBook(reread(), book));
+    expect(added.savedBooks).not.toBe(previous.savedBooks);
+    expect(added.savedBooks.map(item => item.bookKey)).toEqual([book.bookKey, saved.bookKey]);
+    expect(added.recentBooks).toBe(previous.recentBooks);
   });
 });

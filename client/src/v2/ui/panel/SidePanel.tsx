@@ -2,7 +2,7 @@ import { useEffect, useRef, type KeyboardEvent, type MouseEvent } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAccountSession } from '../../auth/AccountSessionProvider';
 import { useLibrary } from '../../context';
-import { useReadingLight } from '../AppFrame';
+import { useReadingLight } from '../readingLightContext';
 import { trapTab } from '../home/dialogFocus';
 import { ChevronGlyph, CloseGlyph, LibraryGlyph, PersonIcon } from '../home/homeIcons';
 

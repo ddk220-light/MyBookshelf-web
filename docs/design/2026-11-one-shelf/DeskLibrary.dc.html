@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Desktop choose a library</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#2f5340}a:hover{color:#1f3a2c}
+</style>
+</helmet>
+<div style="width: 100%; height: 900px; display: flex; background: #faf7f1; color: #1f1a17; font-family: 'Work Sans', sans-serif; font-size: 15px; line-height: 1.5; overflow: hidden">
+
+<aside aria-label="Library and account" style="flex: 0 0 340px; width: 340px; box-sizing: border-box; height: 900px; background: #f3ede2; border-right: 1px solid #e2d9ca; padding: 28px 24px 24px; display: flex; flex-direction: column; gap: 22px">
+<div style="font-family: Newsreader, serif; font-size: 28px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.1">MyBookshelf</div>
+
+<section aria-labelledby="find-h" style="display: flex; flex-direction: column; gap: 14px; background: #faf7f1; border: 1px solid #e2d9ca; border-radius: 16px; padding: 16px 16px 8px; box-shadow: 0 6px 20px -12px rgba(31,26,23,.35)">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<h2 id="find-h" style="margin: 0; font-family: Newsreader, serif; font-weight: 500; font-size: 22px; letter-spacing: -0.02em">Find your library</h2>
+<a href="DeskShelf.dc.html" aria-label="Close" style="width: 44px; height: 44px; margin-right: -10px; display: flex; align-items: center; justify-content: center; color: #4a423b">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+</a>
+</div>
+<button style="height: 48px; border: 1px solid #2f5340; border-radius: 12px; background: transparent; color: #2f5340; display: flex; align-items: center; justify-content: center; gap: 8px; font: inherit; font-weight: 600">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v4M12 18v4M2 12h4M18 12h4"></path></svg>
+Libraries near me
+</button>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="desk-place" style="font-size: 13px; font-weight: 500; color: #4a423b">City, town or library name</label>
+<input id="desk-place" type="search" value="Chennai" style="height: 48px; box-sizing: border-box; border: 1.500px solid #2f5340; border-radius: 12px; background: #ffffff; padding: 0 14px; font: inherit; color: #1f1a17">
+</div>
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column">
+<sc-for list="{{libraries}}" as="lib" hint-placeholder-count="5">
+<li style="border-top: 1px solid #e7e0d5">
+<a href="DeskShelf.dc.html" style="min-height: 60px; padding: 8px 0; box-sizing: border-box; display: flex; align-items: center; gap: 10px; text-decoration: none; color: #1f1a17">
+<div style="flex-grow: 1; display: flex; flex-direction: column; min-width: 0">
+<span style="font-weight: 600; line-height: 1.3">{{lib.name}}</span>
+<span style="font-size: 13px; color: #6b6259">{{lib.area}}</span>
+</div>
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2f5340" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+</a>
+</li>
+</sc-for>
+</ul>
+</section>
+
+<nav aria-label="Help" style="margin-top: auto; display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 14px">
+<a href="#" style="min-height: 36px; display: flex; align-items: center; text-decoration: none; color: #4a423b">Report a problem</a>
+<a href="#" style="min-height: 36px; display: flex; align-items: center; text-decoration: none; color: #4a423b">Privacy</a>
+<a href="#" style="min-height: 36px; display: flex; align-items: center; text-decoration: none; color: #4a423b">About</a>
+</nav>
+</aside>
+
+<main aria-hidden="true" style="flex: 1 1 auto; min-width: 0; box-sizing: border-box; height: 900px; padding: 24px 40px 0; display: flex; flex-direction: column; overflow: hidden">
+<div style="height: 52px; max-width: 680px; box-sizing: border-box; background: #ffffff; border: 1px solid #cfc6b8; border-radius: 14px; display: flex; align-items: center; padding-left: 16px; gap: 10px; color: #6b6259">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.500-3.500"></path></svg>
+Title, author or ISBN
+</div>
+<div style="margin: 22px 0 12px; display: flex; align-items: baseline; gap: 14px">
+<div style="font-family: Newsreader, serif; font-size: 34px; line-height: 1.1; letter-spacing: -0.025em">My shelf</div>
+<div style="font-size: 14px; color: #6b6259">12 books</div>
+</div>
+<sc-for list="{{rows}}" as="row" hint-placeholder-count="2">
+<div style="display: flex; flex-direction: column; margin-bottom: 8px">
+<div style="margin-inline: -40px; padding: 18px 40px 0; background: linear-gradient(180deg, rgba(31,26,23,.13), rgba(31,26,23,0) 18px), repeating-linear-gradient(90deg, rgba(120,84,48,.04) 0 2px, rgba(120,84,48,0) 2px 9px), #efe5d3">
+<div style="position: relative; z-index: 1; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 28px; align-items: end; height: 192px">
+<sc-for list="{{row.books}}" as="book" hint-placeholder-count="6">
+<div style="display: flex; justify-content: center">
+<div style="position: relative; width: 120px; height: 180px; box-shadow: 7px 5px 12px -5px rgba(31,26,23,.4)">
+<span style="position: absolute; left: 0; bottom: 100%; width: 100%; height: 8px; transform: skewX(-45deg); transform-origin: 0 100%; background: repeating-linear-gradient(0deg, #f6efe0 0 1px, #ddd2bc 1px 2px)"></span>
+<span style="position: absolute; left: 100%; top: 0; width: 8px; height: 100%; transform: skewY(-45deg); transform-origin: 0 0; background: repeating-linear-gradient(90deg, #e9dfca 0 1px, #cdbfa5 1px 2px)"></span>
+<span style="position: absolute; inset: 0; box-sizing: border-box; padding: 12px 10px 12px 16px; border-radius: 1px 2px 2px 1px; background: linear-gradient(90deg, rgba(0,0,0,.3) 0, rgba(255,255,255,.16) 3px, rgba(0,0,0,.14) 7px, rgba(0,0,0,0) 13px), {{book.bg}}; color: #fbf3e4; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 9px; text-align: center; font-family: Newsreader, serif; font-size: 16px; line-height: 1.2; overflow-wrap: anywhere">
+<span>{{book.title}}</span>
+<span style="width: 22px; height: 1px; background: rgba(251,243,228,.65)"></span>
+<span style="font-family: 'Work Sans', sans-serif; font-size: 12px; line-height: 1.25">{{book.author}}</span>
+</span>
+</div>
+</div>
+</sc-for>
+</div>
+<div style="height: 12px; margin: -12px -40px 0; background: linear-gradient(180deg, #b88959, #d6ab7c)"></div>
+</div>
+<div style="height: 16px; margin-inline: -40px; box-sizing: border-box; border-top: 1px solid #e9c59b; background: linear-gradient(180deg, #cb9a66 0, #b9854f 55%, #a47340 100%)"></div>
+<div style="height: 10px; margin-inline: -40px; background: linear-gradient(180deg, rgba(31,26,23,.22), rgba(31,26,23,0))"></div>
+</div>
+</sc-for>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() {
+const b = (title, author, bg) => ({ title, author, bg });
+return {
+libraries: [
+{ name: 'Anna Centenary Library', area: 'Kotturpuram' },
+{ name: '[LIBRARY NAME]', area: '[Area]' },
+{ name: '[LIBRARY NAME]', area: '[Area]' },
+{ name: '[LIBRARY NAME]', area: '[Area]' }
+],
+rows: [
+{ books: [
+b('Wings of Fire', 'A. P. J. Abdul Kalam', '#7a2e2e'),
+b('Ponniyin Selvan', 'Kalki', '#1f5a57'),
+b('Malgudi Days', 'R. K. Narayan', '#8a4a1f'),
+b('The God of Small Things', 'Arundhati Roy', '#3f5a2a'),
+b('The Discovery of India', 'Jawaharlal Nehru', '#274b6d'),
+b('Thirukkural', 'Thiruvalluvar', '#4a2f5e')
+] },
+{ books: [
+b('Gitanjali', 'Rabindranath Tagore', '#6d2742'),
+b('The Guide', 'R. K. Narayan', '#2f4f6d'),
+b('Train to Pakistan', 'Khushwant Singh', '#5a4a2a'),
+b('Godaan', 'Premchand', '#704030'),
+b('A Suitable Boy', 'Vikram Seth', '#6b6b5e'),
+b('Midnight’s Children', 'Salman Rushdie', '#5e3a6b')
+] }
+]
+};
+}
+}
+</script>
+</body>
+</html>

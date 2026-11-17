@@ -72,7 +72,10 @@ describe('old addresses', () => {
     const calls = stubApi();
     open('/app/search?q=Wings%20of%20Fire');
     await at(/^\/app\/shelf$/);
-    expect(await screen.findByRole('link', { name: /Wings of Fire/ })).toBeInTheDocument();
+    // The search's result, by its exact name: the cold-open shelf already shows the seed list's
+    // "Wings of Fire by A. P. J. Abdul Kalam, suggested", which the results then replace.
+    expect(await screen.findByRole('link', { name: 'Wings of Fire by A. P. J. Abdul Kalam' })).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /, suggested$/ })).not.toBeInTheDocument();
     expect(screen.getByRole('searchbox', { name: 'Search for a book' })).toHaveValue('Wings of Fire');
     expect(calls.filter(call => call.path.includes('/books/search'))).toHaveLength(1);
     expect(screen.getByTestId('location')).not.toHaveTextContent('Wings');

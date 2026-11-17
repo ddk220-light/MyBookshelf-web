@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { isbnSource, useLibrary } from '../../context';
 import { useHoldingsStore } from '../../holdings';
@@ -15,16 +15,22 @@ import { isMarked, useLibraryMarks } from '../search/useLibraryMarks';
 import { ScanDialog, type ScanAnswer, type ScanSource } from '../scan/ScanDialog';
 import { LibraryPickerDialog } from '../library/LibraryPickerDialog';
 import { libraryLinkMessage, type LibraryLinkNotice } from '../library/SelectLibraryLink';
+import { SUGGESTION_COUNT } from '../../suggestions/pickSuggestions';
+import { noteSuggestionInteraction, SUGGESTION_SOURCES, useShelfSuggestions } from '../../suggestions/useShelfSuggestions';
 import { AccountInvite } from '../shelf/AccountInvite';
 import { Bookcase } from '../shelf/Bookcase';
-import { EmptyBays, EmptyShelf } from '../shelf/EmptyShelf';
+import { EmptyShelf } from '../shelf/EmptyShelf';
 import { ShelfList } from '../shelf/ShelfList';
 import { SpineRow } from '../shelf/SpineRow';
+import { useShelfFocusKeeper } from '../shelf/useShelfFocusKeeper';
+import { useSuggestionMotion } from '../shelf/useSuggestionMotion';
 import { ViewSwitch, type ShelfView } from '../shelf/ViewSwitch';
+import type { LayoutMode } from '../desk/layoutMode';
+import { useBayColumns } from '../desk/useBayColumns';
 import { BackGlyph } from './homeIcons';
 import { SHELF_SEARCH_ID } from './SearchBar';
 import { ShelfStage } from './ShelfStage';
-import { shelfEntries } from './shelfItems';
+import { heldSuggestionSlots, shelfEntries, suggestionEntry } from './shelfItems';
 import { TopBar } from './TopBar';
 import { useShelfHoldings } from './useShelfHoldings';
 import './home.css';
@@ -42,8 +48,24 @@ type HomeState = LegacyArrival & { overlay?: 'panel' | 'scan' | 'library'; panel
  * reader's shelf (or the empty state), the account invite and "Viewed before".
  * A search shows its results in place of the shelf. The side panel and the
  * scan pop-up are overlays with their own history entry, so Back closes them.
+ *
+ * Five suggested books (docs/plans/2026-11-14-desktop-and-shelf-suggestions.md,
+ * Part 2) stand faded after the saved books; on the cold open they are the
+ * whole shelf, under "Ready to search" and a larger search bar. Counts and
+ * the view switch count saved items only. While results are shown there are
+ * no suggestions.
+ *
+ * At rail and wide widths the desk layout (ui/desk) draws this beside its
+ * rail or left column, and owns the library picker; there is no side panel,
+ * and at wide widths no scan button and no account invite (the left column
+ * has Create account). While a book or side page is open in the middle slot
+ * the shelf is drawn `behind` it: inert, its history entry is the page's, so
+ * it opens no overlay and changes no history; `behind.candidateId` keeps
+ * the results the page was opened from, and `openKey`'s cover is outlined.
  */
-export function HomeScreen() {
+export function HomeScreen({ layout = 'phone', behind = null, openKey = null }: { layout?: LayoutMode; behind?: { candidateId?: string } | null; openKey?: string | null } = {}) {
+  const desk = layout !== 'phone';
+  const wide = layout === 'wide';
   const { state, library, loadingLibrary, clearRecentBooks, restoreRecentBooks, recoveryMode, reportStorageFailure, removedBook, dismissRemoval } = useLibrary();
   const navigate = useNavigate();
   const location = useLocation();
@@ -51,17 +73,32 @@ export function HomeScreen() {
   const resultsHeading = useRef<HTMLHeadingElement>(null);
   const [view, setView] = useState<ShelfView>(() => readReaderPreferences().shelfView);
   const [cleared, setCleared] = useState<RecentBook[] | null>(null);
+  const { ref: home, perBay } = useBayColumns(layout);
 
   const entries = useMemo(() => shelfEntries(state.savedBooks, state.savedContent), [state.savedBooks, state.savedContent]);
+  // Library answers are asked for saved books here: a suggestion's badge
+  // comes from an answer already held (the holdings store, or the stored
+  // "found" the suggestion source read once for its candidates), never from a
+  // new check.
   useShelfHoldings(state.selectedLibraryId, state.savedBooks);
+  // While the first suggestions of a visit are on their way their slots stay
+  // empty (`held`), so the books never change under a tap.
+  const suggestions = useShelfSuggestions(state.savedBooks, state.selectedLibraryId, SUGGESTION_SOURCES, state.recentBooks);
+  const suggested = useMemo(() => (suggestions.held ? heldSuggestionSlots(SUGGESTION_COUNT) : suggestions.books.map(suggestionEntry)), [suggestions.held, suggestions.books]);
+  const withSuggestions = useMemo(() => [...entries, ...suggested], [entries, suggested]);
+  const motion = useSuggestionMotion(suggestions.held ? null : suggested.map(entry => entry.key), state.savedBooks.map(book => book.bookKey),
+    { result: suggestions.result, quiet: suggestions.quiet });
+  // Focusing or pressing a suggestion means the reader is choosing from it.
+  const noteInteraction = (event: { target: EventTarget }) => { if (event.target instanceof Element && event.target.closest('[data-suggested]')) noteSuggestionInteraction(); };
   const cachedLibrary = readReaderPreferences().selectedLibrary;
   const libraryName = library?.name || (loadingLibrary && cachedLibrary?.id === state.selectedLibraryId ? cachedLibrary.name : null);
   const badgeLibrary = library?.id === state.selectedLibraryId ? library.name : null;
 
-  const routeState = location.state as HomeState | null;
+  const behindState = useMemo<HomeState | null>(() => behind?.candidateId ? { search: { candidateId: behind.candidateId } } : null, [behind?.candidateId]);
+  const routeState = behind ? behindState : location.state as HomeState | null;
   const latestState = useRef(routeState);
   latestState.current = routeState;
-  const panelOpen = routeState?.overlay === 'panel';
+  const panelOpen = !desk && routeState?.overlay === 'panel';
   const openPanel = () => navigate(location.pathname, { state: { ...(routeState || {}), overlay: 'panel', panelPushed: true } });
   // The entry pushed by openPanel is left with Back. One that arrived another way (/app/settings) is replaced.
   const closePanel = useCallback(() => {
@@ -74,7 +111,7 @@ export function HomeScreen() {
   // Library pop-up (plan Phase 7). "Change" in the side panel swaps the
   // panel's history entry for the pop-up's, so closing it returns to what
   // was under the panel, with focus on the person icon.
-  const libraryOpen = routeState?.overlay === 'library';
+  const libraryOpen = !desk && routeState?.overlay === 'library';
   const changeLibrary = () => {
     const { overlay: _overlay, panelPushed, ...rest } = latestState.current || {};
     navigate(location.pathname, { replace: true, state: { ...rest, overlay: 'library', libraryPushed: Boolean(panelPushed) } });
@@ -93,7 +130,7 @@ export function HomeScreen() {
   // is shown for this visit only, so it is taken out of the history entry.
   const [linkNotice] = useState(() => routeState?.libraryLink || null);
   useEffect(() => {
-    if (!latestState.current?.libraryLink) return;
+    if (behind || !latestState.current?.libraryLink) return;
     const { libraryLink: _notice, ...rest } = latestState.current;
     navigate(location.pathname, { replace: true, state: Object.keys(rest).length ? rest : null });
   }, [navigate, location.pathname]);
@@ -136,8 +173,8 @@ export function HomeScreen() {
   }, [searchEntry, search.cancel]);
   // A search entry whose results are gone (the page was reloaded) is dropped.
   useEffect(() => {
-    if (searchEntry && search.status === 'idle' && !remembered) navigate(location.pathname, { replace: true, state: withoutSearch(routeState) });
-  }, [searchEntry, search.status, remembered, navigate, location.pathname, routeState]);
+    if (!behind && searchEntry && search.status === 'idle' && !remembered) navigate(location.pathname, { replace: true, state: withoutSearch(routeState) });
+  }, [behind, searchEntry, search.status, remembered, navigate, location.pathname, routeState]);
   // Back from a book page restores the text that found these results.
   useEffect(() => {
     if (searchEntry?.candidateId && candidatesFor(searchEntry.candidateId) && search.status === 'idle') setQuery(queryForCandidates(searchEntry.candidateId));
@@ -148,7 +185,7 @@ export function HomeScreen() {
     if (!trimmed) return;
     const pushed = !latestState.current?.search;
     if (pushed) navigate(location.pathname, { state: { ...(latestState.current || {}), search: { pushed: true } } });
-    document.getElementById('main-content')?.scrollTo?.(0, 0);
+    (home.current?.closest('.desk-shelf') || document.getElementById('main-content'))?.scrollTo?.(0, 0);
     // Leave the field (this closes the phone keyboard) for the results heading.
     requestAnimationFrame(() => resultsHeading.current?.focus({ preventScroll: true }));
     const answer = await search.run(trimmed, state.savedBooks);
@@ -173,15 +210,10 @@ export function HomeScreen() {
     setView(next);
     if (!writeReaderPreferences({ shelfView: next })) reportStorageFailure();
   };
-  const focusSearch = () => {
-    const input = document.getElementById(SHELF_SEARCH_ID);
-    input?.focus();
-    input?.scrollIntoView?.({ block: 'nearest' });
-  };
   // Scan pop-up (plan Phase 6). It opens over whatever is showing (shelf or
   // results) as its own history entry. Focus goes back to the button that
   // opened it, or to the search bar after "Search by title".
-  const scanOpen = routeState?.overlay === 'scan';
+  const scanOpen = !wide && routeState?.overlay === 'scan';
   const scanOpener = useRef<HTMLElement | null>(null);
   const focusAfterScan = useRef<'opener' | 'search'>('opener');
   const scanLookup = useRef<AbortController | null>(null);
@@ -239,7 +271,7 @@ export function HomeScreen() {
   // /app/search focuses the search bar; /app/search?q= runs that search once.
   // The marker leaves the history entry and the text leaves memory. The work
   // waits for a timer so React's development double effects run it once.
-  const arrival = routeState?.legacy;
+  const arrival = behind ? undefined : routeState?.legacy;
   useEffect(() => {
     if (!arrival) return;
     const timer = setTimeout(() => {
@@ -270,6 +302,7 @@ export function HomeScreen() {
 
   const empty = entries.length === 0;
   const count = entries.length;
+  useShelfFocusKeeper(home, [showResults, view, perBay, ...withSuggestions.map(entry => entry.key)].join('\n'));
   const resultsStatus = search.status === 'searching' ? 'searching' : search.status === 'failed' ? 'failed' : 'results';
   // The chosen library's background check for these results (plan Phase 8).
   // Only for a library whose catalog the app can read; none chosen, nothing.
@@ -281,35 +314,42 @@ export function HomeScreen() {
   const announcement = !showResults ? '' : resultsStatus === 'searching' ? 'Searching' : resultsStatus === 'failed' ? 'Couldn’t search'
     : !results.length ? 'No books found'
       : books(results.length) + (marks.checking ? '. Looking in ' + badgeLibrary : markedCount ? '. ' + books(markedCount) + ' in ' + badgeLibrary : '');
+  const scan = wide ? undefined : goScan;
+  const backToShelf = <button type="button" className="home-text-button results-back" onClick={() => closeSearch('shelf')}><BackGlyph />Back to my shelf</button>;
   const shelf = <>
-    {empty ? <EmptyShelf onSearch={focusSearch} onScan={goScan} showBays={false} /> : <section className="my-shelf" aria-labelledby="my-shelf-heading">
+    {empty ? <div className="cold-open-suggestions">
+      {/* "Ready to search" and the search bar are in the top bar (intro). */}
+      <Bookcase entries={suggested} libraryName={badgeLibrary} perBay={perBay} openKey={openKey} motion={motion} />
+    </div> : <section className="my-shelf" aria-labelledby="my-shelf-heading">
       <div className="my-shelf-heading">
         <h1 id="my-shelf-heading" tabIndex={-1}>My shelf</h1>
-        {count > 1 && <span>{count} books</span>}
+        <span>{books(count)}</span>
       </div>
-      {view === 'list' && count > 1 ? <ShelfList entries={entries} libraryName={badgeLibrary} /> : <Bookcase entries={entries} libraryName={badgeLibrary} />}
+      {view === 'list' && count > 1 ? <ShelfList entries={withSuggestions} libraryName={badgeLibrary} motion={motion} />
+        : <Bookcase entries={withSuggestions} libraryName={badgeLibrary} perBay={perBay} openKey={openKey} motion={motion} />}
     </section>}
-    {!empty && <AccountInvite savedCount={state.savedBooks.length + state.savedContent.length} />}
+    {!empty && !wide && <AccountInvite savedCount={state.savedBooks.length + state.savedContent.length} />}
     <SpineRow books={state.recentBooks} onClear={() => { void clearViewed(); }} disabled={recoveryMode} />
-    {empty && !state.recentBooks.length && <EmptyBays />}
   </>;
   const resultsPane = <ResultsShelf ref={resultsHeading} status={resultsStatus} entries={results} view={view}
-    onRetry={() => { void submit(search.query || query); }} onScan={goScan} libraryName={badgeLibrary} checking={marks.checking} reserveLine={checkable} />;
+    onRetry={() => { void submit(search.query || query); }} onScan={scan} libraryName={badgeLibrary} checking={marks.checking} reserveLine={checkable}
+    back={wide ? backToShelf : undefined} perBay={perBay} openKey={openKey} />;
 
-  return <div className="home">
+  return <div ref={home} className={'home' + (desk ? ' home-desk home-' + layout : '')} style={desk ? { '--bay-cols': perBay } as CSSProperties : undefined}
+    onPointerDownCapture={noteInteraction} onFocusCapture={noteInteraction}>
     {linkNotice && <p className="home-notice" role="status">{libraryLinkMessage(linkNotice)}</p>}
-    <TopBar ref={personButton} panelOpen={panelOpen} onOpenPanel={openPanel} libraryName={libraryName}
-      search={{ value: query, onChange: changeQuery, onSubmit: text => { void submit(text); }, onClear: clearQuery, onScan: goScan, active: showResults }}
-      leading={showResults ? <button type="button" className="home-text-button results-back" onClick={() => closeSearch('shelf')}><BackGlyph />Back to my shelf</button> : undefined}
+    <TopBar ref={personButton} layout={layout} panelOpen={panelOpen} onOpenPanel={openPanel} libraryName={libraryName} intro={empty && !showResults ? <EmptyShelf /> : undefined}
+      search={{ value: query, onChange: changeQuery, onSubmit: text => { void submit(text); }, onClear: clearQuery, onScan: scan, active: showResults }}
+      leading={showResults && !wide ? backToShelf : undefined}
       trailing={showResults ? results.length > 0 && resultsStatus === 'results' ? <ViewSwitch view={view} onChange={changeView} /> : undefined
         : count > 1 ? <ViewSwitch view={view} onChange={changeView} /> : undefined} />
     <ShelfStage showResults={showResults} shelf={shelf} results={resultsPane} />
     <p className="visually-hidden" role="status" aria-live="polite">{announcement}</p>
     {cleared && <div className="undo-notice home-undo" role="status"><span>Viewed before cleared</span>
       {restoreRecentBooks && <button type="button" onClick={async () => { if (await restoreRecentBooks(cleared)) setCleared(null); }}>Undo</button>}</div>}
-    <SidePanel open={panelOpen} onClose={closePanel} returnFocus={returnFocus} onChangeLibrary={changeLibrary} />
-    <LibraryPickerDialog open={libraryOpen} onClose={closeLibrary} returnFocus={returnFocus} initialQuery={libraryQuery} />
-    <ScanDialog open={scanOpen} onClose={closeScan} onIsbn={lookUpIsbn} onSearchByTitle={searchByTitle} returnFocus={scanReturnFocus} />
+    {!desk && <SidePanel open={panelOpen} onClose={closePanel} returnFocus={returnFocus} onChangeLibrary={changeLibrary} />}
+    {!desk && <LibraryPickerDialog open={libraryOpen} onClose={closeLibrary} returnFocus={returnFocus} initialQuery={libraryQuery} />}
+    {!wide && <ScanDialog open={scanOpen} onClose={closeScan} onIsbn={lookUpIsbn} onSearchByTitle={searchByTitle} returnFocus={scanReturnFocus} />}
   </div>;
 }
 

@@ -114,18 +114,32 @@ export async function runOneShelfMigration({
 
 // Saved-book identity (plan 3.3): a book is on the shelf when a saved item has
 // the same bookKey or the same ISBN-13. Titles and authors are never compared.
-export type BookIdentity = { bookKey: string; isbn13?: string | null };
+export type BookIdentity = { bookKey: string; isbn13?: string | null; workId?: string | null };
 
 function isbn13Of(value: string | null | undefined): string | null {
   const digits = typeof value === 'string' ? value.replace(/[\s-]/g, '') : '';
   return /^97[89]\d{10}$/.test(digits) ? digits : null;
 }
 
-export function findSavedBook(savedBooks: readonly RecentBook[], book: BookIdentity): RecentBook | undefined {
+/** The Open Library work a record names: its `workId`, or a work key (`v1:openlibrary:OL…W`). */
+export function openLibraryWorkOf(book: BookIdentity): string | null {
+  if (typeof book.workId === 'string' && /^OL\d+W$/.test(book.workId)) return book.workId;
+  return /^v1:openlibrary:(OL\d+W)$/.exec(book.bookKey)?.[1] || null;
+}
+
+/**
+ * `sameWork` also counts a saved record of the same Open Library work as a
+ * match. Shelf suggestions use it to leave out other editions of a saved book;
+ * it is for display only, never for identity, saving or library answers.
+ */
+export function findSavedBook<T extends BookIdentity = RecentBook>(savedBooks: readonly T[], book: BookIdentity, { sameWork = false }: { sameWork?: boolean } = {}): T | undefined {
   const byKey = savedBooks.find((saved) => saved.bookKey === book.bookKey);
   if (byKey) return byKey;
   const isbn = isbn13Of(book.isbn13);
-  return isbn ? savedBooks.find((saved) => isbn13Of(saved.isbn13) === isbn) : undefined;
+  const byIsbn = isbn ? savedBooks.find((saved) => isbn13Of(saved.isbn13) === isbn) : undefined;
+  if (byIsbn || !sameWork) return byIsbn;
+  const work = openLibraryWorkOf(book);
+  return work ? savedBooks.find((saved) => openLibraryWorkOf(saved) === work) : undefined;
 }
 
 export function isOnShelf(savedBooks: readonly RecentBook[], book: BookIdentity): boolean {

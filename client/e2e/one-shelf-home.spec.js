@@ -27,14 +27,20 @@ const axe = page => new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wca
 
 test.describe('One-shelf home', () => {
 
-  test('first open: empty shelf, search bar, no tab bar, accessible', async ({ page }) => {
+  test('first open: no empty shelves, search bar, no tab bar, accessible', async ({ page }) => {
     await setup(page);
     await page.goto('/app');
     await expect(page).toHaveURL(/\/app\/shelf$/);
     await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
     await expect(page.getByRole('navigation', { name: 'Primary navigation' })).toHaveCount(0);
-    await expect(page.locator('.book-placeholder')).toHaveCount(1);
-    await page.getByRole('button', { name: 'Search for a book' }).click();
+    // Owner decision (plan 2026-11-14): the cold open draws no empty shelves;
+    // five suggested books stand on it instead (SuggestFirstOpen board).
+    await expect(page.locator('.cover3d.is-suggested')).toHaveCount(5);
+    for (const bay of await page.locator('.bay-books').all()) expect(await bay.locator('.cover3d').count()).toBeGreaterThan(0);
+    // The larger search bar does both: scan sits inside it, with no separate buttons.
+    await expect(page.locator('.home-top-cold .search-bar').getByRole('button', { name: 'Scan a barcode' })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Search for a book|Scan the barcode on a book/ })).toHaveCount(0);
+    await page.getByRole('searchbox', { name: 'Search for a book' }).click();
     await expect(page.getByRole('searchbox', { name: 'Search for a book' })).toBeFocused();
     await page.getByRole('searchbox', { name: 'Search for a book' }).fill('wings of fire');
     expect(page.url()).not.toContain('wings');
@@ -51,8 +57,11 @@ test.describe('One-shelf home', () => {
     await expect(page.locator('.home-library')).toHaveText(LINKED_LIBRARY.name);
     await expect(page.getByRole('link', { name: 'Shelf book 8 by Author 8, in Anna Centenary Library' })).toBeVisible();
     await expect(page.locator('.cover-badge-library')).toHaveCount(1);
-    await expect(page.locator('.bay-books')).toHaveCount(3);
-    await expect(page.locator('.cover3d')).toHaveCount(8);
+    // 8 saved books, then the five suggestions: 13 covers, three a bay.
+    await expect(page.locator('.bay-books')).toHaveCount(5);
+    await expect(page.locator('.cover3d:not(.is-suggested)')).toHaveCount(8);
+    await expect(page.locator('.cover3d.is-suggested')).toHaveCount(5);
+    await expect(page.locator('.my-shelf-heading span')).toHaveText('8 books');
     await expect(page.getByRole('heading', { name: 'Take your shelf with you' })).toBeVisible();
     const viewed = page.getByRole('region', { name: 'Viewed before' });
     await expect(viewed.getByRole('link')).toHaveCount(3);
@@ -68,7 +77,8 @@ test.describe('One-shelf home', () => {
 
     await page.getByRole('button', { name: 'Not now' }).click();
     await page.getByRole('button', { name: 'List view' }).click();
-    await expect(page.locator('.shelf-list-item')).toHaveCount(8);
+    await expect(page.locator('.shelf-list-item')).toHaveCount(13);
+    await expect(page.locator('.shelf-list-cover.is-suggested')).toHaveCount(5);
     await page.reload();
     await expect(page.getByRole('button', { name: 'List view' })).toHaveAttribute('aria-pressed', 'true');
     await expect(page.getByRole('heading', { name: 'Take your shelf with you' })).toHaveCount(0);
@@ -133,16 +143,45 @@ test.describe('One-shelf home', () => {
     expect((await new AxeBuilder({ page }).withRules(['color-contrast']).analyze()).violations).toEqual([]);
   });
 
-  test('a long shelf keeps the page light and a wide screen gets a centred column', async ({ page }) => {
+  test('a long shelf keeps the page light, and a wide screen gets the left column with six books a bay', async ({ page }) => {
     await setup(page, { saved: Array.from({ length: 200 }, (_, index) => book(index + 1)) });
-    await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto('/app/shelf');
-    await expect(page.locator('.cover3d')).toHaveCount(200);
+    // Saved books only: the suggestions after them are added as the reader scrolls, like further bays.
+    await expect(page.locator('.cover3d:not(.is-suggested)')).toHaveCount(200);
     expect(await page.locator('.bay').first().evaluate(element => getComputedStyle(element).contentVisibility)).toBe('auto');
-    const column = await page.locator('.home').boundingBox();
-    expect(column.width).toBeLessThanOrEqual(480);
-    expect(Math.abs(column.x + column.width / 2 - 640)).toBeLessThan(10);
+    await expect(page.locator('.bay-books').first().locator('.cover3d')).toHaveCount(3);
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await expect(page.getByRole('complementary', { name: 'Library and account' })).toBeVisible();
+    await expect(page.locator('.cover3d:not(.is-suggested)')).toHaveCount(200);
+    await expect(page.locator('.bay-books').first().locator('.cover3d')).toHaveCount(6);
+    expect(await page.locator('.home-bookcase .bay').first().evaluate(element => getComputedStyle(element).contentVisibility)).toBe('auto');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  });
+
+  test('a phone turned on its side keeps the phone layout, the reader’s place and an open scan pop-up', async ({ page }) => {
+    await installBarcodeCamera(page, 'missing', false, { camera: 'none' });
+    await setup(page, { saved: Array.from({ length: 60 }, (_, index) => book(index + 1)) });
+    await page.goto('/app/shelf');
+    await expect(page.locator('.cover3d:not(.is-suggested)')).toHaveCount(60);
+    const { width, height } = page.viewportSize();
+    const turn = (portrait) => page.setViewportSize(portrait ? { width, height } : { width: height, height: width });
+    const place = page.locator('.home-bookcase .cover3d').nth(33);
+    await page.locator('#main-content').evaluate((screen, top) => { screen.scrollTop = top; }, 2000);
+    await expect(place).toBeInViewport();
+    await turn(false);
+    await expect(page.getByRole('button', { name: 'Account and settings' })).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'Library and account' })).toHaveCount(0);
+    await expect(place).toBeInViewport();
+    await turn(true);
+    await expect(place).toBeInViewport();
+
+    await page.getByRole('button', { name: 'Scan a barcode' }).click();
+    const field = page.getByRole('dialog', { name: 'Type the ISBN' }).getByRole('textbox', { name: 'ISBN' });
+    await field.fill('978162527');
+    await turn(false);
+    await expect(field).toHaveValue('978162527');
+    await turn(true);
+    await expect(field).toHaveValue('978162527');
   });
 
   test('a very long title and author stay inside the typeset cover', async ({ page }) => {
@@ -157,8 +196,11 @@ test.describe('One-shelf home', () => {
         return box.left >= face.left - 0.5 && box.right <= face.right + 0.5;
       });
     });
-    await expect(page.locator('.home-bookcase .cover3d')).toHaveCount(1);
-    expect(await inside(page.locator('.home-bookcase .cover3d'))).toBe(true);
+    const saved = page.locator('.home-bookcase .cover3d:not(.is-suggested)');
+    await expect(saved).toHaveCount(1);
+    expect(await inside(saved)).toBe(true);
+    // The suggestions' typeset covers too.
+    for (const cover of await page.locator('.home-bookcase .cover3d.is-suggested').all()) expect(await inside(cover)).toBe(true);
   });
 
   test('reduced motion: the panel does not slide', async ({ page }) => {
@@ -321,7 +363,9 @@ test.describe('One-shelf scan', () => {
     await installBarcodeCamera(page);
     await setup(page);
     await page.goto('/app/shelf');
-    await page.getByRole('button', { name: 'Scan the barcode on a book' }).click();
+    await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
+    // On the cold open the scan button is inside the larger search bar.
+    await page.locator('.home-top-cold').getByRole('button', { name: 'Scan a barcode' }).click();
     await expect(page).toHaveURL(bookUrl, { timeout: 15000 });
     await expect(page.getByRole('heading', { name: BOOK.title })).toBeVisible();
     expect(await track(page)).toBe('ended');

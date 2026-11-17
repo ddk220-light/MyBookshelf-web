@@ -74,8 +74,11 @@ test('pinned auth: real Postgres transactions, raw Express body, verification, c
   assert.equal(resets.length, 1);
   // A DB failure after reset-token consumption and session deletion must roll
   // back all three effects, not spend the token and strand the reader.
+  // Only this test's reader: other files change passwords in the same database at the same time.
+  const { rows: [owner] } = await pool.query('SELECT id FROM "user" WHERE email=$1', [email]);
   await pool.query(`CREATE OR REPLACE FUNCTION account_test_fail_password() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'injected password update failure'; END $$`);
-  await pool.query('CREATE TRIGGER account_test_password_failure BEFORE UPDATE OF password ON "account" FOR EACH ROW EXECUTE FUNCTION account_test_fail_password()');
+  await pool.query(`CREATE TRIGGER account_test_password_failure BEFORE UPDATE OF password ON "account" FOR EACH ROW
+    WHEN (OLD."userId" = '${String(owner.id).replace(/'/g, "''")}') EXECUTE FUNCTION account_test_fail_password()`);
   await assert.rejects(auth.api.resetPassword({ body: { token: resets[0].token, newPassword } }));
   assert.ok(await auth.api.getSession({ headers }));
   assert.equal((await pool.query('SELECT 1 FROM verification WHERE identifier=$1', [`reset-password:${resets[0].token}`])).rowCount, 1);

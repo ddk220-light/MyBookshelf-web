@@ -158,4 +158,15 @@ describe('saved-book identity', () => {
     expect(isOnShelf(shelf, { bookKey: 'v1:google:another-edition', isbn13: undefined })).toBe(false);
     expect(isOnShelf([book('v1:a', 'Same', '2026-10-01T00:00:00.000Z')], { bookKey: 'v1:b' })).toBe(false);
   });
+  it('the same Open Library work counts only when asked (shelf suggestions, display only)', () => {
+    const work = [book('v1:openlibrary:OL1037811W', 'Wings of Fire', '2026-10-01T00:00:00.000Z')];
+    const edition = { bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466', workId: 'OL1037811W' };
+    // The book page's match is unchanged: another edition is not "on my shelf".
+    expect(isOnShelf(work, edition)).toBe(false);
+    expect(findSavedBook(work, edition, { sameWork: true })?.bookKey).toBe('v1:openlibrary:OL1037811W');
+    expect(findSavedBook(work, { bookKey: 'v1:isbn:9788173711466', workId: 'OL1W' }, { sameWork: true })).toBeUndefined();
+    expect(findSavedBook(work, { bookKey: 'v1:googlebooks:x' }, { sameWork: true })).toBeUndefined();
+    // A work suggestion against a saved edition record: only its ISBN can match it.
+    expect(findSavedBook(shelf, { bookKey: 'v1:openlibrary:OL5W', isbn13: '9780262033848' }, { sameWork: true })?.title).toBe('Algorithms');
+  });
 });

@@ -148,6 +148,8 @@ test('keyboard only: search, open a result, add it, find a library, back to the 
 
 for (const project of ['mobile', 'desktop']) test(`touch targets are 44 px or more (${project}), Viewed before spines included`, async ({ page }, testInfo) => {
   test.skip(project === 'mobile' ? testInfo.project.name !== 'mobile-chromium' : testInfo.project.name !== 'chromium', 'one size per project');
+  // The desktop layout (left column, middle slot) from 1100 px wide.
+  if (project === 'desktop') await page.setViewportSize({ width: 1440, height: 900 });
   await setup(page, { saved: Array.from({ length: 12 }, (_, index) => book(index + 2)), recent: Array.from({ length: 8 }, (_, index) => book(index + 30, { title: 'V' + index })) });
   await page.goto('/app/shelf');
   await expect(page.getByRole('region', { name: 'Viewed before' })).toBeVisible();
@@ -164,9 +166,17 @@ for (const project of ['mobile', 'desktop']) test(`touch targets are 44 px or mo
   await page.getByRole('button', { name: 'List view' }).click();
   await measure('list view');
   await page.getByRole('button', { name: 'Shelf view' }).click();
-  await page.getByRole('button', { name: 'Account and settings' }).click();
-  await measure('side panel');
-  await page.keyboard.press('Escape');
+  if (project === 'mobile') {
+    await page.getByRole('button', { name: 'Account and settings' }).click();
+    await measure('side panel');
+    await page.keyboard.press('Escape');
+  } else {
+    await page.getByRole('button', { name: 'Change library' }).click();
+    await page.getByLabel('City, town or library name').fill('Chennai');
+    await expect(page.getByRole('region', { name: 'Libraries' })).toBeVisible();
+    await measure('library picker in the column');
+    await page.keyboard.press('Escape');
+  }
   await page.goto('/app/books/' + encodeURIComponent(BOOK.bookKey));
   await expect(page.locator('.library-answer')).toBeVisible();
   await measure('book page');

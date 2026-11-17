@@ -63,13 +63,20 @@ function isRecentBook(value: unknown): value is RecentBook {
   );
 }
 
+// An Open Library work ID (display only, RecentBook.workId). Anything else is
+// dropped without marking the record damaged, so an older or newer bundle's
+// record always reads.
+const workIdOf = (value: unknown) => (typeof value === 'string' && /^OL\d{1,12}W$/.test(value) ? value : undefined);
+
 function normalizeRecentBook(value: RecentBook): RecentBook {
+  const workId = workIdOf(value.workId);
   return {
     bookKey: value.bookKey.trim(),
     title: value.title.trim(),
     authors: value.authors.map((author) => author.trim()).slice(0, 20),
     ...(text(value.isbn13, 13) ? { isbn13: value.isbn13!.trim() } : {}),
     ...(text(value.coverUrl, 2_000) ? { coverUrl: value.coverUrl!.trim() } : {}),
+    ...(workId ? { workId } : {}),
     source: value.source,
     viewedAt: value.viewedAt,
   };
@@ -137,15 +144,37 @@ export function withSelectedLibrary(state: AnonymousWebState, selectedLibraryId:
 }
 
 export function toRecentBook(book: PublicBook, source: RecentSource, viewedAt = new Date().toISOString()): RecentBook {
+  const workId = workIdOf(book.workId);
   return {
     bookKey: book.bookKey,
     title: book.title,
     authors: book.authors,
     ...(book.isbn13 ? { isbn13: book.isbn13 } : {}),
     ...(book.coverUrl ? { coverUrl: book.coverUrl } : {}),
+    ...(workId ? { workId } : {}),
     source,
     viewedAt,
   };
+}
+
+/**
+ * `next`, keeping `previous`'s lists (saved books, saved items, Viewed
+ * before) wherever their contents did not change, and `previous` itself when
+ * nothing did. Every change is made to a fresh read of storage, so without
+ * this a change to Viewed before (opening a book) would hand the shelf a new
+ * but equal list of saved books and redraw every cover.
+ */
+export function keepUnchanged(previous: AnonymousWebState, next: AnonymousWebState): AnonymousWebState {
+  if (previous === next) return next;
+  const same = (a: unknown, b: unknown) => a === b || JSON.stringify(a) === JSON.stringify(b);
+  const merged: AnonymousWebState = {
+    ...next,
+    recentBooks: same(previous.recentBooks, next.recentBooks) ? previous.recentBooks : next.recentBooks,
+    savedBooks: same(previous.savedBooks, next.savedBooks) ? previous.savedBooks : next.savedBooks,
+    savedContent: same(previous.savedContent, next.savedContent) ? previous.savedContent : next.savedContent,
+  };
+  const keys = Object.keys(merged) as (keyof AnonymousWebState)[];
+  return keys.length === Object.keys(previous).length && keys.every(key => merged[key] === previous[key]) ? previous : merged;
 }
 
 export function withRecentBook(state: AnonymousWebState, book: PublicBook, source: RecentSource, viewedAt = new Date().toISOString()): AnonymousWebState {

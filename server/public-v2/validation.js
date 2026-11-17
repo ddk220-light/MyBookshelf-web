@@ -161,3 +161,46 @@ export function parseHoldingsCheck(body) {
   if (!bookKey) throw new PublicV2ValidationError();
   return { libraryId, bookKey, parsed };
 }
+
+// Shelf suggestions (plan 2026-11-14, Part 2). Only the two kinds of key a
+// suggestion can have are accepted: an ISBN edition (`v1:isbn:…`) and an Open
+// Library work (`v1:openlibrary:OL…W`), never a library's own record (whose
+// key names the library) or another source's. They are not stored or logged.
+export const SUGGESTION_LIMITS = Object.freeze({ keyLength: 512 });
+const SUGGESTION_EVENT_FIELDS = new Set(['event', 'bookKey']);
+// "Shown" is no longer counted: a database write per page view was not worth it.
+export const SUGGESTION_EVENTS = Object.freeze(['opened', 'saved']);
+const OPEN_LIBRARY_WORK = /^OL\d+W$/;
+
+function onlyFields(value, allowed) {
+  for (const key of Object.keys(value)) if (!allowed.has(key)) throw new PublicV2ValidationError();
+}
+
+/** An ISBN key or an Open Library work key; anything else is refused. */
+export function suggestionBookKey(value) {
+  if (typeof value !== 'string' || value.length > SUGGESTION_LIMITS.keyLength) throw new PublicV2ValidationError();
+  const parsed = parsePublicBookKey(value);
+  const usable = parsed?.kind === 'isbn' || (parsed?.kind === 'source' && parsed.source === 'openlibrary' && OPEN_LIBRARY_WORK.test(parsed.sourceRecordId));
+  if (!usable) throw new PublicV2ValidationError();
+  return value;
+}
+
+/**
+ * `GET /suggestions/related?book=<bookKey>`: exactly one `book` parameter and
+ * nothing else, so the address (which the CDN and browsers cache) names one
+ * public book and never carries anything about the reader.
+ */
+export function parseRelatedSuggestions(query) {
+  const value = query && typeof query === 'object' && !Array.isArray(query) ? query : {};
+  const names = Object.keys(value);
+  if (names.length !== 1 || names[0] !== 'book' || typeof value.book !== 'string') throw new PublicV2ValidationError();
+  return { bookKey: suggestionBookKey(value.book) };
+}
+
+/** `{ event: 'opened' | 'saved', bookKey }`, returned as `{ event, bookKeys }`. */
+export function parseSuggestionEvent(body) {
+  const value = bodyObject(body);
+  onlyFields(value, SUGGESTION_EVENT_FIELDS);
+  if (!SUGGESTION_EVENTS.includes(value.event)) throw new PublicV2ValidationError();
+  return { event: value.event, bookKeys: [suggestionBookKey(value.bookKey)] };
+}

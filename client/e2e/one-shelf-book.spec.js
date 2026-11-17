@@ -277,8 +277,11 @@ test.describe('One-shelf library pop-up', () => {
     await expect(page.locator('.home-library')).toHaveText(OTHER_LIBRARY.name);
     await expect(page.locator('.cover-badge-library')).toHaveCount(2);
     await expect(page.getByRole('link', { name: 'Shelf book 1 by Author 1' })).toBeVisible();
-    await expect(page.locator('.cover3d')).toHaveCount(3);
+    await expect(page.locator('.cover3d:not(.is-suggested)')).toHaveCount(3);
     expect(calls.lookup.map(call => call.libraryId)).toEqual([LINKED_LIBRARY.id, OTHER_LIBRARY.id]);
+    // Only saved books are asked about; the suggestions after them never are.
+    for (const call of calls.lookup) expect(call.books.map(item => item.bookKey).sort()).toEqual(saved.map(item => item.bookKey).sort());
+    await expect(page.locator('.cover3d.is-suggested .cover-badge-library')).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Account and settings' })).toBeFocused();
     // Closing the pop-up went back past the panel's entry, not to the panel.
     await page.goBack();
@@ -362,7 +365,7 @@ test.describe('One-shelf library links', () => {
     await expect(page).toHaveURL(/\/app\/shelf$/);
     await expect(page.locator('.home-library')).toHaveText(LINKED_LIBRARY.name);
     await expect(page.getByRole('dialog')).toHaveCount(0);
-    await expect(page.locator('.cover3d')).toHaveCount(1);
+    await expect(page.locator('.cover3d:not(.is-suggested)')).toHaveCount(1);
     expect(await everything(page)).not.toContain('wings');
     await page.reload();
     await expect(page.locator('.home-library')).toHaveText(LINKED_LIBRARY.name);

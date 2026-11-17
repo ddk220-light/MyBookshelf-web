@@ -29,6 +29,18 @@ it('reads one entry per saved book and treats the same ISBN-13 as already saved'
   expect(stored.savedBooks.map((book: { title: string }) => book.title)).toEqual(['Saved edition']);
 });
 
+it('opening a book changes Viewed before only: the saved books stay the same list, so the shelf is not drawn again', async () => {
+  const library = renderShelf();
+  const before = library().state.savedBooks;
+  await act(async () => { await library().rememberBook(sameIsbn, 'direct'); });
+  expect(library().state.recentBooks.map(book => book.bookKey)).toEqual([sameIsbn.bookKey]);
+  expect(library().state.savedBooks).toBe(before);
+  // Showing the same book's details again changes nothing at all.
+  const state = library().state;
+  await act(async () => { await library().updateRecentDisplay?.(sameIsbn); });
+  expect(library().state).toBe(state);
+});
+
 it('adding a removed book back drops its "Removed … Undo" notice', async () => {
   const library = renderShelf();
   await act(async () => { await library().unsaveBook(onShelf.bookKey); });
