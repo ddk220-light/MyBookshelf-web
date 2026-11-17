@@ -131,9 +131,11 @@ describe('desk layout at 1440 px', () => {
     expect(screen.queryByRole('link', { name: 'Back' })).not.toBeInTheDocument();
     expect(close.closest('.desk-slot')).not.toBeNull();
     const area = document.querySelector('.desk-shelf-area')!;
-    expect(area).toHaveAttribute('aria-hidden', 'true');
-    // Made inert at the next frame, with the focus move (not in the task that opens the page).
+    // Made inert and hidden together at the next frame, with the focus move (not in
+    // the task that opens the page): never hidden while its controls can take focus.
+    expect(area.hasAttribute('aria-hidden')).toBe(area.hasAttribute('inert'));
     await waitFor(() => expect(area.hasAttribute('inert')).toBe(true));
+    expect(area).toHaveAttribute('aria-hidden', 'true');
     expect(area.querySelector('.cover3d.is-open')).not.toBeNull();
     // Focus moving into the slot is checked in a real browser (one-shelf-desktop.spec.js):
     // jsdom lets a closed dialog's autofocus button take it.
@@ -141,6 +143,7 @@ describe('desk layout at 1440 px', () => {
     await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent(/^\/app\/shelf$/));
     expect(document.querySelector('.desk-slot')).toBeNull();
     expect(document.querySelector('.desk-shelf-area')!.hasAttribute('inert')).toBe(false);
+    expect(document.querySelector('.desk-shelf-area')!.hasAttribute('aria-hidden')).toBe(false);
   });
 
   it('a suggestion opens in the middle slot like any book, outlined on the shelf beside it', async () => {

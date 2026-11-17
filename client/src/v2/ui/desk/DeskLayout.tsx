@@ -124,12 +124,18 @@ export function DeskLayout({ mode, notices, children }: { mode: LayoutMode; noti
   const lastPath = useRef(arrival?.path ?? pathname);
 
   // The shelf beside an open page takes no focus or pointer input: the scrim
-  // over it takes the pointer at once, and it is made inert with the focus
-  // move below, at the next frame (restyling every cover is then not added
-  // to the task that opens the page). It is live again as soon as the page
-  // closes, before focus goes back to it.
+  // over it takes the pointer at once, and it is made inert and hidden from
+  // assistive technology together, with the focus move below, at the next
+  // frame (restyling every cover is then not added to the task that opens
+  // the page; hiding it earlier would hide controls that can still take
+  // focus). It is live again as soon as the page closes, before focus goes
+  // back to it.
   const area = useRef<HTMLDivElement>(null);
-  useLayoutEffect(() => { if (!slotOpen) area.current?.removeAttribute('inert'); }, [slotOpen]);
+  useLayoutEffect(() => {
+    if (slotOpen) return;
+    area.current?.removeAttribute('inert');
+    area.current?.removeAttribute('aria-hidden');
+  }, [slotOpen]);
 
   // Motion: opening (DeskBook board's push) and closing, never under reduced motion.
   const motion = useMediaQuery('(prefers-reduced-motion: no-preference)');
@@ -176,6 +182,7 @@ export function DeskLayout({ mode, notices, children }: { mode: LayoutMode; noti
       const frame = requestAnimationFrame(() => {
         if (!page?.isConnected) return;
         area.current?.setAttribute('inert', '');
+        area.current?.setAttribute('aria-hidden', 'true');
         const active = document.activeElement;
         // Unless something in the page, or a picker or dialog over it, took it first.
         if (active && active !== page && (page.contains(active) || active.closest('dialog[open], .desk-picker'))) return;
@@ -295,7 +302,7 @@ export function DeskLayout({ mode, notices, children }: { mode: LayoutMode; noti
   // On phones the wrappers below are left out of the layout (`shelf-host`,
   // display: contents), so the screen scrolls and looks as released.
   const host = (name: string) => phone ? 'shelf-host' : name;
-  const shelfArea = <div ref={area} className={host('desk-shelf-area')} aria-hidden={slotOpen || undefined}>
+  const shelfArea = <div ref={area} className={host('desk-shelf-area')}>
     <div className={host('desk-shelf')} id={phone ? undefined : 'desk-shelf'}>
       <UNSAFE_LocationContext.Provider value={shelfLocation.current}><HomeScreen layout={mode} behind={behind} openKey={bookKey} /></UNSAFE_LocationContext.Provider>
     </div>
