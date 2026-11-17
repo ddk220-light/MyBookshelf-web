@@ -112,7 +112,9 @@ describe('desk layout at 1440 px', () => {
     seed(Array.from({ length: 8 }, (_, index) => book(index + 1)), LIBRARY.id);
     renderAt('/app/shelf');
     expect(await screen.findByRole('heading', { name: 'My shelf' })).toBeInTheDocument();
-    // 8 saved and 5 suggested books, six a bay: 6, 6 and 1.
+    // 8 saved and 5 suggested books, six a bay: 6, 6 and 1. Suggestions arrive
+    // after the saved books are drawn.
+    await waitFor(() => expect(document.querySelectorAll('.home-bookcase .cover3d.is-suggested')).toHaveLength(5));
     const bays = document.querySelectorAll('.home-bookcase .bay-books');
     expect(bays).toHaveLength(3);
     expect(bays[0].querySelectorAll('.cover3d')).toHaveLength(6);
