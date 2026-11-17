@@ -57,6 +57,23 @@ export function couldntCheck(reason, extra = {}) {
   return { outcome: 'couldnt_check', reason: REASONS.includes(reason) ? reason : 'unavailable', ...extra };
 }
 
+// The provider's own code (e.g. CATALOG_ROBOTS_DISALLOWED, or CATALOG_UNAVAILABLE
+// with a network cause such as ECONNREFUSED), for the failure log only. Kept
+// non-enumerable so it never reaches a response, a stored answer or telemetry.
+export function errorCodeFor(error) {
+  const clean = (value) => (typeof value === 'string' && /^[A-Za-z0-9_.-]{1,40}$/.test(value) ? value : null);
+  const code = clean(error?.code) || clean(error?.errorCode) || (error?.name === 'AbortError' ? 'AbortError' : null);
+  const cause = clean(error?.cause?.code);
+  return code && cause && cause !== code ? `${code}:${cause}`.slice(0, 64) : (code || cause);
+}
+
+export function couldntCheckFor(error, extra = {}) {
+  const answer = couldntCheck(reasonForError(error), extra);
+  const code = errorCodeFor(error);
+  if (code) Object.defineProperty(answer, 'errorCode', { value: code, enumerable: false });
+  return answer;
+}
+
 const FOUND_OUTCOMES = new Set(['available', 'none_available', 'in_catalog']);
 const PROVEN = new Set(['exact_isbn', 'verified_work', 'catalog_record']);
 
@@ -93,12 +110,12 @@ export function answerFromResponse(response, context = {}) {
   // The catalog answered and recognized the edition but did not show a copy
   // (Evergreen: record with no holdings). Not a failure, not an answer.
   if (outcome === 'unknown' && PROVEN.has(matchKind) && !response.errorCode) return couldntCheck('unconfirmed', extra);
-  if (response.errorCode) return couldntCheck(reasonForError({ code: response.errorCode }), extra);
+  if (response.errorCode) return couldntCheckFor({ code: response.errorCode }, extra);
   return couldntCheck('unrecognized', extra);
 }
 
 // The `/availability` response for an unknown outcome carries `errorCode`.
 export function answerFromCheck(result, context = {}) {
-  if (result?.error) return couldntCheck(reasonForError(result.error));
+  if (result?.error) return couldntCheckFor(result.error);
   return answerFromResponse(result?.response, context);
 }

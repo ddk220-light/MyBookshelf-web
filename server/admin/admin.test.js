@@ -5,7 +5,7 @@ import { createApplication } from '../application.js';
 import { createAdminMiddleware } from './middleware.js';
 import { readAdminConfig } from './config.js';
 import { groupLibraryRequests, similarWords } from './grouping.js';
-import { libraryHealthCsv, usage, USAGE_VIEW_FIELDS, FAILURE_CLASSES, updateLibraryRequest, AdminInputError } from './queries.js';
+import { healthWindow, libraryHealthCsv, usage, USAGE_VIEW_FIELDS, FAILURE_CLASSES, updateLibraryRequest, AdminInputError } from './queries.js';
 import { csrfForSession } from '../accounts/security.js';
 
 const OWNER = '0b6f3f7e-8a4c-4f1e-9d55-3c2b1a0f9e88';
@@ -270,4 +270,20 @@ test('status and note changes are validated before any query', async () => {
   for (const body of [{}, { status: 'deleted' }, { note: 'x'.repeat(501) }, { note: 'a‮b' }, { status: 'added', extra: 1 }, []]) {
     await assert.rejects(updateLibraryRequest(db, 'pune', body), AdminInputError);
   }
+});
+
+test('the health review window is 7, 30, 60 or 90 days, and the CSV states it with the error codes and listing', () => {
+  assert.equal(healthWindow(undefined), 7);
+  for (const days of [7, 30, 60, 90]) assert.equal(healthWindow(String(days)), days);
+  for (const bad of ['0', '365', 'x', '-7']) assert.throws(() => healthWindow(bad), AdminInputError);
+  const csv = libraryHealthCsv({ windowDays: 60, libraries: [{ libraryId: 'koha:a', name: 'A', platform: 'koha', host: 'a.example', listed: 'verified',
+    flaggedAt: null, flagReason: null, failures7d: 3, failuresByClass: Object.fromEntries(FAILURE_CLASSES.map(n => [n, n === 'timeout' ? 3 : 0])),
+    errorCodes: { CATALOG_TIMEOUT: 2, 'CATALOG_UNAVAILABLE:ETIMEDOUT': 1 }, checks7d: 10, lastSuccessAt: null, lastFailureAt: null, lastFailure: 'timeout',
+    medianMs: null, medianFailureMs: null, acknowledgedAt: null, ownerNote: null }] });
+  const [header, line] = csv.trim().split('\r\n').map(row => row.split(','));
+  const at = name => line[header.indexOf(name)];
+  assert.equal(at('window_days'), '60');
+  assert.equal(at('listed'), 'verified');
+  assert.equal(at('failures'), '3');
+  assert.ok(csv.includes('"CATALOG_TIMEOUT 2; CATALOG_UNAVAILABLE:ETIMEDOUT 1"'));
 });

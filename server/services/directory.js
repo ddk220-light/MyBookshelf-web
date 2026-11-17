@@ -2,7 +2,8 @@ import libraries from '../data/libraries.json' with { type: 'json' };
 import researched from '../data/india-catalogs.json' with { type: 'json' };
 import discovered from '../data/discovered-catalogs.json' with { type: 'json' };
 import presentationReviews from '../../data/library-presentation-reviews.json' with { type: 'json' };
-import hiddenList from '../data/india-catalogs-hidden.json' with { type: 'json' };
+import indiaAllowlist from '../data/india-catalogs-listed.json' with { type: 'json' };
+import indiaRegions from '../data/india-library-regions.json' with { type: 'json' };
 const NEARBY_CUTOFF_KM = 80.5;
 
 function canonicalPlatform(platform) {
@@ -34,13 +35,33 @@ for (const [id, review] of Object.entries(presentationReviews.libraries)) {
     entry.branchClassificationComplete = branches.branchClassificationComplete;
   }
 }
+// States filled from published evidence (tools/directory/india-regions.mjs) for
+// Indian libraries whose source entry has none. A source region always wins.
+for (const [id, fill] of Object.entries(indiaRegions.libraries)) {
+  const entry = merged.get(id);
+  if (!entry || entry.region) continue;
+  entry.region = fill.region;
+  if (fill.district && !entry.district) entry.district = fill.district;
+}
 const entries = [...merged.values()];
 const byId = new Map(entries.map((entry) => [entry.id, entry]));
-// The one place hidden libraries leave the directory: every way of finding a
-// library (search, browse, near me, public API listings) reads `listed`.
-// Hidden IDs still resolve, so a saved choice or a direct link keeps working.
-const hidden = new Set(hiddenList.libraryIds);
-const listed = entries.filter((entry) => !hidden.has(entry.id));
+// The one place the India allowlist applies: every way of finding a library
+// (search, browse, near me, public API listings) reads `listed`. An Indian
+// library is offered only when server/data/india-catalogs-listed.json lists it
+// (a verified book or an e-Granthalaya audit that found books). Unlisted IDs
+// still resolve, so a saved choice or a direct link keeps working. Libraries
+// outside India are not affected.
+const indiaListed = new Set(indiaAllowlist.libraryIds);
+const listed = entries.filter((entry) => entry.country !== 'IN' || indiaListed.has(entry.id));
+const indiaAuditOnly = new Set(indiaAllowlist.egranthalayaAuditOnly || []);
+/** Why a library is offered when finding one: 'verified', 'egranthalaya-audit',
+ * 'not-listed' (Indian, resolvable by ID only) or 'outside-india'. */
+export function indiaListing(entry) {
+  if (!entry) return null;
+  if (entry.country !== 'IN') return 'outside-india';
+  if (!indiaListed.has(entry.id)) return 'not-listed';
+  return indiaAuditOnly.has(entry.id) ? 'egranthalaya-audit' : 'verified';
+}
 export function getAllLibraries() { return entries; }
 export function getListedLibraries() { return listed; }
 
@@ -73,10 +94,10 @@ export function publicLibrary(entry, distanceKm) {
   return result;
 }
 
-export function searchLibraries(query, limit = 25) {
+export function searchLibraries(query, limit = 25, { pool = listed } = {}) {
   const needle = String(query || '').trim().toLocaleLowerCase();
   if (!needle) return [];
-  return listed
+  return pool
     .filter((entry) => {
       const branchNames = (entry.branches || []).map((branch) => branch.name).join(' ');
       return [entry.name, entry.city, entry.region, entry.country, entry.address, branchNames, ...(entry.searchAliases || [])]
@@ -86,10 +107,15 @@ export function searchLibraries(query, limit = 25) {
     .map((entry) => publicLibrary(entry));
 }
 
-export function getLibrariesByRegion(country, region) {
+// Whole-directory variants, including Indian libraries left off the allowlist.
+// For tests and tools that exercise adapters or place matching; the app's
+// finding paths use the listed versions above and below.
+export function searchAllLibraries(query, limit = 25) { return searchLibraries(query, limit, { pool: entries }); }
+export function getAllLibrariesByRegion(country, region) { return getLibrariesByRegion(country, region, { pool: entries }); }
+export function getLibrariesByRegion(country, region, { pool = listed } = {}) {
   const countryCode = String(country).toUpperCase();
   const regionName = String(region).trim().toLocaleLowerCase();
-  return listed.filter((entry) => entry.country === countryCode
+  return pool.filter((entry) => entry.country === countryCode
     && String(entry.region || '').toLocaleLowerCase() === regionName);
 }
 

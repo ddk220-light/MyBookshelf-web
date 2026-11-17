@@ -15,5 +15,5 @@ test('a refusal, an egress failure and a site error are told apart, and none is 
 
 test('the recheck covers the three unreachable groups and the five single hosts', () => {
   assert.deepEqual(RECHECK_GROUPS.filter((group) => group.prefix).map((group) => group.group), ['KALNET', 'IDEAL', 'Somaiya']);
-  assert.equal(RECHECK_GROUPS.length, 8);
+  assert.equal(RECHECK_GROUPS.length, 12);
 });

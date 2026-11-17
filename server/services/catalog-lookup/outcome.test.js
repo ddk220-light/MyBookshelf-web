@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { answerFromResponse, answerFromCheck, isHealthFailure, reasonForError } from './outcome.js';
+import { answerFromResponse, answerFromCheck, couldntCheckFor, errorCodeFor, isHealthFailure, reasonForError } from './outcome.js';
 
 const coded = code => Object.assign(new Error(code), { code });
 
@@ -60,4 +60,18 @@ test('only real failures count against a library’s health', () => {
   for (const reason of ['timeout', 'unavailable', 'blocked', 'unrecognized', 'configuration']) assert.equal(isHealthFailure(reason), true, reason);
   // Our own request cap and our own cross-reader pacing are not the library's failures.
   for (const reason of ['unconfirmed', 'unsupported', 'cancelled', 'busy', 'budget', undefined]) assert.equal(isHealthFailure(reason), false, String(reason));
+});
+
+test('the provider error code reaches the failure log only, never a response', () => {
+  const robots = couldntCheckFor(coded('CATALOG_ROBOTS_DISALLOWED'));
+  assert.deepEqual(robots, { outcome: 'couldnt_check', reason: 'blocked' });
+  assert.equal(robots.errorCode, 'CATALOG_ROBOTS_DISALLOWED');
+  assert.equal(JSON.stringify(robots).includes('ROBOTS'), false);
+  assert.equal(Object.keys({ ...robots }).includes('errorCode'), false);
+  const network = Object.assign(new Error('fetch failed'), { code: 'CATALOG_UNAVAILABLE', cause: { code: 'ECONNREFUSED' } });
+  assert.equal(errorCodeFor(network), 'CATALOG_UNAVAILABLE:ECONNREFUSED');
+  assert.equal(errorCodeFor(Object.assign(new Error('x'), { name: 'AbortError' })), 'AbortError');
+  // Anything that is not a plain code is dropped rather than logged.
+  assert.equal(errorCodeFor({ code: 'has spaces <b>' }), null);
+  assert.equal(couldntCheckFor(new Error('plain')).errorCode, undefined);
 });

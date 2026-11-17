@@ -25,15 +25,35 @@ denominators and [coverage.csv](coverage.csv) for every connection.
 all 5,036 e-Granthalaya libraries in the directory for the same fifty titles:
 3,135 returned books, 1,890 returned a valid empty result for all fifty and 11
 had request or setup errors. The owner decided to leave the 1,890 out of finding
-a library until their catalogs show books; they are listed in
-[india-catalogs-hidden.json](../../../server/data/india-catalogs-hidden.json) and
-still resolve for readers who already chose one. The 11 error cases stay listed.
+a library until their catalogs show books; they are recorded in
+[empty-catalogs.json](../india-library-status/empty-catalogs.json). Since
+15 November 2026 the directory offers only allowlisted Indian libraries
+([india-catalogs-listed.json](../../../server/data/india-catalogs-listed.json));
+every other library still resolves for readers who already chose one. The 11 error cases stay listed.
 See [the audit evidence](egranthalaya-audit-20261110/README.md) (summary files
 only; per-batch evidence stays on `feat/library-connector-audit`). IUCAA
 (`egranthalaya:universities-iucaa`) later passed a one-book check and is listed
 again, so 1,889 remain hidden; the same list now also holds 155 LIBMAN tenants
 whose latest seed searches were all clean and empty. Per-library status and
 revisit dates: [india-library-status](../india-library-status/README.md).
+
+**Local-machine recheck, 15 November 2026.** The 343 libraries the remote test
+machine could not reach were tried from a local machine with the same runners,
+seeds, pacing and stop rules (`local-20261115-*` evidence and manifests). Seven
+of the ten e-Granthalaya libraries that had failed with HTTP 503 passed.
+**KALNET is a robots refusal:** its robots.txt is `User-agent: *` /
+`Disallow: /` (Crawl-delay 60). The app could not read it because KALNET omits
+a TLS intermediate and a failed robots.txt read counts as no restrictions, so
+the local KALNET run was withdrawn
+([local-20261115-kalnet-withdrawn.json](local-20261115-kalnet-withdrawn.json))
+and robots.txt now uses KALNET's validated transport
+([robots-audit-20261115-before.json](robots-audit-20261115-before.json),
+[after](robots-audit-20261115-after.json)). Somaiya's CloudFront refuses US edges
+from both machines, and SCERT Assam's robots.txt disallows `/cgi-bin/`: both
+blocked. IDEAL and six single hosts are unreachable from both machines; IIT
+Madras and National Science Library publish catalog hostnames with no public
+DNS. Goa DHE stays too slow even at the 45 s maximum budget. See the
+[status tracker](../india-library-status/README.md#local-machine-recheck-15-november-2026).
 
 ## Selection and evidence
 

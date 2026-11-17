@@ -17,7 +17,9 @@ import index from '../data/india-places.json' with { type: 'json' };
 import sources from '../../data/india-place-sources.json' with { type: 'json' };
 import coverage from '../../data/india-location-coverage.json' with { type: 'json' };
 
-const discovery = createDiscoveryService();
+// Place matching over the whole directory: whether a library is offered at all
+// is the India allowlist's job (services/directory.test.js).
+const discovery = createDiscoveryService({ entries: getAllLibraries });
 const cases = [
   ['Chennai', 'koha:anna-centenary-library'], ['Madurai', 'koha:kalaignar-centenary-library'],
   ['Kochi', 'koha:ideal-cift'], ['Bengaluru', 'koha:dharmaram'], ['Karaikudi', 'catalog:alagappa-university'],

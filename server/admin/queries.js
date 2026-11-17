@@ -1,4 +1,4 @@
-import { getLibraryById } from '../services/directory.js';
+import { getLibraryById, indiaListing } from '../services/directory.js';
 import { dailyUsage, USAGE_KINDS } from '../catalog-store/usageLog.js';
 import { groupLibraryRequests } from './grouping.js';
 
@@ -95,7 +95,17 @@ export async function updateProblemReport(db, id, body) {
 
 // Failures come from the health record; check totals are not stored there
 // (only failures), so they come from the anonymous log when it is on.
-export async function libraryHealth(db) {
+// Review windows for the health view: the last week by default, or up to the
+// 90 days library_check_events keeps (maintenance deletes older rows).
+export const HEALTH_WINDOWS = Object.freeze([7, 30, 60, 90]);
+export function healthWindow(value) {
+  const days = Number(value ?? 7);
+  if (!HEALTH_WINDOWS.includes(days)) throw new AdminInputError();
+  return days;
+}
+
+export async function libraryHealth(db, { days = 7 } = {}) {
+  days = healthWindow(days);
   const { rows } = await db.query(`SELECT h.library_id, h.platform, h.last_success_at, h.last_failure_at, h.last_failure,
       h.failures_since_success, h.flagged_at, h.flag_reason, h.acknowledged_at, h.owner_note,
       coalesce(e.failures, 0) AS failures_7d, e.median_ms AS median_failure_ms, e.by_class,
@@ -104,20 +114,22 @@ export async function libraryHealth(db) {
     LEFT JOIN LATERAL (
       SELECT count(*)::int AS failures, percentile_cont(0.5) WITHIN GROUP (ORDER BY c.duration_ms)::int AS median_ms,
         (SELECT jsonb_object_agg(failure, n) FROM (SELECT failure, count(*)::int AS n FROM library_check_events f
-           WHERE f.library_id = h.library_id AND f.occurred_at > now() - interval '7 days' GROUP BY failure) classes) AS by_class
-      FROM library_check_events c WHERE c.library_id = h.library_id AND c.occurred_at > now() - interval '7 days'
+           WHERE f.library_id = h.library_id AND f.occurred_at > now() - make_interval(days => $1) GROUP BY failure) classes) AS by_class,
+        (SELECT jsonb_object_agg(code, n) FROM (SELECT coalesce(error_code, 'none') AS code, count(*)::int AS n FROM library_check_events g
+           WHERE g.library_id = h.library_id AND g.occurred_at > now() - make_interval(days => $1) GROUP BY 1) codes) AS by_code
+      FROM library_check_events c WHERE c.library_id = h.library_id AND c.occurred_at > now() - make_interval(days => $1)
     ) e ON true
-    WHERE h.flagged_at IS NOT NULL OR h.last_failure_at > now() - interval '7 days' OR h.last_success_at > now() - interval '7 days'
-    LIMIT 2000`, [], Q);
+    WHERE h.flagged_at IS NOT NULL OR h.last_failure_at > now() - make_interval(days => $1) OR h.last_success_at > now() - make_interval(days => $1)
+    LIMIT 2000`, [days], Q);
   const ids = rows.map(row => row.library_id);
   const [checks, recent] = ids.length ? await Promise.all([
     db.query(`SELECT library_id, count(*)::int AS checks, percentile_cont(0.5) WITHIN GROUP (ORDER BY duration_ms)::int AS median_ms
       FROM usage_events WHERE kind IN ('book_check', 'result_marks') AND library_id = ANY($1::text[])
-        AND occurred_hour > now() - interval '7 days' GROUP BY library_id`, [ids], Q),
+        AND occurred_hour > now() - make_interval(days => $2) GROUP BY library_id`, [ids, days], Q),
     db.query(`SELECT library_id, occurred_at, operation, failure, error_code, duration_ms, requests FROM (
         SELECT *, row_number() OVER (PARTITION BY library_id ORDER BY occurred_at DESC) AS n FROM library_check_events
-        WHERE library_id = ANY($1::text[]) AND occurred_at > now() - interval '7 days') ranked
-      WHERE n <= 5 ORDER BY library_id, occurred_at DESC`, [ids], Q),
+        WHERE library_id = ANY($1::text[]) AND occurred_at > now() - make_interval(days => $2)) ranked
+      WHERE n <= 5 ORDER BY library_id, occurred_at DESC`, [ids, days], Q),
   ]) : [{ rows: [] }, { rows: [] }];
   const checksBy = new Map(checks.rows.map(row => [row.library_id, row]));
   const recentBy = new Map();
@@ -139,6 +151,8 @@ export async function libraryHealth(db) {
       medianMs: logged?.median_ms ?? null, medianFailureMs: row.median_failure_ms ?? null,
       lastSuccessAt: iso(row.last_success_at), lastFailureAt: iso(row.last_failure_at), lastFailure: row.last_failure,
       failuresSinceSuccess: row.failures_since_success, acknowledgedAt: iso(row.acknowledged_at), ownerNote: row.owner_note,
+      // failures7d, checks7d and the rates cover the requested window (windowDays), 7 days by default.
+      errorCodes: row.by_code || {}, listed: indiaListing(entry),
       recentFailures: recentBy.get(row.library_id) || [],
     };
   });
@@ -147,7 +161,7 @@ export async function libraryHealth(db) {
     || ((b.failureRate ?? -1) - (a.failureRate ?? -1))
     || (b.failures7d - a.failures7d)
     || a.libraryId.localeCompare(b.libraryId));
-  return { libraries, checkTotalsFromLog: checks.rows.length > 0 };
+  return { libraries, windowDays: days, checkTotalsFromLog: checks.rows.length > 0 };
 }
 
 export async function acknowledgeLibraryHealth(db, libraryId, body) {
@@ -171,11 +185,12 @@ const cell = value => {
   // Semicolons and tabs are quoted too, for spreadsheets that split on them.
   return /[",;\t\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 };
-export function libraryHealthCsv({ libraries }) {
-  const header = ['library_id', 'name', 'platform', 'host', 'flagged_at', 'flag_reason', 'failures_7d', ...FAILURE_CLASSES, 'checks_7d',
+export function libraryHealthCsv({ libraries, windowDays = 7 }) {
+  const header = ['library_id', 'name', 'platform', 'host', 'listed', 'window_days', 'flagged_at', 'flag_reason', 'failures', ...FAILURE_CLASSES, 'error_codes', 'checks',
     'last_success_at', 'last_failure_at', 'last_failure', 'median_ms', 'median_failure_ms', 'acknowledged_at', 'owner_note'];
-  const lines = libraries.map(row => [row.libraryId, row.name, row.platform, row.host, row.flaggedAt, row.flagReason, row.failures7d,
-    ...FAILURE_CLASSES.map(name => row.failuresByClass[name]), row.checks7d, row.lastSuccessAt, row.lastFailureAt, row.lastFailure,
+  const codes = row => Object.entries(row.errorCodes || {}).sort((a, b) => b[1] - a[1]).map(([code, n]) => `${code} ${n}`).join('; ');
+  const lines = libraries.map(row => [row.libraryId, row.name, row.platform, row.host, row.listed, windowDays, row.flaggedAt, row.flagReason, row.failures7d,
+    ...FAILURE_CLASSES.map(name => row.failuresByClass[name]), codes(row), row.checks7d, row.lastSuccessAt, row.lastFailureAt, row.lastFailure,
     row.medianMs, row.medianFailureMs, row.acknowledgedAt, row.ownerNote].map(cell).join(','));
   return [header.join(','), ...lines].join('\r\n') + '\r\n';
 }
