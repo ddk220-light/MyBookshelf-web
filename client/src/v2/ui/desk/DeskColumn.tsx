@@ -74,6 +74,27 @@ export function HelpLinks({ replace, report, onDone, className = '' }: { replace
 }
 
 /**
+ * After the picker closes, focus goes back to `target()`. The column may be
+ * drawn again a little later (the chosen library replacing Find my library),
+ * which would drop focus with the button it was on, so for a short while
+ * focus that has been lost is put back on the current target. Focus the
+ * reader has moved somewhere else is left alone.
+ */
+const SETTLE_MS = 1500;
+function returnFocusWhenSettled(target: () => HTMLElement | null) {
+  const until = performance.now() + SETTLE_MS;
+  const step = () => {
+    const active = document.activeElement;
+    const lost = !active || active === document.body || !active.isConnected;
+    const next = target();
+    if (lost && next?.isConnected) next.focus();
+    else if (!lost && active !== next) return;
+    if (performance.now() < until) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+/**
  * The library picker in the left column (DeskLibrary board): in place of the
  * library, account and reading light sections, with the shelf still beside
  * it. Escape and × close it; focus starts on "Libraries near me" (or the
@@ -86,7 +107,7 @@ function ColumnPicker({ onClose, initialQuery, returnFocus }: { onClose: () => v
   back.current = returnFocus;
   useLayoutEffect(() => {
     ref.current?.querySelector<HTMLElement>(initialQuery ? '#library-place' : '.library-near')?.focus();
-    return () => { requestAnimationFrame(() => { const target = back.current(); if (target?.isConnected) target.focus(); }); };
+    return () => returnFocusWhenSettled(() => back.current());
     // Focus moves in once, when the picker opens.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

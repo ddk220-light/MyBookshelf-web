@@ -158,7 +158,8 @@ test('anonymous log, submissions and the host gate as the runtime role', { skip,
   const { rows } = await admin.query('SELECT kind, query_text, occurred_hour = date_trunc(\'hour\', occurred_hour, \'UTC\') AS hour FROM usage_events ORDER BY kind, id');
   assert.deepEqual(rows, [{ kind: 'book_search', query_text: 'wings of fire [removed]', hour: true }, { kind: 'near_me', query_text: null, hour: true },
     { kind: 'suggestion', query_text: null, hour: true }, { kind: 'suggestion', query_text: null, hour: true }]);
-  assert.deepEqual((await admin.query(`SELECT book_key, outcome, library_id FROM usage_events WHERE kind = 'suggestion' ORDER BY id`)).rows,
+  // The two writes are not awaited one after the other, so either may land first.
+  assert.deepEqual((await admin.query(`SELECT book_key, outcome, library_id FROM usage_events WHERE kind = 'suggestion' ORDER BY outcome`)).rows,
     [{ book_key: 'v1:openlibrary:OL1W', outcome: 'opened', library_id: null }, { book_key: 'v1:openlibrary:OL1W', outcome: 'saved', library_id: null }]);
   // The table refuses anything else for a suggestion row, and book keys on other kinds stay refused.
   for (const values of [`'suggestion', 'x', NULL, 'v1:openlibrary:OL1W', 'shown'`, `'suggestion', NULL, 'koha:a', 'v1:openlibrary:OL1W', 'shown'`,
