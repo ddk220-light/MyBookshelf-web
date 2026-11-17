@@ -405,7 +405,8 @@ test.describe('Desktop layout', () => {
     }
     await page.keyboard.press('Escape');
     await expect(page).toHaveURL(/\/app\/shelf$/);
-    expect(await focusedName(page)).toMatch(new RegExp('^' + BOOK.title + ' by .*on my shelf'));
+    // Focus goes back at the next frame, once the shelf is live again.
+    await expect.poll(() => focusedName(page)).toMatch(new RegExp('^' + BOOK.title + ' by .*on my shelf'));
     const ring = await page.evaluate(() => { const style = getComputedStyle(document.activeElement); return style.outlineStyle !== 'none'; });
     expect(ring).toBe(true);
   });
