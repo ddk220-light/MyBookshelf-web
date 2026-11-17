@@ -409,7 +409,8 @@ test.describe('Desktop layout', () => {
     }
     await page.keyboard.press('Escape');
     await expect(page).toHaveURL(/\/app\/shelf$/);
-    expect(await focusedName(page)).toMatch(new RegExp('^' + BOOK.title + ' by .*on my shelf'));
+    // Focus goes back at the next frame, once the shelf is live again.
+    await expect.poll(() => focusedName(page)).toMatch(new RegExp('^' + BOOK.title + ' by .*on my shelf'));
     const ring = await page.evaluate(() => { const style = getComputedStyle(document.activeElement); return style.outlineStyle !== 'none'; });
     expect(ring).toBe(true);
   });
@@ -568,5 +569,207 @@ test.describe('Desktop layout', () => {
     await page.getByRole('link', { name: new RegExp('^' + BOOK.title + ' by ') }).click();
     await expect(page.locator('.library-answer')).toBeVisible();
     expect(await small()).toEqual([]);
+  });
+});
+
+// Faults found by the independent check of the desktop layout (docs/STATUS.md,
+// "Desktop layout follow-up"): each test failed before its fix.
+test.describe('Desktop layout follow-up', () => {
+  test.skip(({ isMobile }) => isMobile, 'Desktop browsers only');
+  test.use({ viewport: WIDE });
+  const picker = page => column(page).getByRole('region', { name: 'Find your library' });
+  const entryIndex = page => page.evaluate(() => window.history.state?.idx);
+  const LONG = Array.from({ length: 60 }, (_, index) => book(index + 2));
+  const cover = page => page.locator('.home-bookcase').getByRole('link', { name: new RegExp('^' + BOOK.title + ' by ') });
+
+  test('a book opened by its address, the library picker, then ×: no entry is left for the book', async ({ page }) => {
+    await setup(page, { libraryId: null });
+    await page.goto(bookPath);
+    expect(await entryIndex(page)).toBe(0);
+    await slot(page).getByRole('button', { name: 'Find my library' }).click();
+    await expect(picker(page)).toBeVisible();
+    await slot(page).getByRole('button', { name: 'Close the book' }).click();
+    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(slot(page)).toHaveCount(0);
+    await expect(picker(page)).toHaveCount(0);
+    await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+    // The shelf took the book's place: it is the first entry, and Back leaves the app.
+    await expect.poll(() => entryIndex(page)).toBe(0);
+    await page.goBack();
+    await expect(page).not.toHaveURL(bookUrl);
+  });
+
+  test('the library pop-up from the old /app/libraries link opens once and never again by itself', async ({ page }) => {
+    await setup(page, { saved: TWELVE, libraryId: null });
+    await page.goto('/app/libraries');
+    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(picker(page)).toBeVisible();
+    // A book opened from the shelf beside it, then closed: the picker stays closed.
+    await cover(page).click();
+    await expect(slot(page).getByRole('heading', { level: 1, name: BOOK.title })).toBeVisible();
+    await expect(picker(page)).toHaveCount(0);
+    await slot(page).getByRole('button', { name: 'Close the book' }).click();
+    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(slot(page)).toHaveCount(0);
+    await expect(picker(page)).toHaveCount(0);
+    // A page from the column, then Back.
+    await column(page).getByRole('link', { name: 'Privacy' }).click();
+    await expect(slot(page).getByRole('heading', { level: 1, name: 'Privacy' })).toBeVisible();
+    await page.goBack();
+    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(slot(page)).toHaveCount(0);
+    await expect(picker(page)).toHaveCount(0);
+    await page.reload();
+    await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+    await expect(picker(page)).toHaveCount(0);
+
+    // Opened with Find my library, the same holds: Escape on a book opened beside it closes the book only.
+    await column(page).getByRole('button', { name: 'Find my library' }).click();
+    await expect(picker(page)).toBeVisible();
+    await cover(page).click();
+    await expect(slot(page)).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(slot(page)).toHaveCount(0);
+    await expect(picker(page)).toHaveCount(0);
+    // Forward goes to the book again, not to the picker.
+    await page.goForward();
+    await expect(page).toHaveURL(bookUrl);
+    await expect(picker(page)).toHaveCount(0);
+  });
+
+  test.describe('rail', () => {
+    test.use({ viewport: { width: 1024, height: 768 } });
+
+    test('one scroll area: the shelf alone, and a long page over a long shelf', async ({ page }) => {
+      await setup(page, { saved: LONG });
+      await page.goto('/app/shelf');
+      await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+      const scrollers = () => page.evaluate(() => [document.scrollingElement, ...document.querySelectorAll('body *')]
+        .filter(element => element.scrollHeight > element.clientHeight + 1 && (element === document.scrollingElement || /auto|scroll/.test(getComputedStyle(element).overflowY)))
+        .map(element => element === document.scrollingElement ? 'document' : '.' + [...element.classList].join('.')));
+      expect(await scrollers()).toEqual(['.desk-shelf']);
+      await page.locator('.desk-shelf').evaluate(element => { element.scrollTop = 600; });
+      const rail = page.getByRole('navigation', { name: 'Library and account' });
+      await rail.getByRole('button', { name: 'Help' }).click();
+      await page.getByRole('dialog', { name: 'Help' }).getByRole('link', { name: 'Privacy' }).click();
+      await expect(slot(page).getByRole('heading', { level: 1, name: 'Privacy' })).toBeVisible();
+      // Only the page scrolls; the shelf behind it keeps its place.
+      expect(await scrollers()).toEqual(['.desk-slot']);
+      expect(await page.locator('.desk-shelf').evaluate(element => element.scrollTop)).toBe(600);
+      await page.keyboard.press('Escape');
+      await expect(slot(page)).toHaveCount(0);
+      expect(await scrollers()).toEqual(['.desk-shelf']);
+      expect(await page.locator('.desk-shelf').evaluate(element => element.scrollTop)).toBe(600);
+    });
+
+    test('the old /app/libraries link: the pop-up beside the rail opens once', async ({ page }) => {
+      await setup(page, { libraryId: null });
+      await page.goto('/app/libraries');
+      const dialog = page.getByRole('dialog', { name: 'Find your library' });
+      await expect(dialog).toBeVisible();
+      await page.keyboard.press('Escape');
+      await expect(dialog).toBeHidden();
+      await cover(page).click();
+      await expect(slot(page)).toBeVisible();
+      await page.goBack();
+      await expect(page).toHaveURL(/\/app\/shelf$/);
+      await expect(slot(page)).toHaveCount(0);
+      await expect(dialog).toBeHidden();
+      // Back from there leaves the app: the pop-up is not waiting in an entry behind the shelf.
+      await page.goBack();
+      await expect(page).not.toHaveURL(/\/app\//);
+      await page.goForward();
+      await expect(page).toHaveURL(/\/app\/shelf$/);
+      await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+      await expect(dialog).toBeHidden();
+    });
+  });
+
+  test.describe('crossing 640 px in a tall window', () => {
+    test.use({ viewport: { width: 600, height: 900 } });
+    const PHONE_TALL = { width: 600, height: 900 };
+    const RAIL = { width: 700, height: 900 };
+    // The shelf screen's element, marked: still the same element after a crossing means it was not drawn again.
+    const mark = page => page.locator('.home').evaluate(element => { element.dataset.kept = 'yes'; });
+    const kept = page => page.locator('.home[data-kept="yes"]');
+    const rail = page => page.getByRole('navigation', { name: 'Library and account' });
+    // The first book in view under the top bar (the same book stays first in view).
+    const firstInView = page => page.evaluate(() => {
+      const scroller = document.querySelector('.desk-shelf') || document.querySelector('main');
+      const top = Math.max(scroller.getBoundingClientRect().top, document.querySelector('.home-top').getBoundingClientRect().bottom);
+      const element = [...scroller.querySelectorAll('[data-shelf-key]')].find(item => item.getBoundingClientRect().bottom > top);
+      return { key: element.dataset.shelfKey, offset: Math.round(element.getBoundingClientRect().top - top), scrolled: scroller.scrollTop };
+    });
+
+    test('the shelf stays drawn: scroll place, typed text and focus are kept both ways', async ({ page }) => {
+      await setup(page, { saved: LONG });
+      await page.goto('/app/shelf');
+      await expect(page.getByRole('button', { name: 'Account and settings' })).toBeVisible();
+      await mark(page);
+      await page.locator('main').evaluate(element => { element.scrollTop = 1500; });
+      const before = await firstInView(page);
+      expect(before.scrolled).toBe(1500);
+      const input = page.getByRole('searchbox', { name: 'Search for a book' });
+      await input.fill('innov');
+      await expect(input).toBeFocused();
+
+      await page.setViewportSize(RAIL);
+      await expect(rail(page)).toBeVisible();
+      await expect(kept(page)).toHaveCount(1);
+      await expect(input).toHaveValue('innov');
+      await expect(input).toBeFocused();
+      await expect.poll(async () => (await firstInView(page)).key).toBe(before.key);
+      expect((await firstInView(page)).scrolled).toBeGreaterThan(1000);
+
+      await page.setViewportSize(PHONE_TALL);
+      await expect(page.getByRole('button', { name: 'Account and settings' })).toBeVisible();
+      await expect(rail(page)).toHaveCount(0);
+      await expect(kept(page)).toHaveCount(1);
+      await expect(input).toHaveValue('innov');
+      await expect(input).toBeFocused();
+      await expect.poll(async () => (await firstInView(page)).key).toBe(before.key);
+    });
+
+    test('a search still running, then its results, are kept', async ({ page }) => {
+      await setup(page, { saved: LONG });
+      let answer;
+      const held = new Promise(resolve => { answer = resolve; });
+      await page.route('**/api/v2/books/search', async route => { await held; await route.fulfill({ json: { kind: 'candidates', candidates: [BOOK] } }); });
+      await page.goto('/app/shelf');
+      await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+      await mark(page);
+      const input = page.getByRole('searchbox', { name: 'Search for a book' });
+      await input.fill('innovator');
+      await input.press('Enter');
+      await expect(page.getByRole('region', { name: 'Searching' })).toBeVisible();
+      await page.setViewportSize(RAIL);
+      await expect(rail(page)).toBeVisible();
+      await expect(page.getByRole('region', { name: 'Searching' })).toBeVisible();
+      answer();
+      const results = page.getByRole('region', { name: 'Search results' });
+      await expect(results.getByRole('link', { name: new RegExp('^' + BOOK.title + ' by ') })).toBeVisible();
+      await expect(input).toHaveValue('innovator');
+      await expect(kept(page)).toHaveCount(1);
+      await page.setViewportSize(PHONE_TALL);
+      await expect(results.getByRole('link', { name: new RegExp('^' + BOOK.title + ' by ') })).toBeVisible();
+      await expect(input).toHaveValue('innovator');
+      await expect(kept(page)).toHaveCount(1);
+    });
+
+    test.describe('with motion', () => {
+      test.use({ contextOptions: { reducedMotion: 'no-preference' } });
+      test('nothing on the shelf moves when the layout changes', async ({ page }) => {
+        await setup(page, { saved: LONG });
+        await page.goto('/app/shelf');
+        await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+        const running = () => page.evaluate(() => document.getAnimations().filter(animation => animation.playState === 'running').map(animation => animation.animationName || 'other'));
+        // The suggestions' first fade-in finishes first.
+        await expect.poll(running).toEqual([]);
+        await page.setViewportSize(RAIL);
+        await expect(rail(page)).toBeVisible();
+        expect(await running()).toEqual([]);
+      });
+    });
   });
 });

@@ -88,6 +88,34 @@ test.describe('Old addresses', () => {
     await expect(page).toHaveURL(/\/app\/shelf$/);
   });
 
+  test('/app/libraries: the pop-up opens once; Back closes it and it never opens again by itself', async ({ page }) => {
+    await fixture(page);
+    await page.addInitScript(book => {
+      if (sessionStorage.getItem('seeded')) return;
+      sessionStorage.setItem('seeded', '1');
+      localStorage.setItem('mybookshelf.anonymous-web.v1', JSON.stringify({ version: 2, selectedLibraryId: null, recentBooks: [],
+        savedBooks: [{ bookKey: book.bookKey, title: book.title, authors: book.authors, source: 'direct', viewedAt: '2026-11-01T00:00:00.000Z' }], savedContent: [] }));
+    }, BOOK);
+    await page.goto('/app/libraries');
+    const dialog = page.getByRole('dialog', { name: 'Find your library' });
+    await expect(dialog).toBeVisible();
+    // Back closes the pop-up and stays on the shelf.
+    await page.goBack();
+    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(dialog).toHaveCount(0);
+    await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+    // Opening a book and coming back, or a reload, does not bring it back.
+    await page.getByRole('link', { name: new RegExp('^' + BOOK.title + ' by ') }).click();
+    await expect(page).toHaveURL(bookUrl);
+    await page.goBack();
+    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+    await expect(dialog).toHaveCount(0);
+    await page.reload();
+    await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+    await expect(dialog).toHaveCount(0);
+  });
+
   test('/app/libraries?q=: the text goes into the pop-up’s field and nowhere else', async ({ page }) => {
     await fixture(page);
     await page.goto('/app/libraries?q=Chennai');

@@ -132,7 +132,8 @@ describe('desk layout at 1440 px', () => {
     expect(close.closest('.desk-slot')).not.toBeNull();
     const area = document.querySelector('.desk-shelf-area')!;
     expect(area).toHaveAttribute('aria-hidden', 'true');
-    expect(area.hasAttribute('inert')).toBe(true);
+    // Made inert at the next frame, with the focus move (not in the task that opens the page).
+    await waitFor(() => expect(area.hasAttribute('inert')).toBe(true));
     expect(area.querySelector('.cover3d.is-open')).not.toBeNull();
     // Focus moving into the slot is checked in a real browser (one-shelf-desktop.spec.js):
     // jsdom lets a closed dialog's autofocus button take it.

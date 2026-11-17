@@ -13,6 +13,7 @@ import {
   withoutSavedBook,
   withSelectedLibrary,
   writeAnonymousWebState,
+  keepUnchanged,
 } from './localState';
 import { READING_LIGHT_STORAGE_KEY } from './readingLight';
 import { DOG_ANIMATION_STORAGE_KEY } from './localState';
@@ -198,5 +199,29 @@ describe('one-shelf de-duplication', () => {
     expect(read.state.savedBooks.map(item => item.title)).toEqual(['New']);
     // The plain reader (used by older bundles) is unchanged.
     expect(readAnonymousWebStateWithStatus(storage).state.savedBooks).toHaveLength(2);
+  });
+});
+
+describe('keepUnchanged', () => {
+  const saved = { bookKey: 'v1:isbn:9780262033848', isbn13: '9780262033848', title: 'Saved', authors: ['Author'], source: 'direct' as const, viewedAt: '2026-10-01T00:00:00.000Z' };
+  const book = { bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466', title: 'Viewed', authors: ['Author'] };
+  const previous = { ...emptyState(), savedBooks: [saved], recentBooks: [] };
+  // Every change starts from a fresh read of storage: equal lists, new objects.
+  const reread = () => JSON.parse(JSON.stringify(previous)) as typeof previous;
+
+  it('keeps the saved books when only Viewed before changes (opening a book)', () => {
+    const next = keepUnchanged(previous, withRecentBook(reread(), book, 'direct'));
+    expect(next).not.toBe(previous);
+    expect(next.savedBooks).toBe(previous.savedBooks);
+    expect(next.savedContent).toBe(previous.savedContent);
+    expect(next.recentBooks.map(item => item.bookKey)).toEqual([book.bookKey]);
+  });
+
+  it('keeps the whole state when nothing changed, and takes a changed list', () => {
+    expect(keepUnchanged(previous, reread())).toBe(previous);
+    const added = keepUnchanged(previous, withSavedBook(reread(), book));
+    expect(added.savedBooks).not.toBe(previous.savedBooks);
+    expect(added.savedBooks.map(item => item.bookKey)).toEqual([book.bookKey, saved.bookKey]);
+    expect(added.recentBooks).toBe(previous.recentBooks);
   });
 });
