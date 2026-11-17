@@ -67,8 +67,8 @@ export function heldSuggestionSlots(count: number): ShelfEntry[] {
 
 /**
  * Whether the chosen library's badge goes on a shelf cover: the holdings
- * store holds "found" for it, or (a suggestion) the server's stored answers
- * for this same library say found and nothing newer here says otherwise. A
+ * store holds "found" for it, or (a suggestion) the stored answers the
+ * suggestion source read for this same library say found and nothing newer here says otherwise. A
  * "couldn't check" never takes the badge away and is never shown as absence.
  */
 export function shelfBadge(entry: Pick<ShelfEntry, 'key' | 'kind' | 'foundIn'>, holdings: Pick<HoldingsStore, 'get' | 'libraryId'>): boolean {

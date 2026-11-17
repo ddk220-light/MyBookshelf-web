@@ -53,7 +53,7 @@ Order of work: build the desktop layout first, then suggestions on both mobile a
 | Point | Decision |
 |---|---|
 | When suggestions refresh | When a book is saved or removed, when the library changes, and on each new visit. Not while browsing within one visit, so the shelf does not jump while someone is choosing. |
-| Where "Suggested" goes | Changed by the owner after the staging review (14 November): a small "Suggested" label below each suggested book. Built today as one label per row under the run; see "Owner review fixes" below. |
+| Where "Suggested" goes | Changed by the owner after the staging review (14 November): a small "Suggested" label below each suggested book, on the plank under it, on phone, rail and desktop (built 17 November; the one tag per bay is gone). Not faded, hidden from screen readers, the same colours as before (4.5:1 or more in all three lights), and drawn over the plank so the bays keep their height. |
 | Screen readers | Each suggestion's name ends with ", suggested". The fade is not the only signal. |
 | Library badge on a suggestion | Only when the catalog store already holds a "found" answer for that library. Never a live catalog check for suggestions. |
 | Already saved or viewed | A book already on the shelf is never suggested, matched by book key, ISBN-13 or the same Open Library work (display only; editions are never merged for identity or library answers). Viewed books may be suggested. |
@@ -89,26 +89,45 @@ Order of work: build the desktop layout first, then suggestions on both mobile a
     the account, so two devices can show different suggestions.
 11. **Indian-language titles.** The seed list uses editions with good covers and known
     English or transliterated titles, so search and library checks work on them.
-12. **Privacy.** To get related suggestions, the app sends the server the book keys of a few
-    recent books. Nothing about the reader is stored, and the request is not linked to an
-    account. The anonymous log records only how many suggestions were opened and saved, per book
+12. **Privacy.** To get related suggestions, the app asks for the related list of each of a few
+    recent books, one public book key per address (`GET /api/v2/suggestions/related?book=…`, never
+    search text or the library). The list is the same for every reader, so Vercel's CDN and the
+    browser keep it; nothing about the reader is in it, and the request is not linked to an
+    account. The chosen library's stored answers for the candidates are asked in the body of
+    `POST /api/v2/holdings/lookup`, as for saved books. The anonymous log records only how many suggestions were opened and saved, per book
     ("shown" was counted at first and removed on 15 November 2026: a database write per page view
     was not worth it), which the published privacy text's "anonymous log" already covers. Search text
     rules are unchanged.
-13. **Cost.** One server request per refresh, none when the server has nothing to add (no
-    chosen library and no recent books). Related-book lists are cached on the server for 24
-    hours; the store is read once per request, about the candidates only. No catalog requests
-    are made for suggestions.
+13. **Cost.** Per refresh, up to three related-list GETs and, with a library chosen, one
+    stored-answers lookup; nothing when there is no chosen library and no recent book. A related
+    list is kept a day by the browser and by Vercel's CDN (a week longer while it refreshes), so a
+    repeat costs no function run; behind that, each instance also caches its Open Library reads
+    for 24 hours. The store is read once per refresh, about the candidates only. No catalog
+    requests are made for suggestions.
 14. **Reduced motion.** Suggestions appear and turn solid without animation.
 15. **Clearing browser data or signing out** returns a guest to the cold open.
 
 ### Build outline
 
 - `shared/suggestions-seed.json`: the seed list (book key, title, author, cover).
-- Server: `POST /api/v2/suggestions { libraryId?, recentBookKeys[≤3], excludeKeys[≤200] }`
-  returns five books with an optional `inLibrary` flag from the store; cached sources; counts
-  only in the anonymous log. As built in step B (14 November 2026, `server/public-v2/suggestions.js`,
-  reworked after the independent review the same day):
+- Server, since 17 November 2026 (owner-approved): `GET /api/v2/suggestions/related?book=<bookKey>`
+  (`server/public-v2/suggestions.js`) gives one book's related list, the same for every reader:
+  exactly one `book` parameter, an ISBN key or an Open Library work key, and nothing else in the
+  address. Up to 30 books, with the filters below. A complete answer carries
+  `Cache-Control: public, max-age=86400` for the browser and
+  `Vercel-CDN-Cache-Control: public, max-age=86400, stale-while-revalidate=604800` for Vercel's CDN
+  (Vercel consumes an `s-maxage` in `Cache-Control` and then sends the browser `max-age=0`, so
+  the two are given separately). A partial answer (Open Library failed or was slow) carries
+  `no-store` for the browser and a minute at the CDN; errors keep `no-store`. It never reads the
+  catalog store. The client (`client/src/v2/suggestions/serverSource.ts`) asks for up to three
+  recent books' lists, merges them newest first, then the seed list, leaves out saved books
+  (`suggestionCandidates`: the pick's rules without one-per-author), bounds the candidates to
+  100 (the lookup's limit), and with a library chosen asks `POST /api/v2/holdings/lookup` once
+  for them (stored answers only, never a live check); "found" ones come first with the badge.
+  If every list fails it keeps the last books; if some fail, the fresh books come before the
+  last ones. A failed lookup is no badge. The old `POST /api/v2/suggestions` is removed.
+- Server, as first built in step B (14 November 2026, `POST /api/v2/suggestions`, replaced on
+  17 November by the above; kept here for the record of the rules it set):
   - Book keys in `recentBookKeys`, `excludeKeys` and the counts are ISBN keys (`v1:isbn:…`) and
     Open Library work keys (`v1:openlibrary:OL…W`) only; anything else, such as a library's own
     record key (which names the library), is refused.
@@ -153,7 +172,8 @@ Order of work: build the desktop layout first, then suggestions on both mobile a
     refresh, was removed on 15 November 2026 and is now refused), an open counted once per history entry. Catalog migration
     `002-suggestion-counts.sql` adds the `suggestion` kind to the anonymous log.
 - Client: a suggestions hook on the home screen, shelf layout that appends the five faded
-  covers after saved books, the "Suggested" plank label, list-view rows, refresh triggers.
+  covers after saved books, a "Suggested" label below each (on the plank), list-view rows,
+  refresh triggers.
   When the server has nothing to add (no chosen library and no recent books) the seed list
   shows at once and nothing is asked. Otherwise, on the first refresh of a visit, the five
   slots keep their places empty (saved books show at once; no placeholder text) until the
@@ -167,9 +187,20 @@ Order of work: build the desktop layout first, then suggestions on both mobile a
 
 ## Owner review fixes (staging, 14 November)
 
-To do, in the order given. More items to come from the owner's review.
+In the order given. More items to come from the owner's review.
 
-1. **"Suggested" under each book.** Replace the one plank label per row with a small
-   "Suggested" label below each suggested book, on phone and desktop. It stays hidden from
-   screen readers (each name already ends ", suggested") and is not faded.
+1. **"Suggested" under each book.** Done 17 November 2026. The one plank tag per bay is gone;
+   each suggested book has a small "Suggested" label on the plank directly below it, on phone,
+   rail and desktop (`client/src/v2/ui/shelf/Bookcase.tsx`, `.suggested-label` in `home.css` and
+   `desk.css`). It is positioned from the book's own slot over the plank, so bays keep their height
+   and the shelf its rhythm at every width. It stays hidden from screen readers (each name already
+   ends ", suggested"), is not faded, and keeps the old tag's colours (4.5:1 or more in Daylight,
+   Lamplight and Ink, checked in the browser journeys). The list view keeps "Suggested" in place
+   of the year.
+2. **Suggestion lookups from Vercel's cache** (owner-approved). Done 17 November 2026: see the
+   build outline above. Before, each visit or refresh ran the suggestions function, paying up to
+   three Open Library requests whenever its instance's memory was cold. Now a returning reader's
+   load makes up to three GETs of public related lists, which the browser and the CDN answer
+   without a function run on a repeat, and one stored-answers lookup for the candidates (beside
+   the shelf's own lookup for saved books).
 

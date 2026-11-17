@@ -92,10 +92,13 @@
 .one-shelf-frame .bay-lip { height: 12px; margin: -12px -16px 0; background: linear-gradient(180deg, var(--shelf-lip-a), var(--shelf-lip-b)); }
 .one-shelf-frame .bay-plank { position: relative; height: 14px; flex: 0 0 auto; box-sizing: border-box; border-top: 1px solid var(--plank-edge); background: linear-gradient(180deg, var(--plank-a) 0, var(--plank-b) 55%, var(--plank-c) 100%); }
 .one-shelf-frame .bay-shadow { height: 8px; flex: 0 0 auto; background: linear-gradient(180deg, var(--plank-shadow), transparent); }
-/* "Suggested": one small tag on the plank front under a bay's run of
-   suggestions, on the same columns as the books (SuggestShelf board). */
-.one-shelf-frame .bay-tags { position: absolute; inset: 0 16px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 18px; align-items: center; }
-.one-shelf-frame .bay-tag { justify-self: center; height: 18px; box-sizing: border-box; padding: 0 8px; border: 1px solid var(--page-side-b); border-radius: 3px; background: var(--reader-bg); color: var(--reader-secondary);
+/* "Suggested": a small label on the plank front below each suggested book
+   (owner review, 14 November). It is drawn over the plank from the book's
+   own slot, centred on the plank as the old per-bay tag was, so the bay keeps
+   its height and the shelf its rhythm. Not faded: the fade is on the cover
+   face only. */
+.one-shelf-frame .suggested-label { position: absolute; top: calc(100% - 2px); left: 50%; transform: translateX(-50%); height: 18px; box-sizing: border-box; padding: 0 8px;
+  border: 1px solid var(--page-side-b); border-radius: 3px; background: var(--reader-bg); color: var(--reader-secondary); pointer-events: none;
   font-size: .6875rem; font-weight: 600; line-height: 16px; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; box-shadow: 0 1px 2px var(--plank-shadow); }
 
 /* My shelf */
@@ -106,7 +109,7 @@
 .one-shelf-frame .home-bookcase { margin-top: 10px; }
 .one-shelf-frame .home-bookcase .bay { margin-bottom: 6px; content-visibility: auto; contain-intrinsic-size: auto 172px; }
 .one-shelf-frame .bay-books { position: relative; z-index: 1; height: 132px; margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: end; }
-.one-shelf-frame .bay-books > li { display: flex; justify-content: center; }
+.one-shelf-frame .bay-books > li { position: relative; display: flex; justify-content: center; }
 .one-shelf-frame .home-bookcase-more { height: 1px; }
 
 /* A face-out book: cover face, page block seen along the top and right edge. */

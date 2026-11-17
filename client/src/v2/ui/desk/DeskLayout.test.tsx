@@ -102,7 +102,9 @@ describe('desk layout at 1440 px', () => {
     const bays = document.querySelectorAll('.cold-open-suggestions .bay');
     expect(bays).toHaveLength(1);
     expect(within(bays[0] as HTMLElement).getAllByRole('link', { name: /, suggested$/ })).toHaveLength(5);
-    expect([...bays[0].querySelectorAll('.bay-tag')].map(tag => (tag as HTMLElement).style.gridColumn)).toEqual(['1 / span 5']);
+    // A "Suggested" label below each, none on the plank.
+    expect([...bays[0].querySelectorAll('.bay-books > li')].map(slot => slot.querySelector('.suggested-label')?.textContent)).toEqual(Array(5).fill('Suggested'));
+    expect(bays[0].querySelectorAll('.bay-tag')).toHaveLength(0);
   });
 
   it('shelf: six books a bay and no account invite', async () => {
@@ -115,7 +117,7 @@ describe('desk layout at 1440 px', () => {
     expect(bays).toHaveLength(3);
     expect(bays[0].querySelectorAll('.cover3d')).toHaveLength(6);
     expect(bays[1].querySelectorAll('.cover3d.is-suggested')).toHaveLength(4);
-    expect([...document.querySelectorAll('.bay-tag')].map(tag => (tag as HTMLElement).style.gridColumn)).toEqual(['3 / span 4', '1 / span 1']);
+    expect([...bays].map(bay => bay.querySelectorAll('.suggested-label').length)).toEqual([0, 4, 1]);
     expect(screen.getByText('8 books')).toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'Take your shelf with you' })).not.toBeInTheDocument();
     expect(await screen.findByText(LIBRARY.name)).toBeInTheDocument();

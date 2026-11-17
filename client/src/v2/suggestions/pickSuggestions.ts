@@ -13,8 +13,9 @@ export type SuggestedBook = {
   workId?: string;
   /**
    * The library whose stored answers say "found" for this book (the server
-   * source's `inLibrary`, for the library it was asked about). Its badge shows
-   * only while that library is the chosen one; never a live check.
+   * source asks POST /holdings/lookup once a refresh, for the library chosen
+   * then). Its badge shows only while that library is the chosen one; never
+   * a live check.
    */
   foundIn?: string;
 };
@@ -73,6 +74,21 @@ const titleAuthor = (book: { title?: string; authors?: readonly string[] }) => {
  * never merged for identity or library answers.
  */
 export function pickSuggestions(sources: ReadonlyArray<readonly SuggestedBook[]>, savedBooks: readonly SavedForPick[], count = SUGGESTION_COUNT): SuggestedBook[] {
+  return pick(sources, savedBooks, count, true);
+}
+
+/**
+ * Every candidate the pick could choose from, in source order, up to `limit`:
+ * the same rules as `pickSuggestions` (never a saved book or another edition
+ * of one, never the same book twice) except one book per author, which the
+ * final pick applies, so that a book the library is known to have can still
+ * win over an earlier one by its author.
+ */
+export function suggestionCandidates(sources: ReadonlyArray<readonly SuggestedBook[]>, savedBooks: readonly SavedForPick[], limit: number): SuggestedBook[] {
+  return pick(sources, savedBooks, limit, false);
+}
+
+function pick(sources: ReadonlyArray<readonly SuggestedBook[]>, savedBooks: readonly SavedForPick[], count: number, oneAuthor: boolean): SuggestedBook[] {
   const picked: SuggestedBook[] = [];
   const authors = new Set<string>();
   const savedTitles = new Set(savedBooks.map(titleAuthor).filter((key): key is string => Boolean(key)));
@@ -83,7 +99,7 @@ export function pickSuggestions(sources: ReadonlyArray<readonly SuggestedBook[]>
       if (findSavedBook(savedBooks, book, { sameWork: true }) || findSavedBook(picked, book, { sameWork: true })) continue;
       const sameTitle = titleAuthor(book);
       if (sameTitle && savedTitles.has(sameTitle)) continue;
-      const author = authorKey(book.authors[0]);
+      const author = oneAuthor ? authorKey(book.authors[0]) : '';
       if (author && authors.has(author)) continue;
       picked.push(book);
       if (author) authors.add(author);

@@ -2,34 +2,34 @@ import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } fro
 import { useHoldingsStore } from '../../holdings';
 import { shelfBadge, type ShelfEntry } from '../home/shelfItems';
 import { BookCover3D } from './BookCover3D';
-import { BOOKS_PER_BAY, bayRows, initialBayCount, suggestedRun } from './shelfLayout';
+import { BOOKS_PER_BAY, bayRows, initialBayCount } from './shelfLayout';
 import type { SuggestionMotion } from './useSuggestionMotion';
 
 const MORE_BAYS = 20;
 
 /**
  * The wooden bay: back panel, a row of books standing on the plank, plank
- * front and its shadow. `plank` is drawn on the plank front (the
- * "Suggested" tag); like the plank, it is hidden from assistive technology.
+ * front and its shadow.
  */
-export function Bay({ children, className = '', shadow = true, plank }: { children?: ReactNode; className?: string; shadow?: boolean; plank?: ReactNode }) {
+export function Bay({ children, className = '', shadow = true }: { children?: ReactNode; className?: string; shadow?: boolean }) {
   return <div className={'bay ' + className}>
     <div className="bay-back">
       {children}
       <div className="bay-lip" aria-hidden="true" />
     </div>
-    <div className="bay-plank" aria-hidden="true">{plank}</div>
+    <div className="bay-plank" aria-hidden="true" />
     {shadow && <div className="bay-shadow" aria-hidden="true" />}
   </div>;
 }
 
 /**
- * One small "Suggested" tag on the plank front, centred under the bay's run
- * of suggestions (plan 2026-11-14, Part 2: never a caption under each book).
- * Its grid matches the books' columns.
+ * The small "Suggested" label below a suggested book, on the plank front
+ * (owner review, 14 November: one under each book). It is drawn over the
+ * plank, so the bay keeps its height. Not faded, and hidden from assistive
+ * technology: the book's name already ends ", suggested".
  */
-function SuggestedTag({ from, span }: { from: number; span: number }) {
-  return <span className="bay-tags"><span className="bay-tag" style={{ gridColumn: (from + 1) + ' / span ' + span }}>Suggested</span></span>;
+function SuggestedLabel() {
+  return <span className="suggested-label" aria-hidden="true">Suggested</span>;
 }
 
 /**
@@ -40,9 +40,9 @@ function SuggestedTag({ from, span }: { from: number; span: number }) {
  * book open in the desktop middle slot: its cover is outlined.
  *
  * Shelf suggestions (`entry.suggested`) follow the saved books and wrap into
- * bays like them; each bay they stand in carries one "Suggested" tag under
- * them. Their library badge, as for saved books, comes only from answers
- * already held: the holdings store's, or the server's stored "found" for the
+ * bays like them, each with a "Suggested" label below it. Their library
+ * badge, as for saved books, comes only from answers already held: the
+ * holdings store's, or the stored "found" the suggestion source read for the
  * chosen library (`shelfBadge`); nothing here asks a library. `motion` fades
  * in a new suggestion and turns a just-saved one solid. A held slot
  * (`entry.held`) stands empty.
@@ -65,16 +65,14 @@ export function Bookcase({ entries, libraryName, perBay = BOOKS_PER_BAY, openKey
     return () => observer.disconnect();
   }, [more, rows.length]);
   return <div className="home-bookcase">
-    {rows.slice(0, shown).map((row, index) => {
-      // A held slot (`entry.held`) keeps its place, empty and without a tag.
-      const run = suggestedRun(row, entry => Boolean(entry.suggested && !entry.held));
-      return <Bay key={index} plank={run && <SuggestedTag from={run.from} span={run.span} />}>
-        <ul className="bay-books">{row.map(entry => entry.held ? <li key={entry.key} aria-hidden="true" /> : <li key={entry.key}>
-          <BookCover3D entry={entry} open={entry.key === openKey} motion={motion?.get(entry.key)}
-            libraryName={libraryName && shelfBadge(entry, holdings) ? libraryName : null} />
-        </li>)}</ul>
-      </Bay>;
-    })}
+    {rows.slice(0, shown).map((row, index) => <Bay key={index}>
+      {/* A held slot (`entry.held`) keeps its place, empty and without a label. */}
+      <ul className="bay-books">{row.map(entry => entry.held ? <li key={entry.key} aria-hidden="true" /> : <li key={entry.key}>
+        <BookCover3D entry={entry} open={entry.key === openKey} motion={motion?.get(entry.key)}
+          libraryName={libraryName && shelfBadge(entry, holdings) ? libraryName : null} />
+        {entry.suggested && <SuggestedLabel />}
+      </li>)}</ul>
+    </Bay>)}
     {more && <div ref={sentinel} className="home-bookcase-more" aria-hidden="true" />}
   </div>;
 }

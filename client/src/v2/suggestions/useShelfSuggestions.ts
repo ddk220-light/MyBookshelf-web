@@ -25,8 +25,9 @@ export type SuggestionSource = {
 };
 
 /**
- * Sources ahead of the seed list: the server's (step B: books related to what
- * the reader viewed or saved, those the chosen library is known to have first).
+ * Sources ahead of the seed list: the server's (books related to what the
+ * reader viewed or saved, cached lists per book; those the chosen library is
+ * known to have first).
  */
 export const SUGGESTION_SOURCES: readonly SuggestionSource[] = [serverSuggestions];
 

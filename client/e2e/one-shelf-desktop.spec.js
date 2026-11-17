@@ -78,7 +78,11 @@ test.describe('Desktop layout', () => {
     await expect(bays).toHaveCount(3);
     await expect(bays.first().locator('.cover3d')).toHaveCount(6);
     await expect(bays.nth(2).locator('.cover3d.is-suggested')).toHaveCount(5);
-    await expect(page.locator('.bay-tag')).toHaveCount(1);
+    // A "Suggested" label below each suggestion, drawn over the plank: every bay keeps one height.
+    await expect(bays.nth(2).locator('.suggested-label')).toHaveCount(5);
+    await expect(page.locator('.suggested-label')).toHaveCount(5);
+    const heights = await page.locator('.home-bookcase .bay').evaluateAll(items => items.map(bay => Math.round(bay.getBoundingClientRect().height)));
+    expect(new Set(heights).size).toBe(1);
     const cover = await page.locator('.home-bookcase .cover3d').first().boundingBox();
     expect(Math.round(cover.width)).toBe(120);
     expect(Math.round(cover.height)).toBe(180);
@@ -127,7 +131,7 @@ test.describe('Desktop layout', () => {
     await expect(page.getByRole('button', { name: /Scan|Search for a book/ })).toHaveCount(0);
     await expect(page.locator('.cold-open-suggestions .bay')).toHaveCount(1);
     await expect(page.locator('.cold-open-suggestions .cover3d.is-suggested')).toHaveCount(5);
-    await expect(page.locator('.bay-tag')).toHaveText(['Suggested']);
+    await expect(page.locator('.suggested-label')).toHaveText(Array(5).fill('Suggested'));
     await expect(column(page).getByRole('button', { name: 'Find my library' })).toBeVisible();
     // The larger search bar stands under the heading, above the books (DeskSuggestFirst board).
     const input = page.getByRole('searchbox', { name: 'Search for a book' });

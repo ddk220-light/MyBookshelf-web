@@ -162,14 +162,11 @@ export function parseHoldingsCheck(body) {
   return { libraryId, bookKey, parsed };
 }
 
-// Shelf suggestions (plan 2026-11-14, Part 2). Exactly these fields; anything
-// else is refused. Book keys are used only to choose and leave out
-// suggestions for this answer: they are not stored or logged. Only the two
-// kinds of key a suggestion can have are accepted: an ISBN edition
-// (`v1:isbn:…`) and an Open Library work (`v1:openlibrary:OL…W`), never a
-// library's own record (whose key names the library) or another source's.
-export const SUGGESTION_LIMITS = Object.freeze({ recentBookKeys: 3, excludeKeys: 200, keyLength: 512 });
-const SUGGESTION_FIELDS = new Set(['libraryId', 'recentBookKeys', 'excludeKeys']);
+// Shelf suggestions (plan 2026-11-14, Part 2). Only the two kinds of key a
+// suggestion can have are accepted: an ISBN edition (`v1:isbn:…`) and an Open
+// Library work (`v1:openlibrary:OL…W`), never a library's own record (whose
+// key names the library) or another source's. They are not stored or logged.
+export const SUGGESTION_LIMITS = Object.freeze({ keyLength: 512 });
 const SUGGESTION_EVENT_FIELDS = new Set(['event', 'bookKey']);
 // "Shown" is no longer counted: a database write per page view was not worth it.
 export const SUGGESTION_EVENTS = Object.freeze(['opened', 'saved']);
@@ -188,19 +185,16 @@ export function suggestionBookKey(value) {
   return value;
 }
 
-function bookKeyList(value, maximum) {
-  if (!Array.isArray(value) || value.length > maximum) throw new PublicV2ValidationError();
-  return [...new Set(value.map(suggestionBookKey))];
-}
-
-export function parseSuggestions(body) {
-  const value = bodyObject(body);
-  onlyFields(value, SUGGESTION_FIELDS);
-  return {
-    ...(value.libraryId !== undefined ? parseLibraryResolve({ libraryId: value.libraryId }) : {}),
-    recentBookKeys: bookKeyList(value.recentBookKeys, SUGGESTION_LIMITS.recentBookKeys),
-    excludeKeys: bookKeyList(value.excludeKeys, SUGGESTION_LIMITS.excludeKeys),
-  };
+/**
+ * `GET /suggestions/related?book=<bookKey>`: exactly one `book` parameter and
+ * nothing else, so the address (which the CDN and browsers cache) names one
+ * public book and never carries anything about the reader.
+ */
+export function parseRelatedSuggestions(query) {
+  const value = query && typeof query === 'object' && !Array.isArray(query) ? query : {};
+  const names = Object.keys(value);
+  if (names.length !== 1 || names[0] !== 'book' || typeof value.book !== 'string') throw new PublicV2ValidationError();
+  return { bookKey: suggestionBookKey(value.book) };
 }
 
 /** `{ event: 'opened' | 'saved', bookKey }`, returned as `{ event, bookKeys }`. */

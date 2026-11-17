@@ -25,7 +25,10 @@ is never needed to search or to check a library.
 **Without an account.** Your shelf, Viewed before list and chosen library are
 kept in your own browser. To show which books your library has and to suggest
 books, the app sends us your chosen library and the identifiers of some of your
-books. We use them for that answer only and do not keep them.
+books. We use them for that answer only and do not keep them. A list of books
+related to one book is the same for everyone, so our hosting provider's cache and
+your browser may keep that list, under that book's identifier, for up to eight
+days, with nothing about you.
 
 **Viewed before.** When you are signed in, each book you open is added to your
 Viewed before list in your account, newest first, up to 50 books. You can

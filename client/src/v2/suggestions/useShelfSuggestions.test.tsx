@@ -216,6 +216,33 @@ describe('useShelfSuggestions', () => {
     expect(SUGGESTION_SOURCES.map(source => source.id)).toEqual(['server']);
   });
 
+  it('with the server source: per refresh, a GET per recent book and one stored-answers lookup; browsing asks nothing; a save or a library change asks again', async () => {
+    const calls: string[] = [];
+    vi.stubGlobal('fetch', vi.fn((path: string) => {
+      calls.push(path.startsWith('/api/v2/suggestions/related?') ? 'GET related' : path);
+      if (path === '/api/v2/holdings/lookup') return Promise.resolve(new Response(JSON.stringify({ answers: {} })));
+      return Promise.resolve(new Response(JSON.stringify({ books: [book(10)] })));
+    }));
+    const shelf = [saved('v1:openlibrary:OL1W')];
+    const viewed = [{ ...saved('v1:openlibrary:OL2W'), viewedAt: '2026-11-02T00:00:00.000Z' }];
+    const { result, rerender } = renderHook(({ shelf, library, recent }) => useSuggestions(shelf, library, SUGGESTION_SOURCES, recent),
+      { initialProps: { shelf, library: 'lib:a' as string | null, recent: viewed } });
+    await waitFor(() => expect(result.current.books[0]?.bookKey).toBe(book(10).bookKey));
+    expect(calls).toEqual(['GET related', 'GET related', '/api/v2/holdings/lookup']);
+    // A book viewed, the shelf drawn again: not a refresh.
+    rerender({ shelf: [...shelf], library: 'lib:a', recent: [{ ...saved('v1:openlibrary:OL3W'), viewedAt: '2026-11-03T00:00:00.000Z' }, ...viewed] });
+    await act(async () => { await new Promise(resolve => setTimeout(resolve, 20)); });
+    expect(calls).toHaveLength(3);
+    // A book saved: three recent books now, and one lookup.
+    rerender({ shelf: [saved(book(10).bookKey), ...shelf], library: 'lib:a', recent: [{ ...saved('v1:openlibrary:OL3W'), viewedAt: '2026-11-03T00:00:00.000Z' }, ...viewed] });
+    await waitFor(() => expect(calls).toHaveLength(7));
+    expect(calls.slice(3)).toEqual(['GET related', 'GET related', 'GET related', '/api/v2/holdings/lookup']);
+    // No library: the related lists only.
+    rerender({ shelf: [saved(book(10).bookKey), ...shelf], library: null, recent: [{ ...saved('v1:openlibrary:OL3W'), viewedAt: '2026-11-03T00:00:00.000Z' }, ...viewed] });
+    await waitFor(() => expect(calls).toHaveLength(10));
+    expect(calls.slice(7)).toEqual(['GET related', 'GET related', 'GET related']);
+  });
+
   it('refreshes on the set of saved books and the library, not their order', () => {
     const a = saved('v1:openlibrary:OL1W'), b = saved('v1:openlibrary:OL2W');
     expect(suggestionRefreshKey([a, b], 'lib')).toBe(suggestionRefreshKey([b, a], 'lib'));

@@ -76,9 +76,10 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null }: 
   const { ref: home, perBay } = useBayColumns(layout);
 
   const entries = useMemo(() => shelfEntries(state.savedBooks, state.savedContent), [state.savedBooks, state.savedContent]);
-  // Library answers are asked for saved books only: a suggestion's badge
-  // comes from an answer already held (the holdings store, or the server's
-  // stored "found" for this library), never from a new check.
+  // Library answers are asked for saved books here: a suggestion's badge
+  // comes from an answer already held (the holdings store, or the stored
+  // "found" the suggestion source read once for its candidates), never from a
+  // new check.
   useShelfHoldings(state.selectedLibraryId, state.savedBooks);
   // While the first suggestions of a visit are on their way their slots stay
   // empty (`held`), so the books never change under a tap.

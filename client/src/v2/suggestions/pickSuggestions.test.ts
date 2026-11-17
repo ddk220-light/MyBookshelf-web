@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import type { RecentBook } from '../types';
-import { bayRows, suggestedRun } from '../ui/shelf/shelfLayout';
+import { bayRows } from '../ui/shelf/shelfLayout';
 import { findSavedBook } from '../oneShelfState';
 import { toRecentBook } from '../localState';
-import { authorKey, mainTitleKey, nameTokensKey, pickSuggestions, SUGGESTION_COUNT, type SuggestedBook } from './pickSuggestions';
+import { authorKey, mainTitleKey, nameTokensKey, pickSuggestions, SUGGESTION_COUNT, suggestionCandidates, type SuggestedBook } from './pickSuggestions';
 import { SEED_SUGGESTIONS } from './seed';
 
 const suggestion = (id: number | string, author: string, extra: Partial<SuggestedBook> = {}): SuggestedBook =>
@@ -134,26 +134,41 @@ describe('shelf suggestions: which five', () => {
   });
 });
 
+describe('shelf suggestions: the candidates before the pick', () => {
+  it('every book the pick could choose, in source order: no saved book or edition of one, no repeat, but several by one author', () => {
+    const books = [suggestion(1, 'Kalki'), suggestion(2, 'KALKI'), suggestion(3, 'Roy', { isbn13: '9788173711466' }), suggestion(1, 'Kalki'),
+      suggestion(4, 'Amish', { title: 'Wings of Fire' }), suggestion(5, 'Seth')];
+    const shelf = [saved('v1:isbn:9788173711466', { isbn13: '9788173711466' }), saved('v1:openlibrary:OL5W')];
+    expect(keys(suggestionCandidates([books, SEED_SUGGESTIONS.slice(0, 2)], shelf, 100)))
+      .toEqual(['v1:openlibrary:OL1W', 'v1:openlibrary:OL2W', 'v1:openlibrary:OL4W', ...keys(SEED_SUGGESTIONS.slice(0, 2))]);
+    // Bounded.
+    expect(suggestionCandidates([SEED_SUGGESTIONS], [], 7)).toEqual(SEED_SUGGESTIONS.slice(0, 7));
+    // The pick from them then keeps one per author.
+    expect(keys(pickSuggestions([suggestionCandidates([books], shelf, 100)], shelf))).toEqual(['v1:openlibrary:OL1W', 'v1:openlibrary:OL4W']);
+  });
+});
+
 describe('shelf suggestions: fill and wrap like books', () => {
+  // `s` a suggestion (with its "Suggested" label below it), `S` a saved book.
   const shelfWith = (savedCount: number, perBay: number) => {
     const items = [...Array.from({ length: savedCount }, (_, index) => ({ key: 'saved' + index, suggested: false })),
       ...pickSuggestions(withSeed(), []).map(book => ({ key: book.bookKey, suggested: true }))];
-    return bayRows(items, perBay).map(row => ({ books: row.map(item => item.suggested ? 's' : 'S').join(''), tag: suggestedRun(row, item => item.suggested) }));
+    return bayRows(items, perBay).map(row => row.map(item => item.suggested ? 's' : 'S').join(''));
   };
 
   it('three a bay on phones', () => {
-    expect(shelfWith(0, 3)).toEqual([{ books: 'sss', tag: { from: 0, span: 3 } }, { books: 'ss', tag: { from: 0, span: 2 } }]);
+    expect(shelfWith(0, 3)).toEqual(['sss', 'ss']);
     // One saved book: the suggestions share its bay (SuggestShelf board).
-    expect(shelfWith(1, 3)).toEqual([{ books: 'Sss', tag: { from: 1, span: 2 } }, { books: 'sss', tag: { from: 0, span: 3 } }]);
-    expect(shelfWith(3, 3)).toEqual([{ books: 'SSS', tag: null }, { books: 'sss', tag: { from: 0, span: 3 } }, { books: 'ss', tag: { from: 0, span: 2 } }]);
-    expect(shelfWith(4, 3)).toEqual([{ books: 'SSS', tag: null }, { books: 'Sss', tag: { from: 1, span: 2 } }, { books: 'sss', tag: { from: 0, span: 3 } }]);
+    expect(shelfWith(1, 3)).toEqual(['Sss', 'sss']);
+    expect(shelfWith(3, 3)).toEqual(['SSS', 'sss', 'ss']);
+    expect(shelfWith(4, 3)).toEqual(['SSS', 'Sss', 'sss']);
   });
 
   it('six a bay at wide widths', () => {
-    expect(shelfWith(0, 6)).toEqual([{ books: 'sssss', tag: { from: 0, span: 5 } }]);
-    expect(shelfWith(1, 6)).toEqual([{ books: 'Ssssss', tag: { from: 1, span: 5 } }]);
+    expect(shelfWith(0, 6)).toEqual(['sssss']);
+    expect(shelfWith(1, 6)).toEqual(['Ssssss']);
     // Four saved (DeskSuggestShelf board): two suggestions share their bay, three go on.
-    expect(shelfWith(4, 6)).toEqual([{ books: 'SSSSss', tag: { from: 4, span: 2 } }, { books: 'sss', tag: { from: 0, span: 3 } }]);
-    expect(shelfWith(6, 6)).toEqual([{ books: 'SSSSSS', tag: null }, { books: 'sssss', tag: { from: 0, span: 5 } }]);
+    expect(shelfWith(4, 6)).toEqual(['SSSSss', 'sss']);
+    expect(shelfWith(6, 6)).toEqual(['SSSSSS', 'sssss']);
   });
 });

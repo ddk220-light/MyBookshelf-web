@@ -104,6 +104,9 @@ export async function post<T>(path: string, body: Record<string, unknown>, signa
   return await response.json().catch(() => ({})) as T;
 }
 
+/** Books per POST /holdings/lookup (server validation.js parseHoldingsLookup). */
+export const HOLDINGS_LOOKUP_LIMIT = 100;
+
 export const publicApi = Object.freeze({
 
   async searchLibraries(query: string): Promise<PublicLibrary[]> {
@@ -148,10 +151,11 @@ export const publicApi = Object.freeze({
     return post('/availability', { libraryId, bookKey, ...options });
   },
 
-  // One-shelf (plan 3.5): stored answers only, no catalog request. At most 100
-  // books per call. Anything other than "found" or "not_found" is dropped.
+  // One-shelf (plan 3.5): stored answers only, no catalog request. At most
+  // HOLDINGS_LOOKUP_LIMIT books per call. Anything other than "found" or
+  // "not_found" is dropped.
   async holdingsLookup(libraryId: string, books: Array<{ bookKey: string; isbn13?: string }>, signal?: AbortSignal): Promise<Record<string, 'found' | 'not_found'>> {
-    const data = await post<{ answers?: unknown }>('/holdings/lookup', { libraryId, books: books.slice(0, 100) }, signal);
+    const data = await post<{ answers?: unknown }>('/holdings/lookup', { libraryId, books: books.slice(0, HOLDINGS_LOOKUP_LIMIT) }, signal);
     const answers: Record<string, 'found' | 'not_found'> = {};
     if (data.answers && typeof data.answers === 'object' && !Array.isArray(data.answers))
       for (const [bookKey, answer] of Object.entries(data.answers as Record<string, unknown>))
@@ -196,13 +200,27 @@ export const publicApi = Object.freeze({
     return { unchecked };
   },
 
-  // Shelf suggestions (plan 2026-11-14, Part 2): candidate books, those the
-  // chosen library is known to have first. Book keys only, never search
-  // text; nothing about the reader is stored. suggestions/serverSource.ts
-  // reads the answer defensively.
-  async suggestions(request: SuggestionRequest, signal?: AbortSignal): Promise<{ books: unknown[]; partial: boolean }> {
-    const data = await post<{ books?: unknown; partial?: unknown }>('/suggestions', request, signal);
-    return { books: Array.isArray(data.books) ? data.books : [], partial: data.partial === true };
+  // Shelf suggestions (plan 2026-11-14, Part 2): one public book's related
+  // books, the same for every reader, so Vercel's CDN and the browser keep the
+  // answer (server suggestions.js RELATED_CACHE). The address holds that
+  // book's key only: an ISBN or Open Library work key, never search text.
+  // No cookies are sent outside preview. suggestions/serverSource.ts reads the
+  // answer defensively; `partial` marks a list the server cut short.
+  async relatedSuggestions(bookKey: string, signal?: AbortSignal): Promise<{ books: unknown[]; partial: boolean }> {
+    let response: Response;
+    try {
+      response = await fetch('/api/v2/suggestions/related?' + new URLSearchParams({ book: bookKey }), {
+        method: 'GET',
+        credentials: import.meta.env.VITE_DEPLOYMENT_ENV === 'preview' ? 'same-origin' : 'omit',
+        signal,
+      });
+    } catch (error) {
+      if (isAbortError(error)) throw error;
+      throw new PublicApiError({ code: 'NETWORK_ERROR', message: 'Unable to reach the catalog service.' });
+    }
+    if (!response.ok) throw await failure(response);
+    const data = await response.json().catch(() => ({})) as { books?: unknown; partial?: unknown };
+    return { books: Array.isArray(data.books) ? data.books : [], partial: data.partial === true || !Array.isArray(data.books) };
   },
 
   // A suggestion opened or saved: counted in the anonymous log, nothing else.
@@ -228,8 +246,6 @@ export type ProblemScreen = typeof PROBLEM_SCREENS[number];
 
 export type HoldingsCheck = { answer: 'found' | 'not_found' | 'unconfirmed' | 'unknown'; catalogUrl?: string };
 
-/** POST /suggestions: at most 3 recent and 200 saved book keys (server validation.js parseSuggestions). */
-export type SuggestionRequest = { libraryId?: string; recentBookKeys: string[]; excludeKeys: string[] };
 /** POST /suggestions/events (server validation.js parseSuggestionEvent): work and ISBN keys only. */
 export type SuggestionEvent = { event: 'opened' | 'saved'; bookKey: string };
 
