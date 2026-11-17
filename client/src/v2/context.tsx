@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { publicApi, PublicApiError } from './api';
 import {
+  keepUnchanged,
   readDedupedAnonymousWebStateWithStatus,
   withRecentBook,
   withSavedBook,
@@ -115,7 +116,8 @@ function GuestLibraryStateProvider({ children }: { children: ReactNode }) {
     recovery.current = next.status === 'corrupt';
     setRecoveryMode(recovery.current);
     setStorageNotice(storageNoticeFor(next.status));
-    stateRef.current = next.state; setState(next.state);
+    const kept = keepUnchanged(stateRef.current, next.state);
+    stateRef.current = kept; setState(kept);
   }, []);
   const startNewShelf = useCallback(() => {
     return withGuestStorageLock(()=>{
@@ -143,7 +145,8 @@ function GuestLibraryStateProvider({ children }: { children: ReactNode }) {
     }
     if (stored?.status === 'unavailable') sessionOnly.current = true;
     const base=stored?.status==='ok'?stored.state:stateRef.current;
-    const next = change(base);
+    // Lists that did not change keep their identity, so the shelf is not redrawn for nothing.
+    const next = keepUnchanged(stateRef.current, change(base));
     stateRef.current = next;
     if (!sessionOnly.current && !writeAnonymousWebState(next)) sessionOnly.current = true;
     if (sessionOnly.current) setStorageNotice(storageNoticeFor('unavailable'));

@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type MouseEvent, type ReactNode } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState, type MouseEvent, type ReactNode } from 'react';
+import { UNSAFE_LocationContext, useLocation, useNavigate, useNavigationType } from 'react-router-dom';
 import { useAccountSession } from '../../auth/AccountSessionProvider';
 import type { BookNavigation } from '../../bookNavigation';
 import { LibraryStateContext, useLibrary, type LibraryState } from '../../context';
@@ -11,7 +11,8 @@ import { useHistoryOverlay } from '../home/useHistoryOverlay';
 import { LibraryPickerDialog } from '../library/LibraryPickerDialog';
 import { canGoBack } from '../panel/PanelPage';
 import { DeskColumn, DeskRail, type ReportFrom } from './DeskColumn';
-import { ACCOUNT_ENTRY_PATH, DeskSlotContext, isSlotPath, type DeskSlot } from './layoutMode';
+import { ACCOUNT_ENTRY_PATH, DeskSlotContext, isSlotPath, type DeskSlot, type LayoutMode } from './layoutMode';
+import { ShelfPlaceKeeper } from './ShelfPlace';
 import './desk.css';
 
 type ShelfRouteState = { search?: { candidateId?: string }; overlay?: string; legacy?: string } & Record<string, unknown>;
@@ -24,6 +25,12 @@ type ShelfRouteState = { search?: { candidateId?: string }; overlay?: string; le
 //   or closing an account form still moves like any other page.
 let lastShelf: { account: string | null; state: LibraryState['state']; library: LibraryState['library'] } | null = null;
 let lastLayout: { open: boolean; path: string; at: number } | null = null;
+// - library picker entries a page opened beside them left behind (by history
+//   entry key), and the entry drawn last, so that the picker never opens again
+//   by itself (see the picker below).
+const leftPickers = new Set<string>();
+let lastEntry: { key: string; picker: boolean; index: number | null } | null = null;
+let passedOver: string | null = null;
 const RECENT_MS = 1500;
 // Fields a reader types in: Escape there belongs to the field, not the page.
 const TYPING_FIELD = 'textarea, select, [contenteditable="true"], [contenteditable=""], '
@@ -57,7 +64,11 @@ function motionAllowed(): boolean {
 
 /**
  * The rail and wide layouts (docs/plans/2026-11-14-desktop-and-shelf-suggestions.md,
- * Part 1; DeskShelf, DeskResults, DeskBook and DeskLibrary boards). The shelf
+ * Part 1; DeskShelf, DeskResults, DeskBook and DeskLibrary boards), and the
+ * phone layout's shelf screen. All three draw the shelf at the same place in
+ * the page, so when the window crosses 640 or 1100 px it stays drawn as it
+ * was (scroll place, a search and its text, an open scan pop-up); on phones
+ * nothing else is added and the shelf screen is as released. The shelf
  * (HomeScreen) is always drawn; a book, Account settings, Report a problem,
  * Privacy, Terms, About or an account form opens in the middle slot beside it,
  * at its own address (`/app/books/…`, `/app/privacy`, …), so Back and Forward
@@ -70,14 +81,17 @@ function motionAllowed(): boolean {
  * under reduced motion. The library picker belongs to the layout: in the left
  * column at wide widths, a pop-over beside the rail otherwise.
  */
-export function DeskLayout({ mode, notices, children }: { mode: 'rail' | 'wide'; notices?: ReactNode; children: ReactNode }) {
+export function DeskLayout({ mode, notices, children }: { mode: LayoutMode; notices?: ReactNode; children: ReactNode }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const navigationType = useNavigationType();
   const live = useLibrary();
   const { session } = useAccountSession();
   const { pathname } = location;
   const routeState = location.state as (ShelfRouteState & BookNavigation) | null;
-  const slotOpen = isSlotPath(pathname);
+  // Phones: the shelf screen only (AppFrame draws every other page as released).
+  const phone = mode === 'phone';
+  const slotOpen = !phone && isSlotPath(pathname);
   const entry = ACCOUNT_ENTRY_PATH.test(pathname);
   const bookMatch = /^\/app\/books\/([^/]+)$/.exec(pathname);
   const bookKey = useMemo(() => { try { return bookMatch ? decodeURIComponent(bookMatch[1]) : null; } catch { return null; } }, [bookMatch?.[1]]);
@@ -109,20 +123,27 @@ export function DeskLayout({ mode, notices, children }: { mode: 'rail' | 'wide';
   const wasOpen = useRef(arrival ? arrival.open : slotOpen);
   const lastPath = useRef(arrival?.path ?? pathname);
 
-  // The shelf beside an open page takes no focus or pointer input.
+  // The shelf beside an open page takes no focus or pointer input: the scrim
+  // over it takes the pointer at once, and it is made inert with the focus
+  // move below, at the next frame (restyling every cover is then not added
+  // to the task that opens the page). It is live again as soon as the page
+  // closes, before focus goes back to it.
   const area = useRef<HTMLDivElement>(null);
-  useLayoutEffect(() => { area.current?.toggleAttribute('inert', slotOpen); }, [slotOpen]);
+  useLayoutEffect(() => { if (!slotOpen) area.current?.removeAttribute('inert'); }, [slotOpen]);
 
   // Motion: opening (DeskBook board's push) and closing, never under reduced motion.
   const motion = useMediaQuery('(prefers-reduced-motion: no-preference)');
   const [phase, setPhase] = useState<'opening' | 'closing' | null>(null);
   useLayoutEffect(() => {
+    if (phone) return;
     lastLayout = { open: slotOpen, path: pathname, at: Date.now() };
     if (wasOpen.current === slotOpen) return;
     wasOpen.current = slotOpen;
     setPhase(motion && motionAllowed() ? (slotOpen ? 'opening' : 'closing') : null);
-  }, [slotOpen, motion, pathname]);
-  useEffect(() => () => { if (lastLayout) lastLayout = { ...lastLayout, at: Date.now() }; }, []);
+  }, [phone, slotOpen, motion, pathname]);
+  const deskShown = useRef(!phone);
+  deskShown.current = !phone;
+  useEffect(() => () => { if (lastLayout && deskShown.current) lastLayout = { ...lastLayout, at: Date.now() }; }, []);
   useEffect(() => {
     if (!phase) return;
     const timer = window.setTimeout(() => setPhase(null), MOTION_MS);
@@ -146,9 +167,21 @@ export function DeskLayout({ mode, notices, children }: { mode: 'rail' | 'wide';
     if (slotOpen) {
       if (!isSlotPath(previous) || previous === pathname) opener.current = pressed.current?.isConnected && !pressed.current.closest('.desk-slot') ? pressed.current : null;
       const page = slotRef.current;
-      page?.scrollTo?.(0, 0);
-      (page?.querySelector<HTMLElement>('.slot-close') || page)?.focus({ preventScroll: true });
-      return;
+      // A page that takes another's place starts at its top. A newly opened
+      // slot is already there: scrolling it would force a layout of the whole
+      // shelf beside it in this same task.
+      if (isSlotPath(previous) && previous !== pathname) page?.scrollTo?.(0, 0);
+      // Focus moves in at the next frame, with the frame's own style and
+      // layout: moving it now would force them for the whole shelf here.
+      const frame = requestAnimationFrame(() => {
+        if (!page?.isConnected) return;
+        area.current?.setAttribute('inert', '');
+        const active = document.activeElement;
+        // Unless something in the page, or a picker or dialog over it, took it first.
+        if (active && active !== page && (page.contains(active) || active.closest('dialog[open], .desk-picker'))) return;
+        (page.querySelector<HTMLElement>('.slot-close') || page).focus({ preventScroll: true });
+      });
+      return () => cancelAnimationFrame(frame);
     }
     if (!isSlotPath(previous) || previous === pathname) return;
     const href = previous.replace(/["\\]/g, '\\$&');
@@ -160,17 +193,31 @@ export function DeskLayout({ mode, notices, children }: { mode: 'rail' | 'wide';
 
   // × , Escape and the shelf beside the page close it: back to where it was
   // opened from, or (opened directly) to the shelf in its place. A library
-  // picker opened on top of the page closes with it.
+  // picker opened on top of the page closes with it. A page opened directly
+  // with the picker on top of it is two entries with nothing before them:
+  // Back once closes the picker, then the shelf takes the page's place, so no
+  // entry for the page is left behind.
+  const shelfInPlace = useCallback((state: unknown) => {
+    const results = (state as BookNavigation | null)?.searchState;
+    const candidate = results?.shelf ? results.candidateId : undefined;
+    navigate('/app/shelf', { replace: true, state: candidate && candidatesFor(candidate) ? { search: { candidateId: candidate } } : null });
+  }, [navigate]);
+  const closeAfterBack = useRef<string | null>(null);
   const close = useCallback(() => {
     const state = location.state as ShelfRouteState | null;
     const steps = state?.overlay && state[state.overlay + 'Pushed'] ? 2 : 1;
     const index = (window.history.state as { idx?: unknown } | null)?.idx;
     if (canGoBack() && typeof index === 'number' && index >= steps) { navigate(-steps); return; }
-    const results = (state as BookNavigation | null)?.searchState;
-    const candidate = results?.shelf ? results.candidateId : undefined;
-    navigate('/app/shelf', { replace: true, state: candidate && candidatesFor(candidate) ? { search: { candidateId: candidate } } : null });
-  }, [location.state, navigate]);
-  const slot = useMemo<DeskSlot>(() => ({ mode, close }), [mode, close]);
+    if (steps === 2 && typeof index === 'number' && index === 1) { closeAfterBack.current = location.pathname; navigate(-1); return; }
+    shelfInPlace(state);
+  }, [location.state, location.pathname, navigate, shelfInPlace]);
+  useLayoutEffect(() => {
+    const page = closeAfterBack.current;
+    if (!page) return;
+    closeAfterBack.current = null;
+    if (pathname === page && !(location.state as ShelfRouteState | null)?.overlay) shelfInPlace(location.state);
+  }, [location, pathname, shelfInPlace]);
+  const slot = useMemo<DeskSlot>(() => ({ mode: mode === 'phone' ? 'rail' : mode, close }), [mode, close]);
   useEffect(() => {
     if (!slotOpen) return;
     const key = (event: KeyboardEvent) => {
@@ -187,7 +234,30 @@ export function DeskLayout({ mode, notices, children }: { mode: 'rail' | 'wide';
   }, [slotOpen, close]);
 
   // The library picker (history entry `overlay: 'library'`, so Back closes it).
-  const picker = useHistoryOverlay('library');
+  // In the left column the shelf and the column stay usable beside it, so a
+  // book or page can be opened from there, which the picker gives way to. It
+  // never opens again by itself: when Back, Forward or × comes back to its
+  // entry, that entry is passed over (one the picker pushed) or the picker is
+  // taken off it (the entry the page had before).
+  const overlay = useHistoryOverlay('library');
+  const leftBehind = overlay.open && leftPickers.has(location.key);
+  const picker = { ...overlay, open: overlay.open && !leftBehind };
+  useLayoutEffect(() => {
+    const index = (window.history.state as { idx?: unknown } | null)?.idx;
+    const previous = lastEntry;
+    lastEntry = { key: location.key, picker: overlay.open, index: typeof index === 'number' ? index : null };
+    if (navigationType === 'PUSH' && previous?.picker && previous.key !== location.key && !overlay.open) leftPickers.add(previous.key);
+    // Once per arrival (React's development double effects run this twice).
+    if (passedOver !== location.key) passedOver = null;
+    if (!leftBehind || passedOver) return;
+    passedOver = location.key;
+    const state = location.state as ShelfRouteState | null;
+    if (state?.libraryPushed) navigate(previous?.index != null && lastEntry.index != null && previous.index < lastEntry.index ? 1 : -1);
+    else {
+      const { overlay: _overlay, libraryPushed: _pushed, ...rest } = state || {};
+      navigate(location.pathname + location.search, { replace: true, state: Object.keys(rest).length ? rest : null });
+    }
+  }, [location.key]); // eslint-disable-line react-hooks/exhaustive-deps
   const pickerOpener = useRef<HTMLElement | null>(null);
   const [pickerQuery, setPickerQuery] = useState(() => routeState?.overlay === 'library' && routeState.legacy === 'library' ? peekLegacyText('library') : undefined);
   useEffect(() => { if (!picker.open) setPickerQuery(undefined); }, [picker.open]);
@@ -212,20 +282,33 @@ export function DeskLayout({ mode, notices, children }: { mode: 'rail' | 'wide';
 
   const report: ReportFrom = bookKey ? { reportScreen: 'book', reportBookKey: bookKey } : { reportScreen: behind?.candidateId || (!slotOpen && routeState?.search) ? 'search' : 'shelf' };
   const wide = mode === 'wide';
-  const side = wide
+  const side = phone ? null : wide
     ? <DeskColumn narrow={slotOpen} picking={picker.open} onChangeLibrary={openPicker} onClosePicker={picker.close} pickerQuery={pickerQuery} pickerReturn={pickerReturn} report={report} />
     : <DeskRail menu={menu} onMenu={setMenu} onLibrary={openPicker} slotOpen={slotOpen} report={report} />;
-  const shelfArea = <div ref={area} className="desk-shelf-area" aria-hidden={slotOpen || undefined}>
-    <div className="desk-shelf" id="desk-shelf">
-      <HomeScreen layout={mode} behind={behind} openKey={bookKey} />
+  // While a page is open the shelf beside it is held as it was: it keeps the
+  // address it was drawn for, so the change of address does not reach its
+  // covers' links and the shelf is not drawn again in full (only the open
+  // book's outline changes).
+  const routerLocation = useContext(UNSAFE_LocationContext);
+  const shelfLocation = useRef(routerLocation);
+  if (!slotOpen) shelfLocation.current = routerLocation;
+  // On phones the wrappers below are left out of the layout (`shelf-host`,
+  // display: contents), so the screen scrolls and looks as released.
+  const host = (name: string) => phone ? 'shelf-host' : name;
+  const shelfArea = <div ref={area} className={host('desk-shelf-area')} aria-hidden={slotOpen || undefined}>
+    <div className={host('desk-shelf')} id={phone ? undefined : 'desk-shelf'}>
+      <UNSAFE_LocationContext.Provider value={shelfLocation.current}><HomeScreen layout={mode} behind={behind} openKey={bookKey} /></UNSAFE_LocationContext.Provider>
     </div>
   </div>;
-  const classes = ['desk', 'desk-mode-' + mode, slotOpen && 'desk-open', bare && 'desk-bare', picker.open && wide && 'desk-picking', phase && 'desk-' + phase].filter(Boolean).join(' ');
+  const classes = phone ? 'shelf-host' : ['desk', 'desk-mode-' + mode, slotOpen && 'desk-open', bare && 'desk-bare', picker.open && wide && 'desk-picking', phase && 'desk-' + phase].filter(Boolean).join(' ');
+  // Every layout has the same elements in the same places, so changing
+  // layout redraws none of them; only their classes change.
   return <div ref={root} className={classes} onClickCapture={noteControl}>
+    <ShelfPlaceKeeper mode={mode} root={root} />
     {backdrop ? <LibraryStateContext.Provider value={backdrop}>{side}</LibraryStateContext.Provider> : side}
-    <main id="main-content" className="desk-main" tabIndex={-1}>
+    <main id="main-content" className={phone ? 'app-screen' : 'desk-main'} tabIndex={-1}>
       {notices}
-      <div className="desk-stage">
+      <div className={host('desk-stage')}>
         {slotOpen && <DeskSlotContext.Provider value={slot}>
           <section ref={slotRef} className="desk-slot" tabIndex={-1} aria-label={slotLabel(pathname)}>
             <div className="desk-slot-page">{children}</div>
@@ -235,6 +318,7 @@ export function DeskLayout({ mode, notices, children }: { mode: 'rail' | 'wide';
         {slotOpen && !bare && <div className="desk-scrim" aria-hidden="true" onClick={close} />}
       </div>
     </main>
-    {!wide && <LibraryPickerDialog open={picker.open} onClose={picker.close} returnFocus={pickerReturn} initialQuery={pickerQuery} />}
+    {/* On phones the shelf screen has its own library pop-up. */}
+    {mode === 'rail' && <LibraryPickerDialog open={picker.open} onClose={picker.close} returnFocus={pickerReturn} initialQuery={pickerQuery} />}
   </div>;
 }

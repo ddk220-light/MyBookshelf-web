@@ -32,7 +32,15 @@
 .one-shelf-frame .desk-main > .site-notice { flex: 0 0 auto; max-width: none; padding: 12px 24px 0; }
 .one-shelf-frame .desk-stage { flex: 1 1 auto; min-height: 0; display: flex; position: relative; overflow: hidden; }
 .one-shelf-frame .desk-shelf-area { flex: 1 1 auto; min-width: 0; position: relative; z-index: 0; overflow: hidden; }
-.one-shelf-frame .desk-shelf { width: 100%; height: 100%; overflow-x: hidden; overflow-y: auto; overscroll-behavior-y: contain; scroll-padding-top: 96px; }
+.one-shelf-frame .desk-shelf { width: 100%; height: 100%; overflow-x: hidden; overflow-y: auto; overscroll-behavior-y: contain; scroll-padding-top: 96px; scrollbar-gutter: stable; }
+/* One scroll area at a time: while a page is open its own scrollbar is the
+   only one. The shelf behind it keeps its place but does not scroll (it is
+   covered on the rail, cut off at the right edge at wide widths), and its
+   gutter stays reserved so its books do not move. */
+.one-shelf-frame .desk-open .desk-shelf { overflow-y: hidden; }
+/* The phone shelf screen is drawn through the same elements as the desk
+   layouts (DeskLayout.tsx); on phones they take no part in the layout. */
+.one-shelf-frame .shelf-host { display: contents; }
 .one-shelf-frame .desk-scrim { position: absolute; inset: 0; z-index: 1; background: var(--desk-scrim); cursor: pointer; }
 .one-shelf-frame .desk .undo-notice.home-undo { bottom: 24px; }
 

@@ -21,7 +21,9 @@ export { useReadingLight };
 // The home screen's side panel is the navigation (no tab bar). Other screens
 // get a link back to the shelf. From 640 px wide (and 480 px tall) the shelf, the book and the
 // panel's pages are drawn by the desk layout instead (ui/desk): a rail or a
-// left column, the shelf, and a middle slot for the book or page.
+// left column, the shelf, and a middle slot for the book or page. The phone
+// shelf screen is drawn by the desk layout too, with nothing added, so that
+// the shelf stays drawn as it is when the window crosses 640 px.
 export function AppFrame({ children }: { children: ReactNode }) {
   const { storageNotice, recoveryMode, reloadShelf, startNewShelf, removedLibraryNotice, removedBook, undoRemoval, reportStorageFailure } = useLibrary();
   const [resetting, setResetting] = useState(false);
@@ -106,7 +108,7 @@ export function AppFrame({ children }: { children: ReactNode }) {
     <div className="app-backdrop">
       <div className={`app-frame one-shelf-frame${location.pathname.startsWith('/app/books/') ? ' book-mode' : ''}${location.pathname.startsWith('/app/account/') ? ' account-entry-mode' : ''}${desk ? ' desk-frame' : ''}`}>
         <a className="desktop-skip" href="#main-content">{m.skipToContent}</a>
-        {desk ? <DeskLayout mode={mode as 'rail' | 'wide'} notices={notices}>{isSlotPath(location.pathname) ? children : null}</DeskLayout>
+        {desk || location.pathname === '/app/shelf' ? <DeskLayout mode={desk ? mode : 'phone'} notices={notices}>{desk && isSlotPath(location.pathname) ? children : null}</DeskLayout>
           : <main id="main-content" ref={screen} className="app-screen" tabIndex={-1}>
             {location.pathname !== '/app/shelf' && !location.pathname.startsWith('/app/books/') && !PANEL_PAGE.test(location.pathname) && <Link className="one-shelf-back" to="/app/shelf"><span aria-hidden="true">‹</span> My shelf</Link>}
             {notices}

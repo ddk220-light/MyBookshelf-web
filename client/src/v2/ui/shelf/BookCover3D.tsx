@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { memo, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useCoverImage } from '../BookCard';
 import { BookmarkGlyph, LibraryGlyph } from '../home/homeIcons';
@@ -24,7 +24,7 @@ import type { CSSProperties } from 'react';
  * readable when faded (spineColors.ts). `motion` fades a new suggestion in or
  * turns a just-saved one solid (SuggestShelf board; none under reduced motion).
  */
-export function BookCover3D({ entry, libraryName, mine = false, pop = false, open = false, motion }: { entry: ShelfEntry; libraryName?: string | null; mine?: boolean; pop?: boolean; open?: boolean;
+export const BookCover3D = memo(function BookCover3D({ entry, libraryName, mine = false, pop = false, open = false, motion }: { entry: ShelfEntry; libraryName?: string | null; mine?: boolean; pop?: boolean; open?: boolean;
   motion?: SuggestionMotion }) {
   const badgeAtStart = useRef(Boolean(libraryName));
   const { url, ready, fail, onLoad } = useCoverImage(entry.kind === 'book' ? entry : {}, entry.alternatives);
@@ -47,4 +47,4 @@ export function BookCover3D({ entry, libraryName, mine = false, pop = false, ope
     {mine && <span className="cover-badge cover-badge-mine" aria-hidden="true"><BookmarkGlyph /></span>}
     {libraryName && <span className={'cover-badge cover-badge-library' + (pop && !badgeAtStart.current ? ' cover-badge-pop' : '')} aria-hidden="true"><LibraryGlyph /></span>}
   </Link>;
-}
+});

@@ -157,6 +157,26 @@ export function toRecentBook(book: PublicBook, source: RecentSource, viewedAt = 
   };
 }
 
+/**
+ * `next`, keeping `previous`'s lists (saved books, saved items, Viewed
+ * before) wherever their contents did not change, and `previous` itself when
+ * nothing did. Every change is made to a fresh read of storage, so without
+ * this a change to Viewed before (opening a book) would hand the shelf a new
+ * but equal list of saved books and redraw every cover.
+ */
+export function keepUnchanged(previous: AnonymousWebState, next: AnonymousWebState): AnonymousWebState {
+  if (previous === next) return next;
+  const same = (a: unknown, b: unknown) => a === b || JSON.stringify(a) === JSON.stringify(b);
+  const merged: AnonymousWebState = {
+    ...next,
+    recentBooks: same(previous.recentBooks, next.recentBooks) ? previous.recentBooks : next.recentBooks,
+    savedBooks: same(previous.savedBooks, next.savedBooks) ? previous.savedBooks : next.savedBooks,
+    savedContent: same(previous.savedContent, next.savedContent) ? previous.savedContent : next.savedContent,
+  };
+  const keys = Object.keys(merged) as (keyof AnonymousWebState)[];
+  return keys.length === Object.keys(previous).length && keys.every(key => merged[key] === previous[key]) ? previous : merged;
+}
+
 export function withRecentBook(state: AnonymousWebState, book: PublicBook, source: RecentSource, viewedAt = new Date().toISOString()): AnonymousWebState {
   const recent = toRecentBook(book, source, viewedAt);
   const retained = state.recentBooks.filter((item) => item.bookKey !== recent.bookKey);

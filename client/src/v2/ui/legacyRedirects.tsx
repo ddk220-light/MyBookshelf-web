@@ -1,5 +1,6 @@
 import { isContentSourceRetired } from '../../../../shared/content-source-availability.mjs';
-import { Navigate, useLocation } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { handOffLegacyText } from '../legacyHandoff';
 import { KnowledgeSearchPage } from './content/KnowledgeSearchPage';
 import { ContentSearchPage } from './content/ContentSearchPage';
@@ -52,13 +53,31 @@ function ContentScope({ params, scope }: { params: URLSearchParams; scope: 'free
  * /app/libraries: the shelf with the library pop-up open; `?q=` is copied
  * into the pop-up's field. `?book=<key>` opens that book with the pop-up
  * over it.
+ *
+ * The pop-up opens once, on arrival: the old address is replaced by the
+ * plain shelf (or book), and the pop-up gets a history entry of its own on
+ * top, as when it is opened from the shelf. Closing it, Back included, leaves
+ * that plain entry, so coming back to it later never opens the pop-up again.
  */
 export function LibrariesRedirect() {
   const params = new URLSearchParams(useLocation().search);
   const book = params.get('book');
-  if (book) return <Navigate to={'/app/books/' + encodeURIComponent(book)} replace state={{ overlay: 'library' }} />;
-  const state: LegacyArrival & { overlay: 'library' } = { overlay: 'library', ...(handOffLegacyText('library', params.get('q')) ? { legacy: 'library' as const } : {}) };
-  return <Navigate to="/app/shelf" replace state={state} />;
+  if (book) return <OpenLibraryOnce to={'/app/books/' + encodeURIComponent(book)} legacy={false} />;
+  return <OpenLibraryOnce to="/app/shelf" legacy={handOffLegacyText('library', params.get('q'))} />;
+}
+
+function OpenLibraryOnce({ to, legacy }: { to: string; legacy: boolean }) {
+  const navigate = useNavigate();
+  // Once, also under React's development double effects.
+  const done = useRef(false);
+  useEffect(() => {
+    if (done.current) return;
+    done.current = true;
+    navigate(to, { replace: true, state: null });
+    const state: LegacyArrival & { overlay: 'library'; libraryPushed: true } = { overlay: 'library', libraryPushed: true, ...(legacy ? { legacy: 'library' as const } : {}) };
+    navigate(to, { state });
+  }, [navigate, to, legacy]);
+  return null;
 }
 
 /** /app/settings: the side panel on the shelf; /app/settings#privacy is the Privacy page. */
