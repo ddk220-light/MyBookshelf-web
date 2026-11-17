@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 1,
+  "observedOn": "2026-11-15",
+  "observedWindowUtc": "11:13-12:40",
+  "method": "Bounded anonymous diagnostics for the non-eGranthalaya follow-up: one robots.txt read per origin with the app's user agent and robots parser, and at most a few single page reads per host to classify a failure. No retries around a refusal, captcha, login or robots rule. These observations are not book checks and never count as passes or as absence. Shared-host stops are recorded in the result files as not_attempted.",
+  "hosts": [
+    {
+      "host": "kalnet.kshec.kerala.gov.in",
+      "family": "vufind (KALNET)",
+      "classification": "unreachable_from_execution_environment",
+      "policyRefusal": false,
+      "directoryEntries": 102,
+      "alsoUsedAs": "Alternate route for 28 entries; preferred search route for indcat:indcat-cali-673635, indcat:indcat-kanu-670567, indcat:indcat-krla-695034, indcat:indcat-mgnd-686560 and indcat:indcat-nals-682017, which fall back to IndCat.",
+      "observations": [
+        "robots.txt: no response within 10 s (11:13Z); the app policy then allows requests for five minutes.",
+        "A proxied TLS connection to /robots.txt was reset by the peer after 3.3 s, before any HTTP response (egress relay: 517 bytes sent, 39 received).",
+        "App search for three members (history, india): fetch failed six times; the run stopped the host after three successive members (vufind-results.json).",
+        "The app's KALNET transport supplies its own TLS agent (for the catalog's missing intermediate certificate), so in this environment it does not use the execution proxy. A proxied request also failed, so the catalog was not reached by either path.",
+        "The earlier run recorded robots.txt HTTP 503 at 07:49Z.",
+        "Second check at 12:23Z: robots.txt again gave no response within 10 s."
+      ],
+      "affectedIds": "All 102 vufind:kalnet-* entries (see vufind-results.json)."
+    },
+    {
+      "host": "koha-opac.somaiya.edu",
+      "family": "vufind (Somaiya)",
+      "classification": "access_refused_by_cdn",
+      "policyRefusal": true,
+      "directoryEntries": 28,
+      "observations": [
+        "robots.txt and the first search both answered HTTP 403 from CloudFront: 'Request blocked. We can't connect to the server for this app or website at this time' (x-cache: Error from cloudfront, edge POP IAD55).",
+        "The app classifies 403 as a refusal; no further requests were sent. The block was observed from a United States edge; whether Indian readers or the production deployment are blocked is not known."
+      ],
+      "affectedIds": "All 28 vufind:somaiya-* entries (see vufind-results.json)."
+    },
+    {
+      "host": "ideal.egranth.ac.in",
+      "family": "koha (IDEAL agricultural network)",
+      "classification": "unreachable_from_execution_environment",
+      "policyRefusal": false,
+      "directoryEntries": 195,
+      "observations": [
+        "The earlier broad run stopped this host after three successive discovery errors (HTTP 503), not a policy refusal; 192 members were never attempted.",
+        "11:23Z app search (agriculture, AAUA scope): HTTP 503 after 14 s. The 503 body was the execution egress proxy's 'upstream connect error or disconnect/reset before headers ... remote connection failure', not a catalog page.",
+        "robots.txt: no response within 10 s at 11:13Z; HTTP 503 at 11:42Z and again at 12:23Z."
+      ],
+      "affectedIds": "All 195 koha:ideal-* entries; see koha-broad-results.json for the three attempted and 192 not attempted."
+    },
+    {
+      "host": "dhegoalib.unifyed.com",
+      "family": "koha (Goa DHE union)",
+      "classification": "too_slow_for_app_budget_and_branch_limit_gone",
+      "policyRefusal": false,
+      "directoryEntries": 38,
+      "observations": [
+        "The earlier broad run stopped after three successive discovery errors: an unscoped union search followed by member-ownership reads exhausted the 30 s Koha budget (CATALOG_UNRECOGNIZED or deadline).",
+        "robots.txt: no response within 30 s, and again no response within 10 s at 12:23Z.",
+        "A branch-limited search (limit=branch:CCL) answered HTTP 410 Gone from Apache after 25 s. The directory already searches this union unscoped; the restriction was not worked around.",
+        "The same unscoped keyword search the app uses answered HTTP 200 only after 35.5 s, beyond the app's 30 s Koha budget."
+      ],
+      "affectedIds": "koha:goa-dhe-* (38 entries). One member, koha:goa-dhe-cescaccs, passed in the earlier run; 33 were never attempted and four failed."
+    },
+    {
+      "host": "library.mes.ac.in",
+      "family": "koha",
+      "classification": "robots_disallow",
+      "policyRefusal": true,
+      "directoryEntries": 29,
+      "observations": ["robots.txt (HTTP 200) disallows /cgi-bin/koha/opac-search.pl and record views for all agents. Confirmed again at 11:13Z; no catalog request sent."],
+      "affectedIds": "koha:pillai-cehs and the 28 other library.mes.ac.in members not attempted in koha-broad-results.json."
+    },
+    {
+      "host": "opac.rayatlibrarynetwork.org",
+      "family": "koha",
+      "classification": "robots_disallow",
+      "policyRefusal": true,
+      "directoryEntries": 43,
+      "observations": ["robots.txt (HTTP 200) has 'Disallow: /' for all agents. Confirmed again at 11:13Z; no catalog request sent."],
+      "affectedIds": "koha:rayat-aac and the 42 other opac.rayatlibrarynetwork.org members not attempted in koha-broad-results.json."
+    },
+    {
+      "host": "single-library Koha hosts with robots refusals",
+      "family": "koha",
+      "classification": "robots_disallow",
+      "policyRefusal": true,
+      "observations": ["robots.txt (HTTP 200) disallows the catalog search path for all agents, rechecked at 11:13Z or 11:21Z."],
+      "affectedIds": ["koha:british-council-india", "koha:arunachal-university", "koha:cvmu", "koha:diet-dhemaji", "koha:sanjay-teachers-training-college", "koha:iiser-berhampur", "koha:japan-foundation-new-delhi", "koha:klh", "koha:oriental-theological-seminary", "koha:sncopac", "koha:dharmaram", "koha:carmel-mala", "koha:central-university-rajasthan", "koha:dbit-bangalore"]
+    },
+    {
+      "host": "robots.txt answers HTTP 503",
+      "family": "koha",
+      "classification": "robots_temporarily_disallowed",
+      "policyRefusal": false,
+      "observations": ["robots.txt answered HTTP 503 at 11:13Z and again at 11:42Z with the body 'No server is available to handle this request'. RFC 9309 and the app treat this as temporarily disallowed, so no catalog request was sent. Not a permanent refusal; recheck later."],
+      "affectedIds": ["koha:goa-institute-management", "koha:ramanujan-college", "koha:scert-assam", "koha:nec-kovilpatti", "koha:vit-chennai"]
+    },
+    {
+      "host": "other unreachable or failing Koha hosts",
+      "family": "koha",
+      "classification": "unreachable_or_server_error",
+      "policyRefusal": false,
+      "observations": [
+        "koha:iit-dharwad: the site's own nginx answered 502 Bad Gateway at 06:47Z, 11:28Z and 11:40Z.",
+        "koha:klh-global-business-school: the TLS connection was reset by the peer; the app saw the egress proxy's 503.",
+        "koha:iim-visakhapatnam: robots.txt and searches timed out at 11:28Z and 11:42Z.",
+        "koha:indian-institute-astrophysics (link-only): robots.txt timed out.",
+        "koha:bhatkhande (link-only): a robots-permitted public search answered HTTP 500.",
+        "koha:cmd-kerala (link-only): robots permitted, but the search page did not have Koha's results markup.",
+        "koha:iihmr-delhi: catalog requires access this public reader does not have; robots.txt 403."
+      ]
+    },
+    {
+      "host": "Koha catalogs without a countable item type",
+      "family": "koha",
+      "classification": "holding_confirmed_but_not_countable_under_monograph_rule",
+      "policyRefusal": false,
+      "observations": [
+        "koha:mac: the holdings table has an Item type column, but its cells are empty for the sampled record (biblionumber 719); the record-level MARC material type shows Book. The strict rule requires a recognized book item type, so no book is counted.",
+        "koha:st-xaviers-jaipur (link-only): a robots-permitted search and record read worked, but every sampled item type is 'Stack'. It stays link-only.",
+        "koha:srhu: health-sciences seeds returned item types 'Medicine', 'Community ...', serials or no item type.",
+        "koha:kakojan-college: sampled records show 'No physical items for this record'."
+      ]
+    },
+    {
+      "host": "opac.niscair.res.in and webopac.iitm.ac.in",
+      "family": "koha / chamo",
+      "classification": "unreachable_from_execution_environment",
+      "policyRefusal": false,
+      "observations": [
+        "koha:national-science-library: robots.txt timed out again at 11:40Z.",
+        "chamo:iit-madras: the hostname did not resolve (ENOTFOUND) at 11:40Z; earlier the egress reported no approved upstream IPv4 address."
+      ]
+    },
+    {
+      "host": "emp.rmc.gov.in",
+      "family": "discovery-community (Rajkot)",
+      "classification": "reachable_again",
+      "policyRefusal": false,
+      "observations": ["robots.txt answered 404 in 2.7 s at 11:40Z after the earlier run's egress connection timeouts. All 21 scopes were rechecked (community-recheck-results.json)."]
+    },
+    {
+      "host": "academic catalogs",
+      "family": "discovery-academic",
+      "observations": [
+        "discovery-academic:autolib-patna-spjain: robots refusal (earlier run); not retried.",
+        "discovery-academic:librarika-bncollege: public access challenge (earlier run); not retried.",
+        "discovery-academic:easylib-sjec: title queries again matched the records, but both cold app lookups exceeded the 20 s book budget (academic-sjec-recheck-results.json). The budget was not changed.",
+        "discovery-academic:srms-3, srms-5, srms-12: the portal's public college list (one read) maps codes 3, 5 and 12 to the same colleges as the directory, so the scope codes are not stale. Their seed searches remain empty: unconfirmed, not absent."
+      ]
+    }
+  ]
+}

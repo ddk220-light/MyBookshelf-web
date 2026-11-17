@@ -74,7 +74,9 @@ describe('one-shelf book page', () => {
     const group = await screen.findByRole('group', { name: label });
     expect(group).toHaveClass('library-answer-' + tone);
     expect(within(group).getByText('Anna Centenary Library')).toBeInTheDocument();
-    expect(within(group).getByRole('link', { name: /^Catalog/ })).toHaveAttribute('href', 'https://catalog.example.test/record/1');
+    // A stored answer can show the row first with the catalog's home link;
+    // the live answer then links the book's own record.
+    await waitFor(() => expect(within(group).getByRole('link', { name: /^Catalog/ })).toHaveAttribute('href', 'https://catalog.example.test/record/1'));
     // Only the answer: no copies, due dates, floors or shelf numbers.
     expect(group.textContent).toBe('Anna Centenary LibraryCatalog');
     expect(Boolean(within(group).queryByRole('button', { name: 'Try again' }))).toBe(answer === 'unknown');

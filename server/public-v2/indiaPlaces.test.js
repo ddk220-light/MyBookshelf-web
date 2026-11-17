@@ -6,7 +6,7 @@ import request from 'supertest';
 import { createPlaceSearch } from './places.js';
 import { searchIndiaPlaces } from './indiaPlaces.js';
 import { createDiscoveryService } from './discovery.js';
-import { getLibraryById } from '../services/directory.js';
+import { getAllLibraries, getLibraryById } from '../services/directory.js';
 import { createPublicDirectoryService } from './directory.js';
 import { libraryLinks } from './libraryLinks.js';
 import { makeTestApp } from '../test/helpers.js';
@@ -17,7 +17,9 @@ import index from '../data/india-places.json' with { type: 'json' };
 import sources from '../../data/india-place-sources.json' with { type: 'json' };
 import coverage from '../../data/india-location-coverage.json' with { type: 'json' };
 
-const discovery = createDiscoveryService();
+// Place matching over the whole directory: whether a library is offered at all
+// is the India allowlist's job (services/directory.test.js).
+const discovery = createDiscoveryService({ entries: getAllLibraries });
 const cases = [
   ['Chennai', 'koha:anna-centenary-library'], ['Madurai', 'koha:kalaignar-centenary-library'],
   ['Kochi', 'koha:ideal-cift'], ['Bengaluru', 'koha:dharmaram'], ['Karaikudi', 'catalog:alagappa-university'],
@@ -113,6 +115,7 @@ test('generated data records its source checksums and unresolved location covera
   for (const [name, source] of Object.entries(sources.sources)) assert.equal(index.sourceChecksums[name], source.sha256);
   const hash = createHash('sha256').update(readFileSync(new URL('../../data/india-administrative-aliases.json', import.meta.url))).digest('hex');
   assert.equal(index.aliasesSha256, hash);
-  assert.equal(coverage.eligibleLibraries, discovery.search({ country: 'IN' }).total);
+  // Location coverage describes the whole directory, hidden libraries included.
+  assert.equal(coverage.eligibleLibraries, createDiscoveryService({ entries: getAllLibraries }).search({ country: 'IN' }).total);
   assert.equal(coverage.localityMatched + coverage.unresolvedLocalities, coverage.eligibleLibraries);
 });

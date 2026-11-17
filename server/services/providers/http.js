@@ -2,6 +2,7 @@ import http from 'node:http';
 import https from 'node:https';
 import { constants as cryptoConstants } from 'node:crypto';
 import { AsyncLocalStorage } from 'node:async_hooks';
+import { catalogAgent, catalogDispatcher } from './network.js';
 
 const DEFAULT_TIMEOUT_MS = 30_000;
 const CACHE_TTL_MS = 60_000;
@@ -33,10 +34,45 @@ const operations = new AsyncLocalStorage();
 //   throws when that slot is past the deadline.
 // - `noRetries`: every request is sent once, with no transport retry (used
 //   while a host's circuit is open: the book page tries once).
+//
+// Requests connect with the catalog connection settings in network.js (a 2.5 s
+// attempt per address). A caller that is not reading a library catalog, such
+// as the Open Library metadata reads, passes `catalogConnection: false` and
+// gets Node's defaults. A caller's own `dispatcher` (KALNET) is used as given.
 export function withCatalogOperation({ maxRequests = Infinity, signal = null, minIntervalMs = 0, robots = null, gate = null, noRetries = false } = {}, task) {
   const current = operations.getStore();
   if (current) return task(current);
   const store = { maxRequests, requests: 0, lastByHost: new Map(), signal, minIntervalMs, robots, gate, noRetries };
+  return operations.run(store, () => task(store));
+}
+
+// An explicit route scope adds its own cap without replacing the reader's
+// aggregate budget. Ordinary nested withCatalogOperation calls still reuse
+// their current scope. Cancelling one route does not cancel sibling fallbacks.
+// A supplied gate replaces the inherited gate so one request reserves one host
+// slot; that route gate must retain the outer operation's deadline restriction.
+export function withCatalogSuboperation(options = {}, task) {
+  const parent = operations.getStore();
+  if (!parent) return withCatalogOperation(options, task);
+  const signals = [...new Set([parent.signal, options.signal].filter(Boolean))];
+  const signal = signals.length > 1 ? AbortSignal.any(signals) : signals[0] || null;
+  let robots = parent.robots;
+  if (options.robots && options.robots !== robots) {
+    const inherited = robots;
+    robots = inherited ? async url => {
+      const outer = await inherited(url);
+      if (!outer?.allowed) return outer;
+      const inner = await options.robots(url);
+      return { allowed: Boolean(inner?.allowed), delayMs: Math.max(outer.delayMs || 0, inner?.delayMs || 0) };
+    } : options.robots;
+  }
+  const store = {
+    parent, maxRequests: options.maxRequests ?? Infinity, requests: 0,
+    lastByHost: parent.lastByHost, signal, robots,
+    gate: options.gate ?? parent.gate,
+    minIntervalMs: Math.max(parent.minIntervalMs || 0, options.minIntervalMs || 0),
+    noRetries: Boolean(parent.noRetries || options.noRetries),
+  };
   return operations.run(store, () => task(store));
 }
 
@@ -54,6 +90,16 @@ export function catalogOperation() {
 
 function budgetError() {
   return Object.assign(new Error('Catalog request budget exhausted'), { code: 'CATALOG_REQUEST_BUDGET' });
+}
+
+function checkRequestBudgets(operation) {
+  for (let scope = operation; scope; scope = scope.parent) {
+    if (scope.requests >= scope.maxRequests) throw budgetError();
+  }
+}
+
+function countRequest(operation) {
+  for (let scope = operation; scope; scope = scope.parent) scope.requests += 1;
 }
 
 const sleep = ms => new Promise(resolve => { setTimeout(resolve, ms); });
@@ -181,6 +227,7 @@ function legacyHttpsRequest(url, options, timeoutMs, redirects = 0, originalHost
       method: options.method || 'GET',
       headers: options.headers,
       signal: options.signal,
+      ...(options.catalogConnection ? { agent: catalogAgent(parsed.protocol) } : {}),
       secureOptions: cryptoConstants.SSL_OP_LEGACY_SERVER_CONNECT,
     }, (response) => {
       const chunks = [];
@@ -287,6 +334,7 @@ async function requestOnce(url, options = {}) {
     deadlineAt = Date.now() + timeoutMs,
     maxResponseBytes = MAX_RESPONSE_BYTES,
     minIntervalMs,
+    catalogConnection = true,
     ...fetchOptions
   } = options;
   if (cacheKey) {
@@ -297,7 +345,7 @@ async function requestOnce(url, options = {}) {
   let spacing = minIntervalMs;
   if (operation) {
     if (operation.signal?.aborted) throw abortedError();
-    if (operation.requests >= operation.maxRequests) throw budgetError();
+    checkRequestBudgets(operation);
     if (operation.robots) {
       const policy = await operation.robots(url);
       if (!policy?.allowed) throw robotsError();
@@ -306,13 +354,13 @@ async function requestOnce(url, options = {}) {
     spacing = Math.max(spacing || 0, operation.minIntervalMs || 0);
     await paceRequest(operation, hostOf(url), spacing, deadlineAt);
     if (operation.signal?.aborted) throw abortedError();
-    if (operation.requests >= operation.maxRequests) throw budgetError();
+    checkRequestBudgets(operation);
     if (operation.gate) {
       await operation.gate(hostOf(url), { spacingMs: spacing || 0, deadlineAt, signal: operation.signal });
       if (operation.signal?.aborted) throw abortedError();
-      if (operation.requests >= operation.maxRequests) throw budgetError();
+      checkRequestBudgets(operation);
     }
-    operation.requests += 1;
+    countRequest(operation);
   }
   const settled = () => { if (operation && spacing > 0) operation.lastByHost.set(hostOf(url), Date.now()); };
 
@@ -333,11 +381,11 @@ async function requestOnce(url, options = {}) {
     try {
       let response;
       try {
-        response = await fetch(url, { ...fetchOptions, headers, signal: controller.signal });
+        response = await fetch(url, { ...(catalogConnection ? { dispatcher: catalogDispatcher() } : {}), ...fetchOptions, headers, signal: controller.signal });
       } catch (error) {
         const errorText = `${error.code || ''} ${error.message || ''} ${error.cause?.code || ''} ${error.cause?.message || ''}`;
         if (parsed.protocol !== 'https:' || !errorText.match(/LEGACY_RENEGOTIATION|unsafe legacy renegotiation/i)) throw error;
-        response = await legacyHttpsRequest(url, { ...fetchOptions, headers, signal: controller.signal }, requestTimeout);
+        response = await legacyHttpsRequest(url, { ...fetchOptions, catalogConnection, headers, signal: controller.signal }, requestTimeout);
       }
       let text;
       if (typeof response.text === 'function') {

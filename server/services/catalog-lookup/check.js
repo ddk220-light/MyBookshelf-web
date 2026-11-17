@@ -37,21 +37,24 @@ async function withBudget(budget, run, lookupKind) {
   const forward = () => controller.abort();
   if (budget.signal?.aborted) return { error: coded('Catalog check was cancelled', 'CATALOG_ABORTED'), lookupKind };
   budget.signal?.addEventListener?.('abort', forward, { once: true });
-  let timer;
+  let timer, current = null;
+  // A deadline or cancellation still reports the requests already sent.
+  const sent = () => current?.requests || 0;
   const deadline = new Promise(resolve => {
     timer = setTimeout(() => {
       controller.abort();
-      resolve({ error: coded('Catalog check deadline exceeded', 'CATALOG_TIMEOUT'), lookupKind });
+      resolve({ error: coded('Catalog check deadline exceeded', 'CATALOG_TIMEOUT'), lookupKind, requests: sent() });
     }, Math.max(0, budget.deadlineAt - Date.now()));
   });
   const cancelled = new Promise(resolve => {
     controller.signal.addEventListener('abort', () => {
-      if (budget.signal?.aborted) resolve({ error: coded('Catalog check was cancelled', 'CATALOG_ABORTED'), lookupKind });
+      if (budget.signal?.aborted) resolve({ error: coded('Catalog check was cancelled', 'CATALOG_ABORTED'), lookupKind, requests: sent() });
     }, { once: true });
   });
   try {
     const work = withCatalogOperation({ maxRequests: budget.maxRequests, signal: controller.signal,
       robots: budget.robots || null, minIntervalMs: budget.minIntervalMs || 0, gate: budget.gate || null, noRetries: Boolean(budget.noRetries) }, async operation => {
+      current = operation;
       const result = await run();
       return { ...result, requests: operation.requests };
     });

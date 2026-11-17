@@ -22,8 +22,12 @@ test('every imported inline library has search, durable reopening, and availabil
       assert.equal(dto.capabilities.publicAvailability, false);
     }
   }
-  assert.equal(createDiscoveryService().search({ country: 'IN' }).total, 6701);
-  assert.equal(createDiscoveryService().search({}).total, 7086);
+  // Only the 4,139 Indian libraries on the allowlist (server/data/india-catalogs-listed.json)
+  // are offered: 1,034 with a verified book and 3,105 e-Granthalaya audit-found.
+  // The finder counts 6,701 of the 6,704 Indian entries (three have no finder record).
+  assert.equal(createDiscoveryService().search({ country: 'IN' }).total, 4139);
+  assert.equal(createDiscoveryService().search({}).total, 7086 - 6701 + 4139);
+  assert.equal(createDiscoveryService({ entries: getAllLibraries }).search({}).total, 7086);
   assert.equal(new Set(getAllLibraries().map(r => r.id)).size, getAllLibraries().length);
 });
 

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { providerWithAlternates } from './index.js';
+import { providerWithAlternates, withProviderRouteExecution } from './index.js';
 
 const library = { platform: 'old', alternateCatalogs: [{ platform: 'new', sourceConnectionId: 'source:one', preferForLookup: true }] };
 test('alternate records reopen on their original route after provider order changes', async () => {
@@ -43,4 +43,107 @@ test('a preferred title-only match cannot hide exact edition evidence from the r
   } }));
   assert.equal((await provider.checkAvailability('9788173711466', 'Wings of Fire')).matchKind, 'exact_isbn');
   assert.deepEqual(calls, ['new', 'old']);
+});
+
+test('route execution follows the existing fallback order without changing results', async () => {
+  const calls = [];
+  const provider = providerWithAlternates(library, entry => ({ checkAvailability: async () => {
+    if (entry.platform === 'new') throw Object.assign(new Error('unavailable'), { code: 'CATALOG_UNAVAILABLE' });
+    return { outcome: 'in_catalog', matchKind: 'exact_isbn', recognizedExact: true };
+  } }));
+  const result = await withProviderRouteExecution(async (route, task) => {
+    calls.push(route);
+    return task();
+  }, () => provider.checkAvailability('9788173711466'));
+  assert.equal(result.outcome, 'in_catalog');
+  assert.deepEqual(calls.map(route => [route.entry.platform, route.method]), [['new', 'checkAvailability'], ['old', 'checkAvailability']]);
+  assert.match(calls[0].prefix, /^alt\.[a-f0-9]{12}\.$/);
+  assert.equal(calls[1].prefix, '');
+  assert.deepEqual(provider.catalogRoutes.map(route => route.entry.platform), ['new', 'old']);
+});
+
+test('route metadata and execution preserve scoped record identities', async () => {
+  const calls = [], opened = [];
+  const provider = providerWithAlternates(library, entry => ({
+    searchCatalog: async () => [{ recordId: '123', title: entry.platform }],
+    resolveCatalogRecord: async id => { opened.push([entry.platform, id]); return { recordId: id, title: entry.platform }; },
+  }));
+  const result = await withProviderRouteExecution(async (route, task) => {
+    calls.push([route.entry.platform, route.method]);
+    return task();
+  }, async () => {
+    const [record] = await provider.searchCatalog('book');
+    const selected = provider.catalogRouteForRecord(record.recordId);
+    assert.equal(selected.entry.platform, 'new');
+    assert.equal(record.recordId, selected.prefix + '123');
+    const resolved = await provider.resolveCatalogRecord(record.recordId);
+    assert.equal(resolved.recordId, record.recordId);
+    return resolved;
+  });
+  assert.equal(result.title, 'new');
+  assert.deepEqual(opened, [['new', '123']]);
+  assert.deepEqual(calls, [['new', 'searchCatalog'], ['new', 'resolveCatalogRecord']]);
+  assert.equal(provider.catalogRouteForRecord('123').entry.platform, 'old');
+  assert.throws(() => provider.catalogRouteForRecord('alt.000000000000.123'), { code: 'CATALOG_UNRECOGNIZED' });
+});
+
+test('concurrent execution scopes remain independent and do not leak to ordinary calls', async () => {
+  const provider = providerWithAlternates(library, entry => ({ searchCatalog: async () => {
+    await new Promise(resolve => setImmediate(resolve));
+    return entry.platform === 'new' ? [] : [{ recordId: '123', title: 'book' }];
+  } }));
+  const a = [], b = [];
+  const run = calls => withProviderRouteExecution(async (route, task) => {
+    calls.push(route.entry.platform);
+    return task();
+  }, () => provider.searchCatalog('book'));
+  await Promise.all([run(a), run(b)]);
+  await provider.searchCatalog('book');
+  assert.deepEqual(a, ['new', 'old']);
+  assert.deepEqual(b, ['new', 'old']);
+});
+
+test('inherited primary methods execute on the primary route and retain their receiver', async () => {
+  const calls = [];
+  const provider = providerWithAlternates(library, entry => ({ label: entry.platform,
+    searchResultRows() { return [{ title: this.label }]; },
+  }));
+  const rows = await withProviderRouteExecution(async (route, task) => {
+    calls.push([route.entry.platform, route.prefix, route.method]);
+    return task();
+  }, () => provider.searchResultRows('book'));
+  assert.deepEqual(rows, [{ title: 'old' }]);
+  assert.deepEqual(calls, [['old', '', 'searchResultRows']]);
+});
+
+test('a primary record checker reopens alternate records on their own resolver', async () => {
+  const calls = [], opened = [];
+  const provider = providerWithAlternates(library, entry => entry.platform === 'old' ? {
+    checkRecordAvailability: async id => { opened.push(['old', id]); return { outcome: 'not_found' }; },
+  } : {
+    searchCatalog: async () => [{ recordId: '123', title: 'book' }],
+    resolveCatalogRecord: async id => { opened.push(['new', id]); return { recordId: id, observation: { outcome: 'in_catalog' } }; },
+  });
+  const [record] = await provider.searchCatalog('book');
+  const result = await withProviderRouteExecution(async (route, task) => {
+    calls.push([route.entry.platform, route.method]);
+    return task();
+  }, () => provider.checkRecordAvailability(record.recordId));
+  assert.equal(result.outcome, 'in_catalog');
+  assert.deepEqual(opened, [['new', '123']]);
+  assert.deepEqual(calls, [['new', 'resolveCatalogRecord']]);
+  assert.equal((await provider.checkRecordAvailability('456')).outcome, 'not_found');
+  assert.deepEqual(opened[1], ['old', '456']);
+  const withoutPrimaryChecker = providerWithAlternates(library, () => ({ resolveCatalogRecord: async () => null }));
+  assert.equal(withoutPrimaryChecker.checkRecordAvailability, undefined);
+});
+
+test('providers without available alternates retain their original object and behavior', async () => {
+  const primary = { checkAvailability: async () => ({ outcome: 'unknown' }) };
+  const provider = providerWithAlternates({ platform: 'old' }, () => primary);
+  let routed = false;
+  assert.equal(provider, primary);
+  assert.equal(provider.catalogRoutes, undefined);
+  await withProviderRouteExecution(() => { routed = true; }, () => provider.checkAvailability('9788173711466'));
+  assert.equal(routed, false);
 });

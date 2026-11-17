@@ -229,7 +229,7 @@ export function createPublicV2Router({
       const abandon = () => { if (!res.writableEnded) controller.abort(); };
       res.on('close', abandon);
       try {
-        book = await catalogLookup.readRecord({ library: entry, read: () => bookService.resolve(bookKey), signal: controller.signal })
+        book = await catalogLookup.readRecord({ library: entry, recordId: parsed.recordId, read: () => bookService.resolve(bookKey), signal: controller.signal })
           .catch(error => { if (error?.code === 'CATALOG_UNSUPPORTED') throw Object.assign(new Error('Book details are unavailable'), { code: 'BOOK_METADATA_UNAVAILABLE' }); throw error; });
       } finally { res.off('close', abandon); }
     } else {

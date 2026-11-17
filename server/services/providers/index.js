@@ -15,14 +15,30 @@ import * as vufind from './vufind.js';
 import * as discoveryAcademic from './discoveryAcademic.js';
 import * as discoveryCommunity from './discoveryCommunity.js';
 import { createHash } from 'node:crypto';
+import { AsyncLocalStorage } from 'node:async_hooks';
 import { normalizeAvailability } from './contract.js';
+
+const routeExecutors = new AsyncLocalStorage();
+
+// The lookup layer can apply the selected catalog's budget and host guard.
+// Callers without this scope keep the existing provider and fallback behavior.
+export function withProviderRouteExecution(executor, task) {
+  return routeExecutors.run(executor, task);
+}
+
+function executeRoute(route, method, task) {
+  const executor = routeExecutors.getStore();
+  return executor ? executor({ entry: route.entry, prefix: route.prefix, method }, task) : task();
+}
 
 function primaryProvider(library) {
   if (!library || !Array.isArray(library.capabilities) || !library.capabilities.includes('availability')) return null;
   const normalize = (check) => async (...args) => normalizeAvailability(await check(...args));
   switch (library.platform) {
     case 'vpl':
-      return { checkAvailability: () => visakhapatnam.checkPublicAvailability(), isbnLookup: false,
+      // Record IDs here are reverified title/author identities, not catalog
+      // record numbers: an own-record check is a title_author lookup.
+      return { checkAvailability: () => visakhapatnam.checkPublicAvailability(), isbnLookup: false, recordLookupKind: 'title_author',
         findBookCandidates: book => visakhapatnam.searchBookCandidates(library, book),
         searchCatalog: query => visakhapatnam.searchPublicCatalog(library, query),
         resolveCatalogRecord: async recordId => ({ ...await visakhapatnam.resolvePublicCatalogRecord(library, recordId), observation: await visakhapatnam.checkPublicRecordAvailability(library, recordId) }),
@@ -96,8 +112,36 @@ export function providerWithAlternates(library, providerFor = primaryProvider) {
   const main = { entry: library, prefix: '', provider: primary };
   const routes = [...alternates.filter(r => r.entry.preferForLookup), main,
     ...alternates.filter(r => !r.entry.preferForLookup)].filter(r => r.provider);
+  const routeForRecord = id => {
+    const alternate = alternates.find(route => id.startsWith(route.prefix));
+    if (id.startsWith('alt.') && !alternate) throw Object.assign(new Error('Unknown catalog route'), { code: 'CATALOG_UNRECOGNIZED' });
+    return alternate || main;
+  };
+  const publicRoute = route => Object.freeze({ entry: route.entry, prefix: route.prefix,
+    hasRecordAvailability: typeof route.provider?.checkRecordAvailability === 'function' });
+  const inherited = { ...primary };
+  for (const [method, value] of Object.entries(inherited)) {
+    if (typeof value !== 'function') continue;
+    inherited[method] = function (...args) {
+      return executeRoute(main, method, () => value.apply(this, args));
+    };
+  }
+  // A primary checker must not receive another route's prefixed identity.
+  // Preserve absence of this method so existing lookupKind selection is stable.
+  if (typeof primary?.checkRecordAvailability === 'function') {
+    inherited.checkRecordAvailability = async id => {
+      const route = routeForRecord(id), ownId = id.slice(route.prefix.length);
+      if (route.provider?.checkRecordAvailability) {
+        return executeRoute(route, 'checkRecordAvailability', () => route.provider.checkRecordAvailability(ownId));
+      }
+      if (!route.provider?.resolveCatalogRecord) throw Object.assign(new Error('Catalog record cannot be opened'), { code: 'CATALOG_UNSUPPORTED' });
+      return (await executeRoute(route, 'resolveCatalogRecord', () => route.provider.resolveCatalogRecord(ownId)))?.observation;
+    };
+  }
   return {
-    ...primary,
+    ...inherited,
+    catalogRoutes: Object.freeze(routes.map(publicRoute)),
+    catalogRouteForRecord: id => publicRoute(routeForRecord(id)),
     // Structured candidate search covers only the primary route.
     findBookCandidates: undefined,
     async searchCatalog(query) {
@@ -106,7 +150,7 @@ export function providerWithAlternates(library, providerFor = primaryProvider) {
       for (const route of routes) {
         if (!route.provider.searchCatalog) continue;
         try {
-          const response = await route.provider.searchCatalog(query);
+          const response = await executeRoute(route, 'searchCatalog', () => route.provider.searchCatalog(query));
           const records = Array.isArray(response) ? response : response?.records;
           if (!Array.isArray(records)) throw new Error('Invalid catalog response');
           completed = true;
@@ -119,11 +163,9 @@ export function providerWithAlternates(library, providerFor = primaryProvider) {
       throw Object.assign(new Error('Catalog search is unavailable'), { code: 'CATALOG_UNSUPPORTED' });
     },
     async resolveCatalogRecord(id) {
-      const alternate = alternates.find(route => id.startsWith(route.prefix));
-      if (id.startsWith('alt.') && !alternate) throw Object.assign(new Error('Unknown catalog route'), { code: 'CATALOG_UNRECOGNIZED' });
-      const route = alternate || main;
+      const route = routeForRecord(id);
       if (!route.provider?.resolveCatalogRecord) throw Object.assign(new Error('Catalog record cannot be opened'), { code: 'CATALOG_UNSUPPORTED' });
-      const result = await route.provider.resolveCatalogRecord(id.slice(route.prefix.length));
+      const result = await executeRoute(route, 'resolveCatalogRecord', () => route.provider.resolveCatalogRecord(id.slice(route.prefix.length)));
       return result ? { ...result, recordId: id } : result;
     },
     async checkAvailability(...args) {
@@ -131,7 +173,7 @@ export function providerWithAlternates(library, providerFor = primaryProvider) {
       for (const route of routes) {
         if (!route.provider.checkAvailability) continue;
         try {
-          const result = await route.provider.checkAvailability(...args);
+          const result = await executeRoute(route, 'checkAvailability', () => route.provider.checkAvailability(...args));
           if (['available', 'none_available', 'in_catalog'].includes(result?.outcome)
               || ['available', 'checked_out', 'waitlist'].includes(result?.status)) {
             if (result?.matchKind !== 'possible_match') return result;

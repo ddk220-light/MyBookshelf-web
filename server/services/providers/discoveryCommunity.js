@@ -80,9 +80,23 @@ export function parseSanthom(data, library, query) {
   return markSearchComplete(distinct, complete && new Set(records.map(item => item.recordId)).size === distinct.length);
 }
 async function santhomSearch(library, query, session) {
-  const params = new URLSearchParams({ ajax: '1', type: 'books', title: query, author: '', year: '', call_no: '',
-    titleFilter: 'contains', authorFilter: 'contains', yearFilter: 'contains', callNoFilter: 'contains', page: '1' });
-  return parseSanthom(jsonResponse(await session.read(`/book.php?${params}`)), library, query);
+  async function read(title) {
+    const params = new URLSearchParams({ ajax: '1', type: 'books', title, author: '', year: '', call_no: '',
+      titleFilter: 'contains', authorFilter: 'contains', yearFilter: 'contains', callNoFilter: 'contains', page: '1' });
+    // Keep the original query in replay IDs, including when the second search
+    // compensates for repeated whitespace in the catalog's stored title.
+    return parseSanthom(jsonResponse(await session.read(`/book.php?${params}`)), library, query);
+  }
+  const records = await read(query);
+  const words = query.split(' ');
+  if (records.length || records.searchComplete !== true || words.length < 5) return records;
+  const prefix = words.slice(0, 4).join(' ');
+  if (prefix.length < 8) return records;
+  const wanted = normalized(query);
+  const candidates = await read(prefix);
+  // A prefix is only a way to retrieve the requested full title. Unrelated
+  // books sharing that prefix must not become results for the original query.
+  return markSearchComplete(candidates.filter(item => normalized(item.title).includes(wanted)), false);
 }
 
 export function parseNmmc(data, library, query) {

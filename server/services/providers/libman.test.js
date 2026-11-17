@@ -65,11 +65,78 @@ test('LIBMAN durable resolver rechecks the selected tenant after search cache ex
   assert.equal(calls.filter(u => u.pathname.includes('GetBookSearchData')).length, 2);
 });
 
+test('LIBMAN double-escaped source titles have the same identity through search and detail sanitization', async () => {
+  const rawTitle = '004.006 DATA PROCESSING AND COMPUTER SCIENCE &amp;amp; CHA';
+  global.fetch = async url => response(url, url.includes('GetBookDetails')
+    ? { ...fixture('record-known'), TITLENAME: rawTitle }
+    : [{ ...fixture('search-known')[0], Title1: rawTitle }]);
+  const [book] = await searchCatalog(library, 'science');
+  clearHttpCache();
+  const resolved = await resolveCatalogRecord(library, book.recordId);
+  assert.equal(book.title, '004.006 DATA PROCESSING AND COMPUTER SCIENCE & CHA');
+  assert.equal(resolved.title, book.title);
+  assert.equal(resolved.recordId, book.recordId);
+});
+
 test('LIBMAN uses the published punctuation-free title search without treating error -100 as empty', async () => {
   const calls = [];
   global.fetch = async url => { calls.push(new URL(url)); return response(url, fixture('search-known')); };
   await searchCatalog(library, 'The Bird With Golden Wings : Stories Of Wit And Magic');
   assert.equal(calls[0].searchParams.get('SearchText'), 'The Bird With Golden Wings');
+});
+
+test('LIBMAN punctuation uses a useful contiguous segment instead of a one-letter prefix', async () => {
+  const queries = [];
+  global.fetch = async url => { queries.push(new URL(url).searchParams.get('SearchText')); return response(url, fixture('search-known')); };
+  await searchCatalog(library, 'A+ Quizmasters Science');
+  await searchCatalog(library, '(The) Classic Science Fiction Collection');
+  assert.deepEqual(queries, ['Quizmasters Science', 'Classic Science Fiction Collection']);
+});
+
+test('LIBMAN clean-zero phrase retry preserves exact title and tenant record proof across cache expiry', async () => {
+  const queries = [];
+  const title = 'Discrete Mathamatical Structure  With Application to Computer Science';
+  global.fetch = async url => {
+    const u = new URL(url);
+    if (url.includes('GetBookDetails')) return response(url, { TITLENO: 1928192, TITLENAME: title, TOTAL_COPIES: 1,
+      IIDropDownList: [{ ACCNO: '1', STATUSNAME: 'PRESENT' }] });
+    assert.equal(u.searchParams.get('Libraryid'), '22');
+    const q = u.searchParams.get('SearchText'); queries.push(q);
+    return response(url, q === 'Mathamatical' ? [
+      { TitleNo: 1928192, Title1: title },
+      { TitleNo: 999, Title1: 'Other Mathamatical Structure' },
+    ] : 0);
+  };
+  const books = await searchCatalog(library, title);
+  assert.deepEqual(books.map(row => row.recordId), ['1928192']);
+  clearHttpCache();
+  const resolved = await resolveCatalogRecord(library, '1928192');
+  assert.equal(resolved.recordId, '1928192');
+  assert.equal(resolved.observation.outcome, 'available');
+  assert.deepEqual(queries, [title.replace(/\s+/g, ' '), 'Mathamatical', title.replace(/\s+/g, ' '), 'Mathamatical']);
+});
+
+test('LIBMAN token retry never broadens errors, ISBN searches, or short queries', async () => {
+  let requests = 0;
+  global.fetch = async url => { requests += 1; return response(url, -100); };
+  await assert.rejects(searchCatalog(library, 'Discrete Mathamatical Structure'));
+  assert.equal(requests, 1);
+  clearHttpCache(); requests = 0;
+  global.fetch = async url => { requests += 1; return response(url, 0); };
+  await searchCatalog(library, 'Art');
+  assert.equal(requests, 1);
+  clearHttpCache(); requests = 0;
+  assert.equal((await checkAvailability(library, '9780670082834')).outcome, 'not_found');
+  assert.equal(requests, 2);
+});
+
+test('LIBMAN does not introduce partial-syllable fallback for unverified combining-mark scripts', async () => {
+  const queries = [];
+  global.fetch = async url => { queries.push(new URL(url).searchParams.get('SearchText')); return response(url, 0); };
+  await searchCatalog(library, 'मराठी साहित्याचा इतिहास');
+  // Preserve the previous initial query; this English-title repair must not
+  // start selecting fragments from later Indic words as additional queries.
+  assert.deepEqual(queries, ['मर']);
 });
 
 test('LIBMAN guessed global record IDs cannot show another tenant’s book', async () => {

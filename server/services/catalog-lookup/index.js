@@ -1,12 +1,12 @@
-import { getProvider } from '../providers/index.js';
-import { withCatalogOperation } from '../providers/http.js';
+import { getProvider, withProviderRouteExecution } from '../providers/index.js';
+import { catalogOperation, withCatalogOperation, withCatalogSuboperation } from '../providers/http.js';
 import { createRobotsPolicy } from '../providers/robots.js';
 import { matchCatalogRecord } from '../libraryBookSearch.js';
 import { validateAndNormalize } from '../isbn.js';
 import { parsePublicBookKey } from '../../public-v2/contracts.js';
 import { runBookCheck } from './check.js';
 import { normalizeProviderObservation } from './observation.js';
-import { answerFromCheck, answerFromResponse, couldntCheck, isHealthFailure, reasonForError } from './outcome.js';
+import { answerFromCheck, answerFromResponse, couldntCheck, couldntCheckFor, isHealthFailure } from './outcome.js';
 import { PLATFORMS, platformFor, hostFor, bookDeadlineMs, lookupV2Enabled } from './platforms.js';
 import { createHostGuard } from './budget.js';
 import { createLookupRecorder, createMemoryHealthRecord, identitiesFor, askedIdentity, storedAnswer } from './record.js';
@@ -35,10 +35,12 @@ function settleBy(promise, deadlineAt, signal, clock = Date.now) {
     let timer;
     const done = (fn, value) => { clearTimeout(timer); signal?.removeEventListener?.('abort', onAbort); fn(value); };
     const onAbort = () => done(reject, coded('Catalog check was cancelled', 'CATALOG_ABORTED'));
+    // Always consume work's rejection, even if its synchronous setup already
+    // cancelled the caller before we install the deadline listener.
+    Promise.resolve(promise).then(value => done(resolve, value), error => done(reject, error));
     if (signal?.aborted) return onAbort();
     signal?.addEventListener?.('abort', onAbort, { once: true });
     if (Number.isFinite(deadlineAt)) timer = setTimeout(() => done(reject, coded('Edition details took too long', 'CATALOG_TIMEOUT')), Math.max(0, deadlineAt - clock()));
-    Promise.resolve(promise).then(value => done(resolve, value), error => done(reject, error));
   });
 }
 
@@ -74,10 +76,11 @@ export function createCatalogLookup({
   // The gate for one operation on this platform: every request waits for its
   // host's next slot (spacing: the larger of the platform's, the adapter's and
   // the robots Crawl-delay; plus the platform's per-minute cap).
-  function gateFor(platform) {
+  function gateFor(platform, operationDeadline = Infinity) {
     if (!hostGate) return null;
     return (requestHost, { spacingMs = 0, deadlineAt, signal } = {}) => hostGate.reserve(requestHost,
-      { spacingMs: Math.max(spacingMs || 0, platform?.minIntervalMs || 0), perMinute: platform?.perMinute || 0, deadlineAt, signal });
+      { spacingMs: Math.max(spacingMs || 0, platform?.minIntervalMs || 0), perMinute: platform?.perMinute || 0,
+        deadlineAt: Math.min(deadlineAt ?? Infinity, operationDeadline), signal });
   }
 
   function noteHost(host, answer) {
@@ -85,27 +88,175 @@ export function createCatalogLookup({
     else if (isHealthFailure(answer.reason)) guard.recordFailure(host);
   }
 
+  // Alternate catalogs remain one institution and retain their public record
+  // keys. Only execution policy follows the route actually being called. A
+  // child HTTP operation adds that route's cap without resetting the reader's
+  // aggregate request budget, deadline, robots policy or cancellation signal.
+  function routeSession({ entry, deadline, signal, kind = 'book', health = true }) {
+    const events = [];
+    const allowances = new Map();
+    let finished = false;
+    function observed(route, value) {
+      if (route.method === 'checkMany' && value instanceof Map) return { outcome: 'checked' };
+      if (route.method === 'searchCatalog' || route.method === 'searchResultRows' || route.method === 'searchBookCandidates') {
+        return Array.isArray(value) || Array.isArray(value?.records) ? { outcome: 'checked' } : couldntCheck('unrecognized');
+      }
+      const observation = route.method === 'resolveCatalogRecord' ? value?.observation : value;
+      if (!observation) return couldntCheck('unconfirmed');
+      try {
+        return answerFromResponse(normalizeProviderObservation(observation, {
+          lookupKind: route.method === 'resolveCatalogRecord' ? (observation.matchKind === 'catalog_record' ? 'catalog_record' : 'verified_work')
+            : route.method === 'checkRecordAvailability' ? 'catalog_record' : 'exact_isbn',
+          attemptedAt: new Date(now()).toISOString(), library: publicView(route.entry), entry: route.entry,
+        }));
+      } catch { return couldntCheck('unrecognized'); }
+    }
+    async function execute(route, task) {
+      const { platform, host, platformName } = settings(route.entry);
+      const policy = platform?.[kind];
+      if (!policy || !(policy.maxRequests > 0)) throw coded('This catalog route does not support this operation', 'CATALOG_UNSUPPORTED');
+      const parentSignal = catalogOperation()?.signal || signal;
+      if (parentSignal?.aborted) throw coded('Catalog check was cancelled', 'CATALOG_ABORTED');
+      const allowanceKey = `${route.prefix || ''}\u0000${platformName}\u0000${host}`;
+      if (!allowances.has(allowanceKey)) allowances.set(allowanceKey, { requests: 0,
+        deadline: Math.min(deadline, now() + (kind === 'book' ? bookDeadlineMs(route.entry, platform) : policy.deadlineMs)) });
+      const allowance = allowances.get(allowanceKey);
+      const routeDeadline = allowance.deadline;
+      if (allowance.requests >= policy.maxRequests) throw coded('Catalog route request budget exhausted', 'CATALOG_REQUEST_BUDGET');
+      if (now() >= routeDeadline) throw coded('Catalog route deadline exceeded', 'CATALOG_TIMEOUT');
+      const hostSlot = gateFor(platform, routeDeadline);
+      const routeGate = async (requestHost, options) => {
+        if (allowance.requests >= policy.maxRequests) throw coded('Catalog route request budget exhausted', 'CATALOG_REQUEST_BUDGET');
+        await hostSlot?.(requestHost, options);
+        // Several provider methods may use the same route concurrently. The
+        // second check and increment happen together after the awaited slot.
+        if (allowance.requests >= policy.maxRequests) throw coded('Catalog route request budget exhausted', 'CATALOG_REQUEST_BUDGET');
+        allowance.requests += 1;
+      };
+      const event = { route, host, platformName, started: false, answer: null };
+      events.push(event);
+      const tryOnce = guard.circuitOpen(host);
+      let release;
+      try {
+        if (kind === 'results') {
+          if (tryOnce || !(release = guard.tryStartMarking(host))) throw coded('This catalog is busy', 'CATALOG_HOST_BUSY');
+        } else {
+          release = await guard.acquire(host, tryOnce ? 1 : platform.hostConcurrency, { deadlineAt: routeDeadline, signal: parentSignal });
+        }
+      } catch (error) {
+        // Waiting for our own slot is not a failed catalog request.
+        event.answer = couldntCheckFor(error);
+        throw error;
+      }
+      const controller = new AbortController();
+      const forward = () => controller.abort();
+      parentSignal?.addEventListener?.('abort', forward, { once: true });
+      try {
+        if (parentSignal?.aborted) throw coded('Catalog check was cancelled', 'CATALOG_ABORTED');
+        event.started = true;
+        const work = withCatalogSuboperation({ maxRequests: policy.maxRequests, signal: controller.signal,
+          minIntervalMs: platform.minIntervalMs || 0, gate: routeGate, noRetries: tryOnce }, task);
+        const value = await settleBy(work, routeDeadline, parentSignal, now);
+        event.value = value;
+        event.answer = observed(route, value);
+        return value;
+      } catch (error) {
+        event.answer = couldntCheckFor(error);
+        throw error;
+      } finally {
+        // A route timeout may be followed by the next catalog. Stop the old
+        // route before releasing its slot or allowing that fallback to start.
+        controller.abort();
+        parentSignal?.removeEventListener?.('abort', forward);
+        release();
+      }
+    }
+    function finish(answer, { profile } = {}) {
+      const attempted = events.filter(event => event.started);
+      const proved = attempted.filter(event => {
+        if (event.answer?.outcome === 'found') return true;
+        if (answer?.outcome !== 'found' || !profile) return false;
+        const rows = Array.isArray(event.value) ? event.value : event.value?.records;
+        return Array.isArray(rows) && rows.some(row => {
+          const match = matchCatalogRecord(row, profile);
+          if (!match || !['exact_isbn', 'verified_work'].includes(match.matchKind) || !row.observation
+              || (answer.matchedIsbn13 && match.isbn13 !== answer.matchedIsbn13)) return false;
+          return observed({ ...event.route, method: 'checkAvailability' }, {
+            ...row.observation, matchKind: match.matchKind, recognizedExact: true,
+          }).outcome === 'found';
+        });
+      });
+      const outcomeFor = event => {
+        if (answer?.outcome === 'found' && proved.includes(event)) return answer;
+        return !event.answer || (event.answer.reason === 'cancelled' && answer?.reason === 'timeout') ? answer : event.answer;
+      };
+      // Parallel ISBN/title recovery still records at most one host outcome
+      // for this reader operation, rather than opening a circuit in one read.
+      if (!finished && health) {
+        const hosts = new Map();
+        for (const event of attempted) {
+          const outcome = outcomeFor(event);
+          if (!outcome) continue;
+          const previous = hosts.get(event.host);
+          const rank = value => ['found', 'not_found'].includes(value?.outcome) ? 3
+            : isHealthFailure(value?.reason) ? 2 : value?.outcome === 'checked' ? 1 : 0;
+          if (!previous || rank(outcome) > rank(previous)) hosts.set(event.host, outcome);
+        }
+        for (const [host, outcome] of hosts) noteHost(host, outcome);
+      }
+      finished = true;
+      const matching = [...attempted].reverse().find(event => outcomeFor(event)?.outcome === answer?.outcome
+        && (answer?.outcome !== 'couldnt_check' || outcomeFor(event)?.reason === answer?.reason));
+      const normalizedUrl = value => { try { return value ? new URL(value).href : null; } catch { return null; } };
+      const answerUrl = normalizedUrl(answer?.catalogUrl);
+      const matchingProof = answerUrl && proved.find(event => {
+        const value = event.value, rows = Array.isArray(value) ? value : value?.records || [];
+        return [value?.catalogUrl, value?.url, value?.observation?.catalogUrl,
+          ...rows.flatMap(row => [row.catalogUrl, row.observation?.catalogUrl])].some(url => normalizedUrl(url) === answerUrl);
+      });
+      const attribution = (answer?.outcome === 'found' ? matchingProof || proved[0] : null) || matching || attempted.at(-1);
+      return { live: attempted.length > 0, ...(attribution ? { host: attribution.host, platformName: attribution.platformName } : {}) };
+    }
+    return { execute, finish };
+  }
+
   // One live book check through the platform's book-page budget. Used by
   // lookupBook and by /availability on the new path. Returns the raw check
   // result (response or error) plus the projected answer.
   async function checkBook({ entry, library, provider: given, book, bookKey, parsed, ownRecord, lookupKind, editionScope = 'work', language, books,
     attemptedAt, signal, deadlineAt }) {
-    const { platform, host, platformName } = settings(entry);
     const startedAt = now();
     const provider = given || providerFor(entry);
+    const routed = Boolean(provider?.catalogRoutes?.length);
+    let policyEntry = entry, routeError;
+    if (routed && ownRecord) {
+      try {
+        const route = provider.catalogRouteForRecord(parsed?.recordId);
+        policyEntry = route.entry;
+        lookupKind = route.hasRecordAvailability ? 'catalog_record' : 'verified_work';
+      }
+      catch (error) { routeError = error; }
+    }
+    const { platform, host, platformName } = settings(policyEntry);
+    let routes;
     const view = publicView(entry, library);
     const finish = (result, profile) => {
       const answer = answerFromCheck(result, { profile, recordId: ownRecord ? parsed?.recordId : undefined });
       // An edition profile (Open Library) that failed or was too slow, or a
       // wait for one of this instance's own host slots, is not the catalog's
       // failure: it neither opens the circuit nor counts in the health record.
-      if (!result.notCatalogFailure) noteHost(host, answer);
-      recorder.record({ entry, platform: platformName, host, book: ownRecord ? { ...book, recordId: parsed?.recordId, recordLibraryId: entry.id } : book,
-        profile, answer, kind: 'book', durationMs: now() - startedAt, requests: result.requests || 0, live: !result.notCatalogFailure });
+      const routeResult = routes?.finish(answer, { profile });
+      if (!routes && !result.notCatalogFailure) noteHost(host, answer);
+      recorder.record({ entry, platform: routeResult?.platformName || platformName, host: routeResult?.host || host,
+        book: ownRecord ? { ...book, recordId: parsed?.recordId, recordLibraryId: entry.id } : book,
+        profile, answer, kind: 'book', durationMs: now() - startedAt, requests: result.requests || 0,
+        live: !result.notCatalogFailure && (routeResult?.live ?? true) });
       return { ...result, answer, durationMs: now() - startedAt, requests: result.requests || 0 };
     };
+    if (routeError) return finish({ error: routeError, lookupKind, notCatalogFailure: true });
     if (!platform || !provider?.checkAvailability) return finish({ error: coded('Catalog lookups are not available for this library', 'CATALOG_UNSUPPORTED'), lookupKind });
-    const deadline = Math.min(deadlineAt ?? Infinity, startedAt + bookDeadlineMs(entry, platform));
+    const deadline = Math.min(deadlineAt ?? Infinity, startedAt + bookDeadlineMs(policyEntry, platform));
+    if (routed) routes = routeSession({ entry, deadline, signal });
     // Resolve the edition profile before taking a host slot, and only within
     // the check's deadline: waiting on Open Library must not hold a catalog
     // slot or use up the catalog's time.
@@ -119,14 +270,15 @@ export function createCatalogLookup({
     // host, and the book page tries once: one check at a time for that host
     // on this instance, and each catalog request is sent once, with no
     // transport retry. The circuit closes on that check's success.
-    const tryOnce = guard.circuitOpen(host);
+    const tryOnce = !routed && guard.circuitOpen(host);
     let release;
-    try { release = await guard.acquire(host, tryOnce ? 1 : platform.hostConcurrency, { deadlineAt: deadline, signal }); }
+    try { release = routed ? () => {} : await guard.acquire(host, tryOnce ? 1 : platform.hostConcurrency, { deadlineAt: deadline, signal }); }
     catch (error) { return finish({ error, lookupKind, notCatalogFailure: true }); }
     try {
-      const result = await runBookCheck({ entry, library: view, provider, book, bookKey, parsed, ownRecord, lookupKind, editionScope, language, books, attemptedAt,
+      const run = () => runBookCheck({ entry, library: view, provider, book, bookKey, parsed, ownRecord, lookupKind, editionScope, language, books, attemptedAt,
         budget: { maxRequests: platform.book.maxRequests, deadlineAt: deadline, signal, robots: robotsCheck, minIntervalMs: platform.minIntervalMs,
-          gate: gateFor(platform), noRetries: tryOnce } });
+          gate: gateFor(platform, deadline), noRetries: tryOnce } });
+      const result = await (routes ? withProviderRouteExecution(routes.execute, run) : run());
       return finish(result, result.profile);
     } finally {
       release();
@@ -152,7 +304,11 @@ export function createCatalogLookup({
     if (stored) return { ...stored, requests: 0, durationMs: now() - startedAt, source: 'stored' };
     const isbn13 = validateAndNormalize(book.isbn13 || '');
     const parsed = own ? { kind: 'catalog', libraryId, recordId: book.recordId } : parsePublicBookKey(book.bookKey || '');
-    const lookupKind = own ? (providerFor(entry)?.checkRecordAvailability ? 'catalog_record' : 'verified_work') : isbn13 ? 'exact_isbn' : 'verified_work';
+    // A provider whose record IDs are reverified title/author identities
+    // (Visakhapatnam) proves that identity, not a numbered catalog record.
+    const ownProvider = own ? providerFor(entry) : null;
+    const lookupKind = own ? (ownProvider?.recordLookupKind === 'title_author' ? 'title_author'
+      : ownProvider?.checkRecordAvailability ? 'catalog_record' : 'verified_work') : isbn13 ? 'exact_isbn' : 'verified_work';
     const books = profile && editionScope === 'work' && !own ? { searchProfile: async () => profile } : null;
     const result = await checkBook({ entry, library: publicLibrary, book: { ...book, isbn13: isbn13 || undefined, title: book.title || '', authors: book.authors || [] },
       bookKey: book.bookKey, parsed, ownRecord: own, lookupKind, editionScope, books, attemptedAt: new Date(startedAt).toISOString(), signal, deadlineAt });
@@ -174,7 +330,7 @@ export function createCatalogLookup({
   }
 
   // Runs `task(operation)` as one catalog operation with the results budget.
-  async function withResultsBudget(platform, deadline, signal, task) {
+  async function withResultsBudget(platform, deadline, signal, task, routes = null) {
     const controller = new AbortController();
     const forward = () => controller.abort();
     signal?.addEventListener?.('abort', forward, { once: true });
@@ -184,7 +340,8 @@ export function createCatalogLookup({
     });
     try {
       const work = withCatalogOperation({ maxRequests: platform.results.maxRequests, signal: controller.signal, robots: robotsCheck,
-        minIntervalMs: platform.minIntervalMs, gate: gateFor(platform) }, operation => task(operation, controller.signal));
+        minIntervalMs: platform.minIntervalMs, gate: gateFor(platform, deadline) }, operation => routes
+        ? withProviderRouteExecution(routes.execute, () => task(operation, controller.signal)) : task(operation, controller.signal));
       work.catch(() => {});
       return await Promise.race([work, expired]);
     } finally {
@@ -217,16 +374,18 @@ export function createCatalogLookup({
     }
     const strategy = platform?.results.strategy || 'none';
     const provider = pending.size && strategy !== 'none' ? providerFor(entry) : null;
-    if (!pending.size || !provider || signal?.aborted || guard.circuitOpen(host)) {
+    const routed = Boolean(provider?.catalogRoutes?.length);
+    if (!pending.size || !provider || signal?.aborted || (!routed && guard.circuitOpen(host))) {
       yield { done: true, notAttempted: [...pending.keys()], unmatched };
       return;
     }
-    const finishMarking = guard.tryStartMarking(host);
+    const finishMarking = routed ? () => {} : guard.tryStartMarking(host);
     if (!finishMarking) {
       yield { done: true, notAttempted: [...pending.keys()], unmatched };
       return;
     }
     const deadline = Math.min(deadlineAt ?? Infinity, startedAt + platform.results.deadlineMs);
+    const routes = routed ? routeSession({ entry, deadline, signal, kind: 'results' }) : null;
     const view = publicView(entry, publicLibrary);
     const attemptedAt = new Date(startedAt).toISOString();
     // A profile that fails, or is not ready by the deadline, means that book
@@ -250,8 +409,10 @@ export function createCatalogLookup({
       ended = true;
       finishMarking();
       if (runAnswer) {
-        noteHost(host, runAnswer);
-        recorder.record({ entry, platform: platformName, host, answer: runAnswer, kind: 'results', durationMs: now() - startedAt, writeAnswers: false });
+        const routeResult = routes?.finish(runAnswer);
+        if (!routes) noteHost(host, runAnswer);
+        recorder.record({ entry, platform: routeResult?.platformName || platformName, host: routeResult?.host || host,
+          answer: runAnswer, kind: 'results', durationMs: now() - startedAt, writeAnswers: false, live: routeResult?.live ?? true });
       }
     };
     try {
@@ -267,13 +428,13 @@ export function createCatalogLookup({
         let rows = cachedRows(key);
         if (!rows) {
           try {
-            const response = await withResultsBudget(platform, deadline, signal, () => search.call(provider, text));
+            const response = await withResultsBudget(platform, deadline, signal, () => search.call(provider, text), routes);
             rows = Array.isArray(response) ? response : response?.records;
             if (!Array.isArray(rows)) throw coded('Unrecognized catalog search', 'CATALOG_UNRECOGNIZED');
             rememberRows(key, rows);
             runAnswer = { outcome: 'checked' };
           } catch (error) {
-            runAnswer = couldntCheck(signal?.aborted ? 'cancelled' : reasonForError(error));
+            runAnswer = signal?.aborted ? couldntCheck('cancelled') : couldntCheckFor(error);
             endRun();
             yield { done: true, notAttempted: [...pending.keys()], unmatched };
             return;
@@ -314,10 +475,10 @@ export function createCatalogLookup({
         if (!isbns.length || signal?.aborted || deadline <= now()) { endRun(); yield { done: true, notAttempted: [...pending.keys()], unmatched }; return; }
         let answers;
         try {
-          answers = await withResultsBudget(platform, deadline, signal, () => provider.checkMany(isbns));
+          answers = await withResultsBudget(platform, deadline, signal, () => provider.checkMany(isbns), routes);
           runAnswer = { outcome: 'checked' };
         } catch (error) {
-          runAnswer = couldntCheck(signal?.aborted ? 'cancelled' : reasonForError(error));
+          runAnswer = signal?.aborted ? couldntCheck('cancelled') : couldntCheckFor(error);
           endRun();
           yield { done: true, notAttempted: [...pending.keys()], unmatched };
           return;
@@ -370,14 +531,14 @@ export function createCatalogLookup({
               }
             };
             await Promise.all(Array.from({ length: Math.max(1, platform.results.concurrency || 1) }, worker));
-          });
+          }, routes);
         } catch (error) { failure ||= error; }
         // The run succeeded only if the catalog gave at least one definite
         // answer; unreadable answers are the catalog's failure, not a success.
         const definite = settled.find(item => item.answer.outcome !== 'couldnt_check');
         runAnswer = definite ? { outcome: 'checked' }
           : signal?.aborted ? couldntCheck('cancelled')
-          : failure ? couldntCheck(reasonForError(failure))
+          : failure ? couldntCheckFor(failure)
           : settled[0]?.answer || null;
         endRun();
         for (const { book, answer } of settled) {
@@ -399,17 +560,30 @@ export function createCatalogLookup({
   // authors and ISBN) takes the same host slot, spacing and request cap as a
   // book check on its platform. `read` performs the provider request(s).
   // Fails with CATALOG_UNSUPPORTED when the library has no catalog adapter.
-  async function readRecord({ library: entry, read, signal }) {
-    const { platform, host } = settings(entry);
+  async function readRecord({ library: entry, recordId, read, signal }) {
+    const provider = providerFor(entry);
+    const routed = Boolean(provider?.catalogRoutes?.length);
+    const policyEntry = routed && recordId ? provider.catalogRouteForRecord(recordId).entry : entry;
+    const { platform, host } = settings(policyEntry);
     if (!platform || !host) throw coded('Catalog lookups are not available for this library', 'CATALOG_UNSUPPORTED');
-    const deadline = now() + bookDeadlineMs(entry, platform);
-    const tryOnce = guard.circuitOpen(host);
-    const release = await guard.acquire(host, tryOnce ? 1 : platform.hostConcurrency, { deadlineAt: deadline, signal });
+    const deadline = now() + bookDeadlineMs(policyEntry, platform);
+    const routes = routed ? routeSession({ entry, deadline, signal, health: false }) : null;
+    const tryOnce = !routed && guard.circuitOpen(host);
+    const release = routed ? () => {} : await guard.acquire(host, tryOnce ? 1 : platform.hostConcurrency, { deadlineAt: deadline, signal });
+    const controller = new AbortController();
+    const forwardAbort = () => controller.abort();
+    signal?.addEventListener?.('abort', forwardAbort, { once: true });
     try {
-      const work = withCatalogOperation({ maxRequests: platform.book.maxRequests, signal: signal || null, robots: robotsCheck,
-        minIntervalMs: platform.minIntervalMs || 0, gate: gateFor(platform), noRetries: tryOnce }, () => read());
+      if (signal?.aborted) throw coded('Catalog check was cancelled', 'CATALOG_ABORTED');
+      const work = withCatalogOperation({ maxRequests: platform.book.maxRequests, signal: controller.signal, robots: robotsCheck,
+        minIntervalMs: platform.minIntervalMs || 0, gate: gateFor(platform, deadline), noRetries: tryOnce }, () => routes
+        ? withProviderRouteExecution(routes.execute, read) : read());
       return await settleBy(work, deadline, signal, now);
     } finally {
+      // A metadata deadline must stop the provider too. Otherwise the rejected
+      // read can continue making requests after its host slot is released.
+      controller.abort();
+      signal?.removeEventListener?.('abort', forwardAbort);
       release();
     }
   }

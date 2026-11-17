@@ -1,6 +1,38 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createPublicDirectoryService, toPublicLibrary } from './directory.js';
+import { getLibraryById } from '../services/directory.js';
+import { scopeSearch } from '../services/providers/koha.js';
+import { platformFor, bookDeadlineMs } from '../services/catalog-lookup/platforms.js';
+
+test('HKMS slow member search keeps its bounded ISBN budget in the merged directory', () => {
+  const library = getLibraryById('egranthalaya:publiclibraries-hkmslib');
+  assert.equal(bookDeadlineMs(library, platformFor(library)), 45_000);
+  assert.equal(library.egranthalayaMemberProbeMs, 35_000);
+  assert.equal(library.egranthalayaHyphenatedIsbnFirst, true);
+  assert.equal(library.egranthalayaSearchScope, 'cluster');
+});
+
+test('UAS Dharwad native catalog is not filtered by the former IDEAL network branch', () => {
+  const library = getLibraryById('koha:uas-dharwad');
+  const search = new URL('/cgi-bin/koha/opac-search.pl?q=agriculture', library.baseUrl);
+  scopeSearch(search, library);
+  assert.equal(search.origin, 'https://opac.uasd.edu');
+  assert.equal(search.searchParams.getAll('limit').some(value => /UASD/.test(value)), false);
+  assert.equal(library.kohaBranchCode, undefined);
+  assert.equal(library.kohaLegacyHoldings, undefined);
+  assert.equal(toPublicLibrary(library).capabilities.publicAvailability, true);
+});
+
+test('SRS and National Medical Library retain measured member-search budgets without changing ISBN order', () => {
+  for (const id of ['egranthalaya:jklibraries-srsjammu', 'egranthalaya:medicallibraries-nml']) {
+    const library = getLibraryById(id);
+    assert.equal(bookDeadlineMs(library, platformFor(library)), 45_000);
+    assert.equal(library.egranthalayaMemberProbeMs, 35_000);
+    assert.notEqual(library.egranthalayaHyphenatedIsbnFirst, true);
+    assert.equal(library.egranthalayaSearchScope, 'cluster');
+  }
+});
 
 test('scoped browse keeps every usable library reachable beyond one page and hides provider internals', () => {
   const entries = Array.from({ length: 29 }, (_, i) => ({ ...linked, id: `catalog:tn-${i}`, name: `Library ${String(i).padStart(2, '0')}`, platform: 'catalog', baseUrl: 'https://internal.example.test', address: `Campus ${i}, Tamil Nadu`, addressScope: 'campus', addressSourceUrl: 'https://official.example.test/contact' }));
@@ -121,5 +153,13 @@ test('only reviewed Koha HTTP pins advertise public availability without exposin
   assert.equal('publicCatalogHttpOrigin' in result, false);
   for (const overrides of [{ platform: 'aspen' }, { publicCatalogHttpOrigin: null }, { baseUrl: 'http://10.1.1.1' }]) {
     assert.equal(toPublicLibrary({ ...entry, ...overrides }).capabilities.publicAvailability, false);
+  }
+});
+
+test('Koha catalogs checked in the November follow-up are offered to readers as connected', () => {
+  for (const id of ['koha:arul-anandar', 'koha:panjab-laws']) {
+    const library = toPublicLibrary(getLibraryById(id));
+    assert.equal(library.capabilities.catalogLookup, true, id);
+    assert.equal(library.capabilities.publicAvailability, true, id);
   }
 });

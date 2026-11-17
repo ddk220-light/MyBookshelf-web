@@ -108,3 +108,27 @@ test('robots groups match the product token exactly; 429 refuses for a while', a
   clock += 5 * 60 * 1000;
   assert.equal((await policy.check('https://c.example/search')).allowed, false);
 });
+
+test('robots.txt is read over the catalog\'s own validated transport and with a usable connect window', async () => {
+  const { kalnetTransportOptions } = await import('./kalnet-tls.js');
+  const net = await import('node:net');
+  // KALNET omits a TLS intermediate; its robots.txt must use the same validated
+  // chain as the catalog, or a failed read would count as "no restrictions".
+  assert.ok(kalnetTransportOptions('https://kalnet.kshec.kerala.gov.in/robots.txt').dispatcher);
+  assert.ok(kalnetTransportOptions('https://kalnet.kshec.kerala.gov.in/vufind/Search/Results').dispatcher);
+  assert.deepEqual(kalnetTransportOptions('https://kalnet.kshec.kerala.gov.in/other'), {});
+  assert.deepEqual(kalnetTransportOptions('https://example.org/robots.txt'), {});
+  let seen;
+  global.fetch = async (url, options) => { seen = options; return { status: 200, ok: true, text: async () => 'User-agent: *\nDisallow: /\n' }; };
+  const policy = createRobotsPolicy();
+  assert.equal((await policy.check('https://kalnet.kshec.kerala.gov.in/vufind/Search/Results?lookfor=x')).allowed, false);
+  assert.ok(seen.dispatcher, 'the KALNET dispatcher is passed to the robots.txt read');
+  assert.equal(seen.dispatcher, kalnetTransportOptions('https://kalnet.kshec.kerala.gov.in/robots.txt').dispatcher);
+  // Other origins use the catalog dispatcher, whose connections allow 2.5 s per
+  // address attempt for high-latency dual-stack hosts (network.test.js). The
+  // process-wide default stays Node's own.
+  const { catalogDispatcher } = await import('./network.js');
+  await createRobotsPolicy().check('https://c.example/search');
+  assert.equal(seen.dispatcher, catalogDispatcher());
+  assert.ok(net.getDefaultAutoSelectFamilyAttemptTimeout() < 2_500);
+});

@@ -1,4 +1,4 @@
-import { cachedTask, enqueueTask, getText } from './http.js';
+import { cachedTask, enqueueTask, getText, peekCachedTask } from './http.js';
 import { attributes, text, firstIsbn, catalogError } from './catalogMarkup.js';
 import { validateAndNormalize } from '../isbn.js';
 import ISBN from 'isbn3';
@@ -40,16 +40,23 @@ export function parseIndcatSearch(html, code) {
   const total = text(clean).match(/Total\s+(\d+)\s+Records? found/i);
   if (!total) throw catalogError('Unrecognized catalog search');
   const records = new Map();
-  for (const m of clean.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)) {
+  const links = [...clean.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)]
+    .filter(m => attributes(m[1]).href?.includes('/search/book_search?'));
+  for (const [index, m] of links.entries()) {
     const a = attributes(m[1]);
-    if (!a.href?.includes('/search/book_search?')) continue;
     const url = new URL(a.href, ORIGIN);
     if (url.origin !== ORIGIN || url.pathname !== '/index.php/search/book_search') throw catalogError('Unrecognized record link');
     let data;
     try { data = JSON.parse(Buffer.from(url.searchParams.get('getDetails') || '', 'base64').toString()); } catch { throw catalogError('Invalid record link'); }
     if ((data.singleclg || data.university) !== code || !/^\d{1,20}$/.test(data.book_detail || '')) throw catalogError('Record belongs to a different institution');
     const title = text(m[2]).slice(0, 500);
-    if (title) records.set(data.book_detail, { recordId: data.book_detail, title, authors: [] });
+    // The public results include an Author paragraph after each record link.
+    // Keep it within this result's boundary; a missing author must never take
+    // the next book's author. It is display metadata, not holding evidence.
+    const detail = clean.slice(m.index + m[0].length, links[index + 1]?.index ?? clean.length);
+    const author = [...detail.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)]
+      .map(row => text(row[1]).match(/^Author\s*:\s*(.+)$/i)?.[1]).find(Boolean);
+    if (title) records.set(data.book_detail, { recordId: data.book_detail, title, authors: author ? [author.slice(0, 500)] : [] });
   }
   if (Number(total[1]) > 0 && !records.size) throw catalogError('Missing catalog records');
   return { total: Number(total[1]), records: [...records.values()].slice(0, 10) };
@@ -88,7 +95,16 @@ export function parseIndcatRecord(html, library, recordId, expectedIsbn = null, 
   // A member's own bibliographic record may have no accessioned copies. It can
   // prove catalog presence after a scoped search, never borrowing availability.
   if (!owned && !ownBibliographicRecord) return null;
+  // The Books union catalog can also contain serial records. Preserve an
+  // explicit MARC bibliographic level instead of presenting every record as
+  // a monograph. Missing leaders do not prove either material type.
+  const leader = [...clean.matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi)].map(row =>
+    [...row[1].matchAll(/<td\b[^>]*>([\s\S]*?)<\/td>/gi)].map(cell => text(cell[1])))
+    .filter(cells => cells[0] === '000').map(cells => (cells[1] || '').replace(/^\|a/, '').trim())
+    .find(value => /^\d{5}.{3}/.test(value));
+  const format = leader?.[7] === 's' ? 'Serial' : leader?.[7] === 'm' ? 'Book' : undefined;
   return { recordId, title: fields.title.replace(/\s*\/\s*(?:by|edited by)\s+.+$/i, ''), authors: fields.author ? [fields.author] : [], isbn,
+    ...(format ? { format } : {}),
     catalogUrl: recordUrl(code, recordId),
     observation: { outcome: 'in_catalog', matchKind: expectedIsbn ? 'exact_isbn' : 'verified_work', recognizedExact: true,
       catalogUrl: recordUrl(code, recordId), locations: [{ name: library.name, status: 'unknown' }] } };
@@ -114,12 +130,20 @@ async function search(library, query, isbn = false, deadlineAt = Date.now() + 60
       opt: isbn ? 'exact' : 'free', submit: 'Search', limits: '10', csrf_test_name: fields.csrf_test_name });
     const result = await read(`${ORIGIN}${PATH}`, { deadlineAt, method: 'POST',
       headers: { Cookie: cookies, Referer: scopeUrl(code), 'Content-Type': 'application/x-www-form-urlencoded' }, body: body.toString() });
-    return parseIndcatSearch(result.text, code);
+    const parsed = parseIndcatSearch(result.text, code);
+    // A successful scoped search already independently proves membership for
+    // these exact records. Reuse that short-lived proof when a result opens,
+    // rather than repeating up to four ISBN searches within the read budget.
+    // This shares the bounded HTTP cache's normal one-minute lifetime and is
+    // keyed by both institution and record, never title or ISBN.
+    await Promise.all(parsed.records.map(record => cachedTask(`indcat:member:${code}:${record.recordId}`, async () => true)));
+    return parsed;
   }, { deadlineAt }), { deadlineAt });
 }
 export async function searchCatalog(library, query) { return (await search(library, query)).records; }
 export async function resolveCatalogRecord(library, recordId, expectedIsbn = null, deadlineAt = Date.now() + 60_000, confirmedMemberRecord = false) {
   const code = config(library);
+  confirmedMemberRecord ||= peekCachedTask(`indcat:member:${code}:${recordId}`) === true;
   const raw = await cachedTask(`indcat:record:${code}:${recordId}`, async () => {
     const response = await read(recordUrl(code, recordId), { deadlineAt });
     let result = parseIndcatRecord(response.text, library, recordId);

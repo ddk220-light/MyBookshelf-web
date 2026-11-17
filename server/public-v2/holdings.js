@@ -132,7 +132,7 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
     let resolved = null, metadataFailed = false;
     // This library's own record is read under its host slot and request cap.
     try { resolved = parsed?.kind === 'catalog' && typeof lookup.readRecord === 'function'
-      ? await lookup.readRecord({ library: entry, read: () => books.resolve(bookKey) })
+      ? await lookup.readRecord({ library: entry, recordId: parsed.recordId, read: () => books.resolve(bookKey) })
       : await books.resolve(bookKey); } catch { metadataFailed = true; }
     if (!resolved && !metadataFailed) return res.status(404).json(publicError('BOOK_NOT_FOUND', 'No public book details were found.'));
     const book = { ...trustedIdentity(libraryId, bookKey, resolved), title: resolved?.title || '', authors: resolved?.authors || [] };

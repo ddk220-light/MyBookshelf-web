@@ -41,7 +41,7 @@ export const PLATFORMS = Object.freeze({
   },
   indcat: {
     // Corrected from the plan: IndCat's institution-scoped search page lists
-    // record links and titles only (parseIndcatSearch), never ISBNs, and costs
+    // record links, titles and authors (parseIndcatSearch), never ISBNs, and costs
     // two requests (scope page + CSRF POST). Rows cannot prove an edition.
     book: { maxRequests: 8, deadlineMs: 20 * S },
     results: { strategy: 'none', maxRequests: 0, deadlineMs: 0, fewRequests: false },

@@ -127,7 +127,7 @@ async function enriched(b,c,read){
   if(c.kind==='easylib'&&c.availability&&/^[A-Za-z0-9_-]{1,80}$/.test(b.sourceId||'')){
     try {const u=new URL('/index.php/OpacController/getBookAvailability',c.url);u.searchParams.set('BookTitleNo',b.sourceId);return {...b,...parseEasylibAvailability(json(await read(u)))};}catch{return b;}
   }
-  if(c.kind==='darshan'&&/^[A-Za-z0-9+/_=-]{1,80}$/.test(b.sourceId||'')){
+  if(c.kind==='darshan'&&/^[A-Za-z0-9+/_=$-]{1,80}$/.test(b.sourceId||'')){
     const u=new URL('/Home/BookInformation',c.url);u.searchParams.set('Enc_MaterialID',b.sourceId);
     try{
       const response=await read(u),returned=new URL(response.url);
@@ -169,7 +169,16 @@ function combinedObservation(matches,c,matchKind,complete){
   // totals only for one complete record, never add them across editions/IDs.
   if(!complete||unique.length>1){
     delete value.totalCopies;delete value.availableCopies;
-    value.locations=unique.flatMap(b=>(b.locations||[]).map(({totalCopies,availableCopies,...location})=>location));
+    const locations=new Map();
+    for(const b of unique)for(const {totalCopies,availableCopies,...location} of b.locations||[]){
+      // One available copy is positive proof. An uninspected variant can
+      // contain other copies at this same location, so negatives are unknown.
+      const status=location.status==='available'?'available':!complete?'unknown':location.status;
+      const old=locations.get(location.name);
+      const merged=old?.status==='available'||status==='available'?'available':old?.status==='unknown'||status==='unknown'?'unknown':status;
+      locations.set(location.name,{...location,status:merged});
+    }
+    value.locations=[...locations.values()];
   }
   return value;
 }
@@ -186,6 +195,11 @@ export async function checkAvailability(library,isbn,title,author){
           if(rich.isbn===exact)exactMatches.push(rich);
           else if(!rich.isbn)complete=false;
         }
+        // One record-owned ISBN proves presence. Repeating the equivalent
+        // ISBN-10/13 search spends another session's requests after that proof.
+        // Unqueried variants can contain other
+        // copies, so omit totals and do not claim all copies unavailable.
+        if(exactMatches.length)return combinedObservation(exactMatches,c,'exact_isbn',complete&&q===variants.at(-1));
         if(result.complete&&result.explicitEmpty)empties++;
         else if(result.records.length)firstError ||= catalogError('Catalog returned records without proof of the requested edition','CATALOG_HOLDING_UNCONFIRMED');
       }catch(error){complete=false;firstError ||= error;}
@@ -202,7 +216,12 @@ export async function checkAvailability(library,isbn,title,author){
       if(matches.length)return combinedObservation(matches,c,'possible_match',result.complete);
     }catch(error){firstError ||= error;}
   }
-  if(completeEmpty&&!firstError)return {outcome:'not_found',matchKind:'none',recognizedExact:true};
+  if(completeEmpty&&!firstError){
+    // Darshan's public ISBN index can omit ISBNs present on its own detail
+    // pages. Both normalized variants being empty cannot prove absence.
+    if(c.isbnAbsence===false)throw catalogError('An empty ISBN search does not prove absence in this catalog','CATALOG_HOLDING_UNCONFIRMED');
+    return {outcome:'not_found',matchKind:'none',recognizedExact:true};
+  }
   if(firstError)throw firstError;
   if(typeof title==='string'&&title.trim()&&!/^ISBN\s+\d/i.test(title))throw catalogError('The requested book is not confirmed by this catalog','CATALOG_HOLDING_UNCONFIRMED');
   throw catalogError(c.isbn?'No confirmed edition or title match':'This catalog needs a book title for lookup','CATALOG_EXACT_ISBN_REQUIRED');

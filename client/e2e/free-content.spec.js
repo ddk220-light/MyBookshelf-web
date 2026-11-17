@@ -79,6 +79,8 @@ test.describe('free-content discovery',()=>{
     await page.goto('/app/read/'+encodeURIComponent(story.key));
     await expect(page.getByRole('link',{name:'Read at StoryWeaver · free account required (opens StoryWeaver)'})).toHaveAttribute('href',story.readingActions[0].url);
     await page.getByRole('button',{name:'Save to shelf'}).click();
+    // The save is written under a browser lock; leave the page only once it shows.
+    await expect(page.getByRole('button',{name:'Saved',exact:true})).toBeVisible();
     await page.goto('/app/shelf');
     await page.getByRole('link',{name:new RegExp(story.title)}).click();
     await expect(page.getByText(/Sign in there to read this book/)).toBeVisible();

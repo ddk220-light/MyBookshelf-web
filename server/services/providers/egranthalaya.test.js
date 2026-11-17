@@ -730,6 +730,63 @@ test('a slow member probe leaves the rest of the original budget for shared hold
   } finally { Date.now = originalNow; }
 });
 
+test('a measured slow member can finish within a bounded probe override', async () => {
+  const originalNow = Date.now;
+  let now = originalNow();
+  Date.now = () => now;
+  const calls = [], member = memberFetch(calls);
+  try {
+    global.fetch = async (url, options) => {
+      const result = await member(url, options);
+      if (calls.length === 1) now += 20_000;
+      return result;
+    };
+    const result = await checkAvailability({ ...upLibrary, egranthalayaMemberProbeMs: 35_000 }, upIsbn);
+    assert.equal(result.outcome, 'available');
+    assert.equal(calls.length, 3);
+    assert.equal(new URLSearchParams(calls[1].options.body).get('DDL_Library'), upLibrary.egranthalayaLibraryCode);
+  } finally { Date.now = originalNow; }
+});
+
+test('an excessive member probe override is capped and retains scoped cluster fallback', async () => {
+  const originalNow = Date.now;
+  let now = originalNow();
+  Date.now = () => now;
+  const calls = [], member = memberFetch(calls), shared = clusterFetch(calls);
+  try {
+    global.fetch = async (url, options) => {
+      if (!calls.length) { const result = await member(url, options); now += 35_001; return result; }
+      return shared(url, options);
+    };
+    assert.equal((await checkAvailability({ ...upLibrary, egranthalayaMemberProbeMs: 3_600_000 }, upIsbn)).outcome, 'available');
+    const searches = calls.filter(call => call.options.method === 'POST');
+    assert.equal(searches.length, 1, 'the expired member probe cannot issue its search');
+    assert.equal(new URLSearchParams(searches[0].options.body).get('DDL_Library'), 'All Libraries');
+  } finally { Date.now = originalNow; }
+});
+
+test('a hyphen-indexed member tries its known ISBN spelling first and retains the plain fallback', async () => {
+  for (const firstEmpty of [false, true]) {
+    clearHttpCache();
+    const calls = [], member = memberFetch(calls);
+    let searches = 0;
+    global.fetch = async (url, options) => {
+      if (options.method === 'POST' && ++searches === 1 && firstEmpty) {
+        calls.push({ url, options });
+        return response(memberPage(emptyMemberSearch(), upLibrary.egranthalayaLibraryCode), url);
+      }
+      return member(url, options);
+    };
+    const result = await checkAvailability({ ...upLibrary, egranthalayaHyphenatedIsbnFirst: true }, upIsbn);
+    assert.equal(result.outcome, 'available');
+    const posts = calls.filter(call => call.options.method === 'POST').map(call => new URLSearchParams(call.options.body));
+    assert.equal(posts[0].get('txt_Search'), hyphenatedIsbn(upIsbn).slice(4, -2));
+    assert.equal(posts[0].get('DDL_Library'), upLibrary.egranthalayaLibraryCode);
+    assert.equal(posts.length, firstEmpty ? 2 : 1);
+    if (firstEmpty) assert.equal(posts[1].get('txt_Search'), clusterIsbnQuery(upIsbn));
+  }
+});
+
 test('a timed-out member probe cannot become no-match just because other members own the shared record', async () => {
   const selected = { ...upLibrary, egranthalayaLibraryCode: 'DLLUCAMR' };
   const calls = [], member = memberFetch(calls), shared = clusterFetch(calls);
@@ -814,6 +871,81 @@ test('Romain Rolland finds Ponniyin Selvan in Tamil script and in English letter
   assert.deepEqual(latin[1].authors, ['KALKI']);
 });
 
+test('a displayed title with a subtitle retries a clean zero using fresh member form state', async () => {
+  const calls = [], hit = fixture('hkms-subtitle-search');
+  const title = parseCatalogSearch(hit, 'HKMSLIB')[0].title;
+  global.fetch = async (url, options) => {
+    calls.push({ url, options });
+    if (options.method !== 'POST') return response(fixture('form'), url, { headers: { 'Set-Cookie': 'ASP.NET_SessionId=first; path=/' } });
+    const body = new URLSearchParams(options.body);
+    assert.equal(body.get('DDL_Library'), 'HKMSLIB');
+    if (body.get('txt_Search') === title) return response(memberPage(fixture('form'), 'HKMSLIB').replace('fixture-state', 'fresh-state')
+      + '<span id="Label37">Your Search Returned 0 Record(s)</span>', url, { headers: { 'Set-Cookie': 'ASP.NET_SessionId=next; path=/' } });
+    assert.equal(body.get('txt_Search'), '10 Daniel Thorner & memorial lectures');
+    assert.equal(body.get('__VIEWSTATE'), 'fresh-state');
+    assert.equal(options.headers.Cookie, 'ASP.NET_SessionId=next');
+    return response(hit, url);
+  };
+  const books = await searchCatalog(library, title);
+  assert.equal(calls.length, 3);
+  assert.equal(books.length, 1);
+  assert.equal(books[0].recordId, '526126');
+  assert.equal(books[0].title, title);
+});
+
+test('subtitle recovery never retries a changed member scope or bypasses the request budget', async () => {
+  const title = 'India: A history';
+  const zero = memberPage(fixture('form'), 'HKMSLIB') + '<span id="Label37">Your Search Returned 0 Record(s)</span>';
+  for (const wrongScope of [true, false]) {
+    clearHttpCache();
+    const calls = [];
+    global.fetch = async (url, options) => {
+      calls.push({ url, options });
+      return response(options.method === 'POST' ? wrongScope ? zero.replaceAll('HKMSLIB', 'OTHER') : zero : fixture('form'), url,
+        { headers: { 'Set-Cookie': 'ASP.NET_SessionId=anonymous-fixture; path=/' } });
+    };
+    await assert.rejects(withCatalogOperation({ maxRequests: 2 }, () => searchCatalog(library, title)),
+      { code: wrongScope ? 'CATALOG_UNRECOGNIZED' : 'CATALOG_REQUEST_BUDGET' });
+    assert.equal(calls.length, 2);
+  }
+});
+
+test('subtitle recovery stops after a positive full-title search or two clean zeros', async () => {
+  for (const positive of [true, false]) {
+    clearHttpCache();
+    const calls = [], zero = memberPage(fixture('form'), 'HKMSLIB')
+      + '<span id="Label37">Your Search Returned 0 Record(s)</span>';
+    global.fetch = async (url, options) => {
+      calls.push({ url, options });
+      return response(options.method === 'POST' ? positive ? fixture('hkms-subtitle-search') : zero : fixture('form'), url,
+        { headers: { 'Set-Cookie': 'ASP.NET_SessionId=anonymous-fixture; path=/' } });
+    };
+    const books = await searchCatalog(library, '10 Daniel Thorner & memorial lectures: Land labour & rights');
+    assert.equal(calls.length, positive ? 2 : 3);
+    assert.equal(books.length, positive ? 1 : 0);
+  }
+});
+
+test('subtitle recovery preserves Hindi, Tamil and Odia vowel marks in the main-title query', async () => {
+  for (const title of ['भारत: स्वतंत्रता का इतिहास', 'हिंदी: साहित्य', 'மழை: கதைகள்', 'இந்தியா: வரலாறு', 'ଭାରତ: ଇତିହାସ']) {
+    clearHttpCache();
+    const calls = [], mainTitle = title.split(':')[0];
+    global.fetch = async (url, options) => {
+      calls.push({ url, options });
+      if (options.method !== 'POST') return response(fixture('form'), url,
+        { headers: { 'Set-Cookie': 'ASP.NET_SessionId=anonymous-fixture; path=/' } });
+      const query = new URLSearchParams(options.body).get('txt_Search');
+      if (query === title) return response(memberPage(fixture('form'), 'HKMSLIB')
+        + '<span id="Label37">Your Search Returned 0 Record(s)</span>', url);
+      assert.equal(query, mainTitle);
+      return response(fixture('hkms-subtitle-search').replace('10 Daniel Thorner &amp; memorial lectures: Land labour &amp; rights', title), url);
+    };
+    const books = await searchCatalog(library, title);
+    assert.equal(calls.length, 3);
+    assert.equal(books[0].title, title);
+  }
+});
+
 test('a full Romain Rolland record page gives the copy, its status and the call number', async () => {
   setEmptyRecordRetryDelayForTests(0);
   const calls = [];
@@ -827,6 +959,65 @@ test('a full Romain Rolland record page gives the copy, its status and the call 
   assert.equal(record.observation.totalCopies, 1);
   assert.equal(record.observation.callNumber, 'V2,1Y7N31P3');
   assert.deepEqual(record.observation.locations, [{ name: 'Romain Rolland Library', status: 'available' }]);
+});
+
+test('a shared record uses its main title and all twenty member rows to confirm catalog membership', async () => {
+  for (const mode of ['confirmed', 'wrong-record', 'wrong-member']) {
+    clearHttpCache();
+    const calls = [];
+    const rows = Array.from({ length: 11 }, (_, index) => {
+      const id = index === 10 && mode !== 'wrong-record' ? '79863' : String(90000 + index);
+      return `<a id="Repeater1_lnkDetails3_${index}" onclick="showValues(${id}, false); return false;">Details</a>`
+        + `<span id="Repeater1_Lbl_Title_${index}">Wings of Fire</span>`;
+    }).join('');
+    const memberCode = mode === 'wrong-member' ? 'OTHER' : 'RRLPY';
+    const search = `<select name="DDL_Library"><option selected="selected" value="${memberCode}">Member</option></select>`
+      + '<span id="Label37">Your Search Returned 11 Record(s)</span>' + rows;
+    global.fetch = async (url, options) => {
+      calls.push({ url, options });
+      if (url.includes('Details.aspx')) return response(fixture('rrlpy-record-79863').replaceAll('RRLPY', 'OTHER'), url);
+      if (options.method === 'POST') {
+        assert.equal(new URLSearchParams(options.body).get('txt_Search'), 'Wings of Fire');
+        return response(search, url);
+      }
+      return response(fixture('rrlpy-form'), url, { headers: { 'Set-Cookie': 'ASP.NET_SessionId=anonymous-fixture; path=/' } });
+    };
+    if (mode !== 'confirmed') await assert.rejects(resolveCatalogRecord(rrl, '79863'), { code: 'CATALOG_UNRECOGNIZED' });
+    else {
+      assert.equal(parseCatalogSearch(search, 'RRLPY').length, 10, 'public search still returns ten rows');
+      const record = await resolveCatalogRecord(rrl, '79863');
+      assert.equal(record.observation.outcome, 'in_catalog');
+      assert.equal(record.observation.availableCopies, undefined, 'another member copy never becomes this member’s available copy');
+      assert.deepEqual(record.observation.locations, [{ name: rrl.name, status: 'unknown' }]);
+    }
+    assert.equal(calls.length, 3);
+  }
+});
+
+test('an ambiguous main title retains exact ISBN confirmation with fresh member form state', async () => {
+  const calls = [];
+  const row = (index, id) => `<a id="Repeater1_lnkDetails3_${index}" onclick="showValues(${id}, false); return false;">Details</a>`
+    + `<span id="Repeater1_Lbl_Title_${index}">India: a history</span>`;
+  const others = Array.from({ length: 20 }, (_, index) => row(index, 90000 + index)).join('');
+  const page = (count, rows) => fixture('rrlpy-form').replace('</form>', `<span id="Label37">Your Search Returned ${count} Record(s)</span>${rows}</form>`);
+  global.fetch = async (url, options) => {
+    calls.push({ url, options });
+    if (url.includes('Details.aspx')) return response(fixture('rrlpy-record-79863').replaceAll('RRLPY', 'OTHER')
+      .replace('Wings of Fire : An Autobiography.', 'India: a history')
+      .replace('</form>', `<span id="Lbl_ISBN">${upIsbn}</span></form>`), url);
+    if (options.method === 'POST') {
+      const fields = new URLSearchParams(options.body);
+      if (fields.get('txt_Search') === 'India') return response(page(20, others).replaceAll('fixture-state', 'fresh-state'), url);
+      assert.equal(fields.get('txt_Search'), upIsbn);
+      assert.equal(fields.get('__VIEWSTATE'), 'fresh-state');
+      return response(page(1, row(0, 79863)), url);
+    }
+    return response(fixture('rrlpy-form'), url, { headers: { 'Set-Cookie': 'ASP.NET_SessionId=anonymous-fixture; path=/' } });
+  };
+  const record = await resolveCatalogRecord(rrl, '79863');
+  assert.equal(record.observation.outcome, 'in_catalog');
+  assert.equal(record.observation.availableCopies, undefined);
+  assert.equal(calls.length, 4);
 });
 
 test('empty record pages are recognised only for the requested record and never for full pages', () => {
