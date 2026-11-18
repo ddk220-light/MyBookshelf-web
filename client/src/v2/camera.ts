@@ -51,6 +51,45 @@ async function createDecoder(wanted: ScanFormats): Promise<FrameDecoder> {
   return fallbackDecoder(wanted);
 }
 
+const CAMERA_CONSTRAINTS: MediaStreamConstraints = {
+  video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
+  audio: false,
+};
+
+type CameraClaim = { active: () => boolean; resolve: (stream: MediaStream | null) => void; reject: (error: unknown) => void };
+let pendingCamera: CameraClaim[] | null = null;
+
+/**
+ * One camera request at a time, shared across restarts. While the browser's
+ * permission prompt is up, the scanner may be stopped and started again (the
+ * page hidden and shown, a lookup started and finished, the pop-up closed and
+ * reopened). A second getUserMedia call then would be a second prompt, and
+ * the first prompt's answer would reach a scanner that had already gone, so a
+ * refusal (Cancel) could be lost. Instead every start joins the request in
+ * flight. When it settles: a refusal reaches every waiting start (stopped
+ * ones ignore it); a camera goes to the newest start still running and
+ * the others get null; with none running, the camera is released at once.
+ */
+export function requestCamera(active: () => boolean): Promise<MediaStream | null> {
+  return new Promise<MediaStream | null>((resolve, reject) => {
+    if (pendingCamera) { pendingCamera.push({ active, resolve, reject }); return; }
+    const claims: CameraClaim[] = [{ active, resolve, reject }];
+    pendingCamera = claims;
+    let request: Promise<MediaStream>;
+    try { request = navigator.mediaDevices.getUserMedia(CAMERA_CONSTRAINTS); }
+    catch (error) { request = Promise.reject(error); }
+    request.then(stream => {
+      if (pendingCamera === claims) pendingCamera = null;
+      const owner = [...claims].reverse().find(claim => claim.active());
+      if (!owner) stream.getTracks().forEach(track => track.stop());
+      for (const claim of claims) claim.resolve(claim === owner ? stream : null);
+    }, (error: unknown) => {
+      if (pendingCamera === claims) pendingCamera = null;
+      for (const claim of claims) claim.reject(error);
+    });
+  });
+}
+
 export class BrowserIsbnScanner implements IsbnScanner {
   private stream: MediaStream | null = null;
   private video: HTMLVideoElement | null = null;
@@ -64,13 +103,12 @@ export class BrowserIsbnScanner implements IsbnScanner {
     const session = this.session;
     if (!navigator.mediaDevices?.getUserMedia) throw new Error('UNSUPPORTED');
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
-        audio: false,
-      });
-      // Permission can resolve after Close, a route change, or hiding the tab.
-      if (session !== this.session) {
-        stream.getTracks().forEach((track) => track.stop());
+      // Permission can resolve after Close, a route change, or hiding the tab:
+      // a stopped scanner gets null (the camera went to a newer start, or was
+      // released), never a second prompt.
+      const stream = await requestCamera(() => session === this.session);
+      if (!stream || session !== this.session) {
+        stream?.getTracks().forEach((track) => track.stop());
         return;
       }
       this.stream = stream;

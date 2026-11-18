@@ -148,6 +148,30 @@ describe('scan pop-up', () => {
     expect(onIsbn).toHaveBeenCalledWith('9780306406157', 'isbn');
   });
 
+  it('a refusal given after the page was hidden and shown again still reaches the pop-up, from one camera request', async () => {
+    let refuse!: (error: unknown) => void;
+    const getUserMedia = vi.fn(() => new Promise<MediaStream>((_resolve, reject) => { refuse = reject; }));
+    Object.defineProperty(navigator, 'mediaDevices', { configurable: true, value: { getUserMedia } });
+    try {
+      render(<ScanDialog open onClose={() => {}} onIsbn={async () => 'opened'} onSearchByTitle={() => {}} />);
+      await settle();
+      // The prompt is up; switching apps hides and shows the page.
+      Object.defineProperty(document, 'hidden', { configurable: true, value: true });
+      act(() => { document.dispatchEvent(new Event('visibilitychange')); });
+      Object.defineProperty(document, 'hidden', { configurable: true, value: false });
+      act(() => { document.dispatchEvent(new Event('visibilitychange')); });
+      await settle();
+      expect(getUserMedia).toHaveBeenCalledOnce();
+      // Cancel on the prompt.
+      await act(async () => { refuse(Object.assign(new Error('denied'), { name: 'NotAllowedError' })); });
+      await settle();
+      expect(screen.getByRole('button', { name: 'Allow camera' })).toBeInTheDocument();
+      expect(screen.queryByLabelText('Camera view')).not.toBeInTheDocument();
+    } finally {
+      Reflect.deleteProperty(navigator, 'mediaDevices');
+    }
+  });
+
   it('a camera held by another app offers Try again', async () => {
     const camera = fakeScanner(Object.assign(new Error('busy'), { name: 'NotReadableError' }));
     render(<Harness scanner={camera.scanner} />);
