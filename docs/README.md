@@ -12,6 +12,10 @@ retired authentication and unrelated research archives are outside its scope.
   in production on 18 November, the backlog in working order, open questions
   for the owner, and how to start the end-to-end run on the owner's Mac with
   both phones. Nothing in the app changes until the plan is agreed.
+- [End-to-end run as a guest reader](research/2026-11-production-ready/README.md)
+  (18 November): Pixel, iPhone and desktop walked at once; the library answers
+  and times seen, findings ranked by severity and tied to backlog items, and
+  the three device reports with their timings. Account flows are still to do.
 
 ## One-shelf redesign (2026-11-12, the current app)
 

@@ -83,6 +83,23 @@ starts at "Start here on the Mac".
    appeared. The owner chose to fix only the wait for now; both are recorded
    under "Decided against, for now".
 
+## Progress on the analysis (18 November, on the Mac)
+
+- **Item 23 is done.** Both phones are driven from the Mac over Wi-Fi: the
+  Pixel through `adb` and Chrome remote debugging, the iPhone through
+  WebDriverAgent (taps, typing, screenshots; page inspection needs the cable).
+- **Item 24 is done for a guest reader** on the Pixel, the iPhone and desktop.
+  Findings, ranked, with the timings:
+  [research/2026-11-production-ready](../research/2026-11-production-ready/README.md).
+  The screenshots (about 730) are on the Mac in
+  `~/mybookshelf-phones/run-2026-11-18/`, outside the repository.
+- **Still to do in item 24:** the account flows, with the owner typing the
+  password (create, verify, sign in and out, merge, change password and email,
+  delete); a real barcode scan; "Libraries near me" with location allowed.
+- **Item 20 has not started.** One junk library request (text "Zzqqxx") was
+  sent to production by mistake during the run and needs deleting there.
+- The run added items 25 to 32 below and open question 13.
+
 ## Backlog, in working order
 
 ### Phase 1: see the real picture
@@ -133,7 +150,12 @@ if item 20 shows nothing needs it.
 
 ### Phase 2: make the core work
 
-**22. e-Granthalaya checks time out from the US region.** Options to weigh:
+**22. e-Granthalaya checks time out from the US region.** The run confirmed 25
+to 26 s and "couldn't check" every time, and Retry the same. Anna Centenary
+(Koha) also ran 45 s or more twice and gave different answers for the same
+book on different devices, so this is about slow Indian catalogs in general,
+and about what the reader sees while waiting (one small spinner, no words, no
+limit). Options to weigh:
 run catalog checks from an Indian region (`bom1`), for those routes only if
 the plan allows, else for the project (then weigh the distance to the
 databases); a longer time budget for e-Granthalaya hosts; finishing a slow
@@ -141,6 +163,11 @@ check in the background so the next look has the answer. Then run the strict
 check for listed e-Granthalaya libraries that were listed from the audit only.
 
 **15. Library status in words, with a direct catalog link.**
+- From the run: also the shelf and search results, where not found, couldn't
+  check and not checked yet all show no mark; the fourth answer "Couldn't
+  confirm" (question mark), which the public pages do not mention; "Catalog"
+  leading to three different places under one label; Anna Centenary's link
+  being plain HTTP on a bare IP address (Safari shows a full-page warning).
 - Replaces the tick, question mark and retry icons on book cards and the book
   page with text under the library: "In your library", "Not in your library",
   and "Couldn't check right now" with a Retry text button.
@@ -150,6 +177,40 @@ check for listed e-Granthalaya libraries that were listed from the audit only.
   link-only libraries, and how many libraries return a record link today.
 
 **The 10-second suggestions wait** (ready; see above).
+
+**27. Search results, the book page and the catalog link agree.** Seen on
+desktop: the book page said found while the results left the same book
+unmarked; opening a result that already has the library mark sends a second
+check to the library; a book opened from a marked result links to the
+catalog's home page, not its record.
+
+**28. iPhone scanner after Cancel.** The camera preview was live after Cancel
+on the camera prompt and read a barcode. Check by hand first; then decide.
+
+**30. First search is slow.** 4 to 7 s for a query not asked recently, with
+only "Searching"; 13.8 s for the library line at Anna Centenary. Find where the
+time goes before choosing a fix.
+
+**25. Library picker on phones.** The keyboard and Safari's form bar hide the
+field and a single result; with many results the title, Close and the field
+leave the screen. Also: no visible count or sign the list stops at 25, mixed
+name styles, rows without a city, the current library not shown, no way back
+to "no library", "Location unavailable" with no next step.
+
+**26. "Request to add" needs a deliberate step.** It sends on one tap, with
+whatever was typed, and no undo.
+
+**31. Search results and saving.** Shelf-view results are covers only (no
+title, author, year or count); a book cannot be saved from the results; "On my
+shelf" removes the book when pressed; "No books found" and misspellings give
+no help; when nothing is in the library the "Looking in…" line just vanishes.
+
+**32. Book page details.** Title and author change a second after opening
+(suggestion data, then Open Library's); author names differ between screens;
+no ISBN, publisher or related books; the tab title is "Book details".
+
+**29. WebKit refuses a stylesheet on every page** (Content-Security-Policy,
+style-src). No visible effect found; find what is refused.
 
 ### Phase 3: account and settings
 
@@ -232,6 +293,13 @@ or with a parent's or guardian's permission); the contact is
 12. **Item 14:** CLAUDE.md calls the catalog store anonymous. With optional
     contact details in it, the wording needs a small change, for the owner's
     approval.
+
+13. **ISBN in the address:** a typed ISBN opens `/app/books/v1:isbn:<number>`,
+    which stays in the browser history. The rule says search text never goes
+    into an address; an ISBN is also the book's identity. Keep, or change?
+14. **Suggestions:** the run saw other-language covers, near-duplicates of
+    saved books and suggestions far from the shelf (research finding 18).
+    Do the two "decided against" items stay as they are?
 
 ## Decided against, for now
 
