@@ -4,8 +4,14 @@
 
 export type StoreState = { state: 'ok' | 'not_configured' | 'unreachable' | 'wrong_role'; code?: string; detail?: string | null; message?: string };
 
+/** The live app's catalog store, as `/api/health` reports it. */
+export type CatalogStoreStatus = 'ok' | 'failed' | 'off';
+
 export type AdminSummary = {
   store: StoreState;
+  catalogStore?: CatalogStoreStatus;
+  /** When the newest library answer was stored; null when none is stored or the admin connection failed. */
+  newestAnswerAt?: string | null;
   usageLogEnabled: boolean;
   counts: null | { openRequests: number; newReports: number; flaggedLibraries: number; flaggedUnacknowledged: number; storedAnswers: number; usageData: boolean };
   answersByLibrary: { libraryId: string; name: string | null; found: number; notFound: number }[];

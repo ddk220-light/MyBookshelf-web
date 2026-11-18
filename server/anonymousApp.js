@@ -4,6 +4,7 @@ import path from 'path';
 import { HTML_SECURITY_POLICY } from '../shared/security-policy.mjs';
 
 import { createPublicV2Router } from './public-v2/router.js';
+import { createCatalogStore } from './catalog-store/index.js';
 
 export const LEGACY_API_RETIRED = Object.freeze({
   error: Object.freeze({
@@ -58,7 +59,9 @@ function setStaticHeaders(res, filePath) {
   }
 }
 
-export function createAnonymousApp({ clientDist, publicRouter = createPublicV2Router(), accounts } = {}) {
+// One catalog store per app: the public router uses it, and `/api/health`
+// reports its status word ('ok', 'failed' or 'off'; catalog-store/index.js).
+export function createAnonymousApp({ clientDist, catalogStore = createCatalogStore(), publicRouter = createPublicV2Router({ catalogStore }), accounts } = {}) {
   const app = express();
   const publicCorsOrigin = process.env.NODE_ENV === 'production' ? false : true;
 
@@ -79,8 +82,13 @@ export function createAnonymousApp({ clientDist, publicRouter = createPublicV2Ro
     },
   );
 
-  app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  // Called by the six-hourly health workflow: one cheap store query at most,
+  // a word and no detail. The app itself works with the store failed or off.
+  app.get('/api/health', async (req, res) => {
+    let catalogStoreStatus = 'failed';
+    try { catalogStoreStatus = typeof catalogStore?.status === 'function' ? await catalogStore.status() : 'off'; } catch { /* Reported as failed. */ }
+    res.setHeader('Cache-Control', 'no-store');
+    res.json({ status: 'ok', catalogStore: catalogStoreStatus, timestamp: new Date().toISOString() });
   });
 
   if (accounts) app.use(accounts);

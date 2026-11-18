@@ -33,10 +33,10 @@ function fakeQueries(overrides = {}) {
   };
 }
 
-function appWith({ identify, env = {}, queries = fakeQueries() } = {}) {
+function appWith({ identify, env = {}, queries = fakeQueries(), storeStatus } = {}) {
   const passthrough = (req, res, next) => next();
   const admin = createAdminMiddleware({ env: { ADMIN_ACCOUNT_IDS: OWNER, CATALOG_ADMIN_DATABASE_URL: 'postgres://catalog_admin@db.invalid/catalog', ...env },
-    identify, connect: () => ({ query: async () => ({ rows: [] }), end: async () => {} }), loadQueries: async () => queries.module });
+    identify, connect: () => ({ query: async () => ({ rows: [] }), end: async () => {} }), loadQueries: async () => queries.module, storeStatus });
   return { app: createApplication({ accounts: passthrough, jobs: passthrough, accountHealth: passthrough, catalogMaintenance: passthrough, admin }), queries };
 }
 
@@ -200,6 +200,28 @@ test('the store not configured, unreachable or on the wrong role reads clearly a
   const runtime = appWith({ identify, queries: fakeQueries({ assertAdminRole: async () => { throw Object.assign(new Error('x'), { code: 'STORE_ROLE_REJECTED' }); } }) }).app;
   assert.equal((await request(runtime).get('/api/admin/summary').set('Cookie', COOKIE)).body.store.state, 'wrong_role');
   assert.equal((await request(runtime).get('/api/admin/library-requests').set('Cookie', COOKIE)).body.error.code, 'STORE_ROLE_REJECTED');
+});
+
+test('the summary shows the runtime store’s status word, the same one /api/health reports', async () => {
+  const identify = async () => identityFor(OWNER);
+  for (const word of ['ok', 'failed', 'off']) {
+    const { app } = appWith({ identify, storeStatus: async () => word });
+    assert.equal((await request(app).get('/api/admin/summary').set('Cookie', COOKIE).expect(200)).body.catalogStore, word);
+  }
+  // Even when the admin connection is not configured, and when the check throws.
+  const unset = appWith({ identify, env: { CATALOG_ADMIN_DATABASE_URL: '' }, storeStatus: async () => { throw new Error('host and password'); } }).app;
+  const body = (await request(unset).get('/api/admin/summary').set('Cookie', COOKIE).expect(200)).body;
+  assert.equal(body.catalogStore, 'failed');
+  assert.equal(body.newestAnswerAt, null);
+  assert.ok(!JSON.stringify(body).includes('password'));
+
+  // The whole app: health and the summary read one store.
+  const passthrough = (req, res, next) => next();
+  const store = { status: async () => 'failed' };
+  const app = createApplication({ catalogStore: store, accounts: Object.assign(passthrough, { identify }), jobs: passthrough, accountHealth: passthrough,
+    catalogMaintenance: passthrough, publicRouter: (req, res, next) => next() });
+  const health = await request(app).get('/api/health').expect(200);
+  assert.deepEqual([health.body.status, health.body.catalogStore], ['ok', 'failed']);
 });
 
 test('requests typed differently group together; different places stay apart', () => {

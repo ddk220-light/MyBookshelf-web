@@ -256,12 +256,15 @@ export async function summary(db, { policy } = {}) {
         (SELECT count(*) FROM library_health WHERE flagged_at IS NOT NULL)::int AS flagged,
         (SELECT count(*) FROM library_health WHERE flagged_at IS NOT NULL AND acknowledged_at IS NULL)::int AS flagged_unacknowledged,
         (SELECT count(*) FROM holdings_answers WHERE expires_at > now())::int AS answers,
+        (SELECT max(checked_at) FROM holdings_answers) AS newest_answer_at,
         (EXISTS (SELECT 1 FROM usage_events) OR EXISTS (SELECT 1 FROM usage_daily_totals)) AS usage_present`, [], Q),
   ]);
   const c = counts.rows[0] || {};
   return {
     counts: { openRequests: c.open_requests ?? 0, newReports: c.new_reports ?? 0, flaggedLibraries: c.flagged ?? 0,
       flaggedUnacknowledged: c.flagged_unacknowledged ?? 0, storedAnswers: c.answers ?? 0, usageData: Boolean(c.usage_present) },
+    // When the newest answer was stored: a store that stopped storing shows here.
+    newestAnswerAt: iso(c.newest_answer_at),
     answersByLibrary: answers.rows.map(row => ({ libraryId: row.library_id, name: libraryName(row.library_id), found: row.found, notFound: row.not_found })),
     optedOut: (policy?.optedOut?.() || []).map(libraryId => ({ libraryId, name: libraryName(libraryId) })),
   };

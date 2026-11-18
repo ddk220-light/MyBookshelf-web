@@ -50,6 +50,20 @@ function StoreBanner({ summary }: { summary: AdminSummary }) {
   </div>;
 }
 
+// The live app's store (the word /api/health reports) and the newest stored
+// answer: a store that stopped storing answers shows here, not only to readers.
+function CatalogStoreLine({ summary }: { summary: AdminSummary }) {
+  const word = summary.catalogStore;
+  if (!word) return null;
+  const newest = summary.newestAnswerAt ? formatTime(summary.newestAnswerAt) : summary.store.state === 'ok' ? 'none yet' : 'unknown';
+  return <>
+    {word === 'failed' && <div className="admin-alert" role="alert">
+      <strong>The app cannot reach its catalog store.</strong> Library answers are not being stored or read back; readers still get live checks.
+    </div>}
+    <p className="admin-note">Catalog store: {word}. Newest stored answer: {newest}.</p>
+  </>;
+}
+
 function UsageLogNote({ enabled, hasData }: { enabled: boolean; hasData: boolean }) {
   if (hasData) return null;
   return <p className="admin-note" role="status">
@@ -100,6 +114,7 @@ export function AdminPage() {
   return <section className="page-section admin" aria-labelledby="admin-title">
     <h1 id="admin-title">Admin</h1>
     <StoreBanner summary={summary} />
+    <CatalogStoreLine summary={summary} />
     <nav className="admin-tabs" aria-label="Admin views">
       {TABS.map(item => <button key={item.id} type="button" aria-pressed={tab === item.id} onClick={() => setTab(item.id)}>
         {item.label}{item.id === 'health' && summary.counts?.flaggedUnacknowledged ? ` (${summary.counts.flaggedUnacknowledged} new)` : ''}

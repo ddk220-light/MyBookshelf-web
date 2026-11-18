@@ -7,7 +7,7 @@ import { scrubQueryText, usageRow, createUsageLog } from './usageLog.js';
 import { parseLibraryRequest, parseProblemReport, SubmissionError, createSubmissions } from './requests.js';
 import { createCatalogPolicy, parseCatalogPolicies } from './policy.js';
 import { createMemoryHostGate, createPgHostGate } from './hostGate.js';
-import { createCatalogStore } from './index.js';
+import { createCatalogStore, createStoreStatus } from './index.js';
 import { createCatalogMaintenanceMiddleware } from './cron.js';
 import { poolSettings } from './pool.js';
 import { createCatalogLookup, createLookupRecorder, createMemoryAnswerStore, createMemoryHealthRecord, PLATFORMS } from '../services/catalog-lookup/index.js';
@@ -27,6 +27,29 @@ test('without a database URL the store is in memory, the log is off and result m
   const store = createCatalogStore({ env: {} });
   assert.equal(store.durable, false);
   assert.equal(store.usage.enabled, false);
+});
+
+test('the store status is one word from one short query, reused briefly, with no detail', async () => {
+  assert.equal(await createCatalogStore({ env: {} }).status(), 'off');
+  let queries = 0, clock = 0;
+  const calls = [];
+  const ok = createStoreStatus({ query: async (text, values, options) => { queries++; calls.push([text, options]); return { rows: [{ ok: 1 }] }; } },
+    { now: () => clock });
+  assert.deepEqual(await Promise.all([ok(), ok()]), ['ok', 'ok']);
+  assert.equal(queries, 1, 'concurrent calls share one query');
+  assert.deepEqual(calls[0], ['SELECT 1 AS ok', { timeoutMs: 2500 }]);
+  clock += 5_000;
+  assert.equal(await ok(), 'ok');
+  assert.equal(queries, 1, 'a recent answer is reused');
+  clock += 20_000;
+  await ok();
+  assert.equal(queries, 2);
+  const failed = createStoreStatus({ query: async () => { throw Object.assign(new Error('password authentication failed for user x at host y'), { code: '28P01' }); } });
+  assert.equal(await failed(), 'failed');
+  const slow = createStoreStatus({ query: () => new Promise(() => {}) }, { timeoutMs: 20 });
+  assert.equal(await slow(), 'failed', 'a database that does not answer within the limit has failed');
+  const store = createCatalogStore({ env: {}, db: { query: async () => ({ rows: [{ ok: 1 }] }) } });
+  assert.equal(await store.status(), 'ok');
 });
 
 test('the log accepts only allowlisted fields and never an address, agent, device, account or coordinates', () => {
