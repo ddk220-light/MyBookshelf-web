@@ -1,4 +1,5 @@
-import { cachedTask, enqueueTask, getJson, peekCachedTask } from './providers/http.js';
+import { cachedTask, getJson, peekCachedTask } from './providers/http.js';
+import { createOpenLibraryPacer } from './openLibraryPacer.js';
 import { validateAndNormalize } from './isbn.js';
 import { lookupBookMetadata } from './bookMetadata.js';
 import { searchGoogleBooksByQuery } from './googleBooks.js';
@@ -22,14 +23,14 @@ function unavailable() {
   return Object.assign(new Error('Book discovery is temporarily unavailable'), { code: 'BOOK_METADATA_UNAVAILABLE' });
 }
 
-let nextRequestAt = 0;
-async function request(path) {
+// Cache and coalesce requests, then pace uncached reads across this process
+// per search, not per read (openLibraryPacer.js): the reads of one search
+// (`group`) go together, at most three at once and three a second, and
+// searches start at least a second apart.
+const pace = createOpenLibraryPacer();
+async function request(path, { group = null } = {}) {
   const deadlineAt = Date.now() + 12_000;
-  return cachedTask(`work-discovery:${path}`, () => enqueueTask('openlibrary:discovery', async () => {
-    // Cache and coalesce requests, then pace uncached reads across this process.
-    const delay = Math.max(0, nextRequestAt - Date.now());
-    if (delay) await new Promise(resolve => setTimeout(resolve, delay));
-    nextRequestAt = Date.now() + 1000;
+  return cachedTask(`work-discovery:${path}`, () => pace(async () => {
     const response = await getJson(`https://openlibrary.org${path}`, {
       deadlineAt, retries: 0, catalogConnection: false,
       headers: { 'User-Agent': 'MyBookshelf/1.0 (book discovery; https://mybookshelf.cloud/privacy)' },
@@ -37,7 +38,7 @@ async function request(path) {
     if (response.status === 404) return null;
     if (!response.ok || response.unreadable) throw unavailable();
     return response.json;
-  }, { deadlineAt }), { deadlineAt, ttlMs: 6 * 60 * 60 * 1000 }).catch(() => { throw unavailable(); });
+  }, { group, deadlineAt }), { deadlineAt, ttlMs: 6 * 60 * 60 * 1000 }).catch(() => { throw unavailable(); });
 }
 
 // An Open Library read this instance already holds (for example the work
@@ -81,6 +82,8 @@ export function createWorkDiscovery({ read = request, fallbackIsbn = lookupBookM
   async function searchPage({ title, author = '', max = 160, offset = 0 }) {
     const query = { title, author, max };
     if (!scopedSearchQuery(query)) return { books: [], nextOffset: null };
+    // Every Open Library read of this search shares one pacing turn.
+    const group = {};
     let hasMore = false;
     const page = books => ({ books, nextOffset: hasMore ? offset + PAGE_SIZE : null,
       ...(failedModes.length || fallbackFailed ? { partial: true } : {}) });
@@ -94,7 +97,7 @@ export function createWorkDiscovery({ read = request, fallbackIsbn = lookupBookM
           : { q: mode === 'prefix' ? prefixSearchQuery(query) : scopedSearchQuery(query, mode === 'spelling'), fields: SEARCH_FIELDS });
       params.set('limit', String(PAGE_SIZE));
       params.set('offset', String(offset));
-      const result = await read(`/search.json?${params}`);
+      const result = await read(`/search.json?${params}`, { group });
       if (!Array.isArray(result?.docs)) throw unavailable();
       hasMore ||= Number(result.numFound ?? result.num_found) > offset + result.docs.length
         || (result.numFound === undefined && result.num_found === undefined && result.docs.length === PAGE_SIZE);
@@ -111,7 +114,7 @@ export function createWorkDiscovery({ read = request, fallbackIsbn = lookupBookM
         if (editionReads >= 2 || checkedWorks.has(candidate.workId) || rankSearchResults([candidate], query, spelling).length) continue;
         editionReads++; checkedWorks.add(candidate.workId);
         try {
-          const editions = await read(`/works/${candidate.workId}/editions.json?limit=100`);
+          const editions = await read(`/works/${candidate.workId}/editions.json?limit=100`, { group });
           candidate.searchTitles.push(...(editions?.entries || []).map(edition => edition.title).filter(Boolean));
         } catch { /* Keep verified search metadata when enrichment is unavailable. */ }
       }
@@ -197,13 +200,15 @@ export function createWorkDiscovery({ read = request, fallbackIsbn = lookupBookM
   async function resolve(id) {
     if (!WORK_ID.test(id)) return null;
     const params = new URLSearchParams({ q: `key:/works/${id}`, fields: FIELDS, limit: '1' });
-    const [data, result] = await Promise.all([read(`/works/${id}.json`), read(`/search.json?${params}`)]);
+    // The reads of one resolution go together, like a search's.
+    const group = {};
+    const [data, result] = await Promise.all([read(`/works/${id}.json`, { group }), read(`/search.json?${params}`, { group })]);
     if (!data?.title) return null;
     const summary = result?.docs?.map(fromSearch).find(book => book?.workId === id);
     let authors = summary?.authors || [];
     if (!authors.length) {
       const keys = unique((data.authors || []).map(item => item.author?.key)).filter(key => /^\/authors\/OL\d+A$/.test(key)).slice(0, 3);
-      authors = (await Promise.all(keys.map(key => read(`${key}.json`)))).map(item => item?.name).filter(Boolean);
+      authors = (await Promise.all(keys.map(key => read(`${key}.json`, { group })))).map(item => item?.name).filter(Boolean);
     }
     return { ...summary, source: 'openlibrary', source_id: id, workId: id, title: data.title, authors,
       description: typeof data.description === 'string' ? data.description : data.description?.value,
