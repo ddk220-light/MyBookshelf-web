@@ -105,6 +105,98 @@ starts at "Start here on the Mac".
   sent to production by mistake during the run and needs deleting there.
 - The run added items 25 to 32 below and open question 13.
 
+## What the run shows: the big things
+
+Read from the three device reports, the account report, the timings and the
+screenshots, plus two checks made afterwards. Every finding is assigned to an
+item below; the priority of each item follows this section.
+
+### 1. The app remembers nothing about libraries (the largest problem)
+
+Production is not keeping library answers. Confirmed after the run: a live
+check answered "found" for Wings of Fire at Anna Centenary; two hours later the
+stored-answer request for the same book and library returned nothing (and took
+3.2 s, where it should take a fraction of a second). Answers are meant to be
+kept for six months.
+
+One cause, many symptoms:
+- the "in your library" mark disappears from the shelf on reload, on a new
+  visit and on a second device (36 stored-answer requests on desktop never
+  produced a mark);
+- every opening of a book asks the library again, so a slow catalog is slow
+  every time (8.5 s again at Anna Centenary; 25 s again at the e-Granthalaya
+  library);
+- the same book gives different answers on different devices within the hour
+  ("not found" on one, "couldn't confirm" on another);
+- library catalogs get more requests than they should, which the project
+  promises not to do.
+
+The same database holds the search log, the failure log, library requests and
+problem reports, so those are very likely not being recorded either. This is
+item 20, and it comes before everything else: several other findings may
+shrink or vanish once answers are kept.
+
+### 2. Indian catalogs are too slow from where the server runs
+
+Checks run until the app's own time limit and then give up: 25 s for
+e-Granthalaya (every time, on every device, and again on Retry) and about 45 s
+at Anna Centenary (twice). The server is in San Francisco. Burlingame, in the
+US, answers in 3 to 5 s. While waiting the reader sees one 18 px spinner and
+no words. Item 22, which now covers all slow catalogs and the wait itself.
+
+### 3. The reader cannot tell what the library answer is
+
+Icons without words (tick, dash, circular arrow, question mark, spinner); a
+fourth answer, "Couldn't confirm", that nothing explains; on the shelf and in
+results "not found", "couldn't check" and "not checked yet" all look the same;
+"Catalog" opens three different places; results, the book page and the link
+disagree with each other. Items 15 and 27.
+
+### 4. Choosing a library on a phone is broken
+
+The keyboard and Safari's form bar hide the field and the result, so typing a
+library's name shows an apparently empty sheet; with a long list the title,
+Close and the field leave the screen. A new reader is never asked to choose a
+library at all. "Request to add" sends on one tap (one junk request was sent
+by accident in the run). Items 25, 26 and 18.
+
+### 5. Search is slow and thin
+
+A first search takes 4 to 7 s (12.5 s for a misspelling) with only
+"Searching". Results in shelf view are covers only, a book cannot be saved
+from them, and "No books found" offers no help. Items 30, 31 and 32.
+
+### 6. Accounts work, but the edges are rough
+
+Create, verify, sign in, sync across two phones, change email, reset and
+delete all work, and most steps take under 2 s. The problems:
+- a password manager's own suggestion is refused (14 characters, 15 needed);
+- creating the account takes about 10 s with nothing shown;
+- "Bring books over" moves under the finger and the wrong control gets tapped;
+- a reset link shows "Link expired" after a reload although it is valid;
+- verifying and resetting both end at a Log in screen with an empty email;
+- "Confirm it's you" is asked seconds after signing in;
+- two account screens in two styles; delete says almost nothing;
+- a change on one phone can take over a minute to show on the other.
+Items 16, 17, 19 and 33.
+
+### 7. What is already good
+
+The app shell is fast (first paint 0.2 s). No sideways scrolling at any width,
+no console errors in Chromium, keyboard focus visible everywhere, Back and
+reload behave, no search text in browser storage or in the address for title
+and author searches. Sign-in, saving and sync are quick. Security emails
+arrive within seconds.
+
+## Priority after the run
+
+| Priority | Items | Why |
+|---|---|---|
+| 1. Before any real reader | 20, 22, 15, 27, 25, 26, 33, 21, 28 | Answers not kept; slow Indian catalogs; unreadable status; picker unusable on phones; accidental requests; reset link; exposed passwords; the camera question |
+| 2. Before promoting it | 16, 17, 18, 19, 30, 31, 14, 34, the 10-second suggestions wait | Account flow and settings; choosing and changing a library; search speed and results; replies to reports |
+| 3. Pages and policy | 11, 12, 13 | Written last so they describe what ships |
+| 4. Polish | 32, 29, 35, 36 | Book details, the WebKit stylesheet message, touch and hover states, fonts and small things |
+
 ## Backlog, in working order
 
 ### Phase 1: see the real picture
@@ -133,6 +225,14 @@ Run on the owner's Mac (a cloud session could not reach either computer).
   - suggestion opened and saved counts, library requests, problem reports.
 - Apply migration 002 where it is missing. Fix whatever is not recording.
   Correct the setup notes.
+- Confirmed after the run: stored answers are not kept (see "What the run
+  shows", 1). First thing to learn is whether production's database has the
+  catalog tables and roles at all; all catalog migrations so far went to the
+  unused database.
+- Delete the junk library request ("Zzqqxx") sent during the run.
+- Afterwards re-run the short checks from the run: the mark on the shelf after
+  a reload, on a second device, and a second opening of a book that sends no
+  new check.
 - Repeat after the end-to-end run and confirm its actions appear.
 
 **21. Change the exposed catalog role passwords.** In Neon, for
@@ -218,6 +318,33 @@ no ISBN, publisher or related books; the tab title is "Book details".
 address, so a reload or a restarted browser shows "Link expired" for a valid
 link, and "Send a new link" opens an empty form without sending anything.
 
+**34. Account edges found in the run** (beyond items 16, 17 and 19).
+- "Signed-in devices" still lists a session after Log out.
+- A change made on one device can take over a minute to show on another (the
+  signed-in shelf refreshes on focus at most once a minute) and nothing says
+  the shelf may be behind.
+- Status bars that stay: "Saved" after an import; "You've been signed out" on
+  top of the Forgot password page.
+- Reset and "password was changed" emails have fixed subjects, so they thread
+  together in Gmail across accounts.
+- No email confirms a deletion (open question 15).
+
+**35. Touch, hover and small-screen polish.** No hover state on covers, rows,
+spines and the landing page's links; no pressed state on anything but two
+buttons; touch targets of 17 to 20 px on public pages and Back links, and
+"Catalog" at 52 x 18; 11 px text on "Suggested" tags and spines; rows that
+stay highlighted on the iPhone; dialog buttons hidden by the keyboard in
+Change email; the Undo notice covering a link; the "Less" button over a
+heading; two toast styles; wide windows (covers 261 px apart at 1920) and a
+28 px strip of shelf beside an open book at 700 px; iPhone landscape; Tab
+order reaching search eleventh.
+
+**36. Smaller technical items.** App fonts are 434 KB of TTF where WOFF2 would
+be far smaller (the landing page already uses it); a dark system setting is
+ignored and "Ink" is a light theme (open question 17); two wordmarks
+("myBookshelf" and "MyBookshelf") and no way from the app to the public pages;
+the in-app About shows a commit hash; "Open the app ↗" opens in the same tab.
+
 **29. WebKit refuses a stylesheet on every page** (Content-Security-Policy,
 style-src). No visible effect found; find what is refused.
 
@@ -230,28 +357,53 @@ and desktop. One line at the top of settings and of each screen saying what it
 is for; fuller wording for creating an account (what it adds) and deleting one
 (what goes, when, what stays). Includes items 16, 17 and 18. The owner reviews
 the mock-ups before anything changes.
+- From the run: two account screens in two styles ("Account settings" and,
+  behind "More", "Your account"); the delete dialog says only "Delete account
+  and shelf?"; "Confirm it's you" seconds after signing in; the side panel
+  cuts the email; "Viewed before" repeats every saved book and the account
+  card lands mid-shelf after the first save; dialog buttons hidden by the
+  iPhone keyboard.
 
 **16. Simpler, friendlier account flow.** No password rules (no 15-character
 minimum, no conditions); no leaked-password check (Have I Been Pwned then
 leaves the privacy policy); a show/hide toggle on password fields; no
 "re-enter password"; a welcome when creating an account. Keep the limit on
 repeated sign-in attempts. The owner will send more detailed feedback.
+- From the run: a password manager's 14-character suggestion is refused, and
+  the refused password is then shown in plain text; creating the account takes
+  about 10 s with no progress shown (find where the time goes; the
+  leaked-password check is one candidate); "Email verified" and "Password
+  saved" both end at a Log in screen with an empty email (sign the reader in,
+  or fill the email); the New password page shows neither the account nor any
+  rule; a saved login keeps the old address after an email change.
 
 **17. Sign-in merges a browser's books into the account automatically.** No
 "Bring books over" screen: saved books are combined and deduplicated, nothing
 is deleted, Viewed before is combined newest first up to 50. The existing
 import (safe to repeat, with receipts) stays underneath. A failed merge keeps
 the browser's copy and retries quietly.
+- From the run: the "Bring books over" screen shifts about 120 px as a
+  loading bar comes and goes, so taps land on the wrong control; changes reach
+  the other device on focus, at most once a minute; logging out brings back
+  the browser's own guest shelf, untouched by the account (this answers open
+  question 4 as things stand).
 
 **18. Shelf page: library and settings.** A visible "Change library" button;
 the library's name opens its catalog in a new tab; the library's logo beside
 its name where we have one; a settings gear at the top right in place of the
 profile icon, with everything changeable inside settings.
+- From the run: a new reader is never asked to choose a library (the cold
+  shelf says "search in your library" and has no library line on phones); the
+  name is plain text everywhere; "Change" is three taps away from a book page;
+  between 640 and 1099 px it is behind an icon that reads as "home"; there is
+  no Help link in the app.
 
 **14. Optional name and email on problem reports and library requests.**
 Decided: stored with the report or request in the same database; deleted after
 90 days, always; no pre-fill from an account. The deletion runs inside the
 existing hourly job.
+- From the run: "Report a problem" is an empty box and Send, with no prompt,
+  no note of what is attached and none of the privacy page's advice.
 
 ### Phase 4: pages and policy (last, so they describe what ships)
 
@@ -263,6 +415,9 @@ canonical links and structured data point to the right pages.
 **12. Rewrite the About page.** Clean and current: one shelf screen, search,
 barcode scan, choosing a library, found / not found / couldn't check,
 suggestions, the optional account.
+- From the run: the help page describes only the phone layout ("the person
+  icon", "tap the barcode button"); the public pages promise three answers
+  while the app has four.
 
 **13. Privacy policy in a professional, standard form.** The key points are
 agreed. Decided: no "What changed" section (this is the original policy); the
@@ -313,6 +468,16 @@ or with a parent's or guardian's permission); the contact is
 15. **Deleted accounts:** signing in to a deleted account answers "This
     account is unavailable", which tells anyone the address had an account.
     Keep, or answer as for a wrong password? And should deletion send an email?
+16. **Test addresses in a public repository:** the account report and its
+    screenshots show plus-addresses of the owner's Gmail, and this repository
+    is public. Leave them, or blank them out (which means rewriting this
+    branch's history)?
+17. **Dark mode:** a phone set to dark gets the light "Daylight" theme. Should
+    the app follow the system setting on first visit?
+18. **"Couldn't confirm":** keep this fourth answer and explain it, or fold it
+    into "Couldn't check right now"?
+19. **Save from search results:** add a save control on each result, or keep
+    saving on the book page only?
 
 ## Decided against, for now
 
