@@ -1,0 +1,24 @@
+/* "Want a reply?" from docs/design/2026-11-production-ready RequestLibrary
+   and ReportProblem boards: an optional name and email in a quiet box.
+   Scoped to .one-shelf-frame like the other one-shelf styles. */
+.one-shelf-frame .contact-fields { box-sizing: border-box; padding: 12px; border: 1px solid var(--control-line); border-radius: 14px; background: var(--reader-fill); display: flex; flex-direction: column; gap: 12px; }
+.one-shelf-frame .contact-intro { margin: 0; font-size: .875rem; line-height: 1.45; color: var(--reader-secondary); }
+.one-shelf-frame .contact-intro strong { font-weight: 600; color: var(--reader-ink); }
+.one-shelf-frame .contact-field, .one-shelf-frame .form-field { display: flex; flex-direction: column; gap: 4px; }
+.one-shelf-frame .contact-field label, .one-shelf-frame .form-field label { font-size: .875rem; font-weight: 500; line-height: 1.4; color: var(--reader-secondary); }
+.one-shelf-frame .contact-field input, .one-shelf-frame .form-field input, .one-shelf-frame .form-field textarea { width: 100%; box-sizing: border-box; margin: 0; padding: 0 12px; border: 1px solid var(--field-line, #cfc6b8); border-radius: 12px;
+  background: var(--reader-surface); color: var(--reader-ink); font: inherit; font-size: 1rem; box-shadow: none; }
+.one-shelf-frame .contact-field input { height: 48px; min-height: 48px; }
+.one-shelf-frame .form-field input { height: 52px; min-height: 52px; }
+.one-shelf-frame .form-field textarea { padding: 10px 12px; line-height: 1.5; resize: none; }
+.one-shelf-frame .form-field textarea::placeholder { color: var(--reader-muted); opacity: 1; }
+.one-shelf-frame .contact-field input:focus-visible, .one-shelf-frame .form-field input:focus-visible, .one-shelf-frame .form-field textarea:focus-visible { outline: 2px solid var(--reader-accent); outline-offset: 0; border-color: var(--reader-accent); box-shadow: none; }
+.one-shelf-frame .contact-field input[aria-invalid='true'], .one-shelf-frame .form-field input[aria-invalid='true'] { border-color: var(--warn-ink, #8a5a00); }
+.one-shelf-frame .contact-error, .one-shelf-frame .form-field-error { font-size: .8125rem; font-weight: 600; color: var(--warn-ink, #8a5a00); }
+/* The small print under a form: what is sent, and the privacy policy. */
+.one-shelf-frame .form-footnote { margin: 0; font-size: .8125rem; line-height: 1.45; color: var(--reader-secondary); }
+.one-shelf-frame .form-footnote a { color: var(--reader-accent); font-weight: 600; }
+
+@media (forced-colors: active) {
+  .one-shelf-frame .contact-fields { border: 1px solid CanvasText; }
+}

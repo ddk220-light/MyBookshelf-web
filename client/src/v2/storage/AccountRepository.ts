@@ -204,7 +204,7 @@ export class AccountRepository {
       throw error;
     }
   }
-  selectLibrary(libraryId: string) {
+  selectLibrary(libraryId: string | null) {
     return this.mutate("/library", "PUT", {
       libraryId,
       settingsRevision: this.state().settingsRevision,

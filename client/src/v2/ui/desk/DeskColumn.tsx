@@ -6,7 +6,7 @@ import { useLibrary } from '../../context';
 import type { PublicLibrary } from '../../types';
 import { trapTab } from '../home/dialogFocus';
 import { CloseGlyph, LibraryGlyph, PersonIcon } from '../home/homeIcons';
-import { LibraryPicker } from '../library/LibraryPickerDialog';
+import { LIBRARY_FIELD, LibraryPicker } from '../library/LibraryPickerDialog';
 import { useReadingLight } from '../readingLightContext';
 
 const LIGHTS = [['daylight', 'Daylight'], ['lamplight', 'Lamplight'], ['ink', 'Ink']] as const;
@@ -97,8 +97,8 @@ function returnFocusWhenSettled(target: () => HTMLElement | null) {
 /**
  * The library picker in the left column (DeskLibrary board): in place of the
  * library, account and reading light sections, with the shelf still beside
- * it. Escape and × close it; focus starts on "Libraries near me" (or the
- * field, when an old link brought text) and goes back to `returnFocus`.
+ * it. Escape and × close it; focus starts in the field and goes back to
+ * `returnFocus`.
  */
 function ColumnPicker({ onClose, initialQuery, returnFocus }: { onClose: () => void; initialQuery?: string; returnFocus: () => HTMLElement | null }) {
   const titleId = useId(), listId = useId();
@@ -106,7 +106,7 @@ function ColumnPicker({ onClose, initialQuery, returnFocus }: { onClose: () => v
   const back = useRef(returnFocus);
   back.current = returnFocus;
   useLayoutEffect(() => {
-    ref.current?.querySelector<HTMLElement>(initialQuery ? '#library-place' : '.library-near')?.focus();
+    ref.current?.querySelector<HTMLElement>(LIBRARY_FIELD)?.focus();
     return () => returnFocusWhenSettled(() => back.current());
     // Focus moves in once, when the picker opens.
     // eslint-disable-next-line react-hooks/exhaustive-deps
