@@ -93,9 +93,13 @@ starts at "Start here on the Mac".
   [research/2026-11-production-ready](../research/2026-11-production-ready/README.md).
   The screenshots (about 730) are on the Mac in
   `~/mybookshelf-phones/run-2026-11-18/`, outside the repository.
-- **Still to do in item 24:** the account flows, with the owner typing the
-  password (create, verify, sign in and out, merge, change password and email,
-  delete); a real barcode scan; "Libraries near me" with location allowed.
+- **Item 24, account flows, done on both phones** with one test account,
+  deleted at the end: [accounts.md](../research/2026-11-production-ready/accounts.md).
+  Create, verify, sign in on the second phone, sync both ways, log out, change
+  email, reset password and delete all work; 17 findings, mostly for items 16,
+  17 and 19, and new item 33. A real barcode scan and "Libraries near me" were
+  also done on the iPhone. Not done: account flows on desktop, change password
+  from settings, the attempt limit.
 - **Item 20 has not started.** One junk library request (text "Zzqqxx") was
   sent to production by mistake during the run and needs deleting there.
 - The run added items 25 to 32 below and open question 13.
@@ -209,6 +213,10 @@ no help; when nothing is in the library the "Looking in…" line just vanishes.
 (suggestion data, then Open Library's); author names differ between screens;
 no ISBN, publisher or related books; the tab title is "Book details".
 
+**33. Reset link survives a reload.** The reset page drops its token from the
+address, so a reload or a restarted browser shows "Link expired" for a valid
+link, and "Send a new link" opens an empty form without sending anything.
+
 **29. WebKit refuses a stylesheet on every page** (Content-Security-Policy,
 style-src). No visible effect found; find what is refused.
 
@@ -300,6 +308,10 @@ or with a parent's or guardian's permission); the contact is
 14. **Suggestions:** the run saw other-language covers, near-duplicates of
     saved books and suggestions far from the shelf (research finding 18).
     Do the two "decided against" items stay as they are?
+
+15. **Deleted accounts:** signing in to a deleted account answers "This
+    account is unavailable", which tells anyone the address had an account.
+    Keep, or answer as for a wrong password? And should deletion send an email?
 
 ## Decided against, for now
 

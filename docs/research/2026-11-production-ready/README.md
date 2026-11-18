@@ -22,10 +22,12 @@ baseline; they are kept outside the repository, on the owner's Mac in
 `~/mybookshelf-phones/run-2026-11-18/` (`pixel/`, `iphone/`, `desktop/shots/`),
 about 195 MB. Screenshot names below refer to those folders.
 
-Not covered: everything that needs an account (create, verify, sign in, merge,
-change password and email, delete), a real barcode scan, "Libraries near me"
-with location granted, a Japanese library, Firefox, and real desktop Safari.
-The account part is still to do with the owner.
+The account flows were run afterwards on both phones: see
+[accounts.md](accounts.md) (create, verify, sign in on a second phone, sync,
+log out, change email, reset password, delete).
+
+Not covered: a Japanese library, Firefox, real desktop Safari, account flows
+on desktop, and a few account actions listed at the end of accounts.md.
 
 ## Things that went wrong during the run
 
