@@ -373,7 +373,7 @@ test('admin HTTP routes with a real account session: 404 until listed, then read
     ACCOUNTS_READING_DATABASE_URL: testRoleURL(accountURL, 'reading'), ACCOUNTS_JOB_SECRET: 'test-only-jobs-secret-longer-than-32-characters',
     RESEND_API_KEY: 'test-transport-not-called', ACCOUNTS_MAIL_FROM: 'accounts@example.test',
     ADMIN_ACCOUNT_IDS: '', CATALOG_ADMIN_DATABASE_URL: roleURL('admin') };
-  const accounts = createAccountMiddleware({ env, initialize: async config => { service = await createAccountService(config, { checkPassword: async () => {} }); return service; } });
+  const accounts = createAccountMiddleware({ env, initialize: async config => { service = await createAccountService(config); return service; } });
   const adminRoutes = createAdminMiddleware({ env, identify: accounts.identify });
   t.after(() => adminRoutes.close());
   const app = createApplication({ accounts, admin: adminRoutes });

@@ -1,4 +1,3 @@
-import { createHash } from 'node:crypto';
 import { AccountRequestError } from './security.js';
 const invalid = (message) => new AccountRequestError(422, 'INVALID_INPUT', message);
 export function strictObject(value, fields) {
@@ -16,33 +15,12 @@ export function emailAddress(value) {
   return value.trim().toLowerCase();
 }
 export function accountPassword(value) {
-  if (typeof value !== 'string' || [...value].length < 15 || [...value].length > 128 || /[\ud800-\udfff]/u.test(value)) throw invalid('Use between 15 and 128 characters for your password.');
+  // No password rules (owner's decision): any non-empty password up to the
+  // maximum. The sign-in limit (5 tries per address per 15 minutes) guards it.
+  if (typeof value !== 'string' || [...value].length < 1 || [...value].length > 128 || /[\ud800-\udfff]/u.test(value)) throw invalid('Use 128 characters or fewer for your password.');
   return value; // Never trim or rewrite a password.
 }
 export function accountToken(value) {
   if (typeof value !== 'string' || !value || value.length > 8192 || /[\s\u0000-\u001f]/.test(value)) throw invalid('This link is invalid. Request a new one.');
   return value;
-}
-export async function checkCompromisedPassword(password, fetcher = fetch) {
-  // Only the first five SHA-1 hex characters leave the server; never send the
-  // password or full hash. SHA-1 here is a range lookup, not password storage.
-  // Match the pinned library's native scrypt input normalization. Otherwise a
-  // compatibility-character spelling could bypass screening for the password
-  // that the native verifier actually accepts. The facade still passes the
-  // original password unchanged to the native hash/verify functions.
-  const digest = createHash('sha1').update(password.normalize('NFKC')).digest('hex').toUpperCase();
-  let response;
-  try { response = await fetcher('https://api.pwnedpasswords.com/range/' + digest.slice(0, 5), {
-    headers: { 'Add-Padding': 'true' }, signal: AbortSignal.timeout(4000),
-  }); } catch { throw new AccountRequestError(503, 'PASSWORD_CHECK_UNAVAILABLE', 'We could not check this password. Try again shortly.'); }
-  if (!response.ok) throw new AccountRequestError(503, 'PASSWORD_CHECK_UNAVAILABLE', 'We could not check this password. Try again shortly.');
-  const text = await response.text();
-  if (text.length > 2_000_000 || !text.trim()) throw new AccountRequestError(503, 'PASSWORD_CHECK_UNAVAILABLE', 'We could not check this password. Try again shortly.');
-  const lines = text.trim().split(/\r?\n/);
-  if (!lines.every((line) => /^[A-F0-9]{35}:\d+$/.test(line.trim()))) throw new AccountRequestError(503, 'PASSWORD_CHECK_UNAVAILABLE', 'We could not check this password. Try again shortly.');
-  const found = lines.some((line) => {
-    const [suffix, count] = line.trim().split(':');
-    return suffix === digest.slice(5) && Number(count) > 0;
-  });
-  if (found) throw invalid('This password has appeared in a known breach. Choose a different password.');
 }

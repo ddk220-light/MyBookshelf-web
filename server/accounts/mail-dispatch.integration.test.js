@@ -63,7 +63,7 @@ test(
           env,
           mail,
           initialize: async (config) => {
-            service = await createAccountService(config, { checkPassword: async () => {} });
+            service = await createAccountService(config);
             return service;
           },
         }),

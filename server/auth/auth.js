@@ -1,4 +1,5 @@
 import { betterAuth } from "better-auth";
+import { magicLink } from "better-auth/plugins/magic-link";
 import { accountMailSchema } from "./mail-schema.js";
 import { lifecycleSchema } from "./lifecycle-schema.js";
 import { configuredProviders } from "./providers.js";
@@ -20,6 +21,7 @@ export function authOptions({
   sendVerificationEmail,
   sendResetPassword,
   onExistingUserSignUp,
+  sendMagicLink,
   databaseHooks,
   getAuth,
 }) {
@@ -39,7 +41,10 @@ export function authOptions({
       requireEmailVerification: true,
       autoSignIn: false,
       password: { hash: passwordBudget.hash, verify: passwordBudget.verify },
-      minPasswordLength: 15,
+      // No password rules (owner's decision): 1 is the smallest the library
+      // accepts. Keep it equal to accounts/validation.js, or a refusal here
+      // shows the reader "Couldn't connect".
+      minPasswordLength: 1,
       maxPasswordLength: 256,
       resetPasswordTokenExpiresIn: 30 * 60,
       revokeSessionsOnPasswordReset: true,
@@ -48,14 +53,17 @@ export function authOptions({
     },
     emailVerification: {
       sendOnSignUp: true,
-      autoSignInAfterVerification: false,
+      // The verification link signs the reader in (single use, 24 hours).
+      autoSignInAfterVerification: true,
       expiresIn: 24 * 60 * 60,
       sendVerificationEmail: sendVerificationEmail ?? mailUnavailable,
     },
     session: {
       expiresIn: 7 * 86400,
       updateAge: 86400,
-      freshAge: 5 * 60,
+      // Within 10 minutes of signing in, changing the email or password does
+      // not ask for the password again (deleting the account always does).
+      freshAge: 10 * 60,
       cookieCache: { enabled: false },
     },
     account: {
@@ -89,6 +97,15 @@ export function authOptions({
       verifiedOidc,
       passwordRotation,
       deletionSchema,
+      // Log in with an emailed link: existing accounts only, single use,
+      // 15 minutes, only a hash of the token is stored. Reached only through
+      // the /api/account facade (auth-actions.js), never the raw routes.
+      magicLink({
+        storeToken: "hashed",
+        expiresIn: 15 * 60,
+        disableSignUp: true,
+        sendMagicLink: sendMagicLink ?? mailUnavailable,
+      }),
     ],
     // Never emit library errors containing request details, tokens or SQL values.
     logger: { disabled: true },

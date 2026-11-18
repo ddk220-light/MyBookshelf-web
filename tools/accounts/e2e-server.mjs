@@ -57,7 +57,6 @@ const accounts = createAccountMiddleware({
   env,
   initialize: async (config) => {
     service = await createAccountService(config, {
-      checkPassword: async () => {},
       ledger,
     });
     return service;

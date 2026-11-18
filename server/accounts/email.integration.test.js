@@ -68,7 +68,6 @@ test(
       secureCookies: false,
     };
     service = await createAccountService(config, {
-      checkPassword: async () => {},
     });
     const password = "synthetic long password " + randomUUID();
     const mail = async (email, kind) => {

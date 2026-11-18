@@ -15,7 +15,7 @@ import { accountCapabilities } from "./capabilities.js";
 import { createMailDispatcher } from "../jobs/mail-dispatch.js";
 
 const RESERVED_AUTH =
-  /^\/api\/auth\/(?:ok|get-session|sign-up\/email|sign-in\/(?:email|social)|sign-out|verify-email|send-verification-email|request-password-reset|reset-password|callback\/[^/]+|change-password|change-email|link-social|unlink-account|delete-user|list-sessions|revoke-session|revoke-sessions|revoke-other-sessions|update-user|set-password)(?:\/|$)/;
+  /^\/api\/auth\/(?:ok|get-session|sign-up\/email|sign-in\/(?:email|social|magic-link)|magic-link\/verify|sign-out|verify-email|send-verification-email|request-password-reset|reset-password|callback\/[^/]+|change-password|change-email|link-social|unlink-account|delete-user|list-sessions|revoke-session|revoke-sessions|revoke-other-sessions|update-user|set-password)(?:\/|$)/;
 const unavailable = (res, code = "ACCOUNT_UNAVAILABLE") =>
   res
     .status(503)
@@ -28,6 +28,30 @@ const unavailable = (res, code = "ACCOUNT_UNAVAILABLE") =>
             : "Accounts are temporarily unavailable. You can continue browsing.",
       },
     });
+
+// Server-Timing on every account response, so a cold and a warm sign-up can
+// be told apart in the browser's network panel: "start" is the time spent
+// starting the account service in this request (absent when it was already
+// running), "app" the whole request. Durations only, never values.
+function serverTiming(res) {
+  const started = performance.now(),
+    writeHead = res.writeHead;
+  res.writeHead = function (...args) {
+    if (!this.headersSent) {
+      const start = this.locals?.accountStartMs;
+      this.setHeader(
+        "Server-Timing",
+        [
+          typeof start === "number" ? `start;dur=${start.toFixed(1)}` : null,
+          `app;dur=${(performance.now() - started).toFixed(1)}`,
+        ]
+          .filter(Boolean)
+          .join(", "),
+      );
+    }
+    return writeHead.apply(this, args);
+  };
+}
 
 // Lazy initialization is scoped to the app, not to public catalog requests.
 export function createAccountMiddleware({
@@ -55,6 +79,9 @@ export function createAccountMiddleware({
     "/api/account/forgot-password",
     "/api/account/reset-password",
     "/api/account/reauth/password",
+    "/api/account/reauth/recent",
+    "/api/account/magic-link",
+    "/api/account/magic-link/verify",
     "/api/account/password",
     "/api/account/sessions/revoke",
     "/api/account/sign-out-all",
@@ -109,6 +136,7 @@ export function createAccountMiddleware({
       )
     )
       return next();
+    serverTiming(res);
     res.set({
       "Cache-Control": "private, no-store",
       "X-Robots-Tag": "noindex",
@@ -195,7 +223,10 @@ export function createAccountMiddleware({
       if (path === "/api/account/capabilities")
         return res.json(accountCapabilities(config));
       if (!service) {
+        const started = performance.now();
         try { await getService(config); } catch { return unavailable(res); }
+        // Starting the service in this request (a cold start): measured apart.
+        res.locals.accountStartMs = performance.now() - started;
       }
       if (path === "/api/auth/ok") return await service.handleAuth(req, res);
       const headers = requestHeaders(req);
@@ -263,7 +294,31 @@ export function createAccountMiddleware({
           .json(await service.actions.resend(req.body, requestIP(req, env)));
       if (path === "/api/account/verify-email")
         return res.json(
-          await service.actions.verify(req.body, requestIP(req, env)),
+          await service.actions.verify(
+            req.body,
+            requestIP(req, env),
+            headers,
+            setCookie,
+          ),
+        );
+      if (path === "/api/account/magic-link")
+        return res
+          .status(202)
+          .json(
+            await service.actions.requestMagicLink(
+              req.body,
+              requestIP(req, env),
+              headers,
+            ),
+          );
+      if (path === "/api/account/magic-link/verify")
+        return res.json(
+          await service.actions.magicLinkSignIn(
+            req.body,
+            requestIP(req, env),
+            headers,
+            setCookie,
+          ),
         );
       if(path==='/api/account/sign-in/social')return res.json(await service.actions.signInSocial(req.body,requestIP(req,env),headers,setCookie));
       if (path === "/api/account/sign-in")
@@ -281,7 +336,12 @@ export function createAccountMiddleware({
           .json(await service.actions.recover(req.body, requestIP(req, env)));
       if (path === "/api/account/reset-password")
         return res.json(
-          await service.actions.reset(req.body, requestIP(req, env)),
+          await service.actions.reset(
+            req.body,
+            requestIP(req, env),
+            headers,
+            setCookie,
+          ),
         );
       if (path === "/api/account/email-change/confirm")
         return res.json(
@@ -295,6 +355,7 @@ export function createAccountMiddleware({
       if (
         [
           "/api/account/reauth/password",
+          "/api/account/reauth/recent",
           "/api/account/password",
           "/api/account/sessions",
           "/api/account/sessions/revoke",
@@ -346,6 +407,10 @@ export function createAccountMiddleware({
               identity,
               headers,
             ),
+          );
+        if (path === "/api/account/reauth/recent")
+          return res.json(
+            await service.actions.confirmRecent(req.body, identity),
           );
         if (path === "/api/account/reauth/password")
           return res.json(
