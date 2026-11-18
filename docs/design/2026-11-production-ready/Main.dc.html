@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Shelf with library and answers in words</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#2f5340}a:hover{color:#1f3a2c}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; background: #faf7f1; color: #1f1a17; font-family: 'Work Sans', sans-serif; font-size: 16px; line-height: 1.5; padding: 8px 16px 16px; display: flex; flex-direction: column; overflow: hidden">
+
+<div style="height: 48px; display: flex; align-items: center; justify-content: space-between">
+<div style="font-family: Newsreader, serif; font-size: 26px; letter-spacing: -0.02em">MyBookshelf</div>
+<button aria-label="Settings" style="width: 44px; height: 44px; border: 0; background: transparent; color: #1f1a17; display: flex; align-items: center; justify-content: center; padding: 0">
+<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+</button>
+</div>
+
+<div style="margin-top: 4px; height: 52px; box-sizing: border-box; border: 1px solid #cfc6b8; border-radius: 14px; background: #ffffff; display: flex; align-items: center; padding: 0 4px 0 14px; gap: 10px">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b6259" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.500-3.500"></path></svg>
+<label for="q" style="position: absolute; left: -9999px">Search for a book</label>
+<input id="q" placeholder="Title, author or ISBN" style="flex-grow: 1; min-width: 0; border: 0; outline: 0; font: inherit; background: transparent; color: #1f1a17">
+<button aria-label="Scan a barcode" style="width: 44px; height: 44px; border: 0; border-left: 1px solid #e7e0d5; background: transparent; color: #2f5340; display: flex; align-items: center; justify-content: center; padding: 0">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 8V5h3M17 5h3v3M20 16v3h-3M7 19H4v-3M8 9v6M11 9v6M14 9v6M16.500 9v6"></path></svg>
+</button>
+</div>
+
+<div style="margin-top: 12px; box-sizing: border-box; border: 1px solid #d6cdbf; border-radius: 14px; background: #f3eee5; padding: 8px 6px 8px 10px; display: flex; align-items: center; gap: 10px">
+<span aria-hidden="true" style="flex-shrink: 0; width: 40px; height: 40px; box-sizing: border-box; border-radius: 8px; background: #ffffff; border: 1px solid #d6cdbf; display: flex; align-items: center; justify-content: center">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4a423b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16M6 20V9l6-4 6 4v11M10 20v-5h4v5"></path></svg>
+</span>
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column">
+<div style="font-size: 12px; color: #6b6259">My library</div>
+<a href="https://www.annacentenarylibrary.org/" style="min-height: 24px; display: inline-flex; align-items: center; gap: 4px; font-weight: 600; font-size: 15px; line-height: 1.25; text-decoration: none">
+Anna Centenary Library
+<svg role="img" aria-label="opens the library's catalog" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5h5v5M19 5l-8 8M11 7H6v11h11v-5"></path></svg>
+</a>
+</div>
+<a href="PickerResults.dc.html" style="flex-shrink: 0; min-height: 44px; padding: 0 12px; display: flex; align-items: center; border: 1px solid #2f5340; border-radius: 10px; font-weight: 600; font-size: 14px; text-decoration: none; background: #ffffff">Change</a>
+</div>
+
+<div style="margin-top: 16px; display: flex; align-items: baseline; justify-content: space-between">
+<h1 style="margin: 0; font-family: Newsreader, serif; font-weight: 500; font-size: 30px; letter-spacing: -0.025em">My shelf</h1>
+<div style="font-size: 14px; color: #6b6259">3 books</div>
+</div>
+
+<div style="margin: 10px -16px 0; padding: 14px 16px 0; background: #efe6d6; display: flex; gap: 14px; align-items: flex-end">
+<a href="BookFound.dc.html" aria-label="Wings of Fire by A. P. J. Abdul Kalam, in your library" style="width: 104px; height: 150px; box-sizing: border-box; padding: 10px 8px; background: #7a2e2e; color: #fbf3e4; border-radius: 1px 3px 3px 1px; display: flex; flex-direction: column; justify-content: center; text-align: center; font-family: Newsreader, serif; font-size: 15px; line-height: 1.2; text-decoration: none; box-shadow: 5px 4px 8px rgba(31,26,23,.3)">Wings of Fire</a>
+<a href="BookNotFound.dc.html" aria-label="Grandma's Bag of Stories by Sudha Murty, not in your library" style="width: 104px; height: 150px; box-sizing: border-box; padding: 10px 8px; background: #2c5a63; color: #fbf3e4; border-radius: 1px 3px 3px 1px; display: flex; flex-direction: column; justify-content: center; text-align: center; font-family: Newsreader, serif; font-size: 15px; line-height: 1.2; text-decoration: none; box-shadow: 5px 4px 8px rgba(31,26,23,.3)">Grandma’s Bag of Stories</a>
+<a href="BookCouldntCheck.dc.html" aria-label="Swami and Friends by R. K. Narayan, couldn't check" style="width: 104px; height: 150px; box-sizing: border-box; padding: 10px 8px; background: #6a5a2a; color: #fbf3e4; border-radius: 1px 3px 3px 1px; display: flex; flex-direction: column; justify-content: center; text-align: center; font-family: Newsreader, serif; font-size: 15px; line-height: 1.2; text-decoration: none; box-shadow: 5px 4px 8px rgba(31,26,23,.3)">Swami and Friends</a>
+</div>
+<div style="margin: 0 -16px; height: 12px; background: #b98a5a; box-shadow: 0 4px 6px rgba(31,26,23,.25)"></div>
+<div style="margin-top: 8px; display: flex; gap: 14px; font-size: 12px; line-height: 1.3">
+<div style="width: 104px; display: flex; gap: 4px; color: #1f3a2c; font-weight: 600">
+<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.600" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px"><path d="M5 12.500l4.500 4.500L19 7.500"></path></svg>
+In your library
+</div>
+<div style="width: 104px; color: #5a5149">Not in your library</div>
+<div style="width: 104px; color: #5a5149">Couldn’t check</div>
+</div>
+
+<div style="margin: 18px -16px 0; padding: 14px 16px 0; background: #efe6d6; display: flex; gap: 14px; align-items: flex-end">
+<a href="BookChecking.dc.html" aria-label="Ignited Minds by A. P. J. Abdul Kalam, suggested" style="width: 104px; height: 150px; box-sizing: border-box; padding: 10px 8px; background: #a34a2a; color: #fbf3e4; border-radius: 1px 3px 3px 1px; display: flex; flex-direction: column; justify-content: center; text-align: center; font-family: Newsreader, serif; font-size: 15px; line-height: 1.2; text-decoration: none; box-shadow: 5px 4px 8px rgba(31,26,23,.3)">Ignited Minds</a>
+<a href="BookChecking.dc.html" aria-label="Malgudi Days by R. K. Narayan, suggested" style="width: 104px; height: 150px; box-sizing: border-box; padding: 10px 8px; background: #3d4f7a; color: #fbf3e4; border-radius: 1px 3px 3px 1px; display: flex; flex-direction: column; justify-content: center; text-align: center; font-family: Newsreader, serif; font-size: 15px; line-height: 1.2; text-decoration: none; box-shadow: 5px 4px 8px rgba(31,26,23,.3)">Malgudi Days</a>
+</div>
+<div style="margin: 0 -16px; height: 12px; background: #b98a5a; box-shadow: 0 4px 6px rgba(31,26,23,.25)"></div>
+<div style="margin-top: 8px; display: flex; gap: 14px; font-size: 12px; line-height: 1.3; color: #5a5149">
+<div style="width: 104px">Suggested</div>
+<div style="width: 104px">Suggested</div>
+</div>
+
+<p style="margin: 14px 0 0; font-size: 13px; line-height: 1.45; color: #5a5149">Answers are for Anna Centenary Library. Open a book to check it again or to see it in the library’s catalog.</p>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

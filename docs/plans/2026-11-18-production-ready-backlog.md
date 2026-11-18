@@ -105,6 +105,18 @@ starts at "Start here on the Mac".
   sent to production by mistake during the run and needs deleting there.
 - The run added items 25 to 32 below and open question 13.
 
+## Plan written on 19 November
+
+Root causes, the three releases and the screens are in
+[the design and implementation plan](2026-11-production-ready-design.md).
+Two corrections to this file from that work:
+- The database noted as production **is** the right one. Production cannot
+  reach it because its three settings hold a mistyped address (`-pooler`
+  twice). Migration 002 is in the right place, and the junk library request
+  from the run was never stored.
+- The 90-day deletion of optional contact details fits the catalog store's
+  daily job; the hourly job only touches the account database.
+
 ## What the run shows: the big things
 
 Read from the three device reports, the account report, the timings and the
