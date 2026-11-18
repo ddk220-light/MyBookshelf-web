@@ -18,11 +18,13 @@ DO $$ BEGIN
     -- Upsert needs SELECT on the conflict target; the runtime never lists requests.
     GRANT SELECT (request_key, request_count), INSERT, UPDATE (request_count, last_requested_on, updated_at) ON library_requests TO catalog_runtime;
     GRANT INSERT ON problem_reports TO catalog_runtime;
+    -- Optional contact details for a request (migration 003); never read back.
+    GRANT INSERT ON library_request_contacts TO catalog_runtime;
     GRANT SELECT, INSERT, UPDATE ON submission_buckets TO catalog_runtime;
     GRANT SELECT, INSERT, UPDATE ON host_request_windows, host_request_slots TO catalog_runtime;
     GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO catalog_runtime;
     REVOKE ALL ON usage_daily_totals, catalog_schema_migrations FROM catalog_runtime;
-    REVOKE SELECT ON usage_events, problem_reports FROM catalog_runtime;
+    REVOKE SELECT ON usage_events, problem_reports, library_request_contacts FROM catalog_runtime;
   END IF;
 
   IF EXISTS (SELECT FROM pg_roles WHERE rolname = 'catalog_worker') THEN
@@ -31,7 +33,9 @@ DO $$ BEGIN
     -- filtered columns; the rollup reads usage_events and the flag refresh
     -- updates library_health.
     GRANT SELECT, DELETE ON holdings_answers, problem_reports, library_requests, submission_buckets,
-      library_check_events, usage_events, host_request_windows, host_request_slots TO catalog_worker;
+      library_check_events, usage_events, host_request_windows, host_request_slots, library_request_contacts TO catalog_worker;
+    -- Optional contact details are removed after 90 days (migration 003).
+    GRANT UPDATE (contact_name, contact_email) ON problem_reports TO catalog_worker;
     GRANT SELECT, INSERT, UPDATE ON usage_daily_totals TO catalog_worker;
     GRANT SELECT, UPDATE (checks_7d, failures_7d, median_ms_7d, flagged_at, flag_reason, updated_at) ON library_health TO catalog_worker;
     REVOKE ALL ON catalog_schema_migrations FROM catalog_worker;

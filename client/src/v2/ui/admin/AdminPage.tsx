@@ -243,12 +243,12 @@ function RequestsTab({ enabled, csrf, onChange }: { enabled: boolean; csrf?: str
   const groups = view.value?.groups || [];
   return <>
     <ErrorLine error={view.error} />
-    <p className="admin-note">Requests that share a place or library name, allowing for one typing slip, are shown together. Each keeps its own count and status.</p>
+    <p className="admin-note">Requests that share a place or library name, allowing for one typing slip, are shown together. Each keeps its own count and status. A name or email left for a reply is deleted after 90 days.</p>
     {view.loading && !view.value ? <p role="status">Loading…</p> : groups.length ? groups.map(group => <section className="admin-card" key={group.requests[0].requestKey} aria-label={group.label}>
       <h3><span className="admin-text">{group.label}</span> <span className="admin-muted">— {group.totalCount} {group.totalCount === 1 ? 'request' : 'requests'}, last {group.lastRequestedOn}</span></h3>
       {group.words.length > 0 && <p className="admin-muted">Shared words: {group.words.join(', ')}</p>}
       <div className="admin-scroll"><table className="admin-table">
-        <thead><tr><th scope="col">Typed text</th><th scope="col">Count</th><th scope="col">First</th><th scope="col">Last</th><th scope="col">Status and note</th></tr></thead>
+        <thead><tr><th scope="col">Typed text</th><th scope="col">Count</th><th scope="col">First</th><th scope="col">Last</th><th scope="col">Reply to</th><th scope="col">Status and note</th></tr></thead>
         <tbody>{group.requests.map(request => <RequestRow key={request.requestKey} request={request} csrf={csrf} onSaved={() => { void view.reload(); onChange(); }} />)}</tbody>
       </table></div>
     </section>) : <p>No library requests yet.</p>}
@@ -268,6 +268,8 @@ function RequestRow({ request, csrf, onSaved }: { request: LibraryRequest; csrf?
   };
   return <tr>
     <td className="admin-text">{request.displayText}</td><td>{request.requestCount}</td><td>{request.firstRequestedOn}</td><td>{request.lastRequestedOn}</td>
+    <td>{request.contacts?.length ? <ul className="admin-contacts">{request.contacts.map((contact, index) => <li key={index}>
+      <span className="admin-text">{contactLine(contact.name, contact.email)}</span> <span className="admin-muted">{formatTime(contact.createdAt)}</span></li>)}</ul> : '—'}</td>
     <td><div className="admin-row">
       <label><span className="admin-visually-hidden">Status for {request.displayText}</span>
         <select value={status} onChange={event => setStatus(event.target.value as RequestStatus)}>{REQUEST_STATUSES.map(value => <option key={value} value={value}>{value}</option>)}</select></label>
@@ -276,6 +278,11 @@ function RequestRow({ request, csrf, onSaved }: { request: LibraryRequest; csrf?
       <button type="button" disabled={!changed || saving} onClick={() => void save()}>Save</button>
     </div><ErrorLine error={error} /></td>
   </tr>;
+}
+
+// The optional name and email a reader left for a reply (kept 90 days).
+function contactLine(name?: string | null, email?: string | null): string {
+  return [name, email].filter(Boolean).join(', ');
 }
 
 // ---- Problem reports ---------------------------------------------------
@@ -307,6 +314,7 @@ function Report({ report, csrf, onSaved }: { report: ProblemReport; csrf?: strin
       <div><dt>Library</dt><dd><LibraryName id={report.libraryId} name={report.libraryName} /></dd></div>
       <div><dt>Book</dt><dd>{report.bookKey ? <Link to={`/app/books/${encodeURIComponent(report.bookKey)}`}>{report.bookKey}</Link> : '—'}</dd></div>
       <div><dt>App version</dt><dd>{report.appVersion || '—'}</dd></div>
+      <div><dt>Reply to</dt><dd className="admin-text">{report.contactName || report.contactEmail ? contactLine(report.contactName, report.contactEmail) : '—'}</dd></div>
     </dl>
     <div className="admin-row">
       <label>Status <select value={report.status} disabled={saving} onChange={event => void change(event.target.value as ReportStatus)}>
