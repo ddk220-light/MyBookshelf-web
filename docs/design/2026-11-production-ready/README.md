@@ -47,14 +47,15 @@ desktop 1440 x 900. Colours, type and spacing are the app's own.
 | `DeleteAccount` | What is deleted (including the copy kept in this browser), what stays for a short time, password, "Delete my account" and "Keep my account" | (new) |
 | `ReportProblem` | A prompt, what is sent with the message, optional name and email kept 90 days | `ReportProblem` |
 
-## 4. Desktop
+## 4. Desktop and the About page
 
 | Board | What it shows | Replaces |
 |---|---|---|
 | `DeskShelf` | Left column with the library link, "Change library", account, a Settings entry and Help; answers in words under the covers | `DeskShelf` |
+| `About` | The static About page that takes over today's landing page: the headline, "Open my reading shelf", an example shelf with an answer in words, How it works, Built to be trusted, featured libraries, who makes it, corrections | (new; the public landing and About pages) |
 
 ## Not drawn
 
 Change email and Change password (the form style of `DeleteAccount`), the rail
-layout between 640 and 1099 px (a gear replaces the three icons), the public
-About page and the privacy policy (text, not layout).
+layout between 640 and 1099 px (a gear replaces the three icons), and the
+privacy policy (text, not layout).

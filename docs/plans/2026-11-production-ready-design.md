@@ -32,11 +32,19 @@ What one deployment means in practice:
 - Production keeps storing no library answers until that deployment, because
   the corrected database settings (A1) only take effect when the site is next
   deployed.
-- The change is large, so it needs one full rehearsal before it goes live: the
-  whole test suite, and a run of the finished branch on the staging address
-  with the two phones. Staging is a preview, not a production deployment; it
-  is used once, with the owner's go-ahead.
-- The server-region measurement (A2, step 4) is done in that same rehearsal.
+- There is no staging step (owner's decision): the finished branch goes
+  straight to `main`. The change is large, so everything that can be checked
+  without a deployment is checked first: the whole test suite, and the
+  finished branch run on the owner's Mac and opened from both phones over
+  Wi-Fi.
+- What a local run cannot show is found on the live site: the production
+  database connection, real library answers from the server's region, account
+  email, and the hosting cache. The checks in section 8 run straight after the
+  deployment, and the previous version stays one click away in Vercel
+  (Instant Rollback) if something is badly wrong.
+- The server-region measurement (A2, step 4) is made on the live site after
+  the deployment. Moving the region, if it proves necessary, would be a
+  second deployment.
 
 Rules for all of it (from CLAUDE.md and the backlog): answers are found / not
 found / couldn't check only; a failed check is never shown as absence;
@@ -123,8 +131,8 @@ handful of live checks.
    page no longer cancels a check that has started. `check.js`,
    `server/services/catalog-lookup/index.js`, `server/public-v2/holdings.js`.
    Medium. Needs A1.
-4. **Then decide the region.** Measure the same two checks from an Indian
-   region on a preview. Moving only the library-check routes needs their own
+4. **Then decide the region.** After the deployment, measure the same two
+   checks on the live site. Moving only the library-check routes needs their own
    function entry point; moving everything puts the server far from its
    databases (the host gate allows 300 ms per database call,
    `server/catalog-store/hostGate.js:82`). Recommendation: do steps 1 to 3
@@ -446,12 +454,15 @@ Still open (each goes ahead as recommended unless the owner says otherwise):
 
 | # | Question | Recommendation |
 |---|---|---|
-| 1 | One rehearsal on the staging address before the single deployment | Yes |
-| 2 | A "couldn't confirm" answer shows "Couldn't check right now" with no "Try again" | Yes |
-| 3 | Server region: measure in the rehearsal, move only if e-Granthalaya still fails | Yes |
-| 4 | Free books and papers stay in the browser for now | Yes; adding them to accounts is a separate piece of work |
-| 5 | CLAUDE.md wording for the catalog store, once it can hold optional contact details | Proposed text comes with the pull request |
-| 6 | A typed ISBN appears in a book's address (it is the book's identity) | Keep; say so in CLAUDE.md |
+| 1 | A "couldn't confirm" answer shows "Couldn't check right now" with no "Try again" | Yes |
+| 2 | Server region: measure on the live site after the deployment; move only if e-Granthalaya still fails (a second deployment) | Yes |
+| 3 | Free books and papers stay in the browser for now | Yes; adding them to accounts is a separate piece of work |
+| 4 | CLAUDE.md wording for the catalog store, once it can hold optional contact details | Proposed text comes with the pull request |
+| 5 | A typed ISBN appears in a book's address (it is the book's identity) | Keep; say so in CLAUDE.md |
+| 6 | The contact shown on the About page | `privacy@mybookshelf.cloud` and LinkedIn, in place of the personal address |
+
+Also answered on 19 November: no staging step; the finished branch goes
+straight to `main`.
 
 ## 8. How the release is checked
 
@@ -459,13 +470,17 @@ After each stage: type checking, client and server tests (with the test
 databases), the tools and SEO tests, the build, and the browser journeys in
 Chromium, phone-sized Chromium and WebKit.
 
-Before the deployment: the rehearsal on the staging address (section 1), with
-the "done when" checks of each package and the short phone pass from the run
-(shelf, a search, a book at each of the three known libraries, the picker with
-the keyboard open, creating an account and logging in by link) on both phones.
+Before the deployment, with nothing deployed: the finished branch runs on the
+owner's Mac and both phones open it over Wi-Fi, for the short phone pass from
+the run (shelf, a search, the picker with the keyboard open, a book page in
+each state, creating an account and logging in by link against the test
+databases). No staging step.
 
-After the deployment: the same checks on the live site, and read-only counts
-showing that answers, searches, failures, requests and reports are stored.
+Straight after the deployment, on the live site: the "done when" checks of
+each package; a book at each of the three known libraries on both phones;
+read-only counts showing that answers, searches, failures, requests and
+reports are stored; `/api/health` reporting the store as `ok`. If a check
+fails badly, roll back in Vercel first and fix afterwards.
 
 ## 9. Handing over
 
