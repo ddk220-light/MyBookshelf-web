@@ -20,7 +20,7 @@ test('the default build loads no analytics and sets no cookie', async ({ page, c
   test.skip(process.env.ANALYTICS_E2E === 'true', 'Default build only');
   const requests = [];
   page.on('request', request => { if (request.url().includes('_vercel/insights') || request.url().includes('/insights.js')) requests.push(request.url()); });
-  for (const path of ['/', '/about', '/app/shelf']) await page.goto(path);
+  for (const path of ['/', '/about', '/app/books/v1%3Aisbn%3A9780140328721']) await page.goto(path);
   await page.waitForLoadState('networkidle');
   expect(requests).toEqual([]);
   expect(await context.cookies()).toEqual([]);
@@ -30,8 +30,8 @@ test('with analytics on, page views are scrubbed, the admin view is never report
   test.skip(process.env.ANALYTICS_E2E !== 'true', 'Requires a VITE_ANALYTICS_ENABLED=true build');
   await context.route('**/_vercel/insights/script.js', route => route.fulfill({ contentType: 'text/javascript', body: STAND_IN }));
   const reported = async () => page.evaluate(() => window.__reported);
-  await page.goto('/app/shelf?q=wings+of+fire#x');
-  await expect.poll(reported).toEqual(['http://127.0.0.1:4173/app/shelf']);
+  await page.goto('/?q=wings+of+fire#x');
+  await expect.poll(reported).toEqual(['http://127.0.0.1:4173/']);
   await page.goto('/app/books/v1%3Aisbn%3A9780140328721?from=search');
   await expect.poll(reported).toEqual(['http://127.0.0.1:4173/app/books/[book]']);
   await page.goto('/app/account/reset-password?token=synthetic');

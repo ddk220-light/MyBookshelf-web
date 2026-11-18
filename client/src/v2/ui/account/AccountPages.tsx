@@ -270,7 +270,7 @@ export function ImportPage() {
       {done ? (
         <>
           <p role="status">{done}</p>
-          <Link className="button-link" to="/app/shelf" replace>
+          <Link className="button-link" to="/" replace>
             Go to your shelf
           </Link>
         </>
@@ -337,7 +337,7 @@ export function ImportPage() {
             type="button"
             className="button-quiet"
             disabled={busy}
-            onClick={() => navigate("/app/shelf", { replace: true })}
+            onClick={() => navigate("/", { replace: true })}
           >
             {library.pendingImportId === id
               ? "Check later"
@@ -527,7 +527,7 @@ export function ProviderReturnPage() {
         className="text-button"
         onClick={() => {
           account.continueGuest();
-          navigate("/app/shelf", { replace: true, state: null });
+          navigate("/", { replace: true, state: null });
         }}
       >
         Continue using this browser

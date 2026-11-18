@@ -25,7 +25,7 @@ async function openPanel(page) {
 
 /** Create account from the side panel, verify through the synthetic outbox, then log in. */
 async function signUpAndLogIn(page, request, { email, password }) {
-  await page.goto("/app/shelf");
+  await page.goto("/");
   await (await openPanel(page)).getByRole("link", { name: "Create account" }).click();
   await expect(page.getByRole("heading", { name: "Create account" })).toBeVisible();
   await page.getByLabel("Email", { exact: true }).fill(email);
@@ -66,7 +66,7 @@ test.describe("account browser → real API → isolated Postgres", () => {
     await page.route("**/api/account/session", unavailable);
     let posts = 0;
     page.on("request", (req) => { if (req.method() === "POST" && new URL(req.url()).pathname.startsWith("/api/account/")) posts++; });
-    await page.goto("/app/shelf");
+    await page.goto("/");
     await expect(page.getByRole("link", { name: "Synthetic guest book 1 by Synthetic author" })).toBeVisible();
     const panel = await openPanel(page);
     await expect(panel.getByRole("link", { name: "Create account" })).toHaveCount(0);
@@ -90,7 +90,7 @@ test.describe("account browser → real API → isolated Postgres", () => {
       page.on("request", (req) => { if (req.method() === "POST" && new URL(req.url()).pathname === "/api/account/sign-up") signUps++; });
       try {
         await signUpAndLogIn(page, request, reader);
-        await expect(page).toHaveURL(/\/app\/shelf$/);
+        await expect(page).toHaveURL(/\/\/[^/]+\/$/);
         await expect(page.locator("html")).toHaveAttribute("data-light", light);
         expect(await sessionStatus(page)).toBe("authenticated");
         expect(signUps).toBe(1);
@@ -126,10 +126,10 @@ test.describe("account browser → real API → isolated Postgres", () => {
     try {
       // Create and verify the account on the second device, so the first one logs in fresh with guest data.
       await signUpAndLogIn(other, request, reader);
-      await expect(other).toHaveURL(/\/app\/shelf$/);
+      await expect(other).toHaveURL(/\/\/[^/]+\/$/);
       await page.addInitScript(([key, value]) => { if (!sessionStorage.getItem("seeded")) { localStorage.setItem(key, JSON.stringify(value)); sessionStorage.setItem("seeded", "1"); } },
         [GUEST_KEY, { version: 2, selectedLibraryId: null, recentBooks: [guestBook(3)], savedBooks: [guestBook(1), guestBook(2)], savedContent: [] }]);
-      await page.goto("/app/shelf");
+      await page.goto("/");
       await (await openPanel(page)).getByRole("link", { name: "Log in" }).click();
       await logIn(page, reader);
       await expect(page).toHaveURL(/\/app\/account\/import/);
@@ -169,7 +169,7 @@ test.describe("account browser → real API → isolated Postgres", () => {
         window.dispatchEvent(new Event("focus"));
       });
       await expect.poll(() => sessionStatus(other)).toBe("guest");
-      await other.goto("/app/shelf");
+      await other.goto("/");
       await expect(other.getByRole("link", { name: "Synthetic guest book 1 by Synthetic author" })).toHaveCount(0);
     } finally {
       await request.post("/__accounts_test__/cleanup", { data: { email: reader.email } });
@@ -181,7 +181,7 @@ test.describe("account browser → real API → isolated Postgres", () => {
     const reader = synthetic();
     try {
       await signUpAndLogIn(page, request, reader);
-      await expect(page).toHaveURL(/\/app\/shelf$/);
+      await expect(page).toHaveURL(/\/\/[^/]+\/$/);
       const save = await page.request.put("/api/account/books", {
         headers: { "X-Account-CSRF": (await (await page.request.get("/api/account/session")).json()).csrfToken, Origin: new URL(page.url()).origin },
         data: { book: { bookKey: guestBook(4).bookKey, isbn13: guestBook(4).isbn13, title: guestBook(4).title, authors: guestBook(4).authors },
@@ -268,7 +268,7 @@ test("email change requires fresh confirmation, supports cancellation and update
     await page.getByLabel("Email", { exact: true }).fill(email);
     await page.getByLabel("Password", { exact: true }).fill(password);
     await page.getByRole("button", { name: "Log in", exact: true }).click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     const requestChange = async () => {
       await page
         .getByRole("button", { name: "Change email", exact: true })
@@ -402,7 +402,7 @@ test("switching accounts rejects an older view and never renders the previous pr
       await page.getByLabel("Email", { exact: true }).fill(email);
       await page.getByLabel("Password", { exact: true }).fill(password);
       await page.getByRole("button", { name: "Log in", exact: true }).click();
-      await expect(page).toHaveURL(/\/app\/shelf$/);
+      await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     };
     await login(emails[0]);
     const a = await (await page.request.get("/api/account/session")).json(),

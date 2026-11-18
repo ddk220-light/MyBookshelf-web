@@ -99,7 +99,7 @@ export function DeskLayout({ mode, notices, children }: { mode: LayoutMode; noti
   // The results a page was opened from stay beside it: a book carries them in
   // its navigation state; any other page takes the shelf's last ones.
   const shelfSearch = useRef<string | undefined>(undefined);
-  if (pathname === '/app/shelf') shelfSearch.current = routeState?.search?.candidateId;
+  if (pathname === '/') shelfSearch.current = routeState?.search?.candidateId;
   const fromResults = bookKey ? (routeState?.searchState?.shelf ? routeState.searchState.candidateId : undefined) : shelfSearch.current;
   const behind = slotOpen ? { candidateId: fromResults && candidatesFor(fromResults) ? fromResults : undefined } : null;
 
@@ -207,7 +207,7 @@ export function DeskLayout({ mode, notices, children }: { mode: LayoutMode; noti
   const shelfInPlace = useCallback((state: unknown) => {
     const results = (state as BookNavigation | null)?.searchState;
     const candidate = results?.shelf ? results.candidateId : undefined;
-    navigate('/app/shelf', { replace: true, state: candidate && candidatesFor(candidate) ? { search: { candidateId: candidate } } : null });
+    navigate('/', { replace: true, state: candidate && candidatesFor(candidate) ? { search: { candidateId: candidate } } : null });
   }, [navigate]);
   const closeAfterBack = useRef<string | null>(null);
   const close = useCallback(() => {
@@ -272,7 +272,7 @@ export function DeskLayout({ mode, notices, children }: { mode: LayoutMode; noti
   useLayoutEffect(() => { if (picker.open) pickerOpener.current = pressed.current; }, [picker.open]);
   const openPicker = useCallback(() => {
     // Beside an account form there is no shelf to choose for: the shelf opens with the picker.
-    if (entry) navigate('/app/shelf', { state: { overlay: 'library' } });
+    if (entry) navigate('/', { state: { overlay: 'library' } });
     else picker.show();
   }, [entry, navigate, picker.show]);
   const pickerReturn = useCallback(() => {

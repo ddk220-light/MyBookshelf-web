@@ -320,11 +320,11 @@ export function DeletionDonePage() {
   if (receipt?.busy && receipt.status === 'unknown') return <AccountForm title="Deleting…" busy><p role="status" className="visually-hidden">Deleting your account</p></AccountForm>;
   const confirmed = receipt && ['accepted', 'pending', 'cleaned'].includes(receipt.status);
   if (confirmed) return <AccountForm title="Account deleted">
-    <Link className="home-button" to="/app/shelf" replace>Back to my shelf</Link>
+    <Link className="home-button" to="/" replace>Back to my shelf</Link>
   </AccountForm>;
   return <AccountForm title="Couldn’t confirm">
     <FormAlert offline={Boolean(receipt)}>{receipt ? 'Deletion not confirmed' : 'Nothing to show here'}</FormAlert>
     {receipt && <button type="button" className="home-button" disabled={receipt.busy} onClick={() => { void check(); }}>{receipt.busy ? 'Checking…' : 'Check again'}</button>}
-    <Link className="home-button home-button-outline" to="/app/shelf" replace>Back to my shelf</Link>
+    <Link className="home-button home-button-outline" to="/" replace>Back to my shelf</Link>
   </AccountForm>;
 }

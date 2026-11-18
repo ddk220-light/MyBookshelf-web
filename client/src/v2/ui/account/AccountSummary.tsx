@@ -30,7 +30,7 @@ export function AccountSummary() {
               className="text-button"
               onClick={() => {
                 void signOut();
-                navigate("/app/shelf", { replace: true, state: null });
+                navigate("/", { replace: true, state: null });
               }}
             >
               Sign out

@@ -73,7 +73,7 @@ test('a library that fails to load stays chosen; one that is gone is cleared wit
     }
   }, { key, library: LINKED_LIBRARY });
   const failed = page.waitForResponse(response => response.url().endsWith('/libraries/resolve'));
-  await page.goto('/app/shelf');
+  await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
   await failed;
   expect((await shelf(page)).selectedLibraryId).toBe(LINKED_LIBRARY.id);
@@ -98,7 +98,7 @@ test('restored storage access never overwrites a shelf that could not be read', 
       return set.call(this, name, value);
     };
   }, { key, book: BOOK });
-  await page.goto('/app/shelf');
+  await page.goto('/');
   await expect(page.getByText('Your changes can’t be saved in this browser. They may be lost when you leave.')).toBeVisible();
   await page.evaluate(() => { window.allowShelfStorage = true; });
   const original = await page.evaluate(key => localStorage.getItem(key), key);
@@ -115,7 +115,7 @@ test('restored storage access never overwrites a shelf that could not be read', 
 test('a book saved in one tab appears on the shelf open in another', async ({ context }) => {
   const first = await context.newPage(), second = await context.newPage();
   for (const page of [first, second]) await fixture(page);
-  await second.goto('/app/shelf');
+  await second.goto('/');
   await expect(second.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
   await first.goto(bookPath);
   await first.getByRole('button', { name: 'Add to my shelf' }).click();

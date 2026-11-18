@@ -36,7 +36,7 @@ import { useShelfHoldings } from './useShelfHoldings';
 import './home.css';
 
 /**
- * History state on /app/shelf. Overlays and the search each add an entry so
+ * History state on the shelf (/). Overlays and the search each add an entry so
  * Back closes them. `search.candidateId` is the opaque key of results held in
  * same-tab memory (searchMemory); the search text itself is never here.
  */

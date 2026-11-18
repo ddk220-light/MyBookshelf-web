@@ -3,11 +3,12 @@ import termsText from '../../../../../docs/policy/terms.md?raw';
 import aboutText from '../../../../../docs/policy/about.md?raw';
 import { PanelPage } from './PanelPage';
 import { PolicyBlocks, inline, parsePolicy, policySections } from './policyText';
-import { appVersion, policyEffectiveDate } from './buildInfo';
+import { policyEffectiveDate } from './buildInfo';
 
-// Privacy, Terms and About (plan section 10.1), from the approved drafts in
-// docs/policy. The texts are rendered as written; only the effective date and
-// version placeholders are filled, and only when the build supplies them.
+// Privacy, Terms and About (plan section 10.1), from the approved texts in
+// docs/policy. The texts are rendered as written; only the effective date
+// placeholder is filled, and only when the build supplies it. The About text
+// is also the public /about page's (tools/seo/build-pages.mjs, plan C2).
 
 function PolicyDocument({ text, name }: { text: string; name: string }) {
   const { title, intro, sections } = policySections(parsePolicy(text, { '[EFFECTIVE DATE]': policyEffectiveDate() }));
@@ -31,13 +32,13 @@ export function TermsPage() {
   return <PolicyDocument text={termsText} name="Terms" />;
 }
 
-/** About board: the name, the About text, then Version and Contact rows. */
+/** About board: the name, the About text, then the Contact row. */
 export function AboutPage() {
-  const blocks = parsePolicy(aboutText, { '[VERSION]': appVersion() });
+  const blocks = parsePolicy(aboutText);
   const facts: Array<[string, string]> = [];
   const body = blocks.filter(block => {
     if (block.type !== 'p') return block.type !== 'h1';
-    const fact = /^(Version|Contact):\s*(.+)$/.exec(block.text);
+    const fact = /^(Contact):\s*(.+)$/.exec(block.text);
     if (fact) facts.push([fact[1], fact[2]]);
     return !fact;
   });

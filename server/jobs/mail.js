@@ -229,7 +229,7 @@ export function renderAccountMail(payload) {
       "Your account was deleted",
       "Access has ended and account cleanup is complete. Independently retained device copies and downloads are unchanged.",
       "Visit MyBookshelf",
-      "/app/shelf",
+      "/",
       "No action is needed.",
     ],
   };

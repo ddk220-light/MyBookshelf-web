@@ -6,6 +6,8 @@ const O = 'https://mybookshelf.cloud';
 
 describe('analytics URL scrubbing', () => {
   it('drops query strings and fragments everywhere', () => {
+    expect(scrubAnalyticsUrl(`${O}/?q=wings+of+fire#top`)).toBe(`${O}/`);
+    // The shelf's old address still redirects, so it is still reported by name.
     expect(scrubAnalyticsUrl(`${O}/app/shelf?q=wings+of+fire#top`)).toBe(`${O}/app/shelf`);
     expect(scrubAnalyticsUrl(`${O}/?q=anna+library`)).toBe(`${O}/`);
     expect(scrubAnalyticsUrl(`${O}/libraries/anna-centenary-library?ref=x#map`)).toBe(`${O}/libraries/anna-centenary-library`);

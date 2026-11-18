@@ -25,7 +25,7 @@ export function ContentDetail({ contentKey, returnTo = '/app/search?scope=free' 
       .catch(()=>{if(!controller.signal.aborted)setError('We couldn’t check this item. That does not mean there is no free copy.');});
     return()=>controller.abort();
   },[contentKey,retry]);
-  const back=returnTo.startsWith('/app/search')||returnTo.startsWith('/app/books/')||returnTo==='/app/shelf'?returnTo:'/app/search?scope=free';
+  const back=returnTo.startsWith('/app/search')||returnTo.startsWith('/app/books/')||returnTo==='/'?returnTo:'/app/search?scope=free';
   if(error)return <section className="content-detail"><Link className="back-link" to={back}>← Back</Link><h1>Couldn’t check this item</h1><p role="alert">{error}</p><button onClick={()=>setRetry(v=>v+1)}>Try again</button></section>;
   if(!item)return <section className="content-detail"><p role="status">Checking reading links…</p></section>;
   const saved=state.savedContent.some(value=>value.contentKey===item.key);
@@ -49,7 +49,7 @@ export function ContentDetail({ contentKey, returnTo = '/app/search?scope=free' 
     }finally{setSaving(false);}
   }
   return <section className="content-detail">
-    <div className="content-toolbar"><Link className="back-link" to={back}>← {back==='/app/shelf'?'Shelf':back.includes('/app/books/')?'Book':back.includes('scope=papers')?'Papers':'Search'}</Link>
+    <div className="content-toolbar"><Link className="back-link" to={back}>← {back==='/'?'Shelf':back.includes('/app/books/')?'Book':back.includes('scope=papers')?'Papers':'Search'}</Link>
       <button className={'content-save'+(saved?' is-saved':'')} aria-label={saved?'Saved':'Save to shelf'} title={saved?'Remove from shelf':'Save to shelf'} aria-pressed={saved} aria-busy={saving} disabled={recoveryMode||saving||!saveContent} onClick={()=>void save()}><BookmarkIcon/></button></div>
     <div className="content-detail-heading">{['book','learning_resource'].includes(item.kind)&&<ContentCover title={item.title} kind={item.kind}/>}<div>
       {!['book','learning_resource'].includes(item.kind)&&<p className={'content-kind'+(item.kind==='preprint'?' content-preprint':'')}>{kindLabel(item.kind)}{item.version?' · '+item.version:''}</p>}

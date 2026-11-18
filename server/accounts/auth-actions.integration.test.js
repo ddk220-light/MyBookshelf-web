@@ -30,7 +30,7 @@ test('signup facade queues durable mail, hides duplicates, requires deliberate o
  assert.deepEqual(await actions.verify({token}),{status:'verified'});
  await assert.rejects(actions.verify({token}),e=>e.code==='LINK_EXPIRED');
  const cookies=[];const signed=await actions.signin({email,password:body.password,returnTo:'//attacker.test'},'192.0.2.5',new Headers(),c=>cookies.push(c));
- assert.equal(signed.returnTo,'/app/shelf');assert.equal(signed.status,'signed-in');assert.ok(cookies.length);
+ assert.equal(signed.returnTo,'/');assert.equal(signed.status,'signed-in');assert.ok(cookies.length);
  assert.ok(!JSON.stringify(signed).includes('token'));
  const uid=(await pool.query('SELECT id FROM "user" WHERE email=$1',[email])).rows[0].id;
  await pool.query('DELETE FROM account_mail_jobs WHERE "authUserId"=$1',[uid]);await pool.query('DELETE FROM account_email_challenges WHERE "authUserId"=$1',[uid]);

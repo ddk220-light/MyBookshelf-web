@@ -376,7 +376,7 @@ export function AccountSettingsPage() {
       await load();
       library.reloadShelf();
       if (action.action === "signout-all")
-        navigate("/app/shelf", { replace: true, state: null });
+        navigate("/", { replace: true, state: null });
     } catch (failure) {
       if (alive.current) {
         setError(

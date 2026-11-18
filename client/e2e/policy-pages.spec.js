@@ -21,13 +21,13 @@ test.describe('Policy pages and Report a problem', () => {
 
   test('Privacy, Terms and About open from the side panel, and Back returns to it', async ({ page }) => {
     await setup(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     const panel = page.getByRole('dialog', { name: 'Account and settings' });
     await page.getByRole('button', { name: 'Account and settings' }).click();
     await panel.getByRole('link', { name: 'Privacy' }).click();
     await expect(page).toHaveURL(/\/app\/privacy$/);
     await expect(page.getByRole('heading', { level: 1, name: 'Privacy' })).toBeVisible();
-    await expect(page.getByRole('heading', { level: 2, name: 'How long we keep things' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: 'How long we keep information' })).toBeVisible();
     await expect(page.getByText('Draft for owner')).toHaveCount(0);
     // Placeholders stay visible until the release sets the effective date (the publication switch).
     const date = process.env.VITE_POLICY_EFFECTIVE_DATE?.trim();
@@ -36,14 +36,15 @@ test.describe('Policy pages and Report a problem', () => {
     expect((await axe(page)).violations).toEqual([]);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.getByRole('link', { name: 'Back' }).click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(panel).toBeVisible();
 
     await panel.getByRole('link', { name: 'About' }).click();
     await expect(page.getByRole('heading', { level: 1, name: 'MyBookshelf' })).toBeVisible();
-    await expect(page.locator('.about-facts dt', { hasText: 'Version' })).toBeVisible();
-    await expect(page.locator('.about-facts dd').first()).toHaveText(/^([0-9a-f]{7}|\[VERSION\])$/);
-    await expect(page.getByRole('link', { name: 'deepakdhanavel@gmail.com' })).toHaveAttribute('href', 'mailto:deepakdhanavel@gmail.com');
+    await expect(page.getByText(/^MyBookshelf keeps a reading shelf/)).toBeVisible();
+    // No build version (a commit hash): only the contact.
+    await expect(page.locator('.about-facts dt')).toHaveText(['Contact']);
+    await expect(page.locator('.about-facts').getByRole('link', { name: 'privacy@mybookshelf.cloud' })).toHaveAttribute('href', 'mailto:privacy@mybookshelf.cloud');
     expect((await axe(page)).violations).toEqual([]);
     await page.goBack();
     await expect(panel).toBeVisible();
@@ -55,13 +56,13 @@ test.describe('Policy pages and Report a problem', () => {
     expect((await axe(page)).violations).toEqual([]);
     // Opened directly, Back goes to the shelf with the panel open.
     await page.getByRole('link', { name: 'Back' }).click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(panel).toBeVisible();
   });
 
   test('the Create account form links the Terms and Privacy in one line', async ({ page }) => {
     await setup(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await page.getByRole('button', { name: 'Account and settings' }).click();
     await page.getByRole('dialog', { name: 'Account and settings' }).getByRole('link', { name: 'Create account' }).click();
     await expect(page.getByRole('heading', { name: 'Create account' })).toBeVisible();
@@ -78,7 +79,7 @@ test.describe('Policy pages and Report a problem', () => {
     await setup(page);
     const reports = [];
     await page.route('**/api/v2/problem-reports', async route => { reports.push(route.request().postDataJSON()); await route.fulfill({ status: 202, json: {} }); });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await page.getByRole('button', { name: 'Account and settings' }).click();
     await page.getByRole('dialog', { name: 'Account and settings' }).getByRole('link', { name: 'Report a problem' }).click();
     const box = page.getByRole('textbox', { name: 'Report a problem' });

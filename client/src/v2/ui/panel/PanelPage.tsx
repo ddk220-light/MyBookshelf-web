@@ -18,7 +18,7 @@ export function canGoBack(): boolean {
  * usually the side panel; opened directly, it goes to the shelf with the panel
  * open. In the desktop middle slot it is a close button (×) at the top right.
  */
-export function BackLink({ fallback = '/app/shelf', fallbackState = { overlay: 'panel' } }: { fallback?: string; fallbackState?: unknown }) {
+export function BackLink({ fallback = '/', fallbackState = { overlay: 'panel' } }: { fallback?: string; fallbackState?: unknown }) {
   const navigate = useNavigate();
   const slot = useDeskSlot();
   if (slot) return <SlotClose label="Close" onClose={slot.close} />;

@@ -30,7 +30,7 @@ test.describe('One-shelf home', () => {
   test('first open: no empty shelves, search bar, no tab bar, accessible', async ({ page }) => {
     await setup(page);
     await page.goto('/app');
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
     await expect(page.getByRole('navigation', { name: 'Primary navigation' })).toHaveCount(0);
     // Owner decision (plan 2026-11-14): the cold open draws no empty shelves;
@@ -52,7 +52,7 @@ test.describe('One-shelf home', () => {
   test('shelf in use: covers, library badge, Viewed before, invite, list view', async ({ page }) => {
     const saved = Array.from({ length: 8 }, (_, index) => book(index + 1));
     await setup(page, { saved, recent: [book(20), book(21), book(22)], libraryId: LINKED_LIBRARY.id, found: [saved[7].bookKey] });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
     await expect(page.locator('.home-library')).toHaveText(LINKED_LIBRARY.name);
     await expect(page.getByRole('link', { name: 'Shelf book 8 by Author 8, in Anna Centenary Library' })).toBeVisible();
@@ -95,7 +95,7 @@ test.describe('One-shelf home', () => {
 
   test('keyboard order and the side panel: focus trap, Escape and Back close it, focus returns', async ({ page }) => {
     await setup(page, { saved: [book(1), book(2)], libraryId: LINKED_LIBRARY.id });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
     await page.locator('body').click({ position: { x: 1, y: 1 } });
     const order = [];
@@ -104,7 +104,7 @@ test.describe('One-shelf home', () => {
       order.push(await page.evaluate(() => document.activeElement?.getAttribute('aria-label') || document.activeElement?.textContent?.trim()));
     }
     const from = order.indexOf('Account and settings');
-    expect(order.slice(from, from + 4)).toEqual(['Account and settings', 'Search for a book', 'Scan a barcode', 'Shelf view']);
+    expect(order.slice(from, from + 4)).toEqual(['Account and settings', 'MyBookshelf', 'Search for a book', 'Scan a barcode']);
 
     const person = page.getByRole('button', { name: 'Account and settings' });
     await person.click();
@@ -125,7 +125,7 @@ test.describe('One-shelf home', () => {
     await expect(panel).toBeVisible();
     await page.goBack();
     await expect(panel).toBeHidden();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
 
     await person.click();
     await panel.getByRole('button', { name: 'Lamplight' }).click();
@@ -136,7 +136,7 @@ test.describe('One-shelf home', () => {
 
   for (const light of ['lamplight', 'ink']) test(`${light} stays legible`, async ({ page }) => {
     await setup(page, { saved: [book(1), book(2), book(3), book(4)], recent: [book(9)], libraryId: LINKED_LIBRARY.id, light, found: [book(1).bookKey] });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.locator('.cover-badge-library')).toHaveCount(1);
     expect((await new AxeBuilder({ page }).withRules(['color-contrast']).analyze()).violations).toEqual([]);
     await page.getByRole('button', { name: 'Account and settings' }).click();
@@ -145,7 +145,7 @@ test.describe('One-shelf home', () => {
 
   test('a long shelf keeps the page light, and a wide screen gets the left column with six books a bay', async ({ page }) => {
     await setup(page, { saved: Array.from({ length: 200 }, (_, index) => book(index + 1)) });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     // Saved books only: the suggestions after them are added as the reader scrolls, like further bays.
     await expect(page.locator('.cover3d:not(.is-suggested)')).toHaveCount(200);
     expect(await page.locator('.bay').first().evaluate(element => getComputedStyle(element).contentVisibility)).toBe('auto');
@@ -161,7 +161,7 @@ test.describe('One-shelf home', () => {
   test('a phone turned on its side keeps the phone layout, the reader’s place and an open scan pop-up', async ({ page }) => {
     await installBarcodeCamera(page, 'missing', false, { camera: 'none' });
     await setup(page, { saved: Array.from({ length: 60 }, (_, index) => book(index + 1)) });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.locator('.cover3d:not(.is-suggested)')).toHaveCount(60);
     const { width, height } = page.viewportSize();
     const turn = (portrait) => page.setViewportSize(portrait ? { width, height } : { width: height, height: width });
@@ -188,7 +188,7 @@ test.describe('One-shelf home', () => {
     const long = book(1, { title: 'The Chronicle of Supercalifragilisticexpialidocious Adventures Across Seventeen Kingdoms',
       authors: ['Bartholomew Maximilian Featherstonehaugh-Worthington III'] });
     await setup(page, { saved: [long] });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     const inside = locator => locator.evaluate(cover => {
       const face = cover.querySelector('.cover3d-face').getBoundingClientRect();
       return [...cover.querySelectorAll('.cover3d-title, .cover3d-author')].every(text => {
@@ -205,7 +205,7 @@ test.describe('One-shelf home', () => {
 
   test('reduced motion: the panel does not slide', async ({ page }) => {
     await setup(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await page.getByRole('button', { name: 'Account and settings' }).click();
     expect(await page.locator('.side-panel').evaluate(element => getComputedStyle(element).animationName)).toBe('none');
   });
@@ -228,7 +228,7 @@ test.describe('One-shelf search', () => {
   test('results on the shelf: my book first with the bookmark, list view, a book and Back, then the shelf', async ({ page }) => {
     await setup(page, { saved: [MINE, book(2)], libraryId: LINKED_LIBRARY.id });
     const queries = searchRequests(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
     await searchFor(page, 'innovator');
     const results = page.getByRole('region', { name: 'Search results' });
@@ -239,7 +239,7 @@ test.describe('One-shelf search', () => {
     await expect(page.getByRole('heading', { name: 'My shelf' })).toHaveCount(0);
     // Public data only; the text is nowhere but the field.
     expect(queries).toEqual([{ query: 'innovator' }]);
-    expect(page.url()).toMatch(/\/app\/shelf$/);
+    expect(page.url()).toMatch(/\/\/[^/]+\/$/);
     expect(JSON.stringify(await page.evaluate(() => history.state))).not.toContain('innovator');
     expect(await page.evaluate(() => JSON.stringify({ ...localStorage }) + JSON.stringify({ ...sessionStorage }))).not.toContain('innovator');
     expect((await axe(page)).violations).toEqual([]);
@@ -279,7 +279,7 @@ test.describe('One-shelf search', () => {
       return route.fulfill({ json: { kind: 'candidates', candidates: [BOOK] } });
     });
     const queries = searchRequests(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await searchFor(page, 'wings of fire');
     await expect(page.locator('.ghost-book')).toHaveCount(9);
     expect((await axe(page)).violations).toEqual([]);
@@ -310,7 +310,7 @@ test.describe('One-shelf search', () => {
 
   test('an ISBN goes straight to its book', async ({ page }) => {
     await setup(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await searchFor(page, '9781625275868');
     await expect(page).toHaveURL(new RegExp('/app/books/' + encodeURIComponent(BOOK.bookKey).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$'));
     await page.goBack();
@@ -319,7 +319,7 @@ test.describe('One-shelf search', () => {
 
   for (const light of ['lamplight', 'ink']) test(`results stay legible in ${light}`, async ({ page }) => {
     await setup(page, { saved: [MINE], light });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await searchFor(page, 'innovator');
     await expect(page.locator('.cover-badge-mine')).toHaveCount(1);
     expect((await new AxeBuilder({ page }).withRules(['color-contrast']).analyze()).violations).toEqual([]);
@@ -327,7 +327,7 @@ test.describe('One-shelf search', () => {
 
   test('reduced motion: results replace the shelf without a slide', async ({ page }) => {
     await setup(page, { saved: [book(1)] });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await searchFor(page, 'innovator');
     await expect(page.getByRole('region', { name: 'Search results' })).toBeVisible();
     await expect(page.locator('.shelf-stage.is-sliding')).toHaveCount(0);
@@ -338,7 +338,7 @@ test.describe('One-shelf search', () => {
     test.use({ contextOptions: { reducedMotion: 'no-preference' } });
     test('the shelf moves down and the results come down from above, then back', async ({ page }) => {
       await setup(page, { saved: [book(1)] });
-      await page.goto('/app/shelf');
+      await page.goto('/');
       await searchFor(page, 'innovator');
       await expect(page.locator('.shelf-stage.slide-down')).toHaveCount(1);
       expect(await page.locator('.stage-results').evaluate(element => getComputedStyle(element).animationName)).toBe('stage-from-above');
@@ -362,7 +362,7 @@ test.describe('One-shelf scan', () => {
     page.on('pageerror', error => errors.push(error.message));
     await installBarcodeCamera(page);
     await setup(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
     // On the cold open the scan button is inside the larger search bar.
     await page.locator('.home-top-cold').getByRole('button', { name: 'Scan a barcode' }).click();
@@ -379,7 +379,7 @@ test.describe('One-shelf scan', () => {
   test('scanning: camera frame and one line; Back and Escape close it, release the camera and return focus', async ({ page }) => {
     await installBarcodeCamera(page, 'missing', false, { code: '' });
     await setup(page, { saved: [book(1)] });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     const scanButton = page.getByRole('button', { name: 'Scan a barcode' });
     await scanButton.click();
     const dialog = page.getByRole('dialog', { name: 'Scan the barcode' });
@@ -388,7 +388,7 @@ test.describe('One-shelf scan', () => {
     await expect(dialog.getByRole('textbox', { name: 'ISBN' })).toHaveAttribute('placeholder', 'ISBN, 10 or 13 digits');
     await expect.poll(() => track(page)).toBe('live');
     expect(await dialog.locator('video').evaluate(video => video.srcObject !== null)).toBe(true);
-    expect(page.url()).toMatch(/\/app\/shelf$/);
+    expect(page.url()).toMatch(/\/\/[^/]+\/$/);
     expect((await axe(page)).violations).toEqual([]);
     // Focus stays in the pop-up.
     for (let index = 0; index < 6; index += 1) {
@@ -407,16 +407,16 @@ test.describe('One-shelf scan', () => {
     await expect(dialog).toBeHidden();
     expect(await track(page)).toBe('ended');
     await expect(scanButton).toBeFocused();
-    expect(page.url()).toMatch(/\/app\/shelf$/);
+    expect(page.url()).toMatch(/\/\/[^/]+\/$/);
     // The pop-up's history entry went with it.
     await page.goBack();
-    expect(page.url()).not.toMatch(/\/app\/shelf$/);
+    expect(page.url()).not.toMatch(/\/\/[^/]+\/$/);
   });
 
   test('not an ISBN: one line and the camera stays on; the second miss: Couldn’t match, Scan again, Search by title', async ({ page }) => {
     await installBarcodeCamera(page, 'missing', false, { code: '5012345678900' });
     await setup(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await page.getByRole('button', { name: 'Scan a barcode' }).click();
     const dialog = page.getByRole('dialog', { name: 'Scan the barcode' });
     await expect(dialog.getByRole('status')).toHaveText('Not an ISBN. Try the back cover.', { timeout: 15000 });
@@ -442,14 +442,14 @@ test.describe('One-shelf scan', () => {
     await expect(page.getByRole('searchbox', { name: 'Search for a book' })).toBeFocused();
     expect(await track(page)).toBe('ended');
     // Nothing scanned is kept in the address or the browser.
-    expect(page.url()).toMatch(/\/app\/shelf$/);
+    expect(page.url()).toMatch(/\/\/[^/]+\/$/);
     expect(JSON.stringify(await page.evaluate(() => history.state)) + await page.evaluate(() => JSON.stringify({ ...localStorage }) + JSON.stringify({ ...sessionStorage }))).not.toMatch(/5012345678900|4006381333931/);
   });
 
   test('camera refused: Allow camera inside the camera box asks again; the ISBN field stays', async ({ page }) => {
     await installBarcodeCamera(page, 'missing', false, { camera: 'denied' });
     await setup(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await page.getByRole('button', { name: 'Scan a barcode' }).click();
     const dialog = page.getByRole('dialog', { name: 'Scan the barcode' });
     const allow = dialog.getByRole('button', { name: 'Allow camera' });
@@ -470,7 +470,7 @@ test.describe('One-shelf scan', () => {
       if (query !== '9780306406157') return route.fallback();
       return route.fulfill({ json: { kind: 'exact', book: { bookKey: 'v1:isbn:' + query, isbn13: query, title: 'ISBN ' + query, authors: [], metadataStatus: 'missing' } } });
     });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await page.getByRole('button', { name: 'Scan a barcode' }).click();
     const dialog = page.getByRole('dialog', { name: 'Type the ISBN' });
     await expect(dialog).toBeVisible();
@@ -496,7 +496,7 @@ test.describe('One-shelf scan', () => {
     await installBarcodeCamera(page, 'missing', false, { camera: 'none' });
     await setup(page);
     await page.route('**/api/v2/books/search', route => route.fulfill({ json: { kind: 'candidates', candidates: [], nextOffset: null } }));
-    await page.goto('/app/shelf');
+    await page.goto('/');
     const input = page.getByRole('searchbox', { name: 'Search for a book' });
     await input.fill('wngs fyre');
     await input.press('Enter');
@@ -511,7 +511,7 @@ test.describe('One-shelf scan', () => {
   for (const light of ['lamplight', 'ink']) test(`the pop-up stays legible in ${light}`, async ({ page }) => {
     await installBarcodeCamera(page, 'missing', false, { code: '5012345678900' });
     await setup(page, { light });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await page.getByRole('button', { name: 'Scan a barcode' }).click();
     await expect(page.getByRole('dialog').getByRole('status')).toHaveText('Not an ISBN. Try the back cover.', { timeout: 15000 });
     expect((await new AxeBuilder({ page }).withRules(['color-contrast']).analyze()).violations).toEqual([]);
@@ -523,7 +523,7 @@ test.describe('One-shelf scan', () => {
   test('reduced motion: the pop-up does not slide', async ({ page }) => {
     await installBarcodeCamera(page, 'missing', false, { camera: 'none' });
     await setup(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await page.getByRole('button', { name: 'Scan a barcode' }).click();
     expect(await page.locator('.scan-dialog[open]').evaluate(element => getComputedStyle(element).animationName)).toBe('none');
   });
@@ -533,7 +533,7 @@ test.describe('One-shelf scan', () => {
     test('the pop-up rises from the bottom', async ({ page }) => {
       await installBarcodeCamera(page, 'missing', false, { camera: 'none' });
       await setup(page);
-      await page.goto('/app/shelf');
+      await page.goto('/');
       await page.getByRole('button', { name: 'Scan a barcode' }).click();
       expect(await page.locator('.scan-dialog[open]').evaluate(element => getComputedStyle(element).animationName)).toBe('scan-in');
     });
@@ -545,7 +545,7 @@ test.describe('One-shelf with accounts switched off', () => {
   test('no account notice on the home screen and no account buttons in the side panel', async ({ page }) => {
     await setup(page, { saved: [book(1)] });
     await page.route('**/api/account/session', route => route.fulfill({ status: 503, json: { error: { code: 'ACCOUNT_DISABLED', message: 'Accounts aren’t enabled here yet. You can continue browsing.' } } }));
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
     await expect(page.getByText(/Accounts aren’t/)).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Check account availability' })).toHaveCount(0);

@@ -28,10 +28,10 @@ export function SearchRedirect() {
   const scope = params.get('scope');
   if (scope && ['free', 'papers', 'knowledge'].includes(scope)) {
     if (contentDiscovery()) return <ContentScope params={params} scope={scope as 'free' | 'papers' | 'knowledge'} />;
-    return <Navigate to="/app/shelf" replace state={null} />;
+    return <Navigate to="/" replace state={null} />;
   }
   const state: LegacyArrival = handOffLegacyText('search', params.get('q')) ? { legacy: 'search' } : { legacy: 'focus-search' };
-  return <Navigate to="/app/shelf" replace state={state} />;
+  return <Navigate to="/" replace state={state} />;
 }
 
 // The free-reading pages as they were reached from the old Search page.
@@ -63,7 +63,7 @@ export function LibrariesRedirect() {
   const params = new URLSearchParams(useLocation().search);
   const book = params.get('book');
   if (book) return <OpenLibraryOnce to={'/app/books/' + encodeURIComponent(book)} legacy={false} />;
-  return <OpenLibraryOnce to="/app/shelf" legacy={handOffLegacyText('library', params.get('q'))} />;
+  return <OpenLibraryOnce to="/" legacy={handOffLegacyText('library', params.get('q'))} />;
 }
 
 function OpenLibraryOnce({ to, legacy }: { to: string; legacy: boolean }) {
@@ -84,5 +84,5 @@ function OpenLibraryOnce({ to, legacy }: { to: string; legacy: boolean }) {
 export function SettingsRedirect() {
   const { hash } = useLocation();
   if (hash === '#privacy') return <Navigate to="/app/privacy" replace />;
-  return <Navigate to="/app/shelf" replace state={{ overlay: 'panel' }} />;
+  return <Navigate to="/" replace state={{ overlay: 'panel' }} />;
 }

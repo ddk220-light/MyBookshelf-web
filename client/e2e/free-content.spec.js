@@ -27,7 +27,7 @@ test.describe('free-content discovery',()=>{
     await page.getByRole('button',{name:'Save to shelf'}).click();
     await expect(page.getByRole('button',{name:'Saved',exact:true})).toHaveAttribute('aria-pressed','true');
     // The one-shelf home shows it as a cover that opens its reading page; removing it there keeps the book.
-    await page.goto('/app/shelf');
+    await page.goto('/');
     const cover=page.getByRole('link',{name:/Synthetic browser flow fixture/});
     await expect(cover).toBeVisible();await cover.click();
     await page.getByRole('button',{name:'Saved',exact:true}).click();
@@ -81,7 +81,7 @@ test.describe('free-content discovery',()=>{
     await page.getByRole('button',{name:'Save to shelf'}).click();
     // The save is written under a browser lock; leave the page only once it shows.
     await expect(page.getByRole('button',{name:'Saved',exact:true})).toBeVisible();
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await page.getByRole('link',{name:new RegExp(story.title)}).click();
     await expect(page.getByText(/Sign in there to read this book/)).toBeVisible();
     await expect(page.getByRole('button',{name:'Saved',exact:true})).toBeVisible();

@@ -4,7 +4,8 @@ import { PersonIcon } from './homeIcons';
 import { SearchBar } from './SearchBar';
 
 /**
- * Person icon (opens the side panel), wordmark, the search bar with the scan
+ * Person icon (opens the side panel), wordmark (a link to the public About
+ * page), the search bar with the scan
  * button, and under it the chosen library's name as plain text (or, while
  * results are shown, `leading`: "Back to my shelf").
  *
@@ -40,7 +41,7 @@ export const TopBar = forwardRef<HTMLButtonElement, {
   return <header className={'home-top' + cold}>
     <div className="home-brand">
       {layout === 'phone' && <button type="button" ref={personButton} className="home-person" aria-label="Account and settings" aria-haspopup="dialog" aria-expanded={panelOpen} onClick={onOpenPanel}><PersonIcon /></button>}
-      <span className="home-wordmark">MyBookshelf</span>
+      <a className="home-wordmark" href="/about">MyBookshelf</a>
     </div>
     {intro}
     <SearchBar {...search} />

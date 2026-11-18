@@ -38,7 +38,7 @@ test.describe('One-shelf accounts', () => {
 
   test('signed in: panel shows the email, Log out and Account settings; settings send a reset link and ask once before deleting', async ({ page }) => {
     const seen = await mockAccount(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await page.getByRole('button', { name: 'Account and settings' }).click();
     const panel = page.getByRole('dialog', { name: 'Account and settings' });
     await expect(panel.getByText(USER.email)).toBeVisible();
@@ -65,7 +65,7 @@ test.describe('One-shelf accounts', () => {
     expect(seen.some(request => request.path === '/reauth/password' || request.path === '/deletion')).toBe(false);
 
     await page.getByRole('link', { name: 'Back' }).click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(panel).toBeVisible();
   });
 
@@ -96,7 +96,7 @@ test.describe('One-shelf accounts', () => {
       if (tries === 1) return { status: 401, json: { error: { code: 'INVALID_CREDENTIALS', message: 'Check your email and password.' } } };
       return route.abort().then(() => 'handled');
     } });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await page.getByRole('button', { name: 'Account and settings' }).click();
     await page.getByRole('dialog', { name: 'Account and settings' }).getByRole('link', { name: 'Log in' }).click();
     await expect(page.getByRole('heading', { name: 'Log in' })).toBeVisible();

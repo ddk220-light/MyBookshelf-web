@@ -12,32 +12,32 @@ export function policyEffectiveDate(value) {
   return typeof value === 'string' && /^[\p{L}\p{N} ,.-]{4,40}$/u.test(value.trim()) ? value.trim() : null;
 }
 
-function inline(text) {
+export function inline(text) {
   return text.split(/(\*\*[^*]+\*\*)/).map(part => /^\*\*[^*]+\*\*$/.test(part)
     ? `<strong>${escape(part.slice(2, -2))}</strong>`
     : part.split(EMAIL).map((piece, at) => (at % 2 ? `<a href="mailto:${escape(piece)}">${escape(piece)}</a>` : escape(piece))).join('')).join('');
 }
 
-/** { title, html } for one policy text, with [EFFECTIVE DATE] filled in. */
-export function policyHtml(markdown, { effectiveDate }) {
-  if (!policyEffectiveDate(effectiveDate)) throw Error('A policy page is published only with its effective date.');
-  const text = markdown.replace(/\r\n?/g, '\n').split('[EFFECTIVE DATE]').join(effectiveDate.trim());
-  if (/\[[A-Z][A-Z ]+\]/.test(text)) throw Error('A policy text still has a placeholder.');
-  const out = [];
-  let title = '', paragraph = [], list = null, table = null;
+/**
+ * The blocks of one text in that subset: { type: 'h1' | 'h2' | 'p', text },
+ * { type: 'ul', items } and { type: 'table', rows } (the first row is the
+ * head). Review notes ("> ...") are left out.
+ */
+export function policyBlocks(markdown) {
+  const blocks = [];
+  let paragraph = [], list = null, table = null;
   const flush = () => {
-    if (paragraph.length) out.push(`<p>${inline(paragraph.join(' '))}</p>`);
-    if (list) out.push(`<ul>${list.map(item => `<li>${inline(item)}</li>`).join('')}</ul>`);
-    if (table?.length) out.push(`<table><thead><tr>${table[0].map(cell => `<th scope="col">${inline(cell)}</th>`).join('')}</tr></thead><tbody>${table.slice(1)
-      .map(row => `<tr>${row.map((cell, at) => (at ? `<td>${inline(cell)}</td>` : `<th scope="row">${inline(cell)}</th>`)).join('')}</tr>`).join('')}</tbody></table>`);
+    if (paragraph.length) blocks.push({ type: 'p', text: paragraph.join(' ') });
+    if (list) blocks.push({ type: 'ul', items: list });
+    if (table?.length) blocks.push({ type: 'table', rows: table });
     paragraph = []; list = null; table = null;
   };
-  for (const raw of text.split('\n')) {
+  for (const raw of markdown.replace(/\r\n?/g, '\n').split('\n')) {
     const line = raw.trimEnd();
     if (!line.trim()) { flush(); continue; }
     if (line.startsWith('>')) { flush(); continue; }
-    if (line.startsWith('# ')) { flush(); title = line.slice(2).trim(); continue; }
-    if (line.startsWith('## ')) { flush(); out.push(`<h2>${inline(line.slice(3).trim())}</h2>`); continue; }
+    if (line.startsWith('# ')) { flush(); blocks.push({ type: 'h1', text: line.slice(2).trim() }); continue; }
+    if (line.startsWith('## ')) { flush(); blocks.push({ type: 'h2', text: line.slice(3).trim() }); continue; }
     if (line.startsWith('|')) {
       if (!table) { flush(); table = []; }
       const cells = line.replace(/^\|/, '').replace(/\|$/, '').split('|').map(cell => cell.trim());
@@ -50,5 +50,24 @@ export function policyHtml(markdown, { effectiveDate }) {
     paragraph.push(line.trim());
   }
   flush();
-  return { title, html: out.join('') };
+  return blocks;
+}
+
+/** One block as HTML. */
+export function blockHtml(block) {
+  if (block.type === 'h2') return `<h2>${inline(block.text)}</h2>`;
+  if (block.type === 'p') return `<p>${inline(block.text)}</p>`;
+  if (block.type === 'ul') return `<ul>${block.items.map(item => `<li>${inline(item)}</li>`).join('')}</ul>`;
+  if (block.type === 'table') return `<table><thead><tr>${block.rows[0].map(cell => `<th scope="col">${inline(cell)}</th>`).join('')}</tr></thead><tbody>${block.rows.slice(1)
+    .map(row => `<tr>${row.map((cell, at) => (at ? `<td>${inline(cell)}</td>` : `<th scope="row">${inline(cell)}</th>`)).join('')}</tr>`).join('')}</tbody></table>`;
+  return '';
+}
+
+/** { title, html } for one policy text, with [EFFECTIVE DATE] filled in. */
+export function policyHtml(markdown, { effectiveDate }) {
+  if (!policyEffectiveDate(effectiveDate)) throw Error('A policy page is published only with its effective date.');
+  const text = markdown.replace(/\r\n?/g, '\n').split('[EFFECTIVE DATE]').join(effectiveDate.trim());
+  if (/\[[A-Z][A-Z ]+\]/.test(text)) throw Error('A policy text still has a placeholder.');
+  const blocks = policyBlocks(text);
+  return { title: blocks.find(block => block.type === 'h1')?.text || '', html: blocks.map(blockHtml).join('') };
 }

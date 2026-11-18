@@ -29,7 +29,7 @@ npm ci
 npm run dev
 ```
 
-Open http://localhost:5173/app/shelf. For the complete built public site:
+Open http://localhost:5173/ (the reading shelf). For the complete built public site:
 
 ```sh
 npm run build

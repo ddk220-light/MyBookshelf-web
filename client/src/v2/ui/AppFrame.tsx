@@ -16,6 +16,9 @@ import { isDeskPath, isSlotPath, useLayoutMode } from './desk/layoutMode';
 // side panel's pages and the account screens (plan Phase 9).
 const PANEL_PAGE = /^\/app\/(report|privacy|terms|about|settings\/account(\/more)?|account\/[a-z-]+)$/;
 
+/** The root page's title, the same as the built page's (tools/seo/build-pages.mjs rootTitle). */
+export const ROOT_TITLE = 'MyBookshelf — Find out if your library has a book';
+
 export { useReadingLight };
 
 // The home screen's side panel is the navigation (no tab bar). Other screens
@@ -72,7 +75,7 @@ export function AppFrame({ children }: { children: ReactNode }) {
         if (shelfSearch && !shelfSearch.closest('[inert]')) shelfSearch.focus();
         else {
           // Search lives on the home screen; results found there come back with it.
-          navigate('/app/shelf', { state: searchState?.shelf && searchState.candidateId ? { search: { candidateId: searchState.candidateId } } : null });
+          navigate('/', { state: searchState?.shelf && searchState.candidateId ? { search: { candidateId: searchState.candidateId } } : null });
           requestAnimationFrame(() => document.getElementById('shelf-search')?.focus());
         }
       } else if (!desk && event.key === 'Escape' && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey && location.pathname.startsWith('/app/books/')) {
@@ -86,8 +89,11 @@ export function AppFrame({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (PANEL_PAGE.test(location.pathname) && !location.pathname.endsWith('/more')) return;
+    // The shelf is the site's root page, which search engines index: it keeps
+    // the title the built page has (ROOT_TITLE, tools/seo/build-pages.mjs).
+    if (location.pathname === '/') { document.title = ROOT_TITLE; return; }
     const route = location.pathname.split('/')[2];
-    const names: Record<string, string> = { shelf: 'Your bookshelf', search: 'Search books', books: 'Book details', read: 'Free reading details' };
+    const names: Record<string, string> = { search: 'Search books', books: 'Book details', read: 'Free reading details' };
     const accountNames: Record<string, string> = {
       'sign-in': 'Sign in', 'sign-up': 'Create account', verify: 'Verify your email',
       'forgot-password': 'Reset your password', 'reset-password': 'Choose a new password',
@@ -108,9 +114,9 @@ export function AppFrame({ children }: { children: ReactNode }) {
     <div className="app-backdrop">
       <div className={`app-frame one-shelf-frame${location.pathname.startsWith('/app/books/') ? ' book-mode' : ''}${location.pathname.startsWith('/app/account/') ? ' account-entry-mode' : ''}${desk ? ' desk-frame' : ''}`}>
         <a className="desktop-skip" href="#main-content">{m.skipToContent}</a>
-        {desk || location.pathname === '/app/shelf' ? <DeskLayout mode={desk ? mode : 'phone'} notices={notices}>{desk && isSlotPath(location.pathname) ? children : null}</DeskLayout>
+        {desk || location.pathname === '/' ? <DeskLayout mode={desk ? mode : 'phone'} notices={notices}>{desk && isSlotPath(location.pathname) ? children : null}</DeskLayout>
           : <main id="main-content" ref={screen} className="app-screen" tabIndex={-1}>
-            {location.pathname !== '/app/shelf' && !location.pathname.startsWith('/app/books/') && !PANEL_PAGE.test(location.pathname) && <Link className="one-shelf-back" to="/app/shelf"><span aria-hidden="true">‹</span> My shelf</Link>}
+            {location.pathname !== '/' && !location.pathname.startsWith('/app/books/') && !PANEL_PAGE.test(location.pathname) && <Link className="one-shelf-back" to="/"><span aria-hidden="true">‹</span> My shelf</Link>}
             {notices}
             {children}
           </main>}

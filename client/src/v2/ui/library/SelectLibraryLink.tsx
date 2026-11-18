@@ -14,7 +14,7 @@ export function selectionTarget(search: string, navigation: LibraryNavigation | 
   // Search, Libraries and Settings are no longer pages in the one-shelf app: they all start on the shelf.
   // A ?q= is never carried on: search text stays out of the address.
   const nextBook = next && next.startsWith('/app/books/') ? safeBookReturn(next) : null;
-  return safeBookReturn(navigation?.after) || sharedReturn || nextBook || '/app/shelf';
+  return safeBookReturn(navigation?.after) || sharedReturn || nextBook || '/';
 }
 
 export type LibraryLinkNotice = 'missing' | 'unavailable';
@@ -39,7 +39,7 @@ export function SelectLibraryLink() {
 
   useEffect(() => {
     const controller = new AbortController();
-    const fail = (notice: LibraryLinkNotice) => navigate('/app/shelf', { replace: true, state: { libraryLink: notice } });
+    const fail = (notice: LibraryLinkNotice) => navigate('/', { replace: true, state: { libraryLink: notice } });
     if (!slug) { fail('missing'); return; }
     publicApi.resolveLibraryLink(slug, controller.signal).then(async library => {
       if (controller.signal.aborted) return;

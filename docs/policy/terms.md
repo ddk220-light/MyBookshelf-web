@@ -54,4 +54,4 @@ If you keep using MyBookshelf after that, the new terms apply.
 
 ## Contact
 
-deepakdhanavel@gmail.com
+privacy@mybookshelf.cloud

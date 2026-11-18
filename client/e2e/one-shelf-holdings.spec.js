@@ -75,7 +75,7 @@ test.describe('One-shelf result badges', () => {
   test('searching, then "Looking in…", then marks: badges top right, "In <library>", list view, accessible', async ({ page }) => {
     const found = [RESULTS[0].bookKey, RESULTS[4].bookKey, RESULTS[8].bookKey];
     const calls = await setup(page, { marks: () => ({ delay: 1200, found }) });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.locator('.home-library')).toHaveText(LINKED_LIBRARY.name);
     await searchFor(page, 'narayan  kalam');
     await expect(results(page).getByRole('link')).toHaveCount(9);
@@ -113,7 +113,7 @@ test.describe('One-shelf result badges', () => {
   test('opening a result stops the check, the marked book is green at once, and Back keeps the marks without asking again', async ({ page }) => {
     let run = 0;
     const calls = await setup(page, { marks: () => (++run === 1 ? { delay: 400, found: [RESULTS[2].bookKey] } : { delay: 0, found: [] }) });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.locator('.home-library')).toHaveText(LINKED_LIBRARY.name);
     await searchFor(page, 'kalam');
     const marked = results(page).getByRole('link', { name: label(RESULTS[2], LINKED_LIBRARY) });
@@ -132,7 +132,7 @@ test.describe('One-shelf result badges', () => {
 
   test('a slow catalog: tapping a book while it is still looking aborts the request; Back asks once more for the rest', async ({ page }) => {
     const calls = await setup(page, { marks: () => ({ delay: 20_000, found: [RESULTS[0].bookKey] }) });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.locator('.home-library')).toHaveText(LINKED_LIBRARY.name);
     await searchFor(page, 'narayan');
     await expect(statusLine(page)).toHaveText('Looking in Anna Centenary Library…');
@@ -161,7 +161,7 @@ test.describe('One-shelf result badges', () => {
     const replies = [{ delay: 300, found: [] }, { delay: 100, status: 503 },
       { delay: 100, raw: lines([{ type: 'mark', bookKey: RESULTS[1].bookKey, answer: 'found' }]) + '{"type":"do' }];
     const calls = await setup(page, { marks: () => replies.shift() });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.locator('.home-library')).toHaveText(LINKED_LIBRARY.name);
     for (const query of ['first', 'second', 'third']) {
       await searchFor(page, query);
@@ -176,7 +176,7 @@ test.describe('One-shelf result badges', () => {
 
   test('changing library stops the check, clears the badges and checks the open results again', async ({ page }) => {
     const calls = await setup(page, { marks: body => body.libraryId === LINKED_LIBRARY.id ? { delay: 100, found: [RESULTS[0].bookKey] } : { delay: 300, found: [RESULTS[5].bookKey, RESULTS[6].bookKey] } });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.locator('.home-library')).toHaveText(LINKED_LIBRARY.name);
     await searchFor(page, 'narayan');
     await expect(results(page).locator('.cover-badge-library')).toHaveCount(1);
@@ -195,7 +195,7 @@ test.describe('One-shelf result badges', () => {
 
   test('no library chosen: no check and no line', async ({ page }) => {
     const calls = await setup(page, { libraryId: null });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await searchFor(page, 'narayan');
     await expect(results(page).getByRole('link')).toHaveCount(9);
     await page.waitForTimeout(300);
@@ -207,7 +207,7 @@ test.describe('One-shelf result badges', () => {
     test.use({ contextOptions: { reducedMotion: 'no-preference' } });
     test('a badge pops in when its mark arrives', async ({ page }) => {
       await setup(page, { marks: () => ({ delay: 900, found: [RESULTS[0].bookKey] }) });
-      await page.goto('/app/shelf');
+      await page.goto('/');
       await expect(page.locator('.home-library')).toHaveText(LINKED_LIBRARY.name);
       await searchFor(page, 'kalam');
       const badge = results(page).locator('.cover-badge-library');

@@ -32,7 +32,7 @@ function useNoIndex() {
 }
 
 function NotFound() {
-  return <section className="page-section prose"><h1>Page not found</h1><Link className="button-link" to="/app/shelf">Back to the shelf</Link></section>;
+  return <section className="page-section prose"><h1>Page not found</h1><Link className="button-link" to="/">Back to the shelf</Link></section>;
 }
 
 function ErrorLine({ error }: { error: unknown }) {
