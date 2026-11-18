@@ -15,12 +15,28 @@ Three walks as a new reader with no account, at the same time:
 | iPhone 16 Pro Max, iOS 27.2 | Safari, Private tab | WebDriverAgent over Wi-Fi (taps, typing, screenshots; no page inspection) | [iphone.md](iphone.md) | 139 |
 | Desktop | Chromium at 1920, 1440, 1280, 1100, 1024 and 700 px wide; one WebKit pass | Playwright | [desktop.md](desktop.md) | 221 screens, 224 control states |
 
-Timings are in `pixel-timings.csv`, `iphone-timings.csv` and
-`desktop-timings.csv`; desktop layout measurements in `desktop-layout.csv`.
-iPhone timings are coarse (polling screenshots). The screenshots are the visual
-baseline; they are kept outside the repository, on the owner's Mac in
-`~/mybookshelf-phones/run-2026-11-18/` (`pixel/`, `iphone/`, `desktop/shots/`),
-about 195 MB. Screenshot names below refer to those folders.
+Everything from the run is in this folder:
+
+- **Screenshots:** [screenshots/](screenshots/INDEX.md), 817 files by device
+  (`pixel/`, `iphone/`, `desktop/`, `desktop/states/`, `accounts/`), with an
+  index. Screenshot names below refer to those folders.
+- **Timings:** `pixel-timings.csv`, `iphone-timings.csv`, `desktop-timings.csv`
+  (iPhone timings are coarse: polling screenshots). Account-flow timings are in
+  the table in [accounts.md](accounts.md).
+- **Layout measurements:** `desktop-layout.csv` (window size, screen, page
+  height, overflow, cut-off text, smallest font and target).
+- **Requests:** `desktop-api-and-asset-requests.csv` (769 requests: path,
+  status, time, size, cache headers).
+- **Desktop scripts and raw logs:** `desktop-scripts/` (the Playwright scripts
+  and `logs/`: console, network, layout detail, control states, tab order).
+
+Left out of the repository, which is public, and kept on the owner's Mac in
+`~/mybookshelf-phones/run-2026-11-18/`: six screenshots (the nearby-libraries
+result with distances from the owner's location, the camera frame showing the
+owner's room, three password-manager screens and one showing another browser's
+tabs) and the saved browser states from the desktop run (they hold a library
+catalog's session cookie).
+
 
 The account flows were run afterwards on both phones: see
 [accounts.md](accounts.md) (create, verify, sign in on a second phone, sync,

@@ -8,9 +8,9 @@ Part of backlog item 24. Nothing in the app was changed.
 Passwords were never typed by the session: the phones' password managers
 generated and filled them (Bitwarden on the iPhone, later 1Password on the
 Pixel), with the owner pasting or unlocking where the phone required it.
-Deliberately wrong passwords were typed as junk strings. Screenshots (about 90)
-are on the Mac in `~/mybookshelf-phones/run-2026-11-18/accounts/`
-(`i..` iPhone, `p..` Pixel), outside the repository.
+Deliberately wrong passwords were typed as junk strings. Screenshots are in
+[screenshots/accounts/](screenshots/INDEX.md) (`i..` iPhone, `p..` Pixel); six
+with private details stay on the owner's Mac (see the README).
 
 ## What was run, and the result
 
