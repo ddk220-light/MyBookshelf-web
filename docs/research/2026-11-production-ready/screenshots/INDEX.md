@@ -160,7 +160,7 @@ resolution.
 
 ## iPhone 16 Pro Max, Safari (Private tab)
 
-138 files in `iphone/`. Report: [iphone.md](../iphone.md).
+139 files in `iphone/`. Report: [iphone.md](../iphone.md).
 
 - [00-owner-existing-shelf](iphone/00-owner-existing-shelf.png)
 - [01-landing-scroll2](iphone/01-landing-scroll2.png)
@@ -289,6 +289,7 @@ resolution.
 - [41-search-misspelling-settled-5.9s](iphone/41-search-misspelling-settled-5.9s.png)
 - [42-search-no-results](iphone/42-search-no-results.png)
 - [43-scan-camera-permission-prompt](iphone/43-scan-camera-permission-prompt.png)
+- [43-scan-sheet-camera-live-after-cancel-UNINTENDED](iphone/43-scan-sheet-camera-live-after-cancel-UNINTENDED.png)
 - [43-scan-unintended-result-book-page](iphone/43-scan-unintended-result-book-page.png)
 - [44-back-swipe-with-side-panel-open](iphone/44-back-swipe-with-side-panel-open.png)
 - [44-safari-back-with-picker-open](iphone/44-safari-back-with-picker-open.png)
@@ -758,14 +759,16 @@ resolution.
 
 ## Account flows on both phones (`i..` iPhone, `p..` Pixel)
 
-86 files in `accounts/`. Report: [accounts.md](../accounts.md).
+92 files in `accounts/`. Report: [accounts.md](../accounts.md).
 
+- [i01-shelf-before](accounts/i01-shelf-before.png)
 - [i02-create-account](accounts/i02-create-account.png)
 - [i03-email-typed](accounts/i03-email-typed.png)
 - [i04-password-focused](accounts/i04-password-focused.png)
 - [i05-password-keyboard](accounts/i05-password-keyboard.png)
 - [i06-strong-password-filled](accounts/i06-strong-password-filled.png)
 - [i08-too-short-message-cropped](accounts/i08-too-short-message-cropped.png)
+- [i09-retry-field-cleared](accounts/i09-retry-field-cleared.png)
 - [i10-after-create](accounts/i10-after-create.png)
 - [i11-verify-page](accounts/i11-verify-page.png)
 - [i12-verified-2s](accounts/i12-verified-2s.png)
@@ -796,11 +799,14 @@ resolution.
 - [i37-removed-on-iphone](accounts/i37-removed-on-iphone.png)
 - [i38-shelf-after-remove](accounts/i38-shelf-after-remove.png)
 - [i39-location-prompt](accounts/i39-location-prompt.png)
+- [i40-near-me-results](accounts/i40-near-me-results.png)
 - [i41-log-out-dialog](accounts/i41-log-out-dialog.png)
 - [i42-side-panel-after-log-out](accounts/i42-side-panel-after-log-out.png)
+- [i43-after-six-wrong-passwords](accounts/i43-after-six-wrong-passwords.png)
 - [i44-after-cancel-1password](accounts/i44-after-cancel-1password.png)
 - [i45-try-again-after-couldnt-connect](accounts/i45-try-again-after-couldnt-connect.png)
 - [i46-fill-password-sheet](accounts/i46-fill-password-sheet.png)
+- [i47-after-fill-password](accounts/i47-after-fill-password.png)
 - [i48-logged-in-again](accounts/i48-logged-in-again.png)
 - [i49-change-email-form](accounts/i49-change-email-form.png)
 - [i50-change-email-step](accounts/i50-change-email-step.png)
@@ -834,6 +840,7 @@ resolution.
 - [p20-send-a-new-link](accounts/p20-send-a-new-link.png)
 - [p21-old-link-reopened](accounts/p21-old-link-reopened.png)
 - [p22-new-password-focused-1password](accounts/p22-new-password-focused-1password.png)
+- [p23-1password-chip-tapped](accounts/p23-1password-chip-tapped.png)
 - [p24-new-password-filled](accounts/p24-new-password-filled.png)
 - [p25-password-saved](accounts/p25-password-saved.png)
 - [p26-log-in-after-reset-offers](accounts/p26-log-in-after-reset-offers.png)

@@ -17,7 +17,7 @@ Three walks as a new reader with no account, at the same time:
 
 Everything from the run is in this folder:
 
-- **Screenshots:** [screenshots/](screenshots/INDEX.md), 817 files by device
+- **Screenshots:** [screenshots/](screenshots/INDEX.md), 824 files by device
   (`pixel/`, `iphone/`, `desktop/`, `desktop/states/`, `accounts/`), with an
   index. Screenshot names below refer to those folders.
 - **Timings:** `pixel-timings.csv`, `iphone-timings.csv`, `desktop-timings.csv`
@@ -30,12 +30,9 @@ Everything from the run is in this folder:
 - **Desktop scripts and raw logs:** `desktop-scripts/` (the Playwright scripts
   and `logs/`: console, network, layout detail, control states, tab order).
 
-Left out of the repository, which is public, and kept on the owner's Mac in
-`~/mybookshelf-phones/run-2026-11-18/`: six screenshots (the nearby-libraries
-result with distances from the owner's location, the camera frame showing the
-owner's room, three password-manager screens and one showing another browser's
-tabs) and the saved browser states from the desktop run (they hold a library
-catalog's session cookie).
+Left out of the repository and kept on the owner's Mac in
+`~/mybookshelf-phones/run-2026-11-18/`: the saved browser states from the
+desktop run (they hold a library catalog's session cookie).
 
 
 The account flows were run afterwards on both phones: see

@@ -9,8 +9,7 @@ Passwords were never typed by the session: the phones' password managers
 generated and filled them (Bitwarden on the iPhone, later 1Password on the
 Pixel), with the owner pasting or unlocking where the phone required it.
 Deliberately wrong passwords were typed as junk strings. Screenshots are in
-[screenshots/accounts/](screenshots/INDEX.md) (`i..` iPhone, `p..` Pixel); six
-with private details stay on the owner's Mac (see the README).
+[screenshots/accounts/](screenshots/INDEX.md) (`i..` iPhone, `p..` Pixel).
 
 ## What was run, and the result
 

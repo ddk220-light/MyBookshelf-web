@@ -91,7 +91,7 @@ starts at "Start here on the Mac".
 - **Item 24 is done for a guest reader** on the Pixel, the iPhone and desktop.
   Findings, ranked, with the timings:
   [research/2026-11-production-ready](../research/2026-11-production-ready/README.md).
-  The 817 screenshots, timings, layout and request data, and the desktop
+  The 824 screenshots, timings, layout and request data, and the desktop
   scripts and logs are in the same folder
   ([index](../research/2026-11-production-ready/screenshots/INDEX.md)).
 - **Item 24, account flows, done on both phones** with one test account,
