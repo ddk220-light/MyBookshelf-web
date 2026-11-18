@@ -5,6 +5,14 @@ This repository contains the current web code, tests, runtime inputs, CI,
 deployment configuration and the recent work analysis. Native app source,
 retired authentication and unrelated research archives are outside its scope.
 
+## Production-ready checks (2026-11-18, start here for current work)
+
+- [Backlog and analysis path](plans/2026-11-18-production-ready-backlog.md):
+  the goal (analysis first, then a design plan, then the fixes), what was found
+  in production on 18 November, the backlog in working order, open questions
+  for the owner, and how to start the end-to-end run on the owner's Mac with
+  both phones. Nothing in the app changes until the plan is agreed.
+
 ## One-shelf redesign (2026-11-12, the current app)
 
 - [Implementation plan](plans/2026-11-12-one-shelf-redesign-implementation-plan.md):
