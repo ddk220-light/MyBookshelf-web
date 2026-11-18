@@ -133,7 +133,7 @@ Wording, used everywhere:
 
 | State | Words | Under them | Actions |
 |---|---|---|---|
-| Found | In your library | Library name and place; "Checked today" | "See this book in the library's catalog" (the book's own record); Change library |
+| Found | In your library | Library name and place | "See this book in the library's catalog" (the book's own record); Change library |
 | Not found | Not in your library | "We looked for this book in the library's catalog and did not find it. The library may still have another edition." | "Search the library's catalog yourself"; Try another library |
 | Checking | Checking your library… | Library name; a moving bar; "This library's catalog can take up to half a minute to answer. You can go back to your shelf: the answer will be there when it arrives." | "Open the library's catalog instead" |
 | Couldn't check | Couldn't check right now | "The library's catalog did not answer in time. This does not mean the book is missing." | "Try again" (a text button); "Open catalog" |
@@ -150,13 +150,16 @@ Changes:
 - The catalog link's label says where it goes: the book's record, or a search.
   A plain-HTTP catalog (Anna Centenary's is on a bare IP address) gets a note
   under the link: "This catalog does not use a secure connection."
+- The shelf's heading reads "My reading shelf" (owner's decision). Buttons
+  keep their wording ("Add to my shelf", "On my shelf").
 - Shelf and list view: words under each saved book ("In your library", "Not
   in your library", "Couldn't check"); nothing under a book not yet checked.
   "Couldn't check" is kept for the visit in the client's store; across visits
   it comes from A2 step 3 storing the late answer, not from storing failures.
-- Results: one summary line ("1 of these 9 books is in <library>"; "None of
-  these 9 books was found in <library>. Open a book to check it."), and the
-  results stream gains `notFound` and `couldntCheck` lists.
+- Results: the words sit under each book that has an answer. There is no
+  summary banner (owner's decision); the existing "Looking in <library>…"
+  line stays while the library is being asked. The results stream gains
+  `notFound` and `couldntCheck` lists so those books can carry their words.
 - Files: `client/src/v2/ui/book/LibraryAnswerCard.tsx`, `book.css`,
   `useLibraryAnswer.ts`, `client/src/v2/holdings.ts`, `api.ts`,
   `ui/shelf/BookCover3D.tsx`, `ui/shelf/ShelfList.tsx`,
@@ -191,7 +194,9 @@ Causes: R8, R9. Screens: `PickerTyping`, `PickerResults`, `RequestLibrary`,
   catalog store's existing **daily** job
   (`server/catalog-store/maintenance.js`). The owner asked for "the existing
   hourly job"; that job only touches the account database, so the daily
-  catalog job is the one that fits, with no new schedule. The admin page shows
+  catalog job is the one that fits, with no new schedule. The scheduled work
+  stays as it is today: one hourly account job, one daily catalog job, a
+  daily account backup and a six-hourly health check. The admin page shows
   the details. Wording that calls this store anonymous changes in CLAUDE.md
   (owner's approval), `requests.js`, the migrations' comments and the docs.
 - **Report a problem.** A prompt, a line saying what is sent with the message
@@ -257,7 +262,8 @@ Screens: `Settings`, `CreateAccount`, `Welcome`, `Account`, `DeleteAccount`,
   client, plus a leaked-password check (`validation.js:26-48`).
 - Change: the minimum becomes 1, the smallest the sign-in library accepts;
   the maximum stays. The leaked-password check, its calls, messages and tests
-  go. Every password field uses the existing Show/Hide field. Both server
+  go. Every password field has an eye icon that shows or hides the password
+  (labelled for screen readers), and no helper text under it. Both server
   checks change together: a mismatch shows as "Couldn't connect".
 - Kept: the limit of 5 sign-in attempts per address per 15 minutes. With
   short passwords it is the only guard, so it must be tested.
@@ -280,8 +286,9 @@ Screens: `Settings`, `CreateAccount`, `Welcome`, `Account`, `DeleteAccount`,
 - Change: the verification link signs the reader in and lands on `Welcome`;
   a password reset signs in with the new password in the same step. Where
   sign-in fails, Log in opens with the email filled.
-- To weigh: a verification link then signs in whoever opens it (single use,
-  24 hours). A reset link already has that power.
+- Decided by the owner: sign the reader in directly. A verification link then
+  signs in whoever opens it (single use, 24 hours), as a reset link already
+  does.
 
 **B4. Links survive a reload (item 33; ships in Release A).**
 - Cause: the page moves the token out of the address into memory, so a
@@ -313,13 +320,21 @@ Screens: `Settings`, `CreateAccount`, `Welcome`, `Account`, `DeleteAccount`,
 - Today: "Account settings" (`AccountSettingsSmall.tsx`) and, behind "More",
   "Your account" (`AccountSettingsPage.tsx`), with two delete flows and two
   change-password flows.
-- Change: one screen as on `Account`: email, password, your shelf (download),
-  devices signed in, log out, delete. The largest piece of Release B.
+- Change: one screen as on `Account`: email, password, the size of the shelf,
+  Log out, delete. The largest piece of Release B.
+- Removed by the owner's decision: "Download account data", the list of
+  signed-in devices and logging out other devices from here. Changing the
+  email or the password still signs the other devices out, as today.
 
 **B7. Delete account.**
-- The screen says what is deleted, what stays and offers the download
-  (`DeleteAccount`). A "deletion started" email is sent at once; today the
-  only email goes up to an hour later, when the hourly job removes the data.
+- The screen says what is deleted and what stays for a short time
+  (`DeleteAccount`). There is no download step.
+- Deleting also clears what the app keeps in that browser: the saved copy of
+  the shelf, Viewed before, the chosen library and the list of merged books.
+  Another device clears the account's data when it finds the account gone;
+  books saved there without an account are that device's own and stay.
+- A confirmation email is sent at once; today the only email goes up to an
+  hour later, when the hourly job removes the data.
 - A deleted account answers "Wrong email or password", like any failed
   sign-in (decision 9).
 
@@ -342,6 +357,21 @@ Screens: `Settings`, `CreateAccount`, `Welcome`, `Account`, `DeleteAccount`,
   not show on the sign-in screens.
 - The logged-out device still listed: cause not found; reproduce first.
 - Emails get a unique reference so they do not thread together.
+
+**B10. Log in with an email link (owner's request, 19 November).**
+- Screen: `LogIn`. The reader types their email and presses "Email me a
+  log-in link"; opening the link on that device logs them in. The password
+  stays as the second way, below it.
+- The sign-in library has a plug-in for this. The link is single use, expires
+  after 15 minutes, carries its token after `#` (as in B4), and is limited
+  like password resets. The screen answers the same whether or not the
+  address has an account ("If that address has an account, a link is on its
+  way").
+- For existing accounts only. Creating an account keeps the email and
+  password form; making creation link-only too is a possible later
+  simplification.
+- New email template; tests for expiry, reuse, the limit and the unknown
+  address.
 
 ## 6. Release C: pages and policy
 
@@ -368,20 +398,34 @@ Screens: `Settings`, `CreateAccount`, `Welcome`, `Account`, `DeleteAccount`,
 
 ## 7. Decisions for the owner
 
+Answered on 19 November:
+
+| Decision | Answer |
+|---|---|
+| After the email link or a password reset | Sign the reader in directly |
+| Log in without a password | Yes: an emailed log-in link, with the password as the second way (B10) |
+| A deleted account at sign-in | "Wrong email or password", like any failed sign-in; a confirmation email at once |
+| A new reader is asked once to choose a library | Yes, and can decline |
+| Different libraries in the browser and the account | The account's wins; the browser's only when the account has none |
+| Account screen | No data download, no device list; one Log out |
+| Deleting an account | Also clears what the app keeps in that browser |
+| Shelf heading | "My reading shelf" |
+| Results | No summary banner |
+| Scheduled jobs | The fewest possible; nothing new is added |
+
+Still open:
+
 | # | Question | Recommendation |
 |---|---|---|
 | 1 | Three releases (three deployments), in the order A, B, C? | Yes |
-| 2 | The 90-day deletion runs in the catalog store's daily job, not the hourly account job | Yes; it is the job that already cleans that database |
+| 2 | Optional names and emails are removed after 90 days by one more step in the catalog store's existing daily job. No new job is added | Yes |
 | 3 | A "couldn't confirm" answer shows "Couldn't check right now" with no "Try again" | Yes |
-| 4 | Shelf and list show words under every checked book | Yes, as on `Main` |
-| 5 | A new reader is asked once to choose a library and can decline | Yes |
-| 6 | Server region: measure after A2, move only if e-Granthalaya still fails | Yes |
-| 7 | At sign-in, if the browser and the account have different libraries, the account's wins | Yes |
-| 8 | Free books and papers stay in the browser for now | Yes; adding them to accounts is a separate piece of work |
-| 9 | A deleted account answers "Wrong email or password", like any other failed sign-in, and deletion sends one email | Yes |
-| 10 | The app is served at `/`; `/app/shelf` keeps working | Yes |
-| 11 | CLAUDE.md wording for the catalog store, once it can hold optional contact details | Proposed text comes with Release A |
-| 12 | A typed ISBN appears in a book's address (it is the book's identity) | Keep; say so in CLAUDE.md |
+| 4 | Server region: measure after A2, move only if e-Granthalaya still fails | Yes |
+| 5 | Free books and papers stay in the browser for now | Yes; adding them to accounts is a separate piece of work |
+| 6 | The app is served at `/`; `/app/shelf` keeps working | Yes |
+| 7 | CLAUDE.md wording for the catalog store, once it can hold optional contact details | Proposed text comes with Release A |
+| 8 | A typed ISBN appears in a book's address (it is the book's identity) | Keep; say so in CLAUDE.md |
+| 9 | "My reading shelf" as the heading only, or also in "Add to my shelf" and "On my shelf"? | Heading only |
 
 ## 8. How each release is checked
 
