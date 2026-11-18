@@ -8,13 +8,13 @@ import { useLibrary } from '../context';
 import { Notice } from './Notice';
 import { uiMessages as m } from '../uiMessages';
 import { ConfirmDialog } from './ConfirmDialog';
-import {AccountNotice} from './account/AccountSummary';
+import {AccountNotice} from './account/AccountNotice';
 import { DeskLayout } from './desk/DeskLayout';
 import { isDeskPath, isSlotPath, useLayoutMode } from './desk/layoutMode';
 
 // One-shelf pages that carry their own "Back" and set their own title: the
 // side panel's pages and the account screens (plan Phase 9).
-const PANEL_PAGE = /^\/app\/(report|privacy|terms|about|settings\/account(\/more)?|account\/[a-z-]+)$/;
+const PANEL_PAGE = /^\/app\/(report|privacy|terms|about|settings\/account(\/(email|password|delete))?|account\/[a-z-]+)$/;
 
 export { useReadingLight };
 
@@ -85,14 +85,14 @@ export function AppFrame({ children }: { children: ReactNode }) {
   }, [location, navigate, desk]);
 
   useEffect(() => {
-    if (PANEL_PAGE.test(location.pathname) && !location.pathname.endsWith('/more')) return;
+    if (PANEL_PAGE.test(location.pathname)) return;
     const route = location.pathname.split('/')[2];
     const names: Record<string, string> = { shelf: 'Your bookshelf', search: 'Search books', books: 'Book details', read: 'Free reading details' };
     const accountNames: Record<string, string> = {
       'sign-in': 'Sign in', 'sign-up': 'Create account', verify: 'Verify your email',
       'forgot-password': 'Reset your password', 'reset-password': 'Choose a new password',
       'email-change': 'Confirm your new email', return: 'Continue securely',
-      'complete-profile': 'Add your name', import: 'Bring books over', deletion: 'Account deletion status',
+      'complete-profile': 'Add your name', deletion: 'Account deletion status',
     };
     const title = location.pathname === '/app/settings/account' ? 'Your account'
       : route === 'account' ? accountNames[location.pathname.split('/')[3]] : names[route];

@@ -7,6 +7,7 @@ import {
 } from "react";
 import { accountRequest } from "./accountClient";
 import { useAccountSession } from "./AccountSessionProvider";
+import { clearDeviceCopy } from "../storage/guestMerge";
 export type DeletionStatus =
   | "unknown"
   | "pending"
@@ -41,7 +42,7 @@ export function DeletionReceiptProvider({ children }: { children: ReactNode }) {
   const account = useAccountSession(),
     [receipt, setReceipt] = useState<Receipt | null>(null),
     current = useRef(receipt),
-    accessEnd = useRef<{ operationId: string; acknowledge: (confirmed: boolean) => void } | null>(null);
+    accessEnd = useRef<{ operationId: string; acknowledge: (confirmed: boolean) => Promise<void> } | null>(null);
   const publish = (value: Receipt) => {
     current.current = value;
     setReceipt(value);
@@ -66,7 +67,18 @@ export function DeletionReceiptProvider({ children }: { children: ReactNode }) {
       error: "",
       identity: input.identity,
     };
-    const acknowledge = account.captureAccessEnd(input.identity);
+    const release = account.captureAccessEnd(input.identity);
+    // Plan B7: once access has ended, what the app keeps in this browser goes
+    // too (the copy of the shelf, Viewed before, the library, the merged
+    // list), before the guest shelf is shown.
+    let cleared = false;
+    const acknowledge = async (confirmed: boolean) => {
+      if (confirmed && !cleared) {
+        cleared = true;
+        await clearDeviceCopy();
+      }
+      release(confirmed);
+    };
     accessEnd.current = {operationId: value.operationId, acknowledge};
     let accessEnded = false;
     publish(value);
@@ -99,7 +111,7 @@ export function DeletionReceiptProvider({ children }: { children: ReactNode }) {
             "Couldn’t confirm the response. Check this request’s status before trying another deletion.",
         });
     } finally {
-      if (current.current?.operationId === value.operationId) acknowledge(accessEnded);
+      if (current.current?.operationId === value.operationId) await acknowledge(accessEnded);
     }
   };
   const check = async () => {
@@ -116,7 +128,7 @@ export function DeletionReceiptProvider({ children }: { children: ReactNode }) {
       });
       if (current.current?.operationId === value.operationId) {
         if (reply.accessEnded && accessEnd.current?.operationId === value.operationId)
-          accessEnd.current.acknowledge(true);
+          await accessEnd.current.acknowledge(true);
         publish({
           ...value,
           status: reply.status,

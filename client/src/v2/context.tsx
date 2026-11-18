@@ -61,11 +61,11 @@ export type LibraryState = {
   loadingAccount?:boolean;
   mutationNotice?:string|null;
   mutationError?:string|null;
-  pendingImportId?:string;
   retryMutation?:()=>Promise<boolean>;
   historyEnabled?:boolean;
   setHistoryEnabled?:(enabled:boolean)=>Promise<boolean>;
-  importGuest?:(id:string,snapshot:AnonymousWebState,history:boolean,policy:'keep-account'|'use-device')=>Promise<{savedAdded:number;historyAccepted:number;historyExpired:number}|null>;
+  /** Signed in: what the quiet merge at sign-in brought over from this browser; undefined until it is done (plan B5). */
+  mergeResult?:{savedAdded:number};
 };
 
 export const LibraryStateContext = createContext<LibraryState | null>(null);

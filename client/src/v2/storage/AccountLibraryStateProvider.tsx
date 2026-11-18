@@ -13,9 +13,9 @@ import {
 import { useAccountSession } from "../auth/AccountSessionProvider";
 import { AccountApiError } from "../auth/accountClient";
 import { AccountRepository, type ReadingSnapshot } from "./AccountRepository";
-import { emptyState, HISTORY_LIMIT } from "../localState";
+import { emptyState, HISTORY_LIMIT, readAnonymousWebStateWithStatus } from "../localState";
+import { planGuestMerge, rememberMerged } from "./guestMerge";
 import { isOnShelf } from "../oneShelfState";
-import type { AnonymousWebState } from "../localState";
 import type {
   PublicBook,
   PublicLibrary,
@@ -23,8 +23,15 @@ import type {
   RecentSource,
 } from "../types";
 
-/** A signed-in shelf reloads on focus at most this often. */
-export const SHELF_RELOAD_MS = 60_000;
+/**
+ * On focus a signed-in shelf asks for the account's revision numbers at most
+ * this often, and reloads only when another device changed them (plan B9).
+ */
+export const SHELF_RELOAD_MS = 10_000;
+/** "Saved" and "Added … from this device" clear themselves after this long. */
+export const DONE_NOTICE_MS = 4_000;
+/** What the quiet merge at sign-in brought over from this browser (plan B5). */
+export type MergeResult = { savedAdded: number };
 
 /**
  * Plan 3.3 and 4.7: a book whose bookKey or ISBN-13 is already saved counts as
@@ -49,6 +56,10 @@ export function AccountLibraryStateProvider({
   const [pending, setPending] = useState(false),
     [loading, setLoading] = useState(true),
     [notice, setNotice] = useState<string | null>(null);
+  const [noticeDone, setNoticeDone] = useState(false);
+  // undefined until the first load and its merge are over.
+  const [mergeResult, setMergeResult] = useState<MergeResult | undefined>();
+  const merging = useRef<Promise<void> | null>(null);
   const [mutationError, setMutationError] = useState<string | null>(null);
   const [undo, setUndo] = useState<{
     book: RecentBook;
@@ -56,8 +67,8 @@ export function AccountLibraryStateProvider({
     revision: number;
     until: number;
   } | null>(null);
-  // When the shelf was last read from the account (focus reloads it at most
-  // once a minute; changes and explicit refreshes always reload).
+  // When the account was last read (focus asks again at most every 10 s;
+  // changes and explicit refreshes always reload).
   const loadedAt = useRef(0);
   const onRetrySuccess = useRef<((value: unknown) => void) | undefined>();
   const fail = useCallback(
@@ -77,12 +88,58 @@ export function AccountLibraryStateProvider({
           ? error.message
           : "Your account could not be refreshed.";
       setNotice(message);
+      setNoticeDone(false);
       setMutationError(message);
       if (error instanceof AccountApiError && error.status === 401)
         account.invalidate();
     },
     [account.invalidate],
   );
+  // Plan B5: once the account shelf has loaded, the books in this browser
+  // that the account lacks go over quietly through the import (safe to
+  // repeat). The browser's library is used only when the account has none.
+  // What was sent is remembered here, so a book later removed from the
+  // account does not come back. A failed merge is tried again at the next
+  // load (one import at most per load, within the 5-an-hour limit) and never
+  // holds the shelf.
+  const mergeGuest = useCallback(async (repo: AccountRepository, loaded: ReadingSnapshot) => {
+    const plan = planGuestMerge(loaded, readAnonymousWebStateWithStatus());
+    if (!plan) {
+      setMergeResult((current) => current ?? { savedAdded: 0 });
+      return;
+    }
+    if (!plan.request) {
+      rememberMerged(plan);
+      setMergeResult((current) => current ?? { savedAdded: 0 });
+      return;
+    }
+    try {
+      const result = await repo.importGuest(
+        crypto.randomUUID(),
+        plan.snapshot,
+        plan.snapshot.recentBooks.length > 0,
+        plan.policy,
+      );
+      if (!active.current || repository.current !== repo) return;
+      rememberMerged(plan);
+      const next = await repo.loadSnapshot();
+      if (!active.current || repository.current !== repo) return;
+      loadedAt.current = Date.now();
+      setSnapshot(next);
+      setMergeResult({ savedAdded: result.savedAdded });
+      if (result.savedAdded > 0) {
+        setNotice(
+          `Added ${result.savedAdded} ${result.savedAdded === 1 ? "book" : "books"} from this device to your account`,
+        );
+        setNoticeDone(true);
+        setMutationError(null);
+      }
+    } catch {
+      repo.abandonPending("/imports");
+      if (active.current && repository.current === repo)
+        setMergeResult((current) => current ?? { savedAdded: 0 });
+    }
+  }, []);
   const refresh = useCallback(async () => {
     const repo = repository.current;
     if (!repo) return;
@@ -92,6 +149,12 @@ export function AccountLibraryStateProvider({
         loadedAt.current = Date.now();
         setSnapshot(next);
         setLoading(false);
+        if (!merging.current) {
+          busy.current = true;
+          merging.current = mergeGuest(repo, next).finally(() => {
+            busy.current = false;
+          });
+        }
       }
     } catch (error) {
       if (repository.current === repo) {
@@ -99,7 +162,28 @@ export function AccountLibraryStateProvider({
         setLoading(false);
       }
     }
-  }, [fail]);
+  }, [fail, mergeGuest]);
+  // Focus: one small request for the revision numbers; the shelf and Viewed
+  // before reload only when another device changed them. No timers.
+  const checkRevisions = useCallback(async () => {
+    const repo = repository.current,
+      current = snapshotRef.current;
+    if (!repo || !current || busy.current || repo.pending) return;
+    loadedAt.current = Date.now();
+    try {
+      const state = await repo.loadState();
+      if (!active.current || repository.current !== repo) return;
+      if (
+        state.shelfRevision !== current.summary.shelfRevision ||
+        state.historyGeneration !== current.summary.historyGeneration ||
+        state.settingsRevision !== current.summary.settingsRevision
+      )
+        await refresh();
+    } catch (error) {
+      if (error instanceof AccountApiError && error.status === 401)
+        account.invalidate();
+    }
+  }, [refresh, account.invalidate]);
   useEffect(() => {
     active.current = true;
     const owner = sessionRef.current.user?.id,
@@ -117,7 +201,7 @@ export function AccountLibraryStateProvider({
     const focus = () => {
       if (document.visibilityState !== "visible") return;
       if (Date.now() - loadedAt.current < SHELF_RELOAD_MS) return;
-      void refresh();
+      void checkRevisions();
     };
     window.addEventListener("focus", focus);
     document.addEventListener("visibilitychange", focus);
@@ -128,7 +212,7 @@ export function AccountLibraryStateProvider({
       window.removeEventListener("focus", focus);
       document.removeEventListener("visibilitychange", focus);
     };
-  }, [refresh]);
+  }, [refresh, checkRevisions]);
   const run = useCallback(
     async <T,>(
       label: string,
@@ -136,13 +220,18 @@ export function AccountLibraryStateProvider({
       after?: (value: T) => void,
       quiet = false,
     ): Promise<T | null> => {
+      // A change made while the quiet merge runs waits for it.
+      if (merging.current) await merging.current;
       const repo = repository.current;
       if (!repo || busy.current || !snapshotRef.current) return null;
       busy.current = true;
       setPending(true);
       setMutationError(null);
       // A quiet change (a Viewed before entry) shows no "Saving…" line.
-      if (!quiet) setNotice(label + "…");
+      if (!quiet) {
+        setNotice(label + "…");
+        setNoticeDone(false);
+      }
       onRetrySuccess.current = after as ((value: unknown) => void) | undefined;
       try {
         const result = await action(repo);
@@ -151,7 +240,10 @@ export function AccountLibraryStateProvider({
         // before entry leaves the shelf as it was, so Undo still applies.
         if (!quiet) setUndo(null);
         after?.(result);
-        if (!quiet) setNotice("Saved");
+        if (!quiet) {
+          setNotice("Saved");
+          setNoticeDone(true);
+        }
         onRetrySuccess.current = undefined;
         try {
           const next = await repo.loadSnapshot();
@@ -160,10 +252,13 @@ export function AccountLibraryStateProvider({
             setSnapshot(next);
           }
         } catch (error) {
-          if (active.current)
-            setNotice(
-              "Your change was saved. Couldn’t refresh your account. Try refreshing.",
-            );
+          if (active.current) {
+            const message =
+              "Your change was saved. Couldn’t refresh your account. Try refreshing.";
+            setNotice(message);
+            setNoticeDone(false);
+            setMutationError(message);
+          }
           if (error instanceof AccountApiError && error.status === 401)
             account.invalidate();
         }
@@ -247,6 +342,15 @@ export function AccountLibraryStateProvider({
       )) !== null
     );
   }, [run, undo]);
+  // "Saved" (and what the merge added) clears itself (plan B9).
+  useEffect(() => {
+    if (!noticeDone || !notice) return;
+    const timer = setTimeout(() => {
+      setNotice((current) => (current === notice ? null : current));
+      setNoticeDone(false);
+    }, DONE_NOTICE_MS);
+    return () => clearTimeout(timer);
+  }, [notice, noticeDone]);
   useEffect(() => {
     if (!undo) return;
     const timer = setTimeout(
@@ -327,16 +431,6 @@ export function AccountLibraryStateProvider({
       )) !== null,
     [run],
   );
-  const importGuest = useCallback(
-    async (
-      id: string,
-      frozen: AnonymousWebState,
-      history: boolean,
-      policy: "keep-account" | "use-device",
-    ) =>
-      run("Importing books", (r) => r.importGuest(id, frozen, history, policy)),
-    [run],
-  );
   const value: LibraryState = {
     state: snapshot
       ? {
@@ -374,14 +468,10 @@ export function AccountLibraryStateProvider({
     loadingAccount: loading,
     mutationNotice: notice,
     mutationError,
-    pendingImportId:
-      repository.current?.pending?.path === "/imports"
-        ? String(repository.current.pending.body.importId)
-        : undefined,
     retryMutation: repository.current?.pending ? retryMutation : undefined,
     historyEnabled: snapshot?.summary.historyEnabled ?? false,
     setHistoryEnabled,
-    importGuest,
+    mergeResult,
   };
   return (
     <LibraryStateContext.Provider value={value}>
