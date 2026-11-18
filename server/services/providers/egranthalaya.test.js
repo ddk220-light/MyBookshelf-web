@@ -1096,3 +1096,65 @@ test('an ISBN check retries an empty member record page before reporting copy st
   assert.equal(result.outcome, 'available');
   assert.match(result.format, /reference use only/);
 });
+
+// ---- Plan A2, step 2: one anonymous session per check ----------------------
+const homeReads = calls => calls.filter(call => call.options.method !== 'POST' && !call.url.includes('Details.aspx')).length;
+
+test('a title search and its record reads in one check share one home page and session', async () => {
+  setEmptyRecordRetryDelayForTests(0);
+  const calls = [];
+  global.fetch = rrlFetch(calls, { 79863: ['rrlpy-record-79863'] });
+  await withCatalogOperation({ maxRequests: 12 }, async () => {
+    const books = await searchCatalog(rrl, 'wings of fire');
+    assert.equal(books.length, 5);
+    const record = await resolveCatalogRecord(rrl, '79863');
+    assert.equal(record.observation.outcome, 'available');
+  });
+  assert.equal(homeReads(calls), 1, 'the home page is read once per check');
+  assert.deepEqual(calls.map(call => (call.options.method === 'POST' ? 'search' : call.url.includes('Details.aspx') ? 'record' : 'home')),
+    ['home', 'search', 'record']);
+  for (const call of calls.slice(1)) assert.equal(call.options.headers.Cookie, 'ASP.NET_SessionId=anonymous-fixture');
+
+  // Another check (another operation) opens its own session; outside a check
+  // every step opens its own, as before.
+  clearHttpCache();
+  calls.length = 0;
+  await withCatalogOperation({ maxRequests: 12 }, () => searchCatalog(rrl, 'wings of fire'));
+  assert.equal(homeReads(calls), 1);
+  clearHttpCache();
+  calls.length = 0;
+  await searchCatalog(rrl, 'wings of fire');
+  await resolveCatalogRecord(rrl, '79863');
+  assert.equal(homeReads(calls), 2);
+});
+
+test('the member search and its cluster fallback share one session; the cap and spacing are unchanged', async () => {
+  // The member search finds nothing, so the shared cluster search follows.
+  const run = async operation => {
+    const calls = [];
+    clearHttpCache();
+    const empty = memberFetch(calls, { search: emptyMemberSearch() });
+    global.fetch = async (url, options) => {
+      if (options.method === 'POST' && new URLSearchParams(options.body).get('DDL_Library') === 'All Libraries') {
+        calls.push({ url, options, at: Date.now() }); return response(emptyMemberSearch(), url);
+      }
+      const result = await empty(url, options);
+      calls.at(-1).at = Date.now();
+      return result;
+    };
+    const result = operation ? await withCatalogOperation(operation, () => checkAvailability(upLibrary, upIsbn)) : await checkAvailability(upLibrary, upIsbn);
+    return { result, calls };
+  };
+  const alone = await run(null);
+  const shared = await run({ maxRequests: 12, minIntervalMs: 40 });
+  assert.equal(shared.result.outcome, alone.result.outcome);
+  assert.equal(homeReads(alone.calls), 2, 'before: the cluster step read the home page again');
+  assert.equal(homeReads(shared.calls), 1, 'one home page for the whole check');
+  assert.equal(shared.calls.length, alone.calls.length - 1);
+  // Requests stay spaced within the check.
+  for (let i = 1; i < shared.calls.length; i++) assert.ok(shared.calls[i].at - shared.calls[i - 1].at >= 35, `request ${i} spaced`);
+  // The check's request cap still stops it.
+  clearHttpCache();
+  global.fetch = memberFetch([], { search: emptyMemberSearch() });
+  await assert.rejects(withCatalogOperation({ maxRequests: 2 }, () => checkAvailability(upLibrary, upIsbn)));
+});
