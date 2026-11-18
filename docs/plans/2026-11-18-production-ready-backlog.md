@@ -468,16 +468,19 @@ or with a parent's or guardian's permission); the contact is
 15. **Deleted accounts:** signing in to a deleted account answers "This
     account is unavailable", which tells anyone the address had an account.
     Keep, or answer as for a wrong password? And should deletion send an email?
-16. **Test addresses in a public repository:** the account report and its
-    screenshots show plus-addresses of the owner's Gmail, and this repository
-    is public. Leave them, or blank them out (which means rewriting this
-    branch's history)?
-17. **Dark mode:** a phone set to dark gets the light "Daylight" theme. Should
-    the app follow the system setting on first visit?
-18. **"Couldn't confirm":** keep this fourth answer and explain it, or fold it
-    into "Couldn't check right now"?
-19. **Save from search results:** add a save control on each result, or keep
-    saving on the book page only?
+
+### Answered by the owner on 19 November
+
+- **Item 20:** go ahead with whatever the fix needs; the owner will grant
+  further permissions when asked.
+- **Test addresses in the public repository** (the account report and its
+  screenshots show plus-addresses of the owner's Gmail): leave them.
+- **Dark mode:** the app does not follow the system setting. Daylight stays
+  the default.
+- **"Couldn't confirm":** folded into "Couldn't check right now". Readers see
+  three answers only (item 15).
+- **Saving:** from the book page only. No save control on search results
+  (item 31).
 
 ## Decided against, for now
 
