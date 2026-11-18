@@ -10,7 +10,8 @@ These boards replace the matching boards in
 (open the folder as a design canvas; the files use the canvas's own runtime
 and do not render fully when opened alone in a browser).
 
-The boards use placeholder covers and example books. Sizes: phone 390 x 844,
+The shelf is called "My reading shelf" everywhere. The boards use placeholder
+covers and example books. Sizes: phone 390 x 844,
 desktop 1440 x 900. Colours, type and spacing are the app's own.
 
 ## 1. The library answer, in words

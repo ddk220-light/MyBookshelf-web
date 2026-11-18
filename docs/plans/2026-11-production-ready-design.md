@@ -14,24 +14,36 @@ Read with:
 
 ## 1. The shape of the work
 
-Three releases, each one deployment, in this order:
+**One release, one deployment** (owner's decision). The work is built in
+three stages on one branch, each stage tested as it is finished, and all of it
+goes live together in a single merge to `main`.
 
-| Release | What it fixes | Backlog items |
+| Stage | What it fixes | Backlog items |
 |---|---|---|
 | A. Make the core work | Library answers are kept; slow catalogs still give an answer; the answer is in words; a library can be chosen on a phone; search is faster and readable | 20, 21, 22, 15, 27, 25, 26, 14, 30, 31, 32, 33, 28, the 10-second suggestions wait |
-| B. Account and settings | Simple account creation, automatic merge, one account screen, settings behind a gear, library name and Change on the shelf | 16, 17, 18, 19, 34 |
-| C. Pages and policy | The app at the root address, About, help, privacy policy, polish | 11, 12, 13, 35, 36 |
+| B. Account and settings | Simple account creation, log-in by email link, automatic merge, one account screen, settings behind a gear, library name and Change on the shelf | 16, 17, 18, 19, 34 |
+| C. Pages and policy | The reading shelf at the root address, the About page, help, privacy policy, polish | 11, 12, 13, 35, 36 |
 
-Release A comes first because it changes what the others describe. Every
-package below lists its cause, the change, the files, the tests and how to
-tell it is done.
+Stage A is built first because it changes what the others describe. Below,
+"Release A", "Release B" and "Release C" mean these stages. Every package
+lists its cause, the change, the files, the tests and how to tell it is done.
 
-Rules for all three (from CLAUDE.md and the backlog): answers are found / not
+What one deployment means in practice:
+- Production keeps storing no library answers until that deployment, because
+  the corrected database settings (A1) only take effect when the site is next
+  deployed.
+- The change is large, so it needs one full rehearsal before it goes live: the
+  whole test suite, and a run of the finished branch on the staging address
+  with the two phones. Staging is a preview, not a production deployment; it
+  is used once, with the owner's go-ahead.
+- The server-region measurement (A2, step 4) is done in that same rehearsal.
+
+Rules for all of it (from CLAUDE.md and the backlog): answers are found / not
 found / couldn't check only; a failed check is never shown as absence;
 editions are never merged for identity or availability; search text only in
 the anonymous log; no log linked to an account; be gentle with catalogs; no
-new timers or recurring work; secrets never in chat, files or output; one
-deployment per release, with every check passing first.
+new timers or recurring work, and the fewest scheduled jobs possible; secrets
+never in chat, files or output; every check passing before the deployment.
 
 ## 2. Root causes
 
@@ -70,7 +82,7 @@ Cause: R1. This is settings work, then proof.
    session).
 2. In Vercel, set the three production settings again with the correct host
    (one `-pooler`) and the new passwords. They take effect at the next
-   deployment, which is Release A itself.
+   deployment, which is the single release.
 3. The database already has migrations 001 and 002. No junk request needs
    deleting: nothing was ever stored.
 4. Preview's settings were written by an earlier script; check them the same
@@ -150,8 +162,10 @@ Changes:
 - The catalog link's label says where it goes: the book's record, or a search.
   A plain-HTTP catalog (Anna Centenary's is on a bare IP address) gets a note
   under the link: "This catalog does not use a secure connection."
-- The shelf's heading reads "My reading shelf" (owner's decision). Buttons
-  keep their wording ("Add to my shelf", "On my shelf").
+- The shelf is called "My reading shelf" everywhere (owner's decision): the
+  heading, back links, "Add to my reading shelf", "On my reading shelf",
+  "Remove from my reading shelf", notices, the account screens, emails, the
+  About and help pages and the privacy policy.
 - Shelf and list view: words under each saved book ("In your library", "Not
   in your library", "Couldn't check"); nothing under a book not yet checked.
   "Couldn't check" is kept for the visit in the client's store; across visits
@@ -375,15 +389,24 @@ Screens: `Settings`, `CreateAccount`, `Welcome`, `Account`, `DeleteAccount`,
 
 ## 6. Release C: pages and policy
 
-- **C1. The app at the root (item 11).** The builder writes an indexable app
-  page at `/` (title, description, canonical link, site data, a link to
-  `/about` for readers without scripts); `/app/shelf` keeps working and stays
-  out of the index; today's landing content moves into `/about`. The other way
-  (`/` redirecting to `/app/shelf`) drops the root from search and is not
-  recommended. `tools/seo/build-pages.mjs`, `client/src/v2/App.tsx` and the
-  path checks in `AppFrame.tsx`, `DeskLayout.tsx`, `layoutMode.ts`,
-  `vite.config.js`; tests in `tools/seo/build-pages.test.mjs` and
+- **C1. The reading shelf at the root (item 11).** `mybookshelf.cloud` is the
+  reading shelf. There is no separate `/app/shelf` page: that old address
+  forwards to `/`, so links and bookmarks made before keep working. Book
+  pages, account pages and the rest keep their addresses under `/app/`. The
+  root page is indexable (title, description, canonical link, site data, and
+  a link to `/about` for readers without scripts).
+  `tools/seo/build-pages.mjs`, `client/src/v2/App.tsx`, the path checks in
+  `AppFrame.tsx`, `DeskLayout.tsx`, `layoutMode.ts`, `vite.config.js`, one
+  redirect in `vercel.json`; tests in `tools/seo/build-pages.test.mjs` and
   `client/e2e/seo-launch.spec.js`, `redirects.spec.js`, `analytics.spec.js`.
+  The shelf's address appears in 38 places in the code and about 220 in the
+  tests; all move to `/`.
+- **C1b. The landing page lives on as the About page.** Everything on today's
+  landing page (what MyBookshelf is, how it works, the example shelf, the
+  featured libraries, "Built to be trusted") moves to `/about`, a static page
+  that search engines can read. It is reached from "About MyBookshelf" in
+  Settings, from the wordmark and the footer links on desktop, and from the
+  other public pages. Its main button is "Open my reading shelf".
 - **C2. About and help (item 12).** One About text for the public page and
   the app, describing the app as it is after Releases A and B. The help page
   is rewritten for phone and desktop. One spelling of the name, and the app's
@@ -409,32 +432,40 @@ Answered on 19 November:
 | Different libraries in the browser and the account | The account's wins; the browser's only when the account has none |
 | Account screen | No data download, no device list; one Log out |
 | Deleting an account | Also clears what the app keeps in that browser |
-| Shelf heading | "My reading shelf" |
+| The shelf's name | "My reading shelf", everywhere |
 | Results | No summary banner |
 | Scheduled jobs | The fewest possible; nothing new is added |
 
-Still open:
+Answered later on 19 November: one deployment for everything; the daily
+clean-up removes optional contact details after 90 days; Log out is for the
+current device only; "My reading shelf" everywhere; the shelf is at
+`mybookshelf.cloud` with no separate `/app/shelf` page; the landing page's
+content moves to the About page.
+
+Still open (each goes ahead as recommended unless the owner says otherwise):
 
 | # | Question | Recommendation |
 |---|---|---|
-| 1 | Three releases (three deployments), in the order A, B, C? | Yes |
-| 2 | Optional names and emails are removed after 90 days by one more step in the catalog store's existing daily job. No new job is added | Yes |
-| 3 | A "couldn't confirm" answer shows "Couldn't check right now" with no "Try again" | Yes |
-| 4 | Server region: measure after A2, move only if e-Granthalaya still fails | Yes |
-| 5 | Free books and papers stay in the browser for now | Yes; adding them to accounts is a separate piece of work |
-| 6 | The app is served at `/`; `/app/shelf` keeps working | Yes |
-| 7 | CLAUDE.md wording for the catalog store, once it can hold optional contact details | Proposed text comes with Release A |
-| 8 | A typed ISBN appears in a book's address (it is the book's identity) | Keep; say so in CLAUDE.md |
-| 9 | "My reading shelf" as the heading only, or also in "Add to my shelf" and "On my shelf"? | Heading only |
+| 1 | One rehearsal on the staging address before the single deployment | Yes |
+| 2 | A "couldn't confirm" answer shows "Couldn't check right now" with no "Try again" | Yes |
+| 3 | Server region: measure in the rehearsal, move only if e-Granthalaya still fails | Yes |
+| 4 | Free books and papers stay in the browser for now | Yes; adding them to accounts is a separate piece of work |
+| 5 | CLAUDE.md wording for the catalog store, once it can hold optional contact details | Proposed text comes with the pull request |
+| 6 | A typed ISBN appears in a book's address (it is the book's identity) | Keep; say so in CLAUDE.md |
 
-## 8. How each release is checked
+## 8. How the release is checked
 
-Before merging: type checking, client and server tests (with the test
+After each stage: type checking, client and server tests (with the test
 databases), the tools and SEO tests, the build, and the browser journeys in
-Chromium, phone-sized Chromium and WebKit. After the deployment: the "done
-when" checks of each package on the live site, then the short phone pass from
-the run (shelf, a search, a book at each of the three known libraries, the
-picker with the keyboard open) on both phones.
+Chromium, phone-sized Chromium and WebKit.
+
+Before the deployment: the rehearsal on the staging address (section 1), with
+the "done when" checks of each package and the short phone pass from the run
+(shelf, a search, a book at each of the three known libraries, the picker with
+the keyboard open, creating an account and logging in by link) on both phones.
+
+After the deployment: the same checks on the live site, and read-only counts
+showing that answers, searches, failures, requests and reports are stored.
 
 ## 9. Handing over
 
@@ -444,13 +475,13 @@ For the implementation agent:
    four root-cause files in
    `docs/research/2026-11-production-ready/root-causes/` (`checks.md`,
    `ui.md`, `accounts.md`, `pages.md`). They hold the file and line references.
-2. Work on one branch per release, cut from `main`. Do not push to `main` or
-   `staging`; the owner merges, or asks for it.
+2. Work on one branch cut from `main`, stage by stage. Do not push to `main`
+   or `staging`; the owner merges, or asks for it.
 3. Release A, step A1, needs the owner: new database passwords in Neon and the
    three settings in Vercel. Ask for them through the secure settings; never
    print or store a value.
 4. Build each package with its tests, then run every check in section 8. Open
-   one pull request per release.
+   one pull request for the whole release.
 5. Anything in section 7 without the owner's answer is decided by the owner,
    not by the agent.
 
