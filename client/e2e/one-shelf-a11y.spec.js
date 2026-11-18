@@ -52,7 +52,7 @@ for (const light of ['daylight', 'lamplight', 'ink']) test.describe(`every scree
     await expect(panel).toBeVisible();
     await noViolations(page, 'side panel');
     await panel.getByRole('button', { name: 'Change library' }).click();
-    const picker = page.getByRole('dialog', { name: 'Find your library' });
+    const picker = page.getByRole('dialog', { name: /^(Change library|Find your library)$/ });
     await expect(picker).toBeVisible();
     await noViolations(page, 'library pop-up');
     await picker.getByLabel('City, town or library name').fill('Chennai');
@@ -101,7 +101,7 @@ test('keyboard only: search, open a result, add it, find a library, back to the 
   await setup(page, { saved: [book(2)], recent: [book(7)], libraryId: null });
   await page.goto('/app/shelf');
   await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
-  const focused = () => page.evaluate(() => { const element = document.activeElement; return element?.getAttribute('aria-label') || element?.labels?.[0]?.textContent?.trim() || element?.textContent?.trim().slice(0, 60) || element?.tagName; });
+  const focused = () => page.evaluate(() => { const element = document.activeElement; const caption = element?.getAttribute('aria-labelledby'); return element?.getAttribute('aria-label') || element?.labels?.[0]?.textContent?.trim() || (caption && document.getElementById(caption)?.textContent?.trim()) || element?.textContent?.trim().slice(0, 60) || element?.tagName; });
   const tabTo = async (name, limit = 25) => {
     for (let step = 0; step < limit; step += 1) {
       await page.keyboard.press('Tab');

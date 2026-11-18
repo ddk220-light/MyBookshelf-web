@@ -182,7 +182,7 @@ test.describe('One-shelf result badges', () => {
     await expect(results(page).locator('.cover-badge-library')).toHaveCount(1);
     await page.getByRole('button', { name: 'Account and settings' }).click();
     await page.getByRole('dialog', { name: 'Account and settings' }).getByRole('button', { name: /^(Change|Choose a) library$/ }).click();
-    const dialog = page.getByRole('dialog', { name: 'Find your library' });
+    const dialog = page.getByRole('dialog', { name: 'Change library' });
     await dialog.getByLabel('City, town or library name').fill('Madurai');
     await dialog.getByRole('button', { name: /Kalaignar Centenary Library/ }).click();
     await expect(dialog).toBeHidden();
