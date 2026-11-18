@@ -31,6 +31,19 @@ test('Anna search keeps all 18 records and separates titles from catalog respons
   assert.equal(new Set(result.records.map(book => book.recordId)).size, 18);
 });
 
+test('every Koha search row carries its own record address on the catalog’s origin', () => {
+  const result = parseKohaCatalogSearch(fixture('chennai-wings-search'), searchUrl);
+  assert.equal(result.records.find(book => book.recordId === '497990').catalogUrl,
+    'http://118.185.210.241:8001/cgi-bin/koha/opac-detail.pl?biblionumber=497990');
+  for (const record of result.records) {
+    const url = new URL(record.catalogUrl);
+    assert.equal(url.origin, new URL(library.baseUrl).origin);
+    assert.equal(url.pathname, '/cgi-bin/koha/opac-detail.pl');
+    assert.deepEqual([...url.searchParams.keys()], ['biblionumber'], 'no other query parameter from the page is kept');
+    assert.equal(url.searchParams.get('biblionumber'), record.recordId);
+  }
+});
+
 test('search ISBNs must belong to the exact record and title; conflicting attributes are rejected', () => {
   const html = fixture('chennai-wings-search');
   for (const altered of [

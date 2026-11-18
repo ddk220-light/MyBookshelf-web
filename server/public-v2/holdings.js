@@ -2,6 +2,7 @@ import { parsePublicBookKey, publicError } from './contracts.js';
 import { catalogHandoffFor } from './catalog-handoff.js';
 import { validateAndNormalize } from '../services/isbn.js';
 import { identitiesFor, askedIdentity, storedAnswer } from '../services/catalog-lookup/record.js';
+import { safeCatalogUrl as onCatalogOrigin } from '../services/catalog-lookup/observation.js';
 import { parseLibraryRequest, parseProblemReport, SubmissionError } from '../catalog-store/requests.js';
 import { PublicV2ValidationError, parseHoldingsCheck, parseHoldingsLookup, parseHoldingsSearch } from './validation.js';
 
@@ -15,13 +16,17 @@ import { PublicV2ValidationError, parseHoldingsCheck, parseHoldingsLookup, parse
 //   POST /problem-reports  report a problem
 //
 // The app's answers: found, not_found, unconfirmed (the catalog answered but
-// did not prove this edition: "Couldn't confirm"), unknown (couldn't check).
-// A failed, cancelled or timed-out check is never "not found", and a "not
-// found" for one ISBN is never presented as "the library does not have this
-// work".
+// did not prove this edition), unknown (couldn't check). `unconfirmed` stays
+// on the wire as its own value; the app shows it as "Couldn't check right
+// now", without "Try again" (plan A3). A failed, cancelled or timed-out check
+// is never "not found", and a "not found" for one ISBN is never presented as
+// "the library does not have this work".
 
 const WORK_ID = /^OL\d+W$/;
 const SEARCH_CAP_MS = 25_000; // the whole result-marking response ends by 25 s (5.7)
+// The lookup run ends a little before the response cap, so a catalog that has
+// not answered by then is reported in `couldntCheck` rather than cut off.
+const LOOKUP_MARGIN_MS = 500;
 const PROFILE_WAIT_MS = 10_000;
 
 const settleWithin = (promise, ms) => new Promise(resolve => {
@@ -154,8 +159,11 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
       // catalog lookup, so it never uses a catalog's time or request budget.
       const profile = book.recordId || metadataFailed ? null
         : await settleWithin(books.searchProfile?.(bookKey, { editionScope: 'work' }), PROFILE_WAIT_MS);
+      // A check still running at its deadline answers "unknown" now and
+      // finishes in the background, storing what it finds for the next look
+      // (plan A2, step 3). The reader leaving no longer cancels a started check.
       const answer = await lookup.lookupBook({ library: entry, publicLibrary: library, book, ...(profile ? { profile } : {}),
-        editionScope: 'work', signal: controller.signal, storedChecked: true });
+        editionScope: 'work', signal: controller.signal, storedChecked: true, background: store.config?.backgroundChecksEnabled !== false });
       if (controller.signal.aborted) return undefined;
       return reply(appAnswer(answer, book, libraryId), answer.source || 'live', answer.catalogUrl);
     } finally {
@@ -164,11 +172,18 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
   }
 
   // Background check for search results (5.7): NDJSON lines
-  //   {"type":"mark","bookKey":"…","answer":"found"}   one per found book
-  //   {"type":"done","unchecked":["…"]}                 always last
-  // `unchecked` lists every book without an answer from this run or the store
-  // (not attempted, no matching row, or only one ISBN not listed). No mark
-  // never means "not in the library".
+  //   {"type":"mark","bookKey":"…","answer":"found","catalogUrl":"…"}   one per found book
+  //   {"type":"done","unchecked":["…"],"notFound":["…"],"couldntCheck":["…"]}   always last
+  // `catalogUrl` is the book's own record in this library's catalog, when the
+  // answer carries one on the library's catalog address (absent otherwise).
+  // `notFound` lists only definite answers: the asked identity is not listed
+  // (a work with a complete edition list, or a book asked by its ISBN). A row
+  // that did not match is never "not found". `couldntCheck` lists books this
+  // run asked the catalog about without a usable answer (the search failed
+  // or ran out of time). `unchecked`, kept for older clients, lists every
+  // book that is neither marked nor in `notFound` (so it includes
+  // `couldntCheck`, books whose rows did not match, and books not asked).
+  // No mark never means "not in the library".
   const identify = key => (typeof books.summary === 'function' ? books.summary(key) : books.resolve(key));
 
   async function holdingsSearch(req, res) {
@@ -183,10 +198,14 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
     res.setHeader('X-Content-Type-Options', 'nosniff');
     const write = line => { if (!res.writableEnded && !res.destroyed) res.write(`${JSON.stringify(line)}\n`); };
     const keys = items.map(item => item.bookKey);
-    const marked = new Set(), answered = new Set();
+    const marked = new Set(), answered = new Set(), failed = new Set();
     const sources = new Set();
+    // The record address goes out only when the library allows links and it
+    // is on the library's own catalog address.
+    const recordLink = value => (library.capabilities?.catalogLink ? onCatalogOrigin(value, library, entry) : undefined);
     const finish = outcome => {
-      write({ type: 'done', unchecked: keys.filter(key => !marked.has(key) && !answered.has(key)) });
+      const unchecked = keys.filter(key => !marked.has(key) && !answered.has(key));
+      write({ type: 'done', unchecked, notFound: keys.filter(key => answered.has(key)), couldntCheck: unchecked.filter(key => failed.has(key)) });
       if (!res.writableEnded) res.end();
       usage({ kind: 'result_marks', queryText: query, libraryId, outcome, resultCount: keys.length, foundCount: marked.size,
         ...(sources.size ? { source: sources.size > 1 ? 'mixed' : [...sources][0] } : {}), durationMs: now() - startedAt });
@@ -223,7 +242,8 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
           profile: lazyProfile(resolved && typeof books.searchProfile === 'function' ? () => books.searchProfile(item.bookKey, { editionScope: 'work' }) : null) };
       }));
       const byKey = new Map(list.map(book => [book.bookKey, book]));
-      iterator = lookup.markResults({ library: entry, publicLibrary: library, query, books: list, signal: controller.signal, deadlineAt })[Symbol.asyncIterator]();
+      const lookupDeadline = deadlineAt - Math.min(LOOKUP_MARGIN_MS, Math.floor(searchCapMs / 4));
+      iterator = lookup.markResults({ library: entry, publicLibrary: library, query, books: list, signal: controller.signal, deadlineAt: lookupDeadline })[Symbol.asyncIterator]();
       const capped = new Promise(resolve => { capTimer = setTimeout(() => resolve({ capped: true }), Math.max(0, deadlineAt - now())); });
       let outcome = 'done';
       while (true) {
@@ -231,13 +251,17 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
         if (step.capped) { outcome = 'partial'; controller.abort(); break; }
         if (step.done) break;
         const item = step.value;
-        if (item.done) break;
+        if (item.done) {
+          for (const key of item.failed || []) failed.add(key);
+          break;
+        }
         if (controller.signal.aborted) { outcome = 'partial'; break; }
         if (item.source) sources.add(item.source);
         const book = byKey.get(item.bookKey);
         if (item.outcome === 'found') {
           marked.add(item.bookKey);
-          write({ type: 'mark', bookKey: item.bookKey, answer: 'found' });
+          const catalogUrl = recordLink(item.catalogUrl);
+          write({ type: 'mark', bookKey: item.bookKey, answer: 'found', ...(catalogUrl ? { catalogUrl } : {}) });
         } else if (item.outcome === 'not_found' && book && definiteNotFound(item, book, libraryId)) {
           answered.add(item.bookKey);
         }

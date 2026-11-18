@@ -252,7 +252,7 @@ test('e-Granthalaya: one member search (2 requests) marks the result whose ISBN 
   const items = await collect(lookup.markResults({ library, query: '101 great lives', books }));
   assert.equal(calls.length, 2);
   assert.deepEqual(items.filter(item => !item.done).map(item => [item.bookKey, item.outcome, item.evidence, item.recordId]), [['a', 'found', 'exact_isbn', '519750']]);
-  assert.deepEqual(items.at(-1), { done: true, notAttempted: ['c'], unmatched: ['b'] });
+  assert.deepEqual(items.at(-1), { done: true, notAttempted: ['c'], unmatched: ['b'], failed: [] });
   await settle();
   // Unmatched rows write nothing; the match is stored for the ISBN.
   assert.deepEqual((await answers.readAnswers(library.id, [{ kind: 'isbn13', value: '9788131313459' }, { kind: 'isbn13', value: '9788173711466' }])).map(row => row.answer), ['found']);
@@ -269,7 +269,7 @@ test('e-Granthalaya rows without ISBNs (Romain Rolland, Wings of Fire) give no b
     egranthalayaCluster: 'PYLIB', egranthalayaLibraryCode: 'RRLPY', egranthalayaSearchScope: 'cluster' };
   const { lookup, answers, settle } = harness();
   const items = await collect(lookup.markResults({ library, query: 'wings of fire', books: [{ bookKey: 'k', isbn13: '9788173711466', profile: kalamProfile() }] }));
-  assert.deepEqual(items, [{ done: true, notAttempted: [], unmatched: ['k'] }]);
+  assert.deepEqual(items, [{ done: true, notAttempted: [], unmatched: ['k'], failed: [] }]);
   await settle();
   assert.equal(answers.size(), 0);
 });
@@ -291,6 +291,9 @@ test('Koha: one keyword search page (1 request) marks the edition shown by ISBN;
   const items = await collect(lookup.markResults({ library: anna, query: 'wings of fire', books }));
   assert.equal(calls.length, 1);
   assert.deepEqual(items.filter(item => !item.done).map(item => [item.bookKey, item.outcome, item.recordId]), [['kalam', 'found', '497990']]);
+  // The mark carries the matching row's record address (A3).
+  assert.equal(items.find(item => item.bookKey === 'kalam').catalogUrl, 'http://118.185.210.241:8001/cgi-bin/koha/opac-detail.pl?biblionumber=497990');
+  assert.deepEqual(items.at(-1).failed, [], 'unmatched rows are not failures');
   assert.deepEqual(items.at(-1).unmatched, ['other-edition', 'sutherland']);
 });
 
@@ -308,13 +311,16 @@ test('Koha RSS rows carry ISBNs (IIT Bhubaneswar) and mark in one request where 
 });
 
 test('Koha libraries whose rows cannot prove the branch (unscoped shared catalogs, IIT Hyderabad API) do not mark results', async () => {
-  global.fetch = async () => assert.fail('no catalog request');
+  // A request here would fail inside the adapter and be swallowed, so count them.
+  let fetches = 0;
+  global.fetch = async () => { fetches++; assert.fail('no catalog request'); };
   const { lookup } = harness();
   for (const library of [{ ...anna, id: 'koha:shared', kohaSearchUnscoped: true, kohaBranchCode: 'MAIN', kohaBranchName: 'Main' },
     { ...anna, id: 'koha:iith', publicCatalogApi: 'iith-opac-v1', publicCatalogCapabilities: {} }]) {
     const items = await collect(lookup.markResults({ library, query: 'wings', books: [{ bookKey: 'k', profile: kalamProfile() }] }));
-    assert.deepEqual(items, [{ done: true, notAttempted: ['k'], unmatched: [] }]);
+    assert.deepEqual(items, [{ done: true, notAttempted: ['k'], unmatched: [], failed: [] }]);
   }
+  assert.equal(fetches, 0);
 });
 
 test('VuFind: one title search (1 request) marks rows by their COinS ISBN', async () => {
@@ -367,7 +373,7 @@ test('Calil: one batch call answers every result ISBN separately; a missing ISBN
     assert.equal(calls.length, 1);
     assert.deepEqual(calls[0].searchParams.get('isbn').split(','), [held, absent, missing]);
     assert.deepEqual(items.filter(item => !item.done).map(item => [item.bookKey, item.outcome]), [['held', 'found'], ['absent', 'not_found']]);
-    assert.deepEqual(items.at(-1), { done: true, notAttempted: ['missing'], unmatched: [] });
+    assert.deepEqual(items.at(-1), { done: true, notAttempted: [], unmatched: [], failed: ['missing'] });
     await settle();
     const stored = await answers.readAnswers(library.id, [held, absent, missing].map(value => ({ kind: 'isbn13', value })));
     assert.deepEqual(stored.map(row => [row.value, row.answer]), [[held, 'found'], [absent, 'not_found']]);
@@ -397,14 +403,14 @@ test('platforms without a results strategy, an open circuit, or a second run on 
   const book = { bookKey: 'k', isbn13: '9788173711466', profile: kalamProfile() };
   for (const platform of ['indcat', 'vpl', 'chamo', 'libsys', 'aspen']) {
     const items = await collect(harness().lookup.markResults({ library: { id: `${platform}:x`, platform, catalogUrl: 'https://x.example' }, query: 'wings', books: [book] }));
-    assert.deepEqual(items, [{ done: true, notAttempted: ['k'], unmatched: [] }], platform);
+    assert.deepEqual(items, [{ done: true, notAttempted: ['k'], unmatched: [], failed: [] }], platform);
   }
   const guard = createHostGuard();
   for (let i = 0; i < 3; i++) guard.recordFailure('118.185.210.241:8001');
-  assert.deepEqual(await collect(harness({ guard }).lookup.markResults({ library: anna, query: 'wings', books: [book] })), [{ done: true, notAttempted: ['k'], unmatched: [] }]);
+  assert.deepEqual(await collect(harness({ guard }).lookup.markResults({ library: anna, query: 'wings', books: [book] })), [{ done: true, notAttempted: ['k'], unmatched: [], failed: [] }]);
   const busy = createHostGuard();
   const finish = busy.tryStartMarking('118.185.210.241:8001');
-  assert.deepEqual(await collect(harness({ guard: busy }).lookup.markResults({ library: anna, query: 'wings', books: [book] })), [{ done: true, notAttempted: ['k'], unmatched: [] }]);
+  assert.deepEqual(await collect(harness({ guard: busy }).lookup.markResults({ library: anna, query: 'wings', books: [book] })), [{ done: true, notAttempted: ['k'], unmatched: [], failed: [] }]);
   finish();
 });
 
@@ -416,7 +422,8 @@ test('result marking never exceeds the platform’s results budget, and a failed
     const { lookup, health, settle } = harness({ providerFor: () => ({ checkAvailability: async () => ({}), searchResultRows: search, searchBookCandidates: search, searchCatalog: search }) });
     const items = await collect(lookup.markResults({ library: { id: `${id}:b`, platform: id, catalogUrl: 'https://s.example' }, query: 'wings', books: [{ bookKey: 'k', profile: kalamProfile() }] }));
     assert.equal(fetches, platform.results.maxRequests, id);
-    assert.deepEqual(items, [{ done: true, notAttempted: ['k'], unmatched: [] }], id);
+    // The search did not finish within our cap: "couldn't check" for the reader, never "not found".
+    assert.deepEqual(items, [{ done: true, notAttempted: [], unmatched: [], failed: ['k'] }], id);
     await settle();
     // Our own request cap ran out: not the library's failure.
     assert.equal(await health.libraryHealth(`${id}:b`), null, id);
@@ -426,7 +433,7 @@ test('result marking never exceeds the platform’s results budget, and a failed
       return { checkAvailability: async () => ({}), searchResultRows: fail, searchBookCandidates: fail, searchCatalog: fail };
     } });
     const failed = await collect(failing.lookup.markResults({ library: { id: `${id}:f`, platform: id, catalogUrl: 'https://f.example' }, query: 'wings', books: [{ bookKey: 'k', profile: kalamProfile() }] }));
-    assert.deepEqual(failed, [{ done: true, notAttempted: ['k'], unmatched: [] }], id);
+    assert.deepEqual(failed, [{ done: true, notAttempted: [], unmatched: [], failed: ['k'] }], id);
     await failing.settle();
     assert.equal((await failing.health.libraryHealth(`${id}:f`)).failuresSinceSuccess, 1, id);
     clearHttpCache();
@@ -442,8 +449,80 @@ test('aborting result marking stops further requests and marks nothing', async (
     return new Promise((_, reject) => { options.signal.addEventListener('abort', () => reject(Object.assign(new Error('aborted'), { name: 'AbortError' }))); if (options.signal.aborted) reject(new Error('aborted')); });
   };
   const items = await collect(harness().lookup.markResults({ library: anna, query: 'wings of fire', signal: controller.signal, books: [{ bookKey: 'k', profile: kalamProfile() }] }));
-  assert.deepEqual(items, [{ done: true, notAttempted: ['k'], unmatched: [] }]);
+  assert.deepEqual(items, [{ done: true, notAttempted: ['k'], unmatched: [], failed: [] }]);
   assert.equal(calls.length, 1);
+});
+
+// --- Plan A2, step 3: a check that runs out of time finishes in the background
+
+function backgroundHarness({ provider, deadlineMs = 100 }) {
+  const deferred = [];
+  const defer = task => { deferred.push(Promise.resolve().then(task)); };
+  const answers = createMemoryAnswerStore(), health = createMemoryHealthRecord();
+  const platforms = { ...UNPACED, vega: { ...UNPACED.vega, book: { ...UNPACED.vega.book, deadlineMs } } };
+  const recorder = createLookupRecorder({ answers, health, defer });
+  const lookup = createCatalogLookup({ providerFor: () => provider, recorder, robots: null, platforms, env: {}, defer });
+  const settle = async () => { while (deferred.length) await Promise.all(deferred.splice(0)); };
+  return { lookup, answers, health, settle };
+}
+const slowLibrary = { id: 'vega:slow', platform: 'vega', catalogUrl: 'https://slow.example/' };
+const slowBook = { bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466' };
+
+test('a book-page check still running at its deadline answers "couldn’t check", then finishes and stores its answer for the next look', async () => {
+  let requests = 0;
+  const provider = { checkAvailability: async () => { requests++; await new Promise(resolve => setTimeout(resolve, 150));
+    return { outcome: 'available', matchKind: 'exact_isbn', recognizedExact: true }; } };
+  const { lookup, answers, health, settle } = backgroundHarness({ provider });
+  const startedAt = Date.now();
+  const first = await lookup.lookupBook({ library: slowLibrary, book: slowBook, editionScope: 'exact', background: true });
+  assert.deepEqual([first.outcome, first.reason], ['couldnt_check', 'timeout']);
+  assert.ok(Date.now() - startedAt < 140, 'the reader is answered at the usual deadline');
+  assert.equal((await answers.readAnswers(slowLibrary.id, [{ kind: 'isbn13', value: slowBook.isbn13 }])).length, 0);
+  await settle();
+  // The same check finished within its own (longer) deadline and stored "found".
+  assert.equal(requests, 1, 'one check, not a second one');
+  const stored = await lookup.lookupBook({ library: slowLibrary, book: slowBook, editionScope: 'exact', background: true });
+  assert.deepEqual([stored.outcome, stored.source], ['found', 'stored']);
+  assert.equal(requests, 1);
+  // The late success is the health record's only event: no timeout was recorded.
+  const record = await health.libraryHealth(slowLibrary.id);
+  assert.equal(record.failuresSinceSuccess, 0);
+  assert.ok(record.lastSuccessAt);
+});
+
+test('a reader leaving does not cancel a started background check; a check that still fails stores nothing', async () => {
+  const provider = { checkAvailability: async () => { await new Promise(resolve => setTimeout(resolve, 60));
+    return { outcome: 'not_found', matchKind: 'none', recognizedExact: true }; } };
+  const { lookup, answers, settle } = backgroundHarness({ provider });
+  const controller = new AbortController();
+  const pending = lookup.lookupBook({ library: slowLibrary, book: slowBook, editionScope: 'exact', background: true, signal: controller.signal });
+  setTimeout(() => controller.abort(), 20);
+  assert.equal((await pending).reason, 'cancelled');
+  await settle();
+  const rows = await answers.readAnswers(slowLibrary.id, [{ kind: 'isbn13', value: slowBook.isbn13 }]);
+  assert.deepEqual(rows.map(row => row.answer), ['not_found'], 'the definite answer was stored after the reader left');
+
+  // Never answers: at its own deadline the background check ends, a timeout
+  // in the health record and no stored answer.
+  const silent = backgroundHarness({ provider: { checkAvailability: () => new Promise(() => {}) } });
+  const answer = await silent.lookup.lookupBook({ library: slowLibrary, book: slowBook, editionScope: 'exact', background: true });
+  assert.equal(answer.reason, 'timeout');
+  await silent.settle();
+  assert.equal(silent.answers.size(), 0);
+  assert.deepEqual((await silent.health.libraryHealth(slowLibrary.id)).failures7dByReason, { timeout: 1 });
+});
+
+test('without background the deadline ends the check, as for /availability', async () => {
+  let finished = false;
+  const provider = { checkAvailability: async () => { await new Promise(resolve => setTimeout(resolve, 150)); finished = true;
+    return { outcome: 'available', matchKind: 'exact_isbn', recognizedExact: true }; } };
+  const { lookup, answers, settle } = backgroundHarness({ provider });
+  const answer = await lookup.lookupBook({ library: slowLibrary, book: slowBook, editionScope: 'exact' });
+  assert.equal(answer.reason, 'timeout');
+  await settle();
+  await new Promise(resolve => setTimeout(resolve, 200));
+  assert.equal(answers.size(), 0);
+  assert.equal(finished, true, 'the adapter call itself settles, but nothing is stored');
 });
 
 // --- /availability: old and new paths agree ---------------------------------
@@ -603,7 +682,7 @@ test('result marking ends by its deadline when an edition profile never arrives,
     const library = { id: `${platform}:slow`, platform, slug: 'S', catalogUrl: `https://${host}` };
     const run = collect(lookup.markResults({ library, query: 'q', books: [{ bookKey: 'a', profile: new Promise(() => {}) }], deadlineAt: Date.now() + 50 }));
     const settled = await Promise.race([run, new Promise(resolve => setTimeout(() => resolve('still waiting'), 1_000))]);
-    assert.deepEqual(settled, [{ done: true, notAttempted: ['a'], unmatched: [] }], platform);
+    assert.deepEqual(settled, [{ done: true, notAttempted: ['a'], unmatched: [], failed: [] }], platform);
     const slot = guard.tryStartMarking(host);
     assert.ok(slot, platform);
     slot();
@@ -707,7 +786,7 @@ test('BiblioCommons marking reads every print row of its one search, and marks a
     // 9780345445605 is the graphic novel's ISBN (its own Open Library work), not the novel's.
     ['v1:openlibrary:OL219602W', 'found', '9780345445605', 'S246C1092054'],
   ]);
-  assert.deepEqual(items.at(-1), { done: true, notAttempted: ['v1:openlibrary:OL19659526W'], unmatched: ['v1:openlibrary:OL24180247W'] });
+  assert.deepEqual(items.at(-1), { done: true, notAttempted: ['v1:openlibrary:OL19659526W'], unmatched: ['v1:openlibrary:OL24180247W'], failed: [] });
 });
 
 test('edition profiles may arrive after the catalog’s part of the run, within the run’s deadline', async () => {
@@ -718,7 +797,7 @@ test('edition profiles may arrive after the catalog’s part of the run, within 
   const late = new Promise(resolve => setTimeout(() => resolve(kalamProfile()), 150));
   const items = await collect(lookup.markResults({ library: { id: 'vufind:late', platform: 'vufind', catalogUrl: 'https://late.example' }, query: 'wings',
     books: [{ bookKey: 'a', profile: late }, { bookKey: 'b', profile: new Promise(() => {}) }], deadlineAt: Date.now() + 600 }));
-  assert.deepEqual(items.map(item => item.done ? item : [item.bookKey, item.outcome]), [['a', 'found'], { done: true, notAttempted: ['b'], unmatched: [] }]);
+  assert.deepEqual(items.map(item => item.done ? item : [item.bookKey, item.outcome]), [['a', 'found'], { done: true, notAttempted: ['b'], unmatched: [], failed: [] }]);
   const slot = guard.tryStartMarking('late.example');
   assert.ok(slot, 'the host slot was freed before waiting on profiles');
   slot();
