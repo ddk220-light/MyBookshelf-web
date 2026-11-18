@@ -1,0 +1,149 @@
+# Production-ready release: implementation progress
+
+Paused on 19 November 2026 at the owner's request, so the work can be resumed
+by anyone. Nothing has been deployed; `main` and `staging` are untouched.
+
+Read first: [the plan](2026-11-production-ready-design.md) (what to build and
+why), [the worker brief](2026-11-production-ready-worker-brief.md) (rules and
+test commands every worker follows), and the root-cause notes in
+`docs/research/2026-11-production-ready/root-causes/`.
+
+## Branches
+
+| Branch | Purpose | State |
+|---|---|---|
+| `claude/production-ready` | The integration branch. Cut from `main`; holds the plan, research, screens, and the 10-second suggestions wait (commit `4cf6f2401e`, cherry-picked from `91ea737c82`). Worker branches merge into it | Clean; this file |
+| `claude/production-ready-w1-library-checks` | Server side of library checks and search (plan A1 code, A2 steps 1-3, A3 server, A5 server) | 4 finished commits, then 1 WIP commit |
+| `claude/production-ready-w2-accounts` | Accounts, server and client (plan B1-B7, B9, B10) | 1 finished commit (server), then 1 large WIP commit (client) |
+| `claude/production-ready-w3-picker-reports` | Library picker on phones, request form, optional contact details, report form, camera fix (plan A4, A6 scanner) | 3 finished commits, then 1 WIP commit (test updates) |
+| `claude/production-ready-w5-pages` | Reading shelf at the root address, About page, help, privacy policy (plan C1, C1b, C2, C3) | 1 WIP commit only |
+
+"Finished" commits were made by the worker after its own checks on that step.
+"WIP" commits hold edits that were in progress when work was paused: they may
+not compile and their tests have not been run. Every WIP commit is titled
+"WIP: unfinished work, saved when paused".
+
+## What each worker branch contains
+
+### w1: library checks (server)
+
+Finished:
+- **A1 code.** `/api/health` reports the catalog store as one word (`ok`,
+  `failed`, `off`); the admin page shows the same word and the newest stored
+  answer's time; the health workflow fails on `failed`.
+- **A2 step 1.** A proven match found before the deadline is kept and
+  returned.
+- **A2 step 3 and A3 server.** A book check that hits its deadline answers
+  "unknown" and finishes in the background under `waitUntil`, storing its
+  answer for the next look. The result-marking stream says which results were
+  not found and which could not be checked.
+- **A2 step 2.** One e-Granthalaya session per check.
+
+WIP: **A5 server**, Open Library pacing per search
+(`server/services/openLibraryPacer.js`, `server/services/workDiscovery.js`).
+
+To finish: complete and test the pacer; run the full server suite; report the
+final field names of the marking stream (the plan names `catalogUrl` on found
+marks and `notFound`, `couldntCheck` on `done`; check the code for what was
+built) and the Koha record URL work (A3 server item c), which may not be done.
+
+### w2: accounts
+
+Finished (server): no password rules (minimum 1), no leaked-password check,
+log-in by emailed link, signed in after verifying and after a reset.
+
+WIP (client, about 30 files): one account screen (`AccountScreens.tsx`), the
+eye-icon password field (`PasswordInput.tsx`), the automatic merge at sign-in
+(`guestMerge.ts` and tests), link tokens in the address fragment
+(`linkToken.ts`), notices (`AccountNotice.tsx`), and removal of the old
+`AccountSettingsSmall`, `AccountSummary` and import screens. The worker was
+updating `PanelPages` and `AccountUndo` tests when paused.
+
+To finish: make the client compile; finish B5 (merge), B6 (one screen), B7
+(delete screen, browser clean-up, confirmation email), B9 (focus refresh by
+revision, recent sign-in window, notices, email reference header), B10 (the
+Log in screen); check B2 (service started when the entry screen opens,
+Server-Timing, request-budget test) and B4; run client, server and account
+browser tests.
+
+### w3: picker, requests, reports
+
+Finished:
+- **Scanner.** One shared camera request, so a refusal always reaches the
+  pop-up.
+- **Item 14.** Migration `003` (optional `contact_name` and `contact_email` on
+  problem reports, a `library_request_contacts` table), validation, grants,
+  the 90-day removal inside the existing daily maintenance, the admin display,
+  the report form.
+- **A4.** The picker's fixed header and field, scrolling list,
+  `visualViewport` sizing, count and "Show 25 more", the current library with
+  Remove (`clearLibrary`), and the request form.
+
+WIP: updates to browser tests (`one-shelf-a11y`, `one-shelf-book`,
+`one-shelf-desktop`, `one-shelf-holdings`, `policy-pages`).
+
+To finish: complete those test updates and run them; run the full client and
+server suites.
+
+### w5: pages
+
+WIP only (about 80 files): the shelf moved from `/app/shelf` to `/` across the
+router, path checks, the page builder, `vercel.json`, `client/index.html` and
+most browser and unit tests; `site.js`, `support.html`, `privacy.html`
+changes. The worker was adding unit tests for the `/app/shelf` forwarding and
+the root route when paused.
+
+Check before building on it: whether the About page (`/about` from the old
+landing content, plan C1b), the new About text (C2), and the privacy policy
+rewrite (`docs/policy/privacy.md`, C3) were started; the file list suggests
+only C1 and parts of C2 were.
+
+To finish: C1 tests; C1b; C2; C3; then `npm run build`, the SEO and tools
+tests, and the browser journeys.
+
+## Not started
+
+- **A3 client and A5 client:** the library answer in words on the book page,
+  shelf, list view and results; titles under result covers; "No books found"
+  help; "On my reading shelf" as a status with a separate Remove; a book keeps
+  its first title; the tab shows the book's title. Depends on w1's field
+  names.
+- **B8:** the settings gear, the settings panel, the library row with Change
+  on the shelf, the first-visit prompt, a Help link in the app, the rail gear.
+- **The "My reading shelf" rename**, everywhere at once, after the other
+  branches are merged.
+- **C4 polish:** hover and pressed states, nothing under 12 px, WOFF2 fonts,
+  44 px touch targets on public pages, the small items from the run.
+- **Proposed CLAUDE.md wording** (needs the owner's approval): the catalog
+  store can now hold optional contact details kept 90 days; the shelf's
+  address is `/`.
+
+## How to resume
+
+1. Finish each worker branch in its own worktree, using the worker brief and
+   one pair of test databases per worker (names must end in `_test`, for
+   example `w1_catalog_test`, `w1_accounts_test`).
+2. Merge into `claude/production-ready` in this order, running the full checks
+   after each: w1, w3, w2, w5. Expect conflicts between w2 and w5 in
+   `client/src/v2/App.tsx`, `AppFrame.tsx`, `DeskLayout.tsx`, `layoutMode.ts`,
+   `AccountPages.tsx`, `AccountEntryGate.tsx`, `AccountSettingsPage.tsx`,
+   `AccountEntry.test.tsx`, `PanelPages.test.tsx` and many browser tests
+   (w5 changed `/app/shelf` to `/` in them), and between w3 and w5 in the
+   browser tests.
+3. Then build the "not started" packages above on `claude/production-ready`:
+   A3/A5 client first, then B8, then the rename, then C4.
+4. Run every check in plan section 8, without deploying.
+
+## Launch (needs the owner)
+
+In this order, on the day of launch:
+1. New passwords for `catalog_runtime`, `catalog_worker` and `catalog_admin`
+   in Neon; the three production settings in Vercel
+   (`CATALOG_DATABASE_URL`, `CATALOG_WORKER_DATABASE_URL`,
+   `CATALOG_ADMIN_DATABASE_URL`) set to the correct host, with `-pooler` once.
+   Never print or store a value.
+2. Apply catalog migration `003` to the production catalog database (it
+   already has `001` and `002`).
+3. Merge `claude/production-ready` into `main`: the single deployment.
+4. Run the live checks in plan section 8 straight away; roll back in Vercel if
+   something is badly wrong.

@@ -16,6 +16,9 @@ retired authentication and unrelated research archives are outside its scope.
   why each problem happens, three releases (make the core work; account and
   settings; pages and policy), the wording for every library answer, and the
   decisions left for the owner. For the agent that makes the changes.
+- [Implementation progress](plans/2026-11-production-ready-progress.md): the
+  branches, what each holds, what is left, and how to resume (paused 19
+  November). [Worker brief](plans/2026-11-production-ready-worker-brief.md).
 - [Screens](design/2026-11-production-ready/README.md): 20 mock-ups (library
   answer in words, choosing a library, settings and account, desktop).
 - [The end-to-end run](research/2026-11-production-ready/README.md) and its
