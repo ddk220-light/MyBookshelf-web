@@ -135,7 +135,7 @@ Order of work: build the desktop layout first, then suggestions on both mobile a
     record key (which names the library), is refused.
   - It returns up to 15 candidates, so that five remain after the app's own pick, which stays the
     authority. It applies the same exclusions (book key, ISBN-13, Open Library work) and the
-    one-per-author rule. It always answers 200 within about 3 s; `partial: true` marks an answer
+    one-per-author rule. It always answers 200 within about 10 s (3 s at first; raised on 18 November 2026 because a slow Open Library left books with long author lists without suggestions); `partial: true` marks an answer
     cut short by a failing or slow store or Open Library, and the app then puts that answer's
     books before its last ones (without repeats) and picks five from them.
   - Candidates come from public lists only: the related lists below, then the seed list

@@ -41,7 +41,12 @@ import { peekOpenLibraryRead } from '../services/workDiscovery.js';
 
 export const RELATED_RETURNED = 30;
 export const OUTBOUND_CAP = 3;
-export const SUGGESTIONS_DEADLINE_MS = 3_000;
+// Long enough for a slow Open Library (3 to 4 s a request on some days): the
+// book's record, then its author and subject lists together. Suggestions
+// arrive after the shelf is drawn, so readers only see them a little later,
+// and a complete answer is then kept a day. At 3 s, such days gave only
+// partial (empty) answers for books with long author lists.
+export const SUGGESTIONS_DEADLINE_MS = 10_000;
 export const SUGGESTION_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 const WORK_ID = /^OL\d+W$/;
 
