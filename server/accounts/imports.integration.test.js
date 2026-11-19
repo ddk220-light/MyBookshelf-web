@@ -65,7 +65,16 @@ test(
         secret: "only-a-test-secret-longer-than-32-characters",
       }),
       history = createHistoryActions({ owned: reading.owned }),
-      imports = createImportActions(reading);
+      counted = [],
+      // The import allowance is counted only once an import is valid and
+      // current (accounts/service.js counts it in the shared buckets).
+      imports = createImportActions({
+        ...reading,
+        limit: async (who, rule) => {
+          assert.equal(who, identity);
+          counted.push(rule.scope);
+        },
+      });
     const book = (age = 0) => {
       const bookKey = "v1:googlebooks:" + randomUUID().replaceAll("-", "");
       keys.push(bookKey);
@@ -99,12 +108,14 @@ test(
       historyGeneration: 0,
     };
     const imported = await imports.importGuest(payload, identity);
+    assert.deepEqual(counted, ["imports"]);
     assert.equal(imported.savedAdded, 1);
     // Guest Viewed before comes over whatever its age (plan 4.7).
     assert.equal(imported.historyAccepted, 2);
     assert.equal(imported.historyExpired, 0);
     assert.equal(imported.historyEnabled, true);
     assert.deepEqual(await imports.importGuest(payload, identity), imported);
+    assert.deepEqual(counted, ["imports"], "a replay is not counted again");
     assert.equal((await reading.state(identity)).selectedLibraryId, "bc:smcl");
     assert.equal((await history.history({}, identity)).books.length, 2);
     assert.ok(
@@ -140,14 +151,45 @@ test(
       ...book(),
       viewedAt: new Date(Date.now() + 86400000).toISOString(),
     });
+    // The refused book is named by its position, so the others can go again.
     await assert.rejects(
       imports.importGuest(malformed, identity),
-      (e) => e.code === "INVALID_INPUT",
+      (e) =>
+        e.code === "INVALID_INPUT" &&
+        JSON.stringify(e.details) ===
+          JSON.stringify({ rejected: { savedBooks: [1], recentBooks: [] } }),
     );
+    await assert.rejects(
+      imports.importGuest(
+        { ...base, snapshot: { ...base.snapshot, selectedLibraryId: "zz:not-listed" } },
+        identity,
+      ),
+      (e) =>
+        e.code === "INVALID_INPUT" &&
+        JSON.stringify(e.details) === JSON.stringify({ rejected: { library: true } }),
+    );
+    // Refused and out-of-date imports spend nothing.
+    assert.deepEqual(counted, ["imports"]);
     assert.equal((await reading.state(identity)).counts.saved, 1);
     const changed = await imports.importGuest(base, identity);
     assert.equal(changed.savedAdded, 1);
     assert.equal((await reading.state(identity)).selectedLibraryId, "bc:sfpl");
+    // Viewed before alone (Undo after "Clear") has its own allowance, so the
+    // merge at sign-in cannot use up the Undo, nor the Undo the merge.
+    const after = await reading.state(identity);
+    await imports.importGuest(
+      {
+        importId: randomUUID(),
+        snapshot: { version: 1, selectedLibraryId: null, savedBooks: [], recentBooks: [book()] },
+        includeHistory: true,
+        libraryPolicy: "keep-account",
+        settingsRevision: after.settingsRevision,
+        shelfRevision: after.shelfRevision,
+        historyGeneration: after.historyGeneration,
+      },
+      identity,
+    );
+    assert.deepEqual(counted, ["imports", "imports", "history-imports"]);
     // The maximum Unicode/long-key envelope is bounded by UTF-8 bytes, not JS length.
     const longKey =
       "v1:catalog:vpl:visakhapatnam-public-library:" +

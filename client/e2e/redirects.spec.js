@@ -21,33 +21,46 @@ test.describe('Old addresses', () => {
   test('/app goes to the shelf', async ({ page }) => {
     await fixture(page);
     await page.goto('/app');
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
+  });
+
+  test('/app/shelf, the shelf’s old address, forwards to the root without its query', async ({ page, request }) => {
+    for (const path of ['/app/shelf', '/app/shelf/', '/app/shelf?q=wings#top', '/app']) {
+      const response = await request.get(path, { maxRedirects: 0 });
+      expect(response.status(), path).toBe(308);
+      expect(response.headers().location, path).toBe('/');
+    }
+    await fixture(page);
+    await page.goto('/app/shelf?q=wings');
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
+    await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
+    expect(await everything(page)).not.toContain('wings');
   });
 
   test('/app/search: the shelf with the search bar focused', async ({ page }) => {
     await fixture(page);
     await page.goto('/app/search');
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(page.getByRole('searchbox', { name: 'Search for a book' })).toBeFocused();
   });
 
   test('/app/search?q=: searches once, and the text stays out of the address, history and storage', async ({ page }) => {
     const { calls } = await fixture(page);
     await page.goto('/app/search?q=innovator');
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(page.getByRole('link', { name: new RegExp('^' + BOOK.title) }).first()).toBeVisible();
     await expect(page.getByRole('searchbox', { name: 'Search for a book' })).toHaveValue('innovator');
     expect(calls.filter(call => call.endpoint === '/books/search')).toHaveLength(1);
     expect(await everything(page)).not.toContain('innovator');
     // Back leaves the results for the shelf; the old address is not in the history.
     await page.goBack();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
     await page.goBack();
     expect(page.url()).not.toContain('innovator');
     await page.goForward();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     expect(await everything(page)).not.toContain('innovator');
     expect(calls.filter(call => call.endpoint === '/books/search')).toHaveLength(1);
   });
@@ -66,10 +79,10 @@ test.describe('Old addresses', () => {
       await expect(page).toHaveURL(/\/app\/search\?scope=free$/);
       await expect(page.getByRole('heading', { name: 'Search', exact: true })).toBeVisible();
     } else {
-      await expect(page).toHaveURL(/\/app\/shelf$/);
+      await expect(page).toHaveURL(/\/\/[^/]+\/$/);
       await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
       await page.goto('/app/search?scope=papers&q=fixture-paper');
-      await expect(page).toHaveURL(/\/app\/shelf$/);
+      await expect(page).toHaveURL(/\/\/[^/]+\/$/);
       expect(calls.some(call => call.endpoint.includes('content'))).toBe(false);
       expect(await everything(page)).not.toContain('fixture-paper');
     }
@@ -78,14 +91,14 @@ test.describe('Old addresses', () => {
   test('/app/libraries: the shelf with the library pop-up', async ({ page }) => {
     await fixture(page);
     await page.goto('/app/libraries');
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     const dialog = page.getByRole('dialog', { name: 'Find your library' });
     await expect(dialog).toBeVisible();
     await expect(dialog.getByLabel('City, town or library name')).toHaveValue('');
     // Back closes it and stays on the shelf.
     await page.keyboard.press('Escape');
     await expect(dialog).toHaveCount(0);
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
   });
 
   test('/app/libraries: the pop-up opens once; Back closes it and it never opens again by itself', async ({ page }) => {
@@ -101,25 +114,25 @@ test.describe('Old addresses', () => {
     await expect(dialog).toBeVisible();
     // Back closes the pop-up and stays on the shelf.
     await page.goBack();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(dialog).toHaveCount(0);
-    await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'My reading shelf' })).toBeVisible();
     // Opening a book and coming back, or a reload, does not bring it back.
     await page.getByRole('link', { name: new RegExp('^' + BOOK.title + ' by ') }).click();
     await expect(page).toHaveURL(bookUrl);
     await page.goBack();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
-    await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
+    await expect(page.getByRole('heading', { level: 1, name: 'My reading shelf' })).toBeVisible();
     await expect(dialog).toHaveCount(0);
     await page.reload();
-    await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'My reading shelf' })).toBeVisible();
     await expect(dialog).toHaveCount(0);
   });
 
   test('/app/libraries?q=: the text goes into the pop-up’s field and nowhere else', async ({ page }) => {
     await fixture(page);
     await page.goto('/app/libraries?q=Chennai');
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     const dialog = page.getByRole('dialog', { name: 'Find your library' });
     await expect(dialog.getByLabel('City, town or library name')).toHaveValue('Chennai');
     await expect(dialog.getByRole('button', { name: new RegExp(LINKED_LIBRARY.name) })).toBeVisible();
@@ -144,8 +157,8 @@ test.describe('Old addresses', () => {
   test('/app/settings: the shelf with the side panel; #privacy: the Privacy page', async ({ page }) => {
     await fixture(page);
     await page.goto('/app/settings');
-    await expect(page).toHaveURL(/\/app\/shelf$/);
-    await expect(page.getByRole('dialog', { name: 'Account and settings' })).toBeVisible();
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
+    await expect(page.getByRole('dialog', { name: 'Settings' })).toBeVisible();
     await page.goto('/app/settings#privacy');
     await expect(page).toHaveURL(/\/app\/privacy$/);
     await expect(page.getByRole('heading', { name: 'Privacy', level: 1 })).toBeVisible();
@@ -154,7 +167,7 @@ test.describe('Old addresses', () => {
   test('/find: the shelf', async ({ page }) => {
     await fixture(page);
     await page.goto('/find');
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
   });
 
@@ -168,7 +181,7 @@ test.describe('Old addresses', () => {
     await fixture(page);
     await page.route('**/api/v2/libraries/resolve-link', route => route.fulfill({ json: { library: LINKED_LIBRARY } }));
     await page.goto('/select/anna-centenary-library?next=/app/search&q=wings');
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(page.locator('.home-library')).toHaveText(LINKED_LIBRARY.name);
     await expect(page.getByRole('dialog')).toHaveCount(0);
     expect(await everything(page)).not.toContain('wings');
@@ -178,15 +191,15 @@ test.describe('Old addresses', () => {
     await fixture(page);
     await page.goto('/app/books/' + encodeURIComponent(BOOK.bookKey));
     await expect(page.getByRole('heading', { name: BOOK.title })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Add to my shelf' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Add to my reading shelf' })).toBeVisible();
   });
 
   test('an unknown app page says so and leads back to the shelf', async ({ page }) => {
     await fixture(page);
     await page.goto('/app/no-such-page');
     await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
-    await page.getByRole('link', { name: 'My shelf' }).click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await page.getByRole('link', { name: 'My reading shelf' }).click();
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
   });
 });
 
@@ -196,31 +209,32 @@ test.describe('Public pages into the app', () => {
     const response = await page.goto('/no-such-page');
     expect(response.status()).toBe(404);
     await expect(page.getByRole('link', { name: 'Explore libraries' })).toHaveAttribute('href', '/libraries');
-    await page.getByRole('link', { name: 'Open your bookshelf →' }).click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await page.getByRole('link', { name: 'Open my reading shelf →' }).click();
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
   });
 
-  test('the landing page’s Find my library opens the library pop-up and puts no typed text in an address', async ({ page }) => {
+  test('the About page leads to the reading shelf at the root, and the wordmark leads back to About', async ({ page }) => {
     await fixture(page);
-    await page.goto('/');
+    await page.goto('/about');
     await expect(page.locator('main input')).toHaveCount(0);
-    await page.getByRole('link', { name: 'Find my library' }).click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
-    await expect(page.getByRole('dialog', { name: 'Find your library' })).toBeVisible();
-    await page.goto('/');
-    await page.getByRole('link', { name: 'Find a book instead →' }).click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await page.getByRole('main').getByRole('link', { name: 'Open my reading shelf' }).click();
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
+    await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
+    await page.getByRole('link', { name: 'MyBookshelf', exact: true }).click();
+    await expect(page).toHaveURL(/\/about$/);
+    await expect(page.locator('h1')).toHaveText('Find out if your library has a book, before you go.');
   });
 
-  test('Open the app and the libraries hub lead into the new app', async ({ page }) => {
+  test('Open my reading shelf and the libraries hub lead into the app', async ({ page }) => {
     await fixture(page);
     await page.goto('/libraries');
-    await page.getByRole('link', { name: 'Find your library in the app →' }).click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    // "Find my library" goes through /app/libraries, which opens the picker over the shelf.
+    await page.getByRole('main').getByRole('link', { name: 'Find my library', exact: true }).click();
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(page.getByRole('dialog', { name: 'Find your library' })).toBeVisible();
     await page.goto('/how-it-works');
-    await page.getByRole('link', { name: /Open the app/ }).click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await page.getByRole('banner').getByRole('link', { name: 'Open my reading shelf' }).click();
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
   });
 });

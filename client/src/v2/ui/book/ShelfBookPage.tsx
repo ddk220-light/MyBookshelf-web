@@ -69,7 +69,7 @@ function firstOpen(entry: string): boolean {
  *
  * In the desktop middle slot (DeskBook board) the page has a close button (×)
  * instead of Back, the library picker is the layout's (the left column at
- * wide widths), and no "Added to your shelf" notice is needed at wide widths:
+ * wide widths), and no "Added to your reading shelf" notice is needed at wide widths:
  * the shelf beside the book shows it.
  */
 export function ShelfBookPage() {
@@ -86,13 +86,29 @@ export function ShelfBookPage() {
   const [error, setError] = useState<string | null>(null);
   const enriched = useCatalogMetadata(resolved);
   const book = enriched?.bookKey === bookKey ? enriched : null;
+  const title = book?.title || (error ? 'Book unavailable' : 'Book details');
+  useEffect(() => {
+    const previous = document.title;
+    const next = title + ' | MyBookshelf';
+    document.title = next;
+    return () => { if (document.title === next) document.title = previous; };
+  }, [title]);
 
   useEffect(() => {
     let active = true;
     setResolved(supplied); setError(null);
     if (!bookKey) { setError('Book details could not load.'); return; }
     publicApi.resolveBook(bookKey, state.selectedLibraryId).then(result => {
-      if (active) setResolved(result.metadataStatus && supplied ? { ...supplied, metadataStatus: result.metadataStatus } : result);
+      if (!active) return;
+      if (!supplied) { setResolved(result); return; }
+      if (result.bookKey !== supplied.bookKey) return;
+      setResolved({
+        ...supplied,
+        description: result.description ?? supplied.description,
+        publishedDate: result.publishedDate ?? supplied.publishedDate,
+        isbn13: supplied.isbn13 ?? result.isbn13,
+        metadataStatus: result.metadataStatus,
+      });
     }).catch(failure => { if (active && !supplied) setError(messageFor(failure, 'Book details could not load.')); });
     return () => { active = false; };
     // Navigation state does not change which book this is.
@@ -134,7 +150,7 @@ export function ShelfBookPage() {
     }
   };
   const back = slot ? <SlotClose label="Close the book" onClose={slot.close} />
-    : <Link className="back-link shelf-book-back" to="/app/shelf" state={backState} onClick={goBack}><BackGlyph size={20} />Back</Link>;
+    : <Link className="back-link shelf-book-back" to="/" state={backState} onClick={goBack}><BackGlyph size={20} />Back</Link>;
 
   // Library pop-up over the book (its own history entry).
   const picker = useHistoryOverlay('library');
@@ -177,20 +193,20 @@ export function ShelfBookPage() {
     try {
       if (savedItem) {
         setAdded(false); setPopTick(false);
-        if (await unsaveBook(savedItem.bookKey)) setAnnouncement('Removed from your shelf');
+        if (await unsaveBook(savedItem.bookKey)) setAnnouncement('Removed from your reading shelf');
         else { setSaveError('Couldn’t remove this book. Try again.'); setAnnouncement('Couldn’t remove this book. Try again.'); }
         return;
       }
       const result = await saveBook(book);
       if (result === 'saved' && fromSuggestion) reportSuggestion('saved', book.bookKey);
-      if (result === 'saved' || result === 'already-saved') { setPopTick(true); setAdded(true); setAnnouncement('Added to your shelf'); return; }
-      const message = result === 'full' ? 'Shelf full' : result === 'recovery' ? 'Reload your saved shelf before making changes.' : 'Couldn’t save this book. Try again.';
+      if (result === 'saved' || result === 'already-saved') { setPopTick(true); setAdded(true); setAnnouncement('Added to your reading shelf'); return; }
+      const message = result === 'full' ? 'Your reading shelf is full' : result === 'recovery' ? 'Reload your reading shelf before making changes.' : 'Couldn’t save this book. Try again.';
       setSaveError(message); setAnnouncement(message);
     } finally { setBusy(false); }
   };
 
   // The library answer is announced once it settles.
-  const settled = card.kind === 'library' && card.answer !== 'checking' ? answerLabel(card.answer, card.name) : '';
+  const settled = card.kind === 'library' && card.answer !== 'checking' ? answerLabel(card.answer) : '';
   useEffect(() => { if (settled) setAnnouncement(settled); }, [settled]);
 
   const [fullAbout, setFullAbout] = useState(false);
@@ -237,8 +253,8 @@ export function ShelfBookPage() {
     </section>
 
     <p className="visually-hidden" role="status">{announcement}</p>
-    {added && saved && slot?.mode !== 'wide' && <div className="undo-notice shelf-book-toast"><span>Added to your shelf</span>
-      {slot ? <button type="button" onClick={slot.close}>See my shelf</button> : <Link to="/app/shelf">See my shelf</Link>}</div>}
+    {added && saved && slot?.mode !== 'wide' && <div className="undo-notice shelf-book-toast"><span>Added to your reading shelf</span>
+      {slot ? <button type="button" onClick={slot.close}>See my reading shelf</button> : <Link to="/">See my reading shelf</Link>}</div>}
     {!slot && <LibraryPickerDialog open={picker.open} onClose={picker.close} returnFocus={pickerReturn} />}
   </section>;
 }

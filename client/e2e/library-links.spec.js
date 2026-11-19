@@ -37,9 +37,9 @@ test('a guide page’s button chooses its library silently and opens the shelf, 
   await fixture(page, true);
   await page.goto('/libraries/anna-centenary-library');
   const button = page.getByRole('link', { name: 'Find a book to check here →' });
-  await expect(button).toHaveAttribute('href', '/select/anna-centenary-library?next=/app/shelf');
+  await expect(button).toHaveAttribute('href', '/select/anna-centenary-library');
   await button.click();
-  await expect(page).toHaveURL(/\/app\/shelf$/);
+  await expect(page).toHaveURL(/\/\/[^/]+\/$/);
   await expect(page.locator('.home-library')).toHaveText(pilots[0].name);
   await expect(page.getByRole('dialog')).toHaveCount(0);
   expect(await chosen(page)).toBe(pilots[0].id);
@@ -52,7 +52,7 @@ test('a guide page’s button chooses its library silently and opens the shelf, 
 for (const library of pilots) test(`/select link for ${library.name} works on a fresh visit with no account`, async ({ page }) => {
   await fixture(page);
   await page.goto(library.selectionPath + '?next=/app/search');
-  await expect(page).toHaveURL(/\/app\/shelf$/);
+  await expect(page).toHaveURL(/\/\/[^/]+\/$/);
   await expect(page.locator('.home-library')).toHaveText(library.name);
   expect(await chosen(page)).toBe(library.id);
   await expect(page.locator('input[type="password"]')).toHaveCount(0);
@@ -70,7 +70,7 @@ test('a second link switches libraries', async ({ page }) => {
 test('an unknown link keeps the chosen library and the saved books', async ({ page }) => {
   await fixture(page, true);
   await page.goto('/select/no-such-library');
-  await expect(page).toHaveURL(/\/app\/shelf$/);
+  await expect(page).toHaveURL(/\/\/[^/]+\/$/);
   await expect(page.locator('.home-notice')).toBeVisible();
   expect(await chosen(page)).toBe(oldLibrary.id);
   expect(await page.evaluate(key => JSON.parse(localStorage.getItem(key)).savedBooks.length, key)).toBe(1);
@@ -98,9 +98,9 @@ test('a shared book link survives reload and Back returns to the shelf', async (
   await page.route('**/api/v2/holdings/check', route => route.fulfill({ json: { answer: 'found' } }));
   await page.goto(pilots[0].selectionPath + '?book=' + encodeURIComponent(BOOK.bookKey));
   await expect(page.getByRole('heading', { name: BOOK.title })).toBeVisible();
-  await expect(page.getByRole('group', { name: 'Found in ' + pilots[0].name })).toBeVisible();
+  await expect(page.getByRole('group', { name: 'In your library' })).toBeVisible();
   await page.reload();
   await expect(page.getByRole('heading', { name: BOOK.title })).toBeVisible();
   await page.getByRole('link', { name: 'Back' }).click();
-  await expect(page).toHaveURL(/\/app\/shelf$/);
+  await expect(page).toHaveURL(/\/\/[^/]+\/$/);
 });

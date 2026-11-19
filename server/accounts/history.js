@@ -8,6 +8,16 @@ export const historySources=new Set(['camera','isbn','search','direct']);
 // reader clears it or deletes the account. history_enabled is no longer
 // consulted for recording; the setting route stays for older clients.
 export const HISTORY_LIMIT=50;
+export async function readHistoryRevision(client, id) {
+  const { rows: [row] } = await client.query(
+    `SELECT md5(coalesce(string_agg(
+      reference_id::text || ':' || extract(epoch FROM viewed_at)::text,
+      ',' ORDER BY reference_id), '')) AS "historyRevision"
+      FROM recent_book_views WHERE user_id=$1`,
+    [id],
+  );
+  return row.historyRevision;
+}
 export async function trimHistory(client,id){
   await client.query(`DELETE FROM recent_book_views WHERE user_id=$1 AND reference_id IN
     (SELECT reference_id FROM recent_book_views WHERE user_id=$1 ORDER BY viewed_at DESC,reference_id DESC OFFSET ${HISTORY_LIMIT})`,[id]);
@@ -19,6 +29,7 @@ export function createHistoryActions({owned}){
       return owned(identity,async(client,settings,id)=>({
         books:(await client.query(`SELECT v.*,r.book_key FROM recent_book_views v JOIN book_refs r ON r.id=v.reference_id
           WHERE v.user_id=$1 ORDER BY v.viewed_at DESC,v.reference_id DESC LIMIT ${HISTORY_LIMIT}`,[id])).rows.map(bookDTO),...versions(settings),
+        historyRevision: await readHistoryRevision(client, id),
       }));
     },
     async historySettings(body,identity){

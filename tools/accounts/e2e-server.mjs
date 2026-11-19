@@ -57,7 +57,6 @@ const accounts = createAccountMiddleware({
   env,
   initialize: async (config) => {
     service = await createAccountService(config, {
-      checkPassword: async () => {},
       ledger,
     });
     return service;
@@ -140,7 +139,7 @@ const app = createApplication({
             `SELECT j.payload FROM account_mail_jobs j JOIN "user" u ON u.id=j."authUserId" WHERE u.email=$1 AND j.kind=$2 AND j.status='queued' AND j."expiresAt">now() ORDER BY j."createdAt" DESC LIMIT 1`,
             [
               email,
-              ["newEmail", "reset"].includes(req.body.kind)
+              ["newEmail", "reset", "magicLink", "deleted"].includes(req.body.kind)
                 ? req.body.kind
                 : "verify",
             ],

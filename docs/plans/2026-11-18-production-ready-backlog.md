@@ -1,0 +1,534 @@
+# Production-ready checks: backlog and analysis path
+
+18 November 2026. Branch `claude/production-ready-checks` (documents only; this
+branch never builds on Vercel).
+
+## Goal
+
+Get MyBookshelf ready for real readers. The owner listed what to fix; a first
+look at production found more. The work runs in this order:
+
+1. **Analysis first.** Nothing in the app changes during it.
+   - Connect the owner's Android phone and iPhone to a session on the owner's
+     Mac and walk the whole product end to end (item 23, then item 24).
+   - Prove that every kind of record is written in production (item 20).
+   - Review the backlog below against what the run finds.
+2. **Design plan.** Write the design for every item, with the open questions
+   resolved with the owner.
+3. **Hand over.** An implementation agent makes the changes from the agreed
+   plan, tests them, and releases them in as few deployments as possible.
+
+This file is the handover for step 1. A session opened on the owner's Mac
+starts at "Start here on the Mac".
+
+## Rules that still apply
+
+- No change to the app, and no deployment, until the owner agrees the plan.
+  Vercel builds only `main` and `staging`; do not push to either.
+- Release in as few deployments as possible; finish and test everything first.
+- Nothing that adds cost without value: no new timers or recurring work.
+- CLAUDE.md rules: answers are found / not found / couldn't check only; a
+  failed check is never shown as "not in the library"; no copy counts, due
+  dates or shelf numbers; editions are never merged for identity or
+  availability; catalog access restrictions and reduced motion are respected;
+  search text only in the anonymous log, never in web addresses, browser
+  storage, platform logs or analytics; no log is linked to an account.
+- Secrets go only through secure settings, never into chat, files or command
+  output. Changes to CLAUDE.md need the owner's approval.
+- Be gentle with library catalogs: few requests, no load tests.
+
+## What is live, and what is ready but not deployed
+
+- **Live (17 November, PR #197):** the desktop layout, shelf suggestions with a
+  "Suggested" label under each book, related lists cached by the CDN, and the
+  Indian library allowlist.
+- **Ready, not deployed:** suggestions wait up to 10 seconds for Open Library
+  instead of 3 (branch `claude/nifty-feynman-4qwocr`, commit `91ea737c82`). On a
+  slow Open Library day, books with long author lists (Wings of Fire, Harry
+  Potter) got no suggestions; with every read slowed by 3.5 s the new wait
+  returns 23 books where the old one returned none. Ship it with the next
+  release.
+- **Done outside the app:** `privacy@mybookshelf.cloud` forwards to the
+  owner's Gmail (ImprovMX; MX and SPF records are in Vercel DNS). Optional,
+  later: reply as that address from Gmail through Resend's SMTP.
+
+## Found in production on 18 November
+
+1. **The database noted as production is not the one the live app uses.** The
+   Neon catalog database in the setup notes has no rows in any table. A live
+   library check answered "found" and stored nothing there, and the app never
+   connected to it. The app does connect to a Postgres database (driver
+   warnings appear in the runtime logs), most likely one created by Vercel's
+   Neon integration. Until that database is found, nobody has seen whether
+   searches, cached answers or failed checks are recorded. Catalog migration
+   `002-suggestion-counts.sql` went to the unused database, so the real one
+   probably lacks it, and "opened" and "saved" suggestion counts are then
+   refused silently. Settings in production: `CATALOG_STORE_ENABLED`,
+   `USAGE_LOG_ENABLED` and `HOLDINGS_BACKGROUND_ENABLED` are all `true`.
+2. **e-Granthalaya checks time out.** Wings of Fire at PM SHRI Kendriya
+   Vidyalaya No.1 Narimedu (`egranthalaya:kvs3-kvnarimedu`) takes 25 to 28
+   seconds and ends as "couldn't check", by ISBN and by work. The server runs in
+   San Francisco (`sfo1`); the government servers (`eg4.nic.in`) are slow from
+   outside India (8.6 s for one page from a US cloud machine). The library was
+   listed from an audit that found books in 16 of 50 titles; the strict check
+   was never run for it. A phone does not change this: the check runs on the
+   server.
+3. **Other catalogs work.** Anna Centenary Library (Koha) answered "found" in
+   12 seconds with a link to the book's own catalog record.
+4. **Passwords to change.** A diagnostic command printed the saved passwords of
+   the three roles of the unused catalog database into a session transcript.
+   Nothing live uses them, but they must be changed (item 21).
+5. **Suggestion quality, seen live.** A book already on the shelf was suggested
+   again under a second Open Library record, and an edition in another language
+   appeared. The owner chose to fix only the wait for now; both are recorded
+   under "Decided against, for now".
+
+## Progress on the analysis (18 November, on the Mac)
+
+- **Item 23 is done.** Both phones are driven from the Mac over Wi-Fi: the
+  Pixel through `adb` and Chrome remote debugging, the iPhone through
+  WebDriverAgent (taps, typing, screenshots; page inspection needs the cable).
+- **Item 24 is done for a guest reader** on the Pixel, the iPhone and desktop.
+  Findings, ranked, with the timings:
+  [research/2026-11-production-ready](../research/2026-11-production-ready/README.md).
+  The 824 screenshots, timings, layout and request data, and the desktop
+  scripts and logs are in the same folder
+  ([index](../research/2026-11-production-ready/screenshots/INDEX.md)).
+- **Item 24, account flows, done on both phones** with one test account,
+  deleted at the end: [accounts.md](../research/2026-11-production-ready/accounts.md).
+  Create, verify, sign in on the second phone, sync both ways, log out, change
+  email, reset password and delete all work; 17 findings, mostly for items 16,
+  17 and 19, and new item 33. A real barcode scan and "Libraries near me" were
+  also done on the iPhone. Not done: account flows on desktop, change password
+  from settings, the attempt limit.
+- **Item 20 has not started.** One junk library request (text "Zzqqxx") was
+  sent to production by mistake during the run and needs deleting there.
+- The run added items 25 to 32 below and open question 13.
+
+## Plan written on 19 November
+
+Root causes, the three releases and the screens are in
+[the design and implementation plan](2026-11-production-ready-design.md).
+Two corrections to this file from that work:
+- The database noted as production **is** the right one. Production cannot
+  reach it because its three settings hold a mistyped address (`-pooler`
+  twice). Migration 002 is in the right place, and the junk library request
+  from the run was never stored.
+- The 90-day deletion of optional contact details fits the catalog store's
+  daily job; the hourly job only touches the account database.
+
+## What the run shows: the big things
+
+Read from the three device reports, the account report, the timings and the
+screenshots, plus two checks made afterwards. Every finding is assigned to an
+item below; the priority of each item follows this section.
+
+### 1. The app remembers nothing about libraries (the largest problem)
+
+Production is not keeping library answers. Confirmed after the run: a live
+check answered "found" for Wings of Fire at Anna Centenary; two hours later the
+stored-answer request for the same book and library returned nothing (and took
+3.2 s, where it should take a fraction of a second). Answers are meant to be
+kept for six months.
+
+One cause, many symptoms:
+- the "in your library" mark disappears from the shelf on reload, on a new
+  visit and on a second device (36 stored-answer requests on desktop never
+  produced a mark);
+- every opening of a book asks the library again, so a slow catalog is slow
+  every time (8.5 s again at Anna Centenary; 25 s again at the e-Granthalaya
+  library);
+- the same book gives different answers on different devices within the hour
+  ("not found" on one, "couldn't confirm" on another);
+- library catalogs get more requests than they should, which the project
+  promises not to do.
+
+The same database holds the search log, the failure log, library requests and
+problem reports, so those are very likely not being recorded either. This is
+item 20, and it comes before everything else: several other findings may
+shrink or vanish once answers are kept.
+
+### 2. Indian catalogs are too slow from where the server runs
+
+Checks run until the app's own time limit and then give up: 25 s for
+e-Granthalaya (every time, on every device, and again on Retry) and about 45 s
+at Anna Centenary (twice). The server is in San Francisco. Burlingame, in the
+US, answers in 3 to 5 s. While waiting the reader sees one 18 px spinner and
+no words. Item 22, which now covers all slow catalogs and the wait itself.
+
+### 3. The reader cannot tell what the library answer is
+
+Icons without words (tick, dash, circular arrow, question mark, spinner); a
+fourth answer, "Couldn't confirm", that nothing explains; on the shelf and in
+results "not found", "couldn't check" and "not checked yet" all look the same;
+"Catalog" opens three different places; results, the book page and the link
+disagree with each other. Items 15 and 27.
+
+### 4. Choosing a library on a phone is broken
+
+The keyboard and Safari's form bar hide the field and the result, so typing a
+library's name shows an apparently empty sheet; with a long list the title,
+Close and the field leave the screen. A new reader is never asked to choose a
+library at all. "Request to add" sends on one tap (one junk request was sent
+by accident in the run). Items 25, 26 and 18.
+
+### 5. Search is slow and thin
+
+A first search takes 4 to 7 s (12.5 s for a misspelling) with only
+"Searching". Results in shelf view are covers only, a book cannot be saved
+from them, and "No books found" offers no help. Items 30, 31 and 32.
+
+### 6. Accounts work, but the edges are rough
+
+Create, verify, sign in, sync across two phones, change email, reset and
+delete all work, and most steps take under 2 s. The problems:
+- a password manager's own suggestion is refused (14 characters, 15 needed);
+- creating the account takes about 10 s with nothing shown;
+- "Bring books over" moves under the finger and the wrong control gets tapped;
+- a reset link shows "Link expired" after a reload although it is valid;
+- verifying and resetting both end at a Log in screen with an empty email;
+- "Confirm it's you" is asked seconds after signing in;
+- two account screens in two styles; delete says almost nothing;
+- a change on one phone can take over a minute to show on the other.
+Items 16, 17, 19 and 33.
+
+### 7. What is already good
+
+The app shell is fast (first paint 0.2 s). No sideways scrolling at any width,
+no console errors in Chromium, keyboard focus visible everywhere, Back and
+reload behave, no search text in browser storage or in the address for title
+and author searches. Sign-in, saving and sync are quick. Security emails
+arrive within seconds.
+
+## Priority after the run
+
+| Priority | Items | Why |
+|---|---|---|
+| 1. Before any real reader | 20, 22, 15, 27, 25, 26, 33, 21, 28 | Answers not kept; slow Indian catalogs; unreadable status; picker unusable on phones; accidental requests; reset link; exposed passwords; the camera question |
+| 2. Before promoting it | 16, 17, 18, 19, 30, 31, 14, 34, the 10-second suggestions wait | Account flow and settings; choosing and changing a library; search speed and results; replies to reports |
+| 3. Pages and policy | 11, 12, 13 | Written last so they describe what ships |
+| 4. Polish | 32, 29, 35, 36 | Book details, the WebKit stylesheet message, touch and hover states, fonts and small things |
+
+## Backlog, in working order
+
+### Phase 1: see the real picture
+
+**23. Control the owner's Android phone and iPhone from a session.**
+Run on the owner's Mac (a cloud session could not reach either computer).
+- Android: Developer options, USB debugging on; Android platform tools
+  (`adb`); Chrome on the phone driven through Chrome's remote debugging.
+- iPhone: Xcode on the Mac; Safari's Web Inspector on in the phone's settings;
+  Appium with WebDriverAgent signed with a free Apple ID (the profile lasts 7
+  days), or inspection only through Safari's Develop menu.
+- Done when the session can open mybookshelf.cloud, tap, type and take
+  screenshots on each phone.
+
+**20. Find production's real databases and prove all logging works.**
+- With the owner's OK, read only the server name in production's database
+  settings (never a password), or the owner looks in Vercel and Neon.
+- Read-only: which migrations are applied, and the row counts.
+- Each of these must be shown to work:
+  - accounts: accounts created (the owner made two), saved books, Viewed
+    before, account email jobs;
+  - searches: the anonymous log (hourly rows now, daily totals after 12 months);
+  - failures: `library_check_events` (90 days);
+  - cache: stored library answers (`holdings_answers`) and the CDN cache for
+    related lists;
+  - suggestion opened and saved counts, library requests, problem reports.
+- Apply migration 002 where it is missing. Fix whatever is not recording.
+  Correct the setup notes.
+- Confirmed after the run: stored answers are not kept (see "What the run
+  shows", 1). First thing to learn is whether production's database has the
+  catalog tables and roles at all; all catalog migrations so far went to the
+  unused database.
+- Delete the junk library request ("Zzqqxx") sent during the run.
+- Afterwards re-run the short checks from the run: the mark on the shelf after
+  a reload, on a second device, and a second opening of a book that sends no
+  new check.
+- Repeat after the end-to-end run and confirm its actions appear.
+
+**21. Change the exposed catalog role passwords.** In Neon, for
+`catalog_runtime`, `catalog_worker` and `catalog_admin` on the unused database;
+update any setting that holds them in the same step. Or delete that database
+if item 20 shows nothing needs it.
+
+**24. End-to-end run on both phones and desktop.**
+- As a new reader: create an account with a plus-address of the owner's Gmail
+  (so it stays separate), read the verification email, sign in and out.
+- Save books before and after signing in; search by title, author and ISBN;
+  scan a barcode; choose and change between several libraries (Koha,
+  e-Granthalaya, libraries outside India); open book pages and catalog links;
+  use suggestions; change password and email; delete the test account.
+- For each step record the time taken and anything broken, confusing or
+  off in the design, with screenshots.
+- Check the owner's call-outs (items 15 to 19 and 22).
+- Output: a findings report ranked by severity, each finding tied to a backlog
+  item or a new one. Nothing in the app changes.
+
+### Phase 2: make the core work
+
+**22. e-Granthalaya checks time out from the US region.** The run confirmed 25
+to 26 s and "couldn't check" every time, and Retry the same. Anna Centenary
+(Koha) also ran 45 s or more twice and gave different answers for the same
+book on different devices, so this is about slow Indian catalogs in general,
+and about what the reader sees while waiting (one small spinner, no words, no
+limit). Options to weigh:
+run catalog checks from an Indian region (`bom1`), for those routes only if
+the plan allows, else for the project (then weigh the distance to the
+databases); a longer time budget for e-Granthalaya hosts; finishing a slow
+check in the background so the next look has the answer. Then run the strict
+check for listed e-Granthalaya libraries that were listed from the audit only.
+
+**15. Library status in words, with a direct catalog link.**
+- From the run: also the shelf and search results, where not found, couldn't
+  check and not checked yet all show no mark; the fourth answer "Couldn't
+  confirm" (question mark), which the public pages do not mention; "Catalog"
+  leading to three different places under one label; Anna Centenary's link
+  being plain HTTP on a bare IP address (Safari shows a full-page warning).
+- Replaces the tick, question mark and retry icons on book cards and the book
+  page with text under the library: "In your library", "Not in your library",
+  and "Couldn't check right now" with a Retry text button.
+- When the book is in the library, the catalog link opens that book's own
+  record where we have it.
+- To plan: the exact words, where they sit on cards and on the book page,
+  link-only libraries, and how many libraries return a record link today.
+
+**The 10-second suggestions wait** (ready; see above).
+
+**27. Search results, the book page and the catalog link agree.** Seen on
+desktop: the book page said found while the results left the same book
+unmarked; opening a result that already has the library mark sends a second
+check to the library; a book opened from a marked result links to the
+catalog's home page, not its record.
+
+**28. iPhone scanner after Cancel.** The camera preview was live after Cancel
+on the camera prompt and read a barcode. Check by hand first; then decide.
+
+**30. First search is slow.** 4 to 7 s for a query not asked recently, with
+only "Searching"; 13.8 s for the library line at Anna Centenary. Find where the
+time goes before choosing a fix.
+
+**25. Library picker on phones.** The keyboard and Safari's form bar hide the
+field and a single result; with many results the title, Close and the field
+leave the screen. Also: no visible count or sign the list stops at 25, mixed
+name styles, rows without a city, the current library not shown, no way back
+to "no library", "Location unavailable" with no next step.
+
+**26. "Request to add" needs a deliberate step.** It sends on one tap, with
+whatever was typed, and no undo.
+
+**31. Search results and saving.** Shelf-view results are covers only (no
+title, author, year or count); a book cannot be saved from the results; "On my
+shelf" removes the book when pressed; "No books found" and misspellings give
+no help; when nothing is in the library the "Looking in…" line just vanishes.
+
+**32. Book page details.** Title and author change a second after opening
+(suggestion data, then Open Library's); author names differ between screens;
+no ISBN, publisher or related books; the tab title is "Book details".
+
+**33. Reset link survives a reload.** The reset page drops its token from the
+address, so a reload or a restarted browser shows "Link expired" for a valid
+link, and "Send a new link" opens an empty form without sending anything.
+
+**34. Account edges found in the run** (beyond items 16, 17 and 19).
+- "Signed-in devices" still lists a session after Log out.
+- A change made on one device can take over a minute to show on another (the
+  signed-in shelf refreshes on focus at most once a minute) and nothing says
+  the shelf may be behind.
+- Status bars that stay: "Saved" after an import; "You've been signed out" on
+  top of the Forgot password page.
+- Reset and "password was changed" emails have fixed subjects, so they thread
+  together in Gmail across accounts.
+- No email confirms a deletion (open question 15).
+
+**35. Touch, hover and small-screen polish.** No hover state on covers, rows,
+spines and the landing page's links; no pressed state on anything but two
+buttons; touch targets of 17 to 20 px on public pages and Back links, and
+"Catalog" at 52 x 18; 11 px text on "Suggested" tags and spines; rows that
+stay highlighted on the iPhone; dialog buttons hidden by the keyboard in
+Change email; the Undo notice covering a link; the "Less" button over a
+heading; two toast styles; wide windows (covers 261 px apart at 1920) and a
+28 px strip of shelf beside an open book at 700 px; iPhone landscape; Tab
+order reaching search eleventh.
+
+**36. Smaller technical items.** App fonts are 434 KB of TTF where WOFF2 would
+be far smaller (the landing page already uses it); a dark system setting is
+ignored and "Ink" is a light theme (open question 17); two wordmarks
+("myBookshelf" and "MyBookshelf") and no way from the app to the public pages;
+the in-app About shows a commit hash; "Open the app ↗" opens in the same tab.
+
+**29. WebKit refuses a stylesheet on every page** (Content-Security-Policy,
+style-src). No visible effect found; find what is refused.
+
+### Phase 3: account and settings
+
+**19. Design mock-ups for settings and the account area.** One consistent,
+professional look for settings, create account, sign in, "this is your
+account", change password, change email, delete account and sign out, on phone
+and desktop. One line at the top of settings and of each screen saying what it
+is for; fuller wording for creating an account (what it adds) and deleting one
+(what goes, when, what stays). Includes items 16, 17 and 18. The owner reviews
+the mock-ups before anything changes.
+- From the run: two account screens in two styles ("Account settings" and,
+  behind "More", "Your account"); the delete dialog says only "Delete account
+  and shelf?"; "Confirm it's you" seconds after signing in; the side panel
+  cuts the email; "Viewed before" repeats every saved book and the account
+  card lands mid-shelf after the first save; dialog buttons hidden by the
+  iPhone keyboard.
+
+**16. Simpler, friendlier account flow.** No password rules (no 15-character
+minimum, no conditions); no leaked-password check (Have I Been Pwned then
+leaves the privacy policy); a show/hide toggle on password fields; no
+"re-enter password"; a welcome when creating an account. Keep the limit on
+repeated sign-in attempts. The owner will send more detailed feedback.
+- From the run: a password manager's 14-character suggestion is refused, and
+  the refused password is then shown in plain text; creating the account takes
+  about 10 s with no progress shown (find where the time goes; the
+  leaked-password check is one candidate); "Email verified" and "Password
+  saved" both end at a Log in screen with an empty email (sign the reader in,
+  or fill the email); the New password page shows neither the account nor any
+  rule; a saved login keeps the old address after an email change.
+
+**17. Sign-in merges a browser's books into the account automatically.** No
+"Bring books over" screen: saved books are combined and deduplicated, nothing
+is deleted, Viewed before is combined newest first up to 50. The existing
+import (safe to repeat, with receipts) stays underneath. A failed merge keeps
+the browser's copy and retries quietly.
+- From the run: the "Bring books over" screen shifts about 120 px as a
+  loading bar comes and goes, so taps land on the wrong control; changes reach
+  the other device on focus, at most once a minute; logging out brings back
+  the browser's own guest shelf, untouched by the account (this answers open
+  question 4 as things stand).
+
+**18. Shelf page: library and settings.** A visible "Change library" button;
+the library's name opens its catalog in a new tab; the library's logo beside
+its name where we have one; a settings gear at the top right in place of the
+profile icon, with everything changeable inside settings.
+- From the run: a new reader is never asked to choose a library (the cold
+  shelf says "search in your library" and has no library line on phones); the
+  name is plain text everywhere; "Change" is three taps away from a book page;
+  between 640 and 1099 px it is behind an icon that reads as "home"; there is
+  no Help link in the app.
+
+**14. Optional name and email on problem reports and library requests.**
+Decided: stored with the report or request in the same database; deleted after
+90 days, always; no pre-fill from an account. The deletion runs inside the
+existing hourly job.
+- From the run: "Report a problem" is an empty box and Send, with no prompt,
+  no note of what is attached and none of the privacy page's advice.
+
+### Phase 4: pages and policy (last, so they describe what ships)
+
+**11. mybookshelf.cloud opens the app.** Visitors land on the shelf with
+search. Today's landing page becomes the static `/about` page that search
+engines index. The root keeps a proper title and description; the sitemap,
+canonical links and structured data point to the right pages.
+
+**12. Rewrite the About page.** Clean and current: one shelf screen, search,
+barcode scan, choosing a library, found / not found / couldn't check,
+suggestions, the optional account.
+- From the run: the help page describes only the phone layout ("the person
+  icon", "tap the barcode button"); the public pages promise three answers
+  while the app has four.
+
+**13. Privacy policy in a professional, standard form.** The key points are
+agreed. Decided: no "What changed" section (this is the original policy); the
+rights section stays general, naming no law; the age rule stays (18 or older,
+or with a parent's or guardian's permission); the contact is
+`privacy@mybookshelf.cloud`. It must describe the optional name and email
+(item 14) and drop Have I Been Pwned if item 16 removes that check.
+
+## Open questions for the owner
+
+1. **Item 20:** may the session read the server name from production's
+   database settings, or will the owner look it up?
+2. **Search logging:** the search log stays anonymous (no account, IP address
+   or device), as the policy and CLAUDE.md say. Confirm that "prove logging
+   works" does not mean linking searches to accounts.
+3. **Item 17, library conflict:** if the browser and the account have
+   different libraries, keep the account's, and take the browser's only when
+   the account has none?
+4. **Item 17, signing out:** does the device go back to an empty guest shelf?
+5. **Item 17, free books and papers:** these stay in the browser today and are
+   not in accounts. Keep that, or add them to accounts (a larger change)?
+6. **Item 16:** the detailed account feedback. Also the shortest password the
+   sign-in library allows will be the minimum; is one character acceptable if
+   it allows that?
+7. **Item 18:** where do Create account and Log in go once the profile icon is
+   gone: inside settings only, or also on the shelf for a signed-out reader?
+8. **Item 18, logos:** logos must be collected once, checked for permission
+   and served from our own site (loading them from a library's site would show
+   that site who our readers are). Is a generic icon acceptable where no logo
+   can be used?
+9. **Item 22:** is moving catalog checks, or the whole project, to an Indian
+   region acceptable if the plan charges the same?
+10. **Item 15:** are the three wordings right ("In your library", "Not in
+    your library", "Couldn't check right now")?
+11. **Item 11:** should the app itself be served at `mybookshelf.cloud/`, or
+    should the root send visitors on to `/app/shelf`?
+12. **Item 14:** CLAUDE.md calls the catalog store anonymous. With optional
+    contact details in it, the wording needs a small change, for the owner's
+    approval.
+
+13. **ISBN in the address:** a typed ISBN opens `/app/books/v1:isbn:<number>`,
+    which stays in the browser history. The rule says search text never goes
+    into an address; an ISBN is also the book's identity. Keep, or change?
+14. **Suggestions:** the run saw other-language covers, near-duplicates of
+    saved books and suggestions far from the shelf (research finding 18).
+    Do the two "decided against" items stay as they are?
+
+15. **Deleted accounts:** signing in to a deleted account answers "This
+    account is unavailable", which tells anyone the address had an account.
+    Keep, or answer as for a wrong password? And should deletion send an email?
+
+### Answered by the owner on 19 November
+
+- **Item 20:** go ahead with whatever the fix needs; the owner will grant
+  further permissions when asked.
+- **Test addresses in the public repository** (the account report and its
+  screenshots show plus-addresses of the owner's Gmail): leave them.
+- **Dark mode:** the app does not follow the system setting. Daylight stays
+  the default.
+- **"Couldn't confirm":** folded into "Couldn't check right now". Readers see
+  three answers only (item 15).
+- **Saving:** from the book page only. No save control on search results
+  (item 31).
+
+## Decided against, for now
+
+- Leaving out suggestions whose title and author match a book already on the
+  shelf.
+- Preferring suggestions in the reader's language.
+- Fixing the robots check that fails closed (owner's earlier decision).
+
+## Start here on the Mac
+
+1. Open this repository in a session on the Mac and read `AGENTS.md`,
+   `docs/STATUS.md` and this file.
+2. **Before plugging in the phones:**
+   - Android: Settings, About phone, tap "Build number" seven times; then
+     Developer options, USB debugging on.
+   - iPhone: Settings, Safari, Advanced, Web Inspector on.
+   - Install Xcode from the App Store if it is not there (a large download).
+3. Do item 23, then item 24 against `https://mybookshelf.cloud`. Take
+   screenshots into a folder outside the repository, or one that is ignored.
+4. Do item 20 with the owner present for the database settings.
+5. Write the findings into `docs/research/2026-11-production-ready/` on this
+   branch, update this file's backlog and open questions, and push this branch
+   only.
+6. Then write the design plan as `docs/plans/2026-11-production-ready-design.md`
+   and resolve the open questions with the owner.
+
+Things a Mac session does not have: the cloud session's scratch files
+(database notes, the staging bypass secret). Anything that needs a secret goes
+through the owner or the project's settings.
+
+## Still open from earlier work
+
+- The owner checks the admin page at `/app/admin`; their account ID must be in
+  `ADMIN_ACCOUNT_IDS`.
+- Recheck the blocked Indian library groups (IDEAL, KALNET and others), due 22
+  November.
+- Backups, Search Console and the legal review.
+- Remove `/availability` on 13 December.
+- Upgrade Playwright for Ubuntu 26.04.

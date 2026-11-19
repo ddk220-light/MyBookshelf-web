@@ -10,6 +10,7 @@ import { HomeScreen } from '../home/HomeScreen';
 import { useHistoryOverlay } from '../home/useHistoryOverlay';
 import { LibraryPickerDialog } from '../library/LibraryPickerDialog';
 import { canGoBack } from '../panel/PanelPage';
+import { SidePanel } from '../panel/SidePanel';
 import { DeskColumn, DeskRail, type ReportFrom } from './DeskColumn';
 import { ACCOUNT_ENTRY_PATH, DeskSlotContext, isSlotPath, type DeskSlot, type LayoutMode } from './layoutMode';
 import { ShelfPlaceKeeper } from './ShelfPlace';
@@ -44,18 +45,17 @@ export function forgetDeskMemory() { lastShelf = null; lastLayout = null; }
 function slotLabel(pathname: string): string {
   const page = pathname.replace(/^\/app\//, '');
   if (page.startsWith('books/')) return 'Book';
-  if (page.startsWith('account/')) return 'Account';
+  if (page.startsWith('account/') || page.startsWith('settings/account/')) return 'Account';
   return ({ report: 'Report a problem', privacy: 'Privacy', terms: 'Terms', about: 'About', 'settings/account': 'Account settings' } as Record<string, string>)[page] || 'Page';
 }
 
 /**
- * At rail widths the links to the side pages sit in the rail's pop-overs,
- * which are gone by the time a page closes: the rail button stands in for
- * them (Account for the account pages, Help for the others).
+ * At rail widths the links to the side pages sit in Settings, which is gone
+ * by the time a page closes: the rail's settings gear stands in for them.
  */
 function railButtonFor(root: HTMLElement | null, pathname: string): HTMLElement | null {
-  const menu = /^\/app\/(account\/|settings\/account$)/.test(pathname) ? 'account' : /^\/app\/(report|privacy|terms|about)$/.test(pathname) ? 'help' : null;
-  return menu ? root?.querySelector<HTMLElement>(`.desk-rail [data-rail="${menu}"]`) || null : null;
+  const fromSettings = /^\/app\/(account\/|settings\/account(\/|$)|report$|privacy$|terms$|about$)/.test(pathname);
+  return fromSettings ? root?.querySelector<HTMLElement>('.desk-rail .desk-settings') || null : null;
 }
 
 function motionAllowed(): boolean {
@@ -99,7 +99,7 @@ export function DeskLayout({ mode, notices, children }: { mode: LayoutMode; noti
   // The results a page was opened from stay beside it: a book carries them in
   // its navigation state; any other page takes the shelf's last ones.
   const shelfSearch = useRef<string | undefined>(undefined);
-  if (pathname === '/app/shelf') shelfSearch.current = routeState?.search?.candidateId;
+  if (pathname === '/') shelfSearch.current = routeState?.search?.candidateId;
   const fromResults = bookKey ? (routeState?.searchState?.shelf ? routeState.searchState.candidateId : undefined) : shelfSearch.current;
   const behind = slotOpen ? { candidateId: fromResults && candidatesFor(fromResults) ? fromResults : undefined } : null;
 
@@ -164,8 +164,8 @@ export function DeskLayout({ mode, notices, children }: { mode: LayoutMode; noti
   const opener = useRef<HTMLElement | null>(null);
   const noteControl = (event: MouseEvent<HTMLDivElement>) => {
     const control = event.target instanceof Element ? event.target.closest<HTMLElement>('a[href], button') : null;
-    // A link in a rail pop-over goes with the pop-over: its rail button stands in for it.
-    if (control) pressed.current = control.closest('.rail-menu') && root.current?.querySelector<HTMLElement>('.rail-button[aria-expanded="true"]') || control;
+    // A link in Settings goes with Settings: at rail width the gear stands in for it.
+    if (control) pressed.current = control.closest('.side-panel') && root.current?.querySelector<HTMLElement>('.desk-rail .desk-settings') || control;
   };
   useLayoutEffect(() => {
     const previous = lastPath.current;
@@ -195,7 +195,8 @@ export function DeskLayout({ mode, notices, children }: { mode: LayoutMode; noti
     const target = opener.current?.isConnected ? opener.current
       : root.current?.querySelector<HTMLElement>(`.desk-shelf a[href="${href}"], .desk-column a[href="${href}"]`) || railButtonFor(root.current, previous);
     opener.current = null;
-    requestAnimationFrame(() => { if (target?.isConnected) target.focus({ preventScroll: true }); });
+    // Settings coming back over the shelf (Back to its entry) keeps its own focus.
+    requestAnimationFrame(() => { if (target?.isConnected && !document.querySelector('dialog[open]')) target.focus({ preventScroll: true }); });
   }, [pathname, slotOpen]);
 
   // × , Escape and the shelf beside the page close it: back to where it was
@@ -207,7 +208,7 @@ export function DeskLayout({ mode, notices, children }: { mode: LayoutMode; noti
   const shelfInPlace = useCallback((state: unknown) => {
     const results = (state as BookNavigation | null)?.searchState;
     const candidate = results?.shelf ? results.candidateId : undefined;
-    navigate('/app/shelf', { replace: true, state: candidate && candidatesFor(candidate) ? { search: { candidateId: candidate } } : null });
+    navigate('/', { replace: true, state: candidate && candidatesFor(candidate) ? { search: { candidateId: candidate } } : null });
   }, [navigate]);
   const closeAfterBack = useRef<string | null>(null);
   const close = useCallback(() => {
@@ -272,26 +273,28 @@ export function DeskLayout({ mode, notices, children }: { mode: LayoutMode; noti
   useLayoutEffect(() => { if (picker.open) pickerOpener.current = pressed.current; }, [picker.open]);
   const openPicker = useCallback(() => {
     // Beside an account form there is no shelf to choose for: the shelf opens with the picker.
-    if (entry) navigate('/app/shelf', { state: { overlay: 'library' } });
+    if (entry) navigate('/', { state: { overlay: 'library' } });
     else picker.show();
   }, [entry, navigate, picker.show]);
   const pickerReturn = useCallback(() => {
     const before = pickerOpener.current;
     if (before?.isConnected && !before.closest('[inert]')) return before;
     return slotRef.current?.querySelector<HTMLElement>('.library-answer, .library-ask-button')
-      || root.current?.querySelector<HTMLElement>('.desk-change, .desk-find-library, .rail-library') || null;
+      || root.current?.querySelector<HTMLElement>('.desk-change, .desk-find-library, .desk-settings') || null;
   }, []);
 
-  // A rail pop-over closes with any new page, and when the rail gives way to
-  // the column (it does not come back by itself when the window narrows again).
-  const [menu, setMenu] = useState<'account' | 'light' | 'help' | null>(null);
-  useEffect(() => { setMenu(null); }, [pathname, mode]);
+  const settings = useHistoryOverlay('panel');
+  const settingsReturn = useCallback(() => root.current?.querySelector<HTMLElement>('.desk-settings') || null, []);
+  const changeLibraryFromSettings = () => {
+    const { panelPushed, ...rest } = routeState || {};
+    navigate(pathname + location.search, { replace: true, state: { ...rest, overlay: 'library', libraryPushed: Boolean(panelPushed) } });
+  };
 
   const report: ReportFrom = bookKey ? { reportScreen: 'book', reportBookKey: bookKey } : { reportScreen: behind?.candidateId || (!slotOpen && routeState?.search) ? 'search' : 'shelf' };
   const wide = mode === 'wide';
   const side = phone ? null : wide
-    ? <DeskColumn narrow={slotOpen} picking={picker.open} onChangeLibrary={openPicker} onClosePicker={picker.close} pickerQuery={pickerQuery} pickerReturn={pickerReturn} report={report} />
-    : <DeskRail menu={menu} onMenu={setMenu} onLibrary={openPicker} slotOpen={slotOpen} report={report} />;
+    ? <DeskColumn narrow={slotOpen} picking={picker.open} onChangeLibrary={openPicker} onClosePicker={picker.close} pickerQuery={pickerQuery} pickerReturn={pickerReturn} report={report} onSettings={settings.show} />
+    : <DeskRail onSettings={settings.show} open={settings.open} />;
   // While a page is open the shelf beside it is held as it was: it keeps the
   // address it was drawn for, so the change of address does not reach its
   // covers' links and the shelf is not drawn again in full (only the open
@@ -304,7 +307,7 @@ export function DeskLayout({ mode, notices, children }: { mode: LayoutMode; noti
   const host = (name: string) => phone ? 'shelf-host' : name;
   const shelfArea = <div ref={area} className={host('desk-shelf-area')}>
     <div className={host('desk-shelf')} id={phone ? undefined : 'desk-shelf'}>
-      <UNSAFE_LocationContext.Provider value={shelfLocation.current}><HomeScreen layout={mode} behind={behind} openKey={bookKey} /></UNSAFE_LocationContext.Provider>
+      <UNSAFE_LocationContext.Provider value={shelfLocation.current}><HomeScreen layout={mode} behind={behind} openKey={bookKey} onOpenLibrary={openPicker} /></UNSAFE_LocationContext.Provider>
     </div>
   </div>;
   const classes = phone ? 'shelf-host' : ['desk', 'desk-mode-' + mode, slotOpen && 'desk-open', bare && 'desk-bare', picker.open && wide && 'desk-picking', phase && 'desk-' + phase].filter(Boolean).join(' ');
@@ -327,5 +330,6 @@ export function DeskLayout({ mode, notices, children }: { mode: LayoutMode; noti
     </main>
     {/* On phones the shelf screen has its own library pop-up. */}
     {mode === 'rail' && <LibraryPickerDialog open={picker.open} onClose={picker.close} returnFocus={pickerReturn} initialQuery={pickerQuery} />}
+    {!phone && <SidePanel open={settings.open} onClose={settings.close} onChangeLibrary={changeLibraryFromSettings} returnFocus={settingsReturn} report={report} />}
   </div>;
 }

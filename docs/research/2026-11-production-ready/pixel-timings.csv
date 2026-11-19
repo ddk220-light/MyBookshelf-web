@@ -1,0 +1,37 @@
+step,what was measured,milliseconds,how measured
+1 landing,GET / time to first byte,122,PerformanceNavigationTiming.responseStart (CDP eval)
+1 landing,GET / DOMContentLoaded end,260,PerformanceNavigationTiming.domContentLoadedEventEnd
+1 landing,GET / load event end,347,PerformanceNavigationTiming.loadEventEnd
+2 cold open,/app/shelf time to first byte after tapping Open the app,34,PerformanceNavigationTiming.responseStart
+2 cold open,/app/shelf first contentful paint,216,performance paint entry
+2 cold open,/app/shelf DOMContentLoaded end,178,PerformanceNavigationTiming
+3 picker,"type 'Anna Centenary': last keystroke to 'Finding libraries'",329,50 ms DOM poll of the dialog text; clock reset on each input event
+3 picker,"type 'Anna Centenary': last keystroke to 1 result listed",748,same
+3 picker,"type 'Zzqqxx': last keystroke to 'No libraries here yet'",728,same
+3 picker,"type 'Kendriya Vidyalaya Narimedu': last keystroke to 1 result",637,same
+3 picker,"type 'Burlingame': last keystroke to 8 results",708,same
+4 search title (no library),Enter to 'Searching' state,57,100 ms DOM poll; clock starts on Enter keydown
+4 search title (no library),Enter to first results ('Wings of Fire'; 9 books),6239,same
+4 search title (no library),Enter to results settled (reveal animation finished),6732,same
+4 search author (no library),Enter to first results ('R. K. Narayan'; 9 books),4656,same
+4 search ISBN (no library),Enter to book page shown (9780143333623),2369,same
+4 search misspelt (no library),Enter to first results ('Harry Poter and the Philosphers Stone'; 3 books),12501,same
+4 search no results (no library),Enter to 'No books found',4472,same
+4 search title (Anna chosen; same query repeated in the session),Enter to results,239,same
+4 search title (Anna chosen; repeated),Enter to first library mark ('in Anna Centenary Library'),339,same
+4 search title (Anna chosen; repeated),Enter to settled ('9 books. 1 book in Anna Centenary Library'),739,same
+6 book page,tap result to book page with description (Wings of Fire),1076,100 ms DOM poll; clock starts just after the tap command returns
+7 suggestion,tap suggestion to book page with description (The Jungle Book),1175,same
+6 book page,reload on book page: first contentful paint,168,performance paint entry
+6 book page,reload on book page: library card still 'Checking' when read,5700,read once about 5.7 s after reload; not waited to the end
+5 shelf,reload on shelf: first contentful paint,160,performance paint entry
+5 shelf,reload on shelf: holdings/lookup finished,424,PerformanceResourceTiming start+duration (second lookup call)
+5 remove,Undo toast lifetime after removing a book,10000,50 ms DOM poll for the Undo button
+8 Anna Centenary x Wings of Fire (Kalam),choose library on book page to 'Found',9080,100 ms DOM poll of main text; clock starts just after the tap command returns
+8 Anna Centenary x Darkstalker,'Checking' shown to 'Couldn't check',46398,100 ms poll of .library-answer aria-label (603 ms to 47001 ms)
+8 Anna Centenary x Darkstalker (one Retry),'Checking' shown to 'Couldn't check',45204,same (607 ms to 45811 ms)
+8 KV No.1 Narimedu (e-Granthalaya) x Wings of Fire,'Checking' shown to 'Couldn't check',25292,same (609 ms to 25901 ms)
+8 Burlingame Public Library x Wings of Fire,'Checking' shown to 'Found',3500,same (700 ms to 4200 ms)
+8 Burlingame Public Library x Grandma's Bag of Stories,'Checking' shown to 'Not found',5894,same (606 ms to 6500 ms)
+10 keyboard,visual viewport height with keyboard open (of 794 css px),482,visualViewport.height (css px not ms)
+10 keyboard,keyboard height in css px,312,794 minus visualViewport.height (css px not ms)

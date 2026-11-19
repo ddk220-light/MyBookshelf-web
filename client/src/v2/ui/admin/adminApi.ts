@@ -4,8 +4,14 @@
 
 export type StoreState = { state: 'ok' | 'not_configured' | 'unreachable' | 'wrong_role'; code?: string; detail?: string | null; message?: string };
 
+/** The live app's catalog store, as `/api/health` reports it. */
+export type CatalogStoreStatus = 'ok' | 'failed' | 'off';
+
 export type AdminSummary = {
   store: StoreState;
+  catalogStore?: CatalogStoreStatus;
+  /** When the newest library answer was stored; null when none is stored or the admin connection failed. */
+  newestAnswerAt?: string | null;
   usageLogEnabled: boolean;
   counts: null | { openRequests: number; newReports: number; flaggedLibraries: number; flaggedUnacknowledged: number; storedAnswers: number; usageData: boolean };
   answersByLibrary: { libraryId: string; name: string | null; found: number; notFound: number }[];
@@ -31,15 +37,18 @@ export type HealthView = { usageLogEnabled: boolean; checkTotalsFromLog: boolean
 
 export const REQUEST_STATUSES = ['open', 'added', 'declined', 'spam'] as const;
 export type RequestStatus = typeof REQUEST_STATUSES[number];
+/** Optional details a reader left to get a reply; removed after 90 days. */
+export type RequestContact = { name: string | null; email: string | null; createdAt: string };
 export type LibraryRequest = { requestKey: string; displayText: string; requestCount: number; firstRequestedOn: string; lastRequestedOn: string;
-  status: RequestStatus; statusNote: string | null; updatedAt: string };
+  status: RequestStatus; statusNote: string | null; updatedAt: string; contacts?: RequestContact[] };
 export type RequestGroup = { label: string; words: string[]; totalCount: number; lastRequestedOn: string; requests: LibraryRequest[] };
 export type RequestsView = { total: number; groups: RequestGroup[] };
 
 export const REPORT_STATUSES = ['new', 'read', 'resolved', 'spam'] as const;
 export type ReportStatus = typeof REPORT_STATUSES[number];
 export type ProblemReport = { id: string; body: string; screen: string | null; libraryId: string | null; libraryName: string | null;
-  bookKey: string | null; appVersion: string | null; createdAt: string; status: ReportStatus; resolvedAt: string | null };
+  bookKey: string | null; appVersion: string | null; createdAt: string; status: ReportStatus; resolvedAt: string | null;
+  contactName?: string | null; contactEmail?: string | null };
 export type ReportsView = { reports: ProblemReport[] };
 
 export type UsageDay = { day: string; book_search: number; book_check: number; result_marks: number; library_finder: number; near_me: number; searchesWithoutResults: number };

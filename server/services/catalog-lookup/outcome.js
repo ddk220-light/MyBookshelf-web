@@ -1,4 +1,5 @@
 import { validateAndNormalize } from '../isbn.js';
+import { linkKind } from './observation.js';
 
 // The only place catalog observations become the three answers the app shows:
 // found, not found, couldn't check (plan 3.5 and 5.2).
@@ -85,7 +86,8 @@ export function answerFromResponse(response, context = {}) {
   if (!response || typeof response !== 'object') return couldntCheck('unrecognized');
   const { outcome, matchKind } = response;
   const catalogUrl = typeof response.catalogUrl === 'string' ? response.catalogUrl : undefined;
-  const extra = catalogUrl ? { catalogUrl } : {};
+  // The link keeps what it is (the book's record, a search, the catalog).
+  const extra = catalogUrl ? { catalogUrl, catalogLinkKind: linkKind(response.catalogLinkKind) } : {};
   const notForLoan = outcome === 'unknown' && response.loanRestriction === 'not_for_loan';
   if ((FOUND_OUTCOMES.has(outcome) || notForLoan) && PROVEN.has(matchKind)) {
     const matchedIsbn13 = validateAndNormalize(response.matchedBook?.isbn13 || '') || undefined;

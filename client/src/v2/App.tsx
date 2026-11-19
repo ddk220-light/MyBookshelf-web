@@ -1,12 +1,10 @@
 import {lazy,Suspense,useLayoutEffect,useRef} from 'react';
 import { Link, Navigate, Route, Routes,useLocation,useNavigate } from 'react-router-dom';
 import {AccountSessionProvider,useAccountSession} from './auth/AccountSessionProvider';
-import {LinkTokenProvider} from './auth/LinkTokenProvider';
-import {RecentAuthProvider} from './auth/RecentAuthProvider';
 import {DeletionReceiptProvider,useDeletionReceipt} from './auth/DeletionReceiptProvider';
 import {safeAccountReturn} from './auth/accountClient';
-import {ImportPage,EmailChangePage,ProviderReturnPage,CompleteProfilePage} from './ui/account/AccountPages';
-import {AccountSettingsPage} from './ui/account/AccountSettingsPage';
+import {EmailChangePage,ProviderReturnPage,CompleteProfilePage} from './ui/account/AccountPages';
+import {AccountPage,ChangeEmailPage,ChangePasswordPage,DeleteAccountPage} from './ui/account/AccountScreens';
 import {AccountEntryGate} from './ui/account/AccountEntryGate';
 import { LibraryStateProvider } from './context';
 import { AppFrame } from './ui/AppFrame';
@@ -15,8 +13,7 @@ import { OneShelfRoot } from './OneShelfRoot';
 import { HomeScreen } from './ui/home/HomeScreen';
 import { ShelfBookPage } from './ui/book/ShelfBookPage';
 import { SelectLibraryLink } from './ui/library/SelectLibraryLink';
-import { AccountSettingsSmall } from './ui/account/AccountSettingsSmall';
-import { CreateAccountPage, DeletionDonePage, LogInPage, NewPasswordPage, ResetRequestPage, VerifyEmailPage } from './ui/account/OneShelfAccountPages';
+import { CreateAccountPage, DeletionDonePage, LogInPage, MagicLinkPage, NewPasswordPage, ResetRequestPage, VerifyEmailPage, WelcomePage } from './ui/account/OneShelfAccountPages';
 import { ReportProblemPage } from './ui/panel/ReportProblemPage';
 import { AboutPage, PrivacyPage, TermsPage } from './ui/panel/PolicyPages';
 import { LibrariesRedirect, SearchRedirect, SettingsRedirect } from './ui/legacyRedirects';
@@ -27,16 +24,16 @@ import { ACCOUNT_ENTRY_PATH } from './ui/desk/layoutMode';
 const AdminPage = lazy(() => import('./ui/admin/AdminPage'));
 
 function NativeAppNotice() {
-  return <section className="page-section prose"><h1>Find your next read</h1><p>No sign-in needed.</p><Link className="button-link" to="/app/shelf">Open my shelf</Link></section>;
+  return <section className="page-section prose"><h1>Find your next read</h1><p>No sign-in needed.</p><Link className="button-link" to="/">Open my reading shelf</Link></section>;
 }
 
 function NotFoundPage() {
-  // The frame's "My shelf" link above the heading leads back.
+  // The frame's "My reading shelf" link above the heading leads back.
   return <section className="page-section prose"><h1>Page not found</h1></section>;
 }
 
 export function AnonymousWebApp() {
-  return <AccountSessionProvider disabledMeansGuest><DeletionReceiptProvider><RecentAuthProvider><LinkTokenProvider><IdentityApp/></LinkTokenProvider></RecentAuthProvider></DeletionReceiptProvider></AccountSessionProvider>;
+  return <AccountSessionProvider disabledMeansGuest><DeletionReceiptProvider><IdentityApp/></DeletionReceiptProvider></AccountSessionProvider>;
 }
 function IdentityApp(){
   const {session,continueGuest}=useAccountSession(),navigate=useNavigate(),location=useLocation();
@@ -47,7 +44,7 @@ function IdentityApp(){
   // Navigation renders in a transition, so a fast deletion reply can end the
   // session before the move to the receipt page has rendered. An identity
   // ended by its own deletion always lands on the receipt page, never the shelf.
-  const redirectTo=redirect&&receipt?.identity===prior.current?'/app/account/deletion':'/app/shelf';
+  const redirectTo=redirect&&receipt?.identity===prior.current?'/app/account/deletion':'/';
   const incomplete=session.status==='authenticated'&&session.needsProfileCompletion&&!entryMode;
   useLayoutEffect(()=>{if(redirect)navigate(redirectTo,{replace:true,state:null});else if(incomplete)navigate('/app/account/complete-profile?returnTo='+encodeURIComponent(safeAccountReturn(location.pathname+location.search)),{replace:true,state:null});prior.current=current;},[current,redirect,redirectTo,incomplete,navigate,location.pathname,location.search]);
   if(redirect||incomplete)return <p role="status">Updating your account…</p>;
@@ -59,25 +56,32 @@ function IdentityApp(){
 }
 
 // The one-shelf app (plan 3.1): the home screen (shelf, search, scan, library
-// pop-up and side panel), the book page, the side panel's pages and the
+// pop-up and side panel) at the root, the book page, the side panel's pages and the
 // account screens. Old addresses redirect (plan Phase 12): Search, Libraries
-// and Settings are overlays on the shelf now. The older full account settings
-// stay reachable at /app/settings/account/more.
+// and Settings are overlays on the shelf now. There is one account screen
+// (plan B6); the older full settings and the "Bring books over" step (the
+// merge is automatic now, B5) redirect to it and to the shelf.
 // Called as a function (not rendered as a component) so <Routes> sees the
 // <Route> elements directly.
 function appRoutes() {
   return <>
     <Route path="/select/:slug" element={<SelectLibraryLink />} />
     <Route path="/select" element={<SelectLibraryLink />} />
-    <Route path="/app" element={<Navigate to="/app/shelf" replace />} />
-    <Route path="/app/shelf" element={<HomeScreen />} />
+    <Route path="/" element={<HomeScreen />} />
+    <Route path="/app" element={<Navigate to="/" replace />} />
+    <Route path="/app/shelf" element={<Navigate to="/" replace />} />
     <Route path="/app/search" element={<SearchRedirect />} />
     <Route path="/app/libraries" element={<LibrariesRedirect />} />
     <Route path="/app/settings" element={<SettingsRedirect />} />
-    <Route path="/app/settings/account" element={<AccountSettingsSmall />}/>
-    <Route path="/app/settings/account/more" element={<AccountSettingsPage />} />
-    <Route path="/app/account/sign-in" element={<AccountEntryGate key="signin"><LogInPage /></AccountEntryGate>}/>
-    <Route path="/app/account/sign-up" element={<AccountEntryGate key="signup" needsEmail><CreateAccountPage /></AccountEntryGate>}/>
+    <Route path="/app/settings/account" element={<AccountPage />}/>
+    <Route path="/app/settings/account/email" element={<ChangeEmailPage />}/>
+    <Route path="/app/settings/account/password" element={<ChangePasswordPage />}/>
+    <Route path="/app/settings/account/delete" element={<DeleteAccountPage />}/>
+    <Route path="/app/settings/account/more" element={<Navigate to="/app/settings/account" replace />} />
+    <Route path="/app/account/sign-in" element={<AccountEntryGate key="signin" warm><LogInPage /></AccountEntryGate>}/>
+    <Route path="/app/account/sign-up" element={<AccountEntryGate key="signup" needsEmail warm><CreateAccountPage /></AccountEntryGate>}/>
+    <Route path="/app/account/magic-link" element={<AccountEntryGate key="magic-link"><MagicLinkPage /></AccountEntryGate>}/>
+    <Route path="/app/account/welcome" element={<WelcomePage />}/>
     <Route path="/app/account/verify" element={<AccountEntryGate key="verify"><VerifyEmailPage /></AccountEntryGate>}/>
     <Route path="/app/account/forgot-password" element={<AccountEntryGate key="forgot" needsEmail><ResetRequestPage /></AccountEntryGate>}/>
     <Route path="/app/account/reset-password" element={<AccountEntryGate key="reset"><NewPasswordPage /></AccountEntryGate>}/>
@@ -85,7 +89,7 @@ function appRoutes() {
     <Route path="/app/account/return" element={<ProviderReturnPage/>}/>
     <Route path="/app/account/complete-profile" element={<CompleteProfilePage/>}/>
     <Route path="/app/account/deletion" element={<DeletionDonePage />}/>
-    <Route path="/app/account/import" element={<ImportPage/>}/>
+    <Route path="/app/account/import" element={<Navigate to="/" replace />}/>
     <Route path="/app/books/:bookKey" element={<ShelfBookPage />} />
     <Route path="/app/read/:contentKey" element={<ContentDetailPage />} />
     <Route path="/app/report" element={<ReportProblemPage />} />
@@ -93,7 +97,7 @@ function appRoutes() {
     <Route path="/app/terms" element={<TermsPage />} />
     <Route path="/app/about" element={<AboutPage />} />
     <Route path="/app/admin" element={<Suspense fallback={<p role="status">Loading…</p>}><AdminPage /></Suspense>} />
-    <Route path="/find" element={<Navigate to="/app/shelf" replace />} />
+    <Route path="/find" element={<Navigate to="/" replace />} />
     <Route path="/privacy" element={<Navigate to="/app/privacy" replace />} />
     <Route path="/login" element={<NativeAppNotice />} />
     <Route path="/connect" element={<NativeAppNotice />} />

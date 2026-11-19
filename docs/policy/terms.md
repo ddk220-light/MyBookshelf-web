@@ -10,7 +10,7 @@ You must be 18 or older, or have a parent's or guardian's permission.
 
 ## What MyBookshelf is
 
-A free tool to find books, keep a shelf of the ones you want, and see whether
+A free tool to find books, keep a reading shelf of the ones you want, and see whether
 a library's catalog lists a book.
 
 ## What it is not
@@ -54,4 +54,4 @@ If you keep using MyBookshelf after that, the new terms apply.
 
 ## Contact
 
-deepakdhanavel@gmail.com
+privacy@mybookshelf.cloud

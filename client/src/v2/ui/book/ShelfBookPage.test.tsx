@@ -42,14 +42,14 @@ const stored = () => JSON.parse(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)!
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); vi.useRealTimers(); localStorage.clear(); sessionStorage.clear(); navigateRef = null; });
 
 describe('one-shelf book page', () => {
-  it('shows the book, Add to my shelf and "Is it in your library?" before a library is chosen', async () => {
+  it('shows the book, Add to my reading shelf and "Is it in your library?" before a library is chosen', async () => {
     const calls = stubApi();
     renderBook();
     expect(await screen.findByRole('heading', { level: 1, name: 'Wings of Fire' })).toBeInTheDocument();
     expect(screen.getByText('A. P. J. Abdul Kalam', { selector: 'p' })).toBeInTheDocument();
     expect(screen.getByText('Published 1999')).toBeInTheDocument();
     expect(screen.getByText('ISBN 9788173711466')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Add to my shelf' })).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByRole('button', { name: 'Add to my reading shelf' })).toBeEnabled();
     expect(screen.getByRole('heading', { name: 'Is it in your library?' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Find my library' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'About this book' })).toBeInTheDocument();
@@ -63,22 +63,22 @@ describe('one-shelf book page', () => {
   });
 
   for (const [answer, label, tone] of [
-    ['found', 'Found in Anna Centenary Library', 'found'],
-    ['not_found', 'Not found in Anna Centenary Library', 'not-found'],
-    ['unconfirmed', 'Couldn’t confirm in Anna Centenary Library', 'grey'],
-    ['unknown', 'Couldn’t check Anna Centenary Library', 'grey'],
-  ] as const) it(`shows "${answer}" as one row with an accessible label`, async () => {
-    const calls = stubApi({ check: () => Promise.resolve(json({ answer, catalogUrl: 'https://catalog.example.test/record/1' })) });
+    ['found', 'In your library', 'found'],
+    ['not_found', 'Not in your library', 'not-found'],
+    ['unconfirmed', 'Couldn’t check right now', 'grey'],
+    ['unknown', 'Couldn’t check right now', 'grey'],
+  ] as const) it(`shows "${answer}" in words with the matching actions`, async () => {
+    const calls = stubApi({ check: () => Promise.resolve(json({ answer, catalogUrl: 'https://catalog.example.test/record/1', catalogLinkKind: 'record' })) });
     seed({ libraryId: LIBRARY.id });
     renderBook();
     const group = await screen.findByRole('group', { name: label });
     expect(group).toHaveClass('library-answer-' + tone);
-    expect(within(group).getByText('Anna Centenary Library')).toBeInTheDocument();
+    expect(within(group).getByText('Anna Centenary Library · Chennai')).toBeInTheDocument();
     // A stored answer can show the row first with the catalog's home link;
     // the live answer then links the book's own record.
-    await waitFor(() => expect(within(group).getByRole('link', { name: /^Catalog/ })).toHaveAttribute('href', 'https://catalog.example.test/record/1'));
+    await waitFor(() => expect(within(group).getByRole('link', { name: /catalog/i })).toHaveAttribute('href', 'https://catalog.example.test/record/1'));
     // Only the answer: no copies, due dates, floors or shelf numbers.
-    expect(group.textContent).toBe('Anna Centenary LibraryCatalog');
+    expect(within(group).getByRole('heading', { name: label })).toBeVisible();
     expect(Boolean(within(group).queryByRole('button', { name: 'Try again' }))).toBe(answer === 'unknown');
     expect(calls.filter(call => call.path.endsWith('/holdings/check')).map(call => call.body)).toEqual([{ libraryId: LIBRARY.id, bookKey: BOOK.bookKey }]);
     // The settled answer is announced from an effect, which can run after the row appears.
@@ -90,12 +90,25 @@ describe('one-shelf book page', () => {
     stubApi({ check: () => new Promise(resolve => { answer = resolve; }) });
     seed({ libraryId: LIBRARY.id });
     renderBook();
-    const checking = await screen.findByRole('group', { name: 'Checking Anna Centenary Library' });
+    const checking = await screen.findByRole('group', { name: 'Checking your library…' });
     expect(checking).toHaveAttribute('aria-busy', 'true');
     expect(checking).toHaveClass('library-answer-grey');
-    expect(within(checking).getByRole('link', { name: /^Catalog/ })).toHaveAttribute('href', LIBRARY.catalogUrl);
+    expect(within(checking).getByRole('link', { name: /catalog/i })).toHaveAttribute('href', LIBRARY.catalogUrl);
     answer(json({ answer: 'found' }));
-    expect(await screen.findByRole('group', { name: 'Found in Anna Centenary Library' })).toBeInTheDocument();
+    expect(await screen.findByRole('group', { name: 'In your library' })).toBeInTheDocument();
+  });
+
+  it('says how long the library may take from its own check limit (answerWithinSeconds)', async () => {
+    for (const [seconds, words] of [[20, 'half a minute'], [30, 'half a minute'], [45, 'a minute'], [undefined, 'a minute']] as const) {
+      stubApi({ libraries: [{ ...LIBRARY, ...(seconds ? { answerWithinSeconds: seconds } : {}) }], check: () => new Promise(() => {}) });
+      seed({ libraryId: LIBRARY.id });
+      const view = renderBook();
+      const checking = await screen.findByRole('group', { name: 'Checking your library…' });
+      await waitFor(() => expect(within(checking).getByText(`This library’s catalog can take up to ${words} to answer. You can go back to your reading shelf: the answer will be there when it arrives.`)).toBeInTheDocument());
+      view.unmount();
+      vi.unstubAllGlobals();
+      localStorage.clear();
+    }
   });
 
   it('a failed, refused, unreadable or unrecognised check is grey "couldn’t check", never white', async () => {
@@ -111,7 +124,7 @@ describe('one-shelf book page', () => {
       stubApi({ check: reply });
       seed({ libraryId: LIBRARY.id });
       renderBook();
-      const group = await screen.findByRole('group', { name: 'Couldn’t check Anna Centenary Library' });
+      const group = await screen.findByRole('group', { name: 'Couldn’t check right now' });
       expect(group).toHaveClass('library-answer-grey');
       expect(document.querySelector('.library-answer-not-found')).toBeNull();
       cleanup(); vi.unstubAllGlobals(); localStorage.clear();
@@ -128,14 +141,14 @@ describe('one-shelf book page', () => {
     } });
     seed({ libraryId: LIBRARY.id });
     renderBook();
-    await screen.findByRole('group', { name: 'Checking Anna Centenary Library' });
+    await screen.findByRole('group', { name: 'Checking your library…' });
     // "Checking" also shows while the library itself is still loading; the
     // check (and its time limit) starts only once the library is ready.
     await waitFor(() => expect(attempts).toBe(1));
     await act(async () => { vi.advanceTimersByTime(CHECK_TIMEOUT_MS + 10); });
-    const group = await screen.findByRole('group', { name: 'Couldn’t check Anna Centenary Library' });
+    const group = await screen.findByRole('group', { name: 'Couldn’t check right now' });
     fireEvent.click(within(group).getByRole('button', { name: 'Try again' }));
-    expect(await screen.findByRole('group', { name: 'Found in Anna Centenary Library' })).toBeInTheDocument();
+    expect(await screen.findByRole('group', { name: 'In your library' })).toBeInTheDocument();
     expect(attempts).toBe(2);
   });
 
@@ -147,11 +160,11 @@ describe('one-shelf book page', () => {
     seed({ libraryId: LIBRARY.id });
     renderBook();
     // While the server is asked, the card already says it couldn't check, with the catalog's home page.
-    let group = await screen.findByRole('group', { name: 'Couldn’t check Anna Centenary Library' });
-    expect(within(group).getByRole('link', { name: /^Catalog/ })).toHaveAttribute('href', LIBRARY.catalogUrl);
+    let group = await screen.findByRole('group', { name: 'This library can’t be checked from here.' });
+    expect(within(group).getByRole('link', { name: /catalog/i })).toHaveAttribute('href', LIBRARY.catalogUrl);
     await act(async () => { release(json({ answer: 'unknown', catalogUrl: search })); });
-    group = await screen.findByRole('group', { name: 'Couldn’t check Anna Centenary Library' });
-    await waitFor(() => expect(within(group).getByRole('link', { name: /^Catalog/ })).toHaveAttribute('href', search));
+    group = await screen.findByRole('group', { name: 'This library can’t be checked from here.' });
+    await waitFor(() => expect(within(group).getByRole('link', { name: /catalog/i })).toHaveAttribute('href', search));
     expect(within(group).queryByRole('button', { name: 'Try again' })).not.toBeInTheDocument();
     expect(group).toHaveClass('library-answer-grey');
   });
@@ -163,37 +176,37 @@ describe('one-shelf book page', () => {
     seed({ libraryId: LIBRARY.id });
     const view = render(<MemoryRouter initialEntries={['/app/books/' + encodeURIComponent(BOOK.bookKey), '/app/books/' + encodeURIComponent(second.bookKey)]} initialIndex={0}>
       <AnonymousWebApp /><Navigator /></MemoryRouter>);
-    await screen.findByRole('group', { name: 'Checking Anna Centenary Library' });
+    await screen.findByRole('group', { name: 'Checking your library…' });
     await waitFor(() => expect(pending.has(BOOK.bookKey)).toBe(true));
     act(() => navigateRef!(1));
     await waitFor(() => expect(pending.has(second.bookKey)).toBe(true));
     // The first edition's answer arrives late: it is not shown for the second.
     pending.get(BOOK.bookKey)!(json({ answer: 'found' }));
     await new Promise(resolve => setTimeout(resolve, 20));
-    expect(screen.getByRole('group', { name: 'Checking Anna Centenary Library' })).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Checking your library…' })).toBeInTheDocument();
     pending.get(second.bookKey)!(json({ answer: 'not_found' }));
-    expect(await screen.findByRole('group', { name: 'Not found in Anna Centenary Library' })).toBeInTheDocument();
+    expect(await screen.findByRole('group', { name: 'Not in your library' })).toBeInTheDocument();
     view.unmount();
   });
 
-  it('adds with a tick and the "See my shelf" toast, and removes on the next tap without asking', async () => {
+  it('adds with a tick and the "See my reading shelf" toast, and removes on the next tap without asking', async () => {
     stubApi();
     renderBook();
-    fireEvent.click(await screen.findByRole('button', { name: 'Add to my shelf' }));
-    const on = await screen.findByRole('button', { name: 'On my shelf' });
-    expect(on).toHaveAttribute('aria-pressed', 'true');
+    fireEvent.click(await screen.findByRole('button', { name: 'Add to my reading shelf' }));
+    const on = await screen.findByText('On my reading shelf');
+    expect(on.tagName).toBe('P');
     expect(on.querySelector('.tick-pop')).not.toBeNull();
-    expect(screen.getByRole('link', { name: 'See my shelf' })).toHaveAttribute('href', '/app/shelf');
-    expect(screen.getByText('Added to your shelf', { selector: '[role="status"]' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'See my reading shelf' })).toHaveAttribute('href', '/');
+    expect(screen.getByText('Added to your reading shelf', { selector: '[role="status"]' })).toBeInTheDocument();
     expect(stored().savedBooks.map((item: { bookKey: string }) => item.bookKey)).toEqual([BOOK.bookKey]);
-    fireEvent.click(on);
-    expect(await screen.findByRole('button', { name: 'Add to my shelf' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Remove from my reading shelf' }));
+    expect(await screen.findByRole('button', { name: 'Add to my reading shelf' })).toBeInTheDocument();
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(stored().savedBooks).toEqual([]);
-    expect(screen.queryByRole('link', { name: 'See my shelf' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'See my reading shelf' })).not.toBeInTheDocument();
     // The existing Undo puts it back.
     fireEvent.click(await screen.findByRole('button', { name: 'Undo' }));
-    expect(await screen.findByRole('button', { name: 'On my shelf' })).toBeInTheDocument();
+    expect(await screen.findByText('On my reading shelf')).toBeInTheDocument();
   });
 
   it('a library served through Calil shows its attribution under the library card; others show none', async () => {
@@ -201,21 +214,21 @@ describe('one-shelf book page', () => {
     stubApi({ libraries: [calil, OTHER] });
     seed({ libraryId: calil.id });
     const view = renderBook();
-    await screen.findByRole('group', { name: 'Found in Setagaya City Library' });
+    await screen.findByRole('group', { name: 'In your library' });
     expect(screen.getByRole('link', { name: 'Calil' })).toHaveAttribute('href', 'https://calil.jp/');
     view.unmount();
     stubApi();
     seed({ libraryId: OTHER.id });
     renderBook();
-    await screen.findByRole('group', { name: 'Found in Kalaignar Centenary Library' });
+    await screen.findByRole('group', { name: 'In your library' });
     expect(screen.queryByText(/Library data from/)).not.toBeInTheDocument();
   });
 
   it('one undo notice at a time: clearing Viewed before replaces "Removed … · Undo"', async () => {
     stubApi();
     seed({ saved: [{ ...BOOK, source: 'search', viewedAt: '2026-01-01T00:00:00.000Z' }] });
-    render(<MemoryRouter initialEntries={['/app/shelf', '/app/books/' + encodeURIComponent(BOOK.bookKey)]} initialIndex={1}><AnonymousWebApp /><Location /></MemoryRouter>);
-    fireEvent.click(await screen.findByRole('button', { name: 'On my shelf' }));
+    render(<MemoryRouter initialEntries={['/', '/app/books/' + encodeURIComponent(BOOK.bookKey)]} initialIndex={1}><AnonymousWebApp /><Location /></MemoryRouter>);
+    fireEvent.click(await screen.findByRole('button', { name: 'Remove from my reading shelf' }));
     expect(await screen.findByText('Removed Wings of Fire')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('link', { name: 'Back' }));
     const viewed = await screen.findByRole('region', { name: 'Viewed before' });
@@ -225,22 +238,22 @@ describe('one-shelf book page', () => {
     expect(document.querySelectorAll('.undo-notice')).toHaveLength(1);
   });
 
-  it('a saved book with the same ISBN-13 under another key counts as on my shelf, and removing takes that one off', async () => {
+  it('a saved book with the same ISBN-13 under another key counts as on my reading shelf, and removing takes that one off', async () => {
     stubApi();
     seed({ saved: [{ bookKey: 'v1:googlebooks:abc', isbn13: BOOK.isbn13, title: 'Wings of Fire', authors: [], source: 'search', viewedAt: '2026-01-01T00:00:00.000Z' }] });
     renderBook();
-    fireEvent.click(await screen.findByRole('button', { name: 'On my shelf' }));
-    await screen.findByRole('button', { name: 'Add to my shelf' });
+    fireEvent.click(await screen.findByRole('button', { name: 'Remove from my reading shelf' }));
+    await screen.findByRole('button', { name: 'Add to my reading shelf' });
     expect(stored().savedBooks).toEqual([]);
   });
 
-  it('at the guest cap Add is disabled with "Shelf full" as its reason', async () => {
+  it('at the guest cap Add is disabled with "Your reading shelf is full" as its reason', async () => {
     stubApi();
     seed({ saved: Array.from({ length: SAVED_BOOKS_CAP }, (_, index) => ({ bookKey: 'v1:openlibrary:OL' + (index + 1) + 'W', title: 'B' + index, authors: [], source: 'direct', viewedAt: '2026-01-01T00:00:00.000Z' })) });
     renderBook();
-    const add = await screen.findByRole('button', { name: 'Add to my shelf' });
+    const add = await screen.findByRole('button', { name: 'Add to my reading shelf' });
     expect(add).toBeDisabled();
-    expect(add).toHaveAccessibleDescription('Shelf full');
+    expect(add).toHaveAccessibleDescription('Your reading shelf is full');
   });
 
   it('a placeholder record shows what is known and no About section', async () => {
@@ -251,7 +264,7 @@ describe('one-shelf book page', () => {
     expect(screen.queryByRole('heading', { name: 'About this book' })).not.toBeInTheDocument();
     expect(screen.queryByText(/Published/)).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: /All editions on Open Library/ })).toHaveAttribute('href', 'https://openlibrary.org/isbn/9780306406157');
-    expect(screen.getByRole('button', { name: 'Add to my shelf' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Add to my reading shelf' })).toBeEnabled();
   });
 
   it('Find my library opens the pop-up over the book; choosing one checks this book without leaving the page', async () => {
@@ -262,7 +275,7 @@ describe('one-shelf book page', () => {
     expect(screen.getByTestId('location')).toHaveTextContent('"overlay":"library"');
     fireEvent.change(within(dialog).getByLabelText('City, town or library name'), { target: { value: 'Chennai' } });
     fireEvent.click(await within(dialog).findByRole('button', { name: /Anna Centenary Library/ }));
-    expect(await screen.findByRole('group', { name: 'Found in Anna Centenary Library' })).toBeInTheDocument();
+    expect(await screen.findByRole('group', { name: 'In your library' })).toBeInTheDocument();
     await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
     expect(screen.getByTestId('location')).toHaveTextContent('/app/books/' + encodeURIComponent(BOOK.bookKey));
     expect(screen.getByTestId('location')).not.toHaveTextContent('overlay');

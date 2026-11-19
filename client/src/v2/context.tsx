@@ -43,6 +43,8 @@ export type LibraryState = {
   dismissRemoval?: () => void;
   reportStorageFailure: () => void;
   selectLibrary: (library: PublicLibrary) => Promise<boolean>;
+  /** "Remove" in the library pop-up: no library chosen. The shelf is untouched. */
+  clearLibrary: () => Promise<boolean>;
   retryLibrary: () => void;
   rememberBook: (book: PublicBook, source: RecentSource) => Promise<boolean>;
   updateRecentDisplay?: (book: PublicBook) => Promise<boolean>;
@@ -61,11 +63,18 @@ export type LibraryState = {
   loadingAccount?:boolean;
   mutationNotice?:string|null;
   mutationError?:string|null;
-  pendingImportId?:string;
   retryMutation?:()=>Promise<boolean>;
   historyEnabled?:boolean;
   setHistoryEnabled?:(enabled:boolean)=>Promise<boolean>;
-  importGuest?:(id:string,snapshot:AnonymousWebState,history:boolean,policy:'keep-account'|'use-device')=>Promise<{savedAdded:number;historyAccepted:number;historyExpired:number}|null>;
+  /** Signed in: what the quiet merge at sign-in brought over from this browser; undefined until it is done (plan B5). */
+  mergeResult?:{savedAdded:number};
+  /**
+   * Signed in to an account this browser did not ask to sign in to (for
+   * example from a link someone else sent): the books saved here are not
+   * sent until the reader answers "Add them" (true) or "Not now" (false).
+   */
+  mergeOffer?:{count:number;email:string}|null;
+  answerMerge?:(add:boolean)=>Promise<void>;
 };
 
 export const LibraryStateContext = createContext<LibraryState | null>(null);
@@ -201,6 +210,14 @@ function GuestLibraryStateProvider({ children }: { children: ReactNode }) {
     setLibrary(selected);
     setLibraryError(null);return true;
   }, [commit, reportStorageFailure]);
+  const clearLibrary = useCallback(async() => {
+    if (!await commit((saved) => withSelectedLibrary(saved, null))) return false;
+    // The remembered name goes too, so nothing shows the removed library while loading.
+    if (!writeReaderPreferences({ selectedLibrary: undefined })) reportStorageFailure();
+    setRemovedLibraryNotice(null);
+    setLibrary(null);
+    setLibraryError(null);return true;
+  }, [commit, reportStorageFailure]);
   const retryLibrary = useCallback(() => setLibraryRetry((count) => count + 1), []);
   const rememberBook = useCallback(async(book: PublicBook, source: RecentSource) => {
     return commit((saved) => withRecentBook(saved, book, source));
@@ -272,6 +289,7 @@ function GuestLibraryStateProvider({ children }: { children: ReactNode }) {
     storageNotice,
     recoveryMode, reloadShelf, startNewShelf, removedLibraryNotice, removedBook: removed?.book || null, undoRemoval, dismissRemoval, reportStorageFailure,
     selectLibrary,
+    clearLibrary,
     retryLibrary,
     rememberBook,
     updateRecentDisplay,
@@ -283,7 +301,7 @@ function GuestLibraryStateProvider({ children }: { children: ReactNode }) {
     unsaveBook,
     saveContent,
     unsaveContent,
-  }), [state, library, loadingLibrary, libraryError, storageNotice, recoveryMode, reloadShelf, startNewShelf, removedLibraryNotice, removed, undoRemoval, dismissRemoval, reportStorageFailure, selectLibrary, retryLibrary, rememberBook, updateRecentDisplay, removeRecentBook, clearRecentBooks, restoreRecentBooks, clearSavedBooks, saveBook, unsaveBook, saveContent, unsaveContent]);
+  }), [state, library, loadingLibrary, libraryError, storageNotice, recoveryMode, reloadShelf, startNewShelf, removedLibraryNotice, removed, undoRemoval, dismissRemoval, reportStorageFailure, selectLibrary, clearLibrary, retryLibrary, rememberBook, updateRecentDisplay, removeRecentBook, clearRecentBooks, restoreRecentBooks, clearSavedBooks, saveBook, unsaveBook, saveContent, unsaveContent]);
 
   return <LibraryStateContext.Provider value={value}>{children}</LibraryStateContext.Provider>;
 }

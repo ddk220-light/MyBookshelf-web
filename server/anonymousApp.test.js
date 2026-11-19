@@ -37,6 +37,7 @@ test('anonymous app accepts only health and v2 API paths without legacy cookies'
   const health = await request(target).get('/api/health').set('Cookie', ['mb_session=old', 'mb_key=old']);
   assert.equal(health.status, 200);
   assert.equal(health.body.status, 'ok');
+  assert.equal(health.body.catalogStore, 'off', 'no catalog database configured in tests');
   assert.equal(health.headers['set-cookie'], undefined);
 
   const v2 = await request(target)
@@ -52,6 +53,17 @@ test('anonymous app accepts only health and v2 API paths without legacy cookies'
   assert.equal(unknownV2.status, 404);
   assert.equal(unknownV2.body.error.code, 'NOT_FOUND');
   assert.equal(unknownV2.headers['set-cookie'], undefined);
+});
+
+test('health reports the catalog store as one word, with no error or connection detail', async () => {
+  for (const [status, word] of [[async () => 'ok', 'ok'], [async () => 'failed', 'failed'], [async () => { throw new Error('postgres://user:secret@host/db'); }, 'failed']]) {
+    const target = createAnonymousApp({ catalogStore: { status }, publicRouter: Router() });
+    const health = await request(target).get('/api/health');
+    assert.equal(health.status, 200);
+    assert.deepEqual(Object.keys(health.body).sort(), ['catalogStore', 'status', 'timestamp']);
+    assert.equal(health.body.catalogStore, word);
+    assert.ok(!health.text.includes('secret'));
+  }
 });
 
 test('retired legacy APIs and uploads return a stable denial without reading a session', async () => {

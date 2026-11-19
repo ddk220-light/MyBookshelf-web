@@ -39,20 +39,20 @@ const targets = page => page.evaluate(() => [...document.querySelectorAll('butto
 for (const light of ['daylight', 'lamplight', 'ink']) test.describe(`every screen and pop-up in ${light}`, () => {
   test('shelf, list view, Viewed before, side panel, library pop-up and scan pop-up', async ({ page }) => {
     await setup(page, { light });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.locator('html')).toHaveAttribute('data-reading-light', light);
-    await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'My reading shelf' })).toBeVisible();
     await expect(page.getByRole('region', { name: 'Viewed before' })).toBeVisible();
     await noViolations(page, 'shelf');
     await page.getByRole('button', { name: 'List view' }).click();
     await noViolations(page, 'list view');
     await page.getByRole('button', { name: 'Shelf view' }).click();
-    await page.getByRole('button', { name: 'Account and settings' }).click();
-    const panel = page.getByRole('dialog', { name: 'Account and settings' });
+    await page.getByRole('button', { name: 'Settings' }).click();
+    const panel = page.getByRole('dialog', { name: 'Settings' });
     await expect(panel).toBeVisible();
     await noViolations(page, 'side panel');
     await panel.getByRole('button', { name: 'Change library' }).click();
-    const picker = page.getByRole('dialog', { name: 'Find your library' });
+    const picker = page.getByRole('dialog', { name: /^(Change library|Find your library)$/ });
     await expect(picker).toBeVisible();
     await noViolations(page, 'library pop-up');
     await picker.getByLabel('City, town or library name').fill('Chennai');
@@ -69,7 +69,7 @@ for (const light of ['daylight', 'lamplight', 'ink']) test.describe(`every scree
 
   test('search results, book page with the library card, empty shelf', async ({ page }) => {
     await setup(page, { light });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     const input = page.getByRole('searchbox', { name: 'Search for a book' });
     await input.fill('innovator');
     await input.press('Enter');
@@ -82,14 +82,14 @@ for (const light of ['daylight', 'lamplight', 'ink']) test.describe(`every scree
     await expect(page.locator('.library-answer')).not.toHaveAttribute('data-answer', 'checking');
     await noViolations(page, 'book page');
     await page.evaluate(() => localStorage.clear());
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await noViolations(page, 'shelf after clearing storage');
   });
 
   test('Privacy, Terms, About, Report a problem, Log in and Create account', async ({ page }) => {
     await setup(page, { light });
     for (const [path, heading] of [['/app/privacy', 'Privacy'], ['/app/terms', 'Terms'], ['/app/about', 'MyBookshelf'], ['/app/report', 'Report a problem'],
-      ['/app/account/sign-in', 'Log in'], ['/app/account/sign-up', 'Create account']]) {
+      ['/app/account/sign-in', 'Log in'], ['/app/account/sign-up', 'Welcome to MyBookshelf']]) {
       await page.goto(path);
       await expect(page.getByRole('heading', { level: 1, name: heading })).toBeVisible();
       await noViolations(page, path);
@@ -97,14 +97,14 @@ for (const light of ['daylight', 'lamplight', 'ink']) test.describe(`every scree
   });
 });
 
-test('keyboard only: search, open a result, add it, find a library, back to the shelf', async ({ page }) => {
+test('keyboard only: search, open a result, add it, find a library, back to the shelf', async ({ page, browserName }) => {
   await setup(page, { saved: [book(2)], recent: [book(7)], libraryId: null });
-  await page.goto('/app/shelf');
-  await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
-  const focused = () => page.evaluate(() => { const element = document.activeElement; return element?.getAttribute('aria-label') || element?.labels?.[0]?.textContent?.trim() || element?.textContent?.trim().slice(0, 60) || element?.tagName; });
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: 'My reading shelf' })).toBeVisible();
+  const focused = () => page.evaluate(() => { const element = document.activeElement; const caption = element?.getAttribute('aria-labelledby'); return element?.getAttribute('aria-label') || element?.labels?.[0]?.textContent?.trim() || (caption && document.getElementById(caption)?.textContent?.trim()) || element?.textContent?.trim().slice(0, 60) || element?.tagName; });
   const tabTo = async (name, limit = 25) => {
     for (let step = 0; step < limit; step += 1) {
-      await page.keyboard.press('Tab');
+      await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
       if ((await focused()) === name) return;
     }
     throw Error('Tab never reached ' + name);
@@ -117,9 +117,9 @@ test('keyboard only: search, open a result, add it, find a library, back to the 
   await tabTo(BOOK.title + ' by ' + BOOK.authors[0]);
   await page.keyboard.press('Enter');
   await expect(page.getByRole('heading', { level: 1, name: BOOK.title })).toBeVisible();
-  await tabTo('Add to my shelf');
+  await tabTo('Add to my reading shelf');
   await page.keyboard.press('Enter');
-  await expect(page.getByRole('button', { name: 'On my shelf' })).toBeFocused();
+  await expect(page.getByText('On my reading shelf', { exact: true })).toBeFocused();
   await tabTo('Find my library');
   await page.keyboard.press('Enter');
   const picker = page.getByRole('dialog', { name: 'Find your library' });
@@ -133,13 +133,13 @@ test('keyboard only: search, open a result, add it, find a library, back to the 
   await expect(picker).toBeHidden();
   // Focus comes back to the library card (or its Try again), never to the top of the page.
   await expect.poll(() => page.evaluate(() => Boolean(document.activeElement?.closest('.library-answer')))).toBe(true);
-  await page.keyboard.press('Shift+Tab');
-  for (let step = 0; step < 15 && (await focused()) !== 'Back'; step += 1) await page.keyboard.press('Shift+Tab');
+  await page.keyboard.press(browserName === 'webkit' ? 'Alt+Shift+Tab' : 'Shift+Tab');
+  for (let step = 0; step < 15 && (await focused()) !== 'Back'; step += 1) await page.keyboard.press(browserName === 'webkit' ? 'Alt+Shift+Tab' : 'Shift+Tab');
   expect(await focused()).toBe('Back');
   await page.keyboard.press('Enter');
   await expect(page.getByRole('region', { name: 'Search results' })).toBeVisible();
   await page.keyboard.press('Escape');
-  await page.goto('/app/shelf');
+  await page.goto('/');
   await expect(page.getByRole('link', { name: new RegExp('^' + BOOK.title + ' by ') }).first()).toBeVisible();
   // Every focusable element on the way showed a visible focus ring.
   const ring = await page.evaluate(() => { const element = document.querySelector('.home-person'); element.focus(); const style = getComputedStyle(element); return style.outlineStyle !== 'none' || style.boxShadow !== 'none'; });
@@ -151,7 +151,7 @@ for (const project of ['mobile', 'desktop']) test(`touch targets are 44 px or mo
   // The desktop layout (left column, middle slot) from 1100 px wide.
   if (project === 'desktop') await page.setViewportSize({ width: 1440, height: 900 });
   await setup(page, { saved: Array.from({ length: 12 }, (_, index) => book(index + 2)), recent: Array.from({ length: 8 }, (_, index) => book(index + 30, { title: 'V' + index })) });
-  await page.goto('/app/shelf');
+  await page.goto('/');
   await expect(page.getByRole('region', { name: 'Viewed before' })).toBeVisible();
   const report = [];
   const measure = async (screen) => {
@@ -167,7 +167,7 @@ for (const project of ['mobile', 'desktop']) test(`touch targets are 44 px or mo
   await measure('list view');
   await page.getByRole('button', { name: 'Shelf view' }).click();
   if (project === 'mobile') {
-    await page.getByRole('button', { name: 'Account and settings' }).click();
+    await page.getByRole('button', { name: 'Settings' }).click();
     await measure('side panel');
     await page.keyboard.press('Escape');
   } else {

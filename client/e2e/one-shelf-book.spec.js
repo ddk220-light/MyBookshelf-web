@@ -75,7 +75,7 @@ const savedKeys = page => page.evaluate(KEY => JSON.parse(localStorage.getItem(K
 
 test.describe('One-shelf book page', () => {
 
-  test('before a library: the book, Add to my shelf and Find my library; add, toast, remove, no confirmation', async ({ page }) => {
+  test('before a library: the book, Add to my reading shelf and Find my library; add, toast, remove, no confirmation', async ({ page }) => {
     const { calls } = await setup(page);
     await page.goto(bookPath);
     await expect(page.getByRole('heading', { level: 1, name: BOOK.title })).toBeVisible();
@@ -94,37 +94,37 @@ test.describe('One-shelf book page', () => {
     expect((await axe(page)).violations).toEqual([]);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 
-    const add = page.getByRole('button', { name: 'Add to my shelf' });
+    const add = page.getByRole('button', { name: 'Add to my reading shelf' });
     const box = await add.boundingBox();
     expect(box.width).toBeGreaterThan(300);
     await add.click();
-    const on = page.getByRole('button', { name: 'On my shelf' });
-    await expect(on).toHaveAttribute('aria-pressed', 'true');
-    await expect(page.locator('.shelf-book-toast')).toContainText('Added to your shelf');
+    await expect(page.getByText('On my reading shelf', { exact: true })).toBeVisible();
+    const remove = page.getByRole('button', { name: 'Remove from my reading shelf' });
+    await expect(page.locator('.shelf-book-toast')).toContainText('Added to your reading shelf');
     expect(await savedKeys(page)).toEqual([BOOK.bookKey]);
     expect((await axe(page)).violations).toEqual([]);
     // Reduced motion: the tick does not pop.
     expect(await page.locator('.save-tick').evaluate(element => getComputedStyle(element).animationName)).toBe('none');
 
-    await on.click();
-    await expect(page.getByRole('button', { name: 'Add to my shelf' })).toHaveAttribute('aria-pressed', 'false');
+    await remove.click();
+    await expect(page.getByRole('button', { name: 'Add to my reading shelf' })).toBeEnabled();
     await expect(page.getByRole('dialog')).toHaveCount(0);
     expect(await savedKeys(page)).toEqual([]);
 
-    await page.getByRole('button', { name: 'Add to my shelf' }).click();
-    await page.getByRole('link', { name: 'See my shelf' }).click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await page.getByRole('button', { name: 'Add to my reading shelf' }).click();
+    await page.getByRole('link', { name: 'See my reading shelf' }).click();
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(page.locator('.bay-books').getByRole('link', { name: BOOK.title + ' by ' + BOOK.authors[0] })).toBeVisible();
     await page.reload();
     await expect(page.locator('.bay-books').getByRole('link', { name: BOOK.title + ' by ' + BOOK.authors[0] })).toBeVisible();
   });
 
   const STATES = [
-    ['found', { answer: 'found', catalogUrl: RECORD }, 'Found in Anna Centenary Library', 'library-answer-found'],
-    ['not found', { answer: 'not_found' }, 'Not found in Anna Centenary Library', 'library-answer-not-found'],
-    ['unconfirmed', { answer: 'unconfirmed' }, 'Couldn’t confirm in Anna Centenary Library', 'library-answer-grey'],
-    ['unknown', { answer: 'unknown' }, 'Couldn’t check Anna Centenary Library', 'library-answer-grey'],
-    ['a failed check', { status: 503 }, 'Couldn’t check Anna Centenary Library', 'library-answer-grey'],
+    ['found', { answer: 'found', catalogUrl: RECORD, catalogLinkKind: 'record' }, 'In your library', 'library-answer-found'],
+    ['not found', { answer: 'not_found' }, 'Not in your library', 'library-answer-not-found'],
+    ['unconfirmed', { answer: 'unconfirmed' }, 'Couldn’t check right now', 'library-answer-grey'],
+    ['unknown', { answer: 'unknown' }, 'Couldn’t check right now', 'library-answer-grey'],
+    ['a failed check', { status: 503 }, 'Couldn’t check right now', 'library-answer-grey'],
   ];
   for (const [name, reply, label, tone] of STATES) test(`library card: ${name}`, async ({ page }) => {
     await setup(page, { libraryId: LINKED_LIBRARY.id, check: reply });
@@ -133,46 +133,44 @@ test.describe('One-shelf book page', () => {
     await expect(card).toBeVisible();
     await expect(card).toHaveClass(new RegExp(tone));
     await expect(card.getByText(LINKED_LIBRARY.name)).toBeVisible();
-    await expect(card.getByRole('link', { name: /^Catalog/ })).toHaveAttribute('href', reply.catalogUrl || LINKED_LIBRARY.catalogUrl);
-    await expect(card.getByRole('button', { name: 'Try again' })).toHaveCount(label.startsWith('Couldn’t check') ? 1 : 0);
-    // One row, no availability details.
-    const height = (await card.boundingBox()).height;
-    expect(height).toBeLessThan(80);
+    await expect(card.getByRole('link', { name: /catalog/i })).toHaveAttribute('href', reply.catalogUrl || LINKED_LIBRARY.catalogUrl);
+    await expect(card.getByRole('button', { name: 'Try again' })).toHaveCount(reply.answer === 'unknown' || reply.status === 503 ? 1 : 0);
+    await expect(card.getByRole('heading', { name: label })).toBeVisible();
     expect(await card.textContent()).not.toMatch(/cop(y|ies)|due|floor|shelf \d/i);
     await expect(page.locator('p[role="status"]', { hasText: label })).toHaveCount(1);
     expect((await axe(page)).violations).toEqual([]);
   });
 
-  test('checking: grey with a static icon under reduced motion, then the answer; Try again after a failure', async ({ page }) => {
+  test('checking: grey with a static progress bar under reduced motion, then the answer; Try again after a failure', async ({ page }) => {
     let mode = 'hold';
     const fixture = await setup(page, { libraryId: LINKED_LIBRARY.id, check: () => mode === 'hold' ? 'hold' : mode === 'fail' ? { status: 503 } : { answer: 'found' } });
     await page.goto(bookPath);
-    const checking = page.getByRole('group', { name: 'Checking Anna Centenary Library' });
+    const checking = page.getByRole('group', { name: 'Checking your library…' });
     await expect(checking).toBeVisible();
     await expect(checking).toHaveClass(/library-answer-grey/);
     await expect(checking).toHaveAttribute('aria-busy', 'true');
-    expect(await page.locator('.library-answer-spin').evaluate(element => getComputedStyle(element).animationName)).toBe('none');
+    expect(await page.locator('.library-answer-progress').evaluate(element => getComputedStyle(element, '::before').animationName)).toBe('none');
     expect((await axe(page)).violations).toEqual([]);
     mode = 'fail';
     await page.reload();
     fixture.release();
-    const failed = page.getByRole('group', { name: 'Couldn’t check Anna Centenary Library' });
+    const failed = page.getByRole('group', { name: 'Couldn’t check right now' });
     await expect(failed).toBeVisible();
     await expect(page.locator('.library-answer-not-found')).toHaveCount(0);
     mode = 'found';
     await failed.getByRole('button', { name: 'Try again' }).click();
-    await expect(page.getByRole('group', { name: 'Found in Anna Centenary Library' })).toBeVisible();
+    await expect(page.getByRole('group', { name: 'In your library' })).toBeVisible();
   });
 
   test('a dropped connection or going offline: couldn’t check, never not found', async ({ page, context }) => {
     await setup(page, { libraryId: LINKED_LIBRARY.id, check: { answer: 'not_found' } });
     await page.route('**/api/v2/holdings/check', route => route.abort('internetdisconnected'));
     await page.goto(bookPath);
-    const card = page.getByRole('group', { name: 'Couldn’t check Anna Centenary Library' });
+    const card = page.getByRole('group', { name: 'Couldn’t check right now' });
     await expect(card).toBeVisible();
     await context.setOffline(true);
     await card.getByRole('button', { name: 'Try again' }).click();
-    await expect(page.getByRole('group', { name: 'Couldn’t check Anna Centenary Library' })).toBeVisible();
+    await expect(page.getByRole('group', { name: 'Couldn’t check right now' })).toBeVisible();
     await expect(page.locator('.library-answer-not-found')).toHaveCount(0);
     await context.setOffline(false);
   });
@@ -204,7 +202,7 @@ test.describe('One-shelf book page', () => {
     expect((await axe(page)).violations).toEqual([]);
     await list.getByRole('button', { name: /Anna Centenary Library/ }).click();
     await expect(dialog).toBeHidden();
-    await expect(page.getByRole('group', { name: 'Found in Anna Centenary Library' })).toBeVisible();
+    await expect(page.getByRole('group', { name: 'In your library' })).toBeVisible();
     expect(page.url()).toContain('/app/books/');
     expect(calls.check).toEqual([{ libraryId: LINKED_LIBRARY.id, bookKey: BOOK.bookKey }]);
     // The typed text went to the server once and is kept nowhere.
@@ -219,7 +217,7 @@ test.describe('One-shelf book page', () => {
     await page.goto('/app/books/' + encodeURIComponent('v1:isbn:9780000000002'));
     await expect(page.getByRole('heading', { level: 1, name: '9780000000002' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'About this book' })).toHaveCount(0);
-    await expect(page.getByRole('button', { name: 'Add to my shelf' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Add to my reading shelf' })).toBeVisible();
   });
 
   for (const light of ['lamplight', 'ink']) test(`the book page and its card stay legible in ${light}`, async ({ page }) => {
@@ -227,8 +225,8 @@ test.describe('One-shelf book page', () => {
     await page.goto(bookPath);
     await expect(page.getByRole('button', { name: 'Find my library' })).toBeVisible();
     expect((await contrast(page)).violations).toEqual([]);
-    await page.getByRole('button', { name: 'Add to my shelf' }).click();
-    await expect(page.getByRole('button', { name: 'On my shelf' })).toBeVisible();
+    await page.getByRole('button', { name: 'Add to my reading shelf' }).click();
+    await expect(page.getByText('On my reading shelf', { exact: true })).toBeVisible();
     expect((await contrast(page)).violations).toEqual([]);
     for (const reply of [{ answer: 'found' }, { answer: 'not_found' }, { answer: 'unknown' }]) {
       await page.unroute('**/api/v2/holdings/check');
@@ -242,12 +240,12 @@ test.describe('One-shelf book page', () => {
 
   test.describe('with motion', () => {
     test.use({ contextOptions: { reducedMotion: 'no-preference' } });
-    test('the tick pops after an add and the checking icon turns', async ({ page }) => {
+    test('the tick pops after an add and the progress bar moves', async ({ page }) => {
       await setup(page, { libraryId: LINKED_LIBRARY.id, check: 'hold' });
       await page.goto(bookPath);
-      await expect(page.getByRole('group', { name: 'Checking Anna Centenary Library' })).toBeVisible();
-      expect(await page.locator('.library-answer-spin').evaluate(element => getComputedStyle(element).animationName)).toBe('check-spin');
-      await page.getByRole('button', { name: 'Add to my shelf' }).click();
+      await expect(page.getByRole('group', { name: 'Checking your library…' })).toBeVisible();
+      expect(await page.locator('.library-answer-progress').evaluate(element => getComputedStyle(element, '::before').animationName)).toBe('library-progress');
+      await page.getByRole('button', { name: 'Add to my reading shelf' }).click();
       expect(await page.locator('.save-tick').evaluate(element => getComputedStyle(element).animationName)).toBe('tick-pop');
     });
   });
@@ -255,10 +253,11 @@ test.describe('One-shelf book page', () => {
 
 test.describe('One-shelf library pop-up', () => {
   const openFromPanel = async page => {
-    await page.getByRole('button', { name: 'Account and settings' }).click();
-    const panel = page.getByRole('dialog', { name: 'Account and settings' });
+    await page.getByRole('button', { name: 'Settings' }).click();
+    const panel = page.getByRole('dialog', { name: 'Settings' });
     await panel.getByRole('button', { name: /^(Change|Choose a) library$/ }).click();
-    const dialog = page.getByRole('dialog', { name: 'Find your library' });
+    // "Change library" when one is chosen, "Find your library" otherwise.
+    const dialog = page.getByRole('dialog', { name: /^(Change library|Find your library)$/ });
     await expect(dialog).toBeVisible();
     return dialog;
   };
@@ -266,11 +265,11 @@ test.describe('One-shelf library pop-up', () => {
   test('Change in the side panel: choosing another library keeps the shelf, clears the badges and refills them', async ({ page }) => {
     const saved = [shelfBook(1), shelfBook(2), shelfBook(3)];
     const { calls } = await setup(page, { saved, libraryId: LINKED_LIBRARY.id, lookup: { [LINKED_LIBRARY.id]: [saved[0].bookKey], [OTHER_LIBRARY.id]: [saved[1].bookKey, saved[2].bookKey] } });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.locator('.home-library')).toHaveText(LINKED_LIBRARY.name);
     await expect(page.locator('.cover-badge-library')).toHaveCount(1);
     const dialog = await openFromPanel(page);
-    await expect(page.getByRole('dialog', { name: 'Account and settings' })).toBeHidden();
+    await expect(page.getByRole('dialog', { name: 'Settings' })).toBeHidden();
     await dialog.getByLabel('City, town or library name').fill('Madurai');
     await dialog.getByRole('button', { name: /Kalaignar Centenary Library/ }).click();
     await expect(dialog).toBeHidden();
@@ -282,7 +281,7 @@ test.describe('One-shelf library pop-up', () => {
     // Only saved books are asked about; the suggestions after them never are.
     for (const call of calls.lookup) expect(call.books.map(item => item.bookKey).sort()).toEqual(saved.map(item => item.bookKey).sort());
     await expect(page.locator('.cover3d.is-suggested .cover-badge-library')).toHaveCount(0);
-    await expect(page.getByRole('button', { name: 'Account and settings' })).toBeFocused();
+    await expect(page.getByRole('button', { name: 'Settings' })).toBeFocused();
     // Closing the pop-up went back past the panel's entry, not to the panel.
     await page.goBack();
     await expect(page.getByRole('dialog')).toHaveCount(0);
@@ -292,10 +291,17 @@ test.describe('One-shelf library pop-up', () => {
     test.use({ geolocation: { latitude: 9.9252, longitude: 78.1198 }, permissions: ['geolocation'] });
     test('Libraries near me fills the same list nearest first with distances; the position is not kept', async ({ page }) => {
       const { calls } = await setup(page);
-      await page.goto('/app/shelf');
+      await page.goto('/');
       const dialog = await openFromPanel(page);
       await dialog.getByLabel('City, town or library name').fill('Chennai');
       await expect(dialog.getByRole('button', { name: /Example Public Library/ })).toBeVisible();
+      // On a phone "Libraries near me" steps aside while the field has text
+      // (PickerTyping board); it is back as soon as the field is empty, even
+      // while the field keeps focus.
+      await expect(dialog.getByRole('button', { name: 'Libraries near me' })).toBeHidden();
+      await dialog.getByLabel('City, town or library name').fill('');
+      await expect(dialog.getByLabel('City, town or library name')).toBeFocused();
+      await expect(dialog.getByRole('button', { name: 'Libraries near me' })).toBeVisible();
       await dialog.getByRole('button', { name: 'Libraries near me' }).click();
       await expect(dialog.getByRole('button', { name: 'Libraries near me' })).toHaveAttribute('aria-pressed', 'true');
       const list = dialog.getByRole('region', { name: 'Nearest first' });
@@ -312,9 +318,9 @@ test.describe('One-shelf library pop-up', () => {
     });
   });
 
-  test('nothing found: one line and one button; one tap sends the request and thanks; the text is kept nowhere', async ({ page }) => {
+  test('nothing found: "Request to add" opens the form; nothing is sent before Send request; the text is kept nowhere', async ({ page }) => {
     const { calls } = await setup(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     const dialog = await openFromPanel(page);
     await dialog.getByLabel('City, town or library name').fill('Tirunelveli');
     await expect(dialog.getByText('No libraries here yet', { exact: true }).first()).toBeVisible();
@@ -322,37 +328,80 @@ test.describe('One-shelf library pop-up', () => {
     await expect(request).toBeVisible();
     expect((await axe(page)).violations).toEqual([]);
     await request.click();
-    await expect(dialog.locator('.library-requested')).toHaveText('Received your request, thank you.');
-    await expect(request).toHaveCount(0);
-    expect(calls.requests).toEqual([{ text: 'Tirunelveli' }]);
+    const form = page.getByRole('dialog', { name: 'Ask us to add a library' });
+    await expect(form.getByLabel('Library name and city')).toHaveValue('Tirunelveli');
+    expect(calls.requests).toEqual([]);
     expect((await axe(page)).violations).toEqual([]);
-    expect(await everything(page)).not.toContain('Tirunelveli');
+    await form.getByLabel('Your email (optional)').fill('reader@example.org');
+    await form.getByRole('button', { name: 'Send request' }).click();
+    await expect(form.locator('.library-requested')).toHaveText('Request sent. Thank you.');
+    await expect(form.getByRole('button', { name: 'Done' })).toBeFocused();
+    expect(calls.requests).toEqual([{ text: 'Tirunelveli', email: 'reader@example.org' }]);
+    expect((await axe(page)).violations).toEqual([]);
+    expect(await everything(page)).not.toMatch(/Tirunelveli|reader@example/);
     await page.keyboard.press('Escape');
-    await expect(dialog).toBeHidden();
-    await expect(page.getByRole('button', { name: 'Account and settings' })).toBeFocused();
+    await expect(form).toBeHidden();
+    await expect(page.getByRole('button', { name: 'Settings' })).toBeFocused();
   });
 
-  test('a refused request text gets no thank-you and keeps the button', async ({ page }) => {
+  test('a refused request says what to check and keeps Send request; Cancel goes back to the list', async ({ page }) => {
     const { calls } = await setup(page, { request: 400 });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     const dialog = await openFromPanel(page);
     await dialog.getByLabel('City, town or library name').fill('Tirunelveli');
     await dialog.getByRole('button', { name: 'Request to add “Tirunelveli”' }).click();
+    const form = page.getByRole('dialog', { name: 'Ask us to add a library' });
+    await form.getByRole('button', { name: 'Send request' }).click();
     await expect.poll(() => calls.requests.length).toBe(1);
-    await expect(dialog.getByRole('button', { name: 'Request to add “Tirunelveli”' })).toBeEnabled();
-    await expect(dialog.getByText(/Received your request|Couldn’t send/)).toHaveCount(0);
+    await expect(form.getByText('Couldn’t send this. Check the library name and the email.')).toBeVisible();
+    await expect(form.getByRole('button', { name: 'Send request' })).toBeEnabled();
+    await expect(form.getByText(/Request sent/)).toHaveCount(0);
+    await form.getByRole('button', { name: 'Cancel' }).click();
+    await expect(dialog.getByRole('button', { name: 'Request to add “Tirunelveli”' })).toBeFocused();
+    expect(calls.requests).toHaveLength(1);
+  });
+
+  test('the sheet keeps its title, Close and field in view with only the list scrolling', async ({ page }) => {
+    await setup(page);
+    await page.goto('/app/shelf');
+    const dialog = await openFromPanel(page);
+    await expect(dialog.getByRole('button', { name: 'Libraries near me' })).toBeFocused();
+    await dialog.getByLabel('City, town or library name').fill('Chennai');
+    await expect(dialog.getByRole('region', { name: /Libraries/ }).getByRole('button').first()).toBeVisible();
+    await expect(dialog.locator('.library-count')).toHaveText(/libraries in Chennai/);
+    // The keyboard takes the lower part of the screen: the sheet fits above it.
+    await page.evaluate(() => {
+      const viewport = window.visualViewport;
+      Object.defineProperty(viewport, 'height', { configurable: true, get: () => 420 });
+      viewport.dispatchEvent(new Event('resize'));
+    });
+    const box = await dialog.boundingBox();
+    const screen = page.viewportSize();
+    expect(box.y + box.height).toBeLessThanOrEqual(420 + 1);
+    expect(screen.height - (box.y + box.height)).toBeGreaterThanOrEqual(screen.height - 420 - 1);
+    for (const target of [dialog.getByRole('heading', { name: /library/ }), dialog.getByRole('button', { name: 'Close' }), dialog.getByLabel('City, town or library name')]) {
+      const part = await target.boundingBox();
+      expect(part.y).toBeGreaterThanOrEqual(box.y);
+      expect(part.y + part.height).toBeLessThanOrEqual(box.y + box.height);
+    }
+    const scrolls = await dialog.evaluate(element => ({ sheet: element.scrollHeight > element.clientHeight + 1, list: getComputedStyle(element.querySelector('.library-list')).overflowY }));
+    expect(scrolls).toEqual({ sheet: false, list: 'auto' });
   });
 
   for (const light of ['lamplight', 'ink']) test(`the pop-up stays legible in ${light}`, async ({ page }) => {
     await setup(page, { light });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     const dialog = await openFromPanel(page);
     await dialog.getByLabel('City, town or library name').fill('Chennai');
     await expect(dialog.getByRole('button', { name: /Anna Centenary Library/ })).toBeVisible();
     expect((await contrast(page)).violations).toEqual([]);
     await dialog.getByLabel('City, town or library name').fill('Tirunelveli');
     await dialog.getByRole('button', { name: 'Request to add “Tirunelveli”' }).click();
-    await expect(dialog.locator('.library-requested')).toBeVisible();
+    const form = page.getByRole('dialog', { name: 'Ask us to add a library' });
+    await expect(form.getByLabel('Library name and city')).toBeVisible();
+    expect((await contrast(page)).violations).toEqual([]);
+    await form.getByRole('button', { name: 'Send request' }).click();
+    await expect(form.locator('.library-requested')).toBeVisible();
     expect((await contrast(page)).violations).toEqual([]);
   });
 });
@@ -362,7 +411,7 @@ test.describe('One-shelf library links', () => {
   test('a guide page’s link chooses the library silently and opens the shelf; the shelf stays', async ({ page }) => {
     await setup(page, { saved: [shelfBook(1)], libraryId: OTHER_LIBRARY.id });
     await page.goto('/select/anna-centenary-library?next=/app/search&q=wings');
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(page.locator('.home-library')).toHaveText(LINKED_LIBRARY.name);
     await expect(page.getByRole('dialog')).toHaveCount(0);
     await expect(page.locator('.cover3d:not(.is-suggested)')).toHaveCount(1);
@@ -375,16 +424,16 @@ test.describe('One-shelf library links', () => {
     const { calls } = await setup(page, { check: { answer: 'found', catalogUrl: RECORD } });
     await page.goto('/select/anna-centenary-library?book=' + encodeURIComponent(BOOK.bookKey));
     await expect(page).toHaveURL(new RegExp(encodeURIComponent(BOOK.bookKey).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
-    await expect(page.getByRole('group', { name: 'Found in Anna Centenary Library' })).toBeVisible();
+    await expect(page.getByRole('group', { name: 'In your library' })).toBeVisible();
     expect(calls.check).toEqual([{ libraryId: LINKED_LIBRARY.id, bookKey: BOOK.bookKey }]);
     await page.getByRole('link', { name: 'Back' }).click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
   });
 
   test('a link that does not resolve lands on the shelf with the notice and keeps the library', async ({ page }) => {
     await setup(page, { libraryId: OTHER_LIBRARY.id });
     await page.goto('/select/no-such-library');
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(page.locator('.home-notice')).toBeVisible();
     await expect(page.locator('.home-library')).toHaveText(OTHER_LIBRARY.name);
     await page.reload();

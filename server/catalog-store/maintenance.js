@@ -8,6 +8,8 @@ import { createPgHealthRecord } from './health.js';
 //   4. problem reports resolved or spam for 90 days, and any older than 12 months
 //   5. library requests: spam after 90 days; added or declined 12 months after
 //      their last update
+//   5b. optional contact details (name, email) 90 days after they were left:
+//      cleared on problem reports, deleted for library requests
 //   6. usage events older than 12 months rolled into daily totals (counts,
 //      result sums, p50/p95 timings; no text, no book keys), one transaction
 //      per day, then deleted
@@ -28,24 +30,30 @@ async function deleteInBatches(db, sql, values = [], { maxBatches = 200 } = {}) 
 }
 
 export async function rollUpUsage(db, { maxDays = 31 } = {}) {
-  const { rows } = await db.query(`SELECT DISTINCT (occurred_hour AT TIME ZONE 'UTC')::date AS day FROM usage_events
+  const { rows } = await db.query(`SELECT DISTINCT to_char(occurred_hour AT TIME ZONE 'UTC', 'YYYY-MM-DD') AS day FROM usage_events
     WHERE occurred_hour < now() - interval '12 months' ORDER BY 1 LIMIT $1`, [maxDays], { timeoutMs: 30_000 });
   let events = 0;
   for (const { day } of rows) {
-    const value = day instanceof Date ? day.toISOString().slice(0, 10) : String(day);
-    events += await db.transaction(async client => {
-      const range = `occurred_hour >= ($1::date AT TIME ZONE 'UTC') AND occurred_hour < (($1::date + 1) AT TIME ZONE 'UTC')
-        AND occurred_hour < now() - interval '12 months'`;
-      await client.query(`INSERT INTO usage_daily_totals AS t (day, kind, library_id, outcome, events, results_sum, p50_ms, p95_ms)
+    // Convert a UTC calendar date to explicit instants before comparing it
+    // with timestamptz. Counting from DELETE also makes concurrent runs safe.
+    const { rows: [rolled] } = await db.query(`WITH expired AS (
+        DELETE FROM usage_events
+        WHERE occurred_hour >= ($1::date::timestamp AT TIME ZONE 'UTC')
+          AND occurred_hour < (($1::date + 1)::timestamp AT TIME ZONE 'UTC')
+          AND occurred_hour < now() - interval '12 months'
+        RETURNING kind, library_id, outcome, result_count, duration_ms
+      ), totals AS (
+        INSERT INTO usage_daily_totals AS t (day, kind, library_id, outcome, events, results_sum, p50_ms, p95_ms)
         SELECT $1::date, kind, coalesce(library_id, ''), outcome, count(*), coalesce(sum(result_count), 0),
-          percentile_cont(0.5) WITHIN GROUP (ORDER BY duration_ms)::int, percentile_cont(0.95) WITHIN GROUP (ORDER BY duration_ms)::int
-        FROM usage_events WHERE ${range}
-        GROUP BY kind, coalesce(library_id, ''), outcome
+          percentile_cont(0.5) WITHIN GROUP (ORDER BY duration_ms)::int,
+          percentile_cont(0.95) WITHIN GROUP (ORDER BY duration_ms)::int
+        FROM expired GROUP BY kind, coalesce(library_id, ''), outcome
         ON CONFLICT (day, kind, library_id, outcome) DO UPDATE SET events = t.events + EXCLUDED.events,
-          results_sum = t.results_sum + EXCLUDED.results_sum, p50_ms = coalesce(EXCLUDED.p50_ms, t.p50_ms), p95_ms = coalesce(EXCLUDED.p95_ms, t.p95_ms)`, [value]);
-      const { rowCount } = await client.query(`DELETE FROM usage_events WHERE ${range}`, [value]);
-      return rowCount;
-    });
+          results_sum = t.results_sum + EXCLUDED.results_sum,
+          p50_ms = coalesce(EXCLUDED.p50_ms, t.p50_ms), p95_ms = coalesce(EXCLUDED.p95_ms, t.p95_ms)
+      )
+      SELECT count(*)::int AS events FROM expired`, [day], { timeoutMs: 30_000 });
+    events += rolled.events;
   }
   return { days: rows.length, events };
 }
@@ -64,6 +72,17 @@ export async function runCatalogMaintenance(db, { policy, now = () => Date.now()
   result.requests = (await db.query(`DELETE FROM library_requests
     WHERE (status = 'spam' AND updated_at < now() - interval '90 days')
        OR (status IN ('added', 'declined') AND updated_at < now() - interval '12 months')`)).rowCount;
+  // Its own step: before migration 003 the columns and table are not there
+  // yet, and the steps after it (usage roll-up, health, check events) must
+  // still run. A failure is named in `failed` and the next run tries again.
+  try {
+    result.contacts = (await db.query(`UPDATE problem_reports SET contact_name = NULL, contact_email = NULL
+      WHERE (contact_name IS NOT NULL OR contact_email IS NOT NULL) AND created_at < now() - interval '90 days'`)).rowCount
+      + (await db.query(`DELETE FROM library_request_contacts WHERE created_at < now() - interval '90 days'`)).rowCount;
+  } catch {
+    result.contacts = null;
+    result.failed = ['contacts'];
+  }
   result.usage = await rollUpUsage(db);
   // 7-day failure counters. Only failures are events (successes update
   // library_health directly), so checks_7d is not derived here: the admin

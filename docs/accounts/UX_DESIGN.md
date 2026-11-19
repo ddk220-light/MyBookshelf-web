@@ -62,7 +62,7 @@ Keep your shelf across devices      Your name [Reader Example] [Save]
 Your name     [                ]    Email     reader@example.test [Change]
 Email         [                ]
 Password      [            Show]    Sign-in methods
-At least 15 characters              Password [Change] / [Set password]
+(no helper text, no rules)          Password [Change] / [Set password]
 [Create account]                    Google [Connect / Disconnect]
                                     Apple  [Connect / Disconnect]
 Or continue with                    Signed-in devices [This browser] [Safari on iPhone: Sign out]

@@ -24,9 +24,9 @@ for (const count of [100, 104]) test('a shelf of ' + count + ' books survives an
   }, { key, book: BOOK, count });
   await page.goto(bookPath);
   const original = (await shelf(page)).savedBooks;
-  const add = page.getByRole('button', { name: 'Add to my shelf' });
+  const add = page.getByRole('button', { name: 'Add to my reading shelf' });
   await expect(add).toBeDisabled();
-  await expect(add).toHaveAccessibleDescription('Shelf full');
+  await expect(add).toHaveAccessibleDescription('Your reading shelf is full');
   expect((await shelf(page)).savedBooks).toEqual(original);
   await page.reload();
   expect((await shelf(page)).savedBooks.length).toBe(count);
@@ -37,18 +37,18 @@ for (const field of ['savedBooks', 'recentBooks']) test('damaged ' + field + ' b
   const raw = JSON.stringify({ version: 1, selectedLibraryId: null, savedBooks: [], recentBooks: [], [field]: [{ title: 'Recover this book' }] });
   await page.addInitScript(({ key, raw }) => { if (!localStorage.getItem(key)) localStorage.setItem(key, raw); }, { key, raw });
   await page.goto(bookPath);
-  await expect(page.getByRole('button', { name: 'Reload shelf', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Add to my shelf' }).click();
-  await page.getByRole('button', { name: 'Reload shelf', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Reload reading shelf', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Add to my reading shelf' }).click();
+  await page.getByRole('button', { name: 'Reload reading shelf', exact: true }).click();
   expect(await page.evaluate(key => localStorage.getItem(key), key)).toBe(raw);
-  await page.getByRole('button', { name: 'Start a new shelf', exact: true }).click();
+  await page.getByRole('button', { name: 'Start a new reading shelf', exact: true }).click();
   await page.keyboard.press('Escape');
   expect(await page.evaluate(key => localStorage.getItem(key), key)).toBe(raw);
-  await page.getByRole('button', { name: 'Start a new shelf', exact: true }).click();
-  await page.getByRole('dialog').getByRole('button', { name: 'Start a new shelf', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Reload shelf', exact: true })).toHaveCount(0);
-  await page.getByRole('button', { name: 'Add to my shelf' }).click();
-  await expect(page.getByRole('button', { name: 'On my shelf' })).toBeVisible();
+  await page.getByRole('button', { name: 'Start a new reading shelf', exact: true }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Start a new reading shelf', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Reload reading shelf', exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Add to my reading shelf' }).click();
+  await expect(page.getByText('On my reading shelf', { exact: true })).toBeVisible();
   expect((await shelf(page)).savedBooks.length).toBe(1);
 });
 
@@ -56,7 +56,7 @@ test('denied storage uses a working session shelf with feedback', async ({ page 
   await fixture(page);
   await page.addInitScript(() => Object.defineProperty(window, 'localStorage', { get() { throw new DOMException('denied', 'SecurityError'); } }));
   await page.goto(bookPath);
-  await page.getByRole('button', { name: 'Add to my shelf' }).click();
+  await page.getByRole('button', { name: 'Add to my reading shelf' }).click();
   await expect(page.locator('.site-notice')).toContainText(/can’t be saved/);
   await page.getByRole('link', { name: 'Back' }).click();
   await expect(page.getByRole('link', { name: new RegExp('^' + BOOK.title) }).first()).toBeVisible();
@@ -73,7 +73,7 @@ test('a library that fails to load stays chosen; one that is gone is cleared wit
     }
   }, { key, library: LINKED_LIBRARY });
   const failed = page.waitForResponse(response => response.url().endsWith('/libraries/resolve'));
-  await page.goto('/app/shelf');
+  await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
   await failed;
   expect((await shelf(page)).selectedLibraryId).toBe(LINKED_LIBRARY.id);
@@ -98,15 +98,15 @@ test('restored storage access never overwrites a shelf that could not be read', 
       return set.call(this, name, value);
     };
   }, { key, book: BOOK });
-  await page.goto('/app/shelf');
+  await page.goto('/');
   await expect(page.getByText('Your changes can’t be saved in this browser. They may be lost when you leave.')).toBeVisible();
   await page.evaluate(() => { window.allowShelfStorage = true; });
   const original = await page.evaluate(key => localStorage.getItem(key), key);
   const search = page.getByRole('searchbox', { name: 'Search for a book' });
   await search.fill(BOOK.isbn13);
   await search.press('Enter');
-  await page.getByRole('button', { name: 'Add to my shelf' }).click();
-  await expect(page.getByRole('button', { name: 'On my shelf' })).toBeVisible();
+  await page.getByRole('button', { name: 'Add to my reading shelf' }).click();
+  await expect(page.getByText('On my reading shelf', { exact: true })).toBeVisible();
   await page.getByRole('link', { name: 'Back' }).click();
   await expect(page.getByRole('link', { name: new RegExp('^' + BOOK.title) }).first()).toBeVisible();
   expect(await page.evaluate(key => localStorage.getItem(key), key)).toBe(original);
@@ -115,10 +115,10 @@ test('restored storage access never overwrites a shelf that could not be read', 
 test('a book saved in one tab appears on the shelf open in another', async ({ context }) => {
   const first = await context.newPage(), second = await context.newPage();
   for (const page of [first, second]) await fixture(page);
-  await second.goto('/app/shelf');
+  await second.goto('/');
   await expect(second.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
   await first.goto(bookPath);
-  await first.getByRole('button', { name: 'Add to my shelf' }).click();
-  await expect(first.getByRole('button', { name: 'On my shelf' })).toBeVisible();
+  await first.getByRole('button', { name: 'Add to my reading shelf' }).click();
+  await expect(first.getByText('On my reading shelf', { exact: true })).toBeVisible();
   await expect(second.getByRole('link', { name: new RegExp('^' + BOOK.title) }).first()).toBeVisible();
 });

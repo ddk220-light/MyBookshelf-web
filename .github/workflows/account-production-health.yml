@@ -23,3 +23,30 @@ jobs:
             --output /tmp/account-health.json \
             https://mybookshelf.cloud/api/account/health
           node -e 'const fs = require("node:fs"); if (JSON.parse(fs.readFileSync("/tmp/account-health.json", "utf8")).status !== "ready") process.exit(1); console.log("Production account worker and prerequisites are ready.");'
+      - name: Check the catalog store answers
+        # Checked even when the account step failed, so both are reported.
+        if: ${{ !cancelled() }}
+        run: |
+          # /api/health reports the catalog store as one word: ok, failed or
+          # off (no database configured). Production needs the store enabled
+          # and reachable ("off" fails too). One retry covers a database that
+          # was waking up, and a first request that timed out or failed: the
+          # step runs under bash -e, so curl's failure is caught here rather
+          # than ending the step before the retry.
+          for attempt in 1 2; do
+            rm -f /tmp/health.json
+            if curl --fail --silent --show-error --max-time 25 \
+              --output /tmp/health.json \
+              https://mybookshelf.cloud/api/health; then
+              word=$(node -e 'const fs = require("node:fs"); let word; try { word = JSON.parse(fs.readFileSync("/tmp/health.json", "utf8")).catalogStore; } catch {} process.stdout.write(["ok", "off", "failed"].includes(word) ? word : "missing");')
+            else
+              word="unreachable"
+            fi
+            if [ "$word" = "ok" ]; then
+              echo "Catalog store: $word"
+              exit 0
+            fi
+            [ "$attempt" = 1 ] && sleep 20
+          done
+          echo "Production catalog store unavailable: $word"
+          exit 1

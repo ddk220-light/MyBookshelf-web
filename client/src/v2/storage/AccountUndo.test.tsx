@@ -15,14 +15,17 @@ const OTHER = { bookKey: 'v1:isbn:9780000000002', title: 'Opened book', authors:
 function account() {
   let shelf: Array<Record<string, unknown>> = [{ ...BOOK, referenceId: 'ref-1', savedAt: '2026-10-01T00:00:00.000Z' }];
   let shelfRevision = 1;
+  let historyRevision = 0;
+  let recent: PublicBook[] = [];
   const versions = () => ({ settingsRevision: 0, shelfRevision, historyGeneration: 0, historyEnabled: true });
   vi.stubGlobal('fetch', vi.fn(async (input: string, init?: RequestInit) => {
     const path = String(input), method = init?.method || 'GET';
     if (path.endsWith('/api/account/capabilities')) return json({ email: true, google: false, apple: false, canonicalOrigin: window.location.origin });
     if (path.endsWith('/api/account/session')) return json({ status: 'authenticated', user: USER, csrfToken: 'csrf-1' });
     if (path.endsWith('/api/account/state')) return json({ profile: { ...USER, profileRevision: 0 }, selectedLibraryId: null, selectedLibrary: null, libraryRemoved: false, counts: { saved: shelf.length, recent: 0 }, ...versions() });
+    if (path.endsWith('/api/account/revisions')) return json({ ...versions(), historyRevision: String(historyRevision) });
     if (path.includes('/api/account/books?')) return json({ books: shelf, nextCursor: null, ...versions() });
-    if (path.endsWith('/api/account/history')) return json({ books: [], ...versions() });
+    if (path.endsWith('/api/account/history')) return json({ books: recent, ...versions(), historyRevision: String(historyRevision) });
     if (path.endsWith('/api/account/history/views') && method === 'POST') return json({ status: 'recorded', ...versions() });
     if (path.endsWith('/api/account/books/ref-1') && method === 'DELETE') {
       shelf = []; shelfRevision += 1;
@@ -34,6 +37,12 @@ function account() {
     }
     return json({ error: { code: 'NOT_FOUND', message: 'Not found.' } }, 404);
   }));
+  return {
+    viewOnAnotherDevice() {
+      recent = [OTHER];
+      historyRevision += 1;
+    },
+  };
 }
 
 function renderAccount() {
@@ -60,8 +69,8 @@ it('signed in: opening another book keeps the Undo; adding the removed book back
   expect(library().removedBook).toBeNull();
 });
 
-it('signed in: focus reloads the shelf (and re-checks the session) at most once a minute', async () => {
-  account();
+it('signed in: focus asks only for the revision numbers, at most every 10 seconds, and reloads only when another device changed them', async () => {
+  const otherDevice = account();
   let clock = 5_000_000;
   const now = vi.spyOn(Date, 'now').mockImplementation(() => clock);
   try {
@@ -72,15 +81,33 @@ it('signed in: focus reloads the shelf (and re-checks the session) at most once 
     await waitFor(() => expect(count('/api/account/state')).toBe(1));
     expect(count('/api/account/session')).toBe(1);
     const focus = () => { window.dispatchEvent(new Event('focus')); document.dispatchEvent(new Event('visibilitychange')); };
-    clock += 30_000;
+    // Within 10 seconds: nothing.
+    clock += 5_000;
     await act(async () => focus());
+    expect(count('/api/account/revisions')).toBe(0);
+    // Later the revisions request finds no changes, so the snapshot is reused.
+    clock += 6_000;
+    await act(async () => focus());
+    await waitFor(() => expect(count('/api/account/revisions')).toBe(1));
     expect(count('/api/account/state')).toBe(1);
-    expect(count('/api/account/session')).toBe(1);
-    clock += 31_000;
+    expect(count('/api/account/books?')).toBe(1);
+    expect(count('/api/account/history')).toBe(1);
+    // Another device removes the book: the next focus finds a new revision and reloads.
+    await fetch('/api/account/books/ref-1', { method: 'DELETE' });
+    clock += 11_000;
     await act(async () => focus());
-    await waitFor(() => expect(count('/api/account/state')).toBe(2));
+    await waitFor(() => expect(library().state.savedBooks).toHaveLength(0));
     expect(count('/api/account/books?')).toBe(2);
     expect(count('/api/account/history')).toBe(2);
-    expect(count('/api/account/session')).toBe(2);
+    // An ordinary view also refreshes history without advancing its generation.
+    otherDevice.viewOnAnotherDevice();
+    clock += 11_000;
+    await act(async () => focus());
+    await waitFor(() => expect(library().state.recentBooks[0]?.bookKey).toBe(OTHER.bookKey));
+    // The session itself is still re-checked at most once a minute.
+    expect(count('/api/account/session')).toBe(1);
+    clock += 61_000;
+    await act(async () => focus());
+    await waitFor(() => expect(count('/api/account/session')).toBe(2));
   } finally { now.mockRestore(); }
 });

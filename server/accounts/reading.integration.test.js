@@ -41,7 +41,8 @@ test('owner-private library/shelf API: conflicts, receipts, exact keys, cursors,
  await admin.query("UPDATE user_books SET saved_at='2026-01-01T00:00:00.000001Z' WHERE user_id=$1 AND reference_id=$2",[a.user.id,next.referenceId]);
  const first=await shelf.books({limit:1},a);assert.equal(first.books[0].referenceId,saved.referenceId);assert.ok(first.nextCursor);
  const second=await shelf.books({limit:1,cursor:first.nextCursor},a);assert.equal(second.books[0].referenceId,next.referenceId);assert.equal(second.nextCursor,null);
- await assert.rejects(shelf.books({cursor:first.nextCursor},b),e=>e.code==='INVALID_INPUT');
+ await assert.rejects(shelf.books({cursor:first.nextCursor},b),e=>e.code==='INVALID_INPUT'&&e.message==='This page of your reading shelf is invalid. Refresh your reading shelf.');
+ await assert.rejects(shelf.books({limit:101},a),e=>e.code==='INVALID_INPUT'&&e.message==='Choose a reading shelf page size between 1 and 100.');
  const removalId=randomUUID();const removed=await shelf.remove({shelfRevision:2,operationId:removalId},a,saved.referenceId);assert.ok(removed.undoUntil);
  await assert.rejects(shelf.books({cursor:first.nextCursor},a),e=>e.code==='VERSION_CONFLICT');
  const restored=await shelf.undo({removalId,shelfRevision:3,operationId:randomUUID()},a);assert.equal(restored.shelfRevision,4);
@@ -52,10 +53,20 @@ test('owner-private library/shelf API: conflicts, receipts, exact keys, cursors,
  assert.equal((await shelf.books({},a)).books[0].bookKey,longKey);assert.equal((await shelf.books({},a)).books[0].coverUrl,undefined);
  assert.deepEqual((await admin.query('SELECT provider_metadata FROM book_refs WHERE id=$1',[long.referenceId])).rows[0].provider_metadata,{});
  const history=createHistoryActions({owned:reading.owned});
+ const initialRevisions = await reading.revisions({}, a);
+ assert.deepEqual(Object.keys(initialRevisions).sort(), [
+   'historyGeneration', 'historyRevision', 'settingsRevision', 'shelfRevision',
+ ]);
  // Viewed before (plan 4.7): a signed-in open is recorded without any setting,
  // newest 50 kept, no expiry; the old setting no longer stops recording.
  const live={book,source:'direct',historyGeneration:0,operationId:randomUUID()};const viewed=await history.view(live,a);assert.deepEqual(await history.view(live,a),viewed);
- assert.equal((await history.history({},a)).books.length,1);
+ const updatedRevisions = await reading.revisions({}, a);
+ assert.notEqual(updatedRevisions.historyRevision, initialRevisions.historyRevision);
+ assert.equal(updatedRevisions.historyGeneration, initialRevisions.historyGeneration);
+ const viewedHistory = await history.history({}, a);
+ assert.equal(viewedHistory.books.length, 1);
+ assert.equal(viewedHistory.historyRevision, updatedRevisions.historyRevision);
+ assert.equal((await reading.revisions({}, b)).historyRevision, initialRevisions.historyRevision);
  assert.equal((await history.history({},b)).books.length,0);
  await assert.rejects(history.view({...live,source:'prefetch',operationId:randomUUID()},a),e=>e.code==='INVALID_INPUT');
  for(let n=0;n<51;n++)await history.view({book:makeBook(),source:'search',historyGeneration:0,operationId:randomUUID()},a);
@@ -74,6 +85,6 @@ test('owner-private library/shelf API: conflicts, receipts, exact keys, cursors,
  const quotaBooks=Array.from({length:999},makeBook);
  for(const row of quotaBooks){const ref=randomUUID();await admin.query('INSERT INTO book_refs(id,book_key,key_digest) VALUES($1,$2,$3)',[ref,row.bookKey,createHash('sha256').update(row.bookKey).digest()]);await admin.query('INSERT INTO user_books(user_id,reference_id,display_snapshot) VALUES($1,$2,$3)',[a.user.id,ref,{title:row.title,authors:[]}]);}
  await assert.rejects(shelf.save({book:makeBook(),shelfRevision:6,operationId:randomUUID()},a),e=>e.code==='SHELF_FULL');assert.equal((await reading.state(a)).counts.saved,1000);
- sessionActive=false;await assert.rejects(reading.state(a),e=>e.code==='SIGN_IN_REQUIRED');sessionActive=true;
+ sessionActive=false;await assert.rejects(reading.revisions({},a),e=>e.code==='SIGN_IN_REQUIRED');sessionActive=true;
  await admin.query("UPDATE app_users SET status='deleting' WHERE id=$1",[a.user.id]);await assert.rejects(shelf.books({},a),/unavailable/);
 });

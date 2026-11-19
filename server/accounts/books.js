@@ -35,12 +35,12 @@ export function createShelfActions({owned,secret}){
       const value=JSON.parse(Buffer.from(data,'base64url').toString());
       if(value.owner!==id||!Number.isFinite(Date.parse(value.at))||!value.id)throw Error();
       if(value.r!==r)throw conflict();return value;
-    }catch(error){if(error instanceof AccountRequestError)throw error;throw invalid('This shelf page is invalid. Refresh your shelf.');}
+    }catch(error){if(error instanceof AccountRequestError)throw error;throw invalid('This page of your reading shelf is invalid. Refresh your reading shelf.');}
   };
   return {
     async books(query,identity){
       const limit=query.limit===undefined?50:Number(query.limit);
-      if(!Number.isInteger(limit)||limit<1||limit>100||Object.keys(query).some(k=>!['cursor','limit'].includes(k)))throw invalid('Choose a shelf page size between 1 and 100.');
+      if(!Number.isInteger(limit)||limit<1||limit>100||Object.keys(query).some(k=>!['cursor','limit'].includes(k)))throw invalid('Choose a reading shelf page size between 1 and 100.');
       return owned(identity,async(client,settings,id)=>{
         const cursor=query.cursor?decode(query.cursor,id,Number(settings.shelf_revision)):null;
         const rows=(await client.query(`SELECT b.*,r.book_key,to_char(b.saved_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_at FROM user_books b JOIN book_refs r ON r.id=b.reference_id WHERE b.user_id=$1

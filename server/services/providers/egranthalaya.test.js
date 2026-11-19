@@ -1096,3 +1096,204 @@ test('an ISBN check retries an empty member record page before reporting copy st
   assert.equal(result.outcome, 'available');
   assert.match(result.format, /reference use only/);
 });
+
+// ---- Plan A2, step 2: one anonymous session per check ----------------------
+const homeReads = calls => calls.filter(call => call.options.method !== 'POST' && !call.url.includes('Details.aspx')).length;
+
+test('a title search and its record reads in one check share one home page and session', async () => {
+  setEmptyRecordRetryDelayForTests(0);
+  const calls = [];
+  global.fetch = rrlFetch(calls, { 79863: ['rrlpy-record-79863'] });
+  await withCatalogOperation({ maxRequests: 12 }, async () => {
+    const books = await searchCatalog(rrl, 'wings of fire');
+    assert.equal(books.length, 5);
+    const record = await resolveCatalogRecord(rrl, '79863');
+    assert.equal(record.observation.outcome, 'available');
+  });
+  assert.equal(homeReads(calls), 1, 'the home page is read once per check');
+  assert.deepEqual(calls.map(call => (call.options.method === 'POST' ? 'search' : call.url.includes('Details.aspx') ? 'record' : 'home')),
+    ['home', 'search', 'record']);
+  for (const call of calls.slice(1)) assert.equal(call.options.headers.Cookie, 'ASP.NET_SessionId=anonymous-fixture');
+
+  // Another check (another operation) opens its own session; outside a check
+  // every step opens its own, as before.
+  clearHttpCache();
+  calls.length = 0;
+  await withCatalogOperation({ maxRequests: 12 }, () => searchCatalog(rrl, 'wings of fire'));
+  assert.equal(homeReads(calls), 1);
+  clearHttpCache();
+  calls.length = 0;
+  await searchCatalog(rrl, 'wings of fire');
+  await resolveCatalogRecord(rrl, '79863');
+  assert.equal(homeReads(calls), 2);
+});
+
+test('the member search and its cluster fallback share one session; the cap and spacing are unchanged', async () => {
+  // The member search finds nothing, so the shared cluster search follows.
+  const run = async operation => {
+    const calls = [];
+    clearHttpCache();
+    const empty = memberFetch(calls, { search: emptyMemberSearch() });
+    global.fetch = async (url, options) => {
+      if (options.method === 'POST' && new URLSearchParams(options.body).get('DDL_Library') === 'All Libraries') {
+        calls.push({ url, options, at: Date.now() }); return response(emptyMemberSearch(), url);
+      }
+      const result = await empty(url, options);
+      calls.at(-1).at = Date.now();
+      return result;
+    };
+    const result = operation ? await withCatalogOperation(operation, () => checkAvailability(upLibrary, upIsbn)) : await checkAvailability(upLibrary, upIsbn);
+    return { result, calls };
+  };
+  const alone = await run(null);
+  const shared = await run({ maxRequests: 12, minIntervalMs: 40 });
+  assert.equal(shared.result.outcome, alone.result.outcome);
+  assert.equal(homeReads(alone.calls), 2, 'before: the cluster step read the home page again');
+  assert.equal(homeReads(shared.calls), 1, 'one home page for the whole check');
+  assert.equal(shared.calls.length, alone.calls.length - 1);
+  // Requests stay spaced within the check.
+  for (let i = 1; i < shared.calls.length; i++) assert.ok(shared.calls[i].at - shared.calls[i - 1].at >= 35, `request ${i} spaced`);
+  // The check's request cap still stops it.
+  clearHttpCache();
+  global.fetch = memberFetch([], { search: emptyMemberSearch() });
+  await assert.rejects(withCatalogOperation({ maxRequests: 2 }, () => checkAvailability(upLibrary, upIsbn)));
+});
+
+// A step that throws, or a member search abandoned at its probe deadline, may
+// still hold its server session; later steps of the check open a fresh one.
+test('a step that throws discards the check’s session: the next step opens a fresh one', async () => {
+  const calls = [];
+  const normal = rrlFetch(calls);
+  let homes = 0, failSearch = true;
+  global.fetch = async (url, options = {}) => {
+    if (options.method === 'POST' && failSearch) {
+      calls.push({ url, options }); failSearch = false;
+      throw Object.assign(new Error('server error'), { code: 'CATALOG_UNAVAILABLE' });
+    }
+    const result = await normal(url, options);
+    if (options.method !== 'POST' && !url.includes('Details.aspx')) {
+      homes += 1;
+      result.headers = new Headers({ 'Set-Cookie': `ASP.NET_SessionId=session-${homes}; path=/` });
+    }
+    return result;
+  };
+  await withCatalogOperation({ maxRequests: 12 }, async () => {
+    await assert.rejects(searchCatalog(rrl, 'wings of fire'));
+    assert.equal((await searchCatalog(rrl, 'wings of fire')).length, 5);
+  });
+  assert.equal(homeReads(calls), 2, 'the failed step’s session is not reused');
+  assert.equal(calls.at(-1).options.headers.Cookie, 'ASP.NET_SessionId=session-2');
+});
+
+test('after a timed-out member search the cluster fallback opens a fresh session', async () => {
+  const calls = [], shared = clusterFetch(calls), member = memberFetch(calls);
+  let homes = 0;
+  global.fetch = async (url, options) => {
+    if (options.method === 'POST' && new URLSearchParams(options.body).get('DDL_Library') !== 'All Libraries') {
+      calls.push({ url, options });
+      throw Object.assign(new Error('probe deadline'), { name: 'AbortError' });
+    }
+    if (options.method !== 'POST' && !url.includes('Details.aspx')) {
+      const result = await member(url, options);
+      homes += 1;
+      result.headers = new Headers({ 'Set-Cookie': `ASP.NET_SessionId=session-${homes};` });
+      return result;
+    }
+    return shared(url, options);
+  };
+  const result = await withCatalogOperation({ maxRequests: 12 }, () => checkAvailability(upLibrary, upIsbn));
+  assert.equal(result.outcome, 'available');
+  assert.equal(homeReads(calls), 2, 'the cluster search does not reuse the abandoned member session');
+  const clusterSearch = calls.find(call => call.options.method === 'POST' && new URLSearchParams(call.options.body).get('DDL_Library') === 'All Libraries');
+  assert.equal(clusterSearch.options.headers.Cookie, 'ASP.NET_SessionId=session-2');
+});
+
+// The member search that simply did not confirm the ISBN has finished every
+// request on its session: the cluster fallback reuses it (no extra home page
+// against the check's cap).
+test('a member search that does not confirm the ISBN keeps the session for the cluster fallback', async () => {
+  const unconfirmed = () => fixture('up-cluster-form').replace('</form>', '<span id="Label37">Your Search Returned 3 Record(s)</span></form>');
+  const run = async operation => {
+    clearHttpCache();
+    const calls = [];
+    const member = memberFetch(calls, { search: unconfirmed() });
+    global.fetch = async (url, options) => {
+      if (options.method === 'POST' && new URLSearchParams(options.body).get('DDL_Library') === 'All Libraries') {
+        calls.push({ url, options }); return response(emptyMemberSearch(), url);
+      }
+      return member(url, options);
+    };
+    const settle = operation ? withCatalogOperation(operation, () => checkAvailability(upLibrary, upIsbn)) : checkAvailability(upLibrary, upIsbn);
+    const outcome = await settle.then(result => result.outcome, error => error.code);
+    return { outcome, calls };
+  };
+  const alone = await run(null);
+  const shared = await run({ maxRequests: 12 });
+  assert.equal(shared.outcome, alone.outcome);
+  const memberSearches = calls => calls.filter(call => call.options.method === 'POST' && new URLSearchParams(call.options.body).get('DDL_Library') === upLibrary.egranthalayaLibraryCode).length;
+  assert.equal(memberSearches(shared.calls), 2, 'both member spellings were searched and did not confirm');
+  assert.equal(homeReads(alone.calls), 2, 'outside a check each step opens its own session');
+  assert.equal(homeReads(shared.calls), 1, 'the cluster fallback reuses the member’s session');
+  assert.ok(shared.calls.length <= alone.calls.length - 1, 'member-then-cluster pays no more requests than before');
+  const cluster = shared.calls.find(call => call.options.method === 'POST' && new URLSearchParams(call.options.body).get('DDL_Library') === 'All Libraries');
+  assert.equal(cluster.options.headers.Cookie, 'ASP.NET_SessionId=cluster-fixture');
+});
+
+// A member search that timed out before it ever ran (queued behind another
+// reader's slow request) used no session: the session an earlier step of the
+// same check opened stays, and the cluster fallback reuses it.
+test('a timed-out member search discards only the session it used', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout', 'Date'], now: Date.now() });
+  const flush = () => new Promise(resolve => setImmediate(resolve));
+  const otherIsbn = '9780140328721';
+  const calls = [];
+  let holdNextHome = false, releaseHeld = null, homes = 0;
+  const member = memberFetch([]), shared = clusterFetch([]);
+  global.fetch = async (url, options) => {
+    const isHome = options.method !== 'POST' && !url.includes('Details.aspx');
+    if (isHome && holdNextHome) {
+      holdNextHome = false;
+      return new Promise((_resolve, reject) => { releaseHeld = () => reject(Object.assign(new Error('slow'), { code: 'CATALOG_UNAVAILABLE' })); });
+    }
+    calls.push({ url, options });
+    const fields = new URLSearchParams(options.body);
+    if (isHome) {
+      homes += 1;
+      const result = await member(url, options);
+      result.headers = new Headers({ 'Set-Cookie': `ASP.NET_SessionId=session-${homes};` });
+      return result;
+    }
+    if (options.method === 'POST' && fields.get('txt_Search') === clusterIsbnQuery(otherIsbn)) return response(emptyMemberSearch(), url);
+    if (options.method === 'POST' && fields.get('DDL_Library') !== 'All Libraries') throw new Error('the member search never runs here');
+    return shared(url, options);
+  };
+  let firstDone, letCheckGo;
+  const firstStep = new Promise(resolve => { firstDone = resolve; });
+  const go = new Promise(resolve => { letCheckGo = resolve; });
+  const check = withCatalogOperation({ maxRequests: 12 }, async () => {
+    // An earlier step of this check opens the check's session.
+    await checkClusterAvailability(upLibrary, otherIsbn).catch(() => {});
+    firstDone();
+    await go;
+    return checkAvailability(upLibrary, upIsbn);
+  });
+  await firstStep;
+  assert.equal(homes, 1);
+  // Another reader's slow step holds the catalog's queue.
+  holdNextHome = true;
+  const other = withCatalogOperation({ maxRequests: 12 }, () => searchCatalog(upLibrary, 'wings of fire')).catch(() => {});
+  for (let i = 0; i < 10 && !releaseHeld; i++) await flush();
+  assert.ok(releaseHeld, 'the other reader’s request is waiting');
+  letCheckGo();
+  for (let i = 0; i < 10; i++) await flush();
+  // The member probe deadline passes while it is still queued.
+  t.mock.timers.tick(15_001);
+  for (let i = 0; i < 10; i++) await flush();
+  releaseHeld();
+  await other;
+  const result = await check;
+  assert.equal(result.outcome, 'available');
+  assert.equal(homes, 1, 'the check’s idle session was not discarded');
+  const cluster = calls.find(call => call.options.method === 'POST' && new URLSearchParams(call.options.body).get('txt_Search') !== clusterIsbnQuery(otherIsbn));
+  assert.equal(cluster.options.headers.Cookie, 'ASP.NET_SessionId=session-1');
+});

@@ -36,54 +36,45 @@ async function mockAccount(page, { signedIn = true, handle } = {}) {
 
 test.describe('One-shelf accounts', () => {
 
-  test('signed in: panel shows the email, Log out and Account settings; settings send a reset link and ask once before deleting', async ({ page }) => {
+  test('Settings shows the signed-in reader and opens the account, password and deletion screens', async ({ page }) => {
     const seen = await mockAccount(page);
-    await page.goto('/app/shelf');
-    await page.getByRole('button', { name: 'Account and settings' }).click();
-    const panel = page.getByRole('dialog', { name: 'Account and settings' });
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Settings' }).click();
+    const panel = page.getByRole('dialog', { name: 'Settings' });
     await expect(panel.getByText(USER.email)).toBeVisible();
     await expect(panel.getByRole('button', { name: 'Log out' })).toBeVisible();
     await expect(panel.getByRole('link', { name: 'Create account' })).toHaveCount(0);
     expect((await axe(page)).violations).toEqual([]);
     await panel.getByRole('link', { name: 'Account settings' }).click();
-    await expect(page).toHaveURL(/\/app\/settings\/account$/);
+    await expect(page.getByRole('heading', { name: 'Your account' })).toBeVisible();
     await expect(page.getByText(USER.email)).toBeVisible();
     expect((await axe(page)).violations).toEqual([]);
-    await page.getByRole('button', { name: 'Change password' }).click();
-    await expect(page.getByRole('button', { name: 'Link sent' })).toBeVisible();
-    expect(seen.find(request => request.path === '/forgot-password').body).toEqual({ email: USER.email });
-
-    const remove = page.getByRole('button', { name: 'Delete account' });
-    await remove.click();
-    const dialog = page.getByRole('alertdialog', { name: 'Delete account and shelf?' });
-    await expect(dialog).toBeVisible();
-    await expect(dialog.getByLabel('Password')).toBeFocused();
+    await page.getByRole('link', { name: 'Change password' }).click();
+    await expect(page.getByLabel('New password', { exact: true })).toBeVisible();
+    await page.getByRole('link', { name: 'Keep my password' }).click();
+    await page.getByRole('link', { name: 'Delete my account…' }).click();
+    await expect(page.getByRole('heading', { name: 'Delete your account' })).toBeVisible();
     expect((await axe(page)).violations).toEqual([]);
-    await page.keyboard.press('Escape');
-    await expect(dialog).toHaveCount(0);
-    await expect(remove).toBeFocused();
+    await page.getByRole('link', { name: 'Keep my account' }).click();
+    await expect(page.getByRole('heading', { name: 'Your account' })).toBeVisible();
     expect(seen.some(request => request.path === '/reauth/password' || request.path === '/deletion')).toBe(false);
-
-    await page.getByRole('link', { name: 'Back' }).click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
-    await expect(panel).toBeVisible();
   });
 
   test('delete account: wrong password, then deleted', async ({ page }) => {
     let tries = 0;
     await mockAccount(page, { handle: async path => {
       if (path === '/reauth/password') return ++tries === 1 ? { status: 401, json: { error: { code: 'INVALID_CREDENTIALS', message: 'Check your email and password.' } } } : { json: { proof: 'proof-1', csrfToken: 'csrf-2' } };
-      if (path === '/deletion') { await new Promise(resolve => setTimeout(resolve, 100)); return { json: { status: 'accepted', accessEnded: true } }; }
+      if (path === '/deletion') return { json: { status: 'accepted', accessEnded: true } };
       return undefined;
     } });
     await page.goto('/app/settings/account');
-    await page.getByRole('button', { name: 'Delete account' }).click();
-    const dialog = page.getByRole('alertdialog', { name: 'Delete account and shelf?' });
-    await dialog.getByLabel('Password').fill('not my password');
-    await dialog.getByRole('button', { name: 'Delete' }).click();
-    await expect(dialog.getByRole('alert')).toHaveText('Wrong password');
-    await dialog.getByLabel('Password').fill('the right synthetic password');
-    await dialog.getByRole('button', { name: 'Delete' }).click();
+    await page.getByRole('link', { name: 'Delete my account…' }).click();
+    const password = page.getByLabel('Type your password to confirm');
+    await password.fill('not my password');
+    await page.getByRole('button', { name: 'Delete my account', exact: true }).click();
+    await expect(page.getByRole('alert')).toHaveText('Wrong password');
+    await password.fill('the right synthetic password');
+    await page.getByRole('button', { name: 'Delete my account', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Account deleted' })).toBeVisible();
     await expect(page).toHaveURL(/\/app\/account\/deletion$/);
   });
@@ -96,38 +87,36 @@ test.describe('One-shelf accounts', () => {
       if (tries === 1) return { status: 401, json: { error: { code: 'INVALID_CREDENTIALS', message: 'Check your email and password.' } } };
       return route.abort().then(() => 'handled');
     } });
-    await page.goto('/app/shelf');
-    await page.getByRole('button', { name: 'Account and settings' }).click();
-    await page.getByRole('dialog', { name: 'Account and settings' }).getByRole('link', { name: 'Log in' }).click();
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Settings' }).click();
+    await page.getByRole('dialog', { name: 'Settings' }).getByRole('link', { name: 'Log in' }).click();
     await expect(page.getByRole('heading', { name: 'Log in' })).toBeVisible();
-    await page.getByLabel('Email').fill('reader@example.test');
-    await page.getByLabel('Password').fill('a synthetic password');
-    await page.getByRole('button', { name: 'Log in' }).click();
+    await page.getByLabel('Email', { exact: true }).fill('reader@example.test');
+    await page.getByLabel('Password', { exact: true }).fill('a synthetic password');
+    await page.getByRole('button', { name: 'Log in with password' }).click();
     await expect(page.getByRole('alert')).toHaveText('Wrong email or password');
-    await expect(page.getByLabel('Email')).toHaveAttribute('aria-invalid', 'true');
+    await expect(page.getByLabel('Email', { exact: true })).toHaveAttribute('aria-invalid', 'true');
     expect((await axe(page)).violations).toEqual([]);
-    await page.getByRole('button', { name: 'Log in' }).click();
+    await page.getByRole('button', { name: 'Log in with password' }).click();
     await expect(page.getByRole('alert')).toContainText('Couldn’t connect');
     await page.getByRole('button', { name: 'Try again' }).click();
     await expect.poll(() => tries).toBe(3);
-    await expect(page.getByRole('link', { name: 'Forgot password?' })).toHaveCount(0);
+    await expect(page.getByRole('link', { name: 'Forgot your password?' })).toHaveCount(0);
   });
 
-  test('create account: too short, then check your email; forgot password: link sent', async ({ page }) => {
+  test('create account accepts a password with one character; forgot password: link sent', async ({ page }) => {
     const seen = await mockAccount(page, { signedIn: false, handle: path => path === '/sign-up' ? { status: 202, json: { status: 'check-email' } } : undefined });
     await page.goto('/app/account/sign-up');
-    await page.getByLabel('Email').fill('reader@example.test');
-    await page.getByLabel('Password').fill('short');
-    await page.getByRole('button', { name: 'Create account' }).click();
-    await expect(page.getByRole('alert')).toHaveText('Too short: 15 characters or more');
+    await page.getByLabel('Email', { exact: true }).fill('reader@example.test');
+    await expect(page.getByRole('button', { name: 'Show password' })).toBeVisible();
     expect((await axe(page)).violations).toEqual([]);
-    await page.getByLabel('Password').fill('a long synthetic passphrase');
+    await page.getByLabel('Password', { exact: true }).fill('x');
     await page.getByRole('button', { name: 'Create account' }).click();
     await expect(page.getByRole('heading', { name: 'Check your email' })).toBeVisible();
-    expect(seen.find(request => request.path === '/sign-up').body).toEqual({ name: 'Reader', email: 'reader@example.test', password: 'a long synthetic passphrase' });
+    expect(seen.find(request => request.path === '/sign-up').body).toEqual({ name: 'Reader', email: 'reader@example.test', password: 'x' });
 
     await page.goto('/app/account/forgot-password');
-    await page.getByLabel('Email').fill('reader@example.test');
+    await page.getByLabel('Email', { exact: true }).fill('reader@example.test');
     await page.getByRole('button', { name: 'Send reset link' }).click();
     await expect(page.getByRole('button', { name: 'Link sent' })).toBeVisible();
     expect((await axe(page)).violations).toEqual([]);
@@ -146,9 +135,9 @@ test.describe('One-shelf accounts', () => {
     await mockAccount(page, { signedIn: false, handle: path => path === '/sign-in' ? { status: 401, json: { error: { code: 'INVALID_CREDENTIALS', message: 'x' } } } : undefined });
     await page.addInitScript(light => localStorage.setItem('mybookshelf.appearance.v1', JSON.stringify({ version: 1, preference: light })), light);
     await page.goto('/app/account/sign-in');
-    await page.getByLabel('Email').fill('reader@example.test');
-    await page.getByLabel('Password').fill('a synthetic password');
-    await page.getByRole('button', { name: 'Log in' }).click();
+    await page.getByLabel('Email', { exact: true }).fill('reader@example.test');
+    await page.getByLabel('Password', { exact: true }).fill('a synthetic password');
+    await page.getByRole('button', { name: 'Log in with password' }).click();
     await expect(page.getByRole('alert')).toBeVisible();
     expect((await new AxeBuilder({ page }).withRules(['color-contrast']).analyze()).violations).toEqual([]);
   });

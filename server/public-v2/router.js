@@ -97,9 +97,10 @@ function afterResponse(res, store, event) {
   });
 }
 
-// `/api/v2` neither reads nor creates identity state. It uses the anonymous
-// catalog store (stored answers, library health, the anonymous log and
-// submissions), never the account database.
+// `/api/v2` neither reads nor creates identity state. It uses the catalog
+// store (stored answers, library health, the anonymous log and submissions,
+// which may carry a name and email a reader chose to leave, kept 90 days),
+// never the account database.
 export function createPublicV2Router({
   directory = createPublicDirectoryService(),
   discovery = createDiscoveryService(),
@@ -121,6 +122,8 @@ export function createPublicV2Router({
   const store = catalogStore || createCatalogStore();
   const catalogLookup = lookup || createCatalogLookup({
     recorder: createLookupRecorder({ answers: store.answers, health: store.health, telemetry, policyFor: store.policyFor, defer: store.defer }),
+    // A book-page check still running at its deadline finishes under waitUntil.
+    defer: store.defer,
     hostGate: store.hostGate,
   });
   const availabilityService = availability || createPublicAvailabilityService({ directory, books: bookService, lookup: catalogLookup });

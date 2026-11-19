@@ -6,7 +6,6 @@ import { csrfForSession, consumeLimits } from "./security.js";
 import { enqueueAccountMail } from "../jobs/mail.js";
 import { createAuthActions } from "./auth-actions.js";
 import { createCredentialActions } from "./credential-actions.js";
-import { createSessionActions } from "./session-actions.js";
 import { createReadingActions } from "./reading.js";
 import { assertReadingRole } from "../db/owner-transaction.js";
 import { createShelfActions } from "./books.js";
@@ -15,16 +14,15 @@ import { createImportActions } from "./imports.js";
 import { createProfileActions } from "./profile-actions.js";
 import { createEmailActions } from "./email-actions.js";
 import {createSocialActions} from './social-actions.js';
-import {privateName,checkCompromisedPassword} from './validation.js';
+import {privateName} from './validation.js';
 import {createMethodActions} from './method-actions.js';
-import {createExportActions} from './export-actions.js';
 import {createDeletionActions} from './deletion-actions.js';
 import {createDeletionLedger} from '../jobs/deletion-ledger.js';
 import {statementTimeoutOption} from '../db/pool-options.js';
 
 const ABSOLUTE_SESSION_MS = 30 * 86400 * 1000;
 
-export async function createAccountService(config, { checkPassword,ledger=createDeletionLedger(config) } = {}) {
+export async function createAccountService(config, { ledger=createDeletionLedger(config) } = {}) {
   const pool = new Pool({
     connectionString: config.databaseURL,
     max: 4,
@@ -34,22 +32,26 @@ export async function createAccountService(config, { checkPassword,ledger=create
   });
   // Keep background pool errors from becoming uncaught exceptions; never log values.
   pool.on("error", () => {});
-  let readingPool;
-  try {
-    // No request-time DDL. A missing migration fails only the account service.
-    await pool.query('SELECT 1 FROM "session" LIMIT 0');
-    await assertAuthRole(pool);
-    if (config.readingDatabaseURL) {
-      readingPool = new Pool({
+  const readingPool = config.readingDatabaseURL
+    ? new Pool({
         connectionString: config.readingDatabaseURL,
         max: 4,
         connectionTimeoutMillis: 3000,
         idleTimeoutMillis: 30000,
         ...statementTimeoutOption(config.readingDatabaseURL, 5000),
-      });
-      readingPool.on("error", () => {});
-      await assertReadingRole(readingPool);
-    }
+      })
+    : undefined;
+  readingPool?.on("error", () => {});
+  try {
+    // No request-time DDL. A missing migration fails only the account service.
+    // The two pools open together: a cold start waits for the slower one only.
+    await Promise.all([
+      (async () => {
+        await pool.query('SELECT 1 FROM "session" LIMIT 0');
+        await assertAuthRole(pool);
+      })(),
+      readingPool ? assertReadingRole(readingPool) : null,
+    ]);
     let auth;
     const mail = (kind) => async (data) => {
       try {
@@ -64,24 +66,20 @@ export async function createAccountService(config, { checkPassword,ledger=create
       sendVerificationEmail: mail("verify"),
       sendResetPassword: mail("reset"),
       onExistingUserSignUp: mail("duplicate"),
+      // The log-in link (B10). Only requested for an existing, verified account.
+      sendMagicLink: async ({ email, token }) => {
+        const user = (
+          await pool.query('SELECT id,email,name FROM "user" WHERE email=$1', [email])
+        ).rows[0];
+        if (user) await mail("magicLink")({ user, token });
+      },
     });
-    const credentials = createCredentialActions({
-      auth,
-      pool,
-      config,
-      checkPassword,
-    });
-    const sessions = createSessionActions({
-      auth,
-      pool,
-      consumeProof: credentials.consumeProof,
-    });
+    const credentials = createCredentialActions({ auth, pool, config });
     const actions = {
-      ...createAuthActions({ auth, pool, config, checkPassword }),
+      ...createAuthActions({ auth, pool, config }),
       ...credentials,
-      ...sessions,
       ...createSocialActions({auth,pool,config}),
-      ...createMethodActions({auth,pool,config,consumeProof:credentials.consumeProof,checkPassword:checkPassword??checkCompromisedPassword}),
+      ...createMethodActions({auth,pool,config,consumeProof:credentials.consumeProof}),
       ...createDeletionActions({auth,pool,config,consumeProof:credentials.consumeProof,ledger}),
       ...createProfileActions({ auth, pool, config }),
       ...createEmailActions({
@@ -108,8 +106,11 @@ export async function createAccountService(config, { checkPassword,ledger=create
         reading,
         createShelfActions({ owned: reading.owned, secret: config.secret }),
         createHistoryActions({ owned: reading.owned }),
-        createImportActions(reading),
-        createExportActions({owned:reading.owned,pool,config}),
+        createImportActions({
+          ...reading,
+          limit: (identity, rule) =>
+            consumeLimits(pool, config.secret, [{ ...rule, subject: identity.user.id }]),
+        }),
       );
     async function identity(headers, setCookie = () => {}) {
       const result = await auth.api.getSession({
@@ -139,6 +140,9 @@ export async function createAccountService(config, { checkPassword,ledger=create
         sessionId: value.session.id,
         authUserId: value.user.id,
         csrfToken: csrfForSession(config.secret, value.session.id),
+        // When this session began: within 10 minutes the account screens do
+        // not ask for the password again (deleting the account always does).
+        signedInAt: new Date(value.session.createdAt).toISOString(),
         user: {
           id: appId ?? value.user.id,
           name: value.user.name,
@@ -154,7 +158,9 @@ export async function createAccountService(config, { checkPassword,ledger=create
       actions,
       reading,
       maintenance:{ledger,purgeDeletion:actions.purgeDeletion},
-      limitPrivate: (identity, action) =>
+      // The import allowance is counted by the import itself, once the import
+      // is known to be valid (accounts/imports.js).
+      limitPrivate: (identity) =>
         consumeLimits(pool, config.secret, [
           {
             scope: "private-mutations",
@@ -162,16 +168,6 @@ export async function createAccountService(config, { checkPassword,ledger=create
             max: 120,
             seconds: 60,
           },
-          ...(action === "importGuest"
-            ? [
-                {
-                  scope: "imports",
-                  subject: identity.user.id,
-                  max: 5,
-                  seconds: 3600,
-                },
-              ]
-            : []),
         ]),
       async session(headers, setCookie) {
         const { sessionId, authUserId, ...summary } = await identity(

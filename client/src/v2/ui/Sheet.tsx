@@ -1,13 +1,23 @@
 import { useEffect, useId, useRef, type ReactNode } from 'react';
 
-export function Sheet({ open, title, children, onClose, className = '' }: { open: boolean; title: string; children: ReactNode; onClose: () => void; className?: string }) {
+export function Sheet({ open, title, children, onClose, className = '', opener }: {
+  open: boolean;
+  title: string;
+  children: ReactNode;
+  onClose: () => void;
+  className?: string;
+  opener?: HTMLElement | null;
+}) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   useEffect(() => {
     const dialog = ref.current;
     if (open && !dialog?.open) dialog?.showModal();
-    if (!open && dialog?.open) dialog.close();
-  }, [open]);
+    if (!open && dialog?.open) {
+      dialog.close();
+      if (opener?.isConnected) opener.focus({ preventScroll: true });
+    }
+  }, [open, opener]);
   return <dialog className={`reader-sheet ${className}`} ref={ref} aria-labelledby={titleId}
     onKeyDown={event => {
       if (event.key !== 'Tab') return;

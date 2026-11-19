@@ -45,18 +45,17 @@ transport double; this does not prove real provider delivery or Google/Apple.
 
 Run `accounts-real.spec.js` and `accounts-visual.spec.js` with `ACCOUNT_E2E=true` and
 `PLAYWRIGHT_BASE_URL=http://127.0.0.1:4300`. The standard test configuration skips
-these files unless that opt-in is present. The journeys enter through the one-shelf
-side panel: accounts not answering, Create account → scanner-safe verification →
-Log in → Account settings → Log out in all three reading lights, guest import on
-first log in with a second device seeing the shelf and the automatic Viewed before,
-signing another device out, export and deletion, email change (Account settings →
-More) and switching accounts. Set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` only when
-using a system Chromium.
+these files unless that opt-in is present. The journeys cover account
+unavailability, signup and confirming email, logging in with a link or
+password, resetting a password after a reload, automatic shelf merge,
+sync across browsers, logging out of one device, deleting the account and its
+browser copy, changing an email address, and switching accounts. Set
+`PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` only when using a system Chromium.
 
 The visual journey takes each account screen in all three lights at 390 and 320 px
 (axe WCAG 2.2 AA, no sideways scrolling, 44 px targets, a screenshot per screen for
 review against the boards), plus doubled text with forced colors. Its outbox accepts
-verification/reset requests only for synthetic `pw-` identities; a separate guarded
+verification, email change, log-in and reset requests only for synthetic `pw-` identities; a separate guarded
 fixture clears a synthetic user's name to test completion. Neither helper exists in
 the deployed application.
 

@@ -8,8 +8,10 @@ test.describe('approved free-content UI behavior',()=>{
   test('recent searches are real same-tab queries and clearing returns to browse',async({page,baseURL})=>{
     await installContentReviewFixture(page,'FreeStart');await openReviewState(page,'FreeStart',baseURL);
     await expect(page.getByRole('heading',{name:'Recent free searches'})).toBeVisible();
-    await page.getByRole('link',{name:/jane austen/}).click();await expect(page).toHaveURL(/q=jane\+austen/);
-    await page.reload();await page.getByLabel('Search free books',{exact:true}).fill('');await page.getByRole('button',{name:'Search',exact:true}).click();
+    await page.getByRole('link',{name:/jane austen/}).click();await expect(page).toHaveURL(/scope=free&search=/);
+    const search=page.getByLabel('Search free books',{exact:true});
+    await expect(search).toHaveValue('jane austen');
+    await search.fill('');await page.getByRole('button',{name:'Search',exact:true}).click();
     await expect(page.getByRole('link',{name:/Classic literature/})).toBeVisible();
     expect(await page.evaluate(()=>Object.values(localStorage).join(' ').includes('jane austen'))).toBe(false);
   });
@@ -57,12 +59,12 @@ test.describe('approved free-content UI behavior',()=>{
   test('bookmark, supplied formats and separate versions remain usable by keyboard',async({page,baseURL})=>{
     await installContentReviewFixture(page,'PaperDetail');await openReviewState(page,'PaperDetail',baseURL);
     await expect(page.locator('.content-detail .content-cover')).toHaveCount(0);
-    const save=page.getByRole('button',{name:'Save to shelf',exact:true});await save.focus();await page.keyboard.press('Enter');
+    const save=page.getByRole('button',{name:'Save to my reading shelf',exact:true});await save.focus();await page.keyboard.press('Enter');
     await expect(page.getByRole('button',{name:'Saved',exact:true})).toHaveAttribute('aria-pressed','true');
     await expect(page.getByRole('link',{name:'PDF (opens arxiv.org)'})).toHaveAttribute('href',reviewPreprint().readingActions[0].downloads[0].url);
     const related=page.locator('.content-relations');await expect(related).toContainText('Its text, access and licence may differ.');
     await expect(related.getByRole('link',{name:/Published version/})).toHaveAttribute('target','_blank');
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await page.getByRole('link',{name:new RegExp(reviewPreprint().title)}).click();await expect(page.getByRole('button',{name:'Saved',exact:true})).toBeVisible();
   });
   test('source dialog exposes unsearched sources and preserves the query',async({page,baseURL})=>{

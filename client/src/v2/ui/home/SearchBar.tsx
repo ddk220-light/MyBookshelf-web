@@ -16,7 +16,7 @@ export function SearchBar({ value, onChange, onSubmit, onClear, onScan, active =
   onChange: (value: string) => void;
   onSubmit: (value: string) => void;
   onClear: () => void;
-  onScan?: () => void;
+  onScan?: (opener: HTMLElement) => void;
   active?: boolean;
 }) {
   const submit = (event: FormEvent) => { event.preventDefault(); onSubmit(value); };
@@ -24,7 +24,7 @@ export function SearchBar({ value, onChange, onSubmit, onClear, onScan, active =
     <span className="search-bar-icon" aria-hidden="true"><SearchGlyph /></span>
     <input id={SHELF_SEARCH_ID} type="search" aria-label="Search for a book" placeholder="Title, author or ISBN" value={value}
       onChange={event => onChange(event.target.value)} maxLength={160} autoComplete="off" spellCheck={false} enterKeyHint="search" />
-    {(value || active) && <button type="button" className="search-bar-clear" aria-label={active ? 'Clear search and go back to my shelf' : 'Clear search'} onClick={onClear}><CloseGlyph size={20} /></button>}
-    {onScan && <button type="button" className="search-bar-scan" aria-label="Scan a barcode" onClick={onScan}><BarcodeGlyph /></button>}
+    {(value || active) && <button type="button" className="search-bar-clear" aria-label={active ? 'Clear search and go back to my reading shelf' : 'Clear search'} onClick={onClear}><CloseGlyph size={20} /></button>}
+    {onScan && <button type="button" className="search-bar-scan" aria-label="Scan a barcode" onClick={event => onScan(event.currentTarget)}><BarcodeGlyph /></button>}
   </form>;
 }

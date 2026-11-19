@@ -8,7 +8,8 @@
 //   CATALOG_BUCKET_SECRET        HMAC key for anonymous submission limits (32+ chars)
 //   USAGE_LOG_ENABLED            'true' to write the anonymous operational log
 //                                (off until the new privacy text is published)
-//   HOLDINGS_BACKGROUND_ENABLED  'false' turns result marking off (kill switch)
+//   HOLDINGS_BACKGROUND_ENABLED  'false' turns result marking off, and stops book-page
+//                                checks finishing in the background (kill switch)
 //   CRON_SECRET                  Bearer secret Vercel Cron sends to the daily job
 //
 // Without the database the server still works: answers and the health record

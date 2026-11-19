@@ -108,6 +108,7 @@ export async function checkAvailability(library, isbn) {
         heldCopies: 0,
         callNumber: parsed.callNumber,
         url: recordUrl,
+        catalogLinkKind: 'record',
         metadataId: recordUrl,
       });
     }, { deadlineAt, shouldCache: (value) => value.status !== 'unknown' });
@@ -334,6 +335,6 @@ export async function checkPublicAvailability(library, value) {
     const record = await publicPage(new URL(recordUrl), deadlineAt);
     const result = parseChamoPublicRecord(record, isbn, { expectedCopies });
     if (!result) throw providerError('CATALOG_UNRECOGNIZED', 'Chamo did not prove this ISBN and its public copy table');
-    return { ...result, catalogUrl: recordUrl };
+    return { ...result, catalogUrl: recordUrl, catalogLinkKind: 'record' };
   }, { deadlineAt, shouldCache: (value) => value.outcome !== 'unknown' });
 }

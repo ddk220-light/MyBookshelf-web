@@ -13,6 +13,20 @@ test('HKMS slow member search keeps its bounded ISBN budget in the merged direct
   assert.equal(library.egranthalayaSearchScope, 'cluster');
 });
 
+test('a checkable library says how long its book check may take, in whole seconds', () => {
+  const koha = { id: 'koha:timed', platform: 'koha', name: 'Timed Library', catalogUrl: 'https://catalog.example.test', publicCatalogValidated: true };
+  assert.equal(toPublicLibrary(koha).answerWithinSeconds, 20);
+  assert.equal(toPublicLibrary({ ...koha, publicCatalogTimeoutMs: 44_500 }).answerWithinSeconds, 45);
+  assert.equal(toPublicLibrary({ ...koha, id: 'chamo:timed', platform: 'chamo' }).answerWithinSeconds, 60);
+  // The measured slow e-Granthalaya member: its own 45 s limit.
+  const hkms = getLibraryById('egranthalaya:publiclibraries-hkmslib');
+  assert.equal(toPublicLibrary(hkms).answerWithinSeconds, Math.ceil(bookDeadlineMs(hkms, platformFor(hkms)) / 1000));
+  assert.equal(toPublicLibrary(hkms).answerWithinSeconds, 45);
+  // A library the app cannot check has no time to give.
+  assert.equal(toPublicLibrary({ ...koha, publicCatalogValidated: false }).answerWithinSeconds, undefined);
+  assert.equal(toPublicLibrary({ id: 'catalog:link', platform: 'catalog', name: 'Link Only', catalogUrl: 'https://catalog.example.test' }).answerWithinSeconds, undefined);
+});
+
 test('UAS Dharwad native catalog is not filtered by the former IDEAL network branch', () => {
   const library = getLibraryById('koha:uas-dharwad');
   const search = new URL('/cgi-bin/koha/opac-search.pl?q=agriculture', library.baseUrl);

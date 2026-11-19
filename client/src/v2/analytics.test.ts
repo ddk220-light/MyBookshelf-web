@@ -6,6 +6,8 @@ const O = 'https://mybookshelf.cloud';
 
 describe('analytics URL scrubbing', () => {
   it('drops query strings and fragments everywhere', () => {
+    expect(scrubAnalyticsUrl(`${O}/?q=wings+of+fire#top`)).toBe(`${O}/`);
+    // The shelf's old address still redirects, so it is still reported by name.
     expect(scrubAnalyticsUrl(`${O}/app/shelf?q=wings+of+fire#top`)).toBe(`${O}/app/shelf`);
     expect(scrubAnalyticsUrl(`${O}/?q=anna+library`)).toBe(`${O}/`);
     expect(scrubAnalyticsUrl(`${O}/libraries/anna-centenary-library?ref=x#map`)).toBe(`${O}/libraries/anna-centenary-library`);
@@ -22,7 +24,7 @@ describe('analytics URL scrubbing', () => {
     expect(scrubAnalyticsUrl(`${O}/app/privacy`)).toBe(`${O}/app/privacy`);
   });
   it('reports public pages by name and guides by slug; a typed address on the 404 page is not reported as typed', () => {
-    for (const path of ['/', '/libraries', '/about', '/how-it-works', '/open-source', '/privacy', '/support', '/libraries/anna-centenary-library']) {
+    for (const path of ['/', '/libraries', '/about', '/how-it-works', '/open-source', '/privacy', '/terms', '/support', '/libraries/anna-centenary-library']) {
       expect(scrubAnalyticsUrl(`${O}${path}`)).toBe(`${O}${path}`);
     }
     expect(scrubAnalyticsUrl(`${O}/wings-of-fire`)).toBe(`${O}/[other]`);

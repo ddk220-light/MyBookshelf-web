@@ -40,8 +40,10 @@ class StoreError extends Error {
 
 export const ADMIN_PATH = /^\/api\/admin(?:\/|\.|$)/;
 
+// `storeStatus` is the runtime store's status word ('ok', 'failed' or 'off',
+// catalog-store/index.js), the same word `/api/health` reports.
 export function createAdminMiddleware({ env = process.env, identify = null, connect = null, policy = createCatalogPolicy(),
-  loadQueries = () => import('./queries.js') } = {}) {
+  loadQueries = () => import('./queries.js'), storeStatus = null } = {}) {
   const parser = express.json({ limit: '8kb', strict: true });
   // One connection per admin URL. Its role check is shared by every request
   // on it and finishes before that connection runs any data query; a request
@@ -140,12 +142,15 @@ export function createAdminMiddleware({ env = process.env, identify = null, conn
         // The summary always answers, so the page can say plainly when the
         // store is not configured or cannot be reached.
         let state = { state: 'ok' }, value = null;
+        const runtime = typeof storeStatus === 'function' ? Promise.resolve().then(storeStatus).catch(() => 'failed') : Promise.resolve(null);
         try { value = await queries.summary(await database(queries), { policy }); } catch (error) {
           if (!(error instanceof StoreError)) error = new StoreError('STORE_UNREACHABLE', safeCode(error));
           state = { state: error.code === 'STORE_NOT_CONFIGURED' ? 'not_configured' : error.code === 'STORE_ROLE_REJECTED' ? 'wrong_role' : 'unreachable',
             code: error.code, detail: error.detail, message: STORE_MESSAGES[error.code] };
         }
-        return res.json({ store: state, ...meta, ...(value || { counts: null, answersByLibrary: [], optedOut: (policy.optedOut?.() || []).map(libraryId => ({ libraryId, name: null })) }) });
+        const catalogStore = await runtime;
+        return res.json({ store: state, ...(catalogStore ? { catalogStore } : {}), ...meta,
+          ...(value || { counts: null, newestAnswerAt: null, answersByLibrary: [], optedOut: (policy.optedOut?.() || []).map(libraryId => ({ libraryId, name: null })) }) });
       }
       const db = await database(queries);
       let value;

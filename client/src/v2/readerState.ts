@@ -8,6 +8,7 @@ export type ReaderPreferences = {
   version: 1;
   shelfView: 'shelf' | 'list';
   shelfSort: 'recent' | 'title' | 'author';
+  libraryPromptDismissed?: true;
   selectedLibrary?: { id: string; name: string };
 };
 const defaults: ReaderPreferences = { version: 1, shelfView: 'shelf', shelfSort: 'recent' };
@@ -25,14 +26,18 @@ export function setReaderIdentityScope(scope: string | null): void {
   for(const key of [AVAILABILITY_CACHE_KEY,LOOKUP_PREFERENCES_KEY])try{browserStorage()?.removeItem(key);}catch{/* Memory is already isolated. */}
   try {
     const storage=browserStorage(),raw=JSON.parse(storage?.getItem(READER_PREFERENCES_KEY)||'null') as Partial<ReaderPreferences>|null;
-    if(raw?.version===1)storage?.setItem(READER_PREFERENCES_KEY,JSON.stringify({version:1,shelfView:raw.shelfView,shelfSort:raw.shelfSort}));
+    if(raw?.version===1)storage?.setItem(READER_PREFERENCES_KEY,JSON.stringify(devicePreferences(raw)));
   }catch{/* No private summary is read in the new scope. */}
+}
+function devicePreferences(prefs: Partial<ReaderPreferences>) {
+  return { version: 1, shelfView: prefs.shelfView, shelfSort: prefs.shelfSort,
+    ...(prefs.libraryPromptDismissed === true ? { libraryPromptDismissed: true } : {}) };
 }
 function read(key: string, maximum: number): unknown {
   try {
     const value = session.get(key) ?? (identityScope&&key!==READER_PREFERENCES_KEY?null:browserStorage()?.getItem(key));
     const parsed=value && value.length <= maximum ? JSON.parse(value) : null;
-    if(identityScope&&key===READER_PREFERENCES_KEY&&!session.has(key))return parsed?.version===1?{version:1,shelfView:parsed.shelfView,shelfSort:parsed.shelfSort}:null;
+    if(identityScope&&key===READER_PREFERENCES_KEY&&!session.has(key))return parsed?.version===1?devicePreferences(parsed):null;
     return parsed;
   } catch { return null; }
 }
@@ -42,7 +47,7 @@ function write(key: string, value: unknown): boolean {
     session.set(key,json);
     if(key===READER_PREFERENCES_KEY){
       const prefs=value as ReaderPreferences;
-      try{browserStorage()?.setItem(key,JSON.stringify({version:1,shelfView:prefs.shelfView,shelfSort:prefs.shelfSort}));}catch{/* Device presentation only. */}
+      try{browserStorage()?.setItem(key,JSON.stringify(devicePreferences(prefs)));}catch{/* Device presentation only. */}
     }
     return true;
   }
@@ -67,6 +72,7 @@ export function readReaderPreferences(): ReaderPreferences {
     ...defaults,
     shelfView: raw.shelfView === 'list' ? 'list' : 'shelf',
     shelfSort: raw.shelfSort === 'title' || raw.shelfSort === 'author' ? raw.shelfSort : 'recent',
+    ...(raw.libraryPromptDismissed === true ? { libraryPromptDismissed: true } : {}),
     ...(selected && typeof selected.id === 'string' && selected.id.length <= 160 && typeof selected.name === 'string' && selected.name.length <= 500 ? { selectedLibrary: selected } : {}),
   };
 }

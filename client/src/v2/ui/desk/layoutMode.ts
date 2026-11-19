@@ -31,15 +31,15 @@ export function useLayoutMode(): LayoutMode {
 }
 
 /** The account forms run without the shelf (App.tsx "entry mode"). */
-export const ACCOUNT_ENTRY_PATH = /^\/app\/account\/(sign-in|sign-up|verify|forgot-password|reset-password|email-change|return|complete-profile|deletion)$/;
+export const ACCOUNT_ENTRY_PATH = /^\/app\/account\/(sign-in|sign-up|verify|magic-link|forgot-password|reset-password|email-change|return|complete-profile|deletion)$/;
 
 /**
  * Pages that open in the middle slot at rail and wide widths, with the shelf
- * beside them: a book, Account settings, Report a problem, Privacy, Terms,
- * About and the account forms. The older full account settings
- * (/app/settings/account/more) stay a page of their own.
+ * beside them: a book, the account screen and its Change email, Change
+ * password and Delete screens, Report a problem, Privacy, Terms, About and the
+ * account forms.
  */
-const SLOT_PAGE = /^\/app\/(books\/[^/]+|report|privacy|terms|about|settings\/account|account\/[a-z-]+)$/;
+const SLOT_PAGE = /^\/app\/(books\/[^/]+|report|privacy|terms|about|settings\/account(?:\/(?:email|password|delete))?|account\/[a-z-]+)$/;
 
 export function isSlotPath(pathname: string): boolean {
   return SLOT_PAGE.test(pathname);
@@ -47,7 +47,7 @@ export function isSlotPath(pathname: string): boolean {
 
 /** Paths drawn by the desk layout (rail and wide): the shelf and every slot page. */
 export function isDeskPath(pathname: string): boolean {
-  return pathname === '/app/shelf' || isSlotPath(pathname);
+  return pathname === '/' || isSlotPath(pathname);
 }
 
 /**

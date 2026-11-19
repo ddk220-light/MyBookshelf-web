@@ -19,7 +19,7 @@ test('signup facade queues durable mail, hides duplicates, requires deliberate o
  pool=new Pool({connectionString:testRoleURL(connectionString,'auth'),max:4});
  const config={baseURL:'http://localhost:3000',secret:'only-test-auth-secret-more-than-32-characters'+randomUUID(),jobSecret:'only-test-jobs-secret-more-than-32-characters',resendKey:'test-key-not-used',mailFrom:'accounts@example.test',secureCookies:false};
  let auth;auth=createAccountAuth({pool,config,sendVerificationEmail:(d)=>enqueueAccountMail(auth,config,'verify',d,d.token),onExistingUserSignUp:(d)=>enqueueAccountMail(auth,config,'duplicate',d)});
- const actions=createAuthActions({auth,pool,config,checkPassword:async()=>{}});
+ const actions=createAuthActions({auth,pool,config});
  const body={email,name:'Private reader',password:`a unique long password ${randomUUID()}`};
  const first=await actions.signup(body,'192.0.2.5');const second=await actions.signup(body,'192.0.2.5');assert.deepEqual(first,second);
  assert.ok(!JSON.stringify(first).includes(email));assert.ok(!JSON.stringify(first).includes('token'));
@@ -27,10 +27,13 @@ test('signup facade queues durable mail, hides duplicates, requires deliberate o
  const job=(await pool.query(`SELECT j.* FROM account_mail_jobs j JOIN "user" u ON u.id=j."authUserId" WHERE u.email=$1 AND kind='verify'`,[email])).rows[0];
  const token=decryptMail(job.payload,config.jobSecret).token;
  assert.equal((await pool.query('SELECT "emailVerified" FROM "user" WHERE email=$1',[email])).rows[0].emailVerified,false);
- assert.deepEqual(await actions.verify({token}),{status:'verified'});
+ // The link signs the reader in (owner's decision); no token in the reply.
+ const verifyCookies=[];const verified=await actions.verify({token},'192.0.2.5',new Headers(),c=>verifyCookies.push(c));
+ assert.deepEqual(verified,{status:'verified',signedIn:true,email});assert.ok(verifyCookies.some(c=>/session_token=/.test(c)&&/HttpOnly/i.test(c)));
+ assert.equal((await auth.api.getSession({headers:new Headers({cookie:verifyCookies.map(c=>c.split(';')[0]).join('; ')})})).user.email,email);
  await assert.rejects(actions.verify({token}),e=>e.code==='LINK_EXPIRED');
  const cookies=[];const signed=await actions.signin({email,password:body.password,returnTo:'//attacker.test'},'192.0.2.5',new Headers(),c=>cookies.push(c));
- assert.equal(signed.returnTo,'/app/shelf');assert.equal(signed.status,'signed-in');assert.ok(cookies.length);
+ assert.equal(signed.returnTo,'/');assert.equal(signed.status,'signed-in');assert.ok(cookies.length);
  assert.ok(!JSON.stringify(signed).includes('token'));
  const uid=(await pool.query('SELECT id FROM "user" WHERE email=$1',[email])).rows[0].id;
  await pool.query('DELETE FROM account_mail_jobs WHERE "authUserId"=$1',[uid]);await pool.query('DELETE FROM account_email_challenges WHERE "authUserId"=$1',[uid]);

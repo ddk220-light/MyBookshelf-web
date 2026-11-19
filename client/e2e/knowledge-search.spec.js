@@ -21,7 +21,7 @@ test.describe('All knowledge',()=>{
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.getByRole('heading',{name:'Search',exact:true}).scrollIntoViewIfNeeded();await page.screenshot({path:info.outputPath(`knowledge-${light}.png`),fullPage:true});
   await page.getByRole('heading',{name:'Mathematics recording 47'}).getByRole('link').click();await expect(page.getByRole('link',{name:'Listen at LibriVox (opens LibriVox)'})).toHaveAttribute('href','https://librivox.org/fixture/');
-  await page.getByRole('button',{name:'Save to shelf',exact:true}).click();await expect(page.getByRole('button',{name:'Saved',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'Save to my reading shelf',exact:true}).click();await expect(page.getByRole('button',{name:'Saved',exact:true})).toBeVisible();
   await page.goto('/app/search?scope=knowledge&q=mathematics');await page.getByRole('combobox',{name:'Source',exact:true}).selectOption('librivox');await expect(page.locator('.knowledge-source')).toHaveCount(1);expect(calls.at(-1).sourceIds).toEqual(['librivox']);
   await page.setViewportSize({width:320,height:844});await page.evaluate(()=>document.documentElement.style.fontSize='200%');
   const overflow=await page.locator('#main-content').evaluate(node=>({width:node.clientWidth,scroll:node.scrollWidth,elements:[...node.querySelectorAll('*')].filter(e=>e.scrollWidth>e.clientWidth+1).map(e=>({tag:e.tagName,class:e.className,width:e.clientWidth,scroll:e.scrollWidth,text:e.textContent?.slice(0,60)}))}));

@@ -1,4 +1,6 @@
-import { MAX_CHECK_MS } from '../libraryBookSearch.js';
+// No check may run past 45 s. Defined here, not in libraryBookSearch.js, so the
+// public page build (which reads the directory) needs no catalog packages.
+export const MAX_CHECK_MS = 45_000;
 
 // One descriptor per catalog platform (plan 5.1, 5.3, 5.4). Numbers are
 // starting points to tune from the health record and the log.
@@ -161,6 +163,14 @@ export function bookDeadlineMs(entry, platform = platformFor(entry)) {
   const configured = Number(entry?.publicCatalogTimeoutMs);
   if (platform?.book.configuredDeadline && Number.isFinite(configured) && configured > 0) return Math.min(Math.max(base, configured), MAX_CHECK_MS);
   return Math.min(base, platform?.id === 'chamo' ? 60 * S : MAX_CHECK_MS);
+}
+
+// Plan A2, step 3: a book-page check still running at its deadline may finish
+// in the background, with the same request cap, until twice its deadline and
+// never later than 90 s after it started (the API function may run 120 s).
+export const MAX_BACKGROUND_CHECK_MS = 90 * S;
+export function backgroundDeadlineMs(entry, platform = platformFor(entry)) {
+  return Math.min(2 * bookDeadlineMs(entry, platform), MAX_BACKGROUND_CHECK_MS);
 }
 
 // CATALOG_LOOKUP_V2: comma-separated platform IDs, or `all`. Unset means the

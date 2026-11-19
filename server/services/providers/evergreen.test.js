@@ -90,6 +90,7 @@ test('successful lookup uses two anonymous bounded public reads and a scoped cat
     outcome: 'available', matchKind: 'exact_isbn', recognizedExact: true,
     totalCopies: 327, availableCopies: 303,
     catalogUrl: 'https://gapines.org/eg/opac/record/6107812?locg=1',
+    catalogLinkKind: 'record',
   });
   assert.equal(calls.length, 2);
   assert.deepEqual(calls.map(({ url }) => url.searchParams.get('method')), ['open-ils.search.biblio.isbn', 'open-ils.search.biblio.record.mods.retrieve']);
@@ -140,6 +141,7 @@ test('an exact record with zero holdings remains unknown with a record link, nev
   const expected = {
     outcome: 'unknown', matchKind: 'exact_isbn', recognizedExact: true,
     catalogUrl: 'https://gapines.org/eg/opac/record/6107812?locg=1',
+    catalogLinkKind: 'record',
   };
   assert.deepEqual(await checkAvailability(pines, ISBN), expected);
   assert.equal(calls, 2);

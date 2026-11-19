@@ -5,8 +5,8 @@ import { resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { HTML_SECURITY_POLICY } from '../shared/security-policy.mjs';
 
-// Short commit SHA for the About page and problem reports: Vercel's build
-// variable, else the local checkout, else empty (About then shows [VERSION]).
+// Short commit SHA sent with problem reports: Vercel's build variable, else
+// the local checkout, else empty (reports then carry no version).
 function buildVersion() {
   const sha = process.env.VERCEL_GIT_COMMIT_SHA;
   if (sha && /^[0-9a-f]{7,40}$/i.test(sha)) return sha.slice(0, 7);
@@ -29,6 +29,10 @@ export default defineConfig({
     configurePreviewServer(server) {
       server.middlewares.use((req, res, next) => {
         const path = new URL(req.url || '/', 'http://localhost').pathname;
+        // As vercel.json: the shelf's old addresses forward to the root, without the query.
+        if (/^\/app(\/shelf)?\/?$/.test(path)) {
+          res.statusCode = 308; res.setHeader('Location', '/'); res.end(); return;
+        }
         if (/^\/(app|select|find)(\/|$)/.test(path)) {
           res.setHeader('X-Robots-Tag', 'noindex, follow');
           req.url = '/app/index.html';

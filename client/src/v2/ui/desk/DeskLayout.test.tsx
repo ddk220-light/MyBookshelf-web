@@ -60,17 +60,17 @@ describe('account forms on desktop', () => {
     expect(screen.getByTestId('location')).toHaveTextContent('/app/account/sign-in');
     expect(screen.getByLabelText('Email')).toHaveValue('reader@example.com');
     fireEvent.keyDown(screen.getByRole('button', { name: 'Close' }), { key: 'Escape' });
-    await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/app/shelf'));
-    expect(await screen.findByRole('heading', { level: 1, name: 'My shelf' })).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/'));
+    expect(await screen.findByRole('heading', { level: 1, name: 'My reading shelf' })).toBeInTheDocument();
     expect(container.querySelector('.desk-bare')).toBeNull();
   });
 });
 
 describe('desk layout routes', () => {
   it('draws the shelf and every middle-slot page, and leaves other pages alone', () => {
-    for (const path of ['/app/shelf', '/app/books/v1%3Aisbn%3A9781625275868', '/app/privacy', '/app/terms', '/app/about', '/app/report', '/app/settings/account', '/app/account/sign-in'])
+    for (const path of ['/', '/app/books/v1%3Aisbn%3A9781625275868', '/app/privacy', '/app/terms', '/app/about', '/app/report', '/app/settings/account', '/app/account/sign-in'])
       expect(isDeskPath(path), path).toBe(true);
-    expect(isSlotPath('/app/shelf')).toBe(false);
+    expect(isSlotPath('/')).toBe(false);
     for (const path of ['/app/settings/account/more', '/app/admin', '/app/read/x', '/select/anna']) expect(isDeskPath(path), path).toBe(false);
   });
 
@@ -86,7 +86,7 @@ describe('desk layout routes', () => {
 describe('desk layout at 1440 px', () => {
   it('cold open: the left column, the search, no scan button, no person icon and no empty shelves', async () => {
     stubApi();
-    renderAt('/app/shelf');
+    renderAt('/');
     expect(await screen.findByRole('heading', { name: 'Ready to search' })).toBeInTheDocument();
     const column = screen.getByRole('complementary', { name: 'Library and account' });
     expect(within(column).getByRole('button', { name: 'Find my library' })).toBeInTheDocument();
@@ -94,7 +94,7 @@ describe('desk layout at 1440 px', () => {
     expect(within(column).getByRole('link', { name: 'Privacy' })).toHaveAttribute('href', '/app/privacy');
     expect(screen.queryByRole('button', { name: 'Scan a barcode' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /Scan the barcode/ })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Account and settings' })).not.toBeInTheDocument();
+    expect(within(column).getByRole('button', { name: 'Settings' })).toBeInTheDocument();
     // No empty shelves: one bay with the five suggested books (DeskSuggestFirst board), under the larger search bar.
     const search = screen.getByRole('searchbox', { name: 'Search for a book' });
     expect(search.closest('.desk-top')).toHaveClass('home-top-cold');
@@ -110,8 +110,8 @@ describe('desk layout at 1440 px', () => {
   it('shelf: six books a bay and no account invite', async () => {
     stubApi();
     seed(Array.from({ length: 8 }, (_, index) => book(index + 1)), LIBRARY.id);
-    renderAt('/app/shelf');
-    expect(await screen.findByRole('heading', { name: 'My shelf' })).toBeInTheDocument();
+    renderAt('/');
+    expect(await screen.findByRole('heading', { name: 'My reading shelf' })).toBeInTheDocument();
     // 8 saved and 5 suggested books, six a bay: 6, 6 and 1. Suggestions arrive
     // after the saved books are drawn.
     await waitFor(() => expect(document.querySelectorAll('.home-bookcase .cover3d.is-suggested')).toHaveLength(5));
@@ -121,7 +121,7 @@ describe('desk layout at 1440 px', () => {
     expect(bays[1].querySelectorAll('.cover3d.is-suggested')).toHaveLength(4);
     expect([...bays].map(bay => bay.querySelectorAll('.suggested-label').length)).toEqual([0, 4, 1]);
     expect(screen.getByText('8 books')).toBeInTheDocument();
-    expect(screen.queryByRole('heading', { name: 'Take your shelf with you' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Take your reading shelf with you' })).not.toBeInTheDocument();
     expect(await screen.findByText(LIBRARY.name)).toBeInTheDocument();
   });
 
@@ -142,7 +142,7 @@ describe('desk layout at 1440 px', () => {
     // Focus moving into the slot is checked in a real browser (one-shelf-desktop.spec.js):
     // jsdom lets a closed dialog's autofocus button take it.
     fireEvent.click(close);
-    await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent(/^\/app\/shelf$/));
+    await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent(/^\/$/));
     expect(document.querySelector('.desk-slot')).toBeNull();
     expect(document.querySelector('.desk-shelf-area')!.hasAttribute('inert')).toBe(false);
     expect(document.querySelector('.desk-shelf-area')!.hasAttribute('aria-hidden')).toBe(false);
@@ -151,7 +151,7 @@ describe('desk layout at 1440 px', () => {
   it('a suggestion opens in the middle slot like any book, outlined on the shelf beside it', async () => {
     stubApi();
     seed([book(1)]);
-    renderAt('/app/shelf');
+    renderAt('/');
     const pick = SEED_SUGGESTIONS[2];
     fireEvent.click(await screen.findByRole('link', { name: pick.title + ' by ' + pick.authors[0] + ', suggested' }));
     expect(await screen.findByRole('button', { name: 'Close the book' })).toBeInTheDocument();

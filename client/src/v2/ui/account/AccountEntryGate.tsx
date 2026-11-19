@@ -8,16 +8,34 @@ import { ProviderEntry, type AccountCapabilities } from "./ProviderEntry";
 
 type Capabilities = AccountCapabilities & { email: boolean };
 
+let warmed = false;
+/** Tests: forget that this page load already woke the account service. */
+export function forgetAccountWarmUp() { warmed = false; }
+/**
+ * Plan B2: opening Create account or Log in wakes the account service and its
+ * database, so the form's own request does not wait for a cold start. One
+ * request, caused by the reader opening the screen, once per page load; never
+ * a timer, and never for a reader whose session already started the service.
+ */
+function warmAccountService() {
+  if (warmed) return;
+  warmed = true;
+  void fetch("/api/auth/ok", { credentials: "same-origin", cache: "no-store" }).catch(() => {});
+}
+
 // Keep private-identity recovery in the session provider. This boundary only
 // prevents entry forms from promising operations the current service cannot run.
 export function AccountEntryGate({
   children,
   needsEmail = false,
   allowProviders = false,
+  warm = false,
 }: {
   children: ReactNode;
   needsEmail?: boolean;
   allowProviders?: boolean;
+  /** Wake the account service when the screen opens (Create account, Log in). */
+  warm?: boolean;
 }) {
   const account = useAccountSession(),
     navigate = useNavigate();
@@ -37,6 +55,10 @@ export function AccountEntryGate({
     account.session.status === "unavailable" ||
     Boolean(account.session.availability);
   const checking = account.session.status === "checking";
+  const guest = account.session.status === "guest";
+  useEffect(() => {
+    if (warm && guest && !account.session.availability) warmAccountService();
+  }, [warm, guest, account.session.availability]);
   useEffect(() => {
     if (!needsEmail || unavailable || checking) return;
     const controller = new AbortController();
@@ -74,7 +96,7 @@ export function AccountEntryGate({
   };
   const continueGuest = () => {
     account.continueGuest();
-    navigate("/app/shelf", { replace: true, state: null });
+    navigate("/", { replace: true, state: null });
   };
   if (
     unavailable ||
@@ -90,7 +112,7 @@ export function AccountEntryGate({
             ? "Accounts aren’t enabled here yet. You can keep your books in this browser."
             : needsEmail && capabilities?.email === false
               ? "Email accounts aren’t available right now. You can keep your books in this browser."
-              : "We can’t open your account right now. Try again, or keep using this browser’s shelf."}
+              : "We can’t open your account right now. Try again, or keep using the reading shelf saved in this browser."}
         </p>
         <button type="button" disabled={retrying} onClick={() => void retry()}>
           {retrying ? "Checking…" : "Try again"}

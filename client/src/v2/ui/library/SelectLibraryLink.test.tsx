@@ -41,7 +41,7 @@ describe('library links in the one-shelf app', () => {
   it('a guide page’s link chooses the library without asking and opens the shelf; the shelf stays', async () => {
     stubApi();
     open('/select/anna-centenary-library?next=/app/search');
-    await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent(/^\/app\/shelf$/));
+    await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent(/^\/$/));
     expect(await screen.findByText(ANNA.name, { selector: '.home-library' })).toBeInTheDocument();
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(stored().selectedLibraryId).toBe(ANNA.id);
@@ -52,7 +52,7 @@ describe('library links in the one-shelf app', () => {
     stubApi();
     open('/select/anna-centenary-library?book=' + encodeURIComponent(BOOK.bookKey));
     await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/app/books/' + encodeURIComponent(BOOK.bookKey)));
-    expect(await screen.findByRole('group', { name: 'Found in Anna Centenary Library' })).toBeInTheDocument();
+    expect(await screen.findByRole('group', { name: 'In your library' })).toBeInTheDocument();
   });
 
   for (const [link, message] of [['missing', 'This library link isn’t available.'], ['down', 'We couldn’t open this library link just now.']] as const)
@@ -60,15 +60,15 @@ describe('library links in the one-shelf app', () => {
       stubApi({ link });
       open('/select/no-such-library');
       expect(await screen.findByText(new RegExp(message))).toBeInTheDocument();
-      expect(screen.getByTestId('location')).toHaveTextContent(/^\/app\/shelf$/);
+      expect(screen.getByTestId('location')).toHaveTextContent(/^\/$/);
       expect(stored().selectedLibraryId).toBe(OLD.id);
     });
 
   it('targets: a book, an allowed next, else the shelf; search text is never carried on', () => {
     expect(selectionTarget('?book=' + encodeURIComponent(BOOK.bookKey), null)).toBe('/app/books/' + encodeURIComponent(BOOK.bookKey));
-    expect(selectionTarget('?next=/app/search&q=wings', null)).toBe('/app/shelf');
+    expect(selectionTarget('?next=/app/search&q=wings', null)).toBe('/');
     expect(selectionTarget('?next=' + encodeURIComponent('/app/books/' + encodeURIComponent(BOOK.bookKey)), null)).toBe('/app/books/' + encodeURIComponent(BOOK.bookKey));
-    expect(selectionTarget('?next=https://evil.example', null)).toBe('/app/shelf');
-    expect(selectionTarget('', null)).toBe('/app/shelf');
+    expect(selectionTarget('?next=https://evil.example', null)).toBe('/');
+    expect(selectionTarget('', null)).toBe('/');
   });
 });

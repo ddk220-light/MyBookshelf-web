@@ -39,7 +39,7 @@ function seed({ saved = [] as unknown[], recent = [] as unknown[], libraryId = n
   localStorage.setItem(ANONYMOUS_WEB_STORAGE_KEY, JSON.stringify({ version: 2, selectedLibraryId: libraryId, recentBooks: recent, savedBooks: saved, savedContent: [] }));
 }
 function Location() { const location = useLocation(); return <output data-testid="location">{location.pathname + location.search}</output>; }
-const renderHome = (path = '/app/shelf') => render(<MemoryRouter initialEntries={[path]}><AnonymousWebApp /><Location /></MemoryRouter>);
+const renderHome = (path = '/') => render(<MemoryRouter initialEntries={[path]}><AnonymousWebApp /><Location /></MemoryRouter>);
 
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); localStorage.clear(); sessionStorage.clear(); forgetSuggestionVisit(); forgetSuggestionMotion(); });
 const SUGGESTED = SEED_SUGGESTIONS.slice(0, 5).map(item => item.title + ' by ' + item.authors[0] + ', suggested');
@@ -50,7 +50,7 @@ describe('one-shelf home', () => {
     stubApi();
     renderHome();
     const heading = await screen.findByRole('heading', { name: 'Ready to search' });
-    expect(screen.getByText('Add books to your shelf and search in your library')).toBeInTheDocument();
+    expect(screen.getByText('Add books to your reading shelf and search in your library')).toBeInTheDocument();
     const input = screen.getByRole('searchbox', { name: 'Search for a book' });
     expect(input).toHaveAttribute('placeholder', 'Title, author or ISBN');
     // The heading stands above the larger search bar (SuggestFirstOpen board), which holds the scan button.
@@ -75,8 +75,8 @@ describe('one-shelf home', () => {
     // The old per-bay tag on the plank is gone.
     expect(document.querySelectorAll('.bay-tag, .bay-tags')).toHaveLength(0);
     for (const plank of document.querySelectorAll('.bay-plank')) expect(plank).toBeEmptyDOMElement();
-    // No "My shelf" heading or count for suggestions.
-    expect(screen.queryByRole('heading', { name: 'My shelf' })).not.toBeInTheDocument();
+    // No "My reading shelf" heading or count for suggestions.
+    expect(screen.queryByRole('heading', { name: 'My reading shelf' })).not.toBeInTheDocument();
     expect(screen.queryByText(/\d books?$/)).not.toBeInTheDocument();
     // No library chosen: no library line.
     expect(screen.queryByText('Anna Centenary Library')).not.toBeInTheDocument();
@@ -87,7 +87,7 @@ describe('one-shelf home', () => {
     renderHome();
     const input = await screen.findByRole('searchbox', { name: 'Search for a book' });
     fireEvent.change(input, { target: { value: 'wings of fire' } });
-    expect(screen.getByTestId('location')).toHaveTextContent(/^\/app\/shelf$/);
+    expect(screen.getByTestId('location')).toHaveTextContent(/^\/$/);
     for (const store of [localStorage, sessionStorage]) for (let index = 0; index < store.length; index += 1)
       expect(store.getItem(store.key(index)!)).not.toContain('wings of fire');
   });
@@ -96,7 +96,7 @@ describe('one-shelf home', () => {
     stubApi();
     seed({ saved: [book(1), book(2), book(3), book(4)] });
     renderHome();
-    expect(await screen.findByRole('heading', { name: 'My shelf' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'My reading shelf' })).toBeInTheDocument();
     // The count is of saved books only.
     expect(screen.getByText('4 books')).toBeInTheDocument();
     const covers = screen.getAllByRole('link', { name: /^Book \d by Author \d$/ });
@@ -124,7 +124,7 @@ describe('one-shelf home', () => {
     seed({ saved: [book(1), book(2)], libraryId: LIBRARY.id });
     renderHome();
     expect(await screen.findByRole('link', { name: 'Book 1 by Author 1, in Anna Centenary Library' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Book 2 by Author 2' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Book 2 by Author 2, Not in your library' })).toBeInTheDocument();
     expect(screen.getByText('Anna Centenary Library', { selector: '.home-library' })).toBeInTheDocument();
     expect(document.querySelectorAll('.cover-badge-library')).toHaveLength(1);
   });
@@ -158,19 +158,19 @@ describe('one-shelf home', () => {
     stubApi();
     seed({ saved: [book(1)] });
     const view = renderHome();
-    expect(await screen.findByRole('heading', { name: 'Take your shelf with you' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Take your reading shelf with you' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Create a free account' })).toHaveAttribute('href', '/app/account/sign-up');
     // One book: no view switch; the count says it is the reader's only book (SuggestShelf board).
     expect(screen.queryByRole('button', { name: 'List view' })).not.toBeInTheDocument();
     expect(screen.getByText('1 book')).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Not now' }));
-    expect(screen.queryByRole('heading', { name: 'Take your shelf with you' })).not.toBeInTheDocument();
+    fireEvent.click(within(screen.getByRole('region', { name: 'Take your reading shelf with you' })).getByRole('button', { name: 'Not now' }));
+    expect(screen.queryByRole('heading', { name: 'Take your reading shelf with you' })).not.toBeInTheDocument();
     expect(JSON.parse(localStorage.getItem(ONE_SHELF_STORAGE_KEY)!).accountInviteDismissed).toBe(true);
     view.unmount();
     renderHome();
-    expect(await screen.findByRole('heading', { name: 'My shelf' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'My reading shelf' })).toBeInTheDocument();
     await new Promise(resolve => setTimeout(resolve, 20));
-    expect(screen.queryByRole('heading', { name: 'Take your shelf with you' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Take your reading shelf with you' })).not.toBeInTheDocument();
   });
 
   it('invite rules: guests with a saved book, email accounts on, not dismissed', () => {
@@ -186,9 +186,9 @@ describe('one-shelf home', () => {
     stubApi({ email: false });
     seed({ saved: [book(1)] });
     renderHome();
-    expect(await screen.findByRole('heading', { name: 'My shelf' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'My reading shelf' })).toBeInTheDocument();
     await new Promise(resolve => setTimeout(resolve, 20));
-    expect(screen.queryByRole('heading', { name: 'Take your shelf with you' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Take your reading shelf with you' })).not.toBeInTheDocument();
   });
 
   it('Viewed before shows spines; Clear empties it and Undo puts it back', async () => {
@@ -208,9 +208,9 @@ describe('one-shelf home', () => {
     stubApi();
     seed({ saved: [book(1)], libraryId: LIBRARY.id });
     renderHome();
-    const person = await screen.findByRole('button', { name: 'Account and settings' });
+    const person = await screen.findByRole('button', { name: 'Settings' });
     fireEvent.click(person);
-    const panel = await screen.findByRole('dialog', { name: 'Account and settings' });
+    const panel = await screen.findByRole('dialog', { name: 'Settings' });
     expect(within(panel).getByRole('link', { name: 'Create account' })).toHaveAttribute('href', '/app/account/sign-up');
     expect(within(panel).getByRole('link', { name: 'Log in' })).toHaveAttribute('href', '/app/account/sign-in');
     expect(await within(panel).findByText('Anna Centenary Library')).toBeInTheDocument();
@@ -218,9 +218,9 @@ describe('one-shelf home', () => {
     expect(within(panel).getByRole('button', { name: 'Daylight' })).toHaveAttribute('aria-pressed', 'true');
     fireEvent.click(within(panel).getByRole('button', { name: 'Ink' }));
     expect(document.documentElement.dataset.readingLight).toBe('ink');
-    for (const name of ['Report a problem', 'Privacy', 'About']) expect(within(panel).getByRole('link', { name })).toBeInTheDocument();
+    for (const name of ['Report a problem', 'Privacy', 'About MyBookshelf']) expect(within(panel).getByRole('link', { name })).toBeInTheDocument();
     fireEvent(panel, new Event('cancel', { cancelable: true }));
-    await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Account and settings' })).not.toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Settings' })).not.toBeInTheDocument());
     expect(person).toHaveFocus();
   });
 
@@ -232,12 +232,12 @@ describe('one-shelf home', () => {
     await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/app/books/' + encodeURIComponent(first.bookKey)));
     // The book page shows the suggestion's record while it looks the book up (here it cannot).
     expect(await screen.findByRole('heading', { level: 1, name: first.title })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Add to my shelf' }));
-    expect(await screen.findByRole('button', { name: 'On my shelf' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Add to my reading shelf' }));
+    expect(await screen.findByText('On my reading shelf')).toBeInTheDocument();
     expect(JSON.parse(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)!).savedBooks.map((item: { bookKey: string }) => item.bookKey)).toEqual([first.bookKey]);
     view.unmount();
     renderHome();
-    expect(await screen.findByRole('heading', { name: 'My shelf' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'My reading shelf' })).toBeInTheDocument();
     const all = [...document.querySelectorAll('.bay-books a')];
     expect(all[0]).toHaveAccessibleName(first.title + ' by ' + first.authors[0]);
     expect(all[0]).not.toHaveClass('is-suggested');
@@ -331,15 +331,15 @@ describe('one-shelf home', () => {
     await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/app/books/' + encodeURIComponent(inLibrary.bookKey)));
     // Opening is not a refresh: nothing more is asked for the suggestions.
     expect(gets()).toHaveLength(2);
-    fireEvent.click(await screen.findByRole('button', { name: 'Add to my shelf' }));
-    expect(await screen.findByRole('button', { name: 'On my shelf' })).toBeInTheDocument();
+    fireEvent.click(await screen.findByRole('button', { name: 'Add to my reading shelf' }));
+    expect(await screen.findByText('On my reading shelf')).toBeInTheDocument();
     await waitFor(() => expect(events())
       .toEqual([{ event: 'opened', bookKey: inLibrary.bookKey }, { event: 'saved', bookKey: inLibrary.bookKey }]));
     // Remembered as a direct open, as before.
     expect(JSON.parse(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)!).recentBooks[0]).toMatchObject({ bookKey: inLibrary.bookKey, source: 'direct' });
     fireEvent.click(screen.getByRole('link', { name: 'Back' }));
     // Saving refreshed the suggestions once: the three newest books' lists and one lookup, without the saved book.
-    await screen.findByRole('heading', { name: 'My shelf' });
+    await screen.findByRole('heading', { name: 'My reading shelf' });
     const shelfCovers = () => [...document.querySelectorAll('.bay-books a')].map(link => link.getAttribute('aria-label'));
     // Saved now, with the badge from its page's answer.
     await waitFor(() => expect(shelfCovers()[0]).toBe('Found Here by Library Author, in Anna Centenary Library'));
@@ -354,7 +354,7 @@ describe('one-shelf home', () => {
     expect(events()).toHaveLength(2);
     // Back again: drawing the shelf counts nothing and asks nothing.
     fireEvent.click(screen.getByRole('link', { name: 'Back' }));
-    await screen.findByRole('heading', { name: 'My shelf' });
+    await screen.findByRole('heading', { name: 'My reading shelf' });
     expect(events()).toHaveLength(2);
     expect(gets()).toHaveLength(5);
     expect(candidateLookups()).toHaveLength(2);
@@ -371,7 +371,7 @@ describe('one-shelf home', () => {
       : fallback(path, init));
     seed({ saved: [book(1)], libraryId: LIBRARY.id });
     renderHome();
-    expect(await screen.findByRole('heading', { name: 'My shelf' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'My reading shelf' })).toBeInTheDocument();
     await waitFor(() => expect(calls.some(call => relatedFor(call.path))).toBe(true));
     // The saved book at once; the five slots keep their places, empty: no cover, no label, no text.
     expect(screen.getByRole('link', { name: /^Book 1 by Author 1/ })).toBeInTheDocument();
@@ -416,7 +416,7 @@ describe('one-shelf home', () => {
   it('/app/settings opens the shelf with the side panel', async () => {
     stubApi();
     renderHome('/app/settings');
-    expect(await screen.findByRole('dialog', { name: 'Account and settings' })).toBeInTheDocument();
-    expect(screen.getByTestId('location')).toHaveTextContent(/^\/app\/shelf$/);
+    expect(await screen.findByRole('dialog', { name: 'Settings' })).toBeInTheDocument();
+    expect(screen.getByTestId('location')).toHaveTextContent(/^\/$/);
   });
 });

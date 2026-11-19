@@ -53,7 +53,7 @@ test('sensitive raw routes remain gated; origin rejects precede database work', 
   for (const path of ['/api/auth/sign-up/email', '/api/auth/change-password', '/api/auth/get-session']) {
     assert.equal((await request(app).post(path).send({})).status, 503);
   }
-  for(const path of ['/api/account/export','/api/account/deletion','/api/account/deletion/status'])assert.equal((await request(app).post(path).send({})).status,403);
+  for(const path of ['/api/account/deletion','/api/account/deletion/status'])assert.equal((await request(app).post(path).send({})).status,403);
   assert.equal((await request(app).get('/api/account/session').set('Origin', 'https://attacker.test')).status, 403);
   assert.equal(calls, 0);
   assert.deepEqual((await request(app).get('/api/account/session').set('Origin', enabled.BETTER_AUTH_URL)).body, { status: 'guest' });
@@ -84,6 +84,34 @@ test('a guest session request without a session cookie never initializes the acc
   for (const name of ['mybookshelf_auth.session_token', '__Secure-mybookshelf_auth.session_token'])
     assert.deepEqual((await request(app).get('/api/account/session').set('Cookie', 'a=b; ' + name + '=v')).body, { status: 'authenticated' });
   assert.equal(calls, 1);
+});
+
+// Plan B2: opening Create account or Log in sends one GET /api/auth/ok, a
+// request the reader's action causes (never a timer), so the account service
+// and its database are awake before the form is sent. A guest's ordinary
+// visits still never start it.
+test('the warm-up request starts the account service once; Server-Timing tells a cold start from a warm one', async () => {
+  let calls = 0;
+  const app = createApplication({ accounts: createAccountMiddleware({ env: enabled, initialize: async () => {
+    calls++; await new Promise(resolve => setTimeout(resolve, 20));
+    return { handleAuth: (req, res) => { res.writeHead(200, { 'Content-Type': 'application/json' }); res.end('{"ok":true}'); } };
+  } }) });
+  assert.deepEqual((await request(app).get('/api/account/session')).body, { status: 'guest' });
+  assert.equal(calls, 0);
+  const cold = await request(app).get('/api/auth/ok');
+  assert.equal(cold.status, 200); assert.equal(calls, 1);
+  assert.equal(cold.headers['cache-control'], 'private, no-store');
+  const [start, total] = cold.headers['server-timing'].split(', ');
+  assert.match(start, /^start;dur=\d+\.\d$/); assert.ok(Number(start.split('=')[1]) >= 15);
+  assert.match(total, /^app;dur=\d+\.\d$/);
+  const warm = await request(app).get('/api/auth/ok');
+  assert.equal(warm.status, 200); assert.equal(calls, 1);
+  assert.match(warm.headers['server-timing'], /^app;dur=\d+\.\d$/);
+  // Raw library routes for the log-in link stay closed: only the facade reaches them.
+  for (const path of ['/api/auth/sign-in/magic-link', '/api/auth/magic-link/verify'])
+    assert.equal((await request(app).post(path).send({})).status, 503);
+  assert.equal((await request(app).post('/api/account/magic-link').set('Origin', 'https://attacker.test').send({ email: 'a@example.test' })).status, 403);
+  assert.equal((await request(app).post('/api/account/reauth/recent').send({ action: 'password-change' })).status, 403);
 });
 
 test('capabilities are read from configuration without starting the account service', async () => {

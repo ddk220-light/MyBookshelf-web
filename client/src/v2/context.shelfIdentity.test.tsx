@@ -48,6 +48,6 @@ it('adding a removed book back drops its "Removed … Undo" notice', async () =>
   let result: string | undefined;
   await act(async () => { result = await library().saveBook(onShelf as unknown as PublicBook); });
   expect(result).toBe('saved');
-  // The book is back: an Undo for its removal would do nothing and hides under "Added to your shelf".
+  // The book is back: an Undo for its removal would do nothing and hides under "Added to your reading shelf".
   expect(library().removedBook).toBeNull();
 });

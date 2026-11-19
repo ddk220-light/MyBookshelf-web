@@ -22,10 +22,14 @@ export type CloudState = Versions & {
   counts: { saved: number; recent: number };
 };
 export type ReadingSnapshot = {
-  summary: CloudState;
+  summary: CloudState & { historyRevision?: string };
   books: CloudBook[];
   recent: CloudBook[];
 };
+type CloudRevisions = Pick<
+  Versions,
+  "settingsRevision" | "shelfRevision" | "historyGeneration"
+> & { historyRevision: string };
 type Pending = { path: string; method: string; body: Record<string, unknown> };
 export class AccountRepository {
   snapshot: ReadingSnapshot | null = null;
@@ -79,7 +83,10 @@ export class AccountRepository {
             this.request<
               { books: CloudBook[]; nextCursor: string | null } & Versions
             >("/books?limit=100"),
-            this.request<{ books: CloudBook[] } & Versions>("/history"),
+            this.request<{
+              books: CloudBook[];
+              historyRevision?: string;
+            } & Versions>("/history"),
           ]);
           const books = [...first.books];
           if (summary.profile.id !== this.session().user?.id)
@@ -109,11 +116,11 @@ export class AccountRepository {
             if (books.length > 1000)
               throw new AccountApiError(
                 "INVALID_RESPONSE",
-                "Your shelf could not be loaded.",
+                "Your reading shelf could not be loaded.",
               );
           }
           const snapshot = {
-            summary,
+            summary: { ...summary, historyRevision: recent.historyRevision },
             books: books.map((b) => ({
               ...b,
               source: b.source || "direct",
@@ -154,6 +161,20 @@ export class AccountRepository {
       })
       .catch(() => {});
     return promise;
+  }
+  loadRevisions(): Promise<CloudRevisions> {
+    return this.request<CloudRevisions>("/revisions");
+  }
+  /**
+   * Forgets a request that failed and will not be retried now (the quiet
+   * merge at sign-in, plan B5: it is tried again at the next load, and must
+   * never leave the shelf waiting on it).
+   */
+  abandonPending(path: string) {
+    if (this.pending?.path !== path) return;
+    if (typeof this.pending.body.importId === "string")
+      this.imports.delete(this.pending.body.importId);
+    this.pending = null;
   }
   private state() {
     this.guard();
@@ -204,7 +225,7 @@ export class AccountRepository {
       throw error;
     }
   }
-  selectLibrary(libraryId: string) {
+  selectLibrary(libraryId: string | null) {
     return this.mutate("/library", "PUT", {
       libraryId,
       settingsRevision: this.state().settingsRevision,
@@ -223,7 +244,7 @@ export class AccountRepository {
     if (!book)
       throw new AccountApiError(
         "BOOK_MISSING",
-        "Refresh your shelf to find this book.",
+        "Refresh your reading shelf to find this book.",
       );
     const operationId = crypto.randomUUID();
     return this.mutate<{ undoUntil: string | null; shelfRevision: number }>(
@@ -278,6 +299,38 @@ export class AccountRepository {
       settingsRevision: this.state().settingsRevision,
       operationId: crypto.randomUUID(),
     });
+  }
+  /**
+   * The quiet merge at sign-in (plan B5): sent on its own, beside the shelf's
+   * one pending change, so a save never waits for it and it never becomes
+   * the change offered for "Retry". It is not retried here; a refusal or a
+   * newer account version goes back to the merge.
+   */
+  async importQuiet(
+    snapshot: AnonymousWebState,
+    includeHistory: boolean,
+    libraryPolicy: "keep-account" | "use-device",
+  ) {
+    const versions = this.state();
+    const result = await this.request<{
+      savedAdded: number;
+      historyAccepted: number;
+      historyExpired: number;
+    }>("/imports", {
+      method: "POST",
+      body: {
+        importId: crypto.randomUUID(),
+        snapshot: structuredClone({ version: 1, selectedLibraryId: snapshot.selectedLibraryId, recentBooks: snapshot.recentBooks, savedBooks: snapshot.savedBooks }),
+        includeHistory,
+        libraryPolicy,
+        settingsRevision: versions.settingsRevision,
+        shelfRevision: versions.shelfRevision,
+        historyGeneration: versions.historyGeneration,
+      },
+    });
+    // The next read starts afresh (one already under way began before this).
+    this.loadPromise = null;
+    return result;
   }
   importGuest(
     importId: string,

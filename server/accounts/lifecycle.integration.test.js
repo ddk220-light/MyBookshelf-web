@@ -80,7 +80,6 @@ test(
       mailFrom: "accounts@example.test",
     };
     service = await createAccountService(config, {
-      checkPassword: async () => {},
       ledger,
     });
     const cookieHeaders = (cookies) =>
@@ -162,50 +161,7 @@ test(
       "UPDATE recent_book_views SET viewed_at=now()-interval '31 days' WHERE user_id=$1",
       [a.identity.user.id],
     );
-    const exported = await proof(a, "export"),
-      operationId = randomUUID(),
-      request = { proof: exported.proof, operationId };
-    const data = await service.reading.exportAccount(
-      request,
-      exported.identity,
-    );
-    assert.equal(data.schemaVersion, 1);
-    assert.equal(data.profile.email, a.email);
-    assert.deepEqual(data.profile.signInMethods, ["password"]);
-    assert.equal(data.savedBooks.length, 1);
-    assert.equal(data.savedBooks[0].bookKey, own.bookKey);
-    assert.equal(data.recentlyViewed.length, 1);
-    assert.equal(data.recentlyViewed[0].bookKey, own.bookKey);
-    assert.deepEqual(data.libraries, [
-      { directoryId: "bc:smcl", selected: true },
-    ]);
-    const serialized = JSON.stringify(data);
-    for (const forbidden of [
-      other.bookKey,
-      b.email,
-      "sessionId",
-      "authUserId",
-      "accessToken",
-      "passwordHash",
-      "csrfToken",
-      exported.identity.sessionId,
-      exported.proof,
-    ])
-      assert.ok(!serialized.includes(forbidden));
-    assert.equal(
-      (await service.reading.exportAccount(request, exported.identity))
-        .savedBooks.length,
-      1,
-      "lost download can retry same operation within original proof lifetime",
-    );
-    await assert.rejects(
-      service.reading.exportAccount(
-        { ...request, operationId: randomUUID() },
-        exported.identity,
-      ),
-      (e) => e.code === "RECENT_AUTH_REQUIRED",
-    );
-    const deleting = await proof(exported, "delete"),
+    const deleting = await proof(a, "delete"),
       receiptNonce = randomBytes(32).toString("base64url"),
       deletionId = randomUUID();
     const deletion = {
@@ -243,13 +199,33 @@ test(
         deleting.identity,
       ),
     );
-    await assert.rejects(
-      service.actions.signin(
-        { email: a.email, password },
-        randomUUID(),
-        new Headers(),
-        () => {},
-      ),
+    // A deleted account answers exactly like a wrong password (decision 9),
+    // whichever password is typed.
+    const wrong = await service.actions
+      .signin({ email: a.email, password: "not the password" }, randomUUID(), new Headers(), () => {})
+      .catch((error) => error);
+    for (const typed of [password, "not the password"])
+      await assert.rejects(
+        service.actions.signin(
+          { email: a.email, password: typed },
+          randomUUID(),
+          new Headers(),
+          () => {},
+        ),
+        (error) =>
+          error.status === 401 &&
+          error.code === "INVALID_CREDENTIALS" &&
+          error.message === wrong.message,
+      );
+    // The confirmation email is queued at once, not when the data is removed.
+    assert.deepEqual(
+      (
+        await admin.query(
+          'SELECT kind FROM account_mail_jobs WHERE "authUserId"=$1 AND kind=$2',
+          [a.identity.authUserId, "deleted"],
+        )
+      ).rows,
+      [{ kind: "deleted" }],
     );
     const status = await service.actions.deletionStatus(
       { operationId: deletionId, receiptNonce },
@@ -330,15 +306,15 @@ test(
       (await service.reading.books({}, b.identity)).books[0].bookKey,
       other.bookKey,
     );
-    assert.equal(
+    assert.deepEqual(
       (
         await admin.query(
-          'SELECT payload FROM account_mail_jobs WHERE "authUserId"=$1',
+          'SELECT kind FROM account_mail_jobs WHERE "authUserId"=$1',
           [a.identity.authUserId],
         )
-      ).rowCount,
-      1,
-      "only the final encrypted security notice remains",
+      ).rows,
+      [{ kind: "deleted" }],
+      "only the one deletion email remains, queued when the reader deleted the account",
     );
   },
 );

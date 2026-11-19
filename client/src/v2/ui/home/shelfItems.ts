@@ -76,22 +76,24 @@ export function shelfBadge(entry: Pick<ShelfEntry, 'key' | 'kind' | 'foundIn'>, 
   const answer = holdings.get(entry.key);
   if (answer === 'found') return true;
   const library = holdings.libraryId();
-  return Boolean(entry.foundIn && library && entry.foundIn === library) && answer !== 'not_found' && answer !== 'unconfirmed';
+  // Only a definite "not found" here takes a stored "found" away; a check
+  // that could not tell (unconfirmed, unknown) never does.
+  return Boolean(entry.foundIn && library && entry.foundIn === library) && answer !== 'not_found';
 }
 
 export function shelfEntries(savedBooks: readonly RecentBook[], savedContent: readonly SavedContent[]): ShelfEntry[] {
   const content: ShelfEntry[] = savedContent.map(item => ({ key: item.contentKey, kind: 'content', title: item.title, authors: item.authors,
-    href: '/app/read/' + encodeURIComponent(item.contentKey), state: { returnTo: '/app/shelf' }, addedAt: time(item.savedAt) }));
+    href: '/app/read/' + encodeURIComponent(item.contentKey), state: { returnTo: '/' }, addedAt: time(item.savedAt) }));
   return [...savedBooks.map(bookEntry), ...content].sort((a, b) => b.addedAt - a.addedAt);
 }
 
 /**
- * "Title by Author", plus ", on my shelf" for a search result the reader has
+ * "Title by Author", plus ", on my reading shelf" for a search result the reader has
  * saved, ", in <library>" when the chosen library has the book and, last,
  * ", suggested" for a shelf suggestion (its fade is not the only signal).
  */
-export function entryLabel(entry: Pick<ShelfEntry, 'title' | 'authors' | 'suggested'>, libraryName?: string | null, mine = false): string {
+export function entryLabel(entry: Pick<ShelfEntry, 'title' | 'authors' | 'suggested'>, libraryName?: string | null, mine = false, status?: string): string {
   const author = entry.authors.filter(Boolean).join(', ');
-  return entry.title + (author ? ' by ' + author : '') + (mine ? ', on my shelf' : '') + (libraryName ? ', in ' + libraryName : '')
+  return entry.title + (author ? ' by ' + author : '') + (mine ? ', on my reading shelf' : '') + (libraryName ? ', in ' + libraryName : status ? ', ' + status : '')
     + (entry.suggested ? ', suggested' : '');
 }

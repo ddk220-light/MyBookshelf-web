@@ -6,6 +6,7 @@ import { kohaCatalogOrigin } from '../services/providers/kohaOrigin.js';
 import { libraryLinks } from './libraryLinks.js';
 import { libraryBranches } from './locations.js';
 import { libraryArea } from './indiaPlaces.js';
+import { bookDeadlineMs, platformFor } from '../services/catalog-lookup/platforms.js';
 
 function safeCatalogUrl(value) {
   if (!value) return null;
@@ -90,6 +91,13 @@ export function toPublicLibrary(entry) {
   if (searches.length) result.search = { isbn: searches.some(s => s.isbn === true),
     title: searches.some(s => s.title === true), mode: searches.some(s => s.mode === 'inline') ? 'inline' : 'external' };
   if (catalogUrl) result.catalogUrl = catalogUrl;
+  // The book page's check limit for this library, in whole seconds, so the
+  // waiting card can say how long the catalog may take ("up to half a
+  // minute" for 30 s or less, else "up to a minute").
+  const platform = platformFor(entry);
+  if (platform && (result.capabilities.catalogLookup || result.capabilities.publicAvailability)) {
+    result.answerWithinSeconds = Math.ceil(bookDeadlineMs(entry, platform) / 1000);
+  }
   const attribution = publicAttribution(entry.attribution);
   if (attribution) result.attribution = attribution;
   if (typeof entry.publicAccessNote === 'string' && entry.publicAccessNote.trim()) {

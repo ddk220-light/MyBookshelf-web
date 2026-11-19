@@ -12,6 +12,7 @@ import { setReaderIdentityScope } from "../readerState";
 import { clearSearchMemory } from "../searchMemory";
 import { clearCatalogMetadata } from "../catalogMetadata";
 import { flushSync } from "react-dom";
+import { accountCode, forgetMerged } from "../storage/guestMerge";
 
 export type AccountUser = {
   id: string;
@@ -29,6 +30,8 @@ export type AccountSession = {
     | "signout-unconfirmed";
   user?: AccountUser;
   csrfToken?: string;
+  /** When this session began (ISO); within 10 minutes the password is not asked again, except to delete. */
+  signedInAt?: string;
   epoch: number;
   logoutPending?: boolean;
   sessionEnded?: boolean;
@@ -39,6 +42,7 @@ type SessionReply = {
   status: "guest" | "unverified" | "authenticated" | "unavailable";
   user?: AccountUser;
   csrfToken?: string;
+  signedInAt?: string;
   needsProfileCompletion?: boolean;
 };
 type SessionContext = {
@@ -50,6 +54,8 @@ type SessionContext = {
   invalidate: () => void;
   prepareSignIn: () => void;
   beginProviderRedirect: () => void;
+  /** Hides "You've been signed out" (the reader closed it). */
+  dismissSessionEnded: () => void;
 };
 const fallback: SessionContext = {
   session: { status: "guest", epoch: 0 },
@@ -60,6 +66,7 @@ const fallback: SessionContext = {
   invalidate: () => {},
   prepareSignIn: () => {},
   beginProviderRedirect: () => {},
+  dismissSessionEnded: () => {},
 };
 const Context = createContext<SessionContext>(fallback);
 export const useAccountSession = () => useContext(Context);
@@ -229,6 +236,15 @@ export function AccountSessionProvider({ children, disabledMeansGuest = false }:
             } else publish({ status: "guest", logoutPending: true });
             return;
           }
+          // The server answered that this signed-in account is no longer
+          // available (it is being deleted): what this browser remembers
+          // about merging into it goes (plan B7).
+          if (
+            reply.status === "unavailable" &&
+            current.current.status === "authenticated" &&
+            current.current.user
+          )
+            forgetMerged(accountCode(current.current.user.id));
           publish(reply);
           if (explicitSignin) broadcast(false, tabId.current);
         } catch (failure) {
@@ -341,6 +357,13 @@ export function AccountSessionProvider({ children, disabledMeansGuest = false }:
     guestLock.current = false;
     writeOverride(false);
   }, [prepareSignIn]);
+  const dismissSessionEnded = useCallback(() => {
+    if (!current.current.sessionEnded) return;
+    endNotice.current = false;
+    const { sessionEnded: _ended, ...rest } = current.current;
+    current.current = rest;
+    setSession(rest);
+  }, []);
   const signOut = useCallback(async () => {
     identityIntent.current++;
     accessEndLock.current = null;
@@ -447,6 +470,7 @@ export function AccountSessionProvider({ children, disabledMeansGuest = false }:
         invalidate,
         prepareSignIn,
         beginProviderRedirect,
+        dismissSessionEnded,
       }}
     >
       {children}

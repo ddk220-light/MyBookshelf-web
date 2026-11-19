@@ -1,5 +1,5 @@
 // Adapters provide fixed URLs. Never pass a caller-supplied origin here.
-export const contact = 'deepakdhanavel@gmail.com';
+export const contact = 'privacy@mybookshelf.cloud';
 export function sourceError(status, retryAfterSeconds) {
   return Object.assign(new Error('The paper source could not answer.'), {sourceStatus:status,retryAfterSeconds});
 }

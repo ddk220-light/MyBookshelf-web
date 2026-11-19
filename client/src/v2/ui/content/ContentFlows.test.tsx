@@ -2,6 +2,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import { contentApi } from '../../contentApi';
+import { readContentSearch } from '../../contentSearchAddress';
 import { PublicApiError } from '../../api';
 import { LibraryStateProvider } from '../../context';
 import { ANONYMOUS_WEB_STORAGE_KEY } from '../../localState';
@@ -28,13 +29,13 @@ it('saves a paper, reloads the mixed shelf and removes it without losing a legac
   localStorage.setItem(ANONYMOUS_WEB_STORAGE_KEY,JSON.stringify({version:1,selectedLibraryId:null,recentBooks:[],savedBooks:[legacyBook]}));
   const fetch=vi.spyOn(globalThis,'fetch').mockRejectedValue(new Error('Unexpected network request'));
   const first=mount(<ContentDetail contentKey={item.key}/>);
-  await screen.findByRole('heading',{name:item.title});fireEvent.click(screen.getByRole('button',{name:'Save to shelf'}));
+  await screen.findByRole('heading',{name:item.title});fireEvent.click(screen.getByRole('button',{name:'Save to my reading shelf'}));
   expect(screen.getByRole('button',{name:'Saved'})).toHaveAttribute('aria-pressed','true');
   let saved=JSON.parse(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)!);
   expect(saved.version).toBe(2);expect(saved.savedBooks).toEqual([legacyBook]);expect(saved.savedContent[0].contentKey).toBe(item.key);
   expect(fetch).not.toHaveBeenCalled();
   // The one-shelf home shows the saved paper as a cover that opens its reading page, next to the legacy book.
-  first.unmount();const shelf=mount(<OneShelfRoot><HomeScreen/></OneShelfRoot>,'/app/shelf');
+  first.unmount();const shelf=mount(<OneShelfRoot><HomeScreen/></OneShelfRoot>,'/');
   expect(await screen.findByRole('link',{name:/Synthetic flow fixture/})).toHaveAttribute('href','/app/read/fcd%3Av1%3Aeuropepmc%3AMED%3A123');
   expect(screen.getByRole('link',{name:/Existing shelf book/})).toBeInTheDocument();
   // Removing it from its reading page keeps the legacy book.
@@ -117,7 +118,11 @@ it('disabled paper search offers free books with the same query instead of an ou
     message:'Paper search is not connected yet.',sources:[{id:'arxiv',status:'disabled',returned:0}]}));
   mount(<ContentSearchPage scope="papers"/>,'/app/search?scope=papers&q=Mathematics');
   await screen.findByRole('heading',{name:'Paper search isn’t enabled yet'});
-  expect(screen.getByRole('link',{name:'Search free books instead'})).toHaveAttribute('href','/app/search?scope=free&q=Mathematics');
+  const href=screen.getByRole('link',{name:'Search free books instead'}).getAttribute('href')!;
+  expect(href).not.toContain('Mathematics');
+  const filters=new URL(href,'http://localhost').searchParams;
+  expect(filters.get('scope')).toBe('free');
+  expect(readContentSearch(filters)).toBe('Mathematics');
   expect(screen.queryByRole('button',{name:'Try again'})).not.toBeInTheDocument();
   expect(screen.queryByText('Free-reading sources aren’t answering')).not.toBeInTheDocument();
 });
@@ -193,7 +198,9 @@ it('source outage is an alert rather than a zero-result claim',async()=>{
   mount(<ContentSearchPage scope="papers"/>,'/app/search?scope=papers&q=outage-fixture');
   await screen.findByRole('alert');expect(screen.getByText('This does not mean there is no free copy.')).toBeInTheDocument();
   expect(screen.queryByText('No verified free copy in these results')).not.toBeInTheDocument();
-  expect(screen.getByRole('link',{name:'Search library books instead'})).toHaveAttribute('href','/app/search?q=outage-fixture');
+  const href=screen.getByRole('link',{name:'Search library books instead'}).getAttribute('href')!;
+  expect(href).not.toContain('outage-fixture');
+  expect(readContentSearch(new URL(href,'http://localhost').searchParams)).toBe('outage-fixture');
 });
 
 it('wide-index daily limit keeps specialist results and avoids provider branding',async()=>{
@@ -230,7 +237,7 @@ it('keeps free source accounts searchable in their own labelled group and disclo
   await screen.findByRole('heading',{name:book.title});
   expect(screen.getByText(/Sign in there to read this book/)).toHaveTextContent('Free account required at StoryWeaver');
   expect(screen.getByRole('link',{name:'Read at StoryWeaver · free account required (opens StoryWeaver)'})).toHaveAttribute('href',book.readingActions[0].url);
-  fireEvent.click(screen.getByRole('button',{name:'Save to shelf'}));
+  fireEvent.click(screen.getByRole('button',{name:'Save to my reading shelf'}));
   expect(JSON.parse(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)!).savedContent[0].contentKey).toBe(book.key);
 });
 

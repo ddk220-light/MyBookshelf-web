@@ -167,37 +167,46 @@ export const publicApi = Object.freeze({
   // Anything the client does not recognise is "unknown" (couldn't check),
   // never "not found". catalogUrl is kept only when it is an http(s) link.
   async holdingsCheck(libraryId: string, bookKey: string, signal?: AbortSignal): Promise<HoldingsCheck> {
-    const data = await post<{ answer?: unknown; catalogUrl?: unknown }>('/holdings/check', { libraryId, bookKey }, signal);
+    const data = await post<{ answer?: unknown; catalogUrl?: unknown; catalogLinkKind?: unknown }>('/holdings/check', { libraryId, bookKey }, signal);
     const answer = data.answer === 'found' || data.answer === 'not_found' || data.answer === 'unconfirmed' ? data.answer : 'unknown';
     const catalogUrl = webLink(data.catalogUrl);
-    return { answer, ...(catalogUrl ? { catalogUrl } : {}) };
+    const catalogLinkKind = data.catalogLinkKind;
+    return { answer, ...(catalogUrl ? { catalogUrl } : {}), ...(catalogUrl && (catalogLinkKind === 'record' || catalogLinkKind === 'search' || catalogLinkKind === 'catalog') ? { catalogLinkKind } : {}) };
   },
 
   // One-shelf background check for search results (plan 5.7): NDJSON lines
-  // {type:'mark', bookKey, answer:'found'} as the library's answers arrive,
-  // then exactly one {type:'done', unchecked}. Only "found" is ever passed on,
-  // and only for a book that was asked about: no mark never means "not in the
-  // library". Any failure (network, HTTP error, unreadable or unfinished
-  // stream) rejects; marks already passed on stand. At most 12 books.
-  async holdingsSearch(libraryId: string, query: string, bookKeys: readonly string[], onMark: (bookKey: string) => void, signal?: AbortSignal): Promise<{ unchecked: string[] }> {
+  // Each found mark can carry a catalog record link. The terminal line
+  // explicitly names the books found absent or whose check failed.
+  async holdingsSearch(libraryId: string, query: string, bookKeys: readonly string[], onMark: (bookKey: string, catalogUrl?: string) => void, signal?: AbortSignal): Promise<HoldingsSearchDone> {
     const asked = [...new Set(bookKeys)].slice(0, 12);
     const response = await send('/holdings/search', { libraryId, query, books: asked.map(bookKey => ({ bookKey })) }, signal, true);
     if (!response.ok) throw await failure(response);
     if (!response.headers.get('content-type')?.includes(NDJSON)) throw new PublicApiError();
     const wanted = new Set(asked);
-    let unchecked: string[] | null = null;
+    const found = new Set<string>();
+    let done: HoldingsSearchDone | null = null;
+    const askedKeys = (input: unknown) => Array.isArray(input)
+      ? [...new Set(input.filter((key): key is string => typeof key === 'string' && wanted.has(key)))] : [];
     await readNdjson(response, line => {
-      if (unchecked) return;
+      if (done) return;
       if (!line || typeof line !== 'object' || Array.isArray(line)) throw new PublicApiError();
-      const event = line as { type?: unknown; bookKey?: unknown; answer?: unknown; unchecked?: unknown };
+      const event = line as Record<string, unknown>;
       if (event.type === 'mark') {
-        if (event.answer === 'found' && typeof event.bookKey === 'string' && wanted.has(event.bookKey)) onMark(event.bookKey);
+        if (event.answer === 'found' && typeof event.bookKey === 'string' && wanted.has(event.bookKey)) {
+          found.add(event.bookKey);
+          onMark(event.bookKey, webLink(event.catalogUrl));
+        }
       } else if (event.type === 'done') {
-        unchecked = Array.isArray(event.unchecked) ? event.unchecked.filter((key): key is string => typeof key === 'string' && wanted.has(key)) : [];
+        const couldNotCheck = askedKeys(event.couldntCheck).filter(key => !found.has(key));
+        done = {
+          unchecked: askedKeys(event.unchecked),
+          notFound: askedKeys(event.notFound).filter(key => !found.has(key) && !couldNotCheck.includes(key)),
+          couldntCheck: couldNotCheck,
+        };
       }
     });
-    if (!unchecked) throw new PublicApiError();
-    return { unchecked };
+    if (!done) throw new PublicApiError();
+    return done;
   },
 
   // Shelf suggestions (plan 2026-11-14, Part 2): one public book's related
@@ -228,23 +237,40 @@ export const publicApi = Object.freeze({
     await post('/suggestions/events', body);
   },
 
-  // One-tap "Request to add" from the library pop-up: the typed text only.
-  async libraryRequest(text: string): Promise<void> {
-    await post('/library-requests', { text });
+  // "Ask us to add a library", sent only by its Send request button: the
+  // library's name and city, and the optional name and email for a reply.
+  async libraryRequest(text: string, contact: ContactDetails = {}): Promise<void> {
+    await post('/library-requests', { text, ...contactFields(contact) });
   },
 
   // Report a problem: the reader's words plus the screen, library and book
-  // shown. No account, email or device identifier is attached.
-  async problemReport(report: { text: string; screen?: ProblemScreen; libraryId?: string; bookKey?: string; appVersion?: string }): Promise<void> {
-    await post('/problem-reports', report);
+  // shown, and the optional name and email for a reply. No account or device
+  // identifier is attached.
+  async problemReport(report: { text: string; screen?: ProblemScreen; libraryId?: string; bookKey?: string; appVersion?: string } & ContactDetails): Promise<void> {
+    const { name, email, ...rest } = report;
+    await post('/problem-reports', { ...rest, ...contactFields({ name, email }) });
   },
 });
+
+/**
+ * A name and email a reader may leave to get a reply (server
+ * catalog-store/requests.js): both optional, kept 90 days. Empty fields are
+ * left out of the request.
+ */
+export type ContactDetails = { name?: string; email?: string };
+function contactFields({ name, email }: ContactDetails): ContactDetails {
+  const fields: ContactDetails = {};
+  if (name?.trim()) fields.name = name.trim();
+  if (email?.trim()) fields.email = email.trim();
+  return fields;
+}
 
 /** Screens a problem report may name (server catalog-store/requests.js SCREENS). */
 export const PROBLEM_SCREENS = ['shelf', 'search', 'book', 'library', 'panel', 'account', 'scan', 'other'] as const;
 export type ProblemScreen = typeof PROBLEM_SCREENS[number];
 
-export type HoldingsCheck = { answer: 'found' | 'not_found' | 'unconfirmed' | 'unknown'; catalogUrl?: string };
+export type HoldingsCheck = { answer: 'found' | 'not_found' | 'unconfirmed' | 'unknown'; catalogUrl?: string; catalogLinkKind?: 'record' | 'search' | 'catalog' };
+type HoldingsSearchDone = { unchecked: string[]; notFound: string[]; couldntCheck: string[] };
 
 /** POST /suggestions/events (server validation.js parseSuggestionEvent): work and ISBN keys only. */
 export type SuggestionEvent = { event: 'opened' | 'saved'; bookKey: string };

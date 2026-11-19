@@ -197,9 +197,12 @@ test('a successful preliminary search does not hide its later record-read failur
 });
 
 test('a found search row is attributed to its route despite a concurrent failing fallback', async () => {
+  // The ISBN routes fail before the row arrives (a proven row ends the check
+  // and cancels whatever is still in flight).
   const h = harness(route => ({ isbn10Lookup: false,
     checkAvailability: async () => { await new Promise(resolve => setImmediate(resolve)); throw code('CATALOG_UNAVAILABLE'); },
-    searchCatalog: async () => route.platform === 'indcat' ? [] : [{ recordId: '7', title: 'Book', authors: ['Author'], isbn, observation }],
+    searchCatalog: async () => { await new Promise(resolve => setTimeout(resolve, 20));
+      return route.platform === 'indcat' ? [] : [{ recordId: '7', title: 'Book', authors: ['Author'], isbn, observation }]; },
   }));
   const answer = await h.check({ editionScope: 'work', profile });
   assert.equal(answer.outcome, 'found');
@@ -209,6 +212,9 @@ test('a found search row is attributed to its route despite a concurrent failing
 });
 
 test('two positive routes are attributed to the actual winning catalog link', async () => {
+  // The preferred route's ISBN answer proves the holding first. The check ends
+  // at that first proven match (it no longer reads on for a copy marked
+  // available), and the answer, its link and its attribution agree.
   const h = harness(route => ({ isbn10Lookup: false,
     checkAvailability: async () => ({ ...positive, catalogUrl: new URL('record/1', route.catalogUrl).href }),
     searchCatalog: async () => {
@@ -219,9 +225,9 @@ test('two positive routes are attributed to the actual winning catalog link', as
   }));
   const answer = await h.check({ editionScope: 'work', profile });
   assert.equal(answer.outcome, 'found');
-  assert.equal(answer.catalogUrl, 'https://indcat.inflibnet.ac.in/record/2');
-  assert.equal(h.recorded[0].host, 'indcat.inflibnet.ac.in');
-  assert.equal(h.recorded[0].platform, 'indcat');
+  assert.equal(answer.catalogUrl, 'https://academic.example.test/record/1');
+  assert.equal(h.recorded[0].host, 'academic.example.test');
+  assert.equal(h.recorded[0].platform, 'discovery-academic');
   assert.deepEqual(h.failures, []);
 });
 
@@ -241,4 +247,35 @@ test('result marking uses the actual route despite an unrelated primary circuit'
   assert.equal(health.platform, 'discovery-academic');
   const release = h.guard.tryStartMarking('academic.example.test');
   assert.equal(typeof release, 'function'); release();
+});
+
+// Only a live reader makes a reader-less check give way. A routed check whose
+// reader has gone must not, on its next route, cancel itself (or another
+// reader-less check) as if it were a waiting reader.
+test('a reader-less routed check never makes itself give way on its next route', async () => {
+  const fast = { indcat: { ...table.indcat, book: { maxRequests: 8, deadlineMs: 40 } },
+    'discovery-academic': { ...table['discovery-academic'], book: { maxRequests: 6, deadlineMs: 40 } } };
+  const alternate = { id: 'indcat:routed', platform: 'discovery-academic', catalogUrl: 'https://academic.example.test/',
+    sourceConnectionId: 'academic:one', preferForLookup: true, capabilities: ['availability'] };
+  const entry = { id: 'indcat:routed', platform: 'indcat', catalogUrl: 'https://indcat.inflibnet.ac.in/', capabilities: ['availability'], alternateCatalogs: [alternate] };
+  let letAcademicAnswer;
+  const academicAnswers = new Promise(resolve => { letAcademicAnswer = resolve; });
+  const provider = providerWithAlternates(entry, route => ({ checkAvailability: async () => {
+    if (route.platform === 'discovery-academic') { await academicAnswers; return negative; }
+    return positive;
+  } }));
+  // Every slot looks taken, so any call to make a reader-less check give way would cancel it.
+  const guard = { ...createHostGuard(), activeCount: () => 99 };
+  const recorded = [], deferred = [];
+  const lookup = createCatalogLookup({ providerFor: () => provider, platforms: fast, robots: null, guard,
+    defer: task => { deferred.push(Promise.resolve().then(task)); },
+    recorder: { readAnswers: async () => [], record: value => recorded.push(value) } });
+  const answer = await lookup.lookupBook({ library: entry, book: { bookKey: `v1:isbn:${isbn}`, isbn13: isbn }, editionScope: 'exact',
+    storedChecked: true, background: true });
+  assert.equal(answer.reason, 'timeout');
+  // The reader has gone; the check runs on and reaches its second route.
+  letAcademicAnswer();
+  while (deferred.length) await Promise.all(deferred.splice(0));
+  assert.equal(recorded.length, 1);
+  assert.equal(recorded[0].answer.outcome, 'found', 'the check was not cancelled by itself');
 });

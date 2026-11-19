@@ -25,7 +25,7 @@ test('fresh proof rotates the current session; password/reset notices and revoca
  const verify=[],reset=[];const auth=createAccountAuth({pool,config,sendVerificationEmail:async d=>verify.push(d),sendResetPassword:async d=>reset.push(d)});
  let password=`a synthetic long password ${randomUUID()}`;const email=emails[0];
  await auth.api.signUpEmail({body:{email,name:'Synthetic reader',password}});await auth.api.verifyEmail({query:{token:verify[0].token}});
- const actions=createAuthActions({auth,pool,config,checkPassword:async()=>{}});const credentials=createCredentialActions({auth,pool,config,checkPassword:async()=>{}});
+ const actions=createAuthActions({auth,pool,config});const credentials=createCredentialActions({auth,pool,config});
  const cookieHeaders=(reply)=>new Headers({cookie:reply.headers.getSetCookie().map(v=>v.split(';')[0]).join('; '),origin:config.baseURL});
  let headers=cookieHeaders(await auth.api.signInEmail({body:{email,password},returnHeaders:true}));
  const second=cookieHeaders(await auth.api.signInEmail({body:{email,password},returnHeaders:true}));
@@ -54,8 +54,11 @@ test('fresh proof rotates the current session; password/reset notices and revoca
  assert.ok(await auth.api.getSession({headers}));
  assert.equal((await pool.query('SELECT 1 FROM verification WHERE identifier=$1',['reset-password:'+reset[0].token])).rowCount,1);
  await admin.query('DROP TRIGGER test_security_mail_failure ON account_mail_jobs');
- await credentials.reset({token:reset[0].token,password:resetPassword},'192.0.2.10');
+ // The reset signs the reader in with the new password in the same step.
+ const resetCookies=[];
+ assert.deepEqual(await credentials.reset({token:reset[0].token,password:resetPassword},'192.0.2.10',new Headers(),c=>resetCookies.push(c)),{status:'password-updated',signedIn:true,email});
  assert.equal(await auth.api.getSession({headers}),null);
+ assert.equal((await auth.api.getSession({headers:new Headers({cookie:resetCookies.map(v=>v.split(';')[0]).join('; ')})})).user.email,email);
  await assert.rejects(credentials.reset({token:reset[0].token,password:resetPassword},'192.0.2.10'),e=>e.code==='LINK_EXPIRED');
  assert.equal((await actions.signin({email,password:resetPassword},'192.0.2.10',new Headers(),()=>{})).status,'signed-in');
 });

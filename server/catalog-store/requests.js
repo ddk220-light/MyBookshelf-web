@@ -2,9 +2,15 @@ import { createHmac, randomBytes } from 'node:crypto';
 
 // Library requests and problem reports (plan 4.2, 4.6.3, section 9 item 27).
 //
-// A library request stores normalised text and a count only: no country, IP,
+// A library request stores normalised text and a count: no country, IP,
 // account or date finer than a day. A problem report stores the reader's text
 // and, optionally, the screen, library, book key and app version.
+// Either may carry an optional name (up to 80 characters) and one email
+// address (up to 254), left by a reader who wants a reply (backlog item 14).
+// They are never linked to an account, address or device, and the daily
+// catalog maintenance removes them after 90 days (maintenance.js). Requests
+// are merged into one row per text, so their details are kept as rows of
+// library_request_contacts.
 // Abuse limits use keyed HMAC digests of the client address and the day,
 // never the raw address (as account_rate_buckets do):
 //   library requests: 5 per hour per address, one per text per address per day
@@ -20,6 +26,8 @@ export class SubmissionError extends Error {
 export const SCREENS = Object.freeze(['shelf', 'search', 'book', 'library', 'panel', 'account', 'scan', 'other']);
 const LIBRARY_ID = /^[a-z][a-z0-9_-]{0,31}:[A-Za-z0-9_-]{1,120}$/;
 const EMAIL = /[^\s@]+@[^\s@]+\.[^\s@]+/;
+// One address: no spaces, commas, semicolons or angle brackets (no lists).
+const ONE_EMAIL = /^[^\s@,;<>]+@[^\s@,;<>]+\.[^\s@,;<>]+$/;
 const URLISH = /(?:https?:\/\/|www\.)|\b[\p{L}\p{N}-]+\.(?:com|org|net|in|io|co|gov|edu|info|me|app|dev|uk|us|jp)\b/iu;
 const HOUR_S = 60 * 60;
 const DAY_S = 24 * HOUR_S;
@@ -37,12 +45,31 @@ const collapse = value => value.normalize('NFKC').replace(/\s+/g, ' ').trim();
 const CONTROL = /[\p{Cc}\u202A-\u202E\u2066-\u2069]/u;
 const REPORT_CONTROL = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F\u202A-\u202E\u2066-\u2069]/u;
 
+// The optional name and email: absent, or an empty string, means none.
+// Anything else that is not one plausible name or one address is refused.
+function parseContact(body) {
+  const contact = {};
+  if (body.name !== undefined) {
+    if (typeof body.name !== 'string' || CONTROL.test(body.name.replace(/[\t\n\r]/g, ' '))) throw new SubmissionError();
+    const name = body.name.normalize('NFC').replace(/\s+/g, ' ').trim();
+    if (name.length > 80) throw new SubmissionError();
+    if (name) contact.name = name;
+  }
+  if (body.email !== undefined) {
+    if (typeof body.email !== 'string' || CONTROL.test(body.email)) throw new SubmissionError();
+    const email = body.email.normalize('NFC').trim();
+    if (email.length > 254 || (email && !ONE_EMAIL.test(email))) throw new SubmissionError();
+    if (email) contact.email = email;
+  }
+  return contact.name || contact.email ? contact : null;
+}
+
 // Text for "Request to add <text>": 2–80 characters with at least one letter;
 // emails, phone numbers and URLs are rejected. The key merges duplicates
 // (NFKC, lower case, punctuation stripped, spaces collapsed).
 export function parseLibraryRequest(body) {
   if (!body || typeof body !== 'object' || Array.isArray(body) || typeof body.text !== 'string') throw new SubmissionError();
-  for (const key of Object.keys(body)) if (key !== 'text') throw new SubmissionError();
+  for (const key of Object.keys(body)) if (!['text', 'name', 'email'].includes(key)) throw new SubmissionError();
   if (CONTROL.test(body.text.replace(/[\t\n\r]/g, ' '))) throw new SubmissionError();
   const displayText = collapse(body.text);
   if (displayText.length < 2 || displayText.length > 80) throw new SubmissionError();
@@ -50,12 +77,13 @@ export function parseLibraryRequest(body) {
   if ((displayText.match(/\d/g) || []).length >= 7) throw new SubmissionError();
   const requestKey = displayText.toLowerCase().replace(/[^\p{L}\p{M}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
   if (requestKey.length < 2) throw new SubmissionError();
-  return { displayText, requestKey };
+  const contact = parseContact(body);
+  return contact ? { displayText, requestKey, contact } : { displayText, requestKey };
 }
 
 export function parseProblemReport(body) {
   if (!body || typeof body !== 'object' || Array.isArray(body) || typeof body.text !== 'string') throw new SubmissionError();
-  const allowed = new Set(['text', 'screen', 'libraryId', 'bookKey', 'appVersion']);
+  const allowed = new Set(['text', 'screen', 'libraryId', 'bookKey', 'appVersion', 'name', 'email']);
   for (const key of Object.keys(body)) if (!allowed.has(key)) throw new SubmissionError();
   if (REPORT_CONTROL.test(body.text)) throw new SubmissionError();
   const text = body.text.normalize('NFC').trim();
@@ -77,6 +105,8 @@ export function parseProblemReport(body) {
     if (typeof body.appVersion !== 'string' || !/^[\w.+-]{1,64}$/.test(body.appVersion)) throw new SubmissionError();
     report.appVersion = body.appVersion;
   }
+  const contact = parseContact(body);
+  if (contact) report.contact = contact;
   return report;
 }
 
@@ -119,7 +149,13 @@ export function createPgBuckets(db) {
 const STORE_REQUEST = `INSERT INTO library_requests (request_key, display_text) VALUES ($1, $2)
   ON CONFLICT (request_key) DO UPDATE SET request_count = library_requests.request_count + 1,
     last_requested_on = current_date, updated_at = now()`;
-const STORE_REPORT = `INSERT INTO problem_reports (body, screen, library_id, book_key, app_version) VALUES ($1, $2, $3, $4, $5)`;
+const STORE_REQUEST_CONTACT = `INSERT INTO library_request_contacts (request_key, name, email) VALUES ($1, $2, $3)`;
+const STORE_REPORT = `INSERT INTO problem_reports (body, screen, library_id, book_key, app_version, contact_name, contact_email)
+  VALUES ($1, $2, $3, $4, $5, $6, $7)`;
+// Before migration 003 (contact columns) is applied: the report without them.
+const STORE_REPORT_WITHOUT_CONTACT = `INSERT INTO problem_reports (body, screen, library_id, book_key, app_version)
+  VALUES ($1, $2, $3, $4, $5)`;
+const UNDEFINED_COLUMN = '42703';
 
 // `db` null: requests and reports are accepted and held in a small in-memory
 // list for this instance (nothing durable before the database exists).
@@ -129,7 +165,7 @@ export function createSubmissions({ db = null, secret = null, buckets = null, fa
   // limits hold only on this instance.
   const key = secret || randomBytes(32).toString('hex');
   const durable = buckets || (db && secret ? createPgBuckets(db) : null);
-  const held = { requests: [], reports: [] };
+  const held = { requests: [], requestContacts: [], reports: [] };
   const day = () => new Date(now()).toISOString().slice(0, 10);
   const digest = (...parts) => createHmac('sha256', key).update(parts.join('\n')).digest();
 
@@ -148,34 +184,49 @@ export function createSubmissions({ db = null, secret = null, buckets = null, fa
   return Object.freeze({
     durable: Boolean(db),
     // Returns 'accepted', 'duplicate' (same text from the same address today:
-    // not counted again) or 'limited'.
-    async libraryRequest({ displayText, requestKey }, { address }) {
+    // not counted again) or 'limited'. A duplicate's contact details are still
+    // kept: the reader asked for a reply.
+    async libraryRequest({ displayText, requestKey, contact = null }, { address }) {
       const client = String(address || 'unknown');
       if (!await within(digest('library-request', client, day()), { max: LIMITS.requestsPerHour, seconds: HOUR_S })) return 'limited';
-      if (!await within(digest('library-request-text', client, day(), requestKey), { max: 1, seconds: DAY_S })) return 'duplicate';
+      const counted = await within(digest('library-request-text', client, day(), requestKey), { max: 1, seconds: DAY_S });
+      if (!counted && !contact) return 'duplicate';
       defer(async () => {
         if (!db) {
-          const existing = held.requests.findIndex(item => item.requestKey === requestKey);
-          const previous = existing >= 0 ? held.requests.splice(existing, 1)[0] : null;
-          hold(held.requests, { requestKey, displayText: previous?.displayText || displayText, count: (previous?.count || 0) + 1, lastRequestedOn: day() });
+          if (counted) {
+            const existing = held.requests.findIndex(item => item.requestKey === requestKey);
+            const previous = existing >= 0 ? held.requests.splice(existing, 1)[0] : null;
+            hold(held.requests, { requestKey, displayText: previous?.displayText || displayText, count: (previous?.count || 0) + 1, lastRequestedOn: day() });
+          }
+          if (contact) hold(held.requestContacts, { requestKey, ...contact, createdOn: day() });
           return;
         }
-        try { await db.query(STORE_REQUEST, [requestKey, displayText]); } catch { /* Dropped when the store is down. */ }
+        try {
+          if (counted) await db.query(STORE_REQUEST, [requestKey, displayText]);
+          // The request row exists (now or from earlier); without it the contact is dropped too.
+          if (contact) await db.query(STORE_REQUEST_CONTACT, [requestKey, contact.name || null, contact.email || null]);
+        } catch { /* Dropped when the store is down. */ }
       });
-      return 'accepted';
+      return counted ? 'accepted' : 'duplicate';
     },
     async problemReport(report, { address }) {
       const client = String(address || 'unknown');
       if (!await within(digest('problem-report', client, day()), { max: LIMITS.reportsPerHour, seconds: HOUR_S })) return 'limited';
       defer(async () => {
         if (!db) { hold(held.reports, { ...report, createdOn: day() }); return; }
+        const values = [report.body, report.screen || null, report.libraryId || null, report.bookKey || null, report.appVersion || null];
         try {
-          await db.query(STORE_REPORT, [report.body, report.screen || null, report.libraryId || null, report.bookKey || null, report.appVersion || null]);
-        } catch { /* Dropped when the store is down. */ }
+          await db.query(STORE_REPORT, [...values, report.contact?.name || null, report.contact?.email || null]);
+        } catch (error) {
+          // The release ran before its migration: the words are still kept.
+          // Contact details have nowhere to go yet and are not stored.
+          if (error?.code !== UNDEFINED_COLUMN) return; // Dropped when the store is down.
+          try { await db.query(STORE_REPORT_WITHOUT_CONTACT, values); } catch { /* Dropped when the store is down. */ }
+        }
       });
       return 'accepted';
     },
     // In-memory mode only (tests and local development).
-    held: () => ({ requests: [...held.requests], reports: [...held.reports] }),
+    held: () => ({ requests: [...held.requests], requestContacts: [...held.requestContacts], reports: [...held.reports] }),
   });
 }

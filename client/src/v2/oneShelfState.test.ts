@@ -161,7 +161,7 @@ describe('saved-book identity', () => {
   it('the same Open Library work counts only when asked (shelf suggestions, display only)', () => {
     const work = [book('v1:openlibrary:OL1037811W', 'Wings of Fire', '2026-10-01T00:00:00.000Z')];
     const edition = { bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466', workId: 'OL1037811W' };
-    // The book page's match is unchanged: another edition is not "on my shelf".
+    // The book page's match is unchanged: another edition is not "on my reading shelf".
     expect(isOnShelf(work, edition)).toBe(false);
     expect(findSavedBook(work, edition, { sameWork: true })?.bookKey).toBe('v1:openlibrary:OL1037811W');
     expect(findSavedBook(work, { bookKey: 'v1:isbn:9788173711466', workId: 'OL1W' }, { sameWork: true })).toBeUndefined();

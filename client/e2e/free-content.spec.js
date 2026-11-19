@@ -19,19 +19,23 @@ test.describe('free-content discovery',()=>{
   }
   test('save, reload and remove a paper while preserving an existing book',async({page})=>{
     await mock(page);
+    await page.addInitScript(()=>{
+      const key='mybookshelf.anonymous-web.v1';
+      if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify({version:1,selectedLibraryId:null,recentBooks:[],savedBooks:[{bookKey:'v1:isbn:9780140328721',title:'Legacy shelf fixture',authors:['Legacy Author'],source:'direct',viewedAt:'2026-10-01T00:00:00Z'}]}));
+    });
     await page.goto('/app/search?scope=papers&q=browser-fixture');
-    await page.evaluate(()=>localStorage.setItem('mybookshelf.anonymous-web.v1',JSON.stringify({version:1,selectedLibraryId:null,recentBooks:[],savedBooks:[{bookKey:'v1:isbn:9780140328721',title:'Legacy shelf fixture',authors:['Legacy Author'],source:'direct',viewedAt:'2026-10-01T00:00:00Z'}]})));
-    await page.reload();
     await page.getByRole('heading',{name:fixture.title}).getByRole('link').click();
     await expect(page.getByRole('link',{name:'Read at Europe PMC (opens Europe PMC)'})).toHaveAttribute('href','https://europepmc.org/articles/PMC123');
-    await page.getByRole('button',{name:'Save to shelf'}).click();
+    await page.getByRole('button',{name:'Save to my reading shelf'}).click();
+    await expect(page.getByRole('button',{name:'Saved',exact:true})).toHaveAttribute('aria-pressed','true');
+    await page.reload();
     await expect(page.getByRole('button',{name:'Saved',exact:true})).toHaveAttribute('aria-pressed','true');
     // The one-shelf home shows it as a cover that opens its reading page; removing it there keeps the book.
-    await page.goto('/app/shelf');
+    await page.goto('/');
     const cover=page.getByRole('link',{name:/Synthetic browser flow fixture/});
     await expect(cover).toBeVisible();await cover.click();
     await page.getByRole('button',{name:'Saved',exact:true}).click();
-    await expect(page.getByRole('button',{name:'Save to shelf',exact:true})).toBeVisible();
+    await expect(page.getByRole('button',{name:'Save to my reading shelf',exact:true})).toBeVisible();
     const state=await page.evaluate(()=>JSON.parse(localStorage.getItem('mybookshelf.anonymous-web.v1')));
     expect(state.version).toBe(2);expect(state.savedContent).toHaveLength(0);expect(state.savedBooks[0].title).toBe('Legacy shelf fixture');
   });
@@ -46,6 +50,26 @@ test.describe('free-content discovery',()=>{
     expect(await page.evaluate(()=>document.querySelector('dialog[open]')?.contains(document.activeElement))).toBe(true);
     await page.keyboard.press('Escape');await expect(dialog).not.toBeVisible();await expect(trigger).toBeFocused();
     await expect(page.getByRole('heading',{name:'Wide paper search is at today’s limit'})).toBeVisible();
+  });
+  test('typed search follows scopes and Back without writing the words into browser addresses or state',async({page})=>{
+    await mock(page);
+    const query='synthetic private search text';
+    const searchRequest=()=>page.waitForRequest(req=>new URL(req.url()).pathname==='/api/v2/content/search' && req.postDataJSON()?.query===query);
+    await page.goto('/app/search?scope=papers');
+    const input=page.getByRole('searchbox');
+    await input.fill(query);
+    await Promise.all([searchRequest(),input.press('Enter')]);
+    await expect(page.getByRole('heading',{name:fixture.title})).toBeVisible();
+    const scope=page.getByRole('link',{name:'Free to read',exact:true});
+    await expect(scope).toHaveAttribute('href',/scope=free&search=/);
+    await Promise.all([searchRequest(),scope.click()]);
+    await expect(page.getByRole('searchbox')).toHaveValue(query);
+    await page.goBack();
+    await expect(page.getByRole('searchbox')).toHaveValue(query);
+    const browserState=await page.evaluate(()=>JSON.stringify({url:location.href,state:history.state,local:{...localStorage},session:{...sessionStorage}}));
+    expect(decodeURIComponent(browserState)).not.toContain(query);
+    await page.reload();
+    await expect(page.getByRole('searchbox')).toHaveValue('');
   });
   test('outage never renders a no-copy claim',async({page})=>{
     await mock(page,{failure:true});await page.goto('/app/search?scope=papers&q=failed-fixture');
@@ -78,10 +102,10 @@ test.describe('free-content discovery',()=>{
     await page.route('**/api/v2/content/resolve',route=>route.fulfill({json:{item:story}}));
     await page.goto('/app/read/'+encodeURIComponent(story.key));
     await expect(page.getByRole('link',{name:'Read at StoryWeaver · free account required (opens StoryWeaver)'})).toHaveAttribute('href',story.readingActions[0].url);
-    await page.getByRole('button',{name:'Save to shelf'}).click();
+    await page.getByRole('button',{name:'Save to my reading shelf'}).click();
     // The save is written under a browser lock; leave the page only once it shows.
     await expect(page.getByRole('button',{name:'Saved',exact:true})).toBeVisible();
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await page.getByRole('link',{name:new RegExp(story.title)}).click();
     await expect(page.getByText(/Sign in there to read this book/)).toBeVisible();
     await expect(page.getByRole('button',{name:'Saved',exact:true})).toBeVisible();

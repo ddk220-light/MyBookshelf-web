@@ -6,7 +6,7 @@ const COVER = '.stage-shelf [data-shelf-key]';
  * Keeps keyboard focus on the shelf when the cover that has it is drawn
  * again elsewhere or leaves (shelf suggestions refresh and move): focus goes
  * to the same book's cover (a suggestion just saved, or one moved to another
- * bay), else to the "My shelf" heading, else to the shelf's first cover;
+ * bay), else to the "My reading shelf" heading, else to the shelf's first cover;
  * never to the page body. `layout` stands for what is drawn: when it changes,
  * a cover that had focus and is gone is replaced.
  */

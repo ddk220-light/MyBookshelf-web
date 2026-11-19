@@ -70,7 +70,7 @@ const titleAuthor = (book: { title?: string; authors?: readonly string[] }) => {
  * Kalam"). Never two books whose first author is the same, nor the same book
  * twice. Callers put the bundled seed list last, so five books stand even
  * when every other source is empty or offline. None of this changes what
- * counts as "on my shelf" anywhere else (findSavedBook), and editions are
+ * counts as "on my reading shelf" anywhere else (findSavedBook), and editions are
  * never merged for identity or library answers.
  */
 export function pickSuggestions(sources: ReadonlyArray<readonly SuggestedBook[]>, savedBooks: readonly SavedForPick[], count = SUGGESTION_COUNT): SuggestedBook[] {

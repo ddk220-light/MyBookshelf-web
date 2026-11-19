@@ -14,6 +14,8 @@ test('public pages work without JavaScript and publish exactly the manifest libr
   const response=await page.goto(baseURL+'/libraries');
   expect(response.status()).toBe(200);
   await expect(page.locator('h1')).toHaveText('Explore the libraries');
+  // The hub's button opens the app's library picker directly.
+  await expect(page.getByRole('main').getByRole('link', { name: 'Find my library', exact: true })).toHaveAttribute('href', '/app/libraries');
   expect(await page.locator('.library-grid > li').count()).toBe(publishedGuides);
   await page.getByRole('link',{name:'Anna Centenary Library',exact:true}).click();
   await expect(page.locator('h1')).toHaveText('Anna Centenary Library');
@@ -22,37 +24,50 @@ test('public pages work without JavaScript and publish exactly the manifest libr
   expect(missing.status()).toBe(404);
   await context.close();
 });
-test('homepage and library metadata are crawlable; app and unknown paths have correct handling', async ({page,request}) => {
+test('the root page is the reading shelf, indexable and crawlable; app and unknown paths have correct handling', async ({page,request}) => {
   const violations=[];
   await page.addInitScript(()=>document.addEventListener('securitypolicyviolation',e=>console.error('CSP: '+e.violatedDirective)));
   page.on('console',msg=>{if(msg.type()==='error' && msg.text().includes('CSP:'))violations.push(msg.text());});
   await page.goto('/');
-  await expect(page.locator('h1')).toContainText('Find out if your library');
+  await expect(page.getByRole('searchbox',{name:'Search for a book'})).toBeVisible();
+  await expect(page.locator('meta[name=robots]')).toHaveAttribute('content','index, follow');
   expect(await page.locator('link[rel=canonical]').getAttribute('href')).toBe('https://mybookshelf.cloud/');
+  await expect(page.locator('meta[name=description]')).toHaveAttribute('content',/reading shelf/);
+  await expect(page).toHaveTitle('MyBookshelf — Find out if your library has a book');
   const data=JSON.parse(await page.locator('script[type="application/ld+json"]').textContent());
-  expect(data.some(item=>item['@type']==='WebSite')).toBe(true);
+  expect(data.some(item=>item['@type']==='WebSite' && item.url==='https://mybookshelf.cloud/')).toBe(true);
   expect(violations).toEqual([]);
+  const root=await request.get('/');
+  expect(root.headers()['x-robots-tag']).toBeUndefined();
+  expect(await root.text()).toMatch(/<noscript>[^]*href="\/about"[^]*<\/noscript>/);
   expect((await request.get('/not-a-page')).status()).toBe(404);
-  expect((await request.get('/sitemap.xml')).headers()['content-type']).toContain('xml');
-  await page.goto('/app/shelf');
+  const sitemap=await request.get('/sitemap.xml');
+  expect(sitemap.headers()['content-type']).toContain('xml');
+  expect(await sitemap.text()).toContain('<loc>https://mybookshelf.cloud/</loc>');
+  expect(await sitemap.text()).not.toContain('/app/');
+  await page.goto('/app/report');
   await expect(page.locator('meta[name=robots]')).toHaveAttribute('content','noindex, follow');
   await expect(page.locator('h1')).toBeVisible();
 });
-test('only returning homepage visitors are redirected; corrupt storage leaves the landing page readable', async ({page}) => {
-  await page.goto('/');
-  await page.evaluate(()=>localStorage.setItem('mybookshelf.anonymous-web.v1',JSON.stringify({version:1,selectedLibraryId:'bc:aclibrary',savedBooks:[],recentBooks:[]})));
-  await page.goto('/');
-  await expect(page).toHaveURL(/\/app\/shelf$/);
-  await page.goto('/about');
-  await expect(page.locator('h1')).toHaveText('About MyBookshelf');
-  await page.evaluate(()=>localStorage.setItem('mybookshelf.anonymous-web.v1','not-json'));
-  await page.goto('/');
-  await expect(page.locator('h1')).toContainText('Find out if your library');
+test('the About page holds the old landing page: the reading shelf, how it works, trust, libraries, who makes it', async ({browser,baseURL}) => {
+  const context=await browser.newContext({javaScriptEnabled:false});
+  const page=await context.newPage();
+  await page.goto(baseURL+'/about');
+  await expect(page.locator('h1')).toHaveText('Find out if your library has a book, before you go.');
+  await expect(page.getByRole('main').getByRole('link',{name:'Open my reading shelf'})).toHaveAttribute('href','/');
+  await expect(page.getByRole('banner').getByRole('link',{name:'Open my reading shelf'})).toHaveAttribute('href','/');
+  await expect(page.getByLabel('An example reading shelf')).toContainText('In your library');
+  for (const name of ['How it works','Built to be trusted','Explore featured libraries','What you can do','Who makes it','Corrections and questions'])
+    await expect(page.getByRole('heading',{level:2,name})).toBeVisible();
+  await expect(page.getByRole('link',{name:'privacy@mybookshelf.cloud'})).toHaveAttribute('href','mailto:privacy@mybookshelf.cloud');
+  await expect(page.getByRole('link',{name:'LinkedIn'})).toBeVisible();
+  expect(await page.content()).not.toMatch(/gmail|myBookshelf/);
+  await context.close();
 });
 
 test('public headings and navigation fit at 320px with enlarged text', async ({page}) => {
   await page.setViewportSize({width:320,height:740});
-  for (const path of ['/', '/libraries', '/libraries/central-library-iit-bhubaneswar', '/about']) {
+  for (const path of ['/about', '/libraries', '/libraries/central-library-iit-bhubaneswar', '/support', '/privacy']) {
     await page.goto(path);
     await page.evaluate(() => { document.documentElement.style.fontSize = '200%'; });
     await page.evaluate(() => document.fonts.ready);

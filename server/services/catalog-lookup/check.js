@@ -16,6 +16,12 @@ const coded = (message, code) => Object.assign(new Error(message), { code });
 // whole check, including single provider calls, then runs inside one catalog
 // operation with that request cap, deadline, pacing and robots policy, and
 // the deadline or the caller's signal cancels any request still in flight.
+//
+// A work search reports its best proven match as it goes (`budget.progress`,
+// libraryBookSearch.js). When the deadline arrives before the search has
+// returned, that match is the answer instead of "couldn't check" (plan A2,
+// step 1). `budget.conclude`, an AbortSignal, asks the check to end now with
+// such a match; without one it is ignored and the check carries on.
 export async function runBookCheck({ entry, library, provider, book, bookKey, parsed, ownRecord, lookupKind,
   editionScope = 'work', language, books, attemptedAt, budget = null }) {
   // Book profiles are Open Library reads. They are resolved before the catalog
@@ -27,12 +33,18 @@ export async function runBookCheck({ entry, library, provider, book, bookKey, pa
     catch (error) { return { error, lookupKind }; }
   }
   const hasProfiles = typeof books?.searchProfile === 'function';
-  const run = () => checkWithProfile({ entry, library, provider, book, parsed, ownRecord, lookupKind, editionScope, attemptedAt, profile, workSearch, hasProfiles, budget });
+  const progress = budget ? (budget.progress || {}) : null;
+  const run = () => checkWithProfile({ entry, library, provider, book, parsed, ownRecord, lookupKind, editionScope, attemptedAt, profile, workSearch, hasProfiles, budget, progress });
   if (!budget) return run();
-  return withBudget(budget, run, lookupKind);
+  // The best proven match so far, as a finished check result, or null.
+  const proven = () => {
+    if (!workSearch || !progress?.best) return null;
+    try { return { response: workResponse(progress.best, { library, entry, attemptedAt }), profile }; } catch { return null; }
+  };
+  return withBudget(budget, run, lookupKind, proven);
 }
 
-async function withBudget(budget, run, lookupKind) {
+async function withBudget(budget, run, lookupKind, proven = () => null) {
   const controller = new AbortController();
   const forward = () => controller.abort();
   if (budget.signal?.aborted) return { error: coded('Catalog check was cancelled', 'CATALOG_ABORTED'), lookupKind };
@@ -40,11 +52,25 @@ async function withBudget(budget, run, lookupKind) {
   let timer, current = null;
   // A deadline or cancellation still reports the requests already sent.
   const sent = () => current?.requests || 0;
+  // At the deadline a proven match already found is kept, never discarded.
   const deadline = new Promise(resolve => {
     timer = setTimeout(() => {
+      const best = proven();
       controller.abort();
-      resolve({ error: coded('Catalog check deadline exceeded', 'CATALOG_TIMEOUT'), lookupKind, requests: sent() });
+      resolve(best ? { ...best, requests: sent() } : { error: coded('Catalog check deadline exceeded', 'CATALOG_TIMEOUT'), lookupKind, requests: sent() });
     }, Math.max(0, budget.deadlineAt - Date.now()));
+  });
+  let onConclude = null;
+  const concluded = new Promise(resolve => {
+    if (!budget.conclude) return;
+    onConclude = () => {
+      const best = proven();
+      if (!best) return;
+      controller.abort();
+      resolve({ ...best, requests: sent() });
+    };
+    if (budget.conclude.aborted) onConclude();
+    else budget.conclude.addEventListener?.('abort', onConclude, { once: true });
   });
   const cancelled = new Promise(resolve => {
     controller.signal.addEventListener('abort', () => {
@@ -56,35 +82,45 @@ async function withBudget(budget, run, lookupKind) {
       robots: budget.robots || null, minIntervalMs: budget.minIntervalMs || 0, gate: budget.gate || null, noRetries: Boolean(budget.noRetries) }, async operation => {
       current = operation;
       const result = await run();
-      return { ...result, requests: operation.requests };
+      // The inner search can reach its own deadline before the outer timer
+      // fires. Keep the same proven match whichever deadline wins.
+      const best = result.error?.code === 'CATALOG_TIMEOUT' ? proven() : null;
+      return { ...(best ?? result), requests: operation.requests };
     });
     work.catch(() => {});
-    return await Promise.race([work, deadline, cancelled]);
+    return await Promise.race([work, deadline, cancelled, concluded]);
   } finally {
     clearTimeout(timer);
     budget.signal?.removeEventListener?.('abort', forward);
+    if (onConclude) budget.conclude?.removeEventListener?.('abort', onConclude);
   }
 }
 
-async function checkWithProfile({ entry, library, provider, book, parsed, ownRecord, lookupKind, editionScope, attemptedAt, profile, workSearch, hasProfiles, budget }) {
+// A work search's observation as the public response (before handoff and
+// attribution). Throws when the observation is not one the app can read.
+function workResponse(observation, { library, entry, attemptedAt }) {
+  const response = observation.outcome === 'no_match'
+    ? { outcome: 'no_match', lookupKind: 'verified_work', matchKind: 'none', freshness: 'fresh', attemptedAt }
+    : normalizeProviderObservation(observation, { lookupKind: 'verified_work', attemptedAt, library, entry });
+  if (!response) throw coded('Unrecognized catalog observation', 'CATALOG_UNRECOGNIZED');
+  response.searchSummary = observation.searchSummary;
+  if (observation.matchedBook) response.matchedBook = {
+    title: String(observation.matchedBook.title || '').slice(0, 500),
+    ...(observation.matchedBook.isbn13 ? { isbn13: observation.matchedBook.isbn13 } : {}),
+  };
+  return response;
+}
+
+async function checkWithProfile({ entry, library, provider, book, parsed, ownRecord, lookupKind, editionScope, attemptedAt, profile, workSearch, hasProfiles, budget, progress }) {
   try {
     if (workSearch) {
       const observation = await searchLibraryBook(provider, profile, budget
-        ? { timeoutMs: Math.max(1, budget.deadlineAt - Date.now()), maxRequests: budget.maxRequests }
+        ? { timeoutMs: Math.max(1, budget.deadlineAt - Date.now()), maxRequests: budget.maxRequests, ...(progress ? { progress } : {}) }
         : { timeoutMs: checkBudgetMs(entry) });
       if (observation.outcome === 'unknown' && !observation.matchKind) {
         return { error: coded('Catalog search incomplete', observation.errorCode), lookupKind: 'verified_work', searchSummary: observation.searchSummary, profile };
       }
-      const response = observation.outcome === 'no_match'
-        ? { outcome: 'no_match', lookupKind: 'verified_work', matchKind: 'none', freshness: 'fresh', attemptedAt }
-        : normalizeProviderObservation(observation, { lookupKind: 'verified_work', attemptedAt, library, entry });
-      if (!response) throw coded('Unrecognized catalog observation', 'CATALOG_UNRECOGNIZED');
-      response.searchSummary = observation.searchSummary;
-      if (observation.matchedBook) response.matchedBook = {
-        title: String(observation.matchedBook.title || '').slice(0, 500),
-        ...(observation.matchedBook.isbn13 ? { isbn13: observation.matchedBook.isbn13 } : {}),
-      };
-      return { response, profile };
+      return { response: workResponse(observation, { library, entry, attemptedAt }), profile };
     }
     if (parsed?.kind === 'catalog' && !ownRecord && !book.isbn13 && !hasProfiles) throw coded('A catalog record cannot identify another library’s edition', 'CATALOG_UNSUPPORTED');
     const observation = ownRecord && provider.checkRecordAvailability

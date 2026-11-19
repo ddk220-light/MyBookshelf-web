@@ -278,3 +278,50 @@ test('title-first: candidate rows left unread by the record limit, request cap o
   const done = await searchLibraryBook({ findBookCandidates: async () => rows.slice(0, 2), resolveCatalogRecord: async id => otherLanguage(id), isbnLookup: false, checkAvailability: async () => miss }, kalam);
   assert.equal(done.outcome, 'no_match');
 });
+
+// ---- Plan A2, step 1: keep what was proven ----------------------------------
+test('the first proven match ends the search, even while the paired title search is still waiting', async () => {
+  const { catalogOperation } = await import('./providers/http.js');
+  let titleCancelled = false, isbnCalls = 0;
+  const started = Date.now();
+  const result = await searchLibraryBook({
+    // The reader's own ISBN proves the edition at once (no copy marked available).
+    checkAvailability: async () => { isbnCalls++; return { ...found, outcome: 'none_available' }; },
+    // The title search would answer only after the deadline.
+    searchCatalog: () => new Promise((resolve, reject) => {
+      const signal = catalogOperation().signal;
+      const timer = setTimeout(() => resolve([]), 5_000);
+      signal.addEventListener('abort', () => { titleCancelled = true; clearTimeout(timer); reject(Object.assign(new Error('cancelled'), { code: 'CATALOG_ABORTED' })); }, { once: true });
+    }),
+  }, profile, { timeoutMs: 4_000 });
+  assert.equal(result.outcome, 'none_available');
+  assert.equal(result.matchKind, 'exact_isbn');
+  assert.ok(Date.now() - started < 1_000, 'answered without waiting for the title search');
+  assert.equal(titleCancelled, true, 'the waiting request is cancelled');
+  assert.equal(isbnCalls, 1, 'no further ISBN is asked after a proven match');
+});
+
+test('a title/author-only match does not end the search early', async () => {
+  const calls = [];
+  const record = { recordId: '42', title: 'Wings of Fire: an autobiography', authors: ['Kalam, A P J Abdul'], observation: found };
+  const result = await searchLibraryBook({ checkAvailability: async isbn => { calls.push(isbn); return isbn === '9788173715181' ? found : miss; },
+    searchCatalog: async query => (query === book.title ? [record] : []) }, profile);
+  // The possible match came first; the later proven ISBN still wins.
+  assert.equal(result.matchKind, 'verified_work');
+  assert.ok(calls.includes('9788173715181'));
+});
+
+test('the best proven match is shared through progress, and nothing more is asked after it', async () => {
+  const progress = {};
+  let isbnAsked = false;
+  const result = await searchLibraryBook({
+    findBookCandidates: async () => [{ recordId: '1', title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'], isbn13: book.isbn13 }],
+    resolveCatalogRecord: async id => ({ recordId: id, title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'], isbn13: book.isbn13,
+      catalogUrl: 'https://catalog.example/record/1', observation: { outcome: 'in_catalog', recognizedExact: true } }),
+    checkAvailability: async () => { isbnAsked = true; return miss; },
+  }, profile, { progress });
+  assert.equal(result.outcome, 'in_catalog');
+  assert.equal(progress.best.matchKind, 'exact_isbn');
+  assert.equal(progress.best.catalogUrl, 'https://catalog.example/record/1');
+  assert.equal(isbnAsked, false, 'no ISBN request after the proven record');
+});

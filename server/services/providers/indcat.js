@@ -105,9 +105,9 @@ export function parseIndcatRecord(html, library, recordId, expectedIsbn = null, 
   const format = leader?.[7] === 's' ? 'Serial' : leader?.[7] === 'm' ? 'Book' : undefined;
   return { recordId, title: fields.title.replace(/\s*\/\s*(?:by|edited by)\s+.+$/i, ''), authors: fields.author ? [fields.author] : [], isbn,
     ...(format ? { format } : {}),
-    catalogUrl: recordUrl(code, recordId),
+    catalogUrl: recordUrl(code, recordId), catalogLinkKind: 'record',
     observation: { outcome: 'in_catalog', matchKind: expectedIsbn ? 'exact_isbn' : 'verified_work', recognizedExact: true,
-      catalogUrl: recordUrl(code, recordId), locations: [{ name: library.name, status: 'unknown' }] } };
+      catalogUrl: recordUrl(code, recordId), catalogLinkKind: 'record', locations: [{ name: library.name, status: 'unknown' }] } };
 }
 
 async function read(url, options = {}) {

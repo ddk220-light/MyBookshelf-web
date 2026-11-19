@@ -5,6 +5,29 @@ This repository contains the current web code, tests, runtime inputs, CI,
 deployment configuration and the recent work analysis. Native app source,
 retired authentication and unrelated research archives are outside its scope.
 
+## Production-ready checks (2026-11-18, start here for current work)
+
+- [Backlog and analysis path](plans/2026-11-18-production-ready-backlog.md):
+  the goal (analysis first, then a design plan, then the fixes), what was found
+  in production on 18 November, the backlog in working order, open questions
+  for the owner, and how to start the end-to-end run on the owner's Mac with
+  both phones. Nothing in the app changes until the plan is agreed.
+- [Root causes, design and implementation plan](plans/2026-11-production-ready-design.md):
+  why each problem happens, three releases (make the core work; account and
+  settings; pages and policy), the wording for every library answer, and the
+  decisions left for the owner. For the agent that makes the changes.
+- [Implementation progress](plans/2026-11-production-ready-progress.md#local-integration):
+  the local integration branch, the four source branches, verification, and
+  the release steps. [Worker brief](plans/2026-11-production-ready-worker-brief.md).
+- [Screens](design/2026-11-production-ready/README.md): 20 mock-ups (library
+  answer in words, choosing a library, settings and account, desktop).
+- [The end-to-end run](research/2026-11-production-ready/README.md) and its
+  [root-cause notes](research/2026-11-production-ready/root-causes/).
+- [End-to-end run as a guest reader](research/2026-11-production-ready/README.md)
+  (18 November): Pixel, iPhone and desktop walked at once; the library answers
+  and times seen, findings ranked by severity and tied to backlog items, and
+  the three device reports with their timings. Account flows are still to do.
+
 ## One-shelf redesign (2026-11-12, the current app)
 
 - [Implementation plan](plans/2026-11-12-one-shelf-redesign-implementation-plan.md):

@@ -8,6 +8,16 @@ import { createContext, createElement, useContext, useEffect, useState, useSyncE
 export type HoldingsAnswer = 'found' | 'not_found' | 'unconfirmed' | 'unknown' | 'checking';
 const ANSWERS: ReadonlySet<string> = new Set(['found', 'not_found', 'unconfirmed', 'unknown', 'checking']);
 
+export function holdingsLabel(answer: HoldingsAnswer | undefined): string | undefined {
+  switch (answer) {
+    case 'found': return 'In your library';
+    case 'not_found': return 'Not in your library';
+    case 'unknown':
+    case 'unconfirmed': return 'Couldn’t check';
+    default: return undefined;
+  }
+}
+
 export function holdingsKey(libraryId: string, bookKey: string): string {
   return libraryId + '|' + bookKey;
 }
@@ -18,8 +28,9 @@ export type HoldingsStore = {
   /** Switches library; answers for any other library are dropped. */
   setLibrary: (libraryId: string | null) => void;
   get: (bookKey: string) => HoldingsAnswer | undefined;
+  recordUrl: (bookKey: string) => string | undefined;
   /** Records answers for the given library; ignored if that library is no longer chosen. */
-  set: (libraryId: string, answers: Record<string, HoldingsAnswer>) => void;
+  set: (libraryId: string, answers: Record<string, HoldingsAnswer>, recordUrls?: Record<string, string>) => void;
   clear: () => void;
   subscribe: (listener: () => void) => () => void;
   version: () => number;
@@ -27,7 +38,8 @@ export type HoldingsStore = {
 
 export function createHoldingsStore(initialLibraryId: string | null = null): HoldingsStore {
   let library = initialLibraryId;
-  let answers = new Map<string, HoldingsAnswer>();
+  const answers = new Map<string, HoldingsAnswer>();
+  const links = new Map<string, string>();
   let revision = 0;
   const listeners = new Set<() => void>();
   const changed = () => { revision += 1; for (const listener of [...listeners]) listener(); };
@@ -36,25 +48,33 @@ export function createHoldingsStore(initialLibraryId: string | null = null): Hol
     setLibrary(next) {
       if (next === library) return;
       library = next;
-      if (answers.size) answers = new Map();
+      answers.clear();
+      links.clear();
       changed();
     },
     get: (bookKey) => (library ? answers.get(holdingsKey(library, bookKey)) : undefined),
-    set(libraryId, next) {
+    recordUrl: (bookKey) => (library ? links.get(holdingsKey(library, bookKey)) : undefined),
+    set(libraryId, next, urls) {
       if (!library || libraryId !== library) return;
       let updated = false;
       for (const [bookKey, answer] of Object.entries(next)) {
         if (!ANSWERS.has(answer)) continue;
         const key = holdingsKey(libraryId, bookKey);
-        if (answers.get(key) === answer) continue;
-        answers.set(key, answer);
-        updated = true;
+        const previous = answers.get(key);
+        // A check that could not answer (unknown, unconfirmed) or has not
+        // answered yet never replaces a proven answer.
+        if ((answer === 'unknown' || answer === 'unconfirmed' || answer === 'checking') && (previous === 'found' || previous === 'not_found')) continue;
+        if (previous !== answer) { answers.set(key, answer); updated = true; }
+        const url = answer === 'found' ? urls?.[bookKey] : undefined;
+        if (url && links.get(key) !== url) { links.set(key, url); updated = true; }
+        else if (answer !== 'found' && links.delete(key)) updated = true;
       }
       if (updated) changed();
     },
     clear() {
       if (!answers.size) return;
-      answers = new Map();
+      answers.clear();
+      links.clear();
       changed();
     },
     subscribe(listener) {

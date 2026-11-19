@@ -25,7 +25,7 @@ function stubApi({ session = { status: 200, body: { status: 'guest' } as unknown
   return searches;
 }
 function Location() { const location = useLocation(); return <output data-testid="location">{location.pathname}</output>; }
-const renderHome = () => render(<MemoryRouter initialEntries={['/app/shelf']}><AnonymousWebApp /><Location /></MemoryRouter>);
+const renderHome = () => render(<MemoryRouter initialEntries={['/']}><AnonymousWebApp /><Location /></MemoryRouter>);
 const typeIsbn = (value: string) => {
   const field = screen.getByRole('textbox', { name: 'ISBN' });
   fireEvent.change(field, { target: { value } });
@@ -64,7 +64,7 @@ describe('scan pop-up on the home screen', () => {
     fireEvent.keyDown(dialog, { key: 'Escape' });
     await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Type the ISBN' })).not.toBeInTheDocument());
     expect(screen.getByRole('button', { name: 'Scan a barcode' })).toHaveFocus();
-    expect(screen.getByTestId('location')).toHaveTextContent(/^\/app\/shelf$/);
+    expect(screen.getByTestId('location')).toHaveTextContent(/^\/$/);
   });
 
   it('an ISBN with no known book: "Couldn’t match that barcode", then Search by title focuses the search bar', async () => {
@@ -77,7 +77,7 @@ describe('scan pop-up on the home screen', () => {
     fireEvent.click(within(noMatch).getByRole('button', { name: 'Search by title' }));
     await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
     expect(screen.getByRole('searchbox', { name: 'Search for a book' })).toHaveFocus();
-    expect(screen.getByTestId('location')).toHaveTextContent(/^\/app\/shelf$/);
+    expect(screen.getByTestId('location')).toHaveTextContent(/^\/$/);
   });
 
   it('"No books found" offers the same pop-up', async () => {
@@ -86,7 +86,7 @@ describe('scan pop-up on the home screen', () => {
     const input = await screen.findByRole('searchbox', { name: 'Search for a book' });
     fireEvent.change(input, { target: { value: 'zzzz qqqq' } });
     fireEvent.submit(input.closest('form')!);
-    fireEvent.click(await screen.findByRole('button', { name: 'Scan the barcode' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Scan the book’s barcode' }));
     expect(await screen.findByRole('dialog', { name: 'Type the ISBN' })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Close' }));
     await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Type the ISBN' })).not.toBeInTheDocument());
@@ -102,14 +102,14 @@ describe('accounts switched off', () => {
     stubApi({ session: DISABLED });
     localStorage.setItem(ANONYMOUS_WEB_STORAGE_KEY, JSON.stringify({ version: 2, selectedLibraryId: null, recentBooks: [], savedBooks: [{ ...BOOK, source: 'direct', viewedAt: '2026-01-01T00:00:00.000Z' }], savedContent: [] }));
     renderHome();
-    expect(await screen.findByRole('heading', { name: 'My shelf' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'My reading shelf' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'The Innovator by Walter Isaacson' })).toBeInTheDocument();
     expect(screen.queryByText(/Accounts aren’t enabled/)).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Check account availability' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Continue as guest' })).not.toBeInTheDocument();
-    expect(screen.queryByRole('heading', { name: 'Take your shelf with you' })).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Account and settings' }));
-    const panel = await screen.findByRole('dialog', { name: 'Account and settings' });
+    expect(screen.queryByRole('heading', { name: 'Take your reading shelf with you' })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Settings' }));
+    const panel = await screen.findByRole('dialog', { name: 'Settings' });
     expect(within(panel).queryByRole('link', { name: 'Create account' })).not.toBeInTheDocument();
     expect(within(panel).queryByRole('link', { name: 'Log in' })).not.toBeInTheDocument();
     expect(within(panel).queryByRole('heading', { name: 'Account' })).not.toBeInTheDocument();

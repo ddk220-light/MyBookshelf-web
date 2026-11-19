@@ -27,10 +27,11 @@ describe('shelf entries and their names', () => {
     // The holdings store's own "found" counts for any book, as for saved books.
     holdings.set('koha:anna', { [WINGS.bookKey]: 'found' });
     expect(shelfBadge(plain, holdings)).toBe(true);
-    // A newer definite answer here wins over the stored one; "couldn't check" never takes the badge away.
-    for (const [answer, badge] of [['not_found', false], ['unconfirmed', false], ['unknown', true], ['checking', true]] as const) {
-      holdings.set('koha:anna', { [WINGS.bookKey]: answer });
-      expect(shelfBadge(found, holdings), answer).toBe(badge);
+    // A newer definite answer here wins over the stored one; "couldn't check" (unknown or unconfirmed) never takes the badge away.
+    for (const [answer, badge] of [['not_found', false], ['unconfirmed', true], ['unknown', true], ['checking', true]] as const) {
+      const fresh = createHoldingsStore('koha:anna');
+      fresh.set('koha:anna', { [WINGS.bookKey]: answer });
+      expect(shelfBadge(found, fresh), answer).toBe(badge);
     }
     // No library chosen: no badge.
     const none = createHoldingsStore(null);

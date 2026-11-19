@@ -55,16 +55,35 @@ export function restoreShelfPlace(scroller: HTMLElement | null, place: ShelfPlac
  */
 export class ShelfPlaceKeeper extends Component<{ mode: LayoutMode; root: RefObject<HTMLElement | null> }> {
   private frame = 0;
+  private restored: { scroller: HTMLElement; scrollTop: number; place: ShelfPlace } | null = null;
 
   getSnapshotBeforeUpdate(previous: Readonly<{ mode: LayoutMode }>): ShelfPlace | null {
     if (previous.mode === this.props.mode) return null;
-    return readShelfPlace(shelfScroller(this.props.root.current, previous.mode));
+    const scroller = shelfScroller(this.props.root.current, previous.mode);
+    // On a wider bay the anchor might no longer be the first book in its
+    // row. A second resize keeps the same anchor until the reader scrolls.
+    const last = this.restored;
+    if (scroller && last?.scroller === scroller && Math.abs(scroller.scrollTop - last.scrollTop) <= 8) {
+      const book = scroller.querySelector<HTMLElement>(last.place.selector);
+      if (book) return { selector: last.place.selector, offset: book.getBoundingClientRect().top - visibleTop(scroller) };
+    }
+    return readShelfPlace(scroller);
   }
 
   componentDidUpdate(_previous: unknown, _state: unknown, place: ShelfPlace | null): void {
     if (!place) return;
     cancelAnimationFrame(this.frame);
-    this.frame = requestAnimationFrame(() => restoreShelfPlace(shelfScroller(this.props.root.current, this.props.mode), place));
+    this.frame = requestAnimationFrame(() => {
+      const scroller = shelfScroller(this.props.root.current, this.props.mode);
+      restoreShelfPlace(scroller, place);
+      this.restored = scroller ? { scroller, scrollTop: scroller.scrollTop, place } : null;
+      // A focused search field can scroll again as WebKit lays out the
+      // new sticky header. Restore after that layout as well.
+      if (scroller) this.frame = requestAnimationFrame(() => {
+        restoreShelfPlace(scroller, place);
+        this.restored = { scroller, scrollTop: scroller.scrollTop, place };
+      });
+    });
   }
 
   componentWillUnmount(): void {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { contentApi } from '../../contentApi';
+import { contentSearchAddress, readContentSearch } from '../../contentSearchAddress';
 import type { ContentItem } from '../../contentTypes';
 import { useLibrary } from '../../context';
 import { ContentCover, kindLabel } from './ContentResult';
@@ -25,7 +26,11 @@ export function ContentDetail({ contentKey, returnTo = '/app/search?scope=free' 
       .catch(()=>{if(!controller.signal.aborted)setError('We couldn’t check this item. That does not mean there is no free copy.');});
     return()=>controller.abort();
   },[contentKey,retry]);
-  const back=returnTo.startsWith('/app/search')||returnTo.startsWith('/app/books/')||returnTo==='/app/shelf'?returnTo:'/app/search?scope=free';
+  let back = returnTo.startsWith('/app/books/') || returnTo === '/' ? returnTo : '/app/search?scope=free';
+  if (returnTo.startsWith('/app/search')) {
+    const params = new URLSearchParams(returnTo.split('?')[1]);
+    back = contentSearchAddress(params, readContentSearch(params));
+  }
   if(error)return <section className="content-detail"><Link className="back-link" to={back}>← Back</Link><h1>Couldn’t check this item</h1><p role="alert">{error}</p><button onClick={()=>setRetry(v=>v+1)}>Try again</button></section>;
   if(!item)return <section className="content-detail"><p role="status">Checking reading links…</p></section>;
   const saved=state.savedContent.some(value=>value.contentKey===item.key);
@@ -43,14 +48,14 @@ export function ContentDetail({ contentKey, returnTo = '/app/search?scope=free' 
     if(!item||!saveContent||!unsaveContent||saving)return;
     setSaving(true);
     try{
-      if(saved){setNotice(await unsaveContent(item.key)?'Removed from your shelf.':'Your shelf could not be changed. Try again.');return;}
+      if(saved){setNotice(await unsaveContent(item.key)?'Removed from your reading shelf.':'Your reading shelf could not be changed. Try again.');return;}
       const result=await saveContent(item);
-      setNotice(result==='full'?'Your shelf holds 100 items. Remove one to save this.':result==='recovery'?'Your shelf needs attention before this can be saved.':result==='failed'?'This item could not be saved. Try again.':'Saved to your shelf in this browser.');
+      setNotice(result==='full'?'Your reading shelf holds 100 items. Remove one to save this.':result==='recovery'?'Your reading shelf needs attention before this can be saved.':result==='failed'?'This item could not be saved. Try again.':'Saved to your reading shelf in this browser.');
     }finally{setSaving(false);}
   }
   return <section className="content-detail">
-    <div className="content-toolbar"><Link className="back-link" to={back}>← {back==='/app/shelf'?'Shelf':back.includes('/app/books/')?'Book':back.includes('scope=papers')?'Papers':'Search'}</Link>
-      <button className={'content-save'+(saved?' is-saved':'')} aria-label={saved?'Saved':'Save to shelf'} title={saved?'Remove from shelf':'Save to shelf'} aria-pressed={saved} aria-busy={saving} disabled={recoveryMode||saving||!saveContent} onClick={()=>void save()}><BookmarkIcon/></button></div>
+    <div className="content-toolbar"><Link className="back-link" to={back}>← {back==='/'?'My reading shelf':back.includes('/app/books/')?'Book':back.includes('scope=papers')?'Papers':'Search'}</Link>
+      <button className={'content-save'+(saved?' is-saved':'')} aria-label={saved?'Saved':'Save to my reading shelf'} title={saved?'Remove from my reading shelf':'Save to my reading shelf'} aria-pressed={saved} aria-busy={saving} disabled={recoveryMode||saving||!saveContent} onClick={()=>void save()}><BookmarkIcon/></button></div>
     <div className="content-detail-heading">{['book','learning_resource'].includes(item.kind)&&<ContentCover title={item.title} kind={item.kind}/>}<div>
       {!['book','learning_resource'].includes(item.kind)&&<p className={'content-kind'+(item.kind==='preprint'?' content-preprint':'')}>{kindLabel(item.kind)}{item.version?' · '+item.version:''}</p>}
       <h1 lang={item.languages[0]!=='und'?item.languages[0]:undefined}>{item.title}</h1>
@@ -85,7 +90,7 @@ export function ContentDetail({ contentKey, returnTo = '/app/search?scope=free' 
       const label=relationNames[relation.kind]||relation.kind.replace(/_/g,' ');
       return <div key={relation.targetKey||relation.targetUrl||relation.kind}>{relation.targetKey?<Link to={'/app/read/'+encodeURIComponent(relation.targetKey)} state={{returnTo:back}}>{label} · separate item →</Link>:relation.targetUrl&&safeSource(relation.targetUrl)?<a href={safeSource(relation.targetUrl)} target="_blank" rel="noopener noreferrer" aria-label={`${label} (opens ${new URL(relation.targetUrl).hostname})`}>{label} at {new URL(relation.targetUrl).hostname} <ExternalLinkIcon/></a>:label}<p className="content-record">This is a separate item. Its text, access and licence may differ.</p></div>;
     })}</section>}
-    {['book','learning_resource'].includes(item.kind)&&<p className="content-library-link"><Link to={'/app/search?q='+encodeURIComponent(item.title+' '+item.contributors.filter(c=>c.role==='author').slice(0,1).map(c=>c.name).join(' '))}>
+    {['book','learning_resource'].includes(item.kind)&&<p className="content-library-link"><Link to={contentSearchAddress({}, item.title+' '+item.contributors.filter(c=>c.role==='author').slice(0,1).map(c=>c.name).join(' '))}>
       <LibraryIcon/>Prefer print? {library?`Search ${library.name}`:'Search library books'}</Link><small>A title search may find a different edition.</small></p>}
     {source&&<footer className="content-provenance">Found via {name} · checked {checkedWhen(source.retrievedAt)}
       {safeSource(source.recordUrl)&&<> · <a href={safeSource(source.recordUrl)} target="_blank" rel="noopener noreferrer" aria-label={`Source record (opens ${new URL(source.recordUrl).hostname})`}>Source record <ExternalLinkIcon/></a></>}</footer>}

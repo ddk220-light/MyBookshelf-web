@@ -12,7 +12,7 @@ import { createUsageLog, dailyUsage } from './usageLog.js';
 import { createSubmissions } from './requests.js';
 import { createPgHostGate } from './hostGate.js';
 import { createCatalogPolicy } from './policy.js';
-import { runCatalogMaintenance } from './maintenance.js';
+import { rollUpUsage, runCatalogMaintenance } from './maintenance.js';
 import { createCatalogMaintenanceMiddleware } from './cron.js';
 import { createCatalogLookup, createLookupRecorder } from '../services/catalog-lookup/index.js';
 import { withTestSetupLock } from '../accounts/test-database.js';
@@ -25,14 +25,14 @@ const roleURL = role => { const url = new URL(connectionString); url.username = 
 const DAY = 24 * 60 * 60 * 1000;
 // Shared with admin/role.integration.test.js.
 const CATALOG_SETUP_LOCK = 'mybookshelf-catalog-test-setup';
-const TABLES = 'holdings_answers, library_profiles, library_check_events, library_health, usage_events, usage_daily_totals, library_requests, problem_reports, submission_buckets, host_request_windows, host_request_slots';
+const TABLES = 'holdings_answers, library_profiles, library_check_events, library_health, usage_events, usage_daily_totals, library_requests, library_request_contacts, problem_reports, submission_buckets, host_request_windows, host_request_slots';
 
 async function prepare(t) {
   const url = new URL(connectionString);
   assert.ok(['localhost', '127.0.0.1'].includes(url.hostname) && url.pathname.endsWith('_test'), 'a disposable local *_test database only');
   const admin = new Pool({ connectionString, max: 2 });
   await migrateCatalog(admin);
-  assert.equal(await migrateCatalog(admin), 2, 'migrations are idempotent');
+  assert.equal(await migrateCatalog(admin), 4, 'migrations are idempotent');
   const grants = await readFile(new URL('./runtime-grants.sql', import.meta.url), 'utf8');
   // admin/role.integration.test.js changes grants on the same tables at the same time.
   await withTestSetupLock(admin, CATALOG_SETUP_LOCK, async c => {
@@ -60,6 +60,14 @@ test('stored answers: TTL filter, upsert strength, opt-out and no repeat catalog
     { libraryId: 'koha:a', kind: 'ol_work', value: 'OL1W', answer: 'found', evidence: 'work_isbn', matchedIsbn13: '9788173711466' }]);
   const read = await answers.readAnswers('koha:a', [id('isbn13', '9788173711466'), id('isbn13', '9780140328721'), id('ol_work', 'OL1W'), id('ol_work', 'OL2W')]);
   assert.deepEqual(read.map(r => [r.kind, r.value, r.answer]).sort(), [['isbn13', '9780140328721', 'not_found'], ['isbn13', '9788173711466', 'found'], ['ol_work', 'OL1W', 'found']]);
+  // The link keeps where it goes (migration 004); a row without a kind has none.
+  await answers.writeAnswers([row('9780000000002', 'found', 'exact_isbn', { catalogUrl: 'https://c.example/r/2', catalogLinkKind: 'record' }),
+    row('9780000000019', 'found', 'exact_isbn', { catalogUrl: 'https://c.example/search?q=1', catalogLinkKind: 'search' }),
+    row('9780000000026', 'found', 'exact_isbn', { catalogLinkKind: 'record' })]);
+  const kinds = await answers.readAnswers('koha:a', [id('isbn13', '9780000000002'), id('isbn13', '9780000000019'), id('isbn13', '9780000000026'), id('isbn13', '9788173711466')]);
+  assert.deepEqual(kinds.map(r => [r.value, r.catalogUrl, r.catalogLinkKind]).sort(), [['9780000000002', 'https://c.example/r/2', 'record'],
+    ['9780000000019', 'https://c.example/search?q=1', 'search'], ['9780000000026', undefined, undefined], ['9788173711466', 'https://c.example/r/1', undefined]]);
+  await admin.query(`DELETE FROM holdings_answers WHERE identity_value IN ('9780000000002', '9780000000019', '9780000000026')`);
   // Both kinds of answer expire 180 days after the check.
   const { rows: ttl } = await admin.query(`SELECT DISTINCT round(extract(epoch FROM expires_at - checked_at) / 86400) AS days FROM holdings_answers`);
   assert.deepEqual(ttl.map(r => Number(r.days)), [180]);
@@ -189,6 +197,18 @@ test('anonymous log, submissions and the host gate as the runtime role', { skip,
   const { rows: buckets } = await admin.query('SELECT bucket FROM submission_buckets');
   assert.ok(buckets.length && buckets.every(b => b.bucket.length === 32 && !b.bucket.toString('latin1').includes('203.0.113')));
   await assert.rejects(runtime.query('SELECT body FROM problem_reports'), { code: '42501' });
+  // Optional contact details (migration 003): on the report, and a row per reader for a merged request.
+  const email = 'reader@example.org';
+  assert.equal(await submissions.problemReport({ body: 'please reply', contact: { name: 'Asha', email } }, { address: '203.0.113.10' }), 'accepted');
+  assert.equal(await submissions.libraryRequest({ ...text, contact: { email } }, { address: '203.0.113.1' }), 'duplicate');
+  assert.equal(await submissions.libraryRequest({ ...text, contact: { name: 'Ravi' } }, { address: '203.0.113.3' }), 'accepted');
+  await settled();
+  assert.deepEqual((await admin.query(`SELECT contact_name, contact_email FROM problem_reports WHERE body = 'please reply'`)).rows, [{ contact_name: 'Asha', contact_email: email }]);
+  assert.deepEqual((await admin.query('SELECT request_key, name, email FROM library_request_contacts ORDER BY created_at, name NULLS FIRST')).rows,
+    [{ request_key: 'anna centenary library', name: null, email }, { request_key: 'anna centenary library', name: 'Ravi', email: null }]);
+  assert.equal((await admin.query('SELECT request_count FROM library_requests')).rows[0].request_count, 3, 'a same-day repeat with details is not counted again');
+  await assert.rejects(runtime.query('SELECT email FROM library_request_contacts'), { code: '42501' });
+  await assert.rejects(admin.query(`INSERT INTO library_request_contacts (request_key) VALUES ('anna centenary library')`), { code: '23514' }, 'a row holds a name or an email');
 
   // Two instances share the host's spacing and per-minute cap.
   const [one, two] = [createPgHostGate(runtime), createPgHostGate(runtime)];
@@ -217,19 +237,39 @@ test('daily maintenance as the worker: expiry, opt-out purge, retention, rollup 
   await admin.query(`INSERT INTO library_requests (request_key, display_text, status, updated_at) VALUES
     ('spam text', 'spam text', 'spam', now() - interval '91 days'), ('added lib', 'Added lib', 'added', now() - interval '13 months'),
     ('open lib', 'Open lib', 'open', now() - interval '2 years')`);
+  // Optional contact details: removed 90 days after they were left, whatever the report's or request's status.
+  await admin.query(`INSERT INTO problem_reports (body, created_at, contact_name, contact_email) VALUES
+    ('old contact', now() - interval '91 days', 'Old', 'old@example.org'), ('new contact', now() - interval '89 days', 'New', 'new@example.org')`);
+  await admin.query(`INSERT INTO library_request_contacts (request_key, name, email, created_at) VALUES
+    ('open lib', 'Old', 'old@example.org', now() - interval '91 days'), ('open lib', NULL, 'new@example.org', now() - interval '89 days'),
+    ('spam text', 'Spam', NULL, now())`);
   await admin.query(`INSERT INTO usage_events (occurred_hour, kind, query_text, library_id, outcome, result_count, duration_ms) VALUES
-    (date_trunc('hour', now() - interval '13 months', 'UTC'), 'book_search', 'private words', '', 'results', 9, 100),
-    (date_trunc('hour', now() - interval '13 months', 'UTC'), 'book_search', 'other words', '', 'results', 3, 300),
+    (date_trunc('day', now() - interval '13 months', 'UTC'), 'book_search', 'private words', '', 'results', 9, 100),
+    (date_trunc('day', now() - interval '13 months', 'UTC') + interval '23 hours', 'book_search', 'other words', '', 'results', 3, 300),
     (date_trunc('hour', now(), 'UTC'), 'book_search', 'recent words', NULL, 'none', 0, 50)`);
   await admin.query(`INSERT INTO library_check_events (library_id, host, platform, operation, failure, duration_ms, requests, occurred_at) VALUES
     ('koha:a', 'a.example', 'koha', 'book_check', 'timeout', 1, 1, now() - interval '91 days')`);
   await admin.query(`INSERT INTO host_request_windows VALUES ('a.example', now() - interval '2 hours', 3), ('a.example', date_trunc('minute', now()), 1)`);
   const policy = createCatalogPolicy({ policies: { schemaVersion: 1, libraries: { 'bc:out': { storeAnswers: false, reason: 'Asked', reviewedOn: '2026-11-12' } } } });
-  const result = await runCatalogMaintenance(worker, { policy });
-  assert.deepEqual([result.expiredAnswers, result.purgedAnswers, result.buckets, result.reports, result.requests, result.usage.events, result.checkEvents, result.hostWindows],
-    [1, 1, 1, 2, 2, 2, 1, 1]);
+  const localTimeWorker = {
+    ...worker,
+    query: (sql, args) => worker.transaction(async client => {
+      await client.query("SET LOCAL TIME ZONE 'America/Los_Angeles'");
+      return client.query(sql, args);
+    }),
+  };
+  const [result, concurrentRollup] = await Promise.all([
+    runCatalogMaintenance(localTimeWorker, { policy }),
+    rollUpUsage(localTimeWorker),
+  ]);
+  assert.deepEqual([result.expiredAnswers, result.purgedAnswers, result.buckets, result.reports, result.requests, result.contacts, result.usage.events + concurrentRollup.events, result.checkEvents, result.hostWindows],
+    [1, 1, 1, 2, 2, 2, 2, 1, 1]);
   assert.deepEqual((await admin.query('SELECT library_id, identity_value FROM holdings_answers')).rows, [{ library_id: 'koha:a', identity_value: '9780140328721' }]);
-  assert.deepEqual((await admin.query('SELECT body FROM problem_reports')).rows, [{ body: 'fresh' }]);
+  assert.deepEqual((await admin.query('SELECT body, contact_name, contact_email FROM problem_reports ORDER BY created_at')).rows, [
+    { body: 'old contact', contact_name: null, contact_email: null }, { body: 'new contact', contact_name: 'New', contact_email: 'new@example.org' },
+    { body: 'fresh', contact_name: null, contact_email: null }]);
+  // The spam request's contact went with the request.
+  assert.deepEqual((await admin.query('SELECT request_key, email FROM library_request_contacts')).rows, [{ request_key: 'open lib', email: 'new@example.org' }]);
   assert.deepEqual((await admin.query('SELECT request_key FROM library_requests')).rows, [{ request_key: 'open lib' }]);
   assert.deepEqual((await admin.query('SELECT query_text FROM usage_events')).rows, [{ query_text: 'recent words' }]);
   const { rows: totals } = await admin.query('SELECT kind, library_id, outcome, events, results_sum, p50_ms, p95_ms FROM usage_daily_totals');
@@ -258,8 +298,9 @@ test('admin view queries as the catalog_admin role: grouped requests, reports, h
   await admin.query(`INSERT INTO library_requests (request_key, display_text, request_count, last_requested_on) VALUES
     ('pune central library', 'Pune Central Library', 4, current_date), ('pune library', 'pune library', 2, current_date - 1),
     ('kozhikode public library', 'Kozhikode Public Library', 2, current_date), ('kozhicode', 'Kozhicode', 1, current_date)`);
-  await admin.query(`INSERT INTO problem_reports (id, body, screen, library_id, book_key) VALUES
-    ('11111111-2222-4333-8444-555555555555', '<script>alert(1)</script> wrong answer', 'book', 'koha:a', 'v1:isbn:9780140328721')`);
+  await admin.query(`INSERT INTO problem_reports (id, body, screen, library_id, book_key, contact_email) VALUES
+    ('11111111-2222-4333-8444-555555555555', '<script>alert(1)</script> wrong answer', 'book', 'koha:a', 'v1:isbn:9780140328721', 'reader@example.org')`);
+  await admin.query(`INSERT INTO library_request_contacts (request_key, name, email) VALUES ('pune library', 'Asha', NULL)`);
   await admin.query(`INSERT INTO library_health (library_id, platform, last_failure_at, last_failure, failures_since_success, flagged_at, flag_reason)
     VALUES ('koha:slow', 'koha', now(), 'timeout', 3, now(), '3 failed attempts on 2 days within 7 days'), ('koha:ok', 'koha', NULL, NULL, 0, NULL, NULL)`);
   await admin.query(`UPDATE library_health SET last_success_at = now() WHERE library_id = 'koha:ok'`);
@@ -281,6 +322,7 @@ test('admin view queries as the catalog_admin role: grouped requests, reports, h
   assert.equal(requests.total, 4);
   assert.deepEqual(requests.groups.map(g => [g.label, g.totalCount, g.requests.length]), [['Pune Central Library', 6, 2], ['Kozhikode Public Library', 3, 2]]);
   assert.match(requests.groups[0].requests[1].lastRequestedOn, /^\d{4}-\d{2}-\d{2}$/);
+  assert.deepEqual(requests.groups[0].requests.map(r => r.contacts.map(c => [c.name, c.email])), [[], [['Asha', null]]]);
   const changed = await queries.updateLibraryRequest(adminRole, 'pune library', { status: 'added', note: 'Same as Pune Central' });
   assert.deepEqual([changed.status, changed.statusNote], ['added', 'Same as Pune Central']);
   assert.equal((await queries.updateLibraryRequest(adminRole, 'pune library', { note: '' })).statusNote, null);
@@ -288,6 +330,7 @@ test('admin view queries as the catalog_admin role: grouped requests, reports, h
 
   const { reports } = await queries.listProblemReports(adminRole);
   assert.equal(reports[0].body, '<script>alert(1)</script> wrong answer', 'stored and returned as plain text');
+  assert.deepEqual([reports[0].contactName, reports[0].contactEmail], [null, 'reader@example.org']);
   const resolved = await queries.updateProblemReport(adminRole, reports[0].id, { status: 'resolved' });
   assert.ok(resolved.resolvedAt);
   assert.equal((await queries.updateProblemReport(adminRole, reports[0].id, { status: 'read' })).resolvedAt, null);
@@ -328,10 +371,13 @@ test('admin view queries as the catalog_admin role: grouped requests, reports, h
   assert.deepEqual(summary.answersByLibrary, [{ libraryId: 'koha:a', name: null, found: 1, notFound: 1 }]);
   assert.deepEqual(summary.optedOut.map(o => o.libraryId), ['bc:out']);
   assert.equal(summary.counts.flaggedLibraries, 1);
+  assert.match(summary.newestAnswerAt, /^\d{4}-\d{2}-\d{2}T/, 'the newest stored answer’s time');
 
   // The admin role changes only status, notes and acknowledgements.
   await assert.rejects(adminRole.query(`UPDATE library_requests SET display_text = 'x'`), { code: '42501' });
   await assert.rejects(adminRole.query(`UPDATE problem_reports SET body = 'x'`), { code: '42501' });
+  await assert.rejects(adminRole.query(`UPDATE problem_reports SET contact_email = NULL`), { code: '42501' });
+  await assert.rejects(adminRole.query(`DELETE FROM library_request_contacts`), { code: '42501' });
   await assert.rejects(adminRole.query(`UPDATE library_health SET flagged_at = NULL`), { code: '42501' });
   await assert.rejects(adminRole.query(`DELETE FROM library_requests`), { code: '42501' });
   await assert.rejects(adminRole.query(`INSERT INTO usage_events (occurred_hour, kind, outcome) VALUES (now(), 'near_me', 'x')`), { code: '42501' });
@@ -373,7 +419,7 @@ test('admin HTTP routes with a real account session: 404 until listed, then read
     ACCOUNTS_READING_DATABASE_URL: testRoleURL(accountURL, 'reading'), ACCOUNTS_JOB_SECRET: 'test-only-jobs-secret-longer-than-32-characters',
     RESEND_API_KEY: 'test-transport-not-called', ACCOUNTS_MAIL_FROM: 'accounts@example.test',
     ADMIN_ACCOUNT_IDS: '', CATALOG_ADMIN_DATABASE_URL: roleURL('admin') };
-  const accounts = createAccountMiddleware({ env, initialize: async config => { service = await createAccountService(config, { checkPassword: async () => {} }); return service; } });
+  const accounts = createAccountMiddleware({ env, initialize: async config => { service = await createAccountService(config); return service; } });
   const adminRoutes = createAdminMiddleware({ env, identify: accounts.identify });
   t.after(() => adminRoutes.close());
   const app = createApplication({ accounts, admin: adminRoutes });

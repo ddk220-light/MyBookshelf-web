@@ -9,22 +9,38 @@ import {
   emailAddress,
   accountPassword,
   accountToken,
-  checkCompromisedPassword,
 } from "./validation.js";
 import { challengeDigest } from "../jobs/mail.js";
 import { authTransaction } from "../auth/transaction.js";
 import { accountCapabilities } from './capabilities.js';
+import { createHash } from "node:crypto";
+
+// The magic-link plugin stores only this digest of a link's token
+// (storeToken: "hashed": SHA-256, base64url without padding).
+const magicLinkDigest = async (token) =>
+  createHash("sha256").update(token).digest("base64url");
 
 const ack = Object.freeze({
   status: "check-email",
   message: "Check your email for the next step.",
 });
-export function createAuthActions({
-  auth,
-  pool,
-  config,
-  checkPassword = checkCompromisedPassword,
-}) {
+const wrongCredentials = () =>
+  new AccountRequestError(
+    401,
+    "INVALID_CREDENTIALS",
+    "Check your email and password.",
+  );
+const linkExpired = () =>
+  new AccountRequestError(
+    400,
+    "LINK_EXPIRED",
+    "This link has expired or was already used.",
+  );
+const magicAck = Object.freeze({
+  status: "check-email",
+  message: "If that address has an account, a link is on its way.",
+});
+export function createAuthActions({ auth, pool, config }) {
   const mailReady = () =>
     Boolean(
       config.jobSecret?.length >= 32 && config.mailFrom && config.resendKey,
@@ -53,7 +69,6 @@ export function createAuthActions({
         email = emailAddress(body.email),
         password = accountPassword(body.password);
       await limits("signup", email, ip);
-      await checkPassword(password);
       const started = new Date();
       await auth.api.signUpEmail({
         body: {
@@ -91,7 +106,7 @@ export function createAuthActions({
       });
       return ack;
     },
-    async verify(body, ip) {
+    async verify(body, ip, headers = new Headers(), setCookie = () => {}) {
       await consumeLimits(pool, config.secret, [
         { scope: "verify:ip", subject: ip, max: 30, seconds: 60 },
       ]);
@@ -140,15 +155,171 @@ export function createAuthActions({
               "LINK_EXPIRED",
               "This link has expired or was already used.",
             );
-          await auth.api.verifyEmail({ query: { token } });
+          // The link signs the reader in (owner's decision): one use, 24 hours.
+          const previous = await auth.api.getSession({
+            headers,
+            query: { disableRefresh: true },
+          });
+          const verified = await auth.api.verifyEmail({
+            query: { token },
+            headers,
+            returnHeaders: true,
+          });
           await adapter.update({
             model: "accountChallenge",
             where: [{ field: "id", value: challenge.id }],
             update: { usedAt: new Date() },
           });
-          return { status: "verified" };
+          const cookies = verified.headers.getSetCookie();
+          // Another account's session in this browser ends here, as at sign-in.
+          if (cookies.length && previous?.session?.token && previous.user.id !== user.id)
+            await context.internalAdapter.deleteSession(previous.session.token);
+          return { cookies, email: user.email };
         },
+      ).then(({ cookies, email }) => {
+        for (const cookie of cookies) setCookie(cookie);
+        return { status: "verified", signedIn: cookies.length > 0, email };
+      });
+    },
+    // Log in with an emailed link (B10): existing, verified, active accounts
+    // only. The answer is the same whether or not the address has one.
+    async requestMagicLink(body, ip, headers) {
+      requireMail();
+      strictObject(body, ["email"]);
+      const email = emailAddress(body.email);
+      const started = Date.now();
+      // Limited like password resets.
+      await consumeLimits(pool, config.secret, [
+        { scope: "magic-link:address", subject: email, max: 5, seconds: 3600 },
+        { scope: "magic-link:ip", subject: ip, max: 30, seconds: 3600 },
+      ]);
+      try {
+        const user = (
+          await pool.query(
+            `SELECT u.id FROM "user" u LEFT JOIN app_users a ON a.auth_user_id=u.id
+            WHERE u.email=$1 AND u."emailVerified" AND coalesce(a.status,'active')='active'`,
+            [email],
+          )
+        ).rows[0];
+        if (user)
+          await auth.api.signInMagicLink({ body: { email }, headers });
+      } catch {
+        /* Existence-neutral response. */
+      }
+      if (Date.now() - started < 500)
+        await new Promise((r) => setTimeout(r, 500 - (Date.now() - started)));
+      return magicAck;
+    },
+    async magicLinkSignIn(body, ip, headers, setCookie) {
+      await consumeLimits(pool, config.secret, [
+        { scope: "magic-link:complete", subject: ip, max: 10, seconds: 900 },
+      ]);
+      strictObject(body, ["token"]);
+      const token = accountToken(body.token);
+      const context = await auth.$context;
+      const stored = await context.internalAdapter.findVerificationValue(
+        "magic-link:" + (await magicLinkDigest(token)),
       );
+      let email = null;
+      try {
+        email = JSON.parse(stored?.value || "null")?.email ?? null;
+      } catch {
+        /* Unreadable: expired below. */
+      }
+      if (!stored || !email || new Date(stored.expiresAt) <= new Date())
+        throw linkExpired();
+      const user = (
+        await pool.query('SELECT id,"emailVerified" FROM "user" WHERE email=$1', [email])
+      ).rows[0];
+      if (!user?.emailVerified) throw linkExpired();
+      let result;
+      try {
+        result = await authTransaction(auth, pool, user.id, async (adapter, context) => {
+          const previous = await auth.api.getSession({
+            headers,
+            query: { disableRefresh: true },
+          });
+          const signed = await auth.api.magicLinkVerify({
+            query: { token },
+            headers,
+            returnHeaders: true,
+          });
+          if (previous?.session?.token && previous.session.token !== signed.response?.token)
+            await context.internalAdapter.deleteSession(previous.session.token);
+          return signed;
+        });
+      } catch (error) {
+        // A used, expired or refused link (the library answers with a status,
+        // a deleted account with ACCOUNT_UNAVAILABLE). Anything else, such as
+        // a database failure, stays an error ("Couldn't connect").
+        if (
+          (error instanceof AccountRequestError && error.code === "ACCOUNT_UNAVAILABLE") ||
+          (!(error instanceof AccountRequestError) && typeof error?.statusCode === "number")
+        )
+          throw linkExpired();
+        throw error;
+      }
+      if (!result?.response?.token) throw linkExpired();
+      for (const cookie of result.headers.getSetCookie()) setCookie(cookie);
+      return { status: "signed-in", email };
+    },
+    // Which account an emailed link is for, before the reader taps it: the
+    // link pages say "Log in as <email>". Nothing is used up. Any link that
+    // would not work (unknown, used, expired, or for an account that is not
+    // active) gets the same answer and reveals nothing.
+    async linkInfo(body, ip) {
+      await consumeLimits(pool, config.secret, [
+        { scope: "link-info:ip", subject: ip, max: 30, seconds: 60 },
+      ]);
+      strictObject(body, ["kind", "token"]);
+      if (!["verify", "magic-link", "reset"].includes(body.kind)) throw linkExpired();
+      const token = accountToken(body.token);
+      const active = async (where, value) =>
+        (
+          await pool.query(
+            `SELECT u.email,u."emailVerified" FROM "user" u LEFT JOIN app_users a ON a.auth_user_id=u.id
+            WHERE ${where} AND coalesce(a.status,'active')='active'`,
+            [value],
+          )
+        ).rows[0];
+      const context = await auth.$context;
+      let user = null;
+      if (body.kind === "verify") {
+        const challenge = (
+          await pool.query(
+            `SELECT "authUserId" FROM account_email_challenges
+            WHERE digest=$1 AND purpose='verify' AND "usedAt" IS NULL AND "expiresAt">now()`,
+            [challengeDigest(token)],
+          )
+        ).rows[0];
+        user = challenge ? await active("u.id=$1", challenge.authUserId) : null;
+        if (user?.emailVerified) user = null;
+      } else if (body.kind === "magic-link") {
+        const stored = await context.internalAdapter.findVerificationValue(
+          "magic-link:" + (await magicLinkDigest(token)),
+        );
+        let email = null;
+        try {
+          email = JSON.parse(stored?.value || "null")?.email ?? null;
+        } catch {
+          /* Unreadable: expired below. */
+        }
+        user =
+          stored && typeof email === "string" && new Date(stored.expiresAt) > new Date()
+            ? await active("u.email=$1", email)
+            : null;
+        if (user && !user.emailVerified) user = null;
+      } else {
+        const stored = await context.internalAdapter.findVerificationValue(
+          "reset-password:" + token,
+        );
+        user =
+          stored && new Date(stored.expiresAt) > new Date()
+            ? await active("u.id=$1", stored.value)
+            : null;
+      }
+      if (!user) throw linkExpired();
+      return { status: "valid", email: user.email };
     },
     async signin(body, ip, headers, setCookie) {
       strictObject(body, ["email", "password", "returnTo"]);
@@ -166,6 +337,9 @@ export function createAuthActions({
       const user = (
         await pool.query('SELECT id FROM \"user\" WHERE email=$1', [email])
       ).rows[0];
+      // A deleted (or deleting) account answers exactly like a wrong
+      // password (owner's decision 9), in about the same time: the password is
+      // never checked against it, but hashed once (below).
       const result = await authTransaction(
         auth,
         pool,
@@ -187,7 +361,15 @@ export function createAuthActions({
             await context.internalAdapter.deleteSession(previous.session.token);
           return signed;
         },
-      );
+      ).catch(async (error) => {
+        if (error instanceof AccountRequestError && error.code === "ACCOUNT_UNAVAILABLE") {
+          // One password hash, as a wrong password or an unknown address
+          // costs, so the answer's timing does not tell a deleted account apart.
+          await (await auth.$context).password.hash(body.password).catch(() => {});
+          throw wrongCredentials();
+        }
+        throw error;
+      });
       // Reject deleting identities even if a valid credential still exists.
       const lifecycle = await pool.query(
         "SELECT status FROM app_users WHERE auth_user_id=$1",
@@ -197,11 +379,7 @@ export function createAuthActions({
         await pool.query('DELETE FROM "session" WHERE token=$1', [
           result.response.token,
         ]);
-        throw new AccountRequestError(
-          403,
-          "ACCOUNT_UNAVAILABLE",
-          "This account is unavailable.",
-        );
+        throw wrongCredentials();
       }
       for (const cookie of result.headers.getSetCookie()) setCookie(cookie);
       return { status: "signed-in", returnTo: safeReturnPath(body.returnTo) };

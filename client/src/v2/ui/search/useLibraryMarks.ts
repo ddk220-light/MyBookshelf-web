@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { publicApi } from '../../api';
-import { useHoldingsStore, type HoldingsStore } from '../../holdings';
+import { useHoldingsStore, type HoldingsAnswer, type HoldingsStore } from '../../holdings';
 import { workIdOf } from '../../searchGroups';
 import type { ResultEntry } from './searchResults';
 
@@ -26,8 +26,8 @@ export function entryMarkKeys(entry: Pick<ResultEntry, 'key' | 'kind' | 'state' 
 }
 
 /** True when the chosen library has marked the card (any record of its work). */
-export function isMarked(store: Pick<HoldingsStore, 'get'>, entry: Pick<ResultEntry, 'key' | 'kind' | 'state' | 'alternatives'>): boolean {
-  return entryMarkKeys(entry).some(key => store.get(key) === 'found');
+export function resultAnswer(store: Pick<HoldingsStore, 'get'>, entry: Pick<ResultEntry, 'key' | 'kind' | 'state' | 'alternatives'>): HoldingsAnswer | undefined {
+  return entryMarkKeys(entry).some(key => store.get(key) === 'found') ? 'found' : entry.kind === 'book' ? store.get(entry.key) : undefined;
 }
 
 /**
@@ -102,8 +102,17 @@ export function useLibraryMarks({ active, libraryId, candidateId, entries, query
         if (record && record.phase === 'running') record.phase = 'done';
         setRun(current => current?.candidateId === candidateId && current.libraryId === libraryId ? { ...current, status } : current);
       };
-      api.holdingsSearch(libraryId, text, asked, bookKey => store.set(libraryId, { [bookKey]: 'found' }), controller.signal)
-        .then(() => finish('done'), () => finish('failed'));
+      api.holdingsSearch(libraryId, text, asked, (bookKey, catalogUrl) => {
+        if (!controller.signal.aborted) store.set(libraryId, { [bookKey]: 'found' }, catalogUrl ? { [bookKey]: catalogUrl } : undefined);
+      }, controller.signal).then(({ notFound, couldntCheck }) => {
+        if (controller.signal.aborted) return;
+        const answers: Record<string, HoldingsAnswer> = Object.fromEntries([
+          ...notFound.map(key => [key, 'not_found'] as const),
+          ...couldntCheck.map(key => [key, 'unknown'] as const),
+        ]);
+        store.set(libraryId, answers);
+        finish('done');
+      }, () => { if (record?.phase !== 'interrupted') finish('failed'); });
     }, 0);
     return () => {
       clearTimeout(begin); clearTimeout(deadline);

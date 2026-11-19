@@ -42,6 +42,8 @@ export function normalizeAvailability(value = {}) {
   }
   const metadataId = nullableString(value.metadataId);
   if (metadataId) result.metadataId = metadataId;
+  // Where `url` goes, when the adapter knows: the book's record, a search or the catalog.
+  if (result.url && ['record', 'search', 'catalog'].includes(value.catalogLinkKind)) result.catalogLinkKind = value.catalogLinkKind;
   return result;
 }
 

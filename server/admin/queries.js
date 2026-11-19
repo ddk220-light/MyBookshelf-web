@@ -6,7 +6,9 @@ import { groupLibraryRequests } from './grouping.js';
 // section 6). Every call runs with the catalog store's admin role
 // (catalog_admin): SELECT on every table, UPDATE only on request and report
 // status/notes and health acknowledgements. Nothing here joins the account
-// database, and no row links to a person.
+// database. The only personal details are the optional name and email a
+// reader left with a request or report to get a reply; the daily catalog
+// maintenance removes them after 90 days.
 
 export class AdminInputError extends Error {
   constructor(message = 'Check the submitted fields.') { super(message); this.code = 'INVALID_REQUEST'; }
@@ -47,10 +49,24 @@ const requestRow = row => ({
 const REQUEST_COLUMNS = `request_key, display_text, request_count, first_requested_on::text AS first_requested_on,
   last_requested_on::text AS last_requested_on, status, status_note, updated_at`;
 
+// The optional contact details readers left with each request, newest first.
+async function requestContacts(db, keys) {
+  if (!keys.length) return new Map();
+  const { rows } = await db.query(`SELECT request_key, name, email, created_at FROM library_request_contacts
+    WHERE request_key = ANY($1::text[]) ORDER BY created_at DESC LIMIT 5000`, [keys], Q);
+  const byKey = new Map();
+  for (const row of rows) {
+    if (!byKey.has(row.request_key)) byKey.set(row.request_key, []);
+    byKey.get(row.request_key).push({ name: row.name, email: row.email, createdAt: iso(row.created_at) });
+  }
+  return byKey;
+}
+
 export async function listLibraryRequests(db, { limit = 1000 } = {}) {
   const { rows } = await db.query(`SELECT ${REQUEST_COLUMNS} FROM library_requests
     ORDER BY request_count DESC, last_requested_on DESC, request_key LIMIT $1`, [limit], Q);
-  const requests = rows.map(requestRow);
+  const contacts = await requestContacts(db, rows.map(row => row.request_key));
+  const requests = rows.map(row => ({ ...requestRow(row), contacts: contacts.get(row.request_key) || [] }));
   return { total: requests.length, groups: groupLibraryRequests(requests) };
 }
 
@@ -71,8 +87,9 @@ export async function updateLibraryRequest(db, requestKey, body) {
 const reportRow = row => ({
   id: row.id, body: row.body, screen: row.screen, libraryId: row.library_id, libraryName: row.library_id ? libraryName(row.library_id) : null,
   bookKey: row.book_key, appVersion: row.app_version, createdAt: iso(row.created_at), status: row.status, resolvedAt: iso(row.resolved_at),
+  contactName: row.contact_name, contactEmail: row.contact_email,
 });
-const REPORT_COLUMNS = 'id, body, screen, library_id, book_key, app_version, created_at, status, resolved_at';
+const REPORT_COLUMNS = 'id, body, screen, library_id, book_key, app_version, created_at, status, resolved_at, contact_name, contact_email';
 
 export async function listProblemReports(db, { limit = 200 } = {}) {
   const { rows } = await db.query(`SELECT ${REPORT_COLUMNS} FROM problem_reports ORDER BY created_at DESC LIMIT $1`, [limit], Q);
@@ -256,12 +273,15 @@ export async function summary(db, { policy } = {}) {
         (SELECT count(*) FROM library_health WHERE flagged_at IS NOT NULL)::int AS flagged,
         (SELECT count(*) FROM library_health WHERE flagged_at IS NOT NULL AND acknowledged_at IS NULL)::int AS flagged_unacknowledged,
         (SELECT count(*) FROM holdings_answers WHERE expires_at > now())::int AS answers,
+        (SELECT max(checked_at) FROM holdings_answers) AS newest_answer_at,
         (EXISTS (SELECT 1 FROM usage_events) OR EXISTS (SELECT 1 FROM usage_daily_totals)) AS usage_present`, [], Q),
   ]);
   const c = counts.rows[0] || {};
   return {
     counts: { openRequests: c.open_requests ?? 0, newReports: c.new_reports ?? 0, flaggedLibraries: c.flagged ?? 0,
       flaggedUnacknowledged: c.flagged_unacknowledged ?? 0, storedAnswers: c.answers ?? 0, usageData: Boolean(c.usage_present) },
+    // When the newest answer was stored: a store that stopped storing shows here.
+    newestAnswerAt: iso(c.newest_answer_at),
     answersByLibrary: answers.rows.map(row => ({ libraryId: row.library_id, name: libraryName(row.library_id), found: row.found, notFound: row.not_found })),
     optedOut: (policy?.optedOut?.() || []).map(libraryId => ({ libraryId, name: libraryName(libraryId) })),
   };

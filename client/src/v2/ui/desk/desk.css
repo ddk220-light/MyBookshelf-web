@@ -51,8 +51,9 @@
 .one-shelf-frame .desk-column.is-picking { flex-basis: 340px; width: 340px; gap: 22px; }
 .one-shelf-frame .desk-wordmark { margin: 0; font: 500 1.75rem/1.1 var(--serif); letter-spacing: -.02em; white-space: nowrap; color: var(--reader-ink); }
 .one-shelf-frame .is-narrow .desk-wordmark { font-size: 1.625rem; }
+.one-shelf-frame .desk-wordmark a { color: inherit; text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; }
 .one-shelf-frame .desk-section { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-.one-shelf-frame .desk-section h2, .one-shelf-frame .rail-menu h2 { margin: 0; font-family: inherit; font-size: .75rem; font-weight: 600; line-height: 1.5; letter-spacing: .08em; text-transform: uppercase; color: var(--reader-muted); }
+.one-shelf-frame .desk-section h2 { margin: 0; font-family: inherit; font-size: .75rem; font-weight: 600; line-height: 1.5; letter-spacing: .08em; text-transform: uppercase; color: var(--reader-muted); }
 .one-shelf-frame .desk-library-row { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .one-shelf-frame .desk-library-icon { flex: 0 0 44px; width: 44px; height: 44px; box-sizing: border-box; border-radius: 10px; background: var(--desk-tile-bg); border: 1px solid var(--control-line); color: var(--reader-secondary); display: inline-flex; align-items: center; justify-content: center; }
 .one-shelf-frame .is-narrow .desk-library-row { gap: 10px; }
@@ -64,6 +65,7 @@
 .one-shelf-frame .desk-find-library { height: 48px; min-height: 48px; }
 .one-shelf-frame .desk-account { gap: 6px; }
 .one-shelf-frame .desk-account h2 { margin-bottom: 4px; }
+.one-shelf-frame .desk-account-line { margin: 0 0 6px; font-size: .875rem; line-height: 1.45; color: var(--reader-secondary); }
 .one-shelf-frame .desk-link { align-self: flex-start; min-height: 44px; min-width: 44px; margin: 0; padding: 0; border: 0; border-radius: 6px; background: transparent; color: var(--reader-accent); display: inline-flex; align-items: center;
   font: inherit; font-weight: 500; line-height: 1.3; text-decoration: none; box-shadow: none; }
 .one-shelf-frame .desk-change { font-weight: 600; }
@@ -74,39 +76,30 @@
 .one-shelf-frame .desk-account-buttons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .one-shelf-frame .desk-account-buttons .home-button { height: 44px; min-height: 44px; padding: 0 4px; font-size: .875rem; white-space: nowrap; }
 .one-shelf-frame .is-narrow .desk-account-buttons, .one-shelf-frame .desk-account-buttons.is-compact { grid-template-columns: minmax(0, 1fr); gap: 8px; }
-.one-shelf-frame .desk-light-toggle { border-radius: 10px; background: var(--reader-surface); }
-.one-shelf-frame .desk-light-toggle button { height: 44px; min-height: 44px; font-size: .8125rem; }
-.one-shelf-frame .is-narrow .desk-light-toggle button { padding: 0; font-size: .75rem; }
 .one-shelf-frame .desk-help { margin-top: auto; display: flex; flex-wrap: wrap; gap: 0 18px; font-size: .875rem; }
 .one-shelf-frame .is-narrow .desk-help { column-gap: 16px; }
 .one-shelf-frame .desk-help a { min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; color: var(--reader-secondary); text-decoration: none; }
 .one-shelf-frame .desk-help a:hover:not(:focus-visible) { text-decoration: underline; text-underline-offset: 3px; }
 
-/* The library picker in the column (DeskLibrary board). */
-.one-shelf-frame .desk-picker { display: flex; flex-direction: column; gap: 14px; padding: 16px 16px 8px; border: 1px solid var(--desk-column-line); border-radius: 16px; background: var(--reader-bg);
+/* The library picker in the column (DeskLibrary board). It takes the
+   column's free height and no more, so only its list scrolls: the title, the
+   field and "Show 25 more" stay in view. */
+.one-shelf-frame .desk-picker { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 14px; padding: 16px 16px 8px; border: 1px solid var(--desk-column-line); border-radius: 16px; background: var(--reader-bg);
   box-shadow: 0 6px 20px -12px var(--panel-shadow); }
 .one-shelf-frame .desk-picker .scan-header h2 { font-size: 1.375rem; letter-spacing: -.02em; }
 .one-shelf-frame .desk-picker .library-near { height: 48px; min-height: 48px; }
-.one-shelf-frame .desk-picker .library-field label { font-size: .8125rem; }
-.one-shelf-frame .desk-picker .library-field input[type='search'] { height: 48px; min-height: 48px; }
+.one-shelf-frame .desk-picker .library-field-caption { font-size: .8125rem; }
+.one-shelf-frame .desk-picker .library-field-box { height: 48px; }
 .one-shelf-frame .desk-picker .library-row { min-height: 60px; padding: 8px 0; gap: 10px; }
 .one-shelf-frame .desk-picker .library-row-area { font-size: .8125rem; }
 .one-shelf-frame .desk-picker .library-rows { border-bottom: 0; }
 
-/* Icon rail (640–1099 px) and its pop-overs. */
+/* Icon rail (640–1099 px): one settings gear. */
 .one-shelf-frame .desk-rail { flex: 0 0 72px; width: 72px; box-sizing: border-box; height: 100%; position: relative; z-index: 3; padding: 16px 0; display: flex; flex-direction: column; align-items: center; gap: 8px;
   background: var(--desk-column-bg); border-right: 1px solid var(--desk-column-line); }
 .one-shelf-frame .rail-button { width: 48px; height: 48px; min-width: 48px; min-height: 48px; padding: 0; border: 0; border-radius: 12px; background: transparent; color: var(--reader-secondary); display: inline-flex; align-items: center; justify-content: center; box-shadow: none; }
 .one-shelf-frame .rail-button:hover:not(:focus-visible) { background: var(--reader-fill); filter: none; }
 .one-shelf-frame .rail-button[aria-expanded='true'] { background: var(--pressed-bg); color: var(--pressed-ink); }
-.one-shelf-frame .rail-menu { position: fixed; left: 84px; right: auto; bottom: auto; margin: 0; width: 280px; max-width: calc(100vw - 100px); box-sizing: border-box; padding: 10px 16px 16px; border: 1px solid var(--reader-line); border-radius: 16px;
-  background: var(--reader-bg); color: var(--reader-ink); box-shadow: 0 12px 40px var(--panel-shadow); flex-direction: column; gap: 10px; font-size: .9375rem; line-height: 1.5; }
-.one-shelf-frame .rail-menu[open] { display: flex; animation: rail-pop 160ms ease-out; }
-.one-shelf-frame .rail-menu::backdrop { background: transparent; }
-.one-shelf-frame .rail-menu-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.one-shelf-frame .rail-menu-close { width: 44px; height: 44px; min-height: 44px; margin-right: -10px; padding: 0; border: 0; background: transparent; color: var(--reader-secondary); display: inline-flex; align-items: center; justify-content: center; }
-.one-shelf-frame .rail-help { margin-top: 0; flex-direction: column; font-size: .9375rem; }
-.one-shelf-frame .rail-help a { color: var(--reader-accent); font-weight: 600; }
 @keyframes rail-pop { from { opacity: 0; transform: translateX(-6px); } to { opacity: 1; transform: none; } }
 /* The library picker beside the rail rather than as a bottom sheet. */
 .one-shelf-frame .desk-mode-rail .library-dialog { inset: 16px auto auto 84px; margin: 0; width: 380px; max-width: calc(100vw - 100px); max-height: calc(100dvh - 32px); padding-bottom: 20px; border: 1px solid var(--reader-line); border-radius: 18px;
@@ -188,7 +181,7 @@
 .one-shelf-frame .home-desk .bay-plank { height: 16px; }
 .one-shelf-frame .home-desk .suggested-label { height: 20px; padding: 0 10px; font-size: .75rem; line-height: 18px; }
 .one-shelf-frame .home-desk .bay-shadow { height: 10px; }
-.one-shelf-frame .home-desk .home-bookcase .bay { margin-bottom: 8px; contain-intrinsic-size: auto calc(var(--bay-h) + 52px); }
+.one-shelf-frame .home-desk .home-bookcase .bay { margin-bottom: 8px; contain-intrinsic-size: none calc(var(--bay-h) + 44px + var(--shelf-answer-space, 0px)); }
 .one-shelf-frame .home-desk .bay-books { height: var(--bay-h); gap: var(--bay-gap); grid-template-columns: repeat(var(--bay-cols, 6), minmax(0, 1fr)); }
 .one-shelf-frame .home-desk .cover3d, .one-shelf-frame .home-desk .results-bookcase .cover3d { width: var(--cover-w); height: var(--cover-h); }
 .one-shelf-frame .home-desk .cover3d-top { height: var(--cover-edge); }
@@ -200,7 +193,7 @@
 .one-shelf-frame .home-desk .cover3d-type.title-xs .cover3d-title { font-size: .8125rem; }
 .one-shelf-frame .home-desk .cover3d-rule { width: 22px; }
 .one-shelf-frame .home-desk .cover3d-author { font-size: .75rem; }
-.one-shelf-frame .home-desk .cover3d-type.author-sm .cover3d-author { font-size: .6875rem; }
+.one-shelf-frame .home-desk .cover3d-type.author-sm .cover3d-author { font-size: .75rem; }
 .one-shelf-frame .home-desk .cover3d .cover-badge { width: 30px; height: 30px; }
 .one-shelf-frame .home-desk .cover3d .cover-badge-library { top: -13px; right: -14px; }
 .one-shelf-frame .home-desk .cover3d .cover-badge-mine { top: -13px; left: -13px; }
@@ -267,10 +260,11 @@
 .one-shelf-frame .desk-opening .desk-scrim { animation: desk-scrim-in 480ms ease both; }
 @media (prefers-reduced-motion: reduce) {
   .one-shelf-frame .desk .desk-column, .one-shelf-frame .desk .desk-slot, .one-shelf-frame .desk .desk-slot-page, .one-shelf-frame .desk .desk-shelf, .one-shelf-frame .desk .desk-scrim,
-  .one-shelf-frame .rail-menu[open], .one-shelf-frame .desk-mode-rail .library-dialog[open] { animation: none; }
+  .one-shelf-frame .desk-mode-rail .library-dialog[open] { animation: none; }
 }
 @media (forced-colors: active) {
   .one-shelf-frame .desk-column, .one-shelf-frame .desk-rail { border-right: 1px solid CanvasText; }
   .one-shelf-frame .desk-slot { border-right: 1px solid CanvasText; }
   .one-shelf-frame .cover3d.is-open { outline-color: Highlight; }
 }
+.one-shelf-frame .desk-library-name a { display: inline-flex; align-items: center; min-height: 44px; }

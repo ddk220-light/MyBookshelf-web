@@ -26,11 +26,27 @@ const bookUrl = new RegExp('/app/books/' + encodeURIComponent(BOOK.bookKey).repl
 const axe = page => new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
 
 test.describe('One-shelf home', () => {
+  test('a new reader can dismiss the library prompt and find it again in Settings', async ({ page }) => {
+    await setup(page);
+    await page.goto('/');
+    const prompt = page.getByRole('region', { name: 'Choose your library' });
+    await expect(prompt.getByRole('button', { name: 'Find my library' })).toBeVisible();
+    await prompt.getByRole('button', { name: 'Not now' }).click();
+    // The prompt goes and focus moves on to the search bar, not the top of the page.
+    await expect(prompt).toHaveCount(0);
+    await expect(page.getByRole('searchbox', { name: 'Search for a book' })).toBeFocused();
+    await page.reload();
+    await expect(prompt).toHaveCount(0);
+    await page.getByRole('button', { name: 'Settings' }).click();
+    await page.getByRole('dialog', { name: 'Settings' }).getByRole('button', { name: 'Choose a library' }).click();
+    await expect(page.getByRole('dialog', { name: 'Find your library' })).toBeVisible();
+  });
+
 
   test('first open: no empty shelves, search bar, no tab bar, accessible', async ({ page }) => {
     await setup(page);
     await page.goto('/app');
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
     await expect(page.getByRole('navigation', { name: 'Primary navigation' })).toHaveCount(0);
     // Owner decision (plan 2026-11-14): the cold open draws no empty shelves;
@@ -52,8 +68,8 @@ test.describe('One-shelf home', () => {
   test('shelf in use: covers, library badge, Viewed before, invite, list view', async ({ page }) => {
     const saved = Array.from({ length: 8 }, (_, index) => book(index + 1));
     await setup(page, { saved, recent: [book(20), book(21), book(22)], libraryId: LINKED_LIBRARY.id, found: [saved[7].bookKey] });
-    await page.goto('/app/shelf');
-    await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
+    await page.goto('/');
+    await expect(page.getByRole('heading', { name: 'My reading shelf' })).toBeVisible();
     await expect(page.locator('.home-library')).toHaveText(LINKED_LIBRARY.name);
     await expect(page.getByRole('link', { name: 'Shelf book 8 by Author 8, in Anna Centenary Library' })).toBeVisible();
     await expect(page.locator('.cover-badge-library')).toHaveCount(1);
@@ -62,7 +78,7 @@ test.describe('One-shelf home', () => {
     await expect(page.locator('.cover3d:not(.is-suggested)')).toHaveCount(8);
     await expect(page.locator('.cover3d.is-suggested')).toHaveCount(5);
     await expect(page.locator('.my-shelf-heading span')).toHaveText('8 books');
-    await expect(page.getByRole('heading', { name: 'Take your shelf with you' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Take your reading shelf with you' })).toBeVisible();
     const viewed = page.getByRole('region', { name: 'Viewed before' });
     await expect(viewed.getByRole('link')).toHaveCount(3);
     // Every control is at least 44 px; spines included.
@@ -75,13 +91,13 @@ test.describe('One-shelf home', () => {
     for (const spine of await viewed.getByRole('link').all()) expect((await spine.boundingBox()).width).toBeGreaterThanOrEqual(44);
     expect((await axe(page)).violations).toEqual([]);
 
-    await page.getByRole('button', { name: 'Not now' }).click();
+    await page.getByRole('region', { name: 'Take your reading shelf with you' }).getByRole('button', { name: 'Not now' }).click();
     await page.getByRole('button', { name: 'List view' }).click();
     await expect(page.locator('.shelf-list-item')).toHaveCount(13);
     await expect(page.locator('.shelf-list-cover.is-suggested')).toHaveCount(5);
     await page.reload();
     await expect(page.getByRole('button', { name: 'List view' })).toHaveAttribute('aria-pressed', 'true');
-    await expect(page.getByRole('heading', { name: 'Take your shelf with you' })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Take your reading shelf with you' })).toHaveCount(0);
     expect((await axe(page)).violations).toEqual([]);
 
     await viewed.getByRole('button', { name: 'Clear' }).click();
@@ -93,28 +109,29 @@ test.describe('One-shelf home', () => {
     await expect(page).toHaveURL(/\/app\/books\//);
   });
 
-  test('keyboard order and the side panel: focus trap, Escape and Back close it, focus returns', async ({ page }) => {
+  test('keyboard order and the side panel: focus trap, Escape and Back close it, focus returns', async ({ page, browserName }) => {
     await setup(page, { saved: [book(1), book(2)], libraryId: LINKED_LIBRARY.id });
-    await page.goto('/app/shelf');
-    await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
+    await page.goto('/');
+    await expect(page.getByRole('heading', { name: 'My reading shelf' })).toBeVisible();
     await page.locator('body').click({ position: { x: 1, y: 1 } });
     const order = [];
     for (let index = 0; index < 5; index += 1) {
-      await page.keyboard.press('Tab');
+      await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
       order.push(await page.evaluate(() => document.activeElement?.getAttribute('aria-label') || document.activeElement?.textContent?.trim()));
     }
-    const from = order.indexOf('Account and settings');
-    expect(order.slice(from, from + 4)).toEqual(['Account and settings', 'Search for a book', 'Scan a barcode', 'Shelf view']);
+    // The wordmark, then the gear opposite it (Main board), then the search bar.
+    const from = order.indexOf('MyBookshelf');
+    expect(order.slice(from, from + 4)).toEqual(['MyBookshelf', 'Settings', 'Search for a book', 'Scan a barcode']);
 
-    const person = page.getByRole('button', { name: 'Account and settings' });
+    const person = page.getByRole('button', { name: 'Settings' });
     await person.click();
-    const panel = page.getByRole('dialog', { name: 'Account and settings' });
+    const panel = page.getByRole('dialog', { name: 'Settings' });
     await expect(panel).toBeVisible();
     await expect(panel.getByRole('button', { name: 'Close' })).toBeFocused();
     await expect(panel.getByText(LINKED_LIBRARY.name)).toBeVisible();
     expect((await axe(page)).violations).toEqual([]);
     for (let index = 0; index < 14; index += 1) {
-      await page.keyboard.press('Tab');
+      await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
       expect(await page.evaluate(() => Boolean(document.activeElement?.closest('dialog')))).toBe(true);
     }
     await page.keyboard.press('Escape');
@@ -125,7 +142,7 @@ test.describe('One-shelf home', () => {
     await expect(panel).toBeVisible();
     await page.goBack();
     await expect(panel).toBeHidden();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
 
     await person.click();
     await panel.getByRole('button', { name: 'Lamplight' }).click();
@@ -136,16 +153,16 @@ test.describe('One-shelf home', () => {
 
   for (const light of ['lamplight', 'ink']) test(`${light} stays legible`, async ({ page }) => {
     await setup(page, { saved: [book(1), book(2), book(3), book(4)], recent: [book(9)], libraryId: LINKED_LIBRARY.id, light, found: [book(1).bookKey] });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.locator('.cover-badge-library')).toHaveCount(1);
     expect((await new AxeBuilder({ page }).withRules(['color-contrast']).analyze()).violations).toEqual([]);
-    await page.getByRole('button', { name: 'Account and settings' }).click();
+    await page.getByRole('button', { name: 'Settings' }).click();
     expect((await new AxeBuilder({ page }).withRules(['color-contrast']).analyze()).violations).toEqual([]);
   });
 
   test('a long shelf keeps the page light, and a wide screen gets the left column with six books a bay', async ({ page }) => {
     await setup(page, { saved: Array.from({ length: 200 }, (_, index) => book(index + 1)) });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     // Saved books only: the suggestions after them are added as the reader scrolls, like further bays.
     await expect(page.locator('.cover3d:not(.is-suggested)')).toHaveCount(200);
     expect(await page.locator('.bay').first().evaluate(element => getComputedStyle(element).contentVisibility)).toBe('auto');
@@ -161,7 +178,7 @@ test.describe('One-shelf home', () => {
   test('a phone turned on its side keeps the phone layout, the reader’s place and an open scan pop-up', async ({ page }) => {
     await installBarcodeCamera(page, 'missing', false, { camera: 'none' });
     await setup(page, { saved: Array.from({ length: 60 }, (_, index) => book(index + 1)) });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.locator('.cover3d:not(.is-suggested)')).toHaveCount(60);
     const { width, height } = page.viewportSize();
     const turn = (portrait) => page.setViewportSize(portrait ? { width, height } : { width: height, height: width });
@@ -169,7 +186,7 @@ test.describe('One-shelf home', () => {
     await page.locator('#main-content').evaluate((screen, top) => { screen.scrollTop = top; }, 2000);
     await expect(place).toBeInViewport();
     await turn(false);
-    await expect(page.getByRole('button', { name: 'Account and settings' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Settings' })).toBeVisible();
     await expect(page.getByRole('navigation', { name: 'Library and account' })).toHaveCount(0);
     await expect(place).toBeInViewport();
     await turn(true);
@@ -188,7 +205,7 @@ test.describe('One-shelf home', () => {
     const long = book(1, { title: 'The Chronicle of Supercalifragilisticexpialidocious Adventures Across Seventeen Kingdoms',
       authors: ['Bartholomew Maximilian Featherstonehaugh-Worthington III'] });
     await setup(page, { saved: [long] });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     const inside = locator => locator.evaluate(cover => {
       const face = cover.querySelector('.cover3d-face').getBoundingClientRect();
       return [...cover.querySelectorAll('.cover3d-title, .cover3d-author')].every(text => {
@@ -205,8 +222,8 @@ test.describe('One-shelf home', () => {
 
   test('reduced motion: the panel does not slide', async ({ page }) => {
     await setup(page);
-    await page.goto('/app/shelf');
-    await page.getByRole('button', { name: 'Account and settings' }).click();
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Settings' }).click();
     expect(await page.locator('.side-panel').evaluate(element => getComputedStyle(element).animationName)).toBe('none');
   });
 });
@@ -228,18 +245,18 @@ test.describe('One-shelf search', () => {
   test('results on the shelf: my book first with the bookmark, list view, a book and Back, then the shelf', async ({ page }) => {
     await setup(page, { saved: [MINE, book(2)], libraryId: LINKED_LIBRARY.id });
     const queries = searchRequests(page);
-    await page.goto('/app/shelf');
-    await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
+    await page.goto('/');
+    await expect(page.getByRole('heading', { name: 'My reading shelf' })).toBeVisible();
     await searchFor(page, 'innovator');
     const results = page.getByRole('region', { name: 'Search results' });
     await expect(results.getByRole('link')).toHaveCount(2);
-    await expect(results.getByRole('link').first()).toHaveAttribute('aria-label', BOOK.title + ' by ' + BOOK.authors[0] + ', on my shelf');
+    await expect(results.getByRole('link').first()).toHaveAttribute('aria-label', BOOK.title + ' by ' + BOOK.authors[0] + ', on my reading shelf, Not in your library');
     await expect(results.locator('.cover-badge-mine')).toHaveCount(1);
     await expect(results.locator('.cover-badge-library')).toHaveCount(0);
-    await expect(page.getByRole('heading', { name: 'My shelf' })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'My reading shelf' })).toHaveCount(0);
     // Public data only; the text is nowhere but the field.
     expect(queries).toEqual([{ query: 'innovator' }]);
-    expect(page.url()).toMatch(/\/app\/shelf$/);
+    expect(page.url()).toMatch(/\/\/[^/]+\/$/);
     expect(JSON.stringify(await page.evaluate(() => history.state))).not.toContain('innovator');
     expect(await page.evaluate(() => JSON.stringify({ ...localStorage }) + JSON.stringify({ ...sessionStorage }))).not.toContain('innovator');
     expect((await axe(page)).violations).toEqual([]);
@@ -256,15 +273,15 @@ test.describe('One-shelf search', () => {
     expect(queries).toHaveLength(1);
 
     await page.goBack();
-    await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'My reading shelf' })).toBeVisible();
     await expect(page.getByRole('searchbox', { name: 'Search for a book' })).toHaveValue('');
     await searchFor(page, 'innovator');
     await expect(results.getByRole('link')).toHaveCount(2);
-    await page.getByRole('button', { name: 'Back to my shelf', exact: true }).click();
-    await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
+    await page.getByRole('button', { name: 'Back to my reading shelf', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'My reading shelf' })).toBeVisible();
     await searchFor(page, 'innovator');
-    await page.getByRole('button', { name: 'Clear search and go back to my shelf' }).click();
-    await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
+    await page.getByRole('button', { name: 'Clear search and go back to my reading shelf' }).click();
+    await expect(page.getByRole('heading', { name: 'My reading shelf' })).toBeVisible();
     await expect(page.getByRole('searchbox', { name: 'Search for a book' })).toBeFocused();
   });
 
@@ -279,7 +296,7 @@ test.describe('One-shelf search', () => {
       return route.fulfill({ json: { kind: 'candidates', candidates: [BOOK] } });
     });
     const queries = searchRequests(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await searchFor(page, 'wings of fire');
     await expect(page.locator('.ghost-book')).toHaveCount(9);
     expect((await axe(page)).violations).toEqual([]);
@@ -288,7 +305,7 @@ test.describe('One-shelf search', () => {
     await searchFor(page, 'wngs fyre kalm');
     await expect(page.getByRole('heading', { name: 'No books found' })).toBeVisible();
     release?.();
-    await expect(page.getByRole('button', { name: 'Scan the barcode' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Scan the book’s barcode' })).toBeVisible();
     expect((await axe(page)).violations).toEqual([]);
 
     answer = 'fail';
@@ -310,7 +327,7 @@ test.describe('One-shelf search', () => {
 
   test('an ISBN goes straight to its book', async ({ page }) => {
     await setup(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await searchFor(page, '9781625275868');
     await expect(page).toHaveURL(new RegExp('/app/books/' + encodeURIComponent(BOOK.bookKey).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$'));
     await page.goBack();
@@ -319,7 +336,7 @@ test.describe('One-shelf search', () => {
 
   for (const light of ['lamplight', 'ink']) test(`results stay legible in ${light}`, async ({ page }) => {
     await setup(page, { saved: [MINE], light });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await searchFor(page, 'innovator');
     await expect(page.locator('.cover-badge-mine')).toHaveCount(1);
     expect((await new AxeBuilder({ page }).withRules(['color-contrast']).analyze()).violations).toEqual([]);
@@ -327,7 +344,7 @@ test.describe('One-shelf search', () => {
 
   test('reduced motion: results replace the shelf without a slide', async ({ page }) => {
     await setup(page, { saved: [book(1)] });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await searchFor(page, 'innovator');
     await expect(page.getByRole('region', { name: 'Search results' })).toBeVisible();
     await expect(page.locator('.shelf-stage.is-sliding')).toHaveCount(0);
@@ -338,15 +355,15 @@ test.describe('One-shelf search', () => {
     test.use({ contextOptions: { reducedMotion: 'no-preference' } });
     test('the shelf moves down and the results come down from above, then back', async ({ page }) => {
       await setup(page, { saved: [book(1)] });
-      await page.goto('/app/shelf');
+      await page.goto('/');
       await searchFor(page, 'innovator');
       await expect(page.locator('.shelf-stage.slide-down')).toHaveCount(1);
       expect(await page.locator('.stage-results').evaluate(element => getComputedStyle(element).animationName)).toBe('stage-from-above');
       await expect(page.locator('.shelf-stage.is-sliding')).toHaveCount(0);
       await expect(page.locator('.stage-pane')).toHaveCount(1);
-      await page.getByRole('button', { name: 'Back to my shelf', exact: true }).click();
+      await page.getByRole('button', { name: 'Back to my reading shelf', exact: true }).click();
       expect(await page.locator('.stage-shelf').evaluate(element => getComputedStyle(element).animationName)).toBe('stage-from-below');
-      await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'My reading shelf' })).toBeVisible();
     });
   });
 });
@@ -362,7 +379,7 @@ test.describe('One-shelf scan', () => {
     page.on('pageerror', error => errors.push(error.message));
     await installBarcodeCamera(page);
     await setup(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
     // On the cold open the scan button is inside the larger search bar.
     await page.locator('.home-top-cold').getByRole('button', { name: 'Scan a barcode' }).click();
@@ -379,7 +396,7 @@ test.describe('One-shelf scan', () => {
   test('scanning: camera frame and one line; Back and Escape close it, release the camera and return focus', async ({ page }) => {
     await installBarcodeCamera(page, 'missing', false, { code: '' });
     await setup(page, { saved: [book(1)] });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     const scanButton = page.getByRole('button', { name: 'Scan a barcode' });
     await scanButton.click();
     const dialog = page.getByRole('dialog', { name: 'Scan the barcode' });
@@ -388,7 +405,7 @@ test.describe('One-shelf scan', () => {
     await expect(dialog.getByRole('textbox', { name: 'ISBN' })).toHaveAttribute('placeholder', 'ISBN, 10 or 13 digits');
     await expect.poll(() => track(page)).toBe('live');
     expect(await dialog.locator('video').evaluate(video => video.srcObject !== null)).toBe(true);
-    expect(page.url()).toMatch(/\/app\/shelf$/);
+    expect(page.url()).toMatch(/\/\/[^/]+\/$/);
     expect((await axe(page)).violations).toEqual([]);
     // Focus stays in the pop-up.
     for (let index = 0; index < 6; index += 1) {
@@ -399,7 +416,7 @@ test.describe('One-shelf scan', () => {
     await expect(dialog).toBeHidden();
     expect(await track(page)).toBe('ended');
     await expect(scanButton).toBeFocused();
-    await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'My reading shelf' })).toBeVisible();
 
     await scanButton.click();
     await expect.poll(() => track(page)).toBe('live');
@@ -407,16 +424,16 @@ test.describe('One-shelf scan', () => {
     await expect(dialog).toBeHidden();
     expect(await track(page)).toBe('ended');
     await expect(scanButton).toBeFocused();
-    expect(page.url()).toMatch(/\/app\/shelf$/);
+    expect(page.url()).toMatch(/\/\/[^/]+\/$/);
     // The pop-up's history entry went with it.
     await page.goBack();
-    expect(page.url()).not.toMatch(/\/app\/shelf$/);
+    expect(page.url()).not.toMatch(/\/\/[^/]+\/$/);
   });
 
   test('not an ISBN: one line and the camera stays on; the second miss: Couldn’t match, Scan again, Search by title', async ({ page }) => {
     await installBarcodeCamera(page, 'missing', false, { code: '5012345678900' });
     await setup(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await page.getByRole('button', { name: 'Scan a barcode' }).click();
     const dialog = page.getByRole('dialog', { name: 'Scan the barcode' });
     await expect(dialog.getByRole('status')).toHaveText('Not an ISBN. Try the back cover.', { timeout: 15000 });
@@ -442,14 +459,14 @@ test.describe('One-shelf scan', () => {
     await expect(page.getByRole('searchbox', { name: 'Search for a book' })).toBeFocused();
     expect(await track(page)).toBe('ended');
     // Nothing scanned is kept in the address or the browser.
-    expect(page.url()).toMatch(/\/app\/shelf$/);
+    expect(page.url()).toMatch(/\/\/[^/]+\/$/);
     expect(JSON.stringify(await page.evaluate(() => history.state)) + await page.evaluate(() => JSON.stringify({ ...localStorage }) + JSON.stringify({ ...sessionStorage }))).not.toMatch(/5012345678900|4006381333931/);
   });
 
   test('camera refused: Allow camera inside the camera box asks again; the ISBN field stays', async ({ page }) => {
     await installBarcodeCamera(page, 'missing', false, { camera: 'denied' });
     await setup(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await page.getByRole('button', { name: 'Scan a barcode' }).click();
     const dialog = page.getByRole('dialog', { name: 'Scan the barcode' });
     const allow = dialog.getByRole('button', { name: 'Allow camera' });
@@ -470,7 +487,7 @@ test.describe('One-shelf scan', () => {
       if (query !== '9780306406157') return route.fallback();
       return route.fulfill({ json: { kind: 'exact', book: { bookKey: 'v1:isbn:' + query, isbn13: query, title: 'ISBN ' + query, authors: [], metadataStatus: 'missing' } } });
     });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await page.getByRole('button', { name: 'Scan a barcode' }).click();
     const dialog = page.getByRole('dialog', { name: 'Type the ISBN' });
     await expect(dialog).toBeVisible();
@@ -496,22 +513,22 @@ test.describe('One-shelf scan', () => {
     await installBarcodeCamera(page, 'missing', false, { camera: 'none' });
     await setup(page);
     await page.route('**/api/v2/books/search', route => route.fulfill({ json: { kind: 'candidates', candidates: [], nextOffset: null } }));
-    await page.goto('/app/shelf');
+    await page.goto('/');
     const input = page.getByRole('searchbox', { name: 'Search for a book' });
     await input.fill('wngs fyre');
     await input.press('Enter');
-    await page.getByRole('button', { name: 'Scan the barcode' }).click();
+    await page.getByRole('button', { name: 'Scan the book’s barcode' }).click();
     await expect(page.getByRole('dialog', { name: 'Type the ISBN' })).toBeVisible();
     await page.goBack();
     await expect(page.getByRole('dialog')).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'No books found' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Scan the barcode' })).toBeFocused();
+    await expect(page.getByRole('button', { name: 'Scan the book’s barcode' })).toBeFocused();
   });
 
   for (const light of ['lamplight', 'ink']) test(`the pop-up stays legible in ${light}`, async ({ page }) => {
     await installBarcodeCamera(page, 'missing', false, { code: '5012345678900' });
     await setup(page, { light });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await page.getByRole('button', { name: 'Scan a barcode' }).click();
     await expect(page.getByRole('dialog').getByRole('status')).toHaveText('Not an ISBN. Try the back cover.', { timeout: 15000 });
     expect((await new AxeBuilder({ page }).withRules(['color-contrast']).analyze()).violations).toEqual([]);
@@ -523,7 +540,7 @@ test.describe('One-shelf scan', () => {
   test('reduced motion: the pop-up does not slide', async ({ page }) => {
     await installBarcodeCamera(page, 'missing', false, { camera: 'none' });
     await setup(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await page.getByRole('button', { name: 'Scan a barcode' }).click();
     expect(await page.locator('.scan-dialog[open]').evaluate(element => getComputedStyle(element).animationName)).toBe('none');
   });
@@ -533,7 +550,7 @@ test.describe('One-shelf scan', () => {
     test('the pop-up rises from the bottom', async ({ page }) => {
       await installBarcodeCamera(page, 'missing', false, { camera: 'none' });
       await setup(page);
-      await page.goto('/app/shelf');
+      await page.goto('/');
       await page.getByRole('button', { name: 'Scan a barcode' }).click();
       expect(await page.locator('.scan-dialog[open]').evaluate(element => getComputedStyle(element).animationName)).toBe('scan-in');
     });
@@ -541,17 +558,103 @@ test.describe('One-shelf scan', () => {
 });
 
 // Accounts switched off (staging): the reader is simply a guest.
+// Review fixes (production-ready release): the Main and PickerTyping boards on a phone.
+test.describe('One-shelf phone details', () => {
+  const MANY = Array.from({ length: 25 }, (_, index) => ({ ...LINKED_LIBRARY, id: 'koha:branch-' + index, name: 'Chennai Branch Library ' + (index + 1) }));
+
+  test('the gear is at the top right, opposite the wordmark; "My library" stands over the library’s name', async ({ page }) => {
+    await setup(page, { saved: [book(1)], libraryId: LINKED_LIBRARY.id });
+    await page.goto('/');
+    await expect(page.locator('.home-library')).toHaveText(LINKED_LIBRARY.name);
+    const wordmark = await page.locator('.home-wordmark').boundingBox();
+    const gear = await page.getByRole('button', { name: 'Settings' }).boundingBox();
+    expect(gear.x).toBeGreaterThan(wordmark.x + wordmark.width);
+    expect(Math.abs((gear.y + gear.height / 2) - (wordmark.y + wordmark.height / 2))).toBeLessThan(4);
+    expect(gear.x + gear.width).toBeGreaterThan(page.viewportSize().width - 24);
+    const caption = page.locator('.home-library-row .home-library-caption');
+    await expect(caption).toHaveText('My library');
+    expect((await caption.boundingBox()).y).toBeLessThan((await page.locator('.home-library').boundingBox()).y);
+    // Never under 12 px.
+    expect(await caption.evaluate(element => parseFloat(getComputedStyle(element).fontSize))).toBeGreaterThanOrEqual(12);
+    expect((await axe(page)).violations).toEqual([]);
+  });
+
+  test('a press shows: the held button gets its inset ring over any hover style', async ({ page }) => {
+    await setup(page, { saved: [book(1)], libraryId: LINKED_LIBRARY.id });
+    await page.goto('/');
+    const change = page.getByRole('button', { name: 'Change library' });
+    await change.hover();
+    await page.mouse.down();
+    expect(await change.evaluate(element => getComputedStyle(element).boxShadow)).toMatch(/inset/);
+    await page.mouse.up();
+    await page.keyboard.press('Escape');
+  });
+
+  test('typing in the library pop-up with the keyboard open: the title, Close, the field and a result stay in view', async ({ page }) => {
+    await setup(page, { saved: [book(1)], libraryId: LINKED_LIBRARY.id });
+    await page.route('**/api/v2/libraries/discover', route => route.fulfill({ json: { libraries: MANY, total: 60, nextOffset: 25 } }));
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Change library' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Change library' });
+    await expect(dialog).toBeVisible();
+    // Before typing: the handle, "Libraries near me" and "Your library now" (PickerResults board).
+    await expect(dialog.locator('.scan-handle')).toBeVisible();
+    await expect(dialog.getByRole('button', { name: 'Libraries near me' })).toBeVisible();
+    await expect(dialog.getByText('Your library now')).toBeVisible();
+    const field = dialog.getByLabel('City, town or library name');
+    await field.click();
+    // Focus alone moves nothing: with an empty field "Libraries near me" can always be found.
+    await expect(field).toBeFocused();
+    await expect(dialog.getByRole('button', { name: 'Libraries near me' })).toBeVisible();
+    await expect(dialog.getByText('Your library now')).toBeVisible();
+    await field.fill('Chennai');
+    // The field has text: they step aside (PickerTyping board shows none of them).
+    await expect(dialog.getByRole('button', { name: 'Libraries near me' })).toBeHidden();
+    await expect(dialog.getByText('Your library now')).toBeHidden();
+    await expect(dialog.locator('.scan-handle')).toBeHidden();
+    await expect(dialog.getByRole('region', { name: 'Libraries' }).getByRole('button')).toHaveCount(25);
+    // The keyboard: the visual viewport shrinks to the area above it, as the
+    // sheet's listener sets it (LibraryPickerDialog, useSheetAboveKeyboard).
+    const visible = 460;
+    await dialog.evaluate((element, height) => {
+      element.style.setProperty('--sheet-height', height + 'px');
+      element.style.setProperty('--sheet-lift', (document.documentElement.clientHeight - height) + 'px');
+    }, visible);
+    expect(await dialog.evaluate(element => getComputedStyle(element).overflowY)).toBe('hidden');
+    const inView = async (locator, name) => {
+      const box = await locator.boundingBox();
+      expect(box, name).not.toBeNull();
+      expect(box.y, name).toBeGreaterThanOrEqual(0);
+      expect(box.y + box.height, name).toBeLessThanOrEqual(visible);
+    };
+    await inView(dialog.getByRole('heading', { name: 'Change library' }), 'title');
+    await inView(dialog.getByRole('button', { name: 'Close' }), 'Close');
+    await inView(field, 'field');
+    await inView(dialog.getByRole('region', { name: 'Libraries' }).getByRole('button').first(), 'first result');
+    // Only the list scrolls, and it keeps room for about two rows.
+    const list = dialog.getByRole('region', { name: 'Libraries' });
+    expect((await list.boundingBox()).height).toBeGreaterThanOrEqual(119);
+    expect(await list.evaluate(element => element.scrollHeight > element.clientHeight)).toBe(true);
+    expect(await dialog.evaluate(element => element.scrollTop)).toBe(0);
+    // Cleared and left: they come back.
+    await dialog.getByRole('button', { name: 'Clear' }).click();
+    await dialog.getByRole('heading', { name: 'Change library' }).focus();
+    await expect(dialog.getByRole('button', { name: 'Libraries near me' })).toBeVisible();
+    await expect(dialog.getByText('Your library now')).toBeVisible();
+  });
+});
+
 test.describe('One-shelf with accounts switched off', () => {
   test('no account notice on the home screen and no account buttons in the side panel', async ({ page }) => {
     await setup(page, { saved: [book(1)] });
     await page.route('**/api/account/session', route => route.fulfill({ status: 503, json: { error: { code: 'ACCOUNT_DISABLED', message: 'Accounts aren’t enabled here yet. You can continue browsing.' } } }));
-    await page.goto('/app/shelf');
-    await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
+    await page.goto('/');
+    await expect(page.getByRole('heading', { name: 'My reading shelf' })).toBeVisible();
     await expect(page.getByText(/Accounts aren’t/)).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Check account availability' })).toHaveCount(0);
-    await expect(page.getByRole('heading', { name: 'Take your shelf with you' })).toHaveCount(0);
-    await page.getByRole('button', { name: 'Account and settings' }).click();
-    const panel = page.getByRole('dialog', { name: 'Account and settings' });
+    await expect(page.getByRole('heading', { name: 'Take your reading shelf with you' })).toHaveCount(0);
+    await page.getByRole('button', { name: 'Settings' }).click();
+    const panel = page.getByRole('dialog', { name: 'Settings' });
     await expect(panel.getByRole('heading', { name: 'My library' })).toBeVisible();
     await expect(panel.getByRole('link', { name: 'Create account' })).toHaveCount(0);
     await expect(panel.getByRole('link', { name: 'Log in' })).toHaveCount(0);

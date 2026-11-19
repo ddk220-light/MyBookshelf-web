@@ -162,6 +162,7 @@ export async function checkAvailability(library, inputIsbn) {
         matchKind: 'exact_isbn',
         recognizedExact: true,
         catalogUrl: catalogUrl.toString(),
+        catalogLinkKind: 'record',
       };
     }
     return {
@@ -171,6 +172,7 @@ export async function checkAvailability(library, inputIsbn) {
       totalCopies,
       availableCopies,
       catalogUrl: catalogUrl.toString(),
+      catalogLinkKind: 'record',
     };
   }, { deadlineAt }), { deadlineAt, shouldCache: (value) => value.outcome !== 'unknown' });
 }

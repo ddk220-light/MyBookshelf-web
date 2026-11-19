@@ -41,6 +41,11 @@ describe('public API adapter', () => {
     vi.stubGlobal('fetch', fetchMock);
     await publicApi.libraryRequest('Tirunelveli');
     expect(fetchMock).toHaveBeenCalledWith('/api/v2/library-requests', expect.objectContaining({ body: JSON.stringify({ text: 'Tirunelveli' }) }));
+    // The optional name and email go only when filled in.
+    await publicApi.libraryRequest('Tirunelveli', { name: ' Asha ', email: '' });
+    expect(fetchMock).toHaveBeenLastCalledWith('/api/v2/library-requests', expect.objectContaining({ body: JSON.stringify({ text: 'Tirunelveli', name: 'Asha' }) }));
+    await publicApi.problemReport({ text: 'Wrong', screen: 'book', name: '', email: 'reader@example.org' });
+    expect(fetchMock).toHaveBeenLastCalledWith('/api/v2/problem-reports', expect.objectContaining({ body: JSON.stringify({ text: 'Wrong', screen: 'book', email: 'reader@example.org' }) }));
   });
 
   it('background check: passes on found marks for asked books only, needs the done line, and rejects any failure', async () => {
@@ -50,7 +55,7 @@ describe('public API adapter', () => {
     stream(['{"type":"mark","bookKey":"v1:openlibrary:OL2W","answer":"found"}', '{"type":"mark","bookKey":"v1:openlibrary:OL1W","answer":"not_found"}',
       '{"type":"mark","bookKey":"v1:openlibrary:OL9W","answer":"found"}', '{"type":"later","x":1}', '{"type":"done","unchecked":["v1:openlibrary:OL1W","other"]}', ''].join('\n'));
     let call = run();
-    await expect(call.done).resolves.toEqual({ unchecked: ['v1:openlibrary:OL1W'] });
+    await expect(call.done).resolves.toEqual({ unchecked: ['v1:openlibrary:OL1W'], notFound: [], couldntCheck: [] });
     expect(call.marks).toEqual(['v1:openlibrary:OL2W']);
     expect(vi.mocked(fetch)).toHaveBeenCalledWith('/api/v2/holdings/search', expect.objectContaining({ body: JSON.stringify({ libraryId: 'koha:a', query: 'wings', books: asked.map(bookKey => ({ bookKey })) }),
       headers: expect.objectContaining({ Accept: 'application/x-ndjson' }) }));

@@ -41,7 +41,7 @@ describe('the one-shelf app', () => {
     localStorage.setItem(ANONYMOUS_WEB_STORAGE_KEY, record);
     localStorage.setItem(AVAILABILITY_CACHE_KEY, JSON.stringify({ version: 1, entries: [] }));
     open('/app');
-    await at(/^\/app\/shelf$/);
+    await at(/^\/$/);
     // The duplicate is collapsed to the newer copy.
     expect(await screen.findAllByRole('link', { name: 'Newer copy by Synthetic author' })).toHaveLength(1);
     expect(screen.queryByRole('link', { name: /Older copy/ })).not.toBeInTheDocument();
@@ -51,11 +51,25 @@ describe('the one-shelf app', () => {
     expect(localStorage.getItem(AVAILABILITY_CACHE_KEY)).toBeNull();
   });
 
+  it('the shelf is at the root; its old address /app/shelf forwards there without its query', async () => {
+    stubApi();
+    open('/app/shelf?q=Wings%20of%20Fire#top');
+    await at(/^\/$/);
+    expect(await screen.findByRole('searchbox', { name: 'Search for a book' })).toHaveValue('');
+    cleanup();
+    open('/');
+    expect(await screen.findByRole('searchbox', { name: 'Search for a book' })).toBeInTheDocument();
+    expect(screen.getByTestId('location')).toHaveTextContent(/^\/$/);
+    // The wordmark leads to the public About page (a static page, not an app route).
+    expect(screen.getByRole('link', { name: 'MyBookshelf' })).toHaveAttribute('href', '/about');
+    await waitFor(() => expect(document.title).toBe('MyBookshelf — Find out if your library has a book'));
+  });
+
   it('an unknown page says so and leads back to the shelf', async () => {
     stubApi();
     open('/no-such-page');
     expect(await screen.findByRole('heading', { name: 'Page not found' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'My shelf' })).toHaveAttribute('href', '/app/shelf');
+    expect(screen.getByRole('link', { name: 'My reading shelf' })).toHaveAttribute('href', '/');
   });
 });
 
@@ -64,14 +78,14 @@ describe('old addresses', () => {
   it('/app/search: the shelf with the search bar focused', async () => {
     stubApi();
     open('/app/search');
-    await at(/^\/app\/shelf$/);
+    await at(/^\/$/);
     await waitFor(() => expect(screen.getByRole('searchbox', { name: 'Search for a book' })).toHaveFocus());
   });
 
   it('/app/search?q=: runs the search once; the text never stays in the address or storage', async () => {
     const calls = stubApi();
     open('/app/search?q=Wings%20of%20Fire');
-    await at(/^\/app\/shelf$/);
+    await at(/^\/$/);
     // The search's result, by its exact name: the cold-open shelf already shows the seed list's
     // "Wings of Fire by A. P. J. Abdul Kalam, suggested", which the results then replace.
     expect(await screen.findByRole('link', { name: 'Wings of Fire by A. P. J. Abdul Kalam' })).toBeInTheDocument();
@@ -87,7 +101,7 @@ describe('old addresses', () => {
   it('/app/search?scope=free (free reading off in this build): the shelf, without searching', async () => {
     const calls = stubApi();
     open('/app/search?scope=free&q=literature');
-    await at(/^\/app\/shelf$/);
+    await at(/^\/$/);
     await screen.findByRole('searchbox', { name: 'Search for a book' });
     expect(calls.some(call => call.path.includes('search'))).toBe(false);
   });
@@ -95,7 +109,7 @@ describe('old addresses', () => {
   it('/app/libraries?q=: the shelf with the library pop-up, the text in its field only', async () => {
     stubApi();
     open('/app/libraries?q=Chennai');
-    await at(/^\/app\/shelf$/);
+    await at(/^\/$/);
     const dialog = await screen.findByRole('dialog', { name: 'Find your library' });
     expect(within(dialog).getByLabelText('City, town or library name')).toHaveValue('Chennai');
     expect(screen.getByTestId('location')).not.toHaveTextContent('Chennai');
@@ -105,7 +119,7 @@ describe('old addresses', () => {
   it('/app/libraries: the shelf with an empty library pop-up', async () => {
     stubApi();
     open('/app/libraries');
-    await at(/^\/app\/shelf$/);
+    await at(/^\/$/);
     const dialog = await screen.findByRole('dialog', { name: 'Find your library' });
     expect(within(dialog).getByLabelText('City, town or library name')).toHaveValue('');
   });
@@ -120,8 +134,8 @@ describe('old addresses', () => {
   it('/app/settings: the shelf with the side panel; #privacy opens Privacy', async () => {
     stubApi();
     const view = open('/app/settings');
-    expect(await screen.findByRole('dialog', { name: 'Account and settings' })).toBeInTheDocument();
-    await at(/^\/app\/shelf$/);
+    expect(await screen.findByRole('dialog', { name: 'Settings' })).toBeInTheDocument();
+    await at(/^\/$/);
     view.unmount();
     open('/app/settings#privacy');
     await at(/^\/app\/privacy$/);
@@ -130,7 +144,7 @@ describe('old addresses', () => {
   it('/find and /privacy', async () => {
     stubApi();
     const view = open('/find');
-    await at(/^\/app\/shelf$/);
+    await at(/^\/$/);
     view.unmount();
     open('/privacy');
     await at(/^\/app\/privacy$/);

@@ -82,7 +82,12 @@ export async function enqueueAccountMail(auth, config, kind, data, token) {
   const now = new Date(),
     expiresAt = new Date(
       now.getTime() +
-        (["reset", "newEmail"].includes(kind) ? 1800 : 86400) * 1000,
+        (kind === "magicLink"
+          ? 900
+          : ["reset", "newEmail"].includes(kind)
+            ? 1800
+            : 86400) *
+          1000,
     );
   if (token && ["verify", "newEmail"].includes(kind)) {
     const purpose = kind === "newEmail" ? "email-change" : "verify";
@@ -168,6 +173,14 @@ export function renderAccountMail(payload) {
       "/app/account/email-change",
       "This link works once, for 30 minutes. Use the newest email. Other signed-in devices will be signed out.",
     ],
+    magicLink: [
+      "Your MyBookshelf log-in link",
+      "Log in to MyBookshelf",
+      "Open this link to log in. You don’t need your password.",
+      "Log in",
+      "/app/account/magic-link",
+      "It works once, for 15 minutes. If you didn’t ask for it, you don’t need to do anything.",
+    ],
     reset: [
       "Reset your MyBookshelf password",
       "Reset your password",
@@ -227,9 +240,9 @@ export function renderAccountMail(payload) {
     deleted: [
       "Your MyBookshelf account was deleted",
       "Your account was deleted",
-      "Access has ended and account cleanup is complete. Independently retained device copies and downloads are unchanged.",
+      "Your email, password, saved books, library choice and Viewed before list were deleted, and you were logged out on every device. Backup copies expire within 30 days.",
       "Visit MyBookshelf",
-      "/app/shelf",
+      "/",
       "No action is needed.",
     ],
   };
@@ -237,7 +250,10 @@ export function renderAccountMail(payload) {
   if (!item) throw new Error("Unsupported account email kind.");
   const [subject, title, copy, button, path, note] = item;
   const url = new URL(path, baseURL);
-  if (token) url.searchParams.set("token", token);
+  // The token goes after "#": that part of an address never reaches a server
+  // or its logs. The page reads it there (pages still accept ?token= for
+  // mails sent before this change).
+  if (token) url.hash = new URLSearchParams({ token }).toString();
   return {
     subject,
     text: `${title}\n\n${copy}\n\n${button}: ${url.href}\n\n${note}\n\nMyBookshelf`,
@@ -277,6 +293,7 @@ export async function runMailBatch(
           subject: email.subject,
           html: email.html,
           text: email.text,
+          headers: email.headers,
         }),
         signal: AbortSignal.timeout(8000),
       });
@@ -286,7 +303,13 @@ export async function runMailBatch(
   for (const job of rows) {
     try {
       const payload = decryptMail(job.payload, config.jobSecret);
-      await send(job, { ...renderAccountMail(payload), to: payload.to });
+      // A reference unique to each message, so mail apps do not thread
+      // separate account emails with the same subject together.
+      await send(job, {
+        ...renderAccountMail(payload),
+        to: payload.to,
+        headers: { "X-Entity-Ref-ID": job.id },
+      });
       await pool.query(
         `UPDATE account_mail_jobs SET status='sent',payload='',"leaseUntil"=NULL,"leaseOwner"=NULL,"lastError"=NULL WHERE id=$1 AND "leaseOwner"=$2`,
         [job.id, worker],
