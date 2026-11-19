@@ -167,31 +167,27 @@ test(
     response = await request("/reauth/recent", "POST", { action: "email-change" }, cookie, session.csrfToken);
     assert.equal(response.status, 403);
     assert.equal((await response.json()).error.code, "RECENT_AUTH_REQUIRED");
-    // A normal account visit can happen after Better Auth's freshness
-    // window. Reading device summaries must still work; revocation
-    // continues to require a separate, action-bound recent-auth proof.
-
-    await admin.query('INSERT INTO "user"(id,name,email,"emailVerified") VALUES($1,$2,$3,true)',
-      [otherUserId,"Other synthetic reader",randomUUID()+"@example.test"]);
-    for(const [owner,age,expiry] of [
-      [otherUserId,0,3600000],
-      [user.id,360000,-1000],
-      [user.id,31*86400000,3600000],
-    ])await admin.query('INSERT INTO "session"(id,token,"userId","createdAt","updatedAt","expiresAt") VALUES($1,$2,$3,$4,now(),$5)',
-      [randomUUID(),randomUUID(),owner,new Date(Date.now()-age),new Date(Date.now()+expiry)]);
-    response = await request("/sessions", "GET", undefined, cookie);
+    // Removed by the owner's decision: the account data download, the list
+    // of signed-in devices and logging out other devices from the account
+    // screen. Their routes are gone (answered like any unknown route).
+    for (const [path, method, body] of [
+      ["/sessions", "GET"],
+      ["/sessions/revoke", "POST", { sessionId: "x", proof: "unused-synthetic-proof-with-more-than-32-characters" }],
+      ["/sign-out-all", "POST", { proof: "unused-synthetic-proof-with-more-than-32-characters" }],
+      ["/export", "POST", { proof: "unused-synthetic-proof-with-more-than-32-characters", operationId: randomUUID() }],
+    ]) {
+      response = await request(path, method, body, cookie, session.csrfToken);
+      assert.equal(response.status, 503, path);
+      assert.equal((await response.json()).error.code, "ACCOUNT_UNAVAILABLE");
+    }
+    // "Confirm it's you" without the password covers changing the password or the email only.
+    await admin.query('UPDATE "session" SET "createdAt"=now() WHERE "userId"=$1', [user.id]);
+    for (const action of ["provider-link", "provider-unlink", "password-setup", "export", "signout-all", "session-revoke"]) {
+      response = await request("/reauth/recent", "POST", { action }, cookie, session.csrfToken);
+      assert.ok([403, 422].includes(response.status), action);
+    }
+    response = await request("/reauth/recent", "POST", { action: "email-change" }, cookie, session.csrfToken);
     assert.equal(response.status, 200);
-    const deviceList = await response.json();
-    assert.equal(deviceList.sessions.length, 1);
-    assert.equal(deviceList.sessions[0].current, true);
-    assert.deepEqual(Object.keys(deviceList.sessions[0]).sort(),
-      ["createdAt", "current", "device", "expiresAt", "id"]);
-    assert.equal((await request("/sessions")).status, 401);
-    response = await request("/sign-out-all", "POST",
-      { proof: "unused-synthetic-proof-with-more-than-32-characters" },
-      cookie, session.csrfToken);
-    assert.equal(response.status, 403);
-    assert.equal((await response.json()).error.code, "RECENT_AUTH_REQUIRED");
     assert.equal((await (await request("/session", "GET", undefined, cookie)).json()).status,
       "authenticated");
     const changedView = await fetch(base + "/api/account/books", {

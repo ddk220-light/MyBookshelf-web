@@ -440,7 +440,7 @@ test(
       "google",
       {
         mode: "reauth",
-        action: "export",
+        action: "email-change",
         email: google.entry.email,
         subject: google.entry.subject,
       },
@@ -467,7 +467,7 @@ test(
       "google",
       {
         mode: "reauth",
-        action: "export",
+        action: "email-change",
         email: google.entry.email,
         subject: google.entry.subject,
       },
@@ -497,7 +497,7 @@ test(
       "google",
       {
         mode: "reauth",
-        action: "export",
+        action: "email-change",
         email: google.entry.email,
         subject: google.entry.subject,
       },
@@ -514,7 +514,7 @@ test(
     );
     const wrongSubject = await start(
       "google",
-      { mode: "reauth", action: "export" },
+      { mode: "reauth", action: "email-change" },
       signed.headers,
     );
     assert.ok(

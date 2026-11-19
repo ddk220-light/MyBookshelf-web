@@ -1,6 +1,5 @@
 import express from "express";
 import {randomUUID} from 'node:crypto';
-import {streamAccountExport} from './stream-export.js';
 import {
   AccountRequestError,
   requireOrigin,
@@ -82,9 +81,8 @@ export function createAccountMiddleware({
     "/api/account/reauth/recent",
     "/api/account/magic-link",
     "/api/account/magic-link/verify",
+    "/api/account/link-info",
     "/api/account/password",
-    "/api/account/sessions/revoke",
-    "/api/account/sign-out-all",
     "/api/account/email-change",
     "/api/account/email-change/cancel",
     "/api/account/email-change/confirm",
@@ -92,7 +90,6 @@ export function createAccountMiddleware({
     '/api/account/provider/result',
     '/api/account/provider/unlink',
     '/api/account/password/setup',
-    '/api/account/export',
     '/api/account/deletion',
     '/api/account/deletion/status',
   ]);
@@ -167,7 +164,6 @@ export function createAccountMiddleware({
           "/api/auth/ok",
           "/api/account/session",
           "/api/account/capabilities",
-          "/api/account/sessions",
         ].includes(path)
       )
         return unavailable(res);
@@ -301,6 +297,10 @@ export function createAccountMiddleware({
             setCookie,
           ),
         );
+      if (path === "/api/account/link-info")
+        return res.json(
+          await service.actions.linkInfo(req.body, requestIP(req, env)),
+        );
       if (path === "/api/account/magic-link")
         return res
           .status(202)
@@ -357,17 +357,13 @@ export function createAccountMiddleware({
           "/api/account/reauth/password",
           "/api/account/reauth/recent",
           "/api/account/password",
-          "/api/account/sessions",
-          "/api/account/sessions/revoke",
-          "/api/account/sign-out-all",
           "/api/account/email-change",
           "/api/account/email-change/cancel",
           '/api/account/provider/start',
           '/api/account/provider/result',
           '/api/account/provider/unlink',
           '/api/account/password/setup',
-          '/api/account/export',
-          '/api/account/deletion',
+                '/api/account/deletion',
         ].includes(path)
       ) {
         const identity = await service.identity(headers, setCookie);
@@ -383,12 +379,6 @@ export function createAccountMiddleware({
         if(path==='/api/account/provider/result')return res.json(await service.actions.providerResult(req.body,identity));
         if(path==='/api/account/provider/unlink')return res.json(await service.actions.unlinkMethod(req.body,identity,headers));
         if(path==='/api/account/password/setup')return res.json(await service.actions.setFirstPassword(req.body,identity,headers));
-        if(path==='/api/account/export'){
-          if(!service.reading)throw new AccountRequestError(503,'ACCOUNT_UNAVAILABLE','Account data is temporarily unavailable.');
-          const value=await service.reading.exportAccount(req.body,identity);
-          res.set({'Content-Type':'application/json; charset=utf-8','Content-Disposition':'attachment; filename="mybookshelf-account.json"','X-Content-Type-Options':'nosniff'});
-          await streamAccountExport(res,value);return;
-        }
         if(path==='/api/account/deletion')return res.status(202).json(await service.actions.deleteAccount(req.body,identity,headers,setCookie));
         if (path === "/api/account/email-change")
           return res
@@ -421,28 +411,8 @@ export function createAccountMiddleware({
               setCookie,
             ),
           );
-        if (path === "/api/account/password")
-          return res.json(
-            await service.actions.changePassword(
-              req.body,
-              identity,
-              headers,
-              setCookie,
-            ),
-          );
-        if (path === "/api/account/sessions")
-          return res.json(await service.actions.list(identity, headers));
-        if (path === "/api/account/sessions/revoke")
-          return res.json(
-            await service.actions.revoke(
-              req.body,
-              identity,
-              headers,
-              setCookie,
-            ),
-          );
         return res.json(
-          await service.actions.revokeAll(
+          await service.actions.changePassword(
             req.body,
             identity,
             headers,
@@ -461,9 +431,14 @@ export function createAccountMiddleware({
       if (res.headersSent) return res.end();
       if (error instanceof AccountRequestError) {
         if (error.retryAfter) res.set("Retry-After", String(error.retryAfter));
-        return res
-          .status(error.status)
-          .json({ error: { code: error.code, message: error.message } });
+        return res.status(error.status).json({
+          error: {
+            code: error.code,
+            message: error.message,
+            // Only positions of refused device books (accounts/imports.js).
+            ...(error.details?.rejected ? { rejected: error.details.rejected } : {}),
+          },
+        });
       }
       if (error?.type === "entity.too.large")
         return res

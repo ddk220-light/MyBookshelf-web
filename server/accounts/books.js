@@ -35,7 +35,7 @@ export function createShelfActions({owned,secret}){
       const value=JSON.parse(Buffer.from(data,'base64url').toString());
       if(value.owner!==id||!Number.isFinite(Date.parse(value.at))||!value.id)throw Error();
       if(value.r!==r)throw conflict();return value;
-    }catch(error){if(error instanceof AccountRequestError)throw error;throw invalid('This shelf page is invalid. Refresh your shelf.');}
+    }catch(error){if(error instanceof AccountRequestError)throw error;throw invalid('This page of your reading shelf is invalid. Refresh your reading shelf.');}
   };
   return {
     async books(query,identity){

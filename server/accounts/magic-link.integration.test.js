@@ -150,6 +150,70 @@ test(
     assert.equal((await mails(reader.authUserId, "magicLink")).length, 3);
     await admin.query("UPDATE app_users SET status='active' WHERE auth_user_id=$1", [reader.authUserId]);
 
+    // The link pages name the account before the reader taps ("Log in as
+    // <email>"): a working link gives its address and is not used up; any
+    // other link gets one answer that says nothing.
+    const expired = async (body) => {
+      const error = await actions.linkInfo(body, ip()).then(() => null, (e) => e);
+      assert.ok(error, "refused");
+      return { status: error.status, code: error.code, message: error.message };
+    };
+    const nothing = await expired({ kind: "magic-link", token: "x".repeat(43) });
+    assert.deepEqual(nothing, { status: 400, code: "LINK_EXPIRED", message: "This link has expired or was already used." });
+    await actions.requestMagicLink({ email: reader.email }, ip(), new Headers());
+    const fourth = decryptMail((await mails(reader.authUserId, "magicLink"))[3].payload, config.jobSecret);
+    for (let look = 0; look < 2; look++)
+      assert.deepEqual(await actions.linkInfo({ kind: "magic-link", token: fourth.token }, ip()), { status: "valid", email: reader.email });
+    for (const kind of ["verify", "reset", "other"])
+      assert.deepEqual(await expired({ kind, token: fourth.token }), nothing, kind);
+    await admin.query("UPDATE app_users SET status='deleting' WHERE auth_user_id=$1", [reader.authUserId]);
+    assert.deepEqual(await expired({ kind: "magic-link", token: fourth.token }), nothing);
+    await admin.query("UPDATE app_users SET status='active' WHERE auth_user_id=$1", [reader.authUserId]);
+    const linked = [];
+    await actions.magicLinkSignIn({ token: fourth.token }, ip(), new Headers(), (c) => linked.push(c));
+    assert.deepEqual(await expired({ kind: "magic-link", token: fourth.token }), nothing);
+    // A verification link: for an address not yet verified only.
+    const newcomer = await create("a newcomer synthetic password", false);
+    const [verifyJob] = await mails(newcomer.authUserId, "verify");
+    const verifyToken = decryptMail(verifyJob.payload, config.jobSecret).token;
+    assert.deepEqual(await actions.linkInfo({ kind: "verify", token: verifyToken }, ip()), { status: "valid", email: newcomer.email });
+    const [readerVerify] = await mails(reader.authUserId, "verify");
+    assert.deepEqual(await expired({ kind: "verify", token: decryptMail(readerVerify.payload, config.jobSecret).token }), nothing);
+    // A reset link.
+    await actions.recover({ email: reader.email }, ip());
+    const [resetJob] = await mails(reader.authUserId, "reset");
+    const resetToken = decryptMail(resetJob.payload, config.jobSecret).token;
+    assert.deepEqual(await actions.linkInfo({ kind: "reset", token: resetToken }, ip()), { status: "valid", email: reader.email });
+    assert.deepEqual(await expired({ kind: "reset", token: resetToken + "x" }), nothing);
+
+    // No IP address or device identifier is kept on a session, and the
+    // library keeps no per-address rows; the app's own limits above still
+    // hold (they keep only one-way codes).
+    const privateHeaders = new Headers({ "user-agent": "Synthetic browser/1.0", "x-forwarded-for": "192.0.2.77" });
+    await actions.signin({ email: reader.email, password: "another synthetic password" }, ip(), privateHeaders, () => {});
+    const rows = (await admin.query('SELECT "ipAddress","userAgent" FROM "session" WHERE "userId"=$1', [reader.authUserId])).rows;
+    assert.ok(rows.length >= 2);
+    assert.ok(rows.every((row) => row.ipAddress === null && row.userAgent === null));
+    assert.equal((await admin.query('SELECT 1 FROM "rateLimit" WHERE key LIKE $1', ["192.0.2.77%"])).rowCount, 0);
+
+    // A deleted account answers like a wrong password, after the same one
+    // password hash a wrong password costs (no timing tell).
+    const context = await service.auth.$context;
+    const hash = context.password.hash;
+    let hashed = 0;
+    context.password.hash = async (value) => { hashed++; return hash(value); };
+    try {
+      await admin.query("UPDATE app_users SET status='deleting' WHERE auth_user_id=$1", [reader.authUserId]);
+      await assert.rejects(
+        actions.signin({ email: reader.email, password: "another synthetic password" }, ip(), new Headers(), () => {}),
+        (error) => error.code === "INVALID_CREDENTIALS" && error.status === 401,
+      );
+      assert.equal(hashed, 1);
+    } finally {
+      context.password.hash = hash;
+      await admin.query("UPDATE app_users SET status='active' WHERE auth_user_id=$1", [reader.authUserId]);
+    }
+
     // Limited like password resets: five requests per address an hour.
     const limited = await create("a limited synthetic password");
     for (let attempt = 0; attempt < 5; attempt++)

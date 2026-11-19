@@ -161,50 +161,7 @@ test(
       "UPDATE recent_book_views SET viewed_at=now()-interval '31 days' WHERE user_id=$1",
       [a.identity.user.id],
     );
-    const exported = await proof(a, "export"),
-      operationId = randomUUID(),
-      request = { proof: exported.proof, operationId };
-    const data = await service.reading.exportAccount(
-      request,
-      exported.identity,
-    );
-    assert.equal(data.schemaVersion, 1);
-    assert.equal(data.profile.email, a.email);
-    assert.deepEqual(data.profile.signInMethods, ["password"]);
-    assert.equal(data.savedBooks.length, 1);
-    assert.equal(data.savedBooks[0].bookKey, own.bookKey);
-    assert.equal(data.recentlyViewed.length, 1);
-    assert.equal(data.recentlyViewed[0].bookKey, own.bookKey);
-    assert.deepEqual(data.libraries, [
-      { directoryId: "bc:smcl", selected: true },
-    ]);
-    const serialized = JSON.stringify(data);
-    for (const forbidden of [
-      other.bookKey,
-      b.email,
-      "sessionId",
-      "authUserId",
-      "accessToken",
-      "passwordHash",
-      "csrfToken",
-      exported.identity.sessionId,
-      exported.proof,
-    ])
-      assert.ok(!serialized.includes(forbidden));
-    assert.equal(
-      (await service.reading.exportAccount(request, exported.identity))
-        .savedBooks.length,
-      1,
-      "lost download can retry same operation within original proof lifetime",
-    );
-    await assert.rejects(
-      service.reading.exportAccount(
-        { ...request, operationId: randomUUID() },
-        exported.identity,
-      ),
-      (e) => e.code === "RECENT_AUTH_REQUIRED",
-    );
-    const deleting = await proof(exported, "delete"),
+    const deleting = await proof(a, "delete"),
       receiptNonce = randomBytes(32).toString("base64url"),
       deletionId = randomUUID();
     const deletion = {

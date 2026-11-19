@@ -77,12 +77,42 @@ export function validateImport(body, validateLibrary, now = Date.now()) {
   const distinct = (rows) => [
     ...new Map(rows.map((row) => [row.bookKey, row])).values(),
   ];
-  return {
-    saved: distinct(snapshot.savedBooks.map(parse)),
-    recent: distinct(snapshot.recentBooks.map(parse)),
-  };
+  // Every book is checked; the answer names the ones refused (by position),
+  // so a browser can send the others again without them.
+  const rejected = { savedBooks: [], recentBooks: [] };
+  const all = (list, field) =>
+    list.flatMap((entry, index) => {
+      try {
+        return [parse(entry)];
+      } catch (error) {
+        if (!(error instanceof AccountRequestError)) throw error;
+        rejected[field].push(index);
+        return [];
+      }
+    });
+  const saved = all(snapshot.savedBooks, "savedBooks"),
+    recent = all(snapshot.recentBooks, "recentBooks");
+  if (rejected.savedBooks.length || rejected.recentBooks.length) {
+    const error = invalid("A device book has invalid details. Nothing has been imported.");
+    error.details = { rejected };
+    throw error;
+  }
+  if (body.libraryPolicy === "use-device") {
+    try {
+      validateLibrary(snapshot.selectedLibraryId);
+    } catch (error) {
+      if (error instanceof AccountRequestError) error.details = { rejected: { library: true } };
+      throw error;
+    }
+  }
+  return { saved: distinct(saved), recent: distinct(recent) };
 }
-export function createImportActions({ owned, validateLibrary }) {
+/** Imports that carry only Viewed before (Undo after "Clear") have their own, larger allowance. */
+export const importLimit = (body) =>
+  body.libraryPolicy === "keep-account" && body.snapshot.savedBooks.length === 0
+    ? { scope: "history-imports", max: 20, seconds: 3600 }
+    : { scope: "imports", max: 5, seconds: 3600 };
+export function createImportActions({ owned, validateLibrary, limit = async () => {} }) {
   return {
     async importGuest(body, identity) {
       const now = Date.now(),
@@ -111,8 +141,9 @@ export function createImportActions({ owned, validateLibrary }) {
           Number(settings.history_generation) !== body.historyGeneration
         )
           throw conflict();
-        if (body.libraryPolicy === "use-device")
-          validateLibrary(body.snapshot.selectedLibraryId);
+        // Counted only for an import that is valid and current (a replay of
+        // the same import above is free).
+        await limit(identity, importLimit(body));
         const current = new Set(
           (
             await client.query(

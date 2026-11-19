@@ -87,15 +87,20 @@ test('pinned auth: real Postgres transactions, raw Express body, verification, c
   assert.equal(await auth.api.getSession({ headers }), null);
   assert.deepEqual(await service.session(headers), { status: 'guest' });
   await assert.rejects(auth.api.resetPassword({ body: { token: resets[0].token, newPassword: oldPassword } }));
-  // The pinned library applies a shared DB-backed default sensitive-route
-  // limiter. Clear only this disposable test database's counters before the
-  // remaining credential checks; do not disable the production limiter.
-  assert.ok((await pool.query('SELECT 1 FROM "rateLimit"')).rowCount > 0);
-  await pool.query('DELETE FROM "rateLimit"');
+  // No IP addresses or device identifiers are kept: the library reads no
+  // client address, so its per-address limiter keeps no rows (the app's own
+  // limits keep one-way codes only), and sessions record neither the address
+  // nor the browser.
+  assert.equal((await pool.query('SELECT 1 FROM "rateLimit"')).rowCount, 0);
   const oldLogin = await request(raw).post('/api/auth/sign-in/email').set('Origin', config.baseURL).send({ email, password: oldPassword });
   assert.equal(oldLogin.status, 401);
-  const newLogin = await request(raw).post('/api/auth/sign-in/email').set('Origin', config.baseURL).send({ email, password: newPassword });
+  const newLogin = await request(raw).post('/api/auth/sign-in/email').set('Origin', config.baseURL)
+    .set('User-Agent', 'Synthetic browser/1.0').set('X-Forwarded-For', '192.0.2.44').send({ email, password: newPassword });
   assert.equal(newLogin.status, 200);
+  const sessionRows = await pool.query('SELECT "ipAddress","userAgent" FROM "session" WHERE "userId"=$1', [owner.id]);
+  assert.ok(sessionRows.rowCount > 0);
+  assert.ok(sessionRows.rows.every((row) => row.ipAddress === null && row.userAgent === null));
+  assert.equal((await pool.query('SELECT 1 FROM "rateLimit"')).rowCount, 0);
   // Renewal must forward the refreshed cookie through the narrow facade.
   const renewedSession = await auth.api.getSession({ headers: new Headers({ cookie: newLogin.headers['set-cookie'].map((v) => v.split(';')[0]).join('; ') }) });
   await pool.query(`UPDATE "session" SET "updatedAt"=now()-interval '2 days', "expiresAt"=now()+interval '5 days' WHERE id=$1`, [renewedSession.session.id]);

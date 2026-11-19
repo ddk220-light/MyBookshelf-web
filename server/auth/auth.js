@@ -15,6 +15,18 @@ import { passwordBudget } from "./password-budget.js";
 import {deletionSchema} from './deletion-schema.js';
 import { AUTH_COOKIE_PREFIX } from "./cookies.js";
 
+// No IP addresses or device identifiers are kept (privacy policy): a session
+// row never holds the browser's address or its user agent.
+export const privateSessionHooks = {
+  session: {
+    create: {
+      before: async (data) => ({
+        data: { ...data, ipAddress: null, userAgent: null },
+      }),
+    },
+  },
+};
+
 export function authOptions({
   pool,
   config,
@@ -81,13 +93,18 @@ export function authOptions({
     },
     hooks: { before: beforeOAuth },
     advanced: {
+      // The library reads no client address: sessions record none, and its
+      // own per-address limiter (below) has no key, so it skips every request
+      // and keeps no rows. The app's limits (accounts/security.js) keep only
+      // one-way codes of the address and stay in force.
+      ipAddress: { disableIpTracking: true },
       cookiePrefix: AUTH_COOKIE_PREFIX,
       useSecureCookies: config.secureCookies,
       defaultCookieAttributes: { httpOnly: true, sameSite: "lax", path: "/" },
     },
     rateLimit: { enabled: true, storage: "database", window: 60, max: 60 },
     databaseHooks: mergeDatabaseHooks(
-      oauthDatabaseHooks(getAuth),
+      mergeDatabaseHooks(oauthDatabaseHooks(getAuth), privateSessionHooks),
       databaseHooks,
     ),
     plugins: [

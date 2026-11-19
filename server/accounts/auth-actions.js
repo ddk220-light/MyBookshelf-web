@@ -263,6 +263,64 @@ export function createAuthActions({ auth, pool, config }) {
       for (const cookie of result.headers.getSetCookie()) setCookie(cookie);
       return { status: "signed-in", email };
     },
+    // Which account an emailed link is for, before the reader taps it: the
+    // link pages say "Log in as <email>". Nothing is used up. Any link that
+    // would not work (unknown, used, expired, or for an account that is not
+    // active) gets the same answer and reveals nothing.
+    async linkInfo(body, ip) {
+      await consumeLimits(pool, config.secret, [
+        { scope: "link-info:ip", subject: ip, max: 30, seconds: 60 },
+      ]);
+      strictObject(body, ["kind", "token"]);
+      if (!["verify", "magic-link", "reset"].includes(body.kind)) throw linkExpired();
+      const token = accountToken(body.token);
+      const active = async (where, value) =>
+        (
+          await pool.query(
+            `SELECT u.email,u."emailVerified" FROM "user" u LEFT JOIN app_users a ON a.auth_user_id=u.id
+            WHERE ${where} AND coalesce(a.status,'active')='active'`,
+            [value],
+          )
+        ).rows[0];
+      const context = await auth.$context;
+      let user = null;
+      if (body.kind === "verify") {
+        const challenge = (
+          await pool.query(
+            `SELECT "authUserId" FROM account_email_challenges
+            WHERE digest=$1 AND purpose='verify' AND "usedAt" IS NULL AND "expiresAt">now()`,
+            [challengeDigest(token)],
+          )
+        ).rows[0];
+        user = challenge ? await active("u.id=$1", challenge.authUserId) : null;
+        if (user?.emailVerified) user = null;
+      } else if (body.kind === "magic-link") {
+        const stored = await context.internalAdapter.findVerificationValue(
+          "magic-link:" + (await magicLinkDigest(token)),
+        );
+        let email = null;
+        try {
+          email = JSON.parse(stored?.value || "null")?.email ?? null;
+        } catch {
+          /* Unreadable: expired below. */
+        }
+        user =
+          stored && typeof email === "string" && new Date(stored.expiresAt) > new Date()
+            ? await active("u.email=$1", email)
+            : null;
+        if (user && !user.emailVerified) user = null;
+      } else {
+        const stored = await context.internalAdapter.findVerificationValue(
+          "reset-password:" + token,
+        );
+        user =
+          stored && new Date(stored.expiresAt) > new Date()
+            ? await active("u.id=$1", stored.value)
+            : null;
+      }
+      if (!user) throw linkExpired();
+      return { status: "valid", email: user.email };
+    },
     async signin(body, ip, headers, setCookie) {
       strictObject(body, ["email", "password", "returnTo"]);
       const email = emailAddress(body.email);
@@ -280,7 +338,8 @@ export function createAuthActions({ auth, pool, config }) {
         await pool.query('SELECT id FROM \"user\" WHERE email=$1', [email])
       ).rows[0];
       // A deleted (or deleting) account answers exactly like a wrong
-      // password (owner's decision 9), before the password is looked at.
+      // password (owner's decision 9), in about the same time: the password is
+      // never checked against it, but hashed once (below).
       const result = await authTransaction(
         auth,
         pool,
@@ -302,9 +361,13 @@ export function createAuthActions({ auth, pool, config }) {
             await context.internalAdapter.deleteSession(previous.session.token);
           return signed;
         },
-      ).catch((error) => {
-        if (error instanceof AccountRequestError && error.code === "ACCOUNT_UNAVAILABLE")
+      ).catch(async (error) => {
+        if (error instanceof AccountRequestError && error.code === "ACCOUNT_UNAVAILABLE") {
+          // One password hash, as a wrong password or an unknown address
+          // costs, so the answer's timing does not tell a deleted account apart.
+          await (await auth.$context).password.hash(body.password).catch(() => {});
           throw wrongCredentials();
+        }
         throw error;
       });
       // Reject deleting identities even if a valid credential still exists.

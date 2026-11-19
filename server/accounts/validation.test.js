@@ -14,7 +14,8 @@ test('private fields enforce Unicode limits without rewriting passwords',()=>{
 test('no password rules: one character is enough, the maximum stays, and no breach lookup exists',()=>{
  assert.equal(accountPassword('a'),'a');
  assert.equal(accountPassword(' '),' ');
- assert.throws(()=>accountPassword(''),e=>e.code==='INVALID_INPUT');
+ assert.throws(()=>accountPassword(''),e=>e.code==='INVALID_INPUT'&&e.message==='Enter a password.');
+ assert.throws(()=>accountPassword(undefined),e=>e.message==='Enter a password.');
  assert.throws(()=>accountPassword('x'.repeat(129)),e=>e.code==='INVALID_INPUT'&&/128/.test(e.message));
  assert.equal('checkCompromisedPassword' in validation,false);
 });

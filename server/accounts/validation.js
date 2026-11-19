@@ -17,7 +17,9 @@ export function emailAddress(value) {
 export function accountPassword(value) {
   // No password rules (owner's decision): any non-empty password up to the
   // maximum. The sign-in limit (5 tries per address per 15 minutes) guards it.
-  if (typeof value !== 'string' || [...value].length < 1 || [...value].length > 128 || /[\ud800-\udfff]/u.test(value)) throw invalid('Use 128 characters or fewer for your password.');
+  if (typeof value !== 'string' || !value) throw invalid('Enter a password.');
+  if ([...value].length > 128) throw invalid('Use 128 characters or fewer for your password.');
+  if (/[\ud800-\udfff]/u.test(value)) throw invalid('This password has a character that can’t be used.');
   return value; // Never trim or rewrite a password.
 }
 export function accountToken(value) {

@@ -6,7 +6,6 @@ import { csrfForSession, consumeLimits } from "./security.js";
 import { enqueueAccountMail } from "../jobs/mail.js";
 import { createAuthActions } from "./auth-actions.js";
 import { createCredentialActions } from "./credential-actions.js";
-import { createSessionActions } from "./session-actions.js";
 import { createReadingActions } from "./reading.js";
 import { assertReadingRole } from "../db/owner-transaction.js";
 import { createShelfActions } from "./books.js";
@@ -17,7 +16,6 @@ import { createEmailActions } from "./email-actions.js";
 import {createSocialActions} from './social-actions.js';
 import {privateName} from './validation.js';
 import {createMethodActions} from './method-actions.js';
-import {createExportActions} from './export-actions.js';
 import {createDeletionActions} from './deletion-actions.js';
 import {createDeletionLedger} from '../jobs/deletion-ledger.js';
 import {statementTimeoutOption} from '../db/pool-options.js';
@@ -77,15 +75,9 @@ export async function createAccountService(config, { ledger=createDeletionLedger
       },
     });
     const credentials = createCredentialActions({ auth, pool, config });
-    const sessions = createSessionActions({
-      auth,
-      pool,
-      consumeProof: credentials.consumeProof,
-    });
     const actions = {
       ...createAuthActions({ auth, pool, config }),
       ...credentials,
-      ...sessions,
       ...createSocialActions({auth,pool,config}),
       ...createMethodActions({auth,pool,config,consumeProof:credentials.consumeProof}),
       ...createDeletionActions({auth,pool,config,consumeProof:credentials.consumeProof,ledger}),
@@ -114,8 +106,11 @@ export async function createAccountService(config, { ledger=createDeletionLedger
         reading,
         createShelfActions({ owned: reading.owned, secret: config.secret }),
         createHistoryActions({ owned: reading.owned }),
-        createImportActions(reading),
-        createExportActions({owned:reading.owned,pool,config}),
+        createImportActions({
+          ...reading,
+          limit: (identity, rule) =>
+            consumeLimits(pool, config.secret, [{ ...rule, subject: identity.user.id }]),
+        }),
       );
     async function identity(headers, setCookie = () => {}) {
       const result = await auth.api.getSession({
@@ -163,7 +158,9 @@ export async function createAccountService(config, { ledger=createDeletionLedger
       actions,
       reading,
       maintenance:{ledger,purgeDeletion:actions.purgeDeletion},
-      limitPrivate: (identity, action) =>
+      // The import allowance is counted by the import itself, once the import
+      // is known to be valid (accounts/imports.js).
+      limitPrivate: (identity) =>
         consumeLimits(pool, config.secret, [
           {
             scope: "private-mutations",
@@ -171,16 +168,6 @@ export async function createAccountService(config, { ledger=createDeletionLedger
             max: 120,
             seconds: 60,
           },
-          ...(action === "importGuest"
-            ? [
-                {
-                  scope: "imports",
-                  subject: identity.user.id,
-                  max: 5,
-                  seconds: 3600,
-                },
-              ]
-            : []),
         ]),
       async session(headers, setCookie) {
         const { sessionId, authUserId, ...summary } = await identity(

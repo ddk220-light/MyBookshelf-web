@@ -17,10 +17,7 @@ const actions = new Set([
   "email-change",
   "provider-link",
   "provider-unlink",
-  "export",
   "delete",
-  "signout-all",
-  "session-revoke",
 ]);
 export function createMethodActions({
   auth,
