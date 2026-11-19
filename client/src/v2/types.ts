@@ -24,6 +24,8 @@ export type PublicLibrary = {
   addressScope?: 'library' | 'campus' | 'locality';
   addressSourceUrl?: string;
   health: CatalogHealth;
+  /** The book check's time limit for this library, in whole seconds (only for libraries the app can check). */
+  answerWithinSeconds?: number;
   capabilities: {
     catalogLookup: boolean;
     publicAvailability: boolean;

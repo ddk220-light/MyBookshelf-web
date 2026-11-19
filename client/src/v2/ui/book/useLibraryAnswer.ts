@@ -3,6 +3,7 @@ import { publicApi, webLink, type HoldingsCheck } from '../../api';
 import { useLibrary } from '../../context';
 import { useHoldingsStore } from '../../holdings';
 import { readReaderPreferences } from '../../readerState';
+import type { PublicLibrary } from '../../types';
 
 /**
  * The longest the book page waits for one check before saying it couldn't
@@ -20,11 +21,11 @@ export type LibraryCardModel =
 
 /**
  * True unless the library says its check answers within 30 s. The directory
- * may send `answerWithinSeconds` (the library's own check limit); without it
- * the card does not promise half a minute.
+ * sends `answerWithinSeconds` (the library's own check limit) for libraries
+ * the app can check; without it the card does not promise half a minute.
  */
-export function slowCatalog(library: unknown): boolean {
-  const seconds = (library as { answerWithinSeconds?: unknown } | null)?.answerWithinSeconds;
+export function slowCatalog(library: Pick<PublicLibrary, 'answerWithinSeconds'> | null | undefined): boolean {
+  const seconds: unknown = library?.answerWithinSeconds;
   return !(typeof seconds === 'number' && seconds > 0 && seconds <= 30);
 }
 

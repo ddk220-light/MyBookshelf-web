@@ -98,6 +98,19 @@ describe('one-shelf book page', () => {
     expect(await screen.findByRole('group', { name: 'In your library' })).toBeInTheDocument();
   });
 
+  it('says how long the library may take from its own check limit (answerWithinSeconds)', async () => {
+    for (const [seconds, words] of [[20, 'half a minute'], [30, 'half a minute'], [45, 'a minute'], [undefined, 'a minute']] as const) {
+      stubApi({ libraries: [{ ...LIBRARY, ...(seconds ? { answerWithinSeconds: seconds } : {}) }], check: () => new Promise(() => {}) });
+      seed({ libraryId: LIBRARY.id });
+      const view = renderBook();
+      const checking = await screen.findByRole('group', { name: 'Checking your library…' });
+      await waitFor(() => expect(within(checking).getByText(`This library’s catalog can take up to ${words} to answer. You can go back to your reading shelf: the answer will be there when it arrives.`)).toBeInTheDocument());
+      view.unmount();
+      vi.unstubAllGlobals();
+      localStorage.clear();
+    }
+  });
+
   it('a failed, refused, unreadable or unrecognised check is grey "couldn’t check", never white', async () => {
     const replies: Array<() => Promise<Response>> = [
       () => Promise.reject(new TypeError('Failed to fetch')),
