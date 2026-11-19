@@ -421,17 +421,29 @@ function openSession(url, options) {
 // Drops this check's session for `url`, so the next step opens a fresh one.
 // eG4 (ASP.NET) runs one request at a time per server session: a step that
 // failed or was abandoned may still be running there, and a later step on the
-// same session would queue behind it.
-function forgetSession(url) {
-  const scope = checkScope();
-  sessions.get(scope)?.delete(url);
+// same session would queue behind it. Only the session that step used is
+// dropped: if a later step has already opened a fresh one, it stays.
+function forgetSession(url, used) {
+  if (!used) return;
+  const byUrl = sessions.get(checkScope());
+  if (byUrl?.get(url) === used) byUrl.delete(url);
 }
 
-// A step that throws leaves its session unusable for the rest of the check.
-function sessionTask(url, task) {
+// A step that throws leaves its session unusable for the rest of the check,
+// except when the member search simply did not confirm the ISBN
+// (CATALOG_PARTIAL_RESULTS): every request of that step has answered, so the
+// cluster fallback reuses the session instead of paying for another home
+// page against the check's request cap. `step.used` is the session the step
+// opened (set only when this call ran the step itself).
+function sessionTask(url, task, step = {}) {
   return async () => {
-    try { return await task(); }
-    catch (error) { forgetSession(url); throw error; }
+    const open = options => (step.used = openSession(url, options));
+    const forget = () => forgetSession(url, step.used);
+    try { return await task({ open, forget }); }
+    catch (error) {
+      if (error?.code !== 'CATALOG_PARTIAL_RESULTS') forget();
+      throw error;
+    }
   };
 }
 
@@ -449,8 +461,9 @@ export async function checkAvailability(library, value) {
     const sharedQueriesCompleted = isbnQueries(isbn, library).every(query =>
       peekCachedTask(`egranthalaya:cluster-variant:${library.egranthalayaCluster}:${isbn}:${query}`) !== undefined);
     let memberNoMatch = false;
+    const memberStep = {};
     try {
-      const member = await checkMemberAvailability(library, isbn, { url, libraryCode,
+      const member = await checkMemberAvailability(library, isbn, { url, libraryCode, step: memberStep,
         deadlineAt: Math.min(deadlineAt, Date.now() + (sharedQueriesCompleted ? TIMEOUT_MS : memberProbeMs)) });
       if (member.outcome !== 'not_found') return member;
       memberNoMatch = true;
@@ -460,7 +473,7 @@ export async function checkAvailability(library, value) {
       // The abandoned member search may still hold its server session (its
       // probe deadline can pass before its own request ends): the fallback
       // opens a fresh session rather than queue behind it.
-      if (timedOut) forgetSession(url);
+      if (timedOut) forgetSession(url, memberStep.used);
     }
     // Member searches can omit shared bibliographic records even when this
     // member owns accessioned copies. Never expose their zero in isolation.
@@ -471,10 +484,10 @@ export async function checkAvailability(library, value) {
   const queries = [...new Set([hyphenatedIsbn(isbn) || isbn, isbn])];
   const deadlineAt = Date.now() + TIMEOUT_MS;
   const key = `availability:egranthalaya:${library.egranthalayaCluster}:${libraryCode}:${isbn}`;
-  return cachedTask(key, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, sessionTask(url, async () => {
+  return cachedTask(key, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, sessionTask(url, async ({ open }) => {
     blocked();
     const options = { deadlineAt, maxResponseBytes: MAX_RESPONSE_BYTES, redirect: 'manual', retries: 0 };
-    const session = await openSession(url, options);
+    const session = await open(options);
     let page = session.home;
     let cookie = session.cookie;
     let record;
@@ -549,10 +562,10 @@ function rowAuthor(value) {
 // Record IDs remain tied to that member and are rechecked on opening a book.
 export async function searchCatalog(library, query) {
   const { url, libraryCode } = configuration(library), deadlineAt = Date.now() + TIMEOUT_MS;
-  return cachedTask(`egranthalaya:search:${library.egranthalayaCluster}:${libraryCode}:${query}`, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, sessionTask(url, async () => {
+  return cachedTask(`egranthalaya:search:${library.egranthalayaCluster}:${libraryCode}:${query}`, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, sessionTask(url, async ({ open }) => {
     blocked();
     const options = { deadlineAt, maxResponseBytes: MAX_RESPONSE_BYTES, redirect: 'manual', retries: 0 };
-    const session = await openSession(url, options);
+    const session = await open(options);
     // eG displays title, subtitle and parallel title together, but its LIKE
     // search indexes those fields separately. Retry a clean zero once with
     // the main title; keep record IDs and member scope as the evidence.
@@ -582,10 +595,10 @@ export async function searchCatalog(library, query) {
 export async function resolveCatalogRecord(library, recordId) {
   if (!/^\d{1,20}$/.test(recordId)) throw providerError('CATALOG_UNRECOGNIZED', 'Invalid catalog record');
   const { url, libraryCode } = configuration(library), deadlineAt = Date.now() + TIMEOUT_MS;
-  return cachedTask(`egranthalaya:record:${library.egranthalayaCluster}:${libraryCode}:${recordId}`, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, sessionTask(url, async () => {
+  return cachedTask(`egranthalaya:record:${library.egranthalayaCluster}:${libraryCode}:${recordId}`, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, sessionTask(url, async ({ open }) => {
     blocked();
     const options = { deadlineAt, maxResponseBytes: MAX_RESPONSE_BYTES, redirect: 'manual', retries: 0 };
-    const session = await openSession(url, options);
+    const session = await open(options);
     const cookie = session.cookie;
     if (!cookie || !selectedOption(session.home, 'DDL_Library')?.options.some(o => o.value === libraryCode)) throw providerError('CATALOG_UNRECOGNIZED', 'Unknown catalog member');
     const page = await readRecordPage(recordId, { url, cookie, options });
@@ -664,13 +677,13 @@ function memberObservation(library, results) {
 // A selected member's form is much smaller than the cluster-wide form, and its
 // search directly proves catalog membership even if no accessioned copies are
 // exposed. Never project another member's holdings onto this library.
-async function checkMemberAvailability(library, isbn, { url, libraryCode, deadlineAt }) {
+async function checkMemberAvailability(library, isbn, { url, libraryCode, deadlineAt, step }) {
   const key = `availability:egranthalaya:member:${library.egranthalayaCluster}:${libraryCode}:${isbn}`;
-  return cachedTask(key, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, sessionTask(url, async () => {
+  return cachedTask(key, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, sessionTask(url, async ({ open }) => {
     blocked();
     // Leave time to return an already confirmed catalog match after a slow detail.
     const options = { deadlineAt: deadlineAt - 1000, maxResponseBytes: MAX_RESPONSE_BYTES, redirect: 'manual', retries: 0 };
-    const session = await openSession(url, options);
+    const session = await open(options);
     let page = session.home, cookie = session.cookie, allEmpty = true;
     for (const query of isbnQueries(isbn, library)) {
       const parsed = await cachedTask(`${key}:empty-variant:${query}`, async () => {
@@ -713,7 +726,7 @@ async function checkMemberAvailability(library, isbn, { url, libraryCode, deadli
     }
     if (allEmpty) return { outcome: 'not_found', matchKind: 'none', recognizedExact: true };
     throw providerError('CATALOG_PARTIAL_RESULTS', 'Member search did not confirm the requested ISBN');
-  }), { deadlineAt }), { deadlineAt, ttlMs: 5 * 60_000 });
+  }, step), { deadlineAt }), { deadlineAt, ttlMs: 5 * 60_000 });
 }
 
 // Inspect shared records when the member index cannot confirm the ISBN. Batch
@@ -730,10 +743,10 @@ export async function checkClusterAvailability(library, value, { deadlineAt = Da
   // the same book reuses this reader-triggered cluster request, never sessions,
   // raw HTML, borrower details, or speculative searches.
   const key = `availability:egranthalaya:cluster:${library.egranthalayaCluster}:${isbn}${stopForMember ? `:member:${libraryCode}` : ''}`;
-  const observation = await cachedTask(key, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, sessionTask(url, async () => {
+  const observation = await cachedTask(key, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, sessionTask(url, async ({ open, forget }) => {
     blocked();
     const options = { deadlineAt: deadlineAt - 1000, maxResponseBytes: MAX_RESPONSE_BYTES, redirect: 'manual', retries: 0 };
-    const session = await openSession(url, options);
+    const session = await open(options);
     let page = session.home, cookie = session.cookie;
     const libraryCodes = selectedOption(session.home, 'DDL_Library')?.options
       .map((option) => option.value).filter((code) => /^[A-Z0-9_]{1,32}$/.test(code)) || [];
@@ -787,7 +800,7 @@ export async function checkClusterAvailability(library, value, { deadlineAt = Da
         // A later slow or changed page must not erase an already verified holding.
         // Access refusals still invalidate the shared origin immediately.
         if (!records.length || error.code === 'CATALOG_PROVIDER_BLOCKED') throw error;
-        forgetSession(url);
+        forget();
         partial = true;
         break;
       }
