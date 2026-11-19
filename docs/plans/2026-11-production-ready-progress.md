@@ -66,6 +66,13 @@ refresh without changing its clear-history generation.
   deletes them atomically. The database test covers both ends of a UTC day
   under a non-UTC PostgreSQL session and concurrent runs. The production
   monitor requires `catalogStore: "ok"`.
+- The published privacy tables fit at 320 px with doubled text. CI builds
+  the effective-date version of the policy for its browser checks.
+- Node 22 type checking, 405 client tests, 905 server tests against local
+  PostgreSQL, 53 JavaScript tool tests, 12 Python tool tests and the isolated
+  Vercel web-service build passed. The three-browser run passed 477 journeys
+  with 216 skips. The synthetic outbox and database run passed 48 separate
+  account journeys across the same three browser profiles.
 - Vercel's live alias serves the ready `main` deployment at `d3262e2cd7`
   in `iad1`, on the Node 22 project. GitHub `main` matched. Production
   account health was `ready`. The old deployment still serves `/app/shelf`
@@ -74,7 +81,8 @@ refresh without changing its clear-history generation.
   were last updated on 13 November. Their values and the state of the hosted
   catalog roles still need the operator's verification. The catalog store
   flag is enabled in production and preview. Accounts and the production
-  provider credentials are production-scoped. The five Claude branch
+  provider credentials are production-scoped. The public privacy page and
+  production build setting both say 13 November 2026. The five Claude branch
   previews were canceled, as expected for branches outside `main` and
   `staging`. The release plan calls for one production deployment after
   the local phone pass and [R03](https://github.com/ddk220-light/MyBookshelf-web/issues/9).
@@ -231,7 +239,8 @@ In this order, on the day of launch:
    the same role. Verify that the runtime role can insert request contacts,
    the worker can expire them and clear report contacts, and the admin can
    read them.
-3. With the phone pass complete and R03 approved, merge the integrated
-   release into `main` for the single deployment.
+3. Confirm the effective date for the revised privacy text. With the phone
+   pass complete and R03 approved, merge the integrated release into `main`
+   for the single deployment.
 4. Run the live checks in plan section 8 straight away; roll back in Vercel if
    something is badly wrong.

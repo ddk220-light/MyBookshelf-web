@@ -43,6 +43,8 @@ jobs:
       - run: node --test tools/accounts/*.test.mjs
       - run: npx playwright install --with-deps chromium webkit
       - run: npm run test:e2e --workspace=client -- --project=chromium --project=mobile-chromium --project=webkit --workers=2
+        env:
+          VITE_POLICY_EFFECTIVE_DATE: '1 January 2026'
       - run: npm run test:e2e --workspace=client -- --project=chromium --project=mobile-chromium --project=webkit --workers=2
         env:
           VITE_CONTENT_DISCOVERY_ENABLED: 'true'
