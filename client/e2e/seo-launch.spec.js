@@ -14,6 +14,8 @@ test('public pages work without JavaScript and publish exactly the manifest libr
   const response=await page.goto(baseURL+'/libraries');
   expect(response.status()).toBe(200);
   await expect(page.locator('h1')).toHaveText('Explore the libraries');
+  // The hub's button opens the app's library picker directly.
+  await expect(page.getByRole('main').getByRole('link', { name: 'Find my library', exact: true })).toHaveAttribute('href', '/app/libraries');
   expect(await page.locator('.library-grid > li').count()).toBe(publishedGuides);
   await page.getByRole('link',{name:'Anna Centenary Library',exact:true}).click();
   await expect(page.locator('h1')).toHaveText('Anna Centenary Library');

@@ -229,10 +229,9 @@ test.describe('Public pages into the app', () => {
   test('Open my reading shelf and the libraries hub lead into the app', async ({ page }) => {
     await fixture(page);
     await page.goto('/libraries');
-    // The shelf itself, where Find my library opens the picker (no old /app/libraries address).
-    await page.getByRole('link', { name: 'Choose your library in the app →' }).click();
+    // "Find my library" goes through /app/libraries, which opens the picker over the shelf.
+    await page.getByRole('main').getByRole('link', { name: 'Find my library', exact: true }).click();
     await expect(page).toHaveURL(/\/\/[^/]+\/$/);
-    await page.getByRole('region', { name: 'Choose your library' }).getByRole('button', { name: 'Find my library' }).click();
     await expect(page.getByRole('dialog', { name: 'Find your library' })).toBeVisible();
     await page.goto('/how-it-works');
     await page.getByRole('banner').getByRole('link', { name: 'Open my reading shelf' }).click();

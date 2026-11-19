@@ -110,6 +110,10 @@ test('new South Indian guides are published with HTTPS official sites and honest
     const home=readFileSync('client/dist/about.html','utf8'), hub=readFileSync('client/dist/libraries.html','utf8');
     assert.ok(home.includes(countWord(pages.length,true)+' reviewed guides') && !home.includes('Nine reviewed'));
     assert.ok(hub.includes(countWord(pages.length,true)+' featured guides'));
+    // "Find my library" opens the app's library picker directly (the
+    // /app/libraries address does that); the shelf alone does not.
+    assert.ok(hub.includes('<a class="button" href="/app/libraries">Find my library</a>'));
+    assert.ok(!hub.includes('Choose your library in the app'));
   }
 });
 test('analytics and Search Console are off by default and, when set, add only the same-origin script and the root-page tag', async () => {
