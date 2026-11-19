@@ -23,7 +23,7 @@ test('HTML and JSON-LD cannot escape into executable markup', () => {
   assert.ok(!jsonLd({name:'</script><script>alert(1)</script>'}).includes('<'));
 });
 // The smallest app shell Vite could build: its head, the noscript note and the root.
-const APP_SHELL = '<!doctype html><html lang="en"><head><meta charset="UTF-8"><title>Your bookshelf</title><meta name="description" content="app"><meta name="robots" content="noindex, follow"><meta property="og:title" content="x"></head><body><noscript><p>Old note</p></noscript><div id="root"></div><script type="module" src="/assets/app.js"></script></body></html>';
+const APP_SHELL = '<!doctype html><html lang="en"><head><meta charset="UTF-8"><title>My reading shelf</title><meta name="description" content="app"><meta name="robots" content="noindex, follow"><meta property="og:title" content="x"></head><body><noscript><p>Old note</p></noscript><div id="root"></div><script type="module" src="/assets/app.js"></script></body></html>';
 
 test('the root page is the app shell made indexable, with the Search Console tag and a link to About for readers without scripts', () => {
   const html = rootShell(APP_SHELL, { siteVerification: 'token123' });

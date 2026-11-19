@@ -104,7 +104,7 @@ export function AppFrame({ children }: { children: ReactNode }) {
 
   const notices = <>
     <AccountNotice />
-    {storageNotice && <div className="site-notice"><Notice tone="error">{storageNotice}</Notice>{recoveryMode && <div className="recovery-actions"><button onClick={reloadShelf}>Reload shelf</button><button className="button-quiet" onClick={() => setResetting(true)}>Start a new shelf</button></div>}</div>}
+    {storageNotice && <div className="site-notice"><Notice tone="error">{storageNotice}</Notice>{recoveryMode && <div className="recovery-actions"><button onClick={reloadShelf}>Reload reading shelf</button><button className="button-quiet" onClick={() => setResetting(true)}>Start a new reading shelf</button></div>}</div>}
     {removedLibraryNotice && <div className="site-notice"><Notice>{removedLibraryNotice}</Notice></div>}
   </>;
   const frame = <ReadingLightContext.Provider value={{ light, preference, setLight }}>
@@ -118,7 +118,7 @@ export function AppFrame({ children }: { children: ReactNode }) {
             {children}
           </main>}
         {removedBook && <div className="undo-notice" role="status"><span>Removed {removedBook.title}</span><button onClick={undoRemoval}>Undo</button></div>}
-        <ConfirmDialog open={resetting} title="Start a new shelf?" body={<p>This replaces the saved shelf in this browser. The original contents cannot be recovered after this.</p>} confirmLabel="Start a new shelf" onConfirm={async() => { await startNewShelf(); setResetting(false); }} onCancel={() => setResetting(false)} />
+        <ConfirmDialog open={resetting} title="Start a new reading shelf?" body={<p>This replaces the reading shelf saved in this browser. The original contents cannot be recovered after this.</p>} confirmLabel="Start a new reading shelf" onConfirm={async() => { await startNewShelf(); setResetting(false); }} onCancel={() => setResetting(false)} />
       </div>
     </div>
   </ReadingLightContext.Provider>;
