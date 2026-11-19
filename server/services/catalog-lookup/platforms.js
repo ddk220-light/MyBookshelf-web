@@ -163,6 +163,14 @@ export function bookDeadlineMs(entry, platform = platformFor(entry)) {
   return Math.min(base, platform?.id === 'chamo' ? 60 * S : MAX_CHECK_MS);
 }
 
+// Plan A2, step 3: a book-page check still running at its deadline may finish
+// in the background, with the same request cap, until twice its deadline and
+// never later than 90 s after it started (the API function may run 120 s).
+export const MAX_BACKGROUND_CHECK_MS = 90 * S;
+export function backgroundDeadlineMs(entry, platform = platformFor(entry)) {
+  return Math.min(2 * bookDeadlineMs(entry, platform), MAX_BACKGROUND_CHECK_MS);
+}
+
 // CATALOG_LOOKUP_V2: comma-separated platform IDs, or `all`. Unset means the
 // old path everywhere.
 export function lookupV2Platforms(env = process.env) {

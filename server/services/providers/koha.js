@@ -262,7 +262,7 @@ export function parseExpandedKohaCatalogSearch(html, searchUrl) {
     if (!(a.class || '').split(/\s+/).includes('title') || !a.href?.includes('opac-detail.pl')) continue;
     const url = detailUrl(a.href, searchUrl), recordId = url.searchParams.get('biblionumber');
     const title = text(m[2]).slice(0, 500);
-    if (title) books.set(recordId, { recordId, title, authors: [] });
+    if (title) books.set(recordId, { recordId, title, authors: [], catalogUrl: url.toString() });
   }
   if (!books.size && !/No results found!/i.test(text(clean))) throw publicError('CATALOG_UNRECOGNIZED', 'Missing catalog search results');
   return [...books.values()].slice(0, 10);
@@ -765,7 +765,9 @@ export function parseKohaCatalogSearch(html, searchUrl, limit = 40) {
     const title = catalogTitle(contents(body, titles[0], 'a'));
     if (!title || url.searchParams.get('biblionumber') !== recordId || records.some((record) => record.recordId === recordId)) return null;
     const isbn13 = catalogSearchIsbn(markup, recordId, title);
-    records.push({ recordId, title, authors: catalogAuthors(body), ...catalogPublication(body), ...(isbn13 ? { isbn13 } : {}) });
+    // The row's own record address (the title link, rebuilt on this catalog's
+    // origin by detailUrl), so a result mark can link to the record.
+    records.push({ recordId, title, authors: catalogAuthors(body), ...catalogPublication(body), ...(isbn13 ? { isbn13 } : {}), catalogUrl: url.toString() });
   }
   if (!records.length || records.length > Number(count[1])) return null;
   const offset = Number(searchUrl.searchParams.get('offset') || 0);
@@ -811,7 +813,7 @@ async function searchPilotCatalog(library, query, base, deadlineAt, offset) {
     if (response.status === 302) {
       const selected = detailUrl(response.headers.get('location'), url);
       const record = await readCatalogRecord(library, selected.searchParams.get('biblionumber'), deadlineAt);
-      return { records: [record.book], hasMore: false };
+      return { records: [{ ...record.book, catalogUrl: record.availability.catalogUrl }], hasMore: false };
     }
     const results = parseKohaCatalogSearch(response.text, url);
     if (!results) throw publicError('CATALOG_UNRECOGNIZED', 'Koha returned an unrecognized title search');

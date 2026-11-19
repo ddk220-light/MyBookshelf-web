@@ -328,6 +328,7 @@ test('admin view queries as the catalog_admin role: grouped requests, reports, h
   assert.deepEqual(summary.answersByLibrary, [{ libraryId: 'koha:a', name: null, found: 1, notFound: 1 }]);
   assert.deepEqual(summary.optedOut.map(o => o.libraryId), ['bc:out']);
   assert.equal(summary.counts.flaggedLibraries, 1);
+  assert.match(summary.newestAnswerAt, /^\d{4}-\d{2}-\d{2}T/, 'the newest stored answer’s time');
 
   // The admin role changes only status, notes and acknowledgements.
   await assert.rejects(adminRole.query(`UPDATE library_requests SET display_text = 'x'`), { code: '42501' });

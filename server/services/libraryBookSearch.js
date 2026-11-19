@@ -1,7 +1,7 @@
 import { validateAndNormalize } from './isbn.js';
 import { isPrintEdition } from './workDiscovery.js';
 import ISBN from 'isbn3';
-import { withCatalogOperation } from './providers/http.js';
+import { withCatalogOperation, withCatalogSuboperation } from './providers/http.js';
 
 // Fold Latin accents (é → e) but keep combining marks in other scripts.
 // Devanagari and Tamil vowel signs are marks: removing them makes different
@@ -89,20 +89,53 @@ export function checkBudgetMs(library) {
 export const TITLE_FIRST_MAX_REQUESTS = 6;
 export const LEGACY_MAX_REQUESTS = 12;
 
+// A proven match: the catalog showed this edition, or another edition of the
+// work, by one of the work's ISBNs or its own record, with a holding the app
+// answers "found" for (outcome.js). A title/author-only match never is.
+const HOLDING_OUTCOMES = new Set(['available', 'none_available', 'in_catalog']);
+export function provesHolding(item) {
+  if (!item || !item.matchKind || item.matchKind === 'possible_match') return false;
+  return HOLDING_OUTCOMES.has(item.outcome) || (item.outcome === 'unknown' && item.recognizedExact === true && item.totalCopies > 0);
+}
+const rank = value => (value.matchKind === 'possible_match' ? 0 : 10) + ({ available: 4, in_catalog: 3, none_available: 2, unknown: 1 }[value.outcome] || 0);
+
 // Small, fixed budgets apply even to works with hundreds of known editions.
 // Provider functions retain their own transport deadlines; after this deadline
 // no further requests are scheduled and late results cannot alter the response.
+//
+// The search ends at the first proven match (plan A2, step 1): the app's answer
+// is "found" either way, so reading on for a copy marked available only costs
+// the catalog requests and the reader time. Requests still in flight then are
+// cancelled. `options.progress`, when given, holds the best proven match so far
+// (`progress.best`), so a caller whose deadline arrives first can still answer
+// with it instead of "couldn't check".
 export async function searchLibraryBook(provider, profile, options = {}) {
   const titleFirst = typeof provider.findBookCandidates === 'function';
   const maxRequests = options.maxRequests ?? (titleFirst ? TITLE_FIRST_MAX_REQUESTS : LEGACY_MAX_REQUESTS);
-  return withCatalogOperation({ maxRequests }, operation => runSearch(provider, profile, {
-    timeoutMs: DEFAULT_CHECK_MS, maxIsbns: 6, maxRecords: titleFirst ? 3 : 6, ...options, maxRequests, titleFirst, operation }));
+  return withCatalogOperation({ maxRequests }, operation => {
+    const stop = new AbortController();
+    // The child scope adds only the cancellation: its cap is what is left of
+    // the operation's, and every request still counts against the operation.
+    return withCatalogSuboperation({ signal: stop.signal, maxRequests: Math.max(0, operation.maxRequests - operation.requests) }, search => runSearch(provider, profile, {
+      timeoutMs: DEFAULT_CHECK_MS, maxIsbns: 6, maxRecords: titleFirst ? 3 : 6, ...options, maxRequests, titleFirst, operation: search,
+      stop: () => stop.abort() }));
+  });
 }
 
-async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, maxRequests, titleFirst, operation }) {
+async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, maxRequests, titleFirst, operation, progress = null, stop = () => {} }) {
   const deadline = Date.now() + timeoutMs;
   const summary = { isbnQueries: 0, titleQueries: 0, recordsChecked: 0, requests: 0, maxRequests, partial: !profile.complete, editionsComplete: profile.complete };
   const positives = [], seen = new Set();
+  let provenFound;
+  const proven = new Promise(resolve => { provenFound = resolve; });
+  const addPositive = item => {
+    positives.push(item);
+    if (!provesHolding(item)) return;
+    if (progress && (!progress.best || rank(item) > rank(progress.best))) {
+      progress.best = { ...item, searchSummary: { ...summary, requests: operation.requests, partial: true } };
+    }
+    provenFound();
+  };
   const searchCandidates = provider.searchBookCandidates || provider.searchCatalog;
   let failures = profile.expansionFailed ? 1 : 0;
   let failureCode;
@@ -111,7 +144,7 @@ async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, m
   const noteFailure = code => { if (!failureCode || failureCode === 'CATALOG_INCOMPLETE') failureCode = code; };
   let completed = 0;
   const budgetLeft = () => operation.requests < operation.maxRequests;
-  const confident = () => positives.some(item => item.outcome === 'available' && item.matchKind !== 'possible_match');
+  const confident = () => positives.some(provesHolding);
   const attempt = async task => {
     if (Date.now() >= deadline) { failures++; noteFailure('CATALOG_TIMEOUT'); return null; }
     let timer;
@@ -136,7 +169,7 @@ async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, m
     const match = matchCatalogRecord(record, profile);
     const observation = record?.observation;
     if (!match || !observation || !['available', 'none_available', 'in_catalog', 'unknown'].includes(observation.outcome)) return;
-    positives.push({ ...observation,
+    addPositive({ ...observation,
       outcome: match.matchKind === 'possible_match' ? 'in_catalog' : observation.outcome,
       matchKind: match.matchKind, lookupKind: match.matchKind === 'possible_match' ? 'title_author' : match.matchKind,
       recognizedExact: match.matchKind !== 'possible_match',
@@ -154,7 +187,7 @@ async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, m
     if (legacyPositive || (result?.matchKind === 'exact_isbn' && ['available', 'none_available', 'in_catalog', 'unknown'].includes(result.outcome))) {
       const canonical = validateAndNormalize(isbn);
       const kind = canonical === profile.book.isbn13 ? 'exact_isbn' : 'verified_work';
-      positives.push({ ...result, ...(legacyPositive ? { outcome: result.status === 'available' ? 'available' : 'none_available',
+      addPositive({ ...result, ...(legacyPositive ? { outcome: result.status === 'available' ? 'available' : 'none_available',
         totalCopies: result.copies, catalogUrl: result.url } : {}), matchKind: kind, lookupKind: kind,
         matchedBook: { title: profile.book.title, isbn13: canonical } });
     } else if (result && !(result.outcome === 'not_found' && result.recognizedExact)) { failures++; noteFailure('CATALOG_UNRECOGNIZED'); }
@@ -195,7 +228,7 @@ async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, m
   // (`isbn10Lookup: false`) is not asked again for the ISBN-10 form: within a
   // small request cap that second request would never reach another edition.
   const identifiers = unique(profile.isbns.flatMap(isbn => [isbn, provider.isbn10Lookup === false ? null : ISBN.parse(isbn)?.isbn10]));
-  if (titleFirst) {
+  const work = (async () => { if (titleFirst) {
     // Title first: on these catalogs one search shows every candidate's title,
     // authors and often its ISBN, while an ISBN search only succeeds when the
     // library recorded that exact ISBN. Lookups run one at a time: requests to
@@ -247,9 +280,12 @@ async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, m
       if (!budgetLeft()) { summary.partial = true; break; }
       await Promise.all([isbns[index] ? byIsbn(isbns[index]) : null, queries[index] ? byTitle(queries[index]) : null]);
     }
-  }
+  } })();
+  work.catch(() => {});
+  // A proven match ends the search at once, even while a paired title search
+  // or another ISBN is still waiting on the catalog; that request is cancelled.
+  try { await Promise.race([work, proven]); } finally { stop(); }
   summary.requests = operation.requests;
-  const rank = value => (value.matchKind === 'possible_match' ? 0 : 10) + ({ available: 4, in_catalog: 3, none_available: 2, unknown: 1 }[value.outcome] || 0);
   positives.sort((a, b) => rank(b) - rank(a));
   summary.partial ||= failures > 0;
   if (positives.length) return { ...positives[0], searchSummary: summary };

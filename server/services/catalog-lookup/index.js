@@ -7,18 +7,18 @@ import { parsePublicBookKey } from '../../public-v2/contracts.js';
 import { runBookCheck } from './check.js';
 import { normalizeProviderObservation } from './observation.js';
 import { answerFromCheck, answerFromResponse, couldntCheck, couldntCheckFor, isHealthFailure } from './outcome.js';
-import { PLATFORMS, platformFor, hostFor, bookDeadlineMs, lookupV2Enabled } from './platforms.js';
+import { PLATFORMS, platformFor, hostFor, bookDeadlineMs, backgroundDeadlineMs, lookupV2Enabled } from './platforms.js';
 import { createHostGuard } from './budget.js';
 import { createLookupRecorder, createMemoryHealthRecord, identitiesFor, askedIdentity, storedAnswer } from './record.js';
 import { createMemoryHostGate } from '../../catalog-store/hostGate.js';
 
 // The catalog lookup layer (plan section 5). Two entry points:
 //
-//   lookupBook({ library, book, profile?, editionScope?, signal, deadlineAt })
+//   lookupBook({ library, book, profile?, editionScope?, signal, deadlineAt, background? })
 //     "does library X have book Y" -> found | not_found | couldnt_check
 //   markResults({ library, query, books, signal, deadlineAt })
 //     async iterable of { bookKey, outcome, ... } as answers arrive, then
-//     { done: true, notAttempted, unmatched }
+//     { done: true, notAttempted, unmatched, failed }
 //
 // `library` is a directory entry (server/data/*.json). `book` is
 //   { bookKey, isbn13?, workId?, title?, authors?, recordId?, recordLibraryId? }
@@ -64,6 +64,9 @@ export function createCatalogLookup({
   now = () => Date.now(),
   env = process.env,
   platforms = PLATFORMS,
+  // Keeps a book-page check alive after the reader's answer (the server
+  // passes catalog-store/waitUntil.js). Without it no check continues.
+  defer = null,
 } = {}) {
   const resultsCache = new Map();
   const robotsCheck = robots ? url => robots.check(url) : null;
@@ -223,8 +226,17 @@ export function createCatalogLookup({
   // One live book check through the platform's book-page budget. Used by
   // lookupBook and by /availability on the new path. Returns the raw check
   // result (response or error) plus the projected answer.
+  //
+  // `background` (the book page, plan A2 step 3): the reader is answered at
+  // the usual deadline, "couldn't check" as before, unless a proven match is
+  // already in hand. The same check, with the same request cap, then carries
+  // on under the platform's waitUntil (`defer`) until its own longer deadline
+  // (backgroundDeadlineMs) and records its answer through the recorder, so
+  // the next look finds it stored. Once started, it is not cancelled by the
+  // reader leaving. Only found and not found are ever stored; a check that
+  // still fails is recorded in the health record, never as an answer.
   async function checkBook({ entry, library, provider: given, book, bookKey, parsed, ownRecord, lookupKind, editionScope = 'work', language, books,
-    attemptedAt, signal, deadlineAt }) {
+    attemptedAt, signal, deadlineAt, background = false }) {
     const startedAt = now();
     const provider = given || providerFor(entry);
     const routed = Boolean(provider?.catalogRoutes?.length);
@@ -255,14 +267,20 @@ export function createCatalogLookup({
     };
     if (routeError) return finish({ error: routeError, lookupKind, notCatalogFailure: true });
     if (!platform || !provider?.checkAvailability) return finish({ error: coded('Catalog lookups are not available for this library', 'CATALOG_UNSUPPORTED'), lookupKind });
-    const deadline = Math.min(deadlineAt ?? Infinity, startedAt + bookDeadlineMs(policyEntry, platform));
-    if (routed) routes = routeSession({ entry, deadline, signal });
+    // The reader's answer is due by `answerBy`. A background check works on
+    // until `deadline`, later; otherwise both are the same moment.
+    const answerBy = Math.min(deadlineAt ?? Infinity, startedAt + bookDeadlineMs(policyEntry, platform));
+    const inBackground = Boolean(background && typeof defer === 'function');
+    const deadline = inBackground ? Math.max(answerBy, startedAt + backgroundDeadlineMs(policyEntry, platform)) : answerBy;
+    // A started background check is not cancelled by the reader leaving.
+    const workSignal = inBackground ? null : signal;
+    if (routed) routes = routeSession({ entry, deadline, signal: workSignal });
     // Resolve the edition profile before taking a host slot, and only within
     // the check's deadline: waiting on Open Library must not hold a catalog
     // slot or use up the catalog's time.
     if (!ownRecord && editionScope === 'work' && typeof books?.searchProfile === 'function') {
       let profile;
-      try { profile = await settleBy(books.searchProfile(bookKey, { editionScope, language }), deadline, signal, now); }
+      try { profile = await settleBy(books.searchProfile(bookKey, { editionScope, language }), answerBy, signal, now); }
       catch (error) { return finish({ error, lookupKind, notCatalogFailure: true }); }
       books = { searchProfile: async () => profile };
     }
@@ -272,17 +290,51 @@ export function createCatalogLookup({
     // transport retry. The circuit closes on that check's success.
     const tryOnce = !routed && guard.circuitOpen(host);
     let release;
-    try { release = routed ? () => {} : await guard.acquire(host, tryOnce ? 1 : platform.hostConcurrency, { deadlineAt: deadline, signal }); }
+    try { release = routed ? () => {} : await guard.acquire(host, tryOnce ? 1 : platform.hostConcurrency, { deadlineAt: answerBy, signal }); }
     catch (error) { return finish({ error, lookupKind, notCatalogFailure: true }); }
-    try {
-      const run = () => runBookCheck({ entry, library: view, provider, book, bookKey, parsed, ownRecord, lookupKind, editionScope, language, books, attemptedAt,
-        budget: { maxRequests: platform.book.maxRequests, deadlineAt: deadline, signal, robots: robotsCheck, minIntervalMs: platform.minIntervalMs,
-          gate: gateFor(platform, deadline), noRetries: tryOnce } });
-      const result = await (routes ? withProviderRouteExecution(routes.execute, run) : run());
-      return finish(result, result.profile);
-    } finally {
-      release();
+    // Shared with the work search: its best proven match so far, and a way to
+    // end the check with it when the reader's answer is due.
+    const progress = {};
+    const conclude = new AbortController();
+    const work = (async () => {
+      try {
+        const run = () => runBookCheck({ entry, library: view, provider, book, bookKey, parsed, ownRecord, lookupKind, editionScope, language, books, attemptedAt,
+          budget: { maxRequests: platform.book.maxRequests, deadlineAt: deadline, signal: workSignal, robots: robotsCheck, minIntervalMs: platform.minIntervalMs,
+            gate: gateFor(platform, deadline), noRetries: tryOnce, progress, conclude: conclude.signal } });
+        const result = await (routes ? withProviderRouteExecution(routes.execute, run) : run());
+        return finish(result, result.profile);
+      } finally {
+        release();
+      }
+    })();
+    if (!inBackground) return work;
+    work.catch(() => {});
+    const due = await untilDue(work, answerBy, signal);
+    if (due === 'settled') return work;
+    if (due === 'due' && progress.best) {
+      // A proven match is in hand: that is the answer now, and the check ends.
+      conclude.abort();
+      return work;
     }
+    // The reader is answered now; the same check finishes in the background,
+    // within its own deadline and request cap, and records what it finds.
+    defer(() => work);
+    const error = due === 'left' ? coded('Catalog check was cancelled', 'CATALOG_ABORTED') : coded('Catalog check deadline exceeded', 'CATALOG_TIMEOUT');
+    return { error, lookupKind, answer: couldntCheckFor(error), durationMs: now() - startedAt, requests: 0, continuing: true };
+  }
+
+  // 'settled' when `work` ends first, 'due' at `at`, 'left' when the reader's
+  // signal aborts. Never rejects.
+  function untilDue(work, at, signal) {
+    return new Promise(resolve => {
+      let timer;
+      const done = value => { clearTimeout(timer); signal?.removeEventListener?.('abort', onLeave); resolve(value); };
+      const onLeave = () => done('left');
+      work.then(() => done('settled'), () => done('settled'));
+      if (signal?.aborted) return onLeave();
+      signal?.addEventListener?.('abort', onLeave, { once: true });
+      timer = setTimeout(() => done('due'), Math.max(0, at - now()));
+    });
   }
 
   // Stored answer for one book, or null. The book page reads this first and
@@ -296,7 +348,10 @@ export function createCatalogLookup({
   }
 
   // `storedChecked`: the caller already read the stored answer (storedFor).
-  async function lookupBook({ library: entry, publicLibrary, book = {}, profile, editionScope = 'work', signal, deadlineAt, storedChecked = false }) {
+  // `background`: a check still running at its deadline finishes after the
+  // answer and stores what it finds (checkBook); the book page sets it.
+  async function lookupBook({ library: entry, publicLibrary, book = {}, profile, editionScope = 'work', signal, deadlineAt, storedChecked = false,
+    background = false }) {
     const startedAt = now();
     const libraryId = entry?.id || entry?.slug;
     const own = book.recordId && (!book.recordLibraryId || book.recordLibraryId === libraryId);
@@ -311,7 +366,7 @@ export function createCatalogLookup({
       : ownProvider?.checkRecordAvailability ? 'catalog_record' : 'verified_work') : isbn13 ? 'exact_isbn' : 'verified_work';
     const books = profile && editionScope === 'work' && !own ? { searchProfile: async () => profile } : null;
     const result = await checkBook({ entry, library: publicLibrary, book: { ...book, isbn13: isbn13 || undefined, title: book.title || '', authors: book.authors || [] },
-      bookKey: book.bookKey, parsed, ownRecord: own, lookupKind, editionScope, books, attemptedAt: new Date(startedAt).toISOString(), signal, deadlineAt });
+      bookKey: book.bookKey, parsed, ownRecord: own, lookupKind, editionScope, books, attemptedAt: new Date(startedAt).toISOString(), signal, deadlineAt, background });
     const { answer } = result;
     return { ...answer, ...(answer.outcome === 'found' && own ? { recordId: book.recordId } : {}),
       requests: result.requests || 0, durationMs: now() - startedAt, source: 'live' };
@@ -358,6 +413,17 @@ export function createCatalogLookup({
     const list = books.filter(book => book?.bookKey).slice(0, MAX_RESULT_BOOKS);
     const pending = new Map(list.map(book => [book.bookKey, book]));
     const unmatched = [];
+    // Books this run asked the catalog about without a usable answer (the
+    // search failed or ran out of time, an ISBN answer could not be read):
+    // "couldn't check", never "not found". A row that did not match is in
+    // `unmatched`, a book never asked about in `notAttempted`; a cancelled
+    // run (the reader left) fails no book.
+    const failed = new Set();
+    const failedFor = (answer, keys) => {
+      if (answer?.outcome !== 'couldnt_check' || ['cancelled', 'unsupported', 'unconfirmed'].includes(answer.reason)) return;
+      for (const key of keys) failed.add(key);
+    };
+    const doneItem = () => ({ done: true, notAttempted: [...pending.keys()].filter(key => !failed.has(key)), unmatched, failed: [...failed] });
 
     // Stored answers first, in one read for every book: each book with an
     // unexpired answer is done.
@@ -373,15 +439,18 @@ export function createCatalogLookup({
       yield { bookKey: book.bookKey, ...stored, source: 'stored' };
     }
     const strategy = platform?.results.strategy || 'none';
-    const provider = pending.size && strategy !== 'none' ? providerFor(entry) : null;
+    const adapter = pending.size && strategy !== 'none' ? providerFor(entry) : null;
+    // An adapter can opt out of result marking (rows that cannot prove this
+    // library's holding): no request, every book not attempted.
+    const provider = adapter?.resultMarking === false ? null : adapter;
     const routed = Boolean(provider?.catalogRoutes?.length);
     if (!pending.size || !provider || signal?.aborted || (!routed && guard.circuitOpen(host))) {
-      yield { done: true, notAttempted: [...pending.keys()], unmatched };
+      yield doneItem();
       return;
     }
     const finishMarking = routed ? () => {} : guard.tryStartMarking(host);
     if (!finishMarking) {
-      yield { done: true, notAttempted: [...pending.keys()], unmatched };
+      yield doneItem();
       return;
     }
     const deadline = Math.min(deadlineAt ?? Infinity, startedAt + platform.results.deadlineMs);
@@ -390,8 +459,8 @@ export function createCatalogLookup({
     const attemptedAt = new Date(startedAt).toISOString();
     // A profile that fails, or is not ready by the deadline, means that book
     // cannot be matched (no badge), never "not found". Profiles are Open
-    // Library reads, paced one at a time across the process, so nine of them
-    // take about nine seconds: they wait until the run's own deadline (the
+    // Library reads, paced across the process (a few at a time), so nine of
+    // them take a few seconds: they wait until the run's own deadline (the
     // response cap), not the catalog's. The catalog part of the run, and its
     // host slot, has ended by then.
     const profileDeadline = Number.isFinite(deadlineAt) ? deadlineAt : deadline;
@@ -421,7 +490,7 @@ export function createCatalogLookup({
         const text = String(query || '').trim().slice(0, 160);
         if (!search || !text) {
           endRun();
-          yield { done: true, notAttempted: [...pending.keys()], unmatched };
+          yield doneItem();
           return;
         }
         const key = `${libraryId}\u0000${normalQuery(text)}`;
@@ -436,7 +505,8 @@ export function createCatalogLookup({
           } catch (error) {
             runAnswer = signal?.aborted ? couldntCheck('cancelled') : couldntCheckFor(error);
             endRun();
-            yield { done: true, notAttempted: [...pending.keys()], unmatched };
+            failedFor(runAnswer, pending.keys());
+            yield doneItem();
             return;
           }
         }
@@ -472,7 +542,7 @@ export function createCatalogLookup({
         const isbns = [...new Set(plan.flatMap(item => item.isbns))];
         // Nothing to ask, or the time went on edition profiles: no catalog
         // request, and not a catalog failure.
-        if (!isbns.length || signal?.aborted || deadline <= now()) { endRun(); yield { done: true, notAttempted: [...pending.keys()], unmatched }; return; }
+        if (!isbns.length || signal?.aborted || deadline <= now()) { endRun(); yield doneItem(); return; }
         let answers;
         try {
           answers = await withResultsBudget(platform, deadline, signal, () => provider.checkMany(isbns), routes);
@@ -480,13 +550,14 @@ export function createCatalogLookup({
         } catch (error) {
           runAnswer = signal?.aborted ? couldntCheck('cancelled') : couldntCheckFor(error);
           endRun();
-          yield { done: true, notAttempted: [...pending.keys()], unmatched };
+          failedFor(runAnswer, plan.map(item => item.book.bookKey));
+          yield doneItem();
           return;
         }
         endRun();
         for (const { book, profile, isbns: asked } of plan) {
           const own = validateAndNormalize(book.isbn13 || '');
-          let found = null, ownAbsent = false, complete = true;
+          let found = null, ownAbsent = false, complete = true, incomplete = null;
           for (const isbn of asked) {
             const response = normalizeProviderObservation(answers.get(isbn), { lookupKind: 'exact_isbn', attemptedAt, library: view, entry });
             const answer = answerFromResponse(response);
@@ -496,7 +567,7 @@ export function createCatalogLookup({
               if (isbn === own) ownAbsent = true;
             } else if (answer.outcome === 'found' && !found) {
               found = { ...answer, evidence: isbn === own ? 'exact_isbn' : 'work_isbn', matchedIsbn13: isbn };
-            } else if (answer.outcome === 'couldnt_check') complete = false;
+            } else if (answer.outcome === 'couldnt_check') { complete = false; incomplete = answer; }
           }
           pending.delete(book.bookKey);
           if (found) {
@@ -505,7 +576,7 @@ export function createCatalogLookup({
           } else if (ownAbsent && asked.length === 1) {
             yield { bookKey: book.bookKey, outcome: 'not_found', evidence: 'isbn_not_listed', source: 'live' };
           } else if (complete) unmatched.push(book.bookKey);
-          else pending.set(book.bookKey, book);
+          else { pending.set(book.bookKey, book); failedFor(incomplete, [book.bookKey]); }
         }
       } else if (strategy === 'per_isbn') {
         const top = [];
@@ -541,16 +612,19 @@ export function createCatalogLookup({
           : failure ? couldntCheckFor(failure)
           : settled[0]?.answer || null;
         endRun();
+        // Books asked about whose answer never came: the run's failure.
+        const unanswered = top.filter(item => !settled.some(done => done.book === item.book)).map(item => item.book.bookKey);
+        failedFor(signal?.aborted ? couldntCheck('cancelled') : failure ? couldntCheckFor(failure) : null, unanswered);
         for (const { book, answer } of settled) {
           pending.delete(book.bookKey);
           const profile = await profiles.get(book.bookKey);
-          if (answer.outcome === 'couldnt_check') { pending.set(book.bookKey, book); continue; }
+          if (answer.outcome === 'couldnt_check') { pending.set(book.bookKey, book); failedFor(answer, [book.bookKey]); continue; }
           recorder.record({ entry, platform: platformName, host, book, profile, answer, kind: 'results', live: false });
           yield { bookKey: book.bookKey, ...answer, source: 'live' };
         }
       }
       endRun();
-      yield { done: true, notAttempted: [...pending.keys()], unmatched };
+      yield doneItem();
     } finally {
       endRun();
     }

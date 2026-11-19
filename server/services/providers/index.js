@@ -56,8 +56,10 @@ function primaryProvider(library) {
       // rows may show ISBNs, or the RSS form for libraries that opt in. Rows
       // of an unscoped shared catalog do not prove this branch's holding.
       const markable = !library.publicCatalogApi && !(library.kohaSearchUnscoped && library.kohaBranchCode);
+      // `resultMarking: false` stops result marking falling back to the
+      // title search, which for these catalogs is not scoped to the branch.
       const marking = markable ? { searchResultRows: query => (library.kohaRssRows === true
-        ? koha.searchRssRows(library, query) : koha.searchPublicCatalog(library, query)) } : {};
+        ? koha.searchRssRows(library, query) : koha.searchPublicCatalog(library, query)) } : { resultMarking: false };
       if (!library.publicCatalogCapabilities?.titleSearch) return { ...(library.publicCatalogApi ? {} : { searchCatalog: query => koha.searchCatalog(library, query), resolveCatalogRecord: id => koha.resolveCatalogRecord(library, id) }), ...marking, checkAvailability: isbn => (library.publicCatalogApi === 'iith-opac-v1' ? iithKoha : koha).checkPublicAvailability(library, isbn) };
       return { ...marking, checkAvailability: (isbn) => koha.checkPublicAvailability(library, isbn),
         searchCatalog: (query, options) => koha.searchPublicCatalog(library, query, options),

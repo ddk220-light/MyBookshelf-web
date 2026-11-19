@@ -50,6 +50,19 @@ describe('AdminPage', () => {
     expect((await screen.findByRole('alert')).textContent).toMatch(/unreachable.*ECONNREFUSED/s);
   });
 
+  it('shows the live store’s status word and the newest stored answer, and alerts when it failed', async () => {
+    mount({ '/summary': () => ok(summary({ state: 'ok' }, { catalogStore: 'ok', newestAnswerAt: '2026-11-18T10:42:00Z' })),
+      '/library-health': () => ok({ usageLogEnabled: false, checkTotalsFromLog: false, libraries: [] }) });
+    expect(await screen.findByText('Catalog store: ok. Newest stored answer: 2026-11-18 10:42 UTC.')).toBeTruthy();
+    expect(screen.queryByRole('alert')).toBeNull();
+    document.body.innerHTML = '';
+    vi.unstubAllGlobals();
+    mount({ '/summary': () => ok(summary({ state: 'ok' }, { catalogStore: 'failed', newestAnswerAt: null })),
+      '/library-health': () => ok({ usageLogEnabled: false, checkTotalsFromLog: false, libraries: [] }) });
+    expect((await screen.findByRole('alert')).textContent).toMatch(/cannot reach its catalog store/);
+    expect(screen.getByText('Catalog store: failed. Newest stored answer: none yet.')).toBeTruthy();
+  });
+
   it('shows reader text as text, never as HTML', async () => {
     const body = '<script>alert(1)</script><img src=x onerror=alert(2)>';
     mount({
