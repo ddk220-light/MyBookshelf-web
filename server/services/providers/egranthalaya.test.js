@@ -1158,3 +1158,52 @@ test('the member search and its cluster fallback share one session; the cap and 
   global.fetch = memberFetch([], { search: emptyMemberSearch() });
   await assert.rejects(withCatalogOperation({ maxRequests: 2 }, () => checkAvailability(upLibrary, upIsbn)));
 });
+
+// A step that throws, or a member search abandoned at its probe deadline, may
+// still hold its server session; later steps of the check open a fresh one.
+test('a step that throws discards the check’s session: the next step opens a fresh one', async () => {
+  const calls = [];
+  const normal = rrlFetch(calls);
+  let homes = 0, failSearch = true;
+  global.fetch = async (url, options = {}) => {
+    if (options.method === 'POST' && failSearch) {
+      calls.push({ url, options }); failSearch = false;
+      throw Object.assign(new Error('server error'), { code: 'CATALOG_UNAVAILABLE' });
+    }
+    const result = await normal(url, options);
+    if (options.method !== 'POST' && !url.includes('Details.aspx')) {
+      homes += 1;
+      result.headers = new Headers({ 'Set-Cookie': `ASP.NET_SessionId=session-${homes}; path=/` });
+    }
+    return result;
+  };
+  await withCatalogOperation({ maxRequests: 12 }, async () => {
+    await assert.rejects(searchCatalog(rrl, 'wings of fire'));
+    assert.equal((await searchCatalog(rrl, 'wings of fire')).length, 5);
+  });
+  assert.equal(homeReads(calls), 2, 'the failed step’s session is not reused');
+  assert.equal(calls.at(-1).options.headers.Cookie, 'ASP.NET_SessionId=session-2');
+});
+
+test('after a timed-out member search the cluster fallback opens a fresh session', async () => {
+  const calls = [], shared = clusterFetch(calls), member = memberFetch(calls);
+  let homes = 0;
+  global.fetch = async (url, options) => {
+    if (options.method === 'POST' && new URLSearchParams(options.body).get('DDL_Library') !== 'All Libraries') {
+      calls.push({ url, options });
+      throw Object.assign(new Error('probe deadline'), { name: 'AbortError' });
+    }
+    if (options.method !== 'POST' && !url.includes('Details.aspx')) {
+      const result = await member(url, options);
+      homes += 1;
+      result.headers = new Headers({ 'Set-Cookie': `ASP.NET_SessionId=session-${homes};` });
+      return result;
+    }
+    return shared(url, options);
+  };
+  const result = await withCatalogOperation({ maxRequests: 12 }, () => checkAvailability(upLibrary, upIsbn));
+  assert.equal(result.outcome, 'available');
+  assert.equal(homeReads(calls), 2, 'the cluster search does not reuse the abandoned member session');
+  const clusterSearch = calls.find(call => call.options.method === 'POST' && new URLSearchParams(call.options.body).get('DDL_Library') === 'All Libraries');
+  assert.equal(clusterSearch.options.headers.Cookie, 'ASP.NET_SessionId=session-2');
+});
