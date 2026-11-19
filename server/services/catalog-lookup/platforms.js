@@ -1,4 +1,6 @@
-import { MAX_CHECK_MS } from '../libraryBookSearch.js';
+// No check may run past 45 s. Defined here, not in libraryBookSearch.js, so the
+// public page build (which reads the directory) needs no catalog packages.
+export const MAX_CHECK_MS = 45_000;
 
 // One descriptor per catalog platform (plan 5.1, 5.3, 5.4). Numbers are
 // starting points to tune from the health record and the log.

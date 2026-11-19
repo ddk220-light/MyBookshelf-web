@@ -2,6 +2,7 @@ import { validateAndNormalize } from './isbn.js';
 import { isPrintEdition } from './workDiscovery.js';
 import ISBN from 'isbn3';
 import { withCatalogOperation, withCatalogSuboperation } from './providers/http.js';
+import { MAX_CHECK_MS } from './catalog-lookup/platforms.js';
 
 // Fold Latin accents (é → e) but keep combining marks in other scripts.
 // Devanagari and Tamil vowel signs are marks: removing them makes different
@@ -77,7 +78,7 @@ export function candidateTier(row, profile) {
 // Kalaignar Centenary answer in 4–9 s per request) declare a longer budget in
 // the directory; no check may run past 45 s.
 export const DEFAULT_CHECK_MS = 20_000;
-export const MAX_CHECK_MS = 45_000;
+export { MAX_CHECK_MS };
 export function checkBudgetMs(library) {
   const configured = Number(library?.publicCatalogTimeoutMs);
   return Number.isFinite(configured) && configured > 0 ? Math.min(configured, MAX_CHECK_MS) : DEFAULT_CHECK_MS;
