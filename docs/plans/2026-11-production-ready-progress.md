@@ -253,8 +253,12 @@ In this order, on the day of launch:
    the same role. Verify that the runtime role can insert request contacts,
    the worker can expire them and clear report contacts, and the admin can
    read them.
-3. Confirm the effective date for the revised privacy text. With the phone
-   pass complete and R03 approved, merge the integrated release into `main`
-   for the single deployment.
+3. Confirm the effective date for the revised privacy text and set it as
+   `VITE_POLICY_EFFECTIVE_DATE` in the production build settings before the
+   release build. It is required: without it the public /privacy page keeps
+   the old text, /terms is not published, and the app's Privacy and Terms
+   pages leave out their "Effective …" line (they no longer show the
+   placeholder). With the phone pass complete and R03 approved, merge the
+   integrated release into `main` for the single deployment.
 4. Run the live checks in plan section 8 straight away; roll back in Vercel if
    something is badly wrong.

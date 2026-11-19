@@ -72,7 +72,7 @@ through our server. The barcode scanner works on your device: camera images
 are not sent to us or saved.
 
 **Abuse protection.** To limit automated misuse, we keep a scrambled code made
-from your IP address for up to one day. It cannot be turned back into the
+from your IP address for up to two days. It cannot be turned back into the
 address. We also limit how often sign-in, log-in links and password resets can
 be tried.
 
@@ -128,7 +128,7 @@ own policies.
 | Library requests | Until handled, then 12 months; spam is deleted after 90 days |
 | Problem reports | Up to 12 months; 90 days after they are resolved |
 | Optional name and email with a request or report | 90 days |
-| Abuse-limit codes | Up to one day |
+| Abuse-limit codes | Up to two days |
 | Database backups | Up to 30 days |
 | Record that an account was deleted (no email or reading data) | 35 days |
 

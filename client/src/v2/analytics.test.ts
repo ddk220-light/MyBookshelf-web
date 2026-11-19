@@ -24,7 +24,7 @@ describe('analytics URL scrubbing', () => {
     expect(scrubAnalyticsUrl(`${O}/app/privacy`)).toBe(`${O}/app/privacy`);
   });
   it('reports public pages by name and guides by slug; a typed address on the 404 page is not reported as typed', () => {
-    for (const path of ['/', '/libraries', '/about', '/how-it-works', '/open-source', '/privacy', '/support', '/libraries/anna-centenary-library']) {
+    for (const path of ['/', '/libraries', '/about', '/how-it-works', '/open-source', '/privacy', '/terms', '/support', '/libraries/anna-centenary-library']) {
       expect(scrubAnalyticsUrl(`${O}${path}`)).toBe(`${O}${path}`);
     }
     expect(scrubAnalyticsUrl(`${O}/wings-of-fire`)).toBe(`${O}/[other]`);
