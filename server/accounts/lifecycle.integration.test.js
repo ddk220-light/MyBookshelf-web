@@ -80,7 +80,6 @@ test(
       mailFrom: "accounts@example.test",
     };
     service = await createAccountService(config, {
-      checkPassword: async () => {},
       ledger,
     });
     const cookieHeaders = (cookies) =>
@@ -243,13 +242,33 @@ test(
         deleting.identity,
       ),
     );
-    await assert.rejects(
-      service.actions.signin(
-        { email: a.email, password },
-        randomUUID(),
-        new Headers(),
-        () => {},
-      ),
+    // A deleted account answers exactly like a wrong password (decision 9),
+    // whichever password is typed.
+    const wrong = await service.actions
+      .signin({ email: a.email, password: "not the password" }, randomUUID(), new Headers(), () => {})
+      .catch((error) => error);
+    for (const typed of [password, "not the password"])
+      await assert.rejects(
+        service.actions.signin(
+          { email: a.email, password: typed },
+          randomUUID(),
+          new Headers(),
+          () => {},
+        ),
+        (error) =>
+          error.status === 401 &&
+          error.code === "INVALID_CREDENTIALS" &&
+          error.message === wrong.message,
+      );
+    // The confirmation email is queued at once, not when the data is removed.
+    assert.deepEqual(
+      (
+        await admin.query(
+          'SELECT kind FROM account_mail_jobs WHERE "authUserId"=$1 AND kind=$2',
+          [a.identity.authUserId, "deleted"],
+        )
+      ).rows,
+      [{ kind: "deleted" }],
     );
     const status = await service.actions.deletionStatus(
       { operationId: deletionId, receiptNonce },
@@ -330,15 +349,15 @@ test(
       (await service.reading.books({}, b.identity)).books[0].bookKey,
       other.bookKey,
     );
-    assert.equal(
+    assert.deepEqual(
       (
         await admin.query(
-          'SELECT payload FROM account_mail_jobs WHERE "authUserId"=$1',
+          'SELECT kind FROM account_mail_jobs WHERE "authUserId"=$1',
           [a.identity.authUserId],
         )
-      ).rowCount,
-      1,
-      "only the final encrypted security notice remains",
+      ).rows,
+      [{ kind: "deleted" }],
+      "only the one deletion email remains, queued when the reader deleted the account",
     );
   },
 );

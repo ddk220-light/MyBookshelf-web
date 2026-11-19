@@ -88,7 +88,6 @@ address.
 | Open Library and Internet Archive | Book details and covers |
 | Google Books | Book details and covers |
 | Photon (Komoot), using OpenStreetMap data | Finding places when you type a town or city |
-| Have I Been Pwned (Pwned Passwords) | Checking a new password against known leaks. Only the first five characters of a scrambled form of the password are sent. |
 | Library catalogs | Checking whether a library has a book. Our server asks the library's own catalog system (or its provider, such as BiblioCommons or Calil) directly. It sends the book's details or your search words, never anything about you. |
 | Google Search Console | Seeing how people find MyBookshelf in Google Search. It adds nothing to our pages. |
 

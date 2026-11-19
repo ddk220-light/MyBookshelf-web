@@ -150,7 +150,6 @@ test(
       });
     });
     service = await createAccountService(config, {
-      checkPassword: async () => {},
     });
     const cookiesFor = (list) =>
       new Headers({ cookie: list.map((c) => c.split(";")[0]).join("; ") });

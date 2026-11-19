@@ -53,9 +53,7 @@ try {
     accounts: createAccountMiddleware({
       env,
       initialize: async (config) =>
-        (service = await createAccountService(config, {
-          checkPassword: async () => {},
-        })),
+        (service = await createAccountService(config)),
     }),
   });
   server = await new Promise((resolve) => {

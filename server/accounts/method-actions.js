@@ -27,7 +27,6 @@ export function createMethodActions({
   pool,
   config,
   consumeProof,
-  checkPassword,
 }) {
   const requireMail = () => {
     if (!config.resendKey || !config.mailFrom || !config.jobSecret)
@@ -300,7 +299,6 @@ export function createMethodActions({
       requireMail();
       strictObject(body, ["password", "proof"]);
       const password = accountPassword(body.password);
-      await checkPassword(password);
       await authTransaction(
         auth,
         pool,

@@ -44,7 +44,7 @@ export function forgetDeskMemory() { lastShelf = null; lastLayout = null; }
 function slotLabel(pathname: string): string {
   const page = pathname.replace(/^\/app\//, '');
   if (page.startsWith('books/')) return 'Book';
-  if (page.startsWith('account/')) return 'Account';
+  if (page.startsWith('account/') || page.startsWith('settings/account/')) return 'Account';
   return ({ report: 'Report a problem', privacy: 'Privacy', terms: 'Terms', about: 'About', 'settings/account': 'Account settings' } as Record<string, string>)[page] || 'Page';
 }
 
@@ -54,7 +54,7 @@ function slotLabel(pathname: string): string {
  * them (Account for the account pages, Help for the others).
  */
 function railButtonFor(root: HTMLElement | null, pathname: string): HTMLElement | null {
-  const menu = /^\/app\/(account\/|settings\/account$)/.test(pathname) ? 'account' : /^\/app\/(report|privacy|terms|about)$/.test(pathname) ? 'help' : null;
+  const menu = /^\/app\/(account\/|settings\/account(\/|$))/.test(pathname) ? 'account' : /^\/app\/(report|privacy|terms|about)$/.test(pathname) ? 'help' : null;
   return menu ? root?.querySelector<HTMLElement>(`.desk-rail [data-rail="${menu}"]`) || null : null;
 }
 

@@ -9,6 +9,7 @@ import {
 } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { AnonymousWebApp } from "../App";
+import { forgetAccountWarmUp } from "../ui/account/AccountEntryGate";
 const response = (data: unknown) =>
   new Response(JSON.stringify(data), { status: 200 });
 const ready = {
@@ -24,6 +25,7 @@ const unavailable = (code = "ACCOUNT_DISABLED") =>
   );
 afterEach(() => {
   cleanup();
+  forgetAccountWarmUp();
   vi.unstubAllGlobals();
   localStorage.clear();
   sessionStorage.clear();
@@ -71,7 +73,7 @@ it("keeps typed account fields when initial session checking finishes", async ()
       screen.getByRole("button", { name: "Create account" }),
     ).toBeEnabled(),
   );
-  fireEvent.submit(screen.getByRole("form", { name: "Create account" }));
+  fireEvent.submit(screen.getByRole("form", { name: "Welcome to MyBookshelf" }));
   expect(
     await screen.findByRole("heading", { name: "Check your email" }),
   ).toBeInTheDocument();
@@ -79,7 +81,7 @@ it("keeps typed account fields when initial session checking finishes", async ()
 function Location() {
   const location = useLocation();
   return (
-    <span data-testid="location">{location.pathname + location.search}</span>
+    <span data-testid="location">{location.pathname + location.search + location.hash}</span>
   );
 }
 for (const route of [
@@ -187,7 +189,7 @@ it("retries unavailable signup and submits only after session and mail availabil
   fireEvent.change(screen.getByLabelText("Password", { exact: true }), {
     target: { value: "a long synthetic password" },
   });
-  fireEvent.submit(screen.getByRole("form", { name: "Create account" }));
+  fireEvent.submit(screen.getByRole("form", { name: "Welcome to MyBookshelf" }));
   expect(
     fetch.mock.calls.filter(([, options]) => options?.method === "POST"),
   ).toHaveLength(0);
@@ -198,7 +200,7 @@ it("retries unavailable signup and submits only after session and mail availabil
     ).toBeEnabled(),
   );
   expect(email).toHaveValue("reader@example.test");
-  fireEvent.submit(screen.getByRole("form", { name: "Create account" }));
+  fireEvent.submit(screen.getByRole("form", { name: "Welcome to MyBookshelf" }));
   await screen.findByRole("heading", { name: "Check your email" });
   expect(
     fetch.mock.calls.filter(([, options]) => options?.method === "POST"),
@@ -232,43 +234,154 @@ for (const route of ["sign-up", "forgot-password"])
       screen.queryByLabelText("Email", { exact: true }),
     ).not.toBeInTheDocument();
   });
-it("removes a verification token from the URL, preserves it through bootstrap and exchanges only on confirmation", async () => {
+const USER = { id: "reader-1", name: "Reader", email: "reader@example.test", emailVerified: true };
+const versions = { settingsRevision: 0, shelfRevision: 0, historyGeneration: 0, historyEnabled: true };
+/** The account API after an emailed link signed the reader in. */
+function signedInAfter(posts: string[], linkPath: string, gate: { open: boolean }, finish?: (resolve: (value: Response) => void) => void) {
+  return vi.fn((path: string, options: RequestInit = {}) => {
+    if (options.method === "POST") posts.push(path);
+    if (path.endsWith("/session")) {
+      if (!gate.open && finish) return new Promise<Response>((resolve) => finish(resolve));
+      return Promise.resolve(response(gate.open ? { status: "authenticated", user: USER, csrfToken: "csrf-1", signedInAt: new Date().toISOString() } : { status: "guest" }));
+    }
+    if (path.endsWith(linkPath)) {
+      gate.open = true;
+      return Promise.resolve(response({ status: "verified", signedIn: true, email: USER.email }));
+    }
+    if (path.endsWith("/state")) return Promise.resolve(response({ profile: { ...USER, profileRevision: 0 }, selectedLibraryId: null, selectedLibrary: null, libraryRemoved: false, counts: { saved: 0, recent: 0 }, ...versions }));
+    if (path.includes("/books?")) return Promise.resolve(response({ books: [], nextCursor: null, ...versions }));
+    if (path.endsWith("/history")) return Promise.resolve(response({ books: [], ...versions }));
+    return Promise.resolve(response({ status: "ok" }));
+  });
+}
+it("keeps the verification token after # until it is used, exchanges it only on confirmation, and signs the reader in to Welcome", async () => {
   let finish: (value: Response) => void = () => {};
-  const posts: string[] = [];
-  vi.stubGlobal(
-    "fetch",
-    vi.fn((path: string, options: RequestInit) => {
-      if (path.endsWith("/session"))
-        return new Promise<Response>((resolve) => {
-          finish = resolve;
-        });
-      if (options.method === "POST") posts.push(path);
-      return Promise.resolve(response({ status: "verified" }));
-    }),
-  );
+  const posts: string[] = [], gate = { open: false };
+  vi.stubGlobal("fetch", signedInAfter(posts, "/verify-email", gate, (resolve) => { finish = resolve; }));
   render(
-    <MemoryRouter
-      initialEntries={["/app/account/verify?token=synthetic-one-use-token"]}
-    >
+    <MemoryRouter initialEntries={["/app/account/verify#token=synthetic-one-use-token"]}>
       <AnonymousWebApp />
       <Location />
     </MemoryRouter>,
   );
-  expect(screen.getByTestId("location")).toHaveTextContent(
-    "/app/account/verify",
-  );
-  await waitFor(() =>
-    expect(screen.getByTestId("location")).not.toHaveTextContent("token="),
-  );
+  // A reload or a restored tab still has the link: the token stays in the address.
+  expect(screen.getByTestId("location")).toHaveTextContent("/app/account/verify#token=synthetic-one-use-token");
   expect(posts).toEqual([]);
   expect(screen.getByRole("button", { name: "Verify email" })).toBeDisabled();
   fireEvent.submit(screen.getByRole("form", { name: "Verify email" }));
   expect(posts).toEqual([]);
   await act(async () => finish(response({ status: "guest" })));
   expect(screen.getByRole("button", { name: "Verify email" })).toBeEnabled();
+  expect(screen.getByTestId("location")).toHaveTextContent("token=");
   fireEvent.click(screen.getByRole("button", { name: "Verify email" }));
-  expect(
-    await screen.findByRole("heading", { name: "Email verified" }),
-  ).toBeInTheDocument();
+  expect(await screen.findByRole("heading", { name: "You’re signed in" })).toBeInTheDocument();
+  expect(screen.getByText("Your email is confirmed and your account is ready.")).toBeInTheDocument();
+  expect(screen.getByText(USER.email)).toBeInTheDocument();
+  expect(screen.getByTestId("location")).toHaveTextContent(/^\/app\/account\/welcome$/);
   expect(posts).toEqual(["/api/account/verify-email"]);
+  expect(JSON.parse((vi.mocked(fetch).mock.calls.find(([path]) => String(path).endsWith("/verify-email"))![1] as RequestInit).body as string)).toEqual({ token: "synthetic-one-use-token" });
+  expect(await screen.findByRole("heading", { name: "Your reading shelf" })).toBeInTheDocument();
+  expect(screen.getByRole("link", { name: "Go to my reading shelf" })).toHaveAttribute("href", "/app/shelf");
+});
+it("still accepts ?token= from emails sent before the change; an expired link offers Request a new link", async () => {
+  const posts: string[] = [];
+  vi.stubGlobal("fetch", vi.fn((path: string, options: RequestInit = {}) => {
+    if (options.method === "POST") posts.push(path);
+    if (path.endsWith("/session")) return Promise.resolve(response({ status: "guest" }));
+    if (path.endsWith("/reset-password")) return Promise.resolve(new Response(JSON.stringify({ error: { code: "LINK_EXPIRED", message: "This link has expired or was already used." } }), { status: 400 }));
+    return Promise.resolve(response({ status: "ok" }));
+  }));
+  render(
+    <MemoryRouter initialEntries={["/app/account/reset-password?token=old-style-token"]}>
+      <AnonymousWebApp />
+      <Location />
+    </MemoryRouter>,
+  );
+  const field = await screen.findByLabelText("New password", { selector: "input" });
+  // No rules: one character is enough, and the eye shows what was typed.
+  fireEvent.change(field, { target: { value: "x" } });
+  const eye = screen.getByRole("button", { name: "Show password" });
+  expect(eye).toHaveAttribute("aria-pressed", "false");
+  expect(field).toHaveAttribute("type", "password");
+  fireEvent.click(eye);
+  expect(screen.getByRole("button", { name: "Hide password" })).toHaveAttribute("aria-pressed", "true");
+  expect(field).toHaveAttribute("type", "text");
+  await waitFor(() => expect(screen.getByRole("button", { name: "Save password" })).toBeEnabled());
+  fireEvent.click(screen.getByRole("button", { name: "Save password" }));
+  expect(await screen.findByText("Link expired")).toBeInTheDocument();
+  expect(posts).toEqual(["/api/account/reset-password"]);
+  fireEvent.click(screen.getByRole("link", { name: "Request a new link" }));
+  expect(screen.getByTestId("location")).toHaveTextContent(/^\/app\/account\/forgot-password$/);
+});
+it("the emailed log-in link signs in on one tap and lands on Welcome", async () => {
+  const posts: string[] = [], gate = { open: false };
+  vi.stubGlobal("fetch", signedInAfter(posts, "/magic-link/verify", gate));
+  render(
+    <MemoryRouter initialEntries={["/app/account/magic-link#token=synthetic-link-token"]}>
+      <AnonymousWebApp />
+      <Location />
+    </MemoryRouter>,
+  );
+  const button = await screen.findByRole("button", { name: "Log in" });
+  await waitFor(() => expect(button).toBeEnabled());
+  // Opening the page spends nothing (a mail scanner cannot use the link).
+  expect(posts).toEqual([]);
+  fireEvent.click(button);
+  expect(await screen.findByRole("heading", { name: "You’re signed in" })).toBeInTheDocument();
+  expect(screen.getByText("You’re logged in on this device.")).toBeInTheDocument();
+  expect(posts).toEqual(["/api/account/magic-link/verify"]);
+  expect(screen.getByTestId("location")).toHaveTextContent(/^\/app\/account\/welcome$/);
+});
+it("opening Create account or Log in wakes the account service with one GET, once per page load", async () => {
+  const calls: string[] = [];
+  vi.stubGlobal("fetch", vi.fn((path: string, options: RequestInit = {}) => {
+    calls.push((options.method || "GET") + " " + path);
+    return Promise.resolve(response(path.endsWith("/session") ? { status: "guest" } : path.endsWith("/capabilities") ? ready : { ok: true }));
+  }));
+  const { unmount } = render(
+    <MemoryRouter initialEntries={["/app/account/sign-up"]}>
+      <AnonymousWebApp />
+    </MemoryRouter>,
+  );
+  await screen.findByLabelText("Email", { exact: true });
+  await waitFor(() => expect(calls).toContain("GET /api/auth/ok"));
+  unmount();
+  render(
+    <MemoryRouter initialEntries={["/app/account/sign-in"]}>
+      <AnonymousWebApp />
+    </MemoryRouter>,
+  );
+  await screen.findByRole("button", { name: "Email me a log-in link" });
+  expect(calls.filter((call) => call === "GET /api/auth/ok")).toHaveLength(1);
+  expect(calls.filter((call) => call.startsWith("POST"))).toEqual([]);
+});
+it("Log in: Email me a log-in link answers the same for any address; the password stays the second way", async () => {
+  const posts: Array<{ path: string; body: unknown }> = [];
+  vi.stubGlobal("fetch", vi.fn((path: string, options: RequestInit = {}) => {
+    if (options.method === "POST") posts.push({ path, body: JSON.parse(String(options.body)) });
+    if (path.endsWith("/session")) return Promise.resolve(response({ status: "guest" }));
+    if (path.endsWith("/magic-link")) return Promise.resolve(new Response(JSON.stringify({ status: "check-email" }), { status: 202 }));
+    return Promise.resolve(response({ ok: true }));
+  }));
+  render(
+    <MemoryRouter initialEntries={["/app/account/sign-in"]}>
+      <AnonymousWebApp />
+    </MemoryRouter>,
+  );
+  const send = await screen.findByRole("button", { name: "Email me a log-in link" });
+  await waitFor(() => expect(send).toBeEnabled());
+  expect(screen.getByText("We send a link to your email. Open it on this device and you are logged in. No password needed.")).toBeInTheDocument();
+  expect(screen.getByText("or use your password")).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Log in with password" })).toBeInTheDocument();
+  expect(screen.getByRole("link", { name: "Create an account" })).toHaveAttribute("href", "/app/account/sign-up");
+  fireEvent.click(send);
+  expect(await screen.findByText("Check the email")).toBeInTheDocument();
+  expect(posts).toEqual([]);
+  fireEvent.change(screen.getByLabelText("Email", { exact: true }), { target: { value: "reader@example.test" } });
+  fireEvent.click(send);
+  expect(await screen.findByRole("heading", { name: "Check your email" })).toBeInTheDocument();
+  expect(screen.getByText("If that address has an account, a link is on its way. Open it on this device and you are logged in.")).toBeInTheDocument();
+  expect(posts).toEqual([{ path: "/api/account/magic-link", body: { email: "reader@example.test" } }]);
+  fireEvent.click(screen.getByRole("button", { name: "Use my password instead" }));
+  expect(screen.getByLabelText("Email", { exact: true })).toHaveValue("reader@example.test");
 });

@@ -110,6 +110,12 @@ export function createDeletionActions({
             where: [{ field: "authUserId", value: identity.authUserId }],
             update: { status: "deleting" },
           });
+          // The one confirmation email goes now, not when the hourly job
+          // removes the data. It commits with the deletion request.
+          const user = await context.internalAdapter.findUserById(
+            identity.authUserId,
+          );
+          if (user) await enqueueAccountMail(auth, config, "deleted", { user });
           await context.internalAdapter.deleteUserSessions(identity.authUserId);
           const reply = await auth.api.signOut({
             headers,
@@ -189,23 +195,26 @@ export function createDeletionActions({
           });
           if (!locked) throw Error("Deletion status changed.");
         }
-        const user = await context.internalAdapter.findUserById(job.authUserId);
-        for (const model of [
-          "accountMail",
-          "accountChallenge",
-          "recentProof",
-          "providerIntent",
-        ])
+        for (const model of ["accountChallenge", "recentProof", "providerIntent"])
           await adapter.deleteMany({
             model,
             where: [{ field: "authUserId", value: job.authUserId }],
           });
+        // Every other mail goes; the deletion confirmation queued when the
+        // reader deleted the account stays until it is sent (its payload is
+        // cleared once sent, and the row removed by the mail job's own clean-up).
+        await adapter.deleteMany({
+          model: "accountMail",
+          where: [
+            { field: "authUserId", value: job.authUserId },
+            { field: "kind", operator: "ne", value: "deleted" },
+          ],
+        });
         await adapter.deleteMany({
           model: "verification",
           where: [{ field: "value", value: job.authUserId }],
         });
         await context.internalAdapter.deleteUser(job.authUserId);
-        if (user) await enqueueAccountMail(auth, config, "deleted", { user });
         const cleanedAt = new Date();
         await adapter.update({
           model: "accountDeletion",

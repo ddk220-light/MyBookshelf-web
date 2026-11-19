@@ -180,28 +180,47 @@ describe('Report a problem', () => {
 });
 
 describe('account screens', () => {
-  it('Create account: too short password, the Terms line, and no name field', async () => {
-    const calls = network({ handle: path => path.endsWith('/api/account/sign-up') ? json({ status: 'check-email' }, 202) : undefined });
+  it('Create account: a welcome, no password rules, an eye on the password, and what happens next', async () => {
+    let release: () => void = () => {};
+    const calls = network({ handle: path => path.endsWith('/api/account/sign-up') ? new Promise<Response>(resolve => { release = () => resolve(json({ status: 'check-email' }, 202)); }) : undefined });
     app('/app/account/sign-up');
-    const email = await screen.findByLabelText('Email');
+    expect(await screen.findByRole('heading', { name: 'Welcome to MyBookshelf' })).toBeInTheDocument();
+    expect(screen.getByText('Create a free account to keep the same reading shelf on every device. The books already on this device come with you.')).toBeInTheDocument();
+    const email = screen.getByLabelText('Email');
     expect(screen.queryByLabelText('Your name')).toBeNull();
-    const terms = screen.getByText((_, node) => node?.textContent === 'By creating an account you agree to the Terms and Privacy' && node.tagName === 'P');
-    expect(within(terms).getByRole('link', { name: 'Terms' })).toHaveAttribute('href', '/app/terms');
-    expect(within(terms).getByRole('link', { name: 'Privacy' })).toHaveAttribute('href', '/app/privacy');
+    const next = screen.getByRole('heading', { name: 'What happens next' }).parentElement!;
+    expect(within(next).getAllByRole('listitem').map(item => item.textContent)).toEqual(['We send a link to your email.', 'Open the link and you are signed in.', 'Your reading shelf appears on any device where you log in.']);
+    expect(screen.getByRole('link', { name: 'privacy policy' })).toHaveAttribute('href', '/app/privacy');
+    expect(screen.getByRole('link', { name: 'Log in' })).toHaveAttribute('href', '/app/account/sign-in');
+    const password = screen.getByLabelText('Password');
+    // No helper text: the field describes nothing until there is an error.
+    expect(password).not.toHaveAttribute('aria-describedby');
+    expect(screen.getByRole('button', { name: 'Show password' })).toHaveAttribute('aria-pressed', 'false');
     await waitFor(() => expect(screen.getByRole('button', { name: 'Create account' })).toBeEnabled());
     fireEvent.change(email, { target: { value: 'reader@example.test' } });
-    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'abc' } });
     fireEvent.click(screen.getByRole('button', { name: 'Create account' }));
-    expect(await screen.findByText('Too short: 15 characters or more')).toBeInTheDocument();
-    expect(screen.getByLabelText('Password')).toHaveAttribute('aria-invalid', 'true');
     expect(calls.some(call => call.path.endsWith('/sign-up'))).toBe(false);
-    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'a long synthetic passphrase' } });
+    expect(password).toHaveFocus();
+    fireEvent.change(password, { target: { value: 'a' } });
     fireEvent.click(screen.getByRole('button', { name: 'Create account' }));
+    expect(await screen.findByRole('button', { name: 'Creating your account…' })).toBeDisabled();
+    release();
     expect(await screen.findByRole('heading', { name: 'Check your email' })).toBeInTheDocument();
-    expect(calls.find(call => call.path.endsWith('/sign-up'))!.body).toEqual({ name: 'Reader', email: 'reader@example.test', password: 'a long synthetic passphrase' });
+    expect(calls.find(call => call.path.endsWith('/sign-up'))!.body).toEqual({ name: 'Reader', email: 'reader@example.test', password: 'a' });
   });
 
-  it('Log in: wrong email or password, then couldn’t connect with Try again', async () => {
+  it('Create account: only the maximum length is a rule', async () => {
+    const calls = network();
+    app('/app/account/sign-up');
+    fireEvent.change(await screen.findByLabelText('Email'), { target: { value: 'reader@example.test' } });
+    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'x'.repeat(129) } });
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Create account' })).toBeEnabled());
+    fireEvent.click(screen.getByRole('button', { name: 'Create account' }));
+    expect(await screen.findByText('Too long: 128 characters or fewer')).toBeInTheDocument();
+    expect(calls.some(call => call.path.endsWith('/sign-up'))).toBe(false);
+  });
+
+  it('Log in with password: wrong email or password, then couldn’t connect with Try again; Forgot your password? keeps the email', async () => {
     let attempt = 0;
     const calls = network({ handle: path => {
       if (!path.endsWith('/api/account/sign-in')) return undefined;
@@ -213,17 +232,21 @@ describe('account screens', () => {
     app('/app/account/sign-in');
     expect(await screen.findByRole('heading', { name: 'Log in' })).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'reader@example.test' } });
-    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'wrong password here' } });
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Log in' })).toBeEnabled());
-    fireEvent.click(screen.getByRole('button', { name: 'Log in' }));
+    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'w' } });
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Log in with password' })).toBeEnabled());
+    fireEvent.click(screen.getByRole('button', { name: 'Log in with password' }));
     expect(await screen.findByText('Wrong email or password')).toBeInTheDocument();
     expect(screen.getByLabelText('Email')).toHaveAttribute('aria-invalid', 'true');
-    expect(screen.getByRole('link', { name: 'Forgot password?' })).toHaveAttribute('href', '/app/account/forgot-password');
-    fireEvent.click(screen.getByRole('button', { name: 'Log in' }));
+    expect(screen.getByRole('link', { name: 'Forgot your password?' })).toHaveAttribute('href', '/app/account/forgot-password');
+    fireEvent.click(screen.getByRole('button', { name: 'Log in with password' }));
     expect(await screen.findByText('Couldn’t connect')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
     expect(await screen.findByText('Too many tries. Try later')).toBeInTheDocument();
     expect(calls.filter(call => call.path.endsWith('/sign-in'))).toHaveLength(3);
+    expect(calls.find(call => call.path.endsWith('/sign-in'))!.body).toMatchObject({ email: 'reader@example.test', password: 'w' });
+    fireEvent.click(screen.getByRole('link', { name: 'Forgot your password?' }));
+    expect(await screen.findByLabelText('Email')).toHaveValue('reader@example.test');
+    expect(screen.getByTestId('location')).toHaveTextContent(/^\/app\/account\/forgot-password$/);
   });
 
   it('Forgot password: Send reset link turns into Link sent', async () => {
@@ -236,42 +259,147 @@ describe('account screens', () => {
     expect(calls.find(call => call.path.endsWith('/forgot-password'))!.body).toEqual({ email: 'reader@example.test' });
   });
 
-  it('Account settings: Change password sends the reset link; Delete asks once and deletes', async () => {
+  it('Your account: email, password, the size of the shelf, Log out and Delete my account…; no download and no devices', async () => {
     const calls = network({ signedIn: true, handle: path => {
-      if (path.endsWith('/forgot-password')) return json({ status: 'check-email' }, 202);
+      if (path.endsWith('/api/account/profile')) return json({ pendingEmail: null, methods: [{ provider: 'password', usable: true }] });
+      if (path.includes('/api/account/books?')) return json({ books: [{ referenceId: '00000000-0000-4000-8000-000000000001', bookKey: 'v1:isbn:9780262033848', title: 'Saved', authors: [], savedAt: '2026-11-01T00:00:00.000Z' }], nextCursor: null, ...versions });
+      if (path.endsWith('/sign-out')) return json({ status: 'signed-out' });
+      return undefined;
+    } });
+    app('/app/settings/account');
+    expect(await screen.findByRole('heading', { name: 'Your account' })).toBeInTheDocument();
+    expect(screen.getByText(USER.email)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Change email' })).toHaveAttribute('href', '/app/settings/account/email');
+    expect(await screen.findByText('Set')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Change password' })).toHaveAttribute('href', '/app/settings/account/password');
+    expect(await screen.findByText('1 saved book · 0 viewed')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Delete my account…' })).toHaveAttribute('href', '/app/settings/account/delete');
+    expect(screen.queryByRole('button', { name: /Download|Sign out all|devices/i })).toBeNull();
+    expect(screen.queryByText(/signed-in devices/i)).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Log out' }));
+    await waitFor(() => expect(calls.some(call => call.path.endsWith('/sign-out'))).toBe(true));
+    await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent(/^\/app\/shelf$/));
+  });
+
+  it('old account addresses lead to the new screens', async () => {
+    network({ signedIn: true, handle: path => path.endsWith('/api/account/profile') ? json({ methods: [{ provider: 'password', usable: true }] }) : undefined });
+    app('/app/settings/account/more');
+    expect(await screen.findByRole('heading', { name: 'Your account' })).toBeInTheDocument();
+    expect(screen.getByTestId('location')).toHaveTextContent(/^\/app\/settings\/account$/);
+    cleanup();
+    app('/app/account/import');
+    await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent(/^\/app\/shelf$/));
+  });
+
+  it('Change password within 10 minutes of signing in asks only for the new password', async () => {
+    const calls = network({ signedIn: true, handle: path => {
+      if (path.endsWith('/api/account/session')) return json({ status: 'authenticated', user: USER, csrfToken: 'csrf-1', signedInAt: new Date(Date.now() - 60_000).toISOString() });
+      if (path.endsWith('/reauth/recent')) return json({ status: 'confirmed', proof: 'proof-1', action: 'password-change', csrfToken: 'csrf-1' });
+      if (path.endsWith('/api/account/password')) return json({ status: 'password-updated' });
+      if (path.endsWith('/api/account/profile')) return json({ methods: [{ provider: 'password', usable: true }] });
+      return undefined;
+    } });
+    app('/app/settings/account/password');
+    expect(await screen.findByRole('heading', { name: 'Change your password' })).toBeInTheDocument();
+    expect(screen.getByText('Other devices where you are logged in will be logged out.')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Current password')).toBeNull();
+    fireEvent.change(screen.getByLabelText('New password'), { target: { value: 'b' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save new password' }));
+    expect(await screen.findByText('Password changed. Other devices were logged out.')).toBeInTheDocument();
+    expect(screen.getByTestId('location')).toHaveTextContent(/^\/app\/settings\/account$/);
+    expect(calls.find(call => call.path.endsWith('/reauth/recent'))!.body).toEqual({ action: 'password-change' });
+    expect(calls.find(call => call.path.endsWith('/api/account/password'))!.body).toEqual({ password: 'b', proof: 'proof-1' });
+    expect(calls.some(call => call.path.endsWith('/reauth/password'))).toBe(false);
+  });
+
+  it('Change password later asks for the current password ("Confirm it’s you")', async () => {
+    let tries = 0;
+    const calls = network({ signedIn: true, handle: path => {
+      if (path.endsWith('/reauth/password')) return ++tries === 1 ? failure(401, 'INVALID_CREDENTIALS') : json({ status: 'confirmed', proof: 'proof-2', action: 'password-change', csrfToken: 'csrf-2' });
+      if (path.endsWith('/api/account/password')) return json({ status: 'password-updated' });
+      if (path.endsWith('/api/account/profile')) return json({ methods: [{ provider: 'password', usable: true }] });
+      return undefined;
+    } });
+    app('/app/settings/account/password');
+    const current = await screen.findByLabelText('Current password');
+    fireEvent.change(current, { target: { value: 'not it' } });
+    fireEvent.change(screen.getByLabelText('New password'), { target: { value: 'new one' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save new password' }));
+    expect(await screen.findByText('Wrong password')).toBeInTheDocument();
+    fireEvent.change(current, { target: { value: 'the old one' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save new password' }));
+    expect(await screen.findByText('Password changed. Other devices were logged out.')).toBeInTheDocument();
+    expect(calls.filter(call => call.path.endsWith('/reauth/password')).map(call => call.body)).toEqual([
+      { password: 'not it', action: 'password-change' }, { password: 'the old one', action: 'password-change' }]);
+    expect(calls.find(call => call.path.endsWith('/api/account/password'))!.body).toEqual({ password: 'new one', proof: 'proof-2' });
+    expect(calls.some(call => call.path.endsWith('/reauth/recent'))).toBe(false);
+  });
+
+  it('Change email sends a link to the new address and keeps the current one until it is opened', async () => {
+    const calls = network({ signedIn: true, handle: path => {
+      if (path.endsWith('/api/account/session')) return json({ status: 'authenticated', user: USER, csrfToken: 'csrf-1', signedInAt: new Date().toISOString() });
+      if (path.endsWith('/reauth/recent')) return json({ status: 'confirmed', proof: 'proof-1', action: 'email-change', csrfToken: 'csrf-1' });
+      if (path.endsWith('/api/account/email-change')) return json({ status: 'check-email' }, 202);
+      return undefined;
+    } });
+    app('/app/settings/account/email');
+    const field = await screen.findByLabelText('New email');
+    fireEvent.change(field, { target: { value: USER.email } });
+    fireEvent.click(screen.getByRole('button', { name: 'Send the link' }));
+    expect(await screen.findByText('That is already your email')).toBeInTheDocument();
+    fireEvent.change(field, { target: { value: 'new@example.test' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Send the link' }));
+    expect(await screen.findByRole('heading', { name: 'Check your new email' })).toBeInTheDocument();
+    expect(calls.find(call => call.path.endsWith('/api/account/email-change'))!.body).toEqual({ newEmail: 'new@example.test', proof: 'proof-1' });
+  });
+
+  it('Delete my account: what goes and what stays, always the password, then deleted and the browser copy cleared', async () => {
+    localStorage.setItem('mybookshelf.anonymous-web.v1', JSON.stringify({ version: 2, selectedLibraryId: 'bc:smcl', recentBooks: [{ bookKey: 'v1:isbn:9780131103627', title: 'Viewed', authors: [], source: 'direct', viewedAt: '2026-11-01T00:00:00.000Z' }],
+      savedBooks: [{ bookKey: 'v1:isbn:9780262033848', title: 'Kept here', authors: [], source: 'direct', viewedAt: '2026-11-01T00:00:00.000Z' }], savedContent: [] }));
+    localStorage.setItem('mybookshelf.merged.v1', JSON.stringify({ version: 1, saved: ['v1:isbn:9780262033848'], viewed: ['v1:isbn:9780131103627'], libraries: ['bc:smcl'] }));
+    localStorage.setItem('mybookshelf.reader-preferences.v1', JSON.stringify({ version: 1, shelfView: 'list', shelfSort: 'recent', selectedLibrary: { id: 'bc:smcl', name: 'San Mateo' } }));
+    const calls = network({ signedIn: true, handle: path => {
+      if (path.endsWith('/api/account/session')) return json({ status: 'authenticated', user: USER, csrfToken: 'csrf-1', signedInAt: new Date().toISOString() });
       if (path.endsWith('/reauth/password')) return json({ proof: 'proof-1', csrfToken: 'csrf-2' });
       // Answered at once: access can end before the move to the receipt page
       // has rendered, and the page must still be the receipt, not the shelf.
       if (path.endsWith('/api/account/deletion')) return json({ status: 'accepted', accessEnded: true });
+      if (path.endsWith('/imports')) return json({ status: 'imported', savedAdded: 1, historyAccepted: 1, historyExpired: 0, ...versions });
       return undefined;
     } });
-    app('/app/settings/account');
-    expect(await screen.findByText(USER.email)).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Change password' }));
-    expect(await screen.findByRole('button', { name: 'Link sent' })).toBeInTheDocument();
-    expect(calls.find(call => call.path.endsWith('/forgot-password'))!.body).toEqual({ email: USER.email });
-    expect(screen.getByRole('link', { name: 'More' })).toHaveAttribute('href', '/app/settings/account/more');
-    fireEvent.click(screen.getByRole('button', { name: 'Delete account' }));
-    const dialog = await screen.findByRole('alertdialog', { name: 'Delete account and shelf?' });
-    expect(within(dialog).getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
-    fireEvent.change(within(dialog).getByLabelText('Password'), { target: { value: 'my account password' } });
-    fireEvent.click(within(dialog).getByRole('button', { name: 'Delete' }));
+    app('/app/settings/account/delete');
+    expect(await screen.findByRole('heading', { name: 'Delete your account' })).toBeInTheDocument();
+    expect(screen.getByText('This cannot be undone. Please read what happens first.')).toBeInTheDocument();
+    const gone = screen.getByRole('region', { name: 'Deleted straight away' });
+    expect(within(gone).getByText('The copy of your reading shelf kept in this browser')).toBeInTheDocument();
+    expect(within(screen.getByRole('region', { name: 'What stays for a short time' })).getByText('Backup copies, which expire within 30 days.')).toBeInTheDocument();
+    expect(screen.getByText('We will send one email to confirm the account was deleted.')).toBeInTheDocument();
+    expect(screen.queryByText(/download/i)).toBeNull();
+    expect(screen.getByRole('link', { name: 'Keep my account' })).toHaveAttribute('href', '/app/settings/account');
+    // Even right after signing in, deleting asks for the password.
+    fireEvent.click(screen.getByRole('button', { name: 'Delete my account' }));
+    expect(await screen.findByText('Type your password')).toBeInTheDocument();
+    expect(calls.some(call => call.path.endsWith('/reauth/password') || call.path.endsWith('/reauth/recent'))).toBe(false);
+    fireEvent.change(screen.getByLabelText('Type your password to confirm'), { target: { value: 'my account password' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Delete my account' }));
     await waitFor(() => expect(calls.some(call => call.path.endsWith('/api/account/deletion'))).toBe(true));
-    await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/app/account/deletion'));
+    expect(await screen.findByRole('heading', { name: 'Account deleted' })).toBeInTheDocument();
+    expect(screen.getByTestId('location')).toHaveTextContent('/app/account/deletion');
     expect(calls.find(call => call.path.endsWith('/reauth/password'))!.body).toEqual({ password: 'my account password', action: 'delete' });
     expect(calls.find(call => call.path.endsWith('/api/account/deletion'))!.body).toMatchObject({ proof: 'proof-1', confirmation: 'delete-account' });
-    expect(await screen.findByRole('heading', { name: 'Account deleted' })).toBeInTheDocument();
+    const left = JSON.parse(localStorage.getItem('mybookshelf.anonymous-web.v1')!);
+    expect(left).toMatchObject({ selectedLibraryId: null, savedBooks: [], recentBooks: [] });
+    expect(localStorage.getItem('mybookshelf.merged.v1')).toBeNull();
+    expect(JSON.parse(localStorage.getItem('mybookshelf.reader-preferences.v1')!)).toEqual({ version: 1, shelfView: 'list', shelfSort: 'recent' });
   });
 
   it('Delete with a wrong password shows one line and stays', async () => {
     network({ signedIn: true, handle: path => path.endsWith('/reauth/password') ? failure(401, 'INVALID_CREDENTIALS') : undefined });
-    app('/app/settings/account');
-    fireEvent.click(await screen.findByRole('button', { name: 'Delete account' }));
-    const dialog = await screen.findByRole('alertdialog', { name: 'Delete account and shelf?' });
-    fireEvent.change(within(dialog).getByLabelText('Password'), { target: { value: 'not it' } });
-    fireEvent.click(within(dialog).getByRole('button', { name: 'Delete' }));
-    expect(await within(dialog).findByText('Wrong password')).toBeInTheDocument();
-    expect(screen.getByTestId('location')).toHaveTextContent('/app/settings/account');
+    app('/app/settings/account/delete');
+    fireEvent.change(await screen.findByLabelText('Type your password to confirm'), { target: { value: 'not it' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Delete my account' }));
+    expect(await screen.findByText('Wrong password')).toBeInTheDocument();
+    expect(screen.getByTestId('location')).toHaveTextContent('/app/settings/account/delete');
   });
 });
 

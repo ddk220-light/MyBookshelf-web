@@ -60,7 +60,7 @@ it('signed in: opening another book keeps the Undo; adding the removed book back
   expect(library().removedBook).toBeNull();
 });
 
-it('signed in: focus reloads the shelf (and re-checks the session) at most once a minute', async () => {
+it('signed in: focus asks only for the revision numbers, at most every 10 seconds, and reloads only when another device changed them', async () => {
   account();
   let clock = 5_000_000;
   const now = vi.spyOn(Date, 'now').mockImplementation(() => clock);
@@ -72,15 +72,27 @@ it('signed in: focus reloads the shelf (and re-checks the session) at most once 
     await waitFor(() => expect(count('/api/account/state')).toBe(1));
     expect(count('/api/account/session')).toBe(1);
     const focus = () => { window.dispatchEvent(new Event('focus')); document.dispatchEvent(new Event('visibilitychange')); };
-    clock += 30_000;
+    // Within 10 seconds: nothing.
+    clock += 5_000;
     await act(async () => focus());
     expect(count('/api/account/state')).toBe(1);
-    expect(count('/api/account/session')).toBe(1);
-    clock += 31_000;
+    // Later: one /state; nothing changed, so the shelf and Viewed before are not read again.
+    clock += 6_000;
     await act(async () => focus());
     await waitFor(() => expect(count('/api/account/state')).toBe(2));
+    expect(count('/api/account/books?')).toBe(1);
+    expect(count('/api/account/history')).toBe(1);
+    // Another device removes the book: the next focus finds a new revision and reloads.
+    await fetch('/api/account/books/ref-1', { method: 'DELETE' });
+    clock += 11_000;
+    await act(async () => focus());
+    await waitFor(() => expect(library().state.savedBooks).toHaveLength(0));
     expect(count('/api/account/books?')).toBe(2);
     expect(count('/api/account/history')).toBe(2);
-    expect(count('/api/account/session')).toBe(2);
+    // The session itself is still re-checked at most once a minute.
+    expect(count('/api/account/session')).toBe(1);
+    clock += 61_000;
+    await act(async () => focus());
+    await waitFor(() => expect(count('/api/account/session')).toBe(2));
   } finally { now.mockRestore(); }
 });

@@ -47,7 +47,7 @@ test('durable mail joins signup transaction; two workers lease, retry idempotent
   assert.ok(payload.token);assert.ok(!JSON.stringify(job).includes(payload.token));
   assert.throws(() => decryptMail(job.payload, 'a different key with more than 32 characters'));
   let attempts = 0;const ids = [];
-  const send = async (claimed, rendered) => { attempts++;ids.push(claimed.id);assert.equal(rendered.to,email);assert.ok(rendered.html.includes('/app/account/verify?token='));if (attempts===1) throw Error('provider response lost'); };
+  const send = async (claimed, rendered) => { attempts++;ids.push(claimed.id);assert.equal(rendered.to,email);assert.ok(rendered.html.includes('/app/account/verify#token='));assert.ok(!rendered.html.includes('?token='));assert.deepEqual(rendered.headers,{'X-Entity-Ref-ID':claimed.id});if (attempts===1) throw Error('provider response lost'); };
   await Promise.all([runMailBatch(pool, config, { transport: send, jobId: job.id }),runMailBatch(pool, config, { transport: send, jobId: job.id })]);
   assert.equal(attempts,1);
   await pool.query('UPDATE account_mail_jobs SET "availableAt"=now() WHERE id=$1', [job.id]);

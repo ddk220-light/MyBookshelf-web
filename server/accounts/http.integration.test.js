@@ -64,7 +64,6 @@ test(
         env,
         initialize: async (config) => {
           service = await createAccountService(config, {
-            checkPassword: async () => {},
           });
           return service;
         },
@@ -92,6 +91,8 @@ test(
     });
     assert.equal(response.status, 202);
     assert.equal(response.headers.get("cache-control"), "private, no-store");
+    // The first request started the account service: both durations are given.
+    assert.match(response.headers.get("server-timing"), /^start;dur=\d+(\.\d)?, app;dur=\d+(\.\d)?$/);
     assert.equal((await request("/state")).status, 401);
     const job = (
       await admin.query(
@@ -102,6 +103,17 @@ test(
     const { token } = decryptMail(job.payload, env.ACCOUNTS_JOB_SECRET);
     response = await request("/verify-email", "POST", { token });
     assert.equal(response.status, 200);
+    // Verifying signs the reader in (owner's decision).
+    assert.deepEqual(await response.json(), { status: "verified", signedIn: true, email });
+    const verifyCookie = response.headers.getSetCookie().map((c) => c.split(";")[0]).join("; ");
+    assert.ok(response.headers.getSetCookie().every((c) => /HttpOnly/i.test(c)));
+    const verifiedSession = await (await request("/session", "GET", undefined, verifyCookie)).json();
+    assert.equal(verifiedSession.status, "authenticated");
+    assert.ok(!Number.isNaN(Date.parse(verifiedSession.signedInAt)));
+    assert.equal(
+      (await request("/sign-out", "POST", {}, verifyCookie, verifiedSession.csrfToken)).status,
+      200,
+    );
     assert.equal(
       (await request("/verify-email", "POST", { token })).status,
       400,
@@ -123,6 +135,8 @@ test(
     );
     response = await request("/sign-in", "POST", { email, password });
     assert.equal(response.status, 200);
+    // Warm: the service was already running, so only the request is timed.
+    assert.match(response.headers.get("server-timing"), /^app;dur=\d+(\.\d)?$/);
     const cookies = response.headers.getSetCookie();
     assert.ok(cookies.some((c) => /HttpOnly/i.test(c)));
     assert.ok(cookies.every((c) => !c.includes("Domain=")));
@@ -134,13 +148,29 @@ test(
     assert.ok(session.csrfToken);
     assert.ok(!("sessionId" in session));
     assert.ok(!JSON.stringify(session).includes('token"'));
-    // A normal account visit can happen after Better Auth's five-minute
-    // freshness window. Reading device summaries must still work; revocation
-    // continues to require a separate, action-bound recent-auth proof.
+    // Within 10 minutes of signing in, "Confirm it's you" is skipped: a proof
+    // without the password, except for deleting the account.
+    response = await request("/reauth/recent", "POST", { action: "password-change" }, cookie, session.csrfToken);
+    assert.equal(response.status, 200);
+    const recent = await response.json();
+    assert.equal(recent.action, "password-change");
+    assert.equal(recent.csrfToken, session.csrfToken);
+    assert.match(recent.proof, /^[A-Za-z0-9_-]{43}$/);
+    response = await request("/reauth/recent", "POST", { action: "delete" }, cookie, session.csrfToken);
+    assert.equal(response.status, 403);
+    assert.equal((await response.json()).error.code, "RECENT_AUTH_REQUIRED");
+    assert.equal((await request("/reauth/recent", "POST", { action: "password-change" }, cookie)).status, 403);
     await admin.query(
-      'UPDATE "session" SET "createdAt"=now()-interval \'6 minutes\' WHERE "userId"=$1',
+      'UPDATE "session" SET "createdAt"=now()-interval \'11 minutes\' WHERE "userId"=$1',
       [user.id],
     );
+    response = await request("/reauth/recent", "POST", { action: "email-change" }, cookie, session.csrfToken);
+    assert.equal(response.status, 403);
+    assert.equal((await response.json()).error.code, "RECENT_AUTH_REQUIRED");
+    // A normal account visit can happen after Better Auth's freshness
+    // window. Reading device summaries must still work; revocation
+    // continues to require a separate, action-bound recent-auth proof.
+
     await admin.query('INSERT INTO "user"(id,name,email,"emailVerified") VALUES($1,$2,$3,true)',
       [otherUserId,"Other synthetic reader",randomUUID()+"@example.test"]);
     for(const [owner,age,expiry] of [

@@ -155,6 +155,21 @@ export class AccountRepository {
       .catch(() => {});
     return promise;
   }
+  /** Only the account's revision numbers (one small request), to see whether another device changed it. */
+  loadState(): Promise<CloudState> {
+    return this.request<CloudState>("/state");
+  }
+  /**
+   * Forgets a request that failed and will not be retried now (the quiet
+   * merge at sign-in, plan B5: it is tried again at the next load, and must
+   * never leave the shelf waiting on it).
+   */
+  abandonPending(path: string) {
+    if (this.pending?.path !== path) return;
+    if (typeof this.pending.body.importId === "string")
+      this.imports.delete(this.pending.body.importId);
+    this.pending = null;
+  }
   private state() {
     this.guard();
     if (!this.snapshot)
