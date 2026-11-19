@@ -29,12 +29,19 @@ jobs:
         run: |
           # /api/health reports the catalog store as one word: ok, failed or
           # off (no database configured). Production needs the store enabled
-          # and reachable. One retry covers a database that was waking up.
+          # and reachable ("off" fails too). One retry covers a database that
+          # was waking up, and a first request that timed out or failed: the
+          # step runs under bash -e, so curl's failure is caught here rather
+          # than ending the step before the retry.
           for attempt in 1 2; do
-            curl --fail --silent --show-error --max-time 25 \
+            rm -f /tmp/health.json
+            if curl --fail --silent --show-error --max-time 25 \
               --output /tmp/health.json \
-              https://mybookshelf.cloud/api/health
-            word=$(node -e 'const fs = require("node:fs"); const word = JSON.parse(fs.readFileSync("/tmp/health.json", "utf8")).catalogStore; process.stdout.write(["ok", "off", "failed"].includes(word) ? word : "missing");')
+              https://mybookshelf.cloud/api/health; then
+              word=$(node -e 'const fs = require("node:fs"); let word; try { word = JSON.parse(fs.readFileSync("/tmp/health.json", "utf8")).catalogStore; } catch {} process.stdout.write(["ok", "off", "failed"].includes(word) ? word : "missing");')
+            else
+              word="unreachable"
+            fi
             if [ "$word" = "ok" ]; then
               echo "Catalog store: $word"
               exit 0
