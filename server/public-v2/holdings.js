@@ -29,6 +29,10 @@ const SEARCH_CAP_MS = 25_000; // the whole result-marking response ends by 25 s 
 // not answered by then is reported in `couldntCheck` rather than cut off.
 const LOOKUP_MARGIN_MS = 500;
 const PROFILE_WAIT_MS = 10_000;
+// The API function may run 120 s (vercel.json). A book-page request, with its
+// record read, edition profile and any check finishing in the background,
+// ends its work a little before that.
+export const FUNCTION_WORK_MS = 110_000;
 
 const settleWithin = (promise, ms) => new Promise(resolve => {
   const timer = setTimeout(() => resolve(null), Math.max(0, ms));
@@ -84,7 +88,7 @@ const safeCatalogUrl = value => {
   try { return ['http:', 'https:'].includes(new URL(value).protocol) ? value : undefined; } catch { return undefined; }
 };
 
-export function createHoldingsRoutes({ directory, books, lookup, store, now = () => Date.now(), searchCapMs = SEARCH_CAP_MS }) {
+export function createHoldingsRoutes({ directory, books, lookup, store, now = () => Date.now(), searchCapMs = SEARCH_CAP_MS, functionWorkMs = FUNCTION_WORK_MS }) {
   const usage = event => { try { store.usage.record(event); } catch { /* The log never alters a response. */ } };
   const readStored = async (libraryId, identities) => {
     if (!identities.length || store.policyFor(libraryId)?.storeAnswers === false) return [];
@@ -169,7 +173,9 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
       // finishes in the background, storing what it finds for the next look
       // (plan A2, step 3). The reader leaving no longer cancels a started check.
       const answer = await lookup.lookupBook({ library: entry, publicLibrary: library, book, ...(profile ? { profile } : {}),
-        editionScope: 'work', signal: controller.signal, storedChecked: true, background: store.config?.backgroundChecksEnabled !== false });
+        editionScope: 'work', signal: controller.signal, storedChecked: true, background: store.config?.backgroundChecksEnabled !== false,
+        // The record read and the profile wait came out of the same function time.
+        finishBy: startedAt + functionWorkMs });
       if (controller.signal.aborted) return undefined;
       return reply(appAnswer(answer, book, libraryId), answer.source || 'live', answer);
     } finally {

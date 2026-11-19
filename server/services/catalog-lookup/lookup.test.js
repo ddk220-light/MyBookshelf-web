@@ -2,7 +2,7 @@ import test, { afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { createCatalogLookup, createLookupRecorder, createMemoryAnswerStore, createMemoryHealthRecord, createHostGuard, PLATFORMS } from './index.js';
-import { cachedTask, clearHttpCache, getText } from '../providers/http.js';
+import { cachedTask, catalogOperation, clearHttpCache, getText } from '../providers/http.js';
 import { clearEgranthalayaRefusals } from '../providers/egranthalaya.js';
 import { createPublicAvailabilityService } from '../../public-v2/availability.js';
 
@@ -455,11 +455,11 @@ test('aborting result marking stops further requests and marks nothing', async (
 
 // --- Plan A2, step 3: a check that runs out of time finishes in the background
 
-function backgroundHarness({ provider, deadlineMs = 100 }) {
+function backgroundHarness({ provider, deadlineMs = 100, hostConcurrency = UNPACED.vega.hostConcurrency }) {
   const deferred = [];
   const defer = task => { deferred.push(Promise.resolve().then(task)); };
   const answers = createMemoryAnswerStore(), health = createMemoryHealthRecord();
-  const platforms = { ...UNPACED, vega: { ...UNPACED.vega, book: { ...UNPACED.vega.book, deadlineMs } } };
+  const platforms = { ...UNPACED, vega: { ...UNPACED.vega, hostConcurrency, book: { ...UNPACED.vega.book, deadlineMs } } };
   const recorder = createLookupRecorder({ answers, health, defer });
   const lookup = createCatalogLookup({ providerFor: () => provider, recorder, robots: null, platforms, env: {}, defer });
   const settle = async () => { while (deferred.length) await Promise.all(deferred.splice(0)); };
@@ -514,6 +514,97 @@ test('a reader leaving does not cancel a started background check; a check that 
   await silent.settle();
   assert.equal(silent.answers.size(), 0);
   assert.deepEqual((await silent.health.libraryHealth(slowLibrary.id)).failures7dByReason, { timeout: 1 });
+});
+
+// --- One check per book and library; checks nobody waits for give way -------
+
+const catalogOperationSignal = () => catalogOperation()?.signal;
+const otherBook = { bookKey: 'v1:isbn:9780140328721', isbn13: '9780140328721' };
+const found = { outcome: 'available', matchKind: 'exact_isbn', recognizedExact: true };
+
+test('a second request for the same book and library joins the running check instead of starting another', async () => {
+  const observation = Promise.withResolvers();
+  let requests = 0;
+  const provider = { checkAvailability: () => { requests++; return observation.promise; } };
+  const { lookup, answers, settle } = backgroundHarness({ provider, deadlineMs: 1_000 });
+  const first = lookup.lookupBook({ library: slowLibrary, book: slowBook, editionScope: 'exact', background: true, storedChecked: true });
+  const second = lookup.lookupBook({ library: slowLibrary, book: slowBook, editionScope: 'exact', background: true, storedChecked: true });
+  await new Promise(resolve => setTimeout(resolve, 10));
+  observation.resolve(found);
+  const answers2 = await Promise.all([first, second]);
+  assert.deepEqual(answers2.map(answer => answer.outcome), ['found', 'found']);
+  assert.equal(requests, 1, 'one catalog check for both readers');
+  assert.equal(answers2[1].requests, 0, 'the joined reader is not charged the requests');
+  await settle();
+  assert.equal((await answers.readAnswers(slowLibrary.id, [{ kind: 'isbn13', value: slowBook.isbn13 }])).length, 1);
+
+  // Try again after "couldn't check": the check still running in the
+  // background is joined, and its late answer reaches the reader.
+  const late = Promise.withResolvers();
+  let calls = 0;
+  const slow = backgroundHarness({ provider: { checkAvailability: () => { calls++; return late.promise; } }, deadlineMs: 60 });
+  const timedOut = await slow.lookup.lookupBook({ library: slowLibrary, book: slowBook, editionScope: 'exact', background: true, storedChecked: true });
+  assert.equal(timedOut.reason, 'timeout');
+  const retry = slow.lookup.lookupBook({ library: slowLibrary, book: slowBook, editionScope: 'exact', background: true, storedChecked: true });
+  late.resolve(found);
+  assert.equal((await retry).outcome, 'found');
+  assert.equal(calls, 1, 'Try again started no second check');
+  await slow.settle();
+});
+
+test('a check whose reader has gone gives way to a reader waiting for the host, and stores nothing', async () => {
+  const pending = new Map();
+  let aborted = 0;
+  const provider = { checkAvailability: isbn => new Promise((resolve, reject) => {
+    pending.set(isbn, resolve);
+    catalogOperationSignal()?.addEventListener('abort', () => { aborted++; reject(coded('stopped', 'CATALOG_ABORTED')); }, { once: true });
+  }) };
+  const { lookup, answers, settle } = backgroundHarness({ provider, deadlineMs: 60, hostConcurrency: 1 });
+  // Reader A is answered "couldn't check" and leaves; A's check runs on alone.
+  const a = await lookup.lookupBook({ library: slowLibrary, book: slowBook, editionScope: 'exact', background: true, storedChecked: true });
+  assert.equal(a.reason, 'timeout');
+  // Reader B asks for another book on the same host (one check at a time).
+  const b = lookup.lookupBook({ library: slowLibrary, book: otherBook, editionScope: 'exact', background: true, storedChecked: true });
+  await new Promise(resolve => setTimeout(resolve, 10));
+  assert.ok(pending.has(otherBook.isbn13), 'B did not wait behind the abandoned check');
+  assert.equal(aborted, 1, 'the abandoned check was stopped');
+  pending.get(slowBook.isbn13)(found); // too late: it was cancelled
+  pending.get(otherBook.isbn13)(found);
+  assert.equal((await b).outcome, 'found');
+  await settle();
+  assert.deepEqual((await answers.readAnswers(slowLibrary.id, [{ kind: 'isbn13', value: slowBook.isbn13 }])), [], 'a cancelled check stores nothing');
+  assert.equal((await answers.readAnswers(slowLibrary.id, [{ kind: 'isbn13', value: otherBook.isbn13 }])).length, 1);
+});
+
+test('at most one check per host runs on without a reader', async () => {
+  let aborted = 0;
+  const provider = { checkAvailability: () => new Promise((resolve, reject) => {
+    catalogOperationSignal()?.addEventListener('abort', () => { aborted++; reject(coded('stopped', 'CATALOG_ABORTED')); }, { once: true });
+  }) };
+  const { lookup, settle } = backgroundHarness({ provider, deadlineMs: 60, hostConcurrency: 4 });
+  const [a, b] = await Promise.all([slowBook, otherBook].map(book =>
+    lookup.lookupBook({ library: slowLibrary, book, editionScope: 'exact', background: true, storedChecked: true })));
+  assert.deepEqual([a.reason, b.reason], ['timeout', 'timeout']);
+  await new Promise(resolve => setTimeout(resolve, 10));
+  assert.equal(aborted, 1, 'the second reader-less check was cancelled; the first runs on');
+  await settle();
+});
+
+test('a book-page check, background included, ends by the caller’s finishBy', async () => {
+  const provider = { checkAvailability: () => new Promise(() => {}) };
+  const { lookup, settle } = backgroundHarness({ provider, deadlineMs: 100 });
+  const startedAt = Date.now();
+  const answer = await lookup.lookupBook({ library: slowLibrary, book: slowBook, editionScope: 'exact', background: true, storedChecked: true,
+    finishBy: startedAt + 130 });
+  assert.equal(answer.reason, 'timeout');
+  await settle();
+  // Without finishBy it would run on until twice its deadline (200 ms).
+  assert.ok(Date.now() - startedAt < 190, `ended at ${Date.now() - startedAt} ms`);
+  // finishBy before the reader's own deadline also brings the answer forward.
+  const early = Date.now();
+  await lookup.lookupBook({ library: slowLibrary, book: otherBook, editionScope: 'exact', background: true, storedChecked: true, finishBy: early + 40 });
+  await settle();
+  assert.ok(Date.now() - early < 90);
 });
 
 test('without background the deadline ends the check, as for /availability', async () => {

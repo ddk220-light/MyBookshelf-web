@@ -37,7 +37,7 @@ const books = {
 
 function harness({ observe = () => ({ outcome: 'available', matchKind: 'exact_isbn', recognizedExact: true }), usageLogEnabled = false,
   policies = { schemaVersion: 1, libraries: { [optedOut.id]: { storeAnswers: false, reason: 'Test', reviewedOn: '2026-11-12' } } },
-  searchCapMs, backgroundChecksEnabled = true, finishInBackground = false, bookDeadlineMs } = {}) {
+  searchCapMs, backgroundChecksEnabled = true, finishInBackground = false, bookDeadlineMs, functionWorkMs } = {}) {
   const pending = [];
   const defer = task => { pending.push(Promise.resolve().then(task).catch(() => {})); };
   const logged = [];
@@ -51,7 +51,7 @@ function harness({ observe = () => ({ outcome: 'available', matchKind: 'exact_is
   const app = makeTestApp(express => {
     express.set('trust proxy', 1);
     express.use('/api/v2', createPublicV2Router({ directory, books, catalogStore: store, lookup, rateLimit: { limit: 1000 },
-      holdingsOptions: searchCapMs ? { searchCapMs } : {} }));
+      holdingsOptions: { ...(searchCapMs ? { searchCapMs } : {}), ...(functionWorkMs ? { functionWorkMs } : {}) } }));
   });
   return { app, store, calls, logged, settle: async () => { while (pending.length) await Promise.all(pending.splice(0)); } };
 }
@@ -132,6 +132,18 @@ test('a slow book-page check answers "unknown" now, finishes in the background a
   await off.settle();
   await new Promise(resolve => setTimeout(resolve, 100));
   assert.equal(off.store.answers.size(), 0);
+});
+
+test('a book-page check, background included, ends within the function’s time limit', async () => {
+  let stopped = false;
+  const never = () => new Promise((_, reject) => { catalogOperation()?.signal.addEventListener('abort', () => { stopped = true; reject(new Error('stopped')); }, { once: true }); });
+  const { app, settle } = harness({ observe: never, finishInBackground: true, bookDeadlineMs: 200, functionWorkMs: 60 });
+  const startedAt = Date.now();
+  const response = await request(app).post('/api/v2/holdings/check').send({ libraryId: vega.id, bookKey: `v1:isbn:${ISBN_A}` });
+  assert.equal(response.body.answer, 'unknown');
+  await settle();
+  assert.equal(stopped, true);
+  assert.ok(Date.now() - startedAt < 180, `work ended at ${Date.now() - startedAt} ms, not at the 200 ms check deadline`);
 });
 
 test('a library in the policy file never gets answer rows, but its health is still recorded', async () => {

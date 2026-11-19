@@ -144,6 +144,7 @@ export function createCatalogLookup({
         if (kind === 'results') {
           if (tryOnce || !(release = guard.tryStartMarking(host))) throw coded('This catalog is busy', 'CATALOG_HOST_BUSY');
         } else {
+          yieldForReader(host, tryOnce ? 1 : platform.hostConcurrency);
           release = await guard.acquire(host, tryOnce ? 1 : platform.hostConcurrency, { deadlineAt: routeDeadline, signal: parentSignal });
         }
       } catch (error) {
@@ -223,6 +224,72 @@ export function createCatalogLookup({
     return { execute, finish };
   }
 
+  // Checks running on this instance (single flight), by library, edition
+  // scope and asked identity: a second request for the same book and library
+  // (Try again, a reload, another reader) joins the running check instead of
+  // starting another one.
+  const flights = new Map();
+  // Background checks whose readers have all gone, by host: at most one per
+  // host at a time, and a live reader waiting for that host's slot goes first.
+  const readerless = new Map();
+
+  function flightKey({ entry, book, bookKey, parsed, ownRecord, editionScope }) {
+    const libraryId = entry?.id || entry?.slug;
+    if (!libraryId) return null;
+    const identity = ownRecord && parsed?.recordId ? { kind: 'catalog_record', value: `${libraryId}:${parsed.recordId}` }
+      : askedIdentity(libraryId, book || {}, editionScope);
+    const asked = identity ? `${identity.kind}:${identity.value}` : bookKey ? `key:${bookKey}` : null;
+    return asked ? `${libraryId}\u0000${editionScope}\u0000${asked}` : null;
+  }
+
+  function newFlight(key) {
+    let resolve;
+    const flight = { key, host: null, readers: 1, background: false, running: true, cancelled: false,
+      cancel: new AbortController(), done: new Promise(value => { resolve = value; }) };
+    flight.settle = value => {
+      if (!flight.running) return;
+      flight.running = false;
+      if (flights.get(key) === flight) flights.delete(key);
+      if (flight.host && readerless.get(flight.host) === flight) readerless.delete(flight.host);
+      resolve(value);
+    };
+    if (key) flights.set(key, flight);
+    return flight;
+  }
+
+  // A cancelled check stops its requests and stores nothing (`finish` turns
+  // its result into "cancelled").
+  function cancelFlight(flight) {
+    if (!flight.running || flight.cancelled) return;
+    flight.cancelled = true;
+    flight.cancel.abort();
+  }
+
+  function attach(flight) {
+    flight.readers += 1;
+    if (flight.host && readerless.get(flight.host) === flight) readerless.delete(flight.host);
+  }
+
+  // The last reader has had its answer and the check runs on alone: it becomes
+  // the host's one reader-less check, or, when the host has one already, it is
+  // cancelled.
+  function detach(flight) {
+    flight.readers = Math.max(0, flight.readers - 1);
+    if (flight.readers > 0 || !flight.running || !flight.background) return;
+    const other = readerless.get(flight.host);
+    if (other && other !== flight) cancelFlight(flight);
+    else readerless.set(flight.host, flight);
+  }
+
+  // A live reader is about to wait for one of `host`'s slots: when every slot
+  // is taken and one is held by a check nobody is waiting for, that check
+  // yields (it is cancelled and releases its slot), so the reader goes first.
+  function yieldForReader(host, limit) {
+    const idle = readerless.get(host);
+    if (!idle || typeof guard.activeCount !== 'function' || guard.activeCount(host) < Math.max(1, limit)) return;
+    cancelFlight(idle);
+  }
+
   // One live book check through the platform's book-page budget. Used by
   // lookupBook and by /availability on the new path. Returns the raw check
   // result (response or error) plus the projected answer.
@@ -232,12 +299,52 @@ export function createCatalogLookup({
   // already in hand. The same check, with the same request cap, then carries
   // on under the platform's waitUntil (`defer`) until its own longer deadline
   // (backgroundDeadlineMs) and records its answer through the recorder, so
-  // the next look finds it stored. Once started, it is not cancelled by the
-  // reader leaving. Only found and not found are ever stored; a check that
-  // still fails is recorded in the health record, never as an answer.
-  async function checkBook({ entry, library, provider: given, book, bookKey, parsed, ownRecord, lookupKind, editionScope = 'work', language, books,
-    attemptedAt, signal, deadlineAt, background = false }) {
+  // the next look finds it stored. The reader leaving does not cancel it, but
+  // a check nobody is waiting for gives way to readers (yieldForReader,
+  // detach). Only found and not found are ever stored; a check that still
+  // fails is recorded in the health record, never as an answer.
+  //
+  // `finishBy`: no part of the check, in the background or not, runs past
+  // this moment (the caller's function time limit).
+  async function checkBook(args) {
     const startedAt = now();
+    const { entry, signal, lookupKind } = args;
+    const key = flightKey(args);
+    const running = key && flights.get(key);
+    // A check that is giving way is not joined: this reader starts its own.
+    if (running && !running.cancelled) {
+      // Join the running check: this reader waits for it until its own
+      // answer is due, and is never charged its requests.
+      const { platform } = settings(entry);
+      const answerBy = Math.min(args.deadlineAt ?? Infinity, args.finishBy ?? Infinity, startedAt + bookDeadlineMs(entry, platform));
+      attach(running);
+      let due;
+      try { due = await untilDue(running.done, answerBy, signal); }
+      finally { detach(running); }
+      if (due === 'settled') {
+        const result = await running.done;
+        // The joined check was cancelled (its reader left a check that could
+        // not go on, or it gave way): this reader, still here, asks again.
+        if (result.answer?.reason === 'cancelled' && !signal?.aborted && now() < answerBy) return checkBook(args);
+        return { ...result, requests: 0, durationMs: now() - startedAt };
+      }
+      const error = due === 'left' ? coded('Catalog check was cancelled', 'CATALOG_ABORTED') : coded('Catalog check deadline exceeded', 'CATALOG_TIMEOUT');
+      return { error, lookupKind, answer: couldntCheckFor(error), durationMs: now() - startedAt, requests: 0, continuing: running.running };
+    }
+    const flight = newFlight(key);
+    try {
+      const result = await startCheck(args, flight, startedAt);
+      return result;
+    } catch (error) {
+      flight.settle({ error, lookupKind, answer: couldntCheckFor(error), requests: 0 });
+      throw error;
+    } finally {
+      detach(flight);
+    }
+  }
+
+  async function startCheck({ entry, library, provider: given, book, bookKey, parsed, ownRecord, lookupKind, editionScope = 'work', language, books,
+    attemptedAt, signal, deadlineAt, background = false, finishBy = Infinity }, flight, startedAt) {
     const provider = given || providerFor(entry);
     const routed = Boolean(provider?.catalogRoutes?.length);
     let policyEntry = entry, routeError;
@@ -250,9 +357,13 @@ export function createCatalogLookup({
       catch (error) { routeError = error; }
     }
     const { platform, host, platformName } = settings(policyEntry);
+    flight.host = host;
     let routes;
     const view = publicView(entry, library);
-    const finish = (result, profile) => {
+    const finish = (checked, profile) => {
+      // A check cancelled to make way for a reader stores nothing, even if an
+      // answer arrived as it stopped.
+      const result = flight.cancelled ? { error: coded('Catalog check was cancelled', 'CATALOG_ABORTED'), lookupKind, requests: checked.requests } : checked;
       const answer = answerFromCheck(result, { profile, recordId: ownRecord ? parsed?.recordId : undefined });
       // An edition profile (Open Library) that failed or was too slow, or a
       // wait for one of this instance's own host slots, is not the catalog's
@@ -263,17 +374,22 @@ export function createCatalogLookup({
         book: ownRecord ? { ...book, recordId: parsed?.recordId, recordLibraryId: entry.id } : book,
         profile, answer, kind: 'book', durationMs: now() - startedAt, requests: result.requests || 0,
         live: !result.notCatalogFailure && (routeResult?.live ?? true) });
-      return { ...result, answer, durationMs: now() - startedAt, requests: result.requests || 0 };
+      const out = { ...result, answer, durationMs: now() - startedAt, requests: result.requests || 0 };
+      flight.settle(out);
+      return out;
     };
     if (routeError) return finish({ error: routeError, lookupKind, notCatalogFailure: true });
     if (!platform || !provider?.checkAvailability) return finish({ error: coded('Catalog lookups are not available for this library', 'CATALOG_UNSUPPORTED'), lookupKind });
     // The reader's answer is due by `answerBy`. A background check works on
-    // until `deadline`, later; otherwise both are the same moment.
-    const answerBy = Math.min(deadlineAt ?? Infinity, startedAt + bookDeadlineMs(policyEntry, platform));
+    // until `deadline`, later; otherwise both are the same moment. Neither
+    // passes `finishBy`.
+    const answerBy = Math.min(deadlineAt ?? Infinity, finishBy, startedAt + bookDeadlineMs(policyEntry, platform));
     const inBackground = Boolean(background && typeof defer === 'function');
-    const deadline = inBackground ? Math.max(answerBy, startedAt + backgroundDeadlineMs(policyEntry, platform)) : answerBy;
-    // A started background check is not cancelled by the reader leaving.
-    const workSignal = inBackground ? null : signal;
+    flight.background = inBackground;
+    const deadline = inBackground ? Math.min(finishBy, Math.max(answerBy, startedAt + backgroundDeadlineMs(policyEntry, platform))) : answerBy;
+    // A started background check is not cancelled by the reader leaving, only
+    // when it gives way to a waiting reader.
+    const workSignal = inBackground ? flight.cancel.signal : signal;
     if (routed) routes = routeSession({ entry, deadline, signal: workSignal });
     // Resolve the edition profile before taking a host slot, and only within
     // the check's deadline: waiting on Open Library must not hold a catalog
@@ -289,8 +405,10 @@ export function createCatalogLookup({
     // on this instance, and each catalog request is sent once, with no
     // transport retry. The circuit closes on that check's success.
     const tryOnce = !routed && guard.circuitOpen(host);
+    const limit = tryOnce ? 1 : platform.hostConcurrency;
     let release;
-    try { release = routed ? () => {} : await guard.acquire(host, tryOnce ? 1 : platform.hostConcurrency, { deadlineAt: answerBy, signal }); }
+    if (!routed) yieldForReader(host, limit);
+    try { release = routed ? () => {} : await guard.acquire(host, limit, { deadlineAt: answerBy, signal }); }
     catch (error) { return finish({ error, lookupKind, notCatalogFailure: true }); }
     // Shared with the work search: its best proven match so far, and a way to
     // end the check with it when the reader's answer is due.
@@ -307,8 +425,9 @@ export function createCatalogLookup({
         release();
       }
     })();
+    // A check that fails unexpectedly still ends its flight.
+    work.catch(error => flight.settle({ error, lookupKind, answer: couldntCheckFor(error), requests: 0 }));
     if (!inBackground) return work;
-    work.catch(() => {});
     const due = await untilDue(work, answerBy, signal);
     if (due === 'settled') return work;
     if (due === 'due' && progress.best) {
@@ -318,7 +437,7 @@ export function createCatalogLookup({
     }
     // The reader is answered now; the same check finishes in the background,
     // within its own deadline and request cap, and records what it finds.
-    defer(() => work);
+    defer(() => work.catch(() => {}));
     const error = due === 'left' ? coded('Catalog check was cancelled', 'CATALOG_ABORTED') : coded('Catalog check deadline exceeded', 'CATALOG_TIMEOUT');
     return { error, lookupKind, answer: couldntCheckFor(error), durationMs: now() - startedAt, requests: 0, continuing: true };
   }
@@ -350,8 +469,9 @@ export function createCatalogLookup({
   // `storedChecked`: the caller already read the stored answer (storedFor).
   // `background`: a check still running at its deadline finishes after the
   // answer and stores what it finds (checkBook); the book page sets it.
+  // `finishBy`: the check, background included, ends by then (checkBook).
   async function lookupBook({ library: entry, publicLibrary, book = {}, profile, editionScope = 'work', signal, deadlineAt, storedChecked = false,
-    background = false }) {
+    background = false, finishBy = Infinity }) {
     const startedAt = now();
     const libraryId = entry?.id || entry?.slug;
     const own = book.recordId && (!book.recordLibraryId || book.recordLibraryId === libraryId);
@@ -366,7 +486,7 @@ export function createCatalogLookup({
       : ownProvider?.checkRecordAvailability ? 'catalog_record' : 'verified_work') : isbn13 ? 'exact_isbn' : 'verified_work';
     const books = profile && editionScope === 'work' && !own ? { searchProfile: async () => profile } : null;
     const result = await checkBook({ entry, library: publicLibrary, book: { ...book, isbn13: isbn13 || undefined, title: book.title || '', authors: book.authors || [] },
-      bookKey: book.bookKey, parsed, ownRecord: own, lookupKind, editionScope, books, attemptedAt: new Date(startedAt).toISOString(), signal, deadlineAt, background });
+      bookKey: book.bookKey, parsed, ownRecord: own, lookupKind, editionScope, books, attemptedAt: new Date(startedAt).toISOString(), signal, deadlineAt, background, finishBy });
     const { answer } = result;
     return { ...answer, ...(answer.outcome === 'found' && own ? { recordId: book.recordId } : {}),
       requests: result.requests || 0, durationMs: now() - startedAt, source: 'live' };
@@ -645,6 +765,7 @@ export function createCatalogLookup({
     const deadline = now() + bookDeadlineMs(policyEntry, platform);
     const routes = routed ? routeSession({ entry, deadline, signal, health: false }) : null;
     const tryOnce = !routed && guard.circuitOpen(host);
+    if (!routed) yieldForReader(host, tryOnce ? 1 : platform.hostConcurrency);
     const release = routed ? () => {} : await guard.acquire(host, tryOnce ? 1 : platform.hostConcurrency, { deadlineAt: deadline, signal });
     const controller = new AbortController();
     const forwardAbort = () => controller.abort();
