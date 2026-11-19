@@ -1,6 +1,6 @@
 # Security
 
-Report suspected vulnerabilities privately to deepakdhanavel@gmail.com, or use
+Report suspected vulnerabilities privately to privacy@mybookshelf.cloud, or use
 GitHub private vulnerability reporting when available. Include reproduction steps
 and the affected release without posting credentials or patron information.
 

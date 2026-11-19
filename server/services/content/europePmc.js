@@ -52,7 +52,7 @@ export function mapEuropePmc(record, observedAt) {
 }
 
 export function createEuropePmcAdapter({fetchImpl=globalThis.fetch, now=()=>Date.now(),
-  contact='deepakdhanavel@gmail.com'}={}) {
+  contact='privacy@mybookshelf.cloud'}={}) {
   return {async search(query,{sourceCursor='*',signal,exactRecord}={}) {
     // Cursor comes only from a verified server-signed token, never a URL supplied
     // by the reader. It is still bounded before constructing this fixed-origin URL.
