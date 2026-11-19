@@ -174,13 +174,13 @@ export function AccountLibraryStateProvider({
     if (!repo || !current || busy.current || repo.pending) return;
     loadedAt.current = Date.now();
     try {
-      const state = await repo.loadState();
+      const revisions = await repo.loadRevisions();
       if (!active.current || repository.current !== repo) return;
       if (
-        state.shelfRevision !== current.summary.shelfRevision ||
-        state.historyGeneration !== current.summary.historyGeneration ||
-        state.historyRevision !== current.summary.historyRevision ||
-        state.settingsRevision !== current.summary.settingsRevision
+        revisions.shelfRevision !== current.summary.shelfRevision ||
+        revisions.historyGeneration !== current.summary.historyGeneration ||
+        revisions.historyRevision !== current.summary.historyRevision ||
+        revisions.settingsRevision !== current.summary.settingsRevision
       )
         await refresh();
     } catch (error) {

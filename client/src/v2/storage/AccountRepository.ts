@@ -20,13 +20,16 @@ export type CloudState = Versions & {
   selectedLibrary: PublicLibrary | null;
   libraryRemoved: boolean;
   counts: { saved: number; recent: number };
-  historyRevision?: string;
 };
 export type ReadingSnapshot = {
-  summary: CloudState;
+  summary: CloudState & { historyRevision?: string };
   books: CloudBook[];
   recent: CloudBook[];
 };
+type CloudRevisions = Pick<
+  Versions,
+  "settingsRevision" | "shelfRevision" | "historyGeneration"
+> & { historyRevision: string };
 type Pending = { path: string; method: string; body: Record<string, unknown> };
 export class AccountRepository {
   snapshot: ReadingSnapshot | null = null;
@@ -80,7 +83,10 @@ export class AccountRepository {
             this.request<
               { books: CloudBook[]; nextCursor: string | null } & Versions
             >("/books?limit=100"),
-            this.request<{ books: CloudBook[] } & Versions>("/history"),
+            this.request<{
+              books: CloudBook[];
+              historyRevision?: string;
+            } & Versions>("/history"),
           ]);
           const books = [...first.books];
           if (summary.profile.id !== this.session().user?.id)
@@ -114,7 +120,7 @@ export class AccountRepository {
               );
           }
           const snapshot = {
-            summary,
+            summary: { ...summary, historyRevision: recent.historyRevision },
             books: books.map((b) => ({
               ...b,
               source: b.source || "direct",
@@ -156,9 +162,8 @@ export class AccountRepository {
       .catch(() => {});
     return promise;
   }
-  /** Only the account's revision numbers (one small request), to see whether another device changed it. */
-  loadState(): Promise<CloudState> {
-    return this.request<CloudState>("/state");
+  loadRevisions(): Promise<CloudRevisions> {
+    return this.request<CloudRevisions>("/revisions");
   }
   /**
    * Forgets a request that failed and will not be retried now (the quiet

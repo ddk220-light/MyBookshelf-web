@@ -2,6 +2,7 @@
 export function readingRoute(path,method){
   const fixed={
     '/api/account/state':{GET:'state'},
+    '/api/account/revisions':{GET:'revisions'},
     '/api/account/library':{PUT:'selectLibrary'},
     '/api/account/books':{GET:'books',PUT:'save'},
     '/api/account/books/undo':{POST:'undo'},

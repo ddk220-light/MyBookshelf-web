@@ -12,7 +12,7 @@ import { createUsageLog, dailyUsage } from './usageLog.js';
 import { createSubmissions } from './requests.js';
 import { createPgHostGate } from './hostGate.js';
 import { createCatalogPolicy } from './policy.js';
-import { runCatalogMaintenance } from './maintenance.js';
+import { rollUpUsage, runCatalogMaintenance } from './maintenance.js';
 import { createCatalogMaintenanceMiddleware } from './cron.js';
 import { createCatalogLookup, createLookupRecorder } from '../services/catalog-lookup/index.js';
 import { withTestSetupLock } from '../accounts/test-database.js';
@@ -236,15 +236,25 @@ test('daily maintenance as the worker: expiry, opt-out purge, retention, rollup 
     ('open lib', 'Old', 'old@example.org', now() - interval '91 days'), ('open lib', NULL, 'new@example.org', now() - interval '89 days'),
     ('spam text', 'Spam', NULL, now())`);
   await admin.query(`INSERT INTO usage_events (occurred_hour, kind, query_text, library_id, outcome, result_count, duration_ms) VALUES
-    (date_trunc('hour', now() - interval '13 months', 'UTC'), 'book_search', 'private words', '', 'results', 9, 100),
-    (date_trunc('hour', now() - interval '13 months', 'UTC'), 'book_search', 'other words', '', 'results', 3, 300),
+    (date_trunc('day', now() - interval '13 months', 'UTC'), 'book_search', 'private words', '', 'results', 9, 100),
+    (date_trunc('day', now() - interval '13 months', 'UTC') + interval '23 hours', 'book_search', 'other words', '', 'results', 3, 300),
     (date_trunc('hour', now(), 'UTC'), 'book_search', 'recent words', NULL, 'none', 0, 50)`);
   await admin.query(`INSERT INTO library_check_events (library_id, host, platform, operation, failure, duration_ms, requests, occurred_at) VALUES
     ('koha:a', 'a.example', 'koha', 'book_check', 'timeout', 1, 1, now() - interval '91 days')`);
   await admin.query(`INSERT INTO host_request_windows VALUES ('a.example', now() - interval '2 hours', 3), ('a.example', date_trunc('minute', now()), 1)`);
   const policy = createCatalogPolicy({ policies: { schemaVersion: 1, libraries: { 'bc:out': { storeAnswers: false, reason: 'Asked', reviewedOn: '2026-11-12' } } } });
-  const result = await runCatalogMaintenance(worker, { policy });
-  assert.deepEqual([result.expiredAnswers, result.purgedAnswers, result.buckets, result.reports, result.requests, result.contacts, result.usage.events, result.checkEvents, result.hostWindows],
+  const localTimeWorker = {
+    ...worker,
+    query: (sql, args) => worker.transaction(async client => {
+      await client.query("SET LOCAL TIME ZONE 'America/Los_Angeles'");
+      return client.query(sql, args);
+    }),
+  };
+  const [result, concurrentRollup] = await Promise.all([
+    runCatalogMaintenance(localTimeWorker, { policy }),
+    rollUpUsage(localTimeWorker),
+  ]);
+  assert.deepEqual([result.expiredAnswers, result.purgedAnswers, result.buckets, result.reports, result.requests, result.contacts, result.usage.events + concurrentRollup.events, result.checkEvents, result.hostWindows],
     [1, 1, 1, 2, 2, 2, 2, 1, 1]);
   assert.deepEqual((await admin.query('SELECT library_id, identity_value FROM holdings_answers')).rows, [{ library_id: 'koha:a', identity_value: '9780140328721' }]);
   assert.deepEqual((await admin.query('SELECT body, contact_name, contact_email FROM problem_reports ORDER BY created_at')).rows, [

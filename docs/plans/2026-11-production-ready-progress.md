@@ -57,6 +57,28 @@ refresh without changing its clear-history generation.
   optional name and email with a library request or problem report for 90
   days. Those details have no link to the reader's account or usage log.
 
+### Follow-up review, 18 November 2026
+
+- The account focus check now reads only the account's revisions. The
+  Viewed before revision comes from the same owner transaction as the list it
+  describes, so a view on another device is picked up on the next focus.
+- The daily catalog job now rolls search rows into their UTC calendar day and
+  deletes them atomically. The database test covers both ends of a UTC day
+  under a non-UTC PostgreSQL session and concurrent runs. The production
+  monitor requires `catalogStore: "ok"`.
+- Vercel's live alias serves the ready `main` deployment at `d3262e2cd7`
+  in `iad1`, on the Node 22 project. GitHub `main` matched. Production
+  account health was `ready`. The old deployment still serves `/app/shelf`
+  with HTTP 200 and returns no catalog status on `/api/health`.
+- The three production catalog connection settings are Sensitive and
+  were last updated on 13 November. Their values and the state of the hosted
+  catalog roles still need the operator's verification. The catalog store
+  flag is enabled in production and preview. Accounts and the production
+  provider credentials are production-scoped. The five Claude branch
+  previews were canceled, as expected for branches outside `main` and
+  `staging`. The release plan calls for one production deployment after
+  the local phone pass and [R03](https://github.com/ddk220-light/MyBookshelf-web/issues/9).
+
 The following sections record the saved handoff before integration.
 
 ## Original paused handoff
@@ -203,8 +225,13 @@ In this order, on the day of launch:
    (`CATALOG_DATABASE_URL`, `CATALOG_WORKER_DATABASE_URL`,
    `CATALOG_ADMIN_DATABASE_URL`) set to the correct host, with `-pooler` once.
    Never print or store a value.
-2. Apply catalog migration `003` to the production catalog database (it
-   already has `001` and `002`).
-3. Merge `claude/production-ready` into `main`: the single deployment.
+2. Apply catalog migration `003` to the production catalog database with
+   the migration owner, then apply
+   [runtime-grants.sql](../../server/catalog-store/runtime-grants.sql) with
+   the same role. Verify that the runtime role can insert request contacts,
+   the worker can expire them and clear report contacts, and the admin can
+   read them.
+3. With the phone pass complete and R03 approved, merge the integrated
+   release into `main` for the single deployment.
 4. Run the live checks in plan section 8 straight away; roll back in Vercel if
    something is badly wrong.

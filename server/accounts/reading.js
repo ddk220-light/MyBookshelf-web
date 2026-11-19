@@ -9,6 +9,7 @@ import {
   versions,
 } from "./operations.js";
 import { AccountRequestError } from "./security.js";
+import { readHistoryRevision } from "./history.js";
 
 export function createReadingActions({
   pool,
@@ -45,6 +46,19 @@ export function createReadingActions({
   return {
     owned,
     validateLibrary,
+    async revisions(query, identity) {
+      strictObject(query, []);
+      return owned(identity, async (client, settings, id) => {
+        const { settingsRevision, shelfRevision, historyGeneration } =
+          versions(settings);
+        return {
+          settingsRevision,
+          shelfRevision,
+          historyGeneration,
+          historyRevision: await readHistoryRevision(client, id),
+        };
+      });
+    },
     async state(identity) {
       return owned(identity, async (client, settings, id) => {
         const selected =
@@ -54,12 +68,10 @@ export function createReadingActions({
               [id],
             )
           ).rows[0]?.directory_id ?? null;
-        const { saved, recent, historyRevision } = (
+        const { saved, recent } = (
           await client.query(
             `SELECT (SELECT count(*)::int FROM user_books WHERE user_id=$1) AS saved,
-              count(*)::int AS recent,
-              md5(coalesce(string_agg(reference_id::text || ':' || extract(epoch FROM viewed_at)::text,
-                ',' ORDER BY reference_id), '')) AS "historyRevision"
+              count(*)::int AS recent
               FROM recent_book_views WHERE user_id=$1`,
             [id],
           )
@@ -80,7 +92,6 @@ export function createReadingActions({
           selectedLibrary: selected ? directory.resolve(selected) : null,
           libraryRemoved: Boolean(selected && !directory.resolve(selected)),
           counts: { saved, recent },
-          historyRevision,
           ...versions(settings),
         };
       });

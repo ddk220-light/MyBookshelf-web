@@ -28,20 +28,18 @@ jobs:
         if: ${{ !cancelled() }}
         run: |
           # /api/health reports the catalog store as one word: ok, failed or
-          # off (no database configured). The store fails open for readers,
-          # so a broken connection is otherwise silent. "failed" fails this
-          # job; "off" does not. One retry after a pause covers a database
-          # that was waking up.
+          # off (no database configured). Production needs the store enabled
+          # and reachable. One retry covers a database that was waking up.
           for attempt in 1 2; do
             curl --fail --silent --show-error --max-time 25 \
               --output /tmp/health.json \
               https://mybookshelf.cloud/api/health
-            word=$(node -e 'const fs = require("node:fs"); process.stdout.write(String(JSON.parse(fs.readFileSync("/tmp/health.json", "utf8")).catalogStore ?? "missing"));')
-            if [ "$word" != "failed" ]; then
+            word=$(node -e 'const fs = require("node:fs"); const word = JSON.parse(fs.readFileSync("/tmp/health.json", "utf8")).catalogStore; process.stdout.write(["ok", "off", "failed"].includes(word) ? word : "missing");')
+            if [ "$word" = "ok" ]; then
               echo "Catalog store: $word"
               exit 0
             fi
             [ "$attempt" = 1 ] && sleep 20
           done
-          echo "Catalog store: failed"
+          echo "Production catalog store unavailable: $word"
           exit 1
