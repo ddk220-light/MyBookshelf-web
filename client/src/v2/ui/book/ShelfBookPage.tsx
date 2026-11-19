@@ -200,7 +200,7 @@ export function ShelfBookPage() {
       const result = await saveBook(book);
       if (result === 'saved' && fromSuggestion) reportSuggestion('saved', book.bookKey);
       if (result === 'saved' || result === 'already-saved') { setPopTick(true); setAdded(true); setAnnouncement('Added to your reading shelf'); return; }
-      const message = result === 'full' ? 'Shelf full' : result === 'recovery' ? 'Reload your saved shelf before making changes.' : 'Couldn’t save this book. Try again.';
+      const message = result === 'full' ? 'Your reading shelf is full' : result === 'recovery' ? 'Reload your reading shelf before making changes.' : 'Couldn’t save this book. Try again.';
       setSaveError(message); setAnnouncement(message);
     } finally { setBusy(false); }
   };

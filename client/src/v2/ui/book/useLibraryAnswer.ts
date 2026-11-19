@@ -14,7 +14,19 @@ export const CHECK_TIMEOUT_MS = 60_000;
 export type CardAnswer = 'checking' | 'found' | 'not_found' | 'unconfirmed' | 'unknown' | 'unsupported';
 export type LibraryCardModel =
   | { kind: 'none' }
-  | { kind: 'library'; answer: CardAnswer; name: string; place?: string; catalogUrl?: string; catalogLinkKind?: HoldingsCheck['catalogLinkKind']; retry?: () => void };
+  | { kind: 'library'; answer: CardAnswer; name: string; place?: string; catalogUrl?: string; catalogLinkKind?: HoldingsCheck['catalogLinkKind']; retry?: () => void;
+      /** The library's catalog may take longer than half a minute to answer. */
+      slowCatalog?: boolean };
+
+/**
+ * True unless the library says its check answers within 30 s. The directory
+ * may send `answerWithinSeconds` (the library's own check limit); without it
+ * the card does not promise half a minute.
+ */
+export function slowCatalog(library: unknown): boolean {
+  const seconds = (library as { answerWithinSeconds?: unknown } | null)?.answerWithinSeconds;
+  return !(typeof seconds === 'number' && seconds > 0 && seconds <= 30);
+}
 
 type Result = HoldingsCheck & { libraryId: string; bookKey: string; attempt: number };
 
@@ -69,17 +81,18 @@ export function useLibraryAnswer(bookKey: string | null | undefined): LibraryCar
   const homeUrl = ready ? webLink(library!.catalogUrl) : undefined;
   if (!ready) {
     if (libraryError && !loadingLibrary) return { kind: 'library', answer: 'unknown', name: name || 'Your library', retry: retryLibrary };
-    return { kind: 'library', answer: 'checking', name };
+    return { kind: 'library', answer: 'checking', name, slowCatalog: true };
   }
   const current = result && result.libraryId === libraryId && result.bookKey === bookKey && result.attempt === attempt ? result : null;
   const catalogUrl = recordUrl || current?.catalogUrl || homeUrl;
   const link = catalogUrl ? { catalogUrl, catalogLinkKind: recordUrl ? 'record' as const : current?.catalogLinkKind } : {};
   const place = library?.city || library?.region || undefined;
   const known = bookKey && store.libraryId() === libraryId && store.get(bookKey) === 'found';
-  if (recordUrl || (known && (!current || current.answer === 'unknown'))) return { kind: 'library', answer: 'found', name, place, ...link };
+  // A check that could not tell (unknown, unconfirmed) never hides a proven "found".
+  if (recordUrl || (known && (!current || current.answer === 'unknown' || current.answer === 'unconfirmed'))) return { kind: 'library', answer: 'found', name, place, ...link };
   // A library whose catalog the app cannot read: couldn't check (unless an
   // answer was stored), and trying again would not help.
   if (!checkable && current?.answer !== 'found' && current?.answer !== 'not_found') return { kind: 'library', answer: 'unsupported', name, ...link };
-  if (!current) return { kind: 'library', answer: 'checking', name, ...link };
+  if (!current) return { kind: 'library', answer: 'checking', name, slowCatalog: slowCatalog(library), ...link };
   return { kind: 'library', answer: current.answer, name, place, ...link, ...(current.answer === 'unknown' ? { retry } : {}) };
 }

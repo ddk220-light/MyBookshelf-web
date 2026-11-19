@@ -61,7 +61,9 @@ export function createHoldingsStore(initialLibraryId: string | null = null): Hol
         if (!ANSWERS.has(answer)) continue;
         const key = holdingsKey(libraryId, bookKey);
         const previous = answers.get(key);
-        if ((answer === 'unknown' || answer === 'checking') && (previous === 'found' || previous === 'not_found')) continue;
+        // A check that could not answer (unknown, unconfirmed) or has not
+        // answered yet never replaces a proven answer.
+        if ((answer === 'unknown' || answer === 'unconfirmed' || answer === 'checking') && (previous === 'found' || previous === 'not_found')) continue;
         if (previous !== answer) { answers.set(key, answer); updated = true; }
         const url = answer === 'found' ? urls?.[bookKey] : undefined;
         if (url && links.get(key) !== url) { links.set(key, url); updated = true; }

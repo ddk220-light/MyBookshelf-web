@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { cleanup, render } from '@testing-library/react';
+import { cleanup, render, screen, within } from '@testing-library/react';
 import { LibraryAnswerCard } from './LibraryAnswerCard';
-import type { CardAnswer } from './useLibraryAnswer';
+import type { CardAnswer, LibraryCardModel } from './useLibraryAnswer';
 
 afterEach(cleanup);
 
@@ -21,5 +21,61 @@ describe('library answer card', () => {
     expect(icon('unsupported')).not.toBe(notFound);
     expect(icon('unknown')).not.toBe(notFound);
     expect(icon('unsupported')).not.toBe(icon('found'));
+  });
+
+  const show = (model: Partial<Extract<LibraryCardModel, { kind: 'library' }>> & { answer: CardAnswer }) =>
+    render(<LibraryAnswerCard model={{ kind: 'library', name: 'Anna Centenary Library', ...model }} onFindLibrary={() => {}} />);
+
+  // The words of the plan's wording table (A3), exactly.
+  it('says Checking, Couldn’t check and unconfirmed in the table’s words', () => {
+    show({ answer: 'checking', catalogUrl: 'https://catalog.example.test/' });
+    let card = screen.getByRole('group');
+    expect(within(card).getByRole('heading')).toHaveTextContent('Checking your library…');
+    expect(within(card).getByText('Anna Centenary Library')).toBeInTheDocument();
+    expect(within(card).getByText('This library’s catalog can take up to half a minute to answer. You can go back to your reading shelf: the answer will be there when it arrives.')).toBeInTheDocument();
+    expect(within(card).getByRole('link')).toHaveTextContent('Open the library’s catalog instead');
+    cleanup();
+
+    show({ answer: 'checking', slowCatalog: true });
+    expect(screen.getByText('This library’s catalog can take up to a minute to answer. You can go back to your reading shelf: the answer will be there when it arrives.')).toBeInTheDocument();
+    cleanup();
+
+    show({ answer: 'unknown', catalogUrl: 'https://catalog.example.test/', retry: () => {} });
+    card = screen.getByRole('group');
+    expect(within(card).getByRole('heading')).toHaveTextContent('Couldn’t check right now');
+    expect(within(card).getByText('The library’s catalog did not answer in time. This does not mean the book is missing.')).toBeInTheDocument();
+    expect(within(card).getByRole('button', { name: 'Try again' })).toBeInTheDocument();
+    expect(within(card).getByRole('link')).toHaveTextContent('Open catalog');
+    cleanup();
+
+    show({ answer: 'unconfirmed', catalogUrl: 'https://catalog.example.test/' });
+    card = screen.getByRole('group');
+    expect(within(card).getByRole('heading')).toHaveTextContent('Couldn’t check right now');
+    expect(within(card).getByText('The library’s catalog answered, but we could not tell whether it has this book.')).toBeInTheDocument();
+    expect(within(card).queryByRole('button', { name: 'Try again' })).not.toBeInTheDocument();
+  });
+
+  it('shows a link-only library without an answer heading or status mark', () => {
+    const { container } = show({ answer: 'unsupported', catalogUrl: 'https://catalog.example.test/' });
+    const card = screen.getByRole('group', { name: 'This library can’t be checked from here.' });
+    expect(within(card).queryByRole('heading')).not.toBeInTheDocument();
+    expect(container.querySelector('.library-answer-icon')).toBeNull();
+    expect(within(card).getByText('This library can’t be checked from here.')).toBeInTheDocument();
+    expect(within(card).getByRole('link')).toHaveTextContent('Open the library’s catalog');
+  });
+
+  it('labels the catalog link by where it goes: the book’s record only for a record link', () => {
+    for (const [kind, words] of [
+      ['record', 'See this book in the library’s catalog'],
+      ['search', 'Search the library’s catalog for this book'],
+      ['catalog', 'Open the library’s catalog'],
+      [undefined, 'Open the library’s catalog'],
+    ] as const) {
+      show({ answer: 'found', catalogUrl: 'https://catalog.example.test/x', catalogLinkKind: kind });
+      expect(screen.getByRole('link')).toHaveTextContent(words);
+      cleanup();
+    }
+    show({ answer: 'not_found', catalogUrl: 'https://catalog.example.test/x', catalogLinkKind: 'search' });
+    expect(screen.getByRole('link')).toHaveTextContent('Search the library’s catalog yourself');
   });
 });

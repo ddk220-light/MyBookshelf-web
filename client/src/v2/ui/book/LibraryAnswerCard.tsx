@@ -2,6 +2,9 @@ import { forwardRef } from 'react';
 import { DashGlyph, ExternalGlyph, FoundGlyph, NotCheckedGlyph, PinGlyph } from '../home/homeIcons';
 import type { CardAnswer, LibraryCardModel } from './useLibraryAnswer';
 
+// Words for each answer (plan A3, the wording table). `unconfirmed` (the
+// catalog answered but did not prove this book) reads as "Couldn't check
+// right now", never as "not found", and offers no Try again.
 export function answerLabel(answer: CardAnswer): string {
   switch (answer) {
     case 'found': return 'In your library';
@@ -12,12 +15,29 @@ export function answerLabel(answer: CardAnswer): string {
   }
 }
 
+/** The sentence under "Checking your library…", true to the library's own time limit. */
+export function checkingDescription(slow = false): string {
+  return 'This library’s catalog can take up to ' + (slow ? 'a minute' : 'half a minute')
+    + ' to answer. You can go back to your reading shelf: the answer will be there when it arrives.';
+}
+
 const descriptions: Partial<Record<CardAnswer, string>> = {
   not_found: 'We looked for this book in the library’s catalog and did not find it. The library may still have another edition.',
-  checking: 'This library’s catalog may take a while to answer. You can go back to your reading shelf while we check.',
-  unknown: 'The library’s catalog couldn’t be checked. This does not mean the book is missing.',
-  unconfirmed: 'We couldn’t confirm a match in the library’s catalog. This does not mean the book is missing.',
+  unknown: 'The library’s catalog did not answer in time. This does not mean the book is missing.',
+  unconfirmed: 'The library’s catalog answered, but we could not tell whether it has this book.',
 };
+
+type LinkKind = Extract<LibraryCardModel, { kind: 'library' }>['catalogLinkKind'];
+
+/** The catalog link's words say where it goes: the book's own record, a search, or the catalog. */
+export function catalogLinkText(answer: CardAnswer, kind: LinkKind): string {
+  if (answer === 'checking') return 'Open the library’s catalog instead';
+  if (answer === 'unsupported') return 'Open the library’s catalog';
+  if (answer === 'unknown' || answer === 'unconfirmed') return 'Open catalog';
+  if (answer === 'not_found') return kind === 'search' ? 'Search the library’s catalog yourself' : 'Open the library’s catalog';
+  return kind === 'record' ? 'See this book in the library’s catalog'
+    : kind === 'search' ? 'Search the library’s catalog for this book' : 'Open the library’s catalog';
+}
 
 export const LibraryAnswerCard = forwardRef<HTMLDivElement, { model: LibraryCardModel; onFindLibrary: () => void }>(
   function LibraryAnswerCard({ model, onFindLibrary }, ref) {
@@ -25,26 +45,25 @@ export const LibraryAnswerCard = forwardRef<HTMLDivElement, { model: LibraryCard
       <h2 id="library-ask-heading">Is it in your library?</h2>
       <button type="button" className="home-button home-button-outline library-ask-button" aria-haspopup="dialog" onClick={onFindLibrary}><PinGlyph />Find my library</button>
     </section>;
-    const { answer, name, place, catalogUrl, catalogLinkKind, retry } = model;
+    const { answer, name, place, catalogUrl, catalogLinkKind, retry, slowCatalog } = model;
     const label = answerLabel(answer);
     const tone = answer === 'found' ? 'found' : answer === 'not_found' ? 'not-found' : 'grey';
     const caption = name && place && !name.includes(place) ? name + ' · ' + place : name;
-    const linkText = answer === 'checking' ? 'Open the library’s catalog instead'
-      : answer === 'unsupported' ? 'Open the library’s catalog'
-        : catalogLinkKind === 'record' ? 'See this book in the library’s catalog'
-          : catalogLinkKind === 'search' ? 'Search the library’s catalog yourself' : 'Open catalog';
+    // A link-only library has no answer to show: no heading and no status mark.
+    const linkOnly = answer === 'unsupported';
+    const description = answer === 'checking' ? checkingDescription(slowCatalog) : linkOnly ? label : descriptions[answer];
     return <div ref={ref} tabIndex={-1} className={'library-answer library-answer-' + tone} role="group" aria-label={label}
       aria-busy={answer === 'checking' || undefined} data-answer={answer}>
-      <h2><span className="library-answer-icon" aria-hidden="true">
+      {!linkOnly && <h2><span className="library-answer-icon" aria-hidden="true">
         {answer === 'found' ? <FoundGlyph /> : answer === 'not_found' ? <DashGlyph /> : <NotCheckedGlyph />}
-      </span>{label}</h2>
+      </span>{label}</h2>}
       {caption && <p className="library-answer-name">{caption}</p>}
       {answer === 'checking' && <span className="library-answer-progress" aria-hidden="true" />}
-      {descriptions[answer] && <p>{descriptions[answer]}</p>}
+      {description && <p>{description}</p>}
       <div className="library-answer-actions">
         {retry && <button type="button" className="home-text-button" onClick={retry}>Try again</button>}
         {catalogUrl && <a className="library-answer-catalog" href={catalogUrl} target="_blank" rel="noopener noreferrer">
-          {linkText}<ExternalGlyph size={16} strokeWidth={2} /><span className="visually-hidden">, opens in a new tab</span>
+          {catalogLinkText(answer, catalogLinkKind)}<ExternalGlyph size={16} strokeWidth={2} /><span className="visually-hidden">, opens in a new tab</span>
         </a>}
         {(answer === 'found' || answer === 'not_found') && <button type="button" className="home-text-button" onClick={onFindLibrary} aria-haspopup="dialog">
           {answer === 'found' ? 'Change library' : 'Try another library'}
