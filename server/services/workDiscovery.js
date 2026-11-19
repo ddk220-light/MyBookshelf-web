@@ -33,7 +33,7 @@ async function request(path, { group = null } = {}) {
   return cachedTask(`work-discovery:${path}`, () => pace(async () => {
     const response = await getJson(`https://openlibrary.org${path}`, {
       deadlineAt, retries: 0, catalogConnection: false,
-      headers: { 'User-Agent': 'MyBookshelf/1.0 (book discovery; https://mybookshelf.cloud/privacy)' },
+      headers: { 'User-Agent': 'MyBookshelf/1.0 (privacy@mybookshelf.cloud)' },
     });
     if (response.status === 404) return null;
     if (!response.ok || response.unreadable) throw unavailable();
