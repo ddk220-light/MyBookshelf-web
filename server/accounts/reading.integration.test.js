@@ -42,6 +42,7 @@ test('owner-private library/shelf API: conflicts, receipts, exact keys, cursors,
  const first=await shelf.books({limit:1},a);assert.equal(first.books[0].referenceId,saved.referenceId);assert.ok(first.nextCursor);
  const second=await shelf.books({limit:1,cursor:first.nextCursor},a);assert.equal(second.books[0].referenceId,next.referenceId);assert.equal(second.nextCursor,null);
  await assert.rejects(shelf.books({cursor:first.nextCursor},b),e=>e.code==='INVALID_INPUT'&&e.message==='This page of your reading shelf is invalid. Refresh your reading shelf.');
+ await assert.rejects(shelf.books({limit:101},a),e=>e.code==='INVALID_INPUT'&&e.message==='Choose a reading shelf page size between 1 and 100.');
  const removalId=randomUUID();const removed=await shelf.remove({shelfRevision:2,operationId:removalId},a,saved.referenceId);assert.ok(removed.undoUntil);
  await assert.rejects(shelf.books({cursor:first.nextCursor},a),e=>e.code==='VERSION_CONFLICT');
  const restored=await shelf.undo({removalId,shelfRevision:3,operationId:randomUUID()},a);assert.equal(restored.shelfRevision,4);

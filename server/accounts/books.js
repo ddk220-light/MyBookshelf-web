@@ -40,7 +40,7 @@ export function createShelfActions({owned,secret}){
   return {
     async books(query,identity){
       const limit=query.limit===undefined?50:Number(query.limit);
-      if(!Number.isInteger(limit)||limit<1||limit>100||Object.keys(query).some(k=>!['cursor','limit'].includes(k)))throw invalid('Choose a shelf page size between 1 and 100.');
+      if(!Number.isInteger(limit)||limit<1||limit>100||Object.keys(query).some(k=>!['cursor','limit'].includes(k)))throw invalid('Choose a reading shelf page size between 1 and 100.');
       return owned(identity,async(client,settings,id)=>{
         const cursor=query.cursor?decode(query.cursor,id,Number(settings.shelf_revision)):null;
         const rows=(await client.query(`SELECT b.*,r.book_key,to_char(b.saved_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_at FROM user_books b JOIN book_refs r ON r.id=b.reference_id WHERE b.user_id=$1
