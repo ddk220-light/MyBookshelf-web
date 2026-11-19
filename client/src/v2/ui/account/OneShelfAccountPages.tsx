@@ -10,6 +10,7 @@ import { TickGlyph } from '../home/homeIcons';
 import { FormAlert } from '../panel/PanelPage';
 import { AccountForm, AccountScreen } from './AccountPages';
 import { PasswordInput } from './PasswordInput';
+import { markSignIn } from '../../storage/guestMerge';
 
 // The account entry screens (production-ready boards CreateAccount, LogIn and
 // Welcome; plan B1 to B4 and B10). Every password field has an eye button and
@@ -102,6 +103,8 @@ export function LogInPage() {
     if (busy || entryPending) return;
     if (!EMAIL.test(address) || address.length > 254) { setEmailInvalid(true); emailInput.current?.focus(); return; }
     setBusy('link'); setError(null); setEmailInvalid(false);
+    // The books saved here join this account on their own once its link is opened here.
+    markSignIn(address);
     try {
       await accountRequest('/magic-link', { method: 'POST', body: { email: address } });
       if (!alive.current) return;
@@ -123,6 +126,7 @@ export function LogInPage() {
     typedEmail.current = address;
     setBusy('password'); setError(null); setVerifySent(false); setEmailInvalid(false);
     prepareSignIn();
+    markSignIn(address);
     try {
       const result = await accountRequest<{ returnTo?: string }>('/sign-in', { method: 'POST',
         body: { email: address, password, returnTo: safeAccountReturn(new URLSearchParams(location.search).get('returnTo')) } });
@@ -217,6 +221,7 @@ export function CreateAccountPage() {
       return;
     }
     setBusy(true);
+    markSignIn(email);
     try {
       await accountRequest('/sign-up', { method: 'POST', body: { name: ACCOUNT_NAME_PLACEHOLDER, email, password } });
       if (alive.current) setSentTo(email);
@@ -226,7 +231,7 @@ export function CreateAccountPage() {
       // The service answers a used email like a new one (PRD AC-02), so "used"
       // appears only if it ever reports the address as taken.
       if (code === 'USER_ALREADY_EXISTS' || code === 'EMAIL_IN_USE') setFields({ email: 'used' });
-      else if (code === 'INVALID_INPUT' && error instanceof Error && /password/i.test(error.message)) setFields({ password: 'long' });
+      else if (code === 'INVALID_INPUT' && error instanceof Error && /characters or fewer/i.test(error.message)) setFields({ password: 'long' });
       else if (code === 'INVALID_INPUT') setFields({ email: 'invalid' });
       else setFailure(failureOf(error) === 'other' ? 'offline' : failureOf(error));
     } finally {
@@ -322,6 +327,34 @@ function useSignedInFromLink(from: NonNullable<EntryState['from']>) {
   };
 }
 
+type LinkKind = 'verify' | 'magic-link' | 'reset';
+type LinkAccount = { status: 'checking' | 'valid' | 'expired' | Failure; email?: string };
+/**
+ * Which account an emailed link is for, asked before the reader taps (the
+ * page says "Log in as <email>", so a link someone else sent is not opened
+ * blind). Nothing is used up; a link that would not work tells nothing.
+ */
+function useLinkAccount(kind: LinkKind, token: string): [LinkAccount, () => void] {
+  const [account, setAccount] = useState<LinkAccount>(() => ({ status: token ? 'checking' : 'expired' }));
+  const [attempt, setAttempt] = useState(0);
+  useEffect(() => {
+    if (!token) { setAccount({ status: 'expired' }); return; }
+    let alive = true;
+    setAccount(current => current.status === 'valid' ? current : { status: 'checking' });
+    accountRequest<{ email?: string }>('/link-info', { method: 'POST', body: { kind, token } }).then(
+      reply => { if (alive) setAccount(typeof reply.email === 'string' ? { status: 'valid', email: reply.email } : { status: 'expired' }); },
+      error => { if (alive) { const failure = failureOf(error); setAccount({ status: failure === 'other' ? 'expired' : failure }); } },
+    );
+    return () => { alive = false; };
+  }, [kind, token, attempt]);
+  return [account, () => setAttempt(n => n + 1)];
+}
+
+/** The address a link is for, named on the page. */
+function LinkAddress({ email }: { email?: string }) {
+  return email ? <div className="account-signed-as"><span>This link is for</span><strong>{email}</strong></div> : null;
+}
+
 function ExpiredLink({ title, to, email }: { title: string; to: string; email?: string }) {
   return <AccountScreen title={title}>
     <FormAlert>Link expired</FormAlert>
@@ -335,6 +368,7 @@ export function NewPasswordPage() {
   const { prepareSignIn } = useAccountSession();
   const token = useLinkToken();
   const location = useLocation();
+  const [link] = useLinkAccount('reset', token);
   const [busy, setBusy] = useState(false);
   const [tooLong, setTooLong] = useState(false);
   const [expired, setExpired] = useState(!token);
@@ -357,13 +391,15 @@ export function NewPasswordPage() {
       if (!alive.current) return;
       const code = error instanceof AccountApiError ? error.code : '';
       const message = error instanceof Error ? error.message : '';
-      if (code === 'INVALID_INPUT' && /password/i.test(message)) setTooLong(true);
+      if (code === 'INVALID_INPUT' && /characters or fewer/i.test(message)) setTooLong(true);
       else if (code === 'LINK_EXPIRED' || code === 'INVALID_INPUT') setExpired(true);
       else setFailure(failureOf(error) === 'other' ? 'offline' : failureOf(error));
     } finally { if (alive.current) setBusy(false); }
   };
-  if (expired) return <ExpiredLink title="New password" to="/app/account/forgot-password" email={stateEmail(location)} />;
+  // The email is kept when the page could learn it before the link ran out.
+  if (expired || link.status === 'expired') return <ExpiredLink title="New password" to="/app/account/forgot-password" email={link.email || stateEmail(location)} />;
   return <AccountForm title="New password" formRef={form} busy={busy} onSubmit={event => { void submit(event); }} noValidate>
+    <LinkAddress email={link.email} />
     <Field label="New password" errorId="new-password-error" error={tooLong ? `Too long: ${PASSWORD_MAX} characters or fewer` : undefined}>{id =>
       <PasswordInput id={id} name="password" autoComplete="new-password" required aria-invalid={tooLong || undefined} aria-describedby={tooLong ? 'new-password-error' : undefined} />}</Field>
     {failureAlert(failure, () => form.current?.requestSubmit())}
@@ -373,68 +409,52 @@ export function NewPasswordPage() {
 
 /**
  * The verification link: one tap (a mail scanner opening the page spends
- * nothing), then signed in (Welcome).
+ * nothing), then signed in (Welcome). The page first names the account.
  */
 export function VerifyEmailPage() {
-  const entryPending = useAccountEntryPending();
-  const { prepareSignIn } = useAccountSession();
-  const token = useLinkToken();
-  const [busy, setBusy] = useState(false);
-  const [expired, setExpired] = useState(!token);
-  const [failure, setFailure] = useState<Failure | null>(null);
-  const form = useRef<HTMLFormElement>(null);
-  const alive = useAlive();
-  const signedIn = useSignedInFromLink('verify');
-  const submit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (busy || entryPending || !token) return;
-    setBusy(true); setFailure(null);
-    prepareSignIn();
-    try {
-      const reply = await accountRequest<{ signedIn?: boolean; email?: string }>('/verify-email', { method: 'POST', body: { token } });
-      await signedIn(reply, alive);
-    } catch (error) {
-      if (!alive.current) return;
-      const kind = failureOf(error);
-      if (kind === 'other') setExpired(true); else setFailure(kind);
-    } finally { if (alive.current) setBusy(false); }
-  };
-  if (expired) return <ExpiredLink title="Verify email" to="/app/account/sign-in" />;
-  return <AccountForm title="Verify email" formRef={form} busy={busy} onSubmit={event => { void submit(event); }}>
-    {failureAlert(failure, () => form.current?.requestSubmit())}
-    <button type="submit" className="home-button" disabled={busy || entryPending}>{busy ? 'Verifying…' : 'Verify email'}</button>
-  </AccountForm>;
+  return <LinkSignInPage kind="verify" title="Verify email" path="/verify-email" from="verify"
+    lede="Confirm your email and log in on this device." />;
 }
 
-/** The emailed log-in link (B10): one tap logs in on this device. */
+/** The emailed log-in link (B10): one tap logs in on this device, as the account the page names. */
 export function MagicLinkPage() {
+  return <LinkSignInPage kind="magic-link" title="Log in" path="/magic-link/verify" from="link"
+    lede="Log in to MyBookshelf on this device." />;
+}
+
+function LinkSignInPage({ kind, title, path, from, lede }: { kind: LinkKind; title: string; path: string; from: 'verify' | 'link'; lede: string }) {
   const entryPending = useAccountEntryPending();
   const { prepareSignIn } = useAccountSession();
   const token = useLinkToken();
+  const [link, checkAgain] = useLinkAccount(kind, token);
   const [busy, setBusy] = useState(false);
   const [expired, setExpired] = useState(!token);
   const [failure, setFailure] = useState<Failure | null>(null);
   const form = useRef<HTMLFormElement>(null);
   const alive = useAlive();
-  const signedIn = useSignedInFromLink('link');
+  const signedIn = useSignedInFromLink(from);
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (busy || entryPending || !token) return;
+    if (busy || entryPending || !token || link.status !== 'valid') return;
     setBusy(true); setFailure(null);
     prepareSignIn();
     try {
-      const reply = await accountRequest<{ email?: string }>('/magic-link/verify', { method: 'POST', body: { token } });
-      await signedIn({ ...reply, signedIn: true }, alive);
+      const reply = await accountRequest<{ signedIn?: boolean; email?: string }>(path, { method: 'POST', body: { token } });
+      await signedIn(from === 'link' ? { ...reply, signedIn: true } : reply, alive);
     } catch (error) {
       if (!alive.current) return;
       const kind = failureOf(error);
       if (kind === 'other') setExpired(true); else setFailure(kind);
     } finally { if (alive.current) setBusy(false); }
   };
-  if (expired) return <ExpiredLink title="Log in" to="/app/account/sign-in" />;
-  return <AccountForm title="Log in" formRef={form} busy={busy} onSubmit={event => { void submit(event); }} lede="Log in to MyBookshelf on this device.">
-    {failureAlert(failure, () => form.current?.requestSubmit())}
-    <button type="submit" className="home-button" disabled={busy || entryPending}>{busy ? 'Logging in…' : 'Log in'}</button>
+  if (expired || link.status === 'expired') return <ExpiredLink title={title} to="/app/account/sign-in" email={link.email} />;
+  const checking = link.status === 'checking';
+  const lookup = link.status === 'offline' || link.status === 'limited' || link.status === 'unavailable' ? link.status : null;
+  return <AccountForm title={title} formRef={form} busy={busy || checking} onSubmit={event => { void submit(event); }} lede={lede}>
+    {lookup ? failureAlert(lookup, checkAgain) : failureAlert(failure, () => form.current?.requestSubmit())}
+    {checking && <p role="status" className="account-fine">Checking the link…</p>}
+    {link.status === 'valid' && <button type="submit" className="home-button account-v2-wrap" disabled={busy || entryPending}>{busy ? 'Logging in…' : `Log in as ${link.email}`}</button>}
+    {link.status === 'valid' && <p className="account-fine">Not you? <Link to="/app/account/sign-in" replace>Log in with your own email</Link></p>}
   </AccountForm>;
 }
 
@@ -453,7 +473,7 @@ export function WelcomePage() {
     <p className="account-lede">{from === 'reset' ? 'Your new password is saved and your account is ready.'
       : from === 'link' ? 'You’re logged in on this device.'
         : 'Your email is confirmed and your account is ready.'}</p>
-    {merged === undefined ? <p role="status" className="account-fine">Bringing over the books from this device…</p>
+    {library.mergeOffer ? <MergeOffer /> : merged === undefined ? <p role="status" className="account-fine">Bringing over the books from this device…</p>
       : <div className="account-came" role="status">
         <h2>{saved > 0 ? 'Your reading shelf came with you' : 'Your reading shelf'}</h2>
         <ul>
@@ -466,6 +486,29 @@ export function WelcomePage() {
     <Link className="home-button" to="/" replace>Go to my reading shelf</Link>
     <Link className="home-text-button account-v2-link" to="/app/settings/account">Account settings</Link>
   </AccountScreen>;
+}
+
+/**
+ * Asked once when the account that signed in is not the one this browser
+ * asked for (for example a link someone else sent): nothing is sent until the
+ * reader says so; "Not now" is remembered for that account.
+ */
+export function MergeOffer({ className = 'account-came' }: { className?: string }) {
+  const library = useLibrary();
+  const [busy, setBusy] = useState(false);
+  const offer = library.mergeOffer;
+  if (!offer || !library.answerMerge) return null;
+  const answer = async (add: boolean) => {
+    setBusy(true);
+    try { await library.answerMerge?.(add); } finally { setBusy(false); }
+  };
+  return <div className={className} role="group" aria-label="Books saved in this browser">
+    <p>Add the {offer.count} {offer.count === 1 ? 'book' : 'books'} saved in this browser to {offer.email}?</p>
+    <div className="account-offer-actions">
+      <button type="button" className="home-button" disabled={busy} onClick={() => { void answer(true); }}>Add them</button>
+      <button type="button" className="home-button home-button-outline" disabled={busy} onClick={() => { void answer(false); }}>Not now</button>
+    </div>
+  </div>;
 }
 
 function WelcomeGlyph() {

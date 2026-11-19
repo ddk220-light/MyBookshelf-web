@@ -48,9 +48,9 @@ test.describe("account screens: lights, widths, zoom and forced colors", () => {
           await check(page, testInfo, `check-email-${light}-${width}`);
           const { token } = await (await request.post("/__accounts_test__/mail", { data: { email } })).json();
           await page.goto("/app/account/verify#token=" + encodeURIComponent(token));
-          await expect(page.getByRole("button", { name: "Verify email", exact: true })).toBeVisible();
+          await expect(page.getByRole("button", { name: "Log in as " + email, exact: true })).toBeVisible();
           await check(page, testInfo, `verify-${light}-${width}`);
-          await page.getByRole("button", { name: "Verify email", exact: true }).click();
+          await page.getByRole("button", { name: "Log in as " + email, exact: true }).click();
           await expect(page.getByRole("heading", { name: "You’re signed in" })).toBeVisible();
           await check(page, testInfo, `welcome-${light}-${width}`);
           await page.goto("/app/settings/account");

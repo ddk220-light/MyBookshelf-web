@@ -37,11 +37,12 @@ async function signUpAndLogIn(page, request, { email, password }) {
   let exchanges = 0;
   page.on("request", (req) => { if (req.method() === "POST" && new URL(req.url()).pathname === "/api/account/verify-email") exchanges++; });
   await page.goto("/app/account/verify#token=" + encodeURIComponent(token));
-  // A link scanner opening the page spends nothing: one deliberate tap verifies.
-  await expect(page.getByRole("button", { name: "Verify email", exact: true })).toBeVisible();
+  // A link scanner opening the page spends nothing: one deliberate tap
+  // verifies, and the page names the account first.
+  await expect(page.getByRole("button", { name: "Log in as " + email, exact: true })).toBeVisible();
   await expect(page).toHaveURL(/#token=/);
   expect(exchanges).toBe(0);
-  await page.getByRole("button", { name: "Verify email", exact: true }).click();
+  await page.getByRole("button", { name: "Log in as " + email, exact: true }).click();
   await expect(page.getByRole("heading", { name: "You’re signed in" })).toBeVisible();
   expect(exchanges).toBe(1);
   await expect(page).not.toHaveURL(/token=/);
@@ -190,6 +191,36 @@ test.describe("account browser → real API → isolated Postgres", () => {
     }
   });
 
+  test("a link someone else sent names their account, and this browser's books are only offered to it", async ({ page, request }) => {
+    const sender = synthetic();
+    await installPublicV2Fixture(page);
+    await page.unroute("**/api/account/session");
+    try {
+      // The account is created somewhere else: this browser never asked for it.
+      const created = await request.post("/api/account/sign-up", {
+        headers: { Origin: new URL(process.env.PLAYWRIGHT_BASE_URL).origin },
+        data: { name: "Reader", email: sender.email, password: sender.password },
+      });
+      expect(created.status()).toBe(202);
+      const mail = await request.post("/__accounts_test__/mail", { data: { email: sender.email } });
+      const { token } = await mail.json();
+      await page.addInitScript(([key, value]) => { if (!sessionStorage.getItem("seeded")) { localStorage.setItem(key, JSON.stringify(value)); sessionStorage.setItem("seeded", "1"); } },
+        [GUEST_KEY, { version: 2, selectedLibraryId: null, recentBooks: [], savedBooks: [guestBook(1), guestBook(2)], savedContent: [] }]);
+      await page.goto("/app/account/verify#token=" + encodeURIComponent(token));
+      await page.getByRole("button", { name: "Log in as " + sender.email, exact: true }).click();
+      await expect(page.getByRole("heading", { name: "You’re signed in" })).toBeVisible();
+      await expect(page.getByText("Add the 2 books saved in this browser to " + sender.email + "?")).toBeVisible();
+      expect((await (await page.request.get("/api/account/books?limit=100")).json()).books).toEqual([]);
+      await page.getByRole("button", { name: "Not now" }).click();
+      await page.getByRole("link", { name: "Go to my reading shelf" }).click();
+      await page.reload();
+      await expect(page.getByText(/books saved in this browser/)).toHaveCount(0);
+      expect((await (await page.request.get("/api/account/books?limit=100")).json()).books).toEqual([]);
+    } finally {
+      await request.post("/__accounts_test__/cleanup", { data: { email: sender.email } });
+    }
+  });
+
   test("email log-in and reset links survive a reload and sign the reader in", async ({ page, request }) => {
     const reader = synthetic();
     await installPublicV2Fixture(page);
@@ -214,7 +245,7 @@ test.describe("account browser → real API → isolated Postgres", () => {
       await page.goto("/app/account/magic-link#token=" + encodeURIComponent(await emailToken("magicLink")));
       await page.reload();
       expect(await sessionStatus(page)).toBe("guest");
-      await page.getByRole("button", { name: "Log in", exact: true }).click();
+      await page.getByRole("button", { name: "Log in as " + reader.email, exact: true }).click();
       await expect(page.getByRole("heading", { name: "You’re signed in" })).toBeVisible();
       await expect(page).not.toHaveURL(/token=/);
       expect(await sessionStatus(page)).toBe("authenticated");

@@ -4,6 +4,8 @@ export class AccountApiError extends Error {
     message: string,
     public status = 0,
     public retryAfter = 0,
+    /** Which device books an import refused, by position (server accounts/imports.js). */
+    public rejected?: { savedBooks?: number[]; recentBooks?: number[]; library?: boolean },
   ) {
     super(message);
   }
@@ -50,6 +52,7 @@ export async function accountRequest<T>(
       error?.message || "Accounts are temporarily unavailable.",
       response.status,
       Number(response.headers.get("Retry-After")) || 0,
+      error?.rejected && typeof error.rejected === "object" ? error.rejected : undefined,
     );
   }
   if (!value || typeof value !== "object")

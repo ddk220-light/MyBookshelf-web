@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useAccountSession } from "../../auth/AccountSessionProvider";
 import { useLibrary } from "../../context";
 import { ACCOUNT_ENTRY_PATH } from "../desk/layoutMode";
+import { MergeOffer } from "./OneShelfAccountPages";
 
 // One line above the screen about the account: checking, signed out, a change
 // being saved. When accounts are switched off the reader just uses the app as
@@ -43,7 +44,7 @@ export function AccountNotice() {
       <div className="account-sync-notice" role="status">
         <span>
           {session.status === "unverified"
-            ? "Verify your email before using your account shelf."
+            ? "Verify your email before using your reading shelf."
             : "Couldn’t check your account. Your account content is hidden until this is resolved."}
         </span>
         <button onClick={() => void refresh()}>Try again</button>
@@ -55,7 +56,7 @@ export function AccountNotice() {
   if (session.logoutPending)
     return (
       <div className="account-sync-notice" role="status">
-        Using this browser’s shelf. Server sign-out is still unconfirmed.
+        Using the reading shelf saved in this browser. Server sign-out is still unconfirmed.
         <button className="text-button" onClick={() => void refresh()}>
           Retry sign out
         </button>
@@ -65,8 +66,8 @@ export function AccountNotice() {
     return (
       <div className="account-sync-notice" role="status">
         <span>
-          You’ve been signed out. Log in to see your account shelf, or keep
-          using this browser’s shelf.
+          You’ve been signed out. Log in to see your reading shelf, or keep
+          using the one saved in this browser.
         </span>
         <Link to="/app/account/sign-in">Log in</Link>
         <button className="text-button" onClick={dismissSessionEnded}>
@@ -74,6 +75,10 @@ export function AccountNotice() {
         </button>
       </div>
     );
+  // Books saved in this browser and an account this browser did not ask to
+  // sign in to: asked here once (Welcome asks on its own page).
+  if (library.mergeOffer && !entry && location.pathname !== "/app/account/welcome")
+    return <MergeOffer className="account-sync-notice account-merge-offer" />;
   if (!library.mutationNotice) return null;
   return (
     <div

@@ -14,7 +14,20 @@ import { useAccountSession } from "../auth/AccountSessionProvider";
 import { AccountApiError } from "../auth/accountClient";
 import { AccountRepository, type ReadingSnapshot } from "./AccountRepository";
 import { emptyState, HISTORY_LIMIT, readAnonymousWebStateWithStatus } from "../localState";
-import { planGuestMerge, rememberMerged } from "./guestMerge";
+import {
+  accountCode,
+  clearSignInMark,
+  mergeRetryAt,
+  noteMergeFailure,
+  planGuestMerge,
+  readMerged,
+  rememberMerged,
+  setMergeConsent,
+  signInMarkMatches,
+  withoutLibrary,
+  withoutRejected,
+} from "./guestMerge";
+import { withGuestStorageLock } from "./guestLock";
 import { isOnShelf } from "../oneShelfState";
 import type {
   PublicBook,
@@ -32,6 +45,8 @@ export const SHELF_RELOAD_MS = 10_000;
 export const DONE_NOTICE_MS = 4_000;
 /** What the quiet merge at sign-in brought over from this browser (plan B5). */
 export type MergeResult = { savedAdded: number };
+/** Books saved in this browser that could join an account this browser did not ask to sign in to. */
+export type MergeOffer = { count: number; email: string };
 
 /**
  * Plan 3.3 and 4.7: a book whose bookKey or ISBN-13 is already saved counts as
@@ -60,6 +75,7 @@ export function AccountLibraryStateProvider({
   // undefined until the first load and its merge are over.
   const [mergeResult, setMergeResult] = useState<MergeResult | undefined>();
   const merging = useRef<Promise<void> | null>(null);
+  const [mergeOffer, setMergeOffer] = useState<MergeOffer | null>(null);
   const [mutationError, setMutationError] = useState<string | null>(null);
   const [undo, setUndo] = useState<{
     book: RecentBook;
@@ -98,48 +114,131 @@ export function AccountLibraryStateProvider({
   // Plan B5: once the account shelf has loaded, the books in this browser
   // that the account lacks go over quietly through the import (safe to
   // repeat). The browser's library is used only when the account has none.
-  // What was sent is remembered here, so a book later removed from the
-  // account does not come back. A failed merge is tried again at the next
-  // load (one import at most per load, within the 5-an-hour limit) and never
-  // holds the shelf.
-  const mergeGuest = useCallback(async (repo: AccountRepository, loaded: ReadingSnapshot) => {
-    const plan = planGuestMerge(loaded, readAnonymousWebStateWithStatus());
-    if (!plan) {
-      setMergeResult((current) => current ?? { savedAdded: 0 });
-      return;
-    }
-    if (!plan.request) {
-      rememberMerged(plan);
-      setMergeResult((current) => current ?? { savedAdded: 0 });
-      return;
-    }
+  // What was sent is remembered for this account, so a book later removed
+  // from the account does not come back. The merge runs on its own only for
+  // the account this browser asked to sign in to (or that the reader agreed
+  // to before); any other account is asked once: "Add them" or "Not now".
+  // One tab merges at a time (the guest storage lock). A refused library or
+  // book is left out and the rest sent again; a failure waits longer each
+  // time, checked at the next load (no timers); it never holds the shelf,
+  // and the shelf's own changes never wait for it.
+  const mergeGuest = useCallback(async (repo: AccountRepository) => {
+    const user = sessionRef.current.user;
+    const current = () => active.current && repository.current === repo;
+    if (!user) return;
+    const account = accountCode(user.id);
+    let added: number | null = null,
+      offer: MergeOffer | null = null;
     try {
-      const result = await repo.importGuest(
-        crypto.randomUUID(),
-        plan.snapshot,
-        plan.snapshot.recentBooks.length > 0,
-        plan.policy,
-      );
-      if (!active.current || repository.current !== repo) return;
-      rememberMerged(plan);
-      const next = await repo.loadSnapshot();
-      if (!active.current || repository.current !== repo) return;
-      loadedAt.current = Date.now();
-      setSnapshot(next);
-      setMergeResult({ savedAdded: result.savedAdded });
-      if (result.savedAdded > 0) {
-        setNotice(
-          `Added ${result.savedAdded} ${result.savedAdded === 1 ? "book" : "books"} from this device to your account`,
-        );
-        setNoticeDone(true);
-        setMutationError(null);
-      }
+      await withGuestStorageLock(async () => {
+        if (!current()) return;
+        const record = readMerged(account);
+        if (Date.now() < mergeRetryAt(record)) return;
+        let loaded = repo.snapshot;
+        if (!loaded) return;
+        let plan = planGuestMerge(loaded, readAnonymousWebStateWithStatus(), record);
+        if (!plan) return;
+        if (!plan.request) {
+          rememberMerged(account, plan);
+          return;
+        }
+        let consent = record.consent;
+        if (!consent && signInMarkMatches(user.email)) {
+          consent = "yes";
+          setMergeConsent(account, "yes");
+          clearSignInMark();
+        }
+        if (consent === "not-now") return;
+        if (consent !== "yes") {
+          // Nothing is sent to an account this browser did not ask for.
+          if (plan.snapshot.savedBooks.length)
+            offer = { count: plan.snapshot.savedBooks.length, email: user.email };
+          return;
+        }
+        let send = plan,
+          withoutLibraryTried = false;
+        for (let attempt = 0; attempt < 4; attempt++) {
+          if (!send.request) {
+            rememberMerged(account, plan);
+            added = 0;
+            return;
+          }
+          try {
+            const result = await repo.importQuiet(
+              send.snapshot,
+              send.snapshot.recentBooks.length > 0,
+              send.policy,
+            );
+            if (!current()) return;
+            // What was left out is settled too: it is not sent again.
+            rememberMerged(account, plan);
+            added = result.savedAdded;
+            return;
+          } catch (error) {
+            if (!current() || !(error instanceof AccountApiError)) throw error;
+            if (error.status === 422 && error.code !== "SHELF_FULL") {
+              const rejected = error.rejected;
+              if (send.snapshot.selectedLibraryId && !withoutLibraryTried && (rejected?.library || !rejected?.savedBooks?.length && !rejected?.recentBooks?.length)) {
+                withoutLibraryTried = true;
+                send = withoutLibrary(send);
+                if (rejected && !rejected.library) send = withoutRejected(send, rejected);
+                continue;
+              }
+              if (rejected?.savedBooks?.length || rejected?.recentBooks?.length) {
+                send = withoutRejected(send, rejected);
+                continue;
+              }
+              throw error;
+            }
+            // Another change on this or another device came first: plan again.
+            if (error.status === 409 && error.code === "VERSION_CONFLICT") {
+              loaded = await repo.loadSnapshot();
+              if (!current()) return;
+              const again = planGuestMerge(loaded, readAnonymousWebStateWithStatus(), readMerged(account));
+              if (!again) return;
+              plan = again;
+              send = withoutLibraryTried ? withoutLibrary(again) : again;
+              continue;
+            }
+            throw error;
+          }
+        }
+        throw new Error("The merge did not settle.");
+      });
     } catch {
-      repo.abandonPending("/imports");
-      if (active.current && repository.current === repo)
-        setMergeResult((current) => current ?? { savedAdded: 0 });
+      if (current()) noteMergeFailure(account);
+    }
+    if (!current()) return;
+    setMergeOffer(offer);
+    if (added !== null) {
+      try {
+        const next = await repo.loadSnapshot();
+        if (current()) {
+          loadedAt.current = Date.now();
+          setSnapshot(next);
+        }
+      } catch {
+        /* The shelf reloads on the next focus or change. */
+      }
+      if (!current()) return;
+    }
+    setMergeResult({ savedAdded: added ?? 0 });
+    if (added) {
+      setNotice(
+        `Added ${added} ${added === 1 ? "book" : "books"} from this device to your account`,
+      );
+      setNoticeDone(true);
+      setMutationError(null);
     }
   }, []);
+  const startMerge = useCallback((repo: AccountRepository) => {
+    if (merging.current) return merging.current;
+    const pendingMerge = mergeGuest(repo).finally(() => {
+      if (merging.current === pendingMerge) merging.current = null;
+    });
+    merging.current = pendingMerge;
+    return pendingMerge;
+  }, [mergeGuest]);
   const refresh = useCallback(async () => {
     const repo = repository.current;
     if (!repo) return;
@@ -149,29 +248,36 @@ export function AccountLibraryStateProvider({
         loadedAt.current = Date.now();
         setSnapshot(next);
         setLoading(false);
-        if (!merging.current) {
-          busy.current = true;
-          const pendingMerge = mergeGuest(repo, next).finally(() => {
-            if (merging.current !== pendingMerge) return;
-            merging.current = null;
-            busy.current = false;
-          });
-          merging.current = pendingMerge;
-        }
+        void startMerge(repo);
       }
     } catch (error) {
       if (repository.current === repo) {
         fail(error);
         setLoading(false);
+        // Welcome stops saying "Bringing over the books…".
+        if (active.current) setMergeResult((current) => current ?? { savedAdded: 0 });
       }
     }
-  }, [fail, mergeGuest]);
+  }, [fail, startMerge]);
+  // "Add them" / "Not now" for books saved in this browser, asked when the
+  // account that signed in is not the one this browser asked for.
+  const answerMerge = useCallback(async (add: boolean) => {
+    const repo = repository.current,
+      user = sessionRef.current.user;
+    if (!repo || !user) return;
+    setMergeConsent(accountCode(user.id), add ? "yes" : "not-now");
+    setMergeOffer(null);
+    if (add) {
+      if (merging.current) await merging.current;
+      await startMerge(repo);
+    }
+  }, [startMerge]);
   // Focus: one small request for the revision numbers; the shelf and Viewed
   // before reload only when another device changed them. No timers.
   const checkRevisions = useCallback(async () => {
     const repo = repository.current,
       current = snapshotRef.current;
-    if (!repo || !current || busy.current || repo.pending) return;
+    if (!repo || !current || busy.current || merging.current || repo.pending) return;
     loadedAt.current = Date.now();
     try {
       const revisions = await repo.loadRevisions();
@@ -216,6 +322,7 @@ export function AccountLibraryStateProvider({
         repository.current = null;
         merging.current = null;
         busy.current = false;
+        setMergeOffer(null);
       }
       window.removeEventListener("focus", focus);
       document.removeEventListener("visibilitychange", focus);
@@ -228,8 +335,7 @@ export function AccountLibraryStateProvider({
       after?: (value: T) => void,
       quiet = false,
     ): Promise<T | null> => {
-      // A change made while the quiet merge runs waits for it.
-      if (merging.current) await merging.current;
+      // The quiet merge runs beside the shelf's changes, never in front of them.
       const repo = repository.current;
       if (!repo || busy.current || !snapshotRef.current) return null;
       busy.current = true;
@@ -487,6 +593,8 @@ export function AccountLibraryStateProvider({
     historyEnabled: snapshot?.summary.historyEnabled ?? false,
     setHistoryEnabled,
     mergeResult,
+    mergeOffer,
+    answerMerge,
   };
   return (
     <LibraryStateContext.Provider value={value}>

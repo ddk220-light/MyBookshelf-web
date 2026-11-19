@@ -68,6 +68,13 @@ export type LibraryState = {
   setHistoryEnabled?:(enabled:boolean)=>Promise<boolean>;
   /** Signed in: what the quiet merge at sign-in brought over from this browser; undefined until it is done (plan B5). */
   mergeResult?:{savedAdded:number};
+  /**
+   * Signed in to an account this browser did not ask to sign in to (for
+   * example from a link someone else sent): the books saved here are not
+   * sent until the reader answers "Add them" (true) or "Not now" (false).
+   */
+  mergeOffer?:{count:number;email:string}|null;
+  answerMerge?:(add:boolean)=>Promise<void>;
 };
 
 export const LibraryStateContext = createContext<LibraryState | null>(null);

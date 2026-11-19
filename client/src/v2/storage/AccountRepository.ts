@@ -300,6 +300,38 @@ export class AccountRepository {
       operationId: crypto.randomUUID(),
     });
   }
+  /**
+   * The quiet merge at sign-in (plan B5): sent on its own, beside the shelf's
+   * one pending change, so a save never waits for it and it never becomes
+   * the change offered for "Retry". It is not retried here; a refusal or a
+   * newer account version goes back to the merge.
+   */
+  async importQuiet(
+    snapshot: AnonymousWebState,
+    includeHistory: boolean,
+    libraryPolicy: "keep-account" | "use-device",
+  ) {
+    const versions = this.state();
+    const result = await this.request<{
+      savedAdded: number;
+      historyAccepted: number;
+      historyExpired: number;
+    }>("/imports", {
+      method: "POST",
+      body: {
+        importId: crypto.randomUUID(),
+        snapshot: structuredClone({ version: 1, selectedLibraryId: snapshot.selectedLibraryId, recentBooks: snapshot.recentBooks, savedBooks: snapshot.savedBooks }),
+        includeHistory,
+        libraryPolicy,
+        settingsRevision: versions.settingsRevision,
+        shelfRevision: versions.shelfRevision,
+        historyGeneration: versions.historyGeneration,
+      },
+    });
+    // The next read starts afresh (one already under way began before this).
+    this.loadPromise = null;
+    return result;
+  }
   importGuest(
     importId: string,
     snapshot: AnonymousWebState,

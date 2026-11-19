@@ -239,6 +239,8 @@ const versions = { settingsRevision: 0, shelfRevision: 0, historyGeneration: 0, 
 /** The account API after an emailed link signed the reader in. */
 function signedInAfter(posts: string[], linkPath: string, gate: { open: boolean }, finish?: (resolve: (value: Response) => void) => void) {
   return vi.fn((path: string, options: RequestInit = {}) => {
+    // Naming the link's account first uses nothing up.
+    if (path.endsWith("/link-info")) return Promise.resolve(response({ status: "valid", email: USER.email }));
     if (options.method === "POST") posts.push(path);
     if (path.endsWith("/session")) {
       if (!gate.open && finish) return new Promise<Response>((resolve) => finish(resolve));
@@ -267,13 +269,17 @@ it("keeps the verification token after # until it is used, exchanges it only on 
   // A reload or a restored tab still has the link: the token stays in the address.
   expect(screen.getByTestId("location")).toHaveTextContent("/app/account/verify#token=synthetic-one-use-token");
   expect(posts).toEqual([]);
-  expect(screen.getByRole("button", { name: "Verify email" })).toBeDisabled();
+  // The page names the account before the reader taps (a link someone else sent is not opened blind).
+  const tap = await screen.findByRole("button", { name: "Log in as " + USER.email });
+  expect(tap).toBeDisabled();
+  expect(JSON.parse((vi.mocked(fetch).mock.calls.find(([path]) => String(path).endsWith("/link-info"))![1] as RequestInit).body as string)).toEqual({ kind: "verify", token: "synthetic-one-use-token" });
+  expect(screen.getByRole("link", { name: "Log in with your own email" })).toHaveAttribute("href", "/app/account/sign-in");
   fireEvent.submit(screen.getByRole("form", { name: "Verify email" }));
   expect(posts).toEqual([]);
   await act(async () => finish(response({ status: "guest" })));
-  expect(screen.getByRole("button", { name: "Verify email" })).toBeEnabled();
+  expect(screen.getByRole("button", { name: "Log in as " + USER.email })).toBeEnabled();
   expect(screen.getByTestId("location")).toHaveTextContent("token=");
-  fireEvent.click(screen.getByRole("button", { name: "Verify email" }));
+  fireEvent.click(screen.getByRole("button", { name: "Log in as " + USER.email }));
   expect(await screen.findByRole("heading", { name: "You’re signed in" })).toBeInTheDocument();
   expect(screen.getByText("Your email is confirmed and your account is ready.")).toBeInTheDocument();
   expect(screen.getByText(USER.email)).toBeInTheDocument();
@@ -288,6 +294,7 @@ it("still accepts ?token= from emails sent before the change; an expired link of
   vi.stubGlobal("fetch", vi.fn((path: string, options: RequestInit = {}) => {
     if (options.method === "POST") posts.push(path);
     if (path.endsWith("/session")) return Promise.resolve(response({ status: "guest" }));
+    if (path.endsWith("/link-info")) return Promise.resolve(response({ status: "valid", email: USER.email }));
     if (path.endsWith("/reset-password")) return Promise.resolve(new Response(JSON.stringify({ error: { code: "LINK_EXPIRED", message: "This link has expired or was already used." } }), { status: 400 }));
     return Promise.resolve(response({ status: "ok" }));
   }));
@@ -309,9 +316,29 @@ it("still accepts ?token= from emails sent before the change; an expired link of
   await waitFor(() => expect(screen.getByRole("button", { name: "Save password" })).toBeEnabled());
   fireEvent.click(screen.getByRole("button", { name: "Save password" }));
   expect(await screen.findByText("Link expired")).toBeInTheDocument();
-  expect(posts).toEqual(["/api/account/reset-password"]);
+  expect(posts).toEqual(["/api/account/link-info", "/api/account/reset-password"]);
   fireEvent.click(screen.getByRole("link", { name: "Request a new link" }));
   expect(screen.getByTestId("location")).toHaveTextContent(/^\/app\/account\/forgot-password$/);
+  // The email the link was for comes along.
+  expect(await screen.findByLabelText("Email")).toHaveValue(USER.email);
+});
+it("a link that no longer works shows Link expired at once, says nothing about any account and uses nothing", async () => {
+  const posts: string[] = [];
+  vi.stubGlobal("fetch", vi.fn((path: string, options: RequestInit = {}) => {
+    if (options.method === "POST") posts.push(path);
+    if (path.endsWith("/session")) return Promise.resolve(response({ status: "guest" }));
+    if (path.endsWith("/link-info")) return Promise.resolve(new Response(JSON.stringify({ error: { code: "LINK_EXPIRED", message: "This link has expired or was already used." } }), { status: 400 }));
+    return Promise.resolve(response({ status: "ok" }));
+  }));
+  render(
+    <MemoryRouter initialEntries={["/app/account/magic-link#token=someone-elses-old-token"]}>
+      <AnonymousWebApp />
+      <Location />
+    </MemoryRouter>,
+  );
+  expect(await screen.findByText("Link expired")).toBeInTheDocument();
+  expect(screen.queryByRole("button", { name: /^Log in as/ })).not.toBeInTheDocument();
+  expect(posts).toEqual(["/api/account/link-info"]);
 });
 it("the emailed log-in link signs in on one tap and lands on Welcome", async () => {
   const posts: string[] = [], gate = { open: false };
@@ -322,7 +349,7 @@ it("the emailed log-in link signs in on one tap and lands on Welcome", async () 
       <Location />
     </MemoryRouter>,
   );
-  const button = await screen.findByRole("button", { name: "Log in" });
+  const button = await screen.findByRole("button", { name: "Log in as " + USER.email });
   await waitFor(() => expect(button).toBeEnabled());
   // Opening the page spends nothing (a mail scanner cannot use the link).
   expect(posts).toEqual([]);

@@ -112,7 +112,7 @@ export function AccountEntryGate({
             ? "Accounts aren’t enabled here yet. You can keep your books in this browser."
             : needsEmail && capabilities?.email === false
               ? "Email accounts aren’t available right now. You can keep your books in this browser."
-              : "We can’t open your account right now. Try again, or keep using this browser’s shelf."}
+              : "We can’t open your account right now. Try again, or keep using the reading shelf saved in this browser."}
         </p>
         <button type="button" disabled={retrying} onClick={() => void retry()}>
           {retrying ? "Checking…" : "Try again"}

@@ -12,6 +12,7 @@ import { setReaderIdentityScope } from "../readerState";
 import { clearSearchMemory } from "../searchMemory";
 import { clearCatalogMetadata } from "../catalogMetadata";
 import { flushSync } from "react-dom";
+import { accountCode, forgetMerged } from "../storage/guestMerge";
 
 export type AccountUser = {
   id: string;
@@ -235,6 +236,15 @@ export function AccountSessionProvider({ children, disabledMeansGuest = false }:
             } else publish({ status: "guest", logoutPending: true });
             return;
           }
+          // The server answered that this signed-in account is no longer
+          // available (it is being deleted): what this browser remembers
+          // about merging into it goes (plan B7).
+          if (
+            reply.status === "unavailable" &&
+            current.current.status === "authenticated" &&
+            current.current.user
+          )
+            forgetMerged(accountCode(current.current.user.id));
           publish(reply);
           if (explicitSignin) broadcast(false, tabId.current);
         } catch (failure) {
