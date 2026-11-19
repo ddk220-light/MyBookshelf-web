@@ -166,7 +166,7 @@ test('PINES member discovery selects the explicit network scope and its web prov
     received = entry;
     return { checkAvailability: async () => ({ outcome: 'available', matchKind: 'exact_isbn',
       recognizedExact: true, availableCopies: 303, totalCopies: 327,
-      catalogUrl: 'https://gapines.org/eg/opac/record/6107812?locg=1' }) };
+      catalogUrl: 'https://gapines.org/eg/opac/record/6107812?locg=1', catalogLinkKind: 'record' }) };
   } });
   const { response } = await service.check({ libraryId: library.id, bookKey: 'v1:isbn:9780735219090' });
   assert.equal(received.evergreenOrgId, 1);

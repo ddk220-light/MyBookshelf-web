@@ -5,7 +5,7 @@ import { matchCatalogRecord } from '../libraryBookSearch.js';
 import { validateAndNormalize } from '../isbn.js';
 import { parsePublicBookKey } from '../../public-v2/contracts.js';
 import { runBookCheck } from './check.js';
-import { normalizeProviderObservation } from './observation.js';
+import { linkKind, normalizeProviderObservation } from './observation.js';
 import { answerFromCheck, answerFromResponse, couldntCheck, couldntCheckFor, isHealthFailure } from './outcome.js';
 import { PLATFORMS, platformFor, hostFor, bookDeadlineMs, backgroundDeadlineMs, lookupV2Enabled } from './platforms.js';
 import { createHostGuard } from './budget.js';
@@ -523,9 +523,11 @@ export function createCatalogLookup({
           if (!match) { unmatched.push(book.bookKey); continue; }
           // A row that shows one of this work's ISBNs, in this library's own
           // scoped search, proves the library lists that edition.
+          // The link is the book's record only when the adapter said so.
           const catalogUrl = match.row.catalogUrl || match.row.observation?.catalogUrl;
+          const catalogLinkKind = linkKind(match.row.catalogUrl ? match.row.catalogLinkKind : match.row.observation?.catalogLinkKind);
           const answer = { outcome: 'found', evidence: match.result.isbn13 === validateAndNormalize(book.isbn13 || '') ? 'exact_isbn' : 'work_isbn',
-            matchedIsbn13: match.result.isbn13, recordId: match.row.recordId, ...(catalogUrl ? { catalogUrl } : {}) };
+            matchedIsbn13: match.result.isbn13, recordId: match.row.recordId, ...(catalogUrl ? { catalogUrl, catalogLinkKind } : {}) };
           recorder.record({ entry, platform: platformName, host, book, profile, answer, kind: 'results', live: false });
           yield { bookKey: book.bookKey, ...answer, source: 'live' };
         }

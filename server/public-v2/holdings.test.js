@@ -75,6 +75,29 @@ test('a second open of the same book in the same library makes no catalog reques
   assert.equal(calls.length, 1);
 });
 
+test('a found answer links the book’s record only when the catalog said the link is its record, live and stored', async () => {
+  const search = 'https://catalog.example/search?q=9788173711466';
+  const record = 'https://catalog.example/record/7';
+  for (const [observed, expectRecord] of [
+    [{ catalogUrl: search, catalogLinkKind: 'search' }, false],
+    [{ catalogUrl: 'https://catalog.example/' }, false],
+    [{ catalogUrl: record, catalogLinkKind: 'record' }, true],
+  ]) {
+    const { app, calls, settle } = harness({ observe: () => ({ outcome: 'available', matchKind: 'exact_isbn', recognizedExact: true, ...observed }) });
+    for (const look of ['live', 'stored']) {
+      const response = await request(app).post('/api/v2/holdings/check').send({ libraryId: vega.id, bookKey: `v1:isbn:${ISBN_A}` });
+      assert.equal(response.body.answer, 'found');
+      if (expectRecord) assert.deepEqual([response.body.catalogUrl, response.body.catalogLinkKind], [record, 'record'], look);
+      else {
+        assert.notEqual(response.body.catalogLinkKind, 'record', `${look}: ${observed.catalogUrl}`);
+        assert.notEqual(response.body.catalogUrl, observed.catalogUrl === search ? search : undefined);
+      }
+      await settle();
+    }
+    assert.equal(calls.length, 1, 'the second look is a store read');
+  }
+});
+
 test('a timed-out check is unknown, stores no answer and writes one health event', async () => {
   const { app, store, calls, settle } = harness({ observe: () => { throw Object.assign(new Error('slow'), { code: 'CATALOG_TIMEOUT' }); } });
   const response = await request(app).post('/api/v2/holdings/check').send({ libraryId: vega.id, bookKey: `v1:isbn:${ISBN_A}` });
@@ -305,7 +328,7 @@ test('result marking identifies results from the search that produced them, with
   const rowsLibrary = { id: 'vufind:rows', platform: 'vufind', catalogUrl: 'https://rows.example/' };
   const rowsDirectory = { ...directory, resolve: id => (id === rowsLibrary.id ? publicOf(rowsLibrary) : null), entry: id => (id === rowsLibrary.id ? rowsLibrary : null) };
   const provider = { checkAvailability: async () => ({}), searchResultRows: async () => [{ recordId: 'R1', title: 'Matilda', authors: ['Dahl, Roald'], isbn: ISBN_B,
-    catalogUrl: 'https://rows.example/Record/R1' }] };
+    catalogUrl: 'https://rows.example/Record/R1', catalogLinkKind: 'record' }] };
   const lookup = createCatalogLookup({ providerFor: () => provider, robots: null, platforms: UNPACED, env: {},
     recorder: createLookupRecorder({ answers: store.answers, health: store.health, policyFor: store.policyFor, defer: () => {} }), hostGate: store.hostGate });
   const summaries = { 'v1:openlibrary:OL1W': known['v1:openlibrary:OL1W'], 'v1:openlibrary:OL2W': known['v1:openlibrary:OL2W'] };
@@ -321,10 +344,32 @@ test('result marking identifies results from the search that produced them, with
   assert.ok(Date.now() - startedAt < 1_500, 'no wait on a full resolution');
   assert.deepEqual(lines(response.text), [
     // The mark carries the matching row's own record address.
-    { type: 'mark', bookKey: 'v1:openlibrary:OL1W', answer: 'found', catalogUrl: 'https://rows.example/Record/R1' },
+    { type: 'mark', bookKey: 'v1:openlibrary:OL1W', answer: 'found', catalogUrl: 'https://rows.example/Record/R1', catalogLinkKind: 'record' },
     // No matching row is neither "not found" nor "couldn't check".
     { type: 'done', unchecked: ['v1:openlibrary:OL2W'], notFound: [], couldntCheck: [] },
   ]);
+});
+
+test('a mark carries a link only when the catalog said it is the book’s record, never a search or the catalog home', async () => {
+  for (const [row, expected] of [
+    [{ catalogUrl: 'https://rows.example/Search?q=matilda', catalogLinkKind: 'search' }, {}],
+    [{ catalogUrl: 'https://rows.example/Record/R1' }, {}],
+    [{ observation: { catalogUrl: 'https://rows.example/', catalogLinkKind: 'catalog' } }, {}],
+    [{ observation: { catalogUrl: 'https://rows.example/Record/R1', catalogLinkKind: 'record' } }, { catalogUrl: 'https://rows.example/Record/R1', catalogLinkKind: 'record' }],
+  ]) {
+    const config = { ...readCatalogStoreConfig({}), backgroundChecksEnabled: true };
+    const store = createCatalogStore({ config, db: null, defer: () => {}, policy: createCatalogPolicy({ policies: { schemaVersion: 1, libraries: {} } }) });
+    const rowsLibrary = { id: 'vufind:rows', platform: 'vufind', catalogUrl: 'https://rows.example/' };
+    const rowsDirectory = { ...directory, resolve: id => (id === rowsLibrary.id ? publicOf(rowsLibrary) : null), entry: id => (id === rowsLibrary.id ? rowsLibrary : null) };
+    const provider = { checkAvailability: async () => ({}), searchResultRows: async () => [{ recordId: 'R1', title: 'Matilda', authors: ['Dahl, Roald'], isbn: ISBN_B, ...row }] };
+    const lookup = createCatalogLookup({ providerFor: () => provider, robots: null, platforms: UNPACED, env: {},
+      recorder: createLookupRecorder({ answers: store.answers, health: store.health, policyFor: store.policyFor, defer: () => {} }), hostGate: store.hostGate });
+    const app = makeTestApp(express => {
+      express.use('/api/v2', createPublicV2Router({ directory: rowsDirectory, books, catalogStore: store, lookup, rateLimit: { limit: 1000 } }));
+    });
+    const response = await request(app).post('/api/v2/holdings/search').send({ libraryId: rowsLibrary.id, query: 'matilda', books: [{ bookKey: 'v1:openlibrary:OL1W' }] });
+    assert.deepEqual(lines(response.text)[0], { type: 'mark', bookKey: 'v1:openlibrary:OL1W', answer: 'found', ...expected });
+  }
 });
 
 test('the done line lists definite "not found" answers and books the catalog could not answer for, never an unmatched row', async () => {
@@ -333,12 +378,12 @@ test('the done line lists definite "not found" answers and books the catalog cou
   // Vega checks each result's ISBN: a book asked by its ISBN that is not
   // listed is a definite "not found"; an unreadable answer is "couldn't check".
   const { app } = harness({ observe: isbn => (isbn === ISBN_A ? { outcome: 'not_found', matchKind: 'none', recognizedExact: true }
-    : isbn === ISBN_B ? { outcome: 'available', matchKind: 'exact_isbn', recognizedExact: true, catalogUrl: 'https://catalog.example/record/9' }
+    : isbn === ISBN_B ? { outcome: 'available', matchKind: 'exact_isbn', recognizedExact: true, catalogUrl: 'https://catalog.example/record/9', catalogLinkKind: 'record' }
       : { outcome: 'unknown', matchKind: null }) });
   const response = await stream(app, { libraryId: vega.id, query: 'q', books: [{ bookKey: `v1:isbn:${ISBN_A}` }, { bookKey: 'v1:openlibrary:OL1W' },
     { bookKey: 'v1:openlibrary:OL2W' }] });
   assert.deepEqual(lines(response.body), [
-    { type: 'mark', bookKey: 'v1:openlibrary:OL1W', answer: 'found', catalogUrl: 'https://catalog.example/record/9' },
+    { type: 'mark', bookKey: 'v1:openlibrary:OL1W', answer: 'found', catalogUrl: 'https://catalog.example/record/9', catalogLinkKind: 'record' },
     { type: 'done', unchecked: ['v1:openlibrary:OL2W'], notFound: [`v1:isbn:${ISBN_A}`], couldntCheck: ['v1:openlibrary:OL2W'] },
   ]);
 

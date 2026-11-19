@@ -226,6 +226,7 @@ async function performCheck(base, isbn, deadlineAt, retry = true) {
     heldCopies: 0,
     callNumber: parsed.callNumber,
     url,
+    catalogLinkKind: 'record',
     metadataId: recordId,
   });
 }

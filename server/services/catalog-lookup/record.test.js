@@ -124,3 +124,11 @@ test('the recorder fails open, honours storeAnswers: false and emits only allowl
   failing.record({ entry: { id: 'lib' }, book, answer: { outcome: 'found', evidence: 'exact_isbn' } });
   await Promise.all(pending);
 });
+
+test('a stored link keeps where it goes; a row without a kind is never the book’s record', () => {
+  const [row] = answerRows({ libraryId: 'koha:a', book, answer: { outcome: 'found', evidence: 'exact_isbn', catalogUrl: 'https://c.example/search?q=1', catalogLinkKind: 'search' } });
+  assert.equal(row.catalogLinkKind, 'search');
+  assert.equal(storedAnswer([row], null).catalogLinkKind, 'search');
+  assert.equal(storedAnswer([{ ...row, catalogLinkKind: undefined }], null).catalogLinkKind, 'catalog');
+  assert.equal(storedAnswer([{ ...row, catalogLinkKind: 'record' }], null).catalogLinkKind, 'record');
+});

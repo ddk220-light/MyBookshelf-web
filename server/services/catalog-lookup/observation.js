@@ -22,6 +22,14 @@ export function safeCatalogUrl(value, library, entry) {
   }
 }
 
+// Where a catalog link goes: the book's own record, a search, or the
+// catalog. A link is the book's record only when the adapter says so; one
+// that says nothing is presented as the catalog, never as the record.
+export const CATALOG_LINK_KINDS = Object.freeze(['record', 'search', 'catalog']);
+export function linkKind(value) {
+  return CATALOG_LINK_KINDS.includes(value) ? value : 'catalog';
+}
+
 export function normalizeProviderObservation(value, { lookupKind, attemptedAt, library, entry }) {
   // Future provider adapters return this direct shape. `recognizedExact` is an
   // internal parser fact: it is required before a public not-found assertion.
@@ -67,7 +75,7 @@ export function normalizeProviderObservation(value, { lookupKind, attemptedAt, l
     const catalogUrl = library.capabilities.catalogLink && safeCatalogUrl(value.catalogUrl, library, entry);
     if (catalogUrl) {
       result.catalogUrl = catalogUrl;
-      result.catalogLinkKind = value.catalogLinkKind === 'search' ? 'search' : 'record';
+      result.catalogLinkKind = linkKind(value.catalogLinkKind);
     }
     const attribution = publicAttribution(value.attribution);
     if (attribution) result.attribution = attribution;
@@ -108,7 +116,7 @@ export function normalizeProviderObservation(value, { lookupKind, attemptedAt, l
   const catalogUrl = library.capabilities.catalogLink && safeCatalogUrl(value.url, library, entry);
   if (catalogUrl) {
     result.catalogUrl = catalogUrl;
-    result.catalogLinkKind = 'record';
+    result.catalogLinkKind = linkKind(value.catalogLinkKind);
   }
   return result;
 }

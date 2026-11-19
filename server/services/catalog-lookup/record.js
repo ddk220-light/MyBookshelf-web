@@ -1,5 +1,6 @@
 import { validateAndNormalize } from '../isbn.js';
 import { isHealthFailure } from './outcome.js';
+import { linkKind } from './observation.js';
 
 // What the lookup layer remembers (plan 4.3, 5.5). Three ports; the in-memory
 // versions below are used without a database, and server/catalog-store/
@@ -41,7 +42,7 @@ export function askedIdentity(libraryId, book = {}, editionScope = 'work') {
 export function storedAnswer(rows, asked) {
   const found = rows.find(row => row.answer === 'found');
   if (found) return { outcome: 'found', evidence: found.evidence, ...(found.matchedIsbn13 ? { matchedIsbn13: found.matchedIsbn13 } : {}),
-    ...(found.catalogUrl ? { catalogUrl: found.catalogUrl } : {}) };
+    ...(found.catalogUrl ? { catalogUrl: found.catalogUrl, catalogLinkKind: linkKind(found.catalogLinkKind) } : {}) };
   const negative = asked && rows.find(row => row.answer === 'not_found' && row.kind === asked.kind && row.value === asked.value);
   return negative ? { outcome: 'not_found', evidence: negative.evidence } : null;
 }
@@ -52,7 +53,7 @@ export function answerRows({ libraryId, book = {}, answer, profile, now = Date.n
   if (!answer || !['found', 'not_found'].includes(answer.outcome)) return [];
   const expiresAt = now + ANSWER_TTL_MS;
   const row = (kind, value, extra = {}) => ({ libraryId, kind, value, answer: answer.outcome, evidence: answer.evidence,
-    ...(answer.catalogUrl ? { catalogUrl: answer.catalogUrl } : {}), expiresAt, ...extra });
+    ...(answer.catalogUrl ? { catalogUrl: answer.catalogUrl, catalogLinkKind: linkKind(answer.catalogLinkKind) } : {}), expiresAt, ...extra });
   const isbn13 = validateAndNormalize(book.isbn13 || '');
   const workId = WORK_ID.test(book.workId || '') ? book.workId : null;
   const workIsbns = new Set(profile?.isbns || []);

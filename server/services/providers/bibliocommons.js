@@ -100,6 +100,7 @@ async function lookupPublicCatalog(slug, isbn, title, author, { skipEmptyTitle =
       const base = {
         callNumber: bibInfo?.briefInfo?.callNumber || null,
         catalogUrl: url,
+        catalogLinkKind: 'record',
         metadataId,
         matchKind: isbnMatch?.bibInfo?.briefInfo?.isbns?.some(value => validateAndNormalize(value) === validateAndNormalize(isbn)) ? 'exact_isbn' : 'possible_match',
       };
@@ -131,7 +132,7 @@ export async function checkAvailability(slug, isbn, title, author) {
   return normalizeAvailability({
     status: result.status, branch: result.branch, copies: result.copies,
     availableCopies: result.availableCopies, heldCopies: result.heldCopies,
-    callNumber: result.callNumber, url: result.catalogUrl, metadataId: result.metadataId,
+    callNumber: result.callNumber, url: result.catalogUrl, catalogLinkKind: 'record', metadataId: result.metadataId,
   });
 }
 
@@ -152,6 +153,7 @@ export async function checkPublicAvailability(slug, isbn, title, author) {
     totalCopies: result.copies,
     callNumber: result.callNumber,
     catalogUrl: result.catalogUrl,
+    catalogLinkKind: 'record',
     locations: result.locations,
   };
 }
@@ -177,9 +179,9 @@ function printRows(slug, query) {
       const catalogUrl = `https://${slug}.bibliocommons.com/v2/record/${encodeURIComponent(id)}`;
       const availability = bib.availability;
       return [{ recordId: id, title: [info.title, info.subtitle].filter(Boolean).join(': '), authors: info.authors || [],
-        isbns: info.isbns || [], language: info.primaryLanguage, format: PRINT_FORMATS[info.format], catalogUrl,
+        isbns: info.isbns || [], language: info.primaryLanguage, format: PRINT_FORMATS[info.format], catalogUrl, catalogLinkKind: 'record',
         observation: { outcome: availability?.status === 'AVAILABLE' ? 'available' : availability?.availableCopies === 0 && availability?.totalCopies > 0 ? 'none_available' : 'in_catalog',
-          matchKind: 'possible_match', catalogUrl,
+          matchKind: 'possible_match', catalogUrl, catalogLinkKind: 'record',
           ...(Number.isInteger(availability?.availableCopies) ? { availableCopies: availability.availableCopies } : {}),
           ...(Number.isInteger(availability?.totalCopies) ? { totalCopies: availability.totalCopies } : {}),
           callNumber: info.callNumber } }];
