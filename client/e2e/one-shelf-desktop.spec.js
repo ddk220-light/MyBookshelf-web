@@ -378,6 +378,7 @@ test.describe('Desktop layout', () => {
     await page.getByRole('button', { name: 'Back to my reading shelf', exact: true }).click();
     await expect(page.getByRole('heading', { level: 1, name: 'My reading shelf' })).toBeVisible();
 
+    await expect.poll(() => page.evaluate(() => history.state?.usr?.search ?? null)).toBeNull();
     await input.fill('nothing at all');
     await input.press('Enter');
     await expect(page.getByRole('heading', { name: 'No books found' })).toBeVisible();
@@ -702,33 +703,36 @@ test.describe('Desktop layout follow-up', () => {
     const mark = page => page.locator('.home').evaluate(element => { element.dataset.kept = 'yes'; });
     const kept = page => page.locator('.home[data-kept="yes"]');
     const rail = page => page.getByRole('complementary', { name: 'MyBookshelf' });
-    // The first book in view under the top bar (the same book stays first in view).
-    const firstInView = page => page.evaluate(() => {
+    // Compare the same cover's vertical position even if the new row starts
+    // with a different cover. Allow the 8 px row gap and subpixel rounding.
+    const shelfPosition = (page, key = null) => page.evaluate(key => {
       const scroller = document.querySelector('.desk-shelf') || document.querySelector('main');
       const top = Math.max(scroller.getBoundingClientRect().top, document.querySelector('.home-top').getBoundingClientRect().bottom);
-      const element = [...scroller.querySelectorAll('[data-shelf-key]')].find(item => item.getBoundingClientRect().bottom > top);
+      const element = [...scroller.querySelectorAll('[data-shelf-key]')].find(item => key
+        ? item.dataset.shelfKey === key : item.getBoundingClientRect().bottom > top);
       return { key: element.dataset.shelfKey, offset: Math.round(element.getBoundingClientRect().top - top), scrolled: scroller.scrollTop };
-    });
+    }, key);
 
     test('the shelf stays drawn: scroll place, typed text and focus are kept both ways', async ({ page }) => {
       await setup(page, { saved: LONG });
       await page.goto('/');
       await expect(page.getByRole('button', { name: 'Settings' })).toBeVisible();
       await mark(page);
-      await page.locator('main').evaluate(element => { element.scrollTop = 1500; });
-      const before = await firstInView(page);
-      expect(before.scrolled).toBe(1500);
       const input = page.getByRole('searchbox', { name: 'Search for a book' });
       await input.fill('innov');
       await expect(input).toBeFocused();
+      // WebKit may scroll when the sticky search input receives focus.
+      await page.locator('main').evaluate(element => { element.scrollTop = 1500; });
+      const before = await shelfPosition(page);
+      expect(before.scrolled).toBe(1500);
 
       await page.setViewportSize(RAIL);
       await expect(rail(page)).toBeVisible();
       await expect(kept(page)).toHaveCount(1);
       await expect(input).toHaveValue('innov');
       await expect(input).toBeFocused();
-      await expect.poll(async () => (await firstInView(page)).key).toBe(before.key);
-      expect((await firstInView(page)).scrolled).toBeGreaterThan(1000);
+      await expect.poll(async () => Math.abs((await shelfPosition(page, before.key)).offset - before.offset)).toBeLessThanOrEqual(10);
+      expect((await shelfPosition(page)).scrolled).toBeGreaterThan(1000);
 
       await page.setViewportSize(PHONE_TALL);
       await expect(page.getByRole('button', { name: 'Settings' })).toBeVisible();
@@ -736,7 +740,7 @@ test.describe('Desktop layout follow-up', () => {
       await expect(kept(page)).toHaveCount(1);
       await expect(input).toHaveValue('innov');
       await expect(input).toBeFocused();
-      await expect.poll(async () => (await firstInView(page)).key).toBe(before.key);
+      await expect.poll(async () => Math.abs((await shelfPosition(page, before.key)).offset - before.offset)).toBeLessThanOrEqual(10);
     });
 
     test('a search still running, then its results, are kept', async ({ page }) => {

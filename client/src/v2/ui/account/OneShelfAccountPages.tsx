@@ -486,7 +486,9 @@ export function DeletionDonePage() {
   if (receipt?.busy && receipt.status === 'unknown') return <AccountForm title="Deleting…" busy><p role="status" className="visually-hidden">Deleting your account</p></AccountForm>;
   const confirmed = receipt && ['accepted', 'pending', 'cleaned'].includes(receipt.status);
   if (confirmed) return <AccountForm title="Account deleted">
-    <p>We sent one email to confirm it. The copy of your reading shelf in this browser was removed too.</p>
+    <p>Access to your account has ended. We’ll email you to confirm.</p>
+    {receipt.status === 'pending' && <p role="status">We’re still recording your request for cleanup.</p>}
+    {receipt.status === 'accepted' && <p role="status">Your account data is scheduled for cleanup.</p>}
     <Link className="home-button" to="/" replace>Back to my reading shelf</Link>
   </AccountForm>;
   return <AccountForm title="Couldn’t confirm">

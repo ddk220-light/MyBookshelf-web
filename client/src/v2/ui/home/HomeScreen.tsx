@@ -161,10 +161,12 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null, on
     const { search: _search, ...rest } = value || {};
     return Object.keys(rest).length ? rest : null;
   };
+  const searchClosedByControl = useRef(false);
   const closeSearch = useCallback((focus: 'input' | 'shelf' | 'none') => {
     search.cancel();
     setQuery('');
     const current = latestState.current;
+    searchClosedByControl.current = Boolean(current?.search);
     if (current?.search?.pushed) navigate(-1);
     else if (current?.search) navigate(location.pathname, { replace: true, state: withoutSearch(current) });
     if (focus === 'none') return;
@@ -179,7 +181,12 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null, on
   const searchWasOpen = useRef(Boolean(searchEntry));
   useEffect(() => {
     const open = Boolean(searchEntry);
-    if (searchWasOpen.current && !open) { search.cancel(); setQuery(''); }
+    if (searchWasOpen.current && !open) {
+      // The button clears the search before navigating back. Do not clear
+      // again when that navigation arrives, as the reader may be typing.
+      if (!searchClosedByControl.current) { search.cancel(); setQuery(''); }
+      searchClosedByControl.current = false;
+    }
     searchWasOpen.current = open;
   }, [searchEntry, search.cancel]);
   // A search entry whose results are gone (the page was reloaded) is dropped.
@@ -188,7 +195,8 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null, on
   }, [behind, searchEntry, search.status, remembered, navigate, location.pathname, routeState]);
   // Back from a book page restores the text that found these results.
   useEffect(() => {
-    if (searchEntry?.candidateId && candidatesFor(searchEntry.candidateId) && search.status === 'idle') setQuery(queryForCandidates(searchEntry.candidateId));
+    if (!searchClosedByControl.current && searchEntry?.candidateId && candidatesFor(searchEntry.candidateId) && search.status === 'idle')
+      setQuery(queryForCandidates(searchEntry.candidateId));
   }, [searchEntry?.candidateId, search.status]);
 
   const submit = async (text: string) => {

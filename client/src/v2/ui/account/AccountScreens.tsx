@@ -277,15 +277,15 @@ export function DeleteAccountPage() {
   return <AccountForm title="Delete your account" busy={busy} noValidate onSubmit={event => { void submit(event); }}
     lede="This cannot be undone. Please read what happens first."
     after={<p className="account-fine">We will send one email to confirm the account was deleted.</p>}>
-    <section className="account-deleted-list" aria-labelledby="deleted-now">
-      <h2 id="deleted-now">Deleted straight away</h2>
+    <section className="account-deleted-list" aria-labelledby="deleted-data">
+      <h2 id="deleted-data">What will be deleted</h2>
       <ul>
         <li>Your email and password</li>
-        <li>Your {plural(saved, 'saved book', 'saved books')} and your library choice</li>
+        <li>{saved ? `Your ${plural(saved, 'saved book', 'saved books')} and your library choice` : 'Your library choice'}</li>
         <li>Your Viewed before list</li>
         <li>The copy of your reading shelf kept in this browser</li>
-        <li>You are logged out on every device</li>
       </ul>
+      <p>You’ll be logged out on every device right away. Live account data is scheduled for removal within 24 hours.</p>
     </section>
     <section className="account-kept-list" aria-labelledby="kept-briefly">
       <h2 id="kept-briefly">What stays for a short time</h2>

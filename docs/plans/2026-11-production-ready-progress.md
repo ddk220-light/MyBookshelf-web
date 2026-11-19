@@ -28,9 +28,20 @@ refresh without changing its clear-history generation.
 - Node 22 type checking, 405 client tests, the production build and 53 tools
   tests (including 9 SEO tests) passed. The complete server suite passed all
   905 tests against disposable PostgreSQL 16 with zero skips.
-- Automated Chromium, mobile Chromium and WebKit journeys use fixtures.
-  The account journeys use the real local API, PostgreSQL and a synthetic
-  mail outbox.
+- The Chromium, mobile Chromium and WebKit run passed 474 journeys, skipped
+  216 flag- or browser-gated cases and exposed three desktop search/resize
+  failures. After the fixes, both desktop journeys passed on both engines
+  (four cases). These were targeted reruns.
+- All 16 account journeys passed on mobile Chromium. On desktop Chromium,
+  15 passed in the full account run and the email-link/reset journey passed
+  on rerun after a selector fix. Deletion and the small account screens
+  also passed a final targeted rerun. These use the real local API, PostgreSQL
+  and a synthetic mail outbox.
+- The loading card avoids giving a 30-second upper bound because some
+  catalogs have longer limits. The deletion screens describe immediate
+  access revocation, queued email and scheduled data cleanup.
+- Discovery sends an identifying User-Agent and the in-process pacer allows
+  up to three starts per second. See the [Open Library API limits](https://openlibrary.org/developers/api).
 - Before release, complete the two-phone run on the finished build and the
   R03 account review. Recheck the production and preview configuration, rotate
   the three catalog role passwords, set the corrected production database
@@ -38,6 +49,13 @@ refresh without changing its clear-history generation.
   persistence, real email, server-region timings and the post-deployment
   checks remain to be measured. No branch was pushed and no deployment was
   started.
+
+### Proposed project guidance
+
+- The reading shelf opens at `/`. The old `/app/shelf` address forwards to it.
+- The catalog store is separate from accounts. It can retain a reader's
+  optional name and email with a library request or problem report for 90
+  days. Those details have no link to the reader's account or usage log.
 
 The following sections record the saved handoff before integration.
 

@@ -380,7 +380,7 @@ describe('account screens', () => {
     app('/app/settings/account/delete');
     expect(await screen.findByRole('heading', { name: 'Delete your account' })).toBeInTheDocument();
     expect(screen.getByText('This cannot be undone. Please read what happens first.')).toBeInTheDocument();
-    const gone = screen.getByRole('region', { name: 'Deleted straight away' });
+    const gone = screen.getByRole('region', { name: 'What will be deleted' });
     expect(within(gone).getByText('The copy of your reading shelf kept in this browser')).toBeInTheDocument();
     expect(within(screen.getByRole('region', { name: 'What stays for a short time' })).getByText('Backup copies, which expire within 30 days.')).toBeInTheDocument();
     expect(screen.getByText('We will send one email to confirm the account was deleted.')).toBeInTheDocument();
