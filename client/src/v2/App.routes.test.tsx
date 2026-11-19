@@ -69,7 +69,7 @@ describe('the one-shelf app', () => {
     stubApi();
     open('/no-such-page');
     expect(await screen.findByRole('heading', { name: 'Page not found' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'My shelf' })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: 'My reading shelf' })).toHaveAttribute('href', '/');
   });
 });
 
@@ -134,7 +134,7 @@ describe('old addresses', () => {
   it('/app/settings: the shelf with the side panel; #privacy opens Privacy', async () => {
     stubApi();
     const view = open('/app/settings');
-    expect(await screen.findByRole('dialog', { name: 'Account and settings' })).toBeInTheDocument();
+    expect(await screen.findByRole('dialog', { name: 'Settings' })).toBeInTheDocument();
     await at(/^\/$/);
     view.unmount();
     open('/app/settings#privacy');

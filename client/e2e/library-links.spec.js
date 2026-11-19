@@ -98,7 +98,7 @@ test('a shared book link survives reload and Back returns to the shelf', async (
   await page.route('**/api/v2/holdings/check', route => route.fulfill({ json: { answer: 'found' } }));
   await page.goto(pilots[0].selectionPath + '?book=' + encodeURIComponent(BOOK.bookKey));
   await expect(page.getByRole('heading', { name: BOOK.title })).toBeVisible();
-  await expect(page.getByRole('group', { name: 'Found in ' + pilots[0].name })).toBeVisible();
+  await expect(page.getByRole('group', { name: 'In your library' })).toBeVisible();
   await page.reload();
   await expect(page.getByRole('heading', { name: BOOK.title })).toBeVisible();
   await page.getByRole('link', { name: 'Back' }).click();

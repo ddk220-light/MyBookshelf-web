@@ -61,7 +61,7 @@ describe('account forms on desktop', () => {
     expect(screen.getByLabelText('Email')).toHaveValue('reader@example.com');
     fireEvent.keyDown(screen.getByRole('button', { name: 'Close' }), { key: 'Escape' });
     await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/'));
-    expect(await screen.findByRole('heading', { level: 1, name: 'My shelf' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { level: 1, name: 'My reading shelf' })).toBeInTheDocument();
     expect(container.querySelector('.desk-bare')).toBeNull();
   });
 });
@@ -94,7 +94,7 @@ describe('desk layout at 1440 px', () => {
     expect(within(column).getByRole('link', { name: 'Privacy' })).toHaveAttribute('href', '/app/privacy');
     expect(screen.queryByRole('button', { name: 'Scan a barcode' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /Scan the barcode/ })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Account and settings' })).not.toBeInTheDocument();
+    expect(within(column).getByRole('button', { name: 'Settings' })).toBeInTheDocument();
     // No empty shelves: one bay with the five suggested books (DeskSuggestFirst board), under the larger search bar.
     const search = screen.getByRole('searchbox', { name: 'Search for a book' });
     expect(search.closest('.desk-top')).toHaveClass('home-top-cold');
@@ -111,7 +111,7 @@ describe('desk layout at 1440 px', () => {
     stubApi();
     seed(Array.from({ length: 8 }, (_, index) => book(index + 1)), LIBRARY.id);
     renderAt('/');
-    expect(await screen.findByRole('heading', { name: 'My shelf' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'My reading shelf' })).toBeInTheDocument();
     // 8 saved and 5 suggested books, six a bay: 6, 6 and 1. Suggestions arrive
     // after the saved books are drawn.
     await waitFor(() => expect(document.querySelectorAll('.home-bookcase .cover3d.is-suggested')).toHaveLength(5));
@@ -121,7 +121,7 @@ describe('desk layout at 1440 px', () => {
     expect(bays[1].querySelectorAll('.cover3d.is-suggested')).toHaveLength(4);
     expect([...bays].map(bay => bay.querySelectorAll('.suggested-label').length)).toEqual([0, 4, 1]);
     expect(screen.getByText('8 books')).toBeInTheDocument();
-    expect(screen.queryByRole('heading', { name: 'Take your shelf with you' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Take your reading shelf with you' })).not.toBeInTheDocument();
     expect(await screen.findByText(LIBRARY.name)).toBeInTheDocument();
   });
 

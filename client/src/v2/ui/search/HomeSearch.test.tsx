@@ -49,17 +49,17 @@ describe('search on the shelf', () => {
     const searches = stubApi();
     seed([KALAM, NARAYAN]);
     renderHome();
-    expect(await screen.findByRole('heading', { name: 'My shelf' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'My reading shelf' })).toBeInTheDocument();
     await searchFor('wings of fire');
     const results = await screen.findByRole('region', { name: 'Search results' });
     const links = within(results).getAllByRole('link');
     expect(links.map(link => link.getAttribute('aria-label'))).toEqual([
-      'Wings of Fire by A. P. J. Abdul Kalam, on my shelf', 'The Dragonet Prophecy by Tui T. Sutherland', 'Wings of Fire by Dale Brown']);
+      'Wings of Fire by A. P. J. Abdul Kalam, on my reading shelf', 'The Dragonet Prophecy by Tui T. Sutherland', 'Wings of Fire by Dale Brown']);
     expect(results.querySelectorAll('.cover-badge-mine')).toHaveLength(1);
     expect(results.querySelectorAll('.cover-badge-library')).toHaveLength(0);
-    // Nothing written under the books.
-    for (const item of results.querySelectorAll('.bay-books > li')) expect(item.children).toHaveLength(1);
-    expect(screen.queryByRole('heading', { name: 'My shelf' })).not.toBeInTheDocument();
+    // Each cover includes visible bibliographic text.
+    expect([...results.querySelectorAll('.result-caption strong')].map(title => title.textContent)).toEqual(['Wings of Fire', 'The Dragonet Prophecy', 'Wings of Fire']);
+    expect(screen.queryByRole('heading', { name: 'My reading shelf' })).not.toBeInTheDocument();
     expect(screen.getByText('3 books', { selector: '[role="status"]' })).toBeInTheDocument();
     // Public data only: no library scope.
     expect(searches).toHaveLength(1);
@@ -73,8 +73,8 @@ describe('search on the shelf', () => {
     expect(within(results).getAllByRole('link')[0]).toHaveTextContent('Wings of Fire');
     expect(results.querySelectorAll('.shelf-list-item')).toHaveLength(3);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Back to my shelf' }));
-    expect(await screen.findByRole('heading', { name: 'My shelf' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Back to my reading shelf' }));
+    expect(await screen.findByRole('heading', { name: 'My reading shelf' })).toBeInTheDocument();
     expect(screen.getByRole('searchbox', { name: 'Search for a book' })).toHaveValue('');
     expect(screen.getByTestId('location')).toHaveTextContent(/^\/\|null$/);
   });
@@ -86,14 +86,14 @@ describe('search on the shelf', () => {
     await searchFor('wings');
     expect(await screen.findByRole('region', { name: 'Searching' })).toBeInTheDocument();
     expect(document.querySelectorAll('.ghost-book')).toHaveLength(9);
-    fireEvent.click(screen.getByRole('button', { name: 'Clear search and go back to my shelf' }));
-    expect(await screen.findByRole('heading', { name: 'My shelf' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Clear search and go back to my reading shelf' }));
+    expect(await screen.findByRole('heading', { name: 'My reading shelf' })).toBeInTheDocument();
     expect(searches[0].signal?.aborted).toBe(true);
 
     await searchFor('guide');
     await screen.findByRole('region', { name: 'Searching' });
     fireEvent.change(screen.getByRole('searchbox', { name: 'Search for a book' }), { target: { value: '' } });
-    expect(await screen.findByRole('heading', { name: 'My shelf' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'My reading shelf' })).toBeInTheDocument();
     expect(searches[1].signal?.aborted).toBe(true);
   });
 
@@ -118,7 +118,7 @@ describe('search on the shelf', () => {
     renderHome();
     await searchFor('nothing');
     expect(await screen.findByRole('heading', { name: 'No books found' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Scan the barcode' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Scan the book’s barcode' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'List view' })).not.toBeInTheDocument();
 
     await searchFor('wings of fire');

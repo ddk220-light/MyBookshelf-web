@@ -9,6 +9,6 @@
 export function EmptyShelf() {
   return <div className="empty-shelf">
     <h1>Ready to search</h1>
-    <p>Add books to your shelf and search in your library</p>
+    <p>Add books to your reading shelf and search in your library</p>
   </div>;
 }

@@ -24,11 +24,11 @@ import { ACCOUNT_ENTRY_PATH } from './ui/desk/layoutMode';
 const AdminPage = lazy(() => import('./ui/admin/AdminPage'));
 
 function NativeAppNotice() {
-  return <section className="page-section prose"><h1>Find your next read</h1><p>No sign-in needed.</p><Link className="button-link" to="/">Open my shelf</Link></section>;
+  return <section className="page-section prose"><h1>Find your next read</h1><p>No sign-in needed.</p><Link className="button-link" to="/">Open my reading shelf</Link></section>;
 }
 
 function NotFoundPage() {
-  // The frame's "My shelf" link above the heading leads back.
+  // The frame's "My reading shelf" link above the heading leads back.
   return <section className="page-section prose"><h1>Page not found</h1></section>;
 }
 

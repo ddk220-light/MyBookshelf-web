@@ -10,7 +10,7 @@ type OverlayState = Record<string, unknown> & { overlay?: string };
  * replaces the entry without the overlay. Any other history state (a book's
  * navigation state, a search) is kept.
  */
-export function useHistoryOverlay(name: 'library') {
+export function useHistoryOverlay(name: 'library' | 'panel') {
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as OverlayState | null;

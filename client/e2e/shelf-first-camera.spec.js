@@ -22,7 +22,7 @@ test('a failed saved library never blocks the shelf or book lookup', async ({ pa
   await search.fill(BOOK.isbn13);
   await search.press('Enter');
   await expect(page.getByRole('heading', { name: BOOK.title })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Add to my shelf' })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Add to my reading shelf' })).toBeEnabled();
 });
 
 for (const [nativeSupport, rotated] of [['missing', false], ['formats', false], ['broken', false], ['missing', true]]) {

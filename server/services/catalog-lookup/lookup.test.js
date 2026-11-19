@@ -468,16 +468,20 @@ function backgroundHarness({ provider, deadlineMs = 100 }) {
 const slowLibrary = { id: 'vega:slow', platform: 'vega', catalogUrl: 'https://slow.example/' };
 const slowBook = { bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466' };
 
-test('a book-page check still running at its deadline answers "couldn’t check", then finishes and stores its answer for the next look', async () => {
+test('a book-page check still running at its deadline answers "couldn’t check", then finishes and stores its answer for the next look', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout', 'Date'] });
   let requests = 0;
-  const provider = { checkAvailability: async () => { requests++; await new Promise(resolve => setTimeout(resolve, 150));
-    return { outcome: 'available', matchKind: 'exact_isbn', recognizedExact: true }; } };
+  const started = Promise.withResolvers();
+  const observation = Promise.withResolvers();
+  const provider = { checkAvailability: () => { requests++; started.resolve(); return observation.promise; } };
   const { lookup, answers, health, settle } = backgroundHarness({ provider });
-  const startedAt = Date.now();
-  const first = await lookup.lookupBook({ library: slowLibrary, book: slowBook, editionScope: 'exact', background: true });
+  const reply = lookup.lookupBook({ library: slowLibrary, book: slowBook, editionScope: 'exact', background: true });
+  await started.promise;
+  t.mock.timers.tick(100);
+  const first = await reply;
   assert.deepEqual([first.outcome, first.reason], ['couldnt_check', 'timeout']);
-  assert.ok(Date.now() - startedAt < 140, 'the reader is answered at the usual deadline');
   assert.equal((await answers.readAnswers(slowLibrary.id, [{ kind: 'isbn13', value: slowBook.isbn13 }])).length, 0);
+  observation.resolve({ outcome: 'available', matchKind: 'exact_isbn', recognizedExact: true });
   await settle();
   // The same check finished within its own (longer) deadline and stored "found".
   assert.equal(requests, 1, 'one check, not a second one');

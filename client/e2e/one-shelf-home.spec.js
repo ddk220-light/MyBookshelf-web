@@ -26,6 +26,19 @@ const bookUrl = new RegExp('/app/books/' + encodeURIComponent(BOOK.bookKey).repl
 const axe = page => new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
 
 test.describe('One-shelf home', () => {
+  test('a new reader can dismiss the library prompt and find it again in Settings', async ({ page }) => {
+    await setup(page);
+    await page.goto('/');
+    const prompt = page.getByRole('region', { name: 'Choose your library' });
+    await expect(prompt.getByRole('button', { name: 'Find my library' })).toBeVisible();
+    await prompt.getByRole('button', { name: 'Not now' }).click();
+    await page.reload();
+    await expect(prompt).toHaveCount(0);
+    await page.getByRole('button', { name: 'Settings' }).click();
+    await page.getByRole('dialog', { name: 'Settings' }).getByRole('button', { name: 'Choose a library' }).click();
+    await expect(page.getByRole('dialog', { name: 'Find your library' })).toBeVisible();
+  });
+
 
   test('first open: no empty shelves, search bar, no tab bar, accessible', async ({ page }) => {
     await setup(page);
@@ -53,7 +66,7 @@ test.describe('One-shelf home', () => {
     const saved = Array.from({ length: 8 }, (_, index) => book(index + 1));
     await setup(page, { saved, recent: [book(20), book(21), book(22)], libraryId: LINKED_LIBRARY.id, found: [saved[7].bookKey] });
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'My reading shelf' })).toBeVisible();
     await expect(page.locator('.home-library')).toHaveText(LINKED_LIBRARY.name);
     await expect(page.getByRole('link', { name: 'Shelf book 8 by Author 8, in Anna Centenary Library' })).toBeVisible();
     await expect(page.locator('.cover-badge-library')).toHaveCount(1);
@@ -62,7 +75,7 @@ test.describe('One-shelf home', () => {
     await expect(page.locator('.cover3d:not(.is-suggested)')).toHaveCount(8);
     await expect(page.locator('.cover3d.is-suggested')).toHaveCount(5);
     await expect(page.locator('.my-shelf-heading span')).toHaveText('8 books');
-    await expect(page.getByRole('heading', { name: 'Take your shelf with you' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Take your reading shelf with you' })).toBeVisible();
     const viewed = page.getByRole('region', { name: 'Viewed before' });
     await expect(viewed.getByRole('link')).toHaveCount(3);
     // Every control is at least 44 px; spines included.
@@ -75,13 +88,13 @@ test.describe('One-shelf home', () => {
     for (const spine of await viewed.getByRole('link').all()) expect((await spine.boundingBox()).width).toBeGreaterThanOrEqual(44);
     expect((await axe(page)).violations).toEqual([]);
 
-    await page.getByRole('button', { name: 'Not now' }).click();
+    await page.getByRole('region', { name: 'Take your reading shelf with you' }).getByRole('button', { name: 'Not now' }).click();
     await page.getByRole('button', { name: 'List view' }).click();
     await expect(page.locator('.shelf-list-item')).toHaveCount(13);
     await expect(page.locator('.shelf-list-cover.is-suggested')).toHaveCount(5);
     await page.reload();
     await expect(page.getByRole('button', { name: 'List view' })).toHaveAttribute('aria-pressed', 'true');
-    await expect(page.getByRole('heading', { name: 'Take your shelf with you' })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Take your reading shelf with you' })).toHaveCount(0);
     expect((await axe(page)).violations).toEqual([]);
 
     await viewed.getByRole('button', { name: 'Clear' }).click();
@@ -93,28 +106,28 @@ test.describe('One-shelf home', () => {
     await expect(page).toHaveURL(/\/app\/books\//);
   });
 
-  test('keyboard order and the side panel: focus trap, Escape and Back close it, focus returns', async ({ page }) => {
+  test('keyboard order and the side panel: focus trap, Escape and Back close it, focus returns', async ({ page, browserName }) => {
     await setup(page, { saved: [book(1), book(2)], libraryId: LINKED_LIBRARY.id });
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'My reading shelf' })).toBeVisible();
     await page.locator('body').click({ position: { x: 1, y: 1 } });
     const order = [];
     for (let index = 0; index < 5; index += 1) {
-      await page.keyboard.press('Tab');
+      await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
       order.push(await page.evaluate(() => document.activeElement?.getAttribute('aria-label') || document.activeElement?.textContent?.trim()));
     }
-    const from = order.indexOf('Account and settings');
-    expect(order.slice(from, from + 4)).toEqual(['Account and settings', 'MyBookshelf', 'Search for a book', 'Scan a barcode']);
+    const from = order.indexOf('Settings');
+    expect(order.slice(from, from + 4)).toEqual(['Settings', 'MyBookshelf', 'Search for a book', 'Scan a barcode']);
 
-    const person = page.getByRole('button', { name: 'Account and settings' });
+    const person = page.getByRole('button', { name: 'Settings' });
     await person.click();
-    const panel = page.getByRole('dialog', { name: 'Account and settings' });
+    const panel = page.getByRole('dialog', { name: 'Settings' });
     await expect(panel).toBeVisible();
     await expect(panel.getByRole('button', { name: 'Close' })).toBeFocused();
     await expect(panel.getByText(LINKED_LIBRARY.name)).toBeVisible();
     expect((await axe(page)).violations).toEqual([]);
     for (let index = 0; index < 14; index += 1) {
-      await page.keyboard.press('Tab');
+      await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
       expect(await page.evaluate(() => Boolean(document.activeElement?.closest('dialog')))).toBe(true);
     }
     await page.keyboard.press('Escape');
@@ -139,7 +152,7 @@ test.describe('One-shelf home', () => {
     await page.goto('/');
     await expect(page.locator('.cover-badge-library')).toHaveCount(1);
     expect((await new AxeBuilder({ page }).withRules(['color-contrast']).analyze()).violations).toEqual([]);
-    await page.getByRole('button', { name: 'Account and settings' }).click();
+    await page.getByRole('button', { name: 'Settings' }).click();
     expect((await new AxeBuilder({ page }).withRules(['color-contrast']).analyze()).violations).toEqual([]);
   });
 
@@ -169,7 +182,7 @@ test.describe('One-shelf home', () => {
     await page.locator('#main-content').evaluate((screen, top) => { screen.scrollTop = top; }, 2000);
     await expect(place).toBeInViewport();
     await turn(false);
-    await expect(page.getByRole('button', { name: 'Account and settings' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Settings' })).toBeVisible();
     await expect(page.getByRole('navigation', { name: 'Library and account' })).toHaveCount(0);
     await expect(place).toBeInViewport();
     await turn(true);
@@ -206,7 +219,7 @@ test.describe('One-shelf home', () => {
   test('reduced motion: the panel does not slide', async ({ page }) => {
     await setup(page);
     await page.goto('/');
-    await page.getByRole('button', { name: 'Account and settings' }).click();
+    await page.getByRole('button', { name: 'Settings' }).click();
     expect(await page.locator('.side-panel').evaluate(element => getComputedStyle(element).animationName)).toBe('none');
   });
 });
@@ -229,14 +242,14 @@ test.describe('One-shelf search', () => {
     await setup(page, { saved: [MINE, book(2)], libraryId: LINKED_LIBRARY.id });
     const queries = searchRequests(page);
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'My reading shelf' })).toBeVisible();
     await searchFor(page, 'innovator');
     const results = page.getByRole('region', { name: 'Search results' });
     await expect(results.getByRole('link')).toHaveCount(2);
-    await expect(results.getByRole('link').first()).toHaveAttribute('aria-label', BOOK.title + ' by ' + BOOK.authors[0] + ', on my shelf');
+    await expect(results.getByRole('link').first()).toHaveAttribute('aria-label', BOOK.title + ' by ' + BOOK.authors[0] + ', on my reading shelf, Not in your library');
     await expect(results.locator('.cover-badge-mine')).toHaveCount(1);
     await expect(results.locator('.cover-badge-library')).toHaveCount(0);
-    await expect(page.getByRole('heading', { name: 'My shelf' })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'My reading shelf' })).toHaveCount(0);
     // Public data only; the text is nowhere but the field.
     expect(queries).toEqual([{ query: 'innovator' }]);
     expect(page.url()).toMatch(/\/\/[^/]+\/$/);
@@ -256,15 +269,15 @@ test.describe('One-shelf search', () => {
     expect(queries).toHaveLength(1);
 
     await page.goBack();
-    await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'My reading shelf' })).toBeVisible();
     await expect(page.getByRole('searchbox', { name: 'Search for a book' })).toHaveValue('');
     await searchFor(page, 'innovator');
     await expect(results.getByRole('link')).toHaveCount(2);
-    await page.getByRole('button', { name: 'Back to my shelf', exact: true }).click();
-    await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
+    await page.getByRole('button', { name: 'Back to my reading shelf', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'My reading shelf' })).toBeVisible();
     await searchFor(page, 'innovator');
-    await page.getByRole('button', { name: 'Clear search and go back to my shelf' }).click();
-    await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
+    await page.getByRole('button', { name: 'Clear search and go back to my reading shelf' }).click();
+    await expect(page.getByRole('heading', { name: 'My reading shelf' })).toBeVisible();
     await expect(page.getByRole('searchbox', { name: 'Search for a book' })).toBeFocused();
   });
 
@@ -288,7 +301,7 @@ test.describe('One-shelf search', () => {
     await searchFor(page, 'wngs fyre kalm');
     await expect(page.getByRole('heading', { name: 'No books found' })).toBeVisible();
     release?.();
-    await expect(page.getByRole('button', { name: 'Scan the barcode' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Scan the book’s barcode' })).toBeVisible();
     expect((await axe(page)).violations).toEqual([]);
 
     answer = 'fail';
@@ -344,9 +357,9 @@ test.describe('One-shelf search', () => {
       expect(await page.locator('.stage-results').evaluate(element => getComputedStyle(element).animationName)).toBe('stage-from-above');
       await expect(page.locator('.shelf-stage.is-sliding')).toHaveCount(0);
       await expect(page.locator('.stage-pane')).toHaveCount(1);
-      await page.getByRole('button', { name: 'Back to my shelf', exact: true }).click();
+      await page.getByRole('button', { name: 'Back to my reading shelf', exact: true }).click();
       expect(await page.locator('.stage-shelf').evaluate(element => getComputedStyle(element).animationName)).toBe('stage-from-below');
-      await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'My reading shelf' })).toBeVisible();
     });
   });
 });
@@ -399,7 +412,7 @@ test.describe('One-shelf scan', () => {
     await expect(dialog).toBeHidden();
     expect(await track(page)).toBe('ended');
     await expect(scanButton).toBeFocused();
-    await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'My reading shelf' })).toBeVisible();
 
     await scanButton.click();
     await expect.poll(() => track(page)).toBe('live');
@@ -500,12 +513,12 @@ test.describe('One-shelf scan', () => {
     const input = page.getByRole('searchbox', { name: 'Search for a book' });
     await input.fill('wngs fyre');
     await input.press('Enter');
-    await page.getByRole('button', { name: 'Scan the barcode' }).click();
+    await page.getByRole('button', { name: 'Scan the book’s barcode' }).click();
     await expect(page.getByRole('dialog', { name: 'Type the ISBN' })).toBeVisible();
     await page.goBack();
     await expect(page.getByRole('dialog')).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'No books found' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Scan the barcode' })).toBeFocused();
+    await expect(page.getByRole('button', { name: 'Scan the book’s barcode' })).toBeFocused();
   });
 
   for (const light of ['lamplight', 'ink']) test(`the pop-up stays legible in ${light}`, async ({ page }) => {
@@ -546,12 +559,12 @@ test.describe('One-shelf with accounts switched off', () => {
     await setup(page, { saved: [book(1)] });
     await page.route('**/api/account/session', route => route.fulfill({ status: 503, json: { error: { code: 'ACCOUNT_DISABLED', message: 'Accounts aren’t enabled here yet. You can continue browsing.' } } }));
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'My reading shelf' })).toBeVisible();
     await expect(page.getByText(/Accounts aren’t/)).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Check account availability' })).toHaveCount(0);
-    await expect(page.getByRole('heading', { name: 'Take your shelf with you' })).toHaveCount(0);
-    await page.getByRole('button', { name: 'Account and settings' }).click();
-    const panel = page.getByRole('dialog', { name: 'Account and settings' });
+    await expect(page.getByRole('heading', { name: 'Take your reading shelf with you' })).toHaveCount(0);
+    await page.getByRole('button', { name: 'Settings' }).click();
+    const panel = page.getByRole('dialog', { name: 'Settings' });
     await expect(panel.getByRole('heading', { name: 'My library' })).toBeVisible();
     await expect(panel.getByRole('link', { name: 'Create account' })).toHaveCount(0);
     await expect(panel.getByRole('link', { name: 'Log in' })).toHaveCount(0);

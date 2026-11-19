@@ -27,10 +27,10 @@ test('reduced motion: nothing slides, pops or spins anywhere in the main journey
   await installBarcodeCamera(page).catch(() => {});
   await seed(page);
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'My reading shelf' })).toBeVisible();
   expect(await moving(page), 'shelf').toEqual([]);
-  await page.getByRole('button', { name: 'Account and settings' }).click();
-  await expect(page.getByRole('dialog', { name: 'Account and settings' })).toBeVisible();
+  await page.getByRole('button', { name: 'Settings' }).click();
+  await expect(page.getByRole('dialog', { name: 'Settings' })).toBeVisible();
   expect(await moving(page), 'side panel').toEqual([]);
   await page.keyboard.press('Escape');
   const input = page.getByRole('searchbox', { name: 'Search for a book' });
@@ -41,8 +41,8 @@ test('reduced motion: nothing slides, pops or spins anywhere in the main journey
   await page.getByRole('region', { name: 'Search results' }).getByRole('link').first().click();
   await expect(page.getByRole('heading', { level: 1, name: BOOK.title })).toBeVisible();
   expect(await moving(page), 'book page while checking').toEqual([]);
-  await page.getByRole('button', { name: 'On my shelf' }).click();
-  await page.getByRole('button', { name: 'Add to my shelf' }).click();
+  await page.getByRole('button', { name: 'Remove from my reading shelf' }).click();
+  await page.getByRole('button', { name: 'Add to my reading shelf' }).click();
   expect(await moving(page), 'tick after adding').toEqual([]);
   await page.locator('.library-answer').getByText(LINKED_LIBRARY.name).waitFor();
   await page.goto('/');
@@ -68,7 +68,7 @@ test('offline start: saved books show, search and the book page say they could n
   await input.press('Enter');
   await expect(page.getByRole('heading', { name: 'Couldn’t search' })).toBeVisible();
   // Opened from the shelf, the saved details show and the library card says it couldn't check.
-  await page.getByRole('button', { name: 'Clear search and go back to my shelf' }).click();
+  await page.getByRole('button', { name: 'Clear search and go back to my reading shelf' }).click();
   await page.getByRole('link', { name: new RegExp('^' + BOOK.title + ' by ') }).first().click();
   await expect(page.getByRole('heading', { level: 1, name: BOOK.title })).toBeVisible();
   await expect(page.locator('.library-answer')).toHaveAttribute('data-answer', 'unknown', { timeout: 40_000 });

@@ -56,7 +56,7 @@ test.describe('Desktop layout', () => {
   test('shelf: left column, six books a bay, search bar and view switch, no person icon, no scan button', async ({ page }) => {
     await setup(page);
     await page.goto('/');
-    await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'My reading shelf' })).toBeVisible();
     const side = column(page);
     await expect(side.getByText('MyBookshelf')).toBeVisible();
     await expect(side.getByRole('heading', { name: 'My library' })).toBeVisible();
@@ -67,9 +67,9 @@ test.describe('Desktop layout', () => {
     await expect(side.getByRole('group', { name: 'Reading light' }).getByRole('button')).toHaveCount(3);
     for (const name of ['Report a problem', 'Privacy', 'About']) await expect(side.getByRole('link', { name })).toBeVisible();
     expect((await side.boundingBox()).width).toBe(300);
-    await expect(page.getByRole('button', { name: 'Account and settings' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Settings' })).toHaveCount(1);
     await expect(page.getByRole('button', { name: 'Scan a barcode' })).toHaveCount(0);
-    await expect(page.getByRole('heading', { name: 'Take your shelf with you' })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Take your reading shelf with you' })).toHaveCount(0);
     await expect(page.getByRole('searchbox', { name: 'Search for a book' })).toBeVisible();
     await expect(page.getByRole('group', { name: 'View' })).toBeVisible();
     await expect(page.locator('.my-shelf-heading span')).toHaveText('12 books');
@@ -105,7 +105,7 @@ test.describe('Desktop layout', () => {
     await side.getByRole('link', { name: 'Account settings' }).click();
     await expect(page).toHaveURL(/\/app\/settings\/account$/);
     await expect(slot(page).getByText(USER.email)).toBeVisible();
-    await expect(slot(page).getByRole('button', { name: 'Change password' })).toBeVisible();
+    await expect(slot(page).getByRole('link', { name: 'Change password' })).toBeVisible();
     // The shelf is still drawn beside the page (hidden from assistive technology).
     await expect(page.locator('#my-shelf-heading')).toBeAttached();
     await slot(page).getByRole('button', { name: 'Close' }).click();
@@ -117,7 +117,7 @@ test.describe('Desktop layout', () => {
     await setup(page);
     await page.route('**/api/account/session', route => route.fulfill({ status: 503, json: { error: { code: 'ACCOUNT_DISABLED', message: 'Accounts are not enabled.' } } }));
     await page.goto('/');
-    await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'My reading shelf' })).toBeVisible();
     await expect(column(page).getByRole('heading', { name: 'My library' })).toBeVisible();
     await expect(column(page).getByRole('heading', { name: 'Account' })).toHaveCount(0);
     await expect(column(page).getByRole('link', { name: 'Log in' })).toHaveCount(0);
@@ -127,7 +127,7 @@ test.describe('Desktop layout', () => {
     await setup(page, { saved: [], recent: [], libraryId: null });
     await page.goto('/');
     await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
-    await expect(page.getByText('Add books to your shelf and search in your library')).toBeVisible();
+    await expect(page.getByText('Add books to your reading shelf and search in your library')).toBeVisible();
     await expect(page.getByRole('button', { name: /Scan|Search for a book/ })).toHaveCount(0);
     await expect(page.locator('.cold-open-suggestions .bay')).toHaveCount(1);
     await expect(page.locator('.cold-open-suggestions .cover3d.is-suggested')).toHaveCount(5);
@@ -207,7 +207,7 @@ test.describe('Desktop layout', () => {
     // No shelf entry behind it: closing puts the shelf in its place.
     await slot(page).getByRole('button', { name: 'Close the book' }).click();
     await expect(page).toHaveURL(/\/\/[^/]+\/$/);
-    await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'My reading shelf' })).toBeVisible();
   });
 
   test('adding a book in the slot puts it on the shelf beside it', async ({ page }) => {
@@ -221,12 +221,12 @@ test.describe('Desktop layout', () => {
     await expect(slot(page).getByRole('heading', { level: 1, name: BOOK.title })).toBeVisible();
     // The results the book was opened from stay beside it.
     await expect(page.locator('.desk-shelf .search-results')).toBeAttached();
-    await slot(page).getByRole('button', { name: 'Add to my shelf' }).click();
-    await expect(slot(page).getByRole('button', { name: 'On my shelf' })).toBeVisible();
+    await slot(page).getByRole('button', { name: 'Add to my reading shelf' }).click();
+    await expect(slot(page).getByText('On my reading shelf', { exact: true })).toBeVisible();
     await expect(page.locator('.shelf-book-toast')).toHaveCount(0);
     await page.keyboard.press('Escape');
     await expect(page.getByRole('region', { name: 'Search results' })).toBeVisible();
-    await page.getByRole('button', { name: 'Back to my shelf', exact: true }).click();
+    await page.getByRole('button', { name: 'Back to my reading shelf', exact: true }).click();
     await expect(page.locator('.my-shelf-heading span')).toHaveText('12 books');
   });
 
@@ -239,7 +239,7 @@ test.describe('Desktop layout', () => {
     // On a desktop the field takes focus at once.
     await expect(picker.getByLabel('City, town or library name')).toBeFocused();
     await expect(page.getByRole('dialog')).toHaveCount(0);
-    await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'My reading shelf' })).toBeVisible();
     await expect(column(page).getByRole('heading', { name: 'Reading light' })).toHaveCount(0);
     await noViolations(page, 'library picker');
     await page.keyboard.press('Escape');
@@ -317,13 +317,13 @@ test.describe('Desktop layout', () => {
     await column(page).getByRole('link', { name: 'Log in' }).click();
     await expect(page).toHaveURL(/\/app\/account\/sign-in$/);
     await expect(slot(page).getByRole('heading', { level: 1, name: 'Log in' })).toBeVisible();
-    await expect(slot(page).getByLabel('Email')).toBeVisible();
+    await expect(slot(page).getByLabel('Email', { exact: true })).toBeVisible();
     // The shelf stays drawn beside the form (read-only).
     await expect(page.locator('.desk-shelf .cover3d:not(.is-suggested)')).toHaveCount(12);
     await noViolations(page, 'log in in the slot');
     await slot(page).getByRole('button', { name: 'Close' }).click();
     await expect(page).toHaveURL(/\/\/[^/]+\/$/);
-    await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'My reading shelf' })).toBeVisible();
   });
 
   test('a direct visit to Privacy shows the shelf with Privacy in the middle', async ({ page }) => {
@@ -338,7 +338,7 @@ test.describe('Desktop layout', () => {
   test('an account form opened directly (an email link, a reload) stands alone; Escape while typing keeps it open', async ({ page }) => {
     await setup(page);
     await page.goto('/app/account/sign-in');
-    const email = slot(page).getByLabel('Email');
+    const email = slot(page).getByLabel('Email', { exact: true });
     await expect(email).toBeVisible();
     await expect(page.locator('.desk-shelf')).toHaveCount(0);
     await expect(column(page)).toBeVisible();
@@ -369,20 +369,20 @@ test.describe('Desktop layout', () => {
     const results = page.getByRole('region', { name: 'Search results' });
     await expect(results.getByRole('link')).toHaveCount(8);
     await expect(results.locator('.bay-books').first().locator('.cover3d')).toHaveCount(6);
-    await expect(page.getByRole('button', { name: 'Back to my shelf', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Back to my reading shelf', exact: true })).toBeVisible();
     await expect(page.locator('.results-head')).toBeVisible();
-    await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toHaveCount(0);
+    await expect(page.getByRole('heading', { level: 1, name: 'My reading shelf' })).toHaveCount(0);
     await expect(page.getByRole('button', { name: /Scan/ })).toHaveCount(0);
     expect(page.url()).not.toContain('result');
     await noViolations(page, 'results');
-    await page.getByRole('button', { name: 'Back to my shelf', exact: true }).click();
-    await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+    await page.getByRole('button', { name: 'Back to my reading shelf', exact: true }).click();
+    await expect(page.getByRole('heading', { level: 1, name: 'My reading shelf' })).toBeVisible();
 
     await input.fill('nothing at all');
     await input.press('Enter');
     await expect(page.getByRole('heading', { name: 'No books found' })).toBeVisible();
     await expect(page.getByRole('button', { name: /Scan/ })).toHaveCount(0);
-    await page.getByRole('button', { name: 'Clear search and go back to my shelf' }).click();
+    await page.getByRole('button', { name: 'Clear search and go back to my reading shelf' }).click();
 
     await input.fill(BOOK.isbn13);
     await input.press('Enter');
@@ -390,35 +390,35 @@ test.describe('Desktop layout', () => {
     await expect(slot(page).getByRole('heading', { level: 1, name: BOOK.title })).toBeVisible();
   });
 
-  test('keyboard only: column, search, a result, add it, Escape back to the result', async ({ page }) => {
+  test('keyboard only: column, search, a result, add it, Escape back to the result', async ({ page, browserName }) => {
     await setup(page, { saved: [book(2)], recent: [] });
     await page.goto('/');
-    await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'My reading shelf' })).toBeVisible();
     await expect(column(page).getByRole('button', { name: 'Change library' })).toBeVisible();
     const order = [];
-    for (let step = 0; step < 15 && order.at(-1) !== 'Search for a book'; step += 1) { await page.keyboard.press('Tab'); order.push(await focusedName(page)); }
-    expect(order).toEqual(['Skip to content', 'MyBookshelf', 'Change library', 'Create account', 'Log in', 'Daylight', 'Lamplight', 'Ink', 'Report a problem', 'Privacy', 'About', 'Search for a book']);
+    for (let step = 0; step < 15 && order.at(-1) !== 'Search for a book'; step += 1) { await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab'); order.push(await focusedName(page)); }
+    expect(order).toEqual(['Skip to content', 'MyBookshelf', 'Anna Centenary Library, opens in a new tab', 'Change library', 'Create account', 'Log in', 'Daylight', 'Lamplight', 'Ink', 'Settings', 'Help', 'Report a problem', 'Privacy', 'About', 'Search for a book']);
     await page.keyboard.type('innovator');
     await page.keyboard.press('Enter');
     const results = page.getByRole('region', { name: 'Search results' });
     await expect(results.getByRole('link').first()).toBeVisible();
-    for (let step = 0; step < 10 && (await focusedName(page)) !== BOOK.title + ' by ' + BOOK.authors[0]; step += 1) await page.keyboard.press('Tab');
+    for (let step = 0; step < 10 && (await focusedName(page)) !== BOOK.title + ' by ' + BOOK.authors[0]; step += 1) await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
     expect(await focusedName(page)).toBe(BOOK.title + ' by ' + BOOK.authors[0]);
     await page.keyboard.press('Enter');
     await expect(slot(page).getByRole('button', { name: 'Close the book' })).toBeFocused();
-    await page.keyboard.press('Tab');
-    expect(await focusedName(page)).toBe('Add to my shelf');
+    await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
+    expect(await focusedName(page)).toBe('Add to my reading shelf');
     await page.keyboard.press('Enter');
-    await expect(slot(page).getByRole('button', { name: 'On my shelf' })).toBeFocused();
+    await expect(slot(page).getByText('On my reading shelf', { exact: true })).toBeFocused();
     // Tab stays out of the shelf behind the book.
     for (let step = 0; step < 8; step += 1) {
-      await page.keyboard.press('Tab');
+      await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
       expect(await page.evaluate(() => Boolean(document.activeElement?.closest('.desk-shelf-area')))).toBe(false);
     }
     await page.keyboard.press('Escape');
     await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     // Focus goes back at the next frame, once the shelf is live again.
-    await expect.poll(() => focusedName(page)).toMatch(new RegExp('^' + BOOK.title + ' by .*on my shelf'));
+    await expect.poll(() => focusedName(page)).toMatch(new RegExp('^' + BOOK.title + ' by .*on my reading shelf'));
     const ring = await page.evaluate(() => { const style = getComputedStyle(document.activeElement); return style.outlineStyle !== 'none'; });
     expect(ring).toBe(true);
   });
@@ -427,7 +427,7 @@ test.describe('Desktop layout', () => {
     await setup(page, { light, signedIn: light === 'ink' });
     await page.goto('/');
     await expect(page.locator('html')).toHaveAttribute('data-reading-light', light);
-    await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'My reading shelf' })).toBeVisible();
     await expect(page.locator('.cover-badge-library').first()).toBeVisible();
     await noViolations(page, light + ' shelf');
     await page.getByRole('link', { name: new RegExp('^' + BOOK.title + ' by ') }).click();
@@ -477,11 +477,11 @@ test.describe('Desktop layout', () => {
     test('icon rail; a book covers the shelf; the rail opens pages and pop-overs', async ({ page }) => {
       await setup(page);
       await page.goto('/');
-      await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
-      const rail = page.getByRole('navigation', { name: 'Library and account' });
-      for (const name of ['My library', 'Account', 'Reading light', 'Help']) await expect(rail.getByRole('button', { name })).toBeVisible();
+      await expect(page.getByRole('heading', { level: 1, name: 'My reading shelf' })).toBeVisible();
+      const rail = page.getByRole('complementary', { name: 'MyBookshelf' });
+      await expect(rail.getByRole('button')).toHaveCount(1);
       await expect(column(page)).toHaveCount(0);
-      await expect(page.getByRole('button', { name: 'Account and settings' })).toHaveCount(0);
+      await expect(page.getByRole('button', { name: 'Settings' })).toHaveCount(1);
       expect((await rail.boundingBox()).width).toBe(72);
       await expect(page.locator('.home-library')).toHaveText(LINKED_LIBRARY.name);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -500,26 +500,26 @@ test.describe('Desktop layout', () => {
       await page.keyboard.press('Escape');
       await expect(cover).toBeFocused();
 
-      await rail.getByRole('button', { name: 'Help' }).click();
-      const help = page.getByRole('dialog', { name: 'Help' });
+      await rail.getByRole('button', { name: 'Settings' }).click();
+      const help = page.getByRole('dialog', { name: 'Settings' });
       await expect(help).toBeVisible();
-      await expect(help.getByRole('link', { name: 'Report a problem' })).toBeFocused();
+      await expect(help.getByRole('button', { name: 'Close' })).toBeFocused();
       await page.keyboard.press('Escape');
       await expect(help).toBeHidden();
-      await expect(rail.getByRole('button', { name: 'Help' })).toBeFocused();
-      await rail.getByRole('button', { name: 'Help' }).click();
+      await expect(rail.getByRole('button', { name: 'Settings' })).toBeFocused();
+      await rail.getByRole('button', { name: 'Settings' }).click();
       await help.getByRole('link', { name: 'Privacy' }).click();
       await expect(page).toHaveURL(/\/app\/privacy$/);
       await expect(slot(page).getByRole('heading', { level: 1, name: 'Privacy' })).toBeVisible();
       await expect(help).toBeHidden();
       await slot(page).getByRole('button', { name: 'Close' }).click();
-
-      await rail.getByRole('button', { name: 'Reading light' }).click();
-      await page.getByRole('dialog', { name: 'Reading light' }).getByRole('button', { name: 'Lamplight' }).click();
+      await expect(help).toBeVisible();
+      await page.getByRole('dialog', { name: 'Settings' }).getByRole('button', { name: 'Lamplight' }).click();
       await expect(page.locator('html')).toHaveAttribute('data-reading-light', 'lamplight');
       await page.keyboard.press('Escape');
 
-      await rail.getByRole('button', { name: 'My library' }).click();
+      await rail.getByRole('button', { name: 'Settings' }).click();
+      await help.getByRole('button', { name: 'Change library' }).click();
       const picker = page.getByRole('dialog', { name: /^(Change library|Find your library)$/ });
       await expect(picker).toBeVisible();
       // At rail width the field takes focus at once.
@@ -527,10 +527,10 @@ test.describe('Desktop layout', () => {
       await noViolations(page, 'rail picker');
       await page.keyboard.press('Escape');
       await expect(picker).toBeHidden();
-      await expect(rail.getByRole('button', { name: 'My library' })).toBeFocused();
+      await expect(rail.getByRole('button', { name: 'Settings' })).toBeFocused();
 
-      await rail.getByRole('button', { name: 'Account' }).click();
-      await page.getByRole('dialog', { name: 'Account' }).getByRole('link', { name: 'Log in' }).click();
+      await rail.getByRole('button', { name: 'Settings' }).click();
+      await page.getByRole('dialog', { name: 'Settings' }).getByRole('link', { name: 'Log in' }).click();
       await expect(page).toHaveURL(/\/app\/account\/sign-in$/);
       await expect(slot(page).getByRole('heading', { level: 1, name: 'Log in' })).toBeVisible();
     });
@@ -538,31 +538,28 @@ test.describe('Desktop layout', () => {
     test('a page opened from a rail pop-over takes focus, and gives it back to the rail button', async ({ page }) => {
       await setup(page);
       await page.goto('/');
-      await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
-      const rail = page.getByRole('navigation', { name: 'Library and account' });
-      await rail.getByRole('button', { name: 'Help' }).click();
-      await page.getByRole('dialog', { name: 'Help' }).getByRole('link', { name: 'Privacy' }).press('Enter');
+      await expect(page.getByRole('heading', { level: 1, name: 'My reading shelf' })).toBeVisible();
+      const rail = page.getByRole('complementary', { name: 'MyBookshelf' });
+      await rail.getByRole('button', { name: 'Settings' }).click();
+      await page.getByRole('dialog', { name: 'Settings' }).getByRole('link', { name: 'Privacy' }).press('Enter');
       await expect(page).toHaveURL(/\/app\/privacy$/);
       await expect(slot(page).getByRole('button', { name: 'Close' })).toBeFocused();
       await page.keyboard.press('Escape');
       await expect(page).toHaveURL(/\/\/[^/]+\/$/);
-      await expect(rail.getByRole('button', { name: 'Help' })).toBeFocused();
-      // An account form is drawn without the shelf (App.tsx entry mode): focus still comes back to Account.
-      await rail.getByRole('button', { name: 'Account' }).click();
-      await page.getByRole('dialog', { name: 'Account' }).getByRole('link', { name: 'Log in' }).press('Enter');
+      const settings = page.getByRole('dialog', { name: 'Settings' });
+      await expect(settings.getByRole('button', { name: 'Close' })).toBeFocused();
+      // A form opened from Settings gets focus and Escape returns to the panel.
+      await settings.getByRole('link', { name: 'Log in' }).press('Enter');
       await expect(slot(page).getByRole('heading', { level: 1, name: 'Log in' })).toBeVisible();
       await expect(slot(page).getByRole('button', { name: 'Close' })).toBeFocused();
       await page.keyboard.press('Escape');
-      await expect(page).toHaveURL(/\/\/[^/]+\/$/);
-      await expect(rail.getByRole('button', { name: 'Account' })).toBeFocused();
-      // A pop-over open while the window widens does not come back by itself when it narrows again.
-      await rail.getByRole('button', { name: 'Help' }).click();
-      await expect(page.getByRole('dialog', { name: 'Help' })).toBeVisible();
+      await expect(settings).toBeVisible();
+      // The same dialog survives a layout change.
       await page.setViewportSize(WIDE);
       await expect(column(page)).toBeVisible();
       await page.setViewportSize({ width: 1024, height: 768 });
       await expect(rail).toBeVisible();
-      await expect(page.getByRole('dialog', { name: 'Help' })).toBeHidden();
+      await expect(page.getByRole('dialog', { name: 'Settings' })).toBeVisible();
     });
   });
 
@@ -602,7 +599,7 @@ test.describe('Desktop layout follow-up', () => {
     await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(slot(page)).toHaveCount(0);
     await expect(picker(page)).toHaveCount(0);
-    await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'My reading shelf' })).toBeVisible();
     // The shelf took the book's place: it is the first entry, and Back leaves the app.
     await expect.poll(() => entryIndex(page)).toBe(0);
     await page.goBack();
@@ -630,7 +627,7 @@ test.describe('Desktop layout follow-up', () => {
     await expect(slot(page)).toHaveCount(0);
     await expect(picker(page)).toHaveCount(0);
     await page.reload();
-    await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'My reading shelf' })).toBeVisible();
     await expect(picker(page)).toHaveCount(0);
 
     // Opened with Find my library, the same holds: Escape on a book opened beside it closes the book only.
@@ -654,21 +651,22 @@ test.describe('Desktop layout follow-up', () => {
     test('one scroll area: the shelf alone, and a long page over a long shelf', async ({ page }) => {
       await setup(page, { saved: LONG });
       await page.goto('/');
-      await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+      await expect(page.getByRole('heading', { level: 1, name: 'My reading shelf' })).toBeVisible();
       const scrollers = () => page.evaluate(() => [document.scrollingElement, ...document.querySelectorAll('body *')]
         .filter(element => element.scrollHeight > element.clientHeight + 1 && (element === document.scrollingElement || /auto|scroll/.test(getComputedStyle(element).overflowY)))
         .map(element => element === document.scrollingElement ? 'document' : '.' + [...element.classList].join('.')));
       expect(await scrollers()).toEqual(['.desk-shelf']);
       await page.locator('.desk-shelf').evaluate(element => { element.scrollTop = 600; });
-      const rail = page.getByRole('navigation', { name: 'Library and account' });
-      await rail.getByRole('button', { name: 'Help' }).click();
-      await page.getByRole('dialog', { name: 'Help' }).getByRole('link', { name: 'Privacy' }).click();
+      const rail = page.getByRole('complementary', { name: 'MyBookshelf' });
+      await rail.getByRole('button', { name: 'Settings' }).click();
+      await page.getByRole('dialog', { name: 'Settings' }).getByRole('link', { name: 'Privacy' }).click();
       await expect(slot(page).getByRole('heading', { level: 1, name: 'Privacy' })).toBeVisible();
       // Only the page scrolls; the shelf behind it keeps its place.
       expect(await scrollers()).toEqual(['.desk-slot']);
       expect(await page.locator('.desk-shelf').evaluate(element => element.scrollTop)).toBe(600);
       await page.keyboard.press('Escape');
       await expect(slot(page)).toHaveCount(0);
+      await page.keyboard.press('Escape');
       expect(await scrollers()).toEqual(['.desk-shelf']);
       expect(await page.locator('.desk-shelf').evaluate(element => element.scrollTop)).toBe(600);
     });
@@ -691,7 +689,7 @@ test.describe('Desktop layout follow-up', () => {
       await expect(page).not.toHaveURL(/\/app\//);
       await page.goForward();
       await expect(page).toHaveURL(/\/\/[^/]+\/$/);
-      await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+      await expect(page.getByRole('heading', { level: 1, name: 'My reading shelf' })).toBeVisible();
       await expect(dialog).toBeHidden();
     });
   });
@@ -703,7 +701,7 @@ test.describe('Desktop layout follow-up', () => {
     // The shelf screen's element, marked: still the same element after a crossing means it was not drawn again.
     const mark = page => page.locator('.home').evaluate(element => { element.dataset.kept = 'yes'; });
     const kept = page => page.locator('.home[data-kept="yes"]');
-    const rail = page => page.getByRole('navigation', { name: 'Library and account' });
+    const rail = page => page.getByRole('complementary', { name: 'MyBookshelf' });
     // The first book in view under the top bar (the same book stays first in view).
     const firstInView = page => page.evaluate(() => {
       const scroller = document.querySelector('.desk-shelf') || document.querySelector('main');
@@ -715,7 +713,7 @@ test.describe('Desktop layout follow-up', () => {
     test('the shelf stays drawn: scroll place, typed text and focus are kept both ways', async ({ page }) => {
       await setup(page, { saved: LONG });
       await page.goto('/');
-      await expect(page.getByRole('button', { name: 'Account and settings' })).toBeVisible();
+      await expect(page.getByRole('button', { name: 'Settings' })).toBeVisible();
       await mark(page);
       await page.locator('main').evaluate(element => { element.scrollTop = 1500; });
       const before = await firstInView(page);
@@ -733,7 +731,7 @@ test.describe('Desktop layout follow-up', () => {
       expect((await firstInView(page)).scrolled).toBeGreaterThan(1000);
 
       await page.setViewportSize(PHONE_TALL);
-      await expect(page.getByRole('button', { name: 'Account and settings' })).toBeVisible();
+      await expect(page.getByRole('button', { name: 'Settings' })).toBeVisible();
       await expect(rail(page)).toHaveCount(0);
       await expect(kept(page)).toHaveCount(1);
       await expect(input).toHaveValue('innov');
@@ -747,7 +745,7 @@ test.describe('Desktop layout follow-up', () => {
       const held = new Promise(resolve => { answer = resolve; });
       await page.route('**/api/v2/books/search', async route => { await held; await route.fulfill({ json: { kind: 'candidates', candidates: [BOOK] } }); });
       await page.goto('/');
-      await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+      await expect(page.getByRole('heading', { level: 1, name: 'My reading shelf' })).toBeVisible();
       await mark(page);
       const input = page.getByRole('searchbox', { name: 'Search for a book' });
       await input.fill('innovator');
@@ -772,7 +770,7 @@ test.describe('Desktop layout follow-up', () => {
       test('nothing on the shelf moves when the layout changes', async ({ page }) => {
         await setup(page, { saved: LONG });
         await page.goto('/');
-        await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+        await expect(page.getByRole('heading', { level: 1, name: 'My reading shelf' })).toBeVisible();
         const running = () => page.evaluate(() => document.getAnimations().filter(animation => animation.playState === 'running').map(animation => animation.animationName || 'other'));
         // The suggestions' first fade-in finishes first.
         await expect.poll(running).toEqual([]);

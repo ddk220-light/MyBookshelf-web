@@ -19,7 +19,7 @@ describe('library answer card', () => {
     const notFound = icon('not_found');
     expect(notFound).not.toBe('');
     expect(icon('unsupported')).not.toBe(notFound);
-    expect(icon('unsupported')).not.toBe(icon('unconfirmed'));
+    expect(icon('unknown')).not.toBe(notFound);
     expect(icon('unsupported')).not.toBe(icon('found'));
   });
 });

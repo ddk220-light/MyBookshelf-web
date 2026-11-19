@@ -55,7 +55,7 @@ describe('public API adapter', () => {
     stream(['{"type":"mark","bookKey":"v1:openlibrary:OL2W","answer":"found"}', '{"type":"mark","bookKey":"v1:openlibrary:OL1W","answer":"not_found"}',
       '{"type":"mark","bookKey":"v1:openlibrary:OL9W","answer":"found"}', '{"type":"later","x":1}', '{"type":"done","unchecked":["v1:openlibrary:OL1W","other"]}', ''].join('\n'));
     let call = run();
-    await expect(call.done).resolves.toEqual({ unchecked: ['v1:openlibrary:OL1W'] });
+    await expect(call.done).resolves.toEqual({ unchecked: ['v1:openlibrary:OL1W'], notFound: [], couldntCheck: [] });
     expect(call.marks).toEqual(['v1:openlibrary:OL2W']);
     expect(vi.mocked(fetch)).toHaveBeenCalledWith('/api/v2/holdings/search', expect.objectContaining({ body: JSON.stringify({ libraryId: 'koha:a', query: 'wings', books: asked.map(bookKey => ({ bookKey })) }),
       headers: expect.objectContaining({ Accept: 'application/x-ndjson' }) }));

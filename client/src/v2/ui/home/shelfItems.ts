@@ -86,12 +86,12 @@ export function shelfEntries(savedBooks: readonly RecentBook[], savedContent: re
 }
 
 /**
- * "Title by Author", plus ", on my shelf" for a search result the reader has
+ * "Title by Author", plus ", on my reading shelf" for a search result the reader has
  * saved, ", in <library>" when the chosen library has the book and, last,
  * ", suggested" for a shelf suggestion (its fade is not the only signal).
  */
-export function entryLabel(entry: Pick<ShelfEntry, 'title' | 'authors' | 'suggested'>, libraryName?: string | null, mine = false): string {
+export function entryLabel(entry: Pick<ShelfEntry, 'title' | 'authors' | 'suggested'>, libraryName?: string | null, mine = false, status?: string): string {
   const author = entry.authors.filter(Boolean).join(', ');
-  return entry.title + (author ? ' by ' + author : '') + (mine ? ', on my shelf' : '') + (libraryName ? ', in ' + libraryName : '')
+  return entry.title + (author ? ' by ' + author : '') + (mine ? ', on my reading shelf' : '') + (libraryName ? ', in ' + libraryName : status ? ', ' + status : '')
     + (entry.suggested ? ', suggested' : '');
 }

@@ -76,7 +76,7 @@ const badges = () => [...document.querySelectorAll('.search-results .cover-badge
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); localStorage.clear(); sessionStorage.clear(); forgetLibraryMarks(); clearSearchMemory(); });
 
 describe('background check for search results', () => {
-  it('asks the chosen library once, says "Looking in…", adds badges as marks arrive, then "In <library>"', async () => {
+  it('asks the chosen library once, says "Looking in…", shows per-book words as checks finish', async () => {
     const { marks, searches } = stubApi();
     seed();
     renderHome();
@@ -97,14 +97,14 @@ describe('background check for search results', () => {
     // Only "found" marks, and only for books that were asked about.
     marks[0].stream.line({ type: 'mark', bookKey: PUBLIC[0].bookKey, answer: 'not_found' });
     marks[0].stream.line({ type: 'mark', bookKey: 'v1:openlibrary:OL99W', answer: 'found' });
-    marks[0].stream.line({ type: 'done', unchecked: [PUBLIC[0].bookKey, PUBLIC[1].bookKey] });
+    marks[0].stream.line({ type: 'done', unchecked: [PUBLIC[1].bookKey], notFound: [PUBLIC[0].bookKey], couldntCheck: [PUBLIC[1].bookKey] });
     marks[0].stream.end();
-    await waitFor(() => expect(line()).toHaveTextContent('In Anna Centenary Library'));
+    await waitFor(() => expect(line()).not.toHaveTextContent('Looking'));
     expect(line()).not.toHaveTextContent('Looking');
     expect(badges()).toHaveLength(1);
     expect(status()).toHaveTextContent('3 books. 1 book in Anna Centenary Library');
-    // Nothing reads as "not in the library".
-    expect(document.body.textContent).not.toMatch(/not (found|in)/i);
+    expect(screen.getByText('Not in your library', { selector: '.cover-answer' })).toBeVisible();
+    expect(screen.getByText('Couldn’t check', { selector: '.cover-answer' })).toBeVisible();
     // The text is nowhere in browser storage, the URL or history state.
     for (const store of [localStorage, sessionStorage]) for (let index = 0; index < store.length; index += 1)
       expect(store.getItem(store.key(index)!)).not.toContain('wings');
@@ -124,15 +124,15 @@ describe('background check for search results', () => {
     await screen.findByText('Anna Centenary Library');
     await searchFor('wings of fire');
     await waitFor(() => expect(marks).toHaveLength(1));
-    marks[0].stream.line({ type: 'mark', bookKey: PUBLIC[1].bookKey, answer: 'found' });
+    marks[0].stream.line({ type: 'mark', bookKey: PUBLIC[1].bookKey, answer: 'found', catalogUrl: 'https://catalog.example.test/record/7' });
     const results = await screen.findByRole('region', { name: 'Search results' });
     const marked = await within(results).findByRole('link', { name: 'The Dragonet Prophecy by Tui T. Sutherland, in Anna Centenary Library' });
     fireEvent.click(marked);
     await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/app/books/'));
     expect(marks[0].signal?.aborted).toBe(true);
-    // Only the opened book is checked; a failed check does not take the mark away.
-    await waitFor(() => expect(checks).toEqual([{ libraryId: LIBRARY.id, bookKey: PUBLIC[1].bookKey }]));
-    expect(await screen.findByRole('group', { name: 'Found in Anna Centenary Library' })).toBeInTheDocument();
+    const card = await screen.findByRole('group', { name: 'In your library' });
+    expect(within(card).getByRole('link', { name: /^See this book/ })).toHaveAttribute('href', 'https://catalog.example.test/record/7');
+    expect(checks).toEqual([]);
 
     navigateRef!(-1);
     const again = await screen.findByRole('region', { name: 'Search results' });
@@ -163,7 +163,7 @@ describe('background check for search results', () => {
     marks[0].stream.line({ type: 'mark', bookKey: PUBLIC[1].bookKey, answer: 'found' });
     marks[0].stream.line({ type: 'done', unchecked: [] });
     marks[0].stream.end();
-    await waitFor(() => expect(line()).toHaveTextContent('In Anna Centenary Library'));
+    await waitFor(() => expect(line()).not.toHaveTextContent('Looking'));
     const results = screen.getByRole('region', { name: 'Search results' });
     fireEvent.click(within(results).getByRole('link', { name: 'Wings of Fire by Dale Brown' }));
     await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/app/books/'));
@@ -171,7 +171,7 @@ describe('background check for search results', () => {
     await screen.findByRole('region', { name: 'Search results' });
     await new Promise(resolve => setTimeout(resolve, 20));
     expect(marks).toHaveLength(1);
-    expect(line()).toHaveTextContent('In Anna Centenary Library');
+    expect(screen.getByText('In your library', { selector: '.cover-answer' })).toBeVisible();
   });
 
   it('a new search, clearing and changing library each stop the running check', async () => {
@@ -185,8 +185,8 @@ describe('background check for search results', () => {
     await waitFor(() => expect(marks).toHaveLength(2));
     expect(marks[0].signal?.aborted).toBe(true);
     expect(marks[1].body.query).toBe('dragonet');
-    fireEvent.click(screen.getByRole('button', { name: 'Clear search and go back to my shelf' }));
-    expect(await screen.findByRole('heading', { name: /Ready to search|My shelf/ })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Clear search and go back to my reading shelf' }));
+    expect(await screen.findByRole('heading', { name: /Ready to search|My reading shelf/ })).toBeInTheDocument();
     expect(marks[1].signal?.aborted).toBe(true);
     await new Promise(resolve => setTimeout(resolve, 20));
     expect(marks).toHaveLength(2);

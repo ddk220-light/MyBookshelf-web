@@ -87,10 +87,10 @@ export function AppFrame({ children }: { children: ReactNode }) {
   }, [location, navigate, desk]);
 
   useEffect(() => {
-    if (PANEL_PAGE.test(location.pathname)) return;
+    if (PANEL_PAGE.test(location.pathname) || location.pathname.startsWith('/app/books/')) return;
     if (location.pathname === '/') { document.title = ROOT_TITLE; return; }
     const route = location.pathname.split('/')[2];
-    const names: Record<string, string> = { search: 'Search books', books: 'Book details', read: 'Free reading details' };
+    const names: Record<string, string> = { search: 'Search books', read: 'Free reading details' };
     const accountNames: Record<string, string> = {
       'sign-in': 'Sign in', 'sign-up': 'Create account', verify: 'Verify your email',
       'forgot-password': 'Reset your password', 'reset-password': 'Choose a new password',
@@ -113,7 +113,7 @@ export function AppFrame({ children }: { children: ReactNode }) {
         <a className="desktop-skip" href="#main-content">{m.skipToContent}</a>
         {desk || location.pathname === '/' ? <DeskLayout mode={desk ? mode : 'phone'} notices={notices}>{desk && isSlotPath(location.pathname) ? children : null}</DeskLayout>
           : <main id="main-content" ref={screen} className="app-screen" tabIndex={-1}>
-            {location.pathname !== '/' && !location.pathname.startsWith('/app/books/') && !PANEL_PAGE.test(location.pathname) && <Link className="one-shelf-back" to="/"><span aria-hidden="true">‹</span> My shelf</Link>}
+            {location.pathname !== '/' && !location.pathname.startsWith('/app/books/') && !PANEL_PAGE.test(location.pathname) && <Link className="one-shelf-back" to="/"><span aria-hidden="true">‹</span> My reading shelf</Link>}
             {notices}
             {children}
           </main>}

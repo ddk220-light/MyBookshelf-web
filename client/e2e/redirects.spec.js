@@ -116,16 +116,16 @@ test.describe('Old addresses', () => {
     await page.goBack();
     await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(dialog).toHaveCount(0);
-    await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'My reading shelf' })).toBeVisible();
     // Opening a book and coming back, or a reload, does not bring it back.
     await page.getByRole('link', { name: new RegExp('^' + BOOK.title + ' by ') }).click();
     await expect(page).toHaveURL(bookUrl);
     await page.goBack();
     await expect(page).toHaveURL(/\/\/[^/]+\/$/);
-    await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'My reading shelf' })).toBeVisible();
     await expect(dialog).toHaveCount(0);
     await page.reload();
-    await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'My reading shelf' })).toBeVisible();
     await expect(dialog).toHaveCount(0);
   });
 
@@ -158,7 +158,7 @@ test.describe('Old addresses', () => {
     await fixture(page);
     await page.goto('/app/settings');
     await expect(page).toHaveURL(/\/\/[^/]+\/$/);
-    await expect(page.getByRole('dialog', { name: 'Account and settings' })).toBeVisible();
+    await expect(page.getByRole('dialog', { name: 'Settings' })).toBeVisible();
     await page.goto('/app/settings#privacy');
     await expect(page).toHaveURL(/\/app\/privacy$/);
     await expect(page.getByRole('heading', { name: 'Privacy', level: 1 })).toBeVisible();
@@ -191,14 +191,14 @@ test.describe('Old addresses', () => {
     await fixture(page);
     await page.goto('/app/books/' + encodeURIComponent(BOOK.bookKey));
     await expect(page.getByRole('heading', { name: BOOK.title })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Add to my shelf' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Add to my reading shelf' })).toBeVisible();
   });
 
   test('an unknown app page says so and leads back to the shelf', async ({ page }) => {
     await fixture(page);
     await page.goto('/app/no-such-page');
     await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
-    await page.getByRole('link', { name: 'My shelf' }).click();
+    await page.getByRole('link', { name: 'My reading shelf' }).click();
     await expect(page).toHaveURL(/\/\/[^/]+\/$/);
   });
 });

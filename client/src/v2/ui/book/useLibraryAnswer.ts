@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
-import { publicApi, webLink } from '../../api';
+import { publicApi, webLink, type HoldingsCheck } from '../../api';
 import { useLibrary } from '../../context';
 import { useHoldingsStore } from '../../holdings';
 import { readReaderPreferences } from '../../readerState';
@@ -14,9 +14,9 @@ export const CHECK_TIMEOUT_MS = 60_000;
 export type CardAnswer = 'checking' | 'found' | 'not_found' | 'unconfirmed' | 'unknown' | 'unsupported';
 export type LibraryCardModel =
   | { kind: 'none' }
-  | { kind: 'library'; answer: CardAnswer; name: string; catalogUrl?: string; retry?: () => void };
+  | { kind: 'library'; answer: CardAnswer; name: string; place?: string; catalogUrl?: string; catalogLinkKind?: HoldingsCheck['catalogLinkKind']; retry?: () => void };
 
-type Result = { libraryId: string; bookKey: string; attempt: number; answer: Exclude<CardAnswer, 'checking' | 'unsupported'>; catalogUrl?: string };
+type Result = HoldingsCheck & { libraryId: string; bookKey: string; attempt: number };
 
 /**
  * The chosen library's answer for one book (plan 3.5, POST /holdings/check):
@@ -40,26 +40,28 @@ export function useLibraryAnswer(bookKey: string | null | undefined): LibraryCar
   const [attempt, setAttempt] = useState(0);
   const [result, setResult] = useState<Result | null>(null);
   const retry = useCallback(() => setAttempt(value => value + 1), []);
+  const recordUrl = checkable && bookKey && store.libraryId() === libraryId ? store.recordUrl(bookKey) : undefined;
 
   // A library whose catalog the app cannot read is still asked: the server
   // answers at once from what it has stored, else "unknown", with a link
   // that searches its catalog for this book.
   useEffect(() => {
-    if (!bookKey || !libraryId || !ready) return;
+    if (!bookKey || !libraryId || !ready || recordUrl) return;
     let active = true;
     let timedOut = false;
     const controller = new AbortController();
     const timer = setTimeout(() => { timedOut = true; controller.abort(); }, CHECK_TIMEOUT_MS);
-    const settle = (answer: Result['answer'], catalogUrl?: string) => {
+    const settle = (reply: HoldingsCheck) => {
       if (!active) return;
-      setResult({ libraryId, bookKey, attempt, answer, ...(catalogUrl ? { catalogUrl } : {}) });
-      if (answer === 'found' || answer === 'not_found' || answer === 'unconfirmed') store.set(libraryId, { [bookKey]: answer });
+      setResult({ libraryId, bookKey, attempt, ...reply });
+      if (checkable) store.set(libraryId, { [bookKey]: reply.answer }, reply.answer === 'found' && reply.catalogUrl && reply.catalogLinkKind === 'record' ? { [bookKey]: reply.catalogUrl } : undefined);
     };
     publicApi.holdingsCheck(libraryId, bookKey, controller.signal)
-      .then(reply => settle(reply.answer, reply.catalogUrl))
-      .catch(() => { if (timedOut || !controller.signal.aborted) settle('unknown'); });
+      .then(settle)
+      .catch(() => { if (timedOut || !controller.signal.aborted) settle({ answer: 'unknown' }); })
+      .finally(() => clearTimeout(timer));
     return () => { active = false; clearTimeout(timer); controller.abort(); };
-  }, [bookKey, libraryId, ready, attempt, store]);
+  }, [bookKey, libraryId, ready, checkable, recordUrl, attempt, store]);
 
   if (!libraryId) return { kind: 'none' };
   const cached = readReaderPreferences().selectedLibrary;
@@ -70,13 +72,14 @@ export function useLibraryAnswer(bookKey: string | null | undefined): LibraryCar
     return { kind: 'library', answer: 'checking', name };
   }
   const current = result && result.libraryId === libraryId && result.bookKey === bookKey && result.attempt === attempt ? result : null;
-  const catalogUrl = current?.catalogUrl || homeUrl;
-  const link = catalogUrl ? { catalogUrl } : {};
+  const catalogUrl = recordUrl || current?.catalogUrl || homeUrl;
+  const link = catalogUrl ? { catalogUrl, catalogLinkKind: recordUrl ? 'record' as const : current?.catalogLinkKind } : {};
+  const place = library?.city || library?.region || undefined;
   const known = bookKey && store.libraryId() === libraryId && store.get(bookKey) === 'found';
-  if (known && (!current || current.answer === 'unknown')) return { kind: 'library', answer: 'found', name, ...link };
+  if (recordUrl || (known && (!current || current.answer === 'unknown'))) return { kind: 'library', answer: 'found', name, place, ...link };
   // A library whose catalog the app cannot read: couldn't check (unless an
   // answer was stored), and trying again would not help.
   if (!checkable && current?.answer !== 'found' && current?.answer !== 'not_found') return { kind: 'library', answer: 'unsupported', name, ...link };
   if (!current) return { kind: 'library', answer: 'checking', name, ...link };
-  return { kind: 'library', answer: current.answer, name, ...link, ...(current.answer === 'unknown' ? { retry } : {}) };
+  return { kind: 'library', answer: current.answer, name, place, ...link, ...(current.answer === 'unknown' ? { retry } : {}) };
 }

@@ -1,11 +1,10 @@
-import { useEffect, useId, useLayoutEffect, useRef, type KeyboardEvent, type MouseEvent, type ReactNode } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, type KeyboardEvent } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import type { ProblemScreen } from '../../api';
+import { webLink, type ProblemScreen } from '../../api';
 import { useAccountSession } from '../../auth/AccountSessionProvider';
 import { useLibrary } from '../../context';
 import type { PublicLibrary } from '../../types';
-import { trapTab } from '../home/dialogFocus';
-import { CloseGlyph, LibraryGlyph, PersonIcon } from '../home/homeIcons';
+import { LibraryGlyph, SettingsGlyph } from '../home/homeIcons';
 import { LIBRARY_FIELD, LibraryPicker } from '../library/LibraryPickerDialog';
 import { useReadingLight } from '../readingLightContext';
 
@@ -29,12 +28,13 @@ export type ReportFrom = { reportScreen: ProblemScreen; reportBookKey?: string }
 /** The chosen library: icon tile, name, place and Change; with none chosen, Find my library. */
 function LibrarySection({ onChange }: { onChange: () => void }) {
   const { library, loadingLibrary } = useLibrary();
+  const catalog = library?.capabilities.catalogLink ? webLink(library.catalogUrl) : undefined;
   return <section className="desk-section desk-library" aria-labelledby="desk-library-heading">
     <h2 id="desk-library-heading">My library</h2>
     {library ? <>
       <div className="desk-library-row">
         <span className="desk-library-icon" aria-hidden="true"><LibraryGlyph size={24} strokeWidth={1.8} /></span>
-        <span className="desk-library-name"><strong>{library.name}</strong>{libraryPlace(library) && <span>{libraryPlace(library)}</span>}</span>
+        <span className="desk-library-name"><strong>{catalog ? <a href={catalog} target="_blank" rel="noreferrer" aria-label={library.name + ", opens in a new tab"}>{library.name}</a> : library.name}</strong>{libraryPlace(library) && <span>{libraryPlace(library)}</span>}</span>
       </div>
       <button type="button" className="desk-link desk-change" aria-label="Change library" onClick={onChange}>Change</button>
     </> : loadingLibrary ? <p className="desk-library-loading" role="status">Loading…</p>
@@ -67,6 +67,7 @@ export function LightToggle({ labelledBy }: { labelledBy: string }) {
 /** Report a problem, Privacy and About. */
 export function HelpLinks({ replace, report, onDone, className = '' }: { replace: boolean; report: ReportFrom; onDone?: () => void; className?: string }) {
   return <nav className={'desk-help ' + className} aria-label="Help and information">
+    <a href="/support">Help</a>
     <Link to="/app/report" state={report} replace={replace} onClick={onDone}>Report a problem</Link>
     <Link to="/app/privacy" replace={replace} onClick={onDone}>Privacy</Link>
     <Link to="/app/about" replace={replace} onClick={onDone}>About</Link>
@@ -130,9 +131,9 @@ function ColumnPicker({ onClose, initialQuery, returnFocus }: { onClose: () => v
  * the library picker (DeskLibrary board). Links open their page in the
  * middle slot; with a page already there, they take its place.
  */
-export function DeskColumn({ narrow, picking, onChangeLibrary, onClosePicker, pickerQuery, pickerReturn, report }: {
+export function DeskColumn({ narrow, picking, onChangeLibrary, onClosePicker, pickerQuery, pickerReturn, report, onSettings }: {
   narrow: boolean; picking: boolean; onChangeLibrary: () => void; onClosePicker: () => void; pickerQuery?: string;
-  pickerReturn: () => HTMLElement | null; report: ReportFrom;
+  pickerReturn: () => HTMLElement | null; report: ReportFrom; onSettings: () => void;
 }) {
   const { shown } = useAccountsShown();
   return <aside className={'desk-column' + (narrow ? ' is-narrow' : '') + (picking ? ' is-picking' : '')} aria-label="Library and account">
@@ -147,94 +148,16 @@ export function DeskColumn({ narrow, picking, onChangeLibrary, onClosePicker, pi
         <h2 id="desk-light-heading">Reading light</h2>
         <LightToggle labelledBy="desk-light-heading" />
       </section>
+      <button type="button" className="desk-link desk-settings" aria-haspopup="dialog" onClick={onSettings}><SettingsGlyph size={18} />Settings</button>
     </>}
     <HelpLinks replace={narrow} report={report} />
   </aside>;
 }
 
-type RailMenuName = 'account' | 'light' | 'help';
-
-/**
- * Between phone and wide widths (640–1099 px) the left column folds into an
- * icon rail: My library opens the library picker; Account, Reading light
- * and Help open a small pop-over beside the rail. Their pages open in the
- * middle slot, over the shelf.
- */
-export function DeskRail({ menu, onMenu, onLibrary, slotOpen, report }: {
-  menu: RailMenuName | null; onMenu: (menu: RailMenuName | null) => void; onLibrary: () => void; slotOpen: boolean; report: ReportFrom;
-}) {
-  const { shown } = useAccountsShown();
-  const buttons = useRef<Partial<Record<RailMenuName, HTMLButtonElement | null>>>({});
-  const open = (name: RailMenuName) => onMenu(menu === name ? null : name);
-  const item = (name: RailMenuName, label: string, icon: ReactNode) => <button type="button" ref={node => { buttons.current[name] = node; }}
-    className="rail-button" data-rail={name} aria-label={label} title={label} aria-haspopup="dialog" aria-expanded={menu === name} onClick={() => open(name)}>{icon}</button>;
-  return <>
-    <nav className="desk-rail" aria-label="Library and account">
-      <button type="button" className="rail-button rail-library" aria-label="My library" title="My library" aria-haspopup="dialog" onClick={onLibrary}><LibraryGlyph size={24} strokeWidth={1.8} /></button>
-      {shown && item('account', 'Account', <PersonIcon />)}
-      {item('light', 'Reading light', <LightGlyph />)}
-      {item('help', 'Help', <HelpGlyph />)}
-    </nav>
-    <RailMenu name={menu} anchor={menu ? buttons.current[menu] || null : null} onClose={() => onMenu(null)}>
-      {menu === 'account' && <AccountLinks replace={slotOpen} compact onDone={() => onMenu(null)} />}
-      {menu === 'light' && <LightToggle labelledBy="rail-menu-title" />}
-      {menu === 'help' && <HelpLinks className="rail-help" replace={slotOpen} report={report} onDone={() => onMenu(null)} />}
-    </RailMenu>
-  </>;
-}
-
-const MENU_TITLES: Record<RailMenuName, string> = { account: 'Account', light: 'Reading light', help: 'Help' };
-
-/** A pop-over beside the rail: a small modal dialog. Escape and a click outside close it; focus returns to its rail button. */
-function RailMenu({ name, anchor, onClose, children }: { name: RailMenuName | null; anchor: HTMLElement | null; onClose: () => void; children: ReactNode }) {
-  const ref = useRef<HTMLDialogElement>(null);
-  const opener = useRef<HTMLElement | null>(null);
-  useEffect(() => {
-    const dialog = ref.current;
-    if (!dialog) return;
-    if (name && !dialog.open) {
-      opener.current = anchor;
-      const box = anchor?.getBoundingClientRect();
-      dialog.style.top = Math.max(12, Math.min((box?.top ?? 12) - 4, window.innerHeight - 260)) + 'px';
-      dialog.showModal();
-      dialog.querySelector<HTMLElement>('a[href], button:not(.rail-menu-close)')?.focus();
-    }
-    if (!name && dialog.open) {
-      dialog.close();
-      if (opener.current?.isConnected) opener.current.focus();
-    }
-  }, [name, anchor]);
-  const backdrop = (event: MouseEvent<HTMLDialogElement>) => {
-    if (event.target !== ref.current) return;
-    const box = ref.current.getBoundingClientRect();
-    if (event.clientX > box.right || event.clientX < box.left || event.clientY < box.top || event.clientY > box.bottom) onClose();
-  };
-  // A link here opens its page in the middle slot. The pop-over closes at
-  // once, before that page is drawn: while it is open (modal) everything
-  // else is inert, and closing it later would take focus back from the page.
-  const follow = (event: MouseEvent<HTMLDialogElement>) => {
-    if (event.target instanceof Element && event.target.closest('a[href]') && ref.current?.open) ref.current.close();
-  };
-  return <dialog ref={ref} className="rail-menu" aria-labelledby="rail-menu-title" onClick={backdrop} onClickCapture={follow} onKeyDown={event => trapTab(event, ref.current)}
-    onCancel={event => { event.preventDefault(); onClose(); }} onClose={() => { if (name) onClose(); }}>
-    {name && <>
-      <div className="rail-menu-head">
-        <h2 id="rail-menu-title">{MENU_TITLES[name]}</h2>
-        <button type="button" className="rail-menu-close" aria-label="Close" onClick={onClose}><CloseGlyph size={20} /></button>
-      </div>
-      {children}
-    </>}
-  </dialog>;
-}
-
-function LightGlyph() {
-  return <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="4" /><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4" />
-  </svg>;
-}
-
-function HelpGlyph() {
-  return <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="9" /><path d="M9.6 9.4a2.5 2.5 0 014.8.9c0 1.7-2.4 2.2-2.4 3.7M12 17h.01" />
-  </svg>;
+/** At rail widths one gear opens the same Settings panel used on phones. */
+export function DeskRail({ onSettings, open }: { onSettings: () => void; open: boolean }) {
+  return <aside className="desk-rail" aria-label="MyBookshelf">
+    <button type="button" className="rail-button desk-settings" aria-label="Settings" title="Settings"
+      aria-haspopup="dialog" aria-expanded={open} onClick={onSettings}><SettingsGlyph /></button>
+  </aside>;
 }

@@ -5,6 +5,7 @@ import { useLibrary } from '../../context';
 import { useReadingLight } from '../readingLightContext';
 import { trapTab } from '../home/dialogFocus';
 import { ChevronGlyph, CloseGlyph, LibraryGlyph, PersonIcon } from '../home/homeIcons';
+import type { ReportOrigin } from './ReportProblemPage';
 
 const LIGHTS = [['daylight', 'Daylight'], ['lamplight', 'Lamplight'], ['ink', 'Ink']] as const;
 
@@ -14,7 +15,9 @@ const LIGHTS = [['daylight', 'Daylight'], ['lamplight', 'Lamplight'], ['ink', 'I
  * returns to the control that opened it. Back closes it too (the home screen
  * opens it as a history entry). "Change" hands over to the library pop-up.
  */
-export function SidePanel({ open, onClose, returnFocus, onChangeLibrary }: { open: boolean; onClose: () => void; returnFocus?: () => HTMLElement | null; onChangeLibrary: () => void }) {
+export function SidePanel({ open, onClose, returnFocus, onChangeLibrary, report }: {
+  open: boolean; onClose: () => void; returnFocus?: () => HTMLElement | null; onChangeLibrary: () => void; report?: ReportOrigin;
+}) {
   const ref = useRef<HTMLDialogElement>(null);
   const { session, signOut } = useAccountSession();
   const { library, loadingLibrary } = useLibrary();
@@ -47,23 +50,14 @@ export function SidePanel({ open, onClose, returnFocus, onChangeLibrary }: { ope
     if (event.clientX > box.right || event.clientX < box.left || event.clientY < box.top || event.clientY > box.bottom) onClose();
   };
 
-  return <dialog ref={ref} className="side-panel" aria-label="Account and settings" onKeyDown={trap} onClick={backdrop}
+  return <dialog ref={ref} className="side-panel" aria-labelledby="settings-title" onKeyDown={trap} onClick={backdrop}
     onCancel={event => { event.preventDefault(); onClose(); }} onClose={() => { if (open) onClose(); }}>
     {open && <>
-      <button type="button" className="side-panel-close" aria-label="Close" onClick={onClose}><CloseGlyph /></button>
-
-      {accountsAvailable && <section className="panel-section panel-account" aria-labelledby="panel-account">
-        <h2 id="panel-account">Account</h2>
-        {signedIn ? <>
-          <div className="panel-person"><span className="panel-avatar" aria-hidden="true"><PersonIcon size={20} /></span><span className="panel-email">{session.user!.email}</span></div>
-          <button type="button" className="home-button home-button-outline panel-button" onClick={() => { void signOut(); }}>Log out</button>
-          <Link className="panel-row panel-row-plain" to="/app/settings/account">Account settings<ChevronGlyph /></Link>
-        </> : <>
-          <Link className="home-button panel-button" to="/app/account/sign-up">Create account</Link>
-          <Link className="home-button home-button-outline panel-button" to="/app/account/sign-in">Log in</Link>
-        </>}
-      </section>}
-
+      <div className="settings-header">
+        <h1 id="settings-title">Settings</h1>
+        <button type="button" className="side-panel-close" aria-label="Close" onClick={onClose}><CloseGlyph /></button>
+      </div>
+      <p className="settings-intro">Your library, your account and how the app looks.</p>
       <section className="panel-section" aria-labelledby="panel-library">
         <h2 id="panel-library">My library</h2>
         <div className="panel-library">
@@ -71,19 +65,36 @@ export function SidePanel({ open, onClose, returnFocus, onChangeLibrary }: { ope
           <span className="panel-library-name">{library ? <><strong>{library.name}</strong>{library.city && <span>{library.city}</span>}</> : <strong>{loadingLibrary ? 'Loading…' : 'None chosen'}</strong>}</span>
           <button type="button" className="home-text-button" aria-haspopup="dialog" aria-label={library ? 'Change library' : 'Choose a library'} onClick={onChangeLibrary}>{library ? 'Change' : 'Choose'}</button>
         </div>
+        <p>Books on your reading shelf show whether this library has them.</p>
       </section>
-
+      {accountsAvailable && <section className="panel-section panel-account" aria-labelledby="panel-account">
+        <h2 id="panel-account">Account</h2>
+        {signedIn ? <>
+          <div className="panel-person"><span className="panel-avatar" aria-hidden="true"><PersonIcon size={20} /></span><span className="panel-email">{session.user!.email}</span></div>
+          <button type="button" className="home-button home-button-outline panel-button" onClick={() => { void signOut(); }}>Log out</button>
+          <Link className="panel-row panel-row-plain" to="/app/settings/account">Account settings<ChevronGlyph /></Link>
+        </> : <>
+          <p>An account keeps the same reading shelf on your phone and your computer. It is optional and free.</p>
+          <div className="settings-account-buttons">
+            <Link className="home-button panel-button" to="/app/account/sign-up">Create account</Link>
+            <Link className="home-button home-button-outline panel-button" to="/app/account/sign-in">Log in</Link>
+          </div>
+        </>}
+      </section>}
       <section className="panel-section" aria-labelledby="panel-light">
         <h2 id="panel-light">Reading light</h2>
         <div className="light-toggle" role="group" aria-labelledby="panel-light">
           {LIGHTS.map(([value, label]) => <button key={value} type="button" aria-pressed={light === value} onClick={() => setLight(value)}>{label}</button>)}
         </div>
+        <p>Daylight is warm and light, Lamplight is dark, Ink is cool and light.</p>
       </section>
 
       <nav className="panel-links" aria-label="Help and information">
-        <Link className="panel-row" to="/app/report" state={{ reportScreen }}>Report a problem<ChevronGlyph /></Link>
+        <h2>Help and about</h2>
+        <a className="panel-row" href="/support">How MyBookshelf works<ChevronGlyph /></a>
+        <Link className="panel-row" to="/app/report" state={report || { reportScreen }}>Report a problem<ChevronGlyph /></Link>
         <Link className="panel-row" to="/app/privacy">Privacy<ChevronGlyph /></Link>
-        <Link className="panel-row" to="/app/about">About<ChevronGlyph /></Link>
+        <a className="panel-row" href="/about">About MyBookshelf<ChevronGlyph /></a>
       </nav>
     </>}
   </dialog>;

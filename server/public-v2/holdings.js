@@ -144,8 +144,10 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
     const book = { ...trustedIdentity(libraryId, bookKey, resolved), title: resolved?.title || '', authors: resolved?.authors || [] };
     const handoff = catalogHandoffFor({ entry, library, book: resolved || (book.isbn13 ? { isbn13: book.isbn13 } : undefined) });
     const reply = (answer, source, extraUrl) => {
-      const catalogUrl = safeCatalogUrl(extraUrl) || safeCatalogUrl(handoff?.catalogUrl);
-      res.json({ answer, ...(catalogUrl ? { catalogUrl } : {}) });
+      const recordUrl = answer === 'found' && library.capabilities?.catalogLink && extraUrl !== handoff?.catalogUrl
+        ? onCatalogOrigin(extraUrl, library, entry) : undefined;
+      const catalogUrl = recordUrl || safeCatalogUrl(handoff?.catalogUrl);
+      res.json({ answer, ...(catalogUrl ? { catalogUrl, catalogLinkKind: recordUrl ? 'record' : handoff.catalogLinkKind } : {}) });
       usage({ kind: 'book_check', libraryId, bookKey, outcome: answer, ...(source ? { source } : {}), durationMs: now() - startedAt });
     };
     const stored = await lookup.storedFor({ library: entry, book });

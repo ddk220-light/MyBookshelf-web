@@ -43,9 +43,9 @@ export function ContentDetail({ contentKey, returnTo = '/app/search?scope=free' 
     if(!item||!saveContent||!unsaveContent||saving)return;
     setSaving(true);
     try{
-      if(saved){setNotice(await unsaveContent(item.key)?'Removed from your shelf.':'Your shelf could not be changed. Try again.');return;}
+      if(saved){setNotice(await unsaveContent(item.key)?'Removed from your reading shelf.':'Your reading shelf could not be changed. Try again.');return;}
       const result=await saveContent(item);
-      setNotice(result==='full'?'Your shelf holds 100 items. Remove one to save this.':result==='recovery'?'Your shelf needs attention before this can be saved.':result==='failed'?'This item could not be saved. Try again.':'Saved to your shelf in this browser.');
+      setNotice(result==='full'?'Your reading shelf holds 100 items. Remove one to save this.':result==='recovery'?'Your reading shelf needs attention before this can be saved.':result==='failed'?'This item could not be saved. Try again.':'Saved to your reading shelf in this browser.');
     }finally{setSaving(false);}
   }
   return <section className="content-detail">

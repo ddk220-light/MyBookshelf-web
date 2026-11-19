@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { webLink } from '../../api';
 import { isbnSource, useLibrary } from '../../context';
 import { useHoldingsStore } from '../../holdings';
 import { readReaderPreferences, writeReaderPreferences } from '../../readerState';
@@ -11,7 +12,7 @@ import { SidePanel } from '../panel/SidePanel';
 import { ResultsShelf } from '../search/ResultsShelf';
 import { resultEntries, type ResultEntry } from '../search/searchResults';
 import { runBookSearch, useBookSearch } from '../search/useBookSearch';
-import { isMarked, useLibraryMarks } from '../search/useLibraryMarks';
+import { resultAnswer, useLibraryMarks } from '../search/useLibraryMarks';
 import { ScanDialog, type ScanAnswer, type ScanSource } from '../scan/ScanDialog';
 import { LibraryPickerDialog } from '../library/LibraryPickerDialog';
 import { libraryLinkMessage, type LibraryLinkNotice } from '../library/SelectLibraryLink';
@@ -27,7 +28,7 @@ import { useSuggestionMotion } from '../shelf/useSuggestionMotion';
 import { ViewSwitch, type ShelfView } from '../shelf/ViewSwitch';
 import type { LayoutMode } from '../desk/layoutMode';
 import { useBayColumns } from '../desk/useBayColumns';
-import { BackGlyph } from './homeIcons';
+import { BackGlyph, LibraryGlyph } from './homeIcons';
 import { SHELF_SEARCH_ID } from './SearchBar';
 import { ShelfStage } from './ShelfStage';
 import { heldSuggestionSlots, shelfEntries, suggestionEntry } from './shelfItems';
@@ -63,7 +64,9 @@ type HomeState = LegacyArrival & { overlay?: 'panel' | 'scan' | 'library'; panel
  * it opens no overlay and changes no history; `behind.candidateId` keeps
  * the results the page was opened from, and `openKey`'s cover is outlined.
  */
-export function HomeScreen({ layout = 'phone', behind = null, openKey = null }: { layout?: LayoutMode; behind?: { candidateId?: string } | null; openKey?: string | null } = {}) {
+export function HomeScreen({ layout = 'phone', behind = null, openKey = null, onOpenLibrary }: {
+  layout?: LayoutMode; behind?: { candidateId?: string } | null; openKey?: string | null; onOpenLibrary?: () => void;
+} = {}) {
   const desk = layout !== 'phone';
   const wide = layout === 'wide';
   const { state, library, loadingLibrary, clearRecentBooks, restoreRecentBooks, recoveryMode, reportStorageFailure, removedBook, dismissRemoval } = useLibrary();
@@ -112,7 +115,15 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null }: 
   // panel's history entry for the pop-up's, so closing it returns to what
   // was under the panel, with focus on the person icon.
   const libraryOpen = !desk && routeState?.overlay === 'library';
+  const libraryOpener = useRef<HTMLElement | null>(null);
+  const returnFromLibrary = useCallback(() => libraryOpener.current?.isConnected ? libraryOpener.current : returnFocus(), [returnFocus]);
+  const openLibrary = (control: HTMLElement) => {
+    if (desk) { onOpenLibrary?.(); return; }
+    libraryOpener.current = control;
+    navigate(location.pathname, { state: { ...(latestState.current || {}), overlay: 'library', libraryPushed: true } });
+  };
   const changeLibrary = () => {
+    libraryOpener.current = personButton.current;
     const { overlay: _overlay, panelPushed, ...rest } = latestState.current || {};
     navigate(location.pathname, { replace: true, state: { ...rest, overlay: 'library', libraryPushed: Boolean(panelPushed) } });
   };
@@ -217,9 +228,8 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null }: 
   const scanOpener = useRef<HTMLElement | null>(null);
   const focusAfterScan = useRef<'opener' | 'search'>('opener');
   const scanLookup = useRef<AbortController | null>(null);
-  const goScan = () => {
-    const active = document.activeElement;
-    scanOpener.current = active instanceof HTMLElement && active !== document.body ? active : null;
+  const goScan = (opener: HTMLElement) => {
+    scanOpener.current = opener;
     focusAfterScan.current = 'opener';
     navigate(location.pathname, { state: { ...(latestState.current || {}), overlay: 'scan', scanPushed: true } });
   };
@@ -310,19 +320,35 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null }: 
   const marks = useLibraryMarks({ active: showResults && resultsStatus === 'results' && results.length > 0 && checkable,
     libraryId: state.selectedLibraryId, candidateId, entries: results, query: queryForCandidates(candidateId) });
   const markedCount = useMarkedCount(badgeLibrary ? results : []);
+  const [promptDismissed, setPromptDismissed] = useState(() => Boolean(readReaderPreferences().libraryPromptDismissed));
+  const dismissLibraryPrompt = useCallback(() => {
+    writeReaderPreferences({ libraryPromptDismissed: true });
+    setPromptDismissed(true);
+  }, []);
+  useEffect(() => {
+    if (!behind && library && !promptDismissed) dismissLibraryPrompt();
+  }, [behind, library, promptDismissed, dismissLibraryPrompt]);
+  const catalog = library?.capabilities.catalogLink ? webLink(library.catalogUrl) : undefined;
+  const libraryRow = libraryName && !wide ? <div className="home-library-row">
+    <span className="home-library-tile"><LibraryGlyph size={20} /></span>
+    {catalog ? <a className="home-library" href={catalog} target="_blank" rel="noreferrer" aria-label={libraryName + ", opens in a new tab"}>{libraryName}</a>
+      : <span className="home-library">{libraryName}</span>}
+    <button type="button" className="home-text-button" aria-label="Change library" aria-haspopup="dialog"
+      onClick={event => openLibrary(event.currentTarget)}>Change</button>
+  </div> : null;
   const books = (total: number) => total === 1 ? '1 book' : total + ' books';
   const announcement = !showResults ? '' : resultsStatus === 'searching' ? 'Searching' : resultsStatus === 'failed' ? 'Couldn’t search'
     : !results.length ? 'No books found'
       : books(results.length) + (marks.checking ? '. Looking in ' + badgeLibrary : markedCount ? '. ' + books(markedCount) + ' in ' + badgeLibrary : '');
   const scan = wide ? undefined : goScan;
-  const backToShelf = <button type="button" className="home-text-button results-back" onClick={() => closeSearch('shelf')}><BackGlyph />Back to my shelf</button>;
+  const backToShelf = <button type="button" className="home-text-button results-back" onClick={() => closeSearch('shelf')}><BackGlyph />Back to my reading shelf</button>;
   const shelf = <>
     {empty ? <div className="cold-open-suggestions">
       {/* "Ready to search" and the search bar are in the top bar (intro). */}
       <Bookcase entries={suggested} libraryName={badgeLibrary} perBay={perBay} openKey={openKey} motion={motion} />
     </div> : <section className="my-shelf" aria-labelledby="my-shelf-heading">
       <div className="my-shelf-heading">
-        <h1 id="my-shelf-heading" tabIndex={-1}>My shelf</h1>
+        <h1 id="my-shelf-heading" tabIndex={-1}>My reading shelf</h1>
         <span>{books(count)}</span>
       </div>
       {view === 'list' && count > 1 ? <ShelfList entries={withSuggestions} libraryName={badgeLibrary} motion={motion} />
@@ -338,17 +364,23 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null }: 
   return <div ref={home} className={'home' + (desk ? ' home-desk home-' + layout : '')} style={desk ? { '--bay-cols': perBay } as CSSProperties : undefined}
     onPointerDownCapture={noteInteraction} onFocusCapture={noteInteraction}>
     {linkNotice && <p className="home-notice" role="status">{libraryLinkMessage(linkNotice)}</p>}
-    <TopBar ref={personButton} layout={layout} panelOpen={panelOpen} onOpenPanel={openPanel} libraryName={libraryName} intro={empty && !showResults ? <EmptyShelf /> : undefined}
+    <TopBar ref={personButton} layout={layout} panelOpen={panelOpen} onOpenPanel={openPanel} intro={empty && !showResults ? <EmptyShelf /> : undefined}
       search={{ value: query, onChange: changeQuery, onSubmit: text => { void submit(text); }, onClear: clearQuery, onScan: scan, active: showResults }}
-      leading={showResults && !wide ? backToShelf : undefined}
+      leading={showResults && !wide ? backToShelf : libraryRow}
       trailing={showResults ? results.length > 0 && resultsStatus === 'results' ? <ViewSwitch view={view} onChange={changeView} /> : undefined
         : count > 1 ? <ViewSwitch view={view} onChange={changeView} /> : undefined} />
+    {!showResults && !behind && !libraryName && !state.selectedLibraryId && !promptDismissed && !recoveryMode && <section className="home-library-prompt" aria-labelledby="library-prompt-title">
+      <h2 id="library-prompt-title"><LibraryGlyph size={20} />Choose your library</h2>
+      <p>Then every book shows whether your library has it.</p>
+      <button type="button" className="home-button" aria-haspopup="dialog" onClick={event => openLibrary(event.currentTarget)}>Find my library</button>
+      <button type="button" className="home-text-button" onClick={dismissLibraryPrompt}>Not now</button>
+    </section>}
     <ShelfStage showResults={showResults} shelf={shelf} results={resultsPane} />
     <p className="visually-hidden" role="status" aria-live="polite">{announcement}</p>
     {cleared && <div className="undo-notice home-undo" role="status"><span>Viewed before cleared</span>
       {restoreRecentBooks && <button type="button" onClick={async () => { if (await restoreRecentBooks(cleared)) setCleared(null); }}>Undo</button>}</div>}
     {!desk && <SidePanel open={panelOpen} onClose={closePanel} returnFocus={returnFocus} onChangeLibrary={changeLibrary} />}
-    {!desk && <LibraryPickerDialog open={libraryOpen} onClose={closeLibrary} returnFocus={returnFocus} initialQuery={libraryQuery} />}
+    {!desk && <LibraryPickerDialog open={libraryOpen} onClose={closeLibrary} returnFocus={returnFromLibrary} initialQuery={libraryQuery} />}
     {!wide && <ScanDialog open={scanOpen} onClose={closeScan} onIsbn={lookUpIsbn} onSearchByTitle={searchByTitle} returnFocus={scanReturnFocus} />}
   </div>;
 }
@@ -358,5 +390,5 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null }: 
 function useMarkedCount(entries: readonly ResultEntry[]): number {
   const holdings = useHoldingsStore();
   useSyncExternalStore(holdings.subscribe, holdings.version, holdings.version);
-  return entries.filter(entry => isMarked(holdings, entry)).length;
+  return entries.filter(entry => resultAnswer(holdings, entry) === 'found').length;
 }

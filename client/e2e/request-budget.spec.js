@@ -30,6 +30,7 @@ async function setup(page, { saved = [], libraryId = null } = {}) {
     const path = new URL(request.url()).pathname;
     const body = request.postDataJSON?.() || {};
     if (path === '/api/account/session') return route.fulfill({ json: { status: 'guest' } });
+    if (path === '/api/auth/ok') return route.fulfill({ json: { ok: true } });
     if (path === '/api/account/capabilities') return route.fulfill({ json: { email: true, google: false, apple: false, canonicalOrigin: new URL(request.url()).origin } });
     if (path === '/api/v2/libraries/resolve') return route.fulfill({ json: { library: LINKED_LIBRARY } });
     if (path === '/api/v2/holdings/lookup') return route.fulfill({ json: { answers: Object.fromEntries((body.books || []).map(item => [item.bookKey, 'found'])) } });
@@ -66,6 +67,20 @@ async function tabSwitches(page, times) {
 }
 
 test.describe('Request budget', () => {
+  test('opening account entry warms the service once for this page load', async ({ page }) => {
+    const calls = await setup(page);
+    await page.goto('/');
+    await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
+    expect(count(calls, 'GET /api/auth/ok')).toBe(0);
+    await page.getByRole('button', { name: 'Settings' }).click();
+    await page.getByRole('dialog', { name: 'Settings' }).getByRole('link', { name: 'Log in' }).click();
+    await expect(page.getByRole('heading', { name: 'Log in' })).toBeVisible();
+    await expect.poll(() => count(calls, 'GET /api/auth/ok')).toBe(1);
+    await page.getByRole('link', { name: 'Create an account' }).click();
+    await expect(page.getByRole('heading', { name: 'Welcome to MyBookshelf' })).toBeVisible();
+    expect(count(calls, 'GET /api/auth/ok')).toBe(1);
+  });
+
   test('a guest\'s first visit: one session call and no other account call; idle and tab switches ask nothing', async ({ page }) => {
     test.setTimeout(45_000);
     const calls = await setup(page);

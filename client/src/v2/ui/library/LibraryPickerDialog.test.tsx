@@ -39,8 +39,8 @@ function renderShelf(libraryId: string | null = null) {
   return render(<MemoryRouter initialEntries={['/']}><AnonymousWebApp /><Location /></MemoryRouter>);
 }
 async function openFromPanel(title = 'Find your library') {
-  fireEvent.click(await screen.findByRole('button', { name: 'Account and settings' }));
-  const panel = await screen.findByRole('dialog', { name: 'Account and settings' });
+  fireEvent.click(await screen.findByRole('button', { name: 'Settings' }));
+  const panel = await screen.findByRole('dialog', { name: 'Settings' });
   fireEvent.click(within(panel).getByRole('button', { name: /library/ }));
   return screen.findByRole('dialog', { name: title });
 }
@@ -58,7 +58,7 @@ describe('library pop-up', () => {
     renderShelf(IIT.id);
     expect(await screen.findByText(IIT.name, { selector: '.home-library' })).toBeInTheDocument();
     const dialog = await openFromPanel('Change library');
-    expect(screen.queryByRole('dialog', { name: 'Account and settings' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('dialog', { name: 'Settings' })).not.toBeInTheDocument();
     expect(screen.getByTestId('location')).toHaveTextContent('"overlay":"library"');
     // On a phone the keyboard waits for a tap: focus starts on "Libraries near me", not the field.
     expect(within(dialog).getByRole('button', { name: 'Libraries near me' })).toHaveFocus();
@@ -89,7 +89,7 @@ describe('library pop-up', () => {
     expect(stored.selectedLibraryId).toBe(ANNA.id);
     expect(stored.savedBooks).toHaveLength(1);
     expect(screen.getByTestId('location')).toHaveTextContent(/^\/\|null$/);
-    expect(screen.getByRole('button', { name: 'Account and settings' })).toHaveFocus();
+    expect(screen.getByRole('button', { name: 'Settings' })).toHaveFocus();
     // The badges refill for the new library.
     await waitFor(() => expect(calls.filter(call => call.path.endsWith('/holdings/lookup')).map(call => call.body.libraryId)).toEqual([IIT.id, ANNA.id]));
   });

@@ -22,8 +22,8 @@ test.describe('Policy pages and Report a problem', () => {
   test('Privacy, Terms and About open from the side panel, and Back returns to it', async ({ page }) => {
     await setup(page);
     await page.goto('/');
-    const panel = page.getByRole('dialog', { name: 'Account and settings' });
-    await page.getByRole('button', { name: 'Account and settings' }).click();
+    const panel = page.getByRole('dialog', { name: 'Settings' });
+    await page.getByRole('button', { name: 'Settings' }).click();
     await panel.getByRole('link', { name: 'Privacy' }).click();
     await expect(page).toHaveURL(/\/app\/privacy$/);
     await expect(page.getByRole('heading', { level: 1, name: 'Privacy' })).toBeVisible();
@@ -32,23 +32,18 @@ test.describe('Policy pages and Report a problem', () => {
     // Placeholders stay visible until the release sets the effective date (the publication switch).
     const date = process.env.VITE_POLICY_EFFECTIVE_DATE?.trim();
     await expect(page.getByText(date ? 'Effective ' + date + '.' : /^Effective \[EFFECTIVE DATE\]\./, { exact: false }).first()).toBeVisible();
-    await expect(page.getByRole('link', { name: /My shelf/ })).toHaveCount(0);
+    await expect(page.getByRole('link', { name: /My reading shelf/ })).toHaveCount(0);
     expect((await axe(page)).violations).toEqual([]);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.getByRole('link', { name: 'Back' }).click();
     await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(panel).toBeVisible();
 
-    await panel.getByRole('link', { name: 'About' }).click();
-    await expect(page.getByRole('heading', { level: 1, name: 'MyBookshelf' })).toBeVisible();
-    await expect(page.getByText(/^MyBookshelf keeps a reading shelf/)).toBeVisible();
-    // No build version (a commit hash): only the contact.
-    await expect(page.locator('.about-facts dt')).toHaveText(['Contact']);
-    await expect(page.locator('.about-facts').getByRole('link', { name: 'privacy@mybookshelf.cloud' })).toHaveAttribute('href', 'mailto:privacy@mybookshelf.cloud');
+    await panel.getByRole('link', { name: 'About MyBookshelf' }).click();
+    await expect(page).toHaveURL(/\/about$/);
+    await expect(page.getByRole('heading', { level: 1, name: 'Find out if your library has a book, before you go.' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'privacy@mybookshelf.cloud', exact: true })).toBeVisible();
     expect((await axe(page)).violations).toEqual([]);
-    await page.goBack();
-    await expect(panel).toBeVisible();
-    await page.keyboard.press('Escape');
 
     await page.goto('/app/terms');
     await expect(page.getByRole('heading', { level: 1, name: 'Terms' })).toBeVisible();
@@ -63,16 +58,16 @@ test.describe('Policy pages and Report a problem', () => {
   test('the Create account form links the Terms and Privacy in one line', async ({ page }) => {
     await setup(page);
     await page.goto('/');
-    await page.getByRole('button', { name: 'Account and settings' }).click();
-    await page.getByRole('dialog', { name: 'Account and settings' }).getByRole('link', { name: 'Create account' }).click();
-    await expect(page.getByRole('heading', { name: 'Create account' })).toBeVisible();
+    await page.getByRole('button', { name: 'Settings' }).click();
+    await page.getByRole('dialog', { name: 'Settings' }).getByRole('link', { name: 'Create account' }).click();
+    await expect(page.getByRole('heading', { name: 'Welcome to MyBookshelf' })).toBeVisible();
     const line = page.locator('.account-terms');
     await expect(line).toHaveText('By creating an account you agree to the Terms and Privacy');
     await expect(line.getByRole('link', { name: 'Privacy' })).toHaveAttribute('href', '/app/privacy');
     await line.getByRole('link', { name: 'Terms' }).click();
     await expect(page.getByRole('heading', { level: 1, name: 'Terms' })).toBeVisible();
     await page.getByRole('link', { name: 'Back' }).click();
-    await expect(page.getByRole('heading', { name: 'Create account' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Welcome to MyBookshelf' })).toBeVisible();
   });
 
   test('Report a problem sends the words with the screen and library, then shows Sent', async ({ page }) => {
@@ -80,8 +75,8 @@ test.describe('Policy pages and Report a problem', () => {
     const reports = [];
     await page.route('**/api/v2/problem-reports', async route => { reports.push(route.request().postDataJSON()); await route.fulfill({ status: 202, json: {} }); });
     await page.goto('/');
-    await page.getByRole('button', { name: 'Account and settings' }).click();
-    await page.getByRole('dialog', { name: 'Account and settings' }).getByRole('link', { name: 'Report a problem' }).click();
+    await page.getByRole('button', { name: 'Settings' }).click();
+    await page.getByRole('dialog', { name: 'Settings' }).getByRole('link', { name: 'Report a problem' }).click();
     const box = page.getByRole('textbox', { name: 'What happened?' });
     await expect(box).toBeVisible();
     await expect(page.locator('.report-context')).toHaveText(new RegExp('^Sent with your message: the screen you were on \\(Shelf\\) and your library \\(' + LINKED_LIBRARY.name + '\\)\\.$'));

@@ -52,7 +52,7 @@ describe('library links in the one-shelf app', () => {
     stubApi();
     open('/select/anna-centenary-library?book=' + encodeURIComponent(BOOK.bookKey));
     await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/app/books/' + encodeURIComponent(BOOK.bookKey)));
-    expect(await screen.findByRole('group', { name: 'Found in Anna Centenary Library' })).toBeInTheDocument();
+    expect(await screen.findByRole('group', { name: 'In your library' })).toBeInTheDocument();
   });
 
   for (const [link, message] of [['missing', 'This library link isn’t available.'], ['down', 'We couldn’t open this library link just now.']] as const)

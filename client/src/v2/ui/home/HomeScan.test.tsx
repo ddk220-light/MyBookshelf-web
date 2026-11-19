@@ -86,7 +86,7 @@ describe('scan pop-up on the home screen', () => {
     const input = await screen.findByRole('searchbox', { name: 'Search for a book' });
     fireEvent.change(input, { target: { value: 'zzzz qqqq' } });
     fireEvent.submit(input.closest('form')!);
-    fireEvent.click(await screen.findByRole('button', { name: 'Scan the barcode' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Scan the book’s barcode' }));
     expect(await screen.findByRole('dialog', { name: 'Type the ISBN' })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Close' }));
     await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Type the ISBN' })).not.toBeInTheDocument());
@@ -102,14 +102,14 @@ describe('accounts switched off', () => {
     stubApi({ session: DISABLED });
     localStorage.setItem(ANONYMOUS_WEB_STORAGE_KEY, JSON.stringify({ version: 2, selectedLibraryId: null, recentBooks: [], savedBooks: [{ ...BOOK, source: 'direct', viewedAt: '2026-01-01T00:00:00.000Z' }], savedContent: [] }));
     renderHome();
-    expect(await screen.findByRole('heading', { name: 'My shelf' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'My reading shelf' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'The Innovator by Walter Isaacson' })).toBeInTheDocument();
     expect(screen.queryByText(/Accounts aren’t enabled/)).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Check account availability' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Continue as guest' })).not.toBeInTheDocument();
-    expect(screen.queryByRole('heading', { name: 'Take your shelf with you' })).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Account and settings' }));
-    const panel = await screen.findByRole('dialog', { name: 'Account and settings' });
+    expect(screen.queryByRole('heading', { name: 'Take your reading shelf with you' })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Settings' }));
+    const panel = await screen.findByRole('dialog', { name: 'Settings' });
     expect(within(panel).queryByRole('link', { name: 'Create account' })).not.toBeInTheDocument();
     expect(within(panel).queryByRole('link', { name: 'Log in' })).not.toBeInTheDocument();
     expect(within(panel).queryByRole('heading', { name: 'Account' })).not.toBeInTheDocument();

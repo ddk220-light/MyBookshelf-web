@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
-import { useHoldingsStore } from '../../holdings';
+import { holdingsLabel, useHoldingsStore } from '../../holdings';
 import { shelfBadge, type ShelfEntry } from '../home/shelfItems';
 import { BookCover3D } from './BookCover3D';
 import { BOOKS_PER_BAY, bayRows, initialBayCount } from './shelfLayout';
@@ -64,14 +64,20 @@ export function Bookcase({ entries, libraryName, perBay = BOOKS_PER_BAY, openKey
     observer.observe(node);
     return () => observer.disconnect();
   }, [more, rows.length]);
-  return <div className="home-bookcase">
+  return <div className={'home-bookcase' + (libraryName ? ' has-library' : '')}>
     {rows.slice(0, shown).map((row, index) => <Bay key={index}>
       {/* A held slot (`entry.held`) keeps its place, empty and without a label. */}
-      <ul className="bay-books">{row.map(entry => entry.held ? <li key={entry.key} aria-hidden="true" /> : <li key={entry.key}>
-        <BookCover3D entry={entry} open={entry.key === openKey} motion={motion?.get(entry.key)}
-          libraryName={libraryName && shelfBadge(entry, holdings) ? libraryName : null} />
-        {entry.suggested && <SuggestedLabel />}
-      </li>)}</ul>
+      <ul className="bay-books">{row.map(entry => {
+        if (entry.held) return <li key={entry.key} aria-hidden="true" />;
+        const found = Boolean(libraryName && shelfBadge(entry, holdings));
+        const label = libraryName && entry.kind === 'book' ? holdingsLabel(found ? 'found' : holdings.get(entry.key)) : undefined;
+        return <li key={entry.key}>
+          <BookCover3D entry={entry} open={entry.key === openKey} motion={motion?.get(entry.key)}
+            libraryName={found ? libraryName : null} status={label} />
+          {label && <span className="cover-answer" aria-hidden="true">{label}</span>}
+          {entry.suggested && <SuggestedLabel />}
+        </li>;
+      })}</ul>
     </Bay>)}
     {more && <div ref={sentinel} className="home-bookcase-more" aria-hidden="true" />}
   </div>;

@@ -78,7 +78,7 @@ describe('policy texts', () => {
     expect(document.body.textContent).not.toMatch(/Pwned|What changed/);
     expect(screen.getAllByRole('link', { name: 'privacy@mybookshelf.cloud' })[0]).toHaveAttribute('href', 'mailto:privacy@mybookshelf.cloud');
     expect(screen.getByRole('link', { name: 'Back' })).toBeInTheDocument();
-    expect(screen.queryByRole('link', { name: /My shelf/ })).toBeNull();
+    expect(screen.queryByRole('link', { name: /My reading shelf/ })).toBeNull();
     // The title is set in an effect, which can run after the heading appears.
     await waitFor(() => expect(document.title).toBe('Privacy — MyBookshelf'));
     view.unmount();
@@ -106,18 +106,18 @@ describe('side panel', () => {
   it('signed out: Create account, Log in, and rows to the new pages', async () => {
     network();
     app('/', { overlay: 'panel' });
-    const panel = await screen.findByRole('dialog', { name: 'Account and settings' });
+    const panel = await screen.findByRole('dialog', { name: 'Settings' });
     expect(within(panel).getByRole('link', { name: 'Create account' })).toHaveAttribute('href', '/app/account/sign-up');
     expect(within(panel).getByRole('link', { name: 'Log in' })).toHaveAttribute('href', '/app/account/sign-in');
     expect(within(panel).getByRole('link', { name: 'Report a problem' })).toHaveAttribute('href', '/app/report');
     expect(within(panel).getByRole('link', { name: 'Privacy' })).toHaveAttribute('href', '/app/privacy');
-    expect(within(panel).getByRole('link', { name: 'About' })).toHaveAttribute('href', '/app/about');
+    expect(within(panel).getByRole('link', { name: 'About MyBookshelf' })).toHaveAttribute('href', '/about');
   });
 
   it('signed in: the email, Log out and Account settings', async () => {
     network({ signedIn: true });
     app('/', { overlay: 'panel' });
-    const panel = await screen.findByRole('dialog', { name: 'Account and settings' });
+    const panel = await screen.findByRole('dialog', { name: 'Settings' });
     expect(await within(panel).findByText(USER.email)).toBeInTheDocument();
     expect(within(panel).getByRole('button', { name: 'Log out' })).toBeInTheDocument();
     expect(within(panel).getByRole('link', { name: 'Account settings' })).toHaveAttribute('href', '/app/settings/account');
@@ -200,7 +200,7 @@ describe('account screens', () => {
     expect(screen.queryByLabelText('Your name')).toBeNull();
     const next = screen.getByRole('heading', { name: 'What happens next' }).parentElement!;
     expect(within(next).getAllByRole('listitem').map(item => item.textContent)).toEqual(['We send a link to your email.', 'Open the link and you are signed in.', 'Your reading shelf appears on any device where you log in.']);
-    expect(screen.getByRole('link', { name: 'privacy policy' })).toHaveAttribute('href', '/app/privacy');
+    expect(screen.getByRole('link', { name: 'Privacy' })).toHaveAttribute('href', '/app/privacy');
     expect(screen.getByRole('link', { name: 'Log in' })).toHaveAttribute('href', '/app/account/sign-in');
     const password = screen.getByLabelText('Password');
     // No helper text: the field describes nothing until there is an error.
@@ -288,7 +288,7 @@ describe('account screens', () => {
     expect(screen.queryByText(/signed-in devices/i)).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Log out' }));
     await waitFor(() => expect(calls.some(call => call.path.endsWith('/sign-out'))).toBe(true));
-    await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent(/^\/app\/shelf$/));
+    await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent(/^\/$/));
   });
 
   it('old account addresses lead to the new screens', async () => {
@@ -298,7 +298,7 @@ describe('account screens', () => {
     expect(screen.getByTestId('location')).toHaveTextContent(/^\/app\/settings\/account$/);
     cleanup();
     app('/app/account/import');
-    await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent(/^\/app\/shelf$/));
+    await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent(/^\/$/));
   });
 
   it('Change password within 10 minutes of signing in asks only for the new password', async () => {

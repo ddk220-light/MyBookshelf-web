@@ -6,6 +6,9 @@ const base = (size: number) => ({ width: size, height: size, viewBox: '0 0 24 24
 export function PersonIcon({ size = 24, strokeWidth = 1.8 }: IconProps) {
   return <svg {...base(size)} strokeWidth={strokeWidth}><circle cx="12" cy="8" r="4" /><path d="M4 20c1.5-4 5-5 8-5s6.5 1 8 5" /></svg>;
 }
+export function SettingsGlyph({ size = 24, strokeWidth = 1.8 }: IconProps) {
+  return <svg {...base(size)} strokeWidth={strokeWidth}><path d="M10 3h4l.6 2.5 2 .9 2.3-1.3 2 3.5-1.8 1.7v2.4l1.8 1.7-2 3.5-2.3-1.3-2 .9-.6 2.5h-4l-.6-2.5-2-.9-2.3 1.3-2-3.5L5 12.7v-2.4L3.1 8.6l2-3.5 2.3 1.3 2-.9z" /><circle cx="12" cy="11.5" r="3" /></svg>;
+}
 export function SearchGlyph({ size = 20, strokeWidth = 2 }: IconProps) {
   return <svg {...base(size)} strokeWidth={strokeWidth}><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>;
 }

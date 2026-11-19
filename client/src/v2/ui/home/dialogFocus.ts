@@ -8,9 +8,10 @@ const FOCUSABLE = 'button:not([disabled]),a[href],input:not([disabled]),select:n
  */
 export function trapTab(event: KeyboardEvent<HTMLElement>, dialog: HTMLElement | null) {
   if (event.key !== 'Tab') return;
-  const controls = Array.from(dialog?.querySelectorAll<HTMLElement>(FOCUSABLE) || []).filter(element => element.getClientRects().length > 0);
-  const first = controls[0], last = controls[controls.length - 1];
-  if (!first) { event.preventDefault(); return; }
-  if (event.shiftKey && (document.activeElement === first || !dialog?.contains(document.activeElement))) { event.preventDefault(); last.focus(); }
-  else if (!event.shiftKey && (document.activeElement === last || !dialog?.contains(document.activeElement))) { event.preventDefault(); first.focus(); }
+  const controls = Array.from(dialog?.querySelectorAll<HTMLElement>(FOCUSABLE) || []).filter(element =>
+    element.tabIndex >= 0 && element.getClientRects().length > 0 && getComputedStyle(element).visibility === 'visible');
+  event.preventDefault();
+  const index = controls.findIndex(element => element === document.activeElement);
+  const next = event.shiftKey ? (index <= 0 ? controls.length - 1 : index - 1) : (index + 1) % controls.length;
+  controls[next]?.focus();
 }

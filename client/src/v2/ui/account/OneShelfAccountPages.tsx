@@ -260,7 +260,7 @@ export function CreateAccountPage() {
         </ol>
       </div>
       <p className="account-switch">Already have an account? <Link to="/app/account/sign-in">Log in</Link></p>
-      <p className="account-fine account-policy">See our <Link to="/app/privacy">privacy policy</Link> for details.</p>
+      <p className="account-fine account-terms">By creating an account you agree to the <Link to="/app/terms">Terms</Link> and <Link to="/app/privacy">Privacy</Link></p>
     </>}>
     <div className="account-v2-field">
       <label htmlFor="signup-email">Email</label>
@@ -486,12 +486,12 @@ export function DeletionDonePage() {
   if (receipt?.busy && receipt.status === 'unknown') return <AccountForm title="Deleting…" busy><p role="status" className="visually-hidden">Deleting your account</p></AccountForm>;
   const confirmed = receipt && ['accepted', 'pending', 'cleaned'].includes(receipt.status);
   if (confirmed) return <AccountForm title="Account deleted">
-    <p>We sent one email to confirm it. The copy of your shelf in this browser was removed too.</p>
-    <Link className="home-button" to="/" replace>Back to my shelf</Link>
+    <p>We sent one email to confirm it. The copy of your reading shelf in this browser was removed too.</p>
+    <Link className="home-button" to="/" replace>Back to my reading shelf</Link>
   </AccountForm>;
   return <AccountForm title="Couldn’t confirm">
     <FormAlert offline={Boolean(receipt)}>{receipt ? 'Deletion not confirmed' : 'Nothing to show here'}</FormAlert>
     {receipt && <button type="button" className="home-button" disabled={receipt.busy} onClick={() => { void check(); }}>{receipt.busy ? 'Checking…' : 'Check again'}</button>}
-    <Link className="home-button home-button-outline" to="/" replace>Back to my shelf</Link>
+    <Link className="home-button home-button-outline" to="/" replace>Back to my reading shelf</Link>
   </AccountForm>;
 }

@@ -6,7 +6,7 @@ import { dismissAccountInvite, readOneShelfState } from '../../oneShelfState';
 import { knownEmailAccounts, rememberEmailAccounts } from './capabilitiesMemo';
 
 /**
- * "Take your shelf with you": shown to guests once they have saved a book,
+ * "Take your reading shelf with you": shown to guests once they have saved a book,
  * only when the service can create email accounts. "Not now" hides it for good.
  */
 export function shouldInviteAccount({ guest, savedCount, emailAccounts, dismissed }: { guest: boolean; savedCount: number; emailAccounts: boolean | null; dismissed: boolean }): boolean {
@@ -31,7 +31,7 @@ export function AccountInvite({ savedCount }: { savedCount: number }) {
   if (!shouldInviteAccount({ guest, savedCount, emailAccounts, dismissed })) return null;
   return <section className="account-invite" aria-labelledby="account-invite-heading">
     <div className="account-invite-text">
-      <h2 id="account-invite-heading">Take your shelf with you</h2>
+      <h2 id="account-invite-heading">Take your reading shelf with you</h2>
       <p>Open it on any phone or computer.</p>
     </div>
     <div className="account-invite-actions">

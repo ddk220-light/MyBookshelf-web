@@ -1,5 +1,48 @@
 # Production-ready release: implementation progress
 
+## Local integration
+
+Resumed in the active checkout on `codex/production-ready` from
+`claude/production-ready` (`a8490e4c11`). The reference branches and scheduled
+production configuration were left in place. The merges followed the planned
+order.
+
+| Workstream | Saved tip | Integrated work |
+|---|---|---|
+| w1 library checks | `7487b8ea8e` | Catalog database health, late answers via the request's existing background lifecycle, one e-Granthalaya session per check, Koha record links, and grouped Open Library pacing |
+| w3 picker and reports | `7ba920f7e0` | Mobile picker, confirmed request form, optional contact fields with 90-day retention, and camera request ownership |
+| w2 accounts | `94cf33a6ef` | One account screen, email log-in, verification and reset that sign the reader in, guest-book merge, deletion, and revision-based refresh |
+| w5 pages | `eeea77ccfb` | Indexable shelf at the root, forwarding for old shelf addresses, static About and Help, and revised privacy text |
+
+The client consumes the stream's `mark.catalogUrl`, `done.notFound` and
+`done.couldntCheck`. A proven record link is reused for the same book and
+library. Failed checks are shown separately from definite absence. The
+follow-up work also adds result captions, a distinct Remove action, tab
+titles, a Settings gear, a dismissible first-visit prompt, WOFF2 fonts and
+touch/keyboard improvements. The signed-in refresh uses a fingerprint of the
+bounded Viewed before list so opening a book on another device can trigger a
+refresh without changing its clear-history generation.
+
+### Local evidence and launch boundary
+
+- Node 22 type checking, 405 client tests, the production build and 53 tools
+  tests (including 9 SEO tests) passed. The complete server suite passed all
+  905 tests against disposable PostgreSQL 16 with zero skips.
+- Automated Chromium, mobile Chromium and WebKit journeys use fixtures.
+  The account journeys use the real local API, PostgreSQL and a synthetic
+  mail outbox.
+- Before release, complete the two-phone run on the finished build and the
+  R03 account review. Recheck the production and preview configuration, rotate
+  the three catalog role passwords, set the corrected production database
+  URLs and apply catalog migration 003 as described below. Hosted catalog
+  persistence, real email, server-region timings and the post-deployment
+  checks remain to be measured. No branch was pushed and no deployment was
+  started.
+
+The following sections record the saved handoff before integration.
+
+## Original paused handoff
+
 Paused on 19 November 2026 at the owner's request, so the work can be resumed
 by anyone. Nothing has been deployed; `main` and `staging` are untouched.
 

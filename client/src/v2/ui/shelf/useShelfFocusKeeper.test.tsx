@@ -11,7 +11,7 @@ function Shelf({ saved, suggested, heading = true }: { saved: string[]; suggeste
   return <div ref={root}>
     <button type="button">Elsewhere</button>
     <div className="stage-shelf">
-      {heading && <h1 id="my-shelf-heading" tabIndex={-1}>My shelf</h1>}
+      {heading && <h1 id="my-shelf-heading" tabIndex={-1}>My reading shelf</h1>}
       <ul>{saved.map(cover)}</ul>
       <ul>{suggested.map(cover)}</ul>
     </div>
@@ -33,7 +33,7 @@ describe('keeping focus on the shelf when suggestions change', () => {
     const view = render(<Shelf saved={['a']} suggested={['s1', 's2']} />);
     act(() => link('s2').focus());
     view.rerender(<Shelf saved={['a']} suggested={['s1', 's9']} />);
-    expect(screen.getByRole('heading', { name: 'My shelf' })).toHaveFocus();
+    expect(screen.getByRole('heading', { name: 'My reading shelf' })).toHaveFocus();
     // Without a heading (the cold open): the shelf's first cover.
     const cold = render(<Shelf saved={[]} suggested={['t1', 't2']} heading={false} />);
     act(() => link('t2').focus());

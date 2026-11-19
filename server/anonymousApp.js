@@ -110,6 +110,7 @@ export function createAnonymousApp({ clientDist, catalogStore = createCatalogSto
   });
 
   if (clientDist) {
+    app.get(['/app', '/app/shelf'], (_req, res) => res.redirect(308, '/'));
     for (const page of ['privacy', 'support']) {
       app.get(`/${page}`, (req, res) => {
         res.setHeader('Cache-Control', 'no-cache');
@@ -120,7 +121,7 @@ export function createAnonymousApp({ clientDist, catalogStore = createCatalogSto
     }
     app.use(express.static(clientDist, { extensions: ['html'], index: 'index.html', setHeaders: setStaticHeaders }));
     // /find is an old address the app redirects to the shelf (plan Phase 12).
-    app.get(['/app', '/app/*', '/select/*', '/find'], (req, res) => {
+    app.get(['/app/*', '/select/*', '/find'], (req, res) => {
       res.setHeader('X-Robots-Tag', 'noindex, follow');
       res.setHeader('Content-Security-Policy', HTML_SECURITY_POLICY);
       res.setHeader('Cache-Control', 'no-cache');

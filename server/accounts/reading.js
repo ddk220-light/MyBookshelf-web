@@ -54,10 +54,13 @@ export function createReadingActions({
               [id],
             )
           ).rows[0]?.directory_id ?? null;
-        const counts = (
+        const { saved, recent, historyRevision } = (
           await client.query(
             `SELECT (SELECT count(*)::int FROM user_books WHERE user_id=$1) AS saved,
-          (SELECT count(*)::int FROM recent_book_views WHERE user_id=$1) AS recent`,
+              count(*)::int AS recent,
+              md5(coalesce(string_agg(reference_id::text || ':' || extract(epoch FROM viewed_at)::text,
+                ',' ORDER BY reference_id), '')) AS "historyRevision"
+              FROM recent_book_views WHERE user_id=$1`,
             [id],
           )
         ).rows[0];
@@ -76,7 +79,8 @@ export function createReadingActions({
           selectedLibraryId: selected,
           selectedLibrary: selected ? directory.resolve(selected) : null,
           libraryRemoved: Boolean(selected && !directory.resolve(selected)),
-          counts,
+          counts: { saved, recent },
+          historyRevision,
           ...versions(settings),
         };
       });

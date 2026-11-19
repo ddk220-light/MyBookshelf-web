@@ -10,6 +10,7 @@ import { HomeScreen } from '../home/HomeScreen';
 import { useHistoryOverlay } from '../home/useHistoryOverlay';
 import { LibraryPickerDialog } from '../library/LibraryPickerDialog';
 import { canGoBack } from '../panel/PanelPage';
+import { SidePanel } from '../panel/SidePanel';
 import { DeskColumn, DeskRail, type ReportFrom } from './DeskColumn';
 import { ACCOUNT_ENTRY_PATH, DeskSlotContext, isSlotPath, type DeskSlot, type LayoutMode } from './layoutMode';
 import { ShelfPlaceKeeper } from './ShelfPlace';
@@ -279,19 +280,21 @@ export function DeskLayout({ mode, notices, children }: { mode: LayoutMode; noti
     const before = pickerOpener.current;
     if (before?.isConnected && !before.closest('[inert]')) return before;
     return slotRef.current?.querySelector<HTMLElement>('.library-answer, .library-ask-button')
-      || root.current?.querySelector<HTMLElement>('.desk-change, .desk-find-library, .rail-library') || null;
+      || root.current?.querySelector<HTMLElement>('.desk-change, .desk-find-library, .desk-settings') || null;
   }, []);
 
-  // A rail pop-over closes with any new page, and when the rail gives way to
-  // the column (it does not come back by itself when the window narrows again).
-  const [menu, setMenu] = useState<'account' | 'light' | 'help' | null>(null);
-  useEffect(() => { setMenu(null); }, [pathname, mode]);
+  const settings = useHistoryOverlay('panel');
+  const settingsReturn = useCallback(() => root.current?.querySelector<HTMLElement>('.desk-settings') || null, []);
+  const changeLibraryFromSettings = () => {
+    const { panelPushed, ...rest } = routeState || {};
+    navigate(pathname + location.search, { replace: true, state: { ...rest, overlay: 'library', libraryPushed: Boolean(panelPushed) } });
+  };
 
   const report: ReportFrom = bookKey ? { reportScreen: 'book', reportBookKey: bookKey } : { reportScreen: behind?.candidateId || (!slotOpen && routeState?.search) ? 'search' : 'shelf' };
   const wide = mode === 'wide';
   const side = phone ? null : wide
-    ? <DeskColumn narrow={slotOpen} picking={picker.open} onChangeLibrary={openPicker} onClosePicker={picker.close} pickerQuery={pickerQuery} pickerReturn={pickerReturn} report={report} />
-    : <DeskRail menu={menu} onMenu={setMenu} onLibrary={openPicker} slotOpen={slotOpen} report={report} />;
+    ? <DeskColumn narrow={slotOpen} picking={picker.open} onChangeLibrary={openPicker} onClosePicker={picker.close} pickerQuery={pickerQuery} pickerReturn={pickerReturn} report={report} onSettings={settings.show} />
+    : <DeskRail onSettings={settings.show} open={settings.open} />;
   // While a page is open the shelf beside it is held as it was: it keeps the
   // address it was drawn for, so the change of address does not reach its
   // covers' links and the shelf is not drawn again in full (only the open
@@ -304,7 +307,7 @@ export function DeskLayout({ mode, notices, children }: { mode: LayoutMode; noti
   const host = (name: string) => phone ? 'shelf-host' : name;
   const shelfArea = <div ref={area} className={host('desk-shelf-area')}>
     <div className={host('desk-shelf')} id={phone ? undefined : 'desk-shelf'}>
-      <UNSAFE_LocationContext.Provider value={shelfLocation.current}><HomeScreen layout={mode} behind={behind} openKey={bookKey} /></UNSAFE_LocationContext.Provider>
+      <UNSAFE_LocationContext.Provider value={shelfLocation.current}><HomeScreen layout={mode} behind={behind} openKey={bookKey} onOpenLibrary={openPicker} /></UNSAFE_LocationContext.Provider>
     </div>
   </div>;
   const classes = phone ? 'shelf-host' : ['desk', 'desk-mode-' + mode, slotOpen && 'desk-open', bare && 'desk-bare', picker.open && wide && 'desk-picking', phase && 'desk-' + phase].filter(Boolean).join(' ');
@@ -327,5 +330,6 @@ export function DeskLayout({ mode, notices, children }: { mode: LayoutMode; noti
     </main>
     {/* On phones the shelf screen has its own library pop-up. */}
     {mode === 'rail' && <LibraryPickerDialog open={picker.open} onClose={picker.close} returnFocus={pickerReturn} initialQuery={pickerQuery} />}
+    {!phone && <SidePanel open={settings.open} onClose={settings.close} onChangeLibrary={changeLibraryFromSettings} returnFocus={settingsReturn} report={report} />}
   </div>;
 }

@@ -151,9 +151,12 @@ export function AccountLibraryStateProvider({
         setLoading(false);
         if (!merging.current) {
           busy.current = true;
-          merging.current = mergeGuest(repo, next).finally(() => {
+          const pendingMerge = mergeGuest(repo, next).finally(() => {
+            if (merging.current !== pendingMerge) return;
+            merging.current = null;
             busy.current = false;
           });
+          merging.current = pendingMerge;
         }
       }
     } catch (error) {
@@ -176,6 +179,7 @@ export function AccountLibraryStateProvider({
       if (
         state.shelfRevision !== current.summary.shelfRevision ||
         state.historyGeneration !== current.summary.historyGeneration ||
+        state.historyRevision !== current.summary.historyRevision ||
         state.settingsRevision !== current.summary.settingsRevision
       )
         await refresh();
@@ -208,7 +212,11 @@ export function AccountLibraryStateProvider({
     return () => {
       active.current = false;
       repo.dispose();
-      if (repository.current === repo) repository.current = null;
+      if (repository.current === repo) {
+        repository.current = null;
+        merging.current = null;
+        busy.current = false;
+      }
       window.removeEventListener("focus", focus);
       document.removeEventListener("visibilitychange", focus);
     };

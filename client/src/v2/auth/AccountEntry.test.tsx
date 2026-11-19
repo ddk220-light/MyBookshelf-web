@@ -281,7 +281,7 @@ it("keeps the verification token after # until it is used, exchanges it only on 
   expect(posts).toEqual(["/api/account/verify-email"]);
   expect(JSON.parse((vi.mocked(fetch).mock.calls.find(([path]) => String(path).endsWith("/verify-email"))![1] as RequestInit).body as string)).toEqual({ token: "synthetic-one-use-token" });
   expect(await screen.findByRole("heading", { name: "Your reading shelf" })).toBeInTheDocument();
-  expect(screen.getByRole("link", { name: "Go to my reading shelf" })).toHaveAttribute("href", "/app/shelf");
+  expect(screen.getByRole("link", { name: "Go to my reading shelf" })).toHaveAttribute("href", "/");
 });
 it("still accepts ?token= from emails sent before the change; an expired link offers Request a new link", async () => {
   const posts: string[] = [];

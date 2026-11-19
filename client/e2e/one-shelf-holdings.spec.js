@@ -86,8 +86,8 @@ test.describe('One-shelf result badges', () => {
     expect((await axe(page)).violations).toEqual([]);
 
     await expect(results(page).locator('.cover-badge-library')).toHaveCount(3);
-    await expect(statusLine(page)).toHaveText('In Anna Centenary Library');
-    await expect(statusLine(page).locator('.results-library-badge')).toBeVisible();
+    await expect(statusLine(page)).toHaveText('');
+    await expect(results(page).getByText('In your library', { exact: true })).toHaveCount(3);
     await expect(page.locator('[role="status"][aria-live="polite"]')).toHaveText('9 books. 3 books in Anna Centenary Library');
     for (const book of RESULTS) await expect(results(page).getByRole('link', { name: label(book, found.includes(book.bookKey) && LINKED_LIBRARY), exact: true })).toBeVisible();
     // Top right of the cover, and no pop under reduced motion.
@@ -121,11 +121,11 @@ test.describe('One-shelf result badges', () => {
     await marked.click();
     await expect(page).toHaveURL(/\/app\/books\//);
     // The check answered "unknown"; the mark already proved this book.
-    await expect(page.getByRole('group', { name: 'Found in Anna Centenary Library' })).toBeVisible();
+    await expect(page.getByRole('group', { name: 'In your library' })).toBeVisible();
     expect(calls.checks.map(call => call.bookKey)).toEqual([RESULTS[2].bookKey]);
     await page.goBack();
     await expect(results(page).getByRole('link', { name: label(RESULTS[2], LINKED_LIBRARY) })).toBeVisible();
-    await expect(statusLine(page)).toHaveText('In Anna Centenary Library');
+    await expect(statusLine(page)).toHaveText('');
     await page.waitForTimeout(300);
     expect(calls.marks).toHaveLength(1);
   });
@@ -170,7 +170,7 @@ test.describe('One-shelf result badges', () => {
       await expect(statusLine(page)).not.toHaveText(/Looking/);
     }
     await expect(results(page).locator('.cover-badge-library')).toHaveCount(1);
-    await expect(statusLine(page)).toHaveText('In Anna Centenary Library');
+    await expect(statusLine(page)).toHaveText('');
     await expect(page.getByText(/not (found|in)|couldn/i)).toHaveCount(0);
   });
 
@@ -180,8 +180,8 @@ test.describe('One-shelf result badges', () => {
     await expect(page.locator('.home-library')).toHaveText(LINKED_LIBRARY.name);
     await searchFor(page, 'narayan');
     await expect(results(page).locator('.cover-badge-library')).toHaveCount(1);
-    await page.getByRole('button', { name: 'Account and settings' }).click();
-    await page.getByRole('dialog', { name: 'Account and settings' }).getByRole('button', { name: /^(Change|Choose a) library$/ }).click();
+    await page.getByRole('button', { name: 'Settings' }).click();
+    await page.getByRole('dialog', { name: 'Settings' }).getByRole('button', { name: /^(Change|Choose a) library$/ }).click();
     const dialog = page.getByRole('dialog', { name: 'Change library' });
     await dialog.getByLabel('City, town or library name').fill('Madurai');
     await dialog.getByRole('button', { name: /Kalaignar Centenary Library/ }).click();
@@ -189,7 +189,7 @@ test.describe('One-shelf result badges', () => {
     await expect(results(page).getByRole('link', { name: label(RESULTS[5], OTHER_LIBRARY) })).toBeVisible();
     await expect(results(page).locator('.cover-badge-library')).toHaveCount(2);
     await expect(results(page).getByRole('link', { name: label(RESULTS[0]), exact: true })).toBeVisible();
-    await expect(statusLine(page)).toHaveText('In Kalaignar Centenary Library');
+    await expect(statusLine(page)).toHaveText('');
     expect(calls.marks.map(call => call.libraryId)).toEqual([LINKED_LIBRARY.id, OTHER_LIBRARY.id]);
   });
 

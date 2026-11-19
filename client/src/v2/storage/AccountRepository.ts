@@ -20,6 +20,7 @@ export type CloudState = Versions & {
   selectedLibrary: PublicLibrary | null;
   libraryRemoved: boolean;
   counts: { saved: number; recent: number };
+  historyRevision?: string;
 };
 export type ReadingSnapshot = {
   summary: CloudState;
@@ -109,7 +110,7 @@ export class AccountRepository {
             if (books.length > 1000)
               throw new AccountApiError(
                 "INVALID_RESPONSE",
-                "Your shelf could not be loaded.",
+                "Your reading shelf could not be loaded.",
               );
           }
           const snapshot = {
@@ -238,7 +239,7 @@ export class AccountRepository {
     if (!book)
       throw new AccountApiError(
         "BOOK_MISSING",
-        "Refresh your shelf to find this book.",
+        "Refresh your reading shelf to find this book.",
       );
     const operationId = crypto.randomUUID();
     return this.mutate<{ undoUntil: string | null; shelfRevision: number }>(
