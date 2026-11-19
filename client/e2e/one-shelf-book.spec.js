@@ -258,7 +258,8 @@ test.describe('One-shelf library pop-up', () => {
     await page.getByRole('button', { name: 'Account and settings' }).click();
     const panel = page.getByRole('dialog', { name: 'Account and settings' });
     await panel.getByRole('button', { name: /^(Change|Choose a) library$/ }).click();
-    const dialog = page.getByRole('dialog', { name: 'Find your library' });
+    // "Change library" when one is chosen, "Find your library" otherwise.
+    const dialog = page.getByRole('dialog', { name: /^(Change library|Find your library)$/ });
     await expect(dialog).toBeVisible();
     return dialog;
   };
@@ -312,7 +313,7 @@ test.describe('One-shelf library pop-up', () => {
     });
   });
 
-  test('nothing found: one line and one button; one tap sends the request and thanks; the text is kept nowhere', async ({ page }) => {
+  test('nothing found: "Request to add" opens the form; nothing is sent before Send request; the text is kept nowhere', async ({ page }) => {
     const { calls } = await setup(page);
     await page.goto('/app/shelf');
     const dialog = await openFromPanel(page);
@@ -322,25 +323,64 @@ test.describe('One-shelf library pop-up', () => {
     await expect(request).toBeVisible();
     expect((await axe(page)).violations).toEqual([]);
     await request.click();
-    await expect(dialog.locator('.library-requested')).toHaveText('Received your request, thank you.');
-    await expect(request).toHaveCount(0);
-    expect(calls.requests).toEqual([{ text: 'Tirunelveli' }]);
+    const form = page.getByRole('dialog', { name: 'Ask us to add a library' });
+    await expect(form.getByLabel('Library name and city')).toHaveValue('Tirunelveli');
+    expect(calls.requests).toEqual([]);
     expect((await axe(page)).violations).toEqual([]);
-    expect(await everything(page)).not.toContain('Tirunelveli');
+    await form.getByLabel('Your email (optional)').fill('reader@example.org');
+    await form.getByRole('button', { name: 'Send request' }).click();
+    await expect(form.locator('.library-requested')).toHaveText('Request sent. Thank you.');
+    await expect(form.getByRole('button', { name: 'Done' })).toBeFocused();
+    expect(calls.requests).toEqual([{ text: 'Tirunelveli', email: 'reader@example.org' }]);
+    expect((await axe(page)).violations).toEqual([]);
+    expect(await everything(page)).not.toMatch(/Tirunelveli|reader@example/);
     await page.keyboard.press('Escape');
-    await expect(dialog).toBeHidden();
+    await expect(form).toBeHidden();
     await expect(page.getByRole('button', { name: 'Account and settings' })).toBeFocused();
   });
 
-  test('a refused request text gets no thank-you and keeps the button', async ({ page }) => {
+  test('a refused request says what to check and keeps Send request; Cancel goes back to the list', async ({ page }) => {
     const { calls } = await setup(page, { request: 400 });
     await page.goto('/app/shelf');
     const dialog = await openFromPanel(page);
     await dialog.getByLabel('City, town or library name').fill('Tirunelveli');
     await dialog.getByRole('button', { name: 'Request to add “Tirunelveli”' }).click();
+    const form = page.getByRole('dialog', { name: 'Ask us to add a library' });
+    await form.getByRole('button', { name: 'Send request' }).click();
     await expect.poll(() => calls.requests.length).toBe(1);
-    await expect(dialog.getByRole('button', { name: 'Request to add “Tirunelveli”' })).toBeEnabled();
-    await expect(dialog.getByText(/Received your request|Couldn’t send/)).toHaveCount(0);
+    await expect(form.getByText('Couldn’t send this. Check the library name and the email.')).toBeVisible();
+    await expect(form.getByRole('button', { name: 'Send request' })).toBeEnabled();
+    await expect(form.getByText(/Request sent/)).toHaveCount(0);
+    await form.getByRole('button', { name: 'Cancel' }).click();
+    await expect(dialog.getByRole('button', { name: 'Request to add “Tirunelveli”' })).toBeFocused();
+    expect(calls.requests).toHaveLength(1);
+  });
+
+  test('the sheet keeps its title, Close and field in view with only the list scrolling', async ({ page }) => {
+    await setup(page);
+    await page.goto('/app/shelf');
+    const dialog = await openFromPanel(page);
+    await expect(dialog.getByRole('button', { name: 'Libraries near me' })).toBeFocused();
+    await dialog.getByLabel('City, town or library name').fill('Chennai');
+    await expect(dialog.getByRole('region', { name: /Libraries/ }).getByRole('button').first()).toBeVisible();
+    await expect(dialog.locator('.library-count')).toHaveText(/libraries in Chennai/);
+    // The keyboard takes the lower part of the screen: the sheet fits above it.
+    await page.evaluate(() => {
+      const viewport = window.visualViewport;
+      Object.defineProperty(viewport, 'height', { configurable: true, get: () => 420 });
+      viewport.dispatchEvent(new Event('resize'));
+    });
+    const box = await dialog.boundingBox();
+    const screen = page.viewportSize();
+    expect(box.y + box.height).toBeLessThanOrEqual(420 + 1);
+    expect(screen.height - (box.y + box.height)).toBeGreaterThanOrEqual(screen.height - 420 - 1);
+    for (const target of [dialog.getByRole('heading', { name: /library/ }), dialog.getByRole('button', { name: 'Close' }), dialog.getByLabel('City, town or library name')]) {
+      const part = await target.boundingBox();
+      expect(part.y).toBeGreaterThanOrEqual(box.y);
+      expect(part.y + part.height).toBeLessThanOrEqual(box.y + box.height);
+    }
+    const scrolls = await dialog.evaluate(element => ({ sheet: element.scrollHeight > element.clientHeight + 1, list: getComputedStyle(element.querySelector('.library-list')).overflowY }));
+    expect(scrolls).toEqual({ sheet: false, list: 'auto' });
   });
 
   for (const light of ['lamplight', 'ink']) test(`the pop-up stays legible in ${light}`, async ({ page }) => {
@@ -352,7 +392,11 @@ test.describe('One-shelf library pop-up', () => {
     expect((await contrast(page)).violations).toEqual([]);
     await dialog.getByLabel('City, town or library name').fill('Tirunelveli');
     await dialog.getByRole('button', { name: 'Request to add “Tirunelveli”' }).click();
-    await expect(dialog.locator('.library-requested')).toBeVisible();
+    const form = page.getByRole('dialog', { name: 'Ask us to add a library' });
+    await expect(form.getByLabel('Library name and city')).toBeVisible();
+    expect((await contrast(page)).violations).toEqual([]);
+    await form.getByRole('button', { name: 'Send request' }).click();
+    await expect(form.locator('.library-requested')).toBeVisible();
     expect((await contrast(page)).violations).toEqual([]);
   });
 });

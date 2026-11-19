@@ -122,6 +122,38 @@ test('library request text: normalised key, letters required, no emails, phones 
   assert.throws(() => parseProblemReport({ text: 'x', bookKey: 'not a key' }), SubmissionError);
 });
 
+test('optional name and email: both optional, a name up to 80 characters, one email up to 254', () => {
+  const email = 'reader@example.org';
+  assert.deepEqual(parseLibraryRequest({ text: 'KV Narimedu, Madurai', name: '  Asha   K ', email: ` ${email} ` }),
+    { displayText: 'KV Narimedu, Madurai', requestKey: 'kv narimedu madurai', contact: { name: 'Asha K', email } });
+  assert.deepEqual(parseLibraryRequest({ text: 'KV Narimedu', email }).contact, { email });
+  // Empty fields are the same as none.
+  assert.deepEqual(parseLibraryRequest({ text: 'KV Narimedu', name: ' ', email: '' }), { displayText: 'KV Narimedu', requestKey: 'kv narimedu' });
+  assert.deepEqual(parseProblemReport({ text: 'Wrong answer', screen: 'book', name: 'Asha', email }),
+    { body: 'Wrong answer', screen: 'book', contact: { name: 'Asha', email } });
+  assert.equal(parseLibraryRequest({ text: 'KV', name: 'n'.repeat(80) }).contact.name.length, 80);
+  assert.ok(parseProblemReport({ text: 'x', email: `${'a'.repeat(64)}@${'b'.repeat(185)}.org` }).contact.email.length === 254);
+  for (const extra of [{ name: 'n'.repeat(81) }, { name: 7 }, { name: 'A\u0000B' }, { name: '‮Asha' }, { email: 'not an email' }, { email: 'a@b' },
+    { email: `${email}, other@example.org` }, { email: `${email} other@example.org` }, { email: '<reader@example.org>' }, { email: 'a@b.co\u0000' },
+    { email: `${'a'.repeat(64)}@${'b'.repeat(186)}.org` }, { email: null }, { phone: '98765 43210' }]) {
+    assert.throws(() => parseLibraryRequest({ text: 'KV Narimedu', ...extra }), SubmissionError, JSON.stringify(extra));
+    assert.throws(() => parseProblemReport({ text: 'Wrong answer', ...extra }), SubmissionError, JSON.stringify(extra));
+  }
+  // An email inside the request text is still refused, even with a contact email.
+  assert.throws(() => parseLibraryRequest({ text: 'mail me at a@b.co', email }), SubmissionError);
+});
+
+test('a request’s contact details are kept even for a same-day repeat, which is not counted again', async () => {
+  const submissions = createSubmissions({ secret: 'x'.repeat(40) });
+  const ask = value => submissions.libraryRequest(parseLibraryRequest(value), { address: '203.0.113.5' });
+  assert.equal(await ask({ text: 'KV Narimedu' }), 'accepted');
+  assert.equal(await ask({ text: 'KV Narimedu' }), 'duplicate');
+  assert.equal(await ask({ text: 'kv narimedu', email: 'reader@example.org' }), 'duplicate');
+  const held = submissions.held();
+  assert.deepEqual(held.requests.map(item => [item.requestKey, item.count]), [['kv narimedu', 1]]);
+  assert.deepEqual(held.requestContacts.map(item => [item.requestKey, item.name, item.email]), [['kv narimedu', undefined, 'reader@example.org']]);
+});
+
 test('submission limits fail open to this instance when the database limiter is down', async () => {
   const failing = { take: async () => { throw new Error('down'); } };
   const submissions = createSubmissions({ db: { query: async () => { throw new Error('down'); } }, secret: 'x'.repeat(32), buckets: failing });

@@ -81,11 +81,13 @@ test.describe('Policy pages and Report a problem', () => {
     await page.goto('/app/shelf');
     await page.getByRole('button', { name: 'Account and settings' }).click();
     await page.getByRole('dialog', { name: 'Account and settings' }).getByRole('link', { name: 'Report a problem' }).click();
-    const box = page.getByRole('textbox', { name: 'Report a problem' });
+    const box = page.getByRole('textbox', { name: 'What happened?' });
     await expect(box).toBeVisible();
+    await expect(page.locator('.report-context')).toHaveText(new RegExp('^Sent with your message: the screen you were on \\(Shelf\\) and your library \\(' + LINKED_LIBRARY.name + '\\)\\.$'));
+    await expect(page.getByText('Please leave out passwords and library card numbers.', { exact: false })).toBeVisible();
     expect((await axe(page)).violations).toEqual([]);
     await box.fill('The library answer looks wrong');
-    await page.getByRole('button', { name: 'Send' }).click();
+    await page.getByRole('button', { name: 'Send report' }).click();
     await expect(page.getByRole('button', { name: 'Sent' })).toHaveAttribute('aria-disabled', 'true');
     expect(reports).toHaveLength(1);
     // Nothing else goes with the words: no account, email or device identifier.
@@ -94,13 +96,29 @@ test.describe('Policy pages and Report a problem', () => {
     expect((await axe(page)).violations).toEqual([]);
   });
 
+  test('Report a problem: the optional name and email go with the words only when filled in', async ({ page }) => {
+    await setup(page);
+    const reports = [];
+    await page.route('**/api/v2/problem-reports', async route => { reports.push(route.request().postDataJSON()); await route.fulfill({ status: 202, json: {} }); });
+    await page.goto('/app/report');
+    await page.getByRole('textbox', { name: 'What happened?' }).fill('Wrong answer');
+    await page.getByLabel('Your name (optional)').fill('Asha');
+    await page.getByLabel('Your email (optional)').fill('reader@example.org');
+    expect((await axe(page)).violations).toEqual([]);
+    await page.getByRole('button', { name: 'Send report' }).click();
+    await expect(page.getByRole('button', { name: 'Sent' })).toBeVisible();
+    expect(reports).toHaveLength(1);
+    expect(reports[0]).toMatchObject({ text: 'Wrong answer', name: 'Asha', email: 'reader@example.org' });
+    expect(await page.evaluate(() => JSON.stringify({ ...localStorage }) + JSON.stringify({ ...sessionStorage }))).not.toMatch(/reader@example|Asha/);
+  });
+
   test('Report a problem: couldn’t connect, then Try again', async ({ page }) => {
     await setup(page);
     let attempts = 0;
     await page.route('**/api/v2/problem-reports', route => (++attempts === 1 ? route.abort() : route.fulfill({ status: 202, json: {} })));
     await page.goto('/app/report');
-    await page.getByRole('textbox', { name: 'Report a problem' }).fill('Scanner did not open');
-    await page.getByRole('button', { name: 'Send' }).click();
+    await page.getByRole('textbox', { name: 'What happened?' }).fill('Scanner did not open');
+    await page.getByRole('button', { name: 'Send report' }).click();
     await expect(page.getByRole('alert')).toContainText('Couldn’t connect');
     await page.getByRole('button', { name: 'Try again' }).click();
     await expect(page.getByRole('button', { name: 'Sent' })).toBeVisible();

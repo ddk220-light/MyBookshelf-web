@@ -1,35 +1,61 @@
-/* Library pop-up, from docs/design/2026-11-one-shelf
-   LibraryPicker and LibraryStates boards at 390 x 844 in Daylight. It is a
+/* Library pop-up, from docs/design/2026-11-production-ready PickerTyping,
+   PickerResults and RequestLibrary boards at 390 x 844 in Daylight. It is a
    .scan-dialog bottom sheet (scan.css) with its own list. Scoped to
    .one-shelf-frame like home.css; Lamplight and Ink use the derived tokens. */
 :root { --request-line: #b9d0b6; }
 :root[data-reading-light='lamplight'] { --request-line: #3f6b4e; }
 :root[data-reading-light='ink'] { --request-line: #a9c1e0; }
 
-.one-shelf-frame .library-dialog { gap: 14px; }
-.one-shelf-frame .library-near { border-width: 1.5px; }
+/* The sheet follows the area above the keyboard: --sheet-height and
+   --sheet-lift come from visualViewport while it is open
+   (LibraryPickerDialog.tsx). Only the list (or the request form) scrolls; the
+   title, Close and the field stay in place. */
+.one-shelf-frame .library-dialog { gap: 12px; bottom: var(--sheet-lift, 0px); max-height: calc(var(--sheet-height, 100%) - 16px); }
+.one-shelf-frame .desk-mode-rail dialog.library-dialog { max-height: calc(min(100dvh, var(--sheet-height, 100dvh)) - 32px); }
+.one-shelf-frame .library-picker { display: contents; }
+.one-shelf-frame .library-picker > * { flex: 0 0 auto; }
+.one-shelf-frame .library-picker > .library-list, .one-shelf-frame .library-picker > .library-request-form { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+
+.one-shelf-frame .library-near { border-width: 1.5px; height: 48px; min-height: 48px; }
 .one-shelf-frame .library-near.is-on { background: var(--pressed-bg); color: var(--pressed-ink); }
 .one-shelf-frame .library-near:disabled { opacity: .7; }
-.one-shelf-frame .library-or span { padding: 0; }
 
-.one-shelf-frame .library-field { display: flex; flex-direction: column; gap: 6px; }
-.one-shelf-frame .library-field label { font-size: .875rem; font-weight: 500; line-height: 1.4; color: var(--reader-secondary); }
-.one-shelf-frame .library-field input[type='search'] { width: 100%; height: 52px; min-height: 52px; box-sizing: border-box; margin: 0; padding: 0 14px; border: 1.5px solid var(--field-line); border-radius: 12px; background: var(--reader-surface); color: var(--reader-ink); font: inherit; font-size: 1rem; box-shadow: none; }
-.one-shelf-frame .library-field input.is-active { border-color: var(--reader-accent); }
-.one-shelf-frame .library-field input[type='search']:focus-visible { outline: 2px solid var(--reader-accent); outline-offset: 0; border-color: var(--reader-accent); box-shadow: none; }
+/* The reader's library, with Remove (PickerResults board). */
+.one-shelf-frame .library-current { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 4px 6px 12px; border: 1px solid var(--request-line); border-radius: 12px; background: var(--pressed-bg); color: var(--pressed-ink); }
+.one-shelf-frame .library-current-text { margin: 0; min-width: 0; display: flex; flex-direction: column; }
+.one-shelf-frame .library-current-label { font-size: .8125rem; line-height: 1.4; }
+.one-shelf-frame .library-current-name { font-weight: 600; font-size: .9375rem; line-height: 1.3; overflow-wrap: anywhere; }
+.one-shelf-frame .library-remove { flex: 0 0 auto; padding: 0 10px; color: var(--pressed-ink); font-size: .875rem; text-decoration: underline; text-underline-offset: 3px; }
+.one-shelf-frame .library-remove:disabled { opacity: .65; }
+
+/* The field: a caption (not a label, see LibraryPicker), the box and Clear. */
+.one-shelf-frame .library-field { display: flex; flex-direction: column; gap: 4px; }
+.one-shelf-frame .library-field-caption { font-size: .875rem; font-weight: 500; line-height: 1.4; color: var(--reader-secondary); }
+.one-shelf-frame .library-field-box { display: flex; align-items: center; gap: 4px; height: 52px; box-sizing: border-box; padding: 0 2px 0 14px; border: 1.5px solid var(--field-line); border-radius: 12px; background: var(--reader-surface); }
+.one-shelf-frame .library-field-box.is-active { border-color: var(--reader-accent); }
+.one-shelf-frame .library-field-box:focus-within { outline: 2px solid var(--reader-accent); outline-offset: 0; border-color: var(--reader-accent); }
+.one-shelf-frame .library-field input[type='search'] { flex: 1 1 auto; min-width: 0; width: auto; height: 100%; min-height: 0; box-sizing: border-box; margin: 0; padding: 0; border: 0; border-radius: 0; background: transparent; color: var(--reader-ink); font: inherit; font-size: 1rem; box-shadow: none; outline: none; }
 .one-shelf-frame .library-field input[type='search']::-webkit-search-cancel-button { display: none; }
+.one-shelf-frame .library-clear { flex: 0 0 44px; width: 44px; height: 44px; min-height: 44px; padding: 0; border: 0; border-radius: 10px; background: transparent; color: var(--reader-secondary); display: inline-flex; align-items: center; justify-content: center; }
+.one-shelf-frame .library-clear:focus-visible { outline: 2px solid var(--reader-accent); outline-offset: -2px; }
+
+.one-shelf-frame .library-count { margin: 0; font-size: .8125rem; line-height: 1.45; color: var(--reader-secondary); }
 
 .one-shelf-frame .library-list { display: flex; flex-direction: column; }
 .one-shelf-frame .library-list-label { margin: 0; padding-bottom: 4px; font-size: .8125rem; line-height: 1.5; color: var(--reader-muted); }
 .one-shelf-frame .library-rows { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; border-bottom: 1px solid var(--reader-line); }
-.one-shelf-frame .library-row { width: 100%; min-height: 68px; box-sizing: border-box; margin: 0; padding: 10px 0; border: 0; border-top: 1px solid var(--reader-line); border-radius: 0; background: transparent; color: var(--reader-ink); display: flex; align-items: center; gap: 12px; text-align: left; font: inherit; font-weight: 400; line-height: 1.5; }
+.one-shelf-frame .library-row { width: 100%; min-height: 60px; box-sizing: border-box; margin: 0; padding: 8px 0; border: 0; border-top: 1px solid var(--reader-line); border-radius: 0; background: transparent; color: var(--reader-ink); display: flex; align-items: center; gap: 10px; text-align: left; font: inherit; font-weight: 400; line-height: 1.4; }
 .one-shelf-frame .library-row svg { flex: 0 0 auto; color: var(--reader-accent); }
-.one-shelf-frame .library-row:hover:not(:focus-visible) { filter: none; box-shadow: none; background: var(--reader-fill); }
+.one-shelf-frame .library-row:hover:not(:focus-visible) { filter: none; box-shadow: none; background: transparent; }
+@media (hover: hover) {
+  .one-shelf-frame .library-row:hover:not(:focus-visible) { background: var(--reader-fill); }
+}
 .one-shelf-frame .library-row:focus-visible { outline: 2px solid var(--reader-accent); outline-offset: -2px; }
 .one-shelf-frame .library-row:disabled { opacity: 1; cursor: default; }
 .one-shelf-frame .library-row-text { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
-.one-shelf-frame .library-row-name { font-weight: 600; overflow-wrap: anywhere; }
+.one-shelf-frame .library-row-name { font-weight: 600; line-height: 1.25; overflow-wrap: anywhere; }
 .one-shelf-frame .library-row-area { font-size: .875rem; color: var(--reader-muted); }
+.one-shelf-frame .library-row-mine { font-size: .875rem; font-weight: 600; color: var(--pressed-ink); }
 .one-shelf-frame .library-row-distance { flex: 0 0 auto; font-size: .875rem; font-weight: 600; color: var(--reader-secondary); }
 .one-shelf-frame .library-row-ghost { gap: 6px; flex-direction: column; align-items: flex-start; justify-content: center; }
 .one-shelf-frame .library-row-ghost span { display: block; height: 12px; width: 60%; border-radius: 6px; background: var(--reader-fill); }
@@ -37,11 +63,30 @@
 
 .one-shelf-frame .library-line { margin: 6px 0 0; color: var(--reader-secondary); }
 .one-shelf-frame .library-line-action { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 0; }
-.one-shelf-frame .library-request { flex: 0 0 auto; height: auto; min-height: 52px; padding-block: 8px; border: 0; text-align: center; overflow-wrap: anywhere; }
+.one-shelf-frame .library-line-location { margin-top: 0; }
+.one-shelf-frame .library-type-instead { display: inline; min-height: 44px; padding: 0; text-align: left; text-decoration: underline; text-underline-offset: 3px; }
+
+/* The footer stays in view under the list (PickerResults board). */
+.one-shelf-frame .library-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding-top: 8px; border-top: 1px solid var(--reader-line); }
+.one-shelf-frame .library-footer .library-line { flex: 1 1 100%; margin: 0; }
+.one-shelf-frame .library-more { width: auto; height: 44px; min-height: 44px; padding: 0 14px; border-width: 1.5px; border-radius: 10px; font-size: .875rem; }
+.one-shelf-frame .library-more:disabled { opacity: .7; }
+.one-shelf-frame .library-request { flex: 1 1 100%; height: auto; min-height: 52px; padding-block: 8px; border: 0; text-align: center; overflow-wrap: anywhere; }
+.one-shelf-frame .library-unlisted { margin-left: auto; font-size: .875rem; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+
+/* "Ask us to add a library" (RequestLibrary board), in place of the list. */
+.one-shelf-frame .library-back { align-self: flex-start; min-height: 44px; margin: -4px 0 -8px -2px; padding: 0 4px 0 0; border: 0; background: transparent; display: inline-flex; align-items: center; gap: 4px; color: var(--reader-accent); font: inherit; font-weight: 600; font-size: .9375rem; }
+.one-shelf-frame .library-back:focus-visible { outline: 2px solid var(--reader-accent); outline-offset: 2px; }
+.one-shelf-frame .library-request-form { display: flex; flex-direction: column; gap: 14px; padding-bottom: 2px; }
+.one-shelf-frame .library-request-intro { margin: 0; font-size: .9375rem; color: var(--reader-secondary); }
+.one-shelf-frame .library-request-send { flex: 0 0 auto; height: 54px; min-height: 54px; }
+.one-shelf-frame .library-request-send:disabled { opacity: .7; }
+.one-shelf-frame .library-request-cancel { flex: 0 0 auto; align-self: center; }
+.one-shelf-frame .library-request-form .library-line { margin: 0; color: var(--warn-ink, #8a5a00); font-weight: 600; }
 .one-shelf-frame .library-requested { flex: 0 0 auto; margin: 0; min-height: 52px; box-sizing: border-box; padding: 8px 12px; border-radius: 12px; background: var(--pressed-bg); border: 1px solid var(--request-line); color: var(--pressed-ink); display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; text-align: center; }
 .one-shelf-frame .library-requested svg { flex: 0 0 auto; }
-.one-shelf-frame .library-unlisted { align-self: center; font-size: .875rem; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; }
+.one-shelf-frame .library-request-sent [role='status'] { display: flex; flex-direction: column; gap: 10px; }
 
 @media (forced-colors: active) {
-  .one-shelf-frame .library-near.is-on, .one-shelf-frame .library-requested { border: 2px solid CanvasText; }
+  .one-shelf-frame .library-near.is-on, .one-shelf-frame .library-requested, .one-shelf-frame .library-current { border: 2px solid CanvasText; }
 }

@@ -203,6 +203,12 @@ export function AccountLibraryStateProvider({
       null,
     [run],
   );
+  // The account API takes null for "no library" (server accounts/reading.js).
+  const clearLibrary = useCallback(
+    async () =>
+      (await run("Removing library", (r) => r.selectLibrary(null))) !== null,
+    [run],
+  );
   const saveBook = useCallback(
     async (book: PublicBook): Promise<SaveResult> => {
       if (snapshotRef.current && isOnShelf(snapshotRef.current.books, book)) {
@@ -362,6 +368,7 @@ export function AccountLibraryStateProvider({
     dismissRemoval: () => setUndo(null),
     reportStorageFailure: () => {},
     selectLibrary,
+    clearLibrary,
     retryLibrary: () => void refresh(),
     rememberBook,
     removeRecentBook,
@@ -404,6 +411,7 @@ const unavailable: LibraryState = {
   undoRemoval: denied,
   reportStorageFailure: () => {},
   selectLibrary: denied,
+  clearLibrary: denied,
   retryLibrary: () => {},
   rememberBook: denied,
   removeRecentBook: denied,

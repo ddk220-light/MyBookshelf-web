@@ -97,9 +97,10 @@ function afterResponse(res, store, event) {
   });
 }
 
-// `/api/v2` neither reads nor creates identity state. It uses the anonymous
-// catalog store (stored answers, library health, the anonymous log and
-// submissions), never the account database.
+// `/api/v2` neither reads nor creates identity state. It uses the catalog
+// store (stored answers, library health, the anonymous log and submissions,
+// which may carry a name and email a reader chose to leave, kept 90 days),
+// never the account database.
 export function createPublicV2Router({
   directory = createPublicDirectoryService(),
   discovery = createDiscoveryService(),

@@ -41,6 +41,11 @@ describe('public API adapter', () => {
     vi.stubGlobal('fetch', fetchMock);
     await publicApi.libraryRequest('Tirunelveli');
     expect(fetchMock).toHaveBeenCalledWith('/api/v2/library-requests', expect.objectContaining({ body: JSON.stringify({ text: 'Tirunelveli' }) }));
+    // The optional name and email go only when filled in.
+    await publicApi.libraryRequest('Tirunelveli', { name: ' Asha ', email: '' });
+    expect(fetchMock).toHaveBeenLastCalledWith('/api/v2/library-requests', expect.objectContaining({ body: JSON.stringify({ text: 'Tirunelveli', name: 'Asha' }) }));
+    await publicApi.problemReport({ text: 'Wrong', screen: 'book', name: '', email: 'reader@example.org' });
+    expect(fetchMock).toHaveBeenLastCalledWith('/api/v2/problem-reports', expect.objectContaining({ body: JSON.stringify({ text: 'Wrong', screen: 'book', email: 'reader@example.org' }) }));
   });
 
   it('background check: passes on found marks for asked books only, needs the done line, and rejects any failure', async () => {

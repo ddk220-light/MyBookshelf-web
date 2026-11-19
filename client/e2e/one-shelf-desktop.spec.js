@@ -236,7 +236,8 @@ test.describe('Desktop layout', () => {
     await column(page).getByRole('button', { name: 'Find my library' }).click();
     const picker = column(page).getByRole('region', { name: 'Find your library' });
     await expect(picker).toBeVisible();
-    await expect(picker.getByRole('button', { name: 'Libraries near me' })).toBeFocused();
+    // On a desktop the field takes focus at once.
+    await expect(picker.getByLabel('City, town or library name')).toBeFocused();
     await expect(page.getByRole('dialog')).toHaveCount(0);
     await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
     await expect(column(page).getByRole('heading', { name: 'Reading light' })).toHaveCount(0);
@@ -256,12 +257,19 @@ test.describe('Desktop layout', () => {
     expect(page.url()).not.toContain('Chennai');
     expect(await page.evaluate(() => JSON.stringify({ ...localStorage }) + JSON.stringify({ ...sessionStorage }))).not.toContain('Chennai');
 
-    // Nothing matches: one tap sends a request.
+    // Nothing matches: "Request to add" opens the request form in the column.
     await page.route('**/api/v2/libraries/discover', route => route.fulfill({ json: { libraries: [], total: 0, nextOffset: null } }));
     await page.route('**/api/v2/library-requests', route => route.fulfill({ status: 202, json: { status: 'received' } }));
     await column(page).getByRole('button', { name: 'Change library' }).click();
-    await picker.getByLabel('City, town or library name').fill('Nowhere Town');
-    await expect(picker.getByRole('button', { name: 'Request to add “Nowhere Town”' })).toBeVisible();
+    const change = column(page).getByRole('region', { name: 'Change library' });
+    await expect(change.getByText('Your library now')).toBeVisible();
+    await change.getByLabel('City, town or library name').fill('Nowhere Town');
+    await change.getByRole('button', { name: 'Request to add “Nowhere Town”' }).click();
+    const form = column(page).getByRole('region', { name: 'Ask us to add a library' });
+    await expect(form.getByLabel('Library name and city')).toHaveValue('Nowhere Town');
+    await noViolations(page, 'request form');
+    await form.getByRole('button', { name: 'Cancel' }).click();
+    await expect(change.getByRole('button', { name: 'Request to add “Nowhere Town”' })).toBeFocused();
     // Back closes the picker too (it is a history entry).
     await page.goBack();
     await expect(picker).toHaveCount(0);
@@ -512,8 +520,10 @@ test.describe('Desktop layout', () => {
       await page.keyboard.press('Escape');
 
       await rail.getByRole('button', { name: 'My library' }).click();
-      const picker = page.getByRole('dialog', { name: 'Find your library' });
+      const picker = page.getByRole('dialog', { name: /^(Change library|Find your library)$/ });
       await expect(picker).toBeVisible();
+      // At rail width the field takes focus at once.
+      await expect(picker.getByLabel('City, town or library name')).toBeFocused();
       await noViolations(page, 'rail picker');
       await page.keyboard.press('Escape');
       await expect(picker).toBeHidden();

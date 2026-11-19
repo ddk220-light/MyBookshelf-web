@@ -8,6 +8,8 @@ import { createPgHealthRecord } from './health.js';
 //   4. problem reports resolved or spam for 90 days, and any older than 12 months
 //   5. library requests: spam after 90 days; added or declined 12 months after
 //      their last update
+//   5b. optional contact details (name, email) 90 days after they were left:
+//      cleared on problem reports, deleted for library requests
 //   6. usage events older than 12 months rolled into daily totals (counts,
 //      result sums, p50/p95 timings; no text, no book keys), one transaction
 //      per day, then deleted
@@ -64,6 +66,9 @@ export async function runCatalogMaintenance(db, { policy, now = () => Date.now()
   result.requests = (await db.query(`DELETE FROM library_requests
     WHERE (status = 'spam' AND updated_at < now() - interval '90 days')
        OR (status IN ('added', 'declined') AND updated_at < now() - interval '12 months')`)).rowCount;
+  result.contacts = (await db.query(`UPDATE problem_reports SET contact_name = NULL, contact_email = NULL
+    WHERE (contact_name IS NOT NULL OR contact_email IS NOT NULL) AND created_at < now() - interval '90 days'`)).rowCount
+    + (await db.query(`DELETE FROM library_request_contacts WHERE created_at < now() - interval '90 days'`)).rowCount;
   result.usage = await rollUpUsage(db);
   // 7-day failure counters. Only failures are events (successes update
   // library_health directly), so checks_7d is not derived here: the admin

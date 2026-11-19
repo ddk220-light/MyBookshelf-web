@@ -243,25 +243,34 @@ test('library requests and problem reports: text and a count, validation and per
     assert.equal((await send({ text })).status, 400, text);
   }
   assert.equal((await send({ text: 'Valid', country: 'IN' })).status, 400, 'no other fields are stored');
+  assert.equal((await send({ text: 'Valid', email: 'not an email' })).status, 400);
   await settle();
   // The second text was the same request from the same address today: not counted again.
   assert.deepEqual(store.submissions.held().requests.map(item => [item.requestKey, item.displayText, item.count]),
     [['anna centenary library', 'Anna Centenary Library', 1]]);
   for (let i = 0; i < 3; i += 1) assert.equal((await send({ text: `Library ${String.fromCharCode(65 + i)}` })).status, 202);
   assert.equal((await send({ text: 'One too many' })).status, 429);
-  assert.equal((await send({ text: 'Another address' }, '198.51.100.9')).status, 202);
+  assert.equal((await send({ text: 'Another address', name: 'Asha', email: 'reader@example.org' }, '198.51.100.9')).status, 202);
+  await settle();
+  assert.deepEqual(store.submissions.held().requestContacts.map(item => [item.requestKey, item.name, item.email]),
+    [['another address', 'Asha', 'reader@example.org']]);
 
   const report = body => request(app).post('/api/v2/problem-reports').set('X-Forwarded-For', '192.0.2.1').send(body);
   assert.equal((await report({ text: 'The library badge is wrong', screen: 'book', libraryId: vega.id, bookKey: `v1:isbn:${ISBN_A}`, appVersion: '1.2.3' })).status, 202);
   // A NUL cannot be stored: refused rather than accepted and silently lost.
-  for (const body of [{ text: '' }, { text: 'x'.repeat(2001) }, { text: 'ok', screen: 'elsewhere' }, { text: 'ok', email: 'a@b.c' },
+  for (const body of [{ text: '' }, { text: 'x'.repeat(2001) }, { text: 'ok', screen: 'elsewhere' }, { text: 'ok', email: 'a@b' },
+    { text: 'ok', email: 'a@b.co, c@d.co' }, { text: 'ok', name: 'n'.repeat(81) }, { text: 'ok', phone: '98765 43210' },
     { text: 'broken\u0000page' }, { text: 'see \u202Ethis' }]) {
     assert.equal((await report(body)).status, 400);
   }
-  for (let i = 0; i < 4; i += 1) assert.equal((await report({ text: `report ${i}` })).status, 202);
+  // A reader who wants a reply may leave a name and one email.
+  assert.equal((await report({ text: 'Please write back', name: 'Asha', email: 'reader@example.org' })).status, 202);
+  for (let i = 0; i < 3; i += 1) assert.equal((await report({ text: `report ${i}` })).status, 202);
   assert.equal((await report({ text: 'sixth' })).status, 429);
   await settle();
-  assert.deepEqual(Object.keys(store.submissions.held().reports[0]).sort(), ['appVersion', 'body', 'bookKey', 'createdOn', 'libraryId', 'screen']);
+  const held = store.submissions.held().reports;
+  assert.deepEqual(Object.keys(held[0]).sort(), ['appVersion', 'body', 'bookKey', 'createdOn', 'libraryId', 'screen']);
+  assert.deepEqual(held[1].contact, { name: 'Asha', email: 'reader@example.org' });
 });
 
 test('the anonymous log is off by default, and when on it gets scrubbed text and never an address, agent or coordinates', async () => {

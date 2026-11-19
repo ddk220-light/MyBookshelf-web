@@ -228,17 +228,33 @@ export const publicApi = Object.freeze({
     await post('/suggestions/events', body);
   },
 
-  // One-tap "Request to add" from the library pop-up: the typed text only.
-  async libraryRequest(text: string): Promise<void> {
-    await post('/library-requests', { text });
+  // "Ask us to add a library", sent only by its Send request button: the
+  // library's name and city, and the optional name and email for a reply.
+  async libraryRequest(text: string, contact: ContactDetails = {}): Promise<void> {
+    await post('/library-requests', { text, ...contactFields(contact) });
   },
 
   // Report a problem: the reader's words plus the screen, library and book
-  // shown. No account, email or device identifier is attached.
-  async problemReport(report: { text: string; screen?: ProblemScreen; libraryId?: string; bookKey?: string; appVersion?: string }): Promise<void> {
-    await post('/problem-reports', report);
+  // shown, and the optional name and email for a reply. No account or device
+  // identifier is attached.
+  async problemReport(report: { text: string; screen?: ProblemScreen; libraryId?: string; bookKey?: string; appVersion?: string } & ContactDetails): Promise<void> {
+    const { name, email, ...rest } = report;
+    await post('/problem-reports', { ...rest, ...contactFields({ name, email }) });
   },
 });
+
+/**
+ * A name and email a reader may leave to get a reply (server
+ * catalog-store/requests.js): both optional, kept 90 days. Empty fields are
+ * left out of the request.
+ */
+export type ContactDetails = { name?: string; email?: string };
+function contactFields({ name, email }: ContactDetails): ContactDetails {
+  const fields: ContactDetails = {};
+  if (name?.trim()) fields.name = name.trim();
+  if (email?.trim()) fields.email = email.trim();
+  return fields;
+}
 
 /** Screens a problem report may name (server catalog-store/requests.js SCREENS). */
 export const PROBLEM_SCREENS = ['shelf', 'search', 'book', 'library', 'panel', 'account', 'scan', 'other'] as const;

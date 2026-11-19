@@ -82,6 +82,24 @@ describe('AdminPage', () => {
     expect(document.querySelector('.admin b')).toBeNull();
   });
 
+  it('shows the optional name and email a reader left for a reply, as text', async () => {
+    mount({
+      '/summary': () => ok(summary()),
+      '/library-health': () => ok({ usageLogEnabled: false, checkTotalsFromLog: false, libraries: [] }),
+      '/problem-reports': () => ok({ reports: [{ id: '11111111-2222-4333-8444-555555555555', body: 'Wrong answer', screen: 'book', libraryId: null, libraryName: null,
+        bookKey: null, appVersion: null, createdAt: '2026-11-13T09:00:00Z', status: 'new', resolvedAt: null, contactName: 'Asha <b>K</b>', contactEmail: 'reader@example.org' }] }),
+      '/library-requests': () => ok({ total: 1, groups: [{ label: 'KV Narimedu', words: [], totalCount: 1, lastRequestedOn: '2026-11-13',
+        requests: [{ requestKey: 'kv narimedu', displayText: 'KV Narimedu', requestCount: 1, firstRequestedOn: '2026-11-13', lastRequestedOn: '2026-11-13', status: 'open', statusNote: null, updatedAt: '',
+          contacts: [{ name: null, email: 'other@example.org', createdAt: '2026-11-13T09:00:00Z' }] }] }] }),
+    });
+    fireEvent.click(await screen.findByRole('button', { name: /Problem reports/ }));
+    expect(await screen.findByText('Asha <b>K</b>, reader@example.org')).toBeTruthy();
+    expect(document.querySelector('.admin b')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: /Library requests/ }));
+    expect(await screen.findByText('other@example.org')).toBeTruthy();
+    expect(screen.getByText(/deleted after 90 days/)).toBeTruthy();
+  });
+
   it('says there is no usage data yet while the log is off', async () => {
     mount({
       '/summary': () => ok(summary()),

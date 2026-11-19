@@ -116,17 +116,49 @@ describe('side panel', () => {
 });
 
 describe('Report a problem', () => {
-  it('sends the words with the screen and library only, then shows Sent', async () => {
+  it('says what is sent with the words, sends them with the screen and library only, then shows Sent', async () => {
     localStorage.setItem('mybookshelf.anonymous-web.v1', JSON.stringify({ version: 2, selectedLibraryId: 'bc:sfpl', savedBooks: [], recentBooks: [], savedContent: [] }));
-    const calls = network({ handle: path => path.endsWith('/api/v2/problem-reports') ? json({}, 202) : path.includes('/api/v2/') ? json({ libraries: [], library: null }) : undefined });
+    const sfpl = { id: 'bc:sfpl', name: 'San Francisco Public Library', city: 'San Francisco', region: 'California', country: 'US', health: 'operational',
+      capabilities: { catalogLookup: true, publicAvailability: true, copyCounts: false, locationAvailability: false, callNumber: false, catalogLink: true } };
+    const calls = network({ handle: path => path.endsWith('/api/v2/problem-reports') ? json({}, 202) : path.endsWith('/api/v2/libraries/resolve') ? json({ library: sfpl })
+      : path.includes('/api/v2/') ? json({ libraries: [], library: null }) : undefined });
     app('/app/report', { reportScreen: 'search' });
-    const box = await screen.findByRole('textbox', { name: 'Report a problem' });
-    expect(screen.getByRole('button', { name: 'Send' })).toBeInTheDocument();
+    const box = await screen.findByRole('textbox', { name: 'What happened?' });
+    await waitFor(() => expect(document.querySelector('.report-context')).toHaveTextContent('your library (San Francisco Public Library)'));
+    expect(box).toHaveAttribute('placeholder', 'For example: the app says Wings of Fire is not in my library, but the library has it.');
+    expect(screen.getByText(/^Tell us what went wrong:/)).toBeInTheDocument();
+    expect(document.querySelector('.report-context')).toHaveTextContent('Sent with your message: the screen you were on (Search results) and your library (San Francisco Public Library).');
+    expect(screen.getByText(/Please leave out passwords and library card numbers\./)).toBeInTheDocument();
+    expect(screen.getByText(/We delete them after 90 days\./)).toBeInTheDocument();
     fireEvent.change(box, { target: { value: '  The cover is wrong\non this book  ' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Send report' }));
     expect(await screen.findByRole('button', { name: 'Sent' })).toHaveAttribute('aria-disabled', 'true');
     const report = calls.find(call => call.path.endsWith('/problem-reports'))!;
     expect(report.body).toEqual({ text: 'The cover is wrong\non this book', screen: 'search', libraryId: 'bc:sfpl' });
+  });
+
+  it('names the book shown and sends the optional name and email; a bad email sends nothing', async () => {
+    const book = { bookKey: 'v1:isbn:9788173711466', title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'], source: 'direct', viewedAt: '2026-11-01T00:00:00.000Z' };
+    localStorage.setItem('mybookshelf.anonymous-web.v1', JSON.stringify({ version: 2, selectedLibraryId: null, savedBooks: [], recentBooks: [book], savedContent: [] }));
+    const calls = network({ handle: path => path.endsWith('/api/v2/problem-reports') ? json({}, 202) : undefined });
+    app('/app/report', { reportScreen: 'book', reportBookKey: book.bookKey });
+    const box = await screen.findByRole('textbox', { name: 'What happened?' });
+    expect(document.querySelector('.report-context')).toHaveTextContent('Sent with your message: the screen you were on (Book page) and the book (Wings of Fire).');
+    fireEvent.change(box, { target: { value: 'Wrong answer' } });
+    fireEvent.change(screen.getByLabelText('Your name (optional)'), { target: { value: 'Asha' } });
+    fireEvent.change(screen.getByLabelText('Your email (optional)'), { target: { value: 'asha@' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Send report' }));
+    expect(await screen.findByText('Check the email address, or leave it empty.')).toBeInTheDocument();
+    expect(calls.some(call => call.path.endsWith('/problem-reports'))).toBe(false);
+    fireEvent.change(screen.getByLabelText('Your email (optional)'), { target: { value: 'asha@example.org' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Send report' }));
+    expect(await screen.findByRole('button', { name: 'Sent' })).toBeInTheDocument();
+    expect(calls.find(call => call.path.endsWith('/problem-reports'))!.body)
+      .toEqual({ text: 'Wrong answer', screen: 'book', bookKey: book.bookKey, name: 'Asha', email: 'asha@example.org' });
+    // The details stay in the page: nothing in browser storage.
+    let stored = '';
+    for (const store of [localStorage, sessionStorage]) for (let index = 0; index < store.length; index += 1) stored += store.getItem(store.key(index)!);
+    expect(stored).not.toMatch(/asha@example|Wrong answer/);
   });
 
   it('shows one line for each failure and Try again when offline', async () => {
@@ -138,8 +170,9 @@ describe('Report a problem', () => {
       return failure(429, 'RATE_LIMITED');
     } });
     app('/app/report');
-    fireEvent.change(await screen.findByRole('textbox', { name: 'Report a problem' }), { target: { value: 'Broken' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+    fireEvent.change(await screen.findByRole('textbox', { name: 'What happened?' }), { target: { value: 'Broken' } });
+    expect(document.querySelector('.report-context')).toHaveTextContent('Sent with your message: the screen you were on (Settings).');
+    fireEvent.click(screen.getByRole('button', { name: 'Send report' }));
     expect(await screen.findByText('Couldn’t connect')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
     expect(await screen.findByText('Too many reports. Try later')).toBeInTheDocument();

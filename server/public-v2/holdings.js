@@ -7,13 +7,14 @@ import { parseLibraryRequest, parseProblemReport, SubmissionError } from '../cat
 import { PublicV2ValidationError, parseHoldingsCheck, parseHoldingsLookup, parseHoldingsSearch } from './validation.js';
 
 // Holdings and submission routes (plan 3.5, 5.7). Still cookie-free: they
-// use the anonymous catalog store, never the account database.
+// use the catalog store, never the account database.
 //
 //   POST /holdings/lookup  stored answers only, no catalog request (shelf badges)
 //   POST /holdings/check   stored answer, else one live check (book page)
 //   POST /holdings/search  NDJSON result marking (background check for results)
-//   POST /library-requests one-tap request to add a library: text and a count
-//   POST /problem-reports  report a problem
+//   POST /library-requests request to add a library: text and a count, plus
+//                          an optional name and email (kept 90 days)
+//   POST /problem-reports  report a problem, with the same optional details
 //
 // The app's answers: found, not_found, unconfirmed (the catalog answered but
 // did not prove this edition), unknown (couldn't check). `unconfirmed` stays
