@@ -34,7 +34,7 @@ it('saves a paper, reloads the mixed shelf and removes it without losing a legac
   expect(saved.version).toBe(2);expect(saved.savedBooks).toEqual([legacyBook]);expect(saved.savedContent[0].contentKey).toBe(item.key);
   expect(fetch).not.toHaveBeenCalled();
   // The one-shelf home shows the saved paper as a cover that opens its reading page, next to the legacy book.
-  first.unmount();const shelf=mount(<OneShelfRoot><HomeScreen/></OneShelfRoot>,'/app/shelf');
+  first.unmount();const shelf=mount(<OneShelfRoot><HomeScreen/></OneShelfRoot>,'/');
   expect(await screen.findByRole('link',{name:/Synthetic flow fixture/})).toHaveAttribute('href','/app/read/fcd%3Av1%3Aeuropepmc%3AMED%3A123');
   expect(screen.getByRole('link',{name:/Existing shelf book/})).toBeInTheDocument();
   // Removing it from its reading page keeps the legacy book.

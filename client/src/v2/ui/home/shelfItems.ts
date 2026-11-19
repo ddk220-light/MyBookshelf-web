@@ -81,7 +81,7 @@ export function shelfBadge(entry: Pick<ShelfEntry, 'key' | 'kind' | 'foundIn'>, 
 
 export function shelfEntries(savedBooks: readonly RecentBook[], savedContent: readonly SavedContent[]): ShelfEntry[] {
   const content: ShelfEntry[] = savedContent.map(item => ({ key: item.contentKey, kind: 'content', title: item.title, authors: item.authors,
-    href: '/app/read/' + encodeURIComponent(item.contentKey), state: { returnTo: '/app/shelf' }, addedAt: time(item.savedAt) }));
+    href: '/app/read/' + encodeURIComponent(item.contentKey), state: { returnTo: '/' }, addedAt: time(item.savedAt) }));
   return [...savedBooks.map(bookEntry), ...content].sort((a, b) => b.addedAt - a.addedAt);
 }
 

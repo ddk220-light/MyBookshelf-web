@@ -69,7 +69,7 @@ test.describe('Request budget', () => {
   test('a guest\'s first visit: one session call and no other account call; idle and tab switches ask nothing', async ({ page }) => {
     test.setTimeout(45_000);
     const calls = await setup(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
     await settle(page);
     expect(accountCalls(calls)).toEqual(['GET /api/account/session']);
@@ -94,7 +94,7 @@ test.describe('Request budget', () => {
     test.setTimeout(45_000);
     const saved = [book(1), book(2), book(3)];
     const calls = await setup(page, { saved, libraryId: LINKED_LIBRARY.id });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.locator('.home-library')).toHaveText(LINKED_LIBRARY.name);
     await expect(page.getByRole('link', { name: /Shelf book 1 by Author 1/ }).first()).toBeVisible();
     await settle(page);
@@ -124,7 +124,7 @@ test.describe('Request budget', () => {
     await expect(page).toHaveURL(/\/app\/books\//);
     await settle(page);
     await page.goBack();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(page.getByRole('link', { name: /Shelf book 1 by Author 1/ }).first()).toBeVisible();
     await settle(page);
     for (const call of ['GET /api/account/session', 'GET /api/account/capabilities', 'POST /api/v2/libraries/resolve'])

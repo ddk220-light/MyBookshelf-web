@@ -36,7 +36,7 @@ function Location() { const location = useLocation(); return <output data-testid
 const book = { bookKey: 'v1:openlibrary:OL1W', title: 'Book 1', authors: ['Author 1'], source: 'direct', viewedAt: '2026-01-01T00:00:00.000Z' };
 function renderShelf(libraryId: string | null = null) {
   localStorage.setItem(ANONYMOUS_WEB_STORAGE_KEY, JSON.stringify({ version: 2, selectedLibraryId: libraryId, recentBooks: [], savedBooks: [book], savedContent: [] }));
-  return render(<MemoryRouter initialEntries={['/app/shelf']}><AnonymousWebApp /><Location /></MemoryRouter>);
+  return render(<MemoryRouter initialEntries={['/']}><AnonymousWebApp /><Location /></MemoryRouter>);
 }
 async function openFromPanel(title = 'Find your library') {
   fireEvent.click(await screen.findByRole('button', { name: 'Account and settings' }));
@@ -88,7 +88,7 @@ describe('library pop-up', () => {
     const stored = JSON.parse(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)!);
     expect(stored.selectedLibraryId).toBe(ANNA.id);
     expect(stored.savedBooks).toHaveLength(1);
-    expect(screen.getByTestId('location')).toHaveTextContent(/^\/app\/shelf\|null$/);
+    expect(screen.getByTestId('location')).toHaveTextContent(/^\/\|null$/);
     expect(screen.getByRole('button', { name: 'Account and settings' })).toHaveFocus();
     // The badges refill for the new library.
     await waitFor(() => expect(calls.filter(call => call.path.endsWith('/holdings/lookup')).map(call => call.body.libraryId)).toEqual([IIT.id, ANNA.id]));
@@ -285,7 +285,7 @@ describe('library pop-up', () => {
     fireEvent.change(within(dialog).getByLabelText('City, town or library name'), { target: { value: 'Chennai' } });
     fireEvent.keyDown(dialog, { key: 'Escape' });
     await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Find your library' })).not.toBeInTheDocument());
-    expect(screen.getByTestId('location')).toHaveTextContent(/^\/app\/shelf\|null$/);
+    expect(screen.getByTestId('location')).toHaveTextContent(/^\/\|null$/);
     dialog = await openFromPanel();
     expect(within(dialog).getByLabelText('City, town or library name')).toHaveValue('');
   });

@@ -55,7 +55,7 @@ test.describe('Desktop layout', () => {
 
   test('shelf: left column, six books a bay, search bar and view switch, no person icon, no scan button', async ({ page }) => {
     await setup(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
     const side = column(page);
     await expect(side.getByText('MyBookshelf')).toBeVisible();
@@ -97,7 +97,7 @@ test.describe('Desktop layout', () => {
 
   test('signed in: the email, Account settings in the middle slot, Log out; signed out accounts stay out when switched off', async ({ page }) => {
     await setup(page, { signedIn: true });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     const side = column(page);
     await expect(side.getByText(USER.email)).toBeVisible();
     await expect(side.getByRole('button', { name: 'Log out' })).toBeVisible();
@@ -109,14 +109,14 @@ test.describe('Desktop layout', () => {
     // The shelf is still drawn beside the page (hidden from assistive technology).
     await expect(page.locator('#my-shelf-heading')).toBeAttached();
     await slot(page).getByRole('button', { name: 'Close' }).click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(slot(page)).toHaveCount(0);
   });
 
   test('accounts switched off: no account section in the column', async ({ page }) => {
     await setup(page);
     await page.route('**/api/account/session', route => route.fulfill({ status: 503, json: { error: { code: 'ACCOUNT_DISABLED', message: 'Accounts are not enabled.' } } }));
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
     await expect(column(page).getByRole('heading', { name: 'My library' })).toBeVisible();
     await expect(column(page).getByRole('heading', { name: 'Account' })).toHaveCount(0);
@@ -125,7 +125,7 @@ test.describe('Desktop layout', () => {
 
   test('cold open: the search leads, no empty shelves and no scan button; five suggested books on one bay', async ({ page }) => {
     await setup(page, { saved: [], recent: [], libraryId: null });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
     await expect(page.getByText('Add books to your shelf and search in your library')).toBeVisible();
     await expect(page.getByRole('button', { name: /Scan|Search for a book/ })).toHaveCount(0);
@@ -148,7 +148,7 @@ test.describe('Desktop layout', () => {
 
   test('a book opens in the middle slot: the column narrows, the shelf moves right and outlines it; ×, Escape, the shelf and Back close it', async ({ page }) => {
     await setup(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     const cover = page.locator('.home-bookcase').getByRole('link', { name: new RegExp('^' + BOOK.title + ' by ') });
     const shelfBefore = await page.locator('.desk-shelf-area').boundingBox();
     await cover.click();
@@ -169,26 +169,26 @@ test.describe('Desktop layout', () => {
     await expect(page.locator('#my-shelf-heading')).toBeAttached();
 
     await close.click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(slot(page)).toHaveCount(0);
     await expect(cover).toBeFocused();
 
     await cover.click();
     await expect(close).toBeFocused();
     await page.keyboard.press('Escape');
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(cover).toBeFocused();
 
     await cover.click();
     await expect(slot(page)).toBeVisible();
     await page.mouse.click(1200, 500);
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(slot(page)).toHaveCount(0);
 
     await cover.click();
     await expect(slot(page)).toBeVisible();
     await page.goBack();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(slot(page)).toHaveCount(0);
     await page.goForward();
     await expect(page).toHaveURL(bookUrl);
@@ -206,13 +206,13 @@ test.describe('Desktop layout', () => {
     await expect(slot(page).getByRole('button', { name: 'Close the book' })).toBeFocused();
     // No shelf entry behind it: closing puts the shelf in its place.
     await slot(page).getByRole('button', { name: 'Close the book' }).click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
   });
 
   test('adding a book in the slot puts it on the shelf beside it', async ({ page }) => {
     await setup(page, { saved: TWELVE.slice(1) });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     const input = page.getByRole('searchbox', { name: 'Search for a book' });
     await input.fill('innovator');
     await input.press('Enter');
@@ -232,7 +232,7 @@ test.describe('Desktop layout', () => {
 
   test('choosing a library in the left column, with the shelf still there', async ({ page }) => {
     await setup(page, { libraryId: null });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await column(page).getByRole('button', { name: 'Find my library' }).click();
     const picker = column(page).getByRole('region', { name: 'Find your library' });
     await expect(picker).toBeVisible();
@@ -273,7 +273,7 @@ test.describe('Desktop layout', () => {
     // Back closes the picker too (it is a history entry).
     await page.goBack();
     await expect(picker).toHaveCount(0);
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
   });
 
   test('Find my library on an open book: the picker opens in the column and the book stays', async ({ page }) => {
@@ -292,7 +292,7 @@ test.describe('Desktop layout', () => {
 
   test('side pages open in the middle slot: Privacy, Report a problem, About, Log in', async ({ page }) => {
     await setup(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     const privacy = column(page).getByRole('link', { name: 'Privacy' });
     await privacy.click();
     await expect(page).toHaveURL(/\/app\/privacy$/);
@@ -306,13 +306,13 @@ test.describe('Desktop layout', () => {
     await expect(page).toHaveURL(/\/app\/about$/);
     await expect(slot(page).getByRole('heading', { level: 1, name: 'MyBookshelf' })).toBeVisible();
     await slot(page).getByRole('button', { name: 'Close' }).click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(privacy).toBeFocused();
 
     await column(page).getByRole('link', { name: 'Report a problem' }).click();
     await expect(slot(page).getByRole('heading', { level: 1, name: 'Report a problem' })).toBeVisible();
     await page.keyboard.press('Escape');
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
 
     await column(page).getByRole('link', { name: 'Log in' }).click();
     await expect(page).toHaveURL(/\/app\/account\/sign-in$/);
@@ -322,7 +322,7 @@ test.describe('Desktop layout', () => {
     await expect(page.locator('.desk-shelf .cover3d:not(.is-suggested)')).toHaveCount(12);
     await noViolations(page, 'log in in the slot');
     await slot(page).getByRole('button', { name: 'Close' }).click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
   });
 
@@ -332,7 +332,7 @@ test.describe('Desktop layout', () => {
     await expect(slot(page).getByRole('heading', { level: 1, name: 'Privacy' })).toBeVisible();
     await expect(page.locator('.desk-shelf .cover3d:not(.is-suggested)')).toHaveCount(12);
     await slot(page).getByRole('button', { name: 'Close' }).click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
   });
 
   test('an account form opened directly (an email link, a reload) stands alone; Escape while typing keeps it open', async ({ page }) => {
@@ -349,7 +349,7 @@ test.describe('Desktop layout', () => {
     await expect(email).toHaveValue('reader@example.com');
     await slot(page).getByRole('button', { name: 'Close' }).focus();
     await page.keyboard.press('Escape');
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(page.locator('.desk-shelf .cover3d:not(.is-suggested)')).toHaveCount(12);
   });
 
@@ -362,7 +362,7 @@ test.describe('Desktop layout', () => {
       return route.fulfill({ json: { kind: 'candidates', candidates: Array.from({ length: 8 }, (_, index) => ({ bookKey: 'v1:openlibrary:OL' + (90 + index) + 'W', title: 'Result ' + index, authors: ['Writer ' + index] })) } });
     });
     await page.route('**/api/v2/holdings/search', route => route.fulfill({ json: { answers: { 'v1:openlibrary:OL90W': 'found' } } }));
-    await page.goto('/app/shelf');
+    await page.goto('/');
     const input = page.getByRole('searchbox', { name: 'Search for a book' });
     await input.fill('result');
     await input.press('Enter');
@@ -392,12 +392,12 @@ test.describe('Desktop layout', () => {
 
   test('keyboard only: column, search, a result, add it, Escape back to the result', async ({ page }) => {
     await setup(page, { saved: [book(2)], recent: [] });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
     await expect(column(page).getByRole('button', { name: 'Change library' })).toBeVisible();
     const order = [];
     for (let step = 0; step < 15 && order.at(-1) !== 'Search for a book'; step += 1) { await page.keyboard.press('Tab'); order.push(await focusedName(page)); }
-    expect(order).toEqual(['Skip to content', 'Change library', 'Create account', 'Log in', 'Daylight', 'Lamplight', 'Ink', 'Report a problem', 'Privacy', 'About', 'Search for a book']);
+    expect(order).toEqual(['Skip to content', 'MyBookshelf', 'Change library', 'Create account', 'Log in', 'Daylight', 'Lamplight', 'Ink', 'Report a problem', 'Privacy', 'About', 'Search for a book']);
     await page.keyboard.type('innovator');
     await page.keyboard.press('Enter');
     const results = page.getByRole('region', { name: 'Search results' });
@@ -416,7 +416,7 @@ test.describe('Desktop layout', () => {
       expect(await page.evaluate(() => Boolean(document.activeElement?.closest('.desk-shelf-area')))).toBe(false);
     }
     await page.keyboard.press('Escape');
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     // Focus goes back at the next frame, once the shelf is live again.
     await expect.poll(() => focusedName(page)).toMatch(new RegExp('^' + BOOK.title + ' by .*on my shelf'));
     const ring = await page.evaluate(() => { const style = getComputedStyle(document.activeElement); return style.outlineStyle !== 'none'; });
@@ -425,7 +425,7 @@ test.describe('Desktop layout', () => {
 
   for (const light of ['daylight', 'lamplight', 'ink']) test(`axe and contrast in ${light}: shelf, book open, picker, results`, async ({ page }) => {
     await setup(page, { light, signedIn: light === 'ink' });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.locator('html')).toHaveAttribute('data-reading-light', light);
     await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
     await expect(page.locator('.cover-badge-library').first()).toBeVisible();
@@ -448,7 +448,7 @@ test.describe('Desktop layout', () => {
 
   test('reduced motion: the book opens without motion', async ({ page }) => {
     await setup(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await page.getByRole('link', { name: new RegExp('^' + BOOK.title + ' by ') }).click();
     await expect(slot(page)).toBeVisible();
     await expect(page.locator('.desk')).not.toHaveClass(/desk-opening/);
@@ -460,7 +460,7 @@ test.describe('Desktop layout', () => {
     test.use({ contextOptions: { reducedMotion: 'no-preference' } });
     test('the book pushes the shelf right, then settles', async ({ page }) => {
       await setup(page);
-      await page.goto('/app/shelf');
+      await page.goto('/');
       await page.getByRole('link', { name: new RegExp('^' + BOOK.title + ' by ') }).click();
       await expect(page.locator('.desk')).toHaveClass(/desk-opening/);
       expect(await slot(page).evaluate(element => getComputedStyle(element).animationName)).toBe('desk-slot-grow');
@@ -476,7 +476,7 @@ test.describe('Desktop layout', () => {
     test.use({ viewport: { width: 1024, height: 768 } });
     test('icon rail; a book covers the shelf; the rail opens pages and pop-overs', async ({ page }) => {
       await setup(page);
-      await page.goto('/app/shelf');
+      await page.goto('/');
       await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
       const rail = page.getByRole('navigation', { name: 'Library and account' });
       for (const name of ['My library', 'Account', 'Reading light', 'Help']) await expect(rail.getByRole('button', { name })).toBeVisible();
@@ -537,7 +537,7 @@ test.describe('Desktop layout', () => {
 
     test('a page opened from a rail pop-over takes focus, and gives it back to the rail button', async ({ page }) => {
       await setup(page);
-      await page.goto('/app/shelf');
+      await page.goto('/');
       await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
       const rail = page.getByRole('navigation', { name: 'Library and account' });
       await rail.getByRole('button', { name: 'Help' }).click();
@@ -545,7 +545,7 @@ test.describe('Desktop layout', () => {
       await expect(page).toHaveURL(/\/app\/privacy$/);
       await expect(slot(page).getByRole('button', { name: 'Close' })).toBeFocused();
       await page.keyboard.press('Escape');
-      await expect(page).toHaveURL(/\/app\/shelf$/);
+      await expect(page).toHaveURL(/\/\/[^/]+\/$/);
       await expect(rail.getByRole('button', { name: 'Help' })).toBeFocused();
       // An account form is drawn without the shelf (App.tsx entry mode): focus still comes back to Account.
       await rail.getByRole('button', { name: 'Account' }).click();
@@ -553,7 +553,7 @@ test.describe('Desktop layout', () => {
       await expect(slot(page).getByRole('heading', { level: 1, name: 'Log in' })).toBeVisible();
       await expect(slot(page).getByRole('button', { name: 'Close' })).toBeFocused();
       await page.keyboard.press('Escape');
-      await expect(page).toHaveURL(/\/app\/shelf$/);
+      await expect(page).toHaveURL(/\/\/[^/]+\/$/);
       await expect(rail.getByRole('button', { name: 'Account' })).toBeFocused();
       // A pop-over open while the window widens does not come back by itself when it narrows again.
       await rail.getByRole('button', { name: 'Help' }).click();
@@ -568,7 +568,7 @@ test.describe('Desktop layout', () => {
 
   test('touch targets are 44 px or more at desktop width, the column included', async ({ page }) => {
     await setup(page, { recent: Array.from({ length: 8 }, (_, index) => book(index + 30)) });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.getByRole('region', { name: 'Viewed before' })).toBeVisible();
     const small = () => page.evaluate(() => [...document.querySelectorAll('button, a[href], input, select, textarea, [role="button"]')]
       .filter(element => element.getClientRects().length && !element.closest('[aria-hidden="true"], [inert]') && !element.classList.contains('desktop-skip')
@@ -599,7 +599,7 @@ test.describe('Desktop layout follow-up', () => {
     await slot(page).getByRole('button', { name: 'Find my library' }).click();
     await expect(picker(page)).toBeVisible();
     await slot(page).getByRole('button', { name: 'Close the book' }).click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(slot(page)).toHaveCount(0);
     await expect(picker(page)).toHaveCount(0);
     await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
@@ -612,21 +612,21 @@ test.describe('Desktop layout follow-up', () => {
   test('the library pop-up from the old /app/libraries link opens once and never again by itself', async ({ page }) => {
     await setup(page, { saved: TWELVE, libraryId: null });
     await page.goto('/app/libraries');
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(picker(page)).toBeVisible();
     // A book opened from the shelf beside it, then closed: the picker stays closed.
     await cover(page).click();
     await expect(slot(page).getByRole('heading', { level: 1, name: BOOK.title })).toBeVisible();
     await expect(picker(page)).toHaveCount(0);
     await slot(page).getByRole('button', { name: 'Close the book' }).click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(slot(page)).toHaveCount(0);
     await expect(picker(page)).toHaveCount(0);
     // A page from the column, then Back.
     await column(page).getByRole('link', { name: 'Privacy' }).click();
     await expect(slot(page).getByRole('heading', { level: 1, name: 'Privacy' })).toBeVisible();
     await page.goBack();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(slot(page)).toHaveCount(0);
     await expect(picker(page)).toHaveCount(0);
     await page.reload();
@@ -639,7 +639,7 @@ test.describe('Desktop layout follow-up', () => {
     await cover(page).click();
     await expect(slot(page)).toBeVisible();
     await page.keyboard.press('Escape');
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(slot(page)).toHaveCount(0);
     await expect(picker(page)).toHaveCount(0);
     // Forward goes to the book again, not to the picker.
@@ -653,7 +653,7 @@ test.describe('Desktop layout follow-up', () => {
 
     test('one scroll area: the shelf alone, and a long page over a long shelf', async ({ page }) => {
       await setup(page, { saved: LONG });
-      await page.goto('/app/shelf');
+      await page.goto('/');
       await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
       const scrollers = () => page.evaluate(() => [document.scrollingElement, ...document.querySelectorAll('body *')]
         .filter(element => element.scrollHeight > element.clientHeight + 1 && (element === document.scrollingElement || /auto|scroll/.test(getComputedStyle(element).overflowY)))
@@ -683,14 +683,14 @@ test.describe('Desktop layout follow-up', () => {
       await cover(page).click();
       await expect(slot(page)).toBeVisible();
       await page.goBack();
-      await expect(page).toHaveURL(/\/app\/shelf$/);
+      await expect(page).toHaveURL(/\/\/[^/]+\/$/);
       await expect(slot(page)).toHaveCount(0);
       await expect(dialog).toBeHidden();
       // Back from there leaves the app: the pop-up is not waiting in an entry behind the shelf.
       await page.goBack();
       await expect(page).not.toHaveURL(/\/app\//);
       await page.goForward();
-      await expect(page).toHaveURL(/\/app\/shelf$/);
+      await expect(page).toHaveURL(/\/\/[^/]+\/$/);
       await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
       await expect(dialog).toBeHidden();
     });
@@ -714,7 +714,7 @@ test.describe('Desktop layout follow-up', () => {
 
     test('the shelf stays drawn: scroll place, typed text and focus are kept both ways', async ({ page }) => {
       await setup(page, { saved: LONG });
-      await page.goto('/app/shelf');
+      await page.goto('/');
       await expect(page.getByRole('button', { name: 'Account and settings' })).toBeVisible();
       await mark(page);
       await page.locator('main').evaluate(element => { element.scrollTop = 1500; });
@@ -746,7 +746,7 @@ test.describe('Desktop layout follow-up', () => {
       let answer;
       const held = new Promise(resolve => { answer = resolve; });
       await page.route('**/api/v2/books/search', async route => { await held; await route.fulfill({ json: { kind: 'candidates', candidates: [BOOK] } }); });
-      await page.goto('/app/shelf');
+      await page.goto('/');
       await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
       await mark(page);
       const input = page.getByRole('searchbox', { name: 'Search for a book' });
@@ -771,7 +771,7 @@ test.describe('Desktop layout follow-up', () => {
       test.use({ contextOptions: { reducedMotion: 'no-preference' } });
       test('nothing on the shelf moves when the layout changes', async ({ page }) => {
         await setup(page, { saved: LONG });
-        await page.goto('/app/shelf');
+        await page.goto('/');
         await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
         const running = () => page.evaluate(() => document.getAnimations().filter(animation => animation.playState === 'running').map(animation => animation.animationName || 'other'));
         // The suggestions' first fade-in finishes first.

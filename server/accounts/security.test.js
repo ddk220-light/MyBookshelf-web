@@ -24,7 +24,7 @@ test('custom writes require the active session, exact origin, JSON and session-b
 
 test('return destinations reject outside origins, traversal, control characters and auth loops while preserving book keys', () => {
   for (const value of ['https://attacker.test', '//attacker.test', '/app/../outside', '/app/%2e%2e/outside', '/app/%252e%252e/outside', '/app/\\attacker', '/app/book/%0aheader', '/app/account/sign-in', '/app/%61ccount/sign-in', '/app/book/%broken']) {
-    assert.equal(safeReturnPath(value), '/app/shelf', value);
+    assert.equal(safeReturnPath(value), '/', value);
   }
   assert.equal(safeReturnPath('/app/book/ol%3A%2Fworks%2FOL123W?tab=editions'), '/app/book/ol%3A%2Fworks%2FOL123W?tab=editions');
   assert.equal(safeReturnPath('/app/settings/account'), '/app/settings/account');

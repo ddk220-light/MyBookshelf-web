@@ -6,7 +6,7 @@ export type BookNavigation = { from?: 'shelf' | 'search'; searchState?: { candid
   /** Opened from a shelf suggestion (counted only; `source` is unchanged). */
   suggested?: boolean };
 // searchState.shelf: the results were shown on the one-shelf home (plan Phase 5),
-// so the way back is /app/shelf with the same opaque results ID.
+// so the way back is the shelf (/) with the same opaque results ID.
 export type LibraryNavigation = { after?: string; book?: PublicBook; notice?: string; bookNavigation?: BookNavigation };
 
 // Share only an explicit local book destination and its edition preferences.

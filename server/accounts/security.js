@@ -70,7 +70,7 @@ export function requestIP(req, env = process.env) {
   return req.socket.remoteAddress || "unknown";
 }
 
-export function safeReturnPath(value, fallback = "/app/shelf") {
+export function safeReturnPath(value, fallback = "/") {
   if (
     typeof value !== "string" ||
     value.length > 8192 ||

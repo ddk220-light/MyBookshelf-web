@@ -34,7 +34,7 @@ function Location() {
   navigateRef = useNavigate();
   return <output data-testid="location">{location.pathname + location.search + '|' + JSON.stringify(location.state)}</output>;
 }
-const renderHome = () => render(<MemoryRouter initialEntries={['/app/shelf']}><AnonymousWebApp /><Location /></MemoryRouter>);
+const renderHome = () => render(<MemoryRouter initialEntries={['/']}><AnonymousWebApp /><Location /></MemoryRouter>);
 const searchFor = async (text: string) => {
   const input = await screen.findByRole('searchbox', { name: 'Search for a book' });
   fireEvent.change(input, { target: { value: text } });
@@ -65,7 +65,7 @@ describe('search on the shelf', () => {
     expect(searches).toHaveLength(1);
     expect(searches[0]).not.toHaveProperty('libraryId');
     // The text is not in the URL, history state or browser storage.
-    await waitFor(() => expect(screen.getByTestId('location').textContent).toMatch(/^\/app\/shelf\|\{"search":\{"pushed":true,"candidateId":"c[a-z0-9]+"\}\}$/));
+    await waitFor(() => expect(screen.getByTestId('location').textContent).toMatch(/^\/\|\{"search":\{"pushed":true,"candidateId":"c[a-z0-9]+"\}\}$/));
     for (const store of [localStorage, sessionStorage]) for (let index = 0; index < store.length; index += 1)
       expect(store.getItem(store.key(index)!)).not.toContain('wings');
 
@@ -76,7 +76,7 @@ describe('search on the shelf', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Back to my shelf' }));
     expect(await screen.findByRole('heading', { name: 'My shelf' })).toBeInTheDocument();
     expect(screen.getByRole('searchbox', { name: 'Search for a book' })).toHaveValue('');
-    expect(screen.getByTestId('location')).toHaveTextContent(/^\/app\/shelf\|null$/);
+    expect(screen.getByTestId('location')).toHaveTextContent(/^\/\|null$/);
   });
 
   it('× and clearing the field go back to the shelf and stop the search', async () => {
@@ -155,7 +155,7 @@ describe('search on the shelf', () => {
     await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/app/books/'));
     // The book page's own back link returns to the results too.
     const back = await screen.findByRole('link', { name: 'Back' });
-    expect(back).toHaveAttribute('href', '/app/shelf');
+    expect(back).toHaveAttribute('href', '/');
     navigateRef!(-1);
     const again = await screen.findByRole('region', { name: 'Search results' });
     expect(within(again).getAllByRole('link')).toHaveLength(3);

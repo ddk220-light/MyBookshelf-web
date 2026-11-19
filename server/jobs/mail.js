@@ -242,7 +242,7 @@ export function renderAccountMail(payload) {
       "Your account was deleted",
       "Your email, password, saved books, library choice and Viewed before list were deleted, and you were logged out on every device. Backup copies expire within 30 days.",
       "Visit MyBookshelf",
-      "/app/shelf",
+      "/",
       "No action is needed.",
     ],
   };

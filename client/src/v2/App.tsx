@@ -24,7 +24,7 @@ import { ACCOUNT_ENTRY_PATH } from './ui/desk/layoutMode';
 const AdminPage = lazy(() => import('./ui/admin/AdminPage'));
 
 function NativeAppNotice() {
-  return <section className="page-section prose"><h1>Find your next read</h1><p>No sign-in needed.</p><Link className="button-link" to="/app/shelf">Open my shelf</Link></section>;
+  return <section className="page-section prose"><h1>Find your next read</h1><p>No sign-in needed.</p><Link className="button-link" to="/">Open my shelf</Link></section>;
 }
 
 function NotFoundPage() {
@@ -44,7 +44,7 @@ function IdentityApp(){
   // Navigation renders in a transition, so a fast deletion reply can end the
   // session before the move to the receipt page has rendered. An identity
   // ended by its own deletion always lands on the receipt page, never the shelf.
-  const redirectTo=redirect&&receipt?.identity===prior.current?'/app/account/deletion':'/app/shelf';
+  const redirectTo=redirect&&receipt?.identity===prior.current?'/app/account/deletion':'/';
   const incomplete=session.status==='authenticated'&&session.needsProfileCompletion&&!entryMode;
   useLayoutEffect(()=>{if(redirect)navigate(redirectTo,{replace:true,state:null});else if(incomplete)navigate('/app/account/complete-profile?returnTo='+encodeURIComponent(safeAccountReturn(location.pathname+location.search)),{replace:true,state:null});prior.current=current;},[current,redirect,redirectTo,incomplete,navigate,location.pathname,location.search]);
   if(redirect||incomplete)return <p role="status">Updating your account…</p>;
@@ -56,7 +56,7 @@ function IdentityApp(){
 }
 
 // The one-shelf app (plan 3.1): the home screen (shelf, search, scan, library
-// pop-up and side panel), the book page, the side panel's pages and the
+// pop-up and side panel) at the root, the book page, the side panel's pages and the
 // account screens. Old addresses redirect (plan Phase 12): Search, Libraries
 // and Settings are overlays on the shelf now. There is one account screen
 // (plan B6); the older full settings and the "Bring books over" step (the
@@ -67,8 +67,9 @@ function appRoutes() {
   return <>
     <Route path="/select/:slug" element={<SelectLibraryLink />} />
     <Route path="/select" element={<SelectLibraryLink />} />
-    <Route path="/app" element={<Navigate to="/app/shelf" replace />} />
-    <Route path="/app/shelf" element={<HomeScreen />} />
+    <Route path="/" element={<HomeScreen />} />
+    <Route path="/app" element={<Navigate to="/" replace />} />
+    <Route path="/app/shelf" element={<Navigate to="/" replace />} />
     <Route path="/app/search" element={<SearchRedirect />} />
     <Route path="/app/libraries" element={<LibrariesRedirect />} />
     <Route path="/app/settings" element={<SettingsRedirect />} />
@@ -88,7 +89,7 @@ function appRoutes() {
     <Route path="/app/account/return" element={<ProviderReturnPage/>}/>
     <Route path="/app/account/complete-profile" element={<CompleteProfilePage/>}/>
     <Route path="/app/account/deletion" element={<DeletionDonePage />}/>
-    <Route path="/app/account/import" element={<Navigate to="/app/shelf" replace />}/>
+    <Route path="/app/account/import" element={<Navigate to="/" replace />}/>
     <Route path="/app/books/:bookKey" element={<ShelfBookPage />} />
     <Route path="/app/read/:contentKey" element={<ContentDetailPage />} />
     <Route path="/app/report" element={<ReportProblemPage />} />
@@ -96,7 +97,7 @@ function appRoutes() {
     <Route path="/app/terms" element={<TermsPage />} />
     <Route path="/app/about" element={<AboutPage />} />
     <Route path="/app/admin" element={<Suspense fallback={<p role="status">Loading…</p>}><AdminPage /></Suspense>} />
-    <Route path="/find" element={<Navigate to="/app/shelf" replace />} />
+    <Route path="/find" element={<Navigate to="/" replace />} />
     <Route path="/privacy" element={<Navigate to="/app/privacy" replace />} />
     <Route path="/login" element={<NativeAppNotice />} />
     <Route path="/connect" element={<NativeAppNotice />} />

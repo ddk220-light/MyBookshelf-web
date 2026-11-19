@@ -67,7 +67,7 @@ export function safeAccountReturn(input: string | null): string {
     input.startsWith("//") ||
     /[\\\u0000-\u001f]/.test(input)
   )
-    return "/app/shelf";
+    return "/";
   try {
     const decoded = decodeURIComponent(input);
     if (
@@ -75,9 +75,9 @@ export function safeAccountReturn(input: string | null): string {
       decoded.split(/[/?#]/).includes("..") ||
       decoded.startsWith("/app/account/")
     )
-      return "/app/shelf";
+      return "/";
     return input;
   } catch {
-    return "/app/shelf";
+    return "/";
   }
 }

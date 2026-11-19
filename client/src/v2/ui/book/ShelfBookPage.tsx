@@ -134,7 +134,7 @@ export function ShelfBookPage() {
     }
   };
   const back = slot ? <SlotClose label="Close the book" onClose={slot.close} />
-    : <Link className="back-link shelf-book-back" to="/app/shelf" state={backState} onClick={goBack}><BackGlyph size={20} />Back</Link>;
+    : <Link className="back-link shelf-book-back" to="/" state={backState} onClick={goBack}><BackGlyph size={20} />Back</Link>;
 
   // Library pop-up over the book (its own history entry).
   const picker = useHistoryOverlay('library');
@@ -238,7 +238,7 @@ export function ShelfBookPage() {
 
     <p className="visually-hidden" role="status">{announcement}</p>
     {added && saved && slot?.mode !== 'wide' && <div className="undo-notice shelf-book-toast"><span>Added to your shelf</span>
-      {slot ? <button type="button" onClick={slot.close}>See my shelf</button> : <Link to="/app/shelf">See my shelf</Link>}</div>}
+      {slot ? <button type="button" onClick={slot.close}>See my shelf</button> : <Link to="/">See my shelf</Link>}</div>}
     {!slot && <LibraryPickerDialog open={picker.open} onClose={picker.close} returnFocus={pickerReturn} />}
   </section>;
 }

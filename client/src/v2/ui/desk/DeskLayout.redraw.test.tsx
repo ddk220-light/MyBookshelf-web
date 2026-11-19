@@ -44,7 +44,7 @@ it('opening a book beside 100 saved books draws again only its own cover', async
     if (path.endsWith('/books/resolve')) return Promise.resolve(json({ book: { ...book(1), bookKey: JSON.parse(String(init?.body)).bookKey } }));
     return Promise.resolve(json({ error: { code: 'NOT_FOUND', message: 'Not found.' } }, 404));
   }));
-  render(<MemoryRouter initialEntries={['/app/shelf']}><AnonymousWebApp /></MemoryRouter>);
+  render(<MemoryRouter initialEntries={['/']}><AnonymousWebApp /></MemoryRouter>);
   const cover = await screen.findByRole('link', { name: /^Book 7 by Author 7/ });
   // Let the shelf settle (suggestions, Viewed before) before counting.
   await waitFor(() => expect(document.querySelectorAll('.desk-shelf [data-shelf-key]').length).toBeGreaterThan(100));

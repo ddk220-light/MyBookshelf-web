@@ -47,7 +47,7 @@ export function isSlotPath(pathname: string): boolean {
 
 /** Paths drawn by the desk layout (rail and wide): the shelf and every slot page. */
 export function isDeskPath(pathname: string): boolean {
-  return pathname === '/app/shelf' || isSlotPath(pathname);
+  return pathname === '/' || isSlotPath(pathname);
 }
 
 /**

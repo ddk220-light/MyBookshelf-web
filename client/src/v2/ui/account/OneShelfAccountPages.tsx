@@ -463,7 +463,7 @@ export function WelcomePage() {
         </ul>
       </div>}
     <div className="account-signed-as"><span>Signed in as</span><strong>{session.user?.email}</strong></div>
-    <Link className="home-button" to="/app/shelf" replace>Go to my reading shelf</Link>
+    <Link className="home-button" to="/" replace>Go to my reading shelf</Link>
     <Link className="home-text-button account-v2-link" to="/app/settings/account">Account settings</Link>
   </AccountScreen>;
 }
@@ -487,11 +487,11 @@ export function DeletionDonePage() {
   const confirmed = receipt && ['accepted', 'pending', 'cleaned'].includes(receipt.status);
   if (confirmed) return <AccountForm title="Account deleted">
     <p>We sent one email to confirm it. The copy of your shelf in this browser was removed too.</p>
-    <Link className="home-button" to="/app/shelf" replace>Back to my shelf</Link>
+    <Link className="home-button" to="/" replace>Back to my shelf</Link>
   </AccountForm>;
   return <AccountForm title="Couldn’t confirm">
     <FormAlert offline={Boolean(receipt)}>{receipt ? 'Deletion not confirmed' : 'Nothing to show here'}</FormAlert>
     {receipt && <button type="button" className="home-button" disabled={receipt.busy} onClick={() => { void check(); }}>{receipt.busy ? 'Checking…' : 'Check again'}</button>}
-    <Link className="home-button home-button-outline" to="/app/shelf" replace>Back to my shelf</Link>
+    <Link className="home-button home-button-outline" to="/" replace>Back to my shelf</Link>
   </AccountForm>;
 }

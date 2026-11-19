@@ -3,8 +3,8 @@ import { expect, test } from '@playwright/test';
 // No fixture: the built app against whatever the preview serves for /api.
 test('a new reader starts with a bookshelf and can choose a library without an account', async ({ page }) => {
   await page.route('**/api/account/session', route => route.fulfill({ json: { status: 'guest' } }));
-  await page.goto('/app/shelf');
-  await expect(page).toHaveURL(/\/shelf$/);
+  await page.goto('/');
+  await expect(page).toHaveURL(/\/\/[^/]+\/$/);
   await expect(page).toHaveTitle(/MyBookshelf/i);
   await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
   await expect(page.getByRole('searchbox', { name: 'Search for a book' })).toBeVisible();

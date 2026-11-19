@@ -42,7 +42,7 @@ test.describe('performance (lab)', () => {
   // longest task while it opens is kept. Budget: under 50 ms at 4×.
   for (const slowdown of [4]) test(`opening a book beside 100 saved books, desktop, ${slowdown}× CPU`, async ({ page }) => {
     await prepare(page, { saved: Array.from({ length: 100 }, (_, index) => book(index)), slowdown: 1, viewport: { width: 1440, height: 900 }, libraryId: LINKED_LIBRARY.id });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
     await page.waitForTimeout(1500);
     const cdp = await page.context().newCDPSession(page);
@@ -66,8 +66,8 @@ test.describe('performance (lab)', () => {
   for (const slowdown of [4, 6]) {
     for (const count of [0, 10, 100]) test(`first render of the shelf, ${count} books, ${slowdown}× CPU`, async ({ page }) => {
       await prepare(page, { saved: Array.from({ length: count }, (_, index) => book(index)), slowdown });
-      await page.goto('/app/shelf');
-      await page.goto('/app/shelf'); // warm cache, as in 8.4
+      await page.goto('/');
+      await page.goto('/'); // warm cache, as in 8.4
       await expect(page.getByRole('heading', { name: count ? 'My shelf' : 'Ready to search' })).toBeVisible();
       await page.waitForTimeout(1500);
       const perf = await page.evaluate(() => ({ ...window.__perf, fcp: Math.round(performance.getEntriesByName('first-contentful-paint')[0]?.startTime || 0),
@@ -78,7 +78,7 @@ test.describe('performance (lab)', () => {
 
     test(`scrolling 100 books, ${slowdown}× CPU`, async ({ page }) => {
       await prepare(page, { saved: Array.from({ length: 100 }, (_, index) => book(index)), slowdown });
-      await page.goto('/app/shelf');
+      await page.goto('/');
       await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
       await page.waitForTimeout(1500);
       await page.evaluate(() => { window.__perf.longTasks = []; });
@@ -103,7 +103,7 @@ test.describe('performance (lab)', () => {
 
     test(`search slide, ${slowdown}× CPU`, async ({ page }) => {
       await prepare(page, { saved: Array.from({ length: 10 }, (_, index) => book(index)), slowdown, motion: 'no-preference' });
-      await page.goto('/app/shelf');
+      await page.goto('/');
       await expect(page.getByRole('heading', { name: 'My shelf' })).toBeVisible();
       await page.waitForTimeout(1000);
       await page.evaluate(() => { window.__perf.longTasks = []; });

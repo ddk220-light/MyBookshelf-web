@@ -113,7 +113,7 @@ test.describe('One-shelf book page', () => {
 
     await page.getByRole('button', { name: 'Add to my shelf' }).click();
     await page.getByRole('link', { name: 'See my shelf' }).click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(page.locator('.bay-books').getByRole('link', { name: BOOK.title + ' by ' + BOOK.authors[0] })).toBeVisible();
     await page.reload();
     await expect(page.locator('.bay-books').getByRole('link', { name: BOOK.title + ' by ' + BOOK.authors[0] })).toBeVisible();
@@ -267,7 +267,7 @@ test.describe('One-shelf library pop-up', () => {
   test('Change in the side panel: choosing another library keeps the shelf, clears the badges and refills them', async ({ page }) => {
     const saved = [shelfBook(1), shelfBook(2), shelfBook(3)];
     const { calls } = await setup(page, { saved, libraryId: LINKED_LIBRARY.id, lookup: { [LINKED_LIBRARY.id]: [saved[0].bookKey], [OTHER_LIBRARY.id]: [saved[1].bookKey, saved[2].bookKey] } });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.locator('.home-library')).toHaveText(LINKED_LIBRARY.name);
     await expect(page.locator('.cover-badge-library')).toHaveCount(1);
     const dialog = await openFromPanel(page);
@@ -293,7 +293,7 @@ test.describe('One-shelf library pop-up', () => {
     test.use({ geolocation: { latitude: 9.9252, longitude: 78.1198 }, permissions: ['geolocation'] });
     test('Libraries near me fills the same list nearest first with distances; the position is not kept', async ({ page }) => {
       const { calls } = await setup(page);
-      await page.goto('/app/shelf');
+      await page.goto('/');
       const dialog = await openFromPanel(page);
       await dialog.getByLabel('City, town or library name').fill('Chennai');
       await expect(dialog.getByRole('button', { name: /Example Public Library/ })).toBeVisible();
@@ -315,7 +315,7 @@ test.describe('One-shelf library pop-up', () => {
 
   test('nothing found: "Request to add" opens the form; nothing is sent before Send request; the text is kept nowhere', async ({ page }) => {
     const { calls } = await setup(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     const dialog = await openFromPanel(page);
     await dialog.getByLabel('City, town or library name').fill('Tirunelveli');
     await expect(dialog.getByText('No libraries here yet', { exact: true }).first()).toBeVisible();
@@ -341,7 +341,7 @@ test.describe('One-shelf library pop-up', () => {
 
   test('a refused request says what to check and keeps Send request; Cancel goes back to the list', async ({ page }) => {
     const { calls } = await setup(page, { request: 400 });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     const dialog = await openFromPanel(page);
     await dialog.getByLabel('City, town or library name').fill('Tirunelveli');
     await dialog.getByRole('button', { name: 'Request to add “Tirunelveli”' }).click();
@@ -385,7 +385,7 @@ test.describe('One-shelf library pop-up', () => {
 
   for (const light of ['lamplight', 'ink']) test(`the pop-up stays legible in ${light}`, async ({ page }) => {
     await setup(page, { light });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     const dialog = await openFromPanel(page);
     await dialog.getByLabel('City, town or library name').fill('Chennai');
     await expect(dialog.getByRole('button', { name: /Anna Centenary Library/ })).toBeVisible();
@@ -406,7 +406,7 @@ test.describe('One-shelf library links', () => {
   test('a guide page’s link chooses the library silently and opens the shelf; the shelf stays', async ({ page }) => {
     await setup(page, { saved: [shelfBook(1)], libraryId: OTHER_LIBRARY.id });
     await page.goto('/select/anna-centenary-library?next=/app/search&q=wings');
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(page.locator('.home-library')).toHaveText(LINKED_LIBRARY.name);
     await expect(page.getByRole('dialog')).toHaveCount(0);
     await expect(page.locator('.cover3d:not(.is-suggested)')).toHaveCount(1);
@@ -422,13 +422,13 @@ test.describe('One-shelf library links', () => {
     await expect(page.getByRole('group', { name: 'Found in Anna Centenary Library' })).toBeVisible();
     expect(calls.check).toEqual([{ libraryId: LINKED_LIBRARY.id, bookKey: BOOK.bookKey }]);
     await page.getByRole('link', { name: 'Back' }).click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
   });
 
   test('a link that does not resolve lands on the shelf with the notice and keeps the library', async ({ page }) => {
     await setup(page, { libraryId: OTHER_LIBRARY.id });
     await page.goto('/select/no-such-library');
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(page.locator('.home-notice')).toBeVisible();
     await expect(page.locator('.home-library')).toHaveText(OTHER_LIBRARY.name);
     await page.reload();

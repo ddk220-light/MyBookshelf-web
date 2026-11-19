@@ -39,7 +39,7 @@ function seed({ saved = [] as unknown[], recent = [] as unknown[], libraryId = n
   localStorage.setItem(ANONYMOUS_WEB_STORAGE_KEY, JSON.stringify({ version: 2, selectedLibraryId: libraryId, recentBooks: recent, savedBooks: saved, savedContent: [] }));
 }
 function Location() { const location = useLocation(); return <output data-testid="location">{location.pathname + location.search}</output>; }
-const renderHome = (path = '/app/shelf') => render(<MemoryRouter initialEntries={[path]}><AnonymousWebApp /><Location /></MemoryRouter>);
+const renderHome = (path = '/') => render(<MemoryRouter initialEntries={[path]}><AnonymousWebApp /><Location /></MemoryRouter>);
 
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); localStorage.clear(); sessionStorage.clear(); forgetSuggestionVisit(); forgetSuggestionMotion(); });
 const SUGGESTED = SEED_SUGGESTIONS.slice(0, 5).map(item => item.title + ' by ' + item.authors[0] + ', suggested');
@@ -87,7 +87,7 @@ describe('one-shelf home', () => {
     renderHome();
     const input = await screen.findByRole('searchbox', { name: 'Search for a book' });
     fireEvent.change(input, { target: { value: 'wings of fire' } });
-    expect(screen.getByTestId('location')).toHaveTextContent(/^\/app\/shelf$/);
+    expect(screen.getByTestId('location')).toHaveTextContent(/^\/$/);
     for (const store of [localStorage, sessionStorage]) for (let index = 0; index < store.length; index += 1)
       expect(store.getItem(store.key(index)!)).not.toContain('wings of fire');
   });
@@ -417,6 +417,6 @@ describe('one-shelf home', () => {
     stubApi();
     renderHome('/app/settings');
     expect(await screen.findByRole('dialog', { name: 'Account and settings' })).toBeInTheDocument();
-    expect(screen.getByTestId('location')).toHaveTextContent(/^\/app\/shelf$/);
+    expect(screen.getByTestId('location')).toHaveTextContent(/^\/$/);
   });
 });

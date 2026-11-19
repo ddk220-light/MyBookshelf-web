@@ -25,7 +25,7 @@ function stubApi({ session = { status: 200, body: { status: 'guest' } as unknown
   return searches;
 }
 function Location() { const location = useLocation(); return <output data-testid="location">{location.pathname}</output>; }
-const renderHome = () => render(<MemoryRouter initialEntries={['/app/shelf']}><AnonymousWebApp /><Location /></MemoryRouter>);
+const renderHome = () => render(<MemoryRouter initialEntries={['/']}><AnonymousWebApp /><Location /></MemoryRouter>);
 const typeIsbn = (value: string) => {
   const field = screen.getByRole('textbox', { name: 'ISBN' });
   fireEvent.change(field, { target: { value } });
@@ -64,7 +64,7 @@ describe('scan pop-up on the home screen', () => {
     fireEvent.keyDown(dialog, { key: 'Escape' });
     await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Type the ISBN' })).not.toBeInTheDocument());
     expect(screen.getByRole('button', { name: 'Scan a barcode' })).toHaveFocus();
-    expect(screen.getByTestId('location')).toHaveTextContent(/^\/app\/shelf$/);
+    expect(screen.getByTestId('location')).toHaveTextContent(/^\/$/);
   });
 
   it('an ISBN with no known book: "Couldn’t match that barcode", then Search by title focuses the search bar', async () => {
@@ -77,7 +77,7 @@ describe('scan pop-up on the home screen', () => {
     fireEvent.click(within(noMatch).getByRole('button', { name: 'Search by title' }));
     await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
     expect(screen.getByRole('searchbox', { name: 'Search for a book' })).toHaveFocus();
-    expect(screen.getByTestId('location')).toHaveTextContent(/^\/app\/shelf$/);
+    expect(screen.getByTestId('location')).toHaveTextContent(/^\/$/);
   });
 
   it('"No books found" offers the same pop-up', async () => {

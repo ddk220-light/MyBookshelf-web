@@ -292,7 +292,7 @@ export function ProviderReturnPage() {
         className="text-button"
         onClick={() => {
           account.continueGuest();
-          navigate("/app/shelf", { replace: true, state: null });
+          navigate("/", { replace: true, state: null });
         }}
       >
         Continue using this browser

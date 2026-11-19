@@ -33,7 +33,7 @@ test.describe("account screens: lights, widths, zoom and forced colors", () => {
         await page.setViewportSize({ width, height: 844 });
         await page.addInitScript((value) => localStorage.setItem("mybookshelf.appearance.v1", JSON.stringify({ version: 1, preference: value })), light);
         try {
-          await page.goto("/app/shelf");
+          await page.goto("/");
           await page.getByRole("button", { name: "Account and settings" }).click();
           const panel = page.getByRole("dialog", { name: "Account and settings" });
           await expect(panel.getByRole("link", { name: "Create account" })).toBeVisible();
@@ -63,7 +63,7 @@ test.describe("account screens: lights, widths, zoom and forced colors", () => {
           await check(page, testInfo, `log-in-error-${light}-${width}`);
           await page.getByLabel("Password", { exact: true }).fill(password);
           await page.getByRole("button", { name: "Log in", exact: true }).click();
-          await expect(page).toHaveURL(/\/app\/shelf$/);
+          await expect(page).toHaveURL(/\/\/[^/]+\/$/);
           await page.getByRole("button", { name: "Account and settings" }).click();
           await expect(panel.getByText(email, { exact: true })).toBeVisible();
           await check(page, testInfo, `panel-signed-in-${light}-${width}`);

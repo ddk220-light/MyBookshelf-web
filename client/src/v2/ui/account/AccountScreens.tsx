@@ -101,7 +101,7 @@ export function AccountPage() {
       </div>
     </section>
     {failureAlert(problem, () => { void cancelChange(); })}
-    <button type="button" className="home-button home-button-outline account-logout" onClick={() => { void signOut(); navigate('/app/shelf', { replace: true, state: null }); }}>Log out</button>
+    <button type="button" className="home-button home-button-outline account-logout" onClick={() => { void signOut(); navigate('/', { replace: true, state: null }); }}>Log out</button>
     <p className="account-fine">Logging out keeps your reading shelf safe in your account.</p>
     <Link className="account-delete-link" to="/app/settings/account/delete">Delete my account…</Link>
   </PanelPage>;

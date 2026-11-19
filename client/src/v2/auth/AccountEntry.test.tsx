@@ -139,7 +139,7 @@ for (const route of [
         name: "Continue using this browser",
       }),
     );
-    expect(screen.getByTestId("location")).toHaveTextContent("/app/shelf");
+    expect(screen.getByTestId("location")).toHaveTextContent("/");
     expect(
       JSON.parse(localStorage.getItem("mybookshelf.anonymous-web.v1")!)
         .savedBooks,

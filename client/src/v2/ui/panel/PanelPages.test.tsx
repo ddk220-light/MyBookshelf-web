@@ -69,11 +69,14 @@ describe('policy texts', () => {
     network();
     const view = app('/app/privacy');
     expect(await screen.findByRole('heading', { level: 1, name: 'Privacy' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { level: 2, name: 'What we collect and why' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'Information we collect' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'How long we keep information' })).toBeInTheDocument();
     expect(screen.getByText(/Effective \[EFFECTIVE DATE\]\./)).toBeInTheDocument();
-    expect(screen.getByText(/each book you open is added to your/)).toBeInTheDocument();
+    expect(screen.getByText(/you can ask for a log-in link by email/)).toBeInTheDocument();
+    expect(screen.getByText(/When you sign in, the books on your reading shelf in that browser are added to your account/)).toBeInTheDocument();
     expect(document.body.textContent).not.toContain('Draft for owner');
-    expect(screen.getAllByRole('link', { name: 'deepakdhanavel@gmail.com' })[0]).toHaveAttribute('href', 'mailto:deepakdhanavel@gmail.com');
+    expect(document.body.textContent).not.toMatch(/Pwned|What changed/);
+    expect(screen.getAllByRole('link', { name: 'privacy@mybookshelf.cloud' })[0]).toHaveAttribute('href', 'mailto:privacy@mybookshelf.cloud');
     expect(screen.getByRole('link', { name: 'Back' })).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: /My shelf/ })).toBeNull();
     // The title is set in an effect, which can run after the heading appears.
@@ -85,17 +88,24 @@ describe('policy texts', () => {
     cleanup();
     app('/app/about');
     expect(await screen.findByRole('heading', { level: 1, name: 'MyBookshelf' })).toBeInTheDocument();
-    expect(screen.getByText(/MyBookshelf helps you find a book/)).toBeInTheDocument();
+    // The same About text as the public /about page (docs/policy/about.md).
+    expect(screen.getByText(/MyBookshelf keeps a reading shelf of the books you want to read/)).toBeInTheDocument();
+    for (const name of ['What you can do', 'How it works', 'Built to be trusted', 'Who makes it', 'Corrections and questions'])
+      expect(screen.getByRole('heading', { level: 2, name })).toBeInTheDocument();
+    expect(screen.getByText(/Log in with a link we email you, or with a password/)).toBeInTheDocument();
     const facts = document.querySelector<HTMLElement>('.about-facts')!;
-    expect(within(facts).getByText('Version').nextElementSibling).toHaveTextContent('[VERSION]');
-    expect(within(facts).getByRole('link', { name: 'deepakdhanavel@gmail.com' })).toBeInTheDocument();
+    // No build version (a commit hash) on the page any more; only the contact.
+    expect(within(facts).queryByText('Version')).toBeNull();
+    expect(document.body.textContent).not.toContain('[VERSION]');
+    expect(within(facts).getByText('Contact').nextElementSibling).toHaveTextContent('privacy@mybookshelf.cloud');
+    expect(within(facts).getByRole('link', { name: 'privacy@mybookshelf.cloud' })).toHaveAttribute('href', 'mailto:privacy@mybookshelf.cloud');
   });
 });
 
 describe('side panel', () => {
   it('signed out: Create account, Log in, and rows to the new pages', async () => {
     network();
-    app('/app/shelf', { overlay: 'panel' });
+    app('/', { overlay: 'panel' });
     const panel = await screen.findByRole('dialog', { name: 'Account and settings' });
     expect(within(panel).getByRole('link', { name: 'Create account' })).toHaveAttribute('href', '/app/account/sign-up');
     expect(within(panel).getByRole('link', { name: 'Log in' })).toHaveAttribute('href', '/app/account/sign-in');
@@ -106,7 +116,7 @@ describe('side panel', () => {
 
   it('signed in: the email, Log out and Account settings', async () => {
     network({ signedIn: true });
-    app('/app/shelf', { overlay: 'panel' });
+    app('/', { overlay: 'panel' });
     const panel = await screen.findByRole('dialog', { name: 'Account and settings' });
     expect(await within(panel).findByText(USER.email)).toBeInTheDocument();
     expect(within(panel).getByRole('button', { name: 'Log out' })).toBeInTheDocument();

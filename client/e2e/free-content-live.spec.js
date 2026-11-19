@@ -26,7 +26,7 @@ test.describe('simple live paper discovery',()=>{
     expect(calls.at(-1).cursor).toBe('synthetic-live-next');
     await page.locator('.content-result h2 a').first().click();await page.getByRole('button',{name:'Save to shelf',exact:true}).click();
     await expect(page.getByRole('button',{name:'Saved',exact:true})).toBeVisible();
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await page.getByRole('link',{name:/Synthetic live mathematics fixture 777777/}).click();
     await expect(page.getByRole('button',{name:'Saved',exact:true})).toBeVisible();
     await expect(page.locator('.content-read')).toHaveAttribute('href',fixture().readingActions[0].url);

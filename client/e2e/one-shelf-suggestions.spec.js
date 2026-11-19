@@ -105,7 +105,7 @@ const faceOpacity = locator => locator.locator('.cover3d-face').evaluate(face =>
 test.describe('Shelf suggestions on a phone', () => {
   test('cold open shows five suggested books; open one, add it: it is first and solid, and five suggestions remain', async ({ page }) => {
     const calls = await setup(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
     const suggested = page.getByRole('link', { name: /, suggested$/ });
     await expect(suggested).toHaveCount(5);
@@ -151,7 +151,7 @@ test.describe('Shelf suggestions on a phone', () => {
   test('a suggestion the chosen library is known to have carries its badge, from stored answers only', async ({ page }) => {
     const calls = await setup(page);
     const asked = await withServerSuggestions(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
     const badged = page.getByRole('link', { name: name(FOUND_HERE) + ', in ' + LINKED_LIBRARY.name + ', suggested' });
     await expect(badged).toBeVisible();
@@ -170,7 +170,7 @@ test.describe('Shelf suggestions on a phone', () => {
     expect(asked.lookups[0].libraryId).toBe(LINKED_LIBRARY.id);
     expect(asked.lookups[0].books.map(item => item.bookKey)).toEqual([RELATED.bookKey, FOUND_HERE.bookKey, ...SEED.map(item => item.bookKey)]);
     expect(calls.filter(call => /^\/holdings\/(check|search)$/.test(call.endpoint) || call.endpoint === '/availability' || call.endpoint === '/suggestions')).toEqual([]);
-    expect(page.url()).toMatch(/\/app\/shelf$/);
+    expect(page.url()).toMatch(/\/\/[^/]+\/$/);
     expect((await axe(page)).violations).toEqual([]);
     // Drawing the five is not counted (only opened and saved are).
     await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 300)));
@@ -193,7 +193,7 @@ test.describe('Shelf suggestions on a phone', () => {
     await setup(page);
     let release;
     const asked = await withServerSuggestions(page, { answer: new Promise(resolve => { release = resolve; }) });
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
     // The slots are held at first, then the seed list stands in for the late answer.
     await expect.poll(() => asked.related.length).toBe(1);
@@ -216,7 +216,7 @@ test.describe('Shelf suggestions on a phone', () => {
     test.use({ contextOptions: { reducedMotion: 'no-preference' } });
     test('the saved book turns solid and the new suggestion fades in', async ({ page }) => {
       await setup(page);
-      await page.goto('/app/shelf');
+      await page.goto('/');
       await page.getByRole('link', { name: name(WINGS) + ', suggested' }).click();
       await page.getByRole('button', { name: 'Add to my shelf' }).click();
       await expect(page.getByRole('button', { name: 'On my shelf' })).toBeVisible();
@@ -240,7 +240,7 @@ test.describe('Shelf suggestions on a desktop', () => {
 
   test('cold open shows five suggested books; open one, add it: it is first and solid, and five suggestions remain', async ({ page }) => {
     await setup(page);
-    await page.goto('/app/shelf');
+    await page.goto('/');
     await expect(page.getByRole('heading', { name: 'Ready to search' })).toBeVisible();
     await expect(page.getByRole('link', { name: /, suggested$/ })).toHaveCount(5);
     expect(await shelfNames(page)).toEqual(suggestedNames(SEED.slice(0, 5)));
@@ -267,7 +267,7 @@ test.describe('Shelf suggestions on a desktop', () => {
     await expect(first).not.toHaveClass(/is-suggested/);
 
     await slot.getByRole('button', { name: 'Close the book' }).click();
-    await expect(page).toHaveURL(/\/app\/shelf$/);
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
     expect(await faceOpacity(first)).toBe('1');
     await expect(page.getByRole('link', { name: /, suggested$/ })).toHaveCount(5);
@@ -290,7 +290,7 @@ test.describe('Shelf suggestions on the rail and a narrow phone', () => {
         sessionStorage.setItem('seeded', '1');
         localStorage.setItem('mybookshelf.anonymous-web.v1', JSON.stringify({ version: 2, selectedLibraryId: null, recentBooks: [], savedBooks: saved, savedContent: [] }));
       }, { saved: SEED.slice(10, 14).map((book, index) => ({ ...book, source: 'direct', viewedAt: new Date(Date.UTC(2026, 0, 1 + index)).toISOString() })) });
-      await page.goto('/app/shelf');
+      await page.goto('/');
       await expect(page.getByRole('heading', { level: 1, name: 'My shelf' })).toBeVisible();
       await expect(page.getByRole('link', { name: /, suggested$/ })).toHaveCount(5);
       await checkLabels(page, 5);

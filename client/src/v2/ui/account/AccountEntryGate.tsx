@@ -96,7 +96,7 @@ export function AccountEntryGate({
   };
   const continueGuest = () => {
     account.continueGuest();
-    navigate("/app/shelf", { replace: true, state: null });
+    navigate("/", { replace: true, state: null });
   };
   if (
     unavailable ||

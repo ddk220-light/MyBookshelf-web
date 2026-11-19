@@ -136,7 +136,7 @@ export function DeskColumn({ narrow, picking, onChangeLibrary, onClosePicker, pi
 }) {
   const { shown } = useAccountsShown();
   return <aside className={'desk-column' + (narrow ? ' is-narrow' : '') + (picking ? ' is-picking' : '')} aria-label="Library and account">
-    <p className="desk-wordmark">MyBookshelf</p>
+    <p className="desk-wordmark"><a href="/about">MyBookshelf</a></p>
     {picking ? <ColumnPicker onClose={onClosePicker} initialQuery={pickerQuery} returnFocus={pickerReturn} /> : <>
       <LibrarySection onChange={onChangeLibrary} />
       {shown && <section className="desk-section desk-account" aria-labelledby="desk-account-heading">

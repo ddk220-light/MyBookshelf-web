@@ -183,7 +183,7 @@ describe('one-shelf book page', () => {
     const on = await screen.findByRole('button', { name: 'On my shelf' });
     expect(on).toHaveAttribute('aria-pressed', 'true');
     expect(on.querySelector('.tick-pop')).not.toBeNull();
-    expect(screen.getByRole('link', { name: 'See my shelf' })).toHaveAttribute('href', '/app/shelf');
+    expect(screen.getByRole('link', { name: 'See my shelf' })).toHaveAttribute('href', '/');
     expect(screen.getByText('Added to your shelf', { selector: '[role="status"]' })).toBeInTheDocument();
     expect(stored().savedBooks.map((item: { bookKey: string }) => item.bookKey)).toEqual([BOOK.bookKey]);
     fireEvent.click(on);
@@ -214,7 +214,7 @@ describe('one-shelf book page', () => {
   it('one undo notice at a time: clearing Viewed before replaces "Removed … · Undo"', async () => {
     stubApi();
     seed({ saved: [{ ...BOOK, source: 'search', viewedAt: '2026-01-01T00:00:00.000Z' }] });
-    render(<MemoryRouter initialEntries={['/app/shelf', '/app/books/' + encodeURIComponent(BOOK.bookKey)]} initialIndex={1}><AnonymousWebApp /><Location /></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/', '/app/books/' + encodeURIComponent(BOOK.bookKey)]} initialIndex={1}><AnonymousWebApp /><Location /></MemoryRouter>);
     fireEvent.click(await screen.findByRole('button', { name: 'On my shelf' }));
     expect(await screen.findByText('Removed Wings of Fire')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('link', { name: 'Back' }));
