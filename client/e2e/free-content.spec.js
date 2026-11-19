@@ -26,7 +26,7 @@ test.describe('free-content discovery',()=>{
     await page.goto('/app/search?scope=papers&q=browser-fixture');
     await page.getByRole('heading',{name:fixture.title}).getByRole('link').click();
     await expect(page.getByRole('link',{name:'Read at Europe PMC (opens Europe PMC)'})).toHaveAttribute('href','https://europepmc.org/articles/PMC123');
-    await page.getByRole('button',{name:'Save to shelf'}).click();
+    await page.getByRole('button',{name:'Save to my reading shelf'}).click();
     await expect(page.getByRole('button',{name:'Saved',exact:true})).toHaveAttribute('aria-pressed','true');
     await page.reload();
     await expect(page.getByRole('button',{name:'Saved',exact:true})).toHaveAttribute('aria-pressed','true');
@@ -35,7 +35,7 @@ test.describe('free-content discovery',()=>{
     const cover=page.getByRole('link',{name:/Synthetic browser flow fixture/});
     await expect(cover).toBeVisible();await cover.click();
     await page.getByRole('button',{name:'Saved',exact:true}).click();
-    await expect(page.getByRole('button',{name:'Save to shelf',exact:true})).toBeVisible();
+    await expect(page.getByRole('button',{name:'Save to my reading shelf',exact:true})).toBeVisible();
     const state=await page.evaluate(()=>JSON.parse(localStorage.getItem('mybookshelf.anonymous-web.v1')));
     expect(state.version).toBe(2);expect(state.savedContent).toHaveLength(0);expect(state.savedBooks[0].title).toBe('Legacy shelf fixture');
   });
@@ -102,7 +102,7 @@ test.describe('free-content discovery',()=>{
     await page.route('**/api/v2/content/resolve',route=>route.fulfill({json:{item:story}}));
     await page.goto('/app/read/'+encodeURIComponent(story.key));
     await expect(page.getByRole('link',{name:'Read at StoryWeaver · free account required (opens StoryWeaver)'})).toHaveAttribute('href',story.readingActions[0].url);
-    await page.getByRole('button',{name:'Save to shelf'}).click();
+    await page.getByRole('button',{name:'Save to my reading shelf'}).click();
     // The save is written under a browser lock; leave the page only once it shows.
     await expect(page.getByRole('button',{name:'Saved',exact:true})).toBeVisible();
     await page.goto('/');

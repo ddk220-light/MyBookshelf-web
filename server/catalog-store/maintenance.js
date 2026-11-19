@@ -72,9 +72,17 @@ export async function runCatalogMaintenance(db, { policy, now = () => Date.now()
   result.requests = (await db.query(`DELETE FROM library_requests
     WHERE (status = 'spam' AND updated_at < now() - interval '90 days')
        OR (status IN ('added', 'declined') AND updated_at < now() - interval '12 months')`)).rowCount;
-  result.contacts = (await db.query(`UPDATE problem_reports SET contact_name = NULL, contact_email = NULL
-    WHERE (contact_name IS NOT NULL OR contact_email IS NOT NULL) AND created_at < now() - interval '90 days'`)).rowCount
-    + (await db.query(`DELETE FROM library_request_contacts WHERE created_at < now() - interval '90 days'`)).rowCount;
+  // Its own step: before migration 003 the columns and table are not there
+  // yet, and the steps after it (usage roll-up, health, check events) must
+  // still run. A failure is named in `failed` and the next run tries again.
+  try {
+    result.contacts = (await db.query(`UPDATE problem_reports SET contact_name = NULL, contact_email = NULL
+      WHERE (contact_name IS NOT NULL OR contact_email IS NOT NULL) AND created_at < now() - interval '90 days'`)).rowCount
+      + (await db.query(`DELETE FROM library_request_contacts WHERE created_at < now() - interval '90 days'`)).rowCount;
+  } catch {
+    result.contacts = null;
+    result.failed = ['contacts'];
+  }
   result.usage = await rollUpUsage(db);
   // 7-day failure counters. Only failures are events (successes update
   // library_health directly), so checks_7d is not derived here: the admin

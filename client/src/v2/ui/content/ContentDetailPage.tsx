@@ -54,8 +54,8 @@ export function ContentDetail({ contentKey, returnTo = '/app/search?scope=free' 
     }finally{setSaving(false);}
   }
   return <section className="content-detail">
-    <div className="content-toolbar"><Link className="back-link" to={back}>← {back==='/'?'Shelf':back.includes('/app/books/')?'Book':back.includes('scope=papers')?'Papers':'Search'}</Link>
-      <button className={'content-save'+(saved?' is-saved':'')} aria-label={saved?'Saved':'Save to shelf'} title={saved?'Remove from shelf':'Save to shelf'} aria-pressed={saved} aria-busy={saving} disabled={recoveryMode||saving||!saveContent} onClick={()=>void save()}><BookmarkIcon/></button></div>
+    <div className="content-toolbar"><Link className="back-link" to={back}>← {back==='/'?'My reading shelf':back.includes('/app/books/')?'Book':back.includes('scope=papers')?'Papers':'Search'}</Link>
+      <button className={'content-save'+(saved?' is-saved':'')} aria-label={saved?'Saved':'Save to my reading shelf'} title={saved?'Remove from my reading shelf':'Save to my reading shelf'} aria-pressed={saved} aria-busy={saving} disabled={recoveryMode||saving||!saveContent} onClick={()=>void save()}><BookmarkIcon/></button></div>
     <div className="content-detail-heading">{['book','learning_resource'].includes(item.kind)&&<ContentCover title={item.title} kind={item.kind}/>}<div>
       {!['book','learning_resource'].includes(item.kind)&&<p className={'content-kind'+(item.kind==='preprint'?' content-preprint':'')}>{kindLabel(item.kind)}{item.version?' · '+item.version:''}</p>}
       <h1 lang={item.languages[0]!=='und'?item.languages[0]:undefined}>{item.title}</h1>

@@ -49,7 +49,8 @@ export function useLibraryDiscovery(initial: { query?: string } = {}) {
   const nearMe = () => {
     const attempt = ++locationAttempt.current;
     setError(null); setErrorKind(null);
-    const failed = () => { setError('Location unavailable. Enter a city, town or postcode, or browse by area.'); setErrorKind('location'); };
+    // A refused or failed position leaves the list as it was (a typed search stays).
+    const failed = () => { setError('Location unavailable. Type your city or library name instead.'); setErrorKind('location'); };
     if (!navigator.geolocation) { failed(); return; }
     setLocating(true);
     navigator.geolocation.getCurrentPosition(position => {

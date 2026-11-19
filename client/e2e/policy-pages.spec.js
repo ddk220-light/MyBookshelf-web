@@ -29,9 +29,11 @@ test.describe('Policy pages and Report a problem', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Privacy' })).toBeVisible();
     await expect(page.getByRole('heading', { level: 2, name: 'How long we keep information' })).toBeVisible();
     await expect(page.getByText('Draft for owner')).toHaveCount(0);
-    // Placeholders stay visible until the release sets the effective date (the publication switch).
+    // The release sets the effective date (the publication switch); without it
+    // the "Effective …" line is left out, never shown with its placeholder.
     const date = process.env.VITE_POLICY_EFFECTIVE_DATE?.trim();
-    await expect(page.getByText(date ? 'Effective ' + date + '.' : /^Effective \[EFFECTIVE DATE\]\./, { exact: false }).first()).toBeVisible();
+    if (date) await expect(page.getByText('Effective ' + date + '.', { exact: false }).first()).toBeVisible();
+    else await expect(page.getByText(/Effective|EFFECTIVE DATE/)).toHaveCount(0);
     await expect(page.getByRole('link', { name: /My reading shelf/ })).toHaveCount(0);
     expect((await axe(page)).violations).toEqual([]);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -79,7 +81,7 @@ test.describe('Policy pages and Report a problem', () => {
     await page.getByRole('dialog', { name: 'Settings' }).getByRole('link', { name: 'Report a problem' }).click();
     const box = page.getByRole('textbox', { name: 'What happened?' });
     await expect(box).toBeVisible();
-    await expect(page.locator('.report-context')).toHaveText(new RegExp('^Sent with your message: the screen you were on \\(Shelf\\) and your library \\(' + LINKED_LIBRARY.name + '\\)\\.$'));
+    await expect(page.locator('.report-context')).toHaveText(new RegExp('^Sent with your message: the screen you were on \\(Reading shelf\\) and your library \\(' + LINKED_LIBRARY.name + '\\)\\.$'));
     await expect(page.getByText('Please leave out passwords and library card numbers.', { exact: false })).toBeVisible();
     expect((await axe(page)).violations).toEqual([]);
     await box.fill('The library answer looks wrong');

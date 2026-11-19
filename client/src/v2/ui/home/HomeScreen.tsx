@@ -337,10 +337,14 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null, on
     if (!behind && library && !promptDismissed) dismissLibraryPrompt();
   }, [behind, library, promptDismissed, dismissLibraryPrompt]);
   const catalog = library?.capabilities.catalogLink ? webLink(library.catalogUrl) : undefined;
+  // "My library" over the name (Main board).
   const libraryRow = libraryName && !wide ? <div className="home-library-row">
     <span className="home-library-tile"><LibraryGlyph size={20} /></span>
-    {catalog ? <a className="home-library" href={catalog} target="_blank" rel="noreferrer" aria-label={libraryName + ", opens in a new tab"}>{libraryName}</a>
-      : <span className="home-library">{libraryName}</span>}
+    <span className="home-library-text">
+      <span className="home-library-caption">My library</span>
+      {catalog ? <a className="home-library" href={catalog} target="_blank" rel="noreferrer" aria-label={libraryName + ", opens in a new tab"}>{libraryName}</a>
+        : <span className="home-library">{libraryName}</span>}
+    </span>
     <button type="button" className="home-text-button" aria-label="Change library" aria-haspopup="dialog"
       onClick={event => openLibrary(event.currentTarget)}>Change</button>
   </div> : null;
@@ -381,7 +385,8 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null, on
       <h2 id="library-prompt-title"><LibraryGlyph size={20} />Choose your library</h2>
       <p>Then every book shows whether your library has it.</p>
       <button type="button" className="home-button" aria-haspopup="dialog" onClick={event => openLibrary(event.currentTarget)}>Find my library</button>
-      <button type="button" className="home-text-button" onClick={dismissLibraryPrompt}>Not now</button>
+      {/* The prompt goes: focus moves on to the search bar, not the top of the page. */}
+      <button type="button" className="home-text-button" onClick={() => { dismissLibraryPrompt(); document.getElementById(SHELF_SEARCH_ID)?.focus({ preventScroll: true }); }}>Not now</button>
     </section>}
     <ShelfStage showResults={showResults} shelf={shelf} results={resultsPane} />
     <p className="visually-hidden" role="status" aria-live="polite">{announcement}</p>

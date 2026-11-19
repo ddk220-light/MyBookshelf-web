@@ -4,8 +4,10 @@ import { Fragment, type ReactNode } from 'react';
 // their words. Only the small Markdown subset those files use is understood:
 // "# " and "## " headings, paragraphs, "- " lists, pipe tables, **bold** and
 // plain email addresses. The leading "> Draft ..." review note is a note for
-// reviewers, not policy text, and is left out. Placeholders such as
-// [EFFECTIVE DATE] stay visible unless the build supplies a value.
+// reviewers, not policy text, and is left out. A placeholder is filled when
+// the build supplies a value; without one, its "Effective [EFFECTIVE DATE]."
+// sentence is left out rather than shown with the placeholder in it
+// (VITE_POLICY_EFFECTIVE_DATE must be set for a release).
 
 export type PolicyBlock =
   | { type: 'h1' | 'h2' | 'p'; text: string }
@@ -14,7 +16,10 @@ export type PolicyBlock =
 
 export function parsePolicy(markdown: string, values: Record<string, string | null> = {}): PolicyBlock[] {
   let text = markdown.replace(/\r\n?/g, '\n');
-  for (const [placeholder, value] of Object.entries(values)) if (value) text = text.split(placeholder).join(value);
+  for (const [placeholder, value] of Object.entries(values)) {
+    if (value) text = text.split(placeholder).join(value);
+    else text = text.split('Effective ' + placeholder + '.').map((part, index) => index ? part.replace(/^[ \t]+/, '') : part).join('');
+  }
   const blocks: PolicyBlock[] = [];
   let paragraph: string[] = [];
   let list: string[] | null = null;

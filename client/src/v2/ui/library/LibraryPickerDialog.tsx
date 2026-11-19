@@ -72,11 +72,20 @@ function useSheetAboveKeyboard(open: boolean, ref: RefObject<HTMLElement | null>
 }
 
 /**
+ * A touch screen (a tablet at rail or wide width): focusing the field there
+ * opens the on-screen keyboard over the picker, so focus waits for a tap.
+ */
+export function touchScreen(): boolean {
+  return typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches;
+}
+
+/**
  * The library pop-up (PickerTyping, PickerResults and RequestLibrary boards):
  * a bottom sheet on phones, beside the rail at middle widths. The title and
- * Close and the field stay in place; only the list scrolls. On phones the
- * keyboard does not open until the reader taps the field (focus starts on
- * "Libraries near me"); at rail width focus starts in the field. Tapping a
+ * Close and the field stay in place; only the list scrolls. On phones and
+ * other touch screens the keyboard does not open until the reader taps the
+ * field (focus starts on "Libraries near me"); at rail width with a mouse or
+ * keyboard focus starts in the field. Tapping a
  * row chooses that library and closes the pop-up; the saved shelf is
  * untouched. The typed text stays in this component's state; the position is
  * used for one request and dropped.
@@ -101,7 +110,7 @@ export function LibraryPickerDialog({ open, onClose, onChosen, returnFocus, init
     if (!dialog) return;
     if (open && !dialog.open) {
       dialog.showModal();
-      dialog.querySelector<HTMLElement>(phone ? '.library-near' : LIBRARY_FIELD)?.focus();
+      dialog.querySelector<HTMLElement>(phone || touchScreen() ? '.library-near' : LIBRARY_FIELD)?.focus();
     }
     if (!open && dialog.open) {
       dialog.close();
@@ -147,6 +156,11 @@ export function LibraryPicker({ titleId, listId, onClose, onChosen, initialQuery
   const [choosing, setChoosing] = useState<string | null>(null);
   const [removing, setRemoving] = useState(false);
   const [removed, setRemoved] = useState(false);
+  // While the reader types on a phone (the field has focus or text), the
+  // handle, "Libraries near me" and "Your library now" step aside so the list
+  // has room above the keyboard (PickerTyping board).
+  const [fieldFocused, setFieldFocused] = useState(false);
+  const phone = useLayoutMode() === 'phone';
   const root = useRef<HTMLDivElement>(null);
   const focusNext = useRef<(() => HTMLElement | null | undefined) | null>(null);
   const firstNewRow = useRef<number | null>(null);
@@ -158,6 +172,8 @@ export function LibraryPicker({ titleId, listId, onClose, onChosen, initialQuery
   const nothing = showList && Boolean(page) && !busy && libraries.length === 0;
   const usMiles = libraries.find(item => item.distanceKm != null)?.country === 'US';
   const remaining = page ? Math.max(0, page.total - libraries.length) : 0;
+  // A refused or failed position leaves the typed list as it was.
+  const listFailed = errorKind === 'load';
 
   // Focus that must wait for the next render (the form opening or closing, new rows).
   useLayoutEffect(() => {
@@ -212,13 +228,14 @@ export function LibraryPicker({ titleId, listId, onClose, onChosen, initialQuery
   // "Nearest first" only when the server gave distances; without them the order is not known to be by distance.
   const hasDistances = libraries.some(item => item.distanceKm != null);
   const label = nearby ? (hasDistances ? 'Nearest first' : 'Libraries near you') : page?.area ? 'Libraries in ' + page.area.label.split(',')[0] : 'Libraries';
-  const count = page && showList && !busy && !errorKind ? libraryCount(page, nearby) : '';
+  const count = page && showList && !busy && !listFailed ? libraryCount(page, nearby) : '';
   const status = removed ? 'Library removed. You can choose another one.' : locating ? 'Finding libraries near you' : busy ? 'Finding libraries'
     : errorKind === 'location' ? 'Location unavailable. Type your city or library name instead.'
       : errorKind === 'load' ? 'Couldn’t load libraries' : nothing ? 'No libraries here yet' : loadingMore ? 'Loading more libraries' : count;
   const place = selected ? [selected.name, selected.city && !selected.name.includes(selected.city) ? selected.city : null].filter(Boolean).join(', ') : '';
 
-  return <div ref={root} className="library-picker">
+  const typing = sheet && phone && !nearby && (fieldFocused || Boolean(query));
+  return <div ref={root} className={'library-picker' + (typing ? ' is-typing' : '')}>
     {sheet && <span className="scan-handle" aria-hidden="true" />}
     <div className="scan-header">
       <h2 id={titleId} tabIndex={-1}>{selected ? 'Change library' : 'Find your library'}</h2>
@@ -237,6 +254,7 @@ export function LibraryPicker({ titleId, listId, onClose, onChosen, initialQuery
       <div className={'library-field-box' + (nearby ? '' : typed ? ' is-active' : '')}>
         <input id="library-lookup" name="library-lookup" className="library-query" type="search" enterKeyHint="search" autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} maxLength={120}
           aria-labelledby={captionId} value={query} onChange={event => type(event.target.value)}
+          onFocus={() => setFieldFocused(true)} onBlur={() => setFieldFocused(false)}
           onKeyDown={event => { if (event.key === 'Enter') event.preventDefault(); }} aria-controls={showList ? listId : undefined} />
         {query && <button type="button" className="library-clear" aria-label="Clear" onClick={() => { type(''); field()?.focus(); }}><CloseGlyph size={20} /></button>}
       </div>
@@ -254,7 +272,7 @@ export function LibraryPicker({ titleId, listId, onClose, onChosen, initialQuery
     {errorKind === 'load' && <div className="library-line library-line-action"><span>Couldn’t load libraries</span>
       <button type="button" className="home-text-button" onClick={retry}>Try again</button></div>}
 
-    {showList && !errorKind && <div className="library-list" id={listId} role="region" aria-label={label} aria-busy={busy || undefined}>
+    {showList && !listFailed && <div className="library-list" id={listId} role="region" aria-label={label} aria-busy={busy || undefined}>
       {libraries.length > 0 && (nearby || page?.area) && <p className="library-list-label" aria-hidden="true">{label}</p>}
       {busy && !libraries.length && <div className="library-rows" aria-hidden="true">{[0, 1, 2].map(row => <span key={row} className="library-row library-row-ghost"><span /><span /></span>)}</div>}
       {libraries.length > 0 && <ul className="library-rows">{libraries.map(item => {
@@ -272,12 +290,12 @@ export function LibraryPicker({ titleId, listId, onClose, onChosen, initialQuery
       {nothing && <p className="library-line">No libraries here yet</p>}
     </div>}
 
-    {nothing && requestText && !errorKind
+    {nothing && requestText && !listFailed
       ? <div className="library-footer">
         <button type="button" className="home-button library-request" onClick={() => openRequest(requestText)}>Request to add “{requestText}”</button>
       </div>
       : !busy && !locating && <div className="library-footer">
-        {canLoadMore && remaining > 0 && !errorKind && <button type="button" className="home-button home-button-outline library-more" disabled={loadingMore} aria-busy={loadingMore || undefined} onClick={more}>
+        {canLoadMore && remaining > 0 && !listFailed && <button type="button" className="home-button home-button-outline library-more" disabled={loadingMore} aria-busy={loadingMore || undefined} onClick={more}>
           {loadingMore ? 'Loading…' : `Show ${Math.min(25, remaining)} more`}</button>}
         {moreFailed && <p className="library-line" role="alert">Couldn’t load more. Try again.</p>}
         <button type="button" className="home-text-button library-unlisted" onClick={() => openRequest(requestText || (nearby ? '' : typed.slice(0, 80)))}>My library isn’t listed</button>

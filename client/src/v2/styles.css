@@ -118,7 +118,10 @@ button, .button-link {
   text-decoration: none;
   transition: filter .15s ease, box-shadow .15s ease;
 }
-button:hover:not(:focus-visible), .button-link:hover:not(:focus-visible) { filter: brightness(1.07); box-shadow: 0 2px 8px rgb(47 83 64 / .25); }
+/* Hover only where there is one: on touch screens a tap would leave it stuck on. */
+@media (hover: hover) {
+  button:hover:not(:focus-visible), .button-link:hover:not(:focus-visible) { filter: brightness(1.07); box-shadow: 0 2px 8px rgb(47 83 64 / .25); }
+}
 button:focus-visible, a:focus-visible, input:focus-visible {
   outline: 3px solid var(--ink-title);              /* #43191a */
   outline-offset: 2px;

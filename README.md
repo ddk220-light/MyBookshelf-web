@@ -92,4 +92,4 @@ terms and credits; see NOTICE and data/LICENSE. Fixture samples are retained onl
 for interoperability tests and are not relicensed as original application code.
 
 Created by **Deepak Ravikumar**, Product Manager.
-[LinkedIn](https://www.linkedin.com/in/deepakdhanavel/) · deepakdhanavel@gmail.com
+[LinkedIn](https://www.linkedin.com/in/deepakdhanavel/) · privacy@mybookshelf.cloud

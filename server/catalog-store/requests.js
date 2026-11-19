@@ -152,6 +152,10 @@ const STORE_REQUEST = `INSERT INTO library_requests (request_key, display_text) 
 const STORE_REQUEST_CONTACT = `INSERT INTO library_request_contacts (request_key, name, email) VALUES ($1, $2, $3)`;
 const STORE_REPORT = `INSERT INTO problem_reports (body, screen, library_id, book_key, app_version, contact_name, contact_email)
   VALUES ($1, $2, $3, $4, $5, $6, $7)`;
+// Before migration 003 (contact columns) is applied: the report without them.
+const STORE_REPORT_WITHOUT_CONTACT = `INSERT INTO problem_reports (body, screen, library_id, book_key, app_version)
+  VALUES ($1, $2, $3, $4, $5)`;
+const UNDEFINED_COLUMN = '42703';
 
 // `db` null: requests and reports are accepted and held in a small in-memory
 // list for this instance (nothing durable before the database exists).
@@ -210,10 +214,15 @@ export function createSubmissions({ db = null, secret = null, buckets = null, fa
       if (!await within(digest('problem-report', client, day()), { max: LIMITS.reportsPerHour, seconds: HOUR_S })) return 'limited';
       defer(async () => {
         if (!db) { hold(held.reports, { ...report, createdOn: day() }); return; }
+        const values = [report.body, report.screen || null, report.libraryId || null, report.bookKey || null, report.appVersion || null];
         try {
-          await db.query(STORE_REPORT, [report.body, report.screen || null, report.libraryId || null, report.bookKey || null, report.appVersion || null,
-            report.contact?.name || null, report.contact?.email || null]);
-        } catch { /* Dropped when the store is down. */ }
+          await db.query(STORE_REPORT, [...values, report.contact?.name || null, report.contact?.email || null]);
+        } catch (error) {
+          // The release ran before its migration: the words are still kept.
+          // Contact details have nowhere to go yet and are not stored.
+          if (error?.code !== UNDEFINED_COLUMN) return; // Dropped when the store is down.
+          try { await db.query(STORE_REPORT_WITHOUT_CONTACT, values); } catch { /* Dropped when the store is down. */ }
+        }
       });
       return 'accepted';
     },

@@ -59,7 +59,7 @@ test.describe('approved free-content UI behavior',()=>{
   test('bookmark, supplied formats and separate versions remain usable by keyboard',async({page,baseURL})=>{
     await installContentReviewFixture(page,'PaperDetail');await openReviewState(page,'PaperDetail',baseURL);
     await expect(page.locator('.content-detail .content-cover')).toHaveCount(0);
-    const save=page.getByRole('button',{name:'Save to shelf',exact:true});await save.focus();await page.keyboard.press('Enter');
+    const save=page.getByRole('button',{name:'Save to my reading shelf',exact:true});await save.focus();await page.keyboard.press('Enter');
     await expect(page.getByRole('button',{name:'Saved',exact:true})).toHaveAttribute('aria-pressed','true');
     await expect(page.getByRole('link',{name:'PDF (opens arxiv.org)'})).toHaveAttribute('href',reviewPreprint().readingActions[0].downloads[0].url);
     const related=page.locator('.content-relations');await expect(related).toContainText('Its text, access and licence may differ.');

@@ -47,7 +47,9 @@ describe('policy texts', () => {
     const text = '> Draft for owner and legal review. Not yet published.\n\n# Privacy\n\nEffective [EFFECTIVE DATE]. Run by someone.\n\n## Contact\n\n**Bold** words and\na wrapped line.\n\n- one\n  continued\n- two\n\n| What | How long |\n|---|---|\n| Account | Until you delete it |\n';
     const kept = policySections(parsePolicy(text, { '[EFFECTIVE DATE]': null }));
     expect(kept.title).toBe('Privacy');
-    expect(kept.intro).toEqual([{ type: 'p', text: 'Effective [EFFECTIVE DATE]. Run by someone.' }]);
+    // Without a date the "Effective …" sentence is left out, never shown with the placeholder.
+    expect(kept.intro).toEqual([{ type: 'p', text: 'Run by someone.' }]);
+    expect(policySections(parsePolicy('# T\n\nEffective [EFFECTIVE DATE].\n\nThe rest.\n', { '[EFFECTIVE DATE]': null })).intro).toEqual([{ type: 'p', text: 'The rest.' }]);
     expect(kept.sections[0]).toEqual({ heading: 'Contact', blocks: [
       { type: 'p', text: '**Bold** words and a wrapped line.' },
       { type: 'ul', items: ['one continued', 'two'] },
@@ -65,13 +67,13 @@ describe('policy texts', () => {
     expect(policyEffectiveDate({ VITE_POLICY_EFFECTIVE_DATE: '<b>' })).toBeNull();
   });
 
-  it('Privacy, Terms and About render the approved texts with visible placeholders', async () => {
+  it('Privacy, Terms and About render the approved texts; without a build date there is no Effective line', async () => {
     network();
     const view = app('/app/privacy');
     expect(await screen.findByRole('heading', { level: 1, name: 'Privacy' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 2, name: 'Information we collect' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 2, name: 'How long we keep information' })).toBeInTheDocument();
-    expect(screen.getByText(/Effective \[EFFECTIVE DATE\]\./)).toBeInTheDocument();
+    expect(document.body.textContent).not.toMatch(/EFFECTIVE DATE|Effective /);
     expect(screen.getByText(/you can ask for a log-in link by email/)).toBeInTheDocument();
     expect(screen.getByText(/When you sign in, the books on your reading shelf in that browser are added to your account/)).toBeInTheDocument();
     expect(document.body.textContent).not.toContain('Draft for owner');
@@ -85,6 +87,8 @@ describe('policy texts', () => {
     app('/app/terms');
     expect(await screen.findByRole('heading', { level: 1, name: 'Terms' })).toBeInTheDocument();
     expect(screen.getByText("You must be 18 or older, or have a parent's or guardian's permission.")).toBeInTheDocument();
+    expect(screen.getByText(/^MyBookshelf is run by Deepak Ravikumar, India\./)).toBeInTheDocument();
+    expect(document.body.textContent).not.toMatch(/EFFECTIVE DATE|Effective /);
     cleanup();
     app('/app/about');
     expect(await screen.findByRole('heading', { level: 1, name: 'MyBookshelf' })).toBeInTheDocument();
@@ -169,6 +173,23 @@ describe('Report a problem', () => {
     let stored = '';
     for (const store of [localStorage, sessionStorage]) for (let index = 0; index < store.length; index += 1) stored += store.getItem(store.key(index)!);
     expect(stored).not.toMatch(/asha@example|Wrong answer/);
+  });
+
+  it('an empty Send report says what is missing and sends nothing; typing clears the line', async () => {
+    const calls = network({ handle: path => path.endsWith('/api/v2/problem-reports') ? json({}, 202) : undefined });
+    app('/app/report', { reportScreen: 'shelf' });
+    const box = await screen.findByRole('textbox', { name: 'What happened?' });
+    expect(document.querySelector('.report-context')).toHaveTextContent('Sent with your message: the screen you were on (Reading shelf).');
+    fireEvent.change(box, { target: { value: '   ' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Send report' }));
+    const line = await screen.findByText('Tell us what happened first.');
+    expect(box).toHaveFocus();
+    expect(box).toHaveAttribute('aria-invalid', 'true');
+    expect(box).toHaveAttribute('aria-describedby', line.id);
+    expect(calls.some(call => call.path.endsWith('/problem-reports'))).toBe(false);
+    fireEvent.change(box, { target: { value: 'Broken' } });
+    expect(screen.queryByText('Tell us what happened first.')).toBeNull();
+    expect(box).not.toHaveAttribute('aria-invalid');
   });
 
   it('shows one line for each failure and Try again when offline', async () => {

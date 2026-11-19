@@ -10,11 +10,12 @@
 // our own origin (/_vercel/insights/*), so the CSP needs no new host.
 //
 // Every reported URL goes through analyticsBeforeSend first: query strings
-// and fragments are dropped (verification and reset links, the landing form's
-// ?q=), book and reading keys are collapsed (/app/books/[book],
-// /app/read/[item]), every /app/account/* path becomes /app/account, the
-// admin view is never reported, and any other unexpected path is collapsed so
-// typed text in an address cannot reach analytics.
+// and fragments are dropped (verification and reset links, an old
+// /app/search?q= or /app/libraries?q= link), book and reading keys are
+// collapsed (/app/books/[book], /app/read/[item]), every /app/account/* path
+// becomes /app/account, the admin view is never reported, and any other
+// unexpected path is collapsed so typed text in an address cannot reach
+// analytics.
 //
 // These functions are self-contained (no module-level references) because
 // build-pages.mjs writes their source into the public pages' /insights.js.
@@ -27,8 +28,7 @@ export function scrubAnalyticsUrl(value) {
   var path = url.pathname.replace(/\/+$/, '') || '/';
   if (/^\/app\/admin(?:\/|$)/i.test(path)) return null;
   // The one-shelf app's pages under /app/ (plan 3.1; the shelf itself is the
-  // root, "/"), then the old addresses that now redirect to the shelf
-  // (/app/libraries is still the libraries hub's "Find your library" entry).
+  // root, "/"), then the old addresses that now redirect to the shelf.
   // A redirect replaces the address before the next view.
   var known = ['/app', '/app/shelf', '/app/settings/account', '/app/settings/account/more',
     '/app/report', '/app/privacy', '/app/terms', '/app/about',
@@ -40,7 +40,7 @@ export function scrubAnalyticsUrl(value) {
   else if (/^\/select(?:\/|$)/.test(path)) { if (!/^\/select(?:\/[a-z0-9]+(?:-[a-z0-9]+)*)?$/.test(path)) path = '/select/[other]'; }
   // The public pages by name and library guides by slug; anything else (a
   // mistyped or pasted address, shown the 404 page) is not reported as typed.
-  else if (['/', '/libraries', '/about', '/how-it-works', '/open-source', '/privacy', '/support'].indexOf(path) < 0
+  else if (['/', '/libraries', '/about', '/how-it-works', '/open-source', '/privacy', '/terms', '/support'].indexOf(path) < 0
     && !/^\/libraries\/[a-z0-9]+(?:-[a-z0-9]+)*$/.test(path)) path = '/[other]';
   return url.origin + path;
 }

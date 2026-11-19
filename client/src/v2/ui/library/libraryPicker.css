@@ -9,12 +9,18 @@
 /* The sheet follows the area above the keyboard: --sheet-height and
    --sheet-lift come from visualViewport while it is open
    (LibraryPickerDialog.tsx). Only the list (or the request form) scrolls; the
-   title, Close and the field stay in place. */
+   title, Close and the field stay in place, so the sheet itself never does. */
 .one-shelf-frame .library-dialog { gap: 12px; bottom: var(--sheet-lift, 0px); max-height: calc(var(--sheet-height, 100%) - 16px); }
+.one-shelf-frame .scan-dialog.library-dialog { overflow: hidden; }
 .one-shelf-frame .desk-mode-rail dialog.library-dialog { max-height: calc(min(100dvh, var(--sheet-height, 100dvh)) - 32px); }
 .one-shelf-frame .library-picker { display: contents; }
 .one-shelf-frame .library-picker > * { flex: 0 0 auto; }
 .one-shelf-frame .library-picker > .library-list, .one-shelf-frame .library-picker > .library-request-form { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+/* Room for about two rows however little space the keyboard leaves. */
+.one-shelf-frame .library-picker > .library-list { min-height: 120px; }
+/* Typing on a phone (PickerTyping board): the handle, "Libraries near me" and
+   "Your library now" step aside while the field has focus or text. */
+.one-shelf-frame .library-picker.is-typing > :is(.scan-handle, .library-near, .library-current) { display: none; }
 
 .one-shelf-frame .library-near { border-width: 1.5px; height: 48px; min-height: 48px; }
 .one-shelf-frame .library-near.is-on { background: var(--pressed-bg); color: var(--pressed-ink); }

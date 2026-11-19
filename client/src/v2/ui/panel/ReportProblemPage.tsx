@@ -17,7 +17,7 @@ const LIMIT = 2000;
 
 /** The screen a report names, as the reader knows it. */
 const SCREEN_NAMES: Record<ProblemScreen, string> = {
-  shelf: 'Shelf', search: 'Search results', book: 'Book page', library: 'Find your library',
+  shelf: 'Reading shelf', search: 'Search results', book: 'Book page', library: 'Find your library',
   panel: 'Settings', account: 'Account', scan: 'Scan', other: 'Other',
 };
 
@@ -43,6 +43,8 @@ export function ReportProblemPage() {
   const [contact, setContact] = useState<ContactDetails>({});
   const [checked, setChecked] = useState(false);
   const [status, setStatus] = useState<Status>('idle');
+  // An empty Send report: a line under the field says what is missing.
+  const [empty, setEmpty] = useState(false);
   const field = useRef<HTMLTextAreaElement>(null);
   const alive = useRef(true);
   useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
@@ -63,7 +65,8 @@ export function ReportProblemPage() {
   const send = async () => {
     const words = text.trim();
     if (status === 'sending') return;
-    if (!words) { field.current?.focus(); return; }
+    if (!words) { setEmpty(true); field.current?.focus(); return; }
+    setEmpty(false);
     setChecked(true);
     if (!emailOk) return;
     setStatus('sending');
@@ -86,8 +89,10 @@ export function ReportProblemPage() {
       <div className="form-field">
         <label htmlFor="report-text">What happened?</label>
         <textarea ref={field} id="report-text" className="report-text" rows={4} maxLength={LIMIT} value={text}
+          aria-invalid={empty || undefined} aria-describedby={empty ? 'report-text-error' : undefined}
           placeholder="For example: the app says Wings of Fire is not in my library, but the library has it."
-          onChange={event => { setText(event.target.value.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F‪-‮⁦-⁩]/gu, '')); edited(); }} />
+          onChange={event => { setText(event.target.value.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F‪-‮⁦-⁩]/gu, '')); if (event.target.value.trim()) setEmpty(false); edited(); }} />
+        {empty && <small className="contact-error" id="report-text-error" role="alert">Tell us what happened first.</small>}
       </div>
       <p className="report-context"><strong>Sent with your message:</strong> {sentWith}</p>
       <ContactFields value={contact} emailError={checked && !emailOk} intro="Both are optional. We delete them after 90 days."

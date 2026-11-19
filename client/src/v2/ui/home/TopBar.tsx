@@ -4,12 +4,12 @@ import { SettingsGlyph } from './homeIcons';
 import { SearchBar } from './SearchBar';
 
 /**
- * Person icon (opens the side panel), wordmark (a link to the public About
- * page), the search bar with the scan
- * button, and under it the chosen library's name as plain text (or, while
+ * The wordmark (a link to the public About page) with the settings gear
+ * opposite it at the top right (opens the side panel; Main board), the search
+ * bar with the scan button, and under it the chosen library (or, while
  * results are shown, `leading`: "Back to my reading shelf").
  *
- * Rail widths: no person icon (the rail holds the account). Wide widths
+ * Rail widths: no gear here (the rail holds it). Wide widths
  * (DeskShelf board): the wordmark and the library are in the left column,
  * so the bar is only the search bar with the view switch (`trailing`) beside
  * it; `leading` is drawn under it by the caller.
@@ -38,8 +38,8 @@ export const TopBar = forwardRef<HTMLButtonElement, {
   </header>;
   return <header className={'home-top' + cold}>
     <div className="home-brand">
-      {layout === 'phone' && <button type="button" ref={settingsButton} className="home-person" aria-label="Settings" aria-haspopup="dialog" aria-expanded={panelOpen} onClick={onOpenPanel}><SettingsGlyph /></button>}
       <a className="home-wordmark" href="/about">MyBookshelf</a>
+      {layout === 'phone' && <button type="button" ref={settingsButton} className="home-person" aria-label="Settings" aria-haspopup="dialog" aria-expanded={panelOpen} onClick={onOpenPanel}><SettingsGlyph /></button>}
     </div>
     {intro}
     <SearchBar {...search} />

@@ -61,10 +61,18 @@ test.describe('Desktop layout', () => {
     await expect(side.getByText('MyBookshelf')).toBeVisible();
     await expect(side.getByRole('heading', { name: 'My library' })).toBeVisible();
     await expect(side.getByText(LINKED_LIBRARY.name)).toBeVisible();
-    await expect(side.getByRole('button', { name: 'Change library' })).toBeVisible();
+    // DeskShelf board: the words on the button, the account line, and no
+    // Reading light here (it is in Settings).
+    await expect(side.getByRole('button', { name: 'Change library' })).toHaveText('Change library');
+    await expect(side.getByText('Keep the same reading shelf on your phone and computer.')).toBeVisible();
     await expect(side.getByRole('link', { name: 'Create account' })).toBeVisible();
     await expect(side.getByRole('link', { name: 'Log in' })).toBeVisible();
-    await expect(side.getByRole('group', { name: 'Reading light' }).getByRole('button')).toHaveCount(3);
+    await expect(side.getByRole('group', { name: 'Reading light' })).toHaveCount(0);
+    await expect(side.getByRole('heading', { name: 'Reading light' })).toHaveCount(0);
+    await side.getByRole('button', { name: 'Settings' }).click();
+    await expect(page.getByRole('dialog', { name: 'Settings' }).getByRole('group', { name: 'Reading light' }).getByRole('button')).toHaveCount(3);
+    await page.keyboard.press('Escape');
+    await expect(side.getByRole('button', { name: 'Settings' })).toBeFocused();
     for (const name of ['Report a problem', 'Privacy', 'About']) await expect(side.getByRole('link', { name })).toBeVisible();
     expect((await side.boundingBox()).width).toBe(300);
     await expect(page.getByRole('button', { name: 'Settings' })).toHaveCount(1);
@@ -102,6 +110,7 @@ test.describe('Desktop layout', () => {
     await expect(side.getByText(USER.email)).toBeVisible();
     await expect(side.getByRole('button', { name: 'Log out' })).toBeVisible();
     await expect(side.getByRole('link', { name: 'Create account' })).toHaveCount(0);
+    await expect(side.getByText('Keep the same reading shelf on your phone and computer.')).toHaveCount(0);
     await side.getByRole('link', { name: 'Account settings' }).click();
     await expect(page).toHaveURL(/\/app\/settings\/account$/);
     await expect(slot(page).getByText(USER.email)).toBeVisible();
@@ -276,6 +285,29 @@ test.describe('Desktop layout', () => {
     await expect(page).toHaveURL(/\/\/[^/]+\/$/);
   });
 
+  test('a long list in the column picker: only the list scrolls; the title, the field and "Show 25 more" stay in view', async ({ page }) => {
+    const MANY = Array.from({ length: 25 }, (_, index) => ({ ...LINKED_LIBRARY, id: 'koha:branch-' + index, name: 'Chennai Branch Library ' + (index + 1) }));
+    await setup(page, { libraryId: null });
+    await page.route('**/api/v2/libraries/discover', route => route.fulfill({ json: { libraries: MANY, total: 60, nextOffset: 25 } }));
+    await page.goto('/');
+    await column(page).getByRole('button', { name: 'Find my library' }).click();
+    const picker = column(page).getByRole('region', { name: 'Find your library' });
+    await picker.getByLabel('City, town or library name').fill('Chennai');
+    const list = picker.getByRole('region', { name: 'Libraries' });
+    await expect(list.getByRole('button')).toHaveCount(25);
+    const height = page.viewportSize().height;
+    for (const [name, locator] of [['title', picker.getByRole('heading', { name: 'Find your library' })], ['field', picker.getByLabel('City, town or library name')],
+      ['Show 25 more', picker.getByRole('button', { name: 'Show 25 more' })]]) {
+      const box = await locator.boundingBox();
+      expect(box.y, name).toBeGreaterThanOrEqual(0);
+      expect(box.y + box.height, name).toBeLessThanOrEqual(height);
+    }
+    // The column itself does not scroll; the list does.
+    expect(await column(page).evaluate(element => element.scrollHeight <= element.clientHeight + 1)).toBe(true);
+    expect(await list.evaluate(element => element.scrollHeight > element.clientHeight)).toBe(true);
+    expect((await list.boundingBox()).height).toBeGreaterThanOrEqual(119);
+  });
+
   test('Find my library on an open book: the picker opens in the column and the book stays', async ({ page }) => {
     await setup(page, { libraryId: null });
     await page.goto(bookPath);
@@ -400,7 +432,7 @@ test.describe('Desktop layout', () => {
     await expect(column(page).getByRole('button', { name: 'Change library' })).toBeVisible();
     const order = [];
     for (let step = 0; step < 15 && order.at(-1) !== 'Search for a book'; step += 1) { await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab'); order.push(await focusedName(page)); }
-    expect(order).toEqual(['Skip to content', 'MyBookshelf', 'Anna Centenary Library, opens in a new tab', 'Change library', 'Create account', 'Log in', 'Daylight', 'Lamplight', 'Ink', 'Settings', 'Help', 'Report a problem', 'Privacy', 'About', 'Search for a book']);
+    expect(order).toEqual(['Skip to content', 'MyBookshelf', 'Anna Centenary Library, opens in a new tab', 'Change library', 'Create account', 'Log in', 'Settings', 'Help', 'Report a problem', 'Privacy', 'About', 'Search for a book']);
     await page.keyboard.type('innovator');
     await page.keyboard.press('Enter');
     const results = page.getByRole('region', { name: 'Search results' });
@@ -563,6 +595,37 @@ test.describe('Desktop layout', () => {
       await page.setViewportSize({ width: 1024, height: 768 });
       await expect(rail).toBeVisible();
       await expect(page.getByRole('dialog', { name: 'Settings' })).toBeVisible();
+    });
+  });
+
+  test.describe('rail, review fixes', () => {
+    test.use({ viewport: { width: 1024, height: 768 } });
+    test('a page opened from Settings and then closed gives focus to the settings gear', async ({ page }) => {
+      await setup(page);
+      // Directly (a reload, a shared link): there is no Settings entry to return to.
+      for (const path of ['/app/privacy', '/app/report', '/app/about']) {
+        await page.goto(path);
+        const close = slot(page).getByRole('button', { name: 'Close' });
+        await expect(close).toBeVisible();
+        await close.click();
+        await expect(page).toHaveURL(/\/\/[^/]+\/$/);
+        await expect(page.getByRole('complementary', { name: 'MyBookshelf' }).getByRole('button', { name: 'Settings' }), path).toBeFocused();
+      }
+    });
+  });
+
+  test.describe('rail on a touch screen', () => {
+    test.use({ viewport: { width: 1024, height: 768 }, hasTouch: true });
+    test('the library pop-up does not put focus in the field, so the keyboard waits for a tap', async ({ page }) => {
+      await setup(page);
+      await page.goto('/');
+      expect(await page.evaluate(() => matchMedia('(pointer: coarse)').matches)).toBe(true);
+      await page.getByRole('complementary', { name: 'MyBookshelf' }).getByRole('button', { name: 'Settings' }).click();
+      await page.getByRole('dialog', { name: 'Settings' }).getByRole('button', { name: 'Change library' }).click();
+      const picker = page.getByRole('dialog', { name: 'Change library' });
+      await expect(picker).toBeVisible();
+      await expect(picker.getByRole('button', { name: 'Libraries near me' })).toBeFocused();
+      await expect(picker.getByLabel('City, town or library name')).not.toBeFocused();
     });
   });
 

@@ -154,6 +154,57 @@ test('a request’s contact details are kept even for a same-day repeat, which i
   assert.deepEqual(held.requestContacts.map(item => [item.requestKey, item.name, item.email]), [['kv narimedu', undefined, 'reader@example.org']]);
 });
 
+test('a report is still stored when the contact columns are not there yet (migration 003 not applied)', async () => {
+  const undefinedColumn = Object.assign(new Error('column "contact_name" does not exist'), { code: '42703' });
+  const queries = [];
+  const db = { query: async (sql, values) => {
+    queries.push({ sql, values });
+    if (/contact_name/.test(sql)) throw undefinedColumn;
+    return { rows: [], rowCount: 1 };
+  } };
+  const pending = [];
+  const submissions = createSubmissions({ db, secret: 'x'.repeat(40), buckets: { take: async () => true }, defer: task => { pending.push(task()); } });
+  const report = parseProblemReport({ text: 'The answer is wrong', screen: 'book', email: 'reader@example.org' });
+  assert.equal(await submissions.problemReport(report, { address: '203.0.113.9' }), 'accepted');
+  assert.equal(await submissions.problemReport(parseProblemReport({ text: 'No contact here' }), { address: '203.0.113.9' }), 'accepted');
+  await Promise.all(pending);
+  const stored = queries.filter(item => !/contact_name/.test(item.sql));
+  assert.equal(stored.length, 2);
+  assert.match(stored[0].sql, /^INSERT INTO problem_reports \(body, screen, library_id, book_key, app_version\)/);
+  assert.deepEqual(stored.map(item => item.values), [['The answer is wrong', 'book', null, null, null], ['No contact here', null, null, null, null]]);
+  // The contact details have nowhere to go and are not written anywhere else.
+  assert.ok(stored.every(item => !JSON.stringify(item.values).includes('reader@example.org')));
+
+  // Any other failure drops the report as before: no second insert.
+  const down = [];
+  const failing = createSubmissions({ db: { query: async sql => { down.push(sql); throw new Error('down'); } }, secret: 'x'.repeat(40),
+    buckets: { take: async () => true }, defer: task => { pending.push(task()); } });
+  await failing.problemReport(parseProblemReport({ text: 'Broken' }), { address: '203.0.113.9' });
+  await Promise.all(pending);
+  assert.equal(down.length, 1);
+});
+
+test('the daily job still rolls up usage, refreshes health and clears check events when contact removal fails', async () => {
+  const { runCatalogMaintenance } = await import('./maintenance.js');
+  const ran = [];
+  const db = { query: async sql => {
+    const text = sql.replace(/\s+/g, ' ').trim();
+    ran.push(text);
+    if (/contact_name = NULL|library_request_contacts/.test(text)) throw Object.assign(new Error('missing'), { code: '42703' });
+    return { rows: [], rowCount: 0 };
+  } };
+  const result = await runCatalogMaintenance(db, { policy: null, now: () => Date.UTC(2026, 10, 19) });
+  assert.equal(result.contacts, null);
+  assert.deepEqual(result.failed, ['contacts']);
+  assert.deepEqual(result.usage, { days: 0, events: 0 });
+  assert.deepEqual(result.health, { libraries: 0, flagged: 0 });
+  assert.equal(result.checkEvents, 0);
+  assert.ok(ran.some(text => text.startsWith('SELECT DISTINCT to_char(occurred_hour')), 'usage roll-up ran');
+  assert.ok(ran.some(text => text.startsWith('UPDATE library_health h SET failures_7d')), '7-day health counts ran');
+  assert.ok(ran.some(text => text.startsWith('DELETE FROM library_check_events')), 'check events were cleared');
+  assert.ok(ran.some(text => text.startsWith('DELETE FROM host_request_windows')), 'host windows were cleared');
+});
+
 test('submission limits fail open to this instance when the database limiter is down', async () => {
   const failing = { take: async () => { throw new Error('down'); } };
   const submissions = createSubmissions({ db: { query: async () => { throw new Error('down'); } }, secret: 'x'.repeat(32), buckets: failing });

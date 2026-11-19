@@ -29,7 +29,7 @@ it('saves a paper, reloads the mixed shelf and removes it without losing a legac
   localStorage.setItem(ANONYMOUS_WEB_STORAGE_KEY,JSON.stringify({version:1,selectedLibraryId:null,recentBooks:[],savedBooks:[legacyBook]}));
   const fetch=vi.spyOn(globalThis,'fetch').mockRejectedValue(new Error('Unexpected network request'));
   const first=mount(<ContentDetail contentKey={item.key}/>);
-  await screen.findByRole('heading',{name:item.title});fireEvent.click(screen.getByRole('button',{name:'Save to shelf'}));
+  await screen.findByRole('heading',{name:item.title});fireEvent.click(screen.getByRole('button',{name:'Save to my reading shelf'}));
   expect(screen.getByRole('button',{name:'Saved'})).toHaveAttribute('aria-pressed','true');
   let saved=JSON.parse(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)!);
   expect(saved.version).toBe(2);expect(saved.savedBooks).toEqual([legacyBook]);expect(saved.savedContent[0].contentKey).toBe(item.key);
@@ -237,7 +237,7 @@ it('keeps free source accounts searchable in their own labelled group and disclo
   await screen.findByRole('heading',{name:book.title});
   expect(screen.getByText(/Sign in there to read this book/)).toHaveTextContent('Free account required at StoryWeaver');
   expect(screen.getByRole('link',{name:'Read at StoryWeaver · free account required (opens StoryWeaver)'})).toHaveAttribute('href',book.readingActions[0].url);
-  fireEvent.click(screen.getByRole('button',{name:'Save to shelf'}));
+  fireEvent.click(screen.getByRole('button',{name:'Save to my reading shelf'}));
   expect(JSON.parse(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)!).savedContent[0].contentKey).toBe(book.key);
 });
 
