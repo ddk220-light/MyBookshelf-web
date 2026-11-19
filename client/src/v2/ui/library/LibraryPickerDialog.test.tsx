@@ -172,6 +172,26 @@ describe('library pop-up', () => {
     expect(within(dialog).getByLabelText('City, town or library name')).toHaveFocus();
   });
 
+  it('on a phone the handle, "Libraries near me" and "Your library now" step aside only while the field has text, not on focus alone', async () => {
+    stubApi();
+    renderShelf(IIT.id);
+    expect(await screen.findByText(IIT.name, { selector: '.home-library' })).toBeInTheDocument();
+    const dialog = await openFromPanel('Change library');
+    const picker = dialog.querySelector('.library-picker')!;
+    const field = within(dialog).getByLabelText('City, town or library name');
+    act(() => { field.focus(); });
+    fireEvent.focus(field);
+    expect(field).toHaveFocus();
+    expect(picker).not.toHaveClass('is-typing');
+    expect(within(dialog).getByRole('button', { name: 'Libraries near me' })).toBeInTheDocument();
+    fireEvent.change(field, { target: { value: 'C' } });
+    expect(picker).toHaveClass('is-typing');
+    // Emptied, still focused: the near-me button is back.
+    fireEvent.change(field, { target: { value: '' } });
+    expect(field).toHaveFocus();
+    expect(picker).not.toHaveClass('is-typing');
+  });
+
   // (On a phone the button steps aside while the field has text; at rail and
   // wide widths it stays beside the field, so this is reachable there.)
   it('a refused position keeps the typed list and its count', async () => {

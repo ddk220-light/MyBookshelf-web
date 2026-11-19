@@ -156,10 +156,6 @@ export function LibraryPicker({ titleId, listId, onClose, onChosen, initialQuery
   const [choosing, setChoosing] = useState<string | null>(null);
   const [removing, setRemoving] = useState(false);
   const [removed, setRemoved] = useState(false);
-  // While the reader types on a phone (the field has focus or text), the
-  // handle, "Libraries near me" and "Your library now" step aside so the list
-  // has room above the keyboard (PickerTyping board).
-  const [fieldFocused, setFieldFocused] = useState(false);
   const phone = useLayoutMode() === 'phone';
   const root = useRef<HTMLDivElement>(null);
   const focusNext = useRef<(() => HTMLElement | null | undefined) | null>(null);
@@ -234,7 +230,11 @@ export function LibraryPicker({ titleId, listId, onClose, onChosen, initialQuery
       : errorKind === 'load' ? 'Couldn’t load libraries' : nothing ? 'No libraries here yet' : loadingMore ? 'Loading more libraries' : count;
   const place = selected ? [selected.name, selected.city && !selected.name.includes(selected.city) ? selected.city : null].filter(Boolean).join(', ') : '';
 
-  const typing = sheet && phone && !nearby && (fieldFocused || Boolean(query));
+  // While the field has text on a phone, the handle, "Libraries near me" and
+  // "Your library now" step aside so the list has room above the keyboard
+  // (PickerTyping board). With an empty field, focused or not, they stay, so
+  // "Libraries near me" can always be found.
+  const typing = sheet && phone && !nearby && query.length > 0;
   return <div ref={root} className={'library-picker' + (typing ? ' is-typing' : '')}>
     {sheet && <span className="scan-handle" aria-hidden="true" />}
     <div className="scan-header">
@@ -254,7 +254,6 @@ export function LibraryPicker({ titleId, listId, onClose, onChosen, initialQuery
       <div className={'library-field-box' + (nearby ? '' : typed ? ' is-active' : '')}>
         <input id="library-lookup" name="library-lookup" className="library-query" type="search" enterKeyHint="search" autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} maxLength={120}
           aria-labelledby={captionId} value={query} onChange={event => type(event.target.value)}
-          onFocus={() => setFieldFocused(true)} onBlur={() => setFieldFocused(false)}
           onKeyDown={event => { if (event.key === 'Enter') event.preventDefault(); }} aria-controls={showList ? listId : undefined} />
         {query && <button type="button" className="library-clear" aria-label="Clear" onClick={() => { type(''); field()?.focus(); }}><CloseGlyph size={20} /></button>}
       </div>

@@ -603,11 +603,15 @@ test.describe('One-shelf phone details', () => {
     await expect(dialog.getByText('Your library now')).toBeVisible();
     const field = dialog.getByLabel('City, town or library name');
     await field.click();
-    // The field has focus: they step aside (PickerTyping board shows none of them).
+    // Focus alone moves nothing: with an empty field "Libraries near me" can always be found.
+    await expect(field).toBeFocused();
+    await expect(dialog.getByRole('button', { name: 'Libraries near me' })).toBeVisible();
+    await expect(dialog.getByText('Your library now')).toBeVisible();
+    await field.fill('Chennai');
+    // The field has text: they step aside (PickerTyping board shows none of them).
     await expect(dialog.getByRole('button', { name: 'Libraries near me' })).toBeHidden();
     await expect(dialog.getByText('Your library now')).toBeHidden();
     await expect(dialog.locator('.scan-handle')).toBeHidden();
-    await field.fill('Chennai');
     await expect(dialog.getByRole('region', { name: 'Libraries' }).getByRole('button')).toHaveCount(25);
     // The keyboard: the visual viewport shrinks to the area above it, as the
     // sheet's listener sets it (LibraryPickerDialog, useSheetAboveKeyboard).
