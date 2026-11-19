@@ -12,6 +12,8 @@ retired authentication and unrelated research archives are outside its scope.
   in production on 18 November, the backlog in working order, open questions
   for the owner, and how to start the end-to-end run on the owner's Mac with
   both phones. Nothing in the app changes until the plan is agreed.
+- [Re-test of the new release, 19 November](research/2026-11-production-ready/rerun-2026-11-19/README.md):
+  Pixel walk-through again and 54 Indian libraries checked from the Mac and the Pixel.
 - [Root causes, design and implementation plan](plans/2026-11-production-ready-design.md):
   why each problem happens, three releases (make the core work; account and
   settings; pages and policy), the wording for every library answer, and the

@@ -1,0 +1,71 @@
+step,what was measured,milliseconds,how measured,18 November figure (ms)
+1 shelf at /,GET / time to first byte (new-reader reload),54,PerformanceNavigationTiming.responseStart (CDP eval),122 (old landing page) / 34 (old /app/shelf)
+1 shelf at /,GET / DOMContentLoaded end,112,PerformanceNavigationTiming.domContentLoadedEventEnd,260 (landing) / 178 (/app/shelf)
+1 shelf at /,GET / load event end,114,PerformanceNavigationTiming.loadEventEnd,347 (landing)
+2 cold open,/ first contentful paint (storage cleared then reload),180,performance paint entry,216
+3 picker,"type 'Chennai': libraries/discover request",372,fetch wrapper (path + status + ms only),not timed
+3 picker,"type 'Anna Centenary': last keystroke to 'Finding libraries'",341,50 ms DOM poll; clock reset on each input event,329
+3 picker,"type 'Anna Centenary': last keystroke to 1 result listed",691,same,748
+3 picker,"type 'Zzqqxx': last keystroke to 'No libraries here yet'",737,same,728
+3 picker,"type 'Kendriya Vidyalaya Narimedu': last keystroke to 1 result",782,same,637
+3 picker,"type 'Burlingame': last keystroke to 8 results",759,same,708
+3 picker,Libraries near me: libraries/discover after allowing location,402,fetch wrapper,not run (permission not granted)
+3 request form,Send request tap to 'Request sent. Thank you.',373,50 ms DOM poll; clock starts on the click event (POST library-requests 202 in 352 ms),not comparable (sent on one tap)
+4 search title (no library),Enter to 'Searching',29,50 ms DOM poll; clock starts on Enter keydown,57
+4 search title (no library),"Enter to first results ('Wings of Fire'; 9 books; query probably asked before by others)",1727,same (POST books/search 1678 ms),6239
+4 search title (no library),Enter to results settled,2577,same,6732
+4 search author (no library),"Enter to first results ('R. K. Narayan'; 9 books)",2541,same,4656
+4 search ISBN (Anna chosen),Enter to book page shown (9780143333623),1383,same (POST books/search 1359 ms),2369
+4 search ISBN (Anna chosen),Enter to book page shown (9780439023481),1398,same,no figure
+4 search misspelt (no library),"Enter to first results ('Harry Poter and the Philosphers Stone'; 3 books)",2960,same (POST books/search 2932 ms),12501
+4 search no results (no library),Enter to 'No books found',1846,same (POST books/search 1827 ms),4472
+6 search first time (no library),"Enter to results ('The Remains of the Day'; not searched earlier in this run)",3977,same (POST books/search 3938 ms),4200 to 6900 (README range for a query not asked recently)
+6 search repeat (no library),same query again 12 s later,160,same (POST books/search 124 ms),239 (repeat with Anna chosen)
+6 search first time (no library),"Enter to results ('Kazuo Ishiguro'; not searched earlier)",1765,same (POST books/search 1636 ms),4656 (author search)
+6 search title (Anna chosen; first time),"Enter to results ('Swami and Friends')",1175,same (POST books/search 1148 ms),no figure
+6 search title (Anna chosen; first time),"library line 'Looking in Anna Centenary Library…' shown to gone (no book marked)",6399,same (POST holdings/search stream 6377 ms),no figure
+4 search title (Anna chosen; repeated),"Enter to results ('Wings of Fire'; same query 6 minutes earlier with no library). Seen once",5727,same (POST books/search 5669 ms),239
+4 search title (Anna chosen; repeated),Enter to library marks settled ('9 books. 1 book in Anna Centenary Library'),15817,same (POST holdings/search stream 10074 ms),739
+4 search title (KV Narimedu chosen),"Enter to results ('Malgudi Days')",1385,same (POST books/search 1312 ms),no figure
+4 search title (KV Narimedu chosen),holdings/search request (no book marked; 'Looking in…' line gone 100 ms later),99,fetch wrapper,no figure
+4 search title (Burlingame chosen; repeated),"Enter to results ('Wings of Fire')",189,50 ms DOM poll (POST books/search 141 ms),no figure
+4 search title (Burlingame chosen; repeated),Enter to library marks settled ('4 books in Burlingame Public Library'),889,same (POST holdings/search stream 675 ms),no figure
+6 book page,tap result to book page with description (Wings of Fire; no library),587,50 ms DOM poll; clock starts on the click event (POST books/resolve 543 ms),1076
+7 suggestion,tap suggestion to 'First published' line (The Jungle Book),2484,same (POST books/resolve 2466 ms),1175
+5 save,Add to my reading shelf tap to 'On my reading shelf',43,same,instant
+5 remove,Undo notice lifetime after 'Remove from my reading shelf',10041,same,10000
+4 choose library,choose Anna Centenary on the shelf to 'In your library' under Wings of Fire (stored answer; holdings/lookup only),208,same (POST holdings/lookup 182 ms),9080 (live check on the book page)
+8 Anna Centenary x Wings of Fire (Kalam),open the saved book: answer shown (from the shelf's answer; holdings/check returned in 198 ms),28,same,9080
+5 book page reload,reload on book page: first contentful paint,180,performance paint entry,168
+5 book page reload,reload on book page: holdings/check finished (answer 'In your library' on screen when read 1.2 s after reload),600,PerformanceResourceTiming start 439 + duration 161,still 'Checking' at 5700
+5 shelf reload,reload on shelf (Anna; 4 books): first contentful paint,212,performance paint entry,160
+5 shelf reload,reload on shelf: second holdings/lookup finished,651,PerformanceResourceTiming start 540 + duration 111,424
+5 shelf reload,reload on shelf (Burlingame; 5 books): first contentful paint,196,performance paint entry,160
+5 change library,change to Burlingame: stored answer shown under Wings of Fire,142,50 ms DOM poll from the click on the library row,no figure (answers were not kept)
+5 change library,change back to Anna Centenary: stored answers shown,227,same,no figure
+8 Anna Centenary x Darkstalker,'Checking your library…' to 'Couldn't check right now',40609,fetch wrapper on POST holdings/check (DOM poll: 35 ms to 40635 ms),46398
+8 Anna Centenary x Darkstalker (Try again; one retry),'Checking your library…' to 'Not in your library',6452,same (DOM poll 41 ms to 6491 ms),45204 (ended couldn't check)
+8 Anna Centenary x Grandma's Bag of Stories (ISBN),'Checking your library…' to 'Not in your library',14113,same (15532 ms from Enter in the search field),"no Pixel figure (iPhone about 14300, not found)"
+8 Anna Centenary x Grandma's Bag of Stories (second look after reload),holdings/check returned (stored),140,fetch wrapper,no figure
+8 Anna Centenary x Swami and Friends,'Checking your library…' to 'Couldn't check right now',45799,same,"no Pixel figure (iPhone over 8500, couldn't check)"
+8 Anna Centenary x Swami and Friends (second look 3 minutes later),'Checking your library…' to 'Couldn't check right now',40085,same,"no Pixel figure (iPhone retry 8100, couldn't confirm)"
+8 Anna Centenary x The Hunger Games (ISBN),'Checking your library…' to 'In your library',10869,same (12298 ms from Enter),no figure
+8 KV No.1 Narimedu (e-Granthalaya) x Wings of Fire,'Checking your library…' to 'Couldn't check right now',26325,same,25292
+8 KV No.1 Narimedu x Wings of Fire (second look 3 minutes later),'Checking your library…' to 'Couldn't check right now',25544,same,25200 (desktop retry)
+8 KV No.1 Narimedu x Darkstalker,'Checking your library…' to 'Couldn't check right now',25151,same,no figure
+8 KV No.1 Narimedu x Grandma's Bag of Stories (ISBN),'Checking your library…' to 'Couldn't check right now',25184,same,no figure
+8 KV No.1 Narimedu x The Hunger Games (ISBN),'Checking your library…' to 'Couldn't check right now',26399,same,no figure
+8 KV No.1 Narimedu catalog front page,GET of the catalog's public front page from the Mac (not the phone; one request),5946,curl time_total (HTTP 200),no figure
+8 Burlingame x Wings of Fire (Kalam),open the saved book: holdings/check returned (stored answer; shown at 54 ms),165,fetch wrapper,3500 (live)
+8 Burlingame x Darkstalker,'Checking your library…' to 'In your library',1377,same,no figure
+8 Burlingame x Grandma's Bag of Stories (ISBN),'Checking your library…' to 'Not in your library',2107,same,5894
+8 Burlingame x Swami and Friends,'Checking your library…' to 'Couldn't check right now' (catalog answered; could not tell),2235,same,no figure
+8 Burlingame x The Hunger Games (ISBN),'Checking your library…' to 'In your library',841,same,"no Pixel figure (desktop 9000 after submit)"
+8 Burlingame x The Hunger Games (second look),holdings/check returned (stored),146,same,no figure
+8 Burlingame x The Dragonet Prophecy (opened from a marked search result),answer on the book page; no holdings/check sent,59,50 ms DOM poll from the click,no figure (desktop: a second check was sent)
+8 Burlingame x The Buried Giant,'Checking your library…' to 'Couldn't check right now' (could not tell),2961,fetch wrapper,no figure
+8 Burlingame x The Jungle Book (suggestion),'Checking your library…' to 'Couldn't check right now' (could not tell),6329,same,no figure
+9 report a problem,Send report tap to 'Sent',131,50 ms DOM poll from the click (POST problem-reports 202 in 118 ms),not sent on 18 November
+10 keyboard,visual viewport height with keyboard open (of 794 css px; regular tab),458,visualViewport.height (css px not ms),482 (Incognito tab)
+10 keyboard,keyboard height in css px,336,794 minus visualViewport.height (css px not ms),312
+10 keyboard,window.innerHeight with keyboard open (page now resizes: interactive-widget=resizes-content),458,window.innerHeight (css px not ms),794 (page did not resize)

@@ -1,0 +1,13 @@
+import fs from 'fs';
+const rows = fs.readFileSync('results.jsonl','utf8').trim().split('\n').map(l=>JSON.parse(l));
+const med = a => { const s=[...a].sort((x,y)=>x-y); return s.length? s[Math.floor(s.length/2)]:0; };
+const tally = (rs) => { const t={found:0,not_found:0,unconfirmed:0,unknown:0,other:0}; for(const r of rs){ if(r.answer in t) t[r.answer]++; else t.other++; } return t; };
+const group = (key) => { const m=new Map(); for(const r of rows){ const k=typeof key==='function'?key(r):r[key]; if(!m.has(k)) m.set(k,[]); m.get(k).push(r);} return m; };
+const line = (k,rs) => { const t=tally(rs); return `${String(k).slice(0,58).padEnd(58)} n=${String(rs.length).padStart(3)} found=${String(t.found).padStart(3)} notfound=${String(t.not_found).padStart(3)} unconf=${String(t.unconfirmed).padStart(3)} unknown=${String(t.unknown).padStart(3)} other=${t.other} med=${med(rs.map(r=>r.ms))} max=${Math.max(...rs.map(r=>r.ms))}`; };
+console.log('TOTAL'); console.log(line('all',rows));
+console.log('\nBY SYSTEM'); for(const [k,rs] of group('system')) console.log(line(k,rs));
+console.log('\nBY STATE'); for(const [k,rs] of [...group('state')].sort()) console.log(line(k,rs));
+console.log('\nBY BOOK'); for(const [k,rs] of group('book')) console.log(line(k,rs));
+console.log('\nBY LIBRARY'); for(const [k,rs] of group(r=>`${r.system.slice(0,10)}|${r.library}`)) console.log(line(k,rs));
+console.log('\nSTATUS'); const st={}; for(const r of rows) st[r.status]=(st[r.status]||0)+1; console.log(st);
+console.log('LINKKIND'); const lk={}; for(const r of rows) lk[r.answer+'/'+r.linkKind]=(lk[r.answer+'/'+r.linkKind]||0)+1; console.log(lk);
