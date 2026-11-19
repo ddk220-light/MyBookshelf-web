@@ -590,6 +590,71 @@ test('at most one check per host runs on without a reader', async () => {
   await settle();
 });
 
+test('a reader-less check that has ended leaves no entry behind: a later one still runs on and stores its answer', async () => {
+  const resolvers = new Map();
+  const provider = { checkAvailability: isbn => new Promise(resolve => { resolvers.set(isbn, resolve); }) };
+  const { lookup, answers, settle } = backgroundHarness({ provider, deadlineMs: 40 });
+  const hostless = { id: 'vega:hostless', platform: 'vega' };
+  const first = await lookup.lookupBook({ library: hostless, book: slowBook, editionScope: 'exact', background: true, storedChecked: true });
+  assert.equal(first.reason, 'timeout');
+  resolvers.get(slowBook.isbn13)(found);
+  await settle();
+  // The first check has ended. A second reader-less check is not mistaken for
+  // the host's second one (it would be cancelled and store nothing).
+  const second = await lookup.lookupBook({ library: hostless, book: otherBook, editionScope: 'exact', background: true, storedChecked: true });
+  assert.equal(second.reason, 'timeout');
+  await new Promise(resolve => setTimeout(resolve, 5));
+  resolvers.get(otherBook.isbn13)(found);
+  await settle();
+  assert.equal((await answers.readAnswers(hostless.id, [{ kind: 'isbn13', value: otherBook.isbn13 }])).length, 1);
+});
+
+test('a reader who joined a check that was cancelled asks again within its own first deadline, not a fresh one', async () => {
+  const provider = { checkAvailability: () => new Promise((_resolve, reject) => {
+    catalogOperationSignal()?.addEventListener('abort', () => reject(coded('stopped', 'CATALOG_ABORTED')), { once: true });
+  }) };
+  const { lookup, settle } = backgroundHarness({ provider, deadlineMs: 120 });
+  const leaving = new AbortController();
+  const first = lookup.lookupBook({ library: slowLibrary, book: slowBook, editionScope: 'exact', signal: leaving.signal, storedChecked: true });
+  await new Promise(resolve => setTimeout(resolve, 5));
+  const joinedAt = Date.now();
+  const second = lookup.lookupBook({ library: slowLibrary, book: slowBook, editionScope: 'exact', storedChecked: true });
+  await new Promise(resolve => setTimeout(resolve, 80));
+  // The first reader leaves; the check it ran stops, so the second asks again.
+  leaving.abort();
+  await first.catch(() => {});
+  const answer = await second;
+  assert.equal(answer.reason, 'timeout');
+  const took = Date.now() - joinedAt;
+  assert.ok(took < 170, `answered at ${took} ms, within its own 120 ms deadline (not 80 + 120 ms)`);
+  await settle();
+});
+
+test('Try again that joins a background check about to time out starts a new check within the reader’s own deadline', async () => {
+  let calls = 0;
+  const provider = { checkAvailability: () => { calls++; return calls === 1 ? new Promise(() => {}) : Promise.resolve(found); } };
+  const { lookup, answers, settle } = backgroundHarness({ provider, deadlineMs: 60 });
+  const first = await lookup.lookupBook({ library: slowLibrary, book: slowBook, editionScope: 'exact', background: true, storedChecked: true });
+  assert.equal(first.reason, 'timeout');
+  // The background check ends at 120 ms; the reader presses Try again just before.
+  await new Promise(resolve => setTimeout(resolve, 45));
+  const retry = await lookup.lookupBook({ library: slowLibrary, book: slowBook, editionScope: 'exact', background: true, storedChecked: true });
+  assert.equal(retry.outcome, 'found', 'not the old check’s timeout');
+  assert.equal(calls, 2, 'one new check, after the old one settled');
+  await settle();
+  assert.equal((await answers.readAnswers(slowLibrary.id, [{ kind: 'isbn13', value: slowBook.isbn13 }])).length, 1);
+  // With too little of the reader's own time left, the old timeout is the answer.
+  let late = 0;
+  const tight = backgroundHarness({ provider: { checkAvailability: () => { late++; return new Promise(() => {}); } }, deadlineMs: 60 });
+  await tight.lookup.lookupBook({ library: slowLibrary, book: slowBook, editionScope: 'exact', background: true, storedChecked: true });
+  await new Promise(resolve => setTimeout(resolve, 45));
+  const short = await tight.lookup.lookupBook({ library: slowLibrary, book: slowBook, editionScope: 'exact', background: true, storedChecked: true,
+    deadlineAt: Date.now() + 25 });
+  assert.equal(short.reason, 'timeout');
+  assert.equal(late, 1);
+  await tight.settle();
+});
+
 test('a book-page check, background included, ends by the caller’s finishBy', async () => {
   const provider = { checkAvailability: () => new Promise(() => {}) };
   const { lookup, settle } = backgroundHarness({ provider, deadlineMs: 100 });

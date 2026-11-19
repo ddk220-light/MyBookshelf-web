@@ -248,3 +248,34 @@ test('result marking uses the actual route despite an unrelated primary circuit'
   const release = h.guard.tryStartMarking('academic.example.test');
   assert.equal(typeof release, 'function'); release();
 });
+
+// Only a live reader makes a reader-less check give way. A routed check whose
+// reader has gone must not, on its next route, cancel itself (or another
+// reader-less check) as if it were a waiting reader.
+test('a reader-less routed check never makes itself give way on its next route', async () => {
+  const fast = { indcat: { ...table.indcat, book: { maxRequests: 8, deadlineMs: 40 } },
+    'discovery-academic': { ...table['discovery-academic'], book: { maxRequests: 6, deadlineMs: 40 } } };
+  const alternate = { id: 'indcat:routed', platform: 'discovery-academic', catalogUrl: 'https://academic.example.test/',
+    sourceConnectionId: 'academic:one', preferForLookup: true, capabilities: ['availability'] };
+  const entry = { id: 'indcat:routed', platform: 'indcat', catalogUrl: 'https://indcat.inflibnet.ac.in/', capabilities: ['availability'], alternateCatalogs: [alternate] };
+  let letAcademicAnswer;
+  const academicAnswers = new Promise(resolve => { letAcademicAnswer = resolve; });
+  const provider = providerWithAlternates(entry, route => ({ checkAvailability: async () => {
+    if (route.platform === 'discovery-academic') { await academicAnswers; return negative; }
+    return positive;
+  } }));
+  // Every slot looks taken, so any call to make a reader-less check give way would cancel it.
+  const guard = { ...createHostGuard(), activeCount: () => 99 };
+  const recorded = [], deferred = [];
+  const lookup = createCatalogLookup({ providerFor: () => provider, platforms: fast, robots: null, guard,
+    defer: task => { deferred.push(Promise.resolve().then(task)); },
+    recorder: { readAnswers: async () => [], record: value => recorded.push(value) } });
+  const answer = await lookup.lookupBook({ library: entry, book: { bookKey: `v1:isbn:${isbn}`, isbn13: isbn }, editionScope: 'exact',
+    storedChecked: true, background: true });
+  assert.equal(answer.reason, 'timeout');
+  // The reader has gone; the check runs on and reaches its second route.
+  letAcademicAnswer();
+  while (deferred.length) await Promise.all(deferred.splice(0));
+  assert.equal(recorded.length, 1);
+  assert.equal(recorded[0].answer.outcome, 'found', 'the check was not cancelled by itself');
+});

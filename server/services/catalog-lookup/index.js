@@ -95,7 +95,7 @@ export function createCatalogLookup({
   // keys. Only execution policy follows the route actually being called. A
   // child HTTP operation adds that route's cap without resetting the reader's
   // aggregate request budget, deadline, robots policy or cancellation signal.
-  function routeSession({ entry, deadline, signal, kind = 'book', health = true }) {
+  function routeSession({ entry, deadline, signal, kind = 'book', health = true, flight = null }) {
     const events = [];
     const allowances = new Map();
     let finished = false;
@@ -144,7 +144,9 @@ export function createCatalogLookup({
         if (kind === 'results') {
           if (tryOnce || !(release = guard.tryStartMarking(host))) throw coded('This catalog is busy', 'CATALOG_HOST_BUSY');
         } else {
-          yieldForReader(host, tryOnce ? 1 : platform.hostConcurrency);
+          // Only a check a reader is waiting for makes a reader-less one give
+          // way; a check nobody waits for never does, and never cancels itself.
+          if (!flight || flight.readers > 0) yieldForReader(host, tryOnce ? 1 : platform.hostConcurrency, flight);
           release = await guard.acquire(host, tryOnce ? 1 : platform.hostConcurrency, { deadlineAt: routeDeadline, signal: parentSignal });
         }
       } catch (error) {
@@ -275,7 +277,9 @@ export function createCatalogLookup({
   // cancelled.
   function detach(flight) {
     flight.readers = Math.max(0, flight.readers - 1);
-    if (flight.readers > 0 || !flight.running || !flight.background) return;
+    // A check that never learnt its host (it ended before it started) cannot
+    // be the host's reader-less check: nothing is kept for it.
+    if (flight.readers > 0 || !flight.running || !flight.background || !flight.host) return;
     const other = readerless.get(flight.host);
     if (other && other !== flight) cancelFlight(flight);
     else readerless.set(flight.host, flight);
@@ -284,10 +288,16 @@ export function createCatalogLookup({
   // A live reader is about to wait for one of `host`'s slots: when every slot
   // is taken and one is held by a check nobody is waiting for, that check
   // yields (it is cancelled and releases its slot), so the reader goes first.
-  function yieldForReader(host, limit) {
+  function yieldForReader(host, limit, self = null) {
     const idle = readerless.get(host);
-    if (!idle || typeof guard.activeCount !== 'function' || guard.activeCount(host) < Math.max(1, limit)) return;
+    if (!idle || idle === self || typeof guard.activeCount !== 'function' || guard.activeCount(host) < Math.max(1, limit)) return;
     cancelFlight(idle);
+  }
+
+  // The least time a reader's own deadline must still leave for a new check
+  // after a joined one timed out: half the library's book-page limit.
+  function minRetryMs(entry, platform) {
+    return Math.max(1, Math.floor(bookDeadlineMs(entry, platform) / 2));
   }
 
   // One live book check through the platform's book-page budget. Used by
@@ -323,9 +333,19 @@ export function createCatalogLookup({
       finally { detach(running); }
       if (due === 'settled') {
         const result = await running.done;
+        // Asking again keeps this reader's own deadline (`answerBy`), never a
+        // fresh one.
+        const again = () => checkBook({ ...args, deadlineAt: answerBy });
         // The joined check was cancelled (its reader left a check that could
         // not go on, or it gave way): this reader, still here, asks again.
-        if (result.answer?.reason === 'cancelled' && !signal?.aborted && now() < answerBy) return checkBook(args);
+        if (result.answer?.reason === 'cancelled' && !signal?.aborted && now() < answerBy) return again();
+        // The joined check ran out of its own time (a background check at its
+        // deadline, or another reader's earlier one): that timeout is not
+        // this reader's. When this reader's deadline still leaves room for a
+        // real attempt, a new check starts now that the old one has settled,
+        // with its own request cap and host slot.
+        if (result.answer?.outcome === 'couldnt_check' && result.answer.reason === 'timeout' && !signal?.aborted
+          && answerBy - now() >= minRetryMs(entry, platform)) return again();
         return { ...result, requests: 0, durationMs: now() - startedAt };
       }
       const error = due === 'left' ? coded('Catalog check was cancelled', 'CATALOG_ABORTED') : coded('Catalog check deadline exceeded', 'CATALOG_TIMEOUT');
@@ -390,7 +410,7 @@ export function createCatalogLookup({
     // A started background check is not cancelled by the reader leaving, only
     // when it gives way to a waiting reader.
     const workSignal = inBackground ? flight.cancel.signal : signal;
-    if (routed) routes = routeSession({ entry, deadline, signal: workSignal });
+    if (routed) routes = routeSession({ entry, deadline, signal: workSignal, flight });
     // Resolve the edition profile before taking a host slot, and only within
     // the check's deadline: waiting on Open Library must not hold a catalog
     // slot or use up the catalog's time.
