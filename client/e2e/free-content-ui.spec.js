@@ -8,8 +8,10 @@ test.describe('approved free-content UI behavior',()=>{
   test('recent searches are real same-tab queries and clearing returns to browse',async({page,baseURL})=>{
     await installContentReviewFixture(page,'FreeStart');await openReviewState(page,'FreeStart',baseURL);
     await expect(page.getByRole('heading',{name:'Recent free searches'})).toBeVisible();
-    await page.getByRole('link',{name:/jane austen/}).click();await expect(page).toHaveURL(/q=jane\+austen/);
-    await page.reload();await page.getByLabel('Search free books',{exact:true}).fill('');await page.getByRole('button',{name:'Search',exact:true}).click();
+    await page.getByRole('link',{name:/jane austen/}).click();await expect(page).toHaveURL(/scope=free&search=/);
+    const search=page.getByLabel('Search free books',{exact:true});
+    await expect(search).toHaveValue('jane austen');
+    await search.fill('');await page.getByRole('button',{name:'Search',exact:true}).click();
     await expect(page.getByRole('link',{name:/Classic literature/})).toBeVisible();
     expect(await page.evaluate(()=>Object.values(localStorage).join(' ').includes('jane austen'))).toBe(false);
   });

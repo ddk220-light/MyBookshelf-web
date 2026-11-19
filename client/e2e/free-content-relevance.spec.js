@@ -18,7 +18,8 @@ test.describe('free-content relevance and disabled search',()=>{
     await expect(page.getByRole('button',{name:'Try again',exact:true})).toHaveCount(0);
     await expect(page.getByRole('heading',{name:'Free-reading sources aren’t answering'})).toHaveCount(0);
     await page.getByRole('link',{name:'Search free books instead'}).click();
-    await expect(page).toHaveURL(/scope=free&q=Mathematics/);
+    await expect(page).toHaveURL(/scope=free&search=/);
+    expect(page.url()).not.toContain('Mathematics');
     await expect(page.getByLabel('Search free books',{exact:true})).toHaveValue('Mathematics');
     await expect(page.getByText('Subject: Mathematics',{exact:true})).toBeVisible();
     expect(await page.locator('#main-content').evaluate(node=>node.scrollWidth<=node.clientWidth)).toBe(true);

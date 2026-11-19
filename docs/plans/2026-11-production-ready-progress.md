@@ -76,7 +76,10 @@ refresh without changing its clear-history generation.
   PostgreSQL, 53 JavaScript tool tests, 12 Python tool tests and the isolated
   Vercel web-service build passed. The three-browser run passed 477 journeys
   with 216 skips. The synthetic outbox and database run passed 48 separate
-  account journeys across the same three browser profiles.
+  account journeys across the same three browser profiles. With the
+  production policy and discovery flags, 93 focused free-reading and public
+  page journeys passed. The two intermittent shelf journeys passed 32
+  WebKit repetitions.
 - Vercel's live alias serves the ready `main` deployment at `d3262e2cd7`
   in `iad1`, on the Node 22 project. GitHub `main` matched. Production
   account health was `ready`. The old deployment still serves `/app/shelf`
@@ -90,6 +93,11 @@ refresh without changing its clear-history generation.
   previews were canceled, as expected for branches outside `main` and
   `staging`. The release plan calls for one production deployment after
   the local phone pass and [R03](https://github.com/ddk220-light/MyBookshelf-web/issues/9).
+- The nightly account backup workflow skipped its recent scheduled runs.
+  GitHub has no `ACCOUNTS_BACKUP_ENABLED` repository variable or
+  `accounts-backup` environment. The
+  [account rollout record](../accounts/PRODUCTION_ROLLOUT.md) also tracks
+  hosted snapshot retention and the independent restore exercise.
 
 The following sections record the saved handoff before integration.
 
