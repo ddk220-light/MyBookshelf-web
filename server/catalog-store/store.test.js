@@ -10,6 +10,7 @@ import { createMemoryHostGate, createPgHostGate } from './hostGate.js';
 import { createCatalogStore, createStoreStatus } from './index.js';
 import { createCatalogMaintenanceMiddleware } from './cron.js';
 import { poolSettings } from './pool.js';
+import { createPgAnswerStore } from './holdings.js';
 import { createCatalogLookup, createLookupRecorder, createMemoryAnswerStore, createMemoryHealthRecord, PLATFORMS } from '../services/catalog-lookup/index.js';
 import { withCatalogOperation, request as httpRequest } from '../services/providers/http.js';
 
@@ -182,6 +183,37 @@ test('a report is still stored when the contact columns are not there yet (migra
   await failing.problemReport(parseProblemReport({ text: 'Broken' }), { address: '203.0.113.9' });
   await Promise.all(pending);
   assert.equal(down.length, 1);
+});
+
+test('stored answers are read and written without the link-kind column until migration 004 is applied', async () => {
+  const queries = [];
+  const db = { query: async (sql, values) => {
+    queries.push({ sql, values });
+    if (/catalog_link_kind/.test(sql)) throw Object.assign(new Error('column "catalog_link_kind" does not exist'), { code: '42703' });
+    if (/^SELECT/.test(sql)) return { rows: [{ library_id: 'koha:a', identity_kind: 'isbn13', identity_value: '9780140328721', answer: 'found',
+      evidence: 'exact_isbn', catalog_url: 'https://catalog.example.org/record/1', expires_ms: '1900000000000' }] };
+    return { rows: [], rowCount: 1 };
+  } };
+  const store = createPgAnswerStore(db);
+  await store.writeAnswers([{ libraryId: 'koha:a', kind: 'isbn13', value: '9780140328721', answer: 'found', evidence: 'exact_isbn',
+    catalogUrl: 'https://catalog.example.org/record/1', catalogLinkKind: 'record' }]);
+  const written = queries.filter(item => /INSERT INTO holdings_answers/.test(item.sql));
+  assert.equal(written.length, 2, 'one try with the column, one without');
+  assert.doesNotMatch(written[1].sql, /catalog_link_kind|\$9/);
+  assert.equal(written[1].values.length, 8);
+  assert.deepEqual(written[1].values[6], ['https://catalog.example.org/record/1']);
+
+  const read = await store.readAnswers('koha:a', [{ kind: 'isbn13', value: '9780140328721' }]);
+  assert.deepEqual(read, [{ libraryId: 'koha:a', kind: 'isbn13', value: '9780140328721', answer: 'found', evidence: 'exact_isbn',
+    catalogUrl: 'https://catalog.example.org/record/1', expiresAt: 1900000000000 }]);
+  assert.equal(read[0].catalogLinkKind, undefined, 'no kind: the link reads as the catalog');
+
+  // Any other failure is passed on, with no second query.
+  const other = [];
+  const failing = createPgAnswerStore({ query: async sql => { other.push(sql); throw Object.assign(new Error('down'), { code: '57P01' }); } });
+  await assert.rejects(failing.readAnswers('koha:a', [{ kind: 'isbn13', value: '9780140328721' }]), { code: '57P01' });
+  await assert.rejects(failing.writeAnswers([{ libraryId: 'koha:a', kind: 'isbn13', value: '9780140328721', answer: 'found', evidence: 'exact_isbn' }]), { code: '57P01' });
+  assert.equal(other.length, 2);
 });
 
 test('the daily job still rolls up usage, refreshes health and clears check events when contact removal fails', async () => {

@@ -247,18 +247,32 @@ In this order, on the day of launch:
    (`CATALOG_DATABASE_URL`, `CATALOG_WORKER_DATABASE_URL`,
    `CATALOG_ADMIN_DATABASE_URL`) set to the correct host, with `-pooler` once.
    Never print or store a value.
-2. Apply catalog migration `003` to the production catalog database with
-   the migration owner, then apply
-   [runtime-grants.sql](../../server/catalog-store/runtime-grants.sql) with
-   the same role. Verify that the runtime role can insert request contacts,
-   the worker can expire them and clear report contacts, and the admin can
-   read them.
-3. Confirm the effective date for the revised privacy text and set it as
+2. Before the deployment, apply catalog migrations `003-contact-details.sql`
+   and `004-catalog-link-kind.sql` to the production catalog database with
+   the migration owner's direct connection string:
+   `CATALOG_MIGRATION_DATABASE_URL=… npm run catalog:migrate --workspace=server`
+   (the runner in `server/catalog-store/migrate.js` applies every migration
+   not yet recorded, in order). Then re-run the catalog runtime grants with the
+   same role:
+   `psql "<owner, direct>" -v ON_ERROR_STOP=1 -f server/catalog-store/runtime-grants.sql`.
+   Verify that the runtime role can insert request contacts, the worker can
+   expire them and clear report contacts, and the admin can read them. (If
+   the deployment ever runs before 004, answers are still stored, without
+   their link kind, and read as links to the catalog.)
+3. Before the deployment, apply accounts migration `013-session-privacy.sql`
+   to the production accounts database with the migration administrator's
+   direct connection string:
+   `ACCOUNTS_MIGRATION_DATABASE_URL=… npm run accounts:migrate --workspace=server`
+   (the runner in `server/db/migrate.js`; it clears the address and browser
+   recorded on existing sessions and the old per-address limiter rows). Then
+   apply `server/db/runtime-grants.sql` again as in
+   [RELEASE-one-shelf.md](../RELEASE-one-shelf.md) section 2.
+4. Confirm the effective date for the revised privacy text and set it as
    `VITE_POLICY_EFFECTIVE_DATE` in the production build settings before the
    release build. It is required: without it the public /privacy page keeps
    the old text, /terms is not published, and the app's Privacy and Terms
    pages leave out their "Effective …" line (they no longer show the
    placeholder). With the phone pass complete and R03 approved, merge the
    integrated release into `main` for the single deployment.
-4. Run the live checks in plan section 8 straight away; roll back in Vercel if
+5. Run the live checks in plan section 8 straight away; roll back in Vercel if
    something is badly wrong.
