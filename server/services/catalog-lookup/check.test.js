@@ -43,6 +43,19 @@ test('at the deadline the best proven match found so far is the answer, not a ti
   assert.equal(timedOut.error.code, 'CATALOG_TIMEOUT');
 });
 
+test('an inner timeout settling first still returns the proven catalog match', async () => {
+  const hitDeadline = async () => {
+    throw Object.assign(new Error('Inner lookup timed out'), { code: 'CATALOG_TIMEOUT' });
+  };
+  const provider = { checkAvailability: hitDeadline, searchCatalog: hitDeadline };
+  const budget = { deadlineAt: Date.now() + 2_000 };
+  const progress = { best: { ...proven, searchSummary: { partial: true } } };
+  const kept = await check(provider, { ...budget, progress });
+  assert.equal(kept.error, undefined);
+  assert.equal(kept.response.catalogUrl, proven.catalogUrl);
+  assert.equal((await check(provider, budget)).error.code, 'CATALOG_TIMEOUT');
+});
+
 test('conclude ends a running check with its proven match, and is ignored without one', async () => {
   const unproven = new AbortController();
   const pending = check({ checkAvailability: hangs, searchCatalog: hangs }, { deadlineAt: Date.now() + 300, progress: {}, conclude: unproven.signal });

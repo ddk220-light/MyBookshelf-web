@@ -59,6 +59,8 @@ refresh without changing its clear-history generation.
 
 ### Follow-up review, 18 November 2026
 
+- When the inner catalog deadline finishes first, the check preserves any
+  match it already proved. The deadline tests cover both timer paths.
 - The account focus check now reads only the account's revisions. The
   Viewed before revision comes from the same owner transaction as the list it
   describes, so a view on another device is picked up on the next focus.
@@ -72,7 +74,7 @@ refresh without changing its clear-history generation.
   links are accepted once, and the app replaces the address. Scope changes
   and Back reuse the in-memory search. Closing Sources returns focus to the
   button that opened it, including in WebKit.
-- Node 22 type checking, 405 client tests, 905 server tests against local
+- Node 22 type checking, 405 client tests, 906 server tests against local
   PostgreSQL, 53 JavaScript tool tests, 12 Python tool tests and the isolated
   Vercel web-service build passed. The three-browser run passed 477 journeys
   with 216 skips. The synthetic outbox and database run passed 48 separate

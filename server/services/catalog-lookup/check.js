@@ -82,7 +82,10 @@ async function withBudget(budget, run, lookupKind, proven = () => null) {
       robots: budget.robots || null, minIntervalMs: budget.minIntervalMs || 0, gate: budget.gate || null, noRetries: Boolean(budget.noRetries) }, async operation => {
       current = operation;
       const result = await run();
-      return { ...result, requests: operation.requests };
+      // The inner search can reach its own deadline before the outer timer
+      // fires. Keep the same proven match whichever deadline wins.
+      const best = result.error?.code === 'CATALOG_TIMEOUT' ? proven() : null;
+      return { ...(best ?? result), requests: operation.requests };
     });
     work.catch(() => {});
     return await Promise.race([work, deadline, cancelled, concluded]);
