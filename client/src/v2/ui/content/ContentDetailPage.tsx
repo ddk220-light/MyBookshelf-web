@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { contentApi } from '../../contentApi';
+import { contentSearchAddress, readContentSearch } from '../../contentSearchAddress';
 import type { ContentItem } from '../../contentTypes';
 import { useLibrary } from '../../context';
 import { ContentCover, kindLabel } from './ContentResult';
@@ -25,7 +26,11 @@ export function ContentDetail({ contentKey, returnTo = '/app/search?scope=free' 
       .catch(()=>{if(!controller.signal.aborted)setError('We couldn’t check this item. That does not mean there is no free copy.');});
     return()=>controller.abort();
   },[contentKey,retry]);
-  const back=returnTo.startsWith('/app/search')||returnTo.startsWith('/app/books/')||returnTo==='/'?returnTo:'/app/search?scope=free';
+  let back = returnTo.startsWith('/app/books/') || returnTo === '/' ? returnTo : '/app/search?scope=free';
+  if (returnTo.startsWith('/app/search')) {
+    const params = new URLSearchParams(returnTo.split('?')[1]);
+    back = contentSearchAddress(params, readContentSearch(params));
+  }
   if(error)return <section className="content-detail"><Link className="back-link" to={back}>← Back</Link><h1>Couldn’t check this item</h1><p role="alert">{error}</p><button onClick={()=>setRetry(v=>v+1)}>Try again</button></section>;
   if(!item)return <section className="content-detail"><p role="status">Checking reading links…</p></section>;
   const saved=state.savedContent.some(value=>value.contentKey===item.key);
@@ -85,7 +90,7 @@ export function ContentDetail({ contentKey, returnTo = '/app/search?scope=free' 
       const label=relationNames[relation.kind]||relation.kind.replace(/_/g,' ');
       return <div key={relation.targetKey||relation.targetUrl||relation.kind}>{relation.targetKey?<Link to={'/app/read/'+encodeURIComponent(relation.targetKey)} state={{returnTo:back}}>{label} · separate item →</Link>:relation.targetUrl&&safeSource(relation.targetUrl)?<a href={safeSource(relation.targetUrl)} target="_blank" rel="noopener noreferrer" aria-label={`${label} (opens ${new URL(relation.targetUrl).hostname})`}>{label} at {new URL(relation.targetUrl).hostname} <ExternalLinkIcon/></a>:label}<p className="content-record">This is a separate item. Its text, access and licence may differ.</p></div>;
     })}</section>}
-    {['book','learning_resource'].includes(item.kind)&&<p className="content-library-link"><Link to={'/app/search?q='+encodeURIComponent(item.title+' '+item.contributors.filter(c=>c.role==='author').slice(0,1).map(c=>c.name).join(' '))}>
+    {['book','learning_resource'].includes(item.kind)&&<p className="content-library-link"><Link to={contentSearchAddress({}, item.title+' '+item.contributors.filter(c=>c.role==='author').slice(0,1).map(c=>c.name).join(' '))}>
       <LibraryIcon/>Prefer print? {library?`Search ${library.name}`:'Search library books'}</Link><small>A title search may find a different edition.</small></p>}
     {source&&<footer className="content-provenance">Found via {name} · checked {checkedWhen(source.retrievedAt)}
       {safeSource(source.recordUrl)&&<> · <a href={safeSource(source.recordUrl)} target="_blank" rel="noopener noreferrer" aria-label={`Source record (opens ${new URL(source.recordUrl).hostname})`}>Source record <ExternalLinkIcon/></a></>}</footer>}

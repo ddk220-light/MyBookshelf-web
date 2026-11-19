@@ -68,6 +68,10 @@ refresh without changing its clear-history generation.
   monitor requires `catalogStore: "ok"`.
 - The published privacy tables fit at 320 px with doubled text. CI builds
   the effective-date version of the policy for its browser checks.
+- The enabled free-reading routes keep search text in tab memory. Old query
+  links are accepted once, and the app replaces the address. Scope changes
+  and Back reuse the in-memory search. Closing Sources returns focus to the
+  button that opened it, including in WebKit.
 - Node 22 type checking, 405 client tests, 905 server tests against local
   PostgreSQL, 53 JavaScript tool tests, 12 Python tool tests and the isolated
   Vercel web-service build passed. The three-browser run passed 477 journeys

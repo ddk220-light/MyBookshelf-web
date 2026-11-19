@@ -1,6 +1,7 @@
 import {useEffect,useRef,useState} from 'react';
 import {Link,useLocation,useNavigate} from 'react-router-dom';
 import {PublicApiError} from '../../api';
+import {contentSearchAddress,readContentSearch} from '../../contentSearchAddress';
 import {knowledgeSources,runKnowledgeSearch,searchKnowledgeSource,type KnowledgeSource} from '../../knowledgeSearch';
 import type {ContentKind,ContentPage} from '../../contentTypes';
 import {SearchScopes} from './ContentSearchPage';
@@ -12,7 +13,7 @@ type Row={source:KnowledgeSource;page?:ContentPage;error?:PublicApiError;busy:bo
 const kinds:ContentKind[]=['book','learning_resource','audiobook','article','preprint','chapter','thesis','report','other'];
 export function KnowledgeSearchPage(){
   const location=useLocation(),navigate=useNavigate();const params=new URLSearchParams(location.search);
-  const query=params.get('q')||'',sourceId=params.get('source')||'',language=params.get('language')||'';
+  const query=readContentSearch(params),sourceId=params.get('source')||'',language=params.get('language')||'';
   const includeUnclear=params.get('unclear')==='1';
   const requestedKind=params.get('kind')||'';const kind=kinds.includes(requestedKind as ContentKind)?requestedKind as ContentKind:undefined;
   const [input,setInput]=useState(query),[sources,setSources]=useState<KnowledgeSource[]|null>(null),[catalogError,setCatalogError]=useState(false),[retry,setRetry]=useState(0),[catalogRetry,setCatalogRetry]=useState(0),[rows,setRows]=useState<Row[]>([]);
@@ -26,8 +27,12 @@ export function KnowledgeSearchPage(){
     if(query&&selected.length)void runKnowledgeSearch(selected,{query,kind,language,includeUnclear},request.signal,(id,page,error)=>setRows(previous=>previous.map(row=>row.source.id===id?{...row,page,error,busy:false}:row)));
     return()=>request.abort();
   },[sources,query,sourceId,kind,language,includeUnclear,retry]);
-  function change(next:Record<string,string>){const value=new URLSearchParams({scope:'knowledge',...query?{q:query}:{},...sourceId?{source:sourceId}:{},...kind?{kind}:{},...language?{language}:{},...includeUnclear?{unclear:'1'}:{}});for(const [k,v]of Object.entries(next)){if(v)value.set(k,v);else value.delete(k);}navigate('/app/search?'+value);}
-  function submit(e:React.FormEvent){e.preventDefault();if(!input.trim())return;if(input.trim()===query)setRetry(v=>v+1);else change({q:input.trim()});}
+  function change(next:Record<string,string>, nextQuery=query){
+    const value=new URLSearchParams({scope:'knowledge',...sourceId?{source:sourceId}:{},...kind?{kind}:{},...language?{language}:{},...includeUnclear?{unclear:'1'}:{}});
+    for(const [k,v]of Object.entries(next)){if(v)value.set(k,v);else value.delete(k);}
+    navigate(contentSearchAddress(value, nextQuery));
+  }
+  function submit(e:React.FormEvent){e.preventDefault();if(!input.trim())return;if(input.trim()===query)setRetry(v=>v+1);else change({},input);}
   async function more(row:Row,restart=false){
     if(row.busy)return;
     if(!restart&&row.page&&row.visible<row.page.items.length){setRows(all=>all.map(r=>r.source.id===row.source.id?{...r,visible:r.visible+6}:r));return;}
@@ -41,7 +46,7 @@ export function KnowledgeSearchPage(){
   const connected=sources?.filter(s=>s.enabled)||[],finished=rows.filter(r=>!r.busy).length,count=rows.reduce((sum,r)=>sum+(r.page?.items.length||0),0),busy=rows.some(r=>r.busy);
   const priority=(row:Row)=>row.page?.items.length?0:row.busy?1:row.error?2:3;
   const displayedRows=[...rows].sort((a,b)=>priority(a)-priority(b));
-  const returnTo='/app/search'+location.search;
+  const returnTo=contentSearchAddress(params, query);
   return <section className="page-section content-search knowledge-search">
     <div className="content-search-header"><header className="page-heading"><h1>Search</h1></header>
       <form className="content-search-form" onSubmit={submit}><label className="visually-hidden" htmlFor="knowledge-query">Search all knowledge</label><input id="knowledge-query" type="search" maxLength={300} placeholder="Books, papers, audio and more" value={input} onChange={e=>setInput(e.target.value)}/><button type="submit" aria-label="Search"><SearchIcon/></button></form><SearchScopes scope="knowledge"/>
@@ -55,7 +60,7 @@ export function KnowledgeSearchPage(){
     <label className="knowledge-unclear"><input type="checkbox" checked={includeUnclear} onChange={e=>change({unclear:e.target.checked?'1':''})}/>Show other items with unclear access, labelled</label>
     {language&&<p className="content-coverage">Searching sources that support this language filter. Other sources may also hold material in this language.</p>}
     {catalogError?<div className="content-notice" role="alert"><p>The source list could not be loaded.</p><button onClick={()=>setCatalogRetry(v=>v+1)}>Try again</button></div>:!sources?<p role="status">Loading connected sources…</p>:!query?<>
-      <div className="content-browse">{[['mathematics','Mathematics'],['agriculture','Agriculture'],['history','History'],['python','Programming']].map(([q,label])=><Link key={q} to={'/app/search?'+new URLSearchParams({scope:'knowledge',q})}><strong>{label}</strong><span>Explore across sources →</span></Link>)}</div>
+      <div className="content-browse">{[['mathematics','Mathematics'],['agriculture','Agriculture'],['history','History'],['python','Programming']].map(([topic,label])=><Link key={topic} to={contentSearchAddress({scope:'knowledge'}, topic)}><strong>{label}</strong><span>Explore across sources →</span></Link>)}</div>
       <h2 className="content-section-label">Connected sources</h2><ul className="knowledge-directory">{connected.map(s=><li key={s.id}><Link to={'/app/search?'+new URLSearchParams({scope:'knowledge',source:s.id})}>{s.name}</Link><p>{s.scope}</p></li>)}</ul><p className="content-coverage">Sources have different coverage and rights. Catalog snapshots can be incomplete or older; their access checks are labelled. More sources will appear as their integrations are verified.</p>
     </>:<>
       <p className="knowledge-progress" role="status" aria-live="polite">{count} results loaded · {finished} of {rows.length} sources finished{busy?' · still searching…':''}</p>

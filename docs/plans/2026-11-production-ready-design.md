@@ -504,4 +504,3 @@ What was not investigated: the real time split of account creation; the
 logged-out device in the list; whether Safari's AutoFill bar can be stopped;
 the real answer times from an Indian region; Open Library's request limit.
 Each is named in its package.
-

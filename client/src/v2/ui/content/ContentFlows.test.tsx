@@ -2,6 +2,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import { contentApi } from '../../contentApi';
+import { readContentSearch } from '../../contentSearchAddress';
 import { PublicApiError } from '../../api';
 import { LibraryStateProvider } from '../../context';
 import { ANONYMOUS_WEB_STORAGE_KEY } from '../../localState';
@@ -117,7 +118,11 @@ it('disabled paper search offers free books with the same query instead of an ou
     message:'Paper search is not connected yet.',sources:[{id:'arxiv',status:'disabled',returned:0}]}));
   mount(<ContentSearchPage scope="papers"/>,'/app/search?scope=papers&q=Mathematics');
   await screen.findByRole('heading',{name:'Paper search isn’t enabled yet'});
-  expect(screen.getByRole('link',{name:'Search free books instead'})).toHaveAttribute('href','/app/search?scope=free&q=Mathematics');
+  const href=screen.getByRole('link',{name:'Search free books instead'}).getAttribute('href')!;
+  expect(href).not.toContain('Mathematics');
+  const filters=new URL(href,'http://localhost').searchParams;
+  expect(filters.get('scope')).toBe('free');
+  expect(readContentSearch(filters)).toBe('Mathematics');
   expect(screen.queryByRole('button',{name:'Try again'})).not.toBeInTheDocument();
   expect(screen.queryByText('Free-reading sources aren’t answering')).not.toBeInTheDocument();
 });
@@ -193,7 +198,9 @@ it('source outage is an alert rather than a zero-result claim',async()=>{
   mount(<ContentSearchPage scope="papers"/>,'/app/search?scope=papers&q=outage-fixture');
   await screen.findByRole('alert');expect(screen.getByText('This does not mean there is no free copy.')).toBeInTheDocument();
   expect(screen.queryByText('No verified free copy in these results')).not.toBeInTheDocument();
-  expect(screen.getByRole('link',{name:'Search library books instead'})).toHaveAttribute('href','/app/search?q=outage-fixture');
+  const href=screen.getByRole('link',{name:'Search library books instead'}).getAttribute('href')!;
+  expect(href).not.toContain('outage-fixture');
+  expect(readContentSearch(new URL(href,'http://localhost').searchParams)).toBe('outage-fixture');
 });
 
 it('wide-index daily limit keeps specialist results and avoids provider branding',async()=>{

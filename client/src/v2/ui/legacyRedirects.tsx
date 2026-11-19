@@ -2,6 +2,7 @@ import { isContentSourceRetired } from '../../../../shared/content-source-availa
 import { useEffect, useRef } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { handOffLegacyText } from '../legacyHandoff';
+import { contentSearchAddress, readContentSearch } from '../contentSearchAddress';
 import { KnowledgeSearchPage } from './content/KnowledgeSearchPage';
 import { ContentSearchPage } from './content/ContentSearchPage';
 
@@ -30,12 +31,13 @@ export function SearchRedirect() {
     if (contentDiscovery()) return <ContentScope params={params} scope={scope as 'free' | 'papers' | 'knowledge'} />;
     return <Navigate to="/" replace state={null} />;
   }
-  const state: LegacyArrival = handOffLegacyText('search', params.get('q')) ? { legacy: 'search' } : { legacy: 'focus-search' };
+  const state: LegacyArrival = handOffLegacyText('search', readContentSearch(params)) ? { legacy: 'search' } : { legacy: 'focus-search' };
   return <Navigate to="/" replace state={state} />;
 }
 
 // The free-reading pages as they were reached from the old Search page.
 function ContentScope({ params, scope }: { params: URLSearchParams; scope: 'free' | 'papers' | 'knowledge' }) {
+  if (params.has('q')) return <Navigate replace to={contentSearchAddress(params, readContentSearch(params))} />;
   if (scope === 'free' && params.get('collection') === 'children' && isContentSourceRetired('storyweaver')) {
     params.set('scope', 'knowledge');
     for (const key of ['collection', 'level', 'item', 'source']) params.delete(key);
