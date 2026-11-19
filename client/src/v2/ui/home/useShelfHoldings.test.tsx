@@ -74,3 +74,52 @@ it('asks again when the shelf closed before the answer came', async () => {
   rerender(tree('lib:a', createElement(Shelf, { libraryId: 'lib:a', books: [book(1)] })));
   await waitFor(() => expect(lookup).toHaveBeenCalledTimes(2));
 });
+
+const sentKeys = (call: unknown[] | undefined) => (JSON.parse(String((call?.[1] as RequestInit | undefined)?.body)) as { books: Array<{ bookKey: string }> }).books.map(item => item.bookKey);
+
+it('at 640 px and wider, where the shelf stays mounted behind an open book, asks once more on each return to the front', async () => {
+  const answers: Record<string, string> = {};
+  const lookup = vi.fn(async (_path: string, _init?: RequestInit) => reply(answers));
+  vi.stubGlobal('fetch', lookup);
+  let store: HoldingsStore | null = null;
+  function Spy() { store = useHoldingsStore(); return null; }
+  function Wide({ behind }: { behind: boolean }) { useShelfHoldings('lib:a', [book(1), book(2)], behind); return null; }
+  const shelf = (behind: boolean) => tree('lib:a', createElement(Fragment, null, createElement(Spy), createElement(Wide, { behind })));
+  const { rerender } = render(shelf(false));
+  await waitFor(() => expect(lookup).toHaveBeenCalledTimes(1));
+  await new Promise(resolve => setTimeout(resolve, 0));
+  // A book opens beside the shelf; its check could not answer in time.
+  rerender(shelf(true));
+  act(() => store!.set('lib:a', { [book(1).bookKey]: 'unknown' }));
+  await new Promise(resolve => setTimeout(resolve, 10));
+  expect(lookup).toHaveBeenCalledTimes(1);
+  // The background check has stored its answer; the shelf comes back in front.
+  answers[book(1).bookKey] = 'found';
+  rerender(shelf(false));
+  await waitFor(() => expect(store!.get(book(1).bookKey)).toBe('found'));
+  expect(lookup).toHaveBeenCalledTimes(2);
+  expect(sentKeys(lookup.mock.calls[1])).toEqual([book(1).bookKey, book(2).bookKey]);
+  // Drawn again in front without a return: nothing more. One more return asks
+  // only for the book still without an answer.
+  rerender(shelf(false));
+  await new Promise(resolve => setTimeout(resolve, 10));
+  expect(lookup).toHaveBeenCalledTimes(2);
+  rerender(shelf(true));
+  rerender(shelf(false));
+  await waitFor(() => expect(lookup).toHaveBeenCalledTimes(3));
+  expect(sentKeys(lookup.mock.calls[2])).toEqual([book(2).bookKey]);
+});
+
+it('a return while a lookup is still on its way does not ask for the same books again', async () => {
+  let release: (value: Response) => void = () => {};
+  const lookup = vi.fn(() => new Promise<Response>(resolve => { release = resolve; }));
+  vi.stubGlobal('fetch', lookup);
+  function Wide({ behind }: { behind: boolean }) { useShelfHoldings('lib:a', [book(1)], behind); return null; }
+  const { rerender } = render(tree('lib:a', createElement(Wide, { behind: false })));
+  await waitFor(() => expect(lookup).toHaveBeenCalledTimes(1));
+  rerender(tree('lib:a', createElement(Wide, { behind: true })));
+  rerender(tree('lib:a', createElement(Wide, { behind: false })));
+  await new Promise(resolve => setTimeout(resolve, 10));
+  expect(lookup).toHaveBeenCalledTimes(1);
+  release(reply({ [book(1).bookKey]: 'found' }));
+});

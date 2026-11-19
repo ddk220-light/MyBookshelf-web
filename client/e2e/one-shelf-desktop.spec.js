@@ -205,6 +205,33 @@ test.describe('Desktop layout', () => {
     await noViolations(page, 'book open');
   });
 
+  test('coming back from a book in the slot asks once for the saved books still without an answer', async ({ page }) => {
+    await setup(page);
+    // Book 2 has no stored answer yet (its check is still running in the background).
+    const lookups = [];
+    const waiting = book(2).bookKey;
+    await page.route('**/api/v2/holdings/lookup', route => {
+      const keys = route.request().postDataJSON().books.map(item => item.bookKey);
+      lookups.push(keys);
+      return route.fulfill({ json: { answers: Object.fromEntries(keys.filter(key => key !== waiting || lookups.length > 1).map(key => [key, 'found'])) } });
+    });
+    await page.goto('/');
+    const cover = page.locator('.home-bookcase').getByRole('link', { name: new RegExp('^' + BOOK.title + ' by ') });
+    await expect(cover).toBeVisible();
+    await expect.poll(() => lookups.filter(keys => keys.includes(waiting)).length).toBe(1);
+    await cover.click();
+    await expect(slot(page).getByRole('heading', { level: 1, name: BOOK.title })).toBeVisible();
+    await page.waitForTimeout(300);
+    expect(lookups.filter(keys => keys.includes(waiting))).toHaveLength(1);
+    await slot(page).getByRole('button', { name: 'Close the book' }).click();
+    await expect(slot(page)).toHaveCount(0);
+    // Once per return, only for the book that had no answer.
+    await expect.poll(() => lookups.filter(keys => keys.includes(waiting)).length).toBe(2);
+    expect(lookups.filter(keys => keys.includes(waiting)).at(-1)).toEqual([waiting]);
+    await page.waitForTimeout(300);
+    expect(lookups.filter(keys => keys.includes(waiting))).toHaveLength(2);
+  });
+
   test('a direct book address shows the shelf with that book open in the middle', async ({ page }) => {
     await setup(page);
     await page.goto(bookPath);

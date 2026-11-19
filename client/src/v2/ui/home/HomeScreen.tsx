@@ -83,7 +83,7 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null, on
   // comes from an answer already held (the holdings store, or the stored
   // "found" the suggestion source read once for its candidates), never from a
   // new check.
-  useShelfHoldings(state.selectedLibraryId, state.savedBooks);
+  useShelfHoldings(state.selectedLibraryId, state.savedBooks, Boolean(behind));
   // While the first suggestions of a visit are on their way their slots stay
   // empty (`held`), so the books never change under a tap.
   const suggestions = useShelfSuggestions(state.savedBooks, state.selectedLibraryId, SUGGESTION_SOURCES, state.recentBooks);
