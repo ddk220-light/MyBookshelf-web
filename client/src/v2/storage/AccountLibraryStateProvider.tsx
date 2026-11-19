@@ -17,6 +17,8 @@ import { emptyState, HISTORY_LIMIT, readAnonymousWebStateWithStatus } from "../l
 import {
   accountCode,
   clearSignInMark,
+  endMergeInProgress,
+  mergeInProgress,
   mergeRetryAt,
   noteMergeFailure,
   planGuestMerge,
@@ -24,6 +26,7 @@ import {
   rememberMerged,
   setMergeConsent,
   signInMarkMatches,
+  startMergeInProgress,
   withoutLibrary,
   withoutRejected,
 } from "./guestMerge";
@@ -118,29 +121,35 @@ export function AccountLibraryStateProvider({
   // from the account does not come back. The merge runs on its own only for
   // the account this browser asked to sign in to (or that the reader agreed
   // to before); any other account is asked once: "Add them" or "Not now".
-  // One tab merges at a time (the guest storage lock). A refused library or
-  // book is left out and the rest sent again; a failure waits longer each
-  // time, checked at the next load (no timers); it never holds the shelf,
-  // and the shelf's own changes never wait for it.
+  // The guest storage lock is held only to plan (and to note "merge in
+  // progress since <time>" in the account's record) and to record the
+  // result, never across a network request; another tab that finds a merge
+  // in progress leaves it alone (checked at its next load, no timers), so two
+  // tabs never send the same books. A refused library or book is left out
+  // and the rest sent again; a failure waits longer each time, checked at the
+  // next load; it never holds the shelf, and the shelf's own changes never
+  // wait for it.
   const mergeGuest = useCallback(async (repo: AccountRepository) => {
     const user = sessionRef.current.user;
     const current = () => active.current && repository.current === repo;
     if (!user) return;
     const account = accountCode(user.id);
     let added: number | null = null,
-      offer: MergeOffer | null = null;
+      offer: MergeOffer | null = null,
+      since: number | null = null;
     try {
-      await withGuestStorageLock(async () => {
-        if (!current()) return;
+      // 1. Plan, under the lock.
+      let plan = await withGuestStorageLock(() => {
+        if (!current()) return null;
         const record = readMerged(account);
-        if (Date.now() < mergeRetryAt(record)) return;
-        let loaded = repo.snapshot;
-        if (!loaded) return;
-        let plan = planGuestMerge(loaded, readAnonymousWebStateWithStatus(), record);
-        if (!plan) return;
-        if (!plan.request) {
-          rememberMerged(account, plan);
-          return;
+        if (Date.now() < mergeRetryAt(record) || mergeInProgress(record)) return null;
+        const loaded = repo.snapshot;
+        if (!loaded) return null;
+        const planned = planGuestMerge(loaded, readAnonymousWebStateWithStatus(), record);
+        if (!planned) return null;
+        if (!planned.request) {
+          rememberMerged(account, planned);
+          return null;
         }
         let consent = record.consent;
         if (!consent && signInMarkMatches(user.email)) {
@@ -148,20 +157,26 @@ export function AccountLibraryStateProvider({
           setMergeConsent(account, "yes");
           clearSignInMark();
         }
-        if (consent === "not-now") return;
+        if (consent === "not-now") return null;
         if (consent !== "yes") {
           // Nothing is sent to an account this browser did not ask for.
-          if (plan.snapshot.savedBooks.length)
-            offer = { count: plan.snapshot.savedBooks.length, email: user.email };
-          return;
+          if (planned.snapshot.savedBooks.length)
+            offer = { count: planned.snapshot.savedBooks.length, email: user.email };
+          return null;
         }
+        since = startMergeInProgress(account);
+        return planned;
+      });
+      // 2. Send, without the lock.
+      let settled = false;
+      if (plan) {
         let send = plan,
           withoutLibraryTried = false;
-        for (let attempt = 0; attempt < 4; attempt++) {
+        for (let attempt = 0; attempt < 4 && !settled; attempt++) {
           if (!send.request) {
-            rememberMerged(account, plan);
             added = 0;
-            return;
+            settled = true;
+            break;
           }
           try {
             const result = await repo.importQuiet(
@@ -169,11 +184,9 @@ export function AccountLibraryStateProvider({
               send.snapshot.recentBooks.length > 0,
               send.policy,
             );
-            if (!current()) return;
-            // What was left out is settled too: it is not sent again.
-            rememberMerged(account, plan);
+            if (!current()) break;
             added = result.savedAdded;
-            return;
+            settled = true;
           } catch (error) {
             if (!current() || !(error instanceof AccountApiError)) throw error;
             if (error.status === 422 && error.code !== "SHELF_FULL") {
@@ -192,10 +205,10 @@ export function AccountLibraryStateProvider({
             }
             // Another change on this or another device came first: plan again.
             if (error.status === 409 && error.code === "VERSION_CONFLICT") {
-              loaded = await repo.loadSnapshot();
-              if (!current()) return;
+              const loaded = await repo.loadSnapshot();
+              if (!current()) break;
               const again = planGuestMerge(loaded, readAnonymousWebStateWithStatus(), readMerged(account));
-              if (!again) return;
+              if (!again) { settled = true; break; }
               plan = again;
               send = withoutLibraryTried ? withoutLibrary(again) : again;
               continue;
@@ -203,10 +216,25 @@ export function AccountLibraryStateProvider({
             throw error;
           }
         }
-        throw new Error("The merge did not settle.");
-      });
+        if (!settled && current()) throw new Error("The merge did not settle.");
+      }
+      // 3. Record the result, under the lock. What was left out is settled
+      // too: it is not sent again.
+      if (plan && since !== null) {
+        const settledPlan = plan, mark = since;
+        await withGuestStorageLock(() => {
+          if (settled && added !== null) rememberMerged(account, settledPlan);
+          else endMergeInProgress(account, mark);
+        });
+      }
     } catch {
-      if (current()) noteMergeFailure(account);
+      if (current() || since !== null) {
+        const mark = since;
+        await withGuestStorageLock(() => {
+          if (mark !== null) endMergeInProgress(account, mark);
+          if (current()) noteMergeFailure(account);
+        }).catch(() => {});
+      }
     }
     if (!current()) return;
     setMergeOffer(offer);

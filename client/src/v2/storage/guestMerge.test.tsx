@@ -2,7 +2,8 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { act, cleanup, render, waitFor } from '@testing-library/react';
 import { AccountSessionProvider } from '../auth/AccountSessionProvider';
 import { LibraryStateProvider, useLibrary, type LibraryState } from '../context';
-import { accountCode, markSignIn, MERGED_KEY, mergeRetryAt, planGuestMerge, readMerged, SIGN_IN_MARK_KEY, signInMarkMatches } from './guestMerge';
+import { accountCode, forgetMerged, markSignIn, MERGE_IN_PROGRESS_MS, MERGED_ACCOUNTS_KEPT, MERGED_KEY, mergeInProgress, mergeRetryAt, planGuestMerge, readMerged, setMergeConsent, SIGN_IN_MARK_KEY, signInMarkMatches, startMergeInProgress } from './guestMerge';
+import { withGuestStorageLock } from './guestLock';
 import type { ReadingSnapshot } from './AccountRepository';
 
 // Plan B5: the automatic merge at sign-in. The browser's books the account
@@ -141,8 +142,58 @@ it('the merged record belongs to one account: another account on this browser st
   await waitFor(() => expect(second.library().mergeResult).toEqual({ savedAdded: 2 }));
   expect(imports).toHaveLength(2);
   expect(readMerged(accountCode(OTHER.id)).saved).toEqual([book(1).bookKey, book(2).bookKey]);
-  // Reading as the first account again starts afresh too (one record per browser).
-  expect(readMerged(accountCode(USER.id)).saved).toEqual([]);
+  // The first account keeps its own record beside it.
+  expect(readMerged(accountCode(USER.id)).saved).toEqual([book(1).bookKey, book(2).bookKey]);
+});
+
+it('two readers taking turns on one browser each keep their own record: a book X removed is not sent again after Y merged', async () => {
+  guest({ savedBooks: [book(1), book(2)] });
+  markSignIn(USER.email);
+  const x: Account = { books: [], recent: [], library: null, shelfRevision: 0 };
+  const imports = account(x);
+  const first = mount();
+  await waitFor(() => expect(first.library().mergeResult).toEqual({ savedAdded: 2 }));
+  first.unmount();
+  // X removes book 1 from the account (here or on another device).
+  x.books = x.books.filter(item => item.bookKey !== book(1).bookKey);
+  x.shelfRevision++;
+  // Y signs in on the same browser and merges.
+  markSignIn(OTHER.email);
+  const y: Account = { user: OTHER, books: [], recent: [], library: null, shelfRevision: 0 };
+  const yImports = account(y);
+  const second = mount();
+  await waitFor(() => expect(second.library().mergeResult).toEqual({ savedAdded: 2 }));
+  expect(yImports).toHaveLength(1);
+  second.unmount();
+  // X signs in again: nothing is sent, so book 1 stays removed.
+  const xAgain = account(x);
+  const third = mount();
+  await waitFor(() => expect(third.library().mergeResult).toEqual({ savedAdded: 0 }));
+  expect(xAgain).toHaveLength(0);
+  expect(imports).toHaveLength(1);
+  expect(third.library().state.savedBooks.map(item => item.bookKey)).toEqual([book(2).bookKey]);
+  expect(readMerged(accountCode(USER.id)).consent).toBe('yes');
+  expect(readMerged(accountCode(OTHER.id)).consent).toBe('yes');
+});
+
+it('a version-2 record (one account per browser) is kept as that account’s entry; only the five most recently used accounts are kept', () => {
+  const x = accountCode(USER.id);
+  localStorage.setItem(MERGED_KEY, JSON.stringify({ version: 2, account: x, saved: [book(1).bookKey], viewed: [], libraries: ['bc:smcl'], consent: 'yes' }));
+  expect(readMerged(x)).toEqual({ version: 2, account: x, saved: [book(1).bookKey], viewed: [], libraries: ['bc:smcl'], consent: 'yes' });
+  // Another account's answer is stored beside it, not over it.
+  setMergeConsent(accountCode('reader-y'), 'not-now');
+  expect(readMerged(x).saved).toEqual([book(1).bookKey]);
+  expect(JSON.parse(localStorage.getItem(MERGED_KEY)!).version).toBe(3);
+  for (let n = 0; n < 4; n++) setMergeConsent(accountCode('turn-' + n), 'yes');
+  // Six accounts used: the least recently used (X) is the one dropped.
+  const kept = Object.keys(JSON.parse(localStorage.getItem(MERGED_KEY)!).accounts);
+  expect(kept).toHaveLength(MERGED_ACCOUNTS_KEPT);
+  expect(kept).not.toContain(x);
+  expect(readMerged(accountCode('reader-y')).consent).toBe('not-now');
+  // Forgetting one account keeps the others.
+  forgetMerged(accountCode('reader-y'));
+  expect(readMerged(accountCode('reader-y')).consent).toBeUndefined();
+  expect(readMerged(accountCode('turn-0')).consent).toBe('yes');
 });
 
 it('an account this browser did not ask for (a link someone else sent) is asked first; nothing is sent, and “Not now” is remembered', async () => {
@@ -254,6 +305,47 @@ it('several tabs merge one at a time: only one of them sends the books', async (
   await waitFor(() => tabs.forEach(tab => expect(tab.library().mergeResult).toBeDefined()));
   expect(imports).toHaveLength(1);
   expect(tabs.map(tab => tab.library().mergeResult?.savedAdded).sort()).toEqual([0, 0, 2]);
+});
+
+it('the storage lock is not held while the books are sent; another tab that loads meanwhile leaves the merge in progress alone', async () => {
+  stubLocks();
+  guest({ savedBooks: [book(1), book(2)] });
+  markSignIn(USER.email);
+  let release!: () => void;
+  const state: Account = { books: [], recent: [], library: null, shelfRevision: 0, hold: new Promise<void>(resolve => { release = resolve; }) };
+  const imports = account(state);
+  const first = mount();
+  await waitFor(() => expect(imports).toHaveLength(1));
+  // While the import is on its way, the guest storage lock is free…
+  let lockFree = false;
+  await withGuestStorageLock(() => { lockFree = true; });
+  expect(lockFree).toBe(true);
+  expect(readMerged(accountCode(USER.id)).mergingSince).toBeTypeOf('number');
+  // …and a second tab does not send the same books.
+  const second = mount();
+  await waitFor(() => expect(second.library().mergeResult).toEqual({ savedAdded: 0 }));
+  expect(imports).toHaveLength(1);
+  state.hold = undefined;
+  release();
+  await waitFor(() => expect(first.library().mergeResult).toEqual({ savedAdded: 2 }));
+  expect(imports).toHaveLength(1);
+  const record = readMerged(accountCode(USER.id));
+  expect(record.mergingSince).toBeUndefined();
+  expect(record.saved).toEqual([book(1).bookKey, book(2).bookKey]);
+});
+
+it('a merge in progress left by a closed tab holds others up only for a short while', async () => {
+  guest({ savedBooks: [book(1)] });
+  markSignIn(USER.email);
+  const x = accountCode(USER.id);
+  startMergeInProgress(x, Date.now() - MERGE_IN_PROGRESS_MS - 1);
+  const imports = account({ books: [], recent: [], library: null, shelfRevision: 0 });
+  const view = mount();
+  await waitFor(() => expect(view.library().mergeResult).toEqual({ savedAdded: 1 }));
+  expect(imports).toHaveLength(1);
+  expect(readMerged(x).mergingSince).toBeUndefined();
+  expect(mergeInProgress({ ...readMerged(x), mergingSince: 1_000 }, 1_000 + MERGE_IN_PROGRESS_MS - 1)).toBe(true);
+  expect(mergeInProgress({ ...readMerged(x), mergingSince: 1_000 }, 1_000 + MERGE_IN_PROGRESS_MS)).toBe(false);
 });
 
 it('while the merge runs, a book opened is still recorded in Viewed before and a save does not wait for it', async () => {
