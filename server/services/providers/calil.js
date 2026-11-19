@@ -60,7 +60,8 @@ export function parseCalilAvailability(payload, { isbn, systemId }) {
     matchKind: 'exact_isbn',
     recognizedExact: true,
     locations,
-    catalogUrl: typeof book.reserveurl === 'string' ? book.reserveurl : undefined,
+    // The library's own page for this book (its reservation page).
+    ...(typeof book.reserveurl === 'string' ? { catalogUrl: book.reserveurl, catalogLinkKind: 'record' } : {}),
     attribution: { ...ATTRIBUTION },
   };
 }

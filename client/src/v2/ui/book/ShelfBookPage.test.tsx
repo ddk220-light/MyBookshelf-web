@@ -234,13 +234,13 @@ describe('one-shelf book page', () => {
     expect(stored().savedBooks).toEqual([]);
   });
 
-  it('at the guest cap Add is disabled with "Shelf full" as its reason', async () => {
+  it('at the guest cap Add is disabled with "Your reading shelf is full" as its reason', async () => {
     stubApi();
     seed({ saved: Array.from({ length: SAVED_BOOKS_CAP }, (_, index) => ({ bookKey: 'v1:openlibrary:OL' + (index + 1) + 'W', title: 'B' + index, authors: [], source: 'direct', viewedAt: '2026-01-01T00:00:00.000Z' })) });
     renderBook();
     const add = await screen.findByRole('button', { name: 'Add to my reading shelf' });
     expect(add).toBeDisabled();
-    expect(add).toHaveAccessibleDescription('Shelf full');
+    expect(add).toHaveAccessibleDescription('Your reading shelf is full');
   });
 
   it('a placeholder record shows what is known and no About section', async () => {

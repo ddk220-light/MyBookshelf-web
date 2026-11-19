@@ -153,6 +153,22 @@ describe('background check for search results', () => {
     expect(marks).toHaveLength(2);
   });
 
+  it('a mark without the book’s record is checked again on the book page, and an unconfirmed reply keeps "In your library"', async () => {
+    const { marks, checks } = stubApi({ check: 'unconfirmed' });
+    seed();
+    renderHome();
+    await screen.findByText('Anna Centenary Library');
+    await searchFor('wings of fire');
+    await waitFor(() => expect(marks).toHaveLength(1));
+    marks[0].stream.line({ type: 'mark', bookKey: PUBLIC[1].bookKey, answer: 'found' });
+    const results = await screen.findByRole('region', { name: 'Search results' });
+    fireEvent.click(await within(results).findByRole('link', { name: 'The Dragonet Prophecy by Tui T. Sutherland, in Anna Centenary Library' }));
+    await waitFor(() => expect(checks).toHaveLength(1));
+    await new Promise(resolve => setTimeout(resolve, 20));
+    expect(await screen.findByRole('group', { name: 'In your library' })).toBeInTheDocument();
+    expect(screen.queryByRole('group', { name: 'Couldn’t check right now' })).toBeNull();
+  });
+
   it('a check that finished is not asked again on Back', async () => {
     const { marks } = stubApi({ check: 'unknown' });
     seed();

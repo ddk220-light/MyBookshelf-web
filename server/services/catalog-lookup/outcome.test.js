@@ -32,7 +32,7 @@ test('not found needs an exact recognized ISBN or a complete, non-partial work s
 test('title/author matches are unconfirmed, never found', () => {
   for (const outcome of ['available', 'in_catalog', 'none_available']) {
     const answer = answerFromResponse({ outcome, lookupKind: 'title_author', matchKind: 'possible_match', catalogUrl: 'https://c.example/r/1' });
-    assert.deepEqual(answer, { outcome: 'couldnt_check', reason: 'unconfirmed', catalogUrl: 'https://c.example/r/1' });
+    assert.deepEqual(answer, { outcome: 'couldnt_check', reason: 'unconfirmed', catalogUrl: 'https://c.example/r/1', catalogLinkKind: 'catalog' });
   }
 });
 

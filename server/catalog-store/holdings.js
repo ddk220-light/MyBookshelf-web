@@ -6,7 +6,7 @@ import { ANSWER_TTL_MS } from '../services/catalog-lookup/record.js';
 
 const TTL_SECONDS = Math.round(ANSWER_TTL_MS / 1000);
 
-const READ = `SELECT library_id, identity_kind, identity_value, answer, evidence, matched_isbn13, catalog_url,
+const READ = `SELECT library_id, identity_kind, identity_value, answer, evidence, matched_isbn13, catalog_url, catalog_link_kind,
     (extract(epoch FROM expires_at) * 1000)::bigint AS expires_ms
   FROM holdings_answers
   WHERE library_id = $1
@@ -16,15 +16,15 @@ const READ = `SELECT library_id, identity_kind, identity_value, answer, evidence
 // `found` replaces anything; `not_found` never replaces an unexpired `found`.
 // Both expire 180 days after the check (owner decision 1).
 const WRITE = `WITH input AS (
-    SELECT * FROM unnest($1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::text[], $7::text[])
-      AS t(library_id, identity_kind, identity_value, answer, evidence, matched_isbn13, catalog_url)
+    SELECT * FROM unnest($1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::text[], $7::text[], $9::text[])
+      AS t(library_id, identity_kind, identity_value, answer, evidence, matched_isbn13, catalog_url, catalog_link_kind)
   ), written AS (
-    INSERT INTO holdings_answers AS h (library_id, identity_kind, identity_value, answer, evidence, matched_isbn13, catalog_url, checked_at, expires_at)
-    SELECT library_id, identity_kind, identity_value, answer, evidence, matched_isbn13, catalog_url, now(), now() + make_interval(secs => $8)
+    INSERT INTO holdings_answers AS h (library_id, identity_kind, identity_value, answer, evidence, matched_isbn13, catalog_url, catalog_link_kind, checked_at, expires_at)
+    SELECT library_id, identity_kind, identity_value, answer, evidence, matched_isbn13, catalog_url, catalog_link_kind, now(), now() + make_interval(secs => $8)
     FROM input
     ON CONFLICT (library_id, identity_kind, identity_value) DO UPDATE SET
       answer = EXCLUDED.answer, evidence = EXCLUDED.evidence, matched_isbn13 = EXCLUDED.matched_isbn13,
-      catalog_url = EXCLUDED.catalog_url, checked_at = EXCLUDED.checked_at, expires_at = EXCLUDED.expires_at
+      catalog_url = EXCLUDED.catalog_url, catalog_link_kind = EXCLUDED.catalog_link_kind, checked_at = EXCLUDED.checked_at, expires_at = EXCLUDED.expires_at
     WHERE EXCLUDED.answer = 'found' OR h.answer <> 'found' OR h.expires_at <= now()
     RETURNING h.library_id
   )
@@ -38,6 +38,9 @@ const CATALOG_URL = value => {
   try { return ['http:', 'https:'].includes(new URL(value).protocol) ? value : null; } catch { return null; }
 };
 
+// Where the link goes (migration 004); a row without one is read as the catalog.
+const LINK_KINDS = new Set(['record', 'search', 'catalog']);
+
 export function createPgAnswerStore(db) {
   return Object.freeze({
     async readAnswers(libraryId, identities = []) {
@@ -45,7 +48,7 @@ export function createPgAnswerStore(db) {
       const { rows } = await db.query(READ, [libraryId, identities.map(id => id.kind), identities.map(id => id.value)]);
       return rows.map(row => ({ libraryId: row.library_id, kind: row.identity_kind, value: row.identity_value, answer: row.answer,
         evidence: row.evidence, ...(row.matched_isbn13 ? { matchedIsbn13: row.matched_isbn13 } : {}),
-        ...(row.catalog_url ? { catalogUrl: row.catalog_url } : {}), expiresAt: Number(row.expires_ms) }));
+        ...(row.catalog_url ? { catalogUrl: row.catalog_url, ...(LINK_KINDS.has(row.catalog_link_kind) ? { catalogLinkKind: row.catalog_link_kind } : {}) } : {}), expiresAt: Number(row.expires_ms) }));
     },
     async writeAnswers(values = []) {
       // One row per identity in a batch (a statement may not update a row
@@ -59,7 +62,8 @@ export function createPgAnswerStore(db) {
       const rows = [...byKey.values()];
       if (!rows.length) return;
       await db.query(WRITE, [rows.map(r => r.libraryId), rows.map(r => r.kind), rows.map(r => r.value), rows.map(r => r.answer),
-        rows.map(r => r.evidence), rows.map(r => r.matchedIsbn13 || null), rows.map(r => CATALOG_URL(r.catalogUrl)), TTL_SECONDS]);
+        rows.map(r => r.evidence), rows.map(r => r.matchedIsbn13 || null), rows.map(r => CATALOG_URL(r.catalogUrl)), TTL_SECONDS,
+        rows.map(r => (CATALOG_URL(r.catalogUrl) && LINK_KINDS.has(r.catalogLinkKind) ? r.catalogLinkKind : null))]);
     },
   });
 }

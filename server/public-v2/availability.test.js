@@ -97,7 +97,7 @@ test('availability preserves public counts, locations, and exact-match truth', a
       outcome: 'available', lookupKind: 'exact_isbn', matchKind: 'exact_isbn', recognizedExact: true,
       availableCopies: 2, totalCopies: 3, callNumber: 'QA 76',
       locations: [{ name: 'Main', availableCopies: 2, totalCopies: 3, status: 'available' }],
-      catalogUrl: 'https://catalog.example.test/record/1',
+      catalogUrl: 'https://catalog.example.test/record/1', catalogLinkKind: 'record',
       attribution: { label: 'Public provider', url: 'https://provider.example.test/' },
     }),
   };
@@ -186,7 +186,7 @@ test('completed unknown holdings keep attribution and do not replace a confirmed
     if (calls === 1) return { outcome: 'available', matchKind: 'exact_isbn', availableCopies: 1 };
     if (calls === 2) return { outcome: 'unknown', matchKind: 'exact_isbn', recognizedExact: true,
       locations: [{ name: 'Main', status: 'unknown' }], attribution,
-      catalogUrl: 'https://catalog.example.test/record/1' };
+      catalogUrl: 'https://catalog.example.test/record/1', catalogLinkKind: 'record' };
     throw new Error('timeout');
   } };
   const service = createPublicAvailabilityService(dependencies(provider));

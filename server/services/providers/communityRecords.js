@@ -28,9 +28,10 @@ export function parseReplayId(id) {
 }
 export const fingerprint = values => createHash('sha256').update(JSON.stringify(values)).digest('hex').slice(0, 20);
 
+// A link to the library's catalog home is not a search for this book.
 export function observation(library, catalogUrl, status = 'unknown', callNumber = null) {
   return { outcome: status === 'available' ? 'available' : status === 'unavailable' ? 'none_available' : 'in_catalog',
-    matchKind: 'verified_work', recognizedExact: true, catalogUrl, catalogLinkKind: 'search',
+    matchKind: 'verified_work', recognizedExact: true, catalogUrl, catalogLinkKind: catalogUrl === library.catalogUrl ? 'catalog' : 'search',
     ...(callNumber ? { callNumber: text(callNumber) } : {}), locations: [{ name: library.name, status }] };
 }
 

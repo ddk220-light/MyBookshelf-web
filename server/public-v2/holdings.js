@@ -29,6 +29,10 @@ const SEARCH_CAP_MS = 25_000; // the whole result-marking response ends by 25 s 
 // not answered by then is reported in `couldntCheck` rather than cut off.
 const LOOKUP_MARGIN_MS = 500;
 const PROFILE_WAIT_MS = 10_000;
+// The API function may run 120 s (vercel.json). A book-page request, with its
+// record read, edition profile and any check finishing in the background,
+// ends its work a little before that.
+export const FUNCTION_WORK_MS = 110_000;
 
 const settleWithin = (promise, ms) => new Promise(resolve => {
   const timer = setTimeout(() => resolve(null), Math.max(0, ms));
@@ -84,7 +88,7 @@ const safeCatalogUrl = value => {
   try { return ['http:', 'https:'].includes(new URL(value).protocol) ? value : undefined; } catch { return undefined; }
 };
 
-export function createHoldingsRoutes({ directory, books, lookup, store, now = () => Date.now(), searchCapMs = SEARCH_CAP_MS }) {
+export function createHoldingsRoutes({ directory, books, lookup, store, now = () => Date.now(), searchCapMs = SEARCH_CAP_MS, functionWorkMs = FUNCTION_WORK_MS }) {
   const usage = event => { try { store.usage.record(event); } catch { /* The log never alters a response. */ } };
   const readStored = async (libraryId, identities) => {
     if (!identities.length || store.policyFor(libraryId)?.storeAnswers === false) return [];
@@ -143,15 +147,18 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
     if (!resolved && !metadataFailed) return res.status(404).json(publicError('BOOK_NOT_FOUND', 'No public book details were found.'));
     const book = { ...trustedIdentity(libraryId, bookKey, resolved), title: resolved?.title || '', authors: resolved?.authors || [] };
     const handoff = catalogHandoffFor({ entry, library, book: resolved || (book.isbn13 ? { isbn13: book.isbn13 } : undefined) });
-    const reply = (answer, source, extraUrl) => {
-      const recordUrl = answer === 'found' && library.capabilities?.catalogLink && extraUrl !== handoff?.catalogUrl
-        ? onCatalogOrigin(extraUrl, library, entry) : undefined;
+    // The answer's own link is used only when the adapter said it is this
+    // book's record (`catalogLinkKind` carried from the provider through the
+    // answer and the stored row); otherwise the reader gets the handoff link.
+    const reply = (answer, source, found = null) => {
+      const recordUrl = answer === 'found' && library.capabilities?.catalogLink && found?.catalogLinkKind === 'record'
+        ? onCatalogOrigin(found.catalogUrl, library, entry) : undefined;
       const catalogUrl = recordUrl || safeCatalogUrl(handoff?.catalogUrl);
       res.json({ answer, ...(catalogUrl ? { catalogUrl, catalogLinkKind: recordUrl ? 'record' : handoff.catalogLinkKind } : {}) });
       usage({ kind: 'book_check', libraryId, bookKey, outcome: answer, ...(source ? { source } : {}), durationMs: now() - startedAt });
     };
     const stored = await lookup.storedFor({ library: entry, book });
-    if (stored) return reply(appAnswer(stored, book, libraryId), 'stored', stored.catalogUrl);
+    if (stored) return reply(appAnswer(stored, book, libraryId), 'stored', stored);
     // Metadata unavailable and nothing in the key to check by: couldn't check.
     if (!library.capabilities?.publicAvailability || (metadataFailed && !book.isbn13 && !book.recordId)) return reply('unknown', null);
     const controller = new AbortController();
@@ -166,19 +173,23 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
       // finishes in the background, storing what it finds for the next look
       // (plan A2, step 3). The reader leaving no longer cancels a started check.
       const answer = await lookup.lookupBook({ library: entry, publicLibrary: library, book, ...(profile ? { profile } : {}),
-        editionScope: 'work', signal: controller.signal, storedChecked: true, background: store.config?.backgroundChecksEnabled !== false });
+        editionScope: 'work', signal: controller.signal, storedChecked: true, background: store.config?.backgroundChecksEnabled !== false,
+        // The record read and the profile wait came out of the same function time.
+        finishBy: startedAt + functionWorkMs });
       if (controller.signal.aborted) return undefined;
-      return reply(appAnswer(answer, book, libraryId), answer.source || 'live', answer.catalogUrl);
+      return reply(appAnswer(answer, book, libraryId), answer.source || 'live', answer);
     } finally {
       res.off('close', abandon);
     }
   }
 
   // Background check for search results (5.7): NDJSON lines
-  //   {"type":"mark","bookKey":"…","answer":"found","catalogUrl":"…"}   one per found book
+  //   {"type":"mark","bookKey":"…","answer":"found","catalogUrl":"…","catalogLinkKind":"record"}   one per found book
   //   {"type":"done","unchecked":["…"],"notFound":["…"],"couldntCheck":["…"]}   always last
-  // `catalogUrl` is the book's own record in this library's catalog, when the
-  // answer carries one on the library's catalog address (absent otherwise).
+  // `catalogUrl` is the book's own record in this library's catalog, only when
+  // the catalog adapter said the link is that record and it is on the
+  // library's catalog address (absent otherwise, e.g. for a search link);
+  // `catalogLinkKind` is then always "record".
   // `notFound` lists only definite answers: the asked identity is not listed
   // (a work with a complete edition list, or a book asked by its ISBN). A row
   // that did not match is never "not found". `couldntCheck` lists books this
@@ -205,7 +216,9 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
     const sources = new Set();
     // The record address goes out only when the library allows links and it
     // is on the library's own catalog address.
-    const recordLink = value => (library.capabilities?.catalogLink ? onCatalogOrigin(value, library, entry) : undefined);
+    // Only a link the adapter said is the book's own record is sent.
+    const recordLink = item => (library.capabilities?.catalogLink && item.catalogLinkKind === 'record'
+      ? onCatalogOrigin(item.catalogUrl, library, entry) : undefined);
     const finish = outcome => {
       const unchecked = keys.filter(key => !marked.has(key) && !answered.has(key));
       write({ type: 'done', unchecked, notFound: keys.filter(key => answered.has(key)), couldntCheck: unchecked.filter(key => failed.has(key)) });
@@ -263,8 +276,8 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
         const book = byKey.get(item.bookKey);
         if (item.outcome === 'found') {
           marked.add(item.bookKey);
-          const catalogUrl = recordLink(item.catalogUrl);
-          write({ type: 'mark', bookKey: item.bookKey, answer: 'found', ...(catalogUrl ? { catalogUrl } : {}) });
+          const catalogUrl = recordLink(item);
+          write({ type: 'mark', bookKey: item.bookKey, answer: 'found', ...(catalogUrl ? { catalogUrl, catalogLinkKind: 'record' } : {}) });
         } else if (item.outcome === 'not_found' && book && definiteNotFound(item, book, libraryId)) {
           answered.add(item.bookKey);
         }

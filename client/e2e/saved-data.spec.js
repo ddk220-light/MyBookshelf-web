@@ -26,7 +26,7 @@ for (const count of [100, 104]) test('a shelf of ' + count + ' books survives an
   const original = (await shelf(page)).savedBooks;
   const add = page.getByRole('button', { name: 'Add to my reading shelf' });
   await expect(add).toBeDisabled();
-  await expect(add).toHaveAccessibleDescription('Shelf full');
+  await expect(add).toHaveAccessibleDescription('Your reading shelf is full');
   expect((await shelf(page)).savedBooks).toEqual(original);
   await page.reload();
   expect((await shelf(page)).savedBooks.length).toBe(count);

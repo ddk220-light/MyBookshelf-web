@@ -88,7 +88,7 @@ export async function checkPublicAvailability(library, value) {
         const detail = await read(`/api/books/${book.biblio_id}`, deadlineAt);
         records.push(parseIithRecord(detail, isbn, book.biblio_id));
       }
-      if (records.length === 1) return { ...records[0], catalogUrl: `${IITH_CATALOG_ORIGIN}/book/${search.books[0].biblio_id}` };
+      if (records.length === 1) return { ...records[0], catalogUrl: `${IITH_CATALOG_ORIGIN}/book/${search.books[0].biblio_id}`, catalogLinkKind: 'record' };
       const result = { ...exactUnknown(), catalogUrl: IITH_CATALOG_ORIGIN, catalogLinkKind: 'catalog' };
       if (records.every((record) => count(record.totalCopies))) {
         result.totalCopies = records.reduce((sum, record) => sum + record.totalCopies, 0);

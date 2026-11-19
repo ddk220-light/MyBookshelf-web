@@ -14,7 +14,9 @@ const askedByStore = new WeakMap<HoldingsStore, { libraryId: string | null; keys
  * Asks for the chosen library's stored answers for the saved books (plan 3.5,
  * POST /holdings/lookup: database only, no catalog request) and puts them in
  * the in-memory holdings store. Each book is asked about once per library per
- * visit: again only for a newly saved book or after the library changes. Any
+ * visit: again only for a newly saved book, after the library changes, or,
+ * when the reader comes back to the shelf, for a book still without an answer
+ * (a check that finished in the background has stored its answer by then). Any
  * failure leaves the books without an answer: no badge, and never "not found".
  */
 export function useShelfHoldings(libraryId: string | null, books: readonly RecentBook[]) {
@@ -29,6 +31,19 @@ export function useShelfHoldings(libraryId: string | null, books: readonly Recen
     inFlight.current.clear();
     controller.current?.abort();
     controller.current = null;
+  }, []);
+  // Coming back to the shelf (from a book page): a check that had not
+  // answered may have finished since and stored its answer. Ask once more,
+  // once per return, for the books with no answer or "couldn't check".
+  useEffect(() => {
+    const asked = askedByStore.get(store);
+    if (!asked || asked.libraryId !== libraryId) return;
+    for (const key of [...asked.keys]) {
+      const answer = store.get(key);
+      if (answer === undefined || answer === 'unknown' || answer === 'checking') asked.keys.delete(key);
+    }
+    // Only when the shelf is drawn again, not when its books or library change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     if (!libraryId) return;

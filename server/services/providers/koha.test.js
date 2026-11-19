@@ -189,7 +189,7 @@ test('unique ISBN redirect produces exactly two honest reads and shares a cached
   const [first, concurrent] = await Promise.all([
     checkPublicAvailability({ ...library, publicCatalogCapabilities: { titleSearch: true } }, ISBN), checkPublicAvailability({ ...library, publicCatalogCapabilities: { titleSearch: true } }, ISBN),
   ]);
-  assert.deepEqual(first, { ...expected, catalogUrl: RECORD_URL });
+  assert.deepEqual(first, { ...expected, catalogUrl: RECORD_URL, catalogLinkKind: 'record' });
   assert.deepEqual(concurrent, first);
   assert.equal(calls.length, 2);
   assert.equal(new URL(calls[0].url).searchParams.get('idx'), 'nb');

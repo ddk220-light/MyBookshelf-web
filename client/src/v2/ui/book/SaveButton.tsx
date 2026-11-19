@@ -20,6 +20,6 @@ export function SaveButton({ saved, busy, full, popTick, onToggle }: { saved: bo
       disabled={full || busy} aria-describedby={full ? reason : undefined} onClick={event => { if (event.detail === 0) nextFocus.current = 'saved'; onToggle(); }}>
       <PlusGlyph />Add to my reading shelf
     </button>
-    {full && <span id={reason} className="visually-hidden">Shelf full</span>}
+    {full && <span id={reason} className="visually-hidden">Your reading shelf is full</span>}
   </>;
 }

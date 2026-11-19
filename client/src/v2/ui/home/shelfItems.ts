@@ -76,7 +76,9 @@ export function shelfBadge(entry: Pick<ShelfEntry, 'key' | 'kind' | 'foundIn'>, 
   const answer = holdings.get(entry.key);
   if (answer === 'found') return true;
   const library = holdings.libraryId();
-  return Boolean(entry.foundIn && library && entry.foundIn === library) && answer !== 'not_found' && answer !== 'unconfirmed';
+  // Only a definite "not found" here takes a stored "found" away; a check
+  // that could not tell (unconfirmed, unknown) never does.
+  return Boolean(entry.foundIn && library && entry.foundIn === library) && answer !== 'not_found';
 }
 
 export function shelfEntries(savedBooks: readonly RecentBook[], savedContent: readonly SavedContent[]): ShelfEntry[] {

@@ -39,6 +39,18 @@ describe('holdings store', () => {
     store.clear();
     expect(calls).toBe(2);
   });
+
+  it('never lets an unconfirmed or failed check replace a proven answer', () => {
+    const store = createHoldingsStore('lib:a');
+    store.set('lib:a', { 'v1:isbn:1': 'found', 'v1:isbn:2': 'not_found' }, { 'v1:isbn:1': 'https://catalog.example.test/record/1' });
+    store.set('lib:a', { 'v1:isbn:1': 'unconfirmed', 'v1:isbn:2': 'unconfirmed' });
+    store.set('lib:a', { 'v1:isbn:1': 'unknown', 'v1:isbn:2': 'unknown' });
+    expect(store.get('v1:isbn:1')).toBe('found');
+    expect(store.recordUrl('v1:isbn:1')).toBe('https://catalog.example.test/record/1');
+    expect(store.get('v1:isbn:2')).toBe('not_found');
+    store.set('lib:a', { 'v1:isbn:3': 'unconfirmed' });
+    expect(store.get('v1:isbn:3')).toBe('unconfirmed');
+  });
 });
 
 describe('HoldingsProvider', () => {

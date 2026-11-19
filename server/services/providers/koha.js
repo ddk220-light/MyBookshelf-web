@@ -262,7 +262,7 @@ export function parseExpandedKohaCatalogSearch(html, searchUrl) {
     if (!(a.class || '').split(/\s+/).includes('title') || !a.href?.includes('opac-detail.pl')) continue;
     const url = detailUrl(a.href, searchUrl), recordId = url.searchParams.get('biblionumber');
     const title = text(m[2]).slice(0, 500);
-    if (title) books.set(recordId, { recordId, title, authors: [], catalogUrl: url.toString() });
+    if (title) books.set(recordId, { recordId, title, authors: [], catalogUrl: url.toString(), catalogLinkKind: 'record' });
   }
   if (!books.size && !/No results found!/i.test(text(clean))) throw publicError('CATALOG_UNRECOGNIZED', 'Missing catalog search results');
   return [...books.values()].slice(0, 10);
@@ -321,9 +321,9 @@ export async function resolveCatalogRecord(library, recordId, options = {}) {
       .map(field => cleanAuthor(text(field.inside).replace(/^By:\s*/i, '')).slice(0, 240)).filter(Boolean))].slice(0, 20);
     const observation = parseHoldings(clean, { matchKind: 'verified_work', recognizedExact: true }, library);
     if (!title || !observation || (library.kohaBranchCode && !observation.totalCopies)) throw publicError('CATALOG_UNRECOGNIZED', 'Catalog did not confirm this branch’s record');
-    return { recordId, title, authors, isbn, catalogUrl: url.toString(), observation: {
+    return { recordId, title, authors, isbn, catalogUrl: url.toString(), catalogLinkKind: 'record', observation: {
       ...observation, outcome: observation.outcome === 'unknown' && observation.totalCopies > 0 ? 'in_catalog' : observation.outcome,
-      matchKind: 'verified_work', catalogUrl: url.toString() } };
+      matchKind: 'verified_work', catalogUrl: url.toString(), catalogLinkKind: 'record' } };
   }, { deadlineAt });
 }
 
@@ -594,7 +594,7 @@ async function checkPilotAvailability(library, value) {
         const title = recordTitle(record.text);
         records.push({ result: { ...result, ...(title ? { catalogTitle: title } : {}) }, title, identity: recordIdentity(record.text) });
       }
-      if (records.length === 1) return { ...records[0].result, catalogUrl: recordUrls[0].toString() };
+      if (records.length === 1) return { ...records[0].result, catalogUrl: recordUrls[0].toString(), catalogLinkKind: 'record' };
       return { ...combineRecords(records), catalogUrl: searchUrl.toString(), catalogLinkKind: 'search' };
     }, { deadlineAt, shouldCache: (result) => result.outcome !== 'unknown' });
   } catch (error) {
@@ -653,7 +653,7 @@ export async function checkPublicAvailability(library, value) {
       }
       if (!records.length) throw lastError || publicError('CATALOG_UNRECOGNIZED', 'No verified record was retrieved');
       const result = partial ? partialRecords(records.map(row => row.result), library) : records.length === 1 ? records[0].result : combineRecords(records);
-      return recordUrls.length === 1 ? { ...result, catalogUrl: recordUrls[0].toString() }
+      return recordUrls.length === 1 ? { ...result, catalogUrl: recordUrls[0].toString(), catalogLinkKind: 'record' }
         : { ...result, catalogUrl: searchUrl.toString(), catalogLinkKind: 'search' };
     }, { deadlineAt, shouldCache: (result) => result.outcome !== 'unknown' });
   } catch (error) {
@@ -767,7 +767,7 @@ export function parseKohaCatalogSearch(html, searchUrl, limit = 40) {
     const isbn13 = catalogSearchIsbn(markup, recordId, title);
     // The row's own record address (the title link, rebuilt on this catalog's
     // origin by detailUrl), so a result mark can link to the record.
-    records.push({ recordId, title, authors: catalogAuthors(body), ...catalogPublication(body), ...(isbn13 ? { isbn13 } : {}), catalogUrl: url.toString() });
+    records.push({ recordId, title, authors: catalogAuthors(body), ...catalogPublication(body), ...(isbn13 ? { isbn13 } : {}), catalogUrl: url.toString(), catalogLinkKind: 'record' });
   }
   if (!records.length || records.length > Number(count[1])) return null;
   const offset = Number(searchUrl.searchParams.get('offset') || 0);
@@ -785,7 +785,7 @@ async function readCatalogRecord(library, recordId, deadlineAt = catalogDeadline
     const response = await publicRead(url, deadlineAt);
     const record = parseKohaCatalogRecord(response.text, recordId, scope);
     if (!record) throw publicError('CATALOG_UNRECOGNIZED', 'Koha did not prove this catalog record identity');
-    return { ...record, availability: { ...record.availability, catalogUrl: url.toString() } };
+    return { ...record, availability: { ...record.availability, catalogUrl: url.toString(), catalogLinkKind: 'record' } };
   }, { deadlineAt, shouldCache: (record) => record.availability.outcome !== 'unknown' || record.availability.loanRestriction === 'not_for_loan' });
 }
 
@@ -813,7 +813,7 @@ async function searchPilotCatalog(library, query, base, deadlineAt, offset) {
     if (response.status === 302) {
       const selected = detailUrl(response.headers.get('location'), url);
       const record = await readCatalogRecord(library, selected.searchParams.get('biblionumber'), deadlineAt);
-      return { records: [{ ...record.book, catalogUrl: record.availability.catalogUrl }], hasMore: false };
+      return { records: [{ ...record.book, catalogUrl: record.availability.catalogUrl, catalogLinkKind: 'record' }], hasMore: false };
     }
     const results = parseKohaCatalogSearch(response.text, url);
     if (!results) throw publicError('CATALOG_UNRECOGNIZED', 'Koha returned an unrecognized title search');
@@ -853,7 +853,7 @@ export async function searchBookCandidates(library, book) {
     if (response.status === 302) {
       const selected = detailUrl(response.headers.get('location'), url);
       const record = await readCatalogRecord(library, selected.searchParams.get('biblionumber'), deadlineAt);
-      return { records: [{ ...record.book, catalogUrl: record.availability.catalogUrl, observation: record.availability }], hasMore: false };
+      return { records: [{ ...record.book, catalogUrl: record.availability.catalogUrl, catalogLinkKind: 'record', observation: record.availability }], hasMore: false };
     }
     const results = parseKohaCatalogSearch(response.text, url);
     if (!results) throw publicError('CATALOG_UNRECOGNIZED', 'Koha returned an unrecognized title search');
@@ -863,7 +863,7 @@ export async function searchBookCandidates(library, book) {
 
 export async function resolvePublicCatalogRecord(library, recordId) {
   const record = await readCatalogRecord(library, recordId);
-  return { ...record.book, catalogUrl: record.availability.catalogUrl, observation: record.availability };
+  return { ...record.book, catalogUrl: record.availability.catalogUrl, catalogLinkKind: 'record', observation: record.availability };
 }
 
 export async function checkPublicRecordAvailability(library, recordId) {
@@ -896,7 +896,7 @@ export function parseKohaRssSearch(xml, searchUrl) {
       .map(match => validateAndNormalize(firstIsbn(match[1]) || match[1])).filter(Boolean);
     const by = text(unwrap(field('description'))).match(/^By\s+(.+?)(?:\.\s|\.$)/);
     records.push({ recordId, title, authors: by ? [cleanAuthor(by[1])].filter(Boolean) : [], isbns: [...new Set(isbns)],
-      catalogUrl: url.toString() });
+      catalogUrl: url.toString(), catalogLinkKind: 'record' });
   }
   if (Number(total[1]) > 0 && !records.length) return null;
   return { records, hasMore: Number(total[1]) > records.length };

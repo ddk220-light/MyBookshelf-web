@@ -32,7 +32,7 @@ async function prepare(t) {
   assert.ok(['localhost', '127.0.0.1'].includes(url.hostname) && url.pathname.endsWith('_test'), 'a disposable local *_test database only');
   const admin = new Pool({ connectionString, max: 2 });
   await migrateCatalog(admin);
-  assert.equal(await migrateCatalog(admin), 3, 'migrations are idempotent');
+  assert.equal(await migrateCatalog(admin), 4, 'migrations are idempotent');
   const grants = await readFile(new URL('./runtime-grants.sql', import.meta.url), 'utf8');
   // admin/role.integration.test.js changes grants on the same tables at the same time.
   await withTestSetupLock(admin, CATALOG_SETUP_LOCK, async c => {
@@ -60,6 +60,14 @@ test('stored answers: TTL filter, upsert strength, opt-out and no repeat catalog
     { libraryId: 'koha:a', kind: 'ol_work', value: 'OL1W', answer: 'found', evidence: 'work_isbn', matchedIsbn13: '9788173711466' }]);
   const read = await answers.readAnswers('koha:a', [id('isbn13', '9788173711466'), id('isbn13', '9780140328721'), id('ol_work', 'OL1W'), id('ol_work', 'OL2W')]);
   assert.deepEqual(read.map(r => [r.kind, r.value, r.answer]).sort(), [['isbn13', '9780140328721', 'not_found'], ['isbn13', '9788173711466', 'found'], ['ol_work', 'OL1W', 'found']]);
+  // The link keeps where it goes (migration 004); a row without a kind has none.
+  await answers.writeAnswers([row('9780000000002', 'found', 'exact_isbn', { catalogUrl: 'https://c.example/r/2', catalogLinkKind: 'record' }),
+    row('9780000000019', 'found', 'exact_isbn', { catalogUrl: 'https://c.example/search?q=1', catalogLinkKind: 'search' }),
+    row('9780000000026', 'found', 'exact_isbn', { catalogLinkKind: 'record' })]);
+  const kinds = await answers.readAnswers('koha:a', [id('isbn13', '9780000000002'), id('isbn13', '9780000000019'), id('isbn13', '9780000000026'), id('isbn13', '9788173711466')]);
+  assert.deepEqual(kinds.map(r => [r.value, r.catalogUrl, r.catalogLinkKind]).sort(), [['9780000000002', 'https://c.example/r/2', 'record'],
+    ['9780000000019', 'https://c.example/search?q=1', 'search'], ['9780000000026', undefined, undefined], ['9788173711466', 'https://c.example/r/1', undefined]]);
+  await admin.query(`DELETE FROM holdings_answers WHERE identity_value IN ('9780000000002', '9780000000019', '9780000000026')`);
   // Both kinds of answer expire 180 days after the check.
   const { rows: ttl } = await admin.query(`SELECT DISTINCT round(extract(epoch FROM expires_at - checked_at) / 86400) AS days FROM holdings_answers`);
   assert.deepEqual(ttl.map(r => Number(r.days)), [180]);

@@ -418,6 +418,23 @@ function openSession(url, options) {
   return opening;
 }
 
+// Drops this check's session for `url`, so the next step opens a fresh one.
+// eG4 (ASP.NET) runs one request at a time per server session: a step that
+// failed or was abandoned may still be running there, and a later step on the
+// same session would queue behind it.
+function forgetSession(url) {
+  const scope = checkScope();
+  sessions.get(scope)?.delete(url);
+}
+
+// A step that throws leaves its session unusable for the rest of the check.
+function sessionTask(url, task) {
+  return async () => {
+    try { return await task(); }
+    catch (error) { forgetSession(url); throw error; }
+  };
+}
+
 export async function checkAvailability(library, value) {
   const isbn = validateAndNormalize(value);
   if (!isbn) throw providerError('CATALOG_EXACT_ISBN_REQUIRED', 'e-Granthalaya availability requires a valid ISBN');
@@ -440,6 +457,10 @@ export async function checkAvailability(library, value) {
     } catch (error) {
       const timedOut = error.name === 'AbortError' || error.code === 'CATALOG_TIMEOUT';
       if ((error.code !== 'CATALOG_PARTIAL_RESULTS' && !timedOut) || Date.now() >= deadlineAt - 1000) throw error;
+      // The abandoned member search may still hold its server session (its
+      // probe deadline can pass before its own request ends): the fallback
+      // opens a fresh session rather than queue behind it.
+      if (timedOut) forgetSession(url);
     }
     // Member searches can omit shared bibliographic records even when this
     // member owns accessioned copies. Never expose their zero in isolation.
@@ -450,7 +471,7 @@ export async function checkAvailability(library, value) {
   const queries = [...new Set([hyphenatedIsbn(isbn) || isbn, isbn])];
   const deadlineAt = Date.now() + TIMEOUT_MS;
   const key = `availability:egranthalaya:${library.egranthalayaCluster}:${libraryCode}:${isbn}`;
-  return cachedTask(key, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, async () => {
+  return cachedTask(key, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, sessionTask(url, async () => {
     blocked();
     const options = { deadlineAt, maxResponseBytes: MAX_RESPONSE_BYTES, redirect: 'manual', retries: 0 };
     const session = await openSession(url, options);
@@ -482,7 +503,7 @@ export async function checkAvailability(library, value) {
     });
     if (!result) throw providerError('CATALOG_UNRECOGNIZED', 'e-Granthalaya did not prove this library’s exact ISBN availability');
     return result;
-  }, { deadlineAt }), { deadlineAt });
+  }), { deadlineAt }), { deadlineAt });
 }
 
 // An ISBN-13 beginning 978 and its ISBN-10 equivalent share these nine
@@ -528,7 +549,7 @@ function rowAuthor(value) {
 // Record IDs remain tied to that member and are rechecked on opening a book.
 export async function searchCatalog(library, query) {
   const { url, libraryCode } = configuration(library), deadlineAt = Date.now() + TIMEOUT_MS;
-  return cachedTask(`egranthalaya:search:${library.egranthalayaCluster}:${libraryCode}:${query}`, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, async () => {
+  return cachedTask(`egranthalaya:search:${library.egranthalayaCluster}:${libraryCode}:${query}`, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, sessionTask(url, async () => {
     blocked();
     const options = { deadlineAt, maxResponseBytes: MAX_RESPONSE_BYTES, redirect: 'manual', retries: 0 };
     const session = await openSession(url, options);
@@ -555,13 +576,13 @@ export async function searchCatalog(library, query) {
     // This member-scoped search confirms each row's record in this library.
     for (const book of books) await cachedTask(searchRowKey(library, libraryCode, book.recordId), () => book, { ttlMs: SEARCH_ROW_TTL_MS });
     return books;
-  }, { deadlineAt }), { deadlineAt });
+  }), { deadlineAt }), { deadlineAt });
 }
 
 export async function resolveCatalogRecord(library, recordId) {
   if (!/^\d{1,20}$/.test(recordId)) throw providerError('CATALOG_UNRECOGNIZED', 'Invalid catalog record');
   const { url, libraryCode } = configuration(library), deadlineAt = Date.now() + TIMEOUT_MS;
-  return cachedTask(`egranthalaya:record:${library.egranthalayaCluster}:${libraryCode}:${recordId}`, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, async () => {
+  return cachedTask(`egranthalaya:record:${library.egranthalayaCluster}:${libraryCode}:${recordId}`, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, sessionTask(url, async () => {
     blocked();
     const options = { deadlineAt, maxResponseBytes: MAX_RESPONSE_BYTES, redirect: 'manual', retries: 0 };
     const session = await openSession(url, options);
@@ -613,7 +634,7 @@ export async function resolveCatalogRecord(library, recordId) {
       || { outcome: 'in_catalog', locations: [{ name: library.name, status: 'unknown' }] };
     return { recordId, title, authors: [rowAuthor(spanById(html, 'Lbl_AUTHOR'))].filter(Boolean), isbn: firstIsbn(spanById(html, 'Lbl_ISBN')),
       observation: { ...observation, matchKind: 'verified_work', recognizedExact: true } };
-  }, { deadlineAt }), { deadlineAt });
+  }), { deadlineAt }), { deadlineAt });
 }
 
 function isbnQueries(isbn, library) {
@@ -645,7 +666,7 @@ function memberObservation(library, results) {
 // exposed. Never project another member's holdings onto this library.
 async function checkMemberAvailability(library, isbn, { url, libraryCode, deadlineAt }) {
   const key = `availability:egranthalaya:member:${library.egranthalayaCluster}:${libraryCode}:${isbn}`;
-  return cachedTask(key, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, async () => {
+  return cachedTask(key, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, sessionTask(url, async () => {
     blocked();
     // Leave time to return an already confirmed catalog match after a slow detail.
     const options = { deadlineAt: deadlineAt - 1000, maxResponseBytes: MAX_RESPONSE_BYTES, redirect: 'manual', retries: 0 };
@@ -692,7 +713,7 @@ async function checkMemberAvailability(library, isbn, { url, libraryCode, deadli
     }
     if (allEmpty) return { outcome: 'not_found', matchKind: 'none', recognizedExact: true };
     throw providerError('CATALOG_PARTIAL_RESULTS', 'Member search did not confirm the requested ISBN');
-  }, { deadlineAt }), { deadlineAt, ttlMs: 5 * 60_000 });
+  }), { deadlineAt }), { deadlineAt, ttlMs: 5 * 60_000 });
 }
 
 // Inspect shared records when the member index cannot confirm the ISBN. Batch
@@ -709,7 +730,7 @@ export async function checkClusterAvailability(library, value, { deadlineAt = Da
   // the same book reuses this reader-triggered cluster request, never sessions,
   // raw HTML, borrower details, or speculative searches.
   const key = `availability:egranthalaya:cluster:${library.egranthalayaCluster}:${isbn}${stopForMember ? `:member:${libraryCode}` : ''}`;
-  const observation = await cachedTask(key, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, async () => {
+  const observation = await cachedTask(key, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, sessionTask(url, async () => {
     blocked();
     const options = { deadlineAt: deadlineAt - 1000, maxResponseBytes: MAX_RESPONSE_BYTES, redirect: 'manual', retries: 0 };
     const session = await openSession(url, options);
@@ -766,12 +787,13 @@ export async function checkClusterAvailability(library, value, { deadlineAt = Da
         // A later slow or changed page must not erase an already verified holding.
         // Access refusals still invalidate the shared origin immediately.
         if (!records.length || error.code === 'CATALOG_PROVIDER_BLOCKED') throw error;
+        forgetSession(url);
         partial = true;
         break;
       }
     }
     return { libraryCodes, records, allEmpty, partial };
-  }, { deadlineAt }), { deadlineAt, ttlMs: 5 * 60_000,
+  }), { deadlineAt }), { deadlineAt, ttlMs: 5 * 60_000,
     shouldCache: value => !value.partial || (stopForMember && value.records.some(record => record.evidence.holdings.some(row => row.libraryCode === libraryCode))) });
   blocked();
   if (!observation.libraryCodes.includes(libraryCode)) throw providerError('CATALOG_UNRECOGNIZED', 'The library code was not in this public cluster');

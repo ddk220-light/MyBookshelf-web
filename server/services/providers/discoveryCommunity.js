@@ -339,7 +339,7 @@ export async function checkAvailability(library, isbn, title, author) {
     // the scanned edition or its available-copy count.
     return { outcome: 'in_catalog', matchKind: 'possible_match', recognizedExact: false,
       catalogUrl: possible.observation?.catalogUrl || library.catalogUrl,
-      catalogLinkKind: possible.observation?.catalogLinkKind || 'search' };
+      catalogLinkKind: possible.observation?.catalogUrl ? possible.observation.catalogLinkKind || 'search' : 'catalog' };
   }
   if (detailError) throw detailError;
   throw catalogError('The requested edition is not confirmed', 'CATALOG_HOLDING_UNCONFIRMED');
