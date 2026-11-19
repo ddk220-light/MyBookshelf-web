@@ -50,13 +50,12 @@ function slotLabel(pathname: string): string {
 }
 
 /**
- * At rail widths the links to the side pages sit in the rail's pop-overs,
- * which are gone by the time a page closes: the rail button stands in for
- * them (Account for the account pages, Help for the others).
+ * At rail widths the links to the side pages sit in Settings, which is gone
+ * by the time a page closes: the rail's settings gear stands in for them.
  */
 function railButtonFor(root: HTMLElement | null, pathname: string): HTMLElement | null {
-  const menu = /^\/app\/(account\/|settings\/account(\/|$))/.test(pathname) ? 'account' : /^\/app\/(report|privacy|terms|about)$/.test(pathname) ? 'help' : null;
-  return menu ? root?.querySelector<HTMLElement>(`.desk-rail [data-rail="${menu}"]`) || null : null;
+  const fromSettings = /^\/app\/(account\/|settings\/account(\/|$)|report$|privacy$|terms$|about$)/.test(pathname);
+  return fromSettings ? root?.querySelector<HTMLElement>('.desk-rail .desk-settings') || null : null;
 }
 
 function motionAllowed(): boolean {
@@ -165,8 +164,8 @@ export function DeskLayout({ mode, notices, children }: { mode: LayoutMode; noti
   const opener = useRef<HTMLElement | null>(null);
   const noteControl = (event: MouseEvent<HTMLDivElement>) => {
     const control = event.target instanceof Element ? event.target.closest<HTMLElement>('a[href], button') : null;
-    // A link in a rail pop-over goes with the pop-over: its rail button stands in for it.
-    if (control) pressed.current = control.closest('.rail-menu') && root.current?.querySelector<HTMLElement>('.rail-button[aria-expanded="true"]') || control;
+    // A link in Settings goes with Settings: at rail width the gear stands in for it.
+    if (control) pressed.current = control.closest('.side-panel') && root.current?.querySelector<HTMLElement>('.desk-rail .desk-settings') || control;
   };
   useLayoutEffect(() => {
     const previous = lastPath.current;
@@ -196,7 +195,8 @@ export function DeskLayout({ mode, notices, children }: { mode: LayoutMode; noti
     const target = opener.current?.isConnected ? opener.current
       : root.current?.querySelector<HTMLElement>(`.desk-shelf a[href="${href}"], .desk-column a[href="${href}"]`) || railButtonFor(root.current, previous);
     opener.current = null;
-    requestAnimationFrame(() => { if (target?.isConnected) target.focus({ preventScroll: true }); });
+    // Settings coming back over the shelf (Back to its entry) keeps its own focus.
+    requestAnimationFrame(() => { if (target?.isConnected && !document.querySelector('dialog[open]')) target.focus({ preventScroll: true }); });
   }, [pathname, slotOpen]);
 
   // × , Escape and the shelf beside the page close it: back to where it was

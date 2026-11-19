@@ -172,6 +172,25 @@ describe('library pop-up', () => {
     expect(within(dialog).getByLabelText('City, town or library name')).toHaveFocus();
   });
 
+  // (On a phone the button steps aside while the field has text; at rail and
+  // wide widths it stays beside the field, so this is reachable there.)
+  it('a refused position keeps the typed list and its count', async () => {
+    stubApi();
+    vi.stubGlobal('navigator', Object.assign(Object.create(navigator), { geolocation: { getCurrentPosition: (_ok: PositionCallback, fail: PositionErrorCallback) => fail({ code: 1 } as GeolocationPositionError) } }));
+    renderShelf();
+    const dialog = await openFromPanel();
+    fireEvent.change(within(dialog).getByLabelText('City, town or library name'), { target: { value: 'Chennai' } });
+    const list = await within(dialog).findByRole('region', { name: 'Libraries' });
+    expect(await within(list).findAllByRole('button')).toHaveLength(2);
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Libraries near me' }));
+    expect(await within(dialog).findByText(/^Location unavailable\./, { selector: 'p:not([role])' })).toBeInTheDocument();
+    // The list the reader typed for is still there, with its count and text.
+    expect(within(within(dialog).getByRole('region', { name: 'Libraries' })).getAllByRole('button').map(row => row.querySelector('.library-row-name')?.textContent))
+      .toEqual([ANNA.name, IIT.name]);
+    expect(dialog.querySelector('.library-count')).toHaveTextContent('2 libraries match');
+    expect(within(dialog).getByLabelText('City, town or library name')).toHaveValue('Chennai');
+  });
+
   it('nothing found: "Request to add" opens the form and nothing is sent before Send request; the text is kept nowhere', async () => {
     const calls = stubApi();
     renderShelf();

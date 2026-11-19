@@ -5,10 +5,7 @@ import { useAccountSession } from '../../auth/AccountSessionProvider';
 import { useLibrary } from '../../context';
 import type { PublicLibrary } from '../../types';
 import { LibraryGlyph, SettingsGlyph } from '../home/homeIcons';
-import { LIBRARY_FIELD, LibraryPicker } from '../library/LibraryPickerDialog';
-import { useReadingLight } from '../readingLightContext';
-
-const LIGHTS = [['daylight', 'Daylight'], ['lamplight', 'Lamplight'], ['ink', 'Ink']] as const;
+import { LIBRARY_FIELD, LibraryPicker, touchScreen } from '../library/LibraryPickerDialog';
 
 /** Accounts switched off or not answering: no account controls at all (as in the side panel). */
 export function useAccountsShown() {
@@ -25,7 +22,7 @@ export function libraryPlace(library: PublicLibrary): string {
 /** What a problem report opened here says about the screen beside it. */
 export type ReportFrom = { reportScreen: ProblemScreen; reportBookKey?: string };
 
-/** The chosen library: icon tile, name, place and Change; with none chosen, Find my library. */
+/** The chosen library: icon tile, name, place and Change library; with none chosen, Find my library. */
 function LibrarySection({ onChange }: { onChange: () => void }) {
   const { library, loadingLibrary } = useLibrary();
   const catalog = library?.capabilities.catalogLink ? webLink(library.catalogUrl) : undefined;
@@ -36,7 +33,7 @@ function LibrarySection({ onChange }: { onChange: () => void }) {
         <span className="desk-library-icon" aria-hidden="true"><LibraryGlyph size={24} strokeWidth={1.8} /></span>
         <span className="desk-library-name"><strong>{catalog ? <a href={catalog} target="_blank" rel="noreferrer" aria-label={library.name + ", opens in a new tab"}>{library.name}</a> : library.name}</strong>{libraryPlace(library) && <span>{libraryPlace(library)}</span>}</span>
       </div>
-      <button type="button" className="desk-link desk-change" aria-label="Change library" onClick={onChange}>Change</button>
+      <button type="button" className="desk-link desk-change" onClick={onChange}>Change library</button>
     </> : loadingLibrary ? <p className="desk-library-loading" role="status">Loading…</p>
       : <button type="button" className="home-button home-button-outline desk-find-library" onClick={onChange}>Find my library</button>}
   </section>;
@@ -54,13 +51,6 @@ export function AccountLinks({ replace, onDone, compact = false }: { replace: bo
   return <div className={'desk-account-buttons' + (compact ? ' is-compact' : '')}>
     <Link className="home-button" to="/app/account/sign-up" replace={replace} onClick={onDone}>Create account</Link>
     <Link className="home-button home-button-outline" to="/app/account/sign-in" replace={replace} onClick={onDone}>Log in</Link>
-  </div>;
-}
-
-export function LightToggle({ labelledBy }: { labelledBy: string }) {
-  const { light, setLight } = useReadingLight();
-  return <div className="light-toggle desk-light-toggle" role="group" aria-labelledby={labelledBy}>
-    {LIGHTS.map(([value, label]) => <button key={value} type="button" aria-pressed={light === value} onClick={() => setLight(value)}>{label}</button>)}
   </div>;
 }
 
@@ -98,7 +88,8 @@ function returnFocusWhenSettled(target: () => HTMLElement | null) {
 /**
  * The library picker in the left column (DeskLibrary board): in place of the
  * library, account and reading light sections, with the shelf still beside
- * it. Escape and × close it; focus starts in the field and goes back to
+ * it. Escape and × close it; focus starts in the field (on a touch screen,
+ * on "Libraries near me", so the keyboard waits for a tap) and goes back to
  * `returnFocus`.
  */
 function ColumnPicker({ onClose, initialQuery, returnFocus }: { onClose: () => void; initialQuery?: string; returnFocus: () => HTMLElement | null }) {
@@ -107,7 +98,7 @@ function ColumnPicker({ onClose, initialQuery, returnFocus }: { onClose: () => v
   const back = useRef(returnFocus);
   back.current = returnFocus;
   useLayoutEffect(() => {
-    ref.current?.querySelector<HTMLElement>(LIBRARY_FIELD)?.focus();
+    ref.current?.querySelector<HTMLElement>(touchScreen() ? '.library-near' : LIBRARY_FIELD)?.focus();
     return () => returnFocusWhenSettled(() => back.current());
     // Focus moves in once, when the picker opens.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -125,8 +116,9 @@ function ColumnPicker({ onClose, initialQuery, returnFocus }: { onClose: () => v
 
 /**
  * The permanent left column at wide widths (DeskShelf board): wordmark, My
- * library, Account (none at all when accounts are switched off), Reading
- * light, and Report a problem / Privacy / About at the bottom. It narrows
+ * library, Account (none at all when accounts are switched off), Settings
+ * (the reading light lives there), and Help / Report a problem / Privacy /
+ * About at the bottom. It narrows
  * while a page is open in the middle slot (DeskBook board) and widens to hold
  * the library picker (DeskLibrary board). Links open their page in the
  * middle slot; with a page already there, they take its place.
@@ -135,19 +127,16 @@ export function DeskColumn({ narrow, picking, onChangeLibrary, onClosePicker, pi
   narrow: boolean; picking: boolean; onChangeLibrary: () => void; onClosePicker: () => void; pickerQuery?: string;
   pickerReturn: () => HTMLElement | null; report: ReportFrom; onSettings: () => void;
 }) {
-  const { shown } = useAccountsShown();
+  const { shown, signedIn } = useAccountsShown();
   return <aside className={'desk-column' + (narrow ? ' is-narrow' : '') + (picking ? ' is-picking' : '')} aria-label="Library and account">
     <p className="desk-wordmark"><a href="/about">MyBookshelf</a></p>
     {picking ? <ColumnPicker onClose={onClosePicker} initialQuery={pickerQuery} returnFocus={pickerReturn} /> : <>
       <LibrarySection onChange={onChangeLibrary} />
       {shown && <section className="desk-section desk-account" aria-labelledby="desk-account-heading">
         <h2 id="desk-account-heading">Account</h2>
+        {!signedIn && <p className="desk-account-line">Keep the same reading shelf on your phone and computer.</p>}
         <AccountLinks replace={narrow} />
       </section>}
-      <section className="desk-section" aria-labelledby="desk-light-heading">
-        <h2 id="desk-light-heading">Reading light</h2>
-        <LightToggle labelledBy="desk-light-heading" />
-      </section>
       <button type="button" className="desk-link desk-settings" aria-haspopup="dialog" onClick={onSettings}><SettingsGlyph size={18} />Settings</button>
     </>}
     <HelpLinks replace={narrow} report={report} />

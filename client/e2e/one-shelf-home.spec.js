@@ -32,6 +32,9 @@ test.describe('One-shelf home', () => {
     const prompt = page.getByRole('region', { name: 'Choose your library' });
     await expect(prompt.getByRole('button', { name: 'Find my library' })).toBeVisible();
     await prompt.getByRole('button', { name: 'Not now' }).click();
+    // The prompt goes and focus moves on to the search bar, not the top of the page.
+    await expect(prompt).toHaveCount(0);
+    await expect(page.getByRole('searchbox', { name: 'Search for a book' })).toBeFocused();
     await page.reload();
     await expect(prompt).toHaveCount(0);
     await page.getByRole('button', { name: 'Settings' }).click();
@@ -116,8 +119,9 @@ test.describe('One-shelf home', () => {
       await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
       order.push(await page.evaluate(() => document.activeElement?.getAttribute('aria-label') || document.activeElement?.textContent?.trim()));
     }
-    const from = order.indexOf('Settings');
-    expect(order.slice(from, from + 4)).toEqual(['Settings', 'MyBookshelf', 'Search for a book', 'Scan a barcode']);
+    // The wordmark, then the gear opposite it (Main board), then the search bar.
+    const from = order.indexOf('MyBookshelf');
+    expect(order.slice(from, from + 4)).toEqual(['MyBookshelf', 'Settings', 'Search for a book', 'Scan a barcode']);
 
     const person = page.getByRole('button', { name: 'Settings' });
     await person.click();
@@ -554,6 +558,88 @@ test.describe('One-shelf scan', () => {
 });
 
 // Accounts switched off (staging): the reader is simply a guest.
+// Review fixes (production-ready release): the Main and PickerTyping boards on a phone.
+test.describe('One-shelf phone details', () => {
+  const MANY = Array.from({ length: 25 }, (_, index) => ({ ...LINKED_LIBRARY, id: 'koha:branch-' + index, name: 'Chennai Branch Library ' + (index + 1) }));
+
+  test('the gear is at the top right, opposite the wordmark; "My library" stands over the library’s name', async ({ page }) => {
+    await setup(page, { saved: [book(1)], libraryId: LINKED_LIBRARY.id });
+    await page.goto('/');
+    await expect(page.locator('.home-library')).toHaveText(LINKED_LIBRARY.name);
+    const wordmark = await page.locator('.home-wordmark').boundingBox();
+    const gear = await page.getByRole('button', { name: 'Settings' }).boundingBox();
+    expect(gear.x).toBeGreaterThan(wordmark.x + wordmark.width);
+    expect(Math.abs((gear.y + gear.height / 2) - (wordmark.y + wordmark.height / 2))).toBeLessThan(4);
+    expect(gear.x + gear.width).toBeGreaterThan(page.viewportSize().width - 24);
+    const caption = page.locator('.home-library-row .home-library-caption');
+    await expect(caption).toHaveText('My library');
+    expect((await caption.boundingBox()).y).toBeLessThan((await page.locator('.home-library').boundingBox()).y);
+    // Never under 12 px.
+    expect(await caption.evaluate(element => parseFloat(getComputedStyle(element).fontSize))).toBeGreaterThanOrEqual(12);
+    expect((await axe(page)).violations).toEqual([]);
+  });
+
+  test('a press shows: the held button gets its inset ring over any hover style', async ({ page }) => {
+    await setup(page, { saved: [book(1)], libraryId: LINKED_LIBRARY.id });
+    await page.goto('/');
+    const change = page.getByRole('button', { name: 'Change library' });
+    await change.hover();
+    await page.mouse.down();
+    expect(await change.evaluate(element => getComputedStyle(element).boxShadow)).toMatch(/inset/);
+    await page.mouse.up();
+    await page.keyboard.press('Escape');
+  });
+
+  test('typing in the library pop-up with the keyboard open: the title, Close, the field and a result stay in view', async ({ page }) => {
+    await setup(page, { saved: [book(1)], libraryId: LINKED_LIBRARY.id });
+    await page.route('**/api/v2/libraries/discover', route => route.fulfill({ json: { libraries: MANY, total: 60, nextOffset: 25 } }));
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Change library' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Change library' });
+    await expect(dialog).toBeVisible();
+    // Before typing: the handle, "Libraries near me" and "Your library now" (PickerResults board).
+    await expect(dialog.locator('.scan-handle')).toBeVisible();
+    await expect(dialog.getByRole('button', { name: 'Libraries near me' })).toBeVisible();
+    await expect(dialog.getByText('Your library now')).toBeVisible();
+    const field = dialog.getByLabel('City, town or library name');
+    await field.click();
+    // The field has focus: they step aside (PickerTyping board shows none of them).
+    await expect(dialog.getByRole('button', { name: 'Libraries near me' })).toBeHidden();
+    await expect(dialog.getByText('Your library now')).toBeHidden();
+    await expect(dialog.locator('.scan-handle')).toBeHidden();
+    await field.fill('Chennai');
+    await expect(dialog.getByRole('region', { name: 'Libraries' }).getByRole('button')).toHaveCount(25);
+    // The keyboard: the visual viewport shrinks to the area above it, as the
+    // sheet's listener sets it (LibraryPickerDialog, useSheetAboveKeyboard).
+    const visible = 460;
+    await dialog.evaluate((element, height) => {
+      element.style.setProperty('--sheet-height', height + 'px');
+      element.style.setProperty('--sheet-lift', (document.documentElement.clientHeight - height) + 'px');
+    }, visible);
+    expect(await dialog.evaluate(element => getComputedStyle(element).overflowY)).toBe('hidden');
+    const inView = async (locator, name) => {
+      const box = await locator.boundingBox();
+      expect(box, name).not.toBeNull();
+      expect(box.y, name).toBeGreaterThanOrEqual(0);
+      expect(box.y + box.height, name).toBeLessThanOrEqual(visible);
+    };
+    await inView(dialog.getByRole('heading', { name: 'Change library' }), 'title');
+    await inView(dialog.getByRole('button', { name: 'Close' }), 'Close');
+    await inView(field, 'field');
+    await inView(dialog.getByRole('region', { name: 'Libraries' }).getByRole('button').first(), 'first result');
+    // Only the list scrolls, and it keeps room for about two rows.
+    const list = dialog.getByRole('region', { name: 'Libraries' });
+    expect((await list.boundingBox()).height).toBeGreaterThanOrEqual(119);
+    expect(await list.evaluate(element => element.scrollHeight > element.clientHeight)).toBe(true);
+    expect(await dialog.evaluate(element => element.scrollTop)).toBe(0);
+    // Cleared and left: they come back.
+    await dialog.getByRole('button', { name: 'Clear' }).click();
+    await dialog.getByRole('heading', { name: 'Change library' }).focus();
+    await expect(dialog.getByRole('button', { name: 'Libraries near me' })).toBeVisible();
+    await expect(dialog.getByText('Your library now')).toBeVisible();
+  });
+});
+
 test.describe('One-shelf with accounts switched off', () => {
   test('no account notice on the home screen and no account buttons in the side panel', async ({ page }) => {
     await setup(page, { saved: [book(1)] });

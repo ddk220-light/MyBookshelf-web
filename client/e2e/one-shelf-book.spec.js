@@ -295,6 +295,11 @@ test.describe('One-shelf library pop-up', () => {
       const dialog = await openFromPanel(page);
       await dialog.getByLabel('City, town or library name').fill('Chennai');
       await expect(dialog.getByRole('button', { name: /Example Public Library/ })).toBeVisible();
+      // On a phone "Libraries near me" steps aside while the field has text or
+      // focus (PickerTyping board); it is back once the field is empty and left.
+      await expect(dialog.getByRole('button', { name: 'Libraries near me' })).toBeHidden();
+      await dialog.getByLabel('City, town or library name').fill('');
+      await dialog.getByLabel('City, town or library name').blur();
       await dialog.getByRole('button', { name: 'Libraries near me' }).click();
       await expect(dialog.getByRole('button', { name: 'Libraries near me' })).toHaveAttribute('aria-pressed', 'true');
       const list = dialog.getByRole('region', { name: 'Nearest first' });
