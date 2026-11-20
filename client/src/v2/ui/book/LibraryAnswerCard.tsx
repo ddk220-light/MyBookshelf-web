@@ -32,7 +32,9 @@ const NOT_MISSING = ' This does not mean the book is missing.';
 /**
  * The sentence under "Couldn’t check right now", true to why the check
  * could not answer. Only a check that ran out of time says the catalog did
- * not answer in time.
+ * not answer in time. `busy` (other checks were already waiting for this
+ * catalog and its turn came too late) never blames the reader. A reader's
+ * check has no request cap, so `budget` gets the general sentence.
  */
 export function unknownDescription(reason?: CheckReason): string {
   switch (reason) {
@@ -41,8 +43,7 @@ export function unknownDescription(reason?: CheckReason): string {
     case 'unsupported':
     case 'unrecognized':
     case 'configuration': return 'We can’t read this library’s catalog for this book yet.' + NOT_MISSING;
-    case 'busy':
-    case 'budget': return 'Too many checks right now. Try again in a minute.';
+    case 'busy': return 'The library’s catalog is busy with other checks. Try again in a minute.' + NOT_MISSING;
     case 'unavailable': return 'The library’s catalog is not answering right now.' + NOT_MISSING;
     default: return 'We couldn’t check the library’s catalog this time.' + NOT_MISSING;
   }

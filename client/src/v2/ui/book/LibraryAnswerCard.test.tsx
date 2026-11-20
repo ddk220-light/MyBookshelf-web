@@ -63,8 +63,10 @@ describe('library answer card', () => {
       ['blocked', 'This library does not allow outside checks of its catalog.' + notMissing],
       ['unsupported', 'We can’t read this library’s catalog for this book yet.' + notMissing],
       ['unrecognized', 'We can’t read this library’s catalog for this book yet.' + notMissing],
-      ['busy', 'Too many checks right now. Try again in a minute.'],
-      ['budget', 'Too many checks right now. Try again in a minute.'],
+      // Other checks were already waiting for this catalog: never the reader's fault.
+      ['busy', 'The library’s catalog is busy with other checks. Try again in a minute.' + notMissing],
+      // A reader's check has no request cap: a request cap never explains it.
+      ['budget', 'We couldn’t check the library’s catalog this time.' + notMissing],
       ['unavailable', 'The library’s catalog is not answering right now.' + notMissing],
       [undefined, 'We couldn’t check the library’s catalog this time.' + notMissing],
     ] as const) {
@@ -73,6 +75,7 @@ describe('library answer card', () => {
       expect(within(card).getByRole('heading')).toHaveTextContent('Couldn’t check right now');
       expect(within(card).getByText(words)).toBeInTheDocument();
       if (reason !== 'timeout') expect(within(card).queryByText(/did not answer in time/)).not.toBeInTheDocument();
+      expect(within(card).queryByText(/Too many checks/)).not.toBeInTheDocument();
       cleanup();
     }
   });

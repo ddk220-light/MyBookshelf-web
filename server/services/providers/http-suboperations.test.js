@@ -211,3 +211,34 @@ test('a book check caps each request (requestTimeoutMs) and carries its deadline
     assert.equal(outer.deadlineAt, started + 5_000);
   });
 });
+
+// 20 November 2026: a host lane runs one request at a time unless the
+// operation allows more (`hostRequests`, a reader's check on a catalog with
+// plain GET searches); first come, first served either way.
+test('a host lane runs one task at a time by default and up to the task\'s own limit when it allows more', async () => {
+  const { enqueueTask } = await import('./http.js');
+  const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+  const run = async (lane, concurrency) => {
+    let active = 0, peak = 0;
+    const order = [];
+    await Promise.all([1, 2, 3, 4].map(n => enqueueTask(lane, async () => {
+      active++; peak = Math.max(peak, active); order.push(n);
+      await sleep(10);
+      active--;
+    }, { concurrency })));
+    return { peak, order };
+  };
+  const single = await run('lane:single');
+  assert.equal(single.peak, 1);
+  assert.deepEqual(single.order, [1, 2, 3, 4]);
+  const pair = await run('lane:pair', 2);
+  assert.equal(pair.peak, 2);
+  assert.deepEqual(pair.order, [1, 2, 3, 4]);
+  // A task past its deadline while waiting is refused without running.
+  let ran = false;
+  const first = enqueueTask('lane:late', () => sleep(30));
+  await assert.rejects(enqueueTask('lane:late', async () => { ran = true; }, { deadlineAt: Date.now() + 5 }));
+  await first;
+  await sleep(5);
+  assert.equal(ran, false);
+});

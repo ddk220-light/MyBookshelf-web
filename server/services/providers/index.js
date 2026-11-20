@@ -64,7 +64,12 @@ function primaryProvider(library) {
       // eight editions in one OR search (koha.checkPublicAvailabilityForIsbns).
       if (!library.publicCatalogCapabilities?.titleSearch) return { ...(library.publicCatalogApi ? {} : { searchCatalog: query => koha.searchCatalog(library, query), resolveCatalogRecord: id => koha.resolveCatalogRecord(library, id),
         checkIsbns: isbns => koha.checkPublicAvailabilityForIsbns(library, isbns), isbn10Lookup: false }), ...marking, checkAvailability: isbn => (library.publicCatalogApi === 'iith-opac-v1' ? iithKoha : koha).checkPublicAvailability(library, isbn) };
+      // Title-search catalogs: the title search and one OR search for up to
+      // eight of the work's ISBNs (both forms of each) run side by side
+      // (libraryBookSearch.js), instead of the title search and then one
+      // search per ISBN form.
       return { ...marking, checkAvailability: (isbn) => koha.checkPublicAvailability(library, isbn),
+        checkIsbns: isbns => koha.checkPublicAvailabilityForIsbns(library, isbns), isbn10Lookup: false,
         searchCatalog: (query, options) => koha.searchPublicCatalog(library, query, options),
         findBookCandidates: book => koha.searchBookCandidates(library, book),
         resolveCatalogRecord: (recordId) => koha.resolvePublicCatalogRecord(library, recordId),

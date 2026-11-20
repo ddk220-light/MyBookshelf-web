@@ -1,8 +1,13 @@
 import { searchLibraryBook, checkBudgetMs } from '../libraryBookSearch.js';
 import { withCatalogOperation } from '../providers/http.js';
 import { normalizeProviderObservation } from './observation.js';
+import { parsePublicBookKey } from '../../public-v2/contracts.js';
 
 const coded = (message, code) => Object.assign(new Error(message), { code });
+// A reader's check (no `maxRequests` in the budget) searches without request,
+// ISBN or record-count caps; an explicit cap is kept for its caller.
+const uncapped = maxRequests => (Number.isFinite(maxRequests) ? { maxRequests }
+  : { maxRequests: Infinity, maxIsbns: Infinity, maxRecords: Infinity, maxTitles: Infinity });
 
 // One catalog check for one book, shared by `/availability` (old and new
 // paths) and `lookupBook`. It returns either `{ response }` (the normalized
@@ -10,12 +15,15 @@ const coded = (message, code) => Object.assign(new Error(message), { code });
 // `{ error, lookupKind, searchSummary? }`. It never turns a failure into an
 // answer: the caller decides how a failure is shown.
 //
-// `budget` is null for the old path (today's behaviour: title-first searches
-// capped by searchLibraryBook, single provider calls uncapped). The lookup
-// layer passes `{ maxRequests, deadlineAt, signal, robots, minIntervalMs, gate, noRetries, requestTimeoutMs }`: the
-// whole check, including single provider calls, then runs inside one catalog
-// operation with that request cap, deadline, pacing and robots policy, and
-// the deadline or the caller's signal cancels any request still in flight.
+// `budget` is null for the old `/availability` path without the lookup layer
+// (searchLibraryBook's own small request caps, no host pacing). The lookup
+// layer passes `{ deadlineAt, signal, robots, minIntervalMs, gate, noRetries,
+// requestTimeoutMs, hostRequests }` and no request cap (a reader's check,
+// owner decision, 20 November 2026): the whole check, including single
+// provider calls, then runs inside one catalog operation with that deadline,
+// the shared host pacing and the robots policy, and the deadline or the
+// caller's signal cancels any request still in flight. A `maxRequests` in the
+// budget (tests, tools) still caps it.
 //
 // A work search reports its best proven match as it goes (`budget.progress`,
 // libraryBookSearch.js). When the deadline arrives before the search has
@@ -34,7 +42,7 @@ export async function runBookCheck({ entry, library, provider, book, bookKey, pa
   }
   const hasProfiles = typeof books?.searchProfile === 'function';
   const progress = budget ? (budget.progress || {}) : null;
-  const run = () => checkWithProfile({ entry, library, provider, book, parsed, ownRecord, lookupKind, editionScope, attemptedAt, profile, workSearch, hasProfiles, budget, progress });
+  const run = () => checkWithProfile({ entry, library, provider, book, parsed, keyed: parsed ?? parsePublicBookKey(bookKey || ''), ownRecord, lookupKind, editionScope, attemptedAt, profile, workSearch, hasProfiles, budget, progress });
   if (!budget) return run();
   // The best proven match so far, as a finished check result, or null.
   const answerWith = observation => {
@@ -82,8 +90,9 @@ async function withBudget(budget, run, lookupKind, proven = () => null, possible
     }, { once: true });
   });
   try {
-    const work = withCatalogOperation({ maxRequests: budget.maxRequests, signal: controller.signal,
+    const work = withCatalogOperation({ maxRequests: budget.maxRequests ?? Infinity, signal: controller.signal,
       robots: budget.robots || null, minIntervalMs: budget.minIntervalMs || 0, gate: budget.gate || null, noRetries: Boolean(budget.noRetries),
+      hostRequests: budget.hostRequests || 1,
       ...(budget.requestTimeoutMs > 0 ? { requestTimeoutMs: budget.requestTimeoutMs } : {}),
       ...(Number.isFinite(budget.deadlineAt) ? { deadlineAt: budget.deadlineAt } : {}) }, async operation => {
       current = operation;
@@ -102,6 +111,18 @@ async function withBudget(budget, run, lookupKind, proven = () => null, possible
   }
 }
 
+// Which search produced a find ('isbn', 'title', 'record') and, for an ISBN
+// find, whether the title search alone matched too: for the check's log line
+// only (record.js), so kept off every response, stored answer and client
+// reply (not enumerable).
+const FOUND_BY = new Set(['isbn', 'title', 'record']);
+export function markFoundBy(target, source) {
+  if (!target || !FOUND_BY.has(source?.foundBy)) return target;
+  Object.defineProperty(target, 'foundBy', { value: source.foundBy, enumerable: false, configurable: true });
+  if (typeof source.titleAlsoMatched === 'boolean') Object.defineProperty(target, 'titleAlsoMatched', { value: source.titleAlsoMatched, enumerable: false, configurable: true });
+  return target;
+}
+
 // A work search's observation as the public response (before handoff and
 // attribution). Throws when the observation is not one the app can read.
 function workResponse(observation, { library, entry, attemptedAt }) {
@@ -110,6 +131,7 @@ function workResponse(observation, { library, entry, attemptedAt }) {
     : normalizeProviderObservation(observation, { lookupKind: 'verified_work', attemptedAt, library, entry });
   if (!response) throw coded('Unrecognized catalog observation', 'CATALOG_UNRECOGNIZED');
   response.searchSummary = observation.searchSummary;
+  markFoundBy(response, observation);
   if (observation.matchedBook) response.matchedBook = {
     title: String(observation.matchedBook.title || '').slice(0, 500),
     ...(observation.matchedBook.isbn13 ? { isbn13: observation.matchedBook.isbn13 } : {}),
@@ -117,12 +139,18 @@ function workResponse(observation, { library, entry, attemptedAt }) {
   return response;
 }
 
-async function checkWithProfile({ entry, library, provider, book, parsed, ownRecord, lookupKind, editionScope, attemptedAt, profile, workSearch, hasProfiles, budget, progress }) {
+async function checkWithProfile({ entry, library, provider, book, parsed, keyed, ownRecord, lookupKind, editionScope, attemptedAt, profile, workSearch, hasProfiles, budget, progress }) {
   try {
     if (workSearch) {
+      // Inside the lookup layer the search has no request or candidate caps
+      // of its own: the check's deadline ends it (searchLibraryBook). The
+      // reader's own ISBN is the one in the book key (an ISBN key), never a
+      // work's representative edition: at a catalog with a title search that
+      // cannot OR ISBNs it is the only ISBN asked.
+      const readerIsbn = keyed?.kind === 'isbn' ? keyed.isbn13 : null;
       const observation = await searchLibraryBook(provider, profile, budget
-        ? { timeoutMs: Math.max(1, budget.deadlineAt - Date.now()), maxRequests: budget.maxRequests, ...(progress ? { progress } : {}) }
-        : { timeoutMs: checkBudgetMs(entry) });
+        ? { timeoutMs: Math.max(1, budget.deadlineAt - Date.now()), ...uncapped(budget.maxRequests), readerIsbn, ...(progress ? { progress } : {}) }
+        : { timeoutMs: checkBudgetMs(entry), readerIsbn });
       if (observation.outcome === 'unknown' && !observation.matchKind) {
         return { error: coded('Catalog search incomplete', observation.errorCode), lookupKind: 'verified_work', searchSummary: observation.searchSummary, profile };
       }

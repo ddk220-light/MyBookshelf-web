@@ -269,7 +269,7 @@ test('result marking never resolves catalog record keys (no catalog read outside
   }
 });
 
-test('the book page reads a record key only for its own library, under that library\'s request cap', async () => {
+test('the book page reads a record key only for its own library, inside that library\'s catalog operation (no request cap)', async () => {
   const { app } = harness();
   const resolved = [];
   const original = books.resolve;
@@ -281,10 +281,11 @@ test('the book page reads a record key only for its own library, under that libr
     assert.equal(other.body.answer, 'unknown');
     assert.equal(other.body.reason, 'unsupported');
     assert.deepEqual(resolved, []);
-    // This library's own record: read inside a catalog operation with the platform's book cap.
+    // This library's own record: read inside a catalog operation (its host
+    // slot, pacing and deadline), with no request cap: a reader's tap.
     const own = createCatalogBookKey(vega.id, '7');
     await request(app).post('/api/v2/holdings/check').send({ libraryId: vega.id, bookKey: own });
-    assert.deepEqual(resolved, [{ key: own, cap: UNPACED.vega.book.maxRequests }]);
+    assert.deepEqual(resolved, [{ key: own, cap: Infinity }]);
   } finally {
     books.resolve = original;
   }
@@ -453,4 +454,22 @@ test('a mark never carries a link off the library’s catalog address, or for a 
   url = 'https://rows.example/Record/R1';
   allowLinks = false;
   assert.deepEqual((await marks('matilda two'))[0], { type: 'mark', bookKey: 'v1:openlibrary:OL1W', answer: 'found' });
+});
+
+// 20 November 2026: the library's deadline counts from the reader's tap, so
+// a slow book resolution comes out of it instead of adding to the wait.
+test('the book page answers within the library deadline from the request, however long the book took to resolve', async () => {
+  const { app } = harness({ observe: () => new Promise(() => {}), bookDeadlineMs: 300 });
+  const original = books.resolve;
+  books.resolve = async key => { await new Promise(resolve => setTimeout(resolve, 200)); return original(key); };
+  try {
+    const started = Date.now();
+    const reply = await request(app).post('/api/v2/holdings/check').send({ libraryId: vega.id, bookKey: `v1:isbn:${ISBN_A}` });
+    const waited = Date.now() - started;
+    assert.deepEqual([reply.body.answer, reply.body.reason], ['unknown', 'timeout']);
+    // 300 ms from the request, not 200 ms of resolving plus 300 ms of checking.
+    assert.ok(waited >= 280 && waited < 450, `${waited} ms`);
+  } finally {
+    books.resolve = original;
+  }
 });

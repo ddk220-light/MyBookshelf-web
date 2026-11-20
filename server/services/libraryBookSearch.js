@@ -202,13 +202,23 @@ export function checkBudgetMs() {
   return DEFAULT_CHECK_MS;
 }
 
-// Hard caps on upstream HTTP requests for one check. Catalogs with a
-// structured candidate search (Koha title search, Visakhapatnam) normally use
-// one search plus one or two record reads.
+// Request caps for a search outside the lookup layer: the old `/availability`
+// path for platforms not in CATALOG_LOOKUP_V2 (no shared host pacing there)
+// and tools. A reader's check through the lookup layer has no request, ISBN
+// or record caps (catalog-lookup/check.js; owner decision, 20 November 2026):
+// its deadline and the shared host pacing bound it.
 export const TITLE_FIRST_MAX_REQUESTS = 6;
 export const LEGACY_MAX_REQUESTS = 12;
-// ISBNs per search for catalogs that answer several at once (`checkIsbns`).
+// ISBNs per search for catalogs that answer several at once (`checkIsbns`):
+// the adapters' own limit for one query (koha.js and indcat.js
+// MAX_BATCH_ISBNS), which keeps one search address a sensible length. A work
+// with more editions is asked in several such searches.
 export const BATCH_ISBNS = 8;
+// A title search (legacy branch) that lists more rows than this does not
+// prove absence: several adapters show only their first page or first rows,
+// not always saying so. This is an absence rule, not a request cap: a reader's
+// check still reads every row it was given.
+export const ABSENCE_LIST_ROWS = 6;
 
 // A proven match: the catalog showed this edition, or another edition of the
 // work, by one of the work's ISBNs, its own record or an agreeing title and
@@ -223,9 +233,15 @@ export function provesHolding(item) {
 const rank = value => (value.matchKind === 'possible_match' ? 0 : value.lookupKind === 'title_author' ? 5 : 10)
   + ({ available: 4, in_catalog: 3, none_available: 2, unknown: 1 }[value.outcome] || 0);
 
-// Small, fixed budgets apply even to works with hundreds of known editions.
-// Provider functions retain their own transport deadlines; after this deadline
-// no further requests are scheduled and late results cannot alter the response.
+// The search's ISBN side and title side run side by side from the start, in
+// the order the owner set (runSearch, "The search order"); each side asks one
+// thing at a time, so a check has at most a couple of requests waiting on the
+// host, and every request waits for the host's shared pacing. Inside the lookup layer
+// there is no request, ISBN or record cap: the deadline ends the search
+// (catalog-lookup/check.js). Without the lookup layer the old small caps
+// apply (`maxRequests`, `maxIsbns`, `maxRecords`, `maxTitles`). Provider
+// functions retain their own transport deadlines; after this deadline no
+// further requests are scheduled and late results cannot alter the response.
 //
 // The search ends at the first proven match (plan A2, step 1): the app's answer
 // is "found" either way, so reading on for a copy marked available only costs
@@ -241,23 +257,35 @@ export async function searchLibraryBook(provider, profile, options = {}) {
     // The child scope adds only the cancellation: its cap is what is left of
     // the operation's, and every request still counts against the operation.
     return withCatalogSuboperation({ signal: stop.signal, maxRequests: Math.max(0, operation.maxRequests - operation.requests) }, search => runSearch(provider, profile, {
-      timeoutMs: DEFAULT_CHECK_MS, maxIsbns: 6, maxRecords: titleFirst ? 3 : 6, ...options, maxRequests, titleFirst, operation: search,
+      timeoutMs: DEFAULT_CHECK_MS, maxIsbns: 6, maxRecords: titleFirst ? 3 : 6, maxTitles: 2, ...options, maxRequests, titleFirst, operation: search,
       stop: () => stop.abort() }));
   });
 }
 
-async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, maxRequests, titleFirst, operation, progress = null, stop = () => {} }) {
+async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, maxTitles, maxRequests, titleFirst, operation, progress = null, stop = () => {},
+  readerIsbn = profile.book?.isbn13 }) {
   const deadline = Date.now() + timeoutMs;
-  const summary = { isbnQueries: 0, titleQueries: 0, titleSearches: 0, relatedTitles: 0, recordsChecked: 0, requests: 0, maxRequests,
-    partial: !profile.complete, editionsComplete: profile.complete };
+  // An edition list that could not be read in full (profile.complete false,
+  // including an Open Library failure) leaves the search partial: nothing
+  // found is then "couldn't tell", never absence and never a catalog failure.
+  const summary = { isbnQueries: 0, titleQueries: 0, titleSearches: 0, relatedTitles: 0, recordsChecked: 0, requests: 0,
+    ...(Number.isFinite(maxRequests) ? { maxRequests } : {}), partial: !profile.complete, editionsComplete: profile.complete };
   // A title search the catalog answered, and its rows we could not rule out.
+  const titleRows = [];
   const noteTitleSearch = records => {
     summary.titleSearches++;
     summary.relatedTitles += records.filter(row => relatedRow(row, profile)).length;
+    titleRows.push(...records);
   };
   const positives = [], seen = new Set();
   let provenFound;
   const proven = new Promise(resolve => { provenFound = resolve; });
+  // For the log line: whether the title search alone matched the work (one
+  // of its rows agrees by title and author, or shows a work ISBN): true or
+  // false once a title search has answered, null before.
+  const titleAlsoMatched = () => (summary.titleSearches > 0
+    ? titleRows.some(row => { const match = matchCatalogRecord(row, profile); return Boolean(match && match.matchKind !== 'possible_match'); }) : null);
+  const withFoundBy = item => (item?.foundBy ? { ...item, titleAlsoMatched: item.foundBy === 'isbn' ? titleAlsoMatched() : true } : item);
   const addPositive = item => {
     positives.push(item);
     // A title-and-author match is kept too, so that a deadline arriving first
@@ -267,45 +295,53 @@ async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, m
     }
     if (!provesHolding(item)) return;
     if (progress && (!progress.best || rank(item) > rank(progress.best))) {
-      progress.best = { ...item, searchSummary: { ...summary, requests: operation.requests, partial: true } };
+      progress.best = withFoundBy({ ...item, searchSummary: { ...summary, requests: operation.requests, partial: true } });
     }
     provenFound();
   };
   const searchCandidates = provider.searchBookCandidates || provider.searchCatalog;
-  let failures = profile.expansionFailed ? 1 : 0;
+  let failures = 0;
   let failureCode;
   // A catalog's own failure code wins over CATALOG_INCOMPLETE, which only
-  // means our request cap or row limit ran out (not the catalog's failure).
+  // means a caller's request cap or row limit ran out (never a reader's check,
+  // which has none) and is not the catalog's failure.
   const noteFailure = code => { if (!failureCode || failureCode === 'CATALOG_INCOMPLETE') failureCode = code; };
   let completed = 0;
   const budgetLeft = () => operation.requests < operation.maxRequests;
   const confident = () => positives.some(provesHolding);
-  const attempt = async task => {
-    if (Date.now() >= deadline) { failures++; noteFailure('CATALOG_TIMEOUT'); return null; }
+  // One lookup: its value (null when it failed), and whether this lookup
+  // itself failed (`failed`; the ISBN and title sides run at once, so the
+  // shared failure count cannot tell whose request it was).
+  const attemptWith = async task => {
+    if (Date.now() >= deadline) { failures++; noteFailure('CATALOG_TIMEOUT'); return { value: null, failed: true }; }
     let timer;
     try {
       const value = await Promise.race([Promise.resolve().then(task), new Promise((_, reject) => {
         timer = setTimeout(() => reject(new Error('Catalog search deadline exceeded')), Math.max(1, deadline - Date.now()));
       })]);
       completed++;
-      return value;
+      return { value, failed: false };
     } catch (error) {
       // A catalog that cannot run this kind of lookup has not failed.
-      if (['CATALOG_TITLE_SEARCH_REQUIRED', 'CATALOG_QUERY_UNSUPPORTED'].includes(error?.code)) { summary.partial = true; return null; }
+      if (['CATALOG_TITLE_SEARCH_REQUIRED', 'CATALOG_QUERY_UNSUPPORTED'].includes(error?.code)) { summary.partial = true; return { value: null, failed: false }; }
       failures++;
       if (['CATALOG_REQUEST_BUDGET', 'CATALOG_INCOMPLETE'].includes(error?.code)) failureCode ||= 'CATALOG_INCOMPLETE';
       else noteFailure(/^CATALOG_[A-Z_]+$/.test(error?.code || '') ? error.code
         : /deadline|timeout/i.test(error?.message || '') || error?.name === 'AbortError' ? 'CATALOG_TIMEOUT' : 'CATALOG_UNAVAILABLE');
-      return null;
+      return { value: null, failed: true };
     }
     finally { clearTimeout(timer); }
   };
+  const attempt = async task => (await attemptWith(task)).value;
   // A record or row counts only with its own observation: adapters give one
   // only for this library's records (a member-scoped search row, or a record
   // page that shows this library's or branch's holding; a union catalog's or
   // shared catalog's record held elsewhere has none or fails), for an ISBN
   // and a title-and-author match alike.
-  const addRecord = record => {
+  // `foundBy`: the search that produced the evidence, for the check's log
+  // line only: 'title' (a title-search row), 'record' (a record page opened
+  // from a title-search row) or 'isbn' (an ISBN request).
+  const addRecord = (record, foundBy = 'title') => {
     const match = matchCatalogRecord(record, profile);
     const observation = record?.observation;
     if (!match || !observation || !['available', 'none_available', 'in_catalog', 'unknown'].includes(observation.outcome)) return;
@@ -319,6 +355,7 @@ async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, m
       recognizedExact: !possible,
       catalogUrl: record.catalogUrl || observation.catalogUrl,
       matchedBook: { title: record.title, ...(match.isbn13 ? { isbn13: match.isbn13 } : {}) },
+      foundBy,
     });
   };
   async function byIsbn(isbn) {
@@ -326,22 +363,29 @@ async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, m
     summary.isbnQueries++;
     // Empty metadata prevents adapters from silently substituting their own
     // title fallback for an ISBN whose identity we haven't verified.
-    const result = await attempt(() => provider.checkAvailability(isbn, '', ''));
+    const { value: result, failed } = await attemptWith(() => provider.checkAvailability(isbn, '', ''));
     const legacyPositive = ['available', 'checked_out', 'waitlist'].includes(result?.status);
     if (legacyPositive || (result?.matchKind === 'exact_isbn' && ['available', 'none_available', 'in_catalog', 'unknown'].includes(result.outcome))) {
       const canonical = validateAndNormalize(isbn);
       const kind = canonical === profile.book.isbn13 ? 'exact_isbn' : 'verified_work';
       addPositive({ ...result, ...(legacyPositive ? { outcome: result.status === 'available' ? 'available' : 'none_available',
         totalCopies: result.copies, catalogUrl: result.url } : {}), matchKind: kind, lookupKind: kind,
-        matchedBook: { title: profile.book.title, isbn13: canonical } });
-    } else if (result && !(result.outcome === 'not_found' && result.recognizedExact)) { failures++; noteFailure('CATALOG_UNRECOGNIZED'); }
+        matchedBook: { title: profile.book.title, isbn13: canonical }, foundBy: 'isbn' });
+    } else if (result && !(result.outcome === 'not_found' && result.recognizedExact)) { failures++; noteFailure('CATALOG_UNRECOGNIZED'); return false; }
+    return !failed;
   }
-  async function readRecords(candidates) {
+  async function readRecords(list) {
+    // With no cap on records read, the rows most likely to be the book are
+    // opened first (candidateTier: a row showing a work ISBN, then one whose
+    // title and author agree), so a holding is usually proven by the first
+    // read; every row is still read before nothing found can count.
+    const candidates = titleFirst ? list : list.map((row, index) => ({ row, index, tier: candidateTier(row, profile) || 9 }))
+      .sort((a, b) => a.tier - b.tier || a.index - b.index).map(item => item.row);
     for (const candidate of candidates) {
       if (confident()) break;
       if (seen.has(candidate.recordId)) continue;
       // Where a row shows the record's full title (`rowTitlesReliable`), a row
-      // whose title rules it out is not opened: it would only use up the cap.
+      // whose title rules it out is not opened: it would only cost a request.
       // Rows with a related title already count against absence (relatedRow).
       if (!titleFirst && provider.rowTitlesReliable === true && candidate.title && !titleAgrees(candidate.title, profile)) continue;
       if (candidate.observation) { seen.add(candidate.recordId); addRecord(candidate); continue; }
@@ -356,10 +400,9 @@ async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, m
         break;
       }
       seen.add(candidate.recordId); summary.recordsChecked++;
-      const before = failures;
-      const record = await attempt(() => provider.resolveCatalogRecord?.(candidate.recordId));
-      if (record) addRecord(record);
-      else if (failures === before) { failures++; noteFailure('CATALOG_UNRECOGNIZED'); }
+      const { value: record, failed } = await attemptWith(() => provider.resolveCatalogRecord?.(candidate.recordId));
+      if (record) addRecord(record, 'record');
+      else if (!failed) { failures++; noteFailure('CATALOG_UNRECOGNIZED'); }
     }
   }
   async function byTitle(query) {
@@ -370,128 +413,183 @@ async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, m
     if (response?.hasMore) summary.partial = true;
     if (!Array.isArray(records)) return;
     noteTitleSearch(records);
-    if (records.length > maxRecords) summary.partial = true;
+    // A long list is not used to prove absence: an adapter may have shortened
+    // it without saying so (ABSENCE_LIST_ROWS). Every row is still read.
+    if (records.length > Math.min(maxRecords, ABSENCE_LIST_ROWS)) summary.partial = true;
     await readRecords(records);
   }
+  const ranked = records => records.map((row, index) => ({ ...row, tier: candidateTier(row, profile), index }))
+    .filter(row => row.tier).sort((a, b) => a.tier - b.tier || a.index - b.index);
+
+  // The search order (owner decision, 20 November 2026):
+  //   1. A book reached by ISBN (a scan or an ISBN key): the reader's own ISBN
+  //      and the title-and-author search start together, and the first
+  //      conclusive find ends the check. Where the catalog can OR ISBNs, the
+  //      work's other known editions ride along in that same single ISBN
+  //      request (the reader's ISBN first); never an extra ISBN request.
+  //   2. A book reached by title (a work key): the title-and-author search,
+  //      plus at most one combined ISBN request where the catalog can OR
+  //      ISBNs. Where it cannot, no ISBN search at all.
+  //   3. A catalog without a title search: the ISBNs are the only evidence,
+  //      batched where possible, otherwise one by one (two at a time where
+  //      the catalog allows, platforms.js `requestsInFlight`), as fast as the
+  //      shared host pacing lets.
+  // The absence rule is unchanged (absenceRisk): "not found" needs an answered
+  // title search with no related row; any failed request, the ISBN one
+  // included, leaves the answer "couldn't check". At a catalog with a title
+  // search the editions no ISBN request covered do not make it partial: the
+  // title search is the evidence there, the ISBN request a second look for a
+  // record listed under another title or with a garbled or missing author.
+  // (Anna Centenary, 20 November 2026: the seven Open Library ISBNs of Swami
+  // and Friends, old UK and US editions, were asked one by one, 3.7 s each,
+  // until the deadline; its copy is "Malgudi schooldays", under another ISBN.)
+  const workIsbns = unique([profile.book.isbn13, ...profile.isbns].map(validateAndNormalize)).filter(isbn => isbn && profile.isbns.includes(isbn));
+  const titleSearchable = (titleFirst || typeof searchCandidates === 'function') && (profile.titles || [profile.book?.title]).some(Boolean);
+  // A catalog that answers several ISBNs in one search (`checkIsbns`).
+  const batched = typeof provider.checkIsbns === 'function' && provider.isbnLookup !== false;
+  const own = validateAndNormalize(readerIsbn || '');
+  const searched = new Set();
+  const byIsbns = async group => {
+    if (Date.now() >= deadline) return;
+    summary.isbnQueries++;
+    const result = await attempt(() => provider.checkIsbns(group));
+    if (!result) return;
+    const matched = validateAndNormalize(result.isbn13 || '');
+    if (matched && group.includes(matched) && ['available', 'none_available', 'in_catalog', 'unknown'].includes(result.outcome)) {
+      group.forEach(isbn => searched.add(isbn));
+      const kind = matched === profile.book.isbn13 ? 'exact_isbn' : 'verified_work';
+      addPositive({ ...result, matchKind: kind, lookupKind: kind, recognizedExact: result.recognizedExact !== false,
+        matchedBook: { title: result.catalogTitle || profile.book.title, isbn13: matched }, foundBy: 'isbn' });
+    } else if (result.outcome === 'not_found' && result.recognizedExact && Array.isArray(result.isbns)) {
+      result.isbns.map(validateAndNormalize).forEach(isbn => { if (isbn) searched.add(isbn); });
+    } else { failures++; noteFailure('CATALOG_UNRECOGNIZED'); }
+  };
   // A catalog whose ISBN search already matches both forms of an edition
-  // (`isbn10Lookup: false`) is not asked again for the ISBN-10 form: within a
-  // small request cap that second request would never reach another edition.
-  const identifiers = unique(profile.isbns.flatMap(isbn => [isbn, provider.isbn10Lookup === false ? null : ISBN.parse(isbn)?.isbn10]));
-  const work = (async () => { if (titleFirst) {
-    // Title first: on these catalogs one search shows every candidate's title,
-    // authors and often its ISBN, while an ISBN search only succeeds when the
-    // library recorded that exact ISBN. Lookups run one at a time: requests to
-    // one catalog host are queued, so parallel lookups only delay each other.
-    const mainTitle = title => titleParts(title)[0];
-    const searches = [];
-    for (const title of profile.titles.filter(Boolean)) {
-      if (!searches.some(search => normalize(mainTitle(search.title)) === normalize(mainTitle(title)))) searches.push({ title, author: profile.authors[0] || '' });
+  // (`isbn10Lookup: false`) is not asked again for the ISBN-10 form; a
+  // title-first catalog is asked by ISBN-13 only, as before.
+  const withForms = isbns => (titleFirst ? isbns
+    : unique(isbns.flatMap(isbn => [isbn, provider.isbn10Lookup === false ? null : ISBN.parse(isbn)?.isbn10])));
+  // ISBN requests to send: groups for one combined search each, or single ISBNs.
+  const groups = [];
+  if (batched) {
+    if (titleSearchable) {
+      // (1) and (2): one request, the reader's ISBN first, as many of the
+      // work's editions as one query takes (BATCH_ISBNS).
+      const ride = unique([own, ...workIsbns]).filter(Boolean).slice(0, BATCH_ISBNS);
+      if (ride.length) groups.push(ride);
+    } else {
+      // (3): every edition, in as many queries as their length needs.
+      for (let index = 0; index < workIsbns.length; index += BATCH_ISBNS) groups.push(workIsbns.slice(index, index + BATCH_ISBNS));
     }
-    let candidatesFound = false, searchFailed = false;
-    for (const search of searches.slice(0, 2)) {
-      if (candidatesFound || confident()) break;
-      if (!budgetLeft()) { summary.partial = true; break; }
-      summary.titleQueries++;
-      const before = failures;
-      const response = await attempt(() => provider.findBookCandidates(search));
-      const records = Array.isArray(response) ? response : response?.records;
-      if (failures > before) { searchFailed = true; break; }
-      if (!Array.isArray(records)) continue;
-      noteTitleSearch(records);
-      if (response?.hasMore) summary.partial = true;
-      const ranked = records.map((row, index) => ({ ...row, tier: candidateTier(row, profile), index }))
-        .filter(row => row.tier).sort((a, b) => a.tier - b.tier || a.index - b.index);
-      candidatesFound = ranked.length > 0;
-      await readRecords(ranked);
+  }
+  // (1): the reader's own ISBN only; (2): none; (3): every edition.
+  const perIsbn = batched ? [] : titleSearchable ? (own ? withForms([own]) : []) : withForms(titleFirst ? workIsbns : profile.isbns);
+  async function isbnSide() {
+    if (provider.isbnLookup === false) return;
+    if (batched) {
+      await Promise.all(groups.map(group => {
+        if (confident() || Date.now() >= deadline) return null;
+        if (!budgetLeft()) { summary.partial = true; return null; }
+        return byIsbns(group);
+      }));
+      // Where ISBNs are the only evidence, every edition must be answered.
+      if (!titleSearchable && !confident() && workIsbns.some(isbn => !searched.has(isbn))) summary.partial = true;
+      return;
     }
-    // Fall back to ISBNs (the reader's own edition first) only while nothing
-    // has been found and the request budget allows. A catalog that just failed
-    // the title search gets one ISBN attempt, not a run of likely failures.
-    const isbns = unique([profile.book.isbn13, ...profile.isbns].map(validateAndNormalize)).filter(isbn => isbn && profile.isbns.includes(isbn));
-    const isbnLimit = searchFailed ? 1 : maxIsbns;
-    let tried = 0;
-    for (const isbn of isbns) {
-      if (positives.length || provider.isbnLookup === false || !provider.checkAvailability) break;
-      if (tried >= isbnLimit || !budgetLeft()) { summary.partial = true; break; }
-      if (tried && failures) break;
-      if (Date.now() >= deadline) { failures++; noteFailure('CATALOG_TIMEOUT'); break; }
-      tried++;
-      await byIsbn(isbn);
-    }
-  } else {
-    // A catalog that answers several ISBNs in one search (`checkIsbns`) is
-    // asked about the work's editions in groups (the reader's ISBN first)
-    // instead of one request per edition, which used to stop at a few
-    // editions and leave many-edition books unconfirmed.
-    const batched = typeof provider.checkIsbns === 'function' && provider.isbnLookup !== false;
-    const workIsbns = unique([profile.book.isbn13, ...profile.isbns].map(validateAndNormalize)).filter(isbn => isbn && profile.isbns.includes(isbn));
-    const groups = [];
-    for (let index = 0; batched && index < workIsbns.length; index += BATCH_ISBNS) groups.push(workIsbns.slice(index, index + BATCH_ISBNS));
-    const isbns = batched || provider.isbnLookup === false ? [] : identifiers.slice(0, maxIsbns);
-    // ISBNs that are never asked (a title-only catalog) do not make the search partial.
-    if (!batched && provider.isbnLookup !== false && identifiers.length > isbns.length) summary.partial = true;
-    const searched = new Set();
-    const byIsbns = async group => {
-      if (Date.now() >= deadline) return;
-      summary.isbnQueries++;
-      const result = await attempt(() => provider.checkIsbns(group));
-      if (!result) return;
-      const matched = validateAndNormalize(result.isbn13 || '');
-      if (matched && group.includes(matched) && ['available', 'none_available', 'in_catalog', 'unknown'].includes(result.outcome)) {
-        group.forEach(isbn => searched.add(isbn));
-        const kind = matched === profile.book.isbn13 ? 'exact_isbn' : 'verified_work';
-        addPositive({ ...result, matchKind: kind, lookupKind: kind, recognizedExact: result.recognizedExact !== false,
-          matchedBook: { title: result.catalogTitle || profile.book.title, isbn13: matched } });
-      } else if (result.outcome === 'not_found' && result.recognizedExact && Array.isArray(result.isbns)) {
-        result.isbns.map(validateAndNormalize).forEach(isbn => { if (isbn) searched.add(isbn); });
-      } else { failures++; noteFailure('CATALOG_UNRECOGNIZED'); }
+    if (!provider.checkAvailability) return;
+    const asked = perIsbn.slice(0, maxIsbns);
+    // ISBNs a capped caller never asks make the search partial.
+    if (asked.length < perIsbn.length) summary.partial = true;
+    const queue = [...asked];
+    const isbnFailures = { count: 0 };
+    const worker = async () => {
+      while (queue.length) {
+        if (confident() || Date.now() >= deadline) return;
+        if (!budgetLeft()) { summary.partial = true; return; }
+        // A title-first catalog whose lookups are failing gets no run of
+        // likely failures: one failed ISBN lookup ends its ISBN side.
+        if (titleFirst && isbnFailures.count) { summary.partial = true; return; }
+        const isbn = queue.shift();
+        if (await byIsbn(isbn) === false) isbnFailures.count++;
+      }
     };
-    const isbnTask = index => (batched ? (groups[index] ? byIsbns(groups[index]) : null) : (isbns[index] ? byIsbn(isbns[index]) : null));
+    await Promise.all(Array.from({ length: Math.max(1, Math.min(2, operation.hostRequests || 1)) }, worker));
+    if (queue.length) summary.partial = true;
+  }
+
+  // The title side.
+  async function titleSide() {
+    if (titleFirst) {
+      // On these catalogs one search shows every candidate's title, authors and
+      // often its ISBN; the ISBN side finds an edition listed under another title.
+      const mainTitle = title => titleParts(title)[0];
+      const searches = [];
+      for (const title of profile.titles.filter(Boolean)) {
+        if (!searches.some(search => normalize(mainTitle(search.title)) === normalize(mainTitle(title)))) searches.push({ title, author: profile.authors[0] || '' });
+      }
+      for (const search of searches.slice(0, maxTitles)) {
+        if (confident()) return;
+        if (!budgetLeft()) { summary.partial = true; return; }
+        summary.titleQueries++;
+        const { value: response, failed } = await attemptWith(() => provider.findBookCandidates(search));
+        const records = Array.isArray(response) ? response : response?.records;
+        if (failed) return;
+        if (!Array.isArray(records)) continue;
+        noteTitleSearch(records);
+        if (response?.hasMore) summary.partial = true;
+        const candidates = ranked(records);
+        await readRecords(candidates);
+        if (candidates.length) return;
+      }
+      return;
+    }
     const titles = (profile.titles || []).filter(Boolean);
     const queries = [];
     for (const query of [[titles[0], profile.authors[0]].filter(Boolean).join(' '), titles[0], titles[1]]) {
       if (query && !queries.some(existing => normalize(existing) === normalize(query))) queries.push(query);
     }
-    const steps = Math.max(batched ? groups.length : isbns.length, queries.length);
-    // Start textual recovery early; a missing ISBN must not consume the whole
-    // budget before the library gets a title/author query.
-    await Promise.all([isbnTask(0), queries[0] ? byTitle(queries[0]) : null]);
-    for (let index = 1; index < steps; index++) {
-      if (confident()) break;
-      if (!budgetLeft()) { summary.partial = true; break; }
-      await Promise.all([isbnTask(index), queries[index] ? byTitle(queries[index]) : null]);
+    for (const query of queries) {
+      if (confident()) return;
+      if (!budgetLeft()) { summary.partial = true; return; }
+      await byTitle(query);
     }
-    if (batched && !confident() && workIsbns.some(isbn => !searched.has(isbn))) summary.partial = true;
   }
-  // Before nothing found may be called absence: one more title search with
-  // the plural words made singular, when the title has any. Its rows count
-  // like any title search's (a related row leaves the answer unconfirmed); a
-  // failure or no budget for it leaves the search incomplete.
-  if (positives.length || failures || !completed || absenceRisk(summary, profile)) return;
-  const variant = singularTitleVariant((profile.titles || [])[0] || profile.book?.title);
-  if (!variant) return;
-  if (!budgetLeft() || Date.now() >= deadline) { summary.partial = true; return; }
-  if (!titleFirst) { await byTitle(variant); return; }
-  summary.titleQueries++;
-  const before = failures;
-  const response = await attempt(() => provider.findBookCandidates({ title: variant, author: profile.authors[0] || '' }));
-  const records = Array.isArray(response) ? response : response?.records;
-  if (failures > before) return;
-  if (!Array.isArray(records)) { summary.partial = true; return; }
-  noteTitleSearch(records);
-  if (response?.hasMore) summary.partial = true;
-  await readRecords(records.map((row, index) => ({ ...row, tier: candidateTier(row, profile), index }))
-    .filter(row => row.tier).sort((a, b) => a.tier - b.tier || a.index - b.index));
+
+  const work = (async () => {
+    // Both sides start now; the ISBN side (the reader's own edition first) is
+    // asked first, as one request ahead of the title search.
+    await Promise.all([isbnSide(), titleSide()]);
+    // Before nothing found may be called absence: one more title search with
+    // the plural words made singular, when the title has any. Its rows count
+    // like any title search's (a related row leaves the answer unconfirmed); a
+    // failure or no time for it leaves the search incomplete.
+    if (positives.length || failures || !completed || absenceRisk(summary, profile)) return;
+    const variant = singularTitleVariant((profile.titles || [])[0] || profile.book?.title);
+    if (!variant) return;
+    if (!budgetLeft() || Date.now() >= deadline) { summary.partial = true; return; }
+    if (!titleFirst) { await byTitle(variant); return; }
+    summary.titleQueries++;
+    const { value: response, failed } = await attemptWith(() => provider.findBookCandidates({ title: variant, author: profile.authors[0] || '' }));
+    const records = Array.isArray(response) ? response : response?.records;
+    if (failed) return;
+    if (!Array.isArray(records)) { summary.partial = true; return; }
+    noteTitleSearch(records);
+    if (response?.hasMore) summary.partial = true;
+    await readRecords(ranked(records));
   })();
   work.catch(() => {});
-  // A proven match ends the search at once, even while a paired title search
-  // or another ISBN is still waiting on the catalog; that request is cancelled.
+  // A proven match ends the search at once, even while a title search or an
+  // ISBN search is still waiting on the catalog; that request is cancelled.
   try { await Promise.race([work, proven]); } finally { stop(); }
   summary.requests = operation.requests;
   positives.sort((a, b) => rank(b) - rank(a));
   summary.partial ||= failures > 0;
-  if (positives.length) return { ...positives[0], searchSummary: summary };
-  if (failures || !completed) return { outcome: 'unknown', searchSummary: summary, errorCode: failureCode || 'CATALOG_INCOMPLETE' };
+  if (positives.length) return withFoundBy({ ...positives[0], searchSummary: summary });
+  // Nothing answered: the time ran out first (CATALOG_TIMEOUT), or there was
+  // nothing this catalog could be asked for this book (no title it can search
+  // and no ISBN lookup), which is not the catalog's failure.
+  if (failures || !completed) return { outcome: 'unknown', searchSummary: summary,
+    errorCode: failureCode || (Date.now() >= deadline ? 'CATALOG_TIMEOUT' : 'CATALOG_QUERY_UNSUPPORTED') };
   // Nothing matched. Whether that is "not found" or only "couldn't check" is
   // decided here, where the search knows what it tried (absenceRisk).
   const risk = absenceRisk(summary, profile);

@@ -34,10 +34,12 @@ const PROFILE_WAIT_MS = 10_000;
 // record read, edition profile and any check finishing in the background,
 // ends its work a little before that.
 export const FUNCTION_WORK_MS = 110_000;
-// The reader's answer is due within 60 s of the request (the book's details,
-// its edition profile and the library's 45 s check, catalog-lookup/
-// platforms.js). The app waits a little longer than that (useLibraryAnswer).
-// A check still running then finishes in the background (FUNCTION_WORK_MS).
+// The reader's answer is due within 60 s of the request at the latest. The
+// library's 45 s check (catalog-lookup/platforms.js) counts from the request
+// itself, so the book's details and its edition profile come out of those
+// 45 s and the answer normally arrives by about 45 s; this is the outer limit.
+// The app waits a little longer than that (useLibraryAnswer). A check still
+// running then finishes in the background (FUNCTION_WORK_MS).
 export const CHECK_REPLY_MS = 60_000;
 
 const settleWithin = (promise, ms) => new Promise(resolve => {
@@ -84,8 +86,10 @@ export function appAnswer(answer, book, libraryId) {
 
 // Why an answer is "unknown" or "unconfirmed" (one of outcome.js REASONS), so
 // the app can say what happened: a timeout, a library that does not allow
-// outside checks, a catalog we cannot read yet, too many checks right now.
-// Never sent with "found" or "not found".
+// outside checks, a catalog we cannot read yet, a catalog already busy with
+// other checks. Never sent with "found" or "not found". (`budget`, a request
+// cap running out, belongs to work the app does on its own and never comes
+// from a reader's check.)
 export function answerReason(appValue, answer) {
   if (appValue === 'unconfirmed') return 'unconfirmed';
   if (appValue !== 'unknown') return undefined;
@@ -156,8 +160,11 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
       usage({ kind: 'book_check', libraryId, bookKey, outcome: 'unknown', durationMs: now() - startedAt });
       return undefined;
     }
+    // The catalog's robots.txt is read (once a day per catalog) while the book
+    // is resolved, not after it in front of the first catalog request.
+    if (library.capabilities?.publicAvailability) try { lookup.prepare?.(entry); } catch { /* the check reads it itself */ }
     let resolved = null, metadataFailed = false;
-    // This library's own record is read under its host slot and request cap.
+    // This library's own record is read under its host slot and deadline.
     try { resolved = parsed?.kind === 'catalog' && typeof lookup.readRecord === 'function'
       ? await lookup.readRecord({ library: entry, recordId: parsed.recordId, read: () => books.resolve(bookKey) })
       : await books.resolve(bookKey); } catch { metadataFailed = true; }
@@ -190,7 +197,7 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
     res.on('close', abandon);
     try {
       // The edition profile (Open Library) is resolved here, outside the
-      // catalog lookup, so it never uses a catalog's time or request budget.
+      // catalog lookup, so it never uses a catalog request.
       const profile = book.recordId || metadataFailed ? null
         : await settleWithin(books.searchProfile?.(bookKey, { editionScope: 'work' }), PROFILE_WAIT_MS);
       // A check still running at its deadline answers "unknown" now and
@@ -198,8 +205,11 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
       // (plan A2, step 3). The reader leaving no longer cancels a started check.
       const answer = await lookup.lookupBook({ library: entry, publicLibrary: library, book, ...(profile ? { profile } : {}),
         editionScope: 'work', signal: controller.signal, storedChecked: true, background: store.config?.backgroundChecksEnabled !== false,
-        // The record read and the profile wait came out of the same reply and function time.
-        deadlineAt: startedAt + checkReplyMs, finishBy: startedAt + functionWorkMs });
+        // The library's 45 s counts from the reader's tap (`askedAt`): the
+        // record read, the book's details and the profile wait come out of it,
+        // so the answer is due about 45 s after the request, well inside the
+        // reply limit (CHECK_REPLY_MS) and the app's wait (CHECK_TIMEOUT_MS).
+        askedAt: startedAt, deadlineAt: startedAt + checkReplyMs, finishBy: startedAt + functionWorkMs });
       if (controller.signal.aborted) return undefined;
       return reply(appAnswer(answer, book, libraryId), answer.source || 'live', answer);
     } finally {

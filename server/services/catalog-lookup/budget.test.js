@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createHostGuard, CIRCUIT_OPEN_MS, CIRCUIT_WINDOW_MS } from './budget.js';
-import { PLATFORMS, REQUEST_TIMEOUT_MS, platformFor, hostFor, bookDeadlineMs, backgroundDeadlineMs, lookupV2Platforms, lookupV2Enabled } from './platforms.js';
+import { PLATFORMS, REQUEST_TIMEOUT_MS, platformFor, hostFor, bookDeadlineMs, backgroundDeadlineMs, lookupV2Platforms, lookupV2Enabled, requestsInFlight } from './platforms.js';
 
 test('three failures within ten minutes open a ten-minute circuit; a success closes it', () => {
   let clock = 0;
@@ -52,12 +52,18 @@ test('only one result-marking run per host at a time', () => {
   assert.ok(guard.tryStartMarking('h'));
 });
 
-test('every platform in the directory has a descriptor with bounded budgets', () => {
+test('every platform in the directory has a descriptor: a bounded book deadline with no request cap, and capped result marking', () => {
   for (const id of ['egranthalaya', 'libman', 'indcat', 'koha', 'bc', 'vufind', 'discovery-community', 'discovery-academic', 'calil', 'vega', 'evergreen', 'chamo', 'libsys', 'aspen', 'vpl']) {
     const platform = platformFor({ platform: id });
     assert.ok(platform, id);
-    assert.ok(platform.book.maxRequests > 0 && platform.book.maxRequests <= 15, id);
+    // A reader's own check is bounded by time and the shared host pacing,
+    // not by a request count (owner decision, 20 November 2026).
+    assert.equal(platform.book.maxRequests, undefined, id);
+    assert.ok(platform.perMinute > 0, id);
     assert.ok(platform.book.deadlineMs > 0 && platform.book.deadlineMs <= 60_000, id);
+    // Work the app does on its own keeps its cap.
+    if (platform.results.strategy !== 'none') assert.ok(platform.results.maxRequests > 0 && platform.results.maxRequests <= 15, id);
+    assert.ok(requestsInFlight(platform) >= 1 && requestsInFlight(platform) <= 2, id);
     assert.ok(['search_rows', 'batch_isbn', 'per_isbn', 'none'].includes(platform.results.strategy), id);
     assert.ok(platform.results.deadlineMs <= 30_000, id);
     // "Few requests" means at most three for all nine results.

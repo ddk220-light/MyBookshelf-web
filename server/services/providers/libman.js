@@ -1,16 +1,20 @@
-import { cachedTask, getJson } from './http.js';
+import { cachedTask, candidateLimit, getJson } from './http.js';
 import { catalogError, decode, firstIsbn, text } from './catalogMarkup.js';
 import { validateAndNormalize } from '../isbn.js';
 import { hyphenatedIsbn } from './egranthalaya.js';
 
 const BASE = 'https://libcloud.mastersofterp.in/OPAC_V3';
 const ID = /^[1-9]\d{0,19}$/;
+// Rows, ISBN-search hits and title rows read outside a reader's check (the
+// catalog search screen, result marking). A reader's check uses every row the
+// search returned and reads every one it needs (candidateLimit); its deadline
+// and the shared host pacing bound it.
 const MAX_BOOKS = 10;
 const MAX_DETAILS = 3;
 // Title-search rows carry no ISBN (19 November 2026: TitleNo, Title, AuthName,
 // Publisher, Edition, CallNo, ... and no ISBN field), so a row alone can never
 // prove an edition. The record's own details have it: the rows whose main
-// title is the one searched for are read, a few per search, to add it.
+// title is the one searched for are read to add it.
 const MAX_ROW_DETAILS = 3;
 const DEADLINE_MS = 45_000;
 const count = value => value != null && Number.isInteger(Number(value)) && Number(value) >= 0 ? Number(value) : undefined;
@@ -178,17 +182,19 @@ const outOfBudget = error => ['CATALOG_REQUEST_BUDGET', 'CATALOG_ABORTED'].inclu
 // their record's ISBNs, so a row can prove an edition; a row still without an
 // ISBN is at most a possible match. Reading details stops when the request
 // budget or deadline runs out (result marking allows one search and a few
-// reads): the rows are returned with what was read.
+// reads): the rows are returned with what was read. Rows left out are flagged
+// (`hasMore`), so a shortened list never stands for the whole search.
 export async function searchCatalog(library, query) {
   const deadlineAt = Date.now() + DEADLINE_MS;
   const result = await search(library, query, 'TITLE', deadlineAt);
-  const rows = result.records.slice(0, MAX_BOOKS).map(book => ({ ...book, observation: {
+  const rows = result.records.slice(0, candidateLimit(MAX_BOOKS)).map(book => ({ ...book, observation: {
     outcome: 'in_catalog', matchKind: 'verified_work', recognizedExact: true, catalogUrl: publicUrl(library), catalogLinkKind: 'search',
   } }));
   const wanted = titleKey(query);
+  const details = candidateLimit(MAX_ROW_DETAILS);
   let read = 0;
   for (const row of rows) {
-    if (row.isbn || !wanted || titleKey(row.title) !== wanted || read >= MAX_ROW_DETAILS) continue;
+    if (row.isbn || !wanted || titleKey(row.title) !== wanted || read >= details) continue;
     read += 1;
     try {
       const value = await detail(library, row.recordId, deadlineAt);
@@ -197,7 +203,7 @@ export async function searchCatalog(library, query) {
       if (outOfBudget(error)) break;
     }
   }
-  return rows;
+  return result.records.length > rows.length ? Object.assign(rows, { hasMore: true }) : rows;
 }
 
 export async function resolveCatalogRecord(library, recordId) {
@@ -254,7 +260,7 @@ export async function checkAvailability(library, isbn, title, author) {
         exactSearchComplete = false;
       }
     }
-    for (const record of [...candidates.values()].slice(0, MAX_DETAILS)) {
+    for (const record of [...candidates.values()].slice(0, candidateLimit(MAX_DETAILS))) {
       try {
         const value = await detail(library, record.recordId, deadlineAt);
         // The app answers found / not found: the first record that shows this
@@ -271,8 +277,9 @@ export async function checkAvailability(library, isbn, title, author) {
     const result = await search(library, title, 'TITLE', deadlineAt);
     const matches = result.records.filter(row => titleKey(row.title) === titleKey(title));
     const exactBooks = [];
-    let partial = matches.length > 2;
-    for (const row of matches.slice(0, 2)) {
+    const read = candidateLimit(2);
+    let partial = matches.length > read;
+    for (const row of matches.slice(0, read)) {
       try {
         const value = await detail(library, row.recordId, deadlineAt);
         if (normalized && value.ISBNS.includes(normalized)) exactBooks.push(parseLibmanRecord(value, library, row.recordId, { confirmedMemberRecord: true, matchKind: 'exact_isbn' }));

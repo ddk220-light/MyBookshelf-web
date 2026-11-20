@@ -1,5 +1,5 @@
 import { decode, text, attrs, markupOnly, contents } from './catalogHtml.js';
-import { cachedTask, catalogOperation, getJson, getText, DEFAULT_TIMEOUT_MS } from './http.js';
+import { cachedTask, candidateLimit, catalogOperation, getJson, getText, DEFAULT_TIMEOUT_MS } from './http.js';
 import { normalizeAvailability, notFound, unknown } from './contract.js';
 import { validateAndNormalize } from '../isbn.js';
 import { publicCatalogOrigin } from './publicCatalogOrigin.js';
@@ -374,9 +374,12 @@ function allItemsUrl(html, recordUrl) {
   return urls.size === 1 ? new URL([...urls][0]) : null;
 }
 
+// Records of one ISBN search read outside a reader's check (the old path and
+// tools). A reader's check reads every record link on the results page it
+// received (candidateLimit): the page, not a count, bounds it.
 const MAX_PUBLIC_RECORDS = 8;
 
-function recordsFromSearch(response, searchUrl) {
+function recordsFromSearch(response, searchUrl, limit = candidateLimit(MAX_PUBLIC_RECORDS)) {
   if (response.status === 302) return { urls: [detailUrl(response.headers?.get?.('location'), searchUrl)], complete: true };
   const markup = markupOnly(response.text);
   const partial = incompleteListing(markup, '', {});
@@ -404,8 +407,8 @@ function recordsFromSearch(response, searchUrl) {
       || (count && Number(count[1]) < urls.length)) {
     throw publicError('CATALOG_UNRECOGNIZED', 'Koha did not prove a bounded record listing');
   }
-  return { urls: urls.slice(0, MAX_PUBLIC_RECORDS).map((url) => new URL(url)),
-    complete: !partial && urls.length <= MAX_PUBLIC_RECORDS && (!count || Number(count[1]) === urls.length) };
+  return { urls: urls.slice(0, limit).map((url) => new URL(url)),
+    complete: !partial && urls.length <= limit && (!count || Number(count[1]) === urls.length) };
 }
 
 
@@ -685,11 +688,16 @@ export async function checkPublicAvailability(library, value) {
 // 2026: 2 to 5 s per search at IIM Calcutta and St. Anthony's Shillong).
 // Returns the first record that proves one of the ISBNs and its holding, with
 // `isbn13` naming that ISBN; or not_found with `isbns` (every ISBN searched)
-// when the verified empty results page answers; otherwise throws. The title
-// search catalogs (`titleSearch`) keep their own lookups.
+// when the verified empty results page answers; otherwise throws.
+//
+// The title-search catalogs (`titleSearch`: Anna Centenary, Kalaignar
+// Centenary, Ernakulam) use it too, beside their title search (20 November
+// 2026: Anna Centenary asked each of Swami and Friends' 7 ISBNs twice, 13- and
+// 10-digit, 3.7 s a search, and ran out of its 45 s; the OR search answers for
+// all of them in one request). Their records are read with the same strict
+// branch identity as their single-ISBN check (branchScope).
 export const MAX_BATCH_ISBNS = 8;
 export async function checkPublicAvailabilityForIsbns(library, values) {
-  if (library.publicCatalogCapabilities?.titleSearch) throw publicError('CATALOG_QUERY_UNSUPPORTED', 'This catalog checks one ISBN at a time');
   const isbns = [...new Set((values || []).map((value) => validateAndNormalize(value)).filter(Boolean))].slice(0, MAX_BATCH_ISBNS);
   if (!isbns.length) throw publicError('CATALOG_EXACT_ISBN_REQUIRED', 'Koha availability requires a valid ISBN');
   const base = configuration(library);
@@ -699,8 +707,9 @@ export async function checkPublicAvailabilityForIsbns(library, values) {
     searchUrl.searchParams.append('idx', 'nb');
     searchUrl.searchParams.append('q', value);
   });
-  const deadlineAt = library.publicCatalogTimeoutMs ? catalogDeadline(library) : Date.now() + 60_000;
-  const scope = { ...library, ...(library.kohaStrictBranchIdentity ? branchScope(library) : {}) };
+  const titleSearch = Boolean(library.publicCatalogCapabilities?.titleSearch);
+  const deadlineAt = titleSearch || library.publicCatalogTimeoutMs ? catalogDeadline(library) : Date.now() + 60_000;
+  const scope = titleSearch ? branchScope(library) : { ...library, ...(library.kohaStrictBranchIdentity ? branchScope(library) : {}) };
   try {
     return await cachedTask(`availability:koha:batch:${base.origin}:${library.kohaBranchCode || ''}:${[...isbns].sort().join(',')}`, async () => {
       const search = await publicRead(searchUrl, deadlineAt, { allowRecordSelection: true });

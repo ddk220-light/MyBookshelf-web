@@ -248,6 +248,13 @@ export function libraryCheckEvent({ entry, libraryId, platform, host, book, answ
     // The check went on after the reader had been answered (plan A2, step 3).
     afterReply: Boolean(afterReply),
     bookKeyKind: bookKeyKind(book),
+    // For a find by a work search: the search that produced the evidence
+    // ('isbn' the ISBN request, 'title' a title-search row, 'record' a record
+    // page opened from title rows), and for an ISBN find whether the title
+    // search alone matched too (null when it had not answered yet). Neither
+    // carries a title or an ISBN.
+    foundBy: answer?.outcome === 'found' && ['isbn', 'title', 'record'].includes(answer?.foundBy) ? answer.foundBy : null,
+    titleAlsoMatched: answer?.outcome === 'found' && typeof answer?.titleAlsoMatched === 'boolean' ? answer.titleAlsoMatched : null,
   };
 }
 

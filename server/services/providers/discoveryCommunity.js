@@ -4,6 +4,7 @@ import { validateAndNormalize } from '../isbn.js';
 import { CommunitySession, hiddenFields, jsonResponse } from './communitySession.js';
 import { aggregateObservations, boundedQuery, distinctRecords, fingerprint, markHasMore, markSearchComplete, normalized, observation, parseReplayId, replayId } from './communityRecords.js';
 import { PMB_SCOPES, checkPmbIsbn, resolvePmb, searchPmb } from './communityPmb.js';
+import { candidateLimit } from './http.js';
 
 const FAMILIES = Object.freeze({
   surat: 'https://office.suratmunicipal.org', rmc: 'https://emp.rmc.gov.in', rmrl: 'https://rmrl.in',
@@ -315,9 +316,11 @@ async function sindhiSearch(library, query, session) {
   // another holder is not this library's book; one we could not read leaves
   // the search incomplete.
   const records = [];
-  // Each record is one more request: four fit a check's request cap.
-  let incomplete = ids.length > 4;
-  for (const id of ids.slice(0, 4)) {
+  // Each record is one more request: four outside a reader's check (result
+  // marking, the catalog search screen); a reader's check reads them all.
+  const read = candidateLimit(4);
+  let incomplete = ids.length > read;
+  for (const id of ids.slice(0, read)) {
     try { records.push(await sindhiResolve(library, id, session)); }
     catch (error) {
       if (error.code === 'CATALOG_HOLDING_UNCONFIRMED') continue;
@@ -385,8 +388,9 @@ export async function checkAvailability(library, isbn, title, author) {
   let complete = records.searchComplete === true;
   let detailError;
   if (c.family === 'pmb') {
-    if (records.length > 3) complete = false;
-    for (const item of records.slice(0, 3)) {
+    const read = candidateLimit(3);
+    if (records.length > read) complete = false;
+    for (const item of records.slice(0, read)) {
       try { detailed.push(await resolvePmb(library, item.recordId, deadlineAt)); }
       catch (error) {
         complete = false;

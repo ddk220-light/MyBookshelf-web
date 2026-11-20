@@ -1,4 +1,4 @@
-import { cachedTask, enqueueTask, getText, peekCachedTask } from './http.js';
+import { cachedTask, candidateLimit, enqueueTask, getText, peekCachedTask } from './http.js';
 import { attributes, text, firstIsbn, catalogError } from './catalogMarkup.js';
 import { validateAndNormalize } from '../isbn.js';
 import ISBN from 'isbn3';
@@ -218,7 +218,12 @@ async function search(library, query, isbn = false, deadlineAt = Date.now() + 60
     return parsed;
   }, { deadlineAt }), { deadlineAt });
 }
-export async function searchCatalog(library, query) { return (await search(library, query)).records; }
+// The first result page (ten rows). A search that lists more is flagged
+// (`hasMore`), so the shortened list never stands for the whole search.
+export async function searchCatalog(library, query) {
+  const { records, total } = await search(library, query);
+  return total > records.length ? Object.assign([...records], { hasMore: true }) : records;
+}
 export async function resolveCatalogRecord(library, recordId, expectedIsbn = null, deadlineAt = Date.now() + 60_000, confirmedMemberRecord = false) {
   const code = config(library);
   confirmedMemberRecord ||= peekCachedTask(`indcat:member:${code}:${recordId}`) === true;
@@ -247,7 +252,8 @@ export async function checkAvailability(library, value) {
   // One scoped search covers both forms of the ISBN (isbnQuery).
   const result = await search(library, isbnQuery(isbn), true, deadlineAt);
   let unresolved = false;
-  for (const record of result.records.slice(0, 4)) {
+  // A reader's check opens every record the search listed (candidateLimit).
+  for (const record of result.records.slice(0, candidateLimit(4))) {
     try {
       const resolved = await resolveCatalogRecord(library, record.recordId, isbn, deadlineAt, true);
       if (resolved) return resolved.observation;
@@ -280,7 +286,7 @@ export async function checkAvailabilityForIsbns(library, values) {
   if (result.total === 0) return { outcome: 'not_found', matchKind: 'none', recognizedExact: true, isbns,
     catalogUrl: scopeUrl(config(library)), catalogLinkKind: 'search' };
   let unresolved = false;
-  for (const record of result.records.slice(0, 4)) {
+  for (const record of result.records.slice(0, candidateLimit(4))) {
     try {
       const resolved = await resolveCatalogRecord(library, record.recordId, null, deadlineAt, true);
       const isbn = isbns.find(candidate => resolved.isbn === candidate || resolved.isbns?.includes(candidate));

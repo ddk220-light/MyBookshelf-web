@@ -82,55 +82,86 @@ test('timeouts, refusals, unreadable pages and outages are couldn’t check, nev
   assert.equal(await health.libraryHealth('vega:u'), null);
 });
 
-test('every platform’s book-page check stops at its request cap and reports couldn’t check', async () => {
-  for (const [id, platform] of Object.entries(PLATFORMS)) {
+// Owner decision, 20 November 2026: a reader's own check has no request cap.
+// It ends at its answer or its deadline; the shared host pacing (perMinute)
+// is the only limit on how fast it asks.
+const NO_PACING = Object.fromEntries(Object.entries(PLATFORMS).map(([id, value]) => [id, { ...value, minIntervalMs: 0, perMinute: 0 }]));
+const tick = () => new Promise(resolve => setTimeout(resolve, 1));
+
+test('a reader’s book check on any platform is not stopped by a request count: past 15 requests it ends only at its deadline, as a timeout', async () => {
+  for (const id of Object.keys(PLATFORMS)) {
     let fetches = 0;
-    global.fetch = async url => { fetches++; return response(url, 'page'); };
+    global.fetch = async url => { fetches++; await tick(); return response(url, 'page'); };
     const provider = { checkAvailability: async () => {
       for (let i = 0; ; i++) await getText(`https://catalog.example/${id}/${i}`, { retries: 0 });
     } };
-    const { lookup } = harness({ providerFor: () => provider });
+    const { lookup } = harness({ providerFor: () => provider, platforms: NO_PACING });
     const answer = await lookup.lookupBook({ library: { id: `${id}:lib`, platform: id, catalogUrl: 'https://catalog.example' },
-      book: { bookKey: 'k', isbn13: '9788173711466' }, editionScope: 'exact' });
-    assert.equal(fetches, platform.book.maxRequests, id);
-    assert.equal(answer.requests, platform.book.maxRequests, id);
-    assert.deepEqual([answer.outcome, answer.reason], ['couldnt_check', 'budget'], id);
+      book: { bookKey: 'k', isbn13: '9788173711466' }, editionScope: 'exact', deadlineAt: Date.now() + 120 });
+    assert.ok(fetches > 15, `${id}: ${fetches} requests`);
+    assert.ok(answer.requests > 15, `${id}: ${answer.requests}`);
+    assert.deepEqual([answer.outcome, answer.reason], ['couldnt_check', 'timeout'], id);
     clearHttpCache();
   }
 });
 
-test('running out of our own request budget is couldn’t check but never counts against the library’s health', async () => {
+test('a reader’s check that needs more than 15 requests completes with its answer', async () => {
+  for (const id of ['libman', 'koha', 'indcat', 'egranthalaya', 'discovery-academic']) {
+    let fetches = 0;
+    global.fetch = async url => { fetches++; await tick(); return response(url, 'page'); };
+    const provider = { checkAvailability: async () => {
+      for (let i = 0; i < 20; i++) await getText(`https://catalog.example/${id}/${i}`, { retries: 0 });
+      return { outcome: 'available', matchKind: 'exact_isbn', recognizedExact: true };
+    } };
+    const { lookup } = harness({ providerFor: () => provider, platforms: NO_PACING });
+    const answer = await lookup.lookupBook({ library: { id: `${id}:twenty`, platform: id, catalogUrl: 'https://catalog.example' },
+      book: { bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466' }, editionScope: 'exact' });
+    assert.equal(fetches, 20, id);
+    assert.deepEqual([answer.outcome, answer.requests], ['found', 20], id);
+    clearHttpCache();
+  }
+});
+
+test('the library’s deadline counts from the reader’s tap (askedAt): time spent resolving the book is not added to it', async () => {
+  const provider = { checkAvailability: () => new Promise(() => {}) };
+  const { lookup } = harness({ providerFor: () => provider, platforms: { ...NO_PACING, vega: { ...NO_PACING.vega, book: { deadlineMs: 300 } } } });
+  const library = { id: 'vega:asked', platform: 'vega', catalogUrl: 'https://catalog.example' };
+  // The reader asked 250 ms ago (the book's details took that long): 50 ms are left.
+  const started = Date.now();
+  const answer = await lookup.lookupBook({ library, book: { bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466' }, editionScope: 'exact',
+    askedAt: started - 250, storedChecked: true });
+  const waited = Date.now() - started;
+  assert.deepEqual([answer.outcome, answer.reason], ['couldnt_check', 'timeout']);
+  assert.ok(waited < 200, `${waited} ms`);
+  // Without askedAt the check has its whole deadline from its own start.
+  const full = Date.now();
+  await lookup.lookupBook({ library, book: { bookKey: 'v1:isbn:9780140328721', isbn13: '9780140328721' }, editionScope: 'exact', storedChecked: true });
+  assert.ok(Date.now() - full >= 280, `${Date.now() - full} ms`);
+});
+
+test('a reader’s work search reads every candidate row (more than the old cap) and a check never ends as "budget"', async () => {
   const guard = createHostGuard();
   const health = createMemoryHealthRecord();
-  // Every response is a page the adapter keeps reading past: the cap stops it.
-  global.fetch = async url => response(url, 'page');
-  const provider = { checkAvailability: async () => { for (let i = 0; ; i++) await getText(`https://capped.example/${i}`, { retries: 0 }); } };
-  const library = { id: 'koha:capped', platform: 'koha', catalogUrl: 'https://capped.example' };
-  for (let i = 0; i < 4; i++) {
-    // A fresh instance each time, so the per-minute host cap is not reached.
-    const { lookup, settle } = harness({ providerFor: () => provider, guard, health });
-    const answer = await lookup.lookupBook({ library, book: { bookKey: 'k', isbn13: '9788173711466' }, editionScope: 'exact' });
-    assert.deepEqual([answer.outcome, answer.reason], ['couldnt_check', 'budget']);
-    await settle();
-  }
-  assert.equal(await health.libraryHealth(library.id), null);
-  assert.equal(guard.circuitOpen('capped.example'), false);
-
-  // A title-first catalog whose candidate rows need more record reads than the
-  // budget allows: our cap, not the library's failure.
-  // (Each record names only a given name of the author: a possible match, never a find.)
+  // Twelve rows that each name only a given name of the author: possible
+  // matches, never a find. Every record is read (13 requests with the search,
+  // more than the old cap of 12), and the answer is "couldn't tell".
+  let reads = 0;
+  global.fetch = async url => { await tick(); return response(url, 'page'); };
   const rows = Array.from({ length: 12 }, (_, i) => ({ recordId: String(i), title: 'Wings of Fire', authors: ['Abdul Rahman'] }));
   const titleFirst = { findBookCandidates: async () => { await getText('https://rows.example/search', { retries: 0 }); return rows; },
-    resolveCatalogRecord: async id => { await getText(`https://rows.example/${id}`, { retries: 0 }); return { recordId: id, title: 'Wings of Fire', authors: ['Abdul Rahman'], observation: { outcome: 'available' } }; },
+    resolveCatalogRecord: async id => { reads++; await getText(`https://rows.example/${id}`, { retries: 0 }); return { recordId: id, title: 'Wings of Fire', authors: ['Abdul Rahman'], observation: { outcome: 'available' } }; },
     checkAvailability: async () => { await getText('https://rows.example/isbn', { retries: 0 }); return { outcome: 'not_found', recognizedExact: true }; } };
-  const second = harness({ providerFor: () => titleFirst, guard, health, platforms: { ...UNPACED, koha: { ...UNPACED.koha, book: { ...UNPACED.koha.book, maxRequests: 2 } } } });
+  const second = harness({ providerFor: () => titleFirst, guard, health, platforms: NO_PACING });
   const profile = { book: { isbn13: '9780000000002', title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'] }, isbns: ['9780000000002'],
     titles: ['Wings of Fire'], authors: ['A. P. J. Abdul Kalam'], language: '', complete: true, expansionFailed: false };
   const rowsLibrary = { id: 'koha:rows', platform: 'koha', catalogUrl: 'https://rows.example' };
-  const capped = await second.lookup.lookupBook({ library: rowsLibrary, book: { bookKey: 'v1:openlibrary:OL9W', workId: 'OL9W', title: 'Wings of Fire' }, profile });
-  assert.equal(capped.outcome, 'couldnt_check');
+  const checked = await second.lookup.lookupBook({ library: rowsLibrary, book: { bookKey: 'v1:openlibrary:OL9W', workId: 'OL9W', title: 'Wings of Fire' }, profile });
+  assert.equal(reads, 12);
+  assert.ok(checked.requests > 12, String(checked.requests));
+  assert.deepEqual([checked.outcome, checked.reason], ['couldnt_check', 'unconfirmed']);
   await second.settle();
   assert.equal(await health.libraryHealth(rowsLibrary.id), null);
+  assert.equal(guard.circuitOpen('rows.example'), false);
 
   // A catalog that answers with something unreadable within the budget is
   // still the catalog's failure.
@@ -758,7 +789,18 @@ test('/availability gives the same response on the old and new paths for every o
       const input = { libraryId: publicLibrary.id, bookKey: publicBook.bookKey, editionScope: scope };
       const before = await old.check(input);
       const after = await next.check(input);
-      const clean = value => { const response = strip(value.response); if (response.searchSummary) response.searchSummary = { ...response.searchSummary, requests: 0 }; return response; };
+      // The search's own counters differ by design: the old path keeps its
+      // small caps, the lookup layer has none and may ask two ISBN forms at
+      // once (20 November 2026). What the answer rests on must agree.
+      const clean = value => {
+        const response = strip(value.response);
+        if (response.searchSummary) {
+          const { editionsComplete, absenceProvable, absenceRisk, titleSearches, relatedTitles } = response.searchSummary;
+          response.searchSummary = ['no_match', 'unknown'].includes(response.outcome)
+            ? { editionsComplete, absenceProvable, absenceRisk, titleSearches, relatedTitles } : { editionsComplete };
+        }
+        return response;
+      };
       assert.deepEqual(clean(after), clean(before), `${scope} ${JSON.stringify(observation)}`);
     }
   }
@@ -794,7 +836,8 @@ test('/availability on real saved pages: e-Granthalaya ISBN record, old and new 
   const strip = ({ attemptedAt, observedAt, ...rest }) => rest;
   assert.deepEqual(strip(next.response), strip(old.response));
   assert.ok(['available', 'in_catalog', 'none_available', 'unknown'].includes(old.response.outcome));
-  assert.ok(calls.length - oldCalls <= PLATFORMS.egranthalaya.book.maxRequests);
+  // No request cap on the new path, and no more requests than the old one.
+  assert.ok(calls.length - oldCalls <= oldCalls, `${calls.length - oldCalls} vs ${oldCalls}`);
   await settle();
   if (['available', 'in_catalog', 'none_available'].includes(old.response.outcome)) assert.equal(answers.size(), 1);
 });
@@ -1022,14 +1065,46 @@ test('every book check writes one library_check log line with its reason, never 
     ['library_check', 'found', null, true, 'isbn'],
     ['library_check', 'couldnt_check', 'blocked', false, 'isbn'],
   ]);
-  assert.deepEqual(Object.keys(lines[0]).sort(), ['afterReply', 'bookKeyKind', 'durationMs', 'errorCode', 'event', 'evidence', 'host', 'libraryId', 'lookupKind',
-    'outcome', 'platform', 'reason', 'requests', 'stored'].sort());
+  assert.deepEqual(Object.keys(lines[0]).sort(), ['afterReply', 'bookKeyKind', 'durationMs', 'errorCode', 'event', 'evidence', 'foundBy', 'host', 'libraryId', 'lookupKind',
+    'outcome', 'platform', 'reason', 'requests', 'stored', 'titleAlsoMatched'].sort());
+  // An exact-edition check is not a work search: no search to name.
+  assert.deepEqual([lines[0].foundBy, lines[0].titleAlsoMatched], [null, null]);
   assert.equal(lines[0].evidence, 'exact_isbn');
   assert.equal(lines[0].lookupKind, 'exact_isbn');
   assert.equal(lines[0].host, 'k.example');
   assert.equal(lines[2].errorCode, 'CATALOG_ROBOTS_DISALLOWED');
   const text = JSON.stringify(lines);
   assert.ok(!/Wings|Kalam|9788173711466|OL\d+W/.test(text), 'no title, author, ISBN or work ID');
+});
+
+test('the log line names the search that found the book (foundBy) and whether the title search alone matched, never the book', async () => {
+  const library = { id: 'koha:found-by', platform: 'koha', catalogUrl: 'https://k.example' };
+  const work = { bookKey: 'v1:openlibrary:OL1037811W', workId: 'OL1037811W', title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'] };
+  const profile = profileOf({ isbn13: '9788173711466', isbns: ['9788173711466', '9788173715181'], title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'] });
+  const held = { outcome: 'in_catalog', recognizedExact: true };
+  const run = async provider => {
+    const lines = [];
+    const { lookup } = harness({ providerFor: () => ({ checkAvailability: async () => ({ outcome: 'not_found', matchKind: 'none', recognizedExact: true }), ...provider }),
+      log: line => lines.push(line) });
+    const answer = await lookup.lookupBook({ library, book: work, profile, storedChecked: true });
+    assert.equal(answer.outcome, 'found');
+    assert.equal(Object.keys(answer).includes('foundBy'), false, 'never on the answer itself');
+    return lines.at(-1);
+  };
+  // The combined ISBN request found it; the title search had answered with an unrelated row.
+  const viaIsbn = await run({ checkIsbns: async isbns => { await new Promise(resolve => setTimeout(resolve, 10)); return { ...held, isbn13: isbns[1] }; },
+    searchCatalog: async () => [{ recordId: '1', title: 'Ignited Minds', authors: ['Kalam, A. P. J. Abdul'] }] });
+  assert.deepEqual([viaIsbn.foundBy, viaIsbn.titleAlsoMatched, viaIsbn.bookKeyKind], ['isbn', false, 'work']);
+  // A title-search row with this library's holding.
+  const viaTitle = await run({ checkIsbns: () => new Promise(() => {}),
+    searchCatalog: async () => [{ recordId: '2', title: 'Wings of Fire', authors: ['Kalam, A. P. J. Abdul'], observation: held }] });
+  assert.deepEqual([viaTitle.foundBy, viaTitle.titleAlsoMatched], ['title', true]);
+  // A record page opened from a title-search row.
+  const viaRecord = await run({ checkIsbns: () => new Promise(() => {}),
+    searchCatalog: async () => [{ recordId: '3', title: 'Wings of Fire', authors: ['Kalam, A. P. J. Abdul'] }],
+    resolveCatalogRecord: async id => ({ recordId: id, title: 'Wings of Fire', authors: ['Kalam, A. P. J. Abdul'], observation: held }) });
+  assert.deepEqual([viaRecord.foundBy, viaRecord.titleAlsoMatched], ['record', true]);
+  assert.ok(!/Wings|Kalam|9788173|OL1037811W/.test(JSON.stringify([viaIsbn, viaTitle, viaRecord])));
 });
 
 // --- Title-and-author finds (owner decision, 19 November 2026) ---------------
@@ -1049,8 +1124,9 @@ test('a title-and-author match in this library\'s catalog is found, stored for t
   // The same answer as an ISBN find; only the evidence differs.
   assert.deepEqual([answer.outcome, answer.evidence, answer.matchedIsbn13], ['found', 'title_author', undefined]);
   assert.equal(answer.catalogLinkKind, 'record');
-  // A find ends the check: no ISBN lookup after it.
-  assert.deepEqual(asked, []);
+  // A find ends the check: only the ISBN lookup that started beside the
+  // title search (20 November 2026), nothing after it.
+  assert.ok(asked.length <= 1, asked.join());
   await settle();
   assert.equal(answers.size(), 1);
   const stored = await answers.readAnswers('koha:ta', [{ kind: 'ol_work', value: 'OL1037811W' }, { kind: 'isbn13', value: '9788173711466' }]);

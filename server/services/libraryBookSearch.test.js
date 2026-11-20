@@ -7,16 +7,35 @@ const profile = { book, isbns: [book.isbn13, '9788173715181'], titles: [book.tit
 const miss = { outcome: 'not_found', matchKind: 'none', recognizedExact: true };
 const found = { outcome: 'available', matchKind: 'exact_isbn', recognizedExact: true, catalogUrl: 'https://catalog.example/record/42' };
 
-test('missing scanned ISBN recovers a known edition while title search starts early', async () => {
+test('an ISBN-only catalog: a missing scanned ISBN recovers a known edition, one edition after another', async () => {
   const calls = [];
   const result = await searchLibraryBook({ checkAvailability: async isbn => {
     calls.push(isbn); return isbn === '9788173715181' ? found : miss;
-  }, searchCatalog: async query => { calls.push(query); return []; } }, profile);
+  } }, profile);
   assert.equal(result.outcome, 'available');
   assert.equal(result.matchKind, 'verified_work');
   assert.equal(result.matchedBook.isbn13, '9788173715181');
-  assert.equal(calls[1], 'Wings of Fire A. P. J. Abdul Kalam');
   assert.ok(calls.includes('8173711461'));
+});
+
+test('a catalog with a title search that cannot OR ISBNs: only the reader\'s own ISBN, beside the title search, never the other editions', async () => {
+  const calls = [];
+  const provider = { checkAvailability: async isbn => { calls.push(isbn); return isbn === '9788173715181' ? found : miss; },
+    searchCatalog: async query => { calls.push(query); return []; } };
+  // Asked by ISBN: that ISBN (both forms) and the title searches, together.
+  const result = await searchLibraryBook(provider, profile, { readerIsbn: book.isbn13 });
+  assert.deepEqual(calls.filter(call => /^\d/.test(call)).sort(), ['8173711461', '9788173711466']);
+  assert.ok(calls.slice(0, 2).includes('Wings of Fire A. P. J. Abdul Kalam'), calls.join(' | '));
+  // The other edition is never asked: the title search is the evidence.
+  assert.equal(calls.includes('9788173715181'), false);
+  assert.equal(result.outcome, 'no_match');
+  assert.equal(result.searchSummary.partial, false);
+  // Asked as a work: no ISBN lookup at all.
+  calls.length = 0;
+  const work = await searchLibraryBook(provider, profile, { readerIsbn: null });
+  assert.deepEqual(calls.filter(call => /^\d/.test(call)), []);
+  assert.equal(work.outcome, 'no_match');
+  assert.equal(work.searchSummary.isbnQueries, 0);
 });
 
 test('ISBN-less records survive author order and initials: a title-and-author match is a verified match (owner decision, 19 November 2026)', async () => {
@@ -68,8 +87,9 @@ test('rejects same-name books, other volumes, adaptations, languages, and format
 
 test('examines later hits, reopens durable records once, and retains success across failures', async () => {
   let reopen = 0;
+  // Both rows show the work's title; the first one's record is another book.
   const result = await searchLibraryBook({ checkAvailability: async () => { throw new Error('timeout'); },
-    searchCatalog: async () => [{ recordId: 'wrong', title: 'Other' }, { recordId: '42', title: book.title }],
+    searchCatalog: async () => [{ recordId: 'wrong', title: book.title }, { recordId: '42', title: book.title }],
     resolveCatalogRecord: async id => { reopen++; return id === '42'
       ? { title: book.title, isbn: '8173715181', authors: book.authors, observation: found } : { title: 'Other', authors: ['Other'], observation: found }; },
   }, profile);
@@ -180,13 +200,20 @@ test('title-first: one search, then only rows the search does not rule out, best
       return { ...row, isbn: row.isbn13, observation: { outcome: 'available', totalCopies: 3, availableCopies: 3 } }; },
     checkAvailability: async isbn => { calls.push(['isbn', isbn]); return miss; },
   }, kalam);
-  assert.deepEqual(calls, [['search', { title: 'Wings of Fire', author: 'A. P. J. Abdul Kalam' }], ['read', 'known']]);
+  // One title search, at the start; only the row showing the work's ISBN is
+  // opened. The ISBN side starts beside it (20 November 2026) and stops at
+  // the proof: at most one lookup is still running then.
+  assert.deepEqual(calls.filter(([kind]) => kind === 'search'), [['search', { title: 'Wings of Fire', author: 'A. P. J. Abdul Kalam' }]]);
+  assert.ok(calls.slice(0, 2).some(([kind]) => kind === 'search'), JSON.stringify(calls));
+  assert.deepEqual(calls.filter(([kind]) => kind === 'read'), [['read', 'known']]);
+  const proofAt = calls.findIndex(([kind]) => kind === 'read');
+  assert.ok(calls.slice(proofAt + 1).filter(([kind]) => kind === 'isbn').length <= 1, JSON.stringify(calls));
   assert.equal(result.outcome, 'available');
   assert.equal(result.matchKind, 'exact_isbn');
   assert.equal(result.searchSummary.recordsChecked, 1);
 });
 
-test('title-first: similar editions are read once, ISBNs are tried only when the search finds nothing', async () => {
+test('title-first: similar editions are read once, and the ISBN side runs beside the title search', async () => {
   const reads = [], isbns = [];
   const similar = await searchLibraryBook({
     findBookCandidates: async () => [1, 2, 3].map(n => ({ recordId: String(n), title: 'Wings of fire', authors: ['Abdul Kalam, A. P. J'], isbn13: '9788181900050' })),
@@ -194,12 +221,21 @@ test('title-first: similar editions are read once, ISBNs are tried only when the
     checkAvailability: async isbn => { isbns.push(isbn); return miss; },
   }, kalam);
   assert.deepEqual(reads, ['1']);
-  assert.deepEqual(isbns, []);
+  // Only the reader's own ISBN is asked (this catalog cannot OR ISBNs), beside the title search.
+  assert.ok(isbns.every(isbn => isbn === kalam.book.isbn13), isbns.join());
   // Another edition's ISBN, with the work's title and author: a title-and-author find.
   assert.deepEqual([similar.matchKind, similar.lookupKind, similar.outcome], ['verified_work', 'title_author', 'available']);
+  isbns.length = 0;
   const empty = await searchLibraryBook({ findBookCandidates: async () => [], checkAvailability: async isbn => { isbns.push(isbn); return isbn === '9788173715181' ? found : miss; } }, kalam);
-  assert.deepEqual(isbns, ['9788173711466', '9788173715181']);
-  assert.equal(empty.matchKind, 'verified_work');
+  assert.deepEqual(isbns, ['9788173711466']);
+  assert.equal(empty.outcome, 'no_match');
+  // A catalog that can OR ISBNs is asked once for all of the work's editions.
+  const batches = [];
+  const ored = await searchLibraryBook({ findBookCandidates: async () => [],
+    checkIsbns: async group => { batches.push(group); return group.includes('9788173715181') ? { ...found, isbn13: '9788173715181' } : { ...miss, isbns: group }; },
+    checkAvailability: async isbn => { isbns.push(isbn); return miss; } }, kalam);
+  assert.deepEqual(batches, [kalam.isbns]);
+  assert.equal(ored.matchKind, 'verified_work');
   // A search that fails and leaves no evidence is unknown, never "not found".
   const failed = await searchLibraryBook({ findBookCandidates: async () => { throw Object.assign(new Error('x'), { code: 'CATALOG_TIMEOUT' }); }, isbnLookup: false, checkAvailability: async () => miss }, kalam);
   assert.equal(failed.outcome, 'unknown');
@@ -221,7 +257,7 @@ test('hard cap: a check never sends more upstream requests than its budget, and 
   assert.equal(TITLE_FIRST_MAX_REQUESTS, 6);
 });
 
-test('replay, Anna Centenary: 2 requests at 9 s each finish inside the 45 s budget (old flow timed out at 20 s)', async (t) => {
+test('replay, Anna Centenary: the title search and one OR ISBN search side by side, then the record, inside the 45 s budget', async (t) => {
   const library = entry('koha:anna-centenary-library');
   // The saved Anna record 309106 (Universities Press, 1999) carries ISBN
   // 9788181900050; this profile lists that edition.
@@ -232,12 +268,18 @@ test('replay, Anna Centenary: 2 requests at 9 s each finish inside the 45 s budg
   }, { latencyMs: 90 });
   const started = Date.now();
   const result = await searchLibraryBook(getProvider(library), universities, { timeoutMs: checkBudgetMs(library) / 100 });
-  assert.equal(requests.length, 2);
+  // The keyword search and one OR search for the work's ISBNs (both forms of
+  // each) go out together; the matching record is then read: 3 requests at
+  // 9 s each, about 18 s (the old flow asked each ISBN form in turn after it).
+  assert.equal(requests.length, 3);
+  const isbnSearch = requests.map(url => new URL(url)).find(url => url.searchParams.getAll('idx').every(idx => idx === 'nb'));
+  assert.ok(isbnSearch, 'one ISBN search');
+  assert.deepEqual(isbnSearch.searchParams.getAll('q').slice(0, 2), ['9788181900050', '8181900057']);
   assert.ok(Date.now() - started < checkBudgetMs(library) / 100);
   assert.equal(result.matchKind, 'exact_isbn');
   assert.equal(result.outcome, 'available');
   assert.equal(result.availableCopies, 1);
-  assert.equal(result.searchSummary.requests, 2);
+  assert.equal(result.searchSummary.requests, 3);
 });
 
 test('replay, Ernakulam: a title-index search and at most three record reads (was 8–11 requests)', async (t) => {
@@ -328,17 +370,19 @@ test('the first proven match ends the search, even while the paired title search
 test('a possible match does not end the search early; a title-and-author find does, like an ISBN find', async () => {
   const calls = [];
   const weak = { recordId: '42', title: 'Wings of Fire: an autobiography', authors: ['Abdul Rahman'], observation: found };
-  const result = await searchLibraryBook({ checkAvailability: async isbn => { calls.push(isbn); return isbn === '9788173715181' ? found : miss; },
-    searchCatalog: async query => (query === book.title ? [weak] : []) }, profile);
-  // The possible match came first; the later proven ISBN still wins.
+  const result = await searchLibraryBook({ checkIsbns: async group => { calls.push(...group);
+    return group.includes('9788173715181') ? { ...found, isbn13: '9788173715181' } : { ...miss, isbns: group }; },
+  searchCatalog: async query => (query === book.title ? [weak] : []) }, profile);
+  // The possible match came first; the proven ISBN of the combined search still wins.
   assert.deepEqual([result.matchKind, result.lookupKind], ['verified_work', 'verified_work']);
   assert.ok(calls.includes('9788173715181'));
-  // Title first: the agreeing row ends the check; no ISBN is asked after it.
+  // Title first: the agreeing row ends the check; the ISBN lookup that
+  // started beside the title search is the only one.
   const asked = [];
   const strong = { ...weak, authors: ['Kalam, A P J Abdul'] };
   const early = await searchLibraryBook({ findBookCandidates: async () => [strong], checkAvailability: async isbn => { asked.push(isbn); return miss; } }, profile);
   assert.deepEqual([early.matchKind, early.lookupKind, early.outcome], ['verified_work', 'title_author', 'available']);
-  assert.deepEqual(asked, []);
+  assert.ok(asked.length <= 1, asked.join());
 });
 
 test('a title-and-author row counts only with this library\'s own holding: a shared or union catalog row held elsewhere is not a find', async () => {
@@ -374,17 +418,21 @@ test('same title by another author, or with no author: never found and never "no
 
 test('the best proven match is shared through progress, and nothing more is asked after it', async () => {
   const progress = {};
-  let isbnAsked = false;
+  const asked = [];
+  let proved = false;
   const result = await searchLibraryBook({
     findBookCandidates: async () => [{ recordId: '1', title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'], isbn13: book.isbn13 }],
-    resolveCatalogRecord: async id => ({ recordId: id, title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'], isbn13: book.isbn13,
-      catalogUrl: 'https://catalog.example/record/1', observation: { outcome: 'in_catalog', recognizedExact: true } }),
-    checkAvailability: async () => { isbnAsked = true; return miss; },
+    resolveCatalogRecord: async id => { proved = true; return { recordId: id, title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'], isbn13: book.isbn13,
+      catalogUrl: 'https://catalog.example/record/1', observation: { outcome: 'in_catalog', recognizedExact: true } }; },
+    checkAvailability: async isbn => { asked.push({ isbn, afterProof: proved }); return miss; },
   }, profile, { progress });
   assert.equal(result.outcome, 'in_catalog');
   assert.equal(progress.best.matchKind, 'exact_isbn');
   assert.equal(progress.best.catalogUrl, 'https://catalog.example/record/1');
-  assert.equal(isbnAsked, false, 'no ISBN request after the proven record');
+  // The ISBN side ran beside the title search; nothing starts once proven.
+  await new Promise(resolve => setTimeout(resolve, 5));
+  assert.ok(asked.filter(item => item.afterProof).length <= 1, JSON.stringify(asked));
+  assert.ok(asked.length < profile.isbns.length + 1);
 });
 
 import { absenceRisk, relatedRow, transliterationRisk } from './libraryBookSearch.js';
@@ -431,37 +479,55 @@ const manyEditions = Array.from({ length: 11 }, (_, index) => `9788173${String(7
     return twelve + ((10 - sum % 10) % 10);
   });
 
-test('batch ISBN catalogs: editions are asked eight at a time, reader ISBN first, and every group counts as searched', async () => {
+// The search order (owner decision, 20 November 2026), at catalogs that can OR ISBNs.
+test('batch ISBN catalogs with a title search: one ISBN request, the reader\'s ISBN first; the title search decides absence', async () => {
   const work = { ...profile, book: { ...book, isbn13: manyEditions[3] }, isbns: manyEditions };
   const groups = [];
   const provider = { checkAvailability: async () => { throw new Error('single ISBN lookups are not used'); },
     checkIsbns: async isbns => { groups.push(isbns); return { ...miss, isbns }; }, searchCatalog: async () => [] };
-  const result = await searchLibraryBook(provider, work, { timeoutMs: 1_000 });
-  assert.deepEqual(groups.map(group => group.length), [8, 3]);
+  const result = await searchLibraryBook(provider, work, { timeoutMs: 1_000, readerIsbn: manyEditions[3] });
+  // Eight of the eleven editions ride along in the one request; no second one.
+  assert.deepEqual(groups.map(group => group.length), [8]);
   assert.equal(groups[0][0], manyEditions[3]);
-  assert.deepEqual(new Set(groups.flat()), new Set(manyEditions));
-  // 11 editions in 2 requests plus the title searches: the absence rule decides.
+  // The editions no request covered do not make the search partial: the
+  // answered title search with no related row is the evidence.
   assert.equal(result.outcome, 'no_match');
   assert.equal(result.searchSummary.partial, false);
   assert.equal(result.searchSummary.absenceProvable, true);
+  // A work key: still at most the one combined request.
+  groups.length = 0;
+  await searchLibraryBook(provider, work, { timeoutMs: 1_000, readerIsbn: null });
+  assert.deepEqual(groups.map(group => group.length), [8]);
 });
 
-test('batch ISBN catalogs: a record proving another edition is verified_work; editions never asked make the search partial', async () => {
-  const work = { ...profile, isbns: manyEditions, book: { ...book, isbn13: manyEditions[0] } };
+test('batch ISBN catalogs without a title search: every edition, eight to a request, and every group must answer', async () => {
+  const work = { ...profile, book: { ...book, isbn13: manyEditions[3] }, isbns: manyEditions };
+  const groups = [];
+  const result = await searchLibraryBook({ checkIsbns: async isbns => { groups.push(isbns); return { ...miss, isbns }; } }, work, { timeoutMs: 1_000 });
+  assert.deepEqual(groups.map(group => group.length), [8, 3]);
+  assert.equal(groups[0][0], manyEditions[3]);
+  assert.deepEqual(new Set(groups.flat()), new Set(manyEditions));
+  assert.equal(result.searchSummary.partial, false);
+  // Without an answered title search a batch "not found" stays unconfirmed (the absence rule).
+  assert.deepEqual([result.outcome, result.searchSummary.absenceRisk], ['no_match', 'no_title_search']);
   const hit = await searchLibraryBook({ checkIsbns: async isbns => (isbns.includes(manyEditions[9])
-    ? { ...found, isbn13: manyEditions[9], catalogTitle: 'Wings of fire' } : { ...miss, isbns }), searchCatalog: async () => [] }, work, { timeoutMs: 1_000 });
+    ? { ...found, isbn13: manyEditions[9], catalogTitle: 'Wings of fire' } : { ...miss, isbns }) }, work, { timeoutMs: 1_000 });
   assert.deepEqual([hit.outcome, hit.matchKind, hit.matchedBook.isbn13], ['available', 'verified_work', manyEditions[9]]);
-  const exact = await searchLibraryBook({ checkIsbns: async () => ({ ...found, isbn13: manyEditions[0] }), searchCatalog: async () => [] }, work, { timeoutMs: 1_000 });
-  assert.equal(exact.matchKind, 'exact_isbn');
   // A not_found that does not list what it searched proves nothing about those editions.
-  const vague = await searchLibraryBook({ checkIsbns: async isbns => ({ ...miss, isbns: isbns.slice(0, 1) }), searchCatalog: async () => [] }, work, { timeoutMs: 1_000 });
-  assert.equal(vague.outcome, 'no_match');
+  const vague = await searchLibraryBook({ checkIsbns: async isbns => ({ ...miss, isbns: isbns.slice(0, 1) }) }, work, { timeoutMs: 1_000 });
   assert.equal(vague.searchSummary.partial, true);
   assert.equal(vague.searchSummary.absenceProvable, false);
-  // Without an answered title search a batch "not found" stays unconfirmed (the absence rule).
-  const isbnOnly = await searchLibraryBook({ checkIsbns: async isbns => ({ ...miss, isbns }) }, profile, { timeoutMs: 1_000 });
-  assert.deepEqual([isbnOnly.outcome, isbnOnly.searchSummary.absenceRisk], ['no_match', 'no_title_search']);
-  // A batch search the catalog could not answer is a failure, not absence.
+});
+
+test('batch ISBN catalogs: a record proving another edition is verified_work; a failed ISBN request is never absence', async () => {
+  const work = { ...profile, isbns: manyEditions, book: { ...book, isbn13: manyEditions[0] } };
+  const hit = await searchLibraryBook({ checkIsbns: async isbns => (isbns.includes(manyEditions[5])
+    ? { ...found, isbn13: manyEditions[5], catalogTitle: 'Wings of fire' } : { ...miss, isbns }), searchCatalog: async () => [] }, work, { timeoutMs: 1_000 });
+  assert.deepEqual([hit.outcome, hit.matchKind, hit.matchedBook.isbn13], ['available', 'verified_work', manyEditions[5]]);
+  const exact = await searchLibraryBook({ checkIsbns: async () => ({ ...found, isbn13: manyEditions[0] }), searchCatalog: async () => [] }, work, { timeoutMs: 1_000 });
+  assert.equal(exact.matchKind, 'exact_isbn');
+  // A batch search the catalog could not answer is a failure, not absence,
+  // even though the title search answered.
   const failed = await searchLibraryBook({ checkIsbns: async () => { throw Object.assign(new Error('x'), { code: 'CATALOG_UNAVAILABLE' }); }, searchCatalog: async () => [] }, profile, { timeoutMs: 1_000 });
   assert.deepEqual([failed.outcome, failed.errorCode], ['unknown', 'CATALOG_UNAVAILABLE']);
 });
@@ -553,4 +619,21 @@ test('before "not found", a singular-title search runs; a row under that variant
   let calls = 0;
   const failing = await searchLibraryBook({ isbnLookup: false, searchCatalog: async () => { if (++calls > 2) throw Object.assign(new Error('x'), { code: 'CATALOG_UNAVAILABLE' }); return []; } }, verma, { timeoutMs: 1_000 });
   assert.equal(failing.outcome, 'unknown');
+});
+
+// 20 November 2026: the reason follows the real cause. Out of time is a
+// timeout, never "budget"; an edition list that could not be read is
+// "couldn't tell", never a request cap.
+test('a search out of time before it could ask anything is a timeout, and an edition list failure is not a cap', async () => {
+  const late = await searchLibraryBook({ checkAvailability: async () => miss, searchCatalog: async () => [] }, profile, { timeoutMs: 0, readerIsbn: book.isbn13 });
+  assert.equal(late.outcome, 'unknown');
+  assert.equal(late.errorCode, 'CATALOG_TIMEOUT');
+  const failedList = await searchLibraryBook({ checkAvailability: async () => miss, searchCatalog: async () => [] },
+    { ...profile, complete: false, expansionFailed: true }, { readerIsbn: book.isbn13, maxRequests: Infinity, maxIsbns: Infinity, maxRecords: Infinity, maxTitles: Infinity });
+  assert.equal(failedList.outcome, 'no_match');
+  assert.equal(failedList.errorCode, undefined);
+  assert.deepEqual([failedList.searchSummary.partial, failedList.searchSummary.absenceProvable], [true, false]);
+  // Nothing this catalog could be asked (no title, no ISBN lookup): not a cap, not the catalog's failure.
+  const nothing = await searchLibraryBook({ isbnLookup: false, searchCatalog: async () => [] }, { ...profile, titles: [], authors: [], book: { ...book, title: '', authors: [] } }, { readerIsbn: null });
+  assert.equal(nothing.errorCode, 'CATALOG_QUERY_UNSUPPORTED');
 });

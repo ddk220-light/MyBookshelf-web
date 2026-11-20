@@ -3,7 +3,7 @@ import { attributes, catalogError, firstIsbn, text } from './catalogMarkup.js';
 import { CommunitySession, hiddenFields } from './communitySession.js';
 import { aggregateObservations, boundedQuery, distinctRecords, markHasMore, markSearchComplete, normalized, observation } from './communityRecords.js';
 import { isbnMatches } from './contract.js';
-import { cachedTask } from './http.js';
+import { cachedTask, candidateLimit } from './http.js';
 
 const ORIGIN = 'https://mediatheques-afinde.org';
 export const PMB_SCOPES = Object.freeze({ 12: 'Bangalore', 9: 'Bengale', 2: 'Bhopal', 16: 'Bombay', 3: 'Chandigarh',
@@ -177,10 +177,11 @@ export async function checkPmbIsbn(library, isbn13, deadlineAt) {
       found.push(...rows);
     }
     const ids = [...new Set(found.map(row => row.recordId))];
-    if (ids.length > 3) complete = false;
+    const read = candidateLimit(3);
+    if (ids.length > read) complete = false;
     const exact = [];
     let error;
-    for (const id of ids.slice(0, 3)) {
+    for (const id of ids.slice(0, read)) {
       try {
         const record = await resolvePmb(library, id, deadlineAt);
         if (record.isbn && isbnMatches(record.isbn, isbn13)) exact.push(record);

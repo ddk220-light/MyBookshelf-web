@@ -25,11 +25,17 @@ export const REASONS = Object.freeze(['unconfirmed', 'timeout', 'unavailable', '
 // `unconfirmed` and `unsupported` say nothing about the catalog's health. A
 // check the reader cancelled (`cancelled`, an addition to the plan's list) is
 // not the catalog's failure either, nor is a check our own cross-reader host
-// pacing could not fit before its deadline (`busy`, catalog-store/hostGate.js).
-// Running out of our own request budget (`budget`: the platform's cap in
-// platforms.js, or rows left unread under it) is our limit, not the library's
-// failure: it neither counts in the health record nor opens the circuit. A
-// catalog that answered with something unreadable is `unrecognized`.
+// pacing could not fit before its deadline (`busy`, catalog-store/hostGate.js:
+// the host's next turn, after other checks already waiting, was past this
+// check's deadline). A check that ran out of time is `timeout`, whatever
+// part of its time went on the book's details, the edition list or waiting
+// for the host's turn. Running out of a request cap (`budget`) is our limit,
+// not the library's failure: it neither counts in the health record nor
+// opens the circuit. Only work the app does on its own has a request cap
+// (result marking, platforms.js `results`; tools); a reader's book check has
+// none (owner decision, 20 November 2026), so `budget` never reaches the
+// book page. A catalog that answered with something unreadable is
+// `unrecognized`.
 const NOT_HEALTH_FAILURES = new Set(['unconfirmed', 'unsupported', 'cancelled', 'busy', 'budget']);
 export function isHealthFailure(reason) {
   return Boolean(reason) && !NOT_HEALTH_FAILURES.has(reason);
@@ -41,6 +47,8 @@ export function reasonForError(error) {
     case 'CATALOG_ABORTED': return 'cancelled';
     case 'CATALOG_HOST_BUSY': return 'busy';
     case 'CATALOG_TIMEOUT': return 'timeout';
+    // A request cap ran out (CATALOG_REQUEST_BUDGET), or a capped search left
+    // rows or editions unasked (CATALOG_INCOMPLETE): capped work only.
     case 'CATALOG_REQUEST_BUDGET':
     case 'CATALOG_INCOMPLETE': return 'budget';
     case 'CATALOG_PROVIDER_BLOCKED':
@@ -104,8 +112,13 @@ export function answerFromResponse(response, context = {}) {
     else if (matchKind === 'catalog_record' || (matchKind === 'verified_work' && response.lookupKind === 'catalog_record')) evidence = 'catalog_record';
     else if (matchKind === 'exact_isbn') evidence = 'exact_isbn';
     else evidence = matchedIsbn13 ? 'work_isbn' : 'catalog_record';
-    return { outcome: 'found', evidence, ...(matchedIsbn13 && !titleAuthor ? { matchedIsbn13 } : {}),
+    const answer = { outcome: 'found', evidence, ...(matchedIsbn13 && !titleAuthor ? { matchedIsbn13 } : {}),
       ...(context.recordId ? { recordId: context.recordId } : {}), ...extra };
+    // Which search found it, for the log line only (check.js markFoundBy).
+    for (const key of ['foundBy', 'titleAlsoMatched']) {
+      if (response[key] !== undefined) Object.defineProperty(answer, key, { value: response[key], enumerable: false, configurable: true });
+    }
+    return answer;
   }
   if (outcome === 'not_found' && matchKind === 'none' && response.lookupKind === 'exact_isbn') {
     return { outcome: 'not_found', evidence: 'isbn_not_listed', ...extra };

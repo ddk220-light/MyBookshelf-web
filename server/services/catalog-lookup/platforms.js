@@ -16,9 +16,14 @@ export const REQUEST_TIMEOUT_MS = 30_000;
 // One descriptor per catalog platform (plan 5.1, 5.3, 5.4). Numbers are
 // starting points to tune from the health record and the log.
 //
-// book:    the book page check (`lookupBook`): request cap and deadline (45 s
-//          everywhere, BOOK_DEADLINE_MS; CHAMO keeps its reviewed 60 s).
-// results: marking up to nine search results (`markResults`):
+// book:    the book page check (`lookupBook`): its deadline (45 s everywhere,
+//          BOOK_DEADLINE_MS; CHAMO keeps its reviewed 60 s). A reader's own
+//          check has no request cap (owner decision, 20 November 2026: "no
+//          request caps ... only when we are programmatically hitting them"):
+//          it ends at its answer or its deadline, and every request waits for
+//          the host's shared pacing below (`perMinute`, the global cap).
+// results: marking up to nine search results (`markResults`), work the app
+//          starts on its own for a list of books, keeps its request cap:
 //   strategy 'search_rows'  one catalog search with the reader's query; a row
 //                           marks a book only when it shows one of that
 //                           work's ISBNs (rows without ISBNs mark nothing);
@@ -26,7 +31,11 @@ export const REQUEST_TIMEOUT_MS = 30_000;
 //            'per_isbn'     single-ISBN lookups for the top results;
 //            'none'         no result marking: answers come when a book opens.
 // hostConcurrency: lookups allowed at once per catalog host on one instance.
-//   (providers/http.js already sends one request at a time per host.)
+// requestsInFlight: requests one book check may have waiting on its host at
+//   once on this instance (providers/http.js `hostRequests`; default 1, one
+//   request at a time per host). 2 where the catalog answers plain GET
+//   searches with no session (Koha, LIBMAN), so a check's title search and
+//   ISBN search run side by side; session and form catalogs stay at 1.
 // minIntervalMs: spacing between successive requests to the host. Enforced
 //   within one lookup by providers/http.js and across all readers and
 //   instances by the host gate (catalog-store/hostGate.js), together with any
@@ -35,14 +44,17 @@ export const REQUEST_TIMEOUT_MS = 30_000;
 //   (plan 5.4, "Across instances"), through the same host gate. Shared hosts
 //   (e-Granthalaya, LIBMAN, IndCat, BiblioCommons, Calil) share one limit.
 //   The gate paces at an even rate (60 s / perMinute between requests, after a
-//   short burst), so each number is sized for one reader checking book after
-//   book: the spacing times the book cap stays well inside the book deadline
-//   (e.g. Koha 12 requests at 1.5 s, discovery 6 at 2 s, both within 20 s of
-//   the 45 s deadline).
+//   short burst). A check waits for its turn within its deadline; only when
+//   the host's next turn is past that deadline does it stop as "busy".
 //
 // `fewRequests` records whether nine results are covered in at most three
 // catalog requests (plan 5.3, column 3), as confirmed against the adapters.
 const S = 1000;
+
+// Requests one book check may have waiting on its host at once (see above).
+export function requestsInFlight(platform) {
+  return Math.max(1, Math.min(4, Math.floor(platform?.requestsInFlight) || 1));
+}
 
 export const PLATFORMS = Object.freeze({
   egranthalaya: {
@@ -52,32 +64,29 @@ export const PLATFORMS = Object.freeze({
     // to the member library. Each search takes 2 to 8 s on eg4.nic.in (19
     // November 2026); an ISBN check is one OR search of both spellings. +2
     // requests for a kept form the server no longer accepts.
-    book: { maxRequests: 10, deadlineMs: BOOK_DEADLINE_MS },
+    book: { deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'search_rows', maxRequests: 4, deadlineMs: 20 * S, fewRequests: 3 },
     hostConcurrency: 4, minIntervalMs: 1 * S, perMinute: 60,
   },
   libman: {
-    // TITLE and ISBN searches (JSON), tenant-scoped, 0.3 to 1.3 s each. Search
-    // rows carry no ISBN: a record's details (one request) add it, for up to
-    // three rows of the searched title, and confirm an ISBN search's hits.
-    // An ISBN costs two searches (plain and hyphenated digits; libraries store
-    // either), so a work with six known ISBNs needs about 16 requests; 15 is
-    // the most any platform may use.
-    book: { maxRequests: 15, deadlineMs: BOOK_DEADLINE_MS },
+    // TITLE and ISBN searches (JSON GETs, no session), tenant-scoped, 0.3 to
+    // 1.3 s each. Search rows carry no ISBN: a record's details (one request)
+    // add it, for the rows of the searched title, and confirm an ISBN
+    // search's hits. The ISBN search takes one text (no OR): an ISBN costs two
+    // searches (plain and hyphenated digits; libraries store either). A
+    // reader's check runs its title and ISBN searches side by side.
+    book: { deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'search_rows', maxRequests: 4, deadlineMs: 15 * S, fewRequests: 1 },
-    hostConcurrency: 4, minIntervalMs: 0, perMinute: 120,
+    hostConcurrency: 4, requestsInFlight: 2, minIntervalMs: 0, perMinute: 120,
   },
   indcat: {
     // Corrected from the plan: IndCat's institution-scoped search page lists
     // record links, titles and authors (parseIndcatSearch), never ISBNs. Rows
     // cannot prove an edition. A search is one POST (the form session is read
-    // once and reused, providers/indcat.js); both forms of an ISBN are one
-    // search. A check is about one ISBN search per edition, up to three title
-    // searches and the record pages they list (1 to 2 s each). 19 November
-    // 2026: at 8, 25 of 70 checks ended on the cap (half of it scope pages);
-    // at 12, slow moments (2 to 4 s a request) ran into the then 20 s
-    // deadline instead. 10 reads more title rows within the deadline.
-    book: { maxRequests: 10, deadlineMs: BOOK_DEADLINE_MS },
+    // once and reused, providers/indcat.js); one search covers both forms of
+    // up to eight ISBNs. A check is a few ISBN batches, up to three title
+    // searches and the record pages they list (1 to 2 s each).
+    book: { deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'none', maxRequests: 0, deadlineMs: 0, fewRequests: false },
     hostConcurrency: 2, minIntervalMs: 0, perMinute: 40,
   },
@@ -87,70 +96,72 @@ export const PLATFORMS = Object.freeze({
     // Title-first libraries may try title, author and keyword indexes (3).
     // Libraries that opt in (`kohaRssRows`) use the RSS form, which lists an
     // ISBN per row. Unscoped shared catalogs and the IIT Hyderabad API do not
-    // mark results: their rows do not prove this library's holding.
-    book: { maxRequests: 12, deadlineMs: BOOK_DEADLINE_MS },
+    // mark results: their rows do not prove this library's holding. A book
+    // check's ISBN search is one OR search for up to eight editions, sent
+    // beside its title search (plain GETs, no session).
+    book: { deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'search_rows', maxRequests: 3, deadlineMs: 15 * S, fewRequests: 1 },
-    hostConcurrency: 2, minIntervalMs: 0, perMinute: 40,
+    hostConcurrency: 2, requestsInFlight: 2, minIntervalMs: 0, perMinute: 40,
   },
   bc: {
     // Gateway keyword search; rows carry `briefInfo.isbns`.
-    book: { maxRequests: 4, deadlineMs: BOOK_DEADLINE_MS },
+    book: { deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'search_rows', maxRequests: 1, deadlineMs: 10 * S, fewRequests: 1 },
     hostConcurrency: 4, minIntervalMs: 0, perMinute: 60,
   },
   vufind: {
     // Title search; rows carry COinS ISBNs.
-    book: { maxRequests: 8, deadlineMs: BOOK_DEADLINE_MS },
+    book: { deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'search_rows', maxRequests: 1, deadlineMs: 15 * S, fewRequests: 1 },
     hostConcurrency: 2, minIntervalMs: 0, perMinute: 40,
   },
   'discovery-community': {
     // Per site family; some rows carry ISBNs, session-based sites need more
     // than one request and therefore mark nothing within this budget.
-    book: { maxRequests: 6, deadlineMs: BOOK_DEADLINE_MS },
+    book: { deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'search_rows', maxRequests: 1, deadlineMs: 15 * S, fewRequests: 'partly' },
     hostConcurrency: 1, minIntervalMs: 0, perMinute: 30,
   },
   'discovery-academic': {
-    book: { maxRequests: 6, deadlineMs: BOOK_DEADLINE_MS },
+    book: { deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'search_rows', maxRequests: 1, deadlineMs: 15 * S, fewRequests: 'partly' },
     hostConcurrency: 1, minIntervalMs: 0, perMinute: 30,
   },
   calil: {
     // One /check call for every result ISBN, then polls every 2 s.
-    book: { maxRequests: 15, deadlineMs: BOOK_DEADLINE_MS },
+    book: { deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'batch_isbn', maxRequests: 15, deadlineMs: 30 * S, fewRequests: 1, isbnsPerBook: 3 },
     hostConcurrency: 2, minIntervalMs: 0, perMinute: 60,
   },
   vega: {
-    book: { maxRequests: 2, deadlineMs: BOOK_DEADLINE_MS },
+    book: { deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'per_isbn', maxRequests: 9, deadlineMs: 10 * S, fewRequests: false, topBooks: 9, concurrency: 2 },
     hostConcurrency: 2, minIntervalMs: 0, perMinute: 60,
   },
   evergreen: {
-    book: { maxRequests: 3, deadlineMs: BOOK_DEADLINE_MS },
+    book: { deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'per_isbn', maxRequests: 9, deadlineMs: 15 * S, fewRequests: false, topBooks: 3, concurrency: 1 },
     hostConcurrency: 1, minIntervalMs: 0, perMinute: 20,
   },
   chamo: {
-    book: { maxRequests: 4, deadlineMs: 60 * S },
+    book: { deadlineMs: 60 * S },
     results: { strategy: 'none', maxRequests: 0, deadlineMs: 0, fewRequests: false },
     hostConcurrency: 1, minIntervalMs: 0, perMinute: 10,
   },
   libsys: {
-    book: { maxRequests: 4, deadlineMs: BOOK_DEADLINE_MS },
+    book: { deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'none', maxRequests: 0, deadlineMs: 0, fewRequests: false },
     hostConcurrency: 1, minIntervalMs: 0, perMinute: 10,
   },
   aspen: {
-    book: { maxRequests: 4, deadlineMs: BOOK_DEADLINE_MS },
+    book: { deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'none', maxRequests: 0, deadlineMs: 0, fewRequests: false },
     hostConcurrency: 1, minIntervalMs: 0, perMinute: 10,
   },
   vpl: {
     // Title search only; rows never prove an edition. robots Crawl-Delay 20 s
     // is applied by the adapter.
-    book: { maxRequests: 2, deadlineMs: BOOK_DEADLINE_MS },
+    book: { deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'none', maxRequests: 0, deadlineMs: 0, fewRequests: false },
     hostConcurrency: 1, minIntervalMs: 20 * S, perMinute: 3,
   },
@@ -197,8 +208,10 @@ export function bookDeadlineMs(entry, platform = platformFor(entry)) {
 }
 
 // Plan A2, step 3: a book-page check still running at its deadline may finish
-// in the background, with the same request cap, until twice its deadline and
-// never later than 90 s after it started (the API function may run 120 s).
+// in the background (the same check for the same book, no request cap, the
+// same shared host pacing), until twice its deadline and never later than
+// 90 s after the reader asked (the API function may run 120 s). It does not
+// fan out: one book, one library, and it gives way to a waiting reader.
 export const MAX_BACKGROUND_CHECK_MS = 90 * S;
 export function backgroundDeadlineMs(entry, platform = platformFor(entry)) {
   return Math.min(2 * bookDeadlineMs(entry, platform), MAX_BACKGROUND_CHECK_MS);

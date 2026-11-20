@@ -893,7 +893,6 @@ test('a batch record counts only for the ISBN its own page states', async () => 
   global.fetch = async (url) => response(url, '', 403);
   clearHttpCache();
   await assert.rejects(checkPublicAvailabilityForIsbns(library, [ISBN]), { code: 'CATALOG_PROVIDER_BLOCKED' });
-  await assert.rejects(checkPublicAvailabilityForIsbns({ ...library, publicCatalogCapabilities: { titleSearch: true } }, [ISBN]), { code: 'CATALOG_QUERY_UNSUPPORTED' });
 });
 
 test('keyword searches drop English articles that some Koha indexes never match', async () => {
@@ -906,4 +905,32 @@ test('keyword searches drop English articles that some Koha indexes never match'
   global.fetch = async (url) => { calls.push(new URL(url)); return response(url, captured('british-search')); };
   await searchCatalog(library, 'The discovery of India').catch(() => {});
   assert.equal(calls[0].searchParams.get('q'), 'discovery of India');
+});
+
+// 20 November 2026: the title-search catalogs (Anna Centenary, Kalaignar
+// Centenary, Ernakulam) get the same OR search for several ISBNs, beside
+// their title search, instead of one 13-digit and one 10-digit search per ISBN.
+test('title-search Koha catalogs answer several ISBNs in one OR search and are wired for it', async () => {
+  const pilot = { ...library, id: 'koha:pilot', publicCatalogCapabilities: { titleSearch: true } };
+  const calls = [];
+  global.fetch = async (url) => { calls.push(new URL(url)); return isSearch(url) ? response(url, '', 302, { location: RECORD }) : response(url, fixture); };
+  const result = await checkPublicAvailabilityForIsbns(pilot, ['9781408855652', ISBN]);
+  assert.equal(result.isbn13, ISBN);
+  assert.equal(result.matchKind, 'exact_isbn');
+  const searches = calls.filter(url => url.pathname.endsWith('opac-search.pl'));
+  assert.equal(searches.length, 1);
+  assert.deepEqual(searches[0].searchParams.getAll('q'), ['9781408855652', '1408855658', '978-1-4088-5565-2', '1-4088-5565-8',
+    ISBN, '0262033844', '978-0-262-03384-8', '0-262-03384-4']);
+  clearHttpCache();
+  global.fetch = async (url) => response(url, emptySearch(url));
+  const none = await checkPublicAvailabilityForIsbns(pilot, [ISBN, '9781408855652']);
+  assert.deepEqual([none.outcome, none.isbns], ['not_found', [ISBN, '9781408855652']]);
+  const { getProvider } = await import('./index.js');
+  const { getAllLibraries } = await import('../directory.js');
+  for (const id of ['koha:anna-centenary-library', 'koha:kalaignar-centenary-library', 'koha:ernakulam-public-library']) {
+    const provider = getProvider(getAllLibraries().find(entry => entry.id === id));
+    assert.equal(typeof provider.checkIsbns, 'function', id);
+    assert.equal(typeof provider.findBookCandidates, 'function', id);
+    assert.equal(provider.isbn10Lookup, false, id);
+  }
 });

@@ -1,5 +1,6 @@
-// Per-instance guards for catalog hosts (plan 5.4). Request caps, deadlines
-// and pacing inside one lookup are enforced by providers/http.js
+// Per-instance guards for catalog hosts (plan 5.4). Deadlines, pacing and the
+// request caps of work the app does on its own (result marking; a reader's
+// book check has none) inside one lookup are enforced by providers/http.js
 // (`withCatalogOperation`); this module limits lookups across readers.
 //
 // - Circuit: three failures for a host within 10 minutes open a 10-minute

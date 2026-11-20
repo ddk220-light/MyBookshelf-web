@@ -99,7 +99,7 @@ describe('one-shelf book page', () => {
     seed({ libraryId: LIBRARY.id });
     renderBook();
     group = await screen.findByRole('group', { name: 'Couldn’t check right now' });
-    expect(within(group).getByText('Too many checks right now. Try again in a minute.')).toBeInTheDocument();
+    expect(within(group).getByText('The library’s catalog is busy with other checks. Try again in a minute. This does not mean the book is missing.')).toBeInTheDocument();
     expect(within(group).getByRole('button', { name: 'Try again' })).toBeInTheDocument();
     cleanup(); vi.unstubAllGlobals(); localStorage.clear();
 

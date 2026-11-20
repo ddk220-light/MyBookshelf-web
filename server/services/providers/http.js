@@ -11,6 +11,7 @@ const MAX_CACHE_ENTRIES = 512;
 const MAX_QUEUE_DEPTH = 50;
 const MAX_RESPONSE_BYTES = 5 * 1024 * 1024;
 
+// lane -> { active, waiting } (enqueueTask)
 const queues = new Map();
 const operations = new AsyncLocalStorage();
 
@@ -40,16 +41,44 @@ const operations = new AsyncLocalStorage();
 // - `deadlineAt`: when the whole operation must end (a book check's
 //   deadline). Adapters whose own call deadline would be shorter use it
 //   instead (providers/koha.js), so the check, not the call, sets the limit.
+// - `hostRequests`: how many of this operation's requests may be waiting on
+//   one host at once on this instance (default 1). A reader's book check on a
+//   catalog with plain GET searches sends its title search and its ISBN search
+//   together (catalog-lookup/platforms.js `requestsInFlight`); the host gate
+//   still paces when each request starts, across every reader.
+//
+// A reader's book check has no request cap (owner decision, 20 November
+// 2026): its deadline and the shared host pacing bound it. Result marking and
+// other work the app does on its own keeps a cap.
 //
 // Requests connect with the catalog connection settings in network.js (a 2.5 s
 // attempt per address). A caller that is not reading a library catalog, such
 // as the Open Library metadata reads, passes `catalogConnection: false` and
 // gets Node's defaults. A caller's own `dispatcher` (KALNET) is used as given.
-export function withCatalogOperation({ maxRequests = Infinity, signal = null, minIntervalMs = 0, robots = null, gate = null, noRetries = false, requestTimeoutMs = Infinity, deadlineAt = null } = {}, task) {
+export function withCatalogOperation({ maxRequests = Infinity, signal = null, minIntervalMs = 0, robots = null, gate = null, noRetries = false, requestTimeoutMs = Infinity, deadlineAt = null, hostRequests = 1 } = {}, task) {
   const current = operations.getStore();
   if (current) return task(current);
-  const store = { maxRequests, requests: 0, lastByHost: new Map(), signal, minIntervalMs, robots, gate, noRetries, requestTimeoutMs, deadlineAt };
+  const store = { maxRequests, requests: 0, lastByHost: new Map(), signal, minIntervalMs, robots, gate, noRetries, requestTimeoutMs, deadlineAt,
+    hostRequests: Math.max(1, Math.min(4, Math.floor(hostRequests) || 1)) };
   return operations.run(store, () => task(store));
+}
+
+// True inside a catalog operation with no request cap at any level: a
+// reader's own book check. Adapters then read every candidate their search
+// listed (up to the page they received) instead of their own small number,
+// which is kept for result marking (capped) and for catalog searches made
+// outside any operation.
+export function uncappedOperation() {
+  const operation = operations.getStore();
+  if (!operation) return false;
+  for (let scope = operation; scope; scope = scope.parent) if (Number.isFinite(scope.maxRequests)) return false;
+  return true;
+}
+
+// How many listed candidates an adapter reads: all of them in a reader's
+// check (uncappedOperation), otherwise `limit`.
+export function candidateLimit(limit) {
+  return uncappedOperation() ? Infinity : limit;
 }
 
 // An explicit route scope adds its own cap without replacing the reader's
@@ -80,6 +109,7 @@ export function withCatalogSuboperation(options = {}, task) {
     noRetries: Boolean(parent.noRetries || options.noRetries),
     requestTimeoutMs: Math.min(parent.requestTimeoutMs ?? Infinity, options.requestTimeoutMs ?? Infinity),
     deadlineAt: [parent.deadlineAt, options.deadlineAt].filter(Number.isFinite).reduce((a, b) => Math.min(a, b), Infinity),
+    hostRequests: Math.max(1, Math.min(parent.hostRequests || 1, options.hostRequests || parent.hostRequests || 1)),
   };
   return operations.run(store, () => task(store));
 }
@@ -156,19 +186,42 @@ function raceDeadline(promise, deadlineAt) {
   ]).finally(() => clearTimeout(timer));
 }
 
-export function enqueueTask(lane, task, { deadlineAt } = {}) {
+// Starts waiting tasks in order while the first one's own limit allows.
+function pumpLane(lane, state) {
+  while (state.waiting.length && state.active < state.waiting[0].limit) {
+    const next = state.waiting.shift();
+    state.active += 1;
+    next();
+  }
+  if (!state.active && !state.waiting.length && queues.get(lane) === state) queues.delete(lane);
+}
+
+// Runs `task` in `lane` (first come, first served). By default one task of a
+// lane runs at a time; `concurrency` lets this task start while fewer than
+// that many tasks of the lane are running (an HTTP host lane allows a reader's
+// check two requests at once on catalogs that answer plain GET searches).
+export function enqueueTask(lane, task, { deadlineAt, concurrency = 1 } = {}) {
   const depth = queueDepth.get(lane) || 0;
   if (depth >= MAX_QUEUE_DEPTH) return Promise.reject(new Error('provider queue is full'));
   queueDepth.set(lane, depth + 1);
-  const previous = queues.get(lane) || Promise.resolve();
-  const current = previous.catch(() => {}).then(() => {
-    if (deadlineAt != null && remaining(deadlineAt) === 0) throw deadlineError();
-    return task();
+  let state = queues.get(lane);
+  if (!state) queues.set(lane, state = { active: 0, waiting: [] });
+  const current = new Promise((resolve, reject) => {
+    const start = () => {
+      Promise.resolve().then(() => {
+        if (deadlineAt != null && remaining(deadlineAt) === 0) throw deadlineError();
+        return task();
+      }).then(resolve, reject).finally(() => {
+        state.active -= 1;
+        pumpLane(lane, state);
+      });
+    };
+    start.limit = Math.max(1, Math.floor(concurrency) || 1);
+    state.waiting.push(start);
+    pumpLane(lane, state);
   });
-  queues.set(lane, current);
   current.finally(() => {
     queueDepth.set(lane, Math.max(0, (queueDepth.get(lane) || 1) - 1));
-    if (queues.get(lane) === current) queues.delete(lane);
   }).catch(() => {});
   return raceDeadline(current, deadlineAt);
 }
@@ -414,7 +467,7 @@ async function requestOnce(url, options = {}) {
       operation?.signal?.removeEventListener?.('abort', cancel);
       settled();
     }
-  }, { deadlineAt });
+  }, { deadlineAt, concurrency: operation?.hostRequests || 1 });
 }
 
 export async function getText(url, options = {}) {

@@ -1,5 +1,5 @@
 import ISBN from 'isbn3';
-import { cachedTask, getText } from './http.js';
+import { cachedTask, candidateLimit, getText } from './http.js';
 import { attributes, catalogError, firstIsbn, text } from './catalogMarkup.js';
 import { validateAndNormalize } from '../isbn.js';
 import { kalnetTransportOptions } from './kalnet-tls.js';
@@ -189,11 +189,14 @@ export function parseVufindRecord(html, library, id, { confirmedMemberRecord = f
   return { recordId: String(id), ...meta, observation };
 }
 
+// Up to ten rows; a search that lists more is flagged (`hasMore`), so the
+// shortened list never stands for the whole search.
 export async function searchCatalog(library, query) {
   const result = await search(library, query, 'Title', Date.now() + DEADLINE_MS);
-  return result.records.slice(0, 10).map(book => ({ ...book, observation: {
+  const rows = result.records.slice(0, 10).map(book => ({ ...book, observation: {
     outcome: 'in_catalog', matchKind: 'verified_work', recognizedExact: true, catalogUrl: recordUrl(library, book.recordId), catalogLinkKind: 'record',
   } }));
+  return Math.max(result.total || 0, result.records.length) > rows.length ? Object.assign(rows, { hasMore: true }) : rows;
 }
 
 export async function resolveCatalogRecord(library, id) {
@@ -249,9 +252,11 @@ export async function checkAvailability(library, isbn, title, author) {
         incomplete = true; exactSearchComplete = false;
       }
     }
-    incomplete ||= candidates.size > MAX_DETAILS;
+    // A reader's check opens every listed hit (candidateLimit); elsewhere six.
+    const details = candidateLimit(MAX_DETAILS);
+    incomplete ||= candidates.size > details;
     const books = [];
-    for (const row of [...candidates.values()].slice(0, MAX_DETAILS)) {
+    for (const row of [...candidates.values()].slice(0, details)) {
       try {
         const value = await detail(library, row.recordId, deadlineAt);
         const observedIsbn = value.meta.isbn || row.isbn;
@@ -270,8 +275,9 @@ export async function checkAvailability(library, isbn, title, author) {
     const result = await search(library, title, 'Title', deadlineAt);
     const matches = result.records.filter(row => titleKey(row.title) === titleKey(title));
     const exactBooks = [];
-    let partial = result.total > result.records.length || matches.length > 2;
-    for (const row of matches.slice(0, 2)) {
+    const read = candidateLimit(2);
+    let partial = result.total > result.records.length || matches.length > read;
+    for (const row of matches.slice(0, read)) {
       try {
         const value = await detail(library, row.recordId, deadlineAt);
         const observedIsbn = value.meta.isbn || row.isbn;

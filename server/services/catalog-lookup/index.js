@@ -7,7 +7,7 @@ import { parsePublicBookKey } from '../../public-v2/contracts.js';
 import { runBookCheck } from './check.js';
 import { linkKind, normalizeProviderObservation } from './observation.js';
 import { answerFromCheck, answerFromResponse, couldntCheck, couldntCheckFor, isHealthFailure } from './outcome.js';
-import { PLATFORMS, REQUEST_TIMEOUT_MS, platformFor, hostFor, bookDeadlineMs, backgroundDeadlineMs, lookupV2Enabled } from './platforms.js';
+import { PLATFORMS, REQUEST_TIMEOUT_MS, platformFor, hostFor, bookDeadlineMs, backgroundDeadlineMs, lookupV2Enabled, requestsInFlight } from './platforms.js';
 import { createHostGuard } from './budget.js';
 import { createLookupRecorder, createMemoryHealthRecord, identitiesFor, askedIdentity, storedAnswer } from './record.js';
 import { createMemoryHostGate } from '../../catalog-store/hostGate.js';
@@ -46,6 +46,26 @@ function settleBy(promise, deadlineAt, signal, clock = Date.now) {
 
 const normalQuery = value => String(value || '').normalize('NFKC').toLowerCase().replace(/\s+/g, ' ').trim();
 
+// When the reader asked (`askedAt`, the request's start), never later than
+// `fallback` (this check's own start).
+function askedAt(args, fallback) {
+  const value = Number(args?.askedAt);
+  return Number.isFinite(value) && value <= fallback ? value : fallback;
+}
+
+// The catalog origins a check on this directory entry reads: its catalog
+// address (`baseUrl`, else `catalogUrl`) and those of its alternate catalogs.
+function catalogOrigins(entry) {
+  const origins = new Set();
+  for (const value of [entry?.baseUrl || entry?.catalogUrl, ...(entry?.alternateCatalogs || []).map(alt => alt?.baseUrl || alt?.catalogUrl)]) {
+    try {
+      const url = new URL(value);
+      if (url.protocol === 'https:' || url.protocol === 'http:') origins.add(url.origin);
+    } catch { /* no usable address */ }
+  }
+  return [...origins].slice(0, 4);
+}
+
 function publicView(entry, library) {
   // The answer does not depend on display capabilities; the catalog link
   // check needs the library's catalog address.
@@ -70,6 +90,18 @@ export function createCatalogLookup({
 } = {}) {
   const resultsCache = new Map();
   const robotsCheck = robots ? url => robots.check(url) : null;
+
+  // Starts reading the robots.txt of the catalog a check on `entry` will use
+  // (cached per origin: a day, five minutes after a failure; providers/
+  // robots.js), so on a cold instance it is read while the book and its
+  // editions are resolved instead of before the first catalog request. Never
+  // waits and never throws: the check itself still applies the policy.
+  function prepare(entry) {
+    if (!robots) return;
+    for (const origin of catalogOrigins(entry)) {
+      try { Promise.resolve(robots.check(`${origin}/`)).catch(() => {}); } catch { /* the check reads it itself */ }
+    }
+  }
 
   function settings(entry) {
     const platform = platformFor(entry, platforms);
@@ -117,7 +149,10 @@ export function createCatalogLookup({
     async function execute(route, task) {
       const { platform, host, platformName } = settings(route.entry);
       const policy = platform?.[kind];
-      if (!policy || !(policy.maxRequests > 0)) throw coded('This catalog route does not support this operation', 'CATALOG_UNSUPPORTED');
+      // A reader's book check has no request cap on any route (its deadline
+      // and the host pacing bound it); result marking keeps its cap.
+      const maxRequests = kind === 'book' ? Infinity : policy?.maxRequests;
+      if (!policy || !(maxRequests > 0)) throw coded('This catalog route does not support this operation', 'CATALOG_UNSUPPORTED');
       const parentSignal = catalogOperation()?.signal || signal;
       if (parentSignal?.aborted) throw coded('Catalog check was cancelled', 'CATALOG_ABORTED');
       const allowanceKey = `${route.prefix || ''}\u0000${platformName}\u0000${host}`;
@@ -125,15 +160,15 @@ export function createCatalogLookup({
         deadline: Math.min(deadline, now() + (kind === 'book' ? bookDeadlineMs(route.entry, platform) : policy.deadlineMs)) });
       const allowance = allowances.get(allowanceKey);
       const routeDeadline = allowance.deadline;
-      if (allowance.requests >= policy.maxRequests) throw coded('Catalog route request budget exhausted', 'CATALOG_REQUEST_BUDGET');
+      if (allowance.requests >= maxRequests) throw coded('Catalog route request budget exhausted', 'CATALOG_REQUEST_BUDGET');
       if (now() >= routeDeadline) throw coded('Catalog route deadline exceeded', 'CATALOG_TIMEOUT');
       const hostSlot = gateFor(platform, routeDeadline);
       const routeGate = async (requestHost, options) => {
-        if (allowance.requests >= policy.maxRequests) throw coded('Catalog route request budget exhausted', 'CATALOG_REQUEST_BUDGET');
+        if (allowance.requests >= maxRequests) throw coded('Catalog route request budget exhausted', 'CATALOG_REQUEST_BUDGET');
         await hostSlot?.(requestHost, options);
         // Several provider methods may use the same route concurrently. The
         // second check and increment happen together after the awaited slot.
-        if (allowance.requests >= policy.maxRequests) throw coded('Catalog route request budget exhausted', 'CATALOG_REQUEST_BUDGET');
+        if (allowance.requests >= maxRequests) throw coded('Catalog route request budget exhausted', 'CATALOG_REQUEST_BUDGET');
         allowance.requests += 1;
       };
       const event = { route, host, platformName, started: false, answer: null };
@@ -160,8 +195,9 @@ export function createCatalogLookup({
       try {
         if (parentSignal?.aborted) throw coded('Catalog check was cancelled', 'CATALOG_ABORTED');
         event.started = true;
-        const work = withCatalogSuboperation({ maxRequests: policy.maxRequests, signal: controller.signal,
-          minIntervalMs: platform.minIntervalMs || 0, gate: routeGate, noRetries: tryOnce }, task);
+        const work = withCatalogSuboperation({ maxRequests, signal: controller.signal,
+          minIntervalMs: platform.minIntervalMs || 0, gate: routeGate, noRetries: tryOnce,
+          ...(kind === 'book' ? { hostRequests: requestsInFlight(platform) } : {}) }, task);
         const value = await settleBy(work, routeDeadline, parentSignal, now);
         event.value = value;
         event.answer = observed(route, value);
@@ -300,14 +336,14 @@ export function createCatalogLookup({
     return Math.max(1, Math.floor(bookDeadlineMs(entry, platform) / 2));
   }
 
-  // One live book check through the platform's book-page budget. Used by
+  // One live book check within the platform's book-page deadline. Used by
   // lookupBook and by /availability on the new path. Returns the raw check
   // result (response or error) plus the projected answer.
   //
   // `background` (the book page, plan A2 step 3): the reader is answered at
   // the usual deadline, "couldn't check" as before, unless a proven match is
-  // already in hand. The same check, with the same request cap, then carries
-  // on under the platform's waitUntil (`defer`) until its own longer deadline
+  // already in hand. The same check (no request cap, the same host pacing)
+  // then carries on under the platform's waitUntil (`defer`) until its own longer deadline
   // (backgroundDeadlineMs) and records its answer through the recorder, so
   // the next look finds it stored. The reader leaving does not cancel it, but
   // a check nobody is waiting for gives way to readers (yieldForReader,
@@ -326,7 +362,7 @@ export function createCatalogLookup({
       // Join the running check: this reader waits for it until its own
       // answer is due, and is never charged its requests.
       const { platform } = settings(entry);
-      const answerBy = Math.min(args.deadlineAt ?? Infinity, args.finishBy ?? Infinity, startedAt + bookDeadlineMs(entry, platform));
+      const answerBy = Math.min(args.deadlineAt ?? Infinity, args.finishBy ?? Infinity, askedAt(args, startedAt) + bookDeadlineMs(entry, platform));
       attach(running);
       let due;
       try { due = await untilDue(running.done, answerBy, signal); }
@@ -343,7 +379,7 @@ export function createCatalogLookup({
         // deadline, or another reader's earlier one): that timeout is not
         // this reader's. When this reader's deadline still leaves room for a
         // real attempt, a new check starts now that the old one has settled,
-        // with its own request cap and host slot.
+        // with its own host slot.
         if (result.answer?.outcome === 'couldnt_check' && result.answer.reason === 'timeout' && !signal?.aborted
           && answerBy - now() >= minRetryMs(entry, platform)) return again();
         return { ...result, requests: 0, durationMs: now() - startedAt };
@@ -364,7 +400,14 @@ export function createCatalogLookup({
   }
 
   async function startCheck({ entry, library, provider: given, book, bookKey, parsed, ownRecord, lookupKind, editionScope = 'work', language, books,
-    attemptedAt, signal, deadlineAt, background = false, finishBy = Infinity }, flight, startedAt) {
+    attemptedAt, signal, deadlineAt, background = false, finishBy = Infinity, askedAt: asked }, flight, startedAt) {
+    // The library's deadline counts from the reader's tap (`askedAt`, the
+    // request's start), so resolving the book and reading its editions come
+    // out of the check's 45 s rather than adding to the reader's wait.
+    const since = askedAt({ askedAt: asked }, startedAt);
+    // The catalog's robots.txt is read while the edition profile is resolved,
+    // not in series before the first catalog request.
+    prepare(entry);
     const provider = given || providerFor(entry);
     const routed = Boolean(provider?.catalogRoutes?.length);
     let policyEntry = entry, routeError;
@@ -403,10 +446,10 @@ export function createCatalogLookup({
     // The reader's answer is due by `answerBy`. A background check works on
     // until `deadline`, later; otherwise both are the same moment. Neither
     // passes `finishBy`.
-    const answerBy = Math.min(deadlineAt ?? Infinity, finishBy, startedAt + bookDeadlineMs(policyEntry, platform));
+    const answerBy = Math.min(deadlineAt ?? Infinity, finishBy, since + bookDeadlineMs(policyEntry, platform));
     const inBackground = Boolean(background && typeof defer === 'function');
     flight.background = inBackground;
-    const deadline = inBackground ? Math.min(finishBy, Math.max(answerBy, startedAt + backgroundDeadlineMs(policyEntry, platform))) : answerBy;
+    const deadline = inBackground ? Math.min(finishBy, Math.max(answerBy, since + backgroundDeadlineMs(policyEntry, platform))) : answerBy;
     // A started background check is not cancelled by the reader leaving, only
     // when it gives way to a waiting reader.
     const workSignal = inBackground ? flight.cancel.signal : signal;
@@ -436,9 +479,12 @@ export function createCatalogLookup({
     const conclude = new AbortController();
     const work = (async () => {
       try {
+        // No request cap: the check ends at its answer or its deadline, and
+        // every request waits for the host's shared pacing (gateFor).
         const run = () => runBookCheck({ entry, library: view, provider, book, bookKey, parsed, ownRecord, lookupKind, editionScope, language, books, attemptedAt,
-          budget: { maxRequests: platform.book.maxRequests, deadlineAt: deadline, signal: workSignal, robots: robotsCheck, minIntervalMs: platform.minIntervalMs,
-            gate: gateFor(platform, deadline), noRetries: tryOnce, requestTimeoutMs: REQUEST_TIMEOUT_MS, progress, conclude: conclude.signal } });
+          budget: { maxRequests: Infinity, deadlineAt: deadline, signal: workSignal, robots: robotsCheck, minIntervalMs: platform.minIntervalMs,
+            gate: gateFor(platform, deadline), noRetries: tryOnce, requestTimeoutMs: REQUEST_TIMEOUT_MS, hostRequests: requestsInFlight(platform),
+            progress, conclude: conclude.signal } });
         const result = await (routes ? withProviderRouteExecution(routes.execute, run) : run());
         return finish(result, result.profile);
       } finally {
@@ -456,7 +502,7 @@ export function createCatalogLookup({
       return work;
     }
     // The reader is answered now; the same check finishes in the background,
-    // within its own deadline and request cap, and records what it finds.
+    // within its own deadline, and records what it finds.
     flight.afterReply = true;
     defer(() => work.catch(() => {}));
     const error = due === 'left' ? coded('Catalog check was cancelled', 'CATALOG_ABORTED') : coded('Catalog check deadline exceeded', 'CATALOG_TIMEOUT');
@@ -500,7 +546,7 @@ export function createCatalogLookup({
   // answer and stores what it finds (checkBook); the book page sets it.
   // `finishBy`: the check, background included, ends by then (checkBook).
   async function lookupBook({ library: entry, publicLibrary, book = {}, profile, editionScope = 'work', signal, deadlineAt, storedChecked = false,
-    background = false, finishBy = Infinity }) {
+    background = false, finishBy = Infinity, askedAt: asked }) {
     const startedAt = now();
     const libraryId = entry?.id || entry?.slug;
     const own = book.recordId && (!book.recordLibraryId || book.recordLibraryId === libraryId);
@@ -518,7 +564,8 @@ export function createCatalogLookup({
       : ownProvider?.checkRecordAvailability ? 'catalog_record' : 'verified_work') : isbn13 ? 'exact_isbn' : 'verified_work';
     const books = profile && editionScope === 'work' && !own ? { searchProfile: async () => profile } : null;
     const result = await checkBook({ entry, library: publicLibrary, book: { ...book, isbn13: isbn13 || undefined, title: book.title || '', authors: book.authors || [] },
-      bookKey: book.bookKey, parsed, ownRecord: own, lookupKind, editionScope, books, attemptedAt: new Date(startedAt).toISOString(), signal, deadlineAt, background, finishBy });
+      bookKey: book.bookKey, parsed, ownRecord: own, lookupKind, editionScope, books, attemptedAt: new Date(startedAt).toISOString(), signal, deadlineAt, background, finishBy,
+      ...(asked != null ? { askedAt: asked } : {}) });
     const { answer } = result;
     return { ...answer, ...(answer.outcome === 'found' && own ? { recordId: book.recordId } : {}),
       requests: result.requests || 0, durationMs: now() - startedAt, source: 'live' };
@@ -785,9 +832,10 @@ export function createCatalogLookup({
   }
 
   // Reading one of this library's own catalog records (a record key's title,
-  // authors and ISBN) takes the same host slot, spacing and request cap as a
-  // book check on its platform. `read` performs the provider request(s).
-  // Fails with CATALOG_UNSUPPORTED when the library has no catalog adapter.
+  // authors and ISBN) for a reader takes the same host slot, spacing and
+  // deadline as a book check on its platform, and like it no request cap.
+  // `read` performs the provider request(s). Fails with CATALOG_UNSUPPORTED
+  // when the library has no catalog adapter.
   async function readRecord({ library: entry, recordId, read, signal }) {
     const provider = providerFor(entry);
     const routed = Boolean(provider?.catalogRoutes?.length);
@@ -804,7 +852,7 @@ export function createCatalogLookup({
     signal?.addEventListener?.('abort', forwardAbort, { once: true });
     try {
       if (signal?.aborted) throw coded('Catalog check was cancelled', 'CATALOG_ABORTED');
-      const work = withCatalogOperation({ maxRequests: platform.book.maxRequests, signal: controller.signal, robots: robotsCheck,
+      const work = withCatalogOperation({ maxRequests: Infinity, signal: controller.signal, robots: robotsCheck,
         minIntervalMs: platform.minIntervalMs || 0, gate: gateFor(platform, deadline), noRetries: tryOnce, requestTimeoutMs: REQUEST_TIMEOUT_MS, deadlineAt: deadline }, () => routes
         ? withProviderRouteExecution(routes.execute, read) : read());
       return await settleBy(work, deadline, signal, now);
@@ -817,7 +865,7 @@ export function createCatalogLookup({
     }
   }
 
-  return Object.freeze({ lookupBook, storedFor, noteStored, markResults, checkBook, readRecord,
+  return Object.freeze({ lookupBook, storedFor, noteStored, markResults, checkBook, readRecord, prepare,
     enabledFor: entry => lookupV2Enabled(entry, env) });
 }
 

@@ -105,7 +105,9 @@ test('a failed preferred route still falls back to the primary without changing 
   assert.equal(h.recorded[0].entry.id, h.entry.id);
 });
 
-test('fallback cannot reset the alternate cap or the whole-reader request cap', async () => {
+test('a reader’s check has no request cap on any route: a route that needs more requests than a descriptor’s old cap still answers', async () => {
+  // A `book.maxRequests` left in a descriptor is ignored for a reader's check
+  // (owner decision, 20 November 2026); every request still takes the host's slot.
   const platforms = { ...table, indcat: { ...table.indcat, book: { maxRequests: 4, deadlineMs: 500 } },
     'discovery-academic': { ...table['discovery-academic'], book: { maxRequests: 2, deadlineMs: 500 } } };
   const h = harness(route => ({ checkAvailability: async () => {
@@ -113,10 +115,10 @@ test('fallback cannot reset the alternate cap or the whole-reader request cap', 
     return positive;
   } }), { platforms });
   const answer = await h.check();
-  assert.equal(answer.outcome, 'couldnt_check'); assert.equal(answer.reason, 'budget');
-  assert.equal(answer.requests, 4);
-  assert.equal(h.requests.filter(url => url.includes('academic.example.test')).length, 2);
-  assert.equal(h.requests.filter(url => url.includes('indcat.inflibnet.ac.in')).length, 2);
+  assert.equal(answer.outcome, 'found');
+  assert.equal(h.requests.filter(url => url.includes('academic.example.test')).length, 3);
+  assert.equal(h.requests.filter(url => url.includes('indcat.inflibnet.ac.in')).length, 0);
+  assert.equal(h.slots.length, 3);
   assert.deepEqual(h.failures, []);
 });
 
@@ -180,7 +182,11 @@ test('metadata reads use a supplied record route and preserve opaque-callback co
   const record = await h.lookup.readRecord({ library: h.entry, recordId: h.recordId, read: () => h.provider.resolveCatalogRecord(h.recordId) });
   assert.equal(record.recordId, h.recordId);
   assert.equal(h.slots.length, 2); assert.ok(h.slots.every(slot => slot.perMinute === 10));
-  await assert.rejects(h.lookup.readRecord({ library: h.entry, read: () => h.provider.resolveCatalogRecord(h.recordId) }), { code: 'CATALOG_REQUEST_BUDGET' });
+  // A reader's record read has no request cap either (the old `maxRequests: 1`
+  // is ignored); it keeps the route's host pacing.
+  const again = await h.lookup.readRecord({ library: h.entry, read: () => h.provider.resolveCatalogRecord(h.recordId) });
+  assert.equal(again.recordId, h.recordId);
+  assert.ok(h.slots.length >= 3 && h.slots.every(slot => slot.perMinute === 10));
   assert.deepEqual(h.failures, []);
 });
 
@@ -270,8 +276,10 @@ test('a reader-less routed check never makes itself give way on its next route',
   const lookup = createCatalogLookup({ providerFor: () => provider, platforms: fast, robots: null, guard,
     defer: task => { deferred.push(Promise.resolve().then(task)); },
     recorder: { readAnswers: async () => [], record: value => recorded.push(value) } });
+  // The reader's answer is due before the first route's own 40 ms deadline,
+  // so which timer fires first never depends on the machine's load.
   const answer = await lookup.lookupBook({ library: entry, book: { bookKey: `v1:isbn:${isbn}`, isbn13: isbn }, editionScope: 'exact',
-    storedChecked: true, background: true });
+    storedChecked: true, background: true, deadlineAt: Date.now() + 15 });
   assert.equal(answer.reason, 'timeout');
   // The reader has gone; the check runs on and reaches its second route.
   letAcademicAnswer();
