@@ -4,7 +4,6 @@ import { validateAndNormalize } from '../isbn.js';
 import { CommunitySession, hiddenFields, jsonResponse } from './communitySession.js';
 import { aggregateObservations, boundedQuery, distinctRecords, fingerprint, markHasMore, markSearchComplete, normalized, observation, parseReplayId, replayId } from './communityRecords.js';
 import { PMB_SCOPES, checkPmbIsbn, resolvePmb, searchPmb } from './communityPmb.js';
-import { candidateLimit } from './http.js';
 
 const FAMILIES = Object.freeze({
   surat: 'https://office.suratmunicipal.org', rmc: 'https://emp.rmc.gov.in', rmrl: 'https://rmrl.in',
@@ -24,16 +23,6 @@ function config(library) {
   if (c.family === 'sindhi' && !SINDHI_HOLDERS[c.scope]) throw catalogError('Unknown archival collection');
   if (c.family === 'pmb' && !PMB_SCOPES[c.scope]) throw catalogError('Unknown catalog branch');
   return c;
-}
-// Whether a work search should ask this catalog about the work's ISBNs one
-// at a time (providers/index.js `isbnLookup`). None should: only PMB has an
-// ISBN index (the other families answer an ISBN alone with
-// CATALOG_QUERY_UNSUPPORTED), and there one search per edition exhausted the
-// request cap before the title search ran (19 Nov 2026: 5 of 10 checks). Its
-// all-words title search finds every edition in one request, and the record
-// pages it lists carry the ISBN. A single-edition check still asks PMB by ISBN.
-export function isbnLookupSupported() {
-  return false;
 }
 function status(value) {
   const label = normalized(value);
@@ -316,9 +305,9 @@ async function sindhiSearch(library, query, session) {
   // another holder is not this library's book; one we could not read leaves
   // the search incomplete.
   const records = [];
-  // Each record is one more request: four outside a reader's check (result
-  // marking, the catalog search screen); a reader's check reads them all.
-  const read = candidateLimit(4);
+  // Each record is one more request: four at most (result marking, the
+  // catalog search screen; a library check uses searchTitle instead).
+  const read = 4;
   let incomplete = ids.length > read;
   for (const id of ids.slice(0, read)) {
     try { records.push(await sindhiResolve(library, id, session)); }
@@ -352,6 +341,34 @@ async function search(library, input, deadlineAt = Date.now() + 45_000) {
   }
 }
 export async function searchCatalog(library, query) { return search(library, query); }
+
+// A reader's library check (libraryBookSearch.js): one title search, and its
+// rows. The Sindhi archive (shared by several collections) and PMB (shared by
+// several branches) list rows that do not show this library's holding: a
+// matching one is opened with readRecord, which throws
+// CATALOG_HOLDING_UNCONFIRMED for another collection's or branch's record.
+export async function searchTitle(library, title) {
+  const c = config(library);
+  if (c.family !== 'sindhi') return search(library, title);
+  const session = new CommunitySession(FAMILIES.sindhi, Date.now() + 45_000);
+  const response = await session.read(`/books?${new URLSearchParams({ q: withoutLeadingArticle(boundedQuery(title)), field: 'title' })}`);
+  const rows = new Map();
+  for (const m of response.text.matchAll(/<button\b([^>]*)>/gi)) {
+    const a = attributes(m[1]);
+    if (DIGITS.test(a['data-book-id'] || '') && a['data-book-title'] && !rows.has(a['data-book-id'])) {
+      rows.set(a['data-book-id'], { recordId: a['data-book-id'], title: text(a['data-book-title']), authors: a['data-book-author'] ? [text(a['data-book-author'])] : [] });
+    }
+  }
+  if (!rows.size && !/no books|no results|0 books|Showing 0/i.test(text(response.text))) throw catalogError('Unrecognized archival search');
+  return [...rows.values()];
+}
+export async function readRecord(library, id) {
+  const c = config(library);
+  if (c.family === 'sindhi') return sindhiResolve(library, id, new CommunitySession(FAMILIES.sindhi, Date.now() + 45_000));
+  if (c.family !== 'pmb') throw catalogError('This catalog has no record pages', 'CATALOG_UNSUPPORTED');
+  try { return await resolvePmb(library, id, Date.now() + 45_000); }
+  catch (error) { throw error.otherBranch ? catalogError('Another branch’s record', 'CATALOG_HOLDING_UNCONFIRMED') : error; }
+}
 
 export async function resolveCatalogRecord(library, id) {
   const c = config(library), deadlineAt = Date.now() + 45_000;
@@ -388,7 +405,7 @@ export async function checkAvailability(library, isbn, title, author) {
   let complete = records.searchComplete === true;
   let detailError;
   if (c.family === 'pmb') {
-    const read = candidateLimit(3);
+    const read = 3;
     if (records.length > read) complete = false;
     for (const item of records.slice(0, read)) {
       try { detailed.push(await resolvePmb(library, item.recordId, deadlineAt)); }

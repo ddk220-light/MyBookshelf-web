@@ -277,7 +277,23 @@ export function createWorkDiscovery({ read = request, fallbackIsbn = lookupBookM
       return { ...base, complete: false, expansionFailed: true };
     }
   }
-  return { search, searchPage, resolve, lookup, profile };
+  // The ISBN of a work's most recent edition that has one (by publication
+  // year, from the first page of its editions), or null when none has one.
+  // Only for a library check at a catalog that cannot be searched by title.
+  async function latestIsbn(id) {
+    if (!WORK_ID.test(id || '')) return null;
+    const result = await read(`/works/${id}/editions.json?limit=${EDITION_PAGE_SIZE}`);
+    if (!Array.isArray(result?.entries)) throw unavailable();
+    let best = null;
+    for (const edition of result.entries) {
+      const isbn = [...(edition.isbn_13 || []), ...(edition.isbn_10 || [])].map(validateAndNormalize).find(Boolean);
+      if (!isbn) continue;
+      const year = Number(String(edition.publish_date || '').match(/\b(1[5-9]\d\d|20\d\d)\b/)?.[1]) || 0;
+      if (!best || year > best.year) best = { isbn, year };
+    }
+    return best?.isbn || null;
+  }
+  return { search, searchPage, resolve, lookup, profile, latestIsbn };
 }
 
 export const workDiscovery = createWorkDiscovery();

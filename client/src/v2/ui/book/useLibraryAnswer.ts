@@ -19,6 +19,8 @@ export type LibraryCardModel =
   | { kind: 'library'; answer: CardAnswer; name: string; place?: string; catalogUrl?: string; catalogLinkKind?: HoldingsCheck['catalogLinkKind']; retry?: () => void;
       /** Why the check could not answer ("unknown" and "unconfirmed" only). */
       reason?: HoldingsCheck['reason'];
+      /** A found answer's matching rows from the library's catalog. */
+      matches?: HoldingsCheck['matches'];
       /** The library's catalog may take longer than half a minute to answer. */
       slowCatalog?: boolean };
 
@@ -93,7 +95,8 @@ export function useLibraryAnswer(bookKey: string | null | undefined): LibraryCar
   const place = library?.city || library?.region || undefined;
   const known = bookKey && store.libraryId() === libraryId && store.get(bookKey) === 'found';
   // A check that could not tell (unknown, unconfirmed) never hides a proven "found".
-  if (recordUrl || (known && (!current || current.answer === 'unknown' || current.answer === 'unconfirmed'))) return { kind: 'library', answer: 'found', name, place, ...link };
+  const matches = current?.answer === 'found' && current.matches?.length ? { matches: current.matches } : {};
+  if (recordUrl || (known && (!current || current.answer === 'unknown' || current.answer === 'unconfirmed'))) return { kind: 'library', answer: 'found', name, place, ...link, ...matches };
   // A library whose catalog the app cannot read: couldn't check (unless an
   // answer was stored), and trying again would not help.
   if (!checkable && current?.answer !== 'found' && current?.answer !== 'not_found') return { kind: 'library', answer: 'unsupported', name, ...link };
@@ -102,5 +105,6 @@ export function useLibraryAnswer(bookKey: string | null | undefined): LibraryCar
   // not a library that does not allow checks or a catalog we cannot read yet.
   const lasting = current.reason === 'blocked' || current.reason === 'unsupported' || current.reason === 'unrecognized' || current.reason === 'configuration';
   return { kind: 'library', answer: current.answer, name, place, ...link, ...(current.reason ? { reason: current.reason } : {}),
+    ...matches,
     ...(current.answer === 'unknown' && !lasting ? { retry } : {}) };
 }

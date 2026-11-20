@@ -2,7 +2,7 @@ import test, { afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { checkAvailability, searchCatalog, resolveCatalogRecord, parseSurat, parseSanthom, parseNmmc,
-  parseRmrl, parseShodhak, parseRmc, parseSindhiRecord, isbnLookupSupported, clearCommunitySessions } from './discoveryCommunity.js';
+  parseRmrl, parseShodhak, parseRmc, parseSindhiRecord, clearCommunitySessions } from './discoveryCommunity.js';
 import { checkPmbIsbn, clearPmbSessions, parsePmbRecord, parsePmbSearch, pmbAllWordsQuery, pmbIsbnQueries } from './communityPmb.js';
 import { CommunitySession } from './communitySession.js';
 import { boundedQuery, parseReplayId, replayId } from './communityRecords.js';
@@ -418,11 +418,8 @@ test('an ISBN alone is a query only PMB can run; elsewhere it is unsupported and
   for (const family of ['surat', 'rmc', 'rmrl', 'santhom', 'shodhak', 'sindhi']) {
     const selected = library(family, { surat: '7', rmc: '3', sindhi: 'indian-institute-of-sindhology' }[family]);
     await assert.rejects(checkAvailability(selected, '9781847941831', '', ''), { code: 'CATALOG_QUERY_UNSUPPORTED' });
-    assert.equal(isbnLookupSupported(selected), false);
   }
   assert.equal(called, false);
-  // PMB answers an ISBN alone, but a work search reads its title search.
-  assert.equal(isbnLookupSupported(library('pmb', '18')), false);
 });
 
 test('Shodhak: the empty result grid is an empty search, and a card names its author', () => {

@@ -169,12 +169,14 @@ export const publicApi = Object.freeze({
   // `reason` (why a check could not answer) is kept only for "unknown" and
   // "unconfirmed", and only when it is one the app knows.
   async holdingsCheck(libraryId: string, bookKey: string, signal?: AbortSignal): Promise<HoldingsCheck> {
-    const data = await post<{ answer?: unknown; reason?: unknown; catalogUrl?: unknown; catalogLinkKind?: unknown }>('/holdings/check', { libraryId, bookKey }, signal);
+    const data = await post<{ answer?: unknown; reason?: unknown; catalogUrl?: unknown; catalogLinkKind?: unknown; matches?: unknown }>('/holdings/check', { libraryId, bookKey }, signal);
     const answer = data.answer === 'found' || data.answer === 'not_found' || data.answer === 'unconfirmed' ? data.answer : 'unknown';
     const reason = (answer === 'unknown' || answer === 'unconfirmed') && (CHECK_REASONS as readonly unknown[]).includes(data.reason) ? data.reason as CheckReason : undefined;
     const catalogUrl = webLink(data.catalogUrl);
     const catalogLinkKind = data.catalogLinkKind;
-    return { answer, ...(reason ? { reason } : {}), ...(catalogUrl ? { catalogUrl } : {}), ...(catalogUrl && (catalogLinkKind === 'record' || catalogLinkKind === 'search' || catalogLinkKind === 'catalog') ? { catalogLinkKind } : {}) };
+    const matches = answer === 'found' ? catalogMatches(data.matches) : [];
+    return { answer, ...(reason ? { reason } : {}), ...(catalogUrl ? { catalogUrl } : {}), ...(catalogUrl && (catalogLinkKind === 'record' || catalogLinkKind === 'search' || catalogLinkKind === 'catalog') ? { catalogLinkKind } : {}),
+      ...(matches.length ? { matches } : {}) };
   },
 
   // One-shelf background check for search results (plan 5.7): NDJSON lines
@@ -275,7 +277,22 @@ export type ProblemScreen = typeof PROBLEM_SCREENS[number];
 /** Why a check could not answer (server catalog-lookup/outcome.js REASONS). */
 export const CHECK_REASONS = ['unconfirmed', 'timeout', 'unavailable', 'blocked', 'unrecognized', 'budget', 'unsupported', 'configuration', 'cancelled', 'busy'] as const;
 export type CheckReason = typeof CHECK_REASONS[number];
-export type HoldingsCheck = { answer: 'found' | 'not_found' | 'unconfirmed' | 'unknown'; reason?: CheckReason; catalogUrl?: string; catalogLinkKind?: 'record' | 'search' | 'catalog' };
+/** One of the library's own catalog rows for a found book: title and author as the catalog shows them, and the record's link when there is one. */
+export type CatalogMatch = { title: string; author?: string; url?: string };
+export type HoldingsCheck = { answer: 'found' | 'not_found' | 'unconfirmed' | 'unknown'; reason?: CheckReason; catalogUrl?: string; catalogLinkKind?: 'record' | 'search' | 'catalog';
+  /** A found answer's matching catalog rows, at most five, the ISBN match first. */
+  matches?: CatalogMatch[] };
+
+function catalogMatches(input: unknown): CatalogMatch[] {
+  if (!Array.isArray(input)) return [];
+  return input.slice(0, 5).flatMap((item): CatalogMatch[] => {
+    if (!item || typeof item !== 'object') return [];
+    const { title, author, url } = item as Record<string, unknown>;
+    if (typeof title !== 'string' || !title.trim()) return [];
+    const link = webLink(url);
+    return [{ title: title.trim().slice(0, 300), ...(typeof author === 'string' && author.trim() ? { author: author.trim().slice(0, 300) } : {}), ...(link ? { url: link } : {}) }];
+  });
+}
 type HoldingsSearchDone = { unchecked: string[]; notFound: string[]; couldntCheck: string[] };
 
 /** POST /suggestions/events (server validation.js parseSuggestionEvent): work and ISBN keys only. */

@@ -37,14 +37,14 @@ const books = {
 
 function harness({ observe = () => ({ outcome: 'available', matchKind: 'exact_isbn', recognizedExact: true }), usageLogEnabled = false,
   policies = { schemaVersion: 1, libraries: { [optedOut.id]: { storeAnswers: false, reason: 'Test', reviewedOn: '2026-11-12' } } },
-  searchCapMs, backgroundChecksEnabled = true, finishInBackground = false, bookDeadlineMs, functionWorkMs } = {}) {
+  searchCapMs, backgroundChecksEnabled = true, finishInBackground = false, bookDeadlineMs, functionWorkMs, searches = null } = {}) {
   const pending = [];
   const defer = task => { pending.push(Promise.resolve().then(task).catch(() => {})); };
   const logged = [];
   const calls = [];
   const config = { ...readCatalogStoreConfig({}), usageLogEnabled, backgroundChecksEnabled };
   const store = createCatalogStore({ config, db: null, defer, usageSink: row => logged.push(row), policy: createCatalogPolicy({ policies }) });
-  const provider = { checkAvailability: async isbn => { calls.push(isbn); return observe(isbn); } };
+  const provider = { checkAvailability: async isbn => { calls.push(isbn); return observe(isbn); }, ...(searches || {}) };
   const platforms = bookDeadlineMs ? { ...UNPACED, vega: { ...UNPACED.vega, book: { ...UNPACED.vega.book, deadlineMs: bookDeadlineMs } } } : UNPACED;
   const lookup = createCatalogLookup({ providerFor: () => provider, robots: null, platforms, env: {}, ...(finishInBackground ? { defer } : {}),
     recorder: createLookupRecorder({ answers: store.answers, health: store.health, policyFor: store.policyFor, defer }), hostGate: store.hostGate });
@@ -73,6 +73,29 @@ test('a second open of the same book in the same library makes no catalog reques
     books: [{ bookKey: `v1:isbn:${ISBN_A}` }, { bookKey: 'v1:openlibrary:OL1W', workId: 'OL1W' }] });
   assert.deepEqual(shelf.body, { answers: { [`v1:isbn:${ISBN_A}`]: 'found' } });
   assert.equal(calls.length, 1);
+});
+
+test('a found answer lists the library\'s matching catalog rows: title and author as the catalog shows them, a record link only on its own catalog', async () => {
+  const held = { outcome: 'in_catalog' };
+  const searched = [];
+  const searches = {
+    searchIsbn: async isbn => { searched.push(['isbn', isbn]); return []; },
+    searchTitle: async title => { searched.push(['title', title]); return [
+      { title: 'Wings of fire : an autobiography', authors: ['Kalam, A. P. J. Abdul', 'Tiwari, Arun'], catalogUrl: 'https://catalog.example/record/7', catalogLinkKind: 'record', observation: held },
+      { title: 'Wings of Fire #07', authors: ['Sutherland, Tui T.'], catalogUrl: 'https://elsewhere.example/record/8', catalogLinkKind: 'record', observation: held },
+      { title: 'Timeless Wings of Fire', authors: [], observation: held }]; },
+  };
+  const { app, logged } = harness({ searches, usageLogEnabled: true });
+  const reply = await request(app).post('/api/v2/holdings/check').send({ libraryId: vega.id, bookKey: `v1:isbn:${ISBN_A}` });
+  assert.deepEqual(searched.sort(), [['isbn', ISBN_A], ['title', 'Wings of Fire']]);
+  assert.equal(reply.body.answer, 'found');
+  assert.deepEqual(reply.body.matches, [
+    { title: 'Wings of fire : an autobiography', author: 'Kalam, A. P. J. Abdul; Tiwari, Arun', url: 'https://catalog.example/record/7' },
+    { title: 'Wings of Fire #07', author: 'Sutherland, Tui T.' },
+  ]);
+  assert.deepEqual([reply.body.catalogUrl, reply.body.catalogLinkKind], ['https://catalog.example/record/7', 'record']);
+  // Catalog titles never go into the anonymous log.
+  assert.ok(!JSON.stringify(logged).includes('Sutherland'));
 });
 
 test('a found answer links the book’s record only when the catalog said the link is its record, live and stored', async () => {
@@ -176,12 +199,13 @@ test('a library in the policy file never gets answer rows, but its health is sti
   assert.ok((await store.health.libraryHealth(optedOut.id)).lastSuccessAt);
 });
 
-test('one ISBN not listed is "not found" only for that edition, never for the work', async () => {
+test('one ISBN not listed is "not found" for the book page that asked it; result marking never says not found for a work', async () => {
   const { app, settle } = harness({ observe: () => ({ outcome: 'not_found', matchKind: 'none', recognizedExact: true }) });
-  // A book whose edition list is incomplete cannot be "not found".
+  // A catalog searched only by ISBN (Vega) that answers "not listed" for the
+  // reader's ISBN: every search made was answered, nothing matched.
   const edition = await request(app).post('/api/v2/holdings/check').send({ libraryId: vega.id, bookKey: `v1:isbn:${ISBN_A}` });
-  assert.equal(edition.body.answer, 'unconfirmed');
-  assert.equal(edition.body.reason, 'unconfirmed');
+  assert.equal(edition.body.answer, 'not_found');
+  assert.equal(edition.body.reason, undefined);
   await settle();
   const search = await request(app).post('/api/v2/holdings/search').buffer(true).parse((res, done) => { let text = ''; res.on('data', c => { text += c; }); res.on('end', () => done(null, text)); })
     .send({ libraryId: vega.id, query: 'matilda', books: [{ bookKey: 'v1:openlibrary:OL1W' }, { bookKey: 'v1:openlibrary:OL2W' }] });

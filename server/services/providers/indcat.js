@@ -1,4 +1,4 @@
-import { cachedTask, candidateLimit, enqueueTask, getText, peekCachedTask } from './http.js';
+import { cachedTask, enqueueTask, getText, peekCachedTask } from './http.js';
 import { attributes, text, firstIsbn, catalogError } from './catalogMarkup.js';
 import { validateAndNormalize } from '../isbn.js';
 import ISBN from 'isbn3';
@@ -252,8 +252,7 @@ export async function checkAvailability(library, value) {
   // One scoped search covers both forms of the ISBN (isbnQuery).
   const result = await search(library, isbnQuery(isbn), true, deadlineAt);
   let unresolved = false;
-  // A reader's check opens every record the search listed (candidateLimit).
-  for (const record of result.records.slice(0, candidateLimit(4))) {
+  for (const record of result.records.slice(0, 4)) {
     try {
       const resolved = await resolveCatalogRecord(library, record.recordId, isbn, deadlineAt, true);
       if (resolved) return resolved.observation;
@@ -270,32 +269,26 @@ export async function checkAvailability(library, value) {
     : 'Search results did not confirm the requested ISBN', 'CATALOG_HOLDING_UNCONFIRMED');
 }
 
-// Several ISBNs of one work in one scoped search. The free all-fields search
-// matches any listed number (isbnQuery), so one POST shows whether any of up
-// to MAX_BATCH_ISBNS editions is listed for this institution (checked live:
-// one real ISBN among five unassigned ones still returns its record). Each
-// record found must state one of the ISBNs and this institution's holding on
-// its own page. Returns that record's observation with `isbn13`, or not_found
-// with `isbns` (every ISBN searched) when the search lists nothing.
-export const MAX_BATCH_ISBNS = 8;
-export async function checkAvailabilityForIsbns(library, values) {
-  const isbns = [...new Set((values || []).map(value => validateAndNormalize(value)).filter(Boolean))].slice(0, MAX_BATCH_ISBNS);
-  if (!isbns.length) throw catalogError('ISBN required', 'CATALOG_EXACT_ISBN_REQUIRED');
-  const deadlineAt = Date.now() + 100_000;
-  const result = await search(library, isbns.map(isbnQuery).join(' '), true, deadlineAt);
-  if (result.total === 0) return { outcome: 'not_found', matchKind: 'none', recognizedExact: true, isbns,
-    catalogUrl: scopeUrl(config(library)), catalogLinkKind: 'search' };
-  let unresolved = false;
-  for (const record of result.records.slice(0, candidateLimit(4))) {
-    try {
-      const resolved = await resolveCatalogRecord(library, record.recordId, null, deadlineAt, true);
-      const isbn = isbns.find(candidate => resolved.isbn === candidate || resolved.isbns?.includes(candidate));
-      if (isbn) return { ...resolved.observation, matchKind: 'exact_isbn', isbn13: isbn };
-    } catch (error) {
-      if (error.code !== 'CATALOG_UNRECOGNIZED') throw error;
-      unresolved = true;
-    }
-  }
-  throw catalogError(unresolved ? 'Catalog records did not confirm this institution’s holding'
-    : 'Search results did not confirm any of these ISBNs', 'CATALOG_HOLDING_UNCONFIRMED');
+// A reader's library check (libraryBookSearch.js): one scoped search, by
+// title or by ISBN (both forms in one query), and its rows. A row does not
+// show this institution's holding (IndCat is a union catalog), so a matching
+// one is opened with readRecord.
+export async function searchTitle(library, title) {
+  return (await search(library, String(title || '').slice(0, 160))).records;
+}
+export async function searchIsbn(library, value) {
+  const query = isbnQuery(value);
+  if (!query) throw catalogError('ISBN required', 'CATALOG_EXACT_ISBN_REQUIRED');
+  return (await search(library, query, true)).records;
+}
+// One record page. The row came from this institution's own scoped search, so
+// its own bibliographic record counts as held (confirmedMemberRecord). Throws
+// CATALOG_HOLDING_UNCONFIRMED when the page shows another institution's.
+export async function readRecord(library, recordId) {
+  const code = config(library);
+  const response = await read(recordUrl(code, recordId), { deadlineAt: Date.now() + 60_000 });
+  if (!/<table\b[^>]*\bid=["']holding["']/i.test(response.text)) throw catalogError('Unrecognized catalog record');
+  const record = parseIndcatRecord(response.text, library, recordId, null, { confirmedMemberRecord: true });
+  if (!record) throw catalogError('Catalog record shows another institution’s holding', 'CATALOG_HOLDING_UNCONFIRMED');
+  return record;
 }

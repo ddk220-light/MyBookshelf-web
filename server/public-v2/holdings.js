@@ -31,13 +31,13 @@ const SEARCH_CAP_MS = 25_000; // the whole result-marking response ends by 25 s 
 const LOOKUP_MARGIN_MS = 500;
 const PROFILE_WAIT_MS = 10_000;
 // The API function may run 120 s (vercel.json). A book-page request, with its
-// record read, edition profile and any check finishing in the background,
-// ends its work a little before that.
+// record read and any check finishing in the background, ends its work a
+// little before that.
 export const FUNCTION_WORK_MS = 110_000;
 // The reader's answer is due within 60 s of the request at the latest. The
 // library's 45 s check (catalog-lookup/platforms.js) counts from the request
-// itself, so the book's details and its edition profile come out of those
-// 45 s and the answer normally arrives by about 45 s; this is the outer limit.
+// itself, so the book's details come out of those 45 s and the answer
+// normally arrives by about 45 s; this is the outer limit.
 // The app waits a little longer than that (useLibraryAnswer). A check still
 // running then finishes in the background (FUNCTION_WORK_MS).
 export const CHECK_REPLY_MS = 60_000;
@@ -179,7 +179,18 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
         ? onCatalogOrigin(found.catalogUrl, library, entry) : undefined;
       const catalogUrl = recordUrl || safeCatalogUrl(handoff?.catalogUrl);
       const reason = answerReason(answer, found);
-      res.json({ answer, ...(reason ? { reason } : {}), ...(catalogUrl ? { catalogUrl, catalogLinkKind: recordUrl ? 'record' : handoff.catalogLinkKind } : {}) });
+      // The catalog's own rows for a found book (up to five, the ISBN match
+      // first): title and author as the catalog shows them, and the record's
+      // link only when it is on the library's catalog address.
+      const matches = answer === 'found' && Array.isArray(found?.matches) ? found.matches.slice(0, 5).flatMap(match => {
+        const title = typeof match?.title === 'string' ? match.title.trim().slice(0, 300) : '';
+        if (!title) return [];
+        const author = typeof match.author === 'string' ? match.author.trim().slice(0, 300) : '';
+        const url = library.capabilities?.catalogLink ? onCatalogOrigin(match.url, library, entry) : undefined;
+        return [{ title, ...(author ? { author } : {}), ...(url ? { url } : {}) }];
+      }) : [];
+      res.json({ answer, ...(reason ? { reason } : {}), ...(catalogUrl ? { catalogUrl, catalogLinkKind: recordUrl ? 'record' : handoff.catalogLinkKind } : {}),
+        ...(matches.length ? { matches } : {}) });
       usage({ kind: 'book_check', libraryId, bookKey, outcome: answer, ...(source ? { source } : {}), durationMs: now() - startedAt });
     };
     const stored = await lookup.storedFor({ library: entry, book });
@@ -196,17 +207,15 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
     const abandon = () => { if (!res.writableEnded) controller.abort(); };
     res.on('close', abandon);
     try {
-      // The edition profile (Open Library) is resolved here, outside the
-      // catalog lookup, so it never uses a catalog request.
-      const profile = book.recordId || metadataFailed ? null
-        : await settleWithin(books.searchProfile?.(bookKey, { editionScope: 'work' }), PROFILE_WAIT_MS);
       // A check still running at its deadline answers "unknown" now and
       // finishes in the background, storing what it finds for the next look
       // (plan A2, step 3). The reader leaving no longer cancels a started check.
-      const answer = await lookup.lookupBook({ library: entry, publicLibrary: library, book, ...(profile ? { profile } : {}),
+      // `books` names a work's latest edition ISBN for a catalog that can
+      // only be searched by ISBN (an Open Library read, never a catalog one).
+      const answer = await lookup.lookupBook({ library: entry, publicLibrary: library, book, books,
         editionScope: 'work', signal: controller.signal, storedChecked: true, background: store.config?.backgroundChecksEnabled !== false,
         // The library's 45 s counts from the reader's tap (`askedAt`): the
-        // record read, the book's details and the profile wait come out of it,
+        // record read and the book's details come out of it,
         // so the answer is due about 45 s after the request, well inside the
         // reply limit (CHECK_REPLY_MS) and the app's wait (CHECK_TIMEOUT_MS).
         askedAt: startedAt, deadlineAt: startedAt + checkReplyMs, finishBy: startedAt + functionWorkMs });

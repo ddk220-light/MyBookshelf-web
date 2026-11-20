@@ -31,15 +31,35 @@ function executeRoute(route, method, task) {
   return executor ? executor({ entry: route.entry, prefix: route.prefix, method }, task) : task();
 }
 
+// An ISBN check's observation as the rows of an ISBN search, for a library
+// check (libraryBookSearch.js): one row when this library holds a record for
+// the ISBN, none when the catalog recognizably lists none, otherwise a failure.
+function isbnRows(check) {
+  return async isbn => {
+    const value = await check(isbn, '', '');
+    const held = ['available', 'none_available', 'in_catalog'].includes(value?.outcome) ? value
+      : ['available', 'checked_out', 'waitlist'].includes(value?.status)
+        ? { outcome: value.status === 'available' ? 'available' : 'none_available', catalogUrl: value.url, catalogLinkKind: value.catalogLinkKind } : null;
+    if (held) return [{ title: value.catalogTitle || '', authors: [], catalogUrl: held.catalogUrl, catalogLinkKind: held.catalogLinkKind, observation: held }];
+    if (value?.outcome === 'not_found' && value.recognizedExact) return [];
+    throw Object.assign(new Error('The catalog did not show whether it holds this ISBN'), { code: 'CATALOG_HOLDING_UNCONFIRMED' });
+  };
+}
+
+// Each catalog's methods. A library check uses only `searchTitle(title)`,
+// `searchIsbn(isbn)` and, where search rows do not show this library's
+// holding, `readRecord(recordId)`: one catalog request each.
 function primaryProvider(library) {
   if (!library || !Array.isArray(library.capabilities) || !library.capabilities.includes('availability')) return null;
   const normalize = (check) => async (...args) => normalizeAvailability(await check(...args));
+  const withIsbnRows = provider => ({ ...provider, searchIsbn: isbnRows(provider.checkAvailability) });
   switch (library.platform) {
     case 'vpl':
       // Record IDs here are reverified title/author identities, not catalog
-      // record numbers: an own-record check is a title_author lookup.
-      return { checkAvailability: () => visakhapatnam.checkPublicAvailability(), isbnLookup: false, recordLookupKind: 'title_author',
-        findBookCandidates: book => visakhapatnam.searchBookCandidates(library, book),
+      // record numbers: an own-record check is a title_author lookup. The
+      // catalog has no ISBN field.
+      return { checkAvailability: () => visakhapatnam.checkPublicAvailability(), recordLookupKind: 'title_author',
+        searchTitle: title => visakhapatnam.searchBookCandidates(library, { title }),
         searchCatalog: query => visakhapatnam.searchPublicCatalog(library, query),
         resolveCatalogRecord: async recordId => ({ ...await visakhapatnam.resolvePublicCatalogRecord(library, recordId), observation: await visakhapatnam.checkPublicRecordAvailability(library, recordId) }),
         checkRecordAvailability: recordId => visakhapatnam.checkPublicRecordAvailability(library, recordId) };
@@ -48,8 +68,10 @@ function primaryProvider(library) {
       // The public v2 service needs the native-equivalent BiblioCommons
       // observation, including match confidence and provider failures. Legacy
       // routes are retired; their compatibility function remains exported by
-      // the adapter for source-level consumers.
-      return { checkAvailability: (isbn, title, author) => bibliocommons.checkPublicAvailability(library.slug, isbn, title, author), searchBookCandidates: query => bibliocommons.searchBookCandidates(library.slug, query),
+      // the adapter for source-level consumers. A bare ISBN is a keyword
+      // search (one request) whose print rows show their ISBNs.
+      return { checkAvailability: (isbn, title, author) => bibliocommons.checkPublicAvailability(library.slug, isbn, title, author),
+        searchTitle: title => bibliocommons.searchBookCandidates(library.slug, title), searchIsbn: isbn => bibliocommons.searchResultRows(library.slug, isbn),
         searchResultRows: query => bibliocommons.searchResultRows(library.slug, query), login: (card, pin) => bibliocommons.login(library.slug, card, pin) };
     case 'koha': {
       // Result marking (catalog-lookup) reads one keyword search page whose
@@ -60,57 +82,51 @@ function primaryProvider(library) {
       // title search, which for these catalogs is not scoped to the branch.
       const marking = markable ? { searchResultRows: query => (library.kohaRssRows === true
         ? koha.searchRssRows(library, query) : koha.searchPublicCatalog(library, query)) } : { resultMarking: false };
-      // The OPAC ISBN search covers both forms of an edition and answers up to
-      // eight editions in one OR search (koha.checkPublicAvailabilityForIsbns).
-      if (!library.publicCatalogCapabilities?.titleSearch) return { ...(library.publicCatalogApi ? {} : { searchCatalog: query => koha.searchCatalog(library, query), resolveCatalogRecord: id => koha.resolveCatalogRecord(library, id),
-        checkIsbns: isbns => koha.checkPublicAvailabilityForIsbns(library, isbns), isbn10Lookup: false }), ...marking, checkAvailability: isbn => (library.publicCatalogApi === 'iith-opac-v1' ? iithKoha : koha).checkPublicAvailability(library, isbn) };
-      // Title-search catalogs: the title search and one OR search for up to
-      // eight of the work's ISBNs (both forms of each) run side by side
-      // (libraryBookSearch.js), instead of the title search and then one
-      // search per ISBN form.
-      return { ...marking, checkAvailability: (isbn) => koha.checkPublicAvailability(library, isbn),
-        checkIsbns: isbns => koha.checkPublicAvailabilityForIsbns(library, isbns), isbn10Lookup: false,
-        searchCatalog: (query, options) => koha.searchPublicCatalog(library, query, options),
-        findBookCandidates: book => koha.searchBookCandidates(library, book),
-        resolveCatalogRecord: (recordId) => koha.resolvePublicCatalogRecord(library, recordId),
-        checkRecordAvailability: (recordId) => koha.checkPublicRecordAvailability(library, recordId) };
+      // The IIT Hyderabad API answers by ISBN only.
+      if (library.publicCatalogApi === 'iith-opac-v1') return withIsbnRows({ ...marking, checkAvailability: isbn => iithKoha.checkPublicAvailability(library, isbn) });
+      return { ...marking, checkAvailability: isbn => koha.checkPublicAvailability(library, isbn),
+        searchTitle: title => koha.searchTitle(library, title), searchIsbn: isbn => koha.searchIsbn(library, isbn), readRecord: id => koha.readRecord(library, id),
+        ...(library.publicCatalogCapabilities?.titleSearch ? {
+          searchCatalog: (query, options) => koha.searchPublicCatalog(library, query, options),
+          resolveCatalogRecord: (recordId) => koha.resolvePublicCatalogRecord(library, recordId),
+          checkRecordAvailability: (recordId) => koha.checkPublicRecordAvailability(library, recordId),
+        } : { searchCatalog: query => koha.searchCatalog(library, query), resolveCatalogRecord: id => koha.resolveCatalogRecord(library, id) }) };
     }
     case 'chamo':
-      return { checkAvailability: (isbn) => chamo.checkPublicAvailability(library, isbn) };
+      return withIsbnRows({ checkAvailability: (isbn) => chamo.checkPublicAvailability(library, isbn) });
     case 'libsys':
-      return { checkAvailability: normalize((isbn) => libsys.checkAvailability(library, isbn)) };
+      return withIsbnRows({ checkAvailability: normalize((isbn) => libsys.checkAvailability(library, isbn)) });
     case 'vega':
-      // Vega's search finds an edition by either ISBN form (checked against
-      // DC Public Library on 2026-11-12), so the ISBN-10 form is not asked.
-      return { checkAvailability: (isbn) => vega.checkAvailability(library, isbn), isbn10Lookup: false };
+      return withIsbnRows({ checkAvailability: (isbn) => vega.checkAvailability(library, isbn) });
     case 'aspen':
-      return { checkAvailability: (isbn) => aspen.checkAvailability(library, isbn) };
+      return withIsbnRows({ checkAvailability: (isbn) => aspen.checkAvailability(library, isbn) });
     case 'calil':
-      return { checkAvailability: (isbn) => calil.checkAvailability(library, isbn), checkMany: isbns => calil.checkMany(library, isbns) };
+      return withIsbnRows({ checkAvailability: (isbn) => calil.checkAvailability(library, isbn), checkMany: isbns => calil.checkMany(library, isbns) });
     case 'evergreen':
-      return { checkAvailability: (isbn) => evergreen.checkAvailability(library, isbn) };
+      return withIsbnRows({ checkAvailability: (isbn) => evergreen.checkAvailability(library, isbn) });
     case 'egranthalaya':
-      // A work check is one member title search (its rows carry this member's
-      // presence and often the ISBN), not one slow ISBN search per edition.
       return { checkAvailability: (isbn) => egranthalaya.checkAvailability(library, isbn), searchCatalog: query => egranthalaya.searchCatalog(library, query), resolveCatalogRecord: id => egranthalaya.resolveCatalogRecord(library, id),
-        findBookCandidates: book => egranthalaya.searchBookCandidates(library, book), isbnLookup: false };
+        searchTitle: title => egranthalaya.searchTitle(library, title), searchIsbn: isbn => egranthalaya.searchIsbn(library, isbn) };
     case 'indcat':
-      // One scoped search covers both ISBN forms and up to eight editions;
-      // search rows show the record's own title (rowTitlesReliable).
       return { checkAvailability: isbn => indcat.checkAvailability(library, isbn), searchCatalog: query => indcat.searchCatalog(library, query), resolveCatalogRecord: id => indcat.resolveCatalogRecord(library, id),
-        checkIsbns: isbns => indcat.checkAvailabilityForIsbns(library, isbns), isbn10Lookup: false, rowTitlesReliable: true };
+        searchTitle: title => indcat.searchTitle(library, title), searchIsbn: isbn => indcat.searchIsbn(library, isbn), readRecord: id => indcat.readRecord(library, id) };
     case 'libman':
+      return { checkAvailability: (isbn, title, author) => libman.checkAvailability(library, isbn, title, author),
+        searchCatalog: query => libman.searchCatalog(library, query), resolveCatalogRecord: id => libman.resolveCatalogRecord(library, id),
+        searchTitle: title => libman.searchTitle(library, title), searchIsbn: isbn => libman.searchIsbn(library, isbn) };
     case 'vufind':
+      return { checkAvailability: (isbn, title, author) => vufind.checkAvailability(library, isbn, title, author),
+        searchCatalog: query => vufind.searchCatalog(library, query), resolveCatalogRecord: id => vufind.resolveCatalogRecord(library, id),
+        searchTitle: title => vufind.searchCatalog(library, title), searchIsbn: isbn => vufind.searchIsbn(library, isbn) };
     case 'discovery-academic':
-    case 'discovery-community': {
-      const adapter = { libman, vufind, 'discovery-academic': discoveryAcademic, 'discovery-community': discoveryCommunity }[library.platform];
-      return { checkAvailability: (isbn, title, author) => adapter.checkAvailability(library, isbn, title, author),
-        searchCatalog: query => adapter.searchCatalog(library, query),
-        resolveCatalogRecord: id => adapter.resolveCatalogRecord(library, id),
-        // LIBMAN's one search already covers both ISBN forms.
-        ...(library.platform === 'libman' ? { isbn10Lookup: false } : {}),
-        ...(typeof adapter.isbnLookupSupported === 'function' && !adapter.isbnLookupSupported(library) ? { isbnLookup: false } : {}) };
-    }
+      return { checkAvailability: (isbn, title, author) => discoveryAcademic.checkAvailability(library, isbn, title, author),
+        searchCatalog: query => discoveryAcademic.searchCatalog(library, query), resolveCatalogRecord: id => discoveryAcademic.resolveCatalogRecord(library, id),
+        searchTitle: title => discoveryAcademic.searchCatalog(library, title),
+        ...(discoveryAcademic.isbnLookupSupported(library) ? { searchIsbn: isbn => discoveryAcademic.searchIsbn(library, isbn) } : {}) };
+    case 'discovery-community':
+      return { checkAvailability: (isbn, title, author) => discoveryCommunity.checkAvailability(library, isbn, title, author),
+        searchCatalog: query => discoveryCommunity.searchCatalog(library, query), resolveCatalogRecord: id => discoveryCommunity.resolveCatalogRecord(library, id),
+        searchTitle: title => discoveryCommunity.searchTitle(library, title), readRecord: id => discoveryCommunity.readRecord(library, id) };
     default:
       return null;
   }
@@ -157,30 +173,39 @@ export function providerWithAlternates(library, providerFor = primaryProvider) {
       return (await executeRoute(route, 'resolveCatalogRecord', () => route.provider.resolveCatalogRecord(ownId)))?.observation;
     };
   }
+  // A search asks each route in order until one lists rows; an empty later
+  // route never hides a failed earlier one. Row record IDs carry the route.
+  const searchRoutes = method => async (...args) => {
+    let error;
+    let completed = false;
+    for (const route of routes) {
+      if (!route.provider[method]) continue;
+      try {
+        const response = await executeRoute(route, method, () => route.provider[method](...args));
+        const records = Array.isArray(response) ? response : response?.records;
+        if (!Array.isArray(records)) throw new Error('Invalid catalog response');
+        completed = true;
+        if (records.length) return records.map(record => ({ ...record, ...(record.recordId ? { recordId: route.prefix + record.recordId } : {}) }));
+      } catch (failure) { error = failure; }
+    }
+    if (error) throw error;
+    if (completed) return [];
+    throw Object.assign(new Error('Catalog search is unavailable'), { code: 'CATALOG_UNSUPPORTED' });
+  };
+  const anyRoute = method => routes.some(route => typeof route.provider[method] === 'function');
   return {
     ...inherited,
     catalogRoutes: Object.freeze(routes.map(publicRoute)),
     catalogRouteForRecord: id => publicRoute(routeForRecord(id)),
-    // Structured candidate search covers only the primary route.
-    findBookCandidates: undefined,
-    async searchCatalog(query) {
-      let error;
-      let completed = false;
-      for (const route of routes) {
-        if (!route.provider.searchCatalog) continue;
-        try {
-          const response = await executeRoute(route, 'searchCatalog', () => route.provider.searchCatalog(query));
-          const records = Array.isArray(response) ? response : response?.records;
-          if (!Array.isArray(records)) throw new Error('Invalid catalog response');
-          completed = true;
-          if (records.length) return records.map(record => ({ ...record, recordId: route.prefix + record.recordId }));
-        } catch (failure) { error = failure; }
-      }
-      // An empty second route must not hide a failed first route.
-      if (error) throw error;
-      if (completed) return [];
-      throw Object.assign(new Error('Catalog search is unavailable'), { code: 'CATALOG_UNSUPPORTED' });
-    },
+    searchCatalog: searchRoutes('searchCatalog'),
+    ...(anyRoute('searchTitle') ? { searchTitle: searchRoutes('searchTitle') } : {}),
+    ...(anyRoute('searchIsbn') ? { searchIsbn: searchRoutes('searchIsbn') } : {}),
+    ...(anyRoute('readRecord') ? { async readRecord(id) {
+      const route = routeForRecord(id);
+      if (!route.provider?.readRecord) throw Object.assign(new Error('Catalog record cannot be opened'), { code: 'CATALOG_UNSUPPORTED' });
+      const result = await executeRoute(route, 'readRecord', () => route.provider.readRecord(id.slice(route.prefix.length)));
+      return result ? { ...result, recordId: id } : result;
+    } } : {}),
     async resolveCatalogRecord(id) {
       const route = routeForRecord(id);
       if (!route.provider?.resolveCatalogRecord) throw Object.assign(new Error('Catalog record cannot be opened'), { code: 'CATALOG_UNSUPPORTED' });

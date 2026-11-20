@@ -37,6 +37,14 @@ describe('public API adapter', () => {
       expect(result.catalogUrl).toBeUndefined();
       expect(result.answer).toBe(data.answer === 'found' ? 'found' : 'unknown');
     }
+    // A found answer's catalog rows: titles kept, unsafe links and extra rows dropped, never on another answer.
+    const rows = [{ title: ' Wings of fire ', author: 'Kalam', url: 'https://catalog.example.test/record/1' }, { title: 'Wings of Fire 7', url: 'javascript:alert(1)' },
+      { title: '' }, { author: 'No title' }, 'text', { title: 'c' }, { title: 'd' }, { title: 'e' }];
+    reply({ answer: 'found', matches: rows });
+    expect((await publicApi.holdingsCheck('koha:a', 'v1:isbn:9788173711466')).matches).toEqual([
+      { title: 'Wings of fire', author: 'Kalam', url: 'https://catalog.example.test/record/1' }, { title: 'Wings of Fire 7' }]);
+    reply({ answer: 'not_found', matches: rows });
+    expect((await publicApi.holdingsCheck('koha:a', 'v1:isbn:9788173711466')).matches).toBeUndefined();
     const fetchMock = vi.fn().mockResolvedValue(new Response('{}', { status: 202 }));
     vi.stubGlobal('fetch', fetchMock);
     await publicApi.libraryRequest('Tirunelveli');

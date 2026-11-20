@@ -47,23 +47,20 @@ test('a book from another catalog uses its ISBN instead of reusing that catalogâ
   assert.equal(response.outcome, 'available');
 });
 
-test('work search recovers editions while exact-only search and stale caches remain isolated', async () => {
+test('a work search finds the book by title while exact-only search and stale caches remain isolated', async () => {
   let fail = false;
-  const alternate = '9788173711466';
-  const provider = { checkAvailability: async isbn => {
-    if (fail) throw new Error('offline');
-    return isbn === alternate ? { outcome: 'in_catalog', matchKind: 'exact_isbn', recognizedExact: true,
-      catalogUrl: 'https://catalog.example.test/record/42' } : { outcome: 'not_found', matchKind: 'none', recognizedExact: true };
-  } };
-  const books = { resolve: async () => book, searchProfile: async () => ({ book, isbns: [book.isbn13, alternate],
-    titles: [book.title], authors: book.authors, complete: true }) };
-  const service = createPublicAvailabilityService(dependencies(provider, { books }));
+  const record = 'https://catalog.example.test/record/42';
+  const offline = () => { if (fail) throw new Error('offline'); };
+  const provider = {
+    checkAvailability: async () => { offline(); return { outcome: 'not_found', matchKind: 'none', recognizedExact: true }; },
+    searchIsbn: async () => { offline(); return []; },
+    searchTitle: async () => { offline(); return [{ title: 'Example: a novel', authors: ['Someone else'], catalogUrl: record, catalogLinkKind: 'record', observation: { outcome: 'in_catalog' } }]; },
+  };
+  const service = createPublicAvailabilityService(dependencies(provider));
   const input = { libraryId: library.id, bookKey: book.bookKey };
   const broad = (await service.check(input)).response;
-  assert.equal(broad.outcome, 'in_catalog');
-  assert.equal(broad.matchKind, 'verified_work');
-  assert.equal(broad.matchedBook.isbn13, alternate);
-  assert.equal(broad.catalogUrl, 'https://catalog.example.test/record/42');
+  assert.deepEqual([broad.outcome, broad.matchKind, broad.lookupKind, broad.catalogUrl], ['in_catalog', 'verified_work', 'title', record]);
+  assert.deepEqual(broad.matches, [{ title: 'Example: a novel', author: 'Someone else', url: record }]);
   assert.equal((await service.check({ ...input, editionScope: 'exact' })).response.outcome, 'not_found');
   fail = true;
   assert.equal((await service.check(input)).response.outcome, 'in_catalog');
@@ -226,22 +223,4 @@ test('aggregated catalog observations preserve a search link instead of calling 
   assert.equal(result.response.outcome, 'available');
   assert.equal(result.response.catalogLinkKind, 'search');
   assert.equal(result.response.totalCopies, 2);
-});
-
-test('work matching preserves reference-only editions, by ISBN or by title and author alike (owner decision, 19 November 2026)', async () => {
-  for (const hasIsbn of [true, false]) {
-    const provider = { checkAvailability: async () => ({ outcome: 'not_found', matchKind: 'none', recognizedExact: true }),
-      searchCatalog: async () => ({ records: [{ recordId: '42' }], hasMore: false }),
-      resolveCatalogRecord: async () => ({ title: book.title, authors: book.authors, ...(hasIsbn ? { isbn13: book.isbn13 } : {}),
-        observation: { outcome: 'unknown', matchKind: 'catalog_record', recognizedRecord: true,
-          totalCopies: 2, notForLoanCopies: 2, loanRestriction: 'not_for_loan', locations: [{ name: 'Reference room', totalCopies: 2 }] } }),
-    };
-    const books = { resolve: async () => book, searchProfile: async () => ({ book, isbns: [book.isbn13], titles: [book.title], authors: book.authors, complete: true }) };
-    const result = (await createPublicAvailabilityService(dependencies(provider, { books })).check({ libraryId: library.id, bookKey: book.bookKey })).response;
-    assert.equal(result.matchKind, hasIsbn ? 'exact_isbn' : 'verified_work');
-    assert.equal(result.lookupKind, hasIsbn ? 'exact_isbn' : 'title_author');
-    assert.equal(result.loanRestriction, 'not_for_loan');
-    assert.equal(result.totalCopies, 2);
-    assert.equal(result.availableCopies, undefined);
-  }
 });

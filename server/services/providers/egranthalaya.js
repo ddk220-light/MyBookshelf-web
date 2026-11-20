@@ -596,7 +596,10 @@ function parseCatalogSearchRows(html, libraryCode) {
     if (!recordId || !title) continue;
     const author = rowAuthor(spanById(clean, `Repeater1_Lbl_Authors_${index}`));
     const copies = spanById(clean, `Repeater1_Lbl_Holding_Info_${index}`)?.match(/^Total Copy\(ies\):\s*(\d{1,5})$/i);
-    books.push({ recordId, title, authors: author ? [author] : [], isbn: firstIsbn(spanById(clean, `Repeater1_ISBNLbl_${index}`)),
+    const isbnText = spanById(clean, `Repeater1_ISBNLbl_${index}`);
+    // Every ISBN the row shows (a record can list several).
+    const isbns = [...new Set((String(isbnText || '').match(/\b(?:97[89](?:[\s-]*\d){10}|\d(?:[\s-]*\d){8}[\s-]*[\dXx])\b/g) || []).map(validateAndNormalize).filter(Boolean))];
+    books.push({ recordId, title, authors: author ? [author] : [], isbn: firstIsbn(isbnText), ...(isbns.length > 1 ? { isbns } : {}),
       ...(copies ? { totalCopies: Number(copies[1]) } : {}) });
   }
   if (Number(count[1]) && !books.length) throw providerError('CATALOG_UNRECOGNIZED', 'Catalog records missing');
@@ -668,13 +671,30 @@ export async function searchCatalog(library, query) {
   return hasMore ? Object.assign(rows, { hasMore: true }) : rows;
 }
 
-// Title-first candidates for a book check ({ title, author } from the work's
-// edition profile): one member title search for the main title (the part
-// before a subtitle). Rows are searchCatalog's, with this member's presence.
-export async function searchBookCandidates(library, { title } = {}) {
-  const main = String(title || '').split(/\s+\/\s+/)[0].split(/\s*:\s*/)[0].trim();
-  if (!/[\p{L}\p{N}]/u.test(main)) throw providerError('CATALOG_QUERY_UNSUPPORTED', 'A title is needed to search this catalog');
-  return searchCatalog(library, main.slice(0, 160));
+// A reader's library check (libraryBookSearch.js): one search of this
+// member's catalog, and its rows. The title search is the page's own TITLE
+// search (the records the member holds copies of, shared ones included); the
+// ISBN search is one ALL search for the ISBN's shared digits in both
+// spellings (OR). Every row is a record this member's own search returned,
+// so it carries the member's presence. The kept public form (memberForm) is
+// the only other request.
+function memberRows(library, search) {
+  const { url, libraryCode } = configuration(library), deadlineAt = Date.now() + TIMEOUT_MS;
+  return cachedTask(`egranthalaya:rows:${library.egranthalayaCluster}:${libraryCode}:${search.field}:${queryKey(search.query)}`, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, async () => {
+    blocked();
+    const rows = parseCatalogSearchRows(await memberSearch(url, libraryCode, search, searchOptions(deadlineAt)), libraryCode);
+    return rows.map(book => ({ ...book, observation: { outcome: 'in_catalog', matchKind: 'verified_work', recognizedExact: true,
+      locations: [{ name: library.name, status: 'unknown' }] } }));
+  }, { deadlineAt }), { deadlineAt, ttlMs: 5 * 60_000 });
+}
+export async function searchTitle(library, title) {
+  return memberRows(library, { query: String(title || '').slice(0, 160), field: 'TITLE' });
+}
+export async function searchIsbn(library, value) {
+  const isbn = validateAndNormalize(value);
+  if (!isbn) throw providerError('CATALOG_EXACT_ISBN_REQUIRED', 'e-Granthalaya availability requires a valid ISBN');
+  const queries = isbnQueries(isbn);
+  return memberRows(library, { query: queries.join(' '), field: 'ALL', boolean: queries.length > 1 ? 'OR' : 'LIKE' });
 }
 
 export async function resolveCatalogRecord(library, recordId) {

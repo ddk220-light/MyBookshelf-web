@@ -3,7 +3,7 @@ import { attributes, catalogError, firstIsbn, text } from './catalogMarkup.js';
 import { CommunitySession, hiddenFields } from './communitySession.js';
 import { aggregateObservations, boundedQuery, distinctRecords, markHasMore, markSearchComplete, normalized, observation } from './communityRecords.js';
 import { isbnMatches } from './contract.js';
-import { cachedTask, candidateLimit } from './http.js';
+import { cachedTask } from './http.js';
 
 const ORIGIN = 'https://mediatheques-afinde.org';
 export const PMB_SCOPES = Object.freeze({ 12: 'Bangalore', 9: 'Bengale', 2: 'Bhopal', 16: 'Bombay', 3: 'Chandigarh',
@@ -177,7 +177,7 @@ export async function checkPmbIsbn(library, isbn13, deadlineAt) {
       found.push(...rows);
     }
     const ids = [...new Set(found.map(row => row.recordId))];
-    const read = candidateLimit(3);
+    const read = 3;
     if (ids.length > read) complete = false;
     const exact = [];
     let error;

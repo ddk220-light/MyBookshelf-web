@@ -225,6 +225,14 @@ export async function searchCatalog(library,query){
   const c=config(library),q=boundedQuery(query),deadlineAt=Date.now()+DEFAULT_TIMEOUT_MS;
   return cachedTask(`academic-search:${library.academicCatalogId}:${q}`,async()=>finish(await fetchQuery(library,q,'title',deadlineAt),c,q),{deadlineAt});
 }
+// A reader's library check (libraryBookSearch.js): one search of the
+// catalog's ISBN index for the reader's ISBN, and its rows (each a record of
+// this library). Only where the catalog has one (isbnLookupSupported).
+export async function searchIsbn(library,value){
+  const c=config(library),isbn=validateAndNormalize(value),deadlineAt=Date.now()+DEFAULT_TIMEOUT_MS;
+  if(!isbn||!c.isbn)throw catalogError('This catalog cannot be searched by ISBN','CATALOG_QUERY_UNSUPPORTED');
+  return finish(await fetchQuery(library,isbn,'isbn',deadlineAt),c,isbn);
+}
 export async function resolveCatalogRecord(library,id){
   const c=config(library),[q,key]=decodeRecord(id),deadlineAt=Date.now()+DEFAULT_TIMEOUT_MS;
   const result=await fetchQuery(library,q,'title',deadlineAt),b=result.records.find(b=>recordFingerprint(b)===key);

@@ -1,7 +1,6 @@
 import { getProvider, withProviderRouteExecution } from '../providers/index.js';
 import { catalogOperation, withCatalogOperation, withCatalogSuboperation } from '../providers/http.js';
 import { createRobotsPolicy } from '../providers/robots.js';
-import { matchCatalogRecord } from '../libraryBookSearch.js';
 import { validateAndNormalize } from '../isbn.js';
 import { parsePublicBookKey } from '../../public-v2/contracts.js';
 import { runBookCheck } from './check.js';
@@ -14,7 +13,7 @@ import { createMemoryHostGate } from '../../catalog-store/hostGate.js';
 
 // The catalog lookup layer (plan section 5). Two entry points:
 //
-//   lookupBook({ library, book, profile?, editionScope?, signal, deadlineAt, background? })
+//   lookupBook({ library, book, books?, editionScope?, signal, deadlineAt, background? })
 //     "does library X have book Y" -> found | not_found | couldnt_check
 //   markResults({ library, query, books, signal, deadlineAt })
 //     async iterable of { bookKey, outcome, ... } as answers arrive, then
@@ -133,14 +132,14 @@ export function createCatalogLookup({
     let finished = false;
     function observed(route, value) {
       if (route.method === 'checkMany' && value instanceof Map) return { outcome: 'checked' };
-      if (route.method === 'searchCatalog' || route.method === 'searchResultRows' || route.method === 'searchBookCandidates') {
+      if (['searchCatalog', 'searchResultRows', 'searchTitle', 'searchIsbn'].includes(route.method)) {
         return Array.isArray(value) || Array.isArray(value?.records) ? { outcome: 'checked' } : couldntCheck('unrecognized');
       }
-      const observation = route.method === 'resolveCatalogRecord' ? value?.observation : value;
+      const observation = ['resolveCatalogRecord', 'readRecord'].includes(route.method) ? value?.observation : value;
       if (!observation) return couldntCheck('unconfirmed');
       try {
         return answerFromResponse(normalizeProviderObservation(observation, {
-          lookupKind: route.method === 'resolveCatalogRecord' ? (observation.matchKind === 'catalog_record' ? 'catalog_record' : 'verified_work')
+          lookupKind: ['resolveCatalogRecord', 'readRecord'].includes(route.method) ? (observation.matchKind === 'catalog_record' ? 'catalog_record' : 'verified_work')
             : route.method === 'checkRecordAvailability' ? 'catalog_record' : 'exact_isbn',
           attemptedAt: new Date(now()).toISOString(), library: publicView(route.entry), entry: route.entry,
         }));
@@ -213,21 +212,11 @@ export function createCatalogLookup({
         release();
       }
     }
-    function finish(answer, { profile } = {}) {
+    function finish(answer) {
       const attempted = events.filter(event => event.started);
-      const proved = attempted.filter(event => {
-        if (event.answer?.outcome === 'found') return true;
-        if (answer?.outcome !== 'found' || !profile) return false;
-        const rows = Array.isArray(event.value) ? event.value : event.value?.records;
-        return Array.isArray(rows) && rows.some(row => {
-          const match = matchCatalogRecord(row, profile);
-          if (!match || !['exact_isbn', 'verified_work'].includes(match.matchKind) || !row.observation
-              || (answer.matchedIsbn13 && match.isbn13 !== answer.matchedIsbn13)) return false;
-          return observed({ ...event.route, method: 'checkAvailability' }, {
-            ...row.observation, matchKind: match.matchKind, recognizedExact: true,
-          }).outcome === 'found';
-        });
-      });
+      // The routes whose own reply proved the find, or that answered a search
+      // whose rows the find came from.
+      const proved = answer?.outcome === 'found' ? attempted.filter(event => ['found', 'checked'].includes(event.answer?.outcome)) : [];
       const outcomeFor = event => {
         if (answer?.outcome === 'found' && proved.includes(event)) return answer;
         return !event.answer || (event.answer.reason === 'cancelled' && answer?.reason === 'timeout') ? answer : event.answer;
@@ -399,14 +388,14 @@ export function createCatalogLookup({
     }
   }
 
-  async function startCheck({ entry, library, provider: given, book, bookKey, parsed, ownRecord, lookupKind, editionScope = 'work', language, books,
+  async function startCheck({ entry, library, provider: given, book, bookKey, parsed, ownRecord, lookupKind, editionScope = 'work', books,
     attemptedAt, signal, deadlineAt, background = false, finishBy = Infinity, askedAt: asked }, flight, startedAt) {
     // The library's deadline counts from the reader's tap (`askedAt`, the
-    // request's start), so resolving the book and reading its editions come
-    // out of the check's 45 s rather than adding to the reader's wait.
+    // request's start), so resolving the book comes out of the check's 45 s
+    // rather than adding to the reader's wait.
     const since = askedAt({ askedAt: asked }, startedAt);
-    // The catalog's robots.txt is read while the edition profile is resolved,
-    // not in series before the first catalog request.
+    // The catalog's robots.txt is read while the book is resolved, not in
+    // series before the first catalog request.
     prepare(entry);
     const provider = given || providerFor(entry);
     const routed = Boolean(provider?.catalogRoutes?.length);
@@ -423,26 +412,26 @@ export function createCatalogLookup({
     flight.host = host;
     let routes;
     const view = publicView(entry, library);
-    const finish = (checked, profile) => {
+    const finish = checked => {
       // A check cancelled to make way for a reader stores nothing, even if an
       // answer arrived as it stopped.
       const result = flight.cancelled ? { error: coded('Catalog check was cancelled', 'CATALOG_ABORTED'), lookupKind, requests: checked.requests } : checked;
-      const answer = answerFromCheck(result, { profile, recordId: ownRecord ? parsed?.recordId : undefined });
-      // An edition profile (Open Library) that failed or was too slow, or a
-      // wait for one of this instance's own host slots, is not the catalog's
-      // failure: it neither opens the circuit nor counts in the health record.
-      const routeResult = routes?.finish(answer, { profile });
+      const answer = answerFromCheck(result, { recordId: ownRecord ? parsed?.recordId : undefined });
+      // Open Library failing to name a work's latest ISBN, or a wait for one
+      // of this instance's own host slots, is not the catalog's failure: it
+      // neither opens the circuit nor counts in the health record.
+      const routeResult = routes?.finish(answer);
       if (!routes && !result.notCatalogFailure) noteHost(host, answer);
       recorder.record({ entry, platform: routeResult?.platformName || platformName, host: routeResult?.host || host,
         book: ownRecord ? { ...book, recordId: parsed?.recordId, recordLibraryId: entry.id } : book,
-        profile, answer, kind: 'book', durationMs: now() - startedAt, requests: result.requests || 0,
+        answer, kind: 'book', durationMs: now() - startedAt, requests: result.requests || 0,
         live: !result.notCatalogFailure && (routeResult?.live ?? true), lookupKind: result.lookupKind || lookupKind, afterReply: Boolean(flight.afterReply) });
       const out = { ...result, answer, durationMs: now() - startedAt, requests: result.requests || 0 };
       flight.settle(out);
       return out;
     };
     if (routeError) return finish({ error: routeError, lookupKind, notCatalogFailure: true });
-    if (!platform || !provider?.checkAvailability) return finish({ error: coded('Catalog lookups are not available for this library', 'CATALOG_UNSUPPORTED'), lookupKind });
+    if (!platform || !(provider?.checkAvailability || provider?.searchTitle || provider?.searchIsbn)) return finish({ error: coded('Catalog lookups are not available for this library', 'CATALOG_UNSUPPORTED'), lookupKind });
     // The reader's answer is due by `answerBy`. A background check works on
     // until `deadline`, later; otherwise both are the same moment. Neither
     // passes `finishBy`.
@@ -454,15 +443,6 @@ export function createCatalogLookup({
     // when it gives way to a waiting reader.
     const workSignal = inBackground ? flight.cancel.signal : signal;
     if (routed) routes = routeSession({ entry, deadline, signal: workSignal, flight });
-    // Resolve the edition profile before taking a host slot, and only within
-    // the check's deadline: waiting on Open Library must not hold a catalog
-    // slot or use up the catalog's time.
-    if (!ownRecord && editionScope === 'work' && typeof books?.searchProfile === 'function') {
-      let profile;
-      try { profile = await settleBy(books.searchProfile(bookKey, { editionScope, language }), answerBy, signal, now); }
-      catch (error) { return finish({ error, lookupKind, notCatalogFailure: true }); }
-      books = { searchProfile: async () => profile };
-    }
     // While the host's circuit is open (plan 5.4) result marking skips the
     // host, and the book page tries once: one check at a time for that host
     // on this instance, and each catalog request is sent once, with no
@@ -481,12 +461,12 @@ export function createCatalogLookup({
       try {
         // No request cap: the check ends at its answer or its deadline, and
         // every request waits for the host's shared pacing (gateFor).
-        const run = () => runBookCheck({ entry, library: view, provider, book, bookKey, parsed, ownRecord, lookupKind, editionScope, language, books, attemptedAt,
+        const run = () => runBookCheck({ entry, library: view, provider, book, bookKey, parsed, ownRecord, lookupKind, editionScope, books, attemptedAt,
           budget: { maxRequests: Infinity, deadlineAt: deadline, signal: workSignal, robots: robotsCheck, minIntervalMs: platform.minIntervalMs,
             gate: gateFor(platform, deadline), noRetries: tryOnce, requestTimeoutMs: REQUEST_TIMEOUT_MS, hostRequests: requestsInFlight(platform),
             progress, conclude: conclude.signal } });
         const result = await (routes ? withProviderRouteExecution(routes.execute, run) : run());
-        return finish(result, result.profile);
+        return finish(result);
       } finally {
         release();
       }
@@ -523,8 +503,7 @@ export function createCatalogLookup({
     });
   }
 
-  // Stored answer for one book, or null. The book page reads this first and
-  // resolves the edition profile only when a live check is needed.
+  // Stored answer for one book, or null. The book page reads this first.
   async function storedFor({ library: entry, book = {}, editionScope = 'work' }) {
     const libraryId = entry?.id || entry?.slug;
     // An exact-edition lookup is answered only by that edition (or this
@@ -545,7 +524,9 @@ export function createCatalogLookup({
   // `background`: a check still running at its deadline finishes after the
   // answer and stores what it finds (checkBook); the book page sets it.
   // `finishBy`: the check, background included, ends by then (checkBook).
-  async function lookupBook({ library: entry, publicLibrary, book = {}, profile, editionScope = 'work', signal, deadlineAt, storedChecked = false,
+  // `books` (optional) names a work's most recent edition ISBN
+  // (`latestIsbn(workId)`) for a catalog that can only be searched by ISBN.
+  async function lookupBook({ library: entry, publicLibrary, book = {}, books = null, editionScope = 'work', signal, deadlineAt, storedChecked = false,
     background = false, finishBy = Infinity, askedAt: asked }) {
     const startedAt = now();
     const libraryId = entry?.id || entry?.slug;
@@ -562,7 +543,6 @@ export function createCatalogLookup({
     const ownProvider = own ? providerFor(entry) : null;
     const lookupKind = own ? (ownProvider?.recordLookupKind === 'title_author' ? 'title_author'
       : ownProvider?.checkRecordAvailability ? 'catalog_record' : 'verified_work') : isbn13 ? 'exact_isbn' : 'verified_work';
-    const books = profile && editionScope === 'work' && !own ? { searchProfile: async () => profile } : null;
     const result = await checkBook({ entry, library: publicLibrary, book: { ...book, isbn13: isbn13 || undefined, title: book.title || '', authors: book.authors || [] },
       bookKey: book.bookKey, parsed, ownRecord: own, lookupKind, editionScope, books, attemptedAt: new Date(startedAt).toISOString(), signal, deadlineAt, background, finishBy,
       ...(asked != null ? { askedAt: asked } : {}) });
@@ -713,10 +693,11 @@ export function createCatalogLookup({
         for (const book of [...pending.values()]) {
           const profile = await profiles.get(book.bookKey);
           if (!profile?.isbns?.length) continue;
+          // A row that shows one of the work's ISBNs (ISBN rows only).
           let match = null;
           for (const row of rows) {
-            const result = matchCatalogRecord(row, profile);
-            if (result && ['exact_isbn', 'verified_work'].includes(result.matchKind)) { match = { row, result }; break; }
+            const isbn13 = [row.isbn, row.isbn13, ...(row.isbns || [])].map(value => validateAndNormalize(value || '')).find(value => value && profile.isbns.includes(value));
+            if (isbn13) { match = { row, result: { isbn13 } }; break; }
           }
           pending.delete(book.bookKey);
           if (!match) { unmatched.push(book.bookKey); continue; }

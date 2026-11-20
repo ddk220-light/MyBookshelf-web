@@ -122,6 +122,7 @@ export function createPublicBookService({
   resolveGoogleVolume = getGoogleBookByVolumeId,
   resolveOpenLibraryWork = workDiscovery.resolve,
   expandWork = workDiscovery.profile,
+  latestWorkIsbn = workDiscovery.latestIsbn,
   now = () => Date.now(),
   cacheTtlMs = 10 * 60 * 1000,
   catalogs = null,
@@ -269,6 +270,9 @@ export function createPublicBookService({
       const book = await service.summary(bookKey);
       return book ? expandWork(book, options) : null;
     },
+    // A work's most recent edition ISBN, for a library check at a catalog
+    // that can only be searched by ISBN.
+    latestIsbn(workId) { return latestWorkIsbn(workId); },
   };
   return Object.freeze(service);
 }

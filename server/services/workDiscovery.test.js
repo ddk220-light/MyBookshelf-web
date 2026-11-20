@@ -2,7 +2,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createWorkDiscovery as factory } from './workDiscovery.js';
 import { createPublicBookService } from '../public-v2/metadata.js';
-import { searchLibraryBook } from './libraryBookSearch.js';
 
 const createWorkDiscovery = options => factory({ fallbackText: async () => [], ...options });
 
@@ -211,24 +210,16 @@ test('expansion failure preserves the original ISBN; exact mode never expands', 
   assert.equal(calls, 1);
 });
 
-test('missing language metadata does not prevent a verified work ISBN reaching an ISBN-only catalog', async () => {
-  const book = { workId: 'OL29062473W', title: 'A Modern Approach to Logical Reasoning', authors: ['R. S. Aggarwal'], languages: [] };
-  const discovery = createWorkDiscovery({ read: async () => ({ size: 1, entries: [{ title: book.title, physical_format: 'paperback', isbn_13: ['9788121919050'] }] }) });
-  const profile = await discovery.profile(book);
-  assert.deepEqual(profile.isbns, ['9788121919050']);
-  assert.equal(profile.language, '');
-  const queried = [];
-  const observation = await searchLibraryBook({ checkAvailability: async isbn => {
-    queried.push(isbn);
-    return { outcome: 'available', matchKind: 'exact_isbn', availableCopies: 1, totalCopies: 1 };
-  } }, profile);
-  assert.deepEqual(queried, ['9788121919050']);
-  assert.equal(observation.outcome, 'available');
-  assert.equal(observation.matchKind, 'verified_work');
-  assert.equal(observation.matchedBook.isbn13, '9788121919050');
-
-  const filtered = await discovery.profile(book, { language: 'tam' });
-  assert.deepEqual(filtered.isbns, []);
+test('a work\'s latest ISBN is that of its most recently published edition with one, from one editions read', async () => {
+  const paths = [];
+  const entries = [{ publish_date: '1999', isbn_10: ['8173711461'] }, { publish_date: 'March 2015', isbn_13: ['9788173715181'] },
+    { publish_date: '2020' }, { publish_date: 'n.d.', isbn_13: ['9780000000002'] }];
+  const discovery = createWorkDiscovery({ read: async path => { paths.push(path); return { size: entries.length, entries }; } });
+  assert.equal(await discovery.latestIsbn('OL1037811W'), '9788173715181');
+  assert.deepEqual(paths, ['/works/OL1037811W/editions.json?limit=100']);
+  assert.equal(await discovery.latestIsbn('not a work'), null);
+  assert.equal(await createWorkDiscovery({ read: async () => ({ entries: [{ publish_date: '2001' }] }) }).latestIsbn('OL1W'), null);
+  await assert.rejects(createWorkDiscovery({ read: async () => ({}) }).latestIsbn('OL1W'));
 });
 
 test('popularity fields are requested and rank results without reaching the public book shape', async () => {

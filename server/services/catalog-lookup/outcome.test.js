@@ -12,34 +12,26 @@ test('the 3.5 projection: proven copies are found, whatever the lending state', 
     assert.deepEqual(answerFromResponse({ outcome, lookupKind: 'catalog_record', matchKind: 'catalog_record' }, { recordId: '42' }),
       { outcome: 'found', evidence: 'catalog_record', recordId: '42' });
   }
-  // A work search's title-and-author match is found like an ISBN match; only the evidence differs.
+  // A work search's title match is found like an ISBN match; only the
+  // evidence differs, and it carries the catalog's matching rows.
   for (const outcome of ['available', 'none_available', 'in_catalog']) {
-    assert.deepEqual(answerFromResponse({ outcome, lookupKind: 'title_author', matchKind: 'verified_work', matchedBook: { title: 'Wings of Fire' } }),
-      { outcome: 'found', evidence: 'title_author' });
+    assert.deepEqual(answerFromResponse({ outcome, lookupKind: 'title', matchKind: 'verified_work', matchedBook: { title: 'Wings of Fire' },
+      matches: [{ title: 'Wings of fire', author: 'Kalam' }] }),
+      { outcome: 'found', evidence: 'title_match', matches: [{ title: 'Wings of fire', author: 'Kalam' }] });
   }
-  // ... but a possible match (title and a shared author word) is not, nor one with no holding shown.
-  assert.deepEqual(answerFromResponse({ outcome: 'in_catalog', lookupKind: 'title_author', matchKind: 'possible_match' }), { outcome: 'couldnt_check', reason: 'unconfirmed' });
-  assert.deepEqual(answerFromResponse({ outcome: 'unknown', lookupKind: 'title_author', matchKind: 'verified_work' }), { outcome: 'couldnt_check', reason: 'unconfirmed' });
+  // ... but a possible match is not, nor one with no holding shown.
+  assert.deepEqual(answerFromResponse({ outcome: 'in_catalog', lookupKind: 'title', matchKind: 'possible_match' }), { outcome: 'couldnt_check', reason: 'unconfirmed' });
+  assert.deepEqual(answerFromResponse({ outcome: 'unknown', lookupKind: 'title', matchKind: 'verified_work' }), { outcome: 'couldnt_check', reason: 'unconfirmed' });
   // A reader's own record identified by title and author (Visakhapatnam) stays a catalog record.
   assert.equal(answerFromResponse({ outcome: 'in_catalog', lookupKind: 'title_author', matchKind: 'verified_work' }, { recordId: 'r1' }).evidence, 'catalog_record');
   // Not for loan is still a holding.
   assert.equal(answerFromResponse({ outcome: 'unknown', lookupKind: 'exact_isbn', matchKind: 'exact_isbn', loanRestriction: 'not_for_loan' }).outcome, 'found');
 });
 
-test('not found needs an exact recognized ISBN or a complete, non-partial work search', () => {
+test('not found: an exact recognized ISBN not listed, or a work search whose every search was answered with no match', () => {
   assert.deepEqual(answerFromResponse({ outcome: 'not_found', lookupKind: 'exact_isbn', matchKind: 'none' }), { outcome: 'not_found', evidence: 'isbn_not_listed' });
-  const provable = { partial: false, editionsComplete: true, absenceProvable: true };
-  assert.deepEqual(answerFromResponse({ outcome: 'no_match', matchKind: 'none', searchSummary: provable }),
-    { outcome: 'not_found', evidence: 'work_no_match' });
-  // A partial search, an incomplete edition list, or an absence the search
-  // could not prove (no ISBN, no title search, another script) proves nothing.
-  for (const searchSummary of [{ partial: true, editionsComplete: true, absenceProvable: true }, { partial: false, editionsComplete: false, absenceProvable: true },
-    { partial: false, editionsComplete: true }, { partial: false, editionsComplete: true, absenceProvable: false, absenceRisk: 'no_isbns' }, {}, undefined]) {
-    const answer = answerFromResponse({ outcome: 'no_match', matchKind: 'none', searchSummary });
-    assert.equal(answer.outcome, 'couldnt_check');
-    assert.equal(answer.reason, 'unconfirmed');
-  }
-  assert.equal(answerFromResponse({ outcome: 'no_match', matchKind: 'none', searchSummary: provable }, { profile: { complete: false } }).outcome, 'couldnt_check');
+  // libraryBookSearch.js returns no_match only when every search it made was answered.
+  assert.deepEqual(answerFromResponse({ outcome: 'no_match', matchKind: 'none' }), { outcome: 'not_found', evidence: 'work_no_match' });
 });
 
 test('title/author matches are unconfirmed, never found', () => {
@@ -51,7 +43,7 @@ test('title/author matches are unconfirmed, never found', () => {
 
 test('failures are couldn’t check with a class, never not found', () => {
   const cases = {
-    CATALOG_TIMEOUT: 'timeout', CATALOG_REQUEST_BUDGET: 'budget', CATALOG_INCOMPLETE: 'budget', CATALOG_PROVIDER_BLOCKED: 'blocked',
+    CATALOG_TIMEOUT: 'timeout', CATALOG_REQUEST_BUDGET: 'budget', CATALOG_PROVIDER_BLOCKED: 'blocked',
     CATALOG_UNRECOGNIZED: 'unrecognized', CATALOG_HOLDING_UNCONFIRMED: 'unrecognized', CATALOG_UNSUPPORTED: 'unsupported',
     CATALOG_EXACT_ISBN_REQUIRED: 'unsupported', CATALOG_CONFIGURATION_REQUIRED: 'configuration', CATALOG_UNAVAILABLE: 'unavailable',
     CATALOG_ABORTED: 'cancelled', SOMETHING_ELSE: 'unavailable',

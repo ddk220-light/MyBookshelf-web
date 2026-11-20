@@ -122,18 +122,6 @@ test('a reader’s check has no request cap on any route: a route that needs mor
   assert.deepEqual(h.failures, []);
 });
 
-test('parallel title and ISBN recovery share one route allowance', async () => {
-  const platforms = { ...table, 'discovery-academic': { ...table['discovery-academic'], hostConcurrency: 2, book: { maxRequests: 3, deadlineMs: 500 } } };
-  const h = harness(route => ({ isbn10Lookup: false,
-    checkAvailability: async () => { if (route.platform === 'indcat') return positive; await read(route, 'isbn/1'); await read(route, 'isbn/2'); return positive; },
-    searchCatalog: async () => { if (route.platform === 'indcat') return []; await read(route, 'title/1'); await read(route, 'title/2'); return [{ recordId: '7', title: 'Book', authors: ['Author'], isbn, observation }]; },
-  }), { platforms });
-  const answer = await h.check({ editionScope: 'work', profile });
-  assert.equal(answer.outcome, 'found');
-  assert.equal(h.requests.filter(url => url.includes('academic.example.test')).length, 3);
-  assert.ok(answer.requests <= table.indcat.book.maxRequests);
-});
-
 test('an alternate deadline cancels that route before release and leaves time for primary fallback', async () => {
   const platforms = { ...table, 'discovery-academic': { ...table['discovery-academic'], book: { maxRequests: 6, deadlineMs: 15 } } };
   let routeSignal;
@@ -151,12 +139,12 @@ test('an alternate deadline cancels that route before release and leaves time fo
 test('parallel methods cannot restart the route-wide deadline after waiting for its host', async () => {
   const platforms = { ...table, 'discovery-academic': { ...table['discovery-academic'], book: { maxRequests: 6, deadlineMs: 100 } } };
   let secondCancelled = false;
-  const h = harness(route => ({ isbn10Lookup: false,
-    checkAvailability: async () => {
+  const h = harness(route => ({
+    searchIsbn: async () => {
       if (route.platform === 'discovery-academic') await new Promise(resolve => setTimeout(resolve, 60));
-      return { outcome: 'unknown', matchKind: 'exact_isbn', recognizedExact: true };
+      return [];
     },
-    searchCatalog: async () => {
+    searchTitle: async () => {
       if (route.platform === 'indcat') {
         assert.equal(secondCancelled, true);
         return [{ recordId: '8', title: 'Book', authors: ['Author'], isbn, observation: { ...observation, outcome: 'available' } }];
@@ -169,7 +157,7 @@ test('parallel methods cannot restart the route-wide deadline after waiting for 
       });
     },
   }), { platforms });
-  assert.equal((await h.check({ editionScope: 'work', profile })).outcome, 'found');
+  assert.equal((await h.check({ editionScope: 'work' })).outcome, 'found');
   assert.equal(secondCancelled, true);
 });
 
@@ -191,12 +179,11 @@ test('metadata reads use a supplied record route and preserve opaque-callback co
 });
 
 test('a successful preliminary search does not hide its later record-read failure', async () => {
-  const h = harness(route => ({ isbn10Lookup: false,
-    checkAvailability: async () => { throw code('CATALOG_QUERY_UNSUPPORTED'); },
-    searchCatalog: async () => route.platform === 'indcat' ? [] : [{ recordId: '7', title: 'Book', authors: ['Author'], isbn }],
-    resolveCatalogRecord: async () => { throw code('CATALOG_TIMEOUT'); },
+  const h = harness(route => ({
+    searchTitle: async () => route.platform === 'indcat' ? [] : [{ recordId: '7', title: 'Book', authors: ['Author'] }],
+    readRecord: async () => { throw code('CATALOG_TIMEOUT'); },
   }));
-  const answer = await h.check({ editionScope: 'work', profile });
+  const answer = await h.check({ editionScope: 'work', bookKey: 'v1:openlibrary:OL1W', isbn13: undefined });
   assert.equal(answer.outcome, 'couldnt_check'); assert.equal(answer.reason, 'timeout');
   assert.deepEqual(h.failures, ['academic.example.test']);
   assert.equal(h.guard.circuitOpen('academic.example.test'), false, 'one reader cannot supply three circuit failures');
@@ -205,12 +192,12 @@ test('a successful preliminary search does not hide its later record-read failur
 test('a found search row is attributed to its route despite a concurrent failing fallback', async () => {
   // The ISBN routes fail before the row arrives (a proven row ends the check
   // and cancels whatever is still in flight).
-  const h = harness(route => ({ isbn10Lookup: false,
-    checkAvailability: async () => { await new Promise(resolve => setImmediate(resolve)); throw code('CATALOG_UNAVAILABLE'); },
-    searchCatalog: async () => { await new Promise(resolve => setTimeout(resolve, 20));
+  const h = harness(route => ({
+    searchIsbn: async () => { await new Promise(resolve => setImmediate(resolve)); throw code('CATALOG_UNAVAILABLE'); },
+    searchTitle: async () => { await new Promise(resolve => setTimeout(resolve, 20));
       return route.platform === 'indcat' ? [] : [{ recordId: '7', title: 'Book', authors: ['Author'], isbn, observation }]; },
   }));
-  const answer = await h.check({ editionScope: 'work', profile });
+  const answer = await h.check({ editionScope: 'work' });
   assert.equal(answer.outcome, 'found');
   assert.equal(h.recorded[0].host, 'academic.example.test');
   assert.equal(h.recorded[0].platform, 'discovery-academic');
@@ -221,15 +208,15 @@ test('two positive routes are attributed to the actual winning catalog link', as
   // The preferred route's ISBN answer proves the holding first. The check ends
   // at that first proven match (it no longer reads on for a copy marked
   // available), and the answer, its link and its attribution agree.
-  const h = harness(route => ({ isbn10Lookup: false,
-    checkAvailability: async () => ({ ...positive, catalogUrl: new URL('record/1', route.catalogUrl).href }),
-    searchCatalog: async () => {
+  const h = harness(route => ({
+    searchIsbn: async () => [{ title: 'Book', isbn, observation: { ...positive, catalogUrl: new URL('record/1', route.catalogUrl).href, catalogLinkKind: 'record' } }],
+    searchTitle: async () => {
       if (route.platform === 'discovery-academic') throw code('CATALOG_UNAVAILABLE');
       return [{ recordId: '8', title: 'Book', authors: ['Author'], isbn,
         observation: { ...observation, outcome: 'available', catalogUrl: new URL('record/2', route.catalogUrl).href } }];
     },
   }));
-  const answer = await h.check({ editionScope: 'work', profile });
+  const answer = await h.check({ editionScope: 'work' });
   assert.equal(answer.outcome, 'found');
   assert.equal(answer.catalogUrl, 'https://academic.example.test/record/1');
   assert.equal(h.recorded[0].host, 'academic.example.test');

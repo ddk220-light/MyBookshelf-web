@@ -6,16 +6,16 @@ import { linkKind } from './observation.js';
 //
 //   available / none_available / in_catalog / not-for-loan, proven by
 //     exact_isbn, verified_work or catalog_record          -> found
-//     (verified_work includes a work search's title-and-author
-//     match in this library's own catalog, lookupKind
-//     title_author: evidence `title_author`, otherwise the
-//     same answer as an ISBN find; owner decision, 19 November 2026)
+//     (verified_work includes a row of this library's catalog
+//     whose title matches the book, lookupKind `title`:
+//     evidence `title_match`, otherwise the same answer as an
+//     ISBN find; owner decision, 20 November 2026; a work
+//     search's found answer lists the matching rows, `matches`)
 //   not_found for an exact ISBN the parser recognized       -> not_found
-//   work-level no_match with a complete edition list, a
-//     search that was not partial and an absence the search
-//     marks provable (absenceProvable)                      -> not_found
-//   possible_match (title and a shared author word only)    -> couldnt_check, unconfirmed
-//   anything else (unknown, timeout, budget, error, ...)    -> couldnt_check
+//   work-level no_match (every search the check made was
+//     answered by the catalog and nothing matched)          -> not_found
+//   possible_match                                          -> couldnt_check, unconfirmed
+//   anything else (unknown, timeout, error, ...)            -> couldnt_check
 //
 // A failure is never "not found".
 
@@ -47,10 +47,8 @@ export function reasonForError(error) {
     case 'CATALOG_ABORTED': return 'cancelled';
     case 'CATALOG_HOST_BUSY': return 'busy';
     case 'CATALOG_TIMEOUT': return 'timeout';
-    // A request cap ran out (CATALOG_REQUEST_BUDGET), or a capped search left
-    // rows or editions unasked (CATALOG_INCOMPLETE): capped work only.
-    case 'CATALOG_REQUEST_BUDGET':
-    case 'CATALOG_INCOMPLETE': return 'budget';
+    // A request cap ran out: capped work only (result marking, tools).
+    case 'CATALOG_REQUEST_BUDGET': return 'budget';
     case 'CATALOG_PROVIDER_BLOCKED':
     case 'CATALOG_ROBOTS_DISALLOWED': return 'blocked';
     case 'CATALOG_UNRECOGNIZED':
@@ -92,9 +90,8 @@ const FOUND_OUTCOMES = new Set(['available', 'none_available', 'in_catalog']);
 const PROVEN = new Set(['exact_isbn', 'verified_work', 'catalog_record']);
 
 // `response` is the normalized public observation (catalog-lookup/observation.js
-// or the `/availability` response). `context.profile` is the work's edition
-// profile when a work-level search ran; `context.recordId` is the library's
-// own catalog record when the reader opened one.
+// or the `/availability` response). `context.recordId` is the library's own
+// catalog record when the reader opened one.
 export function answerFromResponse(response, context = {}) {
   if (!response || typeof response !== 'object') return couldntCheck('unrecognized');
   const { outcome, matchKind } = response;
@@ -105,36 +102,25 @@ export function answerFromResponse(response, context = {}) {
   if ((FOUND_OUTCOMES.has(outcome) || notForLoan) && PROVEN.has(matchKind)) {
     const matchedIsbn13 = validateAndNormalize(response.matchedBook?.isbn13 || '') || undefined;
     let evidence;
-    // A work search's title-and-author match (not a reader's own record,
-    // whose title/author identity is the record itself, Visakhapatnam).
-    const titleAuthor = matchKind === 'verified_work' && response.lookupKind === 'title_author' && !context.recordId;
-    if (titleAuthor) evidence = 'title_author';
+    // A work search's title match (not a reader's own record).
+    const titleMatch = matchKind === 'verified_work' && response.lookupKind === 'title' && !context.recordId;
+    if (titleMatch) evidence = 'title_match';
     else if (matchKind === 'catalog_record' || (matchKind === 'verified_work' && response.lookupKind === 'catalog_record')) evidence = 'catalog_record';
     else if (matchKind === 'exact_isbn') evidence = 'exact_isbn';
     else evidence = matchedIsbn13 ? 'work_isbn' : 'catalog_record';
-    const answer = { outcome: 'found', evidence, ...(matchedIsbn13 && !titleAuthor ? { matchedIsbn13 } : {}),
-      ...(context.recordId ? { recordId: context.recordId } : {}), ...extra };
+    const answer = { outcome: 'found', evidence, ...(matchedIsbn13 && !titleMatch ? { matchedIsbn13 } : {}),
+      ...(context.recordId ? { recordId: context.recordId } : {}), ...extra,
+      ...(Array.isArray(response.matches) && response.matches.length ? { matches: response.matches } : {}) };
     // Which search found it, for the log line only (check.js markFoundBy).
-    for (const key of ['foundBy', 'titleAlsoMatched']) {
-      if (response[key] !== undefined) Object.defineProperty(answer, key, { value: response[key], enumerable: false, configurable: true });
-    }
+    if (response.foundBy !== undefined) Object.defineProperty(answer, 'foundBy', { value: response.foundBy, enumerable: false, configurable: true });
     return answer;
   }
   if (outcome === 'not_found' && matchKind === 'none' && response.lookupKind === 'exact_isbn') {
     return { outcome: 'not_found', evidence: 'isbn_not_listed', ...extra };
   }
-  if (outcome === 'no_match') {
-    const summary = response.searchSummary || {};
-    // The search itself says whether nothing matching is safe to call absence
-    // (libraryBookSearch.js, absenceRisk): known ISBNs, a title search the
-    // catalog answered, no related rows left unexplained, and a title that
-    // cannot hide behind another spelling or script.
-    const complete = summary.partial === false && summary.editionsComplete === true && summary.absenceProvable === true
-      && context.profile?.complete !== false;
-    // The catalog answered, but the edition list or the search was incomplete,
-    // or the book may be listed under an ISBN, spelling or script we did not try.
-    return complete ? { outcome: 'not_found', evidence: 'work_no_match' } : couldntCheck('unconfirmed', extra);
-  }
+  // Every search the check made was answered and nothing matched
+  // (libraryBookSearch.js returns no_match only then).
+  if (outcome === 'no_match') return { outcome: 'not_found', evidence: 'work_no_match' };
   if (matchKind === 'possible_match') return couldntCheck('unconfirmed', extra);
   // The catalog answered and recognized the edition but did not show a copy
   // (Evergreen: record with no holdings). Not a failure, not an answer.

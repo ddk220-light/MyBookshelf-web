@@ -1,7 +1,7 @@
 // Diagnostic: run the app's own book check from this machine, the way
-// POST /api/v2/holdings/check does (same directory, book resolution, edition
-// profile and lookup), and print each answer with its reason and the
-// provider's error code. No store: nothing is read from or written to a database.
+// POST /api/v2/holdings/check does (same directory, book resolution and
+// lookup), and print each answer with its reason, the provider's error code,
+// its requests and the catalog rows a found answer lists. No store: nothing is read from or written to a database.
 //   CATALOG_LOOKUP_V2=all node tools/diag-check.mjs <libraryId> <bookKey> [bookKey ...]
 import { createPublicDirectoryService } from '../server/public-v2/directory.js';
 import { createPublicBookService } from '../server/public-v2/metadata.js';
@@ -31,16 +31,13 @@ for (const bookKey of keys) {
     if (parsed?.kind === 'isbn') book.isbn13 = parsed.isbn13; else if (resolved?.isbn13) book.isbn13 = resolved.isbn13;
     if (parsed?.kind === 'source') book.workId = parsed.sourceRecordId; else if (resolved?.workId) book.workId = resolved.workId;
     row.title = book.title.slice(0, 40); row.resolvedIsbn = book.isbn13 || ''; row.resolveMs = Date.now() - t;
-    const tp = Date.now();
-    const profile = metadataFailed ? null : await Promise.race([books.searchProfile?.(bookKey, { editionScope: 'work' }).catch(() => null), new Promise(r => setTimeout(() => r(null), 8000))]);
-    row.profileMs = Date.now() - tp; row.profileIsbns = profile?.isbns?.length ?? profile?.editions?.length ?? (profile ? 'yes' : 'none'); row.profileComplete = profile?.complete;
     const tl = Date.now();
     // As holdings.js: the library's deadline counts from the request (askedAt).
-    const a = await lookup.lookupBook({ library: entry, publicLibrary: library, book, ...(profile ? { profile } : {}), editionScope: 'work', storedChecked: true, background: false,
+    const a = await lookup.lookupBook({ library: entry, publicLibrary: library, book, books, editionScope: 'work', storedChecked: true, background: false,
       askedAt: t, deadlineAt: t + 60000, finishBy: t + 110000 });
     await new Promise(r => setTimeout(r, 50));
     Object.assign(row, { outcome: a.outcome, reason: a.reason, evidence: a.evidence, requests: a.requests, lookupMs: Date.now() - tl, errorCode: last.health?.errorCode || a.errorCode || '', linkKind: a.catalogLinkKind,
-      foundBy: last.event?.foundBy ?? null, titleAlsoMatched: last.event?.titleAlsoMatched ?? null });
+      foundBy: last.event?.foundBy ?? null, matchCount: last.event?.matchCount ?? 0, matches: a.matches || [] });
   } catch (e) { row.thrown = e.code || e.name; row.message = String(e.message).slice(0, 200); }
   row.ms = Date.now() - t; out(row);
 }

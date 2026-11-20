@@ -1,7 +1,7 @@
 import test, { afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { checkAvailability, clearEgranthalayaRefusals, clusterIsbnQuery, hyphenatedIsbn, isEmptyRecordPage, parseCatalogSearch, parseHoldings, parseSearch, resolveCatalogRecord, searchBookCandidates, searchCatalog, searchForm, setEmptyRecordRetryDelayForTests } from './egranthalaya.js';
+import { checkAvailability, clearEgranthalayaRefusals, clusterIsbnQuery, hyphenatedIsbn, isEmptyRecordPage, parseCatalogSearch, parseHoldings, parseSearch, resolveCatalogRecord, searchCatalog, searchForm, searchIsbn, searchTitle, setEmptyRecordRetryDelayForTests } from './egranthalaya.js';
 import { clearHttpCache, USER_AGENT, withCatalogOperation } from './http.js';
 
 const fixture = (name) => fs.readFileSync(new URL(`../../test/fixtures/egranthalaya/${name}.html`, import.meta.url), 'utf8');
@@ -292,7 +292,7 @@ test('rejects unsafe/incomplete configuration and invalid ISBN before network ac
     await assert.rejects(searchCatalog({ ...library, ...changes }, 'India'), { code: 'CATALOG_CONFIGURATION_REQUIRED' });
   }
   await assert.rejects(checkAvailability(library, '9788131313458'), { code: 'CATALOG_EXACT_ISBN_REQUIRED' });
-  await assert.rejects(searchBookCandidates(library, { title: ' : ' }), { code: 'CATALOG_QUERY_UNSUPPORTED' });
+  await assert.rejects(searchIsbn(library, '9788131313458'), { code: 'CATALOG_EXACT_ISBN_REQUIRED' });
 });
 
 test('timeouts do not erase uncertainty and stay inside the check\'s request cap', async () => {
@@ -313,7 +313,7 @@ test('the ISBN check shares a hyphen-indexed member\'s spelling and the plain di
 // SITAPUR, 19 November 2026 (fixture README): the member's ALL search for the
 // ISBN digits returned 0, its TITLE search returned the two shared records it
 // holds, each showing ISBN 9788173711466.
-test('Sitapur: the title search finds shared records the ISBN search misses, and its rows prove the edition', async () => {
+test('Sitapur: a library check is one ISBN search and one TITLE search; the title rows find the shared records', async () => {
   const calls = [];
   global.fetch = async (url, options = {}) => {
     calls.push({ url, options });
@@ -321,15 +321,14 @@ test('Sitapur: the title search finds shared records the ISBN search misses, and
     return response(fixture(new URLSearchParams(options.body).get('DDL_Field') === 'TITLE' ? 'dlsitapur-title-wings-of-fire' : 'dlsitapur-isbn-zero'), url);
   };
   const sitapur = { ...upLibrary };
-  const [isbnResult, rows] = await withCatalogOperation({ maxRequests: 6 }, () => Promise.allSettled([
-    checkAvailability(sitapur, upIsbn), searchBookCandidates(sitapur, { title: 'Wings of Fire: An Autobiography', author: 'A. P. J. Abdul Kalam' })]));
-  assert.deepEqual(rows.value.map(row => [row.recordId, row.isbn]), [['79083', upIsbn], ['451490', upIsbn]]);
-  assert.deepEqual(rows.value[0].observation, { outcome: 'in_catalog', matchKind: 'verified_work', recognizedExact: true, totalCopies: 7,
+  const [isbnRows, rows] = await withCatalogOperation({}, () => Promise.all([searchIsbn(sitapur, upIsbn), searchTitle(sitapur, 'Wings of Fire')]));
+  assert.deepEqual(isbnRows, []);
+  assert.deepEqual(rows.map(row => [row.recordId, row.isbn]), [['79083', upIsbn], ['451490', upIsbn]]);
+  assert.deepEqual(rows[0].observation, { outcome: 'in_catalog', matchKind: 'verified_work', recognizedExact: true,
     locations: [{ name: sitapur.name, status: 'unknown' }] });
-  assert.equal(isbnResult.value.outcome, 'not_found', 'the ISBN zero alone; the title rows above are what a work check reads');
   assert.deepEqual(posts(calls).map(fields => [fields.get('DDL_Field'), fields.get('DDL_Boolean'), fields.get('txt_Search')]),
-    [['ALL', 'OR', '817371146 81-7371-146'], ['TITLE', 'LIKE', 'Wings of Fire'], ['ALL', 'LIKE', 'Wings of Fire']]);
-  assert.equal(gets(calls), 1);
+    [['ALL', 'OR', '817371146 81-7371-146'], ['TITLE', 'LIKE', 'Wings of Fire']]);
+  assert.equal(gets(calls), 1, 'one kept public form');
 });
 
 // Romain Rolland Library, Puducherry (PYLIB cluster). Fixtures are public
@@ -606,9 +605,9 @@ test('the empty-page retry stays inside a check\'s request cap', async () => {
 
 
 // SRS Jammu, 19 November 2026: the TITLE search for "Wings of Fire" returned
-// 0, the ALL search returned the member's own record 31499 (ISBN
-// 9788173711466). Sitapur showed the opposite (above): a title search is both.
-test('SRS Jammu: the ALL search finds the member\'s own record the TITLE search misses; rows are merged once', async () => {
+// 0; the member's own record 31499 (ISBN 9788173711466) is found by its ALL
+// search, which a library check makes for a reader's ISBN.
+test('SRS Jammu: one TITLE search, and one ALL search for the reader\'s ISBN that finds the member\'s own record', async () => {
   const calls = [];
   const srs = { id: 'egranthalaya:jklibraries-srsjammu', name: 'SRS Central Library', baseUrl: 'https://eg4.nic.in',
     egranthalayaCluster: 'JKLIBRARIES', egranthalayaLibraryCode: 'SRSJAMMU', egranthalayaSearchScope: 'cluster' };
@@ -617,14 +616,8 @@ test('SRS Jammu: the ALL search finds the member\'s own record the TITLE search 
     if (options.method !== 'POST') return response(fixture('srsjammu-form'), url);
     return response(fixture(new URLSearchParams(options.body).get('DDL_Field') === 'TITLE' ? 'srsjammu-title-wings-of-fire' : 'srsjammu-all-wings-of-fire'), url);
   };
-  const rows = await searchBookCandidates(srs, { title: 'Wings of Fire', author: 'A. P. J. Abdul Kalam' });
+  assert.deepEqual(await searchTitle(srs, 'Wings of Fire'), []);
+  const rows = await searchIsbn(srs, upIsbn);
   assert.deepEqual(rows.map(row => [row.recordId, row.isbn, row.observation.outcome]), [['31499', upIsbn, 'in_catalog']]);
   assert.deepEqual(posts(calls).map(fields => fields.get('DDL_Field')), ['TITLE', 'ALL']);
-  // Both searches answering the same record give one row.
-  clearHttpCache(); calls.length = 0;
-  global.fetch = async (url, options = {}) => {
-    calls.push({ url, options });
-    return response(fixture(options.method === 'POST' ? 'srsjammu-all-wings-of-fire' : 'srsjammu-form'), url);
-  };
-  assert.equal((await searchCatalog(srs, 'Wings of Fire')).length, 1);
 });

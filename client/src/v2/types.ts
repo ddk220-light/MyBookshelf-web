@@ -79,14 +79,15 @@ export type PublicBook = {
 
 export type Availability = {
   outcome: 'available' | 'none_available' | 'in_catalog' | 'no_match' | 'not_found' | 'unknown';
-  lookupKind: 'exact_isbn' | 'catalog_record' | 'verified_work' | 'title_author';
+  lookupKind: 'exact_isbn' | 'catalog_record' | 'verified_work' | 'title_author' | 'title';
   matchKind: 'exact_isbn' | 'catalog_record' | 'verified_work' | 'possible_match' | 'none' | null;
   freshness: 'fresh' | 'stale' | 'none';
   observedAt?: string;
   attemptedAt: string;
   errorCode?: string;
   matchedBook?: { title: string; isbn13?: string };
-  searchSummary?: { isbnQueries: number; titleQueries: number; recordsChecked: number; requests?: number; maxRequests?: number; partial: boolean; editionsComplete: boolean };
+  /** A work search's matching rows from the library's catalog. */
+  matches?: Array<{ title: string; author?: string; url?: string }>;
   availableCopies?: number;
   notForLoanCopies?: number;
   totalCopies?: number;

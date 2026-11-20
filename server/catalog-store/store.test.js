@@ -11,6 +11,7 @@ import { createCatalogStore, createStoreStatus } from './index.js';
 import { createCatalogMaintenanceMiddleware } from './cron.js';
 import { poolSettings } from './pool.js';
 import { createPgAnswerStore } from './holdings.js';
+import { ANSWER_RULE_VERSION, ANSWER_TTL_MS } from '../services/catalog-lookup/record.js';
 import { createCatalogLookup, createLookupRecorder, createMemoryAnswerStore, createMemoryHealthRecord, PLATFORMS } from '../services/catalog-lookup/index.js';
 import { withCatalogOperation, request as httpRequest } from '../services/providers/http.js';
 
@@ -430,26 +431,16 @@ test('a pooled (PgBouncer) connection gets no statement_timeout startup paramete
   assert.equal(direct.statement_timeout, 1500);
 });
 
-test('until migration 005, a title-and-author find is dropped and the other answers are still written', async () => {
-  const writes = [];
-  const db = { query: async (sql, values) => {
-    if (!/INSERT INTO holdings_answers/.test(sql)) return { rows: [] };
-    writes.push(values[4]);
-    if (values[4].includes('title_author')) throw Object.assign(new Error('violates check constraint "holdings_answers_evidence_check"'), { code: '23514' });
-    return { rows: [], rowCount: values[4].length };
-  } };
-  await createPgAnswerStore(db).writeAnswers([
-    { libraryId: 'koha:a', kind: 'ol_work', value: 'OL1W', answer: 'found', evidence: 'title_author' },
-    { libraryId: 'koha:a', kind: 'isbn13', value: '9780140328721', answer: 'not_found', evidence: 'isbn_not_listed' }]);
-  assert.deepEqual(writes, [['title_author', 'isbn_not_listed'], ['isbn_not_listed']]);
-  // A check violation without a title-and-author row is passed on.
-  const strict = createPgAnswerStore({ query: async () => { throw Object.assign(new Error('bad'), { code: '23514' }); } });
-  await assert.rejects(strict.writeAnswers([{ libraryId: 'koha:a', kind: 'isbn13', value: '9780140328721', answer: 'found', evidence: 'exact_isbn' }]), { code: '23514' });
-});
-
-test('catalog migration 005 allows the title_author evidence and keeps every earlier value', async () => {
-  const { readFile } = await import('node:fs/promises');
-  const sql = await readFile(new URL('./migrations/005-title-author-evidence.sql', import.meta.url), 'utf8');
-  for (const value of ['exact_isbn', 'work_isbn', 'catalog_record', 'title_author', 'isbn_not_listed', 'work_no_match']) assert.match(sql, new RegExp(`'${value}'`));
-  assert.match(sql, /DROP CONSTRAINT IF EXISTS holdings_answers_evidence_check/);
+test('stored answers carry the answer rule in their lifetime: older rules are neither read nor kept', async () => {
+  const seen = [];
+  const db = { query: async (sql, values) => { seen.push({ sql, values }); return { rows: [] }; } };
+  const store = createPgAnswerStore(db);
+  await store.readAnswers('koha:a', [{ kind: 'ol_work', value: 'OL1W' }]);
+  await store.writeAnswers([{ libraryId: 'koha:a', kind: 'ol_work', value: 'OL1W', answer: 'not_found', evidence: 'work_no_match' }]);
+  const ttl = Math.round(ANSWER_TTL_MS / 1000);
+  assert.equal(ttl, 180 * 24 * 60 * 60 + ANSWER_RULE_VERSION);
+  assert.match(seen[0].sql, /expires_at - checked_at = make_interval\(secs => \$4\)/);
+  assert.equal(seen[0].values[3], ttl);
+  assert.match(seen[1].sql, /OR h\.expires_at - h\.checked_at <> make_interval\(secs => \$8\)/);
+  assert.equal(seen[1].values[7], ttl);
 });

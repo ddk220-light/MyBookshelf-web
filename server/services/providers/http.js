@@ -63,24 +63,6 @@ export function withCatalogOperation({ maxRequests = Infinity, signal = null, mi
   return operations.run(store, () => task(store));
 }
 
-// True inside a catalog operation with no request cap at any level: a
-// reader's own book check. Adapters then read every candidate their search
-// listed (up to the page they received) instead of their own small number,
-// which is kept for result marking (capped) and for catalog searches made
-// outside any operation.
-export function uncappedOperation() {
-  const operation = operations.getStore();
-  if (!operation) return false;
-  for (let scope = operation; scope; scope = scope.parent) if (Number.isFinite(scope.maxRequests)) return false;
-  return true;
-}
-
-// How many listed candidates an adapter reads: all of them in a reader's
-// check (uncappedOperation), otherwise `limit`.
-export function candidateLimit(limit) {
-  return uncappedOperation() ? Infinity : limit;
-}
-
 // An explicit route scope adds its own cap without replacing the reader's
 // aggregate budget. Ordinary nested withCatalogOperation calls still reuse
 // their current scope. Cancelling one route does not cancel sibling fallbacks.

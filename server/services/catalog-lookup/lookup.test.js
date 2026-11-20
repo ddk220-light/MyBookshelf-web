@@ -5,7 +5,6 @@ import { createCatalogLookup, createLookupRecorder, createMemoryAnswerStore, cre
 import { cachedTask, catalogOperation, clearHttpCache, getText } from '../providers/http.js';
 import { clearEgranthalayaRefusals } from '../providers/egranthalaya.js';
 import { createPublicAvailabilityService } from '../../public-v2/availability.js';
-import { WORK_ABSENCE_RULE_SINCE } from './record.js';
 
 const originalFetch = global.fetch;
 afterEach(() => { global.fetch = originalFetch; clearHttpCache(); clearEgranthalayaRefusals(); });
@@ -139,127 +138,63 @@ test('the library’s deadline counts from the reader’s tap (askedAt): time sp
   assert.ok(Date.now() - full >= 280, `${Date.now() - full} ms`);
 });
 
-test('a reader’s work search reads every candidate row (more than the old cap) and a check never ends as "budget"', async () => {
-  const guard = createHostGuard();
-  const health = createMemoryHealthRecord();
-  // Twelve rows that each name only a given name of the author: possible
-  // matches, never a find. Every record is read (13 requests with the search,
-  // more than the old cap of 12), and the answer is "couldn't tell".
-  let reads = 0;
-  global.fetch = async url => { await tick(); return response(url, 'page'); };
-  const rows = Array.from({ length: 12 }, (_, i) => ({ recordId: String(i), title: 'Wings of Fire', authors: ['Abdul Rahman'] }));
-  const titleFirst = { findBookCandidates: async () => { await getText('https://rows.example/search', { retries: 0 }); return rows; },
-    resolveCatalogRecord: async id => { reads++; await getText(`https://rows.example/${id}`, { retries: 0 }); return { recordId: id, title: 'Wings of Fire', authors: ['Abdul Rahman'], observation: { outcome: 'available' } }; },
-    checkAvailability: async () => { await getText('https://rows.example/isbn', { retries: 0 }); return { outcome: 'not_found', recognizedExact: true }; } };
-  const second = harness({ providerFor: () => titleFirst, guard, health, platforms: NO_PACING });
-  const profile = { book: { isbn13: '9780000000002', title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'] }, isbns: ['9780000000002'],
-    titles: ['Wings of Fire'], authors: ['A. P. J. Abdul Kalam'], language: '', complete: true, expansionFailed: false };
-  const rowsLibrary = { id: 'koha:rows', platform: 'koha', catalogUrl: 'https://rows.example' };
-  const checked = await second.lookup.lookupBook({ library: rowsLibrary, book: { bookKey: 'v1:openlibrary:OL9W', workId: 'OL9W', title: 'Wings of Fire' }, profile });
-  assert.equal(reads, 12);
-  assert.ok(checked.requests > 12, String(checked.requests));
-  assert.deepEqual([checked.outcome, checked.reason], ['couldnt_check', 'unconfirmed']);
-  await second.settle();
-  assert.equal(await health.libraryHealth(rowsLibrary.id), null);
-  assert.equal(guard.circuitOpen('rows.example'), false);
-
-  // A catalog that answers with something unreadable within the budget is
-  // still the catalog's failure.
-  const unreadable = harness({ providerFor: () => ({ checkAvailability: async () => ({ outcome: 'unknown', matchKind: 'none' }) }), health });
-  const multi = { ...profile, isbns: ['9788173711466', '9780140328721'] };
-  const answer = await unreadable.lookup.lookupBook({ library: { id: 'vega:odd', platform: 'vega', catalogUrl: 'https://odd.example' },
-    book: { bookKey: 'v1:openlibrary:OL8W', workId: 'OL8W' }, profile: multi });
-  assert.deepEqual([answer.outcome, answer.reason], ['couldnt_check', 'unrecognized']);
-  await unreadable.settle();
-  assert.equal((await health.libraryHealth('vega:odd')).failuresSinceSuccess, 1);
-});
-
-test('a Vega book page spends its two requests on two editions, not on both ISBN forms of one', async () => {
-  const held = '9780062316110';
+// The simple check (owner decision, 20 November 2026), through the lookup
+// layer: requests per check and what is stored.
+function rowsCatalog({ title = [], isbn = [] } = {}) {
   const asked = [];
-  global.fetch = async (url, options) => {
-    const { searchText } = JSON.parse(options.body);
-    asked.push(searchText);
-    return response(url, searchText === held
-      ? { totalResults: 1, data: [{ identifiers: { isbn: held }, materialTabs: [{ name: 'Book', type: 'physical', availability: { status: { general: 'Available' } } }] }] }
-      : { totalResults: 0, data: [] });
-  };
-  const { getProvider } = await import('../providers/index.js');
-  // DC Public Library's directory entry; every request goes to the fixture.
-  const libraries = JSON.parse(fs.readFileSync(new URL('../../data/libraries.json', import.meta.url), 'utf8'));
-  const library = { id: 'vega:dc', ...(Array.isArray(libraries) ? libraries : libraries.libraries || Object.values(libraries))
-    .find(entry => entry.platform === 'vega' && /DC Public/.test(entry.name)) };
-  const { lookup } = harness({ providerFor: getProvider });
-  const isbns = ['9780062316097', held, '9781846558238'];
-  const answer = await lookup.lookupBook({ library, book: { bookKey: 'v1:openlibrary:OL7W', workId: 'OL7W', isbn13: isbns[0] },
-    profile: { book: { isbn13: isbns[0], title: 'Sapiens', authors: [] }, isbns, titles: ['Sapiens'], authors: [], language: '', complete: true, expansionFailed: false } });
-  assert.deepEqual(asked, [isbns[0], held], JSON.stringify(answer));
-  assert.deepEqual([answer.outcome, answer.matchedIsbn13], ['found', held]);
+  const ask = (kind, rows) => async query => { asked.push(kind); await getText(`https://rows.example/${kind}?q=${encodeURIComponent(query)}`, { retries: 0 }); return rows; };
+  return { asked, provider: { checkAvailability: async () => assert.fail('a work check uses the searches'), searchTitle: ask('title', title), searchIsbn: ask('isbn', isbn) } };
+}
+const heldRow = (title, extra = {}) => ({ title, authors: ['Someone'], observation: { outcome: 'in_catalog' }, ...extra });
+
+test('a library check: an ISBN key is two requests, a work key one, an ISBN-only catalog one; an answered empty search is a stored not found', async () => {
+  global.fetch = async url => { await tick(); return response(url, 'page'); };
+  const library = { id: 'koha:rows', platform: 'koha', catalogUrl: 'https://rows.example' };
+  const byIsbn = rowsCatalog();
+  const one = harness({ providerFor: () => byIsbn.provider, platforms: NO_PACING });
+  const isbnKey = await one.lookup.lookupBook({ library, book: { bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466', workId: 'OL1W', title: 'Wings of Fire' } });
+  assert.deepEqual([isbnKey.outcome, isbnKey.evidence, isbnKey.requests, byIsbn.asked.sort()], ['not_found', 'work_no_match', 2, ['isbn', 'title']]);
+  const byWork = rowsCatalog();
+  const two = harness({ providerFor: () => byWork.provider, platforms: NO_PACING });
+  const workKey = await two.lookup.lookupBook({ library, book: { bookKey: 'v1:openlibrary:OL2W', workId: 'OL2W', title: 'Wings of Fire' } });
+  assert.deepEqual([workKey.outcome, workKey.requests, byWork.asked], ['not_found', 1, ['title']]);
+  await two.settle();
+  assert.equal((await two.lookup.lookupBook({ library, book: { bookKey: 'v1:openlibrary:OL2W', workId: 'OL2W', title: 'Wings of Fire' } })).source, 'stored');
+  // A catalog with no title search, asked about a work: the latest edition's ISBN.
+  const isbnOnly = rowsCatalog();
+  delete isbnOnly.provider.searchTitle;
+  const three = harness({ providerFor: () => isbnOnly.provider, platforms: NO_PACING });
+  const books = { latestIsbn: async workId => (workId === 'OL3W' ? '9780140328721' : null) };
+  const latest = await three.lookup.lookupBook({ library: { ...library, id: 'vega:rows', platform: 'vega' }, books,
+    book: { bookKey: 'v1:openlibrary:OL3W', workId: 'OL3W', title: 'Matilda' } });
+  assert.deepEqual([latest.outcome, latest.requests, isbnOnly.asked], ['not_found', 1, ['isbn']]);
 });
 
-test('the work search finds another edition by ISBN within the budget, and a stored answer then needs no request', async () => {
-  const alternate = '9788173711466';
-  let calls = 0;
-  const provider = { checkAvailability: async isbn => {
-    calls++;
-    return isbn === alternate ? { outcome: 'in_catalog', matchKind: 'exact_isbn', recognizedExact: true } : { outcome: 'not_found', matchKind: 'none', recognizedExact: true };
-  } };
-  const { lookup, settle } = harness({ providerFor: () => provider });
-  const library = { id: 'evergreen:x', platform: 'evergreen', catalogUrl: 'https://e.example' };
-  const book = { bookKey: 'v1:isbn:9780140328721', isbn13: '9780140328721', workId: 'OL1W', title: 'Wings of Fire', authors: ['Kalam'] };
-  const profile = profileOf({ isbn13: book.isbn13, isbns: [book.isbn13, alternate], title: book.title, authors: book.authors });
-  const first = await lookup.lookupBook({ library, book, profile });
-  assert.deepEqual([first.outcome, first.evidence, first.matchedIsbn13, first.source], ['found', 'work_isbn', alternate, 'live']);
+test('a find by title is found with the catalog\'s rows; it is not stored, so the next look checks again', async () => {
+  global.fetch = async url => { await tick(); return response(url, 'page'); };
+  const library = { id: 'koha:titles', platform: 'koha', catalogUrl: 'https://rows.example' };
+  const { provider } = rowsCatalog({ title: [heldRow('Wings of Fire: An Autobiography', { catalogUrl: 'https://rows.example/1', catalogLinkKind: 'record' }), heldRow('Wings of Fire 7')] });
+  const { lookup, settle, answers } = harness({ providerFor: () => provider, platforms: NO_PACING });
+  const book = { bookKey: 'v1:openlibrary:OL4W', workId: 'OL4W', title: 'Wings of Fire' };
+  const answer = await lookup.lookupBook({ library, book });
+  assert.deepEqual([answer.outcome, answer.evidence, answer.catalogUrl, answer.requests], ['found', 'title_match', 'https://rows.example/1', 1]);
+  assert.deepEqual(answer.matches, [{ title: 'Wings of Fire: An Autobiography', author: 'Someone', url: 'https://rows.example/1' }, { title: 'Wings of Fire 7', author: 'Someone' }]);
   await settle();
-  const afterFirst = calls;
-  const again = await lookup.lookupBook({ library, book, profile });
-  assert.deepEqual([again.outcome, again.source, again.requests], ['found', 'stored', 0]);
-  assert.equal(calls, afterFirst);
+  assert.equal(answers.size(), 0);
+  assert.equal((await lookup.lookupBook({ library, book })).source, 'live');
 });
 
-test('a complete work search with no match is a stored not found; an incomplete one is not', async () => {
-  // The catalog answers the title search (nothing) and every ISBN (not listed).
-  const provider = { checkAvailability: async () => ({ outcome: 'not_found', matchKind: 'none', recognizedExact: true }), searchCatalog: async () => [] };
-  const library = { id: 'evergreen:y', platform: 'evergreen', catalogUrl: 'https://e.example' };
-  const book = { bookKey: 'v1:isbn:9780140328721', isbn13: '9780140328721', workId: 'OL2W', title: 'Matilda', authors: ['Dahl'] };
-  const english = options => ({ ...profileOf(options), language: 'eng' });
-  const complete = harness({ providerFor: () => provider, clock: () => Math.max(Date.now(), WORK_ABSENCE_RULE_SINCE + 60_000) });
-  const answer = await complete.lookup.lookupBook({ library, book, profile: english({ isbn13: book.isbn13, title: book.title }) });
-  assert.deepEqual([answer.outcome, answer.evidence], ['not_found', 'work_no_match']);
-  await complete.settle();
-  assert.equal((await complete.lookup.lookupBook({ library, book, profile: english({ isbn13: book.isbn13, title: book.title }) })).source, 'stored');
-  const partial = harness({ providerFor: () => provider });
-  const unsure = await partial.lookup.lookupBook({ library, book, profile: english({ isbn13: book.isbn13, title: book.title, complete: false }) });
-  assert.deepEqual([unsure.outcome, unsure.reason], ['couldnt_check', 'unconfirmed']);
-  await partial.settle();
-  assert.equal(partial.answers.size(), 0);
-});
-
-test('a work search that could not have found the book never says not found (Godaan, Ponniyin Selvan)', async () => {
-  const library = { id: 'koha:panjab-laws', platform: 'koha', catalogUrl: 'https://k.example' };
-  const notListed = async () => ({ outcome: 'not_found', matchKind: 'none', recognizedExact: true });
-  const cases = [
-    // No ISBN in Open Library: no row could ever prove the book, so nothing proves it absent.
-    ['no ISBN', { checkAvailability: notListed, searchCatalog: async () => [] },
-      { book: { title: 'Godaan', authors: ['Munshi Premchand'] }, isbns: [], titles: ['Godaan'], authors: ['Munshi Premchand'], language: 'hin', complete: true }],
-    // A Hindi work searched by a romanised title: "Godan" or "गोदान" would not be found.
-    ['another script', { checkAvailability: notListed, searchCatalog: async () => [] },
-      { book: { isbn13: '9789388810470', title: 'Godaan', authors: ['Munshi Premchand'] }, isbns: ['9789388810470'], titles: ['Godaan'], authors: ['Munshi Premchand'], language: 'hin', complete: true }],
-    // ISBN lookups only: an edition Open Library does not list is never tried.
-    ['no title search', { checkAvailability: notListed },
-      { book: { isbn13: '9780140328721', title: 'Matilda', authors: ['Dahl'] }, isbns: ['9780140328721'], titles: ['Matilda'], authors: ['Dahl'], language: 'eng', complete: true }],
-    // A volume of a set the title rules cannot match.
-    ['related title', { checkAvailability: notListed, searchCatalog: async () => [{ recordId: '1', title: 'Ponniyin Selvan Part 1', authors: ['Kalki'], observation: { outcome: 'in_catalog' } }] },
-      { book: { isbn13: '9788184931723', title: 'Ponniyin Selvan', authors: ['Kalki'] }, isbns: ['9788184931723'], titles: ['Ponniyin Selvan'], authors: ['Kalki'], language: 'eng', complete: true }],
-  ];
-  for (const [name, provider, profile] of cases) {
-    const { lookup, answers, settle } = harness({ providerFor: () => provider });
-    const book = { bookKey: 'v1:openlibrary:OL17047576W', workId: 'OL17047576W', ...profile.book };
-    const answer = await lookup.lookupBook({ library, book, profile });
-    assert.deepEqual([answer.outcome, answer.reason], ['couldnt_check', 'unconfirmed'], name);
-    await settle();
-    assert.equal(answers.size(), 0, name);
-  }
+test('a find by the reader\'s ISBN is stored without its list; the next look needs no request', async () => {
+  global.fetch = async url => { await tick(); return response(url, 'page'); };
+  const library = { id: 'koha:isbns', platform: 'koha', catalogUrl: 'https://rows.example' };
+  const { provider } = rowsCatalog({ isbn: [heldRow('Wings of fire', { isbn: '9788173711466' })] });
+  const { lookup, settle } = harness({ providerFor: () => provider, platforms: NO_PACING });
+  const book = { bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466', title: 'Wings of Fire' };
+  const first = await lookup.lookupBook({ library, book });
+  assert.deepEqual([first.outcome, first.evidence, first.matchedIsbn13, first.matches.length], ['found', 'exact_isbn', '9788173711466', 1]);
+  await settle();
+  const again = await lookup.lookupBook({ library, book });
+  assert.deepEqual([again.outcome, again.source, again.requests, again.matches], ['found', 'stored', 0, undefined]);
 });
 
 test('aborting a book check stops further catalog requests', async () => {
@@ -789,18 +724,7 @@ test('/availability gives the same response on the old and new paths for every o
       const input = { libraryId: publicLibrary.id, bookKey: publicBook.bookKey, editionScope: scope };
       const before = await old.check(input);
       const after = await next.check(input);
-      // The search's own counters differ by design: the old path keeps its
-      // small caps, the lookup layer has none and may ask two ISBN forms at
-      // once (20 November 2026). What the answer rests on must agree.
-      const clean = value => {
-        const response = strip(value.response);
-        if (response.searchSummary) {
-          const { editionsComplete, absenceProvable, absenceRisk, titleSearches, relatedTitles } = response.searchSummary;
-          response.searchSummary = ['no_match', 'unknown'].includes(response.outcome)
-            ? { editionsComplete, absenceProvable, absenceRisk, titleSearches, relatedTitles } : { editionsComplete };
-        }
-        return response;
-      };
+      const clean = value => strip(value.response);
       assert.deepEqual(clean(after), clean(before), `${scope} ${JSON.stringify(observation)}`);
     }
   }
@@ -956,26 +880,22 @@ test('a lookup that times out still reports the catalog requests it sent', async
   assert.equal(answer.requests, 1);
 });
 
-test('an edition profile that fails or is too slow is not counted against the catalog', async () => {
+test('Open Library failing to name a work\'s latest ISBN is not counted against an ISBN-only catalog', async () => {
   let catalogCalls = 0;
-  const provider = { checkAvailability: async () => { catalogCalls++; return { outcome: 'available', matchKind: 'exact_isbn', recognizedExact: true }; } };
+  const provider = { checkAvailability: async () => assert.fail('unused'), searchIsbn: async () => { catalogCalls++; return []; } };
   const guard = createHostGuard();
   const { lookup, health, settle } = harness({ guard, providerFor: () => provider });
   const entry = { id: 'vega:profile', platform: 'vega', catalogUrl: 'https://profile.example' };
-  const book = { isbn13: '9788173711466', title: 'Wings of fire', authors: [] };
-  const failing = { searchProfile: async () => { throw coded('Open Library is down', 'METADATA_UNAVAILABLE'); } };
-  const slow = { searchProfile: () => new Promise(() => {}) };
+  const book = { workId: 'OL5W', title: 'Wings of fire', authors: [] };
+  const failing = { latestIsbn: async () => { throw coded('Open Library is down', 'METADATA_UNAVAILABLE'); } };
   for (let i = 0; i < 3; i++) {
-    const down = await lookup.checkBook({ entry, book, bookKey: 'k', lookupKind: 'exact_isbn', books: failing, attemptedAt: 'now' });
+    const down = await lookup.checkBook({ entry, book, bookKey: 'v1:openlibrary:OL5W', lookupKind: 'verified_work', books: failing, attemptedAt: 'now' });
     assert.equal(down.answer.outcome, 'couldnt_check');
-    const late = await lookup.checkBook({ entry, book, bookKey: 'k', lookupKind: 'exact_isbn', books: slow, attemptedAt: 'now', deadlineAt: Date.now() + 30 });
-    assert.deepEqual([late.answer.outcome, late.answer.reason], ['couldnt_check', 'timeout']);
   }
   await settle();
   assert.equal(catalogCalls, 0);
   assert.equal(await health.libraryHealth(entry.id), null);
   assert.equal(guard.circuitOpen('profile.example'), false);
-  assert.equal(guard.activeCount('profile.example'), 0);
 });
 
 test('waiting for a busy host slot on this instance is couldn’t check, but not the catalog’s failure', async () => {
@@ -1066,9 +986,9 @@ test('every book check writes one library_check log line with its reason, never 
     ['library_check', 'couldnt_check', 'blocked', false, 'isbn'],
   ]);
   assert.deepEqual(Object.keys(lines[0]).sort(), ['afterReply', 'bookKeyKind', 'durationMs', 'errorCode', 'event', 'evidence', 'foundBy', 'host', 'libraryId', 'lookupKind',
-    'outcome', 'platform', 'reason', 'requests', 'stored', 'titleAlsoMatched'].sort());
+    'outcome', 'platform', 'reason', 'requests', 'stored', 'matchCount'].sort());
   // An exact-edition check is not a work search: no search to name.
-  assert.deepEqual([lines[0].foundBy, lines[0].titleAlsoMatched], [null, null]);
+  assert.deepEqual([lines[0].foundBy, lines[0].matchCount], [null, 0]);
   assert.equal(lines[0].evidence, 'exact_isbn');
   assert.equal(lines[0].lookupKind, 'exact_isbn');
   assert.equal(lines[0].host, 'k.example');
@@ -1077,88 +997,24 @@ test('every book check writes one library_check log line with its reason, never 
   assert.ok(!/Wings|Kalam|9788173711466|OL\d+W/.test(text), 'no title, author, ISBN or work ID');
 });
 
-test('the log line names the search that found the book (foundBy) and whether the title search alone matched, never the book', async () => {
+test('the log line names the search that found the book (foundBy) and how many rows it lists, never the book', async () => {
   const library = { id: 'koha:found-by', platform: 'koha', catalogUrl: 'https://k.example' };
-  const work = { bookKey: 'v1:openlibrary:OL1037811W', workId: 'OL1037811W', title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'] };
-  const profile = profileOf({ isbn13: '9788173711466', isbns: ['9788173711466', '9788173715181'], title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'] });
-  const held = { outcome: 'in_catalog', recognizedExact: true };
+  const work = { bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466', workId: 'OL1037811W', title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'] };
+  const held = { outcome: 'in_catalog' };
   const run = async provider => {
     const lines = [];
-    const { lookup } = harness({ providerFor: () => ({ checkAvailability: async () => ({ outcome: 'not_found', matchKind: 'none', recognizedExact: true }), ...provider }),
-      log: line => lines.push(line) });
-    const answer = await lookup.lookupBook({ library, book: work, profile, storedChecked: true });
+    const { lookup } = harness({ providerFor: () => ({ checkAvailability: async () => assert.fail('unused'), ...provider }), log: line => lines.push(line) });
+    const answer = await lookup.lookupBook({ library, book: work, storedChecked: true });
     assert.equal(answer.outcome, 'found');
     assert.equal(Object.keys(answer).includes('foundBy'), false, 'never on the answer itself');
     return lines.at(-1);
   };
-  // The combined ISBN request found it; the title search had answered with an unrelated row.
-  const viaIsbn = await run({ checkIsbns: async isbns => { await new Promise(resolve => setTimeout(resolve, 10)); return { ...held, isbn13: isbns[1] }; },
-    searchCatalog: async () => [{ recordId: '1', title: 'Ignited Minds', authors: ['Kalam, A. P. J. Abdul'] }] });
-  assert.deepEqual([viaIsbn.foundBy, viaIsbn.titleAlsoMatched, viaIsbn.bookKeyKind], ['isbn', false, 'work']);
-  // A title-search row with this library's holding.
-  const viaTitle = await run({ checkIsbns: () => new Promise(() => {}),
-    searchCatalog: async () => [{ recordId: '2', title: 'Wings of Fire', authors: ['Kalam, A. P. J. Abdul'], observation: held }] });
-  assert.deepEqual([viaTitle.foundBy, viaTitle.titleAlsoMatched], ['title', true]);
-  // A record page opened from a title-search row.
-  const viaRecord = await run({ checkIsbns: () => new Promise(() => {}),
-    searchCatalog: async () => [{ recordId: '3', title: 'Wings of Fire', authors: ['Kalam, A. P. J. Abdul'] }],
-    resolveCatalogRecord: async id => ({ recordId: id, title: 'Wings of Fire', authors: ['Kalam, A. P. J. Abdul'], observation: held }) });
-  assert.deepEqual([viaRecord.foundBy, viaRecord.titleAlsoMatched], ['record', true]);
+  const viaIsbn = await run({ searchIsbn: async () => [{ title: 'Wings of fire', isbn: '9788173711466', observation: held }], searchTitle: () => new Promise(() => {}) });
+  assert.deepEqual([viaIsbn.foundBy, viaIsbn.matchCount, viaIsbn.bookKeyKind], ['isbn', 1, 'isbn']);
+  const viaTitle = await run({ searchIsbn: async () => [], searchTitle: async () => [{ title: 'Wings of Fire', observation: held }, { title: 'Wings of fire: an autobiography', observation: held }] });
+  assert.deepEqual([viaTitle.foundBy, viaTitle.matchCount, viaTitle.evidence], ['title', 2, 'title_match']);
+  const viaRecord = await run({ searchIsbn: async () => [], searchTitle: async () => [{ recordId: '3', title: 'Wings of Fire' }],
+    readRecord: async id => ({ recordId: id, title: 'Wings of Fire', authors: ['Kalam, A. P. J. Abdul'], observation: held }) });
+  assert.deepEqual([viaRecord.foundBy, viaRecord.matchCount], ['record', 1]);
   assert.ok(!/Wings|Kalam|9788173|OL1037811W/.test(JSON.stringify([viaIsbn, viaTitle, viaRecord])));
-});
-
-// --- Title-and-author finds (owner decision, 19 November 2026) ---------------
-
-test('a title-and-author match in this library\'s catalog is found, stored for the work only, and logged as title_author evidence', async () => {
-  const lines = [];
-  const row = { recordId: '77', title: 'Wings of fire : an autobiography', authors: ['Kalam, A. P. J. Abdul'],
-    catalogUrl: 'https://k.example/cgi-bin/koha/opac-detail.pl?biblionumber=77', catalogLinkKind: 'record',
-    observation: { outcome: 'in_catalog', recognizedExact: true, catalogUrl: 'https://k.example/cgi-bin/koha/opac-detail.pl?biblionumber=77', catalogLinkKind: 'record' } };
-  const asked = [];
-  const provider = { findBookCandidates: async () => [row], checkAvailability: async isbn => { asked.push(isbn); return { outcome: 'not_found', matchKind: 'none', recognizedExact: true }; } };
-  const { lookup, answers, settle } = harness({ providerFor: () => provider, log: line => lines.push(line) });
-  const library = { id: 'koha:ta', platform: 'koha', catalogUrl: 'https://k.example' };
-  const book = { bookKey: 'v1:openlibrary:OL1037811W', workId: 'OL1037811W', title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'] };
-  const profile = profileOf({ isbn13: '9788173711466', title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'] });
-  const answer = await lookup.lookupBook({ library, book, profile });
-  // The same answer as an ISBN find; only the evidence differs.
-  assert.deepEqual([answer.outcome, answer.evidence, answer.matchedIsbn13], ['found', 'title_author', undefined]);
-  assert.equal(answer.catalogLinkKind, 'record');
-  // A find ends the check: only the ISBN lookup that started beside the
-  // title search (20 November 2026), nothing after it.
-  assert.ok(asked.length <= 1, asked.join());
-  await settle();
-  assert.equal(answers.size(), 1);
-  const stored = await answers.readAnswers('koha:ta', [{ kind: 'ol_work', value: 'OL1037811W' }, { kind: 'isbn13', value: '9788173711466' }]);
-  assert.deepEqual(stored.map(r => [r.kind, r.answer, r.evidence]), [['ol_work', 'found', 'title_author']]);
-  const again = await lookup.lookupBook({ library, book, profile });
-  assert.deepEqual([again.outcome, again.source], ['found', 'stored']);
-  // The log line keeps the evidence apart, and never a title, ISBN or work ID.
-  assert.equal(lines[0].evidence, 'title_author');
-  assert.equal(lines[0].outcome, 'found');
-  const text = JSON.stringify(lines);
-  for (const secret of ['Wings', 'Kalam', '9788173711466', 'OL1037811W', '77']) assert.ok(!text.includes(secret), secret);
-});
-
-test('title-and-author: another author, no author, a volume or a union record held elsewhere stays couldn\'t check, never found or not found', async () => {
-  const library = { id: 'koha:tb', platform: 'koha', catalogUrl: 'https://k.example' };
-  const book = { bookKey: 'v1:openlibrary:OL1W', workId: 'OL1W', title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'] };
-  const profile = { ...profileOf({ isbn13: '9788173711466', title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'] }), language: 'eng' };
-  const held = { outcome: 'in_catalog', recognizedExact: true };
-  const cases = {
-    'another author': { findBookCandidates: async () => [{ recordId: '1', title: 'Wings of Fire', authors: ['Sutherland, Tui T.'], observation: held }] },
-    'no author': { isbnLookup: false, searchCatalog: async () => [{ recordId: '2', title: 'Wings of Fire', observation: held }] },
-    'a volume': { isbnLookup: false, searchCatalog: async () => [{ recordId: '3', title: 'Wings of Fire, Part 1', authors: ['Kalam, A. P. J. Abdul'], observation: held }] },
-    // A union catalog row: the record page shows another member's copy, which the adapter refuses.
-    'union record': { isbnLookup: false, searchCatalog: async () => [{ recordId: '4', title: 'Wings of Fire', authors: ['Kalam, A. P. J. Abdul'] }],
-      resolveCatalogRecord: async () => { throw coded('Catalog did not confirm this institution’s holding', 'CATALOG_UNRECOGNIZED'); } },
-  };
-  for (const [name, provider] of Object.entries(cases)) {
-    const { lookup, answers, settle } = harness({ providerFor: () => ({ checkAvailability: async () => ({ outcome: 'not_found', matchKind: 'none', recognizedExact: true }), ...provider }) });
-    const answer = await lookup.lookupBook({ library, book, profile });
-    assert.equal(answer.outcome, 'couldnt_check', name);
-    assert.ok(['unconfirmed', 'unrecognized'].includes(answer.reason), `${name}: ${answer.reason}`);
-    await settle();
-    assert.equal(answers.size(), 0, name);
-  }
 });

@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, useId } from 'react';
 import { DashGlyph, ExternalGlyph, FoundGlyph, NotCheckedGlyph, PinGlyph } from '../home/homeIcons';
 import type { CardAnswer, LibraryCardModel } from './useLibraryAnswer';
 import type { CheckReason } from '../../api';
@@ -61,13 +61,19 @@ export function catalogLinkText(answer: CardAnswer, kind: LinkKind): string {
     : kind === 'search' ? 'Search the library’s catalog for this book' : 'Open the library’s catalog';
 }
 
+/** The words above a found book's rows from the library's catalog. */
+export function matchesHeading(count: number): string {
+  return count === 1 ? 'In the library’s catalog:' : 'Books with this title in the library’s catalog:';
+}
+
 export const LibraryAnswerCard = forwardRef<HTMLDivElement, { model: LibraryCardModel; onFindLibrary: () => void }>(
   function LibraryAnswerCard({ model, onFindLibrary }, ref) {
+    const matchesId = useId();
     if (model.kind === 'none') return <section className="library-ask" aria-labelledby="library-ask-heading">
       <h2 id="library-ask-heading">Is it in your library?</h2>
       <button type="button" className="home-button home-button-outline library-ask-button" aria-haspopup="dialog" onClick={onFindLibrary}><PinGlyph />Find my library</button>
     </section>;
-    const { answer, name, place, catalogUrl, catalogLinkKind, retry, slowCatalog, reason } = model;
+    const { answer, name, place, catalogUrl, catalogLinkKind, retry, slowCatalog, reason, matches } = model;
     const label = answerLabel(answer);
     const tone = answer === 'found' ? 'found' : answer === 'not_found' ? 'not-found' : 'grey';
     const caption = name && place && !name.includes(place) ? name + ' · ' + place : name;
@@ -83,6 +89,17 @@ export const LibraryAnswerCard = forwardRef<HTMLDivElement, { model: LibraryCard
       {caption && <p className="library-answer-name">{caption}</p>}
       {answer === 'checking' && <span className="library-answer-progress" aria-hidden="true" />}
       {description && <p>{description}</p>}
+      {answer === 'found' && matches && matches.length > 0 && <>
+        <p id={matchesId}>{matchesHeading(matches.length)}</p>
+        <ul className="library-answer-matches" aria-labelledby={matchesId}>
+          {matches.map((match, index) => <li key={index}>
+            {match.url || catalogUrl
+              ? <a href={match.url || catalogUrl} target="_blank" rel="noopener noreferrer">{match.title}<span className="visually-hidden">, opens in a new tab</span></a>
+              : <span>{match.title}</span>}
+            {match.author && <span className="library-answer-match-author">{match.author}</span>}
+          </li>)}
+        </ul>
+      </>}
       <div className="library-answer-actions">
         {retry && <button type="button" className="home-text-button" onClick={retry}>Try again</button>}
         {catalogUrl && <a className="library-answer-catalog" href={catalogUrl} target="_blank" rel="noopener noreferrer">

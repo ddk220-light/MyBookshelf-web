@@ -99,13 +99,11 @@ export function createPublicAvailabilityService({
       const v2 = lookup?.enabledFor(entry);
       const result = v2
         ? await lookup.checkBook({ entry, library, provider, book, bookKey, parsed, ownRecord, lookupKind, editionScope, language,
-          books: books.searchProfile ? books : null, attemptedAt, signal })
+          books, attemptedAt, signal })
         : await runBookCheck({ entry, library, provider, book, bookKey, parsed, ownRecord, lookupKind, editionScope, language,
-          books: books.searchProfile ? books : null, attemptedAt });
+          books, attemptedAt });
       if (result.error) {
-        const failure = failed(result.error, handoff, result.lookupKind || lookupKind);
-        if (result.searchSummary) failure.response.searchSummary = result.searchSummary;
-        return failure;
+        return failed(result.error, handoff, result.lookupKind || lookupKind);
       }
       const enriched = attachCatalogHandoff(result.response, handoff, library);
       return { kind: 'result', response: ['unknown', 'no_match'].includes(result.response.outcome) ? enriched : remember(cacheKey, enriched) };

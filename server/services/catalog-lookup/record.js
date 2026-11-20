@@ -19,7 +19,16 @@ import { parsePublicBookKey } from '../../public-v2/contracts.js';
 // Identities are a library's own record, an ISBN-13, or an Open Library work
 // ID. Never a title, author or normalised title.
 
-export const ANSWER_TTL_MS = 180 * 24 * 60 * 60 * 1000;
+// Answers live 180 days (owner decision 1). The few seconds over 180 days
+// are the answer rule's version: a stored row whose lifetime (expiry less
+// check time) is not exactly ANSWER_TTL_MS was written under an older rule
+// and is neither served nor kept against a new answer (catalog-store/
+// holdings.js). Version 1, 20 November 2026: the simple title-or-ISBN check
+// (libraryBookSearch.js); rows of the earlier rules (exactly 180 days) are
+// checked again. Change the version whenever the meaning of a stored answer
+// changes.
+export const ANSWER_RULE_VERSION = 1;
+export const ANSWER_TTL_MS = (180 * 24 * 60 * 60 + ANSWER_RULE_VERSION) * 1000;
 const WORK_ID = /^OL\d+W$/;
 
 export function identitiesFor(libraryId, book = {}) {
@@ -38,32 +47,22 @@ export function askedIdentity(libraryId, book = {}, editionScope = 'work') {
   return identities.find(id => id.kind === 'isbn13') || null;
 }
 
-// Work-level "not found" answers written before this moment used a weaker
-// rule (no ISBN or transliteration check, libraryBookSearch.js absenceRisk)
-// and are not read: the next look checks the catalog again. A row's write time
-// is its expiry less ANSWER_TTL_MS.
-// (The 19 November test run stored such answers for Godaan and Ponniyin
-// Selvan at most of the 54 libraries.) Moved from 20 to 23 November 2026:
-// the code that writes under the new rule, and that answers a title-and-author
-// match "found" (owner decision, 19 November 2026), reaches production after
-// 20 November, and a "not found" the old code wrote until then must not hide
-// such a find. Rows written before this moment are re-checked, never shown.
-export const WORK_ABSENCE_RULE_SINCE = Date.parse('2026-11-23T00:00:00Z');
-const trustedNegative = row => row.evidence !== 'work_no_match'
-  || !Number.isFinite(row.expiresAt) || row.expiresAt - ANSWER_TTL_MS >= WORK_ABSENCE_RULE_SINCE;
-
 // A book is found if any identity is found; not found only if the asked
 // identity is not found.
 export function storedAnswer(rows, asked) {
   const found = rows.find(row => row.answer === 'found');
   if (found) return { outcome: 'found', evidence: found.evidence, ...(found.matchedIsbn13 ? { matchedIsbn13: found.matchedIsbn13 } : {}),
     ...(found.catalogUrl ? { catalogUrl: found.catalogUrl, catalogLinkKind: linkKind(found.catalogLinkKind) } : {}) };
-  const negative = asked && rows.find(row => row.answer === 'not_found' && row.kind === asked.kind && row.value === asked.value && trustedNegative(row));
+  const negative = asked && rows.find(row => row.answer === 'not_found' && row.kind === asked.kind && row.value === asked.value);
   return negative ? { outcome: 'not_found', evidence: negative.evidence } : null;
 }
 
 // Rows to write for one answer (plan 4.3 write rules). `couldnt_check`
-// (including an unconfirmed possible match) writes nothing.
+// writes nothing. A find by title (`title_match`) is not stored: the catalog
+// evidence values allowed in production (migrations 001-004) have no place
+// for it, and the next look checks again and lists the catalog's rows. An
+// ISBN find is stored without its list (the next look shows the heading and
+// the record link only).
 export function answerRows({ libraryId, book = {}, answer, profile, now = Date.now() }) {
   if (!answer || !['found', 'not_found'].includes(answer.outcome)) return [];
   const expiresAt = now + ANSWER_TTL_MS;
@@ -82,10 +81,6 @@ export function answerRows({ libraryId, book = {}, answer, profile, now = Date.n
       const matched = validateAndNormalize(answer.matchedIsbn13 || '');
       if (workId && matched) rows.push(row('ol_work', workId, { matchedIsbn13: matched }));
       if (matched) rows.push(row('isbn13', matched));
-    } else if (answer.evidence === 'title_author') {
-      // The work's title and author in this library's catalog: the work is
-      // found, but no ISBN identity is (catalog migration 005).
-      if (workId) rows.push(row('ol_work', workId));
     } else if (answer.evidence === 'catalog_record') {
       const recordId = answer.recordId || book.recordId;
       if (recordId && (!book.recordLibraryId || book.recordLibraryId === libraryId)) rows.push(row('catalog_record', `${libraryId}:${recordId}`));
@@ -250,11 +245,10 @@ export function libraryCheckEvent({ entry, libraryId, platform, host, book, answ
     bookKeyKind: bookKeyKind(book),
     // For a find by a work search: the search that produced the evidence
     // ('isbn' the ISBN request, 'title' a title-search row, 'record' a record
-    // page opened from title rows), and for an ISBN find whether the title
-    // search alone matched too (null when it had not answered yet). Neither
-    // carries a title or an ISBN.
+    // page opened from a search row), and how many catalog rows the answer
+    // lists. Never a title or an ISBN.
     foundBy: answer?.outcome === 'found' && ['isbn', 'title', 'record'].includes(answer?.foundBy) ? answer.foundBy : null,
-    titleAlsoMatched: answer?.outcome === 'found' && typeof answer?.titleAlsoMatched === 'boolean' ? answer.titleAlsoMatched : null,
+    matchCount: answer?.outcome === 'found' && Array.isArray(answer?.matches) ? answer.matches.length : 0,
   };
 }
 

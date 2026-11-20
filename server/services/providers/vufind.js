@@ -1,5 +1,5 @@
 import ISBN from 'isbn3';
-import { cachedTask, candidateLimit, getText } from './http.js';
+import { cachedTask, getText } from './http.js';
 import { attributes, catalogError, firstIsbn, text } from './catalogMarkup.js';
 import { validateAndNormalize } from '../isbn.js';
 import { kalnetTransportOptions } from './kalnet-tls.js';
@@ -199,6 +199,18 @@ export async function searchCatalog(library, query) {
   return Math.max(result.total || 0, result.records.length) > rows.length ? Object.assign(rows, { hasMore: true }) : rows;
 }
 
+// A reader's library check (libraryBookSearch.js): one search of this
+// library's catalog, by title (searchCatalog) or by ISBN, and its rows, each
+// a record of this library.
+export async function searchIsbn(library, value) {
+  const isbn = validateAndNormalize(value);
+  if (!isbn) throw catalogError('ISBN required', 'CATALOG_EXACT_ISBN_REQUIRED');
+  const result = await search(library, isbn, 'ISN', Date.now() + DEADLINE_MS);
+  return result.records.map(book => ({ ...book, observation: {
+    outcome: 'in_catalog', matchKind: 'verified_work', recognizedExact: true, catalogUrl: recordUrl(library, book.recordId), catalogLinkKind: 'record',
+  } }));
+}
+
 export async function resolveCatalogRecord(library, id) {
   const deadlineAt = Date.now() + DEADLINE_MS;
   const value = await detail(library, String(id), deadlineAt);
@@ -252,8 +264,7 @@ export async function checkAvailability(library, isbn, title, author) {
         incomplete = true; exactSearchComplete = false;
       }
     }
-    // A reader's check opens every listed hit (candidateLimit); elsewhere six.
-    const details = candidateLimit(MAX_DETAILS);
+    const details = MAX_DETAILS;
     incomplete ||= candidates.size > details;
     const books = [];
     for (const row of [...candidates.values()].slice(0, details)) {
@@ -275,7 +286,7 @@ export async function checkAvailability(library, isbn, title, author) {
     const result = await search(library, title, 'Title', deadlineAt);
     const matches = result.records.filter(row => titleKey(row.title) === titleKey(title));
     const exactBooks = [];
-    const read = candidateLimit(2);
+    const read = 2;
     let partial = result.total > result.records.length || matches.length > read;
     for (const row of matches.slice(0, read)) {
       try {

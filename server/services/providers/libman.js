@@ -1,14 +1,13 @@
-import { cachedTask, candidateLimit, getJson } from './http.js';
+import { cachedTask, getJson } from './http.js';
 import { catalogError, decode, firstIsbn, text } from './catalogMarkup.js';
 import { validateAndNormalize } from '../isbn.js';
 import { hyphenatedIsbn } from './egranthalaya.js';
 
 const BASE = 'https://libcloud.mastersofterp.in/OPAC_V3';
 const ID = /^[1-9]\d{0,19}$/;
-// Rows, ISBN-search hits and title rows read outside a reader's check (the
-// catalog search screen, result marking). A reader's check uses every row the
-// search returned and reads every one it needs (candidateLimit); its deadline
-// and the shared host pacing bound it.
+// Rows, ISBN-search hits and title rows read by the catalog search screen,
+// result marking and an exact-edition check. A reader's library check reads
+// none (searchTitle, searchIsbn).
 const MAX_BOOKS = 10;
 const MAX_DETAILS = 3;
 // Title-search rows carry no ISBN (19 November 2026: TitleNo, Title, AuthName,
@@ -81,12 +80,13 @@ export function parseLibmanSearch(json) {
     if (!ID.test(recordId) || !title) throw catalogError('Malformed LIBMAN search record');
     if (seen.has(recordId)) continue;
     seen.add(recordId);
-    records.push({ recordId, title, isbn: firstIsbn(row.ISBN), authors: clean(row.AuthName) ? [clean(row.AuthName)] : [] });
+    const isbns = allIsbns(row.ISBN);
+    records.push({ recordId, title, isbn: firstIsbn(row.ISBN), ...(isbns.length > 1 ? { isbns } : {}), authors: clean(row.AuthName) ? [clean(row.AuthName)] : [] });
   }
   return { records, total: records.length };
 }
 
-async function search(library, query, type, deadlineAt) {
+async function search(library, query, type, deadlineAt, retryWord = true) {
   const { base, tenant } = settings(library);
   // The published UI permits letters, numbers, spaces and commas only. Use a
   // contiguous safe segment: the first segment can be just "A" in "A+ ..." or
@@ -105,7 +105,7 @@ async function search(library, query, type, deadlineAt) {
       { deadlineAt, ttlMs: 5 * 60_000 });
   };
   const result = await read(q);
-  if (type !== 'TITLE' || result.total > 0 || hasCombiningMarks) return result;
+  if (!retryWord || type !== 'TITLE' || result.total > 0 || hasCombiningMarks) return result;
   // Some catalogs store repeated spaces but search literal phrases. Only after
   // an explicit clean zero, retry one substantial word and retain full-title
   // matches. This does not turn an error or a broad word hit into membership.
@@ -187,11 +187,11 @@ const outOfBudget = error => ['CATALOG_REQUEST_BUDGET', 'CATALOG_ABORTED'].inclu
 export async function searchCatalog(library, query) {
   const deadlineAt = Date.now() + DEADLINE_MS;
   const result = await search(library, query, 'TITLE', deadlineAt);
-  const rows = result.records.slice(0, candidateLimit(MAX_BOOKS)).map(book => ({ ...book, observation: {
+  const rows = result.records.slice(0, MAX_BOOKS).map(book => ({ ...book, observation: {
     outcome: 'in_catalog', matchKind: 'verified_work', recognizedExact: true, catalogUrl: publicUrl(library), catalogLinkKind: 'search',
   } }));
   const wanted = titleKey(query);
-  const details = candidateLimit(MAX_ROW_DETAILS);
+  const details = MAX_ROW_DETAILS;
   let read = 0;
   for (const row of rows) {
     if (row.isbn || !wanted || titleKey(row.title) !== wanted || read >= details) continue;
@@ -204,6 +204,22 @@ export async function searchCatalog(library, query) {
     }
   }
   return result.records.length > rows.length ? Object.assign(rows, { hasMore: true }) : rows;
+}
+
+// A reader's library check (libraryBookSearch.js): one search of this
+// tenant's catalog, by title or by ISBN, and its rows. Every row is a record
+// of this library. The ISBN search asks the digits an ISBN-13 shares with its
+// ISBN-10 (both plain forms); a row showing another ISBN does not count.
+const presence = library => ({ outcome: 'in_catalog', matchKind: 'verified_work', recognizedExact: true, catalogUrl: publicUrl(library), catalogLinkKind: 'search' });
+export async function searchTitle(library, title) {
+  const { records } = await search(library, title, 'TITLE', Date.now() + DEADLINE_MS, false);
+  return records.map(row => ({ ...row, observation: presence(library) }));
+}
+export async function searchIsbn(library, value) {
+  const isbn = validateAndNormalize(value);
+  if (!isbn) throw catalogError('ISBN required', 'CATALOG_EXACT_ISBN_REQUIRED');
+  const { records } = await search(library, isbnSearchTerms(isbn)[0], 'ISBN', Date.now() + DEADLINE_MS, false);
+  return records.map(row => ({ ...row, observation: presence(library) }));
 }
 
 export async function resolveCatalogRecord(library, recordId) {
@@ -260,7 +276,7 @@ export async function checkAvailability(library, isbn, title, author) {
         exactSearchComplete = false;
       }
     }
-    for (const record of [...candidates.values()].slice(0, candidateLimit(MAX_DETAILS))) {
+    for (const record of [...candidates.values()].slice(0, MAX_DETAILS)) {
       try {
         const value = await detail(library, record.recordId, deadlineAt);
         // The app answers found / not found: the first record that shows this
@@ -277,7 +293,7 @@ export async function checkAvailability(library, isbn, title, author) {
     const result = await search(library, title, 'TITLE', deadlineAt);
     const matches = result.records.filter(row => titleKey(row.title) === titleKey(title));
     const exactBooks = [];
-    const read = candidateLimit(2);
+    const read = 2;
     let partial = matches.length > read;
     for (const row of matches.slice(0, read)) {
       try {

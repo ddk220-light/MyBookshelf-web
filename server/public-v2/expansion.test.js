@@ -35,7 +35,7 @@ test('Thiruvarur discovery preserves exact Koha holdings and excludes reference 
   try {
     const books = { resolve: async () => ({ title: 'Introduction to algorithms', isbn13: '9780262033848', authors: [] }) };
     const service = createPublicAvailabilityService({ directory, books });
-    const { response } = await service.check({ libraryId: library.id, bookKey: 'v1:isbn:9780262033848' });
+    const { response } = await service.check({ libraryId: library.id, bookKey: 'v1:isbn:9780262033848', editionScope: 'exact' });
     assert.equal(response.outcome, 'available');
     assert.equal(response.matchKind, 'exact_isbn');
     assert.equal(response.availableCopies, 4);
@@ -120,7 +120,7 @@ test('Tamil Nadu discovery connects IIT Madras with exact copy and reading-hall 
   try {
     const books = { resolve: async () => ({ title: 'Delay-doppler communications', isbn13: '9780323850285', authors: [] }) };
     const service = createPublicAvailabilityService({ directory, books });
-    const { response } = await service.check({ libraryId: library.id, bookKey: 'v1:isbn:9780323850285' });
+    const { response } = await service.check({ libraryId: library.id, bookKey: 'v1:isbn:9780323850285', editionScope: 'exact' });
     assert.equal(response.outcome, 'available');
     assert.equal(response.matchKind, 'exact_isbn');
     assert.equal(response.availableCopies, 1);
@@ -308,7 +308,7 @@ test('British Council exact ISBN reaches the public availability DTO with branch
   };
   try {
     const books = {resolve: async () => ({title:'Nineteen eighty-four', isbn13:'9780141036144', authors:['George Orwell']})};
-    const {response} = await createPublicAvailabilityService({directory,books}).check({libraryId:'koha:british-council-india',bookKey:'v1:isbn:9780141036144'});
+    const {response} = await createPublicAvailabilityService({directory,books}).check({libraryId:'koha:british-council-india',bookKey:'v1:isbn:9780141036144',editionScope:'exact'});
     assert.equal(response.outcome, 'none_available');
     assert.equal(response.freshness, 'fresh');
     assert.equal(response.totalCopies, 1);
@@ -356,7 +356,7 @@ test('verified Indian Koha directories route captured exact-edition holdings thr
           text:async () => search ? '' : record};
       };
       const books = {resolve:async () => ({title:'Captured record', isbn13:isbn, authors:[]})};
-      const {response} = await createPublicAvailabilityService({directory,books}).check({libraryId,bookKey:`v1:isbn:${isbn}`});
+      const {response} = await createPublicAvailabilityService({directory,books}).check({libraryId,bookKey:`v1:isbn:${isbn}`,editionScope:'exact'});
       assert.equal(response.outcome, available ? 'available' : 'none_available', slug);
       assert.equal(response.matchKind, 'exact_isbn', slug);
       assert.equal(response.totalCopies, total, slug);
@@ -398,7 +398,7 @@ test('reopened public Koha catalogs are discoverable and HTTP records survive th
   try {
     const service = createPublicAvailabilityService({ directory,
       books: { resolve: async () => ({ title: 'The Alchemist', isbn13: '9788172234980', authors: [] }) } });
-    const { response } = await service.check({ libraryId: 'koha:kalaignar-centenary-library', bookKey: 'v1:isbn:9788172234980' });
+    const { response } = await service.check({ libraryId: 'koha:kalaignar-centenary-library', bookKey: 'v1:isbn:9788172234980', editionScope: 'exact' });
     assert.equal(response.outcome, 'available');
     assert.equal(response.availableCopies, 1);
     assert.equal(response.totalCopies, 3);

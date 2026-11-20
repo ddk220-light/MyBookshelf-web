@@ -4,6 +4,9 @@ import { ANSWER_TTL_MS } from '../services/catalog-lookup/record.js';
 // layer's in-memory store. Rows come from `answerRows` and `identitiesFor`
 // (catalog-lookup/record.js), which never use a title or author.
 
+// The lifetime carries the answer rule's version (record.js ANSWER_TTL_MS):
+// a row whose expiry less its check time is not exactly this was written
+// under an older rule and is ignored, and replaced by any new answer.
 const TTL_SECONDS = Math.round(ANSWER_TTL_MS / 1000);
 
 const readSql = withKind => `SELECT library_id, identity_kind, identity_value, answer, evidence, matched_isbn13, catalog_url${withKind ? ', catalog_link_kind' : ''},
@@ -11,7 +14,8 @@ const readSql = withKind => `SELECT library_id, identity_kind, identity_value, a
   FROM holdings_answers
   WHERE library_id = $1
     AND (identity_kind, identity_value) IN (SELECT * FROM unnest($2::text[], $3::text[]))
-    AND expires_at > now()`;
+    AND expires_at > now()
+    AND expires_at - checked_at = make_interval(secs => $4)`;
 const READ = readSql(true);
 const READ_WITHOUT_KIND = readSql(false);
 
@@ -28,6 +32,7 @@ const writeSql = withKind => `WITH input AS (
       answer = EXCLUDED.answer, evidence = EXCLUDED.evidence, matched_isbn13 = EXCLUDED.matched_isbn13,
       catalog_url = EXCLUDED.catalog_url, ${withKind ? 'catalog_link_kind = EXCLUDED.catalog_link_kind, ' : ''}checked_at = EXCLUDED.checked_at, expires_at = EXCLUDED.expires_at
     WHERE EXCLUDED.answer = 'found' OR h.answer <> 'found' OR h.expires_at <= now()
+      OR h.expires_at - h.checked_at <> make_interval(secs => $8)
     RETURNING h.library_id
   )
   INSERT INTO library_profiles (library_id, answers_stored, last_answer_at)
@@ -42,7 +47,6 @@ const WRITE_WITHOUT_KIND = writeSql(false);
 // a release that ships before the migration still stores answers (their link
 // kind reads as the catalog). Any other error is passed on unchanged.
 const UNDEFINED_COLUMN = '42703';
-const CHECK_VIOLATION = '23514';
 async function withKindFallback(withKind, withoutKind) {
   try { return await withKind(); } catch (error) {
     if (error?.code !== UNDEFINED_COLUMN) throw error;
@@ -62,7 +66,7 @@ export function createPgAnswerStore(db) {
   return Object.freeze({
     async readAnswers(libraryId, identities = []) {
       if (!libraryId || !identities.length) return [];
-      const params = [libraryId, identities.map(id => id.kind), identities.map(id => id.value)];
+      const params = [libraryId, identities.map(id => id.kind), identities.map(id => id.value), TTL_SECONDS];
       const { rows } = await withKindFallback(() => db.query(READ, params), () => db.query(READ_WITHOUT_KIND, params));
       return rows.map(row => ({ libraryId: row.library_id, kind: row.identity_kind, value: row.identity_value, answer: row.answer,
         evidence: row.evidence, ...(row.matched_isbn13 ? { matchedIsbn13: row.matched_isbn13 } : {}),
@@ -84,14 +88,7 @@ export function createPgAnswerStore(db) {
         const kinds = rows.map(r => (CATALOG_URL(r.catalogUrl) && LINK_KINDS.has(r.catalogLinkKind) ? r.catalogLinkKind : null));
         await withKindFallback(() => db.query(WRITE, [...params, kinds]), () => db.query(WRITE_WITHOUT_KIND, params));
       };
-      const rows = [...byKey.values()];
-      // Until catalog migration 005 allows the `title_author` evidence,
-      // Postgres refuses it (23514, check violation): the other rows are
-      // still written, and a title-and-author find is checked again next time.
-      try { await write(rows); } catch (error) {
-        if (error?.code !== CHECK_VIOLATION || !rows.some(r => r.evidence === 'title_author')) throw error;
-        await write(rows.filter(r => r.evidence !== 'title_author'));
-      }
+      await write([...byKey.values()]);
     },
   });
 }

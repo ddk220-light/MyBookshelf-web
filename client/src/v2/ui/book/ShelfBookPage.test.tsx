@@ -85,6 +85,17 @@ describe('one-shelf book page', () => {
     expect(await screen.findByText(label, { selector: '[role="status"]' })).toBeInTheDocument();
   });
 
+  it('lists the catalog rows a found answer carries under "In your library"', async () => {
+    stubApi({ check: () => Promise.resolve(json({ answer: 'found', catalogUrl: 'https://catalog.example.test/record/1', catalogLinkKind: 'record',
+      matches: [{ title: 'Wings of fire : an autobiography', author: 'Kalam, A. P. J. Abdul', url: 'https://catalog.example.test/record/1' }, { title: 'Wings of Fire #07' }] })) });
+    seed({ libraryId: LIBRARY.id });
+    renderBook();
+    const group = await screen.findByRole('group', { name: 'In your library' });
+    const list = await within(group).findByRole('list');
+    expect(within(list).getAllByRole('listitem').map(item => item.textContent)).toEqual([
+      'Wings of fire : an autobiography, opens in a new tabKalam, A. P. J. Abdul', 'Wings of Fire #07, opens in a new tab']);
+  });
+
   it('says why a check could not answer, and offers Try again only when it could help', async () => {
     stubApi({ check: () => Promise.resolve(json({ answer: 'unknown', reason: 'blocked' })) });
     seed({ libraryId: LIBRARY.id });

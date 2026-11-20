@@ -103,4 +103,27 @@ describe('library answer card', () => {
     show({ answer: 'not_found', catalogUrl: 'https://catalog.example.test/x', catalogLinkKind: 'search' });
     expect(screen.getByRole('link')).toHaveTextContent('Search the library’s catalog yourself');
   });
+
+  it('lists a found book\'s rows from the library\'s catalog so the reader can pick one', () => {
+    show({ answer: 'found', catalogUrl: 'https://catalog.example.test/', catalogLinkKind: 'catalog', matches: [
+      { title: 'Wings of fire : an autobiography', author: 'Kalam, A. P. J. Abdul', url: 'https://catalog.example.test/record/7' },
+      { title: 'Wings of Fire #07', author: 'Sutherland, Tui T.' }] });
+    const card = screen.getByRole('group');
+    expect(within(card).getByRole('heading')).toHaveTextContent('In your library');
+    const list = within(card).getByRole('list', { name: 'Books with this title in the library’s catalog:' });
+    const items = within(list).getAllByRole('listitem');
+    expect(items).toHaveLength(2);
+    expect(within(items[0]).getByRole('link')).toHaveAttribute('href', 'https://catalog.example.test/record/7');
+    expect(items[0]).toHaveTextContent('Kalam, A. P. J. Abdul');
+    // A row without its own record link opens the catalog link.
+    expect(within(items[1]).getByRole('link')).toHaveAttribute('href', 'https://catalog.example.test/');
+    cleanup();
+    show({ answer: 'found', matches: [{ title: 'Wings of fire' }] });
+    expect(screen.getByRole('list', { name: 'In the library’s catalog:' })).toHaveTextContent('Wings of fire');
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    cleanup();
+    // Never on any other answer.
+    show({ answer: 'not_found', matches: [{ title: 'Wings of fire' }] });
+    expect(screen.queryByRole('list')).not.toBeInTheDocument();
+  });
 });
