@@ -37,14 +37,17 @@ export async function runBookCheck({ entry, library, provider, book, bookKey, pa
   const run = () => checkWithProfile({ entry, library, provider, book, parsed, ownRecord, lookupKind, editionScope, attemptedAt, profile, workSearch, hasProfiles, budget, progress });
   if (!budget) return run();
   // The best proven match so far, as a finished check result, or null.
-  const proven = () => {
-    if (!workSearch || !progress?.best) return null;
-    try { return { response: workResponse(progress.best, { library, entry, attemptedAt }), profile }; } catch { return null; }
+  const answerWith = observation => {
+    if (!workSearch || !observation) return null;
+    try { return { response: workResponse(observation, { library, entry, attemptedAt }), profile }; } catch { return null; }
   };
-  return withBudget(budget, run, lookupKind, proven);
+  const proven = () => answerWith(progress?.best);
+  // At the deadline only: a title-and-author match (answered "unconfirmed").
+  const possible = () => answerWith(progress?.possible);
+  return withBudget(budget, run, lookupKind, proven, possible);
 }
 
-async function withBudget(budget, run, lookupKind, proven = () => null) {
+async function withBudget(budget, run, lookupKind, proven = () => null, possible = () => null) {
   const controller = new AbortController();
   const forward = () => controller.abort();
   if (budget.signal?.aborted) return { error: coded('Catalog check was cancelled', 'CATALOG_ABORTED'), lookupKind };
@@ -55,7 +58,7 @@ async function withBudget(budget, run, lookupKind, proven = () => null) {
   // At the deadline a proven match already found is kept, never discarded.
   const deadline = new Promise(resolve => {
     timer = setTimeout(() => {
-      const best = proven();
+      const best = proven() || possible();
       controller.abort();
       resolve(best ? { ...best, requests: sent() } : { error: coded('Catalog check deadline exceeded', 'CATALOG_TIMEOUT'), lookupKind, requests: sent() });
     }, Math.max(0, budget.deadlineAt - Date.now()));
@@ -84,7 +87,7 @@ async function withBudget(budget, run, lookupKind, proven = () => null) {
       const result = await run();
       // The inner search can reach its own deadline before the outer timer
       // fires. Keep the same proven match whichever deadline wins.
-      const best = result.error?.code === 'CATALOG_TIMEOUT' ? proven() : null;
+      const best = result.error?.code === 'CATALOG_TIMEOUT' ? proven() || possible() : null;
       return { ...(best ?? result), requests: operation.requests };
     });
     work.catch(() => {});

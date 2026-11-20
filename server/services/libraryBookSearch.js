@@ -10,7 +10,23 @@ import { MAX_CHECK_MS } from './catalog-lookup/platforms.js';
 const normalize = value => String(value || '').normalize('NFKD').replace(/(\p{Script=Latin})\p{M}+/gu, '$1').normalize('NFC')
   .replace(/[\u200c\u200d]/g, '').toLowerCase().replace(/[^\p{L}\p{M}\p{N}]+/gu, ' ').trim();
 const titleParts = value => String(value || '').split(/\s+\/\s+/)[0].split(/\s*:\s*/);
+// Catalogs often drop a leading English article ("DISCOVERY OF INDIA" for "The
+// Discovery of India", SRMS, 19 November 2026), so titles compare without it.
+const titleKey = value => normalize(value).replace(/^(?:the|an?) (?=\S)/, '');
 const unique = values => [...new Set(values.filter(Boolean))];
+// Words compared without a final plural "s", only to find rows that might be
+// the book under a variant title ("Concept of Physics" for "Concepts of
+// Physics", HCDGC, 19 November 2026). Never used to match a book.
+const stemKey = value => titleKey(value).split(' ').map(word => (word.length > 3 && /[^s]s$/.test(word) ? word.slice(0, -1) : word)).join(' ');
+// The main title with its plural words made singular ("Concepts of physics"
+// -> "Concept of physics"), or null when there is none. Catalogs whose title
+// search matches words or substrings miss the singular form a library used.
+export function singularTitleVariant(title) {
+  const main = titleParts(title)[0].trim();
+  if (nonLatinLetters(main)) return null;
+  const variant = main.replace(/\b(\p{L}{3,})s\b/gu, (word, stem) => (/(?:s|u|i|ic)$/i.test(stem) ? word : stem));
+  return variant !== main && /\p{L}/u.test(variant) ? variant : null;
+}
 
 function relatedAuthor(a, b) {
   const left = normalize(a).split(' ').filter(word => word.length > 1);
@@ -25,16 +41,16 @@ const revision = value => normalize(value).match(/\b(?:\d+(?:st|nd|rd|th)?|revis
 
 function sameTitle(expected, actual) {
   const left = titleParts(expected), right = titleParts(actual);
-  if (normalize(left.join(' ')) === normalize(right.join(' '))) return true;
+  if (titleKey(left.join(' ')) === titleKey(right.join(' '))) return true;
   const optionalSubtitle = parts => parts.length === 1 || /^(?:(?:an?|the) )?(?:autobiography|novel|memoir|illustrated edition|large print edition)\b/.test(normalize(parts.slice(1).join(' ')));
-  return normalize(left[0]) === normalize(right[0]) && optionalSubtitle(left) && optionalSubtitle(right);
+  return titleKey(left[0]) === titleKey(right[0]) && optionalSubtitle(left) && optionalSubtitle(right);
 }
 
 // Title rules shared by full records and search-result rows.
 function titleAgrees(title, profile) {
   const titles = profile.titles || [profile.book.title];
   if (!titles.some(expected => sameTitle(expected, title))) return false;
-  if (distinctions.test(title) && !titles.some(expected => normalize(expected) === normalize(title))) return false;
+  if (distinctions.test(title) && !titles.some(expected => titleKey(expected) === titleKey(title))) return false;
   // Preserve numbered/revised editions instead of erasing those differences.
   if (revision(title) && !titles.some(expected => revision(expected) === revision(title))) return false;
   return true;
@@ -48,11 +64,13 @@ export function matchCatalogRecord(record, profile) {
   if (!record?.title || !isPrintEdition(record)) return null;
   if (record.language && profile.language && record.language !== profile.language) return null;
   if (!titleAgrees(record.title, profile)) return null;
-  const recordAuthors = authorsOf(record);
   const authorMatch = authorAgrees(record, profile);
   const isbns = isbnsOf(record);
   const knownIsbn = isbns.find(isbn => profile.isbns.includes(isbn));
-  if (knownIsbn && (!recordAuthors.length || !profile.authors.length || authorMatch)) {
+  // The record shows one of the work's ISBNs and its title agrees: that is the
+  // edition, whoever the catalog lists as author (co-authors and translators:
+  // SRS Jammu lists Wings of Fire, ISBN 9788173711466, under "Tiwari, Arun").
+  if (knownIsbn) {
     return { matchKind: knownIsbn === profile.book.isbn13 ? 'exact_isbn' : 'verified_work', isbn13: knownIsbn };
   }
   if (authorMatch) return { matchKind: 'possible_match', ...(isbns[0] ? { isbn13: isbns[0] } : {}) };
@@ -68,7 +86,9 @@ export function matchCatalogRecord(record, profile) {
 //   - a title search ran and the catalog answered it: ISBN lookups alone miss
 //     every edition Open Library does not list (most Indian printings);
 //   - no row in that search had a related title we could not rule out (a
-//     multi-volume set, "Part 1", a longer title with the same words);
+//     multi-volume set, "Part 1", a longer title with the same words, the
+//     same title under any author); a title with plural words is also
+//     searched in the singular first;
 //   - the title cannot hide behind another spelling or script: every known
 //     title is in Latin script and the work's language is one written in it.
 //     A Hindi or Tamil work may be catalogued as "Godan", "गोदान" or
@@ -81,15 +101,19 @@ export function transliterationRisk(profile) {
   if (!LATIN_SCRIPT_LANGUAGES.has(String(profile?.language || '').toLowerCase())) return true;
   return (profile.titles || [profile.book?.title]).some(nonLatinLetters);
 }
-// A search row that contains one of the work's main titles, word for word,
-// that did not match and that its authors do not rule out: perhaps a volume of
-// a set or the same book under a longer title.
+// A search row that contains one of the work's main titles, word for word
+// (ignoring a leading article and final plural "s"), and that did not match:
+// perhaps a volume of a set, the same book under a longer title, or the book
+// with a wrong author field.
 export function relatedRow(row, profile) {
   if (!row?.title || matchCatalogRecord(row, profile)) return false;
-  if (authorsOf(row).length && profile.authors?.length && !authorAgrees(row, profile)) return false;
-  const text = ` ${normalize(titleParts(row.title).join(' '))} `;
+  // The row's author does not rule it out: small catalogs often put the
+  // publisher there (LIBMAN 520 lists "APJAbdul Kalam Wing Of Fire" under
+  // "Rupa", 19 November 2026). A same-title book by another author therefore
+  // leaves the answer unconfirmed rather than risking a false "not found".
+  const text = ` ${stemKey(titleParts(row.title).join(' '))} `;
   return (profile.titles || [profile.book?.title]).some(expected => {
-    const main = normalize(titleParts(expected)[0]);
+    const main = stemKey(titleParts(expected)[0]);
     return main.length >= 3 && text.includes(` ${main} `);
   });
 }
@@ -110,9 +134,11 @@ export function candidateTier(row, profile) {
   if (!row?.title || !isPrintEdition(row)) return null;
   if (row.language && profile.language && row.language !== profile.language) return null;
   if (!titleAgrees(row.title, profile)) return null;
-  if (authorsOf(row).length && profile.authors.length && !authorAgrees(row, profile)) return null;
   const isbns = isbnsOf(row);
+  // A row showing a work ISBN can prove the edition whatever its author says
+  // (matchCatalogRecord).
   if (isbns.some(isbn => profile.isbns.includes(isbn))) return 1;
+  if (authorsOf(row).length && profile.authors.length && !authorAgrees(row, profile)) return null;
   return isbns.length ? 3 : 2;
 }
 
@@ -132,6 +158,8 @@ export function checkBudgetMs(library) {
 // one search plus one or two record reads.
 export const TITLE_FIRST_MAX_REQUESTS = 6;
 export const LEGACY_MAX_REQUESTS = 12;
+// ISBNs per search for catalogs that answer several at once (`checkIsbns`).
+export const BATCH_ISBNS = 8;
 
 // A proven match: the catalog showed this edition, or another edition of the
 // work, by one of the work's ISBNs or its own record, with a holding the app
@@ -180,6 +208,11 @@ async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, m
   const proven = new Promise(resolve => { provenFound = resolve; });
   const addPositive = item => {
     positives.push(item);
+    // A title-and-author match is kept too, so that a deadline arriving first
+    // answers "unconfirmed" (with the catalog link) rather than "timeout".
+    if (progress && !progress.possible && item.matchKind === 'possible_match') {
+      progress.possible = { ...item, searchSummary: { ...summary, requests: operation.requests, partial: true } };
+    }
     if (!provesHolding(item)) return;
     if (progress && (!progress.best || rank(item) > rank(progress.best))) {
       progress.best = { ...item, searchSummary: { ...summary, requests: operation.requests, partial: true } };
@@ -246,6 +279,10 @@ async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, m
     for (const candidate of candidates) {
       if (confident()) break;
       if (seen.has(candidate.recordId)) continue;
+      // Where a row shows the record's full title (`rowTitlesReliable`), a row
+      // whose title rules it out is not opened: it would only use up the cap.
+      // Rows with a related title already count against absence (relatedRow).
+      if (!titleFirst && provider.rowTitlesReliable === true && candidate.title && !titleAgrees(candidate.title, profile)) continue;
       if (candidate.observation) { seen.add(candidate.recordId); addRecord(candidate); continue; }
       if (titleFirst && candidate.tier === 3 && positives.length) continue;
       const late = Date.now() >= deadline;
@@ -321,18 +358,70 @@ async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, m
       await byIsbn(isbn);
     }
   } else {
-    const isbns = identifiers.slice(0, maxIsbns);
-    if (identifiers.length > isbns.length) summary.partial = true;
-    const queries = unique([[profile.titles[0], profile.authors[0]].filter(Boolean).join(' '), profile.titles[0], profile.titles[1]]).slice(0, 3);
+    // A catalog that answers several ISBNs in one search (`checkIsbns`) is
+    // asked about the work's editions in groups (the reader's ISBN first)
+    // instead of one request per edition, which used to stop at a few
+    // editions and leave many-edition books unconfirmed.
+    const batched = typeof provider.checkIsbns === 'function' && provider.isbnLookup !== false;
+    const workIsbns = unique([profile.book.isbn13, ...profile.isbns].map(validateAndNormalize)).filter(isbn => isbn && profile.isbns.includes(isbn));
+    const groups = [];
+    for (let index = 0; batched && index < workIsbns.length; index += BATCH_ISBNS) groups.push(workIsbns.slice(index, index + BATCH_ISBNS));
+    const isbns = batched || provider.isbnLookup === false ? [] : identifiers.slice(0, maxIsbns);
+    // ISBNs that are never asked (a title-only catalog) do not make the search partial.
+    if (!batched && provider.isbnLookup !== false && identifiers.length > isbns.length) summary.partial = true;
+    const searched = new Set();
+    const byIsbns = async group => {
+      if (Date.now() >= deadline) return;
+      summary.isbnQueries++;
+      const result = await attempt(() => provider.checkIsbns(group));
+      if (!result) return;
+      const matched = validateAndNormalize(result.isbn13 || '');
+      if (matched && group.includes(matched) && ['available', 'none_available', 'in_catalog', 'unknown'].includes(result.outcome)) {
+        group.forEach(isbn => searched.add(isbn));
+        const kind = matched === profile.book.isbn13 ? 'exact_isbn' : 'verified_work';
+        addPositive({ ...result, matchKind: kind, lookupKind: kind, recognizedExact: result.recognizedExact !== false,
+          matchedBook: { title: result.catalogTitle || profile.book.title, isbn13: matched } });
+      } else if (result.outcome === 'not_found' && result.recognizedExact && Array.isArray(result.isbns)) {
+        result.isbns.map(validateAndNormalize).forEach(isbn => { if (isbn) searched.add(isbn); });
+      } else { failures++; noteFailure('CATALOG_UNRECOGNIZED'); }
+    };
+    const isbnTask = index => (batched ? (groups[index] ? byIsbns(groups[index]) : null) : (isbns[index] ? byIsbn(isbns[index]) : null));
+    const titles = (profile.titles || []).filter(Boolean);
+    const queries = [];
+    for (const query of [[titles[0], profile.authors[0]].filter(Boolean).join(' '), titles[0], titles[1]]) {
+      if (query && !queries.some(existing => normalize(existing) === normalize(query))) queries.push(query);
+    }
+    const steps = Math.max(batched ? groups.length : isbns.length, queries.length);
     // Start textual recovery early; a missing ISBN must not consume the whole
     // budget before the library gets a title/author query.
-    await Promise.all([isbns[0] ? byIsbn(isbns[0]) : null, queries[0] ? byTitle(queries[0]) : null]);
-    for (let index = 1; index < Math.max(isbns.length, queries.length); index++) {
+    await Promise.all([isbnTask(0), queries[0] ? byTitle(queries[0]) : null]);
+    for (let index = 1; index < steps; index++) {
       if (confident()) break;
       if (!budgetLeft()) { summary.partial = true; break; }
-      await Promise.all([isbns[index] ? byIsbn(isbns[index]) : null, queries[index] ? byTitle(queries[index]) : null]);
+      await Promise.all([isbnTask(index), queries[index] ? byTitle(queries[index]) : null]);
     }
-  } })();
+    if (batched && !confident() && workIsbns.some(isbn => !searched.has(isbn))) summary.partial = true;
+  }
+  // Before nothing found may be called absence: one more title search with
+  // the plural words made singular, when the title has any. Its rows count
+  // like any title search's (a related row leaves the answer unconfirmed); a
+  // failure or no budget for it leaves the search incomplete.
+  if (positives.length || failures || !completed || absenceRisk(summary, profile)) return;
+  const variant = singularTitleVariant((profile.titles || [])[0] || profile.book?.title);
+  if (!variant) return;
+  if (!budgetLeft() || Date.now() >= deadline) { summary.partial = true; return; }
+  if (!titleFirst) { await byTitle(variant); return; }
+  summary.titleQueries++;
+  const before = failures;
+  const response = await attempt(() => provider.findBookCandidates({ title: variant, author: profile.authors[0] || '' }));
+  const records = Array.isArray(response) ? response : response?.records;
+  if (failures > before) return;
+  if (!Array.isArray(records)) { summary.partial = true; return; }
+  noteTitleSearch(records);
+  if (response?.hasMore) summary.partial = true;
+  await readRecords(records.map((row, index) => ({ ...row, tier: candidateTier(row, profile), index }))
+    .filter(row => row.tier).sort((a, b) => a.tier - b.tier || a.index - b.index));
+  })();
   work.catch(() => {});
   // A proven match ends the search at once, even while a paired title search
   // or another ISBN is still waiting on the catalog; that request is cancelled.

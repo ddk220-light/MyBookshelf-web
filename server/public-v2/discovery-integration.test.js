@@ -22,11 +22,12 @@ test('every imported inline library has search, durable reopening, and availabil
       assert.equal(dto.capabilities.publicAvailability, false);
     }
   }
-  // Only the 4,139 Indian libraries on the allowlist (server/data/india-catalogs-listed.json)
-  // are offered: 1,034 with a verified book and 3,105 e-Granthalaya audit-found.
+  // Only the 4,138 Indian libraries on the allowlist (server/data/india-catalogs-listed.json)
+  // are offered: 1,033 with a verified book and 3,105 e-Granthalaya audit-found
+  // (LBSNAA was removed by hand on 19 November 2026: robots.txt).
   // The finder counts 6,701 of the 6,704 Indian entries (three have no finder record).
-  assert.equal(createDiscoveryService().search({ country: 'IN' }).total, 4139);
-  assert.equal(createDiscoveryService().search({}).total, 7086 - 6701 + 4139);
+  assert.equal(createDiscoveryService().search({ country: 'IN' }).total, 4138);
+  assert.equal(createDiscoveryService().search({}).total, 7086 - 6701 + 4138);
   assert.equal(createDiscoveryService({ entries: getAllLibraries }).search({}).total, 7086);
   assert.equal(new Set(getAllLibraries().map(r => r.id)).size, getAllLibraries().length);
 });

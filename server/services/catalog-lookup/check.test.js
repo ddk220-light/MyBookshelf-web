@@ -72,3 +72,19 @@ test('conclude ends a running check with its proven match, and is ignored withou
   assert.equal((await ended).response.outcome, 'available');
   assert.ok(Date.now() - started < 1_000);
 });
+
+test('at the deadline a title-and-author match answers unconfirmed with its catalog link, never found and never a timeout', async () => {
+  const possible = { outcome: 'in_catalog', matchKind: 'possible_match', lookupKind: 'title_author', recognizedExact: false,
+    catalogUrl: 'https://catalog.example/record/7', matchedBook: { title: book.title }, searchSummary: { partial: true } };
+  const result = await check({ checkAvailability: hangs, searchCatalog: hangs }, { deadlineAt: Date.now() + 50, progress: { possible } });
+  assert.equal(result.error, undefined);
+  assert.equal(result.response.matchKind, 'possible_match');
+  assert.equal(result.response.catalogUrl, 'https://catalog.example/record/7');
+  const { answerFromResponse } = await import('./outcome.js');
+  assert.deepEqual([answerFromResponse(result.response, { profile }).outcome, answerFromResponse(result.response, { profile }).reason], ['couldnt_check', 'unconfirmed']);
+  // A possible match never ends the check early.
+  const conclude = new AbortController(); conclude.abort();
+  const pending = check({ checkAvailability: hangs, searchCatalog: hangs }, { deadlineAt: Date.now() + 80, progress: { possible }, conclude: conclude.signal });
+  const started = Date.now(); await pending;
+  assert.ok(Date.now() - started >= 60);
+});

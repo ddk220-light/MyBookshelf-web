@@ -511,3 +511,18 @@ test('Vega: an ISBN listed only under a group’s eBook tab is in the catalog, n
   // An ISBN the group does not list is not proven by it.
   assert.equal(parseVegaAvailability(payload, '9780593135204'), null);
 });
+
+test('work-check wiring (19 November 2026): batch ISBN searches, title-first e-Granthalaya, ISBN lookups only where they can prove an edition', async () => {
+  const { getLibraryById } = await import('../directory.js');
+  const { getProvider } = await import('./index.js');
+  const of = id => { const entry = getLibraryById(id); assert.ok(entry, id); return getProvider(entry); };
+  const kohaLegacy = of('koha:iim-calcutta-mchv');
+  assert.equal(typeof kohaLegacy.checkIsbns, 'function');
+  assert.equal(kohaLegacy.isbn10Lookup, false);
+  const indcatProvider = of('indcat:indcat-andh-530003');
+  assert.deepEqual([typeof indcatProvider.checkIsbns, indcatProvider.isbn10Lookup, indcatProvider.rowTitlesReliable], ['function', false, true]);
+  const eg = of('egranthalaya:publiclibraries-hkmslib');
+  assert.deepEqual([typeof eg.findBookCandidates, eg.isbnLookup], ['function', false]);
+  const libmanProvider = of('libman:520');
+  assert.deepEqual([libmanProvider.isbn10Lookup, libmanProvider.isbnLookup], [false, undefined]);
+});

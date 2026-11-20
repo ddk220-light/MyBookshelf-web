@@ -342,11 +342,13 @@ test('absence is provable only with ISBNs, an answered title search, no related 
   assert.equal(transliterationRisk({ ...english, titles: ['Wings of Fire', 'अग्नि की उड़ान'] }), true);
   assert.equal(transliterationRisk({ ...english, language: '' }), true);
   assert.equal(transliterationRisk({ ...english, language: 'fre', titles: ['Les Misérables'] }), false);
-  // Rows: a volume of a set is related; the same title by another author is not; a matching row is not "related".
+  // Rows: a volume of a set is related; a matching row is not "related".
   const ponniyin = { ...english, book: { title: 'Ponniyin Selvan' }, titles: ['Ponniyin Selvan'], authors: ['Kalki'], isbns: ['9788184931723'] };
   assert.equal(relatedRow({ title: 'Ponniyin Selvan Part 1', authors: ['Kalki Krishnamurthy'] }, ponniyin), true);
   assert.equal(relatedRow({ title: 'Ponniyin Selvan, vol. 2' }, ponniyin), true);
-  assert.equal(relatedRow({ title: 'Wings of Fire', authors: ['Tui T. Sutherland'] }, english), false);
+  // A same-title row under another name is related: catalogs put publishers in the author field (LIBMAN 520, "Rupa").
+  assert.equal(relatedRow({ title: 'Wings of Fire', authors: ['Tui T. Sutherland'] }, english), true);
+  assert.equal(relatedRow({ title: 'APJAbdul Kalam Wing Of Fire', authors: ['Rupa'] }, english), true);
   assert.equal(relatedRow({ title: 'Wings of Fire', authors: ['Kalam'], isbn: '9788173711466' }, english), false);
   assert.equal(relatedRow({ title: 'Firewings' }, english), false);
 
@@ -358,4 +360,132 @@ test('absence is provable only with ISBNs, an answered title search, no related 
   const godaan = await searchLibraryBook(provider, { ...english, book: { title: 'Godaan', authors: ['Premchand'] }, isbns: [], titles: ['Godaan'], authors: ['Premchand'], language: 'hin' }, { timeoutMs: 1_000 });
   assert.equal(godaan.outcome, 'no_match');
   assert.deepEqual([godaan.searchSummary.absenceProvable, godaan.searchSummary.absenceRisk], [false, 'no_isbns']);
+});
+
+// --- Integration, 19 November 2026 -------------------------------------------
+
+const manyEditions = Array.from({ length: 11 }, (_, index) => `9788173${String(711 + index).padStart(4, '0')}0`)
+  .map(value => value.slice(0, 12)).map(twelve => {
+    const sum = [...twelve].reduce((total, digit, index) => total + Number(digit) * (index % 2 ? 3 : 1), 0);
+    return twelve + ((10 - sum % 10) % 10);
+  });
+
+test('batch ISBN catalogs: editions are asked eight at a time, reader ISBN first, and every group counts as searched', async () => {
+  const work = { ...profile, book: { ...book, isbn13: manyEditions[3] }, isbns: manyEditions };
+  const groups = [];
+  const provider = { checkAvailability: async () => { throw new Error('single ISBN lookups are not used'); },
+    checkIsbns: async isbns => { groups.push(isbns); return { ...miss, isbns }; }, searchCatalog: async () => [] };
+  const result = await searchLibraryBook(provider, work, { timeoutMs: 1_000 });
+  assert.deepEqual(groups.map(group => group.length), [8, 3]);
+  assert.equal(groups[0][0], manyEditions[3]);
+  assert.deepEqual(new Set(groups.flat()), new Set(manyEditions));
+  // 11 editions in 2 requests plus the title searches: the absence rule decides.
+  assert.equal(result.outcome, 'no_match');
+  assert.equal(result.searchSummary.partial, false);
+  assert.equal(result.searchSummary.absenceProvable, true);
+});
+
+test('batch ISBN catalogs: a record proving another edition is verified_work; editions never asked make the search partial', async () => {
+  const work = { ...profile, isbns: manyEditions, book: { ...book, isbn13: manyEditions[0] } };
+  const hit = await searchLibraryBook({ checkIsbns: async isbns => (isbns.includes(manyEditions[9])
+    ? { ...found, isbn13: manyEditions[9], catalogTitle: 'Wings of fire' } : { ...miss, isbns }), searchCatalog: async () => [] }, work, { timeoutMs: 1_000 });
+  assert.deepEqual([hit.outcome, hit.matchKind, hit.matchedBook.isbn13], ['available', 'verified_work', manyEditions[9]]);
+  const exact = await searchLibraryBook({ checkIsbns: async () => ({ ...found, isbn13: manyEditions[0] }), searchCatalog: async () => [] }, work, { timeoutMs: 1_000 });
+  assert.equal(exact.matchKind, 'exact_isbn');
+  // A not_found that does not list what it searched proves nothing about those editions.
+  const vague = await searchLibraryBook({ checkIsbns: async isbns => ({ ...miss, isbns: isbns.slice(0, 1) }), searchCatalog: async () => [] }, work, { timeoutMs: 1_000 });
+  assert.equal(vague.outcome, 'no_match');
+  assert.equal(vague.searchSummary.partial, true);
+  assert.equal(vague.searchSummary.absenceProvable, false);
+  // Without an answered title search a batch "not found" stays unconfirmed (the absence rule).
+  const isbnOnly = await searchLibraryBook({ checkIsbns: async isbns => ({ ...miss, isbns }) }, profile, { timeoutMs: 1_000 });
+  assert.deepEqual([isbnOnly.outcome, isbnOnly.searchSummary.absenceRisk], ['no_match', 'no_title_search']);
+  // A batch search the catalog could not answer is a failure, not absence.
+  const failed = await searchLibraryBook({ checkIsbns: async () => { throw Object.assign(new Error('x'), { code: 'CATALOG_UNAVAILABLE' }); }, searchCatalog: async () => [] }, profile, { timeoutMs: 1_000 });
+  assert.deepEqual([failed.outcome, failed.errorCode], ['unknown', 'CATALOG_UNAVAILABLE']);
+});
+
+test('a title-only catalog (isbnLookup: false) is not partial for the ISBNs it is never asked', async () => {
+  let asked = 0;
+  const result = await searchLibraryBook({ isbnLookup: false, checkAvailability: async () => { asked++; return miss; }, searchCatalog: async () => [] },
+    { ...profile, isbns: manyEditions }, { timeoutMs: 1_000 });
+  assert.equal(asked, 0);
+  assert.equal(result.outcome, 'no_match');
+  assert.equal(result.searchSummary.partial, false);
+  assert.equal(result.searchSummary.absenceProvable, true);
+});
+
+test('rowTitlesReliable: rows whose own title rules them out are not opened', async () => {
+  const opened = [];
+  const rows = [{ recordId: '1', title: 'Fire and ice' }, { recordId: '2', title: 'Wings of fire' }];
+  const provider = { rowTitlesReliable: true, checkIsbns: async isbns => ({ ...miss, isbns }), searchCatalog: async () => rows,
+    resolveCatalogRecord: async id => { opened.push(id); return { title: 'Wings of fire', authors: book.authors, isbn: book.isbn13, observation: found }; } };
+  const result = await searchLibraryBook(provider, profile, { timeoutMs: 1_000 });
+  assert.deepEqual(opened, ['2']);
+  assert.equal(result.matchKind, 'exact_isbn');
+});
+
+test('a work ISBN with an agreeing title is a match even when the catalog lists a co-author (SRS Jammu, "Tiwari, Arun")', async () => {
+  const row = { title: 'Wings of fire : an autobiography', authors: ['Tiwari, Arun'], isbn: '9788173711466' };
+  assert.deepEqual(matchCatalogRecord(row, profile), { matchKind: 'exact_isbn', isbn13: '9788173711466' });
+  // Without the ISBN the other author still rules the row out; a title that disagrees is never rescued by an ISBN.
+  assert.equal(matchCatalogRecord({ ...row, isbn: undefined }, profile), null);
+  assert.equal(matchCatalogRecord({ ...row, title: 'Ignited minds' }, profile), null);
+  // Title first: the row is read first and proves the edition.
+  const result = await searchLibraryBook({ isbnLookup: false, findBookCandidates: async () => [{ ...row, recordId: '31499', observation: { outcome: 'in_catalog', matchKind: 'verified_work', recognizedExact: true } }] }, profile, { timeoutMs: 1_000 });
+  assert.deepEqual([result.outcome, result.matchKind], ['in_catalog', 'exact_isbn']);
+});
+
+test('titles compare without a leading English article (SRMS: "DISCOVERY OF INDIA")', async () => {
+  const nehru = { book: { title: 'The Discovery of India', authors: ['Jawaharlal Nehru'], isbn13: '9780143031031' }, isbns: ['9780143031031'],
+    titles: ['The Discovery of India'], authors: ['Jawaharlal Nehru'], language: 'eng', complete: true };
+  assert.equal(matchCatalogRecord({ title: 'DISCOVERY OF INDIA', authors: ['Nehru, Jawaharlal'] }, nehru).matchKind, 'possible_match');
+  assert.equal(matchCatalogRecord({ title: 'Discovery of India', authors: ['Nehru, Jawaharlal'], isbn: '9780143031031' }, nehru).matchKind, 'exact_isbn');
+  assert.equal(relatedRow({ title: 'DISCOVERY OF INDIA VOL 2', authors: ['Nehru, J.'] }, nehru), true);
+  // An unarticled title is not stripped of its first word.
+  assert.equal(matchCatalogRecord({ title: 'Theory of India', authors: ['Jawaharlal Nehru'] }, nehru), null);
+  const result = await searchLibraryBook({ isbnLookup: false, searchCatalog: async () => [{ recordId: '7', title: 'DISCOVERY OF INDIA', authors: ['NEHRU, JAWAHARLAL'] }],
+    resolveCatalogRecord: async () => ({ title: 'DISCOVERY OF INDIA', authors: ['NEHRU, JAWAHARLAL'], observation: found }) }, nehru, { timeoutMs: 1_000 });
+  assert.equal(result.matchKind, 'possible_match');
+});
+
+test('a title-and-author match is kept in progress for a deadline answer, but never as a proven match', async () => {
+  const progress = {};
+  const record = { recordId: '42', title: book.title, authors: book.authors, observation: found };
+  await searchLibraryBook({ isbnLookup: false, searchCatalog: async () => [record], resolveCatalogRecord: async () => record }, profile, { timeoutMs: 1_000, progress });
+  assert.equal(progress.best, undefined);
+  assert.equal(progress.possible.matchKind, 'possible_match');
+});
+
+test('legacy title queries are not repeated when titles differ only in case', async () => {
+  const queries = [];
+  await searchLibraryBook({ isbnLookup: false, searchCatalog: async query => { queries.push(query); return []; } },
+    { ...profile, titles: ['Wings of Fire', 'Wings of fire'] }, { timeoutMs: 1_000 });
+  // The third is the singular-title probe that precedes any absence claim.
+  assert.deepEqual(queries, ['Wings of Fire A. P. J. Abdul Kalam', 'Wings of Fire', 'Wing of Fire']);
+});
+
+test('before "not found", a singular-title search runs; a row under that variant title leaves the answer unconfirmed (HCDGC, "Concept of Physics")', async () => {
+  const { singularTitleVariant } = await import('./libraryBookSearch.js');
+  assert.equal(singularTitleVariant('Concepts of physics'), 'Concept of physics');
+  assert.equal(singularTitleVariant('The Discovery of India'), null);
+  assert.equal(singularTitleVariant('Physics'), null);
+  const verma = { book: { title: 'Concepts of physics', authors: ['H. C. Verma'], isbn13: '9788177091878' }, isbns: ['9788177091878', '9788177092325'],
+    titles: ['Concepts of physics'], authors: ['H. C. Verma'], language: 'eng', complete: true };
+  // A title substring search: the library's record is titled in the singular.
+  const shelf = [{ recordId: 'r1', title: 'Concept of Physics', authors: ['Verma, H.C.,'] }];
+  const substring = query => shelf.filter(row => row.title.toLowerCase().includes(query.toLowerCase()));
+  const queries = [];
+  const result = await searchLibraryBook({ isbnLookup: false, searchCatalog: async query => { queries.push(query); return substring(query); },
+    resolveCatalogRecord: async () => ({ ...shelf[0], observation: found }) }, verma, { timeoutMs: 1_000 });
+  assert.ok(queries.includes('Concept of physics'));
+  assert.notEqual(result.searchSummary?.absenceProvable, true);
+  // Title first, same rule.
+  const titleFirst = await searchLibraryBook({ isbnLookup: false, findBookCandidates: async ({ title }) => substring(title) }, verma, { timeoutMs: 1_000 });
+  assert.equal(titleFirst.outcome, 'no_match');
+  assert.deepEqual([titleFirst.searchSummary.absenceProvable, titleFirst.searchSummary.absenceRisk], [false, 'related_titles']);
+  // The probe failing is a failure, not absence.
+  let calls = 0;
+  const failing = await searchLibraryBook({ isbnLookup: false, searchCatalog: async () => { if (++calls > 2) throw Object.assign(new Error('x'), { code: 'CATALOG_UNAVAILABLE' }); return []; } }, verma, { timeoutMs: 1_000 });
+  assert.equal(failing.outcome, 'unknown');
 });

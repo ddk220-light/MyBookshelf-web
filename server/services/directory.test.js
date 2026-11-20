@@ -138,9 +138,11 @@ test('every empty-catalog ID is an Indian directory library of a platform with s
 // tools/catalog-hardening/library-status.mjs from strict verifications and the
 // e-Granthalaya fifty-title audit; IDs leave only through its hand-kept
 // `removed` list or a `blocked` status.
-const LISTED_COUNT = 4139;
+// 19 November 2026: LBSNAA removed by hand (its robots.txt disallows the OPAC search).
+const LISTED_COUNT = 4138;
 const AUDIT_ONLY_COUNT = 3105;
 const listedIds = new Set(allowlist.libraryIds);
+const removedIds = new Set(allowlist.removed.map((item) => item.id));
 const indiaEntries = getAllLibraries().filter((entry) => entry.country === 'IN');
 const unlistedEntries = indiaEntries.filter((entry) => !listedIds.has(entry.id));
 const unlistedPlatforms = [...new Set(unlistedEntries.map((entry) => entry.platform))];
@@ -161,13 +163,15 @@ test('the India allowlist holds every verified and audit-found library, sorted, 
     assert.ok(listedIds.has(id), id);
     assert.equal(byId.get(id).platform, 'egranthalaya', id);
   }
-  // Every Indian directory library with a strictly verified book is listed.
-  for (const id of verifiedIds) if (byId.get(id)?.country === 'IN') assert.ok(listedIds.has(id), id);
+  // Every Indian directory library with a strictly verified book is listed,
+  // unless it was removed by hand.
+  for (const id of verifiedIds) if (byId.get(id)?.country === 'IN' && !removedIds.has(id)) assert.ok(listedIds.has(id), id);
+  for (const id of removedIds) assert.equal(listedIds.has(id), false, id);
   // Every library the tracker marks verified or audit-found is listed, and the
   // audit-found ones are e-Granthalaya libraries whose audit found books.
   const status = csvRows('../../docs/research/india-library-status/status.csv');
   const audit = new Map(csvRows('../../docs/research/india-library-hardening/egranthalaya-audit-20261110/libraries.csv').map((row) => [row.libraryId, row]));
-  for (const row of status.filter((item) => ['verified', 'audit-found'].includes(item.status))) assert.ok(listedIds.has(row.library_id), row.library_id);
+  for (const row of status.filter((item) => ['verified', 'audit-found'].includes(item.status) && !removedIds.has(item.library_id))) assert.ok(listedIds.has(row.library_id), row.library_id);
   for (const row of status.filter((item) => item.status === 'audit-found')) assert.ok(Number(audit.get(row.library_id)?.nonemptyQueries) > 0, row.library_id);
   assert.equal(status.filter((item) => item.status === 'audit-found').length, AUDIT_ONLY_COUNT);
   // KALNET's robots.txt refuses all user agents: its scopes are never listed.

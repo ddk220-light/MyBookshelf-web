@@ -263,7 +263,7 @@ test('robots rules are checked before any catalog request', async () => {
 
 const kalamProfile = (isbns = ['9788173711466', '8173711461']) => profileOf({ isbn13: isbns[0], isbns, title: 'Wings of fire: an autobiography', authors: ['A. P. J. Abdul Kalam'] });
 
-test('e-Granthalaya: one member search (2 requests) marks the result whose ISBN the row shows', async () => {
+test('e-Granthalaya: one member title search (the form, then TITLE and ALL searches: 3 requests) marks the result whose ISBN the row shows', async () => {
   const calls = [];
   global.fetch = async (url, options = {}) => {
     calls.push(url);
@@ -279,7 +279,7 @@ test('e-Granthalaya: one member search (2 requests) marks the result whose ISBN 
     { bookKey: 'c' },
   ];
   const items = await collect(lookup.markResults({ library, query: '101 great lives', books }));
-  assert.equal(calls.length, 2);
+  assert.equal(calls.length, 3);
   assert.deepEqual(items.filter(item => !item.done).map(item => [item.bookKey, item.outcome, item.evidence, item.recordId]), [['a', 'found', 'exact_isbn', '519750']]);
   assert.deepEqual(items.at(-1), { done: true, notAttempted: ['c'], unmatched: ['b'], failed: [] });
   await settle();
@@ -287,7 +287,7 @@ test('e-Granthalaya: one member search (2 requests) marks the result whose ISBN 
   assert.deepEqual((await answers.readAnswers(library.id, [{ kind: 'isbn13', value: '9788131313459' }, { kind: 'isbn13', value: '9788173711466' }])).map(row => row.answer), ['found']);
   // The same query within ten minutes reuses the rows; stored answers come first.
   const again = await collect(lookup.markResults({ library, query: '101  GREAT lives', books }));
-  assert.equal(calls.length, 2);
+  assert.equal(calls.length, 3);
   assert.deepEqual(again[0], { bookKey: 'a', outcome: 'found', evidence: 'exact_isbn', source: 'stored' });
 });
 

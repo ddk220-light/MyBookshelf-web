@@ -60,7 +60,10 @@ function primaryProvider(library) {
       // title search, which for these catalogs is not scoped to the branch.
       const marking = markable ? { searchResultRows: query => (library.kohaRssRows === true
         ? koha.searchRssRows(library, query) : koha.searchPublicCatalog(library, query)) } : { resultMarking: false };
-      if (!library.publicCatalogCapabilities?.titleSearch) return { ...(library.publicCatalogApi ? {} : { searchCatalog: query => koha.searchCatalog(library, query), resolveCatalogRecord: id => koha.resolveCatalogRecord(library, id) }), ...marking, checkAvailability: isbn => (library.publicCatalogApi === 'iith-opac-v1' ? iithKoha : koha).checkPublicAvailability(library, isbn) };
+      // The OPAC ISBN search covers both forms of an edition and answers up to
+      // eight editions in one OR search (koha.checkPublicAvailabilityForIsbns).
+      if (!library.publicCatalogCapabilities?.titleSearch) return { ...(library.publicCatalogApi ? {} : { searchCatalog: query => koha.searchCatalog(library, query), resolveCatalogRecord: id => koha.resolveCatalogRecord(library, id),
+        checkIsbns: isbns => koha.checkPublicAvailabilityForIsbns(library, isbns), isbn10Lookup: false }), ...marking, checkAvailability: isbn => (library.publicCatalogApi === 'iith-opac-v1' ? iithKoha : koha).checkPublicAvailability(library, isbn) };
       return { ...marking, checkAvailability: (isbn) => koha.checkPublicAvailability(library, isbn),
         searchCatalog: (query, options) => koha.searchPublicCatalog(library, query, options),
         findBookCandidates: book => koha.searchBookCandidates(library, book),
@@ -82,9 +85,15 @@ function primaryProvider(library) {
     case 'evergreen':
       return { checkAvailability: (isbn) => evergreen.checkAvailability(library, isbn) };
     case 'egranthalaya':
-      return { checkAvailability: (isbn) => egranthalaya.checkAvailability(library, isbn), searchCatalog: query => egranthalaya.searchCatalog(library, query), resolveCatalogRecord: id => egranthalaya.resolveCatalogRecord(library, id) };
+      // A work check is one member title search (its rows carry this member's
+      // presence and often the ISBN), not one slow ISBN search per edition.
+      return { checkAvailability: (isbn) => egranthalaya.checkAvailability(library, isbn), searchCatalog: query => egranthalaya.searchCatalog(library, query), resolveCatalogRecord: id => egranthalaya.resolveCatalogRecord(library, id),
+        findBookCandidates: book => egranthalaya.searchBookCandidates(library, book), isbnLookup: false };
     case 'indcat':
-      return { checkAvailability: isbn => indcat.checkAvailability(library, isbn), searchCatalog: query => indcat.searchCatalog(library, query), resolveCatalogRecord: id => indcat.resolveCatalogRecord(library, id) };
+      // One scoped search covers both ISBN forms and up to eight editions;
+      // search rows show the record's own title (rowTitlesReliable).
+      return { checkAvailability: isbn => indcat.checkAvailability(library, isbn), searchCatalog: query => indcat.searchCatalog(library, query), resolveCatalogRecord: id => indcat.resolveCatalogRecord(library, id),
+        checkIsbns: isbns => indcat.checkAvailabilityForIsbns(library, isbns), isbn10Lookup: false, rowTitlesReliable: true };
     case 'libman':
     case 'vufind':
     case 'discovery-academic':
@@ -92,7 +101,10 @@ function primaryProvider(library) {
       const adapter = { libman, vufind, 'discovery-academic': discoveryAcademic, 'discovery-community': discoveryCommunity }[library.platform];
       return { checkAvailability: (isbn, title, author) => adapter.checkAvailability(library, isbn, title, author),
         searchCatalog: query => adapter.searchCatalog(library, query),
-        resolveCatalogRecord: id => adapter.resolveCatalogRecord(library, id) };
+        resolveCatalogRecord: id => adapter.resolveCatalogRecord(library, id),
+        // LIBMAN's one search already covers both ISBN forms.
+        ...(library.platform === 'libman' ? { isbn10Lookup: false } : {}),
+        ...(typeof adapter.isbnLookupSupported === 'function' && !adapter.isbnLookupSupported(library) ? { isbnLookup: false } : {}) };
     }
     default:
       return null;
