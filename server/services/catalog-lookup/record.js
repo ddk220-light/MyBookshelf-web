@@ -1,6 +1,7 @@
 import { validateAndNormalize } from '../isbn.js';
 import { isHealthFailure } from './outcome.js';
 import { linkKind } from './observation.js';
+import { parsePublicBookKey } from '../../public-v2/contracts.js';
 
 // What the lookup layer remembers (plan 4.3, 5.5). Three ports; the in-memory
 // versions below are used without a database, and server/catalog-store/
@@ -37,13 +38,23 @@ export function askedIdentity(libraryId, book = {}, editionScope = 'work') {
   return identities.find(id => id.kind === 'isbn13') || null;
 }
 
+// Work-level "not found" answers written before this moment used a weaker
+// rule (no ISBN or transliteration check, libraryBookSearch.js absenceRisk)
+// and are not read: the next look checks the catalog again. A row's write time
+// is its expiry less ANSWER_TTL_MS.
+// (The 19 November test run stored such answers for Godaan and Ponniyin
+// Selvan at most of the 54 libraries.)
+export const WORK_ABSENCE_RULE_SINCE = Date.parse('2026-11-20T00:00:00Z');
+const trustedNegative = row => row.evidence !== 'work_no_match'
+  || !Number.isFinite(row.expiresAt) || row.expiresAt - ANSWER_TTL_MS >= WORK_ABSENCE_RULE_SINCE;
+
 // A book is found if any identity is found; not found only if the asked
 // identity is not found.
 export function storedAnswer(rows, asked) {
   const found = rows.find(row => row.answer === 'found');
   if (found) return { outcome: 'found', evidence: found.evidence, ...(found.matchedIsbn13 ? { matchedIsbn13: found.matchedIsbn13 } : {}),
     ...(found.catalogUrl ? { catalogUrl: found.catalogUrl, catalogLinkKind: linkKind(found.catalogLinkKind) } : {}) };
-  const negative = asked && rows.find(row => row.answer === 'not_found' && row.kind === asked.kind && row.value === asked.value);
+  const negative = asked && rows.find(row => row.answer === 'not_found' && row.kind === asked.kind && row.value === asked.value && trustedNegative(row));
   return negative ? { outcome: 'not_found', evidence: negative.evidence } : null;
 }
 
@@ -193,9 +204,55 @@ export function createMemoryHealthRecord({ now = () => Date.now(), maxLibraries 
 
 const defaultDefer = task => { setImmediate(() => { Promise.resolve().then(task).catch(() => {}); }); };
 
+// One structured line per book check, for the platform's runtime log (Vercel
+// keeps stdout): what a check did and why it ended as it did, so a test run
+// can be diagnosed from the log. It names the library, the catalog host and
+// the kind of book key only: never a title, author, query, ISBN, work ID or
+// record ID, and never anything about the reader.
+export const LIBRARY_CHECK_EVENT = 'library_check';
+const SAFE_CODE = /^[A-Za-z0-9_.:-]{1,64}$/;
+const safeCode = value => (typeof value === 'string' && SAFE_CODE.test(value) ? value : null);
+
+export function bookKeyKind(book = {}) {
+  if (book.recordId) return 'catalog_record';
+  const parsed = parsePublicBookKey(book.bookKey || '');
+  if (parsed?.kind === 'catalog') return 'catalog_record';
+  if (parsed?.kind === 'isbn') return 'isbn';
+  if (parsed?.kind === 'source') return 'work';
+  return book.isbn13 ? 'isbn' : 'other';
+}
+
+export function libraryCheckEvent({ entry, libraryId, platform, host, book, answer, requests = 0, durationMs = 0, lookupKind, stored = false, afterReply = false } = {}) {
+  const id = String(libraryId || entry?.id || entry?.slug || '').slice(0, 120);
+  return {
+    event: LIBRARY_CHECK_EVENT,
+    libraryId: id || null,
+    platform: safeCode(platform) || 'unknown',
+    host: typeof host === 'string' && /^[A-Za-z0-9.:_-]{1,200}$/.test(host) ? host : null,
+    outcome: safeCode(answer?.outcome) || 'unknown',
+    reason: safeCode(answer?.reason),
+    errorCode: safeCode(answer?.errorCode),
+    evidence: safeCode(answer?.evidence),
+    requests: Number.isFinite(requests) ? Math.max(0, Math.round(requests)) : 0,
+    durationMs: Number.isFinite(durationMs) ? Math.max(0, Math.round(durationMs)) : 0,
+    lookupKind: safeCode(lookupKind),
+    stored: Boolean(stored),
+    // The check went on after the reader had been answered (plan A2, step 3).
+    afterReply: Boolean(afterReply),
+    bookKeyKind: bookKeyKind(book),
+  };
+}
+
+// Under `node --test` (NODE_TEST_CONTEXT) the line is not printed, so test
+// output stays readable; tests pass their own `log`.
+export function writeLibraryCheckLog(event) {
+  if (process.env.NODE_TEST_CONTEXT) return;
+  try { console.log(JSON.stringify(event)); } catch { /* A log line never alters a lookup. */ }
+}
+
 // The sink the lookup layer writes to. `kind` is 'book' or 'results'.
 export function createLookupRecorder({ answers = null, health = null, telemetry = null, policyFor = () => ({ storeAnswers: true }),
-  defer = defaultDefer, now = () => Date.now() } = {}) {
+  defer = defaultDefer, now = () => Date.now(), log = writeLibraryCheckLog } = {}) {
   const safely = fn => async (...args) => { try { return await fn(...args); } catch { return undefined; } };
 
   // A store that is down or slow reads as "nothing stored": the live check runs.
@@ -208,8 +265,15 @@ export function createLookupRecorder({ answers = null, health = null, telemetry 
     return Array.isArray(rows) ? rows : [];
   };
 
-  function record({ entry, platform, host, book, profile, answer, kind = 'book', durationMs = 0, requests = 0, live = true, writeAnswers = true }) {
+  function record({ entry, platform, host, book, profile, answer, kind = 'book', durationMs = 0, requests = 0, live = true, writeAnswers = true,
+    lookupKind, afterReply = false }) {
     const libraryId = entry?.id || entry?.slug;
+    // Every book check that ran (not result marking) writes its log line now,
+    // whatever the answer, before the deferred store and health writes.
+    if (kind === 'book' && typeof log === 'function') {
+      try { log(libraryCheckEvent({ entry, platform, host, book, answer, requests, durationMs, lookupKind, afterReply })); }
+      catch { /* A log line never alters a lookup. */ }
+    }
     defer(async () => {
       if (writeAnswers && answers && libraryId && policyFor(libraryId)?.storeAnswers !== false) {
         const rows = answerRows({ libraryId, book, answer, profile, now: now() });
@@ -235,5 +299,12 @@ export function createLookupRecorder({ answers = null, health = null, telemetry 
     });
   }
 
-  return Object.freeze({ readAnswers, record });
+  // A reader answered from the store: the same line, `stored: true`, no request.
+  function logStored({ entry, platform, host, book, answer, durationMs = 0, lookupKind }) {
+    if (typeof log !== 'function') return;
+    try { log(libraryCheckEvent({ entry, platform, host, book, answer, durationMs, lookupKind, stored: true })); }
+    catch { /* A log line never alters a lookup. */ }
+  }
+
+  return Object.freeze({ readAnswers, record, logStored });
 }

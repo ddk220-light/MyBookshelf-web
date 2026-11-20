@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import ISBN from 'isbn3';
 import { getText, cachedTask, DEFAULT_TIMEOUT_MS } from './http.js';
 import { validateAndNormalize } from '../isbn.js';
-import { attributes, catalogError } from './catalogMarkup.js';
+import { attributes, catalogError, quoteFreeQuery, startsWithArticle, withoutLeadingArticle } from './catalogMarkup.js';
 import { parseAcademicResponse, recordFingerprint, normalizeCatalogTitle, rejectChallenge, parseEasylibAvailability, parseDarshanIsbn, parseLibsoftDetails } from './discoveryAcademicParsers.js';
 
 const CONFIGS = JSON.parse(readFileSync(new URL('./discoveryAcademicConfigs.json',import.meta.url),'utf8'));
@@ -21,6 +21,18 @@ function config(library) {
   return c;
 }
 export function academicCatalogConfigured(library){return Boolean(Object.hasOwn(CONFIGS,library?.academicCatalogId)&&!CONFIGS[library.academicCatalogId].externalOnly);}
+// Whether a work search should ask this catalog about the work's ISBNs one
+// at a time (providers/index.js `isbnLookup`). Most of these catalogs have no
+// ISBN index: asked for an ISBN alone they answer CATALOG_QUERY_UNSUPPORTED.
+// Baba Mastnath's ISBN index answers, but its rows never show an ISBN, so an
+// ISBN search can only say "none": the title search says that too, for every
+// edition at once, within the request cap (19 Nov 2026: one ISBN = 2 requests).
+// Darshan (ISBN on the record page) and SOUL (ISBN in the row) can prove an
+// edition by ISBN and keep it.
+export function isbnLookupSupported(library){
+  const c=Object.hasOwn(CONFIGS,library?.academicCatalogId)?CONFIGS[library.academicCatalogId]:null;
+  return Boolean(c&&c.isbn&&!c.externalOnly&&c.kind!=='bmu');
+}
 function recordId(query,b){
   // Replaying the selected title is more stable than a broad query such as
   // "India", whose first page can change when the library adds more books.
@@ -51,7 +63,13 @@ function handoffFor(c,book){
   return {catalogUrl:u?.toString()||c.url,catalogLinkKind:u?'search':'catalog'};
 }
 export function academicCatalogHandoff(library,book){return handoffFor(config(library),book);}
-function finish(result,c,q){return result.records.map(b=>({...b,recordId:recordId(q,b),observation:publicObservation(b,c)}));}
+function finish(result,c,q){
+  const records=result.records.map(b=>({...b,recordId:recordId(q,b),observation:publicObservation(b,c)}));
+  // Rows beyond the first page (or a count we could not read) were not seen:
+  // the caller must not read an empty or non-matching page as absence.
+  Object.defineProperty(records,'hasMore',{value:!result.complete,enumerable:false});
+  return records;
+}
 function cookieParts(headers){return typeof headers?.getSetCookie==='function'?headers.getSetCookie():[headers?.get?.('set-cookie')].filter(Boolean);}
 function anonymousSession(c,deadlineAt){
   const origin=new URL(c.url).origin,cookies=new Map();
@@ -77,10 +95,41 @@ function hiddenForm(html){
   for(const m of html.matchAll(/<input\b([^>]*)>/gi)){const a=attributes(m[1]);if(a.name&&a.type?.toLowerCase()==='hidden')params.set(a.name,a.value||'');}
   return params;
 }
+// ASP.NET WebForms catalogs (ProcessCUBE, Baba Mastnath University) accept
+// the public page's own form state again for a later search without a cookie
+// (checked 19 Nov 2026). Reusing it for a few minutes saves one request per
+// search; a response we cannot read is retried once with fresh state.
+const FORM_STATE_TTL_MS=10*60*1000, formStates=new Map();
+export function clearAcademicFormState(){formStates.clear();}
+async function aspxForm(c,url,read,fresh){
+  const key=url,cached=formStates.get(key);
+  if(!fresh&&cached&&cached.expiresAt>Date.now())return {data:new URLSearchParams(cached.data),cached:true};
+  const initial=await read(url);if(!/__VIEWSTATE/.test(initial.text))throw catalogError('Missing public ASP.NET form state');
+  const data=hiddenForm(initial.text);
+  formStates.set(key,{data:data.toString(),expiresAt:Date.now()+FORM_STATE_TTL_MS});
+  while(formStates.size>200)formStates.delete(formStates.keys().next().value);
+  return {data:new URLSearchParams(data),cached:false};
+}
 const formRequest=(data)=>({method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(data).toString()});
 function json(response){try{return JSON.parse(response.text);}catch{throw catalogError('Catalog did not return bibliographic JSON');}}
-async function fetchQuery(library,q,mode,deadlineAt){
+// Several of these catalogs put the search text into SQL unescaped: an
+// apostrophe ("Harry Potter and the Philosopher's Stone") gives a database
+// error page (Easylib "Database Error", ProcessCUBE "Unclosed quotation mark",
+// LIBSOFT mysqli warnings, RPS HTTP 500; 19 Nov 2026). LibAITech, Darshan and
+// Baba Mastnath answer such titles normally. We never send quote characters
+// to the others. The words before the first
+// quoted word are a contains-search for a superset of the title's records,
+// which the caller then matches row by row.
+const QUOTE_UNSAFE=new Set(['easylib','processcube','libsoft','rps','mizoram']);
+// Title searches that match anywhere in the title ("of India" finds "The
+// Constitution of India"; checked 19 Nov 2026). ProcessCUBE matches the start
+// of the title only ("Modern India" does not find "History Of Modern India").
+const TITLE_CONTAINS=new Set(['easylib','libaitech','libsoft','rps','darshan','iust','bmu','srms']);
+async function fetchQuery(library,query,mode,deadlineAt){
   const c=config(library),read=anonymousSession(c,deadlineAt);let response,payload;
+  let q=mode==='title'&&QUOTE_UNSAFE.has(c.kind)?quoteFreeQuery(query):query;
+  if(mode==='title'&&TITLE_CONTAINS.has(c.kind))q=withoutLeadingArticle(q);
+  const isbn=mode==='isbn'?validateAndNormalize(q):null;
   if(c.kind==='srms'){
     const url='https://myportal.srms.ac.in/Library/OPACPanel/searchbookbytitle';
     response=await read(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({searchvalue:q,colg:c.collegeId})});payload=json(response);
@@ -103,21 +152,56 @@ async function fetchQuery(library,q,mode,deadlineAt){
     response=await read(url,formRequest(data));payload=response.text;
   }else if(['mizoram','processcube','bmu'].includes(c.kind)){
     const url=c.kind==='mizoram'?new URL('Normal.aspx',c.url).toString():c.url;
-    const initial=await read(url);if(!/__VIEWSTATE/.test(initial.text))throw catalogError('Missing public ASP.NET form state');
-    const data=hiddenForm(initial.text);
     const values=c.kind==='mizoram'?{ddlSearchIn:'B',ddlField:mode==='isbn'?'Acc_ISBN_No':'Acc_Title',txtSearchValue:q,ddlMatchCritaria:'Like',btnSerach:'Get It !!'}:c.kind==='bmu'?{ddlSearchType:mode==='isbn'?'ISBN':'Title',txtKeyword:q,btnSearch:'Search'}:{txt_search:q,btn_search:'Availability',TextBox1:'',TextBox2:'',TextBox3:'',TextBox4:''};
-    for(const [k,v] of Object.entries(values))data.set(k,v);
-    response=await read(url,formRequest(data));payload=response.text;
+    const post=async fresh=>{
+      const form=await aspxForm(c,url,read,fresh||c.kind==='mizoram');
+      for(const [k,v] of Object.entries(values))form.data.set(k,v);
+      const text=(await read(url,formRequest(form.data))).text;
+      return {form,text};
+    };
+    let attempt=await post(false);
+    if(attempt.form.cached){
+      // Stale form state shows the empty search page (or an error) instead of
+      // results: read it again once with the page's current state.
+      try{parseAcademicResponse(c.kind,attempt.text,{query:q,isbn});}
+      catch(error){if(error.code==='CATALOG_PROVIDER_BLOCKED')throw error;formStates.delete(url);attempt=await post(true);}
+    }
+    payload=attempt.text;
   }else if(c.kind==='easylib'){
-    await read(c.url);response=await read(new URL('/index.php/OpacController/advancedSearchFunc',c.url),formRequest({search:q,pageId:'1',start:'0',length:String(MAX_RESULTS),object:'{}'}));payload=json(response);
+    // The search endpoint needs no session (checked 19 Nov 2026).
+    response=await read(new URL('/index.php/OpacController/advancedSearchFunc',c.url),formRequest({search:q,pageId:'1',start:'0',length:String(MAX_RESULTS),object:'{}'}));payload=json(response);
   }else if(c.kind==='darshan'){
-    await read(c.url);response=await read(new URL('/Home/_SearchResult',c.url),formRequest({F_FieldName:mode==='isbn'?'ISBN':'Title',F_FieldValue:q,F_MaterialTypeID:'1',btnShow:'Search'}));payload=response.text;
+    // The result fragment needs no session (checked 19 Nov 2026).
+    response=await read(new URL('/Home/_SearchResult',c.url),formRequest({F_FieldName:mode==='isbn'?'ISBN':'Title',F_FieldValue:q,F_MaterialTypeID:'1',btnShow:'Search'}));payload=response.text;
   }else if(c.kind==='iust'){
     const url=new URL('/result.aspx',c.url);url.search=new URLSearchParams({cmbval:mode==='isbn'?'ISBN/ISSN':'Title',search:q,RDB:'Contains',Typemate:'All',colltype:'All'});
-    await read(url);response=await read(new URL('/EmployeeDataHandler.ashx',c.url));payload=json(response);
+    const page=(await read(url)).text;
+    // SOUL's data handler answers an empty search with HTTP 500. The result
+    // page itself shows the search's facets; with no material-type facet the
+    // search found nothing, and the handler is not asked.
+    if(iustEmptyResultPage(page))payload=[];
+    else{response=await read(new URL('/EmployeeDataHandler.ashx',c.url));payload=json(response);}
   }else throw catalogError('Public catalog method not implemented','CATALOG_UNSUPPORTED');
-  const result=parseAcademicResponse(c.kind,payload,{query:q,isbn:mode==='isbn'?validateAndNormalize(q):null});
-  return {...result,records:result.records.slice(0,MAX_RESULTS),complete:result.complete&&result.records.length<=MAX_RESULTS,read};
+  const result=parseAcademicResponse(c.kind,payload,{query:q,isbn});
+  // A start-of-title search for "The ..." cannot see the same book filed as
+  // "Discovery of India, The": its empty answer is not a complete one.
+  const inverted=mode==='title'&&c.kind==='processcube'&&startsWithArticle(q);
+  return {...result,records:result.records.slice(0,MAX_RESULTS),complete:result.complete&&!inverted&&result.records.length<=MAX_RESULTS,read};
+}
+export function iustEmptyResultPage(html){
+  rejectChallenge(html);
+  const ids=new Set([...html.matchAll(/<table\b([^>]*)>/gi)].map(m=>attributes(m[1]).id).filter(Boolean));
+  return /Refine Your Search/i.test(html)&&/Type of Material\(s\)/i.test(html)&&/<form\b[^>]*action=['"]\.\/result\.aspx\?/i.test(html)
+    &&!['ContentPlaceHolder1_tomf','ContentPlaceHolder1_authf','ContentPlaceHolder1_pubf','ContentPlaceHolder1_yopf','ContentPlaceHolder1_subjf'].some(id=>ids.has(id));
+}
+// The forms of an ISBN a catalog's ISBN index matches. Darshan's index
+// matches the stored text, which is sometimes plain (9788173711466) and
+// sometimes hyphenated (978-81-203-4007-7); neither form finds the other
+// (checked 19 Nov 2026). The hyphenated ISBN-13 is asked as well.
+function isbnQueries(c,exact){
+  const parsed=ISBN.parse(exact);
+  const forms=c.kind==='darshan'?[exact,parsed?.isbn13h,parsed?.isbn10]:[exact,parsed?.isbn10];
+  return forms.filter((v,i,a)=>v&&a.indexOf(v)===i);
 }
 async function enriched(b,c,read){
   if(c.kind==='libsoft'){
@@ -184,14 +268,24 @@ function combinedObservation(matches,c,matchKind,complete){
 }
 export async function checkAvailability(library,isbn,title,author){
   const c=config(library),exact=validateAndNormalize(isbn),deadlineAt=Date.now()+DEFAULT_TIMEOUT_MS;let completeEmpty=false,firstError=null;
+  const usableTitle=typeof title==='string'&&title.trim()&&!/^ISBN\s+\d/i.test(title);
+  // An ISBN alone, at a catalog with no ISBN index: this lookup cannot run
+  // here. That is not a failure of the catalog and says nothing about absence.
+  if(exact&&!c.isbn&&!usableTitle)throw catalogError('This catalog cannot be searched by ISBN','CATALOG_QUERY_UNSUPPORTED');
   if(exact&&c.isbn){
-    const variants=[exact,ISBN.parse(exact)?.isbn10].filter((v,i,a)=>v&&a.indexOf(v)===i);let empties=0,complete=true;const exactMatches=[];
+    // Where an empty ISBN search proves nothing (Darshan), records stored
+    // under another ISBN form were not inspected: counts stay partial.
+    const variants=isbnQueries(c,exact);let empties=0,complete=c.isbnAbsence!==false;const exactMatches=[];
     for(const q of variants){
       try{
-        const result=await fetchQuery(library,q,'isbn',deadlineAt);
+        // The work search asks for the ISBN-13 and ISBN-10 forms of an edition
+        // separately; both run the same catalog searches, sent once.
+        const result=await cachedTask(`academic-isbn:${library.academicCatalogId}:${q}`,async()=>{const {read:_,...rest}=await fetchQuery(library,q,'isbn',deadlineAt);return rest;},{ttlMs:10*60*1000,deadlineAt});
+        // Record pages are read in this check's own session and deadline.
+        const read=anonymousSession(c,deadlineAt);
         complete&&=result.complete;
         for(const b of result.records){
-          const rich=await enriched(b,c,result.read);
+          const rich=await enriched(b,c,read);
           if(rich.isbn===exact)exactMatches.push(rich);
           else if(!rich.isbn)complete=false;
         }
@@ -207,7 +301,7 @@ export async function checkAvailability(library,isbn,title,author){
     if(exactMatches.length)return combinedObservation(exactMatches,c,'exact_isbn',complete);
     completeEmpty=empties===variants.length;
   }
-  if(typeof title==='string'&&title.trim()&&!/^ISBN\s+\d/i.test(title)){
+  if(usableTitle){
     try{
       const q=boundedQuery(title),result=await fetchQuery(library,q,'title',deadlineAt),candidates=result.records.filter(b=>possibleTitle(b,title,author)),matches=[];
       for(const candidate of candidates)matches.push(await enriched(candidate,c,result.read));
@@ -218,12 +312,14 @@ export async function checkAvailability(library,isbn,title,author){
   }
   if(completeEmpty&&!firstError){
     // Darshan's public ISBN index can omit ISBNs present on its own detail
-    // pages. Both normalized variants being empty cannot prove absence.
-    if(c.isbnAbsence===false)throw catalogError('An empty ISBN search does not prove absence in this catalog','CATALOG_HOLDING_UNCONFIRMED');
+    // pages (stored in another form). An empty search cannot prove absence:
+    // the lookup could not settle the question, which is not a failure.
+    if(c.isbnAbsence===false)throw catalogError('An empty ISBN search does not prove absence in this catalog','CATALOG_QUERY_UNSUPPORTED');
     return {outcome:'not_found',matchKind:'none',recognizedExact:true};
   }
   if(firstError)throw firstError;
-  if(typeof title==='string'&&title.trim()&&!/^ISBN\s+\d/i.test(title))throw catalogError('The requested book is not confirmed by this catalog','CATALOG_HOLDING_UNCONFIRMED');
+  if(usableTitle)throw catalogError('The requested book is not confirmed by this catalog','CATALOG_HOLDING_UNCONFIRMED');
   throw catalogError(c.isbn?'No confirmed edition or title match':'This catalog needs a book title for lookup','CATALOG_EXACT_ISBN_REQUIRED');
 }
+export { quoteFreeQuery } from './catalogMarkup.js';
 export { parseAcademicResponse, parseEasylibAvailability, parseDarshanIsbn, recordFingerprint } from './discoveryAcademicParsers.js';

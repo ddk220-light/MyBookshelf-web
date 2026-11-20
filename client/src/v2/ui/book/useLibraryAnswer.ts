@@ -16,6 +16,8 @@ export type CardAnswer = 'checking' | 'found' | 'not_found' | 'unconfirmed' | 'u
 export type LibraryCardModel =
   | { kind: 'none' }
   | { kind: 'library'; answer: CardAnswer; name: string; place?: string; catalogUrl?: string; catalogLinkKind?: HoldingsCheck['catalogLinkKind']; retry?: () => void;
+      /** Why the check could not answer ("unknown" and "unconfirmed" only). */
+      reason?: HoldingsCheck['reason'];
       /** The library's catalog may take longer than half a minute to answer. */
       slowCatalog?: boolean };
 
@@ -71,7 +73,7 @@ export function useLibraryAnswer(bookKey: string | null | undefined): LibraryCar
     };
     publicApi.holdingsCheck(libraryId, bookKey, controller.signal)
       .then(settle)
-      .catch(() => { if (timedOut || !controller.signal.aborted) settle({ answer: 'unknown' }); })
+      .catch(() => { if (timedOut || !controller.signal.aborted) settle(timedOut ? { answer: 'unknown', reason: 'timeout' } : { answer: 'unknown' }); })
       .finally(() => clearTimeout(timer));
     return () => { active = false; clearTimeout(timer); controller.abort(); };
   }, [bookKey, libraryId, ready, checkable, recordUrl, attempt, store]);
@@ -95,5 +97,9 @@ export function useLibraryAnswer(bookKey: string | null | undefined): LibraryCar
   // answer was stored), and trying again would not help.
   if (!checkable && current?.answer !== 'found' && current?.answer !== 'not_found') return { kind: 'library', answer: 'unsupported', name, ...link };
   if (!current) return { kind: 'library', answer: 'checking', name, slowCatalog: slowCatalog(library), ...link };
-  return { kind: 'library', answer: current.answer, name, place, ...link, ...(current.answer === 'unknown' ? { retry } : {}) };
+  // Trying again helps a check that ran out of time or found the catalog busy,
+  // not a library that does not allow checks or a catalog we cannot read yet.
+  const lasting = current.reason === 'blocked' || current.reason === 'unsupported' || current.reason === 'unrecognized' || current.reason === 'configuration';
+  return { kind: 'library', answer: current.answer, name, place, ...link, ...(current.reason ? { reason: current.reason } : {}),
+    ...(current.answer === 'unknown' && !lasting ? { retry } : {}) };
 }

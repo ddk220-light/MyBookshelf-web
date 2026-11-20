@@ -1,14 +1,14 @@
 import test,{afterEach} from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {parseAcademicResponse,parseEasylibAvailability,parseDarshanIsbn,searchCatalog,resolveCatalogRecord,checkAvailability,academicCatalogConfigured,academicCatalogHandoff} from './discoveryAcademic.js';
+import {parseAcademicResponse,parseEasylibAvailability,parseDarshanIsbn,searchCatalog,resolveCatalogRecord,checkAvailability,academicCatalogConfigured,academicCatalogHandoff,clearAcademicFormState,isbnLookupSupported,iustEmptyResultPage} from './discoveryAcademic.js';
 import {clearHttpCache} from './http.js';
 import {parseLibsoftDetails,rejectChallenge} from './discoveryAcademicParsers.js';
 const fixture=n=>fs.readFileSync(new URL(`../../test/fixtures/discovery-academic/${n}`,import.meta.url),'utf8');
 const parsed=n=>JSON.parse(fixture(n));
 const library=id=>({academicCatalogId:id});
 const originalFetch=global.fetch;
-afterEach(()=>{global.fetch=originalFetch;clearHttpCache();});
+afterEach(()=>{global.fetch=originalFetch;clearHttpCache();clearAcademicFormState();});
 function reply(body,url='https://example.invalid/',extra={}){return {ok:true,status:200,url,headers:new Headers(),text:async()=>typeof body==='string'?body:JSON.stringify(body),...extra};}
 const form='<form><input type="hidden" name="__VIEWSTATE" value="fresh-state"><input type="hidden" name="__EVENTVALIDATION" value="fresh-validation"></form>';
 
@@ -116,6 +116,7 @@ test('cross-origin redirects stop before a second request',async()=>{
 test('ISBN absence needs both equivalent ISBN queries to finish, and timeout never becomes absence',async()=>{
  const posts=[];global.fetch=async(url,options)=>{if(options.method==='POST'){posts.push(new URLSearchParams(options.body).get('txtKeyword'));return reply(fixture('bmu-empty.html'),url);}return reply(form,url);};
  const no=await checkAvailability(library('public-aspx:baba-mastnath-university'),'9788173711466',null,null);assert.equal(no.outcome,'not_found');assert.deepEqual(posts,['9788173711466','8173711461']);
+ clearHttpCache();clearAcademicFormState();
  global.fetch=async(url,options)=>{if(options.method==='POST')throw Object.assign(Error('timeout'),{name:'AbortError'});return reply(form,url);};await assert.rejects(checkAvailability(library('public-aspx:baba-mastnath-university'),'9788173711466',null,null),{name:'AbortError'});
 });
 test('Darshan empty ISBN indexes cannot disprove a detail-page ISBN, and title recovery still verifies the edition',async()=>{
@@ -124,7 +125,8 @@ test('Darshan empty ISBN indexes cannot disprove a detail-page ISBN, and title r
   if(options.method==='POST'&&new URLSearchParams(options.body).get('F_FieldName')==='ISBN')return reply(empty,url);
   return darshanFetch(fixture('darshan.html'))(url,options);
  };
- await assert.rejects(checkAvailability(library('dlib:darshan'),'9788173711466',null,null),{code:'CATALOG_HOLDING_UNCONFIRMED'});
+ // Not a failure of the catalog: an ISBN lookup alone cannot settle it here.
+ await assert.rejects(checkAvailability(library('dlib:darshan'),'9788173711466',null,null),{code:'CATALOG_QUERY_UNSUPPORTED'});
  const recovered=await checkAvailability(library('dlib:darshan'),'9788173711466','Wings of Fire','Kalam');
  assert.equal(recovered.matchKind,'exact_isbn');assert.equal(recovered.recognizedExact,true);
 });
@@ -169,4 +171,62 @@ test('catalog links distinguish direct GET searches from POST-only catalog homes
 });
 test('durable tokens stay within the public contract for long multibyte and escaped titles',async()=>{
  for(const title of ['संस्कृत भाषा साहित्य '.repeat(15),'\\"'.repeat(120),'Very long catalog title '.repeat(30)]){global.fetch=async url=>reply([{title,author_name:'Author'}],url);const [b]=await searchCatalog(library('srms:1'),'Title');assert.ok(b.recordId.length<=180);clearHttpCache();assert.ok(await resolveCatalogRecord(library('srms:1'),b.recordId));clearHttpCache();}
+});
+
+// 19 November 2026 re-test: most of these catalogs have no ISBN index. Asked
+// for an ISBN alone they answered "unsupported" (a failure) for 77 of 170
+// checks; it is a lookup they cannot run, which the work search skips.
+test('an ISBN alone at a title-only catalog is an unsupported query, sent nowhere',async()=>{
+ let called=false;global.fetch=async()=>{called=true;throw Error('unexpected');};
+ for(const id of ['easylib:sdmmc','processcube:kaptipada-nuasahi','webopac:hcdgc','rps-mahnar:library','libsoft:rcet','srms:1'])await assert.rejects(checkAvailability(library(id),'9781847941831','',''),{code:'CATALOG_QUERY_UNSUPPORTED'});
+ assert.equal(called,false);
+ assert.equal(isbnLookupSupported(library('easylib:sdmmc')),false);assert.equal(isbnLookupSupported(library('dlib:darshan')),true);assert.equal(isbnLookupSupported(library('soul:iust')),true);assert.equal(isbnLookupSupported(library('public-aspx:baba-mastnath-university')),false);assert.equal(isbnLookupSupported(library('__proto__')),false);
+});
+test('Easylib and Darshan searches are one request each, without a home-page visit',async()=>{
+ const calls=[];global.fetch=async(url,options)=>{calls.push({url,method:options.method});return reply(url.includes('advancedSearchFunc')?{...parsed('easylib.json'),search:'Wings'}:fixture('darshan.html'),url);};
+ const rows=await searchCatalog(library('easylib:sdmmc'),'Wings');assert.ok(rows.length);assert.equal(rows.hasMore,false);
+ await searchCatalog(library('dlib:darshan'),'Wings');
+ assert.deepEqual(calls.map(c=>c.method),['POST','POST']);
+});
+test('Darshan is asked for the plain and hyphenated ISBN-13 it stores, once for both ISBN forms',async()=>{
+ const posts=[];global.fetch=async(url,options)=>{if(options.method==='POST'){posts.push(new URLSearchParams(options.body).get('F_FieldValue'));return reply(fixture('darshan.html').replace(/<tbody>[\s\S]*?<\/tbody>/,'<tbody></tbody>'),url);}return reply('<html>Catalog</html>',url);};
+ await assert.rejects(checkAvailability(library('dlib:darshan'),'9788173711466','',''),{code:'CATALOG_QUERY_UNSUPPORTED'});
+ await assert.rejects(checkAvailability(library('dlib:darshan'),'8173711461','',''),{code:'CATALOG_QUERY_UNSUPPORTED'});
+ assert.deepEqual(posts,['9788173711466','978-81-7371-146-6','8173711461']);
+});
+test('SOUL result page without facets is an explicit empty search; the failing data handler is not asked',async()=>{
+ assert.equal(iustEmptyResultPage(fixture('iust-result-empty.html')),true);assert.equal(iustEmptyResultPage(fixture('iust-result-hit.html')),false);
+ assert.equal(iustEmptyResultPage('<html>Welcome</html>'),false);
+ const calls=[];global.fetch=async url=>{calls.push(url);if(url.includes('EmployeeDataHandler'))return reply('<title>Runtime Error</title>',url,{ok:false,status:500});return reply(fixture('iust-result-empty.html'),url);};
+ const value=await checkAvailability(library('soul:iust'),'9781408855652','','');
+ assert.equal(value.outcome,'not_found');assert.equal(value.recognizedExact,true);
+ assert.equal(calls.length,2);assert.ok(calls.every(u=>u.includes('/result.aspx')));
+ // A page with results still reads the handler.
+ calls.length=0;clearHttpCache();global.fetch=async url=>{calls.push(url);return reply(url.includes('EmployeeDataHandler')?parsed('iust.json'):fixture('iust-result-hit.html'),url);};
+ assert.equal((await checkAvailability(library('soul:iust'),'9788173711466','','')).matchKind,'exact_isbn');assert.ok(calls.some(u=>u.includes('EmployeeDataHandler')));
+});
+test('ASP.NET form state is reused for a later search and refreshed once when stale',async()=>{
+ const calls=[];let stale=false;
+ global.fetch=async(url,options)=>{calls.push(options.method||'GET');if(options.method==='POST')return reply(stale?form:fixture('processcube.html'),url);stale=false;return reply(form,url);};
+ await searchCatalog(library('processcube:daya-vihar'),'Wings');await searchCatalog(library('processcube:daya-vihar'),'Fire');
+ assert.deepEqual(calls,['GET','POST','POST']);
+ calls.length=0;stale=true;const rows=await searchCatalog(library('processcube:daya-vihar'),'History');
+ assert.deepEqual(calls,['POST','GET','POST']);assert.ok(rows.length);
+ assert.equal((await searchCatalog(library('processcube:daya-vihar'),'Partial')).hasMore,false);
+});
+test('quote characters never reach catalogs that put search text into SQL',async()=>{
+ const {quoteFreeQuery}=await import('./discoveryAcademic.js');
+ assert.equal(quoteFreeQuery("Harry Potter and the Philosopher's Stone"),'Harry Potter and the');
+ assert.equal(quoteFreeQuery('Wings of Fire'),'Wings of Fire');
+ assert.equal(quoteFreeQuery("Gray's Anatomy for Students"),'Anatomy for Students');
+ assert.throws(()=>quoteFreeQuery("O'Neil"),{code:'CATALOG_QUERY_UNSUPPORTED'});
+ const posts=[];global.fetch=async(url,options)=>{posts.push(new URLSearchParams(options.body).get('search'));return reply({search:'Harry Potter and the',realdata:[],recordsTotal:5,recordsFiltered:0},url);};
+ assert.deepEqual(await searchCatalog(library('easylib:sdmmc'),"Harry Potter and the Philosopher's Stone"),[]);assert.deepEqual(posts,['Harry Potter and the']);
+});
+test('SRMS is asked without a leading article; ProcessCUBE, which matches title starts, cannot call such a search complete',async()=>{
+ const bodies=[];global.fetch=async(url,options)=>{bodies.push(JSON.parse(options.body).searchvalue);return reply([{title:'DISCOVERY OF INDIA',author_name:'NEHRU,JAWAHAR LAL'}],url);};
+ const rows=await searchCatalog(library('srms:1'),'The discovery of India');assert.deepEqual(bodies,['discovery of India']);assert.equal(rows[0].title,'DISCOVERY OF INDIA');assert.equal(rows.hasMore,false);
+ global.fetch=async(url,options)=>reply(options.method==='POST'?fixture('processcube.html'):form,url);
+ assert.equal((await searchCatalog(library('processcube:daya-vihar'),'The Wings')).hasMore,true);
+ clearHttpCache();assert.equal((await searchCatalog(library('processcube:daya-vihar'),'Wings')).hasMore,false);
 });

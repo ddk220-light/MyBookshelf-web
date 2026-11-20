@@ -1,6 +1,9 @@
+import ISBN from 'isbn3';
 import { attributes, catalogError, firstIsbn, text } from './catalogMarkup.js';
 import { CommunitySession, hiddenFields } from './communitySession.js';
-import { boundedQuery, distinctRecords, markSearchComplete, normalized, observation } from './communityRecords.js';
+import { aggregateObservations, boundedQuery, distinctRecords, markHasMore, markSearchComplete, normalized, observation } from './communityRecords.js';
+import { isbnMatches } from './contract.js';
+import { cachedTask } from './http.js';
 
 const ORIGIN = 'https://mediatheques-afinde.org';
 export const PMB_SCOPES = Object.freeze({ 12: 'Bangalore', 9: 'Bengale', 2: 'Bhopal', 16: 'Bombay', 3: 'Chandigarh',
@@ -39,9 +42,14 @@ export function parsePmbSearch(html, library) {
     const authors = [...authorBlock.matchAll(/<a\b[^>]*>([\s\S]*?)<\/a>/gi)].map(m => text(m[1]));
     if (id && title) records.push({ recordId: id, title, authors });
   }
-  if (!records.length && !/aucun r[ée]sultat|aucune notice|0\s+(?:notice|r[ée]sultat)|no results/i.test(text(html))) throw catalogError('Unrecognized branch search results');
+  const explicitEmpty = !blocks.length && /aucun r[ée]sultat|aucune notice|0\s+(?:notice|r[ée]sultat)|no results/i.test(text(html));
+  if (!records.length && !explicitEmpty) throw catalogError('Unrecognized branch search results');
+  // "La recherche n'a renvoyé aucun résultat" carries no count: it is a
+  // complete, empty answer (19 Nov 2026).
+  if (explicitEmpty) return markSearchComplete([], true);
   const count = text(html.match(/<span\b[^>]*id=["']searchResult-nbResults["'][^>]*>([\s\S]*?)<\/span>/i)?.[1]);
   const distinct = distinctRecords(records);
+  markHasMore(distinct, !/^\d+$/.test(count) || Number(count) > distinct.length);
   return markSearchComplete(distinct, /^\d+$/.test(count) && Number(count) === records.length
     && records.length === blocks.length && distinct.length === records.length);
 }
@@ -79,7 +87,7 @@ export function parsePmbRecord(html, library, id) {
       status: /sorti jusqu|en pret|emprunte/.test(status) ? 'unavailable'
         : /disponible/.test(status) && !/indisponible|non disponible|consultation sur place/.test(status) ? 'available' : 'unknown' });
   }
-  if (!owned.length) throw catalogError('Record belongs to another branch', 'CATALOG_HOLDING_UNCONFIRMED');
+  if (!owned.length) throw Object.assign(catalogError('Record belongs to another branch', 'CATALOG_HOLDING_UNCONFIRMED'), { otherBranch: visibleCopies > 0 });
   const expectedCopies = text(html.match(/<span\b[^>]*id=["']titre_exemplaires["'][^>]*>([\s\S]*?)<\/span>/i)?.[1]).match(/\((\d+)\)/)?.[1];
   const complete = expectedCopies !== undefined && Number(expectedCopies) === visibleCopies
     && !unidentifiedCopy && copyKeys.size === visibleCopies;
@@ -93,7 +101,13 @@ export function parsePmbRecord(html, library, id) {
   if (complete && owned.every(r => r.status !== 'unknown')) obs.availableCopies = owned.filter(r => r.status === 'available').length;
   return { recordId: id, title, authors, isbn: firstIsbn(fields.record_code), catalogUrl, observation: obs };
 }
-export async function searchPmb(library, query, deadlineAt) {
+// The branch view lives in the anonymous PMB session: without it a search
+// covers the whole network, and parsePmbSearch rejects the page (assertView).
+// A session is reused for a few minutes so a check's searches skip the home
+// page; a reused session that no longer shows the branch is replaced once.
+const SESSION_TTL_MS = 5 * 60 * 1000, sessions = new Map();
+export function clearPmbSessions() { sessions.clear(); }
+async function openSearch(library, deadlineAt) {
   const session = new CommunitySession(ORIGIN, deadlineAt), home = await session.read(viewUrl(library));
   assertView(home.text, library);
   const form = [...home.text.matchAll(/<form\b([^>]*)>([\s\S]*?)<\/form>/gi)].find(m => attributes(m[1]).name === 'search_input');
@@ -102,8 +116,89 @@ export async function searchPmb(library, query, deadlineAt) {
   if (!fields.csrf_token) throw catalogError('Anonymous search token missing');
   const url = new URL(attributes(form[1]).action, ORIGIN);
   if (url.origin !== ORIGIN || url.pathname !== '/index.php' || url.searchParams.get('lvl') !== 'more_results') throw catalogError('Unexpected public search action');
-  const result = await session.post(url.toString(), { ...fields, user_query: boundedQuery(query), look_ALL: '1', typdoc: '' }, { Referer: viewUrl(library) });
-  return parsePmbSearch(result.text, library);
+  const state = { cookies: new Map(session.cookies), fields, url: url.toString(), expiresAt: Date.now() + SESSION_TTL_MS };
+  sessions.set(library.communityCatalog.scope, state);
+  while (sessions.size > 32) sessions.delete(sessions.keys().next().value);
+  return { session, state };
+}
+async function searchForm(library, deadlineAt) {
+  const scope = library.communityCatalog.scope;
+  let current = null;
+  const cached = sessions.get(scope);
+  if (cached && cached.expiresAt > Date.now()) {
+    const session = new CommunitySession(ORIGIN, deadlineAt);
+    session.cookies = new Map(cached.cookies);
+    current = { session, state: cached, reused: true };
+  }
+  const post = ({ session, state }, userQuery) => session.post(state.url, { ...state.fields, user_query: userQuery, look_ALL: '1', typdoc: '' }, { Referer: viewUrl(library) });
+  return async userQuery => {
+    current ||= await openSearch(library, deadlineAt);
+    try { return parsePmbSearch((await post(current, userQuery)).text, library); }
+    catch (error) {
+      if (!current.reused || error.code === 'CATALOG_PROVIDER_BLOCKED' || Date.now() >= deadlineAt) throw error;
+      if (sessions.get(scope) === current.state) sessions.delete(scope);
+      current = await openSearch(library, deadlineAt);
+      return parsePmbSearch((await post(current, userQuery)).text, library);
+    }
+  };
+}
+// PMB ranks any-word matches by relevance: "Wings of Fire" returned 157
+// unrelated records (one word, or a French synonym, each). A leading "+"
+// requires the word, so the catalog returns only records with every word.
+// PMB's own operators are removed from the reader's words.
+export function pmbAllWordsQuery(query) {
+  const words = boundedQuery(query).split(' ').map(word => word.replace(/[+\-*"()~^<>]/g, '')).filter(word => /[\p{L}\p{N}]/u.test(word));
+  if (!words.length) throw catalogError('A title is required', 'CATALOG_UNSUPPORTED');
+  return words.map(word => `+${word}`).join(' ');
+}
+export async function searchPmb(library, query, deadlineAt) {
+  return (await searchForm(library, deadlineAt))(pmbAllWordsQuery(query));
+}
+// PMB stores ISBNs hyphenated (978-0-14-027833-0) and finds them only as a
+// quoted phrase; the plain digits find nothing (checked 19 Nov 2026). An
+// edition can be stored as ISBN-13 or ISBN-10: both forms go in one query,
+// since quoted phrases side by side match either one.
+export function pmbIsbnQueries(isbn13) {
+  const parsed = ISBN.parse(isbn13);
+  const forms = [parsed?.isbn13h, parsed?.isbn10h].filter(Boolean);
+  return forms.length ? [forms.map(value => `"${value}"`).join(' ')] : [];
+}
+export async function checkPmbIsbn(library, isbn13, deadlineAt) {
+  viewUrl(library);
+  // The work search asks the ISBN-13 and ISBN-10 forms separately; both forms
+  // are searched by either question, so the second is answered from this.
+  return cachedTask(`pmb-isbn:${library.communityCatalog.scope}:${isbn13}`, async () => {
+    const search = await searchForm(library, deadlineAt);
+    const found = [];
+    let complete = true;
+    for (const userQuery of pmbIsbnQueries(isbn13)) {
+      const rows = await search(userQuery);
+      if (rows.searchComplete !== true) complete = false;
+      found.push(...rows);
+    }
+    const ids = [...new Set(found.map(row => row.recordId))];
+    if (ids.length > 3) complete = false;
+    const exact = [];
+    let error;
+    for (const id of ids.slice(0, 3)) {
+      try {
+        const record = await resolvePmb(library, id, deadlineAt);
+        if (record.isbn && isbnMatches(record.isbn, isbn13)) exact.push(record);
+        else complete = false;
+      } catch (failure) {
+        // A record whose copies are all at other branches is not this
+        // branch's book. Anything else leaves the answer open.
+        if (failure.otherBranch) continue;
+        complete = false;
+        error ||= failure;
+        if (failure.code === 'CATALOG_PROVIDER_BLOCKED') break;
+      }
+    }
+    if (exact.length) return { ...aggregateObservations(exact.map(item => item.observation), { complete: complete && exact.length === 1 }),
+      matchKind: 'exact_isbn', recognizedExact: true };
+    if (complete) return { outcome: 'not_found', matchKind: 'none', recognizedExact: true };
+    throw error || catalogError('The requested edition is not confirmed', 'CATALOG_HOLDING_UNCONFIRMED');
+  }, { ttlMs: 10 * 60 * 1000, deadlineAt });
 }
 export async function resolvePmb(library, id, deadlineAt) {
   if (!/^\d{1,20}$/.test(id)) throw catalogError('Invalid catalog record');

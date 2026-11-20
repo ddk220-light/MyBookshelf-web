@@ -1,8 +1,8 @@
 import test, { afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { checkPublicAvailability, parseKohaPublicRecord, searchCatalog, resolveCatalogRecord, scopeSearch } from './koha.js';
-import { clearHttpCache } from './http.js';
+import { checkPublicAvailability, checkPublicAvailabilityForIsbns, keywordQuery, parseKohaPublicRecord, searchCatalog, resolveCatalogRecord, scopeSearch } from './koha.js';
+import { clearHttpCache, withCatalogOperation } from './http.js';
 
 const ISBN = '9780262033848';
 const ORIGIN = 'https://library.cutn.ac.in';
@@ -419,21 +419,22 @@ const captured = (name) => fs.readFileSync(new URL(`../../test/fixtures/koha/${n
 const ALCHEMIST = '9788172234980';
 const multiSearch = (numbers) => `<body id="results"><h1 id="numresults">Your search returned ${numbers.length} results.</h1>${numbers.map((id) => `<a href="/cgi-bin/koha/opac-detail.pl?biblionumber=${id}">Book</a>`).join('')}</body>`;
 
-test('ISBN-13 and equivalent ISBN-10 use one Koha OR search; 979 identifiers have no ISBN-10', async () => {
+test('ISBN-13, ISBN-10 and their assigned hyphenated forms use one Koha OR search; 979 identifiers have no ISBN-10', async () => {
   const calls = [];
   global.fetch = async (url) => {
     calls.push(new URL(url));
     return isSearch(url) ? response(url, '', 302, { location: RECORD }) : response(url, fixture);
   };
   await checkPublicAvailability(library, ISBN);
-  assert.deepEqual(calls[0].searchParams.getAll('idx'), ['nb', 'nb']);
-  assert.deepEqual(calls[0].searchParams.getAll('q'), [ISBN, '0262033844']);
-  assert.equal(calls[0].searchParams.get('op'), 'or');
+  assert.deepEqual(calls[0].searchParams.getAll('idx'), ['nb', 'nb', 'nb', 'nb']);
+  assert.deepEqual(calls[0].searchParams.getAll('q'), [ISBN, '0262033844', '978-0-262-03384-8', '0-262-03384-4']);
+  assert.deepEqual(calls[0].searchParams.getAll('op'), ['or', 'or', 'or']);
+  assert.equal(calls.length, 2, 'one search and one record read');
   calls.length = 0;
   global.fetch = async (url) => { calls.push(new URL(url)); return response(url, captured('british-search')); };
   await checkPublicAvailability(library, '9791090636071');
-  assert.deepEqual(calls[0].searchParams.getAll('q'), ['9791090636071']);
-  assert.equal(calls[0].searchParams.has('op'), false);
+  assert.deepEqual(calls[0].searchParams.getAll('q'), ['9791090636071', '979-10-90636-07-1']);
+  assert.equal(calls.length, 1);
 });
 
 test('verified empty Koha search is not-found, while arbitrary empty pages stay unconfirmed', async () => {
@@ -442,7 +443,7 @@ test('verified empty Koha search is not-found, while arbitrary empty pages stay 
   assert.equal(result.outcome, 'not_found');
   assert.equal(result.matchKind, 'none');
   assert.equal(result.catalogLinkKind, 'search');
-  assert.deepEqual(new URL(result.catalogUrl).searchParams.getAll('q'), ['978-0-262-03384-8', '0-262-03384-4']);
+  assert.deepEqual(new URL(result.catalogUrl).searchParams.getAll('q'), [ISBN, '0262033844', '978-0-262-03384-8', '0-262-03384-4']);
   clearHttpCache();
   global.fetch = async (url) => response(url, captured('british-search').replace('id="results"', 'id="unrelated"'));
   await assert.rejects(checkPublicAvailability(library, ISBN), { code: 'CATALOG_UNRECOGNIZED' });
@@ -590,26 +591,26 @@ test('captured ISBN-10 records and British Council single-copy holdings retain e
 });
 
 
-test('a genuine ISBN miss tries assigned hyphenated equivalents once before reading the exact record', async () => {
+test('a record listed only under a hyphenated ISBN is found by the one combined search', async () => {
+  // Modern College Pune, 19 November 2026: 978-81-7709-187-8 is indexed only
+  // with hyphens. The plain pair finds nothing; the combined query selects it.
   const calls = [];
   global.fetch = async (url) => {
     calls.push(url);
     if (!isSearch(url)) return response(url, fixture);
-    if (new URL(url).searchParams.get('q') === ISBN) return response(url, captured('british-search'));
+    if (!new URL(url).searchParams.getAll('q').includes('978-0-262-03384-8')) return response(url, captured('british-search'));
     return response(url, '', 302, { location: RECORD });
   };
   const result = await checkPublicAvailability(library, ISBN);
   assert.equal(result.availableCopies, 4);
-  assert.equal(calls.length, 3);
-  assert.deepEqual(new URL(calls[1]).searchParams.getAll('q'), ['978-0-262-03384-8', '0-262-03384-4']);
+  assert.equal(calls.length, 2);
 });
 
-test('failed or ambiguous hyphenated fallbacks cannot become false not-found results', async () => {
+test('a failed or unproven combined ISBN search never becomes a false not-found result', async () => {
   for (const failure of ['blocked', 'timeout', 'empty', 'wrong-isbn']) {
     clearHttpCache();
     global.fetch = async (url) => {
       if (!isSearch(url)) return response(url, fixture.replace(ISBN, '9780735219090'));
-      if (new URL(url).searchParams.get('q') === ISBN) return response(url, captured('british-search'));
       if (failure === 'blocked') return response(url, '', 403);
       if (failure === 'timeout') throw Object.assign(new Error('deadline'), {name:'AbortError'});
       if (failure === 'empty') return response(url, '<p>No search results</p>');
@@ -617,6 +618,24 @@ test('failed or ambiguous hyphenated fallbacks cannot become false not-found res
     };
     await assert.rejects(checkPublicAvailability(library, ISBN), {code: failure === 'blocked' ? 'CATALOG_PROVIDER_BLOCKED' : failure === 'timeout' ? 'CATALOG_TIMEOUT' : 'CATALOG_UNRECOGNIZED'});
   }
+});
+
+test('one check reads a record page once when the ISBN search and the title search select the same record', async () => {
+  const calls = [];
+  const page = '<h1 class="title">Introduction to algorithms</h1>' + fixture;
+  global.fetch = async (url) => {
+    calls.push(url);
+    return isSearch(url) ? response(url, '', 302, { location: RECORD }) : response(url, page);
+  };
+  await withCatalogOperation({ maxRequests: 10 }, async () => {
+    await checkPublicAvailability(library, ISBN);
+    await searchCatalog(library, 'Introduction to algorithms');
+  });
+  assert.deepEqual(calls.filter(url => !isSearch(url)), [RECORD_URL]);
+  // A later check (another operation) reads the page afresh.
+  clearHttpCache();
+  await withCatalogOperation({ maxRequests: 10 }, () => checkPublicAvailability(library, ISBN));
+  assert.equal(calls.filter(url => !isSearch(url)).length, 2);
 });
 
 
@@ -785,7 +804,7 @@ test('IDEAL legacy empty layout succeeds only inside the verified results main r
   const calls = [];
   global.fetch = async url => { calls.push(url); return response(url, empty); };
   assert.equal((await checkPublicAvailability(library, ISBN)).outcome, 'not_found');
-  assert.equal(calls.length, 2, 'plain equivalents and hyphenated equivalents both checked');
+  assert.equal(calls.length, 1, 'plain and hyphenated equivalents checked in one search');
   for (const html of [empty.replace('ID="results"', 'id="login"'), empty.replace('maincontent', 'footer'),
     empty.replace('<strong>No results found!</strong>', '<p>Search: No results found!</p>'),
     empty.replace('<h1>', '<h1 id="numresults">Your search returned 2 results.</h1><h1>'),
@@ -840,4 +859,51 @@ test('union title search returns only owned records and caches each branch indep
   const other = { ...goa, kohaBranchCode: 'CCL', kohaBranchName: 'Carmel College Library' };
   await assert.rejects(() => searchCatalog(other, 'Wings of Fire'), /did not confirm/);
   await assert.rejects(() => resolveCatalogRecord(other, '1079960'), /did not confirm/);
+});
+
+
+test('several editions are checked in one Koha OR search, and an empty verified page answers for all of them', async () => {
+  // Live, 19 November 2026: a 32-term query at Modern College Pune selected the
+  // one record listed (hyphenated) among eight ISBNs; IIM Calcutta answered
+  // eight Harry Potter editions in one 4.5 s search instead of eight.
+  const calls = [];
+  global.fetch = async (url) => { calls.push(new URL(url)); return response(url, captured('british-search')); };
+  const result = await checkPublicAvailabilityForIsbns(library, [ISBN, '9781408855652', 'not an isbn', ISBN]);
+  assert.equal(result.outcome, 'not_found');
+  assert.equal(result.matchKind, 'none');
+  assert.deepEqual(result.isbns, [ISBN, '9781408855652']);
+  assert.equal(calls.length, 1);
+  assert.deepEqual(calls[0].searchParams.getAll('q'), [ISBN, '0262033844', '978-0-262-03384-8', '0-262-03384-4',
+    '9781408855652', '1408855658', '978-1-4088-5565-2', '1-4088-5565-8']);
+  assert.equal(calls[0].searchParams.getAll('op').length, 7);
+});
+
+test('a batch record counts only for the ISBN its own page states', async () => {
+  const calls = [];
+  global.fetch = async (url) => { calls.push(url); return isSearch(url) ? response(url, '', 302, { location: RECORD }) : response(url, fixture); };
+  const result = await checkPublicAvailabilityForIsbns(library, ['9781408855652', ISBN]);
+  assert.equal(result.isbn13, ISBN);
+  assert.equal(result.matchKind, 'exact_isbn');
+  assert.equal(result.availableCopies, 4);
+  assert.equal(result.catalogUrl, RECORD_URL);
+  assert.equal(calls.length, 2);
+  clearHttpCache();
+  global.fetch = async (url) => (isSearch(url) ? response(url, '', 302, { location: RECORD }) : response(url, fixture.replaceAll(ISBN, '9780735219090')));
+  await assert.rejects(checkPublicAvailabilityForIsbns(library, ['9781408855652', ISBN]), { code: 'CATALOG_UNRECOGNIZED' });
+  global.fetch = async (url) => response(url, '', 403);
+  clearHttpCache();
+  await assert.rejects(checkPublicAvailabilityForIsbns(library, [ISBN]), { code: 'CATALOG_PROVIDER_BLOCKED' });
+  await assert.rejects(checkPublicAvailabilityForIsbns({ ...library, publicCatalogCapabilities: { titleSearch: true } }, [ISBN]), { code: 'CATALOG_QUERY_UNSUPPORTED' });
+});
+
+test('keyword searches drop English articles that some Koha indexes never match', async () => {
+  // Modern College Pune, 19 November 2026: "discovery of India" lists 2
+  // records, "The discovery of India" none.
+  assert.equal(keywordQuery('The discovery of India'), 'discovery of India');
+  assert.equal(keywordQuery('Wings of Fire A. P. J. Abdul Kalam'), 'Wings of Fire A. P. J. Abdul Kalam');
+  assert.equal(keywordQuery('The'), 'The');
+  const calls = [];
+  global.fetch = async (url) => { calls.push(new URL(url)); return response(url, captured('british-search')); };
+  await searchCatalog(library, 'The discovery of India').catch(() => {});
+  assert.equal(calls[0].searchParams.get('q'), 'discovery of India');
 });

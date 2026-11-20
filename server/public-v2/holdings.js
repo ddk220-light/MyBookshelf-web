@@ -3,6 +3,7 @@ import { catalogHandoffFor } from './catalog-handoff.js';
 import { validateAndNormalize } from '../services/isbn.js';
 import { identitiesFor, askedIdentity, storedAnswer } from '../services/catalog-lookup/record.js';
 import { safeCatalogUrl as onCatalogOrigin } from '../services/catalog-lookup/observation.js';
+import { REASONS } from '../services/catalog-lookup/outcome.js';
 import { parseLibraryRequest, parseProblemReport, SubmissionError } from '../catalog-store/requests.js';
 import { PublicV2ValidationError, parseHoldingsCheck, parseHoldingsLookup, parseHoldingsSearch } from './validation.js';
 
@@ -76,6 +77,16 @@ export function appAnswer(answer, book, libraryId) {
   return 'unknown';
 }
 
+// Why an answer is "unknown" or "unconfirmed" (one of outcome.js REASONS), so
+// the app can say what happened: a timeout, a library that does not allow
+// outside checks, a catalog we cannot read yet, too many checks right now.
+// Never sent with "found" or "not found".
+export function answerReason(appValue, answer) {
+  if (appValue === 'unconfirmed') return 'unconfirmed';
+  if (appValue !== 'unknown') return undefined;
+  return REASONS.includes(answer?.reason) ? answer.reason : undefined;
+}
+
 // A promise-like value that starts its work the first time it is awaited.
 function lazyProfile(start) {
   let promise = null;
@@ -135,7 +146,7 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
     // Another library's catalog record is not read for this library: it
     // cannot be identified here without a request to that other catalog.
     if (parsed?.kind === 'catalog' && parsed.libraryId !== libraryId) {
-      res.json({ answer: 'unknown' });
+      res.json({ answer: 'unknown', reason: 'unsupported' });
       usage({ kind: 'book_check', libraryId, bookKey, outcome: 'unknown', durationMs: now() - startedAt });
       return undefined;
     }
@@ -154,13 +165,20 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
       const recordUrl = answer === 'found' && library.capabilities?.catalogLink && found?.catalogLinkKind === 'record'
         ? onCatalogOrigin(found.catalogUrl, library, entry) : undefined;
       const catalogUrl = recordUrl || safeCatalogUrl(handoff?.catalogUrl);
-      res.json({ answer, ...(catalogUrl ? { catalogUrl, catalogLinkKind: recordUrl ? 'record' : handoff.catalogLinkKind } : {}) });
+      const reason = answerReason(answer, found);
+      res.json({ answer, ...(reason ? { reason } : {}), ...(catalogUrl ? { catalogUrl, catalogLinkKind: recordUrl ? 'record' : handoff.catalogLinkKind } : {}) });
       usage({ kind: 'book_check', libraryId, bookKey, outcome: answer, ...(source ? { source } : {}), durationMs: now() - startedAt });
     };
     const stored = await lookup.storedFor({ library: entry, book });
-    if (stored) return reply(appAnswer(stored, book, libraryId), 'stored', stored);
-    // Metadata unavailable and nothing in the key to check by: couldn't check.
-    if (!library.capabilities?.publicAvailability || (metadataFailed && !book.isbn13 && !book.recordId)) return reply('unknown', null);
+    if (stored) {
+      try { lookup.noteStored?.({ library: entry, book, answer: stored, durationMs: now() - startedAt }); } catch { /* The log never alters a response. */ }
+      return reply(appAnswer(stored, book, libraryId), 'stored', stored);
+    }
+    // A library whose catalog the app cannot read.
+    if (!library.capabilities?.publicAvailability) return reply('unknown', null, { reason: 'unsupported' });
+    // Metadata unavailable and nothing in the key to check by: couldn't check
+    // (the book's details, not the library's catalog, failed: no reason given).
+    if (metadataFailed && !book.isbn13 && !book.recordId) return reply('unknown', null);
     const controller = new AbortController();
     const abandon = () => { if (!res.writableEnded) controller.abort(); };
     res.on('close', abandon);

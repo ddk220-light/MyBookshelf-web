@@ -69,7 +69,16 @@ export function distinctRecords(records) {
     distinct.set(record.recordId, previous ? { ...previous,
       observation: aggregateObservations([previous.observation, record.observation]) } : record);
   }
-  return [...distinct.values()].slice(0, 10);
+  const values = [...distinct.values()];
+  // Rows beyond the first ten were not read: mark the search as having more.
+  return values.length > 10 ? markHasMore(values.slice(0, 10), true) : values;
+}
+
+// Internal parser evidence like `searchComplete`: the catalog had rows we did
+// not read, so a search without a match is not evidence of absence.
+export function markHasMore(records, more) {
+  if (more) Object.defineProperty(records, 'hasMore', { value: true, configurable: true });
+  return records;
 }
 
 export function markSearchComplete(records, complete) {

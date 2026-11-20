@@ -393,7 +393,7 @@ export function createCatalogLookup({
       recorder.record({ entry, platform: routeResult?.platformName || platformName, host: routeResult?.host || host,
         book: ownRecord ? { ...book, recordId: parsed?.recordId, recordLibraryId: entry.id } : book,
         profile, answer, kind: 'book', durationMs: now() - startedAt, requests: result.requests || 0,
-        live: !result.notCatalogFailure && (routeResult?.live ?? true) });
+        live: !result.notCatalogFailure && (routeResult?.live ?? true), lookupKind: result.lookupKind || lookupKind, afterReply: Boolean(flight.afterReply) });
       const out = { ...result, answer, durationMs: now() - startedAt, requests: result.requests || 0 };
       flight.settle(out);
       return out;
@@ -457,6 +457,7 @@ export function createCatalogLookup({
     }
     // The reader is answered now; the same check finishes in the background,
     // within its own deadline and request cap, and records what it finds.
+    flight.afterReply = true;
     defer(() => work.catch(() => {}));
     const error = due === 'left' ? coded('Catalog check was cancelled', 'CATALOG_ABORTED') : coded('Catalog check deadline exceeded', 'CATALOG_TIMEOUT');
     return { error, lookupKind, answer: couldntCheckFor(error), durationMs: now() - startedAt, requests: 0, continuing: true };
@@ -486,6 +487,14 @@ export function createCatalogLookup({
     return storedAnswer(await recorder.readAnswers(libraryId, identities), askedIdentity(libraryId, book, editionScope));
   }
 
+  // The log line for a reader answered from the store (record.js).
+  function noteStored({ library: entry, book = {}, answer, durationMs = 0 }) {
+    try {
+      const { platformName, host } = settings(entry);
+      recorder.logStored?.({ entry, platform: platformName, host, book, answer, durationMs });
+    } catch { /* A log line never alters a lookup. */ }
+  }
+
   // `storedChecked`: the caller already read the stored answer (storedFor).
   // `background`: a check still running at its deadline finishes after the
   // answer and stores what it finds (checkBook); the book page sets it.
@@ -496,7 +505,10 @@ export function createCatalogLookup({
     const libraryId = entry?.id || entry?.slug;
     const own = book.recordId && (!book.recordLibraryId || book.recordLibraryId === libraryId);
     const stored = storedChecked ? null : await storedFor({ library: entry, book, editionScope });
-    if (stored) return { ...stored, requests: 0, durationMs: now() - startedAt, source: 'stored' };
+    if (stored) {
+      noteStored({ library: entry, book, answer: stored, durationMs: now() - startedAt });
+      return { ...stored, requests: 0, durationMs: now() - startedAt, source: 'stored' };
+    }
     const isbn13 = validateAndNormalize(book.isbn13 || '');
     const parsed = own ? { kind: 'catalog', libraryId, recordId: book.recordId } : parsePublicBookKey(book.bookKey || '');
     // A provider whose record IDs are reverified title/author identities
@@ -805,7 +817,7 @@ export function createCatalogLookup({
     }
   }
 
-  return Object.freeze({ lookupBook, storedFor, markResults, checkBook, readRecord,
+  return Object.freeze({ lookupBook, storedFor, noteStored, markResults, checkBook, readRecord,
     enabledFor: entry => lookupV2Enabled(entry, env) });
 }
 

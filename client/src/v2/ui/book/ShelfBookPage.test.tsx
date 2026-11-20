@@ -85,6 +85,32 @@ describe('one-shelf book page', () => {
     expect(await screen.findByText(label, { selector: '[role="status"]' })).toBeInTheDocument();
   });
 
+  it('says why a check could not answer, and offers Try again only when it could help', async () => {
+    stubApi({ check: () => Promise.resolve(json({ answer: 'unknown', reason: 'blocked' })) });
+    seed({ libraryId: LIBRARY.id });
+    renderBook();
+    let group = await screen.findByRole('group', { name: 'Couldn’t check right now' });
+    expect(within(group).getByText('This library does not allow outside checks of its catalog. This does not mean the book is missing.')).toBeInTheDocument();
+    expect(within(group).queryByText(/did not answer in time/)).not.toBeInTheDocument();
+    expect(within(group).queryByRole('button', { name: 'Try again' })).not.toBeInTheDocument();
+    cleanup(); vi.unstubAllGlobals(); localStorage.clear();
+
+    stubApi({ check: () => Promise.resolve(json({ answer: 'unknown', reason: 'busy' })) });
+    seed({ libraryId: LIBRARY.id });
+    renderBook();
+    group = await screen.findByRole('group', { name: 'Couldn’t check right now' });
+    expect(within(group).getByText('Too many checks right now. Try again in a minute.')).toBeInTheDocument();
+    expect(within(group).getByRole('button', { name: 'Try again' })).toBeInTheDocument();
+    cleanup(); vi.unstubAllGlobals(); localStorage.clear();
+
+    // A reason the app does not know, or one sent with a definite answer, is ignored.
+    stubApi({ check: () => Promise.resolve(json({ answer: 'unknown', reason: 'mystery' })) });
+    seed({ libraryId: LIBRARY.id });
+    renderBook();
+    group = await screen.findByRole('group', { name: 'Couldn’t check right now' });
+    expect(within(group).getByText('We couldn’t check the library’s catalog this time. This does not mean the book is missing.')).toBeInTheDocument();
+  });
+
   it('shows Checking while the library looks, then the answer', async () => {
     let answer!: (response: Response) => void;
     stubApi({ check: () => new Promise(resolve => { answer = resolve; }) });

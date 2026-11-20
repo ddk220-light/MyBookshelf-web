@@ -325,3 +325,37 @@ test('the best proven match is shared through progress, and nothing more is aske
   assert.equal(progress.best.catalogUrl, 'https://catalog.example/record/1');
   assert.equal(isbnAsked, false, 'no ISBN request after the proven record');
 });
+
+import { absenceRisk, relatedRow, transliterationRisk } from './libraryBookSearch.js';
+
+test('absence is provable only with ISBNs, an answered title search, no related rows and a Latin-script title', async () => {
+  const english = { book: { isbn13: '9788173711466', title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'] }, isbns: ['9788173711466'],
+    titles: ['Wings of Fire'], authors: ['A. P. J. Abdul Kalam'], language: 'eng', complete: true };
+  const summary = { partial: false, editionsComplete: true, titleSearches: 1, relatedTitles: 0 };
+  assert.equal(absenceRisk(summary, english), null);
+  assert.equal(absenceRisk({ ...summary, partial: true }, english), 'partial');
+  assert.equal(absenceRisk(summary, { ...english, isbns: [] }), 'no_isbns');
+  assert.equal(absenceRisk({ ...summary, titleSearches: 0 }, english), 'no_title_search');
+  assert.equal(absenceRisk({ ...summary, relatedTitles: 1 }, english), 'related_titles');
+  // Godaan (Hindi, romanised), a Devanagari title, and a work whose language is not known.
+  assert.equal(transliterationRisk({ ...english, language: 'hin', titles: ['Godaan'] }), true);
+  assert.equal(transliterationRisk({ ...english, titles: ['Wings of Fire', 'अग्नि की उड़ान'] }), true);
+  assert.equal(transliterationRisk({ ...english, language: '' }), true);
+  assert.equal(transliterationRisk({ ...english, language: 'fre', titles: ['Les Misérables'] }), false);
+  // Rows: a volume of a set is related; the same title by another author is not; a matching row is not "related".
+  const ponniyin = { ...english, book: { title: 'Ponniyin Selvan' }, titles: ['Ponniyin Selvan'], authors: ['Kalki'], isbns: ['9788184931723'] };
+  assert.equal(relatedRow({ title: 'Ponniyin Selvan Part 1', authors: ['Kalki Krishnamurthy'] }, ponniyin), true);
+  assert.equal(relatedRow({ title: 'Ponniyin Selvan, vol. 2' }, ponniyin), true);
+  assert.equal(relatedRow({ title: 'Wings of Fire', authors: ['Tui T. Sutherland'] }, english), false);
+  assert.equal(relatedRow({ title: 'Wings of Fire', authors: ['Kalam'], isbn: '9788173711466' }, english), false);
+  assert.equal(relatedRow({ title: 'Firewings' }, english), false);
+
+  // End to end: a title search answered with nothing, every ISBN not listed.
+  const provider = { checkAvailability: async () => ({ outcome: 'not_found', matchKind: 'none', recognizedExact: true }), searchCatalog: async () => [] };
+  const done = await searchLibraryBook(provider, english, { timeoutMs: 1_000 });
+  assert.equal(done.outcome, 'no_match');
+  assert.equal(done.searchSummary.absenceProvable, true);
+  const godaan = await searchLibraryBook(provider, { ...english, book: { title: 'Godaan', authors: ['Premchand'] }, isbns: [], titles: ['Godaan'], authors: ['Premchand'], language: 'hin' }, { timeoutMs: 1_000 });
+  assert.equal(godaan.outcome, 'no_match');
+  assert.deepEqual([godaan.searchSummary.absenceProvable, godaan.searchSummary.absenceRisk], [false, 'no_isbns']);
+});

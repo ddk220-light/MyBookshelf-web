@@ -2,7 +2,7 @@ import test, { afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { parseLibmanSearch, parseLibmanRecord, searchCatalog, resolveCatalogRecord, checkAvailability } from './libman.js';
-import { clearHttpCache } from './http.js';
+import { clearHttpCache, withCatalogOperation } from './http.js';
 
 const fixture = name => JSON.parse(fs.readFileSync(new URL(`../../test/fixtures/libman/${name}.json`, import.meta.url), 'utf8'));
 const library = { name: 'Arka Jain University Library', baseUrl: 'https://libcloud.mastersofterp.in/OPAC_V3', libmanLibraryId: '22', catalogUrl: 'https://libcloud.mastersofterp.in/OPAC_V3/?library=Arka+Jain+University+Library' };
@@ -146,16 +146,35 @@ test('LIBMAN guessed global record IDs cannot show another tenant’s book', asy
   await assert.rejects(searchCatalog({ ...library, baseUrl: 'https://example.com/OPAC_V3' }, 'Wings'));
 });
 
-test('LIBMAN equivalent ISBN fallback validates record ISBN before claiming an exact match', async () => {
+test('LIBMAN ISBN search uses the shared digits, plain and hyphenated, and validates the record ISBN before an exact match', async () => {
   const queries = [];
   global.fetch = async url => {
     const u = new URL(url); const q = u.searchParams.get('SearchText');
     if (q) queries.push(q);
-    return response(url, url.includes('GetBookDetails') ? fixture('record-known') : q === '9780670082834' ? 0 : fixture('search-known'));
+    // A library that stores hyphenated ISBNs: only the hyphenated digits match.
+    return response(url, url.includes('GetBookDetails') ? { ...fixture('record-known'), ISBN: '978-0-670-08283-4' } : q === '067008283' ? 0 : fixture('search-known'));
   };
   const result = await checkAvailability(library, '9780670082834');
   assert.equal(result.matchKind, 'exact_isbn'); assert.equal(result.outcome, 'available');
-  assert.deepEqual(queries, ['9780670082834', '067008283X']);
+  assert.deepEqual(queries, ['067008283', '0-670-08283']);
+  // The ISBN-10 form of the same edition is answered from the same searches.
+  assert.equal((await checkAvailability(library, '067008283X')).outcome, 'available');
+  assert.deepEqual(queries, ['067008283', '0-670-08283']);
+});
+
+test('LIBMAN reads every ISBN in a record field and stops at the first record that shows the asked one', async () => {
+  const details = [];
+  global.fetch = async url => {
+    const u = new URL(url);
+    if (url.includes('GetBookDetails')) {
+      details.push(u.searchParams.get('TitleNo'));
+      return response(url, { ...fixture('record-known'), TITLENO: Number(u.searchParams.get('TitleNo')), ISBN: '81-7371-146-1, 9780670082834' });
+    }
+    return response(url, [...fixture('search-known'), { ...fixture('search-known')[0], TitleNo: 999 }]);
+  };
+  const result = await checkAvailability(library, '9780670082834');
+  assert.equal(result.outcome, 'available');
+  assert.deepEqual(details, ['5568736']);
 });
 
 test('LIBMAN successful equivalent-ISBN zero queries are not-found; blocked responses remain errors', async () => {
@@ -206,4 +225,32 @@ test('LIBMAN title fallback checks later exact-ISBN candidates before declaring 
   };
   const result = await checkAvailability(library, '9780670082834', 'A BETTER INDIA A BETTER WORLD');
   assert.equal(result.outcome, 'available'); assert.equal(result.matchKind, 'exact_isbn'); assert.equal(result.availableCopies, 1);
+});
+
+test('LIBMAN title rows get their record ISBNs, so a row can prove the edition (tenant 522, Wings of Fire)', async () => {
+  const selected = { ...library, name: 'Library 522', libmanLibraryId: '522' };
+  const details = [];
+  global.fetch = async url => {
+    const u = new URL(url);
+    if (url.includes('GetBookDetails')) {
+      const id = u.searchParams.get('TitleNo'); details.push(id);
+      return response(url, id === '6351991' ? fixture('record-wings-522-6351991') : { ...fixture('record-wings-522-6348715'), TITLENO: Number(id) });
+    }
+    return response(url, fixture('search-wings-522'));
+  };
+  const rows = await searchCatalog(selected, 'Wings of Fire');
+  assert.equal(rows.length, 4);
+  assert.deepEqual(details, ['6348715', '6351991', '6353099'], 'three rows of the searched title at most');
+  assert.equal(rows.find(row => row.recordId === '6351991').isbn, '9788173711466');
+  assert.equal(rows.find(row => row.recordId === '6348715').isbn, null);
+  assert.equal(rows.find(row => row.recordId === '6353100').isbn, null, 'not read: past the three-row limit');
+  assert.ok(rows.every(row => row.observation.outcome === 'in_catalog'));
+});
+
+test('LIBMAN row details stop when the request budget runs out, and the rows still come back', async () => {
+  const selected = { ...library, libmanLibraryId: '522' };
+  global.fetch = async url => response(url, url.includes('GetBookDetails') ? fixture('record-wings-522-6351991') : fixture('search-wings-522'));
+  const rows = await withCatalogOperation({ maxRequests: 1 }, () => searchCatalog(selected, 'Wings of Fire'));
+  assert.equal(rows.length, 4);
+  assert.ok(rows.every(row => row.isbn === null));
 });

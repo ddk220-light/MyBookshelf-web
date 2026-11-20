@@ -102,7 +102,8 @@ function mockIndcatSearch(choose) {
     else if (options.method === 'POST') {
       const params = new URLSearchParams(options.body);
       assert.equal(params.get('part_uni'), library.indcatInstitutionCode);
-      assert.equal(params.get('field'), 'isbn');
+      assert.equal(params.get('field'), 'allfields');
+      assert.equal(params.get('opt'), 'free');
       queries.push(params.get('title'));
       body = choose(params.get('title'));
     } else body = '<input name="part_uni" value="ABHA_783384"><input name="csrf_test_name" value="fixture_anonymous_token">';
@@ -111,19 +112,19 @@ function mockIndcatSearch(choose) {
   return queries;
 }
 const indcatEmpty = '<input name="part_uni" value="ABHA_783384"><p>Total 0 Records found</p>';
-test('IndCat equivalent ISBN fallback proves the returned edition and institution', async () => {
-  const queries = mockIndcatSearch(q => q === '8120350677' ? searchHtml() : indcatEmpty);
+test('IndCat searches both ISBN forms at once and proves the returned edition and institution', async () => {
+  const queries = mockIndcatSearch(q => q.split(' ').includes('8120350677') ? searchHtml() : indcatEmpty);
   const result = await checkIndcat(library, '9788120350670');
   assert.equal(result.outcome, 'in_catalog');
   assert.equal(result.matchKind, 'exact_isbn');
-  assert.deepEqual(queries, ['9788120350670', '8120350677']);
+  assert.deepEqual(queries, ['9788120350670 8120350677']);
 });
 test('IndCat complete equivalent-ISBN zero searches are no-match, never a connection error', async () => {
   const queries = mockIndcatSearch(() => indcatEmpty);
   const result = await checkIndcat(library, '9788173711466');
   assert.equal(result.outcome, 'not_found');
   assert.equal(result.matchKind, 'none');
-  assert.equal(queries.length, 4);
+  assert.deepEqual(queries, ['9788173711466 8173711461']);
   assert.equal(result.availableCopies, undefined);
 });
 test('IndCat query hits with a different record ISBN cannot become no-match or availability', async () => {

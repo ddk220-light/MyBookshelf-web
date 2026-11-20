@@ -6,8 +6,6 @@ import isbnRanges from './egranthalaya-isbn-ranges.json' with { type: 'json' };
 
 const ORIGIN = 'https://eg4.nic.in';
 const TIMEOUT_MS = 100_000;
-const MEMBER_PROBE_MS = 15_000;
-const MAX_MEMBER_PROBE_MS = 35_000;
 const MAX_RESPONSE_BYTES = 4 * 1024 * 1024;
 // Search rows let a book open when its record page comes back empty. They hold
 // only the row's own bibliographic fields, keyed by member and record ID.
@@ -119,7 +117,13 @@ export function hyphenatedIsbn(value) {
   return null;
 }
 
-export function searchForm(html, { libraryCode, query, clusterSearch = false }) {
+// `field` is the catalog's own "search in" choice: TITLE (the page's default)
+// or ALL. `boolean` is LIKE (phrase) or OR (any of the words).
+const SEARCH_FIELDS = new Set(['TITLE', 'ALL']);
+const SEARCH_BOOLEANS = new Set(['LIKE', 'OR']);
+
+export function searchForm(html, { libraryCode, query, clusterSearch = false, field = 'ALL', boolean = 'LIKE' }) {
+  if (!SEARCH_FIELDS.has(field) || !SEARCH_BOOLEANS.has(boolean)) return null;
   if (!/^[A-Z0-9_]{1,32}$/.test(libraryCode || '')) return null;
   const markup = withoutScripts(html);
   const form = markup.match(/<form\b([^>]*)>([\s\S]*?)<\/form\s*>/i);
@@ -145,7 +149,8 @@ export function searchForm(html, { libraryCode, query, clusterSearch = false }) 
   if (!hasSearchButton || !fields.get('__VIEWSTATE') || !fields.has('txt_Search')
       || !libraries?.options.some((option) => option.value === libraryCode)
       || (clusterSearch && !libraries.options.some((option) => option.value === 'All Libraries'))
-      || !selectedOption(form[2], 'DDL_Field')?.options.some((option) => option.value === 'ALL')) return null;
+      || !selectedOption(form[2], 'DDL_Field')?.options.some((option) => option.value === field)
+      || !selectedOption(form[2], 'DDL_Boolean')?.options.some((option) => option.value === boolean)) return null;
   // Replay only anonymous search. Cluster mode is the current cluster only;
   // the separate cross-cluster union search and member login stay unused.
   for (const name of ['txtMemberNo', 'txtPassword', 'txt_captcha']) fields.set(name, '');
@@ -155,11 +160,20 @@ export function searchForm(html, { libraryCode, query, clusterSearch = false }) 
   fields.set('__EVENTTARGET', '');
   fields.set('__EVENTARGUMENT', '');
   for (const [name, value] of Object.entries({
-    DDL_Materials: 'Books', txt_Search: query, DDL_Field: 'ALL', DDL_Boolean: 'LIKE',
+    DDL_Materials: 'Books', txt_Search: query, DDL_Field: field, DDL_Boolean: boolean,
     DDL_OrderBy: 'TITLE', DDL_SortBy: 'ASC', DDL_Pages: '20', DDL_Library: clusterSearch ? 'All Libraries' : libraryCode,
     Basic_Search_Bttn: 'Search',
   })) fields.set(name, value);
   return fields;
+}
+
+// The result count of a search page for this member, or null when the page is
+// not a recognized search result for exactly this member.
+function searchCount(html, libraryCode) {
+  const markup = withoutScripts(html);
+  if (selectedOption(markup, 'DDL_Library')?.selected !== libraryCode) return null;
+  const count = spanById(markup, 'Label37')?.match(/^Your Search Returned\s+(\d+)\s+Record\(s\)$/i);
+  return count ? Number(count[1]) : null;
 }
 
 function isbnInLabel(label, isbn) {
@@ -382,14 +396,10 @@ function requireResponse(response, expectedPath) {
   if (url.origin !== ORIGIN || url.pathname !== expectedPath) throw providerError('CATALOG_UNRECOGNIZED', 'e-Granthalaya returned an unexpected page');
 }
 
-// One anonymous eG4 session per catalog check (plan A2, step 2). Each step of
-// a check (member ISBN search, cluster search, title search, record reads)
-// used to fetch the home page again for a new session. Within one catalog
-// operation the first home page and its session cookie are now reused: every
-// step still starts its form from that home page, as before, but it costs no
-// further request. Sessions belong to one operation only, never shared across
-// readers or checks; outside an operation each step opens its own, as before.
-// The request cap and spacing are the operation's and are unchanged.
+// Record pages need an anonymous session from the member's own page. Within
+// one catalog operation the first such page and its session cookie are reused
+// by later record reads; sessions belong to one operation only, never shared
+// across readers or checks. Searches need no session (memberSearch).
 const sessions = new WeakMap();
 
 function checkScope() {
@@ -418,105 +428,150 @@ function openSession(url, options) {
   return opening;
 }
 
-// Drops this check's session for `url`, so the next step opens a fresh one.
-// eG4 (ASP.NET) runs one request at a time per server session: a step that
-// failed or was abandoned may still be running there, and a later step on the
-// same session would queue behind it. Only the session that step used is
-// dropped: if a later step has already opened a fresh one, it stays.
-function forgetSession(url, used) {
-  if (!used) return;
-  const byUrl = sessions.get(checkScope());
-  if (byUrl?.get(url) === used) byUrl.delete(url);
-}
-
-// A step that throws leaves its session unusable for the rest of the check,
-// except when the member search simply did not confirm the ISBN
-// (CATALOG_PARTIAL_RESULTS): every request of that step has answered, so the
-// cluster fallback reuses the session instead of paying for another home
-// page against the check's request cap. `step.used` is the session the step
-// opened (set only when this call ran the step itself).
-function sessionTask(url, task, step = {}) {
+// A step that throws drops the session it used, so the next step opens a fresh
+// one: eG4 (ASP.NET) runs one request at a time per server session, and a
+// failed or abandoned request may still be running there.
+function sessionTask(url, task) {
   return async () => {
-    const open = options => (step.used = openSession(url, options));
-    const forget = () => forgetSession(url, step.used);
-    try { return await task({ open, forget }); }
+    let used = null;
+    try { return await task({ open: options => (used = openSession(url, options)) }); }
     catch (error) {
-      if (error?.code !== 'CATALOG_PARTIAL_RESULTS') forget();
+      const byUrl = used && sessions.get(checkScope());
+      if (byUrl?.get(url) === used) byUrl.delete(url);
       throw error;
     }
   };
 }
 
+// The member's public search form, kept for a few minutes (plan: e-Granthalaya
+// speed, 19 November 2026). It is the anonymous page every visitor gets: the
+// hidden page state and the member's controls, never a session cookie, a
+// member login or a reader's search. Each search posts it without a cookie,
+// so the server gives that search a fresh anonymous session of its own.
+// Fetching this page took 1.2 to 28 s per check (median about 3 s); a POST
+// built from a page fetched 15 minutes earlier was answered normally. When a
+// kept form stops working (the server rejects or ignores its page state), it
+// is dropped and fetched once more within the same search.
+const FORM_TTL_MS = 10 * 60_000;
+const formGenerations = new Map();
+
+function formKey(url) {
+  return `egranthalaya:form:${url}:${formGenerations.get(url) || 0}`;
+}
+
+function dropForm(url) {
+  formGenerations.set(url, (formGenerations.get(url) || 0) + 1);
+  if (formGenerations.size > 5_000) formGenerations.clear();
+}
+
+// Only the form's own fields are kept: no cookie, no page text.
+function formFrom(html, libraryCode) {
+  const markup = withoutScripts(html);
+  const fields = searchForm(markup, { libraryCode, query: '' });
+  if (!fields) throw providerError('CATALOG_UNRECOGNIZED', 'e-Granthalaya public search form is incomplete');
+  return { body: fields.toString(), fields: selectedOption(markup, 'DDL_Field').options.map(option => option.value),
+    booleans: selectedOption(markup, 'DDL_Boolean').options.map(option => option.value) };
+}
+
+async function memberForm(url, libraryCode, options) {
+  let fetched = false;
+  const form = await cachedTask(formKey(url), async () => {
+    fetched = true;
+    blocked();
+    const home = await getText(url, options);
+    requireResponse(home, '/OPAC/Default.aspx');
+    return formFrom(home.text, libraryCode);
+  }, { ttlMs: FORM_TTL_MS, deadlineAt: options.deadlineAt });
+  return { ...form, fetched };
+}
+
+// One anonymous search of this member's catalog. Returns the result page,
+// which `searchCount` has recognized as this member's result. `page` is a
+// member page this step has just read, used as the form instead of the kept one.
+async function memberSearch(url, libraryCode, { query, field, boolean = 'LIKE' }, options, page = null) {
+  for (let attempt = 0; ; attempt++) {
+    const form = page ? { ...formFrom(page, libraryCode), fetched: true } : await memberForm(url, libraryCode, options);
+    if (!form.fields.includes(field) || !form.booleans.includes(boolean)) throw providerError('CATALOG_UNRECOGNIZED', 'e-Granthalaya search options changed');
+    const body = new URLSearchParams(form.body);
+    for (const [name, value] of Object.entries({ txt_Search: query, DDL_Field: field, DDL_Boolean: boolean })) body.set(name, value);
+    blocked();
+    const response = await getText(url, { ...options, method: 'POST', body: body.toString(),
+      headers: { Referer: url, 'Content-Type': 'application/x-www-form-urlencoded' } });
+    if (BLOCKED_STATUSES.has(response.status)) requireResponse(response, '/OPAC/Default.aspx');
+    let samePage = false;
+    try { const at = new URL(response.url); samePage = at.origin === ORIGIN && at.pathname === '/OPAC/Default.aspx'; } catch { /* not recognized */ }
+    if (response.ok && samePage && searchCount(response.text, libraryCode) !== null) return response.text;
+    // A kept form the server no longer accepts: fetch the page once more.
+    if (attempt === 0 && !form.fetched) { dropForm(url); continue; }
+    requireResponse(response, '/OPAC/Default.aspx');
+    throw providerError('CATALOG_UNRECOGNIZED', 'e-Granthalaya search scope or result markup was not recognized');
+  }
+}
+
+// Title searches of this member made within one check. A member's ISBN
+// search (ALL) covers only the records the member catalogued itself: on 19
+// November 2026 SITAPUR's ISBN search for 817371146 returned 0, while its
+// TITLE search returned two shared records it holds, each showing ISBN
+// 9788173711466 (see titleSearch). An ISBN zero therefore says "not found"
+// only within a check that also searched this member by title (a work
+// check); alone (an exact edition check) it stays unconfirmed.
+const titleSearches = new WeakMap();
+
+function noteTitleSearch(promise) {
+  const scope = checkScope();
+  if (!scope) return promise;
+  let entry = titleSearches.get(scope);
+  if (!entry) titleSearches.set(scope, entry = { pending: new Set(), completed: 0 });
+  entry.pending.add(promise);
+  promise.then(() => { entry.completed += 1; }, () => {}).finally(() => entry.pending.delete(promise));
+  return promise;
+}
+
+async function checkSearchedTitles() {
+  const entry = titleSearches.get(checkScope());
+  if (!entry) return false;
+  while (!entry.completed && entry.pending.size) await Promise.allSettled([...entry.pending]);
+  return entry.completed > 0;
+}
+
+function searchOptions(deadlineAt) {
+  return { deadlineAt, maxResponseBytes: MAX_RESPONSE_BYTES, redirect: 'manual', retries: 0 };
+}
+
+// One member search with both spellings of the ISBN's shared digits (plain
+// and, where the ISBN ranges give one, hyphenated: eG4 indexes stored
+// punctuation literally), as one OR search. Every returned row must still
+// show the full, valid ISBN. Copy details are not read: the app answers
+// found / not found, and record pages often come back empty.
 export async function checkAvailability(library, value) {
   const isbn = validateAndNormalize(value);
   if (!isbn) throw providerError('CATALOG_EXACT_ISBN_REQUIRED', 'e-Granthalaya availability requires a valid ISBN');
   const { url, libraryCode } = configuration(library);
   blocked();
-  if (library.egranthalayaSearchScope === 'cluster') {
-    const deadlineAt = Date.now() + TIMEOUT_MS;
-    // A measured slow member may need longer than the default probe. This
-    // never extends the app's outer deadline and still leaves cluster fallback.
-    const memberProbeMs = Number.isFinite(library.egranthalayaMemberProbeMs)
-      ? Math.max(MEMBER_PROBE_MS, Math.min(MAX_MEMBER_PROBE_MS, library.egranthalayaMemberProbeMs)) : MEMBER_PROBE_MS;
-    const sharedQueriesCompleted = isbnQueries(isbn, library).every(query =>
-      peekCachedTask(`egranthalaya:cluster-variant:${library.egranthalayaCluster}:${isbn}:${query}`) !== undefined);
-    let memberNoMatch = false;
-    const memberStep = {};
-    try {
-      const member = await checkMemberAvailability(library, isbn, { url, libraryCode, step: memberStep,
-        deadlineAt: Math.min(deadlineAt, Date.now() + (sharedQueriesCompleted ? TIMEOUT_MS : memberProbeMs)) });
-      if (member.outcome !== 'not_found') return member;
-      memberNoMatch = true;
-    } catch (error) {
-      const timedOut = error.name === 'AbortError' || error.code === 'CATALOG_TIMEOUT';
-      if ((error.code !== 'CATALOG_PARTIAL_RESULTS' && !timedOut) || Date.now() >= deadlineAt - 1000) throw error;
-      // The abandoned member search may still hold its server session (its
-      // probe deadline can pass before its own request ends): the fallback
-      // opens a fresh session rather than queue behind it.
-      if (timedOut) forgetSession(url, memberStep.used);
-    }
-    // Member searches can omit shared bibliographic records even when this
-    // member owns accessioned copies. Never expose their zero in isolation.
-    return checkClusterAvailability(library, isbn, { deadlineAt, stopForMember: true, confirmAbsence: memberNoMatch });
-  }
-  // Some eG4 clusters index punctuation literally. One clean-zero fallback
-  // covers the observed plain ISBN-13 records without widening the library.
-  const queries = [...new Set([hyphenatedIsbn(isbn) || isbn, isbn])];
   const deadlineAt = Date.now() + TIMEOUT_MS;
-  const key = `availability:egranthalaya:${library.egranthalayaCluster}:${libraryCode}:${isbn}`;
-  return cachedTask(key, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, sessionTask(url, async ({ open }) => {
-    blocked();
-    const options = { deadlineAt, maxResponseBytes: MAX_RESPONSE_BYTES, redirect: 'manual', retries: 0 };
-    const session = await open(options);
-    let page = session.home;
-    let cookie = session.cookie;
-    let record;
-    for (const query of queries) {
-      const fields = searchForm(page, { libraryCode, query });
-      if (!fields || !cookie) throw providerError('CATALOG_UNRECOGNIZED', 'e-Granthalaya public search form is incomplete');
-      blocked();
-      const search = await getText(url, {
-        ...options, method: 'POST', headers: { Cookie: cookie, Referer: url, 'Content-Type': 'application/x-www-form-urlencoded' }, body: fields.toString(),
-      });
-      requireResponse(search, '/OPAC/Default.aspx');
-      cookie = session.cookie = sessionCookie(search.headers, cookie);
-      record = parseSearch(search.text, { isbn, libraryCode });
-      if (!record) throw providerError('CATALOG_UNRECOGNIZED', 'e-Granthalaya search scope or result markup was not recognized');
-      if (record.kind !== 'empty') break;
-      // Reuse the fresh anonymous form state and the same deadline/session.
-      // A zero search result remains unknown; it never proves book absence.
-      page = search.text;
-    }
-    if (record?.kind !== 'record') throw providerError('CATALOG_UNRECOGNIZED', 'The public catalog did not prove an exact ISBN match');
-    const detail = await readRecordPage(record.recordId, { url, cookie, options });
-    session.cookie = detail.cookie;
-    const result = parseHoldings(detail.html, {
-      isbn, libraryCode, libraryName: library.name, recordId: record.recordId,
-      referenceOnly: library.egranthalayaReferenceOnly === true, format: record.format,
-    });
-    if (!result) throw providerError('CATALOG_UNRECOGNIZED', 'e-Granthalaya did not prove this library’s exact ISBN availability');
-    return result;
-  }), { deadlineAt }), { deadlineAt });
+  const key = `availability:egranthalaya:member:${library.egranthalayaCluster}:${libraryCode}:${isbn}`;
+  // Only the parsed result is kept (record IDs and format), never pages.
+  const result = await cachedTask(key, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, async () => {
+    const queries = isbnQueries(isbn);
+    const html = await memberSearch(url, libraryCode,
+      { query: queries.join(' '), field: 'ALL', boolean: queries.length > 1 ? 'OR' : 'LIKE' }, searchOptions(deadlineAt));
+    const parsed = parseSearch(html, { isbn, libraryCode, multipleRecords: true });
+    if (!parsed) throw providerError('CATALOG_UNRECOGNIZED', 'e-Granthalaya search scope or result markup was not recognized');
+    return parsed;
+  }, { deadlineAt }), { deadlineAt, ttlMs: 5 * 60_000 });
+  blocked();
+  if (result.kind === 'records') {
+    const format = result.records[0]?.format || 'Book';
+    return {
+      outcome: 'in_catalog', matchKind: 'exact_isbn', recognizedExact: true,
+      format: library.egranthalayaReferenceOnly === true ? `${format} (reference use only)` : format,
+      locations: [{ name: library.name, status: 'unknown' }],
+    };
+  }
+  if (result.kind === 'empty' && await checkSearchedTitles()) return { outcome: 'not_found', matchKind: 'none', recognizedExact: true };
+  // Rows that matched the digits without showing this ISBN, or a zero with no
+  // title search beside it: neither proves the book is or is not there.
+  throw providerError('CATALOG_QUERY_UNSUPPORTED', 'This member’s ISBN search alone cannot show that a book is absent');
 }
 
 // An ISBN-13 beginning 978 and its ISBN-10 equivalent share these nine
@@ -545,7 +600,7 @@ function parseCatalogSearchRows(html, libraryCode) {
       ...(copies ? { totalCopies: Number(copies[1]) } : {}) });
   }
   if (Number(count[1]) && !books.length) throw providerError('CATALOG_UNRECOGNIZED', 'Catalog records missing');
-  return books.slice(0, 20);
+  return Object.assign(books.slice(0, 20), { total: Number(count[1]) });
 }
 
 export function parseCatalogSearch(html, libraryCode) {
@@ -558,14 +613,21 @@ function rowAuthor(value) {
   return cleanAuthor(String(value || '').replace(/^By\s+/i, '').replace(/(?<!(?:^|[\s.])\p{Lu})\.+$/u, ''));
 }
 
-// Title/author discovery uses the chosen member's public ALL/LIKE form.
-// Record IDs remain tied to that member and are rechecked on opening a book.
-export async function searchCatalog(library, query) {
+const queryKey = value => String(value || '').normalize('NFC').toLocaleLowerCase().replace(/\s+/g, ' ').trim();
+
+// A member's two searches index different records (19 November 2026, both
+// with "Wings of Fire" as a LIKE phrase):
+//   - TITLE (the page's default) finds the records the member holds copies
+//     of, shared ones included: SITAPUR's two shared records 451490 and 79083
+//     (ISBN 9788173711466), which its ALL search did not return;
+//   - ALL finds the records the member catalogued itself: SRS Jammu's record
+//     31499 (same ISBN), which its TITLE search did not return.
+// A title search is therefore both, with rows merged by record ID (TITLE rows
+// first), and the main-title retry on a clean zero.
+function titleSearch(library, query) {
   const { url, libraryCode } = configuration(library), deadlineAt = Date.now() + TIMEOUT_MS;
-  return cachedTask(`egranthalaya:search:${library.egranthalayaCluster}:${libraryCode}:${query}`, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, sessionTask(url, async ({ open }) => {
+  return cachedTask(`egranthalaya:search:${library.egranthalayaCluster}:${libraryCode}:${queryKey(query)}`, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, async () => {
     blocked();
-    const options = { deadlineAt, maxResponseBytes: MAX_RESPONSE_BYTES, redirect: 'manual', retries: 0 };
-    const session = await open(options);
     // eG displays title, subtitle and parallel title together, but its LIKE
     // search indexes those fields separately. Retry a clean zero once with
     // the main title; keep record IDs and member scope as the evidence.
@@ -573,23 +635,46 @@ export async function searchCatalog(library, query) {
     const mainTitleLength = mainTitle.match(/[\p{L}\p{N}\p{M}]/gu)?.length || 0;
     if (String(query || '').includes(':') && mainTitle !== query && mainTitleLength >= 3
         && /[\p{L}\p{N}]/u.test(mainTitle)) queries.push(mainTitle);
-    let page = session.home, cookie = session.cookie, books = [];
+    let books = [], hasMore = false;
     for (const term of queries) {
-      const fields = searchForm(page, { libraryCode, query: term });
-      if (!fields || !cookie) throw providerError('CATALOG_UNRECOGNIZED', 'Catalog search form changed');
-      blocked();
-      const response = await getText(url, { ...options, method: 'POST', body: fields.toString(),
-        headers: { Cookie: cookie, Referer: url, 'Content-Type': 'application/x-www-form-urlencoded' } });
-      requireResponse(response, '/OPAC/Default.aspx');
-      books = parseCatalogSearch(response.text, libraryCode);
+      const byId = new Map();
+      hasMore = false;
+      for (const field of ['TITLE', 'ALL']) {
+        const rows = parseCatalogSearchRows(await memberSearch(url, libraryCode, { query: term, field }, searchOptions(deadlineAt)), libraryCode);
+        hasMore ||= rows.total > rows.length;
+        for (const row of rows) if (!byId.has(row.recordId)) byId.set(row.recordId, row);
+      }
+      books = [...byId.values()];
       if (books.length) break;
-      page = response.text;
-      cookie = session.cookie = sessionCookie(response.headers, cookie);
     }
     // This member-scoped search confirms each row's record in this library.
     for (const book of books) await cachedTask(searchRowKey(library, libraryCode, book.recordId), () => book, { ttlMs: SEARCH_ROW_TTL_MS });
-    return books;
-  }), { deadlineAt }), { deadlineAt });
+    return { books, hasMore };
+  }, { deadlineAt }), { deadlineAt, ttlMs: 5 * 60_000 });
+}
+
+// Title discovery and the title half of a book check (see titleSearch).
+// Every row is a record this member's own search returned, so it carries the
+// member's catalog presence (copy status unknown): a row that also shows one
+// of a work's ISBNs proves that edition without opening its record page,
+// which often comes back empty. Up to twenty rows from each search (one
+// result page); `hasMore` when the catalog has more.
+export async function searchCatalog(library, query) {
+  const { books, hasMore } = await noteTitleSearch(titleSearch(library, query));
+  const rows = books.map(book => ({ ...book, observation: { outcome: 'in_catalog', matchKind: 'verified_work', recognizedExact: true,
+    ...(book.totalCopies > 0 ? { totalCopies: book.totalCopies } : {}),
+    ...(library.egranthalayaReferenceOnly === true ? { format: 'Book (reference use only)' } : {}),
+    locations: [{ name: library.name, status: 'unknown' }] } }));
+  return hasMore ? Object.assign(rows, { hasMore: true }) : rows;
+}
+
+// Title-first candidates for a book check ({ title, author } from the work's
+// edition profile): one member title search for the main title (the part
+// before a subtitle). Rows are searchCatalog's, with this member's presence.
+export async function searchBookCandidates(library, { title } = {}) {
+  const main = String(title || '').split(/\s+\/\s+/)[0].split(/\s*:\s*/)[0].trim();
+  if (!/[\p{L}\p{N}]/u.test(main)) throw providerError('CATALOG_QUERY_UNSUPPORTED', 'A title is needed to search this catalog');
+  return searchCatalog(library, main.slice(0, 160));
 }
 
 export async function resolveCatalogRecord(library, recordId) {
@@ -597,7 +682,8 @@ export async function resolveCatalogRecord(library, recordId) {
   const { url, libraryCode } = configuration(library), deadlineAt = Date.now() + TIMEOUT_MS;
   return cachedTask(`egranthalaya:record:${library.egranthalayaCluster}:${libraryCode}:${recordId}`, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, sessionTask(url, async ({ open }) => {
     blocked();
-    const options = { deadlineAt, maxResponseBytes: MAX_RESPONSE_BYTES, redirect: 'manual', retries: 0 };
+    const options = searchOptions(deadlineAt);
+    // A record page needs an anonymous session from the member's own page.
     const session = await open(options);
     const cookie = session.cookie;
     if (!cookie || !selectedOption(session.home, 'DDL_Library')?.options.some(o => o.value === libraryCode)) throw providerError('CATALOG_UNRECOGNIZED', 'Unknown catalog member');
@@ -621,25 +707,21 @@ export async function resolveCatalogRecord(library, recordId) {
     if (!title) throw providerError('CATALOG_UNRECOGNIZED', 'Missing record title');
     if (!own?.length) {
       // Some public records have no accessioned copy. Confirm membership with
-      // a fresh member-scoped title search before reporting catalog presence.
-      // Plain normalized ISBNs can miss a hyphen-indexed member, and a first
-      // title word can bury this record beyond the first page. The main title
-      // uses the same field boundary as the public title-search recovery.
+      // a member-scoped title search before reporting catalog presence. The
+      // main title uses the same field boundary as the title-search recovery.
       const mainTitle = (title.split(':')[0].trim() || title).slice(0, 160);
       // A broad main title may fill the page with other records. Retain the
       // exact ISBN confirmation for those cases, within the same deadline.
-      const queries = [...new Set([mainTitle, firstIsbn(spanById(html, 'Lbl_ISBN'))].filter(Boolean))];
-      let confirmationPage = session.home, confirmationCookie = page.cookie, confirmed = false;
-      for (const query of queries) {
-        const fields = searchForm(confirmationPage, { libraryCode, query });
-        if (!fields) throw providerError('CATALOG_UNRECOGNIZED', 'Catalog search form changed');
-        blocked();
-        const confirmation = await getText(url, { ...options, method: 'POST', body: fields.toString(),
-          headers: { Cookie: confirmationCookie, Referer: url, 'Content-Type': 'application/x-www-form-urlencoded' } });
-        requireResponse(confirmation, '/OPAC/Default.aspx');
-        if (parseCatalogSearchRows(confirmation.text, libraryCode).some(book => book.recordId === recordId)) { confirmed = true; break; }
-        confirmationPage = confirmation.text;
-        confirmationCookie = session.cookie = sessionCookie(confirmation.headers, confirmationCookie);
+      const isbn = firstIsbn(spanById(html, 'Lbl_ISBN'));
+      const searches = [{ query: mainTitle, field: 'TITLE' }];
+      if (isbn) {
+        const queries = isbnQueries(isbn);
+        searches.push({ query: queries.join(' '), field: 'ALL', boolean: queries.length > 1 ? 'OR' : 'LIKE' });
+      }
+      let confirmed = false;
+      for (const search of searches) {
+        const confirmation = await memberSearch(url, libraryCode, search, options, session.home);
+        if (parseCatalogSearchRows(confirmation, libraryCode).some(book => book.recordId === recordId)) { confirmed = true; break; }
       }
       if (!confirmed) throw providerError('CATALOG_UNRECOGNIZED', 'Catalog did not confirm this member’s record');
     }
@@ -650,195 +732,12 @@ export async function resolveCatalogRecord(library, recordId) {
   }), { deadlineAt }), { deadlineAt });
 }
 
-function isbnQueries(isbn, library) {
+// The ISBN's shared digits in its plain and hyphenated spellings (see
+// clusterIsbnQuery and hyphenatedIsbn).
+function isbnQueries(isbn) {
   const hyphenated = hyphenatedIsbn(isbn);
-  const queries = [...new Set([clusterIsbnQuery(isbn), hyphenated &&
+  return [...new Set([clusterIsbnQuery(isbn), hyphenated &&
     (isbn.startsWith('978') ? hyphenated.slice(4, -2) : hyphenated)].filter(Boolean))];
-  // Some member indexes retain ISBN punctuation. Prefer their known
-  // spelling without dropping the other variant or widening member scope.
-  return library?.egranthalayaHyphenatedIsbnFirst === true ? queries.reverse() : queries;
-}
-
-function memberObservation(library, results) {
-  const locations = new Map();
-  for (const result of results) for (const location of result.locations || []) {
-    const value = { name: location.name, status: location.status === 'available' ? 'available' : 'unknown' };
-    if (!locations.has(value.name) || value.status === 'available') locations.set(value.name, value);
-  }
-  return {
-    outcome: results.some(result => result.outcome === 'available') ? 'available' : 'in_catalog',
-    matchKind: 'exact_isbn', recognizedExact: true,
-    ...(results[0]?.callNumber ? { callNumber: results[0].callNumber } : {}),
-    ...(results[0]?.format ? { format: results[0].format } : {}),
-    locations: locations.size ? [...locations.values()] : [{ name: library.name, status: 'unknown' }],
-  };
-}
-
-// A selected member's form is much smaller than the cluster-wide form, and its
-// search directly proves catalog membership even if no accessioned copies are
-// exposed. Never project another member's holdings onto this library.
-async function checkMemberAvailability(library, isbn, { url, libraryCode, deadlineAt, step }) {
-  const key = `availability:egranthalaya:member:${library.egranthalayaCluster}:${libraryCode}:${isbn}`;
-  return cachedTask(key, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, sessionTask(url, async ({ open }) => {
-    blocked();
-    // Leave time to return an already confirmed catalog match after a slow detail.
-    const options = { deadlineAt: deadlineAt - 1000, maxResponseBytes: MAX_RESPONSE_BYTES, redirect: 'manual', retries: 0 };
-    const session = await open(options);
-    let page = session.home, cookie = session.cookie, allEmpty = true;
-    for (const query of isbnQueries(isbn, library)) {
-      const parsed = await cachedTask(`${key}:empty-variant:${query}`, async () => {
-        const fields = searchForm(page, { libraryCode, query });
-        if (!fields || !cookie) throw providerError('CATALOG_UNRECOGNIZED', 'e-Granthalaya public member form is incomplete');
-        blocked();
-        const search = await getText(url, { ...options, method: 'POST', body: fields.toString(),
-          headers: { Cookie: cookie, Referer: url, 'Content-Type': 'application/x-www-form-urlencoded' } });
-        requireResponse(search, '/OPAC/Default.aspx');
-        page = search.text;
-        cookie = session.cookie = sessionCookie(search.headers, cookie);
-        const result = parseSearch(page, { isbn, libraryCode, multipleRecords: true });
-        if (!result) throw providerError('CATALOG_UNRECOGNIZED', 'e-Granthalaya member search scope or markup changed');
-        return result;
-      }, { deadlineAt: options.deadlineAt, ttlMs: 5 * 60_000, shouldCache: result => result.kind === 'empty' });
-      // Cache only completed zero observations, never forms or sessions. If the
-      // alternate spelling times out, a reader retry spends its own bounded
-      // budget on the unfinished spelling instead of repeating the first one.
-      allEmpty &&= parsed.kind === 'empty';
-      if (parsed.kind !== 'records') continue;
-      const results = [];
-      for (const record of parsed.records) {
-        try {
-          const detail = await readRecordPage(record.recordId, { url, cookie, options });
-          cookie = session.cookie = detail.cookie;
-          const result = parseHoldings(detail.html, { isbn, recordId: record.recordId, libraryCode, libraryName: library.name,
-            referenceOnly: library.egranthalayaReferenceOnly === true, format: record.format });
-          if (result) results.push(result);
-          if (result?.outcome === 'available') return memberObservation(library, results);
-        } catch (error) {
-          if (error.code === 'CATALOG_PROVIDER_BLOCKED') throw error;
-          // The scoped search already proved the exact record, but a failed
-          // detail cannot supply copy counts or borrowing status.
-          if (Date.now() >= options.deadlineAt) break;
-        }
-      }
-      // Do not wait for alternate spellings after proving this member's match.
-      // These bounded reads never claim exhaustive counts or none available.
-      return memberObservation(library, results);
-    }
-    if (allEmpty) return { outcome: 'not_found', matchKind: 'none', recognizedExact: true };
-    throw providerError('CATALOG_PARTIAL_RESULTS', 'Member search did not confirm the requested ISBN');
-  }, step), { deadlineAt }), { deadlineAt, ttlMs: 5 * 60_000 });
-}
-
-// Inspect shared records when the member index cannot confirm the ISBN. Batch
-// diagnostics can disable the early return to collect evidence for more members.
-export async function checkClusterAvailability(library, value, { deadlineAt = Date.now() + TIMEOUT_MS, stopForMember = false, confirmAbsence = false } = {}) {
-  const isbn = validateAndNormalize(value);
-  if (!isbn) throw providerError('CATALOG_EXACT_ISBN_REQUIRED', 'e-Granthalaya availability requires a valid ISBN');
-  const config = configuration(library), libraryCode = config.libraryCode;
-  // Open the smaller member landing page, then explicitly search All Libraries.
-  // Live controls confirm the POST still exposes shared holdings of other members.
-  const url = config.url;
-  blocked();
-  // Cache only sanitized bibliographic/holding fields. Switching libraries for
-  // the same book reuses this reader-triggered cluster request, never sessions,
-  // raw HTML, borrower details, or speculative searches.
-  const key = `availability:egranthalaya:cluster:${library.egranthalayaCluster}:${isbn}${stopForMember ? `:member:${libraryCode}` : ''}`;
-  const observation = await cachedTask(key, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, sessionTask(url, async ({ open, forget }) => {
-    blocked();
-    const options = { deadlineAt: deadlineAt - 1000, maxResponseBytes: MAX_RESPONSE_BYTES, redirect: 'manual', retries: 0 };
-    const session = await open(options);
-    let page = session.home, cookie = session.cookie;
-    const libraryCodes = selectedOption(session.home, 'DDL_Library')?.options
-      .map((option) => option.value).filter((code) => /^[A-Z0-9_]{1,32}$/.test(code)) || [];
-    // Search the shared title digits in both plain and assigned-hyphen forms.
-    // Each term covers equivalent 10/13-digit forms; record ISBNs still prove identity.
-    const queries = isbnQueries(isbn, library);
-    const records = [], seen = new Set(), unreadable = new Set();
-    let allEmpty = true, partial = false;
-    for (const query of queries) {
-      try {
-        const variantKey = `egranthalaya:cluster-variant:${library.egranthalayaCluster}:${isbn}:${query}`;
-        const variant = await cachedTask(variantKey, async () => {
-          const fields = searchForm(page, { libraryCode, query, clusterSearch: true });
-          if (!fields || !cookie) throw providerError('CATALOG_UNRECOGNIZED', 'e-Granthalaya public cluster search form is incomplete');
-          blocked();
-          const search = await getText(url, {
-            ...options, method: 'POST', headers: { Cookie: cookie, Referer: url, 'Content-Type': 'application/x-www-form-urlencoded' }, body: fields.toString(),
-          });
-          requireResponse(search, '/OPAC/Default.aspx');
-          page = search.text;
-          cookie = session.cookie = sessionCookie(search.headers, cookie);
-          const parsed = parseSearch(search.text, { isbn, libraryCode, clusterSearch: true });
-          if (!parsed) throw providerError('CATALOG_UNRECOGNIZED', 'The public cluster search markup was not recognized');
-          const value = { records: [], allEmpty: parsed.kind === 'empty', partial: parsed.kind === 'unconfirmed' || parsed.partial === true };
-          for (const record of parsed.records || []) {
-            if (unreadable.has(record.recordId)) { value.partial = true; continue; }
-            const evidence = await cachedTask(`egranthalaya:cluster-detail:${library.egranthalayaCluster}:${isbn}:${record.recordId}`, async () => {
-              const detail = await readRecordPage(record.recordId, { url, cookie, options });
-              cookie = session.cookie = detail.cookie;
-              return parseHoldingEvidence(detail.html, { isbn, recordId: record.recordId });
-            }, { deadlineAt: options.deadlineAt, ttlMs: 5 * 60_000, shouldCache: Boolean });
-            if (!evidence) { unreadable.add(record.recordId); value.partial = true; continue; }
-            value.partial ||= !evidence.complete;
-            value.records.push({ evidence, format: record.format, recordId: record.recordId });
-            if (stopForMember && evidence.holdings.some(row => row.libraryCode === libraryCode && row.status === 'available')) {
-              return { ...value, partial: true, stoppedForMember: true };
-            }
-          }
-          return value;
-        }, { deadlineAt: options.deadlineAt, ttlMs: 5 * 60_000,
-          shouldCache: value => !value.stoppedForMember && (value.allEmpty || value.records.length > 0) });
-        allEmpty &&= variant.allEmpty;
-        partial ||= variant.partial;
-        for (const record of variant.records) {
-          if (!seen.has(record.recordId)) { seen.add(record.recordId); records.push(record); }
-        }
-        if (stopForMember && records.some(record => record.evidence.holdings.some(row => row.libraryCode === libraryCode))) {
-          return { libraryCodes, records, allEmpty: false, partial: true };
-        }
-      } catch (error) {
-        // A later slow or changed page must not erase an already verified holding.
-        // Access refusals still invalidate the shared origin immediately.
-        if (!records.length || error.code === 'CATALOG_PROVIDER_BLOCKED') throw error;
-        forget();
-        partial = true;
-        break;
-      }
-    }
-    return { libraryCodes, records, allEmpty, partial };
-  }), { deadlineAt }), { deadlineAt, ttlMs: 5 * 60_000,
-    shouldCache: value => !value.partial || (stopForMember && value.records.some(record => record.evidence.holdings.some(row => row.libraryCode === libraryCode))) });
-  blocked();
-  if (!observation.libraryCodes.includes(libraryCode)) throw providerError('CATALOG_UNRECOGNIZED', 'The library code was not in this public cluster');
-  const results = observation.records.map(({ evidence, format }) => scopedHoldingResult(evidence, {
-    libraryCode, libraryName: library.name, referenceOnly: library.egranthalayaReferenceOnly === true, format,
-  })).filter(Boolean);
-  const available = results.filter((result) => result.outcome === 'available');
-  // Plain and hyphenated ISBNs are indexed separately. Positive exact holding
-  // evidence is useful, but these bounded searches cannot prove exhaustive
-  // counts across unqueried spellings. A no-match assertion below requires
-  // both variants and every returned exact-record holdings page to be complete.
-  if (!results.length) {
-    if (observation.allEmpty && !observation.partial) return { outcome: 'not_found', matchKind: 'none', recognizedExact: true };
-    if (confirmAbsence && observation.records.length && !observation.partial) {
-      return { outcome: 'not_found', matchKind: 'none', recognizedExact: true };
-    }
-    throw providerError(observation.partial ? 'CATALOG_PARTIAL_RESULTS' : 'CATALOG_HOLDING_UNCONFIRMED',
-      'The public cluster did not confirm this library’s exact ISBN holding');
-  }
-  const locations = new Map();
-  for (const result of results) for (const location of result.locations) {
-    // This partial-punctuation search cannot prove that a shelf has no other
-    // available copy, even when one returned item there is issued.
-    const scopedLocation = { ...location, status: location.status === 'available' ? 'available' : 'unknown' };
-    const previous = locations.get(location.name);
-    if (!previous || scopedLocation.status === 'available') locations.set(location.name, scopedLocation);
-  }
-  return {
-    outcome: available.length ? 'available' : 'in_catalog', matchKind: 'exact_isbn', recognizedExact: true,
-    ...(results[0].callNumber ? { callNumber: results[0].callNumber } : {}),
-    format: results[0].format, locations: [...locations.values()],
-  };
 }
 
 // Refusals disable this shared origin until process restart/operator action.

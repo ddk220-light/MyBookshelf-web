@@ -1,12 +1,17 @@
-import ISBN from 'isbn3';
 import { cachedTask, getJson } from './http.js';
 import { catalogError, decode, firstIsbn, text } from './catalogMarkup.js';
 import { validateAndNormalize } from '../isbn.js';
+import { hyphenatedIsbn } from './egranthalaya.js';
 
 const BASE = 'https://libcloud.mastersofterp.in/OPAC_V3';
 const ID = /^[1-9]\d{0,19}$/;
 const MAX_BOOKS = 10;
-const MAX_DETAILS = 6;
+const MAX_DETAILS = 3;
+// Title-search rows carry no ISBN (19 November 2026: TitleNo, Title, AuthName,
+// Publisher, Edition, CallNo, ... and no ISBN field), so a row alone can never
+// prove an edition. The record's own details have it: the rows whose main
+// title is the one searched for are read, a few per search, to add it.
+const MAX_ROW_DETAILS = 3;
 const DEADLINE_MS = 45_000;
 const count = value => value != null && Number.isInteger(Number(value)) && Number(value) >= 0 ? Number(value) : undefined;
 // The API sometimes double-escapes entities. Detail metadata is sanitized both
@@ -15,6 +20,24 @@ const count = value => value != null && Number.isInteger(Number(value)) && Numbe
 const clean = value => decode(text(value)).replace(/^(?:N\/A|null|-)$/i, '');
 const titleKey = value => clean(value).split(/\s*[:/]\s*/)[0].toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
 const fullTitleKey = value => clean(value).toLocaleLowerCase().replace(/[^\p{L}\p{M}\p{N}]+/gu, ' ').trim();
+
+// Every valid ISBN in a record's ISBN field ("978-81-203-4389-4", "81-7648-019-3",
+// "9788173711466", several separated by commas or slashes, or "---").
+function allIsbns(value) {
+  return [...new Set((text(value).match(/\b(?:97[89](?:[\s-]*\d){10}|\d(?:[\s-]*\d){8}[\s-]*[\dXx])\b/g) || [])
+    .map(validateAndNormalize).filter(Boolean))];
+}
+
+// The ISBN search matches any part of the stored ISBN text, which libraries
+// store plain or hyphenated. The 9 digits an ISBN-13 starting 978 shares with
+// its ISBN-10 find both plain forms; the same digits hyphenated by the
+// official ranges ("81-7371-146") find both hyphenated forms. Each hit is
+// checked against the record's full ISBN before it counts.
+function isbnSearchTerms(isbn) {
+  const stem = isbn.startsWith('978') ? isbn.slice(3, -1) : isbn;
+  const hyphenated = hyphenatedIsbn(isbn);
+  return [...new Set([stem, hyphenated && (isbn.startsWith('978') ? hyphenated.slice(4, -2) : hyphenated)].filter(Boolean))];
+}
 
 function settings(library) {
   const base = String(library.baseUrl || BASE).replace(/\/+$/, '');
@@ -74,7 +97,8 @@ async function search(library, query, type, deadlineAt) {
   const read = value => {
     const url = new URL(`${base}/GetBookSearchData/`);
     for (const [key, item] of Object.entries({ SearchCriteria: type, SearchText: value, Libraryid: tenant, SERIESCODE: '', BOOKCATEGORY: '' })) url.searchParams.set(key, item);
-    return cachedTask(`libman:search:${tenant}:${type}:${value}`, async () => parseLibmanSearch(await readJson(url.toString(), deadlineAt)), { deadlineAt });
+    return cachedTask(`libman:search:${tenant}:${type}:${value.toLocaleLowerCase()}`, async () => parseLibmanSearch(await readJson(url.toString(), deadlineAt)),
+      { deadlineAt, ttlMs: 5 * 60_000 });
   };
   const result = await read(q);
   if (type !== 'TITLE' || result.total > 0 || hasCombiningMarks) return result;
@@ -96,7 +120,7 @@ function selectedDetail(json, recordId, tenant) {
     if (json[field] != null && String(json[field]) !== tenant) throw catalogError('LIBMAN returned a different library');
   }
   return {
-    TITLENO: recordId, TITLENAME: clean(json.TITLENAME), ISBN: firstIsbn(json.ISBN), AUTHORNAME: clean(json.AUTHORNAME),
+    TITLENO: recordId, TITLENAME: clean(json.TITLENAME), ISBN: firstIsbn(json.ISBN), ISBNS: allIsbns(json.ISBN), AUTHORNAME: clean(json.AUTHORNAME),
     CALLNO: clean(json.CALLNO), DOCUMENTTYPE: clean(json.DOCUMENTTYPE), ItemType: clean(json.ItemType),
     TOTAL_COPIES: count(json.TOTAL_COPIES),
     IIDropDownList: Array.isArray(json.IIDropDownList) ? json.IIDropDownList.map(row => ({
@@ -111,7 +135,8 @@ async function detail(library, recordId, deadlineAt) {
   const url = new URL(`${base}/GetBookDetails`);
   url.searchParams.set('TitleNo', recordId);
   url.searchParams.set('LibId', tenant);
-  return cachedTask(`libman:detail:${tenant}:${recordId}`, async () => selectedDetail(await readJson(url.toString(), deadlineAt), recordId, tenant), { deadlineAt });
+  return cachedTask(`libman:detail:${tenant}:${recordId}`, async () => selectedDetail(await readJson(url.toString(), deadlineAt), recordId, tenant),
+    { deadlineAt, ttlMs: 5 * 60_000 });
 }
 
 export function parseLibmanRecord(json, library, recordId, { confirmedMemberRecord = false, matchKind = 'verified_work' } = {}) {
@@ -142,15 +167,37 @@ export function parseLibmanRecord(json, library, recordId, { confirmedMemberReco
     observation.availableCopies = available;
     Object.assign(observation.locations[0], { availableCopies: available, totalCopies: total });
   }
-  return { recordId: String(recordId), title: value.TITLENAME, isbn: value.ISBN, authors: value.AUTHORNAME ? [value.AUTHORNAME] : [], observation };
+  return { recordId: String(recordId), title: value.TITLENAME, isbn: value.ISBN, ...(value.ISBNS?.length > 1 ? { isbns: value.ISBNS } : {}),
+    authors: value.AUTHORNAME ? [value.AUTHORNAME] : [], observation };
 }
 
+const outOfBudget = error => ['CATALOG_REQUEST_BUDGET', 'CATALOG_ABORTED'].includes(error?.code) || error?.name === 'AbortError';
+
+// Rows come from this tenant's own search, so each is a record of this library
+// (copy status unknown). The rows whose main title is the one searched for get
+// their record's ISBNs, so a row can prove an edition; a row still without an
+// ISBN is at most a possible match. Reading details stops when the request
+// budget or deadline runs out (result marking allows one search and a few
+// reads): the rows are returned with what was read.
 export async function searchCatalog(library, query) {
   const deadlineAt = Date.now() + DEADLINE_MS;
   const result = await search(library, query, 'TITLE', deadlineAt);
-  return result.records.slice(0, MAX_BOOKS).map(book => ({ ...book, observation: {
+  const rows = result.records.slice(0, MAX_BOOKS).map(book => ({ ...book, observation: {
     outcome: 'in_catalog', matchKind: 'verified_work', recognizedExact: true, catalogUrl: publicUrl(library), catalogLinkKind: 'search',
   } }));
+  const wanted = titleKey(query);
+  let read = 0;
+  for (const row of rows) {
+    if (row.isbn || !wanted || titleKey(row.title) !== wanted || read >= MAX_ROW_DETAILS) continue;
+    read += 1;
+    try {
+      const value = await detail(library, row.recordId, deadlineAt);
+      if (value.ISBNS.length) Object.assign(row, { isbn: value.ISBNS[0], ...(value.ISBNS.length > 1 ? { isbns: value.ISBNS } : {}) });
+    } catch (error) {
+      if (outOfBudget(error)) break;
+    }
+  }
+  return rows;
 }
 
 export async function resolveCatalogRecord(library, recordId) {
@@ -159,7 +206,7 @@ export async function resolveCatalogRecord(library, recordId) {
   // The tenant query is re-run after cache expiry; a guessed global TitleNo is not ownership proof.
   let confirmed = false;
   if (value.ISBN) {
-    for (const variant of [...new Set([value.ISBN, ISBN.parse(value.ISBN)?.isbn10].filter(Boolean))]) {
+    for (const variant of isbnSearchTerms(value.ISBN)) {
       const result = await search(library, variant, 'ISBN', deadlineAt);
       if (result.records.some(row => row.recordId === String(recordId))) { confirmed = true; break; }
     }
@@ -186,6 +233,9 @@ function aggregate(books, incomplete) {
   return result;
 }
 
+// One or two ISBN searches (isbnSearchTerms), then the records they return,
+// until one shows this ISBN. Both searches answering with nothing is "not
+// found"; hits that do not show it, or that could not be read, are not.
 export async function checkAvailability(library, isbn, title, author) {
   settings(library);
   const deadlineAt = Date.now() + DEADLINE_MS;
@@ -193,29 +243,29 @@ export async function checkAvailability(library, isbn, title, author) {
   let exactSearchComplete = Boolean(normalized);
   let sawExactHits = false;
   const candidates = new Map();
-  let incomplete = false;
   if (normalized) {
-    const variants = [...new Set([normalized, ISBN.parse(normalized)?.isbn10].filter(Boolean))];
-    for (const variant of variants) {
+    for (const term of isbnSearchTerms(normalized)) {
       try {
-        const result = await search(library, variant, 'ISBN', deadlineAt);
+        const result = await search(library, term, 'ISBN', deadlineAt);
         sawExactHits ||= result.total > 0;
         for (const record of result.records) candidates.set(record.recordId, record);
       } catch (error) {
         if (!candidates.size) throw error;
-        exactSearchComplete = false; incomplete = true;
+        exactSearchComplete = false;
       }
     }
-    incomplete ||= candidates.size > MAX_DETAILS;
-    const books = [];
     for (const record of [...candidates.values()].slice(0, MAX_DETAILS)) {
       try {
         const value = await detail(library, record.recordId, deadlineAt);
-        if (value.ISBN !== normalized) { incomplete = true; continue; }
-        books.push(parseLibmanRecord(value, library, record.recordId, { confirmedMemberRecord: true, matchKind: 'exact_isbn' }));
-      } catch { incomplete = true; }
+        // The app answers found / not found: the first record that shows this
+        // ISBN is enough, and no further copy details are read.
+        if (value.ISBNS.includes(normalized)) {
+          return aggregate([parseLibmanRecord(value, library, record.recordId, { confirmedMemberRecord: true, matchKind: 'exact_isbn' })], true);
+        }
+      } catch (error) {
+        if (error?.code === 'CATALOG_PROVIDER_BLOCKED' || outOfBudget(error)) throw error;
+      }
     }
-    if (books.length) return aggregate(books, incomplete);
   }
   if (titleKey(title)) {
     const result = await search(library, title, 'TITLE', deadlineAt);
@@ -225,7 +275,7 @@ export async function checkAvailability(library, isbn, title, author) {
     for (const row of matches.slice(0, 2)) {
       try {
         const value = await detail(library, row.recordId, deadlineAt);
-        if (normalized && value.ISBN === normalized) exactBooks.push(parseLibmanRecord(value, library, row.recordId, { confirmedMemberRecord: true, matchKind: 'exact_isbn' }));
+        if (normalized && value.ISBNS.includes(normalized)) exactBooks.push(parseLibmanRecord(value, library, row.recordId, { confirmedMemberRecord: true, matchKind: 'exact_isbn' }));
         else if (!value.ISBN) partial = true;
       } catch { partial = true; }
     }

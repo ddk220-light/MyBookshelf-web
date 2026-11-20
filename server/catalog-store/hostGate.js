@@ -1,21 +1,39 @@
 // Per-host request pacing across readers (plan 5.4, "Across instances").
 //
 // Each catalog request asks the gate for a slot on its host before it is
-// sent. A slot respects two limits:
-//   - spacing: at least `spacingMs` between requests to the host from any
-//     reader (a robots Crawl-delay, e.g. Visakhapatnam's 20 s, or the
-//     platform's own spacing);
-//   - perMinute: at most this many requests to the host per clock minute.
-// The gate waits for the slot, or throws CATALOG_HOST_BUSY when the slot is
-// past the caller's deadline. A busy host is our own pacing, not a catalog
-// failure: it neither opens the circuit nor counts in the health record.
+// sent. Slots are paced at an even rate, never in clock-minute windows:
+//   - interval: the larger of `spacingMs` (a robots Crawl-delay, e.g.
+//     Visakhapatnam's 20 s, or the platform's own spacing) and
+//     60 s / `perMinute`;
+//   - burst: a host with no fixed spacing may take a few requests (HOST_BURST)
+//     back to back before the even rate applies, so one check is not slowed
+//     while the host is otherwise quiet. A host with a fixed spacing never
+//     bursts: every request keeps that spacing.
+// Over any minute a host therefore gets at most `perMinute` requests plus the
+// burst. This is a "generic cell rate" schedule: the host keeps one time, the
+// next request's theoretical slot, and each reservation moves it on by one
+// interval.
 //
-// The database gate (host_request_slots, host_request_windows) holds across
-// function instances. Each call has a 300 ms timeout and fails open to this
-// instance's memory gate, so a slow or missing store never blocks a lookup
-// (plan section 9, item 12).
+// Why not clock-minute windows (the first version): with 10 requests a minute
+// and checks of 4 to 6 requests, a reader's third check in a minute found the
+// window full and the next slot at the start of the next minute, up to 60 s
+// away, past the check's 20 s deadline, and was refused at once ("busy") with
+// no request sent. An even rate keeps the next slot one interval away, so a
+// check waits a second or two for its turn instead.
+//
+// The gate waits for the slot, or throws CATALOG_HOST_BUSY when the slot is
+// past the caller's deadline (many readers queued on one host). A busy host is
+// our own pacing, not a catalog failure: it neither opens the circuit nor
+// counts in the health record.
+//
+// The database gate (host_request_slots) holds across function instances.
+// Each call has a 300 ms timeout and fails open to this instance's memory
+// gate, so a slow or missing store never blocks a lookup (plan section 9,
+// item 12). The host_request_windows table of the first version is no longer
+// written; maintenance still clears it.
 
 const MINUTE = 60_000;
+export const HOST_BURST = 4;
 const busy = () => Object.assign(new Error('This catalog is busy; try again shortly'), { code: 'CATALOG_HOST_BUSY' });
 const aborted = () => Object.assign(new Error('Catalog check was cancelled'), { name: 'AbortError', code: 'CATALOG_ABORTED' });
 
@@ -29,31 +47,29 @@ function sleep(ms, signal) {
   });
 }
 
+// The pacing for one request: the interval between slots and how far ahead of
+// the schedule a slot may be taken (the burst allowance), both in ms.
+export function pacing({ spacingMs = 0, perMinute = 0 } = {}) {
+  const spacing = spacingMs > 0 ? spacingMs : 0;
+  const rate = perMinute > 0 ? Math.ceil(MINUTE / perMinute) : 0;
+  const intervalMs = Math.max(spacing, rate);
+  return { intervalMs, toleranceMs: spacing > 0 ? 0 : (HOST_BURST - 1) * intervalMs };
+}
+
 export function createMemoryHostGate({ now = () => Date.now(), wait = sleep, maxHosts = 5_000 } = {}) {
+  // host -> the next request's theoretical slot time
   const hosts = new Map();
-  function stateFor(host) {
-    let state = hosts.get(host);
-    if (!state) {
-      state = { nextAt: 0, windowStart: 0, count: 0 };
-      hosts.set(host, state);
-      if (hosts.size > maxHosts) hosts.delete(hosts.keys().next().value);
-    }
-    return state;
-  }
-  // Reserves the earliest slot that meets both limits and returns its time.
+  // Reserves the earliest slot the pacing allows and returns its time.
   function reserveSlot(host, { spacingMs = 0, perMinute = 0, deadlineAt = Infinity }) {
-    const state = stateFor(host);
-    let at = Math.max(now(), state.nextAt);
-    if (perMinute > 0) {
-      const window = Math.floor(at / MINUTE) * MINUTE;
-      if (window === state.windowStart && state.count >= perMinute) at = window + MINUTE;
-    }
-    if (at > deadlineAt) throw busy();
-    const window = Math.floor(at / MINUTE) * MINUTE;
-    if (window !== state.windowStart) { state.windowStart = window; state.count = 0; }
-    state.count += 1;
-    state.nextAt = spacingMs > 0 ? at + spacingMs : Math.max(state.nextAt, at);
-    return at;
+    const { intervalMs, toleranceMs } = pacing({ spacingMs, perMinute });
+    const at = now();
+    const next = hosts.get(host) ?? 0;
+    const slot = Math.max(at, next - toleranceMs);
+    if (slot > deadlineAt) throw busy();
+    hosts.delete(host);
+    hosts.set(host, Math.max(next, at) + intervalMs);
+    if (hosts.size > maxHosts) hosts.delete(hosts.keys().next().value);
+    return slot;
   }
   return Object.freeze({
     reserveSlot,
@@ -65,42 +81,25 @@ export function createMemoryHostGate({ now = () => Date.now(), wait = sleep, max
   });
 }
 
-// Slot spacing in one statement: the next free slot moves forward by the
-// spacing only when the slot is within the caller's deadline.
+// One statement: the host's next theoretical slot moves on by one interval,
+// only when the slot this request gets (that time less the burst allowance,
+// and never before now) is within the caller's deadline. $2 interval, $3 time
+// left before the deadline, $4 burst allowance, all in seconds.
 const SLOT = `INSERT INTO host_request_slots AS s (host, next_at) VALUES ($1, now() + make_interval(secs => $2))
   ON CONFLICT (host) DO UPDATE SET next_at = greatest(s.next_at, now()) + make_interval(secs => $2)
-  WHERE greatest(s.next_at, now()) <= now() + make_interval(secs => $3)
-  RETURNING (extract(epoch FROM s.next_at - make_interval(secs => $2)) * 1000)::bigint AS slot_ms,
+  WHERE greatest(s.next_at - make_interval(secs => $4), now()) <= now() + make_interval(secs => $3)
+  RETURNING (extract(epoch FROM greatest(s.next_at - make_interval(secs => $2) - make_interval(secs => $4), now())) * 1000)::bigint AS slot_ms,
     (extract(epoch FROM now()) * 1000)::bigint AS now_ms`;
-
-// Per-minute counter for the minute that holds the slot.
-const WINDOW = `INSERT INTO host_request_windows AS w (host, window_start, requests)
-  VALUES ($1, date_trunc('minute', to_timestamp($2::double precision / 1000), 'UTC'), 1)
-  ON CONFLICT (host, window_start) DO UPDATE SET requests = w.requests + 1 WHERE w.requests < $3
-  RETURNING requests`;
 
 export function createPgHostGate(db, { fallback = createMemoryHostGate(), now = () => Date.now(), wait = sleep, timeoutMs = 300 } = {}) {
   async function remote(host, { spacingMs = 0, perMinute = 0, deadlineAt = Infinity, signal }) {
     const remaining = Number.isFinite(deadlineAt) ? Math.max(0, deadlineAt - now()) : 3_600_000;
-    let slotAt = now();
-    let offset = 0; // database clock minus this instance's clock
-    if (spacingMs > 0) {
-      const { rows } = await db.query(SLOT, [host, spacingMs / 1000, remaining / 1000], { timeoutMs });
-      if (!rows.length) throw busy();
-      offset = Number(rows[0].now_ms) - now();
-      slotAt = Number(rows[0].slot_ms) - offset;
-    }
-    if (perMinute > 0) {
-      // Try the slot's minute, then the next one if it is within the deadline.
-      for (let attempt = 0; ; attempt += 1) {
-        const { rows } = await db.query(WINDOW, [host, slotAt + offset, perMinute], { timeoutMs });
-        if (rows.length) break;
-        const nextMinute = (Math.floor((slotAt + offset) / MINUTE) + 1) * MINUTE - offset;
-        if (attempt >= 1 || nextMinute > deadlineAt) throw busy();
-        slotAt = nextMinute;
-      }
-    }
-    await wait(slotAt - now(), signal);
+    const { intervalMs, toleranceMs } = pacing({ spacingMs, perMinute });
+    const { rows } = await db.query(SLOT, [host, intervalMs / 1000, remaining / 1000, toleranceMs / 1000], { timeoutMs });
+    if (!rows.length) throw busy();
+    // Database clock minus this instance's clock.
+    const offset = Number(rows[0].now_ms) - now();
+    await wait(Number(rows[0].slot_ms) - offset - now(), signal);
   }
   return Object.freeze({
     async reserve(host, options = {}) {

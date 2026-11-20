@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { identitiesFor, askedIdentity, storedAnswer, answerRows, createMemoryAnswerStore, createMemoryHealthRecord, createLookupRecorder,
-  flagState, ANSWER_TTL_MS } from './record.js';
+  flagState, ANSWER_TTL_MS, WORK_ABSENCE_RULE_SINCE } from './record.js';
 import { createRedactedTelemetrySink } from '../../public-v2/telemetry.js';
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -24,6 +24,16 @@ test('found from any identity; not found only from the identity that was asked',
   assert.equal(storedAnswer(isbnAbsent, asked), null);
   assert.deepEqual(storedAnswer(isbnAbsent, askedIdentity('lib', book, 'exact')), { outcome: 'not_found', evidence: 'isbn_not_listed' });
   assert.equal(storedAnswer([...isbnAbsent, { kind: 'ol_work', value: 'OL123W', answer: 'found', evidence: 'work_isbn' }], asked).outcome, 'found');
+});
+
+test('a work-level not found stored under the old rule is not read again', () => {
+  const asked = askedIdentity('lib', book, 'work');
+  const written = at => ({ kind: 'ol_work', value: 'OL123W', answer: 'not_found', evidence: 'work_no_match', expiresAt: at + ANSWER_TTL_MS });
+  assert.equal(storedAnswer([written(Date.parse('2026-11-19T15:00:00Z'))], asked), null);
+  assert.deepEqual(storedAnswer([written(WORK_ABSENCE_RULE_SINCE)], asked), { outcome: 'not_found', evidence: 'work_no_match' });
+  // ISBN answers were never affected.
+  const isbnRow = { kind: 'isbn13', value: '9788173711466', answer: 'not_found', evidence: 'isbn_not_listed', expiresAt: Date.parse('2026-11-19T15:00:00Z') + ANSWER_TTL_MS };
+  assert.deepEqual(storedAnswer([isbnRow], askedIdentity('lib', book, 'exact')), { outcome: 'not_found', evidence: 'isbn_not_listed' });
 });
 
 test('write rules follow plan 4.3 and nothing is written for couldn’t check', () => {

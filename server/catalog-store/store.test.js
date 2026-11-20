@@ -268,15 +268,58 @@ test('the host gate spaces requests across readers and caps them per minute', as
   assert.deepEqual(waits, [0, 20_000, 40_000]);
   // A slot past the deadline is refused (busy), not queued.
   await assert.rejects(gate.reserve('vpl.example', { spacingMs: 20_000, deadlineAt: clock + 45_000 }), { code: 'CATALOG_HOST_BUSY' });
-  // Per-minute cap: the fourth request in a minute waits for the next minute.
+  // Per-minute pacing: 3 a minute is one slot every 20 s, after a burst of
+  // four back to back. Never a wait for the next clock minute.
   waits.length = 0;
   clock = 120_000;
-  for (let i = 0; i < 4; i += 1) await gate.reserve('koha.example', { perMinute: 3, deadlineAt: clock + 70_000 });
-  assert.deepEqual(waits, [0, 0, 0, 60_000]);
+  for (let i = 0; i < 6; i += 1) await gate.reserve('koha.example', { perMinute: 3, deadlineAt: clock + 70_000 });
+  assert.deepEqual(waits, [0, 0, 0, 0, 20_000, 40_000]);
   await assert.rejects(gate.reserve('koha.example', { perMinute: 3, deadlineAt: clock + 1_000 }), { code: 'CATALOG_HOST_BUSY' });
+  // Time passing frees slots again.
+  waits.length = 0;
+  clock += 120_000;
+  await gate.reserve('koha.example', { perMinute: 3, deadlineAt: clock + 1_000 });
+  assert.deepEqual(waits, [0]);
   // Hosts are independent, and an unlimited host costs nothing.
   await gate.reserve('other.example', { perMinute: 3, deadlineAt: clock });
   await gate.reserve('free.example', {});
+});
+
+test('a reader checking ten books in a row at one library is paced, never refused', async () => {
+  // The 19 November run: discovery-academic:dlib-darshan answered two books,
+  // then refused seven in 53 ms each ("busy") because a clock-minute window of
+  // 10 requests was full and the next slot was past the 20 s deadline. Each
+  // check sends up to six requests, about one a second.
+  let clock = 0;
+  const gate = createMemoryHostGate({ now: () => clock, wait: async ms => { clock += Math.max(0, ms); } });
+  let longestWait = 0;
+  for (let book = 0; book < 10; book += 1) {
+    const deadlineAt = clock + 20_000;
+    for (let request = 0; request < 6; request += 1) {
+      const before = clock;
+      await gate.reserve('library.darshan.ac.in', { perMinute: 30, deadlineAt });
+      longestWait = Math.max(longestWait, clock - before);
+      clock += 1_000; // the catalog's answer
+    }
+    clock += 2_000; // the reader opens the next book
+  }
+  assert.ok(longestWait <= 2_000, `a request waited ${longestWait} ms`);
+});
+
+test('a fixed spacing never bursts, and a crowded host is refused only past the deadline', async () => {
+  let clock = 0;
+  const gate = createMemoryHostGate({ now: () => clock, wait: async () => {} });
+  assert.deepEqual([0, 1, 2].map(() => gate.reserveSlot('eg4.nic.in', { spacingMs: 1_000, perMinute: 60, deadlineAt: 10_000 })), [0, 1_000, 2_000]);
+  // Fifteen readers queue on a 2 s host: slots stay within each deadline
+  // until the queue is longer than it.
+  const slots = [];
+  for (let i = 0; i < 15; i += 1) {
+    try { slots.push(gate.reserveSlot('busy.example', { perMinute: 30, deadlineAt: 20_000 })); }
+    catch (error) { slots.push(error.code); }
+  }
+  assert.deepEqual(slots.slice(0, 4), [0, 0, 0, 0]);
+  assert.equal(slots[4], 2_000);
+  assert.equal(slots.filter(slot => slot === 'CATALOG_HOST_BUSY').length, 1);
 });
 
 test('the database host gate fails open to the instance gate when the store is slow or down', async () => {

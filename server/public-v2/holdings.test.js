@@ -102,6 +102,7 @@ test('a timed-out check is unknown, stores no answer and writes one health event
   const { app, store, calls, settle } = harness({ observe: () => { throw Object.assign(new Error('slow'), { code: 'CATALOG_TIMEOUT' }); } });
   const response = await request(app).post('/api/v2/holdings/check').send({ libraryId: vega.id, bookKey: `v1:isbn:${ISBN_A}` });
   assert.equal(response.body.answer, 'unknown');
+  assert.equal(response.body.reason, 'timeout');
   assert.equal(response.body.catalogUrl, 'https://catalog.example/');
   await settle();
   assert.deepEqual(await store.answers.readAnswers(vega.id, [{ kind: 'isbn13', value: ISBN_A }]), []);
@@ -114,6 +115,23 @@ test('a timed-out check is unknown, stores no answer and writes one health event
   assert.ok(checked >= 1);
   assert.deepEqual(shelf.body.answers, {});
   assert.equal(calls.length, checked, 'shelf badges never contact the catalog');
+});
+
+test('an unknown answer says why: the reason the check could not answer, and never with found or not found', async () => {
+  for (const [code, reason] of [['CATALOG_ROBOTS_DISALLOWED', 'blocked'], ['CATALOG_HOST_BUSY', 'busy'], ['CATALOG_UNSUPPORTED', 'unsupported'],
+    ['CATALOG_UNAVAILABLE', 'unavailable'], ['CATALOG_UNRECOGNIZED', 'unrecognized'], ['CATALOG_REQUEST_BUDGET', 'budget']]) {
+    const { app } = harness({ observe: () => { throw Object.assign(new Error('x'), { code }); } });
+    const response = await request(app).post('/api/v2/holdings/check').send({ libraryId: vega.id, bookKey: `v1:isbn:${ISBN_A}` });
+    assert.deepEqual([response.body.answer, response.body.reason], ['unknown', reason], code);
+    assert.deepEqual(Object.keys(response.body).sort(), ['answer', 'catalogLinkKind', 'catalogUrl', 'reason'], code);
+  }
+  const { app, settle } = harness();
+  for (const look of ['live', 'stored']) {
+    const found = await request(app).post('/api/v2/holdings/check').send({ libraryId: vega.id, bookKey: `v1:isbn:${ISBN_A}` });
+    assert.equal(found.body.answer, 'found', look);
+    assert.equal('reason' in found.body, false, look);
+    await settle();
+  }
 });
 
 test('a slow book-page check answers "unknown" now, finishes in the background and the next look reads it from the store', async () => {
@@ -163,6 +181,7 @@ test('one ISBN not listed is "not found" only for that edition, never for the wo
   // A book whose edition list is incomplete cannot be "not found".
   const edition = await request(app).post('/api/v2/holdings/check').send({ libraryId: vega.id, bookKey: `v1:isbn:${ISBN_A}` });
   assert.equal(edition.body.answer, 'unconfirmed');
+  assert.equal(edition.body.reason, 'unconfirmed');
   await settle();
   const search = await request(app).post('/api/v2/holdings/search').buffer(true).parse((res, done) => { let text = ''; res.on('data', c => { text += c; }); res.on('end', () => done(null, text)); })
     .send({ libraryId: vega.id, query: 'matilda', books: [{ bookKey: 'v1:openlibrary:OL1W' }, { bookKey: 'v1:openlibrary:OL2W' }] });
@@ -260,6 +279,7 @@ test('the book page reads a record key only for its own library, under that libr
     const other = await request(app).post('/api/v2/holdings/check').send({ libraryId: vega.id, bookKey: createCatalogBookKey('koha:other', '1') });
     assert.equal(other.status, 200);
     assert.equal(other.body.answer, 'unknown');
+    assert.equal(other.body.reason, 'unsupported');
     assert.deepEqual(resolved, []);
     // This library's own record: read inside a catalog operation with the platform's book cap.
     const own = createCatalogBookKey(vega.id, '7');

@@ -40,7 +40,7 @@ describe('library answer card', () => {
     expect(screen.getByText('This library’s catalog can take up to a minute to answer. You can go back to your reading shelf: the answer will be there when it arrives.')).toBeInTheDocument();
     cleanup();
 
-    show({ answer: 'unknown', catalogUrl: 'https://catalog.example.test/', retry: () => {} });
+    show({ answer: 'unknown', reason: 'timeout', catalogUrl: 'https://catalog.example.test/', retry: () => {} });
     card = screen.getByRole('group');
     expect(within(card).getByRole('heading')).toHaveTextContent('Couldn’t check right now');
     expect(within(card).getByText('The library’s catalog did not answer in time. This does not mean the book is missing.')).toBeInTheDocument();
@@ -53,6 +53,28 @@ describe('library answer card', () => {
     expect(within(card).getByRole('heading')).toHaveTextContent('Couldn’t check right now');
     expect(within(card).getByText('The library’s catalog answered, but we could not tell whether it has this book.')).toBeInTheDocument();
     expect(within(card).queryByRole('button', { name: 'Try again' })).not.toBeInTheDocument();
+  });
+
+  // Only a check that ran out of time says the catalog did not answer in time.
+  it('says why a check could not answer, in plain words', () => {
+    const notMissing = ' This does not mean the book is missing.';
+    for (const [reason, words] of [
+      ['timeout', 'The library’s catalog did not answer in time.' + notMissing],
+      ['blocked', 'This library does not allow outside checks of its catalog.' + notMissing],
+      ['unsupported', 'We can’t read this library’s catalog for this book yet.' + notMissing],
+      ['unrecognized', 'We can’t read this library’s catalog for this book yet.' + notMissing],
+      ['busy', 'Too many checks right now. Try again in a minute.'],
+      ['budget', 'Too many checks right now. Try again in a minute.'],
+      ['unavailable', 'The library’s catalog is not answering right now.' + notMissing],
+      [undefined, 'We couldn’t check the library’s catalog this time.' + notMissing],
+    ] as const) {
+      show({ answer: 'unknown', reason });
+      const card = screen.getByRole('group');
+      expect(within(card).getByRole('heading')).toHaveTextContent('Couldn’t check right now');
+      expect(within(card).getByText(words)).toBeInTheDocument();
+      if (reason !== 'timeout') expect(within(card).queryByText(/did not answer in time/)).not.toBeInTheDocument();
+      cleanup();
+    }
   });
 
   it('shows a link-only library without an answer heading or status mark', () => {

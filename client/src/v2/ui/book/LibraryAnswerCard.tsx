@@ -1,6 +1,7 @@
 import { forwardRef } from 'react';
 import { DashGlyph, ExternalGlyph, FoundGlyph, NotCheckedGlyph, PinGlyph } from '../home/homeIcons';
 import type { CardAnswer, LibraryCardModel } from './useLibraryAnswer';
+import type { CheckReason } from '../../api';
 
 // Words for each answer (plan A3, the wording table). `unconfirmed` (the
 // catalog answered but did not prove this book) reads as "Couldn't check
@@ -23,9 +24,29 @@ export function checkingDescription(slow = false): string {
 
 const descriptions: Partial<Record<CardAnswer, string>> = {
   not_found: 'We looked for this book in the library’s catalog and did not find it. The library may still have another edition.',
-  unknown: 'The library’s catalog did not answer in time. This does not mean the book is missing.',
   unconfirmed: 'The library’s catalog answered, but we could not tell whether it has this book.',
 };
+
+const NOT_MISSING = ' This does not mean the book is missing.';
+
+/**
+ * The sentence under "Couldn’t check right now", true to why the check
+ * could not answer. Only a check that ran out of time says the catalog did
+ * not answer in time.
+ */
+export function unknownDescription(reason?: CheckReason): string {
+  switch (reason) {
+    case 'timeout': return 'The library’s catalog did not answer in time.' + NOT_MISSING;
+    case 'blocked': return 'This library does not allow outside checks of its catalog.' + NOT_MISSING;
+    case 'unsupported':
+    case 'unrecognized':
+    case 'configuration': return 'We can’t read this library’s catalog for this book yet.' + NOT_MISSING;
+    case 'busy':
+    case 'budget': return 'Too many checks right now. Try again in a minute.';
+    case 'unavailable': return 'The library’s catalog is not answering right now.' + NOT_MISSING;
+    default: return 'We couldn’t check the library’s catalog this time.' + NOT_MISSING;
+  }
+}
 
 type LinkKind = Extract<LibraryCardModel, { kind: 'library' }>['catalogLinkKind'];
 
@@ -45,13 +66,14 @@ export const LibraryAnswerCard = forwardRef<HTMLDivElement, { model: LibraryCard
       <h2 id="library-ask-heading">Is it in your library?</h2>
       <button type="button" className="home-button home-button-outline library-ask-button" aria-haspopup="dialog" onClick={onFindLibrary}><PinGlyph />Find my library</button>
     </section>;
-    const { answer, name, place, catalogUrl, catalogLinkKind, retry, slowCatalog } = model;
+    const { answer, name, place, catalogUrl, catalogLinkKind, retry, slowCatalog, reason } = model;
     const label = answerLabel(answer);
     const tone = answer === 'found' ? 'found' : answer === 'not_found' ? 'not-found' : 'grey';
     const caption = name && place && !name.includes(place) ? name + ' · ' + place : name;
     // A link-only library has no answer to show: no heading and no status mark.
     const linkOnly = answer === 'unsupported';
-    const description = answer === 'checking' ? checkingDescription(slowCatalog) : linkOnly ? label : descriptions[answer];
+    const description = answer === 'checking' ? checkingDescription(slowCatalog) : linkOnly ? label
+      : answer === 'unknown' ? unknownDescription(reason) : descriptions[answer];
     return <div ref={ref} tabIndex={-1} className={'library-answer library-answer-' + tone} role="group" aria-label={label}
       aria-busy={answer === 'checking' || undefined} data-answer={answer}>
       {!linkOnly && <h2><span className="library-answer-icon" aria-hidden="true">

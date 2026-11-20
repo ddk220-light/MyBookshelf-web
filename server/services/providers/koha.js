@@ -1,5 +1,5 @@
 import { decode, text, attrs, markupOnly, contents } from './catalogHtml.js';
-import { cachedTask, getJson, getText, DEFAULT_TIMEOUT_MS } from './http.js';
+import { cachedTask, catalogOperation, getJson, getText, DEFAULT_TIMEOUT_MS } from './http.js';
 import { normalizeAvailability, notFound, unknown } from './contract.js';
 import { validateAndNormalize } from '../isbn.js';
 import { publicCatalogOrigin } from './publicCatalogOrigin.js';
@@ -268,9 +268,20 @@ export function parseExpandedKohaCatalogSearch(html, searchUrl) {
   return [...books.values()].slice(0, 10);
 }
 
+// Koha keyword search requires every word, and some Zebra indexes do not
+// index English articles: Modern College Pune (19 November 2026) answers
+// "discovery of India" with 2 records but "The discovery of India" and
+// "the discovery india" with none. Dropping articles only widens the search;
+// every record found is still opened and matched on its own page.
+export function keywordQuery(query) {
+  const words = String(query || '').trim().split(/\s+/).filter(Boolean);
+  const kept = words.filter(word => !/^(?:the|a|an)$/i.test(word));
+  return (kept.length ? kept : words).join(' ');
+}
+
 export async function searchCatalog(library, query) {
   const url = scopeSearch(new URL('/cgi-bin/koha/opac-search.pl', configuration(library)), library);
-  url.searchParams.set('idx', 'kw'); url.searchParams.set('q', query);
+  url.searchParams.set('idx', 'kw'); url.searchParams.set('q', keywordQuery(query));
   const deadlineAt = catalogDeadline(library);
   return cachedTask(`koha:search:${url}:${library.kohaBranchCode || ''}`, async () => {
     const response = await publicRead(url, deadlineAt, { allowRecordSelection: true });
@@ -297,9 +308,9 @@ export async function resolveCatalogRecord(library, recordId, options = {}) {
   url.searchParams.set('biblionumber', recordId);
   const deadlineAt = options.deadlineAt || catalogDeadline(library);
   return cachedTask(`koha:record:${url}:${library.kohaBranchCode || ''}`, async () => {
-    let response = await publicRead(url, deadlineAt);
+    let response = await readRecordPage(url, deadlineAt);
     const expanded = allItemsUrl(response.text, url);
-    if (expanded) response = await publicRead(expanded, deadlineAt);
+    if (expanded) response = await readRecordPage(expanded, deadlineAt);
     const clean = markupOnly(response.text);
     const heading = [...clean.matchAll(/<h1\b([^>]*)>([\s\S]*?)<\/h1>/gi)].find(m =>
       (attrs(m[1]).class || '').split(/\s+/).includes('title') || attrs(m[1]).property === 'name');
@@ -474,30 +485,19 @@ function combineRecords(records) {
   return result;
 }
 
-function isbnSearchUrl(base, isbn) {
-  const url = new URL('/cgi-bin/koha/opac-search.pl', base);
-  url.searchParams.set('idx', 'nb');
-  url.searchParams.set('q', isbn);
-  // Older catalogs may index only ISBN-10. Search both equivalent identifiers
-  // in one standard Koha query, then deduplicate record URLs before reading.
-  if (isbn.startsWith('978')) {
-    const core = isbn.slice(3, 12);
-    const sum = [...core].reduce((total, digit, index) => total + Number(digit) * (10 - index), 0);
-    const check = (11 - sum % 11) % 11;
-    url.searchParams.append('op', 'or');
-    url.searchParams.append('idx', 'nb');
-    url.searchParams.append('q', core + (check === 10 ? 'X' : check));
-  }
-  return url;
-}
-
-function hyphenatedSearchUrl(base, isbn) {
-  // Some Koha ISBN indexes preserve punctuation. Use assigned ISBN ranges,
-  // not guessed hyphen positions, and independently validate every equivalent.
+// Every equivalent form of one ISBN in one standard Koha OR query: plain
+// ISBN-13 and ISBN-10, and the hyphenated forms from the assigned ISBN ranges
+// (never guessed hyphen positions), because some Koha ISBN indexes keep the
+// punctuation. Koha answers the OR query with the union of the single-form
+// searches (checked live 19 November 2026: Modern College Pune lists
+// 978-81-7709-187-8 only in hyphenated form; the plain pair finds nothing,
+// this query selects the record). One request replaces the former plain search
+// plus hyphenated retry, which doubled every ISBN miss on slow catalogs.
+export function isbnSearchUrl(base, isbn) {
   const parsed = ISBN.parse(isbn);
-  const values = [...new Set([parsed?.isbn13h, parsed?.isbn10h])]
+  const hyphenated = [parsed?.isbn13h, parsed?.isbn10h]
     .filter((value) => typeof value === 'string' && value.includes('-') && validateAndNormalize(value) === isbn);
-  if (!values.length) return null;
+  const values = [...new Set([isbn, isbn10For(isbn), ...hyphenated].filter(Boolean))];
   const url = new URL('/cgi-bin/koha/opac-search.pl', base);
   for (const [index, value] of values.entries()) {
     if (index) url.searchParams.append('op', 'or');
@@ -540,6 +540,27 @@ async function publicRead(url, deadlineAt, { allowRecordSelection = false } = {}
   if (response.url !== url.toString()) throw publicError('CATALOG_UNRECOGNIZED', 'Koha returned an unexpected catalog page');
   if (!response.ok && !(allowRecordSelection && response.status === 302)) throw publicError('CATALOG_UNAVAILABLE', `Koha returned HTTP ${response.status}`);
   return response;
+}
+
+// A record page read once per check. The ISBN check, the title search's
+// record read and a branch-scoped union search can each open the same record
+// within one check (19 November 2026: IIM Calcutta read biblionumber 6647
+// twice in a row, 5 s each). Pages are shared only inside one reader's catalog
+// operation, never across readers, so a later check still reads afresh.
+const pageReads = new WeakMap();
+function readRecordPage(url, deadlineAt) {
+  let operation = catalogOperation();
+  while (operation?.parent) operation = operation.parent;
+  if (!operation) return publicRead(url, deadlineAt);
+  let pages = pageReads.get(operation);
+  if (!pages) pageReads.set(operation, pages = new Map());
+  const key = url.toString();
+  if (!pages.has(key)) {
+    const read = publicRead(url, deadlineAt);
+    pages.set(key, read);
+    read.catch(() => { if (pages.get(key) === read) pages.delete(key); });
+  }
+  return pages.get(key);
 }
 
 function pilotRecordsFromSearch(response, searchUrl) {
@@ -588,7 +609,7 @@ async function checkPilotAvailability(library, value) {
         catalogUrl: searchUrl.toString(), catalogLinkKind: 'search' };
       const records = [];
       for (const recordUrl of recordUrls) {
-        const record = await publicRead(recordUrl, deadlineAt);
+        const record = await readRecordPage(recordUrl, deadlineAt);
         const result = parseKohaPublicRecord(record.text, isbn, branchScope(library));
         if (!result) throw publicError('CATALOG_UNRECOGNIZED', 'Koha did not prove this ISBN and its public holdings');
         const title = recordTitle(record.text);
@@ -607,36 +628,27 @@ export async function checkPublicAvailability(library, value) {
   const isbn = validateAndNormalize(value);
   if (!isbn) throw publicError('CATALOG_EXACT_ISBN_REQUIRED', 'Koha availability requires a valid ISBN');
   const base = configuration(library);
-  let searchUrl = scopeSearch(isbnSearchUrl(base, isbn), library);
+  const searchUrl = scopeSearch(isbnSearchUrl(base, isbn), library);
   const deadlineAt = library.publicCatalogTimeoutMs ? catalogDeadline(library) : Date.now() + 60_000;
   try {
     return await cachedTask(`availability:koha:public:${base.origin}:${library.kohaBranchCode || ''}:${isbn}`, async () => {
       const search = await publicRead(searchUrl, deadlineAt, { allowRecordSelection: true });
-      let listing = recordsFromSearch(search, searchUrl);
-      let recordUrls = listing.urls;
-      if (!recordUrls.length) {
-        const fallback = hyphenatedSearchUrl(base, isbn);
-        if (fallback) {
-          searchUrl = scopeSearch(fallback, library);
-          const retry = await publicRead(searchUrl, deadlineAt, { allowRecordSelection: true });
-          listing = recordsFromSearch(retry, searchUrl);
-          recordUrls = listing.urls;
-        }
-      }
+      const listing = recordsFromSearch(search, searchUrl);
+      const recordUrls = listing.urls;
       if (!recordUrls.length) return { outcome: 'not_found', matchKind: 'none', recognizedExact: true,
         catalogUrl: searchUrl.toString(), catalogLinkKind: 'search' };
       const records = [];
       let partial = !listing.complete, lastError;
       for (const [index, recordUrl] of recordUrls.entries()) {
         try {
-          const record = await publicRead(recordUrl, deadlineAt - 1000);
+          const record = await readRecordPage(recordUrl, deadlineAt - 1000);
           let result = parseKohaPublicRecord(record.text, isbn, { ...library, ...(library.kohaStrictBranchIdentity ? branchScope(library) : {}) });
           if (!result) throw publicError('CATALOG_UNRECOGNIZED', 'Koha did not prove this ISBN and its public holdings');
           // Koha can collapse even a small holdings table behind this explicit
           // public link. Follow it once, for this exact record and origin only.
           const expanded = !Number.isInteger(result.totalCopies) && allItemsUrl(record.text, recordUrl);
           if (expanded) {
-            const allItems = await publicRead(expanded, deadlineAt - 1000);
+            const allItems = await readRecordPage(expanded, deadlineAt - 1000);
             result = parseKohaPublicRecord(allItems.text, isbn, { ...library, ...(library.kohaStrictBranchIdentity ? branchScope(library) : {}) });
             if (!result) throw publicError('CATALOG_UNRECOGNIZED', 'Koha expanded holdings did not prove this ISBN');
             recordUrls[index] = expanded;
@@ -655,6 +667,68 @@ export async function checkPublicAvailability(library, value) {
       const result = partial ? partialRecords(records.map(row => row.result), library) : records.length === 1 ? records[0].result : combineRecords(records);
       return recordUrls.length === 1 ? { ...result, catalogUrl: recordUrls[0].toString(), catalogLinkKind: 'record' }
         : { ...result, catalogUrl: searchUrl.toString(), catalogLinkKind: 'search' };
+    }, { deadlineAt, shouldCache: (result) => result.outcome !== 'unknown' });
+  } catch (error) {
+    throw requestFailure(error);
+  }
+}
+
+// Several ISBNs of one work in one search (for a work's known editions).
+// Koha answers one OR query with the union of the single searches, so one
+// request can show that none of up to MAX_BATCH_ISBNS editions is listed,
+// where one search per edition ran out of time on slow catalogs (19 November
+// 2026: 2 to 5 s per search at IIM Calcutta and St. Anthony's Shillong).
+// Returns the first record that proves one of the ISBNs and its holding, with
+// `isbn13` naming that ISBN; or not_found with `isbns` (every ISBN searched)
+// when the verified empty results page answers; otherwise throws. The title
+// search catalogs (`titleSearch`) keep their own lookups.
+export const MAX_BATCH_ISBNS = 8;
+export async function checkPublicAvailabilityForIsbns(library, values) {
+  if (library.publicCatalogCapabilities?.titleSearch) throw publicError('CATALOG_QUERY_UNSUPPORTED', 'This catalog checks one ISBN at a time');
+  const isbns = [...new Set((values || []).map((value) => validateAndNormalize(value)).filter(Boolean))].slice(0, MAX_BATCH_ISBNS);
+  if (!isbns.length) throw publicError('CATALOG_EXACT_ISBN_REQUIRED', 'Koha availability requires a valid ISBN');
+  const base = configuration(library);
+  const searchUrl = scopeSearch(new URL('/cgi-bin/koha/opac-search.pl', base), library);
+  isbns.flatMap((isbn) => isbnSearchUrl(base, isbn).searchParams.getAll('q')).forEach((value, index) => {
+    if (index) searchUrl.searchParams.append('op', 'or');
+    searchUrl.searchParams.append('idx', 'nb');
+    searchUrl.searchParams.append('q', value);
+  });
+  const deadlineAt = library.publicCatalogTimeoutMs ? catalogDeadline(library) : Date.now() + 60_000;
+  const scope = { ...library, ...(library.kohaStrictBranchIdentity ? branchScope(library) : {}) };
+  try {
+    return await cachedTask(`availability:koha:batch:${base.origin}:${library.kohaBranchCode || ''}:${[...isbns].sort().join(',')}`, async () => {
+      const search = await publicRead(searchUrl, deadlineAt, { allowRecordSelection: true });
+      const { urls } = recordsFromSearch(search, searchUrl);
+      if (!urls.length) return { outcome: 'not_found', matchKind: 'none', recognizedExact: true, isbns,
+        catalogUrl: searchUrl.toString(), catalogLinkKind: 'search' };
+      let recognized = null, lastError = null;
+      for (const recordUrl of urls) {
+        try {
+          let page = await readRecordPage(recordUrl, deadlineAt - 1000);
+          let url = recordUrl;
+          const isbn = isbns.find((candidate) => parseKohaPublicRecord(page.text, candidate, scope));
+          if (!isbn) continue;
+          let result = parseKohaPublicRecord(page.text, isbn, scope);
+          const expanded = !Number.isInteger(result.totalCopies) && allItemsUrl(page.text, recordUrl);
+          if (expanded) {
+            page = await readRecordPage(expanded, deadlineAt - 1000);
+            result = parseKohaPublicRecord(page.text, isbn, scope);
+            if (!result) throw publicError('CATALOG_UNRECOGNIZED', 'Koha expanded holdings did not prove this ISBN');
+            url = expanded;
+          }
+          const title = recordTitle(page.text);
+          const value = { ...result, ...(title ? { catalogTitle: title } : {}), isbn13: isbn, catalogUrl: url.toString(), catalogLinkKind: 'record' };
+          if (['available', 'none_available', 'in_catalog'].includes(value.outcome) || value.totalCopies > 0) return value;
+          recognized ||= value;
+        } catch (error) {
+          if (error.code === 'CATALOG_PROVIDER_BLOCKED') throw error;
+          lastError = error;
+          if (Date.now() >= deadlineAt - 1000) break;
+        }
+      }
+      if (recognized) return recognized;
+      throw lastError || publicError('CATALOG_UNRECOGNIZED', 'Koha records did not prove any of these ISBNs');
     }, { deadlineAt, shouldCache: (result) => result.outcome !== 'unknown' });
   } catch (error) {
     throw requestFailure(error);
@@ -782,7 +856,7 @@ async function readCatalogRecord(library, recordId, deadlineAt = catalogDeadline
   const scope = branchScope(library);
   return cachedTask(`koha:record:${base.origin}:${library.kohaBranchCode || ''}:${scope.libraryName || ''}:${recordId}`, async () => {
     const url = detailUrl(`/cgi-bin/koha/opac-detail.pl?biblionumber=${recordId}`, base);
-    const response = await publicRead(url, deadlineAt);
+    const response = await readRecordPage(url, deadlineAt);
     const record = parseKohaCatalogRecord(response.text, recordId, scope);
     if (!record) throw publicError('CATALOG_UNRECOGNIZED', 'Koha did not prove this catalog record identity');
     return { ...record, availability: { ...record.availability, catalogUrl: url.toString(), catalogLinkKind: 'record' } };

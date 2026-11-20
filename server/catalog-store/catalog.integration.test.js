@@ -218,10 +218,10 @@ test('anonymous log, submissions and the host gate as the runtime role', { skip,
   assert.ok(Date.now() - startedAt >= 350, 'the second instance waited for the slot');
   await assert.rejects(one.reserve('vpl.example', { spacingMs: 60_000, deadlineAt: Date.now() + 100 }).then(() => two.reserve('vpl.example', { spacingMs: 60_000, deadlineAt: Date.now() + 100 })),
     { code: 'CATALOG_HOST_BUSY' });
-  await one.reserve('koha.example', { perMinute: 2, deadlineAt: Date.now() + 1_000 });
-  await two.reserve('koha.example', { perMinute: 2, deadlineAt: Date.now() + 1_000 });
-  const second = new Date().getUTCSeconds();
-  if (second < 58) await assert.rejects(one.reserve('koha.example', { perMinute: 2, deadlineAt: Date.now() + 500 }), { code: 'CATALOG_HOST_BUSY' });
+  // Per-minute pacing: 2 a minute is one slot every 30 s after a burst of
+  // four, shared by both instances; the fifth slot is 30 s away.
+  for (const gate of [one, two, one, two]) await gate.reserve('koha.example', { perMinute: 2, deadlineAt: Date.now() + 1_000 });
+  await assert.rejects(one.reserve('koha.example', { perMinute: 2, deadlineAt: Date.now() + 500 }), { code: 'CATALOG_HOST_BUSY' });
 });
 
 test('daily maintenance as the worker: expiry, opt-out purge, retention, rollup without text', { skip, timeout: 60_000 }, async t => {

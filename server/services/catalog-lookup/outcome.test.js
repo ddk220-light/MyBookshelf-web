@@ -18,15 +18,18 @@ test('the 3.5 projection: proven copies are found, whatever the lending state', 
 
 test('not found needs an exact recognized ISBN or a complete, non-partial work search', () => {
   assert.deepEqual(answerFromResponse({ outcome: 'not_found', lookupKind: 'exact_isbn', matchKind: 'none' }), { outcome: 'not_found', evidence: 'isbn_not_listed' });
-  assert.deepEqual(answerFromResponse({ outcome: 'no_match', matchKind: 'none', searchSummary: { partial: false, editionsComplete: true } }),
+  const provable = { partial: false, editionsComplete: true, absenceProvable: true };
+  assert.deepEqual(answerFromResponse({ outcome: 'no_match', matchKind: 'none', searchSummary: provable }),
     { outcome: 'not_found', evidence: 'work_no_match' });
-  // A partial search, or an incomplete edition list, proves nothing.
-  for (const searchSummary of [{ partial: true, editionsComplete: true }, { partial: false, editionsComplete: false }, {}, undefined]) {
+  // A partial search, an incomplete edition list, or an absence the search
+  // could not prove (no ISBN, no title search, another script) proves nothing.
+  for (const searchSummary of [{ partial: true, editionsComplete: true, absenceProvable: true }, { partial: false, editionsComplete: false, absenceProvable: true },
+    { partial: false, editionsComplete: true }, { partial: false, editionsComplete: true, absenceProvable: false, absenceRisk: 'no_isbns' }, {}, undefined]) {
     const answer = answerFromResponse({ outcome: 'no_match', matchKind: 'none', searchSummary });
     assert.equal(answer.outcome, 'couldnt_check');
     assert.equal(answer.reason, 'unconfirmed');
   }
-  assert.equal(answerFromResponse({ outcome: 'no_match', matchKind: 'none', searchSummary: { partial: false, editionsComplete: true } }, { profile: { complete: false } }).outcome, 'couldnt_check');
+  assert.equal(answerFromResponse({ outcome: 'no_match', matchKind: 'none', searchSummary: provable }, { profile: { complete: false } }).outcome, 'couldnt_check');
 });
 
 test('title/author matches are unconfirmed, never found', () => {

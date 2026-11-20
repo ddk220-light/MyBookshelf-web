@@ -166,12 +166,15 @@ export const publicApi = Object.freeze({
   // One-shelf book page (plan 3.5): the stored answer, else one live check.
   // Anything the client does not recognise is "unknown" (couldn't check),
   // never "not found". catalogUrl is kept only when it is an http(s) link.
+  // `reason` (why a check could not answer) is kept only for "unknown" and
+  // "unconfirmed", and only when it is one the app knows.
   async holdingsCheck(libraryId: string, bookKey: string, signal?: AbortSignal): Promise<HoldingsCheck> {
-    const data = await post<{ answer?: unknown; catalogUrl?: unknown; catalogLinkKind?: unknown }>('/holdings/check', { libraryId, bookKey }, signal);
+    const data = await post<{ answer?: unknown; reason?: unknown; catalogUrl?: unknown; catalogLinkKind?: unknown }>('/holdings/check', { libraryId, bookKey }, signal);
     const answer = data.answer === 'found' || data.answer === 'not_found' || data.answer === 'unconfirmed' ? data.answer : 'unknown';
+    const reason = (answer === 'unknown' || answer === 'unconfirmed') && (CHECK_REASONS as readonly unknown[]).includes(data.reason) ? data.reason as CheckReason : undefined;
     const catalogUrl = webLink(data.catalogUrl);
     const catalogLinkKind = data.catalogLinkKind;
-    return { answer, ...(catalogUrl ? { catalogUrl } : {}), ...(catalogUrl && (catalogLinkKind === 'record' || catalogLinkKind === 'search' || catalogLinkKind === 'catalog') ? { catalogLinkKind } : {}) };
+    return { answer, ...(reason ? { reason } : {}), ...(catalogUrl ? { catalogUrl } : {}), ...(catalogUrl && (catalogLinkKind === 'record' || catalogLinkKind === 'search' || catalogLinkKind === 'catalog') ? { catalogLinkKind } : {}) };
   },
 
   // One-shelf background check for search results (plan 5.7): NDJSON lines
@@ -269,7 +272,10 @@ function contactFields({ name, email }: ContactDetails): ContactDetails {
 export const PROBLEM_SCREENS = ['shelf', 'search', 'book', 'library', 'panel', 'account', 'scan', 'other'] as const;
 export type ProblemScreen = typeof PROBLEM_SCREENS[number];
 
-export type HoldingsCheck = { answer: 'found' | 'not_found' | 'unconfirmed' | 'unknown'; catalogUrl?: string; catalogLinkKind?: 'record' | 'search' | 'catalog' };
+/** Why a check could not answer (server catalog-lookup/outcome.js REASONS). */
+export const CHECK_REASONS = ['unconfirmed', 'timeout', 'unavailable', 'blocked', 'unrecognized', 'budget', 'unsupported', 'configuration', 'cancelled', 'busy'] as const;
+export type CheckReason = typeof CHECK_REASONS[number];
+export type HoldingsCheck = { answer: 'found' | 'not_found' | 'unconfirmed' | 'unknown'; reason?: CheckReason; catalogUrl?: string; catalogLinkKind?: 'record' | 'search' | 'catalog' };
 type HoldingsSearchDone = { unchecked: string[]; notFound: string[]; couldntCheck: string[] };
 
 /** POST /suggestions/events (server validation.js parseSuggestionEvent): work and ISBN keys only. */

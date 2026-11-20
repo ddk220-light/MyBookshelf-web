@@ -182,19 +182,48 @@ test('the work search finds another edition by ISBN within the budget, and a sto
 });
 
 test('a complete work search with no match is a stored not found; an incomplete one is not', async () => {
-  const provider = { checkAvailability: async () => ({ outcome: 'not_found', matchKind: 'none', recognizedExact: true }) };
+  // The catalog answers the title search (nothing) and every ISBN (not listed).
+  const provider = { checkAvailability: async () => ({ outcome: 'not_found', matchKind: 'none', recognizedExact: true }), searchCatalog: async () => [] };
   const library = { id: 'evergreen:y', platform: 'evergreen', catalogUrl: 'https://e.example' };
   const book = { bookKey: 'v1:isbn:9780140328721', isbn13: '9780140328721', workId: 'OL2W', title: 'Matilda', authors: ['Dahl'] };
+  const english = options => ({ ...profileOf(options), language: 'eng' });
   const complete = harness({ providerFor: () => provider });
-  const answer = await complete.lookup.lookupBook({ library, book, profile: profileOf({ isbn13: book.isbn13, title: book.title }) });
+  const answer = await complete.lookup.lookupBook({ library, book, profile: english({ isbn13: book.isbn13, title: book.title }) });
   assert.deepEqual([answer.outcome, answer.evidence], ['not_found', 'work_no_match']);
   await complete.settle();
-  assert.equal((await complete.lookup.lookupBook({ library, book, profile: profileOf({ isbn13: book.isbn13, title: book.title }) })).source, 'stored');
+  assert.equal((await complete.lookup.lookupBook({ library, book, profile: english({ isbn13: book.isbn13, title: book.title }) })).source, 'stored');
   const partial = harness({ providerFor: () => provider });
-  const unsure = await partial.lookup.lookupBook({ library, book, profile: profileOf({ isbn13: book.isbn13, title: book.title, complete: false }) });
+  const unsure = await partial.lookup.lookupBook({ library, book, profile: english({ isbn13: book.isbn13, title: book.title, complete: false }) });
   assert.deepEqual([unsure.outcome, unsure.reason], ['couldnt_check', 'unconfirmed']);
   await partial.settle();
   assert.equal(partial.answers.size(), 0);
+});
+
+test('a work search that could not have found the book never says not found (Godaan, Ponniyin Selvan)', async () => {
+  const library = { id: 'koha:panjab-laws', platform: 'koha', catalogUrl: 'https://k.example' };
+  const notListed = async () => ({ outcome: 'not_found', matchKind: 'none', recognizedExact: true });
+  const cases = [
+    // No ISBN in Open Library: no row could ever prove the book, so nothing proves it absent.
+    ['no ISBN', { checkAvailability: notListed, searchCatalog: async () => [] },
+      { book: { title: 'Godaan', authors: ['Munshi Premchand'] }, isbns: [], titles: ['Godaan'], authors: ['Munshi Premchand'], language: 'hin', complete: true }],
+    // A Hindi work searched by a romanised title: "Godan" or "गोदान" would not be found.
+    ['another script', { checkAvailability: notListed, searchCatalog: async () => [] },
+      { book: { isbn13: '9789388810470', title: 'Godaan', authors: ['Munshi Premchand'] }, isbns: ['9789388810470'], titles: ['Godaan'], authors: ['Munshi Premchand'], language: 'hin', complete: true }],
+    // ISBN lookups only: an edition Open Library does not list is never tried.
+    ['no title search', { checkAvailability: notListed },
+      { book: { isbn13: '9780140328721', title: 'Matilda', authors: ['Dahl'] }, isbns: ['9780140328721'], titles: ['Matilda'], authors: ['Dahl'], language: 'eng', complete: true }],
+    // A volume of a set the title rules cannot match.
+    ['related title', { checkAvailability: notListed, searchCatalog: async () => [{ recordId: '1', title: 'Ponniyin Selvan Part 1', authors: ['Kalki'], observation: { outcome: 'in_catalog' } }] },
+      { book: { isbn13: '9788184931723', title: 'Ponniyin Selvan', authors: ['Kalki'] }, isbns: ['9788184931723'], titles: ['Ponniyin Selvan'], authors: ['Kalki'], language: 'eng', complete: true }],
+  ];
+  for (const [name, provider, profile] of cases) {
+    const { lookup, answers, settle } = harness({ providerFor: () => provider });
+    const book = { bookKey: 'v1:openlibrary:OL17047576W', workId: 'OL17047576W', ...profile.book };
+    const answer = await lookup.lookupBook({ library, book, profile });
+    assert.deepEqual([answer.outcome, answer.reason], ['couldnt_check', 'unconfirmed'], name);
+    await settle();
+    assert.equal(answers.size(), 0, name);
+  }
 });
 
 test('aborting a book check stops further catalog requests', async () => {
@@ -961,4 +990,39 @@ test('edition profiles may arrive after the catalog’s part of the run, within 
   const slot = guard.tryStartMarking('late.example');
   assert.ok(slot, 'the host slot was freed before waiting on profiles');
   slot();
+});
+
+test('every book check writes one library_check log line with its reason, never the book', async () => {
+  const lines = [];
+  const pending = [];
+  const answers = createMemoryAnswerStore();
+  const recorder = createLookupRecorder({ answers, health: createMemoryHealthRecord(), defer: task => pending.push(task()), log: line => lines.push(line) });
+  let mode = 'found';
+  const provider = { checkAvailability: async () => {
+    if (mode === 'blocked') throw Object.assign(new Error('robots'), { code: 'CATALOG_ROBOTS_DISALLOWED' });
+    return mode === 'found' ? { outcome: 'available', matchKind: 'exact_isbn', recognizedExact: true } : { outcome: 'not_found', matchKind: 'none', recognizedExact: true };
+  } };
+  const lookup = createCatalogLookup({ providerFor: () => provider, recorder, platforms: UNPACED, env: { CATALOG_LOOKUP_V2: 'all' } });
+  const library = { id: 'koha:log', platform: 'koha', catalogUrl: 'https://k.example' };
+  const book = { bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466', title: 'Wings of Fire', authors: ['Kalam'] };
+  await lookup.lookupBook({ library, book, editionScope: 'exact' });
+  await Promise.all(pending);
+  // The stored answer: the same line, stored, no request.
+  await lookup.lookupBook({ library, book, editionScope: 'exact' });
+  mode = 'blocked';
+  await lookup.lookupBook({ library: { ...library, id: 'koha:log2' }, book, editionScope: 'exact' });
+  assert.equal(lines.length, 3);
+  assert.deepEqual(lines.map(line => [line.event, line.outcome, line.reason, line.stored, line.bookKeyKind]), [
+    ['library_check', 'found', null, false, 'isbn'],
+    ['library_check', 'found', null, true, 'isbn'],
+    ['library_check', 'couldnt_check', 'blocked', false, 'isbn'],
+  ]);
+  assert.deepEqual(Object.keys(lines[0]).sort(), ['afterReply', 'bookKeyKind', 'durationMs', 'errorCode', 'event', 'evidence', 'host', 'libraryId', 'lookupKind',
+    'outcome', 'platform', 'reason', 'requests', 'stored'].sort());
+  assert.equal(lines[0].evidence, 'exact_isbn');
+  assert.equal(lines[0].lookupKind, 'exact_isbn');
+  assert.equal(lines[0].host, 'k.example');
+  assert.equal(lines[2].errorCode, 'CATALOG_ROBOTS_DISALLOWED');
+  const text = JSON.stringify(lines);
+  assert.ok(!/Wings|Kalam|9788173711466|OL\d+W/.test(text), 'no title, author, ISBN or work ID');
 });

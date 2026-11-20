@@ -1,9 +1,9 @@
-import { attributes, catalogError, firstIsbn, text } from './catalogMarkup.js';
+import { attributes, catalogError, firstIsbn, quoteFreeQuery, text, uninvertedTitle, withoutLeadingArticle } from './catalogMarkup.js';
 import { isbnMatches } from './contract.js';
 import { validateAndNormalize } from '../isbn.js';
 import { CommunitySession, hiddenFields, jsonResponse } from './communitySession.js';
-import { aggregateObservations, boundedQuery, distinctRecords, fingerprint, markSearchComplete, normalized, observation, parseReplayId, replayId } from './communityRecords.js';
-import { PMB_SCOPES, resolvePmb, searchPmb } from './communityPmb.js';
+import { aggregateObservations, boundedQuery, distinctRecords, fingerprint, markHasMore, markSearchComplete, normalized, observation, parseReplayId, replayId } from './communityRecords.js';
+import { PMB_SCOPES, checkPmbIsbn, resolvePmb, searchPmb } from './communityPmb.js';
 
 const FAMILIES = Object.freeze({
   surat: 'https://office.suratmunicipal.org', rmc: 'https://emp.rmc.gov.in', rmrl: 'https://rmrl.in',
@@ -24,13 +24,23 @@ function config(library) {
   if (c.family === 'pmb' && !PMB_SCOPES[c.scope]) throw catalogError('Unknown catalog branch');
   return c;
 }
+// Whether a work search should ask this catalog about the work's ISBNs one
+// at a time (providers/index.js `isbnLookup`). None should: only PMB has an
+// ISBN index (the other families answer an ISBN alone with
+// CATALOG_QUERY_UNSUPPORTED), and there one search per edition exhausted the
+// request cap before the title search ran (19 Nov 2026: 5 of 10 checks). Its
+// all-words title search finds every edition in one request, and the record
+// pages it lists carry the ISBN. A single-edition check still asks PMB by ISBN.
+export function isbnLookupSupported() {
+  return false;
+}
 function status(value) {
   const label = normalized(value);
   return ['available', 'in library'].includes(label) ? 'available'
     : ['issued', 'lended', 'in circulation'].includes(label) ? 'unavailable' : 'unknown';
 }
 function record(library, query, sourceId, title, authors = [], extra = {}) {
-  return { recordId: replayId(query, sourceId), title: text(title).slice(0, 500),
+  return { recordId: replayId(query, sourceId), title: uninvertedTitle(text(title)).slice(0, 500),
     authors: authors.map(a => text(a)).filter(Boolean).slice(0, 10), ...extra };
 }
 
@@ -55,7 +65,7 @@ export function parseSurat(data, library) {
       observation: observation(library, library.catalogUrl, state, row.ClassificationNo) };
   });
   if (data.iTotalRecords > 0 && !records.length) throw catalogError('Municipal records missing');
-  return distinctRecords(records);
+  return markHasMore(distinctRecords(records), data.iTotalRecords > data.data.length);
 }
 async function suratSearch(library, query, session, by) {
   const response = await session.read(`/LMS/Home/GetSearchData?${suratParams(library, query, by)}`);
@@ -148,34 +158,61 @@ export function parseRmrl(html, library, query) {
       observation: observation(library, `${FAMILIES.rmrl}/en/onlinecat/result?${new URLSearchParams({ text: query, searchby: 'title', item: 'books' })}`) });
   });
   if (result.totalCount > 0 && !records.length) throw catalogError('Research catalog records missing');
-  return distinctRecords(records);
+  return markHasMore(distinctRecords(records), result.totalCount > records.length);
 }
 async function rmrlSearch(library, query, session) {
   const response = await session.read(`/en/onlinecat/result?${new URLSearchParams({ text: query, searchby: 'title', item: 'books' })}`);
   return parseRmrl(response.text, library, query);
 }
 
+// An empty search is the result grid with no book in it (19 Nov 2026):
+// <div class="card-body game-product ..."><div class="row"> </div></div>.
+const SHODHAK_EMPTY_GRID = /<div\b[^>]*class=["'][^"']*\bgame-product\b[^"']*["'][^>]*>\s*<div\b[^>]*class=["']row["'][^>]*>\s*<\/div>/i;
 export function parseShodhak(data, library, query) {
   if (typeof data?.data !== 'string') throw catalogError('Unrecognized lending-library response');
-  const blocks = data.data.split(/(?=<div\b[^>]*class=["']product-box["'])/i).slice(1);
+  const html = data.data.replace(/<style\b[\s\S]*?<\/style>/gi, '');
+  const blocks = html.split(/(?=<div\b[^>]*class=["']product-box["'])/i).slice(1);
   const records = [];
   for (const block of blocks.slice(0, 30)) {
     const sourceId = block.match(/data-id=["'](\d+)["']/i)?.[1];
     const title = text(block.match(/<h6\b[^>]*>([\s\S]*?)<\/h6>/i)?.[1]);
     const badge = text(block.match(/<span\b[^>]*class=["'][^"']*card-badge[^"']*["'][^>]*>([\s\S]*?)<\/span>/i)?.[1]);
+    const author = text(block.match(/<span\b[^>]*class=["'][^"']*\bcustom_author\b[^"']*["'][^>]*>([\s\S]*?)<\/span>/i)?.[1]);
     if (!sourceId || !title) throw catalogError('Unrecognized lending-library book');
-    records.push(record(library, query, sourceId, title, [], { observation: observation(library, library.catalogUrl, status(badge)) }));
+    records.push(record(library, query, sourceId, title, [author], { observation: observation(library, library.catalogUrl, status(badge)) }));
   }
-  if (!records.length && !/no (?:books?|results?|records?)(?:\s+found|\s+available)/i.test(text(data.data))) throw catalogError('Unrecognized empty lending search');
-  return distinctRecords(records);
+  if (!records.length && !SHODHAK_EMPTY_GRID.test(html) && !/no (?:books?|results?|records?)(?:\s+found|\s+available)/i.test(text(html))) throw catalogError('Unrecognized empty lending search');
+  // The list has no count or pages: 30 or more cards may not be all of them.
+  return markHasMore(distinctRecords(records), blocks.length >= 30);
 }
+// The anonymous Shodhak session (cookie and CSRF token from the home page)
+// is reused for a few minutes, so a check's later searches are one request.
+// A reused session that is refused or answers oddly is replaced once.
+const SHODHAK_SESSION_TTL_MS = 5 * 60 * 1000;
+let shodhakState = null;
+export function clearCommunitySessions() { shodhakState = null; rmcStates.clear(); }
 async function shodhakSearch(library, query, session) {
-  const home = await session.read('/');
-  const csrf = [...home.text.matchAll(/<meta\b([^>]*)>/gi)].map(m => attributes(m[1])).find(a => a.name === 'csrf-token')?.content;
-  if (!csrf) throw catalogError('Anonymous catalog token missing');
-  const response = await session.read('/getBookList', { method: 'POST', body: JSON.stringify({ author_id: [], category_id: [], search_book: query, language_id: '' }),
+  const post = (csrf) => session.read('/getBookList', { method: 'POST', body: JSON.stringify({ author_id: [], category_id: [], search_book: query, language_id: '' }),
     headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, Referer: `${FAMILIES.shodhak}/`, 'X-Requested-With': 'XMLHttpRequest' } });
-  return parseShodhak(jsonResponse(response), library, query);
+  const fresh = async () => {
+    session.cookies = new Map();
+    const home = await session.read('/');
+    const csrf = [...home.text.matchAll(/<meta\b([^>]*)>/gi)].map(m => attributes(m[1])).find(a => a.name === 'csrf-token')?.content;
+    if (!csrf) throw catalogError('Anonymous catalog token missing');
+    shodhakState = { cookies: new Map(session.cookies), csrf, expiresAt: Date.now() + SHODHAK_SESSION_TTL_MS };
+    return csrf;
+  };
+  const cached = shodhakState && shodhakState.expiresAt > Date.now() ? shodhakState : null;
+  if (cached) {
+    session.cookies = new Map(cached.cookies);
+    try { return parseShodhak(jsonResponse(await post(cached.csrf)), library, query); }
+    catch (error) {
+      // An expired token is HTTP 419 (unavailable here); a refusal is final.
+      if (error.code === 'CATALOG_PROVIDER_BLOCKED' || Date.now() >= session.deadlineAt) throw error;
+      if (shodhakState === cached) shodhakState = null;
+    }
+  }
+  return parseShodhak(jsonResponse(await post(await fresh())), library, query);
 }
 
 function assertRmcScope(html, scope) {
@@ -199,22 +236,49 @@ export function parseRmc(html, library, query) {
   const explicitZero = /No Records? Found|No Data Found|No records to display/i.test(text(html))
     || /\bmsgAlert_error\(\s*['"]No records found[.!]?['"]\s*\)/i.test(html);
   if (!records.length && !explicitZero) throw catalogError('Unrecognized empty municipal search');
-  return distinctRecords(records);
+  return markHasMore(distinctRecords(records), starts.length > 30);
+}
+// Reaching the title form takes three requests (dashboard, Books, search
+// type). Its result page keeps the same form, so a later search in the same
+// anonymous session is one POST. The state is kept a few minutes per branch
+// and language; a stale one (another page, another branch) is replaced once.
+const RMC_SESSION_TTL_MS = 5 * 60 * 1000, rmcStates = new Map();
+const RMC_INPUT = 'ctl00$body$rpt_SearchTypeMaster$ctl01$SearchValue';
+function rmcState(session, response, key) {
+  rmcStates.set(key, { cookies: new Map(session.cookies), hidden: hiddenFields(response.text), url: response.url, expiresAt: Date.now() + RMC_SESSION_TTL_MS });
+  while (rmcStates.size > 64) rmcStates.delete(rmcStates.keys().next().value);
 }
 async function rmcSearch(library, query, session) {
-  let response = await session.read('/rmclibrary/generaldashboard');
-  if (!response.text.includes('ctl00$body$ctl01')) throw catalogError('Public books navigation missing');
-  response = await session.post(response.url, { ...hiddenFields(response.text), __EVENTTARGET: 'ctl00$body$ctl01', __EVENTARGUMENT: '' });
   const language = /[\u0a80-\u0aff]/.test(query) ? '2' : /[\u0900-\u097f]/.test(query) ? '3' : '1';
   const fields = { 'ctl00$body$ddlLanguage': language, 'ctl00$body$ddlLibrary': library.communityCatalog.scope,
     'ctl00$body$lbSearchType': '1', 'ctl00$body$btnSearch': 'Search' };
+  // The catalog builds SQL from the text: an apostrophe is a server error.
+  const actualQuery = quoteFreeQuery(query).slice(0, 50).trim();
+  const key = `${library.communityCatalog.scope}:${language}`, cached = rmcStates.get(key);
+  if (cached && cached.expiresAt > Date.now()) {
+    session.cookies = new Map(cached.cookies);
+    try {
+      const response = await session.post(cached.url, { ...cached.hidden, ...fields, [RMC_INPUT]: actualQuery });
+      const records = parseRmc(response.text, library, actualQuery);
+      rmcState(session, response, key);
+      return records;
+    } catch (error) {
+      if (error.code === 'CATALOG_PROVIDER_BLOCKED' || Date.now() >= session.deadlineAt) throw error;
+      if (rmcStates.get(key) === cached) rmcStates.delete(key);
+      session.cookies = new Map();
+    }
+  }
+  let response = await session.read('/rmclibrary/generaldashboard');
+  if (!response.text.includes('ctl00$body$ctl01')) throw catalogError('Public books navigation missing');
+  response = await session.post(response.url, { ...hiddenFields(response.text), __EVENTTARGET: 'ctl00$body$ctl01', __EVENTARGUMENT: '' });
   response = await session.post(response.url, { ...hiddenFields(response.text), ...fields });
   const input = [...response.text.matchAll(/<input\b([^>]*)>/gi)].map(m => attributes(m[1]))
-    .find(a => a.type === 'text' && a.name === 'ctl00$body$rpt_SearchTypeMaster$ctl01$SearchValue');
+    .find(a => a.type === 'text' && a.name === RMC_INPUT);
   if (!input) throw catalogError('Public title input missing');
-  const actualQuery = query.slice(0, 50);
   response = await session.post(response.url, { ...hiddenFields(response.text), ...fields, [input.name]: actualQuery });
-  return parseRmc(response.text, library, actualQuery);
+  const records = parseRmc(response.text, library, actualQuery);
+  rmcState(session, response, key);
+  return records;
 }
 
 export function parseSindhiRecord(html, library, id) {
@@ -247,17 +311,30 @@ async function sindhiSearch(library, query, session) {
     if (/no books|no results|0 books|Showing 0/i.test(text(response.text))) return [];
     throw catalogError('Unrecognized archival search');
   }
+  // The archive is shared by several collections. A record whose page lists
+  // another holder is not this library's book; one we could not read leaves
+  // the search incomplete.
   const records = [];
-  for (const id of ids.slice(0, 6)) {
+  // Each record is one more request: four fit a check's request cap.
+  let incomplete = ids.length > 4;
+  for (const id of ids.slice(0, 4)) {
     try { records.push(await sindhiResolve(library, id, session)); }
-    catch (error) { if (error.code !== 'CATALOG_HOLDING_UNCONFIRMED') { if (records.length) break; throw error; } }
+    catch (error) {
+      if (error.code === 'CATALOG_HOLDING_UNCONFIRMED') continue;
+      if (!records.length) throw error;
+      incomplete = true;
+      break;
+    }
   }
-  if (!records.length) throw catalogError('Search did not confirm this collection', 'CATALOG_HOLDING_UNCONFIRMED');
-  return records;
+  return markHasMore(records, incomplete);
 }
 
+// Title searches that match anywhere in the title (checked 19 Nov 2026);
+// a leading article is left out so "Discovery of India, The" is found too.
+const TITLE_CONTAINS = new Set(['surat', 'santhom', 'shodhak', 'rmc', 'rmrl', 'pmb', 'sindhi']);
 async function search(library, input, deadlineAt = Date.now() + 45_000) {
-  const c = config(library), query = boundedQuery(input);
+  const c = config(library), bounded = boundedQuery(input);
+  const query = TITLE_CONTAINS.has(c.family) ? withoutLeadingArticle(bounded) : bounded;
   const session = new CommunitySession(FAMILIES[c.family], deadlineAt);
   switch (c.family) {
     case 'surat': return suratSearch(library, query, session);
@@ -297,8 +374,13 @@ export async function checkAvailability(library, isbn, title, author) {
   const c = config(library), normalizedIsbn = validateAndNormalize(isbn), deadlineAt = Date.now() + 45_000;
   // No exact-search absence claim is made for a title/keyword-only catalog.
   const usableTitle = title && !/^ISBN\s+\d+$/i.test(title) ? title : null;
-  if (!usableTitle && !(c.family === 'pmb' && normalizedIsbn)) throw catalogError('This catalog needs the book title', 'CATALOG_UNSUPPORTED');
-  const records = await search(library, usableTitle || normalizedIsbn, deadlineAt);
+  if (!usableTitle) {
+    // An ISBN alone: only PMB has an ISBN index. Elsewhere the lookup cannot
+    // run, which is not the catalog's failure and says nothing about absence.
+    if (c.family === 'pmb' && normalizedIsbn) return checkPmbIsbn(library, normalizedIsbn, deadlineAt);
+    throw catalogError('This catalog cannot be searched by ISBN', normalizedIsbn ? 'CATALOG_QUERY_UNSUPPORTED' : 'CATALOG_UNSUPPORTED');
+  }
+  const records = await search(library, usableTitle, deadlineAt);
   const detailed = [];
   let complete = records.searchComplete === true;
   let detailError;

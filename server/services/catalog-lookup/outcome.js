@@ -7,8 +7,9 @@ import { linkKind } from './observation.js';
 //   available / none_available / in_catalog / not-for-loan, proven by
 //     exact_isbn, verified_work or catalog_record          -> found
 //   not_found for an exact ISBN the parser recognized       -> not_found
-//   work-level no_match with a complete edition list and a
-//     search that was not partial                           -> not_found
+//   work-level no_match with a complete edition list, a
+//     search that was not partial and an absence the search
+//     marks provable (absenceProvable)                      -> not_found
 //   possible_match (title/author only)                      -> couldnt_check, unconfirmed
 //   anything else (unknown, timeout, budget, error, ...)    -> couldnt_check
 //
@@ -103,9 +104,14 @@ export function answerFromResponse(response, context = {}) {
   }
   if (outcome === 'no_match') {
     const summary = response.searchSummary || {};
-    const complete = summary.partial === false && summary.editionsComplete === true && context.profile?.complete !== false;
-    // The catalog answered, but the edition list or the search was incomplete:
-    // the book may be there under an ISBN we did not know about.
+    // The search itself says whether nothing matching is safe to call absence
+    // (libraryBookSearch.js, absenceRisk): known ISBNs, a title search the
+    // catalog answered, no related rows left unexplained, and a title that
+    // cannot hide behind another spelling or script.
+    const complete = summary.partial === false && summary.editionsComplete === true && summary.absenceProvable === true
+      && context.profile?.complete !== false;
+    // The catalog answered, but the edition list or the search was incomplete,
+    // or the book may be listed under an ISBN, spelling or script we did not try.
     return complete ? { outcome: 'not_found', evidence: 'work_no_match' } : couldntCheck('unconfirmed', extra);
   }
   if (matchKind === 'possible_match') return couldntCheck('unconfirmed', extra);

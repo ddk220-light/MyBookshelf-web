@@ -11,8 +11,8 @@
 // - Result marking: at most one marking run per host at a time; a second one
 //   is not queued.
 //
-// Spacing and per-minute caps across readers and instances are the host gate
-// (catalog-store/hostGate.js, `host_request_windows` and `host_request_slots`).
+// Spacing and per-minute pacing across readers and instances are the host gate
+// (catalog-store/hostGate.js, `host_request_slots`).
 
 export const CIRCUIT_FAILURES = 3;
 export const CIRCUIT_WINDOW_MS = 10 * 60 * 1000;

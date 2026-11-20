@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { attributes, text, firstIsbn, catalogError } from './catalogMarkup.js';
+import { attributes, text, firstIsbn, catalogError, uninvertedTitle } from './catalogMarkup.js';
 
 const integer = value => /^\d+$/.test(String(value ?? '').trim()) ? Number(value) : undefined;
 const norm = value => text(value).normalize('NFKC').toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
@@ -17,7 +17,7 @@ function table(html, id) {
 }
 function rows(value) { return [...String(value || '').matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr\s*>/gi)].map(m => cells(m[1])).filter(x => x.length); }
 function fields(value) { return Object.fromEntries([...value.matchAll(/<tr\b[^>]*>\s*<th\b[^>]*>([\s\S]*?)<\/th>\s*<td\b[^>]*>([\s\S]*?)<\/td>[\s\S]*?<\/tr>/gi)].map(m => [norm(m[1]),text(m[2])])); }
-function book(title, author, extra = {}) { return { title: text(title), authors: text(author) ? [text(author)] : [], isbn: null, ...extra }; }
+function book(title, author, extra = {}) { return { title: uninvertedTitle(text(title)), authors: text(author) ? [text(author)] : [], isbn: null, ...extra }; }
 function status(value) {
   const s = norm(value);
   if (s === 'available') return 'available';

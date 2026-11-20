@@ -2,8 +2,8 @@ import test, { afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { checkAvailability, searchCatalog, resolveCatalogRecord, parseSurat, parseSanthom, parseNmmc,
-  parseRmrl, parseShodhak, parseRmc, parseSindhiRecord } from './discoveryCommunity.js';
-import { parsePmbRecord, parsePmbSearch } from './communityPmb.js';
+  parseRmrl, parseShodhak, parseRmc, parseSindhiRecord, isbnLookupSupported, clearCommunitySessions } from './discoveryCommunity.js';
+import { checkPmbIsbn, clearPmbSessions, parsePmbRecord, parsePmbSearch, pmbAllWordsQuery, pmbIsbnQueries } from './communityPmb.js';
 import { CommunitySession } from './communitySession.js';
 import { boundedQuery, parseReplayId, replayId } from './communityRecords.js';
 import { clearHttpCache } from './http.js';
@@ -18,7 +18,7 @@ const library = (family, scope) => ({ id: `discovery-community:${family}-${scope
 const response = (url, value, status = 200, headers = {}) => ({ url, status, ok: status >= 200 && status < 300,
   headers: new Headers(headers), text: async () => typeof value === 'string' ? value : JSON.stringify(value) });
 const originalFetch = global.fetch;
-afterEach(() => { global.fetch = originalFetch; clearHttpCache(); });
+afterEach(() => { global.fetch = originalFetch; clearHttpCache(); clearPmbSessions(); clearCommunitySessions(); });
 
 test('Surat honors the selected library and does not call reference stock borrowable', () => {
   const books = parseSurat(data('surat.json'), library('surat', '1'));
@@ -117,7 +117,8 @@ test('Santhom recovers a displayed long title with catalog whitespace without ch
   global.fetch = async url => {
     const query = new URL(url).searchParams.get('title');
     queries.push(query);
-    const items = query === 'the church in india' ? [stored,
+    // The leading article is left out of contains-searches.
+    const items = query === 'church in india before' ? [stored,
       { ...stored, title: 'the church in india and another unrelated history', call_no: 'OTHER' }] : [];
     return response(url, { success: true, total: items.length, items });
   };
@@ -125,12 +126,12 @@ test('Santhom recovers a displayed long title with catalog whitespace without ch
   assert.equal(records.length, 1);
   assert.equal(records[0].title, title);
   assert.equal(records.searchComplete, false);
-  assert.equal(parseReplayId(records[0].recordId).query, title);
-  assert.deepEqual(queries, [title, 'the church in india']);
+  assert.equal(parseReplayId(records[0].recordId).query, title.slice(4));
+  assert.deepEqual(queries, [title.slice(4), 'church in india before']);
   clearHttpCache();
   const resolved = await resolveCatalogRecord(selected, records[0].recordId);
   assert.equal(resolved.recordId, records[0].recordId);
-  assert.deepEqual(queries, [title, 'the church in india', title, 'the church in india']);
+  assert.deepEqual(queries, [title.slice(4), 'church in india before', title.slice(4), 'church in india before']);
 });
 
 test('Santhom does not broaden a failed request or a short empty query', async () => {
@@ -319,7 +320,8 @@ test('PMB public form posts its own token and uses a fresh stable branch record 
     if (new URL(url).searchParams.get('lvl') === 'notice_display') return response(url, fixture('pmb-record.html'));
     if (options.method === 'POST') {
       const fields = new URLSearchParams(options.body);
-      assert.equal(fields.get('user_query'), 'Camus'); assert.equal(fields.get('look_ALL'), '1');
+      // Every word required: PMB otherwise ranks any-word matches.
+      assert.equal(fields.get('user_query'), '+Camus'); assert.equal(fields.get('look_ALL'), '1');
       assert.equal(fields.get('csrf_token'), 'fixture_token'); assert.equal(fields.has('password'), false);
       return response(url, fixture('pmb-search.html'));
     }
@@ -337,7 +339,8 @@ test('ISBN title fallback remains a possible match and never reports a scanned e
   const result = await checkAvailability(library('surat', '1'), '9788173711466', 'WINGS OF FIRE', '');
   assert.equal(result.outcome, 'in_catalog'); assert.equal(result.matchKind, 'possible_match');
   assert.equal(result.availableCopies, undefined);
-  await assert.rejects(checkAvailability(library('surat', '1'), '9788173711466', 'ISBN 9788173711466', ''), { code: 'CATALOG_UNSUPPORTED' });
+  // An ISBN alone is a lookup this catalog cannot run, not a failure.
+  await assert.rejects(checkAvailability(library('surat', '1'), '9788173711466', 'ISBN 9788173711466', ''), { code: 'CATALOG_QUERY_UNSUPPORTED' });
 });
 
 test('title fallback tolerates a subtitle and reversed author while rejecting a different author', async () => {
@@ -407,4 +410,126 @@ test('refusals and unknown scope configurations fail without retries or invented
   await assert.rejects(searchCatalog(library('rmc', '99'), 'India'));
   await assert.rejects(searchCatalog({ ...library('surat', '1'), baseUrl: 'https://other.example.test' }, 'India'));
   assert.equal(calls, 1);
+});
+
+// 19 November 2026 re-test fixtures (trimmed public responses).
+test('an ISBN alone is a query only PMB can run; elsewhere it is unsupported and sent nowhere', async () => {
+  let called = false; global.fetch = async () => { called = true; throw Error('unexpected'); };
+  for (const family of ['surat', 'rmc', 'rmrl', 'santhom', 'shodhak', 'sindhi']) {
+    const selected = library(family, { surat: '7', rmc: '3', sindhi: 'indian-institute-of-sindhology' }[family]);
+    await assert.rejects(checkAvailability(selected, '9781847941831', '', ''), { code: 'CATALOG_QUERY_UNSUPPORTED' });
+    assert.equal(isbnLookupSupported(selected), false);
+  }
+  assert.equal(called, false);
+  // PMB answers an ISBN alone, but a work search reads its title search.
+  assert.equal(isbnLookupSupported(library('pmb', '18')), false);
+});
+
+test('Shodhak: the empty result grid is an empty search, and a card names its author', () => {
+  assert.deepEqual(parseShodhak(data('shodhak-empty.json'), library('shodhak'), 'Godaan'), []);
+  assert.throws(() => parseShodhak({ data: '<div>Server busy</div>' }, library('shodhak'), 'Godaan'), { code: 'CATALOG_UNRECOGNIZED' });
+  const [book] = parseShodhak(data('shodhak-author.json'), library('shodhak'), 'Wings of Fire');
+  assert.equal(book.title, 'WINGS OF FIRE (AGANPANKH)');
+  assert.deepEqual(book.authors, ['Dr. A. P. J. Abdul Kalam']);
+  assert.equal(book.observation.outcome, 'none_available');
+});
+
+test('PMB searches require every word, and its no-result page is a complete empty answer', () => {
+  assert.equal(pmbAllWordsQuery('Wings of Fire'), '+Wings +of +Fire');
+  assert.equal(pmbAllWordsQuery('"Harry" (Potter) -x'), '+Harry +Potter +x');
+  const empty = parsePmbSearch(fixture('pmb-empty.html'), library('pmb', '18'));
+  assert.deepEqual([...empty], []); assert.equal(empty.searchComplete, true);
+  // The branch shown in the page must still be the selected one.
+  assert.throws(() => parsePmbSearch(fixture('pmb-empty.html'), library('pmb', '12')), { code: 'CATALOG_HOLDING_UNCONFIRMED' });
+  assert.deepEqual(pmbIsbnQueries('9780140278330'), ['"978-0-14-027833-0" "0-14-027833-8"']);
+});
+
+test('PMB ISBN lookup asks both hyphenated forms in one search, and an empty answer is not found', async () => {
+  const selected = library('pmb', '12'), posts = [];
+  const empty = fixture('pmb-empty.html').replace('A.F. Pondicherry', 'AF Bangalore');
+  global.fetch = async (url, options) => {
+    if (options.method === 'POST') { posts.push(new URLSearchParams(options.body).get('user_query')); return response(url, empty); }
+    return response(url, fixture('pmb-home.html'));
+  };
+  const value = await checkAvailability(selected, '9781847941831', '', '');
+  assert.equal(value.outcome, 'not_found'); assert.equal(value.recognizedExact, true);
+  assert.deepEqual(posts, ['"978-1-84794-183-1" "1-84794-183-4"']);
+  // The ISBN-10 form of the same edition is answered without another search.
+  assert.equal((await checkAvailability(selected, '1847941834', '', '')).outcome, 'not_found');
+  assert.equal(posts.length, 1);
+});
+
+test('PMB ISBN lookup proves the edition from the branch record, and a record held elsewhere is not this branch', async () => {
+  const selected = library('pmb', '12');
+  let record = fixture('pmb-record.html');
+  global.fetch = async (url, options) => {
+    if (new URL(url).searchParams.get('lvl') === 'notice_display') return response(url, record);
+    return response(url, options.method === 'POST' ? pmbResultPage(['94918']) : fixture('pmb-home.html'));
+  };
+  const found = await checkAvailability(selected, '9782091805009', '', '');
+  assert.equal(found.matchKind, 'exact_isbn'); assert.equal(found.outcome, 'none_available');
+  clearHttpCache(); clearPmbSessions();
+  record = fixture('pmb-record.html').replace('>AF Bangalore</td>', '>AF Delhi</td>');
+  const elsewhere = await checkAvailability(selected, '9782091805009', '', '');
+  assert.equal(elsewhere.outcome, 'not_found');
+});
+
+test('a search with more rows than were read is marked, so it is never taken as absence', () => {
+  const surat = data('surat.json');
+  assert.equal(parseSurat({ ...surat, iTotalRecords: surat.data.length + 5 }, library('surat', '1')).hasMore, true);
+  assert.equal(parseSurat({ ...surat, iTotalRecords: surat.data.length }, library('surat', '1')).hasMore, undefined);
+});
+
+test('Shodhak reuses its anonymous session for a later search and renews it once when the token expired', async () => {
+  const calls = []; let expired = false;
+  global.fetch = async (url, options) => {
+    calls.push(options.method || 'GET');
+    if (options.method === 'POST') return expired ? response(url, 'Page Expired', 419) : response(url, data('shodhak-empty.json'));
+    expired = false;
+    return response(url, '<meta name="csrf-token" content="public-token">', 200, { 'set-cookie': 'laravel_session=anon; Path=/' });
+  };
+  await searchCatalog(library('shodhak'), 'Godaan'); await searchCatalog(library('shodhak'), 'Gora');
+  assert.deepEqual(calls, ['GET', 'POST', 'POST']);
+  calls.length = 0; expired = true;
+  assert.deepEqual(await searchCatalog(library('shodhak'), 'Godaan'), []);
+  assert.deepEqual(calls, ['POST', 'GET', 'POST']);
+});
+
+test('RMC: a later search reuses the title form in one POST; a stale form or another branch starts over', async () => {
+  const methods = []; let stale = false;
+  global.fetch = async (url, options) => {
+    const fields = new URLSearchParams(options.body || '');
+    methods.push(options.method || 'GET');
+    if (options.method !== 'POST') return response(url, fixture('rmc-home.html'), 200, { 'set-cookie': 'session=public; Path=/rmclibrary/; Secure' });
+    if (fields.get('__EVENTTARGET') === 'ctl00$body$ctl01') return response(url, fixture('rmc-books.html'));
+    if (stale) { stale = false; return response(url, fixture('rmc-home.html')); }
+    // Quote characters never reach the catalog's SQL.
+    assert.ok(!/'/.test(fields.get('ctl00$body$rpt_SearchTypeMaster$ctl01$SearchValue') || ''));
+    return response(url, fixture(fields.has('ctl00$body$rpt_SearchTypeMaster$ctl01$SearchValue') ? 'rmc-positive.html' : 'rmc-titleform.html'));
+  };
+  await searchCatalog(library('rmc', '1'), 'Wings of Fire');
+  assert.deepEqual(methods, ['GET', 'POST', 'POST', 'POST']);
+  methods.length = 0;
+  await searchCatalog(library('rmc', '1'), "Harry Potter and the Philosopher's Stone");
+  assert.deepEqual(methods, ['POST']);
+  methods.length = 0; stale = true;
+  assert.ok((await searchCatalog(library('rmc', '1'), 'Wings of Fire')).length);
+  assert.deepEqual(methods, ['POST', 'GET', 'POST', 'POST', 'POST']);
+});
+
+test('a contains-search leaves out a leading article, so an inverted catalog title is still found', async () => {
+  const { withoutLeadingArticle } = await import('./catalogMarkup.js');
+  assert.equal(withoutLeadingArticle('The discovery of India'), 'discovery of India');
+  assert.equal(withoutLeadingArticle('A Suitable Boy'), 'Suitable Boy');
+  assert.equal(withoutLeadingArticle('Theory of Everything'), 'Theory of Everything');
+  assert.equal(withoutLeadingArticle('The It'), 'The It');
+  const queries = [];
+  global.fetch = async url => { queries.push(new URL(url).searchParams.get('title'));
+    return response(url, { success: true, total: 1, items: [{ call_no: '320.54 NEH-D', title: 'Discovery of India, The', author: 'JAWAHARLAL NEHRU', year_published: 1946, isbn: '-', status: 'In Library', type: 'book' }] }); };
+  const records = await searchCatalog(library('santhom'), 'The discovery of India');
+  // The filing form "Discovery of India, The" is read as the title itself.
+  assert.deepEqual(queries, ['discovery of India']); assert.equal(records[0].title, 'The Discovery of India');
+  const { uninvertedTitle } = await import('./catalogMarkup.js');
+  assert.equal(uninvertedTitle('Guide, The.'), 'The Guide'); assert.equal(uninvertedTitle('Wings of Fire'), 'Wings of Fire');
+  assert.equal(uninvertedTitle('Hepatitis, A'), 'Hepatitis, A'); assert.equal(uninvertedTitle('Suitable Boy, A'), 'A Suitable Boy');
 });

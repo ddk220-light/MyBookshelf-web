@@ -59,3 +59,27 @@ displayed-title query returned a scoped zero; a separate main-title query
 returned this exact record. The fixture tests bounded
 main-title recovery, fresh form/session state and unchanged member scope.
 Live before/after evidence is in `docs/research/india-library-hardening/`.
+
+## Title and ISBN search fields (19 November 2026)
+
+Saved like the Romain Rolland pages (scripts, styles, images and presentation
+attributes removed; every opaque hidden value is `fixture-state`), one request
+at a time, a few seconds apart.
+
+- `dlsitapur-form.html`, `dlsitapur-isbn-zero.html`, `dlsitapur-title-wings-of-fire.html`:
+  Government District Library, Sitapur (UPLIBRARIES:DLSITAPUR). ALL/OR
+  "817371146 81-7371-146" returned 0 records (4.5 s); TITLE/LIKE "Wings of Fire"
+  returned the shared records 79083 and 451490, both showing ISBN 9788173711466
+  (4.5 s). The same day ALL/LIKE "Wings of Fire" also returned 0 here.
+- `srsjammu-form.html`, `srsjammu-title-wings-of-fire.html`, `srsjammu-all-wings-of-fire.html`:
+  SRS Central Library, Jammu (JKLIBRARIES:SRSJAMMU). TITLE/LIKE "Wings of Fire"
+  returned 0 (2.1 s); ALL/LIKE returned the member's record 31499 with ISBN
+  9788173711466 (7.5 s).
+
+So a member's TITLE search finds the records it holds copies of (shared
+records included) and its ALL search the records it catalogued itself; the
+adapter's title search runs both. Also observed: OR with ALL matches any of
+the words (an ISBN's plain and hyphenated digits in one search); a POST built
+from a form page fetched 15 minutes earlier, sent without a session cookie,
+was answered normally; searches of "All Libraries" in UPLIBRARIES took 26 to
+95 s, so the adapter no longer uses them.

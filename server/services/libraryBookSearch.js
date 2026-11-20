@@ -59,6 +59,49 @@ export function matchCatalogRecord(record, profile) {
   return null;
 }
 
+// When may a work search that matched nothing say "not found"? Only when the
+// search could have proved the book was there and looked properly:
+//   - the work has at least one known ISBN: without one no row can prove the
+//     edition, so the search could never say "found" either (Godaan and
+//     Ponniyin Selvan on 19 November: no ISBN in Open Library, "not found" at
+//     32 to 37 of 48 libraries);
+//   - a title search ran and the catalog answered it: ISBN lookups alone miss
+//     every edition Open Library does not list (most Indian printings);
+//   - no row in that search had a related title we could not rule out (a
+//     multi-volume set, "Part 1", a longer title with the same words);
+//   - the title cannot hide behind another spelling or script: every known
+//     title is in Latin script and the work's language is one written in it.
+//     A Hindi or Tamil work may be catalogued as "Godan", "गोदान" or
+//     "பொன்னியின் செல்வன்", which a search for "Godaan" never finds.
+// Otherwise the answer is "couldn't check" (unconfirmed), never "not found".
+const LATIN_SCRIPT_LANGUAGES = new Set(['eng', 'fre', 'ger', 'spa', 'ita', 'por', 'dut', 'swe', 'nor', 'nob', 'nno', 'dan', 'fin', 'ice', 'pol', 'cze', 'slo',
+  'hun', 'rum', 'hrv', 'slv', 'tur', 'ind', 'may', 'vie', 'lat', 'cat', 'glg', 'baq', 'wel', 'gle', 'est', 'lav', 'lit', 'afr', 'swa', 'tgl', 'alb', 'mlt']);
+const nonLatinLetters = value => /(?![\p{Script=Latin}])\p{L}/u.test(String(value || ''));
+export function transliterationRisk(profile) {
+  if (!LATIN_SCRIPT_LANGUAGES.has(String(profile?.language || '').toLowerCase())) return true;
+  return (profile.titles || [profile.book?.title]).some(nonLatinLetters);
+}
+// A search row that contains one of the work's main titles, word for word,
+// that did not match and that its authors do not rule out: perhaps a volume of
+// a set or the same book under a longer title.
+export function relatedRow(row, profile) {
+  if (!row?.title || matchCatalogRecord(row, profile)) return false;
+  if (authorsOf(row).length && profile.authors?.length && !authorAgrees(row, profile)) return false;
+  const text = ` ${normalize(titleParts(row.title).join(' '))} `;
+  return (profile.titles || [profile.book?.title]).some(expected => {
+    const main = normalize(titleParts(expected)[0]);
+    return main.length >= 3 && text.includes(` ${main} `);
+  });
+}
+export function absenceRisk(summary, profile) {
+  if (summary.partial || !summary.editionsComplete || profile?.complete === false) return 'partial';
+  if (!profile?.isbns?.length) return 'no_isbns';
+  if (!(summary.titleSearches > 0)) return 'no_title_search';
+  if (summary.relatedTitles > 0) return 'related_titles';
+  if (transliterationRisk(profile)) return 'other_script';
+  return null;
+}
+
 // A search-result row is worth opening only if its own title/author do not
 // already rule it out. Rows that show one of the work's ISBNs come first (they
 // can prove the edition), then rows with no ISBN shown (opening one may reveal
@@ -125,7 +168,13 @@ export async function searchLibraryBook(provider, profile, options = {}) {
 
 async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, maxRequests, titleFirst, operation, progress = null, stop = () => {} }) {
   const deadline = Date.now() + timeoutMs;
-  const summary = { isbnQueries: 0, titleQueries: 0, recordsChecked: 0, requests: 0, maxRequests, partial: !profile.complete, editionsComplete: profile.complete };
+  const summary = { isbnQueries: 0, titleQueries: 0, titleSearches: 0, relatedTitles: 0, recordsChecked: 0, requests: 0, maxRequests,
+    partial: !profile.complete, editionsComplete: profile.complete };
+  // A title search the catalog answered, and its rows we could not rule out.
+  const noteTitleSearch = records => {
+    summary.titleSearches++;
+    summary.relatedTitles += records.filter(row => relatedRow(row, profile)).length;
+  };
   const positives = [], seen = new Set();
   let provenFound;
   const proven = new Promise(resolve => { provenFound = resolve; });
@@ -222,6 +271,7 @@ async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, m
     const records = Array.isArray(response) ? response : response?.records;
     if (response?.hasMore) summary.partial = true;
     if (!Array.isArray(records)) return;
+    noteTitleSearch(records);
     if (records.length > maxRecords) summary.partial = true;
     await readRecords(records);
   }
@@ -249,6 +299,7 @@ async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, m
       const records = Array.isArray(response) ? response : response?.records;
       if (failures > before) { searchFailed = true; break; }
       if (!Array.isArray(records)) continue;
+      noteTitleSearch(records);
       if (response?.hasMore) summary.partial = true;
       const ranked = records.map((row, index) => ({ ...row, tier: candidateTier(row, profile), index }))
         .filter(row => row.tier).sort((a, b) => a.tier - b.tier || a.index - b.index);
@@ -291,5 +342,10 @@ async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, m
   summary.partial ||= failures > 0;
   if (positives.length) return { ...positives[0], searchSummary: summary };
   if (failures || !completed) return { outcome: 'unknown', searchSummary: summary, errorCode: failureCode || 'CATALOG_INCOMPLETE' };
+  // Nothing matched. Whether that is "not found" or only "couldn't check" is
+  // decided here, where the search knows what it tried (absenceRisk).
+  const risk = absenceRisk(summary, profile);
+  summary.absenceProvable = !risk;
+  if (risk) summary.absenceRisk = risk;
   return { outcome: 'no_match', searchSummary: summary };
 }
