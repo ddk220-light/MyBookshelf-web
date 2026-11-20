@@ -206,20 +206,14 @@ export async function searchCatalog(library, query) {
   return result.records.length > rows.length ? Object.assign(rows, { hasMore: true }) : rows;
 }
 
-// A reader's library check (libraryBookSearch.js): one search of this
-// tenant's catalog, by title or by ISBN, and its rows. Every row is a record
-// of this library. The ISBN search asks the digits an ISBN-13 shares with its
-// ISBN-10 (both plain forms); a row showing another ISBN does not count.
-const presence = library => ({ outcome: 'in_catalog', matchKind: 'verified_work', recognizedExact: true, catalogUrl: publicUrl(library), catalogLinkKind: 'search' });
-export async function searchTitle(library, title) {
-  const { records } = await search(library, title, 'TITLE', Date.now() + DEADLINE_MS, false);
-  return records.map(row => ({ ...row, observation: presence(library) }));
-}
-export async function searchIsbn(library, value) {
-  const isbn = validateAndNormalize(value);
-  if (!isbn) throw catalogError('ISBN required', 'CATALOG_EXACT_ISBN_REQUIRED');
-  const { records } = await search(library, isbnSearchTerms(isbn)[0], 'ISBN', Date.now() + DEADLINE_MS, false);
-  return records.map(row => ({ ...row, observation: presence(library) }));
+// The one library search (libraryBookSearch.js): one search of this
+// tenant's catalog (Libraryid), so every row is a record of this library.
+// The API's criteria seen are TITLE and ISBN, no any-field one: title search
+// (providers/index.js marks it title-only).
+const SEARCH_CRITERIA = 'TITLE';
+export async function librarySearch(library, term) {
+  const { records } = await search(library, term, SEARCH_CRITERIA, Date.now() + DEADLINE_MS, false);
+  return records.map(row => ({ ...row, observation: { outcome: 'in_catalog', matchKind: 'verified_work', recognizedExact: true, catalogUrl: publicUrl(library), catalogLinkKind: 'search' } }));
 }
 
 export async function resolveCatalogRecord(library, recordId) {

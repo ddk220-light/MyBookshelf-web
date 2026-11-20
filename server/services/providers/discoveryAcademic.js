@@ -21,17 +21,18 @@ function config(library) {
   return c;
 }
 export function academicCatalogConfigured(library){return Boolean(Object.hasOwn(CONFIGS,library?.academicCatalogId)&&!CONFIGS[library.academicCatalogId].externalOnly);}
-// Whether a work search should ask this catalog about the work's ISBNs one
-// at a time (providers/index.js `isbnLookup`). Most of these catalogs have no
-// ISBN index: asked for an ISBN alone they answer CATALOG_QUERY_UNSUPPORTED.
-// Baba Mastnath's ISBN index answers, but its rows never show an ISBN, so an
-// ISBN search can only say "none": the title search says that too, for every
-// edition at once, within the request cap (19 Nov 2026: one ISBN = 2 requests).
-// Darshan (ISBN on the record page) and SOUL (ISBN in the row) can prove an
-// edition by ISBN and keep it.
-export function isbnLookupSupported(library){
+// The one library search (libraryBookSearch.js, providers/index.js) asks
+// each kind's own search form in this field: any field where the form offers
+// one (Baba Mastnath "Library catalog", NIOS/LIBSYS "Any Field", Librarika
+// "Default"; Autolib's export is filtered here on every field). The other
+// kinds search titles only (SRMS, LibAITech "Title", ProcessCUBE "Book
+// Title", Mizoram, Darshan, SOUL) or have one search box whose fields are not
+// stated (RPS, Easylib, LIBSOFT); providers/index.js treats those as title
+// searches. Changing a value here switches that kind's field.
+const SEARCH_FIELD={bmu:'All',nios:'0',librarika:'',autolib:'any'};
+export function anyFieldSearch(library){
   const c=Object.hasOwn(CONFIGS,library?.academicCatalogId)?CONFIGS[library.academicCatalogId]:null;
-  return Boolean(c&&c.isbn&&!c.externalOnly&&c.kind!=='bmu');
+  return Boolean(c&&Object.hasOwn(SEARCH_FIELD,c.kind));
 }
 function recordId(query,b){
   // Replaying the selected title is more stable than a broad query such as
@@ -127,8 +128,10 @@ const QUOTE_UNSAFE=new Set(['easylib','processcube','libsoft','rps','mizoram']);
 const TITLE_CONTAINS=new Set(['easylib','libaitech','libsoft','rps','darshan','iust','bmu','srms']);
 async function fetchQuery(library,query,mode,deadlineAt){
   const c=config(library),read=anonymousSession(c,deadlineAt);let response,payload;
-  let q=mode==='title'&&QUOTE_UNSAFE.has(c.kind)?quoteFreeQuery(query):query;
-  if(mode==='title'&&TITLE_CONTAINS.has(c.kind))q=withoutLeadingArticle(q);
+  // `mode`: 'title', 'isbn', or 'search' (the one library search, SEARCH_FIELD).
+  const words=mode!=='isbn',any=mode==='search'&&Object.hasOwn(SEARCH_FIELD,c.kind);
+  let q=words&&QUOTE_UNSAFE.has(c.kind)?quoteFreeQuery(query):query;
+  if(words&&TITLE_CONTAINS.has(c.kind))q=withoutLeadingArticle(q);
   const isbn=mode==='isbn'?validateAndNormalize(q):null;
   if(c.kind==='srms'){
     const url='https://myportal.srms.ac.in/Library/OPACPanel/searchbookbytitle';
@@ -142,17 +145,17 @@ async function fetchQuery(library,query,mode,deadlineAt){
   }else if(c.kind==='libsoft'){
     const url=new URL('/qs.php',c.url);url.search=new URLSearchParams({data:q,select:'10'});response=await read(url);payload=response.text;
   }else if(c.kind==='nios'){
-    await read(c.url);response=await read(new URL('/search/searchResult.html',c.url),formRequest({searchdata:q,db:'1',qcon1:'1',cat1:mode==='isbn'?'7':'2',sortByVal:'Author'}));payload=response.text;
+    await read(c.url);response=await read(new URL('/search/searchResult.html',c.url),formRequest({searchdata:q,db:'1',qcon1:'1',cat1:mode==='isbn'?'7':any?SEARCH_FIELD.nios:'2',sortByVal:'Author'}));payload=response.text;
   }else if(c.kind==='librarika'){
     const url=new URL('/search',c.url),initial=await read(url);
     if(!/id=['"]FilterIndexForm['"]/.test(initial.text))throw catalogError('Missing public Librarika search form');
     const formBlock=initial.text.match(/<form\b[^>]*id=['"]FilterIndexForm['"][\s\S]*?<\/form>/i)?.[0];
     const data=hiddenForm(formBlock||'');
-    data.set('data[Filter][q]',q);data.set('data[Filter][media_type_id]','1');data.set('data[Filter][field]',mode==='isbn'?'Media.isbn':'Media.title');
+    data.set('data[Filter][q]',q);data.set('data[Filter][media_type_id]','1');data.set('data[Filter][field]',mode==='isbn'?'Media.isbn':any?SEARCH_FIELD.librarika:'Media.title');
     response=await read(url,formRequest(data));payload=response.text;
   }else if(['mizoram','processcube','bmu'].includes(c.kind)){
     const url=c.kind==='mizoram'?new URL('Normal.aspx',c.url).toString():c.url;
-    const values=c.kind==='mizoram'?{ddlSearchIn:'B',ddlField:mode==='isbn'?'Acc_ISBN_No':'Acc_Title',txtSearchValue:q,ddlMatchCritaria:'Like',btnSerach:'Get It !!'}:c.kind==='bmu'?{ddlSearchType:mode==='isbn'?'ISBN':'Title',txtKeyword:q,btnSearch:'Search'}:{txt_search:q,btn_search:'Availability',TextBox1:'',TextBox2:'',TextBox3:'',TextBox4:''};
+    const values=c.kind==='mizoram'?{ddlSearchIn:'B',ddlField:mode==='isbn'?'Acc_ISBN_No':'Acc_Title',txtSearchValue:q,ddlMatchCritaria:'Like',btnSerach:'Get It !!'}:c.kind==='bmu'?{ddlSearchType:mode==='isbn'?'ISBN':any?SEARCH_FIELD.bmu:'Title',txtKeyword:q,btnSearch:'Search'}:{txt_search:q,btn_search:'Availability',TextBox1:'',TextBox2:'',TextBox3:'',TextBox4:''};
     const post=async fresh=>{
       const form=await aspxForm(c,url,read,fresh||c.kind==='mizoram');
       for(const [k,v] of Object.entries(values))form.data.set(k,v);
@@ -163,7 +166,7 @@ async function fetchQuery(library,query,mode,deadlineAt){
     if(attempt.form.cached){
       // Stale form state shows the empty search page (or an error) instead of
       // results: read it again once with the page's current state.
-      try{parseAcademicResponse(c.kind,attempt.text,{query:q,isbn});}
+      try{parseAcademicResponse(c.kind,attempt.text,{query:q,isbn,any});}
       catch(error){if(error.code==='CATALOG_PROVIDER_BLOCKED')throw error;formStates.delete(url);attempt=await post(true);}
     }
     payload=attempt.text;
@@ -182,10 +185,10 @@ async function fetchQuery(library,query,mode,deadlineAt){
     if(iustEmptyResultPage(page))payload=[];
     else{response=await read(new URL('/EmployeeDataHandler.ashx',c.url));payload=json(response);}
   }else throw catalogError('Public catalog method not implemented','CATALOG_UNSUPPORTED');
-  const result=parseAcademicResponse(c.kind,payload,{query:q,isbn});
+  const result=parseAcademicResponse(c.kind,payload,{query:q,isbn,any});
   // A start-of-title search for "The ..." cannot see the same book filed as
   // "Discovery of India, The": its empty answer is not a complete one.
-  const inverted=mode==='title'&&c.kind==='processcube'&&startsWithArticle(q);
+  const inverted=words&&c.kind==='processcube'&&startsWithArticle(q);
   return {...result,records:result.records.slice(0,MAX_RESULTS),complete:result.complete&&!inverted&&result.records.length<=MAX_RESULTS,read};
 }
 export function iustEmptyResultPage(html){
@@ -225,13 +228,12 @@ export async function searchCatalog(library,query){
   const c=config(library),q=boundedQuery(query),deadlineAt=Date.now()+DEFAULT_TIMEOUT_MS;
   return cachedTask(`academic-search:${library.academicCatalogId}:${q}`,async()=>finish(await fetchQuery(library,q,'title',deadlineAt),c,q),{deadlineAt});
 }
-// A reader's library check (libraryBookSearch.js): one search of the
-// catalog's ISBN index for the reader's ISBN, and its rows (each a record of
-// this library). Only where the catalog has one (isbnLookupSupported).
-export async function searchIsbn(library,value){
-  const c=config(library),isbn=validateAndNormalize(value),deadlineAt=Date.now()+DEFAULT_TIMEOUT_MS;
-  if(!isbn||!c.isbn)throw catalogError('This catalog cannot be searched by ISBN','CATALOG_QUERY_UNSUPPORTED');
-  return finish(await fetchQuery(library,isbn,'isbn',deadlineAt),c,isbn);
+// The one library search (libraryBookSearch.js): one search in SEARCH_FIELD,
+// and its rows, each a record of this library's catalog.
+export async function librarySearch(library,term){
+  const c=config(library),q=boundedQuery(term),deadlineAt=Date.now()+DEFAULT_TIMEOUT_MS;
+  const {read:_,...result}=await fetchQuery(library,q,'search',deadlineAt);
+  return finish(result,c,q);
 }
 export async function resolveCatalogRecord(library,id){
   const c=config(library),[q,key]=decodeRecord(id),deadlineAt=Date.now()+DEFAULT_TIMEOUT_MS;

@@ -79,7 +79,7 @@ export function parseSanthom(data, library, query) {
   if (!complete) for (const item of distinct) item.observation = aggregateObservations([item.observation], { complete: false });
   return markSearchComplete(distinct, complete && new Set(records.map(item => item.recordId)).size === distinct.length);
 }
-async function santhomSearch(library, query, session) {
+async function santhomSearch(library, query, session, retry = true) {
   async function read(title) {
     const params = new URLSearchParams({ ajax: '1', type: 'books', title, author: '', year: '', call_no: '',
       titleFilter: 'contains', authorFilter: 'contains', yearFilter: 'contains', callNoFilter: 'contains', page: '1' });
@@ -89,7 +89,7 @@ async function santhomSearch(library, query, session) {
   }
   const records = await read(query);
   const words = query.split(' ');
-  if (records.length || records.searchComplete !== true || words.length < 5) return records;
+  if (!retry || records.length || records.searchComplete !== true || words.length < 5) return records;
   const prefix = words.slice(0, 4).join(' ');
   if (prefix.length < 8) return records;
   const wanted = normalized(query);
@@ -306,7 +306,7 @@ async function sindhiSearch(library, query, session) {
   // the search incomplete.
   const records = [];
   // Each record is one more request: four at most (result marking, the
-  // catalog search screen; a library check uses searchTitle instead).
+  // catalog search screen; a library check uses librarySearch instead).
   const read = 4;
   let incomplete = ids.length > read;
   for (const id of ids.slice(0, read)) {
@@ -342,16 +342,31 @@ async function search(library, input, deadlineAt = Date.now() + 45_000) {
 }
 export async function searchCatalog(library, query) { return search(library, query); }
 
-// A reader's library check (libraryBookSearch.js): one title search, and its
-// rows. The Sindhi archive (shared by several collections) and PMB (shared by
-// several branches) list rows that do not show this library's holding: a
-// matching one is opened with readRecord, which throws
-// CATALOG_HOLDING_UNCONFIRMED for another collection's or branch's record.
-export async function searchTitle(library, title) {
+// The one library search (libraryBookSearch.js, providers/index.js): one
+// search of the family's own form, and its rows. The field each family asks:
+//   pmb      look_ALL (all fields), inside the branch's OPAC view
+//   surat    BookName (title), the branch's LibraryId
+//   rmc      search type 1 (Title; the form offers Title, Author,
+//            Publication, Language), the branch's ddlLibrary
+//   santhom  title (contains); nmmc searchType title; rmrl searchby title
+//   shodhak  its one search box (fields not stated)
+//   sindhi   field=title; the archive is shared by several collections and
+//            its search cannot be limited to one: every row counts.
+// Only PMB searches every field; providers/index.js treats the others as
+// title searches.
+const ANY_FIELD_FAMILIES = new Set(['pmb']);
+export function anyFieldSearch(library) { return ANY_FIELD_FAMILIES.has(library?.communityCatalog?.family); }
+export async function librarySearch(library, term) {
   const c = config(library);
-  if (c.family !== 'sindhi') return search(library, title);
+  if (c.family === 'santhom') {
+    const bounded = withoutLeadingArticle(boundedQuery(term));
+    return santhomSearch(library, bounded, new CommunitySession(FAMILIES.santhom, Date.now() + 45_000), false);
+  }
+  if (c.family === 'pmb') return (await search(library, term)).map(row => ({ ...row,
+    catalogUrl: `${FAMILIES.pmb}/index.php?lvl=notice_display&id=${row.recordId}&opac_view=${c.scope}`, catalogLinkKind: 'record' }));
+  if (c.family !== 'sindhi') return search(library, term);
   const session = new CommunitySession(FAMILIES.sindhi, Date.now() + 45_000);
-  const response = await session.read(`/books?${new URLSearchParams({ q: withoutLeadingArticle(boundedQuery(title)), field: 'title' })}`);
+  const response = await session.read(`/books?${new URLSearchParams({ q: withoutLeadingArticle(boundedQuery(term)), field: 'title' })}`);
   const rows = new Map();
   for (const m of response.text.matchAll(/<button\b([^>]*)>/gi)) {
     const a = attributes(m[1]);
@@ -360,14 +375,7 @@ export async function searchTitle(library, title) {
     }
   }
   if (!rows.size && !/no books|no results|0 books|Showing 0/i.test(text(response.text))) throw catalogError('Unrecognized archival search');
-  return [...rows.values()];
-}
-export async function readRecord(library, id) {
-  const c = config(library);
-  if (c.family === 'sindhi') return sindhiResolve(library, id, new CommunitySession(FAMILIES.sindhi, Date.now() + 45_000));
-  if (c.family !== 'pmb') throw catalogError('This catalog has no record pages', 'CATALOG_UNSUPPORTED');
-  try { return await resolvePmb(library, id, Date.now() + 45_000); }
-  catch (error) { throw error.otherBranch ? catalogError('Another branch’s record', 'CATALOG_HOLDING_UNCONFIRMED') : error; }
+  return [...rows.values()].map(row => ({ ...row, catalogUrl: `${FAMILIES.sindhi}/books/${row.recordId}`, catalogLinkKind: 'record' }));
 }
 
 export async function resolveCatalogRecord(library, id) {

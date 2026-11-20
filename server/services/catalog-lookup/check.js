@@ -13,36 +13,26 @@ const coded = (message, code) => Object.assign(new Error(message), { code });
 // decides how a failure is shown.
 //
 // A book asked about as a work (every book key but this library's own record
-// and an exact-edition `/availability` call) is one simple search
-// (libraryBookSearch.js): one title search, plus one search for the reader's
-// ISBN when the book was reached by ISBN, or one ISBN search alone at a
-// catalog without a title search.
+// and an exact-edition `/availability` call) is the one library search
+// (libraryBookSearch.js): one `provider.search(term)` request, through the
+// shared rows cache when the lookup layer passes `rows`.
 //
 // `budget` is null for the old `/availability` path without the lookup layer.
 // The lookup layer passes `{ deadlineAt, signal, robots, minIntervalMs, gate,
-// noRetries, requestTimeoutMs, hostRequests }`: the whole check then runs
+// noRetries, requestTimeoutMs }`: the whole check then runs
 // inside one catalog operation with that deadline, the shared host pacing and
 // the robots policy, and the deadline or the caller's signal cancels any
-// request still in flight. A found answer reached as the deadline arrives is
-// kept (`budget.progress`); `budget.conclude`, an AbortSignal, asks the check
-// to end now with such an answer.
+// request still in flight.
 export async function runBookCheck({ entry, library, provider, book, bookKey, parsed, ownRecord, lookupKind,
-  editionScope = 'work', books, attemptedAt, budget = null }) {
-  // A provider without the searches (an old adapter shape, tests) is asked
-  // by the book's ISBN, as an exact-edition check.
-  const workSearch = !ownRecord && editionScope === 'work' && Boolean(provider?.searchTitle || provider?.searchIsbn);
-  const progress = budget ? (budget.progress || {}) : null;
+  editionScope = 'work', books, attemptedAt, budget = null, rows = null }) {
+  const workSearch = !ownRecord && editionScope === 'work' && typeof provider?.search === 'function';
   const run = () => checkBook({ entry, library, provider, book, bookKey, parsed, keyed: parsed ?? parsePublicBookKey(bookKey || ''), ownRecord, lookupKind,
-    editionScope, attemptedAt, workSearch, books, budget, progress });
+    editionScope, attemptedAt, workSearch, books, budget, rows });
   if (!budget) return run();
-  const proven = () => {
-    if (!workSearch || !progress?.best) return null;
-    try { return { response: workResponse(progress.best, { library, entry, attemptedAt }) }; } catch { return null; }
-  };
-  return withBudget(budget, run, lookupKind, proven);
+  return withBudget(budget, run, lookupKind);
 }
 
-async function withBudget(budget, run, lookupKind, proven) {
+async function withBudget(budget, run, lookupKind) {
   const controller = new AbortController();
   const forward = () => controller.abort();
   if (budget.signal?.aborted) return { error: coded('Catalog check was cancelled', 'CATALOG_ABORTED'), lookupKind };
@@ -52,22 +42,9 @@ async function withBudget(budget, run, lookupKind, proven) {
   const sent = () => current?.requests || 0;
   const deadline = new Promise(resolve => {
     timer = setTimeout(() => {
-      const best = proven();
       controller.abort();
-      resolve(best ? { ...best, requests: sent() } : { error: coded('Catalog check deadline exceeded', 'CATALOG_TIMEOUT'), lookupKind, requests: sent() });
+      resolve({ error: coded('Catalog check deadline exceeded', 'CATALOG_TIMEOUT'), lookupKind, requests: sent() });
     }, Math.max(0, budget.deadlineAt - Date.now()));
-  });
-  let onConclude = null;
-  const concluded = new Promise(resolve => {
-    if (!budget.conclude) return;
-    onConclude = () => {
-      const best = proven();
-      if (!best) return;
-      controller.abort();
-      resolve({ ...best, requests: sent() });
-    };
-    if (budget.conclude.aborted) onConclude();
-    else budget.conclude.addEventListener?.('abort', onConclude, { once: true });
   });
   const cancelled = new Promise(resolve => {
     controller.signal.addEventListener('abort', () => {
@@ -77,28 +54,24 @@ async function withBudget(budget, run, lookupKind, proven) {
   try {
     const work = withCatalogOperation({ maxRequests: budget.maxRequests ?? Infinity, signal: controller.signal,
       robots: budget.robots || null, minIntervalMs: budget.minIntervalMs || 0, gate: budget.gate || null, noRetries: Boolean(budget.noRetries),
-      hostRequests: budget.hostRequests || 1,
       ...(budget.requestTimeoutMs > 0 ? { requestTimeoutMs: budget.requestTimeoutMs } : {}),
       ...(Number.isFinite(budget.deadlineAt) ? { deadlineAt: budget.deadlineAt } : {}) }, async operation => {
       current = operation;
       const result = await run();
-      // The search's own deadline can settle just before this one: a found
-      // answer already in hand is still the answer.
-      return { ...((result.error && proven()) || result), requests: operation.requests };
+      return { ...result, requests: operation.requests };
     });
     work.catch(() => {});
-    return await Promise.race([work, deadline, cancelled, concluded]);
+    return await Promise.race([work, deadline, cancelled]);
   } finally {
     clearTimeout(timer);
     budget.signal?.removeEventListener?.('abort', forward);
-    if (onConclude) budget.conclude?.removeEventListener?.('abort', onConclude);
   }
 }
 
-// Which search produced a find ('isbn', 'title', 'record'): for the check's
-// log line only (record.js), so kept off every response, stored answer and
-// client reply (not enumerable).
-const FOUND_BY = new Set(['isbn', 'title', 'record']);
+// Which term produced a find ('isbn' or 'title'): for the check's log line
+// only (record.js), so kept off every response, stored answer and client
+// reply (not enumerable).
+const FOUND_BY = new Set(['isbn', 'title']);
 export function markFoundBy(target, source) {
   if (!target || !FOUND_BY.has(source?.foundBy)) return target;
   Object.defineProperty(target, 'foundBy', { value: source.foundBy, enumerable: false, configurable: true });
@@ -121,14 +94,14 @@ function workResponse(observation, { library, entry, attemptedAt }) {
   return response;
 }
 
-async function checkBook({ entry, library, provider, book, bookKey, parsed, keyed, ownRecord, lookupKind, editionScope, attemptedAt, workSearch, books, budget, progress }) {
+async function checkBook({ entry, library, provider, book, bookKey, parsed, keyed, ownRecord, lookupKind, editionScope, attemptedAt, workSearch, books, budget, rows }) {
   try {
     if (workSearch) {
       // The reader's own ISBN is the one in the book key (an ISBN key).
       const readerIsbn = keyed?.kind === 'isbn' ? keyed.isbn13 : null;
       const latestIsbn = typeof books?.latestIsbn === 'function' && book?.workId ? () => books.latestIsbn(book.workId) : null;
       const observation = await searchLibraryBook(provider, book, {
-        timeoutMs: budget ? Math.max(1, budget.deadlineAt - Date.now()) : MAX_CHECK_MS, readerIsbn, latestIsbn, progress });
+        timeoutMs: budget ? Math.max(1, budget.deadlineAt - Date.now()) : MAX_CHECK_MS, readerIsbn, latestIsbn, rows });
       if (observation.outcome === 'unknown') {
         return { error: coded('Catalog search incomplete', observation.errorCode), lookupKind: 'verified_work', ...(observation.notCatalogFailure ? { notCatalogFailure: true } : {}) };
       }

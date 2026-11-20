@@ -27,8 +27,10 @@ Indian libraries without a source state get one from
 server/data/india-library-regions.json (tools/directory/india-regions.mjs): published
 state, a single-state PIN or address evidence only, never a library's name. Never treat failed checks as absence or merge editions
 for identity or availability from similar titles (search cards may group
-same-title, same-author records for display only). A title match in the chosen library's own catalog
-is a find, and the card lists the matching catalog rows (owner decision, 20 November 2026). Respect
+same-title, same-author records for display only). Every library check and search-list mark is one
+any-field search of the chosen library's catalog for a term (the book's main title, or the typed text);
+a row with at least 80% of the title's words is a find, and the card lists the matching rows (owner
+decision, 20 November 2026). Respect
 catalog access restrictions and reduced motion.
 Search text may be stored only in the anonymous operational log (no account ID,
 IP or device identifier; 12 months, then totals). Never put it in URLs, browser

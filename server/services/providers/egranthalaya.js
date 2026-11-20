@@ -671,13 +671,12 @@ export async function searchCatalog(library, query) {
   return hasMore ? Object.assign(rows, { hasMore: true }) : rows;
 }
 
-// A reader's library check (libraryBookSearch.js): one search of this
-// member's catalog, and its rows. The title search is the page's own TITLE
-// search (the records the member holds copies of, shared ones included); the
-// ISBN search is one ALL search for the ISBN's shared digits in both
-// spellings (OR). Every row is a record this member's own search returned,
-// so it carries the member's presence. The kept public form (memberForm) is
-// the only other request.
+// The one library search (libraryBookSearch.js, providers/index.js): one
+// search of this member's catalog in the form's "search in" field ALL (any
+// field); 'TITLE' here would search titles only. The search names the member
+// (DDL_Library), so every row is a record of this library. The kept public
+// form (memberForm) is the only other request.
+const SEARCH_FIELD = 'ALL';
 function memberRows(library, search) {
   const { url, libraryCode } = configuration(library), deadlineAt = Date.now() + TIMEOUT_MS;
   return cachedTask(`egranthalaya:rows:${library.egranthalayaCluster}:${libraryCode}:${search.field}:${queryKey(search.query)}`, () => enqueueTask(`provider:egranthalaya:${ORIGIN}`, async () => {
@@ -687,14 +686,8 @@ function memberRows(library, search) {
       locations: [{ name: library.name, status: 'unknown' }] } }));
   }, { deadlineAt }), { deadlineAt, ttlMs: 5 * 60_000 });
 }
-export async function searchTitle(library, title) {
-  return memberRows(library, { query: String(title || '').slice(0, 160), field: 'TITLE' });
-}
-export async function searchIsbn(library, value) {
-  const isbn = validateAndNormalize(value);
-  if (!isbn) throw providerError('CATALOG_EXACT_ISBN_REQUIRED', 'e-Granthalaya availability requires a valid ISBN');
-  const queries = isbnQueries(isbn);
-  return memberRows(library, { query: queries.join(' '), field: 'ALL', boolean: queries.length > 1 ? 'OR' : 'LIKE' });
+export async function librarySearch(library, term) {
+  return memberRows(library, { query: String(term || '').slice(0, 160), field: SEARCH_FIELD });
 }
 
 export async function resolveCatalogRecord(library, recordId) {

@@ -8,34 +8,29 @@
 // reads the directory) needs no catalog packages.
 export const MAX_CHECK_MS = 45_000;
 export const BOOK_DEADLINE_MS = MAX_CHECK_MS;
-// One catalog request in a book check gives up after 30 s, so a single slow
-// request cannot use the whole check when it needs several (a search and a
-// record page). Retries share the same check deadline (providers/http.js).
+// One catalog request in a book check gives up after 30 s. Retries share the
+// same check deadline (providers/http.js).
 export const REQUEST_TIMEOUT_MS = 30_000;
 
 // One descriptor per catalog platform (plan 5.1, 5.3, 5.4). Numbers are
 // starting points to tune from the health record and the log.
 //
 // book:    the book page check (`lookupBook`): its deadline (45 s everywhere,
-//          BOOK_DEADLINE_MS; CHAMO keeps its reviewed 60 s). A reader's own
-//          check has no request cap (owner decision, 20 November 2026: "no
-//          request caps ... only when we are programmatically hitting them"):
-//          it ends at its answer or its deadline, and every request waits for
-//          the host's shared pacing below (`perMinute`, the global cap).
-// results: marking up to nine search results (`markResults`), work the app
+//          BOOK_DEADLINE_MS; CHAMO keeps its reviewed 60 s). It is the one
+//          library search (libraryBookSearch.js, owner decision 20 November
+//          2026): one `provider.search(term)` request, no request cap beyond
+//          that, every request waiting for the host's shared pacing below
+//          (`perMinute`, the global cap).
+// results: marking up to twelve search results (`markResults`), work the app
 //          starts on its own for a list of books, keeps its request cap:
-//   strategy 'search_rows'  one catalog search with the reader's query; a row
-//                           marks a book only when it shows one of that
-//                           work's ISBNs (rows without ISBNs mark nothing);
+//   strategy 'search'       the same one library search with the reader's
+//                           typed text (shared rows cache), and the same
+//                           title matcher for each listed book;
 //            'batch_isbn'   one batch call with every result ISBN (Calil);
 //            'per_isbn'     single-ISBN lookups for the top results;
 //            'none'         no result marking: answers come when a book opens.
+//   (The ISBN-only catalogs keep batch_isbn / per_isbn / none.)
 // hostConcurrency: lookups allowed at once per catalog host on one instance.
-// requestsInFlight: requests one book check may have waiting on its host at
-//   once on this instance (providers/http.js `hostRequests`; default 1, one
-//   request at a time per host). 2 where the catalog answers plain GET
-//   searches with no session (Koha, LIBMAN), so a check's title search and
-//   ISBN search run side by side; session and form catalogs stay at 1.
 // minIntervalMs: spacing between successive requests to the host. Enforced
 //   within one lookup by providers/http.js and across all readers and
 //   instances by the host gate (catalog-store/hostGate.js), together with any
@@ -51,80 +46,62 @@ export const REQUEST_TIMEOUT_MS = 30_000;
 // catalog requests (plan 5.3, column 3), as confirmed against the adapters.
 const S = 1000;
 
-// Requests one book check may have waiting on its host at once (see above).
-export function requestsInFlight(platform) {
-  return Math.max(1, Math.min(4, Math.floor(platform?.requestsInFlight) || 1));
-}
-
 export const PLATFORMS = Object.freeze({
   egranthalaya: {
-    // Member title search: a TITLE and an ALL search (each finds records the
-    // other misses), POSTs built from the member's public form, which is kept
-    // for ten minutes (a GET when it is not). Rows carry ISBNs and are scoped
-    // to the member library. Each search takes 2 to 8 s on eg4.nic.in (19
-    // November 2026); an ISBN check is one OR search of both spellings. +2
-    // requests for a kept form the server no longer accepts.
+    // One member-scoped ALL search, a POST built from the member's public
+    // form, which is kept for ten minutes (a GET when it is not). 2 to 8 s on
+    // eg4.nic.in (19 November 2026). +2 requests for a kept form the server
+    // no longer accepts.
     book: { deadlineMs: BOOK_DEADLINE_MS },
-    results: { strategy: 'search_rows', maxRequests: 4, deadlineMs: 20 * S, fewRequests: 3 },
+    results: { strategy: 'search', maxRequests: 4, deadlineMs: 20 * S, fewRequests: 2 },
     hostConcurrency: 4, minIntervalMs: 1 * S, perMinute: 60,
   },
   libman: {
-    // TITLE and ISBN searches (JSON GETs, no session), tenant-scoped, 0.3 to
-    // 1.3 s each. Search rows carry no ISBN: a record's details (one request)
-    // add it, for the rows of the searched title, and confirm an ISBN
-    // search's hits. The ISBN search takes one text (no OR): an ISBN costs two
-    // searches (plain and hyphenated digits; libraries store either). A
-    // reader's check runs its title and ISBN searches side by side.
+    // One tenant-scoped TITLE search (a JSON GET, no session), 0.3 to 1.3 s.
     book: { deadlineMs: BOOK_DEADLINE_MS },
-    results: { strategy: 'search_rows', maxRequests: 4, deadlineMs: 15 * S, fewRequests: 1 },
-    hostConcurrency: 4, requestsInFlight: 2, minIntervalMs: 0, perMinute: 120,
+    results: { strategy: 'search', maxRequests: 1, deadlineMs: 15 * S, fewRequests: 1 },
+    hostConcurrency: 4, minIntervalMs: 0, perMinute: 120,
   },
   indcat: {
-    // Corrected from the plan: IndCat's institution-scoped search page lists
-    // record links, titles and authors (parseIndcatSearch), never ISBNs. Rows
-    // cannot prove an edition. A search is one POST (the form session is read
-    // once and reused, providers/indcat.js); one search covers both forms of
-    // up to eight ISBNs. A check is a few ISBN batches, up to three title
-    // searches and the record pages they list (1 to 2 s each).
+    // One institution-scoped all-fields search, a POST (the form session is
+    // read once and reused, providers/indcat.js). Rows list record links,
+    // titles and authors. 1 to 2 s.
     book: { deadlineMs: BOOK_DEADLINE_MS },
-    results: { strategy: 'none', maxRequests: 0, deadlineMs: 0, fewRequests: false },
+    results: { strategy: 'search', maxRequests: 2, deadlineMs: 15 * S, fewRequests: 2 },
     hostConcurrency: 2, minIntervalMs: 0, perMinute: 40,
   },
   koha: {
-    // Keyword search page (count=40); rows carry an ISBN where the OPAC
-    // template exposes cover data (Anna Centenary, Ernakulam fixtures).
-    // Title-first libraries may try title, author and keyword indexes (3).
-    // Libraries that opt in (`kohaRssRows`) use the RSS form, which lists an
-    // ISBN per row. Unscoped shared catalogs and the IIT Hyderabad API do not
-    // mark results: their rows do not prove this library's holding. A book
-    // check's ISBN search is one OR search for up to eight editions, sent
-    // beside its title search (plain GETs, no session).
+    // One keyword (any-field) search page, count=40, limited to the branch
+    // where the directory names one (not the unscoped shared catalogs). A
+    // search Koha answers with a single record redirects to it: that page is
+    // read as the search's one row (2 requests). The IIT Hyderabad API is
+    // ISBN-only and marks nothing.
     book: { deadlineMs: BOOK_DEADLINE_MS },
-    results: { strategy: 'search_rows', maxRequests: 3, deadlineMs: 15 * S, fewRequests: 1 },
-    hostConcurrency: 2, requestsInFlight: 2, minIntervalMs: 0, perMinute: 40,
+    results: { strategy: 'search', maxRequests: 2, deadlineMs: 15 * S, fewRequests: 1 },
+    hostConcurrency: 2, minIntervalMs: 0, perMinute: 40,
   },
   bc: {
-    // Gateway keyword search; rows carry `briefInfo.isbns`.
+    // Gateway keyword search.
     book: { deadlineMs: BOOK_DEADLINE_MS },
-    results: { strategy: 'search_rows', maxRequests: 1, deadlineMs: 10 * S, fewRequests: 1 },
+    results: { strategy: 'search', maxRequests: 1, deadlineMs: 10 * S, fewRequests: 1 },
     hostConcurrency: 4, minIntervalMs: 0, perMinute: 60,
   },
   vufind: {
-    // Title search; rows carry COinS ISBNs.
+    // AllFields search, filtered to the institution (and building).
     book: { deadlineMs: BOOK_DEADLINE_MS },
-    results: { strategy: 'search_rows', maxRequests: 1, deadlineMs: 15 * S, fewRequests: 1 },
+    results: { strategy: 'search', maxRequests: 1, deadlineMs: 15 * S, fewRequests: 1 },
     hostConcurrency: 2, minIntervalMs: 0, perMinute: 40,
   },
   'discovery-community': {
-    // Per site family; some rows carry ISBNs, session-based sites need more
-    // than one request and therefore mark nothing within this budget.
+    // Per site family; session-based sites need more than one request on a
+    // cold session and therefore mark nothing within this budget.
     book: { deadlineMs: BOOK_DEADLINE_MS },
-    results: { strategy: 'search_rows', maxRequests: 1, deadlineMs: 15 * S, fewRequests: 'partly' },
+    results: { strategy: 'search', maxRequests: 1, deadlineMs: 15 * S, fewRequests: 'partly' },
     hostConcurrency: 1, minIntervalMs: 0, perMinute: 30,
   },
   'discovery-academic': {
     book: { deadlineMs: BOOK_DEADLINE_MS },
-    results: { strategy: 'search_rows', maxRequests: 1, deadlineMs: 15 * S, fewRequests: 'partly' },
+    results: { strategy: 'search', maxRequests: 1, deadlineMs: 15 * S, fewRequests: 'partly' },
     hostConcurrency: 1, minIntervalMs: 0, perMinute: 30,
   },
   calil: {
@@ -159,8 +136,8 @@ export const PLATFORMS = Object.freeze({
     hostConcurrency: 1, minIntervalMs: 0, perMinute: 10,
   },
   vpl: {
-    // Title search only; rows never prove an edition. robots Crawl-Delay 20 s
-    // is applied by the adapter.
+    // Title search only. robots Crawl-Delay 20 s is applied by the adapter;
+    // too slow to mark results.
     book: { deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'none', maxRequests: 0, deadlineMs: 0, fewRequests: false },
     hostConcurrency: 1, minIntervalMs: 20 * S, perMinute: 3,

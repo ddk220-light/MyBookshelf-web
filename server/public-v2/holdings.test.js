@@ -79,15 +79,14 @@ test('a found answer lists the library\'s matching catalog rows: title and autho
   const held = { outcome: 'in_catalog' };
   const searched = [];
   const searches = {
-    searchIsbn: async isbn => { searched.push(['isbn', isbn]); return []; },
-    searchTitle: async title => { searched.push(['title', title]); return [
+    search: async term => { searched.push(term); return [
       { title: 'Wings of fire : an autobiography', authors: ['Kalam, A. P. J. Abdul', 'Tiwari, Arun'], catalogUrl: 'https://catalog.example/record/7', catalogLinkKind: 'record', observation: held },
       { title: 'Wings of Fire #07', authors: ['Sutherland, Tui T.'], catalogUrl: 'https://elsewhere.example/record/8', catalogLinkKind: 'record', observation: held },
-      { title: 'Timeless Wings of Fire', authors: [], observation: held }]; },
+      { title: 'Wing Of Fire', authors: [], observation: held }]; },
   };
   const { app, logged } = harness({ searches, usageLogEnabled: true });
   const reply = await request(app).post('/api/v2/holdings/check').send({ libraryId: vega.id, bookKey: `v1:isbn:${ISBN_A}` });
-  assert.deepEqual(searched.sort(), [['isbn', ISBN_A], ['title', 'Wings of Fire']]);
+  assert.deepEqual(searched, ['Wings of Fire']);
   assert.equal(reply.body.answer, 'found');
   assert.deepEqual(reply.body.matches, [
     { title: 'Wings of fire : an autobiography', author: 'Kalam, A. P. J. Abdul; Tiwari, Arun', url: 'https://catalog.example/record/7' },
@@ -384,7 +383,7 @@ test('result marking identifies results from the search that produced them, with
   const store = createCatalogStore({ config, db: null, defer: () => {}, policy: createCatalogPolicy({ policies: { schemaVersion: 1, libraries: {} } }) });
   const rowsLibrary = { id: 'vufind:rows', platform: 'vufind', catalogUrl: 'https://rows.example/' };
   const rowsDirectory = { ...directory, resolve: id => (id === rowsLibrary.id ? publicOf(rowsLibrary) : null), entry: id => (id === rowsLibrary.id ? rowsLibrary : null) };
-  const provider = { checkAvailability: async () => ({}), searchResultRows: async () => [{ recordId: 'R1', title: 'Matilda', authors: ['Dahl, Roald'], isbn: ISBN_B,
+  const provider = { checkAvailability: async () => ({}), search: async () => [{ recordId: 'R1', title: 'Matilda', authors: ['Dahl, Roald'], isbn: ISBN_B,
     catalogUrl: 'https://rows.example/Record/R1', catalogLinkKind: 'record' }] };
   const lookup = createCatalogLookup({ providerFor: () => provider, robots: null, platforms: UNPACED, env: {},
     recorder: createLookupRecorder({ answers: store.answers, health: store.health, policyFor: store.policyFor, defer: () => {} }), hostGate: store.hostGate });
@@ -418,7 +417,7 @@ test('a mark carries a link only when the catalog said it is the book’s record
     const store = createCatalogStore({ config, db: null, defer: () => {}, policy: createCatalogPolicy({ policies: { schemaVersion: 1, libraries: {} } }) });
     const rowsLibrary = { id: 'vufind:rows', platform: 'vufind', catalogUrl: 'https://rows.example/' };
     const rowsDirectory = { ...directory, resolve: id => (id === rowsLibrary.id ? publicOf(rowsLibrary) : null), entry: id => (id === rowsLibrary.id ? rowsLibrary : null) };
-    const provider = { checkAvailability: async () => ({}), searchResultRows: async () => [{ recordId: 'R1', title: 'Matilda', authors: ['Dahl, Roald'], isbn: ISBN_B, ...row }] };
+    const provider = { checkAvailability: async () => ({}), search: async () => [{ recordId: 'R1', title: 'Matilda', authors: ['Dahl, Roald'], isbn: ISBN_B, ...row }] };
     const lookup = createCatalogLookup({ providerFor: () => provider, robots: null, platforms: UNPACED, env: {},
       recorder: createLookupRecorder({ answers: store.answers, health: store.health, policyFor: store.policyFor, defer: () => {} }), hostGate: store.hostGate });
     const app = makeTestApp(express => {
@@ -450,7 +449,7 @@ test('the done line lists definite "not found" answers and books the catalog cou
   const rowsLibrary = { id: 'vufind:down', platform: 'vufind', catalogUrl: 'https://down.example/' };
   const rowsDirectory = { ...directory, resolve: id => (id === rowsLibrary.id ? publicOf(rowsLibrary) : null), entry: id => (id === rowsLibrary.id ? rowsLibrary : null) };
   const failing = async () => { throw Object.assign(new Error('down'), { code: 'CATALOG_UNAVAILABLE' }); };
-  const lookup = createCatalogLookup({ providerFor: () => ({ checkAvailability: async () => ({}), searchResultRows: failing }), robots: null, platforms: UNPACED, env: {},
+  const lookup = createCatalogLookup({ providerFor: () => ({ checkAvailability: async () => ({}), search: failing }), robots: null, platforms: UNPACED, env: {},
     recorder: createLookupRecorder({ answers: store.answers, health: store.health, policyFor: store.policyFor, defer: () => {} }), hostGate: store.hostGate });
   const down = makeTestApp(express => {
     express.use('/api/v2', createPublicV2Router({ directory: rowsDirectory, books, catalogStore: store, lookup, rateLimit: { limit: 1000 } }));
@@ -467,7 +466,7 @@ test('a mark never carries a link off the library’s catalog address, or for a 
   const rowsDirectory = { ...directory, entry: id => (id === rowsLibrary.id ? rowsLibrary : null),
     resolve: id => (id === rowsLibrary.id ? { ...publicOf(rowsLibrary), capabilities: { ...publicOf(rowsLibrary).capabilities, catalogLink: allowLinks } } : null) };
   let url = 'https://elsewhere.example/Record/R1';
-  const provider = { checkAvailability: async () => ({}), searchResultRows: async () => [{ recordId: 'R1', title: 'Matilda', authors: ['Dahl, Roald'], isbn: ISBN_B, catalogUrl: url }] };
+  const provider = { checkAvailability: async () => ({}), search: async () => [{ recordId: 'R1', title: 'Matilda', authors: ['Dahl, Roald'], isbn: ISBN_B, catalogUrl: url }] };
   const lookup = createCatalogLookup({ providerFor: () => provider, robots: null, platforms: UNPACED, env: {},
     recorder: createLookupRecorder({ answers: store.answers, health: store.health, policyFor: store.policyFor, defer: () => {} }), hostGate: store.hostGate });
   const app = makeTestApp(express => {

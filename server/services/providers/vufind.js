@@ -26,7 +26,7 @@ export function vufindSearchUrl(library, query, type = 'Title', page = 1) {
   const { base, filters } = settings(library);
   const url = new URL(`${base}/Search/Results`);
   url.searchParams.set('lookfor', text(query).slice(0, 200));
-  url.searchParams.set('type', type === 'ISN' ? 'ISN' : 'Title');
+  url.searchParams.set('type', ['ISN', 'AllFields'].includes(type) ? type : 'Title');
   url.searchParams.set('limit', '10');
   for (const filter of filters) url.searchParams.append('filter[]', filter);
   if (page > 1) url.searchParams.set('page', String(page));
@@ -199,13 +199,12 @@ export async function searchCatalog(library, query) {
   return Math.max(result.total || 0, result.records.length) > rows.length ? Object.assign(rows, { hasMore: true }) : rows;
 }
 
-// A reader's library check (libraryBookSearch.js): one search of this
-// library's catalog, by title (searchCatalog) or by ISBN, and its rows, each
-// a record of this library.
-export async function searchIsbn(library, value) {
-  const isbn = validateAndNormalize(value);
-  if (!isbn) throw catalogError('ISBN required', 'CATALOG_EXACT_ISBN_REQUIRED');
-  const result = await search(library, isbn, 'ISN', Date.now() + DEADLINE_MS);
+// The one library search (libraryBookSearch.js): VuFind's AllFields search
+// ('Title' here would search titles only), filtered to the institution (and
+// building), so every row is a record of this library.
+const SEARCH_TYPE = 'AllFields';
+export async function librarySearch(library, term) {
+  const result = await search(library, term, SEARCH_TYPE, Date.now() + DEADLINE_MS);
   return result.records.map(book => ({ ...book, observation: {
     outcome: 'in_catalog', matchKind: 'verified_work', recognizedExact: true, catalogUrl: recordUrl(library, book.recordId), catalogLinkKind: 'record',
   } }));

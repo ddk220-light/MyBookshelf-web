@@ -42,10 +42,9 @@ const operations = new AsyncLocalStorage();
 //   deadline). Adapters whose own call deadline would be shorter use it
 //   instead (providers/koha.js), so the check, not the call, sets the limit.
 // - `hostRequests`: how many of this operation's requests may be waiting on
-//   one host at once on this instance (default 1). A reader's book check on a
-//   catalog with plain GET searches sends its title search and its ISBN search
-//   together (catalog-lookup/platforms.js `requestsInFlight`); the host gate
-//   still paces when each request starts, across every reader.
+//   one host at once on this instance (default 1; a book check is one
+//   search since 20 November 2026 and leaves it at 1). The host gate paces
+//   when each request starts, across every reader.
 //
 // A reader's book check has no request cap (owner decision, 20 November
 // 2026): its deadline and the shared host pacing bound it. Result marking and

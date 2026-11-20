@@ -292,11 +292,10 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
       const list = await Promise.all(items.map(async item => {
         const resolved = await resolutions.get(item.bookKey);
         const identity = trustedIdentity(libraryId, item.bookKey, resolved);
-        // Edition profiles are Open Library reads outside the catalog's budget.
-        // They start only when marking runs (lazily: not for stored answers, a
-        // platform without a results strategy or an open circuit), in parallel
-        // with the catalog search. A profile that fails means that book cannot
-        // be matched (no badge), never "not found".
+        // Marks are the one library search with the typed text and the title
+        // matcher (catalog-lookup/index.js), which need only the title. Edition
+        // profiles (Open Library reads) are used only by the ISBN-only
+        // catalogs' strategies and start lazily, when such a run asks for one.
         return { ...identity, title: resolved?.title || '', authors: resolved?.authors || [],
           profile: lazyProfile(resolved && typeof books.searchProfile === 'function' ? () => books.searchProfile(item.bookKey, { editionScope: 'work' }) : null) };
       }));

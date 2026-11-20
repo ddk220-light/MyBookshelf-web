@@ -19,16 +19,17 @@ import { parsePublicBookKey } from '../../public-v2/contracts.js';
 // Identities are a library's own record, an ISBN-13, or an Open Library work
 // ID. Never a title, author or normalised title.
 
-// Answers live 180 days (owner decision 1). The few seconds over 180 days
-// are the answer rule's version: a stored row whose lifetime (expiry less
-// check time) is not exactly ANSWER_TTL_MS was written under an older rule
-// and is neither served nor kept against a new answer (catalog-store/
-// holdings.js). Version 1, 20 November 2026: the simple title-or-ISBN check
-// (libraryBookSearch.js); rows of the earlier rules (exactly 180 days) are
-// checked again. Change the version whenever the meaning of a stored answer
-// changes.
-export const ANSWER_RULE_VERSION = 1;
-export const ANSWER_TTL_MS = (180 * 24 * 60 * 60 + ANSWER_RULE_VERSION) * 1000;
+// Answers live 30 days (owner decision, 20 November 2026: accuracy is
+// knowingly lower under the one library search, so answers are kept a month,
+// not 180 days). The few seconds over 30 days are the answer rule's version:
+// a stored row whose lifetime (expiry less check time) is not exactly
+// ANSWER_TTL_MS was written under another rule and is neither served nor
+// kept against a new answer (catalog-store/holdings.js). Version 2, 20
+// November 2026: the one library search (libraryBookSearch.js); rows of
+// earlier rules (180 days, 180 days + 1 s) are checked again. Change the
+// version whenever the meaning of a stored answer changes.
+export const ANSWER_RULE_VERSION = 2;
+export const ANSWER_TTL_MS = (30 * 24 * 60 * 60 + ANSWER_RULE_VERSION) * 1000;
 const WORK_ID = /^OL\d+W$/;
 
 export function identitiesFor(libraryId, book = {}) {
@@ -58,11 +59,14 @@ export function storedAnswer(rows, asked) {
 }
 
 // Rows to write for one answer (plan 4.3 write rules). `couldnt_check`
-// writes nothing. A find by title (`title_match`) is not stored: the catalog
-// evidence values allowed in production (migrations 001-004) have no place
-// for it, and the next look checks again and lists the catalog's rows. An
-// ISBN find is stored without its list (the next look shows the heading and
-// the record link only).
+// writes nothing. Answers are stored without their row list (the next look
+// shows the heading and the catalog link only). A find by the one library
+// search's title match (`title_match`) is stored for the book's work and the
+// ISBN it was asked by, under the evidence value `catalog_record` (a row of
+// the library's own catalog; the values allowed in production, migrations
+// 001-004, have no `title_match`). A "not found" from the search
+// (`work_no_match`) is stored for the identity that was asked (the work, else
+// the ISBN).
 export function answerRows({ libraryId, book = {}, answer, profile, now = Date.now() }) {
   if (!answer || !['found', 'not_found'].includes(answer.outcome)) return [];
   const expiresAt = now + ANSWER_TTL_MS;
@@ -81,6 +85,9 @@ export function answerRows({ libraryId, book = {}, answer, profile, now = Date.n
       const matched = validateAndNormalize(answer.matchedIsbn13 || '');
       if (workId && matched) rows.push(row('ol_work', workId, { matchedIsbn13: matched }));
       if (matched) rows.push(row('isbn13', matched));
+    } else if (answer.evidence === 'title_match') {
+      if (workId) rows.push(row('ol_work', workId, { evidence: 'catalog_record' }));
+      if (isbn13) rows.push(row('isbn13', isbn13, { evidence: 'catalog_record' }));
     } else if (answer.evidence === 'catalog_record') {
       const recordId = answer.recordId || book.recordId;
       if (recordId && (!book.recordLibraryId || book.recordLibraryId === libraryId)) rows.push(row('catalog_record', `${libraryId}:${recordId}`));
@@ -88,8 +95,9 @@ export function answerRows({ libraryId, book = {}, answer, profile, now = Date.n
   } else if (answer.evidence === 'isbn_not_listed') {
     const asked = validateAndNormalize(answer.isbn13 || '') || isbn13;
     if (asked) rows.push(row('isbn13', asked));
-  } else if (answer.evidence === 'work_no_match' && workId) {
-    rows.push(row('ol_work', workId));
+  } else if (answer.evidence === 'work_no_match') {
+    if (workId) rows.push(row('ol_work', workId));
+    else if (isbn13) rows.push(row('isbn13', isbn13));
   }
   return rows;
 }
@@ -243,11 +251,10 @@ export function libraryCheckEvent({ entry, libraryId, platform, host, book, answ
     // The check went on after the reader had been answered (plan A2, step 3).
     afterReply: Boolean(afterReply),
     bookKeyKind: bookKeyKind(book),
-    // For a find by a work search: the search that produced the evidence
-    // ('isbn' the ISBN request, 'title' a title-search row, 'record' a record
-    // page opened from a search row), and how many catalog rows the answer
-    // lists. Never a title or an ISBN.
-    foundBy: answer?.outcome === 'found' && ['isbn', 'title', 'record'].includes(answer?.foundBy) ? answer.foundBy : null,
+    // For a find by the library search: the term that produced it ('isbn' or
+    // 'title'), and how many catalog rows the answer lists. Never a title or
+    // an ISBN.
+    foundBy: answer?.outcome === 'found' && ['isbn', 'title'].includes(answer?.foundBy) ? answer.foundBy : null,
     matchCount: answer?.outcome === 'found' && Array.isArray(answer?.matches) ? answer.matches.length : 0,
   };
 }

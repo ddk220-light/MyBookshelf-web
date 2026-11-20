@@ -31,14 +31,17 @@ test('write rules follow plan 4.3 and nothing is written for couldn’t check', 
   const profile = { isbns: ['9788173711466', '9788173711460'] };
   const rows = answerRows({ libraryId: 'lib', book, profile, now, answer: { outcome: 'found', evidence: 'exact_isbn' } });
   assert.deepEqual(rows.map(row => [row.kind, row.value, row.answer]), [['isbn13', '9788173711466', 'found'], ['ol_work', 'OL123W', 'found']]);
-  // 180 days, plus the answer rule's version in seconds (catalog-store/holdings.js).
-  assert.ok(rows.every(row => row.expiresAt === now + ANSWER_TTL_MS && ANSWER_TTL_MS === 180 * DAY + ANSWER_RULE_VERSION * 1000));
+  // 30 days, plus the answer rule's version in seconds (catalog-store/holdings.js).
+  assert.ok(rows.every(row => row.expiresAt === now + ANSWER_TTL_MS && ANSWER_TTL_MS === 30 * DAY + ANSWER_RULE_VERSION * 1000));
   assert.deepEqual(answerRows({ libraryId: 'lib', book, now, answer: { outcome: 'found', evidence: 'work_isbn', matchedIsbn13: '9780140328721' } })
     .map(row => [row.kind, row.value]), [['ol_work', 'OL123W'], ['isbn13', '9780140328721']]);
   assert.deepEqual(answerRows({ libraryId: 'lib', book: { recordId: '7' }, answer: { outcome: 'found', evidence: 'catalog_record' } }).map(row => row.value), ['lib:7']);
-  // A find by title is not stored (no evidence value for it in production):
-  // the next look checks again and lists the catalog's rows.
-  assert.deepEqual(answerRows({ libraryId: 'lib', book, profile, answer: { outcome: 'found', evidence: 'title_match', matches: [{ title: 'Wings of Fire' }] } }), []);
+  // A find by the library search's title match is stored for the work and the
+  // asked ISBN, without its rows, under the production evidence value catalog_record.
+  assert.deepEqual(answerRows({ libraryId: 'lib', book, profile, answer: { outcome: 'found', evidence: 'title_match', matches: [{ title: 'Wings of Fire' }] } })
+    .map(row => [row.kind, row.value, row.answer, row.evidence, row.matches]), [['ol_work', 'OL123W', 'found', 'catalog_record', undefined], ['isbn13', '9788173711466', 'found', 'catalog_record', undefined]]);
+  // A search's "not found" without a work: stored for the asked ISBN.
+  assert.deepEqual(answerRows({ libraryId: 'lib', book: { isbn13: '9788173711466' }, answer: { outcome: 'not_found', evidence: 'work_no_match' } }).map(row => [row.kind, row.answer]), [['isbn13', 'not_found']]);
   assert.deepEqual(answerRows({ libraryId: 'lib', book, answer: { outcome: 'not_found', evidence: 'isbn_not_listed' } }).map(row => [row.kind, row.answer]), [['isbn13', 'not_found']]);
   assert.deepEqual(answerRows({ libraryId: 'lib', book, answer: { outcome: 'not_found', evidence: 'work_no_match' } }).map(row => [row.kind, row.answer]), [['ol_work', 'not_found']]);
   for (const reason of ['unconfirmed', 'timeout', 'budget', 'blocked']) {
@@ -46,7 +49,7 @@ test('write rules follow plan 4.3 and nothing is written for couldn’t check', 
   }
 });
 
-test('not found never replaces an unexpired found, and both expire after 180 days', async () => {
+test('not found never replaces an unexpired found, and both expire after 30 days', async () => {
   let clock = 0;
   const store = createMemoryAnswerStore({ now: () => clock });
   const ids = [{ kind: 'isbn13', value: '9788173711466' }];

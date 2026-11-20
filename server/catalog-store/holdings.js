@@ -20,7 +20,7 @@ const READ = readSql(true);
 const READ_WITHOUT_KIND = readSql(false);
 
 // `found` replaces anything; `not_found` never replaces an unexpired `found`.
-// Both expire 180 days after the check (owner decision 1).
+// Both expire 30 days after the check (record.js ANSWER_TTL_MS).
 const writeSql = withKind => `WITH input AS (
     SELECT * FROM unnest($1::text[], $2::text[], $3::text[], $4::text[], $5::text[], $6::text[], $7::text[]${withKind ? ', $9::text[]' : ''})
       AS t(library_id, identity_kind, identity_value, answer, evidence, matched_isbn13, catalog_url${withKind ? ', catalog_link_kind' : ''})

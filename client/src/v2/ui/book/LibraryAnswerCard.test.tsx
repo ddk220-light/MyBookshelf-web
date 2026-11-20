@@ -110,7 +110,7 @@ describe('library answer card', () => {
       { title: 'Wings of Fire #07', author: 'Sutherland, Tui T.' }] });
     const card = screen.getByRole('group');
     expect(within(card).getByRole('heading')).toHaveTextContent('In your library');
-    const list = within(card).getByRole('list', { name: 'Books with this title in the library’s catalog:' });
+    const list = within(card).getByRole('list', { name: 'In the library’s catalog:' });
     const items = within(list).getAllByRole('listitem');
     expect(items).toHaveLength(2);
     expect(within(items[0]).getByRole('link')).toHaveAttribute('href', 'https://catalog.example.test/record/7');

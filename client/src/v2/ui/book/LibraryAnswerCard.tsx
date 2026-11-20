@@ -61,11 +61,6 @@ export function catalogLinkText(answer: CardAnswer, kind: LinkKind): string {
     : kind === 'search' ? 'Search the library’s catalog for this book' : 'Open the library’s catalog';
 }
 
-/** The words above a found book's rows from the library's catalog. */
-export function matchesHeading(count: number): string {
-  return count === 1 ? 'In the library’s catalog:' : 'Books with this title in the library’s catalog:';
-}
-
 export const LibraryAnswerCard = forwardRef<HTMLDivElement, { model: LibraryCardModel; onFindLibrary: () => void }>(
   function LibraryAnswerCard({ model, onFindLibrary }, ref) {
     const matchesId = useId();
@@ -90,7 +85,7 @@ export const LibraryAnswerCard = forwardRef<HTMLDivElement, { model: LibraryCard
       {answer === 'checking' && <span className="library-answer-progress" aria-hidden="true" />}
       {description && <p>{description}</p>}
       {answer === 'found' && matches && matches.length > 0 && <>
-        <p id={matchesId}>{matchesHeading(matches.length)}</p>
+        <p id={matchesId}>In the library’s catalog:</p>
         <ul className="library-answer-matches" aria-labelledby={matchesId}>
           {matches.map((match, index) => <li key={index}>
             {match.url || catalogUrl

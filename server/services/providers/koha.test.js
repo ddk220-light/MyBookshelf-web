@@ -1,7 +1,7 @@
 import test, { afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { checkPublicAvailability, keywordQuery, parseKohaPublicRecord, readRecord, searchCatalog, searchIsbn, searchTitle, resolveCatalogRecord, scopeSearch } from './koha.js';
+import { checkPublicAvailability, keywordQuery, librarySearch, parseKohaPublicRecord, searchCatalog, resolveCatalogRecord, scopeSearch } from './koha.js';
 import { clearHttpCache, withCatalogOperation } from './http.js';
 
 const ISBN = '9780262033848';
@@ -862,44 +862,43 @@ test('union title search returns only owned records and caches each branch indep
 });
 
 
-// A reader's check (libraryBookSearch.js, 20 November 2026): one request
-// for the reader's ISBN, every form of that one ISBN in one OR query.
-test('a library check asks Koha for one ISBN in one request, and a branch-scoped search row shows the holding', async () => {
+// The library search (libraryBookSearch.js, 20 November 2026): one keyword
+// (any-field) request, limited to the branch where the directory names one.
+test('the library search is one Koha keyword search, branch-limited, its rows linking to their records', async () => {
   const entry = { id: 'koha:ernakulam-public-library', platform: 'koha', baseUrl: 'http://opac.ernakulampubliclibrary.com', kohaBranchCode: 'MAIN',
     kohaBranchName: 'Ernakulam Public Library', publicCatalogCapabilities: { titleSearch: true } };
   const calls = [];
   global.fetch = async (url) => { calls.push(new URL(url)); return response(url, captured('ernakulam-wings-search')); };
-  const rows = await searchIsbn(entry, ISBN);
+  const rows = await librarySearch(entry, 'Wings of Fire');
   assert.equal(calls.length, 1);
-  assert.deepEqual(calls[0].searchParams.getAll('q'), [ISBN, '0262033844', '978-0-262-03384-8', '0-262-03384-4']);
-  assert.deepEqual(calls[0].searchParams.getAll('idx'), ['nb', 'nb', 'nb', 'nb']);
-  assert.equal(calls[0].searchParams.get('limit'), 'branch:MAIN');
+  assert.deepEqual([calls[0].searchParams.get('idx'), calls[0].searchParams.get('q'), calls[0].searchParams.get('limit')], ['kw', 'Wings of Fire', 'branch:MAIN']);
   assert.equal(rows.length, 23);
-  assert.deepEqual([rows[0].title, rows[0].observation.outcome, rows[0].observation.catalogLinkKind], ['Wings of Fire: An Autobiography', 'in_catalog', 'record']);
-  await assert.rejects(() => searchIsbn(entry, 'not an isbn'), { code: 'CATALOG_EXACT_ISBN_REQUIRED' });
+  assert.deepEqual([rows[0].title, rows[0].catalogLinkKind], ['Wings of Fire: An Autobiography', 'record']);
 });
 
-test('a library check searches Koha\'s title index once, without a leading article; an empty page is no rows', async () => {
+test('the library search drops a leading article; an empty page is no rows', async () => {
   const entry = { id: 'koha:x', platform: 'koha', baseUrl: ORIGIN };
   const calls = [];
   global.fetch = async (url) => { calls.push(new URL(url)); return response(url, emptySearch(url)); };
-  assert.deepEqual(await searchTitle(entry, 'The Discovery of India'), []);
+  assert.deepEqual(await librarySearch(entry, 'The Discovery of India'), []);
   assert.equal(calls.length, 1);
-  assert.deepEqual([calls[0].searchParams.get('idx'), calls[0].searchParams.get('q')], ['ti', 'Discovery of India']);
+  assert.deepEqual([calls[0].searchParams.get('idx'), calls[0].searchParams.get('q')], ['kw', 'Discovery of India']);
 });
 
-test('an unscoped shared Koha: rows do not show the holding; one record page shows this branch\'s copy or none', async () => {
+test('an unscoped shared Koha: no branch limit, every row counts; a single hit redirects to its record, read as the row', async () => {
   const page = '<body id="results"><a class="title" href="/cgi-bin/koha/opac-detail.pl?biblionumber=1079960">Wings of fire</a></body>';
   const calls = [];
   global.fetch = async url => { calls.push(url); return response(url, isSearch(url) ? page : goaFixture); };
-  const rows = await searchTitle(goa, 'Wings of Fire');
-  assert.deepEqual(rows.map(row => [row.recordId, row.title, Boolean(row.observation)]), [['1079960', 'Wings of fire', false]]);
-  const record = await readRecord(goa, '1079960');
-  assert.equal(record.observation.outcome, 'in_catalog');
-  assert.equal(record.catalogUrl, 'http://dhegoalib.unifyed.com/cgi-bin/koha/opac-detail.pl?biblionumber=1079960');
-  assert.equal(calls.length, 2);
+  const rows = await librarySearch(goa, 'Wings of Fire');
+  assert.equal(new URL(calls[0]).searchParams.get('limit'), null);
+  assert.deepEqual(rows.map(row => [row.recordId, row.title]), [['1079960', 'Wings of fire']]);
+  calls.length = 0;
   clearHttpCache();
-  await assert.rejects(() => readRecord({ ...goa, kohaBranchCode: 'CCL', kohaBranchName: 'Carmel College Library' }, '1079960'), { code: 'CATALOG_HOLDING_UNCONFIRMED' });
+  global.fetch = async url => { calls.push(url); return isSearch(url)
+    ? response(url, '', 302, { location: '/cgi-bin/koha/opac-detail.pl?biblionumber=1079960' }) : response(url, goaFixture); };
+  const [one] = await librarySearch(goa, 'Wings of Fire');
+  assert.deepEqual([calls.length, one.recordId, one.catalogUrl], [2, '1079960', 'http://dhegoalib.unifyed.com/cgi-bin/koha/opac-detail.pl?biblionumber=1079960']);
+  assert.ok(one.title);
 });
 
 test('keyword searches drop English articles that some Koha indexes never match', async () => {

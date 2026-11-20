@@ -189,14 +189,8 @@ function printRows(slug, query) {
   }, { deadlineAt });
 }
 
-// Work matching consumes all candidate metadata rather than trusting the first
-// keyword hit. The record URL is durable; identity is checked by the caller.
-export async function searchBookCandidates(slug, query) {
-  return (await printRows(slug, query)).slice(0, 10);
-}
-
-// Result marking: every print row of the same single search. Rows carry their
-// ISBNs, so no row needs a further request.
+// The one library search (libraryBookSearch.js): every print row of one
+// keyword (any-field) search.
 export async function searchResultRows(slug, query) {
   return printRows(slug, query);
 }

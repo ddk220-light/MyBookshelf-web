@@ -185,6 +185,10 @@ async function post(code, session, form, deadlineAt) {
   mergeCookies(session, response.headers);
   return response;
 }
+// The search's field: all fields (the one library search, providers/
+// index.js, uses it for every term); 'title' would search titles only. The
+// form names the institution (part_uni), so every row is its record.
+const SEARCH_FIELD = 'allfields';
 async function search(library, query, isbn = false, deadlineAt = Date.now() + 60_000) {
   const code = config(library);
   return cachedTask(`indcat:search:${code}:${isbn}:${query}`, () => enqueueTask('indcat', async () => {
@@ -194,7 +198,7 @@ async function search(library, query, isbn = false, deadlineAt = Date.now() + 60
     // and 9788173711466 at Andhra University return the union of the two
     // exact searches). Every record found is still opened and must show the
     // ISBN itself; a listed number in another field never proves a holding.
-    const form = { search_type: 'simple', part_uni: code, title: query, field: 'allfields',
+    const form = { search_type: 'simple', part_uni: code, title: query, field: SEARCH_FIELD,
       opt: 'free', submit: 'Search', limits: '10' };
     let session = await formSession(code, deadlineAt), reused = !session.fresh;
     session.fresh = false;
@@ -269,26 +273,10 @@ export async function checkAvailability(library, value) {
     : 'Search results did not confirm the requested ISBN', 'CATALOG_HOLDING_UNCONFIRMED');
 }
 
-// A reader's library check (libraryBookSearch.js): one scoped search, by
-// title or by ISBN (both forms in one query), and its rows. A row does not
-// show this institution's holding (IndCat is a union catalog), so a matching
-// one is opened with readRecord.
-export async function searchTitle(library, title) {
-  return (await search(library, String(title || '').slice(0, 160))).records;
-}
-export async function searchIsbn(library, value) {
-  const query = isbnQuery(value);
-  if (!query) throw catalogError('ISBN required', 'CATALOG_EXACT_ISBN_REQUIRED');
-  return (await search(library, query, true)).records;
-}
-// One record page. The row came from this institution's own scoped search, so
-// its own bibliographic record counts as held (confirmedMemberRecord). Throws
-// CATALOG_HOLDING_UNCONFIRMED when the page shows another institution's.
-export async function readRecord(library, recordId) {
+// The one library search (libraryBookSearch.js): one institution-scoped
+// search and its first ten rows, each linking to its record.
+export async function librarySearch(library, term) {
   const code = config(library);
-  const response = await read(recordUrl(code, recordId), { deadlineAt: Date.now() + 60_000 });
-  if (!/<table\b[^>]*\bid=["']holding["']/i.test(response.text)) throw catalogError('Unrecognized catalog record');
-  const record = parseIndcatRecord(response.text, library, recordId, null, { confirmedMemberRecord: true });
-  if (!record) throw catalogError('Catalog record shows another institution’s holding', 'CATALOG_HOLDING_UNCONFIRMED');
-  return record;
+  const { records } = await search(library, String(term || '').slice(0, 160));
+  return records.map(record => ({ ...record, catalogUrl: recordUrl(code, record.recordId), catalogLinkKind: 'record' }));
 }

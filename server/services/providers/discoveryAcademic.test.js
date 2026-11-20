@@ -1,7 +1,7 @@
 import test,{afterEach} from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {parseAcademicResponse,parseEasylibAvailability,parseDarshanIsbn,searchCatalog,resolveCatalogRecord,checkAvailability,academicCatalogConfigured,academicCatalogHandoff,clearAcademicFormState,isbnLookupSupported,iustEmptyResultPage} from './discoveryAcademic.js';
+import {parseAcademicResponse,parseEasylibAvailability,parseDarshanIsbn,searchCatalog,resolveCatalogRecord,checkAvailability,academicCatalogConfigured,academicCatalogHandoff,clearAcademicFormState,anyFieldSearch,librarySearch,iustEmptyResultPage} from './discoveryAcademic.js';
 import {clearHttpCache} from './http.js';
 import {parseLibsoftDetails,rejectChallenge} from './discoveryAcademicParsers.js';
 const fixture=n=>fs.readFileSync(new URL(`../../test/fixtures/discovery-academic/${n}`,import.meta.url),'utf8');
@@ -180,7 +180,14 @@ test('an ISBN alone at a title-only catalog is an unsupported query, sent nowher
  let called=false;global.fetch=async()=>{called=true;throw Error('unexpected');};
  for(const id of ['easylib:sdmmc','processcube:kaptipada-nuasahi','webopac:hcdgc','rps-mahnar:library','libsoft:rcet','srms:1'])await assert.rejects(checkAvailability(library(id),'9781847941831','',''),{code:'CATALOG_QUERY_UNSUPPORTED'});
  assert.equal(called,false);
- assert.equal(isbnLookupSupported(library('easylib:sdmmc')),false);assert.equal(isbnLookupSupported(library('dlib:darshan')),true);assert.equal(isbnLookupSupported(library('soul:iust')),true);assert.equal(isbnLookupSupported(library('public-aspx:baba-mastnath-university')),false);assert.equal(isbnLookupSupported(library('__proto__')),false);
+ // The library search's field: any field only where the form offers one.
+ assert.equal(anyFieldSearch(library('easylib:sdmmc')),false);assert.equal(anyFieldSearch(library('dlib:darshan')),false);assert.equal(anyFieldSearch(library('public-aspx:baba-mastnath-university')),true);assert.equal(anyFieldSearch(library('__proto__')),false);
+});
+test('Baba Mastnath: the library search asks the form\'s "Library catalog" (All) field',async()=>{
+ clearAcademicFormState();const posts=[];
+ global.fetch=async(url,options={})=>{if(options.method==='POST')posts.push(new URLSearchParams(options.body));return reply(options.method==='POST'?fixture('bmu.html'):fixture('bmu.html'),url);};
+ const rows=await librarySearch(library('public-aspx:baba-mastnath-university'),'Wings of Fire');
+ assert.ok(rows.length>0);assert.equal(posts.at(-1).get('ddlSearchType'),'All');
 });
 test('Easylib and Darshan searches are one request each, without a home-page visit',async()=>{
  const calls=[];global.fetch=async(url,options)=>{calls.push({url,method:options.method});return reply(url.includes('advancedSearchFunc')?{...parsed('easylib.json'),search:'Wings'}:fixture('darshan.html'),url);};

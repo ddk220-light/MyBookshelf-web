@@ -438,7 +438,7 @@ test('stored answers carry the answer rule in their lifetime: older rules are ne
   await store.readAnswers('koha:a', [{ kind: 'ol_work', value: 'OL1W' }]);
   await store.writeAnswers([{ libraryId: 'koha:a', kind: 'ol_work', value: 'OL1W', answer: 'not_found', evidence: 'work_no_match' }]);
   const ttl = Math.round(ANSWER_TTL_MS / 1000);
-  assert.equal(ttl, 180 * 24 * 60 * 60 + ANSWER_RULE_VERSION);
+  assert.equal(ttl, 30 * 24 * 60 * 60 + ANSWER_RULE_VERSION);
   assert.match(seen[0].sql, /expires_at - checked_at = make_interval\(secs => \$4\)/);
   assert.equal(seen[0].values[3], ttl);
   assert.match(seen[1].sql, /OR h\.expires_at - h\.checked_at <> make_interval\(secs => \$8\)/);

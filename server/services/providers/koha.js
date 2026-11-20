@@ -840,59 +840,29 @@ async function searchPilotCatalog(library, query, base, deadlineAt, offset) {
   return { records: [], hasMore: false };
 }
 
-// A reader's library check (libraryBookSearch.js): one search of this
-// library's OPAC, by its title index or by ISBN, and its result rows. Rows of
-// a search scoped to this library (or its branch) show its holding; those of
-// a shared catalog searched unscoped do not, and a matching one is opened
-// with readRecord. A search Koha answers with a single record (a redirect to
-// it) reads that record, as a row.
-async function searchRows(library, url) {
+// The one library search (libraryBookSearch.js, providers/index.js): Koha's
+// keyword index, which searches every field; 'ti' here would search titles
+// only. Limited to the branch where the directory names one (scopeSearch),
+// except the unscoped shared catalogs, whose rows count as this library's. A
+// search Koha answers with a single record redirects to it: that record page
+// is the search's one row.
+const SEARCH_INDEX = 'kw';
+export async function librarySearch(library, term) {
   const deadlineAt = catalogDeadline(library);
-  const held = !(library.kohaSearchUnscoped && library.kohaBranchCode);
-  const response = await publicRead(scopeSearch(url, library), deadlineAt, { allowRecordSelection: true });
-  if (response.status === 302) {
-    const selected = detailUrl(response.headers.get('location'), url).searchParams.get('biblionumber');
-    try { return [await readRecord(library, selected)]; }
-    catch (error) {
-      if (error.code !== 'CATALOG_HOLDING_UNCONFIRMED') throw error;
-      return [];
-    }
-  }
-  const rows = parseKohaCatalogSearch(response.text, url)?.records || parseExpandedKohaCatalogSearch(response.text, url);
-  return rows.map(row => (held ? { ...row, observation: { outcome: 'in_catalog', matchKind: 'verified_work', recognizedExact: true,
-    catalogUrl: row.catalogUrl, catalogLinkKind: 'record' } } : row));
-}
-
-export async function searchTitle(library, title) {
   const url = new URL('/cgi-bin/koha/opac-search.pl', configuration(library));
-  url.searchParams.set('idx', 'ti');
-  url.searchParams.set('q', keywordQuery(title).slice(0, 160));
+  url.searchParams.set('idx', SEARCH_INDEX);
+  url.searchParams.set('q', keywordQuery(term).slice(0, 160));
   url.searchParams.set('count', '40');
-  return searchRows(library, url);
-}
-
-export async function searchIsbn(library, value) {
-  const isbn = validateAndNormalize(value);
-  if (!isbn) throw publicError('CATALOG_EXACT_ISBN_REQUIRED', 'Koha availability requires a valid ISBN');
-  return searchRows(library, isbnSearchUrl(configuration(library), isbn));
-}
-
-// One record page: the record, with an observation only when it shows a copy
-// of this library (or branch). Throws CATALOG_HOLDING_UNCONFIRMED when it
-// shows none.
-export async function readRecord(library, recordId) {
+  const response = await publicRead(scopeSearch(url, library), deadlineAt, { allowRecordSelection: true });
+  if (response.status !== 302) return parseKohaCatalogSearch(response.text, url)?.records || parseExpandedKohaCatalogSearch(response.text, url);
+  const recordId = detailUrl(response.headers.get('location'), url).searchParams.get('biblionumber');
   if (!/^\d{1,20}$/.test(recordId || '')) throw publicError('CATALOG_UNRECOGNIZED', 'Invalid catalog record');
-  const url = new URL('/cgi-bin/koha/opac-detail.pl', configuration(library));
-  url.searchParams.set('biblionumber', recordId);
-  const clean = markupOnly((await readRecordPage(url, catalogDeadline(library))).text);
-  const title = recordTitle(clean);
+  const record = new URL('/cgi-bin/koha/opac-detail.pl', configuration(library));
+  record.searchParams.set('biblionumber', recordId);
+  const page = markupOnly((await readRecordPage(record, deadlineAt)).text);
+  const title = recordTitle(page);
   if (!title) throw publicError('CATALOG_UNRECOGNIZED', 'Koha did not show this catalog record');
-  const scope = library.publicCatalogCapabilities?.titleSearch ? branchScope(library) : library;
-  const holding = parseHoldings(clean, { matchKind: 'verified_work', recognizedExact: true }, scope);
-  if (!(holding?.totalCopies > 0)) throw publicError('CATALOG_HOLDING_UNCONFIRMED', 'This record shows no copy of this library');
-  const catalogUrl = url.toString();
-  return { recordId, title, authors: catalogAuthors(clean), catalogUrl, catalogLinkKind: 'record',
-    observation: { outcome: 'in_catalog', matchKind: 'verified_work', recognizedExact: true, catalogUrl, catalogLinkKind: 'record' } };
+  return [{ recordId, title, authors: catalogAuthors(page), catalogUrl: record.toString(), catalogLinkKind: 'record' }];
 }
 
 export async function resolvePublicCatalogRecord(library, recordId) {
@@ -902,54 +872,4 @@ export async function resolvePublicCatalogRecord(library, recordId) {
 
 export async function checkPublicRecordAvailability(library, recordId) {
   return (await readCatalogRecord(library, recordId)).availability;
-}
-
-// Koha's search page also answers as RSS (`format=rss`, the OpenSearch
-// template). Each <item> carries a record link and, where the record has one,
-// `<dc:identifier>ISBN:…</dc:identifier>`, so one request shows ISBNs for the
-// first 20 results without opening any record. Verified live on IIT
-// Bhubaneswar (12 November 2026, saved as test/fixtures/koha/iitbbs-rss-wings.xml).
-// Result marking uses it only for libraries that opt in (`kohaRssRows`), until
-// a second catalog has been checked.
-export function parseKohaRssSearch(xml, searchUrl) {
-  const body = String(xml || '');
-  if (!/<rss\b[^>]*>/i.test(body) || !/<channel\b/i.test(body)) return null;
-  const total = body.match(/<opensearch:totalResults>\s*(\d+)\s*<\/opensearch:totalResults>/i);
-  if (!total) return null;
-  const records = [];
-  for (const item of body.matchAll(/<item\b[^>]*>([\s\S]*?)<\/item>/gi)) {
-    const field = name => item[1].match(new RegExp(`<${name}\\b[^>]*>([\\s\\S]*?)<\\/${name}>`, 'i'))?.[1] || '';
-    const unwrap = value => value.replace(/<!--[\s\S]*?-->/g, '').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1');
-    const link = text(unwrap(field('link')));
-    let url;
-    try { url = detailUrl(link, searchUrl); } catch { return null; }
-    const recordId = url.searchParams.get('biblionumber');
-    const title = cleanTitle(text(unwrap(field('title'))).replace(/\s*[/:;,]\s*$/, ''));
-    if (!recordId || !title || records.some(record => record.recordId === recordId)) return null;
-    const isbns = [...item[1].matchAll(/<dc:identifier>\s*ISBN:?\s*([^<]+)<\/dc:identifier>/gi)]
-      .map(match => validateAndNormalize(firstIsbn(match[1]) || match[1])).filter(Boolean);
-    const by = text(unwrap(field('description'))).match(/^By\s+(.+?)(?:\.\s|\.$)/);
-    records.push({ recordId, title, authors: by ? [cleanAuthor(by[1])].filter(Boolean) : [], isbns: [...new Set(isbns)],
-      catalogUrl: url.toString(), catalogLinkKind: 'record' });
-  }
-  if (Number(total[1]) > 0 && !records.length) return null;
-  return { records, hasMore: Number(total[1]) > records.length };
-}
-
-export async function searchRssRows(library, query) {
-  if (typeof query !== 'string' || !query.trim() || query.length > 160) throw publicError('CATALOG_UNRECOGNIZED', 'Invalid catalog search');
-  const base = configuration(library);
-  branchScope(library);
-  const deadlineAt = catalogDeadline(library);
-  const url = new URL('/cgi-bin/koha/opac-search.pl', base);
-  url.searchParams.set('idx', 'kw');
-  url.searchParams.set('q', query.trim());
-  scopeSearch(url, library);
-  url.searchParams.set('format', 'rss');
-  return cachedTask(`koha:rss:${url}`, async () => {
-    const response = await publicRead(url, deadlineAt);
-    const result = parseKohaRssSearch(response.text, url);
-    if (!result) throw publicError('CATALOG_UNRECOGNIZED', 'Koha returned an unrecognized RSS search');
-    return result;
-  }, { deadlineAt });
 }

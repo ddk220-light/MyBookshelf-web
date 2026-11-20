@@ -138,63 +138,143 @@ test('the library’s deadline counts from the reader’s tap (askedAt): time sp
   assert.ok(Date.now() - full >= 280, `${Date.now() - full} ms`);
 });
 
-// The simple check (owner decision, 20 November 2026), through the lookup
-// layer: requests per check and what is stored.
-function rowsCatalog({ title = [], isbn = [] } = {}) {
+// The one library search (owner decision, 20 November 2026), through the
+// lookup layer: one request per check, what is stored, the shared rows cache.
+function rowsCatalog(rows = [], extra = {}) {
   const asked = [];
-  const ask = (kind, rows) => async query => { asked.push(kind); await getText(`https://rows.example/${kind}?q=${encodeURIComponent(query)}`, { retries: 0 }); return rows; };
-  return { asked, provider: { checkAvailability: async () => assert.fail('a work check uses the searches'), searchTitle: ask('title', title), searchIsbn: ask('isbn', isbn) } };
+  return { asked, provider: { checkAvailability: async () => assert.fail('a work check uses the search'), ...extra,
+    search: async term => { asked.push(term); await getText(`https://rows.example/search?q=${encodeURIComponent(term)}`, { retries: 0 }); return rows; } } };
 }
-const heldRow = (title, extra = {}) => ({ title, authors: ['Someone'], observation: { outcome: 'in_catalog' }, ...extra });
+const row = (title, extra = {}) => ({ title, authors: ['Someone'], ...extra });
 
-test('a library check: an ISBN key is two requests, a work key one, an ISBN-only catalog one; an answered empty search is a stored not found', async () => {
+test('a library check is one search request, whatever the key; an answered search without a match is a stored not found', async () => {
   global.fetch = async url => { await tick(); return response(url, 'page'); };
   const library = { id: 'koha:rows', platform: 'koha', catalogUrl: 'https://rows.example' };
-  const byIsbn = rowsCatalog();
-  const one = harness({ providerFor: () => byIsbn.provider, platforms: NO_PACING });
-  const isbnKey = await one.lookup.lookupBook({ library, book: { bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466', workId: 'OL1W', title: 'Wings of Fire' } });
-  assert.deepEqual([isbnKey.outcome, isbnKey.evidence, isbnKey.requests, byIsbn.asked.sort()], ['not_found', 'work_no_match', 2, ['isbn', 'title']]);
-  const byWork = rowsCatalog();
-  const two = harness({ providerFor: () => byWork.provider, platforms: NO_PACING });
-  const workKey = await two.lookup.lookupBook({ library, book: { bookKey: 'v1:openlibrary:OL2W', workId: 'OL2W', title: 'Wings of Fire' } });
-  assert.deepEqual([workKey.outcome, workKey.requests, byWork.asked], ['not_found', 1, ['title']]);
-  await two.settle();
-  assert.equal((await two.lookup.lookupBook({ library, book: { bookKey: 'v1:openlibrary:OL2W', workId: 'OL2W', title: 'Wings of Fire' } })).source, 'stored');
-  // A catalog with no title search, asked about a work: the latest edition's ISBN.
-  const isbnOnly = rowsCatalog();
-  delete isbnOnly.provider.searchTitle;
-  const three = harness({ providerFor: () => isbnOnly.provider, platforms: NO_PACING });
+  for (const book of [{ bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466', workId: 'OL1W', title: 'Wings of Fire: An Autobiography' },
+    { bookKey: 'v1:openlibrary:OL2W', workId: 'OL2W', title: 'Wings of Fire' }]) {
+    const catalog = rowsCatalog([row('Wing Of Fire')]);
+    const { lookup, settle } = harness({ providerFor: () => catalog.provider, platforms: NO_PACING });
+    const answer = await lookup.lookupBook({ library, book });
+    assert.deepEqual([answer.outcome, answer.evidence, answer.requests, catalog.asked], ['not_found', 'work_no_match', 1, ['Wings of Fire']]);
+    await settle();
+    assert.equal((await lookup.lookupBook({ library, book })).source, 'stored');
+  }
+  // A catalog asked only by ISBN, about a work: the latest edition's ISBN.
+  const isbnOnly = rowsCatalog([], { searchBy: 'isbn' });
+  const { lookup } = harness({ providerFor: () => isbnOnly.provider, platforms: NO_PACING });
   const books = { latestIsbn: async workId => (workId === 'OL3W' ? '9780140328721' : null) };
-  const latest = await three.lookup.lookupBook({ library: { ...library, id: 'vega:rows', platform: 'vega' }, books,
+  const latest = await lookup.lookupBook({ library: { ...library, id: 'vega:rows', platform: 'vega' }, books,
     book: { bookKey: 'v1:openlibrary:OL3W', workId: 'OL3W', title: 'Matilda' } });
-  assert.deepEqual([latest.outcome, latest.requests, isbnOnly.asked], ['not_found', 1, ['isbn']]);
+  assert.deepEqual([latest.outcome, latest.requests, isbnOnly.asked], ['not_found', 1, ['9780140328721']]);
 });
 
-test('a find by title is found with the catalog\'s rows; it is not stored, so the next look checks again', async () => {
+test('a find is found with the catalog\'s rows, and stored without them for 30 days', async () => {
   global.fetch = async url => { await tick(); return response(url, 'page'); };
   const library = { id: 'koha:titles', platform: 'koha', catalogUrl: 'https://rows.example' };
-  const { provider } = rowsCatalog({ title: [heldRow('Wings of Fire: An Autobiography', { catalogUrl: 'https://rows.example/1', catalogLinkKind: 'record' }), heldRow('Wings of Fire 7')] });
+  const { provider } = rowsCatalog([row('Wings of Fire: An Autobiography', { catalogUrl: 'https://rows.example/1', catalogLinkKind: 'record' }), row('Wings of Fire 7')]);
   const { lookup, settle, answers } = harness({ providerFor: () => provider, platforms: NO_PACING });
-  const book = { bookKey: 'v1:openlibrary:OL4W', workId: 'OL4W', title: 'Wings of Fire' };
+  const book = { bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466', workId: 'OL4W', title: 'Wings of Fire' };
   const answer = await lookup.lookupBook({ library, book });
   assert.deepEqual([answer.outcome, answer.evidence, answer.catalogUrl, answer.requests], ['found', 'title_match', 'https://rows.example/1', 1]);
   assert.deepEqual(answer.matches, [{ title: 'Wings of Fire: An Autobiography', author: 'Someone', url: 'https://rows.example/1' }, { title: 'Wings of Fire 7', author: 'Someone' }]);
   await settle();
-  assert.equal(answers.size(), 0);
-  assert.equal((await lookup.lookupBook({ library, book })).source, 'live');
-});
-
-test('a find by the reader\'s ISBN is stored without its list; the next look needs no request', async () => {
-  global.fetch = async url => { await tick(); return response(url, 'page'); };
-  const library = { id: 'koha:isbns', platform: 'koha', catalogUrl: 'https://rows.example' };
-  const { provider } = rowsCatalog({ isbn: [heldRow('Wings of fire', { isbn: '9788173711466' })] });
-  const { lookup, settle } = harness({ providerFor: () => provider, platforms: NO_PACING });
-  const book = { bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466', title: 'Wings of Fire' };
-  const first = await lookup.lookupBook({ library, book });
-  assert.deepEqual([first.outcome, first.evidence, first.matchedIsbn13, first.matches.length], ['found', 'exact_isbn', '9788173711466', 1]);
-  await settle();
+  const stored = await answers.readAnswers(library.id, [{ kind: 'ol_work', value: 'OL4W' }, { kind: 'isbn13', value: '9788173711466' }]);
+  assert.deepEqual(stored.map(item => [item.kind, item.answer, item.evidence]), [['ol_work', 'found', 'catalog_record'], ['isbn13', 'found', 'catalog_record']]);
   const again = await lookup.lookupBook({ library, book });
   assert.deepEqual([again.outcome, again.source, again.requests, again.matches], ['found', 'stored', 0, undefined]);
+});
+
+test('marks and book checks share the rows of one search: opening a book whose title is the typed text costs no request', async () => {
+  global.fetch = async url => { await tick(); return response(url, 'page'); };
+  const library = { id: 'koha:shared-rows', platform: 'koha', catalogUrl: 'https://rows.example' };
+  const catalog = rowsCatalog([row('Malgudi Days', { catalogUrl: 'https://rows.example/7', catalogLinkKind: 'record' })]);
+  const { lookup } = harness({ providerFor: () => catalog.provider, platforms: NO_PACING });
+  const items = await collect(lookup.markResults({ library, query: 'malgudi days', books: [{ bookKey: 'v1:openlibrary:OL5W', title: 'Malgudi Days' }] }));
+  assert.deepEqual(items[0], { bookKey: 'v1:openlibrary:OL5W', outcome: 'found', evidence: 'title_match', catalogUrl: 'https://rows.example/7', catalogLinkKind: 'record', source: 'live' });
+  const answer = await lookup.lookupBook({ library, book: { bookKey: 'v1:openlibrary:OL5W', workId: 'OL5W', title: 'Malgudi Days' } });
+  assert.deepEqual([answer.outcome, answer.requests, catalog.asked], ['found', 0, ['malgudi days']]);
+});
+
+// --- Result marking: per-platform strategies on saved catalog pages ----------
+
+const kalamProfile = (isbns = ['9788173711466', '8173711461']) => profileOf({ isbn13: isbns[0], isbns, title: 'Wings of fire: an autobiography', authors: ['A. P. J. Abdul Kalam'] });
+
+test('e-Granthalaya: one member search (the form, then one ALL search: 2 requests) marks the result whose title matches', async () => {
+  const calls = [];
+  global.fetch = async (url, options = {}) => {
+    calls.push([url, options.body]);
+    return response(url, read('egranthalaya', options.method === 'POST' ? 'search-hit.html' : 'form.html'),
+      { headers: options.method === 'POST' ? {} : { 'Set-Cookie': 'ASP.NET_SessionId=anonymous-fixture; path=/' } });
+  };
+  const library = { id: 'egranthalaya:publiclibraries-hkmslib', platform: 'egranthalaya', name: 'Harekrushna Mahtab State Library', capabilities: ['availability'],
+    baseUrl: 'https://eg4.nic.in', catalogUrl: 'https://eg4.nic.in/OPAC/Default.aspx?CL_NAME=PUBLICLIBRARIES', egranthalayaCluster: 'PUBLICLIBRARIES', egranthalayaLibraryCode: 'HKMSLIB' };
+  const { lookup, answers, settle } = harness({ providerFor: undefined });
+  const books = [
+    { bookKey: 'a', isbn13: '9788131313459', workId: 'OL9W', title: '101 Great Lives' },
+    { bookKey: 'b', isbn13: '9788173711466', title: 'Wings of Fire' },
+  ];
+  const items = await collect(lookup.markResults({ library, query: '101 great lives', books }));
+  assert.equal(calls.length, 2);
+  assert.match(String(calls[1][1]), /DDL_SearchIn=ALL|ALL/);
+  assert.deepEqual(items.filter(item => !item.done).map(item => [item.bookKey, item.outcome, item.evidence]), [['a', 'found', 'title_match']]);
+  assert.deepEqual(items.at(-1), { done: true, notAttempted: [], unmatched: ['b'], failed: [] });
+  await settle();
+  // Marks are not stored answers.
+  assert.equal(answers.size(), 0);
+  // The same text within ten minutes reuses the rows.
+  await collect(lookup.markResults({ library, query: '101  GREAT lives', books }));
+  assert.equal(calls.length, 2);
+});
+
+const anna = { id: 'koha:anna-centenary-library', platform: 'koha', name: 'Anna Centenary Library', capabilities: ['availability'],
+  baseUrl: 'http://118.185.210.241:8001', catalogUrl: 'http://118.185.210.241:8001', publicCatalogCapabilities: { titleSearch: true }, publicCatalogTimeoutMs: 45_000 };
+
+test('Koha: one keyword search page (1 request) marks every book whose title matches a row, with that row\'s record link', async () => {
+  const calls = [];
+  global.fetch = async url => { calls.push(url); return response(url, read('koha', 'chennai-wings-search.html')); };
+  const { lookup } = harness();
+  const books = [
+    { bookKey: 'kalam', isbn13: '9788173711466', title: 'Wings of Fire: An Autobiography' },
+    { bookKey: 'sutherland', title: 'Wings of Fire' },
+    { bookKey: 'other', title: 'Wing Of Fire' },
+  ];
+  const items = await collect(lookup.markResults({ library: anna, query: 'wings of fire', books }));
+  assert.equal(calls.length, 1);
+  assert.equal(new URL(calls[0]).searchParams.get('idx'), 'kw');
+  assert.deepEqual(items.filter(item => !item.done).map(item => [item.bookKey, item.outcome]), [['kalam', 'found'], ['sutherland', 'found']]);
+  assert.equal(items.find(item => item.bookKey === 'sutherland').catalogUrl, 'http://118.185.210.241:8001/cgi-bin/koha/opac-detail.pl?biblionumber=97054');
+  assert.deepEqual(items.at(-1), { done: true, notAttempted: [], unmatched: ['other'], failed: [] });
+});
+
+test('the IIT Hyderabad API (ISBN only) is not searched with the typed text', async () => {
+  global.fetch = async () => assert.fail('no catalog request');
+  const { lookup } = harness();
+  const library = { ...anna, id: 'koha:iith', publicCatalogApi: 'iith-opac-v1', publicCatalogCapabilities: {} };
+  assert.deepEqual(await collect(lookup.markResults({ library, query: 'wings', books: [{ bookKey: 'k', title: 'Wings' }] })),
+    [{ done: true, notAttempted: ['k'], unmatched: [], failed: [] }]);
+});
+
+test('VuFind, LIBMAN and BiblioCommons: one search request marks by title', async () => {
+  const calls = [];
+  global.fetch = async url => { calls.push(url); return response(url, read('vufind', 'somaiya-search.html')); };
+  const vufind = { id: 'vufind:somaiya', platform: 'vufind', name: 'The Somaiya School Library', capabilities: ['availability'], baseUrl: 'https://koha-opac.somaiya.edu',
+    catalogUrl: 'https://koha-opac.somaiya.edu', vufindInstitution: 'TSS', vufindInstitutionLabel: 'The Somaiya School Library' };
+  let items = await collect(harness().lookup.markResults({ library: vufind, query: 'wings of fire', books: [{ bookKey: 'k', title: 'Wings of Fire' }] }));
+  assert.deepEqual([calls.length, new URL(calls[0]).searchParams.get('type'), items[0].outcome], [1, 'AllFields', 'found']);
+  calls.length = 0;
+  const libmanRows = JSON.parse(read('libman', 'search-known.json'));
+  global.fetch = async url => { calls.push(url); return response(url, libmanRows); };
+  const libman = { id: 'libman:22', platform: 'libman', name: 'Arka Jain University Library', capabilities: ['availability'], baseUrl: 'https://libcloud.mastersofterp.in/OPAC_V3',
+    libmanLibraryId: '22', catalogUrl: 'https://libcloud.mastersofterp.in/OPAC_V3/?library=Arka+Jain+University+Library' };
+  items = await collect(harness().lookup.markResults({ library: libman, query: 'a better india', books: [{ bookKey: 'm', title: 'A Better India: A Better World' }] }));
+  assert.deepEqual([calls.length, items[0].outcome], [1, 'found']);
+  calls.length = 0;
+  global.fetch = async url => { calls.push(url); return response(url, { catalogSearch: { pagination: { count: 2 }, results: [{ representative: 'S1' }, { representative: 'S2' }] },
+    entities: { bibs: { S1: { briefInfo: { title: 'Wings of Fire', subtitle: 'An Autobiography', authors: ['Kalam, A. P. J. Abdul'], isbns: ['8173711461'], format: 'BK' } },
+      S2: { briefInfo: { title: 'Wings of Fire', authors: ['Sutherland, Tui T.'], isbns: [], format: 'BK' } } } } }); };
+  const bc = { id: 'bc:smcl', platform: 'bc', slug: 'smcl', capabilities: ['availability'], catalogUrl: 'https://smcl.bibliocommons.com' };
+  items = await collect(harness().lookup.markResults({ library: bc, query: 'wings of fire', books: [{ bookKey: 'k', title: 'Wings of Fire' }] }));
+  assert.deepEqual([calls.length, items[0].bookKey, items[0].outcome], [1, 'k', 'found']);
 });
 
 test('aborting a book check stops further catalog requests', async () => {
@@ -228,129 +308,6 @@ test('robots rules are checked before any catalog request', async () => {
   const { lookup } = harness({ providerFor: () => provider, robots: { check: async () => ({ allowed: false, delayMs: 0 }) } });
   const answer = await lookup.lookupBook({ library: { id: 'koha:r', platform: 'koha', catalogUrl: 'https://k.example' }, book: { bookKey: 'k', isbn13: '9788173711466' }, editionScope: 'exact' });
   assert.deepEqual([answer.outcome, answer.reason, fetches], ['couldnt_check', 'blocked', 0]);
-});
-
-// --- Result marking: per-platform strategies on saved catalog pages ----------
-
-const kalamProfile = (isbns = ['9788173711466', '8173711461']) => profileOf({ isbn13: isbns[0], isbns, title: 'Wings of fire: an autobiography', authors: ['A. P. J. Abdul Kalam'] });
-
-test('e-Granthalaya: one member title search (the form, then TITLE and ALL searches: 3 requests) marks the result whose ISBN the row shows', async () => {
-  const calls = [];
-  global.fetch = async (url, options = {}) => {
-    calls.push(url);
-    return response(url, read('egranthalaya', options.method === 'POST' ? 'search-hit.html' : 'form.html'),
-      { headers: options.method === 'POST' ? {} : { 'Set-Cookie': 'ASP.NET_SessionId=anonymous-fixture; path=/' } });
-  };
-  const library = { id: 'egranthalaya:publiclibraries-hkmslib', platform: 'egranthalaya', name: 'Harekrushna Mahtab State Library', capabilities: ['availability'],
-    baseUrl: 'https://eg4.nic.in', catalogUrl: 'https://eg4.nic.in/OPAC/Default.aspx?CL_NAME=PUBLICLIBRARIES', egranthalayaCluster: 'PUBLICLIBRARIES', egranthalayaLibraryCode: 'HKMSLIB' };
-  const { lookup, answers, settle } = harness({ providerFor: undefined });
-  const books = [
-    { bookKey: 'a', isbn13: '9788131313459', workId: 'OL9W', profile: profileOf({ isbn13: '9788131313459', title: '101 great lives who shaped the world' }) },
-    { bookKey: 'b', isbn13: '9788173711466', profile: kalamProfile() },
-    { bookKey: 'c' },
-  ];
-  const items = await collect(lookup.markResults({ library, query: '101 great lives', books }));
-  assert.equal(calls.length, 3);
-  assert.deepEqual(items.filter(item => !item.done).map(item => [item.bookKey, item.outcome, item.evidence, item.recordId]), [['a', 'found', 'exact_isbn', '519750']]);
-  assert.deepEqual(items.at(-1), { done: true, notAttempted: ['c'], unmatched: ['b'], failed: [] });
-  await settle();
-  // Unmatched rows write nothing; the match is stored for the ISBN.
-  assert.deepEqual((await answers.readAnswers(library.id, [{ kind: 'isbn13', value: '9788131313459' }, { kind: 'isbn13', value: '9788173711466' }])).map(row => row.answer), ['found']);
-  // The same query within ten minutes reuses the rows; stored answers come first.
-  const again = await collect(lookup.markResults({ library, query: '101  GREAT lives', books }));
-  assert.equal(calls.length, 3);
-  assert.deepEqual(again[0], { bookKey: 'a', outcome: 'found', evidence: 'exact_isbn', source: 'stored' });
-});
-
-test('e-Granthalaya rows without ISBNs (Romain Rolland, Wings of Fire) give no badge even when titles and authors agree', async () => {
-  global.fetch = async (url, options = {}) => response(url, read('egranthalaya', options.method === 'POST' ? 'rrlpy-search-wings-of-fire.html' : 'rrlpy-form.html'),
-    { headers: options.method === 'POST' ? {} : { 'Set-Cookie': 'ASP.NET_SessionId=anonymous-fixture; path=/' } });
-  const library = { id: 'egranthalaya:pylib-rrlpy', platform: 'egranthalaya', name: 'Romain Rolland Library', capabilities: ['availability'], baseUrl: 'https://eg4.nic.in',
-    egranthalayaCluster: 'PYLIB', egranthalayaLibraryCode: 'RRLPY', egranthalayaSearchScope: 'cluster' };
-  const { lookup, answers, settle } = harness();
-  const items = await collect(lookup.markResults({ library, query: 'wings of fire', books: [{ bookKey: 'k', isbn13: '9788173711466', profile: kalamProfile() }] }));
-  assert.deepEqual(items, [{ done: true, notAttempted: [], unmatched: ['k'], failed: [] }]);
-  await settle();
-  assert.equal(answers.size(), 0);
-});
-
-const anna = { id: 'koha:anna-centenary-library', platform: 'koha', name: 'Anna Centenary Library', capabilities: ['availability'],
-  baseUrl: 'http://118.185.210.241:8001', catalogUrl: 'http://118.185.210.241:8001', publicCatalogCapabilities: { titleSearch: true }, publicCatalogTimeoutMs: 45_000 };
-
-test('Koha: one keyword search page (1 request) marks the edition shown by ISBN; same title, other edition or other work, no badge', async () => {
-  const calls = [];
-  global.fetch = async url => { calls.push(url); return response(url, read('koha', 'chennai-wings-search.html')); };
-  const { lookup } = harness();
-  const books = [
-    { bookKey: 'kalam', isbn13: '9788173711466', profile: kalamProfile() },
-    // Same title and author, but an ISBN this catalog does not show.
-    { bookKey: 'other-edition', isbn13: '9780140328721', profile: kalamProfile(['9780140328721']) },
-    // Same title, another work.
-    { bookKey: 'sutherland', isbn13: '9780545685351', profile: profileOf({ isbn13: '9780545685351', title: 'Wings of Fire', authors: ['Tui T. Sutherland'] }) },
-  ];
-  const items = await collect(lookup.markResults({ library: anna, query: 'wings of fire', books }));
-  assert.equal(calls.length, 1);
-  assert.deepEqual(items.filter(item => !item.done).map(item => [item.bookKey, item.outcome, item.recordId]), [['kalam', 'found', '497990']]);
-  // The mark carries the matching row's record address (A3).
-  assert.equal(items.find(item => item.bookKey === 'kalam').catalogUrl, 'http://118.185.210.241:8001/cgi-bin/koha/opac-detail.pl?biblionumber=497990');
-  assert.deepEqual(items.at(-1).failed, [], 'unmatched rows are not failures');
-  assert.deepEqual(items.at(-1).unmatched, ['other-edition', 'sutherland']);
-});
-
-test('Koha RSS rows carry ISBNs (IIT Bhubaneswar) and mark in one request where a library opts in', async () => {
-  const calls = [];
-  global.fetch = async url => { calls.push(url); return response(url, read('koha', 'iitbbs-rss-wings.xml')); };
-  const library = { id: 'koha:iitbbs', platform: 'koha', capabilities: ['availability'], baseUrl: 'https://koha.iitbbs.ac.in', catalogUrl: 'https://koha.iitbbs.ac.in', kohaRssRows: true };
-  const { lookup } = harness();
-  // The matching row names only the co-author (Tiwari); Open Library lists both.
-  const profile = { ...kalamProfile(), authors: ['A. P. J. Abdul Kalam', 'Arun Tiwari'] };
-  const items = await collect(lookup.markResults({ library, query: 'wings of fire', books: [{ bookKey: 'k', isbn13: '9788173711466', profile }] }));
-  assert.equal(calls.length, 1);
-  assert.equal(new URL(calls[0]).searchParams.get('format'), 'rss');
-  assert.deepEqual(items.filter(item => !item.done).map(item => [item.bookKey, item.outcome, item.evidence]), [['k', 'found', 'exact_isbn']]);
-});
-
-test('Koha libraries whose rows cannot prove the branch (unscoped shared catalogs, IIT Hyderabad API) do not mark results', async () => {
-  // A request here would fail inside the adapter and be swallowed, so count them.
-  let fetches = 0;
-  global.fetch = async () => { fetches++; assert.fail('no catalog request'); };
-  const { lookup } = harness();
-  for (const library of [{ ...anna, id: 'koha:shared', kohaSearchUnscoped: true, kohaBranchCode: 'MAIN', kohaBranchName: 'Main' },
-    { ...anna, id: 'koha:iith', publicCatalogApi: 'iith-opac-v1', publicCatalogCapabilities: {} }]) {
-    const items = await collect(lookup.markResults({ library, query: 'wings', books: [{ bookKey: 'k', profile: kalamProfile() }] }));
-    assert.deepEqual(items, [{ done: true, notAttempted: ['k'], unmatched: [], failed: [] }]);
-  }
-  assert.equal(fetches, 0);
-});
-
-test('VuFind: one title search (1 request) marks rows by their COinS ISBN', async () => {
-  const calls = [];
-  global.fetch = async url => { calls.push(url); return response(url, read('vufind', 'somaiya-search.html')); };
-  const library = { id: 'vufind:somaiya', platform: 'vufind', name: 'The Somaiya School Library', capabilities: ['availability'], baseUrl: 'https://koha-opac.somaiya.edu',
-    catalogUrl: 'https://koha-opac.somaiya.edu', vufindInstitution: 'TSS', vufindInstitutionLabel: 'The Somaiya School Library' };
-  const { lookup } = harness();
-  const items = await collect(lookup.markResults({ library, query: 'wings of fire', books: [{ bookKey: 'k', isbn13: '9788173711466', profile: kalamProfile() }] }));
-  assert.equal(calls.length, 1);
-  assert.equal(items[0].outcome, 'found');
-});
-
-test('LIBMAN and BiblioCommons: one search request; rows carry ISBNs', async () => {
-  const libmanRows = JSON.parse(read('libman', 'search-known.json')).map(row => ({ ...row, ISBN: '9780670087488' }));
-  const calls = [];
-  global.fetch = async url => { calls.push(url); return response(url, libmanRows); };
-  const libman = { id: 'libman:22', platform: 'libman', name: 'Arka Jain University Library', capabilities: ['availability'], baseUrl: 'https://libcloud.mastersofterp.in/OPAC_V3',
-    libmanLibraryId: '22', catalogUrl: 'https://libcloud.mastersofterp.in/OPAC_V3/?library=Arka+Jain+University+Library' };
-  const murty = profileOf({ isbn13: '9780670087488', title: 'A Better India: A Better World', authors: ['N. R. Narayana Murty'] });
-  let items = await collect(harness().lookup.markResults({ library: libman, query: 'a better india', books: [{ bookKey: 'm', isbn13: '9780670087488', profile: murty }] }));
-  assert.deepEqual([calls.length, items[0].outcome], [1, 'found']);
-  calls.length = 0;
-  global.fetch = async url => { calls.push(url); return response(url, { catalogSearch: { pagination: { count: 2 }, results: [{ representative: 'S1' }, { representative: 'S2' }] },
-    entities: { bibs: { S1: { briefInfo: { title: 'Wings of Fire', subtitle: 'An Autobiography', authors: ['Kalam, A. P. J. Abdul'], isbns: ['8173711461'], format: 'BK' } },
-      S2: { briefInfo: { title: 'Wings of Fire', authors: ['Sutherland, Tui T.'], isbns: [], format: 'BK' } } } } }); };
-  const bc = { id: 'bc:smcl', platform: 'bc', slug: 'smcl', capabilities: ['availability'], catalogUrl: 'https://smcl.bibliocommons.com' };
-  items = await collect(harness().lookup.markResults({ library: bc, query: 'wings of fire', books: [{ bookKey: 'k', isbn13: '9788173711466', profile: kalamProfile() }] }));
-  assert.equal(calls.length, 1);
-  assert.deepEqual([items[0].bookKey, items[0].outcome, items[0].recordId], ['k', 'found', 'S1']);
 });
 
 test('Calil: one batch call answers every result ISBN separately; a missing ISBN is never not found', async () => {
@@ -415,11 +372,11 @@ test('platforms without a results strategy, an open circuit, or a second run on 
 });
 
 test('result marking never exceeds the platform’s results budget, and a failed search marks nothing and is a health event (running out of budget is not)', async () => {
-  for (const [id, platform] of Object.entries(PLATFORMS).filter(([, value]) => value.results.strategy === 'search_rows')) {
+  for (const [id, platform] of Object.entries(PLATFORMS).filter(([, value]) => value.results.strategy === 'search')) {
     let fetches = 0;
     global.fetch = async url => { fetches++; return response(url, 'page'); };
     const search = async () => { for (let i = 0; ; i++) await getText(`https://s.example/${id}/${i}`, { retries: 0 }); };
-    const { lookup, health, settle } = harness({ providerFor: () => ({ checkAvailability: async () => ({}), searchResultRows: search, searchBookCandidates: search, searchCatalog: search }) });
+    const { lookup, health, settle } = harness({ providerFor: () => ({ checkAvailability: async () => ({}), search }) });
     const items = await collect(lookup.markResults({ library: { id: `${id}:b`, platform: id, catalogUrl: 'https://s.example' }, query: 'wings', books: [{ bookKey: 'k', profile: kalamProfile() }] }));
     assert.equal(fetches, platform.results.maxRequests, id);
     // The search did not finish within our cap: "couldn't check" for the reader, never "not found".
@@ -430,7 +387,7 @@ test('result marking never exceeds the platform’s results budget, and a failed
     // A catalog that fails is.
     const failing = harness({ providerFor: () => {
       const fail = async () => { throw coded('Catalog down', 'CATALOG_UNAVAILABLE'); };
-      return { checkAvailability: async () => ({}), searchResultRows: fail, searchBookCandidates: fail, searchCatalog: fail };
+      return { checkAvailability: async () => ({}), search: fail };
     } });
     const failed = await collect(failing.lookup.markResults({ library: { id: `${id}:f`, platform: id, catalogUrl: 'https://f.example' }, query: 'wings', books: [{ bookKey: 'k', profile: kalamProfile() }] }));
     assert.deepEqual(failed, [{ done: true, notAttempted: [], unmatched: [], failed: ['k'] }], id);
@@ -837,13 +794,15 @@ test('a per-ISBN marking run whose answers were all unreadable is a failure, not
 
 test('result marking ends by its deadline when an edition profile never arrives, and frees the host', async () => {
   let searched = 0;
-  const provider = { checkAvailability: async () => ({}), searchResultRows: async () => { searched++; return []; }, checkMany: async () => assert.fail('no catalog call') };
+  const provider = { checkAvailability: async () => ({}), search: async () => { searched++; return []; }, checkMany: async () => assert.fail('no catalog call') };
   const { lookup, guard, health, settle } = harness({ providerFor: () => provider });
-  for (const [platform, host] of [['vufind', 'slow-profile.example'], ['calil', 'api.calil.jp']]) {
+  // The title-search strategy never waits for a profile; Calil (ISBN batch) does, until the deadline.
+  for (const [platform, host, done] of [['vufind', 'slow-profile.example', { done: true, notAttempted: [], unmatched: ['a'], failed: [] }],
+    ['calil', 'api.calil.jp', { done: true, notAttempted: ['a'], unmatched: [], failed: [] }]]) {
     const library = { id: `${platform}:slow`, platform, slug: 'S', catalogUrl: `https://${host}` };
-    const run = collect(lookup.markResults({ library, query: 'q', books: [{ bookKey: 'a', profile: new Promise(() => {}) }], deadlineAt: Date.now() + 50 }));
+    const run = collect(lookup.markResults({ library, query: 'q', books: [{ bookKey: 'a', title: 'A', profile: new Promise(() => {}) }], deadlineAt: Date.now() + 50 }));
     const settled = await Promise.race([run, new Promise(resolve => setTimeout(() => resolve('still waiting'), 1_000))]);
-    assert.deepEqual(settled, [{ done: true, notAttempted: ['a'], unmatched: [], failed: [] }], platform);
+    assert.deepEqual(settled, [done], platform);
     const slot = guard.tryStartMarking(host);
     assert.ok(slot, platform);
     slot();
@@ -855,10 +814,10 @@ test('result marking ends by its deadline when an edition profile never arrives,
 });
 
 test('a reader who stops reading marks does not hold the host’s marking slot', async () => {
-  const provider = { checkAvailability: async () => ({}), searchResultRows: async () => [{ recordId: '1', title: 'Wings of fire', isbn: '9788173711466' }] };
+  const provider = { checkAvailability: async () => ({}), search: async () => [{ recordId: '1', title: 'Wings of fire', isbn: '9788173711466' }] };
   const { lookup, guard } = harness({ providerFor: () => provider });
   const iterator = lookup.markResults({ library: { id: 'vufind:walk', platform: 'vufind', catalogUrl: 'https://walk.example' }, query: 'wings',
-    books: [{ bookKey: 'a', profile: kalamProfile() }] })[Symbol.asyncIterator]();
+    books: [{ bookKey: 'a', title: 'Wings of Fire' }] })[Symbol.asyncIterator]();
   assert.equal((await iterator.next()).value.outcome, 'found');
   const slot = guard.tryStartMarking('walk.example');
   assert.ok(slot);
@@ -882,7 +841,7 @@ test('a lookup that times out still reports the catalog requests it sent', async
 
 test('Open Library failing to name a work\'s latest ISBN is not counted against an ISBN-only catalog', async () => {
   let catalogCalls = 0;
-  const provider = { checkAvailability: async () => assert.fail('unused'), searchIsbn: async () => { catalogCalls++; return []; } };
+  const provider = { checkAvailability: async () => assert.fail('unused'), searchBy: 'isbn', search: async () => { catalogCalls++; return []; } };
   const guard = createHostGuard();
   const { lookup, health, settle } = harness({ guard, providerFor: () => provider });
   const entry = { id: 'vega:profile', platform: 'vega', catalogUrl: 'https://profile.example' };
@@ -911,53 +870,6 @@ test('waiting for a busy host slot on this instance is couldn’t check, but not
   await settle();
   assert.equal(await health.libraryHealth(entry.id), null);
   assert.equal(guard.circuitOpen('busy.example'), false);
-});
-
-// Captured 2026-11-13 from The Seattle Public Library's gateway (keyword "the
-// hobbit", first page of 25, trimmed to the fields the adapter reads) and Open
-// Library's first edition page for each work, trimmed likewise.
-test('BiblioCommons marking reads every print row of its one search, and marks a work only by its own editions’ ISBNs', async () => {
-  const { getProvider } = await import('../providers/index.js');
-  const { createWorkDiscovery } = await import('../workDiscovery.js');
-  const calls = [];
-  const gateway = read('bibliocommons', 'seattle-search-the-hobbit.json');
-  global.fetch = async url => { calls.push(url); return response(url, gateway); };
-  const editions = { OL27482W: JSON.parse(read('openlibrary', 'OL27482W-editions.json')), OL219602W: JSON.parse(read('openlibrary', 'OL219602W-editions.json')) };
-  const discovery = createWorkDiscovery({ read: async path => editions[path.match(/\/works\/(OL\d+W)\//)?.[1]] || { size: 0, entries: [] } });
-  const work = (workId, title, authors) => ({ bookKey: `v1:openlibrary:${workId}`, workId, title, authors,
-    profile: discovery.profile({ bookKey: `v1:openlibrary:${workId}`, workId, title, authors, languages: ['eng'] }) });
-  const books = [
-    work('OL27482W', 'The Hobbit', ['J.R.R. Tolkien']),
-    work('OL219602W', 'The Hobbit', ['Charles Dixon', 'Sean Deming', 'J.R.R. Tolkien']),
-    // Same title, no ISBN known: never marked by title.
-    work('OL19659526W', 'The Hobbit', []),
-    // Same title and author, ISBNs the rows do not show: not marked.
-    { ...work('OL24180247W', 'The hobbit', ['Patty Kempshall']), profile: profileOf({ isbn13: '9780582005808', title: 'The hobbit', authors: ['Patty Kempshall'] }) },
-  ];
-  const library = { id: 'bc:seattle', platform: 'bc', slug: 'seattle', capabilities: ['availability'], catalogUrl: 'https://seattle.bibliocommons.com' };
-  const items = await collect(harness({ providerFor: getProvider }).lookup.markResults({ library, query: 'the hobbit', books, deadlineAt: Date.now() + 5_000 }));
-  assert.equal(calls.length, 1, 'one gateway search');
-  assert.deepEqual(items.filter(item => !item.done).map(item => [item.bookKey, item.outcome, item.matchedIsbn13, item.recordId]), [
-    // The novel's first print row is the 16th result: the first ten are audiobooks, DVDs and graphic novels.
-    ['v1:openlibrary:OL27482W', 'found', '9780618968633', 'S246C395812'],
-    // 9780345445605 is the graphic novel's ISBN (its own Open Library work), not the novel's.
-    ['v1:openlibrary:OL219602W', 'found', '9780345445605', 'S246C1092054'],
-  ]);
-  assert.deepEqual(items.at(-1), { done: true, notAttempted: ['v1:openlibrary:OL19659526W'], unmatched: ['v1:openlibrary:OL24180247W'], failed: [] });
-});
-
-test('edition profiles may arrive after the catalog’s part of the run, within the run’s deadline', async () => {
-  const platforms = { ...UNPACED, vufind: { ...UNPACED.vufind, results: { ...UNPACED.vufind.results, deadlineMs: 30 } } };
-  const provider = { checkAvailability: async () => ({}), searchResultRows: async () => [{ recordId: '1', title: 'Wings of fire', isbn: '9788173711466' }] };
-  const { lookup, guard } = harness({ providerFor: () => provider, platforms });
-  // Open Library reads are paced one at a time: the ninth profile of a page arrives seconds later.
-  const late = new Promise(resolve => setTimeout(() => resolve(kalamProfile()), 150));
-  const items = await collect(lookup.markResults({ library: { id: 'vufind:late', platform: 'vufind', catalogUrl: 'https://late.example' }, query: 'wings',
-    books: [{ bookKey: 'a', profile: late }, { bookKey: 'b', profile: new Promise(() => {}) }], deadlineAt: Date.now() + 600 }));
-  assert.deepEqual(items.map(item => item.done ? item : [item.bookKey, item.outcome]), [['a', 'found'], { done: true, notAttempted: ['b'], unmatched: [], failed: [] }]);
-  const slot = guard.tryStartMarking('late.example');
-  assert.ok(slot, 'the host slot was freed before waiting on profiles');
-  slot();
 });
 
 test('every book check writes one library_check log line with its reason, never the book', async () => {
@@ -997,24 +909,20 @@ test('every book check writes one library_check log line with its reason, never 
   assert.ok(!/Wings|Kalam|9788173711466|OL\d+W/.test(text), 'no title, author, ISBN or work ID');
 });
 
-test('the log line names the search that found the book (foundBy) and how many rows it lists, never the book', async () => {
+test('the log line names the term that found the book (foundBy) and how many rows it lists, never the book', async () => {
   const library = { id: 'koha:found-by', platform: 'koha', catalogUrl: 'https://k.example' };
-  const work = { bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466', workId: 'OL1037811W', title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'] };
-  const held = { outcome: 'in_catalog' };
-  const run = async provider => {
+  const run = async (book, rows) => {
     const lines = [];
-    const { lookup } = harness({ providerFor: () => ({ checkAvailability: async () => assert.fail('unused'), ...provider }), log: line => lines.push(line) });
-    const answer = await lookup.lookupBook({ library, book: work, storedChecked: true });
+    const { lookup } = harness({ providerFor: () => ({ checkAvailability: async () => assert.fail('unused'), search: async () => rows }), log: line => lines.push(line) });
+    const answer = await lookup.lookupBook({ library, book, storedChecked: true });
     assert.equal(answer.outcome, 'found');
     assert.equal(Object.keys(answer).includes('foundBy'), false, 'never on the answer itself');
     return lines.at(-1);
   };
-  const viaIsbn = await run({ searchIsbn: async () => [{ title: 'Wings of fire', isbn: '9788173711466', observation: held }], searchTitle: () => new Promise(() => {}) });
-  assert.deepEqual([viaIsbn.foundBy, viaIsbn.matchCount, viaIsbn.bookKeyKind], ['isbn', 1, 'isbn']);
-  const viaTitle = await run({ searchIsbn: async () => [], searchTitle: async () => [{ title: 'Wings of Fire', observation: held }, { title: 'Wings of fire: an autobiography', observation: held }] });
-  assert.deepEqual([viaTitle.foundBy, viaTitle.matchCount, viaTitle.evidence], ['title', 2, 'title_match']);
-  const viaRecord = await run({ searchIsbn: async () => [], searchTitle: async () => [{ recordId: '3', title: 'Wings of Fire' }],
-    readRecord: async id => ({ recordId: id, title: 'Wings of Fire', authors: ['Kalam, A. P. J. Abdul'], observation: held }) });
-  assert.deepEqual([viaRecord.foundBy, viaRecord.matchCount], ['record', 1]);
-  assert.ok(!/Wings|Kalam|9788173|OL1037811W/.test(JSON.stringify([viaIsbn, viaTitle, viaRecord])));
+  const viaTitle = await run({ bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466', workId: 'OL1037811W', title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'] },
+    [{ title: 'Wings of Fire' }, { title: 'Wings of fire: an autobiography' }]);
+  assert.deepEqual([viaTitle.foundBy, viaTitle.matchCount, viaTitle.evidence, viaTitle.bookKeyKind], ['title', 2, 'title_match', 'isbn']);
+  const viaIsbn = await run({ bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466', title: '' }, [{ title: 'Wings of fire', isbn: '9788173711466' }]);
+  assert.deepEqual([viaIsbn.foundBy, viaIsbn.matchCount, viaIsbn.evidence], ['isbn', 1, 'exact_isbn']);
+  assert.ok(!/Wings|Kalam|9788173|OL1037811W/.test(JSON.stringify([viaIsbn, viaTitle])));
 });

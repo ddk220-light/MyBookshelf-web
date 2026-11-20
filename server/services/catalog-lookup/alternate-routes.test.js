@@ -12,10 +12,9 @@ const code = value => Object.assign(new Error(value), { code: value });
 const positive = { outcome: 'in_catalog', matchKind: 'exact_isbn', recognizedExact: true };
 const negative = { outcome: 'not_found', matchKind: 'none', recognizedExact: true };
 const observation = { outcome: 'in_catalog', matchKind: 'verified_work', recognizedExact: true };
-const profile = { book: { title: 'Book', authors: ['Author'], isbn13: isbn }, titles: ['Book'], authors: ['Author'], isbns: [isbn], complete: true };
 const table = {
-  indcat: { book: { maxRequests: 8, deadlineMs: 500 }, results: { strategy: 'search_rows', maxRequests: 4, deadlineMs: 500 }, hostConcurrency: 2, minIntervalMs: 0, perMinute: 30 },
-  'discovery-academic': { book: { maxRequests: 6, deadlineMs: 500 }, results: { strategy: 'search_rows', maxRequests: 3, deadlineMs: 500 }, hostConcurrency: 1, minIntervalMs: 0, perMinute: 10 },
+  indcat: { book: { maxRequests: 8, deadlineMs: 500 }, results: { strategy: 'search', maxRequests: 4, deadlineMs: 500 }, hostConcurrency: 2, minIntervalMs: 0, perMinute: 30 },
+  'discovery-academic': { book: { maxRequests: 6, deadlineMs: 500 }, results: { strategy: 'search', maxRequests: 3, deadlineMs: 500 }, hostConcurrency: 1, minIntervalMs: 0, perMinute: 10 },
 };
 function harness(forRoute, { platforms = table } = {}) {
   const alternate = { id: 'indcat:routed', platform: 'discovery-academic', catalogUrl: 'https://academic.example.test/',
@@ -136,31 +135,6 @@ test('an alternate deadline cancels that route before release and leaves time fo
   assert.deepEqual(h.failures, ['academic.example.test']);
 });
 
-test('parallel methods cannot restart the route-wide deadline after waiting for its host', async () => {
-  const platforms = { ...table, 'discovery-academic': { ...table['discovery-academic'], book: { maxRequests: 6, deadlineMs: 100 } } };
-  let secondCancelled = false;
-  const h = harness(route => ({
-    searchIsbn: async () => {
-      if (route.platform === 'discovery-academic') await new Promise(resolve => setTimeout(resolve, 60));
-      return [];
-    },
-    searchTitle: async () => {
-      if (route.platform === 'indcat') {
-        assert.equal(secondCancelled, true);
-        return [{ recordId: '8', title: 'Book', authors: ['Author'], isbn, observation: { ...observation, outcome: 'available' } }];
-      }
-      const signal = catalogOperation().signal;
-      return new Promise((resolve, reject) => {
-        const abort = () => { secondCancelled = true; clearTimeout(timer); reject(code('CATALOG_ABORTED')); };
-        const timer = setTimeout(() => { signal.removeEventListener('abort', abort); resolve([]); }, 60);
-        signal.addEventListener('abort', abort, { once: true });
-      });
-    },
-  }), { platforms });
-  assert.equal((await h.check({ editionScope: 'work' })).outcome, 'found');
-  assert.equal(secondCancelled, true);
-});
-
 test('metadata reads use a supplied record route and preserve opaque-callback compatibility', async () => {
   const platforms = { ...table, indcat: { ...table.indcat, book: { maxRequests: 1, deadlineMs: 500 } },
     'discovery-academic': { ...table['discovery-academic'], book: { maxRequests: 3, deadlineMs: 500 } } };
@@ -178,47 +152,26 @@ test('metadata reads use a supplied record route and preserve opaque-callback co
   assert.deepEqual(h.failures, []);
 });
 
-test('a successful preliminary search does not hide its later record-read failure', async () => {
-  const h = harness(route => ({
-    searchTitle: async () => route.platform === 'indcat' ? [] : [{ recordId: '7', title: 'Book', authors: ['Author'] }],
-    readRecord: async () => { throw code('CATALOG_TIMEOUT'); },
-  }));
-  const answer = await h.check({ editionScope: 'work', bookKey: 'v1:openlibrary:OL1W', isbn13: undefined });
-  assert.equal(answer.outcome, 'couldnt_check'); assert.equal(answer.reason, 'timeout');
+test('the search asks the preferred route first and falls back to the primary only after it fails', async () => {
+  const asked = [];
+  const h = harness(route => ({ search: async () => {
+    asked.push(route.platform); await read(route);
+    if (route.platform === 'discovery-academic') throw code('CATALOG_UNAVAILABLE');
+    return [{ recordId: '8', title: 'Book', authors: ['Author'] }];
+  } }));
+  const answer = await h.check({ editionScope: 'work' });
+  assert.equal(answer.outcome, 'found');
+  assert.deepEqual(asked, ['discovery-academic', 'indcat']);
+  assert.equal(h.recorded[0].host, 'indcat.inflibnet.ac.in');
   assert.deepEqual(h.failures, ['academic.example.test']);
-  assert.equal(h.guard.circuitOpen('academic.example.test'), false, 'one reader cannot supply three circuit failures');
 });
 
-test('a found search row is attributed to its route despite a concurrent failing fallback', async () => {
-  // The ISBN routes fail before the row arrives (a proven row ends the check
-  // and cancels whatever is still in flight).
-  const h = harness(route => ({
-    searchIsbn: async () => { await new Promise(resolve => setImmediate(resolve)); throw code('CATALOG_UNAVAILABLE'); },
-    searchTitle: async () => { await new Promise(resolve => setTimeout(resolve, 20));
-      return route.platform === 'indcat' ? [] : [{ recordId: '7', title: 'Book', authors: ['Author'], isbn, observation }]; },
-  }));
+test('a found search row is attributed to the route that answered', async () => {
+  const h = harness(route => ({ search: async () => (route.platform === 'indcat' ? assert.fail('not asked')
+    : [{ recordId: '7', title: 'Book', authors: ['Author'], catalogUrl: new URL('record/7', route.catalogUrl).href, catalogLinkKind: 'record' }]) }));
   const answer = await h.check({ editionScope: 'work' });
   assert.equal(answer.outcome, 'found');
-  assert.equal(h.recorded[0].host, 'academic.example.test');
-  assert.equal(h.recorded[0].platform, 'discovery-academic');
-  assert.deepEqual(h.failures, ['indcat.inflibnet.ac.in']);
-});
-
-test('two positive routes are attributed to the actual winning catalog link', async () => {
-  // The preferred route's ISBN answer proves the holding first. The check ends
-  // at that first proven match (it no longer reads on for a copy marked
-  // available), and the answer, its link and its attribution agree.
-  const h = harness(route => ({
-    searchIsbn: async () => [{ title: 'Book', isbn, observation: { ...positive, catalogUrl: new URL('record/1', route.catalogUrl).href, catalogLinkKind: 'record' } }],
-    searchTitle: async () => {
-      if (route.platform === 'discovery-academic') throw code('CATALOG_UNAVAILABLE');
-      return [{ recordId: '8', title: 'Book', authors: ['Author'], isbn,
-        observation: { ...observation, outcome: 'available', catalogUrl: new URL('record/2', route.catalogUrl).href } }];
-    },
-  }));
-  const answer = await h.check({ editionScope: 'work' });
-  assert.equal(answer.outcome, 'found');
-  assert.equal(answer.catalogUrl, 'https://academic.example.test/record/1');
+  assert.equal(answer.catalogUrl, 'https://academic.example.test/record/7');
   assert.equal(h.recorded[0].host, 'academic.example.test');
   assert.equal(h.recorded[0].platform, 'discovery-academic');
   assert.deepEqual(h.failures, []);
@@ -226,12 +179,12 @@ test('two positive routes are attributed to the actual winning catalog link', as
 
 test('result marking uses the actual route despite an unrelated primary circuit', async () => {
   const h = harness(route => ({ checkAvailability: async () => positive,
-    searchCatalog: async () => { await read(route); return [{ recordId: '7', title: 'Book', authors: ['Author'], isbn, observation }]; },
+    search: async () => { await read(route); return [{ recordId: '7', title: 'Book', authors: ['Author'], isbn, observation }]; },
   }));
   for (let i = 0; i < 3; i++) h.guard.recordFailure('indcat.inflibnet.ac.in');
   const marks = [];
   for await (const mark of h.lookup.markResults({ library: h.entry, query: 'Book',
-    books: [{ bookKey: `v1:isbn:${isbn}`, isbn13: isbn, profile: Promise.resolve(profile) }] })) marks.push(mark);
+    books: [{ bookKey: `v1:isbn:${isbn}`, isbn13: isbn, title: 'Book' }] })) marks.push(mark);
   assert.equal(marks[0].outcome, 'found');
   assert.equal(h.slots[0].host, 'academic.example.test');
   assert.equal(h.slots[0].perMinute, 10);

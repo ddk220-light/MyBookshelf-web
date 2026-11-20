@@ -53,8 +53,7 @@ test('a work search finds the book by title while exact-only search and stale ca
   const offline = () => { if (fail) throw new Error('offline'); };
   const provider = {
     checkAvailability: async () => { offline(); return { outcome: 'not_found', matchKind: 'none', recognizedExact: true }; },
-    searchIsbn: async () => { offline(); return []; },
-    searchTitle: async () => { offline(); return [{ title: 'Example: a novel', authors: ['Someone else'], catalogUrl: record, catalogLinkKind: 'record', observation: { outcome: 'in_catalog' } }]; },
+    search: async () => { offline(); return [{ title: 'Example: a novel', authors: ['Someone else'], catalogUrl: record, catalogLinkKind: 'record', observation: { outcome: 'in_catalog' } }]; },
   };
   const service = createPublicAvailabilityService(dependencies(provider));
   const input = { libraryId: library.id, bookKey: book.bookKey };

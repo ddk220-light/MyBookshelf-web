@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createHostGuard, CIRCUIT_OPEN_MS, CIRCUIT_WINDOW_MS } from './budget.js';
-import { PLATFORMS, REQUEST_TIMEOUT_MS, platformFor, hostFor, bookDeadlineMs, backgroundDeadlineMs, lookupV2Platforms, lookupV2Enabled, requestsInFlight } from './platforms.js';
+import { PLATFORMS, REQUEST_TIMEOUT_MS, platformFor, hostFor, bookDeadlineMs, backgroundDeadlineMs, lookupV2Platforms, lookupV2Enabled } from './platforms.js';
 
 test('three failures within ten minutes open a ten-minute circuit; a success closes it', () => {
   let clock = 0;
@@ -63,8 +63,7 @@ test('every platform in the directory has a descriptor: a bounded book deadline 
     assert.ok(platform.book.deadlineMs > 0 && platform.book.deadlineMs <= 60_000, id);
     // Work the app does on its own keeps its cap.
     if (platform.results.strategy !== 'none') assert.ok(platform.results.maxRequests > 0 && platform.results.maxRequests <= 15, id);
-    assert.ok(requestsInFlight(platform) >= 1 && requestsInFlight(platform) <= 2, id);
-    assert.ok(['search_rows', 'batch_isbn', 'per_isbn', 'none'].includes(platform.results.strategy), id);
+    assert.ok(['search', 'batch_isbn', 'per_isbn', 'none'].includes(platform.results.strategy), id);
     assert.ok(platform.results.deadlineMs <= 30_000, id);
     // "Few requests" means at most three for all nine results.
     if (Number.isInteger(platform.results.fewRequests)) assert.ok(platform.results.fewRequests <= 3, id);

@@ -50,7 +50,7 @@ export function rejectChallenge(html) {
   if (/cf-chl-|challenge-platform|checking your browser|verify you are human|captcha|just a moment/i.test(html)) throw catalogError('Public catalog access challenge','CATALOG_PROVIDER_BLOCKED');
   if (/fatal error:|server error in ['"]|exception details:|<(?:title|h1)\b[^>]*>\s*(?:\d{3}\s*)?(?:access denied|unauthorized)/i.test(html)) throw catalogError('Catalog application error','CATALOG_UNAVAILABLE');
 }
-export function parseAcademicResponse(kind, payload, { query = '', isbn = null } = {}) {
+export function parseAcademicResponse(kind, payload, { query = '', isbn = null, any = false } = {}) {
   if (typeof payload === 'string') rejectChallenge(payload);
   if (kind === 'srms') {
     if (!Array.isArray(payload) || payload.some(r => !r || typeof r.title !== 'string' || !Object.hasOwn(r,'author_name'))) throw catalogError('Unrecognized college-scoped response');
@@ -59,7 +59,8 @@ export function parseAcademicResponse(kind, payload, { query = '', isbn = null }
   if (kind === 'autolib') {
     if (!Array.isArray(payload?.data) || payload.data.some(r => !Array.isArray(r) || r.length < 9)) throw catalogError('Unrecognized public book export');
     const all = payload.data.map(r => book(r[5],r[6],{isbn:firstIsbn(r[4]),publisher:text(r[8]),subjects:[text(r[7])].filter(Boolean),totalCopies:1}));
-    const selected = all.filter(b => isbn ? b.isbn === isbn : norm(b.title).includes(norm(query)));
+    // `any`: the one library search, on every field of the export.
+    const selected = all.filter(b => isbn ? b.isbn === isbn : norm(any ? [b.title, ...b.authors, b.isbn, b.publisher, ...b.subjects].join(' ') : b.title).includes(norm(query)));
     return proof(grouped(selected,true),true,selected.length === 0);
   }
   if (kind === 'easylib') {

@@ -1,7 +1,7 @@
 import test, { afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { parseIndcatSearch, parseIndcatRecord, searchCatalog, resolveCatalogRecord, checkAvailability, readRecord, searchIsbn, searchTitle } from './indcat.js';
+import { parseIndcatSearch, parseIndcatRecord, searchCatalog, resolveCatalogRecord, checkAvailability, librarySearch } from './indcat.js';
 import { clearHttpCache, withCatalogOperation } from './http.js';
 
 const search = fs.readFileSync(new URL('../../test/fixtures/indcat/bhu-title-search.html', import.meta.url), 'utf8');
@@ -167,24 +167,13 @@ test('IndCat record pages prove any ISBN in their ISBN row or MARC 020 $a, never
   assert.equal(parseIndcatRecord(andhRecord, ANDH, '578503', '9788173715181'), null);
 });
 
-// A reader's check (libraryBookSearch.js, 20 November 2026): one scoped
-// search (both ISBN forms in one query, or the title), rows without a
-// holding, and one record page for a matching row.
-test('a library check: one IndCat search, then one record page shows this institution\'s holding or another\'s', async () => {
-  let log = indcatSite({ searchFor: () => emptySearch });
-  assert.deepEqual(await searchIsbn(ANDH, '9788173711466'), []);
+// The library search (libraryBookSearch.js, 20 November 2026): one
+// institution-scoped all-fields search, rows linking to their records.
+test('the library search is one IndCat all-fields search scoped to the institution', async () => {
+  const log = indcatSite();
+  const rows = await librarySearch(ANDH, 'Wings of Fire');
   assert.equal(log.posts.length, 1);
-  assert.equal(log.posts[0].form.get('title'), '9788173711466 8173711461');
-  clearHttpCache();
-  log = indcatSite();
-  const rows = await searchTitle(ANDH, 'Wings of Fire');
-  assert.equal(log.posts.length, 1);
-  assert.equal(log.posts[0].form.get('title'), 'Wings of Fire');
-  assert.ok(rows.length > 0 && rows.every(row => row.recordId && row.title && !row.observation));
-  const record = await readRecord(ANDH, '578503');
-  assert.equal(record.observation.outcome, 'in_catalog');
-  assert.deepEqual(log.records, ['578503']);
-  await assert.rejects(() => readRecord(ANDH, '1'), { code: 'CATALOG_UNRECOGNIZED' });
-  global.fetch = async url => ({ url, ok: true, status: 200, headers: new Headers(), text: async () => andhRecord.replaceAll('ANDH_530003', 'OTHER_1').replaceAll('Andhra University, Waltair', 'Other College') });
-  await assert.rejects(() => readRecord(ANDH, '578503'), { code: 'CATALOG_HOLDING_UNCONFIRMED' });
+  assert.deepEqual([log.posts[0].form.get('title'), log.posts[0].form.get('field'), log.posts[0].form.get('part_uni')], ['Wings of Fire', 'allfields', 'ANDH_530003']);
+  assert.ok(rows.length > 0 && rows.every(row => row.recordId && row.title && row.catalogLinkKind === 'record' && row.catalogUrl.startsWith('https://indcat.inflibnet.ac.in/')));
+  assert.deepEqual(log.records, []);
 });

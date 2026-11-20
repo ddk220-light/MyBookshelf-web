@@ -68,9 +68,9 @@ test('stored answers: TTL filter, upsert strength, opt-out and no repeat catalog
   assert.deepEqual(kinds.map(r => [r.value, r.catalogUrl, r.catalogLinkKind]).sort(), [['9780000000002', 'https://c.example/r/2', 'record'],
     ['9780000000019', 'https://c.example/search?q=1', 'search'], ['9780000000026', undefined, undefined], ['9788173711466', 'https://c.example/r/1', undefined]]);
   await admin.query(`DELETE FROM holdings_answers WHERE identity_value IN ('9780000000002', '9780000000019', '9780000000026')`);
-  // Both kinds of answer expire 180 days after the check.
+  // Both kinds of answer expire 30 days after the check.
   const { rows: ttl } = await admin.query(`SELECT DISTINCT round(extract(epoch FROM expires_at - checked_at) / 86400) AS days FROM holdings_answers`);
-  assert.deepEqual(ttl.map(r => Number(r.days)), [180]);
+  assert.deepEqual(ttl.map(r => Number(r.days)), [30]);
   // not_found never overwrites an unexpired found; found overwrites not_found.
   await answers.writeAnswers([row('9788173711466', 'not_found', 'isbn_not_listed'), row('9780140328721', 'found', 'exact_isbn')]);
   const after = await answers.readAnswers('koha:a', [id('isbn13', '9788173711466'), id('isbn13', '9780140328721')]);

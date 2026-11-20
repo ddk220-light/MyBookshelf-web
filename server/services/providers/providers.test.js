@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getProvider } from './index.js';
-import { checkAvailability as checkBc, checkPublicAvailability as checkBcPublic, searchBookCandidates, searchResultRows, login } from './bibliocommons.js';
+import { checkAvailability as checkBc, checkPublicAvailability as checkBcPublic, searchResultRows, login } from './bibliocommons.js';
 import { checkAvailability as checkKoha, parseBiblioNumber } from './koha.js';
 import { checkAvailability as checkChamo, parseChamoRecord, parseChamoSearch } from './chamo.js';
 import { checkAvailability as checkLibsys, clearLibsysCache, cookiesFrom, parseLibsysAvailability } from './libsys.js';
@@ -32,7 +32,7 @@ test('BiblioCommons candidate metadata preserves ISBNs without inferring circula
   global.fetch = async url => response({ catalogSearch: { results: [{ representative: 'S1' }] }, entities: { bibs: { S1: {
     briefInfo: { title: 'Wings of Fire', authors: ['Kalam'], isbns: ['8173711461'], format: 'BK', primaryLanguage: 'eng' }, availability: { totalCopies: 2 },
   } } } }, { url });
-  const [record] = await searchBookCandidates('smcl', 'Wings of Fire');
+  const [record] = await searchResultRows('smcl', 'Wings of Fire');
   assert.deepEqual(record.isbns, ['8173711461']);
   assert.equal(record.observation.outcome, 'in_catalog');
   assert.equal(record.catalogUrl, 'https://smcl.bibliocommons.com/v2/record/S1');
@@ -49,9 +49,6 @@ test('BiblioCommons picks print rows from the whole search page before any row c
     ['S246C395812', 'Book'], ['S246C1348703', 'Book'], ['S246C103196', 'Book'],
     ['S246C530683', 'Book'], ['S246C212899', 'Book'], ['S246C129902', 'Book']]);
   assert.ok(rows.find(row => row.recordId === 'S246C395812').isbns.includes('9780618968633'));
-  // The book page's candidate list comes from the same single request.
-  const candidates = await searchBookCandidates('seattle', 'the hobbit');
-  assert.ok(candidates.some(row => row.recordId === 'S246C103196'));
   assert.equal(calls.length, 1);
 });
 
@@ -512,16 +509,16 @@ test('Vega: an ISBN listed only under a group’s eBook tab is in the catalog, n
   assert.equal(parseVegaAvailability(payload, '9780593135204'), null);
 });
 
-test('library-check wiring (20 November 2026): each catalog gives one-request title and ISBN searches, record reads only where rows cannot show the holding', async () => {
+test('library-search wiring (20 November 2026): every catalog gives one search(term); ISBN-only catalogs say so; title-only ones refuse an ISBN term', async () => {
   const { getLibraryById } = await import('../directory.js');
   const { getProvider } = await import('./index.js');
   const of = id => { const entry = getLibraryById(id); assert.ok(entry, id); return getProvider(entry); };
-  const methods = provider => ['searchTitle', 'searchIsbn', 'readRecord'].filter(name => typeof provider[name] === 'function');
-  assert.deepEqual(methods(of('koha:iim-calcutta-mchv')), ['searchTitle', 'searchIsbn', 'readRecord']);
-  assert.deepEqual(methods(of('indcat:indcat-andh-530003')), ['searchTitle', 'searchIsbn', 'readRecord']);
-  assert.deepEqual(methods(of('egranthalaya:publiclibraries-hkmslib')), ['searchTitle', 'searchIsbn']);
-  assert.deepEqual(methods(of('libman:520')), ['searchTitle', 'searchIsbn']);
-  for (const provider of [of('koha:iim-calcutta-mchv'), of('indcat:indcat-andh-530003'), of('libman:520')]) {
-    for (const removed of ['findBookCandidates', 'checkIsbns', 'isbn10Lookup', 'isbnLookup', 'rowTitlesReliable']) assert.equal(provider[removed], undefined, removed);
+  for (const id of ['koha:iim-calcutta-mchv', 'indcat:indcat-andh-530003', 'egranthalaya:publiclibraries-hkmslib', 'libman:520']) {
+    const provider = of(id);
+    assert.equal(typeof provider.search, 'function', id);
+    assert.equal(provider.searchBy, undefined, id);
+    for (const removed of ['searchTitle', 'searchIsbn', 'readRecord', 'searchResultRows', 'resultMarking']) assert.equal(provider[removed], undefined, `${id} ${removed}`);
   }
+  global.fetch = async () => assert.fail('no request for an ISBN at a title-only catalog');
+  await assert.rejects(of('libman:520').search('978-81-7371-146-6'), { code: 'CATALOG_QUERY_UNSUPPORTED' });
 });
