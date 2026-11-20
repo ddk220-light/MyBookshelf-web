@@ -1,11 +1,23 @@
-// No check may run past 45 s. Defined here, not in libraryBookSearch.js, so the
-// public page build (which reads the directory) needs no catalog packages.
+// Every library's book check may run up to 45 s (owner decision, 19 November
+// 2026: one longer deadline for all, not per slow host). It is a ceiling: a
+// check ends as soon as the catalog has answered. The API function may run
+// 120 s (vercel.json `maxDuration`); the reader is answered by about 60 s
+// (public-v2/holdings.js) and a check still running then may finish in the
+// background until 90 s (MAX_BACKGROUND_CHECK_MS), inside that limit.
+// Defined here, not in libraryBookSearch.js, so the public page build (which
+// reads the directory) needs no catalog packages.
 export const MAX_CHECK_MS = 45_000;
+export const BOOK_DEADLINE_MS = MAX_CHECK_MS;
+// One catalog request in a book check gives up after 30 s, so a single slow
+// request cannot use the whole check when it needs several (a search and a
+// record page). Retries share the same check deadline (providers/http.js).
+export const REQUEST_TIMEOUT_MS = 30_000;
 
 // One descriptor per catalog platform (plan 5.1, 5.3, 5.4). Numbers are
 // starting points to tune from the health record and the log.
 //
-// book:    the book page check (`lookupBook`): request cap and deadline.
+// book:    the book page check (`lookupBook`): request cap and deadline (45 s
+//          everywhere, BOOK_DEADLINE_MS; CHAMO keeps its reviewed 60 s).
 // results: marking up to nine search results (`markResults`):
 //   strategy 'search_rows'  one catalog search with the reader's query; a row
 //                           marks a book only when it shows one of that
@@ -25,7 +37,8 @@ export const MAX_CHECK_MS = 45_000;
 //   The gate paces at an even rate (60 s / perMinute between requests, after a
 //   short burst), so each number is sized for one reader checking book after
 //   book: the spacing times the book cap stays well inside the book deadline
-//   (e.g. Koha 12 requests at 1.5 s, discovery 6 at 2 s, both within 20 s).
+//   (e.g. Koha 12 requests at 1.5 s, discovery 6 at 2 s, both within 20 s of
+//   the 45 s deadline).
 //
 // `fewRequests` records whether nine results are covered in at most three
 // catalog requests (plan 5.3, column 3), as confirmed against the adapters.
@@ -39,7 +52,7 @@ export const PLATFORMS = Object.freeze({
     // to the member library. Each search takes 2 to 8 s on eg4.nic.in (19
     // November 2026); an ISBN check is one OR search of both spellings. +2
     // requests for a kept form the server no longer accepts.
-    book: { maxRequests: 10, deadlineMs: 25 * S, configuredDeadline: true },
+    book: { maxRequests: 10, deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'search_rows', maxRequests: 4, deadlineMs: 20 * S, fewRequests: 3 },
     hostConcurrency: 4, minIntervalMs: 1 * S, perMinute: 60,
   },
@@ -50,7 +63,7 @@ export const PLATFORMS = Object.freeze({
     // An ISBN costs two searches (plain and hyphenated digits; libraries store
     // either), so a work with six known ISBNs needs about 16 requests; 15 is
     // the most any platform may use.
-    book: { maxRequests: 15, deadlineMs: 20 * S },
+    book: { maxRequests: 15, deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'search_rows', maxRequests: 4, deadlineMs: 15 * S, fewRequests: 1 },
     hostConcurrency: 4, minIntervalMs: 0, perMinute: 120,
   },
@@ -62,9 +75,9 @@ export const PLATFORMS = Object.freeze({
     // search. A check is about one ISBN search per edition, up to three title
     // searches and the record pages they list (1 to 2 s each). 19 November
     // 2026: at 8, 25 of 70 checks ended on the cap (half of it scope pages);
-    // at 12, slow moments (2 to 4 s a request) ran into the 20 s deadline
-    // instead. 10 reads more title rows and still ends inside the deadline.
-    book: { maxRequests: 10, deadlineMs: 20 * S },
+    // at 12, slow moments (2 to 4 s a request) ran into the then 20 s
+    // deadline instead. 10 reads more title rows within the deadline.
+    book: { maxRequests: 10, deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'none', maxRequests: 0, deadlineMs: 0, fewRequests: false },
     hostConcurrency: 2, minIntervalMs: 0, perMinute: 40,
   },
@@ -75,47 +88,47 @@ export const PLATFORMS = Object.freeze({
     // Libraries that opt in (`kohaRssRows`) use the RSS form, which lists an
     // ISBN per row. Unscoped shared catalogs and the IIT Hyderabad API do not
     // mark results: their rows do not prove this library's holding.
-    book: { maxRequests: 12, deadlineMs: 20 * S, configuredDeadline: true },
+    book: { maxRequests: 12, deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'search_rows', maxRequests: 3, deadlineMs: 15 * S, fewRequests: 1 },
     hostConcurrency: 2, minIntervalMs: 0, perMinute: 40,
   },
   bc: {
     // Gateway keyword search; rows carry `briefInfo.isbns`.
-    book: { maxRequests: 4, deadlineMs: 15 * S },
+    book: { maxRequests: 4, deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'search_rows', maxRequests: 1, deadlineMs: 10 * S, fewRequests: 1 },
     hostConcurrency: 4, minIntervalMs: 0, perMinute: 60,
   },
   vufind: {
     // Title search; rows carry COinS ISBNs.
-    book: { maxRequests: 8, deadlineMs: 20 * S },
+    book: { maxRequests: 8, deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'search_rows', maxRequests: 1, deadlineMs: 15 * S, fewRequests: 1 },
     hostConcurrency: 2, minIntervalMs: 0, perMinute: 40,
   },
   'discovery-community': {
     // Per site family; some rows carry ISBNs, session-based sites need more
     // than one request and therefore mark nothing within this budget.
-    book: { maxRequests: 6, deadlineMs: 20 * S },
+    book: { maxRequests: 6, deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'search_rows', maxRequests: 1, deadlineMs: 15 * S, fewRequests: 'partly' },
     hostConcurrency: 1, minIntervalMs: 0, perMinute: 30,
   },
   'discovery-academic': {
-    book: { maxRequests: 6, deadlineMs: 20 * S },
+    book: { maxRequests: 6, deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'search_rows', maxRequests: 1, deadlineMs: 15 * S, fewRequests: 'partly' },
     hostConcurrency: 1, minIntervalMs: 0, perMinute: 30,
   },
   calil: {
     // One /check call for every result ISBN, then polls every 2 s.
-    book: { maxRequests: 15, deadlineMs: 30 * S },
+    book: { maxRequests: 15, deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'batch_isbn', maxRequests: 15, deadlineMs: 30 * S, fewRequests: 1, isbnsPerBook: 3 },
     hostConcurrency: 2, minIntervalMs: 0, perMinute: 60,
   },
   vega: {
-    book: { maxRequests: 2, deadlineMs: 10 * S },
+    book: { maxRequests: 2, deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'per_isbn', maxRequests: 9, deadlineMs: 10 * S, fewRequests: false, topBooks: 9, concurrency: 2 },
     hostConcurrency: 2, minIntervalMs: 0, perMinute: 60,
   },
   evergreen: {
-    book: { maxRequests: 3, deadlineMs: 15 * S },
+    book: { maxRequests: 3, deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'per_isbn', maxRequests: 9, deadlineMs: 15 * S, fewRequests: false, topBooks: 3, concurrency: 1 },
     hostConcurrency: 1, minIntervalMs: 0, perMinute: 20,
   },
@@ -125,19 +138,19 @@ export const PLATFORMS = Object.freeze({
     hostConcurrency: 1, minIntervalMs: 0, perMinute: 10,
   },
   libsys: {
-    book: { maxRequests: 4, deadlineMs: 30 * S },
+    book: { maxRequests: 4, deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'none', maxRequests: 0, deadlineMs: 0, fewRequests: false },
     hostConcurrency: 1, minIntervalMs: 0, perMinute: 10,
   },
   aspen: {
-    book: { maxRequests: 4, deadlineMs: 30 * S },
+    book: { maxRequests: 4, deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'none', maxRequests: 0, deadlineMs: 0, fewRequests: false },
     hostConcurrency: 1, minIntervalMs: 0, perMinute: 10,
   },
   vpl: {
     // Title search only; rows never prove an edition. robots Crawl-Delay 20 s
     // is applied by the adapter.
-    book: { maxRequests: 2, deadlineMs: 45 * S },
+    book: { maxRequests: 2, deadlineMs: BOOK_DEADLINE_MS },
     results: { strategy: 'none', maxRequests: 0, deadlineMs: 0, fewRequests: false },
     hostConcurrency: 1, minIntervalMs: 20 * S, perMinute: 3,
   },
@@ -175,12 +188,11 @@ export function hostFor(entry) {
   return `${id || 'unknown'}:${entry?.id || entry?.slug || 'library'}`;
 }
 
-// Book page deadline. Libraries with a reviewed slower budget in the
-// directory (`publicCatalogTimeoutMs`) keep it, never beyond 45 s.
+// Book page deadline: the platform's (45 s; CHAMO 60 s). A directory entry's
+// `publicCatalogTimeoutMs` no longer changes it: every library has the
+// longer deadline (it still bounds a Koha adapter call, providers/koha.js).
 export function bookDeadlineMs(entry, platform = platformFor(entry)) {
-  const base = platform?.book.deadlineMs ?? 20 * S;
-  const configured = Number(entry?.publicCatalogTimeoutMs);
-  if (platform?.book.configuredDeadline && Number.isFinite(configured) && configured > 0) return Math.min(Math.max(base, configured), MAX_CHECK_MS);
+  const base = platform?.book.deadlineMs ?? BOOK_DEADLINE_MS;
   return Math.min(base, platform?.id === 'chamo' ? 60 * S : MAX_CHECK_MS);
 }
 

@@ -7,7 +7,7 @@ import { parsePublicBookKey } from '../../public-v2/contracts.js';
 import { runBookCheck } from './check.js';
 import { linkKind, normalizeProviderObservation } from './observation.js';
 import { answerFromCheck, answerFromResponse, couldntCheck, couldntCheckFor, isHealthFailure } from './outcome.js';
-import { PLATFORMS, platformFor, hostFor, bookDeadlineMs, backgroundDeadlineMs, lookupV2Enabled } from './platforms.js';
+import { PLATFORMS, REQUEST_TIMEOUT_MS, platformFor, hostFor, bookDeadlineMs, backgroundDeadlineMs, lookupV2Enabled } from './platforms.js';
 import { createHostGuard } from './budget.js';
 import { createLookupRecorder, createMemoryHealthRecord, identitiesFor, askedIdentity, storedAnswer } from './record.js';
 import { createMemoryHostGate } from '../../catalog-store/hostGate.js';
@@ -438,7 +438,7 @@ export function createCatalogLookup({
       try {
         const run = () => runBookCheck({ entry, library: view, provider, book, bookKey, parsed, ownRecord, lookupKind, editionScope, language, books, attemptedAt,
           budget: { maxRequests: platform.book.maxRequests, deadlineAt: deadline, signal: workSignal, robots: robotsCheck, minIntervalMs: platform.minIntervalMs,
-            gate: gateFor(platform, deadline), noRetries: tryOnce, progress, conclude: conclude.signal } });
+            gate: gateFor(platform, deadline), noRetries: tryOnce, requestTimeoutMs: REQUEST_TIMEOUT_MS, progress, conclude: conclude.signal } });
         const result = await (routes ? withProviderRouteExecution(routes.execute, run) : run());
         return finish(result, result.profile);
       } finally {
@@ -805,7 +805,7 @@ export function createCatalogLookup({
     try {
       if (signal?.aborted) throw coded('Catalog check was cancelled', 'CATALOG_ABORTED');
       const work = withCatalogOperation({ maxRequests: platform.book.maxRequests, signal: controller.signal, robots: robotsCheck,
-        minIntervalMs: platform.minIntervalMs || 0, gate: gateFor(platform, deadline), noRetries: tryOnce }, () => routes
+        minIntervalMs: platform.minIntervalMs || 0, gate: gateFor(platform, deadline), noRetries: tryOnce, requestTimeoutMs: REQUEST_TIMEOUT_MS, deadlineAt: deadline }, () => routes
         ? withProviderRouteExecution(routes.execute, read) : read());
       return await settleBy(work, deadline, signal, now);
     } finally {

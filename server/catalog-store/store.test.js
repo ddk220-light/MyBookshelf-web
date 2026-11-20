@@ -429,3 +429,27 @@ test('a pooled (PgBouncer) connection gets no statement_timeout startup paramete
   const direct = poolSettings('postgres://catalog_runtime:x@ep-quiet-sky-123456.us-east-1.aws.neon.tech/catalog?sslmode=require');
   assert.equal(direct.statement_timeout, 1500);
 });
+
+test('until migration 005, a title-and-author find is dropped and the other answers are still written', async () => {
+  const writes = [];
+  const db = { query: async (sql, values) => {
+    if (!/INSERT INTO holdings_answers/.test(sql)) return { rows: [] };
+    writes.push(values[4]);
+    if (values[4].includes('title_author')) throw Object.assign(new Error('violates check constraint "holdings_answers_evidence_check"'), { code: '23514' });
+    return { rows: [], rowCount: values[4].length };
+  } };
+  await createPgAnswerStore(db).writeAnswers([
+    { libraryId: 'koha:a', kind: 'ol_work', value: 'OL1W', answer: 'found', evidence: 'title_author' },
+    { libraryId: 'koha:a', kind: 'isbn13', value: '9780140328721', answer: 'not_found', evidence: 'isbn_not_listed' }]);
+  assert.deepEqual(writes, [['title_author', 'isbn_not_listed'], ['isbn_not_listed']]);
+  // A check violation without a title-and-author row is passed on.
+  const strict = createPgAnswerStore({ query: async () => { throw Object.assign(new Error('bad'), { code: '23514' }); } });
+  await assert.rejects(strict.writeAnswers([{ libraryId: 'koha:a', kind: 'isbn13', value: '9780140328721', answer: 'found', evidence: 'exact_isbn' }]), { code: '23514' });
+});
+
+test('catalog migration 005 allows the title_author evidence and keeps every earlier value', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const sql = await readFile(new URL('./migrations/005-title-author-evidence.sql', import.meta.url), 'utf8');
+  for (const value of ['exact_isbn', 'work_isbn', 'catalog_record', 'title_author', 'isbn_not_listed', 'work_no_match']) assert.match(sql, new RegExp(`'${value}'`));
+  assert.match(sql, /DROP CONSTRAINT IF EXISTS holdings_answers_evidence_check/);
+});

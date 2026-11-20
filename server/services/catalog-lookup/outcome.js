@@ -6,11 +6,15 @@ import { linkKind } from './observation.js';
 //
 //   available / none_available / in_catalog / not-for-loan, proven by
 //     exact_isbn, verified_work or catalog_record          -> found
+//     (verified_work includes a work search's title-and-author
+//     match in this library's own catalog, lookupKind
+//     title_author: evidence `title_author`, otherwise the
+//     same answer as an ISBN find; owner decision, 19 November 2026)
 //   not_found for an exact ISBN the parser recognized       -> not_found
 //   work-level no_match with a complete edition list, a
 //     search that was not partial and an absence the search
 //     marks provable (absenceProvable)                      -> not_found
-//   possible_match (title/author only)                      -> couldnt_check, unconfirmed
+//   possible_match (title and a shared author word only)    -> couldnt_check, unconfirmed
 //   anything else (unknown, timeout, budget, error, ...)    -> couldnt_check
 //
 // A failure is never "not found".
@@ -93,10 +97,14 @@ export function answerFromResponse(response, context = {}) {
   if ((FOUND_OUTCOMES.has(outcome) || notForLoan) && PROVEN.has(matchKind)) {
     const matchedIsbn13 = validateAndNormalize(response.matchedBook?.isbn13 || '') || undefined;
     let evidence;
-    if (matchKind === 'catalog_record' || (matchKind === 'verified_work' && response.lookupKind === 'catalog_record')) evidence = 'catalog_record';
+    // A work search's title-and-author match (not a reader's own record,
+    // whose title/author identity is the record itself, Visakhapatnam).
+    const titleAuthor = matchKind === 'verified_work' && response.lookupKind === 'title_author' && !context.recordId;
+    if (titleAuthor) evidence = 'title_author';
+    else if (matchKind === 'catalog_record' || (matchKind === 'verified_work' && response.lookupKind === 'catalog_record')) evidence = 'catalog_record';
     else if (matchKind === 'exact_isbn') evidence = 'exact_isbn';
     else evidence = matchedIsbn13 ? 'work_isbn' : 'catalog_record';
-    return { outcome: 'found', evidence, ...(matchedIsbn13 ? { matchedIsbn13 } : {}),
+    return { outcome: 'found', evidence, ...(matchedIsbn13 && !titleAuthor ? { matchedIsbn13 } : {}),
       ...(context.recordId ? { recordId: context.recordId } : {}), ...extra };
   }
   if (outcome === 'not_found' && matchKind === 'none' && response.lookupKind === 'exact_isbn') {

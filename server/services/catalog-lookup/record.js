@@ -43,8 +43,12 @@ export function askedIdentity(libraryId, book = {}, editionScope = 'work') {
 // and are not read: the next look checks the catalog again. A row's write time
 // is its expiry less ANSWER_TTL_MS.
 // (The 19 November test run stored such answers for Godaan and Ponniyin
-// Selvan at most of the 54 libraries.)
-export const WORK_ABSENCE_RULE_SINCE = Date.parse('2026-11-20T00:00:00Z');
+// Selvan at most of the 54 libraries.) Moved from 20 to 23 November 2026:
+// the code that writes under the new rule, and that answers a title-and-author
+// match "found" (owner decision, 19 November 2026), reaches production after
+// 20 November, and a "not found" the old code wrote until then must not hide
+// such a find. Rows written before this moment are re-checked, never shown.
+export const WORK_ABSENCE_RULE_SINCE = Date.parse('2026-11-23T00:00:00Z');
 const trustedNegative = row => row.evidence !== 'work_no_match'
   || !Number.isFinite(row.expiresAt) || row.expiresAt - ANSWER_TTL_MS >= WORK_ABSENCE_RULE_SINCE;
 
@@ -58,8 +62,8 @@ export function storedAnswer(rows, asked) {
   return negative ? { outcome: 'not_found', evidence: negative.evidence } : null;
 }
 
-// Rows to write for one answer (plan 4.3 write rules). `couldnt_check` and
-// title-only matches write nothing.
+// Rows to write for one answer (plan 4.3 write rules). `couldnt_check`
+// (including an unconfirmed possible match) writes nothing.
 export function answerRows({ libraryId, book = {}, answer, profile, now = Date.now() }) {
   if (!answer || !['found', 'not_found'].includes(answer.outcome)) return [];
   const expiresAt = now + ANSWER_TTL_MS;
@@ -78,6 +82,10 @@ export function answerRows({ libraryId, book = {}, answer, profile, now = Date.n
       const matched = validateAndNormalize(answer.matchedIsbn13 || '');
       if (workId && matched) rows.push(row('ol_work', workId, { matchedIsbn13: matched }));
       if (matched) rows.push(row('isbn13', matched));
+    } else if (answer.evidence === 'title_author') {
+      // The work's title and author in this library's catalog: the work is
+      // found, but no ISBN identity is (catalog migration 005).
+      if (workId) rows.push(row('ol_work', workId));
     } else if (answer.evidence === 'catalog_record') {
       const recordId = answer.recordId || book.recordId;
       if (recordId && (!book.recordLibraryId || book.recordLibraryId === libraryId)) rows.push(row('catalog_record', `${libraryId}:${recordId}`));

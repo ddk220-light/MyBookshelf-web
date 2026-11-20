@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createHostGuard, CIRCUIT_OPEN_MS, CIRCUIT_WINDOW_MS } from './budget.js';
-import { PLATFORMS, platformFor, hostFor, bookDeadlineMs, lookupV2Platforms, lookupV2Enabled } from './platforms.js';
+import { PLATFORMS, REQUEST_TIMEOUT_MS, platformFor, hostFor, bookDeadlineMs, backgroundDeadlineMs, lookupV2Platforms, lookupV2Enabled } from './platforms.js';
 
 test('three failures within ten minutes open a ten-minute circuit; a success closes it', () => {
   let clock = 0;
@@ -68,15 +68,18 @@ test('every platform in the directory has a descriptor with bounded budgets', ()
   assert.equal(Object.keys(PLATFORMS).length, 15);
 });
 
-test('shared hosts share one key; slow libraries keep their reviewed budget up to 45 s', () => {
+test('shared hosts share one key; every library has the 45 s book deadline (CHAMO 60 s)', () => {
   assert.equal(hostFor({ platform: 'egranthalaya', baseUrl: 'https://eg4.nic.in' }), 'eg4.nic.in');
   assert.equal(hostFor({ platform: 'bc', catalogUrl: 'https://aclibrary.bibliocommons.com' }), 'gateway.bibliocommons.com');
   assert.equal(hostFor({ platform: 'koha', baseUrl: 'http://118.185.210.241:8001' }), '118.185.210.241:8001');
-  assert.equal(bookDeadlineMs({ platform: 'egranthalaya' }), 25_000);
-  assert.equal(bookDeadlineMs({ platform: 'egranthalaya', publicCatalogTimeoutMs: 45_000 }), 45_000);
+  // One longer deadline for all (owner decision, 19 November 2026), never a per-host one.
+  for (const platform of Object.keys(PLATFORMS).filter(id => id !== 'chamo')) assert.equal(bookDeadlineMs({ platform }), 45_000, platform);
+  assert.equal(bookDeadlineMs({ platform: 'egranthalaya', publicCatalogTimeoutMs: 30_000 }), 45_000);
   assert.equal(bookDeadlineMs({ platform: 'koha', publicCatalogTimeoutMs: 60_000 }), 45_000);
-  assert.equal(bookDeadlineMs({ platform: 'libman', publicCatalogTimeoutMs: 45_000 }), 20_000);
-  assert.equal(bookDeadlineMs({ platform: 'vpl' }), 45_000);
+  assert.equal(bookDeadlineMs({ platform: 'chamo' }), 60_000);
+  // A check in the background ends by 90 s; one request gives up after 30 s.
+  assert.equal(backgroundDeadlineMs({ platform: 'koha' }), 90_000);
+  assert.equal(REQUEST_TIMEOUT_MS, 30_000);
 });
 
 test('CATALOG_LOOKUP_V2 takes a comma list of platforms or all; unset keeps the old path', () => {

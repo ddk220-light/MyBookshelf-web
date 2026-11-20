@@ -31,6 +31,10 @@ test('a work-level not found stored under the old rule is not read again', () =>
   const written = at => ({ kind: 'ol_work', value: 'OL123W', answer: 'not_found', evidence: 'work_no_match', expiresAt: at + ANSWER_TTL_MS });
   assert.equal(storedAnswer([written(Date.parse('2026-11-19T15:00:00Z'))], asked), null);
   assert.deepEqual(storedAnswer([written(WORK_ABSENCE_RULE_SINCE)], asked), { outcome: 'not_found', evidence: 'work_no_match' });
+  // Old-code negatives written until the title-and-author release (after 20
+  // November 2026) must not hide a title-and-author find.
+  assert.equal(storedAnswer([written(Date.parse('2026-11-21T12:00:00Z'))], asked), null);
+  assert.ok(WORK_ABSENCE_RULE_SINCE >= Date.parse('2026-11-23T00:00:00Z'));
   // ISBN answers were never affected.
   const isbnRow = { kind: 'isbn13', value: '9788173711466', answer: 'not_found', evidence: 'isbn_not_listed', expiresAt: Date.parse('2026-11-19T15:00:00Z') + ANSWER_TTL_MS };
   assert.deepEqual(storedAnswer([isbnRow], askedIdentity('lib', book, 'exact')), { outcome: 'not_found', evidence: 'isbn_not_listed' });
@@ -45,6 +49,10 @@ test('write rules follow plan 4.3 and nothing is written for couldn’t check', 
   assert.deepEqual(answerRows({ libraryId: 'lib', book, now, answer: { outcome: 'found', evidence: 'work_isbn', matchedIsbn13: '9780140328721' } })
     .map(row => [row.kind, row.value]), [['ol_work', 'OL123W'], ['isbn13', '9780140328721']]);
   assert.deepEqual(answerRows({ libraryId: 'lib', book: { recordId: '7' }, answer: { outcome: 'found', evidence: 'catalog_record' } }).map(row => row.value), ['lib:7']);
+  // A title-and-author find proves the work, not any ISBN.
+  assert.deepEqual(answerRows({ libraryId: 'lib', book, profile, answer: { outcome: 'found', evidence: 'title_author' } })
+    .map(row => [row.kind, row.value, row.evidence, row.matchedIsbn13]), [['ol_work', 'OL123W', 'title_author', undefined]]);
+  assert.deepEqual(answerRows({ libraryId: 'lib', book: { isbn13: '9788173711466' }, answer: { outcome: 'found', evidence: 'title_author' } }), []);
   assert.deepEqual(answerRows({ libraryId: 'lib', book, answer: { outcome: 'not_found', evidence: 'isbn_not_listed' } }).map(row => [row.kind, row.answer]), [['isbn13', 'not_found']]);
   assert.deepEqual(answerRows({ libraryId: 'lib', book, answer: { outcome: 'not_found', evidence: 'work_no_match' } }).map(row => [row.kind, row.answer]), [['ol_work', 'not_found']]);
   for (const reason of ['unconfirmed', 'timeout', 'budget', 'blocked']) {

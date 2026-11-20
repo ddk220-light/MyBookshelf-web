@@ -15,8 +15,8 @@ test('HKMS slow member search keeps its bounded ISBN budget in the merged direct
 
 test('a checkable library says how long its book check may take, in whole seconds', () => {
   const koha = { id: 'koha:timed', platform: 'koha', name: 'Timed Library', catalogUrl: 'https://catalog.example.test', publicCatalogValidated: true };
-  assert.equal(toPublicLibrary(koha).answerWithinSeconds, 20);
-  assert.equal(toPublicLibrary({ ...koha, publicCatalogTimeoutMs: 44_500 }).answerWithinSeconds, 45);
+  assert.equal(toPublicLibrary(koha).answerWithinSeconds, 45);
+  assert.equal(toPublicLibrary({ ...koha, publicCatalogTimeoutMs: 30_000 }).answerWithinSeconds, 45);
   assert.equal(toPublicLibrary({ ...koha, id: 'chamo:timed', platform: 'chamo' }).answerWithinSeconds, 60);
   // The measured slow e-Granthalaya member: its own 45 s limit.
   const hkms = getLibraryById('egranthalaya:publiclibraries-hkmslib');

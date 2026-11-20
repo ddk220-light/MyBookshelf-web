@@ -229,10 +229,15 @@ function configuration(library) {
   return base;
 }
 
+// Inside a book check the check's own deadline bounds every call (45 s for
+// every library, catalog-lookup/platforms.js): a slow catalog's search and
+// record pages may use all of it, never more. Elsewhere (catalog search,
+// result marking) a call has 30 s, or the library's reviewed budget.
 function catalogDeadline(library) {
   const timeout = library.publicCatalogTimeoutMs ?? DEFAULT_TIMEOUT_MS;
   if (![30_000, 45_000, 60_000].includes(timeout)) throw publicError('CATALOG_CONFIGURATION_REQUIRED', 'Invalid catalog time budget');
-  return Date.now() + timeout;
+  const check = catalogOperation()?.deadlineAt;
+  return Number.isFinite(check) ? check : Date.now() + timeout;
 }
 
 function branchScope(library) {

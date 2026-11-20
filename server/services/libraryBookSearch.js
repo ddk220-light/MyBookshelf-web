@@ -60,11 +60,60 @@ const authorsOf = record => Array.isArray(record.authors) ? record.authors : [re
 const authorAgrees = (record, profile) => authorsOf(record).some(author => profile.authors.some(expected => relatedAuthor(expected, author)));
 const isbnsOf = record => unique([record.isbn, record.isbn13, ...(record.isbns || [])].map(validateAndNormalize));
 
+// The family name of a personal name as catalogs and Open Library write it:
+// the part before a comma ("Kalam, A. P. J. Abdul"), else the last word of
+// two letters or more ("A. P. J. Abdul Kalam"). Null when there is none.
+function surname(name) {
+  const value = String(name || '');
+  const words = normalize(value.includes(',') ? value.split(',')[0] : value).split(' ').filter(word => word.length > 1);
+  return (value.includes(',') ? words[0] : words.at(-1)) || null;
+}
+// An author field that names a translator ("Dharmapurikar, Madhukar Tr",
+// "tr.", "translated by", अनुवाद, மொழிபெயர்ப்பு).
+const TRANSLATOR = /(?:^|[\s,.;:(\/[])(?:tr|trs|trans|transl|translator|translators|translated|translation|anuvadak|anuvad)(?=$|[\s.,;:)\]])|अनुवाद|மொழிபெயர்/iu;
+// Stricter than authorAgrees (one shared word, which a common given name or
+// "Kumar" satisfies): the row's author and one of the work's authors share a
+// family name, in either name order. Used where agreement makes a "found".
+function authorConfirms(record, profile) {
+  return authorsOf(record).some(author => profile.authors.some(expected => {
+    const left = normalize(expected).split(' '), right = normalize(author).split(' ');
+    const mine = surname(expected), theirs = surname(author);
+    return Boolean((mine && right.includes(mine)) || (theirs && left.includes(theirs)));
+  }));
+}
+
+// How a catalog record or search row matches the work (`profile`), or null:
+//   exact_isbn / verified_work  the row shows one of the work's ISBNs (the
+//                               reader's own, or another edition's) and its
+//                               title agrees;
+//   title_author                no work ISBN shown, but the title agrees and
+//                               the author's family name is one of the
+//                               work's authors' (authorConfirms). Owner
+//                               decision, 19 November 2026: this is "found",
+//                               answered exactly like an ISBN match. A row
+//                               that shows some other ISBN qualifies too (an
+//                               edition Open Library does not list). Not a
+//                               row that names a translator: a translation
+//                               under the original title (Modern College
+//                               Pune's Marathi "Malgudi Days", 19 November
+//                               2026) is at most a possible match;
+//   possible_match              title agrees and the authors share only a
+//                               word (authorAgrees, not authorConfirms):
+//                               "couldn't check" (unconfirmed).
+// The title must agree under titleAgrees: the same title once a leading
+// article is ignored, a subtitle optional only when it is one like "an
+// autobiography", and no study guide, abridgement, numbered or revised edition
+// the work's titles do not have. A volume or part ("Part 1", "Vol. 2") is a
+// different title. Never the looser plural-stem comparison of relatedRow.
+// A row with no author, or a work with no author, never makes a title match:
+// a title alone is not enough to say "found" (such a row still blocks "not
+// found", relatedRow). A row by another author is not a match either.
+// A match only proves a holding through the record's own observation, which
+// adapters give only for this library's records (searchLibraryBook, addRecord).
 export function matchCatalogRecord(record, profile) {
   if (!record?.title || !isPrintEdition(record)) return null;
   if (record.language && profile.language && record.language !== profile.language) return null;
   if (!titleAgrees(record.title, profile)) return null;
-  const authorMatch = authorAgrees(record, profile);
   const isbns = isbnsOf(record);
   const knownIsbn = isbns.find(isbn => profile.isbns.includes(isbn));
   // The record shows one of the work's ISBNs and its title agrees: that is the
@@ -73,7 +122,9 @@ export function matchCatalogRecord(record, profile) {
   if (knownIsbn) {
     return { matchKind: knownIsbn === profile.book.isbn13 ? 'exact_isbn' : 'verified_work', isbn13: knownIsbn };
   }
-  if (authorMatch) return { matchKind: 'possible_match', ...(isbns[0] ? { isbn13: isbns[0] } : {}) };
+  if (!authorsOf(record).length || !profile.authors?.length) return null;
+  if (authorConfirms(record, profile) && !authorsOf(record).some(author => TRANSLATOR.test(author))) return { matchKind: 'title_author' };
+  if (authorAgrees(record, profile)) return { matchKind: 'possible_match', ...(isbns[0] ? { isbn13: isbns[0] } : {}) };
   return null;
 }
 
@@ -142,15 +193,13 @@ export function candidateTier(row, profile) {
   return isbns.length ? 3 : 2;
 }
 
-// The availability API function may run for 120 s and the client shows a
-// "still checking" hint after 5 s. Slow catalogs (Anna Centenary and
-// Kalaignar Centenary answer in 4–9 s per request) declare a longer budget in
-// the directory; no check may run past 45 s.
-export const DEFAULT_CHECK_MS = 20_000;
+// The availability API function may run for 120 s. Every library's check may
+// run up to 45 s (owner decision, 19 November 2026: one longer deadline for
+// all instead of per slow host); a check ends as soon as it has its answer.
+export const DEFAULT_CHECK_MS = MAX_CHECK_MS;
 export { MAX_CHECK_MS };
-export function checkBudgetMs(library) {
-  const configured = Number(library?.publicCatalogTimeoutMs);
-  return Number.isFinite(configured) && configured > 0 ? Math.min(configured, MAX_CHECK_MS) : DEFAULT_CHECK_MS;
+export function checkBudgetMs() {
+  return DEFAULT_CHECK_MS;
 }
 
 // Hard caps on upstream HTTP requests for one check. Catalogs with a
@@ -162,14 +211,17 @@ export const LEGACY_MAX_REQUESTS = 12;
 export const BATCH_ISBNS = 8;
 
 // A proven match: the catalog showed this edition, or another edition of the
-// work, by one of the work's ISBNs or its own record, with a holding the app
-// answers "found" for (outcome.js). A title/author-only match never is.
+// work, by one of the work's ISBNs, its own record or an agreeing title and
+// author (matchCatalogRecord), with a holding the app answers "found" for
+// (outcome.js). A possible_match never is.
 const HOLDING_OUTCOMES = new Set(['available', 'none_available', 'in_catalog']);
 export function provesHolding(item) {
   if (!item || !item.matchKind || item.matchKind === 'possible_match') return false;
   return HOLDING_OUTCOMES.has(item.outcome) || (item.outcome === 'unknown' && item.recognizedExact === true && item.totalCopies > 0);
 }
-const rank = value => (value.matchKind === 'possible_match' ? 0 : 10) + ({ available: 4, in_catalog: 3, none_available: 2, unknown: 1 }[value.outcome] || 0);
+// An ISBN match ranks above a title-and-author one, which ranks above a possible match.
+const rank = value => (value.matchKind === 'possible_match' ? 0 : value.lookupKind === 'title_author' ? 5 : 10)
+  + ({ available: 4, in_catalog: 3, none_available: 2, unknown: 1 }[value.outcome] || 0);
 
 // Small, fixed budgets apply even to works with hundreds of known editions.
 // Provider functions retain their own transport deadlines; after this deadline
@@ -248,14 +300,23 @@ async function runSearch(provider, profile, { timeoutMs, maxIsbns, maxRecords, m
     }
     finally { clearTimeout(timer); }
   };
+  // A record or row counts only with its own observation: adapters give one
+  // only for this library's records (a member-scoped search row, or a record
+  // page that shows this library's or branch's holding; a union catalog's or
+  // shared catalog's record held elsewhere has none or fails), for an ISBN
+  // and a title-and-author match alike.
   const addRecord = record => {
     const match = matchCatalogRecord(record, profile);
     const observation = record?.observation;
     if (!match || !observation || !['available', 'none_available', 'in_catalog', 'unknown'].includes(observation.outcome)) return;
+    const possible = match.matchKind === 'possible_match', titleAuthor = match.matchKind === 'title_author';
+    // A title-and-author match is answered as a verified match of the work
+    // (found, outcome.js); `lookupKind: 'title_author'` keeps its evidence
+    // apart for the stored answer and the log.
     addPositive({ ...observation,
-      outcome: match.matchKind === 'possible_match' ? 'in_catalog' : observation.outcome,
-      matchKind: match.matchKind, lookupKind: match.matchKind === 'possible_match' ? 'title_author' : match.matchKind,
-      recognizedExact: match.matchKind !== 'possible_match',
+      outcome: possible ? 'in_catalog' : observation.outcome,
+      matchKind: titleAuthor ? 'verified_work' : match.matchKind, lookupKind: possible || titleAuthor ? 'title_author' : match.matchKind,
+      recognizedExact: !possible,
       catalogUrl: record.catalogUrl || observation.catalogUrl,
       matchedBook: { title: record.title, ...(match.isbn13 ? { isbn13: match.isbn13 } : {}) },
     });

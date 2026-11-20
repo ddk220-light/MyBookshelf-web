@@ -32,7 +32,7 @@ async function prepare(t) {
   assert.ok(['localhost', '127.0.0.1'].includes(url.hostname) && url.pathname.endsWith('_test'), 'a disposable local *_test database only');
   const admin = new Pool({ connectionString, max: 2 });
   await migrateCatalog(admin);
-  assert.equal(await migrateCatalog(admin), 4, 'migrations are idempotent');
+  assert.equal(await migrateCatalog(admin), 5, 'migrations are idempotent');
   const grants = await readFile(new URL('./runtime-grants.sql', import.meta.url), 'utf8');
   // admin/role.integration.test.js changes grants on the same tables at the same time.
   await withTestSetupLock(admin, CATALOG_SETUP_LOCK, async c => {

@@ -19,13 +19,38 @@ test('missing scanned ISBN recovers a known edition while title search starts ea
   assert.ok(calls.includes('8173711461'));
 });
 
-test('ISBN-less records survive author order and initials, without claiming confirmed availability', async () => {
+test('ISBN-less records survive author order and initials: a title-and-author match is a verified match (owner decision, 19 November 2026)', async () => {
   const record = { recordId: '42', title: 'Wings of Fire: an autobiography', authors: ['Kalam, A P J Abdul'], observation: found };
   const result = await searchLibraryBook({ checkAvailability: async () => miss,
     searchCatalog: async query => query === book.title ? [record] : [] }, profile);
-  assert.equal(result.matchKind, 'possible_match');
-  assert.equal(result.outcome, 'in_catalog');
+  assert.equal(result.matchKind, 'verified_work');
+  assert.equal(result.outcome, 'available');
   assert.equal(result.lookupKind, 'title_author');
+  assert.equal(result.matchedBook.isbn13, undefined);
+});
+
+test('title-and-author matching: exact title rules, a shared family name, and no match without an author on both sides', () => {
+  const match = record => matchCatalogRecord(record, profile)?.matchKind ?? null;
+  // No ISBN, the title and the author's family name agree (either name order): title_author.
+  assert.equal(match({ title: 'WINGS OF FIRE', authors: ['Kalam, A. P. J. Abdul'] }), 'title_author');
+  assert.equal(match({ title: 'Wings of fire : an autobiography', authors: ['APJ Abdul Kalam'] }), 'title_author');
+  // Another edition's ISBN Open Library does not list: still the title and author.
+  assert.equal(match({ title: 'Wings of Fire', authors: ['Kalam, A.P.J.Abdul'], isbn: '9788181900050' }), 'title_author');
+  // A translation under the original title (a translator in the author field) is not a find.
+  assert.equal(match({ title: 'Wings of Fire', authors: ['Kalam, A. P. J. Abdul / Dharmapurikar, Madhukar Tr'] }), 'possible_match');
+  assert.equal(match({ title: 'Wings of Fire', authors: ['Kalam, A. P. J. Abdul', 'Sharma, R. (tr.)'] }), 'possible_match');
+  assert.equal(match({ title: 'Wings of Fire', authors: ['KALAM, APJ ABDUL and TIWARI, ARUN'] }), 'title_author');
+  // Only a given name in common is not the author: unconfirmed at best.
+  assert.equal(match({ title: 'Wings of Fire', authors: ['Abdul Rahman'] }), 'possible_match');
+  // Same title, another author: no match (relatedRow then blocks "not found").
+  assert.equal(match({ title: 'Wings of Fire', authors: ['Tui T. Sutherland'] }), null);
+  // No author on the row, or none known for the work: a title alone is never a match.
+  assert.equal(match({ title: 'Wings of Fire' }), null);
+  assert.equal(match({ title: 'Wings of Fire', authors: [] }), null);
+  assert.equal(matchCatalogRecord({ title: 'Wings of Fire', authors: ['Kalam'] }, { ...profile, authors: [] }), null);
+  // Volumes, parts, longer titles, study guides and numbered editions are other titles.
+  for (const title of ['Wings of Fire Part 1', 'Wings of Fire: Part 1', 'Wings of Fire, Vol. 2', 'Wings of Fire and Ignited Minds',
+    'Wings of Fire: study guide', 'Wings of Fire, 2nd edition', 'Wings']) assert.equal(match({ title, authors: book.authors }), null, title);
 });
 
 test('rejects same-name books, other volumes, adaptations, languages, and formats', () => {
@@ -86,19 +111,19 @@ test('pilot catalog envelopes participate in edition search and preserve referen
 test('title matching keeps Hindi and Tamil vowel signs and still folds Latin accents', () => {
   const indic = (title, author) => ({ book: { title, authors: [author], isbn13: '9788126704835' }, isbns: [], titles: [title], authors: [author], complete: true });
   const hindi = indic('राम', 'तुलसीदास');
-  assert.equal(matchCatalogRecord({ title: 'राम', authors: ['तुलसीदास'] }, hindi).matchKind, 'possible_match');
+  assert.equal(matchCatalogRecord({ title: 'राम', authors: ['तुलसीदास'] }, hindi).matchKind, 'title_author');
   // Different vowel signs are different words, not spelling variants.
   assert.equal(matchCatalogRecord({ title: 'रोम', authors: ['तुलसीदास'] }, hindi), null);
   assert.equal(matchCatalogRecord({ title: 'गदन', authors: ['प्रेमचंद'] }, indic('गोदान', 'प्रेमचंद')), null);
-  assert.equal(matchCatalogRecord({ title: 'गोदान', authors: ['प्रेमचंद'] }, indic('गोदान', 'प्रेमचंद')).matchKind, 'possible_match');
+  assert.equal(matchCatalogRecord({ title: 'गोदान', authors: ['प्रेमचंद'] }, indic('गोदान', 'प्रेमचंद')).matchKind, 'title_author');
   const tamil = indic('கடல்', 'கல்கி');
   assert.equal(matchCatalogRecord({ title: 'கடலை', authors: ['கல்கி'] }, tamil), null);
-  assert.equal(matchCatalogRecord({ title: 'கடல்', authors: ['கல்கி'] }, tamil).matchKind, 'possible_match');
+  assert.equal(matchCatalogRecord({ title: 'கடல்', authors: ['கல்கி'] }, tamil).matchKind, 'title_author');
   // A zero-width joiner used only for display does not make a different title.
-  assert.equal(matchCatalogRecord({ title: 'हिन्\u200dदी कहानी', authors: ['प्रेमचंद'] }, indic('हिन्दी कहानी', 'प्रेमचंद')).matchKind, 'possible_match');
+  assert.equal(matchCatalogRecord({ title: 'हिन्\u200dदी कहानी', authors: ['प्रेमचंद'] }, indic('हिन्दी कहानी', 'प्रेमचंद')).matchKind, 'title_author');
   const french = { book: { title: 'Les Misérables', authors: ['Victor Hugo'], isbn13: '9780140444308' }, isbns: [], titles: ['Les Misérables'], authors: ['Victor Hugo'], complete: true };
-  assert.equal(matchCatalogRecord({ title: 'LES MISERABLES', authors: ['Hugo, Victor'] }, french).matchKind, 'possible_match');
-  assert.equal(matchCatalogRecord({ title: 'Les Misérables', authors: ['Hugo, Victor'] }, french).matchKind, 'possible_match');
+  assert.equal(matchCatalogRecord({ title: 'LES MISERABLES', authors: ['Hugo, Victor'] }, french).matchKind, 'title_author');
+  assert.equal(matchCatalogRecord({ title: 'Les Misérables', authors: ['Hugo, Victor'] }, french).matchKind, 'title_author');
 });
 
 // ---- Title-first checks on the South Indian pilot catalogs -------------------
@@ -131,13 +156,13 @@ function replay(t, pages, { latencyMs = 0 } = {}) {
   return requests;
 }
 
-test('check budgets follow the directory, bounded at 45 s', () => {
+test('every library has the same 45 s check budget (owner decision, 19 November 2026)', () => {
   assert.equal(checkBudgetMs(entry('koha:anna-centenary-library')), 45_000);
   assert.equal(checkBudgetMs(entry('koha:kalaignar-centenary-library')), 45_000);
   assert.equal(checkBudgetMs(entry('koha:ernakulam-public-library')), 45_000);
-  assert.equal(checkBudgetMs(entry('vpl:visakhapatnam-public-library')), 20_000);
+  assert.equal(checkBudgetMs(entry('vpl:visakhapatnam-public-library')), 45_000);
   assert.equal(checkBudgetMs({ publicCatalogTimeoutMs: 60_000 }), 45_000);
-  assert.equal(checkBudgetMs({}), 20_000);
+  assert.equal(checkBudgetMs({}), 45_000);
 });
 
 test('title-first: one search, then only rows the search does not rule out, best evidence first', async () => {
@@ -170,8 +195,8 @@ test('title-first: similar editions are read once, ISBNs are tried only when the
   }, kalam);
   assert.deepEqual(reads, ['1']);
   assert.deepEqual(isbns, []);
-  assert.equal(similar.matchKind, 'possible_match');
-  assert.equal(similar.outcome, 'in_catalog');
+  // Another edition's ISBN, with the work's title and author: a title-and-author find.
+  assert.deepEqual([similar.matchKind, similar.lookupKind, similar.outcome], ['verified_work', 'title_author', 'available']);
   const empty = await searchLibraryBook({ findBookCandidates: async () => [], checkAvailability: async isbn => { isbns.push(isbn); return isbn === '9788173715181' ? found : miss; } }, kalam);
   assert.deepEqual(isbns, ['9788173711466', '9788173715181']);
   assert.equal(empty.matchKind, 'verified_work');
@@ -228,9 +253,9 @@ test('replay, Ernakulam: a title-index search and at most three record reads (wa
   });
   const result = await searchLibraryBook(getProvider(library), kalam, { timeoutMs: checkBudgetMs(library) });
   assert.ok(requests.length <= 4, `${requests.length} requests`);
-  // The saved Ernakulam record lists no ISBN, so this is a similar edition.
-  assert.equal(result.matchKind, 'possible_match');
-  assert.equal(result.outcome, 'in_catalog');
+  // The saved Ernakulam record lists no ISBN: its title and author make it a find.
+  assert.deepEqual([result.matchKind, result.lookupKind], ['verified_work', 'title_author']);
+  assert.equal(result.matchedBook.isbn13, undefined);
   // Tui Sutherland's "Wings of Fire" rows are ruled out from the search page alone.
   assert.ok(requests.every(url => !/biblionumber=(?:199310|147571|189517)/.test(url)));
 });
@@ -245,8 +270,7 @@ test('replay, Visakhapatnam: one paced request answers the check from the search
   const result = await searchLibraryBook(getProvider(library), kalam, { timeoutMs: checkBudgetMs(library) });
   assert.equal(requests.length, 1);
   assert.ok(Date.now() - started < 1000);
-  assert.equal(result.matchKind, 'possible_match');
-  assert.equal(result.outcome, 'in_catalog');
+  assert.deepEqual([result.matchKind, result.lookupKind], ['verified_work', 'title_author']);
   assert.equal(result.searchSummary.isbnQueries, 0);
 });
 
@@ -301,14 +325,51 @@ test('the first proven match ends the search, even while the paired title search
   assert.equal(isbnCalls, 1, 'no further ISBN is asked after a proven match');
 });
 
-test('a title/author-only match does not end the search early', async () => {
+test('a possible match does not end the search early; a title-and-author find does, like an ISBN find', async () => {
   const calls = [];
-  const record = { recordId: '42', title: 'Wings of Fire: an autobiography', authors: ['Kalam, A P J Abdul'], observation: found };
+  const weak = { recordId: '42', title: 'Wings of Fire: an autobiography', authors: ['Abdul Rahman'], observation: found };
   const result = await searchLibraryBook({ checkAvailability: async isbn => { calls.push(isbn); return isbn === '9788173715181' ? found : miss; },
-    searchCatalog: async query => (query === book.title ? [record] : []) }, profile);
+    searchCatalog: async query => (query === book.title ? [weak] : []) }, profile);
   // The possible match came first; the later proven ISBN still wins.
-  assert.equal(result.matchKind, 'verified_work');
+  assert.deepEqual([result.matchKind, result.lookupKind], ['verified_work', 'verified_work']);
   assert.ok(calls.includes('9788173715181'));
+  // Title first: the agreeing row ends the check; no ISBN is asked after it.
+  const asked = [];
+  const strong = { ...weak, authors: ['Kalam, A P J Abdul'] };
+  const early = await searchLibraryBook({ findBookCandidates: async () => [strong], checkAvailability: async isbn => { asked.push(isbn); return miss; } }, profile);
+  assert.deepEqual([early.matchKind, early.lookupKind, early.outcome], ['verified_work', 'title_author', 'available']);
+  assert.deepEqual(asked, []);
+});
+
+test('a title-and-author row counts only with this library\'s own holding: a shared or union catalog row held elsewhere is not a find', async () => {
+  // A union catalog lists the record (no observation on the row); its page shows
+  // another member's copy, so the adapter refuses it (IndCat, Koha shared catalogs).
+  const union = await searchLibraryBook({ isbnLookup: false, searchCatalog: async () => [{ recordId: '9', title: book.title, authors: book.authors }],
+    resolveCatalogRecord: async () => { throw Object.assign(new Error('Catalog did not confirm this branch’s record'), { code: 'CATALOG_UNRECOGNIZED' }); } }, profile, { timeoutMs: 1_000 });
+  assert.equal(union.outcome, 'unknown');
+  assert.equal(union.matchKind, undefined);
+  // A record page that shows no holding for this library proves nothing either.
+  const noHolding = await searchLibraryBook({ isbnLookup: false, searchCatalog: async () => [{ recordId: '9', title: book.title, authors: book.authors }],
+    resolveCatalogRecord: async () => ({ title: book.title, authors: book.authors, observation: { outcome: 'not_found' } }) }, profile, { timeoutMs: 1_000 });
+  assert.notEqual(noHolding.matchKind, 'verified_work');
+  assert.ok(['no_match', 'unknown'].includes(noHolding.outcome));
+  // A record without any observation is not a find.
+  const bare = await searchLibraryBook({ isbnLookup: false, searchCatalog: async () => [{ recordId: '9', title: book.title, authors: book.authors }],
+    resolveCatalogRecord: async () => ({ title: book.title, authors: book.authors }) }, profile, { timeoutMs: 1_000 });
+  assert.notEqual(bare.matchKind, 'verified_work');
+});
+
+test('same title by another author, or with no author: never found and never "not found"', async () => {
+  for (const authors of [['Tui T. Sutherland'], []]) {
+    const row = { recordId: '5', title: book.title, authors, observation: found };
+    const result = await searchLibraryBook({ isbnLookup: false, searchCatalog: async () => [row], resolveCatalogRecord: async () => row }, profile, { timeoutMs: 1_000 });
+    assert.equal(result.outcome, 'no_match', JSON.stringify(authors));
+    assert.deepEqual([result.searchSummary.absenceProvable, result.searchSummary.absenceRisk], [false, 'related_titles']);
+  }
+  // A volume of the work is not a find either, and leaves the answer unconfirmed.
+  const volume = { recordId: '6', title: 'Wings of Fire Part 1', authors: book.authors, observation: found };
+  const part = await searchLibraryBook({ isbnLookup: false, searchCatalog: async () => [volume], resolveCatalogRecord: async () => volume }, profile, { timeoutMs: 1_000 });
+  assert.deepEqual([part.outcome, part.searchSummary.absenceRisk], ['no_match', 'related_titles']);
 });
 
 test('the best proven match is shared through progress, and nothing more is asked after it', async () => {
@@ -439,22 +500,26 @@ test('a work ISBN with an agreeing title is a match even when the catalog lists 
 test('titles compare without a leading English article (SRMS: "DISCOVERY OF INDIA")', async () => {
   const nehru = { book: { title: 'The Discovery of India', authors: ['Jawaharlal Nehru'], isbn13: '9780143031031' }, isbns: ['9780143031031'],
     titles: ['The Discovery of India'], authors: ['Jawaharlal Nehru'], language: 'eng', complete: true };
-  assert.equal(matchCatalogRecord({ title: 'DISCOVERY OF INDIA', authors: ['Nehru, Jawaharlal'] }, nehru).matchKind, 'possible_match');
+  assert.equal(matchCatalogRecord({ title: 'DISCOVERY OF INDIA', authors: ['Nehru, Jawaharlal'] }, nehru).matchKind, 'title_author');
   assert.equal(matchCatalogRecord({ title: 'Discovery of India', authors: ['Nehru, Jawaharlal'], isbn: '9780143031031' }, nehru).matchKind, 'exact_isbn');
   assert.equal(relatedRow({ title: 'DISCOVERY OF INDIA VOL 2', authors: ['Nehru, J.'] }, nehru), true);
   // An unarticled title is not stripped of its first word.
   assert.equal(matchCatalogRecord({ title: 'Theory of India', authors: ['Jawaharlal Nehru'] }, nehru), null);
   const result = await searchLibraryBook({ isbnLookup: false, searchCatalog: async () => [{ recordId: '7', title: 'DISCOVERY OF INDIA', authors: ['NEHRU, JAWAHARLAL'] }],
     resolveCatalogRecord: async () => ({ title: 'DISCOVERY OF INDIA', authors: ['NEHRU, JAWAHARLAL'], observation: found }) }, nehru, { timeoutMs: 1_000 });
-  assert.equal(result.matchKind, 'possible_match');
+  assert.deepEqual([result.matchKind, result.lookupKind], ['verified_work', 'title_author']);
 });
 
-test('a title-and-author match is kept in progress for a deadline answer, but never as a proven match', async () => {
+test('a possible match is kept in progress for a deadline answer, never as a proven match; a title-and-author find is proven', async () => {
   const progress = {};
-  const record = { recordId: '42', title: book.title, authors: book.authors, observation: found };
+  const record = { recordId: '42', title: book.title, authors: ['Abdul Rahman'], observation: found };
   await searchLibraryBook({ isbnLookup: false, searchCatalog: async () => [record], resolveCatalogRecord: async () => record }, profile, { timeoutMs: 1_000, progress });
   assert.equal(progress.best, undefined);
   assert.equal(progress.possible.matchKind, 'possible_match');
+  const proven = {};
+  const strong = { ...record, authors: book.authors };
+  await searchLibraryBook({ isbnLookup: false, searchCatalog: async () => [strong], resolveCatalogRecord: async () => strong }, profile, { timeoutMs: 1_000, progress: proven });
+  assert.deepEqual([proven.best.matchKind, proven.best.lookupKind], ['verified_work', 'title_author']);
 });
 
 test('legacy title queries are not repeated when titles differ only in case', async () => {

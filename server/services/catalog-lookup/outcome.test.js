@@ -12,6 +12,16 @@ test('the 3.5 projection: proven copies are found, whatever the lending state', 
     assert.deepEqual(answerFromResponse({ outcome, lookupKind: 'catalog_record', matchKind: 'catalog_record' }, { recordId: '42' }),
       { outcome: 'found', evidence: 'catalog_record', recordId: '42' });
   }
+  // A work search's title-and-author match is found like an ISBN match; only the evidence differs.
+  for (const outcome of ['available', 'none_available', 'in_catalog']) {
+    assert.deepEqual(answerFromResponse({ outcome, lookupKind: 'title_author', matchKind: 'verified_work', matchedBook: { title: 'Wings of Fire' } }),
+      { outcome: 'found', evidence: 'title_author' });
+  }
+  // ... but a possible match (title and a shared author word) is not, nor one with no holding shown.
+  assert.deepEqual(answerFromResponse({ outcome: 'in_catalog', lookupKind: 'title_author', matchKind: 'possible_match' }), { outcome: 'couldnt_check', reason: 'unconfirmed' });
+  assert.deepEqual(answerFromResponse({ outcome: 'unknown', lookupKind: 'title_author', matchKind: 'verified_work' }), { outcome: 'couldnt_check', reason: 'unconfirmed' });
+  // A reader's own record identified by title and author (Visakhapatnam) stays a catalog record.
+  assert.equal(answerFromResponse({ outcome: 'in_catalog', lookupKind: 'title_author', matchKind: 'verified_work' }, { recordId: 'r1' }).evidence, 'catalog_record');
   // Not for loan is still a holding.
   assert.equal(answerFromResponse({ outcome: 'unknown', lookupKind: 'exact_isbn', matchKind: 'exact_isbn', loanRestriction: 'not_for_loan' }).outcome, 'found');
 });

@@ -228,7 +228,7 @@ test('aggregated catalog observations preserve a search link instead of calling 
   assert.equal(result.response.totalCopies, 2);
 });
 
-test('work matching preserves reference-only editions and strips unverified circulation counts', async () => {
+test('work matching preserves reference-only editions, by ISBN or by title and author alike (owner decision, 19 November 2026)', async () => {
   for (const hasIsbn of [true, false]) {
     const provider = { checkAvailability: async () => ({ outcome: 'not_found', matchKind: 'none', recognizedExact: true }),
       searchCatalog: async () => ({ records: [{ recordId: '42' }], hasMore: false }),
@@ -238,10 +238,10 @@ test('work matching preserves reference-only editions and strips unverified circ
     };
     const books = { resolve: async () => book, searchProfile: async () => ({ book, isbns: [book.isbn13], titles: [book.title], authors: book.authors, complete: true }) };
     const result = (await createPublicAvailabilityService(dependencies(provider, { books })).check({ libraryId: library.id, bookKey: book.bookKey })).response;
-    assert.equal(result.matchKind, hasIsbn ? 'exact_isbn' : 'possible_match');
-    assert.equal(result.loanRestriction, hasIsbn ? 'not_for_loan' : undefined);
-    assert.equal(result.totalCopies, hasIsbn ? 2 : undefined);
+    assert.equal(result.matchKind, hasIsbn ? 'exact_isbn' : 'verified_work');
+    assert.equal(result.lookupKind, hasIsbn ? 'exact_isbn' : 'title_author');
+    assert.equal(result.loanRestriction, 'not_for_loan');
+    assert.equal(result.totalCopies, 2);
     assert.equal(result.availableCopies, undefined);
-    if (!hasIsbn) assert.equal(result.locations, undefined);
   }
 });

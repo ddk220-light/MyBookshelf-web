@@ -27,7 +27,9 @@ Keep the handoff accurate when completing substantial work.
   similar titles for identity, ISBNs or availability (search cards may show
   same-title, same-author records together for display only; see
   docs/work-aware-search.md), infer absence from failed checks, or show
-  approximate locations as precise.
+  approximate locations as precise. An exact title-and-author agreement in
+  the chosen library's own catalog counts as found, like an ISBN (owner
+  decision, 19 November 2026); similar titles never do.
 - Respect catalog restrictions, keyboard access and reduced motion. Compare UI
   work against the one-shelf boards (docs/design/2026-11-one-shelf/) and the
   owner decisions in the plan (docs/plans/2026-11-12-one-shelf-redesign-implementation-plan.md).

@@ -42,6 +42,7 @@ const WRITE_WITHOUT_KIND = writeSql(false);
 // a release that ships before the migration still stores answers (their link
 // kind reads as the catalog). Any other error is passed on unchanged.
 const UNDEFINED_COLUMN = '42703';
+const CHECK_VIOLATION = '23514';
 async function withKindFallback(withKind, withoutKind) {
   try { return await withKind(); } catch (error) {
     if (error?.code !== UNDEFINED_COLUMN) throw error;
@@ -76,12 +77,21 @@ export function createPgAnswerStore(db) {
         const existing = byKey.get(key);
         if (!existing || (value.answer === 'found' && existing.answer !== 'found')) byKey.set(key, value);
       }
+      const write = async rows => {
+        if (!rows.length) return;
+        const params = [rows.map(r => r.libraryId), rows.map(r => r.kind), rows.map(r => r.value), rows.map(r => r.answer),
+          rows.map(r => r.evidence), rows.map(r => r.matchedIsbn13 || null), rows.map(r => CATALOG_URL(r.catalogUrl)), TTL_SECONDS];
+        const kinds = rows.map(r => (CATALOG_URL(r.catalogUrl) && LINK_KINDS.has(r.catalogLinkKind) ? r.catalogLinkKind : null));
+        await withKindFallback(() => db.query(WRITE, [...params, kinds]), () => db.query(WRITE_WITHOUT_KIND, params));
+      };
       const rows = [...byKey.values()];
-      if (!rows.length) return;
-      const params = [rows.map(r => r.libraryId), rows.map(r => r.kind), rows.map(r => r.value), rows.map(r => r.answer),
-        rows.map(r => r.evidence), rows.map(r => r.matchedIsbn13 || null), rows.map(r => CATALOG_URL(r.catalogUrl)), TTL_SECONDS];
-      const kinds = rows.map(r => (CATALOG_URL(r.catalogUrl) && LINK_KINDS.has(r.catalogLinkKind) ? r.catalogLinkKind : null));
-      await withKindFallback(() => db.query(WRITE, [...params, kinds]), () => db.query(WRITE_WITHOUT_KIND, params));
+      // Until catalog migration 005 allows the `title_author` evidence,
+      // Postgres refuses it (23514, check violation): the other rows are
+      // still written, and a title-and-author find is checked again next time.
+      try { await write(rows); } catch (error) {
+        if (error?.code !== CHECK_VIOLATION || !rows.some(r => r.evidence === 'title_author')) throw error;
+        await write(rows.filter(r => r.evidence !== 'title_author'));
+      }
     },
   });
 }

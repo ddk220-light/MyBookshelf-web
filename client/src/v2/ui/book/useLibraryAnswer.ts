@@ -7,10 +7,11 @@ import type { PublicLibrary } from '../../types';
 
 /**
  * The longest the book page waits for one check before saying it couldn't
- * check. The server's slowest live check ends at about 55 s, so the page
- * waits a little longer than that rather than cutting off a real answer.
+ * check. Every library's check may take 45 s and the server answers within
+ * 60 s of the request (CHECK_REPLY_MS, server/public-v2/holdings.js), so the
+ * page waits a little longer than that rather than cutting off a real answer.
  */
-export const CHECK_TIMEOUT_MS = 60_000;
+export const CHECK_TIMEOUT_MS = 65_000;
 
 export type CardAnswer = 'checking' | 'found' | 'not_found' | 'unconfirmed' | 'unknown' | 'unsupported';
 export type LibraryCardModel =

@@ -193,3 +193,21 @@ test('a standalone suboperation keeps ordinary operation behavior', async () => 
   });
   assert.equal(sent, 1);
 });
+
+test('a book check caps each request (requestTimeoutMs) and carries its deadline to nested scopes', async () => {
+  global.fetch = (url, { signal }) => new Promise((resolve, reject) => {
+    signal.addEventListener('abort', () => reject(cancelled()), { once: true });
+  });
+  const started = Date.now();
+  await withCatalogOperation({ requestTimeoutMs: 40, deadlineAt: started + 5_000 }, async outer => {
+    // The adapter allows 30 s; the check's per-request cap ends it after 40 ms.
+    await assert.rejects(getText('https://slow.example.invalid/a', { retries: 0, timeoutMs: 30_000 }), { name: 'AbortError' });
+    assert.ok(Date.now() - started < 1_000);
+    await withCatalogSuboperation({ deadlineAt: started + 9_000, requestTimeoutMs: 60_000 }, async child => {
+      // The tighter of the two applies to both.
+      assert.equal(child.deadlineAt, started + 5_000);
+      assert.equal(child.requestTimeoutMs, 40);
+    });
+    assert.equal(outer.deadlineAt, started + 5_000);
+  });
+});

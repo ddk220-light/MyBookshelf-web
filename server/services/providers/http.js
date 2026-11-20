@@ -34,15 +34,21 @@ const operations = new AsyncLocalStorage();
 //   throws when that slot is past the deadline.
 // - `noRetries`: every request is sent once, with no transport retry (used
 //   while a host's circuit is open: the book page tries once).
+// - `requestTimeoutMs`: no single request of the operation waits longer than
+//   this (a book check: 30 s of its 45 s, catalog-lookup/platforms.js), so
+//   one slow request cannot use up a check that needs several.
+// - `deadlineAt`: when the whole operation must end (a book check's
+//   deadline). Adapters whose own call deadline would be shorter use it
+//   instead (providers/koha.js), so the check, not the call, sets the limit.
 //
 // Requests connect with the catalog connection settings in network.js (a 2.5 s
 // attempt per address). A caller that is not reading a library catalog, such
 // as the Open Library metadata reads, passes `catalogConnection: false` and
 // gets Node's defaults. A caller's own `dispatcher` (KALNET) is used as given.
-export function withCatalogOperation({ maxRequests = Infinity, signal = null, minIntervalMs = 0, robots = null, gate = null, noRetries = false } = {}, task) {
+export function withCatalogOperation({ maxRequests = Infinity, signal = null, minIntervalMs = 0, robots = null, gate = null, noRetries = false, requestTimeoutMs = Infinity, deadlineAt = null } = {}, task) {
   const current = operations.getStore();
   if (current) return task(current);
-  const store = { maxRequests, requests: 0, lastByHost: new Map(), signal, minIntervalMs, robots, gate, noRetries };
+  const store = { maxRequests, requests: 0, lastByHost: new Map(), signal, minIntervalMs, robots, gate, noRetries, requestTimeoutMs, deadlineAt };
   return operations.run(store, () => task(store));
 }
 
@@ -72,6 +78,8 @@ export function withCatalogSuboperation(options = {}, task) {
     gate: options.gate ?? parent.gate,
     minIntervalMs: Math.max(parent.minIntervalMs || 0, options.minIntervalMs || 0),
     noRetries: Boolean(parent.noRetries || options.noRetries),
+    requestTimeoutMs: Math.min(parent.requestTimeoutMs ?? Infinity, options.requestTimeoutMs ?? Infinity),
+    deadlineAt: [parent.deadlineAt, options.deadlineAt].filter(Number.isFinite).reduce((a, b) => Math.min(a, b), Infinity),
   };
   return operations.run(store, () => task(store));
 }
@@ -371,7 +379,7 @@ async function requestOnce(url, options = {}) {
     }
     // A cancelled lookup must not reach the catalog after waiting in the queue.
     if (operation?.signal?.aborted) throw abortedError();
-    const requestTimeout = remaining(deadlineAt, timeoutMs);
+    const requestTimeout = Math.min(remaining(deadlineAt, timeoutMs), operation?.requestTimeoutMs ?? Infinity);
     if (requestTimeout === 0) throw deadlineError();
     const headers = { 'User-Agent': USER_AGENT, ...(fetchOptions.headers || {}) };
     const controller = new AbortController();

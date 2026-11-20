@@ -34,6 +34,11 @@ const PROFILE_WAIT_MS = 10_000;
 // record read, edition profile and any check finishing in the background,
 // ends its work a little before that.
 export const FUNCTION_WORK_MS = 110_000;
+// The reader's answer is due within 60 s of the request (the book's details,
+// its edition profile and the library's 45 s check, catalog-lookup/
+// platforms.js). The app waits a little longer than that (useLibraryAnswer).
+// A check still running then finishes in the background (FUNCTION_WORK_MS).
+export const CHECK_REPLY_MS = 60_000;
 
 const settleWithin = (promise, ms) => new Promise(resolve => {
   const timer = setTimeout(() => resolve(null), Math.max(0, ms));
@@ -99,7 +104,8 @@ const safeCatalogUrl = value => {
   try { return ['http:', 'https:'].includes(new URL(value).protocol) ? value : undefined; } catch { return undefined; }
 };
 
-export function createHoldingsRoutes({ directory, books, lookup, store, now = () => Date.now(), searchCapMs = SEARCH_CAP_MS, functionWorkMs = FUNCTION_WORK_MS }) {
+export function createHoldingsRoutes({ directory, books, lookup, store, now = () => Date.now(), searchCapMs = SEARCH_CAP_MS, functionWorkMs = FUNCTION_WORK_MS,
+  checkReplyMs = CHECK_REPLY_MS }) {
   const usage = event => { try { store.usage.record(event); } catch { /* The log never alters a response. */ } };
   const readStored = async (libraryId, identities) => {
     if (!identities.length || store.policyFor(libraryId)?.storeAnswers === false) return [];
@@ -192,8 +198,8 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
       // (plan A2, step 3). The reader leaving no longer cancels a started check.
       const answer = await lookup.lookupBook({ library: entry, publicLibrary: library, book, ...(profile ? { profile } : {}),
         editionScope: 'work', signal: controller.signal, storedChecked: true, background: store.config?.backgroundChecksEnabled !== false,
-        // The record read and the profile wait came out of the same function time.
-        finishBy: startedAt + functionWorkMs });
+        // The record read and the profile wait came out of the same reply and function time.
+        deadlineAt: startedAt + checkReplyMs, finishBy: startedAt + functionWorkMs });
       if (controller.signal.aborted) return undefined;
       return reply(appAnswer(answer, book, libraryId), answer.source || 'live', answer);
     } finally {

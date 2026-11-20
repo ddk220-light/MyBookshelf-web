@@ -12,7 +12,7 @@ const coded = (message, code) => Object.assign(new Error(message), { code });
 //
 // `budget` is null for the old path (today's behaviour: title-first searches
 // capped by searchLibraryBook, single provider calls uncapped). The lookup
-// layer passes `{ maxRequests, deadlineAt, signal, robots, minIntervalMs, gate, noRetries }`: the
+// layer passes `{ maxRequests, deadlineAt, signal, robots, minIntervalMs, gate, noRetries, requestTimeoutMs }`: the
 // whole check, including single provider calls, then runs inside one catalog
 // operation with that request cap, deadline, pacing and robots policy, and
 // the deadline or the caller's signal cancels any request still in flight.
@@ -42,7 +42,8 @@ export async function runBookCheck({ entry, library, provider, book, bookKey, pa
     try { return { response: workResponse(observation, { library, entry, attemptedAt }), profile }; } catch { return null; }
   };
   const proven = () => answerWith(progress?.best);
-  // At the deadline only: a title-and-author match (answered "unconfirmed").
+  // At the deadline only: a possible match (title and a shared author word,
+  // answered "unconfirmed"). A title-and-author match is a proven one.
   const possible = () => answerWith(progress?.possible);
   return withBudget(budget, run, lookupKind, proven, possible);
 }
@@ -82,7 +83,9 @@ async function withBudget(budget, run, lookupKind, proven = () => null, possible
   });
   try {
     const work = withCatalogOperation({ maxRequests: budget.maxRequests, signal: controller.signal,
-      robots: budget.robots || null, minIntervalMs: budget.minIntervalMs || 0, gate: budget.gate || null, noRetries: Boolean(budget.noRetries) }, async operation => {
+      robots: budget.robots || null, minIntervalMs: budget.minIntervalMs || 0, gate: budget.gate || null, noRetries: Boolean(budget.noRetries),
+      ...(budget.requestTimeoutMs > 0 ? { requestTimeoutMs: budget.requestTimeoutMs } : {}),
+      ...(Number.isFinite(budget.deadlineAt) ? { deadlineAt: budget.deadlineAt } : {}) }, async operation => {
       current = operation;
       const result = await run();
       // The inner search can reach its own deadline before the outer timer
