@@ -72,8 +72,9 @@ preview, which would test the previous build.
 
 Runtime directory snapshots in `server/data/` and the documented public review
 files in `data/` are versioned build inputs. The app and SEO generator use the
-same public projection. `shared/seo-libraries.json` is the publication allowlist;
-adding an app directory entry does not publish a new SEO page. The broader
+same public projection. `shared/seo-libraries.json` lists the reviewed guides,
+and `shared/seo-shelves.json` (tools/seo/library-shelves.mjs, docs/seo/LIBRARY_SHELVES.md)
+the Indian library and book pages; adding an app directory entry does not publish a page. The broader
 research corpus and native application history are not part of this repository.
 
 ## Corrections and contributions

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
-import { publishedLibraries, escape, jsonLd, origin, countWord, rootShell, rootTitle, aboutText, contactEmail } from './build-pages.mjs';
+import { publishedLibraries, escape, jsonLd, origin, countWord, rootShell, rootTitle, aboutText, contactEmail, shelfPages, shelfData } from './build-pages.mjs';
 import manifest from '../../shared/seo-libraries.json' with { type: 'json' };
 import { getAllLibraries } from '../../server/services/directory.js';
 import { toPublicLibrary } from '../../server/public-v2/directory.js';
@@ -66,8 +66,12 @@ test('one About text: the public page and the app read docs/policy/about.md', ()
 test('built output contains only published library pages and indexable canonical sitemap URLs', () => {
   const report=JSON.parse(readFileSync('client/dist/seo-report.json'));
   assert.equal(report.libraryPages.length,12);
-  // Nineteen URLs, plus /terms once the policy texts are published (VITE_POLICY_EFFECTIVE_DATE).
-  assert.equal(report.indexablePages.length,existsSync('client/dist/terms.html')?20:19);
+  // Nineteen URLs, plus /terms once the policy texts are published (VITE_POLICY_EFFECTIVE_DATE),
+  // plus the library pages with a shelf that have no guide, the book pages and /books.
+  const shelf=shelfPages(), extra=shelf.libraries.filter(r=>!r.guide).length+shelf.books.length+(shelf.books.length?1:0);
+  assert.deepEqual(report.shelfLibraryPages,shelf.libraries.map(r=>r.path));
+  assert.deepEqual(report.bookPages,shelf.books.map(b=>b.path));
+  assert.equal(report.indexablePages.length,(existsSync('client/dist/terms.html')?20:19)+extra);
   for(const path of report.indexablePages) {
     const html=readFileSync('client/dist/'+(path==='/'?'index':path.slice(1))+'.html','utf8');
     assert.ok(html.includes('content="index, follow"'),path);
@@ -192,7 +196,124 @@ test('the policy texts are published only by the release switch, with the date f
     assert.ok(terms.includes('privacy@mybookshelf.cloud') && !/gmail/.test(terms));
     assert.ok((await readFile(join(out, 'about.html'), 'utf8')).includes('<a href="/terms">Terms</a>'), 'the footer links the published Terms');
     const report = JSON.parse(await readFile(join(out, 'seo-report.json'), 'utf8'));
-    assert.equal(report.indexablePages.length, 20);
+    const shelf = shelfPages();
+    assert.equal(report.indexablePages.length, 20 + shelf.libraries.filter(r => !r.guide).length + shelf.books.length + (shelf.books.length ? 1 : 0));
     assert.ok(report.indexablePages.includes('/terms'));
+  } finally { await rm(out, { recursive: true, force: true }); }
+});
+
+// A small shelf data set on real directory libraries and pool books.
+function fixtureShelves({ count = 6 } = {}) {
+  const { pool, removed } = shelfData();
+  const books = {}, checks = {};
+  pool.slice(0, 12).forEach((b, i) => {
+    books[b.bookKey] = { slug: `fixture-book-${i}`, title: b.title, authors: [b.author], openLibraryUrl: `https://openlibrary.org/works/${b.bookKey.split(':').pop()}`, fetchedOn: '2026-11-21',
+      ...(i % 2 ? { coverId: '9153819' } : {}), ...(i === 0 ? { description: 'A short description <b>with</b> "quotes".', isbns: ['9788173711466'], firstPublished: 1999 } : {}) };
+  });
+  const found = n => Object.fromEntries(pool.slice(0, n).map((b, i) => [b.bookKey, { outcome: 'found', on: i === 1 ? '2026-11-22' : '2026-11-21', matchTitle: b.title }]));
+  const withFailures = { ...found(count), [pool[count].bookKey]: { outcome: 'couldnt_check', on: '2026-11-21', reason: 'timeout' }, [pool[count + 1].bookKey]: { outcome: 'not_found', on: '2026-11-21' } };
+  const shelves = { libraries: {
+    'egranthalaya:jklibraries-srsjammu': { slug: 'srs-central-library', checks: withFailures },
+    'koha:anna-centenary-library': { slug: 'ignored-for-a-guide', checks: found(10) },
+    'koha:iim-visakhapatnam': { slug: 'iim-visakhapatnam-library', checks: found(4) },
+    'koha:goa-dhe-cescaccs': { slug: 'ces-college', checks: found(10) },
+  }, books };
+  return { shelves, pool, removed };
+}
+test('shelves: five or more found books make a page, fewer do not; guides gain the shelf; excluded libraries never appear', () => {
+  const shelf = shelfPages(fixtureShelves());
+  assert.deepEqual(shelf.libraries.map(r => r.path).sort(), ['/libraries/anna-centenary-library', '/libraries/srs-central-library']);
+  const srs = shelf.libraries.find(r => r.id === 'egranthalaya:jklibraries-srsjammu');
+  assert.equal(srs.shelf.length, 6);
+  assert.equal(srs.lastmod, '2026-11-22');
+  assert.equal(shelf.libraries.find(r => r.id === 'koha:anna-centenary-library').guide.slug, 'anna-centenary-library');
+  assert.equal(shelf.libraries.find(r => r.id === 'koha:anna-centenary-library').shelf.length, 10);
+  // A failed check is not on the shelf and is not "not found" on any page.
+  assert.ok(!srs.shelf.some(item => item.bookKey === fixtureShelves().pool[6].bookKey));
+  assert.equal(shelfPages(fixtureShelves({ count: 4 })).libraries.length, 1);
+  // Book pages: every book on a published shelf, with every library that has it.
+  assert.equal(shelf.books.length, 10);
+  const first = shelf.bookByKey.get(fixtureShelves().pool[0].bookKey);
+  assert.deepEqual(first.libraries.map(item => item.row.id), ['koha:anna-centenary-library', 'egranthalaya:jklibraries-srsjammu']);
+  // Slug clashes and bad slugs stop the build.
+  const bad = fixtureShelves();
+  bad.shelves.libraries['egranthalaya:jklibraries-srsjammu'].slug = 'anna-centenary-library';
+  assert.throws(() => shelfPages(bad), /collision/);
+  const ugly = fixtureShelves();
+  ugly.shelves.books[ugly.pool[0].bookKey].slug = 'Bad Slug';
+  assert.throws(() => shelfPages(ugly), /slug/);
+});
+test('library and book pages: shelf section, links both ways, sitemap with check dates, no search text in URLs, CSP-safe HTML', async () => {
+  const { buildPages } = await import('./build-pages.mjs');
+  const { mkdtemp, writeFile, readFile, rm } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const out = await mkdtemp(join(tmpdir(), 'pages-'));
+  try {
+    await writeFile(join(out, 'index.html'), APP_SHELL);
+    const shelf = shelfPages(fixtureShelves());
+    await buildPages(out, { analytics: false, siteVerification: null, policyEffectiveDate: null }, shelf);
+    const read = path => readFile(join(out, path.slice(1) + '.html'), 'utf8');
+    const srs = await read('/libraries/srs-central-library');
+    assert.match(srs, /<title>SRS Central Library — catalog and book search \| MyBookshelf<\/title>/);
+    assert.match(srs, /<h2 id="shelf-heading">Books found in this library’s catalog<\/h2>/);
+    assert.equal((srs.match(/<li class="shelf-book">/g) || []).length, 6);
+    assert.ok(srs.includes('Found in the catalog · checked 22 November 2026'));
+    assert.ok(srs.includes('loading="lazy"') && srs.includes('src="https://covers.openlibrary.org/b/id/9153819-M.jpg"'));
+    assert.ok(srs.includes('not operated by or affiliated with SRS Central Library'));
+    assert.ok(srs.includes('couldn’t check, never that the book isn’t there'));
+    assert.ok(!/copies available|due back|floor \d|shelf number/i.test(srs));
+    assert.ok(!srs.includes('Official library website'), 'no official site the directory lacks');
+    const data = JSON.parse(srs.match(/<script type="application\/ld\+json">([^<]+)<\/script>/)[1]);
+    assert.deepEqual(data.map(item => item['@type']), ['WebPage', 'Library', 'BreadcrumbList', 'ItemList']);
+    assert.equal(data[3].itemListElement.length, 6);
+    // The guide keeps its reviewed content and gains the shelf.
+    const anna = await read('/libraries/anna-centenary-library');
+    assert.ok(anna.includes('What MyBookshelf can check here') && anna.includes('Books found in this library’s catalog'));
+    assert.equal((anna.match(/<li class="shelf-book">/g) || []).length, 10);
+    // No page for fewer than five books, or for an excluded library.
+    const { existsSync: exists } = await import('node:fs');
+    assert.ok(!exists(join(out, 'libraries/iim-visakhapatnam-library.html')) && !exists(join(out, 'libraries/ces-college.html')));
+    // Book page: Book data, a link to each library page and a check at that library.
+    const book = shelf.books.find(b => b.details.slug === 'fixture-book-0');
+    const page = await read(book.path);
+    assert.ok(page.includes('<meta name="robots" content="index, follow">') && page.includes(`<link rel="canonical" href="${origin}${book.path}">`));
+    assert.ok(page.includes('href="/libraries/srs-central-library"') && page.includes('href="/libraries/anna-centenary-library"'));
+    assert.ok(page.includes(`href="/app/books/${encodeURIComponent(book.bookKey)}">Check my library</a>`));
+    assert.ok(page.includes(`href="/select/srs-central-library?book=${encodeURIComponent(book.bookKey)}"`));
+    assert.ok(page.includes('A short description &lt;b&gt;with&lt;/b&gt; &quot;quotes&quot;.') && page.includes('Description from <a href="https://openlibrary.org/works/'));
+    const bookData = JSON.parse(page.match(/<script type="application\/ld\+json">([^<]+)<\/script>/)[1]);
+    const ld = bookData.find(item => item['@type'] === 'Book');
+    assert.deepEqual([ld.name, ld.author[0].name, ld.isbn, ld.url], [book.details.title, book.details.authors[0], '9788173711466', origin + book.path]);
+    assert.ok(bookData.some(item => item['@type'] === 'BreadcrumbList'));
+    // Library page links to the book page, and the indexes link to both.
+    assert.ok(srs.includes(`href="${book.path}"`));
+    const hub = await readFile(join(out, 'libraries.html'), 'utf8'), index = await readFile(join(out, 'books.html'), 'utf8');
+    assert.ok(hub.includes('id="india-by-state"') && hub.includes('href="/libraries/srs-central-library"') && hub.includes('<h3>Jammu and Kashmir</h3>') && hub.includes('href="/books"'));
+    for (const b of shelf.books) assert.ok(index.includes(`href="${b.path}"`), b.path);
+    // Sitemap: every new page, with the date of its data.
+    const sitemap = await readFile(join(out, 'sitemap.xml'), 'utf8');
+    assert.ok(sitemap.includes(`<loc>${origin}/libraries/srs-central-library</loc><lastmod>2026-11-22</lastmod>`));
+    assert.ok(sitemap.includes(`<loc>${origin}${book.path}</loc><lastmod>2026-11-21</lastmod>`));
+    assert.ok(sitemap.includes(`<loc>${origin}/books</loc>`));
+    assert.ok(!sitemap.includes('/select/') && !sitemap.includes('/app/'));
+    const report = JSON.parse(await readFile(join(out, 'seo-report.json'), 'utf8'));
+    assert.equal(report.indexablePages.length, 19 + 1 + shelf.books.length + 1);
+    for (const path of report.indexablePages) {
+      const html = await readFile(join(out, path === '/' ? 'index.html' : path.slice(1) + '.html'), 'utf8');
+      // CSP 'self': no inline style or handler, no inline script but JSON-LD, images only from allowed hosts.
+      assert.ok(!/\sstyle=|\son[a-z]+=/i.test(html), path);
+      assert.ok(!/<script(?![^>]*(?:type="application\/ld\+json"|type="module"|src="\/))/.test(html), path);
+      for (const m of html.matchAll(/<img[^>]+src="([^"]+)"/g)) assert.match(m[1], /^https:\/\/covers\.openlibrary\.org\/b\/id\/\d+-[ML]\.jpg$/, path);
+      // No search text in any URL: no q= parameter, and select links carry only the book key.
+      for (const m of html.matchAll(/href="([^"]+)"/g)) {
+        assert.ok(!/[?&](q|query|search)=/i.test(m[1]), m[1]);
+        if (m[1].startsWith('/select/')) assert.match(m[1], /^\/select\/[a-z0-9-]+(\?book=v1%3A[a-z]+%3A[A-Za-z0-9]+)?$/);
+        if (m[1].startsWith('/') && !/^\/(app|select)\//.test(m[1])) {
+          const target = m[1].split(/[?#]/)[0];
+          assert.ok(target === '/' || exists(join(out, target.slice(1) + '.html')) || exists(join(out, target.slice(1))) || /^\/(site\.css|favicon|apple-touch|manifest|og\/)/.test(target) || ['/privacy','/support'].includes(target) || target === '/terms', 'Broken link: ' + target + ' on ' + path);
+        }
+      }
+    }
   } finally { await rm(out, { recursive: true, force: true }); }
 });

@@ -24,6 +24,21 @@ test('public pages work without JavaScript and publish exactly the manifest libr
   expect(missing.status()).toBe(404);
   await context.close();
 });
+// Library shelves and book pages (tools/seo/library-shelves.mjs): plain links both ways, without JavaScript.
+const report=fs.existsSync(new URL('../dist/seo-report.json', import.meta.url))?JSON.parse(fs.readFileSync(new URL('../dist/seo-report.json', import.meta.url),'utf8')):{bookPages:[]};
+test('a book page lists the libraries that have it, and each links back to a shelf', async ({browser,baseURL}) => {
+  test.skip(!report.bookPages?.length, 'no book pages in this build');
+  const context=await browser.newContext({javaScriptEnabled:false});
+  const page=await context.newPage();
+  const response=await page.goto(baseURL+report.bookPages[0]);
+  expect(response.status()).toBe(200);
+  await expect(page.getByRole('heading',{name:'Found in these libraries'})).toBeVisible();
+  await expect(page.getByRole('link',{name:'Check my library'})).toHaveAttribute('href',/^\/app\/books\/v1%3A/);
+  await page.locator('.found-list li a[href^="/libraries/"]').first().click();
+  await expect(page.getByRole('heading',{name:'Books found in this library’s catalog'})).toBeVisible();
+  await expect(page.locator(`.shelf a[href="${report.bookPages[0]}"]`)).toHaveCount(1);
+  await context.close();
+});
 test('the root page is the reading shelf, indexable and crawlable; app and unknown paths have correct handling', async ({page,request}) => {
   const violations=[];
   await page.addInitScript(()=>document.addEventListener('securitypolicyviolation',e=>console.error('CSP: '+e.violatedDirective)));

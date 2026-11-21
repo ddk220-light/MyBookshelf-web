@@ -21,8 +21,9 @@ tools/catalog-hardening/library-status.mjs; listed IDs stay when a later check
 fails, except a blocked library; remove one by adding it to the file's `removed`
 list with id, reason and date, and the generator never lists it again).
 Unlisted IDs stay resolvable for readers who already chose one; libraries outside
-India are not affected; shared/seo-libraries.json controls only public library
-pages. Failed checks are logged in library_check_events (90 days) for manual review.
+India are not affected; shared/seo-libraries.json controls only the reviewed library
+guides. Public library shelves and /books pages come from shared/seo-shelves.json,
+written by tools/seo/library-shelves.mjs with the app's own check (docs/seo/LIBRARY_SHELVES.md). Failed checks are logged in library_check_events (90 days) for manual review.
 Indian libraries without a source state get one from
 server/data/india-library-regions.json (tools/directory/india-regions.mjs): published
 state, a single-state PIN or address evidence only, never a library's name. Never treat failed checks as absence or merge editions

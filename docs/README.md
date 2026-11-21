@@ -89,6 +89,7 @@ the overview records the provenance and evidence limits.
 ## UI, designs and SEO
 
 - [Approved UI/SEO implementation plan](seo/IMPLEMENTATION_PLAN.md).
+- [Library shelves and book pages](seo/LIBRARY_SHELVES.md): the checker script, pacing, how to add libraries.
 - [Screen review](seo/SCREEN_REVIEW.md): desktop/mobile changes and accuracy limits.
 - [Validation and launch state](seo/VALIDATION.md): tested commits, preview,
   CI, remaining production/SEO actions and live catalog limitations.
