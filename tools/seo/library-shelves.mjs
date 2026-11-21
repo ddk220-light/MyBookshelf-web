@@ -30,7 +30,7 @@ import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
 import {
   chooseCandidates, askOrder, nextBook, recordCheck, createFailurePolicy, createHostQueue, serializeShelves, emptyShelves,
-  foundCounts, foundBooks, today, uniqueSlug, bookSlug, shortDescription, MIN_SHELF, SHELF_SIZE, PLATFORM_CAPS,
+  foundCounts, foundBooks, today, uniqueSlug, bookSlug, correctBookSlugs, shortDescription, MIN_SHELF, SHELF_SIZE, PLATFORM_CAPS,
 } from './shelves-core.mjs';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
@@ -135,6 +135,8 @@ async function bookDetails(books, bookKey, taken) {
     openLibraryUrl: `https://openlibrary.org/works/${bookKey.split(':').pop()}`, fetchedOn: today(),
   };
   const year = /^\d{4}$/.test(String(doc.first_publish_year || '')) ? Number(doc.first_publish_year) : null;
+  // Kept for reference only; the pages do not show it: Open Library's
+  // first_publish_year is its earliest listed edition, often a later reprint.
   if (year) details.firstPublished = year;
   const description = shortDescription(resolved.description);
   if (description) details.description = description;
@@ -163,6 +165,7 @@ async function services() {
 async function details(given) {
   const { books } = given || await services();
   const data = await readJson(FILES.shelves, emptyShelves());
+  correctBookSlugs(data.books);
   const taken = new Set(Object.values(data.books).map(b => b.slug));
   for (const key of [...foundCounts(data).keys()].sort()) {
     if (data.books[key]) continue;
@@ -186,6 +189,9 @@ async function run(options) {
   const candidateRows = (await readJson(FILES.candidates)).libraries;
   const manifest = await readJson(FILES.manifest);
   const data = await readJson(FILES.shelves, emptyShelves());
+  // Slugs an earlier surname rule gave (shelves-core correctBookSlugs) are
+  // corrected here, so the next save writes them; the builder does the same.
+  correctBookSlugs(data.books);
   const on = today();
   // Hosts skipped today by an earlier run (blocking sign or repeated failures).
   const statePath = logDir && resolve(logDir, 'hosts-skipped.json');

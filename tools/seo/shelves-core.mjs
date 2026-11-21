@@ -47,10 +47,47 @@ export function uniqueSlug(parts, id, taken) {
   return slug;
 }
 
+// Letters after a name, not a surname: "Henry Gray F.R.S." is Gray. Three or
+// more dotted capitals (F.R.S.) or a known suffix; two initials ("M. K.",
+// "M.K.") stay, as they may be given names after a surname.
+const POST_NOMINAL = /^(?:(?:\p{Lu}\.){3,}|(?:jr|sr|phd|md|frs|frcs|mrcp|dlitt|esq|ii|iii|iv)\.?)$/iu;
+const lastWord = name => String(name || '').replace(/[.,]/g, ' ').trim().split(/\s+/).pop() || '';
+const legacySurname = lastWord;
+/** The first author's surname for a book slug, ignoring post-nominal letters. */
+export function authorSurname(name) {
+  const words = String(name || '').trim().split(/[\s,]+/).filter(Boolean);
+  while (words.length > 1 && POST_NOMINAL.test(words.at(-1))) words.pop();
+  return lastWord(words.join(' '));
+}
+
 // Book slug: title plus the first author's surname (an ID suffix only on a clash).
 export function bookSlug(book, taken) {
-  const author = String(book.authors?.[0] || '').replace(/[.,]/g, ' ').trim().split(/\s+/).pop() || '';
+  const author = authorSurname(book.authors?.[0]);
   return uniqueSlug([[book.title, author].filter(Boolean).join(' ')], book.bookKey, taken);
+}
+
+/**
+ * Book slugs given by the earlier surname rule, which read post-nominal
+ * letters as the surname ("grays-anatomy-s"), corrected to the current rule
+ * ("grays-anatomy-gray"). Only a slug exactly as the earlier rule made it is
+ * changed, and only to a slug no other book has; every other slug is kept.
+ * Applied by the page builder and on loading the data file, so it holds
+ * whichever version of the checker last saved the file. Returns the changes.
+ */
+export function correctBookSlugs(books) {
+  const changes = [];
+  const taken = new Set(Object.values(books || {}).map(details => details.slug));
+  for (const key of Object.keys(books || {}).sort()) {
+    const details = books[key], first = details.authors?.[0];
+    const old = legacySurname(first), current = authorSurname(first);
+    if (old === current || details.slug !== slugify([details.title, old].filter(Boolean).join(' '))) continue;
+    const slug = slugify([details.title, current].filter(Boolean).join(' '));
+    if (!slug || taken.has(slug)) continue;
+    taken.delete(details.slug); taken.add(slug);
+    changes.push({ bookKey: key, from: details.slug, to: slug });
+    books[key] = { ...details, slug };
+  }
+  return changes;
 }
 
 // ---- Libraries -----------------------------------------------------------

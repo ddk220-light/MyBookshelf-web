@@ -282,6 +282,11 @@ test('library and book pages: shelf section, links both ways, sitemap with check
     assert.ok(page.includes(`href="/app/books/${encodeURIComponent(book.bookKey)}">Check my library</a>`));
     assert.ok(page.includes(`href="/select/srs-central-library?book=${encodeURIComponent(book.bookKey)}"`));
     assert.ok(page.includes('A short description &lt;b&gt;with&lt;/b&gt; &quot;quotes&quot;.') && page.includes('Description from <a href="https://openlibrary.org/works/'));
+    // Open Library's earliest listed edition is not shown (often a reprint year).
+    assert.ok(!page.includes('Earliest edition') && !page.includes('1999'));
+    // The top navigation links the book index on every public page.
+    assert.match(page, /<nav aria-label="Main navigation">.*<a href="\/books">Books<\/a>.*<\/nav>/);
+    assert.match(srs, /<nav aria-label="Main navigation">.*<a href="\/books">Books<\/a>.*<\/nav>/);
     const bookData = JSON.parse(page.match(/<script type="application\/ld\+json">([^<]+)<\/script>/)[1]);
     const ld = bookData.find(item => item['@type'] === 'Book');
     assert.deepEqual([ld.name, ld.author[0].name, ld.isbn, ld.url], [book.details.title, book.details.authors[0], '9788173711466', origin + book.path]);

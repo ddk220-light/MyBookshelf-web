@@ -22,6 +22,38 @@ source, catalog link); fields the directory lacks are left out, and there is no
 official website on generated pages because the directory has none. Book facts
 come from Open Library as stored by the checker. The build needs no network.
 
+### What the pages show
+
+- **Place** (`tools/seo/public-place.mjs`, one rule for every public page): the
+  city the directory's source publishes, or the place index's city when it
+  matched that city or the published address names it (a city with the
+  district's name first: Prayagraj, Kupwara). Nothing that looks like a street,
+  road, colony, building or number is shown as a city. Else the district, when
+  it is published, a PIN code in the library's evidence lies in it, or the
+  address names it: shown as the town when the address names it, else as
+  "<district> district". Else the one district of the state that a part of the
+  published address names. Else the state only. Never from a library's name.
+- **States** have one spelling (`canonicalRegion`, server/public-v2/geography.js):
+  "&" is "and", and older Union Territory names are today's.
+- **Addresses** are the directory's, with parts the source ran together
+  separated ("BhopalBarkeri Kalan" -> "Bhopal, Barkeri Kalan") and a repeated
+  part dropped.
+- **Titles** about 60 characters: the library's name and city (or the book's
+  title and first author) first, then "catalog" (or "find it in a library"),
+  with " | MyBookshelf" only when it still fits. Descriptions fit 155
+  characters and end at a full sentence (shorter forms are chosen, never cut).
+- **Book titles** are shown in title case ("Malgudi days" -> "Malgudi Days";
+  a word with other capitals is never changed). Open Library's earliest edition
+  year is not shown: it is often a reprint.
+- **Library structured data**: the page's URL, and a PostalAddress with the
+  published library or campus address, its PIN when it has exactly one, the
+  town shown, the state and IN. No official website (the directory has none).
+- **Book slugs**: title and first author's surname; post-nominal letters
+  ("F.R.S.", "Jr.") are not a surname. `correctBookSlugs` changes only a slug
+  the earlier rule made ("grays-anatomy-s" -> "grays-anatomy-gray"), in the
+  builder and when the checker loads the data file; vercel.json redirects the
+  old address.
+
 ## The check
 
 `tools/seo/library-shelves.mjs run` uses the same lookup as the app's book page
