@@ -22,14 +22,38 @@
 // Never a library's name: "Air Force School Jaisalmer" is not evidence of a
 // state (data/india-administrative-aliases.json: never infer from a name).
 //
+// The same file also holds `places`: the town (city) and address an Indian
+// library publishes on its own catalog page, for libraries whose source entry
+// has none (directory.js applies them only where the source has no city or no
+// address). Only the labelled "City" and "Address" fields of the library's
+// e-Granthalaya page count, from the saved contact capture or a saved copy of
+// the page (SAVED_PAGES), each recorded with its URL, date and file. A city
+// is kept only when it is one place name (no comma, slash, number, street,
+// acronym or state name) and, when the place index puts that name only in
+// another state, the published address names it too; nothing is taken when the address's PIN or state name points
+// to another state. Never from a library's name, never a guess between parts.
+//
 //   node tools/directory/india-regions.mjs
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { looksLikeStreet } from '../seo/public-place.mjs';
+import { parseContact } from './egranthalaya-contacts.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const CONTACTS = 'docs/research/india-library-regions/egranthalaya-contacts.json';
 export const OUTPUT = 'server/data/india-library-regions.json';
+// Saved copies of a library's own e-Granthalaya home page (its "Contact
+// Details" block as served), for libraries outside the contact capture.
+// Provenance: server/test/fixtures/egranthalaya/README.md.
+export const SAVED_PAGES = [
+  { libraryId: 'egranthalaya:jklibraries-srsjammu', file: 'server/test/fixtures/egranthalaya/srsjammu-form.html',
+    sourceUrl: 'https://eg4.nic.in/OPAC/Default.aspx?CL_NAME=JKLIBRARIES&LIB_CODE=SRSJAMMU', observedAt: '2026-11-19' },
+  { libraryId: 'egranthalaya:uplibraries-dlsitapur', file: 'server/test/fixtures/egranthalaya/dlsitapur-form.html',
+    sourceUrl: 'https://eg4.nic.in/OPAC/Default.aspx?CL_NAME=UPLIBRARIES&LIB_CODE=DLSITAPUR', observedAt: '2026-11-19' },
+  { libraryId: 'egranthalaya:pylib-rrlpy', file: 'server/test/fixtures/egranthalaya/rrlpy-form.html',
+    sourceUrl: 'https://eg4.nic.in/OPAC/Default.aspx?CL_NAME=PYLIB&LIB_CODE=RRLPY', observedAt: '2026-11-12' },
+];
 const read = (path) => JSON.parse(readFileSync(resolve(ROOT, path), 'utf8'));
 
 export function createResolver({ places, aliases }) {
@@ -132,8 +156,80 @@ export function createResolver({ places, aliases }) {
     return [...found];
   };
 
+  // Words a city field holds that are not a town.
+  const NOT_TOWN = new Set([...GENERIC, 'e library', 'elibrary', 'nil', 'none', 'not available', 'other', 'others', 'headquarters', 'hq']);
+  const titleCase = (text) => text.toLowerCase().replace(/(^|[\s.'-])(\p{Ll})/gu, (_, before, letter) => before + letter.toUpperCase());
+  /** The published city field as a town, or { rejected } with the reason. */
+  const townOf = (value, region, address) => {
+    let city = String(value || '').replace(/\s+/g, ' ').trim().replace(/[\s.,;:-]+$/, '');
+    // A PIN typed after the town ("Kangra-177108") is the PIN, not the town.
+    city = city.replace(/[\s-]*(?<!\d)[1-9]\d{2}\s?\d{3}$/, '').trim();
+    if (!city) return { rejected: 'no city published' };
+    // "KABIRDHAM (CHHATTISGARH)": a trailing state in brackets is dropped when it is the library's state.
+    const bracket = city.match(/^(.*?)\s*\(([^)]*)\)$/);
+    if (bracket && normalizeState(bracket[2]) === region) city = bracket[1].trim();
+    if (/[,/;&()|+]/.test(city)) return { rejected: `several parts (${city}): no guess between them` };
+    if (looksLikeStreet(city)) return { rejected: `not a town (${city})` };
+    if ((city.match(/\p{L}/gu) || []).length < 3) return { rejected: `not a town (${city})` };
+    if (/^\p{Lu}{2,4}$/u.test(city) && !placeStates.has(norm(city))) return { rejected: `an abbreviation (${city})` };
+    if (NOT_TOWN.has(norm(city)) || /\b(?:region|zone|division)\b/i.test(city)) return { rejected: `not a town (${city})` };
+    // A word with no vowel is an abbreviation ("BBSR", "NTPC", "BB Cantt"); a
+    // last word of one letter is a cut-off value ("North West B").
+    const words = city.split(/[\s-]+/);
+    if (words.some((word) => /^[A-Za-z]{2,}$/.test(word) && !/[aeiouy]/i.test(word))) return { rejected: `an abbreviation (${city})` };
+    if (words.length > 1 && /^[A-Za-z]$/.test(words.at(-1))) return { rejected: `cut off (${city})` };
+    if (normalizeState(city) && !placeStates.has(norm(city))) return { rejected: `a state name (${city})` };
+    const states = new Set([...(placeStates.get(norm(city)) || []), ...(districtStates.get(norm(city)) || [])]);
+    // The place index holds about 7,700 places, so a town it puts only in another
+    // state may still lie in this one (Dwarka, Delhi): kept when the published
+    // address names it too, else not used ("NOIDA" for a Karauli school).
+    if (states.size && !states.has(region) && !` ${norm(address)} `.includes(` ${norm(city)} `))
+      return { rejected: `the place index puts ${city} only in ${[...states].join(', ')}, and the address does not name it` };
+    // Capitals as a name is written: "BATHINDA" -> "Bathinda", "Bargi nagar" -> "Bargi Nagar".
+    const shown = city === city.toUpperCase() ? titleCase(city) : city.replace(/(^|[\s-])(\p{Ll})/gu, (_, before, letter) => before + letter.toUpperCase());
+    return { city: shown };
+  };
+  /**
+   * The town, address and PIN a library publishes on its own catalog page,
+   * for the fields its source entry lacks: { city?, address?, pin?, evidence }
+   * or { unresolved }. `region` is the library's state (source or filled).
+   */
+  function resolvePlace(entry, page, region) {
+    if (!page || page.outcome !== 'answered') return { unresolved: 'no published contact page' };
+    if (!region) return { unresolved: 'no state: the town is not used without one' };
+    const address = String(page.address || '').replace(/\s+/g, ' ').trim();
+    const usable = (address.match(/\p{L}/gu) || []).length >= 3 ? address : '';
+    const text = [usable, page.city].filter(Boolean).join(', ');
+    const pinEvidence = fromPins(pinsIn(text));
+    if (pinEvidence && pinEvidence.region !== region && !SUCCESSOR[`${region}|${pinEvidence.region}`] && !SUCCESSOR[`${pinEvidence.region}|${region}`])
+      return { unresolved: `PIN ${pinEvidence.pins.join(', ')} is in ${pinEvidence.region}, not ${region}` };
+    const named = statesNamedIn(text).filter((state) => state !== region && !SUCCESSOR[`${region}|${state}`] && !SUCCESSOR[`${state}|${region}`]);
+    if (named.length && !statesNamedIn(text).includes(region)) return { unresolved: `the address names ${named.join(', ')}, not ${region}` };
+    // Without a PIN or the state's name to support it, an address whose place
+    // names all lie in other states is not this library's ("Navodaya
+    // Vidyalaya Samiti, Noida" for a school in Purola).
+    const supported = (pinEvidence && (pinEvidence.region === region || SUCCESSOR[`${region}|${pinEvidence.region}`] || SUCCESSOR[`${pinEvidence.region}|${region}`]))
+      || statesNamedIn(text).includes(region);
+    const places = statesOfPlaces(text);
+    if (!supported && places.matched.length && !places.union.has(region)) return { unresolved: `the address names ${places.matched.join(', ')}, which the place index puts only in ${[...places.union].join(', ')}` };
+    const out = {};
+    const town = entry.city ? null : townOf(page.city, region, usable);
+    if (town?.city) out.city = town.city;
+    if (!entry.address && usable) {
+      out.address = usable;
+      out.addressScope = norm(usable) === norm(town?.city || page.city) ? 'locality' : 'library';
+      const pins = pinsIn(usable);
+      if (pins.length === 1 && fromPins(pins)) out.pin = pins[0];
+    }
+    if (!out.city && !out.address) return { unresolved: town?.rejected || (entry.city && entry.address ? 'source has a city and an address' : 'no usable address') };
+    return { ...out, evidence: { kind: 'published-contact', sourceUrl: page.sourceUrl, observedAt: page.observedAt, file: page.file },
+      ...(town?.rejected ? { cityRejected: town.rejected } : {}) };
+  }
+
   /** Region evidence for one entry, or { unresolved } with the reason. */
-  return function resolveRegion(entry, contact) {
+  resolveRegion.place = resolvePlace;
+  return resolveRegion;
+  function resolveRegion(entry, contact) {
     const published = contact?.outcome === 'answered' ? contact : null;
     const addressText = [published?.address, published?.city, entry.address].filter(Boolean).join(', ');
     const pins = pinsIn(addressText);
@@ -188,12 +284,38 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1
     else unresolved[entry.id] = { listed: allowlist.has(entry.id), reason: result.unresolved };
   }
   const listedMissing = Object.entries(unresolved).filter(([, item]) => item.listed).length;
+  // Published towns and addresses. getAllLibraries() already has the earlier
+  // file's places applied: a city or address equal to the earlier fill is not the source's.
+  const priorPlaces = existsSync(resolve(ROOT, OUTPUT)) ? read(OUTPUT).places || {} : {};
+  const pages = new Map([...contacts].map(([id, item]) => [id, { ...item, file: CONTACTS }]));
+  for (const saved of SAVED_PAGES) {
+    if (pages.has(saved.libraryId) || !existsSync(resolve(ROOT, saved.file))) continue;
+    pages.set(saved.libraryId, { outcome: 'answered', ...parseContact(readFileSync(resolve(ROOT, saved.file), 'utf8')), ...saved });
+  }
+  const places = {}, placesUnresolved = {};
+  const byId = new Map(getAllLibraries().map((row) => [row.id, row]));
+  for (const [id, page] of pages) {
+    const entry = byId.get(id);
+    if (!entry || entry.country !== 'IN') continue;
+    const prior = priorPlaces[id] || {};
+    const source = { ...entry, city: prior.city && entry.city === prior.city ? null : entry.city,
+      address: prior.address && entry.address === prior.address ? null : entry.address };
+    const region = (filled[id] ? null : entry.region) || libraries[id]?.region || null;
+    const result = resolveRegion.place(source, page, region);
+    if (result.unresolved) placesUnresolved[id] = { listed: allowlist.has(id), reason: result.unresolved };
+    else places[id] = result;
+  }
   const output = {
     version: 1,
     basis: 'State (and an unambiguous district) for Indian directory libraries that have none, from published evidence only: the library\'s own published state field, a PIN code GeoNames places in exactly one state, exactly one state named in its published address, or address place names that share one state when two distinct parts agree or one names a district (never a lone town name). Never from a library\'s name. Generated by tools/directory/india-regions.mjs; do not edit by hand.',
-    counts: { filled: Object.keys(libraries).length, unresolved: Object.keys(unresolved).length, unresolvedListed: listedMissing },
+    placesBasis: 'Town (city), address and PIN for Indian libraries whose source entry has none: only the labelled City and Address fields the library publishes on its own e-Granthalaya page, with the page URL, date and saved file. A city with several parts, a number, a street, an abbreviation or a state name is not used, nor one the place index puts only in another state; nothing is used when the address\'s PIN or state points to another state. Never from a library\'s name.',
+    counts: { filled: Object.keys(libraries).length, unresolved: Object.keys(unresolved).length, unresolvedListed: listedMissing,
+      placeCities: Object.values(places).filter((place) => place.city).length, placeAddresses: Object.values(places).filter((place) => place.address).length,
+      placesUnresolved: Object.keys(placesUnresolved).length },
     libraries: Object.fromEntries(Object.entries(libraries).sort()),
     unresolved: Object.fromEntries(Object.entries(unresolved).sort()),
+    places: Object.fromEntries(Object.entries(places).sort()),
+    placesUnresolved: Object.fromEntries(Object.entries(placesUnresolved).sort()),
   };
   writeFileSync(resolve(ROOT, OUTPUT), JSON.stringify(output, null, 2) + '\n');
   console.log(JSON.stringify(output.counts));

@@ -40,6 +40,35 @@ node tools/directory/india-regions.mjs
 A library's name is never evidence: "Air Force School Jaisalmer" says nothing
 about where its library is.
 
+## Towns and addresses (`places`)
+
+Approved by the owner on 21 November 2026: published cities from the
+libraries' own catalog pages go into the directory, with the source recorded.
+The same generator writes `places` into `server/data/india-library-regions.json`:
+the labelled City and Address fields (and the address's PIN, when it has one
+that GeoNames places in a state) that a library publishes on its own
+e-Granthalaya page, for Indian libraries whose source entry has no city or no
+address. `server/services/directory.js` applies them only where the source has
+none, with the page as `addressSourceUrl`; the public place rule
+(`tools/seo/public-place.mjs`) then shows the town, and the app's library
+picker, side panel and book card show it as the library's city.
+
+Evidence: the contact capture below (1,108 pages) and saved copies of a
+library's own page (`SAVED_PAGES` in the generator, provenance in
+`server/test/fixtures/egranthalaya/README.md`; SRS Central Library, Jammu).
+Each entry records the page URL, the date and the file it came from.
+
+A city is used only when it is one place name: not several parts ("Srinagar/
+Jammu", "Kalyani, Nadia, W.B."), a street, a number, an abbreviation ("JNU",
+"BBSR"), a state, a region or a cut-off value. A PIN typed after the town is
+dropped. When the place index puts the name only in another state, the
+published address must name it too (Dwarka, Delhi counts; "NOIDA" for a
+Karauli school does not). Nothing is used when the page's PIN or state name
+points to another state, when its place names all lie in other states with no
+PIN or state to support it, or when the library has no state. On 21 November
+2026 this added 1,052 towns and 1,098 addresses; 10 pages gave nothing
+(`placesUnresolved`) and 49 published city fields were not used as a town (`cityRejected`; their addresses still were).
+
 ## Address capture
 
 `node tools/directory/egranthalaya-contacts.mjs docs/research/india-library-regions/egranthalaya-contacts.json --resume`

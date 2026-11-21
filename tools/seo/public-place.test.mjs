@@ -105,8 +105,12 @@ test('the place rule on the directory: the libraries the live pages showed wrong
   assert.equal(shown('indcat:indcat-andh-530003'), 'Visakhapatnam, Andhra Pradesh');
   assert.equal(shown('egranthalaya:jklibraries-dlkupwara'), 'Kupwara, Jammu and Kashmir');
   assert.equal(shown('libman:276'), 'Pattan, Jammu and Kashmir');
-  // No published place for SRS Central Library in the directory: the state only.
-  assert.equal(shown('egranthalaya:jklibraries-srsjammu'), 'Jammu and Kashmir');
+  // SRS Central Library publishes its city on its own e-Granthalaya page
+  // (server/data/india-library-regions.json `places`, tools/directory/india-regions.mjs).
+  assert.equal(shown('egranthalaya:jklibraries-srsjammu'), 'Jammu, Jammu and Kashmir');
+  assert.equal(shown('egranthalaya:assembly-klasect'), 'Bengaluru, Karnataka');
+  // No published town for Meghalaya's assembly library: the state only, never from its name.
+  assert.equal(shown('egranthalaya:assembly-mlasectlib'), 'Meghalaya');
   const nliu = publicLibrary(toPublicLibrary(getLibraryById('indcat:indcat-nliu-462003')), getLibraryById('indcat:indcat-nliu-462003'));
   assert.equal(nliu.address, 'Kerwa Dam Road, Bhopal, Barkeri Kalan');
 });

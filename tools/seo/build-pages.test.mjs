@@ -255,7 +255,9 @@ test('library and book pages: shelf section, links both ways, sitemap with check
     await buildPages(out, { analytics: false, siteVerification: null, policyEffectiveDate: null }, shelf);
     const read = path => readFile(join(out, path.slice(1) + '.html'), 'utf8');
     const srs = await read('/libraries/srs-central-library');
-    assert.match(srs, /<title>SRS Central Library — catalog and book search \| MyBookshelf<\/title>/);
+    // The town its own catalog page publishes (india-library-regions.json `places`) is in the title.
+    assert.match(srs, /<title>SRS Central Library, Jammu — catalog and book search<\/title>/);
+    assert.match(srs, /<p class="eyebrow">Jammu · Jammu and Kashmir · India<\/p>/);
     assert.match(srs, /<h2 id="shelf-heading">Books found in this library’s catalog<\/h2>/);
     assert.equal((srs.match(/<li class="shelf-book">/g) || []).length, 6);
     assert.ok(srs.includes('Found in the catalog · checked 22 November 2026'));

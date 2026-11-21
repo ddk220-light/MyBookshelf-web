@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createResolver } from './india-regions.mjs';
+import { createResolver, SAVED_PAGES } from './india-regions.mjs';
 import { parseContact, withoutContactChannels } from './egranthalaya-contacts.mjs';
 import { getAllLibraries, getLibraryById } from '../../server/services/directory.js';
 
@@ -115,4 +115,60 @@ test('the generated regions file only fills libraries without a source region, f
   }
   assert.equal(regions.counts.filled, Object.keys(regions.libraries).length);
   assert.equal(regions.counts.unresolved, Object.keys(regions.unresolved).length);
+});
+
+test('a published town and address: one place name from the library\'s own page, never a guess or a name', () => {
+  const page = { outcome: 'answered', sourceUrl: 'https://eg4.nic.in/x', observedAt: '2026-11-15', file: 'contacts.json' };
+  const place = (city, address, region, entry = { id: 'egranthalaya:x' }) => resolve.place(entry, { ...page, city, address }, region);
+  const jammu = place('Jammu', 'Kachi Chowni Jammu, J&K - 180001', 'Jammu and Kashmir');
+  assert.deepEqual(jammu, { city: 'Jammu', address: 'Kachi Chowni Jammu, J&K - 180001', addressScope: 'library', pin: '180001',
+    evidence: { kind: 'published-contact', sourceUrl: 'https://eg4.nic.in/x', observedAt: '2026-11-15', file: 'contacts.json' } });
+  // Capitals as a name is written; a PIN or the library's state after the town is dropped.
+  assert.equal(place('BATHINDA', 'BATHINDA MIL STN,PUNJAB-151004', 'Punjab').city, 'Bathinda');
+  assert.equal(place('Kangra-177108', 'Balahar, Distt-Kangra-177108 Himachal Pradesh', 'Himachal Pradesh').city, 'Kangra');
+  assert.equal(place('Surendranagar 363310', '.', 'Gujarat').city, 'Surendranagar');
+  // Not a town: several parts, a street, a number, an abbreviation, a state, a cut-off value.
+  for (const [city, why] of [['Srinagar/ Jammu', /several parts/], ['Kalyani, Nadia, W.B.', /several parts/], ['Sardar Patel Marg', /not a town/],
+    ['56th Battalion', /not a town/], ['JNU', /abbreviation/], ['BBSR', /abbreviation/], ['NTPC Jamnipali Korba', /abbreviation/],
+    ['Ladakh', /state name/], ['LUCKNOW REGION', /not a town/], ['North West B', /cut off/], ['e-Library', /not a town/]]) {
+    const result = place(city, 'Some Place 180001', 'Jammu and Kashmir');
+    assert.equal(result.city, undefined, city);
+    assert.match(result.cityRejected, why, city);
+  }
+  // A town the place index puts only in another state counts only when the address names it too.
+  assert.equal(place('Dwarka', 'Sector 5, Dwarka, Delhi - 110 075', 'Delhi').city, 'Dwarka');
+  assert.match(place('NOIDA', 'Jatnagla, Tel-Hindaun, Dist-Karauli (322236) Rajasthan', 'Rajasthan').cityRejected, /does not name it/);
+  // Nothing from a page whose PIN, state or places point elsewhere, or without a state.
+  assert.match(place('Chennai', 'Adyar, Chennai 600020', 'Kerala').unresolved, /PIN 600020 is in Tamil Nadu/);
+  assert.match(place('NEW DELHI', 'Yetapaka, ASR Dist.', 'Andhra Pradesh').unresolved, /names Delhi/);
+  assert.match(place('Bukhara', 'Navodaya Vidyalaya Samiti, Noida', 'Uttarakhand').unresolved, /only in Uttar Pradesh/);
+  assert.match(place('Chandigarh', 'Sector 1, Chandigarh', null).unresolved, /no state/);
+  // The source's own city and address always win; a name is never evidence.
+  const kept = place('Lucknow', 'Hazratganj, Lucknow 226001', 'Uttar Pradesh', { id: 'x', city: 'Lucknow', address: 'Kaiserbagh, Lucknow' });
+  assert.match(kept.unresolved, /source has a city and an address/);
+  assert.match(resolve.place({ id: 'x', name: 'District Library Jammu' }, null, 'Jammu and Kashmir').unresolved, /no published contact page/);
+});
+
+test('the generated places: only where the source has none, each with its page, date and file, and applied by the directory', () => {
+  assert.equal(regions.counts.placeCities, Object.values(regions.places).filter((place) => place.city).length);
+  assert.equal(regions.counts.placeAddresses, Object.values(regions.places).filter((place) => place.address).length);
+  const files = new Set(['docs/research/india-library-regions/egranthalaya-contacts.json', ...SAVED_PAGES.map((page) => page.file)]);
+  for (const [id, place] of Object.entries(regions.places)) {
+    const entry = getLibraryById(id);
+    assert.equal(entry?.country, 'IN', id);
+    assert.ok(entry.region, id);
+    assert.match(place.evidence.sourceUrl, /^https:\/\//, id);
+    assert.match(place.evidence.observedAt, /^2026-\d\d-\d\d/, id);
+    assert.ok(files.has(place.evidence.file), id);
+    if (place.city) assert.equal(entry.city, place.city, id); // the source had none, so the published town shows
+    if (place.address) { assert.equal(entry.address, place.address, id); assert.equal(entry.addressSourceUrl, place.evidence.sourceUrl, id); }
+  }
+  // SRS Central Library: the city its own page publishes, from the saved copy of that page.
+  const srs = regions.places['egranthalaya:jklibraries-srsjammu'];
+  assert.equal(srs.city, 'Jammu');
+  assert.equal(srs.evidence.file, 'server/test/fixtures/egranthalaya/srsjammu-form.html');
+  assert.equal(parseContact(readFileSync(new URL(`../../${srs.evidence.file}`, import.meta.url), 'utf8')).city, 'Jammu');
+  // A library whose source has its own city keeps it.
+  assert.equal(regions.places['egranthalaya:pylib-rrlpy'], undefined);
+  assert.equal(getLibraryById('egranthalaya:pylib-rrlpy').city, 'Puducherry');
 });

@@ -43,6 +43,18 @@ for (const [id, fill] of Object.entries(indiaRegions.libraries)) {
   entry.region = fill.region;
   if (fill.district && !entry.district) entry.district = fill.district;
 }
+// The town and address an Indian library publishes on its own catalog page
+// (same file, `places`), only where the source entry has none. A source value always wins.
+for (const [id, place] of Object.entries(indiaRegions.places || {})) {
+  const entry = merged.get(id);
+  if (!entry || entry.country !== 'IN') continue;
+  if (place.city && !entry.city) entry.city = place.city;
+  if (place.address && !entry.address) {
+    entry.address = place.address;
+    entry.addressScope = place.addressScope;
+    entry.addressSourceUrl = place.evidence.sourceUrl;
+  }
+}
 const entries = [...merged.values()];
 const byId = new Map(entries.map((entry) => [entry.id, entry]));
 // The one place the India allowlist applies: every way of finding a library

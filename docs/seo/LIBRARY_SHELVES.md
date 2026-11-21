@@ -33,6 +33,10 @@ come from Open Library as stored by the checker. The build needs no network.
   address names it: shown as the town when the address names it, else as
   "<district> district". Else the one district of the state that a part of the
   published address names. Else the state only. Never from a library's name.
+  The directory's city and address include the town and address a library
+  publishes on its own e-Granthalaya page where the source has none
+  (`places` in server/data/india-library-regions.json, with page, date and file;
+  docs/research/india-library-regions/README.md).
 - **States** have one spelling (`canonicalRegion`, server/public-v2/geography.js):
   "&" is "and", and older Union Territory names are today's.
 - **Addresses** are the directory's, with parts the source ran together
