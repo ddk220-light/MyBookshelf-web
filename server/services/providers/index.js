@@ -91,7 +91,7 @@ function primaryProvider(library) {
         checkRecordAvailability: recordId => visakhapatnam.checkPublicRecordAvailability(library, recordId) };
     case 'bc':
     case 'bibliocommons':
-      // The gateway's keyword search (any field), print rows.
+      // The gateway's keyword search (any field), every row with its format.
       return { checkAvailability: (isbn, title, author) => bibliocommons.checkPublicAvailability(library.slug, isbn, title, author),
         search: term => bibliocommons.searchResultRows(library.slug, term), login: (card, pin) => bibliocommons.login(library.slug, card, pin) };
     case 'koha': {

@@ -57,11 +57,14 @@ export function shelfPages({ shelves, pool, removed } = shelfData(), entries = g
 // (shared/us-book-pool.json): popular books checked live on a reader's tap.
 export function checkData(dir = root) {
   const read = (path, fallback) => existsSync(resolve(dir, path)) ? JSON.parse(readFileSync(resolve(dir, path), 'utf8')) : fallback;
-  return { pages: read('shared/seo-us-libraries.json', { state: 'California', libraries: [], leftOut: [] }), pool: read('shared/us-book-pool.json', null) };
+  // A library on the US list's removed list (server/data/us-catalogs-listed.json)
+  // never has a page: it must be left out here too.
+  return { pages: read('shared/seo-us-libraries.json', { state: 'California', libraries: [], leftOut: [] }), pool: read('shared/us-book-pool.json', null),
+    removed: (read('server/data/us-catalogs-listed.json', { removed: [] }).removed || []).map(item => item.id) };
 }
-export function checkPages({ pages, pool } = checkData(), entries = getAllLibraries(), publication = manifest) {
+export function checkPages({ pages, pool, removed = [] } = checkData(), entries = getAllLibraries(), publication = manifest) {
   if (!pool || !pages.libraries?.length) return { libraries: [], books: [], state: pages?.state || null, date: null };
-  return checkPublication({ entries, toPublic: toPublicLibrary, manifest: publication, pages, pool });
+  return checkPublication({ entries, toPublic: toPublicLibrary, manifest: publication, pages, pool, removed });
 }
 // The script that runs the checks, written to /library-check.js.
 export const CHECK_SCRIPT_PATH = '/library-check.js';

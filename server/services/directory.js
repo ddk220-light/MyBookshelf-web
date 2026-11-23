@@ -4,6 +4,7 @@ import discovered from '../data/discovered-catalogs.json' with { type: 'json' };
 import presentationReviews from '../../data/library-presentation-reviews.json' with { type: 'json' };
 import indiaAllowlist from '../data/india-catalogs-listed.json' with { type: 'json' };
 import indiaRegions from '../data/india-library-regions.json' with { type: 'json' };
+import usAllowlist from '../data/us-catalogs-listed.json' with { type: 'json' };
 const NEARBY_CUTOFF_KM = 80.5;
 
 function canonicalPlatform(platform) {
@@ -55,16 +56,35 @@ for (const [id, place] of Object.entries(indiaRegions.places || {})) {
     entry.addressSourceUrl = place.evidence.sourceUrl;
   }
 }
+// US entries' state, town and position from published evidence
+// (server/data/us-catalogs-listed.json `places`: the IMLS Public Libraries
+// Survey, the catalog's own branch list), never from a library's name. These
+// correct a wrong source value too (Cedar Springs and Croton had been placed
+// by a geocoded name in Texas and New Jersey).
+for (const [id, place] of Object.entries(usAllowlist.places || {})) {
+  const entry = merged.get(id);
+  if (!entry || entry.country !== 'US') continue;
+  for (const field of ['region', 'city', 'lat', 'lon']) if (place[field] !== undefined) entry[field] = place[field];
+}
 const entries = [...merged.values()];
 const byId = new Map(entries.map((entry) => [entry.id, entry]));
-// The one place the India allowlist applies: every way of finding a library
-// (search, browse, near me, public API listings) reads `listed`. An Indian
-// library is offered only when server/data/india-catalogs-listed.json lists it
-// (a verified book or an e-Granthalaya audit that found books). Unlisted IDs
-// still resolve, so a saved choice or a direct link keeps working. Libraries
-// outside India are not affected.
+// The one place the listing rules apply: every way of finding a library
+// (search, browse, near me, public API listings) reads `listed`. Unlisted IDs
+// still resolve, so a saved choice or a direct link keeps working.
+//  - India: offered only when server/data/india-catalogs-listed.json lists it
+//    (a verified book or an e-Granthalaya audit that found books).
+//  - United States: offered only when server/data/us-catalogs-listed.json
+//    lists it and it is not in that file's `removed` list (the 232 entries
+//    from before the list stay as legacy until there is a reason to remove
+//    one; a new entry is listed once verified).
+//  - Every other country: not affected.
 const indiaListed = new Set(indiaAllowlist.libraryIds);
-const listed = entries.filter((entry) => entry.country !== 'IN' || indiaListed.has(entry.id));
+const usListed = new Set(usAllowlist.libraryIds);
+const usRemoved = new Set((usAllowlist.removed || []).map(item => item.id));
+const usVerified = new Set(usAllowlist.verified || []);
+const offered = entry => entry.country === 'IN' ? indiaListed.has(entry.id)
+  : entry.country === 'US' ? usListed.has(entry.id) && !usRemoved.has(entry.id) : true;
+const listed = entries.filter(offered);
 const indiaAuditOnly = new Set(indiaAllowlist.egranthalayaAuditOnly || []);
 /** Why a library is offered when finding one: 'verified', 'egranthalaya-audit',
  * 'not-listed' (Indian, resolvable by ID only) or 'outside-india'. */
@@ -73,6 +93,15 @@ export function indiaListing(entry) {
   if (entry.country !== 'IN') return 'outside-india';
   if (!indiaListed.has(entry.id)) return 'not-listed';
   return indiaAuditOnly.has(entry.id) ? 'egranthalaya-audit' : 'verified';
+}
+/** A US library's listing: 'verified', 'legacy', 'removed' or 'not-listed'
+ * (the last two resolve by ID only); 'outside-us' for any other library. */
+export function usListing(entry) {
+  if (!entry) return null;
+  if (entry.country !== 'US') return 'outside-us';
+  if (usRemoved.has(entry.id)) return 'removed';
+  if (!usListed.has(entry.id)) return 'not-listed';
+  return usVerified.has(entry.id) ? 'verified' : 'legacy';
 }
 export function getAllLibraries() { return entries; }
 export function getListedLibraries() { return listed; }

@@ -25,6 +25,25 @@ test('robots rules: specific agent group, longest rule, Allow on ties, Crawl-del
   assert.ok(robotsRules(visakhapatnam).delay >= 20_000);
 });
 
+test('paths are matched literally and case-sensitively (RFC 9309): /Polaris/search/ does not block /polaris/search/', () => {
+  // The vendor-hosted Polaris template (gcpl.polarislibrary.com, 23 November
+  // 2026) names the capital-P path; the catalogs serve lowercase /polaris/.
+  // Owner decision, 23 November 2026: follow the file strictly and literally.
+  const polaris = robotsRules('User-agent: *\nDisallow: /Polaris/search/\n');
+  assert.equal(robotsAllowed(polaris, 'https://c.example/Polaris/search/searchresults.aspx?term=x'), false);
+  assert.equal(robotsAllowed(polaris, 'https://c.example/Polaris/search/'), false);
+  assert.equal(robotsAllowed(polaris, 'https://c.example/polaris/search/searchresults.aspx?term=x'), true);
+  assert.equal(robotsAllowed(polaris, 'https://c.example/POLARIS/SEARCH/'), true);
+  // The other way round, and with a wildcard: still literal.
+  assert.equal(robotsAllowed(robotsRules('User-agent: *\nDisallow: /polaris/\n'), 'https://c.example/Polaris/search/'), true);
+  assert.equal(robotsAllowed(robotsRules('User-agent: *\nDisallow: /*/Search/\n'), 'https://c.example/polaris/search/'), true);
+  assert.equal(robotsAllowed(robotsRules('User-agent: *\nDisallow: /*/Search/\n'), 'https://c.example/polaris/Search/'), false);
+  // The query string is literal too.
+  assert.equal(robotsAllowed(robotsRules('User-agent: *\nDisallow: /*?*Term=\n'), 'https://c.example/search?term=x'), true);
+  // Field names and the agent token are not case-sensitive.
+  assert.equal(robotsAllowed(robotsRules('USER-AGENT: MyBookShelf\nDISALLOW: /Polaris/\n'), 'https://c.example/Polaris/x'), false);
+});
+
 test('policy reads: one read per origin, 4xx allows, 5xx refuses for a while, network errors allow briefly', async () => {
   let clock = 0;
   const reads = [];

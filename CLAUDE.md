@@ -12,4 +12,6 @@ restrictions, robots.txt and reduced motion. Where a catalog's terms do not
 allow storing availability (BiblioCommons, 23 November 2026;
 server/data/catalog-policies.json), nothing is stored or cached for it: every
 check is one live request. Indian libraries are offered only
-when `server/data/india-catalogs-listed.json` lists them.
+when `server/data/india-catalogs-listed.json` lists them, US libraries only
+when `server/data/us-catalogs-listed.json` lists them and does not remove them.
+A catalog row whose format is video or music is never a find.

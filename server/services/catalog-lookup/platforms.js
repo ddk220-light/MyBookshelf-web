@@ -165,6 +165,11 @@ const SHARED_HOSTS = {
   calil: 'api.calil.jp',
 };
 
+/** The shared catalog host a platform's checks are sent to (BiblioCommons' gateway, ...), or null. */
+export function sharedHostFor(entry) {
+  return SHARED_HOSTS[platformId(entry)] || null;
+}
+
 // "Host" is the provider origin, so libraries on one shared host share one
 // circuit and one concurrency limit.
 export function hostFor(entry) {

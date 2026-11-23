@@ -317,6 +317,34 @@ test('VuFind, LIBMAN and BiblioCommons: one search request marks by title', asyn
   assert.deepEqual([calls.length, items[0].bookKey, items[0].outcome], [1, 'k', 'found']);
 });
 
+test('marks follow the book check\'s row rules: a film or soundtrack never marks a book, and the mark links the print book by its author', async () => {
+  global.fetch = async url => response(url, { catalogSearch: { pagination: { count: 4 }, results: ['S1', 'S2', 'S3', 'S4'].map(representative => ({ representative })) },
+    entities: { bibs: {
+      S1: { briefInfo: { title: 'Killers of the Flower Moon', format: 'DVD' } },
+      S2: { briefInfo: { title: 'Killers of the Flower Moon', subtitle: 'Original Motion Picture Soundtrack', format: 'MUSIC_CD' } },
+      S3: { briefInfo: { title: 'Killers of the Flower Moon', subtitle: 'A Study Guide', authors: ['Guides, Gale'], format: 'BK' } },
+      S4: { briefInfo: { title: 'Killers of the Flower Moon', subtitle: 'The Osage Murders', authors: ['Grann, David'], format: 'BK' } } } } });
+  const bc = { id: 'bc:smcl', platform: 'bc', slug: 'smcl', capabilities: ['availability'], catalogUrl: 'https://smcl.bibliocommons.com' };
+  const items = await collect(harness().lookup.markResults({ library: bc, query: 'killers of the flower moon',
+    books: [{ bookKey: 'k', title: 'Killers of the Flower Moon', authors: ['David Grann'] }, { bookKey: 'film', title: 'Original Motion Picture Soundtrack' }] }));
+  assert.deepEqual(items.filter(item => item.outcome === 'found').map(item => [item.bookKey, item.catalogUrl]), [['k', 'https://smcl.bibliocommons.com/v2/record/S4']]);
+  assert.deepEqual(items.at(-1).unmatched, ['film']);
+});
+
+// San Mateo, 23 November 2026 (a 14.1 s tap): a BiblioCommons check sends
+// every request to the shared gateway, but the robots.txt read started while
+// the book resolves went to the library's own site, so the gateway's was read
+// in series before the first search on a cold instance.
+test('a check reads robots.txt early for the host it will ask: the BiblioCommons gateway, never the library\'s own site', async () => {
+  const read = [];
+  const robots = { check: async url => { read.push(new URL(url).origin); return { allowed: true, delayMs: 0 }; } };
+  const { lookup } = harness({ robots });
+  lookup.prepare({ id: 'bc:smcl', platform: 'bc', slug: 'smcl', catalogUrl: 'https://smcl.bibliocommons.com' });
+  lookup.prepare({ id: 'koha:anna', platform: 'koha', catalogUrl: 'https://opac.example.org/cgi-bin/koha/opac-main.pl' });
+  await new Promise(resolve => setImmediate(resolve));
+  assert.deepEqual(read, ['https://gateway.bibliocommons.com', 'https://opac.example.org']);
+});
+
 test('aborting a book check stops further catalog requests', async () => {
   const calls = [];
   const controller = new AbortController();

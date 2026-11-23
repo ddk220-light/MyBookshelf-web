@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getProvider } from './index.js';
+import { matchingRows, searchLibraryBook } from '../libraryBookSearch.js';
 import { checkAvailability as checkBc, checkPublicAvailability as checkBcPublic, searchResultRows, login } from './bibliocommons.js';
 import { checkAvailability as checkKoha, parseBiblioNumber } from './koha.js';
 import { checkAvailability as checkChamo, parseChamoRecord, parseChamoSearch } from './chamo.js';
@@ -38,18 +39,47 @@ test('BiblioCommons candidate metadata preserves ISBNs without inferring circula
   assert.equal(record.catalogUrl, 'https://smcl.bibliocommons.com/v2/record/S1');
 });
 
-test('BiblioCommons picks print rows from the whole search page before any row cap', async () => {
+test('BiblioCommons passes every row of the search page with the gateway\'s format code', async () => {
   // Seattle, "the hobbit": the first ten of 25 results are recordings, films,
   // e-books and graphic novels; the novel's print records come 15th to 17th.
+  // Which formats count is decided once for every catalog (rowFormats.js).
   const calls = [];
   global.fetch = async url => { calls.push(url); return response(JSON.parse(fixture('bibliocommons', 'seattle-search-the-hobbit.json')), { url }); };
   const rows = await searchResultRows('seattle', 'the hobbit');
-  assert.deepEqual(rows.map(row => [row.recordId, row.format]), [
-    ['S246C1349814', 'Graphic novel'], ['S246C1092054', 'Graphic novel'], ['S246C306534', 'Graphic novel'],
-    ['S246C395812', 'Book'], ['S246C1348703', 'Book'], ['S246C103196', 'Book'],
-    ['S246C530683', 'Book'], ['S246C212899', 'Book'], ['S246C129902', 'Book']]);
+  assert.equal(rows.length, 25);
+  assert.deepEqual(rows.slice(0, 8).map(row => [row.recordId, row.format]), [
+    ['S246C254315', 'BOOK_CD'], ['S246C385563', 'EAUDIOBOOK'], ['S246C402891', 'EAUDIOBOOK'], ['S246C1349814', 'GRAPHIC_NOVEL'],
+    ['S246C1092054', 'GRAPHIC_NOVEL'], ['S246C306534', 'GRAPHIC_NOVEL'], ['S246C847366', 'DVD'], ['S246C610459', 'DVD']]);
   assert.ok(rows.find(row => row.recordId === 'S246C395812').isbns.includes('9780618968633'));
   assert.equal(calls.length, 1);
+});
+
+test('BiblioCommons through the one library search: films and soundtracks are not finds, the novel by its author comes first', async () => {
+  global.fetch = async url => response(JSON.parse(fixture('bibliocommons', 'seattle-search-the-hobbit.json')), { url });
+  const provider = getProvider({ id: 'bc:seattle', slug: 'seattle', platform: 'bc', capabilities: ['catalogSearch', 'availability'] });
+  const result = await searchLibraryBook(provider, { title: 'The Hobbit', authors: ['J. R. R. Tolkien'] });
+  assert.equal(result.outcome, 'in_catalog');
+  // Print rows by Tolkien first (the graphic novel and the three novels),
+  // then the annotated edition; the films and soundtracks are not listed.
+  assert.deepEqual(result.matches.map(match => [match.title, match.author]), [
+    ['The Hobbit: Or There and Back Again', 'Tolkien, J. R. R.'],
+    ['The Hobbit, Or, There and Back Again', 'Tolkien, J. R. R.'],
+    ['The Hobbit, Or, There and Back Again', 'Tolkien, J. R. R.'],
+    ['The Hobbit, Or, There and Back Again', 'Tolkien, J. R. R.'],
+    ['The Annotated Hobbit: The Hobbit, Or, There and Back Again', 'Tolkien, J. R. R.']]);
+  assert.equal(result.catalogUrl, 'https://seattle.bibliocommons.com/v2/record/S246C1349814');
+  const rows = await provider.search('The Hobbit');
+  const kept = matchingRows(rows, { title: 'The Hobbit', authors: ['J. R. R. Tolkien'] });
+  assert.equal(kept.length, 19);
+  assert.deepEqual(rows.filter(row => !kept.includes(row)).map(row => row.format).sort(), ['DVD', 'DVD', 'DVD', 'DVD', 'MUSIC_CD', 'MUSIC_CD']);
+  // E-books and audiobooks are finds, listed after every print row.
+  assert.deepEqual([...new Set(kept.slice(9).map(row => row.format))].sort(), ['BOOK_CD', 'EAUDIOBOOK', 'EBOOK', 'GRAPHIC_NOVEL_DOWNLOAD']);
+  // Only the films and the soundtracks: not a find.
+  const films = JSON.parse(fixture('bibliocommons', 'seattle-search-the-hobbit.json'));
+  const bibs = films.entities.bibs;
+  films.catalogSearch.results = films.catalogSearch.results.filter(item => ['DVD', 'MUSIC_CD'].includes(bibs[item.representative].briefInfo.format));
+  global.fetch = async url => response(films, { url });
+  assert.deepEqual(await searchLibraryBook(provider, { title: 'The Hobbit' }), { outcome: 'no_match' });
 });
 
 afterEach(() => {

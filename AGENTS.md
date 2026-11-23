@@ -59,7 +59,11 @@ upstream arrive here in the next sync. README.md has the commands and layout.
   `tools/catalog-hardening/library-status.mjs`; a listed library stays listed
   when a later check fails (unless blocked), and one is removed only through
   the file's `removed` list (id, reason, date). Unlisted IDs still resolve for
-  readers who already chose them. Libraries outside India are not affected.
+  readers who already chose them. US libraries are offered only if
+  `server/data/us-catalogs-listed.json` lists them and its `removed` list
+  (id, reason, date) does not. Libraries elsewhere are not affected.
+- A catalog row whose format is video or music is never a find; audiobooks,
+  e-books and rows with no format are (`server/services/rowFormats.js`).
 - `shared/seo-libraries.json` controls the reviewed library guides;
   `shared/seo-shelves.json` the generated library shelf and book pages.
 - Never commit secrets, local environment values, account data or browser state.

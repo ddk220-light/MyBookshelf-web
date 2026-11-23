@@ -2,12 +2,12 @@ import { getProvider, withProviderRouteExecution } from '../providers/index.js';
 import { catalogOperation, withCatalogOperation, withCatalogSuboperation } from '../providers/http.js';
 import { createRobotsPolicy } from '../providers/robots.js';
 import { validateAndNormalize } from '../isbn.js';
-import { orderMatches, termKey, titleMatches } from '../libraryBookSearch.js';
+import { matchingRows, termKey } from '../libraryBookSearch.js';
 import { parsePublicBookKey } from '../../public-v2/contracts.js';
 import { runBookCheck } from './check.js';
 import { linkKind, normalizeProviderObservation } from './observation.js';
 import { answerFromCheck, answerFromResponse, couldntCheck, couldntCheckFor, isHealthFailure } from './outcome.js';
-import { PLATFORMS, REQUEST_TIMEOUT_MS, platformFor, hostFor, bookDeadlineMs, backgroundDeadlineMs, lookupV2Enabled } from './platforms.js';
+import { PLATFORMS, REQUEST_TIMEOUT_MS, platformFor, hostFor, sharedHostFor, bookDeadlineMs, backgroundDeadlineMs, lookupV2Enabled } from './platforms.js';
 import { createHostGuard } from './budget.js';
 import { createLookupRecorder, createMemoryHealthRecord, identitiesFor, askedIdentity, storedAnswer } from './record.js';
 import { createMemoryHostGate } from '../../catalog-store/hostGate.js';
@@ -60,9 +60,17 @@ function askedAt(args, fallback) {
 
 // The catalog origins a check on this directory entry reads: its catalog
 // address (`baseUrl`, else `catalogUrl`) and those of its alternate catalogs.
+// A platform whose checks all go to one shared host (BiblioCommons' gateway,
+// platforms.js) reads that host, not the library's own site: a BiblioCommons
+// check never asks <library>.bibliocommons.com, and its gateway's robots.txt
+// was read in series before the first search on a cold instance.
 function catalogOrigins(entry) {
   const origins = new Set();
-  for (const value of [entry?.baseUrl || entry?.catalogUrl, ...(entry?.alternateCatalogs || []).map(alt => alt?.baseUrl || alt?.catalogUrl)]) {
+  const shared = sharedHostFor(entry);
+  for (const value of [shared ? `https://${shared}/` : entry?.baseUrl || entry?.catalogUrl, ...(entry?.alternateCatalogs || []).map(alt => {
+    const altShared = sharedHostFor(alt);
+    return altShared ? `https://${altShared}/` : alt?.baseUrl || alt?.catalogUrl;
+  })]) {
     try {
       const url = new URL(value);
       if (url.protocol === 'https:' || url.protocol === 'http:') origins.add(url.origin);
@@ -698,7 +706,9 @@ export function createCatalogLookup({
         endRun();
         for (const book of [...pending.values()]) {
           pending.delete(book.bookKey);
-          const [row] = orderMatches(rows.filter(item => item && titleMatches(item.title, book.title)), book.title, validateAndNormalize(book.isbn13 || '') || null);
+          // The same row rules as a book check: video and music rows never
+          // mark a book, and the first row is a book row with its author.
+          const [row] = matchingRows(rows, book, { isbn: validateAndNormalize(book.isbn13 || '') || null });
           if (!row) { unmatched.push(book.bookKey); continue; }
           // The link is the book's record only when the adapter said so.
           const catalogUrl = row.catalogUrl || row.observation?.catalogUrl;

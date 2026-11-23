@@ -9,6 +9,7 @@ import { answerReason } from './holdings.js';
 import { createCatalogStore } from '../catalog-store/index.js';
 import { readCatalogStoreConfig } from '../catalog-store/config.js';
 import { createCatalogPolicy } from '../catalog-store/policy.js';
+import { createCheckBudget } from '../catalog-store/checkBudget.js';
 import { createCatalogLookup, createLookupRecorder, PLATFORMS } from '../services/catalog-lookup/index.js';
 import { catalogOperation } from '../services/providers/http.js';
 import shippedPolicies from '../data/catalog-policies.json' with { type: 'json' };
@@ -41,13 +42,15 @@ const books = {
 
 function harness({ observe = () => ({ outcome: 'available', matchKind: 'exact_isbn', recognizedExact: true }), usageLogEnabled = false,
   policies = { schemaVersion: 1, libraries: { [optedOut.id]: { storeAnswers: false, reason: 'Test', reviewedOn: '2026-11-12' } } },
-  searchCapMs, backgroundChecksEnabled = true, finishInBackground = false, bookDeadlineMs, functionWorkMs, searches = null, bookService = books } = {}) {
+  searchCapMs, backgroundChecksEnabled = true, finishInBackground = false, bookDeadlineMs, functionWorkMs, searches = null, bookService = books, checkLimits = null } = {}) {
   const pending = [];
   const defer = task => { pending.push(Promise.resolve().then(task).catch(() => {})); };
   const logged = [];
+  const counted = [];
   const calls = [];
   const config = { ...readCatalogStoreConfig({}), usageLogEnabled, backgroundChecksEnabled };
-  const store = createCatalogStore({ config, db: null, defer, usageSink: row => logged.push(row), policy: createCatalogPolicy({ policies }) });
+  const built = createCatalogStore({ config, db: null, defer, usageSink: row => logged.push(row), outcomeSink: row => counted.push(row), policy: createCatalogPolicy({ policies }) });
+  const store = checkLimits ? { ...built, checkBudget: createCheckBudget({ limits: checkLimits }) } : built;
   const provider = { checkAvailability: async isbn => { calls.push(isbn); return observe(isbn); }, ...(searches || {}) };
   const platforms = bookDeadlineMs ? { ...UNPACED, vega: { ...UNPACED.vega, book: { ...UNPACED.vega.book, deadlineMs: bookDeadlineMs } } } : UNPACED;
   const lookup = createCatalogLookup({ providerFor: () => provider, robots: null, platforms, env: {}, ...(finishInBackground ? { defer } : {}),
@@ -57,7 +60,7 @@ function harness({ observe = () => ({ outcome: 'available', matchKind: 'exact_is
     express.use('/api/v2', createPublicV2Router({ directory, books: bookService, catalogStore: store, lookup, rateLimit: { limit: 1000 },
       holdingsOptions: { ...(searchCapMs ? { searchCapMs } : {}), ...(functionWorkMs ? { functionWorkMs } : {}) } }));
   });
-  return { app, store, calls, logged, settle: async () => { while (pending.length) await Promise.all(pending.splice(0)); } };
+  return { app, store, calls, logged, counted, settle: async () => { while (pending.length) await Promise.all(pending.splice(0)); } };
 }
 
 const lines = text => text.trim().split('\n').map(line => JSON.parse(line));
@@ -636,4 +639,105 @@ test('a no-store library (BiblioCommons): live every time, no stored answers for
   assert.ok(logged.some(row => row.libraryId === vega.id && row.kind === 'book_check' && row.bookKey === 'v1:openlibrary:OL1W'));
   const vegaShelf = await request(app).post('/api/v2/holdings/lookup').send({ libraryId: vega.id, books: [{ bookKey: 'v1:openlibrary:OL1W', workId: 'OL1W' }] });
   assert.deepEqual(vegaShelf.body, { answers: { 'v1:openlibrary:OL1W': 'found' } });
+});
+
+// USA plan, section 10 ("Abuse"): the tap-to-check pages let anyone make our
+// server call a small library, so live checks have a budget per library and
+// per client. Over it: "couldn't check" (busy), and the catalog is not asked.
+test('the book check has a budget per library and per client; over it the answer is busy and the catalog is not asked', async () => {
+  const { app, calls, settle } = harness({ checkLimits: { perLibraryPerMinute: 2, perClientPerMinute: 10, perClientPerDay: 100 } });
+  const check = (bookKey, ip = '203.0.113.20') => request(app).post('/api/v2/holdings/check').set('X-Forwarded-For', ip).send({ libraryId: vega.id, bookKey });
+  assert.equal((await check(`v1:isbn:${ISBN_A}`)).body.answer, 'found');
+  assert.equal((await check('v1:openlibrary:OL1W', '198.51.100.20')).body.answer, 'found');
+  await settle();
+  const busy = await check('v1:openlibrary:OL2W', '192.0.2.20');
+  assert.deepEqual([busy.body.answer, busy.body.reason], ['unknown', 'busy']);
+  assert.equal(calls.length, 2, 'the third live check never reached the catalog');
+  // A stored answer asks no catalog and is not counted against the budget.
+  assert.equal((await check(`v1:isbn:${ISBN_A}`)).body.answer, 'found');
+  assert.equal(calls.length, 2);
+  // Another library has its own budget.
+  const other = await request(app).post('/api/v2/holdings/check').send({ libraryId: optedOut.id, bookKey: 'v1:openlibrary:OL2W' });
+  assert.equal(other.body.answer, 'found');
+
+  const client = harness({ checkLimits: { perLibraryPerMinute: 100, perClientPerMinute: 1, perClientPerDay: 100 } });
+  const ask = (bookKey, ip) => request(client.app).post('/api/v2/holdings/check').set('X-Forwarded-For', ip).send({ libraryId: vega.id, bookKey });
+  assert.equal((await ask(`v1:isbn:${ISBN_A}`, '203.0.113.30')).body.answer, 'found');
+  assert.equal((await ask('v1:openlibrary:OL1W', '203.0.113.30')).body.reason, 'busy');
+  assert.equal((await ask('v1:openlibrary:OL1W', '203.0.113.31')).body.answer, 'found', 'another client is not limited');
+  assert.equal(client.calls.length, 2);
+});
+
+test('the client budget keeps no address: only keyed digests of the address and the day, as the submission limits do', async () => {
+  const taken = [];
+  const budget = createCheckBudget({ secret: 's'.repeat(32), db: { query: async (sql, [buckets, seconds]) => {
+    taken.push({ sql, buckets, seconds });
+    return { rows: buckets.map(bucket => ({ bucket, count: 1 })) };
+  } } });
+  assert.equal(await budget.take({ libraryId: vega.id, address: '203.0.113.40' }), 'ok');
+  assert.equal(taken.length, 1, 'one statement for the three buckets');
+  assert.deepEqual(taken[0].seconds, [60, 60, 86_400]);
+  for (const bucket of taken[0].buckets) {
+    assert.equal(bucket.length, 32);
+    assert.ok(!bucket.toString('latin1').includes('203.0.113.40'));
+  }
+  assert.ok(!taken[0].sql.includes('203.0.113.40') && /submission_buckets/.test(taken[0].sql));
+  // The same address another day gives other digests.
+  let day = Date.parse('2026-11-23T10:00:00Z');
+  const seen = [];
+  const daily = createCheckBudget({ secret: 's'.repeat(32), now: () => day, db: { query: async (sql, [buckets]) => { seen.push(buckets); return { rows: buckets.map(bucket => ({ bucket, count: 1 })) }; } } });
+  await daily.take({ libraryId: vega.id, address: '203.0.113.40' });
+  day += 24 * 60 * 60 * 1000;
+  await daily.take({ libraryId: vega.id, address: '203.0.113.40' });
+  assert.equal(seen[0][0].equals(seen[1][0]), true, 'the library bucket is the library');
+  assert.equal(seen[0][1].equals(seen[1][1]), false);
+  assert.equal(seen[0][2].equals(seen[1][2]), false);
+  // A slow or failing store: this instance's limits apply, and the check is never blocked.
+  const failing = createCheckBudget({ secret: 's'.repeat(32), limits: { perLibraryPerMinute: 1, perClientPerMinute: 5, perClientPerDay: 5 },
+    db: { query: async () => { throw new Error('down'); } } });
+  assert.equal(await failing.take({ libraryId: vega.id, address: 'a' }), 'ok');
+  assert.equal(await failing.take({ libraryId: vega.id, address: 'b' }), 'library');
+  // Over budget in the store: which budget is spent.
+  const full = createCheckBudget({ secret: 's'.repeat(32), db: { query: async (sql, [buckets]) => ({ rows: buckets.map((bucket, index) => ({ bucket, count: index === 0 ? 21 : 1 })) }) } });
+  assert.equal(await full.take({ libraryId: vega.id, address: 'c' }), 'library');
+});
+
+// Decision 17 (23 November 2026): the log may keep daily counts per library
+// for no-store catalogs, with no book, no text and no reader.
+test('every live book check adds to the library\'s daily outcome count, with no book, text or reader in it', async () => {
+  const searched = [];
+  const rows = [{ title: 'Matilda', authors: ['Roald Dahl'], catalogUrl: 'https://sfpl.bibliocommons.com/v2/record/S1', catalogLinkKind: 'record' }];
+  const { app, counted, logged, settle } = harness({ usageLogEnabled: true, policies: shippedPolicies,
+    checkLimits: { perLibraryPerMinute: 4, perClientPerMinute: 100, perClientPerDay: 100 },
+    searches: { search: async term => { searched.push(term); if (term === 'Mockingjay') throw Object.assign(new Error('x'), { code: 'CATALOG_TIMEOUT' }); return rows; } } });
+  const check = bookKey => request(app).post('/api/v2/holdings/check').set('X-Forwarded-For', '203.0.113.50').set('User-Agent', 'Private Agent')
+    .send({ libraryId: biblio.id, bookKey });
+  assert.equal((await check('v1:openlibrary:OL1W')).body.answer, 'found');
+  assert.equal((await check(`v1:isbn:${ISBN_A}`)).body.answer, 'not_found');
+  assert.equal((await check('v1:openlibrary:OL2W')).body.reason, 'timeout');
+  assert.equal((await check('v1:openlibrary:OL1W')).body.answer, 'found');
+  assert.equal((await check('v1:openlibrary:OL1W')).body.reason, 'busy');
+  await settle();
+  assert.deepEqual(counted, [
+    { libraryId: biblio.id, operation: 'book_check', outcome: 'found', reason: '' },
+    { libraryId: biblio.id, operation: 'book_check', outcome: 'not_found', reason: '' },
+    { libraryId: biblio.id, operation: 'book_check', outcome: 'couldnt_check', reason: 'timeout' },
+    { libraryId: biblio.id, operation: 'book_check', outcome: 'found', reason: '' },
+    { libraryId: biblio.id, operation: 'book_check', outcome: 'couldnt_check', reason: 'busy' }]);
+  for (const row of counted) assert.deepEqual(Object.keys(row).sort(), ['libraryId', 'operation', 'outcome', 'reason']);
+  const text = JSON.stringify(counted);
+  for (const value of ['OL1W', 'OL2W', ISBN_A, 'Matilda', 'Mockingjay', 'Wings', '203.0.113.50', 'Private Agent']) assert.ok(!text.includes(value), value);
+  assert.ok(logged.length > 0);
+  // A stored answer is not a check of the catalog today: not counted.
+  const stored = harness({ usageLogEnabled: true });
+  await request(stored.app).post('/api/v2/holdings/check').send({ libraryId: vega.id, bookKey: `v1:isbn:${ISBN_A}` });
+  await stored.settle();
+  await request(stored.app).post('/api/v2/holdings/check').send({ libraryId: vega.id, bookKey: `v1:isbn:${ISBN_A}` });
+  await stored.settle();
+  assert.deepEqual(stored.counted.map(row => row.outcome), ['found']);
+  // Off with the operational log.
+  const off = harness();
+  await request(off.app).post('/api/v2/holdings/check').send({ libraryId: vega.id, bookKey: `v1:isbn:${ISBN_A}` });
+  await off.settle();
+  assert.deepEqual(off.counted, []);
 });

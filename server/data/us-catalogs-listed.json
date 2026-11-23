@@ -1,0 +1,583 @@
+{
+  "version": 1,
+  "reason": "United States libraries offered when finding a library (pop-up search, browse, near me and public API listings). A US directory library that is not listed here, or is in removed, is left out of finding a library but still resolves by ID, so a reader who already chose one keeps it. Libraries outside the United States are not affected (India has its own list).",
+  "criteria": {
+    "legacy": "One of the 232 US directory entries offered before this list (23 November 2026), kept until there is a reason to remove it. It becomes verified on its first find.",
+    "verified": "All four: identity (name, state and catalog host from a published source); permission (the robots.txt result for the app's own token, else *, with its date; the catalog's terms read and its storage decision in server/data/catalog-policies.json, live-only while unread; no wall seen); scope (whether the check is limited to the member or answers from a shared catalog, recorded on the entry); and a find by the app's own check (run with the app's tooling where the host allows agents and storage, otherwise a tap through the live app seen in the outcome counts)."
+  },
+  "rules": [
+    "Kept by hand. A new US directory entry is offered only once it is added to libraryIds and verified (it meets every verified criterion).",
+    "A listed library stays listed when a later check fails or cannot reach it; failed checks are logged for manual review. A library whose catalog blocks the app (robots.txt, a wall, a 403 for the app's user agent) is moved to removed, never kept for having been listed before.",
+    "To remove a library, add { id, reason, date } to removed and take it out of libraryIds and verified. The removed list wins over any later find; delete the entry to list it again.",
+    "places corrects or fills a US entry's state, town and position from published evidence only (the IMLS Public Libraries Survey, the library's own website or the catalog's own branch list), never from a library's name. Each records its evidence; replaces names the wrong values it corrects."
+  ],
+  "count": 217,
+  "counts": {
+    "legacy": 217,
+    "verified": 0,
+    "removed": 15
+  },
+  "platforms": {
+    "aspen": 4,
+    "bc": 212,
+    "evergreen": 1
+  },
+  "removed": [
+    {
+      "id": "bc:godfrey-lee",
+      "reason": "A school district's catalog (Godfrey-Lee Public Schools on Kent District Library's BiblioCommons site), not a public library; Kent District Library has its own entry (bc:kdl).",
+      "date": "2026-11-23"
+    },
+    {
+      "id": "bc:indyplkids",
+      "reason": "The Indianapolis Public Library's Kids' Catalog: a second view of the catalog that bc:indypl already offers, not a separate library.",
+      "date": "2026-11-23"
+    },
+    {
+      "id": "bc:mlkacademy",
+      "reason": "Dr. MLK Academy is a school library, not a public library system.",
+      "date": "2026-11-23"
+    },
+    {
+      "id": "bc:nicasioschool",
+      "reason": "Nicasio School is a school library, not a public library system.",
+      "date": "2026-11-23"
+    },
+    {
+      "id": "bc:nidc-old",
+      "reason": "Northern Indiana Database Cluster: an old shared catalog ('-old' in its address), not a library and not in the IMLS FY2024 public library list; its branch list is St. Joseph County Public Library's branches and a university library, and St. Joseph County Public Library has its own entry (bc:sjcpl).",
+      "date": "2026-11-23"
+    },
+    {
+      "id": "bc:nvc",
+      "reason": "Napa Valley College is a college library, not a public library system (and its catalog is moving to a new shared catalog with Napa County Library).",
+      "date": "2026-11-23"
+    },
+    {
+      "id": "bc:nypl-stagedoor",
+      "reason": "Not New York Public Library's public catalog: a BiblioCommons staging site ('stagedoor'). NYPL's catalog is Vega Discover at borrow.nypl.org, whose robots.txt disallows search for every agent (US national catalog survey, 23 November 2026).",
+      "date": "2026-11-23"
+    },
+    {
+      "id": "bc:sandiego",
+      "reason": "BiblioCommons site disabled: sandiego.bibliocommons.com redirects to /info/site_disabled, and San Diego Public Library moved to Vega Discover (checked 23 November 2026).",
+      "date": "2026-11-23"
+    },
+    {
+      "id": "bc:scc",
+      "reason": "Solano Community College is a college library, not a public library system.",
+      "date": "2026-11-23"
+    },
+    {
+      "id": "bc:shpl",
+      "reason": "St. Helena Public Library left BiblioCommons: it has been in the SPLASH consortium's Polaris catalog with Vega Discover since 2022 (Polaris FAQ and an Innovative press release, US national catalog survey, 23 November 2026).",
+      "date": "2026-11-23"
+    },
+    {
+      "id": "bc:stplkids",
+      "reason": "St. Tammany Parish Library's Kids' Catalog: a duplicate of bc:stpl, not a separate library.",
+      "date": "2026-11-23"
+    },
+    {
+      "id": "vega:_itw_dcpl",
+      "reason": "robots.txt disallows the catalog for every agent: catalog.dclibrary.org and the Vega API host na5.iiivega.com serve Vega's default file, which allows only the home page (User-agent: *, Allow: /$, Disallow: /search, Disallow: /), read on 23 November 2026.",
+      "date": "2026-11-23"
+    },
+    {
+      "id": "vega:_itw_nypl",
+      "reason": "robots.txt disallows the catalog for every agent: borrow.nypl.org serves Vega's default file, which allows only the home page (User-agent: *, Allow: /$, Disallow: /search, Disallow: /), read on 23 November 2026 (US national catalog survey, 23 November 2026).",
+      "date": "2026-11-23"
+    },
+    {
+      "id": "vega:_itw_oceancounty",
+      "reason": "The catalog host catalog.oceancounty.lib.nj.us does not resolve (DNS failure, 23 November 2026).",
+      "date": "2026-11-23"
+    },
+    {
+      "id": "vega:_itw_stella",
+      "reason": "A Vega catalog (catalog.lmxac.org, API host na4.iiivega.com): the front end did not answer on 23 November 2026, and Vega's default robots.txt, the same file on every Vega host read that day (na5.iiivega.com, catalog.dclibrary.org, borrow.nypl.org, wcfl-wmrl.na.iiivega.com), allows only the home page for every agent.",
+      "date": "2026-11-23"
+    }
+  ],
+  "verified": [],
+  "libraryIds": [
+    "aspen:_itw_atlanticnj",
+    "aspen:_itw_clevnet",
+    "aspen:_itw_cuyahoga",
+    "aspen:_itw_mainlib",
+    "bc:aapld",
+    "bc:acl",
+    "bc:aclibrary",
+    "bc:alcona",
+    "bc:allendale",
+    "bc:arapahoelibraries",
+    "bc:austin",
+    "bc:bclsnj",
+    "bc:bdl",
+    "bc:belding",
+    "bc:bellingham",
+    "bc:beverlyhills",
+    "bc:bocalibrary",
+    "bc:bpl",
+    "bc:bradford",
+    "bc:burlingame",
+    "bc:cals",
+    "bc:cantonpl",
+    "bc:carmel",
+    "bc:carsoncity",
+    "bc:caryarea",
+    "bc:ccclib",
+    "bc:ccplohio",
+    "bc:ccslib",
+    "bc:cedarsprings",
+    "bc:chandler",
+    "bc:charlevoix",
+    "bc:cheboygan",
+    "bc:chipublib",
+    "bc:chpl",
+    "bc:cincinnatilibrary",
+    "bc:clevelandcountylibrary",
+    "bc:cml",
+    "bc:cmlibrary",
+    "bc:coopersville",
+    "bc:croton",
+    "bc:crystallake",
+    "bc:ctdl",
+    "bc:dallascountylibrary",
+    "bc:dalycity",
+    "bc:dayton",
+    "bc:dbrl",
+    "bc:dcl",
+    "bc:dcpl",
+    "bc:delawarelibrary",
+    "bc:denton",
+    "bc:desplaines",
+    "bc:dorr",
+    "bc:dpl",
+    "bc:durhamcounty",
+    "bc:ec",
+    "bc:egvpl",
+    "bc:elalibrary",
+    "bc:elpl",
+    "bc:evanstonlibrary",
+    "bc:fennville",
+    "bc:flatriver",
+    "bc:foxrivervalley",
+    "bc:freeport",
+    "bc:fremont",
+    "bc:fremontlibrary",
+    "bc:friscolibrary",
+    "bc:fruitport",
+    "bc:fulcolibrary",
+    "bc:fvrlibraries",
+    "bc:garybyker",
+    "bc:georgetown",
+    "bc:glac",
+    "bc:glencoe",
+    "bc:glenviewpl",
+    "bc:grant",
+    "bc:grantcountylibrary",
+    "bc:grayslake",
+    "bc:greenelibrary",
+    "bc:greenwichlibrary",
+    "bc:grpl",
+    "bc:hackley",
+    "bc:hastings",
+    "bc:hayward",
+    "bc:hclib",
+    "bc:hcpl",
+    "bc:hcplc",
+    "bc:henika",
+    "bc:herrickdl",
+    "bc:hesperia",
+    "bc:hometownship",
+    "bc:hopkins",
+    "bc:howardmiller",
+    "bc:hplibrary",
+    "bc:huntleylibrary",
+    "bc:indypl",
+    "bc:infosoup",
+    "bc:ionia",
+    "bc:itpld",
+    "bc:jcfpl",
+    "bc:jeffcolibrary",
+    "bc:jocolibrary",
+    "bc:kclibrary",
+    "bc:kcls",
+    "bc:kdl",
+    "bc:kentonlibrary",
+    "bc:krl",
+    "bc:lakecountyca",
+    "bc:lakeforestlibrary",
+    "bc:lakeodessa",
+    "bc:laurellibrary",
+    "bc:lawrence",
+    "bc:leighton",
+    "bc:librarypoint",
+    "bc:livermorelibrary",
+    "bc:llc",
+    "bc:loutit",
+    "bc:lpld",
+    "bc:lplp",
+    "bc:lvccld",
+    "bc:lvdl",
+    "bc:mackinaw",
+    "bc:malvernhsclibrary",
+    "bc:margate",
+    "bc:marinet",
+    "bc:marinlibrary",
+    "bc:mcpl",
+    "bc:menlopark",
+    "bc:mgpl",
+    "bc:midark",
+    "bc:more",
+    "bc:mppl",
+    "bc:multcolib",
+    "bc:muskegonadl",
+    "bc:mykpl",
+    "bc:mymcpl",
+    "bc:mysapl",
+    "bc:napalibrary",
+    "bc:naperlib",
+    "bc:newaygo",
+    "bc:nmdl",
+    "bc:northbrookpl",
+    "bc:oaklandlibrary",
+    "bc:oceancity",
+    "bc:olathe",
+    "bc:omaha",
+    "bc:orangecountync",
+    "bc:pac2",
+    "bc:palatinelibrary",
+    "bc:paloalto",
+    "bc:parkridge",
+    "bc:patmos",
+    "bc:pbclibrary",
+    "bc:petoskey",
+    "bc:phpld",
+    "bc:pidl",
+    "bc:pima",
+    "bc:pleasantonlibrary",
+    "bc:plymc",
+    "bc:plymouthlibrary",
+    "bc:poudrelibraries",
+    "bc:princetonlibrary",
+    "bc:rclreads",
+    "bc:rcpl",
+    "bc:richmondlibrary",
+    "bc:rlalibrary",
+    "bc:rmlib",
+    "bc:salem",
+    "bc:salinecountylibrary",
+    "bc:saranac-clarksville",
+    "bc:saugatuck-douglas",
+    "bc:sbl",
+    "bc:sccl",
+    "bc:sclibrary",
+    "bc:sdcl",
+    "bc:seattle",
+    "bc:sfpl",
+    "bc:sjcpl",
+    "bc:sjpl",
+    "bc:skokielibrary",
+    "bc:slpl",
+    "bc:smcl",
+    "bc:smpl",
+    "bc:smplibrary",
+    "bc:sno-isle",
+    "bc:sonoma",
+    "bc:spartacarnegie",
+    "bc:sppl",
+    "bc:springlake",
+    "bc:ssf",
+    "bc:starklibrary",
+    "bc:stpl",
+    "bc:sunnyvale",
+    "bc:tacoma",
+    "bc:tahq",
+    "bc:tamarack",
+    "bc:tchreynolds",
+    "bc:thornapplekellogg",
+    "bc:timberland",
+    "bc:toledo",
+    "bc:troy-miami",
+    "bc:tscpl",
+    "bc:vapld",
+    "bc:wauclib",
+    "bc:waukeganpl",
+    "bc:wccls",
+    "bc:wcls",
+    "bc:wcpl",
+    "bc:westervillelibrary",
+    "bc:whitecloud",
+    "bc:whitelake",
+    "bc:wilmettelibrary",
+    "bc:wnpl",
+    "bc:wnpld",
+    "bc:ylpl",
+    "bc:yumalibrary",
+    "bc:zbpl",
+    "evergreen:gapines"
+  ],
+  "places": {
+    "bc:cedarsprings": {
+      "region": "Michigan",
+      "city": "Cedar Springs",
+      "lat": 43.22581863,
+      "lon": -85.55153652,
+      "replaces": {
+        "region": "Texas",
+        "city": "Dallas"
+      },
+      "evidence": {
+        "source": "IMLS Public Libraries Survey FY2024 (administrative entity file)",
+        "fscsKey": "MI0056",
+        "name": "CEDAR SPRINGS PUBLIC LIBRARY",
+        "address": "107 N Main St, Cedar Springs, MI 49319 (Kent County)",
+        "note": "The only library of this name in the federal list; no Cedar Springs library in Texas. Position: the IMLS outlet record for the central library."
+      }
+    },
+    "bc:croton": {
+      "region": "Michigan",
+      "city": "Newaygo",
+      "lat": 43.43815223,
+      "lon": -85.66133107,
+      "replaces": {
+        "region": "New Jersey",
+        "city": "Flemington"
+      },
+      "evidence": {
+        "source": "IMLS Public Libraries Survey FY2024 (administrative entity file)",
+        "fscsKey": "MI0429",
+        "name": "CROTON TOWNSHIP LIBRARY",
+        "address": "8260 South Croton-Hardy Drive, Newaygo, MI 49337 (Newaygo County)",
+        "note": "The only library of this name in the federal list; New Jersey has no Croton Township. Position: the IMLS outlet record for the central library."
+      }
+    },
+    "bc:ccslib": {
+      "region": "Illinois",
+      "evidence": {
+        "source": "The catalog's own branch list (server/data/libraries.json) and IMLS Public Libraries Survey FY2024",
+        "note": "A shared catalog of north-suburban Illinois libraries: its branches include Algonquin Area Public Library District (IL0006), Evanston Public Library (IL0172) and Crystal Lake Public Library (IL0125), Illinois libraries in the federal list."
+      }
+    },
+    "bc:lplp": {
+      "region": "Michigan",
+      "evidence": {
+        "source": "The catalog's own branch list (server/data/libraries.json) and IMLS Public Libraries Survey FY2024",
+        "note": "Its branches are Muskegon Area District Library (MI0240) and White Lake Community Library (MI0370), Michigan libraries in the federal list."
+      }
+    },
+    "bc:coopersville": {
+      "region": "Michigan",
+      "city": "Coopersville",
+      "evidence": {
+        "source": "IMLS Public Libraries Survey FY2024 (administrative entity file)",
+        "fscsKey": "MI0072",
+        "name": "COOPERSVILLE AREA DISTRICT LIBRARY",
+        "address": "333 Ottawa Street, Coopersville, MI 49404"
+      }
+    },
+    "bc:fennville": {
+      "region": "Michigan",
+      "city": "Fennville",
+      "evidence": {
+        "source": "IMLS Public Libraries Survey FY2024 (administrative entity file)",
+        "fscsKey": "MI0107",
+        "name": "FENNVILLE DISTRICT LIBRARY",
+        "address": "400 West Main Street, Fennville, MI 49408"
+      }
+    },
+    "bc:foxrivervalley": {
+      "region": "Illinois",
+      "city": "East Dundee",
+      "evidence": {
+        "source": "IMLS Public Libraries Survey FY2024 (administrative entity file)",
+        "fscsKey": "IL0146",
+        "name": "FOX RIVER VALLEY PUBLIC LIBRARY DISTRICT",
+        "address": "555 Barrington Avenue, East Dundee, IL 60118"
+      }
+    },
+    "bc:freeport": {
+      "region": "Michigan",
+      "city": "Freeport",
+      "evidence": {
+        "source": "IMLS Public Libraries Survey FY2024 (administrative entity file)",
+        "fscsKey": "MI0117",
+        "name": "FREEPORT DISTRICT LIBRARY",
+        "address": "208 South State Street, Freeport, MI 49325"
+      }
+    },
+    "bc:garybyker": {
+      "region": "Michigan",
+      "city": "Hudsonville",
+      "evidence": {
+        "source": "IMLS Public Libraries Survey FY2024 (administrative entity file)",
+        "fscsKey": "MI0162",
+        "name": "GARY BYKER MEMORIAL LIBRARY OF HUDSONVILLE",
+        "address": "3338 Van Buren Street, Hudsonville, MI 49426"
+      }
+    },
+    "bc:grant": {
+      "region": "Michigan",
+      "city": "Grant",
+      "evidence": {
+        "source": "IMLS Public Libraries Survey FY2024 (administrative entity file)",
+        "fscsKey": "MI0132",
+        "name": "GRANT AREA DISTRICT LIBRARY",
+        "address": "122 Elder Street, Grant, MI 49327"
+      }
+    },
+    "bc:grayslake": {
+      "region": "Illinois",
+      "city": "Grayslake",
+      "evidence": {
+        "source": "IMLS Public Libraries Survey FY2024 (administrative entity file)",
+        "fscsKey": "IL0219",
+        "name": "GRAYSLAKE AREA PUBLIC LIBRARY DISTRICT",
+        "address": "100 Library Lane, Grayslake, IL 60030"
+      }
+    },
+    "bc:itpld": {
+      "region": "Illinois",
+      "city": "Wheeling",
+      "evidence": {
+        "source": "IMLS Public Libraries Survey FY2024 (administrative entity file)",
+        "fscsKey": "IL0255",
+        "name": "INDIAN TRAILS PUBLIC LIBRARY DISTRICT",
+        "address": "355 South Schoenbeck Road, Wheeling, IL 60090"
+      }
+    },
+    "bc:lakeodessa": {
+      "region": "Michigan",
+      "city": "Lake Odessa",
+      "evidence": {
+        "source": "IMLS Public Libraries Survey FY2024 (administrative entity file)",
+        "fscsKey": "MI0188",
+        "name": "LAKE ODESSA COMMUNITY LIBRARY",
+        "address": "1007 Fourth Avenue, Lake Odessa, MI 48849"
+      }
+    },
+    "bc:leighton": {
+      "region": "Michigan",
+      "city": "Wayland",
+      "evidence": {
+        "source": "IMLS Public Libraries Survey FY2024 (administrative entity file)",
+        "fscsKey": "MI0422",
+        "name": "LEIGHTON TOWNSHIP LIBRARY",
+        "address": "4451 12th Street, Wayland, MI 49335"
+      }
+    },
+    "bc:lpld": {
+      "region": "Illinois",
+      "city": "Lincolnwood",
+      "evidence": {
+        "source": "IMLS Public Libraries Survey FY2024 (administrative entity file)",
+        "fscsKey": "IL0608",
+        "name": "LINCOLNWOOD PUBLIC LIBRARY DISTRICT",
+        "address": "4000 West Pratt Avenue, Lincolnwood, IL 60712"
+      }
+    },
+    "bc:petoskey": {
+      "region": "Michigan",
+      "city": "Petoskey",
+      "evidence": {
+        "source": "IMLS Public Libraries Survey FY2024 (administrative entity file)",
+        "fscsKey": "MI0269",
+        "name": "PETOSKEY DISTRICT LIBRARY",
+        "address": "500 East Mitchell Street, Petoskey, MI 49770"
+      }
+    },
+    "bc:saranac-clarksville": {
+      "region": "Michigan",
+      "city": "Saranac",
+      "evidence": {
+        "source": "IMLS Public Libraries Survey FY2024 (administrative entity file)",
+        "fscsKey": "MI0303",
+        "name": "SARANAC CLARKSVILLE DISTRICT LIBRARY",
+        "address": "61 Bridge Street, Saranac, MI 48881"
+      }
+    },
+    "bc:spartacarnegie": {
+      "region": "Michigan",
+      "city": "Sparta",
+      "evidence": {
+        "source": "IMLS Public Libraries Survey FY2024 (administrative entity file)",
+        "fscsKey": "MI0317",
+        "name": "SPARTA CARNEGIE TOWNSHIP LIBRARY",
+        "address": "80 North Union Street, Sparta, MI 49345"
+      }
+    },
+    "bc:tahq": {
+      "region": "Michigan",
+      "city": "Newberry",
+      "evidence": {
+        "source": "IMLS Public Libraries Survey FY2024 (administrative entity file)",
+        "fscsKey": "MI0330",
+        "name": "TAHQUAMENON AREA PUBLIC LIBRARY",
+        "address": "700 Newberry Avenue, Newberry, MI 49868",
+        "note": "The only Tahquamenon library in the federal list; the catalog's branch list is the northern Michigan libraries of the PAC2 catalog."
+      }
+    },
+    "bc:thornapplekellogg": {
+      "region": "Michigan",
+      "city": "Middleville",
+      "evidence": {
+        "source": "IMLS Public Libraries Survey FY2024 (administrative entity file)",
+        "fscsKey": "MI0338",
+        "name": "THORNAPPLE KELLOGG SCHOOL AND COMMUNITY LIBRARY",
+        "address": "3885 Bender Road, Middleville, MI 49333"
+      }
+    },
+    "bc:tchreynolds": {
+      "region": "Michigan",
+      "city": "Howard City",
+      "evidence": {
+        "source": "IMLS Public Libraries Survey FY2024 (administrative entity file)",
+        "fscsKey": "MI0286",
+        "name": "TIMOTHY C. HAUENSTEIN REYNOLDS TOWNSHIP LIBRARY",
+        "address": "117 West Williams Street, Howard City, MI 49329"
+      }
+    },
+    "bc:vapld": {
+      "region": "Illinois",
+      "city": "Lincolnshire",
+      "evidence": {
+        "source": "IMLS Public Libraries Survey FY2024 (administrative entity file)",
+        "fscsKey": "IL0545",
+        "name": "VERNON AREA PUBLIC LIBRARY DISTRICT",
+        "address": "300 Olde Half Day Road, Lincolnshire, IL 60069"
+      }
+    },
+    "bc:wauclib": {
+      "region": "Illinois",
+      "city": "Wauconda",
+      "evidence": {
+        "source": "IMLS Public Libraries Survey FY2024 (administrative entity file)",
+        "fscsKey": "IL0563",
+        "name": "WAUCONDA AREA PUBLIC LIBRARY DISTRICT",
+        "address": "801 North Main Street, Wauconda, IL 60084"
+      }
+    },
+    "bc:whitecloud": {
+      "region": "Michigan",
+      "city": "White Cloud",
+      "evidence": {
+        "source": "IMLS Public Libraries Survey FY2024 (administrative entity file)",
+        "fscsKey": "MI0091",
+        "name": "WHITE CLOUD COMMUNITY LIBRARY",
+        "address": "1038 Wilcox Avenue, White Cloud, MI 49349"
+      }
+    },
+    "bc:wnpld": {
+      "region": "Illinois",
+      "city": "Winnetka",
+      "evidence": {
+        "source": "IMLS Public Libraries Survey FY2024 (administrative entity file)",
+        "fscsKey": "IL0590",
+        "name": "WINNETKA-NORTHFIELD PUBLIC LIBRARY DISTRICT",
+        "address": "768 Oak Street, Winnetka, IL 60093"
+      }
+    }
+  }
+}

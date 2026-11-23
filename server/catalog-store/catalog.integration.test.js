@@ -14,6 +14,9 @@ import { createPgHostGate } from './hostGate.js';
 import { createCatalogPolicy } from './policy.js';
 import { rollUpUsage, runCatalogMaintenance } from './maintenance.js';
 import { createCatalogMaintenanceMiddleware } from './cron.js';
+import { createOutcomeCounts, libraryOutcomes } from './outcomeCounts.js';
+import { createCheckBudget } from './checkBudget.js';
+import { createFrontPageStore, runFrontPageChecks } from './frontPageCheck.js';
 import { createCatalogLookup, createLookupRecorder } from '../services/catalog-lookup/index.js';
 import { withTestSetupLock } from '../accounts/test-database.js';
 
@@ -25,14 +28,14 @@ const roleURL = role => { const url = new URL(connectionString); url.username = 
 const DAY = 24 * 60 * 60 * 1000;
 // Shared with admin/role.integration.test.js.
 const CATALOG_SETUP_LOCK = 'mybookshelf-catalog-test-setup';
-const TABLES = 'holdings_answers, library_profiles, library_check_events, library_health, usage_events, usage_daily_totals, library_requests, library_request_contacts, problem_reports, submission_buckets, host_request_windows, host_request_slots';
+const TABLES = 'holdings_answers, library_profiles, library_check_events, library_health, usage_events, usage_daily_totals, library_requests, library_request_contacts, problem_reports, submission_buckets, host_request_windows, host_request_slots, library_outcome_days, host_front_page_checks';
 
 async function prepare(t) {
   const url = new URL(connectionString);
   assert.ok(['localhost', '127.0.0.1'].includes(url.hostname) && url.pathname.endsWith('_test'), 'a disposable local *_test database only');
   const admin = new Pool({ connectionString, max: 2 });
   await migrateCatalog(admin);
-  assert.equal(await migrateCatalog(admin), 5, 'migrations are idempotent');
+  assert.equal(await migrateCatalog(admin), 6, 'migrations are idempotent');
   const grants = await readFile(new URL('./runtime-grants.sql', import.meta.url), 'utf8');
   // admin/role.integration.test.js changes grants on the same tables at the same time.
   await withTestSetupLock(admin, CATALOG_SETUP_LOCK, async c => {
@@ -278,6 +281,53 @@ test('daily maintenance as the worker: expiry, opt-out purge, retention, rollup 
   assert.ok(!totalColumns.some(c => /query|text|book/.test(c.column_name)), 'totals keep no text and no book keys');
   // The worker role cannot write answers or reports.
   await assert.rejects(worker.query(`INSERT INTO holdings_answers (library_id, identity_kind, identity_value, answer, evidence, expires_at) VALUES ('x:y', 'isbn13', '9780140328721', 'found', 'exact_isbn', now())`), { code: '42501' });
+});
+
+test('daily outcome counts and the check budget as the runtime role: counts only, no book, text or address', { skip, timeout: 60_000 }, async t => {
+  const { admin, runtime, adminRole } = await prepare(t);
+  const pending = [];
+  const counts = createOutcomeCounts({ enabled: true, db: runtime, defer: task => pending.push(task()) });
+  for (const event of [['found', ''], ['found', ''], ['not_found', ''], ['couldnt_check', 'timeout'], ['couldnt_check', 'busy']]) {
+    counts.record({ libraryId: 'bc:sfpl', operation: 'book_check', outcome: event[0], reason: event[1] });
+  }
+  await Promise.all(pending);
+  const { rows } = await admin.query(`SELECT library_id, operation, outcome, reason, checks, day = (now() AT TIME ZONE 'UTC')::date AS today
+    FROM library_outcome_days ORDER BY outcome, reason`);
+  assert.deepEqual(rows, [
+    { library_id: 'bc:sfpl', operation: 'book_check', outcome: 'couldnt_check', reason: 'busy', checks: 1, today: true },
+    { library_id: 'bc:sfpl', operation: 'book_check', outcome: 'couldnt_check', reason: 'timeout', checks: 1, today: true },
+    { library_id: 'bc:sfpl', operation: 'book_check', outcome: 'found', reason: '', checks: 2, today: true },
+    { library_id: 'bc:sfpl', operation: 'book_check', outcome: 'not_found', reason: '', checks: 1, today: true }]);
+  const columns = await admin.query(`SELECT column_name FROM information_schema.columns WHERE table_name = 'library_outcome_days' ORDER BY ordinal_position`);
+  assert.deepEqual(columns.rows.map(row => row.column_name), ['day', 'library_id', 'operation', 'outcome', 'reason', 'checks']);
+  // A reason only with "couldn't check".
+  await assert.rejects(admin.query(`INSERT INTO library_outcome_days (day, library_id, operation, outcome, reason, checks) VALUES (current_date, 'bc:x', 'book_check', 'found', 'timeout', 1)`));
+  assert.deepEqual((await libraryOutcomes(adminRole, { libraryId: 'bc:sfpl' })).map(row => [row.outcome, row.reason, row.checks]),
+    [['couldnt_check', 'busy', 1], ['couldnt_check', 'timeout', 1], ['found', null, 2], ['not_found', null, 1]]);
+  // The budget's buckets are keyed digests in the existing table.
+  const budget = createCheckBudget({ db: runtime, secret: 'b'.repeat(32), limits: { perLibraryPerMinute: 2, perClientPerMinute: 10, perClientPerDay: 10 } });
+  assert.deepEqual([await budget.take({ libraryId: 'bc:sfpl', address: '203.0.113.9' }), await budget.take({ libraryId: 'bc:sfpl', address: '203.0.113.9' }),
+    await budget.take({ libraryId: 'bc:sfpl', address: '203.0.113.9' })], ['ok', 'ok', 'library']);
+  const buckets = await admin.query(`SELECT bucket, count FROM submission_buckets`);
+  assert.equal(buckets.rows.length, 3);
+  assert.ok(buckets.rows.every(row => row.bucket.length === 32 && !row.bucket.toString('latin1').includes('203.0.113.9')));
+});
+
+test('the front-page check store as the worker role: one claim per host, results only', { skip, timeout: 60_000 }, async t => {
+  const { admin, worker, runtime } = await prepare(t);
+  const store = createFrontPageStore(worker);
+  const check = async host => ({ host, outcome: host.startsWith('w') ? 'wall' : 'open', status: host.startsWith('w') ? 403 : 200, robotsStatus: 404,
+    wall: host.startsWith('w'), wallSignal: host.startsWith('w') ? 'cloudflare-challenge' : null, movedTo: null, durationMs: 10 });
+  const hosts = ['a.example.org', 'wall.example.org', 'c.example.org'];
+  assert.equal((await runFrontPageChecks({ store, hosts, limit: 2, check })).checked.length, 2);
+  assert.equal((await runFrontPageChecks({ store, hosts, limit: 2, check })).checked.length, 1);
+  assert.deepEqual((await runFrontPageChecks({ store, hosts, limit: 2, check })).checked, []);
+  const { rows } = await admin.query('SELECT host, outcome, status, wall, wall_signal FROM host_front_page_checks ORDER BY host');
+  assert.deepEqual(rows, [{ host: 'a.example.org', outcome: 'open', status: 200, wall: false, wall_signal: null },
+    { host: 'c.example.org', outcome: 'open', status: 200, wall: false, wall_signal: null },
+    { host: 'wall.example.org', outcome: 'wall', status: 403, wall: true, wall_signal: 'cloudflare-challenge' }]);
+  // Only the worker writes it.
+  await assert.rejects(runtime.query(`INSERT INTO host_front_page_checks (host, outcome) VALUES ('x.example.org', 'open')`));
 });
 
 test('the maintenance route runs with the worker role and refuses the owner role', { skip, timeout: 60_000 }, async t => {

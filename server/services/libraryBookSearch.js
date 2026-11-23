@@ -1,5 +1,6 @@
 import { validateAndNormalize } from './isbn.js';
 import { withCatalogSuboperation } from './providers/http.js';
+import { countsAsFind, isBookRow } from './rowFormats.js';
 import { MAX_CHECK_MS } from './catalog-lookup/platforms.js';
 
 // One library search for everything (owner decision, 20 November 2026:
@@ -14,9 +15,15 @@ import { MAX_CHECK_MS } from './catalog-lookup/platforms.js';
 // the reader's typed text for marks. A catalog that can only be asked by ISBN
 // says so (`provider.searchBy === 'isbn'`) and is handed the ISBN instead
 // (the reader's, else the work's latest edition's); each row it returns is a
-// match. Rows are `{ title, authors?, isbn?, isbns?, recordId?, catalogUrl?,
-// catalogLinkKind?, observation? }`, all this library's (a shared catalog the
-// adapter cannot filter to the library counts as the library's).
+// match. Rows are `{ title, authors?, isbn?, isbns?, format?, recordId?,
+// catalogUrl?, catalogLinkKind?, observation? }`, all this library's (a shared
+// catalog the adapter cannot filter to the library counts as the library's).
+//
+// Row rules (owner decision, 23 November 2026): a row whose catalog-given
+// format is video or music never counts as a find (rowFormats.js reads every
+// adapter's labels); audiobooks, e-books and rows with no format count as
+// before. The card lists book rows first, then rows that carry the book's
+// author before rows that do not, each group in the order below.
 
 export const MAX_MATCHES = 5;
 
@@ -39,7 +46,9 @@ export function mainTitle(title) {
 // A row matches a title when at least 80% of the title's words (its main
 // title, normalised as above, without a leading the/a/an) appear among the
 // row title's words, in any order. Nothing else: no author, ISBN, language or
-// edition rule. "Wing Of Fire" is not "Wings of Fire" (2 of 3 words).
+// edition rule. "Wing Of Fire" is not "Wings of Fire" (2 of 3 words). The
+// format rule is applied beside it (`matchingRows`): a matching video or music
+// row is not a find.
 export function titleMatches(rowTitle, title) {
   const want = words(mainTitle(title));
   const have = new Set(words(rowTitle));
@@ -49,17 +58,53 @@ export function titleMatches(rowTitle, title) {
 
 const isbnsOf = row => [...new Set([row?.isbn, row?.isbn13, ...(row?.isbns || [])].map(value => validateAndNormalize(value || '')).filter(Boolean))];
 
-// Matching rows in display order: the row showing the book's ISBN first (when
-// the book has one), then rows whose title is exactly the title, then rows
-// that start with it, then the rest, each group in the catalog's order.
-export function orderMatches(rows, title, isbn = null) {
+// The family names of a book's authors ("Harper Lee", "Lee, Harper" and
+// "Lee, Harper, 1926-2016" all give "lee"), for the card's order only: an
+// author never decides whether a row is a find.
+const SUFFIXES = new Set(['jr', 'sr', 'ii', 'iii', 'iv', 'phd', 'md', 'dr']);
+function familyName(name) {
+  const text = String(name || '');
+  // "Family, Given": the part before the first comma.
+  const part = text.includes(',') ? text.split(',')[0] : text;
+  const list = normalize(part).split(' ').filter(word => word && !SUFFIXES.has(word) && !/^\d+$/.test(word));
+  return list.length ? list[list.length - 1] : null;
+}
+const authorList = value => (Array.isArray(value) ? value : [value]).filter(item => typeof item === 'string' && item.trim());
+const rowAuthors = row => authorList(Array.isArray(row?.authors) ? row.authors : row?.author);
+
+/** Whether a row names one of the book's authors (by family name). */
+export function carriesAuthor(row, authors = []) {
+  const wanted = new Set(authorList(authors).map(familyName).filter(name => name && name.length >= 2));
+  if (!wanted.size) return false;
+  const have = new Set(rowAuthors(row).flatMap(name => normalize(name).split(' ')));
+  return [...wanted].some(name => have.has(name));
+}
+
+// Matching rows in display order:
+//   1. the row showing the book's ISBN (when the book has one): this edition;
+//   2. book rows (or rows with no format) before e-books, audiobooks and others;
+//   3. within each, rows that carry the book's author before rows that do not;
+//   4. within each, rows whose title is exactly the title, then rows that
+//      start with it, then the rest, each in the catalog's order.
+// The catalog's own order is never trusted for the first row (LAPL lists study
+// guides above the novel, research 23 November 2026).
+export function orderMatches(rows, title, isbn = null, authors = []) {
   const want = titleKey(mainTitle(title));
-  const rank = row => {
-    if (isbn && isbnsOf(row).includes(isbn)) return 0;
+  const titleRank = row => {
     const have = titleKey(row.title);
-    return have === want ? 1 : have.startsWith(`${want} `) ? 2 : 3;
+    return have === want ? 0 : have.startsWith(`${want} `) ? 1 : 2;
   };
-  return [0, 1, 2, 3].flatMap(group => rows.filter(row => rank(row) === group));
+  const rank = row => [isbn && isbnsOf(row).includes(isbn) ? 0 : 1, isBookRow(row) ? 0 : 1, carriesAuthor(row, authors) ? 0 : 1, titleRank(row)];
+  const compare = (a, b) => {
+    for (let i = 0; i < a.rank.length; i += 1) if (a.rank[i] !== b.rank[i]) return a.rank[i] - b.rank[i];
+    return a.index - b.index;
+  };
+  return rows.map((row, index) => ({ row, index, rank: rank(row) })).sort(compare).map(item => item.row);
+}
+
+/** The rows of one search that are a find for this book, in display order: title-matching rows that are not video or music. */
+export function matchingRows(rows, book, { isbn = null, matches = row => titleMatches(row?.title, book?.title) } = {}) {
+  return orderMatches((Array.isArray(rows) ? rows : []).filter(row => row && countsAsFind(row) && matches(row)), book?.title, isbn, book?.authors || []);
 }
 
 // The record link of a row: only one the adapter called the record.
@@ -131,7 +176,7 @@ async function check(provider, book, { deadline, readerIsbn, latestIsbn, rows })
       const value = await timed(() => rows(term));
       const list = Array.isArray(value) ? value : value?.records;
       if (!Array.isArray(list)) throw coded('Unrecognized catalog search', 'CATALOG_UNRECOGNIZED');
-      found = orderMatches(list.filter(row => row && matches(row)), title, validateAndNormalize(book?.isbn13 || '') || isbn || null);
+      found = matchingRows(list, { title, authors: book?.authors || [] }, { isbn: validateAndNormalize(book?.isbn13 || '') || isbn || null, matches });
     } catch (error) { return { outcome: 'unknown', errorCode: failureCode(error) }; }
     if (!found.length) return { outcome: 'no_match' };
 

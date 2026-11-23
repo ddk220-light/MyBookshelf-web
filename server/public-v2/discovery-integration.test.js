@@ -27,7 +27,10 @@ test('every imported inline library has search, durable reopening, and availabil
   // (LBSNAA was removed by hand on 19 November 2026: robots.txt).
   // The finder counts 6,701 of the 6,704 Indian entries (three have no finder record).
   assert.equal(createDiscoveryService().search({ country: 'IN' }).total, 4138);
-  assert.equal(createDiscoveryService().search({}).total, 7086 - 6701 + 4138);
+  // The 15 US entries in server/data/us-catalogs-listed.json `removed` are
+  // not offered either (23 November 2026).
+  assert.equal(createDiscoveryService().search({ country: 'US' }).total, 217);
+  assert.equal(createDiscoveryService().search({}).total, 7086 - 6701 + 4138 - 15);
   assert.equal(createDiscoveryService({ entries: getAllLibraries }).search({}).total, 7086);
   assert.equal(new Set(getAllLibraries().map(r => r.id)).size, getAllLibraries().length);
 });

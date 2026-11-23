@@ -6,13 +6,15 @@ import { safeCatalogUrl as onCatalogOrigin } from '../services/catalog-lookup/ob
 import { REASONS } from '../services/catalog-lookup/outcome.js';
 import { parseLibraryRequest, parseProblemReport, SubmissionError } from '../catalog-store/requests.js';
 import { storesAvailability } from '../catalog-store/policy.js';
+import { countedOutcome } from '../catalog-store/outcomeCounts.js';
 import { PublicV2ValidationError, parseHoldingsCheck, parseHoldingsLookup, parseHoldingsSearch } from './validation.js';
 
 // Holdings and submission routes (plan 3.5, 5.7). Still cookie-free: they
 // use the catalog store, never the account database.
 //
 //   POST /holdings/lookup  stored answers only, no catalog request (shelf badges)
-//   POST /holdings/check   stored answer, else one live check (book page)
+//   POST /holdings/check   stored answer, else one live check (book page),
+//                          within a budget per library and per client
 //   POST /holdings/search  NDJSON result marking (background check for results)
 //   POST /library-requests request to add a library: text and a count, plus
 //                          an optional name and email (kept 90 days)
@@ -124,6 +126,17 @@ const safeCatalogUrl = value => {
 export function createHoldingsRoutes({ directory, books, lookup, store, now = () => Date.now(), searchCapMs = SEARCH_CAP_MS, functionWorkMs = FUNCTION_WORK_MS,
   checkReplyMs = CHECK_REPLY_MS }) {
   const usage = event => { try { store.usage.record(event); } catch { /* The log never alters a response. */ } };
+  // The day's outcome count for this library (catalog-store/outcomeCounts.js):
+  // the library, the operation, found / not found / couldn't check and its
+  // reason. Never a book, text or anything about the reader.
+  const count = (libraryId, answer, reason) => {
+    try { store.outcomes?.record({ libraryId, operation: 'book_check', ...countedOutcome(answer, reason) }); } catch { /* Counts never alter a response. */ }
+  };
+  // The book check's request budget (catalog-store/checkBudget.js): 'ok',
+  // 'library' or 'client'. A missing or failing budget lets the check run.
+  const budgetFor = async (libraryId, address) => {
+    try { return (await store.checkBudget?.take({ libraryId, address })) || 'ok'; } catch { return 'ok'; }
+  };
   // A library whose catalog policy forbids storing availability (BiblioCommons,
   // catalog-store/policy.js): nothing is read from the answer store, and its
   // log rows keep no book key and no found count, so the log never holds
@@ -214,6 +227,8 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
       res.json({ answer, ...(reason ? { reason } : {}), ...(catalogUrl ? { catalogUrl, catalogLinkKind: recordUrl ? 'record' : handoff.catalogLinkKind } : {}),
         ...(matches.length ? { matches } : {}) });
       usage({ kind: 'book_check', libraryId, ...(keeps(libraryId) ? { bookKey } : {}), outcome: answer, ...(source ? { source } : {}), durationMs: now() - startedAt });
+      // A stored answer is not a check of the catalog today: not counted.
+      if (source !== 'stored') count(libraryId, answer, reason);
     };
     const stored = await lookup.storedFor({ library: entry, book });
     if (stored) {
@@ -226,6 +241,9 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
     // because the book's details, not the library's catalog, failed
     // (`details`; the catalog was not asked and its health is not touched).
     if (metadataFailed && !book.isbn13 && !book.recordId) return reply('unknown', null, { reason: 'details' });
+    // Over the library's or this client's budget of live checks: couldn't
+    // check (`busy`), and the catalog is not asked.
+    if (await budgetFor(libraryId, req.ip) !== 'ok') return reply('unknown', null, { reason: 'busy' });
     const controller = new AbortController();
     const abandon = () => { if (!res.writableEnded) controller.abort(); };
     res.on('close', abandon);

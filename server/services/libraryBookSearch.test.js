@@ -1,6 +1,20 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { MAX_MATCHES, mainTitle, orderMatches, searchLibraryBook, titleMatches } from './libraryBookSearch.js';
+import fs from 'node:fs';
+import { MAX_MATCHES, carriesAuthor, mainTitle, matchingRows, orderMatches, searchLibraryBook, titleMatches } from './libraryBookSearch.js';
+import pool from '../../shared/us-book-pool.json' with { type: 'json' };
+
+// TLC LS2 PAC rows saved by the US research on 23 November 2026: 80 searches
+// (the 40 pool books at Los Angeles PL and Frederick County PL), 1,665 rows
+// with the catalog's format label and, for rows passing the title rule, a
+// hand-judged kind (`work` is the book itself). Titles, authors and formats only.
+const tlcFixture = name => new URL(`../test/fixtures/tlc/${name}`, import.meta.url);
+const tlcRows = fs.readFileSync(tlcFixture('rows.tsv'), 'utf8').trim().split('\n').slice(1).map(line => {
+  const [book, host, pos, format, kind, title, author] = line.split('\t');
+  return { book: Number(book), host, pos: Number(pos), format, kind, title, authors: author ? [author] : [] };
+});
+const tlcSearch = name => JSON.parse(fs.readFileSync(tlcFixture(name), 'utf8')).resources
+  .map(row => ({ title: row.shortTitle, authors: row.shortAuthor ? [row.shortAuthor] : [], format: row.format }));
 
 const ISBN = '9788173711466';
 const coded = code => Object.assign(new Error(code), { code });
@@ -40,6 +54,103 @@ test('display order: the ISBN row first, then the exact title, then titles that 
   const rows = [{ title: 'Kalam: Wings of Fire' }, { title: 'Wings of Fire 2' }, { title: 'Wings of fire' }, { title: 'Fire wings of', isbn: ISBN }];
   assert.deepEqual(orderMatches(rows, 'Wings of Fire', ISBN).map(row => row.title), ['Fire wings of', 'Wings of fire', 'Wings of Fire 2', 'Kalam: Wings of Fire']);
   assert.deepEqual(orderMatches(rows, 'Wings of Fire').map(row => row.title), ['Wings of fire', 'Wings of Fire 2', 'Kalam: Wings of Fire', 'Fire wings of']);
+});
+
+test('display order: book rows first, then rows with the book\'s author, then the title order, each in the catalog\'s order', () => {
+  const rows = [
+    { title: 'Wings of fire', format: 'eBook', authors: ['Kalam, A. P. J. Abdul'] },
+    { title: 'Wings of fire : a guide', format: 'Book', authors: ['Guide, Some'] },
+    { title: 'Wings of fire', format: 'Book', authors: [] },
+    { title: 'Kalam: Wings of Fire', format: 'Book', authors: ['Kalam, A. P. J. Abdul'] },
+    { title: 'Wings of fire', authors: ['Kalam, Abdul'] },
+    { title: 'Wings of fire', format: 'Book on CD', authors: [] },
+  ];
+  assert.deepEqual(orderMatches(rows, 'Wings of Fire', null, ['A. P. J. Abdul Kalam']).map(row => [row.title, row.format || '-']), [
+    // Book rows (and the row with no format) that carry the author, exact title first...
+    ['Wings of fire', '-'], ['Kalam: Wings of Fire', 'Book'],
+    // ...then book rows without the author...
+    ['Wings of fire', 'Book'], ['Wings of fire : a guide', 'Book'],
+    // ...then e-books, audiobooks and others, the author's first.
+    ['Wings of fire', 'eBook'], ['Wings of fire', 'Book on CD']]);
+  // With no author known, the format and title order alone.
+  assert.deepEqual(orderMatches(rows, 'Wings of Fire').map(row => row.format || '-'), ['Book', '-', 'Book', 'Book', 'eBook', 'Book on CD']);
+  // The ISBN row is this edition: still first, whatever its format.
+  assert.equal(orderMatches([...rows, { title: 'Wings of fire', format: 'eBook', isbn: ISBN }], 'Wings of Fire', ISBN, ['Kalam'])[0].isbn, ISBN);
+});
+
+test('an author is matched by family name, never decides a find', () => {
+  assert.equal(carriesAuthor({ authors: ['Lee, Harper'] }, ['Harper Lee']), true);
+  assert.equal(carriesAuthor({ authors: ['Van Pelt, Shelby'] }, ['Shelby Van Pelt']), true);
+  assert.equal(carriesAuthor({ authors: ['García Márquez, Gabriel, 1927-2014'] }, ['Gabriel García Márquez']), true);
+  assert.equal(carriesAuthor({ author: 'Seuss, Dr.' }, ['Dr. Seuss']), true);
+  assert.equal(carriesAuthor({ authors: ['Hartley, Mary'] }, ['Harper Lee']), false);
+  assert.equal(carriesAuthor({ authors: [] }, ['Harper Lee']), false);
+  assert.equal(carriesAuthor({ authors: ['Lee, Harper'] }, []), false);
+});
+
+test('row rules: a video or music row is never a find; audiobooks, e-books and rows with no format are', async () => {
+  const film = [{ title: 'The Hobbit', format: 'DVD' }, { title: 'The Hobbit', format: 'Blu-ray' }, { title: 'The Hobbit : the desolation of Smaug', format: 'MUSIC_CD' },
+    { title: 'The Hobbit', format: 'Score' }, { title: 'The Hobbit', format: 'eVideo' }];
+  // A library with only the film and the soundtrack does not have the book.
+  assert.deepEqual(await searchLibraryBook(catalog(film), { title: 'The Hobbit' }), { outcome: 'no_match' });
+  for (const format of ['eBook', 'eAudioBook', 'Book on CD', 'Playaway', 'EAUDIOBOOK', undefined, '0']) {
+    const result = await searchLibraryBook(catalog([...film, { title: 'The Hobbit', format }]), { title: 'The Hobbit' });
+    assert.equal(result.outcome, 'in_catalog', String(format));
+    assert.equal(result.matches.length, 1, String(format));
+  }
+  // The same rule for the rows of an ISBN search.
+  assert.deepEqual(await searchLibraryBook(catalog([{ title: 'A record', format: 'DVD' }]), { title: '' }, { readerIsbn: ISBN }), { outcome: 'no_match' });
+  assert.deepEqual(matchingRows([{ title: 'Malgudi days', format: 'Video cassette' }, { title: 'Malgudi days', format: 'Text book' }], { title: 'Malgudi Days' })
+    .map(row => row.format), ['Text book']);
+});
+
+test('TLC rows: dropping video and music keeps all 80 finds, and the card starts with the print book in 76 of 80', () => {
+  const searches = new Map();
+  for (const row of tlcRows) {
+    const key = `${row.book}:${row.host}`;
+    if (!searches.has(key)) searches.set(key, []);
+    searches.get(key).push(row);
+  }
+  assert.equal(searches.size, 80);
+  const VIDEO_OR_MUSIC = ['DVD', 'Video Recording', 'eVideo', 'Music CD', 'eMusic', 'Score'];
+  const notFirst = [], dropped = [], left = [];
+  for (const [key, rows] of searches) {
+    const book = pool.books[Number(key.split(':')[0]) - 1];
+    assert.equal(rows[0].book, Number(key.split(':')[0]));
+    const shown = matchingRows(rows, { title: book.title, authors: [book.author] });
+    // Every search still finds the book itself...
+    assert.ok(shown.some(row => row.kind === 'work'), key);
+    // ...and no row the catalog labels video or music is on the card.
+    assert.deepEqual(shown.filter(row => VIDEO_OR_MUSIC.includes(row.format)), [], key);
+    // Rows dropped are exactly the passing rows the catalog labels video or music.
+    const passing = rows.filter(row => titleMatches(row.title, book.title));
+    dropped.push(...passing.filter(row => !shown.includes(row)));
+    left.push(...shown.filter(row => ['film', 'music'].includes(row.kind)));
+    if (!(shown[0].kind === 'work' && ['Book', 'Large Print'].includes(shown[0].format))) notFirst.push(`${book.title} (${rows[0].host})`);
+  }
+  assert.equal(dropped.length, 81);
+  assert.ok(dropped.every(row => VIDEO_OR_MUSIC.includes(row.format)));
+  // Two songbooks stay: the catalog calls them e-books.
+  assert.deepEqual(left.map(row => row.format), ['eBook', 'eBook']);
+  // Left for the tighter title test (decision 12): the young readers' edition
+  // listed before the book, and Diary of a Wimpy Kid, whose title starts every
+  // book of the series.
+  assert.deepEqual(notFirst.sort(), ['Diary of a Wimpy Kid (Frederick)', 'Diary of a Wimpy Kid (LAPL)', 'Killers of the Flower Moon (Frederick)', 'Killers of the Flower Moon (LAPL)']);
+});
+
+test('TLC fixtures: LAPL lists study guides above the novel; the card starts with the novel by its author', async () => {
+  const result = await searchLibraryBook(catalog(tlcSearch('lapl-02-to-kill-a-mockingbird.json')), { title: 'To Kill a Mockingbird', authors: ['Harper Lee'] });
+  assert.deepEqual(result.matches.map(match => [match.title, match.author || '']), [
+    ['To kill a mockingbird', 'Lee, Harper'], ['To kill a mockingbird : threatening boundaries', 'Johnson, Claudia Durst'],
+    ['To kill a mockingbird : a graphic novel', 'Fordham, Fred'], ['Harper Lee\'s To kill a mockingbird', 'Hartley, Mary'],
+    ['CliffsNotes Lee\'s To kill a mockingbird', 'Castleman, Tamara']]);
+  // Frederick: the print book, then the Spanish edition is not a match, unrelated rows never are.
+  const bright = await searchLibraryBook(catalog(tlcSearch('fcpl-01-remarkably-bright-creatures.json')), { title: 'Remarkably Bright Creatures', authors: ['Shelby Van Pelt'] });
+  assert.deepEqual(bright.matches, [{ title: 'Remarkably bright creatures', author: 'Van Pelt, Shelby' }]);
+  // Diary of a Wimpy Kid: every series book passes the title rule (decision 12 keeps it for now).
+  const wimpy = matchingRows(tlcSearch('lapl-24-diary-of-a-wimpy-kid.json'), { title: 'Diary of a Wimpy Kid', authors: ['Jeff Kinney'] });
+  assert.equal(wimpy.length, 25);
+  assert.deepEqual(wimpy.slice(0, 2).map(row => row.format), ['Large Print', 'Large Print']);
 });
 
 test('a check is exactly one catalog search, with the book\'s main title, whatever key reached the book', async () => {
