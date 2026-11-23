@@ -195,6 +195,46 @@ test('marks and book checks share the rows of one search: opening a book whose t
   assert.deepEqual([answer.outcome, answer.requests, catalog.asked], ['found', 0, ['malgudi days']]);
 });
 
+// Owner decision, 23 November 2026: a catalog whose terms forbid storing
+// availability (BiblioCommons; server/data/catalog-policies.json) is checked
+// live every time. Nothing is written to or read from the answer store, and
+// the rows cache keeps nothing; other libraries are unchanged.
+test('a no-store library (BiblioCommons): every check and mark is one live request, and nothing is stored or served from the store', async () => {
+  global.fetch = async url => { await tick(); return response(url, 'page'); };
+  const bc = { id: 'bc:sfpl', platform: 'bc', slug: 'sfpl', catalogUrl: 'https://sfpl.bibliocommons.com' };
+  const koha = { id: 'koha:store-rows', platform: 'koha', catalogUrl: 'https://rows.example' };
+  const book = { bookKey: 'v1:openlibrary:OL25382083W', workId: 'OL25382083W', isbn13: '9780063204157', title: 'Remarkably Bright Creatures' };
+  const found = [row('Remarkably Bright Creatures', { catalogUrl: 'https://rows.example/1', catalogLinkKind: 'record' })];
+  const runs = {};
+  for (const library of [bc, koha]) {
+    const catalog = rowsCatalog(found);
+    // The reviewed policy file: the harness passes no policy of its own.
+    const { lookup, answers, settle } = harness({ providerFor: () => catalog.provider, platforms: NO_PACING });
+    const marks = await collect(lookup.markResults({ library, query: 'remarkably bright creatures', books: [{ bookKey: book.bookKey, title: book.title }] }));
+    const first = await lookup.lookupBook({ library, book });
+    await settle();
+    const again = await lookup.lookupBook({ library, book });
+    await settle();
+    const stored = await answers.readAnswers(library.id, [{ kind: 'ol_work', value: book.workId }, { kind: 'isbn13', value: book.isbn13 }]);
+    runs[library.platform] = { mark: marks[0].outcome, first: [first.outcome, first.source, first.requests], again: [again.outcome, again.source, again.requests],
+      searches: catalog.asked.length, stored: stored.length };
+  }
+  // BiblioCommons: the mark, then two book checks, three live searches; nothing stored.
+  assert.deepEqual(runs.bc, { mark: 'found', first: ['found', 'live', 1], again: ['found', 'live', 1], searches: 3, stored: 0 });
+  // Koha, as before: the book check reuses the mark's rows, the second check is the stored answer.
+  assert.deepEqual(runs.koha, { mark: 'found', first: ['found', 'live', 0], again: ['found', 'stored', 0], searches: 1, stored: 2 });
+
+  // An answer stored before the rule (or written by an older release) is never served.
+  const answers = createMemoryAnswerStore();
+  await answers.writeAnswers([{ libraryId: bc.id, kind: 'ol_work', value: book.workId, answer: 'not_found', evidence: 'work_no_match', expiresAt: Date.now() + 60_000 }]);
+  const catalog = rowsCatalog(found);
+  const { lookup } = harness({ providerFor: () => catalog.provider, platforms: NO_PACING, answers });
+  assert.deepEqual([(await lookup.lookupBook({ library: bc, book })).source, catalog.asked.length], ['live', 1]);
+  assert.equal(await lookup.storedFor({ library: bc, book }), null);
+  const marks = await collect(lookup.markResults({ library: bc, query: 'remarkably bright creatures', books: [{ bookKey: book.bookKey, workId: book.workId, title: book.title }] }));
+  assert.deepEqual([marks[0].source, catalog.asked.length], ['live', 2]);
+});
+
 // --- Result marking: per-platform strategies on saved catalog pages ----------
 
 const kalamProfile = (isbns = ['9788173711466', '8173711461']) => profileOf({ isbn13: isbns[0], isbns, title: 'Wings of fire: an autobiography', authors: ['A. P. J. Abdul Kalam'] });

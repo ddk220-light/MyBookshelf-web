@@ -125,8 +125,10 @@ export function createPublicV2Router({
     // A book-page check still running at its deadline finishes under waitUntil.
     defer: store.defer,
     hostGate: store.hostGate,
+    // No rows cache for a library whose policy forbids storing availability.
+    policyFor: store.policyFor,
   });
-  const availabilityService = availability || createPublicAvailabilityService({ directory, books: bookService, lookup: catalogLookup });
+  const availabilityService = availability || createPublicAvailabilityService({ directory, books: bookService, lookup: catalogLookup, policyFor: store.policyFor });
   const holdings = createHoldingsRoutes({ directory, books: bookService, lookup: catalogLookup, store, ...holdingsOptions });
   // Shelf suggestions: Open Library only (public related lists), never a catalog request.
   const suggestions = createSuggestionRoutes({ store, ...suggestionOptions });

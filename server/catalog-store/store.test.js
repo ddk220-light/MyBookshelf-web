@@ -5,7 +5,7 @@ import request from 'supertest';
 import { readCatalogStoreConfig } from './config.js';
 import { scrubQueryText, usageRow, createUsageLog } from './usageLog.js';
 import { parseLibraryRequest, parseProblemReport, SubmissionError, createSubmissions } from './requests.js';
-import { createCatalogPolicy, parseCatalogPolicies } from './policy.js';
+import { createCatalogPolicy, parseCatalogPolicies, parsePlatformPolicies, platformOfLibrary, storesAvailability } from './policy.js';
 import { createMemoryHostGate, createPgHostGate } from './hostGate.js';
 import { createCatalogStore, createStoreStatus } from './index.js';
 import { createCatalogMaintenanceMiddleware } from './cron.js';
@@ -256,8 +256,58 @@ test('the policy file is reviewed data: opt-outs need a reason and a date', () =
   assert.deepEqual(policy.optedOut(), ['bc:example']);
   assert.throws(() => parseCatalogPolicies({ schemaVersion: 1, libraries: { 'bc:x': { storeAnswers: false } } }), /reason/);
   assert.throws(() => parseCatalogPolicies({ schemaVersion: 2, libraries: {} }));
-  // The shipped file parses and is empty.
+  // The shipped file parses: no library opt-outs, and BiblioCommons stores nothing.
   assert.deepEqual(createCatalogPolicy().optedOut(), []);
+  assert.deepEqual(createCatalogPolicy().noStorePlatforms(), ['bc']);
+});
+
+test('a catalog system can forbid storing availability: every library of it, with the terms cited (23 November 2026)', async () => {
+  const shipped = createCatalogPolicy();
+  assert.deepEqual({ ...shipped.policyFor('bc:sfpl') }, { storeAnswers: false, backgroundChecks: true });
+  assert.deepEqual({ ...shipped.policyFor('bc:smcl') }, { storeAnswers: false, backgroundChecks: true });
+  assert.deepEqual({ ...shipped.policyFor('koha:anna-centenary-library') }, { storeAnswers: true, backgroundChecks: true });
+  assert.deepEqual({ ...shipped.policyFor('egranthalaya:pylib-rrlpy') }, { storeAnswers: true, backgroundChecks: true });
+  assert.equal(storesAvailability('bc:sfpl'), false);
+  assert.equal(storesAvailability('vega:nypl'), true);
+  assert.equal(platformOfLibrary('bc:sfpl'), 'bc');
+  // The rule follows the reviewed terms: a reason, the date and the source.
+  const { default: file } = await import('../data/catalog-policies.json', { with: { type: 'json' } });
+  assert.match(file.platforms.bc.reason, /BiblioCommons/);
+  assert.match(file.platforms.bc.sourceUrl, /^https:\/\/[a-z]+\.bibliocommons\.com\/info\/terms$/);
+  assert.equal(file.platforms.bc.reviewedOn, '2026-11-23');
+  assert.throws(() => parsePlatformPolicies({ schemaVersion: 1, platforms: { bc: { storeAnswers: false, reason: 'Terms', reviewedOn: '2026-11-23' } }, libraries: {} }), /sourceUrl/);
+  assert.throws(() => parsePlatformPolicies({ schemaVersion: 1, platforms: { 'bc:x': { storeAnswers: true } }, libraries: {} }), /Invalid/);
+  // A library is held to the stricter of its own rule and its system's.
+  const both = createCatalogPolicy({ policies: { schemaVersion: 1,
+    platforms: { bc: { storeAnswers: false, reason: 'Terms', reviewedOn: '2026-11-23', sourceUrl: 'https://example.org/terms' } },
+    libraries: { 'bc:quiet': { backgroundChecks: false }, 'koha:x': { storeAnswers: false, reason: 'Asked', reviewedOn: '2026-11-23' } } } });
+  assert.deepEqual({ ...both.policyFor('bc:quiet') }, { storeAnswers: false, backgroundChecks: false });
+  assert.deepEqual({ ...both.policyFor('koha:x') }, { storeAnswers: false, backgroundChecks: true });
+  assert.deepEqual([both.optedOut(), both.noStorePlatforms()], [['koha:x'], ['bc']]);
+  // The prefix is the platform for every library in the directory, so the
+  // rule reaches every BiblioCommons library and nothing else.
+  const { getAllLibraries } = await import('../services/directory.js');
+  const libraries = getAllLibraries();
+  assert.ok(libraries.length > 1000);
+  for (const entry of libraries) assert.equal(platformOfLibrary(entry.id), entry.platform, entry.id);
+  assert.ok(libraries.filter(entry => entry.platform === 'bc').every(entry => !storesAvailability(entry.id)));
+  assert.ok(libraries.filter(entry => entry.platform !== 'bc').every(entry => storesAvailability(entry.id)));
+});
+
+test('the daily job deletes every stored answer of a no-store catalog system, by the library ID prefix', async () => {
+  const { runCatalogMaintenance } = await import('./maintenance.js');
+  const ran = [];
+  const db = { query: async (sql, values) => {
+    ran.push([sql.replace(/\s+/g, ' ').trim(), values]);
+    return { rows: [], rowCount: /split_part\(library_id/.test(sql) ? 3 : 0 };
+  } };
+  const result = await runCatalogMaintenance(db, { policy: createCatalogPolicy(), now: () => Date.UTC(2026, 10, 23) });
+  assert.equal(result.purgedAnswers, 3);
+  const purge = ran.find(([text]) => /split_part\(library_id, ':', 1\) = ANY/.test(text));
+  assert.ok(purge && purge[0].startsWith('DELETE FROM holdings_answers'));
+  assert.deepEqual(purge[1], [['bc']]);
+  // No library opt-out in the shipped file: no per-library purge.
+  assert.ok(!ran.some(([text]) => /WHERE library_id = ANY/.test(text)));
 });
 
 test('the host gate spaces requests across readers and caps them per minute', async () => {

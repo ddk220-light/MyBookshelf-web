@@ -85,8 +85,11 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null, on
   // new check.
   useShelfHoldings(state.selectedLibraryId, state.savedBooks, Boolean(behind));
   // While the first suggestions of a visit are on their way their slots stay
-  // empty (`held`), so the books never change under a tap.
-  const suggestions = useShelfSuggestions(state.savedBooks, state.selectedLibraryId, SUGGESTION_SOURCES, state.recentBooks);
+  // empty (`held`), so the books never change under a tap. The seed list
+  // follows the chosen library's country, not known while it loads.
+  const libraryShown = Boolean(state.selectedLibraryId) && library?.id === state.selectedLibraryId;
+  const suggestions = useShelfSuggestions(state.savedBooks, state.selectedLibraryId, SUGGESTION_SOURCES, state.recentBooks,
+    libraryShown ? library!.country ?? null : null, Boolean(state.selectedLibraryId) && !libraryShown && loadingLibrary);
   const suggested = useMemo(() => (suggestions.held ? heldSuggestionSlots(SUGGESTION_COUNT) : suggestions.books.map(suggestionEntry)), [suggestions.held, suggestions.books]);
   const withSuggestions = useMemo(() => [...entries, ...suggested], [entries, suggested]);
   const motion = useSuggestionMotion(suggestions.held ? null : suggested.map(entry => entry.key), state.savedBooks.map(book => book.bookKey),

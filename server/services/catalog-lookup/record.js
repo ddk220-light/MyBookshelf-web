@@ -2,6 +2,7 @@ import { validateAndNormalize } from '../isbn.js';
 import { isHealthFailure } from './outcome.js';
 import { linkKind } from './observation.js';
 import { parsePublicBookKey } from '../../public-v2/contracts.js';
+import { reviewedPolicy } from '../../catalog-store/policy.js';
 
 // What the lookup layer remembers (plan 4.3, 5.5). Three ports; the in-memory
 // versions below are used without a database, and server/catalog-store/
@@ -267,7 +268,11 @@ export function writeLibraryCheckLog(event) {
 }
 
 // The sink the lookup layer writes to. `kind` is 'book' or 'results'.
-export function createLookupRecorder({ answers = null, health = null, telemetry = null, policyFor = () => ({ storeAnswers: true }),
+// `policyFor` is the reviewed catalog policy (catalog-store/policy.js) unless
+// a caller passes its own: a library, or a catalog system such as
+// BiblioCommons, whose policy says storeAnswers: false is never written to
+// the store and never answered from it.
+export function createLookupRecorder({ answers = null, health = null, telemetry = null, policyFor = reviewedPolicy.policyFor,
   defer = defaultDefer, now = () => Date.now(), log = writeLibraryCheckLog } = {}) {
   const safely = fn => async (...args) => { try { return await fn(...args); } catch { return undefined; } };
 

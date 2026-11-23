@@ -3,6 +3,7 @@ import { catalogHandoffFor } from './catalog-handoff.js';
 import { publicAttribution } from './attribution.js';
 import { parsePublicBookKey } from './contracts.js';
 import { runBookCheck } from '../services/catalog-lookup/check.js';
+import { reviewedPolicy, storesAvailability } from '../catalog-store/policy.js';
 
 function timestamp(now) {
   return new Date(now()).toISOString();
@@ -46,16 +47,21 @@ export function createPublicAvailabilityService({
   // The catalog lookup layer (services/catalog-lookup). Optional: without it,
   // or for platforms not named in CATALOG_LOOKUP_V2, the old path runs.
   lookup = null,
+  // The catalog policy (catalog-store/policy.js): a library whose policy
+  // forbids storing availability gets no last-known copy.
+  policyFor = reviewedPolicy.policyFor,
 } = {}) {
   const lastKnown = new Map();
 
-  function cached(key) {
+  function cached(libraryId, key) {
+    if (!storesAvailability(libraryId, policyFor)) return null;
     const value = lastKnown.get(key);
     if (!value || value.expiresAt <= now()) return null;
     return value.response;
   }
 
-  function remember(key, response) {
+  function remember(libraryId, key, response) {
+    if (!storesAvailability(libraryId, policyFor)) return response;
     if (lastKnown.size >= 512) lastKnown.delete(lastKnown.keys().next().value);
     lastKnown.set(key, { response, expiresAt: now() + cacheTtlMs });
     return response;
@@ -70,7 +76,7 @@ export function createPublicAvailabilityService({
       const attemptedAt = timestamp(now);
       const cacheKey = `${libraryId}:${bookKey}:${editionScope}:${language || ''}`;
       const failed = (error, handoff, lookupKind) => {
-        const errorCode = catalogErrorCode(error), previous = cached(cacheKey);
+        const errorCode = catalogErrorCode(error), previous = cached(libraryId, cacheKey);
         return { kind: 'result', response: previous
           ? { ...previous, freshness: 'stale', attemptedAt, errorCode }
           : attachCatalogHandoff(unknown({ lookupKind, attemptedAt, errorCode }), handoff, library) };
@@ -106,7 +112,7 @@ export function createPublicAvailabilityService({
         return failed(result.error, handoff, result.lookupKind || lookupKind);
       }
       const enriched = attachCatalogHandoff(result.response, handoff, library);
-      return { kind: 'result', response: ['unknown', 'no_match'].includes(result.response.outcome) ? enriched : remember(cacheKey, enriched) };
+      return { kind: 'result', response: ['unknown', 'no_match'].includes(result.response.outcome) ? enriched : remember(libraryId, cacheKey, enriched) };
     },
   });
 }

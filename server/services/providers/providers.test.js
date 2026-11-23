@@ -214,7 +214,7 @@ test('BiblioCommons distinguishes upstream failure from a reachable miss', async
   assert.equal((await checkBc('smcl', '9780000000000')).status, 'not_found');
 });
 
-test('BiblioCommons availability uses a 60-second single-flight cache', async () => {
+test('BiblioCommons availability shares a request in flight and keeps nothing afterwards (no-store, 23 November 2026)', async () => {
   let calls = 0;
   global.fetch = async (url) => {
     calls++;
@@ -232,8 +232,19 @@ test('BiblioCommons availability uses a 60-second single-flight cache', async ()
   ]);
   assert.deepEqual(results.map((item) => item.status), ['checked_out', 'checked_out', 'checked_out']);
   assert.equal(calls, 3);
+  // BiblioCommons' terms forbid storing availability (server/data/
+  // catalog-policies.json): the next check is a new live request.
   await checkBc('smcl', '9781111111111');
-  assert.equal(calls, 3);
+  assert.equal(calls, 6);
+});
+
+test('a BiblioCommons library search is a new request every time: no rows are kept', async () => {
+  let calls = 0;
+  global.fetch = async url => { calls += 1; return response({ catalogSearch: { results: [{ representative: 'S1' }] }, entities: { bibs: { S1: {
+    briefInfo: { title: 'Fourth Wing', authors: ['Yarros'], format: 'BK' } } } } }, { url }); };
+  assert.equal((await searchResultRows('sfpl', 'Fourth Wing')).length, 1);
+  assert.equal((await searchResultRows('sfpl', 'Fourth Wing')).length, 1);
+  assert.equal(calls, 2);
 });
 
 test('Koha resolver and full flow use effective item status', async () => {

@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import type { RecentBook } from '../types';
 import type { SuggestedBook } from './pickSuggestions';
-import { SEED_SUGGESTIONS } from './seed';
+import { SEED_SUGGESTIONS, US_SEED_SUGGESTIONS } from './seed';
 import { forgetSuggestionVisit, noteSuggestionInteraction, SUGGESTION_HOLD_MS, SUGGESTION_SOURCES, suggestionRefreshKey, useShelfSuggestions as useSuggestions,
   type SuggestionSource } from './useShelfSuggestions';
 
@@ -18,6 +18,30 @@ const deferred = <T,>() => { let resolve!: (value: T) => void, reject!: (reason:
 afterEach(() => { cleanup(); vi.useRealTimers(); vi.unstubAllGlobals(); forgetSuggestionVisit(); localStorage.clear(); sessionStorage.clear(); });
 
 describe('useShelfSuggestions', () => {
+  it('the seed list follows the chosen library’s country: the US list for a US library, held while the library loads', async () => {
+    const load = vi.fn(async (_context: { libraryId: string | null; seed?: readonly SuggestedBook[] }) => [] as SuggestedBook[]);
+    const sources: SuggestionSource[] = [{ id: 'server', load }];
+    const { result, rerender } = renderHook(({ country, loading }) => useSuggestions([], 'bc:sfpl', sources, [], country, loading),
+      { initialProps: { country: null as string | null, loading: true } });
+    // The chosen library is still loading: nothing is asked, the slots are held empty.
+    expect([result.current.held, result.current.books]).toEqual([true, []]);
+    expect(load).not.toHaveBeenCalled();
+    rerender({ country: 'US', loading: false });
+    await waitFor(() => expect(keys(result.current.books)).toEqual(keys(US_SEED_SUGGESTIONS.slice(0, 5))));
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(load.mock.calls[0][0]).toMatchObject({ libraryId: 'bc:sfpl', seed: US_SEED_SUGGESTIONS });
+    expect(keys(result.current.books).some(key => SEED_SUGGESTIONS.some(item => item.bookKey === key))).toBe(false);
+  });
+
+  it('India, every other country and no library keep today’s list', () => {
+    for (const [library, country] of [[null, null], ['koha:anna', 'IN'], ['calil:Tokyo_Setagaya', 'JP'], ['koha:x', null]] as const) {
+      const { result, unmount } = renderHook(() => useShelfSuggestions([], library, [], [], country));
+      expect(keys(result.current)).toEqual(keys(SEED_SUGGESTIONS.slice(0, 5)));
+      unmount();
+      forgetSuggestionVisit();
+    }
+  });
+
   it('with only the bundled list: the first five not saved, at once', () => {
     const { result, rerender } = renderHook(({ shelf }) => useShelfSuggestions(shelf, null, []), { initialProps: { shelf: [] as RecentBook[] } });
     expect(result.current).toEqual(SEED_SUGGESTIONS.slice(0, 5));
@@ -35,7 +59,7 @@ describe('useShelfSuggestions', () => {
     await waitFor(() => expect(keys(result.current).slice(0, 2)).toEqual(keys([book(10), book(11)])));
     expect(keys(result.current).slice(2)).toEqual(keys(SEED_SUGGESTIONS.slice(0, 3)));
     expect(load).toHaveBeenCalledTimes(1);
-    expect(load.mock.calls[0][0]).toEqual({ savedBooks: shelf, recentBooks: [], libraryId: 'lib:a' });
+    expect(load.mock.calls[0][0]).toEqual({ savedBooks: shelf, recentBooks: [], libraryId: 'lib:a', seed: SEED_SUGGESTIONS });
     // Browsing (a new render, the same saved books in another array): no refresh.
     rerender({ shelf: [...shelf], library: 'lib:a' });
     expect(load).toHaveBeenCalledTimes(1);
@@ -100,7 +124,7 @@ describe('useShelfSuggestions', () => {
     await waitFor(() => expect(answers).toHaveLength(2));
     expect(signals[0].aborted).toBe(true);
     expect(signals[1].aborted).toBe(false);
-    expect(contexts[1]).toEqual({ savedBooks: shelf, recentBooks: [viewed('v1:openlibrary:OL6W')], libraryId: 'lib:a' });
+    expect(contexts[1]).toEqual({ savedBooks: shelf, recentBooks: [viewed('v1:openlibrary:OL6W')], libraryId: 'lib:a', seed: SEED_SUGGESTIONS });
     await act(async () => { answers[0].resolve([book(90)]); await answers[0].promise; });
     expect(keys(result.current)).not.toContain(book(90).bookKey);
     await act(async () => { answers[1].resolve([book(91)]); await answers[1].promise; });
@@ -248,5 +272,8 @@ describe('useShelfSuggestions', () => {
     expect(suggestionRefreshKey([a, b], 'lib')).toBe(suggestionRefreshKey([b, a], 'lib'));
     expect(suggestionRefreshKey([a], 'lib')).not.toBe(suggestionRefreshKey([a, b], 'lib'));
     expect(suggestionRefreshKey([a], 'lib')).not.toBe(suggestionRefreshKey([a], null));
+    // The US seed list for the same library and books is a new refresh; today's list keeps the old key.
+    expect(suggestionRefreshKey([a], 'lib', 'US')).not.toBe(suggestionRefreshKey([a], 'lib'));
+    expect(suggestionRefreshKey([a], 'lib', null)).toBe(suggestionRefreshKey([a], 'lib'));
   });
 });

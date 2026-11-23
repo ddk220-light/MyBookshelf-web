@@ -1,9 +1,13 @@
-import test from 'node:test';
+import test, { after } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { POLICY_EFFECTIVE_DATE, PLACEHOLDER_PATTERN, policyEffectiveDate, withEffectiveDate } from '../../shared/policy-effective-date.mjs';
-import { publishedLibraries, escape, jsonLd, origin, countWord, rootShell, rootTitle, aboutText, contactEmail, shelfPages, shelfData } from './build-pages.mjs';
+import { publishedLibraries, escape, jsonLd, origin, countWord, rootShell, rootTitle, aboutText, contactEmail, shelfPages, shelfData, checkPages, checkData, CHECK_SCRIPT_PATH } from './build-pages.mjs';
+import { checkPublication, CHECK_BOOKS } from './check-pages.mjs';
+import { libraryCheckScriptSource, installLibraryChecks } from './library-check-script.mjs';
+import usList from '../../shared/us-book-pool.json' with { type: 'json' };
+import usPages from '../../shared/seo-us-libraries.json' with { type: 'json' };
 import manifest from '../../shared/seo-libraries.json' with { type: 'json' };
 import { getAllLibraries } from '../../server/services/directory.js';
 import { toPublicLibrary } from '../../server/public-v2/directory.js';
@@ -69,9 +73,11 @@ test('built output contains only published library pages and indexable canonical
   const report=JSON.parse(readFileSync('client/dist/seo-report.json'));
   assert.equal(report.libraryPages.length,12);
   // Twenty URLs (with /terms: the policy texts carry their committed date),
-  // plus the library pages with a shelf that have no guide, the book pages and /books.
-  const shelf=shelfPages(), extra=shelf.libraries.filter(r=>!r.guide).length+shelf.books.length+(shelf.books.length?1:0);
+  // plus the library pages with a shelf that have no guide, the California
+  // pages that have no guide, the book pages and /books.
+  const shelf=shelfPages(), check=checkPages(), extra=shelf.libraries.filter(r=>!r.guide).length+check.libraries.filter(r=>!r.guide).length+shelf.books.length+(shelf.books.length?1:0);
   assert.deepEqual(report.shelfLibraryPages,shelf.libraries.map(r=>r.path));
+  assert.deepEqual(report.checkLibraryPages,check.libraries.map(r=>r.path));
   assert.deepEqual(report.bookPages,shelf.books.map(b=>b.path));
   assert.ok(report.indexablePages.includes('/terms'));
   assert.equal(report.indexablePages.length,20+extra);
@@ -227,7 +233,7 @@ test('every build publishes the policy texts with the committed date and keeps t
     assert.ok((await readFile(join(out, 'about.html'), 'utf8')).includes('<a href="/terms">Terms</a>'), 'the footer links the published Terms');
     const report = JSON.parse(await readFile(join(out, 'seo-report.json'), 'utf8'));
     const shelf = shelfPages();
-    assert.equal(report.indexablePages.length, 20 + shelf.libraries.filter(r => !r.guide).length + shelf.books.length + (shelf.books.length ? 1 : 0));
+    assert.equal(report.indexablePages.length, 20 + shelf.libraries.filter(r => !r.guide).length + checkPages().libraries.filter(r => !r.guide).length + shelf.books.length + (shelf.books.length ? 1 : 0));
     assert.ok(report.indexablePages.includes('/terms'));
   } finally { await rm(out, { recursive: true, force: true }); }
 });
@@ -335,7 +341,7 @@ test('library and book pages: shelf section, links both ways, sitemap with check
     assert.ok(sitemap.includes(`<loc>${origin}/books</loc>`));
     assert.ok(!sitemap.includes('/select/') && !sitemap.includes('/app/'));
     const report = JSON.parse(await readFile(join(out, 'seo-report.json'), 'utf8'));
-    assert.equal(report.indexablePages.length, 19 + 1 + shelf.books.length + 1);
+    assert.equal(report.indexablePages.length, 19 + 1 + checkPages().libraries.filter(r => !r.guide).length + shelf.books.length + 1);
     for (const path of report.indexablePages) {
       const html = await readFile(join(out, path === '/' ? 'index.html' : path.slice(1) + '.html'), 'utf8');
       // CSP 'self': no inline style or handler, no inline script but JSON-LD, images only from allowed hosts.
@@ -353,4 +359,314 @@ test('library and book pages: shelf section, links both ways, sitemap with check
       }
     }
   } finally { await rm(out, { recursive: true, force: true }); }
+});
+
+// ---- California pages: popular books checked live on a tap (23 November 2026)
+
+test('the US list: 30 to 40 distinctive books in six groups, each an Open Library work with a cover and an ISBN, dated', () => {
+  assert.match(usList.updatedOn, /^\d{4}-\d{2}-\d{2}$/);
+  const books = usList.books;
+  assert.ok(books.length >= 30 && books.length <= 40, String(books.length));
+  assert.deepEqual([...new Set(books.map(book => book.group))].sort(), ['children', 'classic', 'fiction', 'nonfiction', 'spanish', 'ya']);
+  for (const book of books) {
+    assert.match(book.bookKey, /^v1:openlibrary:OL\d+W$/, book.title);
+    assert.match(book.coverId, /^\d+$/, book.title);
+    assert.match(book.isbn, /^97[89]\d{10}$/, book.title);
+    assert.ok(book.title.trim() && book.author.trim(), book.title);
+    // Two or more words, and none of the titles the matcher would confuse.
+    assert.ok(book.title.split(/\s+/).length >= 2, book.title);
+    assert.ok(!/1984|Nineteen Eighty|Sorcerer|Philosopher|piedra filosofal/i.test(book.title), book.title);
+  }
+  assert.equal(new Set(books.map(book => book.bookKey)).size, books.length);
+  // The pages' ten and the app's twenty come first, each a mix of the groups, one book per author.
+  assert.ok(new Set(books.slice(0, CHECK_BOOKS).map(book => book.group)).size >= 5);
+  assert.equal(new Set(books.slice(0, 20).map(book => book.author)).size, 20);
+});
+
+test('California: every public library system in the directory has a page; the others are left out with a reason', () => {
+  const california = getAllLibraries().filter(entry => entry.country === 'US' && entry.region === usPages.state);
+  const listed = usPages.libraries.map(item => item.id), out = usPages.leftOut.map(item => item.id);
+  assert.deepEqual([...listed, ...out].sort(), california.map(entry => entry.id).sort(), 'each California entry is in exactly one list');
+  assert.equal(new Set([...listed, ...out]).size, listed.length + out.length);
+  for (const item of usPages.leftOut) assert.ok(item.reason.length > 20 && /^\d{4}-\d{2}-\d{2}$/.test(item.on), item.id);
+  const check = checkPages();
+  assert.equal(check.libraries.length, listed.length);
+  assert.equal(check.date, usList.updatedOn);
+  // The four reviewed guides keep their slugs; every other slug is the library's /select/ link name.
+  const guides = check.libraries.filter(row => row.guide).map(row => row.path).sort();
+  assert.deepEqual(guides, ['/libraries/alameda-county-library', '/libraries/san-francisco-public-library', '/libraries/san-mateo-county-libraries', '/libraries/santa-clara-county-library']);
+  for (const row of check.libraries.filter(item => !item.guide)) {
+    assert.equal(row.library.selectionPath.replace(/^\/select\//, '').replace(/--[0-9a-f]{16}$/, ''), row.slug, row.id);
+    assert.ok(!row.library.address && !row.library.officialUrl, 'only facts the directory has');
+  }
+  // The ten books are the US list's first ten.
+  assert.deepEqual(check.books.map(book => book.bookKey), usList.books.slice(0, CHECK_BOOKS).map(book => book.bookKey));
+  // A slug clash, a page also left out, or a library outside the state stops the build.
+  const publication = pages => checkPublication({ entries: getAllLibraries(), toPublic: toPublicLibrary, manifest, pages, pool: usList });
+  assert.throws(() => publication({ ...usPages, libraries: [...usPages.libraries, { id: 'bc:marinet', slug: 'marinet' }] }), /left out/);
+  assert.throws(() => publication({ ...usPages, libraries: [usPages.libraries[1], { ...usPages.libraries[2], slug: usPages.libraries[1].slug }] }), /collision/);
+  assert.throws(() => publication({ ...usPages, libraries: [{ id: 'bc:nypl-stagedoor', slug: 'stagedoor' }] }), /Not a California library/);
+  assert.throws(() => checkPublication({ entries: getAllLibraries(), toPublic: toPublicLibrary, manifest, pages: usPages, pool: { ...usList, updatedOn: undefined } }), /updatedOn/);
+});
+
+// One build into a temporary folder, shared by the tests below.
+let built = null;
+after(async () => { if (built) { const { rm } = await import('node:fs/promises'); await rm(built.out, { recursive: true, force: true }); } });
+async function buildOnce() {
+  if (built) return built;
+  const { buildPages } = await import('./build-pages.mjs');
+  const { mkdtemp, writeFile } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os');
+  const out = await mkdtemp(join(tmpdir(), 'check-pages-'));
+  await writeFile(join(out, 'index.html'), APP_SHELL);
+  await buildPages(out, { analytics: false, siteVerification: null, policyEffectiveDate: null });
+  built = { out, read: path => readFileSync(join(out, path.slice(1) + '.html'), 'utf8') };
+  return built;
+}
+const californiaPaths = () => checkPages().libraries.map(row => row.path);
+
+test('California pages: the directory’s facts, ten books to check, a button and an app link per book, and no found claim', async () => {
+  const { read } = await buildOnce();
+  const oakland = read('/libraries/oakland-public-library');
+  assert.match(oakland, /<title>Oakland Public Library — catalog and book search \| MyBookshelf<\/title>|<title>Oakland Public Library — catalog and book search<\/title>/);
+  assert.match(oakland, /<meta name="description" content="[^"]*Oakland Public Library catalog \(Oakland, California\)[^"]*popular books[^"]*">/);
+  assert.match(oakland, /<p class="eyebrow">Oakland · California · United States<\/p>/);
+  assert.ok(oakland.includes('<a class="button button-secondary" href="https://oaklandlibrary.bibliocommons.com/">Library’s own catalog ↗</a>'));
+  assert.ok(oakland.includes('<h2 id="check-heading">Popular books: check this library’s catalog</h2>'));
+  assert.ok(oakland.includes('They are books to check, not books known to be in Oakland Public Library.'));
+  assert.ok(oakland.includes('Nothing is checked before you tap, and no answer is kept.'));
+  assert.ok(oakland.includes('not operated by or affiliated with Oakland Public Library'));
+  assert.ok(oakland.includes('couldn’t check, never that the book isn’t there'));
+  assert.equal((oakland.match(/<li class="check-book" /g) || []).length, CHECK_BOOKS);
+  assert.equal((oakland.match(/<button type="button" class="button button-secondary" data-check hidden>Check at Oakland Public Library<span class="sr-only">: /g) || []).length, CHECK_BOOKS);
+  assert.ok(oakland.includes('<button type="button" class="button" data-check-all hidden>Check all 10</button>'));
+  for (const book of usList.books.slice(0, CHECK_BOOKS)) {
+    assert.ok(oakland.includes(`data-book-key="${book.bookKey}"`), book.title);
+    assert.ok(oakland.includes(`<a href="/select/oakland-public-library?book=${encodeURIComponent(book.bookKey)}" rel="nofollow">Check in the app`), book.title);
+    assert.ok(oakland.includes(`src="https://covers.openlibrary.org/b/id/${book.coverId}-M.jpg"`), book.title);
+  }
+  assert.ok(oakland.includes('data-library-check data-library-id="bc:oaklandlibrary"'));
+  assert.ok(!oakland.includes('Official library website'), 'no official site the directory lacks');
+  // Structured data: Library and BreadcrumbList only, nothing that lists the books.
+  const data = JSON.parse(oakland.match(/<script type="application\/ld\+json">([^<]+)<\/script>/)[1]);
+  assert.deepEqual(data.map(item => item['@type']), ['WebPage', 'Library', 'BreadcrumbList']);
+  assert.deepEqual(data[1].address, { '@type': 'PostalAddress', addressLocality: 'Oakland', addressRegion: 'California', addressCountry: 'US' });
+  // A guide keeps its reviewed text and gains the same section.
+  const sfpl = read('/libraries/san-francisco-public-library');
+  const guide = manifest.find(item => item.id === 'bc:sfpl');
+  assert.ok(sfpl.includes(`<p class="lede">${escape(guide.summary)}</p>`) && sfpl.includes(escape(guide.access)) && sfpl.includes('Official library website ↗'));
+  assert.ok(sfpl.includes('Popular books: check this library’s catalog') && sfpl.includes('Check at San Francisco Public Library'));
+  assert.ok(sfpl.includes(`<script src="${CHECK_SCRIPT_PATH}" defer></script>`));
+  const sfplData = JSON.parse(sfpl.match(/<script type="application\/ld\+json">([^<]+)<\/script>/)[1]);
+  assert.deepEqual(sfplData.map(item => item['@type']), ['WebPage', 'Library', 'BreadcrumbList']);
+  // No found claim, count, due date or shelf location on any California page.
+  for (const path of californiaPaths()) {
+    const html = read(path);
+    assert.ok(!/Found in the catalog|Books found in this|found in its catalog|In your library|Not in your library|checked \d{1,2} [A-Z][a-z]+ \d{4}|"ItemList"/.test(html), path);
+    assert.ok(!/copies available|available now|due back|on the shelf|floor \d|shelf number|call number/i.test(html), path);
+    assert.ok(html.includes(`<script src="${CHECK_SCRIPT_PATH}" defer></script>`), path);
+    // No search text in any address: book keys and library slugs only.
+    for (const m of html.matchAll(/href="([^"]+)"/g)) assert.ok(!/[?&](q|query|search|term)=/i.test(m[1]), m[1]);
+  }
+});
+
+test('the check script is one external same-origin file: no inline script or style, and the CSP allows it', async () => {
+  const { out, read } = await buildOnce();
+  const script = readFileSync(join(out, CHECK_SCRIPT_PATH.slice(1)), 'utf8');
+  assert.equal(script, libraryCheckScriptSource());
+  // It calls only the app's own check endpoint, with no cookie, and keeps nothing.
+  assert.ok(script.includes("'/api/v2/holdings/check'") && script.includes("credentials: 'omit'"));
+  assert.ok(!/localStorage|sessionStorage|indexedDB|document\.cookie|https?:\/\/(?!mybookshelf\.cloud)[a-z]/i.test(script.replace(/new win\.URL\(value\)/, '')));
+  assert.ok(!/innerHTML|insertAdjacentHTML|eval\(|new Function|\.style\b/.test(script), 'text and attributes only');
+  const csp = JSON.parse(readFileSync('vercel.json', 'utf8')).services.web.routes[0].headers['Content-Security-Policy'];
+  assert.match(csp, /script-src 'self'/);
+  assert.match(csp, /connect-src 'self'/);
+  for (const path of californiaPaths()) {
+    const html = read(path);
+    assert.ok(!/<script(?![^>]*(?:type="application\/ld\+json"|src="\/library-check\.js"))/.test(html), path);
+    assert.ok(!/\sstyle=|\son[a-z]+=/i.test(html), path);
+  }
+  // Pages without the section do not load it.
+  assert.ok(!read('/libraries/anna-centenary-library').includes(CHECK_SCRIPT_PATH));
+  assert.ok(!read('/about').includes(CHECK_SCRIPT_PATH));
+});
+
+// A fake `fetch` the test answers by hand, one request at a time.
+function fakeFetch() {
+  const calls = [];
+  const fetch = (url, options) => new Promise((resolve, reject) => { calls.push({ url, options, body: JSON.parse(options.body), resolve, reject }); });
+  const reply = (index, body, ok = true) => calls[index].resolve({ ok, json: async () => body });
+  return { calls, fetch, reply };
+}
+const settle = () => new Promise(resolve => setTimeout(resolve, 5));
+
+test('the check script sends nothing when the page loads; a tap is one check, and "Check all" checks one book after another', async () => {
+  const { JSDOM } = await import('jsdom');
+  const { read } = await buildOnce();
+  const dom = new JSDOM(read('/libraries/oakland-public-library'), { url: origin + '/libraries/oakland-public-library', runScripts: 'outside-only' });
+  const { window } = dom, doc = window.document;
+  const api = fakeFetch();
+  window.fetch = api.fetch;
+  try {
+    window.eval(libraryCheckScriptSource());
+    await settle();
+    // Loaded and run, as a crawler that runs scripts would: no request, buttons shown.
+    assert.equal(api.calls.length, 0);
+    const rows = [...doc.querySelectorAll('[data-book-key]')];
+    const button = row => row.querySelector('[data-check]');
+    const answer = row => row.querySelector('[data-check-answer]').textContent;
+    assert.ok(rows.every(row => !button(row).hidden) && !doc.querySelector('[data-check-all]').hidden);
+    await new Promise(resolve => setTimeout(resolve, 50));
+    assert.equal(api.calls.length, 0, 'still nothing without a tap');
+
+    // A tap: one POST to the app's check, with the library and the book key only.
+    button(rows[0]).click();
+    await settle();
+    assert.equal(api.calls.length, 1);
+    const [first] = api.calls;
+    assert.equal(first.url, '/api/v2/holdings/check');
+    assert.deepEqual([first.options.method, first.options.credentials, first.options.headers['Content-Type']], ['POST', 'omit', 'application/json']);
+    assert.deepEqual(first.body, { libraryId: 'bc:oaklandlibrary', bookKey: rows[0].getAttribute('data-book-key') });
+    assert.match(answer(rows[0]), /Checking the library’s catalog/);
+    assert.equal(button(rows[0]).disabled, true);
+    // A second tap on the same book while it is checking asks nothing more.
+    button(rows[0]).click();
+    await settle();
+    assert.equal(api.calls.length, 1);
+    api.reply(0, { answer: 'found', catalogUrl: 'https://oaklandlibrary.bibliocommons.com/v2/record/S1', catalogLinkKind: 'record',
+      matches: [{ title: 'Remarkably bright creatures : a novel', author: 'Van Pelt, Shelby', url: 'https://oaklandlibrary.bibliocommons.com/v2/record/S1' }] });
+    await settle();
+    assert.match(answer(rows[0]), /^Found in the catalog/);
+    assert.match(answer(rows[0]), /It may be another edition/);
+    assert.match(answer(rows[0]), /Remarkably bright creatures : a novel · Van Pelt, Shelby/);
+    const link = rows[0].querySelector('.check-catalog');
+    assert.deepEqual([link.getAttribute('href'), link.textContent], ['https://oaklandlibrary.bibliocommons.com/v2/record/S1', 'See this book in the library’s catalog ↗']);
+    assert.match(button(rows[0]).textContent, /^Check again: /);
+
+    // Check all: one request at a time, in order, each only after the last answered.
+    doc.querySelector('[data-check-all]').click();
+    await settle();
+    assert.equal(api.calls.length, 2);
+    assert.equal(doc.querySelector('[data-check-all]').disabled, true);
+    assert.ok(rows.slice(1).every(row => /Waiting to check/.test(answer(row))));
+    // A tap during "Check all" waits its turn: no second request at once.
+    button(rows[5]).click();
+    await settle();
+    assert.equal(api.calls.length, 2);
+    const replies = [
+      { answer: 'not_found', catalogUrl: 'https://oaklandlibrary.bibliocommons.com/v2/search?query=x', catalogLinkKind: 'search' },
+      { answer: 'unknown', reason: 'timeout' },
+      { answer: 'unconfirmed' },
+      { answer: 'unknown', reason: 'blocked' },
+      'network',
+      { answer: 'found' },
+      { answer: 'surprise' },
+      { answer: 'unknown', reason: 'busy' },
+      { answer: 'not_found' },
+      { answer: 'found' },
+    ];
+    for (let index = 0; index < replies.length; index += 1) {
+      assert.equal(api.calls.length, index + 2, `request ${index + 2} only after ${index + 1} answered`);
+      if (replies[index] === 'network') api.calls[index + 1].reject(new window.TypeError('offline'));
+      else if (index === 7) api.reply(index + 1, {}, false);
+      else api.reply(index + 1, replies[index]);
+      await settle();
+    }
+    assert.equal(api.calls.length, 11);
+    // The order is the page's, the first book again first.
+    assert.deepEqual(api.calls.slice(1).map(call => call.body.bookKey), rows.map(row => row.getAttribute('data-book-key')));
+    assert.match(answer(rows[0]), /^Not found in the catalog/);
+    assert.match(answer(rows[0]), /did not find it\. The library may still have another edition\./);
+    assert.match(answer(rows[0]), /Search the library’s catalog yourself ↗/);
+    assert.match(answer(rows[1]), /^Couldn’t check right now.*did not answer in time\. This does not mean the book is missing\./);
+    assert.match(answer(rows[2]), /^Couldn’t check right now.*could not tell whether it has this book/);
+    assert.match(answer(rows[3]), /does not allow outside checks/);
+    assert.equal(button(rows[3]).hidden, true, 'no Check again for a library that does not allow checks');
+    assert.match(answer(rows[4]), /^Couldn’t check right now.*couldn’t check the library’s catalog this time/);
+    assert.match(answer(rows[6]), /^Couldn’t check right now/, 'an answer the page does not know is couldn’t check');
+    assert.match(answer(rows[7]), /^Couldn’t check right now/, 'a failed reply is couldn’t check, never not found');
+    assert.match(doc.querySelector('[data-check-progress]').textContent, /Checked 10 books\./);
+    assert.equal(doc.querySelector('[data-check-all]').disabled, false);
+    // Only library IDs and book keys ever leave the page.
+    for (const call of api.calls) {
+      assert.deepEqual(Object.keys(call.body).sort(), ['bookKey', 'libraryId']);
+      assert.ok(!call.url.includes('?'));
+    }
+  } finally { window.close(); }
+});
+
+test('the check script needs a page section and fetch: elsewhere it does nothing', async () => {
+  const { JSDOM } = await import('jsdom');
+  const { read } = await buildOnce();
+  const dom = new JSDOM(read('/libraries/anna-centenary-library'), { runScripts: 'outside-only' });
+  let calls = 0;
+  dom.window.fetch = async () => { calls += 1; return { ok: true, json: async () => ({}) }; };
+  assert.equal(installLibraryChecks(dom.window, dom.window.document), 0);
+  assert.equal(calls, 0);
+  const plain = new JSDOM(read('/libraries/oakland-public-library'));
+  // No fetch (an old browser): the buttons stay hidden and the app links remain.
+  delete plain.window.fetch;
+  assert.equal(installLibraryChecks(plain.window, plain.window.document), 0);
+  assert.ok([...plain.window.document.querySelectorAll('[data-check]')].every(item => item.hidden));
+  assert.equal(plain.window.document.querySelectorAll('a[href^="/select/oakland-public-library?book="]').length, CHECK_BOOKS);
+  dom.window.close(); plain.window.close();
+});
+
+test('the sitemap lists every California page with the US list’s date; the index groups them under California', async () => {
+  const { out, read } = await buildOnce();
+  const sitemap = readFileSync(join(out, 'sitemap.xml'), 'utf8');
+  for (const path of californiaPaths()) assert.ok(sitemap.includes(`<loc>${origin}${path}</loc><lastmod>${usList.updatedOn}</lastmod>`), path);
+  const report = JSON.parse(readFileSync(join(out, 'seo-report.json'), 'utf8'));
+  assert.deepEqual(report.checkLibraryPages, californiaPaths());
+  for (const path of californiaPaths()) assert.ok(report.indexablePages.includes(path), path);
+  const hub = read('/libraries');
+  assert.ok(hub.includes(`<section id="us-california" class="state-index"><h2>United States: California <small>· ${californiaPaths().length} libraries</small></h2>`));
+  for (const path of californiaPaths()) assert.ok(hub.includes(`href="${path}"`), path);
+  assert.ok(hub.indexOf('id="india-by-state"') < hub.indexOf('id="us-california"'), 'next to the Indian groups');
+  // The index's date is its newest content.
+  assert.match(sitemap, new RegExp(`<loc>${origin}/libraries</loc><lastmod>${usList.updatedOn}</lastmod>`));
+});
+
+test('India pages are unchanged by the California pages: the same bytes with and without them', async () => {
+  const { buildPages } = await import('./build-pages.mjs');
+  const { mkdtemp, writeFile, rm, readdir } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os');
+  const { out } = await buildOnce();
+  const without = await mkdtemp(join(tmpdir(), 'no-check-pages-'));
+  try {
+    await writeFile(join(without, 'index.html'), APP_SHELL);
+    await buildPages(without, { analytics: false, siteVerification: null, policyEffectiveDate: null }, shelfPages(), { libraries: [], books: [], state: null, date: null });
+    const files = async dir => (await readdir(dir, { recursive: true })).filter(name => name.endsWith('.html')).sort();
+    const before = await files(without);
+    const changed = new Set(['libraries.html', ...californiaPaths().map(path => path.slice(1) + '.html')]);
+    let compared = 0;
+    for (const name of before) {
+      if (changed.has(name)) continue;
+      assert.equal(readFileSync(join(out, name), 'utf8'), readFileSync(join(without, name), 'utf8'), name);
+      compared += 1;
+    }
+    // Every Indian library page and book page is among them.
+    const indian = shelfPages().libraries.map(row => row.path.slice(1) + '.html');
+    assert.ok(indian.length > 100 && indian.every(name => before.includes(name)));
+    assert.ok(compared > indian.length);
+    assert.ok(!existsSync(join(without, CHECK_SCRIPT_PATH.slice(1))), 'no script without the pages');
+  } finally { await rm(without, { recursive: true, force: true }); }
+});
+
+test('checkData reads the committed files', () => {
+  const { pages, pool } = checkData();
+  assert.equal(pages.state, 'California');
+  assert.equal(pool.updatedOn, usList.updatedOn);
+});
+
+test('the check script uses the app’s words for each answer (client LibraryAnswerCard)', () => {
+  const card = readFileSync('client/src/v2/ui/book/LibraryAnswerCard.tsx', 'utf8');
+  const script = libraryCheckScriptSource();
+  const block = (start, end) => card.slice(card.indexOf(start), card.indexOf(end, card.indexOf(start)));
+  const phrases = [...block('export function unknownDescription', '\n}\n').matchAll(/'([^'\n]{12,})'/g), ...block('const descriptions', '};').matchAll(/'([^'\n]{12,})'/g),
+    ...block('export function catalogLinkText', '\n}\n').matchAll(/'([^'\n]{8,})'/g)].map(match => match[1])
+    .filter(text => !/^Open the library’s catalog instead$/.test(text));
+  assert.ok(phrases.length >= 10);
+  for (const text of phrases) assert.ok(script.includes(text), text);
+  assert.ok(script.includes(card.match(/const NOT_MISSING = '([^']+)'/)[1]));
 });

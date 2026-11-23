@@ -11,6 +11,7 @@ import { PLATFORMS, REQUEST_TIMEOUT_MS, platformFor, hostFor, bookDeadlineMs, ba
 import { createHostGuard } from './budget.js';
 import { createLookupRecorder, createMemoryHealthRecord, identitiesFor, askedIdentity, storedAnswer } from './record.js';
 import { createMemoryHostGate } from '../../catalog-store/hostGate.js';
+import { reviewedPolicy, storesAvailability } from '../../catalog-store/policy.js';
 
 // The catalog lookup layer (plan section 5). Two entry points:
 //
@@ -28,7 +29,9 @@ import { createMemoryHostGate } from '../../catalog-store/hostGate.js';
 // Rows of one library search, by library and normalised term, shared by the
 // search-list marks and the book checks (a book opened from a list whose
 // title is the typed text costs no second request). In memory only, ten
-// minutes; never logged.
+// minutes; never logged. Never for a library whose catalog policy forbids
+// storing availability (BiblioCommons, catalog-store/policy.js): there every
+// check and every mark is its own live request.
 const ROWS_CACHE_MS = 10 * 60 * 1000;
 const MAX_RESULT_BOOKS = 12;
 const coded = (message, code) => Object.assign(new Error(message), { code });
@@ -89,6 +92,9 @@ export function createCatalogLookup({
   // Keeps a book-page check alive after the reader's answer (the server
   // passes catalog-store/waitUntil.js). Without it no check continues.
   defer = null,
+  // The catalog policy (catalog-store/policy.js; the server passes the
+  // store's): whether a library's search rows may be kept in the rows cache.
+  policyFor = reviewedPolicy.policyFor,
 } = {}) {
   const rowsCache = new Map();
   const robotsCheck = robots ? url => robots.check(url) : null;
@@ -545,8 +551,16 @@ export function createCatalogLookup({
   }
 
   // One library search's rows from the shared cache, else `fetch()` (one
-  // catalog request), remembered when the catalog answered with rows.
+  // catalog request), remembered when the catalog answered with rows. A
+  // library whose policy forbids storing availability is always `fetch()`,
+  // and nothing is remembered.
   async function sharedRows(entry, term, fetch) {
+    if (!storesAvailability(entry?.id, policyFor)) {
+      const value = await fetch();
+      const rows = Array.isArray(value) ? value : value?.records;
+      if (!Array.isArray(rows)) throw coded('Unrecognized catalog search', 'CATALOG_UNRECOGNIZED');
+      return rows;
+    }
     const key = `${entry?.id || entry?.slug}\u0000${termKey(term)}`;
     const hit = rowsCache.get(key);
     if (hit && hit.expiresAt > now()) return hit.rows;

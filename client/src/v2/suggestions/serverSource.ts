@@ -101,12 +101,13 @@ export function parseServerSuggestions(values: readonly unknown[]): SuggestedBoo
 
 /**
  * The candidates, in order: the related lists in recency order (the newest
- * book's first), then the seed list; never a saved book or another edition
+ * book's first), then the seed list (the one for the chosen library's
+ * country; today's list by default); never a saved book or another edition
  * of one, never one twice, at most CANDIDATE_LIMIT. One book per author is
  * left to the final pick.
  */
-export function mergeCandidates(lists: ReadonlyArray<readonly SuggestedBook[]>, savedBooks: readonly RecentBook[]): SuggestedBook[] {
-  return suggestionCandidates([...lists, SEED_SUGGESTIONS], savedBooks, CANDIDATE_LIMIT);
+export function mergeCandidates(lists: ReadonlyArray<readonly SuggestedBook[]>, savedBooks: readonly RecentBook[], seed: readonly SuggestedBook[] = SEED_SUGGESTIONS): SuggestedBook[] {
+  return suggestionCandidates([...lists, seed], savedBooks, CANDIDATE_LIMIT);
 }
 
 /** Those the library is known to have ("found" stored answers) first, badged for it; the rest keep their order. */
@@ -124,7 +125,6 @@ export function serverHasSomethingToAdd(context: SuggestionContext): boolean {
 }
 
 const aborted = () => new DOMException('The refresh was replaced.', 'AbortError');
-const seedKeys = new Set(SEED_SUGGESTIONS.map(book => book.bookKey));
 
 /**
  * The server source, ahead of the bundled seed list (useShelfSuggestions).
@@ -145,7 +145,8 @@ export const serverSuggestions: SuggestionSource = {
     if (keys.length && failed === keys.length) throw new Error('No related list could be read.');
     const partial = failed > 0 || answers.some(answer => answer.status === 'fulfilled' && answer.value.partial);
     const lists = answers.map(answer => (answer.status === 'fulfilled' ? parseServerSuggestions(answer.value.books) : []));
-    const candidates = mergeCandidates(lists, context.savedBooks);
+    const seed = context.seed || SEED_SUGGESTIONS;
+    const candidates = mergeCandidates(lists, context.savedBooks, seed);
     let books = candidates;
     const libraryId = context.libraryId;
     if (libraryId && candidates.length) {
@@ -161,6 +162,7 @@ export const serverSuggestions: SuggestionSource = {
     if (!partial) return books;
     // Cut short: the fresh related books and those the library has, then the
     // last ones; the seed list follows in the pick.
+    const seedKeys = new Set(seed.map(book => book.bookKey));
     const fresh = books.filter(book => book.foundIn || !seedKeys.has(book.bookKey));
     const kept = new Set(fresh.map(book => book.bookKey));
     return [...fresh, ...previous.filter(book => !kept.has(book.bookKey))].slice(0, CANDIDATE_LIMIT);

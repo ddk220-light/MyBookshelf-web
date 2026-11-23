@@ -168,6 +168,28 @@ h2 small { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Work San
 .book-heading .book-cover { max-width: 180px; }
 .book-heading h1 { margin-bottom: 12px; }
 .book-page main { max-width: 960px; }
+/* California library pages: popular books checked live on a reader's tap
+   (tools/seo/check-pages.mjs, /library-check.js). Text only, no motion. */
+[hidden] { display: none !important; }
+button.button { cursor: pointer; }
+.button:disabled { opacity: .6; cursor: default; }
+.check-section { margin: 32px 0 40px; }
+.check-all { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: 16px 0 0; }
+.check-list { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 0 32px; list-style: none; padding: 0; margin: 12px 0 20px; }
+.check-book { display: grid; grid-template-columns: 72px minmax(0,1fr); gap: 16px; align-items: start; min-width: 0; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.check-book .cover { max-width: 72px; }
+.check-body { min-width: 0; }
+.check-body p { margin: 0; }
+.check-body .shelf-author { margin-top: 2px; }
+.check-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-top: 10px; }
+.check-actions a, .check-catalog { display: inline-flex; align-items: center; min-height: 44px; }
+.check-answer:empty { display: none; }
+.check-answer { margin-top: 10px; padding-left: 12px; border-left: 3px solid var(--line); }
+.check-answer p { margin: 4px 0 0; }
+.check-label { font-weight: 600; color: var(--ink); }
+.check-answer .check-found { color: var(--accent); }
+.check-matches { margin: 4px 0 0; padding-left: 20px; }
+.check-match-author { color: var(--muted); font-size: .875rem; }
 @media (max-width: 1100px) {
   .shelf { grid-template-columns: repeat(4, minmax(0,1fr)); }
   .hero { grid-template-columns: minmax(0,1.2fr) minmax(0,1fr); gap: 32px; }
@@ -190,6 +212,7 @@ h2 small { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Work San
   .section-top, .footer-top { display: block; }
   .columns { columns: 2; }
   .shelf { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 20px 16px; }
+  .check-list { grid-template-columns: minmax(0,1fr); }
   .state-list { columns: 1; }
   .book-heading { grid-template-columns: minmax(0,1fr); gap: 20px; }
   .book-heading .book-cover { max-width: 140px; }

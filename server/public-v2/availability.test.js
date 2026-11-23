@@ -223,3 +223,21 @@ test('aggregated catalog observations preserve a search link instead of calling 
   assert.equal(result.response.catalogLinkKind, 'search');
   assert.equal(result.response.totalCopies, 2);
 });
+
+test('a no-store library (BiblioCommons, 23 November 2026) keeps no last-known answer: a failed check is unknown, not stale', async () => {
+  let fail = false;
+  const provider = {
+    checkAvailability: async () => {
+      if (fail) throw Object.assign(new Error('timeout'), { name: 'AbortError' });
+      return { outcome: 'none_available', matchKind: 'exact_isbn', recognizedExact: true };
+    },
+  };
+  const bcLibrary = { ...library, id: 'bc:sfpl' }, bcEntry = { id: 'bc:sfpl', platform: 'bc', slug: 'sfpl' };
+  const service = createPublicAvailabilityService(dependencies(provider, {
+    directory: { resolve: id => (id === bcLibrary.id ? bcLibrary : null), entry: id => (id === bcEntry.id ? bcEntry : null) } }));
+  const first = await service.check({ libraryId: bcLibrary.id, bookKey: book.bookKey, editionScope: 'exact' });
+  fail = true;
+  const again = await service.check({ libraryId: bcLibrary.id, bookKey: book.bookKey, editionScope: 'exact' });
+  assert.equal(first.response.outcome, 'none_available');
+  assert.deepEqual([again.response.outcome, again.response.freshness, again.response.errorCode], ['unknown', 'none', 'CATALOG_TIMEOUT']);
+});

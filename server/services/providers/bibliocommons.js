@@ -1,6 +1,7 @@
 import { cachedTask, getJson, DEFAULT_TIMEOUT_MS } from './http.js';
 import { normalizeAvailability, notFound, unknown } from './contract.js';
 import { validateAndNormalize } from '../isbn.js';
+import { storesAvailability } from '../../catalog-store/policy.js';
 
 // This is intentionally the same public (no-login) catalog identity and request
 // shape as the native BiblioCommons clients. It is not a browser disguise: it
@@ -8,6 +9,13 @@ import { validateAndNormalize } from '../isbn.js';
 const PUBLIC_WEB_HEADERS = Object.freeze({
   'User-Agent': 'MyBookshelf/1.0 (Web; +https://mybookshelf.cloud/privacy)',
 });
+
+// BiblioCommons' terms forbid harvesting or capturing its content, so the
+// reviewed catalog policy says nothing is stored for its libraries
+// (server/data/catalog-policies.json, owner decision 23 November 2026): no
+// answer or row is kept in this adapter's short in-memory cache either. Two
+// readers asking at the same moment still share the one request in flight.
+const keepFor = slug => storesAvailability(`bc:${slug}`);
 
 function catalogError(code, message) {
   const error = new Error(message);
@@ -117,7 +125,7 @@ async function lookupPublicCatalog(slug, isbn, title, author, { skipEmptyTitle =
         kind: 'observation', status, branch, copies: totalCopies, availableCopies, heldCopies,
         locations: locationsFrom(availData), ...base,
       };
-    }, { deadlineAt, shouldCache: (value) => value.kind !== 'unavailable' });
+    }, { deadlineAt, shouldCache: (value) => value.kind !== 'unavailable' && keepFor(slug) });
   } catch (err) {
     console.error('BiblioCommons availability check failed:', err.message);
     return { kind: 'unavailable' };
@@ -186,7 +194,7 @@ function printRows(slug, query) {
           ...(Number.isInteger(availability?.totalCopies) ? { totalCopies: availability.totalCopies } : {}),
           callNumber: info.callNumber } }];
     });
-  }, { deadlineAt });
+  }, { deadlineAt, shouldCache: () => keepFor(slug) });
 }
 
 // The one library search (libraryBookSearch.js): every print row of one

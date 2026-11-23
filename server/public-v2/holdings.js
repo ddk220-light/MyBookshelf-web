@@ -5,6 +5,7 @@ import { identitiesFor, askedIdentity, storedAnswer } from '../services/catalog-
 import { safeCatalogUrl as onCatalogOrigin } from '../services/catalog-lookup/observation.js';
 import { REASONS } from '../services/catalog-lookup/outcome.js';
 import { parseLibraryRequest, parseProblemReport, SubmissionError } from '../catalog-store/requests.js';
+import { storesAvailability } from '../catalog-store/policy.js';
 import { PublicV2ValidationError, parseHoldingsCheck, parseHoldingsLookup, parseHoldingsSearch } from './validation.js';
 
 // Holdings and submission routes (plan 3.5, 5.7). Still cookie-free: they
@@ -111,8 +112,13 @@ const safeCatalogUrl = value => {
 export function createHoldingsRoutes({ directory, books, lookup, store, now = () => Date.now(), searchCapMs = SEARCH_CAP_MS, functionWorkMs = FUNCTION_WORK_MS,
   checkReplyMs = CHECK_REPLY_MS }) {
   const usage = event => { try { store.usage.record(event); } catch { /* The log never alters a response. */ } };
+  // A library whose catalog policy forbids storing availability (BiblioCommons,
+  // catalog-store/policy.js): nothing is read from the answer store, and its
+  // log rows keep no book key and no found count, so the log never holds
+  // which book it has.
+  const keeps = libraryId => storesAvailability(libraryId, store.policyFor);
   const readStored = async (libraryId, identities) => {
-    if (!identities.length || store.policyFor(libraryId)?.storeAnswers === false) return [];
+    if (!identities.length || !keeps(libraryId)) return [];
     try {
       const rows = await store.answers.readAnswers(libraryId, identities);
       return Array.isArray(rows) ? rows : [];
@@ -157,7 +163,7 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
     // cannot be identified here without a request to that other catalog.
     if (parsed?.kind === 'catalog' && parsed.libraryId !== libraryId) {
       res.json({ answer: 'unknown', reason: 'unsupported' });
-      usage({ kind: 'book_check', libraryId, bookKey, outcome: 'unknown', durationMs: now() - startedAt });
+      usage({ kind: 'book_check', libraryId, ...(keeps(libraryId) ? { bookKey } : {}), outcome: 'unknown', durationMs: now() - startedAt });
       return undefined;
     }
     // The catalog's robots.txt is read (once a day per catalog) while the book
@@ -191,7 +197,7 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
       }) : [];
       res.json({ answer, ...(reason ? { reason } : {}), ...(catalogUrl ? { catalogUrl, catalogLinkKind: recordUrl ? 'record' : handoff.catalogLinkKind } : {}),
         ...(matches.length ? { matches } : {}) });
-      usage({ kind: 'book_check', libraryId, bookKey, outcome: answer, ...(source ? { source } : {}), durationMs: now() - startedAt });
+      usage({ kind: 'book_check', libraryId, ...(keeps(libraryId) ? { bookKey } : {}), outcome: answer, ...(source ? { source } : {}), durationMs: now() - startedAt });
     };
     const stored = await lookup.storedFor({ library: entry, book });
     if (stored) {
@@ -266,7 +272,7 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
       const unchecked = keys.filter(key => !marked.has(key) && !answered.has(key));
       write({ type: 'done', unchecked, notFound: keys.filter(key => answered.has(key)), couldntCheck: unchecked.filter(key => failed.has(key)) });
       if (!res.writableEnded) res.end();
-      usage({ kind: 'result_marks', queryText: query, libraryId, outcome, resultCount: keys.length, foundCount: marked.size,
+      usage({ kind: 'result_marks', queryText: query, libraryId, outcome, resultCount: keys.length, ...(keeps(libraryId) ? { foundCount: marked.size } : {}),
         ...(sources.size ? { source: sources.size > 1 ? 'mixed' : [...sources][0] } : {}), durationMs: now() - startedAt });
     };
     if (!store.config.backgroundChecksEnabled || store.policyFor(libraryId)?.backgroundChecks === false || !library.capabilities?.publicAvailability) {

@@ -5,7 +5,7 @@ import { AnonymousWebApp } from '../../App';
 import { ANONYMOUS_WEB_STORAGE_KEY } from '../../localState';
 import { ONE_SHELF_STORAGE_KEY } from '../../oneShelfState';
 import { READER_PREFERENCES_KEY } from '../../readerState';
-import { SEED_SUGGESTIONS } from '../../suggestions/seed';
+import { SEED_SUGGESTIONS, US_SEED_SUGGESTIONS } from '../../suggestions/seed';
 import { forgetSuggestionVisit, SUGGESTION_HOLD_MS } from '../../suggestions/useShelfSuggestions';
 import { shouldInviteAccount } from '../shelf/AccountInvite';
 import { forgetSuggestionMotion } from '../shelf/useSuggestionMotion';
@@ -18,7 +18,7 @@ const book = (index: number) => ({ bookKey: 'v1:openlibrary:OL' + index + 'W', t
 // `suggestions`: one book's related list (GET /suggestions/related?book=…), by its key.
 const RELATED = '/api/v2/suggestions/related?book=';
 const relatedFor = (path: string) => (path.startsWith(RELATED) ? new URLSearchParams(path.slice(path.indexOf('?'))).get('book') : null);
-function stubApi({ email = true, found = [] as string[], suggestions = null as null | ((bookKey: string) => unknown[]) } = {}) {
+function stubApi({ email = true, found = [] as string[], suggestions = null as null | ((bookKey: string) => unknown[]), library = LIBRARY as unknown } = {}) {
   const calls: Array<{ path: string; body: any; init?: RequestInit }> = [];
   vi.stubGlobal('fetch', vi.fn((path: string, init?: RequestInit) => {
     const body = init?.body ? JSON.parse(String(init.body)) : null;
@@ -28,7 +28,7 @@ function stubApi({ email = true, found = [] as string[], suggestions = null as n
     if (suggestions && path.endsWith('/suggestions/events')) return Promise.resolve(json({}, 202));
     if (path.endsWith('/capabilities')) return Promise.resolve(json({ email, google: false, apple: false, canonicalOrigin: window.location.origin }));
     if (path.endsWith('/session')) return Promise.resolve(json({ status: 'guest' }));
-    if (path.endsWith('/libraries/resolve')) return Promise.resolve(json({ library: LIBRARY }));
+    if (path.endsWith('/libraries/resolve')) return Promise.resolve(json({ library }));
     if (path.endsWith('/holdings/lookup')) return Promise.resolve(json({ answers: Object.fromEntries(body.books.map((item: { bookKey: string }) => [item.bookKey, found.includes(item.bookKey) ? 'found' : 'not_found'])) }));
     if (path.endsWith('/holdings/check')) return Promise.resolve(json({ answer: found.includes(body.bookKey) ? 'found' : 'not_found' }));
     return Promise.resolve(json({ error: { code: 'NOT_FOUND', message: 'Not found.' } }, 404));
@@ -272,6 +272,18 @@ describe('one-shelf home', () => {
     expect(badged.querySelector('.cover-badge-library')).not.toBeNull();
     expect(calls.filter(call => call.path.endsWith('/holdings/lookup')).flatMap(call => call.body.books.map((item: { bookKey: string }) => item.bookKey))).not.toContain(pick.bookKey);
     view.unmount();
+  });
+
+  it('a US library: the suggestions are the US list’s books, and its stored-answers lookup asks about those (23 November 2026)', async () => {
+    const us = { ...LIBRARY, id: 'bc:sfpl', name: 'San Francisco Public Library', city: 'San Francisco', region: 'California', country: 'US' };
+    const calls = stubApi({ library: us, suggestions: () => [] });
+    seed({ saved: [book(1)], libraryId: us.id });
+    renderHome();
+    await waitFor(() => expect(suggestedLinks().map(link => link.getAttribute('aria-label')))
+      .toEqual(US_SEED_SUGGESTIONS.slice(0, 5).map(item => item.title + ' by ' + item.authors[0] + ', suggested')));
+    const lookups = calls.filter(call => call.path.endsWith('/holdings/lookup')).map(call => call.body.books.map((item: { bookKey: string }) => item.bookKey));
+    expect(lookups.find(keys => keys.length > 1)).toEqual(US_SEED_SUGGESTIONS.map(item => item.bookKey));
+    expect(calls.some(call => /\/holdings\/(check|search)$/.test(call.path))).toBe(false);
   });
 
   it('the library badge on a suggestion comes from one stored-answers lookup for the candidates; never a check, and never for a saved book', async () => {

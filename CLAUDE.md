@@ -8,5 +8,8 @@ API. A library check shows found / not found / couldn't check for the chosen
 library, never copy counts, due dates, floors or shelf numbers, and a failed
 check never means absent. Provider keys stay server-side. Search text never goes
 in URLs, browser storage, platform logs or analytics. Respect catalog access
-restrictions, robots.txt and reduced motion. Indian libraries are offered only
+restrictions, robots.txt and reduced motion. Where a catalog's terms do not
+allow storing availability (BiblioCommons, 23 November 2026;
+server/data/catalog-policies.json), nothing is stored or cached for it: every
+check is one live request. Indian libraries are offered only
 when `server/data/india-catalogs-listed.json` lists them.

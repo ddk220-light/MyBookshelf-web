@@ -42,7 +42,10 @@ upstream arrive here in the next sync. README.md has the commands and layout.
   from similar titles for identity, ISBNs or availability. Search cards may
   group same-title, same-author records for display only.
 - Respect each catalog's access restrictions and robots.txt; keep requests
-  paced and bounded, and identify with the app's user agent.
+  paced and bounded, and identify with the app's user agent. Where a
+  catalog's terms do not allow storing availability (BiblioCommons;
+  `platforms` in `server/data/catalog-policies.json`, 23 November 2026),
+  nothing about a book is stored or cached: every check is one live request.
 - Provider keys stay server-side. Never put secrets in `VITE_` variables,
   source, tests, issues or logs. `.env.example` holds names only.
 - Search text is never put in URLs, browser storage, platform logs or

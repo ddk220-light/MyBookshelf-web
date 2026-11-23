@@ -7,8 +7,9 @@
 //
 //   node tools/seo/library-shelves.mjs candidates
 //       Choose the candidate libraries -> shared/seo-shelf-candidates.json
-//   node tools/seo/library-shelves.mjs pool
+//   node tools/seo/library-shelves.mjs pool [--file shared/us-book-pool.json] [--covers]
 //       Fill missing Open Library work keys and ISBNs in shared/seo-book-pool.json
+//       (or the file named), and with --covers the work's cover ID
 //   node tools/seo/library-shelves.mjs run [--ids a,b] [--limit N] [--gap 30] [--log DIR] [--refresh-before YYYY-MM-DD]
 //       Ask candidate libraries pool books until 10 are found or the pool is
 //       used up. Resumable: stop it at any time and run it again.
@@ -32,6 +33,7 @@ import {
   chooseCandidates, askOrder, nextBook, recordCheck, createFailurePolicy, createHostQueue, serializeShelves, emptyShelves,
   foundCounts, foundBooks, today, uniqueSlug, bookSlug, correctBookSlugs, shortDescription, MIN_SHELF, SHELF_SIZE, PLATFORM_CAPS,
 } from './shelves-core.mjs';
+import { storesAvailability } from '../../server/catalog-store/policy.js';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 export const FILES = {
@@ -92,10 +94,14 @@ const plainTitle = value => String(value || '').toLowerCase().replace(/[^a-z0-9]
 const isbn13s = list => [...new Set((list || []).filter(v => /^97[89]\d{10}$/.test(v)))].sort();
 const workKey = doc => `v1:openlibrary:${String(doc.key).replace('/works/', '')}`;
 
-async function pool() {
-  const data = await readJson(FILES.pool);
+// `--file` names another pool (shared/us-book-pool.json); `--covers` also
+// fills `coverId`, the work's cover from the same search.
+async function pool(options = {}) {
+  const file = options.file ? resolve(root, String(options.file)) : FILES.pool;
+  const covers = Boolean(options.covers);
+  const data = await readJson(file);
   for (const book of data.books) {
-    if (book.bookKey && book.isbn) continue;
+    if (book.bookKey && book.isbn && (!covers || book.coverId)) continue;
     await sleep(1500);
     try {
       let doc;
@@ -110,14 +116,18 @@ async function pool() {
       book.bookKey ||= workKey(doc);
       const isbn = isbn13s(doc.isbn)[0];
       if (isbn) book.isbn = isbn;
-      console.log(book.bookKey, '|', doc.title, '|', (doc.author_name || []).join('; '), '|', doc.edition_count, '|', book.isbn || '');
+      if (covers && /^\d+$/.test(String(doc.cover_i || ''))) book.coverId = String(doc.cover_i);
+      console.log(book.bookKey, '|', doc.title, '|', (doc.author_name || []).join('; '), '|', doc.edition_count, '|', book.isbn || '', '|', book.coverId || '');
     } catch (error) { console.log('failed:', book.title, error.message); }
   }
   const keys = data.books.map(b => b.bookKey).filter(Boolean);
   if (new Set(keys).size !== keys.length) console.log('Warning: duplicate work keys in the pool');
-  // One book per line, as the file is kept by hand.
+  // One book per line, as the file is kept by hand; other top-level fields
+  // (the US list's `updatedOn`) are kept between "about" and "books".
   const line = book => '    { ' + Object.entries(book).map(([k, v]) => `${JSON.stringify(k)}: ${JSON.stringify(v)}`).join(', ') + ' }';
-  await writeAtomic(FILES.pool, `{\n  "about": ${JSON.stringify(data.about)},\n  "books": [\n${data.books.map(line).join(',\n')}\n  ]\n}\n`);
+  const { about, books, ...rest } = data;
+  const extra = Object.entries(rest).map(([k, v]) => `  ${JSON.stringify(k)}: ${JSON.stringify(v)},\n`).join('');
+  await writeAtomic(file, `{\n  "about": ${JSON.stringify(about)},\n${extra}  "books": [\n${books.map(line).join(',\n')}\n  ]\n}\n`);
 }
 
 // Book details from the app's own resolver (Open Library), plus its ISBNs.
@@ -218,6 +228,9 @@ async function run(options) {
     const entry = directory.entry?.(row.id), library = directory.resolve(row.id);
     if (!entry || !library) { await log({ libraryId: row.id, skipped: 'not in directory' }); continue; }
     if (!library.capabilities?.publicAvailability) { await log({ libraryId: row.id, skipped: 'no public availability check' }); continue; }
+    // A catalog whose terms forbid storing availability (BiblioCommons,
+    // server/data/catalog-policies.json) is never pre-checked for a shelf.
+    if (!storesAvailability(row.id)) { await log({ libraryId: row.id, skipped: 'catalog policy forbids storing availability' }); continue; }
     const guide = manifest.find(m => m.id === row.id);
     data.libraries[row.id] ||= { checks: {} };
     const record = data.libraries[row.id];
@@ -312,7 +325,7 @@ async function status() {
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const options = args(process.argv.slice(2));
   const command = options._[0];
-  const commands = { candidates, pool, run: () => run(options), details: () => details(), status };
+  const commands = { candidates, pool: () => pool(options), run: () => run(options), details: () => details(), status };
   if (!commands[command]) { console.error('Usage: node tools/seo/library-shelves.mjs candidates|pool|run|details|status'); process.exit(2); }
   await commands[command]();
   process.exit(0);

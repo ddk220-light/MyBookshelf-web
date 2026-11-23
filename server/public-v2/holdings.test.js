@@ -9,13 +9,15 @@ import { readCatalogStoreConfig } from '../catalog-store/config.js';
 import { createCatalogPolicy } from '../catalog-store/policy.js';
 import { createCatalogLookup, createLookupRecorder, PLATFORMS } from '../services/catalog-lookup/index.js';
 import { catalogOperation } from '../services/providers/http.js';
+import shippedPolicies from '../data/catalog-policies.json' with { type: 'json' };
 
 const UNPACED = Object.fromEntries(Object.entries(PLATFORMS).map(([id, value]) => [id, { ...value, minIntervalMs: 0 }]));
 const vega = { id: 'vega:test', platform: 'vega', catalogUrl: 'https://catalog.example/' };
 const optedOut = { id: 'vega:optout', platform: 'vega', catalogUrl: 'https://optout.example/' };
+const biblio = { id: 'bc:sfpl', platform: 'bc', slug: 'sfpl', catalogUrl: 'https://sfpl.bibliocommons.com/' };
 const publicOf = entry => ({ id: entry.id, name: 'Test Library', catalogUrl: entry.catalogUrl,
   capabilities: { catalogLookup: true, publicAvailability: true, copyCounts: false, locationAvailability: false, callNumber: false, catalogLink: true } });
-const entries = new Map([vega, optedOut].map(entry => [entry.id, entry]));
+const entries = new Map([vega, optedOut, biblio].map(entry => [entry.id, entry]));
 const directory = { resolve: id => (entries.has(id) ? publicOf(entries.get(id)) : null), entry: id => entries.get(id) || null,
   search: () => [], browse: () => ({ libraries: [], total: 0, nextOffset: null }) };
 
@@ -495,4 +497,47 @@ test('the book page answers within the library deadline from the request, howeve
   } finally {
     books.resolve = original;
   }
+});
+
+// Owner decision, 23 November 2026: BiblioCommons' terms forbid storing
+// availability (server/data/catalog-policies.json), so its libraries are
+// checked live every time and nothing about a book is kept for them.
+test('a no-store library (BiblioCommons): live every time, no stored answers for the shelf, live marks, no book key in the log', async () => {
+  const searched = [];
+  const rows = [{ title: 'Matilda', authors: ['Roald Dahl'], catalogUrl: 'https://sfpl.bibliocommons.com/v2/record/S1', catalogLinkKind: 'record' }];
+  const { app, store, logged, settle } = harness({ usageLogEnabled: true, policies: shippedPolicies,
+    searches: { search: async term => { searched.push(term); return rows; } } });
+  // An answer stored before the rule is never served, nor used for the shelf.
+  await store.answers.writeAnswers([{ libraryId: biblio.id, kind: 'ol_work', value: 'OL1W', answer: 'not_found', evidence: 'work_no_match', expiresAt: Date.now() + 60_000 }]);
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const check = await request(app).post('/api/v2/holdings/check').send({ libraryId: biblio.id, bookKey: 'v1:openlibrary:OL1W' });
+    assert.equal(check.body.answer, 'found');
+    await settle();
+  }
+  assert.deepEqual(searched, ['Matilda', 'Matilda'], 'one live search per check');
+  const shelf = await request(app).post('/api/v2/holdings/lookup').send({ libraryId: biblio.id, books: [{ bookKey: 'v1:openlibrary:OL1W', workId: 'OL1W' }] });
+  assert.deepEqual(shelf.body, { answers: {} });
+  // The search-list mark comes from the live search, with no rows kept for the book page.
+  const marks = await request(app).post('/api/v2/holdings/search').send({ libraryId: biblio.id, query: 'matilda', books: [{ bookKey: 'v1:openlibrary:OL1W' }] });
+  assert.deepEqual(lines(marks.text).map(line => [line.type, line.answer]), [['mark', 'found'], ['done', undefined]]);
+  await request(app).post('/api/v2/holdings/check').send({ libraryId: biblio.id, bookKey: 'v1:openlibrary:OL1W' });
+  await settle();
+  assert.equal(searched.length, 4);
+  // Nothing new was written: only the old row is there, and it is never read.
+  const kept = await store.answers.readAnswers(biblio.id, [{ kind: 'ol_work', value: 'OL1W' }, { kind: 'isbn13', value: ISBN_B }]);
+  assert.deepEqual(kept.map(row => row.answer), ['not_found']);
+  // The log keeps the library and the outcome, never the book or a found count.
+  const own = logged.filter(row => row.libraryId === biblio.id);
+  assert.deepEqual(own.map(row => [row.kind, row.bookKey, row.outcome]), [['book_check', null, 'found'], ['book_check', null, 'found'],
+    ['result_marks', null, 'done'], ['book_check', null, 'found']]);
+  assert.equal(own.find(row => row.kind === 'result_marks').foundCount, null);
+  // Other libraries are unchanged: the answer is stored and the log names the book.
+  const other = await request(app).post('/api/v2/holdings/check').send({ libraryId: vega.id, bookKey: 'v1:openlibrary:OL1W' });
+  assert.equal(other.body.answer, 'found');
+  await settle();
+  assert.equal((await request(app).post('/api/v2/holdings/check').send({ libraryId: vega.id, bookKey: 'v1:openlibrary:OL1W' })).body.answer, 'found');
+  assert.equal(searched.length, 5, 'the second vega check is the stored answer');
+  assert.ok(logged.some(row => row.libraryId === vega.id && row.kind === 'book_check' && row.bookKey === 'v1:openlibrary:OL1W'));
+  const vegaShelf = await request(app).post('/api/v2/holdings/lookup').send({ libraryId: vega.id, books: [{ bookKey: 'v1:openlibrary:OL1W', workId: 'OL1W' }] });
+  assert.deepEqual(vegaShelf.body, { answers: { 'v1:openlibrary:OL1W': 'found' } });
 });

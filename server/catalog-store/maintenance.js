@@ -3,7 +3,8 @@ import { createPgHealthRecord } from './health.js';
 // The daily job (plan 4.4), run with the worker role from
 // /api/internal/catalog-maintenance:
 //   1. expired answers, in batches of 5,000
-//   2. every answer of a library whose policy says storeAnswers: false
+//   2. every answer of a library whose policy, or whose catalog system's
+//      policy, says storeAnswers: false (policy.js)
 //   3. expired submission buckets
 //   4. problem reports resolved or spam for 90 days, and any older than 12 months
 //   5. library requests: spam after 90 days; added or declined 12 months after
@@ -63,8 +64,13 @@ export async function runCatalogMaintenance(db, { policy, now = () => Date.now()
   result.expiredAnswers = await deleteInBatches(db, `DELETE FROM holdings_answers WHERE ctid IN (
     SELECT ctid FROM holdings_answers WHERE expires_at < now() LIMIT ${BATCH})`);
   const optedOut = policy?.optedOut?.() || [];
-  result.purgedAnswers = optedOut.length ? await deleteInBatches(db, `DELETE FROM holdings_answers WHERE ctid IN (
-    SELECT ctid FROM holdings_answers WHERE library_id = ANY($1::text[]) LIMIT ${BATCH})`, [optedOut]) : 0;
+  // A catalog system whose terms forbid storing availability (BiblioCommons,
+  // 23 November 2026): every library of it, by the library ID's prefix.
+  const platforms = policy?.noStorePlatforms?.() || [];
+  result.purgedAnswers = (optedOut.length ? await deleteInBatches(db, `DELETE FROM holdings_answers WHERE ctid IN (
+    SELECT ctid FROM holdings_answers WHERE library_id = ANY($1::text[]) LIMIT ${BATCH})`, [optedOut]) : 0)
+    + (platforms.length ? await deleteInBatches(db, `DELETE FROM holdings_answers WHERE ctid IN (
+    SELECT ctid FROM holdings_answers WHERE split_part(library_id, ':', 1) = ANY($1::text[]) LIMIT ${BATCH})`, [platforms]) : 0);
   result.buckets = (await db.query('DELETE FROM submission_buckets WHERE reset_at < now()')).rowCount;
   result.reports = (await db.query(`DELETE FROM problem_reports
     WHERE (status IN ('resolved', 'spam') AND coalesce(resolved_at, created_at) < now() - interval '90 days')
