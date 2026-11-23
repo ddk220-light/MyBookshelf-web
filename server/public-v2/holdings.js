@@ -88,13 +88,25 @@ export function appAnswer(answer, book, libraryId) {
 // Why an answer is "unknown" or "unconfirmed" (one of outcome.js REASONS), so
 // the app can say what happened: a timeout, a library that does not allow
 // outside checks, a catalog we cannot read yet, a catalog already busy with
-// other checks. Never sent with "found" or "not found". (`budget`, a request
-// cap running out, belongs to work the app does on its own and never comes
-// from a reader's check.)
+// other checks, a book whose details could not be read. Never sent with
+// "found" or "not found". (`budget`, a request cap running out, belongs to
+// work the app does on its own and never comes from a reader's check.)
+// Every "unknown" says why: an answer that names no known reason is
+// `unavailable`, as outcome.js couldntCheck() gives it (a silent "unknown"
+// on 23 November 2026 was a book-details failure that gave no reason).
 export function answerReason(appValue, answer) {
   if (appValue === 'unconfirmed') return 'unconfirmed';
   if (appValue !== 'unknown') return undefined;
-  return REASONS.includes(answer?.reason) ? answer.reason : undefined;
+  return REASONS.includes(answer?.reason) ? answer.reason : 'unavailable';
+}
+
+// A failed read of the book's details, on stderr so that it shows in the
+// platform's runtime logs: the error code only, never the book or any search
+// text. Not under `node --test`.
+function noteDetailsFailure(error) {
+  if (process.env.NODE_TEST_CONTEXT) return;
+  const code = typeof error?.code === 'string' && /^[A-Z0-9_]{1,40}$/.test(error.code) ? error.code : 'ERROR';
+  try { console.error(`holdings check: book details unavailable (${code})`); } catch { /* A log line never alters a reply. */ }
 }
 
 // A promise-like value that starts its work the first time it is awaited.
@@ -173,7 +185,7 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
     // This library's own record is read under its host slot and deadline.
     try { resolved = parsed?.kind === 'catalog' && typeof lookup.readRecord === 'function'
       ? await lookup.readRecord({ library: entry, recordId: parsed.recordId, read: () => books.resolve(bookKey) })
-      : await books.resolve(bookKey); } catch { metadataFailed = true; }
+      : await books.resolve(bookKey); } catch (error) { metadataFailed = true; noteDetailsFailure(error); }
     if (!resolved && !metadataFailed) return res.status(404).json(publicError('BOOK_NOT_FOUND', 'No public book details were found.'));
     const book = { ...trustedIdentity(libraryId, bookKey, resolved), title: resolved?.title || '', authors: resolved?.authors || [] };
     const handoff = catalogHandoffFor({ entry, library, book: resolved || (book.isbn13 ? { isbn13: book.isbn13 } : undefined) });
@@ -206,9 +218,10 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
     }
     // A library whose catalog the app cannot read.
     if (!library.capabilities?.publicAvailability) return reply('unknown', null, { reason: 'unsupported' });
-    // Metadata unavailable and nothing in the key to check by: couldn't check
-    // (the book's details, not the library's catalog, failed: no reason given).
-    if (metadataFailed && !book.isbn13 && !book.recordId) return reply('unknown', null);
+    // Metadata unavailable and nothing in the key to check by: couldn't check,
+    // because the book's details, not the library's catalog, failed
+    // (`details`; the catalog was not asked and its health is not touched).
+    if (metadataFailed && !book.isbn13 && !book.recordId) return reply('unknown', null, { reason: 'details' });
     const controller = new AbortController();
     const abandon = () => { if (!res.writableEnded) controller.abort(); };
     res.on('close', abandon);

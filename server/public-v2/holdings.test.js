@@ -4,6 +4,7 @@ import request from 'supertest';
 import { makeTestApp } from '../test/helpers.js';
 import { createCatalogBookKey } from './contracts.js';
 import { createPublicV2Router } from './router.js';
+import { answerReason } from './holdings.js';
 import { createCatalogStore } from '../catalog-store/index.js';
 import { readCatalogStoreConfig } from '../catalog-store/config.js';
 import { createCatalogPolicy } from '../catalog-store/policy.js';
@@ -155,6 +156,53 @@ test('an unknown answer says why: the reason the check could not answer, and nev
     assert.equal(found.body.answer, 'found', look);
     assert.equal('reason' in found.body, false, look);
     await settle();
+  }
+  // Every "unknown" names a reason: one that names none, or one the app does
+  // not know, is "unavailable", as outcome.js couldntCheck() gives it.
+  for (const answer of [null, {}, { outcome: 'couldnt_check' }, { outcome: 'couldnt_check', reason: 'surprise' }]) {
+    assert.equal(answerReason('unknown', answer), 'unavailable', JSON.stringify(answer));
+  }
+  assert.equal(answerReason('unknown', { reason: 'details' }), 'details');
+  for (const value of ['found', 'not_found']) assert.equal(answerReason(value, { reason: 'timeout' }), undefined, value);
+});
+
+// 23 November 2026: every live check of a BiblioCommons library from the
+// California pages answered {"answer":"unknown"} with no reason, after about
+// 10.7 s. The book's details (Open Library, for a work key with no ISBN) had
+// failed, so the catalog was never asked and nothing said why. It is now
+// `details`, the library's health is untouched, and the same check finds the
+// book once its details can be read.
+test('a no-store library check whose book details fail is unknown with reason "details", asks no catalog, and finds the book once they read', async () => {
+  const searched = [];
+  const rows = [{ title: 'The Hunger Games', authors: ['Collins, Suzanne'], catalogUrl: 'https://sfpl.bibliocommons.com/v2/record/S2', catalogLinkKind: 'record' }];
+  const { app, store, logged, settle } = harness({ usageLogEnabled: true, policies: shippedPolicies,
+    searches: { search: async term => { searched.push(term); return rows; } } });
+  const bookKey = 'v1:openlibrary:OL5735363W';
+  const original = books.resolve;
+  let detailsUp = false;
+  books.resolve = async key => {
+    if (key !== bookKey) return original(key);
+    if (!detailsUp) throw Object.assign(new Error('Book discovery is temporarily unavailable'), { code: 'BOOK_METADATA_UNAVAILABLE' });
+    return { bookKey, workId: 'OL5735363W', title: 'The Hunger Games', authors: ['Suzanne Collins'] };
+  };
+  try {
+    for (const libraryId of [biblio.id, vega.id]) {
+      const failed = await request(app).post('/api/v2/holdings/check').send({ libraryId, bookKey });
+      assert.deepEqual(failed.body, { answer: 'unknown', reason: 'details', catalogUrl: entries.get(libraryId).catalogUrl, catalogLinkKind: 'catalog' }, libraryId);
+      await settle();
+      assert.equal(await store.health.libraryHealth(libraryId), null, `${libraryId}: not the library's failure`);
+    }
+    assert.deepEqual(searched, [], 'no catalog is asked without the book\'s details');
+    detailsUp = true;
+    const found = await request(app).post('/api/v2/holdings/check').send({ libraryId: biblio.id, bookKey });
+    assert.equal(found.body.answer, 'found');
+    assert.equal('reason' in found.body, false);
+    assert.deepEqual(searched, ['The Hunger Games']);
+    await settle();
+    assert.equal(store.answers.size(), 0, 'nothing stored for a BiblioCommons library');
+    assert.deepEqual(logged.filter(row => row.libraryId === biblio.id).map(row => [row.bookKey, row.outcome]), [[null, 'unknown'], [null, 'found']]);
+  } finally {
+    books.resolve = original;
   }
 });
 

@@ -109,8 +109,13 @@ export function createAnonymousApp({ clientDist, catalogStore = createCatalogSto
     next();
   });
 
+  // The shelf's old addresses forward to the root without their query, which
+  // may carry old search text (`q`). On Vercel, vercel.json sends these paths
+  // to this function: a vercel.json redirect keeps the query (it sent
+  // /app/shelf?q=… to /?q=…). Also with or without a trailing slash.
+  app.get(['/app', '/app/shelf'], (_req, res) => res.redirect(308, '/'));
+
   if (clientDist) {
-    app.get(['/app', '/app/shelf'], (_req, res) => res.redirect(308, '/'));
     for (const page of ['privacy', 'support']) {
       app.get(`/${page}`, (req, res) => {
         res.setHeader('Cache-Control', 'no-cache');

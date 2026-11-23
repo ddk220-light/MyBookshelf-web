@@ -5,7 +5,15 @@
 import { expect, test } from '@playwright/test';
 import { BOOK, LINKED_LIBRARY, installPublicV2Fixture } from './public-v2-fixture.js';
 
-const contentBuild = process.env.FREE_CONTENT_E2E === 'true';
+// Free reading follows the app's own build flag, VITE_CONTENT_DISCOVERY_ENABLED
+// (legacyRedirects.tsx). A local run builds the app with this environment
+// (playwright.config.js webServer), so the value here is the build's;
+// FREE_CONTENT_E2E=true, which the free-reading journeys use, means it is on.
+// A deployed site (PLAYWRIGHT_BASE_URL) was built elsewhere: its value must be
+// given (production has it on), or the one test that depends on it is skipped.
+const contentFlag = process.env.VITE_CONTENT_DISCOVERY_ENABLED ?? (process.env.FREE_CONTENT_E2E === 'true' ? 'true' : undefined);
+const contentBuild = contentFlag === 'true';
+const contentFlagKnown = contentFlag !== undefined || !process.env.PLAYWRIGHT_BASE_URL;
 const bookUrl = new RegExp('/app/books/' + encodeURIComponent(BOOK.bookKey).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$');
 // Address, history state and both browser stores, as one string.
 const everything = page => page.evaluate(() => location.href + JSON.stringify(history.state) + JSON.stringify({ ...localStorage }) + JSON.stringify({ ...sessionStorage }));
@@ -73,6 +81,7 @@ test.describe('Old addresses', () => {
   });
 
   test('/app/search?scope=free: free reading when its build setting is on, otherwise the shelf', async ({ page }) => {
+    test.skip(!contentFlagKnown, 'Set VITE_CONTENT_DISCOVERY_ENABLED to the deployed build’s value (true in production)');
     const { calls } = await fixture(page);
     await page.goto('/app/search?scope=free');
     if (contentBuild) {

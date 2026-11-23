@@ -22,7 +22,7 @@ export function installLibraryChecks(win, doc) {
   var NOT_MISSING = ' This does not mean the book is missing.';
   // Reasons a second try would not change (the app offers no Try again for them).
   var LASTING = { blocked: true, unsupported: true, unrecognized: true, configuration: true };
-  var REASONS = ['unconfirmed', 'timeout', 'unavailable', 'blocked', 'unrecognized', 'budget', 'unsupported', 'configuration', 'cancelled', 'busy'];
+  var REASONS = ['unconfirmed', 'timeout', 'unavailable', 'blocked', 'unrecognized', 'budget', 'unsupported', 'configuration', 'cancelled', 'busy', 'details'];
   if (!doc || typeof doc.querySelectorAll !== 'function' || typeof win.fetch !== 'function' || typeof win.Promise !== 'function') return 0;
 
   function unknownText(reason) {
@@ -33,6 +33,7 @@ export function installLibraryChecks(win, doc) {
       case 'unrecognized':
       case 'configuration': return 'We can’t read this library’s catalog for this book yet.' + NOT_MISSING;
       case 'busy': return 'The library’s catalog is busy with other checks. Try again in a minute.' + NOT_MISSING;
+      case 'details': return 'We couldn’t get this book’s details to search the library’s catalog. Try again in a minute.' + NOT_MISSING;
       case 'unavailable': return 'The library’s catalog is not answering right now.' + NOT_MISSING;
       default: return 'We couldn’t check the library’s catalog this time.' + NOT_MISSING;
     }

@@ -100,3 +100,20 @@ test('browser navigation expires legacy cookies but preserves the anonymous API 
   assert.ok(cookies.some((value) => value.startsWith('mb_session=') && /Expires=/.test(value)));
   assert.ok(cookies.some((value) => value.startsWith('mb_key=') && /Expires=/.test(value)));
 });
+
+// On Vercel these paths reach this function (vercel.json rewrites): a
+// vercel.json redirect kept the query, so /app/shelf?q=wings went to
+// /?q=wings, and old search text stayed in the address.
+test('the shelf’s old addresses forward to the root without their query, with or without the web build', async (t) => {
+  const dist = await mkdtemp(path.join(tmpdir(), 'mybookshelf-legacy-shelf-'));
+  t.after(() => rm(dist, { recursive: true, force: true }));
+  await writeFile(path.join(dist, 'index.html'), '<title>Anonymous web catalog</title>');
+  for (const target of [app(), createAnonymousApp({ clientDist: dist, publicRouter: Router() })]) {
+    for (const address of ['/app', '/app/', '/app/shelf', '/app/shelf/', '/app/shelf?q=wings', '/app?q=wings&scope=all']) {
+      const response = await request(target).get(address).set('Accept', 'text/html').redirects(0);
+      assert.equal(response.status, 308, address);
+      assert.equal(response.headers.location, '/', address);
+      assert.ok(!response.text.includes('wings'), address);
+    }
+  }
+});

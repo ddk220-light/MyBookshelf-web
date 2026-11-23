@@ -17,7 +17,8 @@ test('public pages work without JavaScript and publish exactly the manifest libr
   // The hub's button opens the app's library picker directly.
   await expect(page.getByRole('main').getByRole('link', { name: 'Find my library', exact: true })).toHaveAttribute('href', '/app/libraries');
   expect(await page.locator('.library-grid > li').count()).toBe(publishedGuides);
-  await page.getByRole('link',{name:'Anna Centenary Library',exact:true}).click();
+  // The featured guide's card (the state list links the same page too).
+  await page.locator('.library-grid').getByRole('link',{name:'Anna Centenary Library',exact:true}).click();
   await expect(page.locator('h1')).toHaveText('Anna Centenary Library');
   await expect(page.getByRole('heading',{name:'What MyBookshelf can check here'})).toBeVisible();
   const missing=await page.goto(baseURL+'/libraries/toronto-public-library');

@@ -20,7 +20,7 @@ import { linkKind } from './observation.js';
 // A failure is never "not found".
 
 export const OUTCOMES = Object.freeze(['found', 'not_found', 'couldnt_check']);
-export const REASONS = Object.freeze(['unconfirmed', 'timeout', 'unavailable', 'blocked', 'unrecognized', 'budget', 'unsupported', 'configuration', 'cancelled', 'busy']);
+export const REASONS = Object.freeze(['unconfirmed', 'timeout', 'unavailable', 'blocked', 'unrecognized', 'budget', 'unsupported', 'configuration', 'cancelled', 'busy', 'details']);
 
 // `unconfirmed` and `unsupported` say nothing about the catalog's health. A
 // check the reader cancelled (`cancelled`, an addition to the plan's list) is
@@ -35,8 +35,10 @@ export const REASONS = Object.freeze(['unconfirmed', 'timeout', 'unavailable', '
 // (result marking, platforms.js `results`; tools); a reader's book check has
 // none (owner decision, 20 November 2026), so `budget` never reaches the
 // book page. A catalog that answered with something unreadable is
-// `unrecognized`.
-const NOT_HEALTH_FAILURES = new Set(['unconfirmed', 'unsupported', 'cancelled', 'busy', 'budget']);
+// `unrecognized`. A book whose public details (Open Library) could not be
+// read, so that the library's catalog was never asked, is `details`: the
+// book source failed, not the library (holdings.js).
+const NOT_HEALTH_FAILURES = new Set(['unconfirmed', 'unsupported', 'cancelled', 'busy', 'budget', 'details']);
 export function isHealthFailure(reason) {
   return Boolean(reason) && !NOT_HEALTH_FAILURES.has(reason);
 }

@@ -238,7 +238,9 @@ export function createPublicBookService({
         return null;
       }
       const book = raw ? toPublicBook(raw, { keyOverride: bookKey }) : null;
-      return book ? remember(book) : null;
+      // A work named by its record without some optional details (a slow
+      // Open Library search, workDiscovery.js) is read again sooner.
+      return book ? remember(book, raw.partialDetails ? Math.min(cacheTtlMs, 60_000) : cacheTtlMs) : null;
     },
 
     isMetadataUnavailable,

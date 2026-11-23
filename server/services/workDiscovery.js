@@ -202,18 +202,28 @@ export function createWorkDiscovery({ read = request, fallbackIsbn = lookupBookM
     const params = new URLSearchParams({ q: `key:/works/${id}`, fields: FIELDS, limit: '1' });
     // The reads of one resolution go together, like a search's.
     const group = {};
-    const [data, result] = await Promise.all([read(`/works/${id}.json`, { group }), read(`/search.json?${params}`, { group })]);
+    // The work record names the book (its title is all a library check
+    // searches by); the search row and the author records add authors, the
+    // edition count and languages. Open Library's search can be slow while
+    // the work record answers (8 to 15 s on 23 November 2026, past a read's
+    // 12 s), so a failed search or author read leaves those details out
+    // (`partialDetails`: metadata.js keeps such a book a minute, not ten)
+    // instead of failing the book. A failed work read still fails it.
+    let partialDetails = false;
+    const optional = promise => promise.catch(() => { partialDetails = true; return null; });
+    const [data, result] = await Promise.all([read(`/works/${id}.json`, { group }), optional(read(`/search.json?${params}`, { group }))]);
     if (!data?.title) return null;
     const summary = result?.docs?.map(fromSearch).find(book => book?.workId === id);
     let authors = summary?.authors || [];
     if (!authors.length) {
       const keys = unique((data.authors || []).map(item => item.author?.key)).filter(key => /^\/authors\/OL\d+A$/.test(key)).slice(0, 3);
-      authors = (await Promise.all(keys.map(key => read(`${key}.json`, { group })))).map(item => item?.name).filter(Boolean);
+      authors = (await Promise.all(keys.map(key => optional(read(`${key}.json`, { group }))))).map(item => item?.name).filter(Boolean);
     }
     return { ...summary, source: 'openlibrary', source_id: id, workId: id, title: data.title, authors,
       description: typeof data.description === 'string' ? data.description : data.description?.value,
       subjects: data.subjects || [],
-      coverUrl: data.covers?.[0] > 0 ? `https://covers.openlibrary.org/b/id/${data.covers[0]}-M.jpg` : summary?.coverUrl };
+      coverUrl: data.covers?.[0] > 0 ? `https://covers.openlibrary.org/b/id/${data.covers[0]}-M.jpg` : summary?.coverUrl,
+      ...(partialDetails ? { partialDetails: true } : {}) };
   }
 
   async function lookup({ isbn }) {

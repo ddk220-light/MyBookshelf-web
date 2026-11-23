@@ -185,6 +185,45 @@ test('cold work resolution restores authors; scanning retains the exact ISBN plu
   assert.equal(scanned.language, 'eng');
 });
 
+// 23 November 2026: Open Library's search took 8 to 15 s while the work
+// record answered, and a failed search read failed the whole book, so a
+// library check of a work never reached the catalog.
+test('a work resolves from its record when the search or author reads fail, and is read again within a minute', async () => {
+  const unavailable = () => Object.assign(new Error('Book discovery is temporarily unavailable'), { code: 'BOOK_METADATA_UNAVAILABLE' });
+  let searchUp = false;
+  const reads = [];
+  const discovery = createWorkDiscovery({ read: async path => {
+    reads.push(path);
+    if (path.startsWith('/works/')) return { title: 'Wings of Fire', authors: [{ author: { key: '/authors/OL1A' } }], covers: [7] };
+    if (path.startsWith('/search')) { if (!searchUp) throw unavailable(); return { docs: [work] }; }
+    if (path.startsWith('/authors/')) throw unavailable();
+    return null;
+  } });
+  const partial = await discovery.resolve('OL1037811W');
+  assert.equal(partial.title, 'Wings of Fire');
+  assert.deepEqual(partial.authors, []);
+  assert.equal(partial.partialDetails, true);
+  assert.ok(reads.includes('/authors/OL1A.json'));
+  // A failed work record still fails the book.
+  const broken = createWorkDiscovery({ read: async path => { if (path.startsWith('/works/')) throw unavailable(); return { docs: [work] }; } });
+  await assert.rejects(broken.resolve('OL1037811W'), { code: 'BOOK_METADATA_UNAVAILABLE' });
+
+  let clock = 0;
+  const service = createPublicBookService({ resolveOpenLibraryWork: discovery.resolve, now: () => clock });
+  const first = await service.resolve('v1:openlibrary:OL1037811W');
+  assert.deepEqual([first.title, first.authors, 'partialDetails' in first], ['Wings of Fire', [], false]);
+  searchUp = true;
+  clock = 59_000;
+  assert.deepEqual((await service.resolve('v1:openlibrary:OL1037811W')).authors, [], 'kept within the minute');
+  clock = 61_000;
+  const full = await service.resolve('v1:openlibrary:OL1037811W');
+  assert.deepEqual([full.authors, full.editionCount], [work.author_name, 9], 'read again after a minute, with every detail');
+  clock = 61_000 + 9 * 60_000;
+  const reads0 = reads.length;
+  await service.resolve('v1:openlibrary:OL1037811W');
+  assert.equal(reads.length, reads0, 'a complete book is kept ten minutes');
+});
+
 test('edition expansion deduplicates equivalent ISBNs and excludes other languages and audio', async () => {
   const read = async () => ({ size: 101, entries: [edition, { ...edition, isbn_13: ['9788173711466'] },
     { ...edition, isbn_13: ['9788173715181'], isbn_10: [], physical_format: 'Paperback' },

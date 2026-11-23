@@ -275,7 +275,7 @@ export const PROBLEM_SCREENS = ['shelf', 'search', 'book', 'library', 'panel', '
 export type ProblemScreen = typeof PROBLEM_SCREENS[number];
 
 /** Why a check could not answer (server catalog-lookup/outcome.js REASONS). */
-export const CHECK_REASONS = ['unconfirmed', 'timeout', 'unavailable', 'blocked', 'unrecognized', 'budget', 'unsupported', 'configuration', 'cancelled', 'busy'] as const;
+export const CHECK_REASONS = ['unconfirmed', 'timeout', 'unavailable', 'blocked', 'unrecognized', 'budget', 'unsupported', 'configuration', 'cancelled', 'busy', 'details'] as const;
 export type CheckReason = typeof CHECK_REASONS[number];
 /** One of the library's own catalog rows for a found book: title and author as the catalog shows them, and the record's link when there is one. */
 export type CatalogMatch = { title: string; author?: string; url?: string };

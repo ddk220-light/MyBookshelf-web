@@ -562,7 +562,7 @@ test('the check script sends nothing when the page loads; a tap is one check, an
       { answer: 'found' },
       { answer: 'surprise' },
       { answer: 'unknown', reason: 'busy' },
-      { answer: 'not_found' },
+      { answer: 'unknown', reason: 'details' },
       { answer: 'found' },
     ];
     for (let index = 0; index < replies.length; index += 1) {
@@ -585,6 +585,9 @@ test('the check script sends nothing when the page loads; a tap is one check, an
     assert.match(answer(rows[4]), /^Couldn’t check right now.*couldn’t check the library’s catalog this time/);
     assert.match(answer(rows[6]), /^Couldn’t check right now/, 'an answer the page does not know is couldn’t check');
     assert.match(answer(rows[7]), /^Couldn’t check right now/, 'a failed reply is couldn’t check, never not found');
+    // The book's details could not be read: the library is not blamed, and the reader may try again.
+    assert.match(answer(rows[8]), /^Couldn’t check right now.*couldn’t get this book’s details to search the library’s catalog\. Try again in a minute\. This does not mean the book is missing\./);
+    assert.equal(button(rows[8]).hidden, false);
     assert.match(doc.querySelector('[data-check-progress]').textContent, /Checked 10 books\./);
     assert.equal(doc.querySelector('[data-check-all]').disabled, false);
     // Only library IDs and book keys ever leave the page.

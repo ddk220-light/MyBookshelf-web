@@ -65,6 +65,8 @@ describe('library answer card', () => {
       ['unrecognized', 'We can’t read this library’s catalog for this book yet.' + notMissing],
       // Other checks were already waiting for this catalog: never the reader's fault.
       ['busy', 'The library’s catalog is busy with other checks. Try again in a minute.' + notMissing],
+      // The book's details could not be read: never the library's fault.
+      ['details', 'We couldn’t get this book’s details to search the library’s catalog. Try again in a minute.' + notMissing],
       // A reader's check has no request cap: a request cap never explains it.
       ['budget', 'We couldn’t check the library’s catalog this time.' + notMissing],
       ['unavailable', 'The library’s catalog is not answering right now.' + notMissing],
