@@ -3,7 +3,8 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-li
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { AnonymousWebApp } from '../../App';
 import { parsePolicy, policySections } from './policyText';
-import { appVersion, policyEffectiveDate } from './buildInfo';
+import { appVersion } from './buildInfo';
+import { POLICY_EFFECTIVE_DATE } from '../../../../../shared/policy-effective-date.mjs';
 import { useLibrary } from '../../context';
 import { AccountSessionProvider } from '../../auth/AccountSessionProvider';
 import { LibraryStateProvider } from '../../context';
@@ -63,17 +64,17 @@ describe('policy texts', () => {
     expect(appVersion({})).toBeNull();
     expect(appVersion({ VITE_APP_VERSION: 'abc1234' })).toBe('abc1234');
     expect(appVersion({ VITE_APP_VERSION: 'not a version!' })).toBeNull();
-    expect(policyEffectiveDate({ VITE_POLICY_EFFECTIVE_DATE: ' 1 January 2027 ' })).toBe('1 January 2027');
-    expect(policyEffectiveDate({ VITE_POLICY_EFFECTIVE_DATE: '<b>' })).toBeNull();
   });
 
-  it('Privacy, Terms and About render the approved texts; without a build date there is no Effective line', async () => {
+  it('Privacy, Terms and About render the approved texts, with the committed effective date', async () => {
     network();
     const view = app('/app/privacy');
     expect(await screen.findByRole('heading', { level: 1, name: 'Privacy' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 2, name: 'Information we collect' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 2, name: 'How long we keep information' })).toBeInTheDocument();
-    expect(document.body.textContent).not.toMatch(/EFFECTIVE DATE|Effective /);
+    // The date is filled in when the texts are bundled (shared/policy-effective-date.mjs).
+    expect(screen.getByText(`Effective ${POLICY_EFFECTIVE_DATE}.`)).toBeInTheDocument();
+    expect(document.body.textContent).not.toMatch(/EFFECTIVE DATE|\[[A-Z][A-Z ]+\]/);
     expect(screen.getByText(/you can ask for a log-in link by email/)).toBeInTheDocument();
     expect(screen.getByText(/When you sign in, the books on your reading shelf in that browser are added to your account/)).toBeInTheDocument();
     expect(document.body.textContent).not.toContain('Draft for owner');
@@ -87,8 +88,8 @@ describe('policy texts', () => {
     app('/app/terms');
     expect(await screen.findByRole('heading', { level: 1, name: 'Terms' })).toBeInTheDocument();
     expect(screen.getByText("You must be 18 or older, or have a parent's or guardian's permission.")).toBeInTheDocument();
-    expect(screen.getByText(/^MyBookshelf is run by Deepak Ravikumar, India\./)).toBeInTheDocument();
-    expect(document.body.textContent).not.toMatch(/EFFECTIVE DATE|Effective /);
+    expect(screen.getByText(`Effective ${POLICY_EFFECTIVE_DATE}. MyBookshelf is run by Deepak Ravikumar, India.`)).toBeInTheDocument();
+    expect(document.body.textContent).not.toMatch(/EFFECTIVE DATE|\[[A-Z][A-Z ]+\]/);
     cleanup();
     app('/app/about');
     expect(await screen.findByRole('heading', { level: 1, name: 'MyBookshelf' })).toBeInTheDocument();

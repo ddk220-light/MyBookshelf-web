@@ -5,6 +5,7 @@ import { resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { HTML_SECURITY_POLICY } from '../shared/security-policy.mjs';
 import { SOURCE_REPOSITORY_URL } from '../shared/source-repository.mjs';
+import { policyTextPlugin } from '../shared/policy-effective-date.mjs';
 
 // Short commit SHA sent with problem reports: Vercel's build variable, else
 // the local checkout, else empty (reports then carry no version).
@@ -19,7 +20,9 @@ function buildVersion() {
 
 export default defineConfig({
   appType: 'mpa',
-  plugins: [react(), {
+  // policyTextPlugin: Privacy and Terms carry their committed effective date
+  // in the bundle (shared/policy-effective-date.mjs), never a placeholder.
+  plugins: [react(), policyTextPlugin(), {
     name: 'public-pages-preview',
     configureServer(server) {
       server.middlewares.use((req, res, next) => {

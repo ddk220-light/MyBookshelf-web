@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
+import { join } from 'node:path';
+import { POLICY_EFFECTIVE_DATE, PLACEHOLDER_PATTERN, policyEffectiveDate, withEffectiveDate } from '../../shared/policy-effective-date.mjs';
 import { publishedLibraries, escape, jsonLd, origin, countWord, rootShell, rootTitle, aboutText, contactEmail, shelfPages, shelfData } from './build-pages.mjs';
 import manifest from '../../shared/seo-libraries.json' with { type: 'json' };
 import { getAllLibraries } from '../../server/services/directory.js';
@@ -66,12 +68,13 @@ test('one About text: the public page and the app read docs/policy/about.md', ()
 test('built output contains only published library pages and indexable canonical sitemap URLs', () => {
   const report=JSON.parse(readFileSync('client/dist/seo-report.json'));
   assert.equal(report.libraryPages.length,12);
-  // Nineteen URLs, plus /terms once the policy texts are published (VITE_POLICY_EFFECTIVE_DATE),
+  // Twenty URLs (with /terms: the policy texts carry their committed date),
   // plus the library pages with a shelf that have no guide, the book pages and /books.
   const shelf=shelfPages(), extra=shelf.libraries.filter(r=>!r.guide).length+shelf.books.length+(shelf.books.length?1:0);
   assert.deepEqual(report.shelfLibraryPages,shelf.libraries.map(r=>r.path));
   assert.deepEqual(report.bookPages,shelf.books.map(b=>b.path));
-  assert.equal(report.indexablePages.length,(existsSync('client/dist/terms.html')?20:19)+extra);
+  assert.ok(report.indexablePages.includes('/terms'));
+  assert.equal(report.indexablePages.length,20+extra);
   for(const path of report.indexablePages) {
     const html=readFileSync('client/dist/'+(path==='/'?'index':path.slice(1))+'.html','utf8');
     assert.ok(html.includes('content="index, follow"'),path);
@@ -94,6 +97,25 @@ test('built output contains only published library pages and indexable canonical
   assert.ok(!existsSync('client/dist/site.js'));
   assert.ok(!existsSync('client/dist/libraries/toronto-public-library.html'));
   assert.ok(!readFileSync('client/dist/robots.txt','utf8').includes('Disallow: /app'));
+});
+test('the built bundle and pages carry the policy date and no placeholder such as [EFFECTIVE DATE]', () => {
+  const files=dir=>readdirSync(dir).flatMap(name=>statSync(join(dir,name)).isDirectory()?files(join(dir,name)):[join(dir,name)]);
+  const found=[];
+  for(const file of files('client/dist').filter(f=>/\.(html|js|css|json|xml|txt|webmanifest)$/.test(f))) {
+    const text=readFileSync(file,'utf8');
+    const hit=text.match(PLACEHOLDER_PATTERN)?.[0] || (/\.(html|xml)$/.test(file) && text.match(/\{\{[^}]*\}\}/)?.[0]);
+    if(hit) found.push(file+': '+hit);
+  }
+  assert.deepEqual(found,[]);
+  const line=`Effective ${POLICY_EFFECTIVE_DATE}.`;
+  const bundle=readdirSync('client/dist/assets').filter(f=>f.endsWith('.js')).map(f=>readFileSync('client/dist/assets/'+f,'utf8')).join('');
+  assert.ok(bundle.includes(line),'the app bundle has the dated texts');
+  assert.ok(readFileSync('client/dist/privacy.html','utf8').includes(`<p>${line}</p>`));
+  assert.ok(readFileSync('client/dist/terms.html','utf8').includes(`<p>${line} MyBookshelf is run by Deepak Ravikumar, India.</p>`));
+  // The site's date format ("20 November 2026"), and a value the policy check accepts.
+  assert.match(POLICY_EFFECTIVE_DATE,/^\d{1,2} (January|February|March|April|May|June|July|August|September|October|November|December) \d{4}$/);
+  assert.equal(policyEffectiveDate(POLICY_EFFECTIVE_DATE),POLICY_EFFECTIVE_DATE);
+  assert.throws(()=>withEffectiveDate('Effective [EFFECTIVE DATE]. [NAME]'),/placeholder/);
 });
 test('new South Indian guides are published with HTTPS official sites and honest counts in the copy', () => {
   const pages=publishedLibraries();
@@ -125,8 +147,8 @@ test('analytics and Search Console are off by default and, when set, add only th
   const { mkdtemp, writeFile, readFile, rm, readdir } = await import('node:fs/promises');
   const { tmpdir } = await import('node:os');
   const { join } = await import('node:path');
-  assert.deepEqual(pageSettings({}), { analytics: false, siteVerification: null, policyEffectiveDate: null });
-  assert.deepEqual(pageSettings({ VITE_ANALYTICS_ENABLED: 'true', GOOGLE_SITE_VERIFICATION: '"><script>' }), { analytics: true, siteVerification: null, policyEffectiveDate: null });
+  assert.deepEqual(pageSettings({}), { analytics: false, siteVerification: null, policyEffectiveDate: POLICY_EFFECTIVE_DATE });
+  assert.deepEqual(pageSettings({ VITE_ANALYTICS_ENABLED: 'true', GOOGLE_SITE_VERIFICATION: '"><script>' }), { analytics: true, siteVerification: null, policyEffectiveDate: POLICY_EFFECTIVE_DATE });
   if (existsSync('client/dist/index.html') && !pageSettings().analytics) {
     assert.ok(!existsSync('client/dist/insights.js'));
     for (const file of ['index.html', 'about.html', 'libraries.html']) {
@@ -160,24 +182,20 @@ test('analytics and Search Console are off by default and, when set, add only th
   } finally { await rm(out, { recursive: true, force: true }); }
 });
 
-test('the policy texts are published only by the release switch, with the date filled and the native-app section kept', async () => {
+test('every build publishes the policy texts with the committed date and keeps the native-app section', async () => {
   const { buildPages, pageSettings } = await import('./build-pages.mjs');
   const { mkdtemp, writeFile, readFile, rm } = await import('node:fs/promises');
   const { tmpdir } = await import('node:os');
   const { join } = await import('node:path');
-  assert.equal(pageSettings({ VITE_POLICY_EFFECTIVE_DATE: '<b>' }).policyEffectiveDate, null);
-  assert.equal(pageSettings({ VITE_POLICY_EFFECTIVE_DATE: ' 1 December 2026 ' }).policyEffectiveDate, '1 December 2026');
-  // Default build: today's page, no Terms page.
-  if (existsSync('client/dist/index.html') && !existsSync('client/dist/terms.html')) {
-    assert.match(readFileSync('client/dist/privacy.html', 'utf8'), /Website privacy/);
-    assert.ok(!existsSync('client/dist/terms.html'));
-  }
+  // The date is committed (shared/policy-effective-date.mjs); a build setting cannot change it.
+  assert.equal(pageSettings({}).policyEffectiveDate, POLICY_EFFECTIVE_DATE);
+  assert.equal(pageSettings({ VITE_POLICY_EFFECTIVE_DATE: '1 December 2026' }).policyEffectiveDate, POLICY_EFFECTIVE_DATE);
   const out = await mkdtemp(join(tmpdir(), 'pages-'));
   try {
     await writeFile(join(out, 'index.html'), APP_SHELL);
-    await buildPages(out, { analytics: false, siteVerification: null, policyEffectiveDate: '1 December 2026' });
+    await buildPages(out, pageSettings({}));
     const privacy = await readFile(join(out, 'privacy.html'), 'utf8');
-    assert.match(privacy, /<p>Effective 1 December 2026\.<\/p><h2>Who we are<\/h2><p>MyBookshelf is a free, independent website and web app at mybookshelf\.cloud\. It is run by Deepak Ravikumar, India\./);
+    assert.ok(privacy.includes(`<p>Effective ${POLICY_EFFECTIVE_DATE}.</p><h2>Who we are</h2><p>MyBookshelf is a free, independent website and web app at mybookshelf.cloud. It is run by Deepak Ravikumar, India.`));
     // The standard sections, in order, and nothing else at that level before the native apps.
     const headings = [...privacy.split('id="native-apps"')[0].matchAll(/<h2>([^<]+)<\/h2>/g)].map(match => match[1]);
     assert.deepEqual(headings, ['Who we are', 'Scope', 'Information we collect', 'How we use information', 'What we never do', 'Service providers',

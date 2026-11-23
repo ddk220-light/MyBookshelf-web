@@ -1,16 +1,14 @@
 // The public /privacy and /terms pages from the approved policy texts
-// (docs/policy/*.md), for the release switch (VITE_POLICY_EFFECTIVE_DATE; see
-// docs/RELEASE-one-shelf.md). The same small Markdown subset as the app's
+// (docs/policy/*.md), with their committed effective date
+// (shared/policy-effective-date.mjs). The same small Markdown subset as the app's
 // reader (client/src/v2/ui/panel/policyText.tsx): "# " and "## " headings,
 // paragraphs, "- " lists, pipe tables, **bold** and plain email addresses.
 // The leading "> Draft ..." review note is left out; words are not changed.
+import { policyEffectiveDate, withEffectiveDate } from '../../shared/policy-effective-date.mjs';
+
+export { policyEffectiveDate };
 const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const EMAIL = /([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})/;
-
-/** The value checked the same way as the app's (buildInfo.ts), or null. */
-export function policyEffectiveDate(value) {
-  return typeof value === 'string' && /^[\p{L}\p{N} ,.-]{4,40}$/u.test(value.trim()) ? value.trim() : null;
-}
 
 export function inline(text) {
   return text.split(/(\*\*[^*]+\*\*)/).map(part => /^\*\*[^*]+\*\*$/.test(part)
@@ -65,9 +63,6 @@ export function blockHtml(block) {
 
 /** { title, html } for one policy text, with [EFFECTIVE DATE] filled in. */
 export function policyHtml(markdown, { effectiveDate }) {
-  if (!policyEffectiveDate(effectiveDate)) throw Error('A policy page is published only with its effective date.');
-  const text = markdown.replace(/\r\n?/g, '\n').split('[EFFECTIVE DATE]').join(effectiveDate.trim());
-  if (/\[[A-Z][A-Z ]+\]/.test(text)) throw Error('A policy text still has a placeholder.');
-  const blocks = policyBlocks(text);
+  const blocks = policyBlocks(withEffectiveDate(markdown.replace(/\r\n?/g, '\n'), effectiveDate));
   return { title: blocks.find(block => block.type === 'h1')?.text || '', html: blocks.map(blockHtml).join('') };
 }

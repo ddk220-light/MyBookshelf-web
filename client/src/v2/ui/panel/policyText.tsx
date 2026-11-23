@@ -4,10 +4,10 @@ import { Fragment, type ReactNode } from 'react';
 // their words. Only the small Markdown subset those files use is understood:
 // "# " and "## " headings, paragraphs, "- " lists, pipe tables, **bold** and
 // plain email addresses. The leading "> Draft ..." review note is a note for
-// reviewers, not policy text, and is left out. A placeholder is filled when
-// the build supplies a value; without one, its "Effective [EFFECTIVE DATE]."
-// sentence is left out rather than shown with the placeholder in it
-// (VITE_POLICY_EFFECTIVE_DATE must be set for a release).
+// reviewers, not policy text, and is left out. The app's texts arrive with
+// their effective date already filled in (shared/policy-effective-date.mjs).
+// `values` fills other placeholders; a missing value leaves out its
+// "Effective <placeholder>." sentence rather than showing the placeholder.
 
 export type PolicyBlock =
   | { type: 'h1' | 'h2' | 'p'; text: string }

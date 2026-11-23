@@ -3,6 +3,7 @@
 import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { LINKED_LIBRARY, installPublicV2Fixture } from './public-v2-fixture.js';
+import { POLICY_EFFECTIVE_DATE } from '../../shared/policy-effective-date.mjs';
 
 const KEY = 'mybookshelf.anonymous-web.v1';
 const axe = page => new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
@@ -29,11 +30,9 @@ test.describe('Policy pages and Report a problem', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Privacy' })).toBeVisible();
     await expect(page.getByRole('heading', { level: 2, name: 'How long we keep information' })).toBeVisible();
     await expect(page.getByText('Draft for owner')).toHaveCount(0);
-    // The release sets the effective date (the publication switch); without it
-    // the "Effective …" line is left out, never shown with its placeholder.
-    const date = process.env.VITE_POLICY_EFFECTIVE_DATE?.trim();
-    if (date) await expect(page.getByText('Effective ' + date + '.', { exact: false }).first()).toBeVisible();
-    else await expect(page.getByText(/Effective|EFFECTIVE DATE/)).toHaveCount(0);
+    // The committed effective date (shared/policy-effective-date.mjs), never the placeholder.
+    await expect(page.getByText('Effective ' + POLICY_EFFECTIVE_DATE + '.', { exact: true })).toBeVisible();
+    await expect(page.getByText(/EFFECTIVE DATE/)).toHaveCount(0);
     await expect(page.getByRole('link', { name: /My reading shelf/ })).toHaveCount(0);
     expect((await axe(page)).violations).toEqual([]);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

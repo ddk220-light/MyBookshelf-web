@@ -3,15 +3,15 @@ import termsText from '../../../../../docs/policy/terms.md?raw';
 import aboutText from '../../../../../docs/policy/about.md?raw';
 import { PanelPage } from './PanelPage';
 import { PolicyBlocks, inline, parsePolicy, policySections } from './policyText';
-import { policyEffectiveDate } from './buildInfo';
 
 // Privacy, Terms and About (plan section 10.1), from the approved texts in
-// docs/policy. The texts are rendered as written; only the effective date
-// placeholder is filled, and only when the build supplies it. The About text
-// is also the public /about page's (tools/seo/build-pages.mjs, plan C2).
+// docs/policy. The texts are rendered as written. Their effective date is
+// filled in when the bundle is built (shared/policy-effective-date.mjs), so
+// the bundle never carries the placeholder. The About text is also the public
+// /about page's (tools/seo/build-pages.mjs, plan C2).
 
 function PolicyDocument({ text, name }: { text: string; name: string }) {
-  const { title, intro, sections } = policySections(parsePolicy(text, { '[EFFECTIVE DATE]': policyEffectiveDate() }));
+  const { title, intro, sections } = policySections(parsePolicy(text));
   return <PanelPage title={title || name} documentTitle={name} className="policy-page">
     {intro.length > 0 && <div className="policy-intro"><PolicyBlocks blocks={intro} idPrefix={name + '-intro'} /></div>}
     <div className="policy-sections">

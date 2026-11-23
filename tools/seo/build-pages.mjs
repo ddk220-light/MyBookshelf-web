@@ -7,6 +7,7 @@ import { toPublicLibrary } from '../../server/public-v2/directory.js';
 import { SOURCE_REPOSITORY_URL } from '../../shared/source-repository.mjs';
 import { analyticsScriptSource, analyticsSettingOn, siteVerificationToken } from '../../shared/analytics.mjs';
 import { blockHtml, inline, policyBlocks, policyEffectiveDate, policyHtml } from './policy-html.mjs';
+import { POLICY_EFFECTIVE_DATE } from '../../shared/policy-effective-date.mjs';
 import { shelfPublication, shelfSection, shelfItemList, shelfSummary, shelfTitle, shelfDescription, bookTitle, bookDescription, libraryStructuredData, placeOf, localityOf, longDate, coverUrl, appBookPath, libraryBookPath, TITLE_MAX, DESCRIPTION_MAX } from './shelf-pages.mjs';
 import { emptyShelves } from './shelves-core.mjs';
 import { existsSync, readFileSync } from 'node:fs';
@@ -98,13 +99,14 @@ export function aboutText(markdown) {
 // Build settings, both off by default (plan 4.6.1, Phase 11):
 //   VITE_ANALYTICS_ENABLED=true   cookieless page visits on every public page (/insights.js)
 //   GOOGLE_SITE_VERIFICATION=<token>  Search Console's meta tag on the root page only
-//   VITE_POLICY_EFFECTIVE_DATE=<date>  the release switch for the policy texts
-//     (docs/RELEASE-one-shelf.md): /privacy becomes the approved text
-//     (docs/policy/privacy.md, with the native-app section kept) and /terms is
-//     published. The app's Privacy and Terms pages show the same date.
+// The policy texts' effective date is not a build setting: it is committed in
+// shared/policy-effective-date.mjs (launch day, 23 November 2026), so /privacy
+// is the approved text (docs/policy/privacy.md, with the native-app section
+// kept) and /terms is published in every build, with the same date as the
+// app's Privacy and Terms pages. A VITE_POLICY_EFFECTIVE_DATE setting is ignored.
 export function pageSettings(env = process.env) {
   return { analytics: analyticsSettingOn(env.VITE_ANALYTICS_ENABLED), siteVerification: siteVerificationToken(env.GOOGLE_SITE_VERIFICATION),
-    policyEffectiveDate: policyEffectiveDate(env.VITE_POLICY_EFFECTIVE_DATE) };
+    policyEffectiveDate: policyEffectiveDate(POLICY_EFFECTIVE_DATE) };
 }
 export async function buildPages(output = resolve(root, 'client/dist'), settings = pageSettings(), shelf = shelfPages()) {
   const rows = publishedLibraries();
