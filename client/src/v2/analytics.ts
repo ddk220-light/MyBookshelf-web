@@ -6,11 +6,18 @@ import { analyticsSettingOn, installAnalytics } from '../../../shared/analytics.
 
 export { analyticsBeforeSend, scrubAnalyticsUrl } from '../../../shared/analytics.mjs';
 
-export function analyticsEnabled(environment: Record<string, unknown> = import.meta.env): boolean {
+// Read only the two keys needed. Never pass `import.meta.env` itself as a
+// value: Vite then inlines the whole object, including every VITE_* variable
+// the build host exposes (repository, commit and project details).
+function buildEnvironment(): Record<string, unknown> {
+  return { VITE_ANALYTICS_ENABLED: import.meta.env.VITE_ANALYTICS_ENABLED, PROD: import.meta.env.PROD };
+}
+
+export function analyticsEnabled(environment: Record<string, unknown> = buildEnvironment()): boolean {
   return analyticsSettingOn(environment.VITE_ANALYTICS_ENABLED) && environment.PROD === true;
 }
 
-export function startAnalytics(environment: Record<string, unknown> = import.meta.env, win: Window = window, doc: Document = document): boolean {
+export function startAnalytics(environment: Record<string, unknown> = buildEnvironment(), win: Window = window, doc: Document = document): boolean {
   if (!analyticsEnabled(environment)) return false;
   return installAnalytics(win, doc);
 }

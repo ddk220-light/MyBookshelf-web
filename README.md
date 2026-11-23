@@ -54,6 +54,7 @@ npm test --workspace=server
 npm run build
 npm run test:seo
 node --test tools/deployment/*.test.mjs
+node tools/deployment/client-bundle-env.mjs   # after a build: no Vercel/build-host variables in client/dist
 node --test tools/catalog-hardening/*.test.mjs
 node --test tools/accounts/*.test.mjs
 node --test tools/content/*.test.mjs
