@@ -94,6 +94,7 @@ export function SidePanel({ open, onClose, returnFocus, onChangeLibrary, report 
         <a className="panel-row" href="/support">How MyBookshelf works<ChevronGlyph /></a>
         <Link className="panel-row" to="/app/report" state={report || { reportScreen }}>Report a problem<ChevronGlyph /></Link>
         <Link className="panel-row" to="/app/privacy">Privacy<ChevronGlyph /></Link>
+        <Link className="panel-row" to="/app/terms">Terms<ChevronGlyph /></Link>
         <a className="panel-row" href="/about">About MyBookshelf<ChevronGlyph /></a>
       </nav>
     </>}

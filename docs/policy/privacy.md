@@ -1,5 +1,3 @@
-> Draft for owner and legal review. Not yet published.
-
 # Privacy
 
 Effective [EFFECTIVE DATE].
@@ -102,8 +100,9 @@ be tried.
 
 | Service | What for |
 |---|---|
-| Vercel | Hosting the website and server, scheduled clean-up, a small storage area used when deleting accounts, and anonymous visit counts |
+| Vercel | Hosting the website and server, scheduled clean-up, a small storage area used when deleting accounts, encrypted backups of the accounts database, and anonymous visit counts |
 | Neon | Databases: one for accounts, one for library answers, requests, reports and the anonymous usage information |
+| GitHub | Running the nightly backup of the accounts database. The copy is encrypted as it is made, and only the encrypted file is kept, with Vercel. Only we hold the key that opens it. |
 | Resend | Sending account email: log-in links, address confirmation, password resets and account messages |
 | Open Library and Internet Archive | Book details and covers |
 | Google Books | Book details and covers |

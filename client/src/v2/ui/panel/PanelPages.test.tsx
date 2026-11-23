@@ -79,6 +79,9 @@ describe('policy texts', () => {
     expect(screen.getByText(/When you sign in, the books on your reading shelf in that browser are added to your account/)).toBeInTheDocument();
     expect(document.body.textContent).not.toContain('Draft for owner');
     expect(document.body.textContent).not.toMatch(/Pwned|What changed/);
+    // Every service provider is named, the nightly backup's too.
+    expect(screen.getByText(/^Running the nightly backup of the accounts database\./)).toBeInTheDocument();
+    expect(screen.getByText(/encrypted backups of the accounts database/)).toBeInTheDocument();
     expect(screen.getAllByRole('link', { name: 'privacy@mybookshelf.cloud' })[0]).toHaveAttribute('href', 'mailto:privacy@mybookshelf.cloud');
     expect(screen.getByRole('link', { name: 'Back' })).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: /My reading shelf/ })).toBeNull();
@@ -116,7 +119,23 @@ describe('side panel', () => {
     expect(within(panel).getByRole('link', { name: 'Log in' })).toHaveAttribute('href', '/app/account/sign-in');
     expect(within(panel).getByRole('link', { name: 'Report a problem' })).toHaveAttribute('href', '/app/report');
     expect(within(panel).getByRole('link', { name: 'Privacy' })).toHaveAttribute('href', '/app/privacy');
+    expect(within(panel).getByRole('link', { name: 'Terms' })).toHaveAttribute('href', '/app/terms');
     expect(within(panel).getByRole('link', { name: 'About MyBookshelf' })).toHaveAttribute('href', '/about');
+    // Terms sits beside Privacy, in the same rows.
+    const help = within(panel).getByRole('navigation', { name: 'Help and information' });
+    expect(within(help).getAllByRole('link').map(link => link.textContent)).toEqual(['How MyBookshelf works', 'Report a problem', 'Privacy', 'Terms', 'About MyBookshelf']);
+    expect(within(help).getByRole('link', { name: 'Terms' })).toHaveClass('panel-row');
+  });
+
+  it('Terms opens from the panel, and Back returns to it', async () => {
+    network();
+    app('/', { overlay: 'panel' });
+    const panel = await screen.findByRole('dialog', { name: 'Settings' });
+    fireEvent.click(within(panel).getByRole('link', { name: 'Terms' }));
+    expect(await screen.findByRole('heading', { level: 1, name: 'Terms' })).toBeInTheDocument();
+    expect(screen.getByText("You must be 18 or older, or have a parent's or guardian's permission.")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('link', { name: 'Back' }));
+    expect(await screen.findByRole('dialog', { name: 'Settings' })).toBeInTheDocument();
   });
 
   it('signed in: the email, Log out and Account settings', async () => {

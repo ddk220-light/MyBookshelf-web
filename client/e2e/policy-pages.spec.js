@@ -40,6 +40,14 @@ test.describe('Policy pages and Report a problem', () => {
     await expect(page).toHaveURL(/\/\/[^/]+\/$/);
     await expect(panel).toBeVisible();
 
+    // Terms sits beside Privacy in the panel.
+    await panel.getByRole('link', { name: 'Terms' }).click();
+    await expect(page).toHaveURL(/\/app\/terms$/);
+    await expect(page.getByRole('heading', { level: 1, name: 'Terms' })).toBeVisible();
+    await page.getByRole('link', { name: 'Back' }).click();
+    await expect(page).toHaveURL(/\/\/[^/]+\/$/);
+    await expect(panel).toBeVisible();
+
     await panel.getByRole('link', { name: 'About MyBookshelf' }).click();
     await expect(page).toHaveURL(/\/about$/);
     await expect(page.getByRole('heading', { level: 1, name: 'Find out if your library has a book, before you go.' })).toBeVisible();

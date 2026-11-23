@@ -115,6 +115,30 @@ test('the place rule on the directory: the libraries the live pages showed wrong
   assert.equal(nliu.address, 'Kerwa Dam Road, Bhopal, Barkeri Kalan');
 });
 
+test('a corrected library name: same ID, the new name everywhere, the old page address redirects', () => {
+  // The e-Granthalaya directory spells it "Secretatriat"; the correction lives in
+  // data/library-presentation-reviews.json, so a regenerated directory keeps it.
+  const id = 'egranthalaya:assembly-mlasectlib', name = 'Meghalaya Legislative Assembly Secretariat Library';
+  const oldSlug = 'meghalaya-legislative-assembly-secretatriat-library', newSlug = 'meghalaya-legislative-assembly-secretariat-library';
+  const entry = getLibraryById(id);
+  assert.equal(entry.id, id);
+  assert.equal(entry.name, name);
+  assert.equal(toPublicLibrary(entry).name, name);
+  assert.ok(entry.searchAliases.includes('Meghalaya Legislative Assembly Secretatriat Library'), 'the old spelling still finds it');
+  const shelves = JSON.parse(readFileSync('shared/seo-shelves.json', 'utf8'));
+  assert.equal(shelves.libraries[id].slug, newSlug);
+  assert.ok(!JSON.stringify(shelves).includes(oldSlug));
+  const routes = JSON.parse(readFileSync('vercel.json', 'utf8')).services.web.routes;
+  const redirect = routes.findIndex(route => route.src === '/libraries/' + oldSlug);
+  assert.ok(redirect >= 0 && routes[redirect].status === 308 && routes[redirect].headers.Location === '/libraries/' + newSlug);
+  assert.ok(redirect < routes.findIndex(route => route.src === '/libraries/([^/]+)'));
+  if (existsSync('client/dist/libraries')) {
+    assert.ok(!existsSync(`client/dist/libraries/${oldSlug}.html`));
+    if (existsSync(`client/dist/libraries/${newSlug}.html`)) assert.ok(readFileSync(`client/dist/libraries/${newSlug}.html`, 'utf8').includes(`<h1>${name}</h1>`));
+    assert.ok(!readFileSync('client/dist/sitemap.xml', 'utf8').includes(oldSlug));
+  }
+});
+
 test('titles: name and city first with "catalog", about 60 characters; descriptions end at a sentence within 155', () => {
   assert.equal(shelfTitle({ name: 'SRS Central Library', city: null }), 'SRS Central Library — catalog and book search');
   assert.equal(shelfTitle({ name: 'CPU Central Library Kota', city: 'Kota' }), 'CPU Central Library Kota — catalog and book search');

@@ -206,6 +206,18 @@ test('every build publishes the policy texts with the committed date and keeps t
     assert.match(privacy, /<a href="mailto:privacy@mybookshelf\.cloud">privacy@mybookshelf\.cloud<\/a>/);
     assert.ok(!/Pwned|What changed|gmail/i.test(privacy), 'no Have I Been Pwned, no change notice, no personal address');
     assert.ok(!privacy.includes('[EFFECTIVE DATE]') && !privacy.includes('Draft for owner'));
+    // The published texts start with their title: no reviewers' note ("> Draft ...") above it.
+    for (const name of ['privacy', 'terms', 'about']) assert.match(readFileSync(`docs/policy/${name}.md`, 'utf8'), /^# \S/, name);
+    // Every service provider is named: GitHub runs the nightly backup, Vercel keeps it encrypted.
+    assert.match(privacy, /<th scope="row">GitHub<\/th><td>Running the nightly backup of the accounts database\. The copy is encrypted as it is made, and only the encrypted file is kept, with Vercel\. Only we hold the key that opens it\.<\/td>/);
+    assert.match(privacy, /<th scope="row">Vercel<\/th><td>[^<]*, encrypted backups of the accounts database, [^<]*<\/td>/);
+    // How it works: the one check as the app makes it (20 November 2026), no old rules.
+    const how = await readFile(join(out, 'how-it-works.html'), 'utf8');
+    for (const words of ['one search of your chosen library’s own catalog, across all its fields', 'at least 80% of the words in the book’s title', 'can only be searched by ISBN',
+      'found, not found, or couldn’t check', 'it never means the library lacks the book'])
+      assert.ok(how.includes(words), words);
+    assert.ok(!/edition matching|title and author check/i.test(how));
+    assert.match(how, /<meta name="description" content="How MyBookshelf finds books and checks your library’s own catalog: one search for each book, answered found, not found or couldn’t check\.">/);
     assert.ok(!privacy.includes('Account recently viewed history is off until you turn it on'), 'the old website text is gone');
     assert.match(privacy, /<h2>MyBookshelf native apps \(iPhone and Android\)<\/h2>[\s\S]*<h3>Library card and PIN<\/h3>/);
     assert.match(privacy, /<a href="\/terms">Terms<\/a>/);

@@ -73,7 +73,7 @@ test.describe('Desktop layout', () => {
     await expect(page.getByRole('dialog', { name: 'Settings' }).getByRole('group', { name: 'Reading light' }).getByRole('button')).toHaveCount(3);
     await page.keyboard.press('Escape');
     await expect(side.getByRole('button', { name: 'Settings' })).toBeFocused();
-    for (const name of ['Report a problem', 'Privacy', 'About']) await expect(side.getByRole('link', { name })).toBeVisible();
+    for (const name of ['Report a problem', 'Privacy', 'Terms', 'About']) await expect(side.getByRole('link', { name })).toBeVisible();
     expect((await side.boundingBox()).width).toBe(300);
     await expect(page.getByRole('button', { name: 'Settings' })).toHaveCount(1);
     await expect(page.getByRole('button', { name: 'Scan a barcode' })).toHaveCount(0);
@@ -459,7 +459,7 @@ test.describe('Desktop layout', () => {
     await expect(column(page).getByRole('button', { name: 'Change library' })).toBeVisible();
     const order = [];
     for (let step = 0; step < 15 && order.at(-1) !== 'Search for a book'; step += 1) { await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab'); order.push(await focusedName(page)); }
-    expect(order).toEqual(['Skip to content', 'MyBookshelf', 'Anna Centenary Library, opens in a new tab', 'Change library', 'Create account', 'Log in', 'Settings', 'Help', 'Report a problem', 'Privacy', 'About', 'Search for a book']);
+    expect(order).toEqual(['Skip to content', 'MyBookshelf', 'Anna Centenary Library, opens in a new tab', 'Change library', 'Create account', 'Log in', 'Settings', 'Help', 'Report a problem', 'Privacy', 'Terms', 'About', 'Search for a book']);
     await page.keyboard.type('innovator');
     await page.keyboard.press('Enter');
     const results = page.getByRole('region', { name: 'Search results' });

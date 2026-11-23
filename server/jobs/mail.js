@@ -154,6 +154,8 @@ const escape = (value = "") =>
         c
       ],
   );
+// The one contact address the site uses (privacy policy, help and About pages).
+export const SUPPORT_EMAIL = "privacy@mybookshelf.cloud";
 export function renderAccountMail(payload) {
   const { kind, token, baseURL, name, provider } = payload;
   const templates = {
@@ -227,7 +229,7 @@ export function renderAccountMail(payload) {
       "Your account email has been changed.",
       "Review your account",
       "/app/settings/account",
-      "If this wasn’t you, contact support and secure your sign-in methods.",
+      `If this wasn’t you, write to us at ${SUPPORT_EMAIL} and secure your sign-in methods.`,
     ],
     methodChanged: [
       "Your MyBookshelf sign-in methods changed",

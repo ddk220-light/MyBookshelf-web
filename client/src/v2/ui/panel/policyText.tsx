@@ -1,10 +1,11 @@
 import { Fragment, type ReactNode } from 'react';
 
-// Renders the owner-approved policy drafts (docs/policy/*.md) without changing
+// Renders the owner-approved policy texts (docs/policy/*.md) without changing
 // their words. Only the small Markdown subset those files use is understood:
 // "# " and "## " headings, paragraphs, "- " lists, pipe tables, **bold** and
-// plain email addresses. The leading "> Draft ..." review note is a note for
-// reviewers, not policy text, and is left out. The app's texts arrive with
+// plain email addresses. A "> " line would be a note for reviewers, not policy
+// text, and is left out (the published texts have none since 23 November
+// 2026). The app's texts arrive with
 // their effective date already filled in (shared/policy-effective-date.mjs).
 // `values` fills other placeholders; a missing value leaves out its
 // "Effective <placeholder>." sentence rather than showing the placeholder.

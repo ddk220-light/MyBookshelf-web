@@ -54,12 +54,13 @@ export function AccountLinks({ replace, onDone, compact = false }: { replace: bo
   </div>;
 }
 
-/** Report a problem, Privacy and About. */
+/** Help, Report a problem, Privacy, Terms and About. */
 export function HelpLinks({ replace, report, onDone, className = '' }: { replace: boolean; report: ReportFrom; onDone?: () => void; className?: string }) {
   return <nav className={'desk-help ' + className} aria-label="Help and information">
     <a href="/support">Help</a>
     <Link to="/app/report" state={report} replace={replace} onClick={onDone}>Report a problem</Link>
     <Link to="/app/privacy" replace={replace} onClick={onDone}>Privacy</Link>
+    <Link to="/app/terms" replace={replace} onClick={onDone}>Terms</Link>
     <Link to="/app/about" replace={replace} onClick={onDone}>About</Link>
   </nav>;
 }
@@ -118,7 +119,7 @@ function ColumnPicker({ onClose, initialQuery, returnFocus }: { onClose: () => v
  * The permanent left column at wide widths (DeskShelf board): wordmark, My
  * library, Account (none at all when accounts are switched off), Settings
  * (the reading light lives there), and Help / Report a problem / Privacy /
- * About at the bottom. It narrows
+ * Terms / About at the bottom. It narrows
  * while a page is open in the middle slot (DeskBook board) and widens to hold
  * the library picker (DeskLibrary board). Links open their page in the
  * middle slot; with a page already there, they take its place.

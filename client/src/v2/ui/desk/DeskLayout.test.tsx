@@ -92,6 +92,9 @@ describe('desk layout at 1440 px', () => {
     expect(within(column).getByRole('button', { name: 'Find my library' })).toBeInTheDocument();
     expect(within(column).getByRole('link', { name: 'Create account' })).toHaveAttribute('href', '/app/account/sign-up');
     expect(within(column).getByRole('link', { name: 'Privacy' })).toHaveAttribute('href', '/app/privacy');
+    expect(within(column).getByRole('link', { name: 'Terms' })).toHaveAttribute('href', '/app/terms');
+    expect(within(within(column).getByRole('navigation', { name: 'Help and information' })).getAllByRole('link').map(link => link.textContent))
+      .toEqual(['Help', 'Report a problem', 'Privacy', 'Terms', 'About']);
     expect(screen.queryByRole('button', { name: 'Scan a barcode' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /Scan the barcode/ })).not.toBeInTheDocument();
     expect(within(column).getByRole('button', { name: 'Settings' })).toBeInTheDocument();

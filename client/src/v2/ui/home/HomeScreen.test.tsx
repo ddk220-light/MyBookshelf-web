@@ -218,7 +218,7 @@ describe('one-shelf home', () => {
     expect(within(panel).getByRole('button', { name: 'Daylight' })).toHaveAttribute('aria-pressed', 'true');
     fireEvent.click(within(panel).getByRole('button', { name: 'Ink' }));
     expect(document.documentElement.dataset.readingLight).toBe('ink');
-    for (const name of ['Report a problem', 'Privacy', 'About MyBookshelf']) expect(within(panel).getByRole('link', { name })).toBeInTheDocument();
+    for (const name of ['Report a problem', 'Privacy', 'Terms', 'About MyBookshelf']) expect(within(panel).getByRole('link', { name })).toBeInTheDocument();
     fireEvent(panel, new Event('cancel', { cancelable: true }));
     await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Settings' })).not.toBeInTheDocument());
     expect(person).toHaveFocus();

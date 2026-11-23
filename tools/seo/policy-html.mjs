@@ -3,7 +3,8 @@
 // (shared/policy-effective-date.mjs). The same small Markdown subset as the app's
 // reader (client/src/v2/ui/panel/policyText.tsx): "# " and "## " headings,
 // paragraphs, "- " lists, pipe tables, **bold** and plain email addresses.
-// The leading "> Draft ..." review note is left out; words are not changed.
+// A "> " line (a note for reviewers; the published texts have none since
+// 23 November 2026) is left out; words are not changed.
 import { policyEffectiveDate, withEffectiveDate } from '../../shared/policy-effective-date.mjs';
 
 export { policyEffectiveDate };

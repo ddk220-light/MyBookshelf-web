@@ -1,5 +1,3 @@
-> Draft for owner and legal review. Not yet published.
-
 # Terms
 
 Effective [EFFECTIVE DATE]. MyBookshelf is run by Deepak Ravikumar, India.
