@@ -182,10 +182,14 @@ export function createHoldingsRoutes({ directory, books, lookup, store, now = ()
     // is resolved, not after it in front of the first catalog request.
     if (library.capabilities?.publicAvailability) try { lookup.prepare?.(entry); } catch { /* the check reads it itself */ }
     let resolved = null, metadataFailed = false;
-    // This library's own record is read under its host slot and deadline.
+    // This library's own record is read under its host slot and deadline. A
+    // book whose details are in the repository (the California pages' and
+    // the Indian shelves' books) is checked by them, with no Open Library
+    // read first (metadata.js checkDetails, knownBooks.js).
     try { resolved = parsed?.kind === 'catalog' && typeof lookup.readRecord === 'function'
       ? await lookup.readRecord({ library: entry, recordId: parsed.recordId, read: () => books.resolve(bookKey) })
-      : await books.resolve(bookKey); } catch (error) { metadataFailed = true; noteDetailsFailure(error); }
+      : await (typeof books.checkDetails === 'function' ? books.checkDetails(bookKey) : books.resolve(bookKey)); }
+    catch (error) { metadataFailed = true; noteDetailsFailure(error); }
     if (!resolved && !metadataFailed) return res.status(404).json(publicError('BOOK_NOT_FOUND', 'No public book details were found.'));
     const book = { ...trustedIdentity(libraryId, bookKey, resolved), title: resolved?.title || '', authors: resolved?.authors || [] };
     const handoff = catalogHandoffFor({ entry, library, book: resolved || (book.isbn13 ? { isbn13: book.isbn13 } : undefined) });

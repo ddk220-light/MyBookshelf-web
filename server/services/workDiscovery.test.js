@@ -224,6 +224,34 @@ test('a work resolves from its record when the search or author reads fail, and 
   assert.equal(reads.length, reads0, 'a complete book is kept ten minutes');
 });
 
+// 23 November 2026: the transport's host lane ran this instance's Open
+// Library reads one at a time, so a work's search row waited for its record.
+// The real reader (pacer and transport) is used, with a stubbed network.
+test('a work\'s record and its search row are read from Open Library at once, not one after the other', async () => {
+  const { workDiscovery } = await import('./workDiscovery.js');
+  const id = 'OL987654320W';
+  const original = global.fetch;
+  let active = 0, peak = 0;
+  const paths = [];
+  global.fetch = async url => {
+    const path = new URL(String(url)).pathname;
+    paths.push(path);
+    active++; peak = Math.max(peak, active);
+    await new Promise(resolve => setTimeout(resolve, 40));
+    active--;
+    const body = path === `/works/${id}.json` ? { title: 'Read Together' } : { docs: [{ key: `/works/${id}`, title: 'Read Together', author_name: ['A. Writer'] }] };
+    return new Response(JSON.stringify(body), { status: 200, headers: { 'Content-Type': 'application/json' } });
+  };
+  try {
+    const book = await workDiscovery.resolve(id);
+    assert.deepEqual([book.title, book.authors, 'partialDetails' in book], ['Read Together', ['A. Writer'], false]);
+    assert.deepEqual(paths.sort(), ['/search.json', `/works/${id}.json`]);
+    assert.equal(peak, 2, 'both reads in flight together');
+  } finally {
+    global.fetch = original;
+  }
+});
+
 test('edition expansion deduplicates equivalent ISBNs and excludes other languages and audio', async () => {
   const read = async () => ({ size: 101, entries: [edition, { ...edition, isbn_13: ['9788173711466'] },
     { ...edition, isbn_13: ['9788173715181'], isbn_10: [], physical_format: 'Paperback' },

@@ -1,5 +1,5 @@
 import { cachedTask, getJson, peekCachedTask } from './providers/http.js';
-import { createOpenLibraryPacer } from './openLibraryPacer.js';
+import { createOpenLibraryPacer, OPEN_LIBRARY_MAX_IN_FLIGHT } from './openLibraryPacer.js';
 import { validateAndNormalize } from './isbn.js';
 import { lookupBookMetadata } from './bookMetadata.js';
 import { searchGoogleBooksByQuery } from './googleBooks.js';
@@ -26,13 +26,18 @@ function unavailable() {
 // Cache and coalesce requests, then pace uncached reads across this process
 // per search, not per read (openLibraryPacer.js): the reads of one search
 // (`group`) go together, at most three at once and three a second, and
-// searches start at least a second apart.
+// searches start at least a second apart. The transport's host lane lets
+// the reads the pacer admitted run at once (`hostConcurrency`, http.js).
+// Until 23 November 2026 it ran this instance's Open Library reads one at a
+// time: a work's search row waited for its record (and had only what was
+// left of its own 12 s), and a work's record could wait behind other
+// readers' reads until its 12 s ran out before it was sent.
 const pace = createOpenLibraryPacer();
 async function request(path, { group = null } = {}) {
   const deadlineAt = Date.now() + 12_000;
   return cachedTask(`work-discovery:${path}`, () => pace(async () => {
     const response = await getJson(`https://openlibrary.org${path}`, {
-      deadlineAt, retries: 0, catalogConnection: false,
+      deadlineAt, retries: 0, catalogConnection: false, hostConcurrency: OPEN_LIBRARY_MAX_IN_FLIGHT,
       headers: { 'User-Agent': 'MyBookshelf/1.0 (privacy@mybookshelf.cloud)' },
     });
     if (response.status === 404) return null;

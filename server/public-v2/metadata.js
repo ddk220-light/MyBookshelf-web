@@ -6,6 +6,7 @@ import { getProvider } from '../services/providers/index.js';
 import { getLibraryById } from '../services/directory.js';
 import { catalogHandoffFor } from './catalog-handoff.js';
 import { catalogMetadata } from '../services/catalogMetadata.js';
+import { knownBook } from './knownBooks.js';
 import { decodeHTML } from 'entities';
 
 const MAX_DESCRIPTION_LENGTH = 8_000;
@@ -129,6 +130,7 @@ export function createPublicBookService({
   findLibrary = getLibraryById,
   providerFor = getProvider,
   enrichCatalogIsbn = catalogMetadata,
+  known = knownBook,
 } = {}) {
   const cache = new Map();
 
@@ -241,6 +243,15 @@ export function createPublicBookService({
       // A work named by its record without some optional details (a slow
       // Open Library search, workDiscovery.js) is read again sooner.
       return book ? remember(book, raw.partialDetails ? Math.min(cacheTtlMs, 60_000) : cacheTtlMs) : null;
+    },
+
+    // The details a library check searches by (holdings.js): a book whose
+    // title and authors are in the repository (knownBooks.js: the California
+    // pages' books and the Indian shelf books) gets them at once, with no
+    // Open Library read; any other book is resolved as above. The book page's
+    // own details (resolve) are unchanged.
+    async checkDetails(bookKey) {
+      return known(bookKey) || service.resolve(bookKey);
     },
 
     isMetadataUnavailable,

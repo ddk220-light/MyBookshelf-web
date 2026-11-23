@@ -588,6 +588,14 @@ test('the check script sends nothing when the page loads; a tap is one check, an
     // The book's details could not be read: the library is not blamed, and the reader may try again.
     assert.match(answer(rows[8]), /^Couldn’t check right now.*couldn’t get this book’s details to search the library’s catalog\. Try again in a minute\. This does not mean the book is missing\./);
     assert.equal(button(rows[8]).hidden, false);
+    // As in the app (useLibraryAnswer: Try again for every "couldn't check"
+    // but a lasting reason), each such row offers "Check again": a timeout,
+    // a network failure, an unknown or failed reply, the book's details.
+    for (const index of [1, 4, 6, 7, 8]) {
+      assert.equal(button(rows[index]).hidden, false, `row ${index}`);
+      assert.equal(button(rows[index]).disabled, false, `row ${index}`);
+      assert.match(button(rows[index]).textContent, /^Check again: /, `row ${index}`);
+    }
     assert.match(doc.querySelector('[data-check-progress]').textContent, /Checked 10 books\./);
     assert.equal(doc.querySelector('[data-check-all]').disabled, false);
     // Only library IDs and book keys ever leave the page.

@@ -4,6 +4,7 @@ import request from 'supertest';
 import { makeTestApp } from '../test/helpers.js';
 import { createCatalogBookKey } from './contracts.js';
 import { createPublicV2Router } from './router.js';
+import { createPublicBookService } from './metadata.js';
 import { answerReason } from './holdings.js';
 import { createCatalogStore } from '../catalog-store/index.js';
 import { readCatalogStoreConfig } from '../catalog-store/config.js';
@@ -40,7 +41,7 @@ const books = {
 
 function harness({ observe = () => ({ outcome: 'available', matchKind: 'exact_isbn', recognizedExact: true }), usageLogEnabled = false,
   policies = { schemaVersion: 1, libraries: { [optedOut.id]: { storeAnswers: false, reason: 'Test', reviewedOn: '2026-11-12' } } },
-  searchCapMs, backgroundChecksEnabled = true, finishInBackground = false, bookDeadlineMs, functionWorkMs, searches = null } = {}) {
+  searchCapMs, backgroundChecksEnabled = true, finishInBackground = false, bookDeadlineMs, functionWorkMs, searches = null, bookService = books } = {}) {
   const pending = [];
   const defer = task => { pending.push(Promise.resolve().then(task).catch(() => {})); };
   const logged = [];
@@ -53,7 +54,7 @@ function harness({ observe = () => ({ outcome: 'available', matchKind: 'exact_is
     recorder: createLookupRecorder({ answers: store.answers, health: store.health, policyFor: store.policyFor, defer }), hostGate: store.hostGate });
   const app = makeTestApp(express => {
     express.set('trust proxy', 1);
-    express.use('/api/v2', createPublicV2Router({ directory, books, catalogStore: store, lookup, rateLimit: { limit: 1000 },
+    express.use('/api/v2', createPublicV2Router({ directory, books: bookService, catalogStore: store, lookup, rateLimit: { limit: 1000 },
       holdingsOptions: { ...(searchCapMs ? { searchCapMs } : {}), ...(functionWorkMs ? { functionWorkMs } : {}) } }));
   });
   return { app, store, calls, logged, settle: async () => { while (pending.length) await Promise.all(pending.splice(0)); } };
@@ -203,6 +204,53 @@ test('a no-store library check whose book details fail is unknown with reason "d
     assert.deepEqual(logged.filter(row => row.libraryId === biblio.id).map(row => [row.bookKey, row.outcome]), [[null, 'unknown'], [null, 'found']]);
   } finally {
     books.resolve = original;
+  }
+});
+
+// 23 November 2026: the California pages' books and the Indian shelf books
+// have their title and authors in the repository (knownBooks.js), so their
+// check asks the catalog without waiting on Open Library. Any other work is
+// still resolved from Open Library first. The real book service is used here;
+// the only network is a stub that counts Open Library reads.
+test('a known book is checked by its committed title with no Open Library read; any other work still reads Open Library first', async () => {
+  const unlisted = 'OL987654321W';
+  const reads = [], searched = [];
+  const original = global.fetch;
+  global.fetch = async url => {
+    const address = new URL(String(url));
+    if (address.hostname !== 'openlibrary.org') throw new Error(`unexpected request to ${address.hostname}`);
+    reads.push(address.pathname);
+    const body = address.pathname === `/works/${unlisted}.json` ? { title: 'A Book Nobody Listed', authors: [] }
+      : address.pathname === '/search.json' ? { docs: [{ key: `/works/${unlisted}`, title: 'A Book Nobody Listed', author_name: ['A. Writer'] }] } : null;
+    return new Response(JSON.stringify(body || {}), { status: body ? 200 : 404, headers: { 'Content-Type': 'application/json' } });
+  };
+  const rows = [
+    { title: 'To kill a mockingbird', authors: ['Lee, Harper'], catalogUrl: 'https://sfpl.bibliocommons.com/v2/record/S1', catalogLinkKind: 'record' },
+    { title: 'A book nobody listed', authors: ['Writer, A.'], catalogUrl: 'https://sfpl.bibliocommons.com/v2/record/S2', catalogLinkKind: 'record' },
+  ];
+  const { app, store, settle } = harness({ bookService: createPublicBookService(), policies: shippedPolicies,
+    searches: { search: async term => { searched.push(term); return rows; } } });
+  try {
+    // To Kill a Mockingbird (the US list and the shelf pool): found by its title.
+    const known = await request(app).post('/api/v2/holdings/check').send({ libraryId: biblio.id, bookKey: 'v1:openlibrary:OL3140822W' });
+    assert.equal(known.body.answer, 'found');
+    assert.deepEqual(known.body.matches, [{ title: 'To kill a mockingbird', author: 'Lee, Harper', url: 'https://sfpl.bibliocommons.com/v2/record/S1' }]);
+    // Braiding Sweetgrass, not in these rows: not found, and the catalog link
+    // searches the title and author, never the list's one-edition ISBN.
+    const missing = await request(app).post('/api/v2/holdings/check').send({ libraryId: biblio.id, bookKey: 'v1:openlibrary:OL16819897W' });
+    assert.equal(missing.body.answer, 'not_found');
+    assert.equal(missing.body.catalogUrl, 'https://sfpl.bibliocommons.com/search?query=Braiding+Sweetgrass+Robin+Wall+Kimmerer&searchType=keyword');
+    assert.deepEqual(searched, ['To Kill a Mockingbird', 'Braiding Sweetgrass']);
+    assert.deepEqual(reads, [], 'no Open Library read for a known book');
+
+    const other = await request(app).post('/api/v2/holdings/check').send({ libraryId: biblio.id, bookKey: `v1:openlibrary:${unlisted}` });
+    assert.equal(other.body.answer, 'found');
+    assert.deepEqual(searched.slice(2), ['A Book Nobody Listed']);
+    assert.ok(reads.includes(`/works/${unlisted}.json`), 'an unlisted work is resolved from Open Library');
+    await settle();
+    assert.equal(store.answers.size(), 0, 'nothing stored for a BiblioCommons library');
+  } finally {
+    global.fetch = original;
   }
 });
 

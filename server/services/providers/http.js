@@ -54,6 +54,13 @@ const operations = new AsyncLocalStorage();
 // attempt per address). A caller that is not reading a library catalog, such
 // as the Open Library metadata reads, passes `catalogConnection: false` and
 // gets Node's defaults. A caller's own `dispatcher` (KALNET) is used as given.
+//
+// A host's requests on this instance wait in one lane (enqueueTask), one at
+// a time unless the operation allows more (`hostRequests`). A caller that
+// paces a host itself may pass `hostConcurrency`, how many of its requests
+// may run there at once: the Open Library reads (workDiscovery.js) pass
+// their pacer's limit, so that the reads openLibraryPacer.js admits together
+// (a work's record and its search row) do not wait on each other here.
 export function withCatalogOperation({ maxRequests = Infinity, signal = null, minIntervalMs = 0, robots = null, gate = null, noRetries = false, requestTimeoutMs = Infinity, deadlineAt = null, hostRequests = 1 } = {}, task) {
   const current = operations.getStore();
   if (current) return task(current);
@@ -377,6 +384,7 @@ async function requestOnce(url, options = {}) {
     maxResponseBytes = MAX_RESPONSE_BYTES,
     minIntervalMs,
     catalogConnection = true,
+    hostConcurrency,
     ...fetchOptions
   } = options;
   if (cacheKey) {
@@ -448,7 +456,7 @@ async function requestOnce(url, options = {}) {
       operation?.signal?.removeEventListener?.('abort', cancel);
       settled();
     }
-  }, { deadlineAt, concurrency: operation?.hostRequests || 1 });
+  }, { deadlineAt, concurrency: hostConcurrency || operation?.hostRequests || 1 });
 }
 
 export async function getText(url, options = {}) {

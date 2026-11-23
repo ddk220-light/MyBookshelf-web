@@ -242,3 +242,21 @@ test('a host lane runs one task at a time by default and up to the task\'s own l
   await sleep(5);
   assert.equal(ran, false);
 });
+
+// 23 November 2026: a caller that paces a host itself (the Open Library
+// reads, workDiscovery.js) may let its requests to that host run together
+// (`hostConcurrency`); every other request to a host still runs one at a time.
+test('requests to one host run one at a time unless the caller allows more with hostConcurrency', async () => {
+  let active = 0, peak = 0;
+  global.fetch = async url => {
+    active++; peak = Math.max(peak, active);
+    await new Promise(resolve => setTimeout(resolve, 20));
+    active--;
+    return reply(url);
+  };
+  await Promise.all([1, 2, 3].map(n => getText(`https://lane.example.invalid/single/${n}`, { retries: 0 })));
+  assert.equal(peak, 1);
+  peak = 0;
+  await Promise.all([1, 2, 3, 4].map(n => getText(`https://lane.example.invalid/paced/${n}`, { retries: 0, hostConcurrency: 3 })));
+  assert.equal(peak, 3);
+});
