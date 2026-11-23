@@ -1,0 +1,306 @@
+/* MyBookshelf anonymous web — the native "bright reading room" design language.
+   Every color and radius below is ported from ios/MyBookshelf/Components/Theme.swift
+   (bright v3 cream redesign); type is the same bundled Newsreader + Work Sans pair.
+   The plain semantic structure underneath is the MVP accessibility baseline. */
+
+@font-face {
+  font-family: 'Newsreader';
+  src: url('/fonts/Newsreader.woff2') format('woff2');
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Newsreader';
+  src: url('/fonts/Newsreader-Italic.woff2') format('woff2');
+  font-weight: 200 800;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Work Sans';
+  src: url('/fonts/WorkSans.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Backgrounds — daylight gradient */
+  --bg-top: #f7f0dc;
+  --bg-bottom: #f2e8cf;
+  /* Surfaces */
+  --surface: #fffaf0;
+  --surface-inset: #f6eedd;
+  --segment-track: #efe4d0;
+  /* Inks */
+  --ink-title: #43191a;        /* mahogany */
+  --ink-accent: #7a2f28;       /* mahoganyAccent */
+  --ink-body: #3a2a1e;
+  --ink-author: #7a6350;
+  --ink-muted: #6f5f49;    /* onShelfPillText — AA-safe muted brown */
+  --ink-faint: #ab9a86;
+  --eyebrow: #7d6434;      /* deepened from a88b5f for WCAG AA on cream */
+  /* Forest green (primary) */
+  --forest: #43664b;
+  --forest-end: #4f7d5b;
+  --forest-deep: #2f5340;
+  --green-pill-text: #2f5c3f;
+  --green-pill-bg: #eaf3ec;
+  --green-button-text: #eef6ee;
+  /* Mahogany button gradient */
+  --mahogany-deep: #6e2a24;
+  --mahogany-deep-end: #8a3a30;
+  --cream-button-text: #f6ead3;
+  /* Gold family */
+  --gold: #c6952f;
+  --bracket-gold: #b98f4e;
+  --colophon-gold: #c9b48a;
+  --hold-gold-text: #8a6a1e;
+  --hold-gold-bg: #f2e6c4;
+  /* Status family (availability semantics) */
+  --status-green: #4a7a52;
+  --status-amber: #b28a1e;
+  --status-red: #b23b2b;
+  --status-grey: #8a8378;
+  --on-shelf-pill-bg: #e8e1d0;
+  --on-shelf-pill-text: #6f5f49;
+  --checked-out-pill-bg: #f1ddd4;
+  /* Library card pocket (availability slip) */
+  --pocket-top: #efe2c2;
+  --pocket-bottom: #e6d5b0;
+  --pocket-label: #6f5844; /* metricCaption — AA-safe on pocket paper */
+  --pocket-ink: #5a4632;
+  /* Chips */
+  --chip-idle-bg: #efe7d4;
+  --chip-idle-border: #e0d3b4;
+  --chip-idle-text: #6f5844;
+  --chip-synced-bg: #dfeadb;
+  --chip-synced-border: #c6d8c0;
+  --chip-synced-text: #3c5a41;
+
+  --serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --sans: 'Work Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  color: var(--ink-body);
+  background: var(--bg-bottom);
+  font-family: var(--sans);
+  font-synthesis: none;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-width: 320px;
+  overflow: hidden;
+  background: linear-gradient(to bottom, var(--bg-top), var(--bg-bottom)) fixed;
+  color: var(--ink-body);
+}
+button, input { font: inherit; }
+a { color: var(--forest-deep); }
+
+/* Buttons — the design's signature move: labels are italic serif, not bold sans. */
+button, .button-link {
+  background: linear-gradient(135deg, var(--forest-deep), var(--forest));
+  border: 1px solid var(--forest-deep);
+  border-radius: 14px;
+  color: var(--green-button-text);
+  cursor: pointer;
+  font-family: var(--serif);
+  font-size: var(--text-body);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: .01em;
+  min-height: 44px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  padding: .62rem 1.15rem;
+  text-decoration: none;
+  transition: filter .15s ease, box-shadow .15s ease;
+}
+/* Hover only where there is one: on touch screens a tap would leave it stuck on. */
+@media (hover: hover) {
+  button:hover:not(:focus-visible), .button-link:hover:not(:focus-visible) { filter: brightness(1.07); box-shadow: 0 2px 8px rgb(47 83 64 / .25); }
+}
+button:focus-visible, a:focus-visible, input:focus-visible {
+  outline: 3px solid var(--ink-title);              /* #43191a */
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--cream-button-text);   /* #f6ead3 fills the offset gap */
+}
+button:disabled { cursor: wait; opacity: .65; }
+.button-quiet {
+  background: var(--surface);
+  border: 1px solid var(--colophon-gold);
+  color: var(--ink-accent);
+}
+.button-quiet:hover:not(:focus-visible) { background: var(--surface-inset); box-shadow: 0 2px 8px rgb(67 25 26 / .12); }
+
+.site-notice { padding: 0 1.15rem; }
+
+.page-section { padding: clamp(1.4rem, 4vw, 2rem) 1.15rem 2rem; }
+
+/* Eyebrow — Work Sans, tracked uppercase, tan (native brightEyebrow) */
+
+h1, h2, h3 { color: var(--ink-title); font-family: var(--serif); line-height: 1.12; overflow-wrap: anywhere; }
+/* Shared rem typography follows text zoom in both the mobile and desktop shell. */
+h1 { font-size: var(--text-display); font-weight: 500; margin: 0 0 .8rem; }
+h2 { font-size: var(--text-title); font-weight: 500; margin: 0 0 .6rem; }
+h3 { font-size: var(--text-body); margin: 0 0 .3rem; }
+p { line-height: 1.6; }
+.muted, small { color: var(--ink-muted); }
+
+.notice {
+  background: var(--chip-idle-bg);
+  border: 1px solid var(--chip-idle-border);
+  border-left: 4px solid var(--eyebrow);
+  border-radius: 0 12px 12px 0;
+  color: var(--pocket-ink);
+  margin: 1rem 0;
+  padding: .8rem 1rem;
+}
+.notice.error { background: var(--checked-out-pill-bg); border-color: #e9d3ca; border-left-color: var(--status-red); color: #6a211d; }
+.notice.success { background: var(--chip-synced-bg); border-color: var(--chip-synced-border); border-left-color: var(--status-green); color: var(--chip-synced-text); }
+.status {
+  background: var(--chip-idle-bg);
+  border: 1px solid var(--chip-idle-border);
+  border-radius: 99rem;
+  color: var(--chip-idle-text);
+  font-size: var(--text-label);
+  flex: 0 1 auto;
+  font-weight: 600;
+  letter-spacing: .08em;
+  line-height: 1.25;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  padding: .38rem .6rem;
+  text-align: center;
+  text-transform: uppercase;
+}
+.status.linked { background: var(--green-pill-bg); border-color: var(--chip-synced-border); color: var(--green-pill-text); }
+
+/* Cream card family */
+.text-link { color: var(--forest-deep); display: inline-block; font-weight: 600; margin-top: .8rem; }
+.book-card {
+  background: var(--surface);
+  border: 1px solid var(--segment-track);
+  border-radius: 14px;
+  box-shadow: 0 2px 6px rgb(67 25 26 / .08);
+  color: var(--ink-body);
+  display: block;
+  height: 100%;
+  overflow: hidden;
+  text-decoration: none;
+  transition: box-shadow .15s ease, transform .15s ease;
+}
+.book-card:hover:not(:focus-visible) { border-color: var(--colophon-gold); box-shadow: 0 6px 16px rgb(67 25 26 / .16); transform: translateY(-2px); }
+.book-card > span { display: block; padding: .7rem .75rem .9rem; }
+.book-card strong { -webkit-box-orient: vertical; -webkit-line-clamp: 3; color: var(--ink-title); display: -webkit-box; font-family: var(--serif); font-size: var(--text-body); font-weight: 500; line-height: 1.25; overflow: hidden; overflow-wrap: anywhere; }
+.book-card small { -webkit-box-orient: vertical; -webkit-line-clamp: 2; color: var(--ink-author); display: -webkit-box; font-size: var(--text-small); font-style: italic; font-family: var(--serif); line-height: 1.35; margin-top: .25rem; overflow: hidden; overflow-wrap: anywhere; }
+/* A catalog title may distinguish volumes only at its end. Keep the full
+   title and publication details readable before the reader selects a record. */
+
+.cover { aspect-ratio: 2 / 3; background: var(--surface-inset); display: block; object-fit: cover; width: 100%; }
+.cover-placeholder {
+  align-content: center;
+  background: linear-gradient(160deg, var(--surface-inset), var(--segment-track));
+  color: var(--ink-muted);
+  font-family: var(--serif);
+  font-size: var(--text-small);
+  font-style: italic;
+  padding: 1rem;
+  text-align: center;
+}
+
+/* Scan panel — the native viewfinder: soft cream vignette + gold corner brackets */ /* 5.68:1 on #f6ecd8; the previous #8a6a3e was 3.83:1 on the old gradient's dark stop */
+
+.authors { color: var(--ink-author); font-family: var(--serif); font-size: var(--text-body); font-style: italic; margin-top: 0; }
+/* --eyebrow now paints on .page-right's gradient (worst stop #f2ead4), not
+   --surface — python3 WCAG relative-luminance check: 4.67:1 light (#7d6434),
+   5.99:1 lamplight (#6b5426), both clear 4.5:1 AA for this .7rem/11.2px text. */
+.catalog-time { color: var(--pocket-label); font-size: var(--text-small); font-style: italic; font-family: var(--serif); }
+
+.prose h2 { margin-top: 2rem; }
+.prose p { max-width: 44rem; }
+
+@media (max-width: 560px) {
+  .page-section { padding-top: 1.6rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button, .button-link, .book-card { transition: none; }
+  .book-card:hover { transform: none; }
+}
+
+@media (forced-colors: active) {
+  .notice, .book-card, .status { border: 1px solid CanvasText; }
+  .notice { border-left-width: 4px; }
+  .cover-placeholder { border: 1px solid CanvasText; }
+}
+
+/* Phone frame — the app, centered on every width. The screen is the scrolling
+   region and the navigation owns a separate row, so controls are never covered
+   by a floating overlay at short phone heights. */
+/* Lamplight darkens the page cream, so every ink that paints directly on the
+   backdrop is re-derived here. Ratios computed against BOTH stops
+   (#e9d9b6 light / #e3d0a7 dark); the dark stop is the worst case. */
+:root[data-light='lamplight'] {
+  --bg-top: #e9d9b6;
+  --bg-bottom: #e3d0a7;
+  --eyebrow: #6b5426;        /* 4.74:1 on #e3d0a7, 5.16:1 on #e9d9b6 (was #7d6434 = 3.70:1) */
+  --ink-author: #655040;     /* 4.99:1 on #e3d0a7, 5.43:1 on #e9d9b6 (was #7a6350 = 3.71:1) */
+  --ink-muted: #645540;      /* 4.75:1 on #e3d0a7, 5.17:1 on #e9d9b6 (was #6f5f49 = 4.06:1) */
+  --chip-idle-text: #6a533f; /* 4.74:1 on #e3d0a7, 5.16:1 on #e9d9b6 (was #6f5844 = 4.39:1) */
+}
+.app-backdrop { display: flex; height: 100vh; height: 100dvh; justify-content: center; overflow: hidden; }
+.app-frame {
+  container-type: inline-size; display: flex; flex-direction: column; height: 100%; min-height: 0;
+  overflow: hidden; position: relative; width: min(430px, 100%);
+}
+.app-screen { flex: 1 1 auto; min-height: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior-y: contain; padding-bottom: 1rem; scroll-padding-block: 1rem; }
+
+/* Floating tab bar (native FloatingTabBar) */
+/* The pill fill alone is 1.09:1 against --surface, which fails WCAG 1.4.11 for a
+   state indicator; the forest ring is 6.23:1 and carries the state visually. */ /* 7.62:1 on --green-pill-bg */
+.settings-label { color: var(--eyebrow); font-family: var(--sans); font-size: var(--text-label); font-weight: 600; letter-spacing: .17em; margin-bottom: .7rem; text-transform: uppercase; }
+/* Native's onGreenLabel #a7c0aa is only 3.32:1 on the gradient's LIGHT stop
+   (#43664b) where these two lines actually sit; #d5e4d6 = 4.91:1 there and
+   7.36:1 on #2f4a38. Keep the web token corrected rather than mirroring native. */
+.segment-control { background: var(--segment-track); border-radius: 14px; display: inline-flex; gap: .25rem; padding: .25rem; }
+/* --eyebrow #7d6434 is only 4.45:1 on the #efe4d0 track at 13.6px/600 (normal
+   text, so 4.5:1 applies); --ink-muted is 4.89:1 daylight and 5.72:1 lamplight. */
+/* The active fill is 1.21:1 against the track — WCAG 1.4.11 needs 3:1 for a
+   state cue, so the forest border (5.15:1 on the track) carries it. */ /* 7.19:1 on #f7ece4 at .72rem/600 (#a85a48 was 4.28:1) */
+.button-destructive { background: #f2ddd6; border: 1px solid #e9d3ca; color: #8a2f24; } /* 6.40:1 */
+.button-destructive:hover { filter: none; background: #eed3c9; box-shadow: 0 2px 8px rgb(178 59 43 / .2); }
+.cream-dialog { background: #faf4e2; border: 1px solid var(--colophon-gold); border-radius: 20px; color: #6a5942; max-width: min(26rem, calc(100% - 2rem)); padding: 1.5rem; } /* 6.12:1 */
+.cream-dialog::backdrop { background: rgb(58 38 18 / .38); }
+.cream-dialog-actions { display: flex; flex-wrap: wrap; gap: .7rem; justify-content: flex-end; margin-top: 1.2rem; }
+.cream-dialog-actions > button { flex: 1 1 7rem; min-width: 0; }
+@media (forced-colors: active) { .segment-control, .cream-dialog { border: 1px solid CanvasText; } }
+
+.visually-hidden { clip: rect(0 0 0 0); clip-path: inset(50%); height: 1px; overflow: hidden; position: absolute; white-space: nowrap; width: 1px; }
+.text-link.inline { display: inline; margin: 0; } /* 5.92:1 on --surface, 5.34:1 on --surface-inset */ /* 8.91:1 on --surface */
+/* The pages are positioned with opaque gradients and paint in tree order, so the
+   gutter needs its own stacking level to sit above them; pages stay at z-index auto. */ /* 5.54:1 on the darker paper stop */ /* 4.78:1 on #f4ecd8 */ /* 5.23:1 on #f4ecd8 */ /* 5.92:1 on --surface */ /* 5.88:1 */ /* #eef6ee on #b6472f = 4.85:1 */
+/* Dots are real buttons. The active state is carried by SHAPE (a wide pill), not
+   colour: #b6472f vs the leather is 1.95:1 and vs the idle gold 2.64:1, both under
+   the 3:1 WCAG 1.4.11 floor, while the gold dot itself is 5.14:1 on the leather. */ /* 8.73:1 on the leather */
+
+/* Both spreads share one fixed stage, so page changes never move the actions.
+   Only opacity and a small translation animate; no rotating cover masks the text. */
+
+/* Quiet book chrome; the native ledger gives location and status separate pages. */
+
+/* Compact settings and result cards keep the useful choices above the fold. */
+.settings-label { font-size: var(--text-small); letter-spacing: .03em; text-transform: none; }
+
+/* Search/edition additions retain the restored reading-room palette. */
+:root { --primary: var(--forest-deep); --primary-hover: var(--forest); --primary-soft: var(--green-pill-bg); --line: var(--segment-track); }
+.page-heading { margin-bottom: 1.4rem; }
+.form-hint { color: var(--ink-muted); line-height: 1.6; }
+.form-hint { font-size: var(--text-small); }
+:where(p, li, dd, small, strong) { overflow-wrap: anywhere; }
+select { font: inherit; color: var(--ink-body); background: var(--surface); border: 1px solid var(--colophon-gold); border-radius: 10px; min-height: 44px; max-width: 100%; padding: .5rem; }
+:where(select, summary):focus-visible { outline: 3px solid var(--ink-title); outline-offset: 2px; }
+.book-card strong, .book-card small { display: block; -webkit-line-clamp: unset; overflow: visible; line-height: 1.5; }
+.back-link { display: inline-block; min-height: 44px; padding-block: .5rem; font-size: var(--text-small); }

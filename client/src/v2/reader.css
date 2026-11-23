@@ -1,0 +1,134 @@
+/* Claude's October reading lights, shared by the phone and desktop presentations.
+   Layouts stay fluid; source boards are references, never fixed-size app canvases. */
+:root {
+  --reader-bg: #faf7f1; --reader-surface: #fff; --reader-fill: #efe9df;
+  --reader-ink: #1f1a17; --reader-secondary: #4a423b; --reader-muted: #6b6259;
+  --reader-line: #e7e0d5; --reader-accent: #2f5340; --reader-on: #fff;
+  --reader-ok: #2f7a4b; --reader-out: #a74824; --reader-error: #b42318;
+  --reader-wood: #c19062; --reader-wood-hi: #d9a978; --reader-wood-low: #9b6b40;
+  --reader-hero: #ece3d3; --reader-shadow: rgb(31 26 23 / .22);
+  --reader-toast: #2b2420; --reader-toast-ink: #fbf8f1;
+}
+:root[data-reading-light='lamplight'] {
+  --reader-bg: #15120f; --reader-surface: #1f1b17; --reader-fill: #2b2621;
+  --reader-ink: #f1e9dc; --reader-secondary: #d3c8b8; --reader-muted: #b4a995;
+  --reader-line: #463d33; --reader-accent: #9fd0ae; --reader-on: #10261a;
+  --reader-ok: #7fcf98; --reader-out: #f0956b; --reader-error: #f28b82;
+  --reader-wood: #6e4a30; --reader-wood-hi: #8a5f3e; --reader-wood-low: #4a301d;
+  --reader-hero: #231e19; --reader-shadow: rgb(0 0 0 / .5);
+  --reader-toast: #f1e9dc; --reader-toast-ink: #1f1a17;
+  color-scheme: dark;
+}
+:root[data-reading-light='ink'] {
+  --reader-bg: #f6f7f9; --reader-surface: #fff; --reader-fill: #e9edf2;
+  --reader-ink: #101828; --reader-secondary: #344054; --reader-muted: #5a6474;
+  --reader-line: #dde2e9; --reader-accent: #1d4f91; --reader-on: #fff;
+  --reader-ok: #13784a; --reader-out: #b23c0b; --reader-error: #b42318;
+  --reader-wood: #cdb48e; --reader-wood-hi: #dcc6a3; --reader-wood-low: #a8916c;
+  --reader-hero: #e6ebf1; --reader-shadow: rgb(16 24 40 / .2);
+  --reader-toast: #101828; --reader-toast-ink: #f6f7f9;
+}
+:root, :root[data-light] {
+  --bg-top: var(--reader-bg); --bg-bottom: var(--reader-bg); --surface: var(--reader-surface);
+  --surface-inset: var(--reader-fill); --segment-track: var(--reader-fill); --paper: var(--reader-surface);
+  --ink-title: var(--reader-ink); --ink-body: var(--reader-ink); --ink-author: var(--reader-secondary);
+  --ink-muted: var(--reader-muted); --ink-accent: var(--reader-accent); --ink-faint: var(--reader-muted);
+  --eyebrow: var(--reader-muted); --forest: var(--reader-accent); --forest-deep: var(--reader-accent);
+  --green-button-text: var(--reader-on); --green-pill-text: var(--reader-accent); --green-pill-bg: var(--reader-fill);
+  --line: var(--reader-line); --field-border: var(--reader-line); --placeholder: var(--reader-muted);
+  --status-green: var(--reader-ok); --status-red: var(--reader-error); --status-amber: var(--reader-out);
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Work Sans', sans-serif;
+  color: var(--reader-ink); background: var(--reader-bg); font-family: var(--sans);
+}
+:root:not([data-reading-light='lamplight']) { color-scheme: light; }
+body { background: var(--reader-bg); color: var(--reader-ink); min-width: 320px; }
+h1, h2, h3 { color: var(--reader-ink); font-family: var(--serif); font-weight: 500; letter-spacing: -.025em; overflow-wrap: anywhere; }
+h1 { font-size: 2.25rem; line-height: 1.1; margin: 0; }
+h2 { font-size: 1.4rem; line-height: 1.3; }
+h3 { font-size: 1.15rem; line-height: 1.3; }
+p { color: inherit; overflow-wrap: anywhere; }
+button, input, select, textarea { font: inherit; }
+button, .button-link, .button-quiet { min-height: 44px; min-width: 44px; max-width: 100%; padding: .65rem .9rem; font-weight: 600; line-height: 1.3; border-radius: 12px; border: 1px solid transparent; background: var(--reader-accent); color: var(--reader-on); box-shadow: none; white-space: normal; overflow-wrap: anywhere; }
+button:disabled { opacity: .55; cursor: default; }
+.button-quiet { background: var(--reader-fill); color: var(--reader-accent); border-color: transparent; }
+.text-button, .text-link, .back-link { color: var(--reader-accent); background: transparent; border: 0; min-width: 44px; min-height: 44px; padding: .5rem .25rem; font: 500 .875rem/1.4 var(--sans); text-decoration: none; }
+a { color: var(--reader-accent); overflow-wrap: anywhere; }
+a.text-link, a.back-link, .library-attribution a { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible { outline: 3px solid var(--reader-accent); outline-offset: 3px; box-shadow: none; }
+input:not([type='checkbox']):not([type='radio']), select { width: 100%; min-width: 0; min-height: 44px; background: var(--reader-fill); border: 1px solid var(--reader-line); color: var(--reader-ink); border-radius: 12px; padding: .7rem .8rem; font-size: 1rem; }
+input::placeholder { color: var(--reader-muted); }
+input[type='checkbox'] { width: 24px; height: 24px; accent-color: var(--reader-accent); flex: 0 0 auto; }
+.muted, .form-hint, .book-card small { color: var(--reader-muted); font: 400 .875rem/1.5 var(--sans); }
+.app-backdrop { padding: 0; background: var(--reader-bg); }
+.app-frame { width: 100%; max-width: none; height: 100vh; height: 100dvh; border: 0; border-radius: 0; box-shadow: none; display: flex; flex-direction: column; background: var(--reader-bg); position: relative; }
+.app-screen, .book-mode .app-screen { background: var(--reader-bg); padding: 0; min-height: 0; min-width: 0; overflow: auto; overscroll-behavior-y: contain; scroll-padding: 20px; flex: 1; }
+.app-frame .page-section { padding: 24px 16px 32px; margin: 0 auto; width: 100%; max-width: 720px; }
+.page-heading { margin: 0 0 24px; }
+.site-notice { padding: 12px 16px 0; width: 100%; max-width: 1200px; margin: 0 auto; }
+.notice { background: var(--reader-surface); color: var(--reader-ink); border: 1px solid var(--reader-line); border-radius: 12px; padding: 12px; font: 400 .9rem/1.5 var(--sans); box-shadow: none; }
+/* Set the background here too: the older two-class rule in styles.css uses
+   fixed light colours that are unreadable in Lamplight. */
+.notice.error { background: var(--reader-surface); color: var(--reader-error); border-color: var(--reader-error); }
+.notice.success { background: var(--reader-surface); color: var(--reader-ok); border-color: var(--reader-ok); }
+.recovery-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.undo-notice { position: absolute; z-index: 30; bottom: calc(76px + env(safe-area-inset-bottom)); left: 16px; right: 16px; max-width: 480px; margin: auto; display: flex; gap: 12px; align-items: center; background: var(--reader-toast); color: var(--reader-toast-ink); border-radius: 14px; padding: 8px 12px; box-shadow: 0 6px 24px var(--reader-shadow); }
+.undo-notice span { flex: 1; min-width: 0; overflow-wrap: anywhere; max-height: 5em; overflow: auto; }
+.undo-notice button { flex: 0 0 auto; background: transparent; color: inherit; text-decoration: underline; }
+.reader-sheet, .cream-dialog { color: var(--reader-ink); background: var(--reader-surface); border: 1px solid var(--reader-line); width: min(480px, calc(100% - 24px)); max-width: calc(100% - 24px); max-height: calc(100dvh - 24px); overflow: auto; padding: 20px; border-radius: 20px; box-shadow: 0 12px 70px var(--reader-shadow); }
+.reader-sheet:not([open]), .cream-dialog:not([open]) { display: none; }
+.reader-sheet::backdrop, .cream-dialog::backdrop { background: rgb(0 0 0 / .45); }
+.reader-sheet > header { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 16px; }
+.reader-sheet > header h2 { margin: 0; }
+.icon-button { flex: 0 0 44px; width: 44px; min-width: 44px; height: 44px; padding: 8px; background: transparent; color: var(--reader-accent); font-size: 1.3rem; }
+.reader-sheet label { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; min-height: 44px; }
+.reader-sheet > .text-link { display: flex; margin-block: 10px; }
+.reader-sheet > button { width: 100%; }
+@keyframes reader-loading { to { background-position: -150% 0; } }
+
+/* Shelf */
+.cover-frame .cover-image { width: 100%; height: 100%; object-fit: cover; }
+.cover-frame.cover-placeholder { padding: 0; }
+.cover-frame .cover-fallback { padding: 0; }
+.typeset-cover small { color: inherit; opacity: .9; }
+.typeset-cover { display: flex; height: 100%; width: 100%; flex-direction: column; justify-content: center; gap: 14px; align-items: center; padding: 12%; text-align: center; font-family: var(--serif); overflow: hidden; }
+.typeset-cover strong { font-size: clamp(.8rem, 3vw, 1.4rem); line-height: 1.15; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
+.typeset-cover small { font-size: .7rem; line-height: 1.2; overflow: hidden; max-height: 3.6em; }
+
+/* Continuous book page: one copy of the controls and one scrolling document. */
+
+/* Search */
+/* Direct child only: the scan sheet renders inside this shell and its ISBN
+   field must keep the normal input width, border and background. */
+/* A library catalog that did not answer: a retry state, never "not found". */
+
+/* Library list and details. No coordinates are displayed for area matches. */
+
+/* Settings */
+.settings-label { font: 500 .9rem/1.4 var(--sans); letter-spacing: 0; text-transform: none; color: var(--reader-muted); margin: 0 0 12px; }
+.button-destructive { background: transparent; color: var(--reader-error); border: 1px solid var(--reader-error); }
+
+@media (max-width: 639px) {
+  .reader-sheet { margin: auto 0 0; width: 100%; max-width: 100%; max-height: calc(100dvh - 16px); border-radius: 20px 20px 0 0; padding-bottom: max(20px, env(safe-area-inset-bottom)); }
+}
+@media (forced-colors: active) {
+  button, .button-link, .reader-sheet, .cream-dialog { border: 1px solid CanvasText; }
+}
+
+/* Review refinements: keep navigation controls and loading states predictable. */
+.cover[data-cover="loading"]{background:var(--reader-fill)}
+.cover .typeset-cover{font-size:clamp(.55rem,1.4vw,.95rem);overflow:hidden;padding:8px}
+.cover .typeset-cover strong{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;font-family:var(--serif)}
+.cover .typeset-cover[data-title]::after{content:attr(data-title);display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;font-family:var(--serif)}
+/* Native WebKit selects otherwise contribute their intrinsic text overflow at 200%. */
+
+/* The full book gets typography; tiny thumbnails stay quiet and text-free. */
+.cover .typeset-cover{font-style:normal}
+.book-card .cover .typeset-cover[data-title]::after{display:none}
+.book-card .cover .typeset-cover{padding:0;align-items:center;justify-content:center}
+.book-card .cover .typeset-cover svg{width:18px;height:18px}
+
+/* Phone review: use compact rows and a single, clear discovery start. */
+/* The placeholder sentence is not the book's opening: no drop cap. */
+/* Availability uses the same plain reading type as the reference cards. */
+/* Context stays available below search, leaving the input and results together. */
+/* Keep the first-visit examples at book scale on a wide, otherwise empty shelf. */

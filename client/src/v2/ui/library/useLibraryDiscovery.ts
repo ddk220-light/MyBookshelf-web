@@ -1,0 +1,88 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { publicApi } from '../../api';
+import { messageFor } from '../../context';
+import type { LibraryDiscovery, PublicLibraryPage } from '../../types';
+
+type DiscoveryState = { query: string; page: PublicLibraryPage | null; nearby: boolean };
+const RADIUS_KM = 25;
+
+/**
+ * The library pop-up's list (plan Phase 7): filled either by the typed text or
+ * by "near me". Nothing is kept beyond the open pop-up: the typed text lives in
+ * this hook's state only, and the coordinates are used for one request and
+ * not kept. No URLs, persistent storage, analytics or external geocoder.
+ */
+export function useLibraryDiscovery(initial: { query?: string } = {}) {
+  const [search, setSearch] = useState<DiscoveryState>(() => ({ query: initial.query || '', page: null, nearby: false }));
+  const [busy, setBusy] = useState(false), [locating, setLocating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [errorKind, setErrorKind] = useState<'load' | 'location' | null>(null);
+  const request = useRef<AbortController | null>(null), locationAttempt = useRef(0);
+  // "Show 25 more": the next page of the same typed search, added to the list.
+  const moreRequest = useRef<AbortController | null>(null);
+  const [loadingMore, setLoadingMore] = useState(false), [moreFailed, setMoreFailed] = useState(false);
+  const lastRequest = useRef<LibraryDiscovery>({});
+  const patch = (value: Partial<DiscoveryState>) => setSearch(current => ({ ...current, ...value }));
+  const run = useCallback(async (filters: LibraryDiscovery, transient = false) => {
+    // A transient request (near me) is not remembered: its coordinates go out once.
+    lastRequest.current = transient ? {} : filters;
+    request.current?.abort(); const controller = new AbortController(); request.current = controller;
+    moreRequest.current?.abort(); moreRequest.current = null; setLoadingMore(false); setMoreFailed(false);
+    setBusy(true); setError(null); setErrorKind(null);
+    setSearch(current => ({ ...current, page: null }));
+    try {
+      const page = await publicApi.discoverLibraries(filters, controller.signal);
+      if (!controller.signal.aborted) setSearch(current => ({ ...current, page }));
+    } catch (failure) { if (!controller.signal.aborted) { setError(messageFor(failure, 'Couldn’t load libraries. Try again.')); setErrorKind('load'); } }
+    finally { if (request.current === controller) setBusy(false); }
+  }, []);
+  useEffect(() => () => { request.current?.abort(); moreRequest.current?.abort(); locationAttempt.current++; }, []);
+  const { query, nearby } = search;
+  useEffect(() => {
+    if (nearby) return;
+    request.current?.abort();
+    moreRequest.current?.abort(); moreRequest.current = null; setLoadingMore(false); setMoreFailed(false);
+    if (!query.trim()) { setBusy(false); patch({ page: null }); return; }
+    const timer = window.setTimeout(() => { void run({ query: query.trim() }); }, 300);
+    return () => clearTimeout(timer);
+  }, [query, nearby, run]);
+  const nearMe = () => {
+    const attempt = ++locationAttempt.current;
+    setError(null); setErrorKind(null);
+    // A refused or failed position leaves the list as it was (a typed search stays).
+    const failed = () => { setError('Location unavailable. Type your city or library name instead.'); setErrorKind('location'); };
+    if (!navigator.geolocation) { failed(); return; }
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(position => {
+      if (attempt !== locationAttempt.current) return;
+      // The list switches to nearest first; the position is sent once and dropped.
+      setLocating(false);
+      request.current?.abort();
+      patch({ nearby: true, query: '', page: null });
+      void run({ lat: position.coords.latitude, lon: position.coords.longitude, radiusKm: RADIUS_KM }, true);
+    }, () => { if (attempt === locationAttempt.current) { setLocating(false); failed(); } },
+    { maximumAge: 0, timeout: 12_000, enableHighAccuracy: false });
+  };
+  // Only a typed search has more pages to ask for: a "near me" position is
+  // used for one request and not kept, so it is never sent again.
+  const canLoadMore = !nearby && search.page?.nextOffset != null && Boolean(lastRequest.current.query);
+  const loadMore = async () => {
+    const filters = lastRequest.current, offset = search.page?.nextOffset;
+    if (!canLoadMore || offset == null || !filters.query || moreRequest.current) return;
+    const controller = new AbortController(); moreRequest.current = controller;
+    setLoadingMore(true); setMoreFailed(false);
+    try {
+      const next = await publicApi.discoverLibraries({ ...filters, offset }, controller.signal);
+      if (controller.signal.aborted) return;
+      setSearch(current => {
+        if (!current.page || current.nearby || current.query.trim() !== filters.query) return current;
+        const known = new Set(current.page.libraries.map(item => item.id));
+        return { ...current, page: { ...current.page, libraries: [...current.page.libraries, ...next.libraries.filter(item => !known.has(item.id))],
+          total: next.total, nextOffset: next.nextOffset } };
+      });
+    } catch { if (!controller.signal.aborted) setMoreFailed(true); }
+    finally { if (moreRequest.current === controller) { moreRequest.current = null; setLoadingMore(false); } }
+  };
+  const changeQuery = (value: string) => { locationAttempt.current++; setLocating(false); setErrorKind(null); patch({ query: value, nearby: false }); };
+  return { search, busy, locating, error, errorKind, retry: () => run(lastRequest.current), nearMe, changeQuery, canLoadMore, loadMore, loadingMore, moreFailed };
+}

@@ -1,0 +1,375 @@
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { MemoryRouter, useLocation, useNavigate } from 'react-router-dom';
+import { AnonymousWebApp } from '../../App';
+import { ANONYMOUS_WEB_STORAGE_KEY, SAVED_BOOKS_CAP } from '../../localState';
+import { firstPublishedYear, openLibraryUrl, publishedLine } from './ShelfBookPage';
+import { CHECK_TIMEOUT_MS } from './useLibraryAnswer';
+
+const LIBRARY = { id: 'koha:anna', name: 'Anna Centenary Library', city: 'Chennai', region: 'Tamil Nadu', country: 'IN', health: 'operational', catalogUrl: 'https://catalog.example.test/',
+  capabilities: { catalogLookup: true, publicAvailability: true, copyCounts: true, locationAvailability: true, callNumber: true, catalogLink: true } };
+const OTHER = { ...LIBRARY, id: 'koha:other', name: 'Kalaignar Centenary Library', city: 'Madurai', catalogUrl: 'https://other.example.test/' };
+const BOOK = { bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466', workId: 'OL1037811W', title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'],
+  publishedDate: '1999', description: 'Kalam’s own account of his life.' };
+const json = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status });
+type Check = (body: { libraryId: string; bookKey: string }, signal?: AbortSignal | null) => Promise<Response>;
+
+function stubApi({ check = (() => Promise.resolve(json({ answer: 'found' }))) as Check, book = BOOK as Record<string, unknown>, others = [] as Array<Record<string, unknown>>, libraries = [LIBRARY, OTHER] } = {}) {
+  const calls: Array<{ path: string; body: Record<string, unknown> }> = [];
+  vi.stubGlobal('fetch', vi.fn((path: string, init?: RequestInit) => {
+    const body = init?.body ? JSON.parse(String(init.body)) : null;
+    calls.push({ path, body });
+    if (path.endsWith('/capabilities')) return Promise.resolve(json({ email: true, google: false, apple: false, canonicalOrigin: window.location.origin }));
+    if (path.endsWith('/session')) return Promise.resolve(json({ status: 'guest' }));
+    if (path.endsWith('/libraries/resolve')) { const found = libraries.find(item => item.id === body.libraryId); return Promise.resolve(found ? json({ library: found }) : json({ error: { code: 'LIBRARY_NOT_FOUND' } }, 404)); }
+    if (path.endsWith('/libraries/discover')) return Promise.resolve(json({ libraries, total: libraries.length, nextOffset: null }));
+    if (path.endsWith('/books/resolve')) return Promise.resolve(json({ book: others.find(item => item.bookKey === body.bookKey) || book }));
+    if (path.endsWith('/holdings/check')) return check(body, init?.signal);
+    if (path.endsWith('/holdings/lookup')) return Promise.resolve(json({ answers: {} }));
+    return Promise.resolve(json({ error: { code: 'NOT_FOUND', message: 'Not found.' } }, 404));
+  }));
+  return calls;
+}
+function seed({ saved = [] as unknown[], libraryId = null as string | null } = {}) {
+  localStorage.setItem(ANONYMOUS_WEB_STORAGE_KEY, JSON.stringify({ version: 2, selectedLibraryId: libraryId, recentBooks: [], savedBooks: saved, savedContent: [] }));
+}
+let navigateRef: ((delta: number) => void) | null = null;
+function Location() { const location = useLocation(); return <output data-testid="location">{location.pathname + '|' + JSON.stringify(location.state)}</output>; }
+const renderBook = (key = BOOK.bookKey) => render(<MemoryRouter initialEntries={['/app/books/' + encodeURIComponent(key)]}><AnonymousWebApp /><Location /></MemoryRouter>);
+const card = () => document.querySelector<HTMLElement>('.library-answer');
+const stored = () => JSON.parse(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)!);
+
+afterEach(() => { cleanup(); vi.unstubAllGlobals(); vi.useRealTimers(); localStorage.clear(); sessionStorage.clear(); navigateRef = null; });
+
+describe('one-shelf book page', () => {
+  it('shows the book, Add to my reading shelf and "Is it in your library?" before a library is chosen', async () => {
+    const calls = stubApi();
+    renderBook();
+    expect(await screen.findByRole('heading', { level: 1, name: 'Wings of Fire' })).toBeInTheDocument();
+    expect(screen.getByText('A. P. J. Abdul Kalam', { selector: 'p' })).toBeInTheDocument();
+    expect(screen.getByText('Published 1999')).toBeInTheDocument();
+    expect(screen.getByText('ISBN 9788173711466')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Add to my reading shelf' })).toBeEnabled();
+    expect(screen.getByRole('heading', { name: 'Is it in your library?' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Find my library' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'About this book' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Reviews on Goodreads/ })).toHaveAttribute('href', 'https://www.goodreads.com/search?q=9788173711466');
+    expect(screen.getByRole('link', { name: /All editions on Open Library/ })).toHaveAttribute('href', 'https://openlibrary.org/works/OL1037811W');
+    // No share, edition settings, details table or bookmark icon; no catalog request without a library.
+    expect(screen.queryByRole('button', { name: /Share/ })).not.toBeInTheDocument();
+    expect(screen.queryByText(/Edition settings/)).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Details' })).not.toBeInTheDocument();
+    expect(calls.some(call => call.path.endsWith('/holdings/check') || call.path.endsWith('/availability'))).toBe(false);
+  });
+
+  for (const [answer, label, tone] of [
+    ['found', 'In your library', 'found'],
+    ['not_found', 'Not in your library', 'not-found'],
+    ['unconfirmed', 'Couldn’t check right now', 'grey'],
+    ['unknown', 'Couldn’t check right now', 'grey'],
+  ] as const) it(`shows "${answer}" in words with the matching actions`, async () => {
+    const calls = stubApi({ check: () => Promise.resolve(json({ answer, catalogUrl: 'https://catalog.example.test/record/1', catalogLinkKind: 'record' })) });
+    seed({ libraryId: LIBRARY.id });
+    renderBook();
+    const group = await screen.findByRole('group', { name: label });
+    expect(group).toHaveClass('library-answer-' + tone);
+    expect(within(group).getByText('Anna Centenary Library · Chennai')).toBeInTheDocument();
+    // A stored answer can show the row first with the catalog's home link;
+    // the live answer then links the book's own record.
+    await waitFor(() => expect(within(group).getByRole('link', { name: /catalog/i })).toHaveAttribute('href', 'https://catalog.example.test/record/1'));
+    // Only the answer: no copies, due dates, floors or shelf numbers.
+    expect(within(group).getByRole('heading', { name: label })).toBeVisible();
+    expect(Boolean(within(group).queryByRole('button', { name: 'Try again' }))).toBe(answer === 'unknown');
+    expect(calls.filter(call => call.path.endsWith('/holdings/check')).map(call => call.body)).toEqual([{ libraryId: LIBRARY.id, bookKey: BOOK.bookKey }]);
+    // The settled answer is announced from an effect, which can run after the row appears.
+    expect(await screen.findByText(label, { selector: '[role="status"]' })).toBeInTheDocument();
+  });
+
+  it('lists the catalog rows a found answer carries under "In your library"', async () => {
+    stubApi({ check: () => Promise.resolve(json({ answer: 'found', catalogUrl: 'https://catalog.example.test/record/1', catalogLinkKind: 'record',
+      matches: [{ title: 'Wings of fire : an autobiography', author: 'Kalam, A. P. J. Abdul', url: 'https://catalog.example.test/record/1' }, { title: 'Wings of Fire #07' }] })) });
+    seed({ libraryId: LIBRARY.id });
+    renderBook();
+    const group = await screen.findByRole('group', { name: 'In your library' });
+    const list = await within(group).findByRole('list');
+    expect(within(list).getAllByRole('listitem').map(item => item.textContent)).toEqual([
+      'Wings of fire : an autobiography, opens in a new tabKalam, A. P. J. Abdul', 'Wings of Fire #07, opens in a new tab']);
+  });
+
+  it('says why a check could not answer, and offers Try again only when it could help', async () => {
+    stubApi({ check: () => Promise.resolve(json({ answer: 'unknown', reason: 'blocked' })) });
+    seed({ libraryId: LIBRARY.id });
+    renderBook();
+    let group = await screen.findByRole('group', { name: 'Couldn’t check right now' });
+    expect(within(group).getByText('This library does not allow outside checks of its catalog. This does not mean the book is missing.')).toBeInTheDocument();
+    expect(within(group).queryByText(/did not answer in time/)).not.toBeInTheDocument();
+    expect(within(group).queryByRole('button', { name: 'Try again' })).not.toBeInTheDocument();
+    cleanup(); vi.unstubAllGlobals(); localStorage.clear();
+
+    stubApi({ check: () => Promise.resolve(json({ answer: 'unknown', reason: 'busy' })) });
+    seed({ libraryId: LIBRARY.id });
+    renderBook();
+    group = await screen.findByRole('group', { name: 'Couldn’t check right now' });
+    expect(within(group).getByText('The library’s catalog is busy with other checks. Try again in a minute. This does not mean the book is missing.')).toBeInTheDocument();
+    expect(within(group).getByRole('button', { name: 'Try again' })).toBeInTheDocument();
+    cleanup(); vi.unstubAllGlobals(); localStorage.clear();
+
+    // A reason the app does not know, or one sent with a definite answer, is ignored.
+    stubApi({ check: () => Promise.resolve(json({ answer: 'unknown', reason: 'mystery' })) });
+    seed({ libraryId: LIBRARY.id });
+    renderBook();
+    group = await screen.findByRole('group', { name: 'Couldn’t check right now' });
+    expect(within(group).getByText('We couldn’t check the library’s catalog this time. This does not mean the book is missing.')).toBeInTheDocument();
+  });
+
+  it('shows Checking while the library looks, then the answer', async () => {
+    let answer!: (response: Response) => void;
+    stubApi({ check: () => new Promise(resolve => { answer = resolve; }) });
+    seed({ libraryId: LIBRARY.id });
+    renderBook();
+    const checking = await screen.findByRole('group', { name: 'Checking your library…' });
+    expect(checking).toHaveAttribute('aria-busy', 'true');
+    expect(checking).toHaveClass('library-answer-grey');
+    expect(within(checking).getByRole('link', { name: /catalog/i })).toHaveAttribute('href', LIBRARY.catalogUrl);
+    answer(json({ answer: 'found' }));
+    expect(await screen.findByRole('group', { name: 'In your library' })).toBeInTheDocument();
+  });
+
+  it('says how long the library may take from its own check limit (answerWithinSeconds)', async () => {
+    for (const [seconds, words] of [[20, 'half a minute'], [30, 'half a minute'], [45, 'a minute'], [undefined, 'a minute']] as const) {
+      stubApi({ libraries: [{ ...LIBRARY, ...(seconds ? { answerWithinSeconds: seconds } : {}) }], check: () => new Promise(() => {}) });
+      seed({ libraryId: LIBRARY.id });
+      const view = renderBook();
+      const checking = await screen.findByRole('group', { name: 'Checking your library…' });
+      await waitFor(() => expect(within(checking).getByText(`This library’s catalog can take up to ${words} to answer. You can go back to your reading shelf: the answer will be there when it arrives.`)).toBeInTheDocument());
+      view.unmount();
+      vi.unstubAllGlobals();
+      localStorage.clear();
+    }
+  });
+
+  it('a failed, refused, unreadable or unrecognised check is grey "couldn’t check", never white', async () => {
+    const replies: Array<() => Promise<Response>> = [
+      () => Promise.reject(new TypeError('Failed to fetch')),
+      () => Promise.resolve(json({ error: { code: 'CATALOG_TIMEOUT' } }, 503)),
+      () => Promise.resolve(json({ error: { code: 'RATE_LIMITED' } }, 429)),
+      () => Promise.resolve(new Response('not json', { status: 200 })),
+      () => Promise.resolve(json({ answer: 'not-found' })),
+      () => Promise.resolve(json({ answer: 'checking' })),
+    ];
+    for (const reply of replies) {
+      stubApi({ check: reply });
+      seed({ libraryId: LIBRARY.id });
+      renderBook();
+      const group = await screen.findByRole('group', { name: 'Couldn’t check right now' });
+      expect(group).toHaveClass('library-answer-grey');
+      expect(document.querySelector('.library-answer-not-found')).toBeNull();
+      cleanup(); vi.unstubAllGlobals(); localStorage.clear();
+    }
+  });
+
+  it('a check that runs too long becomes "couldn’t check", and Try again asks once more', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    let attempts = 0;
+    stubApi({ check: (_body, signal) => {
+      attempts += 1;
+      if (attempts > 1) return Promise.resolve(json({ answer: 'found' }));
+      return new Promise((_resolve, reject) => signal?.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError'))));
+    } });
+    seed({ libraryId: LIBRARY.id });
+    renderBook();
+    await screen.findByRole('group', { name: 'Checking your library…' });
+    // "Checking" also shows while the library itself is still loading; the
+    // check (and its time limit) starts only once the library is ready.
+    await waitFor(() => expect(attempts).toBe(1));
+    await act(async () => { vi.advanceTimersByTime(CHECK_TIMEOUT_MS + 10); });
+    const group = await screen.findByRole('group', { name: 'Couldn’t check right now' });
+    fireEvent.click(within(group).getByRole('button', { name: 'Try again' }));
+    expect(await screen.findByRole('group', { name: 'In your library' })).toBeInTheDocument();
+    expect(attempts).toBe(2);
+  });
+
+  it('a library whose catalog cannot be read is "couldn’t check" with no Try again, linking its catalog search for this book', async () => {
+    const closed = { ...LIBRARY, capabilities: { ...LIBRARY.capabilities, publicAvailability: false } };
+    const search = 'https://catalog.example.test/search?q=9788173711466';
+    let release: (response: Response) => void = () => {};
+    stubApi({ libraries: [closed], check: () => new Promise(resolve => { release = resolve; }) });
+    seed({ libraryId: LIBRARY.id });
+    renderBook();
+    // While the server is asked, the card already says it couldn't check, with the catalog's home page.
+    let group = await screen.findByRole('group', { name: 'This library can’t be checked from here.' });
+    expect(within(group).getByRole('link', { name: /catalog/i })).toHaveAttribute('href', LIBRARY.catalogUrl);
+    await act(async () => { release(json({ answer: 'unknown', catalogUrl: search })); });
+    group = await screen.findByRole('group', { name: 'This library can’t be checked from here.' });
+    await waitFor(() => expect(within(group).getByRole('link', { name: /catalog/i })).toHaveAttribute('href', search));
+    expect(within(group).queryByRole('button', { name: 'Try again' })).not.toBeInTheDocument();
+    expect(group).toHaveClass('library-answer-grey');
+  });
+
+  it('never shows one edition’s answer for another, and drops answers that arrive after the book changes', async () => {
+    const pending = new Map<string, (response: Response) => void>();
+    const second = { ...BOOK, bookKey: 'v1:isbn:9788173715181', isbn13: '9788173715181', title: 'Wings of Fire (Universities Press)' };
+    stubApi({ others: [second], check: body => new Promise(resolve => { pending.set(body.bookKey, resolve); }) });
+    seed({ libraryId: LIBRARY.id });
+    const view = render(<MemoryRouter initialEntries={['/app/books/' + encodeURIComponent(BOOK.bookKey), '/app/books/' + encodeURIComponent(second.bookKey)]} initialIndex={0}>
+      <AnonymousWebApp /><Navigator /></MemoryRouter>);
+    await screen.findByRole('group', { name: 'Checking your library…' });
+    await waitFor(() => expect(pending.has(BOOK.bookKey)).toBe(true));
+    act(() => navigateRef!(1));
+    await waitFor(() => expect(pending.has(second.bookKey)).toBe(true));
+    // The first edition's answer arrives late: it is not shown for the second.
+    pending.get(BOOK.bookKey)!(json({ answer: 'found' }));
+    await new Promise(resolve => setTimeout(resolve, 20));
+    expect(screen.getByRole('group', { name: 'Checking your library…' })).toBeInTheDocument();
+    pending.get(second.bookKey)!(json({ answer: 'not_found' }));
+    expect(await screen.findByRole('group', { name: 'Not in your library' })).toBeInTheDocument();
+    view.unmount();
+  });
+
+  it('adds with a tick and the "See my reading shelf" toast, and removes on the next tap without asking', async () => {
+    stubApi();
+    renderBook();
+    fireEvent.click(await screen.findByRole('button', { name: 'Add to my reading shelf' }));
+    const on = await screen.findByText('On my reading shelf');
+    expect(on.tagName).toBe('P');
+    expect(on.querySelector('.tick-pop')).not.toBeNull();
+    expect(screen.getByRole('link', { name: 'See my reading shelf' })).toHaveAttribute('href', '/');
+    expect(screen.getByText('Added to your reading shelf', { selector: '[role="status"]' })).toBeInTheDocument();
+    expect(stored().savedBooks.map((item: { bookKey: string }) => item.bookKey)).toEqual([BOOK.bookKey]);
+    fireEvent.click(screen.getByRole('button', { name: 'Remove from my reading shelf' }));
+    expect(await screen.findByRole('button', { name: 'Add to my reading shelf' })).toBeInTheDocument();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(stored().savedBooks).toEqual([]);
+    expect(screen.queryByRole('link', { name: 'See my reading shelf' })).not.toBeInTheDocument();
+    // The existing Undo puts it back.
+    fireEvent.click(await screen.findByRole('button', { name: 'Undo' }));
+    expect(await screen.findByText('On my reading shelf')).toBeInTheDocument();
+  });
+
+  it('a library served through Calil shows its attribution under the library card; others show none', async () => {
+    const calil = { ...LIBRARY, id: 'calil:setagaya', name: 'Setagaya City Library', country: 'JP', attribution: { label: 'Calil', url: 'https://calil.jp/' } };
+    stubApi({ libraries: [calil, OTHER] });
+    seed({ libraryId: calil.id });
+    const view = renderBook();
+    await screen.findByRole('group', { name: 'In your library' });
+    expect(screen.getByRole('link', { name: 'Calil' })).toHaveAttribute('href', 'https://calil.jp/');
+    view.unmount();
+    stubApi();
+    seed({ libraryId: OTHER.id });
+    renderBook();
+    await screen.findByRole('group', { name: 'In your library' });
+    expect(screen.queryByText(/Library data from/)).not.toBeInTheDocument();
+  });
+
+  it('one undo notice at a time: clearing Viewed before replaces "Removed … · Undo"', async () => {
+    stubApi();
+    seed({ saved: [{ ...BOOK, source: 'search', viewedAt: '2026-01-01T00:00:00.000Z' }] });
+    render(<MemoryRouter initialEntries={['/', '/app/books/' + encodeURIComponent(BOOK.bookKey)]} initialIndex={1}><AnonymousWebApp /><Location /></MemoryRouter>);
+    fireEvent.click(await screen.findByRole('button', { name: 'Remove from my reading shelf' }));
+    expect(await screen.findByText('Removed Wings of Fire')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('link', { name: 'Back' }));
+    const viewed = await screen.findByRole('region', { name: 'Viewed before' });
+    fireEvent.click(within(viewed).getByRole('button', { name: 'Clear' }));
+    expect(await screen.findByText('Viewed before cleared')).toBeInTheDocument();
+    expect(screen.queryByText('Removed Wings of Fire')).not.toBeInTheDocument();
+    expect(document.querySelectorAll('.undo-notice')).toHaveLength(1);
+  });
+
+  it('a saved book with the same ISBN-13 under another key counts as on my reading shelf, and removing takes that one off', async () => {
+    stubApi();
+    seed({ saved: [{ bookKey: 'v1:googlebooks:abc', isbn13: BOOK.isbn13, title: 'Wings of Fire', authors: [], source: 'search', viewedAt: '2026-01-01T00:00:00.000Z' }] });
+    renderBook();
+    fireEvent.click(await screen.findByRole('button', { name: 'Remove from my reading shelf' }));
+    await screen.findByRole('button', { name: 'Add to my reading shelf' });
+    expect(stored().savedBooks).toEqual([]);
+  });
+
+  it('at the guest cap Add is disabled with "Your reading shelf is full" as its reason', async () => {
+    stubApi();
+    seed({ saved: Array.from({ length: SAVED_BOOKS_CAP }, (_, index) => ({ bookKey: 'v1:openlibrary:OL' + (index + 1) + 'W', title: 'B' + index, authors: [], source: 'direct', viewedAt: '2026-01-01T00:00:00.000Z' })) });
+    renderBook();
+    const add = await screen.findByRole('button', { name: 'Add to my reading shelf' });
+    expect(add).toBeDisabled();
+    expect(add).toHaveAccessibleDescription('Your reading shelf is full');
+  });
+
+  it('a placeholder record shows what is known and no About section', async () => {
+    const placeholder = { bookKey: 'v1:isbn:9780306406157', isbn13: '9780306406157', title: 'ISBN 9780306406157', authors: [], metadataStatus: 'missing', description: 'Not to be shown.' };
+    stubApi({ book: placeholder });
+    renderBook(placeholder.bookKey);
+    expect(await screen.findByRole('heading', { level: 1, name: 'ISBN 9780306406157' })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'About this book' })).not.toBeInTheDocument();
+    expect(screen.queryByText(/Published/)).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /All editions on Open Library/ })).toHaveAttribute('href', 'https://openlibrary.org/isbn/9780306406157');
+    expect(screen.getByRole('button', { name: 'Add to my reading shelf' })).toBeEnabled();
+  });
+
+  it('Find my library opens the pop-up over the book; choosing one checks this book without leaving the page', async () => {
+    const calls = stubApi();
+    renderBook();
+    fireEvent.click(await screen.findByRole('button', { name: 'Find my library' }));
+    const dialog = await screen.findByRole('dialog', { name: 'Find your library' });
+    expect(screen.getByTestId('location')).toHaveTextContent('"overlay":"library"');
+    fireEvent.change(within(dialog).getByLabelText('City, town or library name'), { target: { value: 'Chennai' } });
+    fireEvent.click(await within(dialog).findByRole('button', { name: /Anna Centenary Library/ }));
+    expect(await screen.findByRole('group', { name: 'In your library' })).toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+    expect(screen.getByTestId('location')).toHaveTextContent('/app/books/' + encodeURIComponent(BOOK.bookKey));
+    expect(screen.getByTestId('location')).not.toHaveTextContent('overlay');
+    expect(stored().selectedLibraryId).toBe(LIBRARY.id);
+    expect(calls.filter(call => call.path.endsWith('/holdings/check')).map(call => call.body)).toEqual([{ libraryId: LIBRARY.id, bookKey: BOOK.bookKey }]);
+    await waitFor(() => expect(card()).toHaveFocus());
+  });
+});
+
+function Navigator() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  navigateRef = (delta: number) => navigate(delta);
+  return <output data-testid="location">{location.pathname}</output>;
+}
+
+describe('book page helpers', () => {
+  it('a suggestion opened is counted once per history entry (the page drawn again, Back and Forward), in memory only', async () => {
+    const calls = stubApi();
+    const suggested = { pathname: '/app/books/' + encodeURIComponent(BOOK.bookKey), state: { from: 'shelf', source: 'direct', book: BOOK, suggested: true } };
+    const opened = () => calls.filter(call => call.path.endsWith('/suggestions/events')).map(call => call.body);
+    const view = render(<MemoryRouter initialEntries={[{ ...suggested, key: 'entry-a' }]}><AnonymousWebApp /></MemoryRouter>);
+    expect(await screen.findByRole('heading', { level: 1, name: 'Wings of Fire' })).toBeInTheDocument();
+    await waitFor(() => expect(opened()).toEqual([{ event: 'opened', bookKey: BOOK.bookKey }]));
+    view.unmount();
+    // The same entry drawn again: not counted again.
+    render(<MemoryRouter initialEntries={[{ ...suggested, key: 'entry-a' }]}><AnonymousWebApp /></MemoryRouter>);
+    expect(await screen.findByRole('heading', { level: 1, name: 'Wings of Fire' })).toBeInTheDocument();
+    await act(async () => { await new Promise(resolve => setTimeout(resolve, 20)); });
+    expect(opened()).toHaveLength(1);
+    cleanup();
+    // Another open of it (a new entry) counts; an ordinary open does not.
+    render(<MemoryRouter initialEntries={[{ ...suggested, key: 'entry-b' }]}><AnonymousWebApp /></MemoryRouter>);
+    await waitFor(() => expect(opened()).toHaveLength(2));
+    cleanup();
+    render(<MemoryRouter initialEntries={[{ ...suggested, state: { ...suggested.state, suggested: undefined }, key: 'entry-c' }]}><AnonymousWebApp /></MemoryRouter>);
+    expect(await screen.findByRole('heading', { level: 1, name: 'Wings of Fire' })).toBeInTheDocument();
+    await act(async () => { await new Promise(resolve => setTimeout(resolve, 20)); });
+    expect(opened()).toHaveLength(2);
+    expect(localStorage.getItem(ANONYMOUS_WEB_STORAGE_KEY)).not.toContain('entry-');
+    expect(sessionStorage.length).toBe(0);
+  });
+
+  it('first published is the year only', () => {
+    expect(firstPublishedYear('1999')).toBe('1999');
+    expect(firstPublishedYear('2016-10-04')).toBe('2016');
+    expect(firstPublishedYear('May 1999')).toBe('1999');
+    expect(firstPublishedYear(undefined)).toBeNull();
+    // Only a work's date is its first publication; an edition's is just when that edition came out.
+    expect(publishedLine({ bookKey: 'v1:openlibrary:OL1037811W', publishedDate: '1999' })).toBe('First published 1999');
+    expect(publishedLine({ bookKey: 'v1:isbn:9788173711466', publishedDate: '2002' })).toBe('Published 2002');
+    expect(publishedLine({ bookKey: 'v1:isbn:9788173711466' })).toBeNull();
+  });
+  it('Open Library: the work page, else the ISBN page, else nothing', () => {
+    expect(openLibraryUrl({ bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466', workId: 'OL1W' })).toBe('https://openlibrary.org/works/OL1W');
+    expect(openLibraryUrl({ bookKey: 'v1:openlibrary:OL29062473W' })).toBe('https://openlibrary.org/works/OL29062473W');
+    expect(openLibraryUrl({ bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466' })).toBe('https://openlibrary.org/isbn/9788173711466');
+    expect(openLibraryUrl({ bookKey: 'v1:googlebooks:abc' })).toBeNull();
+  });
+});

@@ -1,0 +1,31 @@
+/* Desktop extends the same route tree and screen models; no parallel mount. */
+@media (min-width: 1024px) {
+  .app-frame { display: grid; grid-template-columns: 224px minmax(0, 1fr); }
+  .app-screen, .book-mode .app-screen { grid-column: 2; grid-row: 1; height: 100dvh; }
+  .app-frame .page-section { max-width: 1200px; padding: 44px 32px 40px; }
+  .site-notice { padding: 16px 32px 0; }
+  .undo-notice { bottom: 24px; left: 248px; }
+  .reader-sheet { margin: auto; }
+}
+@media (min-width: 1440px) {
+  .app-frame { grid-template-columns: 248px minmax(0, 1fr); }
+  .app-frame .page-section { padding-inline: 40px; }
+  .undo-notice { left: 272px; }
+}
+@media (max-height: 800px) and (min-width: 1024px) {
+  .app-frame .page-section { padding-top: 24px; }
+}
+@media (hover: hover) {
+  .text-button:hover { background: var(--reader-fill); }
+}
+/* Desktop review: compact book cards and keep library context above the search. */
+@media(min-width:1024px){
+  .app-frame .page-heading h1{font-size:2.65rem}
+}
+/* Reference geometry: use the same sidebar, heading and card scale as Desk*. */
+@media (min-width: 1024px) {
+  .app-frame .page-heading h1 { font-size: 2.5rem; line-height: 1.2; }
+}
+@media (min-width: 1440px) {
+  .app-frame .page-section { padding-inline: 48px; }
+}

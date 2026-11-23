@@ -1,0 +1,146 @@
+/* Account screens (production-ready boards CreateAccount, LogIn, Welcome,
+   Account and DeleteAccount; plan section 5). The shared form layout
+   (.account-v2-form, .account-v2-field, .form-alert) is in
+   panel/panel-pages.css; this file adds what only the account screens use.
+   Colours come from the reading-light tokens, so Lamplight and Ink stay
+   legible. */
+
+/* ConfirmDialog's error line. */
+.account-error {
+  border: 1px solid var(--reader-line);
+  border-left: 4px solid var(--reader-error);
+  border-radius: 12px;
+  padding: 1rem;
+  color: var(--reader-ink);
+  background: var(--reader-surface);
+}
+
+/* A password field with the eye button inside its right edge (B1). */
+.one-shelf-frame .password-input { position: relative; display: flex; align-items: center; }
+.one-shelf-frame .account-v2-field .password-input input:not([type='checkbox']):not([type='radio']) { padding-right: 52px; }
+.one-shelf-frame .password-eye { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; min-height: 44px; margin: 0; padding: 0;
+  display: flex; align-items: center; justify-content: center; border: 0; border-radius: 10px; background: transparent; color: var(--reader-accent); box-shadow: none; }
+.one-shelf-frame .password-eye:focus-visible { outline: 2px solid var(--reader-accent); outline-offset: -2px; }
+
+/* Words around the forms. */
+.one-shelf-frame .account-v2-form > p.account-lede, .one-shelf-frame .account-page .account-lede { margin: 0; color: var(--reader-secondary); font-size: .9375rem; line-height: 1.5; }
+.one-shelf-frame .account-fine { margin: 0; color: var(--reader-muted); font-size: .875rem; line-height: 1.45; }
+.one-shelf-frame .account-v2-form > p.account-fine { color: var(--reader-muted); font-size: .875rem; }
+.one-shelf-frame .account-v2-stack { display: flex; flex-direction: column; gap: 12px; }
+.one-shelf-frame .account-v2-stack .account-fine { color: var(--reader-secondary); }
+.one-shelf-frame .account-v2-form .account-start { align-self: flex-start; }
+.one-shelf-frame .account-divider { display: flex; align-items: center; gap: 12px; margin: 8px 0; color: var(--reader-muted); font-size: .875rem; }
+.one-shelf-frame .account-divider span { flex: 1 1 0; height: 1px; background: var(--reader-line); }
+.one-shelf-frame .account-switch { margin: 0; font-size: .9375rem; color: var(--reader-ink); }
+.one-shelf-frame .account-switch a, .one-shelf-frame .account-policy a { color: var(--reader-accent); font-weight: 600; }
+.one-shelf-frame .account-v2-after { margin-top: 18px; display: flex; flex-direction: column; gap: 16px; }
+.one-shelf-frame .account-next { box-sizing: border-box; padding: 12px; border: 1px solid var(--reader-line); border-radius: 14px; background: var(--reader-fill, var(--reader-surface)); color: var(--reader-secondary); font-size: .875rem; }
+.one-shelf-frame .account-next h2 { margin: 0 0 6px; font-family: inherit; font-size: .875rem; font-weight: 600; line-height: 1.4; color: var(--reader-ink); }
+.one-shelf-frame .account-next ol, .one-shelf-frame .account-came ul, .one-shelf-frame .account-deleted-list ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+
+/* Welcome. */
+.one-shelf-frame .account-welcome { padding-top: 32px; }
+.one-shelf-frame .account-icon { display: block; color: var(--reader-accent); }
+.one-shelf-frame .account-came { box-sizing: border-box; padding: 14px; border: 1px solid var(--reader-line); border-radius: 14px; background: var(--pressed-bg, var(--reader-surface)); color: var(--pressed-ink, var(--reader-ink)); }
+.one-shelf-frame .account-came h2 { margin: 0 0 8px; font-family: inherit; font-size: 1rem; font-weight: 600; }
+.one-shelf-frame .account-signed-as { display: flex; flex-direction: column; gap: 2px; font-size: .875rem; color: var(--reader-secondary); }
+.one-shelf-frame .account-signed-as strong { color: var(--reader-ink); overflow-wrap: anywhere; }
+.one-shelf-frame .account-came p { margin: 0 0 10px; overflow-wrap: anywhere; }
+.one-shelf-frame .account-offer-actions, .account-merge-offer .account-offer-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.account-merge-offer p { margin: 0; overflow-wrap: anywhere; }
+.one-shelf-frame .account-v2-wrap { white-space: normal; overflow-wrap: anywhere; height: auto; min-height: 44px; }
+
+/* Your account (B6). */
+.one-shelf-frame .account-page .account-lede { margin-top: 6px; font-size: .875rem; }
+.one-shelf-frame .account-done { margin: 12px 0 0; color: var(--pressed-ink, var(--reader-ink)); font-weight: 600; font-size: .9375rem; }
+.one-shelf-frame .account-rows { margin-top: 14px; box-sizing: border-box; padding: 4px 12px; border: 1px solid var(--reader-line); border-radius: 14px; background: var(--reader-surface); display: flex; flex-direction: column; }
+.one-shelf-frame .account-row { min-height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.one-shelf-frame .account-row + .account-row { border-top: 1px solid var(--reader-line); }
+.one-shelf-frame .account-row-text { display: flex; flex-direction: column; min-width: 0; padding: 8px 0; }
+.one-shelf-frame .account-row-label { font-size: .8125rem; color: var(--reader-muted); }
+.one-shelf-frame .account-row-value { font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; color: var(--reader-ink); }
+.one-shelf-frame .account-row-note { margin-top: 4px; font-size: .8125rem; color: var(--reader-secondary); overflow-wrap: anywhere; }
+.one-shelf-frame .account-row-note .home-text-button { display: inline; min-height: 0; padding: 0; font-size: .8125rem; }
+.one-shelf-frame .account-row-action { flex-shrink: 0; min-height: 44px; display: flex; align-items: center; color: var(--reader-accent); font-weight: 600; font-size: .875rem; text-decoration: none; }
+.one-shelf-frame .account-page .account-logout { margin-top: 16px; width: 100%; }
+.one-shelf-frame .account-page .account-fine { margin-top: 6px; }
+.one-shelf-frame .account-delete-link { align-self: flex-start; margin-top: 24px; min-height: 44px; display: inline-flex; align-items: center; color: var(--warn-ink); font-weight: 600; font-size: .9375rem; }
+
+/* Delete your account (B7). */
+.one-shelf-frame .account-deleted-list, .one-shelf-frame .account-kept-list { box-sizing: border-box; padding: 12px; border: 1px solid var(--reader-line); border-radius: 14px; display: flex; flex-direction: column; gap: 6px; font-size: .9375rem; }
+.one-shelf-frame .account-deleted-list { border-color: var(--warn-ink); color: var(--reader-ink); }
+.one-shelf-frame .account-kept-list { background: var(--reader-surface); color: var(--reader-secondary); }
+.one-shelf-frame .account-deleted-list h2, .one-shelf-frame .account-kept-list h2 { margin: 0; font-family: inherit; font-size: .9375rem; font-weight: 600; color: var(--reader-ink); }
+.one-shelf-frame .account-deleted-list h2 { color: var(--warn-ink); }
+.one-shelf-frame .account-kept-list p { margin: 0; }
+
+/* Provider controls use their approved brand variants, conditional on capability. */
+.account-providers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.account-providers:empty {
+  display: none;
+}
+.account-providers .provider-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 9rem;
+  gap: 10px;
+  min-height: 48px;
+  border: 1px solid #747775;
+  border-radius: 12px;
+  background: #fff;
+  color: #1f1f1f;
+  font:
+    500 0.9375rem Arial,
+    sans-serif;
+}
+.account-providers .provider-apple {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+.provider-button svg {
+  flex: none;
+}
+:root[data-reading-light="lamplight"] .account-providers .provider-google {
+  background: #131314;
+  color: #e3e3e3;
+  border-color: #8e918f;
+}
+:root[data-reading-light="lamplight"] .account-providers .provider-apple {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+}
+
+/* Shared account status and navigation remain readable at enlarged text sizes. */
+.account-sync-notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 1rem;
+  padding: 12px 16px;
+  border: 1px solid var(--reader-line);
+  border-radius: 12px;
+  background: var(--reader-surface);
+  font-size: 0.875rem;
+}
+.account-sync-notice button {
+  min-height: 44px;
+}
+@media (forced-colors: active) {
+  .account-error,
+  .account-sync-notice,
+  .account-rows,
+  .account-next,
+  .account-came,
+  .account-deleted-list,
+  .account-kept-list {
+    border-color: CanvasText;
+  }
+}

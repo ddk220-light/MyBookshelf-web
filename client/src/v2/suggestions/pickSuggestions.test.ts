@@ -1,0 +1,174 @@
+import { describe, expect, it } from 'vitest';
+import type { RecentBook } from '../types';
+import { bayRows } from '../ui/shelf/shelfLayout';
+import { findSavedBook } from '../oneShelfState';
+import { toRecentBook } from '../localState';
+import { authorKey, mainTitleKey, nameTokensKey, pickSuggestions, SUGGESTION_COUNT, suggestionCandidates, type SuggestedBook } from './pickSuggestions';
+import { SEED_SUGGESTIONS } from './seed';
+
+const suggestion = (id: number | string, author: string, extra: Partial<SuggestedBook> = {}): SuggestedBook =>
+  ({ bookKey: 'v1:openlibrary:OL' + id + 'W', title: 'Title ' + id, authors: [author], ...extra });
+const saved = (bookKey: string, extra: Partial<RecentBook> = {}): RecentBook =>
+  ({ bookKey, title: 'Saved', authors: ['Someone'], source: 'direct', viewedAt: '2026-11-01T00:00:00.000Z', ...extra });
+const keys = (books: readonly SuggestedBook[]) => books.map(book => book.bookKey);
+const withSeed = (...sources: SuggestedBook[][]) => [...sources, SEED_SUGGESTIONS];
+
+describe('shelf suggestions: which five', () => {
+  it('cold open: the first five of the bundled seed list, with no other source (offline too)', () => {
+    expect(pickSuggestions(withSeed(), [])).toEqual(SEED_SUGGESTIONS.slice(0, 5));
+    expect(SUGGESTION_COUNT).toBe(5);
+  });
+
+  it('earlier sources win; the seed list fills in after them', () => {
+    const library = [suggestion(1, 'A'), suggestion(2, 'B')];
+    const related = [suggestion(3, 'C')];
+    expect(keys(pickSuggestions(withSeed(library, related), []))).toEqual([...keys(library), ...keys(related), ...keys(SEED_SUGGESTIONS.slice(0, 2))]);
+  });
+
+  it('one book per author, compared without case or spaces on the first author', () => {
+    const books = [suggestion(1, 'R. K. Narayan'), suggestion(2, 'r.k.  narayan'), suggestion(3, 'Someone Else', { authors: ['Someone Else', 'R. K. Narayan'] }),
+      suggestion(4, ' R.K. NARAYAN '), suggestion(5, 'Kalki'), suggestion(6, 'KALKI'), suggestion(7, 'Amish'), suggestion(8, 'Roy')];
+    expect(keys(pickSuggestions([books], []))).toEqual(keys([books[0], books[2], books[4], books[6], books[7]]));
+    expect(authorKey('A. P. J. Abdul Kalam')).toBe(authorKey('a.p.j. abdul  kalam'));
+    // An earlier source's author also rules out the seed list's book by them.
+    const kalam = suggestion(9, 'A.P.J. Abdul Kalam');
+    expect(keys(pickSuggestions(withSeed([kalam]), []))).not.toContain(SEED_SUGGESTIONS[0].bookKey);
+  });
+
+  it('never a saved book: same book key, same ISBN-13, or the same Open Library work (another edition)', () => {
+    const books = [
+      suggestion(1, 'A'),
+      suggestion(2, 'B', { bookKey: 'v1:isbn:9780000000002', isbn13: '9780000000002' }),
+      suggestion(3, 'C', { bookKey: 'v1:googlebooks:three', workId: 'OL3W' }),
+      suggestion(4, 'D'),
+      suggestion(5, 'E'), suggestion(6, 'F'), suggestion(7, 'G'), suggestion(8, 'H'),
+    ];
+    const shelf = [
+      saved('v1:openlibrary:OL1W'),
+      // Saved under another record with the same ISBN-13.
+      saved('v1:catalog:koha:anna-centenary-library:2', { isbn13: '978-0-00-000000-2' }),
+      // Saved as the Open Library work the suggestion is an edition of.
+      saved('v1:openlibrary:OL3W'),
+      // An ISBN record whose ISBN the work suggestion carries.
+      saved('v1:isbn:9780000000004', { isbn13: '9780000000004' }),
+    ];
+    books[3] = { ...books[3], isbn13: '9780000000004' };
+    expect(keys(pickSuggestions([books], shelf))).toEqual(keys(books.slice(4, 9)));
+  });
+
+  it('never another Open Library work of a saved book: the same title and first author, compared loosely (display only)', () => {
+    const shelf = [saved('v1:openlibrary:OL1037811W', { title: 'Wings of Fire', authors: ['A. P. J. Abdul Kalam'] })];
+    const books = [
+      suggestion(1, 'A.P.J. Abdul Kalam', { title: 'Wings of fire.' }), // a second "Wings of Fire" work
+      suggestion(2, 'Someone Else', { title: 'Wings of Fire' }), // same title, another author
+      suggestion(3, 'A. P. J. Abdul Kalam', { title: 'Ignited Minds' }), // same author, another title
+    ];
+    expect(keys(pickSuggestions([books], shelf))).toEqual(keys(books.slice(1, 3)));
+    // A saved record without a title or author rules nothing out this way.
+    expect(keys(pickSuggestions([books], [{ bookKey: 'v1:isbn:9780000000002' }]))).toEqual(keys([books[0], books[1]]));
+  });
+
+  describe('another edition of a saved book (Wings of Fire saved as an ISBN edition)', () => {
+    const seedWings = SEED_SUGGESTIONS.find(book => book.bookKey === 'v1:openlibrary:OL1037811W')!;
+    const edition = { bookKey: 'v1:isbn:9788173711466', isbn13: '9788173711466', title: 'Wings of Fire: An Autobiography', authors: ['A. P. J. Abdul Kalam', 'Arun Tiwari'] };
+
+    it('is not suggested when the saved record knows its work (the book page’s workId is kept)', () => {
+      // Saved from a book page that knew the work, but titled without the work's main title, so only the work rules it out.
+      const shelf = [toRecentBook({ ...edition, title: 'Agni Siragugal', workId: 'OL1037811W' }, 'direct')];
+      expect(shelf[0].workId).toBe('OL1037811W');
+      expect(keys(pickSuggestions(withSeed(), shelf))).not.toContain(seedWings.bookKey);
+      // An ISBN-keyed saved book against a work-key suggestion, from any source.
+      expect(keys(pickSuggestions([[suggestion('1037811', 'Somebody', { title: 'Another title' })]], shelf))).toEqual([]);
+      // Display only: saving still matches by book key or ISBN-13 alone.
+      expect(findSavedBook(shelf, seedWings)).toBeUndefined();
+    });
+
+    it('is not suggested from an older record without its work: the title up to its subtitle and the first author’s name words', () => {
+      for (const authors of [edition.authors, ['Kalam, A. P. J. Abdul', 'Arun Tiwari'], ['A.P.J. Abdul Kalam']]) {
+        const shelf = [saved(edition.bookKey, { isbn13: edition.isbn13, title: edition.title, authors })];
+        expect(keys(pickSuggestions(withSeed(), shelf)), authors[0]).not.toContain(seedWings.bookKey);
+        // The next seed book stands in: still five.
+        expect(pickSuggestions(withSeed(), shelf)).toHaveLength(5);
+        // Never for identity: the book page and saving still see two different books.
+        expect(findSavedBook(shelf, seedWings)).toBeUndefined();
+        expect(findSavedBook(shelf, seedWings, { sameWork: true })).toBeUndefined();
+      }
+      expect(mainTitleKey('Wings of Fire: An Autobiography')).toBe('wings of fire');
+      expect(mainTitleKey('Wings of Fire - An Autobiography')).toBe('wings of fire');
+      expect(mainTitleKey('WINGS OF FIRE.')).toBe('wings of fire');
+      expect(mainTitleKey(': only a subtitle')).toBe('only a subtitle');
+      expect(nameTokensKey('Kalam, A. P. J. Abdul')).toBe(nameTokensKey('A. P. J. Abdul Kalam'));
+      expect(nameTokensKey('A. P. J. Abdul Kalam')).not.toBe(nameTokensKey('Arun Tiwari'));
+    });
+
+    it('another first author or another main title is still suggested', () => {
+      const byTiwari = [saved(edition.bookKey, { title: edition.title, authors: ['Arun Tiwari', 'A. P. J. Abdul Kalam'] })];
+      expect(keys(pickSuggestions(withSeed(), byTiwari))).toContain(seedWings.bookKey);
+      const ignited = [saved('v1:isbn:9780670049288', { title: 'Ignited Minds: Unleashing the Power Within India', authors: ['A. P. J. Abdul Kalam'] })];
+      expect(keys(pickSuggestions(withSeed(), ignited))).toContain(seedWings.bookKey);
+    });
+  });
+
+  it('never the same book twice, even from two sources', () => {
+    const first = suggestion(1, 'A');
+    const again = { ...suggestion(1, 'Other'), title: 'Another record' };
+    const edition = suggestion('x', 'Third', { bookKey: 'v1:isbn:9780000000009', workId: 'OL1W' });
+    expect(keys(pickSuggestions([[first], [again, edition]], []))).toEqual([first.bookKey]);
+  });
+
+  it('a saved suggestion leaves; the others keep their order and the next one arrives at the end', () => {
+    const before = pickSuggestions(withSeed(), []);
+    const after = pickSuggestions(withSeed(), [saved(before[0].bookKey)]);
+    expect(keys(after)).toEqual([...keys(before.slice(1)), SEED_SUGGESTIONS[5].bookKey]);
+    // Removed from the shelf again: it can be suggested again.
+    expect(pickSuggestions(withSeed(), [])).toEqual(before);
+  });
+
+  it('skips unusable records and stops at five; fewer only when every source runs out', () => {
+    const broken = [{ bookKey: '', title: 'No key', authors: ['X'] }, { bookKey: 'v1:openlibrary:OL9W', title: ' ', authors: ['Y'] }] as SuggestedBook[];
+    expect(pickSuggestions(withSeed(broken), [])).toEqual(SEED_SUGGESTIONS.slice(0, 5));
+    expect(keys(pickSuggestions([[suggestion(1, 'A'), suggestion(2, 'B')]], []))).toHaveLength(2);
+    // A whole seed list on the shelf: the next ones stand in.
+    const shelf = SEED_SUGGESTIONS.slice(0, 18).map(book => saved(book.bookKey));
+    expect(pickSuggestions(withSeed(), shelf)).toEqual(SEED_SUGGESTIONS.slice(18, 20));
+  });
+});
+
+describe('shelf suggestions: the candidates before the pick', () => {
+  it('every book the pick could choose, in source order: no saved book or edition of one, no repeat, but several by one author', () => {
+    const books = [suggestion(1, 'Kalki'), suggestion(2, 'KALKI'), suggestion(3, 'Roy', { isbn13: '9788173711466' }), suggestion(1, 'Kalki'),
+      suggestion(4, 'Amish', { title: 'Wings of Fire' }), suggestion(5, 'Seth')];
+    const shelf = [saved('v1:isbn:9788173711466', { isbn13: '9788173711466' }), saved('v1:openlibrary:OL5W')];
+    expect(keys(suggestionCandidates([books, SEED_SUGGESTIONS.slice(0, 2)], shelf, 100)))
+      .toEqual(['v1:openlibrary:OL1W', 'v1:openlibrary:OL2W', 'v1:openlibrary:OL4W', ...keys(SEED_SUGGESTIONS.slice(0, 2))]);
+    // Bounded.
+    expect(suggestionCandidates([SEED_SUGGESTIONS], [], 7)).toEqual(SEED_SUGGESTIONS.slice(0, 7));
+    // The pick from them then keeps one per author.
+    expect(keys(pickSuggestions([suggestionCandidates([books], shelf, 100)], shelf))).toEqual(['v1:openlibrary:OL1W', 'v1:openlibrary:OL4W']);
+  });
+});
+
+describe('shelf suggestions: fill and wrap like books', () => {
+  // `s` a suggestion (with its "Suggested" label below it), `S` a saved book.
+  const shelfWith = (savedCount: number, perBay: number) => {
+    const items = [...Array.from({ length: savedCount }, (_, index) => ({ key: 'saved' + index, suggested: false })),
+      ...pickSuggestions(withSeed(), []).map(book => ({ key: book.bookKey, suggested: true }))];
+    return bayRows(items, perBay).map(row => row.map(item => item.suggested ? 's' : 'S').join(''));
+  };
+
+  it('three a bay on phones', () => {
+    expect(shelfWith(0, 3)).toEqual(['sss', 'ss']);
+    // One saved book: the suggestions share its bay (SuggestShelf board).
+    expect(shelfWith(1, 3)).toEqual(['Sss', 'sss']);
+    expect(shelfWith(3, 3)).toEqual(['SSS', 'sss', 'ss']);
+    expect(shelfWith(4, 3)).toEqual(['SSS', 'Sss', 'sss']);
+  });
+
+  it('six a bay at wide widths', () => {
+    expect(shelfWith(0, 6)).toEqual(['sssss']);
+    expect(shelfWith(1, 6)).toEqual(['Ssssss']);
+    // Four saved (DeskSuggestShelf board): two suggestions share their bay, three go on.
+    expect(shelfWith(4, 6)).toEqual(['SSSSss', 'sss']);
+    expect(shelfWith(6, 6)).toEqual(['SSSSSS', 'sssss']);
+  });
+});

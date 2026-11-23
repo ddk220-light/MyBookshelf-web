@@ -1,0 +1,26 @@
+/* Desktop reading room. Keep the phone layout in styles.css unchanged; this
+   presentation shares its routes, state, catalog requests and semantic controls. */
+.app-screen { order: 1; }
+.desktop-skip { display: none; }
+
+@media (min-width: 64rem) {
+  .app-frame { display: grid; grid-template-columns: 224px minmax(0, 1fr); width: 100%; max-width: 1680px; }
+  .desktop-skip { display: block; position: absolute; top: 8px; left: 240px; z-index: 100;
+    padding: 12px 18px; border-radius: 8px; background: var(--surface); color: var(--ink-title); transform: translateY(-160%); }
+  .desktop-skip:focus { transform: none; }
+  .app-screen { grid-column: 2; grid-row: 1; min-width: 0; padding-bottom: 0; scroll-padding-block: 32px; }
+  .app-screen:focus { outline: none; }
+  .page-section { max-width: 1240px; margin-inline: auto; padding: 44px 36px 56px; }
+  .site-notice { max-width: 1240px; margin-inline: auto; padding: 0 36px; }
+  h1 { font-size: var(--text-display); line-height: 1.15; }
+  h2 { font-size: var(--text-title); }
+  .page-heading { margin-bottom: 34px; }
+
+  /* Library search has a usable side-by-side list and map when Map is selected. */
+  .settings-label { font-size: var(--text-body); margin-bottom: 18px; }
+}
+
+@media (min-width: 90rem) {
+  .app-frame { grid-template-columns: 248px minmax(0, 1fr); }
+  .page-section { padding: 52px 48px 64px; }
+}

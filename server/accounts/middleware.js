@@ -1,0 +1,500 @@
+import express from "express";
+import {randomUUID} from 'node:crypto';
+import {
+  AccountRequestError,
+  requireOrigin,
+  requireMutation,
+  requireIdentityView,
+  requestIP,
+} from "./security.js";
+import { readAccountConfig } from "./config.js";
+import { readingRoute } from "./reading-routes.js";
+import { hasSessionCookie } from "../auth/cookies.js";
+import { accountCapabilities } from "./capabilities.js";
+import { createMailDispatcher } from "../jobs/mail-dispatch.js";
+
+const RESERVED_AUTH =
+  /^\/api\/auth\/(?:ok|get-session|sign-up\/email|sign-in\/(?:email|social|magic-link)|magic-link\/verify|sign-out|verify-email|send-verification-email|request-password-reset|reset-password|callback\/[^/]+|change-password|change-email|link-social|unlink-account|delete-user|list-sessions|revoke-session|revoke-sessions|revoke-other-sessions|update-user|set-password)(?:\/|$)/;
+const unavailable = (res, code = "ACCOUNT_UNAVAILABLE") =>
+  res
+    .status(503)
+    .json({
+      error: {
+        code,
+        message:
+          code === "ACCOUNT_DISABLED"
+            ? "Accounts aren’t enabled here yet. You can continue browsing."
+            : "Accounts are temporarily unavailable. You can continue browsing.",
+      },
+    });
+
+// Server-Timing on every account response, so a cold and a warm sign-up can
+// be told apart in the browser's network panel: "start" is the time spent
+// starting the account service in this request (absent when it was already
+// running), "app" the whole request. Durations only, never values.
+function serverTiming(res) {
+  const started = performance.now(),
+    writeHead = res.writeHead;
+  res.writeHead = function (...args) {
+    if (!this.headersSent) {
+      const start = this.locals?.accountStartMs;
+      this.setHeader(
+        "Server-Timing",
+        [
+          typeof start === "number" ? `start;dur=${start.toFixed(1)}` : null,
+          `app;dur=${(performance.now() - started).toFixed(1)}`,
+        ]
+          .filter(Boolean)
+          .join(", "),
+      );
+    }
+    return writeHead.apply(this, args);
+  };
+}
+
+// Lazy initialization is scoped to the app, not to public catalog requests.
+export function createAccountMiddleware({
+  env = process.env,
+  initialize = async (config) => {
+    const { createAccountService } = await import("./service.js");
+    return createAccountService(config);
+  },
+  retryAfterMs = 5000,
+  mail = createMailDispatcher(),
+} = {}) {
+  let service,
+    pending,
+    retryAt = 0;
+  const parser = express.json({ limit: "32kb", strict: true });
+  const importParser = express.json({ limit: "2mb", strict: true });
+  const callbackParser=express.urlencoded({extended:false,limit:'32kb',parameterLimit:20});
+  const postPaths = new Set([
+    "/api/account/sign-up",
+    "/api/account/sign-in",
+    '/api/account/sign-in/social',
+    "/api/account/verify-email",
+    "/api/account/resend-verification",
+    "/api/account/sign-out",
+    "/api/account/forgot-password",
+    "/api/account/reset-password",
+    "/api/account/reauth/password",
+    "/api/account/reauth/recent",
+    "/api/account/magic-link",
+    "/api/account/magic-link/verify",
+    "/api/account/link-info",
+    "/api/account/password",
+    "/api/account/email-change",
+    "/api/account/email-change/cancel",
+    "/api/account/email-change/confirm",
+    '/api/account/provider/start',
+    '/api/account/provider/result',
+    '/api/account/provider/unlink',
+    '/api/account/password/setup',
+    '/api/account/deletion',
+    '/api/account/deletion/status',
+  ]);
+  // One lazily initialized account service per app, shared by these routes and
+  // by identify() below (the owner-only admin view uses it to read the session).
+  async function getService(config) {
+    if (service) return service;
+    if (Date.now() < retryAt) throw new Error("Account initialization is waiting to retry.");
+    pending ??= initialize(config)
+      .then((value) => {
+        service = value;
+        return value;
+      })
+      .catch(() => {
+        retryAt = Date.now() + retryAfterMs;
+        throw new Error("Account initialization failed.");
+      })
+      .finally(() => {
+        pending = undefined;
+      });
+    return pending;
+  }
+  const requestHeaders = (req) => {
+    const headers = new Headers();
+    for (const [key, value] of Object.entries(req.headers)) {
+      if (value !== undefined)
+        headers.set(key, Array.isArray(value) ? value.join(", ") : value);
+    }
+    return headers;
+  };
+  // Mail queued while handling a request is sent right after its response.
+  const accounts = (req, res, next) =>
+    mail.track(res, () => handleAccounts(req, res, next));
+  async function handleAccounts(req, res, next) {
+    const path = req.path;
+    if (
+      !(
+        path === "/api/account" ||
+        path.startsWith("/api/account/") ||
+        RESERVED_AUTH.test(path)
+      )
+    )
+      return next();
+    serverTiming(res);
+    res.set({
+      "Cache-Control": "private, no-store",
+      "X-Robots-Tag": "noindex",
+      "Referrer-Policy": "no-referrer",
+      'X-Request-ID':randomUUID(),
+    });
+    const sendJSON=res.json;
+    res.json=function(value){
+      return sendJSON.call(this,value?.error?{...value,error:{...value.error,requestId:res.get('X-Request-ID')}}:value);
+    };
+    try {
+      const config = readAccountConfig(env);
+      if (!config.enabled) return unavailable(res, "ACCOUNT_DISABLED");
+      const callback=/^\/api\/auth\/callback\/(google|apple)$/.exec(path)?.[1];
+      // Auth protocol and sensitive routes stay closed until their individual
+      // policy/mail/lifecycle stories are implemented. /get-session returns raw
+      // library rows, so browsers must use the narrow /api/account/session facade.
+      const isPost = postPaths.has(path);
+      const profile = path === "/api/account/profile";
+      const reading = readingRoute(path, req.method);
+      const mutation = isPost || ((reading || profile) && req.method !== "GET");
+      if (
+        !isPost &&
+        !callback &&
+        !reading &&
+        !profile &&
+        ![
+          "/api/auth/ok",
+          "/api/account/session",
+          "/api/account/capabilities",
+        ].includes(path)
+      )
+        return unavailable(res);
+      if (
+        callback?!((req.method==='GET')||(callback==='apple'&&req.method==='POST')):profile
+          ? !["GET", "PATCH"].includes(req.method)
+          : reading
+            ? !reading.action
+            : req.method !== (isPost ? "POST" : "GET")
+      )
+        return res
+          .status(405)
+          .json({
+            error: {
+              code: "METHOD_NOT_ALLOWED",
+              message: "This method is not supported.",
+            },
+          });
+      if (mutation) {
+        requireOrigin(req, config.baseURL);
+        if (!req.is("application/json"))
+          throw new AccountRequestError(
+            415,
+            "JSON_REQUIRED",
+            "Send a JSON request.",
+          );
+        await new Promise((resolve, reject) =>
+          (path === "/api/account/imports" ? importParser : parser)(
+            req,
+            res,
+            (error) => (error ? reject(error) : resolve()),
+          ),
+        );
+      }
+      if(callback&&req.method==='POST'){
+        if(!req.is('application/x-www-form-urlencoded'))throw new AccountRequestError(415,'INVALID_CALLBACK','Restart Apple sign-in from MyBookshelf.');
+        await new Promise((resolve,reject)=>callbackParser(req,res,error=>error?reject(error):resolve()));
+      }
+      const origin = req.get("Origin");
+      if (!callback&&origin && origin !== config.baseURL)
+        return res
+          .status(403)
+          .json({
+            error: {
+              code: "ORIGIN_REJECTED",
+              message: "The request origin is not allowed.",
+            },
+          });
+      // A browser without a session cookie is a guest: answer exactly what the
+      // service would, without starting it (and waking its database).
+      if (path === "/api/account/session" && !hasSessionCookie(req.get("Cookie")))
+        return res.json({ status: "guest" });
+      if (path === "/api/account/capabilities")
+        return res.json(accountCapabilities(config));
+      if (!service) {
+        const started = performance.now();
+        try { await getService(config); } catch { return unavailable(res); }
+        // Starting the service in this request (a cold start): measured apart.
+        res.locals.accountStartMs = performance.now() - started;
+      }
+      if (path === "/api/auth/ok") return await service.handleAuth(req, res);
+      const headers = requestHeaders(req);
+      const setCookie = (cookie) => res.append("Set-Cookie", cookie);
+      if(callback){
+        const result=await service.actions.oauthCallback(callback,{query:req.query,body:req.body,method:req.method,headers,ip:requestIP(req,env)},setCookie);
+        return res.redirect(result.status,result.location);
+      }
+      if (profile) {
+        const identity = await service.identity(headers, setCookie);
+        if (identity.status !== "authenticated")
+          throw new AccountRequestError(
+            401,
+            "SIGN_IN_REQUIRED",
+            "Sign in to continue.",
+          );
+        requireIdentityView(req, identity);
+        if (mutation) {
+          requireMutation(req, identity, config);
+          await service.limitPrivate(identity);
+        }
+        return res.json(
+          mutation
+            ? await service.actions.updateProfile(
+                req.body,
+                identity,
+                headers,
+                setCookie,
+              )
+            : await service.actions.profile(identity, headers),
+        );
+      }
+      if (reading) {
+        if (!service.reading) return unavailable(res);
+        const identity = await service.identity(headers, setCookie);
+        if (identity.status !== "authenticated")
+          throw new AccountRequestError(
+            401,
+            "SIGN_IN_REQUIRED",
+            "Sign in to continue.",
+          );
+        requireIdentityView(req, identity);
+        if (mutation) {
+          requireMutation(req, identity, config);
+          await service.limitPrivate(identity, reading.action);
+        }
+        const args =
+          reading.action === "state"
+            ? [identity]
+            : [
+                req.method === "GET" ? req.query : req.body,
+                identity,
+                reading.referenceId,
+              ];
+        return res.json(await service.reading[reading.action](...args));
+      }
+      if(path==='/api/account/deletion/status')return res.json(await service.actions.deletionStatus(req.body,requestIP(req,env)));
+      if (path === "/api/account/sign-up")
+        return res
+          .status(202)
+          .json(await service.actions.signup(req.body, requestIP(req, env)));
+      if (path === "/api/account/resend-verification")
+        return res
+          .status(202)
+          .json(await service.actions.resend(req.body, requestIP(req, env)));
+      if (path === "/api/account/verify-email")
+        return res.json(
+          await service.actions.verify(
+            req.body,
+            requestIP(req, env),
+            headers,
+            setCookie,
+          ),
+        );
+      if (path === "/api/account/link-info")
+        return res.json(
+          await service.actions.linkInfo(req.body, requestIP(req, env)),
+        );
+      if (path === "/api/account/magic-link")
+        return res
+          .status(202)
+          .json(
+            await service.actions.requestMagicLink(
+              req.body,
+              requestIP(req, env),
+              headers,
+            ),
+          );
+      if (path === "/api/account/magic-link/verify")
+        return res.json(
+          await service.actions.magicLinkSignIn(
+            req.body,
+            requestIP(req, env),
+            headers,
+            setCookie,
+          ),
+        );
+      if(path==='/api/account/sign-in/social')return res.json(await service.actions.signInSocial(req.body,requestIP(req,env),headers,setCookie));
+      if (path === "/api/account/sign-in")
+        return res.json(
+          await service.actions.signin(
+            req.body,
+            requestIP(req, env),
+            headers,
+            setCookie,
+          ),
+        );
+      if (path === "/api/account/forgot-password")
+        return res
+          .status(202)
+          .json(await service.actions.recover(req.body, requestIP(req, env)));
+      if (path === "/api/account/reset-password")
+        return res.json(
+          await service.actions.reset(
+            req.body,
+            requestIP(req, env),
+            headers,
+            setCookie,
+          ),
+        );
+      if (path === "/api/account/email-change/confirm")
+        return res.json(
+          await service.actions.confirmEmailChange(
+            req.body,
+            requestIP(req, env),
+            headers,
+            setCookie,
+          ),
+        );
+      if (
+        [
+          "/api/account/reauth/password",
+          "/api/account/reauth/recent",
+          "/api/account/password",
+          "/api/account/email-change",
+          "/api/account/email-change/cancel",
+          '/api/account/provider/start',
+          '/api/account/provider/result',
+          '/api/account/provider/unlink',
+          '/api/account/password/setup',
+                '/api/account/deletion',
+        ].includes(path)
+      ) {
+        const identity = await service.identity(headers, setCookie);
+        if (identity.status !== "authenticated")
+          throw new AccountRequestError(
+            401,
+            "SIGN_IN_REQUIRED",
+            "Sign in to continue.",
+          );
+        requireIdentityView(req, identity);
+        if (isPost) requireMutation(req, identity, config);
+        if(path==='/api/account/provider/start')return res.json(await service.actions.startProviderAction(req.body,identity,headers,setCookie));
+        if(path==='/api/account/provider/result')return res.json(await service.actions.providerResult(req.body,identity));
+        if(path==='/api/account/provider/unlink')return res.json(await service.actions.unlinkMethod(req.body,identity,headers));
+        if(path==='/api/account/password/setup')return res.json(await service.actions.setFirstPassword(req.body,identity,headers));
+        if(path==='/api/account/deletion')return res.status(202).json(await service.actions.deleteAccount(req.body,identity,headers,setCookie));
+        if (path === "/api/account/email-change")
+          return res
+            .status(202)
+            .json(
+              await service.actions.requestEmailChange(
+                req.body,
+                identity,
+                headers,
+              ),
+            );
+        if (path === "/api/account/email-change/cancel")
+          return res.json(
+            await service.actions.cancelEmailChange(
+              req.body,
+              identity,
+              headers,
+            ),
+          );
+        if (path === "/api/account/reauth/recent")
+          return res.json(
+            await service.actions.confirmRecent(req.body, identity),
+          );
+        if (path === "/api/account/reauth/password")
+          return res.json(
+            await service.actions.confirmPassword(
+              req.body,
+              identity,
+              headers,
+              setCookie,
+            ),
+          );
+        return res.json(
+          await service.actions.changePassword(
+            req.body,
+            identity,
+            headers,
+            setCookie,
+          ),
+        );
+      }
+      if (path === "/api/account/sign-out") {
+        const identity = await service.identity(headers, setCookie);
+        if (identity.status === "authenticated")
+          requireMutation(req, identity, config);
+        return res.json(await service.actions.signout(headers, setCookie));
+      }
+      return res.json(await service.session(headers, setCookie));
+    } catch (error) {
+      if (res.headersSent) return res.end();
+      if (error instanceof AccountRequestError) {
+        if (error.retryAfter) res.set("Retry-After", String(error.retryAfter));
+        return res.status(error.status).json({
+          error: {
+            code: error.code,
+            message: error.message,
+            // Only positions of refused device books (accounts/imports.js).
+            ...(error.details?.rejected ? { rejected: error.details.rejected } : {}),
+          },
+        });
+      }
+      if (error?.type === "entity.too.large")
+        return res
+          .status(413)
+          .json({
+            error: {
+              code: "PAYLOAD_TOO_LARGE",
+              message: "This request is too large.",
+            },
+          });
+      if (error?.type === "entity.parse.failed")
+        return res
+          .status(400)
+          .json({
+            error: {
+              code: "INVALID_JSON",
+              message: "Check the submitted fields.",
+            },
+          });
+      if (error?.statusCode === 403) {
+        const code = error.body?.code;
+        const unverified = code === "EMAIL_NOT_VERIFIED";
+        const recent = code === "SESSION_NOT_FRESH";
+        return res
+          .status(403)
+          .json({
+            error: {
+              code: unverified ? "VERIFY_EMAIL_REQUIRED"
+                : recent ? "RECENT_AUTH_REQUIRED" : "ACCOUNT_FORBIDDEN",
+              message: unverified ? "Verify your email before signing in."
+                : recent ? "Confirm it’s you again to continue."
+                  : "This account action is not allowed.",
+            },
+          });
+      }
+      if (error?.statusCode === 401)
+        return res
+          .status(401)
+          .json({
+            error: {
+              code: "INVALID_CREDENTIALS",
+              message: "Check your email and password.",
+            },
+          });
+      return unavailable(res);
+    }
+  }
+  // The verified server session for a request, for routes outside /api/account
+  // (the admin view). Never reads anything from the request body. Returns
+  // { status: 'disabled' } when accounts are off; throws when unavailable.
+  accounts.identify = async (req, res) => {
+    const config = readAccountConfig(env);
+    if (!config.enabled) return { status: "disabled" };
+    const current = await getService(config);
+    const identity = await current.identity(requestHeaders(req), (cookie) => res.append("Set-Cookie", cookie));
+    return { status: identity.status, identity, config };
+  };
+  return accounts;
+}

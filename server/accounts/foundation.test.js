@@ -1,0 +1,162 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import request from 'supertest';
+import { createApplication } from '../application.js';
+import { createAccountMiddleware } from './middleware.js';
+import { readAccountConfig, AccountConfigurationError } from './config.js';
+import { APIError } from 'better-auth/api';
+
+const SESSION_COOKIE = 'mybookshelf_auth.session_token=synthetic.value';
+const enabled = { ACCOUNTS_ENABLED: 'true', ACCOUNTS_ENVIRONMENT: 'development', BETTER_AUTH_URL: 'http://localhost:3000',
+  BETTER_AUTH_SECRET: 'test-only-account-secret-with-more-than-32-characters', ACCOUNTS_AUTH_DATABASE_URL: 'postgres://test:test@localhost/accounts_test' };
+
+test('account configuration rejects unsafe origins, preview production access and incomplete secrets', () => {
+  assert.deepEqual(readAccountConfig({}), { enabled: false });
+  assert.equal(readAccountConfig(enabled).baseURL, 'http://localhost:3000');
+  for (const invalid of [ { BETTER_AUTH_URL: 'https://user:password@example.test' }, { BETTER_AUTH_URL: 'https://example.test/path' },
+    { BETTER_AUTH_URL: 'http://example.test' }, { BETTER_AUTH_URL: 'https://*.vercel.app' },
+    { BETTER_AUTH_SECRET: 'short' }, { ACCOUNTS_AUTH_DATABASE_URL: 'https://example.test' },
+    { NODE_ENV: 'production' }, { VERCEL_ENV: 'preview', ACCOUNTS_ENVIRONMENT: 'production' } ]) {
+    assert.throws(() => readAccountConfig({ ...enabled, ...invalid }), AccountConfigurationError);
+  }
+});
+
+test('public catalog never initializes accounts; disabled accounts fail privately', async () => {
+  let calls = 0;
+  const app = createApplication({ accounts: createAccountMiddleware({ env: {}, initialize: async () => { calls++; throw Error(); } }) });
+  assert.equal((await request(app).get('/api/health')).status, 200);
+  const catalog = await request(app).post('/api/v2/libraries/search').send({ query: 'Chennai' });
+  assert.equal(catalog.status, 200); assert.equal(catalog.headers['set-cookie'], undefined);
+  const response = await request(app).get('/api/account/session');
+  assert.equal(response.status, 503); assert.equal(response.headers['cache-control'], 'private, no-store');
+  assert.equal(response.body.error.code, 'ACCOUNT_DISABLED');
+  assert.equal(response.headers['x-robots-tag'], 'noindex'); assert.equal(calls, 0);
+  assert.equal((await request(app).post('/api/auth/login').send({})).status, 410);
+});
+
+test('database initialization failures are bounded and retry without blocking public routes', async () => {
+  let calls = 0;
+  const app = createApplication({ accounts: createAccountMiddleware({ env: enabled, retryAfterMs: 60_000,
+    initialize: async () => { calls++; throw Error('sensitive connection string'); } }) });
+  const response = await request(app).get('/api/auth/ok');
+  assert.equal(response.status, 503); assert.ok(!response.text.includes('sensitive'));
+  assert.equal(response.body.error.code, 'ACCOUNT_UNAVAILABLE');
+  assert.equal((await request(app).get('/api/account/session').set('Cookie', SESSION_COOKIE)).status, 503); assert.equal(calls, 1);
+  assert.equal((await request(app).get('/api/health')).status, 200);
+});
+
+test('sensitive raw routes remain gated; origin rejects precede database work', async () => {
+  let calls = 0;
+  const app = createApplication({ accounts: createAccountMiddleware({ env: enabled, initialize: async () => {
+    calls++; return { session: async () => ({ status: 'guest' }) };
+  } }) });
+  for (const path of ['/api/auth/sign-up/email', '/api/auth/change-password', '/api/auth/get-session']) {
+    assert.equal((await request(app).post(path).send({})).status, 503);
+  }
+  for(const path of ['/api/account/deletion','/api/account/deletion/status'])assert.equal((await request(app).post(path).send({})).status,403);
+  assert.equal((await request(app).get('/api/account/session').set('Origin', 'https://attacker.test')).status, 403);
+  assert.equal(calls, 0);
+  assert.deepEqual((await request(app).get('/api/account/session').set('Origin', enabled.BETTER_AUTH_URL)).body, { status: 'guest' });
+});
+
+test('a guest session request without a session cookie never initializes the account service', async () => {
+  let calls = 0;
+  const app = createApplication({ accounts: createAccountMiddleware({ env: enabled, initialize: async () => {
+    calls++; return { session: async () => ({ status: 'authenticated' }) };
+  } }) });
+  for (const cookie of [undefined, 'theme=lamplight; mybookshelf_auth.dont_remember=x', 'mybookshelf_auth.session_token_x=1']) {
+    const call = request(app).get('/api/account/session');
+    const response = await (cookie ? call.set('Cookie', cookie) : call);
+    assert.equal(response.status, 200);
+    assert.deepEqual(response.body, { status: 'guest' });
+    assert.equal(response.headers['cache-control'], 'private, no-store');
+    assert.equal(response.headers['set-cookie'], undefined);
+  }
+  assert.deepEqual((await request(app).get('/api/account/session').set('Origin', enabled.BETTER_AUTH_URL)).body, { status: 'guest' });
+  // Guards that answer before it keep their order: a foreign origin, a wrong
+  // method and accounts switched off answer as before.
+  assert.equal((await request(app).get('/api/account/session').set('Origin', 'https://attacker.test')).status, 403);
+  assert.equal((await request(app).post('/api/account/session').send({})).status, 405);
+  const off = createApplication({ accounts: createAccountMiddleware({ env: {}, initialize: async () => { calls++; } }) });
+  assert.equal((await request(off).get('/api/account/session')).body.error.code, 'ACCOUNT_DISABLED');
+  assert.equal(calls, 0);
+  // With either session cookie name the service answers.
+  for (const name of ['mybookshelf_auth.session_token', '__Secure-mybookshelf_auth.session_token'])
+    assert.deepEqual((await request(app).get('/api/account/session').set('Cookie', 'a=b; ' + name + '=v')).body, { status: 'authenticated' });
+  assert.equal(calls, 1);
+});
+
+// Plan B2: opening Create account or Log in sends one GET /api/auth/ok, a
+// request the reader's action causes (never a timer), so the account service
+// and its database are awake before the form is sent. A guest's ordinary
+// visits still never start it.
+test('the warm-up request starts the account service once; Server-Timing tells a cold start from a warm one', async () => {
+  let calls = 0;
+  const app = createApplication({ accounts: createAccountMiddleware({ env: enabled, initialize: async () => {
+    calls++; await new Promise(resolve => setTimeout(resolve, 20));
+    return { handleAuth: (req, res) => { res.writeHead(200, { 'Content-Type': 'application/json' }); res.end('{"ok":true}'); } };
+  } }) });
+  assert.deepEqual((await request(app).get('/api/account/session')).body, { status: 'guest' });
+  assert.equal(calls, 0);
+  const cold = await request(app).get('/api/auth/ok');
+  assert.equal(cold.status, 200); assert.equal(calls, 1);
+  assert.equal(cold.headers['cache-control'], 'private, no-store');
+  const [start, total] = cold.headers['server-timing'].split(', ');
+  assert.match(start, /^start;dur=\d+\.\d$/); assert.ok(Number(start.split('=')[1]) >= 15);
+  assert.match(total, /^app;dur=\d+\.\d$/);
+  const warm = await request(app).get('/api/auth/ok');
+  assert.equal(warm.status, 200); assert.equal(calls, 1);
+  assert.match(warm.headers['server-timing'], /^app;dur=\d+\.\d$/);
+  // Raw library routes for the log-in link stay closed: only the facade reaches them.
+  for (const path of ['/api/auth/sign-in/magic-link', '/api/auth/magic-link/verify'])
+    assert.equal((await request(app).post(path).send({})).status, 503);
+  assert.equal((await request(app).post('/api/account/magic-link').set('Origin', 'https://attacker.test').send({ email: 'a@example.test' })).status, 403);
+  assert.equal((await request(app).post('/api/account/reauth/recent').send({ action: 'password-change' })).status, 403);
+});
+
+test('capabilities are read from configuration without starting the account service', async () => {
+  let calls = 0;
+  const app = createApplication({ accounts: createAccountMiddleware({ env: enabled, initialize: async () => { calls++; throw Error(); } }) });
+  const response = await request(app).get('/api/account/capabilities');
+  assert.equal(response.status, 200);
+  assert.deepEqual(response.body, { email: false, google: false, apple: false, canonicalOrigin: 'http://localhost:3000' });
+  const mail = createApplication({ accounts: createAccountMiddleware({ env: { ...enabled, ACCOUNTS_JOB_SECRET: 'x'.repeat(32), ACCOUNTS_MAIL_FROM: 'accounts@example.test', RESEND_API_KEY: 'synthetic' }, initialize: async () => { calls++; throw Error(); } }) });
+  assert.equal((await request(mail).get('/api/account/capabilities')).body.email, true);
+  assert.equal((await request(app).get('/api/account/capabilities').set('Origin', 'https://attacker.test')).status, 403);
+  assert.equal(calls, 0);
+});
+
+test('the session cookie names match the auth library\'s own', async () => {
+  const { getCookies } = await import('better-auth/cookies');
+  const { authOptions } = await import('../auth/auth.js');
+  const { SESSION_COOKIE_NAMES } = await import('../auth/cookies.js');
+  const names = [false, true].map(secureCookies => getCookies(authOptions({ pool: null, config: { baseURL: 'http://localhost:3000', secret: enabled.BETTER_AUTH_SECRET, secureCookies } })).sessionToken.name);
+  assert.deepEqual(names, [...SESSION_COOKIE_NAMES]);
+});
+
+test('native forbidden errors distinguish verification, recent auth and other denials', async () => {
+  for(const [native,expected] of [
+    ['EMAIL_NOT_VERIFIED','VERIFY_EMAIL_REQUIRED'],
+    ['SESSION_NOT_FRESH','RECENT_AUTH_REQUIRED'],
+    ['OTHER_NATIVE_DENIAL','ACCOUNT_FORBIDDEN'],
+  ]) {
+    const app=createApplication({accounts:createAccountMiddleware({env:enabled,
+      initialize:async()=>({session:async()=>{
+        throw APIError.fromStatus('FORBIDDEN',{code:native,message:'Private native error details'});
+      }}),
+    })});
+    const response=await request(app).get('/api/account/session').set('Cookie',SESSION_COOKIE);
+    assert.equal(response.status,403);
+    assert.equal(response.body.error.code,expected);
+    assert.ok(!response.text.includes('Private native error details'));
+    if(native!=='EMAIL_NOT_VERIFIED')assert.doesNotMatch(response.body.error.message,/verify your email/i);
+  }
+});
+
+test('account pools: no statement_timeout startup parameter on a pooled endpoint; a direct connection keeps it', async () => {
+  const { statementTimeoutOption } = await import('../db/pool-options.js');
+  assert.deepEqual(statementTimeoutOption('postgres://mybookshelf_auth:x@ep-quiet-sky-123456-pooler.us-east-1.aws.neon.tech/accounts?sslmode=require', 5000), {});
+  assert.deepEqual(statementTimeoutOption('postgres://mybookshelf_auth:x@ep-quiet-sky-123456.us-east-1.aws.neon.tech/accounts?sslmode=require', 5000), { statement_timeout: 5000 });
+  assert.deepEqual(statementTimeoutOption('postgres://postgres@127.0.0.1:55432/accounts_test', 3000), { statement_timeout: 3000 });
+  assert.deepEqual(statementTimeoutOption('not a url', 3000), { statement_timeout: 3000 });
+});
