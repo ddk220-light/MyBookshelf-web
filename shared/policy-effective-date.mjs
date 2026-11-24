@@ -1,11 +1,12 @@
 // The date the Privacy and Terms texts (docs/policy/privacy.md, terms.md) take
-// effect: the launch day (owner decision, 23 November 2026). It is committed
+// effect: the launch day, 23 November 2026 (owner decision), then 24 November
+// 2026, when Privacy began to describe Google Analytics. It is committed
 // here, not set as a build setting, so every build and the public export carry
 // the same date. The app's bundle gets the texts with the date already in them
 // (policyTextPlugin, in client/vite.config.js), and the public /privacy and
 // /terms pages are built with it (tools/seo/build-pages.mjs). A changed policy
 // text is published with a new date here, as both texts promise.
-export const POLICY_EFFECTIVE_DATE = '23 November 2026';
+export const POLICY_EFFECTIVE_DATE = '24 November 2026';
 
 const PLACEHOLDER = '[EFFECTIVE DATE]';
 /** A bracketed placeholder left in a text, such as "[EFFECTIVE DATE]" or "[NAME]". */

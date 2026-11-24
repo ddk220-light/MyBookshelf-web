@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { publicApi, PublicApiError } from '../../api';
 import { safeBookReturn, type LibraryNavigation } from '../../bookNavigation';
 import { useLibrary } from '../../context';
+import { libraryParams, trackEvent } from '../../googleTag';
 import { uiMessages as m } from '../../uiMessages';
 
 /** Where a shared library link goes after choosing the library: the book in ?book=, an allowed ?next=, or the shelf. */
@@ -32,10 +33,12 @@ export function SelectLibraryLink() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { selectLibrary } = useLibrary();
+  const { selectLibrary, state } = useLibrary();
   const target = useRef(selectionTarget(location.search, location.state as LibraryNavigation | null));
   const select = useRef(selectLibrary);
   select.current = selectLibrary;
+  const chosen = useRef(state.selectedLibraryId);
+  chosen.current = state.selectedLibraryId;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -43,7 +46,8 @@ export function SelectLibraryLink() {
     if (!slug) { fail('missing'); return; }
     publicApi.resolveLibraryLink(slug, controller.signal).then(async library => {
       if (controller.signal.aborted) return;
-      await select.current(library).catch(() => false);
+      const before = chosen.current;
+      if (await select.current(library).catch(() => false) && before !== library.id) trackEvent('select_library', { ...libraryParams(library), method: 'link' });
       if (!controller.signal.aborted) navigate(target.current, { replace: true });
     }).catch(error => {
       if (controller.signal.aborted) return;

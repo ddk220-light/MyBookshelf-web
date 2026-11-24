@@ -1,5 +1,6 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState, type KeyboardEvent, type MouseEvent, type RefObject } from 'react';
 import { useLibrary } from '../../context';
+import { libraryParams, trackEvent } from '../../googleTag';
 import type { PublicLibrary, PublicLibraryPage } from '../../types';
 import { useLayoutMode } from '../desk/layoutMode';
 import { trapTab } from '../home/dialogFocus';
@@ -191,6 +192,7 @@ export function LibraryPicker({ titleId, listId, onClose, onChosen, initialQuery
     const ok = await selectLibrary(library).catch(() => false);
     setChoosing(null);
     if (!ok) return;
+    if (selected?.id !== library.id) trackEvent('select_library', { ...libraryParams(library), method: nearby ? 'near_me' : 'search' });
     onChosen?.(library);
     onClose();
   };

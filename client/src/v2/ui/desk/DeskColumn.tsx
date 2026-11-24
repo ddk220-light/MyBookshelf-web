@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { webLink, type ProblemScreen } from '../../api';
 import { useAccountSession } from '../../auth/AccountSessionProvider';
 import { useLibrary } from '../../context';
+import { libraryParams, trackEvent } from '../../googleTag';
 import type { PublicLibrary } from '../../types';
 import { LibraryGlyph, SettingsGlyph } from '../home/homeIcons';
 import { LIBRARY_FIELD, LibraryPicker, touchScreen } from '../library/LibraryPickerDialog';
@@ -31,7 +32,8 @@ function LibrarySection({ onChange }: { onChange: () => void }) {
     {library ? <>
       <div className="desk-library-row">
         <span className="desk-library-icon" aria-hidden="true"><LibraryGlyph size={24} strokeWidth={1.8} /></span>
-        <span className="desk-library-name"><strong>{catalog ? <a href={catalog} target="_blank" rel="noreferrer" aria-label={library.name + ", opens in a new tab"}>{library.name}</a> : library.name}</strong>{libraryPlace(library) && <span>{libraryPlace(library)}</span>}</span>
+        <span className="desk-library-name"><strong>{catalog ? <a href={catalog} target="_blank" rel="noreferrer" aria-label={library.name + ", opens in a new tab"}
+          onClick={() => trackEvent('catalog_open', { ...libraryParams(library), event_source: 'shelf' })}>{library.name}</a> : library.name}</strong>{libraryPlace(library) && <span>{libraryPlace(library)}</span>}</span>
       </div>
       <button type="button" className="desk-link desk-change" onClick={onChange}>Change library</button>
     </> : loadingLibrary ? <p className="desk-library-loading" role="status">Loading…</p>

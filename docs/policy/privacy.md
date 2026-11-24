@@ -47,9 +47,24 @@ happened (found, not found, couldn't check), how many results came back and
 how long it took. We also count how often each suggested book is opened and
 saved. We keep no account ID, no IP address and no device identifier with any
 of this, so we cannot tell who searched, and search words are never put in
-web addresses. We also count page visits, which site sent you, the type of
-device and browser, and the country, using Vercel Web Analytics, which sets
-no cookies. None of this is linked to an account or a person.
+web addresses. None of this is linked to an account or a person.
+
+**Visit counts.** We use Google Analytics to count visits, how long pages stay
+open, and a few actions: opening the app from a public page, searching,
+choosing a library, opening, adding or removing a book, checking a library,
+opening its catalog, scanning, creating an account or logging in, and sending a
+request or report. Google receives the page (a book you open in the app is sent
+only as "book page"; our public pages are sent by their address, also the ones
+about one book or library), the site that sent you, the type of device and
+browser, its screen size and language, your country and approximate city, the
+library you chose or checked, and whether a search or check found anything. It
+is never sent your search words, which books you search for, open or save in
+the app, your account or your precise location. Google Analytics sets cookies
+that hold a random number for your browser and last up to 13 months after your
+visit. In the European Economic Area, the United Kingdom and Switzerland it
+sets no cookie and counts without one. Its advertising features are off, and
+the counts are not used for ads. Google handles your IP address; we never see
+it in Google Analytics. None of this is linked to an account.
 
 **Library answers.** When we check a library, we keep the answer ("found" or
 "not found") for that library and book for six months, so we do not have to
@@ -83,6 +98,7 @@ be tried.
   as a confirmation that your account was deleted.
 - To find and fix what is broken or slow, using the anonymous usage
   information.
+- To see how many people use MyBookshelf and how, using the visit counts.
 - To add libraries, answer requests and reports, and correct library details.
 - To protect MyBookshelf and the library catalogs from misuse.
 
@@ -92,15 +108,16 @@ be tried.
 - We never show advertising.
 - We never link the anonymous usage information or any log to an account.
 - We never put your search words in web addresses or analytics.
-- We never keep IP addresses or device identifiers in our records, or store
-  your location.
+- Apart from the random number and approximate place that Google Analytics
+  keeps (see **Visit counts**), we never keep IP addresses, device identifiers
+  or your location in our records.
 - We never ask for library card numbers or PINs.
 
 ## Service providers
 
 | Service | What for |
 |---|---|
-| Vercel | Hosting the website and server, scheduled clean-up, a small storage area used when deleting accounts, encrypted backups of the accounts database, and anonymous visit counts |
+| Vercel | Hosting the website and server, scheduled clean-up, encrypted backups of the accounts database, and a small storage area used when deleting accounts |
 | Neon | Databases: one for accounts, one for library answers, requests, reports and the anonymous usage information |
 | GitHub | Running the nightly backup of the accounts database. The copy is encrypted as it is made, and only the encrypted file is kept, with Vercel. Only we hold the key that opens it. |
 | Resend | Sending account email: log-in links, address confirmation, password resets and account messages |
@@ -108,6 +125,7 @@ be tried.
 | Google Books | Book details and covers |
 | Photon (Komoot), using OpenStreetMap data | Finding places when you type a town or city |
 | Library catalogs | Checking whether a library has a book. Our server asks the library's own catalog system (or its provider, such as BiblioCommons or Calil) directly. It sends the book's details or your search words, never anything about you. |
+| Google Analytics | Counting visits and actions (see **Visit counts**). Its script runs on our pages; its advertising features are off. |
 | Google Search Console | Seeing how people find MyBookshelf in Google Search. It adds nothing to our pages. |
 
 These services receive normal network information, such as an IP address,
@@ -122,7 +140,8 @@ own policies.
 | Information in your browser (no account) | Until you clear it or your browser's site data |
 | Log-in links | 15 minutes, and they work once |
 | Anonymous search and library-check information | 12 months, then only totals (for example, searches per day) |
-| Anonymous visit counts | 12 months |
+| Visit counts in Google Analytics | Up to 14 months, then only totals |
+| Google Analytics cookies in your browser | Up to 13 months after your visit, or until you delete them |
 | Library answers | Six months |
 | Library requests | Until handled, then 12 months; spam is deleted after 90 days |
 | Problem reports | Up to 12 months; 90 days after they are resolved |
@@ -139,17 +158,21 @@ own policies.
   then **Account**.
 - You can delete your account in Settings, then **Account**, then **Delete my
   account**. This deletes your email, password, reading shelf, chosen library
-  and Viewed before list, and clears what MyBookshelf keeps in that browser.
-  Live data is removed within 24 hours and backup copies expire within 30
-  days.
-- You can clear what is stored in your browser through your browser's site
-  data settings.
+  and Viewed before list, and clears what MyBookshelf keeps in that browser,
+  except Google Analytics cookies. Live data is removed within 24 hours and
+  backup copies expire within 30 days.
+- You can clear what is stored in your browser, Google Analytics cookies
+  included, through your browser's site data settings.
+- You can block or delete the Google Analytics cookies in your browser. To stop
+  its counting altogether, block its script (a content blocker does) or use
+  Google's opt-out add-on (https://tools.google.com/dlpage/gaoptout).
+  MyBookshelf works fully without it.
 - You can ask us for a copy of the information we hold about you, or ask us to
   correct or delete it, by writing to the address below. We will answer within
   30 days.
 
-The anonymous usage information, library answers and library requests are not
-linked to you, so they cannot be found or deleted by account.
+The anonymous usage information, visit counts, library answers and library
+requests are not linked to you, so they cannot be found or deleted by account.
 
 ## Children
 

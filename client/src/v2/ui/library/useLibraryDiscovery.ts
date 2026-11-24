@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { publicApi } from '../../api';
 import { messageFor } from '../../context';
+import { trackEvent } from '../../googleTag';
 import type { LibraryDiscovery, PublicLibraryPage } from '../../types';
 
 type DiscoveryState = { query: string; page: PublicLibraryPage | null; nearby: boolean };
@@ -10,7 +11,9 @@ const RADIUS_KM = 25;
  * The library pop-up's list (plan Phase 7): filled either by the typed text or
  * by "near me". Nothing is kept beyond the open pop-up: the typed text lives in
  * this hook's state only, and the coordinates are used for one request and
- * not kept. No URLs, persistent storage, analytics or external geocoder.
+ * not kept. No URLs, persistent storage, analytics or external geocoder
+ * (Google Analytics is told only that a search finished and whether it found
+ * libraries).
  */
 export function useLibraryDiscovery(initial: { query?: string } = {}) {
   const [search, setSearch] = useState<DiscoveryState>(() => ({ query: initial.query || '', page: null, nearby: false }));
@@ -26,14 +29,21 @@ export function useLibraryDiscovery(initial: { query?: string } = {}) {
   const run = useCallback(async (filters: LibraryDiscovery, transient = false) => {
     // A transient request (near me) is not remembered: its coordinates go out once.
     lastRequest.current = transient ? {} : filters;
+    const method = transient ? 'near_me' : 'typed';
     request.current?.abort(); const controller = new AbortController(); request.current = controller;
     moreRequest.current?.abort(); moreRequest.current = null; setLoadingMore(false); setMoreFailed(false);
     setBusy(true); setError(null); setErrorKind(null);
     setSearch(current => ({ ...current, page: null }));
     try {
       const page = await publicApi.discoverLibraries(filters, controller.signal);
-      if (!controller.signal.aborted) setSearch(current => ({ ...current, page }));
-    } catch (failure) { if (!controller.signal.aborted) { setError(messageFor(failure, 'Couldn’t load libraries. Try again.')); setErrorKind('load'); } }
+      if (controller.signal.aborted) return;
+      setSearch(current => ({ ...current, page }));
+      trackEvent('library_search', { outcome: page.libraries?.length ? 'results' : 'none', method });
+    } catch (failure) {
+      if (controller.signal.aborted) return;
+      setError(messageFor(failure, 'Couldn’t load libraries. Try again.')); setErrorKind('load');
+      trackEvent('library_search', { outcome: 'error', method });
+    }
     finally { if (request.current === controller) setBusy(false); }
   }, []);
   useEffect(() => () => { request.current?.abort(); moreRequest.current?.abort(); locationAttempt.current++; }, []);

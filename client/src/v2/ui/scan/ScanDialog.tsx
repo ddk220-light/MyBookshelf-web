@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useId, useRef, useState, type FormEvent, type KeyboardEvent, type MouseEvent } from 'react';
 import { BrowserIsbnScanner, type IsbnScanner } from '../../camera';
 import { isValidIsbn13 } from '../../context';
+import { trackEvent } from '../../googleTag';
 import { trapTab } from '../home/dialogFocus';
 import { CameraOffGlyph, CloseGlyph, SearchGlyph, WarningGlyph } from '../home/homeIcons';
 import './scan.css';
@@ -124,6 +125,8 @@ export function ScanDialog({ open, onClose, onIsbn, onSearchByTitle, returnFocus
     setBusy(true); setNotice(null);
     let answer: ScanAnswer;
     try { answer = await onIsbnRef.current(isbn, source); } catch { answer = 'failed'; }
+    // A lookup that could not run is not a scan result: the search counts it.
+    if (source === 'camera' && answer !== 'failed') trackEvent('barcode_scan', { step: answer === 'opened' ? 'found' : 'failed' });
     if (!alive.current) return;
     if (answer === 'opened') return;
     setBusy(false);
@@ -146,7 +149,7 @@ export function ScanDialog({ open, onClose, onIsbn, onSearchByTitle, returnFocus
     lastSeen.current.set(value, now);
     if (isValidIsbn13(value)) { void find(value, 'camera'); return; }
     misses.current += 1;
-    if (misses.current >= MISSES_BEFORE_NO_MATCH) setMode('no-match');
+    if (misses.current >= MISSES_BEFORE_NO_MATCH) { setMode('no-match'); trackEvent('barcode_scan', { step: 'failed' }); }
     else setNotice('not-isbn');
   }, [find]);
   const onCodeRef = useRef(onCode);
@@ -164,6 +167,7 @@ export function ScanDialog({ open, onClose, onIsbn, onSearchByTitle, returnFocus
       const next = cameraFailure(failure);
       if (next === 'no-camera') noCamera.current = true;
       setMode(next);
+      trackEvent('barcode_scan', { step: next === 'blocked' ? 'denied' : 'failed' });
     });
     return () => { active = false; scanner.stop(); };
   }, [scanning, attempt]);

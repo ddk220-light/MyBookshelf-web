@@ -4,7 +4,9 @@ export type BookPageName = 'cover' | 'library' | 'about' | 'details';
 export const BOOK_PAGES: BookPageName[] = ['cover', 'library', 'about', 'details'];
 export type BookNavigation = { from?: 'shelf' | 'search'; searchState?: { candidateId?: string; shelf?: boolean }; source?: RecentSource; book?: PublicBook; transition?: boolean;
   /** Opened from a shelf suggestion (counted only; `source` is unchanged). */
-  suggested?: boolean };
+  suggested?: boolean;
+  /** Opened from Viewed before (counted only). */
+  viewed?: boolean };
 // searchState.shelf: the results were shown on the one-shelf home (plan Phase 5),
 // so the way back is the shelf (/) with the same opaque results ID.
 export type LibraryNavigation = { after?: string; book?: PublicBook; notice?: string; bookNavigation?: BookNavigation };

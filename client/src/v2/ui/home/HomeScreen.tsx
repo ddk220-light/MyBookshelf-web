@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 import { useLocation, useNavigate } from 'react-router-dom';
 import { webLink } from '../../api';
 import { isbnSource, useLibrary } from '../../context';
+import { libraryParams, trackBookSearch, trackEvent } from '../../googleTag';
 import { useHoldingsStore } from '../../holdings';
 import { readReaderPreferences, writeReaderPreferences } from '../../readerState';
 import { candidatesFor, queryForCandidates, shelfMatchesFor } from '../../searchMemory';
@@ -202,7 +203,7 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null, on
       setQuery(queryForCandidates(searchEntry.candidateId));
   }, [searchEntry?.candidateId, search.status]);
 
-  const submit = async (text: string) => {
+  const submit = async (text: string, retry = false) => {
     const trimmed = text.trim();
     if (!trimmed) return;
     const pushed = !latestState.current?.search;
@@ -212,6 +213,7 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null, on
     requestAnimationFrame(() => resultsHeading.current?.focus({ preventScroll: true }));
     const answer = await search.run(trimmed, state.savedBooks);
     if (!answer) return;
+    if (!retry) trackBookSearch(answer, 'typed');
     if (answer.kind === 'exact') {
       navigate('/app/books/' + encodeURIComponent(answer.book.bookKey), { replace: pushed, state: { from: 'shelf', source: isbnSource(trimmed), book: answer.book } });
       return;
@@ -239,9 +241,12 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null, on
   const scanOpener = useRef<HTMLElement | null>(null);
   const focusAfterScan = useRef<'opener' | 'search'>('opener');
   const scanLookup = useRef<AbortController | null>(null);
+  // The last ISBN counted as a search: a retry of it (the barcode still held up) is the same search.
+  const countedIsbn = useRef<string | null>(null);
   const goScan = (opener: HTMLElement) => {
     scanOpener.current = opener;
     focusAfterScan.current = 'opener';
+    trackEvent('barcode_scan', { step: 'opened' });
     navigate(location.pathname, { state: { ...(latestState.current || {}), overlay: 'scan', scanPushed: true } });
   };
   const closeScan = useCallback(() => {
@@ -256,7 +261,7 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null, on
     return opener?.isConnected ? opener : document.querySelector<HTMLElement>('.search-bar-scan');
   }, []);
   const searchByTitle = () => { focusAfterScan.current = 'search'; closeScan(); };
-  useEffect(() => { if (!scanOpen) scanLookup.current?.abort(); }, [scanOpen]);
+  useEffect(() => { if (!scanOpen) { scanLookup.current?.abort(); countedIsbn.current = null; } }, [scanOpen]);
   useEffect(() => () => scanLookup.current?.abort(), []);
   // A scanned or typed ISBN goes through the same public search as the bar.
   // One book: open it in place of the pop-up's entry, so Back from the book
@@ -270,6 +275,8 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null, on
     try { answer = await runBookSearch(isbn, state.savedBooks, controller.signal); }
     catch { return 'failed'; }
     if (controller.signal.aborted || latestState.current?.overlay !== 'scan') return 'failed';
+    if (countedIsbn.current !== isbn) trackBookSearch(answer, source === 'camera' ? 'scan' : 'typed');
+    countedIsbn.current = isbn;
     const replace = Boolean(latestState.current?.scanPushed);
     if (answer.kind === 'exact') {
       if (answer.book.metadataStatus === 'missing') return 'unknown';
@@ -345,7 +352,8 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null, on
     <span className="home-library-tile"><LibraryGlyph size={20} /></span>
     <span className="home-library-text">
       <span className="home-library-caption">My library</span>
-      {catalog ? <a className="home-library" href={catalog} target="_blank" rel="noreferrer" aria-label={libraryName + ", opens in a new tab"}>{libraryName}</a>
+      {catalog ? <a className="home-library" href={catalog} target="_blank" rel="noreferrer" aria-label={libraryName + ", opens in a new tab"}
+        onClick={() => trackEvent('catalog_open', { ...libraryParams(library!), event_source: 'shelf' })}>{libraryName}</a>
         : <span className="home-library">{libraryName}</span>}
     </span>
     <button type="button" className="home-text-button" aria-label="Change library" aria-haspopup="dialog"
@@ -373,7 +381,7 @@ export function HomeScreen({ layout = 'phone', behind = null, openKey = null, on
     <SpineRow books={state.recentBooks} onClear={() => { void clearViewed(); }} disabled={recoveryMode} />
   </>;
   const resultsPane = <ResultsShelf ref={resultsHeading} status={resultsStatus} entries={results} view={view}
-    onRetry={() => { void submit(search.query || query); }} onScan={scan} libraryName={badgeLibrary} checking={marks.checking} reserveLine={checkable}
+    onRetry={() => { void submit(search.query || query, true); }} onScan={scan} libraryName={badgeLibrary} checking={marks.checking} reserveLine={checkable}
     back={wide ? backToShelf : undefined} perBay={perBay} openKey={openKey} />;
 
   return <div ref={home} className={'home' + (desk ? ' home-desk home-' + layout : '')} style={desk ? { '--bay-cols': perBay } as CSSProperties : undefined}

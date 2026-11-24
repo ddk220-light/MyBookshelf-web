@@ -7,6 +7,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 
 import { createAnonymousApp, LEGACY_API_RETIRED } from './anonymousApp.js';
+import { HTML_SECURITY_POLICY } from '../shared/security-policy.mjs';
 
 function app() {
   const publicRouter = Router();
@@ -28,7 +29,7 @@ test('native app policy and support are public documents rather than the web-app
     assert.ok(response.text.includes(title));
     assert.ok(!response.text.includes('Anonymous web catalog'));
     assert.equal(response.headers['cache-control'], 'no-cache');
-    assert.match(response.headers['content-security-policy'], /frame-ancestors 'none'/);
+    assert.equal(response.headers['content-security-policy'], HTML_SECURITY_POLICY);
   }
 });
 

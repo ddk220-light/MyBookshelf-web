@@ -38,10 +38,10 @@ export function scrubAnalyticsUrl(value) {
   else if (/^\/app\/account(?:\/|$)/.test(path)) path = '/app/account';
   else if (/^\/app(?:\/|$)/.test(path)) { if (known.indexOf(path) < 0) path = '/app/[other]'; }
   else if (/^\/select(?:\/|$)/.test(path)) { if (!/^\/select(?:\/[a-z0-9]+(?:-[a-z0-9]+)*)?$/.test(path)) path = '/select/[other]'; }
-  // The public pages by name and library guides by slug; anything else (a
+  // The public pages by name, library and book pages by slug; anything else (a
   // mistyped or pasted address, shown the 404 page) is not reported as typed.
-  else if (['/', '/libraries', '/about', '/how-it-works', '/open-source', '/privacy', '/terms', '/support'].indexOf(path) < 0
-    && !/^\/libraries\/[a-z0-9]+(?:-[a-z0-9]+)*$/.test(path)) path = '/[other]';
+  else if (['/', '/libraries', '/books', '/about', '/how-it-works', '/open-source', '/privacy', '/terms', '/support'].indexOf(path) < 0
+    && !/^\/(?:libraries|books)\/[a-z0-9]+(?:-[a-z0-9]+)*$/.test(path)) path = '/[other]';
   return url.origin + path;
 }
 

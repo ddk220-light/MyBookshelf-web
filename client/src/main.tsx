@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { AnonymousWebApp } from './v2/App';
 import { clearLegacyBrowserState } from './v2/legacyCleanup';
 import { startAnalytics } from './v2/analytics';
+import { GoogleTagPages } from './v2/googleTag';
 import { moveLegacyLinkToken } from './v2/auth/linkToken';
 import './v2/styles.css';
 import './v2/discovery.css';
@@ -25,6 +26,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     {/* URL-backed controls update synchronously; BookLink owns the optional visual transition. */}
     <BrowserRouter useTransitions={false}>
+      <GoogleTagPages />
       <AnonymousWebApp />
     </BrowserRouter>
   </React.StrictMode>,

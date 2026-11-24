@@ -7,6 +7,7 @@ import { publishedLibraries, escape, jsonLd, origin, countWord, rootShell, rootT
 import { checkPublication, bookMix, bookMixKey, checkBooks, BOOK_GROUPS, CHECK_BOOKS, GROUP_MOST, PAGE_PLATFORMS, stateAnchor, stateOrder, withCity } from './check-pages.mjs';
 import { usPageList, pageCandidates, linkSlug, formatPageList, populationRanking, topCoverage, TOP_LIBRARIES } from './us-pages.mjs';
 import { libraryCheckScriptSource, installLibraryChecks } from './library-check-script.mjs';
+import { HTML_SECURITY_POLICY } from '../../shared/security-policy.mjs';
 import usList from '../../shared/us-book-pool.json' with { type: 'json' };
 import usPages from '../../shared/seo-us-libraries.json' with { type: 'json' };
 import usCities from '../../shared/seo-us-cities.json' with { type: 'json' };
@@ -220,6 +221,15 @@ test('every build publishes the policy texts with the committed date and keeps t
     // Every service provider is named: GitHub runs the nightly backup, Vercel keeps it encrypted.
     assert.match(privacy, /<th scope="row">GitHub<\/th><td>Running the nightly backup of the accounts database\. The copy is encrypted as it is made, and only the encrypted file is kept, with Vercel\. Only we hold the key that opens it\.<\/td>/);
     assert.match(privacy, /<th scope="row">Vercel<\/th><td>[^<]*, encrypted backups of the accounts database, [^<]*<\/td>/);
+    // Google Analytics: named as a provider, with its retention and the way to stop it, in the policy and in the older page's copy of it.
+    assert.match(privacy, /<th scope="row">Google Analytics<\/th><td>Counting visits and actions \(see <strong>Visit counts<\/strong>\)\. Its script runs on our pages; its advertising features are off\.<\/td>/);
+    assert.match(privacy, /<th scope="row">Visit counts in Google Analytics<\/th><td>Up to 14 months, then only totals<\/td>/);
+    assert.match(privacy, /<th scope="row">Google Search Console<\/th><td>[^<]*It adds nothing to our pages\.<\/td>/);
+    for (const text of [privacy, readFileSync('client/public-app/privacy.html', 'utf8')]) {
+      for (const words of ['never your search words, which books you search for, open or save in the app, your account or your precise location', 'https://tools.google.com/dlpage/gaoptout', 'European Economic Area, the United Kingdom and Switzerland', 'up to 13 months'])
+        assert.ok(text.replace('never sent your search words', 'never your search words').includes(words), words);
+      assert.ok(!/Vercel Web Analytics|sets no cookies/.test(text));
+    }
     // How it works: the one check as the app makes it (20 November 2026), no old rules.
     const how = await readFile(join(out, 'how-it-works.html'), 'utf8');
     for (const words of ['one search of your chosen library’s own catalog, across all its fields', 'at least 80% of the words in the book’s title', 'can only be searched by ISBN',
@@ -791,11 +801,10 @@ test('the check script is one external same-origin file: no inline script or sty
   assert.ok(!/localStorage|sessionStorage|indexedDB|document\.cookie|https?:\/\/(?!mybookshelf\.cloud)[a-z]/i.test(script.replace(/new win\.URL\(value\)/, '')));
   assert.ok(!/innerHTML|insertAdjacentHTML|eval\(|new Function|\.style\b/.test(script), 'text and attributes only');
   const csp = JSON.parse(readFileSync('vercel.json', 'utf8')).services.web.routes[0].headers['Content-Security-Policy'];
-  assert.match(csp, /script-src 'self'/);
-  assert.match(csp, /connect-src 'self'/);
+  assert.equal(csp, HTML_SECURITY_POLICY);
   for (const path of usPaths()) {
     const html = read(path);
-    assert.ok(!/<script(?![^>]*(?:type="application\/ld\+json"|src="\/library-check\.js"))/.test(html), path);
+    assert.ok(!/<script(?![^>]*(?:type="application\/ld\+json"|src="\/library-check\.js"|src="\/google-tag\.js"))/.test(html), path);
     assert.ok(!/\sstyle=|\son[a-z]+=/i.test(html), path);
   }
   // Pages without the section do not load it.

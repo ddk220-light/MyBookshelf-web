@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { PROBLEM_SCREENS, PublicApiError, publicApi, type ContactDetails, type ProblemScreen } from '../../api';
 import { useLibrary } from '../../context';
+import { trackEvent } from '../../googleTag';
 import { readReaderPreferences } from '../../readerState';
 import { ContactFields, emailIsUsable } from '../contact/ContactFields';
 import { TickGlyph } from '../home/homeIcons';
@@ -73,6 +74,7 @@ export function ReportProblemPage() {
     const version = appVersion();
     try {
       await publicApi.problemReport({ text: words, screen, ...(libraryId ? { libraryId } : {}), ...(bookKey ? { bookKey } : {}), ...(version ? { appVersion: version } : {}), ...contact });
+      trackEvent('problem_report');
       if (alive.current) setStatus('sent');
     } catch (error) {
       if (!alive.current) return;

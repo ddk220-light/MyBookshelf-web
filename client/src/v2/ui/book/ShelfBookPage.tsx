@@ -5,6 +5,7 @@ import { useAccountSession } from '../../auth/AccountSessionProvider';
 import type { BookNavigation } from '../../bookNavigation';
 import { useCatalogMetadata } from '../../catalogMetadata';
 import { goodreadsUrl, messageFor, sourceFromLocation, useLibrary } from '../../context';
+import { openedFrom, outcomeOf, trackEvent } from '../../googleTag';
 import { SAVED_BOOKS_CAP } from '../../localState';
 import { findSavedBook } from '../../oneShelfState';
 import { reportSuggestion } from '../../suggestions/serverSource';
@@ -48,7 +49,7 @@ export function openLibraryUrl(book: Pick<PublicBook, 'bookKey' | 'workId' | 'is
   return book.isbn13 ? 'https://openlibrary.org/isbn/' + book.isbn13 : null;
 }
 
-// The history entries whose suggestion open was counted, for this page load
+// The history entries whose open was counted, for this page load
 // only (memory, never browser storage).
 const countedOpens = new Set<string>();
 function firstOpen(entry: string): boolean {
@@ -134,6 +135,14 @@ export function ShelfBookPage() {
     if (!fromSuggestion || !bookKey || !firstOpen(location.key)) return;
     reportSuggestion('opened', bookKey);
   }, [fromSuggestion, bookKey, location.key]);
+  // Google Analytics (googleTag.ts): how the page was opened, never which book; once per history entry, as above.
+  const openSource = openedFrom(navigation);
+  const bookShown = Boolean(book);
+  useEffect(() => {
+    if (bookShown && firstOpen('page ' + location.key + ' ' + bookKey)) trackEvent('book_open', { event_source: openSource });
+    // An overlay over the page has its own history entry and is not another open.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bookShown, bookKey]);
   useEffect(() => {
     if (book && opened.current === book.bookKey && libraryState.updateRecentDisplay) void libraryState.updateRecentDisplay(book);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -155,6 +164,17 @@ export function ShelfBookPage() {
   // Library pop-up over the book (its own history entry).
   const picker = useHistoryOverlay('library');
   const card = useLibraryAnswer(book?.bookKey);
+  // Google Analytics: an answer that is shown, and the way to the catalog, with
+  // the library and never the book. Checking again shows a new answer.
+  const shownAnswer = book && card.kind === 'library' && card.answer !== 'checking' && card.answer !== 'unsupported' ? card.answer : null;
+  const answered = { outcome: shownAnswer && outcomeOf(shownAnswer), library_id: state.selectedLibraryId, library_country: libraryState.library?.country, event_source: 'book_page' };
+  const shownFor = shownAnswer ? [state.selectedLibraryId, bookKey, shownAnswer].join(' ') : '';
+  const countedAnswer = useRef('');
+  useEffect(() => {
+    if (shownFor && countedAnswer.current !== shownFor) trackEvent('library_check', { ...answered, reason: card.kind === 'library' ? card.reason : undefined });
+    countedAnswer.current = shownFor;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shownFor]);
   const cardRef = useRef<HTMLDivElement>(null);
   // Focus goes back to the library card. When a library was just chosen, the
   // "Find my library" button it returns to is replaced by the card a moment
@@ -193,12 +213,13 @@ export function ShelfBookPage() {
     try {
       if (savedItem) {
         setAdded(false); setPopTick(false);
-        if (await unsaveBook(savedItem.bookKey)) setAnnouncement('Removed from your reading shelf');
+        if (await unsaveBook(savedItem.bookKey)) { setAnnouncement('Removed from your reading shelf'); trackEvent('book_remove', { event_source: openSource }); }
         else { setSaveError('Couldn’t remove this book. Try again.'); setAnnouncement('Couldn’t remove this book. Try again.'); }
         return;
       }
       const result = await saveBook(book);
       if (result === 'saved' && fromSuggestion) reportSuggestion('saved', book.bookKey);
+      if (result === 'saved') trackEvent('book_save', { event_source: openSource });
       if (result === 'saved' || result === 'already-saved') { setPopTick(true); setAdded(true); setAnnouncement('Added to your reading shelf'); return; }
       const message = result === 'full' ? 'Your reading shelf is full' : result === 'recovery' ? 'Reload your reading shelf before making changes.' : 'Couldn’t save this book. Try again.';
       setSaveError(message); setAnnouncement(message);
@@ -237,7 +258,7 @@ export function ShelfBookPage() {
     <SaveButton saved={saved} busy={busy} full={full} popTick={popTick} onToggle={() => { void toggle(); }} />
     {saveError && <p className="shelf-book-line shelf-book-error">{saveError}</p>}
 
-    <LibraryAnswerCard ref={cardRef} model={card} onFindLibrary={picker.show} />
+    <LibraryAnswerCard ref={cardRef} model={card} onFindLibrary={picker.show} onCatalog={() => trackEvent('catalog_open', answered)} />
     {card.kind === 'library' && <LibraryAttribution attribution={libraryState.library?.attribution} />}
 
     {description && <section className="shelf-book-section" aria-labelledby="about-heading">

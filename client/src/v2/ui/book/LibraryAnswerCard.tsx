@@ -64,8 +64,10 @@ export function catalogLinkText(answer: CardAnswer, kind: LinkKind): string {
     : kind === 'search' ? 'Search the library’s catalog for this book' : 'Open the library’s catalog';
 }
 
-export const LibraryAnswerCard = forwardRef<HTMLDivElement, { model: LibraryCardModel; onFindLibrary: () => void }>(
-  function LibraryAnswerCard({ model, onFindLibrary }, ref) {
+export const LibraryAnswerCard = forwardRef<HTMLDivElement, { model: LibraryCardModel; onFindLibrary: () => void;
+  /** A link to the library's catalog was followed (counted only). */
+  onCatalog?: () => void }>(
+  function LibraryAnswerCard({ model, onFindLibrary, onCatalog }, ref) {
     const matchesId = useId();
     if (model.kind === 'none') return <section className="library-ask" aria-labelledby="library-ask-heading">
       <h2 id="library-ask-heading">Is it in your library?</h2>
@@ -92,7 +94,7 @@ export const LibraryAnswerCard = forwardRef<HTMLDivElement, { model: LibraryCard
         <ul className="library-answer-matches" aria-labelledby={matchesId}>
           {matches.slice(0, MAX_CATALOG_MATCHES).map((match, index) => <li key={index}>
             {match.url || catalogUrl
-              ? <a href={match.url || catalogUrl} target="_blank" rel="noopener noreferrer">{match.title}<span className="visually-hidden">, opens in a new tab</span></a>
+              ? <a href={match.url || catalogUrl} target="_blank" rel="noopener noreferrer" onClick={onCatalog}>{match.title}<span className="visually-hidden">, opens in a new tab</span></a>
               : <span>{match.title}</span>}
             {match.author && <span className="library-answer-match-author">{match.author}</span>}
           </li>)}
@@ -100,7 +102,7 @@ export const LibraryAnswerCard = forwardRef<HTMLDivElement, { model: LibraryCard
       </>}
       <div className="library-answer-actions">
         {retry && <button type="button" className="home-text-button" onClick={retry}>Try again</button>}
-        {catalogUrl && <a className="library-answer-catalog" href={catalogUrl} target="_blank" rel="noopener noreferrer">
+        {catalogUrl && <a className="library-answer-catalog" href={catalogUrl} target="_blank" rel="noopener noreferrer" onClick={onCatalog}>
           {catalogLinkText(answer, catalogLinkKind)}<ExternalGlyph size={16} strokeWidth={2} /><span className="visually-hidden">, opens in a new tab</span>
         </a>}
         {(answer === 'found' || answer === 'not_found') && <button type="button" className="home-text-button" onClick={onFindLibrary} aria-haspopup="dialog">

@@ -6,6 +6,7 @@ import { useAccountEntryPending } from '../../auth/entryReadiness';
 import { useLinkToken } from '../../auth/linkToken';
 import { useDeletionReceipt } from '../../auth/DeletionReceiptProvider';
 import { useLibrary } from '../../context';
+import { trackEvent } from '../../googleTag';
 import { TickGlyph } from '../home/homeIcons';
 import { FormAlert } from '../panel/PanelPage';
 import { AccountForm, AccountScreen } from './AccountPages';
@@ -134,6 +135,7 @@ export function LogInPage() {
       const checked = await refresh(true);
       if (!alive.current) return;
       if (checked.status !== 'authenticated') throw new AccountApiError('NETWORK_ERROR', 'Couldn’t connect.');
+      trackEvent('login', { method: 'password' });
       // The books in this browser join the account on their own (plan B5).
       navigate(safeAccountReturn(result.returnTo || null), { replace: true, state: null });
     } catch (failure) {
@@ -321,6 +323,8 @@ function useSignedInFromLink(from: NonNullable<EntryState['from']>) {
   return async (reply: { signedIn?: boolean; email?: string }, alive: { current: boolean }) => {
     const checked = reply.signedIn ? await refresh(true) : null;
     if (!alive.current) return;
+    // An email confirmed by its link is the sign-up; the other links log in.
+    if (checked?.status === 'authenticated') trackEvent(from === 'verify' ? 'sign_up' : 'login', { method: from === 'link' ? 'link' : 'password' });
     // The token leaves the address with this page (replace).
     if (checked?.status === 'authenticated') navigate('/app/account/welcome', { replace: true, state: { from } satisfies EntryState });
     else navigate('/app/account/sign-in', { replace: true, state: { email: reply.email } satisfies EntryState });

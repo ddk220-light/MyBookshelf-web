@@ -20,7 +20,7 @@ export function SpineRow({ books, onClear, disabled }: { books: RecentBook[]; on
             const palette = spinePalette(book.bookKey), size = viewedSpineSize(book.bookKey);
             const author = book.authors.filter(Boolean).join(', ');
             return <li key={book.bookKey}>
-              <Link className="viewed-spine" to={'/app/books/' + encodeURIComponent(book.bookKey)} state={{ from: 'shelf', source: 'direct', book }}
+              <Link className="viewed-spine" to={'/app/books/' + encodeURIComponent(book.bookKey)} state={{ from: 'shelf', source: 'direct', viewed: true, book }}
                 aria-label={entryLabel(book)} style={{ '--spine-bg': palette.top, '--spine-ink': palette.ink, width: size.width, height: size.height } as CSSProperties}>
                 <span className="viewed-spine-title" aria-hidden="true">{book.title}</span>
                 {author && <span className="viewed-spine-author" aria-hidden="true">{author}</span>}

@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import { publicApi, PublicApiError, type ContactDetails } from '../../api';
+import { trackEvent } from '../../googleTag';
 import { ContactFields, emailIsUsable } from '../contact/ContactFields';
 import { TickGlyph } from '../home/homeIcons';
 import { requestableText } from './requestableText';
@@ -45,6 +46,7 @@ export function RequestLibraryForm({ initialText, onCancel, onDone }: {
     setStatus('sending');
     try {
       await publicApi.libraryRequest(library, contact);
+      trackEvent('library_request');
       if (!alive.current) return;
       setSentText(library);
       setStatus('sent');

@@ -151,6 +151,9 @@ export function installLibraryChecks(win, doc) {
         return ask(libraryId, row.getAttribute('data-book-key')).then(function (view) {
           row.setAttribute('data-state', 'answered');
           render(row, view);
+          // The answer shown, for /google-tag.js: the answer and its reason, never the book.
+          row.setAttribute('data-answer', view.answer);
+          try { row.dispatchEvent(new win.CustomEvent('mybookshelf-check', { bubbles: true, detail: { answer: view.answer, reason: view.reason } })); } catch (error) { /* Not counted. */ }
           if (button) {
             label(button, 'Check again', row.getAttribute('data-title') || 'this book');
             button.disabled = false;
